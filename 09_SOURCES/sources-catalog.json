@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "916acb12",
+    "sourceVersion": "5dec7b19",
     "license": "Apache-2.0",
-    "contentHash": "2d22991263db765e9204e7e1aab12dd6054327e43fd4873d0da24447f375ca29",
-    "lastHarvestedAt": "2026-11-19T01:32:51.678Z",
+    "contentHash": "c05241ada6a8508ba7992e4fa38a86e63e69eb5834a4e5c4609a8597c2289ce1",
+    "lastHarvestedAt": "2026-11-20T06:58:44.864Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {
@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "eab98de8",
+    "sourceVersion": "23d2a456",
     "license": "Apache-2.0",
-    "contentHash": "ecac513b4fe6486f988be309d174e04a71d633490aa015cb492ae2db2d71064c",
-    "lastHarvestedAt": "2026-11-19T03:09:48.097Z",
+    "contentHash": "175b0fe40ecc1977628ba91513aafc510bef15b25f78f5034ebd2d61c105d9dc",
+    "lastHarvestedAt": "2026-11-20T07:03:23.845Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {
@@ -8703,10 +8703,10 @@
     "repository": "yshrsmz/BuildKonfig",
     "platform": "github",
     "sourceUrl": "https://github.com/yshrsmz/BuildKonfig",
-    "sourceVersion": "f044a582",
+    "sourceVersion": "56c6977f",
     "license": "Apache-2.0",
-    "contentHash": "f256fb687c7f7d8c3be3cf5d2318715ddff0a540fe0536a22326469e7f8829c4",
-    "lastHarvestedAt": "2026-11-12T21:49:19.858Z",
+    "contentHash": "dfebc9858d63b20523c514675fdffc4d7e51adcbc205d9fdd46836c5fb4c317f",
+    "lastHarvestedAt": "2026-11-20T07:03:00.692Z",
     "learningId": "learn-github-yshrsmz-buildkonfig"
   },
   "aliarifsoydas-sitemap-checker": {

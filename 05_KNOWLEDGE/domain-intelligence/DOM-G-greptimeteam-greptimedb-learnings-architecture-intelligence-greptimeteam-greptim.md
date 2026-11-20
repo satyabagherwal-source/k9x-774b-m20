@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T10:51:43.938Z",
+  "timestamp": "2026-11-20T07:06:22.005Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-greptimeteam-greptimedb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [greptimeteam-greptimedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T10:51:43.938Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T07:06:22.005Z`  
 > **Learning ID**: `LEARN-EVO-greptimeteam-greptimedb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from greptimeteam-greptimedb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `48aa0ed3`  
+> **Source Version**: `5dec7b19`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T10:51:38.866Z  
+> **Timestamp**: 2026-11-20T06:58:43.872Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T10:51:38.860Z  
+> **Harvest Timestamp**: 2026-11-20T06:58:43.342Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6815 stars
+- **Stars / Engagement**: 6825 stars
 
 ---
 
@@ -85,6 +85,7 @@ pub mod tables;
 
 use std::sync::{Arc, Weak};
 
+#[cfg(feature = "enterprise")]
 use common_meta::key::TableMetadataManagerRef;
 use common_query::logical_plan::is_lossless_substrait_type;
 use datafusion::common::DFSchema;
@@ -104,6 +105,31 @@ use crate::information_schema::{
 };
 use crate::kvbackend::KvBackendCatalogManager;
 use crate::system_schema::semantic_graph::EntityGraphProviderRef;
+
+/// Adapts incremental system-table output, including one schema-bearing batch for an empty scan.
+pub(crate) fn record_batch_stream(
+    schema: &SchemaRef,
+    batches: impl futures::Stream<Item = Result<common_recordbatch::RecordBatch>> + Send + 'static,
+) -> common_recordbatch::DfSendableRecordBatchStream {
+    use futures::TryStreamExt;
+
+    let schema = schema.clone();
+    let arrow_schema = schema.arrow_schema().clone();
+    let stream = async_stream::try_stream!({
+        let mut batches = std::pin::pin!(batches);
+        let mut emitted = false;
+        while let Some(batch) = batches.try_next().await? {
+            if batch.num_rows() > 0 {
+                emitted = true;
+                yield batch.into_df_record_batch();
+            }
+        }
+        if !emitted {
+            yield common_recordbatch::RecordBatch::new_empty(schema).into_df_record_batch();
+        }
+    });
+    Box::pin(datafusion::physical_plan::stream::RecordBatchStreamAdapter::new(arrow_schema, stream))
+}
 
 /// Projects an inspection table schema according to the scan request.
 pub(crate) fn projected_schema(schema: &SchemaRef, request: &ScanRequest) -> Result<SchemaRef> {
@@ -192,6 +218,7 @@ pub fn information_extension(
 }
 
 /// Try to get the `[TableMetadataManagerRef]` from `[CatalogManager]` weak reference.
+#[cfg(feature = "enterprise")]
 pub fn table_meta_manager(
     catalog_manager: &Weak<dyn CatalogManager>,
 ) -> Result<Option<TableMetadataManagerRef>> {
@@ -1743,11 +1770,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10479** (2026-11-17): **fix(test): render the schema view in the quantile fold test**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Follow-up to #10202 (native tree as plan lines) and #10433 (the quantile fold test).  ## What's changed and what's your intention?  `native_fused_quantile_is_never_folded_per_partition` fails on a clean `narthex` (`7ba85f6369b`):  ``` the quantile must not be split: ... (the statement text the test looks for is gone) ```  `#10202` changed what `display_indent` renders — plan lines with per-node metrics, without the statement. The test's last assertion checks that the statement is still named by the quantile it wrote (`quantile(0.5, some_metric)`), which is a property of the statement, not of the plan lines.  Fix: read `display_indent_schema` for that assertion, which still renders the statement.  This is the only call site in the file that depends on statement text; the other `~100` `display_indent` uses assert plan structure and are unaffected.  **Every PR based on `narthex` currently fails this test**, which is why this is a standalone one-line fix rather than something folded into another PR.  ### Verification  - `cargo nextest run -p query -E 'test(native_fused_quantile_is_never_folded_per_partition)'` → 1/1 passed.  ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [ ] I have written the necessary rustdoc comments. - [x] I have added the necessary unit tests and in
+- **Issue #10545** (2026-11-20): **test(query): skip the far-future overflow test when SystemTime cannot represent it**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## What's changed  `native_fused_windows_whose_instants_overflow_fall_back` builds a statement starting `5e18 ms` after the Unix epoch. `SystemTime` cannot represent that instant on Windows (and on 32-bit `time_t` targets), so `UNIX_EPOCH.checked_add(..).unwrap()` panicked before the planner saw the query.  The test now checks `checked_add` and returns early when the platform cannot represent the start. The platform-independent `native_tree_supported_declines_the_instants_that_overflow` test in `promql::native::plan::tests` still covers the admission predicate with a pure `i64` grid, including on Windows. 64-bit Unix CI still runs the high-level shape.  This is test-only; no production code changes.  ## Verification  - `cargo nextest run -p query -E 'test(native_fused_windows_whose_instants_overflow_fall_back)'`: passed on Linux. - `cargo fmt --all -- --check`: passed.  Fixes the Windows failure in https://github.com/GreptimeTeam/greptimedb/actions/runs/44635062535/job/135951339889. 
 
-- **Issue #10469** (2026-11-17): **fix(test): stop requiring every scan partition to be non-empty**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Same class as #10466: a test that asserts a plan property the uniform topology (#10418) no longer guarantees.  ## What's changed and what's your intention?  `test_remote_write_v2_histogram_native_partitions` asserts that each of the four scan partitions reports at least one `native.root.output_values`. It fails on `narthex`:  ``` empty native output partition: {0: 0, 1: 3, 2: 3, 3: 2} ```  `SeriesRepartitionExec` routes a series by hashing its **label set** with `XxHash64` (see `series_repartition.rs`), so eight series over four partitions can legitimately leave one empty — with four buckets and eight items the chance of an empty bucket is about 10%. The fixture used to hash evenly; after the topology changes it does not.  So the assertion was checking a property of the hash, not of the topology. The test's actual intent — visible in its own comment — is that the fused producer runs on several partitions and that the merge is exercised.  This replaces "every partition non-empty" with:  - `non_empty >= 2` — more than one partition must actually run, otherwise there is nothing to merge and the test proves nothing; - `sum == 8` — every series must still produce exactly one value, so routing cannot lose data.  The existing `partitions.len() == 4` check stays.  ### Verification  - `cargo nextest run -p tests-integration 
+- **Issue #10543** (2026-11-20): **fix(mito-codec): align sparse metric rows with physical region fields**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Observed in the [test job for #10524](https://github.com/GreptimeTeam/greptimedb/actions/runs/44485860846/job/135438226190) and reproduced on its main baseline (`788df5849b`).  ## What's changed and what's your intention?  #7195 introduced the three-column fast path in `SparseReadRowHelper`. It treats an encoded key, timestamp, and one value in the request as proof that the physical region has exactly one field.  #8382 added native histogram writes. A scalar metric and a histogram can share a physical region with both `greptime_value` and `greptime_native_histogram`. A sparse row can supply either field and omit the other. The fast path emitted only the supplied field, so the memtable expected two values and received one. Its field-count assertion panicked and the remote write returned HTTP 500.  This fix checks both the request width and the physical region's field count before using positional indices. For a multi-field region, the existing name-based mapping places the supplied value in the correct slot and emits NULL for the omitted field.  The new codec test covers either field being omitted and failed before the fix. All 64 codec tests and all six exemplar integration cases passed on the final commit. Formatting and crate-level Clippy also passed.  ## PR Checklist Please convert it to a draft if some of the fo
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1764,1275 +1791,1154 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd941a8e` (2026-11-16)
-**Commit Message**: fix(mito2): wait for a stopped region's checkpoint before reopening it (#10376)
+### Incident Patch 1: `4eca3194` (2026-11-20)
+**Commit Message**: test(query): skip the far-future overflow test when SystemTime cannot represent it (#10545)
 
-* fix(mito2): wait for a stopped region's checkpoint before reopening it
+Windows SystemTime and 32-bit time_t targets cannot represent the 5e18 ms statement start, so checked_add returns None before the planner sees the query. Skip the high-level shape there; the platform-independent native_tree_supported_declines_the_instants_that_overflow test still covers the admission predicate.
 
-A region's manifest checkpoint runs as a background task that writes the
-checkpoint, then `_last_checkpoint`, then deletes older manifest files:
-the deltas up to the previous checkpoint, or every older delta at the
-region's first checkpoint. Stopping the manifest manager does not wait
-for it, so a new instance of the region could read the manifest while the
-old task still wrote it. On a store that writes files in place the open
-could read an empty `_last_checkpoint`. On any store, an open that found
-no checkpoint could have deltas it had just listed deleted by the first
-checkpoint's cleanup.
+Signed-off-by: discord9 <[REDACTED_EMAIL]>
 
-Wait for the stopped instance's checkpoint at engine stop, after the
-worker loop ends, and before a fenced region is reloaded. The wait does
-not hold the manifest lock, which the worker may take meanwhile: the
-checkpoint task owns the sender of a watch channel, which closes however
-the task ends.
-
-Fixes the flaky test_change_region_compaction_window (#7135).
-
-Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
-
-* test(mito2): cover the checkpoint wai
-
-**File**: `src/mito2/src/engine/close_test.rs` (modified, +77/-2)
+**File**: `src/query/src/promql/planner/test.rs` (modified, +11/-4)
 ```diff
-@@ -14,20 +14,22 @@
- 
- use std::sync::Arc;
- use std::sync::atomic::Ordering;
-+use std::time::Duration;
- 
- use api::v1::Rows;
- use common_base::Plugins;
- use common_recordbatch::RecordBatches;
- use store_api::region_engine::RegionEngine;
--use store_api::region_request::{RegionCloseRequest, RegionRequest};
-+use store_api::region_request::{PathType, RegionCloseRequest, RegionOpenRequest, RegionRequest};
- use store_api::storage::{RegionId, ScanRequest};
- 
- use crate::config::MitoConfig;
- use crate::engine::flush_test::MockRegionHook;
- use crate::engine::listener::AlterFlushListener;
- use crate::engine::region_hook::RegionHookRef;
- use crate::test_util::{
--    CreateRequestBuilder, TestEnv, build_rows, flush_region, put_rows, rows_schema,
-+    CheckpointTaskBlocker, CreateRequestBuilder, TestEnv, build_rows, flush_region, put_rows,
-+    rows_schema,
- };
- 
+@@ -3446,16 +3446,23 @@ async fn native_fused_partitioned_table_label_rewrite_falls_back() {
+ /// route, and dropping it from the predicate makes this test fail. (The `@` half of the same
+ /// arithmetic is pinned one level down, in `native::plan::tests`, because a statement whose anchor
+ /// and start are that far apart is refused by the planner's own at-modifier rewrite first.)
++///
++/// A platform whose `SystemTime` cannot represent the `5e18 ms` start skips the high-level
++/// shape; the platform-independent `native_tree_supported_declines_the_instants_that_overflow`
++/// still covers the admission predicate there.
  #[tokio::test]
-@@ -411,3 +413,76 @@ async fn test_repeated_close_during_edit_preserves_flush_requirement(
-     );
-     engine.stop().await.unwrap();
- }
-+
-+#[tokio::test(flavor = "multi_thread")]
-+async fn test_engine_stop_waits_for_checkpoint() {
-+    let (blocker, mock_layer) = CheckpointTaskBlocker::block_last_checkpoint_write();
-+    let mut env = TestEnv::with_prefix("stop-waits-for-checkpoint")
-+        .await
-+        .with_mock_layer(mock_layer);
-+    let config = MitoConfig {
-+        manifest_checkpoint_distance: 1,
-+        ..Default::default()
+ async fn native_fused_windows_whose_instants_overflow_fall_back() {
+-    // The far end of the `i64` millisecond range, one step apart.
++    // The far end of the `i64` millisecond range, one step apart. Windows' `SystemTime` and
++    // 32-bit `time_t` targets cannot represent it, so they cannot build this statement.
++    let Some(far_start) = UNIX_EPOCH.checked_add(Duration::from_millis(5_000_000_000_000_000_000))
++    else {
++        return;
 +    };
-+    let engine = env.create_engine(config.clone()).await;
-+    let region_id = RegionId::new(1, 1);
-+    let request = CreateRequestBuilder::new().build();
-+    let table_dir = request.table_dir.clone();
-+    let column_schemas = rows_schema(&request);
-+    engine
-+        .handle_request(region_id, RegionRequest::Create(request))
-+        .await
-+        .unwrap();
-+    put_rows(
-+        &engine,
-+        region_id,
-+        Rows {
-+            schema: column_schemas,
-+            rows: build_rows(0, 3),
-+        },
-+    )
-+    .await;
-+    // The flush starts a checkpoint, which blocks after it has created `_last_checkpoint`
-+    // and before it has written the pointer.
-+    flush_region(&engine, region_id, None).await;
-+    blocker.wait_until_blocked().await;
-+    let wait_started = engine
-+        .get_region(region_id)
-+        .unwrap()
-+        .manifest_ctx
-+        .manifest_manager
-+        .read()
-+        .await
-+        .checkpointer()
-+        .pending_checkpoint_wait_started();
-+
-+    let mut reopen = tokio::spawn(async move {
-+        let engine = env.reopen_engine(engine, config).await;
-+        let open = RegionRequest::Open(RegionOpenRequest {
-+            engine: String::new(),
-+            table_dir,
-+            path_type: PathType::Bare,
-+            options: Default::default(),
-+            skip_wal_replay: false,
-+            checkpoint: None,
-+            requirements: Default::default(),
-+        });
-+        let result = engine.handle_request(region_id, open).await;
-+        (env, result)
-+    });
-+    tokio::time::timeout(Duration::from_secs(10), wait_started.notified())
-+        .await
-+        .expect("the engine stop does not wait for the checkpoint");
-+    // The new engine would read the empty pointer while the old checkpoint is blocked.
-+    assert!(
-+        tokio::time::timeout(Duration::from_millis(500), &mut reopen)
-+            .await
-+            .is_err()
-+    );
-+    blocker.release();
-+    let (_env, result) = tokio::time::timeout(Duration::from_secs(10), reopen)
-+        .await
-+        .unwrap()
-+        .unwrap();
-+    result.unwrap();
-+}
-```
-
-**File**: `src/mito2/src/engine/object_store_wal_test.rs` (modified, +43/-0)
-```diff
-@@ -1092,6 +1092,49 @@ async fn test_reload_waits_for_held_upload() {
-     assert_eq!(3, count_rows(&engine, region_id).await);
- }
- 
-+#[tokio::test]
-+async fn test_reload_waits_for_running_checkpoint() {
-+    let (blocker, layer) = CheckpointTaskBlocker::block_last_checkpoint_write();
-+    let mut env = TestEnv::with_prefix("reload-waits-for-running-checkpoint")
-+        .await
-+        .with_mock_layer(layer);
-+    let region_id = RegionId::new(1, 1);
-+    let (engine, _log_store, _, schema, _) = create_leased_region(&mut env, region_id).await;
-+    put_range(&engine, region_id, &schema, 0, 3).await;
-+    // The flush starts a checkpoint, which blocks after it has created `_last_checkpoint`
-+    // and before it has written the pointer.
-+    flush_region(&engine, region_id, None).await;
-+    blocker.wait_until_blocked().await;
-+    let old = engine.get_region(region_id).unwrap();
-+    let wait_started = old
-+        .manifest_ctx
-+        .manifest_manager
-+        .read()
-+        .await
-+        .checkpointer()
-+        .pending_checkpoint_wait_started();
-+    fence(&old).await;
-+
-+    notify_fenced(&engine, region_id).await;
-+    tokio::time::timeout(Duration::from_secs(10), wait_started.notified())
-+        .await
-+        .expect("the reload does not wait for the checkpoint");
-+    // The worker takes the manifest lock of the fenced instance, for example to close it,
-+    // while the reload waits.
-+    let manager = tokio::time::timeout(
-+        Duration::from_secs(10),
-+        old.manifest_ctx.manifest_manager.write(),
-+    )
-+    .await
-+    .expect("the reload holds the manifest lock while it waits");
-+    drop(manager);
-+    assert!(!is_replaced(&engine, &old));
-+    blocker.release();
-+
-+    wait_until(|| is_replaced(&engine, &old)).await;
-+    assert_eq!(3, count_rows(&engine, region_id).await);
-+}
-+
- #[tokio::test]
- async fn test_reload_waits_for_running_flush() {
-     let mut env = TestEnv::with_prefix("reload-waits-for-flush").await;
-```
-
-**File**: `src/mito2/src/manifest/checkpointer.rs` (modified, +52/-7)
-```diff
-@@ -22,6 +22,7 @@ use store_api::storage::RegionId;
- use store_api::{MIN_VERSION, ManifestVersion};
- #[cfg(test)]
- use tokio::sync::Notify;
-+use tokio::sync::watch;
- 
- use crate::error::Result;
- use crate::manifest::action::{RegionCheckpoint, RegionManifest};
-@@ -34,11 +35,19 @@ use crate::metrics::MANIFEST_OP_ELAPSED;
- pub(crate) struct Checkpointer {
-     manifest_options: RegionManifestOptions,
-     inner: Arc<Inner>,
--    checkpoint_task: Option<JoinHandle<()>>,
-+    checkpoint_task: Option<CheckpointTask>,
-     #[cfg(test)]
-     pending_checkpoint_wait_started: Arc<Notify>,
- }
- 
-+/// A spawned checkpoint task and the signal that it has ended.
-+#[derive(Debug)]
-+struct CheckpointTask {
-+    handle: JoinHandle<()>,
-+    /// Closes when the task ends, so that it can be awaited without borrowing the checkpointer.
-+    done: watch::Receiver<()>,
-+}
-+
- #[derive(Debug)]
- struct Inner {
-     region_id: RegionId,
-@@ -142,7 +151,7 @@ impl Checkpointer {
-         if self
-             .checkpoint_task
-             .as_ref()
--            .is_some_and(|handle| !handle.is_finished())
-+            .is_some_and(|task| !task.handle.is_finished())
-         {
-             return;
-         }
-@@ -187,24 +196,51 @@ impl Checkpointer {
- 
-     fn do_checkpoint(&mut self, checkpoint: RegionCheckpoint) {
-         let inner = self.inner.clone();
--        self.checkpoint_task = Some(common_runtime::spawn_global(async move {
-+        let (done_sender, done) = watch::channel(());
-+        let handle = common_runtime::spawn_global(async move {
-+            // The sender is dropped however the task ends, which closes the channel.
-+            let _done_sender = done_sender;
-             inner.do_checkpoint(checkpoint).await;
--        }));
-+        });
-+        self.checkpoint_task = Some(CheckpointTask { handle, done });
-+    }
-+
-+    /// Returns a future that resolves once the checkpoint task running now has ended.
-+    ///
-+    /// Unlike [Self::wait_for_pending_checkpoint], which borrows the checkpointer mutably and reaps
-+    /// the task handle, this does neither, so the caller can await the future without holding the
-+    /// manifest lock.
-+    pub(crate) fn pending_checkpoint_completion(&self) -> impl Future<Output = ()> + Send + use<> {
-+        let done = self.checkpoint_task.as_ref().map(|task| task.done.clone());
-+        let region_id = self.inner.region_id();
-+        #[cfg(test)]
-+        let wait_started = self.pending_checkpoint_wait_started.clone();
-+        async move {
-+            // The channel is closed once the task has ended.
-+            let Some(mut done) = done.filter(|receiver| receiver.has_changed().is_ok()) else {
-+                return;
-+            };
-+            #[cfg(test)]
-+            wait_started.notify_one();
-+            info!("Waiting for the pending checkpoint of region {}", region_id);
-+            // Nothing is ever sent, so this returns once the task drops the sender.
-+            let _ = done.changed().await;
-+        }
-     }
- 
-     /// Waits for the current checkpoint task without removing its handle first.
-     ///
-     /// Keeping the handle in `self` while awaiting is important. If the caller is
-     /// cancelled, another lifecycle transition can still wait for the same task.
-     pub(crate) async fn wait_for_pending_checkpoint(&mut self) {
--        let Some(handle) = self.checkpoint_task.as_mut() else {
-+        let Some(task) = self.checkpoint_task.as_mut() else {
-             return;
-         };
- 
-         #[cfg(test)]
-         self.pending_checkpoint_wait_started.notify_one();
- 
--        let result = (&mut *handle).await;
-+        let result = (&mut task.handle).await;
-         // There is no cancellation point between observing completion and
-         // clearing the handle.
-         self.checkpoint_task = None;
-@@ -218,7 +254,16 @@ impl Checkpointer {
-     pub(crate) fn is_doing_checkpoint(&self) -> bool {
-         self.checkpoint_task
-             .as_ref()
--            .is_some_and(|handle| !handle.is_finished())
-+            .is_some_and(|task| !task.handle.is_finished())
-+    }
-+
-+    #[cfg(test)]
-+    pub(crate) fn abort_checkpoint_task(&self) {
-+        self.checkpoint_task
-+            .as_ref()
-+            .expect("checkpoint task must exist")
-+            .handle
-+            .abort();
-     }
- 
-     #[cfg(test)]
-```
-
-**File**: `src/mito2/src/manifest/manager.rs` (modified, +13/-1)
-```diff
-@@ -442,7 +442,12 @@ impl RegionManifestManager {
-         Ok(Some(manager))
-     }
- 
--    /// Stops the manager.
-+    /// Stops the manager. A stopped manager takes no update and starts no checkpoint, but a
-+    /// checkpoint already running keeps writing the manifest directory until it ends.
-+    ///
-+    /// A caller that hands the storage to another instance waits for that checkpoint with
-+    /// `pending_checkpoint_completion` after the stop, as engine stop and reload do. Close and
-+    /// drop, which run in the region worker loop, deliberately do not.
-     pub async fn stop(&mut self) {
-         self.stopped = true;
-     }
-@@ -849,6 +854,13 @@ impl RegionManifestManager {
-         self.checkpointer.wait_for_pending_checkpoint().await;
-     }
- 
-+    /// Returns a future that resolves once the in-flight checkpoint has finished, including its
-+    /// cleanup. Unlike [Self::wait_for_pending_checkpoint], which borrows the manager mutably and
-+    /// reaps the task handle, this does neither.
-+    pub(crate) fn pending_checkpoint_completion(&self) -> impl Future<Output = ()> + Send + use<> {
-+        self.checkpointer.pending_checkpoint_completion()
-+    }
-+
-     /// Clear deleted files from manifest's `removed_files` field without update version. Notice if datanode exit before checkpoint then new manifest by open region may still contain these deleted files, which is acceptable for gc process.
-     pub fn clear_deleted_files(&mut self, deleted_files: Vec<RemovedFile>) {
-         let mut manifest = (*self.manifest()).clone();
-```
-
-**File**: `src/mito2/src/manifest/tests/checkpoint.rs` (modified, +128/-1)
-```diff
-@@ -14,7 +14,7 @@
- 
- use std::assert_matches;
- use std::sync::Arc;
--use std::sync::atomic::{AtomicUsize, Ordering};
-+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
- use std::time::Duration;
- 
- use common_datasource::compression::CompressionType;
-@@ -25,6 +25,7 @@ use object_store::layers::mock::{
- };
- use store_api::storage::{FileId, RegionId};
- use strum::IntoEnumIterator;
-+use tokio::sync::Notify;
- 
- use crate::error::Error::{ChecksumMismatch, ManifestDeltaNotFound};
- use crate::manifest::action::{
-@@ -828,6 +829,132 @@ async fn completed_checkpoint_is_reaped_before_scheduling_the_next_one() {
-     assert_eq!(2, manager.checkpointer().last_checkpoint_version());
- }
- 
-+#[rstest::rstest]
-+#[case::cleanup_finished(false)]
-+#[case::task_aborted(true)]
-+#[tokio::test]
-+async fn pending_checkpoint_completion_waits_until_the_task_ends(#[case] abort: bool) {
-+    let (blocker, mock_layer) = CheckpointTaskBlocker::block_cleanup();
-+    let env = TestEnv::new().await.with_mock_layer(mock_layer);
-+    let metadata = Arc::new(basic_region_metadata());
-+    let mut manager = env
-+        .create_manifest_manager(CompressionType::Uncompressed, 1, Some(metadata))
-+        .await
-+        .unwrap()
-+        .unwrap();
-+
-+    manager.update(nop_action(), false).await.unwrap();
-+    tokio::time::timeout(Duration::from_secs(5), blocker.wait_until_blocked())
-+        .await
-+        .expect("checkpoint cleanup did not start");
-+
-+    // Two waiters stay on their own tasks until the checkpoint ends; a third is cancelled.
-+    let waiters = [
-+        manager.pending_checkpoint_completion(),
-+        manager.pending_checkpoint_completion(),
-+    ]
-+    .map(tokio::spawn);
-+    let mut cancelled = Box::pin(manager.pending_checkpoint_completion());
-+    assert!(
-+        tokio::time::timeout(Duration::from_millis(100), &mut cancelled)
-+            .await
-+            .is_err(),
-+        "the cancelled wait ended before the checkpoint cleanup"
-+    );
-+    drop(cancelled);
-+    assert!(
-+        waiters.iter().all(|waiter| !waiter.is_finished()),
-+        "a spawned wait ended before the checkpoint cleanup"
-+    );
-+    // The cleanup stays blocked in the abort case, so only the abort can end the task.
-+    if abort {
-+        manager.checkpointer().abort_checkpoint_task();
-+    } else {
-+        blocker.release();
-+    }
-+    for waiter in waiters {
-+        tokio::time::timeout(Duration::from_secs(5), waiter)
-+            .await
-+            .expect("the wait did not end with the checkpoint task")
-+            .unwrap();
-+    }
-+    let wait_started = manager.checkpointer().pending_checkpoint_wait_started();
-+    // Consumes the permit the waiters above left.
-+    let _ = tokio::time::timeout(Duration::ZERO, wait_started.notified()).await;
-+    tokio::time::timeout(Duration::ZERO, manager.pending_checkpoint_completion())
-+        .await
-+        .expect("a wait after the checkpoint task ended did not return at once");
-+    assert!(
-+        tokio::time::timeout(Duration::ZERO, wait_started.notified())
-+            .await
-+            .is_err(),
-+        "a wait after the checkpoint task ended started waiting"
-+    );
-+}
-+
-+/// Panics on the first delete, which a checkpoint issues in its cleanup, once released.
-+struct PanickingDeleter {
-+    entered: Arc<Notify>,
-+    release: Arc<Notify>,
-+    panicked: Arc<AtomicBool>,
-+}
-+
-+impl oio::Delete for PanickingDeleter {
-+    async fn delete(&mut self, _path: &str, _args: OpDelete) -> MockResult<()> {
-+        self.entered.notify_one();
-+        self.release.notified().await;
-+        self.panicked.store(true, Ordering::Relaxed);
-+        panic!("mock manifest delete panic");
-+    }
-+
-+    async fn close(&mut self) -> MockResult<()> {
-+        Ok(())
-+    }
-+}
-+
-+#[tokio::test]
-+async fn pending_checkpoint_completion_ends_when_the_task_panics() {
-+    let entered = Arc::new(Notify::new());
-+    let release = Arc::new(Notify::new());
-+    let panicked = Arc::new(AtomicBool::new(false));
-+    let (factory_entered, factory_release, factory_panicked) =
-+        (entered.clone(), release.clone(), panicked.clone());
-+    let mock_layer = MockLayerBuilder::default()
-+        .deleter_factory(Arc::new(move |_inner| {
-+            Box::new(PanickingDeleter {
-+                entered: factory_entered.clone(),
-+                release: factory_release.clone(),
-+                panicked: factory_panicked.clone(),
-+            })
-+        }))
-+        .build()
-+        .unwrap();
-+    let env = TestEnv::new().await.with_mock_layer(mock_layer);
-+    let metadata = Arc::new(basic_region_metadata());
-+    let mut manager = env
-+        .create_manifest_manager(CompressionType::Uncompressed, 1, Some(metadata))
-+        .await
-+        .unwrap()
-+        .unwrap();
-+
-+    manager.update(nop_action(), false).await.unwrap();
-+    tokio::time::timeout(Duration::from_secs(5), entered.notified())
-+        .await
-+        .expect("checkpoint cleanup did not start");
-+    let mut done = Box::pi
-```
-
-**File**: `src/mito2/src/region.rs` (modified, +15/-0)
-```diff
-@@ -1528,6 +1528,21 @@ impl ManifestContext {
-         self.manifest_manager.read().await.has_update().await
-     }
- 
-+    /// Waits for the in-flight checkpoint of a stopped manager. A stopped manager starts no
-+    /// checkpoint, so this instance no longer writes the manifest directory afterwards.
-+    ///
-+    /// Callers must not hold the manifest lock: this takes its read lock, and the lock is not
-+    /// reentrant. Under the lock, use [RegionManifestManager::wait_for_pending_checkpoint]
-+    /// instead. The wait itself holds no lock.
-+    pub(crate) async fn wait_for_checkpoint_after_stop(&self) {
-+        let done = {
-+            let manager = self.manifest_manager.read().await;
-+            debug_assert!(manager.is_stopped());
-+            manager.pending_checkpoint_completion()
-+        };
-+        done.await;
-+    }
-+
-     /// Returns the current region role state.
-     pub(crate) fn current_state(&self) -> RegionRoleState {
-         self.state.load()
-```
-
-**File**: `src/mito2/src/worker.rs` (modified, +10/-1)
-```diff
-@@ -1847,10 +1847,19 @@ impl<S> RegionWorkerLoop<S> {
-         }
-         // Closes remaining regions.
-         let regions = self.regions.list_regions();
--        for region in regions {
-+        for region in &regions {
-             region.deactivate_region_manifest_size_metric();
-             region.stop().await;
-         }
-+        // Another engine may open these regions from the same storage after the stop. Regions
-+        // closed earlier are not waited for; a datanode or standalone shutdown closes every region
-+        // first, so there this only covers regions whose close failed.
-+        join_all(
-+            regions
-+                .iter()
-+                .map(|region| region.manifest_ctx.wait_for_checkpoint_after_stop()),
-+        )
-+        .await;
- 
-         self.regions.clear();
-     }
-```
-
-**File**: `src/mito2/src/worker/handle_reload.rs` (modified, +3/-0)
-```diff
-@@ -66,6 +66,9 @@ impl<S: LogStore> RegionWorkerLoop<S> {
-         let sender = self.sender.clone();
-         common_runtime::spawn_global(async move {
-             let result = async {
-+                // The fenced instance is stopped, but its last checkpoint may still be writing
-+                // the manifest that the reload reads.
-+                region.manifest_ctx.wait_for_checkpoint_after_stop().await;
-                 // The replay reads only what the log store has made durable.
-                 durability_barrier.wait(last_entry_id).await?;
-                 opener.open(&config, &wal).await
+     let plan_for = |query: &str, native_fused| {
+         let query = query.to_string();
+         async move {
+             let mut eval_stmt = build_eval_stmt(&query);
+-            eval_stmt.start = UNIX_EPOCH
+-                .checked_add(Duration::from_millis(5_000_000_000_000_000_000))
+-                .unwrap();
++            eval_stmt.start = far_start;
+             eval_stmt.end = eval_stmt
+                 .start
+                 .checked_add(Duration::from_millis(10_000))
 ```
 
 ---
 
-### Incident Patch 2: `416f08de` (2026-11-17)
-**Commit Message**: fix(mito2): release the manifest lock while a downgrade waits for the checkpoint (#10468)
+### Incident Patch 2: `ce7153de` (2026-11-19)
+**Commit Message**: fix(metasrv): reserve repartition region numbers before creating regions (#10524)
 
-* fix(mito2): release the manifest lock while a downgrade waits for the checkpoint
+* fix(metasrv): reserve repartition region numbers before creating regions
 
-A graceful change to follower or downgrading leader waited for the pending
-checkpoint under the manifest write lock. The region worker reads the manifest
-of that region inline when an index build finishes, so it stopped serving every
-region it owns until the checkpoint ended.
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 
-The wait now uses `pending_checkpoint_completion` with the lock released, and
-takes the lock again afterwards.
+* fix(metasrv): limit repartition changes to region number reservation
 
-Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 
-* fix(mito2): wait for the checkpoint when the region is already a follower
+* refactor: share repartition allocation targets
 
-A request that finds the region already a follower returned at once, while the change that made it a follower could still wait for the checkpoint with the lock released.
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 
-Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+* fix: reserve region numbers when resuming repartition after upgrade
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+* test: bound waits for repartition create requests
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 
 ---------
 
-Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 
-**File**: `src/mito2/src/engine/index_build_test.rs` (modified, +108/-2)
+**File**: `src/common/meta/src/key/table_route.rs` (modified, +102/-1)
 ```diff
-@@ -36,7 +36,7 @@ use datatypes::prelude::ConcreteDataType;
- use datatypes::schema::{ColumnSchema, FulltextOptions, SkippingIndexOptions, SkippingIndexType};
- use puffin::puffin_manager::{PuffinManager, PuffinReader, PuffinWriter};
- use store_api::metadata::ColumnMetadata;
--use store_api::region_engine::RegionEngine;
-+use store_api::region_engine::{RegionEngine, SetRegionRoleStateResponse, SettableRegionRoleState};
- use store_api::region_request::{
-     AddColumn, AlterKind, RegionAlterRequest, RegionBuildIndexRequest, RegionCloseRequest,
-     RegionCompactRequest, RegionFlushRequest, RegionRequest, RegionTruncateRequest, SetIndexOption,
-@@ -64,7 +64,8 @@ use crate::sst::index::{CompletedEntry, IndexBuildType};
- use crate::sst::location;
- use crate::test_util::batch_util::sort_batches_and_print;
- use crate::test_util::{
--    CreateRequestBuilder, TestEnv, build_rows, flush_region, put_rows, reopen_region, rows_schema,
-+    CheckpointTaskBlocker, CreateRequestBuilder, TestEnv, build_rows, flush_region, put_rows,
-+    reopen_region, rows_schema,
- };
+@@ -18,7 +18,7 @@ use std::sync::Arc;
  
- pub(crate) fn async_build_mode_config(is_create_on_flush: bool) -> MitoConfig {
-@@ -3320,3 +3321,108 @@ async fn test_manual_rebuild_reports_budget_discard_of_new_plugin() {
-     );
-     engine.stop().await.unwrap();
- }
-+
-+/// Tests that the worker applies an index publication of a region, and serves other regions,
-+/// while a graceful downgrade of that region waits for the pending checkpoint.
-+#[tokio::test(flavor = "multi_thread")]
-+async fn test_worker_serves_regions_while_downgrade_waits_for_checkpoint() {
-+    let (blocker, mock_layer) = CheckpointTaskBlocker::block_cleanup();
-+    let mut env =
-+        TestEnv::with_prefix("test_worker_serves_regions_while_downgrade_waits_for_checkpoint_")
-+            .await
-+            .with_mock_layer(mock_layer);
-+    let gate = Arc::new(IndexPublicationGate::new(
-+        IndexPublicationPhase::AfterManifestCommit,
-+    ));
-+    let mut config = async_build_mode_config(true);
-+    config.num_workers = 1;
-+    config.manifest_checkpoint_distance = 1;
-+    let engine = env
-+        .create_engine_with(config, None, Some(gate.clone()), None)
-+        .await;
-+
-+    let region_id = RegionId::new(1, 1);
-+    let other_region_id = RegionId::new(2, 1);
-+    for (id, table_dir) in [(region_id, "test"), (other_region_id, "other")] {
-+        env.get_schema_metadata_manager()
-+            .register_region_table_info(
-+                id.table_id(),
-+                "test_table",
-+                "test_catalog",
-+                "test_schema",
-+                None,
-+                env.get_kv_backend(),
-+            )
-+            .await;
-+        let request = CreateRequestBuilder::new()
-+            .table_dir(table_dir)
-+            .build_with_index();
-+        engine
-+            .handle_request(id, RegionRequest::Create(request))
-+            .await
-+            .unwrap();
-+    }
-+    let column_schemas = rows_schema(&CreateRequestBuilder::new().build_with_index());
-+
-+    // The flush commit starts a checkpoint whose cleanup blocks. The index build of the flushed
-+    // file then commits its own manifest version and stops before notifying the worker.
-+    put_and_flush(&engine, region_id, &column_schemas, 0..20).await;
-+    tokio::time::timeout(Duration::from_secs(10), blocker.wait_until_blocked())
-+        .await
-+        .expect("checkpoint cleanup did not start");
-+    tokio::time::timeout(Duration::from_secs(10), gate.wait_entered(1))
-+        .await
-+        .expect("index build did not commit the manifest");
-+
-+    let region = engine.get_region(region_id).unwrap();
-+    let wait_started = region
-+        .manifest_ctx
-+        .manifest_manager
-+        .read()
-+        .await
-+        .checkpointer()
-+        .pending_checkpoint_wait_started();
-+    // Register before starting the transition so the notification cannot be lost.
-+    let wait_started = wait_started.notified();
-+    let engine_for_downgrade = engine.clone();
-+    let downgrade = tokio::spawn(async move {
-+        engine_for_downgrade
-+            .set_region_role_state_gracefully(region_id, SettableRegionRoleState::DowngradingLeader)
-+            .await
-+    });
-+    tokio::time::timeout(Duration::from_secs(5), wait_started)
-+        .await
-+        .expect("downgrade did not start waiting for the checkpoint");
-+
-+    // The worker handles the index publication of the downgrading region, which reads its
-+    // manifest, and then a write to the other region.
-+    gate.release(1);
-+    tokio::time::timeout(Duration::from_secs(10), gate.wait_finished(1))
-+        .await
-+        .expect("worker did not apply the index publication");
-+    tokio::time::timeout(
-+        Duration::from_secs(5),
-+        put_rows(
-+            &engine,
-+            other_region_id,
-+            Rows {
-+                schema: column_schemas.clone(),
-+                rows: build_rows(0, 1),
-+            },
-+        ),
-+    )
-+    .await
-+    .expect("write to another 
-```
-
-**File**: `src/mito2/src/engine/set_role_state_test.rs` (modified, +49/-3)
-```diff
-@@ -309,6 +309,10 @@ async fn test_downgrading_waits_for_checkpoint_and_stops_new_checkpoints() {
-         !downgrade.is_finished(),
-         "downgrade returned before checkpoint cleanup finished"
-     );
-+    assert!(
-+        region.manifest_ctx.manifest_manager.try_read().is_ok(),
-+        "downgrade held the manifest lock while waiting for the checkpoint"
-+    );
+ use serde::{Deserialize, Deserializer, Serialize};
+ use snafu::{OptionExt, ResultExt, ensure};
+-use store_api::storage::{RegionId, RegionNumber};
++use store_api::storage::{MAX_REGION_SEQ, RegionId, RegionNumber};
+ use table::metadata::TableId;
  
-     blocker.release();
-     assert_success_response(&downgrade.await.unwrap().unwrap(), 2);
-@@ -441,9 +445,47 @@ async fn test_direct_follower_waits_for_pending_checkpoint() {
-         !set_follower.is_finished(),
-         "follower transition returned before checkpoint cleanup finished"
-     );
-+    assert!(
-+        region.manifest_ctx.manifest_manager.try_read().is_ok(),
-+        "follower transition held the manifest lock while waiting for the checkpoint"
-+    );
-+
-+    // Requests that observe the region as a follower wait for the same checkpoint.
-+    let mut concurrent_requests = Vec::new();
-+    for state in [
-+        SettableRegionRoleState::Follower,
-+        SettableRegionRoleState::DowngradingLeader,
-+    ] {
-+        let wait_started = region
-+            .manifest_ctx
-+            .manifest_manager
-+            .read()
-+            .await
-+            .checkpointer()
-+            .pending_checkpoint_wait_started();
-+        let wait_started = wait_started.notified();
-+        let cloned_engine = engine.clone();
-+        let request = tokio::spawn(async move {
-+            cloned_engine
-+                .set_region_role_state_gracefully(region_id, state)
-+                .await
-+        });
-+        tokio::time::timeout(Duration::from_secs(5), wait_started)
-+            .await
-+            .expect("concurrent request did not start waiting for the checkpoint");
-+        assert!(
-+            !request.is_finished(),
-+            "concurrent request returned before checkpoint cleanup finished"
-+        );
-+        concurrent_requests.push(request);
-+    }
-+    assert_eq!(RegionRoleState::Follower, region.state());
- 
-     blocker.release();
-     assert_success_response(&set_follower.await.unwrap().unwrap(), 1);
-+    for request in concurrent_requests {
-+        assert_success_response(&request.await.unwrap().unwrap(), 1);
-+    }
- }
- 
- #[tokio::test(flavor = "multi_thread")]
-@@ -514,9 +556,9 @@ async fn test_retried_downgrade_waits_after_first_request_is_cancelled() {
-         "first downgrade did not wait for checkpoint cleanup"
-     );
- 
--    // Cancelling the first caller must not remove the checkpoint handle from
--    // the manifest manager. A retried migration request observes Downgrading
--    // and must wait for the same checkpoint task before it can proceed.
-+    // Cancelling the first caller does not cancel the checkpoint. A retried
-+    // migration request observes Downgrading and waits for the same checkpoint
-+    // task before it proceeds.
-     first_downgrade.abort();
-     assert!(first_downgrade.await.unwrap_err().is_cancelled());
-     assert_eq!(
-@@ -546,6 +588,10 @@ async fn test_retried_downgrade_waits_after_first_request_is_cancelled() {
-         !retry_downgrade.is_finished(),
-         "retried downgrade did not wait for checkpoint cleanup"
-     );
-+    assert!(
-+        region.manifest_ctx.manifest_manager.try_read().is_ok(),
-+        "retried downgrade held the manifest lock while waiting for the checkpoint"
-+    );
- 
-     blocker.release();
-     retry_downgrade.await.unwrap().unwrap();
-```
-
-**File**: `src/mito2/src/region.rs` (modified, +14/-6)
-```diff
-@@ -599,7 +599,8 @@ impl MitoRegion {
-         }
+ use crate::error::{
+@@ -511,6 +511,43 @@ impl TableRouteManager {
+             .transpose()
      }
  
--    /// Sets the region role state gracefully. This acquires the manifest write lock.
-+    /// Sets the region role state gracefully. This acquires the manifest write lock, and releases
-+    /// it while a change to follower or downgrading leader waits for the pending checkpoint.
++    /// Reserves a positive number of consecutive region numbers without publishing their routes.
++    /// On success, advances the high-water mark and route version and returns the first reserved number.
++    /// If the table route changed, returns `None`. Reload the route before retrying.
++    pub async fn try_reserve_region_numbers(
++        &self,
++        table_id: TableId,
++        current: &DeserializedValueWithBytes<TableRouteValue>,
++        count: usize,
++    ) -> Result<Option<RegionNumber>> {
++        // The read path remaps peer addresses. Preserve the stored routes verbatim.
++        let TableRouteValue::Physical(mut route) =
++            TableRouteValue::try_from_raw_value(&current.bytes)?
++        else {
++            return UnexpectedLogicalRouteTableSnafu {
++                err_msg: format!("Cannot reserve region numbers for logical table {table_id}"),
++            }
++            .fail();
++        };
++        let previous = route.max_region_number;
++        let last = RegionNumber::try_from(count)
++            .ok()
++            .and_then(|count| previous.checked_add(count))
++            .filter(|last| previous < *last && *last <= MAX_REGION_SEQ)
++            .with_context(|| InvalidMetadataSnafu {
++                err_msg: format!(
++                    "Cannot reserve {count} region numbers after {previous} for table {table_id}"
++                ),
++            })?;
++        route.max_region_number = last;
++        route.version += 1;
++        let (txn, _) =
++            self.storage
++                .build_update_txn(table_id, current, &TableRouteValue::Physical(route))?;
++        let response = self.storage.kv_backend.txn(txn).await?;
++        Ok(response.succeeded.then_some(previous + 1))
++    }
++
+     /// Sets the staging state for a specific region.
      ///
-     /// Ending staging awaits `drain_stalled_writes` (see [Self::end_staging]); other changes
-     /// drop it.
-@@ -696,8 +697,10 @@ impl MitoRegion {
-                         wait_for_checkpoint = true;
-                     }
-                     RegionRoleState::Follower => {
--                        // Already in desired state - no-op
-+                        // Already in desired state. The change that made it a follower may
-+                        // still wait for the checkpoint.
-                         info!("Region {} already in follower mode", self.region_id);
-+                        wait_for_checkpoint = true;
-                     }
-                 }
-                 None
-@@ -730,6 +733,7 @@ impl MitoRegion {
-                             "Cannot start downgrade for region {} from state {:?}",
-                             self.region_id, current_state
-                         );
-+                        wait_for_checkpoint = true;
-                     }
-                     RegionRoleState::Leader(_) => {
-                         // The region may become writable again when the
-@@ -748,11 +752,15 @@ impl MitoRegion {
-             }
-         };
+     /// Returns a [TableRouteNotFound](crate::error::Error::TableRouteNotFound) Error if:
+@@ -950,6 +987,70 @@ mod tests {
+         assert_eq!(new_table_route.max_region_number, 3);
+     }
  
--        // The state is changed before waiting, so no new writable-leader work
--        // can race with the barrier. Keep the manager lock while joining to
--        // serialize the barrier with checkpoint scheduling.
-+        // The checkpoint task is taken under the lock after the state change, so every commit
-+        // that could start a checkpoint has registered it: a follower takes no commit, and a
-+        // commit of a downgrading leader starts no checkpoint. The wait holds no lock, so the
-+        // worker and other users of the manifest are not blocked while the checkpoint finishes.
-         if wait_for_checkpoint {
--            manager.wait_for_pending_checkpoint().await;
-+            let checkpoint_done = manager.pending_checkpoint_completion();
-+            drop(manager);
-+            checkpoint_done.await;
-+            manager = self.manifest_ctx.manifest_manager.write().await;
++    #[tokio::test]
++    async fn test_reserve_region_numbers() {
++        let table_id = 1024;
++        let kv = Arc::new(MemoryKvBackend::default());
++        let manager = TableRouteManager::new(kv.clone());
++        let storage = manager.table_route_storage();
++        let routes = vec![RegionRoute {
++            region: Region {
++                id: RegionId::new(table_id, MAX_REGION_SEQ - 3),
++                ..Default::default()
++            },
++            ..Default::default()
++        }];
++        let initial = TableRouteValue::physical(routes.clone());
++        let (txn, _) = storage.build_create_txn(table_id, &initial).unwrap();
++        assert!(kv.txn(txn).await.unwrap().succeeded);
++        let current = storage.get_with_raw_bytes(table_id).await.unwrap().unwrap();
++        assert!(
++            manager
++                .try_reserve_region_numbers(table_id, &current, 0)
++                .await
++                .is_err()
++        );
++        assert_eq!(
++            manager
++                .try_reserve_region_numbers(table_id, &current, 2)
++                .await
++                .unwrap(),
++            Some(MAX_REGION_SEQ - 2)
++        );
++        // Another reservation based on the same snapshot must not claim this range.
++        assert_eq!(
++            manager
++                .try_reserve_region_numbers(table_id, &current, 2)
++                .await
++                .unwrap(),
++            None
++        );
++        let current = storage.get_with_raw_bytes(table_id).await.unwrap().unwrap();
++        assert_eq!(current.region_routes().unwrap(), &routes);
++        assert_eq!(current.max_region_number().unwrap(), MAX_REGION_SEQ - 1);
++        assert_eq!(current.version().unwrap(), 1);
++        assert!(
++            manager
++                .try_reserve_region_numbers(table_id, &current, 2)
++                .await
++                .is_err()
++        );
++        assert_eq!(
++            manager
++                .try_reserve_region_numbers(table_id, &current, 1)
++                .await
++                .unwrap(),
++            Some(MAX_REGION_SEQ)
++        );
++        let current = storage.get_with_raw_bytes(table_id).await.unwrap().unwrap();
++        assert!(
++            manager
++                .try_reserve_region_numbers(table_id, &current, 1)
++                .await
++                .is_err()
++        );
++    }
++
+     #[test]
+     fn test_table_route_compatibility() {
+         let old_raw_v = r#"{"region_routes":[{"region":{"id":1,"name":"r1","partition":null,"attrs":{}},"leader_peer":{"id":2,"addr":"a2"},"follower_peers":[]},{"region":{"id":1,
+```
+
+**File**: `src/meta-srv/src/procedure/repartition.rs` (modified, +163/-1)
+```diff
+@@ -58,7 +58,7 @@ use common_telemetry::{error, info, warn};
+ use partition::expr::PartitionExpr;
+ use serde::{Deserialize, Serialize};
+ use snafu::{OptionExt, ResultExt};
+-use store_api::storage::TableId;
++use store_api::storage::{RegionNumber, TableId};
+ use table::table_name::TableName;
+ 
+ use crate::error::{self, Result};
+@@ -327,6 +327,24 @@ impl Context {
+         Ok(table_route_value)
+     }
+ 
++    async fn reserve_region_numbers(
++        &self,
++        current: &DeserializedValueWithBytes<TableRouteValue>,
++        count: usize,
++    ) -> Result<RegionNumber> {
++        let table_id = self.persistent_ctx.table_id;
++        self.table_metadata_manager
++            .table_route_manager()
++            .try_reserve_region_numbers(table_id, current, count)
++            .await
++            .context(error::TableMetadataManagerSnafu)?
++            .with_context(|| error::RetryLaterSnafu {
++                reason: format!(
++                    "Table route changed while reserving region numbers for table {table_id}"
++                ),
++            })
++    }
++
+     /// Retrieves the table info value for the given table id.
+     ///
+     /// Retry:
+@@ -2095,6 +2113,150 @@ mod tests {
+         );
+     }
+ 
++    #[tokio::test]
++    async fn test_repartition_after_partial_create_failure() {
++        check_partial_create_failure(false).await;
++    }
++
++    #[tokio::test]
++    async fn test_repartition_after_pre_upgrade_partial_create_failure() {
++        check_partial_create_failure(true).await;
++    }
++
++    async fn check_partial_create_failure(pre_upgrade: bool) {
++        use api::v1::region::region_request::Body;
++        use common_meta::key::MetadataKey;
++        use common_meta::key::table_route::TableRouteKey;
++        use common_meta::rpc::store::PutRequest;
++
++        let env = TestingEnv::new();
++        let table_id = 1024;
++        let source = range_expr("x", 0, 90);
++        let route = test_region_route(RegionId::new(table_id, 1), &source.as_json_str().unwrap());
++        env.create_physical_table_metadata_for_repartition(
++            table_id,
++            vec![route.clone()],
++            test_region_wal_options(&[1]),
++        )
++        .await;
++
++        let (tx, mut requests) = mpsc::channel(1);
++        let fail_once = AtomicBool::new(true);
++        let nodes = Arc::new(MockDatanodeManager::new(
++            DatanodeWatcher::new(tx).with_handler(move |_, request| {
++                if let Some(Body::Create(create)) = request.body
++                    && create.region_id == RegionId::new(table_id, 3).as_u64()
++                    && fail_once.swap(false, Ordering::SeqCst)
++                {
++                    return error::UnexpectedSnafu {
++                        err_msg: "injected create failure",
++                    }
++                    .fail();
++                }
++                Ok(api::region::RegionResponse::new(0))
++            }),
++        ));
++        let new_split = || {
++            RepartitionProcedure::new(
++                RepartitionFrom::Partitioned {
++                    exprs: vec![source.clone()],
++                    target_partition_columns: None,
++                },
++                vec![
++                    range_expr("x", 0, 30),
++                    range_expr("x", 30, 60),
++                    range_expr("x", 60, 90),
++                ],
++                new_parent_context(&env, nodes.clone(), table_id),
++            )
++        };
++
++        let ctx = TestingEnv::procedure_context();
++        let mut first = new_split();
++        first.execute(&ctx).await.unwrap();
++        let original = first.context.get_table_route_value().await.unwrap();
++        first.execute(&ctx).await.unwrap();
++        let reserved = first.context.get_table_route_value().await.unwrap();
++        if pre_upgrade {
++            // Old BuildPlan persisted the same Execute checkpoint without updating the route.
++            env.kv_backend
++                .put(
++                    PutRequest::new()
++                        .with_key(TableRouteKey::new(table_id).to_bytes())
++                        .with_value(original.get_raw_bytes()),
++                )
++                .await
++                .unwrap();
++            first =
++                RepartitionProcedure::from_json(&first.dump().unwrap(), |persistent_ctx| Context {
++                    persistent_ctx,
++                    ..new_parent_context(&env, nodes.clone(), table_id)
++                })
++                .unwrap();
++        }
++
++        let observe_create = async {
++            // The one-slot channel holds the second create until we observe the first.
++            let (_, request) = requests.recv().await.unwrap();
++            let Some(Body::Create(create)) = request.body else {
++                panic!("expected create")
++            };
++            let current = new_split().context.get_table_route_value().await.unwrap();
++            assert_eq!(current.max_region_number().unwrap(), 3);
++            assert_eq!(current
+```
+
+**File**: `src/meta-srv/src/procedure/repartition/allocate_region.rs` (modified, +82/-24)
+```diff
+@@ -101,13 +101,22 @@ impl BuildPlan {
+     async fn next(
+         &mut self,
+         ctx: &mut Context,
+-        _procedure_ctx: &ProcedureContext,
++        procedure_ctx: &ProcedureContext,
+     ) -> Result<(Box<dyn State>, Status)> {
+         let timer = Instant::now();
+         let table_id = ctx.persistent_ctx.table_id;
++        let table_lock = TableLock::Write(table_id).into();
++        let _guard = procedure_ctx.provider.acquire_lock(&table_lock).await;
+         let table_route_value = ctx.get_table_route_value().await?;
+-        let mut next_region_number =
+-            AllocateRegion::get_next_region_number(table_route_value.max_region_number().unwrap());
++        let to_allocate = AllocateRegion::count_regions_to_allocate(&self.plan_entries);
++        // A crash before the plan is persisted can leave a gap, but no datanode
++        // can create a region until its number has been durably reserved.
++        let mut next_region_number = if to_allocate > 0 {
++            ctx.reserve_region_numbers(&table_route_value, to_allocate)
++                .await?
++        } else {
++            0
++        };
+ 
+         // Converts allocation plan to repartition plan.
+         let repartition_plan_entries = AllocateRegion::convert_to_repartition_plans(
+@@ -117,14 +126,13 @@ impl BuildPlan {
+             table_route_value.region_routes().unwrap(),
+         )?;
+         let plan_count = repartition_plan_entries.len();
+-        let to_allocate = AllocateRegion::count_regions_to_allocate(&repartition_plan_entries);
+         info!(
+             "Repartition allocate regions start, table_id: {}, groups: {}, regions_to_allocate: {}",
+             table_id, plan_count, to_allocate
+         );
+ 
+         // If no region to allocate, directly dispatch the plan.
+-        if AllocateRegion::count_regions_to_allocate(&repartition_plan_entries) == 0 {
++        if to_allocate == 0 {
+             ctx.persistent_ctx.plans = repartition_plan_entries;
+             ctx.update_allocate_region_elapsed(timer.elapsed());
+             return Ok((Box::new(Dispatch), Status::executing(true)));
+@@ -189,9 +197,23 @@ impl ExecutePlan {
+                 .context(error::AllocateRegionRoutesSnafu { table_id })?;
+             new_allocated_region_routes.extend(routes);
          }
++        // Older Execute checkpoints can contain region numbers that Build did not reserve.
++        let table_route_value = ctx.get_table_route_value().await?;
++        let current = table_route_value
++            .max_region_number()
++            .context(error::TableMetadataManagerSnafu)?;
++        if let Some(required) = allocate_regions
++            .iter()
++            .map(|r| r.region_id.region_number())
++            .max()
++            && required > current
++        {
++            ctx.reserve_region_numbers(&table_route_value, (required - current) as usize)
++                .await?;
++        }
++
+         let skip_wal = table_info_value.table_info.meta.options.skip_wal;
+         let allocate_noop = if skip_wal {
+-            let table_route_value = ctx.get_table_route_value().await?;
+             let region_wal_options =
+                 get_region_wal_options(&ctx.table_metadata_manager, &table_route_value, table_id)
+                     .await
+@@ -410,18 +432,13 @@ impl AllocateRegion {
+     }
  
-         // Hack(zhongzc): If we have just become leader (writable), persist any backfilled metadata.
+     /// Calculates the total number of regions that need to be allocated.
+-    fn count_regions_to_allocate(repartition_plan_entries: &[RepartitionPlanEntry]) -> usize {
+-        repartition_plan_entries
++    fn count_regions_to_allocate(plan_entries: &[AllocationPlanEntry]) -> usize {
++        plan_entries
+             .iter()
+-            .map(|p| p.allocated_region_ids.len())
++            .map(|plan| plan.targets_to_allocate().len())
+             .sum()
+     }
+ 
+-    /// Gets the next region number from the physical table route.
+-    fn get_next_region_number(max_region_number: RegionNumber) -> RegionNumber {
+-        max_region_number + 1
+-    }
+-
+     async fn allocate_regions(
+         node_manager: &NodeManagerRef,
+         raw_table_info: &TableInfo,
+@@ -897,23 +914,14 @@ mod tests {
+     #[test]
+     fn test_count_regions_to_allocate() {
+         let table_id = 1024;
+-        let mut next_region_number = 10;
+ 
+         let plan_entries = vec![
+             create_allocation_plan_entry(table_id, &[1], &[(0, 50), (50, 100)]), // 1 allocation
+             create_allocation_plan_entry(table_id, &[2, 3], &[(100, 200)]), // 0 allocation (deallocate)
+             create_allocation_plan_entry(table_id, &[4], &[(200, 250), (250, 300)]), // 1 allocation
+         ];
+ 
+-        let repartition_plans = AllocateRegion::convert_to_repartition_plans(
+-            table_id,
+-            &mut next_region_number,
+-            &plan_entries,
+-            &create_current_region_routes(table_id, &[1, 2, 3, 4]),
+-        )
+-        .unwrap();
+-
+-        let count = AllocateRegion::count_regions_to_allocate(&repartition_plans);
++        let count = AllocateRegion::count_regions
+```
+
+**File**: `src/meta-srv/src/procedure/repartition/plan.rs` (modified, +15/-7)
+```diff
+@@ -165,6 +165,15 @@ pub struct AllocationPlanEntry {
+     pub transition_map: Vec<Vec<usize>>,
+ }
+ 
++impl AllocationPlanEntry {
++    /// Returns the target partitions that need a new region.
++    pub(super) fn targets_to_allocate(&self) -> impl ExactSizeIterator<Item = &PartitionExpr> {
++        self.target_partition_exprs
++            .iter()
++            .skip(self.source_regions.len())
++    }
++}
++
+ /// A plan entry for the dispatch phase after region allocation,
+ /// with concrete source and target region descriptors.
+ #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+@@ -216,20 +225,19 @@ impl RepartitionPlanEntry {
+ pub fn convert_allocation_plan_to_repartition_plan(
+     table_id: TableId,
+     next_region_number: &mut RegionNumber,
+-    AllocationPlanEntry {
++    plan: &AllocationPlanEntry,
++) -> RepartitionPlanEntry {
++    let AllocationPlanEntry {
+         group_id,
+         source_regions,
+         target_partition_exprs,
+         transition_map,
+-        ..
+-    }: &AllocationPlanEntry,
+-) -> RepartitionPlanEntry {
++    } = plan;
+     match source_regions.len().cmp(&target_partition_exprs.len()) {
+         Ordering::Less => {
+             // requires to allocate regions
+-            let pending_allocate_target_partition_exprs = target_partition_exprs
+-                .iter()
+-                .skip(source_regions.len())
++            let pending_allocate_target_partition_exprs = plan
++                .targets_to_allocate()
+                 .map(|target_partition_expr| {
+                     let desc = TargetRegionDescriptor {
+                         region_id: RegionId::new(table_id, *next_region_number),
 ```
 
 ---
 
-### Incident Patch 3: `0a93810c` (2026-11-16)
-**Commit Message**: fix: improve exemplar handling and batch memory admission (#10363)
+### Incident Patch 3: `788df584` (2026-11-19)
+**Commit Message**: fix(metric): route logical table writes by internal table id (#10366)
 
-* chore: update README
+* fix(metric): pass logical table identity to partition evaluation
 
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 
-* fix(ingest): reserve memory for table batches
+* test(metric): cover table-id repartition routing across storage formats
 
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 
-* fix(exemplar): prefix the labels column
+* fix(partition): validate logical routing inputs
 
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 
-* fix(prometheus): hide exemplar table from metadata
+* fix(metric): retain table ids for physical batch routing
 
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 
-* fix(exemplar): reconcile source tags before writes
+* refactor(partition): simplify table-id routing paths
 
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+Separate context dispatch, routing input construction and column conversion
+into private methods while preserving the scalar payload path. Reuse the
+existing table-id constant and shared IPC decoding in tests.
 
-* perf(exemplar): prune tags and retain source IDs
+Keep correctly routed requests intact when their partition version is
+unchanged. Update existing retry coverage to use stale versions for rerouting
+and verify unchanged bulk requests preserve alignment and ownership.
 
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 
-* fix(exemplar): record slow queries
+* fix(servers): validate table-id column row count
 
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+Report mismatched logical table identities before Arrow column construction, document batch and row ordering requirements, and r
 
-* fix(otlp): skip exemplars when source writes fail
-
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
-
-* fix(prometheus): skip exemplars when source writes fail
-
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
-
-* fix: account for held memory in batch admission
-
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
-
-* fix: config comments
-
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
-
-* test: simplify exemplar and memory tests
-
-Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
-
-* test: deduplicate exemplar setup
-
-
-**File**: `config/config.md` (modified, +7/-7)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -13,11 +13,11 @@
- | Key | Type | Default | Descriptions |
- | --- | -----| ------- | ----------- |
- | `default_timezone` | String | Unset | The default timezone of the server. |
--| `default_column_prefix` | String | Unset | The default column prefix for auto-created time index, value, and native histogram columns.<br/>Legacy OTLP summary columns keep their historical `greptime_` prefix. |
-+| `default_column_prefix` | String | Unset | The default column prefix for auto-created time index, value, native histogram, and exemplar-label columns.<br/>Legacy OTLP summary columns keep their historical `greptime_` prefix. |
- | `auto_create_table` | Bool | `true` | Server-side global switch for auto table creation on write.<br/>When `false`, a missing table is never auto-created even if the request sets the `auto_create_table` hint to `true`. Default: `true`. |
- | `user_provider` | String | Unset | The user provider for authentication.<br/>Examples: "static_user_provider:file:/path/to/users", "static_user_provider:cmd:greptime_user=greptime_pwd"<br/>Password verifier formats: "plain:<password>", "pbkdf2_sha256:<iterations>:<hex_salt>:<hex_hash>",<br/>"mysql_native_password:<hex_sha1_sha1_password>",<br/>"pg_scram_sha256:<iterations>:<hex_salt>:<hex_stored_key>:<hex_server_key>"<br/>"pbkdf2_sha256" and "pg_scram_sha256" protect passwords at rest, but such users cannot log in over MySQL:<br/>`static_user_provider` and `watch_file_user_provider` only negotiate `mysql_native_password`, which cannot verify these formats.<br/>"mysql_native_password" is MySQL-specific and cannot authenticate over PostgreSQL at all.<br/>PostgreSQL SCRAM only covers "plain" and "pg_scram_sha256" users; if any user is "pbkdf2_sha256" or<br/>"mysql_native_password", PostgreSQL falls back to cleartext password auth for every user.<br/>For "pg_scram_sha256" users, keep the default iteration count (4096) and salt length (16): both are<br/>observable in the SCRAM server-first message, and non-default values weaken resistance to username<br/>enumeration. |
--| `max_in_flight_write_bytes` | String | 0 | Maximum total memory for all concurrent write request bodies and messages (HTTP, gRPC, Flight).<br/>Set to 0 to disable the limit. Default: "0" (unlimited) |
--| `write_bytes_exhausted_policy` | String | `wait` | Policy when write bytes quota is exhausted.<br/>Options: "wait" (default, 10s timeout), "wait(<duration>)" (e.g., "wait(30s)"), "fail" |
-+| `max_in_flight_write_bytes` | String | 0 | Shared quota for concurrent write request bodies and messages (HTTP, gRPC, Flight)<br/>plus retained decoder memory and estimated PB-to-Arrow conversion memory for ordinary-table batching.<br/>A batch must fit together with its request's existing reservations; only additional memory is acquired.<br/>Set to 0 to disable the limit. Default: "0" (unlimited) |
-+| `write_bytes_exhausted_policy` | String | `wait` | Policy when write bytes quota is exhausted.<br/>Options: "wait" (default, 10s timeout), "wait(<duration>)" (e.g., "wait(30s)"), "fail"<br/>Table-batch conversion never waits for additional memory. Under a wait policy,<br/>temporary contention returns a retryable error; requests that cannot fit are rejected. |
- | `init_regions_in_background` | Bool | `false` | Initialize all regions in the background during the startup.<br/>By default, it provides services after all regions have been initialized. |
- | `init_regions_parallelism` | Integer | `16` | Parallelism of initializing regions. |
- | `max_concurrent_queries` | Integer | `0` | The maximum concurrent region-read streams. Zero means unlimited.<br/>A single query can consume multiple permits. |
-@@ -291,11 +291,11 @@
- | Key | Type | Default | Descriptions |
- | --- | -----| ------- | ----------- |
- | `default_timezone` | String | Unset | The default timezone of the server. |
--| `default_column_prefix` | String | Unset | The default column prefix for auto-created time index, value, and native histogram columns.<br/>Legacy OTLP summary columns keep their historical `greptime_` prefix. |
-+| `default_column_prefix` | String | Unset | The default column prefix for auto-created time index, value, native histogram, and exemplar-label columns.<br/>Legacy OTLP summary columns keep their historical `greptime_` prefix. |
- | `auto_create_table` | Bool | `true` | Server-side global switch for auto table creation on write.<br/>When `false`, a missing table is never auto-created even if the request sets the `auto_create_table` hint to `true`. Default: `true`. |
- | `user_provider` | String | Unset | The user provider for authentication.<br/>Examples: "static_user_provider:file:/path/to/users", "static_user_provider:cmd:greptime_user=greptime_pwd"<br/>Password verifier formats: "plain:<password>", "pbkdf2_sha256:<iterations>:<hex_salt>:<hex_hash>",<br/>"mysql_native_password:<hex_sha1_sha1_password>",<br/>"pg_scram_sha256:<iterations>:<hex_salt>:<hex_stored_key>:<hex_server_key>"<br/>"pbkdf2_sha256" and "pg_scram_sha256" protect
+@@ -15564,6 +15564,7 @@ dependencies = [
+  "opentelemetry-proto",
+  "operator",
+  "otel-arrow-rust",
++ "partition",
+  "paste",
+  "pipeline",
+  "plugins",
 ```
 
-**File**: `config/datanode.example.toml` (modified, +1/-1)
+**File**: `src/metric-engine/src/engine/bulk_insert.rs` (modified, +19/-1)
 ```diff
-@@ -2,7 +2,7 @@
- ## @toml2docs:none-default
- node_id = 42
- 
--## The default column prefix for auto-created time index, value, and native histogram columns.
-+## The default column prefix for auto-created time index, value, native histogram, and exemplar-label columns.
- ## Legacy OTLP summary columns keep their historical `greptime_` prefix.
- ## @toml2docs:none-default
- default_column_prefix = "greptime"
+@@ -246,7 +246,8 @@ mod tests {
+     use mito2::sst::parquet::metadata::MetadataLoader;
+     use mito2::sst::parquet::reader::MetadataCacheMetrics;
+     use store_api::metric_engine_consts::{
+-        METRIC_ENGINE_NAME, PHYSICAL_TABLE_METADATA_KEY, PRIMARY_KEY_ENCODING,
++        DATA_SCHEMA_TABLE_ID_COLUMN_NAME, METRIC_ENGINE_NAME, PHYSICAL_TABLE_METADATA_KEY,
++        PRIMARY_KEY_ENCODING,
+     };
+     use store_api::mito_engine_options::EXPERIMENTAL_SST_FLOAT_FIELD_ENCODING;
+     use store_api::path_utils::table_dir;
+@@ -519,6 +520,23 @@ mod tests {
+             physical_batch.column_by_name("job").is_some(),
+             retain_partition_columns
+         );
++        let physical_batch = if retain_partition_columns {
++            // The batcher retains identity for routing; sparse storage still uses the
++            // identity encoded in __primary_key, including after WAL recovery.
++            let mut fields = physical_batch.schema().fields().to_vec();
++            fields.push(Arc::new(Field::new(
++                DATA_SCHEMA_TABLE_ID_COLUMN_NAME,
++                DataType::UInt32,
++                false,
++            )));
++            let mut columns = physical_batch.columns().to_vec();
++            columns.push(Arc::new(datatypes::arrow::array::UInt32Array::from(vec![
++                logical_region_id.table_id(); physical_batch.num_rows()
++            ])));
++            RecordBatch::try_new(Arc::new(ArrowSchema::new(fields)), columns).unwrap()
++        } else {
++            physical_batch
++        };
+         let request = build_bulk_request(physical_region_id, physical_batch, skip_wal);
+         let response = env
+             .metric()
 ```
 
-**File**: `config/frontend.example.toml` (modified, +6/-2)
+**File**: `src/operator/src/req_convert/common/partitioner.rs` (modified, +568/-12)
 ```diff
-@@ -2,7 +2,7 @@
- ## @toml2docs:none-default
- default_timezone = "UTC"
+@@ -686,6 +686,7 @@ mod tests {
+     use partition::expr;
+     use partition::manager::{PartitionRuleManager, PartitionRuleManagerRef};
+     use partition::multi_dim::MultiDimPartitionRule;
++    use partition::partition::PartitionEvalContext;
+     use store_api::metric_engine_consts;
  
--## The default column prefix for auto-created time index, value, and native histogram columns.
-+## The default column prefix for auto-created time index, value, native histogram, and exemplar-label columns.
- ## Legacy OTLP summary columns keep their historical `greptime_` prefix.
- ## @toml2docs:none-default
- default_column_prefix = "greptime"
-@@ -27,13 +27,17 @@ default_column_prefix = "greptime"
- ## @toml2docs:none-default
- #+ user_provider = "static_user_provider:file:/path/to/users"
- 
--## Maximum total memory for all concurrent write request bodies and messages (HTTP, gRPC, Flight).
-+## Shared quota for concurrent write request bodies and messages (HTTP, gRPC, Flight)
-+## plus retained decoder memory and estimated PB-to-Arrow conversion memory for ordinary-table batching.
-+## A batch must fit together with its request's existing reservations; only additional memory is acquired.
- ## Set to 0 to disable the limit. Default: "0" (unlimited)
- ## @toml2docs:none-default="0"
- #+ max_in_flight_write_bytes = "1GB"
- 
- ## Policy when write bytes quota is exhausted.
- ## Options: "wait" (default, 10s timeout), "wait(<duration>)" (e.g., "wait(30s)"), "fail"
-+## Table-batch conversion never waits for additional memory. Under a wait policy,
-+## temporary contention returns a retryable error; requests that cannot fit are rejected.
- #+ write_bytes_exhausted_policy = "wait"
- 
- ## The runtime options.
-```
-
-**File**: `config/standalone.example.toml` (modified, +6/-2)
-```diff
-@@ -2,7 +2,7 @@
- ## @toml2docs:none-default
- default_timezone = "UTC"
- 
--## The default column prefix for auto-created time index, value, and native histogram columns.
-+## The default column prefix for auto-created time index, value, native histogram, and exemplar-label columns.
- ## Legacy OTLP summary columns keep their historical `greptime_` prefix.
- ## @toml2docs:none-default
- default_column_prefix = "greptime"
-@@ -27,13 +27,17 @@ default_column_prefix = "greptime"
- ## @toml2docs:none-default
- #+ user_provider = "static_user_provider:file:/path/to/users"
- 
--## Maximum total memory for all concurrent write request bodies and messages (HTTP, gRPC, Flight).
-+## Shared quota for concurrent write request bodies and messages (HTTP, gRPC, Flight)
-+## plus retained decoder memory and estimated PB-to-Arrow conversion memory for ordinary-table batching.
-+## A batch must fit together with its request's existing reservations; only additional memory is acquired.
- ## Set to 0 to disable the limit. Default: "0" (unlimited)
- ## @toml2docs:none-default="0"
- #+ max_in_flight_write_bytes = "1GB"
- 
- ## Policy when write bytes quota is exhausted.
- ## Options: "wait" (default, 10s timeout), "wait(<duration>)" (e.g., "wait(30s)"), "fail"
-+## Table-batch conversion never waits for additional memory. Under a wait policy,
-+## temporary contention returns a retryable error; requests that cannot fit are rejected.
- #+ write_bytes_exhausted_policy = "wait"
- 
- ## Initialize all regions in the background during the startup.
-```
-
-**File**: `src/common/meta/src/ddl/alter_logical_tables.rs` (modified, +3/-23)
-```diff
-@@ -24,7 +24,7 @@ use common_procedure::{Context, EventContext, EventTrigger, LockKey, Procedure,
- use common_telemetry::{debug, error, info, warn};
- pub use executor::make_alter_region_request;
- use serde::{Deserialize, Serialize};
--use snafu::{ResultExt, ensure};
-+use snafu::ResultExt;
- use store_api::metadata::ColumnMetadata;
- use store_api::metric_engine_consts::ALTER_PHYSICAL_EXTENSION_KEY;
- use strum::AsRefStr;
-@@ -40,7 +40,7 @@ use crate::ddl::event::table::{
-     TableDdlEvent, TableDdlEventType, TableDdlLocator, alter_table_kind_name,
- };
- use crate::ddl::utils::{extract_column_metadatas, map_to_procedure_error, sync_follower_regions};
--use crate::error::{self, Result};
-+use crate::error::Result;
- use crate::instruction::CacheIdent;
- use crate::key::DeserializedValueWithBytes;
- use crate::key::table_info::TableInfoValue;
-@@ -67,7 +67,7 @@ fn build_validator_from_alter_table_data<'a>(
-         .iter()
-         .map(|task| &task.alter_table)
-         .collect::<Vec<_>>();
--    AlterLogicalTableValidator::new(physical_table_id, alters)
-+    AlterLogicalTableValidator::new(physical_table_id, alters, &data.logical_table_ids)
- }
- 
- /// Builds the executor from the [`AlterTablesData`].
-@@ -149,26 +149,6 @@ impl AlterLogicalTablesProcedure {
-             );
-         }
- 
--        // Locks are fixed at submission. A logical table that resolves to an
--        // id outside the locked set here was dropped and recreated in between,
--        // so this procedure holds no lock for it. Procedures restored from
--        // pre-upgrade state have no recorded ids and keep the old behavior.
--        if !self.data.logical_table_ids.is_empty() {
--            for value in &table_info_values {
--                let table_id = value.get_inner_ref().table_info.ident.table_id;
--                ensure!(
--                    self.data.logical_table_ids.contains(&table_id),
--                    error::UnexpectedSnafu {
--                        err_msg: format!(
--                            "logical table {} (id {table_id}) is not covered by the \
--                             procedure locks; retry the statement",
--                            value.get_inner_ref().table_info.name
--                        ),
--                    }
--                );
--            }
--        }
--
-         // Updates the procedure state.
-         retain_unskipped(&mut self.data.tasks, &skip_alter);
-         self.data.physical_table_info = Some(physical_table_info);
-```
-
-**File**: `src/common/meta/src/ddl/alter_logical_tables/validator.rs` (modified, +16/-2)
-```diff
-@@ -26,7 +26,7 @@ use crate::ddl::utils::table_info::{
- };
- use crate::error::{
-     AlterLogicalTablesInvalidArgumentsSnafu, Result, TableInfoNotFoundSnafu,
--    TableRouteNotFoundSnafu,
-+    TableRouteNotFoundSnafu, UnexpectedSnafu,
- };
- use crate::key::table_info::TableInfoValue;
- use crate::key::table_route::{PhysicalTableRouteValue, TableRouteManager, TableRouteValue};
-@@ -36,13 +36,19 @@ use crate::key::{DeserializedValueWithBytes, TableMetadataManagerRef};
- pub struct AlterLogicalTableValidator<'a> {
-     physical_table_id: TableId,
-     alters: Vec<&'a AlterTableExpr>,
-+    expected_table_ids: &'a [TableId],
- }
- 
- impl<'a> AlterLogicalTableValidator<'a> {
--    pub fn new(physical_table_id: TableId, alters: Vec<&'a AlterTableExpr>) -> Self {
-+    pub fn new(
-+        physical_table_id: TableId,
-+        alters: Vec<&'a AlterTableExpr>,
-+        expected_table_ids: &'a [TableId],
-+    ) -> Self {
-         Self {
-             physical_table_id,
-             alters,
-+            expected_table_ids,
-         }
+     use super::*;
+@@ -777,6 +778,96 @@ mod tests {
+         .unwrap()
      }
  
-@@ -187,6 +193,14 @@ impl<'a> AlterLogicalTableValidator<'a> {
-         let table_ids =
-             get_all_table_ids_by_names(table_metadata_manager.table_name_manager(), &table_names)
-                 .await?;
-+        // Check before skipping completed ALTERs, while the procedure holds the pinned ID locks.
-+        // Old persisted procedures have no pinned IDs and retain their previous behavior.
-+        ensure!(
-+            self.expected_table_ids.is_empty() || self.expected_table_ids == table_ids,
-+            UnexpectedSnafu {
-+                err_msg: "logical tables changed and are not covered by the procedure locks; retry the statement",
-+            }
++    #[test]
++    fn test_physical_bulk_retry_preserves_per_row_table_ids() {
++        use datatypes::arrow::array::UInt32Array;
++
++        let table_info = build_sparse_table_info();
++        let batch = build_sparse_batch();
++        let mut fields = batch.schema().fields().to_vec();
++        fields.push(Arc::new(Field::new(
++            metric_engine_consts::DATA_SCHEMA_TABLE_ID_COLUMN_NAME,
++            DataType::UInt32,
++            false,
++        )));
++        let mut columns = batch.columns().to_vec();
++        columns.push(Arc::new(UInt32Array::from(vec![42, 43, 44, 45, 46])));
++        let batch = RecordBatch::try_new(Arc::new(Schema::new(fields)), columns).unwrap();
++        // Initially no partition uses table id, but the payload must retain it.
++        let initial = TablePartitioner {
++            table_id: 1,
++            rule: Arc::new(MultiDimPartitionRule::try_new(vec![], vec![1], vec![], false).unwrap()),
++            versions: HashMap::from([(1, Some(PartitionExprVersion { value: 1 }))]),
++        };
++        let requests = initial
++            .partition_bulk_insert_requests(batch.clone(), None, false)
++            .unwrap();
++        assert_eq!(requests.len(), 1);
++        let refreshed = TablePartitioner {
++            table_id: 1,
++            rule: Arc::new(
++                MultiDimPartitionRule::try_new(
++                    vec![metric_engine_consts::DATA_SCHEMA_TABLE_ID_COLUMN_NAME.to_string()],
++                    vec![1, 2],
++                    vec![
++                        expr::col(metric_engine_consts::DATA_SCHEMA_TABLE_ID_COLUMN_NAME)
++                            .lt(DataValue::UInt32(44)),
++                        expr::col(metric_engine_consts::DATA_SCHEMA_TABLE_ID_COLUMN_NAME)
++                            .gt_eq(DataValue::UInt32(44)),
++                    ],
++                    true,
++                )
++                .unwrap(),
++            ),
++            versions: HashMap::from([
++                (1, Some(PartitionExprVersion { value: 2 })),
++                (2, Some(PartitionExprVersion { value: 2 })),
++            ]),
++        };
++        assert_eq!(
++            refreshed.rule.eval_context(),
++            PartitionEvalContext::FromPayload
 +        );
-         let mut table_info_values = get_all_table_info_values_by_table_ids(
-             table_metadata_manager.table_info_manager(),
-             &table_ids,
++        let request = build_request(Body::BulkInsert(requests[0].clone()));
++        let mut plain = refreshed
++            .rebuild_write_requests(request.clone(), &table_info)
++            .unwrap();
++        plain.sort_by_key(|r| match r.body.as_ref().unwrap() {
++            Body::BulkInsert(b) => b.region_id,
++            _ => unreachable!(),
++        });
++        let mut tracked = refreshed
++            .rebuild_tracked_write_requests(request, &table_info, Some(vec![0, 1, 2, 3, 4]))
++            .unwrap();
++        tracked.sort_by_key(|(r, _)| match r.body.as_ref().unwrap() {
++            Body::BulkInsert(b) => b.region_id,
++            _ => unreachable!(),
++        });
++        assert_eq!(plain.len(), 2);
++        assert_eq!(tracked.len(), 2);
++        for (index, (request, owners)) in tracked.into_iter().enumerate() {
++            assert_eq!(request.body, plain[index].body);
++            let Some(Body::BulkInsert(request)) = request.body else {
++                unreachable!()
++            };
++            assert_eq!(
++                request.region_id,
++                RegionId::new(1, index as u32 + 1).as_u64()
++            );
++            assert_eq!(
++                request.partition_expr_version,
++                Some(PartitionExprVersion { value: 2 })
++            );
++            let Some(bulk_insert_request::Body::ArrowIpc(ipc)) = request.body else {
++                unreachable!()
++            };
++            let decoded = decode_ipc(&ipc);
++            let (offset, len) = if index == 0 { (0, 2) } else { (2, 3) };
++            assert_eq!(decoded, batch.slice(offset, len));
++            assert_eq!(owners, Some((offset..offset + len).collect()));
++        }
++    }
++
+     #[tokio::test]
+     async fn test_partition_tags_use_physical_table_metadata() {
+         let backend = Arc::new(MemoryKvBackend::new());
+@@ -909,10 +1000,7 @@ mod tests {
+             let Some(bulk_insert_request::Body::ArrowIpc(ipc)) = bulk.body else {
+                 unreachable!()
+             };
+-            let actual = FlightDecoder::try_from_schema_bytes(&ipc.schema)
+-                .unwrap()
+-                .try_decode_record_batch(&ipc.data_header, &ipc.payload)
+-                .unwrap();
++            let actual = decode_ipc(&ipc);
+             let mask = if RegionId::from_u64(bulk.region_id).region_number() == 1 {
+                 vec![true, false, true, true
 ```
 
-**File**: `src/common/meta/src/ddl/tests/alter_logical_tables.rs` (modified, +20/-14)
+**File**: `src/operator/src/test_util/partition_manager.rs` (modified, +101/-92)
 ```diff
-@@ -713,21 +713,27 @@ async fn test_on_prepare_rejects_table_outside_locked_set() {
-     let phy_id = create_physical_table(&ddl_context, "phy").await;
-     create_logical_table(ddl_context.clone(), phy_id, "table1").await;
+@@ -97,11 +97,6 @@ fn new_test_table_info_with_columns(
+         .unwrap()
+ }
  
--    let tasks = vec![make_alter_logical_table_add_column_task(
--        None,
--        "table1",
--        vec!["column1".to_string()],
--    )];
+-#[cfg(test)]
+-fn new_physical_test_table_info(table_id: u32, table_name: &str) -> TableInfo {
+-    new_test_table_info_with_columns(table_id, table_name, test_column_schemas(true), vec![0, 2])
+-}
 -
-     // The table resolved at prepare time is not in the locked set, as if it
-     // had been dropped and recreated after submission.
-     let stale_locked_id = phy_id + 1000;
--    let mut procedure =
--        AlterLogicalTablesProcedure::new(tasks, phy_id, vec![stale_locked_id], ddl_context);
--    let err = procedure.on_prepare().await.unwrap_err();
--    assert!(
--        err.to_string()
--            .contains("not covered by the procedure locks"),
--        "{err}"
+ #[cfg(test)]
+ fn new_logical_test_table_info(table_id: u32, table_name: &str) -> TableInfo {
+     new_test_table_info_with_columns(table_id, table_name, test_column_schemas(false), vec![0])
+@@ -279,96 +274,110 @@ async fn test_partition_expr_version_cache() {
+ 
+ #[tokio::test]
+ async fn test_logical_split_rows_rejects_physical_only_partition_column() {
+-    let kv_backend = Arc::new(common_meta::kv_backend::memory::MemoryKvBackend::new());
+-    let table_metadata_manager = TableMetadataManager::new(kv_backend.clone());
+-    let table_route_cache = test_new_table_route_cache(kv_backend.clone());
+-    let partition_info_cache = test_new_partition_info_cache(table_route_cache.clone());
+-    let partition_manager =
+-        PartitionRuleManager::new(kv_backend, table_route_cache, partition_info_cache);
+-    let physical_table_info = new_physical_test_table_info(1024, "physical");
+-    let logical_table_info = new_logical_test_table_info(1025, "logical");
+-    assert_eq!(
+-        vec!["a", "b"],
+-        physical_table_info
+-            .meta
+-            .partition_column_names()
+-            .map(|name| name.as_str())
+-            .collect::<Vec<_>>()
 -    );
-+    // A completed ADD must also reject rebinding, even when no schema changes are needed.
-+    for column in ["column1", "host"] {
-+        let tasks = vec![make_alter_logical_table_add_column_task(
-+            None,
-+            "table1",
-+            vec![column.into()],
-+        )];
-+        let mut procedure = AlterLogicalTablesProcedure::new(
-+            tasks,
-+            phy_id,
-+            vec![stale_locked_id],
-+            ddl_context.clone(),
+-    assert_eq!(
+-        vec!["a"],
+-        logical_table_info
+-            .meta
+-            .partition_column_names()
+-            .map(|name| name.as_str())
+-            .collect::<Vec<_>>()
+-    );
++    for missing_column in ["b", "__tsid"] {
++        let kv_backend = Arc::new(common_meta::kv_backend::memory::MemoryKvBackend::new());
++        let table_metadata_manager = TableMetadataManager::new(kv_backend.clone());
++        let table_route_cache = test_new_table_route_cache(kv_backend.clone());
++        let partition_info_cache = test_new_partition_info_cache(table_route_cache.clone());
++        let partition_manager =
++            PartitionRuleManager::new(kv_backend, table_route_cache, partition_info_cache);
++        let mut physical_columns = test_column_schemas(true);
++        physical_columns[2].name = missing_column.to_string();
++        let physical_table_info =
++            new_test_table_info_with_columns(1024, "physical", physical_columns, vec![0, 2]);
++        let mut logical_table_info = new_logical_test_table_info(1025, "logical");
++        logical_table_info.meta.engine =
++            store_api::metric_engine_consts::METRIC_ENGINE_NAME.to_string();
++        logical_table_info.meta.options.extra_options.insert(
++            store_api::metric_engine_consts::LOGICAL_TABLE_METADATA_KEY.to_string(),
++            "1024".to_string(),
 +        );
-+        let err = procedure.on_prepare().await.unwrap_err();
-+        assert!(
-+            err.to_string()
-+                .contains("not covered by the procedure locks"),
-+            "{err}"
++        assert_eq!(
++            vec!["a", missing_column],
++            physical_table_info
++                .meta
++                .partition_column_names()
++                .map(|name| name.as_str())
++                .collect::<Vec<_>>()
 +        );
++        assert_eq!(
++            vec!["a"],
++            logical_table_info
++                .meta
++                .partition_column_names()
++                .map(|name| name.as_str())
++                .collect::<Vec<_>>()
++        );
+ 
+-    table_metadata_manager
+-        .create_table_metadata(
+-            physical_table_info,
+-            TableRouteValue::physical(vec![RegionRoute {
+-                region: Region {
+-                    id: 1.into(),
+-                    name: "r1".to_string(),
+-                    attrs: BTreeMap::new(),
+-                    partition_expr: PartitionExpr::new(
+-                        Operand::Expr(PartitionExpr::new(
+-                            Operand::Column("a".to_string()),
+-                            RestrictedOp::GtEq,
+-                            Operand::Value(datatypes::value::Value::Int32(10)),
+-                        )),
+-                        RestrictedOp::And,
+-                        Operand::Expr(PartitionExpr::new(
+-                            Operand::Column("b".to_string()),
+-                            RestrictedOp::Lt,
+-                            Operand::Value(datatypes::value::Value::Int32(50)),
+-                        )),
+-                    )
+-                    .as_json_str()
+-                    .unwrap(),
+-                },
+-                leader_peer: Some(Peer::new(1, "")),
+-                follower_peers: vec![],
+-                leader_state: None,
+-                leader_down_since: None,
+-                write_route_policy: None,
+-            }]),
+-            new_test_region_wal_options(vec![1]),
+-        )
+-        .await
+-        .unwrap();
+-    table_metadata_manager
+-        .create_table_metadata(
+-            logical_table_info.clone(),
+-            TableRouteValue::logical(1024),
+-            new_test_region_wal_options(vec![]),
+-        )
+-        .await
+-        .unwrap();
++     
+```
+
+**File**: `src/partition/src/error.rs` (modified, +8/-0)
+```diff
+@@ -101,6 +101,13 @@ pub enum Error {
+         location: Location,
+     },
+ 
++    #[snafu(display("Invalid partition input, reason: {}", reason))]
++    InvalidPartitionInput {
++        reason: String,
++        #[snafu(implicit)]
++        location: Location,
++    },
++
+     #[snafu(display("Invalid DeleteRequest, reason: {}", reason))]
+     InvalidDeleteRequest {
+         reason: String,
+@@ -266,6 +273,7 @@ impl ErrorExt for Error {
+ 
+             Error::RegionKeysSize { .. }
+             | Error::InvalidInsertRequest { .. }
++            | Error::InvalidPartitionInput { .. }
+             | Error::InvalidDeleteRequest { .. } => StatusCode::InvalidArguments,
+ 
+             Error::ConvertScalarValue { .. }
+```
+
+**File**: `src/partition/src/manager.rs` (modified, +55/-13)
+```diff
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-use std::collections::HashMap;
++use std::collections::{HashMap, HashSet};
+ use std::sync::Arc;
+ 
+ use api::v1::Rows;
+@@ -22,13 +22,17 @@ use common_meta::kv_backend::KvBackendRef;
+ use common_meta::peer::Peer;
+ use common_meta::rpc::router::{self, RegionRoute};
+ use snafu::{OptionExt, ResultExt};
++use store_api::metric_engine_consts::{
++    DATA_SCHEMA_TABLE_ID_COLUMN_NAME, LOGICAL_TABLE_METADATA_KEY, METRIC_ENGINE_NAME,
++};
+ use store_api::storage::{RegionId, RegionNumber};
+ use table::metadata::{TableId, TableInfo};
+ 
+ use crate::cache::{CachedPartitionInfo, PartitionInfoCacheRef, PhysicalPartitionInfo};
+ use crate::error::{FindLeaderSnafu, Result};
+ use crate::expr::PartitionExpr;
+ use crate::multi_dim::MultiDimPartitionRule;
++use crate::partition::PartitionEvalContext;
+ use crate::splitter::RowSplitter;
+ use crate::{PartitionRuleRef, error};
+ 
+@@ -192,12 +196,6 @@ impl PartitionRuleManager {
+         &self,
+         table_info: &TableInfo,
+     ) -> Result<(PartitionRuleRef, HashMap<RegionNumber, Option<u64>>)> {
+-        let partition_columns = table_info
+-            .meta
+-            .partition_column_names()
+-            .cloned()
+-            .collect::<Vec<_>>();
+-
+         let partition_info = self
+             .find_physical_partition_info(table_info.table_id())
+             .await?;
+@@ -225,12 +223,12 @@ impl PartitionRuleManager {
+                 .filter(|partition| partition.partition_expr.is_none())
+                 .map(|partition| partition.id.region_number()),
+         );
+-        let partition_rule = Arc::new(MultiDimPartitionRule::try_new(
+-            partition_columns,
+-            regions,
+-            exprs,
+-            false,
+-        )?) as _;
++        let (partition_columns, eval_context) =
++            Self::resolve_partition_columns_and_context(table_info, &exprs)?;
++        let partition_rule = Arc::new(
++            MultiDimPartitionRule::try_new(partition_columns, regions, exprs, false)?
++                .with_eval_context(eval_context),
++        ) as _;
+         Ok((partition_rule, partition_versions))
+     }
+ 
+@@ -276,6 +274,50 @@ impl PartitionRuleManager {
+ 
+         Ok(result)
+     }
++
++    /// Resolves all expression inputs, including identity supplied outside the payload.
++    fn resolve_partition_columns_and_context(
++        table_info: &TableInfo,
++        exprs: &[PartitionExpr],
++    ) -> Result<(Vec<String>, PartitionEvalContext)> {
++        if table_info.meta.engine != METRIC_ENGINE_NAME
++            || !table_info
++                .meta
++                .options
++                .extra_options
++                .contains_key(LOGICAL_TABLE_METADATA_KEY)
++        {
++            let columns = table_info.meta.partition_column_names().cloned().collect();
++            return Ok((columns, PartitionEvalContext::FromPayload));
++        }
++
++        // Catalog maps only physical partition columns present in the logical schema.
++        // The routing context can additionally supply __table_id.
++        let mut columns = HashSet::new();
++        for expr in exprs {
++            expr.collect_column_names(&mut columns);
++        }
++        let mut columns: Vec<_> = columns.into_iter().collect();
++        // Keep rule snapshots deterministic despite collecting names in a HashSet.
++        columns.sort_unstable();
++        for column in &columns {
++            if column != DATA_SCHEMA_TABLE_ID_COLUMN_NAME
++                && table_info
++                    .meta
++                    .schema
++                    .column_schema_by_name(column)
++                    .is_none()
++            {
++                return error::UndefinedColumnSnafu { column }.fail();
++            }
++        }
++        Ok((
++            columns,
++            PartitionEvalContext::WithTableId {
++                table_id: table_info.table_id(),
++            },
++        ))
 +    }
  }
+ 
+ /// Creates partitions from region routes.
 ```
 
-**File**: `src/common/meta/src/ddl_manager.rs` (modified, +78/-4)
+**File**: `src/partition/src/multi_dim.rs` (modified, +233/-10)
 ```diff
-@@ -625,13 +625,22 @@ impl DdlManager {
-         &self,
-         alter_table_tasks: Vec<AlterTableTask>,
-         physical_table_id: TableId,
-+        expected_table_ids: Option<Vec<TableId>>,
-         procedure_context: ProcedureContext,
-     ) -> Result<(ProcedureId, Option<Output>)> {
-         let context = self.create_context();
+@@ -22,23 +22,27 @@ use datafusion_common::tree_node::{Transformed, TreeNode};
+ use datafusion_expr::{ColumnarValue, Expr};
+ use datafusion_physical_expr::PhysicalExpr;
+ use datatypes::arrow;
+-use datatypes::arrow::array::{Array, BooleanArray, BooleanBufferBuilder, RecordBatch};
++use datatypes::arrow::array::{
++    Array, BooleanArray, BooleanBufferBuilder, NullArray, RecordBatch, UInt32Array,
++};
+ use datatypes::arrow::buffer::BooleanBuffer;
+ use datatypes::arrow::compute::prep_null_mask_filter;
+-use datatypes::arrow::datatypes::{Field, Schema};
++use datatypes::arrow::datatypes::{DataType as ArrowDataType, Field, Schema};
++use datatypes::arrow::record_batch::RecordBatchOptions;
+ use datatypes::data_type::DataType as _;
+ use datatypes::prelude::Value;
+ use datatypes::vectors::{Helper, VectorRef};
+ use serde::{Deserialize, Serialize};
+ use snafu::{OptionExt, ResultExt, ensure};
++use store_api::metric_engine_consts::DATA_SCHEMA_TABLE_ID_COLUMN_NAME;
+ use store_api::storage::RegionNumber;
  
-         // Resolve the logical table ids up front: procedure locks are fixed
-         // at submission, so `lock_key` cannot derive them during `Prepare`.
--        let logical_table_ids = {
-+        let logical_table_ids = if let Some(ids) = expected_table_ids {
-+            ensure!(
-+                ids.len() == alter_table_tasks.len(),
-+                error::AlterLogicalTablesInvalidArgumentsSnafu {
-+                    err_msg: "Expected one pinned table ID per logical ALTER task",
-+                }
-+            );
-+            ids
-+        } else {
-             let table_refs = alter_table_tasks
-                 .iter()
-                 .map(|task| task.table_ref())
-@@ -1043,8 +1052,13 @@ impl DdlManager {
-                         .await
-                 }
-                 AlterLogicalTables(alter_table_tasks) => {
--                    handle_alter_logical_table_tasks(self, alter_table_tasks, procedure_context)
--                        .await
-+                    handle_alter_logical_table_tasks(
-+                        self,
-+                        alter_table_tasks,
-+                        query_context,
-+                        procedure_context,
-+                    )
-+                    .await
-                 }
-                 DropLogicalTables(_) => todo!(),
-                 CreateDatabase(create_database_task) => {
-@@ -1598,6 +1612,7 @@ async fn handle_create_trigger_task(
- async fn handle_alter_logical_table_tasks(
-     ddl_manager: &DdlManager,
-     alter_table_tasks: Vec<AlterTableTask>,
-+    query_context: QueryContext,
-     procedure_context: ProcedureContext,
- ) -> Result<SubmitDdlTaskResponse> {
-     ensure!(
-@@ -1616,9 +1631,15 @@ async fn handle_alter_logical_table_tasks(
-     let physical_table_id =
-         utils::get_physical_table_id(ddl_manager.table_metadata_manager(), first_table).await?;
-     let num_logical_tables = alter_table_tasks.len();
-+    let expected_table_ids = query_context.pinned_logical_table_ids()?;
+ use crate::PartitionRule;
+ use crate::checker::PartitionChecker;
+ use crate::error::{self, Result, UndefinedColumnSnafu};
+ use crate::expr::{Operand, PartitionExpr, RestrictedOp, plan_physical_expr};
+ use crate::function::IcebergHash;
+-use crate::partition::RegionMask;
++use crate::partition::{PartitionEvalContext, RegionMask};
  
-     let (id, _) = ddl_manager
--        .submit_alter_logical_table_tasks(alter_table_tasks, physical_table_id, procedure_context)
-+        .submit_alter_logical_table_tasks(
-+            alter_table_tasks,
-+            physical_table_id,
-+            expected_table_ids,
-+            procedure_context,
-+        )
-         .await?;
+ /// The default region number when no partition exprs are matched.
+ const DEFAULT_REGION: RegionNumber = 0;
+@@ -76,6 +80,10 @@ pub struct MultiDimPartitionRule {
+     /// Cache of physical expressions.
+     #[serde(skip)]
+     physical_expr_cache: RwLock<PhysicalExprCache>,
++    /// Write-local routing context; not persisted. Deserialization defaults to
++    /// [`PartitionEvalContext::FromPayload`].
++    #[serde(skip)]
++    eval_context: PartitionEvalContext,
+ }
  
-     info!(
-@@ -2061,6 +2082,59 @@ mod tests {
-         )
+ impl MultiDimPartitionRule {
+@@ -101,6 +109,7 @@ impl MultiDimPartitionRule {
+             regions,
+             exprs,
+             physical_expr_cache: RwLock::new(None),
++            eval_context: PartitionEvalContext::FromPayload,
+         };
+ 
+         if check_exprs {
+@@ -111,6 +120,12 @@ impl MultiDimPartitionRule {
+         Ok(rule)
      }
  
-+    #[tokio::test]
-+    async fn test_alter_logical_tables_preserves_caller_pinned_ids() {
-+        use crate::ddl::test_util::alter_table::TestAlterTableExprBuilder;
-+        use crate::ddl::test_util::{create_logical_table, create_physical_table};
-+        use crate::rpc::ddl::ALTER_LOGICAL_TABLE_IDS_EXTENSION_KEY;
++    /// Attaches write-local table identity without changing persisted partition expressions.
++    pub(crate) fn with_eval_context(mut self, context: PartitionEvalContext) -> Self {
++        self.eval_context = context;
++        self
++    }
 +
-+        let manager = build_soft_drop_test_ddl_manager();
-+        manager.register_loaders().unwrap();
-+        manager.procedure_manager.start().await.unwrap();
-+        let context = manager.create_context();
-+        let physical_id = create_physical_table(&context, "physical").await;
-+        let logical_id = create_logical_table(context, physical_id, "logical").await;
-+        let expr: api::v1::AlterTableExpr = TestAlterTableExprBuilder::default()
-+            .table_name("logical")
-+            .add_columns(vec![api::v1::ColumnDef {
-+                name: "host".into(),
-+                data_type: api::v1::ColumnDataType::String as i32,
-+                semantic_type: api::v1::SemanticType::Tag as i32,
-+                is_nullable: true,
-+                ..Default::default()
-+            }])
-+            .add_if_not_exists(true)
-+            .build()
-+            .unwrap()
-+            .into();
-+        for (ids, succeeds) in [
-+            (Some((logical_id + 1000).to_string()), false),
-+            (Some(format!("{logical_id},{logical_id}")), false),
-+            (Some(logical_id.to_string()), true),
-+            (None, true),
-+        ] {
-+            let mut context = QueryContext::default();
-+            if let Some(ids) = ids {
-+                context
-+                    .extensions
-+                    .insert(ALTER_LOGICAL_TABLE_IDS_EXTENSION_KEY.into(), ids);
+     pub fn exprs(&self) -> &[PartitionExpr] {
+         &self.exprs
+     }
+@@ -124,14 +139,10 @@ impl MultiDimPartitionRule {
+             }
+         );
+ 
+-        for (region_index, expr) in self.exprs.iter().enumerate() {
+-            if self.evaluate_expr(expr, values)? {
+-                return Ok(self.regions[region_index]);
+-            }
++        match self.eval_context {
++            PartitionEvalContext::FromPayload => self.find_region_from_payload(values),
++            PartitionEvalContext::WithTableId { .. } => self.find_region_with_context(values),
+         }
+-
+-        // return the default region number
+-        Ok(DEFAULT_REGION)
+     }
+ 
+     fn evaluate_expr(&self, expr: &PartitionExpr, values: &[Value]) -> Result<bool> {
+@@ -260,6 +271,8 @@ impl MultiDimPartitionRule {
+         &self,
+         record_batch: &RecordBatch,
+     ) -> Result<HashMap<RegionNumber, RegionMask>> {
++        let routing_batch = self.build_routing_batch(record_batch)?;
++        let record_batch = routing_batch.as_ref().unwrap_or(record_batch);
+         let num_rows = record_batch.num_rows();
+         if self.regions.len() == 1 {
+             return Ok([(
+@@ -369,6 +382,96 @@ impl MultiDimPartitionRule {
+         Ok(result)
+     }
+ 
++    /// Finds a region using the supplied scalar partition values.
++    fn find_region_from_payload(&self, values: &[Value]) -> Result<RegionNumber> {
++        for (region_index, expr) in self.exprs.iter().enumerate() {
++            if self.evaluate_expr(expr, values)? {
++                return Ok(self.regions[region_index]);
 +            }
-+            let result = manager
-+                .submit_ddl_task(
-+                    ExecutorContext {
-+                        query_context: Some(context),
-+                        ..Default::default()
-+                    },
-+                    SubmitDdlTaskRequest::new(DdlTask::new_alter_logical_tables(vec![
-+                        expr.clone(),
-+                    ])),
-+                )
-+                .await;
-+            assert_eq!(result.is_ok(), succeeds, "{result:?}");
 +        }
-+        manager.procedure_mana
++
++        // return the default region number
++        Ok(DEFAULT_REGION)
++    }
++
++    /// Evaluates one row through the same context-aware batch path as bulk writes.
++    fn find_region_with_context(&self, values: &[Value]) -> Result<RegionNumber> {
++        let mut fields = Vec::new();
++        let mut arrays = Vec::new();
++        for (name, value) in self.partition_columns.iter().zip(values) {
++            if name == DATA_SCHEMA_TABLE_ID_COLUMN_NAME {
++                continue;
++            }
++            let vector =
++                Helper::try_from_row_into_vector(std::slice::from_ref(value), &value.data_type())
++                    .context(error::ConvertToVectorSnafu)?;
++            let array = vector.to_arrow_array();
++            fields.push(Field::new(name, array.data_type().clone(), true));
++            arrays.push(array);
++        }
++        let batch = RecordBatch::try_new_with_options(
++            Arc::new(Schema::new(fields)),
++            arrays,
++            &Rec
+```
+
+**File**: `src/partition/src/partition.rs` (modified, +27/-1)
+```diff
+@@ -20,20 +20,46 @@ use std::sync::Arc;
+ use datatypes::arrow::array::{BooleanArray, RecordBatch};
+ use datatypes::prelude::Value;
+ use serde::{Deserialize, Serialize};
+-use store_api::storage::RegionNumber;
++use store_api::storage::{RegionNumber, TableId};
+ 
+ use crate::error::Result;
+ 
+ pub type PartitionRuleRef = Arc<dyn PartitionRule>;
+ 
++/// Supplies additional inputs when evaluating a write's physical partition expressions.
++/// The variants describe input sources, not whether the original write targets a logical table.
++#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
++pub enum PartitionEvalContext {
++    /// Reads partition values directly from the payload.
++    /// Physical metric batches combining logical tables use this variant: their payload
++    /// carries a per-row `__table_id` column that is retained across routing retries.
++    #[default]
++    FromPayload,
++    /// Supplies one table id for every row, overriding any payload `__table_id` value.
++    /// Used for single-logical-table writes whose payload omits internal columns.
++    /// Other partition values still come from the payload; omitted columns declared
++    /// in the logical schema are evaluated as NULL. Already-converted physical metric
++    /// batches carry per-row identities and use [`Self::FromPayload`] instead.
++    WithTableId { table_id: TableId },
++}
++
+ pub trait PartitionRule: Sync + Send {
+     fn as_any(&self) -> &dyn Any;
+ 
+     fn partition_columns(&self) -> &[String];
+ 
++    /// Additional inputs for evaluating physical partition expressions during write routing.
++    /// Defaults to [`PartitionEvalContext::FromPayload`]. Override when routing needs
++    /// inputs supplied outside the write payload.
++    fn eval_context(&self) -> PartitionEvalContext {
++        PartitionEvalContext::FromPayload
++    }
++
+     /// Finds the target region by the partition values.
+     ///
+     /// Note that the `values` should have the same length as the `partition_columns`.
++    /// With [`PartitionEvalContext::WithTableId`], the context supplies `__table_id`;
++    /// the value in its payload slot is ignored.
+     fn find_region(&self, values: &[Value]) -> Result<RegionNumber>;
+ 
+     /// Split the record batch into multiple regions by the partition values.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10479** (2026-11-17): fix(test): render the schema view in the quantile fold test (@discord9)
-- **PR #10469** (2026-11-17): fix(test): stop requiring every scan partition to be non-empty (@discord9)
-- **PR #10468** (2026-11-17): fix(mito2): release the manifest lock while a downgrade waits for the checkpoint (@fengjiachun)
-- **PR #10466** (2026-11-16): test(query): pin the plan shapes the uniform topology builds (@discord9)
-- **PR #10464** (2026-11-17): chore(merge): merge main into narthex (@discord9)
-- **PR #10463** (2026-11-16): chore: drop a PR description that was committed by accident (@discord9)
+- **PR #10545** (2026-11-20): test(query): skip the far-future overflow test when SystemTime cannot represent it (@discord9)
+- **PR #10543** (2026-11-20): fix(mito-codec): align sparse metric rows with physical region fields (@WenyXu)
+- **PR #10542** (2026-11-20): perf(catalog): batch cached metadata reads for information schema scans (@WenyXu)
+- **PR #10536** (2026-11-20): perf(metric-engine): share logical column metadata by physical table (@WenyXu)
+- **PR #10535** (2026-11-20): perf(metric-engine): stream metadata copies during repartition (@WenyXu)
+- **PR #10527** (2026-11-19): feat(meta): add shared batch lookups for table metadata caches (@WenyXu)
 
 ---
 
@@ -3052,65 +2958,44 @@ Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mito2): wait for a stopped region's checkpoint before reopening it
+## X. test(query): skip the far-future overflow test when SystemTime cannot represent 
 
 **RULE**:
-When implementing operations in `src/mito2/src/engine/close_test.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/src/promql/planner/test.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd941a8e`: mito2): wait for a stopped region's checkpoint before reopening it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4eca3194`: test(query): skip the far-future overflow test when SystemTime cannot represent it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/mito2/src/engine/close_test.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/src/promql/planner/test.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use std::time::Duration;
-use store_api::region_request::{PathType, RegionCloseRequest, RegionOpenRequest, RegionRequest};
-    CheckpointTaskBlocker, CreateRequestBuilder, TestEnv, build_rows, flush_region, put_rows,
-    rows_schema,
-
-#[tokio::test(flavor = "multi_thread")]
-async fn test_engine_stop_waits_for_checkpoint() {
-    let (blocker, mock_layer) = CheckpointTaskBlocker::block_last_checkpoint_write();
-    let mut env = TestEnv::with_prefix("stop-waits-for-checkpoint")
-        .await
-        .with_mock_layer(mock_layer);
-    let config = MitoConfig {
-        manifest_checkpoint_distance: 1,
-        ..Default::default()
+///
+/// A platform whose `SystemTime` cannot represent the `5e18 ms` start skips the high-level
+/// shape; the platform-independent `native_tree_supported_declines_the_instants_that_overflow`
+/// still covers the admission predicate there.
+    // The far end of the `i64` millisecond range, one step apart. Windows' `SystemTime` and
+    // 32-bit `time_t` targets cannot represent it, so they cannot build this statement.
+    let Some(far_start) = UNIX_EPOCH.checked_add(Duration::from_millis(5_000_000_000_000_000_000))
+    else {
+        return;
     };
-    let engine = env.create_engine(config.clone()).await;
-    let region_id = RegionId::new(1, 1);
-    let request = CreateRequestBuilder::new().build();
-    let table_dir = request.table_dir.clone();
-    let column_schemas = rows_schema(&request);
-    engine
-        .handle_request(region_id, RegionRequest::Create(request))
-        .await
-        .unwrap();
-    put_rows(
-        &engine,
-        region_id,
-        Rows {
-            schema: column_schemas,
-            rows: build_rows(0, 3),
-        },
-    )
-    .await;
-    // The flush starts a checkpoi
+            eval_stmt.start = far_start;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use store_api::region_request::{RegionCloseRequest, RegionRequest};
-    CreateRequestBuilder, TestEnv, build_rows, flush_region, put_rows, rows_schema,
+    // The far end of the `i64` millisecond range, one step apart.
+            eval_stmt.start = UNIX_EPOCH
+                .checked_add(Duration::from_millis(5_000_000_000_000_000_000))
+                .unwrap();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd941a8e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4eca3194` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

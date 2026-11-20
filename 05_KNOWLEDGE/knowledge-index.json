@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T06:46:05.263Z",
-  "total_verified_learnings": 9028,
+  "last_updated": "2026-11-20T07:06:22.497Z",
+  "total_verified_learnings": 9029,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22273,
+  "total_items": 22296,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -212772,8 +212772,8 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "eab98de8",
-      "content_hash": "ecac513b4fe6486f988be309d174e04a71d633490aa015cb492ae2db2d71064c",
+      "source_version": "23d2a456",
+      "content_hash": "175b0fe40ecc1977628ba91513aafc510bef15b25f78f5034ebd2d61c105d9dc",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
@@ -212791,6 +212791,21 @@
           "number": 9325,
           "title": "list S3 Express directory buckets without StartAfter",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9535,
+          "title": "Inode Link-Zero Ancestry Severance Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9536,
+          "title": "S3 Gateway Trailing-Slash Semantic Distinction Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9537,
+          "title": "Asymmetric State Machine Cache Eviction with Probe Loop Guard",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212798,7 +212813,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T03:09:47.895Z",
+      "verified_at": "2026-11-20T07:03:23.650Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212850,10 +212865,10 @@
       "relative_path": "08_VERIFICATION/juicedata-juicefs-verification-protocol-empirical-defect-shield-for-juicedata-ju.md",
       "title": "Verification Protocol: Empirical Defect Shield for juicedata/juicefs",
       "repository": "juicedata/juicefs",
-      "source_version": "eab98de8",
-      "content_hash": "ca07cb5dbb3e90a90faf5082dd3a71b18bba39f5d063d86b35eb6ade39b08bc9",
+      "source_version": "23d2a456",
+      "content_hash": "2f9f8b9b724d27c69c4461e7212e857349858941aaa656034e89ef139d28e94c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T03:09:48.608Z"
+      "persisted_at": "2026-11-20T07:03:24.632Z"
     },
     "learn-github-clockworklabs-spacetimedb": {
       "learning_id": "learn-github-clockworklabs-spacetimedb",
@@ -234304,8 +234319,8 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "916acb12",
-      "content_hash": "2d22991263db765e9204e7e1aab12dd6054327e43fd4873d0da24447f375ca29",
+      "source_version": "5dec7b19",
+      "content_hash": "c05241ada6a8508ba7992e4fa38a86e63e69eb5834a4e5c4609a8597c2289ce1",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
@@ -234328,6 +234343,11 @@
           "number": 9320,
           "title": "avoid stack overflow on long UNION ALL chains",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9532,
+          "title": "test(query): skip the far-future overflow test when SystemTime cannot represent",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234335,7 +234355,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T01:32:51.450Z",
+      "verified_at": "2026-11-20T06:58:44.668Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234377,10 +234397,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-architecture-intelligence-greptimeteam-greptimedb-core-i.md",
       "title": "Architecture Intelligence: GreptimeTeam/greptimedb Core Invariants",
       "repository": "GreptimeTeam/greptimedb",
-      "source_version": "916acb12",
-      "content_hash": "c15d9f3fde2f9b6b1d8fe4c3f1e63e1d461ef87680e84d363006c2624c3ab0ee",
+      "source_version": "5dec7b19",
+      "content_hash": "1d2e0755ade8f001295cb57e6b405e59559be53348dcb5618c6ad144074d3eaf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T01:32:52.120Z"
+      "persisted_at": "2026-11-20T06:58:45.219Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb",
@@ -234389,10 +234409,10 @@
       "relative_path": "08_VERIFICATION/greptimeteam-greptimedb-verification-protocol-empirical-defect-shield-for-grepti.md",
       "title": "Verification Protocol: Empirical Defect Shield for GreptimeTeam/greptimedb",
       "repository": "GreptimeTeam/greptimedb",
-      "source_version": "916acb12",
-      "content_hash": "727b05e7e6c75cf31f6e4285566e33ea3241ef8f30864614872d5317476123e0",
+      "source_version": "5dec7b19",
+      "content_hash": "9d432d3a46eb7a9ba3c8ae161ee2decc71a88dab757e1e1cb38f94bdc2cc4714",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T01:32:52.298Z"
+      "persisted_at": "2026-11-20T06:58:45.368Z"
     },
     "candidate_directive-gh-51043-python-reject-null-required-arrow-objects": {
       "item_id": "candidate_directive-gh-51043-python-reject-null-required-arrow-objects",
@@ -234450,9 +234470,9 @@
       "title": "Architecture Intelligence: greptimeteam-greptimedb-learnings Core Invariants",
       "repository": "greptimeteam-greptimedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "46dac1ad9a5ad0e670bd988b65425583e337efa63f7e686f326136e2f394df51",
+      "content_hash": "0fbd6affd79ad93d702bc08bc7c4c5644ef84be1d4fcd6ba98284d69de44b5ee",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T10:51:44.168Z"
+      "persisted_at": "2026-11-20T07:06:22.320Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb-learni",
@@ -234462,9 +234482,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for greptimeteam-greptimedb-learnings",
       "repository": "greptimeteam-greptimedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "3d7a1066702444dff6cf30c49d49090a668db4981fb8593badf86ed0f60e7875",
+      "content_hash": "b31b59db7336c23a5b8dc2ccd14aee23a53949b8ea10e3cf591c65f622599fa0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T10:51:44.297Z"
+      "persisted_at": "2026-11-20T07:06:22.497Z"
     },
     "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark": {
       "learning_id": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
@@ -256202,9 +256222,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for juicedata-juicefs-learnings",
       "repository": "juicedata-juicefs-learnings",
       "source_version": "HEAD",
-      "content_hash": "5e88eef2d82c126e3bba52798d367f84a7586d44513eecf3abdc04fc97a43886",
+      "content_hash": "188a5591d5cff3f907294c1a5a333453e40b5ee192ba0fab23986ac5bc8e89de",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T03:14:42.840Z"
+      "persisted_at": "2026-11-20T07:05:20.658Z"
     },
     "learn-huggingface-pika-labs-pika-h3-flex": {
       "learning_id": "learn-huggingface-pika-labs-pika-h3-flex",
@@ -301620,6 +301640,320 @@
       "content_hash": "e70bc2c90a20c8282f5ff495d5716b3ce5460959d405a85a9c538c9686de139c",
       "domain_letter": "A",
       "persisted_at": "2026-11-20T06:46:04.878Z"
+    },
+    "rule-9532": {
+      "learning_id": "rule-9532",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9532,
+      "title": "test(query): skip the far-future overflow test when SystemTime cannot represent",
+      "source_url": "https://github.com/GreptimeTeam/greptimedb",
+      "source_version": "5dec7b19",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T06:58:44.668Z"
+    },
+    "candidate_directive-test-query-skip-the-far-future-overflow-test-when-systemtime-cannot-represent": {
+      "item_id": "candidate_directive-test-query-skip-the-far-future-overflow-test-when-systemtime-cannot-represent",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y8MG-test-query-skip-the-far-future-overflow-test-when-systemtime-cannot-represent.md",
+      "title": "test(query): skip the far-future overflow test when SystemTime cannot represent",
+      "repository": "greptimeteam-greptimedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7336781b8263988cb9339697156437ba08f67db2b0238fbceba450bf2a7fe63a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T07:06:22.143Z"
+    },
+    "learn-github-yshrsmz-buildkonfig": {
+      "learning_id": "learn-github-yshrsmz-buildkonfig",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "yshrsmz/BuildKonfig",
+      "repository": "yshrsmz/BuildKonfig",
+      "slug": "yshrsmz-buildkonfig",
+      "platform": "github",
+      "source_url": "https://github.com/yshrsmz/BuildKonfig",
+      "source_version": "56c6977f",
+      "content_hash": "dfebc9858d63b20523c514675fdffc4d7e51adcbc205d9fdd46836c5fb4c317f",
+      "dossier_path": "07_PROJECT_LEARNING/yshrsmz-buildkonfig-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/yshrsmz-buildkonfig-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9533,
+          "title": "Gradle Generated Source Directory Isolation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9534,
+          "title": "Gradle Plugin Portal Tag Lexical Invariant Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T07:03:00.495Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9533": {
+      "learning_id": "rule-9533",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9533,
+      "title": "Gradle Generated Source Directory Isolation Rule",
+      "source_url": "https://github.com/yshrsmz/BuildKonfig",
+      "source_version": "56c6977f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T07:03:00.495Z"
+    },
+    "rule-9534": {
+      "learning_id": "rule-9534",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9534,
+      "title": "Gradle Plugin Portal Tag Lexical Invariant Rule",
+      "source_url": "https://github.com/yshrsmz/BuildKonfig",
+      "source_version": "56c6977f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T07:03:00.495Z"
+    },
+    "candidate_directive-gradle-generated-source-directory-isolation-rule": {
+      "item_id": "candidate_directive-gradle-generated-source-directory-isolation-rule",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VY93-gradle-generated-source-directory-isolation-rule.md",
+      "title": "Gradle Generated Source Directory Isolation Rule",
+      "repository": "yshrsmz-buildkonfig-learnings",
+      "source_version": "HEAD",
+      "content_hash": "18b65b3915387926358dfa6ce5e4ba468130377a7ba56c67266d83052f8f4d75",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T07:04:35.369Z"
+    },
+    "candidate_directive-gradle-plugin-portal-tag-lexical-invariant-rule": {
+      "item_id": "candidate_directive-gradle-plugin-portal-tag-lexical-invariant-rule",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VY94-gradle-plugin-portal-tag-lexical-invariant-rule.md",
+      "title": "Gradle Plugin Portal Tag Lexical Invariant Rule",
+      "repository": "yshrsmz-buildkonfig-learnings",
+      "source_version": "HEAD",
+      "content_hash": "81c98c8e397b6c2009bf7234da2e4f6c353109bd3fd09629dc649b4e763ce9e7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T07:04:35.556Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-yshrsmz-buildkonfig-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-yshrsmz-buildkonfig-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-yshrsmz-buildkonfig-research-knowledge-intelligence-yshrsmz-buildkonfig-core-inv.md",
+      "title": "Research & Knowledge Intelligence: yshrsmz/BuildKonfig Core Invariants",
+      "repository": "yshrsmz/BuildKonfig",
+      "source_version": "56c6977f",
+      "content_hash": "8be6f523b064041a5569e0a9c5e58251e17dcb58312b200ebe59fa4ac01f2fad",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T07:03:01.175Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-yshrsmz-buildkonfig": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-yshrsmz-buildkonfig",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-yshrsmz-buildkonfig-adr-subsystem-boundary-modular-decoupling-in-yshrsmz-buildko.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in yshrsmz/BuildKonfig",
+      "repository": "yshrsmz/BuildKonfig",
+      "source_version": "56c6977f",
+      "content_hash": "a3fd7040e5454badaad49e92927ceeb66e1b89866df6be28c07418705a8370cf",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T07:03:01.329Z"
+    },
+    "agent_contract-agent-contract-yshrsmz-buildkonfig-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-yshrsmz-buildkonfig-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/yshrsmz-buildkonfig-agent-contract-yshrsmz-buildkonfig-autonomous-specialist-per.md",
+      "title": "Agent Contract: yshrsmz/BuildKonfig Autonomous Specialist Persona",
+      "repository": "yshrsmz/BuildKonfig",
+      "source_version": "56c6977f",
+      "content_hash": "0ba6e9bc73471d5b2adcd926d4df08585e5585dfc127a323fa5c383ae2b45fe1",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T07:03:01.462Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-yshrsmz-buildkonfig": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-yshrsmz-buildkonfig",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/yshrsmz-buildkonfig-verification-protocol-empirical-defect-shield-for-yshrsmz-bu.md",
+      "title": "Verification Protocol: Empirical Defect Shield for yshrsmz/BuildKonfig",
+      "repository": "yshrsmz/BuildKonfig",
+      "source_version": "56c6977f",
+      "content_hash": "c49db678dc80dcd13f1b8cc25be6393d7566f4efe41bfa60542cd000918b3814",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T07:03:01.592Z"
+    },
+    "rule-9535": {
+      "learning_id": "rule-9535",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9535,
+      "title": "Inode Link-Zero Ancestry Severance Invariant",
+      "source_url": "https://github.com/juicedata/juicefs",
+      "source_version": "23d2a456",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T07:03:23.650Z"
+    },
+    "rule-9536": {
+      "learning_id": "rule-9536",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9536,
+      "title": "S3 Gateway Trailing-Slash Semantic Distinction Invariant",
+      "source_url": "https://github.com/juicedata/juicefs",
+      "source_version": "23d2a456",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T07:03:23.650Z"
+    },
+    "rule-9537": {
+      "learning_id": "rule-9537",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9537,
+      "title": "Asymmetric State Machine Cache Eviction with Probe Loop Guard",
+      "source_url": "https://github.com/juicedata/juicefs",
+      "source_version": "23d2a456",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T07:03:23.650Z"
+    },
+    "candidate_directive-inode-link-zero-ancestry-severance-invariant": {
+      "item_id": "candidate_directive-inode-link-zero-ancestry-severance-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WWN4-inode-link-zero-ancestry-severance-invariant.md",
+      "title": "Inode Link-Zero Ancestry Severance Invariant",
+      "repository": "juicedata-juicefs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "128d211db3d9c6f0fc91e97efd5bc2ea6cd96ba6448c2b769dacb6be494726c4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T07:05:19.937Z"
+    },
+    "candidate_directive-s3-gateway-trailing-slash-semantic-distinction-invariant": {
+      "item_id": "candidate_directive-s3-gateway-trailing-slash-semantic-distinction-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WWN5-s3-gateway-trailing-slash-semantic-distinction-invariant.md",
+      "title": "S3 Gateway Trailing-Slash Semantic Distinction Invariant",
+      "repository": "juicedata-juicefs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dcaacd00670b0f85662a81b200bf44b8e5a9da748277d8f753bf645c23bc8392",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T07:05:20.118Z"
+    },
+    "candidate_directive-asymmetric-state-machine-cache-eviction-with-probe-loop-guard": {
+      "item_id": "candidate_directive-asymmetric-state-machine-cache-eviction-with-probe-loop-guard",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WWN5-asymmetric-state-machine-cache-eviction-with-probe-loop-guard.md",
+      "title": "Asymmetric State Machine Cache Eviction with Probe Loop Guard",
+      "repository": "juicedata-juicefs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e3ef93ac1ddef712653727ddfbc32e1b49ccb341b57f2c3aeb39bf0bd87b5482",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T07:05:20.289Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-juicedata-juicefs-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-juicedata-juicefs-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-juicedata-juicefs-search-distribution-intelligence-juicedata-juicefs-core-invari.md",
+      "title": "Search & Distribution Intelligence: juicedata/juicefs Core Invariants",
+      "repository": "juicedata/juicefs",
+      "source_version": "23d2a456",
+      "content_hash": "44ca4343d1ac0b69a33b3e539a6af57e4c3f686e8a54eee93fcaa86cc94b3291",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-20T07:03:24.483Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-yshrsmz-buildkonfig-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-yshrsmz-buildkonfig-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-yshrsmz-buildkonfig-learnings-research-knowledge-intelligence-yshrsmz-buildkonfi.md",
+      "title": "Research & Knowledge Intelligence: yshrsmz-buildkonfig-learnings Core Invariants",
+      "repository": "yshrsmz-buildkonfig-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6584a028acbf591eabd250e6af20e99e650ff434633abecb650a519e6e6f866a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T07:04:35.733Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-yshrsmz-buildkonfig-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-yshrsmz-buildkonfig-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-yshrsmz-buildkonfig-learnings-adr-subsystem-boundary-modular-decoupling-in-yshrs.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in yshrsmz-buildkonfig-learnings",
+      "repository": "yshrsmz-buildkonfig-learnings",
+      "source_version": "HEAD",
+      "content_hash": "73f9fe94af2faa9d1bc9ed8fed4f5c0e78a8837c493487c62b091f941d06f963",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T07:04:35.933Z"
+    },
+    "agent_contract-agent-contract-yshrsmz-buildkonfig-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-yshrsmz-buildkonfig-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/yshrsmz-buildkonfig-learnings-agent-contract-yshrsmz-buildkonfig-learnings-auton.md",
+      "title": "Agent Contract: yshrsmz-buildkonfig-learnings Autonomous Specialist Persona",
+      "repository": "yshrsmz-buildkonfig-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6f2156d46106fc08befafd3a7d0df51a1e5873671c0814f178e56aeb31f5a1f8",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T07:04:36.092Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-yshrsmz-buildkonfig-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-yshrsmz-buildkonfig-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/yshrsmz-buildkonfig-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for yshrsmz-buildkonfig-learnings",
+      "repository": "yshrsmz-buildkonfig-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b1d2f528694f4527548f6d414456eff41656af1fa9ada9c6814045f94eb8a259",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T07:04:36.247Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-juicedata-juicefs-learnings-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-juicedata-juicefs-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-juicedata-juicefs-learnings-search-distribution-intelligence-juicedata-juicefs-l.md",
+      "title": "Search & Distribution Intelligence: juicedata-juicefs-learnings Core Invariants",
+      "repository": "juicedata-juicefs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "27d4259b4ff5e1470039a8eeca8d1815523ee17391b55aa4524aee0d6bec1deb",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-20T07:05:20.481Z"
     }
   },
   "ai-builder-brain": {

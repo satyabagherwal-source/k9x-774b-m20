@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T06:46:04.616Z",
+  "updated_at": "2026-11-20T07:06:21.832Z",
   "stats": {
-    "total_discovered": 6262,
-    "approved_pending_harvest": 5922,
+    "total_discovered": 6264,
+    "approved_pending_harvest": 5924,
     "harvested_count": 0,
     "rejected_count": 340,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5904,
+      "COMMUNITY_AND_EXPERT": 5906,
       "OFFICIAL_DOCUMENTATION": 195,
       "STANDARDS_AND_SPECIFICATIONS": 115,
       "ENGINEERING_BLOGS": 4,
@@ -135407,6 +135407,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
         "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-ACDB86C61808": {
+      "id": "SRC-ACDB86C61808",
+      "url": "https://github.com/GreptimeTeam/greptimedb/actions/runs/44635062535/job/135951339889",
+      "title": "https://github.com/GreptimeTeam/greptimedb/actions/runs/44635062535/job/135951339889",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T07:06:21.744Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
+        "fileName": "greptimeteam-greptimedb-learnings.md"
+      }
+    },
+    "SRC-B3B125000E8F": {
+      "id": "SRC-B3B125000E8F",
+      "url": "https://github.com/GreptimeTeam/greptimedb/actions/runs/44485860846/job/135438226190",
+      "title": "https://github.com/GreptimeTeam/greptimedb/actions/runs/44485860846/job/135438226190",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T07:06:21.832Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
+        "fileName": "greptimeteam-greptimedb-learnings.md"
       }
     }
   }

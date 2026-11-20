@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T06:46:05.081Z",
-  "total_records": 2092,
+  "last_updated": "2026-11-20T07:06:22.320Z",
+  "total_records": 2100,
   "domains": {
     "A": {
       "total": 17,
@@ -58,7 +58,7 @@
       ]
     },
     "D": {
-      "total": 847,
+      "total": 850,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -906,7 +906,10 @@
         "DOM-D-AF6D9DEB",
         "domain_intelligence-research-knowledge-intelligence-thejagstudio-tessera-small-core-invariants",
         "DOM-D-55B2E30A",
-        "domain_intelligence-research-knowledge-intelligence-hf-thejagstudio-tessera-small-learnings-core-inv"
+        "domain_intelligence-research-knowledge-intelligence-hf-thejagstudio-tessera-small-learnings-core-inv",
+        "domain_intelligence-research-knowledge-intelligence-yshrsmz-buildkonfig-core-invariants",
+        "DOM-D-1971CBB0",
+        "domain_intelligence-research-knowledge-intelligence-yshrsmz-buildkonfig-learnings-core-invariants"
       ]
     },
     "E": {
@@ -1857,7 +1860,7 @@
       ]
     },
     "I": {
-      "total": 102,
+      "total": 103,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1960,11 +1963,12 @@
         "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-learnings-core-invarian",
         "DOM-I-333D4D7A",
         "domain_intelligence-content-information-intelligence-jellyfin-swiftfin-core-invariants",
-        "domain_intelligence-content-information-intelligence-jellyfin-swiftfin-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-jellyfin-swiftfin-learnings-core-invariants",
+        "DOM-I-9FC28849"
       ]
     },
     "J": {
-      "total": 38,
+      "total": 41,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -2003,11 +2007,14 @@
         "DOM-J-F8E24CC5",
         "domain_intelligence-search-distribution-intelligence-crawlcove-xml-sitemap-validator-core-invariants",
         "DOM-J-00DA3196",
-        "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-sitemap-validator-learnings"
+        "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-sitemap-validator-learnings",
+        "domain_intelligence-search-distribution-intelligence-juicedata-juicefs-core-invariants",
+        "DOM-J-09AA2241",
+        "domain_intelligence-search-distribution-intelligence-juicedata-juicefs-learnings-core-invariants"
       ]
     },
     "K": {
-      "total": 117,
+      "total": 118,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2125,7 +2132,8 @@
         "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-core-invariants",
         "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-learnings-core-inva",
         "domain_intelligence-quality-verification-intelligence-tmolavi-siteprobe-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-tmolavi-siteprobe-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-tmolavi-siteprobe-learnings-core-invariants",
+        "DOM-K-28C46858"
       ]
     },
     "L": {
@@ -17079,8 +17087,8 @@
       "title": "Architecture Intelligence: GreptimeTeam/greptimedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-architecture-intelligence-greptimeteam-greptimedb-core-i.md",
       "repository": "GreptimeTeam/greptimedb",
-      "content_hash": "c15d9f3fde2f9b6b1d8fe4c3f1e63e1d461ef87680e84d363006c2624c3ab0ee",
-      "created_at": "2026-11-19T01:32:52.120Z"
+      "content_hash": "1d2e0755ade8f001295cb57e6b405e59559be53348dcb5618c6ad144074d3eaf",
+      "created_at": "2026-11-20T06:58:45.219Z"
     },
     "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants",
@@ -17148,8 +17156,8 @@
       "title": "Architecture Intelligence: greptimeteam-greptimedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-learnings-architecture-intelligence-greptimeteam-greptim.md",
       "repository": "greptimeteam-greptimedb-learnings",
-      "content_hash": "46dac1ad9a5ad0e670bd988b65425583e337efa63f7e686f326136e2f394df51",
-      "created_at": "2026-11-17T10:51:44.168Z"
+      "content_hash": "0fbd6affd79ad93d702bc08bc7c4c5644ef84be1d4fcd6ba98284d69de44b5ee",
+      "created_at": "2026-11-20T07:06:22.320Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-glm5-3-flash-e224-dgx-spark-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-glm5-3-flash-e224-dgx-spark-core-invar",
@@ -35284,6 +35292,186 @@
       "repository": "hf-thejagstudio-tessera-small-learnings",
       "content_hash": "22eb51a2490bec5cc4bd4fe1afa641c1296e9a9233057ad2b589338e04a4d74e",
       "created_at": "2026-11-20T06:46:03.244Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-yshrsmz-buildkonfig-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-yshrsmz-buildkonfig-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: yshrsmz/BuildKonfig Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-yshrsmz-buildkonfig-research-knowledge-intelligence-yshrsmz-buildkonfig-core-inv.md",
+      "repository": "yshrsmz/BuildKonfig",
+      "content_hash": "8be6f523b064041a5569e0a9c5e58251e17dcb58312b200ebe59fa4ac01f2fad",
+      "created_at": "2026-11-20T07:03:01.175Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-juicedata-juicefs-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-juicedata-juicefs-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: juicedata/juicefs Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-juicedata-juicefs-search-distribution-intelligence-juicedata-juicefs-core-invari.md",
+      "repository": "juicedata/juicefs",
+      "content_hash": "44ca4343d1ac0b69a33b3e539a6af57e4c3f686e8a54eee93fcaa86cc94b3291",
+      "created_at": "2026-11-20T07:03:24.483Z"
+    },
+    "DOM-D-1971CBB0": {
+      "record_id": "DOM-D-1971CBB0",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [],
+      "title": "AGP 9.0 Implicit Dependency Validation Breakdown (BUG-BKFG-01)",
+      "content": "Never register generated source files by passing concrete `File` or `Path` objects into `srcDir()`. Always pass the Gradle `TaskProvider` or task `DirectoryProperty` provider, preserving dependency provenance in the task execution graph.",
+      "content_hash": "8e1f03b6cc81a7864b2fa01c3281bd093a9df87f343d179a9afd7fb748c0f405",
+      "summary": "AGP’s `ProcessLibraryArtProfileTask` aggressively inspects project build directories for baseline profile candidates. When `BuildKonfigTask` -> Never register generated source files by passing concrete `File` or `Path` objects into `srcDir()`. Always pass the Gradle `TaskProvider` or",
+      "provenance": {
+        "source_uri": "project://yshrsmz-buildkonfig/yshrsmz-buildkonfig-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T07:03:27.427Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (yshrsmz-buildkonfig)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Issues #317, #320. Fixed via test verification harness `BuildKonfigPluginAgpBaselineProfileTest.kt` and directory layout adjustments."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T07:03:57.053Z"
+    },
+    "DOM-I-9FC28849": {
+      "record_id": "DOM-I-9FC28849",
+      "domain_letter": "I",
+      "domain_id": "content_information",
+      "domain_name": "Content & Information Intelligence",
+      "secondary_domains": [],
+      "title": "Gradle Plugin Portal Rejection of Whitespace Tags (BUG-BKFG-02)",
+      "content": "Repository deployment manifests and portal metadata MUST undergo lint validation against destination index schemas prior to running release workflows.",
+      "content_hash": "5566f9258fd0a57308b456adefc78445402548f7bdcbf2072921bbd3408bbd58",
+      "summary": "The Gradle Plugin Portal tag validation schema enforces strict string restrictions (`[a-z0-9-]+`). The string `\"Kotlin Multiplatform\"` inclu -> Repository deployment manifests and portal metadata MUST undergo lint validation against destination index schemas prior to running release ",
+      "provenance": {
+        "source_uri": "project://yshrsmz-buildkonfig/yshrsmz-buildkonfig-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T07:03:27.427Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (yshrsmz-buildkonfig)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `0cec1c57`, PR #388."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T07:04:35.086Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-yshrsmz-buildkonfig-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-yshrsmz-buildkonfig-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: yshrsmz-buildkonfig-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-yshrsmz-buildkonfig-learnings-research-knowledge-intelligence-yshrsmz-buildkonfi.md",
+      "repository": "yshrsmz-buildkonfig-learnings",
+      "content_hash": "6584a028acbf591eabd250e6af20e99e650ff434633abecb650a519e6e6f866a",
+      "created_at": "2026-11-20T07:04:35.733Z"
+    },
+    "DOM-J-09AA2241": {
+      "record_id": "DOM-J-09AA2241",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [],
+      "title": "Phantom Directory Quota Leakage on Open-Unlinked Files (BUG-META-01)",
+      "content": "POSIX decoupling of inode lifetimes from directory entries requires that metadata propagation to ancestors check both parent pointer validity and active link counts (`attr.Nlink > 0`).",
+      "content_hash": "58c67a4cdc986e78ae93524aa00e53cd9cf7e9578d54236326f9a351a6051b47",
+      "summary": "The functions `m.updateParentStat(...)` and `m.getParents(...)` only inspected `parent > 0`, ignoring whether the file still maintained dire -> POSIX decoupling of inode lifetimes from directory entries requires that metadata propagation to ancestors check both parent pointer validit",
+      "provenance": {
+        "source_uri": "project://juicedata-juicefs/juicedata-juicefs-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T07:04:36.405Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (juicedata-juicefs)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `23d2a456`, PR #7892, closed Nov 20, 2026. Tests added in `pkg/meta/base_test.go` (`testDirStat`, `testQuota`)."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T07:05:19.655Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-juicedata-juicefs-learnings-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-juicedata-juicefs-learnings-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: juicedata-juicefs-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-juicedata-juicefs-learnings-search-distribution-intelligence-juicedata-juicefs-l.md",
+      "repository": "juicedata-juicefs-learnings",
+      "content_hash": "27d4259b4ff5e1470039a8eeca8d1815523ee17391b55aa4524aee0d6bec1deb",
+      "created_at": "2026-11-20T07:05:20.481Z"
+    },
+    "DOM-K-28C46858": {
+      "record_id": "DOM-K-28C46858",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "test(query): skip the far-future overflow test when SystemTime cannot represent",
+      "content": "When implementing operations in `src/query/src/promql/planner/test.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "f5b96b27ff6b53c645e2448cec11dd25fb8d7e26cfb57d55db9dbd77d4eb2b9c",
+      "summary": "Prevents defects observed in production commit `4eca3194`: test(query): skip the far-future overflow test when SystemTime cannot represent i -> When implementing operations in `src/query/src/promql/planner/test.rs`, engineers MUST enforce rigorous boundary validation, safe state tran",
+      "provenance": {
+        "source_uri": "project://greptimeteam-greptimedb/greptimeteam-greptimedb-learnings.md",
+        "source_version": "5dec7b19",
+        "observed_at": "2026-11-20T06:58:43.872Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (greptimeteam-greptimedb)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of greptimeteam-greptimedb"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.7,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T07:06:21.540Z"
     }
   }
 }

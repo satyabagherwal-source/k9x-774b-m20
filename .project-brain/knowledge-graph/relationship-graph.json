@@ -2,25 +2,25 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-20T06:46:02.977Z",
+  "updated_at": "2026-11-20T07:06:21.578Z",
   "statistics": {
-    "total_nodes": 415,
-    "total_edges": 184,
+    "total_nodes": 419,
+    "total_edges": 185,
     "domain_distribution": {
-      "D": 266,
+      "D": 267,
       "M": 1,
       "H": 65,
-      "J": 20,
-      "K": 24,
+      "J": 21,
+      "K": 25,
       "L": 8,
       "G": 1,
       "F": 21,
       "B": 2,
       "E": 2,
-      "I": 5
+      "I": 6
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 182,
+      "CONSTRAINED_BY_ARCHITECTURE": 183,
       "VERIFIED_BY_TEST": 1,
       "STYLED_BY_DESIGN": 1
     }
@@ -9276,6 +9276,95 @@
       ],
       "created_at": "2026-11-20T06:46:02.976Z",
       "updated_at": "2026-11-20T06:46:02.976Z"
+    },
+    "DOM-D-1971CBB0": {
+      "id": "DOM-D-1971CBB0",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "AGP 9.0 Implicit Dependency Validation Breakdown (BUG-BKFG-01)",
+      "summary": "AGP’s `ProcessLibraryArtProfileTask` aggressively inspects project build directories for baseline profile candidates. When `BuildKonfigTask` -> Never register generated source files by passing concrete `File` or `Path` objects into `srcDir()`. Always pass the Gradle `TaskProvider` or",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://yshrsmz-buildkonfig/yshrsmz-buildkonfig-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T07:03:27.427Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (yshrsmz-buildkonfig)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-20T07:03:57.084Z",
+      "updated_at": "2026-11-20T07:03:57.084Z"
+    },
+    "DOM-I-9FC28849": {
+      "id": "DOM-I-9FC28849",
+      "domain": "I",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Gradle Plugin Portal Rejection of Whitespace Tags (BUG-BKFG-02)",
+      "summary": "The Gradle Plugin Portal tag validation schema enforces strict string restrictions (`[a-z0-9-]+`). The string `\"Kotlin Multiplatform\"` inclu -> Repository deployment manifests and portal metadata MUST undergo lint validation against destination index schemas prior to running release ",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://yshrsmz-buildkonfig/yshrsmz-buildkonfig-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T07:03:27.427Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (yshrsmz-buildkonfig)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "I",
+        "Content & Information Intelligence"
+      ],
+      "created_at": "2026-11-20T07:04:35.107Z",
+      "updated_at": "2026-11-20T07:04:35.107Z"
+    },
+    "DOM-J-09AA2241": {
+      "id": "DOM-J-09AA2241",
+      "domain": "J",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Phantom Directory Quota Leakage on Open-Unlinked Files (BUG-META-01)",
+      "summary": "The functions `m.updateParentStat(...)` and `m.getParents(...)` only inspected `parent > 0`, ignoring whether the file still maintained dire -> POSIX decoupling of inode lifetimes from directory entries requires that metadata propagation to ancestors check both parent pointer validit",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://juicedata-juicefs/juicedata-juicefs-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T07:04:36.405Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (juicedata-juicefs)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "J",
+        "Search & Distribution Intelligence"
+      ],
+      "created_at": "2026-11-20T07:05:19.676Z",
+      "updated_at": "2026-11-20T07:05:19.676Z"
+    },
+    "DOM-K-28C46858": {
+      "id": "DOM-K-28C46858",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "test(query): skip the far-future overflow test when SystemTime cannot represent",
+      "summary": "Prevents defects observed in production commit `4eca3194`: test(query): skip the far-future overflow test when SystemTime cannot represent i -> When implementing operations in `src/query/src/promql/planner/test.rs`, engineers MUST enforce rigorous boundary validation, safe state tran",
+      "confidence": 0.7,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://greptimeteam-greptimedb/greptimeteam-greptimedb-learnings.md",
+        "source_version": "5dec7b19",
+        "observed_at": "2026-11-20T06:58:43.872Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (greptimeteam-greptimedb)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-20T07:06:21.577Z",
+      "updated_at": "2026-11-20T07:06:21.577Z"
     }
   },
   "edges": [
@@ -11118,6 +11207,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-55B2E30A [D] with Domain M",
       "created_at": "2026-11-20T06:46:02.976Z"
+    },
+    {
+      "id": "EDGE-097B6B34DBD2",
+      "sourceId": "DOM-K-28C46858",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-K-28C46858 [K] with Domain G",
+      "created_at": "2026-11-20T07:06:21.578Z"
     }
   ]
 }

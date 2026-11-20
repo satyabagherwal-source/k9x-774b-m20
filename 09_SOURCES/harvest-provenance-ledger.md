@@ -11524,3 +11524,10 @@ Every entry in this ledger must capture:
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `4d269b9a` | Multi-dimensional audit evidence | 2026-11-20T06:45:17.499Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `339366cd` | Multi-dimensional audit evidence | 2026-11-20T06:45:26.749Z |
 | `learn-dom-d-55b2e30a` | `project://hf-thejagstudio-tessera-small` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-thejagstudio-tessera-small-learnings.md` | 2026-11-20T06:46:02.979Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `5dec7b19` | Multi-dimensional audit evidence | 2026-11-20T06:58:44.864Z |
+| `learn-github-yshrsmz-buildkonfig` | `https://github.com/yshrsmz/BuildKonfig` | `56c6977f` | Multi-dimensional audit evidence | 2026-11-20T07:03:00.692Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `23d2a456` | Multi-dimensional audit evidence | 2026-11-20T07:03:23.845Z |
+| `learn-dom-d-1971cbb0` | `project://yshrsmz-buildkonfig` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yshrsmz-buildkonfig-learnings.md` | 2026-11-20T07:03:57.086Z |
+| `learn-dom-i-9fc28849` | `project://yshrsmz-buildkonfig` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yshrsmz-buildkonfig-learnings.md` | 2026-11-20T07:04:35.109Z |
+| `learn-dom-j-09aa2241` | `project://juicedata-juicefs` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juicedata-juicefs-learnings.md` | 2026-11-20T07:05:19.679Z |
+| `learn-dom-k-28c46858` | `project://greptimeteam-greptimedb` | `5dec7b19` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md` | 2026-11-20T07:06:21.580Z |

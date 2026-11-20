@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T06:46:05.421Z",
+  "last_updated": "2026-11-20T07:06:22.656Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T06:37:30.574Z",
@@ -113,9 +113,9 @@
       "staged_for_review": 0
     },
     "juicedata-juicefs-learnings.md": {
-      "processed_at": "2026-11-19T03:14:42.275Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-20T07:05:19.679Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "tailscale-tailscale-learnings.md": {
       "processed_at": "2026-11-19T23:43:36.782Z",
@@ -838,9 +838,9 @@
       "staged_for_review": 1
     },
     "greptimeteam-greptimedb-learnings.md": {
-      "processed_at": "2026-11-17T10:51:43.842Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-20T07:06:21.580Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "ydb-platform-ydb-learnings.md": {
       "processed_at": "2026-11-19T01:47:31.601Z",
@@ -1263,9 +1263,9 @@
       "staged_for_review": 0
     },
     "yshrsmz-buildkonfig-learnings.md": {
-      "processed_at": "2026-11-12T21:49:40.156Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-20T07:04:35.109Z",
+      "promoted_canonical": 2,
+      "staged_for_review": 0
     },
     "lancedb-lancedb-learnings.md": {
       "processed_at": "2026-11-16T20:11:48.542Z",
@@ -3548,7 +3548,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2469,
-  "total_canonical_promoted": 417,
+  "total_dossiers_evaluated": 2472,
+  "total_canonical_promoted": 421,
   "total_staged_for_review": 1862
 }

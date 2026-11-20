@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T06:45:26.755Z",
-  "total_cycles_completed": 10952,
-  "total_learnings_persisted": 10952,
-  "total_rules_promoted": 10316,
+  "last_updated": "2026-11-20T07:03:23.850Z",
+  "total_cycles_completed": 10955,
+  "total_learnings_persisted": 10955,
+  "total_rules_promoted": 10322,
   "history": [
-    {
-      "timestamp": "2026-11-19T11:08:11.522Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T11:12:59.799Z",
-      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T11:50:26.906Z",
-      "repository": "Qwen/Qwen-Image-2.1-Turbo",
-      "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T11:50:41.769Z",
       "repository": "VectifyAI/PageIndex",
@@ -1403,6 +1382,27 @@
       "repository": "yugabyte/yugabyte-db",
       "learningId": "learn-github-yugabyte-yugabyte-db",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T06:58:44.869Z",
+      "repository": "GreptimeTeam/greptimedb",
+      "learningId": "learn-github-greptimeteam-greptimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T07:03:00.697Z",
+      "repository": "yshrsmz/BuildKonfig",
+      "learningId": "learn-github-yshrsmz-buildkonfig",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T07:03:23.850Z",
+      "repository": "juicedata/juicefs",
+      "learningId": "learn-github-juicedata-juicefs",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

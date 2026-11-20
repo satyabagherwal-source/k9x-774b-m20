@@ -11491,3 +11491,10 @@
 | `CYCLE-20261120-74TY` | `2026-11-20T06:45:17.494Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9530` | Yes (`da195534...`) |
 | `CYCLE-20261120-7BYX` | `2026-11-20T06:45:26.745Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9531` | Yes (`28e3e2f2...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T06:46:02.979Z` | `hf-thejagstudio-tessera-small` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-55B2E30A` [Domain D] | Yes (`e1861645...`) |
+| `CYCLE-20261120-OFSS` | `2026-11-20T06:58:44.860Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9532` | Yes (`c05241ad...`) |
+| `CYCLE-20261120-TX74` | `2026-11-20T07:03:00.688Z` | `yshrsmz/BuildKonfig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9533, Rule 9534` | Yes (`dfebc985...`) |
+| `CYCLE-20261120-UF29` | `2026-11-20T07:03:23.841Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9535, Rule 9536, Rule 9537` | Yes (`175b0fe4...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T07:03:57.086Z` | `yshrsmz-buildkonfig` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-1971CBB0` [Domain D] | Yes (`8e1f03b6...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T07:04:35.109Z` | `yshrsmz-buildkonfig` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-9FC28849` [Domain I] | Yes (`5566f925...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T07:05:19.679Z` | `juicedata-juicefs` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-09AA2241` [Domain J] | Yes (`58c67a4c...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T07:06:21.580Z` | `greptimeteam-greptimedb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-28C46858` [Domain K] | Yes (`f5b96b27...`) |
