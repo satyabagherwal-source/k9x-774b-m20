@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T15:44:11.543Z",
-  "total_verified_learnings": 9041,
+  "last_updated": "2026-11-20T16:14:35.326Z",
+  "total_verified_learnings": 9042,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22489,
+  "total_items": 22501,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -105654,13 +105654,13 @@
       "rule_number": 6820,
       "title": "Bump the all-dependencies group with 5 updates",
       "source_url": "https://github.com/emberstack/kubernetes-reflector",
-      "source_version": "dd9d0499",
+      "source_version": "b26ca679",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-18T11:55:00.509Z"
+      "verified_at": "2026-11-20T16:13:00.731Z"
     },
     "rule-6821": {
       "learning_id": "rule-6821",
@@ -113817,10 +113817,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meilisearch-meilisearch-technical-construction-intelligence-meilisearch-meilisea.md",
       "title": "Technical Construction Intelligence: meilisearch/meilisearch Core Invariants",
       "repository": "meilisearch/meilisearch",
-      "source_version": "01794fd9",
-      "content_hash": "812033f4dbc5a2b79c2b0b1db97c9e844a8b2a453d7daba530a65fcafcde0d4a",
+      "source_version": "9a44a8e8",
+      "content_hash": "d0cbcd0bb5700485c81ae06612d7cf44bb41ce31fa20d72aebcaaba849c6b930",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T09:43:53.996Z"
+      "persisted_at": "2026-11-20T16:13:07.089Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch",
@@ -113829,10 +113829,10 @@
       "relative_path": "08_VERIFICATION/meilisearch-meilisearch-verification-protocol-empirical-defect-shield-for-meilis.md",
       "title": "Verification Protocol: Empirical Defect Shield for meilisearch/meilisearch",
       "repository": "meilisearch/meilisearch",
-      "source_version": "01794fd9",
-      "content_hash": "9cde85f4530e9f30f47e794457c0d94f8f57df2c49045866e736dd3c546e8369",
+      "source_version": "9a44a8e8",
+      "content_hash": "911b5f94edce93705d2bdfba4d9b1a1b0f2c99c55cb7dcad763dab58220e792f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T09:43:54.134Z"
+      "persisted_at": "2026-11-20T16:13:07.245Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning",
@@ -229066,8 +229066,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "8eed95c3",
-      "content_hash": "974660b35a940143b5d583a7f01fb7729d219a1bee741794b90bdf5eeb8b1bac",
+      "source_version": "af0e46a1",
+      "content_hash": "d1290f7ead957efee84884e64f07f745d977a3ac753d673baa003b79253fb0fd",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -229225,6 +229225,11 @@
           "number": 9578,
           "title": "Synthesize ARC examples from object transforms",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 9596,
+          "title": "synthesized dataset processing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229232,7 +229237,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T14:52:51.706Z",
+      "verified_at": "2026-11-20T16:13:09.370Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229274,10 +229279,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "64f9b9ba",
-      "content_hash": "8fbc6f23d95f267084783645d3221c598b9208168d97e0b7773143a0c132b083",
+      "source_version": "af0e46a1",
+      "content_hash": "3b316ed44ea4abca48dc0fa92619eeebdb35145a196f96d7338a22443b726ecb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T18:20:08.191Z"
+      "persisted_at": "2026-11-20T16:13:09.952Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -229286,10 +229291,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "8eed95c3",
-      "content_hash": "70045904393cec134ea079fc19272ac7a24a87539ec9b2069d7bd87d5de65e8c",
+      "source_version": "af0e46a1",
+      "content_hash": "c0a62f446bae0ef2b32fbbca9a5e972cec1e2a90ff9143ce76ccf2eede72d7e1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T14:52:52.586Z"
+      "persisted_at": "2026-11-20T16:13:10.109Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -256305,8 +256310,8 @@
       "slug": "meilisearch-meilisearch",
       "platform": "github",
       "source_url": "https://github.com/meilisearch/meilisearch",
-      "source_version": "01794fd9",
-      "content_hash": "6c9e0fd78d37e5911842ce58955eeb0447b0d9f36b4fd968c385ea1cbe54dbf2",
+      "source_version": "9a44a8e8",
+      "content_hash": "7f924d339f3f9b63f295bf5efb030ff89c3806bb4d483ad81aa9a8d4c444b27b",
       "dossier_path": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "promoted_rules": [
@@ -256319,6 +256324,11 @@
           "number": 8731,
           "title": "Reinstate uuid as a dev feature of meili-snap",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9595,
+          "title": "Empirical Invariant Guard in test-suite.yml",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -256326,7 +256336,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T09:43:53.475Z",
+      "verified_at": "2026-11-20T16:13:06.505Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -257225,14 +257235,19 @@
       "slug": "revenuecat-purchases-ios",
       "platform": "github",
       "source_url": "https://github.com/RevenueCat/purchases-ios",
-      "source_version": "547f252e",
-      "content_hash": "5743b956ceb725c6038815cfdcbb6b2973cd827743c6d9911ffe60fcaac04390",
+      "source_version": "aa9fb54b",
+      "content_hash": "a482853479dda930de02970da1c44c72fbfea515b332004977c8e5110c5c7a51",
       "dossier_path": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "promoted_rules": [
         {
           "number": 8747,
           "title": "prevent paywall hangs from repeated placeholder rendering",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9597,
+          "title": "avoid decoding cached customer info on the main thread",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -257241,7 +257256,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T15:00:39.844Z",
+      "verified_at": "2026-11-20T16:13:57.481Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -257283,10 +257298,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-revenuecat-purchases-ios-architecture-intelligence-revenuecat-purchases-ios-core.md",
       "title": "Architecture Intelligence: RevenueCat/purchases-ios Core Invariants",
       "repository": "RevenueCat/purchases-ios",
-      "source_version": "547f252e",
-      "content_hash": "ee954f7cda354c897215587bc92a90145a2a62622d3a0fbe6f3b9b3598bac386",
+      "source_version": "aa9fb54b",
+      "content_hash": "fc27663a37855d4c69cbd74b38d9592fb3d5b9480b4f1fb848bd53a1143450f6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T15:00:40.274Z"
+      "persisted_at": "2026-11-20T16:13:58.102Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios",
@@ -257295,10 +257310,10 @@
       "relative_path": "08_VERIFICATION/revenuecat-purchases-ios-verification-protocol-empirical-defect-shield-for-reven.md",
       "title": "Verification Protocol: Empirical Defect Shield for RevenueCat/purchases-ios",
       "repository": "RevenueCat/purchases-ios",
-      "source_version": "547f252e",
-      "content_hash": "5b9b6c8b89bd84a98935147c3c01d0d6e39a846a3c563a8622c6db5b1cec42f4",
+      "source_version": "aa9fb54b",
+      "content_hash": "9d876c8705eced91bf901c7db3e0eb121a17198f73e5a8d3b118593df7810885",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T15:00:40.389Z"
+      "persisted_at": "2026-11-20T16:13:58.260Z"
     },
     "learn-github-qdrant-qdrant": {
       "learning_id": "learn-github-qdrant-qdrant",
@@ -257391,9 +257406,9 @@
       "title": "Architecture Intelligence: revenuecat-purchases-ios-learnings Core Invariants",
       "repository": "revenuecat-purchases-ios-learnings",
       "source_version": "HEAD",
-      "content_hash": "1be7fd01b40e89ae2ae140d5107611aea3ba791ff33dbc8ce0954fac3ca86e61",
+      "content_hash": "e2d3976728bab087e6636f3f67fa1cf74ab541bf8c9926ee295189cf0c0a72b8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T15:00:51.077Z"
+      "persisted_at": "2026-11-20T16:14:34.347Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios-learn": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios-learn",
@@ -257403,9 +257418,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for revenuecat-purchases-ios-learnings",
       "repository": "revenuecat-purchases-ios-learnings",
       "source_version": "HEAD",
-      "content_hash": "5804b7bd2e8314e5d1068a2a390b1bf442e460c9734c808cc3212b1322fb8f43",
+      "content_hash": "deb6aeb7d5e24bb1cbc37d7e2d1e0389f4cd3ebc71b885b5b9db9455258f3fe7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T15:00:51.194Z"
+      "persisted_at": "2026-11-20T16:14:34.537Z"
     },
     "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants",
@@ -260783,8 +260798,8 @@
       "slug": "defguard-defguard",
       "platform": "github",
       "source_url": "https://github.com/DefGuard/defguard",
-      "source_version": "9830b49b",
-      "content_hash": "9a9ac3f6811ad73bb29edd3791ee514d4c6fbeba82db30f019fae3dc7e816b68",
+      "source_version": "05bc57ba",
+      "content_hash": "3b9f44d927270ffaf775fd33ed08b13ef245e44669194b9f86fa84dbc74dacee",
       "dossier_path": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "promoted_rules": [
@@ -260797,6 +260812,11 @@
           "number": 9431,
           "title": "improve PR job cancellation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9594,
+          "title": "close idle HTTP connections",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -260804,7 +260824,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T19:12:06.163Z",
+      "verified_at": "2026-11-20T16:13:04.234Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -260858,10 +260878,10 @@
       "relative_path": "08_VERIFICATION/defguard-defguard-verification-protocol-empirical-defect-shield-for-defguard-def.md",
       "title": "Verification Protocol: Empirical Defect Shield for DefGuard/defguard",
       "repository": "DefGuard/defguard",
-      "source_version": "9830b49b",
-      "content_hash": "c4b1399f5232172f02a3abe96378f862dda1bb477996014ff89f07b60d718e2d",
+      "source_version": "05bc57ba",
+      "content_hash": "d8cc654fa8a32d4232ec308c6d88dbc1004e1005cb03f9d6de39b890510c6d57",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T19:12:06.831Z"
+      "persisted_at": "2026-11-20T16:13:05.005Z"
     },
     "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants": {
       "item_id": "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants",
@@ -277490,8 +277510,8 @@
       "slug": "emberstack-kubernetes-reflector",
       "platform": "github",
       "source_url": "https://github.com/emberstack/kubernetes-reflector",
-      "source_version": "dd9d0499",
-      "content_hash": "31371024d31402ce00c21311a8600f6e74587088d70b44cd58fb109795a847b1",
+      "source_version": "b26ca679",
+      "content_hash": "73d0278ec6859a7a6f569beed61b667f19ddc96d5951d0da3b11aa87232e6391",
       "dossier_path": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "promoted_rules": [
@@ -277511,7 +277531,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T11:55:00.509Z",
+      "verified_at": "2026-11-20T16:13:00.731Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -277553,10 +277573,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-emberstack-kubernetes-reflector-architecture-intelligence-emberstack-kubernetes-.md",
       "title": "Architecture Intelligence: emberstack/kubernetes-reflector Core Invariants",
       "repository": "emberstack/kubernetes-reflector",
-      "source_version": "dd9d0499",
-      "content_hash": "e54d36783a8f3f672c75cb8b4f61d672a8b0e07a94e7b133c75746c842e7754e",
+      "source_version": "b26ca679",
+      "content_hash": "85bad94e2fb216b00b9a3c01c5bc365d925705b758a3ef80954b2465045f3d88",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T11:55:00.998Z"
+      "persisted_at": "2026-11-20T16:13:01.304Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-emberstack-kubernetes-reflecto": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-emberstack-kubernetes-reflecto",
@@ -277566,9 +277586,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for emberstack-kubernetes-reflector-learnings",
       "repository": "emberstack-kubernetes-reflector-learnings",
       "source_version": "HEAD",
-      "content_hash": "5f1754dd3011d15e0aacdb52507bd9769b6c9e90dabc5bf5c70ebfb8013e63a9",
+      "content_hash": "9dde4ac4c74aebf14d9d5e1785f782c8f35b416d8bbb861918c214bc7d521fe4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T11:55:43.163Z"
+      "persisted_at": "2026-11-20T16:14:35.326Z"
     },
     "rule-9031": {
       "learning_id": "rule-9031",
@@ -277771,9 +277791,9 @@
       "title": "Architecture Intelligence: emberstack-kubernetes-reflector-learnings Core Invariants",
       "repository": "emberstack-kubernetes-reflector-learnings",
       "source_version": "HEAD",
-      "content_hash": "6951df99defcbb266747ee4794a890d001e647824d769507813f98751e69302b",
+      "content_hash": "f0b30b072c302519b0c685a1c9bace53058a918bd2bfe871e011d52cc69c72fe",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T11:55:43.006Z"
+      "persisted_at": "2026-11-20T16:14:35.152Z"
     },
     "learn-huggingface-briaai-fibo-2-0-dev": {
       "learning_id": "learn-huggingface-briaai-fibo-2-0-dev",
@@ -287833,13 +287853,13 @@
       "item_id": "candidate_directive-bump-the-all-dependencies-group-with-5-updates",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-EMWM-bump-the-all-dependencies-group-with-5-updates.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-J8WL-bump-the-all-dependencies-group-with-5-updates.md",
       "title": "Bump the all-dependencies group with 5 updates",
       "repository": "emberstack-kubernetes-reflector-learnings",
       "source_version": "HEAD",
-      "content_hash": "20a3e8b89fe8b2f5032acee562c17bd7c2b14d411735c9de2babe1a710b7b428",
+      "content_hash": "85fe07641215659cb712141e3b4bf2cb7395176ac3a00399c2d00fd3ae35245b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T11:55:42.839Z"
+      "persisted_at": "2026-11-20T16:14:34.965Z"
     },
     "rule-9213": {
       "learning_id": "rule-9213",
@@ -304843,6 +304863,173 @@
       "content_hash": "ebe5f9ad77434dd5ae634158464878b191647dbd081fe4cd3ff6bbab14c83d42",
       "domain_letter": "I",
       "persisted_at": "2026-11-20T15:44:10.503Z"
+    },
+    "rule-9594": {
+      "learning_id": "rule-9594",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9594,
+      "title": "close idle HTTP connections",
+      "source_url": "https://github.com/DefGuard/defguard",
+      "source_version": "05bc57ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T16:13:04.234Z"
+    },
+    "candidate_directive-close-idle-http-connections": {
+      "item_id": "candidate_directive-close-idle-http-connections",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HB8O-close-idle-http-connections.md",
+      "title": "close idle HTTP connections",
+      "repository": "DefGuard/defguard",
+      "source_version": "05bc57ba",
+      "content_hash": "5b62e174245a8ef56eaf6ed7df353b15c97bd59ca3e4bcddcd273e6de119cbd0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T16:13:04.685Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-defguard-defguard-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-defguard-defguard-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-defguard-defguard-technical-construction-intelligence-defguard-defguard-core-inv.md",
+      "title": "Technical Construction Intelligence: DefGuard/defguard Core Invariants",
+      "repository": "DefGuard/defguard",
+      "source_version": "05bc57ba",
+      "content_hash": "3586fb6ddde45bb0266b9bddf412b34fcd41dcbbd1a7bd08ed330a7dcfb80172",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T16:13:04.844Z"
+    },
+    "rule-9595": {
+      "learning_id": "rule-9595",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9595,
+      "title": "Empirical Invariant Guard in test-suite.yml",
+      "source_url": "https://github.com/meilisearch/meilisearch",
+      "source_version": "9a44a8e8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T16:13:06.505Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-test-suite-yml": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-test-suite-yml",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HCYW-empirical-invariant-guard-in-test-suite-yml.md",
+      "title": "Empirical Invariant Guard in test-suite.yml",
+      "repository": "meilisearch/meilisearch",
+      "source_version": "9a44a8e8",
+      "content_hash": "95ba9b44097bfb207c103173e12a1f3ff8cc3dc91f8893004473243dabfa7eb6",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T16:13:06.925Z"
+    },
+    "rule-9596": {
+      "learning_id": "rule-9596",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9596,
+      "title": "synthesized dataset processing",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "af0e46a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T16:13:09.370Z"
+    },
+    "candidate_directive-synthesized-dataset-processing": {
+      "item_id": "candidate_directive-synthesized-dataset-processing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HF6H-synthesized-dataset-processing.md",
+      "title": "synthesized dataset processing",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "af0e46a1",
+      "content_hash": "718ae202945da56323bac64daf7a5e1fb815c6cce8596dcf5b3382b22aae5fed",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T16:13:09.787Z"
+    },
+    "rule-9597": {
+      "learning_id": "rule-9597",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9597,
+      "title": "avoid decoding cached customer info on the main thread",
+      "source_url": "https://github.com/RevenueCat/purchases-ios",
+      "source_version": "aa9fb54b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T16:13:57.481Z"
+    },
+    "candidate_directive-avoid-decoding-cached-customer-info-on-the-main-thread": {
+      "item_id": "candidate_directive-avoid-decoding-cached-customer-info-on-the-main-thread",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-J8AK-avoid-decoding-cached-customer-info-on-the-main-thread.md",
+      "title": "avoid decoding cached customer info on the main thread",
+      "repository": "revenuecat-purchases-ios-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f96753fab3c714c847d993d9c7310d65fd3b89abb3cb7aea9f8c25b4e81757b8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T16:14:34.172Z"
+    },
+    "learn-huggingface-angelslim-hy4-flash-gguf": {
+      "learning_id": "learn-huggingface-angelslim-hy4-flash-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "AngelSlim/Hy4-flash-GGUF",
+      "repository": "AngelSlim/Hy4-flash-GGUF",
+      "slug": "hf-angelslim-hy4-flash-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/AngelSlim/Hy4-flash-GGUF",
+      "source_version": "hf-angelslim-hy4-flash-gguf",
+      "content_hash": "9605a5b4cc1edb37f43d288f8fe159c5f08c0d09d7b1ed2e5525a20fce37827e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-angelslim-hy4-flash-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-angelslim-hy4-flash-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T16:13:59.694Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-angelslim-hy4-flash-gguf-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-angelslim-hy4-flash-gguf-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-angelslim-hy4-flash-gguf-research-knowledge-intelligence-angelslim-hy4-flash-.md",
+      "title": "Research & Knowledge Intelligence: AngelSlim/Hy4-flash-GGUF Core Invariants",
+      "repository": "AngelSlim/Hy4-flash-GGUF",
+      "source_version": "hf-angelslim-hy4-flash-gguf",
+      "content_hash": "0032a3fd2681ea4bb4a54ffd017301e9c14290a95e5f0db1a4f8c032f6f4e4c3",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T16:14:00.129Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-angelslim-hy4-flash-gguf-learnings-core-invar": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-angelslim-hy4-flash-gguf-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-angelslim-hy4-flash-gguf-learnings-research-knowledge-intelligence-hf-angelsl.md",
+      "title": "Research & Knowledge Intelligence: hf-angelslim-hy4-flash-gguf-learnings Core Invariants",
+      "repository": "hf-angelslim-hy4-flash-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "42ee8dced43d9c69fd1b6f701c4f03f04581a8f5bc9edb33a6236d42e213b42c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T16:14:33.540Z"
     }
   },
   "ai-builder-brain": {

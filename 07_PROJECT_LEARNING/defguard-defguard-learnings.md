@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source**: github ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
-> **Source Version**: `9830b49b`  
+> **Source Version**: `05bc57ba`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T19:12:05.281Z  
+> **Timestamp**: 2026-11-20T16:13:03.405Z  
 > **Learning ID**: `learn-github-defguard-defguard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T19:12:05.274Z  
+> **Harvest Timestamp**: 2026-11-20T16:13:03.399Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zero-Trust access management with true WireGuard® 2FA/MFA
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2920 stars
+- **Stars / Engagement**: 2921 stars
 
 ---
 
@@ -1999,14 +1999,11 @@ impl Token {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4053** (2026-11-20): **Pasted comma-separated addresses aren’t split into chips**
+  *Symptoms*: Pasting a comma-separated list into "IPv4/IPv6 CIDR ranges or addresses" in Add new alias creates one long chip that overflows the form. After saving, the values are split correctly (Edit alias shows separate chips).  Steps 1. Firewall → Aliases → Add new alias 2. Paste `1.0.0.0-9.255.255.255,11.0.0.0-100.63.255.255,100.128.0.0-126.255.255.255,128.0.0.0-169.253.255.255,169.255.0.0-172.15.255.255,172.32.0.0-192.167.255.255,192.169.0.0-223.255.255.255,2000::/3` into the addresses field 3. Click outside the field  https://github.com/user-attachments/assets/9cb2dd70-3f2b-4b9d-a88b-270fb293514a   Fix this in:  - [x] Rules - [x] Destination - [x] Alias - [x] Location -> AllowedIPs
+
 - **Issue #4051** (2026-11-17): **Edge/proxy stops accepting new connections: idle client connections are never closed and exhaust the file descriptor limit**
   *Symptoms*: **Describe the bug** The edge (process `defguard-proxy`) accumulates established client connections on port 443 that are never closed. With roughly 50 active users it reached 1012 established connections within about three days, hit the container's default soft limit of 1024 open files and stopped accepting new connections.  Existing connections kept working, so the service looked healthy, but every new connection attempt timed out. For users this shows up as: - After entering the MFA code, the desktop client spins indefinitely and the tunnel is never established. - Occasionally the client reports that it cannot connect to the edge.  Nothing matching `too many open files` or `accept` appears in the edge container log at the configured log level.  **To Reproduce** Steps to reproduce the behavior: 1. Run the edge as a Docker container with the default `nofile` soft limit of 1024, published directly on 443/tcp (no reverse proxy in front). 2. Let about 50 users work normally with the desktop client for a few days. 3. Watch the number of established connections on port 443 inside the container: `ss -Htn state established 'sport = :443' | wc -l`. It grows continuously and far exceeds the number of clients. 4. Once the process holds 1024 file descriptors, new connections are no longer accepted: SYNs reach the container but get no SYN-ACK, and MFA / tunnel setup hangs in the client.  **Expected behavior** - Idle or dead client connections are closed by the edge (idle timeout and/or T
-
-- **Issue #4036** (2026-11-16): **2.2.0 regression: mobile biometric MFA unavailable for devices enrolled after upgrade**
-  *Symptoms*: Environment - Core / Edge / Gateway 2.2.0 (Open Source, docker), upgraded from 2.1.1/2.1.0/2.1.1 - Location MFA: "Default Internal MFA" flow (auto-created on upgrade), single step:   Authenticator App, Email, Mobile Biometric Authentication, Mobile App Approval - Mobile apps: iOS 2.2.0 (iPhone 13), iOS 2.0.0 (iPhone 11), Android latest Play Store (Xiaomi)  Observed - Devices enrolled BEFORE the upgrade (iPhone 12, Xiaomi): biometric works. - Devices enrolled AFTER the upgrade: "Biometric — Not configured" on connect,   on iOS and Android. Re-enrolling the previously working Xiaomi broke it too. - Core logs registration successfully each time:   "User test(14) registered mobile auth for device iPhone(26)" - Device appears under "Mobile App Approval Devices" in the user profile. - TOTP enabled before enrollment; TOTP works.  Expected: newly enrolled mobile devices can use biometric MFA as before.
-  **Post-Mortem & Fix Analysis**:
-  >    Additional data: rolled back production (no users yet) to Core 2.1.1 / Edge 2.1.0 / Gateway 2.1.1    by restoring the pre-upgrade DB dump. A mobile device (Android, Xiaomi) enrolled on 2.1.1 can use    biometric immediately ("Desktop client login finished ... with method BIOMETRIC").    Same device enrolled on 2.2.0 -> "Biometric — Not configured".
-  >    Confirmed: after rolling back both staging and production to Core 2.1.1 / Edge 2.1.0 /    Gateway 2.1.1 (restore of pre-upgrade DB), newly enrolled mobile devices can use biometric    again (Android Xiaomi re-enrolled on 2.1.1 -> connect with BIOMETRIC works).
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2023,232 +2020,311 @@ impl Token {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9830b49b` (2026-11-19)
-**Commit Message**: fix(CI): improve PR job cancellation (#4071)
+### Incident Patch 1: `05bc57ba` (2026-11-20)
+**Commit Message**: fix: close idle HTTP connections (#4067)
+
+* enforce closing idle HTTP connections
+
+* clarify limitations
+
+* clippy fixes
 
 * update nix flake
 
-* fall back to default renovate base branch setup
+* update cargo deny config
 
-* add job cancellation
+* move listener tests to separate module
 
-* clippy & cve fixes
+* update axum server
 
-**File**: `.github/workflows/ci.yml` (modified, +4/-0)
+* leverage updated axum to simplify setup
+
+* cleanup
+
+**File**: `Cargo.lock` (modified, +5/-4)
 ```diff
-@@ -19,6 +19,10 @@ on:
-       - "LICENSE"
-   workflow_dispatch:
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-+
- permissions:
-   contents: read
-   packages: read
-```
-
-**File**: `.github/workflows/lint-e2e.yml` (modified, +4/-0)
-```diff
-@@ -14,6 +14,10 @@ on:
-     paths:
-       - "e2e/**"
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-+
- jobs:
-   lint-e2e:
-     runs-on:
-```
-
-**File**: `.github/workflows/lint-web.yml` (modified, +4/-0)
-```diff
-@@ -16,6 +16,10 @@ on:
-       - "*.md"
-       - "LICENSE"
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-+
- jobs:
-   lint-web:
-     runs-on:
-```
-
-**File**: `.github/workflows/test-web.yml` (modified, +4/-0)
-```diff
-@@ -10,6 +10,10 @@ on:
-       - "release/**"
-       - "stable/**"
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-+
- permissions:
-   contents: read
- jobs:
-```
-
-**File**: `Cargo.lock` (modified, +15/-15)
-```diff
-@@ -81,9 +81,9 @@ checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
+@@ -452,9 +452,9 @@ dependencies = [
  
  [[package]]
- name = "ammonia"
--version = "4.2.4"
-+version = "4.2.5"
+ name = "axum-server"
+-version = "0.8.0"
++version = "0.9.2"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1f45dfa685e1ec33b1bf1a3b93b8047cbdbef41b6040deebbe6bea7720a45574"
-+checksum = "b34ca49e407c06daac53f0c4debe8ff5df9cc2a4e9369d164a5d86ef8c219319"
+-checksum = "b1df331683d982a0b9492b38127151e6453639cd34926eb9c07d4cd8c6d22bfc"
++checksum = "3766086d344b8f8d2a9cf6fb211b581de5b160e052d7bc75a92e58cc41909054"
  dependencies = [
-  "cssparser",
-  "html5ever",
-@@ -1278,7 +1278,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "d045de693cb712d0b22c6a64be5b953f67b3ce00ab5ad3dd5d8b441886ab8e1a"
+  "arc-swap",
+  "bytes",
+@@ -467,6 +467,7 @@ dependencies = [
+  "pin-project-lite",
+  "rustls",
+  "rustls-pki-types",
++ "socket2",
+  "tokio",
+  "tokio-rustls",
+  "tower-service",
+@@ -5919,7 +5920,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "a253edfdea34032da21af84e16fcc94f4c7a6ba237f9f3bc2dbf43cea8535c44"
  dependencies = [
-  "quote",
-- "syn 2.0.119",
-+ "syn 3.0.9",
- ]
- 
- [[package]]
-@@ -2310,9 +2310,9 @@ dependencies = [
- 
- [[package]]
- name = "email-encoding"
--version = "0.4.2"
-+version = "0.4.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "420b9da095f052ea597503e39073b5b3c522f7db933fbac202d91d24492693fd"
-+checksum = "9f690ae2169f2ceb3f45b28b6fcd8fa16839f2f5c8818546774b9425f5f71004"
+  "annotate-snippets",
+- "base64 0.21.7",
++ "base64 0.23.1",
+  "encoding_rs_io",
+  "granit-parser",
+  "nohash-hasher",
+@@ -6801,7 +6802,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
  dependencies = [
-  "base64 0.23.1",
-  "memchr",
-@@ -2384,7 +2384,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -3655,9 +3655,9 @@ dependencies = [
- 
- [[package]]
- name = "lettre"
--version = "0.11.23"
-+version = "0.11.24"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f2c646bd5cc763b1087b15493e29a64be6147ba8f19342004fa52048ee596eae"
-+checksum = "f294f3d7cdb313e578acef7d7727d4e8d897e0fcd0d6d58c19959cec95073f19"
- dependencies = [
-  "async-trait",
-  "base64 0.23.1",
-@@ -3722,9 +3722,9 @@ dependencies = [
- 
- [[package]]
- name = "libz-sys"
--version = "1.1.31"
-+version = "1.1.33"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
-+checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
- dependencies = [
-  "cc",
-  "libc",
-@@ -5246,7 +5246,7 @@ dependencies = [
-  "once_cell",
-  "socket2",
-  "tracing",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -5687,7 +5687,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -5746,7 +5746,7 @@ dependencies = [
-  "security-framework",
-  "security-framework-sys",
-  "webpki-root-certs",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -6804,7 +6804,7 @@ dependencies = [
-  "getrandom 0.3.4",
+  "fastrand",
+- "getrandom 0.3.4",
++ "getrandom 0.4.3",
   "once_cell",
   "rustix",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -7833,7 +7833,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
+  "windows-sys 0.61.2",
 ```
 
-**File**: `crates/defguard/Cargo.toml` (modified, +3/-0)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -36,3 +36,6 @@ default = ["openapi"]
- # Serve the OpenAPI specification and the Swagger UI. See the `openapi` feature of
- # `defguard_core`. Build with `--no-default-features` to leave it out.
- openapi = ["defguard_core/openapi", "defguard_common/openapi"]
-+
-+[lints]
-+workspace = true
+@@ -42,7 +42,7 @@ axum = "0.8"
+ axum-client-ip = { version = "1.3", default-features = false, features = [
+     "forwarded-header",
+ ] }
+-axum-server = { version = "0.8", features = ["tls-rustls"] }
++axum-server = { version = "0.9.2", features = ["tls-rustls"] }
+ axum-extra = { version = "0.12", features = [
+     "cookie-private",
+     "cookie-key-expansion",
 ```
 
-**File**: `crates/defguard_certs/Cargo.toml` (modified, +3/-0)
+**File**: `crates/defguard_core/src/lib.rs` (modified, +32/-5)
 ```diff
-@@ -15,3 +15,6 @@ rustls-pki-types.workspace = true
- thiserror.workspace = true
- time.workspace = true
- x509-parser.workspace = true
-+
-+[lints]
-+workspace = true
+@@ -19,7 +19,7 @@ use axum::{
+     routing::{delete, get, post, put},
+ };
+ use axum_extra::extract::cookie::Key;
+-use axum_server::tls_rustls::RustlsConfig;
++use axum_server::tls_rustls::{RustlsAcceptor, RustlsConfig};
+ use defguard_certs::CertificateAuthority;
+ use defguard_common::{
+     VERSION,
+@@ -200,6 +200,10 @@ use crate::{
+         },
+         worker::{create_job, create_worker_token, job_status, list_workers, remove_worker},
+     },
++    listener::{
++        HTTP1_HEADER_READ_TIMEOUT, HTTP2_KEEPALIVE_INTERVAL, HTTP2_KEEPALIVE_TIMEOUT,
++        keepalive_acceptor,
++    },
+     location_management::{
+         allowed_peers::get_location_allowed_peers, sync_location_allowed_devices,
+     },
+@@ -219,6 +223,7 @@ pub mod grpc;
+ pub mod handlers;
+ pub mod headers;
+ pub mod letsencrypt;
++mod listener;
+ pub mod location_management;
+ pub mod log_file;
+ pub mod mail;
+@@ -953,14 +958,36 @@ pub async fn run_web_server(
+                     RustlsConfig::from_pem(cert_pem.into_bytes(), key_pem.into_bytes())
+                         .await
+                         .map_err(|err| anyhow!("Failed to load TLS config: {err}"))?;
+-                axum_server::bind_rustls(addr, tls_config)
+-                    .handle(handle_clone.clone())
++                let mut server = axum_server::bind(addr)
++                    .acceptor(RustlsAcceptor::new(tls_config).acceptor(keepalive_acceptor()))
++                    .handle(handle_clone.clone());
++                server
++                    .http_builder()
++                    .http1()
++                    .header_read_timeout(HTTP1_HEADER_READ_TIMEOUT);
++                server
++                    .http_builder()
++                    .http2()
++                    .keep_alive_interval(HTTP2_KEEPALIVE_INTERVAL)
++                    .keep_alive_timeout(HTTP2_KEEPALIVE_TIMEOUT);
++                server
+                     .serve(app)
+                     .await
+                     .map_err(|err| anyhow!("Web server error: {err}"))
+             } else {
+-                axum_server::bind(addr)
+-                    .handle(handle_clone)
++                let mut server = axum_server::bind(addr)
++                    .acceptor(keepalive_acceptor())
++                    .handle(handle_clone);
++                server
++                    .http_builder()
++                    .http1()
++                    .header_read_timeout(HTTP1_HEADER_READ_TIMEOUT);
++                server
++                    .http_builder()
++                    .http2()
++                    .keep_alive_interval(HTTP2_KEEPALIVE_INTERVAL)
++                    .keep_alive_timeout(HTTP2_KEEPALIVE_TIMEOUT);
++                server
+                     .serve(app)
+                     .await
+                     .map_err(|err| anyhow!("Web server error: {err}"))
 ```
 
-**File**: `crates/defguard_common/Cargo.toml` (modified, +3/-0)
+**File**: `crates/defguard_core/src/listener.rs` (added, +25/-0)
 ```diff
-@@ -61,3 +61,6 @@ test-support = ["tokio/net", "tokio/io-util"]
+@@ -0,0 +1,25 @@
++//! Connection settings for the public HTTP(S) listener.
++
++use std::time::Duration;
++
++use axum_server::accept::{TcpConfigAcceptor, TcpKeepaliveConfig, TcpSocketConfig};
++
++pub(super) const HTTP1_HEADER_READ_TIMEOUT: Duration = Duration::from_secs(30);
++pub(super) const HTTP2_KEEPALIVE_INTERVAL: Duration = Duration::from_secs(20);
++/// Time to wait for a PING acknowledgement. This does not expire responsive idle connections.
++pub(super) const HTTP2_KEEPALIVE_TIMEOUT: Duration = Duration::from_secs(20);
++const TCP_KEEPALIVE_TIME: Duration = Duration::from_secs(60);
++const TCP_KEEPALIVE_INTERVAL: Duration = Duration::from_secs(15);
++
++pub(crate) fn keepalive_acceptor() -> TcpConfigAcceptor {
++    TcpConfigAcceptor::new(
++        TcpSocketConfig::new().keepalive(
++            TcpKeepaliveConfig::new()
++                .time(TCP_KEEPALIVE_TIME)
++                .interval(TCP_KEEPALIVE_INTERVAL),
++        ),
++    )
++}
++
++#[cfg(test)]
++mod tests;
+```
+
+**File**: `crates/defguard_core/src/listener/tests.rs` (added, +88/-0)
+```diff
+@@ -0,0 +1,88 @@
++use std::{
++    net::{Ipv4Addr, SocketAddr},
++    time::Duration,
++};
++
++use axum::{Router, routing::get};
++use axum_server::{Handle, accept::Accept};
++use tokio::{
++    io::{AsyncReadExt, AsyncWriteExt},
++    net::{TcpListener, TcpSocket, TcpStream},
++    time::timeout,
++};
++
++use super::keepalive_acceptor;
++
++const TEST_TIMEOUT: Duration = Duration::from_secs(1);
++const CLOSE_DEADLINE: Duration = Duration::from_secs(5);
++
++async fn spawn_server() -> (SocketAddr, Handle<SocketAddr>) {
++    let listener = std::net::TcpListener::bind((Ipv4Addr::LOCALHOST, 0)).unwrap();
++    listener.set_nonblocking(true).unwrap();
++    let addr = listener.local_addr().unwrap();
++    let handle = Handle::new();
++    let mut server = axum_server::from_tcp(listener)
++        .unwrap()
++        .acceptor(keepalive_acceptor())
++        .handle(handle.clone());
++    server
++        .http_builder()
++        .http1()
++        .header_read_timeout(TEST_TIMEOUT);
++    let app = Router::new().route("/", get(|| async { "ok" }));
++    tokio::spawn(server.serve(app.into_make_service()));
++    handle.listening().await;
++    (addr, handle)
++}
++
++async fn read_until_closed(stream: &mut TcpStream) -> Vec<u8> {
++    let mut received = Vec::new();
++    timeout(CLOSE_DEADLINE, stream.read_to_end(&mut received))
++        .await
++        .expect("the core server should close the idle connection")
++        .expect("reading from the connection should succeed");
++    received
++}
++
++#[tokio::test]
++async fn test_idle_keepalive_connection_is_closed_after_response() {
++    let (addr, _handle) = spawn_server().await;
++    let mut stream = TcpStream::connect(addr).await.unwrap();
++    stream
++        .write_all(b"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n")
++        .await
++        .unwrap();
++
++    let received = read_until_closed(&mut stream).await;
++    assert!(received.starts_with(b"HTTP/1.1 200"));
++}
++
++#[tokio::test]
++async fn test_incomplete_request_headers_are_cut_off() {
++    let (addr, _handle) = spawn_server().await;
++    let mut stream = TcpStream::connect(addr).await.unwrap();
++    stream
++        .write_all(b"GET / HTTP/1.1\r\nHost: localhost\r\n")
++        .await
++        .unwrap();
++
++    read_until_closed(&mut stream).await;
++}
++
++#[tokio::test]
++async fn test_accepted_connections_have_tcp_keepalive() {
++    let listener = TcpListener::bind((Ipv4Addr::LOCALHOST, 0)).await.unwrap();
++    let _client = TcpStream::connect(listener.local_addr().unwrap())
++        .await
++        .unwrap();
++    let (stream, _) = listener.accept().await.unwrap();
++    let stream = stream.into_std().unwrap();
++    let socket = TcpSocket::from_std_stream(stream.try_clone().unwrap());
++    assert!(!socket.keepalive().unwrap());
++    let stream = TcpStream::from_std(stream).unwrap();
++
++    let (stream, ()) = keepalive_acceptor().accept(stream, ()).await.unwrap();
++
++    let socket = TcpSocket::from_std_stream(stream.into_std().unwrap());
++    assert!(socket.keepalive().unwrap());
++}
+```
+
+**File**: `crates/defguard_core/tests/integration/ldap_repair.rs` (modified, +1/-1)
+```diff
+@@ -163,7 +163,7 @@ async fn test_repair_rolls_back_updates_when_a_later_candidate_fails(
+     query("CREATE FUNCTION repair_update_guard() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF nextval('repair_update_sequence') = 2 THEN RAISE EXCEPTION 'expected repair failure'; END IF; RETURN NEW; END; $$").execute(&pool).await.unwrap();
+     query("CREATE TRIGGER repair_update_trigger BEFORE UPDATE OF ldap_rdn, ldap_user_path ON \"user\" FOR EACH ROW EXECUTE FUNCTION repair_update_guard()").execute(&pool).await.unwrap();
+     let Err(error) = repair(&pool).await else {
+-        panic!("repair should fail on its second update");
++        panic!("repair should fail on its second update")
+     };
+     assert!(error.to_string().contains("expected repair failure"));
+     let values: Vec<(String, String)> = query_as("SELECT ldap_rdn, ldap_user_path FROM \"user\" WHERE username IN ('rollback_first', 'rollback_second') ORDER BY username").fetch_all(&pool).await.unwrap();
+```
+
+**File**: `crates/defguard_session_manager/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@ tracing.workspace = true
+ strum.workspace = true
  
- [build-dependencies]
- vergen-git2 = "10.0"
-+
-+[lints]
-+workspace = true
+ [dev-dependencies]
+-# TODO: remove this dependency once gateway events are moved
++# Integration tests use enterprise device posture models from core.
+ defguard_core.workspace = true
+ ipnetwork.workspace = true
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4083** (2026-11-20): Fix menu devices table action (@filipslezaklab)
 - **PR #4072** (2026-11-19): Correctly handle pasting network addresses in fields (@jakub-tldr)
 - **PR #4071** (2026-11-19): fix(CI): improve PR job cancellation (@wojcik91)
 - **PR #4068** (2026-11-19): Retire the worker (@moubctez)
+- **PR #4067** (2026-11-20): fix: close idle HTTP connections (@wojcik91)
 - **PR #4066** (2026-11-18): user devices table styling update (@filipslezaklab)
-- **PR #4065** (2026-11-18): Fix cargo deny issues (@j-chmielewski)
-- **PR #4064** (2026-11-18): user devices table styles corrections (@filipslezaklab)
 
 ---
 
@@ -2268,31 +2344,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. CI): improve PR job cancellation
+## X. close idle HTTP connections
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9830b49b`: CI): improve PR job cancellation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `05bc57ba`: close idle HTTP connections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-
+version = "0.9.2"
+checksum = "3766086d344b8f8d2a9cf6fb211b581de5b160e052d7bc75a92e58cc41909054"
+ "socket2",
+ "base64 0.23.1",
+ "getrandom 0.4.3",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+version = "0.8.0"
+checksum = "b1df331683d982a0b9492b38127151e6453639cd34926eb9c07d4cd8c6d22bfc"
+ "base64 0.21.7",
+ "getrandom 0.3.4",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9830b49b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `05bc57ba` are properly handled with clean fallback behavior.

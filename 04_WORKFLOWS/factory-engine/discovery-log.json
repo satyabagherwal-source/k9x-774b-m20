@@ -21778,5 +21778,17 @@
     "downloads": 0,
     "qualityScore": 1090,
     "discoveredAt": "2026-11-20T14:01:29.301Z"
+  },
+  {
+    "name": "AngelSlim/Hy4-flash-GGUF",
+    "fullName": "AngelSlim/Hy4-flash-GGUF",
+    "url": "https://huggingface.co/AngelSlim/Hy4-flash-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: AngelSlim/Hy4-flash-GGUF (101 likes, 75614 downloads)",
+    "likes": 101,
+    "downloads": 75614,
+    "qualityScore": 3010,
+    "discoveredAt": "2026-11-20T16:10:35.643Z"
   }
 ]

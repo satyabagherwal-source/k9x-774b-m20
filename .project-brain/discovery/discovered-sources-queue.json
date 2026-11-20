@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T15:44:09.277Z",
+  "updated_at": "2026-11-20T16:14:33.922Z",
   "stats": {
-    "total_discovered": 6425,
-    "approved_pending_harvest": 6067,
+    "total_discovered": 6428,
+    "approved_pending_harvest": 6070,
     "harvested_count": 0,
     "rejected_count": 358,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6057,
+      "COMMUNITY_AND_EXPERT": 6060,
       "OFFICIAL_DOCUMENTATION": 201,
       "STANDARDS_AND_SPECIFICATIONS": 117,
       "ENGINEERING_BLOGS": 4,
@@ -138867,6 +138867,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
         "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-A92249FE7365": {
+      "id": "SRC-A92249FE7365",
+      "url": "https://huggingface.co/AngelSlim/Hy4-flash-GGUF",
+      "title": "https://huggingface.co/AngelSlim/Hy4-flash-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T16:14:33.272Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-angelslim-hy4-flash-gguf-learnings.md",
+        "fileName": "hf-angelslim-hy4-flash-gguf-learnings.md"
+      }
+    },
+    "SRC-7AAC192D8578": {
+      "id": "SRC-7AAC192D8578",
+      "url": "https://github.com/RevenueCat/fastlane-plugin-revenuecat_internal",
+      "title": "https://github.com/RevenueCat/fastlane-plugin-revenuecat_internal",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T16:14:33.877Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
+        "fileName": "revenuecat-purchases-ios-learnings.md"
+      }
+    },
+    "SRC-B60387494529": {
+      "id": "SRC-B60387494529",
+      "url": "https://github.com/RevenueCat/fastlane-plugin-create_xcframework",
+      "title": "https://github.com/RevenueCat/fastlane-plugin-create_xcframework",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T16:14:33.922Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
+        "fileName": "revenuecat-purchases-ios-learnings.md"
       }
     }
   }

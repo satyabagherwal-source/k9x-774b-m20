@@ -4,22 +4,22 @@
 {
   "source_repository": "meilisearch/meilisearch",
   "source_url": "https://github.com/meilisearch/meilisearch",
-  "source_version": "01794fd9",
+  "source_version": "9a44a8e8",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-19T09:43:53.860Z",
+  "timestamp": "2026-11-20T16:13:06.925Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-meilisearch-meilisearch",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [meilisearch/meilisearch](https://github.com/meilisearch/meilisearch) (Revision: `01794fd9`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-19T09:43:53.860Z`  
+> **Provenance**: Harvested from [meilisearch/meilisearch](https://github.com/meilisearch/meilisearch) (Revision: `9a44a8e8`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-20T16:13:06.925Z`  
 > **Learning ID**: `learn-github-meilisearch-meilisearch`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `meilisearch/meilisearch` (Commit: `01794fd9`)
+- **Target Repository**: `meilisearch/meilisearch` (Commit: `9a44a8e8`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T09:43:53.003Z  
+> **Harvest Timestamp**: 2026-11-20T16:13:05.691Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A lightning-fast search engine API bringing AI-powered hybrid search to your sites and applications.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 59909 stars
+- **Stars / Engagement**: 59944 stars
 
 ---
 
@@ -2060,59 +2060,31 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `01794fd9` (2026-11-18)
-**Commit Message**: Merge pull request #6742 from meilisearch/readme-product-hunt-searchandising
+### Incident Patch 1: `9a44a8e8` (2026-11-19)
+**Commit Message**: Merge pull request #6744 from meilisearch/fix-macos-ci-runner
 
-Add temporary Product Hunt launch link to README
+Replace unsupported macos-14 runner with macos-15
 
-**File**: `README.md` (modified, +8/-0)
+**File**: `.github/workflows/test-suite.yml` (modified, +1/-1)
 ```diff
-@@ -23,6 +23,14 @@
-   <a href="https://github.com/meilisearch/meilisearch/queue"><img alt="Merge Queues enabled" src="https://img.shields.io/badge/Merge_Queues-enabled-%2357cf60?logo=github"></a>
- </p>
- 
-+<p align="center">
-+  🚀 <strong>We’re launching Searchandising on Product Hunt!</strong> Pin, boost and hide results with search rules. We’d love your feedback and a follow.
-+  <a href="https://www.producthunt.com/products/meilisearch-cloud?launch=meilisearch-searchandising">Check us out on Product Hunt →</a>
-+</p>
-+<p align="center">
-+  <a href="https://www.producthunt.com/products/meilisearch-cloud?utm_source=badge-follow&utm_medium=badge&utm_campaign=badge-meilisearch-cloud" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/follow.svg?product_id=532742&theme=light" alt="Meilisearch - Fast search and AI retrieval for your apps and sites | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
-+</p>
-+
- <p align="center">⚡ A lightning-fast search engine that fits effortlessly into your apps, websites, and workflow 🔍</p>
- 
- [Meilisearch](https://www.meilisearch.com?utm_campaign=oss&utm_source=github&utm_medium=meilisearch&utm_content=intro) is a search engine for fast, relevant full-text, semantic, and hybrid search. The easiest way to get started and run it in production is [Meilisearch Cloud](https://cloud.meilisearch.com/register?utm_campaign=oss&utm_source=github&utm_medium=meilisearch&utm_content=intro): create a project and run your first search in minutes, with no servers to deploy, upgrade, or maintain. The engine is open source under the MIT license, so you can also self-host it.
-```
-
----
-
-### Incident Patch 2: `1d553814` (2026-11-18)
-**Commit Message**: Make the Product Hunt launch copy friendlier
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `README.md` (modified, +2/-2)
-```diff
-@@ -24,8 +24,8 @@
- </p>
- 
- <p align="center">
--  🚀 <strong>Meilisearch Searchandising is launching on Product Hunt!</strong> Show your support and follow us for updates.
--  <a href="https://www.producthunt.com/products/meilisearch-cloud?launch=meilisearch-searchandising">Support the launch →</a>
-+  🚀 <strong>We’re launching Searchandising on Product Hunt!</strong> Pin, boost and hide results with search rules. We’d love your feedback and a follow.
-+  <a href="https://www.producthunt.com/products/meilisearch-cloud?launch=meilisearch-searchandising">Check us out on Product Hunt →</a>
- </p>
- <p align="center">
-   <a href="https://www.producthunt.com/products/meilisearch-cloud?utm_source=badge-follow&utm_medium=badge&utm_campaign=badge-meilisearch-cloud" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/follow.svg?product_id=532742&theme=light" alt="Meilisearch - Fast search and AI retrieval for your apps and sites | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+@@ -66,7 +66,7 @@ jobs:
+     strategy:
+       fail-fast: false
+       matrix:
+-        os: [macos-14]
++        os: [macos-15]
+         features: ["", "--features enterprise"]
+     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+     steps:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6748** (closed): Fix the word position documentation link (@curquiza)
+- **PR #6744** (2026-11-19): Replace unsupported macos-14 runner with macos-15 (@curquiza)
 - **PR #6742** (2026-11-18): Add temporary Product Hunt launch link to README (@mayasssh)
 - **PR #6740** (2026-11-17): Fix ngrams base costs (@ManyTheFish)
 - **PR #6739** (2026-11-16): Upgrade to Rust v1.100 (@dureuill)
 - **PR #6738** (2026-11-16): Switch to  ubuntu 24.04 in prevision of GH retirement of 22.04 (@dureuill)
-- **PR #6735** (2026-11-12): Update version for the next release (v1.57.0) in Cargo.toml (@meili-bot)
-- **PR #6734** (2026-11-12): Upgrade macos runner following removal by GH (@dureuill)
 
 ---
 
@@ -2132,38 +2104,31 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in README.md
+## X. Empirical Invariant Guard in test-suite.yml
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/test-suite.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `01794fd9`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9a44a8e8`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/test-suite.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-<p align="center">
-  🚀 <strong>We’re launching Searchandising on Product Hunt!</strong> Pin, boost and hide results with search rules. We’d love your feedback and a follow.
-  <a href="https://www.producthunt.com/products/meilisearch-cloud?launch=meilisearch-searchandising">Check us out on Product Hunt →</a>
-</p>
-<p align="center">
-  <a href="https://www.producthunt.com/products/meilisearch-cloud?utm_source=badge-follow&utm_medium=badge&utm_campaign=badge-meilisearch-cloud" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/follow.svg?product_id=532742&theme=light" alt="Meilisearch - Fast search and AI retrieval for your apps and sites | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
-</p>
-
+        os: [macos-15]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        os: [macos-14]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `01794fd9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9a44a8e8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -5260,3 +5260,7 @@ https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B
 # --- Automatically Discovered by AI Scout Engine [2026-11-20T14:03:37.846Z] ---
 # [HUGGINGFACE-AI-MODELS] Sentinel7/h3 (1090 score) - Verified Hugging Face Model: Sentinel7/h3 (109 likes, 0 downloads)
 https://huggingface.co/Sentinel7/h3
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-20T16:12:44.139Z] ---
+# [HUGGINGFACE-AI-MODELS] AngelSlim/Hy4-flash-GGUF (3010 score) - Verified Hugging Face Model: AngelSlim/Hy4-flash-GGUF (101 likes, 75614 download
+https://huggingface.co/AngelSlim/Hy4-flash-GGUF

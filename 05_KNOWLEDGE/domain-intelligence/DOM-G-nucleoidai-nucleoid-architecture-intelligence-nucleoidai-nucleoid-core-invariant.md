@@ -4,24 +4,24 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "64f9b9ba",
+  "source_version": "af0e46a1",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T18:20:08.047Z",
+  "timestamp": "2026-11-20T16:13:09.786Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `64f9b9ba`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T18:20:08.047Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `af0e46a1`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T16:13:09.786Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: B (Product Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 68%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NucleoidAI/Nucleoid:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T18:20:06.909Z  
+> **Harvest Timestamp**: 2026-11-20T16:13:08.551Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Logic Language for World Models 🌱🐋🌍
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 771 stars
+- **Stars / Engagement**: 772 stars
 
 ---
 
@@ -1181,7 +1181,7 @@ import * as milestone from "./lib/milestone.ts";
 import * as Matrix from "./lib/Matrix.ts";
 import object from "./object.ts";
 
-export async function declarations({ train_dataset }) {
+export async function declarations({ train }) {
   milestone.inferring_declarations();
 
   const {
@@ -1194,7 +1194,7 @@ export async function declarations({ train_dataset }) {
         content: `
           query:
           ${JSON.stringify({
-            ...train_dataset,
+            ...train,
             class_declaration: "<CLASS_DECLARATION>",
             declarations: "<DECLARATIONS>",
             output_canvas: "<OUTPUT_CANVAS>",
@@ -1220,7 +1220,7 @@ export async function declarations({ train_dataset }) {
   return { class_declaration, declarations, output_canvas };
 }
 
-export async function instances({ train_dataset }) {
+export async function instances({ train }) {
   milestone.segmenting_training_objects();
 
   const { result: instances } = await llm.generate({
@@ -1230,8 +1230,8 @@ export async function instances({ train_dataset }) {
         content: `
           query:
           ${JSON.stringify({
-            ...train_dataset,
-            dataset: train_dataset.dataset.map((dataset) => ({
+            ...train,
+            dataset: train.dataset.map((dataset) => ({
               ...dataset,
               instances: [
                 {
@@ -1258,24 +1258,19 @@ export async function instances({ train_dataset }) {
   return { instances };
 }
 
-export async function value({
-  instance_name,
-  train_dataset,
-  input_matrix,
-  instance,
-}) {
+export async function value({ instance_name, train, input_matrix, instance }) {
   milestone.constructing_instance({ instance_name });
 
   instance.instance_name = instance_name;
 
-  const { x, y, width, height, volume } = Matrix.locate(
+  const { x, y, width, height, volume } = Matrix.measure(
     instance.input_instance_matrix
   );
 
-  const orientation = await object.orientation({ train_dataset, instance });
+  const orientation = await object.orientation({ train, instance });
 
   const implementation = await object.implementation({
-    train_dataset,
+    train,
     instance,
     x,
     y,
@@ -1293,7 +1288,7 @@ export async function value({
     [
       `canvas_width = ${canvas_width}`,
       `canvas_height = ${canvas_height}`,
-      train_dataset.class_declaration,
+      train.class_declaration,
       implementation,
     ].join("\n\n")
   );
@@ -1310,10 +1305,10 @@ export async function value({
   instance.input_value = input_value;
 }
 
-export async function state(train_dataset) {
+export async function state(train) {
   const objects = [];
 
-  for (const dataset of train_dataset.dataset) {
+  for (const dataset of train.dataset) {
     const implementations = dataset.instances.map(
       ({ implementation }) => implementation
     );
@@ -1324,8 +1319,8 @@ export async function state(train_dataset) {
       [
         `canvas_width = ${canvas_width}`,
         `canvas_height = ${canvas_height}`,
-        train_dataset.class_declaration,
-        ...train_dataset.declarations,
+        train.class_declaration,
+        ...train.declarations,
         ...implementations,
         "Obj[:]",
       ].join("\n\n")
@@ -1363,7 +1358,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
   const { arc_train, test_input_matrix, test_output_matrix } =
     await arc_dataset.load(puzzle_id);
 
-  const train_dataset = {
+  const train = {
     dataset: arc_train.map(({ input, output }) => ({
       input_matrix: input,
       output_matrix: output,
@@ -1391,22 +1386,22 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
 
   const { class_declaration, declarations, output_canvas } =
     await analyzer.declarations({
-      train_dataset,
+      train,
     });
 
-  train_dataset.class_declaration = class_declaration;
-  train_dataset.declarations = declarations;
-  train_dataset.output_canvas = output_canvas;
+  train.class_declaration = class_declaration;
+  train.declarations = declarations;
+  train.output_canvas = output_canvas;
 
-  for (const dataset of train_dataset.dataset) {
+  for (const dataset of train.dataset) {
     const { instances } = await analyzer.instances({
-      train_dataset: { ...train_dataset, dataset: [dataset] },
+      train: { ...train, dataset: [dataset] },
     });
 
     for (const instance of instances) {
       await analyzer.value({
         instance_name: next_instance_name(),
-        train_dataset,
+        train,
         input_matrix: dataset.input_matrix,
         instance,
       });
@@ -1415,38 +1410,16 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     dataset.instances = instances;
   }
 
-  await analyzer.state(train_dataset);
+  await analyzer.state(train);
 
   milestone.synthesizing_training_dataset();
 
-  const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
-
-  milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
-
-  for (const dataset of synthesized_dataset) {
-    for (const instance of dataset.instances) {
-      await analyzer.value({
-        instance_name: next_instance_name(),
-        train_dataset,
-        input_matrix: dataset.input_matrix,
-        instance,
-      });
-    }
-
-    await object.state({
-      class_declaration,
-      declarations,
-      input_matrix: dataset.input_matrix,
-      input_instances: dataset.instances,
-    });
-
-    train_dataset.dataset.push(dataset);
-  }
+  await synthesizer.synthesize({ train });
 
   milestone.visualization();
 
   const { instances } = await visualizer.instances({
-    train_dataset,
+    train,
     test_input_matrix,
   });
 
@@ -1460,7 +1433,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     const instance_name: string = next_instance_name();
 
     const { implementation, input_value } = await visualizer.value({
-      train_dataset,
+      train,
       test_input_matrix,
       instance_name,
       input_instance_matrix,
@@ -1484,7 +1457,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
   for (const input_instance of input_instances) {
     const { output_instance_matrix } = await visualizer.output_instance_matrix({
       test_input_matrix,
-      train_dataset,
+      train,
       instance: input_instance,
     });
 
@@ -1506,7 +1479,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
 
   const debug = {
     puzzle_id,
-    train_dataset,
+    train,
     test_input_instances: input_instances,
     test_input_matrix,
     test_output_matrix,
@@ -1599,422 +1572,88 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `64f9b9ba` (2026-11-19)
-**Commit Message**: Group ARC milestone panels side by side
+### Incident Patch 1: `63339aa9` (2026-11-20)
+**Commit Message**: Fix synthesized dataset processing
 
-Render related grids, code, and states in responsive boxes that wrap to fit the terminal. Preserve synthesized panels on failure and document the updated layout.
+Append validated datasets after synthesis instead of modifying the training dataset during iteration. Remove redundant processing from the app.
 
-**File**: `arc/README.md` (modified, +38/-23)
+**File**: `arc/src/app.ts` (modified, +1/-23)
 ```diff
-@@ -180,36 +180,50 @@ Milestone steps and panel titles include stage-local subnumbers, such as
- milestones retain the same second number and add a third occurrence number,
- such as `1.3.1` and `1.3.2` for training-object segmentation. Continued grid
- panels keep the same full number. The declarations header includes the
--output canvas instead of adding a separate milestone. Segmented-object panels
--use `Input` and `Output` without object-number labels. After the
--`Analysis · State` table, a `Synthesizing training pairs` step precedes the
--synthesis call, and a `<count> training pairs synthesized` step then shows
--each synthesized pair's `Synthesized <n> · Input` and
--`Synthesized <n> · Output` panels, followed by the
--`Synthesized <n> · Input instance` and `Synthesized <n> · Output instance`
--panels of each of its instances. A synthesized instance's construction then
--starts with a `Constructing <instance>` step, as an extracted instance's does.
-+output canvas instead of adding a separate milestone.
-+
-+Related panels sit side by side in one box, one column per panel, each under
-+its own numbered title; a box for one instance names the instance once, in a
-+title row above the columns. Each training pair's segmented objects share one
-+box with a row per object, its `Input` beside its `Output`, such as
-+`1.4.1 Input` and `1.5.1 Output`; segmented-object panels use `Input` and
-+`Output` without object-number labels. Each constructed instance, extracted
-+or synthesized, shows its `Input crop`, `Output crop`, `Implementation` and
-+`Input state` side by side, `1.8.1` through `1.11.1` for the first one. After
-+the `Analysis · State` table, a `Synthesizing training pairs` step precedes
-+the synthesis call, and a `<count> training pairs synthesized` step then shows
-+one box titled `Synthesized <n>` per synthesized pair: its `Input` beside its
-+`Output`, then a row per instance with its `Input instance` beside its
-+`Output instance`. A synthesized instance's construction then starts with a
-+`Constructing <instance>` step, as an extracted instance's does.
- Model token usage remains attached to its active milestone. Instance-specific
--steps, crop and implementation headers, and input- and output-state headers include the
--instance name. In the visualization, each test object's synthesis shows its
--`Input crop` right before its `Implementation`, as in
--`2.6.1 Input crop · <instance>` and
--`2.7.1 Implementation · <instance>`. Its composition shows the same
-+steps, and the headers of instance panels shown on their own, include the
-+instance name. In the visualization, the segmented test objects' `Input`
-+panels sit side by side (`2.4.1`, `2.4.2`, …). Each test object's
-+`Executing the object transformation` step, such as `2.7.1`, is followed by
-+one box with its `Input crop`, `Implementation` and `Input state` side by
-+side, `2.5.1`, `2.6.1` and `2.8.1`; if that execution fails, the crop and
-+implementation still print before the error. Its composition shows the same
- `Input crop` again before its `Output crop`, under its own number, such as
--`2.12.1`, rather than continuing the synthesis count, and an `Output state`
-+`2.11.1`, rather than continuing the synthesis count, and an `Output state`
- panel right after the `Output crop`: the object's row of the
- `Visualization · State` table, before its `Placed output`.
- The visualization's output-crop header also shows the object's output
- orientation as an arrow emoji and its degrees, such as
--`2.13.1 Output crop · <instance> · ➡️ 90°`, and every input- and
-+`2.12.1 Output crop · <instance> · ➡️ 90°`, and every input- and
- output-state header, in both stages, shows the orientation of the state it
--displays the same way, such as `2.9.1 Input state · <instance> · ⬆️ 0°`. An
--orientation that is not a multiple of 45 degrees shows `🧭` instead of an
--arrow, and an object without a numeric `orientation` adds nothing to the
--header.
-+displays the same way, such as `2.8.1 Input state · ⬆️ 0°` under its
-+instance's title row. An orientation that is not a multiple of 45 degrees
-+shows `🧭` instead of an arrow, and an object without a numeric
-+`orientation` adds nothing to the header.
-+Side-by-side boxes use only the width their panels need. When a row does not
-+fit the window, code and state columns wrap first, down to 40 characters,
-+and then whole panels move onto further rows of the same box.
- Grid headers and the preview's matrix labels omit the grid's dimensions; its
- row and column coordinates show its size.
--Wide grids split into column panels rather than dropping cells. The final
-+Wide grids split into column panels rather than dropping cells; inside a
-+side-by-side box, a grid wider than the window splits into column sections
-+within its own column. The final
- comparison keeps **Expected** before **Result**, followed by an
- exact-match badge in green or a mismatch badge in red, the unchanged difference
- score rendered with keycap digit emojis and padded to at least two digits
-@@
+@@ -69,29 +69,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+ 
+   milestone.synthesizing_training_dataset();
+ 
+-  const synthesized_dataset = await synthesizer.synthesize({ train });
+-
+-  milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
+-
+-  for (const dataset of synthesized_dataset) {
+-    for (const instance of dataset.instances) {
+-      await analyzer.value({
+-        instance_name: next_instance_name(),
+-        train,
+-        input_matrix: dataset.input_matrix,
+-        instance,
+-      });
+-    }
+-
+-    await object.state({
+-      class_declaration,
+-      declarations,
+-      input_matrix: dataset.input_matrix,
+-      input_instances: dataset.instances,
+-    });
+-
+-    train.dataset.push(dataset);
+-  }
++  await synthesizer.synthesize({ train });
+ 
+   milestone.visualization();
+ 
 ```
 
-**File**: `arc/src/lib/milestone.ts` (modified, +107/-68)
+**File**: `arc/src/synthesizer.ts` (modified, +6/-4)
 ```diff
-@@ -6,7 +6,12 @@ function oriented(title: string, orientation: unknown): string {
-   return direction ? `${title} · ${direction}` : title;
- }
+@@ -4,6 +4,8 @@ import object from "./object.ts";
+ import * as nucleoid from "./lib/nucleoid.ts";
  
-+let synthesized:
-+  | { instance_name: string; panels: terminal.Panel[] }
-+  | undefined;
+ async function synthesize({ train }) {
++  const validated_dataset = [];
 +
- export function start({ version, puzzle_id, train, test_input_matrix }) {
-+  synthesized = undefined;
-   terminal.header({ version, puzzle_id });
-   terminal.puzzle({ train, testInput: test_input_matrix });
- }
-@@ -35,16 +40,19 @@ export function segmenting_training_objects() {
- }
+   for (const dataset of train.dataset) {
+     const synthesized_dataset = { instances: [] };
  
- export function training_objects_segmented({ instances }) {
--  instances.forEach((instance) => {
--    terminal.grid("Input", instance.input_instance_matrix, {
--      key: "training_input",
--      loop: true,
--    });
--    terminal.grid("Output", instance.output_instance_matrix, {
--      key: "training_output",
--      loop: true,
--    });
--  });
-+  terminal.panels(
-+    "",
-+    instances.map(({ input_instance_matrix, output_instance_matrix }) => [
-+      terminal.gridPanel("Input", input_instance_matrix, {
-+        key: "training_input",
-+        loop: true,
-+      }),
-+      terminal.gridPanel("Output", output_instance_matrix, {
-+        key: "training_output",
-+        loop: true,
-+      }),
-+    ])
-+  );
- }
+@@ -67,7 +69,7 @@ async function synthesize({ train }) {
+         output_instance_matrix
+       );
  
- export function synthesizing_training_dataset() {
-@@ -55,25 +63,30 @@ export function training_dataset_synthesized({ dataset }) {
-   terminal.step(`${dataset.length} training pairs synthesized`);
-   dataset.forEach(
-     ({ input_matrix, output_matrix, instances }, index: number) => {
--      const pair: string = `Synthesized ${index + 1}`;
--      terminal.grid(`${pair} · Input`, input_matrix, {
--        key: "synthesized_input",
--        loop: true,
--      });
--      terminal.grid(`${pair} · Output`, output_matrix, {
--        key: "synthesized_output",
--        loop: true,
--      });
--      instances.forEach(({ input_instance_matrix, output_instance_matrix }) => {
--        terminal.grid(`${pair} · Input instance`, input_instance_matrix, {
--          key: "synthesized_input_instance",
--          loop: true,
--        });
--        terminal.grid(`${pair} · Output instance`, output_instance_matrix, {
--          key: "synthesized_output_instance",
--          loop: true,
--        });
--      });
-+      terminal.panels(`Synthesized ${index + 1}`, [
-+        [
-+          terminal.gridPanel("Input", input_matrix, {
-+            key: "synthesized_input",
-+            loop: true,
-+          }),
-+          terminal.gridPanel("Output", output_matrix, {
-+            key: "synthesized_output",
-+            loop: true,
-+          }),
-+        ],
-+        ...instances.map(
-+          ({ input_instance_matrix, output_instance_matrix }) => [
-+            terminal.gridPanel("Input instance", input_instance_matrix, {
-+              key: "synthesized_input_instance",
-+              loop: true,
-+            }),
-+            terminal.gridPanel("Output instance", output_instance_matrix, {
-+              key: "synthesized_output_instance",
-+              loop: true,
-+            }),
-+          ]
-+        ),
-+      ]);
+-      const implementation = await object.implementation({
++      instance.implementation = await object.implementation({
+         train,
+         instance: synthesized_instance,
+         x,
+@@ -78,8 +80,6 @@ async function synthesize({ train }) {
+         volume,
+       });
+ 
+-      instance.implementation = implementation;
+-
+       if (
+         output_value.x === x &&
+         output_value.y === y &&
+@@ -103,9 +103,11 @@ async function synthesize({ train }) {
+         [[0]]
+       );
+ 
+-      train.dataset.push(synthesized_dataset);
++      validated_dataset.push(synthesized_dataset);
      }
-   );
- }
-@@ -106,25 +119,27 @@ export function instance_constructed({
-   output_instance_matrix,
-   input_value,
- }) {
--  terminal.grid(
--    `Input crop · ${instance_name}`,
--    Matrix.crop(input_instance_matrix),
--    { key: "input_crop", loop: true }
--  );
--  terminal.grid(
--    `Output crop · ${instance_name}`,
--    Matrix.crop(output_instance_matrix),
--    { key: "output_crop", loop: true }
--  );
--  terminal.code(`Implementation · ${instance_name}`, implementation, {
--    key: "implementation",
--    loop: true,
--  });
--  terminal.value(
--    oriented(`Input state · ${instance_name}`, input_value?.orientation),
--    input_value,
--    { key: "input_state", loop: true }
--  );
-+  terminal.panels(instance_name, [
-+    [
-+      terminal.gridPanel("Input crop", Matrix.crop(input_instance_matrix), {
-+        key: "input_crop",
-+        loop: true,
-+      }),
-+      terminal.gridPanel("Output crop", Matrix.crop(output_instance_matrix), {
-+        key: "output_crop",
-+        loop: true,
-+      }),
-+      terminal.codePanel("Implementation", implementation, {
-+        key: "implementation",
-+        loop: true,
-+      }),
-+      terminal.valuePanel(
-+        oriented("Input state", input_value?.orientation),
-+        input_value,
-+        { key: "input_state", loop: true }
-+      ),
-+    ],
-+  ]);
- }
- 
- export function state({
-@@ -161,12 +176,14 @@ export function segmenting_test_input({ test_input_matrix }) {
- 
- export function test_input_segmented({ instances }) {
-   terminal.step(`${instances.length} objects identified`);
--  instances.forEach(({ input_instance_matrix }) => {
--    terminal.grid("Input", input_instance_matrix, {
--      key: "test_input_object",
--      loop: true,
--    });
--  });
-+  terminal.panels("", [
-+    instances.map(({ input_instance_matrix }) =>
-+      terminal.gridPanel("Input", input_instance_matrix, {
-+        key: "test_input_object",
-+        loop: true,
-+      })
-+  
-```
-
-**File**: `arc/src/lib/terminal.ts` (modified, +279/-21)
-```diff
-@@ -84,8 +84,12 @@ function frame(text: string): string {
-   return styleText("gray", text);
- }
- 
-+function expand(text: string): string {
-+  return String(text).replace(/\t/g, "    ");
-+}
-+
- function wrap(text: string, columns: number) {
--  return wrapAnsi(String(text).replace(/\t/g, "    "), Math.max(1, columns), {
-+  return wrapAnsi(expand(text), Math.max(1, columns), {
-     hard: true,
-     trim: false,
-   }).split("\n");
-@@ -209,32 +213,34 @@ export function step(message: string, milestone?: Milestone) {
    }
++
++  train.dataset.push(...validated_dataset);
  }
  
--export function code(title: string, source, milestone?: Milestone) {
-+function codeLines(source): string[] {
-   const text: string = Array.isArray(source)
-     ? source.join("\n\n")
-     : String(source);
--  block(
--    numbered(title, milestone),
--    stripVTControlCharacters(text)
--      .split("\n")
--      .map((line: string) => styleText("whiteBright", line))
--  );
-+  return stripVTControlCharacters(text)
-+    .split("\n")
-+    .map((line: string) => styleText("whiteBright", line));
-+}
-+
-+function valueLines(data): string[] {
-+  return inspect(data, {
-+    colors: false,
-+    depth: null,
-+    compact: false,
-+    breakLength: Math.max(8, width() - 6),
-+    maxArrayLength: null,
-+    maxStringLength: null,
-+  })
-+    .split("\n")
-+    .map((line: string) => styleText("whiteBright", line));
-+}
-+
-+export function code(title: string, source, milestone?: Milestone) {
-+  block(numbered(title, milestone), codeLines(source));
- }
- 
- export function value(title: string, data, milestone?: Milestone) {
--  block(
--    numbered(title, milestone),
--    inspect(data, {
--      colors: false,
--      depth: null,
--      compact: false,
--      breakLength: Math.max(8, width() - 6),
--      maxArrayLength: null,
--      maxStringLength: null,
--    })
--      .split("\n")
--      .map((line: string) => styleText("whiteBright", line))
--  );
-+  block(numbered(title, milestone), valueLines(data));
- }
- 
- function span(widths): number {
-@@ -416,6 +422,258 @@ export function grid(title: string, matrix, milestone?: Milestone) {
-   }
- }
- 
-+export type Panel =
-+  | { kind: "grid"; title: string; matrix: number[][] }
-+  | { kind: "text"; title: string; lines: string[] };
-+
-+const textMinimum: number = 40;
-+const titleMinimum: number = 32;
-+const panelGap: number = 3;
-+
-+export function gridPanel(title: string, matrix, milestone?: Milestone): Panel {
-+  return { kind: "grid", title: numbered(title, milestone), matrix };
-+}
-+
-+export function codePanel(title: string, source, milestone?: Milestone): Panel {
-+  return {
-+    kind: "text",
-+    title: numbered(title, milestone),
-+    lines: codeLines(source),
-+  };
-+}
-+
-+export function valuePanel(title: string, data, milestone?: Milestone): Panel {
-+  return {
-+    kind: "text",
-+    title: numbered(title, milestone),
-+    lines: valueLines(data),
-+  };
-+}
-+
-+function gridWidth(matrix): number {
-+  const rows: number = matrix.length;
-+  const columns: number = Math.max(0, ...matrix.map((row) => row.length));
-+  return rows === 0 || columns === 0
-+    ? stringWidth("(empty)")
-+    : String(rows - 1).length + 2 + columns * 3;
-+}
-+
-+function gridLines(matrix, available: number, colored: boolean): string[] {
-+  const rows: number = matrix.length;
-+  const columns: number = Math.max(0, ...matrix.map((row) => row.length));
-+  if (rows === 0 || columns === 0) {
-+    return [styleText("gray", "(empty)")];
-+  }
-+  const chunk: number = Math.max(
-+    1,
-+    Math.floor((available - String(rows - 1).length - 2) / 3)
-+  );
-+  if (columns <= chunk) {
-+    return matrixLines(matrix, 0, columns, colored);
-+  }
-+  return Array.from({ length: Math.ceil(columns / chunk) }, (_, index) => {
-+    const start: number = index * chunk;
-+    const end: number = Math.min(columns, start + chunk);
-+    return [
-+      ...(index > 0 ? [""] : []),
-+      styleText("gray", `Columns ${start}–${end - 1}`),
-+      "",
-+      ...matrixLines(matrix, start, end, colored),
-+    ];
-+  }).flat();
-+}
-+
-+function panelContent(panel: Panel): number {
-+  return panel.kind === "grid"
-+    ? gridWidth(panel.matrix)
-+    : Math.max(
-+        0,
-+        ...panel.lines.map((line: string) => stringWidth(expand(line)))
-+      );
-+}
-+
-+function panelNatural(panel: Panel): number {
-+  return Math.max(panelContent(panel), stringWidth(panel.title));
-+}
-+
-+function panelMinimum(panel: Panel, available: number): number {
-+  const content: number = panelContent(panel);
-+  return Math.min(
-+    available,
-+    Math.max(
-+      panel.kind === "grid" ? content : Math.min(content, textMinimum),
-+      Math.min(stringWidth(panel.title), titleMinimum)
-+    )
-+  );
-+}
-+
-+function panelSpan(widths: number[]): number {
-+  return widths.reduce(
-+    (sum: number, cell: number, index: number) =>
-+      sum + cell + (index > 0 ? panelGap : 0),
-+    0
-+  );
-+}
-+
-+function panelRows(panels: Panel[], available: number): Panel[][] {
-+  const rows: Panel[][] = [];
-+  let used: number = 0;
-+  for (const panel of panels) {
-+    const minimum: number
+ export default { synthesize };
 ```
 
 #### Recent Merged Pull Requests:
@@ -2043,65 +1682,53 @@ Render related grids, code, and states in responsive boxes that wrap to fit the 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Group ARC milestone panels side by side
+## X. synthesized dataset processing
 
 **RULE**:
-When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/src/app.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `64f9b9ba`: Group ARC milestone panels side by side. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `63339aa9`: synthesized dataset processing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/app.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-output canvas instead of adding a separate milestone.
-
-Related panels sit side by side in one box, one column per panel, each under
-its own numbered title; a box for one instance names the instance once, in a
-title row above the columns. Each training pair's segmented objects share one
-box with a row per object, its `Input` beside its `Output`, such as
-`1.4.1 Input` and `1.5.1 Output`; segmented-object panels use `Input` and
-`Output` without object-number labels. Each constructed instance, extracted
-or synthesized, shows its `Input crop`, `Output crop`, `Implementation` and
-`Input state` side by side, `1.8.1` through `1.11.1` for the first one. After
-the `Analysis · State` table, a `Synthesizing training pairs` step precedes
-the synthesis call, and a `<count> training pairs synthesized` step then shows
-one box titled `Synthesized <n>` per synthesized pair: its `Input` beside its
-`Output`, then a row per instance with its `Input instance` beside its
-`Output instance`. A synthesized instance's construction then starts with a
-`Constructing <instance>` step, as an extracted instance's does.
-steps, and the headers of instance panels shown on their own, include the
-instance name. In the 
+  await synthesizer.synthesize({ train });
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-output canvas instead of adding a separate milestone. Segmented-object panels
-use `Input` and `Output` without object-number labels. After the
-`Analysis · State` table, a `Synthesizing training pairs` step precedes the
-synthesis call, and a `<count> training pairs synthesized` step then shows
-each synthesized pair's `Synthesized <n> · Input` and
-`Synthesized <n> · Output` panels, followed by the
-`Synthesized <n> · Input instance` and `Synthesized <n> · Output instance`
-panels of each of its instances. A synthesized instance's construction then
-starts with a `Constructing <instance>` step, as an extracted instance's does.
-steps, crop and implementation headers, and input- and output-state headers include the
-instance name. In the visualization, each test object's synthesis shows its
-`Input crop` right before its `Implementation`, as in
-`2.6.1 Input crop · <instance>` and
-`2.7.1 Implementation · <instance>`. Its composition shows the same
-`2.12.1`, rather than continuing the synthesis count, and an `Output state`
-`2.13.1 Output crop · <instance> · ➡️ 90°`, and every input- and
-displays the same way, such as `2.9.1 Input state · <instance> · ⬆️ 0°`. An
-orientation that is not a multip
+  const synthesized_dataset = await synthesizer.synthesize({ train });
+
+  milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
+
+  for (const dataset of synthesized_dataset) {
+    for (const instance of dataset.instances) {
+      await analyzer.value({
+        instance_name: next_instance_name(),
+        train,
+        input_matrix: dataset.input_matrix,
+        instance,
+      });
+    }
+
+    await object.state({
+      class_declaration,
+      declarations,
+      input_matrix: dataset.input_matrix,
+      input_instances: dataset.instances,
+    });
+
+    train.dataset.push(dataset);
+  }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `64f9b9ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `63339aa9` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

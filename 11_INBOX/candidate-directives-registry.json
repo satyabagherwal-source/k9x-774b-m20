@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T15:44:11.237Z",
+  "last_updated": "2026-11-20T16:14:34.965Z",
   "directives": [
     {
       "id": "CD-001",
@@ -29066,14 +29066,14 @@
       "staged_date": "2026-11-18"
     },
     {
-      "id": "CD-EMWM",
+      "id": "CD-J8WL",
       "directive_title": "Bump the all-dependencies group with 5 updates",
       "source_repo": "emberstack-kubernetes-reflector-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-EMWM-bump-the-all-dependencies-group-with-5-updates.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-J8WL-bump-the-all-dependencies-group-with-5-updates.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-18",
+      "date_staged": "2026-11-20",
       "domain_letter": "G"
     },
     {
@@ -38012,6 +38012,68 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-23AD30-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-HB8O",
+      "directive_title": "close idle HTTP connections",
+      "source_repo": "DefGuard/defguard",
+      "source_commit": "05bc57ba",
+      "staged_file": "11_INBOX/candidate-directives/CD-HB8O-close-idle-http-connections.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-HCYW",
+      "directive_title": "Empirical Invariant Guard in test-suite.yml",
+      "source_repo": "meilisearch/meilisearch",
+      "source_commit": "9a44a8e8",
+      "staged_file": "11_INBOX/candidate-directives/CD-HCYW-empirical-invariant-guard-in-test-suite-yml.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-HF6H",
+      "directive_title": "synthesized dataset processing",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "af0e46a1",
+      "staged_file": "11_INBOX/candidate-directives/CD-HF6H-synthesized-dataset-processing.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-J8AK",
+      "directive_title": "avoid decoding cached customer info on the main thread",
+      "source_repo": "revenuecat-purchases-ios-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-J8AK-avoid-decoding-cached-customer-info-on-the-main-thread.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-C4397F",
+      "directive_title": "avoid decoding cached customer info on the main thread",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "revenuecat-purchases-ios",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C4397F-avoid-decoding-cached-customer-info-on-t.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-0FDD8F",
+      "directive_title": "Bump the all-dependencies group with 5 updates",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "emberstack-kubernetes-reflector",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0FDD8F-bump-the-all-dependencies-group-with-5-u.md",
       "staged_date": "2026-11-20"
     }
   ]

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T15:44:11.678Z",
+  "last_updated": "2026-11-20T16:14:35.532Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T12:15:57.033Z",
@@ -393,7 +393,7 @@
       "staged_for_review": 1
     },
     "emberstack-kubernetes-reflector-learnings.md": {
-      "processed_at": "2026-11-18T11:55:42.614Z",
+      "processed_at": "2026-11-20T16:14:34.708Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1478,7 +1478,7 @@
       "staged_for_review": 0
     },
     "revenuecat-purchases-ios-learnings.md": {
-      "processed_at": "2026-11-16T15:00:50.794Z",
+      "processed_at": "2026-11-20T16:14:33.793Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3591,9 +3591,14 @@
       "processed_at": "2026-11-20T14:07:33.642Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-angelslim-hy4-flash-gguf-learnings.md": {
+      "processed_at": "2026-11-20T16:14:33.248Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2547,
-  "total_canonical_promoted": 426,
-  "total_staged_for_review": 1932
+  "total_dossiers_evaluated": 2550,
+  "total_canonical_promoted": 427,
+  "total_staged_for_review": 1934
 }

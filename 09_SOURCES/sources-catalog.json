@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "8eed95c3",
+    "sourceVersion": "af0e46a1",
     "license": "Apache-2.0",
-    "contentHash": "974660b35a940143b5d583a7f01fb7729d219a1bee741794b90bdf5eeb8b1bac",
-    "lastHarvestedAt": "2026-11-20T14:52:51.944Z",
+    "contentHash": "d1290f7ead957efee84884e64f07f745d977a3ac753d673baa003b79253fb0fd",
+    "lastHarvestedAt": "2026-11-20T16:13:09.570Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2443,10 +2443,10 @@
     "repository": "DefGuard/defguard",
     "platform": "github",
     "sourceUrl": "https://github.com/DefGuard/defguard",
-    "sourceVersion": "9830b49b",
+    "sourceVersion": "05bc57ba",
     "license": "NOASSERTION",
-    "contentHash": "9a9ac3f6811ad73bb29edd3791ee514d4c6fbeba82db30f019fae3dc7e816b68",
-    "lastHarvestedAt": "2026-11-19T19:12:06.355Z",
+    "contentHash": "3b9f44d927270ffaf775fd33ed08b13ef245e44669194b9f86fa84dbc74dacee",
+    "lastHarvestedAt": "2026-11-20T16:13:04.436Z",
     "learningId": "learn-github-defguard-defguard"
   },
   "tamagui-tamagui": {
@@ -6423,10 +6423,10 @@
     "repository": "meilisearch/meilisearch",
     "platform": "github",
     "sourceUrl": "https://github.com/meilisearch/meilisearch",
-    "sourceVersion": "01794fd9",
+    "sourceVersion": "9a44a8e8",
     "license": "NOASSERTION",
-    "contentHash": "6c9e0fd78d37e5911842ce58955eeb0447b0d9f36b4fd968c385ea1cbe54dbf2",
-    "lastHarvestedAt": "2026-11-19T09:43:53.660Z",
+    "contentHash": "7f924d339f3f9b63f295bf5efb030ff89c3806bb4d483ad81aa9a8d4c444b27b",
+    "lastHarvestedAt": "2026-11-20T16:13:06.705Z",
     "learningId": "learn-github-meilisearch-meilisearch"
   },
   "pacocoursey-cmdk": {
@@ -7083,10 +7083,10 @@
     "repository": "emberstack/kubernetes-reflector",
     "platform": "github",
     "sourceUrl": "https://github.com/emberstack/kubernetes-reflector",
-    "sourceVersion": "dd9d0499",
+    "sourceVersion": "b26ca679",
     "license": "MIT",
-    "contentHash": "31371024d31402ce00c21311a8600f6e74587088d70b44cd58fb109795a847b1",
-    "lastHarvestedAt": "2026-11-18T11:55:00.687Z",
+    "contentHash": "73d0278ec6859a7a6f569beed61b667f19ddc96d5951d0da3b11aa87232e6391",
+    "lastHarvestedAt": "2026-11-20T16:13:00.930Z",
     "learningId": "learn-github-emberstack-kubernetes-reflector"
   },
   "arxanas-git-branchless": {
@@ -9213,10 +9213,10 @@
     "repository": "RevenueCat/purchases-ios",
     "platform": "github",
     "sourceUrl": "https://github.com/RevenueCat/purchases-ios",
-    "sourceVersion": "547f252e",
+    "sourceVersion": "aa9fb54b",
     "license": "MIT",
-    "contentHash": "5743b956ceb725c6038815cfdcbb6b2973cd827743c6d9911ffe60fcaac04390",
-    "lastHarvestedAt": "2026-11-16T15:00:39.995Z",
+    "contentHash": "a482853479dda930de02970da1c44c72fbfea515b332004977c8e5110c5c7a51",
+    "lastHarvestedAt": "2026-11-20T16:13:57.724Z",
     "learningId": "learn-github-revenuecat-purchases-ios"
   },
   "hf-reflection-beam-1.0-501b-a23b": {
@@ -13068,5 +13068,15 @@
     "contentHash": "6df8bdba548e4e4a652f923d08b793caf630ae0df1f3c9f8392a8bef44f1b522",
     "lastHarvestedAt": "2026-11-20T14:07:29.636Z",
     "learningId": "learn-huggingface-sentinel7-h3"
+  },
+  "hf-angelslim-hy4-flash-gguf": {
+    "repository": "AngelSlim/Hy4-flash-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/AngelSlim/Hy4-flash-GGUF",
+    "sourceVersion": "hf-angelslim-hy4-flash-gguf",
+    "license": "Open-Source",
+    "contentHash": "9605a5b4cc1edb37f43d288f8fe159c5f08c0d09d7b1ed2e5525a20fce37827e",
+    "lastHarvestedAt": "2026-11-20T16:13:59.919Z",
+    "learningId": "learn-huggingface-angelslim-hy4-flash-gguf"
   }
 }

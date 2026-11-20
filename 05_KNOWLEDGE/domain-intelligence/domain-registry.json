@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T15:44:11.389Z",
-  "total_records": 2143,
+  "last_updated": "2026-11-20T16:14:35.152Z",
+  "total_records": 2147,
   "domains": {
     "A": {
       "total": 17,
@@ -58,7 +58,7 @@
       ]
     },
     "D": {
-      "total": 862,
+      "total": 865,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -921,7 +921,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy4-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-microsoft-aion-1-0-instruct-2-3b-core-invariants",
         "DOM-D-6F9E9680",
-        "domain_intelligence-research-knowledge-intelligence-hf-microsoft-aion-1-0-instruct-2-3b-learnings-co"
+        "domain_intelligence-research-knowledge-intelligence-hf-microsoft-aion-1-0-instruct-2-3b-learnings-co",
+        "domain_intelligence-research-knowledge-intelligence-angelslim-hy4-flash-gguf-core-invariants",
+        "DOM-D-981F2664",
+        "domain_intelligence-research-knowledge-intelligence-hf-angelslim-hy4-flash-gguf-learnings-core-invar"
       ]
     },
     "E": {
@@ -1386,7 +1389,7 @@
       ]
     },
     "H": {
-      "total": 502,
+      "total": 503,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1889,7 +1892,8 @@
         "domain_intelligence-technical-construction-intelligence-rocketride-org-rocketride-server-core-invari",
         "domain_intelligence-technical-construction-intelligence-rocketride-org-rocketride-server-learnings-c",
         "domain_intelligence-technical-construction-intelligence-grpc-grpc-rust-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-grpc-grpc-rust-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-grpc-grpc-rust-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-defguard-defguard-core-invariants"
       ]
     },
     "I": {
@@ -8903,8 +8907,8 @@
       "title": "Technical Construction Intelligence: meilisearch/meilisearch Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meilisearch-meilisearch-technical-construction-intelligence-meilisearch-meilisea.md",
       "repository": "meilisearch/meilisearch",
-      "content_hash": "812033f4dbc5a2b79c2b0b1db97c9e844a8b2a453d7daba530a65fcafcde0d4a",
-      "created_at": "2026-11-19T09:43:53.996Z"
+      "content_hash": "d0cbcd0bb5700485c81ae06612d7cf44bb41ce31fa20d72aebcaaba849c6b930",
+      "created_at": "2026-11-20T16:13:07.089Z"
     },
     "DOM-D-F5004225": {
       "record_id": "DOM-D-F5004225",
@@ -15222,8 +15226,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "8fbc6f23d95f267084783645d3221c598b9208168d97e0b7773143a0c132b083",
-      "created_at": "2026-11-19T18:20:08.191Z"
+      "content_hash": "3b316ed44ea4abca48dc0fa92619eeebdb35145a196f96d7338a22443b726ecb",
+      "created_at": "2026-11-20T16:13:09.952Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -24028,8 +24032,8 @@
       "title": "Architecture Intelligence: RevenueCat/purchases-ios Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-revenuecat-purchases-ios-architecture-intelligence-revenuecat-purchases-ios-core.md",
       "repository": "RevenueCat/purchases-ios",
-      "content_hash": "ee954f7cda354c897215587bc92a90145a2a62622d3a0fbe6f3b9b3598bac386",
-      "created_at": "2026-11-16T15:00:40.274Z"
+      "content_hash": "fc27663a37855d4c69cbd74b38d9592fb3d5b9480b4f1fb848bd53a1143450f6",
+      "created_at": "2026-11-20T16:13:58.102Z"
     },
     "domain_intelligence-content-information-intelligence-facebook-folly-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-facebook-folly-learnings-core-invariants",
@@ -24046,8 +24050,8 @@
       "title": "Architecture Intelligence: revenuecat-purchases-ios-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-revenuecat-purchases-ios-learnings-architecture-intelligence-revenuecat-purchase.md",
       "repository": "revenuecat-purchases-ios-learnings",
-      "content_hash": "1be7fd01b40e89ae2ae140d5107611aea3ba791ff33dbc8ce0954fac3ca86e61",
-      "created_at": "2026-11-16T15:00:51.077Z"
+      "content_hash": "e2d3976728bab087e6636f3f67fa1cf74ab541bf8c9926ee295189cf0c0a72b8",
+      "created_at": "2026-11-20T16:14:34.347Z"
     },
     "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants",
@@ -28543,8 +28547,8 @@
       "title": "Architecture Intelligence: emberstack/kubernetes-reflector Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-emberstack-kubernetes-reflector-architecture-intelligence-emberstack-kubernetes-.md",
       "repository": "emberstack/kubernetes-reflector",
-      "content_hash": "e54d36783a8f3f672c75cb8b4f61d672a8b0e07a94e7b133c75746c842e7754e",
-      "created_at": "2026-11-18T11:55:00.998Z"
+      "content_hash": "85bad94e2fb216b00b9a3c01c5bc365d925705b758a3ef80954b2465045f3d88",
+      "created_at": "2026-11-20T16:13:01.304Z"
     },
     "domain_intelligence-design-intelligence-nanbeige-nanbeige4-3-33b-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-nanbeige-nanbeige4-3-33b-core-invariants",
@@ -28604,8 +28608,8 @@
       "title": "Architecture Intelligence: emberstack-kubernetes-reflector-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-emberstack-kubernetes-reflector-learnings-architecture-intelligence-emberstack-k.md",
       "repository": "emberstack-kubernetes-reflector-learnings",
-      "content_hash": "6951df99defcbb266747ee4794a890d001e647824d769507813f98751e69302b",
-      "created_at": "2026-11-18T11:55:43.006Z"
+      "content_hash": "f0b30b072c302519b0c685a1c9bace53058a918bd2bfe871e011d52cc69c72fe",
+      "created_at": "2026-11-20T16:14:35.152Z"
     },
     "domain_intelligence-research-knowledge-intelligence-briaai-fibo-2-0-dev-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-briaai-fibo-2-0-dev-core-invariants",
@@ -36067,6 +36071,75 @@
       "repository": "vcaesar-riot-learnings",
       "content_hash": "ebe5f9ad77434dd5ae634158464878b191647dbd081fe4cd3ff6bbab14c83d42",
       "created_at": "2026-11-20T15:44:10.503Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-defguard-defguard-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-defguard-defguard-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: DefGuard/defguard Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-defguard-defguard-technical-construction-intelligence-defguard-defguard-core-inv.md",
+      "repository": "DefGuard/defguard",
+      "content_hash": "3586fb6ddde45bb0266b9bddf412b34fcd41dcbbd1a7bd08ed330a7dcfb80172",
+      "created_at": "2026-11-20T16:13:04.844Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-angelslim-hy4-flash-gguf-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-angelslim-hy4-flash-gguf-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: AngelSlim/Hy4-flash-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-angelslim-hy4-flash-gguf-research-knowledge-intelligence-angelslim-hy4-flash-.md",
+      "repository": "AngelSlim/Hy4-flash-GGUF",
+      "content_hash": "0032a3fd2681ea4bb4a54ffd017301e9c14290a95e5f0db1a4f8c032f6f4e4c3",
+      "created_at": "2026-11-20T16:14:00.129Z"
+    },
+    "DOM-D-981F2664": {
+      "record_id": "DOM-D-981F2664",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): AngelSlim/Hy4-flash-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-angelslim-hy4-flash-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/AngelSlim/Hy4-flash-GGUF](https://huggingface.co/AngelSlim/Hy4-flash-GGUF))  \n> **Source Version**: `hf-angelslim`  \n> **License**: Open-Source  \n> *",
+      "content_hash": "cdae2e8bf200cb7fe618fdf28ca5df408c949de9648c3cb252e539305897085b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-angelslim-hy4-flash-gguf-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-angelslim-hy4-flash-gguf-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "provenance": {
+        "source_uri": "project://hf-angelslim-hy4-flash-gguf/hf-angelslim-hy4-flash-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T16:14:02.964Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-angelslim-hy4-flash-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-angelslim-hy4-flash-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T16:14:33.213Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-angelslim-hy4-flash-gguf-learnings-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-angelslim-hy4-flash-gguf-learnings-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-angelslim-hy4-flash-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-angelslim-hy4-flash-gguf-learnings-research-knowledge-intelligence-hf-angelsl.md",
+      "repository": "hf-angelslim-hy4-flash-gguf-learnings",
+      "content_hash": "42ee8dced43d9c69fd1b6f701c4f03f04581a8f5bc9edb33a6236d42e213b42c",
+      "created_at": "2026-11-20T16:14:33.540Z"
     }
   }
 }

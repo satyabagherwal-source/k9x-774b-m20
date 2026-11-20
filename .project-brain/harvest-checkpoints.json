@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T15:44:05.762Z",
+  "last_updated": "2026-11-20T16:13:59.928Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "974660b35a940143b5d583a7f01fb7729d219a1bee741794b90bdf5eeb8b1bac",
-      "verified_at": "2026-11-20T14:52:51.954Z",
+      "content_hash": "d1290f7ead957efee84884e64f07f745d977a3ac753d673baa003b79253fb0fd",
+      "verified_at": "2026-11-20T16:13:09.579Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T14:52:51.954Z"
+      "last_updated": "2026-11-20T16:13:09.579Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -3801,14 +3801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-defguard-defguard",
-      "content_hash": "9a9ac3f6811ad73bb29edd3791ee514d4c6fbeba82db30f019fae3dc7e816b68",
-      "verified_at": "2026-11-19T19:12:06.363Z",
+      "content_hash": "3b9f44d927270ffaf775fd33ed08b13ef245e44669194b9f86fa84dbc74dacee",
+      "verified_at": "2026-11-20T16:13:04.446Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T19:12:06.363Z"
+      "last_updated": "2026-11-20T16:13:04.446Z"
     },
     "tamagui/tamagui": {
       "repository": "tamagui/tamagui",
@@ -9726,14 +9726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meilisearch-meilisearch",
-      "content_hash": "6c9e0fd78d37e5911842ce58955eeb0447b0d9f36b4fd968c385ea1cbe54dbf2",
-      "verified_at": "2026-11-19T09:43:53.668Z",
+      "content_hash": "7f924d339f3f9b63f295bf5efb030ff89c3806bb4d483ad81aa9a8d4c444b27b",
+      "verified_at": "2026-11-20T16:13:06.714Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T09:43:53.668Z"
+      "last_updated": "2026-11-20T16:13:06.714Z"
     },
     "dip/cmdk": {
       "repository": "dip/cmdk",
@@ -10671,14 +10671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-emberstack-kubernetes-reflector",
-      "content_hash": "31371024d31402ce00c21311a8600f6e74587088d70b44cd58fb109795a847b1",
-      "verified_at": "2026-11-18T11:55:00.694Z",
+      "content_hash": "73d0278ec6859a7a6f569beed61b667f19ddc96d5951d0da3b11aa87232e6391",
+      "verified_at": "2026-11-20T16:13:00.939Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T11:55:00.694Z"
+      "last_updated": "2026-11-20T16:13:00.939Z"
     },
     "arxanas/git-branchless": {
       "repository": "arxanas/git-branchless",
@@ -13866,14 +13866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-revenuecat-purchases-ios",
-      "content_hash": "5743b956ceb725c6038815cfdcbb6b2973cd827743c6d9911ffe60fcaac04390",
-      "verified_at": "2026-11-16T15:00:40.003Z",
+      "content_hash": "a482853479dda930de02970da1c44c72fbfea515b332004977c8e5110c5c7a51",
+      "verified_at": "2026-11-20T16:13:57.733Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T15:00:40.003Z"
+      "last_updated": "2026-11-20T16:13:57.733Z"
     },
     "reflection/Beam-1.0-501B-A23B": {
       "repository": "reflection/Beam-1.0-501B-A23B",
@@ -19694,6 +19694,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-20T14:07:29.647Z"
+    },
+    "AngelSlim/Hy4-flash-GGUF": {
+      "repository": "AngelSlim/Hy4-flash-GGUF",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-angelslim-hy4-flash-gguf",
+      "content_hash": "9605a5b4cc1edb37f43d288f8fe159c5f08c0d09d7b1ed2e5525a20fce37827e",
+      "verified_at": "2026-11-20T16:13:59.927Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-20T16:13:59.927Z"
     }
   },
   "repos": {

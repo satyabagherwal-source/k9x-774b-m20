@@ -11600,3 +11600,10 @@ Every entry in this ledger must capture:
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `b2da1887` | Multi-dimensional audit evidence | 2026-11-20T15:35:21.612Z |
 | `learn-github-archivebox-archivebox` | `https://github.com/ArchiveBox/ArchiveBox` | `5254facc` | Multi-dimensional audit evidence | 2026-11-20T15:43:55.652Z |
 | `learn-github-vcaesar-riot` | `https://github.com/vcaesar/riot` | `b565db8d` | Multi-dimensional audit evidence | 2026-11-20T15:44:05.753Z |
+| `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `b26ca679` | Multi-dimensional audit evidence | 2026-11-20T16:13:00.930Z |
+| `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `05bc57ba` | Multi-dimensional audit evidence | 2026-11-20T16:13:04.436Z |
+| `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `9a44a8e8` | Multi-dimensional audit evidence | 2026-11-20T16:13:06.705Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `af0e46a1` | Multi-dimensional audit evidence | 2026-11-20T16:13:09.570Z |
+| `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `aa9fb54b` | Multi-dimensional audit evidence | 2026-11-20T16:13:57.724Z |
+| `learn-huggingface-angelslim-hy4-flash-gguf` | `https://huggingface.co/AngelSlim/Hy4-flash-GGUF` | `hf-angelsl` | Multi-dimensional audit evidence | 2026-11-20T16:13:59.919Z |
+| `learn-dom-d-981f2664` | `project://hf-angelslim-hy4-flash-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-angelslim-hy4-flash-gguf-learnings.md` | 2026-11-20T16:14:33.248Z |

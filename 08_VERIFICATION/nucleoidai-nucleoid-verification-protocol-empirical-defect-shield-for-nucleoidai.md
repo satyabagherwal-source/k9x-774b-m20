@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "8eed95c3",
+  "source_version": "af0e46a1",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T14:52:52.208Z",
+  "timestamp": "2026-11-20T16:13:09.786Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `8eed95c3`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T14:52:52.208Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `af0e46a1`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T16:13:09.786Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `8eed95c3`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `af0e46a1`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T14:52:51.106Z  
+> **Harvest Timestamp**: 2026-11-20T16:13:08.551Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1411,29 +1411,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
 
   milestone.synthesizing_training_dataset();
 
-  const synthesized_dataset = await synthesizer.synthesize({ train });
-
-  milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
-
-  for (const dataset of synthesized_dataset) {
-    for (const instance of dataset.instances) {
-      await analyzer.value({
-        instance_name: next_instance_name(),
-        train,
-        input_matrix: dataset.input_matrix,
-        instance,
-      });
-    }
-
-    await object.state({
-      class_declaration,
-      declarations,
-      input_matrix: dataset.input_matrix,
-      input_instances: dataset.instances,
-    });
-
-    train.dataset.push(dataset);
-  }
+  await synthesizer.synthesize({ train });
 
   milestone.visualization();
 
@@ -1591,567 +1569,88 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8eed95c3` (2026-11-20)
-**Commit Message**: Synthesize ARC examples from object transforms
+### Incident Patch 1: `63339aa9` (2026-11-20)
+**Commit Message**: Fix synthesized dataset processing
 
-Replace LLM-generated examples with rotated and shifted instances. Execute Nucleoid rules, validate rendered object properties, and merge matching instances into new training examples.
+Append validated datasets after synthesis instead of modifying the training dataset during iteration. Remove redundant processing from the app.
 
-**File**: `arc/src/synthesizer.ts` (modified, +105/-111)
+**File**: `arc/src/app.ts` (modified, +1/-23)
 ```diff
-@@ -1,117 +1,111 @@
--import * as llm from "./lib/llm.ts";
- import * as Matrix from "./lib/Matrix";
+@@ -69,29 +69,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+ 
+   milestone.synthesizing_training_dataset();
+ 
+-  const synthesized_dataset = await synthesizer.synthesize({ train });
 -
--const FIELD_GUIDE = `
--- "dataset" holds the existing examples. Each pairs an "input_matrix" with the "output_matrix" that the rule produces from it.
--- Each example's "instances" lists its instances, each pairing an "input_instance_matrix" with its "output_instance_matrix". They relate to the example's full matrices by a fixed convention (how instances are found, ordered and cropped); work that convention out from the existing examples and follow it exactly.
--- "class_declaration", "declarations" and "output_canvas" are fixed for this task. Every new example must be valid under them. Do not change them or repeat them in your answer.
--`.trim();
-+import * as visualizer from "./visualizer";
-+import object from "./object.ts";
-+import * as nucleoid from "./lib/nucleoid.ts";
+-  milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
+-
+-  for (const dataset of synthesized_dataset) {
+-    for (const instance of dataset.instances) {
+-      await analyzer.value({
+-        instance_name: next_instance_name(),
+-        train,
+-        input_matrix: dataset.input_matrix,
+-        instance,
+-      });
+-    }
+-
+-    await object.state({
+-      class_declaration,
+-      declarations,
+-      input_matrix: dataset.input_matrix,
+-      input_instances: dataset.instances,
+-    });
+-
+-    train.dataset.push(dataset);
+-  }
++  await synthesizer.synthesize({ train });
+ 
+   milestone.visualization();
+ 
+```
+
+**File**: `arc/src/synthesizer.ts` (modified, +6/-4)
+```diff
+@@ -4,6 +4,8 @@ import object from "./object.ts";
+ import * as nucleoid from "./lib/nucleoid.ts";
  
  async function synthesize({ train }) {
--  const count = train.length;
++  const validated_dataset = [];
++
+   for (const dataset of train.dataset) {
+     const synthesized_dataset = { instances: [] };
+ 
+@@ -67,7 +69,7 @@ async function synthesize({ train }) {
+         output_instance_matrix
+       );
+ 
+-      const implementation = await object.implementation({
++      instance.implementation = await object.implementation({
+         train,
+         instance: synthesized_instance,
+         x,
+@@ -78,8 +80,6 @@ async function synthesize({ train }) {
+         volume,
+       });
+ 
+-      instance.implementation = implementation;
 -
--  const { result } = await llm.generate({
--    few_shot: null,
--    messages: [
--      {
--        role: "assistant",
--        content: `Below is the data for a matrix-transformation task. Each example pairs an input matrix with the output matrix that one hidden rule produces from it, and the same rule holds for every example.
--
--        <current_dataset>
--        ${JSON.stringify({
--          ...train,
--          dataset: train.dataset.map(
--            ({ input_matrix, output_matrix, instances }) => ({
--              input_matrix,
--              output_matrix,
--              instances: instances.map((instance) => ({
--                ...instance,
--                input_instance_crop_matrix: Matrix.crop(
--                  instance.input_instance_matrix
--                ),
--                output_instance_crop_matrix: Matrix.crop(
--                  instance.output_instance_matrix
--                ),
--              })),
--            })
--          ),
--        })}
--        </current_dataset>
--        
--        How to read it:
--        ${FIELD_GUIDE}
--        
--        Your job: write ${
--          count === 1
--            ? "1 new example that follows"
--            : `${count} new examples that follow`
--        } exactly the same rule. New examples are added to the training data, so one whose output breaks the rule does more harm than a missing one.
--        
--        Work in this order:
--        1. Infer the rule and write it as a sequence of steps, precise enough that someone could apply it by hand to an input they have never seen, including how the instances are derived. Check it against every existing example and revise it until it reproduces all of them exactly.
--        2. List the invariants: what every existing example has in common that the rule relies on, plus anything "class_declaration", "declarations" and "output_canvas" impose (allowed values, dimensions, how many of something appear, what never touches or overlaps). If you are unsure whether the rule depends on a property, treat it as an invariant. Every new example must keep all of them.
--        3. Plan each new example in a sentence or two: what its input contains, how it differs from the existing examples and from your other new examples, and what output the rule gives for it.
--        4. Write the examples. Build each input first, then produce its output by applying the rule step by step, copying exactly any cell the rule leaves unchanged. Then derive its instances with the same convention as the existing examples.
--        
--        A good new example is:
--        - Correct: its output is exactly what the rule produces from its input. If you are not certain an example is correct, leave it out; returning fewer examples is better than including a wrong one.
--        - New: not a near-copy of an existing example, such as the same layout shifted, flipped or with values swapped. Vary whatever the rule does not depend on, which may include dimensions, positions, sizes, counts and values, while keeping every invariant.
--        - Informative: it covers a case the existing examples don't (an edge or corner position, a smallest or largest case, a different number of instances) or separates the real rule from a plausible wrong one, but only where the rule clearly decides the output. Avoid inputs the rule leaves open, such as ties it gives no way to break.
--        - Well-formed: every matrix is rectangular (all rows the same length) and uses only allowed values.
--        
--        Reply with one JSON object and nothing else: no prose before or after it and no code fences. Give its keys in this order:
--        - "rule": an array of strings, one step of the rule each.
--        - "invariants": an array of strings, one invariant each.
--        - "plan": an array of strings, one per new example, in the same order as "result".
--        - "result": an array of the new examples. Each has exactly the same keys, nesting and value types as the entries of "dataset" above: "input_matrix", "output_matrix", and "instances",
-```
-
----
-
-### Incident Patch 2: `a8500c83` (2026-11-20)
-**Commit Message**: Add block indentation to terminal editor
-
-Indent selected lines with Tab and unindent selections or the current line with Shift-Tab. Preserve selection direction and cut text, and update editor hints and documentation.
-
-**File**: `README.md` (modified, +3/-1)
-```diff
-@@ -49,7 +49,9 @@ pasted newlines never submit code or add indentation. Ctrl-J inserts an
- automatically indented newline when writing a block by hand.
- Ctrl-Enter also runs on non-Windows terminals that report it distinctly;
- Windows treats it as a newline because pasted LF produces the same key event.
--Tab accepts autocomplete (or indents); Ctrl-Space opens suggestions.
-+Tab accepts autocomplete (or inserts four spaces); with selected text it
-+indents the selected lines without replacing them. Shift-Tab unindents the
-+selection or current line. Ctrl-Space opens suggestions.
- Ctrl-P / Ctrl-N recalls input while preserving an unfinished draft.
- F1-F3 changes tabs, F6 changes the result view, and Ctrl-Up / Ctrl-Down selects
- earlier results. Mouse clicks select tabs, views and results; click/drag edits
-```
-
-**File**: `docs/README.md` (modified, +6/-1)
-```diff
-@@ -95,7 +95,12 @@ empty lines; F5 submits the complete editor. Ctrl-Enter also submits on
- non-Windows terminals that report it distinctly. Native Windows input maps
- pasted LF to Ctrl-Enter, so that key inserts a newline on Windows rather than
- submitting a partial pasted program. Ctrl-J inserts an automatically indented
--newline when typing by hand. Tab completes or indents;
-+newline when typing by hand. Tab completes or inserts four spaces; with
-+selected text it indents the selected lines without replacing them.
-+Shift-Tab removes one leading indentation level from selected lines, or the
-+current line regardless of cursor position. A selection ending at the start
-+of a line leaves that line unchanged. Selection direction and cut/paste text
-+are preserved; each shifted line is an ordinary undoable editor edit.
- Ctrl-Space opens suggestions. Ctrl-P / Ctrl-N navigates input history.
- Use F1-F3 for tabs, F6 or the view buttons for result formats, Ctrl-Up /
- Ctrl-Down for earlier results, and F4 to focus the editor, results or
-```
-
-**File**: `src/terminal/indentation.rs` (added, +150/-0)
-```diff
-@@ -0,0 +1,150 @@
-+use tui_textarea::{CursorMove, TextArea};
-+
-+use crate::INDENT;
-+
-+#[derive(Clone, Copy)]
-+enum Direction {
-+    Indent,
-+    Unindent,
-+}
-+
-+struct Block {
-+    first: usize,
-+    last: usize,
-+    cursor: (usize, usize),
-+    anchor: Option<(usize, usize)>,
-+}
-+
-+impl Block {
-+    fn capture(editor: &TextArea<'_>) -> Self {
-+        let cursor = editor.cursor();
-+        let Some((start, end)) = editor.selection_range().filter(|(start, end)| start != end)
-+        else {
-+            return Self {
-+                first: cursor.0,
-+                last: cursor.0,
-+                cursor,
-+                anchor: None,
-+            };
-+        };
-+        let last = if end.0 > start.0 && end.1 == 0 {
-+            end.0 - 1
-+        } else {
-+            end.0
-+        };
-+        Self {
-+            first: start.0,
-+            last,
-+            cursor,
-+            anchor: Some(if cursor == start { end } else { start }),
-+        }
-+    }
-+
-+    fn shift(&mut self, row: usize, count: usize, direction: Direction) {
-+        for position in std::iter::once(&mut self.cursor).chain(self.anchor.iter_mut()) {
-+            if position.0 == row {
-+                position.1 = match direction {
-+                    Direction::Indent => position.1.saturating_add(count),
-+                    Direction::Unindent => position.1.saturating_sub(count),
-+                };
-+            }
-+        }
-+    }
-+
-+    fn restore(&self, editor: &mut TextArea<'_>) {
-+        if let Some(anchor) = self.anchor {
-+            move_to(editor, anchor);
-+            editor.start_selection();
-+        }
-+        move_to(editor, self.cursor);
-+    }
-+}
-+
-+pub(super) fn indent_selection(editor: &mut TextArea<'_>) -> bool {
-+    let block = Block::capture(editor);
-+    if block.anchor.is_none() {
-+        return false;
-+    }
-+    change(editor, block, Direction::Indent)
-+}
-+
-+pub(super) fn unindent(editor: &mut TextArea<'_>) -> bool {
-+    let block = Block::capture(editor);
-+    change(editor, block, Direction::Unindent)
-+}
-+
-+fn change(editor: &mut TextArea<'_>, mut block: Block, direction: Direction) -> bool {
-+    editor.cancel_selection();
-+    let mut changed = false;
-+    for row in block.first..=block.last {
-+        let count = match direction {
-+            Direction::Indent => INDENT.len(),
-+            Direction::Unindent => editor
-+                .lines()
-+                .get(row)
-+                .map_or(0, |line| leading_indent(line)),
-+        };
-+        if count == 0 {
-+            continue;
-+        }
-+        move_to(editor, (row, 0));
-+        let edited = match direction {
-+            Direction::Indent => editor.insert_str(INDENT),
-+            Direction::Unindent => remove_indent(editor, count),
-+        };
-+        if edited {
-+            block.shift(row, count, direction);
-+            changed = true;
-+        }
-+    }
-+    block.restore(editor);
-+    changed
-+}
-+
-+fn remove_indent(editor: &mut TextArea<'_>, count: usize) -> bool {
-+    editor.start_selection();
-+    for _ in 0..count {
-+        editor.move_cursor(CursorMove::Forward);
-+    }
-+    editor.delete_char()
-+}
-+
-+fn leading_indent(line: &str) -> usize {
-+    let mut width = 0;
-+    let mut count = 0;
-+    for character in line.chars() {
-+        width += match character {
-+            ' ' => 1,
-+            '\t' => INDENT.len() - width % INDENT.len(),
-+            _ => break,
-+        };
-+        count += 1;
-+        if width >= INDENT.len() {
-+            break;
-+        }
-+    }
-+    count
-+}
-+
-+fn move_to(editor: &mut TextArea<'_>, (row, column): (usize, usize)) {
-+    if let (Ok(row), Ok(column)) = (u16::try_from(row), u16::try_from(column)) {
-+        editor.move_cursor(CursorMove::Jump(row, column));
-+        return;
-+    }
-+    let start = u16::try_from(row).unwrap_or(u16::MAX);
-+    editor.move_cursor(CursorMove::Jump(start, 0));
-+    for _ in usize::from(start)..row {
-+        editor.move_cursor(CursorMove::Down);
-+    }
-+    if column == 0 {
-+        return;
-+    }
-+    editor.move_cursor(CursorMove::End);
-+    let end = editor.cursor().1;
-+    for _ in column.min(end)..end {
-+        editor.move_cursor(CursorMove::Back);
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests;
-```
-
-**File**: `src/terminal/indentation/tests.rs` (added, +75/-0)
-```diff
-@@ -0,0 +1,75 @@
-+use super::*;
-+
-+#[test]
-+fn selected_lines_keep_unicode_boundaries_direction_and_cut_text() {
-+    let source = ["a\u{754c}", "", " \tsecond", "last"];
-+    let expected = ["    a\u{754c}", "    ", "     \tsecond", "last"];
-+    for (end, shifted_end) in [((3, 0), (3, 0)), ((2, 3), (2, 7))] {
-+        for reversed in [false, true] {
-+            let mut editor = TextArea::from(source);
-+            let (anchor, cursor) = if reversed {
-+                (end, (0, 1))
-+            } else {
-+                ((0, 1), end)
-+            };
-+            move_to(&mut editor, anchor);
-+            editor.start_selection();
-+            move_to(&mut editor, cursor);
-+            editor.set_yank_text("previous\ncut\n");
-+
-+            assert!(indent_selection(&mut editor));
-+            assert_eq!(editor.lines(), expected);
-+            assert_eq!(editor.selection_range(), Some(((0, 5), shifted_end)));
-+            assert_eq!(editor.cursor(), if reversed { (0, 5) } else { shifted_end });
-+            assert_eq!(editor.yank_text(), "previous\ncut\n");
-+
-+            assert!(unindent(&mut editor));
-+            assert_eq!(editor.lines(), source);
-+            assert_eq!(editor.selection_range(), Some(((0, 1), end)));
-+            assert_eq!(editor.cursor(), cursor);
-+            assert_eq!(editor.yank_text(), "previous\ncut\n");
-+        }
-+    }
-+}
-+
-+#[test]
-+fn unindent_removes_one_leading_level_without_deleting_code() {
-+    for (source, column, expected, shifted_column) in [
-+        ("    value", 7, "value", 3),
-+        ("\tvalue", 3, "value", 2),
-+        (" \tvalue", 4, "value", 2),
-+        ("  value", 0, "value", 0),
-+        (" \t   value", 7, "   value", 5),
-+        ("value", 3, "value", 3),
-+    ] {
-+        let mut editor = TextArea::from([source]);
-+        move_to(&mut editor, (0, column));
-+        editor.set_yank_text("previous cut");
-+
-+        assert_eq!(unindent(&mut editor), source != expected);
-+        assert_eq!(editor.lines(), [expected]);
-+        assert_eq!(editor.cursor(), (0, shifted_column));
-+        assert!(!editor.is_selecting());
-+        assert_eq!(editor.yank_text(), "previous cut");
-+    }
-+}
-+
-+#[test]
-+fn unindent_preserves_positions_beyond_cursor_jump_limits() {
-+    let long_line = format!("    {}", "x".repeat(usize::from(u16::MAX) + 1));
-+    let mut many_lines = vec![String::new(); usize::from(u16::MAX) + 1];
-+    many_lines.push("    value".into());
-+    for mut editor in [TextArea::from([long_line]), TextArea::new(many_lines)] {
-+        editor.move_cursor(CursorMove::Bottom);
-+        editor.move_cursor(CursorMove::End);
-+        let (row, column) = editor.cursor();
-+        let original = editor.lines().to_vec();
-+
-+        assert!(unindent(&mut editor));
-+        assert_eq!(editor.cursor(), (row, column - INDENT.len()));
-+        assert_eq!(editor.lines().len(), original.len());
-+        assert_eq!(editor.lines()[row], original[row].trim_start());
-+        assert!(editor.undo());
-+        assert_eq!(editor.lines(), original);
-+    }
-+}
-```
-
-**File**: `src/terminal/input.rs` (modified, +14/-6)
-```diff
-@@ -3,7 +3,7 @@ use nucleoid::Runtime;
+       if (
+         output_value.x === x &&
+         output_value.y === y &&
+@@ -103,9 +103,11 @@ async function synthesize({ train }) {
+         [[0]]
+       );
  
- use super::completion::Completion;
- use super::output::{Entry, Output, View};
--use super::{App, Focus, HELP, HISTORY_LIMIT, editor, output};
-+use super::{App, Focus, HELP, HISTORY_LIMIT, editor, indentation, output};
- 
- impl App {
-     pub(super) fn key(&mut self, key: KeyEvent, runtime: &mut Runtime) -> bool {
-@@ -120,10 +120,7 @@ impl App {
-             KeyCode::Up if self.editor.lines().len() == 1 => self.recall(false),
-             KeyCode::Down if self.editor.lines().len() == 1 => self.recall(true),
-             KeyCode::Tab => self.complete_or_indent(runtime),
--            KeyCode::BackTab => {
--                editor::dedent(&mut self.editor);
--                self.completion = None;
--            }
-+            KeyCode::BackTab => self.unindent(),
-             KeyCode::Backspace if editor::dedent(&mut self.editor) => self.edited(runtime),
-             KeyCode::Enter => {
-                 self.completion = None;
-@@ -146,6 +143,11 @@ impl App {
+-      train.dataset.push(synthesized_dataset);
++      validated_dataset.push(synthesized_dataset);
      }
- 
-     fn complete_or_indent(&mut self, runtime: &Runtime) {
-+        self.history_index = None;
-+        if indentation::indent_selection(&mut self.editor) {
-+            self.completion = None;
-+            return;
-+        }
-         if self.completion.is_none() {
-             self.completion = Completion::find(runtime, &self.editor, false);
-         }
-@@ -154,7 +156,13 @@ impl App {
-         } else {
-             self.editor.insert_str(crate::INDENT);
-         }
--        self.history_index = None;
-+    }
+   }
 +
-+    fn unindent(&mut self) {
-+        if indentation::unindent(&mut self.editor) {
-+            self.history_index = None;
-+        }
-+        self.completion = None;
-     }
- 
-     pub(super) fn edited(&mut self, runtime: &Runtime) {
-```
-
-**File**: `src/terminal/mod.rs` (modified, +5/-1)
-```diff
-@@ -1,5 +1,6 @@
- mod completion;
- mod editor;
-+mod indentation;
- mod input;
- mod output;
- mod pointer;
-@@ -40,9 +41,12 @@ Windows delivers pasted LF as Ctrl-Enter, so both insert a newline there.
- Ctrl-J inserts an automatically indented newline.
- 
- Tab accepts a completion, or inserts four spaces when none is available.
-+With selected text, Tab indents its lines without replacing the selection.
-+Shift-Tab unindents the selected lines, or the current line from any position.
- Ctrl-Space opens completions; Up/Down selects; Escape dismisses.
- Ctrl-P / Ctrl-N recalls history and restores your unfinished draft.
--Ctrl-Z / Ctrl-Y undoes / redoes edits. Shift-arrows selects text.
-+Ctrl-Z / Ctrl-Y undoes / redoes edits, including each shifted line.
-+Shift-arrows selects text.
- Ctrl-X cuts; Ctrl-V pastes the editor's last cut text.
- Ctrl-C cancels input. Ctrl-D on an empty editor / Ctrl-Q exits.
- 
-```
-
-**File**: `src/terminal/tests.rs` (modified, +92/-0)
-```diff
-@@ -386,6 +386,98 @@ fn familiar_undo_redo_and_cut_paste_shortcuts_work_in_the_editor() {
-     assert_eq!(app.editor.lines(), ["x"]);
++  train.dataset.push(...validated_dataset);
  }
  
-+#[test]
-+fn selected_code_indents_without_replacing_or_running_it() {
-+    let mut app = App::new(false, false);
-+    let mut runtime = Runtime::new();
-+    let source = "value = 7\nvalue + 1";
-+    app.editor = editor::new(source);
-+    app.editor.select_all();
-+    app.editor.set_yank_text("previous cut");
-+
-+    key(&mut app, &mut runtime, KeyCode::Tab, KeyModifiers::NONE);
-+    assert_eq!(app.editor.lines(), ["    value = 7", "    value + 1"]);
-+    assert!(app.editor.is_selecting());
-+    for (width, height) in [(40, 12), (100, 30)] {
-+        let mut terminal = Terminal::new(TestBackend::new(width, height)).unwrap();
-+        terminal.draw(|frame| app.draw(frame)).unwrap();
-+        let screen: String = terminal
-+            .backend()
-+            .buffer()
-+            .content
-+            .iter()
-+            .map(ratatui::buffer::Cell::symbol)
-+            .collect();
-+        assert!(screen.contains("Tab indent"));
-+        assert!(screen.contains("Shift-Tab unindent"));
-+        assert!(screen.contains("F5 run"));
-+        assert!(screen.contains("Ctrl-Q quit"));
-+    }
-+    key(
-+        &mut app,
-+        &mut runtime,
-+        KeyCode::BackTab,
-+        KeyModifiers::SHIFT,
-+    );
-+    assert_eq!(app.editor.lines().join("\n"), source);
-+    assert_eq!(app.editor.yank_text(), "previous cut");
-+
-+    for _ in 0..2 {
-+        key(
-+            &mut app,
-+            &mut runtime,
-+            KeyCode::Char('z'),
-+            KeyModifiers::CONTROL,
-+        );
-+    }
-+    assert_eq!(app.editor.lines(), ["    value = 7", "    value + 1"]);
-+    for _ in 0..2 {
-+        key(
-+            &mut app,
-+            &mut runtime,
-+            KeyCode::Char('y'),
-+            KeyModifiers::CONTROL,
-+        );
-+    }
-+    assert_eq!(app.editor.lines().join("\n"), source);
-+    assert!(app.entries.is_empty());
-+    assert!(!runtime.state.has_variable("value"));
-+
-+    key(&mut app, &mut runtime, KeyCode::F(5), KeyModifiers::NONE);
-+    assert_eq!(app.entries.len(), 1);
-+    assert_eq!(app.entries[0].output.text(View::Text), "8");
-+}
-+
-+#[test]
-+fn unindenting_recalled_input_keeps_the_edited_buffer() {
-+    let mut app = App::new(false, false);
-+    let mut runtime = Runtime::new();
-+    app.history.push("    value = 7".into());
-+    app.editor = editor::new("unfinished draft");
-+    key(
-+        &mut app,
-+        &mut runtime,
-+        KeyCode::Char('p'),
-+        KeyModifiers::CONTROL,
-+    );
-+    assert_eq!(app.editor.lines(), ["    value = 7"]);
-+    key(
-+        &mut app,
-+        &mut runtime,
-+        KeyCode::BackTab,
-+        KeyModifiers::SHIFT,
-+    );
-+    key(
-+        &mut app,
-+        &mut runtime,
-+        KeyCode::Char('n'),
-+        KeyModifiers::CONTROL,
-+    );
-+    assert_eq!(app.editor.lines(), ["value = 7"]);
-+    assert_eq!(app.draft, "unfinished draft");
-+    assert!(app.entries.is_empty());
-+}
-+
- #[test]
- fn windows_control_enter_is_a_pasted_lf_not_an_execution_shortcut() {
-     let mut app = App::new(false, false);
-```
-
-**File**: `src/terminal/view.rs` (modified, +13/-5)
-```diff
-@@ -103,11 +103,19 @@ fn editor_panel(frame: &mut Frame<'_>, area: Rect, app: &mut App, regions: &mut
-             )
-             .alignment(Alignment::Right),
-         )
--        .title_bottom(Line::from(if area.width >= 70 {
--            " Enter newline  Tab complete  Ctrl-J autoindent "
--        } else {
--            " Enter newline  Tab complete "
--        }));
-+        .title_bottom(Line::from(
-+            if app
-+                .editor
-+                .selection_range()
-+                .is_some_and(|(start, end)| start != end)
-+            {
-+                " Tab indent  Shift-Tab unindent "
-+            } else if area.width >= 70 {
-+                " Enter newline  Tab complete  Ctrl-J autoindent "
-+            } else {
-+                " Enter newline  Tab complete "
-+            },
-+        ));
-     regions.editor = editor_block.inner(area);
-     app.editor.set_block(editor_block);
-     app.editor.set_style(base().bg(PANEL));
+ export default { synthesize };
 ```
 
 #### Recent Merged Pull Requests:
@@ -2180,53 +1679,53 @@ Indent selected lines with Tab and unindent selections or the current line with 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Synthesize ARC examples from object transforms
+## X. synthesized dataset processing
 
 **RULE**:
-When implementing operations in `arc/src/synthesizer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/src/app.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8eed95c3`: Synthesize ARC examples from object transforms. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `63339aa9`: synthesized dataset processing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/synthesizer.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/app.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-import * as visualizer from "./visualizer";
-import object from "./object.ts";
-import * as nucleoid from "./lib/nucleoid.ts";
+  await synthesizer.synthesize({ train });
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-import * as llm from "./lib/llm.ts";
+  const synthesized_dataset = await synthesizer.synthesize({ train });
 
-const FIELD_GUIDE = `
-- "dataset" holds the existing examples. Each pairs an "input_matrix" with the "output_matrix" that the rule produces from it.
-- Each example's "instances" lists its instances, each pairing an "input_instance_matrix" with its "output_instance_matrix". They relate to the example's full matrices by a fixed convention (how instances are found, ordered and cropped); work that convention out from the existing examples and follow it exactly.
-- "class_declaration", "declarations" and "output_canvas" are fixed for this task. Every new example must be valid under them. Do not change them or repeat them in your answer.
-`.trim();
-  const count = train.length;
+  milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
 
-  const { result } = await llm.generate({
-    few_shot: null,
-    messages: [
-      {
-        role: "assistant",
-        content: `Below is the data for a matrix-transformation task. Each example pairs an input matrix with the output matrix that one hidden rule produces from it, and the same rule holds for every example.
+  for (const dataset of synthesized_dataset) {
+    for (const instance of dataset.instances) {
+      await analyzer.value({
+        instance_name: next_instance_name(),
+        train,
+        input_matrix: dataset.input_matrix,
+        instance,
+      });
+    }
 
-        <current_dataset>
-        ${JSON.stringify({
-          ...train,
-          dataset: train.dataset.map(
-            ({ input_matrix, output_matrix, ins
+    await object.state({
+      class_declaration,
+      declarations,
+      input_matrix: dataset.input_matrix,
+      input_instances: dataset.instances,
+    });
+
+    train.dataset.push(dataset);
+  }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8eed95c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `63339aa9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

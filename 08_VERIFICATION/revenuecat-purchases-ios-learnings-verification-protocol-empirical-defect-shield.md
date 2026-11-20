@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T15:00:50.870Z",
+  "timestamp": "2026-11-20T16:14:34.062Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-revenuecat-purchases-ios-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [revenuecat-purchases-ios-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T15:00:50.870Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T16:14:34.062Z`  
 > **Learning ID**: `LEARN-EVO-revenuecat-purchases-ios-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md`  
 > **Source**: github ([https://github.com/RevenueCat/purchases-ios](https://github.com/RevenueCat/purchases-ios))  
-> **Source Version**: `547f252e`  
+> **Source Version**: `aa9fb54b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T15:00:39.154Z  
+> **Timestamp**: 2026-11-20T16:13:56.664Z  
 > **Learning ID**: `learn-github-revenuecat-purchases-ios`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RevenueCat/purchases-ios](https://github.com/RevenueCat/purchases-ios))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T15:00:39.149Z  
+> **Harvest Timestamp**: 2026-11-20T16:12:58.911Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: In-app purchases and subscriptions made easy. Support for iOS, watchOS, tvOS, macOS, and visionOS.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3096 stars
+- **Stars / Engagement**: 3095 stars
 
 ---
 
@@ -552,233 +552,448 @@ struct YarnShape: Shape {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5fc2465e` (2026-11-16)
-**Commit Message**: fix: prevent paywall hangs from repeated placeholder rendering (#8302)
+### Incident Patch 1: `8119b57c` (2026-11-18)
+**Commit Message**: fix: avoid decoding cached customer info on the main thread (#25)
 
-**File**: `RevenueCatUI/Views/RemoteImage.swift` (modified, +5/-3)
+**File**: `Sources/Identity/CustomerInfoManager.swift` (modified, +5/-3)
 ```diff
-@@ -243,7 +243,7 @@ private struct ColorSchemeRemoteImage<Content: View>: View {
-                 }
-             } else {
-                 if let expectedSize = self.expectedSize {
--                    content(Image.clearImage(size: expectedSize), expectedSize)
-+                    content(Image.clearImage, expectedSize)
-                 } else {
-                     emptyView(error: nil)
-                 }
-@@ -333,7 +333,9 @@ private struct ColorSchemeRemoteImage<Content: View>: View {
+@@ -198,9 +198,11 @@ class CustomerInfoManager {
+             }
  
- private extension Image {
-     /// Returns a fully transparent SwiftUI Image of the given size.
--    static func clearImage(size: CGSize) -> Image {
-+    static let clearImage: Image = {
-+        let size = CGSize(width: 1, height: 1)
+             self.systemInfo.isApplicationBackgrounded { [self] isAppBackgrounded in
+-                self.fetchAndCacheCustomerInfoDataIfStale(appUserID: appUserID,
+-                                                          isAppBackgrounded: isAppBackgrounded,
+-                                                          completion: completionIfNotCalledAlready)
++                self.operationDispatcher.dispatchOnWorkerThread {
++                    self.fetchAndCacheCustomerInfoDataIfStale(appUserID: appUserID,
++                                                              isAppBackgrounded: isAppBackgrounded,
++                                                              completion: completionIfNotCalledAlready)
++                }
+             }
+ 
+         case .notStaleCachedOrFetched:
+```
+
+**File**: `Tests/UnitTests/Identity/CustomerInfoManagerTests.swift` (modified, +89/-0)
+```diff
+@@ -925,6 +925,66 @@ class CustomerInfoManagerGetCustomerInfoTests: BaseCustomerInfoManagerTests {
+         await expect(self.mockBackend.invokedGetSubscriberDataCount).toEventually(equal(1))
+     }
+ 
++    func testCustomerInfoCachedOrFetchedDoesNotReadFreshCacheAgainOnMainActor() async throws {
++        let systemInfo = MainActorSystemInfo(finishTransactions: true)
++        let deviceCache = MainThreadRecordingDeviceCache(systemInfo: systemInfo)
++        self.mockOperationDispatcher.forwardToOriginalDispatchOnWorkerThread = true
++        let customerInfoManager = CustomerInfoManager(
++            offlineEntitlementsManager: self.mockOfflineEntitlementsManager,
++            operationDispatcher: self.mockOperationDispatcher,
++            deviceCache: deviceCache,
++            backend: self.mockBackend,
++            transactionFetcher: self.mockTransationFetcher,
++            transactionPoster: self.mockTransactionPoster,
++            systemInfo: systemInfo
++        )
++        customerInfoManager.cache(customerInfo: self.mockCustomerInfo, appUserID: Self.appUserID)
 +
-         #if os(iOS) || os(visionOS)
-         let renderer = UIGraphicsImageRenderer(size: size)
-         let uiImage = renderer.image { ctx in
-@@ -361,5 +363,5 @@ private extension Image {
-         return Image(nsImage: nsImage)
++        await withCheckedContinuation { continuation in
++            DispatchQueue.global().async {
++                customerInfoManager.customerInfo(appUserID: Self.appUserID,
++                                                 fetchPolicy: .cachedOrFetched,
++                                                 trackDiagnostics: false) { _ in
++                    continuation.resume()
++                }
++            }
++        }
++
++        await expect(deviceCache.cachedCustomerInfoReadsWereOnMainThread)
++            .toEventually(equal([false, false]))
++    }
++
++    func testCustomerInfoCachedOrFetchedDoesNotReadStaleCacheAgainOnMainActor() async throws {
++        let systemInfo = MainActorSystemInfo(finishTransactions: true)
++        let deviceCache = MainThreadRecordingDeviceCache(systemInfo: systemInfo)
++        deviceCache.stubbedIsCustomerInfoCacheStale = true
++        self.mockBackend.stubbedGetCustomerInfoResult = .success(self.mockRefreshedCustomerInfo)
++        self.mockOperationDispatcher.forwardToOriginalDispatchOnWorkerThread = true
++        let customerInfoManager = CustomerInfoManager(
++            offlineEntitlementsManager: self.mockOfflineEntitlementsManager,
++            operationDispatcher: self.mockOperationDispatcher,
++            deviceCache: deviceCache,
++            backend: self.mockBackend,
++            transactionFetcher: self.mockTransationFetcher,
++            transactionPoster: self.mockTransactionPoster,
++            systemInfo: systemInfo
++        )
++        customerInfoManager.cache(customerInfo: self.mockCustomerInfo, appUserID: Self.appUserID)
++
++        await withCheckedContinuation { continuation in
++            DispatchQueue.global().async {
++                customerInfoManager.customerInfo(appUserID: Self.appUserID,
++                                                 fetchPolicy: .cachedOrFetched,
++                                                 trackDiagnostics: false) { _ in
++                    continuation.resume()
++                }
++            }
++        }
++
++        await expect(self.mockBackend.invokedGetSubscriberDataCount).toEventually(equal(1))
++        expect(deviceCache.cachedCustomerInfoReadsWereOnMainThread) == [false]
++    }
++
+     func testCustomerInfoCachedOrFetchedFetchesIfNoCache() async throws {
+         self.mockBackend.stubbedGetCustomerInfoResult = .success(self.mockRefreshedCustomerInfo)
  
-         #endif
--    }
-+    }()
+@@ -1085,6 +1145,35 @@ class CustomerInfoManagerGetCustomerInfoTests: BaseCustomerInfoManagerTests {
+ 
  }
+ 
++private final class MainActorSystemInfo: MockSystemInfo {
++
++    override func isApplicationBackgrounded(completion: @escaping (Bool) -> Void) {
++        OperationDispatcher.default.dispatchOnMainActor {
++            completion(false)
++        }
++    }
++
++}
++
++extension MainActorSystemInfo: @unchecked Sendable {}
++
++private final class MainThreadRecordingDeviceCache: MockDeviceCache {
++
++    private let readsWereOnMainThread: Atomic<[Bool]> = .init([])
++
++    var cachedCustomerInfoReadsWereOnMainThread: [Bool] {
++        return self.readsWereOnMainThread.value
++    }
++
++    override func cachedCustomerInfoData(appUserID: String) -> Data? {
++        self.readsWereOnMainThread.modify { $0.append(Thread.isMainThread) }
++        return super.cachedCustomerInfoData(appUserID: appUserID)
++    }
++
++}
++
++extension MainThreadRecordingDeviceCache: @unchecked Sendable {}
++
+ @available(iOS 15.0, tvOS 15.0, macOS 12.0, watchOS 8.0, *)
+ class CustomerInfoVerificationTrackingTests: BaseCustomerInfoManagerTests {
+ 
 ```
 
 ---
 
-### Incident Patch 2: `393e7b26` (2026-11-13)
-**Commit Message**: Update AGENTS.md - SwiftUI performance (#8297)
+### Incident Patch 2: `aa9fb54b` (2026-11-20)
+**Commit Message**: [AUTOMATIC] test: sync audience fixtures from Khepri main (RevenueCat/purchases-ios_internal#73)
 
-**File**: `AGENTS.md` (modified, +12/-0)
+Co-authored-by: facumenzella <[REDACTED_EMAIL]>
+GitOrigin-RevId: 6019b1b025369274860b0571ee1cf1fceae4ea8e
+
+**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/coverage.json` (modified, +8/-6)
 ```diff
-@@ -106,6 +106,18 @@ Key top-level directories: `Sources/`, `RevenueCatUI/`, `Tests/`, `Examples/`, `
- - **MVVM Pattern**: ViewModels with SwiftUI views
- - **Main Components**: `PaywallView`, `CustomerCenterView`
- 
-+#### SwiftUI update performance
-+
-+When changing or reviewing RevenueCatUI, distinguish a `body` update from layout or pixel rendering. An extra `body` call is a performance concern when it causes measurable work or a user-visible hitch; don't optimize update counts alone.
-+
-+- Keep changing state and its readers as close as practical to the view that uses it. Own a view-created reference model with `@StateObject`; use `@ObservedObject` for a model owned elsewhere. Pass a child only the values it needs instead of making it observe a broad model.
-+- Publish only values that can change and affect the UI. Check for an actual value change before writing or calling `objectWillChange.send()`. Avoid expensive formatting, filtering, or object creation in `body`.
-+- Treat `@EnvironmentObject` and custom environment snapshots as shared dependencies. In Paywalls V2, `PaywallStateStore` republishes a whole state dictionary into the environment; measure fan-out before adding more readers or changing its update path.
-+- Preserve stable, unique identity for dynamic views. Avoid computed IDs, position-based IDs for reorderable items, and branches that replace a view when only a modifier value changes. Keep `List` / `ForEach` row construction predictable; don't put filtering or `AnyView` inside a large list's row builder without measuring the cost.
-+- Use `.equatable()` only for a measured, value-driven view whose equality covers every input that affects its output. It is not a general redraw switch.
-+- For code that runs on iOS 15, use `ObservableObject` and the existing SwiftUI property wrappers. `@Observable` requires iOS 17; use it only with an availability-gated path and an older-OS fallback.
-+- For performance changes, reproduce the interaction, profile a Release build, and compare the same workload before and after. Use `_printChanges()` only for temporary debugging; remove it before shipping. Validate behavior on the oldest supported OS. The existing `PerformanceTests` cover memory, not SwiftUI view-update counts.
-+
- ### Thread Safety
- 
- The SDK is heavily concurrent — StoreKit callbacks, delegate calls, caching, and network responses can all arrive on different threads. See **`Contributing/ThreadSafety.md`** for the full guide. Key primitives:
+@@ -2,13 +2,15 @@
+   "schema_version": 1,
+   "required_fields": [
+     "country",
++    "latestOwnershipType",
+     "latestStore",
+     "locale",
+     "storefront",
+     "totalRenewals"
+   ],
+   "condition_files": [
+     "conditions/country.json",
++    "conditions/latest_ownership_type.json",
+     "conditions/latest_store.json",
+     "conditions/locale.json",
+     "conditions/storefront.json",
+@@ -2472,37 +2474,37 @@
+     {
+       "field": "latestOwnershipType",
+       "operator": "is",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "latestOwnershipType",
+       "operator": "isNot",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "latestOwnershipType",
+       "operator": "isAnyOf",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "latestOwnershipType",
+       "operator": "isNotAnyOf",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "latestOwnershipType",
+       "operator": "isEmpty",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "latestOwnershipType",
+       "operator": "isNotEmpty",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+```
+
+**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/profiles.json` (modified, +1072/-0)
+```diff
+@@ -1972,6 +1972,1078 @@
+         },
+         "as_of": 350000
+       }
++    },
++    "ownership_purchased": {
++      "app_user_id": "compatibility-user",
++      "evaluated_at": 1717200000,
++      "device": {
++        "app_version": "1.0.0",
++        "platform": "ios",
++        "platform_version": [
++          26,
++          0,
++          0
++        ],
++        "sdk_version": "10.0.0",
++        "locale": null
++      },
++      "store_country": null,
++      "attributes": {},
++      "customer_info": {
++        "request_date": "2024-06-01T00:00:00+00:00",
++        "subscriber": {
++          "first_seen": "1970-01-01T00:00:01Z",
++          "original_app_user_id": "compatibility-user",
++          "original_application_version": "1.0",
++          "subscriptions": {
++            "premium": {
++              "purchase_date": "1970-01-01T00:01:40Z",
++              "original_purchase_date": "1970-01-01T00:01:40Z",
++              "expires_date": "1970-01-01T00:05:00Z",
++              "store": "app_store",
++              "ownership_type": "PURCHASED",
++              "is_sandbox": false,
++              "period_type": "normal"
++            }
++          },
++          "non_subscriptions": {},
++          "entitlements": {}
++        }
++      },
++      "subscriber_dimensions": {
++        "dimensions": {
++          "country": null,
++          "sdk_flavor": null,
++          "last_seen_at": null,
++          "subscription_status": "expired",
++          "total_renewals": 1,
++          "total_spent": 0,
++          "first_purchase_at": 100000,
++          "most_recent_purchase_at": 100000,
++          "most_recent_renewal_at": 100000,
++          "latest_expiration_at": 300000,
++          "trial_start_at": null,
++          "trial_end_at": null,
++          "subscription_opt_out_at": null,
++          "trial_opt_out_at": null,
++          "latest_product_identifier": "premium",
++          "latest_offer": null,
++          "latest_store": "app_store",
++          "is_rc_promo": false,
++          "latest_ownership_type": "purchased",
++          "latest_purchased_offering": null,
++          "price_experiment_id": null,
++          "price_experiment_variant": null,
++          "latest_auto_renew_intent": false,
++          "latest_offer_type": "no_offer",
++          "latest_store_country": null,
++          "total_ad_impressions": null,
++          "total_ad_revenue": null,
++          "total_rewarded_ad_completions": null,
++          "last_ad_impression_at": null,
++          "last_rewarded_ad_completion_at": null
++        },
++        "as_of": 350000
++      }
++    },
++    "ownership_family_shared": {
++      "app_user_id": "compatibility-user",
++      "evaluated_at": 1717200000,
++      "device": {
++        "app_version": "1.0.0",
++        "platform": "ios",
++        "platform_version": [
++          26,
++          0,
++          0
++        ],
++        "sdk_version": "10.0.0",
++        "locale": null
++      },
++      "store_country": null,
++      "attributes": {},
++      "customer_info": {
++        "request_date": "2024-06-01T00:00:00+00:00",
++        "subscriber": {
++          "first_seen": "1970-01-01T00:00:01Z",
++          "original_app_user_id": "compatibility-user",
++          "original_application_version": "1.0",
++          "subscriptions": {
++            "monthly": {
++              "purchase_date": "1970-01-01T00:01:40Z",
++              "original_purchase_date": "1970-01-01T00:01:40Z",
++              "expires_date": "1970-01-01T00:05:00Z",
++              "store": "app_store",
++              "ownership_type": "FAMILY_SHARED",
++              "is_sandbox": false,
++              "period_type": "normal"
++            }
++          },
++          "non_subscriptions": {},
++          "entitlements": {}
++        }
++      },
++      "subscriber_dimensions": {
++        "dimensions": {
++          "country": null,
++          "sdk_flavor": null,
++          "last_seen_at": null,
++          "subscription_status": "expired",
++          "total_renewals": 1,
++          "total_spent": 0,
++          "first_purchase_at": 100000,
++          "most_recent_purchase_at": 100000,
++          "most_recent_renewal_at": 100000,
++          "latest_expiration_at": 300000,
++          "trial_start_at": null,
++          "trial_end_at": null,
++          "subscription_opt_out_at": null,
++          "trial_opt_out_at": null,
++          "latest_product_identifier": "monthly",
++          "latest_offer": null,
++          "latest_store": "app_store",
++          "is_rc_promo": false,
++          "latest_ownership_type": "family_shared",
++          "latest_purchased_offering": null,
++          "price_experiment_id": null,
++          "price_experiment_variant": null,
++          "latest_auto_renew_intent": false,
++          "latest_offer_type": "no_offer",
++          "latest_store_country": null,
++          "total_ad_impressions": null,
++          "total_ad_revenue": null,
++          "total_rewarded_ad_completions": null,
++          "last_ad_impression_at": null,
++          "last_rewarded_ad_completion_a
 ```
 
 ---
 
-### Incident Patch 3: `e119bef9` (2026-11-13)
-**Commit Message**: ci: stop storing test build artifacts and unused logs (#8295)
+### Incident Patch 3: `f994104f` (2026-11-20)
+**Commit Message**: ci: add the hotfix PR comment command (RevenueCat/purchases-ios_internal#62)
 
-* ci: stop storing test build artifacts and unused logs
+GitOrigin-RevId: 482abeef96f8114fd680394c47b359ee71b805f0
 
-* ci: keep test result bundle generation
-
-**File**: `.circleci/default_config.yml` (modified, +0/-243)
+**File**: `Contributing/RELEASING.md` (modified, +8/-9)
 ```diff
-@@ -281,23 +281,6 @@ commands:
-           paths:
-             - vendor/bundle
+@@ -10,12 +10,11 @@
+ 5. The release branch PR can be merged after the release is completed.
  
--  compress_result_bundle:
--    parameters:
--      directory:
--        type: string
--      bundle_name:
--        type: string
--    steps:
--      - run:
--          name: Compress result bundle
--          command: |
--            BUNDLE="<< parameters.directory >>/<< parameters.bundle_name >>.xcresult"
--            if [ -d "$BUNDLE" ]; then
--              tar -czf "$BUNDLE.tar.gz" -C "<< parameters.directory >>" "<< parameters.bundle_name >>.xcresult"
--              rm -r "$BUNDLE"
--            fi
--          when: always
--
-   scan:
-     parameters:
-       directory:
-@@ -312,9 +295,6 @@ commands:
-           command: bundle exec fastlane scan
-       - store_test_results:
-           path: fastlane/test_output
--      - store_artifacts:
--          path: fastlane/test_output/report.html
--          destination: test_report.html
+ ##### Hotfixes:
+-Sometimes you might need to release a patch on a version that's not the latest. Or sometimes there might have been commits on `main` that shouldn't be released, but the latest version has a big bug. For example, let's say the last version is 4.0.0, but there's a bug on 3.9.0 that needs to be released as a 3.9.1:
+-1. Open a PR with the fix, merge it to `main`.
+-2. Jump to 3.9.0 and create a new branch `release/3.9.0`. Push this branch since it will be used as base for the PR you will open in the next steps.
+-3. Cherry pick the changes with your fix that you just merged to `main` using `git cherry-pick <sha_of_the_squashed_commit_in_main>`. Fix any conflicts if there are any. Push the cherry picked commit to the remote branch `release/3.9.0`.
+-4. Run `bundle exec fastlane ios bump` as you would do with any release. This will create a new PR `release/3.9.1`. Make sure the base branch of the PR is pointing to `release/3.9.0` and that the PR is labeled with **DO NOT MERGE** (add it to the title too so it's not merged by mistake)
+-5. When the PR is approved, **DO NOT MERGE IT**. The `wait-for-pr-approval` job is approved automatically once the PR is approved, and CircleCI tags the release when the tests pass. If there is no such job because the release is older than when we introduced it, manually tag the last commit in `release/3.9.1` with `3.9.1`.
+-6. CircleCI will start the deployment process
+-7. Close the PR after the release has been completed and delete both `release/3.9.0` and `release/3.9.1` branches.
+-8. Remember to edit the CHANGELOG.md in `main` to include the version that has been just released
++To release a fix merged into `main` without releasing the rest of `main`, for example 3.9.1 when the latest is 4.0.0, or 4.0.1 while `main` is not ready to release:
++1. Comment `@RCGitBot hotfix 3` on the merged fix PR. The bot cherry-picks the fix onto the latest 3.x tag, bumps the version, opens a `release/3.9.1` PR into a new `hotfix/3.9.0` branch and comments the release PR link on the fix PR.
++1. Approve the release PR, but **don't merge it**. Once tests pass, CircleCI tags 3.9.1, deploys it and merges the PR into `hotfix/3.9.0`. If that does not happen, approve the `wait-for-pr-approval` job in CircleCI by hand, or tag the last commit of `release/3.9.1` with `3.9.1` and push the tag.
++1. Delete the `hotfix/3.9.0` branch and add the release to CHANGELOG.md on `main`.
++
++If the cherry-pick conflicts, the bot comments a local command instead: run it from `main`, resolve the conflicts, run `git cherry-pick --continue`, then run it again to open the PR.
++
++To patch an older minor (3.8.x while 3.9.0 exists), run `bundle exec fastlane ios hotfix pr:<number> version:3.8.2` locally (releases 3.8.3). Both local commands need `fastlane/.env`, like `bump`.
+```
+
+**File**: `Gemfile.lock` (modified, +1/-0)
+```diff
+@@ -7,6 +7,7 @@ GIT
+ GIT
+   remote: https://github.com/RevenueCat/fastlane-plugin-revenuecat_internal
+   revision: 37768463cc78744ee71218b93ecec964fd4c8c83
++  tag: v0.3.0
+   specs:
+     fastlane-plugin-revenuecat_internal (0.3.0)
+       nokogiri
+```
+
+**File**: `fastlane/Fastfile` (modified, +16/-0)
+```diff
+@@ -119,6 +119,22 @@ platform :ios do
+     bump(options)
+   end
  
-   scan-and-archive:
-     parameters:
-@@ -330,9 +310,6 @@ commands:
-           command: bundle exec fastlane scan
-       - store_test_results:
-           path: fastlane/test_output
--      - store_artifacts:
--          path: fastlane/test_output/report.html
--          destination: test_report.html
-       - run:
-           name: Archive
-           working_directory: << parameters.directory >>
-@@ -353,9 +330,6 @@ commands:
-           command: bundle exec fastlane scan
-       - store_test_results:
-           path: fastlane/test_output
--      - store_artifacts:
--          path: fastlane/test_output/report.html
--          destination: test_report.html
-       - run:
-           name: Archive all platforms
-           working_directory: << parameters.directory >>
-@@ -558,18 +532,12 @@ commands:
-           no_output_timeout: 5m
-           environment:
-             SCAN_DEVICE: << parameters.device >>
--      - compress_result_bundle:
--          directory: fastlane/test_output/xctest/ios
--          bundle_name: BackendIntegrationTests
-       - create-snapshot-pr-if-needed:
-           condition: << pipeline.parameters.generate_snapshots >>
-           job: "create_snapshot_pr"
-           version: "BackendIntegrationTests"
-       - store_test_results:
-           path: fastlane/test_output
--      - store_artifacts:
--          path: fastlane/test_output/xctest
--          destination: scan-test-output
++  desc "Open a hotfix release PR that patches an older release with a PR merged into main. Usage: fastlane ios hotfix pr:1234 version:9.16.0"
++  lane :hotfix do |options|
++    create_hotfix(
++      pr_number: options[:pr],
++      version: options[:version],
++      changelog_latest_path: CHANGELOG_LATEST_PATH,
++      changelog_path: CHANGELOG_PATH,
++      files_to_update: files_with_version_number,
++      files_to_update_without_prerelease_modifiers: files_with_version_number_without_prerelease_modifiers,
++      files_to_update_on_latest_stable_releases: files_to_update_on_latest_stable_releases,
++      repo_name: INTERNAL_REPO_NAME,
++      omit_pr_references_in_changelog_files: true,
++      dry_run: options[:dry_run]
++    )
++  end
++
+   desc "Make github release"
+   lane :github_release do |options|
+     create_github_release(
+```
+
+**File**: `fastlane/Pluginfile` (modified, +1/-1)
+```diff
+@@ -3,6 +3,6 @@
+ # Ensure this file is checked in to source control!
  
-   checkout-with-minimal-permissions:
-     steps:
-@@ -637,14 +605,8 @@ jobs:
-           no_output_timeout: 10m
-           environment:
-             DEVICE: iPhone 17,OS=27.0
--      - compress_result_bundle:
--          directory: fastlane/test_output
--          bundle_name: revenuecat_admob
-       - store_test_results:
-           path: fastlane/test_output/revenuecat_admob/tests.xml
--      - store_artifacts:
--          path: fastlane/test_output
--          destination: scan-test-output
- 
-   revenuecat-ads-tests:
-     executor:
-@@ -667,14 +629,8 @@ jobs:
-           no_output_timeout: 10m
-           environment:
-             DEVICE: iPhone 17,OS=27.0
--      - compress_result_bundle:
--          directory: fastlane/test_output
--          bundle_name: revenuecat_ads
-       - store_test_results:
-           path: fastlane/test_output/revenuecat_ads/tests.xml
--      - store_artifacts:
--          path: fastlane/test_output
--          destination: scan-test-output
- 
-   spm-receipt-parser:
-     executor:
-@@ -726,26 +682,12 @@ jobs:
-           no_output_timeout: 5m
-           environment:
-             DEVICE: iPhone 14,OS=16.4
--      - compress_result_bundle:
--          directory: fastlane/test_output
--          bundle_name: revenuecatui
--      - run:
--          name: Preserve RevenueCatUI iOS 16 result bundle
--          when: always
--          command: |
--            cd fastlane/test_output 2>/dev/null || exit 0
--            if [ -f revenuecatui.xcresult.tar.gz ]; then
--              mv revenuecatui.xcresult.tar.gz revenuecatui-iOS16.xcresult.tar.gz
--            fi
-       - create-snapshot-pr-if-needed:
-           condition: << pipeline.parameters.generate_revenuecatui_snapshots >>
-           job: "create_snapshot_pr"
-           version: "revenuecatui-16"
-       - store_test_results:
-           path: fastlane/test_output/revenuecatui/tests.xml
--      - store_artifacts:
--          path: fastlane/test_output
--          destination: scan-test-output-revenuecatui-16
-       - run:
-           name: Clean test output before RevenueCatUI iOS 15 run
-           command: rm -rf fastlane/test_output
-@@ -761,26 +703,12 @@ jobs:
-           no_output_timeout: 5m
-           environment:
-             DEVICE: iPhone 13,OS=15.5
--      - compress_result_bundle:
--          directory: fastlane/test_output
--          bundle_name: revenuecatui
--      - run:
--          name: Preserve RevenueCatUI iOS 15 result bundle
--          when: always
--          command: |
--            cd fastlane/test_output 2>/dev/null || exit 0
--            if [ -f revenuecatui.xcresult.tar.gz ]; then
--              mv revenuecatui.xcresult.tar.gz revenuecatui-iOS15.xcresult.tar.gz
--          
+ gem 'fastlane-plugin-create_xcframework', git: "https://github.com/RevenueCat/fastlane-plugin-create_xcframework"
+-gem "fastlane-plugin-revenuecat_internal", git: "https://github.com/RevenueCat/fastlane-plugin-revenuecat_internal"
++gem "fastlane-plugin-revenuecat_internal", git: "https://github.com/RevenueCat/fastlane-plugin-revenuecat_internal", tag: "v0.3.0"
+ gem 'fastlane-plugin-emerge'
+ gem 'fastlane-plugin-sentry'
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8302** (2026-11-16): fix: prevent paywall hangs from repeated placeholder rendering (@rickvdl)
-- **PR #8301** (closed): Chore(deps): Bump fastlane-plugin-revenuecat_internal from `52a8b95` to `8f4cd3f` (@dependabot[bot])
-- **PR #8297** (2026-11-13): chore(ui): Update AGENTS.md with information about SwiftUI performance (@JZDesign)
-- **PR #8295** (2026-11-13): ci: stop storing test build artifacts and unused logs (@rickvdl)
-- **PR #8292** (2026-11-12): Chore(deps): Bump fastlane-plugin-revenuecat_internal from `1e7875c` to `52a8b95` (@dependabot[bot])
-- **PR #8290** (2026-11-12): Route direct GitHub API calls through the plugin's retry helper (@ajpallares)
+- **PR #8309** (closed): fix(paywalls): format Paywalls V2 prices with the paywall locale (@vegaro)
+- **PR #8308** (closed): fix(paywalls): format percent variables with the price locale (@vegaro)
+- **PR #8306** (2026-11-16): chore(storekit): remove ENABLE_MULTISEAT_PURCHASES compiler flag (@fire-at-will)
+- **PR #8305** (closed): feat(storekit): introduce .seats() PurchaseParams for multiseat purchases (@fire-at-will)
+- **PR #8304** (closed): fix: avoid decoding cached customer info on the main thread (@rickvdl)
+- **PR #8303** (2026-11-16): Chore(deps): Bump fastlane-plugin-revenuecat_internal from `52a8b95` to `32d32fe` (@dependabot[bot])
 
 ---
 
@@ -798,37 +1013,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. prevent paywall hangs from repeated placeholder rendering
+## X. avoid decoding cached customer info on the main thread
 
 **RULE**:
-When implementing operations in `RevenueCatUI/Views/RemoteImage.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RevenueCat/purchases-ios. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/Identity/CustomerInfoManager.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RevenueCat/purchases-ios. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5fc2465e`: prevent paywall hangs from repeated placeholder rendering. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8119b57c`: avoid decoding cached customer info on the main thread. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `RevenueCatUI/Views/RemoteImage.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/Identity/CustomerInfoManager.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-                    content(Image.clearImage, expectedSize)
-    static let clearImage: Image = {
-        let size = CGSize(width: 1, height: 1)
-
-    }()
+                self.operationDispatcher.dispatchOnWorkerThread {
+                    self.fetchAndCacheCustomerInfoDataIfStale(appUserID: appUserID,
+                                                              isAppBackgrounded: isAppBackgrounded,
+                                                              completion: completionIfNotCalledAlready)
+                }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-                    content(Image.clearImage(size: expectedSize), expectedSize)
-    static func clearImage(size: CGSize) -> Image {
-    }
+                self.fetchAndCacheCustomerInfoDataIfStale(appUserID: appUserID,
+                                                          isAppBackgrounded: isAppBackgrounded,
+                                                          completion: completionIfNotCalledAlready)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5fc2465e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8119b57c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

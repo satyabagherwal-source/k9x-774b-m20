@@ -11567,3 +11567,10 @@
 | `CYCLE-20261120-4T1K` | `2026-11-20T15:35:21.608Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9591` | Yes (`fcf163f2...`) |
 | `CYCLE-20261120-FTOF` | `2026-11-20T15:43:55.647Z` | `ArchiveBox/ArchiveBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9592` | Yes (`f706c8c2...`) |
 | `CYCLE-20261120-G1H1` | `2026-11-20T15:44:05.749Z` | `vcaesar/riot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9593` | Yes (`a964c7fc...`) |
+| `CYCLE-20261120-H8CE` | `2026-11-20T16:13:00.926Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6820` | Yes (`73d0278e...`) |
+| `CYCLE-20261120-HB1S` | `2026-11-20T16:13:04.432Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9594` | Yes (`3b9f44d9...`) |
+| `CYCLE-20261120-HCST` | `2026-11-20T16:13:06.701Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9595` | Yes (`7f924d33...`) |
+| `CYCLE-20261120-HF0E` | `2026-11-20T16:13:09.566Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9596` | Yes (`d1290f7e...`) |
+| `CYCLE-20261120-IG60` | `2026-11-20T16:13:57.720Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9597` | Yes (`a4828534...`) |
+| `CYCLE-20261120-IHUZ` | `2026-11-20T16:13:59.915Z` | `AngelSlim/Hy4-flash-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-angelslim-hy4-flash-gguf-learnings.md` | Yes (`9605a5b4...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T16:14:33.248Z` | `hf-angelslim-hy4-flash-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-981F2664` [Domain D] | Yes (`cdae2e8b...`) |
