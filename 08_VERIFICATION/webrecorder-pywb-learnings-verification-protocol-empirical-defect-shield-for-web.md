@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T15:51:46.713Z",
+  "timestamp": "2026-11-20T15:15:26.896Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-webrecorder-pywb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [webrecorder-pywb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T15:51:46.713Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T15:15:26.896Z`  
 > **Learning ID**: `LEARN-EVO-webrecorder-pywb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webrecorder-pywb-learnings.md`  
 > **Source**: github ([https://github.com/webrecorder/pywb](https://github.com/webrecorder/pywb))  
-> **Source Version**: `876fff4c`  
+> **Source Version**: `28750e62`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T15:51:03.071Z  
+> **Timestamp**: 2026-11-20T15:15:12.350Z  
 > **Learning ID**: `learn-github-webrecorder-pywb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/webrecorder-pywb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/webrecorder/pywb](https://github.com/webrecorder/pywb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T15:51:03.066Z  
+> **Harvest Timestamp**: 2026-11-20T15:15:12.222Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Core Python Web Archiving Toolkit for replay and recording of web archives
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: Dockerfile
-- **Stars / Engagement**: 1720 stars
+- **Stars / Engagement**: 1718 stars
 
 ---
 
@@ -1581,8 +1581,8 @@ class RequestURIWSGIHandler(WSGIHandler):
 - **Issue #1029** (2026-10-08): **pip install puts `sample_archive/` in the install prefix and tests in `site-packages`**
   *Symptoms*: ## Describe the bug  `pip install pywb` installs sample data to `$PREFIX/sample_archive`, which on Linux usually ends up being `/usr/local/sample_archive`, which isn't correct according to the FHS and most distro conventions. It also installs the test .py files as a global `tests` package which also seems incorrect.  ## Steps to reproduce the bug  ```sh $ pip install pywb $ ls /usr/local/sample_archive cdx  cdxj  non-surt-cdx  text_content  warcs  zipcdx $ python3 -m"tests.memento_fixture" $ ```  ## Expected behavior  They could be moved under the pywb module, but the [Python Packaging User Guide](https://packaging.python.org/en/latest/discussions/package-formats/#:~:text=wheels%20should%20never%20include%20tests%20and%20documentation) says that "wheels should never include tests and documentation", so I think both should be omitted.  ```sh $ pip install pywb $ ls /usr/local/sample_archive ls: cannot access '/usr/local/sample_archive': No such file or directory $ python3 -m"tests.memento_fixture" /usr/bin/python3: No module named tests.memento_fixture ```  ## Environment - OS: Linux
 
-- **Issue #985** (2026-03-27): **setuptools 82: ModuleNotFoundError: No module named 'pkg_resources'**
-  *Symptoms*: ## Describe the bug  Trying to run pywb with the current version of setuptools (82 or newer) fails as it no longer includes pkg_resources. It appears [importlib.metadata](https://docs.python.org/3/library/importlib.metadata.html#module-importlib.metadata) and [importlib.resources](https://docs.python.org/3/library/importlib.resources.html#module-importlib.resources) may be a suitable replacement.  ## Steps to reproduce the bug  ``` $ pip3 install --upgrade setuptools $ pywb Traceback (most recent call last):   File "/Library/Frameworks/Python.framework/Versions/3.11/bin/pywb", line 5, in <module>     from pywb.apps.cli import wayback   File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/pywb/apps/cli.py", line 5, in <module>     import pkg_resources ModuleNotFoundError: No module named 'pkg_resources' ```  ## Expected behavior  No error.  ## Environment - OS: Linux and MacOS 
+- **Issue #999** (2026-11-19): **client_side_replay: Error pages show "Live page could not be loaded"**
+  *Symptoms*: ## Describe the bug  When client_side_replay mode is enabled, viewing a non-404 archived error pages (e.g. status 403 Forbidden) results in a "Live page could not be loaded" error.  ## Steps to reproduce the bug  ```sh jwarc fetch -o test403.warc 'https://httpbun.com/mix/s=403/b64=PGgyPjQwMyByZXNwb25zZSB0ZXN0IHBhc3NlZDwvaDI+/h=content-type:text%2Fhtml' wb-manager init test wb-manager add test test403.warc echo 'client_side_replay: true' > config.yaml pywb ```  Open http://localhost:8080/test/20260808010841/https://httpbun.com/mix/s=403/b64=PGgyPjQwMyByZXNwb25zZSB0ZXN0IHBhc3NlZDwvaDI+/h=content-type:text%2Fhtml  ## Expected behavior  The archived page should be replayed and look the same as `client_side_replay: false`.  <img width="1450" height="348" alt="Image" src="https://github.com/user-attachments/assets/c8db53db-c32c-4336-af75-4ffc12aec03d" />  ## Screenshots  <img width="1456" height="550" alt="Image" src="https://github.com/user-attachments/assets/beab7e43-00e9-4c0e-8141-a664186c153b" />  ## Environment  MacOS  ## Additional context  This is likely because of this check in wabac.js:  https://github.com/webrecorder/wabac.js/blob/99b919ce483224e96f2be28001a1c05e4fb41a98/src/liveproxy.ts#L159-L166  We probably need to add an option to wabac.js to disable this check and then have pywb enable it.  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1599,278 +1599,57 @@ class RequestURIWSGIHandler(WSGIHandler):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `876fff4c` (2026-11-16)
-**Commit Message**: Merge pull request #1071 from arquivo/igobranco/default-upstream-timeout
+### Incident Patch 1: `28750e62` (2026-11-19)
+**Commit Message**: Merge pull request #1067 from webrecorder/client-side-replay-error-pages
 
-Set a default timeout for live web and remote index requests
+Enable proxyPassErrors in wabac.js
 
-**File**: `pywb/warcserver/http.py` (modified, +3/-0)
+**File**: `pywb/static/loadWabac.js` (modified, +1/-0)
 ```diff
-@@ -49,6 +49,9 @@ class DefaultAdapters(object):
-     live_adapter = PywbHttpAdapter(max_retries=Retry(3))
-     remote_adapter = PywbHttpAdapter(max_retries=Retry(3))
- 
-+    # default timeout (seconds) to connect and between reads
-+    timeout = 30
-+
- 
- requests.packages.urllib3.disable_warnings()
- 
-```
-
-**File**: `pywb/warcserver/index/indexsource.py` (modified, +10/-6)
-```diff
-@@ -194,7 +194,7 @@ def _get_api_url(self, params):
-     def load_index(self, params):
-         api_url = self._get_api_url(params)
-         try:
--            r = self.sesh.get(api_url, timeout=params.get('_timeout'))
-+            r = self.sesh.get(api_url, timeout=params.get('_timeout', DefaultAdapters.timeout))
-             r.raise_for_status()
-         except Exception as e:
-             self.logger.debug('FAILED: ' + str(e))
-@@ -315,7 +315,8 @@ def load_index(self, params):
-             # TODO: add option to not double escape if needed
-             query_url = self.query_api_url + '?q=' + quote_plus(query + quote_plus(url))
-             self.logger.debug("Running query: %s" % query_url)
--            response = self.session.get(query_url)
-+            response = self.session.get(query_url,
-+                                        timeout=params.get('_timeout', DefaultAdapters.timeout))
-             response.raise_for_status()
- 
-             results = etree.fromstring(response.content)
-@@ -447,7 +448,8 @@ def load_index(self, params):
- 
-         if params.get('filter') and not mime:
-             try:
--                res = self.sesh.head(cdx['load_url'])
-+                res = self.sesh.head(cdx['load_url'],
-+                                     timeout=params.get('_timeout', DefaultAdapters.timeout))
-                 if res.status_code != 405:
-                     cdx['status'] = str(res.status_code)
- 
-@@ -645,7 +647,8 @@ def get_timegate_links(self, params, timestamp):
-         try:
-             headers = self._get_headers(params)
-             headers['Accept-Datetime'] = accept_dt
--            res = self.sesh.head(url, headers=headers)
-+            res = self.sesh.head(url, headers=headers,
-+                                 timeout=params.get('_timeout', DefaultAdapters.timeout))
-             res.raise_for_status()
-         except Exception as e:
-             self.logger.debug('FAILED: ' + str(e))
-@@ -668,7 +671,7 @@ def handle_timemap(self, params):
-         try:
-             res = self.sesh.get(url,
-                                 headers=headers,
--                                timeout=params.get('_timeout'))
-+                                timeout=params.get('_timeout', DefaultAdapters.timeout))
- 
-             res.raise_for_status()
-             assert(res.text)
-@@ -787,7 +790,8 @@ def handle_timegate(self, params, timestamp):
-         res = None
-         try:
-             headers = self._get_headers(params)
--            res = self.sesh.head(load_url, headers=headers)
-+            res = self.sesh.head(load_url, headers=headers,
-+                                 timeout=params.get('_timeout', DefaultAdapters.timeout))
-         except Exception as e:
-             no_except_close(res)
-             raise NotFoundException(url)
-```
-
-**File**: `pywb/warcserver/index/test/test_xmlquery_indexsource.py` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@
- 
- 
- # ============================================================================
--def mock_get(self, url):
-+def mock_get(self, url, timeout=None):
-     string = ''
-     global query_url
-     query_url = url
-```
-
-**File**: `pywb/warcserver/resource/responseloader.py` (modified, +1/-1)
-```diff
-@@ -555,7 +555,7 @@ def _do_request(self, method, load_url, data, req_headers, params, is_live):
-                                            preload_content=False,
-                                            decode_content=False,
-                                            retries=max_retries,
--                                           timeout=params.get('_timeout'))
-+                                           timeout=params.get('_timeout', DefaultAdapters.timeout))
- 
-             return upstream_res
- 
-```
-
-**File**: `pywb/warcserver/test/test_handlers.py` (modified, +8/-0)
-```diff
-@@ -27,6 +27,8 @@
- from pywb.warcserver.index.aggregator import DirectoryIndexSource
- 
- from pywb.warcserver.basewarcserver import BaseWarcServer
-+from pywb.warcserver.http import DefaultAdapters
-+from pywb.warcserver.resource.responseloader import LiveWebLoader
- from pywb.utils.memento import MementoUtils
- from pywb.utils.geventserver import GeventServer
- 
-@@ -575,3 +577,9 @@ def test_error_invalid(self):
-         assert resp.text == resp.headers['ResErrors']
- 
- 
-+# ============================================================================
-+def test_live_request_default_timeout():
-+    with patch.object(DefaultAdapters.live_adapter.poolmanager, 'urlopen') as urlopen:
-+        LiveWebLoader()._do_request('GET', 'http://example.com/', None, {}, {}, True)
-+
-+    assert urlopen.call_args[1]['timeout'] == DefaultAdapters.timeout
+@@ -53,6 +53,7 @@ class WabacReplay
+         noPostToGet: false,
+         archivePrefix: this.prefix,
+         archiveMod: "ir_",
++        proxyPassErrors: true,
+         adblockUrl: this.adblockUrl,
+         noPostToGet: true,
+         injectScripts: this.injectScripts.map(src => "../" + src),
 ```
 
 ---
 
-### Incident Patch 2: `4b9ba4e0` (2026-11-13)
-**Commit Message**: Set a default timeout for live web and remote index requests
+### Incident Patch 2: `0c853623` (2026-11-19)
+**Commit Message**: Merge pull request #1085 from webrecorder/update-wombat-3.11.2-wabac-2.28.0
 
-Requests to the live web and to remote indexes could hang indefinitely
-when no timeout was set. Default to 30 seconds.
+Update to wombat 3.11.2 and wabac 2.28.0
 
-Generated-with: Claude Opus 5.5 (claude-opus-5-5)
-
-**File**: `pywb/warcserver/http.py` (modified, +3/-0)
+**File**: `setup.py` (modified, +1/-1)
 ```diff
-@@ -49,6 +49,9 @@ class DefaultAdapters(object):
-     live_adapter = PywbHttpAdapter(max_retries=Retry(3))
-     remote_adapter = PywbHttpAdapter(max_retries=Retry(3))
+@@ -15,7 +15,7 @@
+ root_dir = pathlib.Path(__file__).parent
  
-+    # default timeout (seconds) to connect and between reads
-+    timeout = 30
-+
  
- requests.packages.urllib3.disable_warnings()
+-WABAC_SW_VERSION = "2.27.4"
++WABAC_SW_VERSION = "2.28.0"
+ WABAC_SW_URL = f"https://cdn.jsdelivr.net/npm/@webrecorder/wabac@{WABAC_SW_VERSION}/dist/sw.js"
  
+ def download_wabac_sw():
 ```
 
-**File**: `pywb/warcserver/index/indexsource.py` (modified, +10/-6)
+**File**: `wombat` (modified, +1/-1)
 ```diff
-@@ -194,7 +194,7 @@ def _get_api_url(self, params):
-     def load_index(self, params):
-         api_url = self._get_api_url(params)
-         try:
--            r = self.sesh.get(api_url, timeout=params.get('_timeout'))
-+            r = self.sesh.get(api_url, timeout=params.get('_timeout', DefaultAdapters.timeout))
-             r.raise_for_status()
-         except Exception as e:
-             self.logger.debug('FAILED: ' + str(e))
-@@ -315,7 +315,8 @@ def load_index(self, params):
-             # TODO: add option to not double escape if needed
-             query_url = self.query_api_url + '?q=' + quote_plus(query + quote_plus(url))
-             self.logger.debug("Running query: %s" % query_url)
--            response = self.session.get(query_url)
-+            response = self.session.get(query_url,
-+                                        timeout=params.get('_timeout', DefaultAdapters.timeout))
-             response.raise_for_status()
- 
-             results = etree.fromstring(response.content)
-@@ -447,7 +448,8 @@ def load_index(self, params):
- 
-         if params.get('filter') and not mime:
-             try:
--                res = self.sesh.head(cdx['load_url'])
-+                res = self.sesh.head(cdx['load_url'],
-+                                     timeout=params.get('_timeout', DefaultAdapters.timeout))
-                 if res.status_code != 405:
-                     cdx['status'] = str(res.status_code)
- 
-@@ -645,7 +647,8 @@ def get_timegate_links(self, params, timestamp):
-         try:
-             headers = self._get_headers(params)
-             headers['Accept-Datetime'] = accept_dt
--            res = self.sesh.head(url, headers=headers)
-+            res = self.sesh.head(url, headers=headers,
-+                                 timeout=params.get('_timeout', DefaultAdapters.timeout))
-             res.raise_for_status()
-         except Exception as e:
-             self.logger.debug('FAILED: ' + str(e))
-@@ -668,7 +671,7 @@ def handle_timemap(self, params):
-         try:
-             res = self.sesh.get(url,
-                                 headers=headers,
--                                timeout=params.get('_timeout'))
-+                                timeout=params.get('_timeout', DefaultAdapters.timeout))
- 
-             res.raise_for_status()
-             assert(res.text)
-@@ -787,7 +790,8 @@ def handle_timegate(self, params, timestamp):
-         res = None
-         try:
-             headers = self._get_headers(params)
--            res = self.sesh.head(load_url, headers=headers)
-+            res = self.sesh.head(load_url, headers=headers,
-+                                 timeout=params.get('_timeout', DefaultAdapters.timeout))
-         except Exception as e:
-             no_except_close(res)
-             raise NotFoundException(url)
-```
-
-**File**: `pywb/warcserver/index/test/test_xmlquery_indexsource.py` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@
- 
- 
- # ============================================================================
--def mock_get(self, url):
-+def mock_get(self, url, timeout=None):
-     string = ''
-     global query_url
-     query_url = url
-```
-
-**File**: `pywb/warcserver/resource/responseloader.py` (modified, +1/-1)
-```diff
-@@ -555,7 +555,7 @@ def _do_request(self, method, load_url, data, req_headers, params, is_live):
-                                            preload_content=False,
-                                            decode_content=False,
-                                            retries=max_retries,
--                                           timeout=params.get('_timeout'))
-+                                           timeout=params.get('_timeout', DefaultAdapters.timeout))
- 
-             return upstream_res
- 
-```
-
-**File**: `pywb/warcserver/test/test_handlers.py` (modified, +8/-0)
-```diff
-@@ -27,6 +27,8 @@
- from pywb.warcserver.index.aggregator import DirectoryIndexSource
- 
- from pywb.warcserver.basewarcserver import BaseWarcServer
-+from pywb.warcserver.http import DefaultAdapters
-+from pywb.warcserver.resource.responseloader import LiveWebLoader
- from pywb.utils.memento import MementoUtils
- from pywb.utils.geventserver import GeventServer
- 
-@@ -575,3 +577,9 @@ def test_error_invalid(self):
-         assert resp.text == resp.headers['ResErrors']
- 
- 
-+# ============================================================================
-+def test_live_request_default_timeout():
-+    with patch.object(DefaultAdapters.live_adapter.poolmanager, 'urlopen') as urlopen:
-+        LiveWebLoader()._do_request('GET', 'http://example.com/', None, {}, {}, True)
-+
-+    assert urlopen.call_args[1]['timeout'] == DefaultAdapters.timeout
+@@ -1 +1 @@
+-Subproject commit ad69888a2c57f8fdc408f054eaefce9c25011926
++Subproject commit a7d84409f9669618052cc2cde8384c122fe9da8f
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1085** (2026-11-19): Update to wombat 3.11.2 and wabac 2.28.0 (@ato)
+- **PR #1084** (2026-11-17): Scope the server-side cookie tracker to each visitor (@ato)
+- **PR #1083** (2026-11-17): Support ES modules in replay: rewrite to jm_ modifier, serve unwrapped (@Jaydenha09)
 - **PR #1082** (2026-11-14): Replace py3AMF with a data-only AMF decoder (@ato)
 - **PR #1081** (closed): [SECURITY] Disable shared live cookie tracking by default (@ANJALI-SAVANT)
 - **PR #1079** (closed): [SECURITY] Require opt-in for HTTP ACL user headers (@ANJALI-SAVANT)
-- **PR #1077** (closed): [SECURITY] Block non-public live and remote URLs by default (@ANJALI-SAVANT)
-- **PR #1075** (closed): [SECURITY] Disable AMF by default and restrict class decoding (@ANJALI-SAVANT)
-- **PR #1071** (2026-11-16): Set a default timeout for live web and remote index requests (@igobranco)
 
 ---
 
@@ -1890,23 +1669,21 @@ Generated-with: Claude Opus 5.5 (claude-opus-5-5)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in http.py
+## X. Empirical Invariant Guard in loadWabac.js
 
 **RULE**:
-When implementing operations in `pywb/warcserver/http.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrecorder/pywb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pywb/static/loadWabac.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrecorder/pywb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `876fff4c`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `28750e62`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pywb/warcserver/http.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pywb/static/loadWabac.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    # default timeout (seconds) to connect and between reads
-    timeout = 30
-
+        proxyPassErrors: true,
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1916,7 +1693,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `876fff4c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `28750e62` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

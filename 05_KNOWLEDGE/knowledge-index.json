@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T14:52:58.635Z",
+  "last_updated": "2026-11-20T15:15:28.779Z",
   "total_verified_learnings": 9040,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22464,
+  "total_items": 22470,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -233776,8 +233776,8 @@
       "slug": "apache-pinot",
       "platform": "github",
       "source_url": "https://github.com/apache/pinot",
-      "source_version": "85417d1a",
-      "content_hash": "90e359603df9f37de764bd0f5183a4529ada3f5f128a1fc06baf8cf7876933ee",
+      "source_version": "01004140",
+      "content_hash": "c815bda94e20452ad60e616ab4777d8bc88cd8bff64dad8e94a92a5fe7579a3b",
       "dossier_path": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "promoted_rules": [
@@ -233800,6 +233800,11 @@
           "number": 9359,
           "title": "Prevent Lucene class initialization deadlock during server startup",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9588,
+          "title": "Add prefixed minion dataDir config key",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233807,7 +233812,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T08:29:01.033Z",
+      "verified_at": "2026-11-20T15:15:22.912Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233849,10 +233854,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-content-information-intelligence-apache-pinot-core-invariants.md",
       "title": "Content & Information Intelligence: apache/pinot Core Invariants",
       "repository": "apache/pinot",
-      "source_version": "85417d1a",
-      "content_hash": "f68340c6b16bf0276f6f7f75b8f10d8072d774ba927f61e8640960a2de5873a4",
+      "source_version": "01004140",
+      "content_hash": "cb9ffa57a61a56847fc286571f55fbbce82641db0d56b9b3eb95eff027c17c20",
       "domain_letter": "I",
-      "persisted_at": "2026-11-19T08:29:01.704Z"
+      "persisted_at": "2026-11-20T15:15:23.466Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot",
@@ -233861,10 +233866,10 @@
       "relative_path": "08_VERIFICATION/apache-pinot-verification-protocol-empirical-defect-shield-for-apache-pinot.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/pinot",
       "repository": "apache/pinot",
-      "source_version": "85417d1a",
-      "content_hash": "91fd092acf6cbb6219b48e062fdb86584c1c4fc8337f3b4651095642cf3475b3",
+      "source_version": "01004140",
+      "content_hash": "2753cba08d086dbcdb033b07ffbd6244612f425f334be1006e57108dae96ecb3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T08:29:01.887Z"
+      "persisted_at": "2026-11-20T15:15:23.615Z"
     },
     "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants",
@@ -256793,14 +256798,19 @@
       "slug": "duongductrong-snapzy",
       "platform": "github",
       "source_url": "https://github.com/duongductrong/Snapzy",
-      "source_version": "92a08dd1",
-      "content_hash": "26acc567387b88beb218e746f21fdadbcb51f9b60c3464ba1cec0c960d31ee86",
+      "source_version": "494f494b",
+      "content_hash": "8596b8aa14677d0ae13eb5a2c71aa3bb0ca5735de2ea0c40ba0f2714d44bc997",
       "dossier_path": "07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
       "promoted_rules": [
         {
           "number": 8739,
           "title": "release preferences window content on close to stop idle CPU burn",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9587,
+          "title": "Stop the video fixture from hanging CI and collect test-host crash reports",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -256809,7 +256819,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T13:38:24.469Z",
+      "verified_at": "2026-11-20T15:15:16.285Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -256851,10 +256861,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-duongductrong-snapzy-technical-construction-intelligence-duongductrong-snapzy-co.md",
       "title": "Technical Construction Intelligence: duongductrong/Snapzy Core Invariants",
       "repository": "duongductrong/Snapzy",
-      "source_version": "92a08dd1",
-      "content_hash": "d418a903febd83be4f08567a9efb0757298323128c73b09ac31eec32e4311942",
+      "source_version": "494f494b",
+      "content_hash": "26db62b3bfb3bd50041705e557f2a8ddcf11b459218b4e7866d3609a94443756",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T13:38:24.898Z"
+      "persisted_at": "2026-11-20T15:15:16.842Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-duongductrong-snapzy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-duongductrong-snapzy",
@@ -256863,10 +256873,10 @@
       "relative_path": "08_VERIFICATION/duongductrong-snapzy-verification-protocol-empirical-defect-shield-for-duongduct.md",
       "title": "Verification Protocol: Empirical Defect Shield for duongductrong/Snapzy",
       "repository": "duongductrong/Snapzy",
-      "source_version": "92a08dd1",
-      "content_hash": "74ab68fc3e75dddc35847994290fe5a864717e712a6e688718e81dd3d14b232e",
+      "source_version": "494f494b",
+      "content_hash": "eea7be4b2c892708495a6737aec307d001ddf0ef251c364c8f5e1ceed4ae8de3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T13:38:25.011Z"
+      "persisted_at": "2026-11-20T15:15:16.996Z"
     },
     "rule-8740": {
       "learning_id": "rule-8740",
@@ -256954,9 +256964,9 @@
       "title": "Technical Construction Intelligence: duongductrong-snapzy-learnings Core Invariants",
       "repository": "duongductrong-snapzy-learnings",
       "source_version": "HEAD",
-      "content_hash": "6617b6e2df89e389d6c17fe48ef626c0cfeb12ee9b183be2c0a7592f09a2bad8",
+      "content_hash": "f36e1e8d8c5ae54cf57507a6b761acc7ff71ccc0a2b297fb36fade1cec360bdc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T13:38:38.172Z"
+      "persisted_at": "2026-11-20T15:15:27.879Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-duongductrong-snapzy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-duongductrong-snapzy-learnings",
@@ -256966,9 +256976,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for duongductrong-snapzy-learnings",
       "repository": "duongductrong-snapzy-learnings",
       "source_version": "HEAD",
-      "content_hash": "09013da806da36b5f5904affe4e40fd07b3362fd57edf38d43e168ffd179ea65",
+      "content_hash": "efedd5a601809b81d197c17ff27afe01c1704b315a826c0ea6b0bf60f0914435",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T13:38:38.285Z"
+      "persisted_at": "2026-11-20T15:15:28.029Z"
     },
     "candidate_directive-build-stop-marking-release-binaries-as-dirty": {
       "item_id": "candidate_directive-build-stop-marking-release-binaries-as-dirty",
@@ -257740,14 +257750,19 @@
       "slug": "webrecorder-pywb",
       "platform": "github",
       "source_url": "https://github.com/webrecorder/pywb",
-      "source_version": "876fff4c",
-      "content_hash": "00d76bf3c206cbd064ea7e391e82b5b5ff316f19c7e6bbc328ebbdf1f55713fd",
+      "source_version": "28750e62",
+      "content_hash": "ef41bb330db7fa7c7d9e59396ffdb31641db80f87b359435a022e24421ac4835",
       "dossier_path": "07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
       "promoted_rules": [
         {
           "number": 8754,
           "title": "Empirical Invariant Guard in http.py",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9586,
+          "title": "Empirical Invariant Guard in loadWabac.js",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -257756,7 +257771,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T15:51:03.772Z",
+      "verified_at": "2026-11-20T15:15:13.158Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -257798,10 +257813,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-webrecorder-pywb-technical-construction-intelligence-webrecorder-pywb-core-invar.md",
       "title": "Technical Construction Intelligence: webrecorder/pywb Core Invariants",
       "repository": "webrecorder/pywb",
-      "source_version": "876fff4c",
-      "content_hash": "b446a515fbacff32a8dcc966332a3df12671d5da7474c5444bdf5074eacb08f1",
+      "source_version": "28750e62",
+      "content_hash": "533a6b0e2421a854f6e17dd14d9e84aa83d5d9fb6b8e35720f281bc401231eb3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T15:51:04.202Z"
+      "persisted_at": "2026-11-20T15:15:13.722Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-webrecorder-pywb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-webrecorder-pywb",
@@ -257810,10 +257825,10 @@
       "relative_path": "08_VERIFICATION/webrecorder-pywb-verification-protocol-empirical-defect-shield-for-webrecorder-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for webrecorder/pywb",
       "repository": "webrecorder/pywb",
-      "source_version": "876fff4c",
-      "content_hash": "7c5da5face64e1d447ad697f21bbc3fc52546987d36db7e7099ac1284268e028",
+      "source_version": "28750e62",
+      "content_hash": "562e03dc9e20c64dd7660c3385f3b91c7916deb654e047ddce7ac7d1f8a1b313",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T15:51:04.308Z"
+      "persisted_at": "2026-11-20T15:15:13.874Z"
     },
     "learn-github-0xcub3-wblock": {
       "learning_id": "learn-github-0xcub3-wblock",
@@ -257987,9 +258002,9 @@
       "title": "Technical Construction Intelligence: webrecorder-pywb-learnings Core Invariants",
       "repository": "webrecorder-pywb-learnings",
       "source_version": "HEAD",
-      "content_hash": "2241849f22d6cfe0ee0ebc81fb496bd5e18b6a49f3c8d316dcd8fcf79f2a5fdc",
+      "content_hash": "e7aaf2d8c4ed0a979b09bf52d513d4bec5331cdd8a3f7a3cde182024cf54e8a3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T15:51:46.946Z"
+      "persisted_at": "2026-11-20T15:15:27.165Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-webrecorder-pywb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-webrecorder-pywb-learnings",
@@ -257999,9 +258014,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for webrecorder-pywb-learnings",
       "repository": "webrecorder-pywb-learnings",
       "source_version": "HEAD",
-      "content_hash": "6e0f991fd0d8750c506d0c4b8e1638413960b557cafb16171fa7c1db5d9f53f7",
+      "content_hash": "ec6a1044a3304c45808ab3916a37b6e361b614dd83d0a55e429f7c14f91071f8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T15:51:47.074Z"
+      "persisted_at": "2026-11-20T15:15:27.315Z"
     },
     "candidate_directive-engine-respect-spotify-music-exceptions-across-blockers": {
       "item_id": "candidate_directive-engine-respect-spotify-music-exceptions-across-blockers",
@@ -271649,9 +271664,9 @@
       "title": "Content & Information Intelligence: apache-pinot-learnings Core Invariants",
       "repository": "apache-pinot-learnings",
       "source_version": "HEAD",
-      "content_hash": "60256914c0c374d4d912a894e55aee4d78f56c79543b56f3d345fe7bfba152c8",
+      "content_hash": "b1b957940014df174889389762c829be7aba951ca22a795808d24915bd25b9ab",
       "domain_letter": "I",
-      "persisted_at": "2026-11-19T08:37:50.752Z"
+      "persisted_at": "2026-11-20T15:15:28.612Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot-learnings",
@@ -271661,9 +271676,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-pinot-learnings",
       "repository": "apache-pinot-learnings",
       "source_version": "HEAD",
-      "content_hash": "31eccdee6ae88740f391526cf136daa73f5ae0af89081aed2260d12e6f87341f",
+      "content_hash": "add603d85fd3cf93e859a9e9f956bedc35418dae56a01e666422fee42c179b4b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T08:37:50.933Z"
+      "persisted_at": "2026-11-20T15:15:28.779Z"
     },
     "learn-huggingface-speridlabs-idol": {
       "learning_id": "learn-huggingface-speridlabs-idol",
@@ -304471,6 +304486,84 @@
       "content_hash": "a751be4221c202178d5984fc652aeeb08774eaa797717b94c4419b9e8f018b2b",
       "domain_letter": "F",
       "persisted_at": "2026-11-20T14:52:57.183Z"
+    },
+    "rule-9586": {
+      "learning_id": "rule-9586",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9586,
+      "title": "Empirical Invariant Guard in loadWabac.js",
+      "source_url": "https://github.com/webrecorder/pywb",
+      "source_version": "28750e62",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T15:15:13.158Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-loadwabac-js": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-loadwabac-js",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F7AB-empirical-invariant-guard-in-loadwabac-js.md",
+      "title": "Empirical Invariant Guard in loadWabac.js",
+      "repository": "webrecorder-pywb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9c626d64e0567331b2d8d45ca5b6fb6c9ceb7ab487e83e5f0c31ac1d07a91a57",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T15:15:27.011Z"
+    },
+    "rule-9587": {
+      "learning_id": "rule-9587",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9587,
+      "title": "Stop the video fixture from hanging CI and collect test-host crash reports",
+      "source_url": "https://github.com/duongductrong/Snapzy",
+      "source_version": "494f494b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T15:15:16.285Z"
+    },
+    "candidate_directive-stop-the-video-fixture-from-hanging-ci-and-collect-test-host-crash-reports": {
+      "item_id": "candidate_directive-stop-the-video-fixture-from-hanging-ci-and-collect-test-host-crash-reports",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F7U9-stop-the-video-fixture-from-hanging-ci-and-collect-test-host-crash-reports.md",
+      "title": "Stop the video fixture from hanging CI and collect test-host crash reports",
+      "repository": "duongductrong-snapzy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2648e027abd9050fff1f9093c218a77e894c9c7f0e372825094815e3834c3384",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T15:15:27.732Z"
+    },
+    "rule-9588": {
+      "learning_id": "rule-9588",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9588,
+      "title": "Add prefixed minion dataDir config key",
+      "source_url": "https://github.com/apache/pinot",
+      "source_version": "01004140",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T15:15:22.912Z"
+    },
+    "candidate_directive-add-prefixed-minion-datadir-config-key": {
+      "item_id": "candidate_directive-add-prefixed-minion-datadir-config-key",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F8EE-add-prefixed-minion-datadir-config-key.md",
+      "title": "Add prefixed minion dataDir config key",
+      "repository": "apache-pinot-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bb49df5e2682fe6b8190a11282ae0060efc0a8f01da66719de173a6fba3a8653",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T15:15:28.458Z"
     }
   },
   "ai-builder-brain": {

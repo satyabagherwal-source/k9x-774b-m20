@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T14:52:51.955Z",
+  "last_updated": "2026-11-20T15:15:23.122Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -13776,14 +13776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duongductrong-snapzy",
-      "content_hash": "26acc567387b88beb218e746f21fdadbcb51f9b60c3464ba1cec0c960d31ee86",
-      "verified_at": "2026-11-16T13:38:24.627Z",
+      "content_hash": "8596b8aa14677d0ae13eb5a2c71aa3bb0ca5735de2ea0c40ba0f2714d44bc997",
+      "verified_at": "2026-11-20T15:15:16.500Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T13:38:24.627Z"
+      "last_updated": "2026-11-20T15:15:16.500Z"
     },
     "scrapy-plugins/scrapy-deltafetch": {
       "repository": "scrapy-plugins/scrapy-deltafetch",
@@ -13896,14 +13896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webrecorder-pywb",
-      "content_hash": "00d76bf3c206cbd064ea7e391e82b5b5ff316f19c7e6bbc328ebbdf1f55713fd",
-      "verified_at": "2026-11-16T15:51:03.933Z",
+      "content_hash": "ef41bb330db7fa7c7d9e59396ffdb31641db80f87b359435a022e24421ac4835",
+      "verified_at": "2026-11-20T15:15:13.372Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T15:51:03.933Z"
+      "last_updated": "2026-11-20T15:15:13.372Z"
     },
     "Kruszoneq/macUSB": {
       "repository": "Kruszoneq/macUSB",
@@ -18006,14 +18006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-pinot",
-      "content_hash": "90e359603df9f37de764bd0f5183a4529ada3f5f128a1fc06baf8cf7876933ee",
-      "verified_at": "2026-11-19T08:29:01.277Z",
+      "content_hash": "c815bda94e20452ad60e616ab4777d8bc88cd8bff64dad8e94a92a5fe7579a3b",
+      "verified_at": "2026-11-20T15:15:23.121Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T08:29:01.277Z"
+      "last_updated": "2026-11-20T15:15:23.121Z"
     },
     "N1nEmAn/sapper-v2": {
       "repository": "N1nEmAn/sapper-v2",

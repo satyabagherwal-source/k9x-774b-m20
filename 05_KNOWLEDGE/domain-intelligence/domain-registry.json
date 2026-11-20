@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T14:52:58.423Z",
+  "last_updated": "2026-11-20T15:15:28.612Z",
   "total_records": 2137,
   "domains": {
     "A": {
@@ -16932,8 +16932,8 @@
       "title": "Content & Information Intelligence: apache/pinot Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-content-information-intelligence-apache-pinot-core-invariants.md",
       "repository": "apache/pinot",
-      "content_hash": "f68340c6b16bf0276f6f7f75b8f10d8072d774ba927f61e8640960a2de5873a4",
-      "created_at": "2026-11-19T08:29:01.704Z"
+      "content_hash": "cb9ffa57a61a56847fc286571f55fbbce82641db0d56b9b3eb95eff027c17c20",
+      "created_at": "2026-11-20T15:15:23.466Z"
     },
     "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants",
@@ -23917,8 +23917,8 @@
       "title": "Technical Construction Intelligence: duongductrong/Snapzy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-duongductrong-snapzy-technical-construction-intelligence-duongductrong-snapzy-co.md",
       "repository": "duongductrong/Snapzy",
-      "content_hash": "d418a903febd83be4f08567a9efb0757298323128c73b09ac31eec32e4311942",
-      "created_at": "2026-11-16T13:38:24.898Z"
+      "content_hash": "26db62b3bfb3bd50041705e557f2a8ddcf11b459218b4e7866d3609a94443756",
+      "created_at": "2026-11-20T15:15:16.842Z"
     },
     "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-learnings-core-invarian": {
       "record_id": "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-learnings-core-invarian",
@@ -23926,8 +23926,8 @@
       "title": "Technical Construction Intelligence: duongductrong-snapzy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-duongductrong-snapzy-learnings-technical-construction-intelligence-duongductrong.md",
       "repository": "duongductrong-snapzy-learnings",
-      "content_hash": "6617b6e2df89e389d6c17fe48ef626c0cfeb12ee9b183be2c0a7592f09a2bad8",
-      "created_at": "2026-11-16T13:38:38.172Z"
+      "content_hash": "f36e1e8d8c5ae54cf57507a6b761acc7ff71ccc0a2b297fb36fade1cec360bdc",
+      "created_at": "2026-11-20T15:15:27.879Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ifm-pan2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ifm-pan2-core-invariants",
@@ -24094,8 +24094,8 @@
       "title": "Technical Construction Intelligence: webrecorder/pywb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-webrecorder-pywb-technical-construction-intelligence-webrecorder-pywb-core-invar.md",
       "repository": "webrecorder/pywb",
-      "content_hash": "b446a515fbacff32a8dcc966332a3df12671d5da7474c5444bdf5074eacb08f1",
-      "created_at": "2026-11-16T15:51:04.202Z"
+      "content_hash": "533a6b0e2421a854f6e17dd14d9e84aa83d5d9fb6b8e35720f281bc401231eb3",
+      "created_at": "2026-11-20T15:15:13.722Z"
     },
     "domain_intelligence-technical-construction-intelligence-0xcub3-wblock-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-0xcub3-wblock-core-invariants",
@@ -24146,8 +24146,8 @@
       "title": "Technical Construction Intelligence: webrecorder-pywb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-webrecorder-pywb-learnings-technical-construction-intelligence-webrecorder-pywb-.md",
       "repository": "webrecorder-pywb-learnings",
-      "content_hash": "2241849f22d6cfe0ee0ebc81fb496bd5e18b6a49f3c8d316dcd8fcf79f2a5fdc",
-      "created_at": "2026-11-16T15:51:46.946Z"
+      "content_hash": "e7aaf2d8c4ed0a979b09bf52d513d4bec5331cdd8a3f7a3cde182024cf54e8a3",
+      "created_at": "2026-11-20T15:15:27.165Z"
     },
     "domain_intelligence-technical-construction-intelligence-0xcub3-wblock-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-0xcub3-wblock-learnings-core-invariants",
@@ -27061,8 +27061,8 @@
       "title": "Content & Information Intelligence: apache-pinot-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-learnings-content-information-intelligence-apache-pinot-learnings-c.md",
       "repository": "apache-pinot-learnings",
-      "content_hash": "60256914c0c374d4d912a894e55aee4d78f56c79543b56f3d345fe7bfba152c8",
-      "created_at": "2026-11-19T08:37:50.752Z"
+      "content_hash": "b1b957940014df174889389762c829be7aba951ca22a795808d24915bd25b9ab",
+      "created_at": "2026-11-20T15:15:28.612Z"
     },
     "domain_intelligence-research-knowledge-intelligence-speridlabs-idol-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-speridlabs-idol-core-invariants",

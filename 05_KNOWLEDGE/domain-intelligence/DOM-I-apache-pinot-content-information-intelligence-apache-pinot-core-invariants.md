@@ -4,24 +4,24 @@
 {
   "source_repository": "apache/pinot",
   "source_url": "https://github.com/apache/pinot",
-  "source_version": "85417d1a",
+  "source_version": "01004140",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T08:29:01.518Z",
+  "timestamp": "2026-11-20T15:15:23.312Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-apache-pinot",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apache/pinot](https://github.com/apache/pinot) (Revision: `85417d1a`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T08:29:01.518Z`  
+> **Provenance**: Harvested from [apache/pinot](https://github.com/apache/pinot) (Revision: `01004140`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T15:15:23.312Z`  
 > **Learning ID**: `learn-github-apache-pinot`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), G (Architecture Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), E (Creative Intelligence)
-- **Confidence Rating**: 64%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from apache/pinot:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T08:27:47.202Z  
+> **Harvest Timestamp**: 2026-11-20T15:15:22.080Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2007,438 +2007,116 @@ const syncTableSchemaData = (data, showFieldType) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2a07f212` (2026-11-18)
-**Commit Message**: Prevent Lucene class initialization deadlock during server startup (#20296)
+### Incident Patch 1: `25be8417` (2026-11-19)
+**Commit Message**: Add prefixed minion dataDir config key (#20312)
 
-**File**: `compatibility-verifier/CompatibilityServerStarter.java` (added, +46/-0)
+**File**: `pinot-integration-test-base/src/test/java/org/apache/pinot/integration/tests/ClusterTest.java` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,46 @@
-+/**
-+ * Licensed to the Apache Software Foundation (ASF) under one
-+ * or more contributor license agreements.  See the NOTICE file
-+ * distributed with this work for additional information
-+ * regarding copyright ownership.  The ASF licenses this file
-+ * to you under the Apache License, Version 2.0 (the
-+ * "License"); you may not use this file except in compliance
-+ * with the License.  You may obtain a copy of the License at
-+ *
-+ *   http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing,
-+ * software distributed under the License is distributed on an
-+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+ * KIND, either express or implied.  See the License for the
-+ * specific language governing permissions and limitations
-+ * under the License.
-+ */
-+package org.apache.pinot.compat;
-+
-+import java.lang.reflect.InvocationTargetException;
-+
-+
-+/**
-+ * Initializes Lucene on the main thread before starting a compatibility server, including older releases that lack
-+ * the startup fix. This stateless entry point must run before any concurrent Lucene use in the same JVM.
-+ */
-+public final class CompatibilityServerStarter {
-+  private CompatibilityServerStarter() {
+@@ -338,7 +338,8 @@ protected PinotConfiguration getMinionConf() {
+       _minionBaseApiUrl = "http://localhost:" + minionPort;
+     }
+     _nextMinionPort = minionPort + 1;
+-    minionConf.setProperty(Helix.Instance.DATA_DIR_KEY, TEMP_MINION_DIR + File.separator + "dataDir");
++    minionConf.setProperty(CommonConstants.Minion.CONFIG_OF_MINION_DATA_DIR,
++        TEMP_MINION_DIR + File.separator + "dataDir");
+     minionConf.setProperty(CommonConstants.CONFIG_OF_TIMEZONE, "UTC");
+     overrideMinionConf(minionConf);
+     return minionConf;
+```
+
+**File**: `pinot-minion/src/main/java/org/apache/pinot/minion/BaseMinionStarter.java` (modified, +1/-2)
+```diff
+@@ -220,8 +220,7 @@ public void start()
+ 
+     // Initialize data directory
+     LOGGER.info("Initializing data directory");
+-    File dataDir = new File(_config.getProperty(CommonConstants.Helix.Instance.DATA_DIR_KEY,
+-        CommonConstants.Minion.DEFAULT_INSTANCE_DATA_DIR));
++    File dataDir = new File(_config.getDataDir());
+     if (dataDir.exists()) {
+       FileUtils.cleanDirectory(dataDir);
+     } else {
+```
+
+**File**: `pinot-minion/src/main/java/org/apache/pinot/minion/MinionConf.java` (modified, +8/-0)
+```diff
+@@ -70,6 +70,14 @@ public String getInstanceId() {
+     return instanceId != null ? instanceId : getProperty(CommonConstants.Helix.Instance.INSTANCE_ID_KEY);
+   }
+ 
++  @SuppressWarnings("deprecation") // Falls back to the legacy un-prefixed key for backward compatibility
++  public String getDataDir() {
++    String dataDir = getProperty(CommonConstants.Minion.CONFIG_OF_MINION_DATA_DIR);
++    return dataDir != null
++        ? dataDir
++        : getProperty(CommonConstants.Helix.Instance.DATA_DIR_KEY, CommonConstants.Minion.DEFAULT_INSTANCE_DATA_DIR);
 +  }
 +
-+  public static void main(String[] args)
-+      throws Throwable {
-+    // Lucene 9.12.0 has a class initialization cycle between IndexWriter, TestSecrets, and ConcurrentMergeScheduler.
-+    // Resolve it on one thread before Helix starts loading immutable indexes and creating realtime indexes in parallel.
-+    // https://github.com/apache/lucene/issues/12419
-+    Class.forName("org.apache.lucene.index.IndexWriter");
-+    try {
-+      // Use the distribution's administrator and dependencies, never the current checkout's Pinot implementation.
-+      Class.forName("org.apache.pinot.tools.admin.PinotAdministrator").getMethod("main", String[].class)
-+          .invoke(null, (Object) args);
-+    } catch (InvocationTargetException e) {
-+      throw e.getCause();
-+    }
+   public int getEndReplaceSegmentsTimeoutMs() {
+     return getProperty(END_REPLACE_SEGMENTS_TIMEOUT_MS_KEY, DEFAULT_END_REPLACE_SEGMENTS_SOCKET_TIMEOUT_MS);
+   }
+```
+
+**File**: `pinot-minion/src/test/java/org/apache/pinot/minion/MinionConfTest.java` (modified, +15/-0)
+```diff
+@@ -26,6 +26,8 @@
+ import org.testng.Assert;
+ import org.testng.annotations.Test;
+ 
++import static org.testng.Assert.assertEquals;
++
+ 
+ public class MinionConfTest {
+ 
+@@ -73,6 +75,19 @@ public void testDeprecatedConfigs()
+         "org.apache.pinot.core.crypt.NoOpPinotCrypter");
+   }
+ 
++  @Test
++  @SuppressWarnings("deprecation") // Tests the legacy un-prefixed key fallback
++  public void testDataDirPrecedence() {
++    MinionConf conf = new MinionConf();
++    assertEquals(conf.getDataDir(), CommonConstants.Minion.DEFAULT_INSTANCE_DATA_DIR);
++
++    conf.setProperty(CommonConstants.Helix.Instance.DATA_DIR_KEY, "/legacy/data");
++    assertEquals(conf.getDataDir(), "/legacy/data");
++
++    conf.setProperty(CommonConstants.Minion.CONFIG_OF_MINION_DATA_DIR, "/minion/data");
++    assertEquals(conf.getDataDir(), "/minion/data");
 +  }
-+}
-```
-
-**File**: `compatibility-verifier/README.md` (modified, +7/-0)
-```diff
-@@ -56,6 +56,13 @@ OPTIONAL:
- 
- ### Server readiness and failure diagnostics
- 
-+Before starting each server, the verifier initializes Lucene's `IndexWriter` on the main thread in that server JVM.
-+This also covers older releases during initial startup and rollback, avoiding Lucene 9.12.0's class initialization
-+deadlock when Helix loads text indexes and creates realtime text indexes concurrently. A small bootstrap is compiled
-+with `javac --release 11`; each distribution retains its own libraries, plugins, and launcher settings.
-+This workaround remains necessary while compatibility baselines include releases affected by
-+[Lucene issue #12419](https://github.com/apache/lucene/issues/12419).
 +
- The verifier waits for each server's health endpoint to return success before running operations after startup,
- upgrade, or rollback. HTTP errors do not count as ready. The wait fails if the process exits or does not become
- ready within 600 seconds (configurable with `SERVER_READY_TIMEOUT_SECONDS`).
+   @Test
+   public void testReplaceSegmentsTimeoutDefaultsAndOverrides() {
+     MinionConf conf = new MinionConf();
 ```
 
-**File**: `compatibility-verifier/compCheck.sh` (modified, +7/-1)
+**File**: `pinot-spi/src/main/java/org/apache/pinot/spi/utils/CommonConstants.java` (modified, +2/-0)
 ```diff
-@@ -45,6 +45,7 @@ logCount=1
- cmdName=`basename $0`
- source "$(dirname "${BASH_SOURCE[0]}")/utils.inc"
- source "$(dirname "${BASH_SOURCE[0]}")/server-readiness.inc"
-+source "$(dirname "${BASH_SOURCE[0]}")/server-startup.inc"
- # Resolve this before changing directory to a distribution's bin directory.
- COMPAT_SERVER_LOG4J_CONFIG="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/server-log4j2.xml"
+@@ -205,6 +205,7 @@ public enum SegmentAssignmentStrategyType {
+     public static class Instance {
+       @Deprecated
+       public static final String INSTANCE_ID_KEY = "instanceId";
++      @Deprecated
+       public static final String DATA_DIR_KEY = "dataDir";
+       public static final String ADMIN_PORT_KEY = "adminPort";
+       public static final String ADMIN_HTTPS_PORT_KEY = "adminHttpsPort";
+@@ -2190,6 +2191,7 @@ public static class Controller {
+   public static class Minion {
+     public static final String CONFIG_OF_METRICS_PREFIX = "pinot.minion.";
+     public static final String CONFIG_OF_MINION_ID = "pinot.minion.instance.id";
++    public static final String CONFIG_OF_MINION_DATA_DIR = "pinot.minion.instance.dataDir";
+     public static final String METADATA_EVENT_OBSERVER_PREFIX = "metadata.event.notifier";
  
-@@ -195,6 +196,7 @@ function startServerWithLogs() {
-     export LOG4J_CONFIGURATION_FILE="$COMPAT_SERVER_LOG4J_CONFIG"
-     export LOG_ROOT="$serverLogDir"
-     export PINOT_COMPONENT="$serviceName"
-+    export CLASSPATH_PREFIX="${COMPAT_SERVER_STARTUP_CLASSES}${CLASSPATH_PREFIX:+:$CLASSPATH_PREFIX}"
-     if [ -f "$configFile" ]; then
-       exec "$launcher" StartServer -configFileName "$configFile"
-     else
-@@ -229,7 +231,10 @@ function startService() {
-     ./pinot-admin.sh StartBroker ${configFileArg} 1>${LOG_DIR}/broker.${logCount}.log 2>&1 &
-     echo $! >${PID_DIR}/broker.pid
-   elif [ "$serviceName" = "server" ] || [ "$serviceName" = "server2" ]; then
--    startServerWithLogs "$serviceName" "$PWD/pinot-admin.sh" "$3"
-+    local serverLauncher
-+    serverLauncher=$(prepareCompatibilityServerLauncher "$PWD/pinot-admin.sh") \
-+        || abortCompatibilityCheck "Cannot prepare compatibility launcher for $serviceName"
-+    startServerWithLogs "$serviceName" "$serverLauncher" "$3"
-   elif [ "$serviceName" = "kafka" ]; then
-     startKafkaService
-   fi
-@@ -545,6 +550,7 @@ oldTargetDir="$workingDir"/oldTargetDir
- newTargetDir="$workingDir"/newTargetDir
- 
- setupCompatTester
-+setupCompatibilityServerStartup "$workingDir" || { echo "Cannot compile compatibility server bootstrap"; exit 1; }
- 
- # check that the default ports are open
- if ! checkPortAvailable ${SERVER_ADMIN_PORT} || ! checkPortAvailable ${SERVER_NETTY_PORT} || ! checkPortAvailable ${SERVER_GRPC_PORT} ||
-```
-
-**File**: `compatibility-verifier/server-startup.inc` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+#
-+# Licensed to the Apache Software Foundation (ASF) under one
-+# or more contributor license agreements.  See the NOTICE file
-+# distributed with this work for additional information
-+# regarding copyright ownership.  The ASF licenses this file
-+# to you under the Apache License, Version 2.0 (the
-+# "License"); you may not use this file except in compliance
-+# with the License.  You may obtain a copy of the License at
-+#
-+#   http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing,
-+# software distributed under the License is distributed on an
-+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+# KIND, either express or implied.  See the License for the
-+# specific language governing permissions and limitations
-+# under the License.
-+#
-+
-+COMPAT_SERVER_STARTUP_SOURCE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/CompatibilityServerStarter.java"
-+
-+# Compile without Pinot dependencies so the bootstrap can run with each tested distribution's own classes and JDK.
-+function setupCompatibilityServerStartup() {
-+  local compiler=javac
-+  if [ -n "${JAVA_HOME:-}" ]; then
-+    compiler="$JAVA_HOME/bin/javac"
-+  fi
-+  mkdir -p "$1/server-startup" || return 1
-+  COMPAT_SERVER_STARTUP_CLASSES="$(cd "$1/server-startup" && pwd)" || return 1
-+  "$compiler" --release 11 -d "$COMPAT_SERVER_STARTUP_CLASSES" "$COMPAT_SERVER_STARTUP_SOURCE"
-+}
-+
-+# Keep the generated script beside the original: appassembler resolves its libraries, plugins, and configuration
-+# relative to the script. Change only the main class, preserving all launcher JVM options and argument handling.
-+function prepareCompatibilityServerLauncher() {
-+  local launcher=$1
-+  local compatLauncher="${launcher%.sh}-compat.sh"
-+  local temporaryLauncher
-+  temporaryLauncher=$(mktemp "${compatLauncher}.XXXXXX") || return 1
-+  if ! awk '
-+    $1 == "org.apache.pinot.tools.admin.PinotAdministrator" {
-+      sub(/org\.apache\.pinot\.tools\.admin\.PinotAdministrator/, "org.apache.pinot.compat.CompatibilityServerStarter")
-+      replaced++
-+    }
-+    { print }
-+    END { if (replaced != 1) exit 1 }
-+  ' "$launcher" > "$temporaryLauncher"; then
-+    echo "Cannot locate exactly one PinotAdministrator main class in $launcher" >&2
-+    rm -f "$temporaryLauncher"
-+    return 1
-+  fi
-+  if ! chmod +x "$temporaryLauncher" || ! mv "$temporaryLauncher" "$compatLauncher"; then
-+    rm -f "$temporaryLauncher"
-+    return 1
-+  fi
-+  echo "$compatLauncher"
-+}
-```
-
-**File**: `compatibility-verifier/test_server_readiness.py` (modified, +1/-1)
-```diff
-@@ -205,7 +205,7 @@ def test_each_start_has_its_own_logs_and_preserves_the_working_directory(self):
-                                      'exec sleep 60')
-         script_dir = self.root / "scripts with spaces"
-         script_dir.mkdir()
--        for source in (RUNNER, HELPER, RUNNER.with_name("utils.inc")):
-+        for source in (RUNNER, HELPER, RUNNER.with_name("utils.inc"), RUNNER.with_name("server-startup.inc")):
-             shutil.copyfile(source, script_dir / source.name)
-         copied_config = script_dir / "server-log4j2.xml"
-         shutil.copyfile(HELPER.with_name(copied_config.name), copied_config)
-```
-
-**File**: `pinot-server/src/main/java/org/apache/pinot/server/starter/helix/BaseServerStarter.java` (modified, +6/-0)
-```diff
-@@ -57,6 +57,7 @@
- import org.apache.helix.participant.statemachine.StateModelFactory;
- import org.apache.helix.zookeeper.constant.ZkSystemPropertyKeys;
- import org.apache.helix.zookeeper.datamodel.ZNRecord;
-+import org.apache.lucene.index.IndexWriter;
- import org.apache.pinot.common.Utils;
- import org.apache.pinot.common.config.DefaultClusterConfigChangeHandler;
- import org.apache.pinot.common.config.TlsConfig;
-@@ -663,6 +664,11 @@ public void start()
-     LOGGER.info("Server configs: {}", new PinotAppConfigs(getConfig()).toJSONString());
-     long startTimeMs = System.currentTimeMillis();
- 
-+    // Initialize Lucene on the startup thread before Helix can load existing indexes and create realtime indexes
-+    // concurrently. Lucene 9.x has a class initialization cycle between IndexWriter, TestSecrets, and
-+    // ConcurrentMergeScheduler: https://github.com/apache/lucene/issues/12419.
-+    Class.forName(IndexWriter.class.getName());
-+
-     // Load the index plugins before joining the cluster, so that an invalid plugin set (for example more than
-     // IndexService.MAX_INDEX_TYPES index types) fails server startup instead of every later segment load.
-     LOGGER.info("Loaded {} index types", IndexService.getInstance().getAllIndexes().size());
-```
-
----
-
-### Incident Patch 2: `520655bd` (2026-11-18)
-**Commit Message**: Require patched OpenJDK in Pinot container builds (#20304)
-
-The published base images still carry Java builds affected by the November 2026 advisory.
-Refresh the bases on rebuild and reject older Java 21 and 25 versions before publishing.
-
-**File**: `.github/workflows/build-pinot-base-docker-image.yml` (modified, +2/-2)
-```diff
-@@ -29,7 +29,7 @@ jobs:
-     strategy:
-       matrix:
-         openJdkDist: ["amazoncorretto", "ms-openjdk"]
--        jdk_version: [21, 25]
-+        jdk_version: [25]
-         arch: [amd64, arm64]
-         type: [build, runtime]
-         include:
-@@ -60,7 +60,7 @@ jobs:
-     strategy:
-       matrix:
-         openJdkDist: ["amazoncorretto", "ms-openjdk"]
--        jdk_version: [21, 25]
-+        jdk_version: [25]
-         type: [build, runtime]
-     steps:
-       - name: Login to DockerHub
-```
-
-**File**: `.github/workflows/scripts/docker/.pinot_base_docker_image_build_and_push.sh` (modified, +12/-6)
-```diff
-@@ -28,15 +28,21 @@ if [ -z "${BASE_IMAGE_TYPE}" ]; then
-   exit 1
- fi
- 
--cd docker/images/pinot-base/pinot-base-${BASE_IMAGE_TYPE}
-+BASE_IMAGE_DIR="docker/images/pinot-base/pinot-base-${BASE_IMAGE_TYPE}"
-+JAVA_VERSION="${JDK_VERSION:-25}"
-+IMAGE="apachepinot/pinot-base-${BASE_IMAGE_TYPE}:${TAG}-${ARCH}"
- 
- docker build \
-+  --pull \
-   --no-cache \
-   --platform=${BUILD_PLATFORM} \
--  --file ${OPEN_JDK_DIST}.dockerfile \
--  --tag apachepinot/pinot-base-${BASE_IMAGE_TYPE}:${TAG}-${ARCH} \
--  --build-arg JAVA_VERSION=${JDK_VERSION:-21} \
-+  --file "${BASE_IMAGE_DIR}/${OPEN_JDK_DIST}.dockerfile" \
-+  --tag "${IMAGE}" \
-+  --build-arg JAVA_VERSION="${JAVA_VERSION}" \
-   --build-arg ARCH=${ARCH} \
--  .
-+  "${BASE_IMAGE_DIR}"
- 
--docker push apachepinot/pinot-base-${BASE_IMAGE_TYPE}:${TAG}-${ARCH}
-+docker run --rm -i --platform "${BUILD_PLATFORM}" --entrypoint sh "${IMAGE}" -s \
-+  < docker/images/pinot/check-java-version.sh
-+
-+docker push "${IMAGE}"
-```
-
-**File**: `.github/workflows/scripts/docker/.pinot_compile_and_push_build_image.sh` (modified, +1/-0)
-```diff
-@@ -55,6 +55,7 @@ COMPILE_BASE_IMAGE_TAG="${JDK_VERSION}-amazoncorretto"
- 
- echo "Building docker image for platform: amd64 with tag: pinot-build:${PINOT_BUILD_IMAGE_TAG}"
- docker build \
-+  --pull \
-   --no-cache \
-   --platform linux/amd64 \
-   --file Dockerfile.build \
-```
-
-**File**: `.github/workflows/scripts/docker/.pinot_docker_image_build_and_push.sh` (modified, +1/-0)
-```diff
-@@ -67,6 +67,7 @@ cd ${DOCKER_FILE_BASE_DIR}
- 
- echo "Building Pinot Docker image with JDK ${JDK_VERSION} and base image tag ${PINOT_BASE_IMAGE_TAG}"
- docker buildx build \
-+    --pull \
-     --no-cache \
-     --platform=${BUILD_PLATFORM} \
-     --file Dockerfile \
-```
-
-**File**: `.github/workflows/scripts/docker/.pinot_package_single_platform.sh` (modified, +1/-0)
-```diff
-@@ -71,6 +71,7 @@ for runtimeImage in "${runtimeImages[@]}"; do
-     fi
-   done
- 
-+  docker pull --platform "linux/${BUILD_ARCH}" "apachepinot/pinot-base-runtime:${runtimeImage}"
-   echo "Building docker image for platform: ${BUILD_ARCH} with tags: ${DOCKER_BUILD_TAGS}"
-   docker build \
-     --no-cache \
-```
-
-**File**: `docker/images/pinot-base/README.md` (modified, +13/-9)
-```diff
-@@ -25,30 +25,34 @@ This is the base docker image to build [Apache Pinot](https://github.com/apache/
- 
- ## Build and publish the docker image
- 
--Here is
--the [Github Action task](https://github.com/apachepinot/pinot-fork/actions/workflows/build-pinot-docker-base-image.yml)
--to build and publish pinot base docker images.
-+Use the [Pinot Base Docker Image Build and Publish workflow](https://github.com/apache/pinot/actions/workflows/build-pinot-base-docker-image.yml)
-+to build and publish base images for amd64 and arm64.
- 
--This task can be triggered manually to build the cross platform(amd64 and arm64v8) base image.
-+To roll out a JDK security update, publish the build and runtime base images,
-+then rebuild and publish the Pinot application images that use them. The Pinot
-+image builds check the JDK in their base images before compiling or packaging. For the
-+[November 2026 OpenJDK advisory](https://openjdk.org/groups/vulnerability/advisories/2026-11-17),
-+the base image workflow verifies OpenJDK 25.0.5.1 or newer within the Java 25 release line.
- 
--The build shell is:
-+Use the workflow for official base image publishing. The following commands are
-+for manual builds:
- 
- For Amazon Corretto 25:
- 
- ```SHELL
--docker buildx build --no-cache --platform=linux/arm64,linux/amd64 --file pinot-base-build/amazoncorretto.dockerfile --tag apachepinot/pinot-base-build:25-amazoncorretto --push .
-+docker buildx build --pull --no-cache --build-arg JAVA_VERSION=25 --platform=linux/arm64,linux/amd64 --file pinot-base-build/amazoncorretto.dockerfile --tag apachepinot/pinot-base-build:25-amazoncorretto --push .
- ```
- 
- ```SHELL
--docker buildx build --no-cache --platform=linux/arm64,linux/amd64 --file pinot-base-runtime/amazoncorretto.dockerfile --tag apachepinot/pinot-base-runtime:25-amazoncorretto --push .
-+docker buildx build --pull --no-cache --build-arg JAVA_VERSION=25 --platform=linux/arm64,linux/amd64 --file pinot-base-runtime/amazoncorretto.dockerfile --tag apachepinot/pinot-base-runtime:25-amazoncorretto --push .
- ```
- 
- For MS OpenJDK, the build shell is:
- 
- ```SHELL
--docker buildx build --no-cache --platform=linux/arm64,linux/amd64 --file pinot-base-build/ms-openjdk.dockerfile --tag apachepinot/pinot-base-build:25-ms-openjdk --push .
-+docker buildx build --pull --no-cache --build-arg JAVA_VERSION=25 --platform=linux/arm64,linux/amd64 --file pinot-base-build/ms-openjdk.dockerfile --tag apachepinot/pinot-base-build:25-ms-openjdk --push .
- ```
- 
- ```SHELL
--docker buildx build --no-cache --platform=linux/arm64,linux/amd64 --file pinot-base-runtime/ms-openjdk.dockerfile --tag apachepinot/pinot-base-runtime:25-ms-openjdk --push .
-+docker buildx build --pull --no-cache --build-arg JAVA_VERSION=25 --platform=linux/arm64,linux/amd64 --file pinot-base-runtime/ms-openjdk.dockerfile --tag apachepinot/pinot-base-runtime:25-ms-openjdk --push .
- ```
-```
-
-**File**: `docker/images/pinot-base/pinot-base-build/amazoncorretto.dockerfile` (modified, +2/-2)
-```diff
-@@ -16,7 +16,7 @@
- # specific language governing permissions and limitations
- # under the License.
- #
--ARG JAVA_VERSION=21
-+ARG JAVA_VERSION=25
- FROM debian:bookworm-slim
- 
- LABEL MAINTAINER=dev@pinot.apache.org
-@@ -45,7 +45,7 @@ RUN set -eux \
- # Install Amazon Corretto.
- # /etc/apt/keyrings/ is the correct path for user-managed keys referenced via
- # signed-by=; apt natively handles ASCII-armored .asc files at that path.
--ARG JAVA_VERSION=21
-+ARG JAVA_VERSION=25
- RUN set -eux \
-   && mkdir -p /etc/apt/keyrings \
-   && wget -qO /etc/apt/keyrings/corretto.asc https://apt.corretto.aws/corretto.key \
-```
-
-**File**: `docker/images/pinot-base/pinot-base-build/ms-openjdk.dockerfile` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@
- # specific language governing permissions and limitations
- # under the License.
- #
--ARG JAVA_VERSION=21
-+ARG JAVA_VERSION=25
- ARG JDK_IMAGE=mcr.microsoft.com/openjdk/jdk
- FROM ${JDK_IMAGE}:${JAVA_VERSION}-ubuntu AS pinot_build_env
- 
-```
-
----
-
-### Incident Patch 3: `3785795d` (2026-11-18)
-**Commit Message**: Bump org.webjars:swagger-ui from 5.34.1 to 5.35.0 (#20308)
-
-Bumps [org.webjars:swagger-ui](https://github.com/swagger-api/swagger-ui) from 5.34.1 to 5.35.0.
-- [Release notes](https://github.com/swagger-api/swagger-ui/releases)
-- [Commits](https://github.com/swagger-api/swagger-ui/compare/v5.34.1...v5.35.0)
-
----
-updated-dependencies:
-- dependency-name: org.webjars:swagger-ui
-  dependency-version: 5.35.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `pom.xml` (modified, +1/-1)
-```diff
-@@ -198,7 +198,7 @@
-     <jersey.version>2.48</jersey.version>
-     <hk2.version>2.6.1</hk2.version>
-     <swagger.version>1.6.16</swagger.version>
--    <swagger-ui.version>5.34.1</swagger-ui.version>
-+    <swagger-ui.version>5.35.0</swagger-ui.version>
-     <hadoop.version>3.4.3</hadoop.version>
-     <jsonpath.version>2.10.0</jsonpath.version>
-     <jsonsmart.version>2.6.1</jsonsmart.version>
+     // Config keys
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20325** (2026-11-20): Bump io.github.hakky54:ayza-bom from 10.1.1 to 10.1.2 (@dependabot[bot])
+- **PR #20324** (2026-11-20): Bump at.yawk.lz4:lz4-java from 1.14.0 to 1.14.1 (@dependabot[bot])
+- **PR #20323** (2026-11-20): Bump software.amazon.awssdk:bom from 2.59.1 to 2.59.2 (@dependabot[bot])
+- **PR #20315** (2026-11-19): Bump org.apache.httpcomponents.core5:httpcore5 from 5.4.4 to 5.5 (@dependabot[bot])
+- **PR #20312** (2026-11-19): Add pinot.minion.instance.dataDir config and deprecate un-prefixed dataDir (@ilamhs)
 - **PR #20309** (2026-11-19): Bump org.codehaus.plexus:plexus-utils from 4.1.0 to 4.2.0 (@dependabot[bot])
-- **PR #20308** (2026-11-18): Bump org.webjars:swagger-ui from 5.34.1 to 5.35.0 (@dependabot[bot])
-- **PR #20307** (2026-11-18): Bump org.codehaus.plexus:plexus-xml from 3.1.0 to 3.1.1 (@dependabot[bot])
-- **PR #20306** (2026-11-19): Bump org.roaringbitmap:RoaringBitmap from 1.6.29 to 1.6.30 (@dependabot[bot])
-- **PR #20305** (2026-11-19): Add scope-aware discovery of referenced table identifiers (@xiangfu0)
-- **PR #20304** (2026-11-18): Require patched OpenJDK in Pinot container builds (@xiangfu0)
 
 ---
 
@@ -2458,59 +2136,32 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Prevent Lucene class initialization deadlock during server startup
+## X. Add prefixed minion dataDir config key
 
 **RULE**:
-When implementing operations in `compatibility-verifier/CompatibilityServerStarter.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pinot-integration-test-base/src/test/java/org/apache/pinot/integration/tests/ClusterTest.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2a07f212`: Prevent Lucene class initialization deadlock during server startup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `25be8417`: Add prefixed minion dataDir config key. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `compatibility-verifier/CompatibilityServerStarter.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-integration-test-base/src/test/java/org/apache/pinot/integration/tests/ClusterTest.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-package org.apache.pinot.compat;
-
-import java.lang.reflect.InvocationTargetException;
-
-
-/**
- * Initializes Lucene on the main thread before starting a compatibility server, including older releases that lack
- * the startup fix. This stateless entry point must run before any concurrent Lucene use in the same JVM.
- */
-public final class CompatibilityServerStarter {
-  private CompatibilitySe
+    minionConf.setProperty(CommonConstants.Minion.CONFIG_OF_MINION_DATA_DIR,
+        TEMP_MINION_DIR + File.separator + "dataDir");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    minionConf.setProperty(Helix.Instance.DATA_DIR_KEY, TEMP_MINION_DIR + File.separator + "dataDir");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2a07f212` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `25be8417` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

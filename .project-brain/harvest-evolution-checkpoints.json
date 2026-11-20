@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T14:52:58.800Z",
+  "last_updated": "2026-11-20T15:15:28.911Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T12:15:57.033Z",
@@ -808,7 +808,7 @@
       "staged_for_review": 1
     },
     "apache-pinot-learnings.md": {
-      "processed_at": "2026-11-19T08:37:49.745Z",
+      "processed_at": "2026-11-20T15:15:28.176Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1443,7 +1443,7 @@
       "staged_for_review": 0
     },
     "duongductrong-snapzy-learnings.md": {
-      "processed_at": "2026-11-16T13:38:37.806Z",
+      "processed_at": "2026-11-20T15:15:27.462Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3183,7 +3183,7 @@
       "staged_for_review": 1
     },
     "webrecorder-pywb-learnings.md": {
-      "processed_at": "2026-11-16T15:51:46.347Z",
+      "processed_at": "2026-11-20T15:15:26.414Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3593,7 +3593,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2538,
+  "total_dossiers_evaluated": 2541,
   "total_canonical_promoted": 426,
-  "total_staged_for_review": 1923
+  "total_staged_for_review": 1926
 }

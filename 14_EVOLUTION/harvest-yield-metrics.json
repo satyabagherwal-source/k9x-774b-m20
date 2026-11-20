@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T14:52:51.950Z",
-  "total_cycles_completed": 11011,
-  "total_learnings_persisted": 11011,
-  "total_rules_promoted": 10373,
+  "last_updated": "2026-11-20T15:15:23.118Z",
+  "total_cycles_completed": 11014,
+  "total_learnings_persisted": 11014,
+  "total_rules_promoted": 10376,
   "history": [
-    {
-      "timestamp": "2026-11-19T16:25:01.214Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T16:33:14.192Z",
-      "repository": "black-forest-labs/flux-3-image-klein",
-      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T16:33:17.957Z",
-      "repository": "oven-sh/bun",
-      "learningId": "learn-github-oven-sh-bun",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T16:33:21.847Z",
       "repository": "darrylmorley/whatcable",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-20T14:52:51.950Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T15:15:13.369Z",
+      "repository": "webrecorder/pywb",
+      "learningId": "learn-github-webrecorder-pywb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T15:15:16.497Z",
+      "repository": "duongductrong/Snapzy",
+      "learningId": "learn-github-duongductrong-snapzy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T15:15:23.118Z",
+      "repository": "apache/pinot",
+      "learningId": "learn-github-apache-pinot",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

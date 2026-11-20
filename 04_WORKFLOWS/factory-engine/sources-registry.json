@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-20T13:48:20.383Z",
-    "lastVerified": "2026-11-20T13:48:20.383Z",
+    "lastChecked": "2026-11-20T15:15:20.779Z",
+    "lastVerified": "2026-11-20T15:15:20.779Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T14:52:55.292Z",
-    "lastVerified": "2026-11-20T14:52:55.292Z",
+    "lastChecked": "2026-11-20T15:15:26.274Z",
+    "lastVerified": "2026-11-20T15:15:26.274Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -429,8 +429,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T06:10:53.395Z",
-    "lastVerified": "2026-11-20T06:10:53.395Z",
+    "lastChecked": "2026-11-20T15:15:15.868Z",
+    "lastVerified": "2026-11-20T15:15:15.868Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -928,9 +928,9 @@
   "devspace-sh-devspace": {
     "name": "devspace",
     "officialUrl": "https://github.com/devspace-sh/devspace",
-    "lastChecked": "2026-11-19T11:50:31.070Z",
+    "lastChecked": "2026-11-20T15:15:13.267Z",
     "revisionIdentifier": "8ff62607",
-    "lastVerified": "2026-11-19T11:50:31.070Z"
+    "lastVerified": "2026-11-20T15:15:13.267Z"
   },
   "rustls-rustls": {
     "name": "rustls",
@@ -5055,9 +5055,9 @@
   "salvo-rs-salvo": {
     "name": "salvo",
     "officialUrl": "https://github.com/salvo-rs/salvo",
-    "lastChecked": "2026-11-18T23:10:14.596Z",
+    "lastChecked": "2026-11-20T15:15:05.767Z",
     "revisionIdentifier": "6e2ee81a",
-    "lastVerified": "2026-11-18T23:10:14.596Z"
+    "lastVerified": "2026-11-20T15:15:05.767Z"
   },
   "hf-aleph-alpha-kolibri-1": {
     "name": "Aleph-Alpha/Kolibri-1",
@@ -7248,14 +7248,14 @@
     "officialUrl": "https://github.com/apache/pinot",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-19T08:27:47.202Z",
-    "lastVerified": "2026-11-19T08:27:47.202Z",
+    "lastChecked": "2026-11-20T15:15:22.080Z",
+    "lastVerified": "2026-11-20T15:15:22.080Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-pinot",
-    "contentHash": "90e359603df9f37de764bd0f5183a4529ada3f5f128a1fc06baf8cf7876933ee",
+    "contentHash": "c815bda94e20452ad60e616ab4777d8bc88cd8bff64dad8e94a92a5fe7579a3b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10140,5 +10140,39 @@
     "lastChecked": "2026-11-20T14:52:36.135Z",
     "revisionIdentifier": "83b3e6e0",
     "lastVerified": "2026-11-20T14:52:36.135Z"
+  },
+  "webrecorder-pywb": {
+    "name": "webrecorder/pywb",
+    "officialUrl": "https://github.com/webrecorder/pywb",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-20T15:15:12.222Z",
+    "lastVerified": "2026-11-20T15:15:12.222Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-webrecorder-pywb",
+    "contentHash": "ef41bb330db7fa7c7d9e59396ffdb31641db80f87b359435a022e24421ac4835",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "duongductrong-snapzy": {
+    "name": "duongductrong/Snapzy",
+    "officialUrl": "https://github.com/duongductrong/Snapzy",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-11-20T15:15:15.437Z",
+    "lastVerified": "2026-11-20T15:15:15.437Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-duongductrong-snapzy",
+    "contentHash": "8596b8aa14677d0ae13eb5a2c71aa3bb0ca5735de2ea0c40ba0f2714d44bc997",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -9153,10 +9153,10 @@
     "repository": "duongductrong/Snapzy",
     "platform": "github",
     "sourceUrl": "https://github.com/duongductrong/Snapzy",
-    "sourceVersion": "92a08dd1",
+    "sourceVersion": "494f494b",
     "license": "BSD-3-Clause",
-    "contentHash": "26acc567387b88beb218e746f21fdadbcb51f9b60c3464ba1cec0c960d31ee86",
-    "lastHarvestedAt": "2026-11-16T13:38:24.620Z",
+    "contentHash": "8596b8aa14677d0ae13eb5a2c71aa3bb0ca5735de2ea0c40ba0f2714d44bc997",
+    "lastHarvestedAt": "2026-11-20T15:15:16.492Z",
     "learningId": "learn-github-duongductrong-snapzy"
   },
   "scrapy-plugins-scrapy-deltafetch": {
@@ -9233,10 +9233,10 @@
     "repository": "webrecorder/pywb",
     "platform": "github",
     "sourceUrl": "https://github.com/webrecorder/pywb",
-    "sourceVersion": "876fff4c",
+    "sourceVersion": "28750e62",
     "license": "GPL-3.0",
-    "contentHash": "00d76bf3c206cbd064ea7e391e82b5b5ff316f19c7e6bbc328ebbdf1f55713fd",
-    "lastHarvestedAt": "2026-11-16T15:51:03.926Z",
+    "contentHash": "ef41bb330db7fa7c7d9e59396ffdb31641db80f87b359435a022e24421ac4835",
+    "lastHarvestedAt": "2026-11-20T15:15:13.364Z",
     "learningId": "learn-github-webrecorder-pywb"
   },
   "kruszoneq-macusb": {
@@ -11963,10 +11963,10 @@
     "repository": "apache/pinot",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/pinot",
-    "sourceVersion": "85417d1a",
+    "sourceVersion": "01004140",
     "license": "Apache-2.0",
-    "contentHash": "90e359603df9f37de764bd0f5183a4529ada3f5f128a1fc06baf8cf7876933ee",
-    "lastHarvestedAt": "2026-11-19T08:29:01.266Z",
+    "contentHash": "c815bda94e20452ad60e616ab4777d8bc88cd8bff64dad8e94a92a5fe7579a3b",
+    "lastHarvestedAt": "2026-11-20T15:15:23.113Z",
     "learningId": "learn-github-apache-pinot"
   },
   "n1neman-sapper-v2": {

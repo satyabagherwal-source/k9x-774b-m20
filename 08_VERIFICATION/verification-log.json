@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-DSAH",
-    "timestamp": "2026-11-18T13:47:01.625Z",
-    "repository": "chaos-mesh/chaos-mesh",
-    "learningId": "learn-github-chaos-mesh-chaos-mesh",
-    "contentHash": "cbeca0b16f351cd8259c78ca2c1c2e3647d5666974cbe6c87487d81ada368208",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-DWYO",
-    "timestamp": "2026-11-18T13:47:07.680Z",
-    "repository": "databendlabs/databend",
-    "learningId": "learn-github-databendlabs-databend",
-    "contentHash": "7cf29f9be509c34ba7283affc17c75ec451f5ac27deba6cfebd425d9f81bcb4e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-QD44",
-    "timestamp": "2026-11-18T13:56:48.484Z",
-    "repository": "orcarouter/OrcaSAQ-2-27B",
-    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-    "contentHash": "ffb077a81cf5bc87ecdab6573ffca4cbdec2413d8f238a90a07165d659b569a2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-QFCY",
     "timestamp": "2026-11-18T13:56:51.394Z",
     "repository": "fallow-rs/fallow",
@@ -7490,6 +7445,51 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "974660b35a940143b5d583a7f01fb7729d219a1bee741794b90bdf5eeb8b1bac",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-EWR4",
+    "timestamp": "2026-11-20T15:15:13.360Z",
+    "repository": "webrecorder/pywb",
+    "learningId": "learn-github-webrecorder-pywb",
+    "contentHash": "ef41bb330db7fa7c7d9e59396ffdb31641db80f87b359435a022e24421ac4835",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-EZ5Z",
+    "timestamp": "2026-11-20T15:15:16.487Z",
+    "repository": "duongductrong/Snapzy",
+    "learningId": "learn-github-duongductrong-snapzy",
+    "contentHash": "8596b8aa14677d0ae13eb5a2c71aa3bb0ca5735de2ea0c40ba0f2714d44bc997",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-F49W",
+    "timestamp": "2026-11-20T15:15:23.108Z",
+    "repository": "apache/pinot",
+    "learningId": "learn-github-apache-pinot",
+    "contentHash": "c815bda94e20452ad60e616ab4777d8bc88cd8bff64dad8e94a92a5fe7579a3b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

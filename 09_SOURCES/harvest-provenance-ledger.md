@@ -11592,3 +11592,6 @@ Every entry in this ledger must capture:
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `85eff190` | Multi-dimensional audit evidence | 2026-11-20T14:52:45.726Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `ee71998f` | Multi-dimensional audit evidence | 2026-11-20T14:52:49.040Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8eed95c3` | Multi-dimensional audit evidence | 2026-11-20T14:52:51.944Z |
+| `learn-github-webrecorder-pywb` | `https://github.com/webrecorder/pywb` | `28750e62` | Multi-dimensional audit evidence | 2026-11-20T15:15:13.364Z |
+| `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `494f494b` | Multi-dimensional audit evidence | 2026-11-20T15:15:16.492Z |
+| `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `01004140` | Multi-dimensional audit evidence | 2026-11-20T15:15:23.113Z |

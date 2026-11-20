@@ -4,22 +4,22 @@
 {
   "source_repository": "duongductrong/Snapzy",
   "source_url": "https://github.com/duongductrong/Snapzy",
-  "source_version": "92a08dd1",
+  "source_version": "494f494b",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-16T13:38:24.785Z",
+  "timestamp": "2026-11-20T15:15:16.691Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-duongductrong-snapzy",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [duongductrong/Snapzy](https://github.com/duongductrong/Snapzy) (Revision: `92a08dd1`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-16T13:38:24.785Z`  
+> **Provenance**: Harvested from [duongductrong/Snapzy](https://github.com/duongductrong/Snapzy) (Revision: `494f494b`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-20T15:15:16.691Z`  
 > **Learning ID**: `learn-github-duongductrong-snapzy`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `duongductrong/Snapzy` (Commit: `92a08dd1`)
+- **Target Repository**: `duongductrong/Snapzy` (Commit: `494f494b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duongductrong/Snapzy](https://github.com/duongductrong/Snapzy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T13:38:23.755Z  
+> **Harvest Timestamp**: 2026-11-20T15:15:15.437Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: An open-source native macOS screenshot and screen recording app. A CleanShot X alternative.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3579 stars
+- **Stars / Engagement**: 3592 stars
 
 ---
 
@@ -611,6 +611,77 @@ struct ListCommand: AsyncParsableCommand {
 
 ```
 
+### Core Architecture Module: `Packages/SnapzyCLIKit/Sources/SnapzyCLICore/Commands/MCPCommand.swift`
+```
+//
+//  MCPCommand.swift
+//  SnapzyCLICore
+//
+//  `snapzy mcp` — the stdio MCP server Snapzy hands to an agent CLI it spawns
+//  for Annotate's AI prompt. Not meant to be configured by hand: the session
+//  token exists only while that prompt runs.
+//
+
+import ArgumentParser
+import Foundation
+import SnapzyCLIClient
+import SnapzyCLIProtocol
+
+struct MCPCommand: AsyncParsableCommand {
+  static let configuration = CommandConfiguration(
+    commandName: "mcp",
+    abstract: "Serve Annotate's AI tools over MCP (stdio) for an agent Snapzy started.",
+    discussion: """
+    Snapzy starts this itself when an Annotate AI prompt runs through Claude Code,
+    Codex or OpenCode. The session token comes from \(AgentSessionEnvironment.tokenKey)
+    (or --session) and stops working when that prompt finishes.
+    """,
+    shouldDisplay: false
+  )
+
+  @Option(help: "Session token; defaults to $\(AgentSessionEnvironment.tokenKey).")
+  var session: String?
+
+  @Option(help: "Seconds to wait for each tool call.")
+  var timeout: Double = 90
+
+  func validate() throws {
+    guard timeout > 0 else { throw ValidationError("--timeout must be greater than 0.") }
+  }
+
+  func run() async throws {
+    let token = session ?? ProcessInfo.processInfo.environment[AgentSessionEnvironment.tokenKey]
+    guard let token, !token.isEmpty else {
+      StandardStreams.writeError("snapzy mcp: no session token. Snapzy starts this command itself for Annotate's AI prompt.\n")
+      throw ExitCode(CLIErrorCode.invalidArguments.exitCode)
+    }
+
+    let handler = MCPMessageHandler(
+      backend: SocketToolBackend(
+        session: token,
+        // Never launch Snapzy: the agent was started by a running Snapzy.
+        options: CLISession.Options(
+          requestTimeout: timeout,
+          launchTimeout: 1,
+          allowsLaunch: false,
+          cliVersion: CLIVersion.current
+        )
+      ),
+      serverVersion: CLIVersion.current
+    )
+
+    // One message per line; stdout carries protocol messages only.
+    while let line = readLine(strippingNewline: true) {
+      let trimmed = line.trimmingCharacters(in: .whitespaces)
+      guard !trimmed.isEmpty else { continue }
+      guard let response = await handler.handle(Data(trimmed.utf8)) else { continue }
+      StandardStreams.write(String(decoding: response, as: UTF8.self) + "\n")
+    }
+  }
+}
+
+```
+
 ### Core Architecture Module: `Packages/SnapzyCLIKit/Sources/SnapzyCLICore/Commands/Measure/MeasureCaptureCommands.swift`
 ```
 //
@@ -861,93 +932,19 @@ struct MeasureImageCommand: AsyncParsableCommand {
 
 ```
 
-### Core Architecture Module: `Packages/SnapzyCLIKit/Sources/SnapzyCLICore/Commands/Measure/MeasureOptions.swift`
-```
-//
-//  MeasureOptions.swift
-//  SnapzyCLICore
-//
-//  What to measure, shared by `measure image` and `measure screen|window|area`.
-//
-
-import ArgumentParser
-import SnapzyCLIProtocol
-import SnapzyMeasureCore
-
-extension MeasureAxis: ExpressibleByArgument {}
-
-struct MeasureOptions: ParsableArguments {
-  /// `.unconditionalSingleValue` so a negative value is read as a value, and reported as
-  /// out of bounds instead of as an unknown option.
-  @Option(
-    name: .customLong("at"),
-    parsing: .unconditionalSingleValue,
-    help: ArgumentHelp(
-      "Measure the run of matching pixels around x,y. Repeatable.",
-      valueName: "x,y"
-    )
-  )
-  var points: [CLIPoint] = []
-
-  @Option(
-    name: .customLong("box"),
-    parsing: .unconditionalSingleValue,
-    help: ArgumentHelp(
-      "Measure the content inside x,y,width,height, snapped to its edges. Repeatable.",
-      valueName: "x,y,w,h"
-    )
-  )
-  var boxes: [CLIRect] = []
-
-  @Option(help: "Directions --at measures.")
-  var axis: MeasureAxis = .both
-
-  @Option(help: "Largest color step (0-64) that is not an edge.")
-  var tolerance: Int = MeasureEdgeScanner.defaultTolerance
-
-  @Flag(name: .customLong("no-snap"), help: "Report --box as given instead of snapping it to content.")
-  var noSnap = false
-
-  @Flag(help: "Coordinates are image pixels instead of points.")
-  var pixels = false
-
-  mutating func validate() throws {
-    guard !points.isEmpty || !boxes.isEmpty else {
-      throw ValidationError("Pass at least one --at or --box.")
-    }
-    guard MeasureEdgeScanner.toleranceRange.contains(tolerance) else {
-      let range = MeasureEdgeScanner.toleranceRange
-      throw ValidationError("--tolerance must be between \(range.lowerBound) and \(range.upperBound).")
-    }
-  }
-
-  var request: MeasureRequest {
-    MeasureRequest(
-      points: points,
-      boxes: boxes,
-      axis: axis,
-      tolerance: tolerance,
-      snap: !noSnap,
-      inputsArePixels: pixels
-    )
-  }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #754** (2026-11-17): **fix: Use sidebar.left icon for the sidebar toggle**
+  *Symptoms*: ## Summary  The Annotate toolbar's **Toggle Sidebar** button uses the `rectangle.on.rectangle` SF Symbol. On macOS that icon usually means duplicate, copy or windows, so it doesn't read as a sidebar toggle. That makes the sidebar (backgrounds, padding, corner radius, presets) hard to find, especially since it starts hidden.  This PR switches it to `sidebar.left`, the standard macOS sidebar icon. The Video Editor's sidebar toggle (`VideoEditorToolbarView`) and `AnnotateMockupMainView` already use that icon, so this also makes the app consistent.  ## Changes  Swapped `rectangle.on.rectangle` → `sidebar.left` everywhere it stands for the Annotate sidebar toggle:  - `Snapzy/Features/Annotate/Components/AnnotateToolbarView.swift`: the toolbar button - `Snapzy/Features/Shortcuts/ShortcutOverlayModels.swift`: the `.toggleSidebar` entry in the shortcut overlay - `Snapzy/Features/Onboarding/Mockups/SnapzyMockAnnotateWindow.swift`: onboarding mock of the Annotate window - `Snapzy/Features/Preferences/Components/PreferencesAnnotatePreview.swift`: Annotate preview in Preferences  These look similar but are left alone: `rectangle.on.rectangle.angled` in `PreferencesAfterCaptureMatrixView` and `plus.rectangle.on.rectangle` in `AnnotateBottomBarView`.  `sidebar.left` has been available since macOS 11; the deployment target is 13.0.  ## Test plan  Built locally (Debug, ad-hoc signed) with Xcode 27.2 on macOS 27.2.  - [x] Open a screenshot in Annotate: the toolbar button next to Crop shows th
+
 - **Issue #736** (2026-11-14): **[Bug]: 截图并标注功能启动后，已移动光标但是定位光标位置不改变**
   *Symptoms*: ### Description  使用截图并标注功能，触发选取页面后，看不到鼠标移动 MAC:27.2.1  ### Steps to Reproduce  1、触发【截图并标注】功能 2、移动鼠标  ### Expected Behavior  定位点根据鼠标移动同步移动  ### Actual Behavior  鼠标移动后定位不到鼠标位置  ### Screenshots / Recordings  https://github.com/user-attachments/assets/cfe4dc83-d7ec-4889-9c9f-f37a270c8b08  ### Snapzy Version  2.1.0  ### macOS Version  Other (specify in description)  ### Installation Method  None  ### Additional Context  _No response_
   **Post-Mortem & Fix Analysis**:
   > Hi @l56105878,  感谢反馈！这个问题与 #705 / #597 为同一原因（macOS 27.2 上「截图并标注」的十字准星、坐标气泡和放大镜无法跟随指针移动），已在 #707 中修复并自 **[v2.2.0-beta.3](https://github.com/duongductrong/Snapzy/releases/tag/v2.2.0-beta.3)** 起发布（目前最新 Beta 为 **[v2.2.0-beta.11](https://github.com/duongductrong/Snapzy/releases/tag/v2.2.0-beta.11)**）。  获取 Beta 更新的方法：**Settings → About → Update Channel → Beta**，然后点击 **Check for Updates**。  现在先将此 Issue 关闭；如果更新到 Beta 版本后仍然可以复现，欢迎随时回复或重新打开！  ---  Hi @l56105878,  Thanks for reporting this! This is the same macOS 27.2 Capture Markup pointer-tracking issue fixed in #707, available starting in **[v2.2.0-beta.3](https://github.com/duongductrong/Snapzy/releases/tag/v2.2.0-beta.3)** (latest beta: **[v2.2.0-beta.11](https://github.com/duongductrong/Snapzy/releases/tag/v2.2.0-beta.11)**).  To update to Beta: **Settings → About → Update Channel → Beta**, then **Check for Updates**.  Closing this as fixed—please feel free to reopen if the issue persists on the latest beta build.
-
-- **Issue #730** (2026-11-10): **[Bug]: Tooltips are massive on macOS 15.8**
-  *Symptoms*: ### Description  The tooltips in settings are huuuuge, see screenshot.  ### Steps to Reproduce  1. Open Snapzy Settings. 2. Hover over any `(i)` sign to read the tooltip. 3. The tooltip will fill a massive amount of screen space.  ### Expected Behavior  Tooltips should probably be as large as the text within them.  ### Actual Behavior  The tooltips are massive.  ### Screenshots / Recordings  ![Screenshot](https://github.com/user-attachments/assets/3af50df5-1062-435d-aa8d-566b4080c7a8)  ### Snapzy Version  2.2.0-beta.9  ### macOS Version  macOS 15 (Sequoia)  ### Installation Method  DMG download  ### Additional Context  _No response_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -964,81 +961,1133 @@ struct MeasureOptions: ParsableArguments {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `18fe56ad` (2026-11-14)
-**Commit Message**: fix: release preferences window content on close to stop idle CPU burn
+### Incident Patch 1: `22ea076c` (2026-11-20)
+**Commit Message**: fix: Stop the video fixture from hanging CI and collect test-host crash reports (#764)
 
-**File**: `Snapzy/Features/Preferences/PreferencesWindowController.swift` (modified, +13/-0)
+The audio+video fixture writer could stall forever on the headless macOS 15
+runner, hanging VideoEditorAgentVisionTests past its 2 minute allowance. Encode
+each fixture once per process, copy it per test, and abandon/retry an encode
+whose writer stops accepting media for 15 s.
+
+CI now uploads Snapzy crash reports so test-host aborts come with a backtrace.
+
+**File**: `.github/workflows/ci.yml` (modified, +19/-0)
 ```diff
-@@ -137,5 +137,18 @@ final class PreferencesWindowController: NSObject, NSWindowDelegate {
-       didElevateActivationPolicy = false
-       DiagnosticLogger.shared.log(.debug, .ui, "Activation policy restored to accessory after preferences closed")
-     }
+@@ -183,6 +183,25 @@ jobs:
+ 
+           tail -20 build/ci-test.log
+ 
++      - name: Collect crash reports
++        # A test-host abort leaves only "malloc: ..." in the log; the backtrace lives in
++        # the crash report ReportCrash writes, which the xcresult does not include.
++        if: failure() || cancelled()
++        run: |
++          mkdir -p build/crash-reports
++          find "$HOME/Library/Logs/DiagnosticReports" /Library/Logs/DiagnosticReports \
++            \( -name 'Snapzy*' -o -name 'xctest*' \) -type f -mmin -60 \
++            -exec cp {} build/crash-reports/ \; 2>/dev/null || true
++          ls -la build/crash-reports
 +
-+    // A closed (ordered-out) window keeps its NSHostingView alive, and SwiftUI does not
-+    // fire onDisappear/cancel `.task` for it — so looping work such as the animated
-+    // CaptureSettingsPreview kept rendering off-screen (~20–35% CPU while idle).
-+    // Tear the hierarchy down; `show()` rebuilds it on demand.
-+    guard let closingWindow = notification.object as? NSWindow, closingWindow === window else { return }
-+    DispatchQueue.main.async { [weak self] in
-+      guard let self, self.window === closingWindow, !closingWindow.isVisible else { return }
-+      closingWindow.contentView = nil
-+      closingWindow.delegate = nil
-+      self.themeObserver = nil
-+      self.window = nil
-+    }
++      - name: Upload crash reports
++        if: failure() || cancelled()
++        uses: actions/upload-artifact@v7
++        with:
++          name: ci-crash-reports
++          path: build/crash-reports
++          if-no-files-found: ignore
++
+       - name: Upload test diagnostics
+         if: failure() || cancelled()
+         uses: actions/upload-artifact@v7
+```
+
+**File**: `SnapzyTests/Helpers/VideoEditorActivityFixture.swift` (modified, +52/-0)
+```diff
+@@ -47,7 +47,49 @@ enum VideoEditorActivityFixture {
+     t < 2 || (t >= 5 && t < 7) || t >= 10
    }
- }
+ 
++  /// Encoded fixtures by `duration`/`audio`, written once per test process. The bytes never
++  /// change, and the H.264 encoder on headless CI runners is slow and can stall for good, so
++  /// every extra encode is another chance to hang a test until its time allowance runs out.
++  private static var encodedFixtures: [String: URL] = [:]
++  private static let encodeAttempts = 3
++  /// How long the writer may refuse more media before an attempt is abandoned.
++  private static let stallTimeout: TimeInterval = 15
++
++  /// A fresh copy of the fixture in `directory`, so callers may move or delete it freely.
+   static func makeVideoFile(in directory: URL, duration: TimeInterval, audio: Bool) async throws -> URL {
++    let key = "\(duration)-\(audio)"
++    let cached: URL
++    if let existing = encodedFixtures[key], FileManager.default.fileExists(atPath: existing.path) {
++      cached = existing
++    } else {
++      let cacheDirectory = FileManager.default.temporaryDirectory
++        .appendingPathComponent("VideoEditorActivityFixture-\(ProcessInfo.processInfo.processIdentifier)", isDirectory: true)
++      try FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true)
++      cached = try await encodeWithRetry(in: cacheDirectory, duration: duration, audio: audio)
++      encodedFixtures[key] = cached
++    }
++    let url = directory.appendingPathComponent("analyzer-\(UUID().uuidString).mov")
++    try FileManager.default.copyItem(at: cached, to: url)
++    return url
++  }
++
++  private static func encodeWithRetry(in directory: URL, duration: TimeInterval, audio: Bool) async throws -> URL {
++    var lastError: Error?
++    for _ in 0 ..< encodeAttempts {
++      do {
++        return try await encodeVideoFile(in: directory, duration: duration, audio: audio)
++      } catch let error as FixtureStall {
++        lastError = error
++      }
++    }
++    throw lastError ?? FixtureStall()
++  }
++
++  private struct FixtureStall: Error, CustomStringConvertible {
++    var description: String { "AVAssetWriter stopped accepting fixture media" }
++  }
++
++  private static func encodeVideoFile(in directory: URL, duration: TimeInterval, audio: Bool) async throws -> URL {
+     let url = directory.appendingPathComponent("analyzer-\(UUID().uuidString).mov")
+     let writer = try AVAssetWriter(outputURL: url, fileType: .mov)
+     let video = AVAssetWriterInput(mediaType: .video, outputSettings: [
+@@ -90,7 +132,17 @@ enum VideoEditorActivityFixture {
+     let steps = Int(duration * Double(frameRate))
+     var videoIndex = 0
+     var audioIndex = audio ? 0 : steps
++    var lastProgress = Date()
+     while videoIndex < steps || audioIndex < steps {
++      let progressMark = videoIndex + audioIndex
++      defer {
++        if videoIndex + audioIndex != progressMark { lastProgress = Date() }
++      }
++      if Date().timeIntervalSince(lastProgress) > stallTimeout {
++        writer.cancelWriting()
++        try? FileManager.default.removeItem(at: url)
++        throw FixtureStall()
++      }
+       var progressed = false
+       if videoIndex < steps, videoIndex <= audioIndex || audioIndex >= steps, video.isReadyForMoreMediaData {
+         var buffer: CVPixelBuffer?
 ```
 
 ---
 
-### Incident Patch 2: `bba5596b` (2026-11-14)
-**Commit Message**: fix: clear stuck drop preview frame after dropping an image on annotate canvas (#745)
+### Incident Patch 2: `49ddfbdc` (2026-11-19)
+**Commit Message**: feat: Added Quick Access Optimize action to shrink screenshots (#763)
 
-SwiftUI can re-deliver dropEntered/dropUpdated after a drop finished, which redrew the preview frame with nothing left to clear it. Only show the preview while the mouse button is held.
+* feat: Added Quick Access Optimize action to shrink screenshots
 
-**File**: `Snapzy/Features/Annotate/AnnotateState.swift` (modified, +15/-1)
+Adds an Optimize card action that opens a clear Liquid Glass list of
+downscale levels (e.g. 0.5x / 1x / 1.5x / Original on Retina) beside the
+card, with the real encoded size and savings for each level. The same
+levels are reachable from the card's context menu as a submenu, even when
+the action is not placed on the card.
+
+- Levels derive from the file's DPI; no upscaling and no new dependencies
+  (Core Graphics, ImageIO, existing Swift-WebP).
+- The untouched original is kept while the card lives, so every level is
+  rendered from it and "Original" restores it.
+- Saved enabled-action lists now record the actions they were saved
+  against, so Optimize arrives enabled for existing users.
+- Adds a `.clear` native variant to the Liquid Glass surface.
+
+Refs #758
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* feat: Enhance Quick Access Optimize menu with button anchoring and animation support
+
+* feat: Enhance Quick Access Optimize with native glass support and fade animations
+
+* feat: Adjust Quick Access Optimize menu row height and improve nati
+
+**File**: `Snapzy/Features/Preferences/Components/PreferencesQuickAccessOptimizePresetsSection.swift` (added, +133/-0)
 ```diff
-@@ -575,15 +575,29 @@ final class AnnotateState: ObservableObject {
-   private var isExternalCombineDropActive = false
- 
-   func beginExternalCombineDrop(at point: CGPoint?) {
-+    guard isExternalDragInFlight else {
-+      endExternalCombineDrop()
-+      return
-+    }
-     isExternalCombineDropActive = true
-     updateCombineDropPreview(at: point)
-   }
- 
-   func updateExternalCombineDrop(at point: CGPoint?) {
--    guard isExternalCombineDropActive else { return }
-+    guard isExternalCombineDropActive, isExternalDragInFlight else {
-+      endExternalCombineDrop()
-+      return
-+    }
-     updateCombineDropPreview(at: point)
-   }
- 
-+  /// A drag session always holds a mouse button. SwiftUI can re-deliver `dropEntered`/
-+  /// `dropUpdated` after the drop finished (button released); without this check that
-+  /// late call leaves the preview frame on the canvas with nothing left to clear it.
-+  private var isExternalDragInFlight: Bool {
-+    NSEvent.pressedMouseButtons & 1 != 0
+@@ -0,0 +1,133 @@
++//
++//  PreferencesQuickAccessOptimizePresetsSection.swift
++//  Snapzy
++//
++//  Quick Access settings section that lists, adds, edits and deletes the Optimize
++//  presets shown in the card's Optimize menu.
++//
++
++import SwiftUI
++
++struct QuickAccessOptimizePresetsSection: View {
++  @ObservedObject private var store = QuickAccessOptimizePresetStore.shared
++  @State private var editing: EditingPreset?
++
++  /// A preset open in the editor sheet; `isNew` until it is first saved.
++  private struct EditingPreset: Identifiable {
++    var preset: QuickAccessOptimizePreset
++    let isNew: Bool
++    var id: UUID { preset.id }
 +  }
 +
-   func endExternalCombineDrop() {
-     isExternalCombineDropActive = false
-     clearCombineDropPreview()
++  var body: some View {
++    Section {
++      if store.presets.isEmpty {
++        Text(L10n.PreferencesQuickAccess.optimizePresetsEmpty)
++          .foregroundColor(.secondary)
++      }
++
++      ForEach(store.presets) { preset in
++        HStack(spacing: 12) {
++          Image(systemName: "slider.horizontal.3")
++            .foregroundColor(.secondary)
++            .frame(width: 20)
++
++          VStack(alignment: .leading, spacing: 2) {
++            Text(preset.name)
++              .fontWeight(.medium)
++            Text(preset.settings.summary())
++              .font(.caption)
++              .foregroundColor(.secondary)
++              .monospacedDigit()
++          }
++
++          Spacer()
++
++          Button {
++            editing = EditingPreset(preset: preset, isNew: false)
++          } label: {
++            Image(systemName: "pencil")
++          }
++          .buttonStyle(.borderless)
++          .help(L10n.Common.edit)
++
++          Button {
++            store.deletePreset(id: preset.id)
++          } label: {
++            Image(systemName: "trash")
++          }
++          .buttonStyle(.borderless)
++          .help(L10n.Common.delete)
++        }
++        .padding(.vertical, 2)
++      }
++      .onMove { store.movePresets(fromOffsets: $0, toOffset: $1) }
++
++      Button {
++        editing = EditingPreset(
++          preset: QuickAccessOptimizePreset(name: "", settings: store.lastCustomSettings),
++          isNew: true
++        )
++      } label: {
++        Label(L10n.PreferencesQuickAccess.addOptimizePreset, systemImage: "plus")
++      }
++      .buttonStyle(.borderless)
++    } header: {
++      Text(L10n.PreferencesQuickAccess.optimizePresetsSection)
++    } footer: {
++      Text(L10n.PreferencesQuickAccess.optimizePresetsDescription)
++        .font(.caption)
++        .foregroundColor(.secondary)
++    }
++    .sheet(item: $editing) { editing in
++      QuickAccessOptimizePresetEditorSheet(
++        preset: editing.preset,
++        isNew: editing.isNew,
++        onSave: { preset in
++          if editing.isNew {
++            store.addPreset(name: preset.name, settings: preset.settings)
++          } else {
++            store.updatePreset(preset)
++          }
++          self.editing = nil
++        },
++        onCancel: { self.editing = nil }
++      )
++    }
++  }
++}
++
++private struct QuickAccessOptimizePresetEditorSheet: View {
++  @State var preset: QuickAccessOptimizePreset
++  let isNew: Bool
++  let onSave: (QuickAccessOptimizePreset) -> Void
++  let onCancel: () -> Void
++
++  var body: some View {
++    VStack(alignment: .leading, spacing: 16) {
++      Text(isNew ? L10n.PreferencesQuickAccess.newOptimizePresetTitle : L10n.PreferencesQuickAccess.editOptimizePresetTitle)
++        .font(.headline)
++
++      HStack(spacing: 10) {
++        Text(L10n.PreferencesQuickAccess.optimizePresetNameLabel)
++          .font(.system(size: 12))
++          .frame(width: 70, alignment: .leading)
++        TextField(L10n.QuickAccess.optimizePresetNamePlaceholder, text: $preset.name)
++          .textFieldStyle(.roundedBorder)
++      }
++
++      QuickAccessOptimizeSettingsForm(settings: $preset.settings)
++
++      HStack {
++        Spacer()
++        Button(L10n.Common.cancel, action: onCancel)
++          .keyboardShortcut(.cancelAction)
++        Button(L10n.Common.save) { onSave(preset) }
++          .keyboardShortcut(.defaultAction)
++          .disabled(preset.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
++      }
++    }
++    .padding(20)
++    .frame(width: 440)
++  }
++}
+```
+
+**File**: `Snapzy/Features/Preferences/Components/PreferencesQuickAccessSettingsView.swift` (modified, +2/-0)
+```diff
+@@ -29,6 +29,8 @@ struct QuickAccessSettingsView: View {
+     Form {
+       QuickAccessActionCustomizationView(manager: manager)
+ 
++      QuickAccessOptimizePresetsSection()
++
+       Section(L10n.PreferencesQuickAccess.pinZoomSection) {
+         PinZoomModeComparisonPreview(
+           selectedMode: pinZoomModeStore.mode,
+```
+
+**File**: `Snapzy/Features/Preferences/Models/PreferencesKeys.swift` (modified, +3/-0)
+```diff
+@@ -150,13 +150,16 @@ enum PreferencesKeys {
+   static let quickAccessPinZoomMode = "quickAccess.pin.zoom.mode"
+   static let quickAccessActionOrder = "quickAccess.actions.order.v1"
+   static let quickAccessEnabledActions = "quickAccess.actions.enabled.v1"
++  static let quickAccessKnownActions = "quickAccess.actions.known.v1"
+   static let quickAccessActionSlotAssignments = "quickAccess.actions.slots.v1"
+   static let quickAccessSwipeLeftAction = "quickAccess.swipe.action.left"
+   static let quickAccessSwipeRightAction = "quickAccess.swipe.action.right"
+   static let quickAccessHideCardWhenWindowOpen = "quickAccess.hideCardWhenWindowOpen"
+   static let quickAccessAnimationStyle = "quickAccess.animationStyle"
+   static let quickAccessPlaySounds = "quickAccess.playSounds"
+   static let quickAccessOpenInFinderAfterSave = "quickAccess.openInFinderAfterSave"
++  static let quickAccessOptimizePresets = "quickAccess.optimize.presets.v1"
++  static let quickAccessOptimizeLastCustom = "quickAccess.optimize.lastCustom.v1"
+ 
+   // Recording
+   static let recordingFormat = "recording.format"
+```
+
+**File**: `Snapzy/Features/QuickAccess/Components/QuickAccessCardView.swift` (modified, +148/-11)
+```diff
+@@ -28,6 +28,8 @@ struct QuickAccessCardView: View {
+   @State private var swipeOffset: CGFloat = 0
+   @State private var isCloudUploading = false
+   @State private var cloudUploadProgress: Double = 0
++  @State private var cardAnchor = QuickAccessCardAnchor()
++  @State private var optimizeButtonAnchor = QuickAccessCardAnchor()
+   @Environment(\.accessibilityReduceMotion) var reduceMotion
+ 
+   private let cornerRadius = Radius.card
+@@ -123,6 +125,11 @@ struct QuickAccessCardView: View {
+       QuickAccessContextMenuPresenter(entries: quickAccessContextMenuEntries)
+         .frame(width: scaledWidth, height: scaledHeight)
+     )
++    .background(
++      QuickAccessCardAnchorView(anchor: cardAnchor)
++        .frame(width: scaledWidth, height: scaledHeight)
++        .allowsHitTesting(false)
++    )
+     .overlay(dragInteractionBridge.frame(width: scaledWidth, height: scaledHeight))
+     .onDisappear {
+       isDragging = false
+@@ -349,6 +356,8 @@ struct QuickAccessCardView: View {
+       return cloudActionTitle
+     case .pinToScreen:
+       return item.isPinned ? L10n.PreferencesQuickAccess.unpinAction : L10n.PreferencesQuickAccess.pinToScreenAction
++    case .optimize:
++      return L10n.PreferencesQuickAccess.optimizeAction
+     }
+   }
+ 
+@@ -393,6 +402,8 @@ struct QuickAccessCardView: View {
+       return shouldShowCloudButton
+     case .delete:
+       return true
++    case .optimize:
++      return QuickAccessOptimizeStore.shared.canOptimize(item)
+     }
+   }
+ 
+@@ -402,6 +413,10 @@ struct QuickAccessCardView: View {
+       return !item.isVideo
+     case .uploadToCloud:
+       return shouldShowCloudButton && !alreadyUploadedToCloud && !isCloudUploading
++    case .optimize:
++      // An open editor would write its own pixels back over the optimized file.
++      let isEditorOpen = item.isWindowOpen && !item.isPinned
++      return QuickAccessOptimizeStore.shared.canOptimize(item) && !isEditorOpen
+     case .copy, .saveOrOpen, .dismiss, .delete, .edit:
+       return true
+     }
+@@ -426,9 +441,19 @@ struct QuickAccessCardView: View {
+     case .pinToScreen:
+       guard !item.isVideo else { return }
+       manager.togglePin(id: item.id)
++    case .optimize:
++      presentOptimizeMenu()
+     }
+   }
+ 
++  private func presentOptimizeMenu() {
++    QuickAccessOptimizePanelController.shared.present(
++      for: item,
++      buttonFrame: optimizeButtonAnchor.screenFrame,
++      cardFrame: cardAnchor.screenFrame
++    )
++  }
++
+   private func handleDoubleClick() {
+     if item.isVideo {
+       openVideoEditor()
+@@ -554,6 +579,7 @@ struct QuickAccessCardView: View {
+       performAction(action)
+     }
+       .help(actionHelpText(for: action))
++      .background(optimizeAnchor(for: action))
+       .disabled(!isActionEnabled(action))
+       .opacity(isActionEnabled(action) ? 1 : 0.6)
+       .transition(buttonTransition(delay: delay))
+@@ -596,12 +622,21 @@ struct QuickAccessCardView: View {
+       action: { performAction(action) },
+       helpText: actionHelpText(for: action)
+     )
++    .background(optimizeAnchor(for: action))
+     .transition(cornerButtonTransition(delay: delay))
+     .padding(6)
+     .disabled(!isActionEnabled(action))
+     .opacity(isActionEnabled(action) ? 1 : 0.6)
+   }
+ 
++  /// Lets the Optimize menu open over the button that triggered it.
++  @ViewBuilder
++  private func optimizeAnchor(for action: QuickAccessActionKind) -> some View {
++    if action == .optimize {
++      QuickAccessCardAnchorView(anchor: optimizeButtonAnchor)
++    }
++  }
++
+   private func cornerButtonTransition(delay: Int) -> AnyTransition {
+     if reduceMotion {
+       return .opacity
+@@ -640,6 +675,11 @@ struct QuickAccessCardView: View {
+         insertedDestructiveSeparator = true
+       }
+ 
++      if action == .optimize {
++        entries.append(optimizeContextMenuEntry)
++        continue
++      }
++
+       entries.append(
+         .action(
+           title: actionTitle(for: action),
+@@ -653,6 +693,51 @@ struct QuickAccessCardView: View {
+     return entries
+   }
+ 
++  /// Optimize as a submenu so the levels stay reachable from the context menu even
++  /// when the action has no slot on the card. Levels are read when the menu opens.
++  private var optimizeContextMenuEntry: QuickAccessContextMenuEntry {
++    let item = item
++    return .submenu(
++      title: actionTitle(for: .optimize),
++      systemImage: actionIcon(for: .optimize),
++      isEnabled: isActionEnabled(.optimize),
++      makeEntries: {
++        let store = QuickAccessOptimizeStore.shared
++        guard let plan = store.plan(for: item) else { return [] }
++        var entries: [QuickAccessContextMenuEntry] = plan.levels.map { level in
++          .option(
++            title: QuickAccessOptimizeMenuFormatting.title(for: level),
++            detail: level.dimensionsLabel,
++            isChecked: level.fraction == plan.currentFraction,
++            action: { store.applyReportingFailure(.level(level), to: item.id) }
++          )
++        }
++        let presets = QuickAccessOpt
+```
+
+**File**: `Snapzy/Features/QuickAccess/Components/QuickAccessOptimizeCustomView.swift` (added, +374/-0)
+```diff
+@@ -0,0 +1,374 @@
++//
++//  QuickAccessOptimizeCustomView.swift
++//  Snapzy
++//
++//  The "Custom…" Optimize editor: size, format, quality and a file-size cap with a
++//  live size preview, plus saving the settings as a preset. The settings rows are
++//  shared with the presets editor in Preferences.
++//
++
++import AppKit
++import Combine
++import SwiftUI
++
++// MARK: - Shared settings rows
++
++/// Size, format, quality and file-size cap. Pass `source` to show pixel sizes and
++/// to name the "Original" format after the file's own.
++struct QuickAccessOptimizeSettingsForm: View {
++  @Binding var settings: QuickAccessOptimizeSettings
++  var source: QuickAccessOptimizeSourceInfo?
++  var originalExtension: String?
++  var labelWidth: CGFloat = 70
++
++  private var outputIsLossy: Bool {
++    switch settings.format {
++    case .jpeg, .webp: true
++    case .png: false
++    case .original: originalExtension.map(QuickAccessOptimizeFormat.isLossy(fileExtension:)) ?? true
++    }
++  }
++
++  var body: some View {
++    VStack(alignment: .leading, spacing: 10) {
++      row(L10n.QuickAccess.optimizeSizeLabel) {
++        HStack(spacing: 8) {
++          Slider(
++            value: intBinding(\.scalePercent, step: 5),
++            in: Double(QuickAccessOptimizeSettings.scaleRange.lowerBound)...Double(QuickAccessOptimizeSettings.scaleRange.upperBound)
++          )
++          Text(sizeLabel)
++            .font(.system(size: 11).monospacedDigit())
++            .foregroundStyle(.secondary)
++            .frame(minWidth: 52, alignment: .trailing)
++        }
++      }
++
++      row(L10n.QuickAccess.optimizeFormatLabel) {
++        Picker("", selection: $settings.format) {
++          ForEach(QuickAccessOptimizeFormat.allCases) { format in
++            Text(format == .original ? L10n.QuickAccess.optimizeFormatOriginal : format.displayName(originalExtension: nil))
++              .tag(format)
++          }
++        }
++        .labelsHidden()
++        .pickerStyle(.segmented)
++        .help(settings.format.displayName(originalExtension: originalExtension))
++      }
++
++      row(L10n.QuickAccess.optimizeQualityLabel) {
++        HStack(spacing: 8) {
++          Slider(
++            value: intBinding(\.qualityPercent, step: 5),
++            in: Double(QuickAccessOptimizeSettings.qualityRange.lowerBound)...Double(QuickAccessOptimizeSettings.qualityRange.upperBound)
++          )
++          Text(outputIsLossy ? "\(settings.qualityPercent)" : L10n.QuickAccess.optimizeQualityLossless)
++            .font(.system(size: 11).monospacedDigit())
++            .foregroundStyle(.secondary)
++            .frame(minWidth: 52, alignment: .trailing)
++        }
++        .disabled(!outputIsLossy)
++      }
++
++      row(L10n.QuickAccess.optimizeMaxSizeLabel) {
++        Picker("", selection: $settings.maxFileSize) {
++          Text(L10n.Common.off).tag(Int?.none)
++          ForEach(QuickAccessOptimizeSettings.maxFileSizeOptions, id: \.self) { bytes in
++            Text(QuickAccessImageOptimizer.formatByteCount(bytes)).tag(Int?.some(bytes))
++          }
++        }
++        .labelsHidden()
++        .pickerStyle(.segmented)
++        .controlSize(.small)
++      }
++    }
++  }
++
++  /// "50% · 1440×900", or just "50%" without a source.
++  private var sizeLabel: String {
++    guard let source else { return "\(settings.scalePercent)%" }
++    let fraction = CGFloat(settings.scalePercent) / 100
++    let width = Int((CGFloat(source.pixelWidth) * fraction).rounded())
++    let height = Int((CGFloat(source.pixelHeight) * fraction).rounded())
++    return "\(settings.scalePercent)% · \(width)×\(height)"
++  }
++
++  private func row(_ title: String, @ViewBuilder content: () -> some View) -> some View {
++    HStack(alignment: .center, spacing: 10) {
++      Text(title)
++        .font(.system(size: 12))
++        .frame(width: labelWidth, alignment: .leading)
++      content()
++    }
++  }
++
++  private func intBinding(_ keyPath: WritableKeyPath<QuickAccessOptimizeSettings, Int>, step: Int) -> Binding<Double> {
++    Binding(
++      get: { Double(settings[keyPath: keyPath]) },
++      set: { settings[keyPath: keyPath] = Int(($0 / Double(step)).rounded()) * step }
++    )
++  }
++}
++
++// MARK: - Editor model
++
++@MainActor
++final class QuickAccessOptimizeCustomModel: ObservableObject {
++  let itemID: UUID
++  let source: QuickAccessOptimizeCustomSource
++
++  @Published var settings: QuickAccessOptimizeSettings {
++    didSet { if settings != oldValue { scheduleRender() } }
++  }
++  @Published private(set) var rendering: QuickAccessOptimizeRendering?
++  @Published private(set) var renderedSettings: QuickAccessOptimizeSettings?
++  @Published private(set) var isRendering = false
++  @Published private(set) var renderFailed = false
++  @Published var isNamingPreset = false
++  @Published var presetName = ""
++  @Published private(set) var savedPresetName: String?
++  /// Drives the bubble in/out animation; the panel stays up until it has played.
++  @Published var isShown = false
++
++  var onApply: ((QuickAccessOptimizeSetting
+```
+
+**File**: `Snapzy/Features/QuickAccess/Components/QuickAccessOptimizeMenuView.swift` (added, +330/-0)
+```diff
+@@ -0,0 +1,330 @@
++//
++//  QuickAccessOptimizeMenuView.swift
++//  Snapzy
++//
++//  Optimize levels (`0.5x`, `1x`, `2x`…), saved presets and "Custom…" as a
++//  native-style pop-up menu on clear Liquid Glass, opened with the current level
++//  over the Optimize button.
++//
++
++import AppKit
++import Combine
++import SwiftUI
++
++enum QuickAccessOptimizeMenuFormatting {
++  /// "1x", or "Original (2x)" for the untouched size.
++  static func title(for level: QuickAccessOptimizeLevel) -> String {
++    level.isOriginal
++      ? "\(L10n.QuickAccess.optimizeOriginal) (\(level.scaleLabel))"
++      : level.scaleLabel
++  }
++
++  /// "−62%" against the original, or nil when it would not shrink anything.
++  static func savingsLabel(byteCount: Int, originalByteCount: Int?) -> String? {
++    guard let originalByteCount, originalByteCount > 0, byteCount < originalByteCount else { return nil }
++    let percent = Int((Double(originalByteCount - byteCount) / Double(originalByteCount) * 100).rounded())
++    guard percent > 0 else { return nil }
++    return "−\(percent)%"
++  }
++}
++
++@MainActor
++final class QuickAccessOptimizeMenuModel: ObservableObject {
++  struct Row: Identifiable, Equatable {
++    enum Kind: Equatable {
++      case level(QuickAccessOptimizeLevel)
++      case preset(QuickAccessOptimizePreset)
++      case custom
++    }
++
++    let id: String
++    let kind: Kind
++    /// Draws a separator above the row, like a native menu group break.
++    let startsGroup: Bool
++    var byteCount: Int?
++    var encodedData: Data?
++    var isEstimating: Bool
++
++    var level: QuickAccessOptimizeLevel? {
++      if case let .level(level) = kind { return level }
++      return nil
++    }
++
++    static func id(for level: QuickAccessOptimizeLevel) -> String { "level-\(level.fraction)" }
++  }
++
++  let itemID: UUID
++  let originalByteCount: Int?
++  let originalExtension: String
++  @Published private(set) var rows: [Row]
++  /// The level on disk, or nil when custom settings produced the file.
++  let currentRowID: String?
++  @Published var highlightedID: String?
++  /// Drives the bubble in/out animation; the panel stays up until it has played.
++  @Published var isShown = false
++
++  var onChoose: ((Row) -> Void)?
++
++  /// Explicit and nonisolated: the synthesized main-actor deinit hops through the
++  /// back-deployed swift_task_deinitOnExecutor, which aborts on macOS 13-15 (#668).
++  nonisolated deinit {}
++
++  init(itemID: UUID, plan: QuickAccessOptimizePlan, presets: [QuickAccessOptimizePreset]) {
++    self.itemID = itemID
++    originalByteCount = plan.originalByteCount
++    originalExtension = plan.fileExtension
++
++    var rows = plan.levels.map { level in
++      Row(
++        id: Row.id(for: level),
++        kind: .level(level),
++        startsGroup: false,
++        byteCount: level.isOriginal ? plan.originalByteCount : nil,
++        encodedData: nil,
++        isEstimating: !level.isOriginal
++      )
++    }
++    rows += presets.enumerated().map { index, preset in
++      Row(
++        id: "preset-\(preset.id.uuidString)",
++        kind: .preset(preset),
++        startsGroup: index == 0,
++        byteCount: nil,
++        encodedData: nil,
++        isEstimating: false
++      )
++    }
++    rows.append(Row(id: "custom", kind: .custom, startsGroup: true, byteCount: nil, encodedData: nil, isEstimating: false))
++    self.rows = rows
++
++    currentRowID = plan.levels.first { $0.fraction == plan.currentFraction }.map(Row.id(for:))
++    highlightedID = currentRowID ?? rows.last?.id
++  }
++
++  /// Row the menu opens on (and grows out of): the current level, else "Custom…".
++  var anchorIndex: Int {
++    rows.firstIndex { $0.id == (currentRowID ?? "custom") } ?? 0
++  }
++
++  func record(_ level: QuickAccessOptimizeLevel, data: Data?) {
++    guard let index = rows.firstIndex(where: { $0.level == level }) else { return }
++    rows[index].encodedData = data
++    rows[index].byteCount = data?.count
++    rows[index].isEstimating = false
++  }
++
++  func choose(_ row: Row) {
++    onChoose?(row)
++  }
++
++  func moveHighlight(by offset: Int) {
++    guard !rows.isEmpty else { return }
++    let currentIndex = rows.firstIndex { $0.id == highlightedID } ?? 0
++    let nextIndex = min(max(currentIndex + offset, 0), rows.count - 1)
++    highlightedID = rows[nextIndex].id
++  }
++
++  func chooseHighlighted() {
++    guard let row = rows.first(where: { $0.id == highlightedID }) else { return }
++    choose(row)
++  }
++}
++
++struct QuickAccessOptimizeMenuView: View {
++  @ObservedObject var model: QuickAccessOptimizeMenuModel
++
++  // Geometry mirrors a native pop-up menu; the panel controller reads it to put
++  // the current row right over the Optimize button.
++  static let shadowPadding: CGFloat = 14
++  static let inset: CGFloat = 4
++  static let rowHeight: CGFloat = 19
++  static let rowSpacing: CGFloat = 1
++  /// Height of a group separator, hairline included.
++  static let separatorHeight: CGFloat = 9
++
++  /// Distance from the hosting view's top edge to the centre of row `index`.
++
+```
+
+**File**: `Snapzy/Features/QuickAccess/Managers/QuickAccessOptimizePanelController.swift` (added, +366/-0)
+```diff
+@@ -0,0 +1,366 @@
++//
++//  QuickAccessOptimizePanelController.swift
++//  Snapzy
++//
++//  Hosts the Optimize list and the Custom editor in a borderless child panel. The
++//  Quick Access panel only accepts the mouse inside the card stack, so anything that
++//  spills past the card has to live in a separate window anchored to the card.
++//
++
++import AppKit
++import Combine
++import SwiftUI
++
++/// Remembers the AppKit view behind a card so callers can ask for its screen frame.
++@MainActor
++final class QuickAccessCardAnchor {
++  weak var view: NSView?
++
++  /// Explicit and nonisolated: the synthesized main-actor deinit hops through the
++  /// back-deployed swift_task_deinitOnExecutor, which aborts on macOS 13-15 (#668).
++  nonisolated deinit {}
++
++  var screenFrame: NSRect? {
++    guard let view, let window = view.window else { return nil }
++    return window.convertToScreen(view.convert(view.bounds, to: nil))
++  }
++}
++
++struct QuickAccessCardAnchorView: NSViewRepresentable {
++  let anchor: QuickAccessCardAnchor
++
++  func makeNSView(context _: Context) -> NSView {
++    let view = PassthroughView()
++    anchor.view = view
++    return view
++  }
++
++  func updateNSView(_ nsView: NSView, context _: Context) {
++    anchor.view = nsView
++  }
++
++  private final class PassthroughView: NSView {
++    override func hitTest(_: NSPoint) -> NSView? { nil }
++  }
++}
++
++/// Borderless panel that can take keyboard focus without activating Snapzy.
++final class QuickAccessOptimizePanel: NSPanel {
++  init(contentRect: NSRect) {
++    super.init(
++      contentRect: contentRect,
++      styleMask: [.borderless, .nonactivatingPanel],
++      backing: .buffered,
++      defer: false
++    )
++    isFloatingPanel = true
++    becomesKeyOnlyIfNeeded = false
++    hidesOnDeactivate = false
++    isOpaque = false
++    backgroundColor = .clear
++    // The SwiftUI view draws its own shadow so it can scale with the bubble animation.
++    hasShadow = false
++    isReleasedWhenClosed = false
++    collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .transient]
++    animationBehavior = .utilityWindow
++  }
++
++  override var canBecomeKey: Bool { true }
++  override var canBecomeMain: Bool { false }
++}
++
++@MainActor
++final class QuickAccessOptimizePanelController {
++  static let shared = QuickAccessOptimizePanelController()
++
++  private var panel: QuickAccessOptimizePanel?
++  private var menuModel: QuickAccessOptimizeMenuModel?
++  private var customModel: QuickAccessOptimizeCustomModel?
++  /// Hides whichever view is up with the bubble animation.
++  private var setShown: ((Bool) -> Void)?
++  private var presentedItemID: UUID?
++  private var estimateTask: Task<Void, Never>?
++  private var eventMonitors: [Any] = []
++  private var itemsCancellable: AnyCancellable?
++  private var heldItemID: UUID?
++  /// A click on the card's Optimize button first dismisses the open list through the
++  /// click monitor; remembering that lets the button act as a toggle.
++  private var lastOutsideDismissal: (itemID: UUID, date: Date)?
++
++  private init() {}
++
++  var isPresented: Bool { panel != nil }
++
++  /// Opens the list like a native pop-up menu: the current level lands right over
++  /// `buttonFrame` (screen coordinates), or over the card's centre when the menu was
++  /// opened without the button (e.g. from a shortcut).
++  func present(for item: QuickAccessItem, buttonFrame: NSRect?, cardFrame: NSRect?) {
++    if presentedItemID == item.id {
++      dismiss()
++      return
++    }
++    if let lastOutsideDismissal,
++       lastOutsideDismissal.itemID == item.id,
++       Date().timeIntervalSince(lastOutsideDismissal.date) < 0.4 {
++      self.lastOutsideDismissal = nil
++      return
++    }
++    dismiss()
++
++    let store = QuickAccessOptimizeStore.shared
++    guard !store.isOptimizing(item.id) else { return }
++    guard let plan = store.plan(for: item) else {
++      reportUnavailable()
++      return
++    }
++
++    let anchor = buttonFrame ?? cardFrame
++    let model = QuickAccessOptimizeMenuModel(
++      itemID: item.id,
++      plan: plan,
++      presets: QuickAccessOptimizePresetStore.shared.presets
++    )
++    model.onChoose = { [weak self] row in
++      self?.dismiss()
++      switch row.kind {
++      case let .level(level):
++        store.applyReportingFailure(.level(level, encodedData: row.encodedData), to: item.id)
++      case let .preset(preset):
++        store.applyReportingFailure(.custom(preset.settings), to: item.id)
++      case .custom:
++        // Wait for the menu's close animation so the editor does not pop over it.
++        DispatchQueue.main.asyncAfter(deadline: .now() + Self.closeDuration) {
++          guard let current = QuickAccessManager.shared.items.first(where: { $0.id == item.id }) else { return }
++          self?.presentCustom(for: current, anchor: anchor)
++        }
++      }
++    }
++    menuModel = model
++
++    let hostingView = NSHostingView(rootView: QuickAccessOptimizeMenuView(model: model))
++    hostingView.layoutSubtreeIfNeeded()
++    let size
+```
+
+**File**: `Snapzy/Features/QuickAccess/Models/QuickAccessActionConfigurationStore.swift` (modified, +15/-3)
+```diff
+@@ -22,7 +22,8 @@ final class QuickAccessActionConfigurationStore: ObservableObject {
+     self.defaults = defaults
+     actionOrder = Self.normalizedOrder(from: defaults.stringArray(forKey: PreferencesKeys.quickAccessActionOrder))
+     enabledActions = Self.normalizedEnabledActions(
+-      from: defaults.stringArray(forKey: PreferencesKeys.quickAccessEnabledActions)
++      from: defaults.stringArray(forKey: PreferencesKeys.quickAccessEnabledActions),
++      known: defaults.stringArray(forKey: PreferencesKeys.quickAccessKnownActions)
+     )
+     slotAssignments = Self.normalizedSlotAssignments(
+       from: defaults.dictionary(forKey: PreferencesKeys.quickAccessActionSlotAssignments) as? [String: String]
+@@ -124,6 +125,7 @@ final class QuickAccessActionConfigurationStore: ObservableObject {
+       forKey: PreferencesKeys.quickAccessEnabledActions
+     )
+     defaults.set(rawSlotAssignments(from: slotAssignments), forKey: PreferencesKeys.quickAccessActionSlotAssignments)
++    defaults.set(QuickAccessActionKind.allCases.map(\.rawValue), forKey: PreferencesKeys.quickAccessKnownActions)
+   }
+ 
+   private static func normalizedOrder(from rawIDs: [String]?) -> [QuickAccessActionKind] {
+@@ -143,12 +145,22 @@ final class QuickAccessActionConfigurationStore: ObservableObject {
+     return ordered
+   }
+ 
+-  private static func normalizedEnabledActions(from rawIDs: [String]?) -> Set<QuickAccessActionKind> {
++  /// `known` is the action list the enabled list was saved against. Actions added
++  /// since then were never offered to the user, so they start enabled when they
++  /// are enabled by default; an explicit disable of a known action is kept.
++  static func normalizedEnabledActions(
++    from rawIDs: [String]?,
++    known rawKnownIDs: [String]?
++  ) -> Set<QuickAccessActionKind> {
+     guard let rawIDs else {
+       return QuickAccessActionKind.defaultEnabledActions
+     }
+ 
+-    return Set(rawIDs.compactMap(QuickAccessActionKind.init(rawValue:)))
++    let saved = Set(rawIDs.compactMap(QuickAccessActionKind.init(rawValue:)))
++    let known = rawKnownIDs.map { Set($0.compactMap(QuickAccessActionKind.init(rawValue:))) }
++      ?? QuickAccessActionKind.legacyKnownActions
++    let introduced = QuickAccessActionKind.defaultEnabledActions.subtracting(known)
++    return saved.union(introduced)
+   }
+ 
+   private static func normalizedSlotAssignments(
+```
+
+---
+
+### Incident Patch 3: `4a61039c` (2026-11-18)
+**Commit Message**: ci: split CI into parallel checks, test and release-build jobs (#759)
+
+- checks: localization verify + SnapzyCLIKit tests (10 min)
+- test: Debug xcodebuild test with the unchanged skip list (30 min)
+- release-build: arm64-only on PRs, universal on push like the release
+  archive; adds the #725 runtime weak-import guard, lipo arch check on
+  push, and the Release build duration in the job summary
+- skip CI for docs/plans/markdown-only changes
+- raise release-publish build timeout from 45 to 75 min
+
+**File**: `.github/workflows/ci.yml` (modified, +105/-6)
+```diff
+@@ -3,17 +3,25 @@ name: CI Build Check
+ on:
+   push:
+     branches: [master, beta]
++    paths-ignore:
++      - 'docs/**'
++      - 'plans/**'
++      - '**/*.md'
+   pull_request:
+     branches: [master, beta]
++    paths-ignore:
++      - 'docs/**'
++      - 'plans/**'
++      - '**/*.md'
+ 
+ concurrency:
+   group: ci-${{ github.ref }}
+   cancel-in-progress: true
+ 
+ jobs:
+-  build:
++  checks:
+     runs-on: macos-15
+-    timeout-minutes: 45
++    timeout-minutes: 10
+ 
+     steps:
+       - name: Checkout
+@@ -39,6 +47,25 @@ jobs:
+       - name: Test SnapzyCLIKit package
+         run: swift test --package-path Packages/SnapzyCLIKit
+ 
++  test:
++    runs-on: macos-15
++    timeout-minutes: 30
++
++    steps:
++      - name: Checkout
++        uses: actions/checkout@v7
++
++      - name: Setup Xcode
++        uses: maxim-lobanov/setup-xcode@v1
++        with:
++          xcode-version: '26.2'
++
++      - name: Reset SwiftPM artifact cache
++        # Fresh macos-15 images can ship a stale entry for the Sparkle binary
++        # artifact, which makes package resolution fail with
++        # "... already exists in file system".
++        run: rm -rf "$HOME/Library/Caches/org.swift.swiftpm/artifacts"
++
+       - name: Run tests
+         env:
+           # The following tests crash on GitHub Actions macOS runners (Swift concurrency /
+@@ -157,21 +184,68 @@ jobs:
+             build/ci-test.log
+             build/ci-test.xcresult
+ 
+-      - name: Build
++  release-build:
++    runs-on: macos-15
++    timeout-minutes: 60
++    env:
++      # Pull requests build arm64 only to keep the Release (WMO) compile short; the
++      # SIL optimizer is arch-independent, so optimizer crashes still surface.
++      # Pushes to master/beta build universal exactly like release-publish.yml.
++      BUILD_MODE: ${{ github.event_name == 'pull_request' && 'arm64' || 'universal' }}
++
++    steps:
++      - name: Checkout
++        uses: actions/checkout@v7
++
++      - name: Setup Xcode
++        uses: maxim-lobanov/setup-xcode@v1
++        with:
++          xcode-version: '26.2'
++
++      - name: Reset SwiftPM artifact cache
++        # Fresh macos-15 images can ship a stale entry for the Sparkle binary
++        # artifact, which makes package resolution fail with
++        # "... already exists in file system".
++        run: rm -rf "$HOME/Library/Caches/org.swift.swiftpm/artifacts"
++
++      - name: Build Release
+         run: |
+           set -euo pipefail
+           mkdir -p build
+ 
+-          if ! xcodebuild \
++          if [ "$BUILD_MODE" = "universal" ]; then
++            arch_args=(ONLY_ACTIVE_ARCH=NO)
++          else
++            arch_args=(ARCHS=arm64 ONLY_ACTIVE_ARCH=YES)
++          fi
++          echo "Build mode: $BUILD_MODE (${arch_args[*]})"
++
++          start=$(date +%s)
++          set +e
++          xcodebuild \
+             -project Snapzy.xcodeproj \
+             -scheme Snapzy \
+             -configuration Release \
+             -derivedDataPath build/DerivedData \
+             CODE_SIGN_IDENTITY="" \
+             CODE_SIGNING_REQUIRED=NO \
+             CODE_SIGNING_ALLOWED=NO \
+-            ONLY_ACTIVE_ARCH=NO \
+-            build > build/ci-build.log 2>&1; then
++            "${arch_args[@]}" \
++            build > build/ci-build.log 2>&1
++          status=$?
++          set -e
++          elapsed=$(( $(date +%s) - start ))
++
++          {
++            echo "### Release build ($BUILD_MODE)"
++            echo ""
++            echo "| Result | Duration |"
++            echo "| --- | --- |"
++            if [ "$status" -eq 0 ]; then result="success"; else result="failed ($status)"; fi
++            printf '| %s | %dm %02ds |\n' "$result" $((elapsed / 60)) $((elapsed % 60))
++          } >> "$GITHUB_STEP_SUMMARY"
++
++          if [ "$status" -ne 0 ]; then
+             tail -100 build/ci-build.log
+             exit 1
+           fi
+@@ -202,3 +276,28 @@ jobs:
+             exit 1
+           fi
+           echo "Embedded snapzy CLI verified"
++
++      # Release-only crash class (#725): optimized builds call macOS 15+ Swift
++      # runtime symbols without a fallback, so the app dies at launch on 13/14.
++      # Same guard as release-publish.yml, so a green PR cannot fail the release.
++      - name: Guard Swift runtime imports for deployment target
++        run: |
++          set -euo pipefail
++          bash scripts/check-runtime-weak-imports.sh build/DerivedData/Build/Products/Release/Snapzy.app
++
++      - name: Verify universal binaries
++        if: env.BUILD_MODE == 'universal'
++        run: |
++          set -euo pipefail
++          APP_PATH="build/DerivedData/Build/Products/Release/Snapzy.app"
++          APP_EXEC=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$APP_PATH/Contents/Info.plist")
++          for bin in "$APP_PATH/Contents/MacOS/$APP_EXEC" "$APP_PATH/Contents/Helpers/snapzy"; do
++            archs=$(lipo -archs "$bin")
++            echo "$bin: $archs"
++            for want in x86_64 arm64; do
++              if ! grep -qw "$want" <<<"$archs"; then
++              
+```
+
+**File**: `.github/workflows/release-publish.yml` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ jobs:
+       (github.event.pull_request.merged == true &&
+       startsWith(github.event.pull_request.head.ref, 'release/v'))
+     runs-on: macos-15
+-    timeout-minutes: 45
++    timeout-minutes: 75
+     permissions:
+       contents: write
+     env:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #751** (2026-11-15): chore: release v2.2.0-beta.15 (@github-actions[bot])
-- **PR #750** (2026-11-15): feat: Auto Translate in Annotate (whole image + area) (@duongductrong)
-- **PR #749** (2026-11-15): feat: Added Snip to Translate (OCR + translation card) (@duongductrong)
-- **PR #748** (2026-11-14): chore: release v2.2.0-beta.14 (@github-actions[bot])
-- **PR #747** (2026-11-14): feat: add flip horizontal/vertical and group rotate+flip into one toolbar menu (@duongductrong)
-- **PR #746** (2026-11-14): chore: release v2.2.0-beta.13 (@github-actions[bot])
+- **PR #768** (2026-11-20): feat: Added recording area border shown during recording, independent of dim (#545) (@duongductrong)
+- **PR #767** (2026-11-20): chore: release v2.3.0-beta.2 (@github-actions[bot])
+- **PR #766** (2026-11-20): feat: Added auto-expanding canvas to the Annotate editor (@duongductrong)
+- **PR #765** (2026-11-20): chore: release v2.3.0-beta.1 (@github-actions[bot])
+- **PR #764** (2026-11-20): fix: Get master CI green again (@duongductrong)
+- **PR #763** (2026-11-19): feat: Added Quick Access Optimize action to shrink screenshots (@duongductrong)
 
 ---
 
@@ -1058,33 +2107,39 @@ SwiftUI can re-deliver dropEntered/dropUpdated after a drop finished, which redr
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release preferences window content on close to stop idle CPU burn
+## X. Stop the video fixture from hanging CI and collect test-host crash reports
 
 **RULE**:
-When implementing operations in `Snapzy/Features/Preferences/PreferencesWindowController.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duongductrong/Snapzy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duongductrong/Snapzy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `18fe56ad`: release preferences window content on close to stop idle CPU burn. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `22ea076c`: Stop the video fixture from hanging CI and collect test-host crash reports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Snapzy/Features/Preferences/PreferencesWindowController.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
+      - name: Collect crash reports
+        # A test-host abort leaves only "malloc: ..." in the log; the backtrace lives in
+        # the crash report ReportCrash writes, which the xcresult does not include.
+        if: failure() || cancelled()
+        run: |
+          mkdir -p build/crash-reports
+          find "$HOME/Library/Logs/DiagnosticReports" /Library/Logs/DiagnosticReports \
+            \( -name 'Snapzy*' -o -name 'xctest*' \) -type f -mmin -60 \
+            -exec cp {} build/crash-reports/ \; 2>/dev/null || true
+          ls -la build/crash-reports
 
-    // A closed (ordered-out) window keeps its NSHostingView alive, and SwiftUI does not
-    // fire onDisappear/cancel `.task` for it — so looping work such as the animated
-    // CaptureSettingsPreview kept rendering off-screen (~20–35% CPU while idle).
-    // Tear the hierarchy down; `show()` rebuilds it on demand.
-    guard let closingWindow = notification.object as? NSWindow, closingWindow === window else { return }
-    DispatchQueue.main.async { [weak self] in
-      guard let self, self.window === closingWindow, !closingWindow.isVisible else { return }
-      closingWindow.contentView = nil
-      closingWindow.delegate = nil
-      self.themeObserver = nil
-      self.window = nil
-    }
+      - name: Upload crash reports
+        if: failure() || cancelled()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ci-crash-reports
+          path: build/crash-reports
+          if-no-files-found: ignore
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1094,7 +2149,7 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `18fe56ad` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `22ea076c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

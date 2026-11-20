@@ -11559,3 +11559,6 @@
 | `CYCLE-20261120-M0WP` | `2026-11-20T14:52:45.721Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9585` | Yes (`e86e61ce...`) |
 | `CYCLE-20261120-M3GR` | `2026-11-20T14:52:49.035Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/volcengine-openviking-learnings.md` | Yes (`d5709c37...`) |
 | `CYCLE-20261120-M5PG` | `2026-11-20T14:52:51.940Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9578` | Yes (`974660b3...`) |
+| `CYCLE-20261120-EWR4` | `2026-11-20T15:15:13.360Z` | `webrecorder/pywb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9586` | Yes (`ef41bb33...`) |
+| `CYCLE-20261120-EZ5Z` | `2026-11-20T15:15:16.487Z` | `duongductrong/Snapzy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9587` | Yes (`8596b8aa...`) |
+| `CYCLE-20261120-F49W` | `2026-11-20T15:15:23.108Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9588` | Yes (`c815bda9...`) |

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T14:52:56.922Z",
+  "updated_at": "2026-11-20T15:15:26.799Z",
   "stats": {
-    "total_discovered": 6399,
-    "approved_pending_harvest": 6045,
+    "total_discovered": 6405,
+    "approved_pending_harvest": 6050,
     "harvested_count": 0,
-    "rejected_count": 354,
+    "rejected_count": 355,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6031,
+      "COMMUNITY_AND_EXPERT": 6037,
       "OFFICIAL_DOCUMENTATION": 201,
       "STANDARDS_AND_SPECIFICATIONS": 117,
       "ENGINEERING_BLOGS": 4,
@@ -138323,6 +138323,131 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
         "fileName": "volcengine-openviking-learnings.md"
+      }
+    },
+    "SRC-84CA5FB218BE": {
+      "id": "SRC-84CA5FB218BE",
+      "url": "https://httpbun.com/mix/s=403/b64=PGgyPjQwMyByZXNwb25zZSB0ZXN0IHBhc3NlZDwvaDI+/h=content-type:text%2Fhtml",
+      "title": "https://httpbun.com/mix/s=403/b64=PGgyPjQwMyByZXNwb25zZSB0ZXN0IHBhc3NlZDwvaDI+/h=content-type:text%2Fhtml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:15:26.578Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
+        "fileName": "webrecorder-pywb-learnings.md"
+      }
+    },
+    "SRC-9162D2A27863": {
+      "id": "SRC-9162D2A27863",
+      "url": "http://localhost:8080/test/20260808010841/https://httpbun.com/mix/s=403/b64=PGgyPjQwMyByZXNwb25zZSB0ZXN0IHBhc3NlZDwvaDI+/h=content-type:text%2Fhtml",
+      "title": "http://localhost:8080/test/20260808010841/https://httpbun.com/mix/s=403/b64=PGgyPjQwMyByZXNwb25zZSB0ZXN0IHBhc3NlZDwvaDI+/h=content-type:text%2Fhtml",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-20T15:15:26.634Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
+        "fileName": "webrecorder-pywb-learnings.md"
+      }
+    },
+    "SRC-5201209CB175": {
+      "id": "SRC-5201209CB175",
+      "url": "https://github.com/user-attachments/assets/c8db53db-c32c-4336-af75-4ffc12aec03d",
+      "title": "https://github.com/user-attachments/assets/c8db53db-c32c-4336-af75-4ffc12aec03d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:15:26.673Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
+        "fileName": "webrecorder-pywb-learnings.md"
+      }
+    },
+    "SRC-C843B9EA9600": {
+      "id": "SRC-C843B9EA9600",
+      "url": "https://github.com/user-attachments/assets/beab7e43-00e9-4c0e-8141-a664186c153b",
+      "title": "https://github.com/user-attachments/assets/beab7e43-00e9-4c0e-8141-a664186c153b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:15:26.714Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
+        "fileName": "webrecorder-pywb-learnings.md"
+      }
+    },
+    "SRC-777F25714C1D": {
+      "id": "SRC-777F25714C1D",
+      "url": "https://github.com/webrecorder/wabac.js/blob/99b919ce483224e96f2be28001a1c05e4fb41a98/src/liveproxy.ts",
+      "title": "https://github.com/webrecorder/wabac.js/blob/99b919ce483224e96f2be28001a1c05e4fb41a98/src/liveproxy.ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:15:26.757Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
+        "fileName": "webrecorder-pywb-learnings.md"
+      }
+    },
+    "SRC-0F726A538768": {
+      "id": "SRC-0F726A538768",
+      "url": "https://cdn.jsdelivr.net/npm/@webrecorder/wabac@%7BWABAC_SW_VERSION",
+      "title": "https://cdn.jsdelivr.net/npm/@webrecorder/wabac@%7BWABAC_SW_VERSION",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T15:15:26.799Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
+        "fileName": "webrecorder-pywb-learnings.md"
       }
     }
   }
