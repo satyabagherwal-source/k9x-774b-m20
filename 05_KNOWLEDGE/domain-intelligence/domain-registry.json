@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T07:36:08.455Z",
+  "last_updated": "2026-11-20T08:04:06.918Z",
   "total_records": 2102,
   "domains": {
     "A": {
@@ -8208,8 +8208,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "e55c633c65e7fdb7dce39953f29fed1de87e7238ae00f489905c03c8c02c3d71",
-      "created_at": "2026-11-20T02:39:01.964Z"
+      "content_hash": "9e6405a33718140e28b909c850382b8f0f3590ec77c27d6ee9a6428044c83708",
+      "created_at": "2026-11-20T08:04:01.168Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -8835,8 +8835,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "01168574fc3809184219655e9322e70dddf4849e6fc351f75af8dc5562003473",
-      "created_at": "2026-11-20T07:23:42.432Z"
+      "content_hash": "9b70d02ec09ab2d545cfafd1593a3372cc122e2375ee922747a1c2f862ac783a",
+      "created_at": "2026-11-20T08:04:06.153Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -9441,8 +9441,8 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "c47652a81c3b564e74c7dc4a0fd87ac210a31cda0faa031fba7035d2aa89e510",
-      "created_at": "2026-11-20T02:39:06.174Z"
+      "content_hash": "7d3dedced7aa77bd53862de0b248073d30090cbadf1378a441a7444242c95024",
+      "created_at": "2026-11-20T08:04:04.990Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
@@ -31198,8 +31198,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "da38b9d2533bd48d4be6c25780257244545141862f78b419eae14b4c8d545e71",
-      "created_at": "2026-11-20T07:23:43.300Z"
+      "content_hash": "8f94bacb369b63592e885420a032bbb29c3a75970c7fd9e1ee08ff5a38971326",
+      "created_at": "2026-11-20T08:04:06.918Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",

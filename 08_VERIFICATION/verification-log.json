@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-NPBV",
-    "timestamp": "2026-11-18T11:06:46.651Z",
-    "repository": "react-hook-form/react-hook-form",
-    "learningId": "learn-github-react-hook-form-react-hook-form",
-    "contentHash": "849d910361c578a6a85b3c1bec901bf420e3aa1d915c1f849c8428c64c67d885",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-NS37",
     "timestamp": "2026-11-18T11:06:50.227Z",
     "repository": "gardener/gardener",
@@ -7490,6 +7475,21 @@
     "repository": "open-policy-agent/opa",
     "learningId": "learn-github-open-policy-agent-opa",
     "contentHash": "c53b7789c2a08892cd93e03a49711aa448965c031b4d4f92d4b8a4bbb49d1693",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-0DA1",
+    "timestamp": "2026-11-20T08:04:00.697Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "d175b4f59b796fcdf353b7c8de3ffabd461e91d1172c92e4f3d963e0d73b9dc5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -11503,3 +11503,4 @@
 | `CYCLE-20261120-09PA` | `2026-11-20T07:35:56.446Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9540` | Yes (`82637fe0...`) |
 | `CYCLE-20261120-0DB0` | `2026-11-20T07:36:01.116Z` | `JuulLabs/kable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9541` | Yes (`af7bab64...`) |
 | `CYCLE-20261120-0ERR` | `2026-11-20T07:36:03.015Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9542` | Yes (`c53b7789...`) |
+| `CYCLE-20261120-0DA1` | `2026-11-20T08:04:00.697Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`d175b4f5...`) |

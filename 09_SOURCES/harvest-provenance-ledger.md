@@ -11536,3 +11536,4 @@ Every entry in this ledger must capture:
 | `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `a5623dca` | Multi-dimensional audit evidence | 2026-11-20T07:35:56.450Z |
 | `learn-github-juullabs-kable` | `https://github.com/JuulLabs/kable` | `9836c4e2` | Multi-dimensional audit evidence | 2026-11-20T07:36:01.120Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `a4d2f0c0` | Multi-dimensional audit evidence | 2026-11-20T07:36:03.019Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `40d8778b` | Multi-dimensional audit evidence | 2026-11-20T08:04:00.702Z |

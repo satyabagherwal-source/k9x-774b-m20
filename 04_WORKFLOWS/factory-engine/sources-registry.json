@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T07:36:06.153Z",
-    "lastVerified": "2026-11-20T07:36:06.153Z",
+    "lastChecked": "2026-11-20T08:04:04.058Z",
+    "lastVerified": "2026-11-20T08:04:04.058Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -174,8 +174,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T06:58:38.818Z",
-    "lastVerified": "2026-11-20T06:58:38.818Z",
+    "lastChecked": "2026-11-20T08:03:00.187Z",
+    "lastVerified": "2026-11-20T08:03:00.187Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1093,14 +1093,14 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T02:39:00.928Z",
-    "lastVerified": "2026-11-20T02:39:00.928Z",
+    "lastChecked": "2026-11-20T08:02:59.729Z",
+    "lastVerified": "2026-11-20T08:02:59.729Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "1cbd04c8e15e938124780e7a44ee82366770f3b7b72e01187e6b8bc70e76d490",
+    "contentHash": "d175b4f59b796fcdf353b7c8de3ffabd461e91d1172c92e4f3d963e0d73b9dc5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4215,9 +4215,9 @@
   "wasm-bindgen-wasm-pack": {
     "name": "wasm-pack",
     "officialUrl": "https://github.com/wasm-bindgen/wasm-pack",
-    "lastChecked": "2026-11-18T20:14:11.702Z",
+    "lastChecked": "2026-11-20T08:02:45.152Z",
     "revisionIdentifier": "c262c330",
-    "lastVerified": "2026-11-18T20:14:11.702Z"
+    "lastVerified": "2026-11-20T08:02:45.152Z"
   },
   "hf-qwen-qwen3.8-flash-next": {
     "name": "Qwen/Qwen3.8-Flash-Next",
@@ -6077,9 +6077,9 @@
   "lindb-lindb": {
     "name": "lindb",
     "officialUrl": "https://github.com/lindb/lindb",
-    "lastChecked": "2026-11-19T02:11:30.907Z",
+    "lastChecked": "2026-11-20T08:02:57.659Z",
     "revisionIdentifier": "612070e1",
-    "lastVerified": "2026-11-19T02:11:30.907Z"
+    "lastVerified": "2026-11-20T08:02:57.659Z"
   },
   "graykode-abtop": {
     "name": "abtop",
@@ -6420,9 +6420,9 @@
   "kubeshark-kubeshark": {
     "name": "kubeshark",
     "officialUrl": "https://github.com/kubeshark/kubeshark",
-    "lastChecked": "2026-11-19T04:36:24.629Z",
+    "lastChecked": "2026-11-20T08:02:52.670Z",
     "revisionIdentifier": "b79aa01a",
-    "lastVerified": "2026-11-19T04:36:24.629Z"
+    "lastVerified": "2026-11-20T08:02:52.670Z"
   },
   "vespa-engine-vespa": {
     "name": "vespa-engine/vespa",
@@ -9650,5 +9650,19 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sundios-seo-dashboard": {
+    "name": "SEO-Dashboard",
+    "officialUrl": "https://github.com/sundios/SEO-Dashboard",
+    "lastChecked": "2026-11-20T08:02:47.655Z",
+    "revisionIdentifier": "8ca76eb6",
+    "lastVerified": "2026-11-20T08:02:47.655Z"
+  },
+  "touchlab-droidconkotlin": {
+    "name": "DroidconKotlin",
+    "officialUrl": "https://github.com/touchlab/DroidconKotlin",
+    "lastChecked": "2026-11-20T08:02:50.167Z",
+    "revisionIdentifier": "27f3e87c",
+    "lastVerified": "2026-11-20T08:02:50.167Z"
   }
 }

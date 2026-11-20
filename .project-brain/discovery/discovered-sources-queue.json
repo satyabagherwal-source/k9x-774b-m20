@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T07:36:07.400Z",
+  "updated_at": "2026-11-20T08:04:04.471Z",
   "stats": {
-    "total_discovered": 6268,
-    "approved_pending_harvest": 5928,
+    "total_discovered": 6270,
+    "approved_pending_harvest": 5930,
     "harvested_count": 0,
     "rejected_count": 340,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5908,
+      "COMMUNITY_AND_EXPERT": 5910,
       "OFFICIAL_DOCUMENTATION": 195,
       "STANDARDS_AND_SPECIFICATIONS": 117,
       "ENGINEERING_BLOGS": 4,
@@ -135539,6 +135539,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juullabs-kable-learnings.md",
         "fileName": "juullabs-kable-learnings.md"
+      }
+    },
+    "SRC-3AA6C2A10A17": {
+      "id": "SRC-3AA6C2A10A17",
+      "url": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=bfbc357ab9b2189eb048d13f8ae62ca5e5824376",
+      "title": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=bfbc357ab9b2189eb048d13f8ae62ca5e5824376",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T08:04:04.411Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+        "fileName": "provablehq-snarkos-learnings.md"
+      }
+    },
+    "SRC-219C63C64EB1": {
+      "id": "SRC-219C63C64EB1",
+      "url": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=bfbc357ab9b2",
+      "title": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=bfbc357ab9b2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T08:04:04.471Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+        "fileName": "provablehq-snarkos-learnings.md"
       }
     }
   }

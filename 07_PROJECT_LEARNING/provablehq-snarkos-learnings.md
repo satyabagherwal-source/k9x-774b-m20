@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `ddd15c3e`  
+> **Source Version**: `40d8778b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T02:39:00.934Z  
+> **Timestamp**: 2026-11-20T08:03:59.850Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T02:39:00.928Z  
+> **Harvest Timestamp**: 2026-11-20T08:02:59.729Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -104,7 +104,7 @@ impl<N: Network> FromBytes for WorkerPing<N> {
     }
 }
 
-#[cfg(any(test, feature = "fuzz-helpers"))]
+#[cfg(any(test, feature = "test-helpers"))]
 pub mod prop_tests {
     #![cfg_attr(not(test), allow(unused_imports))]
     use crate::{WorkerPing, prop_tests::any_transmission_id};
@@ -1992,76 +1992,375 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `09710fb9` (2026-11-19)
-**Commit Message**: Run the bft tests with metrics in one build
+### Incident Patch 1: `40d8778b` (2026-11-20)
+**Commit Message**: Merge pull request #4728 from aleo-labs-protocol/breaking/remove-dead-features
 
-The second line rebuilt 15 snarkvm and 11 snarkos crates, 3 min 22 s on
-staging run 44589650148, to run 6 tests in 0.7 s. The snarkos binary
-enables metrics by default, and each-feature checks the crate without it.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmPBwQHC2yRCed8gDf5
-
-**File**: `.github/workflows/ci.yml` (modified, +8/-7)
+**File**: `Cargo.lock` (modified, +8/-69)
 ```diff
-@@ -239,15 +239,16 @@ jobs:
-             runs: nextest run -p snarkos-node-consensus -p snarkos-node-rest -p snarkos-cli
-           - name: node
-             runs: nextest run -p snarkos-node -p snarkos-node-bft-storage-service --features snarkos-node-bft-storage-service/memory,snarkos-node-bft-storage-service/persistent
--          # `helpers::telemetry` compiles only under `metrics`, and nextest
--          # skips the tests in examples unless a command names one.
--          # `--no-tests=fail` overrides NEXTEST_NO_TESTS, so a command that
--          # stops matching any test fails.
-+          # Both lines use `metrics`, which the `snarkos` binary enables by
-+          # default. `helpers::telemetry` compiles only under it, and a line
-+          # without it rebuilds the snarkvm and bft crates. nextest skips the
-+          # tests in examples unless a command names one. `--no-tests=fail`
-+          # overrides NEXTEST_NO_TESTS, so a command that stops matching any
-+          # test fails.
-           - name: bft
-             runs: |
--              nextest run -p snarkos-node-bft
--              nextest run -p snarkos-node-bft --lib --features metrics --no-tests=fail -E test(/helpers::telemetry::/)
--              nextest run -p snarkos-node-bft --example simple_node --no-tests=fail
-+              nextest run -p snarkos-node-bft --features metrics
-+              nextest run -p snarkos-node-bft --features metrics --example simple_node --no-tests=fail
-           - name: router
-             runs: nextest run -p snarkos-node-router
-           - name: sync
+@@ -73,56 +73,6 @@ dependencies = [
+  "memchr",
+ ]
+ 
+-[[package]]
+-name = "aleo-std"
+-version = "1.0.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d7c26e03c99bac238b3454ec6c654bc066a0e4e7eae00608ec76c2279bc8f2cf"
+-dependencies = [
+- "aleo-std-profiler",
+- "aleo-std-time",
+- "aleo-std-timed",
+- "aleo-std-timer",
+- "walkdir",
+-]
+-
+-[[package]]
+-name = "aleo-std-profiler"
+-version = "1.0.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "64476704cd7d71c43623839197bea87e477cfa03006853328fd5c9e07d8f48cc"
+-
+-[[package]]
+-name = "aleo-std-time"
+-version = "1.0.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "61a095fa7b4400ec1de315603c16c1084ece0b7926cbb0333a1ba115732fc35b"
+-dependencies = [
+- "proc-macro2",
+- "quote 1.0.47",
+- "syn 1.0.109",
+-]
+-
+-[[package]]
+-name = "aleo-std-timed"
+-version = "1.0.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a77792a0cf06cc8efdabf5cb355a2f1e9172ae3ab5d30147ff440e1c9e8a03d0"
+-dependencies = [
+- "proc-macro2",
+- "quote 1.0.47",
+- "syn 1.0.109",
+-]
+-
+-[[package]]
+-name = "aleo-std-timer"
+-version = "1.0.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d9fbc20b310af70d896f74cdccc2f12b5d6d9cd7edea5abfd823038279703b30"
+-dependencies = [
+- "colored 2.2.0",
+-]
+-
+ [[package]]
+ name = "alloca"
+ version = "0.4.0"
+@@ -892,16 +842,6 @@ version = "1.0.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "1d07550c9036bf2ae0c684c4297d503f838287c83c53686d05370d0e139ae570"
+ 
+-[[package]]
+-name = "colored"
+-version = "2.2.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "117725a109d387c937a1533ce01b450cbde6b88abceea8473c4d7a85853cda3c"
+-dependencies = [
+- "lazy_static",
+- "windows-sys 0.59.0",
+-]
+-
+ [[package]]
+ name = "colored"
+ version = "3.1.1"
+@@ -4918,7 +4858,7 @@ checksum = "f8b9ba61de2952acfe762d56c3f4743324465be961c685eb26c3ed49ef93d13f"
+ dependencies = [
+  "backtrace",
+  "clap",
+- "colored 3.1.1",
++ "colored",
+  "const-str",
+  "dotenvy",
+  "indexmap 2.14.2",
+@@ -5371,7 +5311,7 @@ dependencies = [
+ name = "snarkos-account"
+ version = "4.13.1"
+ dependencies = [
+- "colored 3.1.1",
++ "colored",
+  "snarkvm",
+ ]
+ 
+@@ -5383,7 +5323,7 @@ dependencies = [
+  "anyhow",
+  "base64 0.23.1",
+  "clap",
+- "colored 3.1.1",
++ "colored",
+  "console-subscriber",
+  "crossterm",
+  "indexmap 2.14.2",
+@@ -5463,12 +5403,11 @@ dependencies = [
+ name = "snarkos-node"
+ version = "4.13.1"
+ dependencies = [
+- "aleo-std",
+  "anyhow",
+  "async-trait",
+  "bytes",
+  "cfg-if",
+- "colored 3.1.1",
++ "colored",
+  "deadline",
+  "futures-util",
+  "http 1.5.0",
+@@ -6539,7 +6478,7 @@ version = "4.13.1"
+ source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=bfbc357ab9b2189eb048d13f8ae62ca5e5824376#bfbc357ab9b2189eb048d13f8ae62ca5e5824376"
+ dependencies = [
+  "anyhow",
+- "colored 3.1.1",
++ "colored",
+  "indexmap 2.14.2",
+  "locktick",
+  "lru 0.19.0",
+@@ -6632,7 +6571,7 @@ source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=bfbc357ab9b2
+ dependencies = [
+  "anyhow",
+  "cfg-if",
+- "colored 3.1.1",
++ "colored",
+  "hex",
+  "lazy_static",
+  "locktick",
+@@ -6700,7 +6639,7 @@ name = "snarkvm-synthesizer-process"
+ version = "4.13.1"
+ source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=bfbc357ab9b2189eb048d13f8ae62ca5e5824376#bfbc357ab9b2189eb048d13f8ae62ca5e5824376"
+ dependencies = [
+- "colored 3.1.1",
++ "colored",
+  "indexmap 2.14.2",
+  "itertools 0.15.0",
+  "locktick",
+@@ -6762,7 +6701,7 @@ source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=bfbc357ab9b2
+ dependencies = [
+  "anyhow",
+  "bincode",
+- "colored 3.1.1",
++ "colored",
+  "dirs",
+  "num-bigint",
+  "rand 0.10.3",
 ```
 
-**File**: `CI.md` (modified, +4/-3)
+**File**: `Cargo.toml` (modified, +2/-12)
 ```diff
-@@ -41,7 +41,7 @@ marked "release" only on the third. The other jobs run on every event.
- | `test (messages)` | hosted | all | 90 | `snarkos-node-bft-events`, `-node-router-messages`, `-node-bft-ledger-service` |
- | `test (services)` | `cpu` | all | 90 | `snarkos-node-consensus`, `-node-rest`, `-cli` |
- | `test (node)` | `cpu` | all | 90 | `snarkos-node` with `snarkos-node-bft-storage-service` (features `memory,persistent`) |
--| `test (bft)` | `cpu` | all | 90 | `snarkos-node-bft`; its `helpers::telemetry` tests with `metrics`, as a second build |
-+| `test (bft)` | `cpu` | all | 90 | `snarkos-node-bft` with `metrics` |
- | `test (router)` | `cpu` | all | 90 | `snarkos-node-router` |
- | `test (sync)` | `cpu` | all | 90 | `snarkos-node-sync` |
- | `build-snarkos` | `cpu` | all | 60 | release `snarkos` with `test_network`, as an artifact |
-@@ -81,8 +81,9 @@ compile in its line that would not under `cargo test -p <crate>` alone. Check
- this before moving a crate between lines, for example by comparing
- `cargo tree -e features` for the line against each crate alone.
+@@ -42,10 +42,6 @@ members = [
+   "utilities",
+ ]
  
--`test (bft)` has a second line for the tests in `helpers::telemetry`, which
--compile only under `metrics`. That line builds the library alone. It passes
-+`test (bft)` runs with `metrics`, which the `snarkos` binary enables by
-+default, so the tests in `helpers::telemetry` compile. The `each-feature` job
-+checks the crate without `metrics`. The `simple_node` line passes
- `--no-tests=fail`, because the step otherwise lets a command match no tests.
+-[workspace.dependencies.aleo-std]
+-version = "1.0.4"
+-default-features = false
+-
+ [workspace.dependencies.snarkvm]
+ #path = "../snarkVM"
+ git = "https://github.com/aleo-labs-protocol/snarkVM.git"
+@@ -281,14 +277,8 @@ name = "snarkos"
+ path = "snarkos/main.rs"
  
- [`.config/nextest.toml`](.config/nextest.toml) sets two test threads. Each
+ [features]
+-default = [ "snarkos-cli/metrics", "dep:snarkos-node-metrics", "snarkos-node/metrics", "snarkos-node-cdn/metrics" ]
+-# The compile-time history features no longer select snarkVM code.
+-# The names stay so existing build commands keep resolving.
+-history = []
+-history-staking-rewards = []
+-# Deprecated alias for the metrics feature, which now carries the validator telemetry.
+-# Retained so that build commands naming this feature keep resolving.
+-telemetry = [ "snarkos-node/metrics" ]
++default = [ "metrics" ]
++metrics = [ "snarkos-cli/metrics", "dep:snarkos-node-metrics", "snarkos-node/metrics", "snarkos-node-cdn/metrics" ]
+ cuda = [
+   "snarkos-account/cuda",
+   "snarkos-cli/cuda",
+```
+
+**File**: `README.md` (modified, +4/-10)
+```diff
+@@ -208,8 +208,7 @@ Once enabled, telemetry metrics are available through:
+     // GET /{network}/validators/participation?metadata={true}
+     ```
+ 
+-Telemetry is part of the `metrics` feature, which is enabled by default. The `telemetry` feature flag
+-is kept as an alias for `metrics`, so commands that name it explicitly still work:
++Telemetry is part of the `metrics` feature, which is enabled by default:
+ 
+ #### 1. [Installation](#2.3-installation)
+ 
+@@ -617,14 +616,9 @@ cargo run --release -- clean --dev <NODE_ID>
+ 
+ ## 6.4 Feature Flags
+ 
+-By default, the metrics feature is turned on for some internal crates. It carries the validator
+-telemetry described in [Validator Telemetry Metrics](#321-validator-telemetry-metrics).
+-
+-* **history** -
+-  Enables a /history REST endpoint.
+-* **telemetry** -
+-  Deprecated alias for **metrics**, kept so that existing build commands keep working.
+-  Validator telemetry is part of **metrics**.
++* **metrics** -
++  Enabled by default. Adds the `--metrics` flag and the metrics exporter. It carries the validator
++  telemetry described in [Validator Telemetry Metrics](#321-validator-telemetry-metrics).
+ * **cuda** -
+   Allows some operations to run on the (NVidia) GPU, instead of on the CPU. See [CUDA acceleration for provers](#optional-cuda-acceleration-for-provers) for install tips and current puzzle status.
+ * **locktick** -
+```
+
+**File**: `cli/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -18,7 +18,6 @@ edition = "2024"
+ 
+ [features]
+ default = [ ]
+-async = [ ]
+ locktick = [
+   "dep:locktick",
+   "snarkos-display/locktick",
+```
+
+**File**: `node/Cargo.toml` (modified, +0/-9)
+```diff
+@@ -18,7 +18,6 @@ edition = "2024"
+ 
+ [features]
+ default = [ ]
+-timer = [ "aleo-std/timer" ]
+ locktick = [
+   "dep:locktick",
+   "snarkos-node-bft/locktick",
+@@ -42,10 +41,6 @@ metrics = [
+   "snarkvm/metrics",
+   "snarkvm/rocks"
+ ]
+-# The compile-time history features no longer select snarkVM code.
+-# The names stay so existing build commands keep resolving.
+-history = []
+-history-staking-rewards = []
+ cuda = [
+   "snarkvm/cuda",
+   "snarkos-account/cuda",
+@@ -63,9 +58,6 @@ serial = [
+ test-helpers = []
+ test_network = [ "snarkos-node-bft/test_network", "snarkos-node-consensus/test_network", "snarkos-utilities/test_network" ]
+ 
+-[dependencies.aleo-std]
+-workspace = true
+-
+ [dependencies.anyhow]
+ workspace = true
+ 
+@@ -198,6 +190,5 @@ workspace = true
+ 
+ [package.metadata.cargo-machete]
+ ignored = [
+-  "aleo-std", # Only the timer feature uses it
+   "serde_json", # Need to set preserve_order feature
+ ]
+```
+
+**File**: `node/rest/Cargo.toml` (modified, +0/-4)
+```diff
+@@ -18,10 +18,6 @@ edition = "2024"
+ 
+ [features]
+ default = [ ]
+-# The compile-time history features no longer select snarkVM code.
+-# The names stay so existing build commands keep resolving.
+-history = []
+-history-staking-rewards = []
+ metrics = [ "dep:snarkos-node-metrics", "snarkos-node-consensus/metrics" ]
+ cuda = [ "snarkvm/cuda", "snarkos-node-consensus/cuda", "snarkos-node-router/cuda" ]
+ locktick = [
+```
+
+**File**: `node/src/validator/mod.rs` (modified, +1/-1)
+```diff
+@@ -591,7 +591,7 @@ mod tests {
+ 
+     type CurrentNetwork = MainnetV0;
+ 
+-    /// Use `RUST_MIN_STACK=67108864 cargo test --release profiler --features timer` to run this test.
++    /// Use `RUST_MIN_STACK=67108864 cargo test --release profiler` to run this test.
+     #[ignore]
+     #[tokio::test]
+     async fn test_profiler() -> Result<()> {
+```
+
+---
+
+### Incident Patch 2: `a4c30de4` (2026-11-20)
+**Commit Message**: Rename the root telemetry feature to metrics
+
+`metrics` holds the forwards that `default` had, and `default` enables
+it. `--no-default-features --features metrics` now gives the full
+default build. The old `telemetry` alias left out `snarkos-cli/metrics`
+and `snarkos-node-cdn/metrics`.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01UYfmmLteo8RJcUAnUrf9qy
+
+**File**: `Cargo.toml` (modified, +2/-4)
+```diff
+@@ -277,10 +277,8 @@ name = "snarkos"
+ path = "snarkos/main.rs"
+ 
+ [features]
+-default = [ "snarkos-cli/metrics", "dep:snarkos-node-metrics", "snarkos-node/metrics", "snarkos-node-cdn/metrics" ]
+-# Deprecated alias for the metrics feature, which now carries the validator telemetry.
+-# Retained so that build commands naming this feature keep resolving.
+-telemetry = [ "snarkos-node/metrics" ]
++default = [ "metrics" ]
++metrics = [ "snarkos-cli/metrics", "dep:snarkos-node-metrics", "snarkos-node/metrics", "snarkos-node-cdn/metrics" ]
+ cuda = [
+   "snarkos-account/cuda",
+   "snarkos-cli/cuda",
+```
+
+**File**: `README.md` (modified, +4/-8)
+```diff
+@@ -208,8 +208,7 @@ Once enabled, telemetry metrics are available through:
+     // GET /{network}/validators/participation?metadata={true}
+     ```
+ 
+-Telemetry is part of the `metrics` feature, which is enabled by default. The `telemetry` feature flag
+-is kept as an alias for `metrics`, so commands that name it explicitly still work:
++Telemetry is part of the `metrics` feature, which is enabled by default:
+ 
+ #### 1. [Installation](#2.3-installation)
+ 
+@@ -617,12 +616,9 @@ cargo run --release -- clean --dev <NODE_ID>
+ 
+ ## 6.4 Feature Flags
+ 
+-By default, the metrics feature is turned on for some internal crates. It carries the validator
+-telemetry described in [Validator Telemetry Metrics](#321-validator-telemetry-metrics).
+-
+-* **telemetry** -
+-  Deprecated alias for **metrics**, kept so that existing build commands keep working.
+-  Validator telemetry is part of **metrics**.
++* **metrics** -
++  Enabled by default. Adds the `--metrics` flag and the metrics exporter. It carries the validator
++  telemetry described in [Validator Telemetry Metrics](#321-validator-telemetry-metrics).
+ * **cuda** -
+   Allows some operations to run on the (NVidia) GPU, instead of on the CPU. See [CUDA acceleration for provers](#optional-cuda-acceleration-for-provers) for install tips and current puzzle status.
+ * **locktick** -
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4718** (2026-11-19): Run the router and sync tests in one job (@cbeck88)
-- **PR #4717** (2026-11-19): Run the bft tests with metrics in one build (@cbeck88)
-- **PR #4714** (2026-11-19): Check each crate with each feature on its own in CI (@cbeck88)
-- **PR #4713** (2026-11-19): Fix the storage-service test imports for the memory feature alone (@cbeck88)
-- **PR #4712** (2026-11-19): Use private temp dirs in tests and the db_backup bench (@cbeck88)
-- **PR #4710** (2026-11-19): Forward serial and test_network features from snarkos-node-bft-ledger-service (@cbeck88)
+- **PR #4728** (2026-11-20): Remove dead features and rename the root telemetry feature to metrics (@cbeck88)
+- **PR #4727** (2026-11-20): Rename test and fuzz-helpers features to test-helpers (@cbeck88)
+- **PR #4726** (2026-11-20): ci: Gauntlet summaries name the check that ran (@cbeck88)
+- **PR #4723** (2026-11-20): Remove structural features from ledger-service; use dep: for optional deps (@cbeck88)
+- **PR #4722** (2026-11-20): Drop the remaining references to the retired branches and old org (@cbeck88)
+- **PR #4721** (2026-11-20): Make Message::VERSIONS a slice and document version growth (@cbeck88)
 
 ---
 
@@ -2081,41 +2380,80 @@ Claude-Session: https://claude.ai/code/session_01UYfmmPBwQHC2yRCed8gDf5
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Run the bft tests with metrics in one build
+## X. Empirical Invariant Guard in Cargo.lock
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `09710fb9`: Run the bft tests with metrics in one build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `40d8778b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-          # Both lines use `metrics`, which the `snarkos` binary enables by
-          # default. `helpers::telemetry` compiles only under it, and a line
-          # without it rebuilds the snarkvm and bft crates. nextest skips the
-          # tests in examples unless a command names one. `--no-tests=fail`
-          # overrides NEXTEST_NO_TESTS, so a command that stops matching any
-          # test fails.
-              nextest run -p snarkos-node-bft --features metrics
-              nextest run -p snarkos-node-bft --features metrics --example simple_node --no-tests=fail
+ "colored",
+ "colored",
+ "colored",
+ "colored",
+ "colored",
+ "colored",
+ "colored",
+ "colored",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-          # `helpers::telemetry` compiles only under `metrics`, and nextest
-          # skips the tests in examples unless a command names one.
-          # `--no-tests=fail` overrides NEXTEST_NO_TESTS, so a command that
-          # stops matching any test fails.
-              nextest run -p snarkos-node-bft
-              nextest run -p snarkos-node-bft --lib --features metrics --no-tests=fail -E test(/helpers::telemetry::/)
-              nextest run -p snarkos-node-bft --example simple_node --no-tests=fail
+[[package]]
+name = "aleo-std"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d7c26e03c99bac238b3454ec6c654bc066a0e4e7eae00608ec76c2279bc8f2cf"
+dependencies = [
+ "aleo-std-profiler",
+ "aleo-std-time",
+ "aleo-std-timed",
+ "aleo-std-timer",
+ "walkdir",
+]
+
+[[package]]
+name = "aleo-std-profiler"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "64476704cd7d71c43623839197bea87e477cfa03006853328fd5c9e07d8f48cc"
+
+[[package]]
+name = "aleo-std-time"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "61a095fa7b4400ec1de315603c16c1084ece0b7926cbb0333a1ba115732fc35b"
+dependencies = [
+ "proc-macro2",
+ "quote 1.0.47",
+ "syn 1.0.109",
+]
+
+[[package]]
+name = "aleo-std-timed"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a77792a0cf06cc8efdabf5cb355a2f1e9172ae3ab5d30147ff440e1c9e8a03d0"
+dependencies = [
+ "proc-macro2",
+ "quote 1.0.47",
+ "syn 1.0.109",
+]
+
+[[package]]
+name = "aleo-std-timer"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d9fbc20b310af70d896f74cdccc2f12b5d6d
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `09710fb9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `40d8778b` are properly handled with clean fallback behavior.

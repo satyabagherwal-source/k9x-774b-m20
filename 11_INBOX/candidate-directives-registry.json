@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T07:36:08.307Z",
+  "last_updated": "2026-11-20T08:04:06.521Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1687,14 +1687,14 @@
       "learning_id": "learn-github-svenstaro-miniserve"
     },
     {
-      "id": "CD-ETDJ",
+      "id": "CD-0GFS",
       "directive_title": "Empirical Invariant Guard in Cargo.lock",
-      "source_repo": "aleo-labs-protocol-snarkos-learnings",
+      "source_repo": "provablehq-snarkos-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-ETDJ-empirical-invariant-guard-in-cargo-lock.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-0GFS-empirical-invariant-guard-in-cargo-lock.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-19",
+      "date_staged": "2026-11-20",
       "domain_letter": "D"
     },
     {
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-KJ5S",
+      "id": "CD-0HC2",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-KJ5S-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-0HC2-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
@@ -36833,6 +36833,33 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-0D45B7",
+      "directive_title": "Empirical Invariant Guard in Cargo.lock",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "provablehq-snarkos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0D45B7-empirical-invariant-guard-in-cargo-lock.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-ED5C1C",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-ED5C1C-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-5313B6",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5313B6-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-20"
     }
   ]
 }
