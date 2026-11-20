@@ -5283,10 +5283,10 @@
     "repository": "transact-rs/sqlx",
     "platform": "github",
     "sourceUrl": "https://github.com/transact-rs/sqlx",
-    "sourceVersion": "30f4eae0",
+    "sourceVersion": "e8acd6bd",
     "license": "Apache-2.0",
-    "contentHash": "23e62268353c5ce5a14fd4fd6279edf73702f549c949cf034323414e679c9d5e",
-    "lastHarvestedAt": "2026-11-18T21:42:10.792Z",
+    "contentHash": "0de2a9a39ecd65b290c5d9ec499a551fa7f19b7d1f1470fdeb1795a8e40d026c",
+    "lastHarvestedAt": "2026-11-20T12:15:15.766Z",
     "learningId": "learn-github-transact-rs-sqlx"
   },
   "bergside-typeui": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "45a890be",
+    "sourceVersion": "db656d41",
     "license": "NOASSERTION",
-    "contentHash": "0b600998c97f7519d42d4d1b82ff0c1bd0fa9db712f29036a2d278d2e6e36b16",
-    "lastHarvestedAt": "2026-11-19T05:42:27.183Z",
+    "contentHash": "50ee7c925cf99740185f455805d9d095f2732f7a78f9ba9776d07bb111e21b6a",
+    "lastHarvestedAt": "2026-11-20T12:15:29.342Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {

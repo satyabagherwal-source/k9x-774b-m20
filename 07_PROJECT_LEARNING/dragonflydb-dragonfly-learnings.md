@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `45a890be`  
+> **Source Version**: `db656d41`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T05:42:26.171Z  
+> **Timestamp**: 2026-11-20T12:15:28.490Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T05:42:26.165Z  
+> **Harvest Timestamp**: 2026-11-20T12:15:28.485Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31882 stars
+- **Stars / Engagement**: 31895 stars
 
 ---
 
@@ -2321,649 +2321,582 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `406477f2` (2026-11-18)
-**Commit Message**: fix: crash with premature STARTSTABLE (#8824)
+### Incident Patch 1: `ee352cbf` (2026-11-19)
+**Commit Message**: fix(search): reply with RESP3 maps and sets in search commands (#8836)
 
-**File**: `src/server/dflycmd.cc` (modified, +7/-9)
+Under RESP3, FT.SEARCH, FT.AGGREGATE and FT.INFO replied with flat RESP2 arrays, and each
+FT.HYBRID result was a flat array, so RESP3 clients could not read them as maps. Client libraries
+that speak RESP3 by default failed in their search, aggregate and info helpers.
+
+Under RESP3:
+- FT.SEARCH and FT.AGGREGATE reply with a map of attributes, format, results, total_results and
+  warning. A search result is a map of id, score (a double), payload, sortkey, extra_attributes
+  and values; an aggregate row has extra_attributes and values.
+- FT.PROFILE SEARCH and AGGREGATE reply with a map of Results and Profile.
+- FT.INFO replies with a map, and each attribute is a map with its flags under flags. WEIGHT
+  and epsilon are doubles.
+- FT.HYBRID results are maps, and execution_time is a double.
+- FT._LIST replies with a set, FT.SYNDUMP and FT.CONFIG HELP with maps.
+
+Under RESP2, three replies change: FT.INFO sends the integer attribute parameters (dim, M,
+ef_construction, initial_cap, ef_runtime, blocksize) as integers, FT.CONFIG GET returns each name
+and value as a pair, and FT.HYBRID writes execution_time in its shortes
+
+**File**: `src/facade/facade_test.h` (modified, +13/-0)
 ```diff
-@@ -117,6 +117,9 @@ FlowInfo& SetupFlowConnection(CommandContext* cmd_cntx, DflyCmd::ReplicaInfo* re
-   conn_cntx->conn()->SetConnectionMemoryAccounting(false);
-   flow.conn = cmd_cntx->conn();
-   flow.eof_token = *eof_token;
-+
-+  // A repeated DFLY FLOW must not inherit the partial sync negotiated by an earlier one.
-+  flow.start_partial_sync_at.reset();
-   return flow;
+@@ -87,6 +87,19 @@ template <typename... Args> auto RespElementsAre(const Args&... matchers) {
+   return RespArray(::testing::ElementsAre(matchers...));
  }
  
-@@ -462,17 +465,12 @@ void DflyCmd::StartStable(CmdArgParser parser, CommandContext* cmd_cntx) {
-     return;
- 
-   util::fb2::LockGuard lk{replica_ptr->GetMutex()};
--  auto repl_state = replica_ptr->GetReplicaState();
--  if (repl_state != SyncState::FULL_SYNC && repl_state != SyncState::PREPARATION) {
--    cmd_cntx->SendError(kInvalidState);
--    return;
--  }
- 
--  // This might happen if a flow abruptly disconnected before sending the SYNC request.
--  if (!replica_ptr->AllFlowsConnected()) {
--    cmd_cntx->SendError(kInvalidState);
-+  // DFLY SYNC may be skipped only if every flow syncs partially, as only it starts a full sync.
-+  SyncState expected =
-+      replica_ptr->AllFlowsPartial() ? SyncState::PREPARATION : SyncState::FULL_SYNC;
-+  if (!CheckReplicaStateOrReply(*replica_ptr, expected, cmd_cntx))
-     return;
--  }
- 
-   {
-     Transaction::Guard tg{cmd_cntx->tx()};
-```
-
-**File**: `src/server/dflycmd.h` (modified, +6/-0)
-```diff
-@@ -216,6 +216,12 @@ class DflyCmd {
-       return std::ranges::all_of(flows_, [](const FlowInfo& flow) { return flow.conn != nullptr; });
-     }
- 
-+    // Returns true if every flow negotiated a partial sync. Caller must hold a lock.
-+    bool AllFlowsPartial() const {
-+      return std::ranges::all_of(
-+          flows_, [](const FlowInfo& flow) { return flow.start_partial_sync_at.has_value(); });
-+    }
-+
-     // Returns the per-replica mutex. Callers acquire it via util::fb2::LockGuard
-     // (exclusive), dfly::SharedLock (shared), or std::shared_lock(..., std::try_to_lock)
-     // (try-shared). Returned by reference rather than a factory-returned scoped lock
-```
-
-**File**: `tests/dragonfly/replication_config_test.py` (modified, +33/-0)
-```diff
-@@ -560,6 +560,39 @@ async def check_encoding(expected):
-     await check_encoding(22)
- 
- 
-+@pytest.mark.parametrize("partial_flows, renegotiate", [(0, False), (1, False), (2, True)])
-+@dfly_args({"proactor_threads": 2, "num_shards": 2})
-+async def test_startstable_without_sync(
-+    df_factory: DflyInstanceFactory, partial_flows, renegotiate
-+):
-+    # DFLY STARTSTABLE may skip DFLY SYNC only if every flow negotiated a partial sync.
-+    master, _, c_master, _ = await setup_replication(df_factory)
-+    lsns = await c_master.execute_command("DFLY REPLICAOFFSET")
-+    async with master.client(single_connection_client=True) as control:
-+        master_id, sync_id, num_flows, version = (
-+            await control.execute_command("REPLCONF", "CAPA", "dragonfly")
-+        )[:4]
-+        await control.execute_command("REPLCONF", "CLIENT-VERSION", version)
-+        flows = [
-+            master.client(single_connection_client=True, lib_name=None, lib_version=None)
-+            for _ in range(num_flows)
-+        ]
-+        for i, flow in enumerate(flows):
-+            lsn = [lsns[i]] if i < partial_flows else []
-+            response = await flow.execute_command("DFLY", "FLOW", master_id, sync_id, i, *lsn)
-+            assert response[0] == ("PARTIAL" if lsn else "FULL")
-+        if renegotiate:
-+            # A repeated DFLY FLOW without an LSN turns the partial flow into a full one.
-+            response = await flows[0].execute_command("DFLY", "FLOW", master_id, sync_id, 0)
-+            assert response[0] == "FULL"
-+
-+        with pytest.raises(redis.exceptions.ResponseError, match="invalid state"):
-+            await control.execute_command("DFLY", "STARTSTABLE", sync_id)
-+        assert await c_master.ping()
-+        for flow in flows:
-+            await flow.aclose()
-+
-+
- # This Test was intorduced in response to a bug when replicating empty hashmaps (encoded as
- # ziplists) created with HSET, HSETEX, HDEL and then replicated 2 times.
- # For more information plz refer to the issue on gh:
-```
-
----
-
-### Incident Patch 2: `d2c2fefc` (2026-11-18)
-**Commit Message**: fix(search): keep stored values and normalize numbers in search replies (#8829)
-
-* fix(search): keep stored values and normalize numbers in search replies
-
-Search replies changed stored values and lost data:
-- Full documents re-rendered NUMERIC hash fields from a parsed double (10.50 as 10.5, 007 as 7).
-  They now return the stored text, like every other field.
-- Numbers in returned fields and aggregate rows went out as RESP3 doubles, and in RESP2 in the
-  shortest form with up to 17 digits. Both protocols now send strings: integers without a
-  fraction, others with 12 significant digits.
-- A full document sorted by a SORTABLE field, or by any field in an HNSW vector query, missed the
-  sort field. It is now added under its alias; a stored field with that name keeps its value.
-- JSON booleans read from the document came back as true/false instead of 1/0.
-- WITHSORTKEYS numbers had 6 significant digits, and WITHPAYLOADS left no slot for the payload,
-  which shifts positional parsers.
-- FT.AGGREGATE sent null for a missing SORTABLE field, reduced groups without numbers to 0 or
-  null, and turned division by zero into null. Missing fields are left out now, SUM and AVG
-  without number
-
-**File**: `src/server/search/aggregator.cc` (modified, +10/-2)
-```diff
-@@ -6,6 +6,7 @@
- 
- #include <algorithm>
- #include <cmath>
-+#include <limits>
- 
- #include "base/logging.h"
- #include "server/search/doc_index.h"
-@@ -191,11 +192,14 @@ Reducer::Func FindReducerFunc(ReducerFunc name) {
-         return static_cast<double>(seen.size());
-       };
-     case ReducerFunc::SUM:
--      return [](ValueIterator it) -> Value { return kSumReducer(it).first; };
-+      return [](ValueIterator it) -> Value {
-+        auto [sum, count] = kSumReducer(it);
-+        return count > 0 ? sum : std::numeric_limits<double>::quiet_NaN();
-+      };
-     case ReducerFunc::AVG:
-       return [](ValueIterator it) -> Value {
-         auto [sum, count] = kSumReducer(it);
--        return count > 0 ? Value{sum / count} : Value{};
-+        return count > 0 ? sum / count : std::numeric_limits<double>::quiet_NaN();
-       };
-     case ReducerFunc::MAX:
-       return [](ValueIterator it) -> Value {
-@@ -209,6 +213,8 @@ Reducer::Func FindReducerFunc(ReducerFunc name) {
-           if (std::holds_alternative<std::monostate>(result) || result < v)
-             result = v;
-         }
-+        if (std::holds_alternative<std::monostate>(result))
-+          return -std::numeric_limits<double>::infinity();
-         return result;
-       };
-     case ReducerFunc::MIN:
-@@ -223,6 +229,8 @@ Reducer::Func FindReducerFunc(ReducerFunc name) {
-           if (std::holds_alternative<std::monostate>(result) || v < result)
-             result = v;
-         }
-+        if (std::holds_alternative<std::monostate>(result))
-+          return std::numeric_limits<double>::infinity();
-         return result;
-       };
-   }
-```
-
-**File**: `src/server/search/doc_accessors.cc` (modified, +10/-15)
-```diff
-@@ -102,6 +102,8 @@ FieldValue ToSortableValueFromJson(search::SchemaField::FieldType type, const Js
-   if (json.is_null()) {
-     return std::monostate{};
-   }
-+  if (json.is_bool())
-+    return string{json.as_bool() ? "1" : "0"};
-   auto json_as_string = json.as_string();
-   return ToSortableValue(type, json_as_string);
- }
-@@ -188,13 +190,10 @@ std::optional<BaseAccessor::StringList> ListPackAccessor::GetStrings(
-   return it != lw_.end() ? StringList{(*it).second} : StringList{};
- }
- 
--SearchDocData ListPackAccessor::SerializeAll(const DocFieldTypes& types) const {
-+SearchDocData ListPackAccessor::SerializeAll() const {
-   SearchDocData out{};
--  for (const auto [key, value] : lw_) {
--    if (auto field_value = ToSortableValue(types.Of(key), value); field_value) {
--      out[key] = std::move(field_value).value();
--    }
--  }
-+  for (const auto [key, value] : lw_)
-+    out[key] = string{value};
-   return out;
- }
- 
-@@ -216,14 +215,10 @@ std::optional<BaseAccessor::StringList> StringMapAccessor::GetStrings(
-   return it != hset_->end() ? StringList{SdsToSafeSv(it->second)} : StringList{};
- }
- 
--SearchDocData StringMapAccessor::SerializeAll(const DocFieldTypes& types) const {
-+SearchDocData StringMapAccessor::SerializeAll() const {
-   SearchDocData out{};
--  for (const auto& [kptr, vptr] : *hset_) {
--    auto field_value = ToSortableValue(types.Of(SdsToSafeSv(kptr)), SdsToSafeSv(vptr));
--    if (field_value) {
--      out[SdsToSafeSv(kptr)] = std::move(field_value).value();
--    }
--  }
-+  for (const auto& [kptr, vptr] : *hset_)
-+    out[SdsToSafeSv(kptr)] = string{SdsToSafeSv(vptr)};
-   return out;
- }
- 
-@@ -471,7 +466,7 @@ SearchDocData JsonAccessor::Serialize(absl::Span<const DocField> fields) const {
-   return out;
- }
- 
--SearchDocData JsonAccessor::SerializeAll(const DocFieldTypes&) const {
-+SearchDocData JsonAccessor::SerializeAll() const {
-   return {{"$", json_.to_string()}};
- }
- 
-@@ -489,7 +484,7 @@ struct EmptyAccessor : public BaseAccessor {
-     return std::optional<StringList>{std::in_place};
-   }
- 
--  SearchDocData SerializeAll(const DocFieldTypes&) const override {
-+  SearchDocData SerializeAll() const override {
-     return {};
-   }
- };
-```
-
-**File**: `src/server/search/doc_accessors.h` (modified, +4/-4)
-```diff
-@@ -27,7 +27,7 @@ class StringMap;
- struct BaseAccessor : public search::DocumentAccessor {
-   // Listed fields are read with GetStrings; whole documents are serialized per type.
-   virtual SearchDocData Serialize(absl::Span<const DocField> fields) const;
--  virtual SearchDocData SerializeAll(const DocFieldTypes& types) const = 0;
-+  virtual SearchDocData SerializeAll() const = 0;
- 
-   // Default implementation uses GetStrings
-   virtual std::optional<VectorInfo> GetVector(std::string_view active_field, size_t dim,
-@@ -42,7 +42,7 @@ struct ListPackAccessor : public BaseAccessor {
-   }
- 
-   std::optional<StringList> GetStrings(std::string_view field) const override;
--  SearchDocData SerializeAll(const DocFieldTypes& types) const override;
-+  SearchDocData SerializeAll() const override;
- 
-  private:
-   detail::ListpackWrap lw_;
-@@ -64,7 +64,7 @@ struct StringMapAccessor : public BaseAccessor {
-   ~StringMapAccessor() override;
- 
-   std::optional<StringList> GetStrings(std::string_view field) const override;
--  SearchDocData SerializeAll(const DocFieldTypes& types) const override;
-+  SearchDocData SerializeAll() const override;
- 
-  private:
-   StringMap* hset_;
-@@ -92,7 +92,7 @@ struct JsonAccessor : public BaseAccessor {
- 
-   // The JsonAccessor works with structured types and not plain strings, so an overload is needed
-   SearchDocData Serialize(absl::Span<const DocField> fields) const override;
--  SearchDocData SerializeAll(const DocFieldTypes& types) const override;
-+  SearchDocData SerializeAll() const override;
- 
-   static void RemoveFieldFromCache(std::string_view field);
- 
-```
-
-**File**: `src/server/search/doc_index.cc` (modified, +26/-32)
-```diff
-@@ -96,8 +96,8 @@ class ExpiringValuesAccessor : public BaseAccessor {
-     return live;
-   }
- 
--  SearchDocData SerializeAll(const DocFieldTypes& types) const override {
--    return doc_.SerializeAll(types);
-+  SearchDocData SerializeAll() const override {
-+    return doc_.SerializeAll();
-   }
- 
-  private:
-@@ -188,23 +188,6 @@ std::optional<std::vector<DocField>> ResolveFields(
-   return ResolveFields(schema, *fields);
- }
- 
--DocFieldTypes::DocFieldTypes(const search::Schema& schema) {
--  for (const auto& [_, field] : schema.fields) {
--    auto [it, inserted] = fields_.try_emplace(field.identifier, &field);
--    if (!inserted && field.StandsBefore(*it->second))
--      it->second = &field;
--  }
--}
--
--search::SchemaField::FieldType DocFieldTypes::Of(std::string_view identifier) const {
--  auto it = fields_.find(identifier);
--  return it != fields_.end() ? it->second->type : search::SchemaField::TEXT;
--}
--
--size_t DocFieldTypes::GetNonPmrMemoryUsage() const {
--  return fields_.bucket_count() * (sizeof(decltype(fields_)::value_type) + 1);
--}
--
- bool SearchParams::ShouldReturnField(std::string_view alias) const {
-   auto cb = [alias](const auto& entry) { return entry.OutputName() == alias; };
-   return !return_fields || any_of(return_fields->begin(), return_fields->end(), cb);
-@@ -475,7 +458,6 @@ bool DocIndex::Matches(string_view key, unsigned obj_code) const {
- 
- ShardDocIndex::ShardDocIndex(shared_ptr<const DocIndex> index, unsigned* hash_index_count)
-     : base_{std::move(index)},
--      field_types_{base_->schema},
-       hash_index_lifetime_{base_->type == DocIndex::HASH ? hash_index_count : nullptr},
-       key_index_{} {
-   DCHECK(base_->type != DocIndex::HASH || hash_index_count);
-@@ -1070,17 +1052,24 @@ void ShardDocIndex::DrainPendingVectorUpdates(const OpArgs& op_args) {
- 
- ShardDocIndex::SerializedEntryWithKey ShardDocIndex::SerializeDocWithKey(
-     search::DocId id, const OpArgs& op_args, const std::optional<std::vector<DocField>>& fields,
--    const DocField* sort_field) {
-+    const FieldReference* sort_field) {
-   auto entry = LoadEntry(id, op_args);
-   if (!entry)
-     return std::nullopt;
-   const auto& accessor = entry->second;
--  SerializedDoc doc{entry->first,
--                    fields ? accessor->Serialize(*fields) : accessor->SerializeAll(field_types_),
--                    {}};
-+  SerializedDoc doc{
-+      entry->first, fields ? accessor->Serialize(*fields) : accessor->SerializeAll(), {}};
-   if (sort_field) {
--    if (auto values = accessor->Serialize(absl::MakeConstSpan(sort_field, 1)); !values.empty())
--      doc.sort_value = std::move(values.begin()->second);
-+    // As in Search(), a sortable field is sorted and shown by its sort-index value.
-+    if (auto r = sort_field->Resolve(base_->schema); r.sortable) {
-+      doc.sort_value = indices_->GetSortIndexValue(id, r.alias);
-+    } else {
-+      const DocField field{sort_field->OutputName(), r.identifier, r.type};
-+      if (auto values = accessor->Serialize(absl::MakeConstSpan(&field, 1)); !values.empty())
-+        doc.sort_value = std::move(values.begin()->second);
-+    }
-+    if (!fields && !holds_alternative<monostate>(doc.sort_value))
-+      doc.values.try_emplace(sort_field->OutputName(), doc.sort_value);
-   }
-   return doc;
- }
-@@ -1223,8 +1212,6 @@ SearchResult ShardDocIndex::Search(const OpArgs& op_args, const SearchParams& pa
-       // trim the rest to avoid out-of-bounds access on sort_scores in the loop below.
-       if (!sort_scores.empty())
-         result.ids.resize(sort_scores.size());
--      if (params.ShouldReturnAllFields())
--        return_fields.push_back(so.field);
-     }
-   }
- 
-@@ -1317,10 +1304,14 @@ SearchResult ShardDocIndex::Search(const OpArgs& op_args, const SearchParams& pa
-     // Load all specified fields from document
-     SearchDocData fields{};
-     if (params.ShouldReturnAllFields())
--      fields = accessor->SerializeAll(field_types_);
-+      fields = accessor->SerializeAll();
- 
-     auto more_fields = accessor->Serialize(listed_fields);
-     fields.insert(make_move_iterator(more_fields.begin()), make_move_iterator(more_fields.end()));
-+
-+    // A whole document may lack the sort alias (JSON has only `$`); add the value it sorted by.
-+    if (params.ShouldReturnAllFields() && !holds_alternative<monostate>(sort_score))
-+      fields.try_emplace(params.sort_option->field.OutputName(), sort_score);
-     out.push_back(
-         {result.ids[i], string{key}, std::move(fields), knn_score, text_score, sort_score});
-   }
-@@ -1462,8 +1453,11 @@ vector<SearchDocData> ShardDocIndex::LoadDocEntriesWithScores(
- 
-     SearchDocData extracted_sort_indicies;
-     extracted_sort_indicies.reserve(sort_indicies.size());
--    for (const auto& [alias, output] : sort_indicies)
--      extracted_sort_indicies[output] = indices_->GetSortIndexValue(doc, alias);
-+    for (const auto& [alias, output] : sort_indicies) {
-+      auto value = indices_->GetSortIndexValue(doc, alias);
-+      if (!holds_alternative<monostate>(val
-```
-
-**File**: `src/server/search/doc_index.h` (modified, +2/-17)
-```diff
-@@ -152,21 +152,6 @@ std::vector<DocField> ResolveFields(const search::Schema& schema,
- std::optional<std::vector<DocField>> ResolveFields(
-     const search::Schema& schema, const std::optional<std::vector<FieldReference>>& fields);
- 
--// Types of document fields by identifier for whole-document replies, decided as by
--// Schema::FindByIdentifier. Views the schema it was built from, which has to outlive it.
--class DocFieldTypes {
-- public:
--  explicit DocFieldTypes(const search::Schema& schema);
--
--  search::SchemaField::FieldType Of(std::string_view identifier) const;  // TEXT when unknown
--
--  size_t GetNonPmrMemoryUsage() const;
--
-- private:
--  // The attribute standing for each document field.
--  absl::flat_hash_map<std::string_view, const search::SchemaField*> fields_;
--};
--
- enum class SortOrder { ASC, DESC };
- 
- // SORTBY order shared by the shards and the coordinator: docs with a value first, then by value and
-@@ -190,6 +175,7 @@ struct SearchParams {
-   size_t limit_total = 10;
- 
-   bool with_sortkeys = false;
-+  bool with_payloads = false;
- 
-   /*
-   1. If not set -> return all fields
-@@ -577,7 +563,7 @@ class ShardDocIndex {
-   using SerializedEntryWithKey = std::optional<SerializedDoc>;
-   SerializedEntryWithKey SerializeDocWithKey(search::DocId id, const OpArgs& op_args,
-                                              const std::optional<std::vector<DocField>>& fields,
--                                             const DocField* sort_field = nullptr);
-+                                             const FieldReference* sort_field = nullptr);
- 
-   search::DefragmentResult Defragment(PageUsage* page_usage) {
-     if (indices_) {
-@@ -680,7 +666,6 @@ class ShardDocIndex {
- 
-  private:
-   std::shared_ptr<const DocIndex> base_;
--  DocFieldTypes field_types_;  // derived from base_->schema
- 
-   // Declared before index resources so its destructor releases the resident gate last.
-   HashIndexLifetime hash_index_lifetime_;
-```
-
-**File**: `src/server/search/filter_eval.cc` (modified, +2/-2)
-```diff
-@@ -92,9 +92,9 @@ Value EvalArith(ArithOp op, const Value& lhs, const Value& rhs) {
-     case ArithOp::MUL:
-       return l * r;
-     case ArithOp::DIV:
--      return r != 0.0 ? Value{l / r} : Value{};
-+      return l / r;
-     case ArithOp::MOD:
--      return r != 0.0 ? Value{std::fmod(l, r)} : Value{};
-+      return std::fmod(l, r);
-     case ArithOp::POW:
-       return std::pow(l, r);
-   }
-```
-
-**File**: `src/server/search/filter_expr_test.cc` (modified, +8/-3)
-```diff
-@@ -264,8 +264,13 @@ TEST(FilterExprTest, UnaryMinus) {
- 
- TEST(FilterExprTest, DivisionByZero) {
-   DocValues doc{{"val", 1.0}};
--  // Division by zero -> monostate -> falsy
-+
-+  // Division by zero follows IEEE 754: inf, -inf or nan.
-   EXPECT_FALSE(EvalBool("@val / 0 == 1", doc));
-+  EXPECT_EQ(Eval("@val / 0", doc), Value{std::numeric_limits<double>::infinity()});
-+  EXPECT_EQ(Eval("0 - @val / 0", doc), Value{-std::numeric_limits<double>::infinity()});
-+  const Value mod = Eval("@val % 0", doc);
-+  EXPECT_TRUE(std::holds_alternative<double>(mod) && std::isnan(std::get<double>(mod)));
- }
- 
- TEST(FilterExprTest, NaNBehavior) {
-@@ -774,12 +779,12 @@ TEST(FilterExprTest, ReducerMaxSkipsNull) {
- }
- 
- TEST(FilterExprTest, ReducerMinAllNull) {
--  // All values null -> MIN returns null (monostate).
-+  // All values null -> MIN returns inf.
-   std::vector<DocValues> values = {DocValues{}, DocValues{}};
-   auto step = MakeGroupStep({}, {Reducer{"val", "r", FindReducerFunc(ReducerFunc::MIN)}});
-   auto result = Process(std::move(values), {"r"}, {step});
-   ASSERT_EQ(result.values.size(), 1);
--  EXPECT_EQ(result.values[0].at("r"), Value{});
-+  EXPECT_EQ(result.values[0].at("r"), Value{std::numeric_limits<double>::infinity()});
- }
- 
- TEST(FilterExprTest, ReducerMinMaxSkipNaN) {
-```
-
-**File**: `src/server/search/search_family.cc` (modified, +33/-18)
-```diff
-@@ -715,6 +715,8 @@ ParseResult<SearchParams> ParseSearchParams(CmdArgParser* parser) {
-         return CreateSyntaxError("bad arguments for FILTER: empty field name"sv);
-     } else if (parser->Check("WITHSORTKEYS")) {
-       params.with_sortkeys = true;
-+    } else if (parser->Check("WITHPAYLOADS")) {
-+      params.with_payloads = true;
-     } else if (parser->Check("WITHSCORES")) {
-       params.with_scores = true;
-     } else if (parser->Check("SCORER")) {
-@@ -1300,10 +1302,24 @@ std::vector<aggregate::DocValues> MergeJoinedKeysWithData(
-   return merged_data;
- }
- 
-+// Numbers in fields and rows: integers without a fraction, others with 12 significant digits.
-+string FormatNumber(double d) {
-+  // The sign of a nan depends on the CPU: x86 makes 0/0 negative.
-+  if (std::isnan(d))
-+    return "nan";
-+  if (d >= -0x1p63 && d < 0x1p63 && std::trunc(d) == d)
-+    return absl::StrCat(static_cast<int64_t>(d));
-+  return absl::StrFormat("%.12g", d);
++// RESP3 arrays, maps and sets all arrive as ARRAY; these check which one was sent.
++MATCHER(IsResp3ArrayKind, "is a RESP3 array") {
++  return arg.type == RespExpr::ARRAY && arg.agg == RespExpr::Agg::kArray;
 +}
 +
- auto SortableValueSender(RedisReplyBuilder* rb) {
-   return Overloaded{
-       [rb](monostate) { rb->SendNull(); },
--      [rb](double d) { rb->SendDouble(d); },
-+      [rb](double d) {
-+        // Short enough to be copied inline, so it may die before a reply scope ends.
-+        const string number = FormatNumber(d);
-+        rb->SendBulkString(string_view{number});
-+      },
-       [rb](const string& s) { rb->SendBulkString(s); },
-   };
++MATCHER(IsResp3MapKind, "is a RESP3 map") {
++  return arg.type == RespExpr::ARRAY && arg.agg == RespExpr::Agg::kMap;
++}
++
++MATCHER(IsResp3SetKind, "is a RESP3 set") {
++  return arg.type == RespExpr::ARRAY && arg.agg == RespExpr::Agg::kSet;
++}
++
+ inline bool operator==(const RespExpr& left, std::string_view s) {
+   return left.type == RespExpr::STRING && ToSV(left.GetBuf()) == s;
  }
-@@ -1417,8 +1433,8 @@ void SearchReply(const SearchParams& params,
+```
+
+**File**: `src/facade/resp_expr.h` (modified, +4/-0)
+```diff
+@@ -22,9 +22,13 @@ class RespExpr {
  
-   const bool reply_with_ids_only = params.IdsOnly();
-   auto* rb = static_cast<RedisReplyBuilder*>(builder);
--  const size_t items_per_field =
--      (reply_with_ids_only ? 1 : 2) + params.with_sortkeys + params.with_scores;
+   enum Type : uint8_t { STRING, ARRAY, INT64, DOUBLE, NIL, NIL_ARRAY, ERROR };
+ 
++  // RESP3 maps and sets arrive as an ARRAY of their flat contents; this tells them apart.
++  enum class Agg : uint8_t { kArray, kMap, kSet };
++
+   using Vec = std::vector<RespExpr>;
+   Type type;
+   bool has_support;  // whether pointers in this item are supported by the external storage.
++  Agg agg = Agg::kArray;
+ 
+   std::variant<int64_t, double, Buffer, Vec*> u;
+ 
+```
+
+**File**: `src/facade/resp_expr_test_utils.cc` (modified, +4/-0)
+```diff
+@@ -68,6 +68,10 @@ RespExpr RespExprBuilder::BuildNode(const RESPObj& obj) {
+           expr.u.emplace<RespExpr::Vec*>(nullptr);
+         } else {
+           expr.type = RespExpr::ARRAY;
++          if (obj.GetType() == RESPObj::Type::MAP)
++            expr.agg = RespExpr::Agg::kMap;
++          else if (obj.GetType() == RESPObj::Type::SET)
++            expr.agg = RespExpr::Agg::kSet;
+           auto vec = std::make_unique<RespExpr::Vec>();
+           vec->resize(arr->Size());
+           expr.u = vec.get();
+```
+
+**File**: `src/server/search/search_family.cc` (modified, +268/-114)
+```diff
+@@ -1364,6 +1364,92 @@ float GlobalMaxTextScore(absl::Span<const SearchResult> results) {
+   return max_it == results.end() ? 0.0f : max_it->max_text_score;
+ }
+ 
++// RESP3 replies of FT.SEARCH and FT.AGGREGATE are maps: the results come first, the total after.
++void StartResp3Reply(size_t results, RedisReplyBuilder* rb) {
++  rb->StartCollection(5, CollectionType::MAP);
++  rb->SendSimpleString("attributes");
++  rb->SendEmptyArray();
++  rb->SendSimpleString("format");
++  rb->SendSimpleString("STRING");
++  rb->SendSimpleString("results");
++  rb->StartArray(results);
++}
++
++void EndResp3Reply(size_t total, RedisReplyBuilder* rb) {
++  rb->SendSimpleString("total_results");
++  rb->SendLong(total);
++  rb->SendSimpleString("warning");
++  rb->SendEmptyArray();
++}
++
++void SendSortKey(const search::SortableValue& value, RedisReplyBuilder* rb) {
++  Overloaded sortable_value_sender{
++      [rb](monostate) { rb->SendNull(); },
++      [rb](double d) { rb->SendBulkString(absl::StrFormat("#%.17g", d)); },
++      [rb](const string& s) { rb->SendBulkString(absl::StrCat("$", s)); },
++  };
++  visit(sortable_value_sender, value);
++}
++
++void SendSearchResultsResp2(const SearchParams& params, size_t total_hits,
++                            absl::Span<SerializedSearchDoc* const> docs, RedisReplyBuilder* rb) {
++  const bool reply_with_ids_only = params.IdsOnly();
 +  const size_t items_per_field = (reply_with_ids_only ? 1 : 2) + params.with_sortkeys +
 +                                 params.with_scores + params.with_payloads;
++  rb->StartArray(docs.size() * items_per_field + 1);
++  rb->SendLong(total_hits);
++  for (const auto* doc : docs) {
++    rb->SendBulkString(doc->key);
++    if (params.with_scores)
++      rb->SendBulkString(absl::StrCat(doc->text_score));
++    if (params.with_payloads)  // Documents have no payloads.
++      rb->SendNull();
++    if (params.with_sortkeys)
++      SendSortKey(doc->sort_score, rb);
++    if (!reply_with_ids_only)
++      SendSerializedDoc(*doc, rb);
++  }
++}
++
++// RESP3 makes each result a map and names its parts.
++void SendSearchResultsResp3(const SearchParams& params, size_t total_hits,
++                            absl::Span<SerializedSearchDoc* const> docs, RedisReplyBuilder* rb) {
++  const bool reply_with_ids_only = params.IdsOnly();
++  const size_t parts_per_result = (reply_with_ids_only ? 2 : 3) + params.with_sortkeys +
++                                  params.with_scores + params.with_payloads;
++  StartResp3Reply(docs.size(), rb);
++  for (const auto* doc : docs) {
++    rb->StartCollection(parts_per_result, CollectionType::MAP);
++    rb->SendSimpleString("id");
++    rb->SendBulkString(doc->key);
++    if (params.with_scores) {
++      rb->SendSimpleString("score");
++      rb->SendDouble(doc->text_score);
++    }
++    if (params.with_payloads) {  // Documents have no payloads.
++      rb->SendSimpleString("payload");
++      rb->SendNull();
++    }
++    if (params.with_sortkeys) {
++      rb->SendSimpleString("sortkey");
++      SendSortKey(doc->sort_score, rb);
++    }
++    if (!reply_with_ids_only) {
++      rb->SendSimpleString("extra_attributes");
++      SendSerializedDoc(*doc, rb);
++    }
++    rb->SendSimpleString("values");
++    rb->SendEmptyArray();
++  }
++  EndResp3Reply(total_hits, rb);
++}
++
++void SendSearchResultsResp(const SearchParams& params, size_t total_hits,
++                           absl::Span<SerializedSearchDoc* const> docs, RedisReplyBuilder* rb) {
++  auto* reply = rb->IsResp3() ? &SendSearchResultsResp3 : &SendSearchResultsResp2;
++  reply(params, total_hits, docs, rb);
++}
++
+ void SearchReply(const SearchParams& params,
+                  std::optional<search::KnnScoreSortOption> knn_sort_option,
+                  std::string_view inject_score_alias, absl::Span<SearchResult> results,
+@@ -1431,41 +1517,18 @@ void SearchReply(const SearchParams& params,
+   if (params.sort_option && !ignore_sort)
+     PartialSortBySortScore(absl::MakeSpan(docs), end, params.sort_option->order);
+ 
+-  const bool reply_with_ids_only = params.IdsOnly();
++  const auto page = absl::MakeConstSpan(docs).subspan(offset, limit);
++  if (knn_score_ret_field && !params.IdsOnly()) {
++    for (auto* doc : page)
++      doc->values[*knn_score_ret_field] = doc->knn_score;
++  }
+   auto* rb = static_cast<RedisReplyBuilder*>(builder);
+-  const size_t items_per_field = (reply_with_ids_only ? 1 : 2) + params.with_sortkeys +
+-                                 params.with_scores + params.with_payloads;
++
    // Batch the reply so temporary sortkeys are copied into the batching buffer instead of referenced
    // past their lifetime — a >kMaxInlineSize bulk string enqueued by reference under a reply scope
    // is copied only when the scope ends, after the "$" + s temporary is gone (use-after-free).
-@@ -1427,7 +1443,7 @@ void SearchReply(const SearchParams& params,
- 
-   Overloaded sortable_value_sender{
-       [rb](monostate) { rb->SendNull(); },
--      [rb](double d) { rb->SendBulkString(absl::StrCat("#", d)); },
-+      [rb](double d) { rb->SendBulkString(absl::StrFormat("#%.17g", d)); },
-       [rb](const string& s) { rb->SendBulkString(absl::StrCat("$", s)); },
-   };
- 
-@@ -1437,6 +1453,8 @@ void SearchReply(const SearchParams& params,
-     if (params.with_scores) {
-       rb->SendBulkString(absl::StrCat(docs[i]->text_score));
-     }
-+    if (params.with_payloads)  // Documents have no payloads.
-+      rb->SendNull();
-     if (params.with_sortkeys) {
-       visit(sortable_value_sender, docs[i]->sort_score);
-     }
-@@ -1468,13 +1486,12 @@ struct HnswSearchOptions {
-   const SearchParams& params;
- };
- 
--// SORTBY by anything but the KNN score needs the sort value loaded from the document.
--std::optional<DocField> HnswSortField(
--    const search::Schema& schema, const SearchParams& params,
--    const std::optional<search::KnnScoreSortOption>& knn_score_option) {
-+// SORTBY by anything but the KNN score needs the sort value of each document.
-+const FieldReference* HnswSortField(
-+    const SearchParams& params, const std::optional<search::KnnScoreSortOption>& knn_score_option) {
-   if (!params.sort_option || (knn_score_option && params.sort_option->IsSame(*knn_score_option)))
--    return std::nullopt;
--  return ResolveField(schema, params.sort_option->field);
-+    return nullptr;
-+  return &params.sort_option->field;
+   SinkReplyBuilder::ReplyAggregator agg{rb};
+-  rb->StartArray(limit * items_per_field + 1);
+-
+-  Overloaded sortable_value_sender{
+-      [rb](monostate) { rb->SendNull(); },
+-      [rb](double d) { rb->SendBulkString(absl::StrFormat("#%
+```
+
+**File**: `src/server/search/search_family_test.cc` (modified, +118/-30)
+```diff
+@@ -351,6 +351,24 @@ template <typename... Args> auto IsMap(Args... args) {
+   return IsMapMatcher(std::make_tuple(args...));
  }
  
- HnswSearchResult LoadHnswSearchDocs(const HnswSearchOptions& options,
-@@ -1512,8 +1529,7 @@ HnswSearchResult LoadHnswSearchDocs(const HnswSearchOptions& options,
-     }
++template <typename... Args> auto IsResp3Array(Args... args) {
++  return AllOf(IsResp3ArrayKind(), IsArray(args...));
++}
++
++template <typename... Args> auto IsResp3Map(Args... args) {
++  return AllOf(IsResp3MapKind(), IsMap(args...));
++}
++
++template <typename... Args> auto IsResp3Set(Args... args) {
++  return AllOf(IsResp3SetKind(), IsUnordArray(args...));
++}
++
++// The RESP3 envelope of FT.SEARCH and FT.AGGREGATE replies.
++template <typename Results> auto IsResp3Reply(Results results, int64_t total) {
++  return IsResp3Map("attributes", IsResp3Array(), "format", "STRING", "results", results,
++                    "total_results", IntArg(total), "warning", IsResp3Array());
++}
++
+ MATCHER_P(IsMapWithSizeMatcher, expected, "") {
+   if (arg.type != RespExpr::ARRAY) {
+     *result_listener << "Wrong response type: " << arg.type;
+@@ -2676,6 +2694,12 @@ TEST_F(SearchFamilyTest, FtProfile) {
+   // Test LIMITED throws no errors
+   resp = Run({"ft.profile", "i1", "search", "limited", "query", "(a | b) c d"});
+   ASSERT_ARRAY_OF_TWO_ARRAYS(resp);
++
++  // RESP3 names both parts, and the results are a search reply map.
++  Run({"HELLO", "3"});
++  EXPECT_THAT(Run({"ft.profile", "i1", "search", "query", "(a | b) c d"}),
++              IsResp3Map("Results", IsResp3Reply(IsResp3Array(), 0), "Profile",
++                         AllOf(IsResp3ArrayKind(), ArrLen(shard_set->size() + 1))));
+ }
  
-     const auto& schema = index->base().schema;
--    const std::optional<DocField> sort_field =
--        HnswSortField(schema, options.params, options.score_sort);
-+    const FieldReference* sort_field = HnswSortField(options.params, options.score_sort);
-     const bool ids_only_without_sort_load = options.params.IdsOnly() && !sort_field;
+ TEST_F(SearchFamilyTest, FtProfileInvalidQuery) {
+@@ -4305,6 +4329,13 @@ TEST_F(SearchFamilyTest, SynonymManagement) {
+   EXPECT_THAT(resp, IsUnordArray("cub", IsArray("3"), "cute", IsArray("2"), "adorable",
+                                  IsArray("2"), "kitty", IsArray("1", "2", "3"), "feline",
+                                  IsArray("1"), "tiger", IsArray("3"), "cat", IsArray("1")));
++
++  // RESP3 maps each term to its groups.
++  Run({"HELLO", "3"});
++  EXPECT_THAT(Run({"FT.SYNDUMP", "my_idx"}),
++              IsResp3Map("cub", IsResp3Array("3"), "cute", IsResp3Array("2"), "adorable",
++                         IsResp3Array("2"), "kitty", IsResp3Array("1", "2", "3"), "feline",
++                         IsResp3Array("1"), "tiger", IsResp3Array("3"), "cat", IsResp3Array("1")));
+ }
  
-     // Resize shard with default `true` value
-@@ -1533,8 +1549,8 @@ HnswSearchResult LoadHnswSearchDocs(const HnswSearchOptions& options,
-         continue;
-       }
+ TEST_F(SearchFamilyTest, SynonymCommandsResolveAliases) {
+@@ -5388,7 +5419,7 @@ TEST_F(SearchFamilyTest, SchemaOptionOrders) {
+               IsArray(IsArray("identifier", "a", "attribute", "a", "type", "TEXT", "WEIGHT", "1",
+                               "SORTABLE", "UNF", "NOSTEM", "INDEXEMPTY", "INDEXMISSING"),
+                       IsArray("identifier", "weight", "attribute", "weight", "type", "NUMERIC",
+-                              "blocksize", "10000", "SORTABLE", "UNF"),
++                              "blocksize", IntArg(10000), "SORTABLE", "UNF"),
+                       IsArray("identifier", "b", "attribute", "b", "type", "TEXT", "WEIGHT", "2",
+                               "SORTABLE", "NOSTEM", "NOINDEX", "WITHSUFFIXTRIE", "INDEXEMPTY"),
+                       IsArray("identifier", "nostem", "attribute", "nostem", "type", "TAG",
+@@ -5597,9 +5628,9 @@ TEST_F(SearchFamilyTest, BlockSizeOptionFtCreate) {
+   resp = Run({"FT.INFO", "index"});
+   EXPECT_THAT(resp, IsArray(_, _, _, _, _, _, "attributes",
+                             IsUnordArray(IsArray("identifier", "number1", "attribute", "number1",
+-                                                 "type", "NUMERIC", "blocksize", "2"),
++                                                 "type", "NUMERIC", "blocksize", IntArg(2)),
+                                          IsArray("identifier", "number2", "attribute", "number2",
+-                                                 "type", "NUMERIC", "blocksize", "1024")),
++                                                 "type", "NUMERIC", "blocksize", IntArg(1024))),
+                             "num_docs", IntArg(0), _, _, _, _));
  
--      if (auto doc = index->SerializeDocWithKey(shard_doc.id, t->GetOpArgs(es), doc_fields,
--                                                sort_field ? &*sort_field : nullptr);
-+      if (auto doc =
-+              index->SerializeDocWithKey(shard_doc.id, t->GetOpArgs(es), doc_fields, sort_field);
-           doc) {
-         shard_doc.key = std::string{doc->key};
-         shard_doc.values = std::move(doc->values);
-@@ -1709,11 +1725,10 @@ HnswSearchResult SearchGlobalHnswIndexRange(const search::AstVectorRangeNode* ra
-       return OpStatus::OK;
-     const auto& schema = idx->base().s
+   // Add a document to the index
+@@ -6153,7 +6184,7 @@ TEST_F(SearchFamilyTest, MAXSEARCHRESULTS) {
+   WaitForIndexReady("memes");
+ 
+   auto resp = Run({"FT.CONFIG", "GET", "MAXSEARCHRESULTS"});
+-  EXPECT_THAT(resp, IsArray("MAXSEARCHRESULTS", "1000000"));
++  EXPECT_THAT(resp, IsArray(IsArray("MAXSEARCHRESULTS", "1000000")));
+ 
+   resp = Run({"FT.SEARCH", "memes", "@phrase:(hello world)", "NOCONTENT"});
+   EXPECT_THAT(resp, RespElementsAre(IntArg(3), _, _, _));
+@@ -6171,7 +6202,7 @@ TEST_F(SearchFamilyTest, MAXSEARCHRESULTS) {
+   EXPECT_THAT(resp, ErrArg("LIMIT exceeds maximum of 1"));
+ 
+   resp = Run({"FT.CONFIG", "GET", "MAXSEARCHRESULTS"});
+-  EXPECT_THAT(resp, IsArray("MAXSEARCHRESULTS", "1"));
++  EXPECT_THAT(resp, IsArray(IsArray("MAXSEARCHRESULTS", "1")));
+ 
+   resp = Run({"FT.CONFIG", "HELP", "MAXSEARCHRESULTS"});
+   EXPECT_THAT(resp, RespElementsAre(IsArray("MAXSEARCHRESULTS", "Description",
+@@ -6180,15 +6211,23 @@ TEST_F(SearchFamilyTest, MAXSEARCHRESULTS) {
+ 
+   resp = Run({"FT.CONFIG",
+```
+
+**File**: `tests/dragonfly/search_test.py` (modified, +7/-7)
+```diff
+@@ -306,7 +306,7 @@ async def test_management(async_client: aioredis.Redis):
+             "type",
+             "NUMERIC",
+             "blocksize",
+-            "10000",
++            10000,
+             "SORTABLE",
+             "UNF",
+         ],
+@@ -331,7 +331,7 @@ async def test_management(async_client: aioredis.Redis):
+             "type",
+             "NUMERIC",
+             "blocksize",
+-            "10000",
++            10000,
+             "SORTABLE",
+             "UNF",
+             "NOINDEX",
+@@ -349,17 +349,17 @@ async def test_management(async_client: aioredis.Redis):
+             "data_type",
+             "FLOAT32",
+             "dim",
+-            "1",
++            1,
+             "distance_metric",
+             "L2",
+             "initial_cap",
+-            "100",
++            100,
+             "M",
+-            "16",
++            16,
+             "ef_construction",
+-            "200",
++            200,
+             "ef_runtime",
+-            "10",
++            10,
+             "epsilon",
+             "0.01",
+         ],
 ```
 
 ---
 
-### Incident Patch 3: `45a890be` (2026-11-18)
-**Commit Message**: fix(core): pack JsonConsT as a type to remove a misaligned member call (#8834)
+### Incident Patch 2: `ba9dbfb1` (2026-11-20)
+**Commit Message**: fix: match RESP3 reply shapes of JSON and probabilistic commands (#8845)
 
-Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
+Under RESP3, several JSON commands sent array shapes that RESP3 clients do not expect: a legacy
+path got a one-element array, JSON.TYPE nested each match on its own, JSON.NUMINCRBY/NUMMULTBY
+sent only the last match of a legacy path as a bare value, and JSON.RESP dropped the [ marker of
+an array. BF, CF and TOPK membership replies were integers, and the INFO replies were flat arrays.
 
-**File**: `src/core/compact_object.h` (modified, +3/-2)
+- The reply builder gets SendBool: #t/#f under RESP3, 1/0 under RESP2. Captured replies keep it,
+  and scripts still get integers.
+- JSON: a legacy path answers with the bare value; JSON.TYPE wraps its whole reply in one more
+  array; JSON.NUMINCRBY and JSON.NUMMULTBY send the new value of every match, null where a match
+  is not a number, also for a legacy path; JSON.RESP keeps the [ marker under RESP3 too. A legacy
+  path that changes no number still fails in the shard, so it stays out of the journal.
+- BF.ADD/EXISTS/MADD/MEXISTS, CF.ADD/ADDNX/EXISTS/MEXISTS/DEL/INSERT and TOPK.QUERY answer with
+  booleans; CF.INSERT reports a full filter as false.
+- BF, CF, CMS and TOPK.INFO reply with a map with simple-string keys; BF.INFO w
+
+**File**: `src/facade/facade.cc` (modified, +5/-0)
 ```diff
-@@ -570,12 +570,13 @@ class CompactObj {
-     std::string_view view() const;
-   } __attribute__((packed));
+@@ -151,6 +151,8 @@ const char* RespExpr::TypeName(Type t) {
+       return "nil";
+     case ERROR:
+       return "error";
++    case BOOL:
++      return "bool";
+   }
+   ABSL_UNREACHABLE();
+ }
+@@ -222,6 +224,9 @@ ostream& operator<<(ostream& os, const facade::RespExpr& e) {
+     case RespExpr::ERROR:
+       os << "e(" << ToSV(get<RespExpr::Buffer>(e.u)) << ")";
+       break;
++    case RespExpr::BOOL:
++      os << (get<int64_t>(e.u) ? "true" : "false");
++      break;
+   }
  
-+  // Pack the type so member functions accept the unaligned storage in CompactObj.
-   struct JsonConsT {
-     JsonType* json_ptr;
-     size_t bytes_used;
+   return os;
+```
+
+**File**: `src/facade/facade_test.cc` (modified, +4/-1)
+```diff
+@@ -44,7 +44,7 @@ bool RespMatcher::MatchAndExplain(RespExpr e, MatchResultListener* listener) con
+       *listener << "\nActual string: " << actual;
+       return false;
+     }
+-  } else if (type_ == RespExpr::INT64) {
++  } else if (type_ == RespExpr::INT64 || type_ == RespExpr::BOOL) {
+     auto actual = get<int64_t>(e.u);
+     if (exp_int_ != actual) {
+       *listener << "\nActual : " << actual << " expected: " << exp_int_;
+@@ -84,6 +84,9 @@ void RespMatcher::DescribeTo(std::ostream* os) const {
+     case RespExpr::DOUBLE:
+       *os << exp_double_;
+       break;
++    case RespExpr::BOOL:
++      *os << (exp_int_ ? "true" : "false");
++      break;
+     default:
+       *os << "TBD";
+       break;
+```
+
+**File**: `src/facade/facade_test.h` (modified, +4/-0)
+```diff
+@@ -69,6 +69,10 @@ inline ::testing::PolymorphicMatcher<RespMatcher> DoubleArg(double_t dval) {
+   return ::testing::MakePolymorphicMatcher(RespMatcher(dval));
+ }
  
-     bool DefragIfNeeded(PageUsage* page_usage);
--  };
-+  } __attribute__((packed));
++inline ::testing::PolymorphicMatcher<RespMatcher> BoolArg(bool val) {
++  return ::testing::MakePolymorphicMatcher(RespMatcher(int64_t{val}, RespExpr::BOOL));
++}
++
+ inline ::testing::PolymorphicMatcher<RespMatcher> ArrLen(size_t len) {
+   return ::testing::MakePolymorphicMatcher(RespMatcher((int64_t)len, RespExpr::ARRAY));
+ }
+```
+
+**File**: `src/facade/reply_builder.cc` (modified, +10/-0)
+```diff
+@@ -40,6 +40,8 @@ constexpr char kDoublePref[] = ",";
+ constexpr char kLongPref[] = ":";
+ constexpr char kNullStringR2[] = "$-1\r\n";
+ constexpr char kNullStringR3[] = "_\r\n";
++constexpr char kTrueR3[] = "#t\r\n";
++constexpr char kFalseR3[] = "#f\r\n";
  
-   // Union of different representations
-   union U {
-@@ -584,9 +585,9 @@ class CompactObj {
-     SmallString small_str;
-     detail::RobjWrapper r_obj;
-     detail::LargeString large_str;
-+    JsonConsT json_obj;
+ template <typename T> size_t piece_size(const T& v) {
+   if constexpr (is_array_v<T>)
+@@ -410,6 +412,14 @@ void RedisReplyBuilderBase::SendDouble(double val) {
+   WritePieces(kDoublePref, val_str, kCRLF);
+ }
  
-     // using 'packed' to reduce alignment of U to 1.
--    JsonConsT json_obj __attribute__((packed));
-     SBF* sbf __attribute__((packed));
-     TOPK* topk __attribute__((packed));
-     CMS* cms __attribute__((packed));
++void RedisReplyBuilderBase::SendBool(bool val) {
++  if (!IsResp3())
++    return SendLong(val);
++
++  ReplyScope scope(this);
++  val ? WritePieces(kTrueR3) : WritePieces(kFalseR3);
++}
++
+ void RedisReplyBuilderBase::SendNullArray() {
+   ReplyScope scope(this);
+   IsResp3() ? WritePieces(kNullStringR3) : WritePieces("*-1", kCRLF);
+```
+
+**File**: `src/facade/reply_builder.h` (modified, +1/-0)
+```diff
+@@ -253,6 +253,7 @@ class RedisReplyBuilderBase : public SinkReplyBuilder {
+ 
+   void SendLong(long val) override;
+   virtual void SendDouble(double val);  // RESP: Number
++  virtual void SendBool(bool val);      // RESP3: Boolean, RESP2: Integer 1 or 0
+ 
+   virtual void SendNullArray();
+   virtual void StartCollection(unsigned len, CollectionType ct);
+```
+
+**File**: `src/facade/reply_builder_test.cc` (modified, +20/-0)
+```diff
+@@ -786,6 +786,24 @@ TEST_F(RedisReplyBuilderTest, Resp3Double) {
+   ASSERT_EQ(str(), ",5.5\r\n");
+ }
+ 
++TEST_F(RedisReplyBuilderTest, Bool) {
++  builder_->SendBool(true);
++  builder_->SendBool(false);
++  ASSERT_TRUE(NoErrors());
++  ASSERT_EQ(TakePayload(), ":1\r\n:0\r\n");
++
++  builder_->SetRespVersion(RespVersion::kResp3);
++  builder_->SendBool(true);
++  builder_->SendBool(false);
++  ASSERT_TRUE(NoErrors());
++  ASSERT_EQ(TakePayload(), "#t\r\n#f\r\n");
++
++  // A RESP2 capture keeps the integer.
++  CapturingReplyBuilder crb;
++  crb.SendBool(true);
++  EXPECT_TRUE(holds_alternative<long>(crb.Take()));
++}
++
+ TEST_F(RedisReplyBuilderTest, Resp3NullString) {
+   builder_->SetRespVersion(RespVersion::kResp3);
+   builder_->SendNull();
+@@ -912,6 +930,8 @@ TEST_F(RedisReplyBuilderTest, BasicCapture) {
+       [](RRB* r) { r->SendNull(); },
+       [](RRB* r) { r->SendLong(1L); },
+       [](RRB* r) { r->SendDouble(6.7); },
++      [](RRB* r) { r->SendBool(true); },
++      [](RRB* r) { r->SendBool(false); },
+       [](RRB* r) { r->SendSimpleString("ok"); },
+       [](RRB* r) { r->SendVerbatimString("A simple string!", RRB::VerbatimFormat::TXT); },
+       [](RRB* r) { r->SendVerbatimString("# Title\nbody", RRB::VerbatimFormat::MARKDOWN); },
+```
+
+**File**: `src/facade/reply_capture.cc` (modified, +13/-0)
+```diff
+@@ -45,6 +45,15 @@ void CapturingReplyBuilder::SendDouble(double val) {
+   Capture(val);
+ }
+ 
++void CapturingReplyBuilder::SendBool(bool val) {
++  // RESP2 has no booleans, so keep the integer that a RESP2 reply would carry.
++  if (!IsResp3())
++    return SendLong(val);
++
++  SKIP_LESS(ReplyMode::FULL);
++  Capture(Bool{val});
++}
++
+ void CapturingReplyBuilder::SendSimpleString(std::string_view str) {
+   SKIP_LESS(ReplyMode::FULL);
+   Capture(SimpleString{string{str}});
+@@ -133,6 +142,10 @@ struct CaptureVisitor {
+     static_cast<RedisReplyBuilder*>(rb)->SendDouble(v);
+   }
+ 
++  void operator()(payload::Bool b) {
++    static_cast<RedisReplyBuilder*>(rb)->SendBool(b.val);
++  }
++
+   void operator()(const payload::SimpleString& ss) {
+     rb->SendSimpleString(ss);
+   }
+```
+
+**File**: `src/facade/reply_capture.h` (modified, +1/-0)
+```diff
+@@ -29,6 +29,7 @@ class CapturingReplyBuilder : public RedisReplyBuilder {
+ 
+   void SendLong(long val) override;
+   void SendDouble(double val) override;
++  void SendBool(bool val) override;
+   void SendSimpleString(std::string_view str) override;
+   void SendBulkString(std::string_view str) override;
+   using RedisReplyBuilderBase::SendBulkString;  // keep the guarded rvalue overload visible
+```
+
+---
+
+### Incident Patch 3: `6dc87ac3` (2026-11-20)
+**Commit Message**: fix(acl): test_acl_load_updates_default_user_connections (#8855)
+
+**File**: `tests/dragonfly/acl_family_test.py` (modified, +1/-2)
+```diff
+@@ -419,7 +419,7 @@ async def subscribe(channel):
+     dropped_reader, dropped_writer = await subscribe("secret")
+ 
+     with open(acl, "w") as f:
+-        f.write("user default on nopass ~* &news -@all +ping\n" + admin_rule)
++        f.write("user default on nopass ~* &news -@all +ping +publish\n" + admin_rule)
+     admin = df.client()
+     await admin.execute_command("AUTH admin pass")
+     await admin.execute_command("ACL LOAD")
+@@ -441,7 +441,6 @@ async def get_denied():
+         assert await dropped_reader.read() == b""
+ 
+     publisher = df.client()
+-    await publisher.execute_command("AUTH admin pass")
+     await publisher.execute_command("PUBLISH news hello")
+     async with async_timeout.timeout(5):
+         await kept_reader.readuntil(b"hello\r\n")
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8834** (2026-11-18): fix(core): pack JsonConsT as a type to remove a misaligned member call (@vyavdoshenko)
-- **PR #8833** (2026-11-18): fix: double call during error processing (@BorysTheDev)
-- **PR #8832** (2026-11-18): refactor: drop noisy error during replication cancel (@BorysTheDev)
-- **PR #8829** (2026-11-18): fix(search): keep stored values and normalize numbers in search replies (@vyavdoshenko)
-- **PR #8825** (closed): fix(search): own the vectors of expiring fields and free borrowed ones only when unread (@vyavdoshenko)
-- **PR #8824** (2026-11-18): fix: crash with premature STARTSTABLE (@BorysTheDev)
+- **PR #8855** (2026-11-20): fix(acl): test_acl_load_updates_default_user_connections (@kostasrim)
+- **PR #8847** (2026-11-19): fix(acl): apply reloaded default user rules on ACL LOAD (@kostasrim)
+- **PR #8845** (2026-11-20): fix: match RESP3 reply shapes of JSON and probabilistic commands (@vyavdoshenko)
+- **PR #8844** (2026-11-19): fix: stack smashing in journal (@BorysTheDev)
+- **PR #8837** (2026-11-19): fix(acl): apply ACL updates to connections on memcache listener (@kostasrim)
+- **PR #8836** (2026-11-19): fix(search): reply with RESP3 maps and sets in search commands (@vyavdoshenko)
 
 ---
 
@@ -2983,42 +2916,40 @@ Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. crash with premature STARTSTABLE
+## X. search): reply with RESP3 maps and sets in search commands
 
 **RULE**:
-When implementing operations in `src/server/dflycmd.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/facade/facade_test.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `406477f2`: crash with premature STARTSTABLE. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ee352cbf`: search): reply with RESP3 maps and sets in search commands. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/dflycmd.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/facade/facade_test.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
+// RESP3 arrays, maps and sets all arrive as ARRAY; these check which one was sent.
+MATCHER(IsResp3ArrayKind, "is a RESP3 array") {
+  return arg.type == RespExpr::ARRAY && arg.agg == RespExpr::Agg::kArray;
+}
 
-  // A repeated DFLY FLOW must not inherit the partial sync negotiated by an earlier one.
-  flow.start_partial_sync_at.reset();
-  // DFLY SYNC may be skipped only if every flow syncs partially, as only it starts a full sync.
-  SyncState expected =
-      replica_ptr->AllFlowsPartial() ? SyncState::PREPARATION : SyncState::FULL_SYNC;
-  if (!CheckReplicaStateOrReply(*replica_ptr, expected, cmd_cntx))
+MATCHER(IsResp3MapKind, "is a RESP3 map") {
+  return arg.type == RespExpr::ARRAY && arg.agg == RespExpr::Agg::kMap;
+}
+
+MATCHER(IsResp3SetKind, "is a RESP3 set") {
+  return arg.type == RespExpr::ARRAY && arg.agg == RespExpr::Agg::kSet;
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-  auto repl_state = replica_ptr->GetReplicaState();
-  if (repl_state != SyncState::FULL_SYNC && repl_state != SyncState::PREPARATION) {
-    cmd_cntx->SendError(kInvalidState);
-    return;
-  }
-  // This might happen if a flow abruptly disconnected before sending the SYNC request.
-  if (!replica_ptr->AllFlowsConnected()) {
-    cmd_cntx->SendError(kInvalidState);
-  }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `406477f2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ee352cbf` are properly handled with clean fallback behavior.

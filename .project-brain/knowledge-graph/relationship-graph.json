@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-20T11:32:47.960Z",
+  "updated_at": "2026-11-20T12:15:56.216Z",
   "statistics": {
-    "total_nodes": 422,
+    "total_nodes": 423,
     "total_edges": 187,
     "domain_distribution": {
       "D": 270,
       "M": 1,
       "H": 65,
-      "J": 21,
+      "J": 22,
       "K": 25,
       "L": 8,
       "G": 1,
@@ -9433,6 +9433,28 @@
       ],
       "created_at": "2026-11-20T11:32:47.960Z",
       "updated_at": "2026-11-20T11:32:47.960Z"
+    },
+    "DOM-J-FBEC7580": {
+      "id": "DOM-J-FBEC7580",
+      "domain": "J",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "search): reply with RESP3 maps and sets in search commands",
+      "summary": "Prevents defects observed in production commit `ee352cbf`: search): reply with RESP3 maps and sets in search commands. Unvalidated execution -> When implementing operations in `src/facade/facade_test.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and",
+      "confidence": 0.64,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://dragonflydb-dragonfly/dragonflydb-dragonfly-learnings.md",
+        "source_version": "db656d41",
+        "observed_at": "2026-11-20T12:15:28.490Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dragonflydb-dragonfly)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "J",
+        "Search & Distribution Intelligence"
+      ],
+      "created_at": "2026-11-20T12:15:56.215Z",
+      "updated_at": "2026-11-20T12:15:56.215Z"
     }
   },
   "edges": [

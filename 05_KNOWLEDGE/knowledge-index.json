@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T12:07:30.530Z",
+  "last_updated": "2026-11-20T12:15:57.347Z",
   "total_verified_learnings": 9035,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22395,
+  "total_items": 22401,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112245,10 +112245,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-technical-construction-intelligence-dragonflydb-dragonfly-.md",
       "title": "Technical Construction Intelligence: dragonflydb/dragonfly Core Invariants",
       "repository": "dragonflydb/dragonfly",
-      "source_version": "ce4df827",
-      "content_hash": "0c4e4a6c511538a3f7e6893cb74c51acc61b3549ee33b033ca1051aa49dd7568",
+      "source_version": "db656d41",
+      "content_hash": "7307de6472366f107580d4bab513883c51c6072fd9657adeb50e678e5126e30b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T05:41:38.760Z"
+      "persisted_at": "2026-11-20T12:15:29.642Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly",
@@ -112257,10 +112257,10 @@
       "relative_path": "08_VERIFICATION/dragonflydb-dragonfly-verification-protocol-empirical-defect-shield-for-dragonfl.md",
       "title": "Verification Protocol: Empirical Defect Shield for dragonflydb/dragonfly",
       "repository": "dragonflydb/dragonfly",
-      "source_version": "45a890be",
-      "content_hash": "4ef9949617ed8413cb684999bbd055cf881a6f6c1db8ed7d916784488ec1ef32",
+      "source_version": "db656d41",
+      "content_hash": "b329e974fc38c67362eca668e8bd2ca6061b1092f8cf296545f00e2ec4f7cc56",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T05:42:27.700Z"
+      "persisted_at": "2026-11-20T12:15:29.760Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
@@ -112282,9 +112282,9 @@
       "title": "Technical Construction Intelligence: dragonflydb-dragonfly-learnings Core Invariants",
       "repository": "dragonflydb-dragonfly-learnings",
       "source_version": "HEAD",
-      "content_hash": "f90b0847631316f815ed77559c82b01085079deafae7c7cc2a36635a6a05e7d2",
+      "content_hash": "5e25c3db503e3d45db78499552cfc8b6a5fe1cb359c6d88e7411d485606c8f43",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T05:42:07.295Z"
+      "persisted_at": "2026-11-20T12:15:56.749Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly-learning",
@@ -112294,9 +112294,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dragonflydb-dragonfly-learnings",
       "repository": "dragonflydb-dragonfly-learnings",
       "source_version": "HEAD",
-      "content_hash": "1b6ea8696de5fe2ff7a7af2ae8e32f8fc2edb21088fabc8ab4abe132c111bba5",
+      "content_hash": "f098a3dd860913de600e27c856f038d6b0de9d8046d0ff4aa47faa9e5c33e469",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T05:47:18.875Z"
+      "persisted_at": "2026-11-20T12:15:56.885Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants",
@@ -237944,8 +237944,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "45a890be",
-      "content_hash": "0b600998c97f7519d42d4d1b82ff0c1bd0fa9db712f29036a2d278d2e6e36b16",
+      "source_version": "db656d41",
+      "content_hash": "50ee7c925cf99740185f455805d9d095f2732f7a78f9ba9776d07bb111e21b6a",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -237968,6 +237968,11 @@
           "number": 9338,
           "title": "crash with premature STARTSTABLE",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9567,
+          "title": "reply with RESP3 maps and sets in search commands",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237975,7 +237980,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T05:42:26.995Z",
+      "verified_at": "2026-11-20T12:15:29.149Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -269188,8 +269193,8 @@
       "slug": "transact-rs-sqlx",
       "platform": "github",
       "source_url": "https://github.com/transact-rs/sqlx",
-      "source_version": "30f4eae0",
-      "content_hash": "23e62268353c5ce5a14fd4fd6279edf73702f549c949cf034323414e679c9d5e",
+      "source_version": "e8acd6bd",
+      "content_hash": "0de2a9a39ecd65b290c5d9ec499a551fa7f19b7d1f1470fdeb1795a8e40d026c",
       "dossier_path": "07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
       "promoted_rules": [
@@ -269202,6 +269207,11 @@
           "number": 9284,
           "title": "don't panic decoding out-of-range dates and times",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9566,
+          "title": "track the ReadyForQuery owed by COPY TO STDOUT",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -269209,7 +269219,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T21:42:10.613Z",
+      "verified_at": "2026-11-20T12:15:15.605Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -269251,10 +269261,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-transact-rs-sqlx-technical-construction-intelligence-transact-rs-sqlx-core-invar.md",
       "title": "Technical Construction Intelligence: transact-rs/sqlx Core Invariants",
       "repository": "transact-rs/sqlx",
-      "source_version": "488c4113",
-      "content_hash": "6c2a8da0d329bdcba5e0782c224d8a0edf2a1eca40110383706d081ab5d3128f",
+      "source_version": "e8acd6bd",
+      "content_hash": "c22a7e9af843b64d1e4f561950c8a38434d3fa7dbedb68dc12ec1ef35df85f65",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T07:28:08.240Z"
+      "persisted_at": "2026-11-20T12:15:16.053Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-transact-rs-sqlx": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-transact-rs-sqlx",
@@ -269263,10 +269273,10 @@
       "relative_path": "08_VERIFICATION/transact-rs-sqlx-verification-protocol-empirical-defect-shield-for-transact-rs-s.md",
       "title": "Verification Protocol: Empirical Defect Shield for transact-rs/sqlx",
       "repository": "transact-rs/sqlx",
-      "source_version": "30f4eae0",
-      "content_hash": "ff4e89bd984f13c3587c2fa817e2eac6f8c359df9e49532226d5d3c6caf8d338",
+      "source_version": "e8acd6bd",
+      "content_hash": "a8d3e1e6a2e98bbbc47a3963f0c80a735951381eefa52bc2db4735465a10d66c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T21:42:11.255Z"
+      "persisted_at": "2026-11-20T12:15:16.166Z"
     },
     "rule-8903": {
       "learning_id": "rule-8903",
@@ -269340,9 +269350,9 @@
       "title": "Technical Construction Intelligence: transact-rs-sqlx-learnings Core Invariants",
       "repository": "transact-rs-sqlx-learnings",
       "source_version": "HEAD",
-      "content_hash": "fbeae491be9954898d20f5ba049ec3f9a1a751884b549bd0f830816d09f54d80",
+      "content_hash": "7ba2cc550ca28d312809ea7c7f63fff64a0043cdd0a6a70223baa278a48ab509",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T07:28:24.445Z"
+      "persisted_at": "2026-11-20T12:15:32.863Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-transact-rs-sqlx-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-transact-rs-sqlx-learnings",
@@ -269352,9 +269362,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for transact-rs-sqlx-learnings",
       "repository": "transact-rs-sqlx-learnings",
       "source_version": "HEAD",
-      "content_hash": "6145719ca65a7f5f9ec393fb396c66b6609d49ebc3c4d494326c8ce98f300f63",
+      "content_hash": "e9e80e5b7cecb56029651b3b0c17309748485ca3842f27c5fa428104d37ff276",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T21:42:30.113Z"
+      "persisted_at": "2026-11-20T12:15:32.994Z"
     },
     "learn-github-appwrite-appwrite": {
       "learning_id": "learn-github-appwrite-appwrite",
@@ -288006,9 +288016,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "8f94bacb369b63592e885420a032bbb29c3a75970c7fd9e1ee08ff5a38971326",
+      "content_hash": "02e856a813d3905aa60774b5100f26dafbd1a193607b3c4d0a2c925866079612",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T08:04:06.918Z"
+      "persisted_at": "2026-11-20T12:15:57.347Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -303425,6 +303435,82 @@
       "content_hash": "d9557169606cc85430f7bca220efac248a3147188ab7a38bdf5bf16aaf5898ec",
       "domain_letter": "K",
       "persisted_at": "2026-11-20T12:07:30.530Z"
+    },
+    "rule-9566": {
+      "learning_id": "rule-9566",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9566,
+      "title": "track the ReadyForQuery owed by COPY TO STDOUT",
+      "source_url": "https://github.com/transact-rs/sqlx",
+      "source_version": "e8acd6bd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T12:15:15.605Z"
+    },
+    "candidate_directive-track-the-readyforquery-owed-by-copy-to-stdout": {
+      "item_id": "candidate_directive-track-the-readyforquery-owed-by-copy-to-stdout",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZHEK-track-the-readyforquery-owed-by-copy-to-stdout.md",
+      "title": "track the ReadyForQuery owed by COPY TO STDOUT",
+      "repository": "transact-rs/sqlx",
+      "source_version": "e8acd6bd",
+      "content_hash": "628033c308e94188353090f2bd210b8c00f5c56d1277e8246df177cf97fb1225",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T12:15:15.933Z"
+    },
+    "rule-9567": {
+      "learning_id": "rule-9567",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9567,
+      "title": "reply with RESP3 maps and sets in search commands",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "db656d41",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T12:15:29.149Z"
+    },
+    "candidate_directive-reply-with-resp3-maps-and-sets-in-search-commands": {
+      "item_id": "candidate_directive-reply-with-resp3-maps-and-sets-in-search-commands",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZRVU-reply-with-resp3-maps-and-sets-in-search-commands.md",
+      "title": "reply with RESP3 maps and sets in search commands",
+      "repository": "dragonflydb/dragonfly",
+      "source_version": "db656d41",
+      "content_hash": "a12349d495d9b0c396752327111eed13142195174deb21bbd6120c091d848bd2",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-20T12:15:29.519Z"
+    },
+    "candidate_directive-postgres-track-the-readyforquery-owed-by-copy-to-stdout": {
+      "item_id": "candidate_directive-postgres-track-the-readyforquery-owed-by-copy-to-stdout",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZUCS-postgres-track-the-readyforquery-owed-by-copy-to-stdout.md",
+      "title": "postgres): track the ReadyForQuery owed by COPY TO STDOUT",
+      "repository": "transact-rs-sqlx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "397abf761161dd62efac8e10d9403a6883ad946932065bd1d23cd7a29aee2668",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T12:15:32.717Z"
+    },
+    "candidate_directive-search-reply-with-resp3-maps-and-sets-in-search-commands": {
+      "item_id": "candidate_directive-search-reply-with-resp3-maps-and-sets-in-search-commands",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0CQI-search-reply-with-resp3-maps-and-sets-in-search-commands.md",
+      "title": "search): reply with RESP3 maps and sets in search commands",
+      "repository": "dragonflydb-dragonfly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1896d6edfbd6d3218ebc7dd35d11875a2264b8d21af088a27d15616ba65d8b8e",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-20T12:15:56.553Z"
     }
   },
   "ai-builder-brain": {

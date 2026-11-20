@@ -11567,3 +11567,6 @@ Every entry in this ledger must capture:
 | `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `62103794` | Multi-dimensional audit evidence | 2026-11-20T12:07:20.455Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `0d45ee96` | Multi-dimensional audit evidence | 2026-11-20T12:07:23.535Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `f01b5c68` | Multi-dimensional audit evidence | 2026-11-20T12:07:25.495Z |
+| `learn-github-transact-rs-sqlx` | `https://github.com/transact-rs/sqlx` | `e8acd6bd` | Multi-dimensional audit evidence | 2026-11-20T12:15:15.766Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `db656d41` | Multi-dimensional audit evidence | 2026-11-20T12:15:29.342Z |
+| `learn-dom-j-fbec7580` | `project://dragonflydb-dragonfly` | `db656d41` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md` | 2026-11-20T12:15:56.218Z |

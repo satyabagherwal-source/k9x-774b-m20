@@ -4,22 +4,22 @@
 {
   "source_repository": "transact-rs/sqlx",
   "source_url": "https://github.com/transact-rs/sqlx",
-  "source_version": "30f4eae0",
+  "source_version": "e8acd6bd",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T21:42:10.976Z",
+  "timestamp": "2026-11-20T12:15:15.932Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-transact-rs-sqlx",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [transact-rs/sqlx](https://github.com/transact-rs/sqlx) (Revision: `30f4eae0`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T21:42:10.976Z`  
+> **Provenance**: Harvested from [transact-rs/sqlx](https://github.com/transact-rs/sqlx) (Revision: `e8acd6bd`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T12:15:15.932Z`  
 > **Learning ID**: `learn-github-transact-rs-sqlx`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `transact-rs/sqlx` (Commit: `30f4eae0`)
+- **Target Repository**: `transact-rs/sqlx` (Commit: `e8acd6bd`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T21:42:09.836Z  
+> **Harvest Timestamp**: 2026-11-20T12:15:14.719Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 🧰 The Rust SQL Toolkit. An async, pure Rust SQL crate featuring compile-time checked queries without a DSL. Supports PostgreSQL, MySQL, and SQLite.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 17693 stars
+- **Stars / Engagement**: 17703 stars
 
 ---
 
@@ -992,323 +992,125 @@ impl FromStr for AnyKind {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `88dbe513` (2026-11-18)
-**Commit Message**: fix(postgres): don't panic decoding out-of-range dates and times (#4528)
+### Incident Patch 1: `e1a6a2d5` (2026-11-19)
+**Commit Message**: fix(postgres): track the ReadyForQuery owed by COPY TO STDOUT (#4454)
 
-Postgres `date`, `timestamp` and `timestamptz` can hold `infinity`,
-`-infinity` and years outside the range of chrono and time, and `time`
-and `timetz` can hold `24:00:00`. The binary decoders added these to an
-epoch with operators that panic on overflow, or wrap a time of day back
-to midnight. Use checked arithmetic and return a decode error instead.
+A copy_out_raw cancelled mid-exchange returned its connection to the pool
+with an untracked ReadyForQuery still pending. The release ping consumed it
+as its own reply, leaving the connection one reply behind, so its next query
+failed with "expected ParseComplete, got ReadyForQuery".
 
-Fixes #2234
-Fixes #3685
-
-**File**: `sqlx-postgres/src/types/chrono/date.rs` (modified, +9/-2)
+**File**: `sqlx-postgres/src/connection/mod.rs` (modified, +1/-1)
 ```diff
-@@ -45,12 +45,19 @@ impl<'r> Decode<'r, Postgres> for NaiveDate {
-                 // DATE is encoded as the days since epoch
-                 let days: i32 = Decode::<Postgres>::decode(value)?;
+@@ -107,7 +107,7 @@ impl PgConnection {
+         Ok(())
+     }
  
--                let days = TimeDelta::try_days(days.into())
-+                let delta = TimeDelta::try_days(days.into())
-                     .unwrap_or_else(|| {
-                         unreachable!("BUG: days ({days}) as `i32` multiplied into seconds should not overflow `i64`")
-                     });
+-    async fn recv_ready_for_query(&mut self) -> Result<(), Error> {
++    pub(crate) async fn recv_ready_for_query(&mut self) -> Result<(), Error> {
+         let r: ReadyForQuery = self.inner.stream.recv_expect().await?;
  
--                postgres_epoch_date() + days
-+                // `infinity`, `-infinity` and years beyond chrono's range don't fit in `NaiveDate`
-+                postgres_epoch_date()
-+                    .checked_add_signed(delta)
-+                    .ok_or_else(|| {
-+                        format!(
-+                            "Postgres DATE out of range for NaiveDate: {days} days from 2000-01-01"
-+                        )
-+                    })?
-             }
- 
-             PgValueFormat::Text => NaiveDate::parse_from_str(value.as_str()?, "%Y-%m-%d")?,
+         self.inner.pending_ready_for_query_count -= 1;
 ```
 
-**File**: `sqlx-postgres/src/types/chrono/datetime.rs` (modified, +7/-1)
+**File**: `sqlx-postgres/src/copy.rs` (modified, +8/-3)
 ```diff
-@@ -53,7 +53,13 @@ impl<'r> Decode<'r, Postgres> for NaiveDateTime {
-             PgValueFormat::Binary => {
-                 // TIMESTAMP is encoded as the microseconds since the epoch
-                 let us = Decode::<Postgres>::decode(value)?;
--                postgres_epoch_datetime() + Duration::microseconds(us)
-+
-+                // `infinity`, `-infinity` and years beyond chrono's range don't fit in `NaiveDateTime`
-+                postgres_epoch_datetime()
-+                    .checked_add_signed(Duration::microseconds(us))
-+                    .ok_or_else(|| {
-+                        format!("Postgres TIMESTAMP out of range for NaiveDateTime: {us} microseconds from 2000-01-01")
-+                    })?
-             }
+@@ -323,23 +323,28 @@ async fn pg_begin_copy_out<'c, C: DerefMut<Target = PgConnection> + Send + 'c>(
+     statement: &str,
+ ) -> Result<BoxStream<'c, Result<Bytes>>> {
+     conn.wait_until_ready().await?;
+-    conn.inner.stream.send(Query(statement)).await?;
++    conn.inner.stream.write_msg(Query(statement))?;
++    // Counted so a cancelled COPY's owed `ReadyForQuery` is drained by `wait_until_ready`
++    // instead of being mistaken for the reply to the connection's next message.
++    // Before the flush: a cancelled flush leaves the `Query` buffered, to be sent later.
++    conn.inner.pending_ready_for_query_count += 1;
++    conn.inner.stream.flush().await?;
  
-             PgValueFormat::Text => {
+     let _: CopyOutResponse = conn.inner.stream.recv_expect().await?;
+ 
+     let stream: TryAsyncStream<'c, Bytes> = try_stream! {
+         loop {
+             match conn.inner.stream.recv().await {
+                 Err(e) => {
+-                    conn.inner.stream.recv_expect::<ReadyForQuery>().await?;
++                    conn.recv_ready_for_query().await?;
+                     return Err(e);
+                 },
+                 Ok(msg) => match msg.format {
+                     BackendMessageFormat::CopyData => r#yield!(msg.decode::<CopyData<Bytes>>()?.0),
+                     BackendMessageFormat::CopyDone => {
+                         let _ = msg.decode::<CopyDone>()?;
+                         conn.inner.stream.recv_expect::<CommandComplete>().await?;
+-                        conn.inner.stream.recv_expect::<ReadyForQuery>().await?;
++                        conn.recv_ready_for_query().await?;
+                         return Ok(())
+                     },
+                     _ => return Err(err_protocol!("unexpected message format during copy out: {:?}", msg.format))
 ```
 
-**File**: `sqlx-postgres/src/types/chrono/time.rs` (modified, +13/-1)
+**File**: `tests/postgres/postgres.rs` (modified, +44/-0)
 ```diff
-@@ -39,7 +39,19 @@ impl<'r> Decode<'r, Postgres> for NaiveTime {
-             PgValueFormat::Binary => {
-                 // TIME is encoded as the microseconds since midnight
-                 let us: i64 = Decode::<Postgres>::decode(value)?;
--                NaiveTime::default() + Duration::microseconds(us)
-+
-+                // Postgres allows `24:00:00`, which would otherwise wrap around to midnight
-+                let (time, overflow) =
-+                    NaiveTime::default().overflowing_add_signed(Duration::microseconds(us));
-+
-+                if overflow != 0 {
-+                    return Err(format!(
-+                        "Postgres TIME out of range for NaiveTime: {us} microseconds from midnight"
-+                    )
-+                    .into());
-+                }
-+
-+                time
-             }
+@@ -1808,6 +1808,50 @@ async fn it_can_copy_out() -> anyhow::Result<()> {
+     Ok(())
+ }
  
-             PgValueFormat::Text => NaiveTime::parse_from_str(value.as_str()?, "%H:%M:%S%.f")?,
-```
-
-**File**: `sqlx-postgres/src/types/time/date.rs` (modified, +7/-1)
-```diff
-@@ -40,7 +40,13 @@ impl<'r> Decode<'r, Postgres> for Date {
-             PgValueFormat::Binary => {
-                 // DATE is encoded as the days since epoch
-                 let days: i32 = Decode::<Postgres>::decode(value)?;
--                PG_EPOCH + Duration::days(days.into())
++#[sqlx_macros::test]
++async fn it_can_reuse_connection_after_cancelled_copy_out() -> anyhow::Result<()> {
++    use sqlx::postgres::PgPoolCopyExt;
++    use sqlx_core::rt::timeout;
 +
-+                // `infinity`, `-infinity` and years beyond 9999 don't fit in `Date`
-+                PG_EPOCH
-+                    .checked_add(Duration::days(days.into()))
-+                    .ok_or_else(|| {
-+                        format!("Postgres DATE out of range for Date: {days} days from 2000-01-01")
-+                    })?
-             }
- 
-             PgValueFormat::Text => Date::parse(
-```
-
-**File**: `sqlx-postgres/src/types/time/datetime.rs` (modified, +8/-1)
-```diff
-@@ -57,7 +57,14 @@ impl<'r> Decode<'r, Postgres> for PrimitiveDateTime {
-             PgValueFormat::Binary => {
-                 // TIMESTAMP is encoded as the microseconds since the epoch
-                 let us = Decode::<Postgres>::decode(value)?;
--                PG_EPOCH.midnight() + Duration::microseconds(us)
++    let mut setup = new::<Postgres>().await?;
++    setup
++        .execute("CREATE TABLE IF NOT EXISTS _sqlx_copy_out_cancel (id INT)")
++        .await?;
 +
-+                // `infinity`, `-infinity` and years beyond 9999 don't fit in `PrimitiveDateTime`
-+                PG_EPOCH
-+                    .midnight()
-+                    .checked_add(Duration::microseconds(us))
-+                    .ok_or_else(|| {
-+                        format!("Postgres TIMESTAMP out of range for PrimitiveDateTime: {us} microseconds from 2000-01-01")
-+                    })?
-             }
- 
-             PgValueFormat::Text => {
-```
-
-**File**: `sqlx-postgres/src/types/time/time.rs` (modified, +11/-1)
-```diff
-@@ -40,7 +40,17 @@ impl<'r> Decode<'r, Postgres> for Time {
-             PgValueFormat::Binary => {
-                 // TIME is encoded as the microseconds since midnight
-                 let us = Decode::<Postgres>::decode(value)?;
--                Time::MIDNIGHT + Duration::microseconds(us)
-+                let duration = Duration::microseconds(us);
++    let pool = PgPoolOptions::new()
++        .max_connections(1)
++        .connect(&dotenvy::var("DATABASE_URL")?)
++        .await?;
 +
-+                // Postgres allows `24:00:00`, which would otherwise wrap around to midnight
-+                if !(Duration::ZERO..Duration::DAY).contains(&duration) {
-+                    return Err(format!(
-+                        "Postgres TIME out of range for Time: {us} microseconds from midnight"
-+                    )
-+                    .into());
-+                }
++    let mut lock = setup.begin().await?;
++    lock.execute("LOCK TABLE _sqlx_copy_out_cancel IN ACCESS EXCLUSIVE MODE")
++        .await?;
 +
-+                Time::MIDNIGHT + duration
-             }
- 
-             PgValueFormat::Text => Time::parse(
-```
-
-**File**: `sqlx-postgres/src/types/time_tz.rs` (modified, +21/-2)
-```diff
-@@ -74,7 +74,16 @@ mod chrono {
-                     let us = buf.read_i64::<BigEndian>()?;
-                     // default is midnight, there is a canary test for this
-                     // in `sqlx-postgres/src/types/chrono/time.rs`
--                    let time = NaiveTime::default() + Duration::microseconds(us);
-+                    let (time, overflow) =
-+                        NaiveTime::default().overflowing_add_signed(Duration::microseconds(us));
-+
-+                    // Postgres allows `24:00:00`, which would otherwise wrap around to midnight
-+                    if overflow != 0 {
-+                        return Err(format!(
-+                            "Postgres TIMETZ out of range for NaiveTime: {us} microseconds from midnight"
-+                        )
-+                        .into());
-+                    }
- 
-                     // OFFSET is encoded as seconds from UTC
-                     let offset_seconds = buf.read_i32::<BigEndian>()?;
-@@ -154,7 +163,17 @@ mod time {
- 
-                     // TIME is encoded as the microseconds since midnight
-                     let us = buf.read_i64::<BigEndian>()?;
--                    let time = Time::MIDNIGHT + Duration::microseconds(us);
-+                    let duration = Duration::microseconds(us);
-+
-+                    // Postgres allows `24:00:00`, which would otherwise wrap around to midnight
-+                    if !(Duration::ZERO..Duration::DAY).contains(&duration) {
-+                        return Err(format!(
-+                            "Postgres TIMETZ out of range for Time: {us} microseconds from midnight"
-+                        )
-+                        .into());
-+                    }
-+
-+                    let time = Time::MIDNIGHT + duration;
- 
-                     // OFFSET is encoded as seconds from UTC
-                     let seconds = buf.read_i32::<BigEndian>()?;
-```
-
-**File**: `tests/postgres/types.rs` (modified, +100/-0)
-```diff
-@@ -302,6 +302,36 @@ test_type!(mac_address_vec<Vec<sqlx::types::mac_address::MacAddress>>(Postgres,
-         ]
- ));
- 
-+// Postgres can store dates and times that `chrono` and `time` cannot represent,
-+// such as `infinity`, years far outside their range, or `24:00:00`.
-+// These should fail to decode, in both text and binary format, instead of panicking or wrapping.
-+#[cfg(any(feature = "chrono", feature = "time"))]
-+async fn assert_decode_error<T>(
-+    conn: &mut sqlx::PgConnection,
-+    sql: &'static str,
-+) -> anyhow::Result<()>
-+where
-+    T: for<'r> sqlx::Decode<'r, Postgres> + sqlx::Type<Postgres> + std::fmt::Debug,
-+{
-+    use sqlx::Row;
-+
-+    let row = conn.fetch_one(sql).await?;
-+    let result = row.try_get::<T, _>(0);
++    let copy = async {
++        let mut stream = pool
++            .copy_out_raw("COPY (SELECT id FROM _sqlx_copy_out_cancel) TO STDOUT")
++            .await?;
++        while stream.try_next().await?.is_some() {}
++        Ok::<_, sqlx::Error>(())
++    };
 +    assert!(
-+        result.is_err(),
-+        "{sql} (text): expected an error, got {result:?}"
++        timeout(Duration::from_millis(200), copy).await.is_err(),
++        "COPY should time out while the table is locked"
 +    );
 +
-+    let row = sqlx::query(sql).fetch_one(&mut *conn).await?;
-+    let result = row.try_get::<T, _>(0);
-+    assert!(
-+        result.is_err(),
-+        "{sql} (binary): expected an error, got {result:?}"
-+    );
++    lock.commit().await?;
++
++    let one: i32 = sqlx::query_scalar("SELECT 1").fetch_one(&pool).await?;
++    assert_eq!(one, 1);
++
++    let mut stream = pool
++        .copy_out_raw("COPY (SELECT id FROM _sqlx_copy_out_cancel) TO STDOUT")
++        .await?;
++    while stream.try_next().await?.is_some() {}
 +
 +    Ok(())
 +}
 +
- #[cfg(feature = "chrono")]
- mod chrono {
-     use super::*;
-@@ -364,6 +394,40 @@ mod chrono {
-         "TIMETZ '05:10:20.115100-05'" == PgTimeTz { time: NaiveTime::from_hms_micro_opt(5, 10, 20, 115100).unwrap(), offset: FixedOffset::west_opt(60 * 60 * 5).unwrap() },
-         "TIMETZ '05:10:20+02'" == PgTimeTz { time: NaiveTime::from_hms_opt(5, 10, 20).unwrap(), offset: FixedOffset::east_opt(60 * 60 * 2 ).unwrap() }
-     ));
-+
-+    #[sqlx_macros::test]
-+    async fn chrono_out_of_range() -> anyhow::Result<()> {
-+        let mut conn = new::<Postgres>().await?;
-+
-+        assert_decode_error::<NaiveDate>(&mut conn, "SELECT DATE 'infinity'").await?;
-+        assert_decode_error::<NaiveDate>(&mut conn, "SELECT DATE '-infinity'").await?;
-+        assert_decode_error::<NaiveDate>(&mut conn, "SELECT DATE '5874897-12-31'").await?;
-+
-+        assert_decode_error::<NaiveDateTime>(&mut conn, "SELECT TIMESTAMP 'infinity'").await?;
-+        assert_decode_error::<NaiveDateTime>(&mut conn, "SELECT TIMESTAMP '-infinity'").await?;
-+        assert_decode_error::<NaiveDateTime>(&mut conn, "SELECT TIMESTAMP '294276-12-31 23:59:59'")
-+            .await?;
-+
-+        assert_decode_error::<DateTime<Utc>>(&mut conn, "SELECT TIMESTAMPTZ 'infinity'").await?;
-+        assert_decode_error::<DateTime<FixedOffset>>(&mut conn, "SELECT TIMESTAMPTZ '-infinity'")
-+            .await?;
-+
-+        assert_decode_error::<NaiveTime>(&mut conn, "SELECT TIME '24:00:00'").await?;
-+        assert_decode_error::<PgTimeTz>(&mut conn, "SELECT TIMETZ '24:00:00+00'").await?;
-+
-+        assert_decode_error::<Vec<NaiveDateTime>>(
-+            &mut conn,
-+            "SELECT array['2019-01-02 05:10:20', 'infinity']::timestamp[]",
-+        )
-+        .await?;
-+        assert_decode_error::<PgRange<DateTime<Utc>>>(
-+            &mut conn,
-+            "SELECT tstzrange('-infinity', 'infinity')",
-+        )
-+        .await?;
-+
-+        Ok(())
-+    }
- }
- 
- #[cfg(feature = "time")]
-@@ -407,6 +471,42 @@ mod time_tests {
-         "TIMETZ '05:10:20.115100-05'" == PgTimeTz { time: time!(5:10:20.115100), offset: UtcOffset::from_whole_seconds(-(60 * 60 * 5)).unwrap() },
-         "TIMETZ '05:10:20+02'" == PgTimeTz { time: time!(5:10:20), offset: UtcOffset::from_whole_seconds(60 * 60 * 2 ).unwrap() }
-     ));
-+
-+    #[sqlx_macros::test]
-+    async fn time_out_of_range() -> anyhow::Result<()> {
-+        let mut conn = new::<Postgres>().await?;
-+
-+        assert_decode_error::<Date>(&mut conn, "SELECT DATE 'infinity'").await?;
-+        assert_decode_error::<Date>(&mut conn, "SELECT DATE '-infinity'").await?;
-+        assert_decode_error::<Date>(&mut conn, "SELECT DATE '5874897-12-31'").await?;
-+
-+        assert_decode_error::<PrimitiveDateTime>(&mut conn, "SELECT TIMESTAMP 'infinity'").await?;
-+        assert_decode_error::<PrimitiveDateTime>(&mut conn, "SELECT TIMESTAMP '-infinity'").await?;
-+        assert_decode_error::<PrimitiveDateTime>(
-+            &mut conn,
-+            "SELECT TIMESTAMP '294276-12-31 23:59:59'",
-+        )
-+        .await?;
-+
-+        assert_decode_error::<OffsetDateTime>(&mut conn, "SELECT TIMESTAMPTZ 'infinity'").await?;
-+        assert_decode_error::<OffsetDateTime>(&mut conn, "SELECT TIMESTAMPTZ '-infinity'").await?;
-+
-+        assert_decode_error::<Time>(&mut conn, "SELECT TIME '24:00:00'").await?;
-+        assert_decode_error::<PgTimeTz>(&mut conn, "SELECT TIMETZ '24:00:00+00'").await?;
-+
-+        assert_decode_error::<Vec<PrimitiveDateTime>>(
-+            &mut conn,
-+            "SELECT array['2019-01-02 05:10:20', 'infinity']::timestamp[]",
-+        )
-+        .await?;
-+        assert_decode_error::<PgRange<OffsetDateTime>>(
-+            &mut conn,
-+            "SELECT tstzrange('-infinity', 'infinity')",
-+        )
-+        .await?;
-+
-+        Ok(())
-+    }
- }
- 
- #[cfg(feature = "json")]
+ #[sqlx_macros::test]
+ async fn it_encodes_custom_array_issue_1504() -> anyhow::Result<()> {
+     use sqlx::encode::IsNull;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4537** (2026-11-19): chore(mysql): update rsa to 0.10.0 (@tuantran0910)
 - **PR #4529** (2026-11-17): fix: handle IPv6 properly at all levels (@abonander)
 - **PR #4528** (2026-11-18): fix(postgres): don't panic decoding out-of-range dates and times (@colinhacks)
 - **PR #4526** (2026-11-16): docs(FAQ): Replace versioned docs.rs link with latest (@TheJanzap)
 - **PR #4525** (2026-11-16): sqlx-sqlite: bump the upper bound on libsqlite3-sys to allow 0.40.x (@lthiery)
-- **PR #4517** (2026-11-18): chore: prepare release 0.9.1 (@abonander)
-- **PR #4515** (closed): fix(sqlite): reset transaction depth after SQLite rolls back on its own (@yxshee)
+- **PR #4522** (closed): feat(postgres): add PgSocketConnector hook to PgConnectOptions (@ropoctl)
 
 ---
 
@@ -1328,40 +1130,31 @@ Fixes #3685
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. postgres): don't panic decoding out-of-range dates and times
+## X. postgres): track the ReadyForQuery owed by COPY TO STDOUT
 
 **RULE**:
-When implementing operations in `sqlx-postgres/src/types/chrono/date.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sqlx-postgres/src/connection/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `88dbe513`: postgres): don't panic decoding out-of-range dates and times. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e1a6a2d5`: postgres): track the ReadyForQuery owed by COPY TO STDOUT. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-postgres/src/types/chrono/date.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-postgres/src/connection/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                let delta = TimeDelta::try_days(days.into())
-                // `infinity`, `-infinity` and years beyond chrono's range don't fit in `NaiveDate`
-                postgres_epoch_date()
-                    .checked_add_signed(delta)
-                    .ok_or_else(|| {
-                        format!(
-                            "Postgres DATE out of range for NaiveDate: {days} days from 2000-01-01"
-                        )
-                    })?
+    pub(crate) async fn recv_ready_for_query(&mut self) -> Result<(), Error> {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                let days = TimeDelta::try_days(days.into())
-                postgres_epoch_date() + days
+    async fn recv_ready_for_query(&mut self) -> Result<(), Error> {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `88dbe513` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e1a6a2d5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

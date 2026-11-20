@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T12:07:30.642Z",
+  "last_updated": "2026-11-20T12:15:57.489Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-20T08:04:06.528Z",
+      "processed_at": "2026-11-20T12:15:57.033Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -888,7 +888,7 @@
       "staged_for_review": 1
     },
     "transact-rs-sqlx-learnings.md": {
-      "processed_at": "2026-11-18T21:42:29.619Z",
+      "processed_at": "2026-11-20T12:15:32.528Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1903,9 +1903,9 @@
       "staged_for_review": 1
     },
     "dragonflydb-dragonfly-learnings.md": {
-      "processed_at": "2026-11-19T05:47:18.271Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-20T12:15:56.218Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "hf-comfy-org-wan-2.2-learnings.md": {
       "processed_at": "2026-11-18T02:51:30.931Z",
@@ -3573,7 +3573,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2511,
-  "total_canonical_promoted": 424,
-  "total_staged_for_review": 1898
+  "total_dossiers_evaluated": 2514,
+  "total_canonical_promoted": 425,
+  "total_staged_for_review": 1900
 }

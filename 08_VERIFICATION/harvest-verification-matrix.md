@@ -11534,3 +11534,6 @@
 | `CYCLE-20261120-PAIR` | `2026-11-20T12:07:20.451Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9563` | Yes (`cc5f574c...`) |
 | `CYCLE-20261120-PCWC` | `2026-11-20T12:07:23.532Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9564` | Yes (`e5947726...`) |
 | `CYCLE-20261120-PEER` | `2026-11-20T12:07:25.491Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9565` | Yes (`e7c8068e...`) |
+| `CYCLE-20261120-ZH9V` | `2026-11-20T12:15:15.763Z` | `transact-rs/sqlx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9566` | Yes (`0de2a9a3...`) |
+| `CYCLE-20261120-ZRQY` | `2026-11-20T12:15:29.338Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9567` | Yes (`50ee7c92...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T12:15:56.218Z` | `dragonflydb-dragonfly` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-FBEC7580` [Domain J] | Yes (`8947f825...`) |

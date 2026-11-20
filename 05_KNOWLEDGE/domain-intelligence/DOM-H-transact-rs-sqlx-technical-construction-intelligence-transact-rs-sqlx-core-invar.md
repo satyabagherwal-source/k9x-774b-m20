@@ -4,24 +4,24 @@
 {
   "source_repository": "transact-rs/sqlx",
   "source_url": "https://github.com/transact-rs/sqlx",
-  "source_version": "488c4113",
+  "source_version": "e8acd6bd",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T07:28:08.119Z",
+  "timestamp": "2026-11-20T12:15:15.932Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-transact-rs-sqlx",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [transact-rs/sqlx](https://github.com/transact-rs/sqlx) (Revision: `488c4113`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T07:28:08.119Z`  
+> **Provenance**: Harvested from [transact-rs/sqlx](https://github.com/transact-rs/sqlx) (Revision: `e8acd6bd`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T12:15:15.932Z`  
 > **Learning ID**: `learn-github-transact-rs-sqlx`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: B (Product Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence)
+- **Confidence Rating**: 71%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from transact-rs/sqlx:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T07:28:07.047Z  
+> **Harvest Timestamp**: 2026-11-20T12:15:14.719Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 🧰 The Rust SQL Toolkit. An async, pure Rust SQL crate featuring compile-time checked queries without a DSL. Supports PostgreSQL, MySQL, and SQLite.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 17681 stars
+- **Stars / Engagement**: 17703 stars
 
 ---
 
@@ -974,11 +974,11 @@ impl FromStr for AnyKind {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4535** (2026-11-18): **0.9.1: `statement_cache_capacity(0)` no longer works behind pgbouncer in transaction mode (worked in 0.9.0)**
+  *Symptoms*:  ### I have found these related issues/pull requests  # Related:  - #4328 / #4337: the change behind this (cache off now means unnamed statements). Only the leak was discussed, not pgbouncer. - #3198, #67: unnamed statements and poolers, same theme, still open. - #4305 / #4361: unnamed statement lost after a catalog lookup. Not mine, I use no custom types.  New issue because: `statement_cache_capacity(0)` behind pgbouncer went from 0 errors on 0.9.0 to most queries failing on 0.9.1, and #4337 calls itself non-breaking.  ### Why this broke, and why the fix covers both the original issue, as well as the new issue  1. Cache off: persistent queries used named statements that nothing closed, so they piled up on the server (the leak) 2. The leak fix switched to the unnamed statement. That is fine on a direct connection 3. sqlx needs two round trips per query, and the first ends with a `Sync` 4. For pgbouncer in transaction mode, each round trip can get another server connection. Measured: the server process changed between two statements 4,287 of 4,784 times outside a transaction, 0 of 4,800 inside one 5. The unnamed statement lives on one server connection, so the second round trip finds none, or another client's. These are the errors above. pgbouncer follows named statements only 6. The fix: named statements again, so pgbouncer follows them, and the previous one is closed with the next `Parse`: no leak, no extra round trip 7. Proof for both: after 100 queries, 100 failing queries
+
 - **Issue #4497** (2026-11-09): **Postgres: "unable to resolve type OIDs" when resolving nested composite types — `fill_cache` drops pending rows on `continue 'outer`**
   *Symptoms*: ### I have found these related issues/pull requests  I searched for "unable to resolve type OIDs" and found no existing reports of this problem. Related, but different:  - #4361 (fixes #4305): touched the same type-resolution path in `resolve.rs` (unnamed statement destroyed by the catalog lookup), but does not change the `fill_cache` dependency loop. - #1672: problems with arrays of custom types inside records, on the decoding side; this report is about OID resolution before decoding. - #2133: custom type name → OID resolution ignoring `search_path`; a different resolution bug.  ### Description  ### Bug Description  `TypeResolver::fill_cache` in `sqlx-postgres/src/connection/resolve.rs` can lose types it still has to resolve. The query then fails with:  ``` Protocol("unable to resolve type OIDs: [Oid(…)]") ```  It happens when one catalog row resolves a type that **several** pending rows depend on, and one of those dependents still needs **another** type that isn't cached yet.  In that case the loop runs `continue 'outer` and throws away the rest of `resolved_dependencies`. Those rows were already taken out of `missing_dependencies` and are never processed again. Any type that was waiting on one of them stays in `missing_dependencies` forever, and the function returns the error above.  The type cache is per connection, so in practice this shows up as intermittent errors on **fresh connections only**. A connection that already cached the leaf types through an earlier query do
-
-- **Issue #4484** (2026-10-27): **PgConnection errors on NOTIFY delivered to a non-PgListener connection**
-  *Symptoms*: ### I have found these related issues/pull requests  - #67 (PgBouncer support) covers prepared statements, startup parameters and session advisory locks in transaction mode, but not notifications. - #2956 (`PgListener` "unknown message type") is a different error, on a listener connection. - pgbouncer/pgbouncer#655: `LISTEN` isn't supported in transaction pooling, which is how the notification reaches other clients in the second case below.  ### Description  On a `PgConnection` that isn't a `PgListener`, a NotificationResponse from the server fails the query in progress with `Protocol("execute: unexpected message: NotificationResponse")`. The statement has already run, and its transaction has committed.  In `PgStream::recv` (`sqlx-postgres/src/connection/stream.rs`), a NotificationResponse is consumed only when `self.notifications` is set, that is, on a `PgListener`'s connection. Otherwise it falls through to the executor, which treats any unexpected message as a protocol error (`executor.rs:366`).  The Postgres protocol says a frontend must accept it anywhere ([Asynchronous Operations](https://www.postgresql.org/docs/current/protocol-flow.html#PROTOCOL-ASYNC)): "Frontends must be prepared to deal with these messages at any time, even when not engaged in a query", and "Good practice is to be able to accept NotificationResponse at any point in the protocol."  There are two ways an ordinary connection can receive a NotificationResponse:  1. **The connection ran `LISTEN` itself*
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -995,873 +995,125 @@ impl FromStr for AnyKind {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6ead2994` (2026-11-16)
-**Commit Message**: fix(sqlite): synchronize transaction depth when SQLite auto-rolls back (#4473)
+### Incident Patch 1: `e1a6a2d5` (2026-11-19)
+**Commit Message**: fix(postgres): track the ReadyForQuery owed by COPY TO STDOUT (#4454)
 
-When SQLite encounters errors such as SQLITE_FULL, SQLITE_IOERR, or SQLITE_CORRUPT during a statement execution, it automatically rolls back the active transaction and resets autocommit mode to active (1).
+A copy_out_raw cancelled mid-exchange returned its connection to the pool
+with an untracked ReadyForQuery still pending. The release ping consumed it
+as its own reply, leaving the connection one reply behind, so its next query
+failed with "expected ParseComplete, got ReadyForQuery".
 
-Previously, when the application or Transaction drop guard subsequently invoked rollback or commit, SQLx attempted to execute a ROLLBACK / RELEASE statement. Because no SQLite transaction was active, the statement failed, leaving shared.transaction_depth stuck at its previous value (>= 1). Subsequent attempts to start transactions via begin_with failed with InvalidSavePointStatement.
-
-This change updates the SQLite connection worker:
-- In Command::Rollback, if depth > 0 but !conn.handle.in_transaction(), reset shared.transaction_depth to 0 and treat the rollback as Ok(()).
-- In Command::Commit, if res.is_err() and !conn.handle.in_transaction(), reset shared.transaction_depth to 0.
-- In Command::Begin, synchronize depth to 0 if !conn.handle.in_transaction().
-- Adds regression test reproducing SQLITE_FULL via page limit.
-
-Fixes #4434
-
-Signed-off-by: Samran Asif <[REDACTED_EMAIL]>
-Co-authored-by: Austin
-
-**File**: `sqlx-sqlite/src/connection/worker.rs` (modified, +43/-16)
+**File**: `sqlx-postgres/src/connection/mod.rs` (modified, +1/-1)
 ```diff
-@@ -213,7 +213,12 @@ impl ConnectionWorker {
-                         update_cached_statements_size(&conn, &shared.cached_statements_size);
-                     }
-                     Command::Begin { tx, statement } => {
--                        let depth = shared.transaction_depth.load(Ordering::Acquire);
-+                        let mut depth = shared.transaction_depth.load(Ordering::Acquire);
-+
-+                        if depth > 0 && !conn.handle.in_transaction() {
-+                            shared.transaction_depth.store(0, Ordering::Release);
-+                            depth = 0;
-+                        }
+@@ -107,7 +107,7 @@ impl PgConnection {
+         Ok(())
+     }
  
-                         let is_custom_statement = statement.is_some();
-                         let statement = match statement {
-@@ -255,23 +260,33 @@ impl ConnectionWorker {
-                                     shared.transaction_depth.fetch_sub(1, Ordering::Release);
-                                 })
-                             {
--                                // The rollback failed. To prevent leaving the connection
--                                // in an inconsistent state we shutdown this worker which
--                                // causes any subsequent operation on the connection to fail.
--                                tracing::error!(%error, "failed to rollback cancelled transaction");
--                                break;
-+                                if !conn.handle.in_transaction() {
-+                                        shared.transaction_depth.store(0, Ordering::Release);
-+                                    } else {
-+                                        // The rollback failed. To prevent leaving the connection
-+                                        // in an inconsistent state we shutdown this worker which
-+                                        // causes any subsequent operation on the connection to fail.
-+                                        tracing::error!(%error, "failed to rollback cancelled transaction");
-+                                        break;
-+                                    }
-                             }
-                         }
-                     }
-                     Command::Commit { tx } => {
-                         let depth = shared.transaction_depth.load(Ordering::Acquire);
+-    async fn recv_ready_for_query(&mut self) -> Result<(), Error> {
++    pub(crate) async fn recv_ready_for_query(&mut self) -> Result<(), Error> {
+         let r: ReadyForQuery = self.inner.stream.recv_expect().await?;
  
-                         let res = if depth > 0 {
--                            conn.handle
--                                .exec(commit_ansi_transaction_sql(depth).as_str())
--                                .map(|_| {
--                                    shared.transaction_depth.fetch_sub(1, Ordering::Release);
--                                })
-+                            let res = conn.handle
-+                                    .exec(commit_ansi_transaction_sql(depth).as_str())
-+                                    .map(|_| {
-+                                        shared.transaction_depth.fetch_sub(1, Ordering::Release);
-+                                    });
-+
-+                                if res.is_err() && !conn.handle.in_transaction() {
-+                                    shared.transaction_depth.store(0, Ordering::Release);
-+                                }
-+
-+                                res
-                         } else {
-                             Ok(())
-                         };
-@@ -293,11 +308,23 @@ impl ConnectionWorker {
-                         let depth = shared.transaction_depth.load(Ordering::Acquire);
- 
-                         let res = if depth > 0 {
--                            conn.handle
--                                .exec(rollback_ansi_transaction_sql(depth).as_str())
--                                .map(|_| {
--                                    shared.transaction_depth.fetch_sub(1, Ordering::Release);
--                                })
-+                            if !conn.handle.in_transaction() {
-+                                    shared.transaction_depth.store(0, Ordering::Release);
-+                                    Ok(())
-+                                } else {
-+                                    let res = conn.handle
-+                                        .exec(rollback_ansi_transaction_sql(depth).as_str())
-+                                        .map(|_| {
-+                                            shared.transaction_depth.fetch_sub(1, Ordering::Release);
-+                                        });
-+
-+                                    if res.is_err() && !conn.handle.in_transaction() {
-+                                        shared.transaction_depth.store(0, Ordering::Release);
-+                                        Ok(())
-+                                    } else {
-+                                        res
-+                                    }
-+                                }
-                         } else {
-                             Ok(())
-                         };
+         self.inner.pending_ready_for_query_count -= 1;
 ```
 
-**File**: `tests/sqlite/sqlite.rs` (modified, +32/-0)
+**File**: `sqlx-postgres/src/copy.rs` (modified, +8/-3)
 ```diff
-@@ -1396,6 +1396,38 @@ async fn it_can_recover_from_bad_transaction_begin() -> anyhow::Result<()> {
+@@ -323,23 +323,28 @@ async fn pg_begin_copy_out<'c, C: DerefMut<Target = PgConnection> + Send + 'c>(
+     statement: &str,
+ ) -> Result<BoxStream<'c, Result<Bytes>>> {
+     conn.wait_until_ready().await?;
+-    conn.inner.stream.send(Query(statement)).await?;
++    conn.inner.stream.write_msg(Query(statement))?;
++    // Counted so a cancelled COPY's owed `ReadyForQuery` is drained by `wait_until_ready`
++    // instead of being mistaken for the reply to the connection's next message.
++    // Before the flush: a cancelled flush leaves the `Query` buffered, to be sent later.
++    conn.inner.pending_ready_for_query_count += 1;
++    conn.inner.stream.flush().await?;
+ 
+     let _: CopyOutResponse = conn.inner.stream.recv_expect().await?;
+ 
+     let stream: TryAsyncStream<'c, Bytes> = try_stream! {
+         loop {
+             match conn.inner.stream.recv().await {
+                 Err(e) => {
+-                    conn.inner.stream.recv_expect::<ReadyForQuery>().await?;
++                    conn.recv_ready_for_query().await?;
+                     return Err(e);
+                 },
+                 Ok(msg) => match msg.format {
+                     BackendMessageFormat::CopyData => r#yield!(msg.decode::<CopyData<Bytes>>()?.0),
+                     BackendMessageFormat::CopyDone => {
+                         let _ = msg.decode::<CopyDone>()?;
+                         conn.inner.stream.recv_expect::<CommandComplete>().await?;
+-                        conn.inner.stream.recv_expect::<ReadyForQuery>().await?;
++                        conn.recv_ready_for_query().await?;
+                         return Ok(())
+                     },
+                     _ => return Err(err_protocol!("unexpected message format during copy out: {:?}", msg.format))
+```
+
+**File**: `tests/postgres/postgres.rs` (modified, +44/-0)
+```diff
+@@ -1808,6 +1808,50 @@ async fn it_can_copy_out() -> anyhow::Result<()> {
      Ok(())
  }
  
 +#[sqlx_macros::test]
-+async fn it_resets_depth_when_sqlite_auto_rolls_back() -> anyhow::Result<()> {
-+    let mut conn = SqliteConnectOptions::new()
-+        .in_memory(true)
-+        .connect()
++async fn it_can_reuse_connection_after_cancelled_copy_out() -> anyhow::Result<()> {
++    use sqlx::postgres::PgPoolCopyExt;
++    use sqlx_core::rt::timeout;
++
++    let mut setup = new::<Postgres>().await?;
++    setup
++        .execute("CREATE TABLE IF NOT EXISTS _sqlx_copy_out_cancel (id INT)")
 +        .await?;
 +
-+    conn.execute("PRAGMA page_size = 512;").await?;
-+    conn.execute("PRAGMA max_page_count = 2;").await?;
-+    conn.execute("CREATE TABLE test (x TEXT);").await?;
-+
-+    let mut tx = conn.begin().await?;
-+    // Trigger SQLITE_FULL by exceeding max_page_count
-+    let res = sqlx::query("INSERT INTO test VALUES (zeroblob(2048));")
-+        .execute(&mut *tx)
-+        .await;
-+    assert!(res.is_err());
-+
-+    // When SQLite automatically rolls back, rollback should succeed and reset depth
-+    tx.rollback().await?;
-+
-+    // Subsequent begin_with must succeed instead of failing with InvalidSavePointStatement
-+    let mut tx2 = conn.begin_with("BEGIN IMMEDIATE").await?;
-+    let value = sqlx::query_scalar::<_, i32>("SELECT 1")
-+        .fetch_one(&mut *tx2)
++    let pool = PgPoolOptions::new()
++        .max_connections(1)
++        .connect(&dotenvy::var("DATABASE_URL")?)
 +        .await?;
-+    assert_eq!(value, 1);
-+    tx2.commit().await?;
++
++    let mut lock = setup.begin().await?;
++    lock.execute("LOCK TABLE _sqlx_copy_out_cancel IN ACCESS EXCLUSIVE MODE")
++        .await?;
++
++    let copy = async {
++        let mut stream = pool
++            .copy_out_raw("COPY (SELECT id FROM _sqlx_copy_out_cancel) TO STDOUT")
++            .await?;
++        while stream.try_next().await?.is_some() {}
++        Ok::<_, sqlx::Error>(())
++    };
++    assert!(
++        timeout(Duration::from_millis(200), copy).await.is_err(),
++        "COPY should time out while the table is locked"
++    );
++
++    lock.commit().await?;
++
++    let one: i32 = sqlx::query_scalar("SELECT 1").fetch_one(&pool).await?;
++    assert_eq!(one, 1);
++
++    let mut stream = pool
++        .copy_out_raw("COPY (SELECT id FROM _sqlx_copy_out_cancel) TO STDOUT")
++        .await?;
++    while stream.try_next().await?.is_some() {}
 +
 +    Ok(())
 +}
 +
- fn transaction_state(handle: &mut LockedSqliteHandle) -> SqliteTransactionState {
-     use libsqlite3_sys::{sqlite3_txn_state, SQLITE_TXN_NONE, SQLITE_TXN_READ, SQLITE_TXN_WRITE};
- 
-```
-
----
-
-### Incident Patch 2: `ea37ec4a` (2026-11-16)
-**Commit Message**: fix(tls): don't wait for incoming data in `RustlsSocket::poll_flush()` (#4450)
-
-* fix(tls): don't wait for incoming data in `RustlsSocket::poll_flush()`
-
-`RustlsSocket::poll_flush` called `poll_complete_io`, which, once nothing
-is left to write, reads and waits until the peer sends something. A close
-always flushes first (`BufferedSocket::shutdown`), so `close_hard()` on a
-connection whose peer has nothing more to say never ends; and
-`return_to_pool` awaits `close_hard()` without a timeout when the ping on
-release fails, so each such connection holds its pool slot until the
-process exits.
-
-That happens whenever a connection comes back to the pool with a statement
-still running that the server then cancels, its statement timeout firing
-after the future holding it was dropped: the ping on release receives the
-cancellation as an error, and through PgBouncer in transaction mode over
-TLS, the server's last answers having come with it, the pooler sends
-nothing more. Ten such closes leave a pool of ten that hands out nothing.
-
-Flush now writes the pending TLS records and returns once none is left,
-as the write half of `complete_io` does, so the close ends whether or not
-the peer speaks ag
-
-**File**: `sqlx-core/src/net/tls/tls_rustls.rs` (modified, +161/-1)
-```diff
-@@ -67,7 +67,21 @@ impl<S: Socket> Socket for RustlsSocket<S> {
-     }
- 
-     fn poll_flush(&mut self, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
--        self.poll_complete_io(cx)
-+        // Only write out the pending TLS records: once nothing is left to write,
-+        // `poll_complete_io()` reads and waits for the peer to send something,
-+        // so a close (which flushes first) would hang if the peer has nothing more to say.
-+        while self.state.wants_write() {
-+            match self.state.write_tls(&mut self.inner) {
-+                // The transport accepts no more; `complete_io()` treats this as EOF too.
-+                Ok(0) => break,
-+                Ok(_) => {}
-+                Err(e) if e.kind() == io::ErrorKind::WouldBlock => {
-+                    ready!(self.inner.poll_ready(cx))?;
-+                }
-+                Err(e) => return Poll::Ready(Err(e)),
-+            }
-+        }
-+        Poll::Ready(self.inner.flush())
-     }
- 
-     fn poll_shutdown(&mut self, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
-@@ -356,3 +370,149 @@ impl ServerCertVerifier for NoHostnameTlsVerifier {
-         self.verifier.supported_verify_schemes()
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use std::future::Future;
-+    use std::pin::pin;
-+    use std::task::Waker;
-+
-+    use rustls::{ConnectionCommon, ServerConfig, ServerConnection};
-+
-+    use super::*;
-+    use crate::net::BufferedSocket;
-+
-+    // A self-signed certificate and its key, for the test server only.
-+    const CERT: &str = "\
-+-----BEGIN CERTIFICATE-----
-+MIIBIjCB1aADAgECAhQRcu62KABJbi99FYkUEAUGt9j9JDAFBgMrZXAwFDESMBAG
-+A1UEAwwJbG9jYWxob3N0MCAXDTI2MTAwODIyMzE0OVoYDzIxMjYwOTE0MjIzMTQ5
-+WjAUMRIwEAYDVQQDDAlsb2NhbGhvc3QwKjAFBgMrZXADIQCIT8wE5M9/LF5HKWU7
-+hFe/SqknU66oA0FPmjfdziJ/IqM3MDUwFAYDVR0RBA0wC4IJbG9jYWxob3N0MB0G
-+A1UdDgQWBBRarcSa6Ue2Ob0JlPlE/409LAm6STAFBgMrZXADQQBpNitWpyHm05qH
-+3Z4w/YG/Ufe05/aDwRAwOKM9snf+pqJ8eG+WnxupOK9oJY/GpmTpW2XSBpVHyGRJ
-+SmndpuEE
-+-----END CERTIFICATE-----";
-+
-+    const KEY: &str = "\
-+-----BEGIN PRIVATE KEY-----
-+MC4CAQAwBQYDK2VwBCIEID8jex+k7LAgC5JfhRHaleP+dhL1s4NemFDa1CMKvcuu
-+-----END PRIVATE KEY-----";
-+
-+    /// A peer that takes every write and never sends anything.
-+    #[derive(Default)]
-+    struct SilentPeer {
-+        received: Vec<u8>,
-+    }
-+
-+    impl Socket for SilentPeer {
-+        fn try_read(&mut self, _buf: &mut dyn ReadBuf) -> io::Result<usize> {
-+            Err(io::ErrorKind::WouldBlock.into())
-+        }
-+
-+        fn try_write(&mut self, buf: &[u8]) -> io::Result<usize> {
-+            self.received.extend_from_slice(buf);
-+            Ok(buf.len())
-+        }
-+
-+        fn poll_read_ready(&mut self, _cx: &mut Context<'_>) -> Poll<io::Result<()>> {
-+            Poll::Pending
-+        }
-+
-+        fn poll_write_ready(&mut self, _cx: &mut Context<'_>) -> Poll<io::Result<()>> {
-+            Poll::Ready(Ok(()))
-+        }
-+
-+        fn poll_shutdown(&mut self, _cx: &mut Context<'_>) -> Poll<io::Result<()>> {
-+            Poll::Ready(Ok(()))
-+        }
-+    }
-+
-+    /// Has `to` read and process `records`.
-+    fn deliver<D>(mut records: &[u8], to: &mut ConnectionCommon<D>) {
-+        while !records.is_empty() {
-+            to.read_tls(&mut records).unwrap();
-+            to.process_new_packets().unwrap();
-+        }
-+    }
-+
-+    /// Delivers the TLS records queued in `from` to `to`.
-+    fn transfer<A, B>(from: &mut ConnectionCommon<A>, to: &mut ConnectionCommon<B>) {
-+        let mut records = Vec::new();
-+        while from.wants_write() {
-+            from.write_tls(&mut records).unwrap();
-+        }
-+        deliver(&records, to);
-+    }
-+
-+    #[track_caller]
-+    fn assert_ready_ok(poll: Poll<io::Result<()>>) {
-+        assert!(
-+            matches!(poll, Poll::Ready(Ok(()))),
-+            "expected `Ready(Ok(()))`, got {poll:?}"
-+        );
-+    }
-+
-+    // A flush with nothing left to write used to read and wait for the peer to send something,
-+    // so a close, which flushes first, never ended if the peer had nothing more to say (#4449).
-+    #[test]
-+    fn flush_and_shutdown_do_not_wait_for_a_silent_peer() {
-+        let mut cx = Context::from_waker(Waker::noop());
-+
-+        // The client's config as `sslmode=require` builds it; loading no files, it's ready at once.
-+        let tls_config = TlsConfig {
-+            accept_invalid_certs: true,
-+            accept_invalid_hostnames: true,
-+            root_cert_path: None,
-+            client_cert_path: None,
-+            client_key_path: None,
-+        };
-+        let Poll::Ready(Ok(RustlsConnector { config })) = pin!(connector(tls_config)).poll(&mut cx)
-+        else {
-+            panic!("`connector()` should be ready at once");
-+        };
-+
-+        let server_config = ServerConfig::builder_with_provider(config.crypto_provider().clone())
-+            .with_safe_default_protocol_versions()
-+            .unwrap()
-+            .with_no_client_auth()
-+            .with_single_cert(
-+                vec![CertificateDer::
-```
-
----
-
-### Incident Patch 3: `488c4113` (2026-11-17)
-**Commit Message**: fix: handle IPv6 properly at all levels (#4529)
-
-* fix: handle IPv6 properly at all levels
-
-* fix: Clippy lint
-
-**File**: `.github/workflows/sqlx.yml` (modified, +133/-17)
-```diff
-@@ -418,7 +418,7 @@ jobs:
-           DATABASE_URL: postgres://postgres@localhost:5432/sqlx?sslmode=verify-ca&sslrootcert=.%2Ftests%2Fcerts%2Fca.crt&sslkey=.%2Ftests%2Fcerts%2Fkeys%2Fclient.key&sslcert=.%2Ftests%2Fcerts%2Fclient.crt
-           RUSTFLAGS: -D warnings --cfg postgres="${{ matrix.postgres }}"
- 
--      # Test with `hostaddr` and `verify-full`
-+      # Test with `hostaddr` and `verify-full` (test connection only)
-       - run: |
-           SKIP_ARGS=()
-           for test in $PG_ISOLATED_TESTS; do
-@@ -427,12 +427,24 @@ jobs:
-           cargo test \
-             --no-default-features \
-             --features any,postgres,macros,_unstable-all-types,runtime-${{ matrix.runtime }},tls-${{ matrix.tls }} \
--            -- \
--            "${SKIP_ARGS[@]}"
-+            --test postgres \
-+            -- --exact it_connects
-         env:
-           DATABASE_URL: postgres://postgres@sqlx.test:5432/sqlx?hostaddr=127.0.0.1&sslmode=verify-full&sslrootcert=.%2Ftests%2Fcerts%2Fca.crt&sslkey=.%2Ftests%2Fcerts%2Fkeys%2Fclient.key&sslcert=.%2Ftests%2Fcerts%2Fclient.crt
-           RUSTFLAGS: -D warnings --cfg postgres="${{ matrix.postgres }}"
- 
-+      # Test with IPv6 and `verify-full` (test connection only)
-+      # The generated certificate includes a `subjectAltName` with an IPv6-mapped `127.0.0.1`
-+      - run: |
-+          cargo test \
-+            --no-default-features \
-+            --features any,postgres,macros,_unstable-all-types,runtime-${{ matrix.runtime }},tls-${{ matrix.tls }} \
-+            --test postgres \
-+            -- --exact it_connects
-+        env:
-+          DATABASE_URL: postgres://postgres@[::ffff:127.0.0.1]:5432/sqlx?sslmode=verify-full&sslrootcert=.%2Ftests%2Fcerts%2Fca.crt&sslkey=.%2Ftests%2Fcerts%2Fkeys%2Fclient.key&sslcert=.%2Ftests%2Fcerts%2Fclient.crt
-+          RUSTFLAGS: -D warnings --cfg postgres="${{ matrix.postgres }}"
-+
-   postgres-isolated:
-     name: Postgres Isolated
-     runs-on: ubuntu-24.04
-@@ -587,21 +599,41 @@ jobs:
-           SQLX_OFFLINE_DIR: .sqlx
-           RUSTFLAGS: --cfg mysql_${{ matrix.mysql }}
- 
--      # client SSL authentication
-+  # client SSL authentication
-+  mysql-ssl-auth:
-+    name: MySQL SSL Auth
-+    runs-on: ubuntu-24.04
-+    strategy:
-+      matrix:
-+        mysql: [ 8 ]
-+        runtime: [ async-global-executor, smol, tokio ]
-+        tls: [ native-tls, rustls-aws-lc-rs, rustls-ring ]
-+        include:
-+          - { mysql: 8, runtime: tokio, tls: rustls-aws-lc-rs-native-roots }
-+    needs: check
-+    timeout-minutes: 30
-+    steps:
-+      - uses: actions/checkout@v5
- 
--      - if: ${{ matrix.tls != 'none' }}
--        run: |
--          docker stop mysql_${{ matrix.mysql }}
-+      - name: Setup Rust
-+        run: rustup show active-toolchain || rustup toolchain install
-+
-+      - uses: Swatinem/rust-cache@v2
-+
-+      # Generate TLS certificates
-+      - run: ./gen-certs.sh
-+        working-directory: tests/certs
-+
-+      - run: |
-           docker compose -f tests/docker-compose.yml run -d -p 3306:3306 --name mysql_${{ matrix.mysql }}_client_ssl mysql_${{ matrix.mysql }}_client_ssl
-           docker exec mysql_${{ matrix.mysql }}_client_ssl bash -c '
-             until (command -v mysqladmin >/dev/null && mysqladmin ping -uroot --silent) || \
--                  (command -v mariadb-admin >/dev/null && mariadb-admin ping -uroot --silent); do
-+                (command -v mariadb-admin >/dev/null && mariadb-admin ping -uroot --silent); do
-               sleep 2
--            done
-+          done
-           '
- 
--      - if: ${{ matrix.tls != 'none' }}
--        run: |
-+      - run: |
-           SKIP_ARGS=()
-           for test in $MYSQL_ISOLATED_TESTS; do
-             SKIP_ARGS+=(--skip "$test")
-@@ -615,6 +647,37 @@ jobs:
-           DATABASE_URL: mysql://root@localhost:3306/sqlx?sslmode=verify_ca&ssl-ca=.%2Ftests%2Fcerts%2Fca.crt&ssl-key=.%2Ftests%2Fcerts%2Fkeys%2Fclient.key&ssl-cert=.%2Ftests%2Fcerts%2Fclient.crt
-           RUSTFLAGS: --cfg mysql_${{ matrix.mysql }}
- 
-+      # Test with `tls-sni-servername=sqlx.test` and `sslmode=verify_identity` (test connection only)
-+      - run: |
-+          SKIP_ARGS=()
-+          for test in $MYSQL_ISOLATED_TESTS; do
-+            SKIP_ARGS+=(--skip "$test")
-+          done
-+          cargo test \
-+            --no-default-features \
-+            --features any,mysql,macros,migrate,_unstable-all-types,runtime-${{ matrix.runtime }},tls-${{ matrix.tls }} \
-+            --test mysql \
-+            -- --exact it_connects
-+        env:
-+          DATABASE_URL: mysql://root@localhost:3306/sqlx?tls-sni-servername=sqlx.test&sslmode=verify_identity&ssl-ca=.%2Ftests%2Fcerts%2Fca.crt&ssl-key=.%2Ftests%2Fcerts%2Fkeys%2Fclient.key&ssl-cert=.%2Ftests%2Fcerts%2Fclient.crt
-+          RUSTFLAGS: --cfg mysql_${{ matrix.mysql }}
-+
-+      # Test with IPv6 and `sslmode=verify_identity` (test connection only)
-+      # The generated certificate includes a `subjectAltName` with an IPv6-mapped `127.0.0.1`
-+      - run: |
-+          SKIP_ARGS
-```
-
-**File**: `sqlx-core/src/net/mod.rs` (modified, +117/-2)
-```diff
-@@ -2,6 +2,121 @@ mod socket;
- pub mod tls;
- 
- pub use socket::{
--    connect_tcp, connect_uds, BufferedSocket, Socket, SocketHost, SocketIntoBox, WithSocket,
--    WriteBuffer,
-+    connect_tcp, connect_uds, BufferedSocket, Socket, SocketIntoBox, WithSocket, WriteBuffer,
- };
-+use std::fmt::{Debug, Display, Formatter};
-+use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
-+
-+#[derive(Clone, PartialEq, Eq)]
-+pub struct UrlHost {
-+    original: Box<str>,
-+    brackets: Brackets,
-+}
-+
-+#[derive(Clone, PartialEq, Eq)]
-+enum Brackets {
-+    None,
-+    Included,
-+    Needed,
-+}
-+
-+impl UrlHost {
-+    pub fn empty() -> Self {
-+        UrlHost {
-+            original: "".into(),
-+            brackets: Brackets::None,
-+        }
-+    }
-+
-+    pub fn localhost() -> Self {
-+        UrlHost {
-+            original: "localhost".into(),
-+            brackets: Brackets::None,
-+        }
-+    }
-+
-+    fn check_brackets(&mut self) {
-+        if self.original.starts_with('[') && self.original.ends_with(']') {
-+            self.brackets = Brackets::Included;
-+        } else if self.original.parse::<Ipv6Addr>().is_ok() {
-+            // IPv6 address passed through `.host()`, should be bracketed in a URL
-+            self.brackets = Brackets::Needed;
-+        } else {
-+            self.brackets = Brackets::None;
-+        }
-+    }
-+
-+    pub fn set(&mut self, s: &str) {
-+        self.original = s.into();
-+        self.check_brackets();
-+    }
-+
-+    pub fn original(&self) -> &str {
-+        &self.original
-+    }
-+
-+    pub fn stripped(&self) -> &str {
-+        self.original.trim_matches(&['[', ']'][..])
-+    }
-+}
-+
-+impl From<String> for UrlHost {
-+    fn from(value: String) -> Self {
-+        let mut this = Self {
-+            original: value.into(),
-+            brackets: Brackets::None,
-+        };
-+        this.check_brackets();
-+        this
-+    }
-+}
-+
-+impl Debug for UrlHost {
-+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-+        Debug::fmt(&self.original, f)
-+    }
-+}
-+
-+impl Display for UrlHost {
-+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-+        if let Brackets::Needed = self.brackets {
-+            write!(f, "[{}]", self.original)
-+        } else {
-+            f.write_str(&self.original)
-+        }
-+    }
-+}
-+
-+impl<'a> From<&'a UrlHost> for SocketHost<'a> {
-+    fn from(host: &'a UrlHost) -> Self {
-+        SocketHost::Str(host.stripped())
-+    }
-+}
-+
-+#[derive(Clone, Copy)]
-+pub enum SocketHost<'a> {
-+    Str(&'a str),
-+    // Separating `Ipv4Addr` and `Ipv6Addr` makes for a flatter enum
-+    Ipv4(Ipv4Addr),
-+    Ipv6(Ipv6Addr),
-+}
-+
-+impl From<IpAddr> for SocketHost<'_> {
-+    fn from(value: IpAddr) -> Self {
-+        match value {
-+            IpAddr::V4(addr) => Self::Ipv4(addr),
-+            IpAddr::V6(addr) => Self::Ipv6(addr),
-+        }
-+    }
-+}
-+
-+impl SocketHost<'_> {
-+    fn try_as_ip(&self) -> Result<IpAddr, &str> {
-+        match *self {
-+            // `Url::host()` returns the host wrapped in brackets which the socket API isn't expecting
-+            Self::Str(s) => s.trim_matches(&['[', ']'][..]).parse().map_err(|_| s),
-+            Self::Ipv4(addr) => Ok(addr.into()),
-+            Self::Ipv6(addr) => Ok(addr.into()),
-+        }
-+    }
-+}
-```
-
-**File**: `sqlx-core/src/net/socket/mod.rs` (modified, +20/-48)
-```diff
-@@ -1,17 +1,15 @@
--use std::fmt::Display;
- use std::future::Future;
- use std::io;
--use std::net::{AddrParseError, IpAddr};
- use std::path::Path;
- use std::pin::Pin;
- use std::task::{ready, Context, Poll};
- 
-+use crate::io::ReadBuf;
-+use crate::net::SocketHost;
- pub use buffered::{BufferedSocket, WriteBuffer};
- use bytes::BufMut;
- use cfg_if::cfg_if;
- 
--use crate::io::ReadBuf;
--
- mod buffered;
- 
- pub trait Socket: Send + Sync + Unpin + 'static {
-@@ -183,43 +181,18 @@ impl<S: Socket + ?Sized> Socket for Box<S> {
-     }
- }
- 
--#[derive(Clone, Copy)]
--pub enum SocketHost<'a> {
--    Name(&'a str),
--    Addr(IpAddr),
--}
--
--impl TryFrom<SocketHost<'_>> for IpAddr {
--    type Error = AddrParseError;
--
--    fn try_from(host: SocketHost<'_>) -> Result<Self, Self::Error> {
--        match host {
--            // IPv6 addresses in URLs will be wrapped in brackets and the `url` crate doesn't trim those.
--            SocketHost::Name(name) => name.trim_matches(&['[', ']'][..]).parse(),
--            SocketHost::Addr(addr) => Ok(addr),
--        }
--    }
--}
--
--impl Display for SocketHost<'_> {
--    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
--        match self {
--            SocketHost::Name(name) => name.fmt(f),
--            SocketHost::Addr(addr) => addr.fmt(f),
--        }
--    }
--}
--
- pub async fn connect_tcp<Ws: WithSocket>(
-     host: SocketHost<'_>,
-     port: u16,
-     with_socket: Ws,
- ) -> crate::Result<Ws::Output> {
-     #[cfg(feature = "_rt-tokio")]
-     if crate::rt::rt_tokio::available() {
--        let socket = match host {
--            SocketHost::Name(name) => tokio::net::TcpStream::connect((name, port)).await?,
--            SocketHost::Addr(addr) => tokio::net::TcpStream::connect((addr, port)).await?,
-+        use tokio::net::TcpStream;
-+
-+        let socket = match host.try_as_ip() {
-+            Ok(addr) => TcpStream::connect((addr, port)).await?,
-+            Err(host) => TcpStream::connect((host, port)).await?,
-         };
- 
-         socket.set_nodelay(true)?;
-@@ -230,7 +203,7 @@ pub async fn connect_tcp<Ws: WithSocket>(
-         if #[cfg(feature = "_rt-async-io")] {
-             Ok(with_socket.with_socket(connect_tcp_async_io(host, port).await?).await)
-         } else {
--            crate::rt::missing_rt((host, port, with_socket))
-+            crate::rt::missing_rt((host.try_as_ip(), port, with_socket))
-         }
-     }
- }
-@@ -243,21 +216,20 @@ pub async fn connect_tcp<Ws: WithSocket>(
- #[cfg(feature = "_rt-async-io")]
- async fn connect_tcp_async_io(host: SocketHost<'_>, port: u16) -> crate::Result<impl Socket> {
-     use async_io::Async;
--    use std::net::{IpAddr, TcpStream, ToSocketAddrs};
--
--    if let Ok(addr) = IpAddr::try_from(host) {
--        let socket = Async::<TcpStream>::connect((addr, port)).await?;
--        socket.get_ref().set_nodelay(true)?;
--        return Ok(socket);
--    }
-+    use std::net::{TcpStream, ToSocketAddrs};
- 
--    let host = host.to_string();
-+    let host: Box<str> = match host.try_as_ip() {
-+        Ok(addr) => {
-+            let socket = Async::<TcpStream>::connect((addr, port)).await?;
-+            socket.get_ref().set_nodelay(true)?;
-+            return Ok(socket);
-+        }
-+        Err(host) => host.into(),
-+    };
- 
--    let addresses = crate::rt::spawn_blocking(move || {
--        let addr = (host.as_str(), port);
--        ToSocketAddrs::to_socket_addrs(&addr)
--    })
--    .await?;
-+    let addresses =
-+        crate::rt::spawn_blocking(move || ToSocketAddrs::to_socket_addrs(&(&host[..], port)))
-+            .await?;
- 
-     let mut last_err = None;
- 
-```
-
-**File**: `sqlx-mysql/src/connection/establish.rs` (modified, +1/-3)
-```diff
-@@ -9,7 +9,6 @@ use crate::protocol::Capabilities;
- use crate::{MySqlConnectOptions, MySqlConnection, MySqlSslMode};
- use bytes::buf::Buf;
- use bytes::Bytes;
--use sqlx_core::net::SocketHost;
- 
- impl MySqlConnection {
-     pub(crate) async fn establish(options: &MySqlConnectOptions) -> Result<Self, Error> {
-@@ -18,8 +17,7 @@ impl MySqlConnection {
-         let handshake = match &options.socket {
-             Some(path) => crate::net::connect_uds(path, do_handshake).await?,
-             None => {
--                crate::net::connect_tcp(SocketHost::Name(&options.host), options.port, do_handshake)
--                    .await?
-+                crate::net::connect_tcp((&options.host).into(), options.port, do_handshake).await?
-             }
-         };
- 
-```
-
-**File**: `sqlx-mysql/src/connection/tls.rs` (modified, +4/-1)
-```diff
-@@ -86,7 +86,10 @@ pub(super) async fn maybe_upgrade<S: Socket>(
- 
-     tls::handshake(
-         stream.socket.into_inner(),
--        options.tls_server_name.as_deref().unwrap_or(&options.host),
-+        options
-+            .tls_sni_servername
-+            .as_deref()
-+            .unwrap_or_else(|| options.host.stripped()),
-         connector,
-         MapStream {
-             server_version: stream.server_version,
-```
-
-**File**: `sqlx-mysql/src/options/mod.rs` (modified, +12/-11)
-```diff
-@@ -1,3 +1,4 @@
-+use sqlx_core::net::UrlHost;
- use std::{
-     path::{Path, PathBuf},
-     sync::{Arc, OnceLock},
-@@ -65,13 +66,13 @@ pub use ssl_mode::MySqlSslMode;
- /// ```
- #[derive(Debug, Clone)]
- pub struct MySqlConnectOptions {
--    pub(crate) host: String,
-+    pub(crate) host: UrlHost,
-     pub(crate) port: u16,
-     pub(crate) socket: Option<PathBuf>,
-     pub(crate) username: String,
-     pub(crate) password: Option<String>,
-     pub(crate) database: Option<String>,
--    pub(crate) tls_server_name: Option<String>,
-+    pub(crate) tls_sni_servername: Option<String>,
-     pub(crate) ssl_options: SslOptions,
-     pub(crate) statement_cache_capacity: usize,
-     pub(crate) charset: String,
-@@ -105,14 +106,14 @@ impl MySqlConnectOptions {
-     pub fn new() -> Self {
-         Self {
-             port: 3306,
--            host: String::from("localhost"),
-+            host: UrlHost::localhost(),
-             socket: None,
-             username: String::from("root"),
-             password: None,
-             database: None,
-             charset: String::from("utf8mb4"),
-             collation: None,
--            tls_server_name: None,
-+            tls_sni_servername: None,
-             ssl_options: SslOptions {
-                 ssl_mode: MySqlSslMode::Preferred,
-                 ssl_ca: None,
-@@ -136,7 +137,7 @@ impl MySqlConnectOptions {
-     /// The default behavior when the host is not specified,
-     /// is to connect to localhost.
-     pub fn host(mut self, host: &str) -> Self {
--        host.clone_into(&mut self.host);
-+        self.host.set(host);
-         self
-     }
- 
-@@ -150,10 +151,10 @@ impl MySqlConnectOptions {
-     /// # use sqlx_mysql::MySqlConnectOptions;
-     /// let _options = MySqlConnectOptions::new()
-     ///     .host("haproxy.example.com")
--    ///     .tls_server_name("mysql.example.com");
-+    ///     .tls_sni_servername("mysql.example.com");
-     /// ```
--    pub fn tls_server_name(mut self, server_name: &str) -> Self {
--        self.tls_server_name = Some(server_name.to_owned());
-+    pub fn tls_sni_servername(mut self, server_name: &str) -> Self {
-+        self.tls_sni_servername = Some(server_name.to_owned());
-         self
-     }
- 
-@@ -480,7 +481,7 @@ impl MySqlConnectOptions {
-     /// assert_eq!(options.get_host(), "127.0.0.1");
-     /// ```
-     pub fn get_host(&self) -> &str {
--        &self.host
-+        self.host.original()
-     }
- 
-     /// Get the server's port.
-@@ -586,7 +587,7 @@ mod tests {
- 
-     #[test]
-     fn tls_server_name_is_stored() {
--        let opts = MySqlConnectOptions::new().tls_server_name("sni.example.com");
--        assert_eq!(opts.tls_server_name.as_deref(), Some("sni.example.com"));
-+        let opts = MySqlConnectOptions::new().tls_sni_servername("sni.example.com");
-+        assert_eq!(opts.tls_sni_servername.as_deref(), Some("sni.example.com"));
-     }
- }
-```
-
-**File**: `sqlx-mysql/src/options/parse.rs` (modified, +19/-0)
-```diff
-@@ -67,6 +67,8 @@ impl MySqlConnectOptions {
- 
-                 "sslkey" | "ssl-key" => options = options.ssl_client_key(&*value),
- 
-+                "tls-sni-servername" => options = options.tls_sni_servername(&value),
-+
-                 "statement-cache-capacity" => {
-                     options =
-                         options.statement_cache_capacity(value.parse().map_err(Error::config)?);
-@@ -197,3 +199,20 @@ fn it_parses_timezone() {
-         .unwrap();
-     assert_eq!(opts.timezone.as_deref(), Some("+08:00"));
- }
-+
-+#[test]
-+fn ipv6_url_round_trips() {
-+    let url = "mysql://username:p%40ssw0rd@[2001:db8::1]:3306/database";
-+
-+    let opts = MySqlConnectOptions::from_str(url).unwrap();
-+
-+    assert_eq!(opts.host.original(), "[2001:db8::1]");
-+    assert_eq!(opts.host.stripped(), "2001:db8::1");
-+
-+    assert_eq!(
-+        opts.build_url().as_str(),
-+        // `build_url()` adds some parameters that weren't in the URL originally,
-+        // but this should not be harmful
-+        "mysql://username:p%40ssw0rd@[2001:db8::1]:3306/database?ssl-mode=PREFERRED&charset=utf8mb4&statement-cache-capacity=100"
-+    )
-+}
-```
-
-**File**: `sqlx-postgres/src/connection/stream.rs` (modified, +1/-2)
-```diff
-@@ -14,7 +14,6 @@ use futures_channel::mpsc::UnboundedSender;
- use futures_util::SinkExt;
- use log::Level;
- use sqlx_core::bytes::Buf;
--use sqlx_core::net::SocketHost;
- 
- // the stream is a separate type from the connection to uphold the invariant where an instantiated
- // [PgConnection] is a **valid** connection to postgres
-@@ -48,7 +47,7 @@ impl PgStream {
-                 net::connect_tcp(
-                     options
-                         .hostaddr
--                        .map_or_else(|| SocketHost::Name(&options.host), SocketHost::Addr),
-+                        .map_or_else(|| (&options.host).into(), Into::into),
-                     options.port,
-                     MaybeUpgradeTls(options),
-                 )
+ #[sqlx_macros::test]
+ async fn it_encodes_custom_array_issue_1504() -> anyhow::Result<()> {
+     use sqlx::encode::IsNull;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4537** (2026-11-19): chore(mysql): update rsa to 0.10.0 (@tuantran0910)
 - **PR #4529** (2026-11-17): fix: handle IPv6 properly at all levels (@abonander)
+- **PR #4528** (2026-11-18): fix(postgres): don't panic decoding out-of-range dates and times (@colinhacks)
 - **PR #4526** (2026-11-16): docs(FAQ): Replace versioned docs.rs link with latest (@TheJanzap)
 - **PR #4525** (2026-11-16): sqlx-sqlite: bump the upper bound on libsqlite3-sys to allow 0.40.x (@lthiery)
-- **PR #4515** (closed): fix(sqlite): reset transaction depth after SQLite rolls back on its own (@yxshee)
-- **PR #4514** (2026-11-08): fix(postgres): make `hostaddr` semantics match `libpq` (@abonander)
-- **PR #4508** (2026-11-09): fix(macros): reject `#[repr(C)]` on enums in `derive(Type)` (@thelastbackspace)
+- **PR #4522** (closed): feat(postgres): add PgSocketConnector hook to PgConnectOptions (@ropoctl)
 
 ---
 
@@ -1881,64 +1133,31 @@ the peer speaks ag
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sqlite): synchronize transaction depth when SQLite auto-rolls back
+## X. postgres): track the ReadyForQuery owed by COPY TO STDOUT
 
 **RULE**:
-When implementing operations in `sqlx-sqlite/src/connection/worker.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sqlx-postgres/src/connection/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6ead2994`: sqlite): synchronize transaction depth when SQLite auto-rolls back. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e1a6a2d5`: postgres): track the ReadyForQuery owed by COPY TO STDOUT. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-sqlite/src/connection/worker.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-postgres/src/connection/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                        let mut depth = shared.transaction_depth.load(Ordering::Acquire);
-
-                        if depth > 0 && !conn.handle.in_transaction() {
-                            shared.transaction_depth.store(0, Ordering::Release);
-                            depth = 0;
-                        }
-                                if !conn.handle.in_transaction() {
-                                        shared.transaction_depth.store(0, Ordering::Release);
-                                    } else {
-                                        // The rollback failed. To prevent leaving the connection
-                                        // in an inconsistent state we shutdown this worker which
-                                        // causes any subsequent operation on the connection to fail.
-                                        tracing::error!(%error, "failed to rollback cancelled transaction");
-                                        break;
-                                    }
-                            let res = conn.handle
-                                    .exec(commit_ansi_transaction_sql(depth).as_str())
-                                    .map(|_| {
-        
+    pub(crate) async fn recv_ready_for_query(&mut self) -> Result<(), Error> {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                        let depth = shared.transaction_depth.load(Ordering::Acquire);
-                                // The rollback failed. To prevent leaving the connection
-                                // in an inconsistent state we shutdown this worker which
-                                // causes any subsequent operation on the connection to fail.
-                                tracing::error!(%error, "failed to rollback cancelled transaction");
-                                break;
-                            conn.handle
-                                .exec(commit_ansi_transaction_sql(depth).as_str())
-                                .map(|_| {
-                                    shared.transaction_depth.fetch_sub(1, Ordering::Release);
-                                })
-                            conn.handle
-                                .exec(rollback_ansi_transaction_sql(depth).as_str())
-                                .map(|_| {
-                                    shared.transaction_depth.fetch_sub(1, Ordering::Release);
-                                })
+    async fn recv_ready_for_query(&mut self) -> Result<(), Error> {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6ead2994` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e1a6a2d5` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
