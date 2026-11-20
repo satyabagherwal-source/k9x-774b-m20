@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-3XKP",
-    "timestamp": "2026-11-18T17:51:18.457Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "b187f2207c146de39280010542f7b630b06a01faa6ecff8729c609d5bf5f1bba",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-41GP",
     "timestamp": "2026-11-18T17:51:23.497Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7490,6 +7475,21 @@
     "repository": "dalance/procs",
     "learningId": "learn-github-dalance-procs",
     "contentHash": "d01a5eef5292a4f0836798ff62e1e6578db0c95246f016bde3bada31b01d6964",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-4EP0",
+    "timestamp": "2026-11-20T21:38:58.020Z",
+    "repository": "beclab/Olares",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "6b7cdb42d047bc5a9e8ceadc94168a44fabc4d3b0e3d73f7874d48c3fe6de5d0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

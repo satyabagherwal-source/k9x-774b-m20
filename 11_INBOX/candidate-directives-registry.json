@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T21:25:56.549Z",
+  "last_updated": "2026-11-20T21:39:04.219Z",
   "directives": [
     {
       "id": "CD-001",
@@ -32758,11 +32758,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-LMMJ",
+      "id": "CD-4JH4",
       "directive_title": "build): download ONNX Runtime archives from npmmirror",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-LMMJ-build-download-onnx-runtime-archives-from-npmmirror.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-4JH4-build-download-onnx-runtime-archives-from-npmmirror.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
@@ -39232,6 +39232,46 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-4EWR",
+      "directive_title": "disable buildx provenance on per-arch proxy images",
+      "source_repo": "beclab/Olares",
+      "source_commit": "83f304b1",
+      "staged_file": "11_INBOX/candidate-directives/CD-4EWR-disable-buildx-provenance-on-per-arch-proxy-images.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-4HS7",
+      "directive_title": "ci): disable buildx provenance on per-arch proxy images",
+      "source_repo": "beclab-olares-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-4HS7-ci-disable-buildx-provenance-on-per-arch-proxy-images.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-F15CE0",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F15CE0-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-902155",
+      "directive_title": "build): download ONNX Runtime archives from npmmirror",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-902155-build-download-onnx-runtime-archives-fro.md",
+      "staged_date": "2026-11-20"
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T21:25:56.741Z",
+  "last_updated": "2026-11-20T21:39:04.429Z",
   "total_records": 2180,
   "domains": {
     "A": {
@@ -14564,8 +14564,8 @@
       "title": "Technical Construction Intelligence: beclab/Olares Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-technical-construction-intelligence-beclab-olares-core-invariants.md",
       "repository": "beclab/Olares",
-      "content_hash": "e3df38f2c67eca949b3695fa9b402f5d0b2df3d0d2da830a04d605367e6b9a1a",
-      "created_at": "2026-11-19T19:12:05.766Z"
+      "content_hash": "2b2a9ffbbc3d78a36953d869119eaa96e147331266763f62370e64385eae1385",
+      "created_at": "2026-11-20T21:38:58.517Z"
     },
     "DOM-D-01385688": {
       "record_id": "DOM-D-01385688",
@@ -14624,8 +14624,8 @@
       "title": "Technical Construction Intelligence: beclab-olares-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-learnings-technical-construction-intelligence-beclab-olares-learni.md",
       "repository": "beclab-olares-learnings",
-      "content_hash": "ac54ab43ef95a30e6a85bab0772be4d0ac971327112aca506c7bf4bee036fa22",
-      "created_at": "2026-11-19T19:12:13.842Z"
+      "content_hash": "79e0a2e0ec4b25dbc759df467500a7346c8ea505afcfdfa8c28790dafdc253cd",
+      "created_at": "2026-11-20T21:39:02.256Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv",
@@ -31276,8 +31276,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "d10cda4a99fe8a64dc924e2f3795b8a1f65fe011b2229e2c68705d6cb04ba9ad",
-      "created_at": "2026-11-20T20:28:21.860Z"
+      "content_hash": "0fa85c8b522718a9cc93524426400c82b84ecc9a97cac6777b9e24722fc4a654",
+      "created_at": "2026-11-20T21:39:03.121Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
@@ -33310,8 +33310,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "cf7f05108ff44a9c419d9e4c851496d99f926d0c08a3642c3ffeab8c65ecbd0a",
-      "created_at": "2026-11-20T20:28:22.758Z"
+      "content_hash": "c22ebc42e00c6e8d692266f9469d6a0d9ae405c8fd1139f9e8b521bfa5c4f16e",
+      "created_at": "2026-11-20T21:39:04.429Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",

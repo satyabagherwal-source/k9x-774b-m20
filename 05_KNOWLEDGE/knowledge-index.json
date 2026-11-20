@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T21:25:56.929Z",
+  "last_updated": "2026-11-20T21:39:04.820Z",
   "total_verified_learnings": 9050,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22662,
+  "total_items": 22665,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "71712d95a55883e169ecbcbe2726466706e2cc3759c6a8f81f66c07a2c21d561",
+      "content_hash": "a7abddf51bf79ff65c7e74d22031caa52431346844457ced25916e1511bbffec",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T20:28:22.915Z"
+      "persisted_at": "2026-11-20T21:39:04.639Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ff588d1acf433e61d49993091caa73c194ec8462cdc8b8a2c1095a29cae201ef",
+      "content_hash": "86f16b4d919317dfc21f31a5c7ee13feaaf2d71482330ac8859aaec4dd42909a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T20:28:23.052Z"
+      "persisted_at": "2026-11-20T21:39:04.820Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -227326,8 +227326,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "8c82c544",
-      "content_hash": "18f33b37e4d8da54c10af60e1e75a99c09a67b57a00d4f73e60589e37b0359f7",
+      "source_version": "83f304b1",
+      "content_hash": "6b7cdb42d047bc5a9e8ceadc94168a44fabc4d3b0e3d73f7874d48c3fe6de5d0",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -227350,6 +227350,11 @@
           "number": 9430,
           "title": "clean up stale JuiceFS mounts",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9643,
+          "title": "disable buildx provenance on per-arch proxy images",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -227357,7 +227362,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T19:12:05.177Z",
+      "verified_at": "2026-11-20T21:38:57.741Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227385,10 +227390,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-technical-construction-intelligence-beclab-olares-core-invariants.md",
       "title": "Technical Construction Intelligence: beclab/Olares Core Invariants",
       "repository": "beclab/Olares",
-      "source_version": "8c82c544",
-      "content_hash": "e3df38f2c67eca949b3695fa9b402f5d0b2df3d0d2da830a04d605367e6b9a1a",
+      "source_version": "83f304b1",
+      "content_hash": "2b2a9ffbbc3d78a36953d869119eaa96e147331266763f62370e64385eae1385",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T19:12:05.766Z"
+      "persisted_at": "2026-11-20T21:38:58.517Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares",
@@ -227397,10 +227402,10 @@
       "relative_path": "08_VERIFICATION/beclab-olares-verification-protocol-empirical-defect-shield-for-beclab-olares.md",
       "title": "Verification Protocol: Empirical Defect Shield for beclab/Olares",
       "repository": "beclab/Olares",
-      "source_version": "a2fc3c1e",
-      "content_hash": "4eae6cfd0fa8ecc1c7f1dcd45908f3f802ea967ee6bc035f9ed6a02c588c02b8",
+      "source_version": "83f304b1",
+      "content_hash": "cca2e97b620e26c42fce9e408a0f9b05e9c2f7eb5b304b6c4f4a89ba1de658db",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T15:35:13.582Z"
+      "persisted_at": "2026-11-20T21:38:58.734Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i",
@@ -227434,9 +227439,9 @@
       "title": "Technical Construction Intelligence: beclab-olares-learnings Core Invariants",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "ac54ab43ef95a30e6a85bab0772be4d0ac971327112aca506c7bf4bee036fa22",
+      "content_hash": "79e0a2e0ec4b25dbc759df467500a7346c8ea505afcfdfa8c28790dafdc253cd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T19:12:13.842Z"
+      "persisted_at": "2026-11-20T21:39:02.256Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings",
@@ -227446,9 +227451,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for beclab-olares-learnings",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "eaba4c40d43adbcf78b63f5d3717b3bc7cb0446232aa46e0fda8dce22a41dcb5",
+      "content_hash": "170508d759e14a925d1531067368a1f9128e8e06947769b806c5d9b9c9ed2d10",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T19:12:14.109Z"
+      "persisted_at": "2026-11-20T21:39:02.474Z"
     },
     "learn-huggingface-sentence-transformers-all-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
@@ -288337,9 +288342,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d10cda4a99fe8a64dc924e2f3795b8a1f65fe011b2229e2c68705d6cb04ba9ad",
+      "content_hash": "0fa85c8b522718a9cc93524426400c82b84ecc9a97cac6777b9e24722fc4a654",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T20:28:21.860Z"
+      "persisted_at": "2026-11-20T21:39:03.121Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -295178,13 +295183,13 @@
       "item_id": "candidate_directive-build-download-onnx-runtime-archives-from-npmmirror",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-LMMJ-build-download-onnx-runtime-archives-from-npmmirror.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-4JH4-build-download-onnx-runtime-archives-from-npmmirror.md",
       "title": "build): download ONNX Runtime archives from npmmirror",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "91d2a9ea3112fa8568e0f8efdf5772334ec03990b446cb7544da2906ca4f754b",
+      "content_hash": "bb5bb060e812853c6fd4abf8c0e1feac26b8b47c688bd47e47e659d565b3ecd4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T20:28:22.603Z"
+      "persisted_at": "2026-11-20T21:39:04.219Z"
     },
     "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -295194,9 +295199,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "cf7f05108ff44a9c419d9e4c851496d99f926d0c08a3642c3ffeab8c65ecbd0a",
+      "content_hash": "c22ebc42e00c6e8d692266f9469d6a0d9ae405c8fd1139f9e8b521bfa5c4f16e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T20:28:22.758Z"
+      "persisted_at": "2026-11-20T21:39:04.429Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -307407,6 +307412,44 @@
       "content_hash": "54d58a0cfc13480f8de886f96a7c26eb3df09be91668525b55a51d7fbc42cb43",
       "domain_letter": "G",
       "persisted_at": "2026-11-20T21:25:56.549Z"
+    },
+    "rule-9643": {
+      "learning_id": "rule-9643",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9643,
+      "title": "disable buildx provenance on per-arch proxy images",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "83f304b1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T21:38:57.741Z"
+    },
+    "candidate_directive-disable-buildx-provenance-on-per-arch-proxy-images": {
+      "item_id": "candidate_directive-disable-buildx-provenance-on-per-arch-proxy-images",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4EWR-disable-buildx-provenance-on-per-arch-proxy-images.md",
+      "title": "disable buildx provenance on per-arch proxy images",
+      "repository": "beclab/Olares",
+      "source_version": "83f304b1",
+      "content_hash": "df5bbded45b1afabd3196e2df10bd6eae3e1905898878597c617da40f29c4504",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T21:38:58.300Z"
+    },
+    "candidate_directive-ci-disable-buildx-provenance-on-per-arch-proxy-images": {
+      "item_id": "candidate_directive-ci-disable-buildx-provenance-on-per-arch-proxy-images",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4HS7-ci-disable-buildx-provenance-on-per-arch-proxy-images.md",
+      "title": "ci): disable buildx provenance on per-arch proxy images",
+      "repository": "beclab-olares-learnings",
+      "source_version": "HEAD",
+      "content_hash": "57ac93b29067aae04d54ce5912e6fdd2e02b40420c08c28a304240c54bf143de",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-20T21:39:02.025Z"
     }
   },
   "ai-builder-brain": {

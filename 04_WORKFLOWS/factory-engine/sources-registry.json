@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T21:25:51.831Z",
-    "lastVerified": "2026-11-20T21:25:51.831Z",
+    "lastChecked": "2026-11-20T21:39:01.454Z",
+    "lastVerified": "2026-11-20T21:39:01.454Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -355,8 +355,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T20:49:42.814Z",
-    "lastVerified": "2026-11-20T20:49:42.814Z",
+    "lastChecked": "2026-11-20T21:38:57.668Z",
+    "lastVerified": "2026-11-20T21:38:57.668Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -431,8 +431,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T15:15:15.868Z",
-    "lastVerified": "2026-11-20T15:15:15.868Z",
+    "lastChecked": "2026-11-20T21:38:52.763Z",
+    "lastVerified": "2026-11-20T21:38:52.763Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -2098,9 +2098,9 @@
   "oceanbase-oceanbase": {
     "name": "oceanbase",
     "officialUrl": "https://github.com/oceanbase/oceanbase",
-    "lastChecked": "2026-11-19T17:06:50.980Z",
+    "lastChecked": "2026-11-20T21:38:55.228Z",
     "revisionIdentifier": "d375c6d7",
-    "lastVerified": "2026-11-19T17:06:50.980Z"
+    "lastVerified": "2026-11-20T21:38:55.228Z"
   },
   "unhappychoice-gitlogue": {
     "name": "gitlogue",
@@ -2927,14 +2927,14 @@
     "officialUrl": "https://github.com/beclab/Olares",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T19:12:04.366Z",
-    "lastVerified": "2026-11-19T19:12:04.366Z",
+    "lastChecked": "2026-11-20T21:38:56.376Z",
+    "lastVerified": "2026-11-20T21:38:56.376Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-beclab-olares",
-    "contentHash": "18f33b37e4d8da54c10af60e1e75a99c09a67b57a00d4f73e60589e37b0359f7",
+    "contentHash": "6b7cdb42d047bc5a9e8ceadc94168a44fabc4d3b0e3d73f7874d48c3fe6de5d0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6702,9 +6702,9 @@
   "ynqa-jnv": {
     "name": "jnv",
     "officialUrl": "https://github.com/ynqa/jnv",
-    "lastChecked": "2026-11-19T05:42:09.885Z",
+    "lastChecked": "2026-11-20T21:38:42.656Z",
     "revisionIdentifier": "9871ba34",
-    "lastVerified": "2026-11-19T05:42:09.885Z"
+    "lastVerified": "2026-11-20T21:38:42.656Z"
   },
   "hf-mudler-locate-anything.cpp-gguf": {
     "name": "mudler/locate-anything.cpp-gguf",
@@ -10804,5 +10804,19 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rdflib-pyshacl": {
+    "name": "pySHACL",
+    "officialUrl": "https://github.com/RDFLib/pySHACL",
+    "lastChecked": "2026-11-20T21:38:45.205Z",
+    "revisionIdentifier": "df57bd43",
+    "lastVerified": "2026-11-20T21:38:45.205Z"
+  },
+  "jtrivedi-wave": {
+    "name": "Wave",
+    "officialUrl": "https://github.com/jtrivedi/Wave",
+    "lastChecked": "2026-11-20T21:38:47.636Z",
+    "revisionIdentifier": "27b7e1d2",
+    "lastVerified": "2026-11-20T21:38:47.636Z"
   }
 }

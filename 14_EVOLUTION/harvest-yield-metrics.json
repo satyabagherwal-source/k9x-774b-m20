@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T21:25:48.463Z",
-  "total_cycles_completed": 11079,
-  "total_learnings_persisted": 11079,
-  "total_rules_promoted": 10433,
+  "last_updated": "2026-11-20T21:38:58.036Z",
+  "total_cycles_completed": 11080,
+  "total_learnings_persisted": 11080,
+  "total_rules_promoted": 10434,
   "history": [
-    {
-      "timestamp": "2026-11-19T22:36:14.508Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T22:36:17.995Z",
       "repository": "matrixorigin/matrixone",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-20T21:25:48.463Z",
       "repository": "dalance/procs",
       "learningId": "learn-github-dalance-procs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T21:38:58.036Z",
+      "repository": "beclab/Olares",
+      "learningId": "learn-github-beclab-olares",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
