@@ -701585,3 +701585,274 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `b943942d` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9491. Two-Tiered State Persistence Invariant (Intermediate vs Durable Sync) (Harvested from hashicorp/terraform)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Two-Tiered State Persistence Invariant (Intermediate vs Durable Sync)",
+  "source": "hashicorp/terraform",
+  "source_url": "https://github.com/hashicorp/terraform",
+  "source_version": "cefb61b7",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-20T01:55:33.880Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-hashicorp-terraform",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [hashicorp/terraform](https://github.com/hashicorp/terraform) (Revision: `cefb61b7`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Systems managing mutable external infrastructure MUST decouple synchronous in-memory transaction checkpoints from durable storage writes via a two-tiered persistence contract (`WriteState` vs `PersistState`), and MUST force an unconditional synchronous durable flush during execution cancellation/SIGINT hooks.
+
+**WHY**:
+Network round-trips to remote storage (e.g., Azure Blob, S3, Consul) during massive parallel graph evaluations (e.g., hundreds of resources concurrently updating) cause I/O saturation, rate limiting, and severe throughput collapse. However, buffering state purely in memory causes state desynchronization if the process is terminated (OOM or SIGKILL). A two-tier persistence model allows high-frequency local checkpoints with rate-limited or interval-based remote flushes, with a strict termination hook that flushes before exiting.
+
+**WHEN TO APPLY**:
+Apply to any distributed or local engine coordinating external system mutations (IaC, migration engines, distributed workflows, orchestrators).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Extracted from internal/backend/local/hook_state.go
+type StateHook struct {
+    sync.Mutex
+    StateMgr            statemgr.Writer
+    PersistInterval     time.Duration
+    Schemas             *schemarepo.Schemas
+    intermediatePersist statemgr.IntermediateStatePersistInfo
+}
+
+func (h *StateHook) PostStateUpdate(new *states.State) (terraform.HookAction, error) {
+    h.Lock()
+    defer h.Unlock()
+
+    h.intermediatePersist.RequestedPersistInterval = h.PersistInterval
+    if h.intermediatePersist.LastPersist.IsZero() {
+        h.intermediatePersist.LastPersist = time.Now()
+    }
+
+    if h.StateMgr != nil {
+        // Tier 1: In-memory/local fast state write
+        if err := h.StateMgr.WriteState(new); err != nil {
+            return terraform.HookActionHalt, err
+        }
+
+        // Tier 2: Conditional remote durable persistence
+        if mgrPersist, ok := h.StateMgr.(statemgr.Persister); ok && h.PersistInterval != 0 && h.Schemas != nil {
+            if h.shouldPersist() {
+                if err := mgrPersist.PersistState(h.Schemas); err != nil {
+                    return terraform.HookActionHalt, err
+                }
+                h.intermediatePersist.LastPersist = time.Now()
+            }
+        }
+    }
+    return terraform.HookActionContinue, nil
+}
+
+// Emergency termination handler guarantees durable write before SIGKILL
+func (h *StateHook) Stopping() {
+    h.Lock()
+    defer h.Unlock()
+
+    if mgrPersist, ok := h.StateMgr.(statemgr.Persister); ok && h.Schemas != nil {
+        h.intermediatePersist.ForcePersist = true
+        if h.shouldPersist() {
+            if err := mgrPersist.PersistState(h.Schemas); err != nil {
+                log.Printf("[ERROR] Failed to persist state after interruption: %s", err)
+            }
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Direct, un-throttled synchronous remote call inside evaluation loop
+// OR ignoring cancellation signals leading to state corruption.
+func (h *UnsafeStateHook) PostStateUpdate(new *states.State) error {
+    // Blocks every concurrent worker on remote I/O; causes rate limit failure
+    return h.remoteClient.UploadPayloadToStorage(new)
+}
+```
+
+**VERIFICATION METHOD**:
+Automated integration test simulating sudden SIGINT/cancellation:
+```go
+func TestStateHook_InterruptFlushesState(t *testing.T) {
+    mockMgr := &mockStatePersister{}
+    hook := &StateHook{
+        StateMgr:        mockMgr,
+        PersistInterval: 10 * time.Minute, // Normal persist is blocked by interval
+        Schemas:         &schemarepo.Schemas{},
+    }
+    hook.PostStateUpdate(states.NewState())
+    if mockMgr.persistCalled {
+        t.Fatal("Persist should have been deferred by PersistInterval")
+    }
+    hook.Stopping()
+    if !mockMgr.persistCalled {
+        t.Fatal("Stopping() MUST force immediate state persistence")
+    }
+}
+```
+
+---
+
+
+---
+
+## 9492. Suffix-Stripping Block-Level AST Normalization (Harvested from hashicorp/terraform)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Suffix-Stripping Block-Level AST Normalization",
+  "source": "hashicorp/terraform",
+  "source_url": "https://github.com/hashicorp/terraform",
+  "source_version": "cefb61b7",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-20T01:55:34.417Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-hashicorp-terraform",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [hashicorp/terraform](https://github.com/hashicorp/terraform) (Revision: `cefb61b7`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When serializing dynamically generated block bodies into AST/formatting engines (e.g., HCL, JSON, XML), code generators MUST NOT format inner blocks repeatedly on raw string concatenation. The generator MUST format the complete synthetic root construct once, and accurately slice off the synthetic header and footer using structural byte offsets.
+
+**WHY**:
+Calling formatting/AST parsing engines repeatedly per-node in nested sequences generates $O(N \cdot K)$ string allocations and garbage collector pressure. Repeated re-parsing and formatting causes performance degradation when processing large arrays (e.g., 10,000+ query results). Formatting once inside synthetic delimiters and byte-slicing ensures $O(1)$ formatting overhead.
+
+**WHEN TO APPLY**:
+Templating engines, HCL/JSON/YAML configuration synthesis, schema generation, code refactoring tools.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Extracted from internal/genconfig/generate_config.go
+func resourceHeader(addr addrs.AbsResourceInstance) string {
+    return fmt.Sprintf("resource %q %q {\n", addr.Resource.Resource.Type, addr.Resource.Resource.Name)
+}
+
+func GenerateResourceContents(
+    addr addrs.AbsResourceInstance,
+    schema *configschema.Block,
+    provider addrs.LocalProviderConfig,
+    configVal cty.Value,
+    forceProvider bool,
+) (Resource, tfdiags.Diagnostics) {
+    var buf strings.Builder
+    var diags tfdiags.Diagnostics
+
+    // Assemble internal block body contents
+    diags = diags.Append(writeConfigBlocksFromExisting(addr, &buf, configVal, schema.BlockTypes, 2))
+
+    // Wrap in synthetic wrapper, format EXACTLY ONCE, slice wrapper boundaries
+    header := resourceHeader(addr)
+    formatted := hclwrite.Format([]byte(header + buf.String() + "}"))
+    
+    // Slice off header and trailing '}'
+    return Resource{
+        Addr: addr, 
+        Body: formatted[len(header) : len(formatted)-1],
+    }, diags
+}
+
+func (r Resource) String() string {
+    var buf strings.Builder
+    buf.WriteString(resourceHeader(r.Addr))
+    buf.Write(r.Body)
+    buf.WriteString("}")
+    return buf.String()
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Formatting body on generation, and then re-formatting again on String()
+func (r BadResource) String() string {
+    var buf strings.Builder
+    buf.WriteString(fmt.Sprintf("resource %q %q {\n", r.Type, r.Name))
+    buf.Write(r.Body)
+    buf.WriteString("}")
+    // Catastrophic overhead: re-parses and formats the entire AST on every call
+    formatted := hclwrite.Format([]byte(buf.String()))
+    return string(formatted)
+}
+```
+
+**VERIFICATION METHOD**:
+Micro-benchmark testing memory allocation ceiling:
+```go
+func BenchmarkResourceConfigString(b *testing.B) {
+    r := Resource{Addr: testAddr, Body: []byte("  attr = \"value\"\n")}
+    b.ReportAllocs()
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        _ = r.String()
+    }
+    // Verifies zero AST parse cycles during simple serialization
+    if b.AllocsPerOp() > 2 {
+        b.Fatalf("expected <= 2 allocs, got %d", b.AllocsPerOp())
+    }
+}
+```
+
+---

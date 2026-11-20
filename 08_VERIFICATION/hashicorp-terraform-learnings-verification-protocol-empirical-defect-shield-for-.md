@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T08:21:42.397Z",
+  "timestamp": "2026-11-20T01:56:45.845Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hashicorp-terraform-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hashicorp-terraform-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T08:21:42.397Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T01:56:45.845Z`  
 > **Learning ID**: `LEARN-EVO-hashicorp-terraform-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source**: github ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
-> **Source Version**: `b3fb138b`  
+> **Source Version**: `cefb61b7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-17T08:18:37.805Z  
+> **Timestamp**: 2026-11-20T01:55:33.345Z  
 > **Learning ID**: `learn-github-hashicorp-terraform`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,589 +43,668 @@ PROVENANCE_END -->
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
-Terraform is a declarative, state-driven infrastructure orchestration engine written in Go. Its core responsibility is reconciling a desired infrastructure topology defined in HashiCorp Configuration Language (HCL2) against real-world target environments (cloud APIs, on-premises systems, network appliances).
+`hashicorp/terraform` solves the problem of declarative infrastructure lifecycle management across heterogeneous target APIs via directed acyclic graph (DAG) reconciliation. Its architecture guarantees that declared intent ($C$), current real-world infrastructure state ($S$), and planned state delta ($P$) converge deterministically without data races or orphaned resources.
 
 ```
-                        +---------------------------------------+
-                        |      Configuration Files (.tf)        |
-                        +---------------------------------------+
-                                           |
-                                           v
-                        +---------------------------------------+
-                        |     HCL2 Parser & AST Loader          |
-                        |      (internal/configs)               |
-                        +---------------------------------------+
-                                           |
-                                           v
-                        +---------------------------------------+
-                        |        Directed Acyclic Graph         |
-                        |    (DAG Builder & Node Reducer)       |
-                        +---------------------------------------+
-                                      |          |
-                   Reads Desired State|          |Pulls Current State
-                                      v          v
-+-------------------+   RPC (gRPC)    +-------------------------+   CRUD    +-------------------+
-|  Remote Backend   | <-------------> |      Core Evaluator     | --------> | Provider Plugins  |
-|  (S3, Azure Blob, |                 |   (internal/terraform)  |           | (AWS, Azure, etc.)|
-|   Consul, etc.)   |                 +-------------------------+           +-------------------+
-+-------------------+                              |
-                                                   v
-                                      +-------------------------+
-                                      |   Terminal View / CLI   |
-                                      | (internal/command/views)|
-                                      +-------------------------+
+                      +-----------------------------+
+                      |   CLI Subsystem (Commands)  |
+                      +--------------+--------------+
+                                     |
+                                     v
+                      +-----------------------------+
+                      |       Terraform Core        |
+                      |   (Evaluation & Context)    |
+                      +--------------+--------------+
+                                     |
+                 +-------------------+-------------------+
+                 |                                       |
+                 v                                       v
+    +--------------------------+            +--------------------------+
+    |   Graph Engine (DAG)     |            | State Manager (Statemgr) |
+    | - Dependency Resolution  |            | - State Locking          |
+    | - Walkers & Transformers |            | - Atomic Write & Persist |
+    +------------+-------------+            +------------+-------------+
+                 |                                       |
+                 v                                       v
+    +--------------------------+            +--------------------------+
+    |   RPC / Plugin Layer     |            |  Remote State Backends   |
+    |   (go-plugin / gRPC)     |            |  (Azure, Consul, S3)     |
+    +------------+-------------+            +--------------------------+
+                 |
+                 v
+      Providers & Provisioners
 ```
 
-### Subsystem Boundaries & Invariants
-1. **Core Evaluator (`internal/terraform`)**: Drives the execution graph. Evaluates nodes concurrently according to topological dependencies using Dijkstra-style dependency walks. Nodes encapsulate operations: provider configuration, resource reading, diff generation, resource apply/destroy, and output publication.
-2. **State Management (`internal/states`, `internal/states/statemgr`, `internal/states/remote`)**: Maintains the canonical mapping between configuration resource addresses (`addrs.ResourceInstance`) and real-world identifiers (`id`, schema payload, metadata). State updates are synchronous, transactional, and protected by distributed leases.
-3. **Remote Backends (`internal/backend/remote-state/*`)**: Decoupled transport and storage plugins (Consul, Azure Blob, S3, GCS) implementing the `statemgr.Full`, `statemgr.Writer`, `statemgr.Persister`, and `statemgr.Locker` interfaces. They handle optimistic concurrency control (CAS), chunked uploads exceeding database/KV limits, and distributed locking.
-4. **View & Terminal Layer (`internal/command/views`, `internal/terminal`)**: An explicit abstraction boundary separating stream I/O (`io.Writer`, color renderers, JSON streams) from business orchestration logic (`internal/command`). Command structs receive structured event views rather than raw `cli.Ui` objects to eliminate interleaving and untracked output.
-5. **Provider RPC Subsystem (`internal/providers`, `go-plugin`)**: gRPC bridge communicating over local Unix domain sockets or named pipes with provider binaries. Schema definitions, plan adjustments, and resource CRUD operations are transferred as serialized cty values across IPC boundaries.
+### Critical Subsystem Boundaries & Abstractions
+
+1. **The Graph Engine (`internal/terraform/graph*.go`)**:
+   - Represents modules, resources, providers, outputs, and provisioners as vertices.
+   - Applies strict DAG transformations: dependency wiring, orphan pruning, transitively closing destroy steps, and dynamic expansion of counts/for-each matrices.
+   - Evaluates vertices concurrently using a topological worker pool constrained by user-defined concurrency flags (`-parallelism`).
+
+2. **The State Manager (`internal/states/statemgr`)**:
+   - Maintains transactional consistency of `states.State`.
+   - Distinguishes between transient intermediate in-memory updates (`WriteState`) and durable remote storage flushing (`PersistState`).
+   - Implements distributed lease arbitration (CAS, Blob Leases, Consul KV Sessions) through `statemgr.Locker` and `statemgr.Persister`.
+
+3. **RPC/Plugin Barrier (`go-plugin` / gRPC)**:
+   - Completely decouples execution binaries. Core communicates with provider binaries over loopback RPC.
+   - Providers yield control back to Core via schema-validated types (`cty.Value`). Dynamic schemas ensure Core never unmarshals arbitrary Go structs from untrusted plugins.
+
+4. **Remote Backends (`internal/backend/remote-state/*`)**:
+   - Implements pluggable storage fabrics for workspace state persistence.
+   - Enforces optimistic concurrency controls (Check-And-Set / ETag validation) and distributed mutually exclusive execution guards (Blob Leases, Consul KV locks).
 
 ---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Two-Tier Atomic State Commit Invariant with Interruption Flushing
+### 1. Two-Tiered State Persistence Invariant (Intermediate vs Durable Sync)
 **RULE**:
-When an orchestration engine performs mutations on external physical or cloud infrastructure, the state manager MUST decouple in-memory state synchronization from persistent storage snapshots via an intermediate timer-throttled hook (`PostStateUpdate`), AND it MUST register an OS signal interrupt interceptor (`Stopping()`) that unconditionally forces an immediate, synchronous persistent state snapshot prior to process termination.
+Systems managing mutable external infrastructure MUST decouple synchronous in-memory transaction checkpoints from durable storage writes via a two-tiered persistence contract (`WriteState` vs `PersistState`), and MUST force an unconditional synchronous durable flush during execution cancellation/SIGINT hooks.
 
 **WHY**:
-Network writes to remote state backends (S3, Azure Blob, Consul) incur high latency (50ms–500ms). Invoking remote persistence on every atomic leaf node update during parallel graph execution bottlenecks throughput. Conversely, deferring remote writes entirely until the end of a plan/apply cycle creates a fatal race condition: if a SIGINT or SIGKILL terminates the process midway, provisioned infrastructure exists in the cloud without tracking metadata in state, resulting in permanently orphaned resources and security leaks.
+Network round-trips to remote storage (e.g., Azure Blob, S3, Consul) during massive parallel graph evaluations (e.g., hundreds of resources concurrently updating) cause I/O saturation, rate limiting, and severe throughput collapse. However, buffering state purely in memory causes state desynchronization if the process is terminated (OOM or SIGKILL). A two-tier persistence model allows high-frequency local checkpoints with rate-limited or interval-based remote flushes, with a strict termination hook that flushes before exiting.
 
 **WHEN TO APPLY**:
-Apply to any workflow engine, deployment orchestrator, or distributed compiler that mutates external environments with distinct transaction phases.
+Apply to any distributed or local engine coordinating external system mutations (IaC, migration engines, distributed workflows, orchestrators).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
-package stateflush
-
-import (
-	"log"
-	"sync"
-	"time"
-)
-
-type HookAction int
-
-const (
-	HookActionContinue HookAction = iota
-	HookActionHalt
-)
-
-type StateSnapshot struct {
-	Serial uint64
-	Data   []byte
+// Extracted from internal/backend/local/hook_state.go
+type StateHook struct {
+    sync.Mutex
+    StateMgr            statemgr.Writer
+    PersistInterval     time.Duration
+    Schemas             *schemarepo.Schemas
+    intermediatePersist statemgr.IntermediateStatePersistInfo
 }
 
-type PersistenceBackend interface {
-	WriteMemoryState(s *StateSnapshot) error
-	PersistToStorage() error
+func (h *StateHook) PostStateUpdate(new *states.State) (terraform.HookAction, error) {
+    h.Lock()
+    defer h.Unlock()
+
+    h.intermediatePersist.RequestedPersistInterval = h.PersistInterval
+    if h.intermediatePersist.LastPersist.IsZero() {
+        h.intermediatePersist.LastPersist = time.Now()
+    }
+
+    if h.StateMgr != nil {
+        // Tier 1: In-memory/local fast state write
+        if err := h.StateMgr.WriteState(new); err != nil {
+            return terraform.HookActionHalt, err
+        }
+
+        // Tier 2: Conditional remote durable persistence
+        if mgrPersist, ok := h.StateMgr.(statemgr.Persister); ok && h.PersistInterval != 0 && h.Schemas != nil {
+            if h.shouldPersist() {
+                if err := mgrPersist.PersistState(h.Schemas); err != nil {
+                    return terraform.HookActionHalt, err
+                }
+                h.intermediatePersist.LastPersist = time.Now()
+            }
+        }
+    }
+    return terraform.HookActionContinue, nil
 }
 
-type ResilientStateHook struct {
-	sync.Mutex
-	Backend         PersistenceBackend
-	PersistInterval time.Duration
-	LastPersist     time.Time
-	ForcePersist    bool
-}
+// Emergency termination handler guarantees durable write before SIGKILL
+func (h *StateHook) Stopping() {
+    h.Lock()
+    defer h.Unlock()
 
-func (h *ResilientStateHook) PostStateUpdate(s *StateSnapshot) (HookAction, error) {
-	h.Lock()
-	defer h.Unlock()
-
-	// 1. In-memory state is updated unconditionally on every node completion
-	if err := h.Backend.WriteMemoryState(s); err != nil {
-		return HookActionHalt, err
-	}
-
-	now := time.Now()
-	if h.LastPersist.IsZero() {
-		h.LastPersist = now
-	}
-
-	// 2. Persistent storage commit is throttled by duration unless forced
-	if h.ForcePersist || (h.PersistInterval > 0 && now.Sub(h.LastPersist) >= h.PersistInterval) {
-		if err := h.Backend.PersistToStorage(); err != nil {
-			return HookActionHalt, err
-		}
-		h.LastPersist = now
-		h.ForcePersist = false
-		log.Printf("[DEBUG] Intermediate state snapshot persisted successfully")
-	}
-
-	return HookActionContinue, nil
-}
-
-func (h *ResilientStateHook) Stopping() {
-	h.Lock()
-	defer h.Unlock()
-
-	// 3. Mark next flush as mandatory and attempt immediate best-effort persistence
-	h.ForcePersist = true
-	if err := h.Backend.PersistToStorage(); err != nil {
-		log.Printf("[ERROR] Emergency state persistence failed during process shutdown: %v", err)
-	} else {
-		log.Printf("[INFO] Emergency state flush completed successfully")
-	}
+    if mgrPersist, ok := h.StateMgr.(statemgr.Persister); ok && h.Schemas != nil {
+        h.intermediatePersist.ForcePersist = true
+        if h.shouldPersist() {
+            if err := mgrPersist.PersistState(h.Schemas); err != nil {
+                log.Printf("[ERROR] Failed to persist state after interruption: %s", err)
+            }
+        }
+    }
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// ANTI-PATTERN: Direct, un-throttled synchronous write or deferred write only on exit.
-func (h *VulnerableHook) PostStateUpdate(s *StateSnapshot) error {
-    // VIOLATION 1: Zero caching; blocks graph parallel workers on network I/O
-    return h.RemoteHTTPBackend.UploadState(s) 
-}
-
-func (e *VulnerableEngine) ExecuteGraph(nodes []Node) {
-    var state State
-    for _, n := range nodes {
-        state = n.Execute() // VIOLATION 2: If SIGINT strikes here, external state is lost
-    }
-    h.RemoteHTTPBackend.UploadState(state) // Run only once at end
+// ANTI-PATTERN: Direct, un-throttled synchronous remote call inside evaluation loop
+// OR ignoring cancellation signals leading to state corruption.
+func (h *UnsafeStateHook) PostStateUpdate(new *states.State) error {
+    // Blocks every concurrent worker on remote I/O; causes rate limit failure
+    return h.remoteClient.UploadPayloadToStorage(new)
 }
 ```
 
 **VERIFICATION METHOD**:
-Inject a mock `PersistenceBackend` and trigger `PostStateUpdate` at 10ms intervals with `PersistInterval = 100ms`. Assert that calls to `PersistToStorage` match elapsed intervals. Concurrently trigger `Stopping()` from a separate goroutine and assert that `PersistToStorage` executes synchronously before `Stopping()` unblocks.
+Automated integration test simulating sudden SIGINT/cancellation:
+```go
+func TestStateHook_InterruptFlushesState(t *testing.T) {
+    mockMgr := &mockStatePersister{}
+    hook := &StateHook{
+        StateMgr:        mockMgr,
+        PersistInterval: 10 * time.Minute, // Normal persist is blocked by interval
+        Schemas:         &schemarepo.Schemas{},
+    }
+    hook.PostStateUpdate(states.NewState())
+    if mockMgr.persistCalled {
+        t.Fatal("Persist should have been deferred by PersistInterval")
+    }
+    hook.Stopping()
+    if !mockMgr.persistCalled {
+        t.Fatal("Stopping() MUST force immediate state persistence")
+    }
+}
+```
 
 ---
 
-### 2. Multi-Tier CAS Fallback with Chunked Block Reassembly for Distributed K/V
+### 2. Suffix-Stripping Block-Level AST Normalization
 **RULE**:
-When writing unstructured state payloads to key-value stores with hard value-size limits (e.g., Consul KV 512KB limit, Raft frame constraints), the storage driver MUST execute a single-transaction Check-And-Set (CAS) for payloads under the threshold. When the payload exceeds the limit, it MUST chunk the payload, store chunk blocks under a hashed content-addressed key namespace, atomically write a manifest pointer referencing those chunks via CAS, and purge orphaned chunks from previous hashes.
+When serializing dynamically generated block bodies into AST/formatting engines (e.g., HCL, JSON, XML), code generators MUST NOT format inner blocks repeatedly on raw string concatenation. The generator MUST format the complete synthetic root construct once, and accurately slice off the synthetic header and footer using structural byte offsets.
 
 **WHY**:
-Payload growth is non-linear in infrastructure graphs. Large environments easily cross 512KB or 1MB. Blindly executing chunking on every write introduces latency and storage bloat; blindly writing the whole blob causes hard HTTP 400/500 transaction rejections. Furthermore, overwriting a multi-part blob without cleaning up old chunks leaves dangling, disconnected orphaned blocks that consume Raft disk log space.
+Calling formatting/AST parsing engines repeatedly per-node in nested sequences generates $O(N \cdot K)$ string allocations and garbage collector pressure. Repeated re-parsing and formatting causes performance degradation when processing large arrays (e.g., 10,000+ query results). Formatting once inside synthetic delimiters and byte-slicing ensures $O(1)$ formatting overhead.
 
 **WHEN TO APPLY**:
-Storage adapters persisting payloads into Consul, etcd, Redis, ZooKeeper, or DynamoDB where document sizes approach or exceed transaction frame sizes.
+Templating engines, HCL/JSON/YAML configuration synthesis, schema generation, code refactoring tools.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
-package storage
-
-import (
-	"crypto/md5"
-	"encoding/json"
-	"errors"
-	"fmt"
-	"strings"
-	"sync"
-)
-
-type KVTransactionOps interface {
-	PutCAS(key string, val []byte, modifyIndex uint64) (uint64, error)
-	PutDirect(key string, val []byte) error
-	DeleteTree(prefix string) error
+// Extracted from internal/genconfig/generate_config.go
+func resourceHeader(addr addrs.AbsResourceInstance) string {
+    return fmt.Sprintf("resource %q %q {\n", addr.Resource.Resource.Type, addr.Resource.Resource.Name)
 }
 
-type ChunkManifest struct {
-	CurrentHash string   `json:"current-hash"`
-	Chunks      []string `json:"chunks"`
+func GenerateResourceContents(
+    addr addrs.AbsResourceInstance,
+    schema *configschema.Block,
+    provider addrs.LocalProviderConfig,
+    configVal cty.Value,
+    forceProvider bool,
+) (Resource, tfdiags.Diagnostics) {
+    var buf strings.Builder
+    var diags tfdiags.Diagnostics
+
+    // Assemble internal block body contents
+    diags = diags.Append(writeConfigBlocksFromExisting(addr, &buf, configVal, schema.BlockTypes, 2))
+
+    // Wrap in synthetic wrapper, format EXACTLY ONCE, slice wrapper boundaries
+    header := resourceHeader(addr)
+    formatted := hclwrite.Format([]byte(header + buf.String() + "}"))
+    
+    // Slice off header and trailing '}'
+    return Resource{
+        Addr: addr, 
+        Body: formatted[len(header) : len(formatted)-1],
+    }, diags
 }
 
-type ChunkedKVClient struct {
-	mu          sync.Mutex
-	client      KVTransactionOps
-	basePath    string
-	modifyIndex uint64
-	chunkLimit  int
-}
-
-func (c *ChunkedKVClient) PutState(data []byte) error {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	// 1. Attempt direct single-entry CAS write
-	newIndex, err := c.client.PutCAS(c.basePath, data, c.modifyIndex)
-	if err == nil {
-		c.modifyIndex = newIndex
-		return nil
-	}
-
-	// 2. Check if error is due to payload size limit
-	if !strings.Contains(err.Error(), "too large") && !strings.Contains(err.Error(), "Value exceeds limit") {
-		return err
-	}
-
-	// 3. Fallback to chunked persistence
-	dataHash := fmt.Sprintf("%x", md5.Sum(data))
-	chunkPaths := make([]string, 0)
-	
-	chunks := splitBuffer(data, c.chunkLimit)
-	for idx, chunk := range chunks {
-		chunkKey := fmt.Sprintf("%s/tfstate.%s/%d", strings.TrimRight(c.basePath, "/"), dataHash, idx)
-		chunkPaths = append(chunkPaths, chunkKey)
-		if err := c.client.PutDirect(chunkKey, chunk); err != nil {
-			return fmt.Errorf("failed writing chunk %s: %w", chunkKey, err)
-		}
-	}
-
-	manifest := ChunkManifest{
-		CurrentHash: dataHash,
-		Chunks:      chunkPaths,
-	}
-	manifestBytes, err := json.Marshal(manifest)
-	if err != nil {
-		return err
-	}
-
-	// 4. Update manifest root atomically via CAS
-	finalIndex, err := c.client.PutCAS(c.basePath, manifestBytes, c.modifyIndex)
-	if err != nil {
-		return fmt.Errorf("failed CAS on chunk manifest: %w", err)
-	}
-	c.modifyIndex = finalIndex
-	return nil
-}
-
-func splitBuffer(buf []byte, chunkSize int) [][]byte {
-	var chunks [][]byte
-	for i := 0; i < len(buf); i += chunkSize {
-		end := i + chunkSize
-		if end > len(buf) {
-			end = len(buf)
-		}
-		chunks = append(chunks, buf[i:end])
-	}
-	return chunks
+func (r Resource) String() string {
+    var buf strings.Builder
+    buf.WriteString(resourceHeader(r.Addr))
+    buf.Write(r.Body)
+    buf.WriteString("}")
+    return buf.String()
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// ANTI-PATTERN: Blind upload with zero chunking fallback or unreferenced chunk pollution
-func (c *VulnerableKVClient) Put(data []byte) error {
-    // VIOLATION: Hard failure when state file grows beyond Consul Raft 512KB limits.
-    // Throws "Value exceeds limit" and causes fatal terraform apply crash midway.
-    return c.kv.Set(c.Path, data)
+// ANTI-PATTERN: Formatting body on generation, and then re-formatting again on String()
+func (r BadResource) String() string {
+    var buf strings.Builder
+    buf.WriteString(fmt.Sprintf("resource %q %q {\n", r.Type, r.Name))
+    buf.Write(r.Body)
+    buf.WriteString("}")
+    // Catastrophic overhead: re-parses and formats the entire AST on every call
+    formatted := hclwrite.Format([]byte(buf.String()))
+    return string(formatted)
 }
 ```
 
 **VERIFICATION METHOD**:
-Generate a random byte slice of 1.5MB. Set `chunkLimit = 524288` (512KB). Execute `PutState`. Verify that exactly 3 chunks are written under `/tfstate.<md5>/[0,1,2]`, verify the manifest JSON structure, and verify that updating with a 2MB slice deletes the previous chunk path prefix.
-
----
-
-### 3. Mutual Incompatibility Enforcement for Environment & Configuration Credentials
-**RULE**:
-When an infrastructure tool supports both external identity discovery (e.g., Azure AKS Workload Identity, AWS IAM Roles for Service Accounts) and local user configuration (flags, HCL blocks, environment variables), any discrepancy between the two MUST trigger an immediate, fatal configuration validation error before any network client initialization. A silent override or precedence order MUST NOT be applied if conflicting explicit credentials exist.
-
-**WHY**:
-Silent fallbacks or priority overriding in authentication leads to severe security misconfigurations. If a developer accidentally leaves a hardcoded client ID in local config while deploying into a production Kubernetes cluster using Workload Identity, silent fallback could authenticate against a staging tenant or fail with an opaque 403 Forbidden error hours into an execution plan.
-
-**WHEN TO APPLY**:
-Authentication providers, SDK wrappers, and backend initialization routines dealing with multiple credential ingress channels (IAM, SSO, ENV, Config File, Workload Identity).
-
-**VERIFIED IMPLEMENTATION PATTERN**:
+Micro-benchmark testing memory allocation ceiling:
 ```go
-package authcheck
-
-import (
-	"fmt"
-	"os"
-	"strings"
-)
-
-type AuthConfig struct {
-	ExplicitClientID    string
-	ClientIDFilePath    string
-	UseWorkloadIdentity bool
-}
-
-func ValidateAndResolveClientID(cfg AuthConfig) (string, error) {
-	clientID := strings.TrimSpace(cfg.ExplicitClientID)
-
-	// 1. Validate file vs literal token conflict
-	if cfg.ClientIDFilePath != "" {
-		raw, err := os.ReadFile(cfg.ClientIDFilePath)
-		if err != nil {
-			return "", fmt.Errorf("reading client ID from file %q: %w", cfg.ClientIDFilePath, err)
-		}
-		fileClientID := strings.TrimSpace(string(raw))
-		if clientID != "" && clientID != fileClientID {
-			return "", fmt.Errorf("mismatch between supplied client_id and client_id_file_path contents: remove one or align them")
-		}
-		clientID = fileClientID
-	}
-
-	// 2. Validate external Workload Identity environment conflict
-	if cfg.UseWorkloadIdentity {
-		envClientID := strings.TrimSpace(os.Getenv("AZURE_CLIENT_ID"))
-		if envClientID != "" {
-			if clientID != "" && clientID != envClientID {
-				return "", fmt.Errorf("mismatch between explicit configuration client ID (%q) and AKS Workload Identity environment client ID (%q)", clientID, envClientID)
-			}
-			clientID = envClientID
-		}
-	}
-
-	if clientID == "" {
-		return "", fmt.Errorf("client ID resolved to empty string; credentials required")
-	}
-
-	return clientID, nil
-}
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// ANTI-PATTERN: Silent precedence fallback hiding operator misconfiguration
-func ResolveCredentialsSilently(cfg AuthConfig) string {
-    // VIOLATION: If operator passes ID_A in config and sets ID_B in pod environment,
-    // ID_A silently masks ID_B, or vice-versa, causing cross-tenant operational disasters.
-    if cfg.ExplicitClientID != "" {
-        return cfg.ExplicitClientID
+func BenchmarkResourceConfigString(b *testing.B) {
+    r := Resource{Addr: testAddr, Body: []byte("  attr = \"value\"\n")}
+    b.ReportAllocs()
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        _ = r.String()
     }
-    return os.Getenv("AZURE_CLIENT_ID")
+    // Verifies zero AST parse cycles during simple serialization
+    if b.AllocsPerOp() > 2 {
+        b.Fatalf("expected <= 2 allocs, got %d", b.AllocsPerOp())
+    }
 }
 ```
-
-**VERIFICATION METHOD**:
-Run a parameterized test matrix asserting:
-1. `cfg.ExplicitClientID = "A"`, `os.Setenv("AZURE_CLIENT_ID", "B")`, `UseWorkloadIdentity = true` -> returns error containing "mismatch".
-2. `cfg.ExplicitClientID = "A"`, `os.Setenv("AZURE_CLIENT_ID", "A")`, `UseWorkloadIdentity = true` -> returns `"A"`, `err == nil`.
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: CLI UI Stream Decoupling & Buffer Assertion Divergence (BUG-TF-39554)
-- **Context**: `internal/command/providers_test.go`, `internal/command/show_test.go`, `internal/command/init2_test.go`
-- **What Was Expected**: Test suites testing CLI commands (`init`, `show`, `providers`, `apply`) should capture command output deterministically through a unified terminal view abstraction (`views.View`) and evaluate exit status alongside standard error buffers.
-- **What Actually Happened**: Legacy `cli.Ui` implementations (`testUiWrapped(t)`) were held simultaneously alongside `testView(t)`. Output was sent to the new terminal `View`, leaving `ui.ErrorWriter` empty. When commands failed in CI, assertions evaluated `ui.ErrorWriter`, producing blank failure messages:
-  `t.Fatalf("init failed\n%s", initUi.ErrorWriter)` -> Printed empty error strings, masking underlying init engine crashes.
-- **Evidence in Repo**: Commit `b3fb138b` & `726ba11b`. Modifications in `internal/command/show_test.go`, `init2_test.go`, `providers_test.go`.
-- **Root Cause**: An architectural migration from HashiCorp's legacy `cli.Ui` interface to an internal `terminal.Streams` and `views.View` pattern left dual references in `Meta`. Subsystems wrote diagnostics to `View`, while test assertions read from legacy `ui.ErrorWriter`.
+### Incident 1: Memory Exhaustion in Query Output Serialization (BUG-TF-42221)
+- **Context**: `internal/genconfig/generate_config.go` & `internal/command/views/json/query.go`
+- **What Was Expected**: Serializing 10,000+ query results to JSON should execute with minimal memory overhead and linear $O(N)$ execution time.
+- **What Actually Happened**: Profiling revealed severe CPU spikes and multi-gigabyte memory allocations during list query JSON rendering.
+- **Evidence in Repo**: Commit `cefb61b7`, PR `#39489`, Changelog `.changes/v1.17/ENHANCEMENTS-20261103-134315.yaml`.
+- **Root Cause**: `Resource.String()` in `internal/genconfig/generate_config.go` invoked `hclwrite.Format()` dynamically every time `String()` was called on a resource item. For queries returning tens of thousands of objects, the HCL lexer/parser was invoked repeatedly on already-formatted bodies.
 - **Remediation Code Diff**:
 ```go
-// - Buggy dual-reference test initialization
-- initUi := testUiWrapped(t)
-- view, _ := testView(t)
-- ic := &InitCommand{
--     Meta: Meta{
--         Ui:   initUi,
--         View: view,
--     },
-- }
-- if code := ic.Run([]string{}); code != 0 {
--     t.Fatalf("init failed\n%s", initUi.ErrorWriter)
-- }
-
-// + Unified terminal View assertion with done callback
-+ view, done := testView(t)
-+ ic := &InitCommand{
-+     Meta: Meta{
-+         View: view,
-+     },
-+ }
-+ if code := ic.Run([]string{}); code != 0 {
-+     t.Fatalf("init failed\n%s", done(t).Stderr())
-+ }
+// internal/genconfig/generate_config.go
+ func (r Resource) String() string {
+ 	var buf strings.Builder
+-	buf.WriteString(fmt.Sprintf("resource %q %q {\n", r.Addr.Resource.Resource.Type, r.Addr.Resource.Resource.Name))
++	buf.WriteString(resourceHeader(r.Addr))
+ 	buf.Write(r.Body)
+ 	buf.WriteString("}")
+-
+-	formatted := hclwrite.Format([]byte(buf.String()))
+-	return string(formatted)
++	return buf.String()
+ }
+ 
+ func GenerateResourceContents(...) (Resource, tfdiags.Diagnostics) {
+...
+-	// The output better be valid HCL which can be parsed and formatted.
+-	formatted := hclwrite.Format([]byte(buf.String()))
+-	return Resource{Addr: addr, Body: formatted}, diags
++	header := resourceHeader(addr)
++	formatted := hclwrite.Format([]byte(header + buf.String() + "}"))
++	return Resource{Addr: addr, Body: formatted[len(header) : len(formatted)-1]}, diags
+ }
 ```
-- **Lesson**: When refactoring an I/O subsystem across hundreds of test harnesses, never allow both the old and new abstractions to coexist in test harnesses; remove the legacy struct fields to force compiler verification of assertion sinks.
+- **Lesson**: Pre-format at boundary production; never invoke an AST formatter inside serialization accessors or getters (`String()`).
 
 ---
 
-### Incident 2: Dependency Cycle during Resource Forget with `destroy = false` (BUG-TF-39501)
-- **Context**: `internal/terraform/graph_builder_destroy.go`, graph transformation passes.
-- **What Was Expected**: Specifying lifecycle argument `destroy = false` (or `prevent_destroy`) on a resource whose attributes feed into a provider configuration block (e.g., `url = terraform_data.test.output`) should allow `terraform destroy` to skip destroying that resource without cycle errors.
-- **What Actually Happened**: The evaluator built a cycle: `terraform_data.test (forget)` -> depends on provider configuration -> provider configuration depends on `terraform_data.test (output)`. Terraform terminated during plan validation with:
-  `Error: Cycle: terraform_data.test (forget), provider["registry.terraform.io/hashicorp/tls"]`.
-- **Evidence in Repo**: Closed Issue #39501.
-- **Root Cause**: The graph reduction pass for destruction treats `destroy = false` as a "forget" node instead of an "apply-destroy" node. The graph edge inversion algorithm indiscriminately reversed all incoming provider dependency edges for the forget node, creating a circular loop between the provider instance and the resource providing its configuration arguments.
-- **Remediation Pattern**:
+### Incident 2: Dependency Cycle Invalidation on `destroy = false` Lifecycle (BUG-CORE-39501)
+- **Context**: State graph builder, provider dependency resolver.
+- **What Was Expected**: Running `terraform destroy` with `lifecycle { destroy = false }` on a resource that supplies configuration attributes to a provider block should execute cleanly by retaining the resource and destroying its dependents.
+- **What Actually Happened**: Terraform halted with `Error: Cycle: terraform_data.test (forget) -> tls_provider -> ...`
+- **Evidence in Repo**: Closed Issue `#39501`.
+- **Root Cause**: The graph transformer for destroy operations inverts edges so dependencies are torn down in reverse order. However, when `destroy = false` was present, the node was transformed into a `NodeAbstractResourceInstanceForget` node. The edge inverter failed to prune dependencies between the provider configuration vertex and the resource instance node, creating a circular reference between the provider destruction pass and the resource forget pass.
+- **Remediation Invariant**:
 ```go
-// Topological edge rule adjustment in graph building:
-// A "forget" node does not execute API mutations and therefore does NOT 
-// require reverse dependency on the provider configuration.
-func (b *DestroyGraphBuilder) AddEdges(g *Graph, n Node) {
-    if isForgetNode(n) && isProviderDependency(n) {
-        // Retain forward edge from resource -> provider config; 
-        // DO NOT invert dependency edge.
-        return
-    }
-    // Normal destroy node edge inversion
-    g.InvertEdge(n)
+// Structural rule applied in graph transformation:
+// When node action is ActionForget, remove bidirectional provider dependency edges 
+// that are only relevant to active infrastructure destruction.
+if action == ActionForget {
+    g.RemoveEdge(providerVertex, resourceVertex)
 }
 ```
-- **Lesson**: Graph edge inversion during lifecycle reversal must distinguish between nodes that perform active teardown mutations (which depend on providers existing) and nodes that omit teardown actions (forget/noop nodes).
+- **Lesson**: When altering graph node behaviors dynamically via lifecycle flags (`destroy = false`), edge inversion algorithms must prune semantic edges that bind lifecycle lifespans to the destroyed provider.
 
 ---
 
-### Incident 3: Redundant Schema Loading Warnings during Module Tree Initialization (BUG-TF-39478)
-- **Context**: `internal/command/init.go`, `internal/modsdir`, `internal/schemarepo`
-- **What Was Expected**: During `terraform init`, traversing nested child modules that do not declare providers should not trigger schema resolution warnings against unavailable provider registries.
-- **What Actually Happened**: In Terraform 1.15.2+, when `TF_LOG=INFO` was enabled, `terraform init` emitted up to 2,608 warning entries:
-  `[WARN] Error loading schema for registry.terraform.io/hashicorp/random: provider not available`.
-- **Evidence in Repo**: Issue #39478.
-- **Root Cause**: The module loader eagerly queried the schema repository for every provider referenced across all modules prior to downloading provider binaries. Because child modules inherit the parent scope, the schema resolver repeatedly iterated and logged warnings on cache misses for every AST node visited in the module tree.
-- **Remediation Pattern**:
+### Incident 3: CLI Formatter Bracket Stripping Syntax Breakage (BUG-HCL-39557)
+- **Context**: `terraform fmt` AST expression rewriting.
+- **What Was Expected**: Multi-line ternary expressions wrapped in quotes and interpolation `${ ... }` should be rewritten without interpolation delimiters while preserving valid syntax.
+- **What Actually Happened**:
+  Original code:
+  ```terraform
+  locals {
+    name = "${(var.env == "prod") ? "app" :
+      lookup(var.names, var.env)}"
+  }
+  ```
+  Was reformatted into invalid syntax:
+  ```terraform
+  locals {
+    name = (var.env == "prod") ? "app" :
+      lookup(var.names, var.env)
+  }
+  ```
+  Because the colon was followed by a newline without enclosing parentheses, `terraform validate` failed on subsequent runs with an `Invalid expression` parse error.
+- **Evidence in Repo**: Closed Issue `#39557`.
+- **Root Cause**: The formatter's unwrap rule checked if the expression began with `(` and ended with `)`. It matched the opening bracket of `(var.env == "prod")` and the closing bracket of `lookup(...)`, mistaking two separate bracketed sub-expressions for a single outer wrapping pair. It therefore skipped adding outer grouping parentheses.
+- **Remediation Invariant**:
 ```go
-// Suppress warnings when schema querying is in exploratory/init phase
-func (s *SchemaRepo) ResolveProviderSchema(p addrs.Provider, phase ExecutionPhase) (*ProviderSchema, error) {
-    schema, found := s.cache[p]
-    if !found {
-        if phase == PhaseInitModuleWalk {
-            // Silently return nil; schema unavailable is an expected invariant during init
-            return nil, ErrSchemaNotAvailablePreInit
+// Bracket balancing validator:
+// Ensure outer parentheses match at root depth before omitting synthetic parentheses.
+func hasEnclosingParentheses(tokens hclwrite.Tokens) bool {
+    if len(tokens) < 2 || tokens[0].Type != hclsyntax.TokenOParen || tokens[len(tokens)-1].Type != hclsyntax.TokenCParen {
+        return false
+    }
+    depth := 0
+    for i, tok := range tokens {
+        if tok.Type == hclsyntax.TokenOParen { depth++ }
+        if tok.Type == hclsyntax.TokenCParen { depth-- }
+        if depth == 0 && i < len(tokens)-1 {
+            // Reached zero depth before the end token: parens are disjoint!
+            return false
         }
-        log.Printf("[WARN] Error loading schema for %s: provider not available", p)
     }
-    return schema, nil
+    return depth == 0
 }
 ```
-- **Lesson**: Diagnostic log emitters in recursive tree traversal operations must be context-aware regarding the current lifecycle phase of the engine.
+- **Lesson**: Never check only token array bounds (`tokens[0]` and `tokens[n-1]`) to determine wrapping; paren balance tracking across the token stream is mandatory.
 
 ---
 
-### Incident 4: TOCTOU & Unbounded State Corruption during Remote State Mutex Locking in Azure Storage (BUG-TF-AZURE-01)
-- **Context**: `internal/backend/remote-state/azure/client.go` (`Lock`, `writeLockInfo`)
-- **What Was Expected**: Acquiring a distributed lease lock on an Azure Blob state store must be atomic. If two CLI runners invoke `Lock()` concurrently on an uninitialized blob, exactly one runner acquires the lease and writes the lock info metadata, while the other fails with a clean concurrency error.
-- **What Actually Happened**: When a blob did not exist, `GetProperties` returned a 404. Both processes evaluated `response.WasNotFound()`, and both proceeded to call `PutBlockBlob` to initialize an empty blob. The second runner clobbered the first, resulting in an orphaned lease state and corrupted lock info metadata.
-- **Evidence in Repo**: `internal/backend/remote-state/azure/client.go:175-215`.
-- **Root Cause**: Time-Of-Check to Time-Of-Use (TOCTOU) race condition. The check (`GetProperties`) and the creation (`PutBlockBlob`) lacked an optimistic concurrency precondition (`x-ms-blob-condition-if-none-match: *`).
-- **Remediation Pattern**:
+### Incident 4: Distributed State Overwrite via Unchecked CAS Miss (BUG-CONSUL-CAS)
+- **Context**: `internal/backend/remote-state/consul/client.go`
+- **What Was Expected**: Writing state updates to Consul KV should fail safely if a concurrent process updated the state key.
+- **What Actually Happened**: Consul KV PUT requests can overwrite state unconditionally if the modify index is zero or if non-transactional APIs are used, leading to state corruption and lost resource tracking across multi-user environments.
+- **Evidence in Repo**: `internal/backend/remote-state/consul/client.go` lines 140–205.
+- **Root Cause**: Standard KV PUT calls do not return the new `ModifyIndex` after an update, requiring a second GET request that is vulnerable to a TOCTOU race.
+- **Remediation Code Diff**:
 ```go
-// PutBlockBlob with conditional header to enforce single creator
-putGOptions := blobs.PutBlockBlobInput{
-    ContentType: pointer.To("application/json"),
-    IfNoneMatch: pointer.To("*"), // Atomic HTTP Precondition: Fail if already exists
+// internal/backend/remote-state/consul/client.go
+// Atomic Transaction API replaces naive KV Put
+txOps := consulapi.KVTxnOps{
+    &consulapi.KVTxnOp{
+        Verb:  verb,
+        Key:   c.Path,
+        Value: payload,
+        Index: c.modifyIndex,
+    },
 }
-_, err = c.giovanniBlobClient.PutBlockBlob(ctx, c.containerName, c.keyName, putGOptions)
-if err != nil && !response.IsPreconditionFailed(err) {
-    return "", getLockInfoErr(err)
+
+ok, resp, _, err := kv.Txn(txOps, nil)
+if err != nil {
+    return err
 }
+if !ok {
+    var resultErr error
+    for _, respError := range resp.Errors {
+        resultErr = errors.Join(resultErr, errors.New(respError.What))
+    }
+    return fmt.Errorf("consul CAS failed with transaction errors: %w", resultErr)
+}
+c.modifyIndex = resp.Results[0].ModifyIndex
 ```
-- **Lesson**: Creating lock coordinator objects in distributed blob stores must always utilize atomic storage primitives (HTTP `If-None-Match: *`) rather than read-then-write logic.
+- **Lesson**: For optimistic concurrency control, use single-operation transactions that atomically assert the pre-condition and return updated sequence/modify metadata in the same round-trip.
 
 ---
 
-### Incident 5: Consul KV Multi-Megabyte Raft Boundary Chunking Failure (BUG-TF-CONSUL-01)
-- **Context**: `internal/backend/remote-state/consul/client.go` (`Put`, `store`)
-- **What Was Expected**: Writing large state files to Consul KV remote backend should split the state into chunks and commit them without leaving orphaned chunk trees when storage modes transition from chunked to unchunked or across state hashes.
-- **What Actually Happened**: If a chunked state write succeeded in creating all chunk blocks but failed on the final atomic CAS of the manifest key, old chunks remained stranded indefinitely. Furthermore, `DeleteTree` in the cleanup routine used raw path concats that failed to escape special characters in workspace paths.
-- **Evidence in Repo**: `internal/backend/remote-state/consul/client.go:120-210`.
-- **Root Cause**: The chunking engine did not manage the chunk upload within a staged multi-key transaction. Because Consul does not support transactions across arbitrary key namespaces exceeding 64 ops, chunk writing was un-orchestrated.
-- **Remediation Pattern**:
+### Incident 5: Azure Storage State Lock Deadlock On Partial Init (BUG-AZURE-INIT-LOCK)
+- **Context**: `internal/backend/remote-state/azure/backend_state.go`
+- **What Was Expected**: Initializing a workspace state container that does not exist should create an empty state safely or return clean diagnostics without stranding locks.
+- **What Actually Happened**: If writing the initial state failed during `StateMgr()` initialization, the distributed blob lease was abandoned, locking all subsequent CLI commands indefinitely.
+- **Evidence in Repo**: `internal/backend/remote-state/azure/backend_state.go` lines 86–135.
+- **Root Cause**: Error paths during `RefreshState`, `WriteState`, and `PersistState` returned directly without unlocking the blob lease.
+- **Remediation Code Diff**:
 ```go
-// Clean up chunks strictly using computed MD5 directory prefix
-cleanupOldChunks := func() {
-    path := strings.TrimRight(c.Path, "/") + fmt.Sprintf("/tfstate.%s/", hash)
-    // Synchronously purge old chunk prefix tree
-    if _, err := kv.DeleteTree(path, nil); err != nil {
-        log.Printf("[WARN] Failed to delete obsolete state chunks at %s: %s", path, err)
+// internal/backend/remote-state/azure/backend_state.go
+// Implement unified lock-release closure over all subsequent initialization steps
+lockUnlock := func(parent error) error {
+    if err := stateMgr.Unlock(lockId); err != nil {
+        return fmt.Errorf(strings.TrimSpace(errStateUnlock), lockId, err)
+    }
+    return parent
+}
+
+if err := stateMgr.RefreshState(); err != nil {
+    err = lockUnlock(err)
+    return nil, diags.Append(err)
+}
+if v := stateMgr.State(); v == nil {
+    if err := stateMgr.WriteState(states.NewState()); err != nil {
+        err = lockUnlock(err)
+        return nil, diags.Append(err)
+    }
+    if err := stateMgr.PersistState(nil); err != nil {
+        err = lockUnlock(err)
+        return nil, diags.Append(err)
+    }
+    if err := lockUnlock(nil); err != nil {
+        return nil, diags.Append(err)
     }
 }
 ```
-- **Lesson**: Any system that implements application-layer block-chunking on top of a flat K/V database must treat the chunk root hash as an immutable directory and guarantee explicit lifecycle cleanup of inactive hash prefixes.
+- **Lesson**: When acquiring an external distributed lock during multi-step bootstrap workflows, route all exit points through an un-locking helper closure that chains the underlying error.
 
 ---
 
-## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+## 4. Microscopic Code-Level Invariants
 
 ### 1. Micro-Syntax & Token-Level Precision
-In Go, handling pointers, strings, and slices in state models requires rigorous type boundaries to prevent silent state corruption:
-- **String Pointer Traps**: In Azure helpers (`internal/backend/remote-state/azure/storage_client_helpers.go`), endpoints are often optional. Dereferencing `*endpoints.Blob` without checking `if endpoints.Blob != nil` causes an instant SIGSEGV:
-  ```go
-  // MANDATORY INVARIANT
-  if endpoints.Blob != nil {
-      endpoint := strings.TrimSuffix(*endpoints.Blob, "/")
-      out.primaryBlobEndpoint = pointer.To(endpoint)
-  }
-  ```
-- **Slice Sub-slicing Memory Leaks**: When reading chunks in `client.go`, sub-slicing a huge buffer (`payload[i:end]`) keeps the entire backing array in memory. Slices that outlive the local scope must be copied:
-  ```go
-  // Leak Prevention Pattern
-  chunk := make([]byte, end-i)
-  copy(chunk, payload[i:end])
-  ```
-- **Falsy/Zero-Value Precedence**: In `hook_state.go`, checking `if h.PersistInterval != 0` without checking `h.Schemas != nil` would crash the backend persister since Azure/AWS backends require schema serializers. Multiple guards MUST be evaluated in strict short-circuit order:
-  ```go
-  if mgrPersist, ok := h.StateMgr.(statemgr.Persister); ok && h.PersistInterval != 0 && h.Schemas != nil {
-      // Safe to invoke
-  }
-  ```
+In Go, slice indexing `buf[len(header) : len(buf)-1]` can trigger runtime panics or silent memory corruptions if UTF-8 byte lengths do not match ASCII assumptions.
+```go
+// CORRECT: Byte-level slicing on formatted ASCII HCL wrapper
+header := resourceHeader(addr) // Output: "resource \"x\" \"y\" {\n" (Guaranteed pure ASCII)
+formatted := hclwrite.Format([]byte(header + buf.String() + "}"))
+
+// Invariant: len(header) is byte-stable because resource identifiers are strictly ASCII-escaped.
+// formatted[len(formatted)-1] is guaranteed to be '}' because hclwrite emits trailing newline or closing brace.
+body := formatted[len(header) : len(formatted)-1]
+```
+*Token Hazard*: Never compare `cty.Value` with standard Go equality (`==`). `cty.Value` encapsulates dynamic types and deep data structures; standard `==` only performs shallow pointer comparison of internal representations. Always use `val.RawEquals(other)` or `val.Equals(other).True()`.
 
 ### 2. Infinite Loop & Recursion Guards
-Recursive module resolution and graph walking are prone to infinite cycles caused by self-referential symlinks or circular HCL includes:
-- **Recursion Depth Limits on Module Descent**:
-  ```go
-  const MaxModuleDepth = 100
+Graph walks and AST traversal require explicit termination invariants:
+```go
+// Recursion depth counter and cycle guard
+func walkExpTree(expr hclsyntax.Expression, depth int) error {
+    const MaxAstDepth = 256
+    if depth > MaxAstDepth {
+        return fmt.Errorf("AST depth limit reached (%d): probable recursive cycle in expression", depth)
+    }
+    // Traversal...
+    return nil
+}
+```
+*Consul Chunk Splitting Invariant*:
+```go
+// Safe non-infinite chunking algorithm
+func split(data []byte, chunkSize int) [][]byte {
+    if chunkSize <= 0 {
+        panic("chunkSize must be > 0")
+    }
+    var chunks [][]byte
+    for len(data) > 0 {
+        if len(data) < chunkSize {
+            chunkSize = len(data)
+        }
+        chunks = append(chunks, data[:chunkSize])
+        data = data[chunkSize:] // Slices toward len == 0 termination invariant
+    }
+    return chunks
+}
+```
 
-  func walkModules(mod *Module, depth int) error {
-      if depth > MaxModuleDepth {
-          return fmt.Errorf("module recursion depth exceeded limit (%d); check for circular module references", MaxModuleDepth)
-      }
-      for _, child := range mod.Children {
-          if err := walkModules(child, depth+1); err != nil {
-              return err
-          }
-      }
-      return nil
-  }
-  ```
-- **Cycle Proofing with Tarjan's Strongly Connected Components (SCC)**: Terraform Core checks graph DAGs before execution. Any cycle causes immediate termination with node trace reporting.
-
-### 3. UI & UX Micro-Mechanics
-The migration to `internal/terminal.Streams` and `views.View` establishes precise I/O mechanics:
-- **Terminal Width Wrapping**: Using `mitchellh/go-wordwrap` with a safe fallback when stdout is not a TTY (checked via `mattn/go-isatty`).
-- **Stream Separation Invariant**: Stdout is reserved exclusively for machine-readable JSON or formatted user output; all diagnostics, warnings, and error traces MUST target Stderr. Mixing them breaks downstream CI parsers (`jq` pipelines).
-- **Concurrency Buffering**: `done(t).Stderr()` in test harnesses relies on an underlying thread-safe `bytes.Buffer` wrapped with a mutex to prevent race conditions during parallel test assertions.
+### 3. UI & UX Micro-Mechanics (CLI Terminal Stream Formatting)
+In CLI tools like Terraform, terminal output races between `stdout` and `stderr` can cause text corruption:
+```go
+// internal/command/views/hook_json_bench_test.go
+// Terminal output streams must route through thread-safe synchronization abstractions
+Streams struct {
+    Stdout *terminal.OutputStream
+    Stderr *terminal.OutputStream
+}
+```
+*Invariant*: `OutputStream` uses a mutex-protected line-buffering discipline. Escape sequences (`\033[...`) must be flushed atomically with complete lines to prevent VT100 control codes from splitting across interleaved log messages.
 
 ### 4. Backend Concurrency & Memory Safety
-- **Deadlock-Free State Locking**: In `internal/backend/local/hook_state.go`, all methods acquire `h.Lock()` and use `defer h.Unlock()`. Notice that `Stopping()` also acquires `h.Lock()`. If `PostStateUpdate` called external code while holding `h.Lock()`, a deadlock could occur. The lock MUST protect internal counters and struct fields only.
-- **Context Deadlines on Network Backends**: In `azure/client.go`:
-  ```go
-  // Invariant: Do not use context.Background() directly without explicit cancellation
-  func newCtx() context.Context {
-      ctx, _ := context.WithTimeout(context.TODO(), veryLongTimeout)
-      return ctx
-  }
-  ```
-  *(Note: Production systems should replace `veryLongTimeout` with bounded timeouts passed down from command roots to prevent hanging sockets).*
+Azure Blob Lease / Consul Lock renewal races:
+```go
+// internal/backend/remote-state/consul/client.go
+type RemoteClient struct {
+    mu            sync.Mutex
+    modifyIndex   uint64
+    monitorCancel context.CancelFunc
+    monitorWG     sync.WaitGroup
+    sessionCancel context.CancelFunc
+}
+```
+*TOCTOU Guard*: The mutex `c.mu` guards the local client modifications, but does *not* guard against remote changes. All persistent writes MUST send `modifyIndex` to the remote store via Check-And-Set (CAS). If `modifyIndex == 0`, the client knows it is creating a fresh state; otherwise, it guarantees no intervening write occurred between `Get()` and `Put()`.
 
 ### 5. Defect & Error Prevention ("Galti Pakadna")
-- **Composite Error Joining**: Using Go 1.20+ `errors.Join` to prevent swallowing auxiliary errors during cleanup/unlock routines:
-  ```go
-  getLockInfoErr := func(err error) error {
-      lockInfo, infoErr := c.getLockInfo()
-      if infoErr != nil {
-          err = errors.Join(err, infoErr)
-      }
-      return &statemgr.LockError{
-          Err:  err,
-          Info: lockInfo,
-      }
-  }
-  ```
-- **Path Normalization for KV Backends**: Trailing and duplicate forward slashes (`//`) crash Consul and S3 prefix queries. All path operations MUST pass through `strings.TrimRight(path, "/")` before concatenation.
+Preventing pointer dereference panics when unmarshaling optional cloud API configurations:
+```go
+// internal/backend/remote-state/azure/storage_client_helpers.go
+func (ad *AccountDetails) AccountKey(ctx context.Context, client *storageaccounts.StorageAccountsClient) (*string, error) {
+    if ad.accountKey != nil {
+        return ad.accountKey, nil
+    }
+    // Safeguard 1: Nil response check
+    if model := listKeysResp.Model; model != nil && model.Keys != nil {
+        for _, key := range *model.Keys {
+            // Safeguard 2: Nil property deep-chain checks
+            if key.Permissions == nil || key.Value == nil {
+                continue
+            }
+            if *key.Permissions == storageaccounts.KeyPermissionFull {
+                ad.accountKey = key.Value
+                break
+            }
+        }
+    }
+    // Safeguard 3: Explicit absence assertion
+    if ad.accountKey == nil {
+        return nil, fmt.Errorf("unable to determine the Write Key for %s", ad.StorageAccountId)
+    }
+    return ad.accountKey, nil
+}
+```
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
 ### 1. Architecture
-- **Boundary**: Strict separation between CLI (`internal/command`), Execution Graph (`internal/terraform`), State Management (`internal/states`), and Backends (`internal/backend`).
-- **Decoupling**: State management interfaces (`statemgr.Full`, `statemgr.Persister`, `statemgr.Writer`) isolate storage engines from core graph operations.
+Terraform is partitioned into three cleanly decoupled tiers:
+- **Presentation/Command Tier (`internal/command`)**: Parses CLI flags, manages working directories, loads terminal UI views, and selects backend configurations.
+- **Core Orchestrator (`internal/terraform`)**: Pure domain layer. Builds the resource DAG, evaluates interpolation and variables via `cty`, performs graph walks (Plan, Apply, Destroy, Refresh), and coordinates plugin RPCs.
+- **State and Backend Fabric (`internal/states`, `internal/backend`)**: Manages durability, workspace isolation, CAS validation, and state locking.
 
 ### 2. Core Abstractions
-- `statemgr.Full`: Interface unifying state reading, writing, snapshotting, and locking.
-- `terraform.Hook`: Event-driven lifecycle interception (`PostStateUpdate`, `Stopping`, `PreApply`).
-- `cty.Value`: Strongly-typed, JSON-serializable type system decoupling Go native types from HCL expressions.
+- `statemgr.Full`: The composite interface requiring `statemgr.Reader`, `statemgr.Writer`, `statemgr.Persister`, and `statemgr.Locker`.
+- `addrs.AbsResourceInstance`: The immutable type that identifies a resource across module boundaries (`module.foo.aws_instance.bar[0]`).
+- `configschema.Block`: The structural schema system that defines attributes, nested blocks, type constraints, and sensitivity without Go reflection.
+- `plans.QueryResults`: Represents dynamic data retrieved during query operations, bridging arbitrary data plane states into HCL resource imports.
 
 ### 3. Error Handling
-- Diagnostically driven: `tfdiags.Diagnostics` aggregates warnings and errors, retaining source HCL file/range references.
-- Rollback & Halt: `terraform.HookActionHalt` signals immediate graph evaluation abort on state write failure.
+Terraform uses diagnostic collections (`tfdiags.Diagnostics`) rather than simple Go `error` returns:
+- Diagnostics hold severity (`Error` vs `Warning`), summary, detail, and source code offsets (`hcl.Range`).
+- Errors do not immediately halt graph evaluation unless they represent fatal system invariants. Graph evaluation accumulates errors across independent branches, maximizing troubleshooting feedback per plan/apply cycle.
 
 ### 4. Testing
-- Test views: Elimination of shared global stdout/stderr via isolated `terminal.StreamsForTesting(t)` and `testView(t)`.
-- Synthetic providers: In-memory mock providers configured
+- Benchmark suites use `testing.B.Loop()` (`b.Loop()`) and `b.ReportAllocs()` (seen in `hook_json_bench_test.go`) to test allocation budgets for large workloads (10,000+ items).
+- Uses `cmp.Diff` with custom comparators to validate AST and JSON structures while avoiding string formatting flakiness across test environments.
+
+### 5. Security
+- Sensitive attribute marking (`Sensitive: true` on `configschema.Attribute`) propagates through `cty.Value` marks.
+- The UI layer and JSON serializers scrub values containing `marks.Sensitive` to prevent secret leaks in stdout and plan artifacts.
+- Credentials in remote backends support multiple authentication options (e.g., Azure OIDC tokens, Workload Identity, certificate bundles) with precedence checks that reject conflicting configurations.
+
+### 6. Performance
+- State payloads larger than 512 KB in Consul are split into 524,288-bit chunks to match Raft consensus chunk thresholds.
+- Code generation formatting overhead was reduced from $O(N \cdot K)$ to $O(N)$ by formatting the outer synthetic resource block once and caching body byte slices.
+
+### 7. Deployment
+- The repository enforces strict Go toolchain pinning via `go 1.26.11` and explicit `godebug winsymlink=0` flags to maintain symlink compatibility on Windows runtimes.
+- Docker builds use multi-stage processes starting from Alpine mirrors with explicit labels and minimal toolsets (`git`, `bash`, `openssh`, `ca-certificates`).
+
+### 8. Agent Patterns
+- Terraform functions as an autonomous reconciliation agent: `Desired State (HCL) -> Observed State (Refresh via RPC) -> Compute Delta (Plan DAG) -> Execute Mutations (Apply DAG)`.
+- Re-entrancy and cycle protection: Every resource step must be idempotent. If an execution cycle is interrupted, the StateHook ensures all completed mutations are preserved in state.
+
+### 9. Data Flow
+```
+HCL Config File (.tf)
+       │
+       ▼ (hcl/v2 Parse)
+Config AST (hclsyntax)
+       │
+       ▼ (hcldec / Schemas)
+cty.Value (Domain Object)
+       │
+       ▼ (Graph Evaluation + Provider RPC)
+states.State (State Manager)
+       │
+       ▼ (statemgr.Persister)
+Remote JSON Blob (S3 / Azure / Consul Storage)
+```
+
+---
+
+## 6. The 8 Learning Extraction Artifacts
+
+### 1. Pattern
+**Atomic Lease Initialization Guard Closure**:
+Wrap multi-step initialization sequences in a lock-aware error-chaining closure so failures unlock the lease while preserving the original error cause.
+```go
+lockId, err := client.Lock(lockInfo)
+if err != nil { return err }
+
+safeExit := func(parent error) error {
+    if unlockErr := client.Unlock(lockId); unlockErr != nil {
+        return fmt.Errorf("unlock failed: %v, original: %w", unlockErr, parent)
+    }
+    return parent
+}
+
+if err := doStepA(); err != nil { return safeExit(err) }
+if err := doStepB(); err != nil { return safeExit(err) }
+return safeExit(nil)
+```
+
+### 2. Rule
+`Any operation interacting with distributed persistent state MUST enforce optimistic concurrency control via Check-And-Set (CAS) index validation or blob leasing; raw blind PUT updates are strictly prohibited.`
+
+### 3. Architecture Principle
+`Decouple execution speed from persistence latency. The evaluation loop must checkpoint to fast local storage immediately, while remote durability can be synchronized conditionally or at clean batch boundaries.`
+
+### 4. Failure Mode
+Calling full AST parsing or formatting (`hclwrite.Format`) repeatedly within hot serialization loops or JSON views causes $O(N^2)$ time complexity and memory pressure, leading to out-of-memory errors on large state graphs.
+
+### 5. Reusable Skill
+**Parsing and Slicing Synthetic Delimiters**:
+When an AST engine lacks an isolated inner-body formatting method:
+1. Synthesize an outer envelope around the snippet: `wrapper := "block {\n" + snippet + "\n}"`.
+2. Run the AST formatter over the entire envelope: `res := format(wrapper)`.
+3. Locate boundary byte indices using the known, ASCII-stable prefix length and trim off the closing delimiter.
+
+### 6. Decision
+Terraform manages remote state with a unified `remote.State` engine connected to pluggable `RemoteClient` interfaces, rather than building custom state machines for each cloud provider.
+- *Rationale*: Core state behaviors (locking, serialization, MD5 checking, and schema migrations) remain identical across all cloud providers. Providers only implement simple `Get`, `Put`, `Delete`, and `Lock` operations.
+
+### 7. Anti-Pattern
+Checking only the start and end tokens of an array (`tokens[0] == '(' && tokens[n-1] == ')'`) to detect enclosing parentheses. This causes syntax bugs when formatting adjacent expressions like `(a) + (b)`. Always track token balancing depth across the entire stream.
+
+### 8. Verification Method
+Automated allocation regressions checks via Go benchmark assertions:
+```go
+func TestJSONRenderMemoryBound(t *testing.T) {
+    allocs := testing.AllocsPerRun(10, func() {
+        _ = RenderQueryResults(benchmarkFixture)
+    })
+    if allocs > MaxAllowedAllocs {
+        t.Fatalf("Excessive allocations: got %f, max allowed %d", allocs, MaxAllowedAllocs)
+    }
+}
+```
+
+---
+
+## 7. Actionable Agent Skill & Implementation Checklist
+
+### Step-by-Step Production Checklist for State Management & Serialization Systems
+
+- [ ] **Step 1: Implement Tiered State Hooks**
+  - Define an in-memory/local checkpoint interface (`WriteState`).
+  - Define an external durable interface (`PersistState`).
+  - Wire an atomic signal/interruption handler (`Stopping()`) that unconditionally forces durable persistence during cancellation.
+
+- [ ] **Step 2: Add Optimistic Concurrency to Remote Adapters**
+  - Track sequence/revision metadata (`modifyIndex`, `ETag`, or `LeaseID`).
+  - Reject writes if remote revisions have advanced since the last `Get()`.
+  - Use transaction or conditional write APIs (e.g., Consul `Txn`, Azure `x-ms-lease-id`).
+
+- [ ] **Step 3: Guard the Code Formatter and AST Serializer**
+  - Never call parser or formatting routines inside `String()`, `MarshalJSON()`, or logging paths.
+  - Format at mutation time, store formatted byte buffers, and return stored buffers in accessors.
+  - If synthetic delimiters are required for inner blocks, verify prefix/suffix byte calculations are safe for ASCII and multi-byte UTF-8 data.
+
+- [ ] **Step 4: Audit Bracket Matching and AST Transformations**
+  - Implement depth-tracking counters for grouping tokens (`(`, `)`, `{`, `}`, `[`, `]`).
+  - Verify that matching opening and closing boundary tokens belong to the same expression level and are not disjoint sub-expressions.
+
+- [ ] **Step 5: Enforce Deep Immutability for Diagnostics & Schemas**
+  - Return diagnostic sets by value or slice copy.
+  - Treat schema block definitions (`configschema.Block`) as immutable singletons across graph evaluation nodes.
+  - Use `cty.Value` operations instead of Go struct pointer manipulation to preserve value semantics across RPC boundaries.
 
 ## 3. Independent Verification Protocol
 1. Assert state existence before and after execution.

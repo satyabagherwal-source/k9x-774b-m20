@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-Y1D1",
-    "timestamp": "2026-11-18T07:30:51.877Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "5c025fc175c344d8e5599b053c3ae7c40b4b7f52414e0271c7b47343e5bd45c9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-Y31I",
     "timestamp": "2026-11-18T07:30:54.054Z",
     "repository": "apple/foundationdb",
@@ -7492,6 +7477,21 @@
     "contentHash": "31e5f143b059d5592fead8ee3c7a4123dd08d59cb725d69a2d2860ebdda8d6a5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-UKCW",
+    "timestamp": "2026-11-20T01:55:34.928Z",
+    "repository": "hashicorp/terraform",
+    "learningId": "learn-github-hashicorp-terraform",
+    "contentHash": "064c95d69542cbab6a58fa0d2a59d6208ea34a1858d1d65b9bd56ba32c2a4bca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T01:31:33.216Z",
+  "last_updated": "2026-11-20T01:55:34.941Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7041,14 +7041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hashicorp-terraform",
-      "content_hash": "38a4a8877440ebb3cdf51efadbb6327173a08f8e0fd0c281231ed1bf2fcd7828",
-      "verified_at": "2026-11-18T06:32:38.672Z",
+      "content_hash": "064c95d69542cbab6a58fa0d2a59d6208ea34a1858d1d65b9bd56ba32c2a4bca",
+      "verified_at": "2026-11-20T01:55:34.940Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T06:32:38.672Z"
+      "last_updated": "2026-11-20T01:55:34.940Z"
     },
     "TaKO8Ki/gobang": {
       "repository": "TaKO8Ki/gobang",

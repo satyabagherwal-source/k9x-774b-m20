@@ -11464,3 +11464,6 @@ Every entry in this ledger must capture:
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `202f6188` | Multi-dimensional audit evidence | 2026-11-20T01:22:58.537Z |
 | `learn-dom-h-f78059fe` | `project://fallow-rs-fallow` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md` | 2026-11-20T01:23:29.245Z |
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `b943942d` | Multi-dimensional audit evidence | 2026-11-20T01:31:33.207Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `cefb61b7` | Multi-dimensional audit evidence | 2026-11-20T01:55:34.932Z |
+| `learn-dom-h-91c37114` | `project://hashicorp-terraform` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hashicorp-terraform-learnings.md` | 2026-11-20T01:56:08.803Z |
+| `learn-dom-k-0b7ebb9f` | `project://hashicorp-terraform` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hashicorp-terraform-learnings.md` | 2026-11-20T01:56:45.727Z |

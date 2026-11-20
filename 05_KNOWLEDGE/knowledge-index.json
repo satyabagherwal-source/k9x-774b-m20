@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T01:42:16.966Z",
+  "last_updated": "2026-11-20T01:56:48.278Z",
   "total_verified_learnings": 9023,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22126,
+  "total_items": 22132,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218604,13 +218604,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DEWU-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-W4OU-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "af70235457a2223efbf0f651e0b9a717c6d916946409b08ffa3d5ae3ba74f5ad",
+      "content_hash": "000ed397ee74305c356c57d1d8a70c92d456385cd5209585c0a7fdb9061609bf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T01:42:14.721Z"
+      "persisted_at": "2026-11-20T01:56:47.934Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218620,9 +218620,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "24a7d92ae69c2e44fe4ae091a105e090a97444ad638dd83563ea006b644b5c8d",
+      "content_hash": "0f289f89b56c5dc027ddb58174863870fdea20c8a672fac65d965bb8bb94eeac",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T01:42:14.947Z"
+      "persisted_at": "2026-11-20T01:56:48.116Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218632,9 +218632,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "f4eff5131887f5aa1f2a3a1477ffa02a5527cc40d62abaabc7ca2739f1424200",
+      "content_hash": "d5720a269ab6f1dfdfc844557a9b3e5be978698e8c2fe1e4a91aee83cd7ee3de",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T01:42:15.169Z"
+      "persisted_at": "2026-11-20T01:56:48.278Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -228021,13 +228021,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-8W3T-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-W435-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "73318d0f569532b02c7479801fd48a38d15d63805a49b8670942d7c87367b1ed",
+      "content_hash": "1b5b2ac91e434a2176852afa17c46f2c50ffd18252b25a2a10b2624c9559a3ac",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T00:14:44.873Z"
+      "persisted_at": "2026-11-20T01:56:47.153Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -228037,9 +228037,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "3a3eacb57c5fc912eec4ade8469d24361a98d70608009264f810c0ed49948b50",
+      "content_hash": "7d43d4f414183eef4c78c1222ee8c3fa379ef5e80e78ba403f896989fc554f64",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T00:14:45.036Z"
+      "persisted_at": "2026-11-20T01:56:47.337Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -228049,9 +228049,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "35de3980996072f524b740861f470d5c2d1715c7d6d77eeced1c13b64bf649de",
+      "content_hash": "14c758c2ed8cc7c894ac0d04be3e4a234dbce1587348983681eb6b6b738bc21b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T00:14:45.188Z"
+      "persisted_at": "2026-11-20T01:56:47.502Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -235140,8 +235140,8 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "a1246154",
-      "content_hash": "38a4a8877440ebb3cdf51efadbb6327173a08f8e0fd0c281231ed1bf2fcd7828",
+      "source_version": "cefb61b7",
+      "content_hash": "064c95d69542cbab6a58fa0d2a59d6208ea34a1858d1d65b9bd56ba32c2a4bca",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
@@ -235169,6 +235169,16 @@
           "number": 9140,
           "title": "command/state replace-provider: Refactor to use views",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9491,
+          "title": "Two-Tiered State Persistence Invariant (Intermediate vs Durable Sync)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9492,
+          "title": "Suffix-Stripping Block-Level AST Normalization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235176,7 +235186,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T06:32:38.420Z",
+      "verified_at": "2026-11-20T01:55:34.737Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235218,10 +235228,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-architecture-intelligence-hashicorp-terraform-core-invariant.md",
       "title": "Architecture Intelligence: hashicorp/terraform Core Invariants",
       "repository": "hashicorp/terraform",
-      "source_version": "a1246154",
-      "content_hash": "49540bee7d860c74cb38d35d5e1c1bab15aaa4059d51be50f2e8f0940cbccbbd",
+      "source_version": "cefb61b7",
+      "content_hash": "3bccfd27b20a820d21062b25105d1e5ca05f33a9d24c3a21e0b62a37cb2d69de",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T06:32:39.115Z"
+      "persisted_at": "2026-11-20T01:55:35.409Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform",
@@ -235230,10 +235240,10 @@
       "relative_path": "08_VERIFICATION/hashicorp-terraform-verification-protocol-empirical-defect-shield-for-hashicorp-.md",
       "title": "Verification Protocol: Empirical Defect Shield for hashicorp/terraform",
       "repository": "hashicorp/terraform",
-      "source_version": "a1246154",
-      "content_hash": "b8933a78d217e3893bad286c8a7918616b0b025a5ed8dc4eabadee1d14954413",
+      "source_version": "cefb61b7",
+      "content_hash": "c5584beb69c93de6e6d0b5e74a712b46c4ad1d0d8c8d47383e66349372a6ad19",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:32:39.287Z"
+      "persisted_at": "2026-11-20T01:55:35.697Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria",
@@ -235255,9 +235265,9 @@
       "title": "Architecture Intelligence: hashicorp-terraform-learnings Core Invariants",
       "repository": "hashicorp-terraform-learnings",
       "source_version": "HEAD",
-      "content_hash": "be822fd7ff7dde5d8698e07c230404589a91c46bc3b0e549ae05d3286b791812",
+      "content_hash": "d29e757b8a2b7397c2c7f93ab3d9ae0ff5182ac8e6ea0826152f3079931e7a3b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T08:21:42.860Z"
+      "persisted_at": "2026-11-20T01:56:46.318Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform-learnings",
@@ -235267,9 +235277,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for hashicorp-terraform-learnings",
       "repository": "hashicorp-terraform-learnings",
       "source_version": "HEAD",
-      "content_hash": "3387ff6644cd89b448a209ed73cdfa079186b3e75bbfb5ab4726560653a76cc8",
+      "content_hash": "cc059d79c0ea2aa6b3662fc78bb5d3fd3ed0696602fbd292561248e5e8b0ceb9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T08:21:43.128Z"
+      "persisted_at": "2026-11-20T01:56:46.636Z"
     },
     "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -299479,6 +299489,82 @@
       "content_hash": "bc1ac45e35935a660773aa116349ecebb493966c2c45bc5e7e531e5e1c1376c7",
       "domain_letter": "G",
       "persisted_at": "2026-11-20T01:31:36.716Z"
+    },
+    "rule-9491": {
+      "learning_id": "rule-9491",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9491,
+      "title": "Two-Tiered State Persistence Invariant (Intermediate vs Durable Sync)",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "cefb61b7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T01:55:34.737Z"
+    },
+    "rule-9492": {
+      "learning_id": "rule-9492",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9492,
+      "title": "Suffix-Stripping Block-Level AST Normalization",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "cefb61b7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T01:55:34.737Z"
+    },
+    "candidate_directive-two-tiered-state-persistence-invariant-intermediate-vs-durable-sync": {
+      "item_id": "candidate_directive-two-tiered-state-persistence-invariant-intermediate-vs-durable-sync",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W365-two-tiered-state-persistence-invariant-intermediate-vs-durable-sync.md",
+      "title": "Two-Tiered State Persistence Invariant (Intermediate vs Durable Sync)",
+      "repository": "hashicorp-terraform-learnings",
+      "source_version": "HEAD",
+      "content_hash": "df44003bc020c34de6d946d79cbe8f494cf7ca927b4676fd67e48567cb93614e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T01:56:45.966Z"
+    },
+    "candidate_directive-suffix-stripping-block-level-ast-normalization": {
+      "item_id": "candidate_directive-suffix-stripping-block-level-ast-normalization",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W365-suffix-stripping-block-level-ast-normalization.md",
+      "title": "Suffix-Stripping Block-Level AST Normalization",
+      "repository": "hashicorp-terraform-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bfaeaa8306a8ec9cbbdccabb145f68d3fe01b03354dabd865dec866caef97b05",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T01:56:46.134Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-hashicorp-terraform": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-hashicorp-terraform",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/hashicorp-terraform-skill-operational-integration-playbook-for-hashicorp-terrafo.md",
+      "title": "Skill: Operational & Integration Playbook for hashicorp/terraform",
+      "repository": "hashicorp/terraform",
+      "source_version": "cefb61b7",
+      "content_hash": "138c9a444ed5ab8522a69efab404ea60f3f63f12835e371318f1507b0d32604a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T01:55:35.561Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-hashicorp-terraform-learnings": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-hashicorp-terraform-learnings",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/hashicorp-terraform-learnings-skill-operational-integration-playbook-for-hashico.md",
+      "title": "Skill: Operational & Integration Playbook for hashicorp-terraform-learnings",
+      "repository": "hashicorp-terraform-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a57c7a4e1f5a5aa785ff3b1100e9edae2fef9a6e9de063ae12d5bfe529f3d114",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T01:56:46.486Z"
     }
   },
   "ai-builder-brain": {

@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T01:42:14.221Z",
-    "lastVerified": "2026-11-20T01:42:14.221Z",
+    "lastChecked": "2026-11-20T01:55:38.351Z",
+    "lastVerified": "2026-11-20T01:55:38.351Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -345,8 +345,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T01:12:46.914Z",
-    "lastVerified": "2026-11-20T01:12:46.914Z",
+    "lastChecked": "2026-11-20T01:54:04.943Z",
+    "lastVerified": "2026-11-20T01:54:04.943Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -863,9 +863,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-19T19:31:07.876Z",
+    "lastChecked": "2026-11-20T01:53:59.948Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-19T19:31:07.876Z"
+    "lastVerified": "2026-11-20T01:53:59.948Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate",
@@ -2391,9 +2391,9 @@
   "tach-org-tach": {
     "name": "tach",
     "officialUrl": "https://github.com/tach-org/tach",
-    "lastChecked": "2026-11-18T14:24:03.868Z",
+    "lastChecked": "2026-11-20T01:53:49.967Z",
     "revisionIdentifier": "7c27c816",
-    "lastVerified": "2026-11-18T14:24:03.868Z"
+    "lastVerified": "2026-11-20T01:53:49.967Z"
   },
   "hf-akhilaaa3-jev-omni": {
     "name": "akhilaaa3/Jev-Omni",
@@ -4214,12 +4214,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "malisper-pgrust": {
-    "name": "malisper/pgrust",
+    "name": "pgrust",
     "officialUrl": "https://github.com/malisper/pgrust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T20:14:29.051Z",
-    "lastVerified": "2026-11-18T20:14:29.051Z",
+    "lastChecked": "2026-11-20T01:54:02.444Z",
+    "lastVerified": "2026-11-20T01:54:02.444Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-malisper-pgrust",
@@ -4228,7 +4228,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "df8a9bb4"
   },
   "aome510-spotify-player": {
     "name": "aome510/spotify-player",
@@ -4527,11 +4528,21 @@
     "lastVerified": "2026-11-18T21:33:44.640Z"
   },
   "hashicorp-terraform": {
-    "name": "terraform",
+    "name": "hashicorp/terraform",
     "officialUrl": "https://github.com/hashicorp/terraform",
-    "lastChecked": "2026-11-18T21:33:47.280Z",
-    "revisionIdentifier": "a1246154",
-    "lastVerified": "2026-11-18T21:33:47.280Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-20T01:54:00.728Z",
+    "lastVerified": "2026-11-20T01:54:00.728Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-hashicorp-terraform",
+    "contentHash": "064c95d69542cbab6a58fa0d2a59d6208ea34a1858d1d65b9bd56ba32c2a4bca",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "amrdeveloper-gql": {
     "name": "GQL",
@@ -8972,5 +8983,19 @@
     "lastChecked": "2026-11-20T01:42:04.179Z",
     "revisionIdentifier": "6157c77e",
     "lastVerified": "2026-11-20T01:42:04.179Z"
+  },
+  "codetot-web-schema-test": {
+    "name": "schema-test",
+    "officialUrl": "https://github.com/codetot-web/schema-test",
+    "lastChecked": "2026-11-20T01:53:52.469Z",
+    "revisionIdentifier": "f395034cc2",
+    "lastVerified": "2026-11-20T01:53:52.469Z"
+  },
+  "kudoleh-ios-clean-architecture-mvvm": {
+    "name": "iOS-Clean-Architecture-MVVM",
+    "officialUrl": "https://github.com/kudoleh/iOS-Clean-Architecture-MVVM",
+    "lastChecked": "2026-11-20T01:53:54.962Z",
+    "revisionIdentifier": "a68da3e3",
+    "lastVerified": "2026-11-20T01:53:54.962Z"
   }
 }

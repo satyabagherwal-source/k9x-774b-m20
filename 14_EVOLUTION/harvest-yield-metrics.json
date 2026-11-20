@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T01:31:33.213Z",
-  "total_cycles_completed": 10905,
-  "total_learnings_persisted": 10905,
-  "total_rules_promoted": 10269,
+  "last_updated": "2026-11-20T01:55:34.937Z",
+  "total_cycles_completed": 10906,
+  "total_learnings_persisted": 10906,
+  "total_rules_promoted": 10271,
   "history": [
-    {
-      "timestamp": "2026-11-19T05:24:20.658Z",
-      "repository": "zai-org/GLM-5.3",
-      "learningId": "learn-huggingface-zai-org-glm-5-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T05:24:29.382Z",
       "repository": "onejs/one",
@@ -1403,6 +1396,13 @@
       "repository": "HelixDB/helix-db",
       "learningId": "learn-github-helixdb-helix-db",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T01:55:34.937Z",
+      "repository": "hashicorp/terraform",
+      "learningId": "learn-github-hashicorp-terraform",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
