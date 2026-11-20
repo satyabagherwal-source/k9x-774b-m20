@@ -4,17 +4,17 @@
 {
   "source_repository": "Louis-CFM/coucou",
   "source_url": "https://github.com/Louis-CFM/coucou",
-  "source_version": "0d7fe588",
+  "source_version": "ab981434",
   "license": "MIT",
-  "timestamp": "2026-11-16T16:00:09.518Z",
+  "timestamp": "2026-11-20T17:12:13.104Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-louis-cfm-coucou",
   "canonical_classification": "architecture_decision"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Louis-CFM/coucou](https://github.com/Louis-CFM/coucou) (Revision: `0d7fe588`).  
-> **License**: MIT | **Timestamp**: `2026-11-16T16:00:09.518Z`  
+> **Provenance**: Harvested from [Louis-CFM/coucou](https://github.com/Louis-CFM/coucou) (Revision: `ab981434`).  
+> **License**: MIT | **Timestamp**: `2026-11-20T17:12:13.104Z`  
 > **Learning ID**: `learn-github-louis-cfm-coucou`
 
 
@@ -30,7 +30,7 @@ During deep inspection of Louis-CFM/coucou, modular boundaries, performance char
 > **Canonical Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T16:00:05.404Z  
+> **Harvest Timestamp**: 2026-11-20T17:12:11.839Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -40,7 +40,7 @@ During deep inspection of Louis-CFM/coucou, modular boundaries, performance char
 - **Description**: A tiny friend in your Mac's notch and on your iPhone that keeps an eye on your AI coding agents: Claude Code, Codex, Cursor, Gemini CLI, Antigravity and more. Approve from the notch or your Lock Screen.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7265 stars
+- **Stars / Engagement**: 7359 stars
 
 ---
 
@@ -1806,40 +1806,124 @@ final class SoundEngine {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d7fe588` (2026-11-13)
-**Commit Message**: Merge pull request #1097 from Louis-CFM/android-0.5.0-dates
+### Incident Patch 1: `80ad610c` (2026-11-19)
+**Commit Message**: Merge pull request #1110 from chennurivarun/fix/dictation-keyboard-languages-main-thread
 
-CHANGELOG: date Android 0.4.0 and 0.5.0
+Flow: read keyboard layouts on the main thread (macOS 27 crash)
 
-**File**: `CHANGELOG.md` (modified, +2/-2)
+**File**: `NotchBuddy/Sources/App/AnalyzerDictation.swift` (modified, +1/-1)
 ```diff
-@@ -51,7 +51,7 @@ Fixes:
- - **Instant page switches in Settings** *(Linux)* (#906 by @RomainBrocheton)
- - **The finished card goes away when a new prompt comes** (#587) and **the GitHub week strip is graded against its own week** (#611), by @rollecode
+@@ -97,7 +97,7 @@ final class AnalyzerDictation: @unchecked Sendable {
+     /// supported, or not installed on this Mac): MacDictation listens then, as before.
+     static func locales(for language: String) async -> [Locale]? {
+         guard SpeechTranscriber.isAvailable else { return nil }
+-        let wanted = language == MacDictation.automatic ? MacDictation.automaticLocales() : [Locale(identifier: language)]
++        let wanted = language == MacDictation.automatic ? await MacDictation.automaticLocales() : [Locale(identifier: language)]
+         guard !wanted.isEmpty else { return nil }
+         let installed = Set(await SpeechTranscriber.installedLocales.map { $0.identifier(.bcp47) })
+         var out: [Locale] = []
+```
+
+**File**: `NotchBuddy/Sources/App/MacDictation.swift` (modified, +3/-2)
+```diff
+@@ -232,7 +232,8 @@ final class MacDictation: @unchecked Sendable {
  
--## Android 0.5.0 — Unreleased
-+## Android 0.5.0 — November 13, 2026
+     /// The languages Automatic listens for: last winner, macOS languages, keyboard layouts,
+     /// Coucou's own language, then English — one per language, up to three.
+-    static func automaticLocales() -> [Locale] {
++    /// Main actor: macOS 27 traps when the keyboard layouts are read off the main thread.
++    @MainActor static func automaticLocales() -> [Locale] {
+         var ids: [String] = []
+         if let last = UserDefaults.standard.string(forKey: lastHeardKey) { ids.append(last) }
+         // The Mac's languages (not Coucou's override in Settings → General → Language).
+@@ -281,7 +282,7 @@ final class MacDictation: @unchecked Sendable {
+     }
  
- - **Coucou for Android 0.5.0**, by @Rhytam23 (versionCode 5)
-   - **A steadier link through your own relay** — the connection no longer drops after a quiet moment (from #554 by @rollecode), and the phone reconnects at once when the computer comes back instead of waiting on a dead connection (from #1041 by @lazarevtill). The relay settings are still hidden on Windows and Linux, so this is for testers for now (see Windows and Linux 0.6.0)
-@@ -61,7 +61,7 @@ Fixes:
-   - **The island fits again** when the phone is rotated or the screen resolution or font size changes while it is open
-   - **Six more languages** — German, Japanese, Korean, Traditional Chinese and Thai (from #1043 to #1047 by @Ohualtex) and Italian (from #974 by @roccordx); the app now has 16 translations
+     /// The main language of each enabled keyboard layout ("fr" for AZERTY, "en" for ABC…).
+-    private static func keyboardLanguages() -> [String] {
++    @MainActor private static func keyboardLanguages() -> [String] {
+         let filter = ["TISPropertyInputSourceCategory": "TISCategoryKeyboardInputSource"] as CFDictionary
+         guard let list = TISCreateInputSourceList(filter, false)?.takeRetainedValue() as? [TISInputSource] else { return [] }
+         return list.compactMap { source in
+```
+
+---
+
+### Incident Patch 2: `c227a944` (2026-11-19)
+**Commit Message**: fix: avoid crash when requesting speech permission
+
+Mark the Speech authorization callback @Sendable so it does not inherit requestPermissions main-actor isolation. Speech may invoke it on a background queue; it only resumes a thread-safe continuation.
+
+**File**: `NotchBuddy/Sources/App/Voice/VoiceSettings.swift` (modified, +1/-1)
+```diff
+@@ -135,7 +135,7 @@ enum VoiceSettings {
+         let mic = await AVAudioApplication.requestRecordPermission()
+         guard mic else { return false }
+         return await withCheckedContinuation { cont in
+-            SFSpeechRecognizer.requestAuthorization { status in
++            SFSpeechRecognizer.requestAuthorization { @Sendable status in
+                 cont.resume(returning: status == .authorized)
+             }
+         }
+```
+
+---
+
+### Incident Patch 3: `a7ffb534` (2026-11-16)
+**Commit Message**: Flow: read keyboard layouts on the main thread (macOS 27 crash)
+
+On macOS 27, TISCreateInputSourceList asserts it runs on the main queue.
+AnalyzerDictation.locales(for:) is a nonisolated async function, so with
+the language on Automatic it ran on the cooperative pool and Coucou
+trapped (EXC_BREAKPOINT in dispatch_assert_queue) the moment the Flow key
+went down. automaticLocales() is now main-actor isolated, so the compiler
+makes every caller hop to the main thread.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `NotchBuddy/Sources/App/AnalyzerDictation.swift` (modified, +1/-1)
+```diff
+@@ -97,7 +97,7 @@ final class AnalyzerDictation: @unchecked Sendable {
+     /// supported, or not installed on this Mac): MacDictation listens then, as before.
+     static func locales(for language: String) async -> [Locale]? {
+         guard SpeechTranscriber.isAvailable else { return nil }
+-        let wanted = language == MacDictation.automatic ? MacDictation.automaticLocales() : [Locale(identifier: language)]
++        let wanted = language == MacDictation.automatic ? await MacDictation.automaticLocales() : [Locale(identifier: language)]
+         guard !wanted.isEmpty else { return nil }
+         let installed = Set(await SpeechTranscriber.installedLocales.map { $0.identifier(.bcp47) })
+         var out: [Locale] = []
+```
+
+**File**: `NotchBuddy/Sources/App/MacDictation.swift` (modified, +3/-2)
+```diff
+@@ -232,7 +232,8 @@ final class MacDictation: @unchecked Sendable {
  
--## Android 0.4.0 — Unreleased
-+## Android 0.4.0 — November 3, 2026
+     /// The languages Automatic listens for: last winner, macOS languages, keyboard layouts,
+     /// Coucou's own language, then English — one per language, up to three.
+-    static func automaticLocales() -> [Locale] {
++    /// Main actor: macOS 27 traps when the keyboard layouts are read off the main thread.
++    @MainActor static func automaticLocales() -> [Locale] {
+         var ids: [String] = []
+         if let last = UserDefaults.standard.string(forKey: lastHeardKey) { ids.append(last) }
+         // The Mac's languages (not Coucou's override in Settings → General → Language).
+@@ -281,7 +282,7 @@ final class MacDictation: @unchecked Sendable {
+     }
  
- - **The island sits in the middle again** when the screen resolution is set below the panel's (#900 by @pfTheTrial)
- - **Coucou for Android 0.4.0** — works with a Mac as well as with Windows and Linux: pair it the same way (Settings → Android phone on the Mac, then scan the QR code). The app itself does not change for this; the Mac speaks the same link as the PC. Needs the Mac release that carries the Android phone link
+     /// The main language of each enabled keyboard layout ("fr" for AZERTY, "en" for ABC…).
+-    private static func keyboardLanguages() -> [String] {
++    @MainActor private static func keyboardLanguages() -> [String] {
+         let filter = ["TISPropertyInputSourceCategory": "TISCategoryKeyboardInputSource"] as CFDictionary
+         guard let list = TISCreateInputSourceList(filter, false)?.takeRetainedValue() as? [TISInputSource] else { return [] }
+         return list.compactMap { source in
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1097** (2026-11-13): CHANGELOG: date Android 0.4.0 and 0.5.0 (@Louis-CFM)
-- **PR #1092** (2026-11-12): Windows and Linux: show the relay settings to testers (@Louis-CFM)
-- **PR #1090** (2026-11-12): Windows and Linux: Flow can hide the pill until you dictate (@Rhytam23)
-- **PR #1089** (2026-11-12): Android 0.5.0: swipe the island away, Do Not Disturb, six more languages, a steadier relay link (@Rhytam23)
-- **PR #1088** (2026-11-11): Release prep: Mac 0.6.0 (@Louis-CFM)
-- **PR #1085** (closed): feat: initialize ml7a Windows app and complete Milestone 1 (@marceleno1717)
+- **PR #1134** (2026-11-20): Tests: the chat PDF test gets its own temp folder (flaky on Linux CI) (@Rhytam23)
+- **PR #1132** (2026-11-19): Release prep: Mac 0.6.1 (@Louis-CFM)
+- **PR #1131** (2026-11-19): Mochi at 60 fps open, 30 folded: no more 120 Hz redraws (#1116) (@Louis-CFM)
+- **PR #1128** (2026-11-19): Fix crash when requesting speech recognition permission (@luchdom)
+- **PR #1124** (2026-11-19): Flow: dictation pasted as heard when the rewrite model answers or refuses instead of rewriting (@liztim17)
+- **PR #1123** (2026-11-18): README: Botan, the founders list (@Louis-CFM)
 
 ---
 
@@ -1859,33 +1943,31 @@ CHANGELOG: date Android 0.4.0 and 0.5.0
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in CHANGELOG.md
+## X. Empirical Invariant Guard in AnalyzerDictation.swift
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `NotchBuddy/Sources/App/AnalyzerDictation.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d7fe588`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `80ad610c`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `NotchBuddy/Sources/App/AnalyzerDictation.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-## Android 0.5.0 — November 13, 2026
-## Android 0.4.0 — November 3, 2026
+        let wanted = language == MacDictation.automatic ? await MacDictation.automaticLocales() : [Locale(identifier: language)]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-## Android 0.5.0 — Unreleased
-## Android 0.4.0 — Unreleased
+        let wanted = language == MacDictation.automatic ? MacDictation.automaticLocales() : [Locale(identifier: language)]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d7fe588` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `80ad610c` are properly handled with clean fallback behavior.
 
 
 ## Consequences

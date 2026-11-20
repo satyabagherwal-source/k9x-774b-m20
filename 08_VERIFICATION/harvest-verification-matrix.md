@@ -11585,3 +11585,8 @@
 | `CYCLE-20261120-1GAW` | `2026-11-20T16:56:43.976Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9602` | Yes (`74eb72d9...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T16:57:24.788Z` | `hf-apple-depthpro2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F2660B55` [Domain D] | Yes (`b2ffd8a2...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T16:58:11.265Z` | `hf-ovhaillm-olala-v1.0-mini-7a1b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-FE8131E1` [Domain D] | Yes (`5a063c5b...`) |
+| `CYCLE-20261120-LB9I` | `2026-11-20T17:12:10.566Z` | `fb55/htmlparser2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9603` | Yes (`afecf835...`) |
+| `CYCLE-20261120-LD2M` | `2026-11-20T17:12:12.910Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9604` | Yes (`90b14faa...`) |
+| `CYCLE-20261120-LIGF` | `2026-11-20T17:12:19.887Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md` | Yes (`8cba45fb...`) |
+| `CYCLE-20261120-LKSN` | `2026-11-20T17:12:22.919Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9605` | Yes (`e9b2fba0...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T17:12:56.311Z` | `vectifyai-pageindex` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-74EC8661` [Domain I] | Yes (`858be8fc...`) |

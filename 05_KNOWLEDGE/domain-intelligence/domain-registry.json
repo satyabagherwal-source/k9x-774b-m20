@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T16:58:12.719Z",
-  "total_records": 2155,
+  "last_updated": "2026-11-20T17:12:57.495Z",
+  "total_records": 2156,
   "domains": {
     "A": {
       "total": 17,
@@ -1905,7 +1905,7 @@
       ]
     },
     "I": {
-      "total": 109,
+      "total": 110,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2015,7 +2015,8 @@
         "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-core-invariants",
         "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-learnings-core-in",
         "domain_intelligence-content-information-intelligence-vcaesar-riot-core-invariants",
-        "domain_intelligence-content-information-intelligence-vcaesar-riot-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-vcaesar-riot-learnings-core-invariants",
+        "DOM-I-74EC8661"
       ]
     },
     "J": {
@@ -15234,8 +15235,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "3b316ed44ea4abca48dc0fa92619eeebdb35145a196f96d7338a22443b726ecb",
-      "created_at": "2026-11-20T16:13:09.952Z"
+      "content_hash": "4184015afad00fa4f9a0a0f819cf598e765490b5fb55d63585511c98125e3d7d",
+      "created_at": "2026-11-20T17:12:23.287Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -23962,8 +23963,8 @@
       "title": "Content & Information Intelligence: VectifyAI/PageIndex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-vectifyai-pageindex-content-information-intelligence-vectifyai-pageindex-core-in.md",
       "repository": "VectifyAI/PageIndex",
-      "content_hash": "3d0b47979fbc7ee70c6e8966e28d09af20325b2631ef7e2c0d744c3eccaa8a9e",
-      "created_at": "2026-11-17T16:46:48.405Z"
+      "content_hash": "c6579b6dc4d59feb23c149bd47fc19037441fd5c4b563067e665277f09b22615",
+      "created_at": "2026-11-20T17:12:20.270Z"
     },
     "DOM-D-3870AF12": {
       "record_id": "DOM-D-3870AF12",
@@ -24022,8 +24023,8 @@
       "title": "Content & Information Intelligence: vectifyai-pageindex-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-vectifyai-pageindex-learnings-content-information-intelligence-vectifyai-pageind.md",
       "repository": "vectifyai-pageindex-learnings",
-      "content_hash": "667b0d855a0d9cad889827c141629268c0b9253281a75b01ad6318790e3da2a1",
-      "created_at": "2026-11-16T14:35:31.391Z"
+      "content_hash": "647514883341287e20d777c45dc21442d48d0aebd7b40bdf8c801feb96339283",
+      "created_at": "2026-11-20T17:12:57.495Z"
     },
     "domain_intelligence-content-information-intelligence-meta-folly-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-meta-folly-core-invariants",
@@ -24182,8 +24183,8 @@
       "title": "Architecture Intelligence: Louis-CFM/coucou Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-louis-cfm-coucou-architecture-intelligence-louis-cfm-coucou-core-invariants.md",
       "repository": "Louis-CFM/coucou",
-      "content_hash": "6926a266dc9ad662365d5edc7e48cd80627c7f756a79cd97794be0c5b14a977f",
-      "created_at": "2026-11-16T16:00:09.639Z"
+      "content_hash": "03678fd53674d13262d8158212f6337ca1cca979eeb207b74dc92906c84eca72",
+      "created_at": "2026-11-20T17:12:13.255Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zyphra-zonos3-mini-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zyphra-zonos3-mini-core-invariants",
@@ -24209,8 +24210,8 @@
       "title": "Architecture Intelligence: louis-cfm-coucou-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-louis-cfm-coucou-learnings-architecture-intelligence-louis-cfm-coucou-learnings-.md",
       "repository": "louis-cfm-coucou-learnings",
-      "content_hash": "a405f0ae38c2fe846e8a9619d9d8b23bc8ec2c79bd9a1ae002cb4c0721d49950",
-      "created_at": "2026-11-16T16:00:22.490Z"
+      "content_hash": "6ed9986151b5945b3f05a5dc8f6385eebee3f2d5a11d567640aeb4afb47b6500",
+      "created_at": "2026-11-20T17:12:28.675Z"
     },
     "domain_intelligence-content-information-intelligence-prometheus-prometheus-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-prometheus-prometheus-learnings-core-invariants",
@@ -24512,8 +24513,8 @@
       "title": "Technical Construction Intelligence: fb55/htmlparser2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fb55-htmlparser2-technical-construction-intelligence-fb55-htmlparser2-core-invar.md",
       "repository": "fb55/htmlparser2",
-      "content_hash": "5d781539f74b70147178cef4dc07032a78a426ff5f82fd3d4a95b714c7c03b7a",
-      "created_at": "2026-11-16T18:46:44.434Z"
+      "content_hash": "0dff6dc35ad5ddfefd463854b637717858ecbae8793b8613b54af1038aa28e05",
+      "created_at": "2026-11-20T17:12:10.918Z"
     },
     "domain_intelligence-architecture-intelligence-openziti-zrok-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-openziti-zrok-core-invariants",
@@ -24539,8 +24540,8 @@
       "title": "Technical Construction Intelligence: fb55-htmlparser2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fb55-htmlparser2-learnings-technical-construction-intelligence-fb55-htmlparser2-.md",
       "repository": "fb55-htmlparser2-learnings",
-      "content_hash": "eb0268a668ea13f3c886a4dda7ca90aa6343102411d70564a4af91abe7518eb4",
-      "created_at": "2026-11-16T18:46:59.986Z"
+      "content_hash": "72d49ad7a5d5400394a68f5c644d6661f6131375ab0bcbbd6e67f05146999505",
+      "created_at": "2026-11-20T17:12:28.002Z"
     },
     "domain_intelligence-architecture-intelligence-openziti-zrok-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-openziti-zrok-learnings-core-invariants",
@@ -36319,6 +36320,48 @@
       "repository": "hf-ovhaillm-olala-v1.0-mini-7a1b-learnings",
       "content_hash": "bab20c95a7a60d051795fced80045cdcdbc071c7e5ed87e88ecc28e531442883",
       "created_at": "2026-11-20T16:58:11.587Z"
+    },
+    "DOM-I-74EC8661": {
+      "record_id": "DOM-I-74EC8661",
+      "domain_letter": "I",
+      "domain_id": "content_information",
+      "domain_name": "Content & Information Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "docs(readme): a self-contained local usage guide, since the docs site now covers",
+      "content": "When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "858be8fcba074037fdb1865513cddf956a88b640d50c6d5d2dbaf63fd596276f",
+      "summary": "Prevents defects observed in production commit `4f2d5fbd`: docs(readme): a self-contained local usage guide, since the docs site now covers  -> When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurr",
+      "provenance": {
+        "source_uri": "project://vectifyai-pageindex/vectifyai-pageindex-learnings.md",
+        "source_version": "614cb815",
+        "observed_at": "2026-11-20T17:12:19.417Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (vectifyai-pageindex)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of vectifyai-pageindex"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.7,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T17:12:56.286Z"
     }
   }
 }

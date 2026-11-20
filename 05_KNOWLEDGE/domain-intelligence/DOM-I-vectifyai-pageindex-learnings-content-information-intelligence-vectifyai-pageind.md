@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T14:35:31.161Z",
+  "timestamp": "2026-11-20T17:12:57.205Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-vectifyai-pageindex-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [vectifyai-pageindex-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T14:35:31.161Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T17:12:57.205Z`  
 > **Learning ID**: `LEARN-EVO-vectifyai-pageindex-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), A (Human & Need Intelligence), C (Market & Business Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), F (Design Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from vectifyai-pageindex-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source**: github ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
-> **Source Version**: `c9f1a879`  
+> **Source Version**: `614cb815`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T14:34:57.648Z  
+> **Timestamp**: 2026-11-20T17:12:19.417Z  
 > **Learning ID**: `learn-github-vectifyai-pageindex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T14:34:57.642Z  
+> **Harvest Timestamp**: 2026-11-20T17:12:19.411Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 40452 stars
+- **Stars / Engagement**: 40495 stars
 
 ---
 
@@ -366,6 +366,8 @@ from typing import TYPE_CHECKING as _TYPE_CHECKING
 from .chat_stream import ChatStream, MessagesStream, ChatObject
 from .client import PageIndexClient, PageIndexCloudClient, PageIndexLocalClient
 from .errors import PageIndexAPIError
+from .page_extract import PageExtractClient
+from .page_search import PageSearchClient
 from .types import (ChatConfig, ChatProcessOptions, CloudIndexConfig,
                     IndexConfig, LocalIndexConfig)
 
@@ -378,6 +380,7 @@ if _TYPE_CHECKING:
 
 __all__ = [
     "PageIndexClient", "PageIndexCloudClient", "PageIndexLocalClient",
+    "PageSearchClient", "PageExtractClient",
     "PageIndexAPIError",
     "IndexConfig", "CloudIndexConfig", "LocalIndexConfig", "ChatConfig",
     "ChatProcessOptions", "ChatStream", "MessagesStream", "ChatObject",
@@ -393,8 +396,9 @@ _LAZY = {
 }
 _SUBMODULES = {"agent_tools", "chat_stream", "client", "cloud_api", "errors",
                "flash", "imaging", "integrations", "local_api", "local_chat",
-               "local_store", "mcp_bridge", "page_index_classic",
-               "page_index_md", "retry", "tree_optimize", "types", "utils"}
+               "local_store", "mcp_bridge", "page_extract", "page_index_classic",
+               "page_index_md", "page_search", "retry", "tree_optimize", "types",
+               "utils"}
 
 
 def __getattr__(name):
@@ -1032,11 +1036,25 @@ _LOCAL_INDEX_KEYS = ("model", "summary_model", "backend", "storage_path",
 _RESERVED_MODE_WORDS = {"hosted", "managed"}
 
 
-def _env_cloud_key(spelling: str, inline: str = "api_key=...") -> str:
+# Page Search's and Page Extract's keys, which work here once their accounts
+# have moved, read only when PAGEINDEX_API_KEY is not set.
+_ENV_KEYS = ("PAGEINDEX_API_KEY", "PAGEINDEX_SEARCH_API_KEY",
+             "PAGEINDEX_EXTRACT_API_KEY")
+
+
+def _env_key(own: Optional[str] = None) -> Optional[str]:
+    """The key the environment gives; of the two older names, ``own`` is
+    read before the other."""
     # .env support lives in utils' import-time load_dotenv(): load it
     # before the read, or a key in .env is visible only by import order.
     from . import utils  # noqa: F401
-    key = os.environ.get("PAGEINDEX_API_KEY")
+    names = (_ENV_KEYS[0], own, *_ENV_KEYS[1:])
+    return next((os.environ[name] for name in names
+                 if name and os.environ.get(name)), None)
+
+
+def _env_cloud_key(spelling: str, inline: str = "api_key=...") -> str:
+    key = _env_key()
     if not key:
         raise PageIndexAPIError(
             f"{spelling} reads the PageIndex API key from the "
@@ -1081,23 +1099,12 @@ def _resolve_index_slot(index) -> "tuple[_CloudKey, dict[str, Any]]":
         # must never fall through and silently become a model name.
         word = index.strip().lower()
         if word in (PAGEINDEX_CLOUD, "cloud"):
-            return lambda: _env_cloud_key(f'index="{index.strip()}"',
-                                          'index={"api_key": ...}'), {}
-        if word == "local":
-            return None, {}
-        if word in _RESERVED_MODE_WORDS:
-            raise PageIndexAPIError(
-                f'index="{index}" is not a mode word — the cloud spelling '
-                'is index="cloud" (key from PAGEINDEX_API_KEY) or '
-                'index={"api_key": ...}.')
-        if index.strip():
-            return None, {"index_model": index}
-        raise PageIndexAPIError(
+            return lambda: _env
 ```
 
 ### Core Architecture Module: `pageindex/cloud_api.py`
 ```
-"""Cloud mode of the PageIndex SDK, based on the 0.2.8 client."""
+"""Cloud mode of the PageIndex SDK: the client of the PageIndex Cloud API."""
 import os
 import requests
 from pathlib import Path
@@ -1153,25 +1160,36 @@ class CloudAPI:
         folder_id: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
         collection_id: Optional[str] = None,
+        index: bool = True,
+        extract: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
-        Upload a PDF document for processing; the tree is built in the background.
+        Upload a PDF document for processing; the tree is built in the background,
+        or not at all with ``index=False``.
         Immediately returns a document identifier (`doc_id`) for subsequent operations.
 
         Args:
             file_path (str): Path to the PDF file.
-            mode (str, optional): None (default), the OCR-based cloud pipeline, or "flash".
+            mode (str, optional): None (default), the default cloud pipeline, or "flash".
             beta_headers (List[str], optional): Beta feature headers (e.g., ["block_reference"]
                 to enable block-level content with bounding boxes). Defaults to None.
             folder_id (str, optional): Folder (workspace) ID to assign the document to. Defaults to None.
             metadata (dict, optional): Your own JSON-serializable tags for the document;
                 returned in get_tree/get_ocr responses and list_documents entries. Defaults to None.
             collection_id (str, optional): Collection ID to store the document in, in place of a folder. Defaults to None.
+            extract (dict, optional): With ``index=False``, an extract job's
+                configuration, as ``create_extract()`` takes it: the job
+                starts on the document, and only its extraction is charged,
+                once it completes. A job that does not complete leaves the
+                document this upload made failed, with its name and file but
+                no pages, until you delete it.
 
         Returns:
             dict: {'doc_id': ...} — plus 'name', the stored document name
                 (a taken name gains a numeric suffix), when the server
-                returns it.
+                returns it, and with ``extract`` 'extract_job_id'. A file
+                stored already whose pages are not ready starts no job:
+                {'doc_id', 'duplicate': True}.
         """
         if mode not in (None, "flash"):
             raise PageIndexAPIError(
@@ -1183,6 +1201,8 @@ class CloudAPI:
             # The server rejects if_retrieval alongside algorithm=flash, and
             # keeps node text for Flash trees by default.
             data = {'algorithm': 'flash'}
+        if not index:
+            data = {'algorithm': 'none'}
         if beta_headers is not None:
             data['beta_headers'] = json.dumps(beta_headers)
         if folder_id is not None:
@@ -1191,6 +1211,8 @@ class CloudAPI:
             data['metadata'] = json.dumps(metadata)
         if collection_id is not None:
             data['collection_id'] = collection_id
+        if extract is not None:
+            data['extract'] = json.dumps(extract)
 
         with open(file_path, "rb") as f:
             response = self._http.post(
@@ -1200,6 +1222,13 @@ class CloudAPI:
                 data=data
             )
 
+        if response.status_code == 409 and extract is not None:
+            try:
+                stored = response.json()["detail"]["doc_id"]
+            except (ValueError, KeyError, TypeError):
+                stored = None
+            if stored:
+                return {"doc_id": stored, "duplicate": True}
         if response.status_code != 200:
             raise PageIndexAPIError(
                 f"Failed to submit document: {response.text}",
@@ -1330,38 +1359,7 @@ class CloudAPI:
             timeout=30
         )
         if response.status_code != 200:
-            raise PageIndexAPIError(
-                f"Failed to get document image: {response.text}",
-                status_code=response.status_code)
-        url = response.json().get("url")
-        if not url:
-            raise PageIndexAPIError(f"No image URL returned for {img_id!r}.")
-        return url
-
-    # ---------- TREE GENERATION ----------
-
-    def get_tree(self, doc_id: str, node_summary: bool = False,
-                 include_text: bool = True) -> Dict[str, Any]:
-        """
-        Get tree generation status and results.
-
-        Args:
-            doc_id (str): Document ID.
-            node_summary (bool): Include node summaries (default False).
-
-        Returns:
-            dict: API response with status and, if ready, tree structure.
-        """
-        response = self._http.get(
-            f"{self.BASE_URL}/doc/{_enc(doc_id)}/?type=tree&summary={node_summary}"
-            f"&include_text={str(include_text).lower()}",
-            headers=self._headers(),
-            timeout=30
-        )
-        if response.status_code != 200:
-            raise PageIndexAPIError(
-                f"Failed to get tree result: {response.text}",
-                sta
+    
 ```
 
 ### Core Architecture Module: `pageindex/errors.py`
@@ -1413,15 +1411,15 @@ __all__ = ["page_index_flash"]
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #678** (2026-11-15): **feat: page_image() gives a page, or a part of it drawn sharper, as an image; update_document() sets metadata keys; list_documents(filter=) lists by metadata**
-  *Symptoms*: Six more things the Page Search and Page Extract SDKs offer and the client lacked, though the cloud already serves them: a page, or a part of it, as an image; changing a document's metadata; listing documents by metadata; and waiting for a document or an extract job.  Stacked on #677 (search and Extract methods): the base is its branch so that only this change shows. It goes to `main` once #677 is merged.  ## Changes  - `page_image(doc_id, page, box=None)` returns the page as JPEG bytes, where `get_page_image()` returns a link. With `box`, (x0, y0, x1, y1) as fractions of the page from its top left, it returns only that part, drawn sharper, to read small print. The whole page is downloaded from the presigned link without the API key. - `update_document(doc_id, metadata=...)` sets metadata keys: a key set to `None` is removed and the keys not named stay. The cloud replaces a document's metadata whole, so the client reads it, merges and writes it back; of two writers at once the later one wins. - `list_documents(filter=...)` lists only the documents whose metadata meets a filter such as `{"year": {"$gte": 2023}}`. - `wait_document(doc_id, timeout=1800)` waits until a document is ready and returns it. In local mode it returns at once. - `wait_extract(job_id, timeout=3600)` waits for an extract job started with `extract(..., wait=False)`; `extract()` now shares its loop. - `get_collection(collection_id)` returns one collection, read from the list. - All but `wait_document` are cl
+- **Issue #694** (2026-11-20): **docs(readme): usage guide fold titles and group labels end with a colon, and streaming comes before citations**
+  *Symptoms*: Small layout follow-up to #693 on the README's usage guide: fold titles end with a colon, option B's two group labels do too, and option A lists streaming before citations.  ## Changes  - Every usage guide fold title ends with a colon, in plain text. - Option B's group labels read *Agent frameworks:* and *More options:*. - Option A orders its folds streaming, citations, protocols, conversations and multiple documents.  No code changed; the blocks run in the same order as before, apart from streaming, which nothing after it depends on. 
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"469bd912d1ef6eca50b8d632abe1ea72e98e1325","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"469bd912d1ef6eca50b8d632abe1ea72e98e1325","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"469bd912d1ef6eca50b8d632abe1ea72e98e1325","mergeGateEnabled":false,"pullRequestNumber":678,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-15T18:06:43.570517Z">2026-11-15T18:06:43.570517Z</relative-time> | `469bd91` | PR opened | | 🔒
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"b59e0d12667e6e4e2758ffeb43d4ec2215cf2398","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"b59e0d12667e6e4e2758ffeb43d4ec2215cf2398","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"b59e0d12667e6e4e2758ffeb43d4ec2215cf2398","mergeGateEnabled":false,"pullRequestNumber":694,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-20T10:23:36.645753Z">2026-11-20T10:23:36.645753Z</relative-time> | `b59e0d1` | PR opened | | 🔒
 
-- **Issue #677** (2026-11-15): **feat: the client searches pages and documents, extracts JSON from a PDF, and returns a page or a part of it as an image**
-  *Symptoms*: The cloud already offers page search, document search, Extract and page images cut to a box, but the client had no methods for them: they were reachable only through the cloud's MCP tools. This adds what the Page Search and Page Extract SDKs offer and the client lacked. All of it is cloud-only, except `wait_document`; local mode raises `PageIndexAPIError`.  `client.search(questions, document=doc_id)` returns, for each question, the pages that help answer it. Without `document` it searches across documents: the most relevant documents for each question are found first, and only their pages are searched. Both return one shape: results, then documents, then pages.  `client.extract(document, schema)` turns a PDF, or an uploaded document, into JSON that fits a JSON Schema or a Pydantic model, and waits for the result by default.  ## Changes  Search  - `search(questions, *, document, documents, collection, folder, recursive, filter, max_documents, document_top_k, top_k, include_text, start_page, end_page)`: the parameter names follow the Page Search SDK; `folder` and `recursive` are new, for PageIndex's folders. Across documents each question opens at most `max_documents` (default 3) or exactly `document_top_k`, up to 10, and a document several questions chose is searched once. A document whose pages cannot be searched goes to `failed_documents`; running out of credits, or every opened document failing, raises. - `search_documents(questions, *, document_ids, collection, folder, rec
+- **Issue #693** (2026-11-20): **docs(readme): a self-contained local usage guide, since the docs site now covers only the cloud**
+  *Symptoms*: The docs site now covers only the cloud, so the README's links for local use (getting-started, sdk/agents, sdk/documents) landed on cloud-only pages. The README now carries its own local usage guide, one self-contained path: set up the client, index your documents, then ask with your LLM (`chat()`) or with your agent, matching the docs site's "Use with your LLM" and "Use with your agent".  ## Changes  - Usage Guide: Step 1 (install, models and API keys, with a table giving each provider an `index=` and a `chat=` model), Step 2 (index, read and manage documents), Step 3 with Option A (`chat()`: citations, streaming, protocols, conversations and multiple documents) and Option B (agent frameworks, plus citations, document management and one-call setup). Details fold. - Examples use the latest chat models: `gpt-6.2-sol` and `claude-opus-5-5`. - Cloud section: drops OCR and block-level citations, which the cloud no longer uses; adds Page Search API and Page Extract API; the metadata row says collections & metadata. - Links: Metadata, Folders and MCP point at the new docs pages; the Flash update links to Step 2; the File System entries link to the folders page (their blog posts now redirect to the PageIndex Agent post); the diagram loads the light and dark SVGs already in `assets/`.  ## Verification  Every python block in the Usage Guide ran in order against real models (local mode, two sample PDFs), and each row of the model table indexed a document and answered a question: OpenAI
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"71b3674d3fa681b1b0084b9757c2256068f92afc","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":"71b3674d3fa681b1b0084b9757c2256068f92afc","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"71b3674d3fa681b1b0084b9757c2256068f92afc","mergeGateEnabled":false,"pullRequestNumber":677,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-15T18:38:00.775560Z">2026-11-15T18:38:00.775560Z</relative-time> | `71b3674` | New commits | | 🔒
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"6b732f96f6955ea690ccb42f1124791e134c379e","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"6b732f96f6955ea690ccb42f1124791e134c379e","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"6b732f96f6955ea690ccb42f1124791e134c379e","mergeGateEnabled":false,"pullRequestNumber":693,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-20T10:09:05.055557Z">2026-11-20T10:09:05.055557Z</relative-time> | `6b732f9` | PR opened | | 🔒
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1438,357 +1436,270 @@ __all__ = ["page_index_flash"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9f1a879` (2026-11-15)
-**Commit Message**: feat: the client searches pages and documents, extracts JSON from a PDF, and returns a page or a part of it as an image (#677)
+### Incident Patch 1: `4f2d5fbd` (2026-11-20)
+**Commit Message**: docs(readme): a self-contained local usage guide, since the docs site now covers only the cloud (#693)
 
-- search(questions, document=...) returns, for each question, the pages that help answer it. Without document it finds the most relevant documents for each question first and searches only their pages, joining the cloud's two calls; both return one shape: results, then documents, then pages. search_documents() returns the documents likely to hold each answer. Parameter names follow the Page Search SDK; folder and recursive are new, for PageIndex's folders.
-- extract(document, schema) turns a PDF's path, or an uploaded document's id, into JSON that fits a JSON Schema or a Pydantic model. It waits for the result by default, and for a document still processing first. get_extract, list_extracts, cancel_extract, delete_extract and wait_extract manage jobs; a status read that fails during a wait names the job, which goes on running.
-- page_image(doc_id, page, box=None) returns a page as JPEG bytes, or with box only that part of it, drawn sharper. update_document(doc_id, metadata=...) sets the keys named, removes those set to None and keeps the rest. list_documen
+The docs site now covers only the cloud, so the README carries its own local usage guide: set up the client, index your documents, then ask with your LLM (chat()) or with your agent, matching the docs site's two paths. Details fold.
 
-**File**: `pageindex/client.py` (modified, +513/-1)
+Examples use the latest chat models (gpt-6.2-sol, claude-opus-5-5). The cloud section drops OCR and block-level citations, adds Page Search API and Page Extract API, and its links point at the new docs pages. Every python block in the guide and each row of the model table ran against real models.
+
+**File**: `README.md` (modified, +351/-16)
 ```diff
-@@ -7,7 +7,7 @@
- import time
- import warnings
- from typing import (TYPE_CHECKING, Any, Callable, Iterator, Literal, Mapping,
--                    Optional, Union, cast, overload)
-+                    Optional, Sequence, Union, cast, overload)
+@@ -32,8 +32,8 @@
  
- from .chat_stream import ChatStream, MessagesStream, ChatObject
- from .errors import PageIndexAPIError
-@@ -917,6 +917,16 @@ def submit_document(
-             self._wait_until_ready(result["doc_id"])
-         return result
+ - [Oct '26] 🔥 [**Page Search API**](https://search.pageindex.ai): find the pages that answer each question in about a second, and send your LLM only those. *Cut 97% token cost on document question answering*; more accurate and faster than vector search ([benchmark](https://github.com/VectifyAI/page-search-benchmark)).
+ - [Aug '26] [**PageIndex SDK**](#quickstart): **local** and **cloud** modes — one client to index, retrieve, and chat on your machine (with your own LLM API key) or on [PageIndex Cloud](https://developer.pageindex.ai/).
+-- [Aug '26] ⚡ [**PageIndex Flash**](https://pageindex.ai/blog/pageindex-flash): fast tree index generation for text-based PDFs, now the default indexing method in PageIndex SDK local mode.
+-- [Scale PageIndex to Millions of Documents](https://pageindex.ai/blog/pageindex-filesystem): *PageIndex File System* is a file-level tree indexing layer that lets PageIndex reason over an entire corpus, not just a single document.
++- [Aug '26] ⚡ [**PageIndex Flash**](#step-2-index-your-documents): fast tree index generation for text-based PDFs, now the default indexing method in PageIndex SDK local mode.
++- [Scale PageIndex to Millions of Documents](https://pageindex.ai/docs/documents/folders): *PageIndex File System* is a file-level tree indexing layer that lets PageIndex reason over an entire corpus, not just a single document.
+ - [PageIndex App](https://app.pageindex.ai): a human-like document analysis agent for long professional documents.<!-- Also available via [MCP](https://pageindex.ai/developer) or [API](https://pageindex.ai/developer). -->
  
-+    def wait_document(self, doc_id: str, timeout: float = 1800.0) -> dict[str, Any]:
-+        """
-+        Wait until a document is ready for use, and return it as
-+        ``get_document()`` does. Raises PageIndexAPIError if its processing
-+        failed, or is not done within ``timeout`` seconds (it goes on in the
-+        cloud). A local document is ready at once.
-+        """
-+        self._wait_until_ready(doc_id, timeout)
-+        return self.get_document(doc_id)
-+
-     def _wait_until_ready(self, doc_id: str, timeout: float = 1800.0) -> None:
-         import requests
-         interval = 2.0
-@@ -1040,6 +1050,32 @@ def get_page_image(self, doc_id: str, page: int) -> str:
-             "rendering. Create the client with an api_key to get page images."
-         ).get_page_image(doc_id=doc_id, page=page)
+ </details>
+@@ -51,7 +51,10 @@ Inspired by AlphaGo, **[PageIndex](https://vectify.ai/pageindex)** replaces the
  
-+    def page_image(self, doc_id: str, page: int,
-+                   box: Optional[Sequence[float]] = None) -> bytes:
-+        """
-+        One page as JPEG bytes: the image itself, where ``get_page_image()``
-+        gives a link to it. With ``box``, only that part of the page, drawn
-+        sharper, to read small print. Cloud-only: local mode renders no page
-+        images.
-+
-+            crop = client.page_image(doc_id, 12, box=(0.1, 0.4, 0.9, 0.7))
-+
-+        Args:
-+            doc_id (str): Document ID.
-+            page (int): 1-based page number.
-+            box (sequence of 4 floats, optional): (x0, y0, x1, y1) as
-+                fractions of the page's width and height from its top left,
-+                each from 0 to 1, with x0 < x1 and y0 < y1. A box the cloud
-+                cannot read raises PageIndexAPIError (HTTP 422).
-+
-+        Returns:
-+            bytes: The JPEG.
-+        """
-+        return self._require_cloud(
-+            "page_image is cloud-only — local mode has no page-image "
-+            "rendering. Create the client with an api_key to get page images."
-+        ).page_image(doc_id=doc_id, page=page, box=box)
-+
-     def get_document_image(self, doc_id: str, img_id: str) -> str:
-         """
-         A short-lived URL to an image OCR extracted from the document.
-@@ -2233,6 +2269,7 @@ def list_documents(
-         folder_id: Optional[str] = None,
-         recursive: bool = False,
-         collection_id: Optional[str] = None,
-+        filter: Optional[dict[str, Any]] = None,
-     ) -> dict[str, Any]:
-         """
-         List documents with pagination, newest first.
-@@ -2247,6 +2284,10 @@ def list_documents(
-             collection_id (str, optional): Cloud-only: list one collection's
-                 documents. Passing ``folder_id`` or ``recursive`` too raises
-                 PageIndexAPIError (HTTP 400).
-+            filter (dict, optional): Cloud-only: list only the documents
-+                whose metadata meets it, e.g. ``{"year": {"$gte": 2023}}``.
-+                A key alone is equality; the operators are $eq, $ne, $in,
-+                $gt, $gte, $lt, $lte, and $and / $or over a list of filters.
+ <div align="center">
+   <a href="https://pageindex.ai/blog/pageindex-intro" target="_blank" title="The PageIndex Framework">
+-    <img src="https://docs.pageindex.ai/images/cookbook/vectorless-rag.png" width="70%">
++    <picture>
++      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/VectifyAI/PageIndex/main/assets/vectorless-rag-dark.svg">
++      <img src="https://raw.githubusercontent.com/VectifyAI/PageIndex/main/assets/vectorless-rag-light.svg" width="70%" alt="Vectorless RAG with PageIndex: a document becomes a tree index, and LLM reasoning searches the tree to answer a query.">
++    </picture>
+   </a>
+ </div>
  
-         Returns:
-             dict: {'documents': [...], 'total', 'limit', 'offset'}.
-@@ -2257,10 +2298,43 @@ def list_documents(
-         collection, for a folder reached only through a share of
-         something below it, and for every local document.
-         """
-+        if filter is not None:
-+            return self._require_cloud(
-+                "list_documents(filter=) is cloud-only — metadata filters "
-+                "are not supported in local mode. Create the client with an "
-+                "api_key to use them."
-+            ).list_documents(limit=limit, offset=offset, folder_id=folder_id,
-+                             recursive=recursive, collection_id=collection_id,
-+                             metadata_filter=filter)
-         return self._api.list_documents(limit=limit, offset=offset,
-                                         folder_id=folder_id, recursive=recursive,
-                                         collection_id=collection_id)
+@@ -89,7 +92,7 @@ os.environ["OPENAI_API_KEY"] = "your-openai-key"
  
-+    def update_document(self, doc_id: str, *,
-+                        metadata: dict[str, Any]) -> dict[str, Any]:
-+        """
-+        Set metadata keys on a document: a key set to None is removed, and
-+        the keys not named stay. The metadata rules of ``submit_document()``
-+        apply: a breach raises PageIndexAPIError (HTTP 400). Cloud-only:
-+        local mode raises PageIndexAPIError.
+ client = PageIndexClient(
+     index="gpt-6-luna",                 # model to build the tree index
+-    chat="gpt-6-sol",                   # model to search the tree
++    chat="gpt-6.2-sol",                 # model to search the tree
+ )
+ doc_id = client.submit_document("report.pdf")["doc_id"]
+ 
+@@ -104,13 +107,338 @@ print(answer)
+ 
+ **Have a Claude subscription?** PageIndex can use your subscription to call Claude models through Claude Code: usage is covered by your plan, no API key needed. Install with `pip install -U "pageindex[claude]"`, then prefix model names with `claude-code/`, e.g., `index="claude-code/haiku"`, `chat="claude-code/opus"` (see [example](https://github.com/VectifyAI/PageIndex/blob/main/cookbook/pageindex-claude-subscription.py)).
+ 
+-### [Use PageIndex through the SDK client →](https://docs.pageindex.ai/getting-started)
++# Usage Guide
+ 
+-Configure other models, streaming, multi-document search, citations, and more.
++Run PageIndex on your machine, step by step. Each step builds on the one before.
+ 
+-### [Integrate PageIndex with your own agent →](https://docs.pageindex.ai/sdk/agents)
++## Step 1: Set up the client
+ 
+-Drop PageIndex tools into the OpenAI Agents SDK, the Claude Agent SDK, or any other framework.
++<details>
++<summary>Install and initialize</summary>
++<br>
 +
-+            client.update_document(doc_id, metadata={"year": 2025, "draft": None})
++```bash
++pip install -U pageindex
++```
 +
-+        The client reads the document's metadata, then writes t
++```python
++import os
++from pageindex import PageIndexClient
++
++os.environ["OPENAI_API_KEY"] = "your-openai-key"
++
++client = PageIndexClient(
++    index="gpt-6-luna",                 # model to build the tree index
++    chat="gpt-6.2-sol",                 # model to search the tree
++)
++```
++
++</details>
++
++<details>
++<summary>Models and API keys</summary>
++<br>
++
++- **`index=`: a basic model is sufficient.** The tree structure itself is extracted from the document layout without an LLM; the index model only summarizes and refines it, which a basic model does well.
++- **`chat=`: use the best model you can afford.** The chat model searches the tree to retrieve information. See [Query cost and accuracy](#query-cost-and-accuracy).
++
++Model names follow [LiteLLM's naming](https://docs.litellm.ai/docs/providers). The two models can come from different providers; set the API key of each provider you use:
++
++| Provider | `index=` | `chat=` | API key |
++|---|---|---|---|
++| OpenAI | `gpt-6-luna` | `gpt-6.2-sol` | `OPENAI_API_KEY` |
++| Anthropic | `anthropic/claude-haiku-5-5` | `anthropic/claude-opus-5-5` | `ANTHROPIC_API_KEY` |
++| OpenRouter | `openrouter/anthropic/claud
 ```
 
-**File**: `pageindex/cloud_api.py` (modified, +242/-2)
-```diff
-@@ -2,7 +2,7 @@
- import os
- import requests
- from pathlib import Path
--from typing import Optional, Dict, Any, List, Union, Iterator
-+from typing import Optional, Dict, Any, List, Sequence, Union, Iterator
- import json
- import urllib.parse
- 
-@@ -186,6 +186,34 @@ def get_page_image(self, doc_id: str, page: int) -> str:
-                 return img["url"]
-         raise PageIndexAPIError(f"No image URL returned for page {page}.")
- 
-+    def page_image(self, doc_id: str, page: int, box: Optional[Sequence[float]] = None) -> bytes:
-+        """A rendered page as JPEG bytes.
-+
-+        Args:
-+            doc_id (str): Document ID.
-+            page (int): 1-based page number.
-+            box (sequence of 4 floats, optional): (x0, y0, x1, y1) as fractions
-+                of the page from its top left: only that part, drawn sharper.
-+
-+        Returns:
-+            bytes: The JPEG.
-+        """
-+        if box is None:
-+            # a presigned URL: the API key stays off it
-+            response = self._http.get(self.get_page_image(doc_id, page), timeout=60)
-+        else:
-+            response = self._http.get(
-+                f"{self.BASE_URL}/doc/s3/{_enc(doc_id)}/images/region",
-+                headers=self._headers(),
-+                params={"page": page, "box": ",".join(str(v) for v in box)},
-+                timeout=60
-+            )
-+        if response.status_code != 200:
-+            raise PageIndexAPIError(
-+                f"Failed to get page image: {response.text}",
-+                status_code=response.status_code)
-+        return response.content
-+
-     def get_document_image(self, doc_id: str, img_id: str) -> str:
-         """Presigned URL for an embedded image extracted during OCR.
- 
-@@ -422,6 +450,29 @@ def get_document(self, doc_id: str) -> Dict[str, Any]:
-                 status_code=response.status_code)
-         return response.json()
- 
-+    def set_document_metadata(self, doc_id: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
-+        """
-+        Replace a document's metadata (your own tags) with `metadata`.
-+
-+        Args:
-+            doc_id (str): Document ID.
-+            metadata (dict): The whole of the new metadata; {} clears it.
-+
-+        Returns:
-+            dict: {"doc_id": ..., "metadata": ...}
-+        """
-+        response = self._http.put(
-+            f"{self.BASE_URL}/doc/{_enc(doc_id)}/metadata/",
-+            headers=self._headers(),
-+            json=metadata,
-+            timeout=30
-+        )
-+        if response.status_code != 200:
-+            raise PageIndexAPIError(
-+                f"Failed to update document metadata: {response.text}",
-+                status_code=response.status_code)
-+        return response.json()
-+
-     def delete_document(self, doc_id: str) -> Dict[str, Any]:
-         """
-         Delete a PageIndex document and all its associated data.
-@@ -443,7 +494,7 @@ def delete_document(self, doc_id: str) -> Dict[str, Any]:
-                 status_code=response.status_code)
-         return response.json() if response.content else {}
- 
--    def list_documents(self, limit: int = 50, offset: int = 0, folder_id: Optional[str] = None, name: Optional[str] = None, recursive: bool = False, collection_id: Optional[str] = None) -> Dict[str, Any]:
-+    def list_documents(self, limit: int = 50, offset: int = 0, folder_id: Optional[str] = None, name: Optional[str] = None, recursive: bool = False, collection_id: Optional[str] = None, metadata_filter: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-         """
-         List all documents for the authenticated user with pagination.
- 
-@@ -455,6 +506,7 @@ def list_documents(self, limit: int = 50, offset: int = 0, folder_id: Optional[s
-             recursive (bool, optional): Also return documents in descendant folders of folder_id.
-                 Defaults to False (direct contents only).
-             collection_id (str, optional): Return one collection's documents. Defaults to None.
-+            metadata_filter (dict, optional): Return only the documents whose metadata meets it. Defaults to None.
- 
-         Returns:
-             dict: API response containing:
-@@ -477,6 +529,8 @@ def list_documents(self, limit: int = 50, offset: int = 0, folder_id: Optional[s
-             params["recursive"] = recursive
-         if collection_id is not None:
-             params["collection_id"] = collection_id
-+        if metadata_filter is not None:
-+            params["metadata_filter"] = json.dumps(metadata_filter)
- 
-         response = self._http.get(
-             f"{self.BASE_URL}/docs/",
-@@ -744,3 +798,189 @@ def delete_metadata_schema(
-                 f"Failed to delete metadata schema: {response.text}",
-                 status_code=response.status_code)
-         return response.json()
-+
-+    # ---------- SEARCH ----------
-+
-+    def search_pages(
-+        self,
-+        doc_id: str,
-+        questions: List[str],
-+        top_k: Optional[int] = None,
-+        include_text: bool = False,
-+        start_page: Opti
-```
+---
 
-**File**: `tests/test_client.py` (modified, +439/-0)
+### Incident Patch 2: `614cb815` (2026-11-20)
+**Commit Message**: docs(readme): usage guide fold titles and group labels end with a colon, and streaming comes before citations (#694)
+
+Usage guide fold titles and option B's group labels end with a colon, and option A lists streaming before citations. Layout only; no code changed.
+
+**File**: `README.md` (modified, +28/-28)
 ```diff
-@@ -2037,6 +2037,445 @@ def test_cloud_collection_wiring(cloud, sample_pdf):
-     assert calls[-1]["params"] == {"limit": 50, "offset": 0, "collection_id": "c/1"}
+@@ -114,7 +114,7 @@ Run PageIndex on your machine, step by step. Each step builds on the one before.
+ ## Step 1: Set up the client
  
+ <details>
+-<summary>Install and initialize</summary>
++<summary>Install and initialize:</summary>
+ <br>
  
-+def test_search_and_extract_are_cloud_only(local_client):
-+    for call in (lambda: local_client.search("q", document="d"),
-+                 lambda: local_client.search_documents("q"),
-+                 lambda: local_client.extract("d", {"type": "object"}),
-+                 lambda: local_client.get_extract("ext_1"),
-+                 local_client.list_extracts,
-+                 lambda: local_client.cancel_extract("ext_1"),
-+                 lambda: local_client.delete_extract("ext_1")):
-+        with pytest.raises(PageIndexAPIError, match="cloud-only"):
-+            call()
+ ```bash
+@@ -136,7 +136,7 @@ client = PageIndexClient(
+ </details>
+ 
+ <details>
+-<summary>Models and API keys</summary>
++<summary>Models and API keys:</summary>
+ <br>
+ 
+ - **`index=`: a basic model is sufficient.** The tree structure itself is extracted from the document layout without an LLM; the index model only summarizes and refines it, which a basic model does well.
+@@ -168,7 +168,7 @@ doc_id = client.submit_document("report.pdf")["doc_id"]
+ Local mode (PageIndex Flash) works with text-based PDFs. For scanned files and image understanding, use [PageIndex Cloud](#pageindex-cloud).
+ 
+ <details>
+-<summary>Read and manage your documents</summary>
++<summary>Read and manage your documents:</summary>
+ <br>
+ 
+ Read what you indexed:
+@@ -226,7 +226,20 @@ answer = client.chat("What changed in the risk factors?", doc_id=doc_id)
+ ```
+ 
+ <details>
+-<summary>Citations</summary>
++<summary>Streaming:</summary>
++<br>
 +
++The stream shows the agent's thinking and tool calls as it works; pass `show_process=False` to stream only the answer:
 +
-+@pytest.fixture
-+def served(monkeypatch):
-+    """A cloud client whose requests answers.to(method, path, kw) answers,
-+    with a payload, a (status, payload) pair or a FakeResponse."""
-+    client = PageIndexClient(api_key="secret")
-+    calls = []
-+    class Answers:
-+        to = staticmethod(lambda method, path, kw: {})
-+    def handler(method, url, kw):
-+        path = url.replace("https://api.pageindex.ai", "", 1)
-+        calls.append({"method": method, "path": path, **kw})
-+        answer = Answers.to(method, path, kw)
-+        if isinstance(answer, FakeResponse):
-+            return answer
-+        status, payload = answer if isinstance(answer, tuple) else (200, answer)
-+        return FakeResponse(payload, status_code=status, text=json.dumps(payload))
-+    _patch_requests(monkeypatch, handler)
-+    return client, calls, Answers
++```python
++for chunk in client.chat("Summarize this document.", doc_id=doc_id, stream=True):
++    print(chunk, end="", flush=True)
++```
 +
++</details>
 +
-+def test_search_one_document(served):
-+    client, calls, answers = served
-+    info = {"id": "pi/1", "name": "q1.pdf", "pageNum": 20, "folderId": "f-1",
-+            "collectionId": None, "metadata": {"year": 2025}, "status": "completed"}
-+    pages = [{"page": 4, "relevance": 0.9, "read": "text"}]
-+    more = [{"page": 7, "relevance": 0.2, "read": "image"}]
-+    usage = {"pages": 20, "questions": 1, "billable_pages": 19, "credits": 0.19,
-+             "balance": 99.81}
-+    answers.to = lambda method, path, kw: info if method == "GET" else {
-+        "id": "srch_1", "doc_id": "pi/1",
-+        "results": [{"question": "revenue?", "pages": pages, "more_pages": more}],
-+        "failed_pages": [9], "usage": usage, "seconds": 1.2}
-+
-+    found = client.search("revenue?", document="pi/1", start_page=2, end_page=21)
-+
-+    assert (calls[-1]["method"], calls[-1]["path"]) == ("POST", "/doc/pi%2F1/page-search/")
-+    assert calls[-1]["json"] == {"questions": ["revenue?"], "include_text": False,
-+                                 "start_page": 2, "end_page": 21}
-+    assert found == {
-+        "id": "srch_1",
-+        "results": [{"question": "revenue?", "documents": [{
-+            "id": "pi/1", "name": "q1.pdf", "pageNum": 20, "folderId": "f-1",
-+            "collectionId": None, "metadata": {"year": 2025}, "relevance": None,
-+            "pages": pages, "more_pages": more, "failed_pages": [9]}]}],
-+        "failed_documents": [],
-+        "processing_documents": [],
-+        "usage": {"documents": 0, "billable_documents": 0, **usage},
-+        "seconds": 1.2,
-+    }
-+
-+
-+def _found_document(doc_id, relevance):
-+    return {"id": doc_id, "name": f"{doc_id}.pdf", "pageNum": 10, "folderId": None,
-+            "collectionId": "c-1", "metadata": None, "relevance": relevance}
-+
-+
-+def _documents_found(first, second):
-+    return {"id": "srch_d",
-+            "results": [{"question": "q1", "documents": first, "more_documents": []},
-+                        {"question": "q2", "documents": second, "more_documents": []}],
-+            "failed_documents": ["x"], "processing_documents": ["y"],
-+            "usage": {"documents": 4, "questions": 2, "billable_documents": 3,
-+                      "credits": 0.12, "balance": 50.0},
-+            "seconds": 0.5}
-+
-+
-+def _pages_found(path, kw):
-+    doc_id = path.split("/")[2]
-+    return {"id": f"srch_{doc_id}", "doc_id": doc_id,
-+            "results": [{"question": q, "pages": [{"page": int(q[1]), "relevance": 0.9,
-+                                                   "read": "text"}]}
-+                        for q in kw["json"]["questions"]],
-+            "failed_pages": [], "seconds": 1.0,
-+            "usage": {"pages": 10, "questions": len(kw["json"]["questions"]),
-+                      "billable_pages": 10, "credits": 0.11, "balance": 49.89}}
-+
-+
-+def test_search_across_documents(served):
-+    client, calls, answers = served
-+    a, b, c = (_found_document(doc_id, r) for doc_id, r in (("a", 0.9), ("b", 0.8), ("c", 0.7)))
-+    judged = _documents_found([a, b, c], [b])
-+    def to(method, path, kw):
-+        if path == "/docs/search/":
-+            return judged
-+        if path.startswith("/doc/a/"):
-+            return 409, {"detail": "The document's pages are not ready."}
-+        return _pages_found(path, kw)
-+    answers.to = to
-+
-+    found = client.search(["q1", "q2"], collection="c-1", 
++<details>
++<summary>Citations:</summary>
+ <br>
+ 
+ Pass `citations=True`, and every claim cites its page:
+@@ -250,20 +263,7 @@ for c in resolved["citations"]:
+ </details>
+ 
+ <details>
+-<summary>Streaming</summary>
+-<br>
+-
+-The stream shows the agent's thinking and tool calls as it works; pass `show_process=False` to stream only the answer:
+-
+-```python
+-for chunk in client.chat("Summarize this document.", doc_id=doc_id, stream=True):
+-    print(chunk, end="", flush=True)
+-```
+-
+-</details>
+-
+-<details>
+-<summary>Protocols (Chat Completions / Responses / Messages)</summary>
++<summary>Protocols (Chat Completions / Responses / Messages):</summary>
+ <br>
+ 
+ `protocol=` returns the response in that API's own shape: `"chat_completions"` or `"responses"` (OpenAI), or `"messages"` (Anthropic, with a Claude model):
+@@ -276,7 +276,7 @@ print(response["output"])
+ </details>
+ 
+ <details>
+-<summary>Conversations and multiple documents</summary>
++<summary>Conversations and multiple documents:</summary>
+ <br>
+ 
+ **Continue a conversation.** Pass the messages so far in place of the question:
+@@ -313,12 +313,12 @@ messages = [
+ 
+ Leave out the first message to let the agent look across every indexed document. The context guides the agent; it is not a lock.
+ 
+-#### *Agent frameworks*
++#### *Agent frameworks:*
+ 
+ Pass `instructions`, PageIndex's tools, and `messages` to your agent framework:
+ 
+ <details>
+-<summary>OpenAI Agents SDK</summary>
++<summary>OpenAI Agents SDK:</summary>
+ <br>
+ 
+ Ships with the SDK, no extras needed:
+@@ -339,7 +339,7 @@ print(result.final_output)
+ </details>
+ 
+ <details>
+-<summary>Anthropic SDK</summary>
++<summary>Anthropic SDK:</summary>
+ <br>
+ 
+ Install with `pip install -U "pageindex[anthropic]"`:
+@@ -361,7 +361,7 @@ print("".join(block.text for block in final.content if block.type == "text"))
+ </details>
+ 
+ <details>
+-<summary>Claude Agent SDK</summary>
++<summary>Claude Agent SDK:</summary>
+ <br>
+ 
+ Install with `pip install -U "pageindex[claude]"`:
+@@ -393,7 +393,7 @@ asyncio.run(main())
+ </details>
+ 
+ <details>
+-<summary>Other agent frameworks</summary>
++<summary>Other agent frameworks:</summary>
+ <br>
+ 
+ ```python
+@@ -404,10 +404,10 @@ These are plain Python functions for LangChain, PydanticAI, or any other framewo
+ 
+ </details>
+ 
+-#### *More options*
++#### *More options:*
+ 
+ <details>
+-<summary>Citations</summary>
++<summary>Citations:</summary>
+ <br>
+ 
+ Add the citation prompt to the instructions, and the agent cites each claim's page in the same tags as `chat(citations=True)`. Read them with `resolve_citations()`, as in Citations under With your LLM:
+@@ -419,15 +419,15 @@ instructions = client.agent_instructions() + "\n\n" + client.citation_prompt()
+ </details>
+ 
+ <details>
+-<summary>Document management</summary>
++<summary>Document management:</summary>
+ <br>
+ 
+ The tools only read by default. Pass `include_management=True` to both `agent_instructions()` and the tool method, such as `as_openai_tools()`, to also let the agent delete documents.
+ 
+ </details>
+ 
+ <details>
+-<summary>One-call setup</summary>
++<summary>One-call setup:</summary>
+ <br>
+ 
+ These helpers return the instructions and tools together, in place of the setup above:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #678** (2026-11-15): feat: page_image() gives a page, or a part of it drawn sharper, as an image; update_document() sets metadata keys; list_documents(filter=) lists by metadata (@rejojer)
-- **PR #677** (2026-11-15): feat: the client searches pages and documents, extracts JSON from a PDF, and returns a page or a part of it as an image (@rejojer)
-- **PR #674** (2026-11-14): release: collections, chat(collection_id=) with box citations, and get_citations for library paths (@rejojer)
-- **PR #673** (2026-11-13): fix(chat): own-model chat drops a citation box on a page whose picture the call never saw (@rejojer)
-- **PR #671** (2026-11-13): test: the live copy checks skip while the cloud addresses documents by path and local mode does not (@rejojer)
-- **PR #670** (2026-11-13): test: the live envelope check passes on the cloud's text outline and on a picture page's extra blocks (@rejojer)
+- **PR #694** (2026-11-20): docs(readme): usage guide fold titles and group labels end with a colon, and streaming comes before citations (@rejojer)
+- **PR #693** (2026-11-20): docs(readme): a self-contained local usage guide, since the docs site now covers only the cloud (@rejojer)
+- **PR #692** (2026-11-19): feat: PageIndexClient.collection_context() gives the collection targeting text for an agent you run yourself (@rejojer)
+- **PR #691** (2026-11-19): fix: extract(file) uploads the file again when the stored document it waited for is deleted, and its docstrings say only a completed job is charged (@rejojer)
+- **PR #690** (2026-11-19): feat: PageExtractClient.extract(file) uploads the file with its job, so the upload is not charged on its own (@rejojer)
+- **PR #687** (2026-11-18): build: lift the litellm cap; 1.109 fixed the mcp import it was for (@rejojer)
 
 ---
 
@@ -1808,56 +1719,60 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. the client searches pages and documents, extracts JSON from a PDF, and returns a
+## X. docs(readme): a self-contained local usage guide, since the docs site now covers
 
 **RULE**:
-When implementing operations in `pageindex/client.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9f1a879`: the client searches pages and documents, extracts JSON from a PDF, and returns a page or a part of it as an image. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4f2d5fbd`: docs(readme): a self-contained local usage guide, since the docs site now covers only the cloud. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/client.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-                    Optional, Sequence, Union, cast, overload)
-    def wait_document(self, doc_id: str, timeout: float = 1800.0) -> dict[str, Any]:
-        """
-        Wait until a document is ready for use, and return it as
-        ``get_document()`` does. Raises PageIndexAPIError if its processing
-        failed, or is not done within ``timeout`` seconds (it goes on in the
-        cloud). A local document is ready at once.
-        """
-        self._wait_until_ready(doc_id, timeout)
-        return self.get_document(doc_id)
+- [Aug '26] ⚡ [**PageIndex Flash**](#step-2-index-your-documents): fast tree index generation for text-based PDFs, now the default indexing method in PageIndex SDK local mode.
+- [Scale PageIndex to Millions of Documents](https://pageindex.ai/docs/documents/folders): *PageIndex File System* is a file-level tree indexing layer that lets PageIndex reason over an entire corpus, not just a single document.
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/VectifyAI/PageIndex/main/assets/vectorless-rag-dark.svg">
+      <img src="https://raw.githubusercontent.com/VectifyAI/PageIndex/main/assets/vectorless-rag-light.svg" width="70%" alt="Vectorless RAG with PageIndex: a document becomes a tree index, and LLM reasoning searches the tree to answer a query.">
+    </picture>
+    chat="gpt-6.2-sol",                 # model to search the tree
+# Usage Guide
+Run PageIndex on your machine, step by step. Each step builds on the one before.
+## Step 1: Set up the client
+<details>
+<summary>Install and initialize</summary>
+<br>
 
-    def page_image(self, doc_id: str, page: int,
-                   box: Optional[Sequence[float]] = None) -> bytes:
-        """
-        One page as JPEG bytes: the image itself, where ``get_page_image()``
-        gives a link to it. With ``box``, only that part of the page, drawn
-        sharper, to read small print. Cloud-only: local mode renders no page
-        images.
+```bash
+pip install -U pageindex
+```
 
-            crop = client.page_image(doc_id, 12, box=(0.1, 0.4, 0.9, 0.7))
+```python
+import os
+from pageindex import PageIndexClient
 
-        Args:
-            doc_id (str): Document ID.
-            page (int): 1-based page number.
-            box (sequence of 4 floats, optional): (x0, y0, x1, y1) as
-                fractions of the page's width and
+os.environ["OPENAI_API_
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-                    Optional, Union, cast, overload)
+- [Aug '26] ⚡ [**PageIndex Flash**](https://pageindex.ai/blog/pageindex-flash): fast tree index generation for text-based PDFs, now the default indexing method in PageIndex SDK local mode.
+- [Scale PageIndex to Millions of Documents](https://pageindex.ai/blog/pageindex-filesystem): *PageIndex File System* is a file-level tree indexing layer that lets PageIndex reason over an entire corpus, not just a single document.
+    <img src="https://docs.pageindex.ai/images/cookbook/vectorless-rag.png" width="70%">
+    chat="gpt-6-sol",                   # model to search the tree
+### [Use PageIndex through the SDK client →](https://docs.pageindex.ai/getting-started)
+Configure other models, streaming, multi-document search, citations, and more.
+### [Integrate PageIndex with your own agent →](https://docs.pageindex.ai/sdk/agents)
+Drop PageIndex tools into the OpenAI Agents SDK, the Claude Agent SDK, or any other framework.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9f1a879` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4f2d5fbd` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

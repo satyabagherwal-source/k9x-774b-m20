@@ -2,10 +2,10 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-20T16:58:11.262Z",
+  "updated_at": "2026-11-20T17:12:56.309Z",
   "statistics": {
-    "total_nodes": 428,
-    "total_edges": 189,
+    "total_nodes": 429,
+    "total_edges": 190,
     "domain_distribution": {
       "D": 275,
       "M": 1,
@@ -17,10 +17,10 @@
       "F": 21,
       "B": 2,
       "E": 2,
-      "I": 6
+      "I": 7
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 187,
+      "CONSTRAINED_BY_ARCHITECTURE": 188,
       "VERIFIED_BY_TEST": 1,
       "STYLED_BY_DESIGN": 1
     }
@@ -9567,6 +9567,29 @@
       ],
       "created_at": "2026-11-20T16:58:11.262Z",
       "updated_at": "2026-11-20T16:58:11.262Z"
+    },
+    "DOM-I-74EC8661": {
+      "id": "DOM-I-74EC8661",
+      "domain": "I",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "docs(readme): a self-contained local usage guide, since the docs site now covers",
+      "summary": "Prevents defects observed in production commit `4f2d5fbd`: docs(readme): a self-contained local usage guide, since the docs site now covers  -> When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurr",
+      "confidence": 0.7,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://vectifyai-pageindex/vectifyai-pageindex-learnings.md",
+        "source_version": "614cb815",
+        "observed_at": "2026-11-20T17:12:19.417Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (vectifyai-pageindex)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "I",
+        "Content & Information Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-20T17:12:56.308Z",
+      "updated_at": "2026-11-20T17:12:56.308Z"
     }
   },
   "edges": [
@@ -11459,6 +11482,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-F2660B55 [D] with Domain M",
       "created_at": "2026-11-20T16:57:24.785Z"
+    },
+    {
+      "id": "EDGE-81B0FA0797DB",
+      "sourceId": "DOM-I-74EC8661",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-I-74EC8661 [I] with Domain G",
+      "created_at": "2026-11-20T17:12:56.308Z"
     }
   ]
 }

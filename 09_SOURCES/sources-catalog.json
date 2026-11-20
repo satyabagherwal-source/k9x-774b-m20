@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "af0e46a1",
+    "sourceVersion": "bb087a5c",
     "license": "Apache-2.0",
-    "contentHash": "d1290f7ead957efee84884e64f07f745d977a3ac753d673baa003b79253fb0fd",
-    "lastHarvestedAt": "2026-11-20T16:13:09.570Z",
+    "contentHash": "e9b2fba0f66fc4cd03de7702433853d334aa7839e9797f0fb0316bc898086f18",
+    "lastHarvestedAt": "2026-11-20T17:12:22.923Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6613,10 +6613,10 @@
     "repository": "VectifyAI/PageIndex",
     "platform": "github",
     "sourceUrl": "https://github.com/VectifyAI/PageIndex",
-    "sourceVersion": "ab19dc0e",
+    "sourceVersion": "614cb815",
     "license": "MIT",
-    "contentHash": "550f4e17bfbce4fd6b31fb807194a61a54f4cae50cb3792372e1aef7c9b4f52e",
-    "lastHarvestedAt": "2026-11-19T11:50:41.762Z",
+    "contentHash": "8cba45fb2fdb832ffaaf073fcacbb734f17b56407477c69d2f0ff6157d38c10e",
+    "lastHarvestedAt": "2026-11-20T17:12:19.891Z",
     "learningId": "learn-github-vectifyai-pageindex"
   },
   "epicweb-dev-advanced-react-patterns": {
@@ -9303,10 +9303,10 @@
     "repository": "Louis-CFM/coucou",
     "platform": "github",
     "sourceUrl": "https://github.com/Louis-CFM/coucou",
-    "sourceVersion": "0d7fe588",
+    "sourceVersion": "ab981434",
     "license": "MIT",
-    "contentHash": "feb9d2924edf89cd7f4feb81ae2255a9beeaaf204870cc06dc6c086b44ce75be",
-    "lastHarvestedAt": "2026-11-16T16:00:09.300Z",
+    "contentHash": "90b14faa35c2222adcc3105e2fc8f9a3775bc7b5f3107bf4ddd8ba92dff30483",
+    "lastHarvestedAt": "2026-11-20T17:12:12.914Z",
     "learningId": "learn-github-louis-cfm-coucou"
   },
   "lxml-lxml": {
@@ -9363,10 +9363,10 @@
     "repository": "fb55/htmlparser2",
     "platform": "github",
     "sourceUrl": "https://github.com/fb55/htmlparser2",
-    "sourceVersion": "fd2e61db",
+    "sourceVersion": "15801e74",
     "license": "MIT",
-    "contentHash": "ef695c1952a1003b66f4361c5d0e16c5c2b4380faf8711a74a7b0014c682331f",
-    "lastHarvestedAt": "2026-11-16T18:46:44.017Z",
+    "contentHash": "afecf835e4df7f05c9fab40587fca10621ec0ea28472ae4e90117b1169e3c5ba",
+    "lastHarvestedAt": "2026-11-20T17:12:10.570Z",
     "learningId": "learn-github-fb55-htmlparser2"
   },
   "inikulin-parse5": {

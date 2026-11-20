@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T16:58:12.503Z",
+  "last_updated": "2026-11-20T17:12:57.330Z",
   "directives": [
     {
       "id": "CD-001",
@@ -38192,6 +38192,68 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-LOLK",
+      "directive_title": "build(deps-dev): Bump typescript-eslint from 8.72.2 to 8.73.0",
+      "source_repo": "fb55-htmlparser2-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LOLK-build-deps-dev-bump-typescript-eslint-from-8-72-2-to-8-73-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-LP4B",
+      "directive_title": "Empirical Invariant Guard in AnalyzerDictation.swift",
+      "source_repo": "louis-cfm-coucou-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LP4B-empirical-invariant-guard-in-analyzerdictation-swift.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-MBC8",
+      "directive_title": "docs(readme): a self-contained local usage guide, since the docs site now covers",
+      "source_repo": "vectifyai-pageindex-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MBC8-docs-readme-a-self-contained-local-usage-guide-since-the-docs-site-now-covers.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-LKYK",
+      "directive_title": "Draft NUC 125 Stepped Slices",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "bb087a5c",
+      "staged_file": "11_INBOX/candidate-directives/CD-LKYK-draft-nuc-125-stepped-slices.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-9D7A42",
+      "directive_title": "build(deps-dev): Bump typescript-eslint from 8.72.2 to 8.73.0",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "fb55-htmlparser2",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9D7A42-build-deps-dev-bump-typescript-eslint-fr.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-10B05E",
+      "directive_title": "Empirical Invariant Guard in AnalyzerDictation.swift",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "louis-cfm-coucou",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-10B05E-empirical-invariant-guard-in-analyzerdic.md",
+      "staged_date": "2026-11-20"
     }
   ]
 }

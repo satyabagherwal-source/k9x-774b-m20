@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T16:56:43.987Z",
-  "total_cycles_completed": 11033,
-  "total_learnings_persisted": 11033,
-  "total_rules_promoted": 10391,
+  "last_updated": "2026-11-20T17:12:22.928Z",
+  "total_cycles_completed": 11037,
+  "total_learnings_persisted": 11037,
+  "total_rules_promoted": 10394,
   "history": [
-    {
-      "timestamp": "2026-11-19T18:06:24.101Z",
-      "repository": "karmada-io/karmada",
-      "learningId": "learn-github-karmada-io-karmada",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T18:06:25.680Z",
-      "repository": "openziti/zrok",
-      "learningId": "learn-github-openziti-zrok",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T18:19:49.357Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-Base",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T18:19:51.327Z",
-      "repository": "nguyenphutrong/quotio",
-      "learningId": "learn-github-nguyenphutrong-quotio",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T18:20:00.524Z",
       "repository": "kgateway-dev/kgateway",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-20T16:56:43.987Z",
       "repository": "milvus-io/milvus",
       "learningId": "learn-github-milvus-io-milvus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T17:12:10.576Z",
+      "repository": "fb55/htmlparser2",
+      "learningId": "learn-github-fb55-htmlparser2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T17:12:12.919Z",
+      "repository": "Louis-CFM/coucou",
+      "learningId": "learn-github-louis-cfm-coucou",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T17:12:19.923Z",
+      "repository": "VectifyAI/PageIndex",
+      "learningId": "learn-github-vectifyai-pageindex",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T17:12:22.928Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

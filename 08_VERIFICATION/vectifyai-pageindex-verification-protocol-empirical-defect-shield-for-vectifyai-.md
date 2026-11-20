@@ -4,22 +4,22 @@
 {
   "source_repository": "VectifyAI/PageIndex",
   "source_url": "https://github.com/VectifyAI/PageIndex",
-  "source_version": "ab19dc0e",
+  "source_version": "614cb815",
   "license": "MIT",
-  "timestamp": "2026-11-19T11:50:42.047Z",
+  "timestamp": "2026-11-20T17:12:20.120Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-vectifyai-pageindex",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `ab19dc0e`).  
-> **License**: MIT | **Timestamp**: `2026-11-19T11:50:42.047Z`  
+> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `614cb815`).  
+> **License**: MIT | **Timestamp**: `2026-11-20T17:12:20.120Z`  
 > **Learning ID**: `learn-github-vectifyai-pageindex`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `VectifyAI/PageIndex` (Commit: `ab19dc0e`)
+- **Target Repository**: `VectifyAI/PageIndex` (Commit: `614cb815`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T11:50:40.428Z  
+> **Harvest Timestamp**: 2026-11-20T17:12:19.411Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 40483 stars
+- **Stars / Engagement**: 40495 stars
 
 ---
 
@@ -1394,15 +1394,15 @@ __all__ = ["page_index_flash"]
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #691** (2026-11-19): **fix: extract(file) uploads the file again when the stored document it waited for is deleted, and its docstrings say only a completed job is charged**
-  *Symptoms*: `PageExtractClient.extract(file)` is charged its extraction alone, once the job completes: a job that fails or is cancelled is not charged, and leaves the file it uploaded as a failed document, with its name and file but no pages (VectifyAI/pageindex-compute#914). The same file uploaded again is then a new document. The docstrings now say so.  Such a job also keeps its document processing until it ends. A second `extract()` of the same file meanwhile gets a 409 naming that document and waits for it; if the first job then does not complete, the document fails, and `extract()` now uploads the file again, once, instead of raising.  **Merge once VectifyAI/pageindex-compute#914 is on Prod**: the code works with either server, but the docstrings describe the new pricing.  ## Changes  - `extract(file)`: after a 409 for a stored file, a document that fails or is gone while it is waited for makes the file be uploaded once more. - The retry when the collection found earlier is gone moved into `_store`, so both uploads have it. - Docstrings of `extract()` (`document`, `pages`), `cancel_extract()`, `delete_extract()` and `CloudAPI.submit_document(extract=)`. Only a document the upload made fails; a file stored already keeps its document.  ## Verification  - New tests: the waited-for document fails, or is deleted, and the file is uploaded again; a second failure raises. - Full suite: 1274 passed. `test_summary_effort_ladder_is_what_litellm_would_send` and `test_litellm_model_settings_list
+- **Issue #694** (2026-11-20): **docs(readme): usage guide fold titles and group labels end with a colon, and streaming comes before citations**
+  *Symptoms*: Small layout follow-up to #693 on the README's usage guide: fold titles end with a colon, option B's two group labels do too, and option A lists streaming before citations.  ## Changes  - Every usage guide fold title ends with a colon, in plain text. - Option B's group labels read *Agent frameworks:* and *More options:*. - Option A orders its folds streaming, citations, protocols, conversations and multiple documents.  No code changed; the blocks run in the same order as before, apart from streaming, which nothing after it depends on. 
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"1b2718bdd5d14096f8c8ec0d309193f553ae6bb2","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"1b2718bdd5d14096f8c8ec0d309193f553ae6bb2","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"1b2718bdd5d14096f8c8ec0d309193f553ae6bb2","mergeGateEnabled":false,"pullRequestNumber":691,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-19T07:05:03.739471Z">2026-11-19T07:05:03.739471Z</relative-time> | `1b2718b` | New commits | | 
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"b59e0d12667e6e4e2758ffeb43d4ec2215cf2398","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"b59e0d12667e6e4e2758ffeb43d4ec2215cf2398","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"b59e0d12667e6e4e2758ffeb43d4ec2215cf2398","mergeGateEnabled":false,"pullRequestNumber":694,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-20T10:23:36.645753Z">2026-11-20T10:23:36.645753Z</relative-time> | `b59e0d1` | PR opened | | 🔒
 
-- **Issue #690** (2026-11-19): **feat: PageExtractClient.extract(file) uploads the file with its job, so the upload is not charged on its own**
-  *Symptoms*: `PageExtractClient.extract("a.pdf", schema)` now makes one upload that carries the extraction's configuration, and the server starts the job with it (VectifyAI/pageindex-compute#912). The upload is not charged on its own: the job is the only charge, and at least the file's upload price ($0.10 per 1,000 pages).  When the upload starts no job, `extract()` does what it did before: it waits for the document and starts the job itself. That happens for a file stored already whose pages are still being read (the server answers 409 with the stored `doc_id`), and on a server without extraction on upload, so this can be released before or after the server change.  ## Changes  - `CloudAPI.submit_document(extract=)` sends the configuration with the upload. A 409 that names a `doc_id` is returned as `{"doc_id": ..., "duplicate": True}`. - `extract(file)`: one upload; with `extract_job_id` in the answer it reads that job, otherwise it waits for the document and calls `POST /extract`. - Docstrings of `extract()` and `cancel_extract()`: no separate upload charge; a job started by an upload is charged the upload price if it fails or is cancelled after reading the file. `pages`: the extraction is charged for those pages alone, but a file still costs at least its upload price, for all its pages.  ## Verification  - `tests/test_client.py` covers the one-upload path, both fallbacks (409 with a `doc_id`, and an answer without `extract_job_id`), and a 409 without a `doc_id`. - Full suite: 390 passe
+- **Issue #693** (2026-11-20): **docs(readme): a self-contained local usage guide, since the docs site now covers only the cloud**
+  *Symptoms*: The docs site now covers only the cloud, so the README's links for local use (getting-started, sdk/agents, sdk/documents) landed on cloud-only pages. The README now carries its own local usage guide, one self-contained path: set up the client, index your documents, then ask with your LLM (`chat()`) or with your agent, matching the docs site's "Use with your LLM" and "Use with your agent".  ## Changes  - Usage Guide: Step 1 (install, models and API keys, with a table giving each provider an `index=` and a `chat=` model), Step 2 (index, read and manage documents), Step 3 with Option A (`chat()`: citations, streaming, protocols, conversations and multiple documents) and Option B (agent frameworks, plus citations, document management and one-call setup). Details fold. - Examples use the latest chat models: `gpt-6.2-sol` and `claude-opus-5-5`. - Cloud section: drops OCR and block-level citations, which the cloud no longer uses; adds Page Search API and Page Extract API; the metadata row says collections & metadata. - Links: Metadata, Folders and MCP point at the new docs pages; the Flash update links to Step 2; the File System entries link to the folders page (their blog posts now redirect to the PageIndex Agent post); the diagram loads the light and dark SVGs already in `assets/`.  ## Verification  Every python block in the Usage Guide ran in order against real models (local mode, two sample PDFs), and each row of the model table indexed a document and answered a question: OpenAI
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"175cf42992a6d719c3d93480accd6c42cd40f106","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":"175cf42992a6d719c3d93480accd6c42cd40f106","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"175cf42992a6d719c3d93480accd6c42cd40f106","mergeGateEnabled":false,"pullRequestNumber":690,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-18T13:25:40.666558Z">2026-11-18T13:25:40.666558Z</relative-time> | `175cf42` | New commits | | 🔒
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"6b732f96f6955ea690ccb42f1124791e134c379e","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"6b732f96f6955ea690ccb42f1124791e134c379e","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"6b732f96f6955ea690ccb42f1124791e134c379e","mergeGateEnabled":false,"pullRequestNumber":693,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-20T10:09:05.055557Z">2026-11-20T10:09:05.055557Z</relative-time> | `6b732f9` | PR opened | | 🔒
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1419,187 +1419,270 @@ __all__ = ["page_index_flash"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ab19dc0e` (2026-11-19)
-**Commit Message**: fix: extract(file) uploads the file again when the stored document it waited for fails, and its docstrings say only a completed job is charged (#691)
+### Incident Patch 1: `4f2d5fbd` (2026-11-20)
+**Commit Message**: docs(readme): a self-contained local usage guide, since the docs site now covers only the cloud (#693)
 
-A job that fails or is cancelled is not charged and leaves the file it uploaded as a failed document, with its name and file but no pages. extract() waiting on a stored document that fails or is gone uploads the file again, once.
+The docs site now covers only the cloud, so the README carries its own local usage guide: set up the client, index your documents, then ask with your LLM (chat()) or with your agent, matching the docs site's two paths. Details fold.
 
-**File**: `pageindex/cloud_api.py` (modified, +4/-2)
+Examples use the latest chat models (gpt-6.2-sol, claude-opus-5-5). The cloud section drops OCR and block-level citations, adds Page Search API and Page Extract API, and its links point at the new docs pages. Every python block in the guide and each row of the model table ran against real models.
+
+**File**: `README.md` (modified, +351/-16)
 ```diff
-@@ -73,8 +73,10 @@ def submit_document(
-             collection_id (str, optional): Collection ID to store the document in, in place of a folder. Defaults to None.
-             extract (dict, optional): With ``index=False``, an extract job's
-                 configuration, as ``create_extract()`` takes it: the job
--                starts on the document, and the upload is not charged on its
--                own.
-+                starts on the document, and only its extraction is charged,
-+                once it completes. A job that does not complete leaves the
-+                document this upload made failed, with its name and file but
-+                no pages, until you delete it.
+@@ -32,8 +32,8 @@
  
-         Returns:
-             dict: {'doc_id': ...} — plus 'name', the stored document name
+ - [Oct '26] 🔥 [**Page Search API**](https://search.pageindex.ai): find the pages that answer each question in about a second, and send your LLM only those. *Cut 97% token cost on document question answering*; more accurate and faster than vector search ([benchmark](https://github.com/VectifyAI/page-search-benchmark)).
+ - [Aug '26] [**PageIndex SDK**](#quickstart): **local** and **cloud** modes — one client to index, retrieve, and chat on your machine (with your own LLM API key) or on [PageIndex Cloud](https://developer.pageindex.ai/).
+-- [Aug '26] ⚡ [**PageIndex Flash**](https://pageindex.ai/blog/pageindex-flash): fast tree index generation for text-based PDFs, now the default indexing method in PageIndex SDK local mode.
+-- [Scale PageIndex to Millions of Documents](https://pageindex.ai/blog/pageindex-filesystem): *PageIndex File System* is a file-level tree indexing layer that lets PageIndex reason over an entire corpus, not just a single document.
++- [Aug '26] ⚡ [**PageIndex Flash**](#step-2-index-your-documents): fast tree index generation for text-based PDFs, now the default indexing method in PageIndex SDK local mode.
++- [Scale PageIndex to Millions of Documents](https://pageindex.ai/docs/documents/folders): *PageIndex File System* is a file-level tree indexing layer that lets PageIndex reason over an entire corpus, not just a single document.
+ - [PageIndex App](https://app.pageindex.ai): a human-like document analysis agent for long professional documents.<!-- Also available via [MCP](https://pageindex.ai/developer) or [API](https://pageindex.ai/developer). -->
+ 
+ </details>
+@@ -51,7 +51,10 @@ Inspired by AlphaGo, **[PageIndex](https://vectify.ai/pageindex)** replaces the
+ 
+ <div align="center">
+   <a href="https://pageindex.ai/blog/pageindex-intro" target="_blank" title="The PageIndex Framework">
+-    <img src="https://docs.pageindex.ai/images/cookbook/vectorless-rag.png" width="70%">
++    <picture>
++      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/VectifyAI/PageIndex/main/assets/vectorless-rag-dark.svg">
++      <img src="https://raw.githubusercontent.com/VectifyAI/PageIndex/main/assets/vectorless-rag-light.svg" width="70%" alt="Vectorless RAG with PageIndex: a document becomes a tree index, and LLM reasoning searches the tree to answer a query.">
++    </picture>
+   </a>
+ </div>
+ 
+@@ -89,7 +92,7 @@ os.environ["OPENAI_API_KEY"] = "your-openai-key"
+ 
+ client = PageIndexClient(
+     index="gpt-6-luna",                 # model to build the tree index
+-    chat="gpt-6-sol",                   # model to search the tree
++    chat="gpt-6.2-sol",                 # model to search the tree
+ )
+ doc_id = client.submit_document("report.pdf")["doc_id"]
+ 
+@@ -104,13 +107,338 @@ print(answer)
+ 
+ **Have a Claude subscription?** PageIndex can use your subscription to call Claude models through Claude Code: usage is covered by your plan, no API key needed. Install with `pip install -U "pageindex[claude]"`, then prefix model names with `claude-code/`, e.g., `index="claude-code/haiku"`, `chat="claude-code/opus"` (see [example](https://github.com/VectifyAI/PageIndex/blob/main/cookbook/pageindex-claude-subscription.py)).
+ 
+-### [Use PageIndex through the SDK client →](https://docs.pageindex.ai/getting-started)
++# Usage Guide
+ 
+-Configure other models, streaming, multi-document search, citations, and more.
++Run PageIndex on your machine, step by step. Each step builds on the one before.
+ 
+-### [Integrate PageIndex with your own agent →](https://docs.pageindex.ai/sdk/agents)
++## Step 1: Set up the client
+ 
+-Drop PageIndex tools into the OpenAI Agents SDK, the Claude Agent SDK, or any other framework.
++<details>
++<summary>Install and initialize</summary>
++<br>
++
++```bash
++pip install -U pageindex
++```
++
++```python
++import os
++from pageindex import PageIndexClient
++
++os.environ["OPENAI_API_KEY"] = "your-openai-key"
++
++client = PageIndexClient(
++    index="gpt-6-luna",                 # model to build the tree index
++    chat="gpt-6.2-sol",                 # model to search the tree
++)
++```
++
++</details>
++
++<details>
++<summary>Models and API keys</summary>
++<br>
++
++- **`index=`: a basic model is sufficient.** The tree structure itself is extracted from the document layout without an LLM; the index model only summarizes and refines it, which a basic model does well.
++- **`chat=`: use the best model you can afford.** The chat model searches the tree to retrieve information. See [Query cost and accuracy](#query-cost-and-accuracy).
++
++Model names follow [LiteLLM's naming](https://docs.litellm.ai/docs/providers). The two models can come from different providers; set the API key of each provider you use:
++
++| Provider | `index=` | `chat=` | API key |
++|---|---|---|---|
++| OpenAI | `gpt-6-luna` | `gpt-6.2-sol` | `OPENAI_API_KEY` |
++| Anthropic | `anthropic/claude-haiku-5-5` | `anthropic/claude-opus-5-5` | `ANTHROPIC_API_KEY` |
++| OpenRouter | `openrouter/anthropic/claud
 ```
 
-**File**: `pageindex/page_extract.py` (modified, +47/-28)
-```diff
-@@ -58,21 +58,24 @@ def extract(
- 
-         Args:
-             document (str): A PDF's path: the file is uploaded to
--                ``collection`` with the job, with no outline index built, and
--                the job is the only charge: the extraction, but not less than
--                the file's upload price ($0.10 per 1,000 pages), which is
--                also what the job costs if it fails or is cancelled after
--                reading the file. Uploading the same file again uses the
--                stored document. Or the ``doc_id`` of an uploaded document:
-+                ``collection`` with the job, with no outline index built.
-+                Only the extraction is charged, once the job completes, and
-+                the file is kept as a document from then on; a job that fails
-+                or is cancelled is not charged, and leaves a file it uploaded
-+                as a failed document, with its name and file but no pages,
-+                until you delete it. Uploading the same file again uses the
-+                stored document, unless it failed: then the file is uploaded
-+                as a new document, usually under a suffixed name such as
-+                ``name_1.pdf``. Or
-+                the ``doc_id`` of an uploaded document:
-                 one still processing is waited for first, and with
-                 ``wait=False`` raises PageIndexAPIError (HTTP 409).
-             schema (dict | type): A JSON Schema whose top is an object or an
-                 array, or a Pydantic model class.
-             tier (str): "standard" (default) or "pro".
-             pages (str | int | tuple, optional): Extract from these pages
-                 only: "3-9", (3, 9) or 3. The extraction is charged for them
--                alone, but a file still costs at least its upload price, for
--                all its pages.
-+                alone.
-             cite_sources (bool): Give the page each list item is on, under
-                 'extract_metadata'.
-             system_prompt (str, optional): Your own instructions for the
-@@ -119,20 +122,26 @@ def extract(
-         document = os.fspath(document)
-         deadline = time.monotonic() + timeout
-         if os.path.exists(document):
--            try:
-+            for last in (False, True):
-                 stored = self._store(document, collection, configuration)
--            except PageIndexAPIError as exc:
--                # The collection found earlier is gone: find or make it again.
--                if exc.status_code != 404 or not self._collections.pop(collection, None):
--                    raise
--                stored = self._store(document, collection, configuration)
--            if "extract_job_id" in stored:
--                job = api.get_extract(stored["extract_job_id"])
--                return self._done(job, deadline, timeout) if wait else job
--            # No job started: the file is stored already and not ready, or
--            # the server is older than extraction on upload.
-+                if "extract_job_id" in stored:
-+                    job = api.get_extract(stored["extract_job_id"])
-+                    return self._done(job, deadline, timeout) if wait else job
-+                # No job started: the file is stored already and not ready, or
-+                # the server is older than extraction on upload.
-+                try:
-+                    self.pageindex._wait_until_ready(
-+                        stored["doc_id"], deadline - time.monotonic())
-+                    break
-+                except PageIndexAPIError as exc:
-+                    # The job it was stored with did not complete, and failed
-+                    # it, or it was deleted: the file is uploaded again.
-+                    if last or not (
-+                            exc.status_code == 404
-+                            or self.pageindex.get_document(
-+                                stored["doc_id"]).get("status") == "failed"):
-+                        raise
-             document = stored["doc_id"]
--            self.pageindex._wait_until_ready(document, deadline - time.monotonic())
-         elif document.lower().endswith(".pdf"):
-             raise FileNotFoundError(document)
-         try:
-@@ -146,9 +155,18 @@ def extract(
- 
-     def _store(self, file_path: str, collection: Optional[str],
-                configuration: dict) -> dict:
--        return self.pageindex._upload(
--            file_path, False, collection_id=self._collection(collection),
--            index=False, extract=configuration)
-+        def upload():
-+            return self.pageindex._upload(
-+                file_path, False, collection_id=self._collection(collection),
-+                index=False, extract=configuration)
-+
-+        try:
-+            return upload()
-+        except PageIndexAPIError as exc:
-+            # The collection found earlier is gone: find or make it again.
-+            if exc.status_code != 404 or not self._collections.pop(collection, None):
-+     
-```
+---
 
-**File**: `tests/test_client.py` (modified, +47/-0)
+### Incident Patch 2: `614cb815` (2026-11-20)
+**Commit Message**: docs(readme): usage guide fold titles and group labels end with a colon, and streaming comes before citations (#694)
+
+Usage guide fold titles and option B's group labels end with a colon, and option A lists streaming before citations. Layout only; no code changed.
+
+**File**: `README.md` (modified, +28/-28)
 ```diff
-@@ -2401,6 +2401,53 @@ def to(method, path, kw):
-     assert calls[-1]["data"]["doc_id"] == "pi-1"
+@@ -114,7 +114,7 @@ Run PageIndex on your machine, step by step. Each step builds on the one before.
+ ## Step 1: Set up the client
  
+ <details>
+-<summary>Install and initialize</summary>
++<summary>Install and initialize:</summary>
+ <br>
  
-+@pytest.mark.parametrize("stored, reads", [
-+    ({"id": "pi-1", "status": "failed"}, 2),  # its job did not complete
-+    ((404, {"detail": "Document not found."}), 1),  # deleted meanwhile
-+])
-+def test_extract_uploads_again_when_the_document_it_waited_for_fails(
-+        extracting, sample_pdf, monkeypatch, stored, reads):
-+    client, calls, answers = extracting
-+    monkeypatch.setattr("pageindex.client.time.sleep", lambda s: None)
-+    # stored by another job, still processing
-+    uploads = iter([
-+        (409, {"detail": {"message": "still processed", "doc_id": "pi-1"}}),
-+        {"doc_id": "pi-2", "name": "sample.pdf", "extract_job_id": "ext_1"}])
-+    def to(method, path, kw):
-+        if path == "/collections/":
-+            return {"collections": [{"id": "c-9", "name": "Page Extract"}], "total": 1}
-+        if path == "/doc/":
-+            return next(uploads)
-+        if path == "/doc/pi-1/metadata/":
-+            return stored
-+        return {"id": "ext_1", "status": "pending"}
-+    answers.to = to
+ ```bash
+@@ -136,7 +136,7 @@ client = PageIndexClient(
+ </details>
+ 
+ <details>
+-<summary>Models and API keys</summary>
++<summary>Models and API keys:</summary>
+ <br>
+ 
+ - **`index=`: a basic model is sufficient.** The tree structure itself is extracted from the document layout without an LLM; the index model only summarizes and refines it, which a basic model does well.
+@@ -168,7 +168,7 @@ doc_id = client.submit_document("report.pdf")["doc_id"]
+ Local mode (PageIndex Flash) works with text-based PDFs. For scanned files and image understanding, use [PageIndex Cloud](#pageindex-cloud).
+ 
+ <details>
+-<summary>Read and manage your documents</summary>
++<summary>Read and manage your documents:</summary>
+ <br>
+ 
+ Read what you indexed:
+@@ -226,7 +226,20 @@ answer = client.chat("What changed in the risk factors?", doc_id=doc_id)
+ ```
+ 
+ <details>
+-<summary>Citations</summary>
++<summary>Streaming:</summary>
++<br>
 +
-+    assert client.extract(sample_pdf, {"type": "object"}, wait=False) == {
-+        "id": "ext_1", "status": "pending"}
-+    assert [(c["method"], c["path"]) for c in calls] == [
-+        ("GET", "/collections/"), ("POST", "/doc/"),
-+        *[("GET", "/doc/pi-1/metadata/")] * reads,
-+        ("POST", "/doc/"), ("GET", "/extract/ext_1/")]
++The stream shows the agent's thinking and tool calls as it works; pass `show_process=False` to stream only the answer:
 +
++```python
++for chunk in client.chat("Summarize this document.", doc_id=doc_id, stream=True):
++    print(chunk, end="", flush=True)
++```
 +
-+def test_extract_raises_when_the_document_it_waited_for_fails_again(
-+        extracting, sample_pdf, monkeypatch):
-+    client, calls, answers = extracting
-+    monkeypatch.setattr("pageindex.client.time.sleep", lambda s: None)
-+    def to(method, path, kw):
-+        if path == "/collections/":
-+            return {"collections": [{"id": "c-9", "name": "Page Extract"}], "total": 1}
-+        if path == "/doc/":
-+            return 409, {"detail": {"message": "still processed", "doc_id": "pi-1"}}
-+        return {"id": "pi-1", "status": "failed"}
-+    answers.to = to
++</details>
 +
-+    with pytest.raises(PageIndexAPIError, match="failed"):
-+        client.extract(sample_pdf, {"type": "object"})
-+    assert [c["path"] for c in calls].count("/doc/") == 2  # one upload again
-+
-+
- def test_extract_raises_a_conflict_that_names_no_document(extracting, sample_pdf):
-     client, calls, answers = extracting
-     answers.to = lambda method, path, kw: (
++<details>
++<summary>Citations:</summary>
+ <br>
+ 
+ Pass `citations=True`, and every claim cites its page:
+@@ -250,20 +263,7 @@ for c in resolved["citations"]:
+ </details>
+ 
+ <details>
+-<summary>Streaming</summary>
+-<br>
+-
+-The stream shows the agent's thinking and tool calls as it works; pass `show_process=False` to stream only the answer:
+-
+-```python
+-for chunk in client.chat("Summarize this document.", doc_id=doc_id, stream=True):
+-    print(chunk, end="", flush=True)
+-```
+-
+-</details>
+-
+-<details>
+-<summary>Protocols (Chat Completions / Responses / Messages)</summary>
++<summary>Protocols (Chat Completions / Responses / Messages):</summary>
+ <br>
+ 
+ `protocol=` returns the response in that API's own shape: `"chat_completions"` or `"responses"` (OpenAI), or `"messages"` (Anthropic, with a Claude model):
+@@ -276,7 +276,7 @@ print(response["output"])
+ </details>
+ 
+ <details>
+-<summary>Conversations and multiple documents</summary>
++<summary>Conversations and multiple documents:</summary>
+ <br>
+ 
+ **Continue a conversation.** Pass the messages so far in place of the question:
+@@ -313,12 +313,12 @@ messages = [
+ 
+ Leave out the first message to let the agent look across every indexed document. The context guides the agent; it is not a lock.
+ 
+-#### *Agent frameworks*
++#### *Agent frameworks:*
+ 
+ Pass `instructions`, PageIndex's tools, and `messages` to your agent framework:
+ 
+ <details>
+-<summary>OpenAI Agents SDK</summary>
++<summary>OpenAI Agents SDK:</summary>
+ <br>
+ 
+ Ships with the SDK, no extras needed:
+@@ -339,7 +339,7 @@ print(result.final_output)
+ </details>
+ 
+ <details>
+-<summary>Anthropic SDK</summary>
++<summary>Anthropic SDK:</summary>
+ <br>
+ 
+ Install with `pip install -U "pageindex[anthropic]"`:
+@@ -361,7 +361,7 @@ print("".join(block.text for block in final.content if block.type == "text"))
+ </details>
+ 
+ <details>
+-<summary>Claude Agent SDK</summary>
++<summary>Claude Agent SDK:</summary>
+ <br>
+ 
+ Install with `pip install -U "pageindex[claude]"`:
+@@ -393,7 +393,7 @@ asyncio.run(main())
+ </details>
+ 
+ <details>
+-<summary>Other agent frameworks</summary>
++<summary>Other agent frameworks:</summary>
+ <br>
+ 
+ ```python
+@@ -404,10 +404,10 @@ These are plain Python functions for LangChain, PydanticAI, or any other framewo
+ 
+ </details>
+ 
+-#### *More options*
++#### *More options:*
+ 
+ <details>
+-<summary>Citations</summary>
++<summary>Citations:</summary>
+ <br>
+ 
+ Add the citation prompt to the instructions, and the agent cites each claim's page in the same tags as `chat(citations=True)`. Read them with `resolve_citations()`, as in Citations under With your LLM:
+@@ -419,15 +419,15 @@ instructions = client.agent_instructions() + "\n\n" + client.citation_prompt()
+ </details>
+ 
+ <details>
+-<summary>Document management</summary>
++<summary>Document management:</summary>
+ <br>
+ 
+ The tools only read by default. Pass `include_management=True` to both `agent_instructions()` and the tool method, such as `as_openai_tools()`, to also let the agent delete documents.
+ 
+ </details>
+ 
+ <details>
+-<summary>One-call setup</summary>
++<summary>One-call setup:</summary>
+ <br>
+ 
+ These helpers return the instructions and tools together, in place of the setup above:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #694** (2026-11-20): docs(readme): usage guide fold titles and group labels end with a colon, and streaming comes before citations (@rejojer)
+- **PR #693** (2026-11-20): docs(readme): a self-contained local usage guide, since the docs site now covers only the cloud (@rejojer)
+- **PR #692** (2026-11-19): feat: PageIndexClient.collection_context() gives the collection targeting text for an agent you run yourself (@rejojer)
 - **PR #691** (2026-11-19): fix: extract(file) uploads the file again when the stored document it waited for is deleted, and its docstrings say only a completed job is charged (@rejojer)
 - **PR #690** (2026-11-19): feat: PageExtractClient.extract(file) uploads the file with its job, so the upload is not charged on its own (@rejojer)
 - **PR #687** (2026-11-18): build: lift the litellm cap; 1.109 fixed the mcp import it was for (@rejojer)
-- **PR #686** (2026-11-17): refactor: PageIndexClient.build_index() is named build_outline_index(), and its errors say outline index (@rejojer)
-- **PR #685** (closed): docs: README shows PageSearchClient and PageExtractClient beside PageIndexClient (@rejojer)
-- **PR #684** (2026-11-17): feat: a cloud client without PAGEINDEX_API_KEY reads the key Page Search or Page Extract users already export, each product client its own first (@rejojer)
 
 ---
 
@@ -1619,35 +1702,60 @@ A job that fails or is cancelled is not charged and leaves the file it uploaded 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. extract(file) uploads the file again when the stored document it waited for fail
+## X. docs(readme): a self-contained local usage guide, since the docs site now covers
 
 **RULE**:
-When implementing operations in `pageindex/cloud_api.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ab19dc0e`: extract(file) uploads the file again when the stored document it waited for fails, and its docstrings say only a completed job is charged. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4f2d5fbd`: docs(readme): a self-contained local usage guide, since the docs site now covers only the cloud. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/cloud_api.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-                starts on the document, and only its extraction is charged,
-                once it completes. A job that does not complete leaves the
-                document this upload made failed, with its name and file but
-                no pages, until you delete it.
+- [Aug '26] ⚡ [**PageIndex Flash**](#step-2-index-your-documents): fast tree index generation for text-based PDFs, now the default indexing method in PageIndex SDK local mode.
+- [Scale PageIndex to Millions of Documents](https://pageindex.ai/docs/documents/folders): *PageIndex File System* is a file-level tree indexing layer that lets PageIndex reason over an entire corpus, not just a single document.
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/VectifyAI/PageIndex/main/assets/vectorless-rag-dark.svg">
+      <img src="https://raw.githubusercontent.com/VectifyAI/PageIndex/main/assets/vectorless-rag-light.svg" width="70%" alt="Vectorless RAG with PageIndex: a document becomes a tree index, and LLM reasoning searches the tree to answer a query.">
+    </picture>
+    chat="gpt-6.2-sol",                 # model to search the tree
+# Usage Guide
+Run PageIndex on your machine, step by step. Each step builds on the one before.
+## Step 1: Set up the client
+<details>
+<summary>Install and initialize</summary>
+<br>
+
+```bash
+pip install -U pageindex
+```
+
+```python
+import os
+from pageindex import PageIndexClient
+
+os.environ["OPENAI_API_
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-                starts on the document, and the upload is not charged on its
-                own.
+- [Aug '26] ⚡ [**PageIndex Flash**](https://pageindex.ai/blog/pageindex-flash): fast tree index generation for text-based PDFs, now the default indexing method in PageIndex SDK local mode.
+- [Scale PageIndex to Millions of Documents](https://pageindex.ai/blog/pageindex-filesystem): *PageIndex File System* is a file-level tree indexing layer that lets PageIndex reason over an entire corpus, not just a single document.
+    <img src="https://docs.pageindex.ai/images/cookbook/vectorless-rag.png" width="70%">
+    chat="gpt-6-sol",                   # model to search the tree
+### [Use PageIndex through the SDK client →](https://docs.pageindex.ai/getting-started)
+Configure other models, streaming, multi-document search, citations, and more.
+### [Integrate PageIndex with your own agent →](https://docs.pageindex.ai/sdk/agents)
+Drop PageIndex tools into the OpenAI Agents SDK, the Claude Agent SDK, or any other framework.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ab19dc0e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4f2d5fbd` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

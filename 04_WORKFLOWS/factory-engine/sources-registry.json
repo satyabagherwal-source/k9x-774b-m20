@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T16:56:47.372Z",
-    "lastVerified": "2026-11-20T16:56:47.372Z",
+    "lastChecked": "2026-11-20T17:12:26.095Z",
+    "lastVerified": "2026-11-20T17:12:26.095Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -354,14 +354,14 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T16:13:08.551Z",
-    "lastVerified": "2026-11-20T16:13:08.551Z",
+    "lastChecked": "2026-11-20T17:12:21.891Z",
+    "lastVerified": "2026-11-20T17:12:21.891Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d1290f7ead957efee84884e64f07f745d977a3ac753d673baa003b79253fb0fd",
+    "contentHash": "e9b2fba0f66fc4cd03de7702433853d334aa7839e9797f0fb0316bc898086f18",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -540,14 +540,14 @@
     "officialUrl": "https://github.com/VectifyAI/PageIndex",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-19T11:50:40.428Z",
-    "lastVerified": "2026-11-19T11:50:40.428Z",
+    "lastChecked": "2026-11-20T17:12:19.411Z",
+    "lastVerified": "2026-11-20T17:12:19.411Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vectifyai-pageindex",
-    "contentHash": "550f4e17bfbce4fd6b31fb807194a61a54f4cae50cb3792372e1aef7c9b4f52e",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "8cba45fb2fdb832ffaaf073fcacbb734f17b56407477c69d2f0ff6157d38c10e",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1026,9 +1026,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-20T07:35:59.721Z",
+    "lastChecked": "2026-11-20T17:12:12.688Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-20T07:35:59.721Z"
+    "lastVerified": "2026-11-20T17:12:12.688Z"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -1499,9 +1499,9 @@
   "go-kratos-kratos": {
     "name": "kratos",
     "officialUrl": "https://github.com/go-kratos/kratos",
-    "lastChecked": "2026-11-19T14:20:21.244Z",
+    "lastChecked": "2026-11-20T17:12:10.084Z",
     "revisionIdentifier": "dd0fb7df",
-    "lastVerified": "2026-11-19T14:20:21.244Z"
+    "lastVerified": "2026-11-20T17:12:10.084Z"
   },
   "lunasec-io-lunasec": {
     "name": "lunasec",
@@ -5368,12 +5368,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "mlua-rs-mlua": {
-    "name": "mlua-rs/mlua",
+    "name": "mlua",
     "officialUrl": "https://github.com/mlua-rs/mlua",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T00:22:42.149Z",
-    "lastVerified": "2026-11-19T00:22:42.149Z",
+    "lastChecked": "2026-11-20T17:12:02.561Z",
+    "lastVerified": "2026-11-20T17:12:02.561Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mlua-rs-mlua",
@@ -5382,7 +5382,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3c0fd858"
   },
   "hf-naiveai-naive-n0.5-flash": {
     "name": "NaiveAI/Naive-N0.5-Flash",
@@ -10349,6 +10350,40 @@
     "contentHash": "dc663124afd300bf015d31a59c555823bc79a34c99eee3211f663c24193f0151",
     "promotedRulesCount": 1,
     "recentFixesCount": 24,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "fb55-htmlparser2": {
+    "name": "fb55/htmlparser2",
+    "officialUrl": "https://github.com/fb55/htmlparser2",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-20T17:12:09.401Z",
+    "lastVerified": "2026-11-20T17:12:09.401Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-fb55-htmlparser2",
+    "contentHash": "afecf835e4df7f05c9fab40587fca10621ec0ea28472ae4e90117b1169e3c5ba",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "louis-cfm-coucou": {
+    "name": "Louis-CFM/coucou",
+    "officialUrl": "https://github.com/Louis-CFM/coucou",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-11-20T17:12:11.839Z",
+    "lastVerified": "2026-11-20T17:12:11.839Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-louis-cfm-coucou",
+    "contentHash": "90b14faa35c2222adcc3105e2fc8f9a3775bc7b5f3107bf4ddd8ba92dff30483",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 22,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

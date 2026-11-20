@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T16:58:13.129Z",
+  "last_updated": "2026-11-20T17:12:57.805Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T12:15:57.033Z",
@@ -693,7 +693,7 @@
       "staged_for_review": 0
     },
     "fb55-htmlparser2-learnings.md": {
-      "processed_at": "2026-11-16T18:46:58.998Z",
+      "processed_at": "2026-11-20T17:12:26.237Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1513,7 +1513,7 @@
       "staged_for_review": 0
     },
     "louis-cfm-coucou-learnings.md": {
-      "processed_at": "2026-11-16T16:00:22.169Z",
+      "processed_at": "2026-11-20T17:12:28.312Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3168,9 +3168,9 @@
       "staged_for_review": 0
     },
     "vectifyai-pageindex-learnings.md": {
-      "processed_at": "2026-11-19T11:51:25.128Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-20T17:12:56.311Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "qdrant-qdrant-learnings.md": {
       "processed_at": "2026-11-16T15:00:51.306Z",
@@ -3608,7 +3608,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2559,
-  "total_canonical_promoted": 430,
-  "total_staged_for_review": 1940
+  "total_dossiers_evaluated": 2562,
+  "total_canonical_promoted": 431,
+  "total_staged_for_review": 1942
 }

@@ -11618,3 +11618,8 @@ Every entry in this ledger must capture:
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `19ed1d67` | Multi-dimensional audit evidence | 2026-11-20T16:56:43.980Z |
 | `learn-dom-d-f2660b55` | `project://hf-apple-depthpro2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-apple-depthpro2-learnings.md` | 2026-11-20T16:57:24.788Z |
 | `learn-dom-d-fe8131e1` | `project://hf-ovhaillm-olala-v1.0-mini-7a1b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md` | 2026-11-20T16:58:11.265Z |
+| `learn-github-fb55-htmlparser2` | `https://github.com/fb55/htmlparser2` | `15801e74` | Multi-dimensional audit evidence | 2026-11-20T17:12:10.570Z |
+| `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `ab981434` | Multi-dimensional audit evidence | 2026-11-20T17:12:12.914Z |
+| `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `614cb815` | Multi-dimensional audit evidence | 2026-11-20T17:12:19.891Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `bb087a5c` | Multi-dimensional audit evidence | 2026-11-20T17:12:22.923Z |
+| `learn-dom-i-74ec8661` | `project://vectifyai-pageindex` | `614cb815` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md` | 2026-11-20T17:12:56.311Z |
