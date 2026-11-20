@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T00:33:33.212Z",
-  "total_records": 2043,
+  "last_updated": "2026-11-20T00:46:48.652Z",
+  "total_records": 2047,
   "domains": {
     "A": {
       "total": 17,
@@ -1344,7 +1344,7 @@
       ]
     },
     "H": {
-      "total": 480,
+      "total": 481,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1825,11 +1825,12 @@
         "domain_intelligence-technical-construction-intelligence-rtk-ai-rtk-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-tableproapp-tablepro-learnings-core-invarian",
         "domain_intelligence-technical-construction-intelligence-lapce-lapce-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-lapce-lapce-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-lapce-lapce-learnings-core-invariants",
+        "DOM-H-52039FE3"
       ]
     },
     "I": {
-      "total": 99,
+      "total": 100,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1929,7 +1930,8 @@
         "domain_intelligence-content-information-intelligence-gluesql-gluesql-core-invariants",
         "domain_intelligence-content-information-intelligence-gluesql-gluesql-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-core-invariants",
-        "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-learnings-core-invarian"
+        "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-learnings-core-invarian",
+        "DOM-I-333D4D7A"
       ]
     },
     "J": {
@@ -1967,7 +1969,7 @@
       ]
     },
     "K": {
-      "total": 109,
+      "total": 111,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2077,7 +2079,9 @@
         "domain_intelligence-quality-verification-intelligence-sigstore-cosign-core-invariants",
         "domain_intelligence-quality-verification-intelligence-sigstore-cosign-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-vinceglb-filekit-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-vinceglb-filekit-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-vinceglb-filekit-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-risingwavelabs-risingwave-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-risingwavelabs-risingwave-learnings-core-invar"
       ]
     },
     "L": {
@@ -18078,8 +18082,8 @@
       "title": "Technical Construction Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dathere-qsv-technical-construction-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "617dbb4f859e2a7dc994ce7b9ddc2ee04f03d47dc1305b16f253c6dd0dcd7a7c",
-      "created_at": "2026-11-19T17:38:09.578Z"
+      "content_hash": "1020c17bffeb839abf6696c19d8b19ec5f0bd559fc585f1efc3dfdac14956bb7",
+      "created_at": "2026-11-20T00:45:37.472Z"
     },
     "DOM-D-11540386": {
       "record_id": "DOM-D-11540386",
@@ -21988,8 +21992,8 @@
       "title": "Technical Construction Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dathere-qsv-learnings-technical-construction-intelligence-dathere-qsv-learnings-.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "9363878e1721f1ed9c03f0841528f029788aefda345cb93899ea28457a2ea754",
-      "created_at": "2026-11-15T19:45:49.720Z"
+      "content_hash": "ec0091da7470d29813695100cd11ad010e90ae550ba11b16a303f613e7c13bfc",
+      "created_at": "2026-11-20T00:46:48.652Z"
     },
     "domain_intelligence-research-knowledge-intelligence-videorebirthai-hyperflow-h3-flash-core-invariant": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-videorebirthai-hyperflow-h3-flash-core-invariant",
@@ -26137,8 +26141,8 @@
       "title": "Architecture Intelligence: zarf-dev/zarf Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zarf-dev-zarf-architecture-intelligence-zarf-dev-zarf-core-invariants.md",
       "repository": "zarf-dev/zarf",
-      "content_hash": "e43a67eb669566d96b554fec23b0ab98c595b7f1c478bcf655ea8cfce3fdd724",
-      "created_at": "2026-11-18T05:44:16.526Z"
+      "content_hash": "b6b087617672194aaf0ef8413417bbaa1a16703b887bec9aefb9a081422e9a98",
+      "created_at": "2026-11-20T00:43:21.152Z"
     },
     "domain_intelligence-content-information-intelligence-sfu-db-connector-x-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-sfu-db-connector-x-core-invariants",
@@ -26164,8 +26168,8 @@
       "title": "Architecture Intelligence: zarf-dev-zarf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zarf-dev-zarf-learnings-architecture-intelligence-zarf-dev-zarf-learnings-core-i.md",
       "repository": "zarf-dev-zarf-learnings",
-      "content_hash": "8f3022ecf9c0d18e1ca634a41fa52a191a8494c42f43719705a38d7d437b22b5",
-      "created_at": "2026-11-18T05:44:22.136Z"
+      "content_hash": "60e564fcedef3e47b3bd8dde82a4c9342f80f4236642291192c3d955076b4de1",
+      "created_at": "2026-11-20T00:45:41.696Z"
     },
     "domain_intelligence-research-knowledge-intelligence-facebook-sam-3d-body-dinov3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-facebook-sam-3d-body-dinov3-core-invariants",
@@ -34246,6 +34250,92 @@
       "repository": "vinceglb-filekit-learnings",
       "content_hash": "cdcbc485659feee030108b6170a47355d548b45b4b4bea3ff19667256f83e04d",
       "created_at": "2026-11-20T00:06:47.858Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-risingwavelabs-risingwave-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-risingwavelabs-risingwave-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: risingwavelabs/risingwave Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-risingwavelabs-risingwave-quality-verification-intelligence-risingwavelabs-risin.md",
+      "repository": "risingwavelabs/risingwave",
+      "content_hash": "97e4aa7f2666ed8c332c25b75555187804a369e9a0d813d019ec81e4ca74f6ed",
+      "created_at": "2026-11-20T00:43:28.314Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-risingwavelabs-risingwave-learnings-core-invar": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-risingwavelabs-risingwave-learnings-core-invar",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: risingwavelabs-risingwave-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-risingwavelabs-risingwave-learnings-quality-verification-intelligence-risingwave.md",
+      "repository": "risingwavelabs-risingwave-learnings",
+      "content_hash": "e690aaea8c23bbfb472a6ec198fe9a61741822ad1b16333f823aa236dc27fceb",
+      "created_at": "2026-11-20T00:45:42.372Z"
+    },
+    "DOM-H-52039FE3": {
+      "record_id": "DOM-H-52039FE3",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Premature Stream Return Leaving Parquet File Sinks Corrupted (BUG-SYNTH-01)",
+      "content": "Streaming file rotation must enforce a strict two-phase commit: seal and flush the active sink before creating the next file handle.",
+      "content_hash": "eefab692ab197dc9ec258e90053e696ef23b0e212b36c5a36b55f4296dce9a03",
+      "summary": "The rotation loop attempted to initialize the next output file handle before closing and finalizing the current `parquet::Writer`. The early -> Streaming file rotation must enforce a strict two-phase commit: seal and flush the active sink before creating the next file handle.",
+      "provenance": {
+        "source_uri": "project://dathere-qsv/dathere-qsv-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T00:45:42.628Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dathere-qsv)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `588d2c40`. File: `src/cmd/synthesize/output.rs`, `src/cmd/synthesize/mod.rs`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T00:46:10.505Z"
+    },
+    "DOM-I-333D4D7A": {
+      "record_id": "DOM-I-333D4D7A",
+      "domain_letter": "I",
+      "domain_id": "content_information",
+      "domain_name": "Content & Information Intelligence",
+      "secondary_domains": [],
+      "title": "Empty Cardinality Selection Inverting Enum Generation (BUG-SCHEMA-02)",
+      "content": "Do not let empty string selections fall back to default wildcards when representing empty candidate sets.",
+      "content_hash": "55f0cd1bb5a4b87864ae8a6f5a1cf880e8db38b153303690fdab8b99984291a0",
+      "summary": "`build_low_cardinality_column_selector_arg` returned an empty string (`\"\"`) when no column met the threshold. Downstream, `SelectColumns::pa -> Do not let empty string selections fall back to default wildcards when representing empty candidate sets.",
+      "provenance": {
+        "source_uri": "project://dathere-qsv/dathere-qsv-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T00:45:42.628Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dathere-qsv)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Issue #4829, Repro with `qsv schema hc.csv --enum-threshold 50`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T00:46:47.854Z"
     }
   }
 }

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T05:44:21.847Z",
+  "timestamp": "2026-11-20T00:45:41.438Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zarf-dev-zarf-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zarf-dev-zarf-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T05:44:21.847Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T00:45:41.438Z`  
 > **Learning ID**: `LEARN-EVO-zarf-dev-zarf-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 78%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zarf-dev-zarf-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source**: github ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
-> **Source Version**: `31862576`  
+> **Source Version**: `14a502fa`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T05:44:14.971Z  
+> **Timestamp**: 2026-11-20T00:43:19.796Z  
 > **Learning ID**: `learn-github-zarf-dev-zarf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T05:44:14.965Z  
+> **Harvest Timestamp**: 2026-11-20T00:43:15.987Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The Airgap Native Package Manager for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2100 stars
+- **Stars / Engagement**: 2104 stars
 
 ---
 
@@ -1487,14 +1487,13 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5687** (2026-11-17): **Community membership request for @dwertent**
-  *Symptoms*: I'd like to become a Community Member of `zarf-dev`, following the [contributor ladder](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTOR_LADDER.md#community-members).  ### Merged contributions  I have authored six merged PRs:  - [#5644: Fix agent mutation policy defaults during Helm schema validation](https://github.com/zarf-dev/zarf/pull/5644) - [#5592: Hide the deprecated YOLO example from the docs and recommend connected mode](https://github.com/zarf-dev/zarf/pull/5592) - [#5601: Fix broken documentation links](https://github.com/zarf-dev/zarf/pull/5601) - [#5602: Update documentation-site dependencies to address vulnerabilities](https://github.com/zarf-dev/zarf/pull/5602) - [#5620: Update Brotli from v1.2.0 to v1.2.8](https://github.com/zarf-dev/zarf/pull/5620) - [#5629: Update klauspost/compress from v1.19.2 to v1.20.3](https://github.com/zarf-dev/zarf/pull/5629)  ### Issues and community participation  I have also opened:  - [#5559: Add a CI check for broken documentation links](https://github.com/zarf-dev/zarf/issues/5559) - [#5589: Standardize deployment logs](https://github.com/zarf-dev/zarf/issues/5589) - [#5678: Add missing Dependabot grouping rules for related dependencies](https://github.com/zarf-dev/zarf/issues/5678)  I attended the two most recent Zarf community meetings, and two-factor authentication is enabled on my GitHub account.  ### Sponsorship and approval  @AustinAbro321 @brandtkeller , would you be willing to provide the maintainer sponsorship an
-
-- **Issue #5685** (2026-11-17): **chore(docs): update AirGap link to IBM's website**
-  *Symptoms*: Old AirGap link is broken (https://ibm.github.io/kubernetes-networking/vpc/airgap/) add new link to IBMs website  ## Description  ...  ## Related Issue  Fixes # <!-- or --> Relates to #  ## Checklist before merging  - [ ] Test, docs, adr added or updated as needed - [ ] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
+- **Issue #5694** (2026-11-19): **chore(adrs): remove all ADR documents, which were moved to proposals/archived/adr**
+  *Symptoms*: ## Description  All ADRs are moved to proposals repo in https://github.com/zarf-dev/proposals/pull/76, once that merges we'll be able to drop the entire `adr/` directory from this repo.   ## Related Issue  Fixes #5693  ## Checklist before merging  - [ ] Test, docs, adr added or updated as needed - [x] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
   **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">👷</span> Deploy request for *zarf-docs* pending review. [Visit the deploys page to approve it](https://app.netlify.com/projects/zarf-docs/deploys)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 5600284507e5f3948412873b322a52fe497ac288 |
-  > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5685?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :white_check_mark: All modified and coverable lines are covered by tests. [see 197 files with indirect coverage changes](https://app.codecov.io/gh/zarf-dev/zarf/pull/5685/indirect-changes?src=pr&el=tree-more&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) <details><summary> :rocket: New features to boost your workflow: </summary>  - :snowflake: [Test Analytics](https://docs.codecov.com/docs/test-analytics): Detect flaky tests, report on failures, and find test suite problems. - :package: [JS Bundle Analysis](https://docs.codecov.com/docs/javascript-bundle-analysis): Save yourself from yourself by tracking and limiting bundle sizes in JS merges. </details>
+  > ### <span aria-hidden="true">👷</span> Deploy request for *zarf-docs* pending review. [Visit the deploys page to approve it](https://app.netlify.com/projects/zarf-docs/deploys)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 9f682a8cfa8468572dce2221838395677d577daf |
+
+- **Issue #5693** (2026-11-19): **Transfer all ADRs from the main zarf repo to archived directory under proposals**
+  *Symptoms*: We've decided to move all Architecture Decision Record documents (ADRs) from https://github.com/zarf-dev/zarf/tree/main/adr to https://github.com/zarf-dev/proposals under `archived/adr` while maintaining the git log history for the transferred files.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1511,34 +1510,367 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6f444bd5` (2026-11-17)
-**Commit Message**: fix: count node items when sizing registry HPA replicas (#5641)
+### Incident Patch 1: `14a502fa` (2026-11-19)
+**Commit Message**: docs: contribution workflow changes (#5680)
 
-Signed-off-by: James Lanska <[REDACTED_EMAIL]>
+Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
+Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
+Co-authored-by: David Wertenteil <[REDACTED_EMAIL]>
 
-**File**: `packages/init/v1alpha1/zarf-registry/chart/templates/hpa.yaml` (modified, +3/-2)
+**File**: `.github/pull_request_template.md` (modified, +3/-2)
 ```diff
-@@ -14,8 +14,9 @@ spec:
-     kind: Deployment
-     name: {{ template "docker-registry.fullname" . }}
- {{- if .Values.autoscaling.mapReplicasToNodes }}
--  minReplicas: {{ len (lookup "v1" "Node" "" "") }}
--  maxReplicas: {{ add (len (lookup "v1" "Node" "" "")) 4 }}
-+{{- $nodeCount := max 1 (len ((lookup "v1" "Node" "" "").items | default list)) }}
-+  minReplicas: {{ $nodeCount }}
-+  maxReplicas: {{ add $nodeCount 4 }}
- {{- else }}
-   minReplicas: {{ .Values.autoscaling.minReplicas }}
-   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
+@@ -3,12 +3,13 @@
+ ...
+ 
+ ## Related Issue
++<!-- Every PR must link to an issue that has a `ready` status and is assigned to you. Otherwise, the PR will be closed. See CONTRIBUTING.md#pull-request-requirements. -->
+ 
+ Fixes #
+ <!-- or -->
+ Relates to #
+ 
+ ## Checklist before merging
+ 
+-- [ ] Test, docs, adr added or updated as needed
+-- [ ] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed
++- [ ] Tests and docs added or updated as needed
++- [ ] [Contributor Guide Steps](https://docs.zarf.dev/contribute/contributor-guide/#developer-workflow) followed
+```
+
+**File**: `CONTRIBUTING.md` (modified, +18/-6)
+```diff
+@@ -2,7 +2,7 @@
+ 
+ First off, thanks so much for wanting to help out! :tada:
+ 
+-This document describes the steps and requirements for contributing a bug fix or feature in a Pull Request to Zarf! If you have any questions about the process or the pull request you are working on feel free to reach out in the [Zarf Kubernetes Slack Channel](https://kubernetes.slack.com/archives/C03B6BJAUJ3). The doc also details a bit about the governance structure of the project.
++This document describes the steps and requirements for contributing a bug fix or feature in a Pull Request to Zarf! If you have any questions about the process or the pull request you are working on feel free to reach out in the [Zarf OpenSSF Slack Channel](https://openssf.slack.com/archives/C07AKUMBDMJ). The doc also details a bit about the governance structure of the project.
+ 
+ ## Developer Experience
+ 
+@@ -63,23 +63,35 @@ Zarf is a tool used within the United States Government and as such security is
+ 
+ Zarf maintainers will require one (1) core team review before merge. See the (contributing ladder)[CONTRIBUTING_LADDER.md] for more information.
+ 
++### Issue Guidelines
++
++Issues primarily move through the following statuses: `triage` → `accepted` → `ready`. Issues begin in `triage`. A Maintainer or Reviewer can move an issue to `accepted` once its scope and value to the project are clear. Once prioritized and assigned, the issue moves to `ready`.
++
++To help move an issue forward, from `triage` to `accepted`, ask clarifying questions or clear up undefined behavior.
++
++When creating or scoping issues, do not use AI to generate project feedback or use cases. Feedback grounded in experience with the project is extremely helpful to maintainers, while AI output can create noise that distracts from higher priorities.
++
++### Pull Request Requirements
++
++A pull request must reference an issue with `ready` status on the project board and its assignee must be the PR author. Otherwise the PR will be closed.
++
++Issues labeled `open-for-contribution` or `good-first-issue` are looking for contributors. Comment to request assignment to an issue.
++
+ ### Developer Workflow
+ 
+ :key: == Required by automation
+ 
+-1. Review the issues list for `good-first-issue` or `help-wanted` labels. Issues with the `Triage` status in the project need to be triaged first before evaluation of implementation. Other issues with the `Ready` status may be of more complexity and can be worked by those familiar with the code base and other in-progress work.
+-1. Drop a comment in the issue; request any additional questions with regards to scope and ask to be assigned. If you have any questions as you work through the code, reach out in the [Zarf Kubernetes Slack Channel](https://kubernetes.slack.com/archives/C03B6BJAUJ3).
++1. Find an issue and follow the [Pull Request Requirements](#pull-request-requirements).
++    - Questions during implementation can be discussed in the issue or in the [Zarf OpenSSF Slack Channel](https://openssf.slack.com/archives/C07AKUMBDMJ).
+ 1. :key: Set up your Git config to GPG sign all commits. [Here's some documentation on how to set it up](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits). You won't be able to merge your PR if you have any unverified commits.
+ 1. In addition to signing your commits, you will also need to sign-off on commits stating you agree to the contribution terms.
+    - This can be done by using `-s` with your git commit - adding "Signed-off-by" line automatically.
+    - Example: `git commit -s -m "fix: add missing newline"`
+-1. Create a Draft Pull Request as soon as you can, even if it is just 5 minutes after you started working on it. We lean towards working in the open as much as we can. If you're not sure what to put in the PR description, just put a link to the issue you're working on.
++1. Create a Draft Pull Request as soon as you can. We lean towards working in the open. Ensure there is a link to the issue you're working on.
+    - :key: We follow the [conventional commits spec](https://www.conventionalcommits.org/en/v1.0.0/) with the [commitlint conventional config](https://github.com/conventional-changelog/commitlint/tree/master/%40commitlint/config-conventional) as extended types for PR titles.
+ 1. :key: Automated tests will begin based on the paths you have edited in your Pull Request.
+    > ⚠️ **NOTE:** _If you are an external third-party contributor, the pipelines won't run until a [CODEOWNER](https://github.com/zarf-dev/zarf/blob/main/CODEOWNERS) approves the pipeline run._
+-1. :key: Be sure to use the [needs-adr,needs-docs,needs-tests](https://github.com/zarf-dev/zarf/labels?q=needs) labels as appropriate for the PR. Once you have addressed all of the needs, remove the label.
+ 1. Once the review is complete and approved, a core member of the zarf project will merge your PR. If you are a contributor, two core members of the zarf project will be required to approve the PR.
+-1. Cl
+```
+
+---
+
+### Incident Patch 2: `d8a4007c` (2026-11-19)
+**Commit Message**: chore(adrs): remove all ADR documents, which were moved to proposals/archived/adr (#5694)
+
+Signed-off-by: Maciej Szulik <[REDACTED_EMAIL]>
+
+**File**: `adr/0001-record-architecture-decisions.md` (removed, +0/-23)
+```diff
+@@ -1,23 +0,0 @@
+-# 1. Record architecture decisions
+-
+-Date: 2022-03-01
+-
+-## Status
+-
+-Accepted
+-
+-## Context
+-
+-> NOTE:
+->
+-> This file was automatically created when we used [adr-tools](https://github.com/npryce/adr-tools) to initialize the document log in the repo. ADRs on ADRs are a little silly, but it does give a lightweight way to direct the reader over to our contributor guide that has a lot more information.
+-
+-We need to record the architectural decisions made on this project.
+-
+-## Decision
+-
+-We will use Architecture Decision Records, as [described by Michael Nygard](http://thinkrelevance.com/blog/2011/11/15/documenting-architecture-decisions), with a couple of small tweaks. See the [Documentation section in the Contributor guide](../CONTRIBUTING.md#documentation) for full details.
+-
+-## Consequences
+-
+-See Michael Nygard's article, linked above. For a lightweight ADR toolset, see Nat Pryce's [adr-tools](https://github.com/npryce/adr-tools).
+```
+
+**File**: `adr/0002-moving-e2e-tests-away-from-terratest.md` (removed, +0/-36)
+```diff
+@@ -1,36 +0,0 @@
+-# 2. Moving E2E Tests Away From Terratest
+-
+-Date: 2022-03-04
+-
+-## Status
+-
+-Accepted
+-
+-## Context
+-
+-In previous releases of Zarf, the creation of the initialization package at the core of many of our E2E tests required repository secrets to login to registry1. Since this is an open-source project, anyone could submit a change to one of our GitHub workflows that could steal our secrets. In order to protect our secrets from any bad-actors we used [peter-evans/slash-command-dispatch@v2](https://github.com/peter-evans/slash-command-dispatch) so that only a maintainer would have the ability to run the E2E tests when a PR is submitted for review.
+-
+-In the current version of Zarf (v0.15) images from registry1 are no longer needed to create the zarf-init-{{arch}}.tar.zst. This means, given our current span of E2E tests, we no longer need to use repository secrets when running tests. This gives us the ability to reassess the way we do our E2E testing.
+-
+-When considering how to handle the tests, some of the important additions we were considering were:
+-  1. Ability to test against different kubernetes distributions
+-  2. Ability to test against different linux distributions
+-  3. Ability to run (at least some of) the E2E tests locally without relying on an ec2 instance - for quicker feedback loops when developing new features
+-
+-## Decision
+-
+-The previous E2E test code was not extensible enough to be reused to test Zarf against different kubernetes distributions. The test suite was refactored so that we could write a setup and teardown function for each kubernetes distribution we wanted to verify against and the test suite was then responsible for cycling through the different distributions. This gives us the ability to test multiple kubernetes distributions against the same exact test cases.
+-
+-The individual test cases were also rewritten to not rely on terratest running a bash command over ssh. Instead, the test uses the locally built Zarf binary and example packages to validate expected behavior. This approach works both on local dev machines (linux/mac) and on the Ubuntu GitHub Runner that gets triggered when a pull request is created. This also has the positive side effect of not needing to wait several minutes for an ec2 instance to spin up for testing.
+-
+-Since we no longer need repository secrets to run the E2E tests, we removed the requirement for a maintainer to use a `/test all` chatops command to dispatch the tests. Instead, there is a new test workflow defined for each kubernetes distribution we are verifying against and the tests get run automatically whenever a PR is created or updated.
+-
+-When looking back at the list of 'important additions' we were considering above. All three are addressed with this approach. Testing against different kubernetes distributions is as simple as defining how to create and destroy the cluster. All of the test cases are runnable locally and then because of that testing on a linux distribution is possible by just switching over to another machine and running the same `make test-e2e` there. This also gives us the ability to test against cloud distributions like EKS! All you need is a valid kubeconfig and running `go test ./...` in the `./src/test/e2e` directory will run all of the test cases against the EKS cluster.
+-
+-## Consequences
+-
+-While it was not something we were doing before, testing directly on the GitHub Runner instead of using Terratest to test on an ec2 instance means that when we get around to adding automated testing of Zarf against different linux distributions we will want to have more discussions on if we want to use self-hosted runners of different OS's or if we want to go back to Terratest to stand up ec2 instances with different AMIs.
+-
+-In the future, we will likely want to write E2E tests that use images that require repository secrets to access. When that happens we will want to bring back some form of 'maintainer action' to initiate the test workflow. Going back to [peter-evans/slash-command-dispatch@v2](https://github.com/peter-evans/slash-command-dispatch) might be the right answer for that but there will need to be more discussion to make sure the team agrees that's the best solution first.
+-
+-As the amount of E2E tests we have grows, the longer it will take to get results back on each PR. Duhh! Paralyzing the tests on a single host will be difficult (but not impossible) because it means more logic will be needed in the test suite to make sure the host has enough resources to handle multiple clusters being run in parallel. The simpler solution would be to break out each of our tests into a new GitHub Workflow. This will easily mitigate the issue of tests taking long to run but also give us a lot more yaml to maintain. Either solution is valid but more team discussions will be needed as we get closer to needing it.
+```
+
+**File**: `adr/0003-image-injection-into-remote-clusters-without-native-support.md` (removed, +0/-23)
+```diff
+@@ -1,23 +0,0 @@
+-# 3. Image injection into remote clusters without native support
+-
+-Date: 2022-03-04
+-
+-## Status
+-
+-Accepted
+-
+-Amended by [7. Use Rust Binary for Both Injection Stages](0007-use-rust-binary-for-both-injection-stages.md)
+-
+-## Context
+-
+-In order to create any workloads in K8s, an image has to exist on the node or be pulled in from an OCI Distribution server (docker registry). Local K8s distros such as KIND, K3D, K3S, Microk8s have CLI support for injecting or pushing images into the CRIs of cluster nodes. No standard or tool exists to do this generically in K8s as the CRI sits outside the problem of K8s beyond just communicating with it. For Zarf to push images into a K8s cluster that does not have a CLI option to inject the image, we have to establish some mechanism to create a temporary registry, use an existing one, or inject the image in the cluster. Zarf must also support unknown environments with no other dependencies; we cannot assume a registry exists. Typically when K8s pulls images from a remote registry, it sends the request to the CRI that then does the pull outside of the K8s context. The CRI runs at the host level on a per-node basis, so to access a private registry, the TLS trust needs to be modified on any host/node that would attempt to pull the image. The two primary ways to do this are modifying the node's root certificate authorities or the CRIs configuration if it has an option for TLS root CA. Lastly, as this is per node, all nodes in the cluster would need to be modified or some affinity/taint to force the pod to use a single node during bootstrapping.
+-
+-## Decision
+-
+-Because we cannot require third-party dependencies, the requirement from some cloud-managed or distro-managed registry is not an option as not every K8s cluster will have that available.  Running an in-memory registry while zarf is performing `zarf init` was initially explored to resolve the external dependency issue.  However, this solution proved too complex when dealing with network traversal (especially behind NATs), firewall, and NACL rulesets.  Additionally, because of the complexities around TLS trust, the in-memory registry was not a viable solution.
+-
+-After iterating on several solutions, including `kubectl cp`, `kubectl exec`, a busybox configmap injection that brought in netcat to stream files, and a few variations on those ideas, we found using only configmaps to be the most predictable method for injection. The challenge with this mode is that the ETCD limit is 1 MB total, with binary data base64-encoded leaving roughly 670 KBs of data per configmap, far too small to bring the registry tarball in a single configmap. So instead, we used a combination of a custom Rust binary compiled with MUSL to perform file concatenation, untarring, and verification of a set of split tarball chunks across a variable number of configmaps. We found that chunking by less than the near-maximum configmap size was more performant on some resource-constrained control planes. The details of this solution and a drawing are located in the main README of this repo.
+-
+-## Consequences
+-
+-Because this mechanism uses only a standard Podspec and Configmap definition, there should be no problem running this on any generic K8s cluster.  However, the current implementation requires manually compiling the Rust binary, and mini go binary for injection; these binaries are also committed to the git repo.  Future updates should move these two compile actions to pipeline stages to eliminate stale binaries.  The other consideration is that this brings in a new language; even if it is only for a few dozen lines of code, it is a context switch for the engineering team should an update need to be made.
+```
+
+**File**: `adr/0004-generate-sboms-with-witness.md` (removed, +0/-19)
+```diff
+@@ -1,19 +0,0 @@
+-# 4. SBOM Generation with Witness
+-
+-Date: 2022-03-29
+-
+-## Status
+-
+-Accepted
+-
+-## Context
+-
+-SBOM are required for software running on government hardware per EO14028.
+-
+-## Decision
+-
+-Using Witness' Syft attestor functionality allows Zarf to continue to get more refined SBOM capabilities as Witness' capabilities expand over time. Syft is capable of finding installed packages and some binaries for statically compiled dependencies over each image within a Zarf package. This allows for SBOMs for each image to be generated and packaged along with the Zarf package.  Abilities to export the SBOM to SDPX and CycloneDX formatted documents as well as a browse-able web page are in works.
+-
+-## Consequences
+-
+-Added dependencies of Witness and Syft which may inflate Zarf binary size.  Increased Zarf package size -- Jeff noted that uncompressed SBOMs for Big Bang Core came in at around 200MB.
+```
+
+**File**: `adr/0005-mutating-webhook.md` (removed, +0/-21)
+```diff
+@@ -1,21 +0,0 @@
+-# 5. Mutating Webhook
+-
+-Date: 2022-05-18
+-
+-## Status
+-
+-Accepted
+-
+-## Context
+-
+-Currently Zarf leverages [Helm Post Rendering](https://helm.sh/docs/topics/advanced/#post-rendering) to mutate image paths and secrets for K8s to use the internal [Zarf Registry](../packages/init/v1alpha1/zarf-registry/). This works well for simple K8s deployments where Zarf is performing the actual manifest apply but fails when using a secondary gitops tools suchs as [Flux](https://github.com/fluxcd/flux2), [ArgoCD](https://argo-cd.readthedocs.io/en/stable/), etc. At that point, Zarf is unable to provide mutation and it is dependent on the package author to do the mutations themselves using rudimentary templating. Further, this issue also exists when for CRDs that references the [git server](../packages/init/v1alpha1/gitea/). A `zarf prepare` command was added previously to make this less painful, but it still requires additional burden on package authors to do something we are able to prescribe in code.
+-
+-## Decision
+-
+-A [mutating webhook](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/) is standard practice in K8s and there [are a lot of them](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#what-does-each-admission-controller-do). Using the normal Zarf component structure and deployment strategy we can leverage a mutating webhook to perform automatic imagePullSecret binding and image path updates as well as add additional as-needed mutations such as updating the [GitRepository](https://fluxcd.io/docs/components/source/gitrepositories/) CRD with the appropriate secret and custom URL for the git server if someone is using Flux.
+-
+-## Consequences
+-
+-While deploying the webhook will greatly reduce the package development burden, the nature of how helm manages resources still means we will have to be careful how we apply secrets that could collide with secrets deployed by helm with other tools. Additionally, to keep the webhook simple we are foregoing any side-effects in this iteration such as creating secrets on-demand in a namespace as it is created.  Adding side effects carries with it the need to roll those back on failure, handle additional RBAC in the cluster and integrate with the K8s API in the webhook. Therefore, some care will have to be taken for now with how registry and git secrets are generated in a namespace. For example, in the case of [Big Bang](https://repo1.dso.mil/platform-one/big-bang/bigbang) these secrets can be created by those helm charts if we pass in the proper configuration.
+-
+-Another benefit of this approach is another layer security for Zarf clusters.  The Zarf Agent will act as an intermediary not allowing images not in the Zarf Registry or git repos not stored in the internal git server.  
+```
+
+**File**: `adr/0006-package-variables.md` (removed, +0/-33)
+```diff
+@@ -1,33 +0,0 @@
+-# 6. package variables
+-
+-Date: 2022-07-28
+-
+-## Status
+-
+-Accepted
+-
+-## Context
+-
+-Currently, Zarf only allows variables to be specified within components which introduces the following limitations:
+-
+- - Variables are scoped to the component making reuse between components impossible
+- - Variables cannot be used for elements within the package definition itself
+- - Variables can only be set at create time, not by a user at deploy time
+-
+-This forces a package creator to copy information within their package/component definitions and also requires them to make bespoke packages per environment even if only small changes are needed to the overall spec (such as changing a domain name).
+-
+-## Decision
+-
+-The decision was made to move variable definitions to the package level and to split "variables" into three distinct types:
+-
+-- Variables (specified with the `variables` yaml key) allow for the templating of component files similar to the component variables before them.  The main changes are that they are now specified at the package level (allowing for reuse between components) and have additional prompting and defaulting features to allow a package creator to ask for more information during `zarf package deploy`.
+-- Constants (specified with the `constants` yaml key) also template component files, but must be specified at package create time.  This allows a package creator to use the same value in multiple places without the need for copying it and without the package deployer being able to override it.
+-- Package Variables (specified by using `###ZARF_PKG_VAR_*###` in the package definition) allow package creators to template the same information multiple times within the package definition or dynamically specify values or defaults in constants and variables.
+-
+-> ⚠️ `###ZARF_PKG_VAR_*###` has been changed to `###ZARF_PKG_TMPL_*###` to semantically dissociate it from normal variables.
+-
+-## Consequences
+-
+-This makes it easier to build a single package that will apply to multiple environments and helps package creators to develop automation around their packages while keeping their package definitions DRY.  Choosing to have constants *and* variables also allows us to reduce potential confusion from package deployers who would otherwise be able to accidentally override values that are meant to be static.
+-
+-As for drawbacks, the largest one is that this provides the potential for a user to build imperative packages depending on what they template or are allowed to template.  This will need to be considered carefully in the future.  The current implementation also ties us to only templating string values for the time being and we will have to think through what should be technically variablizable in the future (for example variables cannot be used in component import paths because this would introduce a lot of fragility for not much perceived user benefit).
+```
+
+**File**: `adr/0007-use-rust-binary-for-both-injection-stages.md` (removed, +0/-30)
+```diff
+@@ -1,30 +0,0 @@
+-# 7. Use Rust Binary for Both Injection Stages
+-
+-Date: 2022-10-29
+-
+-## Status
+-
+-Accepted
+-
+-Amends [3. Image injection into remote clusters without native support](0003-image-injection-into-remote-clusters-without-native-support.md)
+-
+-## Context
+-
+-In ADR 3, the decision was made to create a rust binary (`stage1`) that would re-assemble a `registry:2` image and a go registry binary (`stage2`) from a series of configmaps. While this solution works, it is overkill for the operations that `stage2` performs. The `stage2` binary is only responsible for 1. starting a docker registry in `rw` mode, 2. pushing the `registry:2` crane tarball into said registry, 3. starting the docker registry in `r` mode. This `registry:2` image is then immediately consumed by the `zarf-registry` package, creating a true in-cluster docker registry. The injector pod is then destroyed. The overhead this operation creates:
+-
+-- having to keep track of another binary (making the total number 3 for the zarf ecosystem)
+-- nearly doubling the amount of configmaps loaded into the cluster (makes init slower)
+-- having to compile the binary for each platform (adds to the build time + ci)
+-- using a full-featured docker registry to host a single image (wasteful)
+-
+-## Decision
+-
+-The rust binary is already being injected via configmap and unpacking the tarball. There is little need to bring everything but the kitchen sink to just serve a single image. Therefore the decision is to use the rust binary to perform the entire injection process. This required a few changes to the rust binary:
+-
+-- not only re-assemble + unpack the tarball, but also unpack the `registry:2` image (stored as a [crane tarball format](https://github.com/google/go-containerregistry/tree/main/pkg/v1/tarball))
+-- transform the `registry:2` crane manifest to a docker v2 manifest
+-- spin up an HTTP server compliant with the v2 docker registry API to serve the `registry:2` image
+-
+-## Consequences
+-
+-The removal of the `stage2` binary makes the build process much simpler, and cuts down on make targets, as well as considerations needed during the build process. Additionally, the init process is faster, as the `stage2` binary is not injected anymore and the `registry:2` image is directly served instead of being pushed to an ephemeral registry, then served. There is a current risk to the new size of the `stage1` binary. Using stable compiler optimizations, the smallest it is able to come to is 868kb. While successfully tested on `k3s`, `kind`, and `k3d`, it is possible that the binary is too large for some Kubernetes distros (due to the potential interpretation of the configmap size limit). Additionally, the docker API implementation only serves a v2 manifest (most likely OCI in a future iteration) / image pull flow. This also greatly increases the lines of rust code and logic used within this repo, and future changes to this code will require more rust knowledge and experience, especially understanding the docker registry API and docker manifest formats.
+```
+
+**File**: `adr/0008-begin-using-unit-tests.md` (removed, +0/-44)
+```diff
+@@ -1,44 +0,0 @@
+-# 8. Begin using unit tests
+-
+-Date: 2022-12-12
+-
+-## Status
+-
+-Accepted
+-
+-## Context
+-
+-There are sections of the code that are not easily able to be tested by our end-to-end testing and now that Zarf is moving into being a library for other products there will be more scrutiny around our defined interfaces.  This ADR explores ways that we could adjust our testing strategy to address these concerns.
+-
+-Potential considerations:
+-
+-1. Introduce Unit-Testing Zarf-wide
+-    Pros:
+-        - More of the codebase is covered with tests and will force us to take more consideration when updating it
+-    Cons:
+-        - As the codebase evolves the efficacy of these tests is likely to go down, especially if they are written to the code rather than the interface
+-
+-2. Introduce Unit Testing in a defined and limited capacity within Zarf
+-    Pros:
+-        - A decent amount of the codebase will be tested (specifically we can target those areas difficult to e2e test)
+-        - We can be picky about what/where we unit test so that the maintenance burden of the tests is not too high
+-    Cons:
+-        - We will need to be vigilant when PRs come through with Unit Tests that these are correct applications of them
+-
+-3. Introduce Integration Testing or partial End-to-End testing
+-    Pros:
+-        - This is closer to how we already test within Zarf
+-    Cons:
+-        - These can be relatively complex to orchestrate and maintain over time requiring complex mocks or other mechanisms to make them work
+-
+-## Decision
+-
+-It was decided to introduce a limited set of unit tests to the Zarf codebase (2) because this will enable us the most flexibility and control over how we test while also allowing us to specifically target specific units without a ton of overhead.  Specifically we will ask the following before implementing a Unit Test:
+-
+-1. Is what I want to test a true unit (i.e. a single function or file)?
+-2. Does what I want to test have a clearly defined interface (i.e. a public specification)?
+-3. Is this code inside of the `src/pkg` folder or should it be?
+-
+-## Consequences
+-
+-This will help us to test things like specific file formats or interactions with certain standards more easily and will allow us to define our own function signatures that are well tested for use in library code.  We will need to be vigilant though going forward that any new test follows the guidelines above, and that contributors are aware of when they should introduce a unit test.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5694** (2026-11-19): chore(adrs): remove all ADR documents, which were moved to proposals/archived/adr (@soltysh)
 - **PR #5685** (2026-11-17): chore(docs): update AirGap link to IBM's website (@BraedenOlney)
 - **PR #5683** (2026-11-17): docs: remove variables example (@AustinAbro321)
+- **PR #5680** (2026-11-19): docs: contribution workflow changes (@AustinAbro321)
 - **PR #5676** (2026-11-16): fix: paginate registry tag listings (@briantwatson)
 - **PR #5675** (2026-11-16): chore(deps): bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
-- **PR #5674** (2026-11-16): chore(deps): bump the codeql group with 3 updates (@dependabot[bot])
-- **PR #5657** (closed): feat(git): remove external git shell-out fallback (#2772) (@Amankumar-10012004)
 
 ---
 
@@ -1558,34 +1890,34 @@ Signed-off-by: James Lanska <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. count node items when sizing registry HPA replicas
+## X. docs: contribution workflow changes
 
 **RULE**:
-When implementing operations in `packages/init/v1alpha1/zarf-registry/chart/templates/hpa.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/pull_request_template.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6f444bd5`: count node items when sizing registry HPA replicas. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `14a502fa`: docs: contribution workflow changes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/init/v1alpha1/zarf-registry/chart/templates/hpa.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/pull_request_template.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-{{- $nodeCount := max 1 (len ((lookup "v1" "Node" "" "").items | default list)) }}
-  minReplicas: {{ $nodeCount }}
-  maxReplicas: {{ add $nodeCount 4 }}
+<!-- Every PR must link to an issue that has a `ready` status and is assigned to you. Otherwise, the PR will be closed. See CONTRIBUTING.md#pull-request-requirements. -->
+- [ ] Tests and docs added or updated as needed
+- [ ] [Contributor Guide Steps](https://docs.zarf.dev/contribute/contributor-guide/#developer-workflow) followed
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-  minReplicas: {{ len (lookup "v1" "Node" "" "") }}
-  maxReplicas: {{ add (len (lookup "v1" "Node" "" "")) 4 }}
+- [ ] Test, docs, adr added or updated as needed
+- [ ] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6f444bd5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `14a502fa` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

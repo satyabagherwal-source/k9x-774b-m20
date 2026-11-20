@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T18:39:03.128Z",
+  "timestamp": "2026-11-20T00:45:42.117Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-risingwavelabs-risingwave-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [risingwavelabs-risingwave-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T18:39:03.128Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T00:45:42.117Z`  
 > **Learning ID**: `LEARN-EVO-risingwavelabs-risingwave-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `e3c035e0`  
+> **Source Version**: `7f1b206a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T18:38:20.371Z  
+> **Timestamp**: 2026-11-20T00:43:26.981Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T18:38:20.365Z  
+> **Harvest Timestamp**: 2026-11-20T00:43:22.209Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9423 stars
+- **Stars / Engagement**: 9425 stars
 
 ---
 
@@ -1102,283 +1102,554 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3c035e0` (2026-11-18)
-**Commit Message**: fix(iceberg): honor `s3.iam_role_arn` in the storage catalog (#28035)
+### Incident Patch 1: `7f1b206a` (2026-11-19)
+**Commit Message**: fix(pgwire): send BackendKeyData after password auth, reject short CancelRequest (#27343)
 
-**File**: `src/connector/src/connector_common/iceberg/mod.rs` (modified, +1/-0)
+Co-authored-by: Xiaochong(Eddy) Wei <[REDACTED_EMAIL]>
+Co-authored-by: xiaochong <[REDACTED_EMAIL]>
+Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `src/utils/pgwire/src/pg_message.rs` (modified, +31/-1)
 ```diff
-@@ -632,6 +632,7 @@ impl IcebergCommon {
-                     .warehouse(warehouse)
-                     .access_key(self.s3_access_key.clone())
-                     .secret_key(self.s3_secret_key.clone())
-+                    .iam_role_arn(self.s3_iam_role_arn.clone())
-                     .region(self.s3_region.clone())
-                     .endpoint(self.s3_endpoint.clone())
-                     .path_style_access(Some(self.effective_s3_path_style_access()))
-```
-
-**File**: `src/connector/src/connector_common/iceberg/storage_catalog.rs` (modified, +6/-2)
-```diff
-@@ -26,8 +26,8 @@ use async_trait::async_trait;
- use futures::TryStreamExt;
- use iceberg::io::{
-     AZBLOB_ACCOUNT_KEY, AZBLOB_ACCOUNT_NAME, AZBLOB_ENDPOINT, FileIO, FileIOBuilder,
--    GCS_CREDENTIALS_JSON, GCS_DISABLE_CONFIG_LOAD, S3_ACCESS_KEY_ID, S3_DISABLE_CONFIG_LOAD,
--    S3_ENDPOINT, S3_PATH_STYLE_ACCESS, S3_REGION, S3_SECRET_ACCESS_KEY,
-+    GCS_CREDENTIALS_JSON, GCS_DISABLE_CONFIG_LOAD, S3_ACCESS_KEY_ID, S3_ASSUME_ROLE_ARN,
-+    S3_DISABLE_CONFIG_LOAD, S3_ENDPOINT, S3_PATH_STYLE_ACCESS, S3_REGION, S3_SECRET_ACCESS_KEY,
- };
- use iceberg::spec::{TableMetadata, TableMetadataBuilder, TableProperties};
- use iceberg::table::Table;
-@@ -52,6 +52,7 @@ pub struct StorageCatalogS3Config {
-     warehouse: String,
-     access_key: Option<String>,
-     secret_key: Option<String>,
-+    iam_role_arn: Option<String>,
-     endpoint: Option<String>,
-     region: Option<String>,
-     path_style_access: Option<bool>,
-@@ -91,6 +92,9 @@ impl StorageCatalog {
-                 if let Some(secret_key) = &config.secret_key {
-                     file_io_builder = file_io_builder.with_prop(S3_SECRET_ACCESS_KEY, secret_key)
-                 };
-+                if let Some(iam_role_arn) = &config.iam_role_arn {
-+                    file_io_builder = file_io_builder.with_prop(S3_ASSUME_ROLE_ARN, iam_role_arn);
-+                }
-                 if let Some(endpoint) = &config.endpoint {
-                     file_io_builder = file_io_builder.with_prop(S3_ENDPOINT, endpoint)
-                 }
-```
-
----
-
-### Incident Patch 2: `4084d839` (2026-11-18)
-**Commit Message**: fix(optimizer): preserve LIKE filtering for trailing underscores (#28002)
-
-Signed-off-by: StandingMan <[REDACTED_EMAIL]>
-
-**File**: `e2e_test/batch/functions/like.slt.part` (modified, +45/-0)
-```diff
-@@ -116,3 +116,48 @@ statement ok
- drop table like_escape_trades;
+@@ -151,6 +151,15 @@ pub struct FeCancelMessage {
  
- # End
+ impl FeCancelMessage {
+     pub fn parse(mut buf: Bytes) -> Result<FeMessage> {
++        if buf.remaining() < 8 {
++            return Err(Error::new(
++                ErrorKind::InvalidInput,
++                format!(
++                    "Invalid cancel request: expected 8 bytes of payload, got {}",
++                    buf.remaining()
++                ),
++            ));
++        }
+         let target_process_id = buf.get_i32();
+         let target_secret_key = buf.get_i32();
+         Ok(FeMessage::CancelQuery(Self {
+@@ -897,9 +906,13 @@ fn write_err_or_notice(buf: &mut BytesMut, msg: &ErrorOrNoticeMessage<'_>) -> Re
+ 
+ #[cfg(test)]
+ mod tests {
++    use std::io::ErrorKind;
 +
-+# A trailing underscore must retain LIKE filtering after prefix range rewriting.
-+statement ok
-+create table like_prefix_rewrite(v varchar);
+     use bytes::Bytes;
+ 
+-    use crate::pg_message::{FeParseMessage, FeQueryMessage, FeStartupMessage};
++    use crate::pg_message::{
++        FeCancelMessage, FeMessage, FeParseMessage, FeQueryMessage, FeStartupMessage,
++    };
+ 
+     #[test]
+     fn test_get_sql() {
+@@ -920,6 +933,23 @@ mod tests {
+         assert_eq!(fe.get_sql().unwrap(), "select 1");
+     }
+ 
++    #[test]
++    fn test_cancel_request_rejects_short_payload() {
++        // A client without a secret key stops after the process id.
++        let err = FeCancelMessage::parse(Bytes::from_static(&[0, 0, 0, 1])).unwrap_err();
++        assert_eq!(err.kind(), ErrorKind::InvalidInput);
 +
-+statement ok
-+insert into like_prefix_rewrite values
-+    ('ABC'), ('ABCx'), ('ABCxx'), ('ABC_'), ('ABC_x'), ('ABC_xx'),
-+    ('ABD'), (NULL);
++        let err = FeCancelMessage::parse(Bytes::new()).unwrap_err();
++        assert_eq!(err.kind(), ErrorKind::InvalidInput);
 +
-+query T rowsort
-+select v from like_prefix_rewrite where v like 'ABC_';
-+----
-+ABC_
-+ABCx
++        let msg = FeCancelMessage::parse(Bytes::from_static(&[0, 0, 0, 1, 0, 0, 0, 2])).unwrap();
++        let FeMessage::CancelQuery(msg) = msg else {
++            panic!("expected a cancel query message");
++        };
++        assert_eq!(msg.target_process_id, 1);
++        assert_eq!(msg.target_secret_key, 2);
++    }
 +
-+query T rowsort
-+select v from like_prefix_rewrite where v like 'ABC%';
-+----
-+ABC
-+ABC_
-+ABC_x
-+ABC_xx
-+ABCx
-+ABCxx
-+
-+query T rowsort
-+select v from like_prefix_rewrite where v like 'ABC\__';
-+----
-+ABC_x
-+
-+query T rowsort
-+select v from like_prefix_rewrite where v like 'ABC\_%';
-+----
-+ABC_
-+ABC_x
-+ABC_xx
-+
-+query T rowsort
-+select v from like_prefix_rewrite where v like 'ABC\_';
-+----
-+ABC_
-+
-+statement ok
-+drop table like_prefix_rewrite;
+     #[test]
+     fn test_startup_build() {
+         let payload = b"user\0dev\0options\0\0\0";
 ```
 
-**File**: `src/frontend/planner_test/tests/testdata/input/index_selection.yaml` (modified, +14/-0)
+**File**: `src/utils/pgwire/src/pg_protocol.rs` (modified, +32/-29)
 ```diff
-@@ -415,6 +415,20 @@
-     select * from t1 where a like 'ABC%'
-   expected_outputs:
-   - batch_plan
-+- name: trailing underscore LIKE keeps residual filter with index range
-+  sql: |
-+    create table t1 (a varchar);
-+    create index idx on t1(a);
-+    select * from t1 where a like 'ABC_'
-+  expected_outputs:
-+  - batch_plan
-+- name: escaped underscore prefix LIKE uses index range without residual filter
-+  sql: |
-+    create table t1 (a varchar);
-+    create index idx on t1(a);
-+    select * from t1 where a like 'ABC\_%'
-+  expected_outputs:
-+  - batch_plan
- - sql: |
-     create table t1 (a varchar, b int, c int, d int);
-     create index idx on t1(a);
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/output/index_selection.yaml` (modified, +17/-0)
-```diff
-@@ -743,6 +743,23 @@
-   batch_plan: |-
-     BatchExchange { order: [], dist: Single }
-     └─BatchScan { table: idx, columns: [idx.a, idx.b, idx.c, idx.d], scan_ranges: [idx.a >= Utf8("ABC") AND idx.a < Utf8("ABD")], distribution: UpstreamHashShard(idx.a) }
-+- name: trailing underscore LIKE keeps residual filter with index range
-+  sql: |
-+    create table t1 (a varchar);
-+    create index idx on t1(a);
-+    select * from t1 where a like 'ABC_'
-+  batch_plan: |-
-+    BatchExchange { order: [], dist: Single }
-+    └─BatchFilter { predicate: Like(idx.a, 'ABC_':Varchar) }
-+      └─BatchScan { table: idx, columns: [idx.a], scan_ranges: [idx.a >= Utf8("ABC") AND idx.a < Utf8("ABD")], distribution: UpstreamHashShard(idx.a) }
-+- name: escaped underscore prefix LIKE uses index range without residual filter
-+  sql: |
-+    create table t1 (a varchar);
-+    create index idx on t1(a);
-+    select * from t1 where a like 'ABC\_%'
-+  batch_plan: |-
-+    BatchExchange { order: [], dist: Single }
-+    └─BatchScan { table: idx, columns: [idx.a], scan_ranges: [idx.a >= Utf8("ABC_") AND idx.a < Utf8("ABC`")], distribution: UpstreamHashShard(idx.a) }
- - sql: |
-     create table t1 (a varchar, b int, c int, d int);
-     create index idx on t1(a);
-```
-
-**File**: `src/frontend/src/optimizer/rule/rewrite_like_expr_rule.rs` (modified, +2/-2)
-```diff
-@@ -24,6 +24,7 @@ use crate::optimizer::plan_node::{ExprRewritable, LogicalFilter};
- /// `RewriteLikeExprRule` rewrites simple like expression, so that it can benefit from index selection.
- /// col like 'ABC' => col = 'ABC'
- /// col like 'ABC%' => col >= 'ABC' and col < 'ABD'
-+/// col like 'ABC_' => col >= 'ABC' and col < 'ABD' and col like 'ABC_'
- /// col like 'ABC%E' => col >= 'ABC' and col < 'ABD' and col like 'ABC%E'
- pub struct RewriteLikeExprRule {}
- impl Rule<Logical> for RewriteLikeExprRule {
-@@ -131,7 +132,6 @@ impl ExprRewriter for LikeExprRewriter {
+@@ -82,6 +82,10 @@ where
+ 
+     session_mgr: Arc<SM>,
+     session: Option<Arc<SM::Session>>,
++    /// `application_name` from the startup message, reported back to the client once
++    /// authentication finishes. Kept here because the startup message is gone by the
++    /// time a password arrives.
++    application_name: Option<String>,
+ 
+     result_cache: HashMap<String, ResultCache<<SM::Session as Session>::ValuesStream>>,
+     unnamed_prepare_statement:
+@@ -274,6 +278,7 @@ where
+             state: PgProtocolState::Startup,
+             session_mgr,
+             session: None,
++            application_name: None,
+             tls_context: tls_config
+                 .as_ref()
+                 .and_then(|e| build_ssl_ctx_from_config(e).ok()),
+@@ -766,65 +771,63 @@ where
+                 .map_err(|e| PsqlError::StartupError(e.into()))?;
+         }
+ 
+-        self.state = match session.user_authenticator() {
+-            UserAuthenticator::None => {
+-                self.stream.write_no_flush(BeMessage::AuthenticationOk)?;
++        self.application_name = application_name.cloned();
+ 
+-                // Cancel request need this for identify and verification. According to postgres
+-                // doc, it should be written to buffer after receive AuthenticationOk.
+-                self.stream
+-                    .write_no_flush(BeMessage::BackendKeyData(session.id()))?;
+-
+-                self.stream.write_no_flush(BeMessage::ParameterStatus(
+-                    BeParameterStatusMessage::TimeZone(
+-                        &session
+-                            .get_config("timezone")
+-                            .map_err(|e| PsqlError::StartupError(e.into()))?,
+-                    ),
+-                ))?;
+-                self.stream
+-                    .write_parameter_status_msg_no_flush(&ParameterStatus {
+-                        application_name: application_name.cloned(),
+-                    })?;
+-                self.ready_for_query()?;
+-                PgProtocolState::Regular
+-            }
++        match session.user_authenticator() {
++            UserAuthenticator::None => self.finish_authentication(&session)?,
+             UserAuthenticator::ClearText(_)
+             | UserAuthenticator::OAuth { .. }
+             | UserAuthenticator::Ldap(..) => {
+                 self.stream
+                     .write_no_flush(BeMessage::AuthenticationCleartextPassword)?;
+-                PgProtocolState::Authentication
++                self.state = PgProtocolState::Authentication;
+             }
+             UserAuthenticator::Md5WithSalt { salt, .. } => {
+                 self.stream
+                     .write_no_flush(BeMessage::AuthenticationMd5Password(salt))?;
+-                PgProtocolState::Authentication
++                self.state = PgProtocolState::Authentication;
+             }
          };
  
-         let bytes = data.as_bytes();
--        let len = bytes.len();
+         self.session = Some(session);
+         Ok(())
+     }
  
-         let (char_wildcard_idx, str_wildcard_idx, unescaped_bytes) =
-             Self::cal_index_and_unescape(bytes);
-@@ -204,7 +204,7 @@ impl ExprRewriter for LikeExprRewriter {
-             DataType::Boolean,
-         );
+-    async fn process_password_msg(&mut self, msg: FePasswordMessage) -> PsqlResult<()> {
+-        let session = self.session.as_ref().unwrap();
+-        let authenticator = session.user_authenticator();
+-        authenticator.authenticate(&msg.password).await?;
++    /// Completes the startup sequence once the user is authenticated: acknowledge the
++    /// authentication, hand the client the key it needs to cancel this session, report the
++    /// server parameters and open the connection for queries.
++    ///
++    /// Shared by every authentication method so that none of them can drift.
++    fn finish_authentication(&mut self, session: &SM::Session) -> PsqlResult<()> {
+         self.stream.write_no_flush(BeMessage::AuthenticationOk)?;
++        // The client needs this to identify the session in a later `CancelRequest`, and
++        // postgres sends it once authentication has succeeded.
++        self.stream
++            .write_no_flush(BeMessage::BackendKeyData(session.id()))?;
+         let timezone = session
+             .get_config("timezone")
+             .map_err(|e| PsqlError::StartupError(e.into()))?;
+         self.stream.write_no_flush(BeMessage::ParameterStatus(
+             BeParameterStatusMessage::TimeZone(&timezone),
+         ))?;
+         self.stream
+-            .write_parameter_status_msg_no_flush(&ParameterStatus::default())?;
++            .write_parameter_status_msg_no_flush(&ParameterStatus {
++                application_name: self.application_name.clone(),
++            })?;
+         self.ready_for_query()?;
+         self.state = PgProtocolState::Regular;
+         Ok(())
+     }
  
--        if idx == len - 1 {
-+        if str_wildcard_idx == Some(idx) && idx == unescaped_bytes.len() - 1 {
-             between.into()
-         } else {
-             FunctionCall::new_unchecked(
++    async fn process_password_msg(&mut self, msg: FePasswordMessage) -> PsqlResult<()> {
++        let session = self.session.clone().unwrap();
++        session
++            .user_authenticator()
++            .authenticate(&msg.password)
++            .await?;
++        self.finish_authentication(&session)
++    }
++
+     fn process_cancel_msg(&mut self, m: FeCancelMessage) -> PsqlResult<()> {
+         let session_id = (m.target_process_id, m.targ
+```
+
+**File**: `src/utils/pgwire/src/pg_server.rs` (modified, +90/-13)
+```diff
+@@ -439,7 +439,7 @@ pub async fn handle_connection<S, SM>(
+ }
+ #[cfg(test)]
+ mod tests {
+-    use std::sync::Arc;
++    use std::sync::{Arc, Mutex};
+     use std::time::{Duration, Instant};
+ 
+     use bytes::Bytes;
+@@ -464,8 +464,26 @@ mod tests {
+     use crate::types;
+     use crate::types::Row;
+ 
+-    struct MockSessionManager {}
+-    struct MockSession {}
++    struct MockSessionManager {
++        authenticator: UserAuthenticator,
++        session_id: SessionId,
++        cancelled: Arc<Mutex<Vec<SessionId>>>,
++    }
++
++    impl Default for MockSessionManager {
++        fn default() -> Self {
++            Self {
++                authenticator: UserAuthenticator::None,
++                session_id: (0, 0),
++                cancelled: Arc::new(Mutex::new(Vec::new())),
++            }
++        }
++    }
++
++    struct MockSession {
++        authenticator: UserAuthenticator,
++        id: SessionId,
++    }
+ 
+     const STREAMING_TEST_QUERY: &str = "SELECT 'pgwire_streaming_test'";
+ 
+@@ -486,16 +504,17 @@ mod tests {
+             _user_name: &str,
+             _peer_addr: crate::net::AddressRef,
+         ) -> Result<Arc<Self::Session>, Self::Error> {
+-            Ok(Arc::new(MockSession {}))
++            Ok(Arc::new(MockSession {
++                authenticator: self.authenticator.clone(),
++                id: self.session_id,
++            }))
+         }
+ 
+-        fn cancel_queries_in_session(&self, _session_id: SessionId) {
+-            todo!()
++        fn cancel_queries_in_session(&self, session_id: SessionId) {
++            self.cancelled.lock().unwrap().push(session_id);
+         }
+ 
+-        fn cancel_creating_jobs_in_session(&self, _session_id: SessionId) {
+-            todo!()
+-        }
++        fn cancel_creating_jobs_in_session(&self, _session_id: SessionId) {}
+ 
+         fn end_session(&self, _session: &Self::Session) {}
+     }
+@@ -595,11 +614,11 @@ mod tests {
+         }
+ 
+         fn user_authenticator(&self) -> &UserAuthenticator {
+-            &UserAuthenticator::None
++            &self.authenticator
+         }
+ 
+         fn id(&self) -> SessionId {
+-            (0, 0)
++            self.id
+         }
+ 
+         fn get_config(&self, key: &str) -> Result<String, Self::Error> {
+@@ -643,7 +662,7 @@ mod tests {
+         let bind_addr = bind_addr.into();
+         let pg_config = pg_config.into();
+ 
+-        let session_mgr = MockSessionManager {};
++        let session_mgr = MockSessionManager::default();
+         tokio::spawn(async move {
+             pg_serve(
+                 &bind_addr,
+@@ -688,6 +707,64 @@ mod tests {
+         assert_eq!(rows.len(), 1);
+     }
+ 
++    #[tokio::test]
++    async fn test_cancel_request_after_password_auth() {
++        let session_id = (42, 7);
++        let cancelled = Arc::new(Mutex::new(Vec::new()));
++        let session_mgr = MockSessionManager {
++            authenticator: UserAuthenticator::ClearText(b"pw".to_vec()),
++            session_id,
++            cancelled: cancelled.clone(),
++        };
++
++        tokio::spawn(async move {
++            pg_serve(
++                "127.0.0.1:10002",
++                socket2::TcpKeepalive::new(),
++                Arc::new(session_mgr),
++                ConnectionContext {
++                    tls_config: None,
++                    sql_option_redaction: None,
++                    message_memory_manager: MessageMemoryManager::new(u64::MAX, u64::MAX, u64::MAX)
++                        .into(),
++                    stream_flush_threshold_bytes: 64 * 1024,
++                },
++                CancellationToken::new(), // dummy
++            )
++            .await
++        });
++        // wait for server to start
++        tokio::time::sleep(Duration::from_millis(100)).await;
++
++        let (client, connection) = tokio_postgres::connect(
++            "host=localhost port=10002 user=mock password=pw application_name=cancel_test",
++            NoTls,
++        )
++        .await
++        .unwrap();
++        // Reported in the same `ParameterStatus` burst as `BackendKeyData`, so the
++        // password path must not skip it either.
++        assert_eq!(
++            connection.parameter("application_name"),
++            Some("cancel_test")
++        );
++        tokio::spawn(async move {
++            let _ = connection.await;
++        });
++
++        // The cancel token is built from the `BackendKeyData` the server sent after
++        // `AuthenticationOk`. Without it the client cancels with (0, 0) instead.
++        client.cancel_token().cancel_query(NoTls).await.unwrap();
++
++        for _ in 0..100 {
++            if !cancelled.lock().unwrap().is_empty() {
++                break;
++            }
++            tokio::time::sleep(Duration::from_millis(20)).await;
++        }
++        assert_eq!(cancelled.lock().unwrap().as_slice(), &[session_id]);
++    }
++
+     #[tokio::test]
+     async fn test_query_tcp() {
+         do_test_query("127.0.0.1:10000", "host=localhost port=10000").await;
+@@ -722,7 +799,7 @@ mod tests {
+             pg_serve(
+             
 ```
 
 ---
 
-### Incident Patch 3: `e0a6bd27` (2026-11-18)
-**Commit Message**: build(docker): provide additional -nodwp image (#27841)
+### Incident Patch 2: `9232723c` (2026-11-19)
+**Commit Message**: fix(sqlserver-cdc): escape database names in JDBC URLs (#28084)
 
-**File**: `ci/scripts/multi-arch-docker.sh` (modified, +21/-0)
+**File**: `java/connector-node/risingwave-connector-service/src/main/java/com/risingwave/connector/source/common/SqlServerDbzConnectorConfig.java` (modified, +3/-1)
 ```diff
-@@ -31,6 +31,25 @@ fi
+@@ -32,9 +32,11 @@ public class SqlServerDbzConnectorConfig extends DbzConnectorConfig {
  
- echo "--- arches: ${arches[*]}"
+     public String getJdbcUrl() {
+         var encrypt = Boolean.parseBoolean(userProps.getOrDefault(ENCRYPT, "false"));
++        // Brace quoting preserves semicolons and whitespace; literal closing braces are doubled.
++        var databaseName = "{" + getDbName().replace("}", "}}") + "}";
+         return String.format(
+                 "jdbc:sqlserver://%s:%s;databaseName=%s;encrypt=%s;trustServerCertificate=true",
+-                getHost(), getPort(), getDbName(), encrypt);
++                getHost(), getPort(), databaseName, encrypt);
+     }
  
-+# A docker config mounted from the CI agent is not readable inside the container.
-+function regctl() {
-+  DOCKER_AUTH_CONFIG=$(jq -n '{
-+    auths: {
-+      "ghcr.io": { username: $ENV.GHCR_USERNAME, password: $ENV.GHCR_TOKEN },
-+      "docker.io": { username: "risingwavelabs", password: $ENV.DOCKER_TOKEN }
-+    }
-+  }') docker run --rm -e DOCKER_AUTH_CONFIG regclient/regctl:v0.11.7 "$@"
-+}
-+
-+# Push `<tag>-nodwp`: the image `<tag>` without the layer of the split debug info `risingwave.dwp`.
-+function pushNodwp() {
-+  echo "push image tag: $1-nodwp"
-+  if ! regctl image mod "$1" --create "$1-nodwp" --layer-rm-created-by 'risingwave\.dwp'; then
-+    echo "^^^ +++"
-+    echo "WARN: failed to push $1-nodwp; the image $1 is unaffected"
-+  fi
-+}
-+
- # push images to gchr
- function pushGchr() {
-   GHCRTAG="${ghcraddr}:$1"
-@@ -42,6 +61,7 @@ function pushGchr() {
-   done
-   docker manifest create --insecure "$GHCRTAG" "${args[@]}"
-   docker manifest push --insecure "$GHCRTAG"
-+  pushNodwp "$GHCRTAG"
- }
- 
- # push images to dockerhub
-@@ -55,6 +75,7 @@ function pushDockerhub() {
-   done
-   docker manifest create --insecure "$DOCKERTAG" "${args[@]}"
-   docker manifest push --insecure "$DOCKERTAG"
-+  pushNodwp "$DOCKERTAG"
- }
- 
- function isStableVersion() {
+     @Override
 ```
 
-**File**: `docker/Dockerfile` (modified, +5/-2)
+**File**: `java/connector-node/risingwave-connector-service/src/test/java/com/risingwave/connector/source/common/SqlServerDbzConnectorConfigTest.java` (added, +85/-0)
 ```diff
-@@ -123,7 +123,7 @@ RUN ./build-debezium.sh && \
-   mkdir -p /risingwave/bin/connector-node && \
-   tar -zxvf /risingwave/java/connector-node/assembly/target/risingwave-connector-1.0.0.tar.gz -C /risingwave/bin/connector-node
- 
--FROM base AS risingwave
-+FROM base AS risingwave-nodwp
- 
- LABEL org.opencontainers.image.source https://github.com/risingwavelabs/risingwave
- 
-@@ -141,7 +141,6 @@ RUN rustup show && sed -i '1s/^/default_toolchain = "stable"\n/' ~/.rustup/setti
- RUN mkdir -p /risingwave/bin/connector-node && mkdir -p /risingwave/lib
- 
- COPY --from=rust-builder /risingwave/bin/risingwave /risingwave/bin/risingwave
--COPY --from=rust-builder /risingwave/bin/risingwave.dwp /risingwave/bin/risingwave.dwp
- COPY --from=java-builder /risingwave/bin/connector-node /risingwave/bin/connector-node
- COPY --from=rust-builder /risingwave/bin/jeprof /usr/local/bin/jeprof
- COPY --from=rust-base /root/.cargo/bin/flamegraph /usr/local/bin/flamegraph
-@@ -161,3 +160,7 @@ ENV LD_LIBRARY_PATH /risingwave/lib/adbc:${LD_LIBRARY_PATH}
- 
- ENTRYPOINT [ "/risingwave/bin/risingwave" ]
- CMD [ "single_node" ]
+@@ -0,0 +1,85 @@
++/*
++ * Copyright 2026 RisingWave Labs
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
 +
-+FROM risingwave-nodwp AS risingwave
++package com.risingwave.connector.source.common;
 +
-+COPY --from=rust-builder /risingwave/bin/risingwave.dwp /risingwave/bin/risingwave.dwp
++import static org.junit.Assert.assertEquals;
++
++import com.microsoft.sqlserver.jdbc.SQLServerDriver;
++import com.risingwave.proto.ConnectorServiceProto.GetEventStreamRequest;
++import com.risingwave.proto.ConnectorServiceProto.SourceType;
++import java.sql.SQLException;
++import java.util.HashMap;
++import java.util.Map;
++import java.util.Properties;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.junit.runners.Parameterized;
++
++@RunWith(Parameterized.class)
++public class SqlServerDbzConnectorConfigTest {
++    @Parameterized.Parameters(name = "databaseName={0}")
++    public static String[] databaseNames() {
++        return new String[] {
++            "sales",
++            "sales;east",
++            "sales;applicationName=changed",
++            "sales;databaseName=other",
++            "sales;encrypt=true;trustServerCertificate=false",
++            "sales{east",
++            "sales}east",
++            "{sales}",
++            "sales}};applicationName=changed",
++            " sales",
++            "sales ",
++            " sales;{east} "
++        };
++    }
++
++    @Parameterized.Parameter public String databaseName;
++
++    @Test
++    public void preservesDatabaseNameWithoutChangingConnectionProperties() throws SQLException {
++        for (var encrypt : new String[] {"false", "true"}) {
++            var expected = parseJdbcUrl("sales", encrypt);
++            assertEquals(encrypt, expected.get("encrypt"));
++            assertEquals("true", expected.get("trustServerCertificate"));
++            expected.put("databaseName", databaseName);
++
++            assertEquals(expected, parseJdbcUrl(databaseName, encrypt));
++        }
++    }
++
++    private static Map<String, String> parseJdbcUrl(String databaseName, String encrypt)
++            throws SQLException {
++        var config =
++                new SqlServerDbzConnectorConfig(
++                        GetEventStreamRequest.newBuilder()
++                                .setSourceType(SourceType.SQL_SERVER)
++                                .putProperties("hostname", "example.invalid")
++                                .putProperties("port", "1433")
++                                .putProperties("database.name", databaseName)
++                                .putProperties("database.encrypt", encrypt)
++                                .build());
++        var properties = new HashMap<String, String>();
++        // Parse with the real driver without opening a connection to SQL Server.
++        for (var property :
++                new SQLServerDriver().getPropertyInfo(config.getJdbcUrl(), new Properties())) {
++            properties.put(property.name, property.value);
++        }
++        return properties;
++    }
++}
+```
+
+---
+
+### Incident Patch 3: `4c7bff5f` (2026-11-19)
+**Commit Message**: fix(postgres-cdc): encode database names in JDBC URLs (#28083)
+
+**File**: `java/connector-node/risingwave-connector-service/src/main/java/com/risingwave/connector/source/common/PostgresDbzConnectorConfig.java` (modified, +6/-1)
+```diff
+@@ -19,6 +19,8 @@
+ import com.risingwave.connector.api.TableSchema;
+ import com.risingwave.connector.cdc.debezium.internal.ConfigurableOffsetBackingStore;
+ import com.risingwave.proto.ConnectorServiceProto.GetEventStreamRequest;
++import java.net.URLEncoder;
++import java.nio.charset.StandardCharsets;
+ import java.util.Properties;
+ 
+ public class PostgresDbzConnectorConfig extends DbzConnectorConfig {
+@@ -36,7 +38,10 @@ public class PostgresDbzConnectorConfig extends DbzConnectorConfig {
+     }
+ 
+     public String getJdbcUrl() {
+-        return String.format("jdbc:postgresql://%s:%s/%s", getHost(), getPort(), getDbName());
++        // pgjdbc URL-decodes the database component, so encode literal names before interpolation.
++        return String.format(
++                "jdbc:postgresql://%s:%s/%s",
++                getHost(), getPort(), URLEncoder.encode(getDbName(), StandardCharsets.UTF_8));
+     }
+ 
+     public String getPubName() {
+```
+
+**File**: `java/connector-node/risingwave-connector-service/src/test/java/com/risingwave/connector/source/common/DbzConnectorConfigTest.java` (modified, +43/-0)
+```diff
+@@ -28,6 +28,7 @@
+ import java.lang.management.ManagementFactory;
+ import java.util.HashMap;
+ import java.util.Map;
++import java.util.Properties;
+ import java.util.concurrent.atomic.AtomicInteger;
+ import javax.management.ObjectName;
+ import org.junit.Test;
+@@ -51,6 +52,48 @@ private static DbzConnectorConfig postgresConfig(long sourceId) {
+                 Map.of("cdc.source.wait.streaming.start.timeout", "3600"));
+     }
+ 
++    @Test
++    public void postgresJdbcUrlPreservesLiteralDatabaseName() {
++        for (var database :
++                new String[] {
++                    "sales",
++                    "sales+east",
++                    "sales%2Beast",
++                    "sales%",
++                    "sales?sslmode=disable",
++                    "sales?user=other&password=other",
++                    "sales east",
++                    "sales/east",
++                    "sales#east",
++                    "sales&east=west",
++                    "sales\"east",
++                    "销售"
++                }) {
++            var config =
++                    (PostgresDbzConnectorConfig)
++                            createConfig(
++                                    SourceType.POSTGRES,
++                                    46,
++                                    Map.of(
++                                            "hostname", "example.invalid",
++                                            "port", "5432",
++                                            "database.name", database));
++            var expected = new Properties();
++            expected.setProperty("PGHOST", "example.invalid");
++            expected.setProperty("PGPORT", "5432");
++            expected.setProperty("PGDBNAME", database);
++
++            // Exercise the URL shared by validation and publication creation without connecting.
++            assertEquals(
++                    database,
++                    expected,
++                    org.postgresql.Driver.parseURL(config.getJdbcUrl(), new Properties()));
++            assertEquals(database, config.getDbName());
++            assertEquals(
++                    database, config.getResolvedDebeziumProps().getProperty("database.dbname"));
++        }
++    }
++
+     @Test
+     public void usesConstructorSourceIdForTopicPrefix() {
+         var userProps = new HashMap<String, String>();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28054** (2026-11-18): cherry-pick chore(deps): patch `chrono-tz` with 2026f (#27811) to release-3.0 (@maybe-vibe)
-- **PR #28053** (2026-11-18): cherry-pick fix(frontend): allow kinesis with plain avro aws glue schema registry (#27611) to release-3.0 (@maybe-vibe)
-- **PR #28052** (2026-11-18): cherry-pick chore(deps): patch `chrono-tz` with 2026f (#27811) to release-3.1 (@maybe-vibe)
-- **PR #28051** (2026-11-18): cherry-pick fix(frontend): allow kinesis with plain avro aws glue schema registry (#27611) to release-3.1 (@maybe-vibe)
-- **PR #28050** (2026-11-18): build(docker): provide additional -nodwp image (#27841) (@risingwave-ci)
-- **PR #28049** (2026-11-18): build(docker): provide additional -nodwp image (#27841) (@risingwave-ci)
+- **PR #28104** (2026-11-20): fix(streaming): eliminate no-op updates in cross-database table scan (#28070) (@risingwave-ci)
+- **PR #28093** (closed): chore(deps): bump jiff from 0.2.35 to 0.2.39 (@dependabot[bot])
+- **PR #28084** (2026-11-19): fix(sqlserver-cdc): escape database names in JDBC URLs (@zwang28)
+- **PR #28083** (2026-11-19): fix(postgres-cdc): encode database names in JDBC URLs (@zwang28)
+- **PR #28074** (2026-11-19): fix(iceberg): keep storage catalog tables visible during commits (@howenyap)
+- **PR #28073** (2026-11-19): chore(deps): stop renaming gcloud-* and yaml-rust2 so dependabot updates them (@maybe-vibe)
 
 ---
 
@@ -1398,31 +1669,61 @@ Signed-off-by: StandingMan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. iceberg): honor `s3.iam_role_arn` in the storage catalog
+## X. pgwire): send BackendKeyData after password auth, reject short CancelRequest
 
 **RULE**:
-When implementing operations in `src/connector/src/connector_common/iceberg/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/utils/pgwire/src/pg_message.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e3c035e0`: iceberg): honor `s3.iam_role_arn` in the storage catalog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7f1b206a`: pgwire): send BackendKeyData after password auth, reject short CancelRequest. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/connector/src/connector_common/iceberg/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/utils/pgwire/src/pg_message.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                    .iam_role_arn(self.s3_iam_role_arn.clone())
+        if buf.remaining() < 8 {
+            return Err(Error::new(
+                ErrorKind::InvalidInput,
+                format!(
+                    "Invalid cancel request: expected 8 bytes of payload, got {}",
+                    buf.remaining()
+                ),
+            ));
+        }
+    use std::io::ErrorKind;
+
+    use crate::pg_message::{
+        FeCancelMessage, FeMessage, FeParseMessage, FeQueryMessage, FeStartupMessage,
+    };
+    #[test]
+    fn test_cancel_request_rejects_short_payload() {
+        // A client without a secret key stops after the process id.
+        let err = FeCancelMessage::parse(Bytes::from_static(&[0, 0, 0, 1])).unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+
+        let err = FeCancelMessage::parse(Bytes::new()).unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+
+        let msg = FeCancelMessage::parse(Bytes::from_static(&[0, 0, 0, 1, 0, 0, 0, 2])).unwrap();
+        let FeMessage::CancelQuery(msg) = msg else {
+            panic!("expected a cancel query message");
+        };
+        assert_eq!(msg.target_process_id, 1);
+        assert_eq!(msg.target_secret_key, 2);
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    use crate::pg_message::{FeParseMessage, FeQueryMessage, FeStartupMessage};
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3c035e0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7f1b206a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

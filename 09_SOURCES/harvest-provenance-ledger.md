@@ -11448,3 +11448,8 @@ Every entry in this ledger must capture:
 | `learn-github-nsh07-tomato` | `https://github.com/nsh07/Tomato` | `b3036b46` | Multi-dimensional audit evidence | 2026-11-20T00:14:38.223Z |
 | `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `b65fcac0` | Multi-dimensional audit evidence | 2026-11-20T00:33:14.757Z |
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `bf3ef159` | Multi-dimensional audit evidence | 2026-11-20T00:33:27.407Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `14a502fa` | Multi-dimensional audit evidence | 2026-11-20T00:43:20.800Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `7f1b206a` | Multi-dimensional audit evidence | 2026-11-20T00:43:27.970Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `588d2c40` | Multi-dimensional audit evidence | 2026-11-20T00:45:36.873Z |
+| `learn-dom-h-52039fe3` | `project://dathere-qsv` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md` | 2026-11-20T00:46:10.531Z |
+| `learn-dom-i-333d4d7a` | `project://dathere-qsv` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md` | 2026-11-20T00:46:47.877Z |

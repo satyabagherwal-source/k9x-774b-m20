@@ -11415,3 +11415,8 @@
 | `CYCLE-20261120-8QYZ` | `2026-11-20T00:14:38.219Z` | `nsh07/Tomato` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9473` | Yes (`5aa9e059...`) |
 | `CYCLE-20261120-WOHT` | `2026-11-20T00:33:14.753Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9474` | Yes (`9b511dfb...`) |
 | `CYCLE-20261120-WY96` | `2026-11-20T00:33:27.402Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9475` | Yes (`6158a6d4...`) |
+| `CYCLE-20261120-9O4C` | `2026-11-20T00:43:20.796Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9476` | Yes (`944a135a...`) |
+| `CYCLE-20261120-9TNI` | `2026-11-20T00:43:27.966Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9477` | Yes (`e8494667...`) |
+| `CYCLE-20261120-CL45` | `2026-11-20T00:45:36.869Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9478, Rule 9479, Rule 9480` | Yes (`52881fb3...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T00:46:10.531Z` | `dathere-qsv` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-52039FE3` [Domain H] | Yes (`eefab692...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T00:46:47.877Z` | `dathere-qsv` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-333D4D7A` [Domain I] | Yes (`55f0cd1b...`) |

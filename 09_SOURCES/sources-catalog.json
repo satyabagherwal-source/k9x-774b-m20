@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "17861239",
+    "sourceVersion": "588d2c40",
     "license": "NOASSERTION",
-    "contentHash": "88eaf3ea946867da74ad5252cc8250a2da01c13b8fc81bdb1cd50ee244c024ff",
-    "lastHarvestedAt": "2026-11-19T17:38:09.206Z",
+    "contentHash": "52881fb3acd5c835f0669d582ef767af2a53424e55c1de98d48226e1e64ade2e",
+    "lastHarvestedAt": "2026-11-20T00:45:36.873Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "e3c035e0",
+    "sourceVersion": "7f1b206a",
     "license": "Apache-2.0",
-    "contentHash": "86d871b48ad6bc71b94d668789081dae3bd28bb6334808402ded6462aeaf41e6",
-    "lastHarvestedAt": "2026-11-18T18:38:21.568Z",
+    "contentHash": "e8494667cacf437a0d019a51108f85ecd77db640ab923b8f1e91a3bfc573a584",
+    "lastHarvestedAt": "2026-11-20T00:43:27.970Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "31862576",
+    "sourceVersion": "14a502fa",
     "license": "Apache-2.0",
-    "contentHash": "355630c8eba1069c50ecc75aed37018e666782ccbb715c66f2402b4e9b8773ce",
-    "lastHarvestedAt": "2026-11-18T05:44:16.096Z",
+    "contentHash": "944a135a51a550d764d7ef796700441aa684db74b46a596c1adf4309410139f6",
+    "lastHarvestedAt": "2026-11-20T00:43:20.800Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {

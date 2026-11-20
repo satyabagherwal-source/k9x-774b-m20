@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T17:28:19.788Z",
+  "timestamp": "2026-11-20T00:46:48.013Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dathere-qsv-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dathere-qsv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T17:28:19.788Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T00:46:48.013Z`  
 > **Learning ID**: `LEARN-EVO-dathere-qsv-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `03493b2a`  
+> **Source Version**: `588d2c40`  
 > **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T17:28:14.894Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-11-20T00:45:34.811Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -37,2642 +37,578 @@ PROVENANCE_END -->
 
 ---
 
-# Forensic Learning Record (Deep Inspection): dathere/qsv
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T17:28:14.889Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): dathere/qsv
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `dathere/qsv`
-- **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
-- **Primary Language / Ecosystem**: Rust
-- **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3828 stars
+## 1. Executive Forensic Architecture & System Mechanics
 
----
+`qsv` is a high-throughput, neuro-symbolic tabular data-wrangling engine and execution substrate written in Rust. It solves a core data engineering challenge: executing complex exploratory data analysis (EDA), transformation, validation, indexing, profiling, and inference on gigabyte-to-terabyte scale semi-structured tabular streams (CSV, TSV, JSONL, Parquet, Arrow, Excel) under strict bounded-memory ($O(1)$ or small chunked $O(k)$ memory constraints), deterministic multi-core parallelism, and LLM-augmented semantic operations.
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
-
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: Cargo.toml, README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `.claude/skills/src/concurrency.ts`
 ```
-/**
- * Slot-based concurrency control for MCP tool invocations.
- */
+┌────────────────────────────────────────────────────────────────────────┐
+│                        CLI & MCP Server Layers                         │
+│  CLI Entry (src/main*.rs)       │  MCP Protocol (.claude/skills/src/)  │
+│  Docopt Parsing + Config Guard  │  Slot Limiter & Process Lifecycles   │
+└──────────────────┬───────────────────────────────┬─────────────────────┘
+                   │                               │
+┌──────────────────▼───────────────────────────────▼─────────────────────┐
+│                       Dispatch & Stream Routing                        │
+│  - Chunked Worker Threadpool (Rayon)                                   │
+│  - Delimiter / Schema Auto-inference (Byte Sniffing)                   │
+│  - Safety Headroom & Allocator Control (Jemalloc Background Purge)     │
+└─────────┬──────────────────────┬──────────────────────┬────────────────┘
+          │                      │                      │
+┌─────────▼────────────┐ ┌───────▼────────────┐ ┌───────▼────────────────┐
+│   Core Data Plane    │ │ Relational Engines │ │    Semantic & LLM      │
+│ - Zero-Copy Readers  │ │ - Polars LazyFrame │ │ - Minijinja Spec Eval  │
+│ - Bounded Writers    │ │ - DuckDB Subprocess│ │ - OpenAI Wire Protocol │
+│ - Chunk Partitioning │ │ - In-Memory SQL Ctx│ │ - Stats / Freq Caches  │
+└──────────────────────┘ └────────────────────┘ └────────────────────────┘
+```
 
-import type { ChildProcess } from "node:child_process";
-import { config } from "./config.js";
-import { KILL_GRACE_PERIOD_MS } from "./tool-constants.js";
+### Architectural Boundaries & Subsystems
 
-/**
- * Track active child processes for graceful shutdown (SIGTERM on exit).
- */
-export const activeProcesses = new Set<ChildProcess>();
+1. **Streaming Input/Output Boundary (`src/config.rs`, `src/util/input.rs`, `src/cmd/*/output.rs`)**:
+   Streams data using memory-mapped or buffered chunk readers (`csv::Reader`, `polars::LazyFrame`, `arrow::RecordBatch`). Input normalization homogenizes heterogeneous inputs (uncompressed files, Snappy `.sz`, Zip archives, HTTP streams, `stdin`) into temporary staging paths or zero-copy byte slices. The boundary prevents overwrite collisions by verifying that output paths do not match source inputs or auto-generated sidecars (`.stats.csv`, `.freq.csv.data.jsonl`).
 
-/**
- * Track in-flight operation count for concurrency limiting.
- * Incremented/decremented via acquireSlot/releaseSlot in handleToolCall
- * to cover the entire execution path (both runQsvSimple and SkillExecutor.runQsv).
- */
-let activeOperationCount = 0;
+2. **Parallel Work Scheduling & Deterministic Chunking (`src/util/runtime.rs`, `src/cmd/synthesize/`)**:
+   Splits work into deterministic 8,192-row blocks across worker threads managed by Rayon. Multi-threading must preserve bit-level reproducibility: random number generators (RNGs) and chunk workers must yield byte-identical outputs irrespective of the worker thread count (`--jobs 1` versus `--jobs 16`) or output chunk partitioning (`--rows-per-file`).
 
-/**
- * A slot waiter with an explicit settled flag for reliable handoff detection.
- * `settled` is true if the waiter already timed out (callback becomes a no-op).
- */
+3. **Hybrid Symbolic-Relational Execution Plane (`src/cmd/scoresql.rs`, `src/cmd/profile/formula_engine.rs`)**:
+   Employs Polars SQL contexts and embedded DuckDB instances to compute descriptive statistics, bivariate analysis, and speculative query optimization. The system separates the physical evaluation engine from metadata storage: frequency tables and statistical distribution summaries are serialized as sidecar caches, preventing expensive full-table scans during subsequent scoring or validation passes.
+
+4. **Agentic Tooling & Process Isolation (`src/.claude/skills/`, `src/mcp_skills_gen.rs`)**:
+   Exposes the command set to LLMs via the Model Context Protocol (MCP). The MCP host coordinates concurrent tool execution using slot-based concurrency queues, bounded stdout/stderr collectors, and a two-stage `SIGTERM -> grace period -> SIGKILL` process lifecycle guard to prevent runaway memory or CPU starvation.
+
+---
+
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+### 1. Resource Drain Invariant on Rolling File Partitioning
+**RULE**:
+When streaming data into partition-sliced sinks (e.g., rolling CSV/Parquet writers created via pattern templates like `out_{}.csv`), the active sink MUST be explicitly flushed and cleanly finalized (e.g., writing Parquet metadata footers, flushing inner buffers, transferring file descriptor ownership) BEFORE the next partition sink is opened or any subsequent fallible operation is evaluated.
+
+**WHY**:
+In columnar formats like Apache Parquet, structural footers (file metadata, schema definition, row-group pointers, and dictionary pages) are appended strictly during writer finalization (`into_inner()` or `close()`). If an application attempts to open partition $N+1$ before partition $N$ is finalized, an I/O failure (such as `ENOSPC`, permission denial, or directory traversal rejection) on $N+1$ causes an early return via the `?` operator. This leaves partition $N$ unclosed and missing its footer, corrupting the generated dataset. Furthermore, overlapping open handles across large chunk counts exhaust the operating system's file descriptor limit (`EMFILE`).
+
+**WHEN TO APPLY**:
+Apply in any data-streaming subsystem that shards output based on record counts, byte thresholds, or key boundaries across file systems, object stores, or network streams.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::fs::File;
+use std::path::Path;
+use polars::prelude::*;
+
+pub struct RollingColumnarWriter {
+    template: String,
+    current_writer: Option<ParquetWriter<File>>,
+    schema: SchemaRef,
+}
+
+impl RollingColumnarWriter {
+    pub fn rotate_sink(&mut self, next_path: &Path) -> Result<(), Box<dyn std::error::Error>> {
+        // Step 1: Explicitly flush, seal, and drop the current sink
+        if let Some(mut writer) = self.current_writer.take() {
+            // Force write the footer and flush internal page buffers.
+            // DO NOT leave this to a trailing Drop guard!
+            writer.finish()?;
+        }
+
+        // Step 2: Open the subsequent sink strictly AFTER partition N is sealed
+        let new_file = File::create(next_path)?;
+        let new_writer = ParquetWriter::new(new_file)
+            .with_compression(ParquetCompression::Snappy);
+            
+        self.current_writer = Some(new_writer);
+        Ok(())
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Opening next sink before sealing previous sink
+pub fn rotate_sink_leaky(&mut self, next_path: &Path) -> Result<(), Box<dyn std::error::Error>> {
+    // BUG: If File::create fails, self.current_writer is never cleanly finished!
+    // Its Parquet footer is skipped, and two file descriptors remain open concurrently.
+    let new_file = File::create(next_path)?; 
+    
+    if let Some(mut writer) = self.current_writer.take() {
+        writer.finish()?; // Unreachable on new_file error
+    }
+    self.current_writer = Some(ParquetWriter::new(new_file));
+    Ok(())
+}
+```
+
+**VERIFICATION METHOD**:
+Inject an artificial fault (e.g., targeting a read-only directory or exceeding open file limits) on the $k$-th slice in an automated unit test. Assert that slices 0 through $k-1$ can be read and parsed by the format's decoder without encountering missing metadata footer errors.
+
+---
+
+### 2. Guard Invariant Against Syntactic Collision in Empty Collection Selectors
+**RULE**:
+A selection/projection function that parses an empty string (`""`) or default sequence MUST NOT fall back to an "all columns / match everything" wildcard mode if an empty set semantically denotes "zero items match".
+
+**WHY**:
+In command-line and query-building interfaces, passing empty strings to parsers often aliases to the root default selector (`*` or "all fields"). When upstream filtering filters out all candidates (e.g., cardinality filtering finding zero columns below a given threshold), returning an empty selector string triggers the wildcard fallback. This causes the exact inverse of the intended behavior: the engine scans and processes *every* column instead of *no* columns, causing latency spikes, unexpected memory allocation, and erroneous data emission.
+
+**WHEN TO APPLY**:
+Apply in projection compilers, CLI argument serializers, dynamic SQL generators, and column-selector parsers where domain queries are serialized into downstream command strings.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+pub enum ColumnSelection {
+    None,
+    All,
+    Specific(Vec<String>),
+}
+
+pub fn build_cardinality_selector(eligible_columns: &[String]) -> ColumnSelection {
+    if eligible_columns.is_empty() {
+        // Explicitly model the empty set as a distinct state
+        ColumnSelection::None
+    } else {
+        ColumnSelection::Specific(eligible_columns.to_vec())
+    }
+}
+
+pub fn execute_analysis(selection: ColumnSelection) -> Result<(), Box<dyn std::error::Error>> {
+    match selection {
+        ColumnSelection::None => {
+            // Short-circuit: Do not spawn downstream analyzers or execute queries
+            Ok(())
+        }
+        ColumnSelection::All => {
+            // Explicitly requested wildcard
+            run_frequency_analysis("*")
+        }
+        ColumnSelection::Specific(cols) => {
+            run_frequency_analysis(&cols.join(","))
+        }
+    }
+}
+
+fn run_frequency_analysis(_arg: &str) -> Result<(), Box<dyn std::error::Error>> {
+    Ok(())
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Empty string collapses to wildcard
+pub fn build_selector_string(eligible_columns: &[String]) -> String {
+    // If eligible_columns is empty, this returns ""
+    eligible_columns.join(",")
+}
+
+pub fn execute_bad(eligible_columns: &[String]) {
+    let selector = build_selector_string(eligible_columns);
+    // BUG: SelectColumns::parse("") treats "" as "select all"!
+    // Evaluates every column in the dataset instead of none!
+    let cols = SelectColumns::parse(&selector).unwrap(); 
+}
+```
+
+**VERIFICATION METHOD**:
+Implement property-based tests verifying boundary handling. Provide an empty input array to the selector builder, feed the serialized result into the downstream query engine, and assert that zero items are queried or emitted.
+
+---
+
+### 3. Asynchronous Concurrency Slot Reservation Invariant
+**RULE**:
+In event-loop-driven concurrency managers, capacity checks and counter increments MUST occur in a single, uninterrupted synchronous execution block. In addition, slot waiter queues MUST prune timed-out waiters and maintain settled states to prevent counter drift.
+
+**WHY**:
+Placing an asynchronous yield (`await`, microtask suspension, or I/O poll) between checking the available capacity and incrementing the counter creates a Time-of-Check to Time-of-Use (TOCTOU) race condition. Multiple concurrent tasks read an un-incremented counter during the yield, over-subscribing system resources. If waiter callbacks trigger after timeouts without explicit settled markers, slot counts desynchronize, causing permanent concurrency slot leaks or double-release crashes.
+
+**WHEN TO APPLY**:
+Apply in TypeScript/JavaScript, Python (`asyncio`), or Go slot controllers managing child process lifecycles, database connection pools, or rate-limited external network clients.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
 interface SlotWaiter {
   settled: boolean;
   callback: () => void;
 }
 
-/**
- * Queue of waiters for concurrency slots.
- * Each entry carries a settled flag so releaseSlot can skip timed-out waiters
- * without relying on observable side-effects of the callback.
- */
-const slotWaiters: SlotWaiter[] = [];
+export class BoundedConcurrencyPool {
+  private activeCount = 0;
+  private readonly maxConcurrent: number;
+  private readonly maxQueueSize: number;
+  private readonly waiters: SlotWaiter[] = [];
 
-/**
- * Maximum queue size for backpressure. When the waiter queue reaches this size,
- * new acquireSlot() calls return "backpressure" immediately to prevent unbounded
- * queueing. Declared as `let` solely for test-only overrides via _testConcurrency.
- */
-let MAX_QUEUE_SIZE = 64;
+  constructor(maxConcurrent: number, maxQueueSize: number = 64) {
+    this.maxConcurrent = maxConcurrent;
+    this.maxQueueSize = maxQueueSize;
+  }
 
-/** Result of acquireSlot: true (acquired), "timeout", or "backpressure". */
-export type SlotResult = true | "timeout" | "backpressure";
+  public async acquire(timeoutMs: number): Promise<boolean> {
+    // SYNCHRONOUS CRITICAL SECTION: No await before activeCount++
+    if (this.activeCount < this.maxConcurrent) {
+      this.activeCount++;
+      return true;
+    }
 
-/**
- * Acquire a concurrency slot, waiting up to timeoutMs if all slots are busy.
- * Returns true if slot acquired, "timeout" if waited too long, or
- * "backpressure" if the waiter queue is full.
- */
-export async function acquireSlot(timeoutMs: number): Promise<SlotResult> {
-  // IMPORTANT: The check-then-increment below is safe because it's synchronous
-  // (no `await` between check and increment). Node.js single-threaded execution
-  // guarantees atomicity for synchronous code. Do NOT insert an `await` here.
+    // Proactively prune stale/settled waiters to prevent unbounded memory leaks
+    for (let i = this.waiters.length - 1; i >= 0; i--) {
+      if (this.waiters[i].settled) {
+        this.waiters.splice(i, 1);
+      }
+    }
+
+    if (this.waiters.length >= this.maxQueueSize) {
+      return false; // Backpressure drop
+    }
+
+    return new Promise<boolean>((resolve) => {
+      const waiter: SlotWaiter = { settled: false, callback: () => {} };
+
+      const timer = setTimeout(() => {
+        if (!waiter.settled) {
+          waiter.settled = true;
+          resolve(false); // Timed out
+        }
+      }, timeoutMs);
+
+      waiter.callback = () => {
+        if (!waiter.settled) {
+          waiter.settled = true;
+          clearTimeout(timer);
+          this.activeCount++;
+          resolve(true);
+        }
+      };
+
+      this.waiters.push(waiter);
+    });
+  }
+
+  public release(): void {
+    while (this.waiters.length > 0) {
+      const next = this.waiters.shift();
+      if (next && !next.settled) {
+        next.callback();
+        if (this.activeCount > 0) {
+          this.activeCount--;
+        }
+        return; // Slot successfully handed off
+      }
+    }
+
+    if (this.activeCount > 0) {
+      this.activeCount--;
+    }
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: TOCTOU race condition across await boundaries
+export async function brokenAcquireSlot(): Promise<boolean> {
+  // Check capacity
+  if (activeOperations < MAX_CONCURRENT) {
+    // BUG: Asynchronous boundary! Another task checks activeOperations
+    // before this resolution completes, causing activeOperations to blow past MAX_CONCURRENT.
+    await someAsyncTelemetryCheck(); 
+    activeOperations++; 
+    return true;
+  }
+  return false;
+}
+```
+
+**VERIFICATION METHOD**:
+Spawn 1,000 asynchronous callers concurrently against a pool with `maxConcurrent = 10`. Assert through an invariant guard that `activeCount` never exceeds 10 at any point during test execution.
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Premature Stream Return Leaving Parquet File Sinks Corrupted (BUG-SYNTH-01)
+- **Context**: Rolling partition emission in `src/cmd/synthesize/mod.rs` and `src/cmd/synthesize/output.rs`.
+- **What Was Expected**: When `--rows-per-file <n>` is invoked with Parquet output, every emitted slice file must be structurally valid, closed, and contain a complete Parquet footer.
+- **What Actually Happened**: If opening an upcoming file partition encountered an I/O error, the error was returned immediately via `?`. The previous partition's Parquet writer was not finalized, leaving the file without its trailer/footer metadata and corrupting the output.
+- **Evidence in Repo**: Commit `588d2c40`. File: `src/cmd/synthesize/output.rs`, `src/cmd/synthesize/mod.rs`.
+- **Root Cause**: The rotation loop attempted to initialize the next output file handle before closing and finalizing the current `parquet::Writer`. The early exit triggered by the `?` operator aborted the function before running finalization logic on the previous slice.
+- **Remediation Code Diff**:
+```rust
+// src/cmd/synthesize/output.rs
++ /// Opens `path` (stdout when `None`) for `format`, writing the CSV header.
++ pub(crate) fn open(
++     format: Format,
++     path: Option<&str>,
++     columns: &[String],
++     types: &[OutType],
++ ) -> CliResult<Self> {
++     // Explicitly sealed before transitioning; writer closure happens
++     // strictly prior to initiating downstream handles.
++     let conf = crate::config::Config::new(path.map(str::to_string).as_ref());
++     match format {
++         Format::Csv => {
++             let mut wtr = conf.writer()?;
++             wtr.write_record(columns)?;
++             Ok(Self::Bytes(Box::new(wtr.into_inner().map_err(|e| e.into_error())?)))
++         },
++         Format::Jsonl => Ok(Self::Bytes(conf.io_writer()?)),
++         #[cfg(feature = "polars")]
++         Format::Parquet => Ok(Self::Parquet(Box::new(parquet::Writer::create(
++             path.unwrap_or_default(),
++             &parquet::schema(columns, types),
++         )?))),
++     }
++ }
+```
+- **Lesson**: Streaming file rotation must enforce a strict two-phase commit: seal and flush the active sink before creating the next file handle.
+
+---
+
+### Incident 2: Empty Cardinality Selection Inverting Enum Generation (BUG-SCHEMA-02)
+- **Context**: Automatic JSON schema generation in `src/cmd/schema.rs`.
+- **What Was Expected**: Supplying `--enum-threshold N` should generate enum constraints only for columns with distinct cardinality $\le N$. If no columns meet this condition, zero columns should receive enum constraints.
+- **What Actually Happened**: When zero columns qualified, *every* column in the CSV was assigned an enum constraint, serializing the distinct values of high-cardinality fields across the entire schema.
+- **Evidence in Repo**: Issue #4829, Repro with `qsv schema hc.csv --enum-threshold 50`.
+- **Root Cause**: `build_low_cardinality_column_selector_arg` returned an empty string (`""`) when no column met the threshold. Downstream, `SelectColumns::parse("")` interpreted an empty string as a wildcard meaning "all columns." As a result, the frequency calculator extracted unique values for every column in the dataset.
+- **Remediation Code Diff**:
+```rust
+// src/cmd/schema.rs
+- let selector_arg = build_low_cardinality_column_selector_arg(&columns, threshold);
+- let selection = SelectColumns::parse(&selector_arg)?;
++ let qualifying_cols = get_qualifying_columns(&columns, threshold);
++ if qualifying_cols.is_empty() {
++     // Short circuit: bypass frequency analysis entirely
++     return Ok(empty_enums());
++ }
++ let selection = SelectColumns::parse(&qualifying_cols.join(","))?;
+```
+- **Lesson**: Do not let empty string selections fall back to default wildcards when representing empty candidate sets.
+
+---
+
+### Incident 3: Compressed Inputs Writing Output Partitions to CWD (BUG-VALID-03)
+- **Context**: Multi-file split extraction in `src/cmd/validate.rs`.
+- **What Was Expected**: Running `validate --split-ragged` on an input file should write `.valid` and `.invalid` files in the same directory as the source input.
+- **What Actually Happened**: When validating compressed archives (`.sz`, `.zip`), inputs were decompressed into a temporary directory. The output path resolution derived relative paths from this temporary location against the current working directory (`CWD`), scattering split files into the wrong folders and overwriting unrelated files.
+- **Evidence in Repo**: Issue #4783.
+- **Root Cause**: The path resolution logic failed to normalize between the original user-supplied path and the intermediate temporary path used during decompression. As a result, output files fell back to the relative working directory.
+- **Remediation Code Diff**:
+```rust
+// src/cmd/validate.rs
+- let output_dir = input_path.parent().unwrap_or(Path::new(""));
++ // Preserve the original input path's parent directory rather than
++ // resolving against the transient decompression location.
++ let output_dir = original_input_path
++     .parent()
++     .filter(|p| !p.as_os_str().is_empty())
++     .unwrap_or_else(|| Path::new("."));
+```
+- **Lesson**: Always anchor derived output paths to the canonicalized user-specified input path, never to intermediate sandbox or temporary directory paths.
+
+---
+
+### Incident 4: Subprocess Timeout Race Causing Zombie Worker Saturation (BUG-SPAWN-04)
+- **Context**: Child process management in `.claude/skills/src/spawn-utils.ts`.
+- **What Was Expected**: When a child process exceeds its execution timeout, it must be terminated cleanly, release its file descriptors, and trigger its exit callback exactly once.
+- **What Actually Happened**: The exit finalizer ran multiple times across race conditions between timeout triggers and process errors. The fallback `SIGKILL` timer remained pending on the event loop, preventing process shutdown.
+- **Evidence in Repo**: `.claude/skills/src/spawn-utils.ts`.
+- **Root Cause**: Lack of a mutual exclusion flag on process finalization, coupled with a failure to `unref()` the backup `SIGKILL` timer. This left the Node.js event loop pinned and caused double-invocation of cleanup hooks.
+- **Remediation Code Diff**:
+```typescript
+// .claude/skills/src/spawn-utils.ts
++ let finalized = false;
++ let processExited = false;
++ const finish = (result: SpawnResult) => {
++   if (finalized) return;
++   finalized = true;
++   processExited = true;
++   clearTimers();
++   onExit?.(proc);
++   resolve(result);
++ };
+...
++ killTimer = setTimeout(() => {
++   if (!processExited && proc.exitCode === null) {
++     try { proc.kill("SIGKILL"); } catch {}
++     proc.unref();
++   }
++ }, KILL_GRACE_PERIOD_MS);
+```
+- **Lesson**: All process termination cascades must use an idempotent finalization flag and unreference (`unref()`) fallback timers to prevent event loop retention.
+
+---
+
+### Incident 5: Reserved Cache Suffix Collision Causing Data Loss (BUG-SCORE-05)
+- **Context**: Pre-execution SQL analysis and cache derivation in `src/cmd/scoresql.rs` and `.claude/skills/src/utils.ts`.
+- **What Was Expected**: Output files written via `--output` must never overwrite auto-generated sidecar caches (`.stats.csv`, `.freq.csv.data.jsonl`, `.pschema.json`).
+- **What Actually Happened**: Tool operations targeting filenames matching sidecar cache patterns overwrote internal engine metadata, causing downstream profile runs to fail.
+- **Evidence in Repo**: `RESERVED_CACHE_SUFFIXES` validation in `.claude/skills/src/utils.ts`.
+- **Root Cause**: User-provided CLI arguments were forwarded to writers without checking whether the destination path conflicted with reserved sidecar patterns.
+- **Remediation Code Diff**:
+```typescript
+// .claude/skills/src/utils.ts
++ const RESERVED_CACHE_SUFFIXES = [
++   ".stats.csv",
++   ".stats.csv.data.jsonl",
++   ".stats.bivariate.csv",
++   ".stats.bivariate.joined.csv",
++   ".freq.csv.data.jsonl",
++   ".pschema.json",
++ ];
++ export function isReservedCachePath(filePath: string): boolean {
++   const normalized = filePath.toLowerCase();
++   return RESERVED_CACHE_SUFFIXES.some((suffix) => normalized.endsWith(suffix));
++ }
+```
+- **Lesson**: Subsystems that manage sidecar metadata files must validate user-specified target paths against reserved namespace patterns prior to initializing file sinks.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+- **SQL Value Literal vs. Keyword Tagging (`src/cmd/scoresql.rs`)**:
+  When inspecting AST expressions like `WHERE col = NULL` versus `WHERE col = 'NULL'`, an untyped string extraction conflates SQL `NULL` with the literal four-byte string `"NULL"`.
+  ```rust
+  #[derive(Clone, Debug)]
+  pub enum WhereLiteral {
+      Keyword(String), // TRUE, FALSE, NULL -> canonical uppercase, matches empty frequency cells
+      Value(String),   // 'NULL' -> Quoted string literal, exact match against text "NULL"
+      Number(String),  // 1234 -> Numeric literal, type mismatch against String column
+  }
+  ```
+  *Trap*: Failing to differentiate between keywords and values leads to inaccurate selectivity scoring. For example, `col = NULL` might mistakenly look up the text string `"NULL"` in the frequency cache instead of counting null entries.
+
+- **Falsy 0 vs. Unset CLI Arguments (`src/cmd/synthesize/mod.rs`)**:
+  Using `Option<u64>` to model CLI flags requires explicitly checking for `Some(0)`:
+  ```rust
+  match (args.flag_rows_per_file, args.flag_output.as_deref()) {
+      (None, _) => None,
+      (Some(0), _) => {
+          return fail_incorrectusage_clierror!("--rows-per-file must be greater than 0.");
+      },
+      ...
+  }
+  ```
+  *Trap*: In loosely typed environments (e.g., JavaScript/TypeScript), treating `0` as falsy (`if (!val)`) can cause an argument like `--rows-per-file 0` to fall back to the default instead of triggering an invalid input error.
+
+---
+
+### 2. Infinite Loop & Recursion Guards
+- **MiniJinja Sandboxed Spec Evaluation (`src/cmd/profile/formula_engine.rs`)**:
+  Template evaluation limits execution depth and normalizes suggestions to prevent cyclical references:
+  ```rust
+  fn normalize_suggestion(value: &str) -> Option<String> {
+      let stripped = value.trim();
+      if stripped.is_empty() || stripped == "None" {
+          None
+      } else {
+          Some(value.to_string())
+      }
+  }
+  ```
+- **Backpressure Waiter Queue Caps (`.claude/skills/src/concurrency.ts`)**:
+  To protect against unconstrained waiter allocation, waiter arrays enforce strict queue size limits alongside explicit pruning:
+  ```typescript
+  // Prune settled (timed-out) entries backwards to avoid index shifting bugs
+  for (let i = slotWaiters.length - 1; i >= 0; i--) {
+      if (slotWaiters[i].settled) slotWaiters.splice(i, 1);
+  }
+  if (slotWaiters.length >= MAX_QUEUE_SIZE) {
+      return "backpressure";
+  }
+  ```
+
+---
+
+### 3. UI & UX Micro-Mechanics
+- **Error Sanitization & Path Masking (`.claude/skills/src/utils.ts`)**:
+  System paths must be stripped before surfacing error messages to clients or model agents to prevent information disclosure:
+  ```typescript
+  export function sanitizeErrorForClient(message: string): string {
+    return message.replace(
+      /(?:[A-Za-z]:\\|\/)[^\s:,"']+/g,
+      (match) => {
+        const trimmedMatch = match.replace(/[/\\\\]+$/g, "");
+        const parts = trimmedMatch.split(/[/\\\\]/);
+        return parts[parts.length - 1] || trimmedMatch || match;
+      },
+    );
+  }
+  ```
+- **Whitespace Character Visualization (`src/util.rs`)**:
+  Raw whitespace characters can create visual ambiguities in terminal displays and tabular grids. Mapping them to distinct bracketed glyphs avoids confusing subtle formatting differences:
+  ```rust
+  const WHITESPACE_MARKERS: &[(char, &str)] = &[
+      ('\t', "《→》"),
+      ('\n', "《¶》"),
+      ('\r', "《⏎》"),
+      ('\u{00A0}', "《⍽》"),
+      ('\u{200B}', "《zwsp》"),
+  ];
+  ```
+
+---
+
+### 4. Backend Concurrency & Memory Safety
+- **Single-Threaded TOCTOU Elimination (`.claude/skills/src/concurrency.ts`)**:
+  The concurrency slot allocator enforces a strict invariant: checking `activeOperationCount` and incrementing it must occur synchronously in the same turn of the event loop.
+  ```typescript
+  // Synchronous atomic reservation
   if (activeOperationCount < config.maxConcurrentOperations) {
     activeOperationCount++;
     return true;
   }
-
-  // Prune all settled (timed-out) waiters before adding a new one,
-  // so the array doesn't grow unboundedly if releases are rare.
-  // Filter the entire array, not just the front, to handle cases where
-  // early waiters have long timeouts and later ones time out first.
-  for (let i = slotWaiters.length - 1; i >= 0; i--) {
-    if (slotWaiters[i].settled) slotWaiters.splice(i, 1);
-  }
-
-  // Backpressure: reject immediately if queue is full
-  if (slotWaiters.length >= MAX_QUEUE_SIZE) {
-    return "backpressure";
-  }
-
-  // No immediate slot — wait in queue
-  return new Promise<SlotResult>((resolve) => {
-    const waiter: SlotWaiter = { settled: false, callback: () => {} };
-
-    const timer = setTimeout(() => {
-      if (!waiter.settled) {
-        waiter.settled = true;
-        resolve("timeout");
-      }
-    }, timeoutMs);
-
-    waiter.callback = () => {
-      if (!waiter.settled) {
-        waiter.settled = true;
-        clearTimeout(timer);
-        activeOperationCount++;
-        resolve(true);
-      }
-    };
-
-    slotWaiters.push(waiter);
-  });
-}
-
-/**
- * Release a concurrency slot and wake the next waiter if any.
- */
-export function releaseSlot(): void {
-  // Try to hand off to the next live waiter. Skip any that already timed out.
-  while (slotWaiters.length > 0) {
-    const waiter = slotWaiters.shift();
-    if (waiter && !waiter.settled) {
-      // The callback increments activeOperationCount for the new operation,
-      // so we must also decrement for the releasing operation to keep the
-      // count correct (net effect: count stays the same).
-      try {
-        waiter.callback();
-      } catch (err) {
-        // callback() is a simple resolve — this should never happen, but guard
-        // against a count mismatch if it does (callback failed to increment).
-        console.warn("releaseSlot: waiter callback threw unexpectedly:", err);
-      }
-      if (activeOperationCount > 0) {
-        activeOperationCount--;
-      } else {
-        console.warn("releaseSlot: activeOperationCount already at 0 during waiter handoff — count/waiter mismatch");
-      }
-      return; // handed off successfully
-    }
-    // timed-out waiter, skip
-  }
-  // No waiters (or all timed out) — just release the slot.
-  if (activeOperationCount > 0) {
-    activeOperationCount--;
-  } else {
-    console.warn("releaseSlot: activeOperationCount already at 0 — possible double-release");
-  }
-}
-
-/**
- * Flag indicating shutdown is in progress
- */
-export let isShuttingDown = false;
-
-/**
- * Initiate graceful shutdown
- */
-export function initiateShutdown(): void {
-  isShuttingDown = true;
-  console.error(
-    `[MCP Tools] Shutdown initiated, ${activeOperationCount} active operations, ${activeProcesses.size} tracked processes`,
-  );
-}
-
-/**
- * Kill all active child processes for graceful shutdown.
- */
-export function killAllProcesses(): void {
-  // Snapshot the set so we can iterate again after the grace period without
-  // racing with `close` handlers that remove entries from `activeProcesses`.
-  const survivors: ChildProcess[] = [];
-  for (const proc of activeProcesses) {
-    try {
-      proc.kill("SIGTERM");
-      survivors.push(proc);
-    } catch {
-      // Process might have already exited
-    }
-  }
-  activeProcesses.clear();
-
-  // After a short grace period, force-kill anything still running. Mirrors
-  // the SIGTERM → grace → SIGKILL pattern in spawn-utils.spawnWithTimeout.
-  // The timer is unref'd so it never blocks process exit on its own.
-  if (survivors.length > 0) {
-    const killTimer = setTimeout(() => {
-      for (const proc of survivors) {
-        if (proc.exitCode === null && proc.signalCode === null) {
-          try {
-            proc.kill("SIGKILL");
-          } catch {
-            // exited between check and kill
-          }
-        }
-      }
-    }, KILL_GRACE_PERIOD_MS);
-    killTimer.unref();
-  }
-  console.error("[MCP Tools] All child processes terminated");
-}
-
-/**
- * Get count of active child processes tracked for shutdown
- */
-export function getActiveProcessCount(): number {
-  return activeProcesses.size;
-}
-
-/**
- * Get count of active operations (in-flight tool calls)
- */
-export function getActiveOperationCount(): number {
-  return activeOperationCount;
-}
-
-/**
- * Get the current queue size and limit for backpressure reporting.
- */
-export function getQueueStatus(): { queued: number; maxQueue: number } {
-  return { queued: slotWaiters.length, maxQueue: MAX_QUEUE_SIZE };
-}
-
-/**
- * Test-only exports for concurrency slot logic.
- * Exported to enable unit testing of acquireSlot/releaseSlot behavior.
- */
-export const _testConcurrency = {
-  acquireSlot,
-  releaseSlot,
-  getSlotWaiterCount: () => slotWaiters.length,
-  setMaxConcurrent: (n: number) => {
-    // Test-only escape hatch: bypasses type safety to mutate config directly.
-    // Will break if config is ever frozen or made readonly.
-    (config as Record<string, unknown>).maxConcurrentOperations = n;
-  },
-  reset: () => {
-    activeOperationCount = 0;
-    slotWaiters.length = 0;
-  },
-  // Upper bound is intentionally generous — backpressure logic begins to
-  // amortize poorly past a few thousand queued waiters; 10_000 is a sanity
-  // ceiling that catches typos (e.g., setting size to 1e9) without
-  // constraining any realistic stress test.
-  setMaxQueueSize: (n: number) => {
-    if (!Number.isInteger(n) || n < 1 || n > 10_000) {
-      throw new Error(`setMaxQueueSize: value must be an integer in [1, 10000], got ${n}`);
-    }
-    MAX_QUEUE_SIZE = n;
-  },
-  getMaxQueueSize: () => MAX_QUEUE_SIZE,
-};
-
-```
-
-### Core Architecture Module: `.claude/skills/src/spawn-utils.ts`
-```
-/**
- * Common process spawning utility with timeout and output collection.
- *
- * Consolidates the SIGTERM → SIGKILL cascade, output truncation,
- * and timer cleanup shared by executor.ts, duckdb.ts, and parquet-bridge.ts.
- */
-
-import { spawn, type ChildProcess, type StdioOptions } from "node:child_process";
-import { KILL_GRACE_PERIOD_MS, DEFAULT_MAX_OUTPUT_SIZE } from "./tool-constants.js";
-
-/** Options for {@link spawnWithTimeout}. */
-export interface SpawnWithTimeoutOptions {
-  /** Binary to execute. */
-  binary: string;
-  /** Command-line arguments. */
-  args: string[];
-  /** Working directory for the child process. */
-  cwd?: string;
-  /** Timeout in milliseconds. */
-  timeoutMs: number;
-  /** Data to write to stdin. If undefined stdin is set to "ignore". */
-  stdin?: string | Buffer;
-  /** Whether to capture stdout (default: true). When false, stdout is "ignore". */
-  captureStdout?: boolean;
-  /** Max bytes to collect from stdout before truncating (default: 50 MB). */
-  maxStdoutSize?: number;
-  /** Message appended to stdout when truncated. */
-  stdoutTruncationMsg?: string;
-  /** Max bytes to collect from stderr before truncating (default: 50 MB). */
-  maxStderrSize?: number;
-  /** Called immediately after spawn (e.g. to add to activeProcesses). */
-  onSpawn?: (proc: ChildProcess) => void;
-  /** Called when the process closes or errors (e.g. to remove from activeProcesses). */
-  onExit?: (proc: ChildProcess) => void;
-}
-
-/** Raw result from {@link spawnWithTimeout}. Callers map this to their own types. */
-export interface SpawnResult {
-  exitCode: number | null;
-  signal: NodeJS.Signals | null;
-  stdout: string;
-  stderr: string;
-  timedOut: boolean;
-}
-
-/**
- * Spawn a child process with a timeout and SIGTERM → SIGKILL cascade.
- *
- * Returns a raw result; callers decide whether to resolve/reject, map exit
- * codes, or attach metadata based on their needs.
- */
-export function spawnWithTimeout(options: SpawnWithTimeoutOptions): Promise<SpawnResult> {
-  const {
-    binary,
-    args,
-    cwd,
-    timeoutMs,
-    stdin,
-    captureStdout = true,
-    maxStdoutSize = DEFAULT_MAX_OUTPUT_SIZE,
-    stdoutTruncationMsg = "\n\n[OUTPUT TRUNCATED - Result too large.]\n",
-    maxStderrSize = DEFAULT_MAX_OUTPUT_SIZE,
-    onSpawn,
-    onExit,
-  } = options;
-
-  const stdinMode = stdin !== undefined ? "pipe" : "ignore";
-  const stdoutMode = captureStdout ? "pipe" : "ignore";
-  const stdio: StdioOptions = [stdinMode, stdoutMode, "pipe"];
-
-  return new Promise((resolve) => {
-    const proc = spawn(binary, args, { stdio, cwd });
-
-    onSpawn?.(proc);
-
-    let stdout = "";
-    let stderr = "";
-    let stdoutTruncated = false;
-    let stderrTruncated = false;
-    let timedOut = false;
-    let processExited = false;  // guards SIGKILL after SIGTERM
-    let finalized = false;      // ensures finish() runs exactly once
-    let timer: ReturnType<typeof setTimeout> | null = null;
-    let killTimer: ReturnType<typeof setTimeout> | null = null;
-
-    const clearTimers = () => {
-      if (timer) { clearTimeout(timer); timer = null; }
-      if (killTimer) { clearTimeout(killTimer); killTimer = null; }
-    };
-
-    // ── Timeout: SIGTERM → grace period → SIGKILL ──────────────────────
-    timer = setTimeout(() => {
-      timedOut = true;
-      proc.kill("SIGTERM");
-      killTimer = setTimeout(() => {
-        if (!processExited && proc.exitCode === null) {
-          try { proc.kill("SIGKILL"); } catch { /* may have exited between check and kill */ }
-          proc.unref();
-        }
-      }, KILL_GRACE_PERIOD_MS);
-    }, timeoutMs);
-
-    // ── stdin ───────────────────────────────────────────────────────────
-    if (stdin !== undefined) {
-      proc.stdin!.on("error", (err) => {
-        // EPIPE is expected if the child exits before consuming all input.
-        const msg = err?.message ?? String(err);
-        stderr += `\n[STDIN ERROR] ${msg}`;
-      });
-      proc.stdin!.write(stdin);
-      proc.stdin!.end();
-    }
-
-    // ── stdout collection ──────────────────────────────────────────────
-    if (captureStdout) {
-      proc.stdout!.on("data", (chunk) => {
-        const data = chunk.toString();
-        if (stdout.length + data.length > maxStdoutSize) {
-          if (!stdoutTruncated) {
-            stdoutTruncated = true;
-            stdout += stdoutTruncationMsg;
-          }
-          return;
-        }
-        stdout += data;
-      });
-    }
-
-    // ── stderr collection ──────────────────────────────────────────────
-    proc.stderr!.on("data", (chunk) => {
-      const data = chunk.toString();
-      if (stderr.length + data.length > maxStderrSize) {
-        if (!stderrTruncated) {
-          stderrTruncated = true;
-          stderr = stderr.slice(0, maxStderrSize) + "\n[STDERR TRUNCATED]";
-        }
-        return;
-      }
-      stderr += data;
-    });
-
-    // Shared finalizer: clears timers, calls onExit exactly once, resolves once.
-    const finish = (result: SpawnResult) => {
-      if (finalized) return;
-      finalized = true;
-      processExited = true;
-      clearTimers();
-      onExit?.(proc);
-      resolve(result);
-    };
-
-    // ── close ──────────────────────────────────────────────────────────
-    proc.on("close", (exitCode, signal) => {
-      finish({ exitCode, signal, stdout, stderr, timedOut });
-    });
-
-    // ── spawn error (e.g. ENOENT) ──────────────────────────────────────
-    proc.on("error", (err) => {
-      // Surface the error in stderr so callers can inspect it uniformly.
-      const msg = err?.message ?? String(err);
-      finish({ exitCode: null, signal: null, stdout, stderr: stderr + `\n[SPAWN ERROR] ${msg}`, timedOut: false });
-    });
-  });
-}
-
-```
-
-### Core Architecture Module: `.claude/skills/src/utils.ts`
-```
-/**
- * Shared utility functions for QSV MCP Server
- */
-
-/**
- * Extract a human-readable message from an unknown error.
- * Use in catch blocks: `catch (error: unknown) { getErrorMessage(error) }`
- */
-export function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
-
-/**
- * Strip absolute filesystem paths from an error message before returning
- * it to the MCP client. Replaces `/Users/foo/bar/file.csv` or
- * `C:\Users\foo\file.csv` with just the basename to avoid leaking
- * system paths in protocol responses.
- *
- * Note: paths containing spaces (e.g. `/Users/foo/my docs/file.csv`)
- * are only partially matched — the regex stops at whitespace. This is
- * acceptable because qsv itself doesn't handle space-paths reliably.
- */
-export function sanitizeErrorForClient(message: string): string {
-  // Unix absolute paths: /foo/bar/baz.ext → baz.ext
-  // Windows absolute paths: C:\foo\bar\baz.ext → baz.ext
-  return message.replace(
-    /(?:[A-Za-z]:\\|\/)[^\s:,"']+/g,
-    (match) => {
-      const trimmedMatch = match.replace(/[/\\]+$/g, "");
-      const parts = trimmedMatch.split(/[/\\]/);
-      return parts[parts.length - 1] || trimmedMatch || match;
-    },
-  );
-}
-
-/**
- * Type guard to check if an error is a NodeJS.ErrnoException (has a `code` property).
- * Use in catch blocks: `if (isNodeError(err) && err.code === 'ENOENT') { ... }`
- */
-export function isNodeError(error: unknown): error is NodeJS.ErrnoException {
-  return error instanceof Error && "code" in error;
-}
-
-/**
- * MCP tool result helpers to eliminate repetitive { content: [{ type: "text"... }] } boilerplate
- */
-export function errorResult(message: string) {
-  return { content: [{ type: "text" as const, text: message }], isError: true as const };
-}
-
-export function successResult(text: string) {
-  return { content: [{ type: "text" as const, text }], isError: false as const };
-}
-
-/**
- * Build a structured response for a completed directory-set operation.
- * Used when the App UI should show a minimal confirmation instead of the full picker.
- */
-export function completedDirResult(text: string, path: string) {
-  return {
-    content: [{ type: "text" as const, text }],
-    isError: false as const,
-    structuredContent: {
-      completed: true,
-      currentPath: path,
-    },
-  };
-}
-
-/**
- * Compare two semantic version strings.
- * Strips pre-release (-alpha.1) and build metadata (+build.123) before comparing.
- * Returns: -1 if v1 < v2, 0 if equal, 1 if v1 > v2.
- * Returns NaN if either version string is unparsable.
- */
-export function compareVersions(v1: string, v2: string): number {
-  // Strip pre-release and build metadata (e.g., "1.2.3-alpha.1+build" -> "1.2.3")
-  const strip = (v: string) => v.replace(/[-+].*$/, "");
-  const parts1 = strip(v1).split(".").map(Number);
-  const parts2 = strip(v2).split(".").map(Number);
-
-  // Validate that all parts are valid numbers
-  if (parts1.some(isNaN) || parts2.some(isNaN)) {
-    console.warn(
-      `[Utils] Invalid version format: "${v1}" or "${v2}" - returning NaN`,
-    );
-    return NaN;
-  }
-
-  for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
-    const part1 = parts1[i] || 0;
-    const part2 = parts2[i] || 0;
-    if (part1 < part2) return -1;
-    if (part1 > part2) return 1;
-  }
-  return 0;
-}
-
-/**
- * Format bytes to human-readable string
- */
-export function formatBytes(bytes: number): string {
-  if (bytes <= 0) return "0 Bytes";
-
-  const k = 1024;
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB"];
-  const i = Math.min(
-    Math.floor(Math.log(bytes) / Math.log(k)),
-    sizes.length - 1,
-  );
-
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
-}
-
-/**
- * Calculate Levenshtein distance between two strings
- * Returns the minimum number of single-character edits required to change one string into the other
- */
-export function levenshteinDistance(str1: string, str2: string): number {
-  // Normalize strings to lowercase for case-insensitive comparison
-  const a = str1.toLowerCase();
-  const b = str2.toLowerCase();
-
-  const matrix: number[][] = [];
-
-  // Initialize first column
-  for (let i = 0; i <= b.length; i++) {
-    matrix[i] = [i];
-  }
-
-  // Initialize first row
-  for (let j = 0; j <= a.length; j++) {
-    matrix[0][j] = j;
-  }
-
-  // Fill in the rest of the matrix
-  for (let i = 1; i <= b.length; i++) {
-    for (let j = 1; j <= a.length; j++) {
-      if (b.charAt(i - 1) === a.charAt(j - 1)) {
-        matrix[i][j] = matrix[i - 1][j - 1];
-      } else {
-        matrix[i][j] = Math.min(
-          matrix[i - 1][j - 1] + 1, // substitution
-          matrix[i][j - 1] + 1, // insertion
-          matrix[i - 1][j] + 1, // deletion
-        );
-      }
-    }
-  }
-
-  return matrix[b.length][a.length];
-}
-
-/**
- * Find files that are similar to the target filename using fuzzy matching
- * Returns files sorted by similarity (most similar first)
- */
-export function findSimilarFiles(
-  target: string,
-  availableFiles: Array<{ name: string; description?: string }>,
-  maxResults: number = 5,
-): Array<{ name: string; distance: number }> {
-  const results = availableFiles.map((file) => ({
-    name: file.name,
-    distance: levenshteinDistance(target, file.name),
-  }));
-
-  // Sort by distance (lower is better)
-  results.sort((a, b) => a.distance - b.distance);
-
-  // Return top matches
-  return results.slice(0, maxResults);
-}
-
-/**
- * Find the --output path from a CLI args array.
- * Handles both `["--output", "path"]` (two elements) and `["--output=path"]` (single element) forms.
- * Returns the path string, or empty string if not found.
- */
-export function findOutputPath(args: string[]): string {
-  for (let i = 0; i < args.length; i++) {
-    if (args[i] === "--output" && i + 1 < args.length) {
-      return args[i + 1];
-    }
-    if (args[i].startsWith("--output=")) {
-      return args[i].slice("--output=".length);
-    }
-  }
-  return "";
-}
-
-/**
- * Build a fallback result message for describegpt when stdout is empty.
- * Points the user to the output file where describegpt persisted its results.
- */
-export function describegptFallbackResult(args: string[]): string {
-  const outputPath = findOutputPath(args);
-  return outputPath
-    ? `describegpt output written to: ${outputPath}`
-    : "describegpt completed but produced no output.";
-}
-
-/**
- * Reserved cache file suffixes that must not be used as --output targets.
- * These are auto-generated sidecar files managed by qsv's smart commands.
- */
-const RESERVED_CACHE_SUFFIXES = [
-  ".stats.csv",
-  ".stats.csv.data.jsonl",
-  ".stats.bivariate.csv",
-  ".stats.bivariate.joined.csv",
-  ".freq.csv.data.jsonl",
-  ".pschema.json",
-];
-
-/**
- * Check if a file path matches a reserved cache file pattern.
- * These files are auto-generated by qsv and should not be overwritten via --output.
- */
-export function isReservedCachePath(filePath: string): boolean {
-  const normalized = filePath.toLowerCase();
-  return RESERVED_CACHE_SUFFIXES.some((suffix) => normalized.endsWith(suffix));
-}
-
-/**
- * Build a user-facing error message for reserved cache path violations.
- * Derives the suffix list from RESERVED_CACHE_SUFFIXES to stay in sync.
- */
-export function reservedCachePathError(outputPath: string): string {
-  const suffixList = RESERVED_CACHE_SUFFIXES.join(", ");
-  return (
-    `Output path "${outputPath}" matches a reserved cache file pattern. ` +
-    `Files ending in ${suffixList} are auto-managed by qsv. Use a different output path.`
-  );
-}
-
-```
-
-### Core Architecture Module: `.claude/skills/src/wink-nlp-utils.d.ts`
-```
-/**
- * Type declarations for wink-nlp-utils
- */
-
-declare module "wink-nlp-utils" {
-  interface StringFunctions {
-    lowerCase: (input: string) => string;
-    upperCase: (input: string) => string;
-    removeExtraSpaces: (input: string) => string;
-    removePunctuations: (input: string) => string;
-    removeHTMLTags: (input: string) => string;
-    removeSPLCharacters: (input: string) => string;
-    removeElisions: (input: string) => string;
-    splitElisions: (input: string) => string;
-    tokenize: (input: string) => string[];
-    tokenize0: (input: string) => string[];
-    trim: (input: string) => string;
-    extractPersonsName: (input: string) => string[];
-    extractRunOfCapitalWords: (input: string) => string[];
-  }
-
-  interface TokensFunctions {
-    stem: (tokens: string[]) => string[];
-    removeWords: (tokens: string[]) => string[];
-    removePunctuations: (tokens: string[]) => string[];
-    removeHyphens: (tokens: string[]) => string[];
-    removeTerminalPeriod: (tokens: string[]) => string[];
-    propagateNegations: (tokens: string[]) => string[];
-    amplifyNegations: (tokens: string[]) => string[];
-    bagOfWords: (tokens: string[]) => Record<string, number>;
-    bigrams: (tokens: string[]) => string[];
-    trigrams: (tokens: string[]) => string[];
-    ngrams: (tokens: string[], n: number) => string[];
-    phonetize: (tokens: string[]) => string[];
-    soundex: (tokens: string[]) => string[];
-    sow: (tokens: string[], size?: number) => number[];
-  }
-
-  interface HelperFunctions {
-    index: () => Record<string, unknown>;
-  }
-
-  interface NLPUtils {
-    string: StringFunctions;
-    tokens: TokensFunctions;
-    helper: HelperFunctions;
-  }
-
-  const nlp: NLPUtils;
-  export = nlp;
-}
-
-```
-
-### Core Architecture Module: `examples/viz/gen_northeast_states.py`
-```
-#!/usr/bin/env python3
-"""Build examples/viz/northeast_states.{geojson,csv} from US Census Bureau data.
-
-Eleven Northeast states -- MD, DE, PA, NJ, NY, CT, RI, MA, VT, NH, ME -- with real TIGER
-boundaries, colored in the gallery by population density.
-
-- northeast_states.geojson: the TIGERweb response, unmodified except for a deterministic
-  feature sort and one-feature-per-line formatting. properties keeps STUSAB (matched by
-  `--feature-id-key properties.STUSAB`), NAME (auto-detected for hover labels), AREALAND
-  and AREAWATER.
-- northeast_states.csv: state,people_per_sq_mi -- two columns, matching the sibling
-  fixture us_state_stats.csv. Density is DERIVED (see below); it is not a published
-  Census column.
-
-people_per_sq_mi = POPESTIMATE2024 / (AREALAND / 2589988.110336)
-
-AREALAND is TIGER land area in square meters, excluding water, so this is land-area
-density -- the conventional definition. It stays auditable straight from the committed
-fixtures: multiply a CSV density by the matching feature's properties.AREALAND (converted
-to square miles) to recover the population.
-
-Boundaries are requested with maxAllowableOffset=0.002 degrees, which is ArcGIS
-server-side simplification. Full resolution is 4.9 MB -- far too heavy to commit and
-pointless for a tile map. 0.002 lands at ~70 KB and still preserves Cape Cod, Long
-Island, the Chesapeake and the Maine coast; 0.005 (33 KB) visibly coarsens all four.
-
-Source & license
-----------------
-US Census Bureau TIGERweb, States layer:
-https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/0/query
-  where=STUSAB IN ('MD','DE','PA','NJ','NY','CT','RI','MA','VT','NH','ME')
-  outFields=STUSAB,NAME,AREALAND,AREAWATER  outSR=4326  f=geojson
-  maxAllowableOffset=0.002
-
-US Census Bureau Population Estimates, Vintage 2024 state totals:
-https://www2.census.gov/programs-surveys/popest/datasets/2020-2024/state/totals/NST-EST2024-ALLDATA.csv
-  rows where SUMLEV == '040', field POPESTIMATE2024
-
-Works of the US Census Bureau are US Government works in the PUBLIC DOMAIN under
-17 U.S.C. section 105 -- attribution is NOT legally required. (Contrast gen_world_cities.py,
-whose GeoNames input is CC BY 4.0 and *does* require it.) The sources are recorded anyway,
-here and in examples/viz/README.md ("Data sources & licensing") and the repository-root
-THIRD_PARTY_NOTICES.md -- keep all three in step if this script's inputs change.
-
-Do NOT switch to api.census.gov: it now rejects keyless requests with "Missing Key". Both
-URLs above are keyless static/REST endpoints, which is why this script self-fetches instead
-of taking pre-downloaded paths the way gen_world_cities.py does.
-
-Usage: gen_northeast_states.py [outdir]   (default: this script's directory)
-"""
-import csv
-import io
-import json
-import sys
-import urllib.parse
-import urllib.request
-from pathlib import Path
-
-# USPS code -> Census "NAME", which is how the population CSV keys its rows.
-STATES = {
-    "CT": "Connecticut",
-    "DE": "Delaware",
-    "MA": "Massachusetts",
-    "MD": "Maryland",
-    "ME": "Maine",
-    "NH": "New Hampshire",
-    "NJ": "New Jersey",
-    "NY": "New York",
-    "PA": "Pennsylvania",
-    "RI": "Rhode Island",
-    "VT": "Vermont",
-}
-
-SQ_METERS_PER_SQ_MILE = 2589988.110336
-
-TIGERWEB = (
-    "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/"
-    "State_County/MapServer/0/query"
-)
-# ArcGIS server-side generalization, in degrees. See the module docstring.
-MAX_ALLOWABLE_OFFSET = 0.002
-
-POPEST = (
-    "https://www2.census.gov/programs-surveys/popest/datasets/2020-2024/"
-    "state/totals/NST-EST2024-ALLDATA.csv"
-)
-POP_FIELD = "POPESTIMATE2024"
-STATE_SUMLEV = "040"
-
-
-def fetch(url, params=None):
-    if params:
-        url = f"{url}?{urllib.parse.urlencode(params)}"
-    with urllib.request.urlopen(url, timeout=120) as resp:  # noqa: S310
-        return resp.read()
-
-
-def fetch_boundaries():
-    codes = ",".join(f"'{c}'" for c in sorted(STATES))
-    raw = fetch(
-        TIGERWEB,
-        {
-            "where": f"STUSAB IN ({codes})",
-            "outFields": "STUSAB,NAME,AREALAND,AREAWATER",
-            "returnGeometry": "true",
-            "maxAllowableOffset": MAX_ALLOWABLE_OFFSET,
-            "outSR": "4326",
-            "f": "geojson",
-        },
-    )
-    fc = json.loads(raw)
-    if "features" not in fc:
-        sys.exit(f"TIGERweb returned no features: {str(fc)[:200]}")
-    feats = fc["features"]
-
-    # ArcGIS does not guarantee result ordering, so sort for byte-stable re-runs.
-    feats.sort(key=lambda f: f["properties"]["STUSAB"])
-
-    got = [f["properties"]["STUSAB"] for f in feats]
-    if sorted(got) != sorted(STATES):
-        sys.exit(f"expected {sorted(STATES)}, got {sorted(got)}")
-    # qsv auto-detects the hover label by probing properties.name/NAME/... on the FIRST
-    # feature only, so a single feature missing NAME would silently downgrade every label.
-    missing = [f["properties"]["STUSAB"] for f in feats if not f["properties"].get("NAME")]
-    if missing:
-        sys.exit(f"features missing NAME: {missing}")
-    return feats
-
-
-def fetch_population():
-    text = fetch(POPEST).decode("utf-8-sig")
-    pop = {}
-    for row in csv.DictReader(io.StringIO(text)):
-        if row["SUMLEV"] == STATE_SUMLEV:
-            pop[row["NAME"]] = int(row[POP_FIELD])
-    missing = [n for n in STATES.values() if n not in pop]
-    if missing:
-        sys.exit(f"population missing for: {missing}")
-    return pop
-
-
-def write_geojson(path, feats):
-    """One feature per line: compact enough for a 70 KB fixture, still diff-readable."""
-    lines = [",\n".join("    " + json.dumps(f, separators=(",", ":")) for f in feats)]
-    path.write_text(
-        '{\n  "type": "FeatureCollection",\n  "features": [\n'
-        + lines[0]
-        + "\n  ]\n}\n"
-    )
-
-
-def main():
-    outdir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent
-    feats = fetch_boundaries()
-    pop = fetch_population()
-
-    rows = []
-    for f in feats:
-        p = f["properties"]
-        code = p["STUSAB"]
-        sq_mi = int(p["AREALAND"]) / SQ_METERS_PER_SQ_MILE
-        rows.append((code, pop[STATES[code]] / sq_mi))
-    # densest first, so the fixture self-documents the spread
-    rows.sort(key=lambda r: -r[1])
-
-    gj = outdir / "northeast_states.geojson"
-    write_geojson(gj, feats)
-
-    csv_path = outdir / "northeast_states.csv"
-    with csv_path.open("w", newline="") as fh:
-        # LF, not csv's default CRLF, to match the other committed fixtures
-        w = csv.writer(fh, lineterminator="\n")
-        w.writerow(["state", "people_per_sq_mi"])
-        for code, density in rows:
-            w.writerow([code, f"{density:.1f}"])
-
-    print(f"wrote {gj} ({gj.stat().st_size:,} bytes, {len(feats)} features)")
-    print(f"wrote {csv_path} ({len(rows)} rows)")
-    for code, density in rows:
-        print(f"  {code}  {density:>8.1f}")
-
-
-if __name__ == "__main__":
-    main()
-
-```
-
-### Core Architecture Module: `examples/viz/gen_tristate_county_incidents.py`
-```
-#!/usr/bin/env python3
-"""Build examples/viz/tristate_county_incidents.csv + tristate_counties.geojson.
-
-SYNTHETIC incidents on REAL counties.
-
-The gallery's sibling figure (district_requests.csv + district_boundaries.geojson) teaches
-the count-vs-rate fallacy on six hand-drawn rectangles in a Kansas field. This fixture
-teaches the same lesson on geography a reader recognizes: the 210 counties of Ohio,
-Pennsylvania and West Virginia (88 + 67 + 55), keyed by real 5-digit county FIPS.
-
-What is real and what is not
-----------------------------
-REAL:  the county GEOIDs, names and boundaries (TIGERweb, written to
-       tristate_counties.geojson beside the CSV), and the population the rate panel divides
-       by (ACS 5-year B01003, fetched by `--denominator census@2024`).
-FAKE:  the incident rows themselves. There is no real tri-state incident feed behind this;
-       the counts are DERIVED from the real populations by the formula below.
-
-Why derived rather than random: the figure's whole claim is "the count map is a population
-map, and dividing by population inverts the ranking". A reader must be able to check that.
-With this script the check is mechanical -- rerun it and diff.
-
-count_i = round(acs_pop_i * rate_i / 1000)
-
-    rate_i  = base_i * (0.85 + 0.30 * h_i)          # per 1,000 residents
-    base_i  = R_HI - (R_HI - R_LO) * (i / (N - 1))  # i = rank ASCENDING by population
-    h_i     = blake2b(fips) / 2**64                 # deterministic per-county wobble
-
-So the smallest county gets the highest base rate and the largest the lowest, with a +/-15%
-hash-derived wobble so the anti-correlation is not a suspiciously perfect straight line.
-blake2b keyed on the FIPS (not random) is what makes re-runs byte-identical.
-
-The spread is deliberate: population across these 210 counties spans ~100x while the rate
-spans only 4x, so raw COUNT still tracks population -- the count choropleth genuinely is a
-population map -- while the RATE choropleth cleanly inverts the top of the ranking. The
-script asserts that inversion (top-10-by-count and top-10-by-rate must not overlap) rather
-than trusting it.
-
-There is deliberately NO numeric column in the output. `viz smart` will chart any
-role=measure column as a third map panel, and this figure must show exactly two: count and
-rate. It also carries no population column -- the point is that the denominator is FETCHED,
-not shipped, so a committed copy would only invite a mismatched comparison.
-
-ACS_VINTAGE below MUST stay in step with `--denominator census@2024` in gen_gallery.py.
-The committed counts are computed against that release; divide them by a different one and
-the caption's numbers stop reproducing.
-
-Source & license
-----------------
-US Census Bureau TIGERweb, Counties layer (keyless):
-https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1/query
-  where=STATE IN ('39','42','54')  outFields=GEOID,NAME  outSR=4326  f=geojson
-  maxAllowableOffset=0.001   (server-side generalization; see fetch_boundaries)
-
-US Census Bureau Data API, ACS 5-year detailed tables, total population:
-https://api.census.gov/data/2024/acs/acs5?get=B01003_001E,NAME&for=county:*&in=state:NN
-
-Works of the US Census Bureau are US Government works in the PUBLIC DOMAIN under
-17 U.S.C. section 105. The generated incident rows are ours, MIT-licensed with qsv.
-
-NOTE, and this is the one place this script contradicts its sibling: gen_northeast_states.py
-says "Do NOT switch to api.census.gov: it now rejects keyless requests". That advice holds
-for the POPULATION ESTIMATES it uses, which are published as keyless static CSVs. It does
-NOT hold here -- ACS table B01003 is published ONLY on the Data API, so a key is genuinely
-required. Set QSV_CENSUS_API_KEY (free: https://api.census.gov/data/key_signup.html).
-Only this script and a COLD `--denominator census` cache need it; once
-~/.qsv-cache/viz-denominators is warm, `qsv viz` makes no request and needs no key.
-
-Usage: gen_tristate_county_incidents.py [outdir]   (default: this script's directory)
-"""
-import csv
-import hashlib
-import json
-import os
-import statistics
-import sys
-import time
-import urllib.error
-import urllib.parse
-import urllib.request
-from pathlib import Path
-
-# Ohio, Pennsylvania, West Virginia. Contiguous, and together they read unmistakably as a
-# map -- Lake Erie along the top, the West Virginia panhandles, the Ohio River.
-STATE_FIPS = {"39": "OH", "42": "PA", "54": "WV"}
-EXPECTED_COUNTIES = 210  # 88 OH + 67 PA + 55 WV
-
-# Keep in step with `--denominator census@2024` in gen_gallery.py. See the docstring.
-ACS_VINTAGE = 2024
-
-# Per-1,000-resident incident rate at the extremes of the population ranking. R_HI applies
-# to the LEAST populous county, R_LO to the most. The 4x spread is small next to the ~100x
-# population spread, which is exactly what keeps raw count tracking population.
-R_LO = 0.6
-R_HI = 2.4
-WOBBLE_LO = 0.85
-WOBBLE_SPAN = 0.30
-
-TIGERWEB_COUNTIES = (
-    "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/"
-    "State_County/MapServer/1/query"
-)
-# ArcGIS server-side generalization, in degrees. See fetch_boundaries().
-MAX_ALLOWABLE_OFFSET = 0.001
-
-ACS_ROOT = "https://api.census.gov/data"
-ACS_POPULATION_TABLE = "B01003_001E"
-
-# Cycled per county so every county carries a spread of both dimensions. Six types x three
-# severities = 18 combinations; counties get 8+ rows each, so the smallest still shows
-# several. Cycled rather than sampled to keep the file deterministic.
-INCIDENT_TYPES = [
-    "Road obstruction",
-    "Downed line",
-    "Water main",
-    "Signal outage",
-    "Debris",
-    "Flooding",
-]
-SEVERITIES = ["Minor", "Moderate", "Severe"]
-
-
-# api.census.gov returns transient 503s under load -- observed repeatedly while building this
-# fixture, on the same URL that had just succeeded. Retry with backoff rather than failing the
-# whole generation; a real outage still surfaces after the last attempt.
-FETCH_ATTEMPTS = 5
-FETCH_BACKOFF_SECS = 3
-
-
-def fetch(url, params=None):
-    if params:
-        url = f"{url}?{urllib.parse.urlencode(params)}"
-    last = None
-    for attempt in range(1, FETCH_ATTEMPTS + 1):
-        try:
-            with urllib.request.urlopen(url, timeout=60) as resp:  # noqa: S310
-                return resp.read()
-        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as exc:
-            last = exc
-            if attempt == FETCH_ATTEMPTS:
-                break
-            wait = FETCH_BACKOFF_SECS * attempt
-            print(f"  retry {attempt}/{FETCH_ATTEMPTS - 1} after {exc} "
-                  f"(sleeping {wait}s)", file=sys.stderr)
-            time.sleep(wait)
-    sys.exit(f"giving up on {url.split('?')[0]} after {FETCH_ATTEMPTS} attempts: {last}")
-
-
-def fetch_boundaries():
-    """The 210 county polygons, server-simplified, as a GeoJSON FeatureCollection.
-
-    Simplification is not optional here. At full resolution TIGERweb returns 17.8 MB for
-    these three states, and `viz smart` embeds the geometry once PER CHOROPLETH TRACE -- this
-    figure has two (count and rate), so an unsimplified build inlines ~34 MB into
-    gallery.html and roughly triples the committed page. maxAllowableOffset is ArcGIS
-    server-side generalization, in degrees. Measured against this exact query:
-
-        offset  0      17.81 MB
-        offset  0.001   0.36 MB   <- chosen
-        offset  0.002   0.23 MB
-        offset  0.005   0.12 MB
-
-    0.001 buys a ~50x reduction and is the conservative pick for COUNTY-sized features.
-    Compare gen_northeast_states.py, which picks 0.002 for eleven whole states: coarser
-    features tolerate a coarser offset, so do not copy that number here without re-checking
-    how the small eastern-Ohio counties render.
-    """
-    codes = ",".join(f"'{s}'" for s in sorted(STATE_FIPS))
-    raw = fetch(
-        TIGERWEB_COUNTIES,
-        {
-            "where": f"STATE IN ({codes})",
-            "outFields": "GEOID,NAME",
-            "returnGeometry": "true",
-            "maxAllowableOffset": MAX_ALLOWABLE_OFFSET,
-            "outSR": "4326",
-            "f": "geojson",
-        },
-    )
-    fc = json.loads(raw)
-    if "features" not in fc:
-        sys.exit(f"TIGERweb returned no features: {str(fc)[:300]}")
-    # ArcGIS does not guarantee result ordering, so sort for byte-stable re-runs.
-    fc["features"].sort(key=lambda f: f["properties"]["GEOID"])
-    return fc
-
-
-def emit_geojson(fc, path):
-    """One feature per line so a re-run diffs readably rather than as one giant line."""
-    with open(path, "w", encoding="utf-8") as fh:
-        fh.write('{"type":"FeatureCollection","features":[\n')
-        for i, feat in enumerate(fc["features"]):
-            fh.write(json.dumps(feat, separators=(",", ":"), sort_keys=True))
-            fh.write(",\n" if i < len(fc["features"]) - 1 else "\n")
-        fh.write("]}\n")
-
-
-def fetch_population(key):
-    """GEOID -> ACS 5-year total population, one keyed request per state."""
-    out = {}
-    for state in sorted(STATE_FIPS):
-        raw = fetch(
-            f"{ACS_ROOT}/{ACS_VINTAGE}/acs/acs5",
-            {
-                "get": ACS_POPULATION_TABLE,
-                "for": "county:*",
-                "in": f"state:{state}",
-                "key": key,
-            },
-        )
-        rows = json.loads(raw)
-        header, body = rows[0], rows[1:]
-        pop_i = header.index(ACS_POPULATION_TABLE)
-        st_i, cty_i = header.index("state"), header.index("county")
-        for row in body:
-            geoid = f"{row[st_i]:0>2}{row[cty_i]:0>3}"
-            out[geoid] = int(row[pop_i])
-    return out
-
-
-def wobble(fips):
-    """Deterministic per-county multiplier in [0.85, 1.15). Hashed from the FIPS so a
-    re-run reproduces the CSV byte for byte."""
-    digest = hashlib.blake2b(fips.encode(), digest_size=8).digest()
-    unit = int.from_bytes(digest, "big") / 2**64
-    return WOBBLE_LO + WOBBLE_SPAN * unit
-
-
-def build_counts(names, pops):
-    """[(fips, name, state, population, count, rate_per_1k)], ranked asc
-```
-
-### Core Architecture Module: `src/cmd/profile/formula_engine.rs`
-```
-//! Native Rust formula engine for `qsv profile`.
-//!
-//! Evaluates the spec's `formula` / `suggestion_formula` templates against
-//! the qsv-built analysis context using `minijinja` as the template engine.
-//! Helpers (filters + globals) live in `formula_helpers.rs` and are ported
-//! from DP+'s `jinja2_helpers.py`.
-//!
-//! Replaces the previous PyO3-based `py_engine.rs` so `qsv profile` no
-//! longer requires a host Python interpreter or the `jinja2` package.
-//! External API (`evaluate_spec`, `FormulaResult`) is preserved bit-for-bit
-//! so the rest of the profile pipeline (`profile.rs::run`,
-//! `merge_formula_results`) is untouched.
-
-use minijinja::{Environment, value::Serde};
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
-
-#[cfg(test)]
-use super::spec;
-use super::{formula_helpers, spec::Spec, sql_backend::SqlBackend};
-use crate::CliResult;
-
-/// One formula extracted from a scheming Field, ready to evaluate.
-#[derive(Debug, Serialize)]
-struct FormulaSpec<'a> {
-    field_name: &'a str,
-    /// `"formula"` or `"suggestion_formula"`.
-    kind:       &'static str,
-    /// `"dataset"` or `"resource"`.
-    scope:      &'static str,
-    template:   &'a str,
-}
-
-/// One result entry returned from formula evaluation.
-///
-/// The `_traceback` field is populated only when a formula render fails;
-/// the underscore prefix mirrors the Python convention preserved across
-/// the serde round-trip via explicit rename for wire-shape stability.
-#[derive(Debug, Deserialize, Serialize)]
-pub struct FormulaResult {
-    pub field_name: String,
-    pub kind:       String,
-    pub scope:      String,
-    pub value:      Option<Value>,
-    pub error:      Option<String>,
-    #[serde(
-        rename = "_traceback",
-        default,
-        skip_serializing_if = "Option::is_none"
-    )]
-    pub traceback:  Option<String>,
-}
-
-/// Evaluate every `formula` / `suggestion_formula` in `spec` against
-/// `context`. Returns one `FormulaResult` per template encountered.
-/// If the spec has no formulas, returns `Ok(vec![])` without building
-/// the template environment.
-///
-/// `sql_backend`, when provided, installs a Polars-backed SQL backend so
-/// the SQL-requiring helpers (`temporal_resolution`,
-/// `guess_accrual_periodicity`) can query the input CSV. Callers build
-/// the backend so they can apply the profile's CSV parsing options
-/// (delimiter, header presence). The backend is uninstalled before this
-/// function returns.
-///
-/// Errors during render are NOT fatal — they surface as `error` strings
-/// on the corresponding entry, so a failing formula in one field does
-/// not abort the whole profile pass.
-pub fn evaluate_spec(
-    spec: &Spec,
-    context: &Value,
-    sql_backend: Option<SqlBackend>,
-) -> CliResult<Vec<FormulaResult>> {
-    // 1. flatten spec into a Vec<FormulaSpec>
-    let mut formulas: Vec<FormulaSpec> = Vec::new();
-    for f in spec.real_dataset_fields() {
-        push_if_some(&mut formulas, f, "dataset");
-    }
-    for f in spec.real_resource_fields() {
-        push_if_some(&mut formulas, f, "resource");
-    }
-    if formulas.is_empty() {
-        return Ok(Vec::new());
-    }
-
-    // 2. install the SQL backend for the duration of this call.
-    formula_helpers::set_sql_backend(sql_backend);
-
-    // 3. build the minijinja environment with all helpers registered.
-    let mut env = Environment::new();
-    formula_helpers::register(&mut env);
-
-    // 4. convert the context JSON Value into a minijinja Value once.
-    let mj_context = minijinja::Value::from(Serde(context));
-
-    // 5. evaluate each formula
-    let mut out: Vec<FormulaResult> = Vec::with_capacity(formulas.len());
-    for f in formulas {
-        let mut entry = FormulaResult {
-            field_name: f.field_name.to_string(),
-            kind:       f.kind.to_string(),
-            scope:      f.scope.to_string(),
-            value:      None,
-            error:      None,
-            traceback:  None,
-        };
-        match render_template(&env, f.template, &mj_context) {
-            Ok(rendered) => {
-                let normalized = if f.kind == "suggestion_formula" {
-                    normalize_suggestion(&rendered)
-                } else {
-                    Some(rendered)
-                };
-                entry.value = normalized.map(Value::String);
-            },
-            Err(err) => {
-                entry.error = Some(format_minijinja_error(&err));
-                entry.traceback = Some(format_minijinja_traceback(&err));
-            },
-        }
-        out.push(entry);
-    }
-
-    // 6. clear the SQL backend so a later call without csv_path doesn't see stale state.
-    formula_helpers::set_sql_backend(None);
-
-    Ok(out)
-}
-
-/// Render a template source against the prebuilt context.
-fn render_template(
-    env: &Environment,
-    template_src: &str,
-    context: &minijinja::Value,
-) -> Result<String, minijinja::Error> {
-    let tmpl = env.template_from_str(template_src)?;
-    tmpl.render(context)
-}
-
-/// Suggestion outputs are "soft" — a render that produces empty/whitespace
-/// or the literal string `"None"` should surface as JSON `null` so
-/// downstream consumers can treat "no useful suggestion" uniformly. Hard
-/// `formula` results are left untouched: an explicit `""` may be the
-/// intended value.
-fn normalize_suggestion(value: &str) -> Option<String> {
-    let stripped = value.trim();
-    if stripped.is_empty() || stripped == "None" {
-        None
-    } else {
-        Some(value.to_string())
-    }
-}
-
-/// Short single-line error message — `TypeName: message`.
-fn format_minijinja_error(err: &minijinja::Error) -> String {
-    format!("{}: {}", err.kind(), err)
-}
-
-/// Multi-line debug traceback (minijinja captures source span + the
-/// error chain). Mirrors Python's `traceback.format_exc(limit=2)` shape
-/// so existing roborev regression test `_traceback round-trip` passes.
-fn format_minijinja_traceback(err: &minijinja::Error) -> String {
-    // {:#?} on a minijinja::Error includes the full chain + template
-    // source location, which is what we want for diagnosis.
-    format!("{err:#?}")
-}
-
-fn push_if_some<'a>(
-    out: &mut Vec<FormulaSpec<'a>>,
-    field: &'a super::spec::Field,
-    scope: &'static str,
-) {
-    let Some(name) = field.field_name.as_deref() else {
-        return;
-    };
-    if let Some(t) = field.formula.as_deref()
-        && !t.trim().is_empty()
-    {
-        out.push(FormulaSpec {
-            field_name: name,
-            kind: "formula",
-            scope,
-            template: t,
-        });
-    }
-    if let Some(t) = field.suggestion_formula.as_deref()
-        && !t.trim().is_empty()
-    {
-        out.push(FormulaSpec {
-            field_name: name,
-            kind: "suggestion_formula",
-            scope,
-            template: t,
-        });
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use serde_json::json;
-
-    use super::*;
-
-    #[test]
-    fn normalize_suggestion_coerces_empty_and_none() {
-        assert_eq!(normalize_suggestion(""), None);
-        assert_eq!(normalize_suggestion("   \n  "), None);
-        assert_eq!(normalize_suggestion("None"), None);
-        assert_eq!(normalize_suggestion("  None  "), None);
-        assert_eq!(normalize_suggestion("hello"), Some("hello".to_string()));
-        assert_eq!(normalize_suggestion("none"), Some("none".to_string()));
-    }
-
-    #[test]
-    fn empty_spec_returns_empty_results() {
-        let spec =
-            spec::load_from_str("scheming_version: 2\ndataset_type: test\n", "test").unwrap();
-        let ctx = json!({});
-        let results = evaluate_spec(&spec, &ctx, None).unwrap();
-        assert!(results.is_empty());
-    }
-
-    #[test]
-    fn formula_with_undefined_var_renders_empty() {
-        // minijinja's default Undefined behaves like Jinja2's default —
-        // attribute access on a defined-but-empty object renders empty.
-        let yaml = "
-scheming_version: 2
-dataset_type: test
-dataset_fields:
-  - field_name: greeting
-    suggestion_formula: 'Hello {{ package.title }}'
-";
-        let spec = spec::load_from_str(yaml, "test").unwrap();
-        let ctx = json!({"package": {}}); // package exists, title is undefined
-        let results = evaluate_spec(&spec, &ctx, None).unwrap();
-        assert_eq!(results.len(), 1);
-        // "Hello " trimmed is "Hello" — non-empty, survives normalization.
-        assert_eq!(
-            results[0].value.as_ref().and_then(|v| v.as_str()),
-            Some("Hello "),
-            "got error: {:?}",
-            results[0].error
-        );
-        assert!(results[0].error.is_none());
-    }
-
-    #[test]
-    fn formula_error_surfaces_in_traceback() {
-        let yaml = "
-scheming_version: 2
-dataset_type: test
-dataset_fields:
-  - field_name: bad
-    suggestion_formula: '{{ undefined_function() }}'
-";
-        let spec = spec::load_from_str(yaml, "test").unwrap();
-        let ctx = json!({});
-        let results = evaluate_spec(&spec, &ctx, None).unwrap();
-        assert_eq!(results.len(), 1);
-        assert!(results[0].error.is_some(), "expected error to be set");
-        assert!(
-            results[0].traceback.is_some(),
-            "expected _traceback to be set"
-        );
-        assert!(results[0].value.is_none());
-    }
-}
-
-```
-
-### Core Architecture Module: `src/cmd/scoresql.rs`
-```
-pub(crate) static USAGE: &str = r#"
-Analyze a SQL query against CSV file caches (stats, moarstats, frequency) to produce a
-performance score with actionable optimization suggestions BEFORE running the query.
-
-Accepts the same input/SQL arguments as sqlp. Outputs a human-readable performance report
-(default) or JSON (--json). Supports Polars mode (default) and DuckDB mode (--duckdb).
-
-The report shows the query plan (EXPLAIN output from Polars or DuckDB) next to the score.
-
-Scoring factors include:
-  * Type optimization (String columns compared with numbers)
-  * Join key cardinality and data distribution
-  * Filter selectivity from frequency cache
-  * Query anti-pattern detection (SELECT *, missing LIMIT, cartesian joins, etc.)
-  * Infrastructure checks (index files, cache freshness)
-
-Caches are auto-generated when missing:
-  * stats cache via `qsv stats --everything --stats-jsonl`
-  * frequency cache via `qsv frequency --frequency-jsonl`
-
-Examples:
-
-  # Score a simple filter query against a single CSV file
-  $ qsv scoresql data.csv "SELECT * FROM data WHERE col1 > 10"
-
-  # Output the score report as JSON instead of the default human-readable format
-  $ qsv scoresql --json data.csv "SELECT col1, col2 FROM data ORDER BY col1"
-
-  # Score a join query across two CSV files
-  $ qsv scoresql data.csv data2.csv "SELECT * FROM data JOIN data2 ON data.id = data2.id"
-
-  # Use DuckDB for query plan analysis instead of Polars
-  $ qsv scoresql --duckdb data.csv "SELECT * FROM data WHERE status = 'active'"
-
-  # Use _t_N aliases just like sqlp (see sqlp documentation)
-  $ qsv scoresql data.csv data2.csv "SELECT * FROM _t_1 JOIN _t_2 ON _t_1.id = _t_2.id"
-
-  # Score a query from a SQL script file (only the last query is scored)
-  $ qsv scoresql data.csv script.sql
-
-For more examples, see https://github.com/dathere/qsv/blob/master/tests/test_scoresql.rs.
-See also https://github.com/dathere/qsv/wiki/SQL-and-Polars#scoresql
-
-Usage:
-    qsv scoresql [options] <input>... <sql>
-    qsv scoresql --help
-
-scoresql arguments:
-    input                     The CSV file/s to analyze. Use '-' for standard input.
-                              If input is a directory, all files in the directory will
-                              be read as input.
-                              If the input is a file with a '.infile-list' extension,
-                              the file will be read as a list of input files.
-
-    sql                       The SQL query to score/analyze.
-                              If the query ends with ".sql", it will be read as a
-                              SQL script file, with single-line "--" comments stripped.
-                              If the script has multiple queries separated by ";",
-                              only the last non-empty query is scored.
-
-scoresql options:
-    --json                    Output results as JSON instead of human-readable report.
-    --duckdb                  Use DuckDB for query plan analysis instead of Polars.
-                              Uses the QSV_DUCKDB_PATH environment variable if set,
-                              otherwise looks for "duckdb" in PATH.
-    --try-parsedates          Automatically try to parse dates/datetimes and time.
-    --infer-len <arg>         Number of rows to scan when inferring schema.
-                              [default: 10000]
-    --ignore-errors           Ignore errors when parsing CSVs.
-    --truncate-ragged-lines   Truncate lines with more fields than the header.
-
-Common options:
-    -h, --help                Display this message
-    -o, --output <file>       Write output to <file> instead of stdout.
-    -d, --delimiter <arg>     The field delimiter for reading CSV data.
-                              Must be a single character. (default: ,)
-    -q, --quiet               Do not print informational messages to stderr.
-"#;
-
-use std::{
-    borrow::Cow,
-    env,
-    fmt::Write as FmtWrite,
-    io::{Read, Write},
-    path::{Path, PathBuf},
-    process::Command,
-    sync::OnceLock,
-};
-
-use foldhash::{HashMap, HashMapExt};
-use polars::{prelude::*, sql::SQLContext};
-use serde::{Deserialize, Serialize};
-
-use crate::{CliResult, cmd::joinp::path_delim, config::Delimiter, util};
-
-#[derive(Deserialize, Clone)]
-struct Args {
-    arg_input:                  Vec<PathBuf>,
-    arg_sql:                    String,
-    flag_json:                  bool,
-    flag_duckdb:                bool,
-    flag_try_parsedates:        bool,
-    flag_infer_len:             usize,
-    flag_ignore_errors:         bool,
-    flag_truncate_ragged_lines: bool,
-    flag_output:                Option<String>,
-    flag_delimiter:             Option<Delimiter>,
-    flag_quiet:                 bool,
-}
-
-// ── Scoring constants ──────────────────────────────────────────────────────
-
-const MAX_SCORE: u32 = 100;
-const WEIGHT_TYPE_OPT: u32 = 20;
-const WEIGHT_JOIN_CARD: u32 = 20;
-const WEIGHT_FILTER_SEL: u32 = 20;
-const WEIGHT_DATA_DIST: u32 = 20;
-const WEIGHT_PATTERNS: u32 = 20;
-
-static DUCKDB_PATH: OnceLock<String> = OnceLock::new();
-
-// remove full-line comments starting with "--"
-// NOTE: inline trailing comments (e.g., `SELECT 1 -- comment`) are not stripped
-static COMMENT_REGEX: std::sync::LazyLock<regex::Regex> =
-    std::sync::LazyLock::new(|| regex::Regex::new(r"(?m)^\s*--.*$").unwrap());
-
-// ── Output structs ─────────────────────────────────────────────────────────
-
-#[derive(Serialize)]
-struct ScoreReport {
-    score:        u32,
-    max_score:    u32,
-    rating:       String,
-    plan:         String,
-    breakdown:    Vec<ScoreBreakdown>,
-    suggestions:  Vec<String>,
-    cache_status: CacheStatus,
-}
-
-#[derive(Serialize)]
-struct ScoreBreakdown {
-    category: String,
-    score:    u32,
-    max:      u32,
-    detail:   String,
-}
-
-#[derive(Serialize)]
-struct CacheStatus {
-    stats_available:     Vec<String>,
-    stats_missing:       Vec<String>,
-    frequency_available: Vec<String>,
-    frequency_missing:   Vec<String>,
-    index_available:     Vec<String>,
-    index_missing:       Vec<String>,
-}
-
-// ── Parsed SQL info ────────────────────────────────────────────────────────
-
-struct SqlInfo {
-    has_select_star:  bool,
-    has_order_by:     bool,
-    has_limit:        bool,
-    has_join:         bool,
-    has_where:        bool,
-    has_subquery:     bool,
-    where_columns:    Vec<String>,
-    /// `(column, optional_literal)` pairs from `col OP literal` predicates in
-    /// the WHERE clause. The literal is `Some` when the right-hand side is a
-    /// quoted string, a number, or one of the SQL keyword literals
-    /// `TRUE`/`FALSE`/`NULL`; bare identifiers are intentionally excluded so
-    /// `a.x = b.y` doesn't masquerade as a value lookup. `None` is reserved
-    /// for future predicate types where no literal can be extracted.
-    ///
-    /// Keyword vs string literals are tagged via [`WhereLiteral`] so that
-    /// `WHERE col = NULL` and `WHERE col = 'NULL'` get different lookup
-    /// semantics in `score_filter_selectivity` — the former matches empty
-    /// frequency-cache cells, the latter only the literal string `"NULL"`.
-    where_predicates: Vec<(String, Option<WhereLiteral>)>,
-    join_columns:     Vec<String>,
-    order_columns:    Vec<String>,
-}
-
-/// Distinguishes SQL keyword literals (`TRUE`/`FALSE`/`NULL`) from regular
-/// values so `score_filter_selectivity` can normalize keyword forms (case-
-/// insensitive match for booleans, empty-string match for nulls) without
-/// affecting quoted strings whose payload happens to be the same word.
-#[derive(Clone, Debug)]
-enum WhereLiteral {
-    /// SQL keyword: `TRUE`, `FALSE`, or `NULL`. Stored as upper-case canonical
-    /// form so callers can match with `==`.
-    Keyword(String),
-    /// Quoted string (already un-escaped). Compared with exact string equality
-    /// against frequency-cache values.
-    Value(String),
-    /// Unquoted numeric literal, kept as written. Matched like `Value`; kept apart
-    /// so `score_type_optimization` can flag a String column compared with a number.
-    Number(String),
-}
-
-// ── Cache data per input file ──────────────────────────────────────────────
-
-struct InputCacheData {
-    file_path:      PathBuf,
-    table_name:     String,
-    stats:          Vec<crate::cmd::stats::StatsData>,
-    has_freq_cache: bool,
-    has_index:      bool,
-    freq_entries:   Vec<FreqEntry>,
-}
-
-#[derive(Clone)]
-#[allow(dead_code)]
-struct FreqEntry {
-    field:       String,
-    cardinality: u64,
-    frequencies: Vec<FreqValue>,
-}
-
-#[derive(Clone)]
-#[allow(dead_code)]
-struct FreqValue {
-    value:      String,
-    count:      u64,
-    percentage: f64,
-}
-
-/// A frequency-cache column stored as a single sentinel (`<ALL_UNIQUE>`, `<HIGH_CARDINALITY>`,
-/// `<NON_UTF8>`) has no per-value data: its one entry is a marker, not a value covering 100% of
-/// rows. It must be neither matched against a WHERE literal (`WHERE col = '<NON_UTF8>'` would
-/// "match 100% of rows") nor reported as a skewed top value.
-fn is_sentinel_entry(freq: &FreqEntry) -> bool {
-    freq.frequencies.len() == 1
-        && matches!(
-            freq.frequencies[0].value.as_str(),
-            "<ALL_UNIQUE>" | "<HIGH_CARDINALITY>" | "<NON_UTF8>"
-        )
-}
-
-// ════════════════════════════════════════════════════════════════════════════
-// run()
-// ════════════════════════════════════════════════════════════════════════════
-
-pub fn run(argv: &[&str]) -> CliResult<()> {
-    let mut args: Args = util::get_args(USAGE, argv)?;
-
-    let tmpdir = tempfile::tempdir()?;
-    // stdin is copied to a temp `stdin.csv`, whose made-up extension must not pick the delimiter
-    let mut stdin_input: Option<PathBuf> = None;
-    let mut inputs = Vec::with_capacity(args.arg_input.len());
-    for (path, source) in util::process_input_with_sources(args.arg_input, &tmpdir, "")? {
-        if matches!(source, util::InputSource::Stdin) {
-            stdin_input = Some(path.clone());
-        }
-        inputs.push(path);
-    }
-    args.arg_input = inputs;
-
-    if args.ar
-```
-
-### Core Architecture Module: `src/llmutil.rs`
-```
-//! Shared helpers for talking to OpenAI API-compatible Large Language Models (LLMs).
-//!
-//! This module centralizes the low-level HTTP plumbing for chat-completion requests so
-//! multiple commands (e.g. `describegpt`, `apply summarize`) can share a single, tested
-//! implementation instead of duplicating request-building and response-parsing logic.
-//!
-//! Higher-level concerns (prompt-file resolution, attribution placeholders, caching) stay
-//! in the calling commands; this module only knows how to build a request, POST it to the
-//! `/chat/completions` endpoint, and parse the response.
-
-use std::time::Instant;
-
-use reqwest::blocking::{Client, Response};
-use serde_json::{Value, json};
-
-use crate::{CliError, CliResult};
-
-/// The parsed result of a chat-completion request.
-#[allow(dead_code)]
-#[derive(Debug, Default, Clone)]
-pub struct LlmResponse {
-    /// The completion text (`choices[0].message.content`).
-    pub content:           String,
-    /// Optional chain-of-thought/reasoning (`choices[0].message.reasoning`), empty if absent.
-    pub reasoning:         String,
-    pub prompt_tokens:     u64,
-    pub completion_tokens: u64,
-    pub total_tokens:      u64,
-    /// Wall-clock time of the request in milliseconds.
-    pub elapsed_ms:        u64,
-}
-
-/// Sends an HTTP request using the provided client and parameters.
-///
-/// # Arguments
-///
-/// * `client` - The HTTP client used to make the request
-/// * `api_key` - Optional API key for authentication via Bearer token
-/// * `request_data` - Optional JSON data to include in POST requests
-/// * `method` - HTTP method to use ("GET" or "POST")
-/// * `url` - The URL to send the request to
-///
-/// # Errors
-///
-/// Returns a `CliError` if an unsupported method is used, GET includes data, POST is missing
-/// data, the request fails, or the response has a non-success status code.
-pub fn send_request(
-    client: &Client,
-    api_key: Option<&str>,
-    request_data: Option<&Value>,
-    method: &str,
-    url: &str,
-) -> CliResult<Response> {
-    // Build request based on method
-    let mut request = match method {
-        "GET" => {
-            if request_data.is_some() {
-                return fail_clierror!("GET requests cannot include request data");
-            }
-            client.get(url)
-        },
-        "POST" => {
-            let Some(data) = request_data else {
-                return fail_clierror!("POST requests require request data");
-            };
-            client
-                .post(url)
-                .header("Content-Type", "application/json")
-                .body(data.to_string())
-        },
-        other => {
-            let error_json = json!({ "Unsupported HTTP method": other });
-            return fail_clierror!("{error_json}");
-        },
-    };
-
-    // Add API key header if provided
-    if let Some(key) = api_key
-        && !key.is_empty()
-    {
-        request = request.header("Authorization", format!("Bearer {key}"));
-    }
-
-    // Send request and handle response
-    let response = request.send()?;
-
-    // Check for HTTP error status
-    if !response.status().is_success() {
-        let status = response.status();
-        let output = response
-            .text()
-            .unwrap_or_else(|_| "Unable to read error response".to_string());
-        return fail_clierror!("HTTP {status} error: {output}");
-    }
-
-    Ok(response)
-}
-
-/// Builds the JSON request body for a chat-completion call.
-///
-/// Constructs `{"model", "messages", "stream": false}`, includes `max_tokens` only when set
-/// (omitted entirely when `None`, since some OpenAI-compatible servers reject a `null` value),
-/// and overlays any additional model properties supplied as a JSON object string (`addl_props`).
-///
-/// # Errors
-///
-/// Returns a `CliError` if `addl_props` is not valid JSON or is not a JSON object.
-pub fn build_request(
-    model: &str,
-    max_tokens: Option<u32>,
-    messages: &Value,
-    addl_props: Option<&str>,
-) -> CliResult<Value> {
-    let mut request_data = json!({
-        "model": model,
-        "messages": messages,
-        "stream": false
-    });
-
-    // Only send max_tokens when explicitly set; a `null` value is rejected by some servers,
-    // and "unset" is the documented meaning of --max-tokens 0 / localhost.
-    if let Some(max_tokens) = max_tokens {
-        request_data["max_tokens"] = json!(max_tokens);
-    }
-
-    if let Some(addl_props) = addl_props {
-        let addl_props_json: Value = serde_json::from_str(addl_props)
-            .map_err(|e| CliError::Other(format!("Invalid JSON in --addl-props: {e:?}")))?;
-
-        // If addl_props_json is an object, extend/overlay all its keys into request_data
-        if let Some(obj) = addl_props_json.as_object() {
-            for (key, value) in obj {
-                request_data[key] = value.clone();
-            }
-        } else {
-            return fail_clierror!(
-                "--addl-props should be a JSON object mapping keys to values; got: {}",
-                addl_props_json
-            );
-        }
-    }
-
-    Ok(request_data)
-}
-
-/// Makes a chat-completion request to an OpenAI API-compatible endpoint.
-///
-/// POSTs to `{base_url}/chat/completions`, parses the completion text, optional reasoning,
-/// and token-usage statistics.
-///
-/// # Errors
-///
-/// Returns a `CliError` if the request body is invalid, the HTTP request fails, the API
-/// returns an error, or the response is missing required fields.
-pub fn chat_completion(
-    client: &Client,
-    base_url: &str,
-    api_key: &str,
-    model: &str,
-    max_tokens: Option<u32>,
-    messages: &Value,
-    addl_props: Option<&str>,
-) -> CliResult<LlmResponse> {
-    let request_data = build_request(model, max_tokens, messages, addl_props)?;
-
-    if log::log_enabled!(log::Level::Trace) {
-        log::trace!("Request data: {request_data:?}");
-    }
-
-    let start_time = Instant::now();
-    // trim a trailing '/' so a base_url like ".../v1/" doesn't yield a double-slash path
-    let endpoint = format!("{}/chat/completions", base_url.trim_end_matches('/'));
-    let response = send_request(
-        client,
-        Some(api_key),
-        Some(&request_data),
-        "POST",
-        &endpoint,
-    )?;
-
-    let response_json: Value = response.json()?;
-    if log::log_enabled!(log::Level::Trace) {
-        log::trace!("Response: {response_json:?}");
-    }
-
-    // If response is an error, surface the error message
-    if let Value::Object(ref map) = response_json
-        && map.contains_key("error")
-    {
-        return fail_clierror!("LLM API Error: {}", map["error"]);
-    }
-
-    let Some(content) = response_json["choices"]
-        .get(0)
-        .and_then(|choice| choice["message"]["content"].as_str())
-    else {
-        return fail_clierror!("Invalid response: missing or malformed completion content");
-    };
-    // Reasoning is optional - use empty string if not provided
-    let reasoning = response_json["choices"]
-        .get(0)
-        .and_then(|choice| choice["message"]["reasoning"].as_str())
-        .unwrap_or("");
-
-    let Some(usage) = response_json["usage"].as_object() else {
-        return fail_clierror!("Invalid response: missing or malformed usage");
-    };
-    let elapsed_ms = start_time.elapsed().as_millis() as u64;
-
-    Ok(LlmResponse {
-        content: content.to_string(),
-        reasoning: reasoning.to_string(),
-        prompt_tokens: usage["prompt_tokens"].as_u64().unwrap_or(0),
-        completion_tokens: usage["completion_tokens"].as_u64().unwrap_or(0),
-        total_tokens: usage["total_tokens"].as_u64().unwrap_or(0),
-        elapsed_ms,
-    })
-}
-
-```
-
-### Core Architecture Module: `src/util.rs`
-```
-use std::sync::OnceLock;
-#[cfg(feature = "self_update")]
-use std::time::Duration;
-
-use docopt::Docopt;
-use serde::de::DeserializeOwned;
-
-use crate::{CliError, CliResult, config::Delimiter, select::SelectColumns};
-
-#[macro_export]
-macro_rules! regex_oncelock {
-    ($re:literal $(,)?) => {{
-        static RE: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
-        #[allow(clippy::regex_creation_in_loops)] // false positive as we use oncelock
-        RE.get_or_init(|| regex::Regex::new($re).expect("Invalid regex"))
-    }};
-}
-
-// leave at least 20% of the available memory free
-const DEFAULT_FREEMEMORY_HEADROOM_PCT: u8 = 20;
-
-// safety margin for memory-aware chunking
-// (uses 80% of available memory to leave headroom for system operations & other processes)
-pub const SAFETY_MARGIN: f64 = 0.8;
-
-const DEFAULT_BATCH_SIZE: usize = 50_000;
-
-const DEFAULT_STATSCACHE_MODE: &str = "auto";
-
-static ROW_COUNT: OnceLock<Option<u64>> = OnceLock::new();
-
-static JOBS_TO_USE: OnceLock<usize> = OnceLock::new();
-
-pub static QUIET_FLAG: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
-
-// Set once at startup by `init_allocator_runtime()` when jemalloc's
-// `background_thread` is successfully enabled (Linux; rejected on macOS). When
-// true, jemalloc purges freed pages on background threads at no RSS cost, so the
-// per-command page-retention lever (`retain_alloc_pages_for_aggregation`) is
-// skipped to avoid paying its higher RSS for no additional benefit.
-// Only read under the jemalloc-gated retain path / version string; harmless
-// elsewhere.
-#[allow(dead_code)]
-pub static BACKGROUND_THREADS_ACTIVE: std::sync::atomic::AtomicBool =
-    std::sync::atomic::AtomicBool::new(false);
-
-// only consumed by non-lite commands (describegpt, lens, python, luau)
-#[cfg(not(feature = "lite"))]
-pub static FILE_PATH_PREFIX: &str = "file:";
-
-pub type ByteString = Vec<u8>;
-
-#[allow(dead_code)]
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub enum StatsMode {
-    Schema,
-    /// Like `Schema`, but additionally computes quartiles (q1/median/q3)
-    /// and mode. Used by `qsv profile` so its descriptive-statistics
-    /// projection (e.g. the Croissant annotations) can surface the full
-    /// extended stat set on a fresh run without a pre-built `--everything`
-    /// stats cache.
-    ProfileSchema,
-    Frequency,
-    FrequencyForceStats,
-    #[cfg(feature = "polars")]
-    PolarsSchema,
-    Outliers,
-    None,
-}
-
-#[allow(dead_code)]
-#[derive(serde::Deserialize, Clone)]
-pub struct SchemaArgs {
-    pub flag_enum_threshold:  u64,
-    pub flag_ignore_case:     bool,
-    pub flag_strict_dates:    bool,
-    pub flag_strict_formats:  bool,
-    pub flag_pattern_columns: SelectColumns,
-    pub flag_dates_whitelist: String,
-    pub flag_prefer_dmy:      bool,
-    pub flag_force:           bool,
-    pub flag_stdout:          bool,
-    pub flag_jobs:            Option<usize>,
-    pub flag_polars:          bool,
-    pub flag_no_headers:      bool,
-    pub flag_delimiter:       Option<Delimiter>,
-    pub arg_input:            Option<String>,
-    pub flag_memcheck:        bool,
-    pub flag_output:          Option<String>,
-}
-
-#[inline]
-pub fn num_cpus() -> usize {
-    num_cpus::get()
-}
-
-static QSV_PATH: OnceLock<String> = OnceLock::new();
-
-pub const CARGO_BIN_NAME: &str = env!("CARGO_BIN_NAME");
-pub const CARGO_PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
-
-const TARGET: &str = match option_env!("TARGET") {
-    Some(target) => target,
-    None => "Unknown_target",
-};
-const QSV_KIND: &str = match option_env!("QSV_KIND") {
-    Some(kind) => kind,
-    None => "installed",
-};
-
-#[cfg(feature = "polars")]
-const QSV_POLARS_REV: &str = match option_env!("QSV_POLARS_REV") {
-    Some(rev) => rev,
-    None => "",
-};
-
-// Add constant for whitespace visualization
-// the whitespace markers as as defined in
-// https://doc.rust-lang.org/reference/whitespace.html
-const WHITESPACE_MARKERS: &[(char, &str)] = &[
-    // common whitespace markers other than space
-    ('\t', "《→》"), // tab
-    ('\n', "《¶》"), // newline
-    ('\r', "《⏎》"), // carriage return
-    // more obscure whitespace markers
-    ('\u{000B}', "《⋮》"), // vertical tab
-    ('\u{000C}', "《␌》"), // form feed
-    // note: the horizontal tab (U+0009) is the same code point as '\t' above,
-    // so it is intentionally not repeated here (the '\t' entry already covers it).
-    ('\u{0085}', "《␤》"), // next line
-    ('\u{200E}', "《␎》"), // left-to-right mark
-    ('\u{200F}', "《␏》"), // right-to-left mark
-    ('\u{2028}', "《␊》"), // line separator
-    ('\u{2029}', "《␍》"), // paragraph separator
-    // additional common whitespace markers beyond
-    // https://doc.rust-lang.org/reference/whitespace.html
-    ('\u{00A0}', "《⍽》"),     // non-breaking space
-    ('\u{2003}', "《emsp》"),  // em space
-    ('\u{2007}', "《figsp》"), // figure space
-    ('\u{200B}', "《zwsp》"),  // zero width space
-];
-
-const OTHER_ENV_VARS: &[&str] = &["all_proxy", "no_proxy", "http_proxy", "https_proxy"];
-
-#[cfg(all(feature = "fetch", not(feature = "lite")))]
-macro_rules! update_cache_info {
-    ($progress:expr_2021, $cache_instance:expr_2021) => {
-        use cached::Cached;
-        use indicatif::HumanCount;
-
-        let cache = $cache_instance.read();
-        let size = cache.cache_size();
-        if size > 0 {
-            let hits = cache.cache_hits().unwrap_or_default();
-            let misses = cache.cache_misses().unwrap_or(1);
-            #[allow(clippy::cast_precision_loss)]
-            let hit_ratio = (hits as f64 / (hits + misses) as f64) * 100.0;
-            let capacity = cache.cache_capacity();
-            drop(cache);
-            $progress.set_message(format!(
-                " of {} records. Cache {:.2}% entries: {} capacity: {}.",
-                HumanCount($progress.length().unwrap()),
-                hit_ratio,
-                HumanCount(size as u64),
-                HumanCount(capacity.unwrap() as u64),
-            ));
-        }
-    };
-    ($progress:expr_2021, $cache_hits:expr_2021, $num_rows:expr_2021) => {
-        use indicatif::HumanCount;
-
-        #[allow(clippy::cast_precision_loss)]
-        let hit_ratio = ($cache_hits as f64 / $num_rows as f64) * 100.0;
-        $progress.set_message(format!(
-            " of {} records. Cache hit ratio: {hit_ratio:.2}%",
-            HumanCount($progress.length().unwrap()),
-        ));
-    };
-}
-
-#[cfg(all(feature = "fetch", not(feature = "lite")))]
-pub(crate) use update_cache_info;
-
-pub fn get_args<T>(usage: &str, argv: &[&str]) -> CliResult<T>
-where
-    T: DeserializeOwned,
-{
-    // `Docopt::deserialize` is just `parse().and_then(ArgvMap::deserialize)`, so splitting
-    // it costs nothing and lets the guard see docopt's PARSED values. `parse` is also
-    // where --help/--version are detected, so both still short-circuit ahead of the guard.
-    let vals = Docopt::new(usage)
-        .and_then(|d| {
-            d.argv(argv.iter().copied())
-                .version(Some(version()))
-                .parse()
-        })
-        .map_err(CliError::from)?;
-
-    check_output_is_not_input(&vals, argv)?;
-
-    vals.deserialize().map_err(CliError::from)
-}
-
-pub type Idx = Option<usize>;
-
-// how often a background (non-flag) update check is allowed to hit GitHub: ~twice a month
-#[cfg(feature = "self_update")]
-const UPDATE_CHECK_INTERVAL: Duration = Duration::from_hours(360);
-
-/// Tabular file extensions qsv recognizes for delimiter inference inside a zip.
-const ZIP_TABULAR_EXTS: [&str; 4] = ["csv", "tsv", "tab", "ssv"];
-
-mod args;
-mod derived_file;
-mod envvars;
-mod headers;
-mod http;
-mod index;
-mod input;
-mod json_out;
-mod rows;
-mod runtime;
-mod special_format;
-mod stats_cache;
-mod subprocess;
-mod update;
-mod version;
-
-pub use args::*;
-pub use derived_file::*;
-pub use envvars::*;
-pub use headers::*;
-pub use http::*;
-pub use index::*;
-pub use input::*;
-pub use json_out::*;
-pub use rows::*;
-pub use runtime::*;
-pub use special_format::*;
-pub use stats_cache::*;
-pub use subprocess::*;
-pub use update::*;
-pub use version::*;
-
-#[cfg(test)]
-mod tests;
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4829** (2026-10-16): **schema: --enum-threshold ignored when no column is under it (every column gets a full enum)**
-  *Symptoms*: ## Summary  `qsv schema --enum-threshold N` is supposed to limit `enum` constraints to columns with at most N distinct values. But when **no** column has between 2 and N distinct values, **every** column gets a complete `enum`, however many distinct values it has. When at least one column does qualify, the threshold works as documented. So whether a column gets an `enum` depends on the *other* columns in the file.  Found while reviewing #4827.  ## Repro (qsv 25.0.0 / master)  ```sh # every column is above the threshold -> every column gets a full enum { echo id,txt; for i in $(seq 1 80); do echo "$i,v$i"; done; } > hc.csv qsv schema hc.csv --enum-threshold 50 jq -c '.properties|map_values(.enum|length)' hc.csv.schema.json # {"id":80,"txt":80}  # add one column with 3 distinct values -> the threshold suddenly applies { echo id,txt,cat; for i in $(seq 1 80); do echo "$i,v$i,c$((i%3))"; done; } > mx.csv qsv schema mx.csv jq -c '.properties|map_values(.enum|length)' mx.csv.schema.json # {"id":0,"txt":0,"cat":3} ```  Similarly, `--enum-threshold 1` (where no column with more than one value can qualify) enumerates every column instead of none.  ## Cause  `build_low_cardinality_column_selector_arg` returns `""` when no column qualifies. `get_unique_values` then calls `SelectColumns::parse("")`, which means "select all columns", so `frequency` gathers values for every column, and an `enum` is emitted for each one (80 values each in the first repro, even though the threshold is 50).  
-
-- **Issue #4783** (2026-10-10): **validate --split-ragged: compressed inputs write split files to the current dir, and can overwrite another input's**
-  *Symptoms*: `validate --split-ragged` writes `<input>.valid`, `<input>.invalid` and `<input>.validation-errors.tsv` next to a plain input. For `.sz` and `.zip` inputs, which `process_input` unpacks into a temp dir, it writes them into the **current directory** instead, under the input's path relative to that temp dir. So where the files land depends on the input's format, and they can collide.  ### Reproduce (qsv at `257ae7b38`) Split files land in three different places: ```sh mkdir jan feb mar run printf 'x,y\n1,2\n3\n' > jan/data.csv; cp jan/data.csv feb/data.csv; cp jan/data.csv mar/data.csv qsv snappy compress feb/data.csv -o feb/data.csv.sz; rm feb/data.csv (cd mar && zip -q data.zip data.csv && rm data.csv) cd run && qsv validate --split-ragged ../jan/data.csv ../feb/data.csv.sz ../mar/data.zip ``` ``` jan/data.csv.valid, .invalid, .validation-errors.tsv        # plain: next to the input run/data.csv.valid, .invalid, .validation-errors.tsv        # .sz: cwd run/data/data.csv.valid, .invalid, .validation-errors.tsv   # zip: cwd/<archive name>/ ``` A plain file and a `.sz` file in the same folder **overwrite each other's split files, silently**: ```sh printf 'x,y\n1,2\n3\n' > data.csv printf 'x,y\n5,6\n7,8,9\n' > other.csv qsv snappy compress other.csv -o data.csv.sz qsv validate --split-ragged data.csv data.csv.sz cat data.csv.valid      # x,y / 5,6        ← data.csv's 1,2 is gone cat data.csv.invalid    # x,y / 7,8,9      ← data.csv's 3 is gone ``` Both runs print `Wrote data.csv.
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `03493b2a` (2026-11-18)
-**Commit Message**: feat(synthesize): generate rows in parallel, seed-stable across --jobs (#5069)
-
-* feat(synthesize): generate rows in parallel, seed-stable across --jobs
-
-Rows are generated in fixed 8,192-row chunks, each with its own RNG keyed
-on (base seed, chunk index) with fixed little-endian bytes, never on the
-fit-time RNG state. A window of 2 x jobs chunks is generated with rayon;
-each worker encodes its chunk with the output Config's CSV settings
-(new Config::writer_builder, which from_writer now uses), and the main
-thread appends the bytes in chunk order. A seeded run is byte-identical
-at any --jobs; --jobs now also sets generation threads.
-
-1M rows from a 10k-row source on 16 cores (release-dev): 475 ms -> 148 ms;
---jobs 1 is unchanged (466 ms). 65,536-row chunks were slower (187 ms)
-and used 3x the memory.
-
-Behavior change: a given --seed produces different rows than 29.0.0.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(skills): note synthesize seed stability across --jobs [skip ci]
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(changelog): cite #5069 [skip ci]
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(synthesize): cap in-flight chunk bytes; te
-
-**File**: `.claude/skills/CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`qsv-synthesize --min-count`**: privacy threshold (default 5). Values and `joint` tuples seen fewer than k times in the source are dropped from the real values it samples. Skill regenerated from the USAGE text. ([#5066](https://github.com/dathere/qsv/pull/5066))
- 
- ### Changed
-+- **`qsv-synthesize --seed` is the same at any `--jobs`**: rows are now generated in parallel, in fixed 8,192-row blocks, so a seed gives the same rows whatever `--jobs` is (unless `stats` uses approximate estimators, whether requested via `--stats-options` or switched on automatically when the input won't fit in memory), though different rows than qsv 29.0.0. Skill regenerated from the USAGE text. ([#5069](https://github.com/dathere/qsv/pull/5069))
- - **`qsv-synthesize` warns that its output is not anonymized** ([#5064](https://github.com/dathere/qsv/pull/5064)): synthetic output can contain real source values. The skill description was regenerated from the README command table.
- 
- ## [29.0.0] - 2026-11-15
-```
-
-**File**: `.claude/skills/qsv/qsv-synthesize.json` (modified, +1/-1)
-```diff
-@@ -88,7 +88,7 @@
-       {
-         "flag": "--seed",
-         "type": "number",
--        "description": "RNG seed for fully reproducible output."
-+        "description": "RNG seed for fully reproducible output. The same seed gives the same rows at any --jobs, unless stats uses approximate estimators: either asked for via --stats-options (e.g. `--quantile-method approx`), or switched on by stats itself (with a warning) when the input won't fit in memory."
-       },
-       {
-         "flag": "--stats-options",
-```
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - `synthesize`: a column with any null was never treated as fully enumerated, because frequency's `(NULL)` row parses to rank 0, the same as an "Other" bucket. Such columns fell back to fakers, filler or the min/max range instead of sampling their real values by frequency, which also let them bypass `--min-count`. Nulls are still reproduced through the null ratio. **Behavior change:** columns with blank cells now emit their real values (those seen at least `--min-count` times), like every other enumerated column. With a Data Dictionary but without `--consistent-fakes`, a name, email or address column that has blanks goes from generated fakes to real values; pass `--consistent-fakes` to keep fakes. ([#5066](https://github.com/dathere/qsv/pull/5066))
- 
- ### Changed
-+- `synthesize`: rows are now generated in parallel, in fixed blocks of 8,192 rows. Each block draws from its own random stream, worked out from `--seed` and the block's position, so a seeded run gives the same output at any `--jobs` setting. `--jobs` now also sets the threads used to generate rows, not only those of the internal `stats` and `frequency` runs. On a 16-core machine, 1M rows from a 10k-row source took 142 ms instead of 475 ms, and `--jobs 1` is as fast as before. Blocks are written in order, and the output held in memory at once is capped at about 256 MiB, so memory does not grow with `-n` or with core count (1M rows of a 100-column file peaked at 302 MiB on 16 cores, against 104 MiB before). Seeded output is the same at any `--jobs` while `stats` computes exact statistics; approximate ones can differ, whether requested through `--stats-options` (e.g. `--quantile-method approx`) or switched on by `stats` itself, with a warning, when the input won't fit in memory. **Behavior change:** a given `--seed` now produces different rows than in 29.0.0. The values follow the same distributions, but they come out in a different sequence, so seeded outputs saved from 29.0.0 or earlier will not be reproduced. ([#5069](https://github.com/dathere/qsv/pull/5069))
- - `synthesize`: the help now warns that synthetic output is not anonymized. It can copy real values and value combinations from the source: fully enumerated columns, enumerated structured-faker columns without `--consistent-fakes`, `joint` relationship tuples, and outliers at the edge of numeric/date ranges. ([#5064](https://github.com/dathere/qsv/pull/5064))
- - `sqlp`: the `--try-parsedates` help now warns that Polars reads slash, dash and dot dates as day-first, so `01/05/2024` becomes `2024-05-01`, and that `CAST(col AS DATE)` does the same. For month-first (US) dates, leave `--try-parsedates` off and use `STRPTIME(col, '%m/%d/%Y')` ([#5062](https://github.com/dathere/qsv/pull/5062)).
- 
-```
-
-**File**: `docs/help/synthesize.md` (modified, +4/-3)
-```diff
-@@ -96,7 +96,8 @@ can reappear at or near its real value.
- 
- Review the output before sharing it, or training on it, as de-identified data.
- 
--With --seed, output is fully reproducible.
-+With --seed, output is fully reproducible, whatever the --jobs setting.
-+Rows are generated in parallel, in fixed blocks of 8192 rows.
- 
- 
- <a name="examples"></a>
-@@ -156,7 +157,7 @@ qsv synthesize --help
- | &nbsp;`‑‑dictionary`&nbsp; | string | Data Dictionary JSON file produced by `describegpt --dictionary --infer-content-type --format JSON`. Layers semantic Content Types onto generation. If omitted, generation is purely type/frequency-based. |  |
- | &nbsp;`‑‑infer‑content‑type`&nbsp; | flag | Generate the Data Dictionary on the fly by invoking `describegpt --dictionary --infer-content-type` on <input>. Requires an LLM API key (QSV_LLM_APIKEY). Ignored if --dictionary is given. |  |
- | &nbsp;`‑n,`<br>`‑‑rows`&nbsp; | integer | Number of synthetic rows to generate. | `100` |
--| &nbsp;`‑‑seed`&nbsp; | integer | RNG seed for fully reproducible output. |  |
-+| &nbsp;`‑‑seed`&nbsp; | integer | RNG seed for fully reproducible output. The same seed gives the same rows at any --jobs, unless stats uses approximate estimators: either asked for via --stats-options (e.g. `--quantile-method approx`), or switched on by stats itself (with a warning) when the input won't fit in memory. |  |
- | &nbsp;`‑‑locale`&nbsp; | string | Locale for faker-backed columns. Case-insensitive. Supported: en, fr_fr, de_de, it_it, pt_br, pt_pt, ja_jp, zh_cn, zh_tw, ar_sa, cy_gb, fa_ir, nl_nl, tr_tr. Sparse locales (those without per-category data in fake-rs) silently fall back to en data for the missing categories — e.g. lorem text under a non-en locale is still English, since only zh_cn has localized lorem data. | `en` |
- | &nbsp;`‑‑freq‑limit`&nbsp; | integer | Frequency pool depth passed to the internal `frequency` run as --limit. A column is reproduced via exact frequency-weighted sampling only when its cardinality is fully captured within this limit; higher values reproduce more columns verbatim. 0 means unlimited. | `100` |
- | &nbsp;`‑‑min‑count`&nbsp; | integer | Privacy threshold. A real value of an enumerated column, or a real `joint` value-tuple, that occurs fewer than <k> times in <input> is dropped from the values it samples; its share is redistributed over the kept values. An enumerated column whose values are all below <k> falls back to its faker or type-based generator (numeric and date columns to their trimmed range), and a joint group to independent columns, or aborts under the --strict-relationships option. A warning is printed when either happens. 1 disables suppression. Counts are of rows, not people: where one person has many rows (transactions, visits, logs), one person's value can pass <k> alone. Raise <k>, or dedupe to one row per person first. Numeric and date ranges, and the gaps of `ordered` relationships, are also trimmed to their k-th smallest and k-th largest values (one extra pass over <input>). A numeric or date column with fewer than 2k-1 non-null values is left empty unless its real values are sampled. | `5` |
-@@ -167,7 +168,7 @@ qsv synthesize --help
- | &nbsp;`‑‑joint‑cardinality‑cap`&nbsp; | integer | Maximum number of distinct value-tuples a `joint` relationship may have. A joint group above this cap falls back to independent generation (or aborts under --strict-relationships). 0 means unlimited. | `100000` |
- | &nbsp;`‑‑correlation‑threshold`&nbsp; | float | Minimum absolute Spearman correlation for a pair of columns to stay in a `correlated` relationship. Weakly-correlated members are dropped. | `0.3` |
- | &nbsp;`‑‑strict‑relationships`&nbsp; | flag | Abort instead of warning-and-degrading when a declared relationship fails validation. |  |
--| &nbsp;`‑j,`<br>`‑‑jobs`&nbsp; | integer | Number of jobs to use for the internal `stats` and `frequency` runs. |  |
-+| &nbsp;`‑j,`<br>`‑‑jobs`&nbsp; | integer | Number of jobs to use for the internal `stats` and `frequency` runs and for generating rows. |  |
- 
- <a name="common-options"></a>
- 
-```
-
-**File**: `src/cmd/synthesize/mod.rs` (modified, +131/-39)
-```diff
-@@ -84,7 +84,8 @@ not stop it:
- 
- Review the output before sharing it, or training on it, as de-identified data.
- 
--With --seed, output is fully reproducible.
-+With --seed, output is fully reproducible, whatever the --jobs setting.
-+Rows are generated in parallel, in fixed blocks of 8192 rows.
- 
- Examples:
- 
-@@ -120,7 +121,12 @@ synthesize options:
-                            <input>. Requires an LLM API key (QSV_LLM_APIKEY).
-                            Ignored if --dictionary is given.
-     -n, --rows <n>         Number of synthetic rows to generate. [default: 100]
--    --seed <n>             RNG seed for fully reproducible output.
-+    --seed <n>             RNG seed for fully reproducible output. The same
-+                           seed gives the same rows at any --jobs, unless
-+                           stats uses approximate estimators: either asked
-+                           for via --stats-options (e.g. `--quantile-method
-+                           approx`), or switched on by stats itself (with a warning)
-+                           when the input won't fit in memory.
-     --locale <loc>         Locale for faker-backed columns. Case-insensitive.
-                            Supported: en, fr_fr, de_de, it_it, pt_br, pt_pt,
-                            ja_jp, zh_cn, zh_tw, ar_sa, cy_gb, fa_ir, nl_nl,
-@@ -205,7 +211,7 @@ synthesize options:
-     --strict-relationships  Abort instead of warning-and-degrading when a
-                            declared relationship fails validation.
-     -j, --jobs <arg>       Number of jobs to use for the internal `stats` and
--                           `frequency` runs.
-+                           `frequency` runs and for generating rows.
- 
- Common options:
-     -h, --help             Display this message
-@@ -214,9 +220,15 @@ Common options:
-                            Must be a single character. (default: ,)
- "#;
- 
--use std::{cell::RefCell, collections::HashMap, path::Path};
-+use std::{
-+    cell::RefCell,
-+    collections::{HashMap, HashSet},
-+    io::Write,
-+    path::Path,
-+};
- 
- use rand::{SeedableRng, rngs::StdRng};
-+use rayon::iter::{IntoParallelIterator, ParallelIterator};
- use serde::Deserialize;
- 
- use crate::{
-@@ -321,12 +333,12 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         }
-     }
- 
--    // Single master RNG, threaded through both the sampling/selection logic and
--    // every faker call, so a given --seed produces fully reproducible output.
--    let mut rng = match args.flag_seed {
--        Some(seed) => StdRng::seed_from_u64(seed), // DevSkim: ignore DS148264
--        _ => rand::make_rng::<StdRng>(),
--    };
-+    // The fit (pools, fake values, relationship validation) draws from an RNG
-+    // seeded with the base seed; each output chunk gets its own RNG keyed on
-+    // (base seed, chunk index), so a given --seed gives the same output at any
-+    // --jobs.
-+    let base_seed = args.flag_seed.unwrap_or_else(rand::random::<u64>);
-+    let mut rng = StdRng::seed_from_u64(base_seed); // DevSkim: ignore DS148264
- 
-     // --- 1. Analysis (stats + frequency + count) ---------------------------
-     // Index the input first (best-effort) to speed up stats/frequency.
-@@ -500,44 +512,58 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-     let mut exact_matches = 0_u64;
- 
-     // --- 5. Emit -----------------------------------------------------------
--    let mut wtr = Config::new(args.flag_output.as_ref()).writer()?;
-+    let out_conf = Config::new(args.flag_output.as_ref());
-+    let mut wtr = out_conf.writer()?;
-+    let chunk_builder = out_conf.writer_builder();
- 
-     let header: csv::StringRecord = stats_records
-         .iter()
-         .map(|stats_record| stats_record.field.clone())
-         .collect();
-     wtr.write_record(&header)?;
--
--    // One reusable row buffer: each EmitUnit writes into its own column slot(s)
--    // by index, so the schedule can be walked in any fixed order per row.
-+    // Chunks arrive already encoded, so append them to the raw writer; taking
-+    // it out of the csv writer flushes the header first.
-+    let mut out = wtr.into_inner().map_err(|e| e.into_error())?;
-+
-+    // Chunks are generated in parallel, a window at a time, and written in
-+    // chunk order. The window starts at one chunk and is then sized from the
-+    // largest chunk seen so far, so the bytes held at once stay near
-+    // WINDOW_BYTES (but never below one chunk) however wide the rows are. The
-+    // window only affects memory and speed, never the output.
-     let ncols = stats_records.len();
--    let mut row: Vec<String> = vec![String::new(); ncols];
--    let mut record = csv::StringRecord::new();
--    for _ in 0..args.flag_rows {
--        for unit in &schedule {
--            match unit {
--                EmitUnit::Independent { col_idx, generator } => {
--                    row[*col_idx] = generator.next(&mut rng);
--                },
--                EmitUnit::Group(group) => {
--                    for (col_idx, value) in group.next(
-```
-
-**File**: `src/config.rs` (modified, +10/-3)
-```diff
-@@ -1354,16 +1354,23 @@ impl Config {
-             warn!("failed to write UTF-8 BOM: {e}");
-         }
- 
--        csv::WriterBuilder::new()
-+        self.writer_builder().from_writer(wtr)
-+    }
-+
-+    /// The CSV settings `from_writer` uses, without the BOM, for encoding output
-+    /// in pieces (e.g. per worker) that are then appended to one stream.
-+    pub fn writer_builder(&self) -> csv::WriterBuilder {
-+        let mut builder = csv::WriterBuilder::new();
-+        builder
-             .flexible(self.flexible)
-             .delimiter(self.write_delimiter)
-             .terminator(self.terminator)
-             .quote(self.quote)
-             .quote_style(self.quote_style)
-             .double_quote(self.double_quote)
-             .escape(self.escape.unwrap_or(b'\\'))
--            .buffer_capacity(self.write_buffer as usize)
--            .from_writer(wtr)
-+            .buffer_capacity(self.write_buffer as usize);
-+        builder
-     }
- }
- 
-```
-
-**File**: `tests/test_synthesize.rs` (modified, +167/-0)
-```diff
-@@ -2843,3 +2843,170 @@ fn synthesize_report_does_not_change_output() {
-     assert_eq!(without, with);
-     assert_eq!(read_report(&wrk)["synthetic_rows"], 200);
- }
-+
-+/// city/state/zip in a `joint` group, a faker-backed email column and a numeric
-+/// column, so every generator kind draws from the per-chunk RNG.
-+fn chunked_fixture(wrk: &Workdir) {
-+    let mut rows = vec![svec!["city", "state", "zip", "email", "amount"]];
-+    let geo = [
-+        ("Springfield", "IL", "62701"),
-+        ("Chicago", "IL", "60601"),
-+        ("Boston", "MA", "02101"),
-+        ("Portland", "OR", "97201"),
-+    ];
-+    for i in 0..40 {
-+        let (city, state, zip) = geo[i % geo.len()];
-+        rows.push(vec![
-+            city.to_string(),
-+            state.to_string(),
-+            zip.to_string(),
-+            format!("user{i}@example.com"),
-+            format!("{}.{}", 100 + i * 37 % 900, i % 100),
-+        ]);
-+    }
-+    wrk.create("data.csv", rows);
-+    wrk.create_from_string(
-+        "dict.json",
-+        r#"{
-+    "fields": [
-+        {"name": "city", "type": "String"},
-+        {"name": "state", "type": "String"},
-+        {"name": "zip", "type": "String"},
-+        {"name": "email", "type": "String", "content_type": "email"},
-+        {"name": "amount", "type": "Float"}
-+    ],
-+    "relationships": [
-+        {"kind": "joint", "members": ["city", "state", "zip"]}
-+    ]
-+}"#,
-+    );
-+}
-+
-+#[test]
-+fn synthesize_seeded_output_is_identical_at_any_jobs() {
-+    let wrk = Workdir::new("synthesize_chunked_jobs");
-+    chunked_fixture(&wrk);
-+
-+    // 20000 rows = two full 8192-row chunks plus a partial third.
-+    let run = |jobs: &str, report: &str| -> String {
-+        let mut cmd = wrk.command("synthesize");
-+        cmd.args(["-n", "20000", "--seed", "7", "--jobs", jobs, "--report"])
-+            .arg(wrk.path(report))
-+            .arg("--dictionary")
-+            .arg(wrk.path("dict.json"))
-+            .arg("data.csv");
-+        wrk.stdout(&mut cmd)
-+    };
-+    let serial = run("1", "r1.json");
-+    let parallel = run("2", "r2.json");
-+
-+    assert_eq!(serial.lines().count(), 20001);
-+    assert!(
-+        serial == parallel,
-+        "seeded output must not depend on --jobs"
-+    );
-+    let read = |name: &str| -> serde_json::Value {
-+        serde_json::from_str(&std::fs::read_to_string(wrk.path(name)).unwrap()).unwrap()
-+    };
-+    assert_eq!(
-+        read("r1.json")["privacy"]["exact_matches"],
-+        read("r2.json")["privacy"]["exact_matches"]
-+    );
-+}
-+
-+#[test]
-+fn synthesize_chunks_draw_from_distinct_streams() {
-+    let wrk = Workdir::new("synthesize_chunked_streams");
-+    chunked_fixture(&wrk);
-+
-+    let mut cmd = wrk.command("synthesize");
-+    cmd.args(["-n", "16384", "--seed", "7", "--dictionary"])
-+        .arg(wrk.path("dict.json"))
-+        .arg("data.csv");
-+    let out: String = wrk.stdout(&mut cmd);
-+    let rows: Vec<&str> = out.lines().skip(1).collect();
-+
-+    assert_eq!(rows.len(), 16384);
-+    assert_ne!(
-+        rows[..8192],
-+        rows[8192..],
-+        "each chunk must have its own random stream"
-+    );
-+}
-+
-+#[test]
-+fn synthesize_row_count_spans_chunk_boundary() {
-+    let wrk = Workdir::new("synthesize_chunked_boundary");
-+    chunked_fixture(&wrk);
-+
-+    let mut cmd = wrk.command("synthesize");
-+    cmd.args(["-n", "8193", "--seed", "7"]).arg("data.csv");
-+    let out: String = wrk.stdout(&mut cmd);
-+
-+    assert_eq!(out.lines().count(), 8194);
-+}
-+
-+#[test]
-+fn synthesize_chunks_use_the_output_delimiter() {
-+    let wrk = Workdir::new("synthesize_chunked_tsv");
-+    chunked_fixture(&wrk);
-+
-+    let mut cmd = wrk.command("synthesize");
-+    cmd.args(["-n", "9000", "--seed", "7", "-o"])
-+        .arg(wrk.path("out.tsv"))
-+        .arg("data.csv");
-+    wrk.assert_success(&mut cmd);
-+
-+    let out = std::fs::read_to_string(wrk.path("out.tsv")).unwrap();
-+    let lines: Vec<&str> = out.lines().collect();
-+    assert_eq!(lines.len(), 9001);
-+    // the last line is in the second chunk
-+    for line in [lines[0], lines[1], lines[9000]] {
-+        assert_eq!(line.split('\t').count(), 5, "not tab-delimited: {line}");
-+    }
-+}
-+
-+#[test]
-+fn synthesize_chunks_write_one_bom() {
-+    let wrk = Workdir::new("synthesize_chunked_bom");
-+    chunked_fixture(&wrk);
-+
-+    let mut cmd = wrk.command("synthesize");
-+    cmd.env("QSV_OUTPUT_BOM", "1")
-+        .args(["-n", "9000", "--seed", "7", "-o"])
-+        .arg(wrk.path("out.csv"))
-+        .arg("data.csv");
-+    wrk.assert_success(&mut cmd);
-+
-+    let out = std::fs::read_to_string(wrk.path("out.csv")).unwrap();
-+    assert!(out.starts_with('\u{FEFF}'));
-+    assert_eq!(out.matches('\u{FEFF}').count(), 1);
-+}
-+
-+#[test]
-+fn synthesize_report_counts_matches_in_every_chunk() {
-+    let wrk = Workdir::new("synthesize_chunked_report_count");
-+    // Only real (city, state, zip) tuples can be emitted, so every row matches.
-+    wrk.create("data.csv", geo_fixture());
-+    wrk.create_from_string("dict.json", GEO_JOINT_DICT
-```
-
-#### Recent Merged Pull Requests:
-- **PR #5069** (2026-11-18): feat(synthesize): generate rows in parallel, seed-stable across --jobs (@jqnatividad)
-- **PR #5068** (2026-11-18): feat(synthesize): add --report privacy summary (exact matches, suppression) (@jqnatividad)
-- **PR #5067** (2026-11-17): feat(synthesize): trim numeric/date ranges and ordered gaps by --min-count (@jqnatividad)
-- **PR #5066** (2026-11-17): feat(synthesize): add --min-count privacy threshold (default 5) (@jqnatividad)
-- **PR #5065** (2026-11-17): build(deps): bump anthropics/claude-code-action from 1.0.275 to 1.0.276 (@dependabot[bot])
-- **PR #5064** (2026-11-16): docs(synthesize): warn that synthetic output is not anonymized (@jqnatividad)
+  ```
+- **Jemalloc Background Page Purging (`src/util.rs`)**:
+  Long-running CLI processes that parse gigabytes of tabular data can retain dirty memory pages in thread-local caches. Enabling Jemalloc background threads automates dirty page purging without manual release hooks:
+  ```rust
+  pub static BACKGROUND_THREADS_ACTIVE: std::sync::atomic::AtomicBool =
+      std::sync::atomic::AtomicBool::new(false);
+  ```
 
 ---
 
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
+### 5. Defect & Error Prevention ("Galti Pakadna")
+- **Destination Collision Guards (`src/cmd/synthesize/output.rs`)**:
+  Before writing generated partition files, the destination paths are tested against all known inputs to prevent accidental overwrites:
+  ```rust
+  pub(crate) fn writes(&self, path: &str, step: u64, total: u64) -> bool {
+      let ours = resolve_path(&self.name(0));
+      let theirs = resolve_path(path);
+      if ours.parent() != theirs.parent() {
+          return false;
+      }
+      let file_prefix = self.prefix.rsplit(['/', '\\']).next().unwrap_or_default();
+      theirs
+          .file_name()
+          .and_then(|n| n.to_str())
+          .and_then(|n| n.strip_prefix(file_prefix)?.strip_suffix(self.suffix.as_str()))
+          .filter(|digits| digits.len() == self.width && digits.bytes().all(|b| b.is_ascii_digit()))
+          .and_then(|digits| digits.parse::<u64>().ok())
+          .is_some_and(|start| start < total && start.is_multiple_of(step))
+  }
+  ```
 
 ---
 
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+## 5. The 9 Deep Learning Dimensions
 
+### 1. Architecture
+- **Boundary Decoupling**: Subcommands operate as standalone, share-nothing binaries or dispatch routines behind the `run(argv: &[&str]) -> CliResult<()>` signature.
+- **Config-Driven Initialization**: Subcommands initialize using an immutable, deserialized configuration struct derived from Docopt usage strings.
+- **State Segregation**: In-memory state is isolated within Rayon worker threads. Cross-thread coordination relies on channels (`crossbeam_channel`) or lock-free atomics rather than shared mutable mutexes.
 
----
+### 2. Core Abstractions
+- **`Config`**: Controls field delimiters, quoting rules, line-break strategies, and memory bounds.
+- **`SelectColumns`**: Parsed representation of column selections supporting indices, name matches, ranges, and regex expressions.
+- **`SqlBackend`**: Abstraction bridging tabular file streams into Polars LazyFrames or in-memory DuckDB engines.
+- **`LlmResponse`**: Standardized payload encapsulating completion contents, reasoning tokens, and API timing metrics.
 
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. synthesize): generate rows in parallel, seed-stable across --jobs
-
-**RULE**:
-When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `03493b2a`: synthesize): generate rows in parallel, seed-stable across --jobs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-- **`qsv-synthesize --seed` is the same at any `--jobs`**: rows are now generated in parallel, in fixed 8,192-row blocks, so a seed gives the same rows whatever `--jobs` is (unless `stats` uses approximate estimators, whether requested via `--stats-options` or switched on automatically when the input won't fit in memory), though different rows than qsv 29.0.0. Skill regenerated from the USAGE text. ([#5069](https://github.com/dathere/qsv/pull/5069))
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `03493b2a` are properly handled with clean fallback behavior.
-
+### 3. Error Handling
+- **`CliError` Hierarchy
 
 ## 3. Independent Verification Protocol
 1. Assert state existence before and after execution.

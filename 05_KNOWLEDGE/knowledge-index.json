@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T00:33:33.475Z",
+  "last_updated": "2026-11-20T00:46:48.820Z",
   "total_verified_learnings": 9023,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22086,
+  "total_items": 22100,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112122,10 +112122,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "17861239",
-      "content_hash": "94343b6ec66c116fb02c7e158bf6d4c52bd647d39021878d13e7c18a9cbb1be7",
+      "source_version": "588d2c40",
+      "content_hash": "f2f0830966ccf4e706a30d44785b0e9c8acd4aa54482fe53f7850e5e43907ffd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T17:38:09.727Z"
+      "persisted_at": "2026-11-20T00:45:37.613Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112159,9 +112159,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "ddcc352418add6bca6cc5d297da8e72ae15434e6942690f281aad9dc8774804d",
+      "content_hash": "9ce6d481310b625c7ff2b69c94b2b19060c64b2d60f0e0c1181cc92e5aee9959",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T17:28:20.199Z"
+      "persisted_at": "2026-11-20T00:46:48.820Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -219557,8 +219557,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "17861239",
-      "content_hash": "88eaf3ea946867da74ad5252cc8250a2da01c13b8fc81bdb1cd50ee244c024ff",
+      "source_version": "588d2c40",
+      "content_hash": "52881fb3acd5c835f0669d582ef767af2a53424e55c1de98d48226e1e64ade2e",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -219666,6 +219666,21 @@
           "number": 9421,
           "title": "--format csv|jsonl|parquet with typed columns",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9478,
+          "title": "Resource Drain Invariant on Rolling File Partitioning",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9479,
+          "title": "Guard Invariant Against Syntactic Collision in Empty Collection Selectors",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9480,
+          "title": "Asynchronous Concurrency Slot Reservation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219673,7 +219688,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T17:38:08.964Z",
+      "verified_at": "2026-11-20T00:45:36.665Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225450,8 +225465,8 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "e3c035e0",
-      "content_hash": "86d871b48ad6bc71b94d668789081dae3bd28bb6334808402ded6462aeaf41e6",
+      "source_version": "7f1b206a",
+      "content_hash": "e8494667cacf437a0d019a51108f85ecd77db640ab923b8f1e91a3bfc573a584",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
@@ -225474,6 +225489,11 @@
           "number": 9273,
           "title": "honor `s3.iam_role_arn` in the storage catalog",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9477,
+          "title": "send BackendKeyData after password auth, reject short CancelRequest",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -225481,7 +225501,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T18:38:21.309Z",
+      "verified_at": "2026-11-20T00:43:27.772Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225535,10 +225555,10 @@
       "relative_path": "08_VERIFICATION/risingwavelabs-risingwave-verification-protocol-empirical-defect-shield-for-risi.md",
       "title": "Verification Protocol: Empirical Defect Shield for risingwavelabs/risingwave",
       "repository": "risingwavelabs/risingwave",
-      "source_version": "e3c035e0",
-      "content_hash": "d1c9ae42a7a193a675c5ccb47d1b46735ded7ec0be0883b3954843e058574f2b",
+      "source_version": "7f1b206a",
+      "content_hash": "8dd7475aba3af4069e658dd133d7379db126678885248c7d7d7d00f4082f25c4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T18:38:22.263Z"
+      "persisted_at": "2026-11-20T00:43:28.460Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fermionresearch-phonon-2-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fermionresearch-phonon-2-learnings-core-invar",
@@ -225596,9 +225616,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for risingwavelabs-risingwave-learnings",
       "repository": "risingwavelabs-risingwave-learnings",
       "source_version": "HEAD",
-      "content_hash": "bc48fca663ddfe89a8b0bdae2feef1e387852aa53a1e60fe7a020d3bbba7cf25",
+      "content_hash": "be4b6f3bbed43fff740181ce4dcd3330863942f2fb737abbc2b7ff1074cef4c8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T18:39:03.685Z"
+      "persisted_at": "2026-11-20T00:45:42.511Z"
     },
     "learn-github-zvec-ai-zvec-grep": {
       "learning_id": "learn-github-zvec-ai-zvec-grep",
@@ -237828,10 +237848,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dathere-qsv-technical-construction-intelligence-dathere-qsv-core-invariants.md",
       "title": "Technical Construction Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "17861239",
-      "content_hash": "617dbb4f859e2a7dc994ce7b9ddc2ee04f03d47dc1305b16f253c6dd0dcd7a7c",
+      "source_version": "588d2c40",
+      "content_hash": "1020c17bffeb839abf6696c19d8b19ec5f0bd559fc585f1efc3dfdac14956bb7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T17:38:09.578Z"
+      "persisted_at": "2026-11-20T00:45:37.472Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants",
@@ -249000,9 +249020,9 @@
       "title": "Technical Construction Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "9363878e1721f1ed9c03f0841528f029788aefda345cb93899ea28457a2ea754",
+      "content_hash": "ec0091da7470d29813695100cd11ad010e90ae550ba11b16a303f613e7c13bfc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T19:45:49.720Z"
+      "persisted_at": "2026-11-20T00:46:48.652Z"
     },
     "learn-huggingface-videorebirthai-hyperflow-h3-flash": {
       "learning_id": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
@@ -268434,8 +268454,8 @@
       "slug": "zarf-dev-zarf",
       "platform": "github",
       "source_url": "https://github.com/zarf-dev/zarf",
-      "source_version": "31862576",
-      "content_hash": "355630c8eba1069c50ecc75aed37018e666782ccbb715c66f2402b4e9b8773ce",
+      "source_version": "14a502fa",
+      "content_hash": "944a135a51a550d764d7ef796700441aa684db74b46a596c1adf4309410139f6",
       "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "promoted_rules": [
@@ -268448,6 +268468,11 @@
           "number": 9133,
           "title": "count node items when sizing registry HPA replicas",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9476,
+          "title": "contribution workflow changes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -268455,7 +268480,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T05:44:15.883Z",
+      "verified_at": "2026-11-20T00:43:20.606Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -268497,10 +268522,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zarf-dev-zarf-architecture-intelligence-zarf-dev-zarf-core-invariants.md",
       "title": "Architecture Intelligence: zarf-dev/zarf Core Invariants",
       "repository": "zarf-dev/zarf",
-      "source_version": "31862576",
-      "content_hash": "e43a67eb669566d96b554fec23b0ab98c595b7f1c478bcf655ea8cfce3fdd724",
+      "source_version": "14a502fa",
+      "content_hash": "b6b087617672194aaf0ef8413417bbaa1a16703b887bec9aefb9a081422e9a98",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T05:44:16.526Z"
+      "persisted_at": "2026-11-20T00:43:21.152Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf",
@@ -268509,10 +268534,10 @@
       "relative_path": "08_VERIFICATION/zarf-dev-zarf-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf.md",
       "title": "Verification Protocol: Empirical Defect Shield for zarf-dev/zarf",
       "repository": "zarf-dev/zarf",
-      "source_version": "31862576",
-      "content_hash": "4538bf197823b47afcf183e562270b4fbfe46a271fb9f4a392d175588856f898",
+      "source_version": "14a502fa",
+      "content_hash": "1f1bed588cd948241629b391263b5ed1bedda7dbc412aaa35921e76051113086",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T05:44:16.705Z"
+      "persisted_at": "2026-11-20T00:43:21.297Z"
     },
     "domain_intelligence-content-information-intelligence-sfu-db-connector-x-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-sfu-db-connector-x-core-invariants",
@@ -268596,9 +268621,9 @@
       "title": "Architecture Intelligence: zarf-dev-zarf-learnings Core Invariants",
       "repository": "zarf-dev-zarf-learnings",
       "source_version": "HEAD",
-      "content_hash": "8f3022ecf9c0d18e1ca634a41fa52a191a8494c42f43719705a38d7d437b22b5",
+      "content_hash": "60e564fcedef3e47b3bd8dde82a4c9342f80f4236642291192c3d955076b4de1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T05:44:22.136Z"
+      "persisted_at": "2026-11-20T00:45:41.696Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf-learnings",
@@ -268608,9 +268633,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zarf-dev-zarf-learnings",
       "repository": "zarf-dev-zarf-learnings",
       "source_version": "HEAD",
-      "content_hash": "2ea56b2c3e018bb7183d21cdaf3bcdf277a392543ca117e20fcda22abaaf5417",
+      "content_hash": "a2f52acc16df292017f32c02beb307620e4c5acfd0931edefd356fe98f2e8b7f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T05:44:22.306Z"
+      "persisted_at": "2026-11-20T00:45:41.832Z"
     },
     "learn-huggingface-facebook-sam-3d-body-dinov3": {
       "learning_id": "learn-huggingface-facebook-sam-3d-body-dinov3",
@@ -298884,6 +298909,184 @@
       "content_hash": "dbde759c49122d9bb91b6ea86263a90890f09a7fffe3d6db7268aaec5d7b26b2",
       "domain_letter": "I",
       "persisted_at": "2026-11-20T00:33:32.194Z"
+    },
+    "rule-9476": {
+      "learning_id": "rule-9476",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9476,
+      "title": "contribution workflow changes",
+      "source_url": "https://github.com/zarf-dev/zarf",
+      "source_version": "14a502fa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T00:43:20.606Z"
+    },
+    "candidate_directive-contribution-workflow-changes": {
+      "item_id": "candidate_directive-contribution-workflow-changes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9O9Y-contribution-workflow-changes.md",
+      "title": "contribution workflow changes",
+      "repository": "zarf-dev/zarf",
+      "source_version": "14a502fa",
+      "content_hash": "ff75ed318832fa54dcf9653e1916d81b855cafee238d7e9fa1026bc014004bd0",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-20T00:43:21.001Z"
+    },
+    "rule-9477": {
+      "learning_id": "rule-9477",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9477,
+      "title": "send BackendKeyData after password auth, reject short CancelRequest",
+      "source_url": "https://github.com/risingwavelabs/risingwave",
+      "source_version": "7f1b206a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T00:43:27.772Z"
+    },
+    "candidate_directive-send-backendkeydata-after-password-auth-reject-short-cancelrequest": {
+      "item_id": "candidate_directive-send-backendkeydata-after-password-auth-reject-short-cancelrequest",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9TSZ-send-backendkeydata-after-password-auth-reject-short-cancelrequest.md",
+      "title": "send BackendKeyData after password auth, reject short CancelRequest",
+      "repository": "risingwavelabs/risingwave",
+      "source_version": "7f1b206a",
+      "content_hash": "e57f8fc128d288bdb583b2b1d368286407ca125695dee8e76276a9b27691ed62",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T00:43:28.165Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-risingwavelabs-risingwave-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-risingwavelabs-risingwave-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-risingwavelabs-risingwave-quality-verification-intelligence-risingwavelabs-risin.md",
+      "title": "Quality & Verification Intelligence: risingwavelabs/risingwave Core Invariants",
+      "repository": "risingwavelabs/risingwave",
+      "source_version": "7f1b206a",
+      "content_hash": "97e4aa7f2666ed8c332c25b75555187804a369e9a0d813d019ec81e4ca74f6ed",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T00:43:28.314Z"
+    },
+    "rule-9478": {
+      "learning_id": "rule-9478",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9478,
+      "title": "Resource Drain Invariant on Rolling File Partitioning",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "588d2c40",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T00:45:36.665Z"
+    },
+    "rule-9479": {
+      "learning_id": "rule-9479",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9479,
+      "title": "Guard Invariant Against Syntactic Collision in Empty Collection Selectors",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "588d2c40",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T00:45:36.665Z"
+    },
+    "rule-9480": {
+      "learning_id": "rule-9480",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9480,
+      "title": "Asynchronous Concurrency Slot Reservation Invariant",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "588d2c40",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T00:45:36.665Z"
+    },
+    "candidate_directive-resource-drain-invariant-on-rolling-file-partitioning": {
+      "item_id": "candidate_directive-resource-drain-invariant-on-rolling-file-partitioning",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E43F-resource-drain-invariant-on-rolling-file-partitioning.md",
+      "title": "Resource Drain Invariant on Rolling File Partitioning",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "65db2c77879a9f93e71ea7e32dcaff772e902bf532f936f6deb03ec6fab71181",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T00:46:48.124Z"
+    },
+    "candidate_directive-guard-invariant-against-syntactic-collision-in-empty-collection-selectors": {
+      "item_id": "candidate_directive-guard-invariant-against-syntactic-collision-in-empty-collection-selectors",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E43F-guard-invariant-against-syntactic-collision-in-empty-collection-selectors.md",
+      "title": "Guard Invariant Against Syntactic Collision in Empty Collection Selectors",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c1d68dbf76d5ee67b2a8f9fd9f663a1ee56266fcb1a1de79eecf13d2de2a400b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T00:46:48.310Z"
+    },
+    "candidate_directive-asynchronous-concurrency-slot-reservation-invariant": {
+      "item_id": "candidate_directive-asynchronous-concurrency-slot-reservation-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E43G-asynchronous-concurrency-slot-reservation-invariant.md",
+      "title": "Asynchronous Concurrency Slot Reservation Invariant",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f49268e58f0cba95b739c2cb9ec49699dd8d2a89f668b8124602a4517b12e1fb",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T00:46:48.472Z"
+    },
+    "candidate_directive-docs-contribution-workflow-changes": {
+      "item_id": "candidate_directive-docs-contribution-workflow-changes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-COQB-docs-contribution-workflow-changes.md",
+      "title": "docs: contribution workflow changes",
+      "repository": "zarf-dev-zarf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e9a6f2539c32d0c2d30bc3343b5b60ef055bdc2af4b348b3b1ee452d7ead8ab9",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-20T00:45:41.558Z"
+    },
+    "candidate_directive-pgwire-send-backendkeydata-after-password-auth-reject-short-cancelrequest": {
+      "item_id": "candidate_directive-pgwire-send-backendkeydata-after-password-auth-reject-short-cancelrequest",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CP8W-pgwire-send-backendkeydata-after-password-auth-reject-short-cancelrequest.md",
+      "title": "pgwire): send BackendKeyData after password auth, reject short CancelRequest",
+      "repository": "risingwavelabs-risingwave-learnings",
+      "source_version": "HEAD",
+      "content_hash": "de63b3af90cf40b6d2b39e98c1193ff69c1510acb80a77cd3014354454bf1024",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T00:45:42.225Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-risingwavelabs-risingwave-learnings-core-invar": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-risingwavelabs-risingwave-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-risingwavelabs-risingwave-learnings-quality-verification-intelligence-risingwave.md",
+      "title": "Quality & Verification Intelligence: risingwavelabs-risingwave-learnings Core Invariants",
+      "repository": "risingwavelabs-risingwave-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e690aaea8c23bbfb472a6ec198fe9a61741822ad1b16333f823aa236dc27fceb",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T00:45:42.372Z"
     }
   },
   "ai-builder-brain": {

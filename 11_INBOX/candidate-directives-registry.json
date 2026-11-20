@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T00:33:33.071Z",
+  "last_updated": "2026-11-20T00:46:48.472Z",
   "directives": [
     {
       "id": "CD-001",
@@ -35165,6 +35165,72 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-254D08-build-download-onnx-runtime-archives-fro.md",
       "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-9O9Y",
+      "directive_title": "contribution workflow changes",
+      "source_repo": "zarf-dev/zarf",
+      "source_commit": "14a502fa",
+      "staged_file": "11_INBOX/candidate-directives/CD-9O9Y-contribution-workflow-changes.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-9TSZ",
+      "directive_title": "send BackendKeyData after password auth, reject short CancelRequest",
+      "source_repo": "risingwavelabs/risingwave",
+      "source_commit": "7f1b206a",
+      "staged_file": "11_INBOX/candidate-directives/CD-9TSZ-send-backendkeydata-after-password-auth-reject-short-cancelrequest.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-E43F",
+      "directive_title": "Guard Invariant Against Syntactic Collision in Empty Collection Selectors",
+      "source_repo": "dathere-qsv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-E43F-guard-invariant-against-syntactic-collision-in-empty-collection-selectors.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-E43G",
+      "directive_title": "Asynchronous Concurrency Slot Reservation Invariant",
+      "source_repo": "dathere-qsv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-E43G-asynchronous-concurrency-slot-reservation-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-COQB",
+      "directive_title": "docs: contribution workflow changes",
+      "source_repo": "zarf-dev-zarf-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-COQB-docs-contribution-workflow-changes.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-CP8W",
+      "directive_title": "pgwire): send BackendKeyData after password auth, reject short CancelRequest",
+      "source_repo": "risingwavelabs-risingwave-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CP8W-pgwire-send-backendkeydata-after-password-auth-reject-short-cancelrequest.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "K"
     }
   ]
 }

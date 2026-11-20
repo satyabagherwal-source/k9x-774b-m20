@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T00:33:30.790Z",
-    "lastVerified": "2026-11-20T00:33:30.790Z",
+    "lastChecked": "2026-11-20T00:45:40.266Z",
+    "lastVerified": "2026-11-20T00:45:40.266Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -170,22 +170,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T00:06:40.248Z",
-    "lastVerified": "2026-11-20T00:06:40.248Z",
+    "lastChecked": "2026-11-20T00:43:21.726Z",
+    "lastVerified": "2026-11-20T00:43:21.726Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "88eaf3ea946867da74ad5252cc8250a2da01c13b8fc81bdb1cd50ee244c024ff",
-    "promotedRulesCount": 1,
+    "contentHash": "52881fb3acd5c835f0669d582ef767af2a53424e55c1de98d48226e1e64ade2e",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "17861239"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -316,12 +315,12 @@
     "lastVerified": "2026-11-19T08:02:35.668Z"
   },
   "openziti-zrok": {
-    "name": "openziti/zrok",
+    "name": "zrok",
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T18:06:25.172Z",
-    "lastVerified": "2026-11-19T18:06:25.172Z",
+    "lastChecked": "2026-11-20T00:43:13.052Z",
+    "lastVerified": "2026-11-20T00:43:13.052Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -330,7 +329,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d8e5316d"
   },
   "run-llama-llama_index": {
     "name": "llama_index",
@@ -1918,9 +1918,9 @@
   "michael-a-kuykendall-shimmy": {
     "name": "shimmy",
     "officialUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
-    "lastChecked": "2026-11-18T13:25:29.581Z",
+    "lastChecked": "2026-11-20T00:43:03.044Z",
     "revisionIdentifier": "9f6d996e",
-    "lastVerified": "2026-11-18T13:25:29.581Z"
+    "lastVerified": "2026-11-20T00:43:03.044Z"
   },
   "hf-fastino-gliner2.5-decide": {
     "name": "fastino/GLiNER2.5-Decide",
@@ -3864,14 +3864,14 @@
     "officialUrl": "https://github.com/risingwavelabs/risingwave",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T18:38:20.365Z",
-    "lastVerified": "2026-11-18T18:38:20.365Z",
+    "lastChecked": "2026-11-20T00:43:22.209Z",
+    "lastVerified": "2026-11-20T00:43:22.209Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "86d871b48ad6bc71b94d668789081dae3bd28bb6334808402ded6462aeaf41e6",
+    "contentHash": "e8494667cacf437a0d019a51108f85ecd77db640ab923b8f1e91a3bfc573a584",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4173,11 +4173,21 @@
     "lastVerified": "2026-11-18T20:14:16.734Z"
   },
   "zarf-dev-zarf": {
-    "name": "zarf",
+    "name": "zarf-dev/zarf",
     "officialUrl": "https://github.com/zarf-dev/zarf",
-    "lastChecked": "2026-11-18T20:14:19.303Z",
-    "revisionIdentifier": "31862576",
-    "lastVerified": "2026-11-18T20:14:19.303Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-20T00:43:15.987Z",
+    "lastVerified": "2026-11-20T00:43:15.987Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-zarf-dev-zarf",
+    "contentHash": "944a135a51a550d764d7ef796700441aa684db74b46a596c1adf4309410139f6",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "malisper-pgrust": {
     "name": "malisper/pgrust",
@@ -8844,5 +8854,19 @@
     "lastChecked": "2026-11-20T00:33:13.440Z",
     "revisionIdentifier": "b6cfb6d0",
     "lastVerified": "2026-11-20T00:33:13.440Z"
+  },
+  "magnetoid-seo-crawler": {
+    "name": "SEO-Crawler",
+    "officialUrl": "https://github.com/magnetoid/SEO-Crawler",
+    "lastChecked": "2026-11-20T00:43:05.567Z",
+    "revisionIdentifier": "ebce8aa942",
+    "lastVerified": "2026-11-20T00:43:05.567Z"
+  },
+  "jinxiansen-swiftui": {
+    "name": "SwiftUI",
+    "officialUrl": "https://github.com/Jinxiansen/SwiftUI",
+    "lastChecked": "2026-11-20T00:43:08.056Z",
+    "revisionIdentifier": "d8192c12",
+    "lastVerified": "2026-11-20T00:43:08.056Z"
   }
 }

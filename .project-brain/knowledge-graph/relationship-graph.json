@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-19T23:16:16.959Z",
+  "updated_at": "2026-11-20T00:46:47.875Z",
   "statistics": {
-    "total_nodes": 395,
+    "total_nodes": 397,
     "total_edges": 181,
     "domain_distribution": {
       "D": 262,
       "M": 1,
-      "H": 59,
+      "H": 60,
       "J": 15,
       "K": 22,
       "L": 8,
@@ -17,7 +17,7 @@
       "F": 19,
       "B": 2,
       "E": 2,
-      "I": 4
+      "I": 5
     },
     "relation_distribution": {
       "CONSTRAINED_BY_ARCHITECTURE": 180,
@@ -8832,6 +8832,50 @@
       ],
       "created_at": "2026-11-19T23:16:16.958Z",
       "updated_at": "2026-11-19T23:16:16.958Z"
+    },
+    "DOM-H-52039FE3": {
+      "id": "DOM-H-52039FE3",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Premature Stream Return Leaving Parquet File Sinks Corrupted (BUG-SYNTH-01)",
+      "summary": "The rotation loop attempted to initialize the next output file handle before closing and finalizing the current `parquet::Writer`. The early -> Streaming file rotation must enforce a strict two-phase commit: seal and flush the active sink before creating the next file handle.",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://dathere-qsv/dathere-qsv-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T00:45:42.628Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dathere-qsv)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-20T00:46:10.529Z",
+      "updated_at": "2026-11-20T00:46:10.529Z"
+    },
+    "DOM-I-333D4D7A": {
+      "id": "DOM-I-333D4D7A",
+      "domain": "I",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Empty Cardinality Selection Inverting Enum Generation (BUG-SCHEMA-02)",
+      "summary": "`build_low_cardinality_column_selector_arg` returned an empty string (`\"\"`) when no column met the threshold. Downstream, `SelectColumns::pa -> Do not let empty string selections fall back to default wildcards when representing empty candidate sets.",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://dathere-qsv/dathere-qsv-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T00:45:42.628Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dathere-qsv)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "I",
+        "Content & Information Intelligence"
+      ],
+      "created_at": "2026-11-20T00:46:47.875Z",
+      "updated_at": "2026-11-20T00:46:47.875Z"
     }
   },
   "edges": [
