@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T08:38:49.185Z",
+  "last_updated": "2026-11-20T09:10:41.739Z",
   "total_records": 2102,
   "domains": {
     "A": {
@@ -10413,8 +10413,8 @@
       "title": "Architecture Intelligence: opentofu/opentofu Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-opentofu-opentofu-architecture-intelligence-opentofu-opentofu-core-invariants.md",
       "repository": "opentofu/opentofu",
-      "content_hash": "e6b9343e47fd011f23116cdfabc2c349865ce5b574e92b5e9c9a32f9505d1b26",
-      "created_at": "2026-11-19T05:06:14.644Z"
+      "content_hash": "84c274a3d2831801353c1cd62486209a0690530a32efc046f38b8fa8344bc248",
+      "created_at": "2026-11-20T09:10:04.072Z"
     },
     "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants",
@@ -15865,8 +15865,8 @@
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "e82ffad8e4c04260c3c3c1ba268aa975d1c0a56019e2c5d4758b0859879eac67",
-      "created_at": "2026-11-19T11:50:45.089Z"
+      "content_hash": "649a0d925e9984525e7c5d34bd12eb5d060f0a743ad853b5026c1a34fff2617a",
+      "created_at": "2026-11-20T09:10:36.697Z"
     },
     "DOM-D-C603EFBB": {
       "record_id": "DOM-D-C603EFBB",
@@ -15925,8 +15925,8 @@
       "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-learnings-technical-construction-intelligence-nucleoidai-nuc.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "4f78faddff8b734cac7df29e61635925b33f8186c74ca54986577e6afffc3bc2",
-      "created_at": "2026-11-19T11:51:26.928Z"
+      "content_hash": "101bcd2ada4dc8c1c7cc952277601daeb72f4b877ec1ffc4f00676f940bf054d",
+      "created_at": "2026-11-20T09:10:40.839Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp",
@@ -17752,8 +17752,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "21c5777e6bcafdc5f4a61e22934b0d736758593d90fbfb83265a2aaeb15f95d5",
-      "created_at": "2026-11-20T06:03:05.336Z"
+      "content_hash": "9f423d558d5c38a7cab563c562a034acdb1f04a0824c9d3492846ff4f08ad597",
+      "created_at": "2026-11-20T09:10:41.739Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -28019,8 +28019,8 @@
       "title": "Architecture Intelligence: opentofu-opentofu-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-opentofu-opentofu-learnings-architecture-intelligence-opentofu-opentofu-learning.md",
       "repository": "opentofu-opentofu-learnings",
-      "content_hash": "92ddb42ca43ca20b84cfdb8a263a994c61bd561510d504ca481d4b6c918c69d7",
-      "created_at": "2026-11-19T05:06:23.369Z"
+      "content_hash": "a0e040f1bd0e48450310a6fc1685052e880f13b82e6e1d5e3a9aeec844ef4bfa",
+      "created_at": "2026-11-20T09:10:40.056Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-core",

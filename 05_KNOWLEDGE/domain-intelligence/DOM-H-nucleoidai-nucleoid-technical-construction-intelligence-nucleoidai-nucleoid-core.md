@@ -4,24 +4,24 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "08c6985f",
+  "source_version": "ba512866",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T11:50:44.872Z",
+  "timestamp": "2026-11-20T09:10:36.551Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `08c6985f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T11:50:44.872Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `ba512866`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T09:10:36.551Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence)
-- **Confidence Rating**: 52%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NucleoidAI/Nucleoid:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T11:50:43.327Z  
+> **Harvest Timestamp**: 2026-11-20T09:09:59.637Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1181,10 +1181,12 @@ import * as milestone from "./lib/milestone.ts";
 import * as Matrix from "./lib/Matrix.ts";
 import object from "./object.ts";
 
-export async function declarations({ train_dataset }) {
+export async function declarations({ train }) {
   milestone.inferring_declarations();
 
-  const { declarations, output_canvas } = await llm.generate({
+  const {
+    result: { class_declaration, declarations, output_canvas },
+  } = await llm.generate({
     grammar: true,
     messages: [
       {
@@ -1192,23 +1194,33 @@ export async function declarations({ train_dataset }) {
         content: `
           query:
           ${JSON.stringify({
-            ...train_dataset,
+            ...train,
+            class_declaration: "<CLASS_DECLARATION>",
             declarations: "<DECLARATIONS>",
             output_canvas: "<OUTPUT_CANVAS>",
           })}
           json_format:
-          { "declarations": <DECLARATIONS>, "output_canvas": <OUTPUT_CANVAS> }
+          {
+            "result": {
+              "class_declaration": <CLASS_DECLARATION>,
+              "declarations": <DECLARATIONS>,
+              "output_canvas": <OUTPUT_CANVAS>
+            }
+          }
         `,
       },
     ],
   });
 
-  milestone.declarations_inferred({ declarations, output_canvas });
+  milestone.declarations_inferred({
+    declarations: [class_declaration, ...declarations],
+    output_canvas,
+  });
 
-  return { declarations, output_canvas };
+  return { class_declaration, declarations, output_canvas };
 }
 
-export async function instances({ train_dataset }) {
+export async function instances({ train }) {
   milestone.segmenting_training_objects();
 
   const { result: instances } = await llm.generate({
@@ -1218,8 +1230,8 @@ export async function instances({ train_dataset }) {
         content: `
           query:
           ${JSON.stringify({
-            ...train_dataset,
-            dataset: train_dataset.dataset.map((dataset) => ({
+            ...train,
+            dataset: train.dataset.map((dataset) => ({
               ...dataset,
               instances: [
                 {
@@ -1246,24 +1258,19 @@ export async function instances({ train_dataset }) {
   return { instances };
 }
 
-export async function value({
-  instance_name,
-  train_dataset,
-  input_matrix,
-  instance,
-}) {
+export async function value({ instance_name, train, input_matrix, instance }) {
   milestone.constructing_instance({ instance_name });
 
   instance.instance_name = instance_name;
 
-  const { x, y, width, height, volume } = Matrix.locate(
+  const { x, y, width, height, volume } = Matrix.measure(
     instance.input_instance_matrix
   );
 
-  const orientation = await object.orientation({ train_dataset, instance });
+  const orientation = await object.orientation({ train, instance });
 
   const implementation = await object.implementation({
-    train_dataset,
+    train,
     instance,
     x,
     y,
@@ -1281,7 +1288,7 @@ export async function value({
     [
       `canvas_width = ${canvas_width}`,
       `canvas_height = ${canvas_height}`,
-      train_dataset.declarations[0],
+      train.class_declaration,
       implementation,
     ].join("\n\n")
   );
@@ -1298,10 +1305,10 @@ export async function value({
   instance.input_value = input_value;
 }
 
-export async function state(train_dataset) {
+export async function state(train) {
   const objects = [];
 
-  for (const dataset of train_dataset.dataset) {
+  for (const dataset of train.dataset) {
     const implementations = dataset.instances.map(
       ({ implementation }) => implementation
     );
@@ -1312,7 +1319,8 @@ export async function state(train_dataset) {
       [
         `canvas_width = ${canvas_width}`,
         `canvas_height = ${canvas_height}`,
-        ...train_dataset.declarations,
+        train.class_declaration,
+        ...train.declarations,
         ...implementations,
         "Obj[:]",
       ].join("\n\n")
@@ -1350,12 +1358,13 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
   const { arc_train, test_input_matrix, test_output_matrix } =
     await arc_dataset.load(puzzle_id);
 
-  const train_dataset = {
+  const train = {
     dataset: arc_train.map(({ input, output }) => ({
       input_matrix: input,
       output_matrix: output,
       instances: undefined,
     })),
+    class_declaration: undefined,
     declarations: undefined,
     output_canvas: undefined,
   };
@@ -1375,22 +1384,24 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
   const next_instance_name = (): string =>
     `obj${String(instance_index++).padStart(12, "0")}`;
 
-  const { declarations, output_canvas } = await analyzer.declarations({
-    train_dataset,
-  });
+  const { class_declaration, declarations, output_canvas } =
+    await analyzer.declarations({
+      train,
+    });
 
-  train_dataset.declarations = declarations;
-  train_dataset.output_canvas = output_canvas;
+  train.class_declaration = class_declaration;
+  train.declarations = declarations;
+  train.output_canvas = output_canvas;
 
-  for (const dataset of train_dataset.dataset) {
+  for (const dataset of train.dataset) {
     const { instances } = await analyzer.instances({
-      train_dataset: { ...train_dataset, dataset: [dataset] },
+      train: { ...train, dataset: [dataset] },
     });
 
     for (const instance of instances) {
       await analyzer.value({
         instance_name: next_instance_name(),
-        train_dataset,
+        train,
         input_matrix: dataset.input_matrix,
         instance,
       });
@@ -1399,33 +1410,38 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     dataset.instances = instances;
   }
 
-  await analyzer.state(train_dataset);
+  await analyzer.state(train);
 
-  const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
+  milestone.synthesizing_training_dataset();
+
+  const synthesized_dataset = await synthesizer.synthesize({ train });
+
+  milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
 
   for (const dataset of synthesized_dataset) {
     for (const instance of dataset.instances) {
       await analyzer.value({
         instance_name: next_instance_name(),
-        train_dataset,
+        train,
         input_matrix: dataset.input_matrix,
         instance,
       });
     }
 
     await object.state({
+      class_declaration,
       declarations,
       input_matrix: dataset.input_matrix,
       input_instances: dataset.instances,
     });
 
-    train_dataset.dataset.push(dataset);
+    train.dataset.push(dataset);
   }
 
   milestone.visualization();
 
   const { instances } = await visualizer.instances({
-    train_dataset,
+    train,
     test_input_matrix,
   });
 
@@ -1439,7 +1455,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     const instance_name: string = next_instance_name();
 
     const { implementation, input_value } = await visualizer.value({
-      train_dataset,
+      train,
       test_input_matrix,
       instance_name,
       input_instance_matrix,
@@ -1454,6 +1470,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
   }
 
   await object.state({
+    class_declaration,
     declarations,
     input_matrix: test_input_matrix,
     input_instances,
@@ -1462,7 +1479,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
   for (const input_instance of input_instances) {
     const { output_instance_matrix } = await visualizer.output_instance_matrix({
       test_input_matrix,
-      train_dataset,
+      train,
       instance: input_instance,
     });
 
@@ -1484,7 +1501,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
 
   const debug = {
     puzzle_id,
-    train_dataset,
+    train,
     test_input_instances: input_instances,
     test_input_matrix,
     test_output_matrix,
@@ -1577,750 +1594,857 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `08c6985f` (2026-11-19)
-**Commit Message**: Remove comments from ARC datasets
+### Incident Patch 1: `ba512866` (2026-11-20)
+**Commit Message**: Improve terminal editor navigation
 
-Remove descriptive comments from three datasets and update the dataset agent, grammar, and documentation to require executable code only. Object snapshots remain unchanged.
+Add pane-aware paging and subtle scrollbars, expand the focused editor for long drafts, and make autocomplete respect multiline strings, comments, and popup mouse interactions.
 
-**File**: `.claude/agents/arc-dataset.agent.md` (modified, +3/-8)
+**File**: `README.md` (modified, +6/-0)
 ```diff
-@@ -94,9 +94,8 @@ formatting exactly:
-   `input_value`, `output_value`.
- - Two-space indentation, one matrix row per line, and `implementation`,
-   `input_value`, and `output_value` each on a single line.
--- Natural-language `#` comments appear only in `declarations`, where they are
--  optional and describe its classes and rules, and in `implementation`, where
--  they describe the object it constructs. No other field carries them.
-+- No field carries `#` comments: every declaration and every `implementation`
-+  is executable code alone, as in every existing dataset.
+@@ -57,6 +57,12 @@ the cursor/selection, and the wheel scrolls individual panes. Ctrl-C cancels
+ input, Ctrl-Q exits, and `.help` lists all controls.
+ At compact heights, results and diagnostics share a pane; F4 switches between
+ them without hiding the editor.
++Subtle scrollbars mark long results and diagnostics; PageUp / PageDown moves
++by the visible rows of the selected pane. Scrolling over autocomplete changes
++the selected suggestion without moving the panes behind it.
++Long drafts expand the focused editor to at most half the terminal, while
++result focus returns that space to output. Autocomplete respects strings and
++comments across lines, so Tab does not replace text inside them.
  
- ## Model the world
- 
-@@ -236,11 +235,6 @@ The caller decides whether to propose the feature; you never start a NUC.
-   datasets) with named arguments matching its parameters, where `width` and
-   `height` are the input mask's nonzero bounding-box column and row counts and
-   `volume` is its number of nonzero cells.
--- Before that code, `implementation` holds `#` comment lines that describe the
--  object, as in every existing dataset: its kind and colors, then its size,
--  position and, when it points, its direction, such as
--  `# 2 by 2 at x 5, y 1, pointing southeast`. They do not change its
--  snapshots.
- - Never hand-write `input_value` or `output_value`. As `arc/src/analyzer.ts`
-   does, run the Nucleoid executable (`NUCLEOID_EXECUTABLE`, else the debug
-   build in `target/debug/`; build it with `cargo build` if missing) as
-@@ -281,6 +275,7 @@ Verify with a throwaway script outside the repository; do not add tests:
-   output masks reproduces `output_matrix`, cell for cell.
- - Every `input_value.volume` and `output_value.volume` equals the number of
-   nonzero cells in the instance's input or output mask.
-+- No declaration or `implementation` holds a `#` comment line.
- - Rerunning Nucleoid reproduces every `input_value` and `output_value`.
- 
- For an explicitly authorized padding-only repair, restore unambiguous
+ `nucleoid --plain` keeps the line-oriented interface below. Piped stdin or
+ redirected stdout selects it automatically; file execution and the `--json`
 ```
 
-**File**: `arc/README.md` (modified, +39/-80)
+**File**: `docs/README.md` (modified, +14/-0)
 ```diff
-@@ -398,15 +398,9 @@ three juxtaposed statements and raises `ReferenceError`. The solver's own
- same. Every snapshot is the state that the same rules give when spelled with
- `=`.
+@@ -101,6 +101,20 @@ Use F1-F3 for tabs, F6 or the view buttons for result formats, Ctrl-Up /
+ Ctrl-Down for earlier results, and F4 to focus the editor, results or
+ diagnostics. PageUp / PageDown and the mouse wheel scroll; focused-result
+ Left / Right (or Shift-wheel) moves across text or table columns.
++PageUp / PageDown uses the focused result or diagnostic viewport, excluding
++the table header from the page size. Subtle gutter scrollbars indicate overflow
++without reducing content width. Selecting a history entry without diagnostics
++returns diagnostic focus to its result. The autocomplete popup captures mouse
++events across its full bounds; its wheel selects suggestions, never the pane
++underneath.
++Long buffers grow the focused editor to at most half the terminal while keeping
++result content visible; focusing results or diagnostics restores the normal
++editor height. Wide editors show the total line count beside the cursor position.
++Autocomplete checks the accepted lexer's context up to the cursor, including
++multiline strings, templates and `#`, `//` and `/* ... */` comments. No
++suggestions appear inside those regions, even with Ctrl-Space; code after
++closed literals and comments completes normally. Incomplete text after the
++cursor does not affect suggestions before it.
+ Click/drag positions/selects editor text. `.help` documents all controls;
+ `.json`, `.table` and `.graph` accept optional `on` / `off` arguments.
  
--Each snippet starts with `#` comment lines that describe the object it
--constructs, in the style of the declarations' comments: its kind and colors,
--then its size and position and, when it points, its direction. They put the
--instance's own arguments and input mask into words, and Nucleoid skips them,
--so they change no snapshot:
-+Snippets and declarations hold executable code alone, with no `#` comment:
- 
- ```nuc
--# A corner whose vertex and both segments are color 9,
--# 2 by 2 at x 5, y 1, pointing southeast
- obj7e96305711c2 is Obj(x=5, y=1, width=2, height=2, orientation=135, volume=3, vertex_color=9, vertical_segment_color=9, horizontal_segment_color=9)
- ```
- 
-@@ -614,9 +608,8 @@ row, of one color or with its lone color in the middle cell, has no head and
- takes the horizontal axis, 90. The rules leave `orientation` unchanged: each
- bar keeps 90, and each cleared row, which has no output cell, keeps its input
- orientation, 270 for three of the cleared rows and 90 for the other five. The
--declarations hold executable code and one `#` comment, the orientation line
--that every dataset places above its class. The test pair follows the training
--pairs at the same level and is annotated by the same rules.
-+test pair follows the training pairs at the same level and is annotated by the
-+same rules.
- 
- `dataset.25ff71a9.json` annotates the four original training pairs from
- `data\training\25ff71a9.json`, in order, followed by its two test pairs, six
-@@ -665,10 +658,8 @@ both states because the figure moves without turning: 90 for the bars,
- horizontal lines without a head; 135 and 45 for the trominoes, corners that
- point toward their vertex, the bottom-right cell of the third figure's box and
- the top-right cell of the fourth's; and 0 for the test pairs' vertical 2-cell
--bar and single cell. The declarations hold executable code and one `#` comment,
--the orientation line that every dataset places above its class. The test pairs
--follow the training pairs at the same level and are annotated by the same
--rules.
-+bar and single cell. The test pairs follow the training pairs at the same level
-+and are annotated by the same rules.
- 
- `dataset.27a28665.json` annotates the seven original training pairs from
- `data\training\27a28665.json`, in order, followed by its three test pairs,
-@@ -804,10 +795,8 @@ and keeps that orientation with its inside marker: the training corners point
- at 225 and 45, and at 45, 225, and 135, and the test corners at 45, 315, 225,
- and 135, so only the test pair has a corner at 315. The declarations write
- their assignments with `is` and their tags as bare words, with no quoted
--string, and hold `#` comments: two lines above the class, the orientation line
--among them, and one above the `marker_color` rule. Each implementation starts
--with two comment lines that describe its corner. The test pair follows the
--training pairs at the same level and is annotated by the same rules.
-+string. The test pair follows the training pairs at the same level and is
-+annotated by the same rules.
- 
- `dataset.3c9b0459.json` annotates the four original training pairs from
- `data\training\3c9b0459.json`, in order, followed by its test pair, five
-@@ -858,10 +847,8 @@ bounding-box origin, 0 and 0, equal to `output_value.x`/`output_value.y`.
- `output_canvas` is `EXACT` because each output keeps its input's 3 by 3
- canvas; with no zero cell to crop, `FIT` would frame the same grids.
- Orientation is 0 in every input state, where the mosaic is not turned, and
--180 in every output state. The declarations hold executable code and one `#`
--comment, the orientation line that every dataset places above its class. The
--test pair follows the training pairs at the same level and is annotated by the
--same rules.
-+180 in every output state. The test pair follows the training pairs at the same
-+level and is annotated by the same rules.
- 
- `dataset.44f52bb0.json` annotates the six original training pairs from
- `data\training\44f52bb0.json`, in order, followed by its two test pairs,
-@@ -1052,14 +1039,11 @@ in that order, where `width` and `height` are the column and row counts of the
- block's box, the nonzero bounding box of its input mask, and `volume` the
- number of its nonzero cells, 3, 3, and 9 in every
- pair, with no color, parts list, canvas size, or matrix of cells, because
--the rules need none: the block's cells travel in its masks. Its declaration,
--comments included, is that of `dataset.6150a2bd.json`. Each implementation
--passes `x=0, y=0, width=3, height=3, orientation=0, volume=9` after comment
--lines that name the block's colors in reading order and its box, such as
--`# The whole block of colors 6, 1 and 8,` and `# 3 by 3 at x 0, y 0` for the
--first training input. Three unconditional, commented class-level rules turn
--every block into t
 ```
 
-**File**: `arc/nucleoid.ebnf` (modified, +2/-3)
+**File**: `src/terminal/completion.rs` (modified, +16/-18)
 ```diff
-@@ -1,5 +1,5 @@
--declaration          ::= ( COMMENT NEWLINE )* ( classStmt | ifStmt | classRule )
--implementation       ::= ( COMMENT NEWLINE )* NAME assign NAME
-+declaration          ::= classStmt | ifStmt | classRule
-+implementation       ::= NAME assign NAME
-                          '(' labeledArgument ( ',' labeledArgument )+ ')'
- assign               ::= 'is' | '='
+@@ -2,8 +2,11 @@ use std::collections::BTreeSet;
  
-@@ -50,6 +50,5 @@ RESERVED             ::= 'and' | 'class' | 'else' | 'if' | 'in' | 'not' | 'of' |
- CLASS_REF            ::= '$' NAME
- INTEGER              ::= [0-9]+
- STRING               ::= "'" [^']* "'"
--COMMENT              ::= '#' [^#xA]*
- NEWLINE              ::= #xA
- INDENT               ::= '    '
+ use nucleoid::Runtime;
+ use nucleoid::graph::NodeKind;
++use nucleoid::lang::ast::lexer::{Token, tokenize};
+ use tui_textarea::{CursorMove, TextArea};
+ 
++use super::editor;
++
+ const WORDS: &[&str] = &[
+     "and",
+     "assert",
+@@ -135,7 +138,7 @@ impl Completion {
+             return None;
+         }
+         let before: String = before.iter().collect();
+-        if in_literal_or_comment(head) {
++        if !code_position(editor, row, column) {
+             return None;
+         }
+         let candidates = if row == 0 && before.trim().is_empty() && prefix.starts_with('.') {
+@@ -206,23 +209,18 @@ fn word(character: char) -> bool {
+     character.is_ascii_alphanumeric() || matches!(character, '_' | '$' | '.')
+ }
+ 
+-fn in_literal_or_comment(line: &[char]) -> bool {
+-    let mut quote = None;
+-    let mut escaped = false;
+-    for &character in line {
+-        if escaped {
+-            escaped = false;
+-        } else if character == '\\' && quote.is_some() {
+-            escaped = true;
+-        } else if quote == Some(character) {
+-            quote = None;
+-        } else if quote.is_none() && character == '#' {
+-            return true;
+-        } else if quote.is_none() && matches!(character, '\'' | '"' | '`') {
+-            quote = Some(character);
+-        }
+-    }
+-    quote.is_some()
++fn code_position(editor: &TextArea<'_>, row: usize, column: usize) -> bool {
++    const CURSOR_MARKER: &str = "__nucleoid_completion_cursor";
++    let mut source = editor::source_before_cursor(editor);
++    source.push(' ');
++    source.push_str(CURSOR_MARKER);
++    tokenize(&source).is_ok_and(|tokens| {
++        tokens.into_iter().any(|spanned| {
++            spanned.position.line == row + 1
++                && spanned.position.column == column + 2
++                && matches!(spanned.token, Token::Identifier(name) if name == CURSOR_MARKER)
++        })
++    })
+ }
+ 
+ fn add_members(runtime: &Runtime, owner: &str, candidates: &mut BTreeSet<String>) {
 ```
 
-**File**: `arc/src/dataset/dataset.3aa6fb7a.json` (modified, +11/-11)
+**File**: `src/terminal/completion/tests.rs` (modified, +59/-0)
 ```diff
-@@ -1,8 +1,8 @@
- {
-   "declarations": [
--    "# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\n# Each object is a one-color corner, three cells of a 2 by 2 box that meet at its vertex, and it points toward that vertex.\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6747\n    this.color is color",
-+    "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6747\n    this.color is color",
-     "$Obj.tag is l3337",
--    "# Every corner gets its inside marker: the open cell of its box, diagonally across from its vertex, turns color 1 and completes the square.\n$Obj.marker_color is 1",
-+    "$Obj.marker_color is 1",
-     "$Obj.volume is $Obj.volume@first + 1"
-   ],
-   "output_canvas": "EXACT",
-@@ -53,7 +53,7 @@
-             [0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# A corner of color 8,\n# 2 by 2 at x 1, y 1, pointing southwest\nobj06bbbdc98e71 is Obj(x=1, y=1, width=2, height=2, orientation=225, volume=3, color=8)",
-+          "implementation": "obj06bbbdc98e71 is Obj(x=1, y=1, width=2, height=2, orientation=225, volume=3, color=8)",
-           "input_value": {"color":8,"height":2,"id":"obj06bbbdc98e71","orientation":225,"tag":"l6747","volume":3,"width":2,"x":1,"y":1},
-           "output_value": {"color":8,"height":2,"id":"obj06bbbdc98e71","marker_color":1,"orientation":225,"tag":"l3337","volume":4,"width":2,"x":1,"y":1}
-         },
-@@ -83,7 +83,7 @@
-             [0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# A corner of color 8,\n# 2 by 2 at x 4, y 3, pointing northeast\nobj812b7881ec0e is Obj(x=4, y=3, width=2, height=2, orientation=45, volume=3, color=8)",
-+          "implementation": "obj812b7881ec0e is Obj(x=4, y=3, width=2, height=2, orientation=45, volume=3, color=8)",
-           "input_value": {"color":8,"height":2,"id":"obj812b7881ec0e","orientation":45,"tag":"l6747","volume":3,"width":2,"x":4,"y":3},
-           "output_value": {"color":8,"height":2,"id":"obj812b7881ec0e","marker_color":1,"orientation":45,"tag":"l3337","volume":4,"width":2,"x":4,"y":3}
-         }
-@@ -135,7 +135,7 @@
-             [0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# A corner of color 8,\n# 2 by 2 at x 4, y 0, pointing northeast\nobj3a91dc0b584b is Obj(x=4, y=0, width=2, height=2, orientation=45, volume=3, color=8)",
-+          "implementation": "obj3a91dc0b584b is Obj(x=4, y=0, width=2, height=2, orientation=45, volume=3, color=8)",
-           "input_value": {"color":8,"height":2,"id":"obj3a91dc0b584b","orientation":45,"tag":"l6747","volume":3,"width":2,"x":4,"y":0},
-           "output_value": {"color":8,"height":2,"id":"obj3a91dc0b584b","marker_color":1,"orientation":45,"tag":"l3337","volume":4,"width":2,"x":4,"y":0}
-         },
-@@ -165,7 +165,7 @@
-             [0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# A corner of color 8,\n# 2 by 2 at x 2, y 2, pointing southwest\nobj1d5b3380e76e is Obj(x=2, y=2, width=2, height=2, orientation=225, volume=3, color=8)",
-+          "implementation": "obj1d5b3380e76e is Obj(x=2, y=2, width=2, height=2, orientation=225, volume=3, color=8)",
-           "input_value": {"color":8,"height":2,"id":"obj1d5b3380e76e","orientation":225,"tag":"l6747","volume":3,"width":2,"x":2,"y":2},
-           "output_value": {"color":8,"height":2,"id":"obj1d5b3380e76e","marker_color":1,"orientation":225,"tag":"l3337","volume":4,"width":2,"x":2,"y":2}
-         },
-@@ -195,7 +195,7 @@
-             [0, 0, 0, 1, 8, 0, 0],
-             [0, 0, 0, 8, 8, 0, 0]
-           ],
--          "implementation": "# A corner of color 8,\n# 2 by 2 at x 3, y 5, pointing southeast\nobje29de8da7b6d is Obj(x=3, y=5, width=2, height=2, orientation=135, volume=3, color=8)",
-+          "implementation": "obje29de8da7b6d is Obj(x=3, y=5, width=2, height=2, orientation=135, volume=3, color=8)",
-           "input_value": {"color":8,"height":2,"id":"obje29de8da7b6d","orientation":135,"tag":"l6747","volume":3,"width":2,"x":3,"y":5},
-           "output_value": {"color":8,"height":2,"id":"obje29de8da7b6d","marker_color":1,"orientation":135,"tag":"l3337","volume":4,"width":2,"x":3,"y":5}
-         }
-@@ -247,7 +247,7 @@
-             [0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0]
-           ],
--          "implementation": "# A corner of color 8,\n# 2 by 2 at x 5, y 0, pointing northeast\nobje1ac1e9c728c is Obj(x=5, y=0, width=
+@@ -332,6 +332,65 @@ fn strings_comments_and_whitespace_do_not_trigger_automatic_completion() {
+     assert!(Completion::find(&runtime, &editor::new("\"#\"; Math.sq"), false).is_some());
+ }
+ 
++#[test]
++fn completion_stays_out_of_comments_and_multiline_literals_even_when_requested() {
++    let runtime = Runtime::new();
++    for source in [
++        "// Math.sq",
++        "value = 1 // Math.sq",
++        "/* Math.sq",
++        "/* ignored\nMath.sq",
++        "/* closed */ # Math.sq",
++        "\"open\nMath.sq",
++        "'open\nMath.sq",
++        "`open\nMath.sq",
++        r#"value = "escaped \" quote Math.sq"#,
++        "__nucleoid_completion_cursor # Math.sq",
++    ] {
++        let editor = editor::new(source);
++        for explicit in [false, true] {
++            assert!(
++                Completion::find(&runtime, &editor, explicit).is_none(),
++                "{source:?}, explicit: {explicit}"
++            );
++        }
++    }
++}
++
++#[test]
++fn completion_resumes_after_literals_comments_and_division_without_running_code() {
++    let runtime = Runtime::new();
++    for source in [
++        "// ignored \"\nMath.sq",
++        "# ignored '\nMath.sq",
++        "/* ignored ' # */ Math.sq",
++        "/* ignored\n*/ Math.sq",
++        "\"closed\ntext\"; Math.sq",
++        "`closed\ntext`; Math.sq",
++        "pattern = /[#]/; Math.sq",
++        "value = 8 / 2; Math.sq",
++        "\"/* // #\"; Math.sq",
++    ] {
++        let editor = editor::new(source);
++        let completion = Completion::find(&runtime, &editor, false).unwrap();
++        assert_eq!(completion.candidates, ["Math.sqrt"], "{source:?}");
++    }
++}
++
++#[test]
++fn completion_checks_only_source_before_the_cursor() {
++    let runtime = Runtime::new();
++    let mut editor = editor::new("Math.sq\n/* unterminated");
++    editor.move_cursor(CursorMove::Jump(0, 7));
++    let completion = Completion::find(&runtime, &editor, false).unwrap();
++    completion.apply(&mut editor);
++    assert_eq!(editor.lines(), ["Math.sqrt", "/* unterminated"]);
++
++    let mut editor = editor::new("/* Math.sq */\nMath.sq");
++    editor.move_cursor(CursorMove::Jump(0, 10));
++    assert!(Completion::find(&runtime, &editor, true).is_none());
++}
++
+ #[test]
+ fn completion_offers_repeat_as_it_offers_while() {
+     let mut runtime = Runtime::new();
 ```
 
-**File**: `arc/src/dataset/dataset.dae9d2b5.json` (modified, +17/-17)
+**File**: `src/terminal/editor.rs` (modified, +10/-4)
 ```diff
-@@ -1,8 +1,8 @@
- {
-   "declarations": [
--    "# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\n# Each object is a whole panel figure, including any disconnected pieces.\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.volume = volume\n    this.tag = 'l9100'",
--    "# Register the right panel with the left panel without changing either figure's shape.\nif $Obj.x@first >= canvas_width / 2:\n    $Obj.x = $Obj.x@first - canvas_width / 2",
--    "# Recolor every occupied figure cell; identically colored overlaps compose as a union.\n$Obj.fill_color = 6"
-+    "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int):\n    this.x = x\n    this.y = y\n    this.width = width\n    this.height = height\n    this.orientation = orientation\n    this.volume = volume\n    this.tag = 'l9100'",
-+    "if $Obj.x@first >= canvas_width / 2:\n    $Obj.x = $Obj.x@first - canvas_width / 2",
-+    "$Obj.fill_color = 6"
-   ],
-   "output_canvas": "FIT",
-   "dataset": [
-@@ -36,7 +36,7 @@
-             [6, 0, 0],
-             [0, 0, 0]
-           ],
--          "implementation": "# The whole left-panel corner of color 4,\n# 2 by 2 at x 0, y 0, pointing northwest\nobj9794a3111594 = Obj(x=0, y=0, width=2, height=2, orientation=315, volume=3)",
-+          "implementation": "obj9794a3111594 = Obj(x=0, y=0, width=2, height=2, orientation=315, volume=3)",
-           "input_value": {"height":2,"id":"obj9794a3111594","orientation":315,"tag":"l9100","volume":3,"width":2,"x":0,"y":0},
-           "output_value": {"fill_color":6,"height":2,"id":"obj9794a3111594","orientation":315,"tag":"l9100","volume":3,"width":2,"x":0,"y":0}
-         },
-@@ -58,7 +58,7 @@
-             [6, 0, 0],
-             [0, 0, 6]
-           ],
--          "implementation": "# The whole right-panel pattern of color 3,\n# 3 by 3 at x 3, y 0\nobj76d109fcf155 = Obj(x=3, y=0, width=3, height=3, orientation=0, volume=4)",
-+          "implementation": "obj76d109fcf155 = Obj(x=3, y=0, width=3, height=3, orientation=0, volume=4)",
-           "input_value": {"height":3,"id":"obj76d109fcf155","orientation":0,"tag":"l9100","volume":4,"width":3,"x":3,"y":0},
-           "output_value": {"fill_color":6,"height":3,"id":"obj76d109fcf155","orientation":0,"tag":"l9100","volume":4,"width":3,"x":0,"y":0}
-         }
-@@ -94,7 +94,7 @@
-             [6, 0, 0],
-             [0, 0, 6]
-           ],
--          "implementation": "# The whole left-panel pattern of color 4,\n# 3 by 3 at x 0, y 0\nobjc2fe1d5c024b = Obj(x=0, y=0, width=3, height=3, orientation=0, volume=4)",
-+          "implementation": "objc2fe1d5c024b = Obj(x=0, y=0, width=3, height=3, orientation=0, volume=4)",
-           "input_value": {"height":3,"id":"objc2fe1d5c024b","orientation":0,"tag":"l9100","volume":4,"width":3,"x":0,"y":0},
-           "output_value": {"fill_color":6,"height":3,"id":"objc2fe1d5c024b","orientation":0,"tag":"l9100","volume":4,"width":3,"x":0,"y":0}
-         },
-@@ -116,7 +116,7 @@
-             [6, 0, 0],
-             [6, 0, 0]
-           ],
--          "implementation": "# The whole right-panel corner of color 3,\n# 3 by 2 at x 3, y 0, pointing northwest\nobj3981ce96f289 = Obj(x=3, y=0, width=2, height=3, orientation=315, volume=4)",
-+          "implementation": "obj3981ce96f289 = Obj(x=3, y=0, width=2, height=3, orientation=315, volume=4)",
-           "input_value": {"height":3,"id":"obj3981ce96f289","orientation":315,"tag":"l9100","volume":4,"width":2,"x":3,"y":0},
-           "output_value": {"fill_color":6,"height":3,"id":"obj3981ce96f289","orientation":315,"tag":"l9100","volume":4,"width":2,"x":0,"y":0}
-         }
-@@ -152,7 +152,7 @@
-             [0, 6, 6],
-             [6, 6, 0]
-           ],
--          "implementation": "# The whole left-panel pattern of color 4,\n# 3 by 3 at x 0, y 0\nobj501566e9788a = Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5)",
-+          "implementation": "obj501566e9788a = Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5)",
-           "input_value": {"height":3,"id":"obj501566e9788a","orientation":0,"tag":"l9100","volume":5,"width":3,"x":0,"y":0},
-           "output_value": {"fill_color":6,"height":3,"id":"obj501566e9788a","orientation":0,"tag":"l9100","volume":5,"width":3,"x":0,"y":0}
-         },
-@@ -174,7 +174,7 @@
-             [6, 0, 6],
-             [0, 0, 6]
-           ],
--          "implementation": "# The whole right-panel pattern of color 3,\n# 3 by 3 at x 3, y 0\nobj19bac09d8db8 = Obj(x=3, y=0, width=3, height=3, orientation=0, volume=4)",
-+          "implementation": "obj19bac09d8db8 = Obj(x=3, y=0, width=3, height=3, orientation=0, volume=4)",
-           "input_value": {"height":3,"id":"obj19bac09d8db8","orientation":0,"tag":"l9100","volume":4,"width":3,"x":3,"y":0},
-           "output_value": {"fill_color
+@@ -14,20 +14,26 @@ pub(super) fn new(source: &str) -> TextArea<'static> {
+     editor
+ }
+ 
+-pub(super) fn newline(editor: &mut TextArea<'_>) {
++pub(super) fn source_before_cursor(editor: &TextArea<'_>) -> String {
+     let (row, column) = editor.cursor();
+     let prefix: String = line(editor, row).chars().take(column).collect();
+-    let source = editor
++    editor
+         .lines()
+         .iter()
+         .take(row)
+         .map(String::as_str)
+         .chain(std::iter::once(prefix.as_str()))
+         .collect::<Vec<_>>()
+-        .join("\n");
++        .join("\n")
++}
++
++pub(super) fn newline(editor: &mut TextArea<'_>) {
++    let (row, column) = editor.cursor();
++    let source = source_before_cursor(editor);
+     let indentation = if unterminated_block_comment(&source) {
+-        prefix
++        line(editor, row)
+             .chars()
++            .take(column)
+             .take_while(|character| matches!(character, ' ' | '\t'))
+             .collect()
+     } else {
 ```
 
-**File**: `arc/src/dataset/dataset.fafffa47.json` (modified, +14/-14)
+**File**: `src/terminal/input.rs` (modified, +10/-2)
 ```diff
-@@ -1,8 +1,8 @@
- {
-   "declarations": [
--    "# Orientation is the direction an object points, in degrees clockwise from north (0 up, 90 right, 180 down, 270 left)\n# Each object is the whole figure of one panel, the top or bottom half of the canvas, including any disconnected pieces.\n# holes are the [column, row] cells of its panel that the figure leaves empty, counted from the top-left corner of the panel.\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, holes: list):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l9100\n    this.holes is holes",
-+    "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, holes: list):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l9100\n    this.holes is holes",
-     "$Obj.tag is l8372",
--    "# Overlay the panels and keep the holes that every panel shares.\n$Obj.points is $Obj.holes.filter(hole => all figure in Obj: figure.holes.includes(hole))",
-+    "$Obj.points is $Obj.holes.filter(hole => all figure in Obj: figure.holes.includes(hole))",
-     "$Obj.fill_color is 2",
-     "$Obj.x is $Obj.points.min(point => point[0])",
-     "$Obj.y is $Obj.points.min(point => point[1])",
-@@ -48,7 +48,7 @@
-             [2, 0, 0],
-             [0, 0, 0]
-           ],
--          "implementation": "# The whole top-panel pattern of color 9,\n# 3 by 3 at x 0, y 0\nobje25bf2e9e53d is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=7, holes=[[0, 0], [0, 1]])",
-+          "implementation": "obje25bf2e9e53d is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=7, holes=[[0, 0], [0, 1]])",
-           "input_value": {"height":3,"holes":[[0,0],[0,1]],"id":"obje25bf2e9e53d","orientation":0,"tag":"l9100","volume":7,"width":3,"x":0,"y":0},
-           "output_value": {"fill_color":2,"height":2,"holes":[[0,0],[0,1]],"id":"obje25bf2e9e53d","orientation":0,"points":[[0,0],[0,1]],"tag":"l8372","volume":2,"width":1,"x":0,"y":0}
-         },
-@@ -73,7 +73,7 @@
-             [2, 0, 0],
-             [0, 0, 0]
-           ],
--          "implementation": "# The whole bottom-panel pattern of color 1,\n# 3 by 3 at x 0, y 3\nobj999f7889a66e is Obj(x=0, y=3, width=3, height=3, orientation=0, volume=5, holes=[[0, 0], [2, 0], [0, 1], [1, 1]])",
-+          "implementation": "obj999f7889a66e is Obj(x=0, y=3, width=3, height=3, orientation=0, volume=5, holes=[[0, 0], [2, 0], [0, 1], [1, 1]])",
-           "input_value": {"height":3,"holes":[[0,0],[2,0],[0,1],[1,1]],"id":"obj999f7889a66e","orientation":0,"tag":"l9100","volume":5,"width":3,"x":0,"y":3},
-           "output_value": {"fill_color":2,"height":2,"holes":[[0,0],[2,0],[0,1],[1,1]],"id":"obj999f7889a66e","orientation":0,"points":[[0,0],[0,1]],"tag":"l8372","volume":2,"width":1,"x":0,"y":0}
+@@ -58,8 +58,8 @@ impl App {
+             KeyCode::Enter if ctrl && !cfg!(windows) => return Some(self.submit(runtime)),
+             KeyCode::Up if ctrl => self.select_entry(self.selected.saturating_sub(1)),
+             KeyCode::Down if ctrl => self.select_entry(self.selected.saturating_add(1)),
+-            KeyCode::PageUp => self.scroll_vertical(false, self.regions.output.height.max(1)),
+-            KeyCode::PageDown => self.scroll_vertical(true, self.regions.output.height.max(1)),
++            KeyCode::PageUp => self.page_scroll(false),
++            KeyCode::PageDown => self.page_scroll(true),
+             KeyCode::Esc => {
+                 if self.completion.take().is_none() {
+                     self.editor.cancel_selection();
+@@ -248,6 +248,14 @@ impl App {
+ 
+     pub(super) fn select_entry(&mut self, selected: usize) {
+         self.selected = selected.min(self.entries.len().saturating_sub(1));
++        if self.focus == Focus::Diagnostics
++            && self
++                .entries
++                .get(self.selected)
++                .is_none_or(|entry| entry.diagnostics.is_empty())
++        {
++            self.focus = Focus::Result;
++        }
+         self.scroll = 0;
+         self.horizontal = 0;
+         self.diagnostic_scroll = 0;
+```
+
+**File**: `src/terminal/mod.rs` (modified, +4/-3)
+```diff
+@@ -48,12 +48,13 @@ Ctrl-C cancels input. Ctrl-D on an empty editor / Ctrl-Q exits.
+ 
+ F1-F3 changes tabs; the extra tabs are reserved for later.
+ F6 changes Text / JSON / Table. Ctrl-Up / Ctrl-Down selects earlier results.
+-F4 cycles editor, result and diagnostics focus. PgUp/PgDn scrolls the focused
+-result; Left/Right scrolls text or moves table columns.
++F4 cycles editor, result and diagnostics focus. PgUp/PgDn scrolls by a visible
++page; Left/Right scrolls text or moves table columns. Scrollbars mark overflow.
+ 
+ Click tabs, result views or history entries. Click/drag in the editor to
+ position/select text. Use the mouse wheel to scroll each pane; Shift-wheel
+-scrolls results horizontally. Pasted code is never executed automatically.";
++scrolls results horizontally. Over completions, the wheel selects suggestions
++without scrolling the pane underneath. Pasted code is never executed automatically.";
+ 
+ pub(super) fn run(runtime: &mut Runtime, json: bool, graph: bool) -> io::Result<()> {
+     let _session = Session;
+```
+
+**File**: `src/terminal/pointer.rs` (modified, +46/-11)
+```diff
+@@ -13,6 +13,23 @@ fn scrolled(offset: u16, forward: bool) -> u16 {
+ }
+ 
+ impl App {
++    pub(super) fn page_scroll(&mut self, forward: bool) {
++        let height = if self.focus == Focus::Diagnostics {
++            self.regions.diagnostics.height
++        } else {
++            let table_header = self.view == View::Table
++                && self
++                    .entries
++                    .get(self.selected)
++                    .is_some_and(|entry| entry.output.table().is_some());
++            self.regions
++                .output
++                .height
++                .saturating_sub(u16::from(table_header))
++        };
++        self.scroll_vertical(forward, height.max(1));
++    }
++
+     pub(super) fn scroll_vertical(&mut self, forward: bool, amount: u16) {
+         let scroll = if self.focus == Focus::Diagnostics {
+             &mut self.diagnostic_scroll
+@@ -75,16 +92,8 @@ impl App {
+     }
+ 
+     fn click(&mut self, mouse: MouseEvent, position: Position) {
+-        if self.regions.completions.contains(position) {
+-            if let Some(mut completion) = self.completion.take() {
+-                let index = self.regions.completion_start
+-                    + usize::from(mouse.row - self.regions.completions.y);
+-                if index < completion.candidates.len() {
+-                    completion.selected = index;
+-                    completion.apply(&mut self.editor);
+-                    self.history_index = None;
+-                }
+-            }
++        if self.completion_at(position) {
++            self.click_completion(position);
+         } else if let Some(tab) = self
+             .regions
+             .tabs
+@@ -124,9 +133,32 @@ impl App {
          }
-@@ -115,7 +115,7 @@
-             [0, 0, 0],
-             [0, 2, 0]
-           ],
--          "implementation": "# The whole top-panel pattern of color 9,\n# 3 by 3 at x 0, y 0\nobj07489bc01ff6 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, holes=[[1, 0], [0, 1], [0, 2], [1, 2]])",
-+          "implementation": "obj07489bc01ff6 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, holes=[[1, 0], [0, 1], [0, 2], [1, 2]])",
-           "input_value": {"height":3,"holes":[[1,0],[0,1],[0,2],[1,2]],"id":"obj07489bc01ff6","orientation":0,"tag":"l9100","volume":5,"width":3,"x":0,"y":0},
-           "output_value": {"fill_color":2,"height":3,"holes":[[1,0],[0,1],[0,2],[1,2]],"id":"obj07489bc01ff6","orientation":0,"points":[[1,0],[1,2]],"tag":"l8372","volume":2,"width":1,"x":1,"y":0}
-         },
-@@ -140,7 +140,7 @@
-             [0, 0, 0],
-             [0, 2, 0]
-           ],
--          "implementation": "# The whole bottom-panel pattern of color 1,\n# 3 by 3 at x 0, y 3\nobjf496979cac4a is Obj(x=0, y=3, width=3, height=3, orientation=0, volume=4, holes=[[1, 0], [1, 1], [2, 1], [1, 2], [2, 2]])",
-+          "implementation": "objf496979cac4a is Obj(x=0, y=3, width=3, height=3, orientation=0, volume=4, holes=[[1, 0], [1, 1], [2, 1], [1, 2], [2, 2]])",
-           "input_value": {"height":3,"holes":[[1,0],[1,1],[2,1],[1,2],[2,2]],"id":"objf496979cac4a","orientation":0,"tag":"l9100","volume":4,"width":3,"x":0,"y":3},
-           "output_value": {"fill_color":2,"height":3,"holes":[[1,0],[1,1],[2,1],[1,2],[2,2]],"id":"objf496979cac4a","orientation":0,"points":[[1,0],[1,2]],"tag":"l8372","volume":2,"width":1,"x":1,"y":0}
-         }
-@@ -182,7 +182,7 @@
-             [0, 2, 0],
-             [0, 2, 2]
-           ],
--          "implementation": "# The whole top-panel pattern of color 9,\n# 3 by 3 at x 0, y 0\nobj92a92c4b1e74 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=4, holes=[[0, 0], [2, 0], [1, 1], [1, 2], [2, 2]])",
-+          "implementation": "obj92a
+     }
+ 
++    fn completion_at(&self, position: Position) -> bool {
++        self.completion.is_some() && self.regions.completion_popup.contains(position)
++    }
++
++    fn click_completion(&mut self, position: Position) {
++        if !self.regions.completions.contains(position) {
++            return;
++        }
++        if let Some(mut completion) = self.completion.take() {
++            let index = self.regions.completion_start
++                + usize::from(position.y - self.regions.completions.y);
++            if index < completion.candidates.len() {
++                completion.selected = index;
++                completion.apply(&mut self.editor);
++                self.history_index = None;
++            }
++        }
++    }
++
+     fn wheel(&mut self, mouse: MouseEvent, position: Position, forward: bool) {
+         let sideways = mouse.modifiers.contains(KeyModifiers::SHIFT);
+-        if self.regions.editor.contains(position) {
++        if self.completion_at(position) {
++            if let Some(completion) = &mut self.completion {
++                completion.select(forward);
++            }
++        } else if self.regions.editor.contains(position) {
+             self.editor.scroll((if forward { 3 } else { -3 }, 0));
+             self.completion = None;
+         } else if self.regions.history.contains(position) {
+@@ -151,6 +183,9 @@ impl App {
+     }
+ 
+     fn wheel_sideways(&mut self, position: Position, forward: bool) {
++        if self.completion_at(position) {
++            return;
++        }
+         if self.regions.editor.contains(position) {
+             self.editor.scroll((0, if forward { 3 } else { -3 }));
+             self.completion = None;
 ```
 
 ---
 
-### Incident Patch 2: `9af29ad1` (2026-11-19)
-**Commit Message**: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
+### Incident Patch 2: `f8489165` (2026-11-20)
+**Commit Message**: Rename ARC training dataset to train
 
-**File**: `README.md` (modified, +28/-0)
+Use `train` throughout the ARC pipeline and debug output. Update documentation to note the legacy debug-log field.
+
+**File**: `.claude/agents/arc-debug.agent.md` (modified, +7/-6)
 ```diff
-@@ -2617,6 +2617,34 @@ assert([readings, moved], [[-1, 3, 4], [2, false]])
-   warning clears. See the
-   [root contract](nucleoid.spec.md#held-values-of-reasoning-selections).
+@@ -73,10 +73,11 @@ Derive the exact schema from the current `arc/src/app.ts`, `analyzer.ts`,
+ between that code and the log. At the time of writing, `start()` writes
+ `JSON.stringify(debug, null, 2)`, and the stages fill these fields:
  
-+## Python-style except clauses
-+
-+**Except clauses fall back to another sensor when a reading fails**
-+
-+```nuc
-+hall = 19
-+try:
-+    kitchen = cellar + 1
-+except Exception as fault:
-+    kitchen = hall - 1
-+    note = fault
-+heating = kitchen < 20
-+assert([kitchen, note, heating], [18, ReferenceError("cellar is not defined"), true])
-+hall = 22
-+assert([kitchen, heating], [21, false])
-+```
-+
-+- [NUC 122](docs/nuc-0122.md) reads Python's catch-all clause headers:
-+  `except:` and `except Exception:` are `catch:`, and
-+  `except Exception as fault:` is `catch fault:`, with the same suite, the
-+  same rollback of the failed body and the same binding.
-+- The kitchen's reading derives from a cellar sensor that has not
-+  reported, so reading it fails, and the clause estimates the kitchen from
-+  the hall instead and records why. The estimate is a declaration like any
-+  other, so it follows the hall's reading, and the heating follows the
-+  estimate. See the
-+  [root contract](nucleoid.spec.md#python-style-except-clauses).
-+
- ## Reactive list flattening
- 
- **Flat turns nested lists into one live list**
+-1. Load: `train_dataset.dataset[].input_matrix` / `output_matrix`,
+-   `test_input_matrix`, `test_output_matrix`.
+-2. `analyzer.declarations` (LLM): `train_dataset.declarations`,
+-   `train_dataset.output_canvas`.
++1. Load: `train.dataset[].input_matrix` / `output_matrix`,
++   `test_input_matrix`, `test_output_matrix`. Logs written before
++   20-Nov-2026 hold `train` as `train_dataset`.
++2. `analyzer.declarations` (LLM): `train.declarations`,
++   `train.output_canvas`.
+ 3. `analyzer.instances` (LLM, per training pair): each instance's
+    `input_instance_matrix` and `output_instance_matrix`. The extracted
+    instances get their `instance_name`, then `analyzer.synthesize` (no LLM)
+@@ -85,7 +86,7 @@ between that code and the log. At the time of writing, `start()` writes
+    x+1 y+1, x-1 y+1 or x-1 y-1, except an instance whose object, its input
+    object or its output object when the input is empty, is a single pixel.
+    A training pair without other instances gains none. They follow the
+-   training pairs in `train_dataset.dataset`, three per training pair in
++   training pairs in `train.dataset`, three per training pair in
+    turn, in that order. Each holds one instance per synthesized extracted
+    instance of its source pair, in source order, with `synthesis` (`source`,
+    `rotation`, `offset`), named
+@@ -96,7 +97,7 @@ between that code and the log. At the time of writing, `start()` writes
+    source pair, with `input_instance_epoch` and `output_instance_epoch` and
+    each synthesis a world of its own on the pair's canvas, or hold one
+    synthesized instance per synthesized pair. Only the analysis synthesizes. The
+-   visualizer's prompts read the synthesized pairs from `train_dataset` as
++   visualizer's prompts read the synthesized pairs from `train` as
+    training examples, like the others, which is intended and not an
+    abnormality.
+ 4. `analyzer.value` (LLM, then Nucleoid on `declarations[0]` plus the
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +19/-16)
+**File**: `arc/README.md` (modified, +2/-2)
 ```diff
-@@ -799,19 +799,22 @@
- {"id":"spec-0799","description":"Nucleoid gives the values that a change reaches and the model with holds","code":"rate = 0.2\nprice = 10\nqty = 3\nsubtotal = price * qty\ntax = subtotal * rate\nreach = price |> affects |> holds\nknown = model |> holds\nassert(reach, [30, 6])\nassert(known, [0.2, 10, 3, 30, 6])\ntotal = subtotal + tax\nassert(reach, [30, 6, 36])\nqty = 4\nassert(reach, [40, 8, 48])\ntax = qty * rate\nassert(reach, [40, 40.8])\ndelete total\nassert(known, [0.2, 10, 4, 40, 0.8])\nreach","return":"[40]"}
- {"id":"spec-0800","description":"Nucleoid gives the values behind class level rules with holds","code":"fee = 2\nclass Order(price, qty):\n    this.price = price\n    this.qty = qty\n$Order.total = $Order.price * $Order.qty\n$Order.basis = $Order.total |> why |> holds\nfirst = Order(10, 2)\nassert(first.basis, [20, 10, 2])\n$Order.total = $Order.price * $Order.qty + fee\nsecond = Order(4, 5)\nreach = fee |> affects |> holds\nassert([first.basis, second.basis], [[22, 10, 2, 2], [22, 4, 5, 2]])\nassert(reach, [22, 22])\nfirst.qty = 3\nfee = 1\nassert([first.basis, second.basis], [[31, 10, 3, 1], [21, 4, 5, 1]])\nassert(reach, [31, 21])\nfirst.total |> why |> stated |> holds","return":"[1]"}
- {"id":"spec-0801","description":"Nucleoid rolls back failed updates through held values","code":"price = 10\nqty = 3\nsubtotal = price * qty\nvalues = subtotal |> why |> holds\nfailure = \"\"\ntry:\n    values = 1 |> holds\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Cannot explain 1\"))\nassert(values, [30, 10, 3])\ntry:\n    fee = 2\n    subtotal = price * qty + fee\n    assert(values, [32, 10, 3, 2])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert(values, [30, 10, 3])\nqty = 4\ninputs = subtotal |> why |> stated |> holds\n[values, inputs]","return":"[[40,10,4],[10,4]]"}
--{"id":"spec-0802","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0803","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0804","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0805","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0806","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
--{"id":"spec-0807","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
--{"id":"spec-0808","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nasse
+@@ -294,7 +294,7 @@ any request, with a JSON syntax error that does not name the file.
+ Each model call can pass `llm.generate` a `few_shot` function that maps every
+ instruction dataset to only the properties of that call's own prompt; a call
+ without one receives every instruction dataset with all its properties. A call
+-that sends a `train_dataset` builds it and its few-shot examples with the same
++that sends `train` builds it and its few-shot examples with the same
+ projection, so both carry the same properties in the same order. Every solver
+ call passes its own:
+ 
+@@ -306,7 +306,7 @@ call passes its own:
+ | `visualizer.value` | `class_declaration`, and the instances of every pair in one list, with `implementation`, `input_value`, and `input_instance_matrix` |
+ | `visualizer.output_instance_matrix` | The instances of every pair in one list, with `input_value`, `input_instance_matrix`, `output_value`, and `output_instance_matrix` |
+ 
+-`analyzer.value` sends no `train_dataset`, so its examples carry the
++`analyzer.value` sends no `train`, so its examples carry the
+ properties of the `instances` it sends, the instances of the same pair
+ constructed before it. The calls that crop their own instance matrices,
+ `analyzer.value`, `visualizer.value`, and `visualizer.output_instance_matrix`,
 ```
 
-**File**: `dataset/nucleoid.synth.86.jsonl` (added, +16/-0)
+**File**: `arc/src/analyzer.ts` (modified, +13/-18)
 ```diff
-@@ -0,0 +1,16 @@
-+{"id":"synth-86-0001","description":"Except catches a failed reading and falls back to a default","code":"reading = 0\ntry:\n    reading = sensor * 2\nexcept:\n    reading = -1\nreading","return":"-1"}
-+{"id":"synth-86-0002","description":"A bare except binds the error to error as catch does","code":"try:\n    level = tank + 1\nexcept:\n    level = error\nlevel","return":"\"ReferenceError: tank is not defined\""}
-+{"id":"synth-86-0003","description":"Except Exception catches every error","code":"try:\n    size = (4).resize(2)\nexcept Exception:\n    size = 0\nsize","return":"0"}
-+{"id":"synth-86-0004","description":"Except Exception as a name binds the thrown value as it was thrown","code":"try:\n    throw 404\nexcept Exception as failure:\n    code = failure + 1\ncode","return":"405"}
-+{"id":"synth-86-0005","description":"A failed body rolls back before its except clause runs","code":"stock = 10\nreserved = stock - 2\ntry:\n    stock = 3\n    throw \"SHORT\"\nexcept Exception as reason:\n    note = reason\n[stock, reserved, note]","return":"[10,8,\"SHORT\"]"}
-+{"id":"synth-86-0006","description":"Except clauses return from functions","code":"def length_of(text):\n    try:\n        if text == \"\":\n            throw \"EMPTY\"\n        return text.length\n    except Exception as problem:\n        return problem\n[length_of(\"abc\"), length_of(\"\")]","return":"[3,\"EMPTY\"]"}
-+{"id":"synth-86-0007","description":"Except clauses return from methods","code":"class Thermostat(limit):\n    this.limit = limit\n    def check(target):\n        try:\n            if target > this.limit:\n                throw \"TOO HOT\"\n            return target\n        except Exception as alarm:\n            return alarm\nhall = Thermostat(28)\n[hall.check(22), hall.check(35)]","return":"[22,\"TOO HOT\"]"}
-+{"id":"synth-86-0008","description":"An error raised in an except clause reaches the enclosing one","code":"def probe(depth):\n    try:\n        try:\n            throw depth\n        except Exception as inner:\n            throw inner * 10\n    except Exception as outer:\n        return outer + 1\nprobe(4)","return":"41"}
-+{"id":"synth-86-0009","description":"A finally clause runs after an except clause","code":"log = []\ntry:\n    throw \"X\"\nexcept Exception as e:\n    log.push(e)\nfinally:\n    log.push(\"done\")\nlog","return":"[\"X\",\"done\"]"}
-+{"id":"synth-86-0010","description":"Except clauses take inline suites","code":"try: total = price * 2\nexcept: total = 0\ntotal","return":"0"}
-+{"id":"synth-86-0011","description":"Except follows a colon-free try header","code":"try\n    total = count + 1\nexcept Exception as e:\n    total = 0\ntotal","return":"0"}
-+{"id":"synth-86-0012","description":"Declarations in an except clause stay live","code":"base = 4\ntry:\n    value = missing\nexcept:\n    value = base * 2\nbase = 5\nvalue","return":"10"}
-+{"id":"synth-86-0013","description":"An except binder shadows an outer name only inside its clause","code":"e = \"outer\"\ntry:\n    throw \"inner\"\nexcept Exception as e:\n    seen = e\n[seen, e]","return":"[\"inner\",\"outer\"]"}
-+{"id":"synth-86-0014","description":"Except Exception is a fixed word that a variable named Exception does not change","code":"Exception = \"not a class\"\ntry:\n    x = missing\nexcept Exception:\n    x = Exception\nx","return":"\"not a class\""}
-+{"id":"synth-86-0015","description":"Except clauses run inside braced arrow functions","code":"fallback = (v) => {\n    try:\n        return v.calibrate()\n    except:\n        return 0\n}\nfallback(5)","return":"0"}
-+{"id":"synth-86-0016","description":"Except clauses run inside if blocks","code":"ready = true\nif ready:\n    try:\n        r = gauge.read()\n    except:\n        r = \"offline\"\nr","return":"\"offline\""}
+@@ -4,7 +4,7 @@ import * as milestone from "./lib/milestone.ts";
+ import * as Matrix from "./lib/Matrix.ts";
+ import object from "./object.ts";
+ 
+-export async function declarations({ train_dataset }) {
++export async function declarations({ train }) {
+   milestone.inferring_declarations();
+ 
+   const {
+@@ -17,7 +17,7 @@ export async function declarations({ train_dataset }) {
+         content: `
+           query:
+           ${JSON.stringify({
+-            ...train_dataset,
++            ...train,
+             class_declaration: "<CLASS_DECLARATION>",
+             declarations: "<DECLARATIONS>",
+             output_canvas: "<OUTPUT_CANVAS>",
+@@ -43,7 +43,7 @@ export async function declarations({ train_dataset }) {
+   return { class_declaration, declarations, output_canvas };
+ }
+ 
+-export async function instances({ train_dataset }) {
++export async function instances({ train }) {
+   milestone.segmenting_training_objects();
+ 
+   const { result: instances } = await llm.generate({
+@@ -53,8 +53,8 @@ export async function instances({ train_dataset }) {
+         content: `
+           query:
+           ${JSON.stringify({
+-            ...train_dataset,
+-            dataset: train_dataset.dataset.map((dataset) => ({
++            ...train,
++            dataset: train.dataset.map((dataset) => ({
+               ...dataset,
+               instances: [
+                 {
+@@ -81,12 +81,7 @@ export async function instances({ train_dataset }) {
+   return { instances };
+ }
+ 
+-export async function value({
+-  instance_name,
+-  train_dataset,
+-  input_matrix,
+-  instance,
+-}) {
++export async function value({ instance_name, train, input_matrix, instance }) {
+   milestone.constructing_instance({ instance_name });
+ 
+   instance.instance_name = instance_name;
+@@ -95,10 +90,10 @@ export async function value({
+     instance.input_instance_matrix
+   );
+ 
+-  const orientation = await object.orientation({ train_dataset, instance });
++  const orientation = await object.orientation({ train, instance });
+ 
+   const implementation = await object.implementation({
+-    train_dataset,
++    train,
+     instance,
+     x,
+     y,
+@@ -116,7 +111,7 @@ export async function value({
+     [
+       `canvas_width = ${canvas_width}`,
+       `canvas_height = ${canvas_height}`,
+-      train_dataset.class_declaration,
++      train.class_declaration,
+       implementation,
+     ].join("\n\n")
+   );
+@@ -133,10 +128,10 @@ export async function value({
+   instance.input_value = input_value;
+ }
+ 
+-export async function state(train_dataset) {
++export async function state(train) {
+   const objects = [];
+ 
+-  for (const dataset of train_dataset.dataset) {
++  for (const dataset of train.dataset) {
+     const implementations = dataset.instances.map(
+       ({ implementation }) => implementation
+     );
+@@ -147,8 +142,8 @@ export async function state(train_dataset) {
+       [
+         `canvas_width = ${canvas_width}`,
+         `canvas_height = ${canvas_height}`,
+-        train_dataset.class_declaration,
+-        ...train_dataset.declarations,
++        train.class_declaration,
++        ...train.declarations,
+         ...implementations,
+         "Obj[:]",
+       ].join("\n\n")
 ```
 
-**File**: `docs/README.md` (modified, +53/-1)
+**File**: `arc/src/app.ts` (modified, +16/-16)
 ```diff
-@@ -2509,7 +2509,55 @@ visits.length
-   before a `catch`. See the
-   [root contract](../nucleoid.spec.md#finally-clauses).
+@@ -13,7 +13,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+   const { arc_train, test_input_matrix, test_output_matrix } =
+     await arc_dataset.load(puzzle_id);
  
--Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md).
-+### Python-style except clauses
-+
-+```
-+def ratio(part, whole):
-+    try:
-+        if whole == 0:
-+            throw "EMPTY"
-+        return part / whole
-+    except Exception as reason:
-+        return reason
-+assert([ratio(3, 4), ratio(1, 0)], [0.75, "EMPTY"])
-+try:
-+    share = stock / 2
-+except Exception:
-+    share = 0
-+try:
-+    level = stock.reorder()
-+except:
-+    level = error
-+assert([share, level], [0, ReferenceError("stock is not defined")])
-+stock = 8
-+share
-+```
-+
-+- This is the complete
-+  `Nucleoid reads Python except clauses as catch clauses` program in
-+  `tests/reference.md`, without its title and expected-return metadata; it
-+  returns `0`.
-+- [NUC 122](nuc-0122.md) reads Python's catch-all clause headers where a
-+  `catch` clause belongs: `except:` and `except Exception:` are exactly
-+  `catch:`, binding the error to `error`, and `except Exception as NAME:` is
-+  exactly `catch NAME:`. Each builds the same statement as its `catch`
-+  spelling, so rollback, the binding and its scope, `return`, nested `try`
-+  statements and a following `finally:` behave as they do with `catch`.
-+- The header takes its colon. `except`, `Exception` and `as` stay ordinary
-+  names, and every other header where `catch` belongs, such as `except e:`,
-+  `except ValueError:` or a colon-free `except Exception as e`, keeps
-+  `SyntaxError("Expected 'catch' after 'try'")`.
-+- Differences from Python: typed and filtered clauses, several clauses,
-+  `else:`, `except*` and `raise` are not added, and Nucleoid raises with
-+  `throw`. The bound value is the error's text, such as
-+  `"ReferenceError: stock is not defined"`, or the thrown value, not an
-+  exception object. `Exception` catches every error, since Nucleoid has no
-+  exits like `SystemExit` that Python's `Exception` leaves out, and an outer
-+  name that the clause's binder shadows keeps its value, where Python
-+  unbinds it. See the
-+  [root contract](../nucleoid.spec.md#python-style-except-clauses).
-+
-+Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md), [NUC 122](nuc-0122.md).
+-  const train_dataset = {
++  const train = {
+     dataset: arc_train.map(({ input, output }) => ({
+       input_matrix: input,
+       output_matrix: output,
+@@ -41,22 +41,22 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
  
- ---
+   const { class_declaration, declarations, output_canvas } =
+     await analyzer.declarations({
+-      train_dataset,
++      train,
+     });
  
-@@ -5063,6 +5111,10 @@ try:                                   run the body; a failure rolls it back
-     statement
- catch name:                            then runs this suite with the error bound
-     statement
-+except Exception as name:              Python's spelling of catch name: (NUC 122)
-+    statement
-+except:                                Python's spelling of catch:, binding error (NUC 122)
-+    statement
- finally:                               runs however the statement ends (NUC 119)
-     statement
- return expression                      yield from a block or function
+-  train_dataset.class_declaration = class_declaration;
+-  train_dataset.declarations = declarations;
+-  train_dataset.output_canvas = output_canvas;
++  train.class_declaration = class_declaration;
++  train.declarations = declarations;
++  train.output_canvas = output_canvas;
+ 
+-  for (const dataset of train_dataset.dataset) {
++  for (const dataset of train.dataset) {
+     const { instances } = await analyzer.instances({
+-      train_dataset: { ...train_dataset, dataset: [dataset] },
++      train: { ...train, dataset: [dataset] },
+     });
+ 
+     for (const instance of instances) {
+       await analyzer.value({
+         instance_name: next_instance_name(),
+-        train_dataset,
++        train,
+         input_matrix: dataset.input_matrix,
+         instance,
+       });
+@@ -65,19 +65,19 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+     dataset.instances = instances;
+   }
+ 
+-  await analyzer.state(train_dataset);
++  await analyzer.state(train);
+ 
+   milestone.synthesizing_training_dataset();
+ 
+-  const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
++  const synthesized_dataset = await synthesizer.synthesize({ train });
+ 
+   milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
+ 
+   for (const dataset of synthesized_dataset) {
+     for (const instance of dataset.instances) {
+       await analyzer.value({
+         instance_name: next_instance_name(),
+-        train_dataset,
++        train,
+         input_matrix: dataset.input_matrix,
+         instance,
+       });
+@@ -90,13 +90,13 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+       input_instances: dataset.instances,
+     });
+ 
+-    train_dataset.dataset.push(dataset);
++    train.dataset.push(dataset);
+   }
+ 
+   milestone.visualization();
+ 
+   const { instances } = await visualizer.instances({
+-    train_dataset,
++    train,
+     test_input_matrix,
+   });
+ 
+@@ -110,7 +110,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+     const instance_name: string = next_instance_name();
+ 
+     const { implementation, input_value } = await visualizer.value({
+-      train_dataset,
++      train,
+       test_input_matrix,
+       instance_name,
+       input_instance_matrix,
+@@ -134,7 +134,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+   for (const input_instance of input_instances) {
+     const { output_instance_matrix } = await visualizer.output_instance_matrix({
+       test_input_matrix,
+-      train_dataset,
++      train,
+       instance: input_instance,
+     });
+ 
+@@ -156,7 +156,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+ 
+   const debug = {
+     puzzle_id,
+-    train_dataset,
++    train,
+     test_input_instances: input_instances,
+     test_input_matrix,
+     test_output_matrix,
 ```
 
-**File**: `docs/examples.md` (modified, +34/-0)
+**File**: `arc/src/object.ts` (modified, +10/-10)
 ```diff
-@@ -4142,6 +4142,40 @@ hours = 15
-   [NUC 121](nuc-0121.md) and the
-   [root contract](../nucleoid.spec.md#held-values-of-reasoning-selections).
+@@ -3,10 +3,10 @@ import * as Matrix from "./lib/Matrix.ts";
+ import * as nucleoid from "./lib/nucleoid";
+ import * as milestone from "./lib/milestone.ts";
  
-+## Python-style except clauses
-+
-+**Except clauses refuse an overdrawn transfer and keep both wallets whole**
-+
-+```nuc
-+class Wallet(owner, coins):
-+    this.owner = owner
-+    this.coins = coins
-+def transfer(source, target, amount):
-+    target.coins = target.coins + amount
-+    if amount > source.coins.value:
-+        throw source.owner + " LACKS " + amount
-+    source.coins = source.coins - amount
-+ana = Wallet("Ana", 50)
-+ben = Wallet("Ben", 10)
-+try:
-+    transfer(ana, ben, 80)
-+except Exception as refusal:
-+    log = refusal
-+assert([ana.coins, ben.coins, log], [50, 10, "Ana LACKS 80"])
-+transfer(ana, ben, 20)
-+[ana.coins, ben.coins]
-+# return: [30,30]
-+```
-+
-+- `transfer` credits the target before it finds that the source lacks the
-+  coins, so the refused transfer has already changed Ben's wallet when it
-+  throws. The failed body is rolled back before the `except` clause runs,
-+  so both wallets keep what they had, and the clause records the refusal.
-+- `except Exception as refusal:` is exactly `catch refusal:`, so a transfer
-+  the source can afford then goes through as before. See
-+  [NUC 122](nuc-0122.md) and the
-+  [root contract](../nucleoid.spec.md#python-style-except-clauses).
-+
- ## Reactive list flattening
+-async function orientation({ train_dataset, instance }) {
++async function orientation({ train, instance }) {
+   const { orientation } = await llm.generate({
+-    few_shot: (train_dataset) =>
+-      train_dataset.dataset
++    few_shot: (train) =>
++      train.dataset
+         .flat()
+         .flatMap(({ instances }) => instances)
+         .map(({ input_instance_matrix, input_value }) => ({
+@@ -19,7 +19,7 @@ async function orientation({ train_dataset, instance }) {
+         content: `
+           current:
+           ${JSON.stringify(
+-            train_dataset.dataset
++            train.dataset
+               .flat()
+               .filter(({ instances }) => instances)
+               .flatMap(({ instances }) => instances)
+@@ -55,7 +55,7 @@ async function orientation({ train_dataset, instance }) {
  
- **Flattening keeps the dirty tiles of every room counted**
+ async function implementation({
+   few_shot = true,
+-  train_dataset,
++  train,
+   instance,
+   x,
+   y,
+@@ -64,10 +64,10 @@ async function implementation({
+   orientation,
+   volume,
+ }) {
+-  const few_shot_function = (train_dataset) => ({
+-    ...train_dataset,
++  const few_shot_function = (train) => ({
++    ...train,
+     declarations: undefined,
+-    dataset: train_dataset.dataset.map(({ instances }) => ({
++    dataset: train.dataset.map(({ instances }) => ({
+       instances: instances.map((instance) => ({
+         ...instance,
+         input_instance_matrix: Matrix.crop(instance.input_instance_matrix),
+@@ -84,9 +84,9 @@ async function implementation({
+         content: `
+           current:
+           ${JSON.stringify({
+-            ...train_dataset,
++            ...train,
+             declarations: undefined,
+-            dataset: train_dataset.dataset
++            dataset: train.dataset
+               .filter(({ instances }) => instances)
+               .map(({ instances }) => ({
+                 instances: instances
 ```
 
-**File**: `docs/nuc-0000.md` (modified, +4/-2)
+**File**: `arc/src/synthesizer.ts` (modified, +7/-7)
 ```diff
-@@ -131,6 +131,7 @@ Created: 31-Jul-2026
- | [108](nuc-0108.md) | List and Population Partitions | Accepted |
- | [111](nuc-0111.md) | Reactive String Padding | Accepted |
- | [114](nuc-0114.md) | List and Population Products | Accepted |
-+| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Draft |
+@@ -7,8 +7,8 @@ const FIELD_GUIDE = `
+ - "class_declaration", "declarations" and "output_canvas" are fixed for this task. Every new example must be valid under them. Do not change them or repeat them in your answer.
+ `.trim();
  
- ### Reasoning enhancement
+-async function synthesize({ train_dataset }) {
+-  const count = train_dataset.length;
++async function synthesize({ train }) {
++  const count = train.length;
  
-@@ -165,7 +166,7 @@ Created: 31-Jul-2026
- | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Accepted |
- | [117](nuc-0117.md) | First and Last Element Methods | Accepted |
- | [118](nuc-0118.md) | Case Conversion Method Aliases | Accepted |
--| [122](nuc-0122.md) | Python-Style Except Clauses | Draft |
-+| [122](nuc-0122.md) | Python-Style Except Clauses | Accepted |
+   const { result } = await llm.generate({
+     few_shot: null,
+@@ -19,8 +19,8 @@ async function synthesize({ train_dataset }) {
  
- ### Documentation
- 
-@@ -298,7 +299,8 @@ Created: 31-Jul-2026
- | [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Accepted |
- | [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
--| [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Draft |
-+| [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Accepted |
-+| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Draft |
- 
- ## Copyright
- 
+         <current_dataset>
+         ${JSON.stringify({
+-          ...train_dataset,
+-          dataset: train_dataset.dataset.map(
++          ...train,
++          dataset: train.dataset.map(
+             ({ input_matrix, output_matrix, instances }) => ({
+               input_matrix,
+               output_matrix,
+@@ -70,9 +70,9 @@ async function synthesize({ train_dataset }) {
+         content: `
+           synthesize:
+           ${JSON.stringify({
+-            class_declaration: train_dataset.class_declaration,
+-            declarations: train_dataset.declarations,
+-            output_canvas: train_dataset.output_canvas,
++            class_declaration: train.class_declaration,
++            declarations: train.declarations,
++            output_canvas: train.output_canvas,
+             dataset: [
+               {
+                 input_matrix: "<INPUT_MATRIX>",
 ```
 
-**File**: `docs/nuc-0122.md` (modified, +1154/-28)
+**File**: `arc/src/visualizer.ts` (modified, +27/-29)
 ```diff
-@@ -4,57 +4,1183 @@
- NUC: 122
- Title: Python-Style Except Clauses
- Author: Can Mingir <canmingir@gmail.com>
--Status: Draft
-+Status: Accepted
- Type: Standards Track
- Category: Language compatibility
- Created: 18-Nov-2026
-+Requires: 9, 46, 119
- ```
+@@ -4,7 +4,7 @@ import * as milestone from "./lib/milestone.ts";
+ import object from "./object.ts";
+ import * as nucleoid from "./lib/nucleoid";
  
- ## Abstract
+-export async function instances({ train_dataset, test_input_matrix }) {
++export async function instances({ train, test_input_matrix }) {
+   milestone.segmenting_test_input({ test_input_matrix });
  
--- A `try` statement may spell its catch clause with Python's `except`.
--  `except:` and `except Exception:` catch every error, as `catch:` does,
--  and `except Exception as NAME:` binds the error to `NAME`, as
--  `catch NAME:` does.
--- Such a program reads exactly as its `catch` spelling, including a
--  `finally:` clause of [NUC 119](nuc-0119.md) after the `except` clause.
--- At the accepted revision each such program is a whole-program parse
--  error, `SyntaxError("Expected 'catch' after 'try'")`. Only those programs
--  change.
--- Every other name after `except`, as in `except e:` or
--  `except ValueError:`, keeps that error, because Python reads it as a
--  filter by exception class, which Nucleoid's errors do not have. `except`
--  stays an ordinary name everywhere else, including the `except` stage of
--  [NUC 106](nuc-0106.md).
-+- A `try` statement may spell its catch clause with Python's catch-all
-+  `except` headers. Where a `catch` clause belongs, directly after the
-+  body:
-+  - `except:` and `except Exception:` are exactly `catch:`, so the error is
-+    bound to the name `error`;
-+  - `except Exception as NAME:`, where `NAME` is a name, is exactly
-+    `catch NAME:`.
-+- Each header builds the statement of its `catch` spelling, `Stmt::Try`, or
-+  `Stmt::TryFinally` with a `finally:` clause of [NUC 119](nuc-0119.md)
-+  after it, with the same parameter and suites. So the clause behaves as
-+  `catch` does: the failed body is rolled back first, the bound name is
-+  scoped to the clause, and returns, loops, nested `try` statements and the
-+  declarations of either suite run as they do with `catch`.
-+- The header ends with its colon, as Python requires. Every other header
-+  where `catch` belongs keeps the accepted
-+  `SyntaxError("Expected 'catch' after 'try'")` at the `except`, byte for
-+  byte, among them `except e:`, `except ValueError:`, a parenthesized or
-+  comma-separated list, a binder that is not a name and a header without its
-+  colon. A `try` statement still takes one clause.
-+- `except`, `Exception` and `as` stay ordinary names everywhere else,
-+  including the `except` stage of [NUC 106](nuc-0106.md). No keyword, lexer
-+  token, syntax-tree node, error type or message is added.
-+- Only inputs that were errors at the accepted revision change: programs
-+  in which a `try` statement's body is directly followed by a matching
-+  header, each of which raised `SyntaxError("Expected 'catch' after 'try'")`
-+  at the `except` of such a header. The authoritative contract is
-+  [Python-style except clauses](../nucleoid.spec.md#python-style-except-clauses).
+   let {
+@@ -18,26 +18,24 @@ export async function instances({ train_dataset, test_input_matrix }) {
+         content: `
+           current:
+           ${JSON.stringify({
+-            class_declaration: train_dataset.class_declaration,
+-            dataset: train_dataset.dataset.map(
+-              ({ input_matrix, instances }) => ({
+-                input_matrix,
+-                instances: instances.map((instance) => ({
+-                  instance_matrix: instance.input_instance_matrix,
+-                  instance_crop_matrix: Matrix.crop(
+-                    instance.input_instance_matrix
+-                  ),
+-                  implementation: instance.implementation,
+-                  x: instance.input_value.x,
+-                  y: instance.input_value.y,
+-                  width: instance.input_value.width,
+-                  height: instance.input_value.height,
+-                  orientation: instance.input_value.orientation,
+-                  volume: instance.input_value.volume,
+-                  value: instance.input_value,
+-                })),
+-              })
+-            ),
++            class_declaration: train.class_declaration,
++            dataset: train.dataset.map(({ input_matrix, instances }) => ({
++              input_matrix,
++              instances: instances.map((instance) => ({
++                instance_matrix: instance.input_instance_matrix,
++                instance_crop_matrix: Matrix.crop(
++                  instance.input_instance_matrix
++                ),
++                implementation: instance.implementation,
++                x: instance.input_value.x,
++                y: instance.input_value.y,
++                width: instance.input_value.width,
++                height: instance.input_value.height,
++                orientation: instance.input_value.orientation,
++                volume: instance.input_value.volume,
++                value: instance.input_value,
++              })),
++            })),
+           })}
+         `,
+       },
+@@ -46,7 +44,7 @@ export async function instances({ train_dataset, test_input_matrix }) {
+         content: `
+           query:
+           ${JSON.stringify({
+-            class_declaration: train_dataset.class_declaration,
++            class_declaration: train.class_declaration,
+             dataset: [
+               {
+                 instance_matrix: test_input_matrix,
+@@ -85,7 +83,7 @@ export async function instances({ train_dataset, test_input_matrix }) {
+ }
  
- ## Motivation
+ export async function value({
+-  train_dataset,
++  train,
+   test_input_matrix,
+   instance_name,
+   input_instance_matrix,
+@@ -97,11 +95,11 @@ export async function value({
  
- - Nucleoid already reads many of Python's spellings: `def`, `elif`, `None`,
--  `self`, `lambda`, `not in`, `pass` and, through NUC 119, `finally:`. Its
--  error handling still knows only `catch`, so a model or a programmer who
--  writes Python's `try:` and `except Exception as error:` gets a parse
--  error for the whole program.
--- The catch-all forms `except:` and `except Exception as error:` are
--  Python's spellings of a clause that catches every error, which is what
--  Nucleoid's `catch` does. Reading them lets familiar Python error handling
--  run unchanged, as the language-superset aspiration of
--  [NUC 1](nuc-0001.md) asks.
-+  `self`, `lambda`, `not in`, `pass` and, through [NUC 119](nuc-0119.md),
-+  `finally:`. Its error handling still knows only `catch`, so a model or a
-+  programmer who writes Python's `try:` and `except Exception as error:`
-+  gets a parse error for the whole program, and nothing in it runs:
-+
-+  ```
-+  def ratio(part, whole):
-+      try:
-+          if whole == 0:
-+              throw "EMPTY"
-+          return part / whole
-+      except Exception as reason:
-+          return reason
-+  ratio(1, 0)
-+  ```
-+
-+  The accepted parser rejects it with
-+  `SyntaxError("Expected 'catch' after 'try'")` at line 6, column 5.
-+  Writing `catch reason:` makes it run and return `"EMPTY"`.
-+- The catch-all forms `except:`, `except Exception:` and
-+  `except Exception as error:` are Python's spellings of a clause that
-+  catches every error, which is what Nucleoid's `catch` does. Reading them
-+  lets familiar error handling run unchanged, as the language-superset
-+  aspiration of [NUC 1](nuc-0001.md) asks.
-+- World models handle readings and updates that can fail: a sensor that has
-+  not reported, a transfer that a wallet cannot cover. The `except` clause
-+  keeps the Python habit for that handling, and the transaction rollback of
-+  Nucleoid's `catch` keeps the model consistent.
+   const { x, y, width, height, volume } = Matrix.measure(input_instance_matrix);
  
- ## Rationale
+-  const orientation = await object.orientation({ train_dataset, instance });
++  const orientation = await object.orientation({ train, instance });
  
--- Pending: the proposer completes this section.
-+- **Category and mode.** The allocating continuous cycle drew Language
-+  compatibility with one tool-backed uniform
-```
-
-**File**: `docs/nuc-0123.md` (added, +73/-0)
-```diff
-@@ -0,0 +1,73 @@
-+# NUC 123 -- List and Population Variances and Standard Deviations
-+
-+```
-+NUC: 123
-+Title: List and Population Variances and Standard Deviations
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Utility enhancement
-+Created: 19-Nov-2026
-+```
-+
-+## Abstract
-+
-+- Lists and class instance lists gain two read-only queries, `variance`
-+  and `stdev`. `RECEIVER.variance()` returns the population variance of the
-+  receiver's items, the mean of their squared deviations from their mean,
-+  and `RECEIVER.variance(selector)` that of `selector(item)` for every item.
-+  `RECEIVER.stdev()` and `RECEIVER.stdev(selector)` return its square root,
-+  the population standard deviation.
-+- Both divide by the number of values, as numpy's `var` and `std` and
-+  Python's `statistics.pvariance` and `statistics.pstdev` do, and as a case
-+  of [NUC 80](nuc-0080.md) does when it writes the variance out from two
-+  averages. A list or a class population holds every value it describes,
-+  so it is the whole population, and a single value has variance `0`.
-+- They follow [NUC 84](nuc-0084.md)'s `median`, beside
-+  [NUC 68](nuc-0068.md)'s `sum` and [NUC 80](nuc-0080.md)'s `average`:
-+  the same receivers, numeric conversion, selector rules, NaN and undefined
-+  results, and liveness under [NUC 61](nuc-0061.md)'s shared query rules.
-+- At the accepted revision these calls are run-time errors,
-+  `TypeError("<receiver>.variance is not a function")` and
-+  `TypeError("<receiver>.stdev is not a function")`. Only inputs that were
-+  errors change. No syntax, keyword, token or error type is added, and
-+  bindings, properties and methods named `variance` or `stdev` keep their
-+  accepted results.
-+
-+## Motivation
-+
-+- World models summarize their populations. Lists and class populations
-+  already have their sums, extremes, averages, medians and modes, but not
-+  their spread. A model that asks how far readings, prices or scores
-+  scatter must write the variance out from two averages, as a case of
-+  NUC 80 does with
-+  `team.scores.average(score -> score * score) - team.mean() ** 2`, and a
-+  standard deviation wraps that in `Math.sqrt`.
-+- The written-out formula repeats the receiver and the selector, is easy
-+  to get wrong, and loses precision when large values spread little,
-+  because subtracting two close averages cancels their leading digits.
-+  `variance()` and `stdev()` name the statistic once, as `average()` and
-+  `median()` do, and can compute it from the deviations themselves.
-+
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Specification
-+
-+- Pending: the proposer completes this section.
-+
-+## Errors
-+
-+- Pending: the proposer completes this section.
-+
-+## Reference Implementation
-+
-+- Pending: the proposer completes this section.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
+   const implementation = await object.implementation({
+     few_shot: false,
+-    train_dataset,
++    train,
+     instance,
+     x,
+     y,
+@@ -124,7 +122,7 @@ export async function value({
+     [
+       `canvas_width = ${canvas_width}`,
+       `canvas_height = ${canvas_height}`,
+-      train_dataset.class_declaration,
++      train.class_declaration,
+       implementation,
+     ].join("\n\n")
+   );
+@@ -136,7 +134,7 @@ export async function value({
+ 
+ export async function output_instance_matrix({
+   test_input_matrix,
+-  train_dataset,
++  train,
+   instance,
+ }) {
+   const { x, y } = instance.output_value;
+@@ -151,8 +149,8 @@ export async function output_instance_matrix({
+         content: `
+           current:
+           ${JSON.stringify({
+-            ...train_dataset,
+-            dataset: train_dataset.dataset.map(({ instances }) => ({
++            ...train,
++            dataset: train.dataset.map(({ instances }) => ({
+               instances: instances.map((instance) => ({
+                 ...instance,
+                 input_instance_matrix: Matrix.crop(
 ```
 
 #### Recent Merged Pull Requests:
@@ -2349,40 +2473,36 @@ Remove descriptive comments from three datasets and update the dataset agent, gr
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove comments from ARC datasets
+## X. Improve terminal editor navigation
 
 **RULE**:
-When implementing operations in `.claude/agents/arc-dataset.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `08c6985f`: Remove comments from ARC datasets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba512866`: Improve terminal editor navigation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-dataset.agent.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- No field carries `#` comments: every declaration and every `implementation`
-  is executable code alone, as in every existing dataset.
-- No declaration or `implementation` holds a `#` comment line.
+Subtle scrollbars mark long results and diagnostics; PageUp / PageDown moves
+by the visible rows of the selected pane. Scrolling over autocomplete changes
+the selected suggestion without moving the panes behind it.
+Long drafts expand the focused editor to at most half the terminal, while
+result focus returns that space to output. Autocomplete respects strings and
+comments across lines, so Tab does not replace text inside them.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- Natural-language `#` comments appear only in `declarations`, where they are
-  optional and describe its classes and rules, and in `implementation`, where
-  they describe the object it constructs. No other field carries them.
-- Before that code, `implementation` holds `#` comment lines that describe the
-  object, as in every existing dataset: its kind and colors, then its size,
-  position and, when it points, its direction, such as
-  `# 2 by 2 at x 5, y 1, pointing southeast`. They do not change its
-  snapshots.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `08c6985f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba512866` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

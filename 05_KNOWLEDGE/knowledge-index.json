@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T08:38:49.352Z",
+  "last_updated": "2026-11-20T09:10:41.739Z",
   "total_verified_learnings": 9029,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22316,
+  "total_items": 22321,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -215045,8 +215045,8 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "9699ab67",
-      "content_hash": "2b7d87e3e556816d76aab036a68c0ab528e27ba02eea123cb38ae8b36335dc90",
+      "source_version": "1e528630",
+      "content_hash": "533fff1cc0f287cd15f6f1938d8c8b6e0f94b5ba1dec57d288ce50c9fefea8a2",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
@@ -215064,6 +215064,11 @@
           "number": 9332,
           "title": "symbol libraries crash when uninitialized",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9545,
+          "title": "Fuller handling of ActionIfUnwanted",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215071,7 +215076,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T05:06:14.232Z",
+      "verified_at": "2026-11-20T09:10:03.533Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215113,10 +215118,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-opentofu-opentofu-architecture-intelligence-opentofu-opentofu-core-invariants.md",
       "title": "Architecture Intelligence: opentofu/opentofu Core Invariants",
       "repository": "opentofu/opentofu",
-      "source_version": "9699ab67",
-      "content_hash": "e6b9343e47fd011f23116cdfabc2c349865ce5b574e92b5e9c9a32f9505d1b26",
+      "source_version": "1e528630",
+      "content_hash": "84c274a3d2831801353c1cd62486209a0690530a32efc046f38b8fa8344bc248",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T05:06:14.644Z"
+      "persisted_at": "2026-11-20T09:10:04.072Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu",
@@ -215125,10 +215130,10 @@
       "relative_path": "08_VERIFICATION/opentofu-opentofu-verification-protocol-empirical-defect-shield-for-opentofu-ope.md",
       "title": "Verification Protocol: Empirical Defect Shield for opentofu/opentofu",
       "repository": "opentofu/opentofu",
-      "source_version": "9699ab67",
-      "content_hash": "979ac324b1a406285b7691585342a55c527e86c6a2e9b38579bc648803423f50",
+      "source_version": "1e528630",
+      "content_hash": "8e41dcffb38c1d6df9eaf00a203a78b45095771de4cd33b7cf703915d3bfc8ba",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T05:06:14.781Z"
+      "persisted_at": "2026-11-20T09:10:04.214Z"
     },
     "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants",
@@ -228991,8 +228996,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "64f9b9ba",
-      "content_hash": "994d4b6aa04d594bd5cb32de3b6a916f832a9dd4780a39e13e5ced4d945aedd4",
+      "source_version": "ba512866",
+      "content_hash": "3b94e5dc820425cbc38a39c0c755bad56ca3fdd6a67c248b63c29c661533b641",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -229140,6 +229145,11 @@
           "number": 9426,
           "title": "Group ARC milestone panels side by side",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9546,
+          "title": "Improve terminal editor navigation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229147,7 +229157,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T18:20:07.683Z",
+      "verified_at": "2026-11-20T09:10:36.169Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229201,10 +229211,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "64f9b9ba",
-      "content_hash": "e1a7cefbbeb43b7261be7b6f0ca94407b3c204984876ef6e72a3d0fc6eb21493",
+      "source_version": "ba512866",
+      "content_hash": "5decd664f2793cf4e2df3607c0c2a0ebd0bdb6b31ed2d362340096af7216bf53",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T18:20:08.332Z"
+      "persisted_at": "2026-11-20T09:10:36.837Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -230264,9 +230274,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "e06318fae51e9728a242770fa1b2e8a2aeb75ada90deb3edae6f7073cdf56714",
+      "content_hash": "1af0c84800dd8fc7a9fe29ba7adeb00d3984738c6f1299f5be2ce596b86bfaa9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T17:07:55.693Z"
+      "persisted_at": "2026-11-20T09:10:40.976Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -230770,10 +230780,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "08c6985f",
-      "content_hash": "e82ffad8e4c04260c3c3c1ba268aa975d1c0a56019e2c5d4758b0859879eac67",
+      "source_version": "ba512866",
+      "content_hash": "649a0d925e9984525e7c5d34bd12eb5d060f0a743ad853b5026c1a34fff2617a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T11:50:45.089Z"
+      "persisted_at": "2026-11-20T09:10:36.697Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian",
@@ -230795,9 +230805,9 @@
       "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "4f78faddff8b734cac7df29e61635925b33f8186c74ca54986577e6afffc3bc2",
+      "content_hash": "101bcd2ada4dc8c1c7cc952277601daeb72f4b877ec1ffc4f00676f940bf054d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T11:51:26.928Z"
+      "persisted_at": "2026-11-20T09:10:40.839Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
@@ -236336,9 +236346,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "21c5777e6bcafdc5f4a61e22934b0d736758593d90fbfb83265a2aaeb15f95d5",
+      "content_hash": "9f423d558d5c38a7cab563c562a034acdb1f04a0824c9d3492846ff4f08ad597",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T06:03:05.336Z"
+      "persisted_at": "2026-11-20T09:10:41.739Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -274912,9 +274922,9 @@
       "title": "Architecture Intelligence: opentofu-opentofu-learnings Core Invariants",
       "repository": "opentofu-opentofu-learnings",
       "source_version": "HEAD",
-      "content_hash": "92ddb42ca43ca20b84cfdb8a263a994c61bd561510d504ca481d4b6c918c69d7",
+      "content_hash": "a0e040f1bd0e48450310a6fc1685052e880f13b82e6e1d5e3a9aeec844ef4bfa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T05:06:23.369Z"
+      "persisted_at": "2026-11-20T09:10:40.056Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu-learnings",
@@ -274924,9 +274934,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for opentofu-opentofu-learnings",
       "repository": "opentofu-opentofu-learnings",
       "source_version": "HEAD",
-      "content_hash": "7b8e4556e04fd871270edd1e5fc75397c81ca0ddaa0cd9227a2a295ddb8dc5c2",
+      "content_hash": "66c41cd23e407e1125a173d089e880cc342ae745c3ce3649ff6b28d0b3b14686",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T05:06:23.475Z"
+      "persisted_at": "2026-11-20T09:10:40.207Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
@@ -302243,6 +302253,70 @@
       "content_hash": "bc8398e408452a6df8c044af217525525a34a3c9b847204c0d422d1a89210b25",
       "domain_letter": "H",
       "persisted_at": "2026-11-20T08:38:48.050Z"
+    },
+    "rule-9545": {
+      "learning_id": "rule-9545",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9545,
+      "title": "Fuller handling of ActionIfUnwanted",
+      "source_url": "https://github.com/opentofu/opentofu",
+      "source_version": "1e528630",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T09:10:03.533Z"
+    },
+    "candidate_directive-fuller-handling-of-actionifunwanted": {
+      "item_id": "candidate_directive-fuller-handling-of-actionifunwanted",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DBBM-fuller-handling-of-actionifunwanted.md",
+      "title": "Fuller handling of ActionIfUnwanted",
+      "repository": "opentofu/opentofu",
+      "source_version": "1e528630",
+      "content_hash": "71148fa9c6c3307743a2a078ac3e8bbc8efe2717d54c500a02cfdbe682e6fe69",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T09:10:03.923Z"
+    },
+    "rule-9546": {
+      "learning_id": "rule-9546",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9546,
+      "title": "Improve terminal editor navigation",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "ba512866",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T09:10:36.169Z"
+    },
+    "candidate_directive-improve-terminal-editor-navigation": {
+      "item_id": "candidate_directive-improve-terminal-editor-navigation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E3P4-improve-terminal-editor-navigation.md",
+      "title": "Improve terminal editor navigation",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d0b97fb8bb61dac192cd7ddefe2f423603f9eff7d01b278fae6a96e132e039a7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T09:10:40.699Z"
+    },
+    "candidate_directive-resource-fuller-handling-of-actionifunwanted": {
+      "item_id": "candidate_directive-resource-fuller-handling-of-actionifunwanted",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E33G-resource-fuller-handling-of-actionifunwanted.md",
+      "title": "resource: Fuller handling of ActionIfUnwanted",
+      "repository": "opentofu-opentofu-learnings",
+      "source_version": "HEAD",
+      "content_hash": "717cc2a76fbc34f11854b3447555abb7ba3864b8daf64cc85bac4080ea04caf3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T09:10:39.917Z"
     }
   },
   "ai-builder-brain": {

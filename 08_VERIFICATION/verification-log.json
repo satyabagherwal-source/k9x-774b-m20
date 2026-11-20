@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-8845",
-    "timestamp": "2026-11-18T11:22:44.117Z",
-    "repository": "rustls/rustls",
-    "learningId": "learn-github-rustls-rustls",
-    "contentHash": "9e6a9b0ce154695fd0fcc6b968ce8683ba4bb1c8ab70c5ce42f3fa22c6672b42",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-LMVO",
-    "timestamp": "2026-11-18T11:33:09.780Z",
-    "repository": "eclipse-theia/theia",
-    "learningId": "learn-github-eclipse-theia-theia",
-    "contentHash": "ca7f2236837f812c33d8ccb3f4d99031e473730ef44c3e2ab5acef865578c8f9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-LPDY",
     "timestamp": "2026-11-18T11:33:13.030Z",
     "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -7490,6 +7460,36 @@
     "repository": "ytsaurus/ytsaurus",
     "learningId": "learn-github-ytsaurus-ytsaurus",
     "contentHash": "a384e31d5b5e5cfad446e8f3cf93f1046c6f40bde43783491419cf4764b2e388",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-DB64",
+    "timestamp": "2026-11-20T09:10:03.724Z",
+    "repository": "opentofu/opentofu",
+    "learningId": "learn-github-opentofu-opentofu",
+    "contentHash": "533fff1cc0f287cd15f6f1938d8c8b6e0f94b5ba1dec57d288ce50c9fefea8a2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-E0CG",
+    "timestamp": "2026-11-20T09:10:36.352Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "3b94e5dc820425cbc38a39c0c755bad56ca3fdd6a67c248b63c29c661533b641",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

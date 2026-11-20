@@ -11507,3 +11507,5 @@
 | `CYCLE-20261120-X7OY` | `2026-11-20T08:29:33.106Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md` | Yes (`b3ff569e...`) |
 | `CYCLE-20261120-3UVZ` | `2026-11-20T08:34:43.103Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9543` | Yes (`38842935...`) |
 | `CYCLE-20261120-90CG` | `2026-11-20T08:38:43.456Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9544` | Yes (`a384e31d...`) |
+| `CYCLE-20261120-DB64` | `2026-11-20T09:10:03.724Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9545` | Yes (`533fff1c...`) |
+| `CYCLE-20261120-E0CG` | `2026-11-20T09:10:36.352Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9546` | Yes (`3b94e5dc...`) |

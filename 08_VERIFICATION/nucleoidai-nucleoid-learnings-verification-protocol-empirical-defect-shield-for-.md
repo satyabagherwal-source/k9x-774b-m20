@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T17:07:55.152Z",
+  "timestamp": "2026-11-20T09:10:40.596Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T17:07:55.152Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T09:10:40.596Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `e737db35`  
+> **Source Version**: `ba512866`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T17:06:57.186Z  
+> **Timestamp**: 2026-11-20T09:10:35.394Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T17:06:57.180Z  
+> **Harvest Timestamp**: 2026-11-20T09:09:59.637Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1192,7 +1192,7 @@ import * as milestone from "./lib/milestone.ts";
 import * as Matrix from "./lib/Matrix.ts";
 import object from "./object.ts";
 
-export async function declarations({ train_dataset }) {
+export async function declarations({ train }) {
   milestone.inferring_declarations();
 
   const {
@@ -1205,7 +1205,7 @@ export async function declarations({ train_dataset }) {
         content: `
           query:
           ${JSON.stringify({
-            ...train_dataset,
+            ...train,
             class_declaration: "<CLASS_DECLARATION>",
             declarations: "<DECLARATIONS>",
             output_canvas: "<OUTPUT_CANVAS>",
@@ -1231,7 +1231,7 @@ export async function declarations({ train_dataset }) {
   return { class_declaration, declarations, output_canvas };
 }
 
-export async function instances({ train_dataset }) {
+export async function instances({ train }) {
   milestone.segmenting_training_objects();
 
   const { result: instances } = await llm.generate({
@@ -1241,8 +1241,8 @@ export async function instances({ train_dataset }) {
         content: `
           query:
           ${JSON.stringify({
-            ...train_dataset,
-            dataset: train_dataset.dataset.map((dataset) => ({
+            ...train,
+            dataset: train.dataset.map((dataset) => ({
               ...dataset,
               instances: [
                 {
@@ -1269,24 +1269,19 @@ export async function instances({ train_dataset }) {
   return { instances };
 }
 
-export async function value({
-  instance_name,
-  train_dataset,
-  input_matrix,
-  instance,
-}) {
+export async function value({ instance_name, train, input_matrix, instance }) {
   milestone.constructing_instance({ instance_name });
 
   instance.instance_name = instance_name;
 
-  const { x, y, width, height, volume } = Matrix.locate(
+  const { x, y, width, height, volume } = Matrix.measure(
     instance.input_instance_matrix
   );
 
-  const orientation = await object.orientation({ train_dataset, instance });
+  const orientation = await object.orientation({ train, instance });
 
   const implementation = await object.implementation({
-    train_dataset,
+    train,
     instance,
     x,
     y,
@@ -1304,7 +1299,7 @@ export async function value({
     [
       `canvas_width = ${canvas_width}`,
       `canvas_height = ${canvas_height}`,
-      train_dataset.class_declaration,
+      train.class_declaration,
       implementation,
     ].join("\n\n")
   );
@@ -1321,10 +1316,10 @@ export async function value({
   instance.input_value = input_value;
 }
 
-export async function state(train_dataset) {
+export async function state(train) {
   const objects = [];
 
-  for (const dataset of train_dataset.dataset) {
+  for (const dataset of train.dataset) {
     const implementations = dataset.instances.map(
       ({ implementation }) => implementation
     );
@@ -1335,8 +1330,8 @@ export async function state(train_dataset) {
       [
         `canvas_width = ${canvas_width}`,
         `canvas_height = ${canvas_height}`,
-        train_dataset.class_declaration,
-        ...train_dataset.declarations,
+        train.class_declaration,
+        ...train.declarations,
         ...implementations,
         "Obj[:]",
       ].join("\n\n")
@@ -1374,7 +1369,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
   const { arc_train, test_input_matrix, test_output_matrix } =
     await arc_dataset.load(puzzle_id);
 
-  const train_dataset = {
+  const train = {
     dataset: arc_train.map(({ input, output }) => ({
       input_matrix: input,
       output_matrix: output,
@@ -1402,22 +1397,22 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
 
   const { class_declaration, declarations, output_canvas } =
     await analyzer.declarations({
-      train_dataset,
+      train,
     });
 
-  train_dataset.class_declaration = class_declaration;
-  train_dataset.declarations = declarations;
-  train_dataset.output_canvas = output_canvas;
+  train.class_declaration = class_declaration;
+  train.declarations = declarations;
+  train.output_canvas = output_canvas;
 
-  for (const dataset of train_dataset.dataset) {
+  for (const dataset of train.dataset) {
     const { instances } = await analyzer.instances({
-      train_dataset: { ...train_dataset, dataset: [dataset] },
+      train: { ...train, dataset: [dataset] },
     });
 
     for (const instance of instances) {
       await analyzer.value({
         instance_name: next_instance_name(),
-        train_dataset,
+        train,
         input_matrix: dataset.input_matrix,
         instance,
       });
@@ -1426,11 +1421,11 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     dataset.instances = instances;
   }
 
-  await analyzer.state(train_dataset);
+  await analyzer.state(train);
 
   milestone.synthesizing_training_dataset();
 
-  const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
+  const synthesized_dataset = await synthesizer.synthesize({ train });
 
   milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
 
@@ -1438,7 +1433,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     for (const instance of dataset.instances) {
       await analyzer.value({
         instance_name: next_instance_name(),
-        train_dataset,
+        train,
         input_matrix: dataset.input_matrix,
         instance,
       });
@@ -1451,13 +1446,13 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
       input_instances: dataset.instances,
     });
 
-    train_dataset.dataset.push(dataset);
+    train.dataset.push(dataset);
   }
 
   milestone.visualization();
 
   const { instances } = await visualizer.instances({
-    train_dataset,
+    train,
     test_input_matrix,
   });
 
@@ -1471,7 +1466,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     const instance_name: string = next_instance_name();
 
     const { implementation, input_value } = await visualizer.value({
-      train_dataset,
+      train,
       test_input_matrix,
       instance_name,
       input_instance_matrix,
@@ -1495,7 +1490,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
   for (const input_instance of input_instances) {
     const { output_instance_matrix } = await visualizer.output_instance_matrix({
       test_input_matrix,
-      train_dataset,
+      train,
       instance: input_instance,
     });
 
@@ -1517,7 +1512,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
 
   const debug = {
     puzzle_id,
-    train_dataset,
+    train,
     test_input_instances: input_instances,
     test_input_matrix,
     test_output_matrix,
@@ -1610,208 +1605,857 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e737db35` (2026-11-19)
-**Commit Message**: Separate ARC class definitions from rules
+### Incident Patch 1: `ba512866` (2026-11-20)
+**Commit Message**: Improve terminal editor navigation
 
-Move class definitions into a dedicated field across ARC datasets and pass them separately through analysis, visualization, synthesis, and state execution.
+Add pane-aware paging and subtle scrollbars, expand the focused editor for long drafts, and make autocomplete respect multiline strings, comments, and popup mouse interactions.
 
-**File**: `arc/README.md` (modified, +7/-5)
+**File**: `README.md` (modified, +6/-0)
 ```diff
-@@ -285,10 +285,10 @@ call passes its own:
+@@ -57,6 +57,12 @@ the cursor/selection, and the wheel scrolls individual panes. Ctrl-C cancels
+ input, Ctrl-Q exits, and `.help` lists all controls.
+ At compact heights, results and diagnostics share a pane; F4 switches between
+ them without hiding the editor.
++Subtle scrollbars mark long results and diagnostics; PageUp / PageDown moves
++by the visible rows of the selected pane. Scrolling over autocomplete changes
++the selected suggestion without moving the panes behind it.
++Long drafts expand the focused editor to at most half the terminal, while
++result focus returns that space to output. Autocomplete respects strings and
++comments across lines, so Tab does not replace text inside them.
  
- | Call | Few-shot properties of each instruction dataset |
- | --- | --- |
--| `analyzer.declarations` | `declarations`, `output_canvas`, and each pair's `input_matrix` and `output_matrix` |
--| `analyzer.instances`, `visualizer.instances` | `declarations`, and each pair's `input_matrix`, `output_matrix`, and `instances` with `input_instance_matrix` and `output_instance_matrix` |
--| `analyzer.value` | `declarations`, and each pair's `instances` with `instance_name`, `input_instance_matrix`, and `implementation` |
--| `visualizer.value` | `declarations`, and the instances of every pair in one list, with `implementation`, `input_value`, and `input_instance_matrix` |
-+| `analyzer.declarations` | `class_declaration`, `declarations`, `output_canvas`, and each pair's `input_matrix` and `output_matrix` |
-+| `analyzer.instances`, `visualizer.instances` | `class_declaration`, `declarations`, and each pair's `input_matrix`, `output_matrix`, and `instances` with `input_instance_matrix` and `output_instance_matrix` |
-+| `analyzer.value` | `class_declaration`, and each pair's `instances` with `instance_name`, `input_instance_matrix`, and `implementation` |
-+| `visualizer.value` | `class_declaration`, and the instances of every pair in one list, with `implementation`, `input_value`, and `input_instance_matrix` |
- | `visualizer.output_instance_matrix` | The instances of every pair in one list, with `input_value`, `input_instance_matrix`, `output_value`, and `output_instance_matrix` |
- 
- `analyzer.value` sends no `train_dataset`, so its examples carry the
-@@ -2518,12 +2518,14 @@ There are 2 sections in our approach: analysis and visualization. In analysis ph
- ##### 1. Find patterns and Represent in `nuc` lang
- 
- The LLM finds pattern for given training input and output data and creates declarations in `nuc` lang.
-+The class declaration goes in `class_declaration`, a string, and
-+`declarations` holds the declarations that follow it.
- It also infers the `output_canvas` from the training pairs.
- 
- ```json
- {
-+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int, vertical_segment_color: int, horizontal_segment_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6747\n    this.vertex_color is vertex_color\n    this.vertical_segment_color is vertical_segment_color\n    this.horizontal_segment_color is horizontal_segment_color",
-   "declarations": [
--    "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int, vertical_segment_color: int, horizontal_segment_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6747\n    this.vertex_color is vertex_color\n    this.vertical_segment_color is vertical_segment_color\n    this.horizontal_segment_color is horizontal_segment_color",
-     "if $Obj.vertex_color is 9 and $Obj.vertical_segment_color is 9 and $Obj.horizontal_segment_color is 9:\n    $Obj.tag is l6624\n    $Obj.marker_color is 4\n    $Obj.x is $Obj.x@first - 1 if $Obj.orientation > 180 else $Obj.x@first\n    $Obj.y is $Obj.y@first - 1 if $Obj.orientation < 90 or $Obj.orientation > 270 else $Obj.y@first\n    $Obj.width is $Obj.width@first + 1\n    $Obj.height is $Obj.height@first + 1\n    $Obj.volume is $Obj.volume@first + 1"
-   ],
-   "output_canvas": "EXACT"
+ `nucleoid --plain` keeps the line-oriented interface below. Piped stdin or
+ redirected stdout selects it automatically; file execution and the `--json`
 ```
 
-**File**: `arc/src/analyzer.ts` (modified, +10/-4)
+**File**: `docs/README.md` (modified, +14/-0)
 ```diff
-@@ -8,7 +8,7 @@ export async function declarations({ train_dataset }) {
+@@ -101,6 +101,20 @@ Use F1-F3 for tabs, F6 or the view buttons for result formats, Ctrl-Up /
+ Ctrl-Down for earlier results, and F4 to focus the editor, results or
+ diagnostics. PageUp / PageDown and the mouse wheel scroll; focused-result
+ Left / Right (or Shift-wheel) moves across text or table columns.
++PageUp / PageDown uses the focused result or diagnostic viewport, excluding
++the table header from the page size. Subtle gutter scrollbars indicate overflow
++without reducing content width. Selecting a history entry without diagnostics
++returns diagnostic focus to its result. The autocomplete popup captures mouse
++events across its full bounds; its wheel selects suggestions, never the pane
++underneath.
++Long buffers grow the focused editor to at most half the terminal while keeping
++result content visible; focusing results or diagnostics restores the normal
++editor height. Wide editors show the total line count beside the cursor position.
++Autocomplete checks the accepted lexer's context up to the cursor, including
++multiline strings, templates and `#`, `//` and `/* ... */` comments. No
++suggestions appear inside those regions, even with Ctrl-Space; code after
++closed literals and comments completes normally. Incomplete text after the
++cursor does not affect suggestions before it.
+ Click/drag positions/selects editor text. `.help` documents all controls;
+ `.json`, `.table` and `.graph` accept optional `on` / `off` arguments.
+ 
+```
+
+**File**: `src/terminal/completion.rs` (modified, +16/-18)
+```diff
+@@ -2,8 +2,11 @@ use std::collections::BTreeSet;
+ 
+ use nucleoid::Runtime;
+ use nucleoid::graph::NodeKind;
++use nucleoid::lang::ast::lexer::{Token, tokenize};
+ use tui_textarea::{CursorMove, TextArea};
+ 
++use super::editor;
++
+ const WORDS: &[&str] = &[
+     "and",
+     "assert",
+@@ -135,7 +138,7 @@ impl Completion {
+             return None;
+         }
+         let before: String = before.iter().collect();
+-        if in_literal_or_comment(head) {
++        if !code_position(editor, row, column) {
+             return None;
+         }
+         let candidates = if row == 0 && before.trim().is_empty() && prefix.starts_with('.') {
+@@ -206,23 +209,18 @@ fn word(character: char) -> bool {
+     character.is_ascii_alphanumeric() || matches!(character, '_' | '$' | '.')
+ }
+ 
+-fn in_literal_or_comment(line: &[char]) -> bool {
+-    let mut quote = None;
+-    let mut escaped = false;
+-    for &character in line {
+-        if escaped {
+-            escaped = false;
+-        } else if character == '\\' && quote.is_some() {
+-            escaped = true;
+-        } else if quote == Some(character) {
+-            quote = None;
+-        } else if quote.is_none() && character == '#' {
+-            return true;
+-        } else if quote.is_none() && matches!(character, '\'' | '"' | '`') {
+-            quote = Some(character);
+-        }
+-    }
+-    quote.is_some()
++fn code_position(editor: &TextArea<'_>, row: usize, column: usize) -> bool {
++    const CURSOR_MARKER: &str = "__nucleoid_completion_cursor";
++    let mut source = editor::source_before_cursor(editor);
++    source.push(' ');
++    source.push_str(CURSOR_MARKER);
++    tokenize(&source).is_ok_and(|tokens| {
++        tokens.into_iter().any(|spanned| {
++            spanned.position.line == row + 1
++                && spanned.position.column == column + 2
++                && matches!(spanned.token, Token::Identifier(name) if name == CURSOR_MARKER)
++        })
++    })
+ }
+ 
+ fn add_members(runtime: &Runtime, owner: &str, candidates: &mut BTreeSet<String>) {
+```
+
+**File**: `src/terminal/completion/tests.rs` (modified, +59/-0)
+```diff
+@@ -332,6 +332,65 @@ fn strings_comments_and_whitespace_do_not_trigger_automatic_completion() {
+     assert!(Completion::find(&runtime, &editor::new("\"#\"; Math.sq"), false).is_some());
+ }
+ 
++#[test]
++fn completion_stays_out_of_comments_and_multiline_literals_even_when_requested() {
++    let runtime = Runtime::new();
++    for source in [
++        "// Math.sq",
++        "value = 1 // Math.sq",
++        "/* Math.sq",
++        "/* ignored\nMath.sq",
++        "/* closed */ # Math.sq",
++        "\"open\nMath.sq",
++        "'open\nMath.sq",
++        "`open\nMath.sq",
++        r#"value = "escaped \" quote Math.sq"#,
++        "__nucleoid_completion_cursor # Math.sq",
++    ] {
++        let editor = editor::new(source);
++        for explicit in [false, true] {
++            assert!(
++                Completion::find(&runtime, &editor, explicit).is_none(),
++                "{source:?}, explicit: {explicit}"
++            );
++        }
++    }
++}
++
++#[test]
++fn completion_resumes_after_literals_comments_and_division_without_running_code() {
++    let runtime = Runtime::new();
++    for source in [
++        "// ignored \"\nMath.sq",
++        "# ignored '\nMath.sq",
++        "/* ignored ' # */ Math.sq",
++        "/* ignored\n*/ Math.sq",
++        "\"closed\ntext\"; Math.sq",
++        "`closed\ntext`; Math.sq",
++        "pattern = /[#]/; Math.sq",
++        "value = 8 / 2; Math.sq",
++        "\"/* // #\"; Math.sq",
++    ] {
++        let editor = editor::new(source);
++        let completion = Completion::find(&runtime, &editor, false).unwrap();
++        assert_eq!(completion.candidates, ["Math.sqrt"], "{source:?}");
++    }
++}
++
++#[test]
++fn completion_checks_only_source_before_the_cursor() {
++    let runtime = Runtime::new();
++    let mut editor = editor::new("Math.sq\n/* unterminated");
++    editor.move_cursor(CursorMove::Jump(0, 7));
++    let completion = Completion::find(&runtime, &editor, false).unwrap();
++    completion.apply(&mut editor);
++    assert_eq!(editor.lines(), ["Math.sqrt", "/* unterminated"]);
++
++    let mut editor = editor::new("/* Math.sq */\nMath.sq");
++    editor.move_cursor(CursorMove::Jump(0, 10));
++    assert!(Completion::find(&runtime, &editor, true).is_none());
++}
++
+ #[test]
+ fn completion_offers_repeat_as_it_offers_while() {
+     let mut runtime = Runtime::new();
+```
+
+**File**: `src/terminal/editor.rs` (modified, +10/-4)
+```diff
+@@ -14,20 +14,26 @@ pub(super) fn new(source: &str) -> TextArea<'static> {
+     editor
+ }
+ 
+-pub(super) fn newline(editor: &mut TextArea<'_>) {
++pub(super) fn source_before_cursor(editor: &TextArea<'_>) -> String {
+     let (row, column) = editor.cursor();
+     let prefix: String = line(editor, row).chars().take(column).collect();
+-    let source = editor
++    editor
+         .lines()
+         .iter()
+         .take(row)
+         .map(String::as_str)
+         .chain(std::iter::once(prefix.as_str()))
+         .collect::<Vec<_>>()
+-        .join("\n");
++        .join("\n")
++}
++
++pub(super) fn newline(editor: &mut TextArea<'_>) {
++    let (row, column) = editor.cursor();
++    let source = source_before_cursor(editor);
+     let indentation = if unterminated_block_comment(&source) {
+-        prefix
++        line(editor, row)
+             .chars()
++            .take(column)
+             .take_while(|character| matches!(character, ' ' | '\t'))
+             .collect()
+     } else {
+```
+
+**File**: `src/terminal/input.rs` (modified, +10/-2)
+```diff
+@@ -58,8 +58,8 @@ impl App {
+             KeyCode::Enter if ctrl && !cfg!(windows) => return Some(self.submit(runtime)),
+             KeyCode::Up if ctrl => self.select_entry(self.selected.saturating_sub(1)),
+             KeyCode::Down if ctrl => self.select_entry(self.selected.saturating_add(1)),
+-            KeyCode::PageUp => self.scroll_vertical(false, self.regions.output.height.max(1)),
+-            KeyCode::PageDown => self.scroll_vertical(true, self.regions.output.height.max(1)),
++            KeyCode::PageUp => self.page_scroll(false),
++            KeyCode::PageDown => self.page_scroll(true),
+             KeyCode::Esc => {
+                 if self.completion.take().is_none() {
+                     self.editor.cancel_selection();
+@@ -248,6 +248,14 @@ impl App {
+ 
+     pub(super) fn select_entry(&mut self, selected: usize) {
+         self.selected = selected.min(self.entries.len().saturating_sub(1));
++        if self.focus == Focus::Diagnostics
++            && self
++                .entries
++                .get(self.selected)
++                .is_none_or(|entry| entry.diagnostics.is_empty())
++        {
++            self.focus = Focus::Result;
++        }
+         self.scroll = 0;
+         self.horizontal = 0;
+         self.diagnostic_scroll = 0;
+```
+
+**File**: `src/terminal/mod.rs` (modified, +4/-3)
+```diff
+@@ -48,12 +48,13 @@ Ctrl-C cancels input. Ctrl-D on an empty editor / Ctrl-Q exits.
+ 
+ F1-F3 changes tabs; the extra tabs are reserved for later.
+ F6 changes Text / JSON / Table. Ctrl-Up / Ctrl-Down selects earlier results.
+-F4 cycles editor, result and diagnostics focus. PgUp/PgDn scrolls the focused
+-result; Left/Right scrolls text or moves table columns.
++F4 cycles editor, result and diagnostics focus. PgUp/PgDn scrolls by a visible
++page; Left/Right scrolls text or moves table columns. Scrollbars mark overflow.
+ 
+ Click tabs, result views or history entries. Click/drag in the editor to
+ position/select text. Use the mouse wheel to scroll each pane; Shift-wheel
+-scrolls results horizontally. Pasted code is never executed automatically.";
++scrolls results horizontally. Over completions, the wheel selects suggestions
++without scrolling the pane underneath. Pasted code is never executed automatically.";
+ 
+ pub(super) fn run(runtime: &mut Runtime, json: bool, graph: bool) -> io::Result<()> {
+     let _session = Session;
+```
+
+**File**: `src/terminal/pointer.rs` (modified, +46/-11)
+```diff
+@@ -13,6 +13,23 @@ fn scrolled(offset: u16, forward: bool) -> u16 {
+ }
+ 
+ impl App {
++    pub(super) fn page_scroll(&mut self, forward: bool) {
++        let height = if self.focus == Focus::Diagnostics {
++            self.regions.diagnostics.height
++        } else {
++            let table_header = self.view == View::Table
++                && self
++                    .entries
++                    .get(self.selected)
++                    .is_some_and(|entry| entry.output.table().is_some());
++            self.regions
++                .output
++                .height
++                .saturating_sub(u16::from(table_header))
++        };
++        self.scroll_vertical(forward, height.max(1));
++    }
++
+     pub(super) fn scroll_vertical(&mut self, forward: bool, amount: u16) {
+         let scroll = if self.focus == Focus::Diagnostics {
+             &mut self.diagnostic_scroll
+@@ -75,16 +92,8 @@ impl App {
+     }
+ 
+     fn click(&mut self, mouse: MouseEvent, position: Position) {
+-        if self.regions.completions.contains(position) {
+-            if let Some(mut completion) = self.completion.take() {
+-                let index = self.regions.completion_start
+-                    + usize::from(mouse.row - self.regions.completions.y);
+-                if index < completion.candidates.len() {
+-                    completion.selected = index;
+-                    completion.apply(&mut self.editor);
+-                    self.history_index = None;
+-                }
+-            }
++        if self.completion_at(position) {
++            self.click_completion(position);
+         } else if let Some(tab) = self
+             .regions
+             .tabs
+@@ -124,9 +133,32 @@ impl App {
+         }
+     }
+ 
++    fn completion_at(&self, position: Position) -> bool {
++        self.completion.is_some() && self.regions.completion_popup.contains(position)
++    }
++
++    fn click_completion(&mut self, position: Position) {
++        if !self.regions.completions.contains(position) {
++            return;
++        }
++        if let Some(mut completion) = self.completion.take() {
++            let index = self.regions.completion_start
++                + usize::from(position.y - self.regions.completions.y);
++            if index < completion.candidates.len() {
++                completion.selected = index;
++                completion.apply(&mut self.editor);
++                self.history_index = None;
++            }
++        }
++    }
++
+     fn wheel(&mut self, mouse: MouseEvent, position: Position, forward: bool) {
+         let sideways = mouse.modifiers.contains(KeyModifiers::SHIFT);
+-        if self.regions.editor.contains(position) {
++        if self.completion_at(position) {
++            if let Some(completion) = &mut self.completion {
++                completion.select(forward);
++            }
++        } else if self.regions.editor.contains(position) {
+             self.editor.scroll((if forward { 3 } else { -3 }, 0));
+             self.completion = None;
+         } else if self.regions.history.contains(position) {
+@@ -151,6 +183,9 @@ impl App {
+     }
+ 
+     fn wheel_sideways(&mut self, position: Position, forward: bool) {
++        if self.completion_at(position) {
++            return;
++        }
+         if self.regions.editor.contains(position) {
+             self.editor.scroll((0, if forward { 3 } else { -3 }));
+             self.completion = None;
+```
+
+---
+
+### Incident Patch 2: `f8489165` (2026-11-20)
+**Commit Message**: Rename ARC training dataset to train
+
+Use `train` throughout the ARC pipeline and debug output. Update documentation to note the legacy debug-log field.
+
+**File**: `.claude/agents/arc-debug.agent.md` (modified, +7/-6)
+```diff
+@@ -73,10 +73,11 @@ Derive the exact schema from the current `arc/src/app.ts`, `analyzer.ts`,
+ between that code and the log. At the time of writing, `start()` writes
+ `JSON.stringify(debug, null, 2)`, and the stages fill these fields:
+ 
+-1. Load: `train_dataset.dataset[].input_matrix` / `output_matrix`,
+-   `test_input_matrix`, `test_output_matrix`.
+-2. `analyzer.declarations` (LLM): `train_dataset.declarations`,
+-   `train_dataset.output_canvas`.
++1. Load: `train.dataset[].input_matrix` / `output_matrix`,
++   `test_input_matrix`, `test_output_matrix`. Logs written before
++   20-Nov-2026 hold `train` as `train_dataset`.
++2. `analyzer.declarations` (LLM): `train.declarations`,
++   `train.output_canvas`.
+ 3. `analyzer.instances` (LLM, per training pair): each instance's
+    `input_instance_matrix` and `output_instance_matrix`. The extracted
+    instances get their `instance_name`, then `analyzer.synthesize` (no LLM)
+@@ -85,7 +86,7 @@ between that code and the log. At the time of writing, `start()` writes
+    x+1 y+1, x-1 y+1 or x-1 y-1, except an instance whose object, its input
+    object or its output object when the input is empty, is a single pixel.
+    A training pair without other instances gains none. They follow the
+-   training pairs in `train_dataset.dataset`, three per training pair in
++   training pairs in `train.dataset`, three per training pair in
+    turn, in that order. Each holds one instance per synthesized extracted
+    instance of its source pair, in source order, with `synthesis` (`source`,
+    `rotation`, `offset`), named
+@@ -96,7 +97,7 @@ between that code and the log. At the time of writing, `start()` writes
+    source pair, with `input_instance_epoch` and `output_instance_epoch` and
+    each synthesis a world of its own on the pair's canvas, or hold one
+    synthesized instance per synthesized pair. Only the analysis synthesizes. The
+-   visualizer's prompts read the synthesized pairs from `train_dataset` as
++   visualizer's prompts read the synthesized pairs from `train` as
+    training examples, like the others, which is intended and not an
+    abnormality.
+ 4. `analyzer.value` (LLM, then Nucleoid on `declarations[0]` plus the
+```
+
+**File**: `arc/README.md` (modified, +2/-2)
+```diff
+@@ -294,7 +294,7 @@ any request, with a JSON syntax error that does not name the file.
+ Each model call can pass `llm.generate` a `few_shot` function that maps every
+ instruction dataset to only the properties of that call's own prompt; a call
+ without one receives every instruction dataset with all its properties. A call
+-that sends a `train_dataset` builds it and its few-shot examples with the same
++that sends `train` builds it and its few-shot examples with the same
+ projection, so both carry the same properties in the same order. Every solver
+ call passes its own:
+ 
+@@ -306,7 +306,7 @@ call passes its own:
+ | `visualizer.value` | `class_declaration`, and the instances of every pair in one list, with `implementation`, `input_value`, and `input_instance_matrix` |
+ | `visualizer.output_instance_matrix` | The instances of every pair in one list, with `input_value`, `input_instance_matrix`, `output_value`, and `output_instance_matrix` |
+ 
+-`analyzer.value` sends no `train_dataset`, so its examples carry the
++`analyzer.value` sends no `train`, so its examples carry the
+ properties of the `instances` it sends, the instances of the same pair
+ constructed before it. The calls that crop their own instance matrices,
+ `analyzer.value`, `visualizer.value`, and `visualizer.output_instance_matrix`,
+```
+
+**File**: `arc/src/analyzer.ts` (modified, +13/-18)
+```diff
+@@ -4,7 +4,7 @@ import * as milestone from "./lib/milestone.ts";
+ import * as Matrix from "./lib/Matrix.ts";
+ import object from "./object.ts";
+ 
+-export async function declarations({ train_dataset }) {
++export async function declarations({ train }) {
    milestone.inferring_declarations();
  
    const {
--    result: { declarations, output_canvas },
-+    result: { class_declaration, declarations, output_canvas },
-   } = await llm.generate({
-     grammar: true,
-     messages: [
-@@ -18,12 +18,14 @@ export async function declarations({ train_dataset }) {
+@@ -17,7 +17,7 @@ export async function declarations({ train_dataset }) {
+         content: `
            query:
            ${JSON.stringify({
-             ...train_dataset,
-+            class_declaration: "<CLASS_DECLARATION>",
+-            ...train_dataset,
++            ...train,
+             class_declaration: "<CLASS_DECLARATION>",
              declarations: "<DECLARATIONS>",
              output_canvas: "<OUTPUT_CANVAS>",
-           })}
-           json_format:
-           {
-             "result": {
-+              "class_declaration": <CLASS_DECLARATION>,
-               "declarations": <DECLARATIONS>,
-               "output_canvas": <OUTPUT_CANVAS>
-             }
-@@ -33,9 +35,12 @@ export async function declarations({ train_dataset }) {
-     ],
-   });
- 
--  milestone.declarations_inferred({ declarations, output_canvas });
-+  milestone.declarations_inferred({
-+    declarations: [class_declaration, ...declarations],
-+    output_canvas,
-+  });
- 
--  return { declarations, output_canvas };
-+  return { class_declaration, declarations, output_canvas };
+@@ -43,7 +43,7 @@ export async function declarations({ train_dataset }) {
+   return { class_declaration, declarations, output_canvas };
  }
  
- export async function instances({ train_dataset }) {
-@@ -111,7 +116,7 @@ export async function value({
+-export async function instances({ train_dataset }) {
++export async function instances({ train }) {
+   milestone.segmenting_training_objects();
+ 
+   const { result: instances } = await llm.generate({
+@@ -53,8 +53,8 @@ export async function instances({ train_dataset }) {
+         content: `
+           query:
+           ${JSON.stringify({
+-            ...train_dataset,
+-            dataset: train_dataset.dataset.map((dataset) => ({
++            ...train,
++            dataset: train.dataset.map((dataset) => ({
+               ...dataset,
+               instances: [
+                 {
+@@ -81,12 +81,7 @@ export async function instances({ train_dataset }) {
+   return { instances };
+ }
+ 
+-export async function value({
+-  instance_name,
+-  train_dataset,
+-  input_matrix,
+-  instance,
+-}) {
++export async function value({ instance_name, train, input_matrix, instance }) {
+   milestone.constructing_instance({ instance_name });
+ 
+   instance.instance_name = instance_name;
+@@ -95,10 +90,10 @@ export async function value({
+     instance.input_instance_matrix
+   );
+ 
+-  const orientation = await object.orientation({ train_dataset, instance });
++  const orientation = await object.orientation({ train, instance });
+ 
+   const implementation = await object.implementation({
+-    train_dataset,
++    train,
+     instance,
+     x,
+     y,
+@@ -116,7 +111,7 @@ export async function value({
      [
        `canvas_width = ${canvas_width}`,
        `canvas_height = ${canvas_height}`,
--      train_dataset.declarations[0],
-+      train_dataset.class_declaration,
+-      train_dataset.class_declaration,
++      train.class_declaration,
        implementation,
      ].join("\n\n")
    );
-@@ -142,6 +147,7 @@ export async function state(train_dataset) {
+@@ -133,10 +128,10 @@ export async function value({
+   instance.input_value = input_value;
+ }
+ 
+-export async function state(train_dataset) {
++export async function state(train) {
+   const objects = [];
+ 
+-  for (const dataset of train_dataset.dataset) {
++  for (const dataset of train.dataset) {
+     const implementations = dataset.instances.map(
+       ({ implementation }) => implementation
+     );
+@@ -147,8 +142,8 @@ export async function state(train_dataset) {
        [
          `canvas_width = ${canvas_width}`,
          `canvas_height = ${canvas_height}`,
-+        train_dataset.class_declaration,
-         ...train_dataset.declarations,
+-        train_dataset.class_declaration,
+-        ...train_dataset.declarations,
++        train.class_declaration,
++        ...train.declarations,
          ...implementations,
          "Obj[:]",
+       ].join("\n\n")
 ```
 
-**File**: `arc/src/app.ts` (modified, +8/-3)
+**File**: `arc/src/app.ts` (modified, +16/-16)
 ```diff
-@@ -19,6 +19,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+@@ -13,7 +13,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+   const { arc_train, test_input_matrix, test_output_matrix } =
+     await arc_dataset.load(puzzle_id);
+ 
+-  const train_dataset = {
++  const train = {
+     dataset: arc_train.map(({ input, output }) => ({
+       input_matrix: input,
        output_matrix: output,
-       instances: undefined,
-     })),
-+    class_declaration: undefined,
-     declarations: undefined,
-     output_canvas: undefined,
-   };
-@@ -38,10 +39,12 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
-   const next_instance_name = (): string =>
-     `obj${String(instance_index++).padStart(12, "0")}`;
+@@ -41,22 +41,22 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
  
--  const { declarations, output_canvas } = await analyzer.declarations({
--    train_dataset,
--  });
-+  const { class_declaration, declarations, output_canvas } =
-+    await analyzer.declarations({
-+      train_dataset,
-+    });
+   const { class_declaration, declarations, output_canvas } =
+     await analyzer.declarations({
+-      train_dataset,
++      train,
+     });
  
-+  train_dataset.class_declaration = class_declaration;
-   train_dataset.declarations = declarations;
-   train_dataset.output_canvas = output_canvas;
+-  train_dataset.class_declaration = class_declaration;
+-  train_dataset.declarations = declarations;
+-  train_dataset.output_canvas = output_canvas;
++  train.class_declaration = class_declaration;
++  train.declarations = declarations;
++  train.output_canvas = output_canvas;
  
-@@ -81,6 +84,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
-     }
+-  for (const dataset of train_dataset.dataset) {
++  for (const dataset of train.dataset) {
+     const { instances } = await analyzer.instances({
+-      train_dataset: { ...train_dataset, dataset: [dataset] },
++      train: { ...train, dataset: [dataset] },
+     });
  
-     await object.state({
-+      class_declaration,
-       declarations,
-       input_matrix: dataset.input_matrix,
-       input_instances: dataset.instances,
-@@ -121,6 +125,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+     for (const instance of instances) {
+       await analyzer.value({
+         instance_name: next_instance_name(),
+-        train_dataset,
++        train,
+         input_matrix: dataset.input_matrix,
+         instance,
+       });
+@@ -65,19 +65,19 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+     dataset.instances = instances;
    }
  
-   await object.state({
-+    class_declaration,
-     declarations,
-     input_matrix: test_input_matrix,
-     input_instances,
+-  await analyzer.state(train_dataset);
++  await analyzer.state(train);
+ 
+   milestone.synthesizing_training_dataset();
+ 
+-  const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
++  const synthesized_dataset = await synthesizer.synthesize({ train });
+ 
+   milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
+ 
+   for (const dataset of synthesized_dataset) {
+     for (const instance of dataset.instances) {
+       await analyzer.value({
+         instance_name: next_instance_name(),
+-        train_dataset,
++        train,
+         input_matrix: dataset.input_matrix,
+         instance,
+       });
+@@ -90,13 +90,13 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+       input_instances: dataset.instances,
+     });
+ 
+-    train_dataset.dataset.push(dataset);
++    train.dataset.push(dataset);
+   }
+ 
+   milestone.visualization();
+ 
+   const { instances } = await visualizer.instances({
+-    train_dataset,
++    train,
+     test_input_matrix,
+   });
+ 
+@@ -110,7 +110,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+     const instance_name: string = next_instance_name();
+ 
+     const { implementation, input_value } = await visualizer.value({
+-      train_dataset,
++      train,
+       test_input_matrix,
+       instance_name,
+       input_instance_matrix,
+@@ -134,7 +134,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+   for (const input_instance of input_instances) {
+     const { output_instance_matrix } = await visualizer.output_instance_matrix({
+       test_input_matrix,
+-      train_dataset,
++      train,
+       instance: input_instance,
+     });
+ 
+@@ -156,7 +156,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+ 
+   const debug = {
+     puzzle_id,
+-    train_dataset,
++    train,
+     test_input_instances: input_instances,
+     test_input_matrix,
+     test_output_matrix,
 ```
 
-**File**: `arc/src/dataset/dataset.017c7c7b.json` (modified, +1/-1)
+**File**: `arc/src/object.ts` (modified, +10/-10)
 ```diff
-@@ -1,6 +1,6 @@
- {
-+  "class_declaration": "# Each object is the whole color-1 pattern, as tall as the grid, whose rows repeat every period rows. The output continues it down to 9 rows and draws it in color 2\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int, period: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l9100\n    this.color is color\n    this.period is period",
-   "declarations": [
--    "# Each object is the whole color-1 pattern, as tall as the grid, whose rows repeat every period rows. The output continues it down to 9 rows and draws it in color 2\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int, period: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l9100\n    this.color is color\n    this.period is period",
-     "# Each pattern becomes l8384, a pattern repeating down\n$Obj.tag is l8384",
-     "# It continues downward, below its last row\n$Obj.extension_direction is down",
-     "# Its height grows to 1.5 times its input height, 6 rows to 9, the height of the output grid\n$Obj.height is $Obj.height@first * 3 / 2",
+@@ -3,10 +3,10 @@ import * as Matrix from "./lib/Matrix.ts";
+ import * as nucleoid from "./lib/nucleoid";
+ import * as milestone from "./lib/milestone.ts";
+ 
+-async function orientation({ train_dataset, instance }) {
++async function orientation({ train, instance }) {
+   const { orientation } = await llm.generate({
+-    few_shot: (train_dataset) =>
+-      train_dataset.dataset
++    few_shot: (train) =>
++      train.dataset
+         .flat()
+         .flatMap(({ instances }) => instances)
+         .map(({ input_instance_matrix, input_value }) => ({
+@@ -19,7 +19,7 @@ async function orientation({ train_dataset, instance }) {
+         content: `
+           current:
+           ${JSON.stringify(
+-            train_dataset.dataset
++            train.dataset
+               .flat()
+               .filter(({ instances }) => instances)
+               .flatMap(({ instances }) => instances)
+@@ -55,7 +55,7 @@ async function orientation({ train_dataset, instance }) {
+ 
+ async function implementation({
+   few_shot = true,
+-  train_dataset,
++  train,
+   instance,
+   x,
+   y,
+@@ -64,10 +64,10 @@ async function implementation({
+   orientation,
+   volume,
+ }) {
+-  const few_shot_function = (train_dataset) => ({
+-    ...train_dataset,
++  const few_shot_function = (train) => ({
++    ...train,
+     declarations: undefined,
+-    dataset: train_dataset.dataset.map(({ instances }) => ({
++    dataset: train.dataset.map(({ instances }) => ({
+       instances: instances.map((instance) => ({
+         ...instance,
+         input_instance_matrix: Matrix.crop(instance.input_instance_matrix),
+@@ -84,9 +84,9 @@ async function implementation({
+         content: `
+           current:
+           ${JSON.stringify({
+-            ...train_dataset,
++            ...train,
+             declarations: undefined,
+-            dataset: train_dataset.dataset
++            dataset: train.dataset
+               .filter(({ instances }) => instances)
+               .map(({ instances }) => ({
+                 instances: instances
 ```
 
-**File**: `arc/src/dataset/dataset.0ca9ddb6.json` (modified, +1/-1)
+**File**: `arc/src/synthesizer.ts` (modified, +7/-7)
 ```diff
-@@ -1,6 +1,6 @@
- {
-+  "class_declaration": "# Each object is one single-cell point. A color-1 point grows an orthogonal cross of color 7, a color-2 point a diagonal cross of color 4, and points of other colors stay as they are\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l7544\n    this.vertex_color is vertex_color",
-   "declarations": [
--    "# Each object is one single-cell point. A color-1 point grows an orthogonal cross of color 7, a color-2 point a diagonal cross of color 4, and points of other colors stay as they are\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l7544\n    this.vertex_color is vertex_color",
-     "# A color-1 point grows 4 orthogonal arms of color 7\nif $Obj.vertex_color is 1:\n    $Obj.tag is l1707\n    $Obj.marker_color is 7\n    $Obj.x is $Obj.x@first - 1\n    $Obj.y is $Obj.y@first - 1\n    $Obj.width is $Obj.width@first + 2\n    $Obj.height is $Obj.height@first + 2\n    $Obj.volume is $Obj.volume@first + 4",
-     "# A color-2 point grows 4 diagonal arms of color 4\nif $Obj.vertex_color is 2:\n    $Obj.tag is l2404\n    $Obj.marker_color is 4\n    $Obj.x is $Obj.x@first - 1\n    $Obj.y is $Obj.y@first - 1\n    $Obj.width is $Obj.width@first + 2\n    $Obj.height is $Obj.height@first + 2\n    $Obj.volume is $Obj.volume@first + 4"
-   ],
+@@ -7,8 +7,8 @@ const FIELD_GUIDE = `
+ - "class_declaration", "declarations" and "output_canvas" are fixed for this task. Every new example must be valid under them. Do not change them or repeat them in your answer.
+ `.trim();
+ 
+-async function synthesize({ train_dataset }) {
+-  const count = train_dataset.length;
++async function synthesize({ train }) {
++  const count = train.length;
+ 
+   const { result } = await llm.generate({
+     few_shot: null,
+@@ -19,8 +19,8 @@ async function synthesize({ train_dataset }) {
+ 
+         <current_dataset>
+         ${JSON.stringify({
+-          ...train_dataset,
+-          dataset: train_dataset.dataset.map(
++          ...train,
++          dataset: train.dataset.map(
+             ({ input_matrix, output_matrix, instances }) => ({
+               input_matrix,
+               output_matrix,
+@@ -70,9 +70,9 @@ async function synthesize({ train_dataset }) {
+         content: `
+           synthesize:
+           ${JSON.stringify({
+-            class_declaration: train_dataset.class_declaration,
+-            declarations: train_dataset.declarations,
+-            output_canvas: train_dataset.output_canvas,
++            class_declaration: train.class_declaration,
++            declarations: train.declarations,
++            output_canvas: train.output_canvas,
+             dataset: [
+               {
+                 input_matrix: "<INPUT_MATRIX>",
 ```
 
-**File**: `arc/src/dataset/dataset.0d3d703e.json` (modified, +1/-1)
+**File**: `arc/src/visualizer.ts` (modified, +27/-29)
 ```diff
-@@ -1,6 +1,6 @@
- {
-+  "class_declaration": "# Each object is one full-height column of a single color. Every column swaps its color for its partner: 1 and 5, 2 and 6, 3 and 4, 8 and 9 swap\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6953\n    this.color is color",
-   "declarations": [
--    "# Each object is one full-height column of a single color. Every column swaps its color for its partner: 1 and 5, 2 and 6, 3 and 4, 8 and 9 swap\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6953\n    this.color is color",
-     "# Each column takes the partner of its input color: find the pair holding the input color, then the other member of that pair\n$Obj.color is [[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner is not $Obj.color@first)"
-   ],
-   "output_canvas": "EXACT",
-```
-
-**File**: `arc/src/dataset/dataset.25d8a9c8.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-+  "class_declaration": "# Each object is one full-width row of 3 cells. A row whose cells share one color turns all 5, and any other row is cleared to the background\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, parts: list):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l3058\n    this.parts is parts",
-   "declarations": [
--    "# Each object is one full-width row of 3 cells. A row whose cells share one color turns all 5, and any other row is cleared to the background\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, parts: list):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l3058\n    this.parts is parts",
-     "# A row with one distinct color is filled with 5; any other row gets 0, the background\n$Obj.fill_color is 5 if $Obj.parts.distinct().length is 1 else 0",
-     "# A cleared row keeps no cells; a filled row keeps its 3 input cells\n$Obj.volume is 0 if $Obj.fill_color is 0 else $Obj.volume@first"
-   ],
-```
-
-**File**: `arc/src/dataset/dataset.25ff71a9.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-+  "class_declaration": "# Each object is the one shape in the grid. Every shape moves down by one row\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l9100",
-   "declarations": [
--    "# Each object is the one shape in the grid. Every shape moves down by one row\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l9100",
-     "# Each shape moves down one row from its input row; its cells and size stay the same\n$Obj.y is $Obj.y@first + 1"
-   ],
-   "output_canvas": "EXACT",
+@@ -4,7 +4,7 @@ import * as milestone from "./lib/milestone.ts";
+ import object from "./object.ts";
+ import * as nucleoid from "./lib/nucleoid";
+ 
+-export async function instances({ train_dataset, test_input_matrix }) {
++export async function instances({ train, test_input_matrix }) {
+   milestone.segmenting_test_input({ test_input_matrix });
+ 
+   let {
+@@ -18,26 +18,24 @@ export async function instances({ train_dataset, test_input_matrix }) {
+         content: `
+           current:
+           ${JSON.stringify({
+-            class_declaration: train_dataset.class_declaration,
+-            dataset: train_dataset.dataset.map(
+-              ({ input_matrix, instances }) => ({
+-                input_matrix,
+-                instances: instances.map((instance) => ({
+-                  instance_matrix: instance.input_instance_matrix,
+-                  instance_crop_matrix: Matrix.crop(
+-                    instance.input_instance_matrix
+-                  ),
+-                  implementation: instance.implementation,
+-                  x: instance.input_value.x,
+-                  y: instance.input_value.y,
+-                  width: instance.input_value.width,
+-                  height: instance.input_value.height,
+-                  orientation: instance.input_value.orientation,
+-                  volume: instance.input_value.volume,
+-                  value: instance.input_value,
+-                })),
+-              })
+-            ),
++            class_declaration: train.class_declaration,
++            dataset: train.dataset.map(({ input_matrix, instances }) => ({
++              input_matrix,
++              instances: instances.map((instance) => ({
++                instance_matrix: instance.input_instance_matrix,
++                instance_crop_matrix: Matrix.crop(
++                  instance.input_instance_matrix
++                ),
++                implementation: instance.implementation,
++                x: instance.input_value.x,
++                y: instance.input_value.y,
++                width: instance.input_value.width,
++                height: instance.input_value.height,
++                orientation: instance.input_value.orientation,
++                volume: instance.input_value.volume,
++                value: instance.input_value,
++              })),
++            })),
+           })}
+         `,
+       },
+@@ -46,7 +44,7 @@ export async function instances({ train_dataset, test_input_matrix }) {
+         content: `
+           query:
+           ${JSON.stringify({
+-            class_declaration: train_dataset.class_declaration,
++            class_declaration: train.class_declaration,
+             dataset: [
+               {
+                 instance_matrix: test_input_matrix,
+@@ -85,7 +83,7 @@ export async function instances({ train_dataset, test_input_matrix }) {
+ }
+ 
+ export async function value({
+-  train_dataset,
++  train,
+   test_input_matrix,
+   instance_name,
+   input_instance_matrix,
+@@ -97,11 +95,11 @@ export async function value({
+ 
+   const { x, y, width, height, volume } = Matrix.measure(input_instance_matrix);
+ 
+-  const orientation = await object.orientation({ train_dataset, instance });
++  const orientation = await object.orientation({ train, instance });
+ 
+   const implementation = await object.implementation({
+     few_shot: false,
+-    train_dataset,
++    train,
+     instance,
+     x,
+     y,
+@@ -124,7 +122,7 @@ export async function value({
+     [
+       `canvas_width = ${canvas_width}`,
+       `canvas_height = ${canvas_height}`,
+-      train_dataset.class_declaration,
++      train.class_declaration,
+       implementation,
+     ].join("\n\n")
+   );
+@@ -136,7 +134,7 @@ export async function value({
+ 
+ export async function output_instance_matrix({
+   test_input_matrix,
+-  train_dataset,
++  train,
+   instance,
+ }) {
+   const { x, y } = instance.output_value;
+@@ -151,8 +149,8 @@ export async function output_instance_matrix({
+         content: `
+           current:
+           ${JSON.stringify({
+-            ...train_dataset,
+-            dataset: train_dataset.dataset.map(({ instances }) => ({
++            ...train,
++            dataset: train.dataset.map(({ instances }) => ({
+               instances: instances.map((instance) => ({
+                 ...instance,
+                 input_instance_matrix: Matrix.crop(
 ```
 
 #### Recent Merged Pull Requests:
@@ -1840,41 +2484,36 @@ Move class definitions into a dedicated field across ARC datasets and pass them 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Separate ARC class definitions from rules
+## X. Improve terminal editor navigation
 
 **RULE**:
-When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e737db35`: Separate ARC class definitions from rules. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba512866`: Improve terminal editor navigation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| `analyzer.declarations` | `class_declaration`, `declarations`, `output_canvas`, and each pair's `input_matrix` and `output_matrix` |
-| `analyzer.instances`, `visualizer.instances` | `class_declaration`, `declarations`, and each pair's `input_matrix`, `output_matrix`, and `instances` with `input_instance_matrix` and `output_instance_matrix` |
-| `analyzer.value` | `class_declaration`, and each pair's `instances` with `instance_name`, `input_instance_matrix`, and `implementation` |
-| `visualizer.value` | `class_declaration`, and the instances of every pair in one list, with `implementation`, `input_value`, and `input_instance_matrix` |
-The class declaration goes in `class_declaration`, a string, and
-`declarations` holds the declarations that follow it.
-  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int, vertical_segment_color: int, horizontal_segment_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6747\n    this.vertex_color is vertex_color\n    this.vertical_segment_color is vert
+Subtle scrollbars mark long results and diagnostics; PageUp / PageDown moves
+by the visible rows of the selected pane. Scrolling over autocomplete changes
+the selected suggestion without moving the panes behind it.
+Long drafts expand the focused editor to at most half the terminal, while
+result focus returns that space to output. Autocomplete respects strings and
+comments across lines, so Tab does not replace text inside them.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-| `analyzer.declarations` | `declarations`, `output_canvas`, and each pair's `input_matrix` and `output_matrix` |
-| `analyzer.instances`, `visualizer.instances` | `declarations`, and each pair's `input_matrix`, `output_matrix`, and `instances` with `input_instance_matrix` and `output_instance_matrix` |
-| `analyzer.value` | `declarations`, and each pair's `instances` with `instance_name`, `input_instance_matrix`, and `implementation` |
-| `visualizer.value` | `declarations`, and the instances of every pair in one list, with `implementation`, `input_value`, and `input_instance_matrix` |
-    "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int, vertical_segment_color: int, horizontal_segment_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is l6747\n    this.vertex_color is vertex_color\n    this.vertical_segment_color is vertical_segment_color\n    this.horizontal_segment_color is horizontal_segment_color",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e737db35` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba512866` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

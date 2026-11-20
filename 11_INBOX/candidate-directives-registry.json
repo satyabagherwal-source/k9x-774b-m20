@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T08:38:49.035Z",
+  "last_updated": "2026-11-20T09:10:41.107Z",
   "directives": [
     {
       "id": "CD-001",
@@ -36921,6 +36921,57 @@
       "source_repo": "ytsaurus-ytsaurus",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9E0AEB-fixes-from-babenko-s-review-of-merged-sh.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-DBBM",
+      "directive_title": "Fuller handling of ActionIfUnwanted",
+      "source_repo": "opentofu/opentofu",
+      "source_commit": "1e528630",
+      "staged_file": "11_INBOX/candidate-directives/CD-DBBM-fuller-handling-of-actionifunwanted.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-E3P4",
+      "directive_title": "Improve terminal editor navigation",
+      "source_repo": "nucleoidai-nucleoid-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-E3P4-improve-terminal-editor-navigation.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-E33G",
+      "directive_title": "resource: Fuller handling of ActionIfUnwanted",
+      "source_repo": "opentofu-opentofu-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-E33G-resource-fuller-handling-of-actionifunwanted.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-9BA1AF",
+      "directive_title": "Improve terminal editor navigation",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9BA1AF-improve-terminal-editor-navigation.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-7667F1",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7667F1-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-20"
     }
   ]

@@ -11540,3 +11540,5 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `3965e511` | Multi-dimensional audit evidence | 2026-11-20T08:29:33.110Z |
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `762af53b` | Multi-dimensional audit evidence | 2026-11-20T08:34:43.106Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `1b712cf0` | Multi-dimensional audit evidence | 2026-11-20T08:38:43.460Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `1e528630` | Multi-dimensional audit evidence | 2026-11-20T09:10:03.729Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ba512866` | Multi-dimensional audit evidence | 2026-11-20T09:10:36.355Z |

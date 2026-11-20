@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "64f9b9ba",
+    "sourceVersion": "ba512866",
     "license": "Apache-2.0",
-    "contentHash": "994d4b6aa04d594bd5cb32de3b6a916f832a9dd4780a39e13e5ced4d945aedd4",
-    "lastHarvestedAt": "2026-11-19T18:20:07.867Z",
+    "contentHash": "3b94e5dc820425cbc38a39c0c755bad56ca3fdd6a67c248b63c29c661533b641",
+    "lastHarvestedAt": "2026-11-20T09:10:36.355Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6363,10 +6363,10 @@
     "repository": "opentofu/opentofu",
     "platform": "github",
     "sourceUrl": "https://github.com/opentofu/opentofu",
-    "sourceVersion": "9699ab67",
+    "sourceVersion": "1e528630",
     "license": "MPL-2.0",
-    "contentHash": "2b7d87e3e556816d76aab036a68c0ab528e27ba02eea123cb38ae8b36335dc90",
-    "lastHarvestedAt": "2026-11-19T05:06:14.371Z",
+    "contentHash": "533fff1cc0f287cd15f6f1938d8c8b6e0f94b5ba1dec57d288ce50c9fefea8a2",
+    "lastHarvestedAt": "2026-11-20T09:10:03.729Z",
     "learningId": "learn-github-opentofu-opentofu"
   },
   "surrealdb-surrealdb": {

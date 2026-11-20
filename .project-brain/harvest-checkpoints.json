@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T08:38:43.469Z",
+  "last_updated": "2026-11-20T09:10:36.364Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "994d4b6aa04d594bd5cb32de3b6a916f832a9dd4780a39e13e5ced4d945aedd4",
-      "verified_at": "2026-11-19T18:20:07.875Z",
+      "content_hash": "3b94e5dc820425cbc38a39c0c755bad56ca3fdd6a67c248b63c29c661533b641",
+      "verified_at": "2026-11-20T09:10:36.363Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T18:20:07.875Z"
+      "last_updated": "2026-11-20T09:10:36.363Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -9636,14 +9636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-opentofu-opentofu",
-      "content_hash": "2b7d87e3e556816d76aab036a68c0ab528e27ba02eea123cb38ae8b36335dc90",
-      "verified_at": "2026-11-19T05:06:14.378Z",
+      "content_hash": "533fff1cc0f287cd15f6f1938d8c8b6e0f94b5ba1dec57d288ce50c9fefea8a2",
+      "verified_at": "2026-11-20T09:10:03.736Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T05:06:14.378Z"
+      "last_updated": "2026-11-20T09:10:03.736Z"
     },
     "surrealdb/surrealdb": {
       "repository": "surrealdb/surrealdb",
