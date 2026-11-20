@@ -11626,3 +11626,6 @@ Every entry in this ledger must capture:
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `a0385c9a` | Multi-dimensional audit evidence | 2026-11-20T17:20:56.408Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `cfce7f98` | Multi-dimensional audit evidence | 2026-11-20T17:20:59.857Z |
 | `learn-github-inikulin-parse5` | `https://github.com/inikulin/parse5` | `62a198aa` | Multi-dimensional audit evidence | 2026-11-20T17:21:12.633Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `84dbbbf9` | Multi-dimensional audit evidence | 2026-11-20T17:29:06.384Z |
+| `learn-github-fb55-css-select` | `https://github.com/fb55/css-select` | `10f516f0` | Multi-dimensional audit evidence | 2026-11-20T17:29:08.794Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `d4845b0c` | Multi-dimensional audit evidence | 2026-11-20T17:29:16.654Z |

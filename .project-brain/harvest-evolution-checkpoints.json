@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T17:21:18.361Z",
+  "last_updated": "2026-11-20T17:29:24.888Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T12:15:57.033Z",
@@ -603,7 +603,7 @@
       "staged_for_review": 1
     },
     "freenet-freenet-core-learnings.md": {
-      "processed_at": "2026-11-20T08:38:47.817Z",
+      "processed_at": "2026-11-20T17:29:24.095Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -713,7 +713,7 @@
       "staged_for_review": 1
     },
     "fb55-css-select-learnings.md": {
-      "processed_at": "2026-11-16T20:02:45.313Z",
+      "processed_at": "2026-11-20T17:29:21.833Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1028,9 +1028,9 @@
       "staged_for_review": 1
     },
     "ntex-rs-ntex-learnings.md": {
-      "processed_at": "2026-11-19T00:41:46.092Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-20T17:29:20.076Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "encoredev-encore-learnings.md": {
       "processed_at": "2026-11-13T15:19:17.090Z",
@@ -3608,7 +3608,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2565,
+  "total_dossiers_evaluated": 2568,
   "total_canonical_promoted": 431,
-  "total_staged_for_review": 1945
+  "total_staged_for_review": 1948
 }

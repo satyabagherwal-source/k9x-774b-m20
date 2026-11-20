@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T17:21:15.752Z",
-    "lastVerified": "2026-11-20T17:21:15.752Z",
+    "lastChecked": "2026-11-20T17:29:19.942Z",
+    "lastVerified": "2026-11-20T17:29:19.942Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -170,12 +170,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T16:42:27.441Z",
-    "lastVerified": "2026-11-20T16:42:27.441Z",
+    "lastChecked": "2026-11-20T17:29:14.706Z",
+    "lastVerified": "2026-11-20T17:29:14.706Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -184,7 +184,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "82819859"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -620,9 +621,9 @@
   "qdrant-qdrant": {
     "name": "qdrant",
     "officialUrl": "https://github.com/qdrant/qdrant",
-    "lastChecked": "2026-11-19T12:40:35.750Z",
+    "lastChecked": "2026-11-20T17:29:12.323Z",
     "revisionIdentifier": "23065a0b",
-    "lastVerified": "2026-11-19T12:40:35.750Z"
+    "lastVerified": "2026-11-20T17:29:12.323Z"
   },
   "iii-hq-iii": {
     "name": "iii-hq/iii",
@@ -1203,13 +1204,13 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T08:28:36.331Z",
-    "lastVerified": "2026-11-20T08:28:36.331Z",
+    "lastChecked": "2026-11-20T17:29:15.628Z",
+    "lastVerified": "2026-11-20T17:29:15.628Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "b3ff569eedb707d26bcd9128ac4276b8583f5035d861cbaccab9d6352d73afbf",
-    "promotedRulesCount": 0,
+    "contentHash": "2bf92818d7692107f1a8d2b9431defae49b4d31397c91e41e5771471ff94341c",
+    "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -1651,9 +1652,9 @@
   "kubesphere-kubesphere": {
     "name": "kubesphere",
     "officialUrl": "https://github.com/kubesphere/kubesphere",
-    "lastChecked": "2026-11-19T14:52:26.112Z",
+    "lastChecked": "2026-11-20T17:29:07.456Z",
     "revisionIdentifier": "04a29b5c",
-    "lastVerified": "2026-11-19T14:52:26.112Z"
+    "lastVerified": "2026-11-20T17:29:07.456Z"
   },
   "zama-ai-tfhe-rs": {
     "name": "zama-ai/tfhe-rs",
@@ -5493,14 +5494,14 @@
     "officialUrl": "https://github.com/ntex-rs/ntex",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T00:40:58.092Z",
-    "lastVerified": "2026-11-19T00:40:58.092Z",
+    "lastChecked": "2026-11-20T17:29:05.764Z",
+    "lastVerified": "2026-11-20T17:29:05.764Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ntex-rs-ntex",
-    "contentHash": "91296967c2da2fabfcdf6f2b9fc953683d8b803391cd5396e808140343715005",
+    "contentHash": "74110263ade45af877a761a9361a897f331f1f07cada15c01621659d7b3da583",
     "promotedRulesCount": 0,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10411,5 +10412,29 @@
     "lastChecked": "2026-11-20T17:20:47.617Z",
     "revisionIdentifier": "19825faa",
     "lastVerified": "2026-11-20T17:20:47.617Z"
+  },
+  "fb55-css-select": {
+    "name": "fb55/css-select",
+    "officialUrl": "https://github.com/fb55/css-select",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-20T17:29:08.063Z",
+    "lastVerified": "2026-11-20T17:29:08.063Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-fb55-css-select",
+    "contentHash": "2bf86db4f7c725d8b036b3157f90f41f8e0e2fc4866592fcad664943e9bb0b7e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "relatedcode-progresshud": {
+    "name": "ProgressHUD",
+    "officialUrl": "https://github.com/relatedcode/ProgressHUD",
+    "lastChecked": "2026-11-20T17:29:04.754Z",
+    "revisionIdentifier": "25471d6e",
+    "lastVerified": "2026-11-20T17:29:04.754Z"
   }
 }

@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "3965e511",
+    "sourceVersion": "d4845b0c",
     "license": "NOASSERTION",
-    "contentHash": "b3ff569eedb707d26bcd9128ac4276b8583f5035d861cbaccab9d6352d73afbf",
-    "lastHarvestedAt": "2026-11-20T08:29:33.110Z",
+    "contentHash": "2bf92818d7692107f1a8d2b9431defae49b4d31397c91e41e5771471ff94341c",
+    "lastHarvestedAt": "2026-11-20T17:29:16.654Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -5793,10 +5793,10 @@
     "repository": "ntex-rs/ntex",
     "platform": "github",
     "sourceUrl": "https://github.com/ntex-rs/ntex",
-    "sourceVersion": "abcff08d",
+    "sourceVersion": "84dbbbf9",
     "license": "Apache-2.0",
-    "contentHash": "91296967c2da2fabfcdf6f2b9fc953683d8b803391cd5396e808140343715005",
-    "lastHarvestedAt": "2026-11-19T00:40:58.648Z",
+    "contentHash": "74110263ade45af877a761a9361a897f331f1f07cada15c01621659d7b3da583",
+    "lastHarvestedAt": "2026-11-20T17:29:06.384Z",
     "learningId": "learn-github-ntex-rs-ntex"
   },
   "learnapollo-learnapollo": {
@@ -9393,10 +9393,10 @@
     "repository": "fb55/css-select",
     "platform": "github",
     "sourceUrl": "https://github.com/fb55/css-select",
-    "sourceVersion": "84ec1620",
+    "sourceVersion": "10f516f0",
     "license": "BSD-2-Clause",
-    "contentHash": "98736740b34d6fce5ff7b783f8c864f83ec611605efaf0587336700d7391f409",
-    "lastHarvestedAt": "2026-11-16T20:02:34.445Z",
+    "contentHash": "2bf86db4f7c725d8b036b3157f90f41f8e0e2fc4866592fcad664943e9bb0b7e",
+    "lastHarvestedAt": "2026-11-20T17:29:08.794Z",
     "learningId": "learn-github-fb55-css-select"
   },
   "sindresorhus-keyboardshortcuts": {

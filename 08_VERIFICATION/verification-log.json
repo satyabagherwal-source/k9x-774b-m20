@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-S3Y4",
-    "timestamp": "2026-11-18T15:22:08.764Z",
-    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-    "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-    "contentHash": "6bf2d6beaf579bc86a809500bdb48c1fa72c096ab1251daedb9308b4fc7ccbcf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-SA43",
-    "timestamp": "2026-11-18T15:22:16.755Z",
-    "repository": "software-mansion/react-native-reanimated",
-    "learningId": "learn-github-software-mansion-react-native-reanimated",
-    "contentHash": "874993902dd0e58e571ace67862012cb443caf4cbe33171ee601f2a12a8f10c7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-8LEW",
-    "timestamp": "2026-11-18T15:34:57.896Z",
-    "repository": "Alissonerdx/BFS-Best-Face-Swap",
-    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-    "contentHash": "66ef68a8f65b3c97530ac6982c806f4caafc9b7cd24a67fb12e5a1d5db061a24",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-8VBW",
     "timestamp": "2026-11-18T15:35:10.748Z",
     "repository": "rustls/rustls",
@@ -7490,6 +7445,51 @@
     "repository": "inikulin/parse5",
     "learningId": "learn-github-inikulin-parse5",
     "contentHash": "e4acc127c0db7a876e0ceecef788cae032edb7cc98acb40a00ca9f4e0927dc0d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-732J",
+    "timestamp": "2026-11-20T17:29:06.379Z",
+    "repository": "ntex-rs/ntex",
+    "learningId": "learn-github-ntex-rs-ntex",
+    "contentHash": "74110263ade45af877a761a9361a897f331f1f07cada15c01621659d7b3da583",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-74XH",
+    "timestamp": "2026-11-20T17:29:08.789Z",
+    "repository": "fb55/css-select",
+    "learningId": "learn-github-fb55-css-select",
+    "contentHash": "2bf86db4f7c725d8b036b3157f90f41f8e0e2fc4866592fcad664943e9bb0b7e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-7AZU",
+    "timestamp": "2026-11-20T17:29:16.650Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "2bf92818d7692107f1a8d2b9431defae49b4d31397c91e41e5771471ff94341c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

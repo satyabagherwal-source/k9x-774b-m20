@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T17:21:17.992Z",
+  "last_updated": "2026-11-20T17:29:24.459Z",
   "total_records": 2157,
   "domains": {
     "A": {
@@ -9523,8 +9523,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "28ddde85f3600be9f04a0f8b05a962914626fa4a45159f9c9c1cc91c4b3f6c21",
-      "created_at": "2026-11-20T08:29:33.488Z"
+      "content_hash": "9907cd1e97f721034133e3513f6f5691fbf270c2f33d406e94b2a9e1901d1d89",
+      "created_at": "2026-11-20T17:29:17.007Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -9601,8 +9601,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "461b8871f8e8891cdd207fb313f9dece70a91b1af4a25c94d5f765515e830090",
-      "created_at": "2026-11-20T08:38:48.196Z"
+      "content_hash": "4ea0b2b80b330c3c6b627c10db98414a1a7c725c9fbd219064c50a2ae3dc407b",
+      "created_at": "2026-11-20T17:29:24.459Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -11128,8 +11128,8 @@
       "title": "Architecture Intelligence: ntex-rs/ntex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-architecture-intelligence-ntex-rs-ntex-core-invariants.md",
       "repository": "ntex-rs/ntex",
-      "content_hash": "db2ca83efff5401256517199fe5f8bd19e57896c66028cd21265bacd2544547b",
-      "created_at": "2026-11-19T00:40:59.013Z"
+      "content_hash": "3ce084793cdf7e54e95d321b38fce82f6d199066ff3014f10bfad0640879dfa9",
+      "created_at": "2026-11-20T17:29:06.775Z"
     },
     "domain_intelligence-design-intelligence-callstack-react-native-paper-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-callstack-react-native-paper-core-invariants",
@@ -11164,8 +11164,8 @@
       "title": "Architecture Intelligence: ntex-rs-ntex-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-learnings-architecture-intelligence-ntex-rs-ntex-learnings-core-inv.md",
       "repository": "ntex-rs-ntex-learnings",
-      "content_hash": "6e4ee6f5b2cedac79c9e18fb85d9048d7e7434f3d66a1b4de6c9e165ddf3a5ee",
-      "created_at": "2026-11-19T00:41:46.579Z"
+      "content_hash": "63dec2194ff5d44ada1aa4837c7c94703c9113fa049a20b9dc3252386a474a32",
+      "created_at": "2026-11-20T17:29:21.544Z"
     },
     "DOM-D-B528111D": {
       "record_id": "DOM-D-B528111D",
@@ -24595,8 +24595,8 @@
       "title": "Technical Construction Intelligence: fb55/css-select Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fb55-css-select-technical-construction-intelligence-fb55-css-select-core-invaria.md",
       "repository": "fb55/css-select",
-      "content_hash": "4a730cda5a277dbacacfa3b47e4e702570aa4c301685d94e94fed2370e0d19cc",
-      "created_at": "2026-11-16T20:02:34.828Z"
+      "content_hash": "be6125439af03abd2c5fe672fb9ce1950bcd342813968e60b67c5144b6e0e085",
+      "created_at": "2026-11-20T17:29:09.159Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-css-select-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-fb55-css-select-learnings-core-invariants",
@@ -24604,8 +24604,8 @@
       "title": "Technical Construction Intelligence: fb55-css-select-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fb55-css-select-learnings-technical-construction-intelligence-fb55-css-select-le.md",
       "repository": "fb55-css-select-learnings",
-      "content_hash": "5df396bbae5d49261a27b5c5e715dcab8e8e958ece2cfd75ad3df8aaff1de4b8",
-      "created_at": "2026-11-16T20:02:46.091Z"
+      "content_hash": "a79fb59d0c51f02a5abee1369f6293a2b19a22b07fe2d7b620076210bf438758",
+      "created_at": "2026-11-20T17:29:23.802Z"
     },
     "domain_intelligence-technical-construction-intelligence-cheeriojs-dom-serializer-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-cheeriojs-dom-serializer-core-invariants",

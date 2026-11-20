@@ -712251,3 +712251,92 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `62a198aa` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9608. say why a web archive was refused; warn on large sites in fdev (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "say why a web archive was refused; warn on large sites in fdev",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "d4845b0c",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-20T17:29:16.162Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `d4845b0c`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/core/src/server/app_packaging.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d4845b0c`: server): say why a web archive was refused; warn on large sites in fdev. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/server/app_packaging.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    /// The archive is well-formed but this node will not unpack it: it breaks
+    /// one of the per-entry unpack checks (file size, total size, entry count,
+    /// entry type, path). The message is shown to whoever asked for the site,
+    /// since it is the only way a site's author learns why the page does not
+    /// load. The decompressed-stream cap and the state-framing checks in
+    /// `TryFrom` still report `UnpackingError`, or `StoringError` when the cap
+    /// trips while `unpack_in` reads a file's data; both are shown
+    /// generically. They fire only for padded or malformed archives, never for
+    /// an ordinary site under the network's state-size limit.
+    ///
+    /// Up to [`SHOWN_PATH_MAX_CHARS`] characters of the archive author's own
+    /// text (an entry path) therefore appear on a page at the node's origin:
+    /// quoted, escaped, HTML-escaped by the response layer, and framed as a
+    /// path in the site. Accepted, because the author needs the name to fix
+    /// the site and can show any text they like in the site itself.
+    ///
+    /// It is composed here from the limits and the archive's own headers, never
+    /// from a filesystem error, so it carr
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+        let reject = |msg: String| WebContractError::UnpackingError(anyhow::anyhow!(msg));
+                    "web archive has more than {MAX_ARCHIVE_ENTRIES} entries"
+                    "refusing to unpack {entry_type:?} entry from web archive: {path:?}"
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d4845b0c` are properly handled with clean fallback behavior.

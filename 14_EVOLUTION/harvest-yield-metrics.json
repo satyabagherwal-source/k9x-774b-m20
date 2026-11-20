@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T17:21:12.637Z",
-  "total_cycles_completed": 11040,
-  "total_learnings_persisted": 11040,
-  "total_rules_promoted": 10397,
+  "last_updated": "2026-11-20T17:29:16.660Z",
+  "total_cycles_completed": 11043,
+  "total_learnings_persisted": 11043,
+  "total_rules_promoted": 10399,
   "history": [
-    {
-      "timestamp": "2026-11-19T18:32:55.938Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T18:32:59.280Z",
-      "repository": "tw93/Pake",
-      "learningId": "learn-github-tw93-pake",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T18:48:51.959Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T18:48:57.550Z",
       "repository": "openkruise/kruise",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-20T17:21:12.637Z",
       "repository": "inikulin/parse5",
       "learningId": "learn-github-inikulin-parse5",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T17:29:06.418Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T17:29:08.799Z",
+      "repository": "fb55/css-select",
+      "learningId": "learn-github-fb55-css-select",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T17:29:16.660Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

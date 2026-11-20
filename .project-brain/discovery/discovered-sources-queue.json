@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T17:21:16.896Z",
+  "updated_at": "2026-11-20T17:29:23.231Z",
   "stats": {
-    "total_discovered": 6484,
-    "approved_pending_harvest": 6126,
+    "total_discovered": 6527,
+    "approved_pending_harvest": 6169,
     "harvested_count": 0,
     "rejected_count": 358,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6112,
-      "OFFICIAL_DOCUMENTATION": 205,
+      "COMMUNITY_AND_EXPERT": 6133,
+      "OFFICIAL_DOCUMENTATION": 227,
       "STANDARDS_AND_SPECIFICATIONS": 117,
       "ENGINEERING_BLOGS": 4,
       "SECURITY_ADVISORIES": 38,
@@ -140165,6 +140165,952 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
         "fileName": "nats-io-nats-server-learnings.md"
+      }
+    },
+    "SRC-312B550157D1": {
+      "id": "SRC-312B550157D1",
+      "url": "https://github.com/ntex-rs/ntex/actions/workflows/linux.yml/badge.svg?branch=main",
+      "title": "https://github.com/ntex-rs/ntex/actions/workflows/linux.yml/badge.svg?branch=main",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.195Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-6E1A310C2E6E": {
+      "id": "SRC-6E1A310C2E6E",
+      "url": "https://github.com/ntex-rs/ntex/actions/workflows/linux.yml",
+      "title": "https://github.com/ntex-rs/ntex/actions/workflows/linux.yml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.240Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-F036EA1FF87B": {
+      "id": "SRC-F036EA1FF87B",
+      "url": "https://codecov.io/gh/ntex-rs/ntex/branch/main/graph/badge.svg",
+      "title": "https://codecov.io/gh/ntex-rs/ntex/branch/main/graph/badge.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.280Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-6E432DB03CE3": {
+      "id": "SRC-6E432DB03CE3",
+      "url": "https://codecov.io/gh/ntex-rs/ntex/tree/main",
+      "title": "https://codecov.io/gh/ntex-rs/ntex/tree/main",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.320Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-06B3DD1AF87F": {
+      "id": "SRC-06B3DD1AF87F",
+      "url": "https://img.shields.io/crates/v/ntex.svg",
+      "title": "https://img.shields.io/crates/v/ntex.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.359Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-E94DE8754725": {
+      "id": "SRC-E94DE8754725",
+      "url": "https://crates.io/crates/ntex",
+      "title": "https://crates.io/crates/ntex",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.397Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-8634369808AD": {
+      "id": "SRC-8634369808AD",
+      "url": "https://img.shields.io/docsrs/ntex/latest",
+      "title": "https://img.shields.io/docsrs/ntex/latest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.436Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-7B711857CCAE": {
+      "id": "SRC-7B711857CCAE",
+      "url": "https://docs.rs/ntex",
+      "title": "https://docs.rs/ntex",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.474Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-E9EDEAA473E3": {
+      "id": "SRC-E9EDEAA473E3",
+      "url": "https://img.shields.io/badge/rustc-1.97+-lightgray.svg",
+      "title": "https://img.shields.io/badge/rustc-1.97+-lightgray.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.513Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-C7E73E62CE03": {
+      "id": "SRC-C7E73E62CE03",
+      "url": "https://releases.rs/docs/1.97.0",
+      "title": "https://releases.rs/docs/1.97.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.552Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-8074D4A0539C": {
+      "id": "SRC-8074D4A0539C",
+      "url": "https://img.shields.io/crates/l/ntex.svg",
+      "title": "https://img.shields.io/crates/l/ntex.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.594Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-065036B0D390": {
+      "id": "SRC-065036B0D390",
+      "url": "https://img.shields.io/discord/919288597826387979?label=chat&logo=discord",
+      "title": "https://img.shields.io/discord/919288597826387979?label=chat&logo=discord",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.633Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-A6F744256B23": {
+      "id": "SRC-A6F744256B23",
+      "url": "https://discord.gg/4GtaeP5Uqu",
+      "title": "https://discord.gg/4GtaeP5Uqu",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.671Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-B882443F3E9B": {
+      "id": "SRC-B882443F3E9B",
+      "url": "https://github.com/ntex-rs/ntex/actions/workflows/osx.yml/badge.svg?branch=main",
+      "title": "https://github.com/ntex-rs/ntex/actions/workflows/osx.yml/badge.svg?branch=main",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.709Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-AA8ABB33CC4E": {
+      "id": "SRC-AA8ABB33CC4E",
+      "url": "https://github.com/ntex-rs/ntex/actions/workflows/osx.yml",
+      "title": "https://github.com/ntex-rs/ntex/actions/workflows/osx.yml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.747Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-80449240B877": {
+      "id": "SRC-80449240B877",
+      "url": "https://github.com/ntex-rs/ntex/actions/workflows/windows.yml/badge.svg?branch=main",
+      "title": "https://github.com/ntex-rs/ntex/actions/workflows/windows.yml/badge.svg?branch=main",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.787Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-1D1E53F3FE2F": {
+      "id": "SRC-1D1E53F3FE2F",
+      "url": "https://github.com/ntex-rs/ntex/actions/workflows/windows.yml",
+      "title": "https://github.com/ntex-rs/ntex/actions/workflows/windows.yml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.826Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-80409CFDC260": {
+      "id": "SRC-80409CFDC260",
+      "url": "https://docs.ntex.rs/index.html",
+      "title": "https://docs.ntex.rs/index.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.864Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-3FA81C3D06AE": {
+      "id": "SRC-3FA81C3D06AE",
+      "url": "https://docs.ntex.rs/api/ntex/index.html",
+      "title": "https://docs.ntex.rs/api/ntex/index.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.920Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-FD0DA1629433": {
+      "id": "SRC-FD0DA1629433",
+      "url": "https://github.com/ntex-rs/ntex-amqp",
+      "title": "https://github.com/ntex-rs/ntex-amqp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:20.960Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-7E8340FCC53B": {
+      "id": "SRC-7E8340FCC53B",
+      "url": "https://github.com/ntex-rs/ntex-grpc",
+      "title": "https://github.com/ntex-rs/ntex-grpc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:21.002Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-C3E3874F4B2C": {
+      "id": "SRC-C3E3874F4B2C",
+      "url": "https://http-arena.com/",
+      "title": "https://http-arena.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:21.045Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-5E1A23B22CF1": {
+      "id": "SRC-5E1A23B22CF1",
+      "url": "https://docs.ntex.rs/api/ntex/web/struct.App.html",
+      "title": "https://docs.ntex.rs/api/ntex/web/struct.App.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:21.088Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-218CE15C157D": {
+      "id": "SRC-218CE15C157D",
+      "url": "https://docs.ntex.rs/api/ntex/util/struct.Bytes.html",
+      "title": "https://docs.ntex.rs/api/ntex/util/struct.Bytes.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:21.129Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-CF0BC60E4C75": {
+      "id": "SRC-CF0BC60E4C75",
+      "url": "https://docs.ntex.rs/api/ntex/web/types/struct.Form.html",
+      "title": "https://docs.ntex.rs/api/ntex/web/types/struct.Form.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:21.184Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-D53BECEBF216": {
+      "id": "SRC-D53BECEBF216",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:22.377Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-A006E6268E08": {
+      "id": "SRC-A006E6268E08",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Selector_list",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/CSS/Selector_list",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:22.416Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-3535392736CC": {
+      "id": "SRC-3535392736CC",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Universal_selectors",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/CSS/Universal_selectors",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:22.457Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-EAAF330A749E": {
+      "id": "SRC-EAAF330A749E",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/:not",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/CSS/:not",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:22.495Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-53DA2286EC77": {
+      "id": "SRC-53DA2286EC77",
+      "url": "https://api.jquery.com/contains-selector",
+      "title": "https://api.jquery.com/contains-selector",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:22.540Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-516A63053E7D": {
+      "id": "SRC-516A63053E7D",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/:has",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/CSS/:has",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:22.583Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-A560FF7C9D38": {
+      "id": "SRC-A560FF7C9D38",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/:root",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/CSS/:root",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:22.635Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-21DCF26F0426": {
+      "id": "SRC-21DCF26F0426",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/:empty",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/CSS/:empty",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:22.674Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-6718136B6A99": {
+      "id": "SRC-6718136B6A99",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/:first-child",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/CSS/:first-child",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:22.714Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-9B9E67A61AF5": {
+      "id": "SRC-9B9E67A61AF5",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/:last-child",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/CSS/:last-child",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:22.752Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-6DE855B87768": {
+      "id": "SRC-6DE855B87768",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/:first-of-type",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/CSS/:first-of-type",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:22.793Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-F55B3F091961": {
+      "id": "SRC-F55B3F091961",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/:last-of-type",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/CSS/:last-of-type",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:22.832Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-678C7F54825C": {
+      "id": "SRC-678C7F54825C",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/:only-of-type",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/CSS/:only-of-type",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:22.873Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-A8E6AA776EFF": {
+      "id": "SRC-A8E6AA776EFF",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/:only-child",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/CSS/:only-child",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:22.910Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-10B166AFEA00": {
+      "id": "SRC-10B166AFEA00",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/:nth-child",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/CSS/:nth-child",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:22.950Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-130B8E7AEAD3": {
+      "id": "SRC-130B8E7AEAD3",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/:nth-last-child",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/CSS/:nth-last-child",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:22.989Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-F05F0A108674": {
+      "id": "SRC-F05F0A108674",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/:nth-of-type",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/CSS/:nth-of-type",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:23.030Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-B93B5D124D97": {
+      "id": "SRC-B93B5D124D97",
+      "url": "https://registry.npmjs.org/@biomejs/cli-linux-arm64/-/cli-li",
+      "title": "https://registry.npmjs.org/@biomejs/cli-linux-arm64/-/cli-li",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T17:29:23.231Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
+        "fileName": "fb55-css-select-learnings.md"
       }
     }
   }

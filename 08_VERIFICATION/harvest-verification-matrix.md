@@ -11593,3 +11593,6 @@
 | `CYCLE-20261120-WL04` | `2026-11-20T17:20:56.404Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9606` | Yes (`72fa071d...`) |
 | `CYCLE-20261120-WNNX` | `2026-11-20T17:20:59.853Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9576` | Yes (`ab265535...`) |
 | `CYCLE-20261120-WXIT` | `2026-11-20T17:21:12.629Z` | `inikulin/parse5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9607` | Yes (`e4acc127...`) |
+| `CYCLE-20261120-732J` | `2026-11-20T17:29:06.379Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md` | Yes (`74110263...`) |
+| `CYCLE-20261120-74XH` | `2026-11-20T17:29:08.789Z` | `fb55/css-select` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9603` | Yes (`2bf86db4...`) |
+| `CYCLE-20261120-7AZU` | `2026-11-20T17:29:16.650Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9608` | Yes (`2bf92818...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `3965e511`  
+> **Source Version**: `d4845b0c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T08:29:32.628Z  
+> **Timestamp**: 2026-11-20T17:29:15.634Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T08:28:36.331Z  
+> **Harvest Timestamp**: 2026-11-20T17:29:15.628Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,14 +1738,14 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6303** (2026-11-20): **fix(server): say why a web archive was refused; warn on large sites in fdev**
+  *Symptoms*: ## Problem  0.2.161 (#6281) started refusing a published media-heavy website (contract `Ch5S5guTNAontnYX2qTFLmHxAh2kLodU1xpoJjv4dx5J`, 50.6 MiB unpacked) because it exceeds the new 48 MiB unpacked cap. The person who reported it saw only:  ``` failed unpacking contract: Ch5S5guTNAontnYX2qTFLmHxAh2kLodU1xpoJjv4dx5J ```  The reason appeared only in the gateway's own log, so neither the visitor nor the site's author could tell what was wrong.  The limits themselves are being raised separately on `fix/webapp-archive-size-regression`. This PR leaves the limit constants alone (the two branches merge cleanly), and it handles the other half: telling people why a site was refused, and nudging authors toward smaller sites.  ## Approach  **The refusal says why.** - The five per-entry unpack checks (file size, total size, entry count, entry type, path) now return `WebContractError::Refused`, written for a person, for example:   > failed unpacking contract: KEY: the website unpacks to at least 48.0 MiB, over this node's ... limit for one website. A website is downloaded whole by every visitor, so large media (video, audio, big images) is better hosted separately and linked to. - When the size and the limit would round to the same MiB figure, both are given in bytes. - The 400 body appends this reason.  **Some errors stay generic.** - An I/O or decode error keeps the bare message, because it can contain a local filesystem path and this body is served at the node's origin, including on host
+
 - **Issue #6302** (2026-11-20): **fix(transport): count QUIC inbound bytes in cumulative_bytes_received**
   *Symptoms*: ## Problem  `cumulative_bytes_received` and the per-peer received counters were fed only by `record_packet_received`, called after legacy symmetric decryption. QUIC packets are decrypted inside quinn and never reach it, while QUIC sends are counted at the socket. After the QUIC data ramp hit 100% the dashboard download line, `bandwidth_history`, `network_status` and telemetry `cumulative_bytes_received` undercounted (fleet upload/download ratio 2.41).  ## Approach  **Source of the count.** quinn's `udp_rx` is incremented before decryption, so datagrams with a live connection ID and bad ciphertext would inflate it, which #3999 forbids. quinn exposes no post-decryption byte count, so `PathReport::report` instead reports the connection's stream-read bytes (`ConnRanges::read_bytes`, bytes quinn returned after authenticating them) through `TransportMetrics::record_quic_received`. That moves `cumulative_bytes_received` and the per-peer `bytes_received`, keyed by the normalized remote address. The sent side records the target it is given and the QUIC socket adapter normalizes addresses before quinn sees them, so the keys match.  **Unit difference.** The sent counter counts whole UDP datagrams at the socket. The new receive count is stream payload only: it excludes QUIC framing, acknowledgement-only packets and handshake datagrams (the sent side counts those). Measured on a 256 KiB transfer in the in-memory rig, datagram bytes were 1.040x the payload counted, so download is undercoun
   **Post-Mortem & Fix Analysis**:
   > <!-- claude-rule-review --> ### Rule Review: No blocking issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md, transport.md **Files reviewed:** 7  #### Warnings None.  - **Regression tests:** The `fix:` PR adds two regression tests.   - `received_wire_bytes_count_only_authenticated_reads` runs the real path lifecycle and injects forged datagrams with a live connection ID. It covers the #3999 pre-decrypt overcount.   - `a_path_report_counts_stream_reads_per_peer_on_ticks_and_cumulative_on_drop` covers the tick path, the final report, and no regrowth of the per-peer entry. - **Determinism:** The new tests use `GlobalRng::seed_guard(SEED)` and the pair's virtual `time.sleep`. No banned APIs were added. - **Cleanup/GC rules:** No new exemption logic was added. - **Documentation:** The PR adds a pattern entry to `bug-prevention-patterns.md`. The `quic_bytes_received` note in `transport.md` (about quinn's UDP counts) is about a different metric, so it isn't made stale.
   > ## ⚠️ Extended Benchmark Regressions Detected  Some extended benchmarks show performance regressions.  **Note**: Extended benchmarks include high-latency and packet-loss scenarios which have higher variance than standard CI benchmarks.  [View full results](https://github.com/freenet/freenet-core/actions/runs/44655765836)  [View full benchmark summary](https://github.com/freenet/freenet-core/actions/runs/44655765836)
-
-- **Issue #6301** (2026-11-20): **Dashboard and telemetry download counters miss all QUIC inbound bytes**
-  *Symptoms*: ## Problem  `cumulative_bytes_received` does not count bytes that arrive on QUIC paths. Every outbound datagram is counted at the socket (`transport.rs`, `send_to` and `try_send_to_mapped` call `record_packet_sent`), QUIC included. Inbound bytes are counted only by `record_packet_received`, whose only call sites are in the legacy UDP path after symmetric decryption (`connection_handler.rs`, the `PeerConnection::recv` path and the handshake completion ACK). QUIC packets are decrypted inside quinn and never reach it.  The QUIC data ramp has been at 100% since 2026-11-17 02:30 UTC, and legacy UDP now carries roughly a third of inbound packets, so most inbound traffic is missing from:  - the local dashboard's download line (`bandwidth_history.rs` samples `cumulative_bytes_received`) - `resource_utilization.cumulative_bytes_received` in telemetry - the dashboard's lifetime "downloaded" figure (`network_status.rs`)  Upload is unaffected.  ## Evidence  Fleet telemetry, 2026-11-18 00:00 to 2026-11-20 00:40 UTC, 1,672 nodes with at least 6 h of coverage: summed upload 9,472 GB/day, summed download 3,927 GB/day, a ratio of 2.41. Across a closed network every received byte was sent by someone, so a ratio that far from 1 points at the counters. Median per node: upload about 2.6 GB/day, download about 0.65 GB/day. No measurement from before the ramp is available for comparison, so the ratio alone does not prove the cause; the code paths above do.  ## Fix direction  Feed authenticated QUIC
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1762,372 +1762,355 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3965e511` (2026-11-20)
-**Commit Message**: fix(transport): count QUIC inbound bytes in cumulative_bytes_received (#6302)
+### Incident Patch 1: `d4845b0c` (2026-11-20)
+**Commit Message**: fix(server): say why a web archive was refused; warn on large sites in fdev (#6303)
 
-**File**: `.claude/rules/bug-prevention-patterns.md` (modified, +21/-0)
+**File**: `crates/core/src/server/app_packaging.rs` (modified, +361/-7)
 ```diff
-@@ -1209,3 +1209,24 @@ straddle a commit.
- Audit question when touching the fan-out: *can this path send twice to one
- peer for one contract inside the receiver's budget, and does every summary it
- records come from the same read as the bytes it sent?*
-+
-+## A new transport whose bytes bypass the socket-layer counters
-+
-+Wire bytes are metered at two different layers. Sent bytes are counted at the
-+socket (`record_packet_sent`, every transport). Received bytes are counted only
-+after legacy symmetric decryption (`record_packet_received`). A transport that
-+decrypts elsewhere (QUIC, inside quinn) is counted on send and missing on
-+receive, so upload and download diverge with no error. #6301: once the QUIC
-+data ramp reached 100%, the fleet upload/download ratio read 2.41.
-+
-+Fix shape: `recycle::PathReport::report` feeds the connection's authenticated
-+stream-read byte count (`ConnRanges::read_bytes`) into
-+`TransportMetrics::record_quic_received`. Do NOT use quinn's `udp_rx`: it is
-+incremented before decryption, so a datagram with a live connection ID and bad
-+ciphertext inflates it (#3999). The cost is a unit difference: payload only, not
-+the whole datagram the sent side counts (about 4% on a bulk transfer, more for
-+ack-only traffic). Never call `record_packet_received` for QUIC (double count).
-+Audit question when adding a transport: *for each direction, where is it
-+metered, and is it the same layer?* Pinned by
-+`received_wire_bytes_count_only_authenticated_reads` (real path lifecycle, forged
-+datagrams) and `a_path_report_counts_stream_reads_per_peer_on_ticks_and_cumulative_on_drop`.
-```
-
-**File**: `crates/core/src/transport/metrics.rs` (modified, +23/-0)
-```diff
-@@ -2874,6 +2874,29 @@ impl TransportMetrics {
-         self.record_per_peer(remote_addr, bytes, |s| &s.bytes_received);
-     }
- 
-+    /// Record authenticated inbound QUIC stream payload bytes of one connection.
+@@ -17,6 +17,84 @@ pub enum WebContractError {
+     StoringError(std::io::Error),
+     #[error("file not found: {0}")]
+     FileNotFound(String),
++    /// The archive is well-formed but this node will not unpack it: it breaks
++    /// one of the per-entry unpack checks (file size, total size, entry count,
++    /// entry type, path). The message is shown to whoever asked for the site,
++    /// since it is the only way a site's author learns why the page does not
++    /// load. The decompressed-stream cap and the state-framing checks in
++    /// `TryFrom` still report `UnpackingError`, or `StoringError` when the cap
++    /// trips while `unpack_in` reads a file's data; both are shown
++    /// generically. They fire only for padded or malformed archives, never for
++    /// an ordinary site under the network's state-size limit.
 +    ///
-+    /// QUIC packets are decrypted inside quinn and never reach
-+    /// [`Self::record_packet_received`], so without this the download counters
-+    /// miss every QUIC byte while [`Self::record_packet_sent`] counts QUIC
-+    /// sends at the socket. `bytes` must come from data quinn returned after
-+    /// authenticating it (stream reads), never from quinn's `udp_rx`, which
-+    /// counts before decryption (#3999). `remote_addr` is `None` for a
-+    /// connection that has ended: only the cumulative counter moves, so the
-+    /// per-peer table does not regrow an entry for a peer that is gone. Skips
-+    /// zero so an idle path does not churn the per-peer LRU. The packet count
-+    /// is not moved: quinn exposes no authenticated packet count.
-+    pub(crate) fn record_quic_received(&self, remote_addr: Option<SocketAddr>, bytes: u64) {
-+        if bytes == 0 {
-+            return;
-+        }
-+        self.cumulative_bytes_received
-+            .fetch_add(bytes, Ordering::Relaxed);
-+        if let Some(addr) = remote_addr {
-+            self.record_per_peer(addr, bytes, |s| &s.bytes_received);
-+        }
-+    }
-+
-     /// Read cumulative bytes downloaded without resetting counters.
-     pub fn cumulative_bytes_received(&self) -> u64 {
-         self.cumulative_bytes_received.load(Ordering::Relaxed)
-```
-
-**File**: `crates/core/src/transport/quic/path.rs` (modified, +3/-1)
-```diff
-@@ -1094,6 +1094,7 @@ impl QuicPath {
-         // carrying data while it is in the gauge.
-         let counted_as_data_path = Arc::new(std::sync::atomic::AtomicBool::new(false));
-         let ended_as_data_path = Arc::new(std::sync::atomic::AtomicBool::new(false));
-+        let read_ranges = receiver.ranges();
-         #[cfg_attr(not(test), allow(unused_mut))]
-         let mut report = recycle::PathReport::new(
-             connection.inner().clone(),
-@@ -1104,7 +1105,8 @@ impl QuicPath {
-                 now: counted_as_data_path.clone(),
-                 at_end: ended_as_data_path.clone(),
-             },
--        );
-+        )
-+        .with_read(read_ranges);
-         #[cfg(test)]
-         {
-             report.panic_once_bucketed = limits.panic_in_watch;
-```
-
-**File**: `crates/core/src/transport/quic/path/inbound.rs` (modified, +2/-2)
-```diff
-@@ -1721,12 +1721,12 @@ impl ConnRanges {
-     }
- 
-     /// `bytes` more were read on one of the connection's streams.
--    fn note_read(&self, bytes: u64) {
-+    pub(in crate::transport::quic) fn note_read(&self, bytes: u64) {
-         self.read.fetch_add(bytes, Ordering::Relaxed);
-     }
- 
-     /// Bytes read on the connection's streams so far.
--    fn read_bytes(&self) -> u64 {
-+    pub(in crate::transport::quic) fn read_bytes(&self) -> u64 {
-         self.read.load(Ordering::Relaxed)
-     }
- 
-```
-
-**File**: `crates/core/src/transport/quic/path/tests.rs` (modified, +75/-0)
-```diff
-@@ -11982,3 +11982,78 @@ fn a_slow_lossy_path_stays_within_its_consumer_gap() {
-         eprintln!("gap lossy: worst over all seeds {worst:?}");
-     })
- }
-+
-+/// Received wire bytes come from the authenticated stream reads, through the
-+/// real path lifecycle and the process-wide metrics (#6301): the payload sent
-+/// is counted for the peer, and never more than quinn's own datagram count.
-+/// Datagrams with a live connection ID and invalid ciphertext reach quinn's
-+/// `udp_rx` (it counts before decrypting) and must not move the counters.
-+#[test]
-+fn received_wire_bytes_count_only_authenticated_reads() {
-+    bounded(|| async move {
-+        let _seed = GlobalRng::seed_guard(SEED);
-+        let p = paths("quic-path-wire-rx", QuicPathLimits::DEFAULT).await;
-+        let a_addr = p.pair.a_addr;
-+        let (a, time) = (p.a.clone(), p.pair.time.clone());
-+        let len = 256 * 1024;
-+        p.drive({
-+            let time = time.clone();
-+            async move {
-+                a.send_stream(StreamId::next(), None, Bytes::from(payload(len)))
-+                    .await
-+                    .expect("send");
-+                // Several ack-watch ticks, so the report has run.
-+                time.sleep(Duration::from_secs(6)).await;
-+            }
-+        })
-+        .await;
-+        let global = &crate::transport::TRANSPORT_METRICS;
-+        let (_, counted) = global.peer_bytes(a_addr).expect("a per-peer entry");
-+        let udp = p.b.connection().inner().stats().udp_rx;
-+        assert!(counted >= len as u64, "payload {len}, counted {counted}");
-+        assert!(
-+            counted <= udp.bytes,
-+            "counted {counted} > quinn {}",
-+            udp.bytes
-+        );
-+        eprintln!(
-+            "wire-rx payload={counted} quinn_udp_rx={} ratio={:.4}",
-+            udp.bytes,
-+            udp.bytes as f64 / counted as f64
-+        );
-+
-+        // Forged datagrams: a live CID taken from a real short-header packet.
-+        let real = p
-+            .pair
-+            .sent()
-+            .into_iter()
-+            .rev()
-+            .find(|s| s.from == a_addr && s.bytes.first().is_some_and(|b| b & 0x80 == 0))
-+            .expect("a short-header datagram from a");
-+        let mut forged = real.bytes[..1 + super::super::cid::CID_LEN].to_vec();
-+        forged.extend(std::iter::repeat_n(0xAB, 1100));
-+        let pair_ref = &p.pair;
-+        for _ in 0..10 {
-+            pair_ref.inject_from_a(&forged).await;
-+        }
-+        let t = p.pair.time.clone();
-+        let b_conn = p.b.connection().inner().clone();
-+        let seen = p
-+            .drive(async move {
-+                t.sleep(Duration::from_secs(6)).await;
-+                b_conn.stats().udp_rx
-+            })
-+            .await;
-+        assert!(
-+            seen.datagrams >= udp.datagrams + 10,
-+            "premise: quinn counted the forged datagrams ({} -> {})",
-+            udp.datagrams,
-+            seen.datagrams
-+        );
-+        let (_, after) = global.peer_bytes(a_addr).expect("entry");
-+        assert_eq!(
-+            after, counted,
-+            "forged datagrams moved the received counter"
-+        );
-+    })
++    /// Up to [`SHOWN_PATH_MAX_CHARS`] characters of the archive author's own
++    /// text (an entry path) therefore appear on a page at the node's origin:
++    /// quoted, escaped, HTML-escaped by the response layer, and framed as a
++    /// path in the site. Accepted, because the author needs the name to fix
++    /// the site and can show any text they like in the site itself.
++    ///
++    /// It is composed here from the limits and the archive's own headers, never
++    /// from a filesystem error, so it carries no detail of the node's disk. The
++    /// one archive-controlled part, an entry path, goes through
++    /// [`shown_path`], which bounds its length: the message is returned on
++    /// every request and kept in the node's negative cache, and a tar long-name
++    /// record can make a path megabytes long.
++    #[error("{0}")]
++    Refused(String),
 +}
++
++/// Most characters of an archive entry path quoted in a [`WebContractError::Refused`]
++/// message, counted after escaping.
++const SHOWN_PATH_MAX_CHARS: usize = 120;
++
++/// An archive entry path quoted for a refusal message: each character escaped
++/// with `char::escape_debug` (control, bidi and combining characters become
++/// `\u{..}`, quotes are backslashed; slightly stricter than `str`'s `Debug`,
++/// which leaves `'` and non-initial combining marks alone), cut at a whole
++/// escape once [`SHOWN_PATH_MAX_CHARS`] escaped characters are reached, then
++/// quoted, with `...` after the closing quote when cut.
++///
++/// The cap counts the ESCAPED output: one bidi override expands to eight
++/// characters, so capping the raw path would let a hostile name push the
++/// message past `unpack_failed_message`'s backstop, which would then cut the
++/// hint and split an escape. A huge path is never formatted whole.
++fn shown_path(path: &Path) -> String {
++    let lossy = path.to_string_lossy();
++    let mut out = String::from("\"");
++    let mut shown = 0;
++    let mut cut = false;
++    for c in lossy.chars() {
++        let escaped = c.escape_debug();
++        let len = escaped.len();
++        if shown + len > SHOWN_PATH_MAX_CHARS {
++            cut = true;
++            break;
++        }
++        out.extend(escaped);
++        shown += len;
++    }
++    out.push('"');
++    if cut {
++        out.push_str("...");
++    }
++    out
++}
++
++/// `bytes` in MiB with one decimal, for messages a person reads.
++fn mib(bytes: u64) -> String {
++    format!("{:.1} MiB", bytes as f64 / (1024.0 * 1024.0))
++}
++
++/// `size` and `limit` for a "size is over limit" message. In MiB unless the
++/// two would round to the same figure (within about 50 KiB of each other),
++/// where the message would read as a contradiction; then in bytes.
++fn size_and_limit(size: u64, limit: u64) -> (String, String) {
++    let (s, l) = (mib(size), mib(limit));
++    if s == l {
++        (format!("{size} bytes"), format!("{limit} byte"))
++    } else {
++        (s, l)
++    }
+ }
+ 
+ /// Largest compressed web archive accepted from a contract's state.
+@@ -184,7 +262,7 @@ impl WebApp {
+         use std::path::Component;
+         use tar::EntryType;
+ 
+-        let reject = |msg: String| WebContractError::UnpackingError(anyhow::anyhow!(msg));
++        let reject = WebContractError::Refused;
+ 
+         let mut decoded_web = self.decode_web();
+         decoded_web.set_overwrite(false);
+@@ -203,7 +281,8 @@ impl WebApp {
+             count += 1;
+             if count > MAX_ARCHIVE_ENTRIES {
+                 return Err(reject(format!(
+-                    "web archive has more than {MAX_ARCHIVE_ENTRIES} entries"
++                    "the website has more than {MAX_ARCHIVE_ENTRIES} files and folders, over \
++                     this node's limit for one website."
+                 )));
+             }
+ 
+@@ -214,7 +293,9 @@ impl WebApp {
+             if !matches!(entry_type, EntryType::Regular | EntryType::Directory) {
+                 let path = entry.path().map(|p| p.to_path_buf()).unwrap_or_default();
+                 return Err(reject(format!(
+-                    "refusing to unpack {entry_type:?} entry from web archive: {path:?}"
++                    "the website contains {} as 
 ```
 
-**File**: `crates/core/src/transport/quic/recycle.rs` (modified, +56/-1)
+**File**: `crates/core/src/server/path_handlers.rs` (modified, +206/-25)
 ```diff
-@@ -2231,6 +2231,18 @@ pub(crate) struct PathReport {
-     connection: quinn::Connection,
-     node: &'static crate::transport::metrics::QuicDataCounters,
-     bytes: UdpBytes,
-+    /// The connection's count of stream bytes read, which quinn hands over
-+    /// only after it has decrypted and authenticated the packets that carried
-+    /// them. `None` until [`Self::with_read`] (nothing is counted then).
-+    read: Option<Arc<super::path::inbound::ConnRanges>>,
-+    /// Bytes of `read` already reported.
-+    read_reported: u64,
-+    /// Where the path's received bytes are also counted as wire bytes
-+    /// (`cumulative_bytes_received`, per-peer `bytes_received`); the
-+    /// process-wide metrics unless a test passes its own ([`Self::with_wire`]).
-+    wire: &'static crate::transport::metrics::TransportMetrics,
-+    /// The peer's canonical address, the key the sent side uses per peer.
-+    remote: std::net::SocketAddr,
-     loss: PathLoss,
-     window: crate::transport::metrics::PathLossWindow,
-     /// The loss gate's verdict counts and those already reported; `None` when
-@@ -2278,6 +2290,10 @@ impl PathReport {
-             timed_at: built_at,
-             meter,
-             bytes: UdpBytes::of(&stats),
-+            read: None,
-+            read_reported: 0,
-+            wire: &crate::transport::TRANSPORT_METRICS,
-+            remote: crate::transport::normalize_mapped_addr(connection.remote_address()),
-             loss: PathLoss::of(&stats),
-             window: crate::transport::metrics::PathLossWindow::new(node),
-             gate,
-@@ -2292,11 +2308,32 @@ impl PathReport {
+@@ -137,21 +137,77 @@ static CONTRACT_REFRESH_LOCKS: LazyLock<
+ /// `Retry-After`). A suppressed request must get the SAME answer the request
+ /// that recorded the failure got, not an arbitrary pick between them — so this
+ /// records which one it was, not just that failure occurred.
+-#[derive(Debug, Clone, Copy)]
++#[derive(Debug, Clone)]
+ enum TerminalAbsenceKind {
+     ContractNotFound,
+     MissingContract,
+     /// The contract's state is not an archive this node will unpack (malformed,
+     /// or over the unpack limits). The answer is a function of the state, so it
+     /// repeats until the state changes; without recording it, every request
+-    /// re-fetches and re-unpacks the same refused archive.
+-    ArchiveRefused,
++    /// re-fetches and re-unpacks the same refused archive. A genuine write
++    /// failure (disk full) is recorded too, because it cannot be told apart
++    /// from an archive fault at the point it surfaces (see [`unpack_error`]);
++    /// it is retried once the refresh window ends.
++    ///
++    /// Carries the full error text the first request got (bounded by
++    /// [`unpack_failed_message`]), so a replayed refusal still says WHY rather
++    /// than only that it failed.
++    ArchiveRefused(std::sync::Arc<str>),
+ }
+ 
+-/// Prefix of the error `unpack_if_stale` returns for an archive it refuses;
+-/// `ensure_contract_cached`'s caller recognises it to record the refusal.
++/// Prefix of the error `unpack_if_stale` returns for an archive it refuses,
++/// followed by the contract key and, for a `Refused` archive, `: <reason>`.
++/// `ensure_contract_cached`'s caller recognises the prefix to record the
++/// refusal.
+ const UNPACK_FAILED_PREFIX: &str = "failed unpacking contract: ";
+ 
++/// The error `unpack_if_stale` returns when unpacking `key`'s archive fails:
++/// always an `InvalidParam` (400) carrying [`unpack_failed_message`], which
++/// the negative cache records.
++///
++/// That includes a [`WebContractError::StoringError`], although it can be a
++/// node fault (disk full). It comes from `tar`'s `unpack_in`, which also
++/// READS the entry's data and refuses a duplicate entry (`set_overwrite(false)`),
++/// so a truncated or corrupt stream, the decoder cap tripping mid-file, or a
++/// crafted duplicate all surface as the same variant. Leaving those uncached
++/// would let a hostile archive be fetched and unpacked again on every request;
++/// caching a real disk fault only delays its retry to the end of the window.
++fn unpack_error(key: &str, err: &WebContractError) -> WebSocketApiError {
++    WebSocketApiError::InvalidParam {
++        error_cause: unpack_failed_message(key, err),
++    }
++}
++
++/// The 400 body for an archive this node will not serve.
++///
++/// A [`WebContractError::Refused`] reason is appended: it names the limit and
++/// the size, and without it a site's author sees only that the page failed
++/// (the 0.2.161 media-site refusal was reported with exactly that). Any other
++/// error stays generic, since an I/O error can carry a local filesystem path
++/// and this body is shown at the node's origin, including on hosted nodes.
++///
++/// The reason is cut to [`REFUSAL_REASON_MAX_CHARS`]. `Refused` already bounds
++/// the archive-controlled path it quotes; this is the backstop, because the
++/// result is served on every request and kept in the negative cache
++/// (`TerminalAbsenceKind::ArchiveRefused`).
++fn unpack_failed_message(key: &str, err: &WebContractError) -> String {
++    match err {
++        WebContractError::Refused(reason) => {
++            let mut shown: String = reason.chars().take(REFUSAL_REASON_MAX_CHARS).collect();
++            if shown.len() < reason.len() {
++                shown.push_str("...");
++            }
++            format!("{UNPACK_FAILED_PREFIX}{key}: {shown}")
++        }
++        WebContractError::UnpackingError(_)
++        | WebContractError::StoringError(_)
++        | WebContractError::FileNotFound(_) => format!("{UNPACK_FAILED_PREFIX}{key}"),
++    }
++}
++
++/// Most characters of a refusal reason [`unpack_failed_message`] passes on.
++const REFUSAL_REASON_MAX_CHARS: usize = 512;
++
+ impl TerminalAbsenceKind {
+     fn into_error(self, instance_id: ContractInstanceId) -> WebSocketApiError {
+         match self {
+@@ -161,8 +217,8 @@ impl TerminalAbsenceKind {
+             TerminalAbsenceKind::MissingContract => {
+                 WebSocketApiError::MissingContract { instance_id }
+             }
+-            TerminalAbsenceKind::ArchiveRefused => WebSocketApiError::InvalidParam {
+-                error_cause: format!("{UNPACK_FAILED_PREFIX}{instance_id}"),
++            TerminalAbsenceKind::ArchiveRefused(error_cause) => WebSocketApiError::InvalidParam {
++                error_cause: error_cause.to_string(),
+             },
          }
      }
- 
-+    /// Report the bytes the connection's streams read as received wire bytes.
-+    pub(in crate::transport::quic) fn with_read(
-+        mut self,
-+        read: Arc<super::path::inbound::ConnRanges>,
-+    ) -> Self {
-+        self.read_reported = read.read_bytes();
-+        self.read = Some(read);
-+        self
-+    }
-+
-+    /// Count the path's received bytes in `wire` instead of the process-wide
-+    /// metrics (tests, which share the global one with every other test).
-+    #[cfg_attr(not(test), allow(dead_code))]
-+    pub(crate) fn with_wire(
-+        mut self,
-+        wire: &'static crate::transport::metrics::TransportMetrics,
-+    ) -> Self {
-+        self.wire = wire;
-+        self
-+    }
-+
-     /// Report the change since the last report, from one read of the stats,
-     /// and the time since the last one when `now` is given. The final report,
-     /// on drop, has no clock, so a path's last tick to its end (under
-     /// [`ACK_WATCH_TICK`]) is not counted.
--    fn report(&mut self, now: Option<u64>) {
-+    pub(in crate::transport::quic) fn report(&mut self, now: Option<u64>) {
-         let mut tick_ms = None;
-         if let Some(now) = now {
-             // Whole milliseconds, carrying the rest to the next report.
-@@ -2311,6 +2348,24 @@ impl PathReport {
-         let stats = self.connection.stats();
-         let (next, sent, got) = self.bytes.step(UdpBytes::of(&stats));
-         self.node.record_bytes(sent, got);
-+        // Received wire bytes for the dashboard and telemetry. QUIC packets are
-+        // decrypted inside quinn, so the legacy post-decryption call never sees
-+        // them. quinn's `udp_rx` is counted BEFORE decryption (a datagram with a
-+        // live connection ID and bad ciphertext is in it), so it cannot feed
-+        // metrics that count only authenticated traffic (#3999). The stream
-+        // bytes the receive side has read are authenticated, and are what is
-+        // reported: payload only, so QUIC framing, acknowledgement-only
-+        // packets and handshake bytes are not in it, unlike the sent side,
-+        // which meters whole datagrams at the socket.
-+        if let Some(read) = &self.read {
-+            let total = read.read_bytes();
-+            let delta = total.saturating_sub(self.read_reported);
-+            self.read_reported = total;
-+            // The final report (no clock) runs after the connection is gone:
-+            // it must not recreate the peer's entry in the per-peer table.
-+            self.wire
-+                .record_quic_received(now.map(|_| self.remote), delta);
-+        }
-         self.bytes = next;
-         let (next, delta) = self.loss.step(PathLoss::of(&stats));
-         let carrying = self.carrying.now.load(std::sync::atomic::Ordering::Acquire)
+@@ -198,8 +254,8 @@ impl RefreshState {
+         &self,
+         instance_id: &ContractInstanceId,
+     ) -> Option<TerminalAbsenceKind> {
+-        self.last_cold_failure.and_then(|(id, at, kind)| {
+-      
 ```
 
-**File**: `crates/core/src/transport/quic/tests.rs` (modified, +58/-0)
+**File**: `crates/fdev/src/website.rs` (modified, +122/-3)
 ```diff
-@@ -443,6 +443,14 @@ pub(in crate::transport::quic) async fn pair_with(
- }
- 
- impl Pair {
-+    /// Send `bytes` from `a`'s socket to `b`'s, as a forger on the path would.
-+    pub(in crate::transport::quic) async fn inject_from_a(&self, bytes: &[u8]) {
-+        self.a_socket
-+            .send_to(bytes, self.b_addr)
-+            .await
-+            .expect("inject");
-+    }
-+
-     fn a_key(&self) -> TransportPublicKey {
-         self.a_keys.public().clone()
+@@ -229,13 +229,78 @@ fn ensure_state_within_limit(state_len: usize, dir: &Path) -> anyhow::Result<()>
+             "Website is {state_mib:.1} MiB after compression, exceeding Freenet's \
+              {limit_mib} MiB contract-state limit. Reduce the size of {dir}: check for \
+              large media files, or an accidentally included node_modules/, .git/, or \
+-             build/target/ directory.",
++             build/target/ directory.{largest}",
+             dir = dir.display(),
++            largest = largest_files(dir),
+         );
      }
-@@ -4926,6 +4934,56 @@ async fn connected(pair: &Pair) -> (QuicConnection, QuicConnection) {
-     result
+     Ok(())
  }
  
-+/// A path's final report must not regrow the per-peer entry of a peer whose
-+/// connection is gone, and the tick report must count what the connection's
-+/// streams read, once (#6301). Private metrics, so no other test is in them.
-+#[test]
-+fn a_path_report_counts_stream_reads_per_peer_on_ticks_and_cumulative_on_drop() {
-+    use crate::transport::metrics::TransportMetrics;
-+    use crate::transport::quic::path::inbound::ConnRanges;
-+    bounded(|| async move {
-+        let _seed = GlobalRng::seed_guard(SEED);
-+        let net = crate::transport::test_net::subnet();
-+        let rig = pair("quic-wire-report", net.addr(1), net.addr(2), None).await;
-+        let (_client, server) = connected(&rig).await;
-+        let wire: &'static TransportMetrics = Box::leak(Box::new(TransportMetrics::new()));
-+        let node: &'static crate::transport::metrics::QuicDataCounters =
-+            Box::leak(Box::new(crate::transport::metrics::QuicDataCounters::new()));
-+        let ranges = Arc::new(ConnRanges::new(1000, 64));
-+        let mut report = super::recycle::PathReport::new(
-+            server.inner().clone(),
-+            node,
-+            0,
-+            None,
-+            super::recycle::Carrying {
-+                now: Arc::default(),
-+                at_end: Arc::default(),
-+            },
-+        )
-+        .with_wire(wire)
-+        .with_read(ranges.clone());
-+        ranges.note_read(1000);
-+        report.report(Some(1));
-+        assert_eq!(wire.cumulative_bytes_received(), 1000);
-+        assert_eq!(wire.peer_bytes(rig.a_addr), Some((0, 1000)));
-+        report.report(Some(2));
-+        assert_eq!(wire.cumulative_bytes_received(), 1000, "counted once");
-+        ranges.note_read(500);
-+        drop(report);
-+        assert_eq!(
-+            wire.cumulative_bytes_received(),
-+            1500,
-+            "the final report counts"
-+        );
-+        assert_eq!(
-+            wire.peer_bytes(rig.a_addr),
-+            Some((0, 1000)),
-+            "the final report leaves the per-peer table alone"
-+        );
-+        assert_eq!(wire.cumulative_bytes_sent(), 0, "sent is the socket's");
-+    })
++/// The largest files under `dir` (uncompressed sizes), one per line after a
++/// heading, or an empty string if none can be read. Best effort: it only
++/// decorates a message, so it never returns an error. A file whose size cannot
++/// be read is skipped; if any directory cannot be listed, the whole list is
++/// omitted.
++fn largest_files(dir: &Path) -> String {
++    let mib = |bytes: u64| bytes as f64 / (1024.0 * 1024.0);
++    let mut files: Vec<(u64, PathBuf)> = walkdir(dir)
++        .unwrap_or_default()
++        .into_iter()
++        .filter_map(|path| Some((fs::metadata(&path).ok()?.len(), path)))
++        .collect();
++    if files.is_empty() {
++        return String::new();
++    }
++    files.sort_by_key(|(len, _)| std::cmp::Reverse(*len));
++    let lines: Vec<String> = files
++        .iter()
++        .take(LARGE_SITE_FILES_SHOWN)
++        .map(|(len, path)| {
++            let shown = path.strip_prefix(dir).unwrap_or(path);
++            format!("  {:>7.1} MiB  {}", mib(*len), shown.display())
++        })
++        .collect();
++    format!(
++        "\nLargest files (before compression):\n{}",
++        lines.join("\n")
++    )
 +}
 +
- /// DATA_BLOCKED and STREAM_DATA_BLOCKED frames this side sent.
- fn blocked_frames(connection: &QuicConnection) -> u64 {
-     let tx = connection.inner().stats().frame_tx;
++/// Packed state size above which `publish` warns that the site is large.
++///
++/// A nudge, not a limit: the publish goes ahead. Every visitor's node fetches
++/// the whole state before it can show any page, and every republish ships it
++/// again, so a site this size loads slowly for everyone. Typical sites are a
++/// few MiB; the hard ceiling is [`MAX_CONTRACT_STATE_SIZE`].
++const LARGE_SITE_WARNING_BYTES: usize = 10 * 1024 * 1024;
++
++/// How many of the largest files the size messages name.
++const LARGE_SITE_FILES_SHOWN: usize = 3;
++
++/// The warning `publish` prints for a large site, or `None` at or below
++/// [`LARGE_SITE_WARNING_BYTES`]. Names the largest files, since one or two
++/// media files are usually most of it.
++///
++/// It measures the packed (compressed) state, which is what the network
++/// carries and every visitor downloads. It does not check a node's unpack
++/// limits, which count uncompressed bytes on the node's disk and live in
++/// `freenet::server::app_packaging`: a site that compresses unusually well
++/// could pass this and still be refused there, with a message naming the limit.
++fn large_site_warning(state_len: usize, dir: &Path) -> Option<String> {
++    if state_len <= LARGE_SITE_WARNING_BYTES {
++        return None;
++    }
++    Some(format!(
++        "Warning: this website is {:.1} MiB after compression. Every visitor's node \
++         downloads the whole site before it can show a page, and each republish sends it \
++         again, so large sites load slowly. Consider hosting large media separately and \
++         linking to it.{}",
++        state_len as f64 / (1024.0 * 1024.0),
++        largest_files(dir),
++    ))
++}
++
+ fn load_contract_wasm(custom_path: Option<&Path>) -> anyhow::Result<Vec<u8>> {
+     match custom_path {
+         Some(path) => {
+@@ -381,6 +446,9 @@ pub async fn publish(
+     // message (its state-size limit for ~50-64 MiB, or a cryptic chunk-count
+     // stream-reassembly error for >64 MiB serialized) (#4653).
+     ensure_state_within_limit(state.as_ref().len(), &directory)?;
++    if let Some(warning) = large_site_warning(state.as_ref().len(), &directory) {
++        eprintln!("{warning}");
++    }
+ 
+     println!("Publishing website as contract {key} (version {version})");
+ 
+@@ -503,9 +571,60 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn large_site_warning_names_the_largest_files_above_the_threshold() {
++        let dir = tempfile::tempdir().unwrap();
++        fs::create_dir(dir.path().join("assets")).unwrap();
++        fs::write(dir.path().join("index.html"), vec![0u8; 100]).unwrap();
++        fs::write(
++            dir.path().join("assets/video.webm"),
++            vec![0u8; 3 * 1024 * 1024],
++        )
++        .unwrap();
++        fs::write(
++            dir.path().join("assets/song.mp3"),
++            vec![0u8; 2 * 1024 * 1024],
++        )
++        .unwrap();
++        fs::write(dir.path().join("assets/pic.jpg"), vec![0u8; 1024 * 1024]).unwrap();
++
++        // At the threshold: no warning, so ordinary sites publish quietly.
++        assert!(large_site_warning(LARGE_SITE_WARNING_BYTES, dir.path()).is_none());
++
++        // Over it: a warning naming the largest files, largest first, and
++        // not the small ones beyond LARGE_SITE_FILES_SHOWN.
++  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6303** (2026-11-20): fix(server): say why a web archive was refused; warn on large sites in fdev (@sanity)
 - **PR #6302** (2026-11-20): fix(transport): count QUIC inbound bytes in cumulative_bytes_received (@sanity)
 - **PR #6300** (2026-11-19): build: release 0.2.161 (@sanity)
 - **PR #6299** (2026-11-19): chore(release): raise the QUIC-native wire floor to 0.2.162 (@sanity)
 - **PR #6298** (2026-11-19): fix: bound contract-handler event admission per priority class (@sanity)
 - **PR #6297** (2026-11-19): feat(quic): native joiners inside the connection cap, with their own queue share (@sanity)
-- **PR #6296** (2026-11-19): fix(connect): enforce the transient connection budget; bound FixedRate flight size (@sanity)
 
 ---
 
@@ -2147,47 +2130,47 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. transport): count QUIC inbound bytes in cumulative_bytes_received
+## X. server): say why a web archive was refused; warn on large sites in fdev
 
 **RULE**:
-When implementing operations in `.claude/rules/bug-prevention-patterns.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/src/server/app_packaging.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3965e511`: transport): count QUIC inbound bytes in cumulative_bytes_received. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d4845b0c`: server): say why a web archive was refused; warn on large sites in fdev. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/bug-prevention-patterns.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/server/app_packaging.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-## A new transport whose bytes bypass the socket-layer counters
-
-Wire bytes are metered at two different layers. Sent bytes are counted at the
-socket (`record_packet_sent`, every transport). Received bytes are counted only
-after legacy symmetric decryption (`record_packet_received`). A transport that
-decrypts elsewhere (QUIC, inside quinn) is counted on send and missing on
-receive, so upload and download diverge with no error. #6301: once the QUIC
-data ramp reached 100%, the fleet upload/download ratio read 2.41.
-
-Fix shape: `recycle::PathReport::report` feeds the connection's authenticated
-stream-read byte count (`ConnRanges::read_bytes`) into
-`TransportMetrics::record_quic_received`. Do NOT use quinn's `udp_rx`: it is
-incremented before decryption, so a datagram with a live connection ID and bad
-ciphertext inflates it (#3999). The cost is a unit difference: payload only, not
-the whole datagram the sent side counts (about 4% on a bulk transfer, more for
-ack-only traffic). Never call `record_packet_received` for QUIC (double count).
-Audit question when adding a transport: *for each direction, where is it
-metered, and is it the same layer?* Pinned by
-`received_wire_bytes_count_only
+    /// The archive is well-formed but this node will not unpack it: it breaks
+    /// one of the per-entry unpack checks (file size, total size, entry count,
+    /// entry type, path). The message is shown to whoever asked for the site,
+    /// since it is the only way a site's author learns why the page does not
+    /// load. The decompressed-stream cap and the state-framing checks in
+    /// `TryFrom` still report `UnpackingError`, or `StoringError` when the cap
+    /// trips while `unpack_in` reads a file's data; both are shown
+    /// generically. They fire only for padded or malformed archives, never for
+    /// an ordinary site under the network's state-size limit.
+    ///
+    /// Up to [`SHOWN_PATH_MAX_CHARS`] characters of the archive author's own
+    /// text (an entry path) therefore appear on a page at the node's origin:
+    /// quoted, escaped, HTML-escaped by the response layer, and framed as a
+    /// path in the site. Accepted, because the author needs the name to fix
+    /// the site and can show any text they like in the site itself.
+    ///
+    /// It is composed here from the limits and the archive's own headers, never
+    /// from a filesystem error, so it carr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        let reject = |msg: String| WebContractError::UnpackingError(anyhow::anyhow!(msg));
+                    "web archive has more than {MAX_ARCHIVE_ENTRIES} entries"
+                    "refusing to unpack {entry_type:?} entry from web archive: {path:?}"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3965e511` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d4845b0c` are properly handled with clean fallback behavior.
