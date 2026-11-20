@@ -4,24 +4,24 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "39c445bb",
+  "source_version": "25be3e4c",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-18T03:56:22.663Z",
+  "timestamp": "2026-11-20T13:08:32.738Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `39c445bb`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-18T03:56:22.663Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `25be3e4c`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-20T13:08:32.738Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain D (Research & Knowledge Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), E (Creative Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere/qsv:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T03:56:21.459Z  
+> **Harvest Timestamp**: 2026-11-20T13:08:31.463Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3827 stars
+- **Stars / Engagement**: 3834 stars
 
 ---
 
@@ -2215,38 +2215,33 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `39c445bb` (2026-11-18)
-**Commit Message**: feat(synthesize): add --report privacy summary (exact matches, suppression) (#5068)
+### Incident Patch 1: `25be3e4c` (2026-11-20)
+**Commit Message**: feat(synthesize): --quantiles <n> for finer numeric/date marginals (#5078)
 
-* feat(synthesize): add --report privacy summary (exact matches, suppression)
+* feat(synthesize): --quantiles <n> for finer numeric/date marginals
 
-`--report <file>` writes a JSON summary of how much of the source a run
-reproduced: the number and rate of synthetic rows that exactly match a
-source row (numbers and dates compared by value, other columns as text),
-and the values and `joint` tuples `--min-count` suppressed, per column or
-group. The check costs one extra pass over the input and runs only when
-`--report` is given; output is byte-identical with or without it.
+--quantiles 2|4|5|10|20|25|50|100 sets how many equal-share buckets
+reproduce each numeric and date column, and the gaps of `ordered`
+relationships. The default of 4 keeps cutting at the interpolated stats
+quartiles, so default output is byte-identical. Other values cut at
+`stats --percentiles` (nearest-rank, real source values), so each column
+is capped to the largest divisor of N that leaves --min-count non-null
+values per bucket, falling back to the quartiles.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(changelog): cite #5068 [skip ci]
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(readme): mention synthesize --report [skip ci]
+Buckets are already free-length in the saved model, so the model format
+stays at version 2. --quantiles is refused with --model, and with N != 4
+--stats-options may not include --percentiles/--percentile-list.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(readme): clarify synthesize --report summary [skip ci]
+* docs(synthesize): cite #5078 in CHANGELOGs; fix renamed builder names in range_trim doc [skip ci]
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(synthesize): harden --report keys and path checks
+* fix(synthesize): --quantiles precision, trimmed-end cap, nearest-rank gaps
 
-- Refuse a --report path that is the input, --dictionary or --output file
-  (compared by canonical path, also before the file exists), so the JSON
-  can't overwrite them.
-- Key intege
+Address roborev 6640:
+- read percentile edges unrounded (stats --round 9999 unless the user
 
 **File**: `.claude/skills/CHANGELOG.md` (modified, +1/-0)
 ```diff
@@ -2254,10 +2249,10 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
  ## [Unreleased]
  
  ### Added
-+- **`qsv-synthesize --report <file>`**: JSON report with the exact-match rate of synthetic rows against the source and what `--min-count` suppressed. Skill regenerated from the USAGE text. ([#5068](https://github.com/dathere/qsv/pull/5068))
- - **`qsv-synthesize --min-count` trims numeric/date ranges**: range ends become the k-th smallest / largest values, so a lone outlier can't reappear. Skill regenerated from the USAGE text. ([#5067](https://github.com/dathere/qsv/pull/5067))
- - **`qsv-synthesize --min-count`**: privacy threshold (default 5). Values and `joint` tuples seen fewer than k times in the source are dropped from the real values it samples. Skill regenerated from the USAGE text. ([#5066](https://github.com/dathere/qsv/pull/5066))
- 
++- **`qsv-synthesize --quantiles <n>`**: 2, 4, 5, 10, 20, 25, 50 or 100 equal-share buckets for numeric/date columns and `ordered` gaps (default 4, the quartiles, unchanged output); more buckets keep long tails. Skill regenerated from the USAGE text. ([#5078](https://github.com/dathere/qsv/pull/5078))
+ - **`qsv-synthesize`: `--rows-per-file` is CLI-only for now.** The new `synthesize --rows-per-file` option and its USAGE example are left out of the skill: the MCP server checks only the literal `{}` output template against its allowed directories and would report the template as the written file. The generator's per-command skip list now also drops examples that use a skipped option. ([#5077](https://github.com/dathere/qsv/pull/5077))
+ - **`qsv-synthesize --format csv|jsonl|parquet`**: typed JSONL and Parquet output (integers, floats, Parquet dates, nulls; booleans when `--stats-options=--infer-boolean` types the column Boolean and its values are `true`/`false`); zero-padded codes stay text. Parquet needs `--output`. Skill regenerated from the USAGE text. ([#5075](https://github.com/dathere/qsv/pull/5075))
+ - **`qsv-synthesize --save-model <file>` / `--model <file>`**: save the fitted model once, then generate from it without the source (`<input>` is now optional, and omitted with `--model`). Same `--rows` and `--seed` give the same rows as the fitting run, including across `--shard` slices. Skill regenerated from the USAGE text. ([#5074](https://github.com/dathere/qsv/pull/5074))
 ```
 
 **File**: `.claude/skills/qsv/qsv-synthesize.json` (modified, +6/-1)
@@ -2266,40 +2261,35 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
  {
    "name": "qsv-synthesize",
    "version": "29.0.0",
--  "description": "Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic fake-rs fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`).",
-+  "description": "Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic fake-rs fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). `--report` writes a JSON summary of how many synthetic rows exactly match a source row (numbers and dates compared by value) and which values and `joint` tuples `--min-count` dropped.",
+-  "description": "Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic fake-rs fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). `--report` writes a JSON summary of how many synthetic rows exactly match a source row (numbers and dates compared by value) and which values and `joint` tuples `--min-count` dropped.",
++  "description": "Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quantile-bucketed numeric/date generation (quartiles by default), null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic fake-rs fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). `--report` writes a JSON summary of how many synthetic rows exactly match a source row (numbers and dates compared by value) and which values and `joint` tuples `--min-count` dropped.",
    "category": "generation",
    "command": {
      "subcommand": "synthesize",
-@@ -74,6 +74,11 @@
+@@ -85,6 +85,11 @@
          "type": "string",
          "description": "Write output to <file> instead of stdout."
        },
 +      {
-+        "flag": "--report",
-+        "type": "string",
-+        "description": "Write a JSON report of what the run reproduced from <input>: source and synthetic row counts, how many synthetic rows exactly match a source row (numbers and dates compared by value, other columns as text), and the values and joint tuples dropped by the --min-count option. Takes one extra pass over <input> and holds a hash per distinct source row in memory. A row with a float, free-text or faker column rarely matches exactly, so a low match rate does not by itself show that the output is private. A joint group that falls back to independent columns is listed, and so is each of its columns that also drops values, so suppressed rows can be counted more than once. Must not be the input, dictionary or output file."
++        "flag": "--quantiles",
++        "type": "number",
++        "description": "Number of equal-share buckets that reproduce the shape of numeric and date columns: 2, 4, 5, 10, 20, 25, 50 or 100. More buckets keep skewed and long-tailed columns closer to the source. 4 (the default) cuts at the source quartiles; other values cut at `stats --percentiles` (real source values). A column with too few non-null values for every bucket to hold more than <k> of them (<k> is set by the --min-count option) gets fewer buckets, or the quartiles. Also applies to the gaps of `ordered` relationships."
 +      },
        {
-         "flag": "--rows",
-         "type": "number",
+         "flag": "--report",
+         "type": "string",
 ```
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  ## [Unreleased]
  
  ### Added
-+- `synthesize`: new `--report <file>` writes a JSON report of how much of the source a run reproduced: source and synthetic row counts, the `--min-count` used, how many synthetic rows exactly match a source row (and the rate), and the values and `joint` tuples `--min-count` dropped per column or group. Numbers and dates are compared by value, so `2020-01-05` matches a source `01/05/2020`; other columns are compared as text. A row with a float, free-text or faker column rarely matches exactly, so a low rate alone does not show the output is private. Takes one extra pass over the input and holds one hash per distinct source row; output is unchanged with or without it. ([#5068](https://github.com/dathere/qsv/pull/5068))
- - `synthesize`: `--min-count` now also trims numeric and date/datetime ranges, and the gaps learned for `ordered` relationships. Each range end becomes the k-th smallest / k-th largest value, so at least k source rows lie at or beyond it and a lone outlier (a top salary, an earliest date, a decades-long tenure) no longer sets the range or reappears at its real value. The ends are still real values, and integers and dates can land on them. Quartiles are clamped into the trimmed range. A numeric or date column with fewer than 2k−1 non-null values (9 at the default) has no such range and is left empty, with a warning, unless its real values are sampled. `ordered` followers are clamped into their own trimmed range, and an `ordered` pair with fewer than 2k−1 rows that have both values is dropped to independent generation (or aborts under `--strict-relationships`). Costs one extra streaming pass over the input, skipped when there are no numeric/date columns or with `--min-count 1`, which keeps the real min/max. **Behavior change:** numeric/date output no longer reaches the source's extreme values by default. ([#5067](https://github.com/dathere/qsv/pull/5067))
- - `synthesize`: new `--min-count <k>` privacy threshold (default 5). Real values of enumerated columns, and real `joint` relationship tuples, seen fewer than k times in the source are dropped from the values it samples; their share is redistributed over the kept values. A column whose values are all below k falls back to its faker or type-based generator (numeric and date columns to their numeric/date range), and a joint group to independent columns, or aborts under `--strict-relationships`. A warning is printed when a column or joint group is fully suppressed. **Behavior change:** existing runs no longer sample values or tuples seen 1–4 times, and small or highly varied sources can see whole categorical columns replaced by filler; pass `--min-count 1` for the previous output. ([#5066](https://github.com/dathere/qsv/pull/5066))
- 
- ### Fixed
-+- `synthesize`: under `QSV_NO_HEADERS`, `stats` numbers columns from 0 and `frequency` from 1, so each column was paired with the next column's frequency table: a column could be filled with its neighbor's values, and the first fell back to filler text. Frequency's column numbers are now shifted to match. ([#5068](https://github.com/dathere/qsv/pull/5068))
- - `synthesize`: relationship learning read source columns by their position in the `stats` output, so `--stats-options` that selected or reordered columns (e.g. `--select city,zip`) made `joint`, `ordered` and `correlated` groups learn from the wrong columns, such as pairing IDs with cities. Source columns are now mapped by position when the stats output matches the header, by unique header name under a selection, and by index for headerless input (`QSV_NO_HEADERS`). `--stats-options` may no longer include `--select`/`-s` or `--weight`, which change which columns `stats` reports; run `qsv select` on the input first. ([#5067](https://github.com/dathere/qsv/pull/5067))
- - `synthesize`: a column with any null was never treated as fully enumerated, because frequency's `(NULL)` row parses to rank 0, the same as an "Other" bucket. Such columns fell back to fakers, filler or the min/max range instead of sampling their real values by frequency, which also let them bypass `--min-count`. Nulls are still reproduced through the null ratio. **Behavior change:** columns with blank cells now emit their real values (those seen at least `--min-count` times), like every other enumerated column. With a Data Dictionary but without `--consistent-fakes`, a name, email or address column that has blanks goes from generated fakes to real values; pass `--consistent-fakes` to keep fakes. ([#5066](https://github.com/dathere/qsv/pull/5066))
- 
++- `synthesize`: new `--quantiles <n>` sets how many equal-share buckets reproduce each numeric and date column's shape, and the gaps of `ordered` relationships: 2, 4, 5, 10, 20, 25, 50 or 100 (divisors of 100, so every bucket edge is a whole percentile and every bucket holds the same share of rows). More buckets keep skewed and long-tailed columns closer to the source: on a column whose values double every 5% of rows, the 90th percentile came out 2.4× too high with the quartiles and 2% high with `--quantiles 20`. The default of 4 still cuts at the source quartiles, so output is unchanged; other values cut at `stats --percentiles`, which are real source values, so a column gets fewer buckets when it has too few non-null values for each bucket to hold more than `--min-count` of them (at worst, the quartiles). Percentile edges are read unrounded (`stats --round 9999`, unless `--stats-options` sets `--round`), so small-magnitude floats keep distinct edges. The model format is unchanged. `--quantiles` can't be combined with `--model`, and with a value other than 4 `--stats-options` may not include `--percentiles` or `--percentile-list`. ([#5078](https://github.com/dathere/qsv/pull/5078))
+ - `synthesize`: new `--rows-per-file <n>` splits the output into files of `<n>` rows. The `--output` name must contain `{}`, which is replaced by the zero-based row number of each file's first row, as in `qsv split`, zero-padded so the names sort in order (`-o synthetic_{}.csv` writes `synthetic_000.csv`, `synthetic_250.csv`, …). The files hold the same rows as a single-file run, in order, at any `--jobs` and from a `--model` run, and join the same way as `--shard` slices; each CSV file has a header row and each Parquet file its schema. It can't be combined with `--shard`, and a template that would write over the input, dictionary, model or report file is refused. ([#5077](https://github.com/dathere/qsv/pull/5077))
+ - `synthesize`: new `--format csv|jsonl|parquet`. JSONL and Parquet keep each column's type: integers and floats as such, dates as Parquet `Date`/`Datetime` (JSONL writes them as strings), and empty values as null. A `true`/`false` column is written as booleans only when `stats` types it Boolean (`--stats-options --infer-boolean`); otherwise it is text. Types are decided once when the model is fitted, from the generator where it has one; a column sampled from real values keeps its `stats` type only if every value converts unchanged, so a zero-padded code such as a ZIP stays text, and a date format that can't read its own output back (`%Y-%m`, `%y`) is written as text. Output is the same bytes at any `--jobs` and from a `--model` run; Parquet row groups hold at most 65,536 rows (fewer for very wide rows, to bound memory) and split at the same points whatever `--jobs`. Parquet needs `--output` and the `polars` feature. Saved models now record the column types, so the model format is version 2 and models saved before this change must be fitted again. ([#5075](https://github.com/dathere/qsv/pull/5075))
+ - `synthesize`: new `--save-model <file>` saves the fitted model (the per-column generators and relationship groups) as JSON, and `--model <file>` generates from it without the source, so a dataset can be profiled once and generated anywhere. A `--model` run with the same `--rows` and `--seed` writes the same bytes as the run that saved the model, and slices made with `--shard` from one model join to that output whatever memory each machine has. The model holds real values from the source (such as enumerated values, quartile boundaries and range ends), including some the output may never show, so share it at least as carefully as the output. Its format is internal to qsv and versioned: a model of another version is refused with a message to fit it again, and a malformed model is refused before generating. Options that shape the fit or read the source (`--dictionary`, `--stats-options`, `--report`, …) are refused with `--model`; defaulted ones such as `--locale` are ignored. `serde_json`'s `float_roundtrip` feature is now declared directly, since model runs depend on exact float round-trips (it was already enabled through other dependencies). ([#5074](https://github.com/dathere/qsv/pull/5074))
 ```
 
 **File**: `README.md` (modified, +1/-1)
@@ -2308,8 +2298,8 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
  | [split](docs/help/split.md)<br>📇🏎️ | Split one CSV file into many CSV files. It can split by number of rows, number of chunks or file size. Uses multithreading to go faster if an index is present when splitting by rows or chunks. |
  | [sqlp](docs/help/sqlp.md)✨<br>📇🗄️🐻‍❄️🚀🪄 | <a name="sqlp_deeplink"></a>Run [Polars](https://pola.rs) SQL (a PostgreSQL dialect) queries against several CSVs, Parquet, JSONL and Arrow files - converting queries to blazing-fast Polars [LazyFrame](https://docs.pola.rs/user-guide/lazy/) expressions, processing larger than memory CSV files. Query results can be saved in CSV, JSON, JSONL, Parquet, Apache Arrow IPC and Apache Avro formats. |
  | [stats](docs/help/stats.md)<br>📇🤯🏎️👆🪄 | <a name="stats_deeplink"></a>Compute up to 48 [summary statistics](docs/STATS_DEFINITIONS.md) & make GUARANTEED data type inferences (Null, String, Float, Integer, Date, DateTime, Boolean) for each column in a CSV ([Example](https://github.com/dathere/qsv/blob/master/docs/stats/NYC_311_SR_2010-2020-sample-1M.stats.csv)).<br>Uses multithreading to go faster if an index is present. With an index, can compile "streaming" stats on a 1M row sample of NYC's 311 data in [less than 0.25 seconds vs 2.24 seconds without one](https://qsv.dathere.com/benchmarks). |
--| [synthesize](docs/help/synthesize.md)✨<br>📇🎲🤖 | <a name="synthesize_deeplink"></a>Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). |
-+| [synthesize](docs/help/synthesize.md)✨<br>📇🎲🤖 | <a name="synthesize_deeplink"></a>Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). `--report` writes a JSON summary of how many synthetic rows exactly match a source row (numbers and dates compared by value) and which values and `joint` tuples `--min-count` dropped. |
+-| [synthesize](docs/help/synthesize.md)✨<br>📇🎲🤖 | <a name="synthesize_deeplink"></a>Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). `--report` writes a JSON summary of how many synthetic rows exactly match a source row (numbers and dates compared by value) and which values and `joint` tuples `--min-count` dropped. |
++| [synthesize](docs/help/synthesize.md)✨<br>📇🎲🤖 | <a name="synthesize_deeplink"></a>Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quantile-bucketed numeric/date generation (quartiles by default), null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). `--report` writes a JSON summary of how many synthetic rows exactly match a source row (numbers and dates compared by value) and which values and `joint` tuples `--min-count` dropped. |
  | [table](docs/help/table.md)<br>🤯 | Align output of a CSV using [elastic tabstops](https://github.com/BurntSushi/tabwriter) for viewing; or to create an "aligned TSV" file or Fixed Width Format file. To interactively view a CSV, use the `lens` command. |
  | [template](docs/help/template.md)<br>📇🚀🔣📚⛩️ ![CKAN](docs/images/ckan.png) | Renders a template using CSV data with the [MiniJinja](https://docs.rs/minijinja/latest/minijinja/) template engine ([Example](https://github.com/dathere/qsv/blob/4645ec07b5befe3b0c0e49bf0f547315d0d7514b/src/cmd/template.rs#L18-L44)). |
  | [to](docs/help/to.md)✨<br>🗄️🐻‍❄️🚀 | Convert CSV files to [Parquet](https://parquet.apache.org), [PostgreSQL](https://www.postgresql.org), [SQLite](https://www.sqlite.org/index.html), Excel (XLSX), [LibreOffice Calc](https://www.libreoffice.org/discover/calc/) (ODS) and [Data Package](https://datahub.io/docs/data-packages/tabular). |
@@ -2321,272 +2311,86 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
  | [split](split.md)<br>[📇](#legend "uses an index when available.")[🏎️](#legend "multithreaded and/or faster when an index (📇) is available.") | Split one CSV file into many CSV files. It can split by number of rows, number of chunks or file size. Uses multithreading to go faster if an index is present when splitting by rows or chunks. |
  | [sqlp](sqlp.md)<br>[📇](#legend "uses an index when available.")[🗄️](#legend "Extended input support.")[🐻‍❄️](#legend "command powered/accelerated by  vectorized query engine.")[🚀](#legend "multithreaded even without an index.")[🪄](#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".") | Run [Polars](https://pola.rs) SQL (a PostgreSQL dialect) queries against several CSVs, Parquet, JSONL and Arrow files - converting queries to blazing-fast Polars [LazyFrame](https://docs.pola.rs/user-guide/lazy/) expressions, processing larger than memory CSV files. Query results can be saved in CSV, JSON, JSONL, Parquet, Apache Arrow IPC and Apache Avro formats. |
  | [stats](stats.md)<br>[📇](#legend "uses an index when available.")[🤯](#legend "loads entire CSV into memory, though `dedup`, `stats` & `transpose` have \"streaming\" modes as well.")[🏎️](#legend "multithreaded and/or faster when an index (📇) is available.")[👆](#legend "has powerful column selector support. See `select` for syntax.")[🪄](#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".") | Compute up to 48 [summary statistics](../STATS_DEFINITIONS.md) & make GUARANTEED data type inferences (Null, String, Float, Integer, Date, DateTime, Boolean) for each column in a CSV ([Example](https://github.com/dathere/qsv/blob/master/docs/stats/NYC_311_SR_2010-2020-sample-1M.stats.csv)). Uses multithreading to go faster if an index is present. With an index, can compile "streaming" stats on a 1M row sample of NYC's 311 data in [less than 0.25 seconds vs 2.24 seconds without one](https://qsv.dathere.com/benchmarks). |
--| [synthesize](synthesize.md)<br>[📇](#legend "uses an index when available.")[🎲](#legend "randomly generated or randomized output with a --seed option for reproducibility.")[🤖](#legend "command uses Natural Language Processing or Generative AI.") | Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). |
-+| [synthesize](synthesize.md)<br>[📇](#legend "uses an index when available.")[🎲](#legend "randomly generated or randomized output with a --seed option for reproducibility.")[🤖](#legend "command uses Natural Language Processing or Generative AI.") | Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). `--report` writes a JSON summary of how many synthetic rows exactly match a source row (numbers and dates compared by value) and which values and `joint` tuples `--min-count` dropped. |
- | [table](table.md)<br>[🤯](#legend "loads entire CSV in
+-| [synthesize](synthesize.md)<br>[📇](#legend "uses an index when available.")[🎲](#legend "randomly generated or randomized output with a --seed option for reproducibility.")[🤖](#legend "command uses Natural Language Processing or Generative AI.") | Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). `--report` writes a JSON summary of how many synthetic rows exactly match a source row (numbers and dates compared by value) and which values and `joint` tuples `--min-count` dropped. |
++| [synthesize](synthesize.md)<br>[📇](#legend "uses an index when available.")[🎲](#legend "randomly generated or randomized output with a --seed option for reproducibility.")[🤖](#legend "command uses Natural Language Processing or Generative AI.") | Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quantile-bucketed numeric/date generation (quartiles by default), null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). `--report` writes a JSON summary of 
 ```
 
-**File**: `docs/help/synthesize.md` (modified, +2/-1)
+**File**: `docs/help/synthesize.md` (modified, +7/-5)
 ```diff
 @@ -1,6 +1,6 @@
  # synthesize
  
--> Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`).
-+> Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). `--report` writes a JSON summary of how many synthetic rows exactly match a source row (numbers and dates compared by value) and which values and `joint` tuples `--min-count` dropped.
+-> Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). `--report` writes a JSON summary of how many synthetic rows exactly match a source row (numbers and dates compared by value) and which values and `joint` tuples `--min-count` dropped.
++> Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quantile-bucketed numeric/date generation (quartiles by default), null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). `--report` writes a JSON summary of how many synthetic rows exactly match a source row (numbers and dates compared by value) and which values and `joint` tuples `--min-count` dropped.
  
  **[Table of Contents](TableOfContents.md)** | **Source: [src/cmd/synthesize/mod.rs](https://github.com/dathere/qsv/blob/master/src/cmd/synthesize/mod.rs)** | [📇](TableOfContents.md#legend "uses an index when available.")[🎲](TableOfContents.md#legend "randomly generated or randomized output with a --seed option for reproducibility.")[🤖](TableOfContents.md#legend "command uses Natural Language Processing or Generative AI.")
  
-@@ -160,6 +160,7 @@ qsv synthesize --help
- | &nbsp;`‑‑locale`&nbsp; | string | Locale for faker-backed columns. Case-insensitive. Supported: en, fr_fr, de_de, it_it, pt_br, pt_pt, ja_jp, zh_cn, zh_tw, ar_sa, cy_gb, fa_ir, nl_nl, tr_tr. Sparse locales (those without per-category data in fake-rs) silently fall back to en data for the missing categories — e.g. lorem text under a non-en locale is still English, since only zh_cn has localized lorem data. | `en` |
- | &nbsp;`‑‑freq‑limit`&nbsp; | integer | Frequency pool depth passed to the internal `frequency` run as --limit. A column is reproduced via exact frequency-weighted sampling only when its cardinality is fully captured within this limit; higher values reproduce more columns verbatim. 0 means unlimited. | `100` |
- | &nbsp;`‑‑min‑count`&nbsp; | integer | Privacy threshold. A real value of an enumerated column, or a real `joint` value-tuple, that occurs fewer than <k> times in <input> is dropped from the values it samples; its share is redistributed over the kept values. An enumerated column whose values are all below <k> falls back to its faker or type-based generator (numeric and date columns to their trimmed range), and a joint group to independent columns, or aborts under the --strict-relationships option. A warning is printed when either happens. 1 disables suppression. Counts are of rows, not people: where one person has many rows (transactions, visits, logs), one person's value can pass <k> alone. Raise <k>, or dedupe to one row per person first. Numeric and date ranges, and the gaps of `ordered` relationships, are also trimmed to their k-th smallest and k-th largest values (one extra pass over <input>). A numeric or date column with fewer than 2k-1 non-null values is left empty unless its real values are sampled. | `5` |
-+| &nbsp;`‑‑report`&nbsp; | string | Write a JSON report of what the run reproduced from <input>: source and synthetic row counts, how many synthetic rows exactly match a source row (numbers and dates compared by value, other columns as text), and the values and joint tuples dropped by the --min-count option. Takes one extra pass over <input> and 
+@@ -19,8 +19,9 @@ fake data that reproduce the source's per-column attributes:
+ * Categorical / low-cardinality columns are reproduced by frequency-weighted
+ sampling of their *real* value set — cardinality, weights and repetition
+ structure are preserved, minus values rarer than the --min-count.
+-* Numeric and date/datetime columns are reproduced with quartile buckets, so
+-the shape of the distribution (not just its [min,max] range) is preserved.
++* Numeric and date/datetime columns are reproduced with quantile buckets
++(quartiles by default, see --quantiles), so the shape of the distribution
++(not just its [min,max] range) is preserved.
+ The range ends are trimmed by the --min-count (see below).
+ * Null ratios are reproduced per column.
+ 
+@@ -89,14 +90,14 @@ city/zip/age combination) seen at least --min-count times.
+ * Numeric and date ranges are trimmed so that at least --min-count rows
+ lie at or beyond each end (the k-th smallest and k-th largest values),
+ so a lone outlier no longer sets the range. The ends are themselves real
+-values, and values inside the range are drawn uniformly per quartile, so
++values, and values inside the range are drawn uniformly per bucket, so
+ integers and dates can still land exactly on real values. With
+ the --min-count at 1 the range is the real min and max, and an outlier
+ can reappear at or near its real value.
+ 
+ Review the output before sharing it, or training on it, as de-identified data.
+ A model saved with --save-model holds real values from <input>, such as
+-enumerated values, quartile boundaries and range ends, including some the
++enumerated values, bucket boundaries and range ends, including some the
+ output never shows. Review and share it at least as carefully as the output.
+ 
+ With --seed, output is fully reproducible, whatever the --jobs setting.
+@@ -221,6 +222,7 @@ qsv synthesize --help
+ | &nbsp;`‑‑model`&nbsp; | string | Generate from a model saved with --save-model i
 ```
 
-**File**: `src/cmd/synthesize/generator.rs` (modified, +42/-6)
+**File**: `src/cmd/stats.rs` (modified, +1/-1)
 ```diff
-@@ -187,6 +187,7 @@ pub(crate) enum ColumnGenerator {
+@@ -606,7 +606,7 @@ fn default_stats_separator() -> String {
  }
  
- impl ColumnGenerator {
-+    #[cfg(test)]
-     pub(crate) fn build(
-         stats: &StatsRecord,
-         freqs: &[&FrequencyRecord],
-@@ -197,6 +198,35 @@ impl ColumnGenerator {
-         consistent_fakes: bool,
-         min_count: u64,
-         rng: &mut StdRng,
-+    ) -> ColumnGenerator {
-+        Self::build_tracked(
-+            stats,
-+            freqs,
-+            content_type,
-+            total_rows,
-+            requested_rows,
-+            locale,
-+            consistent_fakes,
-+            min_count,
-+            &mut None,
-+            rng,
-+        )
-+    }
-+
-+    /// `suppressed_out` receives the (distinct values, rows) that `min_count`
-+    /// dropped, when the column's real values were sampled from (or would
-+    /// have been, before every value was dropped).
-+    pub(crate) fn build_tracked(
-+        stats: &StatsRecord,
-+        freqs: &[&FrequencyRecord],
-+        content_type: &str,
-+        total_rows: u64,
-+        requested_rows: u64,
-+        locale: Locale,
-+        consistent_fakes: bool,
-+        min_count: u64,
-+        suppressed_out: &mut Option<(usize, u64)>,
-+        rng: &mut StdRng,
-     ) -> ColumnGenerator {
-         let null_ratio = compute_null_ratio(stats.nullcount, total_rows);
+ /// The separator for multi-value cells: `QSV_STATS_SEPARATOR`, or the default when unset.
+-fn stats_separator_from_env() -> String {
++pub(crate) fn stats_separator_from_env() -> String {
+     std::env::var("QSV_STATS_SEPARATOR").unwrap_or_else(|_| default_stats_separator())
+ }
  
-@@ -238,7 +268,9 @@ impl ColumnGenerator {
- 
-         // 2. Fully-enumerated frequency pool — reproduces the real value set, weights, cardinality
-         //    and repetition structure, minus values seen fewer than `min_count` times.
--        if let Some(generator) = try_frequency_weighted(freqs, null_ratio, min_count) {
-+        if let Some(generator) =
-+            try_frequency_weighted(freqs, null_ratio, min_count, suppressed_out)
-+        {
-             return generator;
-         }
- 
-@@ -471,6 +503,7 @@ fn try_frequency_weighted(
-     freqs: &[&FrequencyRecord],
-     null_ratio: f64,
-     min_count: u64,
-+    suppressed_out: &mut Option<(usize, u64)>,
- ) -> Option<ColumnGenerator> {
-     if freqs.is_empty() {
-         return None;
-@@ -488,20 +521,23 @@ fn try_frequency_weighted(
-     let mut values = Vec::new();
-     let mut weights = Vec::new();
-     let mut suppressed = 0_usize;
-+    let mut suppressed_rows = 0_u64;
-     for f in freqs {
-         // Nulls are reproduced via `null_ratio`, not the value pool.
-         if f.value == NULL_TEXT || f.value.contains(ALL_UNIQUE_SENTINEL) || f.count == 0 {
-             continue;
-         }
-         if f.count < min_count {
-             suppressed += 1;
-+            suppressed_rows += f.count;
-             continue;
-         }
-         values.push(f.value.clone());
-         #[allow(clippy::cast_precision_loss)]
-         weights.push(f.count as f64);
-     }
-     if suppressed > 0 {
-+        *suppressed_out = Some((suppressed, suppressed_rows));
-         log::info!(
-             "synthesize: column '{}' — suppressed {suppressed} value(s) seen fewer than \
-              --min-count ({min_count}) times",
-@@ -998,7 +1034,7 @@ mod tests {
-     fn frequency_weighted_only_emits_pool_values_at_the_right_ratio() {
-         let freqs = [freq("c", "A", 700, 1.0), freq("c", "B", 300, 2.0)];
-         let refs: Vec<&FrequencyRecord> = freqs.iter().collect();
--        let generator = try_frequency_weighted(&refs, 0.0, 1).unwrap();
-+        let generator = try_frequency_weighted(&refs, 0.0, 1, &mut None).unwrap();
- 
-         let mut rng = StdRng::seed_from_u64(7); // DevSkim: ignore DS148264
-         let n = 20_000;
-@@ -1019,7 +1055,7 @@ mod tests {
-     fn frequency_weighted_rejects_other_bucket() {
-         let freqs = [freq("c", "A", 700, 1.0), freq("c", "Other (5)", 300, 0.0)];
-         let refs: Vec<&FrequencyRecord> = freqs.iter().collect();
--        assert!(try_frequency_weighted(&refs, 0.0, 1).is_none());
-+        assert!(try_frequency_weighted(&refs, 0.0, 1, &mut None).is_none());
-     }
- 
-     #[test]
-@@ -1030,7 +1066,7 @@ mod tests {
-             freq("c", "RARE", 4, 3.0),
-         ];
-         let refs: Vec<&FrequencyRecord> = freqs.iter().collect();
--        let generator = try_frequency_weighted(&refs, 0.0, 5).unwrap();
-+        let generator = try_frequency_weighted(&refs, 0.0, 5, &mut None).unwrap();
- 
-         let mut rng = StdRng::seed_from_u64(11); // DevSkim: ignore DS148264
-         let n = 20_000;
-@@ -1052,9 +1088,9 @@ mod tests {
-     fn frequency_weighted_returns_none_when_all_values_below_min_count() {
-         let freqs = [freq("c", "A", 4, 1.0), freq("c", "B", 1, 2.0)];
-         let refs: Vec<&FrequencyRecord> = freqs.iter().collect();
--        assert!(try_frequency_weighted(&refs, 0.0, 5).is_none());
-+        assert!(try_frequency_weighted(&refs, 0.0, 5, &mut None).is_none());
-         // The threshold is inclusive: count == min_count is kept.
--        assert!(try_frequency_weighted(&refs, 0.0, 4).is_some());
-+        assert!(try_frequency_weighted(&refs, 0.0, 4, &mut None).is_some());
-     }
- 
-     #[test]
 ```
 
-**File**: `src/cmd/synthesize/mod.rs` (modified, +99/-4)
+**File**: `src/cmd/synthesize/faker_map.rs` (modified, +1/-1)
 ```diff
-@@ -157,6 +157,22 @@ synthesize options:
-                            than 2k-1 non-null values is left empty unless its
-                            real values are sampled.
-                            [default: 5]
-+    --report <file>        Write a JSON report of what the run reproduced
-+                           from <input>: source and synthetic row counts,
-+                           how many synthetic rows exactly match a source
-+                           row (numbers and dates compared by value, other
-+                           columns as text), and the values and joint tuples
-+                           dropped by the --min-count option. Takes one
-+                           extra pass over <input> and holds a hash per
-+                           distinct source row in memory. A row with a
-+                           float, free-text or faker column rarely matches
-+                           exactly, so a low match rate does not by itself
-+                           show that the output is private. A joint group
-+                           that falls back to independent columns is listed,
-+                           and so is each of its columns that also drops
-+                           values, so suppressed rows can be counted more
-+                           than once. Must not be the input, dictionary or
-+                           output file.
-     --stats-options <arg>  Extra options appended to the internal `stats` run.
-                            Note: cardinality, quartiles and date inference are
-                            always enabled — do not re-specify them here.
-@@ -198,7 +214,7 @@ Common options:
-                            Must be a single character. (default: ,)
- "#;
- 
--use std::{collections::HashMap, path::Path};
-+use std::{cell::RefCell, collections::HashMap, path::Path};
- 
- use rand::{SeedableRng, rngs::StdRng};
- use serde::Deserialize;
-@@ -216,6 +232,7 @@ mod generator;
- mod group_generator;
- mod range_trim;
- mod relationships;
-+mod report;
- 
- use faker_map::Locale;
- use relationships::{EmitUnit, ScheduleParams, build_emit_schedule};
-@@ -234,6 +251,7 @@ struct Args {
-     flag_no_relationships:      bool,
-     flag_joint_cardinality_cap: u64,
-     flag_min_count:             u64,
-+    flag_report:                Option<String>,
-     flag_correlation_threshold: f64,
-     flag_strict_relationships:  bool,
-     flag_jobs:                  Option<usize>,
-@@ -290,6 +308,18 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-     if !Path::new(input_path).is_file() {
-         return fail_clierror!("Input file '{input_path}' does not exist or is not a file.");
-     }
-+    if let Some(report_path) = &args.flag_report {
-+        let report = report::resolve_path(report_path);
-+        let clashes = std::iter::once(Some(input_path))
-+            .chain([args.flag_dictionary.as_deref(), args.flag_output.as_deref()])
-+            .flatten()
-+            .any(|other| report::resolve_path(other) == report);
-+        if clashes {
-+            return fail_incorrectusage_clierror!(
-+                "--report must not be the input, --dictionary or --output file."
-+            );
-+        }
-+    }
- 
-     // Single master RNG, threaded through both the sampling/selection logic and
-     // every faker call, so a given --seed produces fully reproducible output.
-@@ -372,7 +402,21 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
- 
-     // --- 2. Parse analysis -------------------------------------------------
-     let (mut stats_records, _addl_cols) = parse_stats_csv(&stats_csv)?;
--    let frequency_records = parse_frequency_csv(&freq_csv)?;
-+    let mut frequency_records = parse_frequency_csv(&freq_csv)?;
-+    // Without headers stats names columns "0", "1", … but frequency names them
-+    // "1", "2", …; renumber frequency's so both point at the same column.
-+    if crate::config::resolved_no_headers(false) {
-+        for fr in &mut frequency_records {
-+            if let Some(n) = fr
-+                .field
-+                .parse::<usize>()
-+                .ok()
-+                .and_then(|n| n.checked_sub(1))
-+            {
-+                fr.field = n.to_string();
-+            }
-+        }
-+    }
- 
-     if stats_records.is_empty() {
-         return fail_clierror!("No columns found in '{input_path}'.");
-@@ -422,6 +466,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-     // --- 4. Build the row-emission schedule --------------------------------
-     // Ungrouped columns get one ColumnGenerator each; columns named by a valid
-     // `relationship` are grouped under a GroupGenerator that emits them jointly.
-+    let suppressions = RefCell::new(Vec::new());
-     let schedule_params = ScheduleParams {
-         stats_records: &stats_records,
-         frequency_records: &frequency_records,
-@@ -438,9 +483,22 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         strict: args.flag_strict_relationships,
-         input_path,
-         delimiter: args.flag_delimiter,
-+        suppressions: &suppressions,
+@@ -283,7 +283,7 @@ define_locales! {
+ /// `unique_id` is here because there is no general-purpose `fake-rs` faker that
+ /// guarantees per-row uniqueness across a synthesis pass. Instead, synthesize
+ /// uses the same fallback path as `unknown`: numeric columns go through
+-/// `build_numeric` (which samples from min/max or quartile buckets — so it does
++/// `build_numeric` (which samples from min/max or quantile buckets — so it does
+ /// NOT guarantee uniqueness and can emit duplicates), and string columns get
+ /// type-based text. A future enhancement could swap in a dedicated unique-value
+ /// generator (e.g. counter-backed for integers, `UUIDv4` for strings) to honor
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5068** (2026-11-18): feat(synthesize): add --report privacy summary (exact matches, suppression) (@jqnatividad)
-- **PR #5067** (2026-11-17): feat(synthesize): trim numeric/date ranges and ordered gaps by --min-count (@jqnatividad)
-- **PR #5066** (2026-11-17): feat(synthesize): add --min-count privacy threshold (default 5) (@jqnatividad)
-- **PR #5065** (2026-11-17): build(deps): bump anthropics/claude-code-action from 1.0.275 to 1.0.276 (@dependabot[bot])
-- **PR #5064** (2026-11-16): docs(synthesize): warn that synthetic output is not anonymized (@jqnatividad)
-- **PR #5063** (2026-11-16): build(deps): bump anthropics/claude-code-action from 1.0.271 to 1.0.275 (@dependabot[bot])
+- **PR #5078** (2026-11-20): feat(synthesize): --quantiles <n> for finer numeric/date marginals (@jqnatividad)
+- **PR #5077** (2026-11-20): feat(synthesize): --rows-per-file <n> splits the output into files (@jqnatividad)
+- **PR #5075** (2026-11-19): feat(synthesize): --format csv|jsonl|parquet with typed columns (@jqnatividad)
+- **PR #5074** (2026-11-19): feat(synthesize): --save-model / --model to fit once and generate from the model (@jqnatividad)
+- **PR #5073** (2026-11-18): feat(synthesize): add --shard k/N to generate one slice of a seeded dataset (@jqnatividad)
+- **PR #5069** (2026-11-18): feat(synthesize): generate rows in parallel, seed-stable across --jobs (@jqnatividad)
 
 ---
 
@@ -2606,13 +2410,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. synthesize): add --report privacy summary (exact matches, suppression)
+## X. synthesize): --quantiles <n> for finer numeric/date marginals
 
 **RULE**:
 When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `39c445bb`: synthesize): add --report privacy summary (exact matches, suppression). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `25be3e4c`: synthesize): --quantiles <n> for finer numeric/date marginals. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
@@ -2620,7 +2424,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`qsv-synthesize --report <file>`**: JSON report with the exact-match rate of synthetic rows against the source and what `--min-count` suppressed. Skill regenerated from the USAGE text. ([#5068](https://github.com/dathere/qsv/pull/5068))
+- **`qsv-synthesize --quantiles <n>`**: 2, 4, 5, 10, 20, 25, 50 or 100 equal-share buckets for numeric/date columns and `ordered` gaps (default 4, the quartiles, unchanged output); more buckets keep long tails. Skill regenerated from the USAGE text. ([#5078](https://github.com/dathere/qsv/pull/5078))
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2630,7 +2434,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `39c445bb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `25be3e4c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

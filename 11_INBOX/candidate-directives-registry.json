@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T12:50:33.242Z",
+  "last_updated": "2026-11-20T13:13:24.373Z",
   "directives": [
     {
       "id": "CD-001",
@@ -37466,6 +37466,88 @@
       "source_repo": "duckdb-duckdb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-BB29B2-min-max-for-interval-type.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-28LP",
+      "directive_title": "Bump the actions group across 1 directory with 8 updates",
+      "source_repo": "actions-actions-runner-controller-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-28LP-bump-the-actions-group-across-1-directory-with-8-updates.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-293P",
+      "directive_title": "ipn/store/kubestore: cache TLS certs briefly on write replicas",
+      "source_repo": "tailscale-tailscale-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-293P-ipn-store-kubestore-cache-tls-certs-briefly-on-write-replicas.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-W02Q",
+      "directive_title": "--quantiles <n> for finer numeric/date marginals",
+      "source_repo": "dathere/qsv",
+      "source_commit": "25be3e4c",
+      "staged_file": "11_INBOX/candidate-directives/CD-W02Q-quantiles-n-for-finer-numeric-date-marginals.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-W043",
+      "directive_title": "Empirical Invariant Guard in PrettyFormatHelpers.cpp",
+      "source_repo": "ClickHouse/ClickHouse",
+      "source_commit": "9c89de48",
+      "staged_file": "11_INBOX/candidate-directives/CD-W043-empirical-invariant-guard-in-prettyformathelpers-cpp.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-27PC",
+      "directive_title": "Empirical Invariant Guard in bd.rs",
+      "source_repo": "embassy-rs-embassy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-27PC-empirical-invariant-guard-in-bd-rs.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-8B81A1",
+      "directive_title": "Empirical Invariant Guard in bd.rs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "embassy-rs-embassy",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8B81A1-empirical-invariant-guard-in-bd-rs.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-1D8F25",
+      "directive_title": "Bump the actions group across 1 directory with 8 updates",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "actions-actions-runner-controller",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1D8F25-bump-the-actions-group-across-1-director.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-D947D9",
+      "directive_title": "ipn/store/kubestore: cache TLS certs briefly on write replicas",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tailscale-tailscale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D947D9-ipn-store-kubestore-cache-tls-certs-brie.md",
       "staged_date": "2026-11-20"
     }
   ]

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T23:43:37.021Z",
+  "timestamp": "2026-11-20T13:13:24.262Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tailscale-tailscale-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tailscale-tailscale-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T23:43:37.021Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T13:13:24.262Z`  
 > **Learning ID**: `LEARN-EVO-tailscale-tailscale-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `2e8f381c`  
+> **Source Version**: `c8ba9da5`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T23:43:28.848Z  
+> **Timestamp**: 2026-11-20T13:08:27.312Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T23:43:28.842Z  
+> **Harvest Timestamp**: 2026-11-20T13:08:27.307Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39337 stars
+- **Stars / Engagement**: 39367 stars
 
 ---
 
@@ -848,139 +848,486 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `92f396d8` (2026-11-19)
-**Commit Message**: util/linuxfw: run without IPv6 rules when ip6tables fails to initialize (#22362)
+### Incident Patch 1: `c8ba9da5` (2026-11-20)
+**Commit Message**: ipn/store/kubestore: cache TLS certs briefly on write replicas (#22103)
 
-newIPTablesRunner returned the error from the IPv6 go-iptables constructor,
-which made tailscaled exit at startup. The nft flavor of ip6tables exits 1
-from "--version" on kernels without nf_tables even though the binary is
-present. Treat that like a missing ip6tables and disable tunneled IPv6.
+The write replica of an HA ProxyGroup (cert share "rw") doesn't keep TLS
+certs in memory, so that it notices a recreated, empty cert Secret and
+issues a new cert. As a result, it read the cert Secret from the API
+server on every TLS handshake, with a 30s timeout. When the API server
+was slow or unavailable, handshakes on that replica waited for the read,
+and feature/acme repeated the read under the per-domain lock. Clients
+with a 10s handshake timeout, such as kubectl, failed.
 
-Fixes #20348
+This commit adds a small per-domain cache of the last-known-good cert
+and key for write replicas. The replica serves a cached cert for 30s
+before it reads the Secret again. When it has a cached cert, the read
+uses a 3s timeout, and on an error other than not found or forbidden
+the replica serves the cached cert and waits another 30s before the
+next read. A read that finds the Secret missing, forbidden or empty
+removes the cached cert and returns ipn.ErrStateNotExist as before, so
+a recreated Ingress still gets a new cert, at most 30s later.
+Concurrent reads of the same Secret share one GET, and a read that is
+in flight when a cert is wr
 
-Signed-off-by: Brendan Creane <[REDACTED_EMAIL]>
-
-**File**: `util/linuxfw/iptables.go` (modified, +9/-5)
+**File**: `ipn/store/kubestore/store_kube.go` (modified, +139/-17)
 ```diff
-@@ -102,14 +102,18 @@ func newIPTablesRunner(logf logger.Logf) (*iptablesRunner, error) {
- 	case ip6terr != nil:
- 		logf("disabling tunneled IPv6 due to missing ip6tables: %v", ip6terr)
- 	default:
--		supportsV6 = true
- 		ipt6, err = iptables.NewWithProtocol(iptables.ProtocolIPv6)
- 		if err != nil {
--			return nil, err
-+			// ip6tables is present but "ip6tables --version" failed,
-+			// as the nft flavor does on kernels without nf_tables.
-+			// Run without IPv6 rules instead of failing. (#20348)
-+			logf("disabling tunneled IPv6 due to ip6tables init failure: %v", err)
-+		} else {
-+			supportsV6 = true
-+			supportsV6Filter = checkSupportsV6Filter(ipt6, logf)
-+			supportsV6NAT = checkSupportsV6NAT(ipt6, logf)
-+			logf("netfilter running in iptables mode v6 = %v, v6filter = %v, v6nat = %v", supportsV6, supportsV6Filter, supportsV6NAT)
- 		}
--		supportsV6Filter = checkSupportsV6Filter(ipt6, logf)
--		supportsV6NAT = checkSupportsV6NAT(ipt6, logf)
--		logf("netfilter running in iptables mode v6 = %v, v6filter = %v, v6nat = %v", supportsV6, supportsV6Filter, supportsV6NAT)
+@@ -14,6 +14,7 @@ import (
+ 	"net/http"
+ 	"os"
+ 	"strings"
++	"sync"
+ 	"time"
+ 
+ 	"tailscale.com/envknob"
+@@ -24,9 +25,11 @@ import (
+ 	"tailscale.com/kube/kubeapi"
+ 	"tailscale.com/kube/kubeclient"
+ 	"tailscale.com/kube/kubetypes"
++	"tailscale.com/tstime"
+ 	"tailscale.com/types/logger"
+ 	"tailscale.com/util/dnsname"
+ 	"tailscale.com/util/mak"
++	"tailscale.com/util/singleflight"
+ )
+ 
+ func init() {
+@@ -44,6 +47,17 @@ const (
+ 	// state Secret and emit an Event.
+ 	timeout = 30 * time.Second
+ 
++	// rwCertTTL is how long a write replica serves a TLS cert from its
++	// in-memory cache before it reads the cert Secret again. A short TTL
++	// limits how long the replica can serve a stale cert after the cert
++	// Secret is recreated, for example after Ingress recreation.
++	rwCertTTL = 30 * time.Second
++	// rwCertFallbackTimeout is the timeout for a write replica's cert
++	// Secret read when it has a last-known-good cert to fall back to.
++	// TLS handshakes wait for this read, so it must be much shorter than
++	// typical client handshake timeouts (10s for kubectl).
++	rwCertFallbackTimeout = 3 * time.Second
++
+ 	reasonTailscaleStateUpdated      = "TailscaledStateUpdated"
+ 	reasonTailscaleStateLoaded       = "TailscaleStateLoaded"
+ 	reasonTailscaleStateUpdateFailed = "TailscaleStateUpdateFailed"
+@@ -90,6 +104,32 @@ type Store struct {
+ 	// memory holds the latest tailscale state. Writes write state to a kube
+ 	// Secret and memory, Reads read from memory.
+ 	memory mem.Store
++
++	// clock is used for rwCerts expiry.
++	clock tstime.DefaultClock
++
++	// certReads deduplicates concurrent cert Secret reads per domain.
++	certReads singleflight.Group[string, *rwCert]
++
++	// rwCertsMu guards rwCerts.
++	rwCertsMu sync.Mutex
++	// rwCerts holds the last-known-good TLS cert and key per domain for
++	// write replicas (cert share "rw"). Write replicas don't keep certs in
++	// memory, so that they notice a recreated, empty cert Secret and issue
++	// a new cert. Instead, they use rwCerts to skip Secret reads for
++	// rwCertTTL and to keep serving TLS when the API server is unavailable.
++	// Entries are never modified, only replaced, so that a read can tell
++	// whether a write replaced the entry while the read was in flight.
++	rwCerts map[string]*rwCert
++}
++
++// rwCert is a TLS cert and key cached by a write replica.
++type rwCert struct {
++	// cert and key are returned to every reader of the cache entry, so
++	// they must not be modified.
++	cert, key []byte
++	// recheckAt is when the replica reads the cert Secret again.
++	recheckAt time.Time
+ }
+ 
+ // New returns a new Store that persists state to Kubernets Secret(s).
+@@ -153,7 +193,8 @@ func newWithClient(logf logger.Logf, c kubeclient.Client, secretName string) (*S
+ 	// Write replicas never load certs in-memory to avoid a situation where,
+ 	// after Ingress recreation (and the associated cert Secret recreation), new
+ 	// TLS certs don't get issued because the write replica still has certs
+-	// in-memory. Instead, write replicas fetch certs from Secret on each request.
++	// in-memory. Instead, write replicas fetch certs from Secret, with a short
++	// TTL cache (see rwCerts).
+ 	if s.certShareMode == "ro" {
+ 		sel := s.certSecretSelector()
+ 		if err := s.loadCerts(context.Background(), sel); err != nil {
+@@ -365,20 +406,24 @@ func (s *Store) WriteTLSCertAndKey(domain string, cert, key []byte) (err error)
+ 	// TODO(irbekrm): certs for write replicas are currently not
+ 	// written to memory to avoid out of sync memory state after
+ 	// Ingress resources have been recreated.  This means that TLS
+-	// certs for write replicas are retrieved from the Secret on
+-	// each HTTPS request. This is a temporary solution till we
++	// certs for write replicas are retrieved from the Secret once
++	// rwCertTTL has passed. This is a temporary solution till we
+ 	// implement a Secret watch.
+ 	if s.certShareMode != "rw" {
+ 		s.memory.WriteState(ipn.StateKey(domain+".crt"), cert)
+ 		s.memory.WriteState(ipn.StateKey(domain+".key"), key)
++	} else {
++		s.setRWCert(domain, cert, key)
  	}
- 	return &iptablesRunner{
- 		ipt4:              ipt4,
+ 	return nil
+ }
+ 
+ // ReadTLSCertAndKey reads a TLS cert and key from memory or from a
+ // domain-specific Secret. It first checks the in-memory store, if not found in
+ // memory and running cert store in read-only mode, looks up a Secret.
+-// Note that write replicas of HA Ingress always retrieve TLS certs from Secrets.
++// Write replicas of HA Ingress don't use the in-memory store. They read the
++// Secret at most once per rwCertTTL, and serve the last-known-good cert if the
++// read fails with an error other than not found or forbidden.
+ func (s *Store) ReadTLSCertAndKey(domain string) (cert, key []byte, err error) {
+ 	if err := dnsname.ValidHostname(domain); err != nil {
+ 		return nil, nil, fmt.Errorf("invalid domain name %q: %w", domain, err)
+@@ -396,14 +441,40 @@ func (s *Store) ReadTLSCertAndKey(domain string) (cert, key []byte, err error) {
+ 		return nil, nil, ipn.ErrStateNotExist
+ 	}
+ 
+-	ctx, cancel := context.WithTimeout(
 ```
 
-**File**: `util/linuxfw/iptables_test.go` (added, +55/-0)
+**File**: `ipn/store/kubestore/store_kube_test.go` (modified, +402/-0)
 ```diff
-@@ -0,0 +1,55 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+//go:build linux && !ts_omit_iptables
-+
-+package linuxfw
-+
-+import (
-+	"fmt"
-+	"os"
-+	"path/filepath"
-+	"strings"
-+	"testing"
-+
+@@ -8,9 +8,14 @@ import (
+ 	"context"
+ 	"crypto/sha256"
+ 	"encoding/json"
++	"errors"
+ 	"fmt"
+ 	"strings"
++	"sync"
++	"sync/atomic"
+ 	"testing"
++	"testing/synctest"
++	"time"
+ 
+ 	"github.com/google/go-cmp/cmp"
+ 	"tailscale.com/envknob"
+@@ -19,6 +24,8 @@ import (
+ 	"tailscale.com/kube/kubeapi"
+ 	"tailscale.com/kube/kubeclient"
+ 	"tailscale.com/kube/kubetypes"
 +	"tailscale.com/tstest"
-+	"tailscale.com/types/logger"
-+)
++	"tailscale.com/tstime"
+ )
+ 
+ func TestKubernetesPodMigrationWithTPMAttestationKey(t *testing.T) {
+@@ -635,6 +642,401 @@ func TestReadTLSCertAndKey(t *testing.T) {
+ 	}
+ }
+ 
++func TestReadTLSCertAndKeyWriteReplicaCache(t *testing.T) {
++	const testDomain = "my-app.tailnetxyz.ts.net"
 +
-+// TestNewIPTablesRunnerIP6TablesInitFailure checks that a present but
-+// non-functional ip6tables disables IPv6 instead of failing runner creation.
-+// The nft flavor of ip6tables exits 1 from "--version" on kernels without
-+// nf_tables, which used to make tailscaled exit at startup (#20348).
-+func TestNewIPTablesRunnerIP6TablesInitFailure(t *testing.T) {
-+	dir := t.TempDir()
-+	writeScript := func(name, body string) {
-+		t.Helper()
-+		if err := os.WriteFile(filepath.Join(dir, name), []byte("#!/bin/sh\n"+body), 0o755); err != nil {
-+			t.Fatal(err)
-+		}
++	var (
++		secretData   map[string][]byte
++		secretGetErr error
++		gets         int
++		lastTimeout  time.Duration
++	)
++	client := &kubeclient.FakeClient{
++		GetSecretImpl: func(ctx context.Context, name string) (*kubeapi.Secret, error) {
++			gets++
++			if deadline, ok := ctx.Deadline(); ok {
++				lastTimeout = time.Until(deadline)
++			}
++			if secretGetErr != nil {
++				return nil, secretGetErr
++			}
++			return &kubeapi.Secret{Data: secretData}, nil
++		},
++		JSONPatchResourceImpl: func(context.Context, string, string, []kubeclient.JSONPatch) error {
++			return nil
++		},
 +	}
-+	writeScript("iptables", "echo 'iptables v1.8.10 (legacy)'\n")
-+	writeScript("ip6tables", "echo 'ip6tables/1.8.10 Failed to initialize nft: Protocol not supported' >&2\nexit 1\n")
-+	t.Setenv("PATH", dir)
++	clock := tstest.NewClock(tstest.ClockOpts{})
++	s := &Store{
++		client:        client,
++		secretName:    "ts-state",
++		certShareMode: "rw",
++		clock:         tstime.DefaultClock{Clock: clock},
++		logf:          t.Logf,
++	}
++	tlsData := func(cert, key string) map[string][]byte {
++		return map[string][]byte{"tls.crt": []byte(cert), "tls.key": []byte(key)}
++	}
 +
-+	// Make the system IPv6 probe pass so the test reaches the ip6tables
-+	// constructor regardless of the host's IPv6 configuration.
-+	tstest.Replace(t, &checkIPv6ForTest, func(logger.Logf) error { return nil })
-+
-+	var logs strings.Builder
-+	r, err := newIPTablesRunner(func(format string, args ...any) {
-+		fmt.Fprintf(&logs, format+"\n", args...)
-+	})
-+	if err != nil {
-+		t.Fatalf("newIPTablesRunner: %v", err)
++	steps := []struct {
++		name         string
++		advance      time.Duration
++		secretData   map[string][]byte
++		secretGetErr error
++		// write, if set, writes cert and key with WriteTLSCertAndKey
++		// before the read.
++		write       map[string][]byte
++		wantCert    string
++		wantKey     string
++		wantErr     error
++		wantGet     bool
++		wantTimeout time.Duration // max GetSecret timeout, if wantGet
++	}{
++		{
++			name:         "no_cache_api_error",
++			secretGetErr: errors.New("api error"),
++			wantErr:      errors.New("api error"),
++			wantGet:      true,
++			wantTimeout:  timeout,
++		},
++		{
++			name:        "first_read_from_secret",
++			secretData:  tlsData("cert-a", "key-a"),
++			wantCert:    "cert-a",
++			wantKey:     "key-a",
++			wantGet:     true,
++			wantTimeout: timeout,
++		},
++		{
++			name:       "within_ttl_served_from_cache",
++			advance:    rwCertTTL / 2,
++			secretData: tlsData("cert-b", "key-b"),
++			wantCert:   "cert-a",
++			wantKey:    "key-a",
++		},
++		{
++			name:        "after_ttl_read_from_secret",
++			advance:     rwCertTTL,
++			secretData:  tlsData("cert-b", "key-b"),
++			wantCert:    "cert-b",
++			wantKey:     "key-b",
++			wantGet:     true,
++			wantTimeout: rwCertFallbackTimeout,
++		},
++		{
++			name:         "after_ttl_api_error_serves_last_known_good",
++			advance:      rwCertTTL,
++			secretGetErr: errors.New("api error"),
++			wantCert:     "cert-b",
++			wantKey:      "key-b",
++			wantGet:      true,
++			wantTimeout:  rwCertFallbackTimeout,
++		},
++		{
++			name:         "after_fallback_served_from_cache",
++			advance:      rwCertTTL / 2,
++			secretGetErr: errors.New("api error"),
++			wantCert:     "cert-b",
++			wantKey:      "key-b",
++		},
++		{
++			name:       "after_ttl_secret_emptied",
++			advance:    rwCertTTL,
++			secretData: map[string][]byte{},
++			wantErr:    ipn.ErrStateNotExist,
++			wantGet:    true,
++		},
++		{
++			name:         "emptied_secret_clears_cache",
++			secretGetErr: errors.New("api error"),
++			wantErr:      errors.New("api error"),
++			wantGet:      true,
++			wantTimeout:  timeout,
++		},
++		{
++			name:       "written_cert_served_from_cache",
++			write:      tlsData("cert-c", "key-c"),
++			secretData: tlsData("cert-c", "key-c"),
++			wantCert:   "cert-c",
++			wantKey:    "key-c",
++		},
++		{
++			name:         "after_ttl_secret_not_found",
++			advance:      rwCertTTL,
++			secretGetErr: &kubeapi.Status{Code: 404},
++			wantErr:      ipn.ErrStateNotExist,
++			wantGet:      true,
++		},
++		{
++			name:         "not_found_clears_cache",
++			secretGetErr: errors.New("api error"),
++			wantErr:      errors.New("api error"),
++			wantGet:      true,
++			wantTimeout:  timeout,
++		},
++		{
++			name:       "written_cert_served_from_cache_again",
++			write:      tlsData("cert-d", "key-d"),
++			secretData: tlsData("cert-d", "key-d"),
++			wantCert:   "cert-d",
++			wantKey:    "key-d",
++		},
++		{
++			name:         "after_ttl_secret_forbidden",
++			advance:      rwCertTTL,
++			secretGetErr: &kubeapi.Status{Code: 403},
++			wantErr:      ipn.ErrStateNotExist,
++			wantGet:      true,
++		},
++		{
++			name:         "forbidden_clears_cache",
++			secretGetErr: errors.New("api error"),
++			wantErr:      errors.New("api error"),
++			wantGet:      true,
++			wantTimeout:  timeout,
++		},
 +	}
-+	if r.HasIPV6() {
-+		t.Error("HasIPV6() = true; want false when ip6tables fails to initialize")
-+	}
-+	if r.HasIPV6Filter() || r.HasIPV6NAT() {
-+		t.Error("IPv6 filter/NAT reported available; want neither")
-+	}
-+	if !strings.Contains(logs.String(), "disabling tunneled IPv6 due to ip6tables init failure") {
-+		t.Errorf("log missing ip6tables init failure line; got:\n%s", logs.String())
-+	}
-+}
++	for _, st := range steps {
++		clock.Advance(st.advance)
++		secretData = st.secretData
++		secretGetErr = st.secretGetErr
++		if s
 ```
 
 ---
 
-### Incident Patch 2: `cc0716a2` (2026-11-19)
-**Commit Message**: cmd/k8s-operator: clarify tag requirements (#15757)
+### Incident Patch 2: `519a9f50` (2026-11-20)
+**Commit Message**: k8s-operator: stop PortRanges.All() at the last port in the range (#21305)
 
-Updates tailscale/tailscale#15732
+* k8s-operator: stop PortRanges.All() at the last port in the range
 
-Signed-off-by: Irbe Krumina <[REDACTED_EMAIL]>
+PortRanges.All() walks a range with a uint16 counter and a port <= end
+condition. When end is 65535 the increment wraps back to zero instead
+of ending the loop, so the iterator restarts at 0 and yields the whole
+port space again, and again.
 
-**File**: `cmd/k8s-operator/deploy/chart/values.yaml` (modified, +4/-4)
+ClashesWith is the caller that drains All(), so it is where this
+shows. With one ProxyClass holding 40000-65535, validating a second
+one holding 30000-30100 walks up to 65535, wraps, and reaches 30000 on
+the next pass, where Contains returns true. The two ranges are
+disjoint, but the second ProxyClass is rejected as clashing and never
+goes valid. allocatePorts stops at the first free port so it returns,
+but once past 65535 the port it picks is outside the range that was
+configured.
+
+endPort is only bounded by the cluster's --service-node-port-range, so
+65535 is reachable on a cluster configured up to it.
+
+Yield end and then stop. Also skip a range whose Port is above its
+EndPort, which the old condition did for free and the new one would
+not.
+
+Fixes #21304
+
+Change-Id: I7d60b133a4a83678bc6aba76c5f9b6b6e
+
+**File**: `k8s-operator/apis/v1alpha1/types_proxyclass.go` (modified, +2/-2)
 ```diff
-@@ -65,8 +65,8 @@ oauthSecretVolume: {}
- installCRDs: true
+@@ -133,8 +133,8 @@ func (prs PortRanges) All() iter.Seq[uint16] {
+ 				end = pr.Port
+ 			}
  
- operatorConfig:
--  # ACL tag that operator will be tagged with. Operator must be made owner of
--  # these tags
-+  # ACL tags that operator's Tailscale device will be tagged with.
-+  # These tags must be the exact same tags that the operator's OAuth client creds were tagged with.
-   # https://tailscale.com/kb/1236/kubernetes-operator/?q=operator#setting-up-the-kubernetes-operator
-   # Multiple tags are defined as array items and passed to the operator as a comma-separated string
-   defaultTags:
-@@ -150,8 +150,8 @@ proxyConfig:
-     # used.
-     tag: ""
-     digest: ""
--  # ACL tag that operator will tag proxies with. Operator must be made owner of
--  # these tags
-+  # ACL tags that operator will tag proxies with.
-+  # These tags must be either the tags that the operator's OAuth client creds were tagged with or tags owned by those tags.
-   # https://tailscale.com/kb/1236/kubernetes-operator/?q=operator#setting-up-the-kubernetes-operator
-   # Multiple tags can be passed as a comma-separated string i.e 'tag:k8s-proxies,tag:prod'.
-   # Note that if you pass multiple tags to this field via `--set` flag to helm upgrade/install commands you must escape the comma (for example, "tag:k8s-proxies\,tag:prod"). See https://github.com/helm/helm/issues/1556
+-			for port := pr.Port; port <= end; port++ {
+-				if !yield(port) {
++			for port := int(pr.Port); port <= int(end); port++ {
++				if !yield(uint16(port)) {
+ 					return
+ 				}
+ 			}
+```
+
+**File**: `k8s-operator/apis/v1alpha1/types_proxyclass_test.go` (added, +99/-0)
+```diff
+@@ -0,0 +1,99 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++package v1alpha1
++
++import (
++	"slices"
++	"testing"
++)
++
++func TestPortRangesAll(t *testing.T) {
++	tests := []struct {
++		name string
++		prs  PortRanges
++		want []uint16
++	}{
++		{
++			name: "single_port",
++			prs:  PortRanges{{Port: 30000}},
++			want: []uint16{30000},
++		},
++		{
++			name: "small_range",
++			prs:  PortRanges{{Port: 30000, EndPort: 30002}},
++			want: []uint16{30000, 30001, 30002},
++		},
++		{
++			name: "range_ending_at_max_port",
++			prs:  PortRanges{{Port: 65533, EndPort: 65535}},
++			want: []uint16{65533, 65534, 65535},
++		},
++		{
++			name: "single_max_port",
++			prs:  PortRanges{{Port: 65535}},
++			want: []uint16{65535},
++		},
++		{
++			name: "multiple_ranges",
++			prs:  PortRanges{{Port: 30000, EndPort: 30001}, {Port: 65535}},
++			want: []uint16{30000, 30001, 65535},
++		},
++		{
++			name: "inverted_range_yields_nothing",
++			prs:  PortRanges{{Port: 30100, EndPort: 30000}},
++			want: nil,
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			var got []uint16
++			for p := range tt.prs.All() {
++				got = append(got, p)
++				if len(got) > len(tt.want) {
++					t.Fatalf("All() yielded more than the %d expected ports; got %v...", len(tt.want), got)
++				}
++			}
++			if !slices.Equal(got, tt.want) {
++				t.Errorf("All() = %v, want %v", got, tt.want)
++			}
++		})
++	}
++}
++
++func TestPortRangesClashesWith(t *testing.T) {
++	tests := []struct {
++		name string
++		prs  PortRanges
++		pr   PortRange
++		want bool
++	}{
++		{
++			name: "overlapping",
++			prs:  PortRanges{{Port: 30000, EndPort: 30100}},
++			pr:   PortRange{Port: 30050, EndPort: 30150},
++			want: true,
++		},
++		{
++			name: "disjoint",
++			prs:  PortRanges{{Port: 30000, EndPort: 30100}},
++			pr:   PortRange{Port: 30101, EndPort: 30200},
++			want: false,
++		},
++		{
++			name: "disjoint_below_range_ending_at_max_port",
++			prs:  PortRanges{{Port: 40000, EndPort: 65535}},
++			pr:   PortRange{Port: 30000, EndPort: 30100},
++			want: false,
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			if got := tt.prs.ClashesWith(tt.pr); got != tt.want {
++				t.Errorf("ClashesWith(%s) = %v, want %v", tt.pr, got, tt.want)
++			}
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -1009,43 +1356,62 @@ Signed-off-by: Irbe Krumina <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. util/linuxfw: run without IPv6 rules when ip6tables fails to initialize
+## X. ipn/store/kubestore: cache TLS certs briefly on write replicas
 
 **RULE**:
-When implementing operations in `util/linuxfw/iptables.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ipn/store/kubestore/store_kube.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `92f396d8`: util/linuxfw: run without IPv6 rules when ip6tables fails to initialize. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c8ba9da5`: ipn/store/kubestore: cache TLS certs briefly on write replicas. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `util/linuxfw/iptables.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/store/kubestore/store_kube.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			// ip6tables is present but "ip6tables --version" failed,
-			// as the nft flavor does on kernels without nf_tables.
-			// Run without IPv6 rules instead of failing. (#20348)
-			logf("disabling tunneled IPv6 due to ip6tables init failure: %v", err)
-		} else {
-			supportsV6 = true
-			supportsV6Filter = checkSupportsV6Filter(ipt6, logf)
-			supportsV6NAT = checkSupportsV6NAT(ipt6, logf)
-			logf("netfilter running in iptables mode v6 = %v, v6filter = %v, v6nat = %v", supportsV6, supportsV6Filter, supportsV6NAT)
+	"sync"
+	"tailscale.com/tstime"
+	"tailscale.com/util/singleflight"
+	// rwCertTTL is how long a write replica serves a TLS cert from its
+	// in-memory cache before it reads the cert Secret again. A short TTL
+	// limits how long the replica can serve a stale cert after the cert
+	// Secret is recreated, for example after Ingress recreation.
+	rwCertTTL = 30 * time.Second
+	// rwCertFallbackTimeout is the timeout for a write replica's cert
+	// Secret read when it has a last-known-good cert to fall back to.
+	// TLS handshakes wait for this read, so it must be much shorter than
+	// typical client handshake timeouts (10s for kubectl).
+	rwCertFallbackTimeout = 3 * time.Second
+
+
+	// clock is used for rwCerts expiry.
+	clock tstime.DefaultClock
+
+	// certReads deduplicates concurrent cert Secret reads per domain.
+	certReads singleflight.Group[string, *rwCert]
+
+	// rwCertsMu guards rwCerts.
+	rwCertsMu sync.Mutex
+	// rwCerts holds the last-known-good TLS cert and key per domain for
+	// write replicas (cert share "rw"). Write replicas don't keep certs in
+	// memory, so that they notice a recreated, empty cert Secret and issue
+	// a new cert. Instead, they use rwCerts to skip Secret reads for
+	// rw
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		supportsV6 = true
-			return nil, err
-		supportsV6Filter = checkSupportsV6Filter(ipt6, logf)
-		supportsV6NAT = checkSupportsV6NAT(ipt6, logf)
-		logf("netfilter running in iptables mode v6 = %v, v6filter = %v, v6nat = %v", supportsV6, supportsV6Filter, supportsV6NAT)
+	// in-memory. Instead, write replicas fetch certs from Secret on each request.
+	// certs for write replicas are retrieved from the Secret on
+	// each HTTPS request. This is a temporary solution till we
+// Note that write replicas of HA Ingress always retrieve TLS certs from Secrets.
+	ctx, cancel := context.WithTimeout(
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `92f396d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c8ba9da5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

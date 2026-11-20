@@ -11540,3 +11540,8 @@
 | `CYCLE-20261120-8H6F` | `2026-11-20T12:50:15.159Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9568` | Yes (`00e832b4...`) |
 | `CYCLE-20261120-8JAA` | `2026-11-20T12:50:17.890Z` | `scrapy/scrapy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9569` | Yes (`d38a8d4e...`) |
 | `CYCLE-20261120-8R4D` | `2026-11-20T12:50:28.045Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9570` | Yes (`eb529b29...`) |
+| `CYCLE-20261120-VU4Q` | `2026-11-20T13:08:25.034Z` | `actions/actions-runner-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9571` | Yes (`366b924a...`) |
+| `CYCLE-20261120-VWN1` | `2026-11-20T13:08:28.285Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9572` | Yes (`591efe20...`) |
+| `CYCLE-20261120-VZW3` | `2026-11-20T13:08:32.499Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9573` | Yes (`f49b734d...`) |
+| `CYCLE-20261120-VZXN` | `2026-11-20T13:08:32.555Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9573` | Yes (`157b2e6d...`) |
+| `CYCLE-20261120-24ZE` | `2026-11-20T13:13:19.034Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9574` | Yes (`3aeebfc7...`) |

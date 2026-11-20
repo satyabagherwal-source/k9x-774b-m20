@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T22:06:56.904Z",
+  "timestamp": "2026-11-20T13:13:22.454Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-embassy-rs-embassy-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [embassy-rs-embassy-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T22:06:56.904Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T13:13:22.454Z`  
 > **Learning ID**: `LEARN-EVO-embassy-rs-embassy-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: B (Product Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 75%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 78%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from embassy-rs-embassy-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source**: github ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
-> **Source Version**: `b4d9d61a`  
+> **Source Version**: `0bf016d3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T22:03:22.031Z  
+> **Timestamp**: 2026-11-20T13:13:18.035Z  
 > **Learning ID**: `learn-github-embassy-rs-embassy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T22:03:21.901Z  
+> **Harvest Timestamp**: 2026-11-20T13:08:17.494Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Modern embedded framework, using Rust and async.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10127 stars
+- **Stars / Engagement**: 10134 stars
 
 ---
 
@@ -1463,11 +1463,11 @@ unsafe fn bounce_chunks_inout(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7589** (2026-11-18): **stm32/rcc: use shared backup domain code for G5**
-  *Symptoms*: G5 excluded `rcc/bd.rs` because its backup-domain registers are named after the "RTC domain": `RCC_RTCCR` instead of `RCC_BDCR`, and `PWR_RTCCR.DRTCP` instead of `DBP`. `bd.rs` now handles these names the same way it handles `CSR`/`CSR1` on L0/L1/C0, and `rcc::Config` on G5 gets `ls: LsConfig`, so LSI, LSE and the RTC clock can be configured.  - The domain reset is skipped on G5, as on H5/U5/L5. RM0522 (C5, same family line) says SRAM2 is erased by a backup domain reset. - G5's LSEDRV only has medium-high and high drive (ST SVD), so `LseDrive::Low` and `LseDrive::MediumLow` aren't available there. - Bumps stm32-metapac for the `Lsedrv::Highest` → `High` rename on G5 (embassy-rs/stm32-data e40ce1ac8).  Build-tested only; no G5 board on the HIL farm. 
+- **Issue #7605** (2026-11-20): **embassy-usb: upgrade UVC class to UVC 1.5**
+  *Symptoms*: Upgrades `embassy-usb::class::uvc::device` directly to UVC 1.5 as a cohesive single-version implementation.  - **UVC 1.5 protocol & probe/commit:**   - Advertises `bcdUVC = 0x0150` and `PC_PROTOCOL_15 = 0x01` with 48-byte `VS_PROBE_CONTROL` / `VS_COMMIT_CONTROL` negotiation (`bmUsage`, `bBitDepthLuma`, `bmSettings`, `bMaxNumberOfRefFramesPlus1`, `bmRateControlModes`, `bmLayoutPerStream`), while still tolerating 26/34-byte proposals. - **Additional formats (`PixelFormat`):**   - Adds `PixelFormat::I420`, `PixelFormat::H264` (`VS_FORMAT_FRAME_BASED` / `VS_FRAME_FRAME_BASED` with `H264` GUID), and `PixelFormat::FrameBased` + `fourcc_guid`. - **VideoControl units & error reporting:**   - Adds optional `ProcessingControls` (`VC_PROCESSING_UNIT`: brightness, contrast, hue, saturation, sharpness, gamma, gain, white balance temp/auto, backlight compensation, power line frequency, hue auto) and `CameraControls` (`ITT_CAMERA`: AE mode, exposure time abs, focus abs/auto, zoom abs) with `GET_CUR`/`SET_CUR`/`GET_MIN`/`GET_MAX`/`GET_RES`/`GET_DEF`/`GET_INFO`, `VC_REQUEST_ERROR_CODE_CONTROL`, and `Camera::control_values()` / `Camera::take_controls_changed()`. - **Method 2 still image capture (`StillConfig` / `StillSettings`):**   - Emits `VS_STILL_IMAGE_FRAME`, sets `bStillCaptureMethod = 2`, handles `VS_STILL_PROBE_CONTROL` / `VS_STILL_COMMIT_CONTROL` / `VS_STILL_IMAGE_TRIGGER_CONTROL`, and adds `Camera::take_still_trigger()` and `Camera::write_still_frame()` / `Camera::start_still_frame()
 
-- **Issue #7584** (2026-11-18): **stm32/low-power: build for more chips, restore clocks in all chips, misc fixes**
-  *Symptoms*: - Fix LPTIM time driver build in all low-power-supported chips. - Make LPTIM clock config explicit.     - It no longer implicitly changes RCC config, it asserts it's valid instead.     - If it's valid but can't run in STOP mode, it prints a warning and inhibits STOP. - restore clocks after Stop, run HIL tests in real Stop     - remove the `low-power-debug-with-sleep` feature.     - restore the clocks after Stop on all families with low-power support.     - tests: remove `fake-stop`, run all low-power boards in real Stop.     - ci: disable the tests that fail in Stop for now.  - some more errata workarounds.     - workaround u0 instruction fetch corruption on stop exit.     - do not reset BD in L5, it has the same errata as H5. 
+- **Issue #7604** (2026-11-20): **embassy-usb: add MTP (Media Transfer Protocol) device class**
+  *Symptoms*: Adds the Media Transfer Protocol (MTP / PTP) device class to `embassy-usb` behind the `class-mtp` feature (included in `class-all`).  - **Protocol types & dataset codecs (`class::mtp::types`):**   - USB Still Image / MTP class constants (`0x06`/`0x01`/`0x01`), control requests (`REQ_CANCEL`, `REQ_GET_EXT_EVENT_DATA`, `REQ_RESET`, `REQ_GET_DEVICE_STATUS`), and PIMA 15740 / MTP 1.1 constant modules (`op`, `resp`, `event`, `format`, `storage_type`, `fs_type`, `access`, `assoc`, `obj_prop`, `dev_prop`).   - 12-byte container codecs (`ContainerHeader`, `CommandBlock`, `ResponseBlock`, `EventBlock`).   - Zero-alloc `MtpWriter` / `MtpReader` (including PIMA 15740 UTF-16LE string encoding/decoding) and `DeviceInfo`, `StorageInfo`, and `ObjectInfo` dataset serialization/parsing. - **Device class & streaming transport (`class::mtp::device`):**   - `MtpClass::new` registers the Still Image / MTP interface (Bulk-IN, Bulk-OUT, Interrupt-IN), optional `"MTP"` interface string, and optional MS OS 2.0 `"MTP"` compatible ID descriptor (`Config::with_msos(true)`).   - `Control` `InterfaceHandler` handles `REQ_CANCEL`, `REQ_RESET`, `REQ_GET_DEVICE_STATUS`, and `REQ_GET_EXT_EVENT_DATA` via `ControlShared`.   - Async `read_command`, `start_data_out` (`DataOutReader`), `read_data_all`, `start_data_in` (`DataInWriter`), `write_data`, `write_response`, and `write_event` with ZLP handling on `max_packet_size` boundaries.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1484,1094 +1484,508 @@ unsafe fn bounce_chunks_inout(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6bd3541f` (2026-11-17)
-**Commit Message**: stm32: fix LPTIM time driver and low-power builds, make the LPTIM clock explicit
+### Incident Patch 1: `c0913476` (2026-11-19)
+**Commit Message**: Merge pull request #7578 from lennlouisgeek/fix/stm32c5-clocks
 
-- time-driver-lptim: build on every LPTIM version. v1/v1a/v1b count the
-  overflow on ARRM; the v2 register API is keyed on lptim_v2a/lptim_v2b.
-- time-driver-lptim: rcc::init no longer changes the clock config. The
-  driver reads its kernel clock mux at init, panics if it can't run from
-  it, and with low-power disables Stop (with a warning) when the clock
-  doesn't run in Stop.
-- rcc: f2/f4/f7, g0, g4, h5/h7 report LSE/LSI; u3 applies LSESYSEN.
-- low-power: build on L412/L422, L4P5/L4Q5, U3 with TIM, U0 with LPTIM.
-- Add CI builds for the LPTIM/low-power combinations and an LPTIM time
-  driver HIL test (tests/stm32-lptim).
+feat(stm32): complete C5 RCC clock support
 
-**File**: `embassy-stm32/CHANGELOG.md` (modified, +8/-0)
+**File**: `embassy-stm32/src/rcc/bd.rs` (modified, +29/-12)
 ```diff
-@@ -49,6 +49,8 @@ RCC:
- - feat: stm32/rcc u5: backup SRAM; `BackupMemory::new` enables its clock
- - feat: stm32/rcc: add `rcc::reset_flags()` to read what caused the last reset.
- - change: stm32/rcc h7: remove `rcc::ResetReason`, use `rcc::reset_flags()` instead (breaking change).
-+- fix: stm32/rcc f2, f4, f7, g0, g4, h5, h7: report the LSE and LSI frequencies, so peripherals can use them as kernel clock
-+- fix: stm32/rcc u3: `LseConfig::peripherals_clocked` sets `LSESYSEN`; it was ignored
- 
- LPTIM:
- - fix: stm32/lptim: a period whose tick count is at least 65536 no longer panics when rounding the divider up to a power of two still leaves the reload above 65535. The prescaler is the smallest of /1, /2, ..., /128 for which the reload fits in 16 bits. A period that does not fit even at /128 still panics.
-@@ -60,6 +62,11 @@ Time driver:
- - fix: stm32/time-driver-lptim: the interrupt handler clears only the flags it read; it also cleared every enabled flag, so an overflow that arrived during the handler was lost and time fell back one counter period
- - fix: stm32/time-driver-lptim: on U5, U3 and WBA, wait for `DIEROK` after each `DIER` change; a `CCIE` write still in flight when entering Stop lost the alarm wakeup until the next overflow
- - fix: stm32/time-driver-lptim: `now()` retries if the update event flag changes while it reads the counter; a wrap between the two reads returned a time one counter period ahead, then time went backwards
-+- fix: stm32/time-driver-lptim: build on chips with LPTIM v1, v1a or v1b (F4, F7, G0, G4, H7, L0, L4, L4+, WB), which have no update event; the counter overflow is counted on `ARRM`
-+- fix: stm32/time-driver-lptim: build on C5, H5, L5, U0 and U3; `time-driver-lptim3` on U5 and U3 uses the shared LPTIM3/LPTIM4 kernel clock mux
-+- change: stm32/time-driver-lptim: `init` no longer changes `config.rcc`. The LPTIM kernel clock must be selected in `config.rcc.mux` and enabled in `config.rcc` (LSE with `peripherals_clocked: true` on L5, U0, U3, U5, WBA and WL); the reset value is no longer switched to LSI, and LSI and HSI are no longer enabled (breaking change).
-+- change: stm32/time-driver-lptim: panic at `init` if the LPTIM kernel clock is LSE not routed to peripherals, or a frequency that is not 1, 2, 4, ..., 128 times the tick rate.
-+- change: stm32/time-driver-lptim: with `low-power`, an LPTIM kernel clock other than LSI or LSE disables Stop mode and logs a warning.
- - fix: stm32/time-driver-lptim: on U5, U3 and WBA, the wait for `CMPOK` after a compare write is bounded, as the `DIEROK` wait is, instead of spinning forever with interrupts masked; both bounds now count counter clock cycles, so a prescaled counter no longer gives up on a `DIEROK` that is only slow
- 
- I2C:
-@@ -119,6 +126,7 @@ Flash:
- Low power:
- - fix: stm32/low-power: fail to compile on chip families with no low-power implementation, instead of building a `sleep()` that set `SLEEPDEEP` and entered whatever `PWR` happened to default to, without clearing the wake-up flags or restoring the system clock on wake-up. Implemented families are F4, G4, L0, L4, L5, U0, U3, U5, H5, WB, WBA and WL.
- - add: stm32/low-power: Stop mode support for STM32G4, entering the low-power-regulator stop (`PWR_CR1.LPMS = 0b001`).
-+- fix: stm32/low-power: build on L412/L422 and L4P5/L4Q5, on U3 with a TIM time driver, and on U0 with an LPTIM time driver
- 
- Align to API guidelines:
- - change: stm32/gpio: rename `get_level()` to `level()` and `get_output_level()` to `output_level()` on `Input`, `Output`, `OutputOpenDrain`, `Flex` and `ExtiInput`. `lpgpio::LpGpio::get_level()` is now `level()`.
-```
-
-**File**: `embassy-stm32/Cargo.toml` (modified, +30/-2)
-```diff
-@@ -134,6 +134,34 @@ build = [
-     {target = "thumbv8m.main-none-eabihf", features = ["defmt", "dual-bank", "exti", "stm32c552rc", "time", "time-driver-any"]},
-     {target = "thumbv6m-none-eabi", features = ["defmt", "exti", "stm32g070rb", "time", "time-driver-any"]},
-     {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "stm32h755zi-cm4", "time", "time-driver-any"]},
-+    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "dual-bank", "exti", "stm32c531cb", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "low-power", "stm32f410c8", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "dual-bank", "exti", "stm32f767zi", "time", "time-driver-lptim1"]},
-+    {target = "thumbv6m-none-eabi", features = ["defmt", "exti", "stm32g071rb", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "dual-bank", "exti", "low-power", "stm32g474re", "time", "time-driver-lptim1"]},
-+    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "exti", "low-power", "stm32h503rb", "time", "time-driver-lptim1"]},
-+    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "exti", "low-power", "stm32h563zi", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "stm32h723zg", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "stm32h753zi", "time", "time-driver-lptim3"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "stm32h755zi-cm7", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "stm32h7a3zi", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "stm32h7s3l8", "time", "time-driver-lptim1"]},
-+    {target = "thumbv6m-none-eabi", features = ["defmt", "exti", "low-power", "stm32l073rz", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "low-power", "stm32l412kb", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "low-power", "stm32l412kb", "time", "time-driver-any"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "low-power", "stm32l476rg", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "dual-bank", "exti", "low-power", "stm32l4p5ae", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "dual-bank", "exti", "low-power", "stm32l4r5zi", "time", "time-driver-lptim2"]},
-+    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "dual-bank", "exti", "low-power", "stm32l552ze", "time", "time-driver-lptim1"]},
-+    {target = "thumbv6m-none-eabi", features = ["defmt", "exti", "low-power", "stm32u083rc", "time", "time-driver-lptim1"]},
-+    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "exti", "low-power", "stm32u385rg", "time", "time-driver-lptim1"]},
-+    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "exti", "low-power", "stm32u385rg", "time", "time-driver-lptim3"]},
-+    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "exti", "low-power", "stm32u385rg", "time", "time-driver-any"]},
-+    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "exti", "low-power", "stm32u585ai", "time", "time-driver-lptim3"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "low-power", "stm32wb55rg", "time", "time-driver-lptim1"]},
-+    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "exti", "low-power", "stm32wba65ri", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "low-power", "stm32wl55jc-cm4", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "low-power", "stm32wle5jc", "time", "time-driver-lptim1"]},
- ]
- 
- [package.metadata.embassy_docs]
-@@ -229,11 +257,11 @@ aligned = "0.4.3"
- heapless = "0.9.3"
- 
- # stm32-metapac = { version = "21" }
--stm32-metapac = { git = "https://github.com/embassy-rs/stm32-data-generated", tag = "stm32-data-82e648dd53815704702719594a12c87e95dd48d8" }
-+stm32-metapac = { git = "https://github.com/embassy-rs/stm32-data-generated", tag = "stm32-data-af2c47a6ac9618b5e4cb3a490b2429fcdcd8bb91" }
- 
- [build-dependencies]
- # stm32-metapac = { version = "21", default-features = false, features = ["metadata"]}
--stm32-metapac = { git = "https://github.com/embassy-rs/stm32-data-generated", tag = "stm32-data-82e648dd53815704702719594a12c87e95dd48d8", default-features = false, features = ["metadata"] }
-+stm32-metapac = { git = "https://github.com/embassy-rs/stm32-data-generated", tag = "stm32-data-af2c47a6ac9618b5e4cb3a490b2429fcdcd8bb91", default-features = false, features = ["metadata"] }
- 
- proc-macro2 = "1.0.107"
- quote = "1.0.47"
-```
-
-**File**: `embassy-stm32/build.rs` (modified, +68/-0)
-```diff
-@@ -1189,6 +1189,74 @@ fn main() {
-         }
-     });
- 
-+    // The kernel clock selected for an LPTIM time driver, so the driver can check that it can run
-+    // and whether it keeps running in Stop mode.
-+    if let Some(p) = METADATA.peripherals.iter().find(|p| p.name == time_driver_singleton)
-+        && p.registers.as_ref().is_some_and(|r| r.kind == "lptim")
-+        && let Some(rcc) = &p.rcc
-+        && let PeripheralRccKernelClock::Mux(mux) = &rcc.kernel_clock
-+    {
-+        let ir = &clock_gen.rcc_registers.ir;
-+        let fieldset_name = mux.register.to_ascii_lowercase();
-+        let fieldset = ir
-+            .fieldsets
-+            .iter()
-+            .find(|i| i.name.eq_ignore_ascii_case(&fieldset_name))
-+            .unwrap();
-+        let field_name = mux.field.to_ascii_lowercase();
-+        let field = fieldset.fields.iter().find(|i| i.name == field_name).unwrap();
-+        let enum_name = field.enumm.unwrap();
-+        let enumm = ir.enums.iter().find(|i| i.name == enum_name).unwrap();
-+
-+        let mut name_arms = TokenStream::new();
-+        for v in enumm.variants {
-+            let variant = format_ident!("{}", v.name);
-+            let name = pascal_to_upper_snake(v.name);
-+            name_arms.extend(quote!(Sel::#variant => #name,));
-+        }
-+        let has = |name: &str| enumm.variants.iter().any(|v| v.name == name);
-+        let is_lsi = if has("Lsi") {
-+            quote!(sel() == Sel::Lsi)
-+        } else {
-+            quote!(false)
-+        };
-+        let is_lse = if has("Lse") {
-+            quote!(sel() == Sel::Lse)
-+        } else {
-+            quote!(false)
-+        };
-+
-+        let fieldset_name = format_ident!("{}", fieldset_name);
-+        let field_name = format_ident!("{}", field_name);
-+        let enum_name = format_ident!("{}", enum_name);
-+        g.extend(quote! {
-+            pub(crate) mod time_driver_clock {
-+                use crate::pac::rcc::vals::#enum_name as Sel;
-+
-+                fn sel() -> Sel {
-+                    crate::pac::RCC.#fieldset_name().read().#field_name()
-+                }
-+
-+                /// Name of the selected clock.
-+                pub(crate) fn name() -> &'static str {
-+                    #[allow(unreachable_patterns)]
-+                    match sel() {
-+                        #name_arms
-+                        _ => "?",
-+                    }
-+                }
-+
-+                pub(crate) fn is_lsi() -> bool {
-+                    #is_lsi
-+                }
-+
-+                pub(crate) fn is_lse() -> bool {
-+                    #is_lse
-+                }
-+            }
-+        });
-+    }
-+
-     // Generate RCC
-     clock_gen.clock_names.insert("sys".to_string());
-     clock_gen.clock_names.insert("rtc".to_string());
-```
-
-**File**: `embassy-stm32/src/low_power.rs` (modified, +1/-1)
-```diff
-@@ -74,7 +74,7 @@ foreach_interrupt! {
-     };
+@@ -14,6 +14,7 @@ use crate::time::Hertz;
+ #[derive(Clone, Copy)]
+ pub enum LseMode {
+     Oscillator(LseDrive),
++    /// External clock. On C5 this uses digital bypass; analog bypass is not functional.
+     Bypass,
  }
  
--#[cfg(all(feature = "rt", stm32u0))]
-+#[cfg(all(feature = "rt", stm32u0, not(feature = "_lp-time-driver")))]
- foreach_interrupt! {
-     (RTC, rtc, $block:ident, TAMP, $irq:ident) => {
-         #[interrupt]
-```
-
-**File**: `embassy-stm32/src/rcc/bd.rs` (modified, +4/-4)
-```diff
-@@ -169,7 +169,7 @@ impl LsConfig {
-             },
-             None => (false, false, None),
-         };
--        #[cfg(any(rcc_l5, rcc_u5, rcc_wle, rcc_wl5, rcc_wba, rcc_u0))]
-+        #[cfg(any(rcc_l5, rcc_u5, rcc_u3, rcc_wle, rcc_wl5, rcc_wba, rcc_u0))]
-         let lse_sysen = if let Some(lse) = self.lse {
-             Some(lse.peripherals_clocked)
-         } else {
-@@ -298,7 +298,7 @@ impl LsConfig {
-         {
-             ok &= lsecfgr.lsebyp() == lse_byp;
-         }
--        #[cfg(any(rcc_l5, rcc_u5, rcc_wle, rcc_wl5, rcc_wba, rcc_u0))]
-+        #[cfg(any(rcc_l5, rcc_u5, rcc_u3, rcc_wle, rcc_wl5, rcc_wba, rcc_u0))]
-         if let Some(lse_sysen) = lse_sysen
-             && !lse_sysen
-         {
-@@ -315,7 +315,7 @@ impl LsConfig {
+@@ -29,7 +30,7 @@ pub struct LseConfig {
+ #[allow(dead_code)]
+ #[derive(Default, Clone, Copy)]
+ pub enum LseDrive {
+-    #[cfg(not(any(stm32h5, stm32g5)))] // ES0565: LSE Low drive mode is not functional
++    #[cfg(not(any(stm32h5, stm32g5, stm32c5)))] // ES0565/ES0661/ES0676/ES0677: LSE low drive is not functional
+     Low = 0,
+     #[cfg(not(stm32g5))] // G5 only has medium-high and high drive.
+     MediumLow = 0x01,
+@@ -45,7 +46,7 @@ impl From<LseDrive> for crate::pac::rcc::vals::Lsedrv {
+         use crate::pac::rcc::vals::Lsedrv;
  
-         // After a power-on reset LSESYSEN will be set to 0
-         // even if VBAT was present and kept the RTC running
--        #[cfg(any(rcc_l5, rcc_u5, rcc_wle, rcc_wl5, rcc_wba, rcc_u0))]
-+        #[cfg(any(rcc_l5, rcc_u5, rcc_u3, rcc_wle, rcc_wl5, rcc_wba, rcc_u0))]
-         if ok
-             && let Some(lse_sysen) = lse_sysen
-             && lse_sysen
-@@ -388,7 +388,7 @@ impl LsConfig {
-                 while !crate::pac::RCC.sr().read().lserdy() {}
-             }
- 
--            #[cfg(any(rcc_l5, rcc_u5, rcc_wle, rcc_wl5, rcc_wba, rcc_u0))]
-+            #[cfg(any(rcc_l5, rcc_u5, rcc_u3, rcc_wle, rcc_wl5, rcc_wba, rcc_u0))]
-             if let Some(lse_sysen) = lse_sysen {
-                 bdcr().modify(|w| {
-                     w.set_lsesysen(lse_sysen);
-```
-
-**File**: `embassy-stm32/src/rcc/f247.rs` (modified, +3/-2)
-```diff
-@@ -11,6 +11,7 @@ pub use crate::pac::rcc::vals::{
-     Pllsrc as PllSource, Ppre as APBPrescaler, Sw as Sysclk,
- };
- use crate::pac::{FLASH, RCC};
-+use crate::rcc::LSI_FREQ;
- #[cfg(dsihost)]
- use crate::rcc::dsi;
- #[cfg(dsihost)]
-@@ -338,8 +339,8 @@ pub(crate) unsafe fn init(config: Config) {
-     set_clocks!(
-         hsi: hsi,
-         hse: hse,
--        lse: None, // TODO
--        lsi: None, // TODO
-+        lse: config.ls.lse.map(|l| l.frequency),
-+        lsi: config.ls.lsi.then_some(LSI_FREQ),
-         sys: Some(sys),
-         hclk1: Some(hclk),
-         hclk2: Some(hclk),
-```
-
-**File**: `embassy-stm32/src/rcc/g0.rs` (modified, +2/-4)
-```diff
-@@ -369,10 +369,8 @@ pub(crate) unsafe fn init(config: Config) {
-         #[cfg(crs)]
-         hsi48: hsi48,
-         rtc: rtc,
--
--        // TODO
--        lsi: None,
--        lse: None,
-+        lsi: config.ls.lsi.then_some(LSI_FREQ),
-+        lse: config.ls.lse.map(|l| l.frequency),
-     );
- }
- 
-```
-
-**File**: `embassy-stm32/src/rcc/g4.rs` (modified, +3/-2)
-```diff
-@@ -4,6 +4,7 @@ pub use crate::pac::rcc::vals::{
-     Pllsrc as PllSource, Ppre as APBPrescaler, Sw as Sysclk,
- };
- use crate::pac::{FLASH, PWR, RCC};
-+use crate::rcc::LSI_FREQ;
- use crate::time::Hertz;
- 
- /// HSI speed
-@@ -332,8 +333,8 @@ pub(crate) unsafe fn init(config: Config) {
-         hsi48: hsi48,
-         rtc: rtc,
-         i2s_ckin: None,
--        lsi: None,
--        lse: None,
-+        lsi: config.ls.lsi.then_some(LSI_FREQ),
-+        lse: config.ls.lse.map(|l| l.frequency),
-     );
- }
- 
-```
-
----
-
-### Incident Patch 2: `326f980c` (2026-11-18)
-**Commit Message**: Merge pull request #7584 from embassy-rs/stm32-lp-build-fixes
-
-stm32/low-power: build for more chips, restore clocks in all chips, misc fixes
-
-**File**: `ci.sh` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ rm -rf out/tests/nrf51422-dk
- 
- # temporarily disabled
- rm -rf out/tests/stm32f767zi
--rm -rf out/tests/stm32f429zi
-+rm -f out/tests/stm32f429zi/i2s_dma
- 
- rm -f out/tests/stm32u585ai/saes
- 
-```
-
-**File**: `embassy-stm32/CHANGELOG.md` (modified, +15/-0)
-```diff
-@@ -49,6 +49,8 @@ RCC:
- - feat: stm32/rcc u5: backup SRAM; `BackupMemory::new` enables its clock
- - feat: stm32/rcc: add `rcc::reset_flags()` to read what caused the last reset.
- - change: stm32/rcc h7: remove `rcc::ResetReason`, use `rcc::reset_flags()` instead (breaking change).
-+- fix: stm32/rcc f2, f4, f7, g0, g4, h5, h7: report the LSE and LSI frequencies, so peripherals can use them as kernel clock
-+- fix: stm32/rcc u3: `LseConfig::peripherals_clocked` sets `LSESYSEN`; it was ignored
- 
- LPTIM:
- - fix: stm32/lptim: a period whose tick count is at least 65536 no longer panics when rounding the divider up to a power of two still leaves the reload above 65535. The prescaler is the smallest of /1, /2, ..., /128 for which the reload fits in 16 bits. A period that does not fit even at /128 still panics.
-@@ -60,6 +62,11 @@ Time driver:
- - fix: stm32/time-driver-lptim: the interrupt handler clears only the flags it read; it also cleared every enabled flag, so an overflow that arrived during the handler was lost and time fell back one counter period
- - fix: stm32/time-driver-lptim: on U5, U3 and WBA, wait for `DIEROK` after each `DIER` change; a `CCIE` write still in flight when entering Stop lost the alarm wakeup until the next overflow
- - fix: stm32/time-driver-lptim: `now()` retries if the update event flag changes while it reads the counter; a wrap between the two reads returned a time one counter period ahead, then time went backwards
-+- fix: stm32/time-driver-lptim: build on chips with LPTIM v1, v1a or v1b (F4, F7, G0, G4, H7, L0, L4, L4+, WB), which have no update event; the counter overflow is counted on `ARRM`
-+- fix: stm32/time-driver-lptim: build on C5, H5, L5, U0 and U3; `time-driver-lptim3` on U5 and U3 uses the shared LPTIM3/LPTIM4 kernel clock mux
-+- change: stm32/time-driver-lptim: `init` no longer changes `config.rcc`. The LPTIM kernel clock must be selected in `config.rcc.mux` and enabled in `config.rcc` (LSE with `peripherals_clocked: true` on L5, U0, U3, U5, WBA and WL); the reset value is no longer switched to LSI, and LSI and HSI are no longer enabled (breaking change).
-+- change: stm32/time-driver-lptim: panic at `init` if the LPTIM kernel clock is LSE not routed to peripherals, or a frequency that is not 1, 2, 4, ..., 128 times the tick rate.
-+- change: stm32/time-driver-lptim: with `low-power`, an LPTIM kernel clock other than LSI or LSE disables Stop mode and logs a warning.
- - fix: stm32/time-driver-lptim: on U5, U3 and WBA, the wait for `CMPOK` after a compare write is bounded, as the `DIEROK` wait is, instead of spinning forever with interrupts masked; both bounds now count counter clock cycles, so a prescaled counter no longer gives up on a `DIEROK` that is only slow
- 
- I2C:
-@@ -119,6 +126,14 @@ Flash:
- Low power:
- - fix: stm32/low-power: fail to compile on chip families with no low-power implementation, instead of building a `sleep()` that set `SLEEPDEEP` and entered whatever `PWR` happened to default to, without clearing the wake-up flags or restoring the system clock on wake-up. Implemented families are F4, G4, L0, L4, L5, U0, U3, U5, H5, WB, WBA and WL.
- - add: stm32/low-power: Stop mode support for STM32G4, entering the low-power-regulator stop (`PWR_CR1.LPMS = 0b001`).
-+- fix: stm32/low-power: build on L412/L422 and L4P5/L4Q5, on U3 with a TIM time driver, and on U0 with an LPTIM time driver
-+- fix: stm32/low-power: restore the clocks after Stop on L0, L4, L5, U0, WB and H5 (including the voltage scale and flash latency on H5), which kept running on the wake-up clock.
-+- change: stm32/low-power: after Stop, turn back on only the oscillators, PLLs and voltage settings that Stop turned off, instead of re-running the RCC init (U3, U5, WL, WBA, F4, G4).
-+- fix: stm32/low-power l0: only put the regulator in low-power mode for Stop, not for the `WFI` sleeps after it.
-+- fix: stm32/low-power u0: execute the `WFI` from RAM. With `enable_debug_during_sleep`, the chip HardFaulted on wake-up from Stop.
-+- fix: stm32/rcc l5: don't reset the backup domain when configuring LSE/LSI, which also erased SRAM2.
-+- change: stm32/rcc l5: `LsConfig::new()` and `LsConfig::default()` use LSI for the RTC, like the other families, instead of turning it off.
-+- change: stm32/low-power: remove the `low-power-debug-with-sleep` feature.
- 
- Align to API guidelines:
- - change: stm32/gpio: rename `get_level()` to `level()` and `get_output_level()` to `output_level()` on `Input`, `Output`, `OutputOpenDrain`, `Flex` and `ExtiInput`. `lpgpio::LpGpio::get_level()` is now `level()`.
-```
-
-**File**: `embassy-stm32/Cargo.toml` (modified, +30/-3)
-```diff
-@@ -134,6 +134,34 @@ build = [
-     {target = "thumbv8m.main-none-eabihf", features = ["defmt", "dual-bank", "exti", "stm32c552rc", "time", "time-driver-any"]},
-     {target = "thumbv6m-none-eabi", features = ["defmt", "exti", "stm32g070rb", "time", "time-driver-any"]},
-     {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "stm32h755zi-cm4", "time", "time-driver-any"]},
-+    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "dual-bank", "exti", "stm32c531cb", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "low-power", "stm32f410c8", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "dual-bank", "exti", "stm32f767zi", "time", "time-driver-lptim1"]},
-+    {target = "thumbv6m-none-eabi", features = ["defmt", "exti", "stm32g071rb", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "dual-bank", "exti", "low-power", "stm32g474re", "time", "time-driver-lptim1"]},
-+    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "exti", "low-power", "stm32h503rb", "time", "time-driver-lptim1"]},
-+    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "exti", "low-power", "stm32h563zi", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "stm32h723zg", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "stm32h753zi", "time", "time-driver-lptim3"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "stm32h755zi-cm7", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "stm32h7a3zi", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "stm32h7s3l8", "time", "time-driver-lptim1"]},
-+    {target = "thumbv6m-none-eabi", features = ["defmt", "exti", "low-power", "stm32l073rz", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "low-power", "stm32l412kb", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "low-power", "stm32l412kb", "time", "time-driver-any"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "low-power", "stm32l476rg", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "dual-bank", "exti", "low-power", "stm32l4p5ae", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "dual-bank", "exti", "low-power", "stm32l4r5zi", "time", "time-driver-lptim2"]},
-+    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "dual-bank", "exti", "low-power", "stm32l552ze", "time", "time-driver-lptim1"]},
-+    {target = "thumbv6m-none-eabi", features = ["defmt", "exti", "low-power", "stm32u083rc", "time", "time-driver-lptim1"]},
-+    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "exti", "low-power", "stm32u385rg", "time", "time-driver-lptim1"]},
-+    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "exti", "low-power", "stm32u385rg", "time", "time-driver-lptim3"]},
-+    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "exti", "low-power", "stm32u385rg", "time", "time-driver-any"]},
-+    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "exti", "low-power", "stm32u585ai", "time", "time-driver-lptim3"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "low-power", "stm32wb55rg", "time", "time-driver-lptim1"]},
-+    {target = "thumbv8m.main-none-eabihf", features = ["defmt", "exti", "low-power", "stm32wba65ri", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "low-power", "stm32wl55jc-cm4", "time", "time-driver-lptim1"]},
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "exti", "low-power", "stm32wle5jc", "time", "time-driver-lptim1"]},
- ]
- 
- [package.metadata.embassy_docs]
-@@ -229,11 +257,11 @@ aligned = "0.4.3"
- heapless = "0.9.3"
- 
- # stm32-metapac = { version = "21" }
--stm32-metapac = { git = "https://github.com/embassy-rs/stm32-data-generated", tag = "stm32-data-82e648dd53815704702719594a12c87e95dd48d8" }
-+stm32-metapac = { git = "https://github.com/embassy-rs/stm32-data-generated", tag = "stm32-data-af2c47a6ac9618b5e4cb3a490b2429fcdcd8bb91" }
- 
- [build-dependencies]
- # stm32-metapac = { version = "21", default-features = false, features = ["metadata"]}
--stm32-metapac = { git = "https://github.com/embassy-rs/stm32-data-generated", tag = "stm32-data-82e648dd53815704702719594a12c87e95dd48d8", default-features = false, features = ["metadata"] }
-+stm32-metapac = { git = "https://github.com/embassy-rs/stm32-data-generated", tag = "stm32-data-af2c47a6ac9618b5e4cb3a490b2429fcdcd8bb91", default-features = false, features = ["metadata"] }
- 
- proc-macro2 = "1.0.107"
- quote = "1.0.47"
-@@ -354,7 +382,6 @@ embassy-crypto-p384-ecdsa = ["dep:crypto-bigint"]
-```
-
-**File**: `embassy-stm32/build.rs` (modified, +68/-0)
-```diff
-@@ -1189,6 +1189,74 @@ fn main() {
-         }
-     });
- 
-+    // The kernel clock selected for an LPTIM time driver, so the driver can check that it can run
-+    // and whether it keeps running in Stop mode.
-+    if let Some(p) = METADATA.peripherals.iter().find(|p| p.name == time_driver_singleton)
-+        && p.registers.as_ref().is_some_and(|r| r.kind == "lptim")
-+        && let Some(rcc) = &p.rcc
-+        && let PeripheralRccKernelClock::Mux(mux) = &rcc.kernel_clock
-+    {
-+        let ir = &clock_gen.rcc_registers.ir;
-+        let fieldset_name = mux.register.to_ascii_lowercase();
-+        let fieldset = ir
-+            .fieldsets
-+            .iter()
-+            .find(|i| i.name.eq_ignore_ascii_case(&fieldset_name))
-+            .unwrap();
-+        let field_name = mux.field.to_ascii_lowercase();
-+        let field = fieldset.fields.iter().find(|i| i.name == field_name).unwrap();
-+        let enum_name = field.enumm.unwrap();
-+        let enumm = ir.enums.iter().find(|i| i.name == enum_name).unwrap();
-+
-+        let mut name_arms = TokenStream::new();
-+        for v in enumm.variants {
-+            let variant = format_ident!("{}", v.name);
-+            let name = pascal_to_upper_snake(v.name);
-+            name_arms.extend(quote!(Sel::#variant => #name,));
-+        }
-+        let has = |name: &str| enumm.variants.iter().any(|v| v.name == name);
-+        let is_lsi = if has("Lsi") {
-+            quote!(sel() == Sel::Lsi)
-+        } else {
-+            quote!(false)
-+        };
-+        let is_lse = if has("Lse") {
-+            quote!(sel() == Sel::Lse)
-+        } else {
-+            quote!(false)
-+        };
-+
-+        let fieldset_name = format_ident!("{}", fieldset_name);
-+        let field_name = format_ident!("{}", field_name);
-+        let enum_name = format_ident!("{}", enum_name);
-+        g.extend(quote! {
-+            pub(crate) mod time_driver_clock {
-+                use crate::pac::rcc::vals::#enum_name as Sel;
-+
-+                fn sel() -> Sel {
-+                    crate::pac::RCC.#fieldset_name().read().#field_name()
-+                }
-+
-+                /// Name of the selected clock.
-+                pub(crate) fn name() -> &'static str {
-+                    #[allow(unreachable_patterns)]
-+                    match sel() {
-+                        #name_arms
-+                        _ => "?",
-+                    }
-+                }
-+
-+                pub(crate) fn is_lsi() -> bool {
-+                    #is_lsi
-+                }
-+
-+                pub(crate) fn is_lse() -> bool {
-+                    #is_lse
-+                }
-+            }
-+        });
-+    }
-+
-     // Generate RCC
-     clock_gen.clock_names.insert("sys".to_string());
-     clock_gen.clock_names.insert("rtc".to_string());
-```
-
-**File**: `embassy-stm32/src/lib.rs` (modified, +3/-3)
-```diff
-@@ -664,7 +664,7 @@ mod dual_core {
-         clocks: UnsafeCell<MaybeUninit<Clocks>>,
-         config: UnsafeCell<MaybeUninit<SharedConfig>>,
-         #[cfg(feature = "low-power")]
--        rcc_config: UnsafeCell<MaybeUninit<Option<rcc::Config>>>,
-+        stop_restore: UnsafeCell<MaybeUninit<Option<rcc::StopRestore>>>,
+         match value {
+-            #[cfg(not(any(stm32h5, stm32g5)))]
++            #[cfg(not(any(stm32h5, stm32g5, stm32c5)))]
+             LseDrive::Low => Lsedrv::Low,
+             #[cfg(not(stm32g5))]
+             LseDrive::MediumLow => Lsedrv::MediumLow,
+@@ -55,26 +56,26 @@ impl From<LseDrive> for crate::pac::rcc::vals::Lsedrv {
      }
- 
-     unsafe impl Sync for SharedData {}
-@@ -699,7 +699,7 @@ mod dual_core {
- 
-         rcc::set_freqs_ptr(shared_data.clocks.get());
-         #[cfg(feature = "low-power")]
--        rcc::set_rcc_config_ptr(shared_data.rcc_config.get());
-+        rcc::set_stop_restore_ptr(shared_data.stop_restore.get());
-         let p = init_hw(config);
- 
-         hsem::get_hsem(1).blocking_notify();
-@@ -748,7 +748,7 @@ mod dual_core {
-     fn init_secondary_hw(shared_data: &'static SharedData) -> Peripherals {
-         rcc::set_freqs_ptr(shared_data.clocks.get());
-         #[cfg(feature = "low-power")]
--        rcc::set_rcc_config_ptr(shared_data.rcc_config.get());
-+        rcc::set_stop_restore_ptr(shared_data.stop_restore.get());
- 
-         let config = unsafe { (*shared_data.config.get()).assume_init() };
- 
-```
-
-**File**: `embassy-stm32/src/low_power.rs` (modified, +42/-71)
-```diff
-@@ -74,7 +74,7 @@ foreach_interrupt! {
-     };
  }
  
--#[cfg(all(feature = "rt", stm32u0))]
-+#[cfg(all(feature = "rt", stm32u0, not(feature = "_lp-time-driver")))]
- foreach_interrupt! {
-     (RTC, rtc, $block:ident, TAMP, $irq:ident) => {
-         #[interrupt]
-@@ -110,7 +110,6 @@ mod platform {
-         #[cfg(stm32wb)]
-         let mutex = {
-             use crate::hsem::get_hsem;
--            use crate::pac::rcc::vals::{Smps, Sw};
-             use crate::pac::{PWR, RCC};
+-#[cfg(not(any(rtc_v2_l0, rtc_v2_l1, stm32c0, stm32g5)))]
++#[cfg(not(any(rtc_v2_l0, rtc_v2_l1, stm32c0, stm32g5, stm32c5)))]
+ type Bdcr = crate::pac::rcc::regs::Bdcr;
+ #[cfg(any(rtc_v2_l0, rtc_v2_l1))]
+ type Bdcr = crate::pac::rcc::regs::Csr;
+ #[cfg(any(stm32c0))]
+ type Bdcr = crate::pac::rcc::regs::Csr1;
+-// G5 calls the backup domain the "RTC domain": RCC_RTCCR instead of RCC_BDCR.
+-#[cfg(any(stm32g5))]
++// C5/G5 call the backup domain the "RTC domain": RCC_RTCCR instead of RCC_BDCR.
++#[cfg(any(stm32g5, stm32c5))]
+ type Bdcr = crate::pac::rcc::regs::Rtccr;
  
-             trace!("low power: trying to get sem3");
-@@ -126,27 +125,7 @@ mod platform {
+ #[cfg(any(stm32c0))]
+ fn unlock() {}
  
-             if !(sem4_mutex.is_some() && !PWR.extscr().read().c2ds()) {
-                 sem4_mutex.take();
--
--                // Set HSION
--                RCC.cr().modify(|w| {
--                    w.set_hsion(true);
--                });
--
--                // Wait for HSIRDY
--                while !RCC.cr().read().hsirdy() {}
--
--                // Set SW to HSI
--                RCC.cfgr().modify(|w| {
--                    w.set_sw(Sw::Hsi);
--                });
--
--                // Wait for SWS to report HSI
--                while !RCC.cfgr().read().sws().eq(&Sw::Hsi) {}
--
--                // Set SMPSSEL to HSI
--                RCC.smpscr().modify(|w| {
--                    w.set_smpssel(Smps::Hsi);
--                });
-+                crate::rcc::stop_switch_to_hsi();
-             }
+-#[cfg(stm32g5)]
++#[cfg(any(stm32g5, stm32c5))]
+ fn unlock() {
+     crate::pac::PWR.rtccr().modify(|w| w.set_drtcp(true));
+     while !crate::pac::PWR.rtccr().read().drtcp() {}
+ }
  
-             // on PWR
-@@ -236,8 +215,13 @@ mod platform {
-         // Clear WKUP1..WKUP8 pending flags (CWUFx) before stop entry.
-         crate::pac::PWR.wuscr().write(|w| w.0 = 0xff);
+-#[cfg(not(any(stm32c0, stm32g5)))]
++#[cfg(not(any(stm32c0, stm32g5, stm32c5)))]
+ fn unlock() {
+     #[cfg(any(stm32f0, stm32f1, stm32f2, stm32f3, stm32l0, stm32l1))]
+     let cr = crate::pac::PWR.cr();
+@@ -92,11 +93,11 @@ fn unlock() {
+ fn bdcr() -> Reg<Bdcr, RW> {
+     #[cfg(any(rtc_v2_l0, rtc_v2_l1))]
+     return crate::pac::RCC.csr();
+-    #[cfg(not(any(rtc_v2_l0, rtc_v2_l1, stm32c0, stm32g5)))]
++    #[cfg(not(any(rtc_v2_l0, rtc_v2_l1, stm32c0, stm32g5, stm32c5)))]
+     return crate::pac::RCC.bdcr();
+     #[cfg(any(stm32c0))]
+     return crate::pac::RCC.csr1();
+-    #[cfg(any(stm32g5))]
++    #[cfg(any(stm32g5, stm32c5))]
+     return crate::pac::RCC.rtccr();
+ }
  
-+        // LPSDSR also puts the regulator in low-power mode in Sleep, which needs the system clock
-+        // at or below MSI range 1 (RM0377 6.3.8), so it's only set for Stop.
-         #[cfg(stm32l0)]
--        crate::pac::PWR.cr().modify(|w| w.set_cwuf(true));
-+        crate::pac::PWR.cr().modify(|w| {
-+            w.set_cwuf(true);
-+            w.set_lpsdsr(crate::pac::pwr::vals::Mode::MainMode);
-+        });
- 
-         #[cfg(stm32g4)]
-         // G4 keeps its wake-up flags (WUF1..WUF5) in PWR_SR1 and the standby flag (SBF) there
-@@ -254,19 +238,24 @@ mod platform {
-         });
-     }
- 
--    /// Exit stop mode, reinitializing timer and rcc if required
-+    /// Exit stop mode: restore the clocks, clear the flags and reinitialize the timer if required.
-     pub fn exit_stop(_cs: CriticalSection) {
-+        // Both cores share the clocks, so they restore them one at a time.
-+        #[cfg(any(stm32wb, stm32wl5x))]
-+        let lock = crate::hsem::get_hsem(3).blocking_lock(0);
-+
-+        crate::rcc::stop_exit(_cs);
-+
-+        #[cfg(any(stm32wb, stm32wl5x))]
-+        drop(lock);
-+
-         #[cfg(any(stm32u5, stm32u3))]
-         {
-             let sr = crate::pac::PWR.sr().read();
-             if sr.stopf() {
-                 let lpms = crate::pac::PWR.cr1().read().lpms();
-                 debug!("low power: U5/U3 woke from STOP (LPMS={})", lpms.to_bits());
- 
--                // HSE and all PLLs stop in any STOP mode on U5/U3.
--                // Full RCC restore from saved config on every STOP exit.
--                crate::rcc::reinit_saved(_cs);
--
-                 // GPTIM timer state is lost in Stop2/Stop3, needs re-init.
-                 // LPTIM (_lp-time-driver) survives all STOP modes autonomously.
-                 #[cfg(not(feature = "_lp-time-driver"))]
-@@ -280,45 +269,17 @@ mod platform {
-             crate::pac::PWR.sr().modify(|w| w.set_cssf(true));
-         }
- 
--        #[cfg(any(stm32wl, stm32wb, stm32wba, stm32f4, stm32g4))]
--        {
--            // stm32wl5x is dual core and we don't want BOTH cores to re-initialize RCC so we hold a lock
--            #[cfg(stm32wl5x)]
--            let lock = crate::hsem::get_hsem(3).blocking_lock(0);
-+        #[cfg(stm32h5)]
-+        crate::pac::PWR.pmcr().modify(|w| w.set_cssf(true));
- 
-+        #[cfg(any(stm32wl, stm32wb, stm32wba))]
-+        {
-             #[cfg(any(stm32wl, stm32wb))]
-             let es = crate::pac::PWR.extscr().read();
- 
-             #[cfg(stm32wba)]
-             let es = crate::pac::PWR.sr().read();
- 
--            // we need to re-initialize RCC if *BOTH* cores have been in some STOP mode!
--            #[cfg(any(stm32wl, stm32wba, stm32f4, stm32g4))]
--            let re_initialize_rcc = {
--                #[cfg(stm32wl5x)]
--                {
--                    // core 1 in any STOP mode AND core 2 in any STOP mode
--                    (es.c1stopf() || es.c1stop2f()) && (es.c2stopf() || es.c2stop2f())
--                }
--                #[cfg(stm32wlex)]
--                {
--                    es.c1stop2f() || es.c1stopf()
--                }
--                #[cfg(stm32wba)]
--                {
--                    es.stopf()
--                }
--                // F4 and G4 always need it: neither has STOPWUCK (RM0440 Table 40 lists HSI16 as
--                // the only wake-up system clock for Stop 0/1), so exiting Stop always lands us on
--                // HSI16 rather than the configured PLL. `reini
-```
-
-**File**: `embassy-stm32/src/rcc/bd.rs` (modified, +18/-14)
-```diff
-@@ -99,13 +99,7 @@ pub struct LsConfig {
- impl LsConfig {
-     /// Creates an [`LsConfig`] using the LSI when possible.
-     pub const fn new() -> Self {
--        // on L5, just the fact that LSI is enabled makes things crash.
--        // TODO: investigate.
--
--        #[cfg(not(stm32l5))]
--        return Self::default_lsi();
--        #[cfg(stm32l5)]
--        return Self::off();
-+        Self::default_lsi()
-     }
- 
-     pub const fn default_lse() -> Self {
-@@ -169,7 +163,7 @@ impl LsConfig {
-             },
-             None => (false, false, None),
-         };
--        #[cfg(any(rcc_l5, rcc_u5, rcc_wle, rcc_wl5, rcc_wba, rcc_u0))]
-+        #[cfg(any(rcc_l5, rcc_u5, rcc_u3, rcc_wle, rcc_wl5, rcc_wba, rcc_u0))]
-         let lse_sysen = if let Some(lse) = self.lse {
-             Some(lse.peripherals_clocked)
-         } else {
-@@ -181,7 +175,7 @@ impl LsConfig {
-         // Disable backup domain write protection
-         unlock();
- 
--        if self.lsi {
-+        let enable_lsi = || {
-             #[cfg(any(stm32u5, stm32h5, stm32wba))]
+@@ -193,9 +194,9 @@ impl LsConfig {
              let csr = crate::pac::RCC.bdcr();
              #[cfg(stm32n6)]
-@@ -205,6 +199,9 @@ impl LsConfig {
- 
-             #[cfg(any(rcc_wb, rcc_wba))]
-             while !csr.read().lsi1rdy() {}
-+        };
-+        if self.lsi {
-+            enable_lsi();
-         }
- 
-         // Enable backup regulator for persistent battery backed sram
-@@ -298,7 +295,7 @@ impl LsConfig {
+             let csr = crate::pac::RCC.sr();
+-            #[cfg(stm32g5)]
++            #[cfg(any(stm32g5, stm32c5))]
+             let csr = crate::pac::RCC.rtccr();
+-            #[cfg(not(any(stm32u5, stm32h5, stm32wba, stm32c0, stm32n6, stm32g5)))]
++            #[cfg(not(any(stm32u5, stm32h5, stm32wba, stm32c0, stm32n6, stm32g5, stm32c5)))]
+             let csr = crate::pac::RCC.csr();
+             #[cfg(stm32c0)]
+             let csr = crate::pac::RCC.csr2();
+@@ -310,6 +311,15 @@ impl LsConfig {
          {
              ok &= lsecfgr.lsebyp() == lse_byp;
          }
--        #[cfg(any(rcc_l5, rcc_u5, rcc_wle, rcc_wl5, rcc_wba, rcc_u0))]
-+        #[cfg(any(rcc_l5, rcc_u5, rcc_u3, rcc_wle, rcc_wl5, rcc_wba, rcc_u0))]
++        #[cfg(stm32c5)]
++        if lse_en {
++            ok &= reg.lseext()
++                == if lse_byp {
++                    crate::pac::rcc::vals::Lseext::Digital
++                } else {
++                    crate::pac::rcc::vals::Lseext::Analog
++                };
++        }
+         #[cfg(any(rcc_l5, rcc_u5, rcc_u3, rcc_wle, rcc_wl5, rcc_wba, rcc_u0))]
          if let Some(lse_sysen) = lse_sysen
              && !lse_sysen
-         {
-@@ -315,7 +312,7 @@ impl LsConfig {
- 
-         // After a power-on reset LSESYSEN will be set to 0
-         // even if VBAT was present and kept the RTC running
--        #[cfg(any(rcc_l5, rcc_u5, rcc_wle, rcc_wl5, rcc_wba, rcc_u0))]
-+        #[cfg(any(rcc_l5, rcc_u5, rcc_u3, rcc_wle, rcc_wl5, rcc_wba, rcc_u0))]
-         if ok
-             && let Some(lse_sysen) = lse_sysen
-             && lse_sysen
-@@ -334,11 +331,17 @@ impl LsConfig {
-         }
+@@ -347,7 +357,7 @@ impl LsConfig {
  
          // If not OK, reset backup domain and configure it.
--        #[cfg(not(any(rcc_l0, rcc_l0_v2, rcc_l1, stm32h5, stm32h7rs, stm32c0, stm32n6, stm32u5)))]
-+        #[cfg(not(any(rcc_l0, rcc_l0_v2, rcc_l1, stm32h5, stm32h7rs, stm32c0, stm32n6, stm32u5, stm32l5)))]
+         #[cfg(not(any(
+-            rcc_l0, rcc_l0_v2, rcc_l1, stm32h5, stm32h7rs, stm32c0, stm32n6, stm32u5, stm32l5, stm32g5
++            rcc_l0, rcc_l0_v2, rcc_l1, stm32h5, stm32h7rs, stm32c0, stm32n6, stm32u5, stm32l5, stm32g5, stm32c5
+         )))]
          {
              bdcr().modify(|w| w.set_bdrst(true));
-             bdcr().modify(|w| w.set_bdrst(false));
-         }
-+        // The reset turns the LSI off on WBA, although RM0493 says it doesn't reset LSI1ON
-+        // (checked on an STM32WBA52).
-+        #[cfg(stm32wba)]
-+        if self.lsi {
-+            enable_lsi();
-+        }
-         // H5 has a terrible, terrible errata: 'SRAM2 is erased when the backup domain is reset'
-         // pending a more sane sane way to handle this, just don't reset BD for now.
-         // This means the RTCSEL write below will have no effect, only if it has already been written
-@@ -348,7 +351,8 @@ impl LsConfig {
-         // STM32H562xx/563xx/573xx device errata - 2.2.14 SRAM2 is erased when the backup domain is reset
-         // The U5 does the same: SRAM2 is one of the "device secrets" a backup domain reset wipes
-         // (RM0456, tamper and backup registers), observed on an STM32U585 where the erase zeroed
--        // the 64 kB of SRAM2 during `init`.
-+        // the 64 kB of SRAM2 during `init`. L5 too: "The SRAM2 is also erased by a Backup domain
-+        // reset" (RM0438, memory and bus architecture).
-         //#[cfg(any(stm32h5, stm32h7rs))]
-         #[cfg(any(stm32h7rs, stm32n6))]
-         {
-@@ -388,7 +392,7 @@ impl LsConfig {
-                 while !crate::pac::RCC.sr().read().lserdy() {}
-             }
+@@ -392,6 +402,13 @@ impl LsConfig {
+                         w.set_lsedrv(lse_drv.into());
+                     }
+                     w.set_lsebyp(lse_byp);
++                    // ES0661/ES0676/ES0677: analog bypass is not functional on C5.
++                    #[cfg(stm32c5)]
++                    w.set_lseext(if lse_byp {
++                        crate::pac::rcc::vals::Lseext::Digital
++                    } else {
++                        crate::pac::rcc::vals::Lseext::Analog
++                    });
+                     w.set_lseon(true);
+                 });
  
--            #[cfg(any(rcc_l5, rcc_u5, rcc_wle, rcc_wl5, rcc_wba, rcc_u0))]
-+            #[cfg(any(rcc_l5, rcc_u5, rcc_u3, rcc_wle, rcc_wl5, rcc_wba, rcc_u0))]
-             if let Some(lse_sysen) = lse_sysen {
-                 bdcr().modify(|w| {
-                     w.set_lsesysen(lse_sysen);
 ```
 
-**File**: `embassy-stm32/src/rcc/f247.rs` (modified, +80/-2)
+**File**: `embassy-stm32/src/rcc/c5.rs` (modified, +274/-17)
 ```diff
-@@ -11,6 +11,7 @@ pub use crate::pac::rcc::vals::{
-     Pllsrc as PllSource, Ppre as APBPrescaler, Sw as Sysclk,
- };
- use crate::pac::{FLASH, RCC};
-+use crate::rcc::LSI_FREQ;
- #[cfg(dsihost)]
- use crate::rcc::dsi;
- #[cfg(dsihost)]
-@@ -338,8 +339,8 @@ pub(crate) unsafe fn init(config: Config) {
-     set_clocks!(
-         hsi: hsi,
-         hse: hse,
--        lse: None, // TODO
--        lsi: None, // TODO
-+        lse: config.ls.lse.map(|l| l.frequency),
-+        lsi: config.ls.lsi.then_some(LSI_FREQ),
-         sys: Some(sys),
-         hclk1: Some(hclk),
-         hclk2: Some(hclk),
-@@ -378,6 +379,83 @@ pub(crate) unsafe fn init(config: Config) {
-     );
+@@ -1,10 +1,12 @@
+ use stm32_metapac::FLASH;
+-use stm32_metapac::rcc::vals::{Adcdacpre, Hseext};
++use stm32_metapac::rcc::vals::{Adcdacpre, Hseext, Hsikdiv, Psiref, Psirefsrc};
+ 
+ use crate::pac::RCC;
+-pub use crate::pac::rcc::vals::{Hpre as AHBPrescaler, Ppre as APBPrescaler, Sw as Sysclk};
++pub use crate::pac::rcc::vals::{
++    Hpre as AHBPrescaler, Ppre as APBPrescaler, Psifreq as PsiFrequency, Psikdiv as PsiKernelDivider, Sw as Sysclk,
++};
++use crate::rcc::{LSI_FREQ, LsConfig};
+ use crate::time::Hertz;
+-
+ /// HSI speed
+ pub const HSI_FREQ: Hertz = Hertz(144_000_000);
+ 
+@@ -26,6 +28,38 @@ pub struct Hse {
+     pub mode: HseMode,
  }
  
-+/// The clocks to bring back after Stop.
++#[derive(Clone, Copy, Eq, PartialEq)]
++pub struct HsiKernel {
++    pub div: Hsikdiv,
++}
++
++/// Reference clock for the PSI oscillator.
 +///
-+/// F4 wakes up on HSI at 16 MHz with HSE and the PLLs off (RM0090 5.3.4, 6.3.1), which runs at
-+/// 0 wait states at any supply voltage, so the flash latency never needs raising before Stop. The
-+/// chips with over-drive also lose it and drop to voltage scale 3 until the PLL is on (RM0090
-+/// 5.1.4).
-+#[cfg(feature = "low-power")]
++/// LSE references are not supported yet.
++#[derive(Clone, Copy, Eq, PartialEq)]
++pub enum PsiSource {
++    /// HSI divided by 18 (8 MHz). Requires `Config::hsi` to be enabled.
++    Hsi,
++    /// HSE. Requires `Config::hse` at 8, 16, 24, 25, 32, 48, or 50 MHz.
++    /// 25 and 50 MHz references only support a 100 MHz PSI output.
++    Hse,
++}
++
++/// Configuration of the PSI oscillator and its independent outputs.
 +#[derive(Clone, Copy)]
-+pub(crate) struct StopRestore {
-+    cr: crate::pac::rcc::regs::Cr,
-+    sw: Sysclk,
-+    #[cfg(any(stm32f446, stm32f4x9, stm32f427, stm32f437))]
-+    overdrive: bool,
++pub struct Psi {
++    /// Reference clock source, enabled separately in `Config`.
++    pub source: PsiSource,
++    /// Oscillator frequency. 160 MHz is only usable through a divided output.
++    pub frequency: PsiFrequency,
++    /// Enable the undivided PSIS output for SYSCLK or peripherals (at most 144 MHz).
++    pub sys: bool,
++    /// Enable the PSI / 3 output. USB requires a 144 MHz PSI oscillator.
++    pub div3: bool,
++    /// Enable PSIK with this divider, or disable it with `None`.
++    pub kernel_div: Option<PsiKernelDivider>,
 +}
 +
-+#[cfg(feature = "low-power")]
-+impl StopRestore {
-+    pub(crate) fn capture() -> Self {
-+        Self {
-+            cr: RCC.cr().read(),
-+            sw: RCC.cfgr().read().sws(),
-+            #[cfg(any(stm32f446, stm32f4x9, stm32f427, stm32f437))]
-+            overdrive: PWR.cr1().read().odswen(),
+ /// Configuration of the core clocks
+ #[non_exhaustive]
+ #[derive(Clone, Copy)]
+@@ -36,8 +70,18 @@ pub struct Config {
+     /// Enable HSI Div 3 tap (48MHz)
+     pub hsi_div3: bool,
+ 
++    pub hsik: Option<HsiKernel>,
++
+     pub hse: Option<Hse>,
+ 
++    /// Low-speed clocks and RTC clock source.
++    /// The RTC domain is not reset during initialization, as this would erase SRAM2.
++    /// Changing a previously selected RTC clock source requires a power cycle.
++    pub ls: LsConfig,
++
++    /// PSI oscillator configuration. `None` disables all PSI outputs.
++    pub psi: Option<Psi>,
++
+     /// System Clock Configuration
+     pub sys: Sysclk,
+ 
+@@ -58,7 +102,10 @@ impl Config {
+         Self {
+             hsi: false,
+             hsi_div3: true,
++            hsik: None,
+             hse: None,
++            ls: LsConfig::new(),
++            psi: None,
+             sys: Sysclk::Hsidiv3,
+             ahb_pre: AHBPrescaler::Div1,
+             apb1_pre: APBPrescaler::Div1,
+@@ -97,6 +144,19 @@ pub(crate) unsafe fn init(config: Config) {
+     RCC.cfgr().modify(|w| w.set_sw(Sysclk::Hsidiv3));
+     while RCC.cfgr().read().sws() != Sysclk::Hsidiv3 {}
+ 
++    // Stop every PSI output before changing its reference source or frequency.
++    // This also releases HSE if a bootloader used it as the PSI reference.
++    RCC.cr().modify(|w| {
++        w.set_psion(false);
++        w.set_psidiv3on(false);
++        w.set_psikon(false);
++        w.set_psikeron(false);
++    });
++    while {
++        let cr = RCC.cr().read();
++        cr.psirdy() || cr.psidiv3rdy() || cr.psikrdy()
++    } {}
++
+     // Configure HSI
+     let hsi = config.hsi.then_some(HSI_FREQ);
+     let hsi_div3 = config.hsi_div3.then_some(Hertz(HSI_FREQ.0 / 3));
+@@ -109,6 +169,35 @@ pub(crate) unsafe fn init(config: Config) {
+         while !RCC.cr().read().hsidiv3rdy() {}
+     }
+ 
++    // Configure HSIK
++    let hsik = match config.hsik {
++        Some(hsik) => {
++            RCC.cr2().modify(|w| w.set_hsikdiv(hsik.div));
++            RCC.cr().modify(|w| w.set_hsikon(true));
++            while !RCC.cr().read().hsikrdy() {}
++            let div_x2: u32 = match hsik.div {
++                Hsikdiv::Div1 => 2,
++                Hsikdiv::Div15 => 3,
++                Hsikdiv::Div2 => 4,
++                Hsikdiv::Div25 => 5,
++                Hsikdiv::Div3 => 6,
++                Hsikdiv::Div35 => 7,
++                Hsikdiv::Div4 => 8,
++                Hsikdiv::Div45 => 9,
++                Hsikdiv::Div5 => 10,
++                Hsikdiv::Div55 => 11,
++                Hsikdiv::Div6 => 12,
++                Hsikdiv::Div65 => 13,
++                Hsikdiv::Div7 => 14,
++                Hsikdiv::Div75 => 15,
++                Hsikdiv::Div8 => 16,
++                _ => panic!("invalid HSIK divider"),
++            };
++            Some(Hertz(HSI_FREQ.0 * 2 / div_x2))
 +        }
-+    }
++        None => None,
++    };
 +
-+    pub(crate) fn enter(&self) {}
+     // Configure HSE
+     let hse = match config.hse {
+         None => {
+@@ -143,12 +232,62 @@ pub(crate) unsafe fn init(config: Config) {
+         }
+     };
+ 
++    let (psi, psidiv3, psik) = match config.psi {
++        Some(psi) => {
++            let (source, reference) = match psi.source {
++                PsiSource::Hsi => {
++          
+```
+
+**File**: `embassy-stm32/src/rcc/mod.rs` (modified, +0/-2)
+```diff
+@@ -5,9 +5,7 @@
+ 
+ use core::mem::MaybeUninit;
+ 
+-#[cfg(not(stm32c5))]
+ mod bd;
+-#[cfg(not(stm32c5))]
+ pub use bd::*;
+ 
+ #[cfg(any(stm32f0, stm32f1, stm32f3))]
+```
+
+**File**: `examples/stm32c5/src/bin/psi.rs` (added, +50/-0)
+```diff
+@@ -0,0 +1,50 @@
++#![no_std]
++#![no_main]
 +
-+    pub(crate) fn exit(&self) {
-+        let s = self.cr;
-+        RCC.cr().modify(|w| w.set_hseon(w.hseon() | s.hseon()));
-+        while s.hseon() && !RCC.cr().read().hserdy() {}
++use defmt::info;
++use defmt_rtt as _;
++use embassy_executor::Spawner;
++use embassy_stm32::rcc::{self, Psi, PsiFrequency, PsiKernelDivider, PsiSource, Sysclk, mux};
++use embassy_stm32::time::Hertz;
++use embassy_stm32::{Config, peripherals};
++use embassy_time::Timer;
++use panic_probe as _;
 +
-+        RCC.cr().modify(|w| {
-+            w.set_pllon(w.pllon() | s.pllon());
-+            #[cfg(not(stm32f410))]
-+            w.set_plli2son(w.plli2son() | s.plli2son());
-+            #[cfg(any(stm32f446, stm32f427, stm32f437, stm32f4x9))]
-+            w.set_pllsaion(w.pllsaion() | s.pllsaion());
-+        });
++#[embassy_executor::main]
++async fn main(_spawner: Spawner) {
++    let mut config = Config::default();
++    config.rcc.hsi = true; // HSI / 18 supplies the 8 MHz PSI reference.
++    config.rcc.hsi_div3 = false;
++    config.rcc.psi = Some(Psi {
++        source: PsiSource::Hsi,
++        frequency: PsiFrequency::F144mHz,
++        sys: true,
++        div3: true,
++        kernel_div: Some(PsiKernelDivider::Div15),
++    });
++    config.rcc.sys = Sysclk::Psi;
++    config.rcc.mux.clk48sel = mux::Clksel::Psidiv3;
++    config.rcc.mux.adcdacsel = mux::Adcdacsel::Psik;
++    config.rcc.mux.usart2sel = mux::Usartsel::Psik;
++    // PSIK = 96 MHz; ADC/DAC clock = 96 / 4 = 24 MHz.
++    config.rcc.adcdac_pre = embassy_stm32::pac::rcc::vals::Adcdacpre::Div4;
 +
-+        // Over-drive goes back on once the PLL is on, while still running on HSI (RM0090 5.1.4).
-+        #[cfg(any(stm32f446, stm32f4x9, stm32f427, stm32f437))]
-+        if self.overdrive && !PWR.cr1().read().odswen() {
-+            PWR.cr1().modify(|w| w.set_oden(true));
-+            while !PWR.csr1().read().odrdy() {}
-+            PWR.cr1().modify(|w| w.set_odswen(true));
-+            while !PWR.csr1().read().odswrdy() {}
-+        }
++    // For an HSE reference, configure config.rcc.hse, select PsiSource::Hse,
++    // and disable config.rcc.hsi if it is not needed elsewhere.
++    let p = embassy_stm32::init(config);
++    let clocks = rcc::clocks(&p.RCC);
++    assert!(clocks.sys.to_hertz() == Some(Hertz(144_000_000)));
++    assert!(clocks.psi.to_hertz() == Some(Hertz(144_000_000)));
++    assert!(clocks.psidiv3.to_hertz() == Some(Hertz(48_000_000)));
++    assert!(clocks.psik.to_hertz() == Some(Hertz(96_000_000)));
++    assert!(clocks.hsidiv3.to_hertz().is_none());
++    assert!(rcc::frequency::<peripherals::USART2>() == Hertz(96_000_000));
++    assert!(rcc::frequency::<peripherals::ADC1>() == Hertz(24_000_000));
++    assert!(rcc::frequency::<peripherals::USB>() == Hertz(48_000_000));
++    assert!(rcc::frequency::<peripherals::RNG>() == Hertz(48_000_000));
 +
-+        loop {
-+            let cr = RCC.cr().read();
-+            #[allow(unused_mut)]
-+            let mut ready = cr.pllrdy() | !s.pllon();
-+            #[cfg(not(stm32f410))]
-+            {
-+                ready &= cr.plli2srdy() | !s.plli2son();
-+            }
-+            #[cfg(any(stm32f446, stm32f427, stm32f437, stm32f4x9))]
-+            {
-+                ready &= cr.pllsairdy() | !s.pllsaion();
-+            }
-+            if ready {
-+                break;
-+            }
-+        }
-+
-+        if RCC.cfgr().read().sws() != self.sw {
-+            RCC.cfgr().modify(|w| w.set_sw(self.sw));
-+            while RCC.cfgr().read().sws() != self.sw {}
-+        }
-+        if !s.hsion() {
-+            RCC.cr().modify(|w| w.set_hsion(false));
-+        }
++    loop {
++        info!("PSI SYSCLK=144 MHz, PSIDIV3=48 MHz, PSIK=96 MHz");
++        Timer::after_secs(1).await;
 +    }
 +}
-+
- struct PllInput {
-     source: PllSource,
-     hsi: Option<Hertz>,
 ```
 
 ---
 
-### Incident Patch 3: `4f1f3c8d` (2026-11-16)
-**Commit Message**: fix: use dedicated buffer for control commands
+### Incident Patch 2: `41d0a997` (2026-11-19)
+**Commit Message**: stm32/flash: workaround "writing zeros over ones fails with progerr" errata in tests
 
-* Use a dedicated control buffer for at commands to prevent them from
-being blocked by unreleased data buffers.
-* Add a lock to ensure only a single ongoing at command at a time.
-* Make number of ipc tx buffers configurable using cargo features.
-
-**File**: `embassy-net-nrf91/CHANGELOG.md` (modified, +3/-0)
+**File**: `tests/stm32/src/bin/flash.rs` (modified, +43/-5)
 ```diff
-@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - changed: add `keep_open` config option to keep sockets open across PDN loss/reattach.
- - changed: link state follows the PDN deactivated/activated socket status notifications rather than polling attach.
- - fixed: reopen the raw socket when the modem closes it, instead of polling for a detach.
-+- changed: select the number of IP TX buffers with the `tx-buf-count-4` or `tx-buf-count-8` feature (exactly one is required).
-+- fixed: AT commands and socket requests use a dedicated TX buffer, so they are not blocked when IP packets hold all TX buffers.
-+- fixed: only one AT command runs at a time.
- 
- ## 0.2.0 - 2026-03-10
- 
-```
-
-**File**: `embassy-net-nrf91/Cargo.toml` (modified, +7/-3)
-```diff
-@@ -14,6 +14,10 @@ publish = true
- defmt = ["dep:defmt", "heapless/defmt", "embassy-time/defmt"]
- log = ["dep:log"]
- 
-+## Number of IP TX buffers. Select exactly one.
-+tx-buf-count-4 = []
-+tx-buf-count-8 = []
-+
- [dependencies]
- defmt = { version = "1.0.1", optional = true }
- log = { version = "0.4.14", optional = true }
-@@ -31,14 +35,14 @@ at-commands = "0.5.4"
- 
- [package.metadata.embassy]
- build = [
--    {target = "thumbv7em-none-eabi", features = ["defmt", "nrf-pac/nrf9160"]}
-+    {target = "thumbv7em-none-eabi", features = ["defmt", "nrf-pac/nrf9160", "tx-buf-count-4"]}
- ]
- 
- [package.metadata.embassy_docs]
- src_base = "https://github.com/embassy-rs/embassy/blob/embassy-net-nrf91-v$VERSION/embassy-net-nrf91/src/"
- src_base_git = "https://github.com/embassy-rs/embassy/blob/$COMMIT/embassy-net-nrf91/src/"
- target = "thumbv7em-none-eabi"
--features = ["defmt", "nrf-pac/nrf9160"]
-+features = ["defmt", "nrf-pac/nrf9160", "tx-buf-count-4"]
- 
- [package.metadata.docs.rs]
--features = ["defmt", "nrf-pac/nrf9160"]
-+features = ["defmt", "nrf-pac/nrf9160", "tx-buf-count-4"]
-```
-
-**File**: `embassy-net-nrf91/src/lib.rs` (modified, +190/-12)
-```diff
-@@ -21,6 +21,7 @@ use core::task::{Poll, Waker};
- use cortex_m::peripheral::NVIC;
- use embassy_net_driver_channel as ch;
- use embassy_sync::blocking_mutex::raw::NoopRawMutex;
-+use embassy_sync::mutex::Mutex;
- use embassy_sync::pipe;
- use embassy_sync::waitqueue::{AtomicWaker, WakerRegistration};
- use heapless::Vec;
-@@ -230,6 +231,7 @@ async fn new_internal<'a>(
- 
-         tx_seq_no: 0,
-         tx_buf_used: [false; TX_BUF_COUNT],
-+        ctrl_buf_used: [false; CTRL_BUF_COUNT],
-         tx_waker: WakerRegistration::new(),
- 
-         trace_chans: Vec::new(),
-@@ -245,6 +247,7 @@ async fn new_internal<'a>(
-     let control = Control {
-         state: state_inner,
-         state_ch,
-+        at_lock: &state.at_lock,
-     };
- 
-     let (trace_reader, trace_writer) = if let Some(trace) = trace_buffer {
-@@ -287,6 +290,7 @@ impl TraceBuffer {
- pub struct State {
-     ch: ch::State<4, 4>,
-     inner: MaybeUninit<RefCell<StateInner>>,
-+    at_lock: Mutex<NoopRawMutex, ()>,
- }
- 
- impl State {
-@@ -295,12 +299,31 @@ impl State {
-         Self {
-             ch: ch::State::new(),
-             inner: MaybeUninit::uninit(),
-+            at_lock: Mutex::new(()),
+@@ -907,28 +907,66 @@ mod ecc {
          }
      }
- }
  
-+#[cfg(all(feature = "tx-buf-count-4", feature = "tx-buf-count-8"))]
-+compile_error!("Select only one of the features `tx-buf-count-4` and `tx-buf-count-8`.");
-+#[cfg(not(any(feature = "tx-buf-count-4", feature = "tx-buf-count-8")))]
-+compile_error!("Select one of the features `tx-buf-count-4` or `tx-buf-count-8`.");
++    /// Erratum "Overwriting with all zeros a flash memory location previously programmed with all
++    /// ones fails" (G071: ES0418, WB55: ES0394 2.2.10, WL55: ES0500): programming zeros over a word
++    /// programmed with all ones sets PROGERR. A word left with all its data bits erased but not
++    /// its ECC bits looks like one.
++    #[cfg(ecc_reset)]
++    const ZEROS_OVER_ONES_FAIL: bool = cfg!(any(
++        feature = "stm32g071rb",
++        feature = "stm32wb55rg",
++        feature = "stm32wl55jc"
++    ));
 +
-+#[cfg(feature = "tx-buf-count-4")]
- const TX_BUF_COUNT: usize = 4;
-+#[cfg(not(feature = "tx-buf-count-4"))]
-+const TX_BUF_COUNT: usize = 8;
- const TX_BUF_SIZE: usize = 1500;
-+/// The modem can hold a control buffer after the response, until it gets the next message.
-+const CTRL_BUF_COUNT: usize = 2;
-+
-+/// Control requests use dedicated buffers, so full IP buffers cannot block them.
-+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
-+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
-+enum TxKind {
-+    Ip,
-+    Control,
-+}
- 
- struct TraceChannelInfo {
-     ptr: *mut TraceChannel,
-@@ -318,7 +341,10 @@ struct PendingRequest {
- 
- #[derive(Copy, Clone, PartialEq, Eq, Debug)]
- #[cfg_attr(feature = "defmt", derive(defmt::Format))]
--struct NoFreeBufs;
-+enum NoFreeBufs {
-+    TxBuf,
-+    MsgSlot,
-+}
- 
- struct StateInner {
-     init: bool,
-@@ -343,6 +369,7 @@ struct StateInner {
- 
-     tx_seq_no: u16,
-     tx_buf_used: [bool; TX_BUF_COUNT],
-+    ctrl_buf_used: [bool; CTRL_BUF_COUNT],
-     tx_waker: WakerRegistration,
- 
-     trace_chans: Vec<TraceChannelInfo, TRACE_CHANNEL_COUNT>,
-@@ -544,26 +571,38 @@ impl StateInner {
-         return None;
-     }
- 
--    fn send_message(&mut self, msg: &mut Message, data: &[u8]) -> Result<(), NoFreeBufs> {
-+    fn alloc_tx_buf(&mut self, kind: TxKind) -> Option<*mut u8> {
-+        match kind {
-+            TxKind::Ip => {
-+                let idx = self.find_free_tx_buf()?;
-+                self.tx_buf_used[idx] = true;
-+                Some(unsafe { addr_of_mut!((*self.cb).tx_bufs[idx]) } as *mut u8)
+     /// Zeros can be programmed over any word, also one with an ECC error that the flash's check
+     /// that the word is erased hits. Even words are zeroed blocking, odd ones async.
++    ///
++    /// With [`ZEROS_OVER_ONES_FAIL`], only the words with ECC errors are written, and
++    /// `NotErased` is accepted.
+     #[cfg(ecc_reset)]
+     async fn zero_errors(mut p: Peri<'_, peripherals::FLASH>, planted: &Planted) {
+         let zeros = [0u8; WRITE_SIZE];
+         let words = || (planted.offset..planted.offset + planted.size).step_by(WRITE_SIZE);
++        let mut zeroed = 0;
+         {
+             let mut f = Flash::new_blocking(p.reborrow(), Config::default());
+             for offset in words().step_by(2) {
+-                unwrap!(f.blocking_write(offset, &zeros));
++                if zero_target(&mut f, offset) {
++                    let res = f.blocking_write(offset, &zeros);
++                    zeroed += zero_result(&mut f, offset, res) as u32;
++                }
+             }
+         }
+         let mut f = Flash::new(p, Irqs, Config::default());
+         for offset in words().skip(1).step_by(2) {
+-            unwrap!(f.write(offset, &zeros).await);
++            if zero_target(&mut f, offset) {
++                let res = f.write(offset, &zeros).await;
++                zeroed += zero_result(&mut f, offset, res) as u32;
 +            }
-+            TxKind::Control => {
-+                let idx = self.ctrl_buf_used.iter().position(|&u| !u)?;
-+                self.ctrl_buf_used[idx] = true;
-+                Some(unsafe { addr_of_mut!((*self.cb).ctrl_bufs[idx]) } as *mut u8)
-+            }
-+        }
+         }
++        info!("ecc: {} words zeroed", zeroed);
++        defmt::assert!(zeroed > 0);
++    }
+ 
++    /// Whether [`zero_errors`] writes zeros over the word at `offset`.
++    #[cfg(ecc_reset)]
++    fn zero_target<M: embassy_stm32::mode::Mode>(f: &mut Flash<'_, M>, offset: u32) -> bool {
+         let mut buf = [0u8; WRITE_SIZE];
+-        for offset in words() {
+-            unwrap!(f.blocking_read(offset, &mut buf));
+-            defmt::assert_eq!(buf, zeros);
++        !ZEROS_OVER_ONES_FAIL || f.blocking_read(offset, &mut buf) == Err(Error::Ecc)
 +    }
 +
-+    fn send_message(&mut self, msg: &mut Message, data: &[u8], kind: TxKind) -> Result<(), NoFreeBufs> {
-         if data.is_empty() {
-             msg.data = ptr::null_mut();
-             msg.data_len = 0;
-             self.send_message_raw(msg)
-         } else {
-             assert!(data.len() <= TX_BUF_SIZE);
--            let buf_idx = self.find_free_tx_buf().ok_or(NoFreeBufs)?;
--            let buf = unsafe { addr_of_mut!((*self.cb).tx_bufs[buf_idx]) } as *mut u8;
-+            let buf = self.alloc_tx_buf(kind).ok_or(NoFreeBufs::TxBuf)?;
-             unsafe { copy_nonoverlapping(data.as_ptr(), buf, data.len()) }
-             msg.data = buf;
-             msg.data_len = data.len();
--            self.tx_buf_used[buf_idx] = true;
- 
-             fence(Ordering::SeqCst); // synchronize copy_nonoverlapping (non-volatile) with volatile writes below.
-             if let Err(e) = self.send_message_raw(msg) {
-                 msg.data = ptr::null_mut();
-                 msg.data_len = 0;
--                self.tx_buf_used[buf_idx] = false;
--                self.tx_waker.wake();
-+                self.handle_control_free(buf);
-                 Err(e)
-             } else {
-                 Ok(())
-@@ -579,7 +618,7 @@ impl StateInner {
-         };
- 
-         // allocate a msg.
--        let idx = self.find_free_message(ch).ok_or(NoFreeBufs)?;
-+        let idx = self.find_free_message(ch).ok_or(NoFreeBufs::MsgSlot)?;
- 
-         debug!("tx seq {} msg: {:?}", self.tx_seq_no, msg);
- 
-@@ -604,6 +643,21 @@ impl StateInner {
++    /// Checks the result of writing zeros over the word at `offset`. Returns whether the word was
++    /// zeroed.
++    #[cfg(ecc_reset)]
++    fn zero_result<M: embassy_stm32::mode::Mode>(f: &mut Flash<'_, M>, offset: u32, res: Result<(), Error>) -> bool {
++        if ZEROS_OVER_ONES_FAIL && res == Err(Error::NotErased) {
++            return false;
+         }
++        unwrap!(res);
++        let mut buf = [0u8; WRITE_SIZE];
++        unwrap!(f.blocking_read(offset, &mut buf));
++        defmt::assert_eq!(buf, [0u8; WRITE_SIZE]);
++        true
      }
  
-     fn handle_control_free(&mut self, ptr: *mut u8) {
-+        for idx in 0..CTRL_BUF_COUNT {
-+            if
+     #[cfg(ecc_reset)]
 ```
 
-**File**: `examples/nrf9160/Cargo.toml` (modified, +1/-1)
+---
+
+### Incident Patch 3: `bb6ce689` (2026-11-19)
+**Commit Message**: Merge pull request #7579 from xoviat/fix-stm32wb-stop2-timer
+
+stm32/low-power: restore RCC and GPTIM after Stop on STM32WB
+
+**File**: `embassy-stm32/src/low_power.rs` (modified, +18/-2)
 ```diff
-@@ -9,7 +9,7 @@ publish = false
- embassy-executor = { version = "0.10.0", path = "../../embassy-executor", features = ["platform-cortex-m", "executor-thread", "executor-interrupt", "defmt"] }
- embassy-time = { version = "0.5.1", path = "../../embassy-time", features = ["defmt", "defmt-timestamp-uptime"] }
- embassy-nrf = { version = "0.11.0", path = "../../embassy-nrf", features = ["defmt", "nrf9160-s", "time-driver-rtc1", "unstable-pac", "time"] }
--embassy-net-nrf91 = { version = "0.2.0", path = "../../embassy-net-nrf91", features = ["defmt"] }
-+embassy-net-nrf91 = { version = "0.2.0", path = "../../embassy-net-nrf91", features = ["defmt", "tx-buf-count-4"] }
- embassy-net = { version = "0.9.1", path = "../../embassy-net", features = ["defmt", "tcp", "ipv4", "medium-ip", "icmp-ping-reply"] }
+@@ -218,6 +218,13 @@ fn clear_flags() {
+         #[cfg(feature = "_core-cm0p")]
+         w.set_c2cssf(true);
+     });
++    #[cfg(stm32wb)]
++    // CPU1 clears its own Stop/Standby flags (each core owns its own bits, as on
++    // stm32wl). C1STOPF is only ever set when the system actually entered Stop mode,
++    // so clearing it before each entry is what lets `exit_stop` distinguish a real
++    // system Stop (clocks gone) from a mere CPU1 deepsleep in which the clocks were
++    // left untouched. CPU2's flags are left alone - they belong to CPU2.
++    crate::pac::PWR.extscr().modify(|w| w.set_c1cssf(true));
+     #[cfg(stm32wba)]
+     crate::pac::PWR.sr().modify(|w| w.set_cssf(true));
+     #[cfg(stm32wba)]
+@@ -300,7 +307,7 @@ fn exit_stop(cs: CriticalSection) {
+         #[cfg(stm32wba)]
+         let es = crate::pac::PWR.sr().read();
  
- defmt = "1.0.1"
+-        #[cfg(any(stm32wl, stm32wba))]
++        #[cfg(any(stm32wl, stm32wb, stm32wba))]
+         let re_initialize_timer = {
+             #[cfg(all(stm32wl, not(feature = "_core-cm0p")))]
+             {
+@@ -310,6 +317,15 @@ fn exit_stop(cs: CriticalSection) {
+             {
+                 es.c2stop2f()
+             }
++            #[cfg(stm32wb)]
++            {
++                // C1STOPF is only set when the system as a whole entered Stop (RM0473),
++                // i.e. exactly when HSE/PLL are gone and the clocks were restored above:
++                // the GPTIM is then parked and its prescaler must be recomputed for the
++                // restored timer clock. LPTIM keeps running from LSI/LSE through Stop and
++                // is skipped by the cfg inside the block below.
++                es.c1stopf()
++            }
+             #[cfg(stm32wba)]
+             {
+                 es.stopf()
+@@ -350,7 +366,7 @@ fn exit_stop(cs: CriticalSection) {
+ 
+         clear_flags();
+ 
+-        #[cfg(any(stm32wl, stm32wba))]
++        #[cfg(any(stm32wl, stm32wb, stm32wba))]
+         if re_initialize_timer {
+             trace!("low power: re-initializing timer");
+             // when we wake from STOP2, we need to re-initialize the time driver
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7589** (2026-11-18): stm32/rcc: use shared backup domain code for G5 (@Dirbaio)
-- **PR #7584** (2026-11-18): stm32/low-power: build for more chips, restore clocks in all chips, misc fixes (@Dirbaio)
-- **PR #7583** (2026-11-18): fix: use dedicated buffer for control commands (@lulf)
-- **PR #7580** (2026-11-18): nrf/uart: fix buffered uart hanging if irqs are delayed (@Dirbaio)
-- **PR #7577** (2026-11-18): G5 (@xoviat)
-- **PR #7575** (2026-11-18): usb(synopsys-otg): abort an IN transfer cancelled before its FIFO is filled (@leftger)
+- **PR #7605** (2026-11-20): embassy-usb: upgrade UVC class to UVC 1.5 (@leftger)
+- **PR #7604** (2026-11-20): embassy-usb: add MTP (Media Transfer Protocol) device class (@leftger)
+- **PR #7602** (2026-11-20): stm32/npu: run streaming-engine epochs (@leftger)
+- **PR #7599** (2026-11-19): stm32: update metapac (@Dirbaio)
+- **PR #7598** (2026-11-19): usb-driver: more cleanups (@Dirbaio)
+- **PR #7597** (2026-11-19): sync: implement Format and Debug where possible (@wojciech-graj)
 
 ---
 
@@ -2591,38 +2005,64 @@ being blocked by unreleased data buffers.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stm32: fix LPTIM time driver and low-power builds, make the LPTIM clock explicit
+## X. Empirical Invariant Guard in bd.rs
 
 **RULE**:
-When implementing operations in `embassy-stm32/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `embassy-stm32/src/rcc/bd.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6bd3541f`: stm32: fix LPTIM time driver and low-power builds, make the LPTIM clock explicit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c0913476`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-stm32/CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-stm32/src/rcc/bd.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- fix: stm32/rcc f2, f4, f7, g0, g4, h5, h7: report the LSE and LSI frequencies, so peripherals can use them as kernel clock
-- fix: stm32/rcc u3: `LseConfig::peripherals_clocked` sets `LSESYSEN`; it was ignored
-- fix: stm32/time-driver-lptim: build on chips with LPTIM v1, v1a or v1b (F4, F7, G0, G4, H7, L0, L4, L4+, WB), which have no update event; the counter overflow is counted on `ARRM`
-- fix: stm32/time-driver-lptim: build on C5, H5, L5, U0 and U3; `time-driver-lptim3` on U5 and U3 uses the shared LPTIM3/LPTIM4 kernel clock mux
-- change: stm32/time-driver-lptim: `init` no longer changes `config.rcc`. The LPTIM kernel clock must be selected in `config.rcc.mux` and enabled in `config.rcc` (LSE with `peripherals_clocked: true` on L5, U0, U3, U5, WBA and WL); the reset value is no longer switched to LSI, and LSI and HSI are no longer enabled (breaking change).
-- change: stm32/time-driver-lptim: panic at `init` if the LPTIM kernel clock is LSE not routed to peripherals, or a frequency that is not 1, 2, 4, ..., 128 times the tick rate.
-- change: stm32/time-driver-lptim: with `low-power`, an LPTIM kernel clock other than LSI or LSE disables Stop mode and logs a warning.
-- fix: stm32/l
+    /// External clock. On C5 this uses digital bypass; analog bypass is not functional.
+    #[cfg(not(any(stm32h5, stm32g5, stm32c5)))] // ES0565/ES0661/ES0676/ES0677: LSE low drive is not functional
+            #[cfg(not(any(stm32h5, stm32g5, stm32c5)))]
+#[cfg(not(any(rtc_v2_l0, rtc_v2_l1, stm32c0, stm32g5, stm32c5)))]
+// C5/G5 call the backup domain the "RTC domain": RCC_RTCCR instead of RCC_BDCR.
+#[cfg(any(stm32g5, stm32c5))]
+#[cfg(any(stm32g5, stm32c5))]
+#[cfg(not(any(stm32c0, stm32g5, stm32c5)))]
+    #[cfg(not(any(rtc_v2_l0, rtc_v2_l1, stm32c0, stm32g5, stm32c5)))]
+    #[cfg(any(stm32g5, stm32c5))]
+            #[cfg(any(stm32g5, stm32c5))]
+            #[cfg(not(any(stm32u5, stm32h5, stm32wba, stm32c0, stm32n6, stm32g5, stm32c5)))]
+        #[cfg(stm32c5)]
+        if lse_en {
+            ok &= reg.lseext()
+                == if lse_byp {
+                    crate::pac::rcc::vals::Lseext::Digital
+                } else {
+                    crate::pac::rcc::vals::Lseext::Analog
+                };
+        }
+            rcc_l0, rcc_l0_v2, rcc_l1, stm32h5, stm32h7rs, stm32c0, stm32n6, stm32u5, stm32l5, stm32g5, stm32c5
+                    // ES0661/ES0676/ES0677: analog bypass is n
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    #[cfg(not(any(stm32h5, stm32g5)))] // ES0565: LSE Low drive mode is not functional
+            #[cfg(not(any(stm32h5, stm32g5)))]
+#[cfg(not(any(rtc_v2_l0, rtc_v2_l1, stm32c0, stm32g5)))]
+// G5 calls the backup domain the "RTC domain": RCC_RTCCR instead of RCC_BDCR.
+#[cfg(any(stm32g5))]
+#[cfg(stm32g5)]
+#[cfg(not(any(stm32c0, stm32g5)))]
+    #[cfg(not(any(rtc_v2_l0, rtc_v2_l1, stm32c0, stm32g5)))]
+    #[cfg(any(stm32g5))]
+            #[cfg(stm32g5)]
+            #[cfg(not(any(stm32u5, stm32h5, stm32wba, stm32c0, stm32n6, stm32g5)))]
+            rcc_l0, rcc_l0_v2, rcc_l1, stm32h5, stm32h7rs, stm32c0, stm32n6, stm32u5, stm32l5, stm32g5
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6bd3541f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c0913476` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

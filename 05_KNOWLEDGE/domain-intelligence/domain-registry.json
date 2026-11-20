@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T12:50:33.397Z",
-  "total_records": 2126,
+  "last_updated": "2026-11-20T13:13:24.525Z",
+  "total_records": 2128,
   "domains": {
     "A": {
       "total": 17,
@@ -1008,7 +1008,7 @@
       ]
     },
     "G": {
-      "total": 362,
+      "total": 364,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1371,7 +1371,9 @@
         "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-joreilly-confetti-core-invariants",
         "domain_intelligence-architecture-intelligence-joreilly-confetti-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-redisearch-redisearch-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-redisearch-redisearch-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-actions-actions-runner-controller-core-invariants",
+        "domain_intelligence-architecture-intelligence-actions-actions-runner-controller-learnings-core-invar"
       ]
     },
     "H": {
@@ -8127,8 +8129,8 @@
       "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
       "repository": "ClickHouse/ClickHouse",
-      "content_hash": "defc0f26470b8de43c788c469d173c65e1c7e4929c8eed0127fce934c163b1da",
-      "created_at": "2026-11-19T06:30:23.175Z"
+      "content_hash": "37f86b065798b48133594bcd596f046c08438ce662865a10816ee11c89e55550",
+      "created_at": "2026-11-20T13:08:32.949Z"
     },
     "DOM-D-303E5CE5": {
       "record_id": "DOM-D-303E5CE5",
@@ -9939,8 +9941,8 @@
       "title": "Architecture Intelligence: embassy-rs/embassy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-architecture-intelligence-embassy-rs-embassy-core-invariants.md",
       "repository": "embassy-rs/embassy",
-      "content_hash": "0fa555bd910d134a86df7ab0a111218507ec580fff3cc4025e5157007849217f",
-      "created_at": "2026-11-18T22:03:23.333Z"
+      "content_hash": "3f952f3aadfab5d306fb04f6921dbebf099ec429942afeafa019261e71119deb",
+      "created_at": "2026-11-20T13:13:19.405Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core",
@@ -9984,8 +9986,8 @@
       "title": "Architecture Intelligence: embassy-rs-embassy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-learnings-architecture-intelligence-embassy-rs-embassy-learni.md",
       "repository": "embassy-rs-embassy-learnings",
-      "content_hash": "07488624c70100babd13590fee64abc4461779c3cc331a43ef27330bdd8d8a1f",
-      "created_at": "2026-11-18T22:06:57.152Z"
+      "content_hash": "2337461b893cb63f3648e71088638e32fe07e9d6ebcf43e802b96349030e8686",
+      "created_at": "2026-11-20T13:13:22.715Z"
     },
     "DOM-D-4AA06C1E": {
       "record_id": "DOM-D-4AA06C1E",
@@ -29718,8 +29720,8 @@
       "title": "Research & Knowledge Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dathere-qsv-research-knowledge-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "eb6ddf7c329840712b635034eeef02677e4fe0795f2b58dda1cdcd5ba9d3d41a",
-      "created_at": "2026-11-18T03:56:22.857Z"
+      "content_hash": "e5bfeb4a41f02a4d136a42b0ea4ac93b07c40b6bac3ddb877e3b7095c8a37169",
+      "created_at": "2026-11-20T13:08:32.890Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dathere-qsv-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-dathere-qsv-learnings-core-invariants",
@@ -31768,8 +31770,8 @@
       "title": "Technical Construction Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tailscale-tailscale-technical-construction-intelligence-tailscale-tailscale-core.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "b632d682a3f9f55bcaf2024e67721833cf36eaa4a3f4db5272bbf78cdcd64b38",
-      "created_at": "2026-11-18T17:51:18.715Z"
+      "content_hash": "3ed7bddb57a781e3d998357f9ee9fe357f3342d72fbc2589d4fe5e934ca03595",
+      "created_at": "2026-11-20T13:08:28.638Z"
     },
     "DOM-D-714854BB": {
       "record_id": "DOM-D-714854BB",
@@ -31819,8 +31821,8 @@
       "title": "Technical Construction Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tailscale-tailscale-learnings-technical-construction-intelligence-tailscale-tail.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "2df913af3b6293b290f6f4fbcccd96517cd175f8692a353712b90d0705069356",
-      "created_at": "2026-11-18T17:52:02.941Z"
+      "content_hash": "bf9c5995697f81faf87cb4139f49a17993fbc7650d83b9c82992ac6cdfb0a7a7",
+      "created_at": "2026-11-20T13:13:24.525Z"
     },
     "domain_intelligence-research-knowledge-intelligence-compvis-stable-diffusion-v1-4-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-compvis-stable-diffusion-v1-4-core-invariants",
@@ -35864,6 +35866,24 @@
       "repository": "grpc-grpc-rust-learnings",
       "content_hash": "948f542ab615c9dee18a188f0f9d988ae867d55e926855055a45c85635684629",
       "created_at": "2026-11-20T12:50:31.733Z"
+    },
+    "domain_intelligence-architecture-intelligence-actions-actions-runner-controller-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-actions-actions-runner-controller-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: actions/actions-runner-controller Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-actions-actions-runner-controller-architecture-intelligence-actions-actions-runn.md",
+      "repository": "actions/actions-runner-controller",
+      "content_hash": "bb40628cc5c6f7ab28460380679c438953eb72869f80de20304a47d81d2ce1ac",
+      "created_at": "2026-11-20T13:08:25.390Z"
+    },
+    "domain_intelligence-architecture-intelligence-actions-actions-runner-controller-learnings-core-invar": {
+      "record_id": "domain_intelligence-architecture-intelligence-actions-actions-runner-controller-learnings-core-invar",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: actions-actions-runner-controller-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-actions-actions-runner-controller-learnings-architecture-intelligence-actions-ac.md",
+      "repository": "actions-actions-runner-controller-learnings",
+      "content_hash": "80a6d2e5d2bf4c8a5befc62aab35b177d558cadbdce3d4745d4a469bc1de4e80",
+      "created_at": "2026-11-20T13:13:23.876Z"
     }
   }
 }

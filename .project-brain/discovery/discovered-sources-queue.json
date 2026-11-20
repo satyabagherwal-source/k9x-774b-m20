@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T12:50:33.031Z",
+  "updated_at": "2026-11-20T13:13:23.527Z",
   "stats": {
-    "total_discovered": 6349,
-    "approved_pending_harvest": 6000,
+    "total_discovered": 6360,
+    "approved_pending_harvest": 6011,
     "harvested_count": 0,
     "rejected_count": 349,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5985,
-      "OFFICIAL_DOCUMENTATION": 199,
+      "COMMUNITY_AND_EXPERT": 5992,
+      "OFFICIAL_DOCUMENTATION": 201,
       "STANDARDS_AND_SPECIFICATIONS": 117,
       "ENGINEERING_BLOGS": 4,
-      "SECURITY_ADVISORIES": 36,
+      "SECURITY_ADVISORIES": 38,
       "LEGAL_AND_REGULATORY": 2,
       "RESEARCH_AND_ACADEMIA": 6
     }
@@ -137258,6 +137258,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
         "fileName": "duckdb-duckdb-learnings.md"
+      }
+    },
+    "SRC-5A9EF8C5609C": {
+      "id": "SRC-5A9EF8C5609C",
+      "url": "https://github.com/actions/actions-runner-controller",
+      "title": "https://github.com/actions/actions-runner-controller",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:13:23.057Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
+        "fileName": "actions-actions-runner-controller-learnings.md"
+      }
+    },
+    "SRC-405C6077FADF": {
+      "id": "SRC-405C6077FADF",
+      "url": "https://docs.github.com/en/developers/webhooks-and-events/securing-your-webhooks",
+      "title": "https://docs.github.com/en/developers/webhooks-and-events/securing-your-webhooks",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:13:23.122Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
+        "fileName": "actions-actions-runner-controller-learnings.md"
+      }
+    },
+    "SRC-28A3AC23A754": {
+      "id": "SRC-28A3AC23A754",
+      "url": "https://github.com/actions/actions-runner-controller/issues/2118",
+      "title": "https://github.com/actions/actions-runner-controller/issues/2118",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:13:23.165Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
+        "fileName": "actions-actions-runner-controller-learnings.md"
+      }
+    },
+    "SRC-77B92310B604": {
+      "id": "SRC-77B92310B604",
+      "url": "https://github.com/actions/actions-runner-controller/pull/2119",
+      "title": "https://github.com/actions/actions-runner-controller/pull/2119",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:13:23.209Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
+        "fileName": "actions-actions-runner-controller-learnings.md"
+      }
+    },
+    "SRC-E80DB6364E72": {
+      "id": "SRC-E80DB6364E72",
+      "url": "https://gist.github.com/nathanklick/268fea6496a4d7b14cecb2999747ef84",
+      "title": "https://gist.github.com/nathanklick/268fea6496a4d7b14cecb2999747ef84",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:13:23.251Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
+        "fileName": "actions-actions-runner-controller-learnings.md"
+      }
+    },
+    "SRC-051EF6407E2B": {
+      "id": "SRC-051EF6407E2B",
+      "url": "https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/troubleshooting-actions-runner-controller-errors",
+      "title": "https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/troubleshooting-actions-runner-controller-errors",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:13:23.296Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
+        "fileName": "actions-actions-runner-controller-learnings.md"
+      }
+    },
+    "SRC-C6715618C896": {
+      "id": "SRC-C6715618C896",
+      "url": "https://github.com/actions/actions-runner-controller/discussions",
+      "title": "https://github.com/actions/actions-runner-controller/discussions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:13:23.337Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
+        "fileName": "actions-actions-runner-controller-learnings.md"
+      }
+    },
+    "SRC-809CBBB90982": {
+      "id": "SRC-809CBBB90982",
+      "url": "https://github.com/actions/actions-runner-controller/blob/master/docs/gha-runner-scale-set-controller/README.md",
+      "title": "https://github.com/actions/actions-runner-controller/blob/master/docs/gha-runner-scale-set-controller/README.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:13:23.382Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
+        "fileName": "actions-actions-runner-controller-learnings.md"
+      }
+    },
+    "SRC-698D125AA40F": {
+      "id": "SRC-698D125AA40F",
+      "url": "https://www.cve.org/CVERecord?id=CVE-2026-111943",
+      "title": "https://www.cve.org/CVERecord?id=CVE-2026-111943",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:13:23.441Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
+        "fileName": "actions-actions-runner-controller-learnings.md"
+      }
+    },
+    "SRC-F6AE6DB404FD": {
+      "id": "SRC-F6AE6DB404FD",
+      "url": "https://github.com/golang/go/issues/82345",
+      "title": "https://github.com/golang/go/issues/82345",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:13:23.485Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
+        "fileName": "actions-actions-runner-controller-learnings.md"
+      }
+    },
+    "SRC-211C96CB4F2F": {
+      "id": "SRC-211C96CB4F2F",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-111943",
+      "title": "Vulnerability Advisory CVE-2026-111943",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T13:13:23.527Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
+        "fileName": "actions-actions-runner-controller-learnings.md"
       }
     }
   }

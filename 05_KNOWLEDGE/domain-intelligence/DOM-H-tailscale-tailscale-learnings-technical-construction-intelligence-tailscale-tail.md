@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T17:52:02.821Z",
+  "timestamp": "2026-11-20T13:13:24.262Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tailscale-tailscale-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tailscale-tailscale-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T17:52:02.821Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T13:13:24.262Z`  
 > **Learning ID**: `LEARN-EVO-tailscale-tailscale-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tailscale-tailscale-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `6a92f86a`  
+> **Source Version**: `c8ba9da5`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T17:51:17.888Z  
+> **Timestamp**: 2026-11-20T13:08:27.312Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T17:51:17.882Z  
+> **Harvest Timestamp**: 2026-11-20T13:08:27.307Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39294 stars
+- **Stars / Engagement**: 39367 stars
 
 ---
 
@@ -851,631 +851,495 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1f36d5a8` (2026-11-18)
-**Commit Message**: feature/linuxdnsfight, go.mod: replace gonotify with direct inotify calls
+### Incident Patch 1: `c8ba9da5` (2026-11-20)
+**Commit Message**: ipn/store/kubestore: cache TLS certs briefly on write replicas (#22103)
 
-The resolv.conf watcher needs one watch on one directory and a
-blocking read. gonotify v3.0.2 has a bug where it loops forever
-without advancing when a record's name length runs past the end of a
-read. It also never closes its fd on cancel and allocates 32 KB per
-Read. Use x/sys/unix directly, return an error on a malformed record,
-and stop when the kernel removes the watch.
+The write replica of an HA ProxyGroup (cert share "rw") doesn't keep TLS
+certs in memory, so that it notices a recreated, empty cert Secret and
+issues a new cert. As a result, it read the cert Secret from the API
+server on every TLS handshake, with a 30s timeout. When the API server
+was slow or unavailable, handshakes on that replica waited for the read,
+and feature/acme repeated the read under the per-domain lock. Clients
+with a 10s handshake timeout, such as kubectl, failed.
 
-Fixes #16576
+This commit adds a small per-domain cache of the last-known-good cert
+and key for write replicas. The replica serves a cached cert for 30s
+before it reads the Secret again. When it has a cached cert, the read
+uses a 3s timeout, and on an error other than not found or forbidden
+the replica serves the cached cert and waits another 30s before the
+next read. A read that finds the Secret missing, forbidden or empty
+removes the cached cert and returns ipn.ErrStateNotExist as before, so
+a recreated Ingress still gets a new cert, at most 30s later.
+Concurrent reads of the same Secret share one GET, and a read that is
+in flight when a cert is wr
 
-Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
-Change-Id: If2bc5e94f8aab2922ee9e07b3c2b75a76f4f9236
-
-**File**: `cmd/tailscaled/depaware.txt` (modified, +0/-2)
+**File**: `ipn/store/kubestore/store_kube.go` (modified, +139/-17)
 ```diff
-@@ -146,8 +146,6 @@ tailscale.com/cmd/tailscaled dependencies: (generated by github.com/tailscale/de
-         github.com/huin/goupnp/scpd                                  from github.com/huin/goupnp
-         github.com/huin/goupnp/soap                                  from github.com/huin/goupnp+
-         github.com/huin/goupnp/ssdp                                  from github.com/huin/goupnp
--   L 💣 github.com/illarion/gonotify/v3                              from tailscale.com/feature/linuxdnsfight
--   L    github.com/illarion/gonotify/v3/syscallf                     from github.com/illarion/gonotify/v3
-    L    github.com/insomniacslk/dhcp/dhcpv4                          from tailscale.com/feature/tap
-    L    github.com/insomniacslk/dhcp/iana                            from github.com/insomniacslk/dhcp/dhcpv4
-    L    github.com/insomniacslk/dhcp/interfaces                      from github.com/insomniacslk/dhcp/dhcpv4
-```
-
-**File**: `feature/linuxdnsfight/linuxdnsfight.go` (modified, +88/-28)
-```diff
-@@ -8,10 +8,15 @@
- package linuxdnsfight
- 
- import (
-+	"bytes"
- 	"context"
-+	"encoding/binary"
-+	"errors"
- 	"fmt"
-+	"os"
-+	"path/filepath"
- 
--	"github.com/illarion/gonotify/v3"
-+	"golang.org/x/sys/unix"
- 	"tailscale.com/feature"
- 	"tailscale.com/net/dns"
- )
-@@ -23,49 +28,104 @@ func init() {
- 	dns.HookWatchFile.Set(watchFile)
- }
- 
-+// watchEvents are the inotify events that indicate a file in the watched
-+// directory may have changed.
-+const watchEvents = unix.IN_ATTRIB |
-+	unix.IN_CLOSE_WRITE |
-+	unix.IN_CREATE |
-+	unix.IN_DELETE |
-+	unix.IN_MODIFY |
-+	unix.IN_MOVE
-+
- // watchFile sets up an inotify watch for a given directory and
- // calls the callback function every time a particular file is changed.
- // The filename should be located in the provided directory.
-+//
-+// It calls cb once after the watch is in place, so changes made before
-+// watchFile was called are not missed.
- func watchFile(ctx context.Context, dir, filename string, cb func()) error {
--	ctx, cancel := context.WithCancel(ctx)
--	defer cancel()
--
--	const events = gonotify.IN_ATTRIB |
--		gonotify.IN_CLOSE_WRITE |
--		gonotify.IN_CREATE |
--		gonotify.IN_DELETE |
--		gonotify.IN_MODIFY |
--		gonotify.IN_MOVE
--
--	// Watch only dir itself (not recursively) and only for the events
--	// above. gonotify.NewDirWatcher registers IN_ALL_EVENTS on every
--	// subdirectory and filters afterwards, so every open or read under
--	// /etc (including /etc/ld.so.cache on each exec) woke this goroutine.
--	in, err := gonotify.NewInotify(ctx)
-+	fd, err := unix.InotifyInit1(unix.IN_CLOEXEC | unix.IN_NONBLOCK)
- 	if err != nil {
--		return fmt.Errorf("NewInotify: %w", err)
-+		return fmt.Errorf("inotify_init1: %w", err)
- 	}
--	if _, err := in.AddWatch(dir, events|gonotify.IN_ONLYDIR); err != nil {
--		return fmt.Errorf("AddWatch: %w", err)
-+	// The fd is non-blocking, so os.NewFile registers it with the runtime
-+	// poller. Reads then block without a thread, and Close from another
-+	// goroutine unblocks them.
-+	f := os.NewFile(uintptr(fd), "inotify")
-+	defer f.Close()
-+
-+	// Watch only dir itself (not recursively) and only for watchEvents, so
-+	// the kernel drops opens and reads of other files in dir.
-+	if _, err := unix.InotifyAddWatch(fd, dir, watchEvents|unix.IN_ONLYDIR); err != nil {
-+		return fmt.Errorf("inotify_add_watch %q: %w", dir, err)
- 	}
- 
--	// NewDirWatcher used to emit a synthetic event for existing files,
--	// which ran cb once at startup. Keep that behavior.
-+	stop := context.AfterFunc(ctx, func() { f.Close() })
-+	defer stop()
-+
- 	cb()
- 
-+	base := filepath.Base(filename)
-+	// The kernel only returns whole records and fails the read with EINVAL
-+	// if the next one doesn't fit, so size buf for one record with the
-+	// longest possible name. Events are rare, so reading one or a few per
-+	// read is fine.
-+	var buf [unix.SizeofInotifyEvent + unix.NAME_MAX + 1]byte
- 	for {
--		evs, err := in.Read()
-+		n, err := f.Read(buf[:])
- 		if err != nil {
- 			if ctx.Err() != nil {
- 				return ctx.Err()
- 			}
--			return fmt.Errorf("Read: %w", err)
-+			return fmt.Errorf("inotify read: %w", err)
- 		}
--		for _, ev := range evs {
--			if ev.Name == filename {
--				cb()
--				break
--			}
-+		changed, err := parseEvents(buf[:n], base)
-+		if err != nil {
-+			return err
-+		}
-+		if changed {
-+			cb()
-+		}
-+	}
-+}
-+
-+// errWatchRemoved is returned by [parseEvents] when the kernel removed the
-+// watch, such as when the watched directory was deleted or unmounted.
-+var errWatchRemoved = errors.New("inotify watch removed")
-+
-+// parseEvents parses the inotify_event records in buf, as returned by one
-+// read of an inotify fd. It reports whether any of them may indicate a
-+// change to the file named base, or that events were lost.
-+//
-+// It returns an error if buf is malformed. The kernel only returns whole
-+// records, so a malformed buf means something other than the kernel's
-+// inotify code produced it.
-+func parseEvents(buf []byte, base string) (changed bool, err error) {
-+	for len(buf) > 0 {
-+		if len(buf) < unix.SizeofInotifyEvent {
-+			return false, fmt.Errorf("malformed inotify read: %d trailing bytes", len(buf))
-+		}
-+		mask := binary.NativeEndian.Uint32(buf[4:])
-+		nameLen := binary.NativeEndian.Uint32(buf[12:])
-+		if uint64(nameLen) > uint64(len(buf)-unix.SizeofInotifyEvent) {
-+			return false, fmt.Errorf("malformed inotify read: name length %d exceeds remaining %d bytes", nameLen, len(buf)-unix.SizeofInotifyEvent)
-+		}
-+		name := buf[unix.SizeofInotifyEvent:][:nameLen]
-+		buf = buf[unix.SizeofInotifyEvent+int(nameLen):]
-+
-+		if mask&unix.IN_IGNORED != 0 {
-+			return false, errWatchRemoved
-+		}
-+		if mask&unix.IN_Q_OVERFLOW != 0 {
-+			changed = true
-+			continue
-+		}
-+		if i := bytes.IndexByte(name, 0); i >= 0 {
-+			name = name[:i]
-+		}
-+		if string(name) == base {
-+			changed = true
- 		}
- 	}
-+	return changed, nil
- }
-```
-
-**File**: `feature/linuxdnsfight/linuxdnsfight_test.go` (modified, +209/-0)
-```diff
-@@ -6,14 +6,19 @@
- package linuxdnsfight
- 
- import (
-+	"bytes"
- 	"context"
-+	"encoding/binary"
- 	"errors"
+@@ -14,6 +14,7 @@ import (
+ 	"net/http"
  	"os"
- 	"path/filepath"
-+	"strconv"
-+	"strings"
- 	"testing"
+ 	"strings"
++	"sync"
  	"time"
  
- 	"golang.org/x/sync/errgroup"
-+	"golang.org/x/sys/unix"
+ 	"tailscale.com/envknob"
+@@ -24,9 +25,11 @@ import (
+ 	"tailscale.com/kube/kubeapi"
+ 	"tailscale.com/kube/kubeclient"
+ 	"tailscale.com/kube/kubetypes"
++	"tailscale.com/tstime"
+ 	"tailscale.com/types/logger"
+ 	"tailscale.com/util/dnsname"
+ 	"tailscale.com/util/mak"
++	"tailscale.com/util/singleflight"
  )
  
- // startWatch runs watchFile on dir/filename and returns a channel that
-@@ -78,3 +83,207 @@ func TestWatchFileIgnoresReadsAndOtherFiles(t *testing.T) {
- 	case <-time.After(200 * time.Millisecond):
- 	}
- }
+ func init() {
+@@ -44,6 +47,17 @@ const (
+ 	// state Secret and emit an Event.
+ 	timeout = 30 * time.Second
+ 
++	// rwCertTTL is how long a write replica serves a TLS cert from its
++	// in-memory cache before it reads the cert Secret again. A short TTL
++	// limits how long the replica can serve a stale cert after the cert
++	// Secret is recreated, for example after Ingress recreation.
++	rwCertTTL = 30 * time.Second
++	// rwCertFallbackTimeout is the timeout for a write replica's cert
++	// Secret read when it has a last-known-good cert to fall back to.
++	// TLS handshakes wait for this read, so it must be much shorter than
++	// typical client handshake timeouts (10s for kubectl).
++	rwCertFallbackTimeout = 3 * time.Second
 +
-+// TestWatchFileLongName checks that the read buffer holds an event for a
-+// file with the longest name Linux allows, and that watching continues.
-+func TestWatchFileLongName(t *testing.T) {
-+	dir := t.TempDir()
-+	path := filepath.Join(dir, "resolv.conf")
-+	calls := startWatch(t, dir, path)
+ 	reasonTailscaleStateUpdated      = "TailscaledStateUpdated"
+ 	reasonTailscaleStateLoaded       = "TailscaleStateLoaded"
+ 	reasonTailscaleStateUpdateFailed = "TailscaleStateUpdateFailed"
+@@ -90,6 +104,32 @@ type Store struct {
+ 	// memory holds the latest tailscale state. Writes write state to a kube
+ 	// Secret and memory, Reads read from memory.
+ 	memory mem.Store
 +
-+	long := filepath.Join(dir, strings.Repeat("x", unix.NAME_MAX))
-+	for range 3 {
-+		if err := os.WriteFile(long, nil, 0644); err != nil {
-+			t.Fatal(err)
-+		}
-+		if err := os.Remove(long); err != nil {
-+			t.Fatal(err)
-+		}
-+	}
-+	if err := os.WriteFile(path, []byte("x"), 0644); err != nil {
-+		t.Fatal(err)
-+	}
-+	select {
-+	case <-calls:
-+	case <-time.After(5 * time.Second):
-+		t.Fatal("callback was not called after long-name events and a write")
-+	}
++	// clock is used for rwCerts expiry.
++	clock tstime.DefaultClock
++
++	// certReads deduplicates concurrent cert Secret reads per domain.
++	certReads singleflight.Group[string, *rwCert]
++
++	// rwCertsMu guards rwCerts.
++	rwCertsMu sync.Mutex
++	// rwCerts holds the last-known-good TLS cert and key per domain for
++	// write replicas (cert share "rw"). Write replicas don't keep certs in
++	// memory, so that they notice a recreated, empty cert Secret and issue
++	// a new cert. Instead, they use rwCerts to skip Secret reads for
++	// rwCertTTL and to keep serving TLS when the API server is unavailable.
++	// Entries are never modified, only replaced, so that a read can tell
++	// whether a write replaced the entry while the read was in flight.
++	rwCerts map[string]*rwCert
 +}
 +
-+// inotifyWatches returns the number of inotify fds held by this process
-+// and the masks of their watches, read from /proc/self/fdinfo.
-+func inotifyWatches(t *testing.T) (fds int, masks []uint64) {
-+	t.Helper()
-+	ents, err := os.ReadDir("/proc/self/fd")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	for _, e := range ents {
-+		target, err := os.Readlink("/proc/self/fd/" + e.Name())
-+		if err != nil || target != "anon_inode:inotify" {
-+			continue
-+		}
-+		fds++
-+		info, err := os.ReadFile("/proc/self/fdinfo/" + e.Name())
-+		if err != nil {
-+			t.Fatal(err)
-+		}
-+		for line := range strings.Lines(string(info)) {
-+			if !strings.HasPrefix(line, "inotify ") {
-+				continue
++// rwCert is a TLS cert and key cached by a write replica.
++type rwCert struct {
++	// cert and key are returned to every reader of the cache entry, so
++	// they must not be modified.
++	cert, key []byte
++	// recheckAt is when the replica reads the cert Secret again.
++	recheckAt time.Time
+ }
+ 
+ // New returns a new Store that persists state to Kubernets Secret(s).
+@@ -153,7 +193,8 @@ func newWithClient(logf logger.Logf, c kubeclient.Client, secretName string) (*S
+ 	// Write replicas never load certs in-memory to avoid a situation where,
+ 	// after Ingress recreation (and the associated cert Secret recreation), new
+ 	// TLS certs don't get issued because the write replica still has certs
+-	// in-memory. Instead, write replicas fetch certs from Secret on each request.
++	// in-memory. Instead, write replicas fetch certs from Secret, with a short
++	// TTL cache (see rwCerts).
+ 	if s.certShareMode == "ro" {
+ 		sel := s.certSecretSelector()
+ 		if err := s.loadCerts(context.Background(), sel); err != nil {
+@@ -365,20 +406,24 @@ func (s *Store) WriteTLSCertAndKey(domain string, cert, key []byte) (err error)
+ 	// TODO(irbekrm): certs for write replicas are currently not
+ 	// written to memory to avoid out of sync memory state after
+ 	// Ingress resources have been recreated.  This means that TLS
+-	// certs for write replicas are retrieved from the Secret on
+-	// each HTTPS request. This is a temporary solution till we
++	// certs for write replicas are retrieved from the Secret once
++	// rwCertTTL has passed. This is a temporary solution till we
+ 	// implement a Secret watch.
+ 	if s.certShareMode != "rw" {
+ 		s.memory.WriteState(ipn.StateKey(domain+".crt"), cert)
+ 		s.memory.WriteState(ipn.StateKey(domain+".key"), key)
++	} else {
++		s.setRWCert(domain, cert, key)
+ 	}
+ 	return nil
+ }
+ 
+ // ReadTLSCertAndKey reads a TLS cert and key from memory or from a
+ // domain-specific Secret. It first checks the in-memory store, if not found in
+ // memory and running cert store in read-only mode, looks up a Secret.
+-// Note that write replicas of HA Ingress always retrieve TLS certs from Secrets.
++// Write replicas of HA Ingress don't use the in-memory store. They read the
++// Secret at most once per rwCertTTL, and serve the last-known-good cert if the
++// read fails with an error other than not found or forbidden.
+ func (s *Store) ReadTLSCertAndKey(domain string) (cert, key []byte, err error) {
+ 	if err := dnsname.ValidHostname(domain); err != nil {
+ 		return nil, nil, fmt.Errorf("invalid domain name %q: %w", domain, err)
+@@ -396,14 +441,40 @@ func (s *Store) ReadTLSCertAndKey(domain string) (cert, key []byte, err error) {
+ 		return nil, nil, ipn.ErrStateNotExist
+ 	}
+ 
+-	ctx, cancel := context.WithTimeout(
+```
+
+**File**: `ipn/store/kubestore/store_kube_test.go` (modified, +402/-0)
+```diff
+@@ -8,9 +8,14 @@ import (
+ 	"context"
+ 	"crypto/sha256"
+ 	"encoding/json"
++	"errors"
+ 	"fmt"
+ 	"strings"
++	"sync"
++	"sync/atomic"
+ 	"testing"
++	"testing/synctest"
++	"time"
+ 
+ 	"github.com/google/go-cmp/cmp"
+ 	"tailscale.com/envknob"
+@@ -19,6 +24,8 @@ import (
+ 	"tailscale.com/kube/kubeapi"
+ 	"tailscale.com/kube/kubeclient"
+ 	"tailscale.com/kube/kubetypes"
++	"tailscale.com/tstest"
++	"tailscale.com/tstime"
+ )
+ 
+ func TestKubernetesPodMigrationWithTPMAttestationKey(t *testing.T) {
+@@ -635,6 +642,401 @@ func TestReadTLSCertAndKey(t *testing.T) {
+ 	}
+ }
+ 
++func TestReadTLSCertAndKeyWriteReplicaCache(t *testing.T) {
++	const testDomain = "my-app.tailnetxyz.ts.net"
++
++	var (
++		secretData   map[string][]byte
++		secretGetErr error
++		gets         int
++		lastTimeout  time.Duration
++	)
++	client := &kubeclient.FakeClient{
++		GetSecretImpl: func(ctx context.Context, name string) (*kubeapi.Secret, error) {
++			gets++
++			if deadline, ok := ctx.Deadline(); ok {
++				lastTimeout = time.Until(deadline)
 +			}
-+			for f := range strings.FieldsSeq(line) {
-+				if hex, ok := strings.CutPrefix(f, "mask:"); ok {
-+					m, err := strconv.ParseUint(hex, 16, 32)
-+					if err != nil {
-+						t.Fatalf("bad fdinfo line %q: %v", line, err)
-+					}
-+					masks = append(masks, m)
++			if secretGetErr != nil {
++				return nil, secretGetErr
++			}
++			return &kubeapi.Secret{Data: secretData}, nil
++		},
++		JSONPatchResourceImpl: func(context.Context, string, string, []kubeclient.JSONPatch) error {
++			return nil
++		},
++	}
++	clock := tstest.NewClock(tstest.ClockOpts{})
++	s := &Store{
++		client:        client,
++		secretName:    "ts-state",
++		certShareMode: "rw",
++		clock:         tstime.DefaultClock{Clock: clock},
++		logf:          t.Logf,
++	}
++	tlsData := func(cert, key string) map[string][]byte {
++		return map[string][]byte{"tls.crt": []byte(cert), "tls.key": []byte(key)}
++	}
++
++	steps := []struct {
++		name         string
++		advance      time.Duration
++		secretData   map[string][]byte
++		secretGetErr error
++		// write, if set, writes cert and key with WriteTLSCertAndKey
++		// before the read.
++		write       map[string][]byte
++		wantCert    string
++		wantKey     string
++		wantErr     error
++		wantGet     bool
++		wantTimeout time.Duration // max GetSecret timeout, if wantGet
++	}{
++		{
++			name:         "no_cache_api_error",
++			secretGetErr: errors.New("api error"),
++			wantErr:      errors.New("api error"),
++			wantGet:      true,
++			wantTimeout:  timeout,
++		},
++		{
++			name:        "first_read_from_secret",
++			secretData:  tlsData("cert-a", "key-a"),
++			wantCert:    "cert-a",
++			wantKey:     "key-a",
++			wantGet:     true,
++			wantTimeout: timeout,
++		},
++		{
++			name:       "within_ttl_served_from_cache",
++			advance:    rwCertTTL / 2,
++			secretData: tlsData("cert-b", "key-b"),
++			wantCert:   "cert-a",
++			wantKey:    "key-a",
++		},
++		{
++			name:        "after_ttl_read_from_secret",
++			advance:     rwCertTTL,
++			secretData:  tlsData("cert-b", "key-b"),
++			wantCert:    "cert-b",
++			wantKey:     "key-b",
++			wantGet:     true,
++			wantTimeout: rwCertFallbackTimeout,
++		},
++		{
++			name:         "after_ttl_api_error_serves_last_known_good",
++			advance:      rwCertTTL,
++			secretGetErr: errors.New("api error"),
++			wantCert:     "cert-b",
++			wantKey:      "key-b",
++			wantGet:      true,
++			wantTimeout:  rwCertFallbackTimeout,
++		},
++		{
++			name:         "after_fallback_served_from_cache",
++			advance:      rwCertTTL / 2,
++			secretGetErr: errors.New("api error"),
++			wantCert:     "cert-b",
++			wantKey:      "key-b",
++		},
++		{
++			name:       "after_ttl_secret_emptied",
++			advance:    rwCertTTL,
++			secretData: map[string][]byte{},
++			wantErr:    ipn.ErrStateNotExist,
++			wantGet:    true,
++		},
++		{
++			name:         "emptied_secret_clears_cache",
++			secretGetErr: errors.New("api error"),
++			wantErr:      errors.New("api error"),
++			wantGet:      true,
++			wantTimeout:  timeout,
++		},
++		{
++			name:       "written_cert_served_from_cache",
++			write:      tlsData("cert-c", "key-c"),
++			secretData: tlsData("cert-c", "key-c"),
++			wantCert:   "cert-c",
++			wantKey:    "key-c",
++		},
++		{
++			name:         "after_ttl_secret_not_found",
++			advance:      rwCertTTL,
++			secretGetErr: &kubeapi.Status{Code: 404},
++			wantErr:      ipn.ErrStateNotExist,
++			wantGet:      true,
++		},
++		{
++			name:         "not_found_clears_cache",
++			secretGetErr: errors.New("api error"),
++			wantErr:      errors.New("api error"),
++			wantGet:      true,
++			wantTimeout:  timeout,
++		},
++		{
++			name:       "written_cert_served_from_cache_again",
++			write:      tlsData("cert-d", "key-d"),
++			secretData: tlsData("cert-d", "key-d"),
++			wantCert:   "cert-d",
++			wantKey:    "key-d",
++		},
++		{
++			name:         "after_ttl_secret_forbidden",
++			advance:      rwCertTTL,
++			secretGetErr: &kubeapi.Status{Code: 403},
++			wantErr:      ipn.ErrStateNotExist,
++			wantGet:      true,
++		},
++		{
++			name:         "forbidden_clears_cache",
++			secretGetErr: errors.New("api error"),
++			wantErr:      errors.New("api error"),
++			wantGet:      true,
++			wantTimeout:  timeout,
++		},
++	}
++	for _, st := range steps {
++		clock.Advance(st.advance)
++		secretData = st.secretData
++		secretGetErr = st.secretGetErr
++		if s
+```
+
+---
+
+### Incident Patch 2: `519a9f50` (2026-11-20)
+**Commit Message**: k8s-operator: stop PortRanges.All() at the last port in the range (#21305)
+
+* k8s-operator: stop PortRanges.All() at the last port in the range
+
+PortRanges.All() walks a range with a uint16 counter and a port <= end
+condition. When end is 65535 the increment wraps back to zero instead
+of ending the loop, so the iterator restarts at 0 and yields the whole
+port space again, and again.
+
+ClashesWith is the caller that drains All(), so it is where this
+shows. With one ProxyClass holding 40000-65535, validating a second
+one holding 30000-30100 walks up to 65535, wraps, and reaches 30000 on
+the next pass, where Contains returns true. The two ranges are
+disjoint, but the second ProxyClass is rejected as clashing and never
+goes valid. allocatePorts stops at the first free port so it returns,
+but once past 65535 the port it picks is outside the range that was
+configured.
+
+endPort is only bounded by the cluster's --service-node-port-range, so
+65535 is reachable on a cluster configured up to it.
+
+Yield end and then stop. Also skip a range whose Port is above its
+EndPort, which the old condition did for free and the new one would
+not.
+
+Fixes #21304
+
+Change-Id: I7d60b133a4a83678bc6aba76c5f9b6b6e
+
+**File**: `k8s-operator/apis/v1alpha1/types_proxyclass.go` (modified, +2/-2)
+```diff
+@@ -133,8 +133,8 @@ func (prs PortRanges) All() iter.Seq[uint16] {
+ 				end = pr.Port
+ 			}
+ 
+-			for port := pr.Port; port <= end; port++ {
+-				if !yield(port) {
++			for port := int(pr.Port); port <= int(end); port++ {
++				if !yield(uint16(port)) {
+ 					return
+ 				}
+ 			}
+```
+
+**File**: `k8s-operator/apis/v1alpha1/types_proxyclass_test.go` (added, +99/-0)
+```diff
+@@ -0,0 +1,99 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++package v1alpha1
++
++import (
++	"slices"
++	"testing"
++)
++
++func TestPortRangesAll(t *testing.T) {
++	tests := []struct {
++		name string
++		prs  PortRanges
++		want []uint16
++	}{
++		{
++			name: "single_port",
++			prs:  PortRanges{{Port: 30000}},
++			want: []uint16{30000},
++		},
++		{
++			name: "small_range",
++			prs:  PortRanges{{Port: 30000, EndPort: 30002}},
++			want: []uint16{30000, 30001, 30002},
++		},
++		{
++			name: "range_ending_at_max_port",
++			prs:  PortRanges{{Port: 65533, EndPort: 65535}},
++			want: []uint16{65533, 65534, 65535},
++		},
++		{
++			name: "single_max_port",
++			prs:  PortRanges{{Port: 65535}},
++			want: []uint16{65535},
++		},
++		{
++			name: "multiple_ranges",
++			prs:  PortRanges{{Port: 30000, EndPort: 30001}, {Port: 65535}},
++			want: []uint16{30000, 30001, 65535},
++		},
++		{
++			name: "inverted_range_yields_nothing",
++			prs:  PortRanges{{Port: 30100, EndPort: 30000}},
++			want: nil,
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			var got []uint16
++			for p := range tt.prs.All() {
++				got = append(got, p)
++				if len(got) > len(tt.want) {
++					t.Fatalf("All() yielded more than the %d expected ports; got %v...", len(tt.want), got)
 +				}
 +			}
-+		}
-+	}
-+	return fds, masks
-+}
-+
-+func TestWatchFileKernelMask(t *testing.T) {
-+	dir := t.TempDir()
-+	if err := os.Mkdir(filepath.Join(dir, "sub"), 0755); err != nil {
-+		t.Fatal(err)
-+	}
-+	ctx, cancel := context.WithCancel(context.Background())
-+	started := make(chan struct{}, 1)
-+	errc := make(chan error, 1)
-+	go func() {
-+		errc <- watchFile(ctx, dir, filepath.Join(dir, "resolv.conf"), func() {
-+			select {
-+			case started <- struct{}{}:
-+			default:
++			if !slices.Equal(got, tt.want) {
++				t.Errorf("All() = %v, want %v", got, tt.want)
 +			}
 +		})
-+	}()
-+	<-started
-+
-+	fds, masks := inotifyWatches(t)
-+	if fds != 1 || len(masks) != 1 {
-+		t.Fatalf("got %d inotify fds with %d watches; want 1 fd with 1 watch", fds, len(masks))
-+	}
-+	const readEvents = unix.IN_OPEN | unix.IN_ACCESS | unix.IN_CLOSE_NOWRITE
-+	if masks[0]&readEvents != 0 {
-+		t.Errorf("watch mask %#x includes read events", masks[0])
-+	}
-+
-+	cancel()
-+	if err := <-errc; !errors.Is(err, context.Canceled) {
-+		t.Errorf("watchFile = %v; want context.Canceled", err)
-+	}
-+	if fds, _ := inotifyWatches(t); fds != 0 {
-+		t.Errorf("%d inotify fds still open after watchFile returned", fds)
 +	}
 +}
 +
-+func TestWatchFileDirRemoved(t *testing.T) {
-+	dir := filepath.Join(t.TempDir(), "etc")
-+	if err := os.Mkdir(dir, 0755); err != nil {
-+		t.Fatal(err)
-+	}
-+	started := make(chan struct{})
-+	errc := make(chan error, 1)
-+	go func() {
-+		errc <- watchFile(t.Context(), dir, filepath.Join(dir, "resolv.conf"), func() {
-+			close(started)
-+		})
-+	}()
-+	<-started
-+	if err := os.Remove(dir); err != nil {
-+		t.Fatal(err)
-+	}
-+	select {
-+	case err := <-errc:
-+		if !errors.Is(err, errWatchRemoved) {
-+			t.Errorf("watchFile = %v; want errWatchRemoved", err)
-+		}
-+	case <-time.After(5 * time.Second):
-+		t.Fatal("watchFile did not return after its directory was removed")
-+	}
-+}
-+
-+// event encodes one inotify_event record, padding the name the way the
-+// kernel does.
-+func event(wd int32, mask uint32, name string) []byte {
-+	nameLen := 0
-+	if name != "" {
-+		nameLen = (len(name) + unix.SizeofInotifyEvent) &^ (unix.SizeofInotifyEvent - 1)
-+	}
-+	b := make([]byte, unix.SizeofInotifyEvent+nameLen)
-+	binary.NativeEndian.PutUint32(b[0:], uint32(wd))
-+	binary.NativeEndian.PutUint32(b[4:], mask)
-+	binary.NativeEndian.PutUint32(b[12:], uint32(nameLen))
-+	copy(b[unix.SizeofInotifyEvent:], name)
-+	return b
-+}
-+
-+// badLen returns an inotify_event header whose name length is nameLen,
-+// with no name bytes after it.
-+func badLen(nameLen uint32) []byte {
-+	return binary.NativeEndian.AppendUint32(make([]byte, 12), nameLen)
-+}
-+
-+func TestParseEvents(t *testing.T) {
-+	cat := func(bs ...[]byte) []byte { return bytes.Join(bs, nil) }
++func TestPortRangesClashesWith(t *testing.T) {
 +	tests := []struct {
-+		name        string
-+		buf         []byte
-+		wantChanged bool
-+		wantErr     string // substring; empty means no error
++		name string
++		prs  PortRanges
++		pr   PortRange
++		want bool
 +	}{
-+		{name: "empty"},
-+		{name: "match", buf: event(1, unix.IN_CLOSE_WRITE, "resolv.
-```
-
-**File**: `flake.nix` (modified, +1/-1)
-```diff
-@@ -172,4 +172,4 @@
-     });
-   };
- }
--# nix-direnv cache busting line: sha256-2FUoQbRKmhAbpWH356v/TpgjT9KrcZekMO5E1HbLtMA=
-+# nix-direnv cache busting line: sha256-ZcegeCjeDDLaX7adwdoxndOjukb4H+JNKHx0xGCWXiQ=
-```
-
-**File**: `flakehashes.json` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@
-     "sri": "sha256-Up4oMG6TVLQkV9inAYF3uYbxu+bMHeU7q9BLcXIllow="
-   },
-   "vendor": {
--    "goModSum": "sha256-uGmj1yPXUtncPrsDPi9pVW4y+ZJuWPCUWXpgIiGJfIo=",
--    "sri": "sha256-2FUoQbRKmhAbpWH356v/TpgjT9KrcZekMO5E1HbLtMA="
-+    "goModSum": "sha256-tp8fiukPKErrTuxmaT8TqSiJqSR6BjntVSnWnBWW7RQ=",
-+    "sri": "sha256-ZcegeCjeDDLaX7adwdoxndOjukb4H+JNKHx0xGCWXiQ="
-   }
- }
-```
-
-**File**: `go.mod` (modified, +0/-1)
-```diff
-@@ -79,7 +79,6 @@ require (
- 	github.com/hashicorp/raft-boltdb/v2 v2.3.1
- 	github.com/hdevalence/ed25519consensus v0.2.0
- 	github.com/huin/goupnp v1.3.0
--	github.com/illarion/gonotify/v3 v3.0.2
- 	github.com/inetaf/tcpproxy v0.0.0-20260515195445-c159a6051109
- 	github.com/insomniacslk/dhcp v0.0.0-20260901064844-234b97448fae
- 	github.com/jellydator/ttlcache/v3 v3.4.1
-```
-
-**File**: `go.sum` (modified, +0/-2)
-```diff
-@@ -710,8 +710,6 @@ github.com/hugelgupf/vmtest v0.0.0-20240307030256-5d9f3d34a58d h1:nP8SfQJqruIVSW
- github.com/hugelgupf/vmtest v0.0.0-20240307030256-5d9f3d34a58d/go.mod h1:B63hDJMhTupLWCHwopAyEo7wRFowx9kOc8m8j1sfOqE=
- github.com/huin/goupnp v1.3.0 h1:UvLUlWDNpoUdYzb2TCn+MuTWtcjXKSza2n6CBdQ0xXc=
- github.com/huin/goupnp v1.3.0/go.mod h1:gnGPsThkYa7bFi/KWmEysQRf48l2dvR5bxr2OFckNX8=
--github.com/illarion/gonotify/v3 v3.0.2 h1:O7S6vcopHexutmpObkeWsnzMJt/r1hONIEogeVNmJMk=
--github.com/illarion/gonotify/v3 v3.0.2/go.mod h1:HWGPdPe817GfvY3w7cx6zkbzNZfi3QjcBm/wgVvEL1U=
- github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
- github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
- github.com/inetaf/tcpproxy v0.0.0-20260515195445-c159a6051109 h1:H3ztMPCBcyG60Ks0plTncU3Vs6jIrxhn3nEThpMEpo4=
-```
-
-**File**: `net/dns/direct_linux_test.go` (modified, +2/-2)
-```diff
-@@ -76,8 +76,8 @@ search ts.net ts-dns.test
- }
- 
- // watchFile is a test implementation of the file watcher that uses a timer
--// instead of inotify. Real inotify (gonotify.NewDirWatcher) creates goroutines
--// that block on real syscalls, which don't work inside synctest's fake-time
-+// instead of inotify. The real watcher blocks reading an inotify fd, which
-+// doesn't work inside synctest's fake-time
- // bubble. Instead, we use a one-shot timer that synctest.Wait() will advance,
- // triggering a callback to check for file trampling.
- func watchFile(ctx context.Context, dir, filename string, cb func()) error {
-```
-
----
-
-### Incident Patch 2: `31854730` (2026-11-17)
-**Commit Message**: build(deps): bump minimatch from 3.1.2 to 3.1.5 in /client/web
-
-Bumps [minimatch](https://github.com/isaacs/minimatch) from 3.1.2 to 3.1.5.
-- [Release notes](https://github.com/isaacs/minimatch/releases)
-- [Changelog](https://github.com/isaacs/minimatch/blob/main/changelog.md)
-- [Commits](https://github.com/isaacs/minimatch/compare/v3.1.2...v3.1.5)
-
----
-updated-dependencies:
-- dependency-name: minimatch
-  dependency-version: 3.1.5
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `client/web/pnpm-lock.yaml` (modified, +11/-11)
-```diff
-@@ -2902,8 +2902,8 @@ packages:
-     resolution: {integrity: sha512-vqiC06CuhBTUdZH+RYl8sFrL096vA45Ok5ISO6sE/Mr1jRbGH4Csnhi8f3wKVl7x8mO4Au7Ir9D3Oyv1VYMFJw==}
-     engines: {node: '>=12'}
- 
--  minimatch@3.1.2:
--    resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
-+  minimatch@3.1.5:
-+    resolution: {integrity: sha512-VgjWUsnnT6n+NUk6eZq77zeFdpW2LWDzP6zFGrCbHXiYNul5Dzqk2HHQ5uFH2DNW5Xbp8+jVzaeNt94ssEEl4w==}
- 
-   minimatch@9.0.3:
-     resolution: {integrity: sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==}
-@@ -4820,7 +4820,7 @@ snapshots:
-       ignore: 5.3.1
-       import-fresh: 3.3.0
-       js-yaml: 4.3.2
--      minimatch: 3.1.2
-+      minimatch: 3.1.5
-       strip-json-comments: 3.1.1
-     transitivePeerDependencies:
-       - supports-color
-@@ -4848,7 +4848,7 @@ snapshots:
-     dependencies:
-       '@humanwhocodes/object-schema': 2.0.1
-       debug: 4.4.3(supports-color@7.2.0)
--      minimatch: 3.1.2
-+      minimatch: 3.1.5
-     transitivePeerDependencies:
-       - supports-color
- 
-@@ -6163,7 +6163,7 @@ snapshots:
-       hasown: 2.0.4
-       is-core-module: 2.13.1
-       is-glob: 4.0.3
--      minimatch: 3.1.2
-+      minimatch: 3.1.5
-       object.fromentries: 2.0.7
-       object.groupby: 1.0.1
-       object.values: 1.1.7
-@@ -6202,7 +6202,7 @@ snapshots:
-       hasown: 2.0.4
-       jsx-ast-utils: 3.3.5
-       language-tags: 1.0.9
--      minimatch: 3.1.2
-+      minimatch: 3.1.5
-       object.entries: 1.1.7
-       object.fromentries: 2.0.7
- 
-@@ -6220,7 +6220,7 @@ snapshots:
-       eslint: 8.54.0(supports-color@7.2.0)
-       estraverse: 5.3.0
-       jsx-ast-utils: 3.3.5
--      minimatch: 3.1.2
-+      minimatch: 3.1.5
-       object.entries: 1.1.7
-       object.fromentries: 2.0.7
-       object.hasown: 1.1.3
-@@ -6287,7 +6287,7 @@ snapshots:
-       json-stable-stringify-without-jsonify: 1.0.1
-       levn: 0.4.1
-       lodash.merge: 4.6.2
--      minimatch: 3.1.2
-+      minimatch: 3.1.5
-       natural-compare: 1.4.0
-       optionator: 0.9.3
-       strip-ansi: 6.0.1
-@@ -6452,7 +6452,7 @@ snapshots:
-       fs.realpath: 1.0.0
-       inflight: 1.0.6
-       inherits: 2.0.4
--      minimatch: 3.1.2
-+      minimatch: 3.1.5
-       once: 1.4.0
-       path-is-absolute: 1.0.1
- 
-@@ -6461,7 +6461,7 @@ snapshots:
-       fs.realpath: 1.0.0
-       inflight: 1.0.6
-       inherits: 2.0.4
--      minimatch: 3.1.2
-+      minimatch: 3.1.5
-       once: 1.4.0
-       path-is-absolute: 1.0.1
- 
-@@ -6813,7 +6813,7 @@ snapshots:
- 
-   mimic-fn@4.0.0: {}
- 
--  minimatch@3.1.2:
-+  minimatch@3.1.5:
-     dependencies:
-       brace-expansion: 1.1.11
- 
-```
-
----
-
-### Incident Patch 3: `f1b5e513` (2026-11-18)
-**Commit Message**: tstest/natlab/vmtest: make ssh tests run across Linux test matrix (#22491)
-
-Updates #21817
-
-Signed-off-by: Claus Lensbøl <[REDACTED_EMAIL]>
-
-**File**: `tstest/natlab/vmtest/matrix_generated_test.go` (modified, +3/-0)
-```diff
-@@ -17,6 +17,9 @@ var testMatrix = []struct {
- 	{name: "testPeerAPINotReachableFromLAN_Ubuntu2404", fn: func(t *testing.T) { testPeerAPINotReachableFromLAN(t, vmtest.Ubuntu2404) }},
- 	{name: "testPeerAPINotReachableFromLAN_Fedora43", fn: func(t *testing.T) { testPeerAPINotReachableFromLAN(t, vmtest.Fedora43) }},
- 	{name: "testPeerAPINotReachableFromLAN_Debian13", fn: func(t *testing.T) { testPeerAPINotReachableFromLAN(t, vmtest.Debian13) }},
-+	{name: "testTailscaleSSHForOS_Ubuntu2404", fn: func(t *testing.T) { testTailscaleSSHForOS(t, vmtest.Ubuntu2404) }},
-+	{name: "testTailscaleSSHForOS_Fedora43", fn: func(t *testing.T) { testTailscaleSSHForOS(t, vmtest.Fedora43) }},
-+	{name: "testTailscaleSSHForOS_Debian13", fn: func(t *testing.T) { testTailscaleSSHForOS(t, vmtest.Debian13) }},
- 	{name: "testSubnetRouterForOS_Ubuntu2404", fn: func(t *testing.T) { testSubnetRouterForOS(t, vmtest.Ubuntu2404) }},
- 	{name: "testSubnetRouterForOS_Fedora43", fn: func(t *testing.T) { testSubnetRouterForOS(t, vmtest.Fedora43) }},
- 	{name: "testSubnetRouterForOS_Debian13", fn: func(t *testing.T) { testSubnetRouterForOS(t, vmtest.Debian13) }},
-```
-
-**File**: `tstest/natlab/vmtest/ssh_test.go` (modified, +17/-12)
-```diff
-@@ -18,29 +18,34 @@ import (
- 	"tailscale.com/tstest/natlab/vnet"
- )
- 
--// TestTailscaleSSH_Ubuntu exercises the Tailscale SSH server ("tailscale up
--// --ssh", not a system sshd) on an Ubuntu node, with an Ubuntu node as the SSH
--// client. It tests logging in as both root and a non-root user, which
--// exercises the incubator's su-based login path.
-+// TestTailscaleSSH_Ubuntu exercises the Tailscale SSH server on Ubuntu.
-+// See testTailscaleSSHForOS for what is verified.
- func TestTailscaleSSH_Ubuntu(t *testing.T) {
--	testSuite := newTestSuite(t, "ubuntu", vmtest.Ubuntu2404)
-+	testTailscaleSSHForOS(t, vmtest.Ubuntu2404)
++		{
++			name: "overlapping",
++			prs:  PortRanges{{Port: 30000, EndPort: 30100}},
++			pr:   PortRange{Port: 30050, EndPort: 30150},
++			want: true,
++		},
++		{
++			name: "disjoint",
++			prs:  PortRanges{{Port: 30000, EndPort: 30100}},
++			pr:   PortRange{Port: 30101, EndPort: 30200},
++			want: false,
++		},
++		{
++			name: "disjoint_below_range_ending_at_max_port",
++			prs:  PortRanges{{Port: 40000, EndPort: 65535}},
++			pr:   PortRange{Port: 30000, EndPort: 30100},
++			want: false,
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			if got := tt.prs.ClashesWith(tt.pr); got != tt.want {
++				t.Errorf("ClashesWith(%s) = %v, want %v", tt.pr, got, tt.want)
++			}
++		})
++	}
 +}
- 
--	ubuntu := testSuite.server
-+// testTailscaleSSHForOS exercises the Tailscale SSH server ("tailscale up
-+// --ssh", not a system sshd) on a Linux node of the given distribution, with
-+// an Ubuntu node as the SSH client. It tests logging in as both root and a
-+// non-root user, which exercises the incubator's su-based login path.
-+func testTailscaleSSHForOS(t *testing.T, serverOS vmtest.OSImageLinux) {
-+	testSuite := newTestSuite(t, serverOS.Name, serverOS)
-+	server := testSuite.server
- 
--	if out, err := testSuite.env.SSHExec(ubuntu, "useradd -m -s /bin/bash tsuser"); err != nil {
-+	if out, err := testSuite.env.SSHExec(server, "useradd -m -s /bin/bash tsuser"); err != nil {
- 		t.Fatalf("useradd: %v\n%s", err, out)
- 	}
- 
--	testSuite.waitSSH(t, "ubuntu", "root")
-+	testSuite.waitSSH(t, serverOS.Name, "root")
- 
--	testSuite.check(t, "ubuntu root login", "root", "id -un && pwd", "root\n/root")
--	testSuite.check(t, "ubuntu non-root login", "tsuser", "id -un && pwd", "tsuser\n/home/tsuser")
-+	testSuite.check(t, serverOS.Name+" root login", "root", "id -un && pwd", "root\n/root")
-+	testSuite.check(t, serverOS.Name+" non-root login", "tsuser", "id -un && pwd", "tsuser\n/home/tsuser")
- 
- 	if out, code := testSuite.ssh(t, "nosuchuser", "true"); code == 0 {
--		t.Errorf("ubuntu nonexistent user: ssh succeeded, want failure:\n%s", out)
-+		t.Errorf("%s nonexistent user: ssh succeeded, want failure:\n%s", serverOS.Name, out)
- 	}
- 
--	testSuite.checkAutogroupNonroot(t, "ubuntu")
-+	testSuite.checkAutogroupNonroot(t, serverOS.Name)
- }
- 
- // TestTailscaleSSH_FreeBSD exercises the Tailscale SSH server ("tailscale up
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22491** (2026-11-18): tstest/natlab/vmtest: make ssh tests run across Linux test matrix (@cmol)
-- **PR #22489** (2026-11-18): feature/linuxdnsfight, go.mod: replace gonotify with direct inotify calls (@bradfitz)
-- **PR #22485** (2026-11-18): cmd/k8s-operator/e2e: tidy e2e test logging (@BeckyPauley)
-- **PR #22484** (2026-11-18): ipn: log PostureChecking in Prefs.Pretty (@alexwlchan)
-- **PR #22481** (closed): net/tstun: reclaim orphaned TUN interfaces without recreating them (@raggi)
-- **PR #22476** (2026-11-17): go.mod: bump github.com/tailscale/wireguard-go (@tailscale-code-updater[bot])
+- **PR #22518** (2026-11-19): go.mod: bump wg-go for hybrid pq log details (@jwhited)
+- **PR #22513** (2026-11-19): feature/conn25: guard against an unusable Transit IP (@mazdakn)
+- **PR #22508** (2026-11-19): wgengine/magicsock: update packetLooksLike docs (@jwhited)
+- **PR #22506** (2026-11-18): tstest/natlab: Fix typo in README sample command (@fmarier)
+- **PR #22505** (closed): tstest/natlab: Fix invalid example command in README (@fmarier)
+- **PR #22503** (2026-11-19): go.toolchain.rev: bump Go toolchain [release-branch] (@bradfitz)
 
 ---
 
@@ -1489,6 +1353,68 @@ Signed-off-by: Claus Lensbøl <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. ipn/store/kubestore: cache TLS certs briefly on write replicas
+
+**RULE**:
+When implementing operations in `ipn/store/kubestore/store_kube.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c8ba9da5`: ipn/store/kubestore: cache TLS certs briefly on write replicas. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/store/kubestore/store_kube.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	"sync"
+	"tailscale.com/tstime"
+	"tailscale.com/util/singleflight"
+	// rwCertTTL is how long a write replica serves a TLS cert from its
+	// in-memory cache before it reads the cert Secret again. A short TTL
+	// limits how long the replica can serve a stale cert after the cert
+	// Secret is recreated, for example after Ingress recreation.
+	rwCertTTL = 30 * time.Second
+	// rwCertFallbackTimeout is the timeout for a write replica's cert
+	// Secret read when it has a last-known-good cert to fall back to.
+	// TLS handshakes wait for this read, so it must be much shorter than
+	// typical client handshake timeouts (10s for kubectl).
+	rwCertFallbackTimeout = 3 * time.Second
+
+
+	// clock is used for rwCerts expiry.
+	clock tstime.DefaultClock
+
+	// certReads deduplicates concurrent cert Secret reads per domain.
+	certReads singleflight.Group[string, *rwCert]
+
+	// rwCertsMu guards rwCerts.
+	rwCertsMu sync.Mutex
+	// rwCerts holds the last-known-good TLS cert and key per domain for
+	// write replicas (cert share "rw"). Write replicas don't keep certs in
+	// memory, so that they notice a recreated, empty cert Secret and issue
+	// a new cert. Instead, they use rwCerts to skip Secret reads for
+	// rw
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	// in-memory. Instead, write replicas fetch certs from Secret on each request.
+	// certs for write replicas are retrieved from the Secret on
+	// each HTTPS request. This is a temporary solution till we
+// Note that write replicas of HA Ingress always retrieve TLS certs from Secrets.
+	ctx, cancel := context.WithTimeout(
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c8ba9da5` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

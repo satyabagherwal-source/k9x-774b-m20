@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "588d2c40",
+    "sourceVersion": "25be3e4c",
     "license": "NOASSERTION",
-    "contentHash": "52881fb3acd5c835f0669d582ef767af2a53424e55c1de98d48226e1e64ade2e",
-    "lastHarvestedAt": "2026-11-20T00:45:36.873Z",
+    "contentHash": "f49b734d138436ee8e823f56148ee9589ba29635af1aa32e47580354c75dc91b",
+    "lastHarvestedAt": "2026-11-20T13:08:32.504Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "2e8f381c",
+    "sourceVersion": "c8ba9da5",
     "license": "BSD-3-Clause",
-    "contentHash": "00869492f11257255c8c18e102a7e64e9e6eca8d091f1332aa7e5389eef6817e",
-    "lastHarvestedAt": "2026-11-19T23:43:30.206Z",
+    "contentHash": "591efe20104a8fb60386c474eab82ffde2608ab0620651152f34dcfdb12299a4",
+    "lastHarvestedAt": "2026-11-20T13:08:28.290Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "b4d9d61a",
+    "sourceVersion": "0bf016d3",
     "license": "Apache-2.0",
-    "contentHash": "68e97b1124d2f928be2302ecfdbc31034695ef94b6476a5c96ce40b7b81df021",
-    "lastHarvestedAt": "2026-11-18T22:03:22.995Z",
+    "contentHash": "3aeebfc7d3635449d655fe54e84fa0f1130a6f5dfeeec9f97cfb61908c83f76c",
+    "lastHarvestedAt": "2026-11-20T13:13:19.039Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "92fdcb78",
+    "sourceVersion": "9c89de48",
     "license": "Apache-2.0",
-    "contentHash": "2f4085a8c2a9a3ee0e3ffbf5aba9c961196bd170af7ea7603d7fc603f925669a",
-    "lastHarvestedAt": "2026-11-19T06:30:22.904Z",
+    "contentHash": "157b2e6dc980518a86f078026975acc0411fb9c3ff067537a5aa83aaeb0c5380",
+    "lastHarvestedAt": "2026-11-20T13:08:32.560Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -6603,10 +6603,10 @@
     "repository": "actions/actions-runner-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/actions/actions-runner-controller",
-    "sourceVersion": "89f34c4f",
+    "sourceVersion": "b27dac72",
     "license": "Apache-2.0",
-    "contentHash": "764271afe3bfebf04cf9fc8a7190d7289dc61975c96b630246067dd3bd9d44f1",
-    "lastHarvestedAt": "2026-10-27T20:20:12.301Z",
+    "contentHash": "366b924a088e09c4289ee95ff6a69555455a4f7f5e11d497b1599f34ab402cf5",
+    "lastHarvestedAt": "2026-11-20T13:08:25.039Z",
     "learningId": "learn-github-actions-actions-runner-controller"
   },
   "vectifyai-pageindex": {

@@ -11573,3 +11573,8 @@ Every entry in this ledger must capture:
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `78a8aa87` | Multi-dimensional audit evidence | 2026-11-20T12:50:15.164Z |
 | `learn-github-scrapy-scrapy` | `https://github.com/scrapy/scrapy` | `00acf3f3` | Multi-dimensional audit evidence | 2026-11-20T12:50:17.894Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `522f213e` | Multi-dimensional audit evidence | 2026-11-20T12:50:28.049Z |
+| `learn-github-actions-actions-runner-controller` | `https://github.com/actions/actions-runner-controller` | `b27dac72` | Multi-dimensional audit evidence | 2026-11-20T13:08:25.039Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `c8ba9da5` | Multi-dimensional audit evidence | 2026-11-20T13:08:28.290Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `25be3e4c` | Multi-dimensional audit evidence | 2026-11-20T13:08:32.504Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `9c89de48` | Multi-dimensional audit evidence | 2026-11-20T13:08:32.560Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `0bf016d3` | Multi-dimensional audit evidence | 2026-11-20T13:13:19.039Z |
