@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T06:10:56.100Z",
+  "last_updated": "2026-11-20T06:19:37.535Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "753e9b00ae69560e874a16bffe2f878d5b83a21c1f11354080c50a13f406f560",
-      "verified_at": "2026-11-19T00:58:22.937Z",
+      "content_hash": "5a465d28b97bfb4649ecd6fb1cef650ab0c34c7ab58cdfc28e1eff9e4884afed",
+      "verified_at": "2026-11-20T06:19:37.535Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T00:58:22.937Z"
+      "last_updated": "2026-11-20T06:19:37.535Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",
@@ -13011,14 +13011,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-simonschubert-kai",
-      "content_hash": "a23e2af8713cf1f87a318bf3003b424ec3b95776aa73ebe1da769e2db2a151d2",
-      "verified_at": "2026-11-12T21:19:32.423Z",
+      "content_hash": "fac8a97cb2b3cf88369f350a9487cf7920221fe74c451c67fc3f04a14002cc81",
+      "verified_at": "2026-11-20T06:19:28.920Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T21:19:32.423Z"
+      "last_updated": "2026-11-20T06:19:28.920Z"
     },
     "a4csi/schema-org-validate": {
       "repository": "a4csi/schema-org-validate",
@@ -19461,14 +19461,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-erkamyaman-rust-anything",
-      "content_hash": "03384e9e6475471326bd664a2df9cdfcf52e38f0ec1f6767fa3680f51901a84e",
-      "verified_at": "2026-11-18T18:38:08.562Z",
+      "content_hash": "99e2cdb0bd13b92bce1919761f6f74d2737aa17983d05f2fe23386fb07dc63bf",
+      "verified_at": "2026-11-20T06:19:24.638Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T18:38:08.562Z"
+      "last_updated": "2026-11-20T06:19:24.638Z"
     },
     "akhaliq/MiniMax-H3-Image-Character-Swap": {
       "repository": "akhaliq/MiniMax-H3-Image-Character-Swap",

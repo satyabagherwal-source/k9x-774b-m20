@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T06:10:56.097Z",
-  "total_cycles_completed": 10944,
-  "total_learnings_persisted": 10944,
-  "total_rules_promoted": 10308,
+  "last_updated": "2026-11-20T06:19:37.532Z",
+  "total_cycles_completed": 10947,
+  "total_learnings_persisted": 10947,
+  "total_rules_promoted": 10311,
   "history": [
-    {
-      "timestamp": "2026-11-19T09:43:56.807Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T10:15:37.154Z",
-      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-      "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T10:15:44.770Z",
-      "repository": "tw93/Mole",
-      "learningId": "learn-github-tw93-mole",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T10:15:58.232Z",
       "repository": "RadixArk/DaisyRose-27B",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-20T06:10:56.097Z",
       "repository": "ShiftHackZ/SDAI-KMP",
       "learningId": "learn-github-shifthackz-sdai-kmp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T06:19:24.636Z",
+      "repository": "erkamyaman/rust-anything",
+      "learningId": "learn-github-erkamyaman-rust-anything",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T06:19:28.918Z",
+      "repository": "SimonSchubert/Kai",
+      "learningId": "learn-github-simonschubert-kai",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T06:19:37.532Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T06:11:33.747Z",
-  "total_records": 2084,
+  "last_updated": "2026-11-20T06:19:42.791Z",
+  "total_records": 2086,
   "domains": {
     "A": {
       "total": 17,
@@ -915,7 +915,7 @@
       ]
     },
     "F": {
-      "total": 69,
+      "total": 71,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -985,7 +985,9 @@
         "domain_intelligence-design-intelligence-herdrdev-herdr-core-invariants",
         "domain_intelligence-design-intelligence-herdrdev-herdr-learnings-core-invariants",
         "DOM-F-D7FA7771",
-        "DOM-F-8BEE39B8"
+        "DOM-F-8BEE39B8",
+        "domain_intelligence-design-intelligence-simonschubert-kai-core-invariants",
+        "domain_intelligence-design-intelligence-simonschubert-kai-learnings-core-invariants"
       ]
     },
     "G": {
@@ -16645,8 +16647,8 @@
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "repository": "StarRocks/starrocks",
-      "content_hash": "39c71cc2ccc2e6ab516965c5eb10b00985b55d52f374c30317eab47d878f93d7",
-      "created_at": "2026-11-19T00:58:23.253Z"
+      "content_hash": "6e6b263c40a9d16f0559e91d1e88afcf8b3d2f1bab9a3ab6d72bdf3a908c5512",
+      "created_at": "2026-11-20T06:19:37.883Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
@@ -16723,8 +16725,8 @@
       "title": "Technical Construction Intelligence: starrocks-starrocks-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-learnings-technical-construction-intelligence-starrocks-star.md",
       "repository": "starrocks-starrocks-learnings",
-      "content_hash": "591b3c52156a15f12ed30ca909fdc8838ab3a0c36acbf0e243761984798d2ae2",
-      "created_at": "2026-11-19T00:58:27.972Z"
+      "content_hash": "49c9315a7579594ef078ca44d455584d4748a56d215476eff04826988c316577",
+      "created_at": "2026-11-20T06:19:42.791Z"
     },
     "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants",
@@ -31795,8 +31797,8 @@
       "title": "Content & Information Intelligence: erkamyaman/rust-anything Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-erkamyaman-rust-anything-content-information-intelligence-erkamyaman-rust-anythi.md",
       "repository": "erkamyaman/rust-anything",
-      "content_hash": "c8bcab42905d2936e49f691767fef8ee77ec09db0860b6839f8b0147f5b653fb",
-      "created_at": "2026-11-18T18:38:09.004Z"
+      "content_hash": "a21cc11cac1e1f3e5fb4f21e3340fbecb88b915d501f37364f5ca98be440d47a",
+      "created_at": "2026-11-20T06:19:24.978Z"
     },
     "domain_intelligence-content-information-intelligence-erkamyaman-rust-anything-learnings-core-invaria": {
       "record_id": "domain_intelligence-content-information-intelligence-erkamyaman-rust-anything-learnings-core-invaria",
@@ -31804,8 +31806,8 @@
       "title": "Content & Information Intelligence: erkamyaman-rust-anything-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-erkamyaman-rust-anything-learnings-content-information-intelligence-erkamyaman-r.md",
       "repository": "erkamyaman-rust-anything-learnings",
-      "content_hash": "f48a3ee1c2adb6fe01064a35e6f5fd2ec8aaecaf4d258ae96b78fade1dfd5ec8",
-      "created_at": "2026-11-18T18:38:26.058Z"
+      "content_hash": "d961cbe06262979bafa26ae10baa4a6112b45a325bd3ac42f2b3a5e3a315e56a",
+      "created_at": "2026-11-20T06:19:41.194Z"
     },
     "DOM-D-70CB2061": {
       "record_id": "DOM-D-70CB2061",
@@ -35171,6 +35173,24 @@
       "repository": "shifthackz-stable-diffusion-kmp-learnings",
       "content_hash": "360945ae01ef4b4f84a9e558786be1125f2e534cb9bcb8736489f51ec0e803e7",
       "created_at": "2026-11-20T06:11:31.450Z"
+    },
+    "domain_intelligence-design-intelligence-simonschubert-kai-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-simonschubert-kai-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: SimonSchubert/Kai Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-simonschubert-kai-design-intelligence-simonschubert-kai-core-invariants.md",
+      "repository": "SimonSchubert/Kai",
+      "content_hash": "2d764a63123633682cf0c572b59273d52c714a66e6d984f6f3f61f204f2f07d3",
+      "created_at": "2026-11-20T06:19:29.261Z"
+    },
+    "domain_intelligence-design-intelligence-simonschubert-kai-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-simonschubert-kai-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: simonschubert-kai-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-simonschubert-kai-learnings-design-intelligence-simonschubert-kai-learnings-core.md",
+      "repository": "simonschubert-kai-learnings",
+      "content_hash": "e1529bb4da55cb8ead216e4589356a3f09e99b381b5ea452f47b76a7c02982ed",
+      "created_at": "2026-11-20T06:19:41.921Z"
     }
   }
 }

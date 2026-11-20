@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "01c149aa",
+    "sourceVersion": "b400696f",
     "license": "Apache-2.0",
-    "contentHash": "753e9b00ae69560e874a16bffe2f878d5b83a21c1f11354080c50a13f406f560",
-    "lastHarvestedAt": "2026-11-19T00:58:22.930Z",
+    "contentHash": "5a465d28b97bfb4649ecd6fb1cef650ab0c34c7ab58cdfc28e1eff9e4884afed",
+    "lastHarvestedAt": "2026-11-20T06:19:37.527Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {
@@ -8643,10 +8643,10 @@
     "repository": "SimonSchubert/Kai",
     "platform": "github",
     "sourceUrl": "https://github.com/SimonSchubert/Kai",
-    "sourceVersion": "22e49557",
+    "sourceVersion": "bc3f0916",
     "license": "Apache-2.0",
-    "contentHash": "a23e2af8713cf1f87a318bf3003b424ec3b95776aa73ebe1da769e2db2a151d2",
-    "lastHarvestedAt": "2026-11-12T21:19:32.408Z",
+    "contentHash": "fac8a97cb2b3cf88369f350a9487cf7920221fe74c451c67fc3f04a14002cc81",
+    "lastHarvestedAt": "2026-11-20T06:19:28.913Z",
     "learningId": "learn-github-simonschubert-kai"
   },
   "a4csi-schema-org-validate": {
@@ -12913,10 +12913,10 @@
     "repository": "erkamyaman/rust-anything",
     "platform": "github",
     "sourceUrl": "https://github.com/erkamyaman/rust-anything",
-    "sourceVersion": "8a2e1d1f",
+    "sourceVersion": "fe91ee14",
     "license": "MIT",
-    "contentHash": "03384e9e6475471326bd664a2df9cdfcf52e38f0ec1f6767fa3680f51901a84e",
-    "lastHarvestedAt": "2026-11-18T18:38:08.551Z",
+    "contentHash": "99e2cdb0bd13b92bce1919761f6f74d2737aa17983d05f2fe23386fb07dc63bf",
+    "lastHarvestedAt": "2026-11-20T06:19:24.630Z",
     "learningId": "learn-github-erkamyaman-rust-anything"
   },
   "hf-akhaliq-minimax-h3-image-character-swap": {

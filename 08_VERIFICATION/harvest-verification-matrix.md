@@ -11482,3 +11482,6 @@
 | `CYCLE-20261120-YSDA` | `2026-11-20T06:10:48.478Z` | `fujiapple852/trippy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md` | Yes (`db0e91ae...`) |
 | `CYCLE-20261120-YY8M` | `2026-11-20T06:10:56.086Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9525` | Yes (`aed8459a...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T06:11:30.068Z` | `fujiapple852-trippy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-AF6D9DEB` [Domain D] | Yes (`a4c55c95...`) |
+| `CYCLE-20261120-9UMQ` | `2026-11-20T06:19:24.626Z` | `erkamyaman/rust-anything` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9526` | Yes (`99e2cdb0...`) |
+| `CYCLE-20261120-9XXO` | `2026-11-20T06:19:28.908Z` | `SimonSchubert/Kai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3545` | Yes (`fac8a97c...`) |
+| `CYCLE-20261120-A4KZ` | `2026-11-20T06:19:37.523Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9527` | Yes (`5a465d28...`) |

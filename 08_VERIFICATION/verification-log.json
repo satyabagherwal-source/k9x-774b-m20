@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-Y11G",
-    "timestamp": "2026-11-18T10:18:49.156Z",
-    "repository": "appwrite/appwrite",
-    "learningId": "learn-github-appwrite-appwrite",
-    "contentHash": "fabb8d06ede87ac7d3ec29c42f11a81ce940fc61d1a645c7a672225f7c64f961",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-Y20F",
-    "timestamp": "2026-11-18T10:18:50.415Z",
-    "repository": "kubernetes-sigs/aws-load-balancer-controller",
-    "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-    "contentHash": "19fe20183b5db04683acb424b60db54b7956767455a9ae4ad106b7156b8ced82",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-Y3I0",
-    "timestamp": "2026-11-18T10:18:52.344Z",
-    "repository": "nolabs-ai/nono",
-    "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "25982e132fe987ca83e96b1a8d73f133dcd3214736c0eea7a713d15442045619",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-Y4P3",
     "timestamp": "2026-11-18T10:18:53.895Z",
     "repository": "VectifyAI/PageIndex",
@@ -7490,6 +7445,51 @@
     "repository": "ShiftHackZ/SDAI-KMP",
     "learningId": "learn-github-shifthackz-sdai-kmp",
     "contentHash": "aed8459abce934d5e4d70cab0c0befa6d0abeea4e262becec984e9e9d0f30ef9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-9UMQ",
+    "timestamp": "2026-11-20T06:19:24.626Z",
+    "repository": "erkamyaman/rust-anything",
+    "learningId": "learn-github-erkamyaman-rust-anything",
+    "contentHash": "99e2cdb0bd13b92bce1919761f6f74d2737aa17983d05f2fe23386fb07dc63bf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-9XXO",
+    "timestamp": "2026-11-20T06:19:28.908Z",
+    "repository": "SimonSchubert/Kai",
+    "learningId": "learn-github-simonschubert-kai",
+    "contentHash": "fac8a97cb2b3cf88369f350a9487cf7920221fe74c451c67fc3f04a14002cc81",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-A4KZ",
+    "timestamp": "2026-11-20T06:19:37.523Z",
+    "repository": "StarRocks/starrocks",
+    "learningId": "learn-github-starrocks-starrocks",
+    "contentHash": "5a465d28b97bfb4649ecd6fb1cef650ab0c34c7ab58cdfc28e1eff9e4884afed",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

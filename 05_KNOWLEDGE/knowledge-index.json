@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T06:11:34.071Z",
-  "total_verified_learnings": 9025,
+  "last_updated": "2026-11-20T06:19:42.936Z",
+  "total_verified_learnings": 9026,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22241,
+  "total_items": 22251,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -59944,13 +59944,13 @@
       "rule_number": 3545,
       "title": "Upgrade dependencies",
       "source_url": "https://github.com/SimonSchubert/Kai",
-      "source_version": "22e49557",
+      "source_version": "bc3f0916",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-12T21:19:32.298Z"
+      "verified_at": "2026-11-20T06:19:28.725Z"
     },
     "rule-3546": {
       "learning_id": "rule-3546",
@@ -233022,8 +233022,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "01c149aa",
-      "content_hash": "753e9b00ae69560e874a16bffe2f878d5b83a21c1f11354080c50a13f406f560",
+      "source_version": "b400696f",
+      "content_hash": "5a465d28b97bfb4649ecd6fb1cef650ab0c34c7ab58cdfc28e1eff9e4884afed",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -233066,6 +233066,11 @@
           "number": 9314,
           "title": "[Tool] release-notes skill: file security upgrades and fixes under Security",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9527,
+          "title": "[BugFix][RB-1573] Count variant nulls in count(VARIANT) and keep scalar types in",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233073,7 +233078,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T00:58:22.751Z",
+      "verified_at": "2026-11-20T06:19:37.332Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233115,10 +233120,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "repository": "StarRocks/starrocks",
-      "source_version": "01c149aa",
-      "content_hash": "39c71cc2ccc2e6ab516965c5eb10b00985b55d52f374c30317eab47d878f93d7",
+      "source_version": "b400696f",
+      "content_hash": "6e6b263c40a9d16f0559e91d1e88afcf8b3d2f1bab9a3ab6d72bdf3a908c5512",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T00:58:23.253Z"
+      "persisted_at": "2026-11-20T06:19:37.883Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks",
@@ -233127,10 +233132,10 @@
       "relative_path": "08_VERIFICATION/starrocks-starrocks-verification-protocol-empirical-defect-shield-for-starrocks-.md",
       "title": "Verification Protocol: Empirical Defect Shield for StarRocks/starrocks",
       "repository": "StarRocks/starrocks",
-      "source_version": "01c149aa",
-      "content_hash": "e80895893b7c908ed28886d408663f74491e148f829d5e0d6d0d005fb90c021d",
+      "source_version": "b400696f",
+      "content_hash": "bae7e6dc13ba57f2080151d837df753f82ddc593ce1a2033dc9b1015319769cc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:58:23.385Z"
+      "persisted_at": "2026-11-20T06:19:38.031Z"
     },
     "learn-huggingface-autotrust-jev-27b-vl": {
       "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
@@ -233243,9 +233248,9 @@
       "title": "Technical Construction Intelligence: starrocks-starrocks-learnings Core Invariants",
       "repository": "starrocks-starrocks-learnings",
       "source_version": "HEAD",
-      "content_hash": "591b3c52156a15f12ed30ca909fdc8838ab3a0c36acbf0e243761984798d2ae2",
+      "content_hash": "49c9315a7579594ef078ca44d455584d4748a56d215476eff04826988c316577",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T00:58:27.972Z"
+      "persisted_at": "2026-11-20T06:19:42.791Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks-learnings",
@@ -233255,9 +233260,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for starrocks-starrocks-learnings",
       "repository": "starrocks-starrocks-learnings",
       "source_version": "HEAD",
-      "content_hash": "37350c575ad47263f91c7e60e7087d7458d2f081639a497dd75ab8b47485f021",
+      "content_hash": "ec03f89cd607be79ff7a156dd17ef3f8e543959a915abf7336059a022a646a3f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:58:28.101Z"
+      "persisted_at": "2026-11-20T06:19:42.936Z"
     },
     "learn-github-oven-sh-bun": {
       "learning_id": "learn-github-oven-sh-bun",
@@ -290292,14 +290297,19 @@
       "slug": "erkamyaman-rust-anything",
       "platform": "github",
       "source_url": "https://github.com/erkamyaman/rust-anything",
-      "source_version": "8a2e1d1f",
-      "content_hash": "03384e9e6475471326bd664a2df9cdfcf52e38f0ec1f6767fa3680f51901a84e",
+      "source_version": "fe91ee14",
+      "content_hash": "99e2cdb0bd13b92bce1919761f6f74d2737aa17983d05f2fe23386fb07dc63bf",
       "dossier_path": "07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
       "promoted_rules": [
         {
           "number": 9272,
           "title": "Deep-dive lessons: doctor, MCP labels/progress/prompts, gate fixes, stall detect",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9526,
+          "title": "address remaining CodeRabbit findings",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -290308,7 +290318,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T18:38:08.250Z",
+      "verified_at": "2026-11-20T06:19:24.426Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -290350,10 +290360,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-erkamyaman-rust-anything-content-information-intelligence-erkamyaman-rust-anythi.md",
       "title": "Content & Information Intelligence: erkamyaman/rust-anything Core Invariants",
       "repository": "erkamyaman/rust-anything",
-      "source_version": "8a2e1d1f",
-      "content_hash": "c8bcab42905d2936e49f691767fef8ee77ec09db0860b6839f8b0147f5b653fb",
+      "source_version": "fe91ee14",
+      "content_hash": "a21cc11cac1e1f3e5fb4f21e3340fbecb88b915d501f37364f5ca98be440d47a",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T18:38:09.004Z"
+      "persisted_at": "2026-11-20T06:19:24.978Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-erkamyaman-rust-anything": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-erkamyaman-rust-anything",
@@ -290362,10 +290372,10 @@
       "relative_path": "08_VERIFICATION/erkamyaman-rust-anything-verification-protocol-empirical-defect-shield-for-erkam.md",
       "title": "Verification Protocol: Empirical Defect Shield for erkamyaman/rust-anything",
       "repository": "erkamyaman/rust-anything",
-      "source_version": "8a2e1d1f",
-      "content_hash": "3e17f3f3d4d4142ddf81a9279397456fd0509e292bd4bdbc10e82bf1509ee7d3",
+      "source_version": "fe91ee14",
+      "content_hash": "24c67e364b85d8155da9624c0044234c94cf56107a0ebe80ead236295753aeed",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T18:38:09.238Z"
+      "persisted_at": "2026-11-20T06:19:25.131Z"
     },
     "rule-9273": {
       "learning_id": "rule-9273",
@@ -290401,9 +290411,9 @@
       "title": "Content & Information Intelligence: erkamyaman-rust-anything-learnings Core Invariants",
       "repository": "erkamyaman-rust-anything-learnings",
       "source_version": "HEAD",
-      "content_hash": "f48a3ee1c2adb6fe01064a35e6f5fd2ec8aaecaf4d258ae96b78fade1dfd5ec8",
+      "content_hash": "d961cbe06262979bafa26ae10baa4a6112b45a325bd3ac42f2b3a5e3a315e56a",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T18:38:26.058Z"
+      "persisted_at": "2026-11-20T06:19:41.194Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-erkamyaman-rust-anything-learn": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-erkamyaman-rust-anything-learn",
@@ -290413,9 +290423,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for erkamyaman-rust-anything-learnings",
       "repository": "erkamyaman-rust-anything-learnings",
       "source_version": "HEAD",
-      "content_hash": "1a74496f2322ea409bac527b900ac48044f13a5c515b0af13e1d84f34c97e4f2",
+      "content_hash": "4e9ec6883a4946f0ed6332ee8ba9e79a962c69d33a62365b75eb1b9f0dba16e5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T18:38:26.278Z"
+      "persisted_at": "2026-11-20T06:19:41.362Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-core-",
@@ -301137,6 +301147,151 @@
       "content_hash": "360945ae01ef4b4f84a9e558786be1125f2e534cb9bcb8736489f51ec0e803e7",
       "domain_letter": "G",
       "persisted_at": "2026-11-20T06:11:31.450Z"
+    },
+    "rule-9526": {
+      "learning_id": "rule-9526",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9526,
+      "title": "address remaining CodeRabbit findings",
+      "source_url": "https://github.com/erkamyaman/rust-anything",
+      "source_version": "fe91ee14",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T06:19:24.426Z"
+    },
+    "candidate_directive-address-remaining-coderabbit-findings": {
+      "item_id": "candidate_directive-address-remaining-coderabbit-findings",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-A7AP-address-remaining-coderabbit-findings.md",
+      "title": "address remaining CodeRabbit findings",
+      "repository": "erkamyaman-rust-anything-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fab28d3b66cdb55ac987698410dd4545c5244ab849c75cef527a66a6486ee8c8",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-20T06:19:41.044Z"
+    },
+    "learn-github-simonschubert-kai": {
+      "learning_id": "learn-github-simonschubert-kai",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "SimonSchubert/Kai",
+      "repository": "SimonSchubert/Kai",
+      "slug": "simonschubert-kai",
+      "platform": "github",
+      "source_url": "https://github.com/SimonSchubert/Kai",
+      "source_version": "bc3f0916",
+      "content_hash": "fac8a97cb2b3cf88369f350a9487cf7920221fe74c451c67fc3f04a14002cc81",
+      "dossier_path": "07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 3545,
+          "title": "Upgrade dependencies",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T06:19:28.725Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-upgrade-dependencies": {
+      "item_id": "candidate_directive-upgrade-dependencies",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-A7UW-upgrade-dependencies.md",
+      "title": "Upgrade dependencies",
+      "repository": "simonschubert-kai-learnings",
+      "source_version": "HEAD",
+      "content_hash": "13baf6f62e9165da196a16b5202ba2495600c119b213022e9ac6baffba5db66c",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-20T06:19:41.769Z"
+    },
+    "domain_intelligence-design-intelligence-simonschubert-kai-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-simonschubert-kai-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-simonschubert-kai-design-intelligence-simonschubert-kai-core-invariants.md",
+      "title": "Design Intelligence: SimonSchubert/Kai Core Invariants",
+      "repository": "SimonSchubert/Kai",
+      "source_version": "bc3f0916",
+      "content_hash": "2d764a63123633682cf0c572b59273d52c714a66e6d984f6f3f61f204f2f07d3",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-20T06:19:29.261Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-simonschubert-kai": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-simonschubert-kai",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/simonschubert-kai-verification-protocol-empirical-defect-shield-for-simonschuber.md",
+      "title": "Verification Protocol: Empirical Defect Shield for SimonSchubert/Kai",
+      "repository": "SimonSchubert/Kai",
+      "source_version": "bc3f0916",
+      "content_hash": "18ed0d848165fd47339b2edbf8aa788cab49fe1014283dbb540d236036fb3f5b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T06:19:29.404Z"
+    },
+    "rule-9527": {
+      "learning_id": "rule-9527",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9527,
+      "title": "[BugFix][RB-1573] Count variant nulls in count(VARIANT) and keep scalar types in",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "b400696f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T06:19:37.332Z"
+    },
+    "candidate_directive-bugfix-rb-1573-count-variant-nulls-in-count-variant-and-keep-scalar-types-in": {
+      "item_id": "candidate_directive-bugfix-rb-1573-count-variant-nulls-in-count-variant-and-keep-scalar-types-in",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-A8J2-bugfix-rb-1573-count-variant-nulls-in-count-variant-and-keep-scalar-types-in.md",
+      "title": "[BugFix][RB-1573] Count variant nulls in count(VARIANT) and keep scalar types in",
+      "repository": "starrocks-starrocks-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9cfafbd53731820a12bbb7be626f110fcfdb071c4a0bb5397bbca657c782d262",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T06:19:42.641Z"
+    },
+    "domain_intelligence-design-intelligence-simonschubert-kai-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-simonschubert-kai-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-simonschubert-kai-learnings-design-intelligence-simonschubert-kai-learnings-core.md",
+      "title": "Design Intelligence: simonschubert-kai-learnings Core Invariants",
+      "repository": "simonschubert-kai-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e1529bb4da55cb8ead216e4589356a3f09e99b381b5ea452f47b76a7c02982ed",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-20T06:19:41.921Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-simonschubert-kai-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-simonschubert-kai-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/simonschubert-kai-learnings-verification-protocol-empirical-defect-shield-for-si.md",
+      "title": "Verification Protocol: Empirical Defect Shield for simonschubert-kai-learnings",
+      "repository": "simonschubert-kai-learnings",
+      "source_version": "HEAD",
+      "content_hash": "670c668c8f64c244dae146fc57ef028f306ad8494f39433213948e86a121850f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T06:19:42.090Z"
     }
   },
   "ai-builder-brain": {

@@ -11515,3 +11515,6 @@ Every entry in this ledger must capture:
 | `learn-github-fujiapple852-trippy` | `https://github.com/fujiapple852/trippy` | `42a3508e` | Multi-dimensional audit evidence | 2026-11-20T06:10:48.483Z |
 | `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/Stable-Diffusion-KMP` | `82ebd42d` | Multi-dimensional audit evidence | 2026-11-20T06:10:56.091Z |
 | `learn-dom-d-af6d9deb` | `project://fujiapple852-trippy` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md` | 2026-11-20T06:11:30.068Z |
+| `learn-github-erkamyaman-rust-anything` | `https://github.com/erkamyaman/rust-anything` | `fe91ee14` | Multi-dimensional audit evidence | 2026-11-20T06:19:24.630Z |
+| `learn-github-simonschubert-kai` | `https://github.com/SimonSchubert/Kai` | `bc3f0916` | Multi-dimensional audit evidence | 2026-11-20T06:19:28.913Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `b400696f` | Multi-dimensional audit evidence | 2026-11-20T06:19:37.527Z |

@@ -4,22 +4,22 @@
 {
   "source_repository": "erkamyaman/rust-anything",
   "source_url": "https://github.com/erkamyaman/rust-anything",
-  "source_version": "8a2e1d1f",
+  "source_version": "fe91ee14",
   "license": "MIT",
-  "timestamp": "2026-11-18T18:38:08.803Z",
+  "timestamp": "2026-11-20T06:19:24.827Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-erkamyaman-rust-anything",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [erkamyaman/rust-anything](https://github.com/erkamyaman/rust-anything) (Revision: `8a2e1d1f`).  
-> **License**: MIT | **Timestamp**: `2026-11-18T18:38:08.803Z`  
+> **Provenance**: Harvested from [erkamyaman/rust-anything](https://github.com/erkamyaman/rust-anything) (Revision: `fe91ee14`).  
+> **License**: MIT | **Timestamp**: `2026-11-20T06:19:24.827Z`  
 > **Learning ID**: `learn-github-erkamyaman-rust-anything`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `erkamyaman/rust-anything` (Commit: `8a2e1d1f`)
+- **Target Repository**: `erkamyaman/rust-anything` (Commit: `fe91ee14`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/erkamyaman/rust-anything](https://github.com/erkamyaman/rust-anything))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T18:38:07.275Z  
+> **Harvest Timestamp**: 2026-11-20T06:19:23.443Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Rewrite your whole app in Rust, one piece at a time, checked against the original's recorded behavior at every step. CLIs, HTTP servers and libraries in TypeScript, Python, C, Go, Ruby and Java.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3012 stars
+- **Stars / Engagement**: 5550 stars
 
 ---
 
@@ -47,6 +47,368 @@ PROVENANCE_END -->
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `demo/real-world/prettier-rs/prettier-js-rs/src/utils.rs`
+```
+//! `src/language-js/utils/index.js` and the string/number helpers of `src/utils/`.
+
+use crate::value::Value;
+
+use crate::node::*;
+use crate::options::Options;
+use crate::printer::Printer;
+
+pub fn width(text: &str) -> usize {
+    doc_printer_rs::port::string_width(text) as usize
+}
+
+pub fn precedence(op: &str) -> i32 {
+    precedence_of(op)
+}
+
+pub fn precedence_of(op: &str) -> i32 {
+    match op {
+        "|>" => 0,
+        "??" => 1,
+        "||" => 2,
+        "&&" => 3,
+        "|" => 4,
+        "^" => 5,
+        "&" => 6,
+        "==" | "===" | "!=" | "!==" => 7,
+        "<" | ">" | "<=" | ">=" | "in" | "instanceof" => 8,
+        ">>" | "<<" | ">>>" => 9,
+        "+" | "-" => 10,
+        "*" | "/" | "%" => 11,
+        "**" => 12,
+        _ => -100,
+    }
+}
+
+fn is_equality(op: &str) -> bool {
+    matches!(op, "==" | "!=" | "===" | "!==")
+}
+
+fn is_multiplicative(op: &str) -> bool {
+    matches!(op, "*" | "/" | "%")
+}
+
+fn is_bitshift(op: &str) -> bool {
+    matches!(op, ">>" | ">>>" | "<<")
+}
+
+pub fn should_flatten(parent_op: &str, node_op: &str) -> bool {
+    if precedence_of(node_op) != precedence_of(parent_op) {
+        return false;
+    }
+    if parent_op == "**" {
+        return false;
+    }
+    if is_equality(parent_op) && is_equality(node_op) {
+        return false;
+    }
+    if (node_op == "%" && is_multiplicative(parent_op))
+        || (parent_op == "%" && is_multiplicative(node_op))
+    {
+        return false;
+    }
+    if node_op != parent_op && is_multiplicative(node_op) && is_multiplicative(parent_op) {
+        return false;
+    }
+    if is_bitshift(parent_op) && is_bitshift(node_op) {
+        return false;
+    }
+    true
+}
+
+pub fn is_bitwise_operator(op: &str) -> bool {
+    is_bitshift(op) || matches!(op, "|" | "^" | "&")
+}
+
+pub fn is_binary_cast_expression(n: &Value) -> bool {
+    matches!(
+        n.ty(),
+        "AsExpression"
+            | "AsConstExpression"
+            | "SatisfiesExpression"
+            | "TSAsExpression"
+            | "TSSatisfiesExpression"
+    )
+}
+
+pub fn is_nullish_coalescing(n: &Value) -> bool {
+    n.is("LogicalExpression") && n.str_of("operator") == Some("??")
+}
+
+pub fn is_signed_numeric_literal(n: &Value) -> bool {
+    n.is("UnaryExpression")
+        && matches!(n.str_of("operator"), Some("+" | "-"))
+        && n.field("argument").is_some_and(is_numeric_literal)
+}
+
+pub fn is_memberish(n: &Value) -> bool {
+    is_member_expression(n) || (n.is("BindExpression") && n.field("object").is_some())
+}
+
+pub fn is_call_like_expression(n: &Value) -> bool {
+    is_call_expression(n) || matches!(n.ty(), "NewExpression" | "ImportExpression")
+}
+
+pub fn has_naked_left_side(n: &Value) -> bool {
+    matches!(
+        n.ty(),
+        "AssignmentExpression"
+            | "BinaryExpression"
+            | "LogicalExpression"
+            | "NGPipeExpression"
+            | "ConditionalExpression"
+            | "SequenceExpression"
+            | "TaggedTemplateExpression"
+            | "BindExpression"
+            | "TSNonNullExpression"
+            | "ChainExpression"
+    ) || is_call_expression(n)
+        || is_member_expression(n)
+        || (n.is("UpdateExpression") && !n.flag("prefix"))
+        || is_binary_cast_expression(n)
+}
+
+pub fn left_side(n: &Value) -> Option<&Value> {
+    if let Some(Value::Array(e)) = n.get("expressions") {
+        return e.first();
+    }
+    [
+        "left",
+        "test",
+        "callee",
+        "object",
+        "tag",
+        "argument",
+        "expression",
+    ]
+    .iter()
+    .find_map(|k| n.field(k))
+}
+
+pub fn left_side_path(n: &Value) -> Vec<(&'static str, Option<usize>)> {
+    if matches!(n.get("expressions"), Some(Value::Array(_))) {
+        return vec![("expressions", Some(0))];
+    }
+    for k in [
+        "left",
+        "test",
+        "object",
+        "callee",
+        "tag",
+        "argument",
+        "expression",
+    ] {
+        if n.field(k).is_some() {
+            return vec![(k, None)];
+        }
+    }
+    Vec::new()
+}
+
+pub fn starts_with_no_lookahead_token(n: &Value, pred: &dyn Fn(&Value) -> bool) -> bool {
+    let go = |k: &str| {
+        n.field(k)
+            .is_some_and(|c| starts_with_no_lookahead_token(c, pred))
+    };
+    match n.ty() {
+        "BinaryExpression" | "LogicalExpression" | "AssignmentExpression" | "NGPipeExpression" => {
+            go("left")
+        }
+        "MemberExpression" | "OptionalMemberExpression" => go("object"),
+        "TaggedTemplateExpression" => {
+            if n.field("tag").is_some_and(|t| t.is("FunctionExpression")) {
+                return false;
+            }
+            go("tag")
+        }
+        "CallExpression" | "OptionalCallExpression" => {
+            if n.field("callee")
+                .is_some_and(|t| t.is("FunctionExpression"))
+            {
+                return false;
+            }
+            go("callee")
+        }
+        "ConditionalExpression" => go("test"),
+        "UpdateExpression" => !n.flag("prefix") && go("argument"),
+        "BindExpression" => go("object"),
+        "SequenceExpression" => n
+            .list("expressions")
+            .first()
+            .is_some_and(|c| starts_with_no_lookahead_token(c, pred)),
+        "ChainExpression"
+        | "TSSatisfiesExpression"
+        | "TSAsExpression"
+        | "TSNonNullExpression"
+        | "AsExpression"
+        | "AsConstExpression"
+        | "SatisfiesExpression" => go("expression"),
+        _ => pred(n),
+    }
+}
+
+pub fn call_arguments(n: &Value) -> Vec<&Value> {
+    let n = skip_chain(n);
+    if n.is("ImportExpression") || n.is("TSImportType") {
+        let key = if n.is("ImportExpression") {
+            "source"
+        } else {
+            "argument"
+        };
+        let mut out: Vec<&Value> = n.field(key).into_iter().collect();
+        if let Some(o) = n.field("options") {
+            out.push(o);
+        }
+        return out;
+    }
+    n.list("arguments").iter().collect()
+}
+
+pub fn function_parameters(n: &Value) -> Vec<&Value> {
+    let mut out = Vec::new();
+    if let Some(t) = n.field("this") {
+        out.push(t);
+    }
+    if let Some(Value::Array(p)) = n.get("parameters") {
+        out.extend(p.iter());
+    } else {
+        out.extend(n.list("params").iter());
+    }
+    if let Some(r) = n.field("rest") {
+        out.push(r);
+    }
+    out
+}
+
+pub fn has_rest_parameter(n: &Value) -> bool {
+    n.field("rest").is_some()
+        || function_parameters(n)
+            .last()
+            .is_some_and(|p| p.is("RestElement"))
+}
+
+pub fn is_single_word_type(n: &Value) -> bool {
+    matches!(
+        n.ty(),
+        "Identifier" | "ThisExpression" | "Super" | "PrivateName" | "PrivateIdentifier"
+    )
+}
+
+pub fn is_simple_call_argument(n: &Value, depth: i32) -> bool {
+    if depth <= 0 {
+        return false;
+    }
+    if n.is("ChainExpression") || n.is("TSNonNullExpression") {
+        return n
+            .field("expression")
+            .is_some_and(|e| is_simple_call_argument(e, depth));
+    }
+    let child = |c: &Value| is_simple_call_argument(c, depth - 1);
+    if is_regexp_literal(n) {
+        let pattern = n
+            .get("regex")
+            .and_then(|r| r.str_of("pattern"))
+            .unwrap_or("");
+        return width(pattern) <= 5;
+    }
+    if is_literal(n) || is_single_word_type(n) || n.is("ArgumentPlaceholder") {
+        return true;
+    }
+    if n.is("TemplateLiteral") {
+        return n.list("quasis").iter().all(|q| {
+            !q.get("value")
+                .and_then(|v| v.str_of("raw"))
+                .unwrap_or("")
+                .contains('\n')
+        }) && n.list("expressions").iter().all(child);
+    }
+    if n.is("ObjectExpression") {
+        return n.list("properties").iter().all(|p| {
+            !p.flag("computed") && (p.flag("shorthand") || p.field("value").is_some_and(child))
+        });
+    }
+    if n.is("ArrayExpression") {
+        return n.list("elements").iter().all(|x| x.is_null() || child(x));
+    }
+    if is_call_like_expression(n) {
+        if n.is("ImportExpression")
+            || n.field("callee")
+                .is_some_and(|c| is_simple_call_argument(c, depth))
+        {
+            let args = call_arguments(n);
+            return args.len() as i32 <= depth && args.iter().all(|a| child(a));
+        }
+        return false;
+    }
+    if is_member_expression(n) {
+        return n
+            .field("object")
+            .is_some_and(|o| is_simple_call_argument(o, depth))
+            && n.field("property")
+                .is_some_and(|o| is_simple_call_argument(o, depth));
+    }
+    if (n.is("UnaryExpression") && matches!(n.str_of("operator"), Some("!" | "-" | "+" | "~")))
+        || n.is("UpdateExpression")
+    {
+        return n
+            .field("argument")
+            .is_some_and(|a| is_simple_call_argument(a, depth));
+    }
+    false
+}
+
+pub fn is_lone_short_argument(
+    n: &Value,
+    print_width: usize,
+    opts: &Options,
+    c: &crate::comments::Comments,
+) -> bool {
+    if c.has_any(n) {
+        return false;
+    }
+    let threshold = print_width as f64 * 0.25;
+    if n.is("ThisExpression")
+        || (n.is("Identifier")
+            && (n.str_of("name").unwrap_or("").encode_utf16().count() as f64) <= threshold)
+        || (is_signed_numeric_literal(n) && !n.field("argument").is_some_and(|a| c.has_any(a)))
+    {
+        return true;
+    }
+    if let Some(pattern) = n.get("regex").and_then(|r| r.str_of("pattern"))
+        && n.is("Literal")
+    {
+        return pattern.encode_utf16().count() as f64 <= threshold;
+    }
+    if is_string_literal(n) {
+        let raw = n.str_of("raw").unwrap_or("");
+        return print_string(raw, opts).encode_utf16().count() as f64 <= threshold;
+    }
+    if n.is("TemplateLiteral") {
+        let quasis = n.list("quasis");
+        let raw = quasis
+            .first()
+            .and_then(|q| q.get("value"))
+            .and_then(|v| v.str_of("raw"))
+            .unwrap_or("");
+        return n.list("expressions").is_empty()
+            && raw.encode_utf16().count() as f64 <= threshold
+            && !raw.contains('\
+```
+
+### Core Architecture Module: `demo/real-world/prettier-rs/scripts/fuzz-worker.mjs`
+```
+import path from "node:path"; import { pathToFileURL } from "node:url";
+const [dir, filepath] = process.argv.slice(2);
+const prettier = await import(pathToFileURL(path.join(dir, "index.mjs")).href);
+let input = ""; for await (const c of process.stdin) input += c;
+try { process.stdout.write(await prettier.format(input, { filepath })); } catch { process.exit(2); }
+
+```
 
 ### Core Architecture Module: `demo/x18n-core/contracts-rs/shadow/contracts.shadow.ts`
 ```
@@ -1206,201 +1568,17 @@ pub fn split_key_wire(len: u32) -> Result<u32, JsError> {
 
 ```
 
-### Core Architecture Module: `demo/x18n-core/keys-rs/src/port.rs`
-```
-//! The Rust port of `packages/core/src/keys.ts`.
-//!
-//! `globToRegExp`, `keyMatcher` and `pathMatcher` stay in TS: they return a RegExp or a function.
-
-#![forbid(unsafe_code)]
-
-use serde_json::{Value, json};
-
-use crate::js;
-use crate::utf16;
-
-/// Port of `joinKey` (`packages/core/src/keys.ts:4`): `ns:a.b.c`, or `a.b.c` without namespace.
-pub fn join_key(namespace: Option<String>, path: Vec<String>) -> String {
-    let dotted = path.join(".");
-    match namespace {
-        None => dotted,
-        Some(ns) => format!("{ns}:{dotted}"),
-    }
-}
-
-/// Port of `splitKey` (`packages/core/src/keys.ts:12`). Without `namespaced`, `:` is part of the key.
-pub fn split_key(key: String, namespaced: Option<bool>) -> Value {
-    // `:` is ASCII: its UTF-8 position splits the string where JS's UTF-16 index does.
-    let index = if namespaced.unwrap_or(true) {
-        key.find(':')
-    } else {
-        None
-    };
-    let (namespace, rest) = match index {
-        Some(i) => (Value::String(key[..i].to_string()), &key[i + 1..]),
-        None => (js::undefined(), key.as_str()),
-    };
-    let path: Vec<&str> = if rest.is_empty() {
-        Vec::new()
-    } else {
-        rest.split('.').collect()
-    };
-    json!({ "namespace": namespace, "path": path })
-}
-
-/// Port of `isKeyUnder` (`packages/core/src/keys.ts:31`): `a.b` is under `a`.
-pub fn is_key_under(key: String, prefix: String) -> bool {
-    if key == prefix {
-        return true;
-    }
-    let sep = if prefix.ends_with(':') { "" } else { "." };
-    key.starts_with(&format!("{prefix}{sep}"))
-}
-
-/// Port of `replaceKeyPrefix` (`packages/core/src/keys.ts:40`).
-///
-/// Returns UTF-16 code units: when `from` is not really a prefix, JS `slice` can cut a
-/// surrogate pair in half, and that half survives in JS but not in a Rust `String`.
-/// `index.cjs` turns the units back into the exact JS string.
-pub fn replace_key_prefix(key: String, from: String, to: String) -> Vec<u16> {
-    if key == from {
-        return utf16::units(&to);
-    }
-    // `key.slice(from.length)`: both lengths are UTF-16 code units in JS.
-    let units = utf16::units(&key);
-    let skip = from.encode_utf16().count().min(units.len());
-    let mut out = utf16::units(&to);
-    out.extend_from_slice(&units[skip..]);
-    out
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn keys_round_trip() {
-        assert_eq!(
-            join_key(Some("ns".into()), vec!["a".into(), "b".into()]),
-            "ns:a.b"
-        );
-        assert_eq!(
-            split_key("ns:a.b".into(), None),
-            json!({ "namespace": "ns", "path": ["a", "b"] })
-        );
-        assert_eq!(split_key("a:b".into(), Some(false))["path"], json!(["a:b"]));
-        assert!(js::is_undefined(
-            &split_key("a.b".into(), None)["namespace"]
-        ));
-        assert!(is_key_under("a.b".into(), "a".into()));
-        assert!(!is_key_under("ab".into(), "a".into()));
-        assert!(is_key_under("ns:a".into(), "ns:".into()));
-        assert_eq!(
-            String::from_utf16(&replace_key_prefix("😀.x".into(), "😀".into(), "y".into())).ok(),
-            Some("y.x".to_string())
-        );
-        // Cutting inside "😀" keeps the lone low surrogate, as JS does.
-        assert_eq!(
-            replace_key_prefix("😀x".into(), "a".into(), "".into()),
-            [0xDE00, u16::from(b'x')]
-        );
-    }
-}
-
-```
-
-### Core Architecture Module: `demo/x18n-core/keys-rs/src/utf16.rs`
-```
-//! JS string indexing in Rust.
-//!
-//! JS strings are indexed in UTF-16 code units; Rust `str` in UTF-8 bytes. A port that returns
-//! or consumes offsets must use these helpers, or non-ASCII text gets wrong results silently.
-
-#![forbid(unsafe_code)]
-
-/// The UTF-16 code units of `s`, as JS sees the string.
-pub fn units(s: &str) -> Vec<u16> {
-    s.encode_utf16().collect()
-}
-
-/// The string `units[start..end]` decodes to, like JS `slice` (lone surrogates become U+FFFD).
-pub fn slice(units: &[u16], start: usize, end: usize) -> String {
-    let end = end.min(units.len());
-    let start = start.min(end);
-    String::from_utf16_lossy(&units[start..end])
-}
-
-/// JS `haystack.indexOf(needle, from)`, in UTF-16 code units.
-pub fn index_of(haystack: &[u16], needle: &[u16], from: usize) -> Option<usize> {
-    let from = from.min(haystack.len());
-    if needle.is_empty() {
-        return Some(from);
-    }
-    haystack[from..]
-        .windows(needle.len())
-        .position(|w| w == needle)
-        .map(|i| i + from)
-}
-
-/// JS `haystack.lastIndexOf(needle)`, in UTF-16 code units.
-pub fn last_index_of(haystack: &[u16], needle: &[u16]) -> Option<usize> {
-    if needle.is_empty() {
-        return Some(haystack.len());
-    }
-    haystack.windows(needle.len()).rposition(|w| w == needle)
-}
-
-/// UTF-8 byte offset of a UTF-16 offset in `s`, for slicing a Rust `str`.
-pub fn byte_offset(s: &str, utf16_offset: usize) -> usize {
-    let mut seen = 0;
-    for (byte, c) in s.char_indices() {
-        if seen >= utf16_offset {
-            return byte;
-        }
-        seen += c.len_utf16();
-    }
-    s.len()
-}
-
-/// UTF-16 offset of a UTF-8 byte offset in `s`, for returning ranges to JS.
-pub fn utf16_offset(s: &str, byte_offset: usize) -> usize {
-    s[..byte_offset.min(s.len())].encode_utf16().count()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn matches_js_indexing() {
-        let s = units("a👍b");
-        assert_eq!(s.len(), 4);
-        assert_eq!(index_of(&s, &units("b"), 0), Some(3));
-        assert_eq!(last_index_of(&s, &units("a")), Some(0));
-        assert_eq!(slice(&s, 3, 4), "b");
-        assert_eq!(byte_offset("a👍b", 3), 5);
-        assert_eq!(utf16_offset("a👍b", 5), 3);
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #83** (2026-11-18): **Update README.md**
-  *Symptoms*: Just adding the href to the README_PT.md  ## What and why  This PR adds a Portuguese (Português) translation of the project's README.  The goal is to make rust-anything more accessible to Portuguese-speaking developers by providing documentation in their native language.  Changes: - Added `docs/README_PT.md` with the Portuguese translation. - Added a Portuguese option to the language selector in the main README.  No code, functionality, or existing documentation has been modified.  ## How to check it  - Open `docs/README_PT.md` and review the Portuguese translation. - Check that the Portuguese language link in the main README points to the correct file. - Verify that existing language options remain unchanged.  ## Checklist  - [x] Documentation updated. - [x] No application code changed. - [ ] `cargo fmt`, `cargo clippy` and `cargo test` (not applicable to this documentation-only change). - [ ] Any untested changes are noted above.  <!-- This is an auto-generated comment: release notes by coderabbit.ai --> <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Updated the README’s language selector to include a link to the Portuguese translation. <!-- end of auto-generated comment: release notes by coderabbit.ai -->
-  **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/erkamyaman/rust-anything/pull/83?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  <details> <summary
+- **Issue #119** (2026-11-20): **docs: the FAQ says Kotlin is supported, as the README and STATUS already do**
+  *Symptoms*: ## What and why  `docs/faq.md` still says Kotlin is "not supported yet", but Kotlin support shipped in 2.1.0 (#117): the README's Languages table has a Kotlin row, `docs/STATUS.md` lists it as Tested, and `docs/tools.md` and the README intro already name it. This updates the FAQ answer to match, using the README's wording for what is supported (Gradle modules of top-level functions and `@JvmStatic` methods). Swift stays "not supported yet".  ## Verified  - Diff is one paragraph in `docs/faq.md` (3 lines added, 2 removed, no other file touched). - Wording checked against README.md "Languages" (Kotlin row) and docs/STATUS.md (Kotlin: Tested). - The `../README.md#languages` link still points at the existing `## Languages` heading. - File line endings are unchanged (LF).  ## Not verified  - Docs only: `cargo fmt`, `cargo clippy` and `cargo test` were not run, because no source or test file changes and I had no Rust toolchain in this environment. - Skipped the CHANGELOG entry since this only corrects an outdated FAQ sentence; happy to add one if you want it.  This change was prepared with AI assistance and reviewed by me before submitting.   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Updated the FAQ to clarify Kotlin support for Gradle modules with top-level functions and `@JvmStatic` methods. Swift remains unsupported.  <!-- end of auto-generated comment: releas
 
-- **Issue #82** (2026-11-18): **Create README_PT.md**
-  *Symptoms*: ## What and why  This PR adds a Portuguese (Português) translation of the project's README.  The goal is to make rust-anything more accessible to Portuguese-speaking developers by providing documentation in their native language.  Changes: - Added `docs/README_PT.md` with the Portuguese translation. - Added a Portuguese option to the language selector in the main README.  No code, functionality, or existing documentation has been modified.  ## How to check it  - Open `docs/README_PT.md` and review the Portuguese translation. - Check that the Portuguese language link in the main README points to the correct file. - Verify that existing language options remain unchanged.  ## Checklist  - [x] Documentation updated. - [x] No application code changed. - [ ] `cargo fmt`, `cargo clippy` and `cargo test` (not applicable to this documentation-only change). - [ ] Any untested changes are noted above.  <!-- This is an auto-generated comment: release notes by coderabbit.ai --> <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added a Portuguese-language README covering supported languages, installation and agent setup, migration workflows, whole-application migration, benchmarks, limitations, and frequently asked questions.   * The guide also documents commands, requirements, stated outcomes, and project resources, along with sponsorship, contribution, and licensing information. <!-- end of auto-generated comment: release notes by coderabbit.ai -->
-  **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/erkamyaman/rust-anything/pull/82?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- walkthrough_start -->  <details> <summary><strong>Walkthrough</strong></summary> <dl> <dd> <br>  Adds a Portuguese README covering rust-anything’s supported languages, insta
-  > [README.md](https://github.com/user-attachments/files/35022897/README.md)  The README.md with README_PT.md  link
+- **Issue #118** (2026-11-19): **"0 mismatches" rests on falling back to Prettier, and PHP and C# unit ports are still "coming next"**
+  *Symptoms*: cc @erkamyaman Hi Erkam, I tested rust-anything like a new user on launch day, and I found 3 things worth fixing. 1. The headline says 17,224 recorded runs with 0 mismatches, but only 15,837 of those runs are fully in Rust. The rest match because they fall back to Prettier itself. 2. The headline says rewrite your whole app in Rust, but the PHP and C# unit bridges are "coming next". Only record, replay and the front door work for those two today. 3. The tool does not translate code. Your own README says your coding agent or you write the Rust, and the proof only covers what the recording covers. One example, so you can see the work is real. Finding 1, reproduction: 1. Open the README. It says: "New in 2.0: Prettier, ported to Rust. 19x faster · 17,224 recorded runs · 0 mismatches" 2. Read the paragraph under the results table. It says: "Prettier: 15,837 of 17,224 recorded runs format fully in Rust across 10 languages (JavaScript, TypeScript, JSX, JSON, GraphQL, YAML, Markdown, CSS, SCSS, Less), and all 17,224 match Prettier byte for byte, since anything not ported yet falls back to Prettier." 3. That is 1,387 runs, about 8 in every 100, that are not Rust at all. They match because the original Prettier runs them. A new user reads "0 mismatches" as proof the Rust port matches the original. For 1,387 runs there is no Rust port being tested, only the original running again. Screenshots are attached. I also have the reports for the other two problems listed above. I have a full r
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1417,342 +1595,866 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bb4de3f6` (2026-11-18)
-**Commit Message**: Deep-dive lessons: doctor, MCP labels/progress/prompts, gate fixes, stall detection, crate table
+### Incident Patch 1: `53558cc1` (2026-11-19)
+**Commit Message**: fix: address remaining CodeRabbit findings
 
-- `rust-anything doctor`: runtimes and versions, agent setup (MCP entry and skill: missing,
-  current, outdated, foreign), and an MCP self-test, each problem with its fix; `--json`
-- MCP: every tool has a title and read-only / destructive / open-world hints; failed calls carry
-  structuredContent {code, message, retryable, next}; each call runs on its own thread with
-  progress notifications and cancellation; prompts `port_unit` and `port_whole_app` from the skill
-- MCP tools and the CLI now take the same options (a test keeps them in step), and docs/tools.md
-  is generated from the tool list
-- gate: each failed check carries the command that fixes it; `todo!` and functions that only
-  panic count as unported
-- diff keeps a short history per change to port.rs and reports a stalled port after three
-  changes that gain no matching case; the skill says to stop and ask then
-- The library-to-crate mappings of all eight languages are one data table, src/crates.toml
-- Tests no longer skip silently when CI names the runtime in RUST_ANYTHING_REQUIRE
-- README: warning that recording runs the ori
+- scope Kotlin recording sources to the ported unit\n- resolve import aliases, parent packages and the longest crates prefix\n- block extension functions, expression bodies without a type and nested objects with wrong owners\n- keep SKIP_DIRS only outside src trees\n- let --jni-libs point diff at libraries installed by build
 
-**File**: `.coderabbit.yaml` (added, +5/-0)
+**File**: `docs/tools.md` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
-+reviews:
-+  auto_review:
-+    ignore_usernames:
-+      - "dependabot[bot]"
+@@ -96,6 +96,7 @@ Runs the original's code or commands.
+ | `crate` | string | yes | Folder of the generated crate (holds rust-anything.json). |
+ | `profile` | string |  | Diff on this machine (default) or on a connected Android device (JVM crates). |
+ | `device` | string |  | Android device serial; picked automatically when only one is connected. |
++| `jni_libs` | string |  | Android libraries folder to diff; defaults to <crate>/jniLibs. |
+ | `ignore_key_order` | boolean |  |  |
+ | `module` | string |  | Test this JS module instead of the crate's `index.cjs`. |
+ | `node_args` | string[] |  | Extra arguments for node, e.g. ["--import=tsx"]. |
 ```
 
-**File**: `.github/ISSUE_TEMPLATE/bug_report.yml` (modified, +9/-4)
+**File**: `src/android_device.rs` (modified, +10/-5)
 ```diff
-@@ -6,6 +6,10 @@ body:
-     attributes:
-       value: |
-         Thanks for reporting. A security problem goes through the private report in SECURITY.md instead.
-+
-+        **Don't paste secrets or private data.** Leave out API keys, tokens, private code, and the
-+        recorded `cases.jsonl` (or `rust/app-cases/`) of a private project: recordings contain real
-+        inputs and outputs. A minimal repro with made-up data is enough.
-   - type: textarea
-     id: what
-     attributes:
-@@ -50,11 +54,12 @@ body:
-         - Not language specific
-     validations:
-       required: true
--  - type: input
--    id: platform
-+  - type: textarea
-+    id: environment
-     attributes:
--      label: Platform
--      description: OS and architecture, plus the runtime version if it matters (Node, Python, JDK...).
-+      label: Environment
-+      description: Output of `rust-anything doctor` (1.6+), or your OS, Node/Python/etc. versions. Check it for paths or names you'd rather not share.
-+      render: text
-       placeholder: macOS 26 arm64, Node 22
-     validations:
-       required: true
+@@ -322,7 +322,12 @@ pub fn record(
+ }
+ 
+ /// Diffs the Android `.so` built for the connected device's ABI against the recording.
+-pub fn diff(crate_dir: &Path, m: &Manifest, device: Option<&str>) -> Result<DiffOutcome> {
++pub fn diff(
++    crate_dir: &Path,
++    m: &Manifest,
++    device: Option<&str>,
++    jni_libs: Option<&Path>,
++) -> Result<DiffOutcome> {
+     check_language(m)?;
+     let cases = crate_dir.join(crate::harness::CASES);
+     if !cases.is_file() {
+@@ -334,10 +339,10 @@ pub fn diff(crate_dir: &Path, m: &Manifest, device: Option<&str>) -> Result<Diff
+     }
+     let device = Device::connect(device)?;
+     let abi = device.abi()?;
+-    let lib = crate_dir
+-        .join("jniLibs")
+-        .join(&abi)
+-        .join(format!("lib{}.so", m.lib_name()));
++    let base = jni_libs
++        .map(Path::to_path_buf)
++        .unwrap_or_else(|| crate_dir.join("jniLibs"));
++    let lib = base.join(&abi).join(format!("lib{}.so", m.lib_name()));
+     if !lib.is_file() {
+         bail!(
+             "no {} for the device ABI {abi}; run `rust-anything build {crate} --profile android --abi {abi}` first",
 ```
 
-**File**: `.github/actionlint.yaml` (added, +2/-0)
+**File**: `src/crates.rs` (modified, +10/-0)
 ```diff
-@@ -0,0 +1,2 @@
-+self-hosted-runner:
-+  labels: []
+@@ -76,6 +76,16 @@ pub fn find(lang: &str, name: &str) -> Option<CrateMatch> {
+         })
+ }
+ 
++/// The longest configured prefix of `lang` that starts `name`, if any.
++pub fn longest_prefix(lang: &str, name: &str) -> Option<&'static str> {
++    table()
++        .get(lang)?
++        .iter()
++        .flat_map(|e| e.prefixes.iter().map(String::as_str))
++        .filter(|p| name.starts_with(p))
++        .max_by_key(|p| p.len())
++}
++
+ #[cfg(test)]
+ mod tests {
+     use super::*;
 ```
 
-**File**: `.github/dependabot.yml` (added, +17/-0)
+**File**: `src/harness.rs` (modified, +6/-2)
 ```diff
-@@ -0,0 +1,17 @@
-+version: 2
-+updates:
-+  - package-ecosystem: cargo
-+    directory: /
-+    schedule:
-+      interval: weekly
-+    groups:
-+      cargo-minor-and-patch:
-+        update-types: [minor, patch]
-+
-+  - package-ecosystem: github-actions
-+    directory: /
-+    schedule:
-+      interval: weekly
-+    groups:
-+      actions-minor-and-patch:
-+        update-types: [minor, patch]
+@@ -764,11 +764,15 @@ pub fn diff(opts: &DiffOptions) -> Result<DiffOutcome> {
+ }
+ 
+ /// Diffs on a connected Android device, using the port built for the device's ABI.
+-pub fn diff_android(opts: &DiffOptions, device: Option<&str>) -> Result<DiffOutcome> {
++pub fn diff_android(
++    opts: &DiffOptions,
++    device: Option<&str>,
++    jni_libs: Option<&Path>,
++) -> Result<DiffOutcome> {
+     let manifest = Manifest::load(opts.crate_dir)?;
+     diff_after(
+         opts,
+-        crate::android_device::diff(opts.crate_dir, &manifest, device)?,
++        crate::android_device::diff(opts.crate_dir, &manifest, device, jni_libs)?,
+     )
+ }
+ 
 ```
 
-**File**: `.github/pull_request_template.md` (modified, +7/-3)
+**File**: `src/harness_kotlin.rs` (modified, +10/-1)
 ```diff
-@@ -2,13 +2,17 @@
- 
- <!-- What was wrong or missing, and how this change fixes it. Link the issue: Fixes #123 -->
- 
--## How to check it
-+## Verified
- 
--<!-- The repro, or the commands that show the change working. -->
-+<!-- What you ran and what you saw: the repro, the commands, and their output. -->
-+
-+## Not verified
-+
-+<!-- What you couldn't try (another OS, a runtime you don't have), and why. "Nothing" is a fine answer. -->
- 
- ## Checklist
- 
- - [ ] `cargo fmt`, `cargo clippy --all-targets -- -D warnings` and `cargo test` pass
- - [ ] A test that fails without this change
- - [ ] Docs and `CHANGELOG.md` updated if users will notice the change
--- [ ] Anything I couldn't test is noted above (another OS, a runtime I don't have)
-+- [ ] Anything I couldn't test is listed under Not verified
+@@ -103,12 +103,21 @@ fn compile(crate_dir: &Path, m: &Manifest, rust: bool) -> Result<Classpath> {
+     if !rust {
+         let jar = work.join("kotlin-original.jar");
+         let ws = crate::lang::kotlin::discover(&m.root)?;
+-        let sources: Vec<PathBuf> = ws
++        let all: Vec<PathBuf> = ws
+             .files
+             .iter()
+             .filter(|f| f.kind == crate::ts::discover::FileKind::Source)
+             .map(|f| m.root.join(&f.path))
+             .collect();
++        // Compile the unit being ported, not every Kotlin file in the module: an Android
++        // activity or other SDK-only source elsewhere in the module must not block recording.
++        let unit = m.root.join(&m.unit);
++        let scoped: Vec<PathBuf> = all
++            .iter()
++            .filter(|p| p.starts_with(&unit))
++            .cloned()
++            .collect();
++        let sources = if scoped.is_empty() { all } else { scoped };
+         let mut cmd = Command::new("kotlinc");
+         cmd.arg("-include-runtime")
+             .arg("-d")
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +14/-0)
+**File**: `src/lang/kotlin.rs` (modified, +82/-21)
 ```diff
-@@ -6,6 +6,14 @@ on:
-   pull_request:
+@@ -67,8 +67,15 @@ pub fn discover(root: &Path) -> Result<Workspace> {
+     let mut packages: Vec<Package> = Vec::new();
+     let mut files = Vec::new();
+     let walker = crate::walk::filtered(root, |e| {
+-        !(e.file_type().is_some_and(|t| t.is_dir())
+-            && SKIP_DIRS.contains(&e.file_name().to_string_lossy().as_ref()))
++        if !e.file_type().is_some_and(|t| t.is_dir())
++            || !SKIP_DIRS.contains(&e.file_name().to_string_lossy().as_ref())
++        {
++            return true;
++        }
++        // `src/main/kotlin/build/` can be a real package; other `build/` folders are output.
++        !e.path()
++            .components()
++            .any(|c| c.as_os_str() == std::ffi::OsStr::new("src"))
+     })
+     .hidden(true)
+     .require_git(false)
+@@ -268,28 +275,47 @@ pub fn scan(source: &str) -> FileFacts {
+ }
  
- jobs:
-+  actionlint:
-+    runs-on: ubuntu-latest
-+    steps:
-+      - uses: actions/checkout@v4
-+      - uses: docker://rhysd/actionlint:1.7.12
-+        with:
-+          args: -color
-+
-   msrv:
-     runs-on: ubuntu-latest
-     steps:
-@@ -18,6 +26,8 @@ jobs:
+ pub fn resolve(spec: &str, index: &HashMap<&str, usize>, ws: &Workspace) -> super::Resolution {
++    // `import a.b.C as Alias` keeps the dotted path, not the local alias.
++    let spec = spec.split(" as ").next().unwrap_or(spec).trim();
++    let wildcard = spec.ends_with(".*");
+     let first = spec.split('.').next().unwrap_or("");
+     if matches!(first, "kotlin" | "java" | "javax" | "jdk" | "sun") || spec.starts_with("com.sun.")
+     {
+         return super::Resolution::Stdlib;
+     }
+     let path = spec.trim_end_matches(".*").replace('.', "/");
+-    for p in &ws.packages {
+-        let file = join(&p.src_root, &format!("{path}.kt"));
+-        if let Some(i) = index.get(file.as_str()) {
+-            return super::Resolution::File(*i);
+-        }
+-        // Kotlin `package a.b` maps to a folder; find any file in that folder.
+-        let dir = join(&p.src_root, &path);
+-        if let Some((_, i)) = index
+-            .iter()
+-            .filter(|(f, _)| f.rsplit_once('/').is_some_and(|(d, _)| d == dir))
+-            .min_by_key(|(f, _)| **f)
+-        {
+-            return super::Resolution::File(*i);
++    let find = |p: &str, packages: &[Package]| -> Option<usize> {
++        for pkg in packages {
++            let file = join(&pkg.src_root, &format!("{p}.kt"));
++            if let Some(i) = index.get(file.as_str()) {
++                return Some(*i);
++            }
++            // Kotlin `package a.b` maps to a folder; find any file in that folder.
++            let dir = join(&pkg.src_root, p);
++            if let Some((_, i)) = index
++                .iter()
++                .filter(|(f, _)| f.rsplit_once('/').is_some_and(|(d, _)| d == dir))
++                .min_by_key(|(f, _)| **f)
++            {
++                return Some(*i);
++            }
+         }
++        None
++    };
++    if let Some(i) = find(&path, &ws.packages) {
++        return super::Resolution::File(i);
++    }
++    // A class import can also resolve to a file in its parent package.
++    if !wildcard
++        && let Some((parent, _)) = path.rsplit_once('/')
++        && let Some(i) = find(parent, &ws.packages)
++    {
++        return super::Resolution::File(i);
+     }
+-    super::Resolution::External(spec.split('.').take(2).collect::<Vec<_>>().join("."))
++    let external = crate::crates::longest_prefix("kotlin", spec)
++        .map(str::to_string)
++        .unwrap_or_else(|| spec.split('.').take(2).collect::<Vec<_>>().join("."));
++    super::Resolution::External(external)
+ }
  
-   check:
-     runs-on: ubuntu-latest
-+    env:
-+      RUST_ANYTHING_REQUIRE: node,cargo
-     steps:
-       - uses: actions/checkout@v4
-       - run: sh scripts/check-secrets.sh --all
-@@ -35,6 +45,8 @@ jobs:
- 
-   macos:
-     runs-on: macos-latest
-+    env:
-+      RUST_ANYTHING_REQUIRE: node,python3,go,ruby,java,cc,cargo
-     steps:
-       - uses: actions/checkout@v4
-       - uses: dtolnay/rust-toolchain@stable
-@@ -71,6 +83,8 @@ jobs:
- 
-   windows:
-     runs-on: windows-latest
-+    env:
-+      RUST_ANYTHING_REQUIRE: node,python,go,ruby,java,cargo
-     steps:
-       - uses: actions/checkout@v4
-       - uses: dtolnay/rust-toolchain@stable
+ pub fn lookup(name: &str) -> Option<CrateMatch> {
+@@ -538,6 +564,15 @@ fn collect(
+         };
+         let name = text(name_node, source).to_string();
+         let mut blocker = None;
++        // `fun Foo.bar()` needs a dispatched receiver; the JVM owner would not be the file class.
++        if source
++            .get(function.start_byte()..name_node.start_byte())
++            .unwrap_or_default()
++            .trim_end()
++            .ends_with('.')
++        {
++            blocker.get_or_insert_with(|| "extension functions need a receiver".into());
++        }
+         if mods.split_whitespace().any(|w| w == "suspend") {
+             blocker = Some("suspend functions keep their continuation in Kotlin".into());
+         }
+@@ -597,8 +632,23 @@ fn collect(
+         }
+         let ret = named_children(function)
+             .iter()
+-            .find(|n| is_type_node(n.kind()))
+-            .map_or_else(|| "Unit".to_string(), |n| type_text(*n, source));
++            .find(|n| n.start_byte() > name_node.end_byte() && is_type_node(n.kind()))
++            .map_or_else(
++                || {
++                    if source
++                        .get(name_node.end_byte()..function.end_byte())
++                        .unwrap_or_default()
++                        .trim_start()
++                        .starts_with('=')
++                    {
++                        blocker.get_or_insert_with(|| {
++                            "expression body has no explicit return type".into()
++                        });
++                    }
++                    "Unit".to_string()
++                },
++                |n| type_text(*n, source),
++  
 ```
 
-**File**: `.github/workflows/release.yml` (modified, +1/-1)
+**File**: `src/main.rs` (modified, +9/-3)
 ```diff
-@@ -69,7 +69,7 @@ jobs:
-         env:
-           GH_TOKEN: ${{ github.token }}
-         run: |
--          (cd dist && sha256sum * > SHA256SUMS)
-+          (cd dist && sha256sum -- * > SHA256SUMS)
-           version="${GITHUB_REF_NAME#v}"
-           awk -v v="$version" '/^## /{ if (on) exit; if (index($0, "## " v " ") == 1) { on = 1; next } } on' CHANGELOG.md > notes.md
-           gh release create "$GITHUB_REF_NAME" dist/* --title "$GITHUB_REF_NAME" --notes-file notes.md --verify-tag
+@@ -175,6 +175,9 @@ enum Cmd {
+         /// Android device serial; picked automatically when only one is connected.
+         #[arg(long)]
+         device: Option<String>,
++        /// Android libraries folder to diff; defaults to `<crate>/jniLibs`.
++        #[arg(long)]
++        jni_libs: Option<PathBuf>,
+         /// Test this JS module instead of the crate's `index.cjs`.
+         #[arg(long)]
+         module: Option<PathBuf>,
+@@ -692,6 +695,7 @@ fn run() -> Result<ExitCode> {
+             crate_dir,
+             profile,
+             device,
++            jni_libs,
+             module,
+             ignore_key_order,
+             float_tolerance,
+@@ -707,12 +711,14 @@ fn run() -> Result<ExitCode> {
+             };
+             let d = match profile {
+                 Profile::Host => {
+-                    if device.is_some() {
+-                        anyhow::bail!("`--device` needs `--profile android`");
++                    if device.is_some() || jni_libs.is_some() {
++                        anyhow::bail!("`--device` and `--jni-libs` need `--profile android`");
+                     }
+                     harness::diff(&opts)?
+                 }
+-                Profile::Android => harness::diff_android(&opts, device.as_deref())?,
++                Profile::Android => {
++                    harness::diff_android(&opts, device.as_deref(), jni_libs.as_deref())?
++                }
+             };
+             let stale = rust_anything::bridge::Manifest::load(&crate_dir)
+                 .ok()
 ```
 
-**File**: `CONTRIBUTING.md` (modified, +15/-2)
+**File**: `src/mcp.rs` (modified, +8/-3)
 ```diff
-@@ -37,6 +37,11 @@ git config core.hooksPath .githooks
- cargo test
- ```
- 
-+`cargo run -- doctor` lists which of these runtimes you have, their versions, and the command
-+that installs or updates each one. To make a missing runtime fail its tests instead of skipping
-+them (CI does this), name it in `RUST_ANYTHING_REQUIRE`, e.g.
-+`RUST_ANYTHING_REQUIRE=node,python3,go,ruby,java cargo test`.
-+
- The hook runs `scripts/check-secrets.sh`, which refuses keys, tokens and personal home-folder
- paths in what you commit. CI runs it on every file.
- 
-@@ -60,15 +65,23 @@ paths in what you commit. CI runs it on every file.
- - **Style:** match the code around you. Keep comments for what the code can't say on its own, and
-   put the reasoning for a change in the pull request instead.
- 
-+## Add a crate mapping
-+
-+`analyze` names the Rust crate for each library the code imports from `src/crates.toml`. To add
-+one, append an entry under its language: `names` (exact package names) or `prefixes` (the start of
-+a name, for Java and C#), `crates`, `fit` (`good`, `partial` or `none`) and a `note` when the fit
-+needs explaining. The first matching entry wins, so put specific ones before broad prefixes. A
-+library missing from the table is reported as `unknown`; never guess a crate.
-+
- ## Add a language
- 
- PHP and C# were added as previews in two commits worth reading first:
- [e8ac243](https://github.com/erkamyaman/rust-anything/commit/e8ac243) (PHP) and
- [caea59a](https://github.com/erkamyaman/rust-anything/commit/caea59a) (C#). A new language starts
- the same way:
- 
--1. A plugin in `src/lang/<name>.rs`: discovery, scan (imports and risks), resolve, the
--   package-to-crate table and exports.
-+1. A plugin in `src/lang/<name>.rs`: discovery, scan (imports and risks), resolve and exports,
-+   plus its libraries' crates as `[[<name>]]` entries in `src/crates.toml`.
- 2. Detection and dispatch in `src/lang/mod.rs`.
- 3. Whole-app support in `src/whole_app.rs`: entry points, servers, declared dependencies.
- 4. The CLI and HTTP fixtures, a library fixture, and tests in `tests/analyze.rs`, `tests/app.rs`
+@@ -462,6 +462,7 @@ fn tool_schemas() -> Value {
+                 "crate": crate_dir,
+                 "profile": { "type": "string", "enum": ["host", "android"], "description": "Diff on this machine (default) or on a connected Android device (JVM crates)." },
+                 "device": { "type": "string", "description": "Android device serial; picked automatically when only one is connected." },
++                "jni_libs": { "type": "string", "description": "Android libraries folder to diff; defaults to <crate>/jniLibs." },
+                 "ignore_key_order": { "type": "boolean" },
+                 "module": { "type": "string", "description": "Test this JS module instead of the crate's `index.cjs`." },
+                 "node_args": { "type": "array", "items": { "type": "string" }, "description": "Extra arguments for node, e.g. [\"--import=tsx\"]." },
+@@ -739,12 +740,16 @@ fn call(name: &str, args: &Value) -> Result<Value> {
+             };
+             serde_json::to_value(match args["profile"].as_str().unwrap_or("host") {
+                 "host" => {
+-                    if !args["device"].is_null() {
+-                        anyhow::bail!("`device` needs profile `android`");
++                    if !args["device"].is_null() || !args["jni_libs"].is_null() {
++                        anyhow::bail!("`device` and `jni_libs` need profile `android`");
+                     }
+                     harness::diff(&opts)?
+                 }
+-                "android" => harness::diff_android(&opts, args["device"].as_str())?,
++                "android" => harness::diff_android(
++                    &opts,
++                    args["device"].as_str(),
++                    args["jni_libs"].as_str().map(Path::new),
++                )?,
+                 other => anyhow::bail!("unknown diff profile `{other}`: use host or android"),
+             })?
+         }
 ```
 
 ---
 
-### Incident Patch 2: `4cbd7273` (2026-11-18)
-**Commit Message**: Fix the Portuguese README's paths and link it from every translation
+### Incident Patch 2: `22d528b3` (2026-11-19)
+**Commit Message**: fix: address CodeRabbit findings on PR #117
 
-docs/README_PT.md now finds the logo and LICENSE from docs/, links back
-to English, and carries the community-maintained note like the other
-translations. Every translation links to Português, and the README link
-loses a stray space in its href.
+- reject stale Android .so in on-device diff\n- select classpath with the platform separator\n- block every overloaded export from the reflection driver\n- skip Gradle build output during Kotlin detection\n- correct API default/error guidance and MCP host-only guards\n- tighten the guarded device test and regenerate tools docs
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `docs/tools.md` (modified, +2/-2)
 ```diff
-@@ -6,7 +6,7 @@
+@@ -6,7 +6,7 @@ Generated from the MCP server's tool list by `tests/tools.rs`; do not edit by ha
  
- <p align="center">by <a href="https://github.com/erkamyaman">erKam Yaman</a></p>
+ Tool `analyze` · CLI `rust-anything analyze`
  
--<p align="center">English · <a href ="docs/README_PT.md">Português</a> · <a href="docs/README_TR.md">Türkçe</a> · <a href="docs/README_ZH.md">简体中文</a> · <a href="docs/README_ZH-TW.md">繁體中文</a> · <a href="docs/README_DE.md">Deutsch</a> · <a href="docs/README_FR.md">Français</a> · <a href="docs/README_RU.md">Русский</a> · <a href="docs/README_UK.md">Українська</a> · <a href="docs/README_JA.md">日本語</a> · <a href="docs/README_KO.md">한국어</a> · <a href="docs/README_AZ.md">Azərbaycanca</a> · <a href="docs/README_UZ.md">Oʻzbekcha</a> · <a href="docs/README_KK.md">Қазақша</a> · <a href="docs/README_KY.md">Кыргызча</a> · <a href="docs/README_TK.md">Türkmençe</a> · <a href="docs/README_TT.md">Татарча</a> · <a href="docs/README_UG.md">ئۇيغۇرچە</a></p>
-+<p align="center">English · <a href="docs/README_PT.md">Português</a> · <a href="docs/README_TR.md">Türkçe</a> · <a href="docs/README_ZH.md">简体中文</a> · <a href="docs/README_ZH-TW.md">繁體中文</a> · <a href="docs/README_DE.md">Deutsch</a> · <a href="docs/README_FR.md">Français</a> · <a href="docs/README_RU.md">Русский</a> · <a href="docs/README_UK.md">Українська</a> · <a href="docs/README_JA.md">日本語</a> · <a href="docs/README_KO.md">한국어</a> · <a href="docs/README_AZ.md">Azərbaycanca</a> · <a href="docs/README_UZ.md">Oʻzbekcha</a> · <a href="docs/README_KK.md">Қазақша</a> · <a href="docs/README_KY.md">Кыргызча</a> · <a href="docs/README_TK.md">Türkmençe</a> · <a href="docs/README_TT.md">Татарча</a> · <a href="docs/README_UG.md">ئۇيغۇرچە</a></p>
+-Map a repository (TypeScript/JavaScript, Python, C, Go, Ruby or Java): units, port order (waves), risks with file:line, bridge per unit, dependency-to-crate fit, and `start_here`: the best first ports.
++Map a repository (TypeScript/JavaScript, Python, C, Go, Ruby, Java or Kotlin): units, port order (waves), risks with file:line, bridge per unit, dependency-to-crate fit, and `start_here`: the best first ports.
  
- <p align="center"><em>Rewrite your whole app in Rust. Keep it working the whole way.</em></p>
+ Read-only.
+ 
+@@ -79,7 +79,7 @@ Runs the original's code or commands.
+ | `crate` | string | yes | Folder of the generated crate (holds rust-anything.json). |
+ | `profile` | string |  | Build for this machine (default) or for Android. |
+ | `abi` | string[] |  | Android ABIs; defaults to arm64-v8a, armeabi-v7a and x86_64. |
+-| `api` | integer |  | Android API level (default 21). |
++| `api` | integer |  | Android API level (at least 26; default 26). |
+ | `ndk` | string |  | Android NDK root; found from ANDROID_NDK_HOME or the SDK when omitted. |
+ | `jni_libs` | string |  | Where to install the Android libraries; defaults to <crate>/jniLibs. |
  
 ```
 
-**File**: `docs/README_AZ.md` (modified, +1/-1)
+**File**: `src/android.rs` (modified, +4/-3)
 ```diff
-@@ -6,7 +6,7 @@
+@@ -166,9 +166,10 @@ pub fn build(crate_dir: &Path, manifest: &Manifest, opts: &Options) -> Result<Re
+         let linker = bin.join(format!("{}{}-clang", abi.clang_prefix(), opts.api));
+         if !linker.is_file() {
+             bail!(
+-                "no NDK linker for API {} at {}; the NDK supports API 21 and up, raise `--api`",
++                "no NDK linker for API {} at {}; this NDK does not ship that API level, lower `--api` (minimum {})",
+                 opts.api,
+-                linker.display()
++                linker.display(),
++                MIN_API
+             );
+         }
+         let mut cmd = Command::new("cargo");
+@@ -304,7 +305,7 @@ fn newest_ndk(dir: PathBuf) -> Option<PathBuf> {
+     found.pop().map(|(_, p)| p)
+ }
  
- <p align="center">Müəllif: <a href="https://github.com/erkamyaman">erKam Yaman</a></p>
- 
--<p align="center"><a href="../README.md">English</a> · <a href="README_TR.md">Türkçe</a> · <a href="README_ZH.md">简体中文</a> · <a href="README_ZH-TW.md">繁體中文</a> · <a href="README_DE.md">Deutsch</a> · <a href="README_FR.md">Français</a> · <a href="README_RU.md">Русский</a> · <a href="README_UK.md">Українська</a> · <a href="README_JA.md">日本語</a> · <a href="README_KO.md">한국어</a> · Azərbaycanca · <a href="README_UZ.md">Oʻzbekcha</a> · <a href="README_KK.md">Қазақша</a> · <a href="README_KY.md">Кыргызча</a> · <a href="README_TK.md">Türkmençe</a> · <a href="README_TT.md">Татарча</a> · <a href="README_UG.md">ئۇيغۇرچە</a></p>
-+<p align="center"><a href="../README.md">English</a> · <a href="README_PT.md">Português</a> · <a href="README_TR.md">Türkçe</a> · <a href="README_ZH.md">简体中文</a> · <a href="README_ZH-TW.md">繁體中文</a> · <a href="README_DE.md">Deutsch</a> · <a href="README_FR.md">Français</a> · <a href="README_RU.md">Русский</a> · <a href="README_UK.md">Українська</a> · <a href="README_JA.md">日本語</a> · <a href="README_KO.md">한국어</a> · Azərbaycanca · <a href="README_UZ.md">Oʻzbekcha</a> · <a href="README_KK.md">Қазақша</a> · <a href="README_KY.md">Кыргызча</a> · <a href="README_TK.md">Türkmençe</a> · <a href="README_TT.md">Татарча</a> · <a href="README_UG.md">ئۇيغۇرچە</a></p>
- <p align="center"><sub>Bu tərcümə icma tərəfindən dəstəklənir və <a href="../README.md">ingiliscə README</a>-dən geri qala bilər.</sub></p>
- 
- <p align="center"><em>Bütün tətbiqinizi Rust-da yenidən yazın. Bütün yol boyu işlək qalsın.</em></p>
+-pub(crate) fn sdk_folders() -> Vec<PathBuf> {
++pub fn sdk_folders() -> Vec<PathBuf> {
+     let mut out = Vec::new();
+     if let Some(home) = std::env::var_os("HOME") {
+         let home = PathBuf::from(home);
 ```
 
-**File**: `docs/README_DE.md` (modified, +1/-1)
+**File**: `src/android_device.rs` (modified, +8/-0)
 ```diff
-@@ -6,7 +6,7 @@
+@@ -345,6 +345,14 @@ pub fn diff(crate_dir: &Path, m: &Manifest, device: Option<&str>) -> Result<Diff
+             crate = crate_dir.display()
+         );
+     }
++    if crate::harness::sources_newer_than(crate_dir, &lib) {
++        bail!(
++            "{} is older than the crate's sources, so diff would test the previous port; run \
++             `rust-anything build {crate} --profile android --abi {abi}` first",
++            lib.display(),
++            crate = crate_dir.display()
++        );
++    }
+     let work = work_dir(crate_dir, "diff")?;
+     let classes = crate::harness_kotlin::android_classes(crate_dir, m, true)?;
+     let jar = package(&classes, &work)?;
+```
+
+**File**: `src/harness.rs` (modified, +8/-2)
+```diff
+@@ -422,7 +422,14 @@ fn stale_build(crate_dir: &Path, manifest: &Manifest) -> Option<PathBuf> {
+         Kind::Pyo3 => crate::harness_py::native_file(crate_dir, manifest),
+         _ => return None,
+     };
+-    let built_at = std::fs::metadata(&built).and_then(|m| m.modified()).ok()?;
++    sources_newer_than(crate_dir, &built).then_some(built)
++}
++
++/// True when `Cargo.toml` or any `.rs` file under `src/` is newer than `built`.
++pub(crate) fn sources_newer_than(crate_dir: &Path, built: &Path) -> bool {
++    let Ok(built_at) = std::fs::metadata(built).and_then(|m| m.modified()) else {
++        return false;
++    };
+     let mut sources = vec![crate_dir.join("Cargo.toml")];
+     sources.extend(
+         walkdir_rs(&crate_dir.join("src"))
+@@ -433,7 +440,6 @@ fn stale_build(crate_dir: &Path, manifest: &Manifest) -> Option<PathBuf> {
+         .iter()
+         .filter_map(|p| std::fs::metadata(p).and_then(|m| m.modified()).ok())
+         .any(|changed| changed > built_at)
+-        .then_some(built)
+ }
  
- <p align="center">von <a href="https://github.com/erkamyaman">erKam Yaman</a></p>
+ fn walkdir_rs(dir: &Path) -> Vec<PathBuf> {
+```
+
+**File**: `src/harness_kotlin.rs` (modified, +10/-11)
+```diff
+@@ -7,6 +7,7 @@
+ //! is used for record, diff and bench.
  
--<p align="center"><a href="../README.md">English</a> · <a href="README_TR.md">Türkçe</a> · <a href="README_ZH.md">简体中文</a> · <a href="README_ZH-TW.md">繁體中文</a> · Deutsch · <a href="README_FR.md">Français</a> · <a href="README_RU.md">Русский</a> · <a href="README_UK.md">Українська</a> · <a href="README_JA.md">日本語</a> · <a href="README_KO.md">한국어</a> · <a href="README_AZ.md">Azərbaycanca</a> · <a href="README_UZ.md">Oʻzbekcha</a> · <a href="README_KK.md">Қазақша</a> · <a href="README_KY.md">Кыргызча</a> · <a href="README_TK.md">Türkmençe</a> · <a href="README_TT.md">Татарча</a> · <a href="README_UG.md">ئۇيغۇرچە</a></p>
-+<p align="center"><a href="../README.md">English</a> · <a href="README_PT.md">Português</a> · <a href="README_TR.md">Türkçe</a> · <a href="README_ZH.md">简体中文</a> · <a href="README_ZH-TW.md">繁體中文</a> · Deutsch · <a href="README_FR.md">Français</a> · <a href="README_RU.md">Русский</a> · <a href="README_UK.md">Українська</a> · <a href="README_JA.md">日本語</a> · <a href="README_KO.md">한국어</a> · <a href="README_AZ.md">Azərbaycanca</a> · <a href="README_UZ.md">Oʻzbekcha</a> · <a href="README_KK.md">Қазақша</a> · <a href="README_KY.md">Кыргызча</a> · <a href="README_TK.md">Türkmençe</a> · <a href="README_TT.md">Татарча</a> · <a href="README_UG.md">ئۇيغۇرچە</a></p>
+ use crate::walk::Canonical;
++use std::ffi::OsString;
+ use std::path::{Path, PathBuf};
+ use std::process::Command;
  
- <p align="center"><sub>Diese Übersetzung wird von der Community gepflegt und kann hinter dem <a href="../README.md">englischen README</a> zurückliegen.</sub></p>
+@@ -63,11 +64,12 @@ struct Classpath {
+ }
+ 
+ impl Classpath {
+-    fn value(&self) -> String {
+-        match &self.original_jar {
+-            Some(jar) => format!("{}:{}", self.classes.display(), jar.display()),
+-            None => self.classes.display().to_string(),
++    fn value(&self) -> Result<OsString> {
++        let mut parts = vec![self.classes.as_path()];
++        if let Some(jar) = &self.original_jar {
++            parts.push(jar.as_path());
+         }
++        std::env::join_paths(parts).context("building Java classpath")
+     }
+ }
+ 
+@@ -128,12 +130,9 @@ fn compile(crate_dir: &Path, m: &Manifest, rust: bool) -> Result<Classpath> {
+     let mut javac = Command::new("javac");
+     javac.arg("-encoding").arg("UTF-8").arg("-nowarn");
+     if !cp.is_empty() {
+-        javac.arg("-cp").arg(
+-            cp.iter()
+-                .map(|p| p.display().to_string())
+-                .collect::<Vec<_>>()
+-                .join(":"),
+-        );
++        javac
++            .arg("-cp")
++            .arg(std::env::join_paths(&cp).context("building Java classpath")?);
+     }
+     javac.arg("-d").arg(&classes).args(&sources);
+     run(
+@@ -186,7 +185,7 @@ fn driver_command(
+         ));
+     }
+     cmd.arg("-cp")
+-        .arg(cp.value())
++        .arg(cp.value()?)
+         .arg("rustanything.RustAnythingDriver")
+         .arg(mode)
+         .arg(&targets)
+```
+
+**File**: `src/lang/java.rs` (modified, +11/-0)
+```diff
+@@ -534,6 +534,17 @@ pub fn exports(path: &str, source: &str) -> Vec<ExportedFn> {
+             });
+         }
+     }
++    // The reflection driver keys methods by name alone: an overload would pick an arbitrary
++    // signature. Block every export sharing a name, not just the later declaration.
++    let mut counts: std::collections::BTreeMap<String, usize> = std::collections::BTreeMap::new();
++    for f in &out {
++        *counts.entry(f.name.clone()).or_default() += 1;
++    }
++    for f in &mut out {
++        if counts.get(&f.name).copied().unwrap_or(0) > 1 {
++            f.blocker = Some("overloaded: one name, several signatures".into());
++        }
++    }
+     out
+ }
  
 ```
 
-**File**: `docs/README_FR.md` (modified, +1/-1)
+**File**: `src/lang/kotlin.rs` (modified, +11/-2)
 ```diff
-@@ -6,7 +6,7 @@
+@@ -241,8 +241,6 @@ pub fn scan(source: &str) -> FileFacts {
+                 ("substring", Risk::StringOffsets),
+                 ("charAt", Risk::StringOffsets),
+                 ("indexOf", Risk::StringOffsets),
+-                ("split(", Risk::RegexSyntax),
+-                ("replace(", Risk::RegexSyntax),
+                 ("toInt(", Risk::IntegerSemantics),
+                 ("toLong(", Risk::IntegerSemantics),
+                 ("getClass", Risk::Reflection),
+@@ -715,6 +713,17 @@ pub fn exports(path: &str, source: &str) -> Vec<ExportedFn> {
+             _ => {}
+         }
+     }
++    // The reflection driver keys methods by name alone: an overload would pick an arbitrary
++    // signature. Block every export sharing a name, not just the later declaration.
++    let mut counts: std::collections::BTreeMap<String, usize> = std::collections::BTreeMap::new();
++    for f in &out {
++        *counts.entry(f.name.clone()).or_default() += 1;
++    }
++    for f in &mut out {
++        if counts.get(&f.name).copied().unwrap_or(0) > 1 {
++            f.blocker = Some("overloaded: one name, several signatures".into());
++        }
++    }
+     for f in &mut out {
+         let (class, _) = receiver(f);
+         let simple = class.rsplit('.').next().unwrap_or(&class);
+```
+
+**File**: `src/lang/mod.rs` (modified, +19/-5)
+```diff
+@@ -77,11 +77,25 @@ impl Lang {
+             if !has("pom.xml") && (has("build.gradle.kts") || has("build.gradle")) {
+                 let mut kt = 0usize;
+                 let mut java = 0usize;
+-                for entry in crate::walk::builder(root)
+-                    .hidden(true)
+-                    .require_git(false)
+-                    .build()
+-                    .flatten()
++                for entry in crate::walk::filtered(root, |e| {
++                    if !e.file_type().is_some_and(|kind| kind.is_dir()) {
++                        return true;
++                    }
++                    let name = e.file_name().to_string_lossy();
++                    ![
++                        "build",
++                        ".gradle",
++                        ".kotlin",
++                        "out",
++                        "node_modules",
++                        "target",
++                    ]
++                    .contains(&name.as_ref())
++                })
++                .hidden(true)
++                .require_git(false)
++                .build()
++                .flatten()
+                 {
+                     if !entry.file_type().is_some_and(|kind| kind.is_file()) {
+                         continue;
+```
+
+---
+
+### Incident Patch 3: `4f2f51b8` (2026-11-19)
+**Commit Message**: Rust best practices: release profile and rust-version for lifted apps, lints for new bridges, lockfile and advisories checks in gate, skill guidance
+
+**File**: `CHANGELOG.md` (modified, +11/-0)
+```diff
+@@ -2,6 +2,17 @@
  
- <p align="center">par <a href="https://github.com/erkamyaman">erKam Yaman</a></p>
+ ## Unreleased
  
--<p align="center"><a href="../README.md">English</a> · <a href="README_TR.md">Türkçe</a> · <a href="README_ZH.md">简体中文</a> · <a href="README_ZH-TW.md">繁體中文</a> · <a href="README_DE.md">Deutsch</a> · Français · <a href="README_RU.md">Русский</a> · <a href="README_UK.md">Українська</a> · <a href="README_JA.md">日本語</a> · <a href="README_KO.md">한국어</a> · <a href="README_AZ.md">Azərbaycanca</a> · <a href="README_UZ.md">Oʻzbekcha</a> · <a href="README_KK.md">Қазақша</a> · <a href="README_KY.md">Кыргызча</a> · <a href="README_TK.md">Türkmençe</a> · <a href="README_TT.md">Татарча</a> · <a href="README_UG.md">ئۇيغۇرچە</a></p>
-+<p align="center"><a href="../README.md">English</a> · <a href="README_PT.md">Português</a> · <a href="README_TR.md">Türkçe</a> · <a href="README_ZH.md">简体中文</a> · <a href="README_ZH-TW.md">繁體中文</a> · <a href="README_DE.md">Deutsch</a> · Français · <a href="README_RU.md">Русский</a> · <a href="README_UK.md">Українська</a> · <a href="README_JA.md">日本語</a> · <a href="README_KO.md">한국어</a> · <a href="README_AZ.md">Azərbaycanca</a> · <a href="README_UZ.md">Oʻzbekcha</a> · <a href="README_KK.md">Қазақша</a> · <a href="README_KY.md">Кыргызча</a> · <a href="README_TK.md">Türkmençe</a> · <a href="README_TT.md">Татарча</a> · <a href="README_UG.md">ئۇيغۇرچە</a></p>
++- `lift`: the lifted app or library gets `rust-version` and a release profile with `lto = true`
++  and `codegen-units = 1`, unless it sets them already.
++- `bridge`: generated crates set `rust-version` and warn on `unused_lifetimes` and
++  `trivial_numeric_casts` (so `gate` fails on them).
++- `gate`: two checks that never fail it: `lockfile` warns when `Cargo.lock` is missing or out of
++  date, and `advisories` runs `cargo deny check advisories` or `cargo audit` when one is
++  installed.
++- Skill: typed errors inside `port.rs`, Rust's `is_alphanumeric` against the original's letter
++  rule, `#[expect(lint, reason = "...")]` over `#[allow]`, and `cargo test` with no tests proving
++  nothing.
++
+ ## 2.0.2 (2026-11-19)
  
- <p align="center"><sub>Cette traduction est maintenue par la communauté et peut être en retard sur le <a href="../README.md">README anglais</a>.</sub></p>
+ - The npm package carries `mcpName`, and `server.json` describes the MCP server, so it can be
+```
+
+**File**: `plugin/skills/rust-anything/SKILL.md` (modified, +9/-2)
+```diff
+@@ -88,7 +88,11 @@ a signature in `port.rs`, run `rust-anything refresh <crate>`.
+ - Read each risk the plan lists for the unit, at its `file:line`, before writing code.
+ - String offsets: JS and Java index UTF-16 code units, Rust UTF-8 bytes: use `src/utf16.rs`.
+ - Errors: return `Err("TypeName: message")`; it becomes that exception in Python, Ruby and Java,
+-  and the `error` text in Go.
++  and the `error` text in Go. Inside `port.rs`, a small error enum is clearer; turn it into that
++  string only in the exported function.
++- Letters and digits: Rust's `char::is_alphanumeric` takes more than Java's
++  `Character.isLetterOrDigit` (letters and decimal digits, per UTF-16 unit, so nothing beyond
++  U+FFFF) or Python's `str.isalpha` (letters only). Match the original's rule by general category.
+ - Numbers in Python and Ruby: ints that the original passes through must come back as ints;
+   in Python ports use `crate::pynum::Num` for int-or-float, not `serde_json::Value`.
+ - C: inputs recorded as `crash:` are undefined behavior; any result passes.
+@@ -100,7 +104,10 @@ a signature in `port.rs`, run `rust-anything refresh <crate>`.
+   for real text the patterns see, record it with `--inputs`, and set `unicode(false)` or spell out
+   ASCII classes (`[A-Za-z0-9_]`) where the original's `\w` is ASCII-only (JS without `u`, Java).
+ - No `unsafe`. If truly needed: minimal, isolated, with a `// SAFETY:` comment.
+-- Add Rust unit tests in `port.rs` for the cases you reason about.
++- Add Rust unit tests in `port.rs` for the cases you reason about. `cargo test` passing with no
++  tests proves nothing: the recorded cases are the proof.
++- To silence a lint, use `#[expect(lint, reason = "...")]`, not `#[allow]`, so it is flagged once
++  it no longer applies.
+ 
+ ## 2b. Batch a hot loop
  
 ```
 
-**File**: `docs/README_JA.md` (modified, +1/-1)
+**File**: `skills/rust-anything/SKILL.md` (modified, +9/-2)
 ```diff
-@@ -6,7 +6,7 @@
+@@ -88,7 +88,11 @@ a signature in `port.rs`, run `rust-anything refresh <crate>`.
+ - Read each risk the plan lists for the unit, at its `file:line`, before writing code.
+ - String offsets: JS and Java index UTF-16 code units, Rust UTF-8 bytes: use `src/utf16.rs`.
+ - Errors: return `Err("TypeName: message")`; it becomes that exception in Python, Ruby and Java,
+-  and the `error` text in Go.
++  and the `error` text in Go. Inside `port.rs`, a small error enum is clearer; turn it into that
++  string only in the exported function.
++- Letters and digits: Rust's `char::is_alphanumeric` takes more than Java's
++  `Character.isLetterOrDigit` (letters and decimal digits, per UTF-16 unit, so nothing beyond
++  U+FFFF) or Python's `str.isalpha` (letters only). Match the original's rule by general category.
+ - Numbers in Python and Ruby: ints that the original passes through must come back as ints;
+   in Python ports use `crate::pynum::Num` for int-or-float, not `serde_json::Value`.
+ - C: inputs recorded as `crash:` are undefined behavior; any result passes.
+@@ -100,7 +104,10 @@ a signature in `port.rs`, run `rust-anything refresh <crate>`.
+   for real text the patterns see, record it with `--inputs`, and set `unicode(false)` or spell out
+   ASCII classes (`[A-Za-z0-9_]`) where the original's `\w` is ASCII-only (JS without `u`, Java).
+ - No `unsafe`. If truly needed: minimal, isolated, with a `// SAFETY:` comment.
+-- Add Rust unit tests in `port.rs` for the cases you reason about.
++- Add Rust unit tests in `port.rs` for the cases you reason about. `cargo test` passing with no
++  tests proves nothing: the recorded cases are the proof.
++- To silence a lint, use `#[expect(lint, reason = "...")]`, not `#[allow]`, so it is flagged once
++  it no longer applies.
  
- <p align="center">作者: <a href="https://github.com/erkamyaman">erKam Yaman</a></p>
- 
--<p align="center"><a href="../README.md">English</a> · <a href="README_TR.md">Türkçe</a> · <a href="README_ZH.md">简体中文</a> · <a href="README_ZH-TW.md">繁體中文</a> · <a href="README_DE.md">Deutsch</a> · <a href="README_FR.md">Français</a> · <a href="README_RU.md">Русский</a> · <a href="README_UK.md">Українська</a> · 日本語 · <a href="README_KO.md">한국어</a> · <a href="README_AZ.md">Azərbaycanca</a> · <a href="README_UZ.md">Oʻzbekcha</a> · <a href="README_KK.md">Қазақша</a> · <a href="README_KY.md">Кыргызча</a> · <a href="README_TK.md">Türkmençe</a> · <a href="README_TT.md">Татарча</a> · <a href="README_UG.md">ئۇيغۇرچە</a></p>
-+<p align="center"><a href="../README.md">English</a> · <a href="README_PT.md">Português</a> · <a href="README_TR.md">Türkçe</a> · <a href="README_ZH.md">简体中文</a> · <a href="README_ZH-TW.md">繁體中文</a> · <a href="README_DE.md">Deutsch</a> · <a href="README_FR.md">Français</a> · <a href="README_RU.md">Русский</a> · <a href="README_UK.md">Українська</a> · 日本語 · <a href="README_KO.md">한국어</a> · <a href="README_AZ.md">Azərbaycanca</a> · <a href="README_UZ.md">Oʻzbekcha</a> · <a href="README_KK.md">Қазақша</a> · <a href="README_KY.md">Кыргызча</a> · <a href="README_TK.md">Türkmençe</a> · <a href="README_TT.md">Татарча</a> · <a href="README_UG.md">ئۇيغۇرچە</a></p>
- 
- <p align="center"><sub>この翻訳はコミュニティによって管理されており、<a href="../README.md">英語版 README</a> より古い場合があります。</sub></p>
+ ## 2b. Batch a hot loop
  
 ```
 
-**File**: `docs/README_KK.md` (modified, +1/-1)
+**File**: `src/codegen.rs` (modified, +3/-2)
 ```diff
-@@ -6,7 +6,7 @@
+@@ -9,6 +9,7 @@
+ //!   markers for what JSON lacks (`undefined`, NaN, lone surrogates; see `js.rs`);
+ //! - UTF-16 units: a `Vec<u16>` return, for strings that may hold lone surrogates.
  
- <p align="center">авторы: <a href="https://github.com/erkamyaman">erKam Yaman</a></p>
++use crate::MIN_RUST;
+ use std::fmt::Write as _;
  
--<p align="center"><a href="../README.md">English</a> · <a href="README_TR.md">Türkçe</a> · <a href="README_ZH.md">简体中文</a> · <a href="README_ZH-TW.md">繁體中文</a> · <a href="README_DE.md">Deutsch</a> · <a href="README_FR.md">Français</a> · <a href="README_RU.md">Русский</a> · <a href="README_UK.md">Українська</a> · <a href="README_JA.md">日本語</a> · <a href="README_KO.md">한국어</a> · <a href="README_AZ.md">Azərbaycanca</a> · <a href="README_UZ.md">Oʻzbekcha</a> · Қазақша · <a href="README_KY.md">Кыргызча</a> · <a href="README_TK.md">Türkmençe</a> · <a href="README_TT.md">Татарча</a> · <a href="README_UG.md">ئۇيغۇرچە</a></p>
-+<p align="center"><a href="../README.md">English</a> · <a href="README_PT.md">Português</a> · <a href="README_TR.md">Türkçe</a> · <a href="README_ZH.md">简体中文</a> · <a href="README_ZH-TW.md">繁體中文</a> · <a href="README_DE.md">Deutsch</a> · <a href="README_FR.md">Français</a> · <a href="README_RU.md">Русский</a> · <a href="README_UK.md">Українська</a> · <a href="README_JA.md">日本語</a> · <a href="README_KO.md">한국어</a> · <a href="README_AZ.md">Azərbaycanca</a> · <a href="README_UZ.md">Oʻzbekcha</a> · Қазақша · <a href="README_KY.md">Кыргызча</a> · <a href="README_TK.md">Türkmençe</a> · <a href="README_TT.md">Татарча</a> · <a href="README_UG.md">ئۇيغۇرچە</a></p>
- 
- <p align="center"><sub>Бұл аударманы қауымдастық жүргізеді, сондықтан ол <a href="../README.md">ағылшынша README</a> нұсқасынан артта қалуы мүмкін.</sub></p>
- 
+ use crate::bridge::{Kind, Manifest, RType, param_type, snake_case};
+@@ -1229,9 +1230,9 @@ pub fn cargo_toml(m: &Manifest, api: &PortApi) -> String {
+         ""
+     };
+     format!(
+-        "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nedition = \"2024\"\npublish = false\ndescription = \"Rust port of `{}`, generated by rust-anything\"\n\n\
++        "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nedition = \"2024\"\nrust-version = \"{MIN_RUST}\"\npublish = false\ndescription = \"Rust port of `{}`, generated by rust-anything\"\n\n\
+          [lib]\ncrate-type = [\"cdylib\", \"rlib\"]\n\n[dependencies]\n{deps}{build}\n\
+-         [profile.release]\nlto = true\n\n[lints.clippy]\nall = {{ level = \"warn\", priority = -1 }}\n",
++         [profile.release]\nlto = true\n\n[lints.clippy]\nall = {{ level = \"warn\", priority = -1 }}\n\n[lints.rust]\nunused_lifetimes = \"warn\"\ntrivial_numeric_casts = \"warn\"\n",
+         m.crate_name, m.unit
+     )
+ }
 ```
 
-**File**: `docs/README_KO.md` (modified, +1/-1)
+**File**: `src/codegen_c.rs` (modified, +3/-2)
 ```diff
-@@ -6,7 +6,7 @@
+@@ -4,6 +4,7 @@
+ //! `const char *` as `Option<&[u8]>` (`None` for `NULL`). `lib.rs` is the only place with
+ //! `unsafe`: reading C strings, and exporting unmangled symbols.
  
- <p align="center">제작: <a href="https://github.com/erkamyaman">erKam Yaman</a></p>
++use crate::MIN_RUST;
+ use std::fmt::Write as _;
  
--<p align="center"><a href="../README.md">English</a> · <a href="README_TR.md">Türkçe</a> · <a href="README_ZH.md">简体中文</a> · <a href="README_ZH-TW.md">繁體中文</a> · <a href="README_DE.md">Deutsch</a> · <a href="README_FR.md">Français</a> · <a href="README_RU.md">Русский</a> · <a href="README_UK.md">Українська</a> · <a href="README_JA.md">日本語</a> · 한국어 · <a href="README_AZ.md">Azərbaycanca</a> · <a href="README_UZ.md">Oʻzbekcha</a> · <a href="README_KK.md">Қазақша</a> · <a href="README_KY.md">Кыргызча</a> · <a href="README_TK.md">Türkmençe</a> · <a href="README_TT.md">Татарча</a> · <a href="README_UG.md">ئۇيغۇرچە</a></p>
-+<p align="center"><a href="../README.md">English</a> · <a href="README_PT.md">Português</a> · <a href="README_TR.md">Türkçe</a> · <a href="README_ZH.md">简体中文</a> · <a href="README_ZH-TW.md">繁體中文</a> · <a href="README_DE.md">Deutsch</a> · <a href="README_FR.md">Français</a> · <a href="README_RU.md">Русский</a> · <a href="README_UK.md">Українська</a> · <a href="README_JA.md">日本語</a> · 한국어 · <a href="README_AZ.md">Azərbaycanca</a> · <a href="README_UZ.md">Oʻzbekcha</a> · <a href="README_KK.md">Қазақша</a> · <a href="README_KY.md">Кыргызча</a> · <a href="README_TK.md">Türkmençe</a> · <a href="README_TT.md">Татарча</a> · <a href="README_UG.md">ئۇيغۇرچە</a></p>
+ use crate::bridge::Manifest;
+@@ -248,11 +249,11 @@ pub fn shadow_flags(m: &Manifest) -> String {
  
- <p align="center"><sub>이 번역은 커뮤니티에서 관리하며 <a href="../README.md">영어 README</a>보다 늦게 반영될 수 있습니다.</sub></p>
- 
+ pub fn cargo_toml(m: &Manifest) -> String {
+     format!(
+-        "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nedition = \"2024\"\npublish = false\n\
++        "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nedition = \"2024\"\nrust-version = \"{MIN_RUST}\"\npublish = false\n\
+          description = \"Rust port of `{}`, generated by rust-anything\"\n\n\
+          [lib]\ncrate-type = [\"cdylib\", \"staticlib\", \"rlib\"]\n\n\
+          [features]\n# Export only the `rust_anything_` names, to link beside the original C code.\nshadow = []\n\n[dependencies]\n\n\
+-         [profile.release]\nlto = true\n\n[lints.clippy]\nall = {{ level = \"warn\", priority = -1 }}\n",
++         [profile.release]\nlto = true\n\n[lints.clippy]\nall = {{ level = \"warn\", priority = -1 }}\n\n[lints.rust]\nunused_lifetimes = \"warn\"\ntrivial_numeric_casts = \"warn\"\n",
+         m.crate_name, m.unit
+     )
+ }
 ```
 
-**File**: `docs/README_KY.md` (modified, +1/-1)
+**File**: `src/codegen_ffi.rs` (modified, +3/-2)
 ```diff
-@@ -6,7 +6,7 @@
+@@ -6,6 +6,7 @@
+ //! `rust_anything_free`; Java through one JNI method. The language side is a generated wrapper with
+ //! the original names and signatures, so callers do not change.
  
- <p align="center">автору: <a href="https://github.com/erkamyaman">erKam Yaman</a></p>
++use crate::MIN_RUST;
+ use std::fmt::Write as _;
  
--<p align="center"><a href="../README.md">English</a> · <a href="README_TR.md">Türkçe</a> · <a href="README_ZH.md">简体中文</a> · <a href="README_ZH-TW.md">繁體中文</a> · <a href="README_DE.md">Deutsch</a> · <a href="README_FR.md">Français</a> · <a href="README_RU.md">Русский</a> · <a href="README_UK.md">Українська</a> · <a href="README_JA.md">日本語</a> · <a href="README_KO.md">한국어</a> · <a href="README_AZ.md">Azərbaycanca</a> · <a href="README_UZ.md">Oʻzbekcha</a> · <a href="README_KK.md">Қазақша</a> · Кыргызча · <a href="README_TK.md">Türkmençe</a> · <a href="README_TT.md">Татарча</a> · <a href="README_UG.md">ئۇيغۇرچە</a></p>
-+<p align="center"><a href="../README.md">English</a> · <a href="README_PT.md">Português</a> · <a href="README_TR.md">Türkçe</a> · <a href="README_ZH.md">简体中文</a> · <a href="README_ZH-TW.md">繁體中文</a> · <a href="README_DE.md">Deutsch</a> · <a href="README_FR.md">Français</a> · <a href="README_RU.md">Русский</a> · <a href="README_UK.md">Українська</a> · <a href="README_JA.md">日本語</a> · <a href="README_KO.md">한국어</a> · <a href="README_AZ.md">Azərbaycanca</a> · <a href="README_UZ.md">Oʻzbekcha</a> · <a href="README_KK.md">Қазақша</a> · Кыргызча · <a href="README_TK.md">Türkmençe</a> · <a href="README_TT.md">Татарча</a> · <a href="README_UG.md">ئۇيغۇرچە</a></p>
+ use crate::bridge::Manifest;
+@@ -235,10 +236,10 @@ pub fn cargo_toml(m: &Manifest) -> String {
+         "serde_json = { version = \"1\", features = [\"preserve_order\", \"float_roundtrip\"] }\n"
+     };
+     format!(
+-        "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nedition = \"2024\"\npublish = false\n\
++        "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nedition = \"2024\"\nrust-version = \"{MIN_RUST}\"\npublish = false\n\
+          description = \"Rust port of `{}`, generated by rust-anything\"\n\n\
+          [lib]\ncrate-type = [{crate_types}]\n\n[dependencies]\nserde = {{ version = \"1\", features = [\"derive\"] }}\n\
+-         {serde_json}{extra}\n[profile.release]\nlto = true\n\n[lints.clippy]\nall = {{ level = \"warn\", priority = -1 }}\n",
++         {serde_json}{extra}\n[profile.release]\nlto = true\n\n[lints.clippy]\nall = {{ level = \"warn\", priority = -1 }}\n\n[lints.rust]\nunused_lifetimes = \"warn\"\ntrivial_numeric_casts = \"warn\"\n",
+         m.crate_name, m.unit
+     )
+ }
+```
+
+**File**: `src/codegen_ruby.rs` (modified, +3/-2)
+```diff
+@@ -1,6 +1,7 @@
+ //! Ruby: the Fiddle wrapper (the original module functions over the Rust library), and the
+ //! driver that calls them by name for record, diff and bench.
  
- <p align="center"><sub>Бул котормону коомчулук колдойт, ошондуктан ал <a href="../README.md">англисче README</a> нускасынан артта калышы мүмкүн.</sub></p>
++use crate::MIN_RUST;
+ use std::fmt::Write as _;
  
+ use crate::bridge::Manifest;
+@@ -412,12 +413,12 @@ pub fn lib_rs(m: &Manifest, api: &crate::codegen::PortApi) -> Result<String, Str
+ 
+ pub fn cargo_toml(m: &Manifest) -> String {
+     format!(
+-        "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nedition = \"2024\"\npublish = false\n\
++        "[package]\nname = \"{}\"\nversion = \"0.1.0\"\nedition = \"2024\"\nrust-version = \"{MIN_RUST}\"\npublish = false\n\
+          description = \"Rust port of `{}`, generated by rust-anything\"\n\n\
+          [lib]\ncrate-type = [\"cdylib\", \"rlib\"]\n\n[dependencies]\nmagnus = \"0.8\"\n\
+          serde = {{ version = \"1\", features = [\"derive\"] }}\n\
+          serde_json = {{ version = \"1\", features = [\"preserve_order\", \"float_roundtrip\"] }}\n\n\
+-         [profile.release]\nlto = true\n\n[lints.clippy]\nall = {{ level = \"warn\", priority = -1 }}\n",
++         [profile.release]\nlto = true\n\n[lints.clippy]\nall = {{ level = \"warn\", priority = -1 }}\n\n[lints.rust]\nunused_lifetimes = \"warn\"\ntrivial_numeric_casts = \"warn\"\n",
+         m.crate_name, m.unit
+     )
+ }
+```
+
+**File**: `src/gate.rs` (modified, +88/-0)
+```diff
+@@ -212,7 +212,10 @@ pub struct GateOutcome {
+ 
+ pub fn gate(crate_dir: &Path, node_args: &[String]) -> Result<GateOutcome> {
+     let manifest = Manifest::load(crate_dir)?;
++    let lockfile = lockfile_check(crate_dir);
+     let mut checks = rust_checks(crate_dir, &crate_dir.join("target"));
++    checks.extend(lockfile);
++    checks.extend(advisories_check(crate_dir));
+     checks.push(ported_check(crate_dir));
+ 
+     checks.extend(size_check(crate_dir, &manifest));
+@@ -342,6 +345,91 @@ pub fn gate(crate_dir: &Path, node_args: &[String]) -> Result<GateOutcome> {
+     })
+ }
+ 
++fn lockfile_check(crate_dir: &Path) -> Option<Check> {
++    if !crate_dir.join("Cargo.lock").exists() {
++        return Some(Check {
++            fix: None,
++            name: "lockfile",
++            passed: true,
++            detail: "warning: no Cargo.lock yet; keep the one the build writes, so builds are reproducible".into(),
++        });
++    }
++    let mut cmd = Command::new("cargo");
++    cmd.args([
++        "metadata",
++        "--locked",
++        "--offline",
++        "--format-version",
++        "1",
++        "--manifest-path",
++    ])
++    .arg(crate_dir.join("Cargo.toml"));
++    let out = crate::process::output(&mut cmd, crate::process::BUILD).ok()?;
++    let stderr = String::from_utf8_lossy(&out.stderr);
++    let stale = !out.status.success() && stderr.contains("--locked");
++    Some(Check {
++        fix: None,
++        name: "lockfile",
++        passed: true,
++        detail: if stale {
++            "warning: Cargo.lock is out of date with Cargo.toml; keep the refreshed one the build wrote".into()
++        } else {
++            "Cargo.lock matches Cargo.toml".into()
++        },
++    })
++}
++
++fn advisories_check(crate_dir: &Path) -> Option<Check> {
++    let manifest = crate_dir.join("Cargo.toml");
++    let attempts: [(&str, Vec<std::ffi::OsString>); 2] = [
++        (
++            "cargo-deny",
++            vec![
++                "deny".into(),
++                "--manifest-path".into(),
++                manifest.clone().into(),
++                "check".into(),
++                "advisories".into(),
++            ],
++        ),
++        (
++            "cargo-audit",
++            vec![
++                "audit".into(),
++                "--file".into(),
++                crate_dir.join("Cargo.lock").into(),
++            ],
++        ),
++    ];
++    for (tool, args) in attempts {
++        if !crate::setup::on_path(tool) {
++            continue;
++        }
++        let mut cmd = Command::new("cargo");
++        cmd.args(&args);
++        let out = crate::process::output(&mut cmd, crate::process::BUILD).ok()?;
++        let text = format!(
++            "{}{}",
++            String::from_utf8_lossy(&out.stdout),
++            String::from_utf8_lossy(&out.stderr)
++        );
++        return Some(Check {
++            fix: None,
++            name: "advisories",
++            passed: true,
++            detail: if out.status.success() {
++                format!("no known advisories ({tool})")
++            } else {
++                format!(
++                    "warning: {tool} reports advisories\n{}",
++                    last_lines(&text, 15)
++                )
++            },
++        });
++    }
++    None
++}
++
+ /// The checks that hold for any Rust crate, bindings or not: fmt, clippy (warnings are errors),
+ /// cargo test, and `unsafe` only with a `// SAFETY:` comment.
+ pub fn rust_checks(crate_dir: &Path, target_dir: &Path) -> Vec<Check> {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #83** (2026-11-18): Update README.md (@eliseujorge)
-- **PR #82** (2026-11-18): Create README_PT.md (@eliseujorge)
-- **PR #81** (closed): Add Portuguese version of README (@eliseujorge)
-- **PR #78** (2026-11-18): test: add native Windows integration coverage (@atontini)
-- **PR #76** (2026-11-18): Keep the configured port when re-recording HTTP cases (@rudycelekli)
-- **PR #75** (2026-11-18): Decode file URLs in Node CPU profiles (@rudycelekli)
+- **PR #119** (2026-11-20): docs: the FAQ says Kotlin is supported, as the README and STATUS already do (@HankGrimm)
+- **PR #117** (2026-11-19): feat: Kotlin/JVM support, Android NDK profile and on-device record/diff (@mcvo170585)
+- **PR #112** (2026-11-19): bridge --allocator: rusty_alloc as an opt-in global allocator for batch crates (@Ttimmahlax)
+- **PR #109** (2026-11-19): setup: keep the other keys of an inline Codex entry (@ardazeybek)
+- **PR #108** (2026-11-19): setup: keep a symlinked settings file and its permissions (@ardazeybek)
+- **PR #107** (2026-11-19): analyze: match Python workspace packages by their normalized name (@ardazeybek)
 
 ---
 
@@ -1772,25 +2474,21 @@ loses a stray space in its href.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Deep-dive lessons: doctor, MCP labels/progress/prompts, gate fixes, stall detect
+## X. address remaining CodeRabbit findings
 
 **RULE**:
-When implementing operations in `.coderabbit.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in erkamyaman/rust-anything. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/tools.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in erkamyaman/rust-anything. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bb4de3f6`: Deep-dive lessons: doctor, MCP labels/progress/prompts, gate fixes, stall detection, crate table. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `53558cc1`: address remaining CodeRabbit findings. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.coderabbit.yaml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/tools.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
-reviews:
-  auto_review:
-    ignore_usernames:
-      - "dependabot[bot]"
+| `jni_libs` | string |  | Android libraries folder to diff; defaults to <crate>/jniLibs. |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1800,7 +2498,7 @@ reviews:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bb4de3f6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `53558cc1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

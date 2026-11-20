@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for simonschubert/kai
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for SimonSchubert/Kai
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "simonschubert/kai",
-  "source_url": "https://github.com/simonschubert/kai",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "SimonSchubert/Kai",
+  "source_url": "https://github.com/SimonSchubert/Kai",
+  "source_version": "bc3f0916",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-20T06:19:29.113Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-simonschubert-kai",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [simonschubert/kai](https://github.com/simonschubert/kai) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [SimonSchubert/Kai](https://github.com/SimonSchubert/Kai) (Revision: `bc3f0916`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T06:19:29.113Z`  
+> **Learning ID**: `learn-github-simonschubert-kai`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `simonschubert/kai` (Commit: `historical`)
+- **Target Repository**: `SimonSchubert/Kai` (Commit: `bc3f0916`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/simonschubert-kai-learnings.md`  
-> **Source**: github ([https://github.com/SimonSchubert/Kai](https://github.com/SimonSchubert/Kai))  
-> **Source Version**: `a055ad41`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T15:35:13.196Z  
-> **Learning ID**: `learn-github-simonschubert-kai`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): SimonSchubert/Kai
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/simonschubert-kai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SimonSchubert/Kai](https://github.com/SimonSchubert/Kai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T15:35:13.071Z  
+> **Harvest Timestamp**: 2026-11-20T06:19:28.239Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: OpenClaw alternative in your pocket
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1343 stars
+- **Stars / Engagement**: 1361 stars
 
 ---
 
@@ -1061,53 +1047,162 @@ private fun AnnotatedString.Builder.appendInline(node: InlineNode, colors: Color
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a055ad41` (2026-11-07)
+### Incident Patch 1: `bc3f0916` (2026-11-18)
 **Commit Message**: Upgrade dependencies
 
-**File**: `gradle/wrapper/gradle-wrapper.properties` (modified, +1/-1)
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- distributionBase=GRADLE_USER_HOME
- distributionPath=wrapper/dists
--distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.2-bin.zip
-+distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.0-bin.zip
- networkTimeout=10000
- retries=0
- retryBackOffMs=500
+@@ -12,7 +12,7 @@ androidx-lifecycle = "2.11.0"
+ compose-multiplatform = "1.12.2"
+ compose-material3 = "1.10.0-alpha05"
+ coil = "3.6.3"
+-filekitCore = "0.17.0"
++filekitCore = "0.17.1"
+ koinCompose = "4.2.2"
+ kotlin = "2.4.21"
+ kotlinx-coroutines = "1.11.0"
 ```
 
 ---
 
-### Incident Patch 2: `b8d605cf` (2026-11-06)
+### Incident Patch 2: `841d4912` (2026-11-17)
 **Commit Message**: Upgrade dependencies
 
-**File**: `gradle/libs.versions.toml` (modified, +2/-2)
+**File**: `Gemfile.lock` (modified, +25/-25)
 ```diff
-@@ -1,5 +1,5 @@
- [versions]
--agp = "9.5.0"
-+agp = "9.5.1"
- appVersion = "3.3.0"
- android-versionCode = "117"
- android-compileSdk = "37"
-@@ -31,7 +31,7 @@ paparazzi = "2.0.0-alpha05"
- turbine = "1.2.1"
- bouncycastle = "1.86"
- reorderable = "3.1.0"
--litert-lm = "0.19.0"
-+litert-lm = "0.19.1"
- sqldelight = "2.4.1"
- materialIcons = "1.7.3"
- xz = "1.12"
+@@ -8,8 +8,8 @@ GEM
+     artifactory (3.0.17)
+     atomos (0.1.3)
+     aws-eventstream (1.4.1)
+-    aws-partitions (1.1300.0)
+-    aws-sdk-core (3.263.0)
++    aws-partitions (1.1306.0)
++    aws-sdk-core (3.269.0)
+       aws-eventstream (~> 1, >= 1.4.1)
+       aws-partitions (~> 1, >= 1.992.0)
+       aws-sigv4 (~> 1.9)
+@@ -18,11 +18,11 @@ GEM
+       jmespath (~> 1, >= 1.6.1)
+       logger
+       rexml (~> 3.4, >= 3.4.2)
+-    aws-sdk-kms (1.138.0)
+-      aws-sdk-core (~> 3, >= 3.263.0)
++    aws-sdk-kms (1.144.0)
++      aws-sdk-core (~> 3, >= 3.269.0)
+       aws-sigv4 (~> 1.5)
+-    aws-sdk-s3 (1.237.0)
+-      aws-sdk-core (~> 3, >= 3.263.0)
++    aws-sdk-s3 (1.243.0)
++      aws-sdk-core (~> 3, >= 3.269.0)
+       aws-sdk-kms (~> 1)
+       aws-sigv4 (~> 1.5)
+     aws-sigv4 (1.12.1)
+@@ -45,7 +45,7 @@ GEM
+     dotenv (2.8.1)
+     emoji_regex (3.2.3)
+     erb (6.0.7)
+-    excon (1.10.0)
++    excon (1.12.0)
+     faraday (2.15.1)
+       faraday-net_http (>= 2.0, < 3.6)
+       json
+@@ -62,7 +62,7 @@ GEM
+     faraday-retry (2.4.0)
+       faraday (~> 2.0)
+     fastimage (2.4.3)
+-    fastlane (2.241.2)
++    fastlane (2.242.0)
+       CFPropertyList (>= 2.3, < 5.0.0)
+       abbrev (~> 0.1)
+       addressable (>= 2.9.0, < 3.0.0)
+@@ -107,7 +107,7 @@ GEM
+       ostruct (>= 0.1.0)
+       plist (>= 3.1.0, < 4.0.0)
+       rubyzip (>= 3.4.0, < 4.0.0)
+-      security (~> 0.3)
++      security (~> 0.4)
+       simctl (~> 1.6.3)
+       terminal-notifier (>= 3.1.0, < 4.0.0)
+       terminal-table (~> 4)
+@@ -121,14 +121,14 @@ GEM
+     gh_inspector (1.1.3)
+     google-apis-androidpublisher_v3 (0.111.0)
+       google-apis-core (>= 0.15.0, < 2.a)
+-    google-apis-core (1.4.0)
++    google-apis-core (1.4.1)
+       addressable (~> 2.9)
+       faraday (~> 2.13)
+       faraday-follow_redirects (~> 0.3)
+       googleauth (~> 1.14)
+       mini_mime (~> 1.1)
+-      multi_json (~> 1.11)
+-      representable (~> 3.0)
++      multi_json (~> 1.21, >= 1.21.2)
++      representable (~> 3.3, >= 3.3.1)
+       retriable (>= 3.1, < 5.0)
+     google-apis-iamcredentials_v1 (0.28.0)
+       google-apis-core (>= 0.15.0, < 2.a)
+@@ -143,7 +143,7 @@ GEM
+       base64 (~> 0.2)
+       faraday (>= 1.0, < 3.a)
+     google-cloud-errors (1.7.1)
+-    google-cloud-storage (1.62.1)
++    google-cloud-storage (1.62.2)
+       addressable (~> 2.8)
+       digest-crc (~> 0.4)
+       google-apis-core (>= 0.18, < 2)
+@@ -165,7 +165,7 @@ GEM
+     http-cookie (1.1.6)
+       domain_name (~> 0.5)
+     io-console (0.9.5)
+-    irb (1.18.0)
++    irb (1.19.0)
+       pp (>= 0.6.0)
+       prism (>= 1.3.0)
+       rdoc (>= 4.0.0)
+@@ -181,7 +181,7 @@ GEM
+     multipart-post (2.4.1)
+     mutex_m (0.3.0)
+     nanaimo (0.4.0)
+-    naturally (2.3.0)
++    naturally (2.4.0)
+     net-http (0.10.0)
+       net-protocol (>= 0.3.0)
+       uri (>= 0.11.1)
+@@ -271,10 +271,10 @@ CHECKSUMS
+   artifactory (3.0.17) sha256=3023d5c964c31674090d655a516f38ca75665c15084140c08b7f2841131af263
+   atomos (0.1.3) sha256=7d43b22f2454a36bace5532d30785b06de3711399cb1c6bf932573eda536789f
+   aws-eventstream (1.4.1) sha256=ceb6a99c61df4bb00344e54aed0351574beca24f87a0d1487d1d2ed80929ce96
+-  aws-partitions (1.1300.0) sha256=e3cc87a4ffe875d7326e6b9f5fe696ff9a59632227f3252061dcba1782664924
+-  aws-sdk-core (3.263.0) sha256=9b6d396ed8b3e5ba19b0640fbdbfa1875b0c485353e1bb836f1e72b403c8892d
+-  aws-sdk-kms (1.138.0) sha256=b3b4da50b962faa1333d6072f2eb04d8ad71569b32ee0d639657df3f8be8b37d
+-  aws-sdk-s3 (1.237.0) sha256=1e8a96a5411124d66f85f397bd00a1d6df53da1946725b6d5980d921a8e11191
++  aws-partitions (1.1306.0) sha256=a81c504476036b27b2cadc6ca40fc338aa91d70f42cbda183145e216aa75fefd
++  aws-sdk-core (3.269.0) sha256=ad9e2b4bf9a11339cebb3a039ae8557944dd60c851abba5000bb7fa48923faa8
++  aws-sdk-kms (1.144.0) sha256=4601ab2082e417d5bd4ff6b6655eea678c262a4682ab9859da5368872aef9968
++  aws-sdk-s3 (1.243.0) sha256=56a17292cb32b549012ebcb7f306f613433cc90f0d4ccb0fee351152c3876f8c
+   aws-sigv4 (1.12.1) sha256=6973ff95cb0fd0dc58ba26e90e9510a2219525d07620c8babeb70ef831826c00
+   babosa (1.0.4) sha256=18dea450f595462ed7cb80595abd76b2e535db8c91b350f6c4b3d73986c5bc99
+   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
+@@ -292,32 +292,32 @@ CHECKSUMS
+   dotenv (2.8.1) sha256=c5944793349ae03c432e1780a2ca929d60b88c7d14d52d630db0508c3a8a17d8
+   emoji_regex (3.2.3) sha256=ecd8be856b7691406c6bf3bb3a5e55d6ed683ffab98b4aa531bb90e1ddcc564b
+   erb (6.0.7) sha256=c5ca6dc25b0ef974a44dc8f59fe847577122483b1968a38dec305c60bf91ee92
+-  excon (1.10.0) sha256=868d456c6db29f965d7cc6c5eddbb4d77df08e2a2b2dca7ca3547f2a55afc4b4
++  excon (1.12.0) sha256=ce2f4f12a44278479d132a94db544e42cb0683230a467ce80529b4ac805c579e
+   faraday (2.15.1) sha256=8708154deda739c5e86cc42b74960e23e8491fce0eba9e11639a6a34b1ac288f
+   faraday-cookie_jar (0.0.8) sha256=0140605823f8cc63c7028fccee486aaed8e54835c360cffc1f7c8c07c4299dbb
+   faraday-follow_redirects (0.5.0) sha256=5cde93c894b30943a5d2b93c2fe9284216a6b756f7af406a1e55f211d97d10ad
+   faraday-multipart (1.2.0) sha256=7
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #546** (closed): 请求合并代码 (@DUOFreedom)
 - **PR #534** (closed): Prevent chat from snapping to the bottom while back-reading. (@richard-zed)
 - **PR #506** (2026-10-02): Add Requesty service (@Thibaultjaigu)
 - **PR #492** (closed): fix(android): let Debian apt run in work profiles and system clones (@LaCroixEdu)
 - **PR #430** (closed): Improve accessibility with content descriptions and clean up code (@aeldergentics)
 - **PR #429** (closed): Improve accessibility and code quality with retries and tests (@aeldergentics)
-- **PR #428** (2026-08-29): 🧪 Add tests for ExtensionFunctions (@aeldergentics)
 
 ---
 
@@ -1130,28 +1225,28 @@ Observed empirical fixes and code patches:
 ## X. Upgrade dependencies
 
 **RULE**:
-When implementing operations in `gradle/wrapper/gradle-wrapper.properties`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/Kai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/Kai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a055ad41`: Upgrade dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bc3f0916`: Upgrade dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/wrapper/gradle-wrapper.properties`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.0-bin.zip
+filekitCore = "0.17.1"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.2-bin.zip
+// Induced defect failure mode:
+filekitCore = "0.17.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a055ad41` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bc3f0916` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

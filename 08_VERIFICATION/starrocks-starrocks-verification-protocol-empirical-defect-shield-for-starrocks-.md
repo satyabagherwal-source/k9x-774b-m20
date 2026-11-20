@@ -4,22 +4,22 @@
 {
   "source_repository": "StarRocks/starrocks",
   "source_url": "https://github.com/StarRocks/starrocks",
-  "source_version": "01c149aa",
+  "source_version": "b400696f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T00:58:23.119Z",
+  "timestamp": "2026-11-20T06:19:37.737Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-starrocks-starrocks",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [StarRocks/starrocks](https://github.com/StarRocks/starrocks) (Revision: `01c149aa`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T00:58:23.119Z`  
+> **Provenance**: Harvested from [StarRocks/starrocks](https://github.com/StarRocks/starrocks) (Revision: `b400696f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T06:19:37.737Z`  
 > **Learning ID**: `learn-github-starrocks-starrocks`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `StarRocks/starrocks` (Commit: `01c149aa`)
+- **Target Repository**: `StarRocks/starrocks` (Commit: `b400696f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T00:58:22.012Z  
+> **Harvest Timestamp**: 2026-11-20T06:19:36.528Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12267 stars
+- **Stars / Engagement**: 12271 stars
 
 ---
 
@@ -1829,259 +1829,648 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e27c1150` (2026-11-18)
-**Commit Message**: [Tool] release-notes skill: file security upgrades and fixes under Security (#83672)
+### Incident Patch 1: `36091cdd` (2026-11-20)
+**Commit Message**: [BugFix][RB-1573] Count variant nulls in count(VARIANT) and keep scalar types in CAST(VARIANT AS JSON) (#83939)
 
-Signed-off-by: huailiu1122 <[REDACTED_EMAIL]>
+Co-authored-by: tqqq <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: wanpengfei-git <[REDACTED_EMAIL]>
 
-**File**: `.claude/skills/release-notes/SKILL.md` (modified, +1/-1)
+**File**: `be/src/exprs/cast_expr_tpl.hpp` (modified, +9/-1)
 ```diff
-@@ -58,7 +58,7 @@ frontmatter.
- 
- ### 3. Categorize and rewrite
- Apply `references/categorization.md`:
--- Map each PR to `Behavior Changes` / `Improvements` / `Bug fixes`; exclude
-+- Map each PR to `Behavior Changes` / `Improvements` / `Security` / `Bug fixes`; exclude
-   `[Doc]`/`[UT]`/`[Tool]` and behavior-neutral `[Refactor]`.
- - Rewrite each title into a user-facing sentence (strip prefixes/scope, backtick
-   identifiers), grouping closely related PRs with space-separated links.
+@@ -229,14 +229,22 @@ static ColumnPtr cast_to_json_fn(ColumnPtr& column, const cctz::time_zone& zone)
+                 if (!st.ok()) {
+                     overflow = true;
+                 } else {
+-                    auto parsed = JsonValue::parse_json_or_string(ss.str());
++                    // variant_to_json writes JSON text, so a number, a boolean or a null must stay one instead of
++                    // becoming a JSON string, which is what parse_json_or_string makes of a bare scalar.
++                    auto parsed = JsonValue::parse_json_text(ss.str());
+                     if (parsed.ok()) {
+                         value = parsed.value();
+                     } else {
+                         overflow = true;
+                     }
+                 }
+             }
++            if (!overflow && value.is_null() && row_ref.get_value().type() == VariantType::NULL_TYPE) {
++                // A variant null converts to SQL NULL, as it does for every other cast target. A NaN or infinite
++                // FLOAT/DOUBLE also prints as null, but it takes the path below like CAST(DOUBLE AS JSON) does.
++                builder.append_null();
++                continue;
++            }
+         } else {
+             if constexpr (AllowThrowException) {
+                 THROW_RUNTIME_ERROR_WITH_TYPE(FromType);
 ```
 
-**File**: `.claude/skills/release-notes/references/categorization.md` (modified, +18/-0)
+**File**: `be/src/types/json_value.cpp` (modified, +33/-0)
 ```diff
-@@ -21,6 +21,24 @@ StarRocks PR titles start with a bracketed type prefix (enforced by
- If a PR has no recognizable prefix, fall back to its labels and `body_excerpt` to decide,
- and flag it for reviewer confirmation (see below).
+@@ -136,6 +136,39 @@ StatusOr<JsonValue> JsonValue::parse_json_or_string(const Slice& src) {
+     return Status::OK();
+ }
  
-+## Security (cross-cutting)
++StatusOr<JsonValue> JsonValue::parse_json_text(const Slice& src) {
++    if (src.size > kJSONLengthLimit) {
++        return Status::NotSupported("JSON string exceed maximum length 16MB");
++    }
++    try {
++        // The velocypack parser builds a number that ends the input digit by digit instead of converting it as a
++        // whole, so a bare 0.3 comes back as the next double. A trailing space sends it through the exact
++        // conversion; only a bare scalar can end without a closing bracket or quote, and it is short.
++        std::string padded;
++        Slice text = src;
++        if (!src.empty()) {
++            const char last = src.get_data()[src.get_size() - 1];
++            if (last != '}' && last != ']' && last != '"') {
++                padded.reserve(src.get_size() + 1);
++                padded.append(src.get_data(), src.get_size());
++                padded.push_back(' ');
++                text = Slice(padded);
++            }
++        }
++        vpack::Exception error(vpack::Exception::InternalError);
++        vpack::Options options = parse_options_from_config();
++        auto b = vpack::Parser::tryFromJson(text.get_data(), text.get_size(), &error, &options);
++        if (b == nullptr) {
++            return fromVPackException(error);
++        }
++        JsonValue res;
++        res.assign(*b);
++        return res;
++    } catch (const vpack::Exception& e) {
++        return fromVPackException(e);
++    }
++}
 +
-+Like Behavior Changes, `Security` overrides the table above. It holds:
-+
-+- upgrades of third-party dependencies (libraries, the JDK, base images, bundled tools), the
-+  usual reason for which is a reported vulnerability;
-+- fixes of a vulnerability in StarRocks itself: injection, cross-site scripting, an
-+  access-control bypass, a credential or secret that is exposed.
-+
-+Write the CVE IDs first, in brackets, when the PR names them, and the component's new
-+version: "[CVE-2026-59902] Bumped Netty to 4.1.137.Final." Without a CVE ID: "Bumped
-+ZooKeeper to 3.9.6." StarRocks' own components (StarOS, StarMgr, Starlet, StarCache) are not
-+third-party: file their upgrades by what they change, usually under Bug fixes.
-+
-+Use `### Security` only where the file's most recent patch section has it (see `format.md`);
-+elsewhere these entries go under `### Bug fixes`. Never move an existing `### Security`
-+entry to another subsection.
-+
- ## Behavior Changes (cross-cutting)
- 
- `Behavior Changes` is **not** a title prefix — it is a cross-cutting category that overrides
+ Status JsonValue::parse(const Slice& src, JsonValue* out) {
+     ASSIGN_OR_RETURN(auto json_value, parse_json_or_string(src));
+     *out = std::move(json_value);
 ```
 
-**File**: `.claude/skills/release-notes/references/format.md` (modified, +10/-3)
+**File**: `be/src/types/json_value.h` (modified, +2/-0)
 ```diff
-@@ -65,6 +65,10 @@ Release date: Month D, YYYY
+@@ -125,6 +125,8 @@ class JsonValue {
+     static StatusOr<JsonValue> parse(const Slice& src);
+     // Try to parse it as JSON object, otherwise consider it as a string
+     static StatusOr<JsonValue> parse_json_or_string(const Slice& src);
++    // Parse `src` as one JSON text of any kind, including a bare scalar such as 1, true or null.
++    static StatusOr<JsonValue> parse_json_text(const Slice& src);
+     // Effective JSON nesting-depth cap from config (json_max_parse_nesting_depth), with a built-in
+     // fallback (1024) so it is never silently disabled. Single source of truth shared by the
+     // velocypack parse path (parse_options_from_config) and the simdjson ingest path (SimdJsonConverter).
+```
+
+**File**: `be/test/exprs/cast_expr_test.cpp` (modified, +83/-0)
+```diff
+@@ -17,6 +17,7 @@
+ #include <glog/logging.h>
+ #include <gtest/gtest.h>
  
- - <user-facing description>. [#NNNNN](https://github.com/StarRocks/starrocks/pull/NNNNN)
++#include <cstring>
+ #include <limits>
  
-+### Security
+ #include "base/string/slice.h"
+@@ -3740,4 +3741,86 @@ TEST_F(VectorizedCastExprTest, variant_cast_to_json_from_rebuilt_shredded_row) {
+     EXPECT_EQ(long_value, str->to_string());
+ }
+ 
++// A scalar VARIANT casts to the same JSON scalar, not to a JSON string of its text, and a variant null casts to SQL
++// NULL, also under a throwing cast.
++TEST_F(VectorizedCastExprTest, variant_scalar_cast_to_json_keeps_json_type) {
++    const std::vector<std::string> inputs = {"1", "true", "1.5", R"("s")", "null", R"({"a":null})"};
++    auto variant_col = VariantColumn::create();
++    for (const auto& text : inputs) {
++        auto encoded = VariantEncoder::encode_json_text_to_variant(text);
++        ASSERT_TRUE(encoded.ok()) << encoded.status();
++        variant_col->append(&encoded.value());
++    }
++    for (const bool allow_throw : {false, true}) {
++        ColumnPtr result;
++        ASSERT_NO_THROW(
++                result = cast_from_variant(gen_type_desc(TPrimitiveType::JSON), variant_col->clone(), allow_throw));
++        ASSERT_EQ(inputs.size(), result->size());
++        const auto json_at = [&](size_t row) {
++            const JsonValue* json = result->get(row).get_json();
++            return json == nullptr ? std::string("<null>") : json->to_string_uncheck();
++        };
++        EXPECT_EQ("1", json_at(0));
++        EXPECT_TRUE(result->get(0).get_json()->get_int().ok());
++        EXPECT_EQ("true", json_at(1));
++        EXPECT_TRUE(result->get(1).get_json()->get_bool().ok());
++        EXPECT_EQ("1.5", json_at(2));
++        EXPECT_EQ(R"("s")", json_at(3));
++        EXPECT_TRUE(result->is_null(4));
++        EXPECT_EQ(R"({"a": null})", json_at(5));
++    }
++}
 +
-+- [CVE-YYYY-NNNNN] Bumped <component> to <version> to fix <the vulnerability>. [#NNNNN](https://github.com/StarRocks/starrocks/pull/NNNNN)
++// A DOUBLE VARIANT casts to the same double in JSON. The JSON parser built a number at the end of its input digit by
++// digit, which turned 0.3 into the next double up.
++TEST_F(VectorizedCastExprTest, variant_double_cast_to_json_keeps_exact_value) {
++    const std::vector<double> values = {0.3, -0.3, 0.7, 1e-5, 123.456, 1e300, 5e-324, -0.0};
++    auto variant_col = VariantColumn::create();
++    for (double d : values) {
++        auto json = JsonValue::from_double(d);
++        auto encoded = VariantEncoder::encode_json_to_variant(json);
++        ASSERT_TRUE(encoded.ok()) << encoded.status();
++        variant_col->append(&encoded.value());
++    }
++    ColumnPtr result = cast_from_variant(gen_type_desc(TPrimitiveType::JSON), std::move(variant_col));
++    ASSERT_EQ(values.size(), result->size());
++    for (size_t i = 0; i < values.size(); ++i) {
++        const JsonValue* json = result->get(i).get_json();
++        ASSERT_NE(nullptr, json) << i;
++        auto d = json->get_double();
++        ASSERT_TRUE(d.ok()) << i << ": " << json->to_string_uncheck();
++        EXPECT_EQ(values[i], d.value()) << i << ": " << json->to_string_uncheck();
++    }
++}
 +
- ### Bug fixes
++// A NaN DOUBLE has no JSON form and prints as null; it casts like CAST(DOUBLE AS JSON) does: SQL NULL, or an error
++// under a throwing cast. Only a variant null is always SQL NULL.
++TEST_F(VectorizedCastExprTest, variant_nan_cast_to_json_follows_double_cast) {
++    const auto make_column = [](bool nan) {
++        auto variant_col = VariantColumn::create();
++        if (nan) {
++            const double value = std::numeric_limits<double>::quiet_NaN();
++            std::string bytes(1 + sizeof(double), '\0');
++            bytes[0] = static_cast<char>(static_cast<uint8_t>(VariantType::DOUBLE) << 2);
++            memcpy(bytes.data() + 1, &value, sizeof(value)); // little-endian host
++            VariantRowValue row(VariantMetadata::kEmptyMetadata, bytes);
++            variant_col->append(&row);
++        } else {
++            auto encoded = VariantEncoder::encode_json_text_to_variant("null");
++            EXPECT_TRUE(encoded.ok()) << encoded.status();
++            variant_col->append(&encoded.value());
++        }
++        return variant_col;
++    };
++    const TTypeDesc json_type = gen_type_desc(TPrimitiveType::JSON);
++    ColumnPtr nan_result = cast_from_variant(json_type, make_column(true));
++    ASSERT_EQ(1, nan_result->size());
++    EXPECT_TRUE(nan_result->is_null(0));
++    EXPECT_FALSE(cast_from_variant_error(json_type, make_column(true)).empty());
++
++    ColumnPtr null_result = cast_from_variant(json_type, make_column(false), true);
++    ASSERT_EQ(1, null_result->size());
++    EXPECT_TRUE(null_result->is_null(0));
++}
++
+ } // namespace starrocks
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/FunctionSet.java` (modified, +8/-1)
+```diff
+@@ -1396,7 +1396,14 @@ private void initAggregateBuiltins() {
+                 false, false, false));
  
- The following issues have been fixed:
-@@ -74,9 +78,12 @@ The following issues have been fixed:
- 
- Rules:
- 
--- Use the heading text exactly: `### Behavior Changes`, `### Improvements`, `### Bug fixes`
--  (note the lowercase "fixes" — match the existing file; some older sections use
--  `### Bug Fixes`, but follow the most recent section's casing).
-+- Use the heading text exactly: `### Behavior Changes`, `### Improvements`, `### Security`,
-+  `### Bug fixes` (note the lowercase "fixes" — match the existing file; some older sections
-+  use `### Bug Fixes`, but follow the most recent section's casing).
-+- `### Security` goes between Improvements and Bug fixes, and only in a file whose most recent
-+  patch section has one (`release-4.1.md` does; `release-4.0.md` and `release-3.5.md` do not).
-+  In any other file, its entries go under Bug fixes. See `categorization.md`.
- - **Omit any subsection that has no entries.** Do not emit an empty heading.
- - The `### Bug fixes` section is conventionally preceded by the line
-   `The following issues have been fixed:` — keep it if the existing file uses it.
+         for (Type t : SUPPORTED_TYPES) {
+-            if (t.isFunctionType() || t.isVariantType()) {
++            if (t.isFunctionType()) {
++                continue;
++            }
++            if (t.isVariantType()) {
++                // Only count: without it count(v) casts v to VARCHAR, which turns a variant null into a SQL NULL
++                // and drops it from the count, although `v IS NULL` is false.
++                addBuiltin(AggregateFunction.createBuiltin(FunctionSet.COUNT,
++                        Lists.newArrayList(t), IntegerType.BIGINT, IntegerType.BIGINT, false, true, true));
+                 continue;
+             }
+             if (t.isNull()) {
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/FunctionAnalyzer.java` (modified, +4/-1)
+```diff
+@@ -1620,7 +1620,10 @@ private static Function getAdjustedAnalyzedAggregateFunction(ConnectContext sess
+         if (fnName.equals(FunctionSet.COUNT) && isDistinct) {
+             // Compatible with the logic of the original search function "count distinct"
+             // TODO: fix how we equal count distinct.
+-            fn = ExprUtils.getBuiltinFunction(FunctionSet.COUNT, new Type[] { argumentTypes[0] },
++            // count(VARIANT) is only for plain counting: there is no distinct aggregate over VARIANT, so count
++            // distinct keeps casting a VARIANT argument to VARCHAR as it did before the VARIANT overload existed.
++            Type distinctArgType = argumentTypes[0].isVariantType() ? VarcharType.VARCHAR : argumentTypes[0];
++            fn = ExprUtils.getBuiltinFunction(FunctionSet.COUNT, new Type[] { distinctArgType },
+                     Function.CompareMode.IS_NONSTRICT_SUPERTYPE_OF);
+         } else if (fnName.equals(FunctionSet.EXCHANGE_BYTES) || fnName.equals(FunctionSet.EXCHANGE_SPEED)) {
+             fn = ExprUtils.getBuiltinFunction(fnName, argumentTypes, Function.CompareMode.IS_NONSTRICT_SUPERTYPE_OF);
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/AggregateTest.java` (modified, +28/-0)
+```diff
+@@ -3645,4 +3645,32 @@ public void testStructFieldOfAggregates() throws Exception {
+         assertContains(plan, "output: sum(2: v2), max(3: v3)");
+         assertContains(plan, "named_struct('a', 4: sum, 'b', 5: max).a");
+     }
++
++    // count(v) on a VARIANT counts it as VARIANT. Counting cast(v as VARCHAR) instead turned a variant null into a SQL
++    // NULL and dropped it from the count, although `v IS NULL` is false.
++    @Test
++    public void testCountVariantDoesNotCastToVarchar() throws Exception {
++        int oldStage = connectContext.getSessionVariable().getNewPlannerAggStage();
++        try {
++            for (int stage : new int[] {0, 1, 2}) {
++                connectContext.getSessionVariable().setNewPlanerAggStage(stage);
++                String plan = getVerboseExplain(
++                        "select t1b, count(cast(t1a as variant)) from test_all_type group by t1b");
++                assertContains(plan, "count[([11: cast, VARIANT, true]); args: VARIANT; result: BIGINT");
++                assertNotContains(plan, "as VARCHAR");
++            }
++            // There is no distinct aggregate over VARIANT: count distinct still casts its argument to VARCHAR, so
++            // the multi-phase split never hands a VARIANT column to a VARCHAR distinct state.
++            for (int stage : new int[] {0, 1, 2, 3, 4}) {
++                connectContext.getSessionVariable().setNewPlanerAggStage(stage);
++                String plan = getVerboseExplain(
++                        "select count(distinct cast(t1a as variant)) from test_all_type");
++                assertContains(plan, "VARIANT, true] as VARCHAR)");
++                assertNotContains(plan, "as VARIANT)); args: CHAR");
++                assertNotContains(plan, "VARIANT, true]); args: CHAR");
++            }
++        } finally {
++            connectContext.getSessionVariable().setNewPlanerAggStage(oldStage);
++        }
++    }
+ }
+```
+
+**File**: `test/sql/test_iceberg/R/test_iceberg_variant_mixed_files` (modified, +1/-1)
+```diff
+@@ -67,7 +67,7 @@ alter table plain execute add_files(location='oss://${oss_bucket}/test_iceberg_v
+ -- !result
+ select count(*), count(v), min(id), max(id) from mixed;
+ -- result:
+-276	273	1	405
++276	275	1	405
+ -- !result
+ function: assert_equal_result("select id, cast(v as string) from mixed order by id", "select id, cast(v as string) from plain order by id")
+ -- result:
 ```
 
 ---
 
-### Incident Patch 2: `01c149aa` (2026-11-18)
-**Commit Message**: [Doc] Require the full PR template in the agent guides (#83708)
+### Incident Patch 2: `593ce64a` (2026-11-20)
+**Commit Message**: [BugFix] Derive a pinned refresh's scope from the frozen snapshot, not from live (#81631)
 
-Signed-off-by: Dan Roscigno <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Youngwb <[REDACTED_EMAIL]>
+Co-authored-by: Youngwb <[REDACTED_EMAIL]>
 
-**File**: `AGENTS.md` (modified, +1/-0)
+**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/MaterializedView.java` (modified, +8/-2)
 ```diff
-@@ -53,6 +53,7 @@ In the final change summary or PR description, state which existing signals were
- - Commit messages: English, imperative, concise.
- - PR titles: `[BugFix] ...`, `[Feature] ...`, `[Enhancement] ...`, `[Refactor] ...`, `[UT] ...`, `[Doc] ...`, or `[Tool] ...`.
- - Fill the repository PR template completely, including behavior-change classification and test/docs checkboxes.
-+- Keep every block of the template, including the final "Bugfix cherry-pick branch check" block, which is required on every PR. Always tick "I have checked the version labels..." in it.
- - Bug-fix PRs intended for branch backports must set the version checkboxes that drive auto-backporting.
- - When editing any file under `docs/`, read `docs/CLAUDE.md` for documentation-specific rules before making changes.
+@@ -1414,22 +1414,28 @@ public List<BasePartitionInfo> getBaseTableLatestPartitionInfo(Table baseTable)
+                 .stream().map(BasePartitionInfo::fromExternalTable).collect(Collectors.toList());
+     }
  
++    public Set<String> getUpdatedPartitionNamesOfExternalTable(Table baseTable, boolean isQueryRewrite) {
++        return getUpdatedPartitionNamesOfExternalTable(baseTable, isQueryRewrite, null);
++    }
++
+     /**
+      * Get the updated partition names of the external base table of the materialized view.
+      *
+      * @param baseTable:      the external base table of the materialized view to check the updated partition names
+      * @param isQueryRewrite: whether it's for query rewrite or not
++     * @param pinnedVersionRange: the frozen snapshot to compare against, null to compare against the live table
+      * @return: the updated partition names of the external base table
+      */
+-    public Set<String> getUpdatedPartitionNamesOfExternalTable(Table baseTable, boolean isQueryRewrite) {
++    public Set<String> getUpdatedPartitionNamesOfExternalTable(Table baseTable, boolean isQueryRewrite,
++                                                               TvrVersionRange pinnedVersionRange) {
+         Set<String> result = Sets.newHashSet();
+         // NOTE: For query dump replay, ignore updated partition infos only to check mv can rewrite query or not.
+         // Ignore partitions when mv 's last refreshed time period is less than `maxMVRewriteStaleness`
+         if (FeConstants.isReplayFromQueryDump || (isQueryRewrite && isStalenessSatisfied())) {
+             return result;
+         }
+ 
+-        ConnectorPartitionTraits traits = ConnectorPartitionTraits.build(this, baseTable);
++        ConnectorPartitionTraits traits = ConnectorPartitionTraits.build(this, baseTable, pinnedVersionRange);
+         traits.setQueryMVRewrite(isQueryRewrite);
+         return traits.getUpdatedPartitionNames(
+                 this.getBaseTableInfos(),
 ```
 
-**File**: `docs/AGENTS.md` (modified, +13/-2)
+**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/MvRefreshArbiter.java` (modified, +11/-6)
 ```diff
-@@ -198,11 +198,22 @@ Place images in `_assets/` and reference:
- 2. Set `sidebar_position` in its frontmatter to order it within that section
- 3. Add English and Chinese versions; add Japanese version when applicable
+@@ -51,8 +51,10 @@ public class MvRefreshArbiter {
+     private static final Logger LOG = LogManager.getLogger(MvRefreshArbiter.class);
  
--### For Bug Fixes
-+### Pull Requests
+     public static boolean needsToRefreshTable(MaterializedView mv, BaseTableInfo baseTableInfo, Table table,
+-                                              MVTimelinessArbiter.QueryRewriteParams queryRewriteParams) {
+-        Optional<Boolean> needsToRefresh = needsToRefreshTable(mv, baseTableInfo, table, true, queryRewriteParams);
++                                              MVTimelinessArbiter.QueryRewriteParams queryRewriteParams,
++                                              TvrVersionRange pinnedVersionRange) {
++        Optional<Boolean> needsToRefresh =
++                needsToRefreshTable(mv, baseTableInfo, table, true, queryRewriteParams, pinnedVersionRange);
+         if (needsToRefresh.isPresent()) {
+             return needsToRefresh.get();
+         }
+@@ -130,7 +132,8 @@ private static Optional<Boolean> needsToRefreshTable(MaterializedView mv,
+                                                          BaseTableInfo baseTableInfo,
+                                                          Table baseTable,
+                                                          boolean withMv,
+-                                                         MVTimelinessArbiter.QueryRewriteParams queryRewriteParams) {
++                                                         MVTimelinessArbiter.QueryRewriteParams queryRewriteParams,
++                                                         TvrVersionRange pinnedVersionRange) {
+         if (baseTable.isView()) {
+             // do nothing
+             return Optional.of(false);
+@@ -168,7 +171,7 @@ private static Optional<Boolean> needsToRefreshTable(MaterializedView mv,
+             return Optional.of(false);
+         } else {
+             Set<String> baseUpdatedPartitionNames = mv.getUpdatedPartitionNamesOfExternalTable(baseTable,
+-                    queryRewriteParams.isQueryRewrite());
++                    queryRewriteParams.isQueryRewrite(), pinnedVersionRange);
+             if (baseUpdatedPartitionNames == null) {
+                 return Optional.empty();
+             }
+@@ -181,12 +184,14 @@ private static Optional<Boolean> needsToRefreshTable(MaterializedView mv,
+      * @param baseTable: the table to check
+      * @param withMv: whether to check the materialized view if it's a materialized view
+      * @param queryRewriteParams: whether this caller is query rewrite or not
++     * @param pinnedVersionRange: the frozen snapshot to answer from, null to answer from the live table
+      * @return MvBaseTableUpdateInfo: the update info of the base table
+      */
+     public static MvBaseTableUpdateInfo getMvBaseTableUpdateInfo(MaterializedView mv,
+                                                                  Table baseTable,
+                                                                  boolean withMv,
+-                                                                 MVTimelinessArbiter.QueryRewriteParams queryRewriteParams) {
++                                                                 MVTimelinessArbiter.QueryRewriteParams queryRewriteParams,
++                                                                 TvrVersionRange pinnedVersionRange) {
+         MvBaseTableUpdateInfo baseTableUpdateInfo = new MvBaseTableUpdateInfo();
+         if (baseTable.isView()) {
+             // do nothing
+@@ -225,7 +230,7 @@ public static MvBaseTableUpdateInfo getMvBaseTableUpdateInfo(MaterializedView mv
+             baseTableUpdateInfo.addToRefreshPartitionNames(updatedPCellSet);
+         } else {
+             Set<String> baseUpdatedPartitionNames = mv.getUpdatedPartitionNamesOfExternalTable(baseTable,
+-                    queryRewriteParams.isQueryRewrite());
++                    queryRewriteParams.isQueryRewrite(), pinnedVersionRange);
+             if (baseUpdatedPartitionNames == null) {
+                 return null;
+             }
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/mv/MVTimelinessArbiter.java` (modified, +3/-2)
+```diff
+@@ -213,7 +213,8 @@ protected boolean needsRefreshOnNonRefBaseTables(Map<Table, List<Column>> refBas
+                 return true;
+             }
+             // If the non-ref table has already changed, need refresh all materialized views' partitions.
+-            if (needsToRefreshTable(mv, tableInfo, baseTable, queryRewriteParams)) {
++            if (needsToRefreshTable(mv, tableInfo, baseTable, queryRewriteParams,
++                    /* pinnedVersionRange */ null)) {
+                 return true;
+             }
+             if (hasDeletedPartitions(mv, baseTable, /* pinnedVersionRange */ null)) {
+@@ -265,7 +266,7 @@ protected Map<Table, PCellSortedSet> collectBaseTableUpdatePartitionNames(Map<Ta
+         Map<Table, PCellSortedSet> baseChangedPartitionNames = Maps.newHashMap();
+         for (Table baseTable : refBaseTableAndColumns.keySet()) {
+             MvBaseTableUpdateInfo mvBaseTableUpdateInfo = getMvBaseTableUpdateInfo(mv, baseTable,
+-                    true, queryRewriteParams);
++                    true, queryRewriteParams, /* pinnedVersionRange */ null);
+             if (mvBaseTableUpdateInfo == null) {
+                 logMVPrepare(mv, "Failed to collect update info for ref base table {}, fallback to full refresh",
+                         baseTable.getName());
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/mv/MVTimelinessNonPartitionArbiter.java` (modified, +2/-1)
+```diff
+@@ -69,7 +69,8 @@ protected MvUpdateInfo getMVTimelinessUpdateInfoInChecked() {
+             }
  
- 1. Create PR with `[Doc]` prefix in title
- 2. Sign off commit: `git commit -s`
--3. Select "Doc" checkbox in PR template
-+3. Use `.github/PULL_REQUEST_TEMPLATE.md` as the PR description. Copy the whole
-+   template and fill it in. Do not write a free-form description and do not drop
-+   sections: every block is required, including the final
-+   "Bugfix cherry-pick branch check" block.
-+4. Select the "Doc" checkbox in the PR template
-+5. In "Bugfix cherry-pick branch check", always tick "I have checked the version
-+   labels which the pr will be auto-backported to the target branch". Tick a
-+   version (4.2, 4.1, ...) only to have the PR auto-backported to that branch.
-+   When you open the branch PRs yourself (manual backports, for example because
-+   links differ between branches), leave every version unticked.
-+6. On a backport PR that you open yourself, tick "This is a backport pr" and
-+   link the original PR in "Why I'm doing".
+             // once mv's base table has updated, refresh the materialized view totally.
+-            MvBaseTableUpdateInfo mvBaseTableUpdateInfo = getMvBaseTableUpdateInfo(mv, table, true, queryRewriteParams);
++            MvBaseTableUpdateInfo mvBaseTableUpdateInfo =
++                    getMvBaseTableUpdateInfo(mv, table, true, queryRewriteParams, /* pinnedVersionRange */ null);
+             if (mvBaseTableUpdateInfo == null) {
+                 logMVPrepare(mv, "Non-partitioned base table update info is unknown, need refresh totally.");
+                 return MvUpdateInfo.fullRefresh(mv);
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/connector/partitiontraits/CachedPartitionTraits.java` (modified, +6/-2)
+```diff
+@@ -66,12 +66,16 @@ public CachedPartitionTraits(Cache<Object, Object> cache,
+     }
  
- ### Translation
+     /**
+-     * Construct the cache key: cache_{prefix}_{tableId}
++     * Construct the cache key: cache_{prefix}_{mvId}_{tableId}, suffixed with the pinned snapshot when
++     * this instance reads one.
+      * @param prefix use the prefix to distinguish different cache keys, please check the unique usage of this method
+      * @return the cache key
+      */
+     private String buildCacheKey(String prefix) {
+-        return String.format("cache_%s_%s_%s", prefix, (mv == null) ? "0" : mv.getId(), table.getId());
++        String key = String.format("cache_%s_%s_%s", prefix, (mv == null) ? "0" : mv.getId(), table.getId());
++        // A pinned answer and a live answer for the same base table must not share an entry. The unpinned
++        // key stays unsuffixed: it is reported per-key in the refresh runtime profile.
++        return pinnedVersionRange == null ? key : key + "_" + pinnedVersionRange;
+     }
  
+     /**
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/scheduler/MvTaskRunContext.java` (modified, +6/-2)
+```diff
+@@ -33,8 +33,8 @@ public class MvTaskRunContext extends TaskRunContext {
+     public static class MVRefreshRuntimeState {
+         private final Map<Long, BaseTableSnapshotInfo> snapshotBaseTables = Maps.newHashMap();
+ 
+-        // Pinned TvrVersionRange per base table, keyed by Table.getTableIdentifier() (stable across
+-        // connector getTable() calls, unlike tableId for external tables).
++        // Pinned TvrVersionRange per base table, keyed by Table.getUUID() (cross-database unique and
++        // stable across connector getTable() calls, unlike tableId for external tables).
+         private final Map<String, TvrVersionRange> pinnedTvrMap = Maps.newHashMap();
+ 
+         public Map<Long, BaseTableSnapshotInfo> getSnapshotBaseTables() {
+@@ -50,6 +50,10 @@ public Map<String, TvrVersionRange> getPinnedTvrMap() {
+             return pinnedTvrMap;
+         }
+ 
++        public TvrVersionRange getPinnedRange(Table baseTable) {
++            return pinnedTvrMap.get(baseTable.getUUID());
++        }
++
+         public void reset() {
+             snapshotBaseTables.clear();
+             pinnedTvrMap.clear();
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/scheduler/mv/pct/MVPCTRefreshNonPartitioner.java` (modified, +1/-1)
+```diff
+@@ -82,7 +82,7 @@ private PCellSortedSet getNonPartitionedMVPartitionsToRefresh() {
+     @Override
+     public PCellSortedSet getMVPartitionsToRefreshWithCheck(Map<Long, BaseTableSnapshotInfo> snapshotBaseTables) {
+         // non-partitioned materialized view
+-        if (mvRefreshParams.isForce() || isNonPartitionedMVNeedToRefresh(snapshotBaseTables, mv, queryRewriteParams)) {
++        if (mvRefreshParams.isForce() || isNonPartitionedMVNeedToRefresh(snapshotBaseTables)) {
+             return getNonPartitionedMVPartitionsToRefresh();
+         }
+         return PCellSortedSet.of();
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/scheduler/mv/pct/MVPCTRefreshPartitioner.java` (modified, +9/-8)
+```diff
+@@ -489,7 +489,7 @@ protected PCellSortedSet getMvPartitionNamesToRefresh(PCellSortedSet toRefreshPa
+ 
+             // check the updated partition names in the ref base table
+             MvBaseTableUpdateInfo mvBaseTableUpdateInfo = getMvBaseTableUpdateInfo(mv, baseTable,
+-                    false, queryRewriteParams);
++                    false, queryRewriteParams, pinnedRangeFor(baseTable));
+             if (mvBaseTableUpdateInfo == null) {
+                 throw new DmlException(String.format("Find the updated partition info of ref base table %s of mv " +
+                         "%s failed, current mv partitions:%s", baseTable.getName(), mv.getName(), toRefreshPartitions));
+@@ -554,7 +554,8 @@ protected boolean needsRefreshBasedOnNonRefTables(Map<Long, BaseTableSnapshotInf
+             if (tableColumnMap.containsKey(snapshotTable)) {
+                 continue;
+             }
+-            if (needsToRefreshTable(mv, snapshotInfo.getBaseTableInfo(), snapshotTable, queryRewriteParams)) {
++            if (needsToRefreshTable(mv, snapshotInfo.getBaseTableInfo(), snapshotTable, queryRewriteParams,
++                    pinnedRangeFor(snapshotTable))) {
+                 return true;
+             }
+             // A non-ref base table is not partition-aligned with the mv, so losing a partition invalidates all of it.
+@@ -571,18 +572,18 @@ protected boolean needsRefreshBasedOnNonRefTables(Map<Long, BaseTableSnapshotInf
+      * - its base table has updated.
+      * - its base table has deleted partitions.
+      */
+-    public static boolean isNonPartitionedMVNeedToRefresh(Map<Long, BaseTableSnapshotInfo> snapshotBaseTables,
+-                                                          MaterializedView mv,
+-                                                          MVTimelinessArbiter.QueryRewriteParams queryRewriteParams) {
++    public boolean isNonPartitionedMVNeedToRefresh(Map<Long, BaseTableSnapshotInfo> snapshotBaseTables) {
+         for (BaseTableSnapshotInfo snapshotInfo : snapshotBaseTables.values()) {
+             Table snapshotTable = snapshotInfo.getBaseTable();
+             if (!isPartitionRefreshSupported(snapshotTable)) {
+                 return true;
+             }
+-            if (needsToRefreshTable(mv, snapshotInfo.getBaseTableInfo(), snapshotTable, queryRewriteParams)) {
++            TvrVersionRange pinnedRange = pinnedRangeFor(snapshotTable);
++            if (needsToRefreshTable(mv, snapshotInfo.getBaseTableInfo(), snapshotTable, queryRewriteParams,
++                    pinnedRange)) {
+                 return true;
+             }
+-            if (hasDeletedPartitions(mv, snapshotTable, /* pinnedVersionRange */ null)) {
++            if (hasDeletedPartitions(mv, snapshotTable, pinnedRange)) {
+                 return true;
+             }
+             if (hasUntrackedRows(mv, snapshotTable)) {
+@@ -633,7 +634,7 @@ public PrefetchedPartitionInfos prefetchExternalPartitionInfos(Map<Long, BaseTab
+ 
+     /** The snapshot the scan reads: a pinned run must answer base-state questions from it, not from live. */
+     private TvrVersionRange pinnedRangeFor(Table baseTable) {
+-        return mvContext.getRefreshRuntimeState().getPinnedTvrMap().get(baseTable.getUUID());
++        return mvContext.getRefreshRuntimeState().getPinnedRange(baseTable);
+     }
+ 
+     public void dropPartition(Database db, MaterializedView materializedView, String mvPartitionName) {
 ```
 
 ---
 
-### Incident Patch 3: `4017f856` (2026-11-18)
-**Commit Message**: [Doc] Translate the release notes index pages and fix the Maven link (#83710)
+### Incident Patch 3: `ee983a26` (2026-11-20)
+**Commit Message**: [BugFix][RB-1509] Keep duplicate live entries of an Iceberg delete manifest in the delete file cache (#83938)
 
-Signed-off-by: Dan Roscigno <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: tqqq <[REDACTED_EMAIL]>
+Co-authored-by: tqqq <[REDACTED_EMAIL]>
 
-**File**: `docs/en/release_notes/ecosystem/flink_connector.md` (modified, +1/-1)
+**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/DeleteFileWrapper.java` (modified, +7/-2)
 ```diff
-@@ -22,7 +22,7 @@ products: [oss]
+@@ -53,12 +53,17 @@ public boolean equals(Object o) {
  
- **Methods to obtain the JAR file:**
+         DeleteFileWrapper that = (DeleteFileWrapper) o;
  
--- Directly download the the Flink connector JAR file from the [Maven Central Repository](https://repo1.maven.org/maven2/com/starrocks).
-+- Directly download the the Flink connector JAR file from the [Maven Central Repository](https://repo1.maven.org/maven2/com/starrocks/).
- - Add the Flink connector as a dependency in your Maven project's `pom.xml` file and download it. For specific instructions, see [user guide](../../loading/Flink-connector-starrocks.md#obtain-flink-connector).
- - Compile the source codes into Flink connector JAR file. For specific instructions, see [user guide](../../loading/Flink-connector-starrocks.md#obtain-flink-connector).
+-        return deleteFile.path().toString().equals(that.deleteFile.path().toString());
++        // pos() is the entry's row in its manifest: a manifest can list the same delete file twice (committed twice
++        // and then merged into one manifest), and Iceberg indexes it once per entry. Keeping both entries keeps the
++        // cached set in step with the manifest's live entry count, which the read side checks.
++        return deleteFile.path().toString().equals(that.deleteFile.path().toString())
++                && Objects.equals(deleteFile.pos(), that.deleteFile.pos());
+     }
  
+     @Override
+     public int hashCode() {
+-        return Objects.hash(deleteFile.path());
++        // path() is a CharSequence; hash its string form so it stays consistent with equals().
++        return Objects.hash(deleteFile.path().toString(), deleteFile.pos());
+     }
+ 
+     @Override
 ```
 
-**File**: `docs/en/release_notes/ecosystem/spark_connector.md` (modified, +1/-1)
+**File**: `fe/fe-core/src/test/java/com/starrocks/connector/iceberg/IcebergManifestCacheStatsTest.java` (modified, +51/-0)
 ```diff
-@@ -19,7 +19,7 @@ products: [oss]
- 
- **Methods to obtain the JAR file:**
- 
--- Directly download the Spark connector JAR file from the [Maven Central Repository](https://repo1.maven.org/maven2/com/starrocks).
-+- Directly download the Spark connector JAR file from the [Maven Central Repository](https://repo1.maven.org/maven2/com/starrocks/).
- - Add the Spark connector as a dependency in your Maven project's `pom.xml` file and download it. For specific instructions, see [user guide](../../loading/spark/Spark-connector-starrocks.md#obtain-spark-connector).
- - Compile the source codes into Spark connector JAR file. For specific instructions, see [user guide](../../loading/spark/Spark-connector-starrocks.md#obtain-spark-connector).
- 
-```
-
-**File**: `docs/ja/release_notes/ecosystem/flink_connector.md` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ products: [oss]
- 
- **JAR ファイルを取得する方法:**
- 
--- [Maven Central Repository](https://repo1.maven.org/maven2/com/starrocks) から直接 Flink コネクタ JAR ファイルをダウンロードします。
-+- [Maven Central Repository](https://repo1.maven.org/maven2/com/starrocks/) から直接 Flink コネクタ JAR ファイルをダウンロードします。
- - Flink コネクタを Maven プロジェクトの `pom.xml` ファイルに依存関係として追加し、ダウンロードします。具体的な手順は [ユーザーガイド](../../loading/Flink-connector-starrocks.md#obtain-flink-connector) を参照してください。
- - ソースコードをコンパイルして Flink コネクタ JAR ファイルを作成します。具体的な手順は [ユーザーガイド](../../loading/Flink-connector-starrocks.md#obtain-flink-connector) を参照してください。
- 
-```
-
-**File**: `docs/ja/release_notes/ecosystem/spark_connector.md` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ products: [oss]
- 
- **JAR ファイルの取得方法:**
- 
--- [Maven Central Repository](https://repo1.maven.org/maven2/com/starrocks) から直接 Spark connector JAR ファイルをダウンロードします。
-+- [Maven Central Repository](https://repo1.maven.org/maven2/com/starrocks/) から直接 Spark connector JAR ファイルをダウンロードします。
- - Maven プロジェクトの `pom.xml` ファイルに Spark connector を依存関係として追加し、ダウンロードします。具体的な手順については、[ユーザーガイド](../../loading/spark/Spark-connector-starrocks.md#obtain-spark-connector) を参照してください。
- - ソースコードをコンパイルして Spark connector JAR ファイルを作成します。具体的な手順については、[ユーザーガイド](../../loading/spark/Spark-connector-starrocks.md#obtain-spark-connector) を参照してください。
- 
-```
-
-**File**: `docs/ja/release_notes/release_notes.md` (modified, +2/-2)
-```diff
-@@ -4,9 +4,9 @@ description: "このドキュメントバージョンの StarRocks リリース
- products: [oss]
- ---
- 
--# Release notes
-+# リリースノート
- 
--For release notes for newer major versions please switch the documentation version in the drop-down at the top of the page.
-+より新しいメジャーバージョンのリリースノートについては、ページ上部のドロップダウンでドキュメントのバージョンを切り替えてください。
- 
- import DocCardList from '@theme/DocCardList';
- 
-```
-
-**File**: `docs/zh/release_notes/ecosystem/flink_connector.md` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ products: [oss]
- 
- 您可以通过以下方式获取 Flink connector 的 JAR 包：
- 
--- 从 [Maven Central Repository](https://repo1.maven.org/maven2/com/starrocks) 直接下载编译好的 JAR 包。
-+- 从 [Maven Central Repository](https://repo1.maven.org/maven2/com/starrocks/) 直接下载编译好的 JAR 包。
- - 在 Maven 项目的 pom 文件添加 Flink connector 为依赖项，作为依赖下载。具体方式，参见[使用文档](../../loading/Flink-connector-starrocks.md)。
- - 使用源码手动编译成 JAR 包。具体方式，参见[使用文档](../../loading/Flink-connector-starrocks.md)。
- 
-```
-
-**File**: `docs/zh/release_notes/ecosystem/spark_connector.md` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ products: [oss]
- 
- 您可以通过以下方式获取 Spark connector 的 JAR 包：
- 
--- 从 [Maven Central Repository](https://repo1.maven.org/maven2/com/starrocks) 直接下载编译好的 JAR 包。
-+- 从 [Maven Central Repository](https://repo1.maven.org/maven2/com/starrocks/) 直接下载编译好的 JAR 包。
- - 在 Maven 项目的 pom 文件添加 Spark connector 为依赖项，作为依赖下载。具体方式，参见[使用文档](../../loading/spark/Spark-connector-starrocks.md)。
- - 使用源码手动编译成 JAR 包。具体方式，参见[使用文档](../../loading/spark/Spark-connector-starrocks.md)。
- 
-```
-
-**File**: `docs/zh/release_notes/release_notes.md` (modified, +2/-2)
-```diff
-@@ -4,9 +4,9 @@ description: "本文档版本对应的 StarRocks 发布说明，以及 Kafka、S
- products: [oss]
- ---
- 
--# Release notes
-+# 发布说明
- 
--For release notes for newer major versions please switch the documentation version in the drop-down at the top of the page.
-+如需查看更新的主要版本的发布说明，请使用页面顶部的下拉菜单切换文档版本。
- 
- import DocCardList from '@theme/DocCardList';
- 
+@@ -19,6 +19,7 @@
+ import com.google.common.collect.Maps;
+ import com.starrocks.catalog.Column;
+ import com.starrocks.catalog.IcebergTable;
++import com.starrocks.common.jmockit.Deencapsulation;
+ import com.starrocks.common.tvr.TvrTableSnapshot;
+ import com.starrocks.connector.ConnectorProperties;
+ import com.starrocks.connector.ConnectorType;
+@@ -881,4 +882,54 @@ public void testManifestWithDuplicateLiveEntriesIsCached() throws IOException {
+                 sortedLocations(planTasks(catalog, table, Expressions.equal("id", 5))));
+         Assertions.assertEquals(expected, sortedLocations(planTasksWithStats(catalog, table, List.of("id"))));
+     }
++
++    @Test
++    public void testDeleteManifestWithDuplicateLiveEntriesIsCached() throws IOException {
++        Schema schema = new Schema(List.of(Types.NestedField.required(1, "id", Types.IntegerType.get())));
++        Table table = create(schema, PartitionSpec.unpartitioned(), "t_dup_deletes", 2);
++        // merge the delete manifests of the two row deltas below into one
++        table.updateProperties().set("commit.manifest.min-count-to-merge", "2").commit();
++        table.newAppend().appendFile(DataFiles.builder(PartitionSpec.unpartitioned())
++                .withPath("/path/to/dup-deletes-data.parquet")
++                .withFileSizeInBytes(10)
++                .withRecordCount(10)
++                .build()).commit();
++        DeleteFile deletes = FileMetadata.deleteFileBuilder(PartitionSpec.unpartitioned())
++                .ofPositionDeletes()
++                .withPath("/path/to/dup-deletes-pos.parquet")
++                .withFormat(FileFormat.PARQUET)
++                .withFileSizeInBytes(10)
++                .withRecordCount(1)
++                .build();
++        // a retried commit: the same delete file is committed twice
++        table.newRowDelta().addDeletes(deletes).commit();
++        table.newRowDelta().addDeletes(deletes).commit();
++
++        List<ManifestFile> manifests = table.currentSnapshot().deleteManifests(table.io());
++        Assertions.assertEquals(1, manifests.size());
++        ManifestFile manifest = manifests.get(0);
++        Assertions.assertEquals(2, manifest.existingFilesCount() + manifest.addedFilesCount());
++
++        int expected;
++        try (CloseableIterable<FileScanTask> tasks = table.newScan().planFiles()) {
++            List<FileScanTask> list = Lists.newArrayList(tasks);
++            Assertions.assertEquals(1, list.size());
++            expected = list.get(0).deletes().size();
++        }
++        Assertions.assertEquals(2, expected);
++
++        CachingIcebergCatalog catalog = newCatalog(Map.of());
++        com.github.benmanes.caffeine.cache.Cache<String, Set<DeleteFile>> deleteFileCache =
++                Deencapsulation.getField(catalog, "deleteFileCache");
++        // cold: reads the manifest and fills the cache; warm: must be served from the complete cache entry
++        for (int i = 0; i < 3; i++) {
++            List<FileScanTask> tasks = planTasks(catalog, table, Expressions.alwaysTrue());
++            Assertions.assertEquals(1, tasks.size());
++            Assertions.assertEquals(expected, tasks.get(0).deletes().size(), "plan " + i);
++            Set<DeleteFile> cached =
++                    deleteFileCache.getIfPresent(manifest.path());
++            Assertions.assertNotNull(cached, "plan " + i + " left no cache entry");
++            Assertions.assertEquals(2, cached.size(), "plan " + i + " left an incomplete cache entry");
++        }
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #83716** (2026-11-18): [Doc] Translate the release notes index pages and fix the Maven link (backport #83710) (@mergify[bot])
-- **PR #83715** (2026-11-18): [Doc] Translate the release notes index pages and fix the Maven link (backport #83710) (@mergify[bot])
-- **PR #83714** (2026-11-18): [Doc] Translate the release notes index pages and fix the Maven link (backport #83710) (@mergify[bot])
-- **PR #83713** (2026-11-18): [Doc] Translate the release notes index pages and fix the Maven link (backport #83710) (@DanRoscigno)
-- **PR #83712** (2026-11-18): [Doc] Translate the release notes index pages and fix the Maven link (backport #83710) (@DanRoscigno)
-- **PR #83711** (2026-11-18): [Doc] Translate the release notes index pages and fix the Maven link (backport #83710) (@DanRoscigno)
+- **PR #83989** (2026-11-20): [Tool] Retire the stale GeoStorageDescPB validation_state waiver (backport #82269) (backport #82278) (@mergify[bot])
+- **PR #83967** (2026-11-20): [BugFix][RB-1509] Keep duplicate live entries of an Iceberg delete manifest in the delete file cache (backport #83938) (@mergify[bot])
+- **PR #83966** (2026-11-20): [BugFix][RB-1509] Keep duplicate live entries of an Iceberg delete manifest in the delete file cache (backport #83938) (@mergify[bot])
+- **PR #83964** (2026-11-20): [Enhancement] Enable nested geo expressions in SQL (backport #83063) (backport #83089) (@mergify[bot])
+- **PR #83962** (2026-11-20): Resolve conflicts for main-cd-contributed-pr-66835 (@GavinMar)
+- **PR #83961** (2026-11-20): [BugFix] Reject REFRESH EXTERNAL TABLE names with more than three parts (backport #83892) (@mergify[bot])
 
 ---
 
@@ -2101,31 +2490,39 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Tool] release-notes skill: file security upgrades and fixes under Security
+## X. [BugFix][RB-1573] Count variant nulls in count(VARIANT) and keep scalar types in
 
 **RULE**:
-When implementing operations in `.claude/skills/release-notes/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `be/src/exprs/cast_expr_tpl.hpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e27c1150`: [Tool] release-notes skill: file security upgrades and fixes under Security. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `36091cdd`: [BugFix][RB-1573] Count variant nulls in count(VARIANT) and keep scalar types in CAST(VARIANT AS JSON). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/release-notes/SKILL.md`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `be/src/exprs/cast_expr_tpl.hpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-- Map each PR to `Behavior Changes` / `Improvements` / `Security` / `Bug fixes`; exclude
+                    // variant_to_json writes JSON text, so a number, a boolean or a null must stay one instead of
+                    // becoming a JSON string, which is what parse_json_or_string makes of a bare scalar.
+                    auto parsed = JsonValue::parse_json_text(ss.str());
+            if (!overflow && value.is_null() && row_ref.get_value().type() == VariantType::NULL_TYPE) {
+                // A variant null converts to SQL NULL, as it does for every other cast target. A NaN or infinite
+                // FLOAT/DOUBLE also prints as null, but it takes the path below like CAST(DOUBLE AS JSON) does.
+                builder.append_null();
+                continue;
+            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-- Map each PR to `Behavior Changes` / `Improvements` / `Bug fixes`; exclude
+                    auto parsed = JsonValue::parse_json_or_string(ss.str());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e27c1150` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `36091cdd` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
