@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T11:41:06.116Z",
+  "last_updated": "2026-11-20T12:07:30.267Z",
   "directives": [
     {
       "id": "CD-001",
@@ -37291,6 +37291,68 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-317FDC-dead-license-badge-link-in-readme.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-PANR",
+      "directive_title": "add NameFQDN when importing --ir",
+      "source_repo": "DNSControl/dnscontrol",
+      "source_commit": "62103794",
+      "staged_file": "11_INBOX/candidate-directives/CD-PANR-add-namefqdn-when-importing-ir.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-PHMI",
+      "directive_title": "operator/pkg/ciliumidentity: Fix revert check in CID update test",
+      "source_repo": "cilium-cilium-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PHMI-operator-pkg-ciliumidentity-fix-revert-check-in-cid-update-test.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-PI3B",
+      "directive_title": "[MOD-15594] Fix crash on documents with more than 65536 fields",
+      "source_repo": "redisearch-redisearch-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PI3B-mod-15594-fix-crash-on-documents-with-more-than-65536-fields.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-PH3I",
+      "directive_title": "commands: add NameFQDN when importing --ir",
+      "source_repo": "dnscontrol-dnscontrol-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PH3I-commands-add-namefqdn-when-importing-ir.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-DCD5FF",
+      "directive_title": "operator/pkg/ciliumidentity: Fix revert check in CID update test",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "cilium-cilium",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DCD5FF-operator-pkg-ciliumidentity-fix-revert-c.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-096439",
+      "directive_title": "[MOD-15594] Fix crash on documents with more than 65536 fields",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "redisearch-redisearch",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-096439--mod-15594-fix-crash-on-documents-with-m.md",
       "staged_date": "2026-11-20"
     }
   ]

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T11:32:48.749Z",
+  "updated_at": "2026-11-20T12:07:30.080Z",
   "stats": {
-    "total_discovered": 6346,
-    "approved_pending_harvest": 5997,
+    "total_discovered": 6348,
+    "approved_pending_harvest": 5999,
     "harvested_count": 0,
     "rejected_count": 349,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5982,
+      "COMMUNITY_AND_EXPERT": 5984,
       "OFFICIAL_DOCUMENTATION": 199,
       "STANDARDS_AND_SPECIFICATIONS": 117,
       "ENGINEERING_BLOGS": 4,
@@ -137192,6 +137192,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/touchlab-kermit-learnings.md",
         "fileName": "touchlab-kermit-learnings.md"
+      }
+    },
+    "SRC-C43C424CF11D": {
+      "id": "SRC-C43C424CF11D",
+      "url": "https://github.com/DNSControl/dnscontrol/issues/4854",
+      "title": "https://github.com/DNSControl/dnscontrol/issues/4854",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T12:07:28.753Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
+        "fileName": "dnscontrol-dnscontrol-learnings.md"
+      }
+    },
+    "SRC-58BB5030F727": {
+      "id": "SRC-58BB5030F727",
+      "url": "https://github.com/alberttwong",
+      "title": "https://github.com/alberttwong",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T12:07:30.080Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
+        "fileName": "redisearch-redisearch-learnings.md"
       }
     }
   }

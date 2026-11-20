@@ -4,23 +4,23 @@
 {
   "source_repository": "cilium/cilium",
   "source_url": "https://github.com/cilium/cilium",
-  "source_version": "f752313f",
+  "source_version": "0d45ee96",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T23:02:06.805Z",
+  "timestamp": "2026-11-20T12:07:23.720Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-cilium-cilium",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `f752313f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T23:02:06.805Z`  
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `0d45ee96`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T12:07:23.720Z`  
 > **Learning ID**: `learn-github-cilium-cilium`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T22:52:03.841Z  
+> **Harvest Timestamp**: 2026-11-20T12:07:22.608Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25869 stars
+- **Stars / Engagement**: 25873 stars
 
 ---
 
@@ -1273,13 +1273,13 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #50148** (2026-11-19): **Bump to StateDB v0.9.5 and add regression test for early pruning**
-  *Symptoms*: Bump to StateDB v0.9.5 and add a regression test to load-balancer control-plane to verify that `Prune` is only called once `Update` has been done for each frontend after table initialization.  This replaces the fix in https://github.com/cilium/cilium/pull/49996 by fixing the underlying behavior in StateDB.  Thanks to @novikovfred for reporting the issue and for the attempted fix.  AIL:3 for the test case.  Marked for backports to v1.18, v1.19 and v1.20. Will do that manually as the actual StateDB version to bump to is different for each branch.  ```release-note Fix issue in StateDB impacting the load-balancer sub-system where during the start of the agent load-balancing BPF state may have been temporarily pruned before being reapplied which may have caused short temporary disruption to service traffic. ```
-
-- **Issue #50147** (2026-11-19): **[CI-WIP: DO-NOT-MERGE] Fix egress gateway excl cidr test**
-  *Symptoms*: I pushed this branch to my own fork: https://github.com/cilium/cilium/pull/47588. Running the tests here so the workflow changes reflect. Will close: DO NOT MERGE
+- **Issue #50158** (2026-11-20): **operator/pkg/ciliumidentity: Fix revert check in CID update test**
+  *Symptoms*: TestUpdateUsedCIDIsReverted changes a CID's labels and waits for the CID store to have the original labels again. The first check runs right away. If the CID store has not seen the change yet, it still has the original object, so the check passes even though nothing was reverted. With the revert removed from the reconciler, the test still passed 19 out of 30 runs.  This commit makes the test only accept an object written after the change.  Fixes: febd4e24206 ("pkg/ciliumidentity: Fix TestUpdateUsedCIDIsReverted test") Signed-off-by: Chris Tarazi <chris@isovalent.com> 
   **Post-Mortem & Fix Analysis**:
-  > /ci-eks
+  > /test
+
+- **Issue #50155** (2026-11-20): **bpf: add enable-egress-chain-continue so later TCX egress programs run after to-netdev**
+  *Symptoms*: Please ensure your pull request adheres to the following guidelines:  - [X] For first time contributors, read [Submitting a pull request] - [X] All code is covered by unit and/or runtime tests where feasible. - [X] All commits contain a well written commit description including a title,       description and a `Fixes: #XXX` line if the commit addresses a particular       GitHub issue. - [ ] If your commit description contains a `Fixes: <commit-id>` tag, then       please add the commit author[s] as reviewer[s] to this issue. - [X] All commits are signed off. See the section [Developer’s Certificate of Origin] - [X] Provide a title or release-note blurb suitable for the release notes. - [X] Describe how you have tested this change in a live environment such as       [kind], if applicable. - [X] Disclose use of machine learning models (including LLMs and other generative AI)       in accordance with the [Cilium AI Policy], and indicate the rating using       [AI Influence Level].       Example: "This PR was prepared with AIL:N. I personally checked X." - [X] Thanks for contributing!  <!-- Description of change -->  Related: #29891, #38337  Some deployments run their own TCX egress program after Cilium, e.g. to push MPLS labels. Cilium does not support MPLS encapsulation itself (see #29891) and the underlying kernel `bpf_fib_lookup` helpers do not return LWT encapsulation data that may be present on routes so it is challenging to add this functionality directly into Cilium. Cili
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1296,291 +1296,59 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `71947297` (2026-11-18)
-**Commit Message**: Update security policy to use GHSA form for vulnerability reporting
+### Incident Patch 1: `b0ce3fe1` (2026-11-18)
+**Commit Message**: operator/pkg/ciliumidentity: Fix revert check in CID update test
 
-Signed-off-by: Peter Oyekunle <[REDACTED_EMAIL]>
+TestUpdateUsedCIDIsReverted changes a CID's labels and waits for the CID
+store to have the original labels again. The first check runs right
+away. If the CID store has not seen the change yet, it still has the
+original object, so the check passes even though nothing was reverted.
+With the revert removed from the reconciler, the test still passed 19
+out of 30 runs.
 
-**File**: `SECURITY.md` (modified, +6/-6)
+This commit makes the test only accept an object written after the
+change.
+
+Fixes: febd4e24206 ("pkg/ciliumidentity: Fix TestUpdateUsedCIDIsReverted test")
+Signed-off-by: Chris Tarazi <[REDACTED_EMAIL]>
+
+**File**: `operator/pkg/ciliumidentity/controller_test.go` (modified, +4/-9)
 ```diff
-@@ -12,13 +12,13 @@
+@@ -415,21 +415,16 @@ func TestUpdateUsedCIDIsReverted(t *testing.T) {
+ 		t.Fatalf("update CID: %v", err)
+ 	}
  
- ## Reporting a Vulnerability
- 
--We strongly encourage you to report security vulnerabilities to
--our private security mailing list: security@cilium.io - first, before
--disclosing them in any public forums.
-+Please report security vulnerabilities privately through
-+[Cilium's vulnerability reporting form](https://github.com/cilium/cilium/security/advisories/new)
-+before disclosing them in any public forums. Reports submitted through this
-+form will be treated with high priority by the Cilium Security Team.
- 
--This is a private mailing list where members of Cilium's
--[Security Team](https://github.com/cilium/community/blob/main/roles/Security-Team.md)
--are subscribed to, and is treated as top priority.
-+For enquiries and reports not related to Cilium software, contact the Cilium
-+security team via security@cilium.io.
- 
- ### Scope
- 
-```
-
----
-
-### Incident Patch 2: `5b381b91` (2026-11-12)
-**Commit Message**: bpf/trace: align crypto obs points metrics reasons
-
-TRACE_FROM_CRYPTO reports WireGuard decrypted packets, so account them
-as REASON_DECRYPT like the other ingress obs points do.
-
-TRACE_TO_CRYPTO sees plaintext packets, the kernel encrypts them right
-after, hence REASON_ENCRYPTING was misleading: the obs point just
-forwards traffic to cilium_wg0, and the ciphertext leaving the node is
-already accounted at TRACE_TO_NETWORK.
-
-Impact:
-
-1. Cilium metrics for bpf_wireguard will report `Interface Decrypted`
-instead of `Interface Decrypting` on ingress, and `Success` instead of
-`Interface Encrypting` on egress.
-2. No change for Monitor/Hubble.
-
-Also add a small doc comment clearly spell out in the code that
-TRACE_REASON_ENCRYPTED applies to ingress traffic, and in which case
-we might not see it. Also, remove unneeded stack variable.
-
-Signed-off-by: Simone Magnani <[REDACTED_EMAIL]>
-
-**File**: `bpf/lib/trace.h` (modified, +12/-11)
-```diff
-@@ -43,6 +43,10 @@ enum trace_reason {
- 	TRACE_REASON_RESERVED_2,    /* Previous TRACE_REASON_ENCRYPT_OVERLAY. */
- 	/* Note: TRACE_REASON_ENCRYPTED is used as a mask. Beware if you add
- 	 * new values below it, they would match with that mask.
-+	 *
-+	 * On TRACE_FROM_* points it flags packets that were just decrypted
-+	 * (IPsec at TRACE_FROM_NETWORK, WireGuard at TRACE_FROM_CRYPTO or
-+	 * TRACE_FROM_OVERLAY).
- 	 */
- 	TRACE_REASON_ENCRYPTED = 0x80,
- } __packed;
-@@ -76,8 +80,6 @@ static __always_inline void
- _update_trace_metrics(const struct __ctx_buff *ctx, enum trace_point obs_point,
- 		      enum trace_reason reason, __u16 line, __u8 file)
- {
--	__u8 encrypted;
+-	cid, err := fakeClient.CiliumV2().CiliumIdentities().Get(ctx, updated.Name, metav1.GetOptions{})
+-	if err != nil {
+-		t.Fatalf("get CID: %v", err)
+-	}
+-	if !cmp.Equal(cid.SecurityLabels, updated.SecurityLabels) {
+-		t.Fatalf("expected labels %v, got %v", updated.SecurityLabels, cid.SecurityLabels)
+-	}
 -
- 	switch (obs_point) {
- 	case TRACE_TO_LXC:
- 		_update_metrics(ctx_full_len(ctx), METRIC_INGRESS,
-@@ -94,13 +96,9 @@ _update_trace_metrics(const struct __ctx_buff *ctx, enum trace_point obs_point,
- 	case TRACE_FROM_STACK:
- 	case TRACE_FROM_OVERLAY:
- 	case TRACE_FROM_NETWORK:
--		encrypted = reason & TRACE_REASON_ENCRYPTED;
--		if (!encrypted)
--			_update_metrics(ctx_full_len(ctx), METRIC_INGRESS,
--					REASON_PLAINTEXT, line, file);
--		else
--			_update_metrics(ctx_full_len(ctx), METRIC_INGRESS,
--					REASON_DECRYPT, line, file);
-+		_update_metrics(ctx_full_len(ctx), METRIC_INGRESS,
-+				(reason & TRACE_REASON_ENCRYPTED) ?
-+				REASON_DECRYPT : REASON_PLAINTEXT, line, file);
- 		break;
- 	/* TRACE_FROM_LXC, i.e endpoint-to-endpoint delivery is handled
- 	 * separately in ipv*_local_delivery() where we can bump an egress
-@@ -120,13 +118,16 @@ _update_trace_metrics(const struct __ctx_buff *ctx, enum trace_point obs_point,
- 	 * Using these obs points from different programs would result in a build bug.
- 	 */
- #if defined(IS_BPF_WIREGUARD)
-+	/* Packets are still plaintext at TRACE_TO_CRYPTO, the kernel encrypts
-+	 * them afterwards. The ciphertext is accounted at TRACE_TO_NETWORK.
-+	 */
- 	case TRACE_TO_CRYPTO:
- 		_update_metrics(ctx_full_len(ctx), METRIC_EGRESS,
--				REASON_ENCRYPTING, line, file);
-+				REASON_FORWARDED, line, file);
- 		break;
- 	case TRACE_FROM_CRYPTO:
- 		_update_metrics(ctx_full_len(ctx), METRIC_INGRESS,
--				REASON_DECRYPTING, line, file);
-+				REASON_DECRYPT, line, file);
- 		break;
- #else
- 	case TRACE_TO_CRYPTO:
-```
-
-**File**: `bpf/tests/tc_nodeport_l3_dev.h` (modified, +2/-7)
-```diff
-@@ -193,7 +193,7 @@ l3_to_l2_fast_redirect_setup(struct __ctx_buff *ctx, bool is_ingress, bool is_ip
- 		metrics_del_entry(is_ingress ? REASON_PLAINTEXT : REASON_FORWARDED,
- 				  is_ingress ? METRIC_INGRESS : METRIC_EGRESS);
- 	if (is_defined(IS_BPF_WIREGUARD))
--		metrics_del_entry(is_ingress ? REASON_DECRYPTING : REASON_ENCRYPTING,
-+		metrics_del_entry(is_ingress ? REASON_DECRYPT : REASON_FORWARDED,
- 				  is_ingress ? METRIC_INGRESS : METRIC_EGRESS);
- 
- 	if (is_ipv4)
-@@ -245,7 +245,7 @@ ingress_l3_to_l2_fast_redirect_check(__maybe_unused const struct __ctx_buff *ctx
- 		.reason = REASON_PLAINTEXT,
- #endif
- #if defined(IS_BPF_WIREGUARD)
--		.reason = REASON_DECRYPTING,
-+		.reason = REASON_DECRYPT,
- #endif
- 		.dir = METRIC_INGRESS,
- 	};
-@@ -421,12 +421,7 @@ egress_l3_to_l2_fast_redirect_check(__maybe_unused const struct __ctx_buff *ctx,
- 
- 	struct metrics_value *entry = NULL;
- 	struct metrics_key key = {
--#if defined(IS_BPF_HOST)
- 		.reason = REASON_FORWARDED,
--#endif
--#if defined(IS_BPF_WIREGUARD)
--		.reason = REASON_ENCRYPTING,
--#endif
- 		.dir = METRIC_EGRESS,
- 	};
- 
-```
-
----
-
-### Incident Patch 3: `30e74636` (2026-11-12)
-**Commit Message**: bpf/to-netdev: use TRACE_REASON_ENCRYPTED also for encrypted traffic
-
-Differently than the previous commit, here at egress it might be useful
-to report that the packet has been encrypted. However, we cannot reuse
-the same REASON_DECRYPT as we're doing so far, otherwise we'd be
-incorrectly report encrypted traffic as decrypted.
-
-With this commit, based on the observation point, we can differentiate
-REASON_DECRYPT and REASON_ENCRYPT, so that we can update metrics
-accordingly. We introduce REASON_ENCRYPT that translates to
-`Interface Encrypted`, for when a packet has been encrypted fully.
-
-Impact:
-
-1. Cilium metrics will not have anymore the incorrect `Interface Decrypted`
-line for this traffic in bpf_host, but `Interface Encrypted`.
-2. Monitor/Hubble will keep reporting the "encrypted" bit for this
-network traffic. Hubble `--encrypted` and `--unencrypted` flags would
-filter this accordingly too.
-
-Signed-off-by: Simone Magnani <[REDACTED_EMAIL]>
-
-**File**: `bpf/bpf_host.c` (modified, +6/-6)
-```diff
-@@ -1511,6 +1511,7 @@ static __always_inline int
- cil_to_netdev_cont(struct __ctx_buff *ctx, __u32 src_sec_identity,
- 		   struct trace_ctx trace, __be16 proto)
- {
-+	bool encrypted = ctx_is_encrypt(ctx);
- 	__u32 dst_sec_identity = UNKNOWN_ID;
- 	int ret = CTX_ACT_OK;
- 	__s8 ext_err = 0;
-@@ -1541,15 +1542,13 @@ cil_to_netdev_cont(struct __ctx_buff *ctx, __u32 src_sec_identity,
- 	}
- 
- 	if (CONFIG(enable_ipsec)) {
--		if (!ctx_is_encrypt(ctx)) {
-+		if (!encrypted) {
- 			ret = ipsec_maybe_redirect_to_encrypt(ctx, proto,
- 							      src_sec_identity);
- 			if (ret == CTX_ACT_REDIRECT)
- 				return ret;
- 			else if (IS_ERR(ret))
- 				goto drop_err;
--		} else {
--			trace.reason |= TRACE_REASON_ENCRYPTED;
++	// The store can still hold the object from before the tampering, which
++	// already has the original labels.
+ 	require.EventuallyWithT(t, func(ct *assert.CollectT) {
+ 		cids := store.List()
+ 		if !assert.Len(ct, cids, 1) {
+ 			return
  		}
- 	}
+-		cid = cids[0]
++		cid := cids[0]
  
-@@ -1573,14 +1572,12 @@ cil_to_netdev_cont(struct __ctx_buff *ctx, __u32 src_sec_identity,
- 		 * encrypted WireGuard UDP packets), we check whether the mark
- 		 * is set before the redirect.
- 		 */
--		if (!ctx_is_encrypt(ctx)) {
-+		if (!encrypted) {
- 			ret = host_wg_encrypt_hook(ctx, proto, src_sec_identity);
- 			if (ret == CTX_ACT_REDIRECT)
- 				return ret;
- 			else if (IS_ERR(ret))
- 				goto drop_err;
--		} else {
--			trace.reason |= TRACE_REASON_ENCRYPTED;
- 		}
- 	}
- 
-@@ -1615,6 +1612,9 @@ cil_to_netdev_cont(struct __ctx_buff *ctx, __u32 src_sec_identity,
- 	if (IS_ERR(ret))
- 		goto drop_err;
- 
-+	if (encrypted)
-+		trace.reason |= TRACE_REASON_ENCRYPTED;
-+
- 	send_trace_notify(ctx, TRACE_TO_NETWORK, src_sec_identity, dst_sec_identity,
- 			  TRACE_EP_ID_UNKNOWN, CONFIG(interface_ifindex),
- 			  trace.reason, trace.monitor, proto);
-```
-
-**File**: `bpf/lib/common.h` (modified, +1/-0)
-```diff
-@@ -169,6 +169,7 @@ __revalidate_data_pull(const struct __ctx_buff *ctx, void **data_, void **data_e
- #define REASON_RESERVED_2		13 /* was REASON_DECRYPTING */
- #define REASON_LB_REVNAT_DELETE		14
- #define REASON_MTU_ERROR_MSG			15
-+#define REASON_ENCRYPT			16
- 
- /* Cilium metrics direction for dropping/forwarding packet */
- enum metric_dir {
-```
-
-**File**: `bpf/lib/trace.h` (modified, +5/-1)
-```diff
-@@ -47,6 +47,9 @@ enum trace_reason {
- 	 * On TRACE_FROM_* points it flags packets that were just decrypted
- 	 * (IPsec at TRACE_FROM_NETWORK, WireGuard at TRACE_FROM_CRYPTO or
- 	 * TRACE_FROM_OVERLAY).
-+	 *
-+	 * On TRACE_TO_* points it flags packets that have been encrypted
-+	 * (IPsec and WireGuard at TRACE_TO_NETWORK).
- 	 */
- 	TRACE_REASON_ENCRYPTED = 0x80,
- } __packed;
-@@ -90,7 +93,8 @@ _update_trace_metrics(const struct __ctx_buff *ctx, enum trace_point obs_point,
- 	case TRACE_TO_OVERLAY:
- 	case TRACE_TO_NETWORK:
- 		_update_metrics(ctx_full_len(ctx), METRIC_EGRESS,
--				REASON_FORWARDED, line, file);
-+				(reason & TRACE_REASON_ENCRYPTED) ?
-+				REASON_ENCRYPT : REASON_FORWARDED, line, file);
- 		break;
- 	case TRACE_FROM_HOST:
- 	case TRACE_FROM_STACK:
-```
-
-**File**: `pkg/monitor/api/drop.go` (modified, +1/-0)
-```diff
-@@ -30,6 +30,7 @@ var errors = map[uint8]string{
- 	13:  "Interface Encrypting",               // Unused
- 	14:  "LB: sock cgroup: Reverse entry delete succeeded",
- 	15:  "MTU error message",
-+	16:  "Interface Encrypted",
- 	130: "Invalid source mac",      // Unused
- 	131: "Invalid destination mac", // Unused
- 	132: "Invalid source ip",
++		assert.NotEqual(ct, toUpdate.ResourceVersion, cid.ResourceVersion)
+ 		assert.Equal(ct, cid1.SecurityLabels, cid.SecurityLabels)
+ 	}, WaitUntilTimeout, 100*time.Millisecond)
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #50158** (2026-11-20): operator/pkg/ciliumidentity: Fix revert check in CID update test (@christarazi)
+- **PR #50155** (closed): bpf: add enable-egress-chain-continue so later TCX egress programs run after to-netdev (@floatingstatic)
+- **PR #50151** (2026-11-20): .github: Run labeler after the external-contributions job (@aanm)
 - **PR #50148** (2026-11-19): Bump to StateDB v0.9.5 and add regression test for early pruning (@joamaki)
 - **PR #50147** (closed): [CI-WIP: DO-NOT-MERGE] Fix egress gateway excl cidr test (@tommyp1ckles)
-- **PR #50139** (2026-11-19): MAINTAINERS: Add Antony Reynaud (@pchaigno)
-- **PR #50138** (2026-11-19): [v1.19] Backports 2026-11-19 (@aanm)
-- **PR #50129** (2026-11-19): proxy: Bump envoy version to v1.39.x (@sayboras)
-- **PR #50128** (2026-11-19): [v1.20] Revert "bpf: fix ICMP sample checksum accumulation" (@giorio94)
+- **PR #50145** (2026-11-20): identity: allow registering custom local label sources (@rastislavs)
 
 ---
 
@@ -1600,41 +1368,42 @@ Signed-off-by: Simone Magnani <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update security policy to use GHSA form for vulnerability reporting
+## X. operator/pkg/ciliumidentity: Fix revert check in CID update test
 
 **RULE**:
-When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `operator/pkg/ciliumidentity/controller_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `71947297`: Update security policy to use GHSA form for vulnerability reporting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b0ce3fe1`: operator/pkg/ciliumidentity: Fix revert check in CID update test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `operator/pkg/ciliumidentity/controller_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-Please report security vulnerabilities privately through
-[Cilium's vulnerability reporting form](https://github.com/cilium/cilium/security/advisories/new)
-before disclosing them in any public forums. Reports submitted through this
-form will be treated with high priority by the Cilium Security Team.
-For enquiries and reports not related to Cilium software, contact the Cilium
-security team via security@cilium.io.
+	// The store can still hold the object from before the tampering, which
+	// already has the original labels.
+		cid := cids[0]
+		assert.NotEqual(ct, toUpdate.ResourceVersion, cid.ResourceVersion)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-We strongly encourage you to report security vulnerabilities to
-our private security mailing list: security@cilium.io - first, before
-disclosing them in any public forums.
-This is a private mailing list where members of Cilium's
-[Security Team](https://github.com/cilium/community/blob/main/roles/Security-Team.md)
-are subscribed to, and is treated as top priority.
+	cid, err := fakeClient.CiliumV2().CiliumIdentities().Get(ctx, updated.Name, metav1.GetOptions{})
+	if err != nil {
+		t.Fatalf("get CID: %v", err)
+	}
+	if !cmp.Equal(cid.SecurityLabels, updated.SecurityLabels) {
+		t.Fatalf("expected labels %v, got %v", updated.SecurityLabels, cid.SecurityLabels)
+	}
+
+		cid = cids[0]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `71947297` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b0ce3fe1` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

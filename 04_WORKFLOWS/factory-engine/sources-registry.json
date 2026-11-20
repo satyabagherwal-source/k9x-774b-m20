@@ -4,14 +4,14 @@
     "officialUrl": "https://github.com/DNSControl/dnscontrol",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T07:14:21.763Z",
-    "lastVerified": "2026-11-19T07:14:21.763Z",
+    "lastChecked": "2026-11-20T12:07:19.389Z",
+    "lastVerified": "2026-11-20T12:07:19.389Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dnscontrol-dnscontrol",
-    "contentHash": "405e4fcfe90f14b070926d4257022adc5281c48ac57f726effeb2bbd1e9da12e",
+    "contentHash": "cc5f574cfad974afe02e36e62c011cafe9aa5c68f9f07bb7cf3076483535f1b4",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T11:41:04.147Z",
-    "lastVerified": "2026-11-20T11:41:04.147Z",
+    "lastChecked": "2026-11-20T12:07:28.582Z",
+    "lastVerified": "2026-11-20T12:07:28.582Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-20T10:34:24.874Z",
+    "lastChecked": "2026-11-20T12:07:23.083Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-20T10:34:24.874Z"
+    "lastVerified": "2026-11-20T12:07:23.083Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1803,22 +1803,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium",
+    "name": "cilium/cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T04:37:53.435Z",
-    "lastVerified": "2026-11-20T04:37:53.435Z",
+    "lastChecked": "2026-11-20T12:07:22.608Z",
+    "lastVerified": "2026-11-20T12:07:22.608Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "015eb68ce81b83e375ddb9b0cc32b83545ee57743e93f3821db15ad53e87fbc8",
+    "contentHash": "e5947726184ef4446c8f9b891968e7584815252acb597cd029f3c94c94d5600e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f752313f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -4557,9 +4556,9 @@
   "gitui-org-gitui": {
     "name": "gitui",
     "officialUrl": "https://github.com/gitui-org/gitui",
-    "lastChecked": "2026-11-18T21:33:39.650Z",
+    "lastChecked": "2026-11-20T12:07:07.991Z",
     "revisionIdentifier": "d7214ecc",
-    "lastVerified": "2026-11-18T21:33:39.650Z"
+    "lastVerified": "2026-11-20T12:07:07.991Z"
   },
   "hf-openai-gpt-oss-20b": {
     "name": "openai/gpt-oss-20b",
@@ -6645,14 +6644,14 @@
     "officialUrl": "https://github.com/RediSearch/RediSearch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T05:24:34.273Z",
-    "lastVerified": "2026-11-19T05:24:34.273Z",
+    "lastChecked": "2026-11-20T12:07:24.569Z",
+    "lastVerified": "2026-11-20T12:07:24.569Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "3b14c6b4046320e52930e38272dd30b35ae69987e704ac610be76b8aefd49d61",
+    "contentHash": "e7c8068e36d43ce7469b67ff4395560324a87a2184f67b9e6d7f11aaf71e8cc5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9928,5 +9927,19 @@
     "lastChecked": "2026-11-20T11:40:45.702Z",
     "revisionIdentifier": "68e76907",
     "lastVerified": "2026-11-20T11:40:45.702Z"
+  },
+  "agamm-pseo-next": {
+    "name": "pseo-next",
+    "officialUrl": "https://github.com/agamm/pseo-next",
+    "lastChecked": "2026-11-20T12:07:10.480Z",
+    "revisionIdentifier": "2f816d2c",
+    "lastVerified": "2026-11-20T12:07:10.480Z"
+  },
+  "aakira-napier": {
+    "name": "Napier",
+    "officialUrl": "https://github.com/AAkira/Napier",
+    "lastChecked": "2026-11-20T12:07:12.986Z",
+    "revisionIdentifier": "50835e2e",
+    "lastVerified": "2026-11-20T12:07:12.986Z"
   }
 }

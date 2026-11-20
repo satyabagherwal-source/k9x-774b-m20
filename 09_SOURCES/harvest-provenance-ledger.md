@@ -11564,3 +11564,6 @@ Every entry in this ledger must capture:
 | `learn-dom-d-04a5e986` | `project://hf-harness-hub-qwen3.8-27b-opencode-adapted` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md` | 2026-11-20T11:32:07.964Z |
 | `learn-dom-d-19e80851` | `project://hf-tencent-hy4` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tencent-hy4-learnings.md` | 2026-11-20T11:32:47.962Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `9a7d0b65` | Multi-dimensional audit evidence | 2026-11-20T11:41:01.056Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `62103794` | Multi-dimensional audit evidence | 2026-11-20T12:07:20.455Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `0d45ee96` | Multi-dimensional audit evidence | 2026-11-20T12:07:23.535Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `f01b5c68` | Multi-dimensional audit evidence | 2026-11-20T12:07:25.495Z |

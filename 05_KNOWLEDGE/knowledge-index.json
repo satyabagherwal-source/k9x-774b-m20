@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T11:41:06.356Z",
+  "last_updated": "2026-11-20T12:07:30.530Z",
   "total_verified_learnings": 9035,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22384,
+  "total_items": 22395,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111993,10 +111993,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "f752313f",
-      "content_hash": "899c7a44a7d14e55422c8bc73c654aabadc63d165b2dbb30da65a64b0bd798c8",
+      "source_version": "0d45ee96",
+      "content_hash": "9791f0851dddf4e7e82257ad63cff842a09b97697170d17b282f42a75b2b13e0",
       "domain_letter": "B",
-      "persisted_at": "2026-11-19T23:02:06.995Z"
+      "persisted_at": "2026-11-20T12:07:23.852Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -112005,10 +112005,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "f752313f",
-      "content_hash": "a5bdc91a0efa2bb2004379bc3f785c7f9d197f682271d470295e6ff64eef2433",
+      "source_version": "0d45ee96",
+      "content_hash": "f8f2da1373511446f6b52dde340693357242d3b83c4dbfb815d3bba7755d0fcb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T23:02:07.186Z"
+      "persisted_at": "2026-11-20T12:07:23.983Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -112030,9 +112030,9 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "d07ce9c22e7f4c66dc398daa22ecf4aea7b4a053db62d41c8d84cb1af917d3ca",
+      "content_hash": "ba19c3e465d796862a43953cdd36fcf0a6ff855a5c3cfa1ab55822a586d7f82e",
       "domain_letter": "B",
-      "persisted_at": "2026-11-19T23:02:11.669Z"
+      "persisted_at": "2026-11-20T12:07:29.789Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings",
@@ -112042,9 +112042,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cilium-cilium-learnings",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "0e790f040d346648a52a805c7eb870fb7d9b92726a37fe266038756a1e3d7e1b",
+      "content_hash": "30daaf5108eb3314f0f7bd05ec8de625a912b7f3679bb9fa98024014afd340ce",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T23:02:11.853Z"
+      "persisted_at": "2026-11-20T12:07:29.920Z"
     },
     "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394": {
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
@@ -214166,8 +214166,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "f752313f",
-      "content_hash": "015eb68ce81b83e375ddb9b0cc32b83545ee57743e93f3821db15ad53e87fbc8",
+      "source_version": "0d45ee96",
+      "content_hash": "e5947726184ef4446c8f9b891968e7584815252acb597cd029f3c94c94d5600e",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -214245,6 +214245,11 @@
           "number": 9465,
           "title": "Update security policy to use GHSA form for vulnerability reporting",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9564,
+          "title": "operator/pkg/ciliumidentity: Fix revert check in CID update test",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214252,7 +214257,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T23:02:06.318Z",
+      "verified_at": "2026-11-20T12:07:23.368Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239114,8 +239119,8 @@
       "slug": "dnscontrol-dnscontrol",
       "platform": "github",
       "source_url": "https://github.com/DNSControl/dnscontrol",
-      "source_version": "cc95a67a",
-      "content_hash": "405e4fcfe90f14b070926d4257022adc5281c48ac57f726effeb2bbd1e9da12e",
+      "source_version": "62103794",
+      "content_hash": "cc5f574cfad974afe02e36e62c011cafe9aa5c68f9f07bb7cf3076483535f1b4",
       "dossier_path": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "promoted_rules": [
@@ -239138,6 +239143,11 @@
           "number": 9349,
           "title": "build(deps): bump step-security/harden-runner from 2.22.3 to 2.22.4",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9563,
+          "title": "add NameFQDN when importing --ir",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239145,7 +239155,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T07:14:22.601Z",
+      "verified_at": "2026-11-20T12:07:20.265Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239187,10 +239197,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dnscontrol-dnscontrol-architecture-intelligence-dnscontrol-dnscontrol-core-invar.md",
       "title": "Architecture Intelligence: DNSControl/dnscontrol Core Invariants",
       "repository": "DNSControl/dnscontrol",
-      "source_version": "0087e705",
-      "content_hash": "5844c53a83ac68d32cb7f884993b25ffdcae5846555438d3bcaeaa4de7b87c96",
+      "source_version": "62103794",
+      "content_hash": "174726f8f2614446a4fc8dfcab22a6c4820971df23b8e244d6ec4f34406211af",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T13:05:50.516Z"
+      "persisted_at": "2026-11-20T12:07:20.791Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dnscontrol-dnscontrol": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dnscontrol-dnscontrol",
@@ -239199,10 +239209,10 @@
       "relative_path": "08_VERIFICATION/dnscontrol-dnscontrol-verification-protocol-empirical-defect-shield-for-dnscontr.md",
       "title": "Verification Protocol: Empirical Defect Shield for DNSControl/dnscontrol",
       "repository": "DNSControl/dnscontrol",
-      "source_version": "cc95a67a",
-      "content_hash": "216057d43383723946cb435d697cce03fa9c1f5cb928437c1d34727ae22fd6ec",
+      "source_version": "62103794",
+      "content_hash": "c8fadb1afde09e21315328078148aefea2e4f22893e61d0de25bfeef5f77e9db",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T07:14:23.376Z"
+      "persisted_at": "2026-11-20T12:07:21.050Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized",
@@ -239236,9 +239246,9 @@
       "title": "Architecture Intelligence: dnscontrol-dnscontrol-learnings Core Invariants",
       "repository": "dnscontrol-dnscontrol-learnings",
       "source_version": "HEAD",
-      "content_hash": "8a406ec63e46faec298141b3ca4f6c8234f58a53df374dcb1c7518c0e78b10cf",
+      "content_hash": "59f642ba62e2574c6aeef4563a1c87009bc75de899ae94ee77a1fe36412d1f5c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T13:05:58.761Z"
+      "persisted_at": "2026-11-20T12:07:29.102Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dnscontrol-dnscontrol-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dnscontrol-dnscontrol-learning",
@@ -239248,9 +239258,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dnscontrol-dnscontrol-learnings",
       "repository": "dnscontrol-dnscontrol-learnings",
       "source_version": "HEAD",
-      "content_hash": "ffc95c9b77f2a10471e59919927985a8e42da4627225f47186d8f7c085960a70",
+      "content_hash": "199d7331d146542e4fd30870e509aa936828227b050c48befb6d93009e52b4a8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T07:14:28.215Z"
+      "persisted_at": "2026-11-20T12:07:29.362Z"
     },
     "learn-huggingface-autotrust-jev-35b": {
       "learning_id": "learn-huggingface-autotrust-jev-35b",
@@ -255433,8 +255443,8 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "495f707d",
-      "content_hash": "3b14c6b4046320e52930e38272dd30b35ae69987e704ac610be76b8aefd49d61",
+      "source_version": "f01b5c68",
+      "content_hash": "e7c8068e36d43ce7469b67ff4395560324a87a2184f67b9e6d7f11aaf71e8cc5",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
@@ -255447,6 +255457,11 @@
           "number": 9336,
           "title": "share SkipTo clearing and the timeout granularity",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9565,
+          "title": "[MOD-15594] Fix crash on documents with more than 65536 fields",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -255454,7 +255469,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T05:24:35.045Z",
+      "verified_at": "2026-11-20T12:07:25.319Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -273411,10 +273426,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-redisearch-redisearch-architecture-intelligence-redisearch-redisearch-core-invar.md",
       "title": "Architecture Intelligence: RediSearch/RediSearch Core Invariants",
       "repository": "RediSearch/RediSearch",
-      "source_version": "495f707d",
-      "content_hash": "1427c3cac5c2d8591a0fea3b412a9fb636762dadf960e925cc97b4425b597f2f",
+      "source_version": "f01b5c68",
+      "content_hash": "3b443369b7ac7bf2cb980a8d51e6029d0c8d9d4dedd63a44414917b769123090",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T05:24:35.564Z"
+      "persisted_at": "2026-11-20T12:07:25.821Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-redisearch-redisearch": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-redisearch-redisearch",
@@ -273423,10 +273438,10 @@
       "relative_path": "08_VERIFICATION/redisearch-redisearch-verification-protocol-empirical-defect-shield-for-redisear.md",
       "title": "Verification Protocol: Empirical Defect Shield for RediSearch/RediSearch",
       "repository": "RediSearch/RediSearch",
-      "source_version": "495f707d",
-      "content_hash": "d0192e4f6d7f93ea89104d70e3cb22843a9a2356ed35911e22af9dc45b1be8e3",
+      "source_version": "f01b5c68",
+      "content_hash": "1f30d2209aa14ecd991def89703abb74e1de3c940250a76a5d71aa34dca29a8a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T05:24:35.702Z"
+      "persisted_at": "2026-11-20T12:07:25.947Z"
     },
     "learn-huggingface-autogluon-chronos-2": {
       "learning_id": "learn-huggingface-autogluon-chronos-2",
@@ -303272,6 +303287,144 @@
       "content_hash": "a912344eacb48729562492ba25d8772f7efd6e81adee38bfd9ae63126379b6f3",
       "domain_letter": "H",
       "persisted_at": "2026-11-20T11:41:04.665Z"
+    },
+    "rule-9563": {
+      "learning_id": "rule-9563",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9563,
+      "title": "add NameFQDN when importing --ir",
+      "source_url": "https://github.com/DNSControl/dnscontrol",
+      "source_version": "62103794",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T12:07:20.265Z"
+    },
+    "candidate_directive-add-namefqdn-when-importing-ir": {
+      "item_id": "candidate_directive-add-namefqdn-when-importing-ir",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PANR-add-namefqdn-when-importing-ir.md",
+      "title": "add NameFQDN when importing --ir",
+      "repository": "DNSControl/dnscontrol",
+      "source_version": "62103794",
+      "content_hash": "2e6dfe19b0d9afa4e2ed5245a3f1c2a3fef5f7d7cdf7d0996a835b68b7f11a1c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T12:07:20.632Z"
+    },
+    "agent_contract-agent-contract-dnscontrol-dnscontrol-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-dnscontrol-dnscontrol-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/dnscontrol-dnscontrol-agent-contract-dnscontrol-dnscontrol-autonomous-specialist.md",
+      "title": "Agent Contract: DNSControl/dnscontrol Autonomous Specialist Persona",
+      "repository": "DNSControl/dnscontrol",
+      "source_version": "62103794",
+      "content_hash": "2edb554a39a4438e1203a048c5886a1fc1c25c72e05c5a94699661c8b67b4a21",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T12:07:20.934Z"
+    },
+    "rule-9564": {
+      "learning_id": "rule-9564",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9564,
+      "title": "operator/pkg/ciliumidentity: Fix revert check in CID update test",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "0d45ee96",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T12:07:23.368Z"
+    },
+    "candidate_directive-operator-pkg-ciliumidentity-fix-revert-check-in-cid-update-test": {
+      "item_id": "candidate_directive-operator-pkg-ciliumidentity-fix-revert-check-in-cid-update-test",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PHMI-operator-pkg-ciliumidentity-fix-revert-check-in-cid-update-test.md",
+      "title": "operator/pkg/ciliumidentity: Fix revert check in CID update test",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9379ea32925efeb57c5497a80c61f3e721f49612fb65a986db133854b5884aff",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T12:07:29.658Z"
+    },
+    "rule-9565": {
+      "learning_id": "rule-9565",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9565,
+      "title": "[MOD-15594] Fix crash on documents with more than 65536 fields",
+      "source_url": "https://github.com/RediSearch/RediSearch",
+      "source_version": "f01b5c68",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T12:07:25.319Z"
+    },
+    "candidate_directive-mod-15594-fix-crash-on-documents-with-more-than-65536-fields": {
+      "item_id": "candidate_directive-mod-15594-fix-crash-on-documents-with-more-than-65536-fields",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PI3B-mod-15594-fix-crash-on-documents-with-more-than-65536-fields.md",
+      "title": "[MOD-15594] Fix crash on documents with more than 65536 fields",
+      "repository": "redisearch-redisearch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7be5c1f071b91543876cdb81c7264ac38d1b535a3fc32cefe40676405efd176d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T12:07:30.267Z"
+    },
+    "candidate_directive-commands-add-namefqdn-when-importing-ir": {
+      "item_id": "candidate_directive-commands-add-namefqdn-when-importing-ir",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PH3I-commands-add-namefqdn-when-importing-ir.md",
+      "title": "commands: add NameFQDN when importing --ir",
+      "repository": "dnscontrol-dnscontrol-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f69ae551e14f5665bbd573edbd348a91f25f833a459f0bfa47a565bd43108576",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T12:07:28.975Z"
+    },
+    "agent_contract-agent-contract-dnscontrol-dnscontrol-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-dnscontrol-dnscontrol-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/dnscontrol-dnscontrol-learnings-agent-contract-dnscontrol-dnscontrol-learnings-a.md",
+      "title": "Agent Contract: dnscontrol-dnscontrol-learnings Autonomous Specialist Persona",
+      "repository": "dnscontrol-dnscontrol-learnings",
+      "source_version": "HEAD",
+      "content_hash": "47161e05cbcd7f0daa42b97f0762d16d6a39651748c4b5cf06c3201469ef5c59",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T12:07:29.248Z"
+    },
+    "domain_intelligence-architecture-intelligence-redisearch-redisearch-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-redisearch-redisearch-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-redisearch-redisearch-learnings-architecture-intelligence-redisearch-redisearch-.md",
+      "title": "Architecture Intelligence: redisearch-redisearch-learnings Core Invariants",
+      "repository": "redisearch-redisearch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "315eb94ce42998c55c677010b9b46bbe92d9599ec4150ac22beb221a43798920",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T12:07:30.399Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-redisearch-redisearch-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-redisearch-redisearch-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/redisearch-redisearch-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for redisearch-redisearch-learnings",
+      "repository": "redisearch-redisearch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d9557169606cc85430f7bca220efac248a3147188ab7a38bdf5bf16aaf5898ec",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T12:07:30.530Z"
     }
   },
   "ai-builder-brain": {

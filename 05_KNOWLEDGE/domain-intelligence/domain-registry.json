@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T11:41:06.239Z",
-  "total_records": 2122,
+  "last_updated": "2026-11-20T12:07:30.399Z",
+  "total_records": 2123,
   "domains": {
     "A": {
       "total": 17,
@@ -1008,7 +1008,7 @@
       ]
     },
     "G": {
-      "total": 361,
+      "total": 362,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1370,7 +1370,8 @@
         "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-core-invariants",
         "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-joreilly-confetti-core-invariants",
-        "domain_intelligence-architecture-intelligence-joreilly-confetti-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-joreilly-confetti-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-redisearch-redisearch-learnings-core-invariants"
       ]
     },
     "H": {
@@ -7865,8 +7866,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "899c7a44a7d14e55422c8bc73c654aabadc63d165b2dbb30da65a64b0bd798c8",
-      "created_at": "2026-11-19T23:02:06.995Z"
+      "content_hash": "9791f0851dddf4e7e82257ad63cff842a09b97697170d17b282f42a75b2b13e0",
+      "created_at": "2026-11-20T12:07:23.852Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -7883,8 +7884,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "d07ce9c22e7f4c66dc398daa22ecf4aea7b4a053db62d41c8d84cb1af917d3ca",
-      "created_at": "2026-11-19T23:02:11.669Z"
+      "content_hash": "ba19c3e465d796862a43953cdd36fcf0a6ff855a5c3cfa1ab55822a586d7f82e",
+      "created_at": "2026-11-20T12:07:29.789Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -18532,8 +18533,8 @@
       "title": "Architecture Intelligence: DNSControl/dnscontrol Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dnscontrol-dnscontrol-architecture-intelligence-dnscontrol-dnscontrol-core-invar.md",
       "repository": "DNSControl/dnscontrol",
-      "content_hash": "5844c53a83ac68d32cb7f884993b25ffdcae5846555438d3bcaeaa4de7b87c96",
-      "created_at": "2026-11-17T13:05:50.516Z"
+      "content_hash": "174726f8f2614446a4fc8dfcab22a6c4820971df23b8e244d6ec4f34406211af",
+      "created_at": "2026-11-20T12:07:20.791Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized",
@@ -18550,8 +18551,8 @@
       "title": "Architecture Intelligence: dnscontrol-dnscontrol-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dnscontrol-dnscontrol-learnings-architecture-intelligence-dnscontrol-dnscontrol-.md",
       "repository": "dnscontrol-dnscontrol-learnings",
-      "content_hash": "8a406ec63e46faec298141b3ca4f6c8234f58a53df374dcb1c7518c0e78b10cf",
-      "created_at": "2026-11-17T13:05:58.761Z"
+      "content_hash": "59f642ba62e2574c6aeef4563a1c87009bc75de899ae94ee77a1fe36412d1f5c",
+      "created_at": "2026-11-20T12:07:29.102Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-core-invaria",
@@ -27673,8 +27674,8 @@
       "title": "Architecture Intelligence: RediSearch/RediSearch Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-redisearch-redisearch-architecture-intelligence-redisearch-redisearch-core-invar.md",
       "repository": "RediSearch/RediSearch",
-      "content_hash": "1427c3cac5c2d8591a0fea3b412a9fb636762dadf960e925cc97b4425b597f2f",
-      "created_at": "2026-11-19T05:24:35.564Z"
+      "content_hash": "3b443369b7ac7bf2cb980a8d51e6029d0c8d9d4dedd63a44414917b769123090",
+      "created_at": "2026-11-20T12:07:25.821Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autogluon-chronos-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autogluon-chronos-2-core-invariants",
@@ -35791,6 +35792,15 @@
       "repository": "touchlab-kermit-learnings",
       "content_hash": "21816555453068d512fdd609876e00ba82fb41cf24e7b422522196cfa97b0139",
       "created_at": "2026-11-20T11:32:49.178Z"
+    },
+    "domain_intelligence-architecture-intelligence-redisearch-redisearch-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-redisearch-redisearch-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: redisearch-redisearch-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-redisearch-redisearch-learnings-architecture-intelligence-redisearch-redisearch-.md",
+      "repository": "redisearch-redisearch-learnings",
+      "content_hash": "315eb94ce42998c55c677010b9b46bbe92d9599ec4150ac22beb221a43798920",
+      "created_at": "2026-11-20T12:07:30.399Z"
     }
   }
 }

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T11:41:01.060Z",
-  "total_cycles_completed": 10985,
-  "total_learnings_persisted": 10985,
-  "total_rules_promoted": 10348,
+  "last_updated": "2026-11-20T12:07:25.500Z",
+  "total_cycles_completed": 10988,
+  "total_learnings_persisted": 10988,
+  "total_rules_promoted": 10351,
   "history": [
-    {
-      "timestamp": "2026-11-19T15:16:38.944Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T15:16:43.827Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T15:21:28.407Z",
-      "repository": "openbmb/MiniCPM-V-4.7-1B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T15:42:25.329Z",
       "repository": "codewhale-hq/Codewhale",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-20T11:41:01.060Z",
       "repository": "genkit-ai/genkit",
       "learningId": "learn-github-genkit-ai-genkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T12:07:20.459Z",
+      "repository": "DNSControl/dnscontrol",
+      "learningId": "learn-github-dnscontrol-dnscontrol",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T12:07:23.540Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T12:07:25.500Z",
+      "repository": "RediSearch/RediSearch",
+      "learningId": "learn-github-redisearch-redisearch",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

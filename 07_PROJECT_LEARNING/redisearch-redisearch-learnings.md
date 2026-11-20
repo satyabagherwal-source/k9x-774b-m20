@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source**: github ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
-> **Source Version**: `495f707d`  
+> **Source Version**: `f01b5c68`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T05:24:34.278Z  
+> **Timestamp**: 2026-11-20T12:07:24.574Z  
 > **Learning ID**: `learn-github-redisearch-redisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T05:24:34.273Z  
+> **Harvest Timestamp**: 2026-11-20T12:07:24.569Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A query and indexing engine for Redis, providing secondary indexing, full-text search, vector similarity search and aggregations.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6246 stars
+- **Stars / Engagement**: 6245 stars
 
 ---
 
@@ -1847,177 +1847,787 @@ export interface Profile<X = {}> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a9794e0b` (2026-11-18)
-**Commit Message**: iterators_ffi: share SkipTo clearing and the timeout granularity (#12399)
+### Incident Patch 1: `20c75192` (2026-11-19)
+**Commit Message**: [MOD-15594] Fix crash on documents with more than 65536 fields (#12426)
 
-The vector and numeric top-k entrypoints each cleared the `SkipTo` slot of the
-iterator they box, and the numeric and geo-shape entrypoints each defined the
-deadline-probe granularity. Move both to the crate root as `without_skip_to`
-and `TIMEOUT_CHECK_GRANULARITY`.
+* [MOD-15594] Fix crash on documents with more than 65536 fields
+
+* [MOD-15594] Fix CI: sync FFI headers, skip slow cap test under Miri, flatten buildGroupRP
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `src/redisearch_rs/c_entrypoint/iterators_ffi/src/geo_shape.rs` (modified, +1/-2)
+**File**: `rwnqqozrprn` (added, +314/-0)
 ```diff
-@@ -21,8 +21,7 @@ use rqe_iterators::{
-     utils::{AnyTimeoutContext, OwnedSlice},
- };
- 
--/// Probe the query deadline once every this many candidate documents.
--const TIMEOUT_CHECK_GRANULARITY: u32 = 100;
-+use crate::TIMEOUT_CHECK_GRANULARITY;
- 
- /// A [`MemTracker`] that adjusts an externally-owned `usize` counter through a
- /// raw pointer — the geometry index's allocation counter, shared from C across
+@@ -0,0 +1,314 @@
++
++                   SSUUMMMMAARRYY OOFF LLEESSSS CCOOMMMMAANNDDSS
++
++      Commands marked with * may be preceded by a number, _N.
++      Notes in parentheses indicate the behavior if _N is given.
++      A key preceded by a caret indicates the Ctrl key; thus ^K is ctrl-K.
++
++  h  H                 Display this help.
++  q  :q  Q  :Q  ZZ     Exit.
++ ---------------------------------------------------------------------------
++
++                           MMOOVVIINNGG
++
++  e  ^E  j  ^N  CR  *  Forward  one line   (or _N lines).
++  y  ^Y  k  ^K  ^P  *  Backward one line   (or _N lines).
++  f  ^F  ^V  SPACE  *  Forward  one window (or _N lines).
++  b  ^B  ESC-v      *  Backward one window (or _N lines).
++  z                 *  Forward  one window (and set window to _N).
++  w                 *  Backward one window (and set window to _N).
++  ESC-SPACE         *  Forward  one window, but don't stop at end-of-file.
++  d  ^D             *  Forward  one half-window (and set half-window to _N).
++  u  ^U             *  Backward one half-window (and set half-window to _N).
++  ESC-)  RightArrow *  Right one half screen width (or _N positions).
++  ESC-(  LeftArrow  *  Left  one half screen width (or _N positions).
++  ESC-}  ^RightArrow   Right to last column displayed.
++  ESC-{  ^LeftArrow    Left  to first column.
++  F                    Forward forever; like "tail -f".
++  ESC-F                Like F but stop when search pattern is found.
++  r  ^R  ^L            Repaint screen.
++  R                    Repaint screen, discarding buffered input.
++        ---------------------------------------------------
++        Default "window" is the screen height.
++        Default "half-window" is half of the screen height.
++ ---------------------------------------------------------------------------
++
++                          SSEEAARRCCHHIINNGG
++
++  /_p_a_t_t_e_r_n          *  Search forward for (_N-th) matching line.
++  ?_p_a_t_t_e_r_n          *  Search backward for (_N-th) matching line.
++  n                 *  Repeat previous search (for _N-th occurrence).
++  N                 *  Repeat previous search in reverse direction.
++  ESC-n             *  Repeat previous search, spanning files.
++  ESC-N             *  Repeat previous search, reverse dir. & spanning files.
++  ^O^N  ^On         *  Search forward for (_N-th) OSC8 hyperlink.
++  ^O^P  ^Op         *  Search backward for (_N-th) OSC8 hyperlink.
++  ^O^L  ^Ol            Jump to the currently selected OSC8 hyperlink.
++  ESC-u                Undo (toggle) search highlighting.
++  ESC-U                Clear search highlighting.
++  &_p_a_t_t_e_r_n          *  Display only matching lines.
++        ---------------------------------------------------
++        A search pattern may begin with one or more of:
++        ^N or !  Search for NON-matching lines.
++        ^E or *  Search multiple files (pass thru END OF FILE).
++        ^F or @  Start search at FIRST file (for /) or last file (for ?).
++        ^K       Highlight matches, but don't move (KEEP position).
++        ^R       Don't use REGULAR EXPRESSIONS.
++        ^S _n     Search for match in _n-th parenthesized subpattern.
++        ^W       WRAP search if no match found.
++        ^L       Enter next character literally into pattern.
++ ---------------------------------------------------------------------------
++
++                           JJUUMMPPIINNGG
++
++  g  <  ESC-<       *  Go to first line in file (or line _N).
++  G  >  ESC->       *  Go to last line in file (or line _N).
++  p  %              *  Go to beginning of file (or _N percent into file).
++  t                 *  Go to the (_N-th) next tag.
++  T                 *  Go to the (_N-th) previous tag.
++  {  (  [           *  Find close bracket } ) ].
++  }  )  ]           *  Find open bracket { ( [.
++  ESC-^F _<_c_1_> _<_c_2_>  *  Find close bracket _<_c_2_>.
++  ESC-^B _<_c_1_> _<_c_2_>  *  Find open bracket _<_c_1_>.
++        ---------------------------------------------------
++        Each "find close bracket" command goes forward to the close bracket 
++          matching the (_N-th) open bracket in the top line.
++        Each "find open bracket" command goes backward to the open bracket 
++          matching the (_N-th) close bracket in the bottom line.
++
++  m_<_l_e_t_t_e_r_>            Mark the current top line with <letter>.
++  M_<_l_e_t_t_e_r_>            Mark the current bottom line with <letter>.
++  '_<_l_e_t_t_e_r_>            Go to a previously marked position.
++  ''                   Go to the previous position.
++  ^X^X                 Same as '.
++  ESC-m_<_l_e_t_t_e_r_>        Clear a mark.
++        ---------------------------------------------------
++        A mark is any upper-case or lower-case letter.
++        Certain marks are predefined:
++             ^  means  beginning of the file
++             $ 
 ```
 
-**File**: `src/redisearch_rs/c_entrypoint/iterators_ffi/src/lib.rs` (modified, +24/-0)
+**File**: `src/pipeline/pipeline_construction.c` (modified, +3/-3)
 ```diff
-@@ -22,3 +22,27 @@ mod profile_print;
- pub mod union;
- pub mod vector_top_k;
- pub mod wildcard;
-+
-+use std::ptr::NonNull;
-+
-+use ffi::QueryIterator;
-+use rqe_iterators::interop::patch_vtable;
-+
-+/// Probe the query deadline once every this many candidate documents.
-+const TIMEOUT_CHECK_GRANULARITY: u32 = 100;
-+
-+/// Hand a freshly boxed top-k iterator to C with its `SkipTo` cleared.
-+///
-+/// Top-k yields in score order, so it cannot seek by doc id; without `SkipTo`
-+/// the C highlighter finds a document by reading instead.
-+///
-+/// # Safety
-+///
-+/// `ptr` comes straight from an
-+/// [`RQEIteratorWrapper`](rqe_iterators::interop::RQEIteratorWrapper) constructor
-+/// and has no other alias.
-+unsafe fn without_skip_to(ptr: NonNull<QueryIterator>) -> *mut QueryIterator {
-+    // SAFETY: forwarded from this function's contract.
-+    unsafe { patch_vtable(ptr, |h| h.SkipTo = None) };
-+    ptr.as_ptr()
-+}
-```
-
-**File**: `src/redisearch_rs/c_entrypoint/iterators_ffi/src/numeric_top_k.rs` (modified, +5/-12)
-```diff
-@@ -23,14 +23,11 @@ use numeric_score_source::{
-     DocValidity, NumericTopKIterator, new_numeric_top_k, range_iterator::NumericTreeRef,
- };
- use rqe_iterators::{
--    FieldExpirationChecker,
--    c2rust::CRQEIterator,
--    interop::{RQEIteratorWrapper, patch_vtable},
-+    FieldExpirationChecker, c2rust::CRQEIterator, interop::RQEIteratorWrapper,
-     utils::AnyTimeoutContext,
- };
- 
--/// Probe the query deadline once every this many candidate documents.
--const TIMEOUT_CHECK_GRANULARITY: u32 = 100;
-+use crate::{TIMEOUT_CHECK_GRANULARITY, without_skip_to};
- 
- /// Construct a numeric top-k iterator and expose it as a C [`QueryIterator`].
- ///
-@@ -121,9 +118,7 @@ pub unsafe extern "C" fn NewNumericTopKIterator(
+@@ -72,14 +72,14 @@ static ResultProcessor *buildGroupRP(PLN_GroupStep *gstp, RLookup *srclookup,
+       if (loadKeys) {
+         // We failed to get the key for reading, so we know getting it for loading will succeed.
+         srckeys[ii] = RLookup_GetKey_LoadEx(srclookup, fldname, fldname_len, fldname, RLOOKUP_F_NOFLAGS);
+-        *loadKeys = array_ensure_append_1(*loadKeys, srckeys[ii]);
+       }
+       // We currently allow implicit loading only for known fields from the schema.
+       // If we can't load keys, or the key we loaded is not in the schema, we fail.
+-      if (!loadKeys || !(RLookupKey_GetFlags(srckeys[ii]) & RLOOKUP_F_SCHEMASRC)) {
++      if (!srckeys[ii] || !(RLookupKey_GetFlags(srckeys[ii]) & RLOOKUP_F_SCHEMASRC)) {
+         QueryError_SetWithUserDataFmt(err, QUERY_ERROR_CODE_NO_PROP_KEY, "No such property", " `%s`", fldname);
+         goto cleanup;
+       }
++      *loadKeys = array_ensure_append_1(*loadKeys, srckeys[ii]);
      }
- }
- 
--/// Box a reduced numeric top-k into the C [`QueryIterator`] handle, clearing
--/// the root-only `SkipTo` vtable slot so the C highlighter falls back to
--/// sequential reads.
-+/// Box a reduced numeric top-k into the C [`QueryIterator`] handle.
- fn box_reduced<V: DocValidity>(
-     reduced: Option<NumericTopKIterator<'_, V, FieldExpirationChecker, AnyTimeoutContext>>,
- ) -> *mut QueryIterator {
-@@ -137,8 +132,6 @@ fn box_reduced<V: DocValidity>(
-     } else {
-         RQEIteratorWrapper::boxed_new(it)
-     };
--    // SAFETY: `ptr` comes from `boxed_new`/`boxed_new_compound` above and has no
--    // other alias yet, satisfying 1 and 2.
--    unsafe { patch_vtable(ptr, |h| h.SkipTo = None) };
--    ptr.as_ptr()
-+    // SAFETY: `ptr` was just boxed above and has no other alias.
-+    unsafe { without_skip_to(ptr) }
- }
+     dstkeys[ii] = RLookup_GetKey_WriteEx(&gstp->lookup, fldname, fldname_len, RLOOKUP_F_NOFLAGS);
+     if (!dstkeys[ii]) {
+@@ -294,7 +294,7 @@ static ResultProcessor *getArrangeRP(Pipeline *pipeline, const AggregationPipeli
+           sortkey = RLookup_GetKey_Load(lk, keystr, keystr, RLOOKUP_F_NOFLAGS);
+           // We currently allow implicit loading only for known fields from the schema.
+           // If the key we loaded is not in the schema, we fail.
+-          if (!(RLookupKey_GetFlags(sortkey) & RLOOKUP_F_SCHEMASRC)) {
++          if (!sortkey || !(RLookupKey_GetFlags(sortkey) & RLOOKUP_F_SCHEMASRC)) {
+             QueryError_SetWithUserDataFmt(status, QUERY_ERROR_CODE_NO_PROP_KEY, "Property", " `%s` not loaded nor in schema", keystr);
+             goto end;
+           }
 ```
 
-**File**: `src/redisearch_rs/c_entrypoint/iterators_ffi/src/vector_top_k.rs` (modified, +15/-26)
+**File**: `src/redisearch_rs/headers/reducers_ffi.h` (modified, +2/-0)
 ```diff
-@@ -14,12 +14,12 @@ use std::{ffi::c_void, ptr::NonNull};
- use ffi::{QueryIterator, QueryRequestLimits, RedisSearchCtx, VecSimIndex, VecSimQueryParams};
- use field::FieldFilterContext;
- use rqe_iterators::{
--    ExpirationChecker, FieldExpirationChecker,
--    c2rust::CRQEIterator,
--    interop::{RQEIteratorWrapper, patch_vtable},
-+    ExpirationChecker, FieldExpirationChecker, c2rust::CRQEIterator, interop::RQEIteratorWrapper,
- };
- use vector_score_source::{NewVectorTopK, new_vector_top_k};
+@@ -13,6 +13,8 @@
+  * An append-only list of [`RLookupKey`]s.
+  *
+  * This type maintains a list of [`RLookupKey`]s addressable by string name.
++ * It holds at most one key per row slot; once every slot is taken, creating a
++ * key yields `None`.
+  *
+  * # Sealing
+  *
+```
+
+**File**: `src/redisearch_rs/headers/rlookup.h` (modified, +2/-0)
+```diff
+@@ -119,6 +119,8 @@ typedef uint32_t RLookup_Opt;
+  * An append-only list of [`RLookupKey`]s.
+  *
+  * This type maintains a list of [`RLookupKey`]s addressable by string name.
++ * It holds at most one key per row slot; once every slot is taken, creating a
++ * key yields `None`.
+  *
+  * # Sealing
+  *
+```
+
+**File**: `src/redisearch_rs/rlookup/src/load_document/hash.rs` (modified, +30/-8)
+```diff
+@@ -258,17 +258,18 @@ impl<'n> DocumentFormat for HashDocumentFormat<'n> {
+                     // Key name is already taken by a query key.
+                     return;
+                 } else {
+-                    c.into_current().unwrap()
++                    c.into_current()
+                 }
+             } else {
+                 // First returned document, create the key.
+-                rlookup
+-                    .get_key_load(
+-                        field_cstr.to_owned(),
+-                        field_cstr,
+-                        RLookupKeyFlag::ForceLoad.into(),
+-                    )
+-                    .unwrap()
++                rlookup.get_key_load(
++                    field_cstr.to_owned(),
++                    field_cstr,
++                    RLookupKeyFlag::ForceLoad.into(),
++                )
++            };
++            let Some(key) = key else {
++                return;
+             };
  
-+use crate::without_skip_to;
+             let coerce = if key.flags.contains(RLookupKeyFlag::Numeric) && !self.force_string {
+@@ -391,6 +392,27 @@ mod tests {
+         assert_eq!(expect_string(&v), b"\xff\xfe\x80hello");
+     }
+ 
++    #[test]
++    #[cfg_attr(miri, ignore)] // can't call FFI function RedisModule_CreateString under miri
++    fn load_all_fills_the_last_row_slot_and_skips_the_rest() {
++        redis_mock::init_redis_module_mock();
++        let mut builder = redis_mock::TestContext::builder();
++        builder.with_key_type(&KeyType::Hash);
++        builder.inject_key_value(c"fits".to_owned(), c"1".to_owned());
++        builder.inject_key_value(c"overflows".to_owned(), c"2".to_owned());
++        let mut ctx = builder.build();
++        let format = HashDocumentFormat::new(NonNull::from_mut(&mut ctx).cast(), false);
++        let mut rlookup = RLookup::new();
++        rlookup.fill_all_but_last_row_slot();
++        let mut row = RLookupRow::new();
 +
- /// Construct a vector top-k iterator and expose it as a C [`QueryIterator`].
++        format
++            .load_all(&mut rlookup, &mut row, &make_string(&c"doc:1".to_owned()))
++            .unwrap();
++
++        assert_eq!(row.num_dyn_values(), 1);
++    }
++
+     #[test]
+     #[cfg_attr(miri, ignore)] // can't call FFI function RedisModule_CreateString under miri
+     fn invalid_fallback_to_zero() {
+```
+
+**File**: `src/redisearch_rs/rlookup/src/load_document/json.rs` (modified, +5/-5)
+```diff
+@@ -171,17 +171,17 @@ impl DocumentFormat for JsonDocumentFormat<'_> {
+         let value = self.load_root(key_name)?;
+ 
+         let rlk = if let Some(rlk) = rlookup.find_key_by_name(JSON_ROOT) {
+-            rlk.into_current().unwrap()
++            rlk.into_current()
+         } else {
+             // A SORTABLE schema field on `$` makes the key value-available from
+             // the sorting vector, in which case `get_key_load` returns `None`
+             // unless forced.
+-            rlookup
+-                .get_key_load(JSON_ROOT, JSON_ROOT, RLookupKeyFlag::ForceLoad.into())
+-                .unwrap()
++            rlookup.get_key_load(JSON_ROOT, JSON_ROOT, RLookupKeyFlag::ForceLoad.into())
+         };
+ 
+-        dst_row.write_key(rlk, value);
++        if let Some(rlk) = rlk {
++            dst_row.write_key(rlk, value);
++        }
+ 
+         Ok(())
+     }
+```
+
+**File**: `src/redisearch_rs/rlookup/src/lookup.rs` (modified, +15/-9)
+```diff
+@@ -57,6 +57,8 @@ pub type RLookupOptions = BitFlags<RLookupOption>;
+ /// An append-only list of [`RLookupKey`]s.
  ///
- /// This call can reduce to an `Empty` iterator, whose `type_` is
-@@ -111,32 +111,21 @@ pub unsafe extern "C" fn NewVectorTopKIterator(
-     box_reduced(reduced)
+ /// This type maintains a list of [`RLookupKey`]s addressable by string name.
++/// It holds at most one key per row slot; once every slot is taken, creating a
++/// key yields `None`.
+ ///
+ /// # Sealing
+ ///
+@@ -205,7 +207,7 @@ impl<'a> RLookup<'a> {
+     }
+ 
+     /// Resolve a writable key by name, lazily indexing wide lookups before the search.
+-    pub(crate) fn get_or_create_key_by_name(&mut self, name: &[u8]) -> &RLookupKey<'a> {
++    pub(crate) fn get_or_create_key_by_name(&mut self, name: &[u8]) -> Option<&RLookupKey<'a>> {
+         let slot = if let Some(slot) = self.keys.find_slot_for_write(name) {
+             slot
+         } else {
+@@ -214,10 +216,9 @@ impl<'a> RLookup<'a> {
+             self.get_key_write_slot(
+                 CString::new(name).expect("field names cannot contain NUL"),
+                 RLookupKeyFlags::empty(),
+-            )
+-            .expect("a missing key must be writable")
++            )?
+         };
+-        self.keys.get(slot).unwrap()
++        self.keys.get(slot)
+     }
+ 
+     /// Add all non-overridden keys from `src` to `self`.
+@@ -337,7 +338,7 @@ impl<'a> RLookup<'a> {
+         // the schema as SORTABLE, and create only if so.
+         let name = match self.gen_key_from_spec(name, flags) {
+             Ok(key) => {
+-                return Some(self.keys.push_slot(key));
++                return self.keys.push(key);
+             }
+             Err(name) => name,
+         };
+@@ -349,7 +350,7 @@ impl<'a> RLookup<'a> {
+             let special = self.hidden_if_schema_special(key.name().as_ref());
+             key.flags |= special;
+ 
+-            return Some(self.keys.push_slot(key));
++            return self.keys.push(key);
+         }
+ 
+         None
+@@ -450,7 +451,7 @@ impl<'a> RLookup<'a> {
+             // B. we didn't find the key in the lookup table:
+             // create a new key with the name and flags.
+             self.keys
+-                .push_slot(RLookupKey::new(name, flags | RLookupKeyFlag::QuerySrc))
++                .push(RLookupKey::new(name, flags | RLookupKeyFlag::QuerySrc))?
+         };
+ 
+         Some(key)
+@@ -548,10 +549,10 @@ impl<'a> RLookup<'a> {
+                 .unwrap();
+             slot
+         } else {
+-            self.keys.push_slot(RLookupKey::new(
++            self.keys.push(RLookupKey::new(
+                 name.clone(),
+                 flags | RLookupKeyFlag::DocSrc | RLookupKeyFlag::IsLoaded,
+-            ))
++            ))?
+         };
+ 
+         let key = self.keys.cursor_at_mut(slot).into_current().unwrap();
+@@ -591,6 +592,11 @@ impl<'a> RLookup<'a> {
+         Some(slot)
+     }
+ 
++    #[cfg(test)]
++    pub(crate) fn fill_all_but_last_row_slot(&mut self) {
++        self.keys.fill_all_but_last_row_slot();
++    }
++
+     /// The row len of the [`RLookup`] is the number of keys in its key list not counting the overridden keys.
+     pub fn get_row_len(&self) -> u32 {
+         self.keys.row_len()
+```
+
+**File**: `src/redisearch_rs/rlookup/src/lookup/key_list.rs` (modified, +36/-15)
+```diff
+@@ -213,9 +213,13 @@ impl<'a> KeyList<'a> {
+         store.find_slot(name)
+     }
+ 
+-    pub(crate) fn push_slot(&mut self, mut key: RLookupKey<'a>) -> u16 {
++    /// Insert a key at the next logical row slot and return that slot.
++    ///
++    /// Returns `None`, leaving the list unchanged, once every slot a
++    /// [`dstidx`](super::key::RLookupKeyHeader::dstidx) can address is taken.
++    pub(crate) fn push(&mut self, mut key: RLookupKey<'a>) -> Option<u16> {
++        let slot = u16::try_from(self.live().len()).ok()?;
+         let store = self.store.get_or_insert_with(|| Box::new(KeyStore::new()));
+-        let slot = u16::try_from(store.live.len()).expect("RLookup key count exceeds u16::MAX");
+         key.dstidx = slot;
+         store.live.push(OwnedKey::new(key));
+         if store.by_name.is_some() {
+@@ -225,20 +229,18 @@ impl<'a> KeyList<'a> {
+         #[cfg(debug_assertions)]
+         self.assert_valid("KeyList::push");
+ 
+-        slot
++        Some(slot)
+     }
+ 
+-    /// Insert a key at the next logical row slot.
+-    pub(crate) fn push(&mut self, key: RLookupKey<'a>) -> Pin<&mut RLookupKey<'a>> {
+-        let slot = self.push_slot(key);
+-
+-        self.store
+-            .as_mut()
+-            .unwrap()
+-            .live
+-            .get_mut(usize::from(slot))
+-            .unwrap()
+-            .get_pin_mut()
++    #[cfg(test)]
++    pub(crate) fn fill_all_but_last_row_slot(&mut self) {
++        let store = self.store.get_or_insert_with(|| Box::new(KeyStore::new()));
++        let first = u16::try_from(store.live.len()).unwrap();
++        store.live.extend((first..u16::MAX).map(|slot| {
++            let mut key = RLookupKey::new(c"filler", RLookupKeyFlags::empty());
++            key.dstidx = slot;
++            OwnedKey::new(key)
++        }));
+     }
+ 
+     pub fn cursor_front(&self) -> Cursor<'_, 'a> {
+@@ -477,6 +479,23 @@ mod tests {
+         assert_eq!(keys.row_len(), 3);
+     }
+ 
++    #[test]
++    #[cfg_attr(miri, ignore = "fills every row slot, too slow under Miri")]
++    fn push_is_refused_once_every_dstidx_is_taken() {
++        let mut keys = KeyList::new();
++        keys.fill_all_but_last_row_slot();
++
++        assert_eq!(
++            keys.push(RLookupKey::new(c"last", RLookupKeyFlags::empty())),
++            Some(u16::MAX)
++        );
++        assert_eq!(
++            keys.push(RLookupKey::new(c"overflow", RLookupKeyFlags::empty())),
++            None
++        );
++        assert_eq!(keys.row_len(), u32::from(u16::MAX) + 1);
++    }
++
+     #[test]
+     fn duplicate_names_resolve_to_first_slot() {
+         let mut keys = KeyList::new();
+@@ -657,7 +676,9 @@ mod tests {
+         assert_eq!(keys.find_slot(c"pre"), Some(0));
+ 
+         // ...nor of a name first seen after promotion.
+-        let post_slot = keys.push_slot(RLookupKey::new(c"post", RLookupKeyFlags::empty()));
++        let post_slot = keys
++            .push(RLookupKey::new(c"post", RLookupKeyFlags::empty()))
++            .unwrap();
+         keys.push(RLookupKey::new(c"post", RLookupKeyFlags::empty()));
+         assert_eq!(keys.find_slot(c"post"), Some(post_slot));
+ 
+```
+
+---
+
+### Incident Patch 2: `cdd910a2` (2026-11-19)
+**Commit Message**: [MOD-14129] Always require TAG dictionaries when restoring Flex indexes from SST (#12442)
+
+* [MOD-14129] Require dictionaries when restoring disk TAG indexes from SST
+
+* Remove redundant TAG restore flag from disk open callback
+
+* Remove the per-index TAG dictionary marker from v30 SST RDBs
+
+**File**: `src/query.c` (modified, +5/-13)
+```diff
+@@ -796,9 +796,7 @@ static inline bool QueryNode_ValidateToken(QueryNode *n, IndexSpec *spec, RSSear
+   return true;
  }
  
--/// Box a [`NewVectorTopK`] into the C [`QueryIterator`] handle, clearing the
--/// root-only `SkipTo` vtable slot so the C highlighter falls back to sequential
--/// reads. Generic over the expiration checker to keep the boxing path
--/// independent of the checker strategy.
-+/// Box a [`NewVectorTopK`] into the C [`QueryIterator`] handle. Generic over the
-+/// expiration checker to keep the boxing path independent of the checker
-+/// strategy.
- fn box_reduced<'index, E: ExpirationChecker + 'index>(
-     reduced: NewVectorTopK<'index, E>,
- ) -> *mut QueryIterator {
--    let clear_skip_to = |ptr| {
--        // SAFETY: `ptr` comes from `boxed_new`/`boxed_new_compound` below and has no
--        // other alias yet, satisfying 1 and 2.
--        unsafe { patch_vtable(ptr, |h| h.SkipTo = None) }
--    };
--    let iterator = match reduced {
--        NewVectorTopK::ReducedEmpty => RQEIteratorWrapper::boxed_new(rqe_iterators::Empty),
--        NewVectorTopK::Unfiltered(it) => {
--            let ptr = RQEIteratorWrapper::boxed_new(it);
--            clear_skip_to(ptr);
--            ptr
--        }
--        NewVectorTopK::Filtered(it) => {
--            // `boxed_new_compound` registers the `ProfileChildren` callback so
--            // `FT.PROFILE` recurses into and counts the filter subtree.
--            let ptr = RQEIteratorWrapper::boxed_new_compound(it);
--            clear_skip_to(ptr);
--            ptr
-+    let ptr = match reduced {
-+        NewVectorTopK::ReducedEmpty => {
-+            return RQEIteratorWrapper::boxed_new(rqe_iterators::Empty).as_ptr();
-         }
-+        NewVectorTopK::Unfiltered(it) => RQEIteratorWrapper::boxed_new(it),
-+        // `boxed_new_compound` registers the `ProfileChildren` callback so
-+        // `FT.PROFILE` recurses into and counts the filter subtree.
-+        NewVectorTopK::Filtered(it) => RQEIteratorWrapper::boxed_new_compound(it),
-     };
--    iterator.as_ptr()
-+    // SAFETY: `ptr` was just boxed above and has no other alias.
-+    unsafe { without_skip_to(ptr) }
+-// TAG clauses that expand terms need a complete dictionary before they can be enabled on Flex.
+-static int validateDiskTagMultiTermQuery(QueryNodeType queryType, const IndexSpec *spec,
+-                                         QueryError *status) {
++static int validateDiskTagMultiTermQuery(QueryNodeType queryType, QueryError *status) {
+   if (!SearchDisk_IsEnabledForValidation()) {
+     return REDISMODULE_OK;
+   }
+@@ -816,15 +814,9 @@ static int validateDiskTagMultiTermQuery(QueryNodeType queryType, const IndexSpe
+     default:
+       return REDISMODULE_OK;
+   }
+-  if (spec->tagDictionariesAvailable) {
+-    // until MOD-20990 will enable multi term tag queries
+-    QueryError_SetWithoutUserDataFmt(status, QUERY_ERROR_CODE_FLEX_UNSUPPORTED_QUERY,
+-                                     "%s queries are not supported on Flex indexes", queryTypeName);
+-  } else {
+-    QueryError_SetError(status, QUERY_ERROR_CODE_FLEX_UNSUPPORTED_QUERY,
+-                        "TAG dictionary is unavailable after loading a legacy SST index; "
+-                        "drop and recreate the index to use TAG multi-term queries");
+-  }
++  // TODO(MOD-20990): Enable multi-term TAG queries on Flex indexes.
++  QueryError_SetWithoutUserDataFmt(status, QUERY_ERROR_CODE_FLEX_UNSUPPORTED_QUERY,
++                                   "%s queries are not supported on Flex indexes", queryTypeName);
+   return REDISMODULE_ERR;
  }
+ 
+@@ -870,7 +862,7 @@ static int QueryNode_CheckIsValid(QueryNode *n, IndexSpec *spec, RSSearchOptions
+         }
+         for (size_t ii = 0; ii < QueryNode_NumChildren(n); ++ii) {
+           QueryNode *child = n->children[ii];
+-          if (validateDiskTagMultiTermQuery(child->type, spec, status) != REDISMODULE_OK) {
++          if (validateDiskTagMultiTermQuery(child->type, status) != REDISMODULE_OK) {
+             return REDISMODULE_ERR;
+           }
+         }
+```
+
+**File**: `src/search_disk.c` (modified, +1/-2)
+```diff
+@@ -445,8 +445,7 @@ RedisSearchDiskIndexSpec *SearchDisk_OpenIndexWithRdbState(
+   SearchDiskCompactionCallbacks callbacks = SearchDisk_CompactionCallbacks();
+   RedisSearchDiskIndexSpec *result = disk->basic.openIndexSpecWithRdbState(
+       ctx, disk_db, indexName, obfuscatedName, strlen(obfuscatedName), type, rdbState,
+-      c_index_spec->tagDictionariesAvailable, c_index_spec->flags, fields, c_index_spec->numFields,
+-      &callbacks, c_index_spec);
++      c_index_spec->flags, fields, c_index_spec->numFields, &callbacks, c_index_spec);
+   rm_free(fields);
+   SearchDisk_CompleteLogicalOpen(result, c_index_spec);
+   SearchDisk_CheckOpenResult(ctx, result);
+```
+
+**File**: `src/search_disk_api.h` (modified, +3/-4)
+```diff
+@@ -338,14 +338,14 @@ typedef struct BasicDiskAPI {
+    * Consumes `rdbState` unconditionally — the state is freed by this call
+    * regardless of whether IndexSpec creation succeeds or fails. The caller
+    * MUST null its pointer after this call, on both paths.
++   * The caller has restored the dictionaries for all disk TAG fields.
+    *
+    * @param disk Pointer to the disk context
+    * @param indexName Name of the index
+    * @param obfuscatedName Obfuscated name of the index (for logging)
+    * @param obfuscatedNameLen Length of the obfuscated name
+    * @param type Document type for this index
+    * @param rdbState Temporary RDB state from loadRdbToTempObject (will be consumed)
+-   * @param tagCountsRestored Complete C-owned TAG dictionaries are ready for compaction updates.
+    * @param flags The index's `IndexSpec::flags`, as for openIndexSpec.
+    * @param fields Borrowed schema declarations, used to open CFs with their final options.
+    * @param numFields Number of declarations in fields.
+@@ -358,9 +358,8 @@ typedef struct BasicDiskAPI {
+   RedisSearchDiskIndexSpec *(*openIndexSpecWithRdbState)(
+       RedisModuleCtx *ctx, RedisSearchDisk *disk, const HiddenString *indexName,
+       const char *obfuscatedName, size_t obfuscatedNameLen, DocumentType type,
+-      RedisSearchDiskRdbState *rdbState, bool tagCountsRestored, IndexFlags flags,
+-      const SearchDiskField *fields, size_t numFields,
+-      const SearchDiskCompactionCallbacks *callbacks, void *private_data);
++      RedisSearchDiskRdbState *rdbState, IndexFlags flags, const SearchDiskField *fields,
++      size_t numFields, const SearchDiskCompactionCallbacks *callbacks, void *private_data);
+ 
+   /**
+    * @brief Free a temporary RDB state object.
+```
+
+**File**: `src/spec.c` (modified, +7/-17)
+```diff
+@@ -2573,7 +2573,6 @@ static void initializeIndexSpec(IndexSpec *sp, const HiddenString *name, IndexFl
+   sp->diskSpec = NULL;
+   sp->pendingDiskRdbState = NULL;
+   sp->diskRegistered = false;
+-  sp->tagDictionariesAvailable = true;
+   sp->resume_bg_indexing = false;
+   sp->monitorDocumentExpiration = RSGlobalConfig.monitorExpiration;
+   sp->monitorFieldExpiration = RSGlobalConfig.monitorExpiration &&
+@@ -3333,7 +3332,6 @@ void IndexSpec_RdbSave(RedisModuleIO *rdb, IndexSpec *sp, int contextFlags) {
+   // In a forked child the memory is a snapshot and no lock is needed.
+   const bool storeDiskRdbData = contextFlags & REDISMODULE_CTX_FLAGS_SST_RDB;
+   const bool saveDiskSpec = sp->diskSpec && storeDiskRdbData;
+-  const bool saveTagDictionaries = saveDiskSpec && sp->tagDictionariesAvailable;
+   const bool inMainProcess = !(contextFlags & REDISMODULE_CTX_FLAGS_IS_CHILD);
+   const bool needLock = saveDiskSpec && inMainProcess;
+   RedisModuleCtx *ctx = RedisModule_GetContextFromIO(rdb);
+@@ -3346,12 +3344,8 @@ void IndexSpec_RdbSave(RedisModuleIO *rdb, IndexSpec *sp, int contextFlags) {
+   HiddenString_SaveToRdb(sp->specName, rdb);
+   RedisModule_SaveUnsigned(rdb, (uint64_t)sp->flags);
+   RedisModule_SaveUnsigned(rdb, sp->numFields);
+-  if (saveDiskSpec) {
+-    // One availability flag governs all TAG dictionary payloads in the field records.
+-    RedisModule_SaveUnsigned(rdb, saveTagDictionaries);
+-  }
+   for (int i = 0; i < sp->numFields; i++) {
+-    FieldSpec_RdbSave(rdb, &sp->fields[i], contextFlags, saveTagDictionaries, needLock);
++    FieldSpec_RdbSave(rdb, &sp->fields[i], contextFlags, saveDiskSpec, needLock);
+   }
+ 
+   SchemaRule_RdbSave(sp->rule, rdb);
+@@ -3474,22 +3468,19 @@ IndexSpec *IndexSpec_RdbLoad(RedisModuleIO *rdb, int encver, bool useSst, QueryE
+   IndexSpec_MakeKeyless(sp);
+   RedisModule_Log(RSDummyContext, "notice", useSst ? "Loading RDB for IndexSpec with SST flag": "Loading RDB for IndexSpec without SST flag");
+   loadDiskSpec = isSpecOnDisk(sp) && useSst;
+-  if (loadDiskSpec) {
+-    uint64_t available = 0;
+-    if (encver >= INDEX_SST_TAG_VALUES_VERSION) {
+-      available = LoadUnsigned_IOError(rdb, goto cleanup);
+-      if (available > 1) goto cleanup;
+-    }
+-    sp->tagDictionariesAvailable = available != 0;
+-  }
+-  loadTagDictionaries = loadDiskSpec && sp->tagDictionariesAvailable;
++  loadTagDictionaries = loadDiskSpec && encver >= INDEX_SST_TAG_VALUES_VERSION;
+   for (int i = 0; i < sp->numFields; i++) {
+     FieldSpec *fs = sp->fields + i;
+     if (FieldSpec_RdbLoad(rdb, fs, spec_ref, encver, useSst, loadTagDictionaries) !=
+         REDISMODULE_OK) {
+       QueryError_SetWithUserDataFmt(status, QUERY_ERROR_CODE_PARSE_ARGS, "Failed to load index field", " %d", i);
+       goto cleanup;
+     }
++    if (loadDiskSpec && FIELD_IS(fs, INDEXFLD_T_TAG) && !loadTagDictionaries) {
++      QueryError_SetError(status, QUERY_ERROR_CODE_PARSE_ARGS,
++                          "SST RDB is missing the TAG dictionary for a disk index");
++      goto cleanup;
++    }
+     if (fs->ftId != RS_INVALID_FIELD_ID) {
+       // Prefer not to rely on the ordering of fields in the RDB file
+       *array_ensure_at(&sp->fieldIdToIndex, fs->ftId, t_fieldIndex) = fs->index;
+@@ -3685,7 +3676,6 @@ void *IndexSpec_LegacyRdbLoad(RedisModuleIO *rdb, int encver) {
+   sp->numSortableFields = 0;
+   sp->terms = NULL;
+   sp->docs = DocTable_New(INITIAL_DOC_TABLE_SIZE);
+-  sp->tagDictionariesAvailable = true;
+   // IndexSpec_Free clears it, so it must be valid before the first failed read below.
+   sp->stats.indexError = IndexError_Init();
+ 
+```
+
+**File**: `src/spec.h` (modified, +0/-2)
+```diff
+@@ -387,8 +387,6 @@ typedef struct IndexSpec {
+   // replication ending. Vector index state is stored inline in each field.
+   RedisSearchDiskRdbState *pendingDiskRdbState;
+   bool diskRegistered;
+-  // Complete TAG dictionaries are available
+-  bool tagDictionariesAvailable;
+ 
+   // True when the SST+RDB stream indicated the source node was still
+   // background-indexing (scan in progress, or a previous scan failed on OOM)
+```
+
+**File**: `tests/cpptests/test_cpp_disk_open_fields.cpp` (modified, +46/-58)
+```diff
+@@ -71,7 +71,6 @@ class DiskSchemaOpenTest : public ::testing::Test {
+   static inline int closeIndexSpecCalls = 0;
+   static inline int rdbStateToken = 0;
+   static inline SearchDiskCompactionCallbacks compactionCallbacks{};
+-  static inline bool restoredTagCounts = false;
+ 
+   static bool recordSchema(RedisModuleCtx *ctx, void *privateData, IndexFlags flags,
+                            const SearchDiskField *fields, size_t n) {
+@@ -140,10 +139,9 @@ class DiskSchemaOpenTest : public ::testing::Test {
+     };
+     api.basic.openIndexSpecWithRdbState =
+         [](RedisModuleCtx *ctx, RedisSearchDisk *, const HiddenString *, const char *, size_t,
+-           DocumentType, RedisSearchDiskRdbState *state, bool tagCountsRestored, IndexFlags flags,
++           DocumentType, RedisSearchDiskRdbState *state, IndexFlags flags,
+            const SearchDiskField *fields, size_t n, const SearchDiskCompactionCallbacks *,
+            void *privateData) {
+-          restoredTagCounts = tagCountsRestored;
+           EXPECT_EQ(state, reinterpret_cast<RedisSearchDiskRdbState *>(&rdbStateToken));
+           events.emplace_back("openIndexWithRdbState");
+           return recordSchema(ctx, privateData, flags, fields, n)
+@@ -627,29 +625,27 @@ class DiskTagPersistenceTest : public DiskSchemaOpenTest {
+     io = RMCK_CreateRdbIO();
+   }
+ 
+-  IndexSpec *saveSource(bool tagDictionariesAvailable = true) {
++  IndexSpec *saveSource(int contextFlags = REDISMODULE_CTX_FLAGS_SST_RDB) {
+     QueryError err = QueryError_Default();
+     IndexSpec *sp = create("tag_sst_counts", {"first", "TAG", "second", "TAG"}, &err);
+     EXPECT_NE(sp, nullptr) << QueryError_GetUserError(&err);
+     if (!sp) return nullptr;
+     const char *tags[] = {"hello", "world", ""};
+     TagIndex_Commit(TagIndex_Open(&sp->fields[0]), tags, 3, &sp->stats);
+     TagIndex_Commit(TagIndex_Open(&sp->fields[0]), tags, 1, &sp->stats);
+-    sp->tagDictionariesAvailable = tagDictionariesAvailable;
+-    IndexSpec_RdbSave(io, sp, REDISMODULE_CTX_FLAGS_SST_RDB);
++    IndexSpec_RdbSave(io, sp, contextFlags);
+     return sp;
+   }
+ 
+   void skipRdbString() {
+     RedisModule_Free(RMCK_LoadStringBuffer(io, nullptr));
+   }
+ 
+-  size_t tagDictionaryFlagOffset() {
++  void skipIndexHeader() {
+     io->read_pos = 0;
+     skipRdbString();        // Index name
+     RMCK_LoadUnsigned(io);  // Index flags
+     RMCK_LoadUnsigned(io);  // Number of fields
+-    return io->read_pos;
+   }
+ 
+   // Advance over the schema for one TAG field in this fixture.
+@@ -678,6 +674,15 @@ class DiskTagPersistenceTest : public DiskSchemaOpenTest {
+     EXPECT_EQ(io->read_pos, io->buffer.size());
+   }
+ 
++  void expectLoadError(int version, const char *message) {
++    QueryError err = QueryError_Default();
++    loaded = IndexSpec_RdbLoad(io, version, true, &err);
++    EXPECT_EQ(loaded, nullptr);
++    EXPECT_EQ(QueryError_GetCode(&err), QUERY_ERROR_CODE_PARSE_ARGS);
++    EXPECT_NE(std::string(QueryError_GetUserError(&err)).find(message), std::string::npos);
++    QueryError_ClearError(&err);
++  }
++
+   void TearDown() override {
+     if (loaded) {
+       if (loaded->diskSpec) SearchDisk_CloseIndexOnMainThread(RSDummyContext, loaded);
+@@ -693,7 +698,6 @@ TEST_F(DiskTagPersistenceTest, CountsSurviveLoadingAndStorageBinding) {
+   discardSource();
+   load(INDEX_CURRENT_VERSION);
+   ASSERT_NE(loaded, nullptr);
+-  EXPECT_TRUE(loaded->tagDictionariesAvailable);
+   auto *idx = TagIndex_Open(&loaded->fields[0]);
+   ASSERT_NE(idx, nullptr);
+   EXPECT_TRUE(idx->valuesAreCounts);
+@@ -703,7 +707,6 @@ TEST_F(DiskTagPersistenceTest, CountsSurviveLoadingAndStorageBinding) {
+   EXPECT_EQ(reinterpret_cast<uintptr_t>(TrieMap_Find(idx->values, "", 0)), 1u);
+   EXPECT_EQ(TagIndex_NUniqueValues(TagIndex_Open(&loaded->fields[1])), 0u);
+   ASSERT_TRUE(IndexSpec_SSTRdbOpenAndApply(RSDummyContext, loaded));
+-  EXPECT_TRUE(restoredTagCounts);
+   EXPECT_EQ(TagIndex_Open(&loaded->fields[0]), idx);
+   EXPECT_EQ(idx->diskSpec, loaded->diskSpec);
+ }
+@@ -716,73 +719,58 @@ TEST_F(DiskTagPersistenceTest, UnboundCountDictionariesCanBeDiscarded) {
+   EXPECT_EQ(loaded->diskSpec, nullptr);
+ }
+ 
+-TEST_F(DiskTagPersistenceTest, LegacyPayloadRemainsUnavailableAfterAnotherSave) {
+-  ASSERT_NE(saveSource(false), nullptr);
+-  const size_t offset = tagDictionaryFlagOffset();
+-  ASSERT_LE(offset + sizeof(uint64_t), io->buffer.size());
+-  io->buffer.erase(io->buffer.begin() + offset, io->buffer.begin() + offset + sizeof(uint64_t));
++TEST_F(DiskTagPersistenceTest, RestoredTagQueriesRequireExactValues) {
++  ASSERT_NE(saveSource(), nullptr);
+   discardSource();
+-  load(INDEX_SST_TAG_VALUES_VERSION - 1);
+-  ASSERT_NE(loaded, nullptr);
+-  EXPECT_FALSE(loaded->tagDictionariesAvailable);
+-  ASSERT_TRUE(IndexSpec_SSTRdbOpenAndApply(RSDummyContext, loaded));
+-  EXPECT_FALSE(restoredTagCounts);
+-  {
+-    Restore unstable{RSGlobalConfig.enableUnstableFeatures};
+-    RSGlobalConfig.enableUnstableFeatures = true;
+-    RedisSearchCtx sctx = SEARCH_CTX_STATIC(RSDummyContext, lo
+```
+
+**File**: `tests/cpptests/test_cpp_sst_finish_replication.cpp` (modified, +3/-3)
+```diff
+@@ -61,8 +61,8 @@ class SSTFinishReplicationTestBase : public ::testing::Test {
+     api.basic.updateMemoryLimit = [](RedisSearchDisk *, size_t, size_t) { return true; };
+     api.basic.openIndexSpecWithRdbState =
+         [](RedisModuleCtx *, RedisSearchDisk *, const HiddenString *, const char *, size_t,
+-           DocumentType, RedisSearchDiskRdbState *, bool, IndexFlags, const SearchDiskField *,
+-           size_t, const SearchDiskCompactionCallbacks *, void *privateData) {
++           DocumentType, RedisSearchDiskRdbState *, IndexFlags, const SearchDiskField *, size_t,
++           const SearchDiskCompactionCallbacks *, void *privateData) {
+           ++opens[privateData];
+           return reinterpret_cast<RedisSearchDiskIndexSpec *>(privateData);
+         };
+@@ -106,7 +106,7 @@ TEST_F(SSTFinishReplicationTestBase, FailedOpenAbortsCompletion) {
+   stageSpec("sst_finish_open_failure");
+   api.basic.openIndexSpecWithRdbState =
+       [](RedisModuleCtx *, RedisSearchDisk *, const HiddenString *, const char *, size_t,
+-         DocumentType, RedisSearchDiskRdbState *, bool, IndexFlags, const SearchDiskField *, size_t,
++         DocumentType, RedisSearchDiskRdbState *, IndexFlags, const SearchDiskField *, size_t,
+          const SearchDiskCompactionCallbacks *,
+          void *) { return static_cast<RedisSearchDiskIndexSpec *>(nullptr); };
+   Restore<decltype(RedisModule_GetContextFlags)> flags{RedisModule_GetContextFlags};
+```
+
+---
+
+### Incident Patch 3: `80a68c76` (2026-11-19)
+**Commit Message**: [MOD-20897] Name RHEL 10 build artifacts rhel10 (#12322)
+
+get-platform mapped rocky8/rocky9 to rhel8/rhel9 but had no rocky10 entry,
+so Rocky Linux 10 builds were published as Linux-rocky10-*. Redis Enterprise
+consumes the rhel10 name, as it does rhel9 today.
+
+RHEL images (ID=rhel, e.g. UBI or rs-devcontainer) report a minor
+VERSION_ID, which leaked into the name (rhel10.0, rhel9.9). Strip it, as
+RediSearchEnterprise's get-platform already does for rhel8/rhel9.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `sbin/get-platform` (modified, +6/-0)
+```diff
+@@ -137,8 +137,14 @@ def map_version_artifact(osnick):
+         "ol8": "rhel8",
+         "rocky8": "rhel8",
+         "rocky9": "rhel9",
++        "rocky10": "rhel10",
+     }
+ 
++    # RHEL images report ID=rhel with a minor VERSION_ID (e.g. rhel10.0); keep the
++    # artifact name stable across minor updates.
++    if osnick.startswith("rhel") and "." in osnick:
++        return osnick.split(".", 1)[0]
++
+     # Special mapping: any alpine3.x → alpine3
+     if osnick.startswith("alpine3") or osnick.startswith("NotpineForGHA3"):
+         return "alpine3"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12412** (2026-11-18): [8.10-rse] [MOD-21162] Fix missing, duplicate and stale search results on a Flex replica after a sync without SST (@redisearch-backport-pull-request[bot])
-- **PR #12411** (closed): [8.8-rse] [MOD-21162] Fix missing, duplicate and stale search results on a Flex replica after a sync without SST (@redisearch-backport-pull-request[bot])
-- **PR #12402** (2026-11-18): numeric top-k: drop redundant state and arguments (@JonasKruckenberg)
-- **PR #12400** (2026-11-18): numeric top-k: report the plan's Optimizer mode in the profile (@JonasKruckenberg)
-- **PR #12399** (2026-11-18): iterators_ffi: share SkipTo clearing and the timeout granularity (@JonasKruckenberg)
-- **PR #12398** (closed): [MOD-12200] Add RDB persistence for disk TAG counts (@nonirosenfeldredis)
+- **PR #12449** (closed): [MOD-14129] Temporarily revert disk TAG dictionary persistence (@nonirosenfeldredis)
+- **PR #12448** (2026-11-20): Bump version from 8.12.1 to 8.12.2 (@oshadmi)
+- **PR #12444** (2026-11-19): CI: pin cargo-deny to 0.21.0 in the lint job (@oshadmi)
+- **PR #12442** (2026-11-19): [MOD-14129] Always require TAG dictionaries when restoring Flex indexes from SST (@nonirosenfeldredis)
+- **PR #12438** (2026-11-19): [MOD-21414] Test restoring an aliased index that is already registered (@kei-nan)
+- **PR #12433** (2026-11-19): [8.12] [MOD-21404] CI: install LLVM 21 from EL8 AppStream and EL9 EPEL to keep LTO on Rocky/Alma (@oshadmi)
 
 ---
 
@@ -2037,29 +2647,51 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. iterators_ffi: share SkipTo clearing and the timeout granularity
+## X. [MOD-15594] Fix crash on documents with more than 65536 fields
 
 **RULE**:
-When implementing operations in `src/redisearch_rs/c_entrypoint/iterators_ffi/src/geo_shape.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rwnqqozrprn`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a9794e0b`: iterators_ffi: share SkipTo clearing and the timeout granularity. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `20c75192`: [MOD-15594] Fix crash on documents with more than 65536 fields. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/redisearch_rs/c_entrypoint/iterators_ffi/src/geo_shape.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rwnqqozrprn`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::TIMEOUT_CHECK_GRANULARITY;
+
+                   SSUUMMMMAARRYY OOFF LLEESSSS CCOOMMMMAANNDDSS
+
+      Commands marked with * may be preceded by a number, _N.
+      Notes in parentheses indicate the behavior if _N is given.
+      A key preceded by a caret indicates the Ctrl key; thus ^K is ctrl-K.
+
+  h  H                 Display this help.
+  q  :q  Q  :Q  ZZ     Exit.
+ ---------------------------------------------------------------------------
+
+                           MMOOVVIINNGG
+
+  e  ^E  j  ^N  CR  *  Forward  one line   (or _N lines).
+  y  ^Y  k  ^K  ^P  *  Backward one line   (or _N lines).
+  f  ^F  ^V  SPACE  *  Forward  one window (or _N lines).
+  b  ^B  ESC-v      *  Backward one window (or _N lines).
+  z                 *  Forward  one window (and set window to _N).
+  w                 *  Backward one window (and set window to _N).
+  ESC-SPACE         *  Forward  one window, but don't stop at end-of-file.
+  d  ^D             *  Forward  one half-window (and set half-window to _N).
+  u  ^U             *  Backward one half-window (and set half-window to _N).
+  ESC-)  RightArrow *  Right one half screen width (or _N positions).
+  ESC-(  LeftArrow  *  Left  one half
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-/// Probe the query deadline once every this many candidate documents.
-const TIMEOUT_CHECK_GRANULARITY: u32 = 100;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a9794e0b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `20c75192` are properly handled with clean fallback behavior.
