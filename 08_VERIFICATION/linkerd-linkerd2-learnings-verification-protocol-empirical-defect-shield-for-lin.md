@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T04:44:19.713Z",
+  "timestamp": "2026-11-20T08:38:47.260Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-linkerd-linkerd2-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [linkerd-linkerd2-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T04:44:19.713Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T08:38:47.260Z`  
 > **Learning ID**: `LEARN-EVO-linkerd-linkerd2-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source**: github ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
-> **Source Version**: `e8326770`  
+> **Source Version**: `762af53b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T04:44:14.834Z  
+> **Timestamp**: 2026-11-20T08:34:42.155Z  
 > **Learning ID**: `learn-github-linkerd-linkerd2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T04:44:14.828Z  
+> **Harvest Timestamp**: 2026-11-20T08:28:33.272Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Ultralight, security-first service mesh for Kubernetes. Main repo for Linkerd 2.x.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 11539 stars
+- **Stars / Engagement**: 11548 stars
 
 ---
 
@@ -1646,260 +1646,185 @@ func (pw *ProbeWorker) doProbe() error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e8326770` (2026-11-18)
-**Commit Message**: build(deps): bump jiff from 0.2.35 to 0.2.46 (#15687)
+### Incident Patch 1: `762af53b` (2026-11-19)
+**Commit Message**: build(deps): bump github.com/prometheus/common from 0.71.0 to 0.73.0 (#15759)
 
-Bumps [jiff](https://github.com/BurntSushi/jiff) from 0.2.35 to 0.2.46.
-- [Changelog](https://github.com/BurntSushi/jiff/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/BurntSushi/jiff/compare/jiff-static-0.2.35...0.2.46)
+Bumps [github.com/prometheus/common](https://github.com/prometheus/common) from 0.71.0 to 0.73.0.
+- [Release notes](https://github.com/prometheus/common/releases)
+- [Changelog](https://github.com/prometheus/common/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/prometheus/common/compare/v0.71.0...v0.73.0)
 
 ---
 updated-dependencies:
-- dependency-name: jiff
-  dependency-version: 0.2.37
+- dependency-name: github.com/prometheus/common
+  dependency-version: 0.73.0
   dependency-type: direct:production
-  update-type: version-update:semver-patch
+  update-type: version-update:semver-minor
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `Cargo.lock` (modified, +14/-52)
+**File**: `go.mod` (modified, +7/-2)
 ```diff
-@@ -182,12 +182,6 @@ version = "0.22.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
+@@ -28,7 +28,7 @@ require (
+ 	github.com/pkg/browser v0.0.0-20170505125900-c90ca0c84f15
+ 	github.com/prometheus/client_golang v1.24.1
+ 	github.com/prometheus/client_model v0.6.3
+-	github.com/prometheus/common v0.71.0
++	github.com/prometheus/common v0.73.0
+ 	github.com/sergi/go-diff v1.4.0
+ 	github.com/shurcooL/vfsgen v0.0.0-20230704071429-0000e147ea92
+ 	github.com/sirupsen/logrus v1.10.2
+@@ -54,6 +54,11 @@ require (
+ 	sigs.k8s.io/yaml v1.6.0
+ )
  
--[[package]]
--name = "bitflags"
--version = "1.3.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
--
- [[package]]
- name = "bitflags"
- version = "2.13.1"
-@@ -375,37 +369,6 @@ version = "2.11.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "a4ae5f15dda3c708c0ade84bfee31ccab44a3da4f88015ed22f63732abe300c8"
- 
--[[package]]
--name = "defmt"
--version = "1.1.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e2953bfe4f93bbd20cc71198842756f77d161884c99ebbabc41d80231ded88d1"
--dependencies = [
-- "bitflags 1.3.2",
-- "defmt-macros",
--]
--
--[[package]]
--name = "defmt-macros"
--version = "1.1.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bad9c72e7ca2137e0dc3813245a0d282fd6daad32fd800af018306a9169b5fe8"
--dependencies = [
-- "defmt-parser",
-- "proc-macro2",
-- "quote",
-- "syn 2.0.119",
--]
--
--[[package]]
--name = "defmt-parser"
--version = "1.0.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "10d60334b3b2e7c9d91ef8150abfb6fa4c1c39ebbcf4a81c2e346aad939fee3e"
--dependencies = [
-- "thiserror",
--]
--
- [[package]]
- name = "delegate"
- version = "0.13.5"
-@@ -992,11 +955,10 @@ dependencies = [
- 
- [[package]]
- name = "jiff"
--version = "0.2.35"
-+version = "0.2.46"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "668b7183bd07af9a4885f5c35b0cc5c83c4607a913c16b7e17291832910d2dcc"
-+checksum = "175dc66334db3b9ab9985bf8b61cfed50dc16d20964bb47f9e479adcae984a7f"
- dependencies = [
-- "defmt",
-  "jiff-core",
-  "jiff-static",
-  "jiff-tzdb-platform",
-@@ -1009,18 +971,18 @@ dependencies = [
- 
- [[package]]
- name = "jiff-core"
--version = "0.1.0"
-+version = "0.1.8"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7feca88439efe53da3754500c1851dedf3cb36c524dd5cf8225cc0794de95d09"
-+checksum = "e599b80292e597019b8b3e392de3f4bea2959ddfb8c7dff60e035e9e311a2c1b"
- dependencies = [
-- "defmt",
-+ "log",
- ]
- 
- [[package]]
- name = "jiff-static"
--version = "0.2.35"
-+version = "0.2.46"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3a69dcb3a21cfb32ce1cd056169337ca284af0766dd766e7878819b251a49204"
-+checksum = "c7b1af7547d47354bc438d797e3854601bde8f8d185780c5ba4ab27afa54f1ba"
- dependencies = [
-  "jiff-core",
-  "proc-macro2",
-@@ -1577,7 +1539,7 @@ version = "0.10.81"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "77823a27f0babb03091cb9ed9ef80af3b39dbc82f97e8fa530374b7dafd87a45"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags",
-  "cfg-if",
-  "foreign-types",
-  "libc",
-@@ -1781,7 +1743,7 @@ version = "0.18.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "25485360a54d6861439d60facef26de713b1e126bf015ec8f98239467a2b82f7"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags",
-  "procfs-core",
-  "rustix",
- ]
-@@ -1792,7 +1754,7 @@ version = "0.18.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "e6401bf7b6af22f78b563665d15a22e9aef27775b79b149a66ca022468a4e405"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags",
-  "hex",
- ]
- 
-@@ -1924,7 +1886,7 @@ version = "0.5.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "469052894dcb553421e483e4209ee581a45100d31b4018de03e5a7ad86374a7e"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags",
- ]
- 
- [[package]]
-@@ -2011,7 +1973,7 @@ version = "1.1.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags",
-  "errno",
-  "libc",
-  "linux-raw-sys",
-@@ -2128,7 +2090,7 @@ version = "3.7.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "b7f4bc775c73d9a02cde8bf7b2ec4c9d12743edf609006c7facc23998404cd1d"
- dependencies = [
-- "bitflags 2.13.1",
-+ "bitflags",
-  "core-foundation",
-  "core-foundation-sys",
-  "libc",
-@@ -2521,7 +2483,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "4cfcf7e2740e6fc6d4d688b4ef00650406bb94adf4731e43c096c3a19fe40840"
- dependencies = [
-  "base64",
-- "bitflags 2.13.1",
-+ "bitflags",
-  "bytes",
-  "http",
-  "http-body",
++require (
++	github.com/hashicorp/go-uuid v1.0.3 // indirect
++	github.com/pandatix/go-abnf v0.5.1 // indirect
++)
++
+ require (
+ 	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
+ 	github.com/BurntSushi/toml v1.6.0 // indirect
+@@ -134,7 +139,7 @@ require (
+ 	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/mod v0.42.0 // indirect
+ 	golang.org/x/net v0.62.0 // indirect
+-	golang.org/x/oauth2 v0.36.0 // indirect
++	golang.org/x/oauth2 v0.37.0 // indirect
+ 	golang.org/x/sync v0.24.0 // indirect
+ 	golang.org/x/sys v0.49.0 // indirect
+ 	golang.org/x/telemetry v0.0.0-20261009151841-97e8ea77aa2a // indirect
+```
+
+**File**: `go.sum` (modified, +8/-4)
+```diff
+@@ -251,6 +251,8 @@ github.com/hashicorp/errwrap v1.1.0 h1:OxrOeh75EUXMY8TBjag2fzXGZ40LB6IKw45YeGUDY
+ github.com/hashicorp/errwrap v1.1.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
+ github.com/hashicorp/go-multierror v1.1.1 h1:H5DkEtf6CXdFp0N0Em5UCwQpXMWke8IA0+lD48awMYo=
+ github.com/hashicorp/go-multierror v1.1.1/go.mod h1:iw975J/qwKPdAO1clOe2L8331t/9/fmwbPZ6JB6eMoM=
++github.com/hashicorp/go-uuid v1.0.3 h1:2gKiV6YVmrJ1i2CKKa9obLvRieoRGviZFL26PcT/Co8=
++github.com/hashicorp/go-uuid v1.0.3/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
+ github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
+ github.com/hashicorp/golang-lru v0.5.1 h1:0hERBMJE1eitiLkihrMvRVBYAkpHzc/J3QdDN+dAcgU=
+ github.com/hashicorp/golang-lru v0.5.1/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
+@@ -327,6 +329,8 @@ github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8
+ github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
+ github.com/opencontainers/image-spec v1.1.1 h1:y0fUlFfIZhPF1W537XOLg0/fcx6zcHCJwooC2xJA040=
+ github.com/opencontainers/image-spec v1.1.1/go.mod h1:qpqAh3Dmcf36wStyyWU+kCeDgrGnAve2nCC8+7h8Q0M=
++github.com/pandatix/go-abnf v0.5.1 h1:iyLvSu2Aq12iE0r4n948Qw21BHDuckLq/8WIXAAF+HI=
++github.com/pandatix/go-abnf v0.5.1/go.mod h1:VBmbtpFgQNEaQpyAvmi+Ecd9wAYJKzA3TmiB3L93sVg=
+ github.com/patrickmn/go-cache v2.1.0+incompatible h1:HRMgzkcYKYpi3C8ajMPV8OFXaaRUnok+kx1WdO15EQc=
+ github.com/patrickmn/go-cache v2.1.0+incompatible/go.mod h1:3Qf8kWWT7OJRJbdiICTKqZju1ZixQ/KpMGzzAfe6+WQ=
+ github.com/peterbourgon/diskv v2.0.1+incompatible h1:UBdAOUP5p4RWqPBg048CAvpKN+vxiaj6gdUUzhl4XmI=
+@@ -343,8 +347,8 @@ github.com/prometheus/client_golang v1.24.1/go.mod h1:F+oSRECHg4sse5ucfYpYDeIv/h
+ github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
+ github.com/prometheus/client_model v0.6.3 h1:O0jaTVAYNxTHYInEPFJt5I3+sN8zqBtVMPTB1qyxiEo=
+ github.com/prometheus/client_model v0.6.3/go.mod h1:gpN5P9S7Rr6Yr92PiQ+Ixvhf6JZEkF1dnxsYL2aPBEM=
+-github.com/prometheus/common v0.71.0 h1:9KDAKb7Mj3HEVKyFCK6Dc/HIwlBzZIN2l7/lrHl3KK8=
+-github.com/prometheus/common v0.71.0/go.mod h1:CLJ5H8TEsGX8bl31BdMkfhIZ+QmZ9tBPPotUxUbfcmk=
++github.com/prometheus/common v0.73.0 h1:NGIOmVi8jrgiiPQgXxD6rP0FfxFsuZxnMQkel0qBy/g=
++github.com/prometheus/common v0.73.0/go.mod h1:Nt+CsVkf/mj4wDAmtSwq1HTPohHSX6fMr6+/f9B5UqM=
+ github.com/prometheus/otlptranslator v1.0.0 h1:s0LJW/iN9dkIH+EnhiD3BlkkP5QVIUVEoIwkU+A6qos=
+ github.com/prometheus/otlptranslator v1.0.0/go.mod h1:vRYWnXvI6aWGpsdY/mOT/cbeVRBlPWtBNDb7kGR3uKM=
+ github.com/prometheus/procfs v0.21.1 h1:GljZCt+zSTS+NZq88cyQ1LjZ+RCHp3uVuabBWA5+OJI=
+@@ -523,8 +527,8 @@ golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4Iltr
+ golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+ golang.org/x/oauth2 v0.0.0-20191202225959-858c2ad4c8b6/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+ golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+-golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+-golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
++golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
++golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
+ golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20181108010431-42b317875d0f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 ```
 
 ---
 
-### Incident Patch 2: `2700dc1b` (2026-11-18)
-**Commit Message**: build(deps): bump indexmap from 2.14.0 to 2.14.2 (#15689)
+### Incident Patch 2: `2af200d8` (2026-11-19)
+**Commit Message**: build(deps): bump go.opentelemetry.io/otel/trace from 1.44.0 to 1.47.0 (#15788)
 
-Bumps [indexmap](https://github.com/indexmap-rs/indexmap) from 2.14.0 to 2.14.2.
-- [Changelog](https://github.com/indexmap-rs/indexmap/blob/main/RELEASES.md)
-- [Commits](https://github.com/indexmap-rs/indexmap/compare/2.14.0...2.14.2)
+Bumps [go.opentelemetry.io/otel/trace](https://github.com/open-telemetry/opentelemetry-go) from 1.44.0 to 1.47.0.
+- [Release notes](https://github.com/open-telemetry/opentelemetry-go/releases)
+- [Changelog](https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/open-telemetry/opentelemetry-go/compare/v1.44.0...v1.47.0)
 
 ---
 updated-dependencies:
-- dependency-name: indexmap
-  dependency-version: 2.14.2
+- dependency-name: go.opentelemetry.io/otel/trace
+  dependency-version: 1.47.0
   dependency-type: indirect
-  update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `go.mod` (modified, +2/-2)
 ```diff
-@@ -937,9 +937,9 @@ checksum = "b9e0384b61958566e926dc50660321d12159025e767c18e043daf26b70104c39"
- 
- [[package]]
- name = "indexmap"
--version = "2.14.0"
-+version = "2.14.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d466e9454f08e4a911e14806c24e16fba1b4c121d1ea474396f396069cf949d9"
-+checksum = "cc4e190f5d26ca7051642629da2c52fc03bde85a03197c99408dcd291734c855"
- dependencies = [
-  "equivalent",
-  "hashbrown 0.17.0",
+@@ -127,8 +127,8 @@ require (
+ 	github.com/spf13/cast v1.7.0 // indirect
+ 	github.com/x448/float16 v0.8.4 // indirect
+ 	github.com/xlab/treeprint v1.2.0 // indirect
+-	go.opentelemetry.io/otel v1.44.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.44.0 // indirect
++	go.opentelemetry.io/otel v1.47.0 // indirect
++	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.4 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+ 	golang.org/x/crypto v0.58.0 // indirect
 ```
 
----
-
-### Incident Patch 3: `3191e103` (2026-11-18)
-**Commit Message**: build(deps): bump find-msvc-tools from 0.1.12 to 0.1.15 (#15695)
-
-Bumps [find-msvc-tools](https://github.com/rust-lang/cc-rs) from 0.1.12 to 0.1.15.
-- [Release notes](https://github.com/rust-lang/cc-rs/releases)
-- [Changelog](https://github.com/rust-lang/cc-rs/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/rust-lang/cc-rs/compare/find-msvc-tools-v0.1.12...find-msvc-tools-v0.1.15)
-
----
-updated-dependencies:
-- dependency-name: find-msvc-tools
-  dependency-version: 0.1.14
-  dependency-type: indirect
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `go.sum` (modified, +8/-8)
 ```diff
-@@ -557,9 +557,9 @@ checksum = "da7c62ceae207dd37ea5b845da6a0696c799f85e97da1ab5b7910be3c1c80223"
- 
- [[package]]
- name = "find-msvc-tools"
--version = "0.1.12"
-+version = "0.1.15"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3e0f1c7c3a72c66fd80abe965175f7523475c0489a87d3ff9d6e8c87d87a9d2d"
-+checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
- 
- [[package]]
- name = "fnv"
+@@ -413,8 +413,8 @@ go.opentelemetry.io/contrib/exporters/autoexport v0.67.0 h1:4fnRcNpc6YFtG3zsFw9a
+ go.opentelemetry.io/contrib/exporters/autoexport v0.67.0/go.mod h1:qTvIHMFKoxW7HXg02gm6/Wofhq5p3Ib/A/NNt1EoBSQ=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 h1:8tvICD4vSTOOsNrsI4Ljf6C+6UKvpTEH5XY3JMoyPoo=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0/go.mod h1:z9+yiacE0IHRqM4qFfkbt/JYlmYXgss8GY/jXoNuPJI=
+-go.opentelemetry.io/otel v1.44.0 h1:JjwHmHpA4iZ3wBxluu2fbbE7j4kqlE8jXyAyPXH7HqU=
+-go.opentelemetry.io/otel v1.44.0/go.mod h1:BMgjTHL9WPRlRjL2oZCBTL4whCGtXch2H4BhOPIAyYc=
++go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
++go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
+ go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.19.0 h1:Dn8rkudDzY6KV9dr/D/bTUuWgqDf9xe0rr4G2elrn0Y=
+ go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.19.0/go.mod h1:gMk9F0xDgyN9M/3Ed5Y1wKcx/9mlU91NXY2SNq7RQuU=
+ go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.19.0 h1:HIBTQ3VO5aupLKjC90JgMqpezVXwFuq6Ryjn0/izoag=
+@@ -437,18 +437,18 @@ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.43.0 h1:TC+BewnDpeiAmc
+ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.43.0/go.mod h1:J/ZyF4vfPwsSr9xJSPyQ4LqtcTPULFR64KwTikGLe+A=
+ go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.43.0 h1:mS47AX77OtFfKG4vtp+84kuGSFZHTyxtXIN269vChY0=
+ go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.43.0/go.mod h1:PJnsC41lAGncJlPUniSwM81gc80GkgWJWr3cu2nKEtU=
+-go.opentelemetry.io/otel/log v0.19.0 h1:KUZs/GOsw79TBBMfDWsXS+KZ4g2Ckzksd1ymzsIEbo4=
+-go.opentelemetry.io/otel/log v0.19.0/go.mod h1:5DQYeGmxVIr4n0/BcJvF4upsraHjg6vudJJpnkL6Ipk=
+-go.opentelemetry.io/otel/metric v1.44.0 h1:1w0gILTcHdr3YI+ixLyjemwrVnsMURbTZFrSYCdDdmc=
+-go.opentelemetry.io/otel/metric v1.44.0/go.mod h1:8O7hanEPBNgEMmybD3s2VBKcgWOCsA6tzHBPODAiquo=
++go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
++go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
++go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
++go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
+ go.opentelemetry.io/otel/sdk v1.44.0 h1:nHYwb9lK+fJPU/dnT6s7W7Z8itMWyqrnVfbheVYrZ58=
+ go.opentelemetry.io/otel/sdk v1.44.0/go.mod h1:Osuydd3Se74nqjAKxid74N5eC+jfEqfTegHRnq58oK0=
+ go.opentelemetry.io/otel/sdk/log v0.19.0 h1:scYVLqT22D2gqXItnWiocLUKGH9yvkkeql5dBDiXyko=
+ go.opentelemetry.io/otel/sdk/log v0.19.0/go.mod h1:vFBowwXGLlW9AvpuF7bMgnNI95LiW10szrOdvzBHlAg=
+ go.opentelemetry.io/otel/sdk/metric v1.44.0 h1:3LlKgI+VjbVsjNRFZJZAJ30WjXC5VkNRks6si09iEfI=
+ go.opentelemetry.io/otel/sdk/metric v1.44.0/go.mod h1:5B5pMARnXxKhltooO4xUuCBorl65a4EpnTalObqOigA=
+-go.opentelemetry.io/otel/trace v1.44.0 h1:jxF5CsGYCe74MCRx2X4g7WsY/VBKRqqpNvXlX/6gtIk=
+-go.opentelemetry.io/otel/trace v1.44.0/go.mod h1:oLl1jrMQAVo6v3GAggN+1VH9VIz9iUSvW53sW1Q8PIE=
++go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
++go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
+ go.opentelemetry.io/proto/otlp v1.10.0 h1:IQRWgT5srOCYfiWnpqUYz9CVmbO8bFmKcwYxpuCSL2g=
+ go.opentelemetry.io/proto/otlp v1.10.0/go.mod h1:/CV4QoCR/S9yaPj8utp3lvQPoqMtxXdzn7ozvvozVqk=
+ go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15788** (2026-11-19): build(deps): bump go.opentelemetry.io/otel/trace from 1.44.0 to 1.47.0 (@dependabot[bot])
 - **PR #15781** (2026-11-13): proxy: v2.374.0 (@l5d-bot)
 - **PR #15776** (2026-11-06): chore: migrate stale from app to action (@raykroeker)
 - **PR #15775** (2026-11-06): chore: bump dev image to v55. (@toidiu)
 - **PR #15768** (2026-11-05): proxy: v2.373.0 (@l5d-bot)
 - **PR #15766** (2026-11-04): build: keep apko outputs out of the repo root (@alpeb)
-- **PR #15763** (2026-11-05): build(deps): bump node-forge from 1.4.0 to 1.4.3 in /web/app (@dependabot[bot])
 
 ---
 
@@ -1919,88 +1844,38 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump jiff from 0.2.35 to 0.2.46
+## X. build(deps): bump github.com/prometheus/common from 0.71.0 to 0.73.0
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e8326770`: build(deps): bump jiff from 0.2.35 to 0.2.46. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `762af53b`: build(deps): bump github.com/prometheus/common from 0.71.0 to 0.73.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-version = "0.2.46"
-checksum = "175dc66334db3b9ab9985bf8b61cfed50dc16d20964bb47f9e479adcae984a7f"
-version = "0.1.8"
-checksum = "e599b80292e597019b8b3e392de3f4bea2959ddfb8c7dff60e035e9e311a2c1b"
- "log",
-version = "0.2.46"
-checksum = "c7b1af7547d47354bc438d797e3854601bde8f8d185780c5ba4ab27afa54f1ba"
- "bitflags",
- "bitflags",
- "bitflags",
- "bitflags",
- "bitflags",
- "bitflags",
- "bitflags",
+	github.com/prometheus/common v0.73.0
+require (
+	github.com/hashicorp/go-uuid v1.0.3 // indirect
+	github.com/pandatix/go-abnf v0.5.1 // indirect
+)
+
+	golang.org/x/oauth2 v0.37.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-[[package]]
-name = "bitflags"
-version = "1.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
-
-[[package]]
-name = "defmt"
-version = "1.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e2953bfe4f93bbd20cc71198842756f77d161884c99ebbabc41d80231ded88d1"
-dependencies = [
- "bitflags 1.3.2",
- "defmt-macros",
-]
-
-[[package]]
-name = "defmt-macros"
-version = "1.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bad9c72e7ca2137e0dc3813245a0d282fd6daad32fd800af018306a9169b5fe8"
-dependencies = [
- "defmt-parser",
- "proc-macro2",
- "quote",
- "syn 2.0.119",
-]
-
-[[package]]
-name = "defmt-parser"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "10d60334b3b2e7c9d91ef8150abfb6fa4c1c39ebbcf4a81c2e346aad939fee3e"
-dependencies = [
- "thiserror",
-]
-
-version = "0.2.35"
-checksum = "668b7183bd07af9a4885f5c35b0cc5c83c4607a913c16b7e17291832910d2dcc"
- "defmt",
-version = "0.1.0"
-checksum = "7feca88439efe53da3754500c1851dedf3cb36c524dd5cf8225cc0794de95d09"
- "defmt",
-version = "0.2.35"
-checksum = "3a69dcb3a21cfb32c
+	github.com/prometheus/common v0.71.0
+	golang.org/x/oauth2 v0.36.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e8326770` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `762af53b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

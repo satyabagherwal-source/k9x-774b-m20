@@ -11504,3 +11504,6 @@
 | `CYCLE-20261120-0DB0` | `2026-11-20T07:36:01.116Z` | `JuulLabs/kable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9541` | Yes (`af7bab64...`) |
 | `CYCLE-20261120-0ERR` | `2026-11-20T07:36:03.015Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9542` | Yes (`c53b7789...`) |
 | `CYCLE-20261120-0DA1` | `2026-11-20T08:04:00.697Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`d175b4f5...`) |
+| `CYCLE-20261120-X7OY` | `2026-11-20T08:29:33.106Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md` | Yes (`b3ff569e...`) |
+| `CYCLE-20261120-3UVZ` | `2026-11-20T08:34:43.103Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9543` | Yes (`38842935...`) |
+| `CYCLE-20261120-90CG` | `2026-11-20T08:38:43.456Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9544` | Yes (`a384e31d...`) |

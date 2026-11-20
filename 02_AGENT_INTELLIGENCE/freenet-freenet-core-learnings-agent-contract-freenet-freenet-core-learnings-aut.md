@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T15:51:41.087Z",
+  "timestamp": "2026-11-20T08:38:47.942Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-freenet-freenet-core-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [freenet-freenet-core-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T15:51:41.087Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T08:38:47.942Z`  
 > **Learning ID**: `LEARN-EVO-freenet-freenet-core-learnings`
 
 
@@ -26,10 +26,10 @@ PROVENANCE_END -->
 ## 2. Operational Capabilities
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `6e7fbbd6`  
+> **Source Version**: `3965e511`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T15:51:32.214Z  
+> **Timestamp**: 2026-11-20T08:29:32.628Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,7 +43,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T15:51:32.208Z  
+> **Harvest Timestamp**: 2026-11-20T08:28:36.331Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -53,7 +53,7 @@ PROVENANCE_END -->
 - **Description**: Declare your digital independence
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3127 stars
+- **Stars / Engagement**: 3130 stars
 
 ---
 
@@ -1764,11 +1764,14 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6258** (2026-11-17): **test(quic): pin the crash-breaker marker lock and correct its doc**
-  *Symptoms*: ## Problem  Two leftovers from the review of #6256: - `MARKER_UPDATE` orders the Windows short-run clear and the endpoint-death record, so that in either order the death record survives to the next start. Deleting either lock left every behaviour test green, because a single-threaded test cannot interleave the two writers. - The lock's doc said it covered each read-and-change of the marker. Arming and the Windows panic-hook write do not take it.  ## Approach  Test and documentation only; no behaviour change.  - A source pin, `the_marker_update_lock_is_taken_by_the_clear_and_the_record`, checks that both writers take the lock before reading the marker: `short_runs::clear_short_run`, and both write paths of `note_endpoint_down_exit_with`. - The lock's doc now says it orders exactly those two writers, and why the others do not need it:   - arming, and a death recorded before arming, are ordered by `PENDING`, and the clear timer starts only after arming;   - the Windows panic hook takes no lock. A caught socket-adapter panic writes before the endpoint goes down; an unrelated QUIC panic at the same moment could cost one free restart;   - a clean exit's clear does not run on a death. - A comment on `clear_short_run` notes that a clock stepped back during a run can date a death before the run's start. The clear then removes the marker, and that one death restarts the gateway without counting.  This does not change #6184. An earlier version of this PR also hardened the QUIC runtime a
+- **Issue #6302** (2026-11-20): **fix(transport): count QUIC inbound bytes in cumulative_bytes_received**
+  *Symptoms*: ## Problem  `cumulative_bytes_received` and the per-peer received counters were fed only by `record_packet_received`, called after legacy symmetric decryption. QUIC packets are decrypted inside quinn and never reach it, while QUIC sends are counted at the socket. After the QUIC data ramp hit 100% the dashboard download line, `bandwidth_history`, `network_status` and telemetry `cumulative_bytes_received` undercounted (fleet upload/download ratio 2.41).  ## Approach  **Source of the count.** quinn's `udp_rx` is incremented before decryption, so datagrams with a live connection ID and bad ciphertext would inflate it, which #3999 forbids. quinn exposes no post-decryption byte count, so `PathReport::report` instead reports the connection's stream-read bytes (`ConnRanges::read_bytes`, bytes quinn returned after authenticating them) through `TransportMetrics::record_quic_received`. That moves `cumulative_bytes_received` and the per-peer `bytes_received`, keyed by the normalized remote address. The sent side records the target it is given and the QUIC socket adapter normalizes addresses before quinn sees them, so the keys match.  **Unit difference.** The sent counter counts whole UDP datagrams at the socket. The new receive count is stream payload only: it excludes QUIC framing, acknowledgement-only packets and handshake datagrams (the sent side counts those). Measured on a 256 KiB transfer in the in-memory rig, datagram bytes were 1.040x the payload counted, so download is undercoun
+  **Post-Mortem & Fix Analysis**:
+  > <!-- claude-rule-review --> ### Rule Review: No blocking issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md, transport.md **Files reviewed:** 7  #### Warnings None.  - **Regression tests:** The `fix:` PR adds two regression tests.   - `received_wire_bytes_count_only_authenticated_reads` runs the real path lifecycle and injects forged datagrams with a live connection ID. It covers the #3999 pre-decrypt overcount.   - `a_path_report_counts_stream_reads_per_peer_on_ticks_and_cumulative_on_drop` covers the tick path, the final report, and no regrowth of the per-peer entry. - **Determinism:** The new tests use `GlobalRng::seed_guard(SEED)` and the pair's virtual `time.sleep`. No banned APIs were added. - **Cleanup/GC rules:** No new exemption logic was added. - **Documentation:** The PR adds a pattern entry to `bug-prevention-patterns.md`. The `quic_bytes_received` note in `transport.md` (about quinn's UDP counts) is about a different metric, so it isn't made stale.
+  > ## ⚠️ Extended Benchmark Regressions Detected  Some extended benchmarks show performance regressions.  **Note**: Extended benchmarks include high-latency and packet-loss scenarios which have higher variance than standard CI benchmarks.  [View full results](https://github.com/freenet/freenet-core/actions/runs/44655765836)  [View full benchmark summary](https://github.com/freenet/freenet-core/actions/runs/44655765836)
 
-- **Issue #6257** (2026-11-17): **feat(telemetry): per-path QUIC srtt and send-rate bucket gauges in the transport snapshot**
-  *Symptoms*: ## Problem The transport snapshot says how much QUIC paths lost but not how fast or how far away they are. Judging QUIC as the default (and the removal of UDP) needs the distribution of path round-trip times and send rates across the fleet, which the snapshot does not carry.  ## Approach Two gauge families, both of live QUIC paths that carry data (a path that carries none, such as an idle shadow path, is in neither, and a path that stops carrying leaves), moved at each acknowledgement-watch tick (about 2 s) and left when the path ends, as the existing `quic_loss_rate_<bucket>` gauges are. They live under the `loss` lock and in the same `PathLossWindow`, so a path is in at most one bucket of each and a snapshot reads them consistently; the bucket moves are their own critical section, not written together with a loss report's sums. Observe-only: no transport behaviour changes. - `quic_srtt_<bucket>`: quinn's `PathStats::rtt`. Buckets `lt_10ms`, `lt_25ms`, `lt_50ms`, `lt_100ms`, `lt_200ms`, `lt_400ms`, `ge_400ms`. - `quic_tx_bps_<bucket>`: UDP payload bits per second sent over the last tick. Buckets `lt_10kbps`, `lt_100kbps`, `lt_1mbps`, `lt_10mbps`, `lt_100mbps`, `ge_100mbps`. A tick of 0 ms leaves the path in its bucket.  `tx_bps` counts the datagram bytes quinn built (`udp_tx.bytes`): retransmissions, acknowledgements, padding and keepalives included. It is neither goodput nor capacity. These gauges describe path conditions; the speed of QUIC against UDP is answered from tran
+- **Issue #6301** (2026-11-20): **Dashboard and telemetry download counters miss all QUIC inbound bytes**
+  *Symptoms*: ## Problem  `cumulative_bytes_received` does not count bytes that arrive on QUIC paths. Every outbound datagram is counted at the socket (`transport.rs`, `send_to` and `try_send_to_mapped` call `record_packet_sent`), QUIC included. Inbound bytes are counted only by `record_packet_received`, whose only call sites are in the legacy UDP path after symmetric decryption (`connection_handler.rs`, the `PeerConnection::recv` path and the handshake completion ACK). QUIC packets are decrypted inside quinn and never reach it.  The QUIC data ramp has been at 100% since 2026-11-17 02:30 UTC, and legacy UDP now carries roughly a third of inbound packets, so most inbound traffic is missing from:  - the local dashboard's download line (`bandwidth_history.rs` samples `cumulative_bytes_received`) - `resource_utilization.cumulative_bytes_received` in telemetry - the dashboard's lifetime "downloaded" figure (`network_status.rs`)  Upload is unaffected.  ## Evidence  Fleet telemetry, 2026-11-18 00:00 to 2026-11-20 00:40 UTC, 1,672 nodes with at least 6 h of coverage: summed upload 9,472 GB/day, summed download 3,927 GB/day, a ratio of 2.41. Across a closed network every received byte was sent by someone, so a ratio that far from 1 points at the counters. Median per node: upload about 2.6 GB/day, download about 0.65 GB/day. No measurement from before the ramp is available for comparison, so the ratio alone does not prove the cause; the code paths above do.  ## Fix direction  Feed authenticated QUIC
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1785,738 +1788,372 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `01e05980` (2026-11-17)
-**Commit Message**: test(quic): pin the crash-breaker marker lock and correct its doc (#6258)
+### Incident Patch 1: `3965e511` (2026-11-20)
+**Commit Message**: fix(transport): count QUIC inbound bytes in cumulative_bytes_received (#6302)
 
-**File**: `crates/core/src/transport/quic/breaker.rs` (modified, +59/-5)
+**File**: `.claude/rules/bug-prevention-patterns.md` (modified, +21/-0)
 ```diff
-@@ -385,11 +385,25 @@ static PENDING: parking_lot::Mutex<Pending> = parking_lot::Mutex::new(Pending {
- /// start would restart the node without bound.
- static OVERRIDDEN: AtomicBool = AtomicBool::new(false);
- 
--/// Held across each read-and-change of this run's marker by the Windows
--/// short-run clear ([`short_runs`]) and by [`note_endpoint_down_exit`], so
--/// in either order the death record survives: a clear that comes first is
--/// followed by the record written again, and a record written first makes
--/// the clear leave the marker.
-+/// Orders exactly two writers of this run's marker: the Windows short-run
-+/// clear (`short_runs::clear_short_run`) and the endpoint-death record
-+/// ([`note_endpoint_down_exit_with`]). Each holds it across its
-+/// read-and-change, so in either order the death record survives: a clear
-+/// that comes first is followed by the record written again, and a record
-+/// written first makes the clear leave the marker. Pinned by
-+/// `the_marker_update_lock_is_taken_by_the_clear_and_the_record`.
-+///
-+/// The other writers do not take it, and it does not order them:
-+/// - arming ([`arm`]) runs under [`PENDING`], as does the record of a death
-+///   before arming, so those two are ordered by that lock instead, and the
-+///   clear timer starts only after arming;
-+/// - the Windows panic hook (`short_runs::mark_quic_panic`) takes no lock,
-+///   since it runs inside a panic. A caught socket-adapter panic marks the
-+///   marker before the endpoint goes down, so its write lands before the
-+///   death record; an unrelated QUIC panic on another thread at the same
-+///   moment could overwrite the record, which then costs one free restart;
-+/// - a clean exit's removal ([`clear_if_owned`]) does not run on a death,
-+///   which ends the process without a clean exit.
- pub(super) static MARKER_UPDATE: parking_lot::Mutex<()> = parking_lot::Mutex::new(());
- 
- /// The marker this process armed, as armed, for a Windows run that must
-@@ -1913,6 +1927,46 @@ mod tests {
-         }
+@@ -1209,3 +1209,24 @@ straddle a commit.
+ Audit question when touching the fan-out: *can this path send twice to one
+ peer for one contract inside the receiver's budget, and does every summary it
+ records come from the same read as the bytes it sent?*
++
++## A new transport whose bytes bypass the socket-layer counters
++
++Wire bytes are metered at two different layers. Sent bytes are counted at the
++socket (`record_packet_sent`, every transport). Received bytes are counted only
++after legacy symmetric decryption (`record_packet_received`). A transport that
++decrypts elsewhere (QUIC, inside quinn) is counted on send and missing on
++receive, so upload and download diverge with no error. #6301: once the QUIC
++data ramp reached 100%, the fleet upload/download ratio read 2.41.
++
++Fix shape: `recycle::PathReport::report` feeds the connection's authenticated
++stream-read byte count (`ConnRanges::read_bytes`) into
++`TransportMetrics::record_quic_received`. Do NOT use quinn's `udp_rx`: it is
++incremented before decryption, so a datagram with a live connection ID and bad
++ciphertext inflates it (#3999). The cost is a unit difference: payload only, not
++the whole datagram the sent side counts (about 4% on a bulk transfer, more for
++ack-only traffic). Never call `record_packet_received` for QUIC (double count).
++Audit question when adding a transport: *for each direction, where is it
++metered, and is it the same layer?* Pinned by
++`received_wire_bytes_count_only_authenticated_reads` (real path lifecycle, forged
++datagrams) and `a_path_report_counts_stream_reads_per_peer_on_ticks_and_cumulative_on_drop`.
+```
+
+**File**: `crates/core/src/transport/metrics.rs` (modified, +23/-0)
+```diff
+@@ -2874,6 +2874,29 @@ impl TransportMetrics {
+         self.record_per_peer(remote_addr, bytes, |s| &s.bytes_received);
      }
  
-+    /// Both writers [`MARKER_UPDATE`] orders take it before they read the
-+    /// marker. Deleting either lock leaves every behaviour test green (a
-+    /// single-threaded test cannot interleave them), so this pins the lines.
-+    #[test]
-+    fn the_marker_update_lock_is_taken_by_the_clear_and_the_record() {
-+        let flat = |src: &str, signature: &str| -> String {
-+            production_fn_body(src, signature)
-+                .lines()
-+                .map(|line| line.split_once("//").map_or(line, |(code, _)| code))
-+                .collect::<String>()
-+                .split_whitespace()
-+                .collect()
-+        };
-+        let clear = flat(include_str!("breaker/short_runs.rs"), "fn clear_short_run(");
-+        let lock = clear
-+            .find("let_update=super::MARKER_UPDATE.lock();")
-+            .expect("the clear takes the lock");
-+        let read = clear.find("read_previous(path)").expect("the read");
-+        assert!(lock < read, "before it reads the marker: {clear}");
-+        assert!(clear[lock..].contains("clear_if_owned(path,nonce)"));
-+
-+        let record = flat(
-+            include_str!("breaker.rs"),
-+            "fn note_endpoint_down_exit_with(",
-+        );
-+        let lock = record
-+            .find("let_update=MARKER_UPDATE.lock();")
-+            .expect("the record takes the lock");
-+        let armed = record
-+            .find("ifletSome((path,nonce))=armed{")
-+            .expect("the armed-marker path");
-+        let pending = record
-+            .find("letmutpending=pending.lock();")
-+            .expect("the pending-marker path");
-+        assert!(
-+            lock < armed && lock < pending,
-+            "before either write path: {record}"
-+        );
++    /// Record authenticated inbound QUIC stream payload bytes of one connection.
++    ///
++    /// QUIC packets are decrypted inside quinn and never reach
++    /// [`Self::record_packet_received`], so without this the download counters
++    /// miss every QUIC byte while [`Self::record_packet_sent`] counts QUIC
++    /// sends at the socket. `bytes` must come from data quinn returned after
++    /// authenticating it (stream reads), never from quinn's `udp_rx`, which
++    /// counts before decryption (#3999). `remote_addr` is `None` for a
++    /// connection that has ended: only the cumulative counter moves, so the
++    /// per-peer table does not regrow an entry for a peer that is gone. Skips
++    /// zero so an idle path does not churn the per-peer LRU. The packet count
++    /// is not moved: quinn exposes no authenticated packet count.
++    pub(crate) fn record_quic_received(&self, remote_addr: Option<SocketAddr>, bytes: u64) {
++        if bytes == 0 {
++            return;
++        }
++        self.cumulative_bytes_received
++            .fetch_add(bytes, Ordering::Relaxed);
++        if let Some(addr) = remote_addr {
++            self.record_per_peer(addr, bytes, |s| &s.bytes_received);
++        }
 +    }
 +
-     /// The Windows rewrite of a cleared marker is wired end to end: arming
-     /// keeps the marker as armed, and the endpoint-death record passes it on
-     /// off unix. Neither runs in a unix unit test (arming writes through
+     /// Read cumulative bytes downloaded without resetting counters.
+     pub fn cumulative_bytes_received(&self) -> u64 {
+         self.cumulative_bytes_received.load(Ordering::Relaxed)
 ```
 
-**File**: `crates/core/src/transport/quic/breaker/short_runs.rs` (modified, +5/-0)
+**File**: `crates/core/src/transport/quic/path.rs` (modified, +3/-1)
 ```diff
-@@ -501,6 +501,11 @@ fn in_quic_code() -> bool {
- /// (`super::endpoint_down_verdict`). Runs under [`super::MARKER_UPDATE`],
- /// which the record is written under too, so the two cannot interleave.
- /// Returns whether it removed the marker.
-+///
-+/// A clock stepped back during the run can date the death before
-+/// `started_at_secs`; the clear then takes it for an earlier run's and
-+/// removes the marker, so that death restarts the gateway once without
-+/// counting (`super::endpoint_down_verdict` applies the same test).
- fn clear_short_run(path: &Path, nonce: u64) -> std::io::Result<bool> {
-     let _update = super::MARKER_UPDATE.lock();
-     if let Previous::Marker(Marker::ShortRuns {
-```
-
----
-
-### Incident Patch 2: `6e7fbbd6` (2026-11-17)
-**Commit Message**: fix(connect): one survivor rule for native and UDP connections to one peer (gates 18-19) (#6255)
-
-**File**: `.claude/rules/transport.md` (modified, +42/-12)
-```diff
-@@ -521,9 +521,10 @@ dropped unanswered past the per-CONNECT cap on refused acceptors,
- turned its own native connects off,
- `connect_native_rescued_by_udp_{joiner,acceptor}` for each UDP dial after a
- failed native setup that connected (R5: a connection a node without UDP
--would not have made), `connect_native_both_dials_connected_kept_{udp,native}`
--for a native dial and the UDP dial beside it that both connected (the first
--kept), and the last offer as states
-+would not have made), `connect_native_both_dials_connected_{udp,native}_first`
-+for a native dial and the UDP dial beside it that both connected (the native
-+one kept), `connect_native_survivor_{swapped,udp_dropped}` for each
-+survivor-rule decision, and the last offer as states
- `connect_native_offer_{level,percent,ready}`; see
- `operations/connect/native.rs`) and the shadow-mode upgrade
- telemetry (below, "Upgrade telemetry"). Each label set is declared once in a
-@@ -2284,15 +2285,44 @@ Fallback: a failed native setup is followed by today's UDP dial to the same
-   it with the native dial, and not held back, which punched late. An
-   outcome answers only its own transport's callbacks, except that a kept
-   connection answers both dials' requesters, since all asked for a
--  connection to that peer (never answered Ok without a kept connection). If
--  both connect, the one established first is kept and the later one is
--  closed without touching the ring or the transient budget
--  (connect_native_both_dials_connected_kept_{udp,native}); whether the two
--  sides can disagree on which survives is open (design note 10.2 item 18).
--  A UDP dial beside a native one that fails never backs off (a 30 s backoff
--  would refuse the native dial's own fallback); while the native dial is
--  pending it also marks nothing, and once the native dial has ended without
--  a connection it takes the ordinary failure path apart from the backoff. A
-+  connection to that peer (never answered Ok without a kept connection).
-+  SURVIVOR RULE (design note 10.2 item 18): when a node holds, or is handed,
-+  a native and a UDP connection to one peer key, it keeps the native one,
-+  whichever came first and whether the UDP one was dialled or arrived
-+  inbound (matched key looked up by key, else the address:
-+  native_holds_peer), as long as the native entry is LIVE (heard from within
-+  identity::HOLD_WINDOW, 30 s). A quiet native entry (peer restarted, NAT
-+  rebound) does not hold the peer: the UDP connection takes the ordinary
-+  replace, or it would be refused until the 120 s QUIC idle timeout. Both
-+  ends apply the rule, so they normally agree with no message. Residual:
-+  each end judges liveness on its OWN receipt stamp, so a UDP connection
-+  arriving just as one end's native connection crosses HOLD_WINDOW can be
-+  kept at one end and dropped at the other; that needs the native
-+  connection silent for about two keepalive intervals (HOLD_WINDOW >= 2 x
-+  KEEPALIVE_INTERVAL is a const assert in identity.rs), so about two lost
-+  keepalives. Rare; a gate before native is enabled (design note 10.2 item
-+  18). Native second: replace_transport_in_place swaps only the
-+  transport (listener, sender, connection id, receipt, remote version) and
-+  keeps identity, ring membership, transient status, ReadyState,
-+  connected-since and health (no promotion, prune or budget call); the old
-+  listener's close carries the old id and is ignored. UDP second: dropped,
-+  nothing else touched. A native dial onto an entry bound to ANOTHER key
-+  takes the ordinary replace (the entry is stale). Two UDP connections keep
-+  the old later-replaces-earlier behaviour. record_success runs before any
-+  keep/swap/drop. A dropped UDP dial's requesters are answered with the
-+  native holder's address, and an unused reservation at the dial's own
-+  address is released. Counted: connect_native_survivor_{swapped,udp_dropped},
-+  connect_native_both_dials_connected_{udp,native}_first (beside pair only).
-+  One-sided native setups (one end connected, the other's setup failed;
-+  10.2 item 20) are NOT counted locally: no counter at one end can see them
-+  (a "native won then closed soon" counter was tried in #6255 and both
-+  missed them and counted unrelated closes). They are measured by joining
-+  both ends' setup outcomes by the CONNECT transaction (in simulation, the
-+  native wire trace's native_setup_pairs).
-+  A UDP dial beside a native one that fails while the native dial is
-+  pending neither backs off (a 30 s backoff would refuse the native dial's
-+  own fallback) nor marks anything; once the native dial has ended without
-+  a connection it takes the ordinary failure path, backoff included. A
-   native failure marks
-   no failed address and records no peer backoff, so the fallback is not
-   refused. Until UDP is removed a failed native setup never costs the join
-```
-
-**File**: `crates/core/src/node/network_bridge/in_memory.rs` (modified, +8/-0)
-```diff
-@@ -113,6 +113,12 @@ pub struct FaultInjectorState {
-     /// each with the bytes it has let through so far. Kept here rather than in
-     /// [`FaultConfig`], whose rules are values.
-     pub quic_datagram_cuts: Vec<(crate::simulation::QuicDatagramCut, u64)>,
-+    /// One-way delay added to every QUIC-class datagram
-+    /// (`SimNetwork::delay_quic_datagrams`), if any.
-+    pub quic_datagram_delay: Option<std::time::Duration>,
-+    /// One-way delay added to every legacy UDP intro datagram, the packets
-+    /// that open a UDP connection (`SimNetwork::delay_udp_intros`), if any.
-+    pub udp_intro_delay: Option<std::time::Duration>,
- }
- 
- impl FaultInjectorState {
-@@ -127,6 +133,8 @@ impl FaultInjectorState {
-             network_name: None,
-             enforce_fault_drops: false,
-             quic_datagram_cuts: Vec::new(),
-+            quic_datagram_delay: None,
-+            udp_intro_delay: None,
-         }
-     }
- 
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +17/-5)
-```diff
-@@ -564,6 +564,11 @@ struct ConnectionEntry {
-     /// `None` when the version wasn't exchanged (e.g. joiner->gateway path).
-     /// Used to gate version-dependent message types (e.g. SubscribeHint).
-     remote_version: Option<(u8, u8, u16)>,
-+    /// Whether this transport is a QUIC-native connection rather than a
-+    /// legacy UDP one. The survivor rule reads it: when a node holds, or is
-+    /// handed, a native and a UDP connection to one peer, it keeps the
-+    /// native one (`P2pConnManager::replace_transport_in_place`).
-+    native: bool,
- }
- 
- impl ConnectionEntry {
-@@ -1265,7 +1270,12 @@ impl P2pConnManager {
- 
-     /// Removes a transport from the connection map and the open-transport set.
-     fn remove_connection(&mut self, addr: SocketAddr) -> Option<ConnectionEntry> {
--        self.connections.remove(addr)
-+        let removed = self.connections.remove(addr);
-+        #[cfg(any(test, feature = "testing"))]
-+        if removed.is_some() {
-+            self.trace_transport(addr, None);
-+        }
-+        removed
-     }
- 
-     pub(in crate::node) fn listening_port(&self) -> u16 {
-@@ -3379,10 +3389,10 @@ struct EventListenerState {
-     /// remote peer's, so the bound is the dial's.
-     udp_beside_native: HashMap<SocketAddr, Vec<BesideUdpRequester>>,
-     /// Addresses whose UDP dial beside a still-pending native dial connected
--    /// first. If the native dial then connects too, its connection is closed
--    /// (the first established is kept) and counted as
--    /// `connect_native_both_dials_connected_kept_udp`. Cleared when the native
--    /// dial ends.
-+    /// first. If the native dial then connects too, it is swapped in for the
-+    /// UDP connection (the survivor rule keeps native) and counted as
-+    /// `connect_native_both_dials_connected_udp_first`. Cleared when the
-+    /// native dial ends.
-     beside_udp_connected: HashSet<SocketAddr>,
-     pending_op_results: HashMap<Transaction, Sender<WaiterReply>>,
-     /// Last time pending_op_results was scanned for closed senders.
-@@ -5895,6 +5905,7 @@ pub(crate) mod tests {
-                 created_at: Instant::now(),
-                 link_use: super::zombie_sweep::LinkUseStamp::new(Instant::now()),
-                 remote_version: None,
-+                native: false,
+@@ -1094,6 +1094,7 @@ impl QuicPath {
+         // carrying data while it is in the gauge.
+         let counted_as_data_path = Arc::new(std::sync::atomic::AtomicBool::new(false));
+         let ended_as_data_path = Arc::new(std::sync::atomic::AtomicBool::new(false));
++        let read_ranges = receiver.ranges();
+         #[cfg_attr(not(test), allow(unused_mut))]
+         let mut report = recycle::PathReport::new(
+             connection.inner().clone(),
+@@ -1104,7 +1105,8 @@ impl QuicPath {
+                 now: counted_as_data_path.clone(),
+                 at_end: ended_as_data_path.clone(),
              },
-         );
-         let (tx2, _rx2) = mpsc::channel(1);
-@@ -5908,6 +5919,7 @@ pub(crate) mod tests {
-                 created_at: Instant::now(),
-                 link_use: super::zombie_sweep::LinkUseStamp::new(Instant::now()),
-                 remote_version: None,
-+                native: false,
-             },
-         );
- 
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle.rs` (modified, +437/-116)
-```diff
-@@ -1247,6 +1247,37 @@ impl P2pConnManager {
-                     }
-                 };
- 
-+                // The survivor rule (`native_holds_peer`): an inbound UDP
-+                // connection from a peer a native connection holds is dropped,
-+                // leaving the native entry, the ring and the transient budget
-+                // untouched. The peer applies the same rule to its own copy
-+                // of this pair, so it normally keeps the native connection
-+                // too; see `native_holds_peer` for when the two ends can
-+                // decide differently.
-+                if let Some(holder) =
-+                    self.native_holds_peer(remote_addr, peer.as_ref().map(|p| p.pub_key()))
-+                {
-+                    tracing::info!(
-+                        remote = %remote_addr,
-+                        %holder,
-+                        transient,
-+                        transaction = ?transaction,
-+                        "Inbound UDP connection from a peer a native connection holds; \
-+                         keeping the native connection"
-+                    );
-+                    TRANSPORT_METRICS.record_connect_native_survivor(false);
-+                    #[cfg(any(test, feature = "testing"))]
-+                    crate::operations::connect::native_wire_trace::record_at(
-+                        remote_addr,
-+                        crate::operations::connect::native_wire_trace::NativeWireEvent::Survivor {
-+                            swapped: false,
-+                            inbound: true,
-+                        },
-+                    );
-+                    drop(connection);
-+                    return Ok(());
-+                }
-+
-                 tracing::info!(
-                     remote = %remote_addr,
-                     peer_known = peer.is_some(),
-@@ -1304,30 +1335,70 @@ impl P2pConnManager {
-                     transaction = %transaction,
-                     "Outbound connection established"
-                 );
--                // A UDP dial beside a native one connected.
-                 if !transport.is_native() {
--                    if let Some(beside) = state.udp_beside_native.remove(&peer_addr) {
--                        // The native dial connected first: the connection
--                        // established first is kept. This one is closed (dropped)
--                        // without touching the ring or the transient budget, and
--                        // this dial's requesters are answered with the kept one.
--                        if self.connections.contains_key(&peer_addr) {
--                            tracing::info!(
--                                remote = %peer_addr,
--                                transaction = %transaction,
--                                "UDP dial beside a native dial connected after the native one; \
--                                 keeping the native connection"
--                            );
-+                    let beside = state.udp_beside_native.remove(&peer_addr);
-+                    // The survivor rule (`native_holds_peer`): a UDP dial to a
-+                    // peer a native connection holds is dropped without
-+                    // touching the ring or the transient budget, whether it
-+                    // ran beside that native dial or not, and its requesters
-+                    // are answered with the native connection.
-+                    if let Some(holder) = self.native_holds_peer(peer_addr, Some(peer.pub_key())) {
-+                        // The in-transit reservation this dial made at its
-+                        // own address is not used: the peer is held at
-+                        // `holder`. At the holder's own address it is the
-+                        // ring entry, which stays.
-+                        // Not while a native dial to that address is
-+                        // pending: the reservation is that dial's too.
-+                        if holder != peer_addr && !state.native_pending.contains(&peer_addr) {
-+                            let cm = &self.bridge.op_manager.ring.connection_manager;
-+                            if !cm.is_in_ring(peer_addr) && cm.has_connection_or_pending(peer_addr)
-+                            {
-+                                cm.prune_in_transit_connection(peer_addr);
-+                            }
-+                        }
-+                        tracing::info!(
-+                            %holder,
-+                            remote = %peer_addr,
-+                            transaction = %transaction,
-+                            beside = beside.is_some(),
-+                            "UDP dial connected to a peer a native connection holds; \
-+                             keeping the native connection"
-+                        );
-+                        TRANSPORT_METRICS.record_connect_native_survivor(false);
-+                        #[cfg(any(test, feature = "testing"))]
-+                        crate::operations:
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle/tests.rs` (modified, +643/-12)
-```diff
-@@ -4062,11 +4062,15 @@ async fn native_then_udp_both_connect_keeps_the_native_connection() {
-     let mut h = Harness::new("beside-native-then-udp").await;
-     let addr: SocketAddr = "203.0.113.236:6281".parse().unwrap();
-     let before = both_connected_here();
-+    let survivors = survivor_here();
-     let (peer, mut native, mut udp) = beside::dials(&mut h, addr).await;
-     h.handshake_event(beside::established(&peer, true)).await;
-     let id = h.mgr.connections[&addr].connection_id;
-+    let pair = PairState::of(&h, addr);
-     h.handshake_event(beside::established(&peer, false)).await;
-     assert_eq!(both_connected_here(), (before.0, before.1 + 1));
-+    assert_eq!(survivor_here(), (survivors.0 + 1, survivors.1));
-+    assert_eq!(PairState::of(&h, addr), pair, "nothing else changed");
-     assert_eq!(native.try_recv(), Ok(Ok((addr, None))));
-     assert_eq!(udp.try_recv(), Ok(Ok((addr, None))));
-     assert_eq!(
-@@ -4085,26 +4089,37 @@ fn both_connected_here() -> (u64, u64) {
-     (udp, native)
- }
- 
--/// #6253 review round 2: both dials connect, the UDP one first. The first
--/// connection is kept: the native one is closed without touching the ring
--/// (no prune, so no second DropConnection) and counted, and the native
--/// dial's requesters were answered by the UDP connection.
-+/// Gate 18: both dials connect, the UDP one first. The survivor rule keeps
-+/// the native connection: it is swapped in for the UDP one in place, without
-+/// promotion, prune (so no second DropConnection) or transient budget call,
-+/// and counted. What the ring and the connection manager hold for the peer
-+/// survives the swap: ring entry, ReadyState, connected-since, health record
-+/// and transient count (the in-place switch #6253 removed lost these).
- #[tokio::test]
--async fn udp_then_native_both_connect_keeps_the_udp_connection() {
-+async fn udp_then_native_both_connect_swaps_in_the_native_connection() {
-     let mut h = Harness::new("beside-udp-then-native").await;
-     let addr: SocketAddr = "203.0.113.236:6282".parse().unwrap();
-     let before = both_connected_here();
-+    let survivors = survivor_here();
-     let (peer, mut native, mut udp) = beside::dials(&mut h, addr).await;
-     h.handshake_event(beside::established(&peer, false)).await;
-     assert_eq!(native.try_recv(), Ok(Ok((addr, None))));
-     assert_eq!(udp.try_recv(), Ok(Ok((addr, None))));
-     let udp_id = h.mgr.connections[&addr].connection_id;
-+    assert!(!h.mgr.connections[&addr].native, "premise: a UDP entry");
-+    let cm = &h.mgr.bridge.op_manager.ring.connection_manager;
-+    cm.mark_peer_ready(addr);
-+    cm.peer_health.lock().record_success(addr);
-+    let pair = PairState::of(&h, addr);
-+    assert!(pair.marked_ready && pair.connected_since.is_some() && pair.health == Some((1, 0)));
-     while h.handshake_rx.try_recv().is_ok() {}
-     h.handshake_event(beside::established(&peer, true)).await;
--    assert_eq!(
--        h.mgr.connections[&addr].connection_id, udp_id,
--        "the UDP connection, established first, stays"
-+    let entry = &h.mgr.connections[&addr];
-+    assert_ne!(
-+        entry.connection_id, udp_id,
-+        "the native connection took the entry"
-     );
-+    assert!(entry.native);
-     let mut drops = 0;
-     while let Ok(command) = h.handshake_rx.try_recv() {
-         if matches!(command, HandshakeCommand::DropConnection { addr: a } if a == addr) {
-@@ -4114,10 +4129,88 @@ async fn udp_then_native_both_connect_keeps_the_udp_connection() {
-     // The arm drops the address's expectation once, as for any outbound
-     // connection; a replacement would prune and send a second.
-     assert_eq!(drops, 1, "nothing was pruned or replaced");
--    assert_eq!(h.ring_key_at(addr).as_ref(), Some(peer.pub_key()));
--    assert_eq!(h_count(&h), 1);
-+    assert_eq!(PairState::of(&h, addr), pair, "everything else survived");
-     assert_eq!(both_connected_here(), (before.0 + 1, before.1));
-+    assert_eq!(survivor_here(), (survivors.0, survivors.1 + 1));
-     beside::assert_clear(&h, addr);
-+    // The UDP listener's close carries the old id and is ignored.
-+    h.mgr
-+        .handle_transport_event(
-+            Some(ConnEvent::TransportClosed {
-+                remote_addr: addr,
-+                error: TransportError::ConnectionClosed(addr),
-+                connection_id: udp_id,
-+                reason: crate::tracing::DisconnectReason::Timeout,
-+            }),
-+            &mut h.state,
-+            &h.handshake,
+-        );
 +        )
-+        .await
-+        .expect("handle_transport_event");
-+    assert!(
-+        h.mgr.connections[&addr].native,
-+        "the stale close is ignored"
-+    );
-+    assert_eq!(PairState::of(&h, addr), pair);
-+    // The old UDP listener itself ended: its sender was dropped, so it
-+    // reports its close, under the old id.
-+    let ended = tokio::time::timeout(Duration::from_secs(5), async {
-+        loop {
-+            match h._conn_events_rx.recv().await {
-+                Some(ConnEvent::TransportClo
++        .with_read(read_ranges);
+         #[cfg(test)]
+         {
+             report.panic_once_bucketed = limits.panic_in_watch;
 ```
 
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_map.rs` (modified, +1/-0)
+**File**: `crates/core/src/transport/quic/path/inbound.rs` (modified, +2/-2)
 ```diff
-@@ -132,6 +132,7 @@ mod tests {
-             created_at: now,
-             link_use: LinkUseStamp::new(now),
-             remote_version: None,
-+            native: false,
-         }
+@@ -1721,12 +1721,12 @@ impl ConnRanges {
+     }
+ 
+     /// `bytes` more were read on one of the connection's streams.
+-    fn note_read(&self, bytes: u64) {
++    pub(in crate::transport::quic) fn note_read(&self, bytes: u64) {
+         self.read.fetch_add(bytes, Ordering::Relaxed);
+     }
+ 
+     /// Bytes read on the connection's streams so far.
+-    fn read_bytes(&self) -> u64 {
++    pub(in crate::transport::quic) fn read_bytes(&self) -> u64 {
+         self.read.load(Ordering::Relaxed)
      }
  
 ```
 
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/identity.rs` (modified, +19/-6)
+**File**: `crates/core/src/transport/quic/path/tests.rs` (modified, +75/-0)
 ```diff
-@@ -188,6 +188,23 @@ pub(super) enum BindOutcome {
- /// count too, stamped at the path's next 2 s watch tick.
- pub(super) const HOLD_WINDOW: std::time::Duration = std::time::Duration::from_secs(30);
- 
-+// The survivor rule treats a native connection silent for HOLD_WINDOW as
-+// gone; with keepalives at KEEPALIVE_INTERVAL that takes at least two lost
-+// keepalives in a row, not one.
-+const _: () = assert!(
-+    HOLD_WINDOW.as_nanos() >= 2 * crate::transport::quic::config::KEEPALIVE_INTERVAL.as_nanos()
-+);
-+
-+/// Whether `entry`'s transport received an authenticated packet within
-+/// [`HOLD_WINDOW`]. A transport that does not report receipt (a test double)
-+/// counts as heard from.
-+pub(super) fn heard_from_recently(entry: &ConnectionEntry) -> bool {
-+    entry
-+        .receipt
-+        .as_ref()
-+        .is_none_or(|stamp| stamp.since_last_receipt() <= HOLD_WINDOW)
-+}
-+
- /// The connection, other than `exclude`, bound to `key`, and whether it was
- /// heard from within [`HOLD_WINDOW`]. A connection whose transport does not
- /// report receipt (a test double) counts as heard from.
-@@ -196,12 +213,7 @@ pub(super) fn key_holder(
-     exclude: Option<SocketAddr>,
-     key: &TransportPublicKey,
- ) -> Option<(SocketAddr, bool)> {
--    let live = |entry: &ConnectionEntry| {
--        entry
--            .receipt
--            .as_ref()
--            .is_none_or(|stamp| stamp.since_last_receipt() <= HOLD_WINDOW)
--    };
-+    let live = heard_from_recently;
-     let mut quiet = None;
-     for (addr, entry) in connections {
-         if Some(*addr) == exclude || entry.identity.key() != Some(key) {
-@@ -492,6 +504,7 @@ mod tests {
-                     created_at: now,
-                     link_use: super::super::zombie_sweep::LinkUseStamp::new(now),
-                     remote_version: None,
-+                    native: false,
-                 },
-             );
-         }
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/zombie_sweep.rs` (modified, +3/-0)
-```diff
-@@ -1648,6 +1648,7 @@ mod tests {
-                     created_at: created,
-                     link_use: LinkUseStamp::new(created),
-                     remote_version: None,
-+                    native: false,
-                 },
-             );
-         }
-@@ -1716,6 +1717,7 @@ mod tests {
-             created_at,
-             link_use,
-             remote_version: None,
-+            native: false,
-         }
-     }
- 
-@@ -2511,6 +2513,7 @@ mod tests {
-                 created_at: created,
-                 link_use: link_use.clone(),
-                 remote_version: None,
-+                native: false,
-             },
-         );
- 
-```
-
----
-
-### Incident Patch 3: `340dbf84` (2026-11-17)
-**Commit Message**: feat(telemetry): per-path QUIC srtt and send-rate bucket gauges in the transport snapshot (#6257)
-
-**File**: `.claude/rules/transport.md` (modified, +6/-1)
-```diff
-@@ -1526,7 +1526,12 @@ a test passes its own; tests read their own, never the global).
-   both are recorded in one record_path_loss call under the one loss lock, the
-   exception the bug-prevention rule on a metric re-derived at the call site
-   allows (as for broadcast_payload_mix). The single keys are not under quic_carrying_, which the two carrying
--  families share. Packets in flight at close are dropped by quinn, not declared
-+  families share.
-+  Two more gauges of live paths, moved at each watch tick under the same lock and
-+  left by the window's drop: quic_srtt_<bucket> (quinn's PathStats::rtt) and
-+  quic_tx_bps_<bucket> (UDP payload bits per second over the last tick), every
-+  bucket uploaded at 0; both are one tick's reading, so they describe the fleet's
-+  distribution, not a path's throughput. Packets in flight at close are dropped by quinn, not declared
-   lost, so a final bucket can understate the loss at the end. The rate is quinn's lost over
-   sent (quinn-proto 0.11.19), not a measurement of the link: sent counts every
-   packet quinn built, acknowledgement-only ones included; lost counts quinn's
-```
-
-**File**: `crates/core/src/tracing/telemetry.rs` (modified, +2/-0)
-```diff
-@@ -8030,6 +8030,8 @@ mod tests {
-         data.pipe_source = (1108..1112).collect();
-         data.pipe_dropped = (1112..1115).collect();
-         data.late_end = (1121..1124).collect();
-+        data.path_srtt = (1124..1131).collect();
-+        data.path_tx_bps = (1131..1137).collect();
-         let want: std::collections::BTreeMap<String, u64> =
-             snapshot.quic_data.keys().into_iter().collect();
-         assert!(want.values().all(|value| *value != 0));
-```
-
-**File**: `crates/core/src/transport/metrics/quic_data.rs` (modified, +272/-6)
-```diff
-@@ -26,6 +26,8 @@
- //! | `quic_ended_paths_below_floor` | paths that ended in the period before sending 200 packets, so in no bucket |
- //! | `quic_carried_packets_sent`, `quic_carried_packets_lost` | the period's packets sent, and declared lost, while their path carried data (a subset of `quic_sent_packets` and `quic_lost_packets`; the shadow share is the difference, a reconciliation residual: both operands are recorded by `record_path_loss` under the one `loss` lock, the exception the bug-prevention rule "metric describing a filtering decision, re-derived at the call site" allows, as for `broadcast_payload_mix`) |
- //! | `quic_carrying_loss_rate_<bucket>`, `quic_carrying_ended_loss_rate_<bucket>`, `quic_carried_paths_ended_below_floor` | the same three as for every path, for paths that carry data, by their loss counted from the first report that found the path carrying (a path whose data bit came on after it started starts its carrying count then); every gauge bucket sent every period |
-+//! | `quic_srtt_<bucket>` | live QUIC paths that carry data, by their smoothed round-trip time (quinn's `PathStats::rtt`) at their last tick (a gauge, not reset, every bucket sent every period, 0 included): `lt_10ms`, `lt_25ms`, `lt_50ms`, `lt_100ms`, `lt_200ms`, `lt_400ms`, `ge_400ms`. A path is in a bucket from its first tick as a data path (it is built from an established connection, which has an RTT sample), and leaves when it stops carrying or ends; paths that carry no data are in none |
-+//! | `quic_tx_bps_<bucket>` | live QUIC paths that carry data, by the datagram bits per second quinn built on them over their last tick (about 2 s; a gauge, not reset, every bucket sent every period, 0 included): `lt_10kbps`, `lt_100kbps`, `lt_1mbps`, `lt_10mbps`, `lt_100mbps`, `ge_100mbps`. The bytes are UDP payload as quinn counts them (`udp_tx.bytes`): retransmissions, acknowledgements, padding and keepalives included, so it is neither goodput nor capacity. These two gauges describe path conditions; the speed of QUIC against UDP is answered from transfer events (bytes over duration, by transport and release), not from them. One tick's rate, sampled when the snapshot is taken, so it describes the fleet's distribution rather than one path's throughput; a tick of 0 ms is not counted |
- //! | `quic_streams_sampled_paths`, `quic_streams_open_ge_<n>`, `quic_streams_peak_max` | per path and period, the peak of inbound streams read at once: the paths sampled, those whose peak reached each level, and the highest peak |
- //! | `quic_gate_loss_<verdict>` | congestion events by the loss gate's verdict (`recycle::loss_gate`): passed to Cubic as `queue`, `share` (loss share above the ceiling), `persistent`, `ecn` (a congestion mark), `no_sample`, or `ignored` as random loss; summed over the node's paths up to each path's last tick. Over a path's life they sum to its `quic_congestion_events`; within one period they can differ by the events between the two reads of a tick |
- //! | `quic_gate_ended_queue_<bucket>` | paths that ended in the period after at least 20 gate verdicts, by the share of them passed as `queue`: `lt_10pct`, `lt_50pct`, `ge_50pct`. A path whose losses mostly read as a queue runs as plain Cubic, whether the queue is real or jitter |
-@@ -164,6 +166,53 @@ fn loss_rate_bucket(lost: u64, sent: u64) -> usize {
-         .count()
+@@ -11982,3 +11982,78 @@ fn a_slow_lossy_path_stays_within_its_consumer_gap() {
+         eprintln!("gap lossy: worst over all seeds {worst:?}");
+     })
  }
- 
-+/// The per-path round-trip-time gauges' prefix; every bucket is uploaded in
-+/// every snapshot.
-+const PATH_SRTT_PREFIX: &str = "quic_srtt_";
 +
-+/// The upper bounds of the round-trip-time buckets, in milliseconds; the last
-+/// bucket is `ge_400ms`.
-+const PATH_SRTT_BOUNDS_MS: [u128; 6] = [10, 25, 50, 100, 200, 400];
++/// Received wire bytes come from the authenticated stream reads, through the
++/// real path lifecycle and the process-wide metrics (#6301): the payload sent
++/// is counted for the peer, and never more than quinn's own datagram count.
++/// Datagrams with a live connection ID and invalid ciphertext reach quinn's
++/// `udp_rx` (it counts before decrypting) and must not move the counters.
++#[test]
++fn received_wire_bytes_count_only_authenticated_reads() {
++    bounded(|| async move {
++        let _seed = GlobalRng::seed_guard(SEED);
++        let p = paths("quic-path-wire-rx", QuicPathLimits::DEFAULT).await;
++        let a_addr = p.pair.a_addr;
++        let (a, time) = (p.a.clone(), p.pair.time.clone());
++        let len = 256 * 1024;
++        p.drive({
++            let time = time.clone();
++            async move {
++                a.send_stream(StreamId::next(), None, Bytes::from(payload(len)))
++                    .await
++                    .expect("send");
++                // Several ack-watch ticks, so the report has run.
++                time.sleep(Duration::from_secs(6)).await;
++            }
++        })
++        .await;
++        let global = &crate::transport::TRANSPORT_METRICS;
++        let (_, counted) = global.peer_bytes(a_addr).expect("a per-peer entry");
++        let udp = p.b.connection().inner().stats().udp_rx;
++        assert!(counted >= len as u64, "payload {len}, counted {counted}");
++        assert!(
++            counted <= udp.bytes,
++            "counted {counted} > quinn {}",
++            udp.bytes
++        );
++        eprintln!(
++            "wire-rx payload={counted} quinn_udp_rx={} ratio={:.4}",
++            udp.bytes,
++            udp.bytes as f64 / counted as f64
++        );
 +
-+/// The round-trip-time buckets' labels (`quic_srtt_<label>`), in order.
-+pub(crate) const PATH_SRTT_LABELS: [&str; 7] = [
-+    "lt_10ms", "lt_25ms", "lt_50ms", "lt_100ms", "lt_200ms", "lt_400ms", "ge_400ms",
-+];
-+
-+fn path_srtt_bucket(rtt: std::time::Duration) -> usize {
-+    let ms = rtt.as_millis();
-+    PATH_SRTT_BOUNDS_MS
-+        .iter()
-+        .take_while(|bound| ms >= **bound)
-+        .count()
++        // Forged datagrams: a live CID taken from a real short-header packet.
++        let real = p
++            .pair
++            .sent()
++            .into_iter()
++            .rev()
++            .find(|s| s.from == a_addr && s.bytes.first().is_some_and(|b| b & 0x80 == 0))
++            .expect("a short-header datagram from a");
++        let mut forged = real.bytes[..1 + super::super::cid::CID_LEN].to_vec();
++        forged.extend(std::iter::repeat_n(0xAB, 1100));
++        let pair_ref = &p.pair;
++        for _ in 0..10 {
++            pair_ref.inject_from_a(&forged).await;
++        }
++        let t = p.pair.time.clone();
++        let b_conn = p.b.connection().inner().clone();
++        let seen = p
++            .drive(async move {
++                t.sleep(Duration::from_secs(6)).await;
++                b_conn.stats().udp_rx
++            })
++            .await;
++        assert!(
++            seen.datagrams >= udp.datagrams + 10,
++            "premise: quinn counted the forged datagrams ({} -> {})",
++            udp.datagrams,
++            seen.datagrams
++        );
++        let (_, after) = global.peer_bytes(a_addr).expect("entry");
++        assert_eq!(
++            after, counted,
++            "forged datagrams moved the received counter"
++        );
++    })
 +}
-+
-+/// The per-path send-rate gauges' prefix; uploaded like [`PATH_SRTT_PREFIX`].
-+const PATH_TX_BPS_PREFIX: &str = "quic_tx_bps_";
-+
-+/// The upper bounds of the send-rate buckets, in bits per second; the last
-+/// bucket is `ge_100mbps`.
-+const PATH_TX_BPS_BOUNDS: [u128; 5] = [10_000, 100_000, 1_000_000, 10_000_000, 100_000_000];
-+
-+/// The send-rate buckets' labels (`quic_tx_bps_<label>`), in order.
-+pub(crate) const PATH_TX_BPS_LABELS: [&str; 6] = [
-+    "lt_10kbps",
-+    "lt_100kbps",
-+    "lt_1mbps",
-+    "lt_10mbps",
-+    "lt_100mbps",
-+    "ge_100mbps",
-+];
-+
-+/// The bucket of `bytes` sent in `ms` (not 0) milliseconds.
-+fn path_tx_bps_bucket(bytes: u64, ms: u64) -> usize {
-+    let bits_per_second = u128::from(bytes) * 8 * 1000 / u128::from(ms);
-+    PATH_TX_BPS_BOUNDS
-+        .iter()
-+        .take_while(|bound| bits_per_second >= **bound)
-+        .count()
-+}
-+
- ///
 ```
 
-**File**: `crates/core/src/transport/quic/recycle.rs` (modified, +10/-0)
+**File**: `crates/core/src/transport/quic/recycle.rs` (modified, +56/-1)
 ```diff
-@@ -2297,9 +2297,11 @@ impl PathReport {
+@@ -2231,6 +2231,18 @@ pub(crate) struct PathReport {
+     connection: quinn::Connection,
+     node: &'static crate::transport::metrics::QuicDataCounters,
+     bytes: UdpBytes,
++    /// The connection's count of stream bytes read, which quinn hands over
++    /// only after it has decrypted and authenticated the packets that carried
++    /// them. `None` until [`Self::with_read`] (nothing is counted then).
++    read: Option<Arc<super::path::inbound::ConnRanges>>,
++    /// Bytes of `read` already reported.
++    read_reported: u64,
++    /// Where the path's received bytes are also counted as wire bytes
++    /// (`cumulative_bytes_received`, per-peer `bytes_received`); the
++    /// process-wide metrics unless a test passes its own ([`Self::with_wire`]).
++    wire: &'static crate::transport::metrics::TransportMetrics,
++    /// The peer's canonical address, the key the sent side uses per peer.
++    remote: std::net::SocketAddr,
+     loss: PathLoss,
+     window: crate::transport::metrics::PathLossWindow,
+     /// The loss gate's verdict counts and those already reported; `None` when
+@@ -2278,6 +2290,10 @@ impl PathReport {
+             timed_at: built_at,
+             meter,
+             bytes: UdpBytes::of(&stats),
++            read: None,
++            read_reported: 0,
++            wire: &crate::transport::TRANSPORT_METRICS,
++            remote: crate::transport::normalize_mapped_addr(connection.remote_address()),
+             loss: PathLoss::of(&stats),
+             window: crate::transport::metrics::PathLossWindow::new(node),
+             gate,
+@@ -2292,11 +2308,32 @@ impl PathReport {
+         }
+     }
+ 
++    /// Report the bytes the connection's streams read as received wire bytes.
++    pub(in crate::transport::quic) fn with_read(
++        mut self,
++        read: Arc<super::path::inbound::ConnRanges>,
++    ) -> Self {
++        self.read_reported = read.read_bytes();
++        self.read = Some(read);
++        self
++    }
++
++    /// Count the path's received bytes in `wire` instead of the process-wide
++    /// metrics (tests, which share the global one with every other test).
++    #[cfg_attr(not(test), allow(dead_code))]
++    pub(crate) fn with_wire(
++        mut self,
++        wire: &'static crate::transport::metrics::TransportMetrics,
++    ) -> Self {
++        self.wire = wire;
++        self
++    }
++
+     /// Report the change since the last report, from one read of the stats,
+     /// and the time since the last one when `now` is given. The final report,
      /// on drop, has no clock, so a path's last tick to its end (under
      /// [`ACK_WATCH_TICK`]) is not counted.
-     fn report(&mut self, now: Option<u64>) {
-+        let mut tick_ms = None;
+-    fn report(&mut self, now: Option<u64>) {
++    pub(in crate::transport::quic) fn report(&mut self, now: Option<u64>) {
+         let mut tick_ms = None;
          if let Some(now) = now {
              // Whole milliseconds, carrying the rest to the next report.
-             let ms = now.saturating_sub(self.timed_at) / 1_000_000;
-+            tick_ms = Some(ms);
-             self.timed_at = self.timed_at.saturating_add(ms * 1_000_000);
-             self.node.record_path_time(ms);
-             if let Some(meter) = &self.meter {
-@@ -2320,6 +2322,14 @@ impl PathReport {
-         self.node
-             .record_path_loss(&mut self.window, delta, carrying);
-         self.loss = next;
-+        // The round-trip time and send-rate gauges of data paths
-+        // (`quic_srtt_<bucket>`, `quic_tx_bps_<bucket>`), at each timed tick.
-+        // The final report has no clock, and the window's drop takes the path
-+        // out of them.
-+        if let Some(ms) = tick_ms {
-+            self.node
-+                .record_path_rates(&mut self.window, stats.path.rtt, sent, ms, carrying);
+@@ -2311,6 +2348,24 @@ impl PathReport {
+         let stats = self.connection.stats();
+         let (next, sent, got) = self.bytes.step(UdpBytes::of(&stats));
+         self.node.record_bytes(sent, got);
++        // Received wire bytes for the dashboard and telemetry. QUIC packets are
++        // decrypted inside quinn, so the legacy post-decryption call never sees
++        // them. quinn's `udp_rx` is counted BEFORE decryption (a datagram with a
++        // live connection ID and bad ciphertext is in it), so it cannot feed
++        // metrics that count only authenticated traffic (#3999). The stream
++        // bytes the receive side has read are authenticated, and are what is
++        // reported: payload only, so QUIC framing, acknowledgement-only
++        // packets and handshake bytes are not in it, unlike the sent side,
++        // which meters whole datagrams at the socket.
++        if let Some(read) = &self.read {
++            let total = read.read_bytes();
++            let delta = total.saturating_sub(self.read_reported);
++            self.read_reported = total;
++            // The final report (no clock) runs after the connection is gone:
++            // it must not recreate the peer's entry in the per-peer table.
++            self.wire
++                .record_quic_received(now.map(|_| self.remote), delta);
 +        }
-         if let Some((verdicts, seen)) = &mut self.gate {
-             let now = verdicts.read();
-             let delta: [u64; loss_gate::GATE_VERDICTS] =
+         self.bytes = next;
+         let (next, delta) = self.loss.step(PathLoss::of(&stats));
+         let carrying = self.carrying.now.load(std::sync::atomic::Ordering::Acquire)
 ```
 
-**File**: `crates/core/src/transport/quic/recycle/tests.rs` (modified, +35/-0)
+**File**: `crates/core/src/transport/quic/tests.rs` (modified, +58/-0)
 ```diff
-@@ -1329,6 +1329,41 @@ fn ack_counting_implements_every_controller_method() {
-     assert_eq!(ours, trait_methods);
+@@ -443,6 +443,14 @@ pub(in crate::transport::quic) async fn pair_with(
  }
  
-+/// Pin: each timed tick of a path's report passes the path's smoothed RTT, the
-+/// bytes it sent since the last report, the milliseconds since it and whether
-+/// it carries data to the
-+/// per-path gauges (`quic_srtt_<bucket>`, `quic_tx_bps_<bucket>`), and the final
-+/// report, which has no clock, does not. Deleting the call, or passing another
-+/// RTT, leaves every unit test of the gauges green while the fleet reads 0.
+ impl Pair {
++    /// Send `bytes` from `a`'s socket to `b`'s, as a forger on the path would.
++    pub(in crate::transport::quic) async fn inject_from_a(&self, bytes: &[u8]) {
++        self.a_socket
++            .send_to(bytes, self.b_addr)
++            .await
++            .expect("inject");
++    }
++
+     fn a_key(&self) -> TransportPublicKey {
+         self.a_keys.public().clone()
+     }
+@@ -4926,6 +4934,56 @@ async fn connected(pair: &Pair) -> (QuicConnection, QuicConnection) {
+     result
+ }
+ 
++/// A path's final report must not regrow the per-peer entry of a peer whose
++/// connection is gone, and the tick report must count what the connection's
++/// streams read, once (#6301). Private metrics, so no other test is in them.
 +#[test]
-+fn a_timed_report_feeds_the_per_path_gauges() {
-+    let code: String = include_str!("../recycle.rs")
-+        .lines()
-+        .map(|line| line.split_once("//").map_or(line, |(code, _)| code))
-+        .collect::<Vec<_>>()
-+        .join("\n");
-+    let start = code
-+        .find("fn report(&mut self, now: Option<u64>)")
-+        .expect("PathReport::report not found");
-+    let (body, _) = code[start..]
-+        .split_once("\n    }\n")
-+        .expect("could not locate the end of PathReport::report");
-+    let body: String = body.chars().filter(|c| !c.is_whitespace()).collect();
-+    assert!(
-+        body.contains("iflet Some(now)=now{".replace(' ', "").as_str())
-+            && body.contains("tick_ms=Some(ms);"),
-+        "the timed tick must record the milliseconds it covers"
-+    );
-+    assert!(
-+        body.contains(
-+            "iflet Some(ms)=tick_ms{self.node.record_path_rates(&mutself.window,stats.path.rtt,sent,ms,carrying);}"
-+                .replace(' ', "")
-+                .as_str()
-+        ),
-+        "a timed report must pass the path's rtt, sent bytes and ms to record_path_rates"
-+    );
++fn a_path_report_counts_stream_reads_per_peer_on_ticks_and_cumulative_on_drop() {
++    use crate::transport::metrics::TransportMetrics;
++    use crate::transport::quic::path::inbound::ConnRanges;
++    bounded(|| async move {
++        let _seed = GlobalRng::seed_guard(SEED);
++        let net = crate::transport::test_net::subnet();
++        let rig = pair("quic-wire-report", net.addr(1), net.addr(2), None).await;
++        let (_client, server) = connected(&rig).await;
++        let wire: &'static TransportMetrics = Box::leak(Box::new(TransportMetrics::new()));
++        let node: &'static crate::transport::metrics::QuicDataCounters =
++            Box::leak(Box::new(crate::transport::metrics::QuicDataCounters::new()));
++        let ranges = Arc::new(ConnRanges::new(1000, 64));
++        let mut report = super::recycle::PathReport::new(
++            server.inner().clone(),
++            node,
++            0,
++            None,
++            super::recycle::Carrying {
++                now: Arc::default(),
++                at_end: Arc::default(),
++            },
++        )
++        .with_wire(wire)
++        .with_read(ranges.clone());
++        ranges.note_read(1000);
++        report.report(Some(1));
++        assert_eq!(wire.cumulative_bytes_received(), 1000);
++        assert_eq!(wire.peer_bytes(rig.a_addr), Some((0, 1000)));
++        report.report(Some(2));
++        assert_eq!(wire.cumulative_bytes_received(), 1000, "counted once");
++        ranges.note_read(500);
++        drop(report);
++        assert_eq!(
++            wire.cumulative_bytes_received(),
++            1500,
++            "the final report counts"
++        );
++        assert_eq!(
++            wire.peer_bytes(rig.a_addr),
++            Some((0, 1000)),
++            "the final report leaves the per-peer table alone"
++        );
++        assert_eq!(wire.cumulative_bytes_sent(), 0, "sent is the socket's");
++    })
 +}
 +
- /// Each report is the change since the last one, sent and received kept apart,
- /// and the next is taken from the state it hands back; a count that went down
- /// reports 0.
+ /// DATA_BLOCKED and STREAM_DATA_BLOCKED frames this side sent.
+ fn blocked_frames(connection: &QuicConnection) -> u64 {
+     let tx = connection.inner().stats().frame_tx;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6258** (2026-11-17): test(quic): pin the crash-breaker marker lock and correct its doc (@sanity)
-- **PR #6257** (2026-11-17): feat(telemetry): per-path QUIC srtt and send-rate bucket gauges in the transport snapshot (@sanity)
-- **PR #6256** (2026-11-17): fix(quic): keep a Windows endpoint-death record past the short-run clear (@sanity)
-- **PR #6255** (2026-11-17): fix(connect): one survivor rule for native and UDP connections to one peer (gates 18-19) (@sanity)
-- **PR #6254** (2026-11-17): fix(telemetry): fill peer_startup's commit and report auto-update state (#5975) (@sanity)
-- **PR #6253** (2026-11-17): fix(connect): native dial timing gates, a NAT model, and UDP dials beside native ones (@sanity)
+- **PR #6302** (2026-11-20): fix(transport): count QUIC inbound bytes in cumulative_bytes_received (@sanity)
+- **PR #6300** (2026-11-19): build: release 0.2.161 (@sanity)
+- **PR #6299** (2026-11-19): chore(release): raise the QUIC-native wire floor to 0.2.162 (@sanity)
+- **PR #6298** (2026-11-19): fix: bound contract-handler event admission per priority class (@sanity)
+- **PR #6297** (2026-11-19): feat(quic): native joiners inside the connection cap, with their own queue share (@sanity)
+- **PR #6296** (2026-11-19): fix(connect): enforce the transient connection budget; bound FixedRate flight size (@sanity)
 
 ---
 
@@ -2536,52 +2173,50 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(quic): pin the crash-breaker marker lock and correct its doc
+## X. transport): count QUIC inbound bytes in cumulative_bytes_received
 
 **RULE**:
-When implementing operations in `crates/core/src/transport/quic/breaker.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/bug-prevention-patterns.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `01e05980`: test(quic): pin the crash-breaker marker lock and correct its doc. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3965e511`: transport): count QUIC inbound bytes in cumulative_bytes_received. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/transport/quic/breaker.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/bug-prevention-patterns.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Orders exactly two writers of this run's marker: the Windows short-run
-/// clear (`short_runs::clear_short_run`) and the endpoint-death record
-/// ([`note_endpoint_down_exit_with`]). Each holds it across its
-/// read-and-change, so in either order the death record survives: a clear
-/// that comes first is followed by the record written again, and a record
-/// written first makes the clear leave the marker. Pinned by
-/// `the_marker_update_lock_is_taken_by_the_clear_and_the_record`.
-///
-/// The other writers do not take it, and it does not order them:
-/// - arming ([`arm`]) runs under [`PENDING`], as does the record of a death
-///   before arming, so those two are ordered by that lock instead, and the
-///   clear timer starts only after arming;
-/// - the Windows panic hook (`short_runs::mark_quic_panic`) takes no lock,
-///   since it runs inside a panic. A caught socket-adapter panic marks the
-///   marker before the endpoint goes down, so its write lands before the
-///   death record; an unrelated QUIC panic on another thread at the same
-///   moment could overwrite the record, which then costs one free restart;
-/// - a clean exit's removal ([`clear_if_owned`]) does not run on 
+
+## A new transport whose bytes bypass the socket-layer counters
+
+Wire bytes are metered at two different layers. Sent bytes are counted at the
+socket (`record_packet_sent`, every transport). Received bytes are counted only
+after legacy symmetric decryption (`record_packet_received`). A transport that
+decrypts elsewhere (QUIC, inside quinn) is counted on send and missing on
+receive, so upload and download diverge with no error. #6301: once the QUIC
+data ramp reached 100%, the fleet upload/download ratio read 2.41.
+
+Fix shape: `recycle::PathReport::report` feeds the connection's authenticated
+stream-read byte count (`ConnRanges::read_bytes`) into
+`TransportMetrics::record_quic_received`. Do NOT use quinn's `udp_rx`: it is
+incremented before decryption, so a datagram with a live connection ID and bad
+ciphertext inflates it (#3999). The cost is a unit difference: payload only, not
+the whole datagram the sent side counts (about 4% on a bulk transfer, more for
+ack-only traffic). Never call `record_packet_received` for QUIC (double count).
+Audit question when adding a transport: *for each direction, where is it
+metered, and is it the same layer?* Pinned by
+`received_wire_bytes_count_only
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-/// Held across each read-and-change of this run's marker by the Windows
-/// short-run clear ([`short_runs`]) and by [`note_endpoint_down_exit`], so
-/// in either order the death record survives: a clear that comes first is
-/// followed by the record written again, and a record written first makes
-/// the clear leave the marker.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `01e05980` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3965e511` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

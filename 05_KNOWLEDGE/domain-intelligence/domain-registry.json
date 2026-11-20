@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T08:04:06.918Z",
+  "last_updated": "2026-11-20T08:38:49.185Z",
   "total_records": 2102,
   "domains": {
     "A": {
@@ -9468,8 +9468,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "59e0b35eeeefc3c9a48a07bde3000188bfa588f91b387aa5dc6b78cb731359d0",
-      "created_at": "2026-11-19T20:55:52.776Z"
+      "content_hash": "28ddde85f3600be9f04a0f8b05a962914626fa4a45159f9c9c1cc91c4b3f6c21",
+      "created_at": "2026-11-20T08:29:33.488Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -9546,8 +9546,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "12ff1f70cb4c9f077ea8b5b35aeac0ed647558b8cedff2cd7c2b1bd891aa2c83",
-      "created_at": "2026-11-19T20:56:28.453Z"
+      "content_hash": "461b8871f8e8891cdd207fb313f9dece70a91b1af4a25c94d5f765515e830090",
+      "created_at": "2026-11-20T08:38:48.196Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -10266,8 +10266,8 @@
       "title": "Architecture Intelligence: linkerd/linkerd2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-linkerd-linkerd2-architecture-intelligence-linkerd-linkerd2-core-invariants.md",
       "repository": "linkerd/linkerd2",
-      "content_hash": "cd4866c96365d8450dc73d528120e7fc07ab00f078bc01d4f34fa76ef4a6c454",
-      "created_at": "2026-11-19T04:44:16.184Z"
+      "content_hash": "be37ebf580d2dadb780fce4d0706b7f31d30d61673133e61e9a972a4fa734604",
+      "created_at": "2026-11-20T08:34:43.435Z"
     },
     "DOM-D-43004423": {
       "record_id": "DOM-D-43004423",
@@ -10326,8 +10326,8 @@
       "title": "Architecture Intelligence: linkerd-linkerd2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-linkerd-linkerd2-learnings-architecture-intelligence-linkerd-linkerd2-learnings-.md",
       "repository": "linkerd-linkerd2-learnings",
-      "content_hash": "0af9ac99e7bd269a1b1ca5bfc6cc1a2a7da51598b9f497e2a366454d72be64e6",
-      "created_at": "2026-11-19T04:44:19.969Z"
+      "content_hash": "b2db304dee9b8834d00c62beaca22b2486d3242eaa68f7b376a406aedb5bdce0",
+      "created_at": "2026-11-20T08:38:47.525Z"
     },
     "DOM-D-4CA3BD2A": {
       "record_id": "DOM-D-4CA3BD2A",
@@ -23361,8 +23361,8 @@
       "title": "Technical Construction Intelligence: ytsaurus/ytsaurus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-technical-construction-intelligence-ytsaurus-ytsaurus-core-inv.md",
       "repository": "ytsaurus/ytsaurus",
-      "content_hash": "d2de6782d868c5d98afb139b2270ae7bdaebc60e7c4876c1283cd99cf6422b19",
-      "created_at": "2026-11-17T12:25:05.125Z"
+      "content_hash": "c62dae0dab95a4c4cb9bd495b033ef47cc1545b63e7d02faec0a5ed720a94bf8",
+      "created_at": "2026-11-20T08:38:43.810Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv",
@@ -23379,8 +23379,8 @@
       "title": "Technical Construction Intelligence: ytsaurus-ytsaurus-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-learnings-technical-construction-intelligence-ytsaurus-ytsauru.md",
       "repository": "ytsaurus-ytsaurus-learnings",
-      "content_hash": "cdd5526a3bdf628054243bbfbf1bba5c4da7e70e435fefb35d77621e3d2ba51b",
-      "created_at": "2026-11-16T03:37:30.954Z"
+      "content_hash": "15c41cfa387246f12651c86d9c9338590657344dc52daa98699e3dc71ae2c13b",
+      "created_at": "2026-11-20T08:38:49.185Z"
     },
     "domain_intelligence-architecture-intelligence-cilium-cilium-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-cilium-cilium-core-invariants",

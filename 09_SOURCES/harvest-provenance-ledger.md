@@ -11537,3 +11537,6 @@ Every entry in this ledger must capture:
 | `learn-github-juullabs-kable` | `https://github.com/JuulLabs/kable` | `9836c4e2` | Multi-dimensional audit evidence | 2026-11-20T07:36:01.120Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `a4d2f0c0` | Multi-dimensional audit evidence | 2026-11-20T07:36:03.019Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `40d8778b` | Multi-dimensional audit evidence | 2026-11-20T08:04:00.702Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `3965e511` | Multi-dimensional audit evidence | 2026-11-20T08:29:33.110Z |
+| `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `762af53b` | Multi-dimensional audit evidence | 2026-11-20T08:34:43.106Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `1b712cf0` | Multi-dimensional audit evidence | 2026-11-20T08:38:43.460Z |

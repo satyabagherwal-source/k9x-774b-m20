@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T08:04:06.918Z",
+  "last_updated": "2026-11-20T08:38:49.352Z",
   "total_verified_learnings": 9029,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22310,
+  "total_items": 22316,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114657,10 +114657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "48d67dfb",
-      "content_hash": "59e0b35eeeefc3c9a48a07bde3000188bfa588f91b387aa5dc6b78cb731359d0",
+      "source_version": "3965e511",
+      "content_hash": "28ddde85f3600be9f04a0f8b05a962914626fa4a45159f9c9c1cc91c4b3f6c21",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T20:55:52.776Z"
+      "persisted_at": "2026-11-20T08:29:33.488Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114669,10 +114669,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "48d67dfb",
-      "content_hash": "ba2a02c8278d446b796a3234c5640fa5b6164f67f3317ea73f2784661ac5a6d4",
+      "source_version": "3965e511",
+      "content_hash": "22ec939c17df1ff1e2dc661aadb1b241c7ffe498c30cc44ca35461ee839eba23",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T20:55:52.934Z"
+      "persisted_at": "2026-11-20T08:29:33.755Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114754,9 +114754,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "12ff1f70cb4c9f077ea8b5b35aeac0ed647558b8cedff2cd7c2b1bd891aa2c83",
+      "content_hash": "461b8871f8e8891cdd207fb313f9dece70a91b1af4a25c94d5f765515e830090",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T20:56:28.453Z"
+      "persisted_at": "2026-11-20T08:38:48.196Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114766,9 +114766,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "324025aa8c592f6876861ec5b6ddd61d5200d180c8cb2bcb5d9c56939f3c7693",
+      "content_hash": "4201f968c472a13ecc6e514140e292c8825b4d1b5b1df92cbd63855af3c46ecb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T20:56:28.613Z"
+      "persisted_at": "2026-11-20T08:38:48.490Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -214660,8 +214660,8 @@
       "slug": "linkerd-linkerd2",
       "platform": "github",
       "source_url": "https://github.com/linkerd/linkerd2",
-      "source_version": "e8326770",
-      "content_hash": "b802fcc3386c4f8956952ad81b7e049bd05ce7df01595cfe7066376fc02953f4",
+      "source_version": "762af53b",
+      "content_hash": "388429359f82f08dff903cee43f83698748e47908281741958fda2295ef9f961",
       "dossier_path": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "promoted_rules": [
@@ -214674,6 +214674,11 @@
           "number": 9331,
           "title": "build(deps): bump jiff from 0.2.35 to 0.2.46",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9543,
+          "title": "build(deps): bump github.com/prometheus/common from 0.71.0 to 0.73.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214681,7 +214686,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T04:44:15.657Z",
+      "verified_at": "2026-11-20T08:34:42.931Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214723,10 +214728,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-linkerd-linkerd2-architecture-intelligence-linkerd-linkerd2-core-invariants.md",
       "title": "Architecture Intelligence: linkerd/linkerd2 Core Invariants",
       "repository": "linkerd/linkerd2",
-      "source_version": "e8326770",
-      "content_hash": "cd4866c96365d8450dc73d528120e7fc07ab00f078bc01d4f34fa76ef4a6c454",
+      "source_version": "762af53b",
+      "content_hash": "be37ebf580d2dadb780fce4d0706b7f31d30d61673133e61e9a972a4fa734604",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T04:44:16.184Z"
+      "persisted_at": "2026-11-20T08:34:43.435Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-linkerd-linkerd2": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-linkerd-linkerd2",
@@ -214735,10 +214740,10 @@
       "relative_path": "08_VERIFICATION/linkerd-linkerd2-verification-protocol-empirical-defect-shield-for-linkerd-linke.md",
       "title": "Verification Protocol: Empirical Defect Shield for linkerd/linkerd2",
       "repository": "linkerd/linkerd2",
-      "source_version": "e8326770",
-      "content_hash": "ae064fb700b7d0ea8fb478033f98e19e839b025cbf65a84e4177d71f1afaa03b",
+      "source_version": "762af53b",
+      "content_hash": "695067e50e505227b42d10673d7d8b2410756e459ca175c8809760cce4ccf073",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T04:44:16.326Z"
+      "persisted_at": "2026-11-20T08:34:43.569Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-learnings-core-invariants",
@@ -214772,9 +214777,9 @@
       "title": "Architecture Intelligence: linkerd-linkerd2-learnings Core Invariants",
       "repository": "linkerd-linkerd2-learnings",
       "source_version": "HEAD",
-      "content_hash": "0af9ac99e7bd269a1b1ca5bfc6cc1a2a7da51598b9f497e2a366454d72be64e6",
+      "content_hash": "b2db304dee9b8834d00c62beaca22b2486d3242eaa68f7b376a406aedb5bdce0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T04:44:19.969Z"
+      "persisted_at": "2026-11-20T08:38:47.525Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-linkerd-linkerd2-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-linkerd-linkerd2-learnings",
@@ -214784,9 +214789,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for linkerd-linkerd2-learnings",
       "repository": "linkerd-linkerd2-learnings",
       "source_version": "HEAD",
-      "content_hash": "b0120bd0b2d7c4d0e876d788c989e87702f5556b66c599bcc63a7972e007fd5b",
+      "content_hash": "2056a391227b718c5a04ac7888f4d89a9db26b2dab293b59bb60abf31fcb6fdf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T04:44:20.124Z"
+      "persisted_at": "2026-11-20T08:38:47.672Z"
     },
     "candidate_directive-clean-up-stdin-source-logging-for-per-source-debug": {
       "item_id": "candidate_directive-clean-up-stdin-source-logging-for-per-source-debug",
@@ -220044,8 +220049,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "48d67dfb",
-      "content_hash": "27bbfe828429281bfe4b8fb2fd7b7477e3956e931a5f89b8727c6f6786355c1c",
+      "source_version": "3965e511",
+      "content_hash": "b3ff569eedb707d26bcd9128ac4276b8583f5035d861cbaccab9d6352d73afbf",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -220140,7 +220145,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T20:55:52.228Z",
+      "verified_at": "2026-11-20T08:29:32.897Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235876,8 +235881,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "6f9fb9d6",
-      "content_hash": "1494f499a0265de243e1f75e3474e3ffef2426f0a7a070c1c45fd743882bb42d",
+      "source_version": "1b712cf0",
+      "content_hash": "a384e31d5b5e5cfad446e8f3cf93f1046c6f40bde43783491419cf4764b2e388",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -235900,6 +235905,11 @@
           "number": 9323,
           "title": "(YqlSelect) Fix panic on qualified star for inputs without column ord",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9544,
+          "title": "Fixes from babenko's review of merged shuffle, chunk format, chunk session pool",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235907,7 +235917,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T02:56:11.061Z",
+      "verified_at": "2026-11-20T08:38:43.262Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235961,10 +235971,10 @@
       "relative_path": "08_VERIFICATION/ytsaurus-ytsaurus-verification-protocol-empirical-defect-shield-for-ytsaurus-yts.md",
       "title": "Verification Protocol: Empirical Defect Shield for ytsaurus/ytsaurus",
       "repository": "ytsaurus/ytsaurus",
-      "source_version": "6f9fb9d6",
-      "content_hash": "8576e8ebe39981a3d8a9e8bb3e7e1012c34d288cf89ff52ddab293b5b2aa29e7",
+      "source_version": "1b712cf0",
+      "content_hash": "a8ef5a80a482643b8c81ca40dd2cd176ea74aeb1d9268e0cf7567c190c19e47d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T02:56:11.906Z"
+      "persisted_at": "2026-11-20T08:38:43.957Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core",
@@ -236022,9 +236032,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ytsaurus-ytsaurus-learnings",
       "repository": "ytsaurus-ytsaurus-learnings",
       "source_version": "HEAD",
-      "content_hash": "49d9dc8611662c0c142f74e5f761b95bade99552720fcf5dd7f1997f3bb2011b",
+      "content_hash": "19211bf0407457b91c97d479be7a221a06d90b91c4ec5e60350d3d933fe5c935",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T02:56:56.434Z"
+      "persisted_at": "2026-11-20T08:38:49.352Z"
     },
     "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf": {
       "learning_id": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
@@ -254077,10 +254087,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-technical-construction-intelligence-ytsaurus-ytsaurus-core-inv.md",
       "title": "Technical Construction Intelligence: ytsaurus/ytsaurus Core Invariants",
       "repository": "ytsaurus/ytsaurus",
-      "source_version": "0374c91e",
-      "content_hash": "d2de6782d868c5d98afb139b2270ae7bdaebc60e7c4876c1283cd99cf6422b19",
+      "source_version": "1b712cf0",
+      "content_hash": "c62dae0dab95a4c4cb9bd495b033ef47cc1545b63e7d02faec0a5ed720a94bf8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T12:25:05.125Z"
+      "persisted_at": "2026-11-20T08:38:43.810Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv",
@@ -254102,9 +254112,9 @@
       "title": "Technical Construction Intelligence: ytsaurus-ytsaurus-learnings Core Invariants",
       "repository": "ytsaurus-ytsaurus-learnings",
       "source_version": "HEAD",
-      "content_hash": "cdd5526a3bdf628054243bbfbf1bba5c4da7e70e435fefb35d77621e3d2ba51b",
+      "content_hash": "15c41cfa387246f12651c86d9c9338590657344dc52daa98699e3dc71ae2c13b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T03:37:30.954Z"
+      "persisted_at": "2026-11-20T08:38:49.185Z"
     },
     "rule-8701": {
       "learning_id": "rule-8701",
@@ -274611,10 +274621,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/freenet-freenet-core-agent-contract-freenet-freenet-core-autonomous-specialist-p.md",
       "title": "Agent Contract: freenet/freenet-core Autonomous Specialist Persona",
       "repository": "freenet/freenet-core",
-      "source_version": "b7ba2671",
-      "content_hash": "047c3846b010aeada85abb19e834804961a76897b173859e97ae2b6edf375cb6",
+      "source_version": "3965e511",
+      "content_hash": "eb2d30ff9e198ab5659bbbae9b4ff2c0dc4b9123ef405823ba43338829f0b87b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T21:42:23.192Z"
+      "persisted_at": "2026-11-20T08:29:33.633Z"
     },
     "candidate_directive-show-read-only-wiki-conflict-metadata-in-the-editor": {
       "item_id": "candidate_directive-show-read-only-wiki-conflict-metadata-in-the-editor",
@@ -274674,9 +274684,9 @@
       "title": "Agent Contract: freenet-freenet-core-learnings Autonomous Specialist Persona",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "939577972d6d70305f518ed0772310457350d1a4d476597048595d8a00a4eeb1",
+      "content_hash": "bb37459188bc0e1bdc5ccd5a38a9480c015b77c7b705691d9701608a4de3c767",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T15:51:41.491Z"
+      "persisted_at": "2026-11-20T08:38:48.361Z"
     },
     "candidate_directive-react-show-read-only-wiki-conflict-metadata-in-the-editor": {
       "item_id": "candidate_directive-react-show-read-only-wiki-conflict-metadata-in-the-editor",
@@ -302157,6 +302167,82 @@
       "content_hash": "585f7424b793894c0fefbc80084e33d9cbabe8ad640cf269fc4d919e12a6669a",
       "domain_letter": "H",
       "persisted_at": "2026-11-20T07:36:08.307Z"
+    },
+    "candidate_directive-count-quic-inbound-bytes-in-cumulative_bytes_received": {
+      "item_id": "candidate_directive-count-quic-inbound-bytes-in-cumulative_bytes_received",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-X7VC-count-quic-inbound-bytes-in-cumulative_bytes_received.md",
+      "title": "count QUIC inbound bytes in cumulative_bytes_received",
+      "repository": "freenet/freenet-core",
+      "source_version": "3965e511",
+      "content_hash": "07d2f3e2975ab84bcd051a37ed108ecb1ed3149fba51b94894dd1207f4a2ee5b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T08:29:33.339Z"
+    },
+    "rule-9543": {
+      "learning_id": "rule-9543",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9543,
+      "title": "build(deps): bump github.com/prometheus/common from 0.71.0 to 0.73.0",
+      "source_url": "https://github.com/linkerd/linkerd2",
+      "source_version": "762af53b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T08:34:42.931Z"
+    },
+    "candidate_directive-build-deps-bump-github-com-prometheus-common-from-0-71-0-to-0-73-0": {
+      "item_id": "candidate_directive-build-deps-bump-github-com-prometheus-common-from-0-71-0-to-0-73-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-93D7-build-deps-bump-github-com-prometheus-common-from-0-71-0-to-0-73-0.md",
+      "title": "build(deps): bump github.com/prometheus/common from 0.71.0 to 0.73.0",
+      "repository": "linkerd-linkerd2-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ee974f88bef08e78b25f3436f750a68d8f0fc393c5627dcb96c834d4487ed0e0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T08:38:47.374Z"
+    },
+    "rule-9544": {
+      "learning_id": "rule-9544",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9544,
+      "title": "Fixes from babenko's review of merged shuffle, chunk format, chunk session pool",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "1b712cf0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T08:38:43.262Z"
+    },
+    "candidate_directive-fixes-from-babenko-s-review-of-merged-shuffle-chunk-format-chunk-session-pool": {
+      "item_id": "candidate_directive-fixes-from-babenko-s-review-of-merged-shuffle-chunk-format-chunk-session-pool",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-94NF-fixes-from-babenko-s-review-of-merged-shuffle-chunk-format-chunk-session-pool.md",
+      "title": "Fixes from babenko's review of merged shuffle, chunk format, chunk session pool",
+      "repository": "ytsaurus-ytsaurus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eac3c3a58035e23a9fdcc36f9ac0386fe399475355e2923a9d81803648b00c4b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T08:38:49.035Z"
+    },
+    "candidate_directive-transport-count-quic-inbound-bytes-in-cumulative_bytes_received": {
+      "item_id": "candidate_directive-transport-count-quic-inbound-bytes-in-cumulative_bytes_received",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-93VZ-transport-count-quic-inbound-bytes-in-cumulative_bytes_received.md",
+      "title": "transport): count QUIC inbound bytes in cumulative_bytes_received",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bc8398e408452a6df8c044af217525525a34a3c9b847204c0d422d1a89210b25",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T08:38:48.050Z"
     }
   },
   "ai-builder-brain": {

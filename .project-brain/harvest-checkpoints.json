@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T08:04:00.714Z",
+  "last_updated": "2026-11-20T08:38:43.469Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "27bbfe828429281bfe4b8fb2fd7b7477e3956e931a5f89b8727c6f6786355c1c",
-      "verified_at": "2026-11-19T20:55:52.430Z",
+      "content_hash": "b3ff569eedb707d26bcd9128ac4276b8583f5035d861cbaccab9d6352d73afbf",
+      "verified_at": "2026-11-20T08:29:33.135Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T20:55:52.430Z"
+      "last_updated": "2026-11-20T08:29:33.135Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "1494f499a0265de243e1f75e3474e3ffef2426f0a7a070c1c45fd743882bb42d",
-      "verified_at": "2026-11-19T02:56:11.296Z",
+      "content_hash": "a384e31d5b5e5cfad446e8f3cf93f1046c6f40bde43783491419cf4764b2e388",
+      "verified_at": "2026-11-20T08:38:43.468Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T02:56:11.296Z"
+      "last_updated": "2026-11-20T08:38:43.468Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -9441,14 +9441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-linkerd-linkerd2",
-      "content_hash": "b802fcc3386c4f8956952ad81b7e049bd05ce7df01595cfe7066376fc02953f4",
-      "verified_at": "2026-11-19T04:44:15.856Z",
+      "content_hash": "388429359f82f08dff903cee43f83698748e47908281741958fda2295ef9f961",
+      "verified_at": "2026-11-20T08:34:43.114Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T04:44:15.856Z"
+      "last_updated": "2026-11-20T08:34:43.114Z"
     },
     "tursodatabase/libsql": {
       "repository": "tursodatabase/libsql",

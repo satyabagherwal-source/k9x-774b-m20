@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T08:04:06.521Z",
+  "last_updated": "2026-11-20T08:38:49.035Z",
   "directives": [
     {
       "id": "CD-001",
@@ -36859,6 +36859,68 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "A",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-5313B6-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-X7VC",
+      "directive_title": "count QUIC inbound bytes in cumulative_bytes_received",
+      "source_repo": "freenet/freenet-core",
+      "source_commit": "3965e511",
+      "staged_file": "11_INBOX/candidate-directives/CD-X7VC-count-quic-inbound-bytes-in-cumulative_bytes_received.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-93D7",
+      "directive_title": "build(deps): bump github.com/prometheus/common from 0.71.0 to 0.73.0",
+      "source_repo": "linkerd-linkerd2-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-93D7-build-deps-bump-github-com-prometheus-common-from-0-71-0-to-0-73-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-94NF",
+      "directive_title": "Fixes from babenko's review of merged shuffle, chunk format, chunk session pool",
+      "source_repo": "ytsaurus-ytsaurus-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-94NF-fixes-from-babenko-s-review-of-merged-shuffle-chunk-format-chunk-session-pool.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-43CD05",
+      "directive_title": "build(deps): bump github.com/prometheus/common from 0.71.0 to 0.73.0",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "linkerd-linkerd2",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-43CD05-build-deps-bump-github-com-prometheus-co.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-93VZ",
+      "directive_title": "transport): count QUIC inbound bytes in cumulative_bytes_received",
+      "source_repo": "freenet-freenet-core-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-93VZ-transport-count-quic-inbound-bytes-in-cumulative_bytes_received.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-9E0AEB",
+      "directive_title": "Fixes from babenko's review of merged shuffle, chunk format, chunk session pool",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ytsaurus-ytsaurus",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9E0AEB-fixes-from-babenko-s-review-of-merged-sh.md",
       "staged_date": "2026-11-20"
     }
   ]

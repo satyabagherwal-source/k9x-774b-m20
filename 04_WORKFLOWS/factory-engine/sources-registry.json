@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T08:04:04.058Z",
-    "lastVerified": "2026-11-20T08:04:04.058Z",
+    "lastChecked": "2026-11-20T08:38:46.612Z",
+    "lastVerified": "2026-11-20T08:38:46.612Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-20T07:14:55.990Z",
+    "lastChecked": "2026-11-20T08:28:35.988Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-20T07:14:55.990Z"
+    "lastVerified": "2026-11-20T08:28:35.988Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1182,22 +1182,21 @@
     "revisionIdentifier": "dd9d0499"
   },
   "freenet-freenet-core": {
-    "name": "freenet-core",
+    "name": "freenet/freenet-core",
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T02:58:27.739Z",
-    "lastVerified": "2026-11-20T02:58:27.739Z",
+    "lastChecked": "2026-11-20T08:28:36.331Z",
+    "lastVerified": "2026-11-20T08:28:36.331Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "27bbfe828429281bfe4b8fb2fd7b7477e3956e931a5f89b8727c6f6786355c1c",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "contentHash": "b3ff569eedb707d26bcd9128ac4276b8583f5035d861cbaccab9d6352d73afbf",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "48d67dfb"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tursodatabase-turso": {
     "name": "tursodatabase/turso",
@@ -4279,12 +4278,12 @@
     "revisionIdentifier": "df8a9bb4"
   },
   "aome510-spotify-player": {
-    "name": "aome510/spotify-player",
+    "name": "spotify-player",
     "officialUrl": "https://github.com/aome510/spotify-player",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T20:37:36.600Z",
-    "lastVerified": "2026-11-18T20:37:36.600Z",
+    "lastChecked": "2026-11-20T08:28:20.999Z",
+    "lastVerified": "2026-11-20T08:28:20.999Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aome510-spotify-player",
@@ -4293,7 +4292,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8d17edec"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
     "name": "deepseek-ai/DeepSeek-V4-Pro",
@@ -6134,14 +6134,14 @@
     "officialUrl": "https://github.com/ytsaurus/ytsaurus",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-19T02:56:10.139Z",
-    "lastVerified": "2026-11-19T02:56:10.139Z",
+    "lastChecked": "2026-11-20T08:28:41.227Z",
+    "lastVerified": "2026-11-20T08:28:41.227Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "1494f499a0265de243e1f75e3474e3ffef2426f0a7a070c1c45fd743882bb42d",
+    "contentHash": "a384e31d5b5e5cfad446e8f3cf93f1046c6f40bde43783491419cf4764b2e388",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6477,14 +6477,14 @@
     "officialUrl": "https://github.com/linkerd/linkerd2",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T04:44:14.828Z",
-    "lastVerified": "2026-11-19T04:44:14.828Z",
+    "lastChecked": "2026-11-20T08:28:33.272Z",
+    "lastVerified": "2026-11-20T08:28:33.272Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-linkerd-linkerd2",
-    "contentHash": "b802fcc3386c4f8956952ad81b7e049bd05ce7df01595cfe7066376fc02953f4",
+    "contentHash": "388429359f82f08dff903cee43f83698748e47908281741958fda2295ef9f961",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9664,5 +9664,19 @@
     "lastChecked": "2026-11-20T08:02:50.167Z",
     "revisionIdentifier": "27f3e87c",
     "lastVerified": "2026-11-20T08:02:50.167Z"
+  },
+  "gatenlp-ultimate-sitemap-parser": {
+    "name": "ultimate-sitemap-parser",
+    "officialUrl": "https://github.com/GateNLP/ultimate-sitemap-parser",
+    "lastChecked": "2026-11-20T08:28:23.528Z",
+    "revisionIdentifier": "6ab7704f",
+    "lastVerified": "2026-11-20T08:28:23.528Z"
+  },
+  "realm-realm-kotlin": {
+    "name": "realm-kotlin",
+    "officialUrl": "https://github.com/realm/realm-kotlin",
+    "lastChecked": "2026-11-20T08:28:25.998Z",
+    "revisionIdentifier": "9cdc4556",
+    "lastVerified": "2026-11-20T08:28:25.998Z"
   }
 }

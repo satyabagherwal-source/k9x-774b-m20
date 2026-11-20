@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "48d67dfb",
+    "sourceVersion": "3965e511",
     "license": "NOASSERTION",
-    "contentHash": "27bbfe828429281bfe4b8fb2fd7b7477e3956e931a5f89b8727c6f6786355c1c",
-    "lastHarvestedAt": "2026-11-19T20:55:52.421Z",
+    "contentHash": "b3ff569eedb707d26bcd9128ac4276b8583f5035d861cbaccab9d6352d73afbf",
+    "lastHarvestedAt": "2026-11-20T08:29:33.110Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "6f9fb9d6",
+    "sourceVersion": "1b712cf0",
     "license": "Apache-2.0",
-    "contentHash": "1494f499a0265de243e1f75e3474e3ffef2426f0a7a070c1c45fd743882bb42d",
-    "lastHarvestedAt": "2026-11-19T02:56:11.287Z",
+    "contentHash": "a384e31d5b5e5cfad446e8f3cf93f1046c6f40bde43783491419cf4764b2e388",
+    "lastHarvestedAt": "2026-11-20T08:38:43.460Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -6213,10 +6213,10 @@
     "repository": "linkerd/linkerd2",
     "platform": "github",
     "sourceUrl": "https://github.com/linkerd/linkerd2",
-    "sourceVersion": "e8326770",
+    "sourceVersion": "762af53b",
     "license": "Apache-2.0",
-    "contentHash": "b802fcc3386c4f8956952ad81b7e049bd05ce7df01595cfe7066376fc02953f4",
-    "lastHarvestedAt": "2026-11-19T04:44:15.849Z",
+    "contentHash": "388429359f82f08dff903cee43f83698748e47908281741958fda2295ef9f961",
+    "lastHarvestedAt": "2026-11-20T08:34:43.106Z",
     "learningId": "learn-github-linkerd-linkerd2"
   },
   "libsql-libsql": {

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T08:04:04.471Z",
+  "updated_at": "2026-11-20T08:38:48.807Z",
   "stats": {
-    "total_discovered": 6270,
-    "approved_pending_harvest": 5930,
+    "total_discovered": 6279,
+    "approved_pending_harvest": 5939,
     "harvested_count": 0,
     "rejected_count": 340,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5910,
+      "COMMUNITY_AND_EXPERT": 5919,
       "OFFICIAL_DOCUMENTATION": 195,
       "STANDARDS_AND_SPECIFICATIONS": 117,
       "ENGINEERING_BLOGS": 4,
@@ -135583,6 +135583,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
         "fileName": "provablehq-snarkos-learnings.md"
+      }
+    },
+    "SRC-61F8559048BF": {
+      "id": "SRC-61F8559048BF",
+      "url": "https://github.com/prometheus/common",
+      "title": "https://github.com/prometheus/common",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T08:38:46.937Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
+        "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-6394E972DE27": {
+      "id": "SRC-6394E972DE27",
+      "url": "https://github.com/prometheus/common/releases",
+      "title": "https://github.com/prometheus/common/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T08:38:46.982Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
+        "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-C9CD6AB71C23": {
+      "id": "SRC-C9CD6AB71C23",
+      "url": "https://github.com/prometheus/common/blob/main/CHANGELOG.md",
+      "title": "https://github.com/prometheus/common/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T08:38:47.025Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
+        "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-2DE1A39B3718": {
+      "id": "SRC-2DE1A39B3718",
+      "url": "https://github.com/prometheus/common/compare/v0.71.0...v0.73.0",
+      "title": "https://github.com/prometheus/common/compare/v0.71.0...v0.73.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T08:38:47.078Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
+        "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-FAFDE3D32DB9": {
+      "id": "SRC-FAFDE3D32DB9",
+      "url": "https://github.com/open-telemetry/opentelemetry-go/compare/v1.44.0...v1.47.0",
+      "title": "https://github.com/open-telemetry/opentelemetry-go/compare/v1.44.0...v1.47.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T08:38:47.166Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
+        "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-0462A90D5B1C": {
+      "id": "SRC-0462A90D5B1C",
+      "url": "https://github.com/freenet/freenet-core/actions/runs/44655765836",
+      "title": "https://github.com/freenet/freenet-core/actions/runs/44655765836",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T08:38:47.855Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
+        "fileName": "freenet-freenet-core-learnings.md"
+      }
+    },
+    "SRC-6135F80209B8": {
+      "id": "SRC-6135F80209B8",
+      "url": "https://nda.ya.ru/t/rrsbgl677wuFBJ",
+      "title": "https://nda.ya.ru/t/rrsbgl677wuFBJ",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T08:38:48.727Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
+      }
+    },
+    "SRC-69C4FEBDC738": {
+      "id": "SRC-69C4FEBDC738",
+      "url": "https://nda.ya.ru/t/Y9pR93YN7rPF8K",
+      "title": "https://nda.ya.ru/t/Y9pR93YN7rPF8K",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T08:38:48.769Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
+      }
+    },
+    "SRC-F2212FDFEEFA": {
+      "id": "SRC-F2212FDFEEFA",
+      "url": "https://nda.ya.ru/t/VDY0Zyvr7wuFBM",
+      "title": "https://nda.ya.ru/t/VDY0Zyvr7wuFBM",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T08:38:48.807Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
       }
     }
   }
