@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-DKB1",
-    "timestamp": "2026-11-18T11:54:52.813Z",
-    "repository": "XingChen-AGI/TeleOCR",
-    "learningId": "learn-huggingface-xingchen-agi-teleocr",
-    "contentHash": "37627c9579d7107501dcca0806e021fa28db6a00ac70f12c40f17ec08e7d5d84",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-DQDN",
-    "timestamp": "2026-11-18T11:55:00.683Z",
-    "repository": "emberstack/kubernetes-reflector",
-    "learningId": "learn-github-emberstack-kubernetes-reflector",
-    "contentHash": "31371024d31402ce00c21311a8600f6e74587088d70b44cd58fb109795a847b1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-DW9P",
-    "timestamp": "2026-11-18T11:55:08.317Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "4e4cbb0f77f326be72fe1cd20e5538b5499cebe93628892cc8dca2aeccd83904",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-OEPW",
     "timestamp": "2026-11-18T12:03:18.788Z",
     "repository": "Qwen/Qwen-Image-2.1",
@@ -7490,6 +7445,51 @@
     "repository": "envoyproxy/envoy",
     "learningId": "learn-github-envoyproxy-envoy",
     "contentHash": "449e090d0167cf85ce9e9101f3d90347646744a04ed0713f0df03dc24db09f94",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-DP9J",
+    "timestamp": "2026-11-20T10:34:20.839Z",
+    "repository": "kamgurgul/cpu-info",
+    "learningId": "learn-github-kamgurgul-cpu-info",
+    "contentHash": "0bc4c5841003aee9074a621ebe0f9c955a45cf105a7f7b94bcc5d2af7bec0570",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-DRHO",
+    "timestamp": "2026-11-20T10:34:23.724Z",
+    "repository": "k3s-io/k3s",
+    "learningId": "learn-github-k3s-io-k3s",
+    "contentHash": "4e8dcc25f0f9f15647e070410e5bdc32ae8c0f1df273a9adc2665668dda4c10f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-QH4K",
+    "timestamp": "2026-11-20T10:44:16.820Z",
+    "repository": "kucherenko/jscpd",
+    "learningId": "learn-github-kucherenko-jscpd",
+    "contentHash": "a326537dc530934a6a24b442de2ef16d885530a668528970fb03ed7976cb8990",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T09:59:10.597Z",
+  "last_updated": "2026-11-20T10:44:16.835Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7596,14 +7596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kucherenko-jscpd",
-      "content_hash": "657cdf25d1db7f4e39d2cab25a08d91809bc09a63396cd6693a170d9b210bfd8",
-      "verified_at": "2026-11-13T18:43:41.087Z",
+      "content_hash": "a326537dc530934a6a24b442de2ef16d885530a668528970fb03ed7976cb8990",
+      "verified_at": "2026-11-20T10:44:16.835Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T18:43:41.087Z"
+      "last_updated": "2026-11-20T10:44:16.835Z"
     },
     "akveo/kittenTricks": {
       "repository": "akveo/kittenTricks",
@@ -9591,14 +9591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-k3s-io-k3s",
-      "content_hash": "a704822ca2f5ece452c8ac1549aa05e819ea2ff8b03d0c12b466b73f864893c8",
-      "verified_at": "2026-11-15T06:36:51.627Z",
+      "content_hash": "4e8dcc25f0f9f15647e070410e5bdc32ae8c0f1df273a9adc2665668dda4c10f",
+      "verified_at": "2026-11-20T10:34:23.738Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T06:36:51.627Z"
+      "last_updated": "2026-11-20T10:34:23.738Z"
     },
     "Ataraxy-Labs/sem": {
       "repository": "Ataraxy-Labs/sem",
@@ -13311,14 +13311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kamgurgul-cpu-info",
-      "content_hash": "89caf5389e99928ad18346b57c701a764dfa4283093a72925b58ebe78b7b3348",
-      "verified_at": "2026-11-16T05:29:02.012Z",
+      "content_hash": "0bc4c5841003aee9074a621ebe0f9c955a45cf105a7f7b94bcc5d2af7bec0570",
+      "verified_at": "2026-11-20T10:34:20.853Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T05:29:02.012Z"
+      "last_updated": "2026-11-20T10:34:20.853Z"
     },
     "ugolbck/seofordev": {
       "repository": "ugolbck/seofordev",

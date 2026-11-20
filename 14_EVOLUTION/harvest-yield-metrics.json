@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T09:59:10.592Z",
-  "total_cycles_completed": 10972,
-  "total_learnings_persisted": 10972,
-  "total_rules_promoted": 10337,
+  "last_updated": "2026-11-20T10:44:16.831Z",
+  "total_cycles_completed": 10975,
+  "total_learnings_persisted": 10975,
+  "total_rules_promoted": 10340,
   "history": [
-    {
-      "timestamp": "2026-11-19T14:03:30.999Z",
-      "repository": "bahdotsh/wrkflw",
-      "learningId": "learn-github-bahdotsh-wrkflw",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T14:03:33.837Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T14:20:17.057Z",
-      "repository": "speridlabs/iris-3b",
-      "learningId": "learn-huggingface-speridlabs-iris-3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T14:20:19.766Z",
       "repository": "agent-of-empires/agent-of-empires",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-20T09:59:10.592Z",
       "repository": "envoyproxy/envoy",
       "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T10:34:20.850Z",
+      "repository": "kamgurgul/cpu-info",
+      "learningId": "learn-github-kamgurgul-cpu-info",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T10:34:23.735Z",
+      "repository": "k3s-io/k3s",
+      "learningId": "learn-github-k3s-io-k3s",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T10:44:16.831Z",
+      "repository": "kucherenko/jscpd",
+      "learningId": "learn-github-kucherenko-jscpd",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

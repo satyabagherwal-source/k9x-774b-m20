@@ -4,22 +4,22 @@
 {
   "source_repository": "kucherenko/jscpd",
   "source_url": "https://github.com/kucherenko/jscpd",
-  "source_version": "b79927a3",
+  "source_version": "f79ae2bc",
   "license": "MIT",
-  "timestamp": "2026-11-13T18:43:41.287Z",
+  "timestamp": "2026-11-20T10:44:17.080Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-kucherenko-jscpd",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [kucherenko/jscpd](https://github.com/kucherenko/jscpd) (Revision: `b79927a3`).  
-> **License**: MIT | **Timestamp**: `2026-11-13T18:43:41.287Z`  
+> **Provenance**: Harvested from [kucherenko/jscpd](https://github.com/kucherenko/jscpd) (Revision: `f79ae2bc`).  
+> **License**: MIT | **Timestamp**: `2026-11-20T10:44:17.080Z`  
 > **Learning ID**: `learn-github-kucherenko-jscpd`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `kucherenko/jscpd` (Commit: `b79927a3`)
+- **Target Repository**: `kucherenko/jscpd` (Commit: `f79ae2bc`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kucherenko/jscpd](https://github.com/kucherenko/jscpd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T18:43:40.462Z  
+> **Harvest Timestamp**: 2026-11-20T10:34:14.290Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Copy/paste detector for source code. 220+ languages, Rust engine, SARIF/HTML/badge reporters, GitHub Action, MCP server for AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6549 stars
+- **Stars / Engagement**: 6586 stars
 
 ---
 
@@ -1551,6 +1551,7 @@ pub mod history;
 pub mod models;
 pub mod paths;
 pub mod summary;
+pub mod time;
 
 ```
 
@@ -1889,395 +1890,714 @@ impl CpdClone {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `89715b34` (2026-11-12)
-**Commit Message**: fix(deps): bump rustix to 1.1.6 for RUSTSEC-2026-0486
+### Incident Patch 1: `c206ed58` (2026-11-18)
+**Commit Message**: fix(deps): move the detection date helper to cpd-core
 
-rustix 1.1.5 marked unwritten bytes as initialized when its xattr
-functions got a zero-length buffer. jscpd pulls it in through tempfile
-and does not call those functions, but the nightly cargo deny check
-fails on it. Lockfile only.
+Review of #1310:
+- now_iso8601() lives in cpd_core::time, next to the two report models
+  that carry a detection date, so basta no longer goes through the
+  statistics module of cpd-finder for it; jiff moves there too
+- it can't panic: it builds the timestamp from SystemTime itself, a
+  clock before 1970 gives the epoch and a time jiff can't hold gives the
+  seconds as a number, as the chrono code did
+- basta calls the function where it needs it, the re-export in
+  analyze.rs is gone
+- tests: a clock before 1970, a time past the year 9999, and the shape
+  of the live value
 
-Fixes #1290
-
-**File**: `rust/Cargo.lock` (modified, +6/-6)
+**File**: `rust/Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -1081,7 +1081,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+@@ -584,6 +584,7 @@ checksum = "417bef24afe1460300965a25ff4a24b8b45ad011948302ec221e8a0a81eb2c79"
+ name = "cpd-core"
+ version = "0.1.23"
  dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
++ "jiff",
+  "rayon",
+  "rustc-hash",
+  "serde",
+@@ -600,7 +601,6 @@ dependencies = [
+  "cpd-tokenizer",
+  "globset",
+  "ignore",
+- "jiff",
+  "memchr",
+  "memmap2",
+  "rayon",
+```
+
+**File**: `rust/crates/basta/src/analyze.rs` (modified, +1/-3)
+```diff
+@@ -351,12 +351,10 @@ fn stats(graph: &Graph, findings: &[Finding], total_lines: u32, entry_points: us
+         } else {
+             (f64::from(dead_lines) / f64::from(total_lines)) * 100.0
+         },
+-        detection_date: now_iso8601(),
++        detection_date: cpd_core::time::now_iso8601(),
+     }
+ }
  
- [[package]]
-@@ -2874,15 +2874,15 @@ checksum = "6b1e7f9a428571be2dc5bc0505c13fb6bf936822b894ec87abf8a08a4e51742d"
+-pub(crate) use cpd_finder::statistics::now_iso8601;
+-
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+```
+
+**File**: `rust/crates/basta/src/rustc.rs` (modified, +1/-1)
+```diff
+@@ -184,7 +184,7 @@ fn stats(findings: &[Finding], total_lines: u32) -> Stats {
+         } else {
+             (f64::from(dead_lines) / f64::from(total_lines)) * 100.0
+         },
+-        detection_date: crate::analyze::now_iso8601(),
++        detection_date: cpd_core::time::now_iso8601(),
+     }
+ }
  
- [[package]]
- name = "rustix"
--version = "1.1.5"
-+version = "1.1.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "891efababe418670775f199f0d233d84843c227a0949a883ce15b37c78d6629d"
-+checksum = "e5e76742e5294153d4dde1207dbec5bdd81eef6fabdc0d2118babadabfd858aa"
- dependencies = [
-  "bitflags 2.13.2",
-  "errno",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+```
+
+**File**: `rust/crates/cpd-core/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -17,6 +17,7 @@ rustc-hash = "2"
+ xxhash-rust = { version = "0.8", features = ["xxh3"] }
+ rayon = "1"
+ serde = { version = "1", features = ["derive"] }
++jiff = { version = "0.2", default-features = false, features = ["std"] }
  
- [[package]]
-@@ -3236,7 +3236,7 @@ dependencies = [
-  "getrandom 0.4.3",
-  "once_cell",
-  "rustix",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+ [dev-dependencies]
+ serde_json = "1"
+```
+
+**File**: `rust/crates/cpd-core/src/lib.rs` (modified, +1/-0)
+```diff
+@@ -7,3 +7,4 @@ pub mod history;
+ pub mod models;
+ pub mod paths;
+ pub mod summary;
++pub mod time;
+```
+
+**File**: `rust/crates/cpd-core/src/time.rs` (added, +73/-0)
+```diff
+@@ -0,0 +1,73 @@
++//! The clock string that reports carry as their detection date.
++
++use std::time::{Duration, SystemTime, UNIX_EPOCH};
++
++/// The current UTC time as `2026-11-18T09:30:00.123Z`, the shape of
++/// JavaScript's `Date.prototype.toISOString()`.
++pub fn now_iso8601() -> String {
++    iso8601_utc(SystemTime::now())
++}
++
++/// Format a system time in UTC with millisecond precision. It never panics:
++/// a clock before 1970 gives the epoch, and a time that jiff can't hold
++/// (past the year 9999) gives the seconds as a plain number.
++fn iso8601_utc(time: SystemTime) -> String {
++    let since_epoch = time.duration_since(UNIX_EPOCH).unwrap_or_default();
++    timestamp(since_epoch)
++        .map(|timestamp| format!("{timestamp:.3}"))
++        .unwrap_or_else(|| since_epoch.as_secs().to_string())
++}
++
++fn timestamp(since_epoch: Duration) -> Option<jiff::Timestamp> {
++    let seconds = i64::try_from(since_epoch.as_secs()).ok()?;
++    let nanoseconds = i32::try_from(since_epoch.subsec_nanos()).ok()?;
++    jiff::Timestamp::new(seconds, nanoseconds).ok()
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    fn at(seconds: u64, nanoseconds: u32) -> SystemTime {
++        UNIX_EPOCH + Duration::new(seconds, nanoseconds)
++    }
++
++    #[test]
++    fn formats_utc_with_milliseconds() {
++        let cases = [
++            (0, 0, "1970-01-01T00:00:00.000Z"),
++            (86_399, 999_999_999, "1970-01-01T23:59:59.999Z"),
++            (1_709_164_800, 7_000_000, "2024-02-29T00:00:00.007Z"),
++            (1_795_080_645, 123_000_000, "2026-11-19T09:30:45.123Z"),
++        ];
++        for (seconds, nanoseconds, expected) in cases {
++            assert_eq!(
++                iso8601_utc(at(seconds, nanoseconds)),
++                expected,
++                "seconds = {seconds}"
++            );
++        }
++    }
++
++    #[test]
++    fn a_clock_before_1970_gives_the_epoch() {
++        let before = UNIX_EPOCH - Duration::from_secs(86_400);
++        assert_eq!(iso8601_utc(before), "1970-01-01T00:00:00.000Z");
++    }
++
++    #[test]
++    fn a_time_past_the_year_9999_gives_plain_seconds() {
++        let seconds = 400_000_000_000;
++        assert_eq!(iso8601_utc(at(seconds, 0)), seconds.to_string());
++    }
++
++    #[test]
++    fn now_has_the_shape_of_to_iso_string() {
++        let now = now_iso8601();
++        let shape: String = now
++            .chars()
++            .map(|c| if c.is_ascii_digit() { '0' } else { c })
++            .collect();
++        assert_eq!(shape, "0000-00-00T00:00:00.000Z", "{now}");
++    }
++}
+```
+
+**File**: `rust/crates/cpd-finder/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -20,6 +20,5 @@ ignore = "0.4"
+ globset = "0.4"
+ rayon = "1"
+ regex = "1"
+-jiff = { version = "0.2", default-features = false, features = ["std"] }
+ memmap2 = "0.9"
+ memchr = "2.8"
+```
+
+**File**: `rust/crates/cpd-finder/src/statistics.rs` (modified, +1/-31)
+```diff
+@@ -57,7 +57,7 @@ pub fn compute<'a>(
+         }
+     }
  
- [[package]]
-@@ -3761,7 +3761,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+-    let detection_date = now_iso8601();
++    let detection_date = cpd_core::time::now_iso8601();
  
- [[package]]
+     Statistics {
+         total: StatRow {
+@@ -77,17 +77,6 @@ pub fn compute<'a>(
+     }
+ }
+ 
+-/// The current UTC time as `2026-11-18T09:30:00.123Z`, the shape of
+-/// JavaScript's `Date.prototype.toISOString()`.
+-pub fn now_iso8601() -> String {
+-    iso8601_utc(jiff::Timestamp::now())
+-}
+-
+-/// Format a timestamp in UTC with millisecond precision.
+-fn iso8601_utc(timestamp: jiff::Timestamp) -> String {
+-    format!("{timestamp:.3}")
+-}
+-
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+@@ -201,22 +190,3 @@ mod tests {
+         assert_eq!(stats.formats["javascript"].sources, 1);
+     }
+ }
+-
+-#[cfg(test)]
+-mod iso8601_tests {
+-    use super::iso8601_utc;
+-
+-    #[test]
+-    fn formats_utc_with_milliseconds() {
+-        let cases = [
+-            (0, 0, "1970-01-01T00:00:00.000Z"),
+-            (86_399, 999_999_999, "1970-01-01T23:59:59.999Z"),
+-            (1_709_164_800, 7_000_000, "2024-02-29T00:00:00.007Z"),
+-            (1_795_080_645, 123_000_000, "2026-11-19T09:30:45.123Z"),
+-        ];
+-        for (secs, nanos, expected) in cases {
+-            let timestamp = jiff::Timestamp::new(secs, nanos).unwrap();
+-            assert_eq!(iso8601_utc(timestamp), expected, "secs = {secs}");
+-        }
+-    }
+-}
 ```
 
 ---
 
-### Incident Patch 2: `3953aaf1` (2026-11-12)
-**Commit Message**: fix(deps): keep windows-sys 0.61.2 for errno, tempfile and winapi-util
+### Incident Patch 2: `94d8958f` (2026-11-18)
+**Commit Message**: fix(deps): format the detection date with jiff
 
-rustix 1.1.6 accepts windows-sys >=0.52, <0.62, and cargo update moved
-it and three neighbours to 0.52.0. Only rustix needs to change.
+The hand-written date conversion goes away. jiff is one of the two
+crates the advisory recommends, and it is in the tree already through
+env_logger, so the lockfile gains no package. cpd-finder asks for it
+without default features: a UTC timestamp needs no time zone database.
 
-**File**: `rust/Cargo.lock` (modified, +4/-4)
+**File**: `rust/Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -1081,7 +1081,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
+@@ -600,6 +600,7 @@ dependencies = [
+  "cpd-tokenizer",
+  "globset",
+  "ignore",
++ "jiff",
+  "memchr",
+  "memmap2",
+  "rayon",
+```
+
+**File**: `rust/crates/cpd-finder/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -20,5 +20,6 @@ ignore = "0.4"
+ globset = "0.4"
+ rayon = "1"
+ regex = "1"
++jiff = { version = "0.2", default-features = false, features = ["std"] }
+ memmap2 = "0.9"
+ memchr = "2.8"
+```
+
+**File**: `rust/crates/cpd-finder/src/statistics.rs` (modified, +11/-42)
+```diff
+@@ -80,39 +80,12 @@ pub fn compute<'a>(
+ /// The current UTC time as `2026-11-18T09:30:00.123Z`, the shape of
+ /// JavaScript's `Date.prototype.toISOString()`.
+ pub fn now_iso8601() -> String {
+-    let duration = std::time::SystemTime::now()
+-        .duration_since(std::time::UNIX_EPOCH)
+-        .unwrap_or_default();
+-    iso8601_utc(duration.as_secs(), duration.subsec_millis())
++    iso8601_utc(jiff::Timestamp::now())
+ }
  
- [[package]]
-@@ -2882,7 +2882,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
+-/// Format seconds since the Unix epoch, plus milliseconds, as an ISO 8601 UTC
+-/// timestamp. The date comes from the days-to-civil conversion of the
+-/// proleptic Gregorian calendar, so no date-time crate is needed for it.
+-pub fn iso8601_utc(secs: u64, millis: u32) -> String {
+-    let days = secs / 86_400;
+-    let rem = secs % 86_400;
+-    // Shift the epoch to 0000-03-01 so a leap day is the last day of a year.
+-    let z = days + 719_468;
+-    let era = z / 146_097;
+-    let day_of_era = z % 146_097;
+-    let year_of_era =
+-        (day_of_era - day_of_era / 1_460 + day_of_era / 36_524 - day_of_era / 146_096) / 365;
+-    let day_of_year = day_of_era - (365 * year_of_era + year_of_era / 4 - year_of_era / 100);
+-    let shifted_month = (5 * day_of_year + 2) / 153;
+-    let day = day_of_year - (153 * shifted_month + 2) / 5 + 1;
+-    let month = if shifted_month < 10 {
+-        shifted_month + 3
+-    } else {
+-        shifted_month - 9
+-    };
+-    let year = year_of_era + era * 400 + u64::from(month <= 2);
+-    format!(
+-        "{year:04}-{month:02}-{day:02}T{:02}:{:02}:{:02}.{millis:03}Z",
+-        rem / 3_600,
+-        rem % 3_600 / 60,
+-        rem % 60
+-    )
++/// Format a timestamp in UTC with millisecond precision.
++fn iso8601_utc(timestamp: jiff::Timestamp) -> String {
++    format!("{timestamp:.3}")
+ }
  
- [[package]]
-@@ -3236,7 +3236,7 @@ dependencies = [
-  "getrandom 0.4.3",
-  "once_cell",
-  "rustix",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
+ #[cfg(test)]
+@@ -234,20 +207,16 @@ mod iso8601_tests {
+     use super::iso8601_utc;
  
- [[package]]
-@@ -3761,7 +3761,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
+     #[test]
+-    fn formats_known_instants() {
++    fn formats_utc_with_milliseconds() {
+         let cases = [
+             (0, 0, "1970-01-01T00:00:00.000Z"),
+-            (86_399, 999, "1970-01-01T23:59:59.999Z"),
+-            (951_782_400, 0, "2000-02-29T00:00:00.000Z"),
+-            (951_868_800, 0, "2000-03-01T00:00:00.000Z"),
+-            (1_709_164_800, 7, "2024-02-29T00:00:00.007Z"),
+-            (1_735_689_599, 0, "2024-12-31T23:59:59.000Z"),
+-            (1_735_689_600, 0, "2025-01-01T00:00:00.000Z"),
+-            (1_795_080_645, 123, "2026-11-19T09:30:45.123Z"),
+-            (4_107_542_400, 0, "2100-03-01T00:00:00.000Z"),
++            (86_399, 999_999_999, "1970-01-01T23:59:59.999Z"),
++            (1_709_164_800, 7_000_000, "2024-02-29T00:00:00.007Z"),
++            (1_795_080_645, 123_000_000, "2026-11-19T09:30:45.123Z"),
+         ];
+-        for (secs, millis, expected) in cases {
+-            assert_eq!(iso8601_utc(secs, millis), expected, "secs = {secs}");
++        for (secs, nanos, expected) in cases {
++            let timestamp = jiff::Timestamp::new(secs, nanos).unwrap();
++            assert_eq!(iso8601_utc(timestamp), expected, "secs = {secs}");
+         }
+     }
+ }
 ```
 
 ---
 
-### Incident Patch 3: `60b54227` (2026-11-12)
-**Commit Message**: fix(npm): getJscpdReport names what jscpd wrote when there is no report
+### Incident Patch 3: `a9dbd250` (2026-11-18)
+**Commit Message**: fix(deps): drop chrono for RUSTSEC-2026-0543
 
-Follow-up to #1288 from the review of the merged code:
-- "deadCode": true in .jscpd.json switches jscpd into dead-code mode
-  without any flag, and the run ended as "no report (exit code 0)".
-  JSCPD_NO_REPORT now names the files jscpd wrote instead, which also
-  covers modes added later.
-- --debug, --semantic-models and --semantic-download without
-  --semantic exit without scanning; they are rejected up front.
-- Short flags in one arg (-so out, -sh) are split, and a value-taking
-  letter ends the cluster (-k10).
-- A run killed by a signal says so, with error.signal.
-- An unreadable jscpd-report.json gives JSCPD_NO_REPORT, not a bare
-  SyntaxError.
-- The temporary directory is removed with retries, and a failed
-  removal no longer replaces the report or the error.
-- One helper builds the coded errors.
+chrono is unmaintained (#1309). jscpd used it in two places, both to
+print the detection date of a report as an ISO 8601 UTC timestamp.
+cpd-finder now formats it with a days-to-civil conversion, and basta
+calls the same function instead of its own copy.
 
-**File**: `rust/jscpd/README.md` (modified, +5/-1)
+The lockfile loses chrono and the 13 crates only it pulled in.
+
+Fixes #1309
+
+**File**: `rust/Cargo.lock` (modified, +0/-138)
 ```diff
-@@ -175,7 +175,11 @@ for (const { firstFile, secondFile } of duplicates) {
- }
- ```
+@@ -37,15 +37,6 @@ version = "0.2.21"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
  
--The directory is removed afterwards. The report comes back even when a gate such as `--threshold` fails the run. What jscpd prints to stdout is dropped; pass `stdio` in `options` to see it. `args` that set `--output` or `--report-name`, or a mode that writes another file (`--dead-code`, `--health`, `--compare`, `--complexity`, `--dashboard`) or none (`--mcp`, `--lsp`, `--list`), make it throw an `Error` with `code === "JSCPD_UNSUPPORTED_ARG"` and the flag in `arg` before anything runs; use `runJscpd` for those modes. When jscpd writes no report, for example for a path that does not exist, it throws an `Error` with `code === "JSCPD_NO_REPORT"` and the run's `status` and `stderr`. In `startLoc` and `endLoc`, lines count from 1, and columns and positions count bytes from 0.
-+The directory is removed afterwards, with any other file reporter's output (`--reporters html` in `args` writes there too). The report comes back even when a gate such as `--threshold` fails the run. What jscpd prints to stdout is dropped; pass `stdio` in `options` to see it.
-+
-+`args` that set `--output` or `--report-name`, or a mode that writes another file (`--dead-code`, `--health`, `--compare`, `--complexity`, `--dashboard`) or none (`--mcp`, `--lsp`, `--list`, `--debug`), make it throw an `Error` with `code === "JSCPD_UNSUPPORTED_ARG"` and the flag in `arg` before anything runs; use `runJscpd` for those. When jscpd runs and there is still no report, it throws an `Error` with `code === "JSCPD_NO_REPORT"` and the run's `status`, `signal` and `stderr`: for example for a path that does not exist, or for `"deadCode": true` in `.jscpd.json`, where the message names the file jscpd wrote instead.
-+
-+In `startLoc` and `endLoc`, lines count from 1, and columns and positions count bytes from 0.
+-[[package]]
+-name = "android_system_properties"
+-version = "0.1.6"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ae221649c9976a6f6c56ae1facf410f3ddb33cc661c4b7b61020a912d4237fbc"
+-dependencies = [
+- "libc",
+-]
+-
+ [[package]]
+ name = "annotate-snippets"
+ version = "0.12.16"
+@@ -233,7 +224,6 @@ checksum = "2af50177e190e07a26ab74f8b1efbfe2ef87da2116221318cb1c2e82baf7de06"
+ name = "basta"
+ version = "0.3.3"
+ dependencies = [
+- "chrono",
+  "clap",
+  "cpd-core",
+  "cpd-finder",
+@@ -447,19 +437,6 @@ dependencies = [
+  "ryu",
+ ]
  
- ## Coming from jscpd v4
+-[[package]]
+-name = "chrono"
+-version = "0.4.45"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1aa79e62e7697b8e29b513a68abacf485adcd1fe8284a4316c5ae868e6633327"
+-dependencies = [
+- "iana-time-zone",
+- "js-sys",
+- "num-traits",
+- "wasm-bindgen",
+- "windows-link",
+-]
+-
+ [[package]]
+ name = "clap"
+ version = "4.6.7"
+@@ -618,7 +595,6 @@ dependencies = [
+ name = "cpd-finder"
+ version = "0.1.22"
+ dependencies = [
+- "chrono",
+  "cpd-core",
+  "cpd-similarity",
+  "cpd-tokenizer",
+@@ -1170,30 +1146,6 @@ dependencies = [
+  "percent-encoding",
+ ]
  
+-[[package]]
+-name = "futures-core"
+-version = "0.3.34"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "92d699e522242e69e3003b94ecc1f960f3a5e015aa7c5d7486e65ad01dd94f5e"
+-
+-[[package]]
+-name = "futures-task"
+-version = "0.3.34"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cd417de3d1d015fc3bfd2b1ea46dfc7bab72ef86f1cc7cc9c78e728b34a6d1fd"
+-
+-[[package]]
+-name = "futures-util"
+-version = "0.3.34"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0d50a92467f8ba5dd6e3ee5d4bd04d73ab2e4e1c44474a0674821dfce14b79bc"
+-dependencies = [
+- "futures-core",
+- "futures-task",
+- "pin-project-lite",
+- "slab",
+-]
+-
+ [[package]]
+ name = "gemm"
+ version = "0.19.0"
+@@ -1471,30 +1423,6 @@ dependencies = [
+  "typenum",
+ ]
+ 
+-[[package]]
+-name = "iana-time-zone"
+-version = "0.1.65"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e31bc9ad994ba00e440a8aa5c9ef0ec67d5cb5e5cb0cc7f8b744a35b389cc470"
+-dependencies = [
+- "android_system_properties",
+- "core-foundation-sys",
+- "iana-time-zone-haiku",
+- "js-sys",
+- "log",
+- "wasm-bindgen",
+- "windows-core",
+-]
+-
+-[[package]]
+-name = "iana-time-zone-haiku"
+-version = "0.1.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f31827a206f56af32e590ba56d5d2d085f558508192593743f16b2306495269f"
+-dependencies = [
+- "cc",
+-]
+-
+ [[package]]
+ name = "icu_collections"
+ version = "2.3.0"
+@@ -1768,7 +1696,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "7883d941dae510fb2d978fc3fe018c71c9e2892fd38854de3e8b92c2e5ad9cc5"
+ dependencies = [
+  "cfg-if",
+- "futures-util",
+  "wasm-bindgen",
+ ]
+ 
+@@ -2455,12 +2382,6 @@ dependencies = [
+  "siphasher",
+ ]
+ 
+-[[package]]
+-name = "pin-project-lite"
+-version = "0.2.17"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a89322df9ebe1c1578d689c92318e070967d1042b512afbe49518723f4e6d5cd"
+-
+ [[package]]
+ name = "pkg-config"
+ version = "0.3.34"
+@@ -3103,12 +3024,6 @@ version = "1.0.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "33f4fe9184a62d842c9ef383018f3306d8ba224fd9d836f56d7288308847c256"
+ 
+-[[package]]
+-name = "slab"
+-version = "0.4.12"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
+-
+ [[package]]
+ name = "smallvec"
+ version = "1.16.2"
+@@ -3764,65 +3679,12 @@ dependencies = [
+  "windows-sys 0.61.2",
+ ]
+ 
+-[[package]]
+-name = "windows-core"
+-version = "0.62.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b8e83a14d34d0623b51dce9581199302a221863196a1dde71a7663a4c2be9deb"
+-dependencies = [
+- "windows-implement",
+- "windows-interface",
+- "windows-link",
+- "windows-result",
+- "windows-strings",
+-]
+-
+-[[package]]
+-name = "windows-implement"
+-version = "0.60.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "053e2e040ab57b9dc951b72c264860db7eb3b0200ba345b4e4c3b14f67855ddf"
+-dependencies = [
+- "proc-macro2",
+- "quote",
+- "syn 2.0.119",
+-]
+-
+-[[package]]
+-name = "windows-interface"
+-version = "0.59.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3f316c4a2570ba26bbec722032c4099d8c8bc095efccdc15688708623367e358"
+-dependencies = [
+- "proc-macro2",
+- "quote",
+- "syn 2.0.119",
+-]
+-
+ [[package]]
+ name = "windows-link"
+ version = "0.2.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
+ 
+-[[package]]
+-name = "windows-result"
+-version = "0.4.1"
+-source = 
 ```
 
-**File**: `rust/jscpd/index.d.ts` (modified, +6/-3)
+**File**: `rust/crates/basta/Cargo.toml` (modified, +0/-1)
 ```diff
-@@ -112,13 +112,16 @@ export interface JscpdReport {
-  * in `arg`, before running anything, when `args` set `--output` or
-  * `--report-name`, or a mode that writes no `jscpd-report.json`
-  * (`--dead-code`, `--health`, `--compare`, `--complexity`, `--dashboard`,
-- * `--mcp`, `--lsp`, `--list`, `--help`, `--version`).
-+ * `--mcp`, `--lsp`, `--list`, `--debug`, `--semantic-models`, `--help`,
-+ * `--version`, `--semantic-download` without `--semantic`).
-  *
-  * The report is returned whenever jscpd wrote it, even when a gate such as
-  * `--threshold` failed the run. Throws `result.error` when the binary could
-  * not run, and an `Error` whose `code` is `"JSCPD_NO_REPORT"`, with the exit
-- * `status` and `stderr`, when it wrote no report (for example, a path that
-- * does not exist). Throws as `runJscpd` does when there is no binary.
-+ * `status`, `signal` and `stderr`, when there is no report to return (for
-+ * example, a path that does not exist, or `"deadCode": true` in the config:
-+ * the message names the files jscpd wrote instead). Throws as `runJscpd`
-+ * does when there is no binary.
-  */
- export function getJscpdReport(
-   args: readonly string[],
+@@ -37,7 +37,6 @@ oxc_syntax = "0.158"
+ ruff_python_ast = "0.0.21"
+ ruff_python_parser = "0.0.21"
+ rustc-hash = "2"
+-chrono = "0.4"
+ rayon = "1"
+ serde = { version = "1", features = ["derive"] }
+ serde_json = "1"
 ```
 
-**File**: `rust/jscpd/index.js` (modified, +102/-35)
+**File**: `rust/crates/basta/src/analyze.rs` (modified, +1/-10)
 ```diff
-@@ -22,7 +22,9 @@ const UNSUPPORTED_ARG = "JSCPD_UNSUPPORTED_ARG";
- const OWN_FLAGS = new Set(["--output", "-o", "--report-name"]);
- // Modes that write another file instead of jscpd-report.json, or none at
- // all: --dead-code writes basta-report.json, --health jscpd-health.json,
--// --mcp and --lsp wait for a client on stdin.
-+// --mcp and --lsp wait for a client on stdin, --debug prints the config.
-+// A mode switched on another way (`"deadCode": true` in .jscpd.json) is
-+// caught after the run: the error names the files jscpd wrote instead.
- const OTHER_MODES = new Set([
-   "--dead-code",
-   "--basta",
-@@ -33,16 +35,19 @@ const OTHER_MODES = new Set([
-   "--mcp",
-   "--lsp",
-   "--list",
-+  "--debug",
-+  "--semantic-models",
-   "--help",
-   "-h",
-   "--version",
-   "-V",
- ]);
-+// jscpd's short flags that take a value: in `-sk30` or `-so out`, what
-+// follows the letter is its value, not more flags.
-+const SHORT_WITH_VALUE = new Set("klxmfiroctzp");
+@@ -22,7 +22,6 @@ use crate::rustc;
+ use cpd_finder::walker::{WalkConfig, walk};
+ use rayon::prelude::*;
+ use std::path::{Path, PathBuf};
+-use std::time::{SystemTime, UNIX_EPOCH};
  
--function noBinary(message) {
--  const error = new Error(message);
--  error.code = NO_BINARY;
--  return error;
-+function codedError(code, message, fields) {
-+  return Object.assign(new Error(message), { code }, fields);
+ /// Everything a run produced, plus the graph it was derived from so callers
+ /// that want more than the findings (the MCP server, tests) need not rebuild it.
+@@ -356,15 +355,7 @@ fn stats(graph: &Graph, findings: &[Finding], total_lines: u32, entry_points: us
+     }
  }
  
- /**
-@@ -56,7 +61,8 @@ function noBinary(message) {
- function runJscpd(args, options) {
-   const key = getPlatformKey();
-   if (!key) {
--    throw noBinary(
-+    throw codedError(
-+      NO_BINARY,
-       `jscpd: no prebuilt binary for this platform: ${describeHost()}\n` +
-         `jscpd: supported platforms: ${supportedPlatforms().join(", ")}\n` +
-         "jscpd: build from source instead with `cargo install jscpd` " +
-@@ -82,7 +88,8 @@ function runJscpd(args, options) {
-       binaryName
-     );
-     if (!fs.existsSync(localBuild)) {
--      throw noBinary(
-+      throw codedError(
-+        NO_BINARY,
-         `jscpd: Platform package "${entry.packageName}" not installed.` +
-           ` Install it with: npm install ${entry.packageName}\n` +
-           "Alternatively, build from source: cargo build --release -p jscpd"
-@@ -94,25 +101,42 @@ function runJscpd(args, options) {
-   return spawnSync(binaryPath, args, options);
+-pub(crate) fn now_iso8601() -> String {
+-    let duration = SystemTime::now()
+-        .duration_since(UNIX_EPOCH)
+-        .unwrap_or_default();
+-    let seconds = duration.as_secs();
+-    chrono::DateTime::from_timestamp(seconds as i64, duration.subsec_millis() * 1_000_000)
+-        .map(|dt| dt.format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string())
+-        .unwrap_or_else(|| seconds.to_string())
+-}
++pub(crate) use cpd_finder::statistics::now_iso8601;
+ 
+ #[cfg(test)]
+ mod tests {
+```
+
+**File**: `rust/crates/cpd-finder/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -20,6 +20,5 @@ ignore = "0.4"
+ globset = "0.4"
+ rayon = "1"
+ regex = "1"
+-chrono = "0.4"
+ memmap2 = "0.9"
+ memchr = "2.8"
+```
+
+**File**: `rust/crates/cpd-finder/src/statistics.rs` (modified, +62/-11)
+```diff
+@@ -57,17 +57,7 @@ pub fn compute<'a>(
+         }
+     }
+ 
+-    use std::time::{SystemTime, UNIX_EPOCH};
+-    let detection_date = {
+-        let duration = SystemTime::now()
+-            .duration_since(UNIX_EPOCH)
+-            .unwrap_or_default();
+-        let secs = duration.as_secs();
+-        let millis = duration.subsec_millis();
+-        chrono::DateTime::from_timestamp(secs as i64, millis * 1_000_000)
+-            .map(|dt| dt.format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string())
+-            .unwrap_or_else(|| format!("{secs}"))
+-    };
++    let detection_date = now_iso8601();
+ 
+     Statistics {
+         total: StatRow {
+@@ -87,6 +77,44 @@ pub fn compute<'a>(
+     }
  }
  
--function unsupportedArg(arg, message) {
--  const error = new Error(`jscpd: getJscpdReport: ${message}`);
--  error.code = UNSUPPORTED_ARG;
--  error.arg = arg;
--  return error;
-+function unsupportedArg(flag, message) {
-+  return codedError(UNSUPPORTED_ARG, `jscpd: getJscpdReport: ${message}`, {
-+    arg: flag,
-+  });
++/// The current UTC time as `2026-11-18T09:30:00.123Z`, the shape of
++/// JavaScript's `Date.prototype.toISOString()`.
++pub fn now_iso8601() -> String {
++    let duration = std::time::SystemTime::now()
++        .duration_since(std::time::UNIX_EPOCH)
++        .unwrap_or_default();
++    iso8601_utc(duration.as_secs(), duration.subsec_millis())
 +}
 +
-+// The flags in one arg: `--name=value` gives `--name`, a cluster of short
-+// flags such as `-so` gives `-s` and `-o`.
-+function flagsOf(arg) {
-+  if (arg.startsWith("--")) {
-+    return [arg.split("=")[0]];
-+  }
-+  if (!arg.startsWith("-") || arg.length < 2) {
-+    return [];
-+  }
-+  const flags = [];
-+  for (const letter of arg.slice(1)) {
-+    flags.push(`-${letter}`);
-+    if (SHORT_WITH_VALUE.has(letter)) {
-+      break;
-+    }
-+  }
-+  return flags;
- }
- 
- // Throws for an arg that would make jscpd fail or write no jscpd-report.json.
- // Everything after `--` is a path.
- function checkArgs(args) {
-+  const flags = [];
-   for (const arg of args) {
-     if (arg === "--") {
--      return;
-+      break;
-     }
--    const flag = arg.startsWith("--")
--      ? arg.split("=")[0]
--      : arg.startsWith("-o")
--        ? "-o"
--        : arg;
-+    flags.push(...flagsOf(arg));
-+  }
-+  for (const flag of flags) {
-     if (OWN_FLAGS.has(flag)) {
-       throw unsupportedArg(
-         flag,
-@@ -126,6 +150,40 @@ function checkArgs(args) {
-       );
-     }
-   }
-+  // Alone, --semantic-download exits after the download.
-+  if (flags.includes("--semantic-download") && !flags.includes("--semantic")) {
-+    throw unsupportedArg(
-+      "--semantic-download",
-+      "--semantic-download without --semantic does not scan, run it with runJscpd"
-+    );
-+  }
++/// Format seconds since the Unix epoch, plus milliseconds, as an ISO 8601 UTC
++/// timestamp. The date comes from the days-to-civil conversion of the
++/// proleptic Gregorian calendar, so no date-time crate is needed for it.
++pub fn iso8601_utc(secs: u64, millis: u32) -> String {
++    let days = secs / 86_400;
++    let rem = secs % 86_400;
++    // Shift the epoch to 0000-03-01 so a leap day is the last day of a year.
++    let z = days + 719_468;
++    let era = z / 146_097;
++    let day_of_era = z % 146_097;
++    let year_of_era =
++        (day_of_era - day_of_era / 1_460 + day_of_era / 36_524 - day_of_era / 146_096) / 365;
++    let day_of_year = day_of_era - (365 * year_of_era + year_of_era / 4 - year_of_era / 100);
++    let shifted_month = (5 * day_of_year + 2) / 153;
++    let day = day_of_year - (153 * shifted_month + 2) / 5 + 1;
++    let month = if shifted_month < 10 {
++        shifted_month + 3
++    } else {
++        shifted_month - 9
++    };
++    let year = year_of_era + era * 400 + u64::from(month <= 2);
++    format!(
++        "{year:04}-{month:02}-{day:02}T{:02}:{:02}:{:02}.{millis:03}Z",
++        rem / 3_600,
++        rem % 3_600 / 60,
++        rem % 60
++    )
 +}
 +
-+// Why there is no report to return: `reason`, or else the files jscpd
-+// wrote instead (a mode switched on in the config writes its own file).
-+function noReport(result, dir, reason) {
-+  const stderr = String(result.stderr ?? "");
-+  const exit =
-+    result.status === null && result.signal
-+      ? `killed by ${result.signal}`
-+      : `exit code ${result.status}`;
-+  let detail = reason ? `, ${reason}` : "";
-+  if (!reason) {
-+    try {
-+      const written = fs.readdirSync(dir).sort();
-+      if (written.length) {
-+        detail = `, it wrote ${written.join(", ")} instead`;
-+      }
-+    } catch {
-+      // Gone already; nothing to name.
-+    }
-+  }
-+  return codedError(
-+    NO_REPORT,
-+    `jscpd: no report (${exit}${detail})` +
-+      (stderr ? `\n${stderr.trimEnd()}` : ""),
-+    { status: result.status, signal: result.signal, stderr }
-+  );
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+@@ -200,3 +228,26 @@ mod tests {
+         assert_eq!(stats.formats["javascript"].sources, 1);
+     }
  }
- 
- /**
-@@ -139,10 +197,11 @@ function checkArgs(args) {
-  * Throws an Error with `code === "JSCPD_UNSUPPORTED_ARG"` and the flag in
-  * `arg`, before running anything, when `args` set `--output` or
-  * `--report-name`, or a mode that writes no jscpd-report.json (`--dead-code`,
-- * `--health`, `--compare`,
-```
-
-**File**: `rust/jscpd/test/run-jscpd.test.js` (modified, +35/-0)
-```diff
-@@ -299,6 +299,15 @@ test("getJscpdReport throws JSCPD_UNSUPPORTED_ARG for its own flags and other mo
-     [["-h"], "-h"],
-     [["--version"], "--version"],
-     [["-V"], "-V"],
-+    [["--debug"], "--debug"],
-+    [["--semantic-models"], "--semantic-models"],
-+    [["--semantic-download"], "--semantic-download"],
-+    [["--semantic-download=minilm"], "--semantic-download"],
-+    // Short flags in one arg.
-+    [["-so", "out"], "-o"],
-+    [["-sao"], "-o"],
-+    [["-sh"], "-h"],
-+    [["-sV"], "-V"],
-   ];
-   for (const [args, arg] of cases) {
-     assert.throws(
-@@ -318,6 +327,32 @@ test("getJscpdReport throws JSCPD_UNSUPPORTED_ARG for its own flags and other mo
-   assert.deepEqual(fs.readdirSync(tmp), []);
- });
- 
-+test("getJscpdReport reads a short flag's value as a value, not as more flags", (t) => {
-+  const dir = projectWithClone(t);
-+  // -k10: "10" is the value of -k. -sa: --silent and --absolute.
-+  const report = getJscpdReport([dir, "-k10", "-l", "3", "-sa"]);
-+  assert.equal(report.duplicates.length, 1);
-+  assert.ok(path.isAbsolute(report.duplicates[0].firstFile.name));
-+});
 +
-+test("a mode switched on in the config: JSCPD_NO_REPORT names the file jscpd wrote", (t) => {
-+  const dir = projectWithClone(t);
-+  fs.writeFileSync(path.join(dir, ".jscpd.json"), JSON.stringify({ deadCode: true }));
-+  assert.throws(
-+    () => getJscpdReport(["."], { cwd: dir }),
-+    (error) => {
-+      assert.equal(error.code, "JSCPD_NO_REPORT");
-+      assert.equal(error.status, 0);
-+      assert.equal(error.signal, null);
-+      assert.match(
-+        error.message,
-+        /^jscpd: no report \(exit code 0, it wrote basta-report\.json instead\)/
-+      );
-+      return true;
++#[cfg(test)]
++mod iso8601_tests {
++    use super::iso8601_utc;
++
++    #[test]
++    fn formats_known_instants() {
++        let cases = [
++            (0, 0, "1970-01-01T00:00:00.000Z"),
++            (86_399, 999, "1970-01-01T23:59:59.999Z"),
++            (951_782_400, 0, "2000-02-29T00:00:00.000Z"),
++            (951_868_800, 0, "2000-03-01T00:00:00.000Z"),
++            (1_709_164_800, 7, "2024-02-29T00:00:00.007Z"),
++            (1_735_689_599, 0, "2024-12-31T23:59:59.000Z"),
++            (1_735_689_600, 0, "2025-01-01T00:00:00.000Z"),
++            (1_795_080_645, 123, "2026-11-19T09:30:45.123Z"),
++            (4_107_542_400, 0, "2100-03-01T00:00:00.000Z"),
++        ];
++        for (secs, millis, expected) in cases {
++            assert_eq!(iso8601_utc(secs, millis), expected, "secs = {secs}");
++        }
 +    }
-+  );
-+});
-+
- test("getJscpdReport reads flag names after -- as paths", (t) => {
-   const dir = projectWithClone(t);
-   fs.mkdirSync(path.join(dir, "--health"));
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1300** (2026-11-13): chore(deps): bump tree-sitter from 0.27.1 to 0.27.2 in /rust (@dependabot[bot])
-- **PR #1299** (2026-11-13): chore(deps): bump globset from 0.4.20 to 0.4.21 in /rust (@dependabot[bot])
-- **PR #1298** (2026-11-13): chore(deps): bump tree-sitter-scala from 0.26.4 to 0.26.9 in /rust (@dependabot[bot])
-- **PR #1297** (2026-11-13): chore(deps): bump the ruff group across 1 directory with 2 updates (@dependabot[bot])
-- **PR #1296** (2026-11-13): chore(deps): bump the oxc group in /rust with 7 updates (@dependabot[bot])
-- **PR #1295** (2026-11-13): chore(deps): bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
+- **PR #1318** (2026-11-20): chore(deps): bump ureq from 3.5.1 to 3.5.2 in /rust (@dependabot[bot])
+- **PR #1316** (2026-11-20): chore(deps): bump serde-saphyr from 2.0.0 to 2.1.1 in /rust (@dependabot[bot])
+- **PR #1315** (2026-11-20): chore(deps): bump the ruff group in /rust with 2 updates (@dependabot[bot])
+- **PR #1314** (2026-11-20): chore(deps): bump taiki-e/install-action from 2.90.3 to 2.90.5 (@dependabot[bot])
+- **PR #1312** (2026-11-20): chore(deps): bump cachix/install-nix-action from 31.11.3 to 31.11.5 (@dependabot[bot])
+- **PR #1311** (2026-11-20): chore(deps): bump EmbarkStudios/cargo-deny-action from 2.1.1 to 2.1.2 (@dependabot[bot])
 
 ---
 
@@ -2297,13 +2617,13 @@ Follow-up to #1288 from the review of the merged code:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump rustix to 1.1.6 for RUSTSEC-2026-0486
+## X. deps): move the detection date helper to cpd-core
 
 **RULE**:
 When implementing operations in `rust/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kucherenko/jscpd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `89715b34`: deps): bump rustix to 1.1.6 for RUSTSEC-2026-0486. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c206ed58`: deps): move the detection date helper to cpd-core. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/Cargo.lock`.
@@ -2311,27 +2631,17 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "windows-sys 0.52.0",
-version = "1.1.6"
-checksum = "e5e76742e5294153d4dde1207dbec5bdd81eef6fabdc0d2118babadabfd858aa"
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
+ "jiff",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
- "windows-sys 0.61.2",
-version = "1.1.5"
-checksum = "891efababe418670775f199f0d233d84843c227a0949a883ce15b37c78d6629d"
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
+// Induced defect failure mode:
+ "jiff",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `89715b34` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c206ed58` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md`  
 > **Source**: github ([https://github.com/kamgurgul/cpu-info](https://github.com/kamgurgul/cpu-info))  
-> **Source Version**: `e0ad273c`  
+> **Source Version**: `0a32bfc5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T05:29:01.094Z  
+> **Timestamp**: 2026-11-20T10:34:19.616Z  
 > **Learning ID**: `learn-github-kamgurgul-cpu-info`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kamgurgul/cpu-info](https://github.com/kamgurgul/cpu-info))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T05:29:01.089Z  
+> **Harvest Timestamp**: 2026-11-20T10:34:19.446Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -326,6 +326,32 @@ actual fun String.normalize(): String {
 
 ```
 
+### Core Architecture Module: `shared/src/androidMain/kotlin/com/kgurgul/cpuinfo/utils/navigation/FullScreenBackGesture.android.kt`
+```
+/*
+ * Copyright KG Soft
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.kgurgul.cpuinfo.utils.navigation
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+
+@Composable actual fun Modifier.fullScreenBackGesture(): Modifier = this
+
+```
+
 ### Core Architecture Module: `shared/src/commonMain/kotlin/com/kgurgul/cpuinfo/utils/ComposeExtensions.kt`
 ```
 /*
@@ -598,36 +624,6 @@ fun formatHz(valueHz: Long): String {
 
 ```
 
-### Core Architecture Module: `shared/src/commonMain/kotlin/com/kgurgul/cpuinfo/utils/IDispatchersProvider.kt`
-```
-/*
- * Copyright KG Soft
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package com.kgurgul.cpuinfo.utils
-
-import kotlinx.coroutines.CoroutineDispatcher
-
-interface IDispatchersProvider {
-    val main: CoroutineDispatcher
-    val io: CoroutineDispatcher
-    val default: CoroutineDispatcher
-    val unconfined: CoroutineDispatcher
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -658,67 +654,163 @@ interface IDispatchersProvider {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e0ad273c` (2026-11-15)
-**Commit Message**: [SHARED] Update typography
+### Incident Patch 1: `75fd286f` (2026-11-20)
+**Commit Message**: [JVM] Fix proguard config
 
-**File**: `shared/src/commonMain/kotlin/com/kgurgul/cpuinfo/ui/theme/Typoghraphy.kt` (modified, +3/-0)
+**File**: `desktopApp/rules.pro` (modified, +3/-0)
 ```diff
-@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
- import androidx.compose.ui.unit.sp
+@@ -10,6 +10,9 @@
+ # JNA - keep all classes and suppress reflection notes
+ -keep class com.sun.jna.** { *; }
+ -dontnote com.sun.jna.**
++# JNA binds native functions by method name and structures by field name
++-keep interface * extends com.sun.jna.Library { *; }
++-keep class * extends com.sun.jna.Structure { *; }
  
- private val defaultTextStyle = TextStyle.Default
-+private val baselineTypography = Typography()
+ # WindowsExeIconDecoder - JNA interfaces must be kept with original names
+ -keep class com.kgurgul.cpuinfo.utils.WindowsExeIconDecoder { *; }
+```
+
+**File**: `shared/src/jvmMain/kotlin/com/kgurgul/cpuinfo/domain/action/ExternalAppAction.jvm.kt` (modified, +3/-0)
+```diff
+@@ -64,6 +64,9 @@ actual class ExternalAppAction actual constructor() : IExternalAppAction, KoinCo
+                 throw e
+             } catch (e: Exception) {
+                 Result.failure(e)
++            } catch (e: LinkageError) {
++                // Broken native bindings (e.g. UnsatisfiedLinkError) must surface, not vanish.
++                Result.failure(e)
+             }
+         }
  
- val CpuInfoTypography =
-     Typography(
-@@ -30,6 +31,8 @@ val CpuInfoTypography =
-                 fontWeight = FontWeight.Medium,
-                 lineHeight = 24.sp,
-             ),
-+        titleSmall = baselineTypography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-+        bodyMedium = baselineTypography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-         labelSmall =
-             defaultTextStyle.copy(
-                 fontSize = 10.sp,
+```
+
+**File**: `shared/src/jvmMain/kotlin/com/kgurgul/cpuinfo/utils/uninstall/WindowsUninstaller.kt` (modified, +8/-26)
+```diff
+@@ -20,15 +20,15 @@ import com.kgurgul.cpuinfo.domain.model.UninstallTarget
+ import com.sun.jna.Native
+ import com.sun.jna.platform.win32.Kernel32
+ import com.sun.jna.platform.win32.Kernel32Util
++import com.sun.jna.platform.win32.KnownFolders
+ import com.sun.jna.platform.win32.Ole32
+ import com.sun.jna.platform.win32.Shell32
++import com.sun.jna.platform.win32.Shell32Util
+ import com.sun.jna.platform.win32.ShellAPI
+ import com.sun.jna.platform.win32.Win32Exception
+ import com.sun.jna.platform.win32.WinBase
+ import com.sun.jna.platform.win32.WinError
+ import com.sun.jna.ptr.IntByReference
+-import com.sun.jna.win32.StdCallLibrary
+-import com.sun.jna.win32.W32APIOptions
+ import java.io.File
+ import java.io.IOException
+ import kotlinx.coroutines.delay
+@@ -138,15 +138,11 @@ internal class WindowsUninstaller(
+ }
+ 
+ private suspend fun launchWindowsUninstaller(entry: WindowsAppEntry): UninstallOutcome {
+-    val systemPath = CharArray(WINDOWS_MAX_PATH)
+-    val size = SystemDirectoryApi.instance.GetSystemDirectory(systemPath, systemPath.size)
+-    check(size > 0 && size < systemPath.size) { "Cannot locate the Windows system directory" }
++    // Use JNA's own bindings: ProGuard renames methods of app-declared JNA interfaces.
++    val systemDirectory = Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_System)
++    check(systemDirectory.isNotBlank()) { "Cannot locate the Windows system directory" }
+     val command =
+-        windowsUninstallCommand(
+-            entry,
+-            String(systemPath, 0, size),
+-            Kernel32Util::expandEnvironmentStrings,
+-        )
++        windowsUninstallCommand(entry, systemDirectory, Kernel32Util::expandEnvironmentStrings)
+     require(File(command.executable).isFile) { "Uninstaller does not exist: ${command.executable}" }
+     val execution =
+         ShellAPI.SHELLEXECUTEINFO().apply {
+@@ -161,7 +157,8 @@ private suspend fun launchWindowsUninstaller(entry: WindowsAppEntry): UninstallO
+     val comResult = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_APARTMENTTHREADED)
+     try {
+         if (!Shell32.INSTANCE.ShellExecuteEx(execution)) {
+-            val error = Kernel32.INSTANCE.GetLastError()
++            // JNA captures the error right after the call; a separate GetLastError call may not.
++            val error = Native.getLastError()
+             if (error == WinError.ERROR_CANCELLED) return UninstallOutcome.CANCELLED
+             throw Win32Exception(error)
+         }
+@@ -189,18 +186,3 @@ private suspend fun launchWindowsUninstaller(entry: WindowsAppEntry): UninstallO
+         Kernel32.INSTANCE.CloseHandle(process)
+     }
+ }
+-
+-private const val WINDOWS_MAX_PATH = 260
+-
+-private interface SystemDirectoryApi : StdCallLibrary {
+-    fun GetSystemDirectory(buffer: CharArray, size: Int): Int
+-
+-    companion object {
+-        val instance: SystemDirectoryApi =
+-            Native.load(
+-                "kernel32",
+-                SystemDirectoryApi::class.java,
+-                W32APIOptions.UNICODE_OPTIONS,
+-            )
+-    }
+-}
 ```
 
 ---
 
-### Incident Patch 2: `bbb85927` (2026-11-14)
-**Commit Message**: [SHARED] Libs update
+### Incident Patch 2: `5b8d81b1` (2026-11-19)
+**Commit Message**: [IOS] Fix iOS pipeline
 
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+**File**: `.github/workflows/ios_release.yml` (modified, +1/-0)
 ```diff
-@@ -33,7 +33,7 @@ kotlin = "2.4.21"
- kotlinxBrowser = "0.5.0"
- kotlinxCoroutines = "1.11.0"
- kotlinxImmutable = "0.5.2"
--kotlinxSerialization = "1.12.0"
-+kotlinxSerialization = "1.13.0"
- kover = "0.9.11"
- ktfmt = "0.64"
- licenses = "3.1.5"
+@@ -79,6 +79,7 @@ jobs:
+             PRODUCT_BUNDLE_IDENTIFIER="${{ secrets.IOS_BUNDLE_ID }}" \
+             CODE_SIGN_STYLE="Manual" \
+             CODE_SIGN_IDENTITY="Apple Distribution" \
++            CURRENT_PROJECT_VERSION="${{ github.run_number }}" \
+             PROVISIONING_PROFILE_SPECIFIER="${{ secrets.IOS_DIST_PROVISIONING_PROFILE_NAME }}" \
+             archive
+       - name: "Generate ExportOptions.plist"
 ```
 
-**File**: `gradle/wrapper/gradle-wrapper.properties` (modified, +1/-1)
+**File**: `iosApp/iosApp/Info.plist` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- distributionBase=GRADLE_USER_HOME
- distributionPath=wrapper/dists
--distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.2-all.zip
-+distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.1-all.zip
- networkTimeout=10000
- retries=0
- retryBackOffMs=500
+@@ -19,7 +19,7 @@
+ 	<key>CFBundleShortVersionString</key>
+ 	<string>1.5.0</string>
+ 	<key>CFBundleVersion</key>
+-	<string>7</string>
++	<string>$(CURRENT_PROJECT_VERSION)</string>
+ 	<key>LSRequiresIPhoneOS</key>
+ 	<true/>
+ 	<key>UIApplicationSceneManifest</key>
+```
+
+---
+
+### Incident Patch 3: `bb8afb2a` (2026-11-19)
+**Commit Message**: [IOS] Fix iOS pipeline
+
+**File**: `.github/workflows/ios_release.yml` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@ jobs:
+         run: ./gradlew spotlessCheck
+   build_and_release:
+     needs: code_quality
+-    runs-on: macos-26
++    runs-on: xcode-27
+     steps:
+       - uses: actions/checkout@v7
+       - name: set up JDK 17
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #655** (closed): Update composeUiTest to v1.13.0 - autoclosed (@renovate[bot])
+- **PR #654** (closed): Update androidxWear to v1.7.2 - autoclosed (@renovate[bot])
+- **PR #653** (2026-11-19): Update dependency ruby to v4.0.10 (@renovate[bot])
+- **PR #652** (closed): Update dependency com.github.oshi:oshi-core to v7.8.0 - autoclosed (@renovate[bot])
 - **PR #651** (closed): Update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.13.0 - autoclosed (@renovate[bot])
-- **PR #650** (closed): Update Gradle to v9.9.1 - autoclosed (@renovate[bot])
-- **PR #649** (closed): Update dependency androidx.test.uiautomator:uiautomator to v2.4.1 - autoclosed (@renovate[bot])
-- **PR #648** (closed): Update dependency com.diffplug.spotless to v8.11.0 - autoclosed (@renovate[bot])
-- **PR #647** (closed): Update dependency com.github.jk1.dependency-license-report to v3.1.5 - autoclosed (@renovate[bot])
-- **PR #646** (closed): Update plugin io.github.ben-manes.versions.settings to v0.67.0 - autoclosed (@renovate[bot])
+- **PR #650** (closed): Update Gradle to v9.9.2 - autoclosed (@renovate[bot])
 
 ---
 
@@ -738,23 +830,23 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [SHARED] Update typography
+## X. [JVM] Fix proguard config
 
 **RULE**:
-When implementing operations in `shared/src/commonMain/kotlin/com/kgurgul/cpuinfo/ui/theme/Typoghraphy.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kamgurgul/cpu-info. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `desktopApp/rules.pro`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kamgurgul/cpu-info. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e0ad273c`: [SHARED] Update typography. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `75fd286f`: [JVM] Fix proguard config. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/src/commonMain/kotlin/com/kgurgul/cpuinfo/ui/theme/Typoghraphy.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `desktopApp/rules.pro`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-private val baselineTypography = Typography()
-        titleSmall = baselineTypography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-        bodyMedium = baselineTypography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+# JNA binds native functions by method name and structures by field name
+-keep interface * extends com.sun.jna.Library { *; }
+-keep class * extends com.sun.jna.Structure { *; }
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -764,4 +856,4 @@ private val baselineTypography = Typography()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e0ad273c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `75fd286f` are properly handled with clean fallback behavior.

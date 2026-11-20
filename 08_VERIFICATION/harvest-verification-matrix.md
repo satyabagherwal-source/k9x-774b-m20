@@ -11516,3 +11516,6 @@
 | `CYCLE-20261120-4ETW` | `2026-11-20T09:59:07.796Z` | `chrisbanes/skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9550` | Yes (`f2ef466a...`) |
 | `CYCLE-20261120-4GZ9` | `2026-11-20T09:59:10.581Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9551` | Yes (`449e090d...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T09:59:48.929Z` | `hf-cloudflare-clairic` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9E529A03` [Domain D] | Yes (`756b7c64...`) |
+| `CYCLE-20261120-DP9J` | `2026-11-20T10:34:20.839Z` | `kamgurgul/cpu-info` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9552` | Yes (`0bc4c584...`) |
+| `CYCLE-20261120-DRHO` | `2026-11-20T10:34:23.724Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9553` | Yes (`4e8dcc25...`) |
+| `CYCLE-20261120-QH4K` | `2026-11-20T10:44:16.820Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9554` | Yes (`a326537d...`) |

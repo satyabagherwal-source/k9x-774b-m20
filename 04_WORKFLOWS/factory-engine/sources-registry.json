@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T09:59:13.947Z",
-    "lastVerified": "2026-11-20T09:59:13.947Z",
+    "lastChecked": "2026-11-20T10:44:20.170Z",
+    "lastVerified": "2026-11-20T10:44:20.170Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-20T08:28:35.988Z",
+    "lastChecked": "2026-11-20T10:34:24.874Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-20T08:28:35.988Z"
+    "lastVerified": "2026-11-20T10:34:24.874Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1486,9 +1486,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-20T03:44:01.301Z",
+    "lastChecked": "2026-11-20T10:34:19.626Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-20T03:44:01.301Z"
+    "lastVerified": "2026-11-20T10:34:19.626Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -4443,11 +4443,21 @@
     "lastVerified": "2026-11-20T02:38:57.772Z"
   },
   "kucherenko-jscpd": {
-    "name": "jscpd",
+    "name": "kucherenko/jscpd",
     "officialUrl": "https://github.com/kucherenko/jscpd",
-    "lastChecked": "2026-11-18T21:01:53.922Z",
-    "revisionIdentifier": "b79927a3",
-    "lastVerified": "2026-11-18T21:01:53.922Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-20T10:34:14.290Z",
+    "lastVerified": "2026-11-20T10:34:14.290Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-kucherenko-jscpd",
+    "contentHash": "a326537dc530934a6a24b442de2ef16d885530a668528970fb03ed7976cb8990",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-meta-llama-meta-llama-3-8b-instruct": {
     "name": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -6381,9 +6391,9 @@
   "mariadb-server": {
     "name": "server",
     "officialUrl": "https://github.com/MariaDB/server",
-    "lastChecked": "2026-11-19T04:03:21.308Z",
+    "lastChecked": "2026-11-20T10:34:22.528Z",
     "revisionIdentifier": "39281811",
-    "lastVerified": "2026-11-19T04:03:21.308Z"
+    "lastVerified": "2026-11-20T10:34:22.528Z"
   },
   "graphprotocol-graph-node": {
     "name": "graphprotocol/graph-node",
@@ -6742,11 +6752,21 @@
     "lastVerified": "2026-11-19T05:54:44.310Z"
   },
   "k3s-io-k3s": {
-    "name": "k3s",
+    "name": "k3s-io/k3s",
     "officialUrl": "https://github.com/k3s-io/k3s",
-    "lastChecked": "2026-11-19T05:54:46.769Z",
-    "revisionIdentifier": "c55a7df0",
-    "lastVerified": "2026-11-19T05:54:46.769Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-20T10:34:22.505Z",
+    "lastVerified": "2026-11-20T10:34:22.505Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-k3s-io-k3s",
+    "contentHash": "4e8dcc25f0f9f15647e070410e5bdc32ae8c0f1df273a9adc2665668dda4c10f",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "duckdb-duckdb": {
     "name": "duckdb/duckdb",
@@ -9763,6 +9783,30 @@
     "contentHash": "c4776516fbbaf7eae58ed6d320461fa4d477caaa76265d1706e3573709010eda",
     "promotedRulesCount": 1,
     "recentFixesCount": 17,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "joshcarty-google-searchconsole": {
+    "name": "google-searchconsole",
+    "officialUrl": "https://github.com/joshcarty/google-searchconsole",
+    "lastChecked": "2026-11-20T10:34:12.118Z",
+    "revisionIdentifier": "9ab5a265",
+    "lastVerified": "2026-11-20T10:34:12.118Z"
+  },
+  "kamgurgul-cpu-info": {
+    "name": "kamgurgul/cpu-info",
+    "officialUrl": "https://github.com/kamgurgul/cpu-info",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-20T10:34:19.446Z",
+    "lastVerified": "2026-11-20T10:34:19.446Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-kamgurgul-cpu-info",
+    "contentHash": "0bc4c5841003aee9074a621ebe0f9c955a45cf105a7f7b94bcc5d2af7bec0570",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

@@ -11549,3 +11549,6 @@ Every entry in this ledger must capture:
 | `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `50b5d4cf` | Multi-dimensional audit evidence | 2026-11-20T09:59:07.801Z |
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `205e84d0` | Multi-dimensional audit evidence | 2026-11-20T09:59:10.586Z |
 | `learn-dom-d-9e529a03` | `project://hf-cloudflare-clairic` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cloudflare-clairic-learnings.md` | 2026-11-20T09:59:48.929Z |
+| `learn-github-kamgurgul-cpu-info` | `https://github.com/kamgurgul/cpu-info` | `0a32bfc5` | Multi-dimensional audit evidence | 2026-11-20T10:34:20.844Z |
+| `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `647ad670` | Multi-dimensional audit evidence | 2026-11-20T10:34:23.729Z |
+| `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `f79ae2bc` | Multi-dimensional audit evidence | 2026-11-20T10:44:16.825Z |

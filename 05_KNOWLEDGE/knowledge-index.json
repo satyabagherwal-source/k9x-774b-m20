@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T09:59:51.212Z",
-  "total_verified_learnings": 9030,
+  "last_updated": "2026-11-20T10:44:23.183Z",
+  "total_verified_learnings": 9031,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22336,
+  "total_items": 22346,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114801,10 +114801,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kucherenko-jscpd-technical-construction-intelligence-kucherenko-jscpd-core-invar.md",
       "title": "Technical Construction Intelligence: kucherenko/jscpd Core Invariants",
       "repository": "kucherenko/jscpd",
-      "source_version": "b79927a3",
-      "content_hash": "fbaba7ccec379d5e610ac6b4c0be3aac13acbbcd7ecf98975888a432f2b4bd8e",
+      "source_version": "f79ae2bc",
+      "content_hash": "4f8c2c690f8e38e3fd6d60ba77185f897e70794b4b651e3362a63a7c1655adf6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T18:43:41.385Z"
+      "persisted_at": "2026-11-20T10:44:17.271Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd",
@@ -114813,10 +114813,10 @@
       "relative_path": "08_VERIFICATION/kucherenko-jscpd-verification-protocol-empirical-defect-shield-for-kucherenko-js.md",
       "title": "Verification Protocol: Empirical Defect Shield for kucherenko/jscpd",
       "repository": "kucherenko/jscpd",
-      "source_version": "b79927a3",
-      "content_hash": "823f57ca2aaca0f93f60e826a8b0f4a5dab218859940076e7106da022a953e0f",
+      "source_version": "f79ae2bc",
+      "content_hash": "4f47800546b8a003693bc9ea04e5ba270fc0e3aeb44231c80a072b5af590c397",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T18:43:41.484Z"
+      "persisted_at": "2026-11-20T10:44:17.457Z"
     },
     "candidate_directive-docs-fix-api-links-for-library-types-named-like-global-types-53359": {
       "item_id": "candidate_directive-docs-fix-api-links-for-library-types-named-like-global-types-53359",
@@ -114862,9 +114862,9 @@
       "title": "Technical Construction Intelligence: kucherenko-jscpd-learnings Core Invariants",
       "repository": "kucherenko-jscpd-learnings",
       "source_version": "HEAD",
-      "content_hash": "bf0bb35c25209bd77f807ac833b6bdff6c549732db1f37a1acd3aced4badb6c5",
+      "content_hash": "650cb45bbd1f6a3f37a4a3755d339b928038573d982c68988bf4af49e4115b10",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T18:43:50.744Z"
+      "persisted_at": "2026-11-20T10:44:20.870Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd-learnings",
@@ -114874,9 +114874,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kucherenko-jscpd-learnings",
       "repository": "kucherenko-jscpd-learnings",
       "source_version": "HEAD",
-      "content_hash": "dc15042df3eeae8687c250f428d4312963c188df9cf9bc51fcb88f524ab62200",
+      "content_hash": "9b97f167cf155849b057cf3a439da9f491729ca4a2489f02a76d4e9109dba3d6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T18:43:50.843Z"
+      "persisted_at": "2026-11-20T10:44:21.080Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu",
@@ -216144,8 +216144,8 @@
       "slug": "k3s-io-k3s",
       "platform": "github",
       "source_url": "https://github.com/k3s-io/k3s",
-      "source_version": "c55a7df0",
-      "content_hash": "a704822ca2f5ece452c8ac1549aa05e819ea2ff8b03d0c12b466b73f864893c8",
+      "source_version": "647ad670",
+      "content_hash": "4e8dcc25f0f9f15647e070410e5bdc32ae8c0f1df273a9adc2665668dda4c10f",
       "dossier_path": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "promoted_rules": [
@@ -216158,6 +216158,11 @@
           "number": 8583,
           "title": "update busybox image to 1.38.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9553,
+          "title": "Bump Traefik to v3.7.19 and chart to v42.4.1",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216165,7 +216170,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T06:36:51.466Z",
+      "verified_at": "2026-11-20T10:34:23.494Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216207,10 +216212,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-k3s-io-k3s-architecture-intelligence-k3s-io-k3s-core-invariants.md",
       "title": "Architecture Intelligence: k3s-io/k3s Core Invariants",
       "repository": "k3s-io/k3s",
-      "source_version": "c55a7df0",
-      "content_hash": "444292f8e8b1fb24fbb82f752f3b46b7a434bb3017528095e13198de3b09441e",
+      "source_version": "647ad670",
+      "content_hash": "52bdcf861d2392451e13032e44173ea74de3e3d7de853d304aa992c35b6fda3a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T06:36:51.908Z"
+      "persisted_at": "2026-11-20T10:34:24.179Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-k3s-io-k3s": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-k3s-io-k3s",
@@ -216219,10 +216224,10 @@
       "relative_path": "08_VERIFICATION/k3s-io-k3s-verification-protocol-empirical-defect-shield-for-k3s-io-k3s.md",
       "title": "Verification Protocol: Empirical Defect Shield for k3s-io/k3s",
       "repository": "k3s-io/k3s",
-      "source_version": "c55a7df0",
-      "content_hash": "f60393773cbdb64a05b63525e75746b2dd2082737277ae48b32be9d3548b9ca9",
+      "source_version": "647ad670",
+      "content_hash": "6782e58abe123392aeae921082a8142865838e9d23d38eef36262f62b6754601",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T06:36:52.079Z"
+      "persisted_at": "2026-11-20T10:34:24.382Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-bert-bert-base-uncased-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-bert-bert-base-uncased-learnings-core-",
@@ -216292,9 +216297,9 @@
       "title": "Architecture Intelligence: k3s-io-k3s-learnings Core Invariants",
       "repository": "k3s-io-k3s-learnings",
       "source_version": "HEAD",
-      "content_hash": "6ffcd6b76001c6cbb023dbbe75e58a8dd41d2606315818b7229e9d7b7c8cd769",
+      "content_hash": "494d1f6c50f2150e53badf71b1a9633557da6e1d9f981853f92c8ea5c0255672",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T06:37:31.861Z"
+      "persisted_at": "2026-11-20T10:44:22.970Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-k3s-io-k3s-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-k3s-io-k3s-learnings",
@@ -216304,9 +216309,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for k3s-io-k3s-learnings",
       "repository": "k3s-io-k3s-learnings",
       "source_version": "HEAD",
-      "content_hash": "8fac3ba83650cdd315a55d4d4e24cb96e8f1dbe33af8f75cb8e5d594f4cc8955",
+      "content_hash": "b93c99ffda2de70c898a9c7f8aa297d9e6babfa13b48eb91e5bc80872ec8114e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T06:37:31.986Z"
+      "persisted_at": "2026-11-20T10:44:23.183Z"
     },
     "learn-huggingface-baai-bge-m3": {
       "learning_id": "learn-huggingface-baai-bge-m3",
@@ -255291,14 +255296,19 @@
       "slug": "kamgurgul-cpu-info",
       "platform": "github",
       "source_url": "https://github.com/kamgurgul/cpu-info",
-      "source_version": "e0ad273c",
-      "content_hash": "89caf5389e99928ad18346b57c701a764dfa4283093a72925b58ebe78b7b3348",
+      "source_version": "0a32bfc5",
+      "content_hash": "0bc4c5841003aee9074a621ebe0f9c955a45cf105a7f7b94bcc5d2af7bec0570",
       "dossier_path": "07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md",
       "promoted_rules": [
         {
           "number": 8718,
           "title": "[SHARED] Update typography",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9552,
+          "title": "[JVM] Fix proguard config",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -255307,7 +255317,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T05:29:01.848Z",
+      "verified_at": "2026-11-20T10:34:20.611Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -255361,10 +255371,10 @@
       "relative_path": "08_VERIFICATION/kamgurgul-cpu-info-verification-protocol-empirical-defect-shield-for-kamgurgul-c.md",
       "title": "Verification Protocol: Empirical Defect Shield for kamgurgul/cpu-info",
       "repository": "kamgurgul/cpu-info",
-      "source_version": "e0ad273c",
-      "content_hash": "3014b66b99327bf491b0c2d40b13153c2ac240b90dbbfbeb3b3326c21f57e5ac",
+      "source_version": "0a32bfc5",
+      "content_hash": "36aea79f7cc5205ceb605fede9c741c3bac69aa9636dc94e3dac199cf9f1afe7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T05:29:02.396Z"
+      "persisted_at": "2026-11-20T10:34:21.468Z"
     },
     "candidate_directive-run-validateandnormalizeconfig-in-ordered-phases": {
       "item_id": "candidate_directive-run-validateandnormalizeconfig-in-ordered-phases",
@@ -255472,9 +255482,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kamgurgul-cpu-info-learnings",
       "repository": "kamgurgul-cpu-info-learnings",
       "source_version": "HEAD",
-      "content_hash": "45f84db84710fb751339ea0e7a4ccc0cff32d367167ff9c9fc7a95b5a5f068ee",
+      "content_hash": "d3356d9873952858e2f8851d2bf15c31f982b191332be4dda5283c4a19ebf3e2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T05:29:12.883Z"
+      "persisted_at": "2026-11-20T10:44:21.965Z"
     },
     "candidate_directive-normalize-run-validateandnormalizeconfig-in-ordered-phases": {
       "item_id": "candidate_directive-normalize-run-validateandnormalizeconfig-in-ordered-phases",
@@ -302541,6 +302551,153 @@
       "content_hash": "385aabbafec9707ca95fa17f05d95ecf760bd324c1e682b9c68e6b56033b790b",
       "domain_letter": "D",
       "persisted_at": "2026-11-20T09:59:49.249Z"
+    },
+    "rule-9552": {
+      "learning_id": "rule-9552",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9552,
+      "title": "[JVM] Fix proguard config",
+      "source_url": "https://github.com/kamgurgul/cpu-info",
+      "source_version": "0a32bfc5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T10:34:20.611Z"
+    },
+    "candidate_directive-jvm-fix-proguard-config": {
+      "item_id": "candidate_directive-jvm-fix-proguard-config",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QKSW-jvm-fix-proguard-config.md",
+      "title": "[JVM] Fix proguard config",
+      "repository": "kamgurgul-cpu-info-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dee3bf08716c3f18f278d62ba006db06265a1bac6c65810eaed32cba957c3478",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T10:44:21.584Z"
+    },
+    "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kamgurgul-cpu-info-architecture-intelligence-kamgurgul-cpu-info-core-invariants.md",
+      "title": "Architecture Intelligence: kamgurgul/cpu-info Core Invariants",
+      "repository": "kamgurgul/cpu-info",
+      "source_version": "0a32bfc5",
+      "content_hash": "717805360487eb28a929d2e106a903e87a85bc9edc80d640587d43415d4c51b4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T10:34:21.279Z"
+    },
+    "rule-9553": {
+      "learning_id": "rule-9553",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9553,
+      "title": "Bump Traefik to v3.7.19 and chart to v42.4.1",
+      "source_url": "https://github.com/k3s-io/k3s",
+      "source_version": "647ad670",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T10:34:23.494Z"
+    },
+    "candidate_directive-bump-traefik-to-v3-7-19-and-chart-to-v42-4-1": {
+      "item_id": "candidate_directive-bump-traefik-to-v3-7-19-and-chart-to-v42-4-1",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QLQ2-bump-traefik-to-v3-7-19-and-chart-to-v42-4-1.md",
+      "title": "Bump Traefik to v3.7.19 and chart to v42.4.1",
+      "repository": "k3s-io-k3s-learnings",
+      "source_version": "HEAD",
+      "content_hash": "44d3fc818ec9b10a8759dcc9c16913f27bbeaa575e3e11443dddfb91a6548ce4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T10:44:22.779Z"
+    },
+    "learn-github-kucherenko-jscpd": {
+      "learning_id": "learn-github-kucherenko-jscpd",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "kucherenko/jscpd",
+      "repository": "kucherenko/jscpd",
+      "slug": "kucherenko-jscpd",
+      "platform": "github",
+      "source_url": "https://github.com/kucherenko/jscpd",
+      "source_version": "f79ae2bc",
+      "content_hash": "a326537dc530934a6a24b442de2ef16d885530a668528970fb03ed7976cb8990",
+      "dossier_path": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9554,
+          "title": "move the detection date helper to cpd-core",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-20T10:44:16.593Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9554": {
+      "learning_id": "rule-9554",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9554,
+      "title": "move the detection date helper to cpd-core",
+      "source_url": "https://github.com/kucherenko/jscpd",
+      "source_version": "f79ae2bc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T10:44:16.593Z"
+    },
+    "candidate_directive-move-the-detection-date-helper-to-cpd-core": {
+      "item_id": "candidate_directive-move-the-detection-date-helper-to-cpd-core",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QHBM-move-the-detection-date-helper-to-cpd-core.md",
+      "title": "move the detection date helper to cpd-core",
+      "repository": "kucherenko/jscpd",
+      "source_version": "f79ae2bc",
+      "content_hash": "10a5187e193ab9bee3f79ab6d34822ca005251b33a963599101e9858203c9532",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T10:44:17.081Z"
+    },
+    "candidate_directive-deps-move-the-detection-date-helper-to-cpd-core": {
+      "item_id": "candidate_directive-deps-move-the-detection-date-helper-to-cpd-core",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QK3P-deps-move-the-detection-date-helper-to-cpd-core.md",
+      "title": "deps): move the detection date helper to cpd-core",
+      "repository": "kucherenko-jscpd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "16ec5f8c7bb1c4fe7e7f17748b69f8f205eabcc6d131525e067692d4fcd34896",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T10:44:20.683Z"
+    },
+    "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kamgurgul-cpu-info-learnings-architecture-intelligence-kamgurgul-cpu-info-learni.md",
+      "title": "Architecture Intelligence: kamgurgul-cpu-info-learnings Core Invariants",
+      "repository": "kamgurgul-cpu-info-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f7666470752d0f85f82337f3d16229c1ceadb461417ec86fc82338a6497ee617",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T10:44:21.779Z"
     }
   },
   "ai-builder-brain": {

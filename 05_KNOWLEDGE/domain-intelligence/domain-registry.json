@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T09:59:51.007Z",
-  "total_records": 2107,
+  "last_updated": "2026-11-20T10:44:22.970Z",
+  "total_records": 2109,
   "domains": {
     "A": {
       "total": 17,
@@ -1000,7 +1000,7 @@
       ]
     },
     "G": {
-      "total": 357,
+      "total": 359,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1358,7 +1358,9 @@
         "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-core-invariants",
         "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-shifthackz-stable-diffusion-kmp-learnings-core-invaria"
+        "domain_intelligence-architecture-intelligence-shifthackz-stable-diffusion-kmp-learnings-core-invaria",
+        "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-core-invariants",
+        "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-learnings-core-invariants"
       ]
     },
     "H": {
@@ -9569,8 +9571,8 @@
       "title": "Technical Construction Intelligence: kucherenko/jscpd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kucherenko-jscpd-technical-construction-intelligence-kucherenko-jscpd-core-invar.md",
       "repository": "kucherenko/jscpd",
-      "content_hash": "fbaba7ccec379d5e610ac6b4c0be3aac13acbbcd7ecf98975888a432f2b4bd8e",
-      "created_at": "2026-11-13T18:43:41.385Z"
+      "content_hash": "4f8c2c690f8e38e3fd6d60ba77185f897e70794b4b651e3362a63a7c1655adf6",
+      "created_at": "2026-11-20T10:44:17.271Z"
     },
     "domain_intelligence-technical-construction-intelligence-expo-expo-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-expo-expo-core-invariants",
@@ -9587,8 +9589,8 @@
       "title": "Technical Construction Intelligence: kucherenko-jscpd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kucherenko-jscpd-learnings-technical-construction-intelligence-kucherenko-jscpd-.md",
       "repository": "kucherenko-jscpd-learnings",
-      "content_hash": "bf0bb35c25209bd77f807ac833b6bdff6c549732db1f37a1acd3aced4badb6c5",
-      "created_at": "2026-11-13T18:43:50.744Z"
+      "content_hash": "650cb45bbd1f6a3f37a4a3755d339b928038573d982c68988bf4af49e4115b10",
+      "created_at": "2026-11-20T10:44:20.870Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu",
@@ -10706,8 +10708,8 @@
       "title": "Architecture Intelligence: k3s-io/k3s Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-k3s-io-k3s-architecture-intelligence-k3s-io-k3s-core-invariants.md",
       "repository": "k3s-io/k3s",
-      "content_hash": "444292f8e8b1fb24fbb82f752f3b46b7a434bb3017528095e13198de3b09441e",
-      "created_at": "2026-11-15T06:36:51.908Z"
+      "content_hash": "52bdcf861d2392451e13032e44173ea74de3e3d7de853d304aa992c35b6fda3a",
+      "created_at": "2026-11-20T10:34:24.179Z"
     },
     "DOM-D-81EB8074": {
       "record_id": "DOM-D-81EB8074",
@@ -10817,8 +10819,8 @@
       "title": "Architecture Intelligence: k3s-io-k3s-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-k3s-io-k3s-learnings-architecture-intelligence-k3s-io-k3s-learnings-core-invaria.md",
       "repository": "k3s-io-k3s-learnings",
-      "content_hash": "6ffcd6b76001c6cbb023dbbe75e58a8dd41d2606315818b7229e9d7b7c8cd769",
-      "created_at": "2026-11-15T06:37:31.861Z"
+      "content_hash": "494d1f6c50f2150e53badf71b1a9633557da6e1d9f981853f92c8ea5c0255672",
+      "created_at": "2026-11-20T10:44:22.970Z"
     },
     "domain_intelligence-research-knowledge-intelligence-baai-bge-m3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-baai-bge-m3-core-invariants",
@@ -35575,6 +35577,24 @@
       "repository": "hf-cloudflare-clairic-learnings",
       "content_hash": "385aabbafec9707ca95fa17f05d95ecf760bd324c1e682b9c68e6b56033b790b",
       "created_at": "2026-11-20T09:59:49.249Z"
+    },
+    "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: kamgurgul/cpu-info Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kamgurgul-cpu-info-architecture-intelligence-kamgurgul-cpu-info-core-invariants.md",
+      "repository": "kamgurgul/cpu-info",
+      "content_hash": "717805360487eb28a929d2e106a903e87a85bc9edc80d640587d43415d4c51b4",
+      "created_at": "2026-11-20T10:34:21.279Z"
+    },
+    "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: kamgurgul-cpu-info-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kamgurgul-cpu-info-learnings-architecture-intelligence-kamgurgul-cpu-info-learni.md",
+      "repository": "kamgurgul-cpu-info-learnings",
+      "content_hash": "f7666470752d0f85f82337f3d16229c1ceadb461417ec86fc82338a6497ee617",
+      "created_at": "2026-11-20T10:44:21.779Z"
     }
   }
 }

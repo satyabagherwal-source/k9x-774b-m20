@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T06:37:31.633Z",
+  "timestamp": "2026-11-20T10:44:22.667Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-k3s-io-k3s-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [k3s-io-k3s-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T06:37:31.633Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T10:44:22.667Z`  
 > **Learning ID**: `LEARN-EVO-k3s-io-k3s-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from k3s-io-k3s-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source**: github ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
-> **Source Version**: `c55a7df0`  
+> **Source Version**: `647ad670`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T06:36:50.741Z  
+> **Timestamp**: 2026-11-20T10:34:22.511Z  
 > **Learning ID**: `learn-github-k3s-io-k3s`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T06:36:50.735Z  
+> **Harvest Timestamp**: 2026-11-20T10:34:22.505Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Lightweight Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 34408 stars
+- **Stars / Engagement**: 34471 stars
 
 ---
 
@@ -912,13 +912,15 @@ func AddFeatureGate(current, toAdd string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14982** (2026-11-12): **cred/passwd permanently "newer than datastore": bootstrap record is never re-saved**
-  *Symptoms*: # cred/passwd permanently "newer than datastore": bootstrap record is never re-saved  ## Environmental Info  **RKE2 Version:** `v1.37.0+rke2r1` (`37af8f9f73a0e95c36295142a63fdcb218cd34e2`), Go `1.26.7-X:boringcrypto`  **Node(s) CPU architecture, OS, and Version:** - 3 servers (etcd + control-plane), 5 agents, x86_64 - servers: Ubuntu 22.04.5 (5.15.0-202) ×2, Ubuntu 26.04 (7.0.0-42) ×1  **Cluster Configuration:** 3 servers, 5 agents. Embedded etcd. Cluster created 2025-01-21.  ## Describe the bug  Two of three servers fail to start with:  ``` level=fatal msg="/var/lib/rancher/rke2/server/cred/passwd newer than datastore and could cause a cluster outage. Remove the file(s) from disk and restart to reload from datastore." ```  The documented remedy — remove the file and restart — works exactly **once**. The regenerated file gets `mtime = now`, which is again newer than the datastore record, so the *next* start fails the same way. The node is therefore permanently one restart away from refusing to boot.  This is not cosmetic: a site-wide power cut restarts all three servers at once, only the unaffected one returns, etcd loses quorum, and the cluster stays down until someone removes the file by hand on each node. That is exactly what happened to us on 2026-11-10 and cost a 24-hour outage.  ## Root cause as far as we could trace it  The bootstrap record in the datastore appears to be written once and never updated:  ``` $ etcdctl get /bootstrap --prefix -w fields "Key"            :
-
-- **Issue #14974** (2026-11-13): **Bump gateway-api to 1.7.0**
-  *Symptoms*: #### Proposed Changes Bump gateway-api to 1.7.0  #### Types of Changes Version bump  #### Verification There are 10 Gateway API CRDs, all on v1.7.0 with helm.sh/resource-policy: keep annotation.  #### Linked Issues Resolves #14973  #### User-Facing Change ```release-note Bump gateway-api to 1.7.0 ```
+- **Issue #15018** (2026-11-19): **Duplicate - opened without the feature type, please ignore**
+  *Symptoms*: Opened without the Feature issue type, which only the template form sets. Recreated; please ignore this one.
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/k3s-io/k3s/pull/14974?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 51.97%. Comparing base ([`51d3b70`](https://app.codecov.io/gh/k3s-io/k3s/commit/51d3b7043183cbd61381773e6345082bd4cf2280?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)) to head ([`b86e219`](https://app.codecov.io/gh/k3s-io/k3s/commit/b86e219872cff5ce663ac686ea472258179bbd19?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##             main   #14974      +/-   ## ==========================================
+  > Recreated as #15020.
+
+- **Issue #15017** (2026-11-19): **[Release-1.34] Bump Traefik image to v3.7.19**
+  *Symptoms*: Issue: https://github.com/k3s-io/k3s/issues/15016 Backport: https://github.com/k3s-io/k3s/pull/15009
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/k3s-io/k3s/pull/15017?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 52.10%. Comparing base ([`5002961`](https://app.codecov.io/gh/k3s-io/k3s/commit/50029619e1b36d9bc629e175c878443129c47d16?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)) to head ([`e20efd4`](https://app.codecov.io/gh/k3s-io/k3s/commit/e20efd4ea025b7e6ba5d612ab10dba03e957bda1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)).  <details><summary>Additional details and impacted files</summary>    ```diff @@               Coverage Diff                @@ ##           release-1.34   #15017      +/-   ## ==============================
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -935,122 +937,61 @@ func AddFeatureGate(current, toAdd string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c55a7df0` (2026-11-10)
-**Commit Message**: update busybox image to 1.38.0
+### Incident Patch 1: `647ad670` (2026-11-19)
+**Commit Message**: Bump Traefik to v3.7.19 and chart to v42.4.1
 
-Signed-off-by: Michael Moll <[REDACTED_EMAIL]>
+Signed-off-by: Manuel Buil <[REDACTED_EMAIL]>
 
-**File**: `manifests/local-storage.yaml` (modified, +1/-1)
+**File**: `manifests/traefik.yaml` (modified, +3/-3)
 ```diff
-@@ -131,7 +131,7 @@ data:
-     spec:
-       containers:
-       - name: helper-pod
--        image: "%{SYSTEM_DEFAULT_REGISTRY}%rancher/mirrored-library-busybox:1.37.0"
-+        image: "%{SYSTEM_DEFAULT_REGISTRY}%rancher/mirrored-library-busybox:1.38.0"
-         imagePullPolicy: IfNotPresent
-         securityContext:
-           seLinuxOptions:
+@@ -7,7 +7,7 @@ metadata:
+ spec:
+   forceConflicts: true
+   failurePolicy: retry
+-  chart: https://%{KUBERNETES_API}%/static/charts/traefik-crd-41.6.101+up41.6.1.tgz
++  chart: https://%{KUBERNETES_API}%/static/charts/traefik-crd-41.6.101+up42.4.1.tgz
+ ---
+ apiVersion: helm.cattle.io/v1
+ kind: HelmChart
+@@ -17,7 +17,7 @@ metadata:
+ spec:
+   forceConflicts: true
+   failurePolicy: retry
+-  chart: https://%{KUBERNETES_API}%/static/charts/traefik-41.6.101+up41.6.1.tgz
++  chart: https://%{KUBERNETES_API}%/static/charts/traefik-42.4.101+up42.4.1.tgz
+   set:
+     global.systemDefaultRegistry: "%{SYSTEM_DEFAULT_REGISTRY_RAW}%"
+   valuesContent: |-
+@@ -32,7 +32,7 @@ spec:
+     priorityClassName: "system-cluster-critical"
+     image:
+       repository: "rancher/mirrored-library-traefik"
+-      tag: "3.7.17"
++      tag: "3.7.19"
+     tolerations:
+     - key: "CriticalAddonsOnly"
+       operator: "Exists"
 ```
 
 **File**: `scripts/airgap/image-list.txt` (modified, +1/-1)
 ```diff
-@@ -2,7 +2,7 @@ docker.io/rancher/klipper-helm:v0.14.0-build20261106
- docker.io/rancher/klipper-lb:v0.4.18
+@@ -3,6 +3,6 @@ docker.io/rancher/klipper-lb:v0.4.18
  docker.io/rancher/local-path-provisioner:v0.0.37
  docker.io/rancher/mirrored-coredns-coredns:1.15.0
--docker.io/rancher/mirrored-library-busybox:1.37.0
-+docker.io/rancher/mirrored-library-busybox:1.38.0
- docker.io/rancher/mirrored-library-traefik:3.7.17
+ docker.io/rancher/mirrored-library-busybox:1.38.0
+-docker.io/rancher/mirrored-library-traefik:3.7.17
++docker.io/rancher/mirrored-library-traefik:3.7.19
  docker.io/rancher/mirrored-metrics-server:v0.9.1
  docker.io/rancher/mirrored-pause:3.10.2
 ```
 
-**File**: `tests/docker/resources/clusterip.yaml` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ spec:
-     spec:
-       containers:
-       - name: nginx
--        image: ghcr.io/k3s-io/mirrored-library-busybox:1.37.0
-+        image: ghcr.io/k3s-io/mirrored-library-busybox:1.38.0
-         args: ['sh', '-c', 'echo Welcome to nginx! > index.html; hostname > name.html; httpd -vvf']
-         ports:
-         - containerPort: 80
-```
-
-**File**: `tests/docker/resources/daemonset.yaml` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@ spec:
-     spec:
-       containers:
-         - name: webserver
--          image: ghcr.io/k3s-io/mirrored-library-busybox:1.37.0
-+          image: ghcr.io/k3s-io/mirrored-library-busybox:1.38.0
-           args: ['sh', '-c', 'echo Welcome to nginx! > index.html; hostname > name.html; httpd -vvf']
-           ports:
-           - containerPort: 80
-```
-
-**File**: `tests/docker/resources/dualstack_clusterip.yaml` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ spec:
-     spec:
-       containers:
-       - name: nginx
--        image: ghcr.io/k3s-io/mirrored-library-busybox:1.37.0
-+        image: ghcr.io/k3s-io/mirrored-library-busybox:1.38.0
-         args: ['sh', '-c', 'echo Welcome to nginx! > index.html; hostname > name.html; httpd -vvf']
-         ports:
-         - containerPort: 80
-```
-
-**File**: `tests/docker/resources/dualstack_nodeport.yaml` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ spec:
-     spec:
-       containers:
-       - name: nginx
--        image: ghcr.io/k3s-io/mirrored-library-busybox:1.37.0
-+        image: ghcr.io/k3s-io/mirrored-library-busybox:1.38.0
-         args: ['sh', '-c', 'echo Welcome to nginx! > index.html; hostname > name.html; httpd -vvf']
-         ports:
-         - containerPort: 80
-```
-
-**File**: `tests/docker/resources/gatewayapi.yaml` (modified, +1/-1)
-```diff
-@@ -32,7 +32,7 @@ spec:
-       terminationGracePeriodSeconds: 10
-       containers:
-       - name: testcontainer
--        image: ghcr.io/k3s-io/mirrored-library-busybox:1.37.0
-+        image: ghcr.io/k3s-io/mirrored-library-busybox:1.38.0
-         args: ['sh', '-c', 'echo Welcome to gatewayapi-echo! > index.html; httpd -vvf']
-         ports:
-         - containerPort: 80
-```
-
-**File**: `tests/docker/resources/ingress.yaml` (modified, +1/-1)
-```diff
-@@ -47,7 +47,7 @@ spec:
-       terminationGracePeriodSeconds: 60
-       containers:
-       - name: testcontainer
--        image: ghcr.io/k3s-io/mirrored-library-busybox:1.37.0
-+        image: ghcr.io/k3s-io/mirrored-library-busybox:1.38.0
-         args: ['sh', '-c', 'echo Welcome to nginx! > index.html; hostname > name.html; httpd -vvf']
-         ports:
-         - containerPort: 80
-```
-
 #### Recent Merged Pull Requests:
-- **PR #14974** (2026-11-13): Bump gateway-api to 1.7.0 (@manuelbuil)
-- **PR #14972** (2026-11-13): update busybox image to 1.38.0 (@mmoll)
-- **PR #14971** (2026-11-10): Disable LB+tunnel on agentless servers with local apiserver (@brandond)
-- **PR #14968** (2026-11-06): [main] Bump Klipper LB version (@github-actions[bot])
-- **PR #14967** (2026-11-06): [main] Bump Klipper Helm and Helm Controller version (@github-actions[bot])
-- **PR #14966** (2026-11-06): [release-1.36] Bump Klipper LB version (@github-actions[bot])
+- **PR #15017** (2026-11-19): [Release-1.34] Bump Traefik image to v3.7.19 (@manuelbuil)
+- **PR #15015** (2026-11-19): [Release-1.35] Bump Traefik image to v3.7.19 (@manuelbuil)
+- **PR #15013** (2026-11-19): [Release-1.36] Bump Traefik image to v3.7.19 (@manuelbuil)
+- **PR #15011** (2026-11-19): [Release-1.37] Bump Traefik to v3.7.19 and chart to v42.4.1 (@manuelbuil)
+- **PR #15009** (2026-11-19): Bump Traefik to v3.7.19 and chart to v42.4.1 (@manuelbuil)
+- **PR #15001** (closed): Run integration coverage conversion as root (@manuelbuil)
 
 ---
 
@@ -1070,31 +1011,35 @@ Signed-off-by: Michael Moll <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. update busybox image to 1.38.0
+## X. Bump Traefik to v3.7.19 and chart to v42.4.1
 
 **RULE**:
-When implementing operations in `manifests/local-storage.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `manifests/traefik.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c55a7df0`: update busybox image to 1.38.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `647ad670`: Bump Traefik to v3.7.19 and chart to v42.4.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `manifests/local-storage.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `manifests/traefik.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        image: "%{SYSTEM_DEFAULT_REGISTRY}%rancher/mirrored-library-busybox:1.38.0"
+  chart: https://%{KUBERNETES_API}%/static/charts/traefik-crd-41.6.101+up42.4.1.tgz
+  chart: https://%{KUBERNETES_API}%/static/charts/traefik-42.4.101+up42.4.1.tgz
+      tag: "3.7.19"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        image: "%{SYSTEM_DEFAULT_REGISTRY}%rancher/mirrored-library-busybox:1.37.0"
+  chart: https://%{KUBERNETES_API}%/static/charts/traefik-crd-41.6.101+up41.6.1.tgz
+  chart: https://%{KUBERNETES_API}%/static/charts/traefik-41.6.101+up41.6.1.tgz
+      tag: "3.7.17"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c55a7df0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `647ad670` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

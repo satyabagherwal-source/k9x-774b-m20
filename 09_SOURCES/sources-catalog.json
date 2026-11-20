@@ -4983,10 +4983,10 @@
     "repository": "kucherenko/jscpd",
     "platform": "github",
     "sourceUrl": "https://github.com/kucherenko/jscpd",
-    "sourceVersion": "b79927a3",
+    "sourceVersion": "f79ae2bc",
     "license": "MIT",
-    "contentHash": "657cdf25d1db7f4e39d2cab25a08d91809bc09a63396cd6693a170d9b210bfd8",
-    "lastHarvestedAt": "2026-11-13T18:43:41.070Z",
+    "contentHash": "a326537dc530934a6a24b442de2ef16d885530a668528970fb03ed7976cb8990",
+    "lastHarvestedAt": "2026-11-20T10:44:16.825Z",
     "learningId": "learn-github-kucherenko-jscpd"
   },
   "akveo-kittentricks": {
@@ -6313,10 +6313,10 @@
     "repository": "k3s-io/k3s",
     "platform": "github",
     "sourceUrl": "https://github.com/k3s-io/k3s",
-    "sourceVersion": "c55a7df0",
+    "sourceVersion": "647ad670",
     "license": "Apache-2.0",
-    "contentHash": "a704822ca2f5ece452c8ac1549aa05e819ea2ff8b03d0c12b466b73f864893c8",
-    "lastHarvestedAt": "2026-11-15T06:36:51.619Z",
+    "contentHash": "4e8dcc25f0f9f15647e070410e5bdc32ae8c0f1df273a9adc2665668dda4c10f",
+    "lastHarvestedAt": "2026-11-20T10:34:23.729Z",
     "learningId": "learn-github-k3s-io-k3s"
   },
   "open-source-legal-opencontracts": {
@@ -8843,10 +8843,10 @@
     "repository": "kamgurgul/cpu-info",
     "platform": "github",
     "sourceUrl": "https://github.com/kamgurgul/cpu-info",
-    "sourceVersion": "e0ad273c",
+    "sourceVersion": "0a32bfc5",
     "license": "Apache-2.0",
-    "contentHash": "89caf5389e99928ad18346b57c701a764dfa4283093a72925b58ebe78b7b3348",
-    "lastHarvestedAt": "2026-11-16T05:29:02.004Z",
+    "contentHash": "0bc4c5841003aee9074a621ebe0f9c955a45cf105a7f7b94bcc5d2af7bec0570",
+    "lastHarvestedAt": "2026-11-20T10:34:20.844Z",
     "learningId": "learn-github-kamgurgul-cpu-info"
   },
   "ugolbck-seofordev": {
