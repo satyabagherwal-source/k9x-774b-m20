@@ -11430,3 +11430,4 @@
 | `CYCLE-20261120-LJI1` | `2026-11-20T01:20:34.298Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9486` | Yes (`7c3ca376...`) |
 | `CYCLE-20261120-OMSL` | `2026-11-20T01:22:58.533Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9487, Rule 9488, Rule 9489` | Yes (`d69e3c87...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T01:23:29.245Z` | `fallow-rs-fallow` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-F78059FE` [Domain H] | Yes (`4e10d831...`) |
+| `CYCLE-20261120-ZNWZ` | `2026-11-20T01:31:33.203Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9490` | Yes (`31e5f143...`) |

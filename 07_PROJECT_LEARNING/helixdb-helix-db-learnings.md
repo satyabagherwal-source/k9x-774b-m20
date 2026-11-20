@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source**: github ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
-> **Source Version**: `2b9e3612`  
+> **Source Version**: `b943942d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T04:20:55.302Z  
+> **Timestamp**: 2026-11-20T01:31:32.198Z  
 > **Learning ID**: `learn-github-helixdb-helix-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T04:20:55.297Z  
+> **Harvest Timestamp**: 2026-11-20T01:31:31.991Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: HelixDB is an OLTP graph database with native vector and full-text search built in Rust on Object Storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6297 stars
+- **Stars / Engagement**: 6304 stars
 
 ---
 
@@ -2085,1067 +2085,1080 @@ pub(super) fn validate_body(family: QueueFamily, body: &[u8]) -> Result<(), Enco
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2b9e3612` (2026-11-17)
-**Commit Message**: Add Google Cloud Storage as an object storage backend (#1303)
+### Incident Patch 1: `b943942d` (2026-11-19)
+**Commit Message**: Build indexes without waiting on S3 per step or rescanning applied deltas (#1310)
 
-Adds GCS next to S3, so a server or hyperscale cluster can keep its
-database in a GCS bucket. Set `GCS_BUCKET` instead of `S3_BUCKET`.
+Building a new index on an existing label took about 400 s on 1M rows on
+S3. With 1,000 writes/s running, it took 25 min to over an hour, or
+never finished. This PR cuts those builds to 20-50 s. **No stored format
+changes.**
+
+## Why it was slow
+
+1. **Each step waited for the S3 upload twice.** A step made two
+commits, the claim and the step, and each waited about 100 ms for the
+WAL upload. That wait was about 95% of a clean build.
+2. **Catch-up re-read every delta from the start.** Applied deltas leave
+deleted markers behind, and each check scanned the whole delta range
+again, markers included. With writes running, that cost grew with every
+step.
+
+## What changed
+
+**1. Pending-delta ledger** (`secondary/delta_ledger.rs`, used by
+equality, unique and range indexes)
 
 ```diff
- pub enum HelixDbSource {
-     InMemory { .. }, InMemoryToken { .. }, Disk { .. },
--    ObjectStorage { database, bucket, region, endpoint, allow_http },
-+    ObjectStorage { database, bucket: ObjectStorageBucket },
- }
-+pub enum ObjectStorageBucket {
-+    S3 { name, region, endpoint, allow_http },
-+    Gcs { name },   // native GCS client, never the S3-compatible endpoint
-+}
-
- pub enum StorageConfig {          // server
-     Memory, Disk { .. },
--    S3 { bucket, region, endpoint, allow_http, cache },
-+    ObjectStorage { bucket: db::ObjectStorageBucket, cache },
- }
+ observe pending deltas
+-  scan the whole delta range from the start
++  point-read the keys already in the ledger
++  scan only the part not seen yet
 ```
 
-Server storage selection:
+- Writers add their keys to the ledger as they commit.
+- After a restart, or if the ledger grows past its cap (4×65,536 keys
+per DB handle), the build falls back to one full scan.
 
-```text
-HELIX_DATA_DIR | S3_BUCKET | GCS_BUCKET
-  none set      -> Memory
-  exactly one   -> Disk | ObjectStorage(S3) | ObjectStorage(Gcs)   (object storage always gets the hybrid disk cache)
-  two or more   -> ConflictingStorageConfiguration, before any cache dir is created
-```
-
-- **Why native GCS:** SlateDB's writer fencing relies on create-only
-puts, generation-matched overwrites of
-
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `crates/db/src/execution/interpreter/mutation/index_context.rs` (modified, +8/-3)
 ```diff
-@@ -3289,6 +3289,7 @@ dependencies = [
-  "futures-util",
-  "http",
-  "http-body-util",
-+ "httparse",
-  "humantime",
-  "hyper",
-  "itertools 0.15.0",
-```
-
-**File**: `bindings/uniffi/src/helix_db.rs` (modified, +18/-18)
-```diff
-@@ -114,7 +114,7 @@ pub enum HelixDbSource {
-     InMemory { database: String },
-     /// Local filesystem object storage rooted at `root`, scoped by database path.
-     Disk { root: String, database: String },
--    /// S3-compatible object storage.
-+    /// S3 or S3-compatible object storage.
-     ObjectStorage {
-         database: String,
-         bucket: String,
-@@ -140,10 +140,12 @@ impl From<HelixDbSource> for db::HelixDbSource {
-                 allow_http,
-             } => Self::ObjectStorage {
-                 database,
--                bucket,
--                region,
--                endpoint,
--                allow_http,
-+                bucket: db::ObjectStorageBucket::S3 {
-+                    name: bucket,
-+                    region,
-+                    endpoint,
-+                    allow_http,
-+                },
-             },
-         }
-     }
-@@ -594,28 +596,26 @@ mod tests {
-         assert_eq!(root, std::path::PathBuf::from("/tmp/helix"));
-         assert_eq!(database, "disk");
- 
--        let db::HelixDbSource::ObjectStorage {
--            database,
--            bucket,
--            region,
--            endpoint,
--            allow_http,
--        } = HelixDbSource::ObjectStorage {
-+        let db::HelixDbSource::ObjectStorage { database, bucket } = HelixDbSource::ObjectStorage {
-             database: "os".to_string(),
-             bucket: "bucket".to_string(),
-             region: "region".to_string(),
-             endpoint: Some("http://localhost:9000".to_string()),
-             allow_http: true,
-         }
--        .into()
--        else {
-+        .into() else {
-             panic!("expected object-storage source");
-         };
-         assert_eq!(database, "os");
--        assert_eq!(bucket, "bucket");
--        assert_eq!(region, "region");
--        assert_eq!(endpoint.as_deref(), Some("http://localhost:9000"));
--        assert!(allow_http);
-+        assert_eq!(
-+            bucket,
-+            db::ObjectStorageBucket::S3 {
-+                name: "bucket".to_string(),
-+                region: "region".to_string(),
-+                endpoint: Some("http://localhost:9000".to_string()),
-+                allow_http: true,
-+            }
-+        );
-     }
- 
-     #[tokio::test]
-```
-
-**File**: `crates/db/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@ version = "0.1.0"
- edition = "2024"
- 
- [dependencies]
--slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "747f75d851c0105a204ef1b113597e62b752f82b", features = ["zstd"] }
-+slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "747f75d851c0105a204ef1b113597e62b752f82b", features = ["azure", "gcp", "zstd"] }
- slatedb-common = { git = "https://github.com/HelixDB/slatedb.git", rev = "747f75d851c0105a204ef1b113597e62b752f82b", optional = true }
- http-body = { version = "1", optional = true }
- helix-ast = { path = "../ast" }
-```
-
-**File**: `crates/db/src/lib.rs` (modified, +225/-55)
-```diff
-@@ -124,7 +124,10 @@ use slatedb::db_cache::{
- };
- #[cfg(test)]
- use slatedb::object_store::memory::InMemory;
--use slatedb::object_store::{aws::AmazonS3Builder, local::LocalFileSystem, ObjectStore};
-+use slatedb::object_store::{
-+    aws::AmazonS3Builder, azure::MicrosoftAzureBuilder, gcp::GoogleCloudStorageBuilder,
-+    local::LocalFileSystem, ObjectStore,
-+};
- use slatedb::{CacheTarget, Db, DbCacheManagerOps, DbMetadataOps, DbReader};
- use tokio::sync::{oneshot, watch, Mutex};
- use tokio::task::JoinHandle;
-@@ -371,56 +374,121 @@ pub enum HelixDbSource {
-         /// Logical database path inside the local object store.
-         database: String,
-     },
--    /// S3-compatible object storage.
-+    /// Remote object storage: an S3 or GCS bucket, or an Azure Blob Storage
-+    /// container.
-     ObjectStorage {
--        /// Logical database path inside the object store.
-+        /// Logical database path inside the bucket.
-         database: String,
-+        /// The bucket and the service that holds it.
-+        bucket: ObjectStorageBucket,
-+    },
-+}
-+
-+/// The bucket an [`HelixDbSource::ObjectStorage`] database lives in, and the
-+/// service that holds it.
-+///
-+/// Every service gives SlateDB what its single-writer fencing needs: create-only
-+/// puts, compare-and-swap overwrites of GC boundary files, and strongly
-+/// consistent listings. GCS is reached through its own API, never its
-+/// S3-compatible endpoint, which does not offer the same conditional writes.
-+#[derive(Clone, Debug, PartialEq, Eq)]
-+pub enum ObjectStorageBucket {
-+    /// Amazon S3, or an S3-compatible server at `endpoint`. Credentials come
-+    /// from the standard AWS environment variables, web identity, or instance
-+    /// metadata.
-+    S3 {
-         /// Bucket name.
--        bucket: String,
--        /// Region.
-+        name: String,
-+        /// Bucket region.
-         region: String,
--        /// Optional endpoint for S3-compatible local storage.
-+        /// Endpoint of an S3-compatible server; `None` for AWS S3.
-         endpoint: Option<String>,
--        /// Whether HTTP endpoints are allowed.
-+        /// Whether a plain-HTTP endpoint is allowed.
-         allow_http: bool,
-     },
-+    /// Google Cloud Storage. Credentials come from `GOOGLE_SERVICE_ACCOUNT`,
-+    /// `GOOGLE_SERVICE_ACCOUNT_KEY` or `GOOGLE_APPLICATION_CREDENTIALS`, else
-+    /// from the GCE metadata server, which serves GKE Workload Identity.
-+    /// `GOOGLE_BASE_URL` replaces the API endpoint, for an emulator.
-+    Gcs {
-+        /// Bucket name.
-+        name: String,
-+    },
-+    /// An Azure Blob Storage container. Credentials come from, in order,
-+    /// `AZURE_STORAGE_TOKEN`, `AZURE_STORAGE_ACCOUNT_KEY`, workload identity
-+    /// (`AZURE_CLIENT_ID`, `AZURE_TENANT_ID` and `AZURE_FEDERATED_TOKEN_FILE`,
-+    /// which AKS Workload Identity injects), a service principal
-+    /// (`AZURE_CLIENT_SECRET`), `AZURE_STORAGE_SAS_KEY`, the Azure CLI
-+    /// (`AZURE_USE_AZURE_CLI`), else the instance's managed identity.
-+    /// `AZURE_STORAGE_USE_EMULATOR` selects Azurite.
-+    Azure {
-+        /// Storage account name.
-+        account: String,
-+        /// Container name.
-+        container: String,
-+    },
- }
- 
- impl HelixDbSource {
-     /// Telemetry deployment ID derived from this source's storage.
-     ///
--    /// Only AWS S3 storage has one: its bucket names are globally unique,
--    /// while memory, disk and custom S3 endpoints reuse the same names across
--    /// unrelated users.
-+    /// Only AWS S3, GCS and Azure storage have one: their bucket and storage
-+    /// account names are globally unique, while memory, disk and custom S3
-+    /// endpoints reuse the same names across unrelated users. Buckets with the
-+    /// same name on different services give different IDs.
-     ///
-     /// ```
--    /// use db::HelixDbSource;
-+    /// use db::{HelixDbSource, ObjectStorageBucket};
-     ///
-     /// let s3 = |endpoint: Option<&str>| HelixDbSource::ObjectStorage {
-     ///     database: "db/".to_string(),
--    ///     bucket: "acme-data".to_string(),
--    ///     region: "us-east-2".to_string(),
--    ///     endpoint: endpoint.map(str::to_string),
--    ///     allow_http: false,
-+    ///     bucket: ObjectStorageBucket::S3 {
-+    ///         name: "acme-data".to_string(),
-+    ///         region: "us-east-2".to_string(),
-+    ///         endpoint: endpoint.map(str::to_string),
-+    ///         allow_http: false,
-+    ///     },
-     /// };
-     /// assert!(s3(None).telemetry_deployment_id().is_some());
-     /// assert!(s3(Some("http://seaweedfs:8333")).telemetry_deployment_id().is_none());
-+    /// let gcs = HelixDbSource::ObjectStorage {
-+    ///     database: "db/".to_string(),
-+    ///     bucket: ObjectStorageBucket::Gcs { name: "acme-data".to_string() },
-+    /// };
-+    /// assert!(gcs.telemetry_deployment_id().is_some());
-+    /// assert_ne!(gcs.telemetry_deployment_id(), s3(None).telemetry_deployment_id());
-+    /// let azure = HelixDbSource::
-```
-
-**File**: `crates/db/tests/TEST_TARGET_INVENTORY.md` (modified, +1/-0)
-```diff
-@@ -28,6 +28,7 @@ Cargo discovers these targets:
- | `hybrid_cache_reuse` | `test` | `crates/db/tests/hybrid_cache_reuse.rs` | Reopens and closes a hybrid-cache reader repeatedly and asserts every reopen reads through the process's one Foyer device, so exactly one set of partition files stays open across reopens, and that no other descriptor outlives a closed reader. Counts `/proc/self/fd` and skips without procfs; it is its own target so no concurrent test perturbs the count. |
- | `index_lifecycle_contracts` | `test` | `crates/db/tests/index_lifecycle_contracts.rs` | Requires `index-lifecycle-testing` and runs deterministic family-shape, backfill-mutation, concurrent-create, and repeated-recoverable-fault acceptance contracts through the installed production drivers. Late vector/text writes at every build stage enqueue complete operations through the real producer and ledger; the contracts require that they never send a build back to catch-up, survive reopen, are visible to strong searches before publication, and match after explicit publication. Text builds whose scanned entities are deleted, re-texted, moved, or un-indexed before partition construction activate and match an independent build's hits and scores. |
- | `mutation_count_visibility` | `test` | `crates/db/tests/mutation_count_visibility.rs` | Covers counts of a write's own rows through the public query boundary: they return their rows without flushing deferred index maintenance, later index-backed counts and expansions in the same batch still see every staged write, and a unique conflict between counted writes fails the commit and writes nothing. |
-+| `object_storage_contract` | `test` | `crates/db/tests/object_storage_contract.rs` | Ignored by default: each service's module needs a real bucket or container and credentials (`HELIX_TEST_S3_BUCKET`, `HELIX_TEST_GCS_BUCKET`, `HELIX_TEST_AZURE_CONTAINER`). Runs the same five contracts against S3, GCS and Azure Blob Storage: create-only puts, version-matched overwrites and conditional GETs, put-ID metadata on single and multipart uploads, and consistent offset listings, then that a newer SlateDB writer and a newer HelixDB writer opened through the service's `ObjectStorageBucket` fence the older one and a reader sees exactly what survived. |
- | `production_contracts` | `test` | `crates/db/tests/production_contracts.rs` | Imports the compiled `db` library without `cfg(test)` and covers the public query/interpreter boundary, including graph behavior, source-fed node/edge mutations, all typed KV read modes, explicit comparison/membership shapes, limited and empty access, branch partition and mixed-row invariants, nested branch-context restoration, unbound conditional variables, scalar and operator-specific predicate-error propagation, repeat-predicate and shortest-path missing/ambiguous/revisited/isolated endpoint shapes, nested and edge-endpoint property paths, typed/transport ID parameters and variable ID-source shapes, label mutation/no-op/cascade plus empty/unlabeled deletion invariants, malformed requests, dynamic and typed AST `FOREACH`, complete literal/runtime property-value conversion, stable parallel-stage execution on a public reader, scalar/malformed multi-dependency composition, ordinary/folded/scalar stream-operation shapes, scalar aggregate and aggregate-after-fold shape contracts, typed and rejected dynamic bounds, empty intersection, fail-closed index-lifecycle value consumption, shared-runtime vector/text search and DDL availability, chained injection, sparse/selected/binding projections, vector-distance metadata and search-label projections, typed vector-array conversions through the live planner context, missing-property ordering, mixed/empty aggregates, expression value/error edges, managed secondary/range/search read-your-writes, range-index-delivered order preservation, same-transaction labeled/unfiltered out/in/both topology reads across parallel differently labeled edges, and index-served source filters and counts (null, runtime, range-only and unique equality, long IN lists, and point, runtime, label and text-search count sets) checked against an unindexed database. |
- | `projection_materialization` | `bench` | `crates/db/benches/projection_materialization.rs` | Deterministic 512-node/512-edge Divan projection baseline with allocation profiling; setup and planning are excluded from measurement. |
- | `property_row_reads` | `bench` | `crates/db/benches/property_row_reads.rs` | Measures filtered counts, one-field projections and full-row reads over 2,000 wide nodes (text body and embedding) with allocation profiling; setup and planning are excluded from measurement. |
-```
-
-**File**: `crates/db/tests/object_storage_contract.rs` (added, +466/-0)
-```diff
-@@ -0,0 +1,466 @@
-+//! Proof, against real S3, GCS and Azure Blob Storage, that each object
-+//! storage service HelixDB supports keeps the storage contract SlateDB and
-+//! HelixDB rely on.
-+//!
-+//! SlateDB fences an older writer with create-only puts, advances GC boundary
-+//! files with version-matched overwrites and revalidates them with
-+//! conditional GETs, verifies a retried put through custom metadata, and lists
-+//! strongly consistently. The first three contracts check each primitive; the
-+//! last two open SlateDB and HelixDB on the service end to end. Every service
-+//! runs the same five contracts, in its own module.
-+//!
-+//! Every test is ignored by default because it needs a real bucket or
-+//! container and credentials (see [`db::ObjectStorageBucket`]). Run one
-+//! service's module with its variables set:
-+//!
-+//! ```text
-+//! HELIX_TEST_S3_BUCKET=<bucket> AWS_REGION=<region> \
-+//!     cargo test -p db --test object_storage_contract -- --ignored s3::
-+//! HELIX_TEST_GCS_BUCKET=<bucket> GOOGLE_SERVICE_ACCOUNT=<key file> \
-+//!     cargo test -p db --test object_storage_contract -- --ignored gcs::
-+//! HELIX_TEST_AZURE_CONTAINER=<container> AZURE_STORAGE_ACCOUNT_NAME=<account> \
-+//!     AZURE_STORAGE_ACCOUNT_KEY=<key> \
-+//!     cargo test -p db --test object_storage_contract -- --ignored azure::
-+//! ```
-+//!
-+//! Each test writes under its own random prefix and deletes it once it passes.
-+
-+use std::sync::Arc;
-+
-+use db::{HelixDB, HelixDbSource, ObjectStorageBucket};
-+use futures::{StreamExt as _, TryStreamExt as _};
-+use helix_ast::query::QueryRequest;
-+use helix_ast::value::PropertyInput;
-+use helix_ast::{batch, traversal};
-+use serde_json::json;
-+use slatedb::object_store::{self, ObjectStore, ObjectStoreExt as _};
-+use slatedb::{CloseReason, Db, ErrorKind, IsolationLevel};
-+
-+/// S3 and GCS multipart uploads need every part but the last to be at least
-+/// 5 MiB; Azure has no minimum.
-+const PART_BYTES: usize = 5 * 1024 * 1024;
-+
-+/// An object storage service under test.
-+#[derive(Clone, Copy, Debug)]
-+enum Service {
-+    S3,
-+    Gcs,
-+    Azure,
-+}
-+
-+fn variable(name: &str) -> String {
-+    std::env::var(name).unwrap_or_else(|_| panic!("set {name}"))
-+}
-+
-+impl Service {
-+    /// The bucket or container under test, as HelixDB opens it.
-+    fn bucket(self) -> ObjectStorageBucket {
-+        match self {
-+            Self::S3 => ObjectStorageBucket::S3 {
-+                name: variable("HELIX_TEST_S3_BUCKET"),
-+                region: variable("AWS_REGION"),
-+                endpoint: None,
-+                allow_http: false,
-+            },
-+            Self::Gcs => ObjectStorageBucket::Gcs {
-+                name: variable("HELIX_TEST_GCS_BUCKET"),
-+            },
-+            Self::Azure => ObjectStorageBucket::Azure {
-+                account: variable("AZURE_STORAGE_ACCOUNT_NAME"),
-+                container: variable("HELIX_TEST_AZURE_CONTAINER"),
-+            },
+@@ -324,7 +324,7 @@ impl MutationIndexContext {
+     pub(crate) fn into_prepared(self) -> Result<PreparedMutationIndexContext, crate::HelixDbError> {
+         let Self {
+             property_writes,
+-            _scope_permit,
++            _scope_permit: mut scope_permit,
+             active,
+             secondary,
+             secondary_runtime,
+@@ -339,10 +339,15 @@ impl MutationIndexContext {
+                 transitions: _,
+         } = self;
+         topology_runtime.consume_prepared()?;
+-        secondary_runtime.consume_prepared()?;
++        let staged = secondary_runtime.consume_prepared()?;
++        // The permit records them once dropped, after the commit applies;
++        // only focused tests run without one.
++        if let Some(permit) = scope_permit.as_mut() {
++            permit.stage_build_deltas(staged);
 +        }
-+    }
+         Ok(PreparedMutationIndexContext {
+             _property_writes: property_writes,
+-            _scope_permit,
++            _scope_permit: scope_permit,
+             active_generations: active.into_generations(),
+             _secondary: secondary,
+             _vector: vector,
+```
+
+**File**: `crates/db/src/index_lifecycle/failpoints.rs` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@ pub enum IndexOutboxFailpoint {
+     DdlEnqueueAfterStaging,
+     /// Immediately before an eligible pointer is claimed.
+     ClaimBefore,
+-    /// Immediately after the claim commit is durable.
++    /// Immediately after the claim commit is applied.
+     ClaimAfter,
+     /// Immediately before a claimed operation's bounded read.
+     BatchReadBefore,
+```
+
+**File**: `crates/db/src/index_lifecycle/operation.rs` (modified, +60/-10)
+```diff
+@@ -997,6 +997,15 @@ impl IndexOperationQueueSchedule {
+     }
+ }
+ 
++/// What a progressed step does with the claim it ran under.
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
++pub(crate) enum ClaimContinuation {
++    /// Requeue the operation, so any worker may claim its next step.
++    Release,
++    /// Keep the claim, so the worker holding it runs the next step directly.
++    Retain,
++}
 +
-+    /// A client for the bucket under test and a fresh prefix inside it.
-+    fn scratch(self) -> (Arc<dyn ObjectStore>, String) {
-+        let store: Arc<dyn ObjectStore> = match self.bucket() {
-+            ObjectStorageBucket::S3 { name, region, .. } => Arc::new(
-+                object_store::aws::AmazonS3Builder::from_env()
-+                    .with_bucket_name(name)
-+                    .with_region(region)
-+                    .build()
-+                    .expect("S3 client builds"),
+ /// Canonical durable index operation.
+ #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+ pub struct IndexOperationRecord {
+@@ -1207,7 +1216,13 @@ impl IndexOperationRecord {
+         &self.progress
+     }
+ 
+-    /// Returns the persisted transient-failure attempt counter.
++    /// Returns how many claims have tried the current checkpoint.
++    ///
++    /// A claim adds one. A committed step that advances the checkpoint resets
++    /// the count: to zero when it releases its claim, or to one when the
++    /// claim it keeps carries on with the next step. Failures, blockers, and
++    /// retries leave it unchanged, so it counts consecutive attempts that
++    /// made no progress, which is what transient-failure backoff scales by.
+     pub const fn attempt(&self) -> u32 {
+         self.attempt
+     }
+@@ -1254,10 +1269,17 @@ impl IndexOperationRecord {
+         )
+     }
+ 
+-    /// Persists a successful bounded checkpoint and releases its claim.
++    /// Persists a successful bounded checkpoint, then requeues the operation
++    /// or keeps its claim as `claim` asks.
++    ///
++    /// A kept claim is the exact claim the step ran under, so the worker that
++    /// holds it can run the next step without claiming again. Progress resets
++    /// the attempt counter: a released checkpoint has had no attempt yet, and
++    /// a kept claim is the one attempt at its new checkpoint.
+     pub(crate) fn progressed(
+         &self,
+         progress: IndexOperationProgress,
++        claim: ClaimContinuation,
+     ) -> Result<Self, IndexOperationModelError> {
+         if !matches!(
+             self.execution_state,
+@@ -1268,13 +1290,20 @@ impl IndexOperationRecord {
+                 transition: "progress",
+             });
+         }
++        let (attempt, execution_state) = match claim {
++            ClaimContinuation::Release => (
++                0,
++                IndexOperationExecutionState::Queued {
++                    not_before_unix_millis: None,
++                },
 +            ),
-+            ObjectStorageBucket::Gcs { name } => Arc::new(
-+                object_store::gcp::GoogleCloudStorageBuilder::from_env()
-+                    .with_bucket_name(name)
-+                    .build()
-+                    .expect("GCS client builds"),
-+            ),
-+            ObjectStorageBucket::Azure { account, container } => Arc::new(
-+                object_store::azure::MicrosoftAzureBuilder::from_env()
-+                    .with_account(account)
-+                    .with_container_name(container)
-+                    .build()
-+                    .expect("Azure client builds"),
-+            ),
++            ClaimContinuation::Retain => (1, self.execution_state.clone()),
 +        };
-+        (
-+            store,
-+            format!("helix-object-storage-contract/{}", uuid::Uuid::new_v4()),
-+        )
-+    }
-+}
-+
-+/// Deletes every object under `prefix`.
-+async fn remove(store: &dyn ObjectStore, prefix: &str) {
-+    let locations = store
-+        .list(Some(&object_store::path::Path::from(prefix)))
-+        .map_ok(|meta| meta.location)
-+        .boxed();
-+    store
-+        .delete_stream(locations)
-+        .try_collect::<Vec<_>>()
-+        .await
-+        .expect("scratch prefix deletes");
-+}
-+
-+/// The put-ID metadata SlateDB stamps on every conditional put.
-+fn put_id(value: &'static str) -> object_store::Attributes {
-+    let mut attributes = object_store::Attributes::new();
-+    attributes.insert(
-+        object_store::Attribute::Metadata("slatedbputid".into()),
-+        value.into(),
-+    );
-+    attributes
-+}
-+
-+/// A create-only put refu
-```
-
-**File**: `crates/metrics/src/attribution.rs` (modified, +42/-0)
-```diff
-@@ -33,6 +33,8 @@ pub const PROJECT_ID_ENV: &str = "HELIX_TELEMETRY_PROJECT_ID";
- 
- const PROJECT_DOMAIN: &[u8] = b"helix-telemetry-project-v1";
- const DEPLOYMENT_DOMAIN: &[u8] = b"helix-telemetry-deployment-v1";
-+const GCS_DEPLOYMENT_DOMAIN: &[u8] = b"helix-telemetry-deployment-gcs-v1";
-+const AZURE_DEPLOYMENT_DOMAIN: &[u8] = b"helix-telemetry-deployment-azure-v1";
- const CONTAINER_MARKERS: [&str; 2] = ["/.dockerenv", "/run/.containerenv"];
- 
- /// CI service a process runs in, detected from the variable it always sets.
-@@ -218,6 +220,46 @@ impl DeploymentId {
-             .then(|| Self(domain_digest(DEPLOYMENT_DOMAIN, [bucket, database])))
+         self.next(
+             self.index_record_revision,
+             progress,
+-            self.attempt,
+-            IndexOperationExecutionState::Queued {
+-                not_before_unix_millis: None,
+-            },
++            attempt,
++            execution_state,
+         )
      }
  
-+    /// Derives an ID from Google Cloud Storage, whose bucket names are
-+    /// globally unique. It is hashed in its own domain, so a GCS bucket never
-+    /// shares an ID with an S3 bucket of the same name.
-+    ///
-+    /// ```
-+    /// use helix_metrics::attribution::DeploymentId;
-+    ///
-+    /// let id = DeploymentId::for_gcs("acme-data", "db/");
-+    /// assert_eq!(id, DeploymentId::for_gcs("acme-data", "db/"));
-+    /// assert_ne!(id, DeploymentId::for_gcs("acme-data", "other/"));
-+    /// assert_ne!(Some(id), DeploymentId::for_s3("acme-data", "db/", None));
-+    /// ```
-+    #[must_use]
-+    pub fn for_gcs(bucket: &str, database: &str) -> Self {
-+        Self(domain_digest(GCS_DEPLOYMENT_DOMAIN, [bucket, database]))
-+    }
-+
-+    /// Derives an ID from Azure Blob Storage, whose storage account names are
-+    /// globally unique. It is hashed in its own domain, so it never shares an
-+    /// ID with an S3 or GCS bucket.
-+    ///
-+    /// ```
-+    /// use helix_metrics::attribution::DeploymentId;
-+    ///
-+    /// let id = DeploymentId::for_azure("acme", "data", "db/");
-+    /// assert_eq!(id, DeploymentId::for_azure("acme", "data", "db/"));
-+    /// assert_ne!(id, DeploymentId::for_azure("acme", "data", "other/"));
-+    /// assert_ne!(id, DeploymentId::for_azure("acme", "other", "db/"));
-+    /// // Parts are hashed apart, so moving a boundary between them changes the ID.
-+    /// assert_ne!(id, DeploymentId::for_azure("acmed", "ata", "db/"));
-+    /// assert_ne!(id, DeploymentId::for_gcs("data", "db/"));
-+    /// ```
-+    #[must_use]
-+    pub fn for_azure(account: &str, container: &str, database: &str) -> Self {
-+        Self(domain_digest(
-+            AZURE_DEPLOYMENT_DOMAIN,
-+            [account, container, database],
-+        ))
-+    }
-+
-     #[must_use]
-     pub fn as_str(&self) -> &str {
-         &self.0
+@@ -1397,7 +1426,8 @@ impl IndexOperationRecord {
+     }
+ 
+     /// Converts a constructing BUILD into the family's initial cleanup
+-    /// checkpoint while invalidating any queued delay or worker claim.
++    /// checkpoint while invalidating any queued delay or worker claim. The
++    /// cleanup checkpoint has had no attempt, so the attempt counter resets.
+     pub(crate) fn begin_abort(
+         &self,
+         index_record_revision: IndexRevision,
+@@ -1448,7 +1478,7 @@ impl IndexOperationRecord {
+         self.next(
+             index_record_revision,
+             progress,
+-            self.attempt,
++            0,
+             IndexOperationExecutionState::Queued {
+                 not_before_unix_millis: None,
+             },
+@@ -2397,14 +2427,30 @@ mod tests {
+         let replaced = claimed.claim(claim(2, 2)).unwrap();
+         assert_eq!(replaced.attempt(), 8);
+ 
+-        let progressed = claimed.progressed(secondary_constructing()).unwrap();
++        let progressed = claimed
++            .progressed(secondary_constructing(), ClaimContinuation::Release)
++            .unwrap();
+         assert!(matches!(
+             progressed.execution_state(),
+             IndexOperationExecutionState::Queued {
+                 not_before_unix_millis: None
+             }
+         ));
++        assert_eq!(progressed.attempt(), 0, "progress resets the attempts");
++        let retained = claimed
++            .progressed(secondary_constructing(), ClaimContinuation::Retain)
++            .unwrap();
++        assert_eq!(retained.execution_state(), claimed.execution_state());
++        assert_eq!(retained.attempt(), 1, "a kept claim is one attempt");
++        assert_eq!(retained.claim(claim(1, 3)).unwrap().attempt(), 2);
++        assert_eq!(progressed.claim(claim(1, 3)).unwrap().attempt(), 1);
++        assert_eq!(
++            retained.operation_revision(),
++            claimed.operation_revision().checked_next().unwrap()
++        );
++        assert_eq!(retained.queue_schedule(), None);
+         let failed = claimed.transient_failure(30).unwrap();
++        assert_eq!(failed.attempt(), claimed.attempt(), "failures accumulate");
+         assert!(failed
+             .queue_schedule()
 ```
 
-**File**: `crates/server/src/config.rs` (modified, +369/-130)
+**File**: `crates/db/src/index_lifecycle/outbox.rs` (modified, +916/-116)
 ```diff
-@@ -44,9 +44,9 @@ const OBJECT_STORE_MIN_PARTS: usize = 256;
- const OPEN_FILE_HEADROOM: u64 = 1024;
- /// File in the cache root a running server holds an exclusive lock on.
- const CACHE_LOCK_FILE: &str = ".helix-cache.lock";
--/// Cache root for S3 storage when `HELIX_DISK_CACHE_DIR` is unset: the
-+/// Cache root for object storage when `HELIX_DISK_CACHE_DIR` is unset: the
- /// directory the product image creates for its runtime user.
--const DEFAULT_S3_CACHE_DIR: &str = "/var/cache/helix";
-+const DEFAULT_OBJECT_STORAGE_CACHE_DIR: &str = "/var/cache/helix";
- /// Seconds after its last use that a full-text split is still exempt from
- /// eviction. The DB default of five minutes lets a burst of admissions keep
- /// the tier over its share that long. One second, the shortest period, is
-@@ -83,11 +83,14 @@ pub struct ServerConfig {
- impl ServerConfig {
-     /// Load server configuration from environment variables.
+@@ -29,19 +29,19 @@ use crate::encoding::v2::values::{
+ };
+ use crate::error::{HelixDbError, Result};
+ use crate::execution_control;
+-use crate::transaction::Mutation;
++use crate::transaction::{CommitDurability, Mutation};
+ 
+ mod failure;
+ #[cfg(test)]
+ pub(crate) mod step_pause;
+ 
+ use super::failpoints::{self, IndexOutboxFailpoint};
+ use super::{
+-    BuildOperationOutcome, ClaimSequence, IndexOperationBlocker, IndexOperationExecutionState,
+-    IndexOperationFamily, IndexOperationId, IndexOperationOutcome, IndexOperationProgress,
+-    IndexOperationRecord, IndexOperationRevision, IndexOperationStage, IndexOperationStatus,
+-    IndexRecordV2, IndexRevision, IndexStateTransition, IndexStateV2, IndexV2MetadataValue,
+-    OperationClaim, OperationQueuePointerValue, WriterEpoch,
++    BuildOperationOutcome, ClaimContinuation, ClaimSequence, IndexOperationBlocker,
++    IndexOperationExecutionState, IndexOperationFamily, IndexOperationId, IndexOperationOutcome,
++    IndexOperationProgress, IndexOperationRecord, IndexOperationRevision, IndexOperationStage,
++    IndexOperationStatus, IndexRecordV2, IndexRevision, IndexStateTransition, IndexStateV2,
++    IndexV2MetadataValue, OperationClaim, OperationQueuePointerValue, WriterEpoch,
+ };
+ 
+ /// Maximum scheduling delay used for one observation of a persisted deadline.
+@@ -131,7 +131,8 @@ pub(crate) enum ClaimPermission {
+     SameEpochRecovery(SameEpochRecoveryProof),
+ }
+ 
+-/// Exact claimed operation returned after its claim transaction commits.
++/// Exact claimed operation returned after its claim transaction commits, or
++/// after a step that kept its claim committed.
+ #[derive(Debug, Clone)]
+ pub(crate) struct ClaimedOperation {
+     pub(crate) scope: DataScope,
+@@ -141,7 +142,8 @@ pub(crate) struct ClaimedOperation {
+ /// Closed family-driver result for one bounded claimed step.
+ #[derive(Debug, Clone)]
+ pub(crate) enum IndexOperationStepResult {
+-    /// Physical work and the supplied next checkpoint commit together.
++    /// Physical work and the supplied next checkpoint commit together,
++    /// without waiting for the WAL upload (see [`execute_claimed_step_with_evidence`]).
+     Progressed(IndexOperationProgress),
+     /// No physical work commits; the exact checkpoint is durably backed off.
+     TransientFailure,
+@@ -150,9 +152,10 @@ pub(crate) enum IndexOperationStepResult {
+     /// The step's transaction commits the blocker beside the operation's
+     /// unchanged checkpoint, so anything the driver staged commits too and a
+     /// retry rescans it: a driver stages before blocking only work that a
+-    /// rescan from that checkpoint reconciles.
++    /// rescan from that checkpoint reconciles. The commit is durable.
+     Blocked(IndexOperationBlocker),
+-    /// The canonical lifecycle state and terminal operation commit together.
++    /// The canonical lifecycle state and terminal operation commit together,
++    /// durably.
+     Completed(IndexOperationOutcome),
+ }
+ 
+@@ -454,7 +457,10 @@ impl PreparedIndexOperationStep {
+         }
+     }
+ 
+-    /// Performs post-commit external work only after durability is proven.
++    /// Performs post-commit external work once the step's commit is applied.
++    ///
++    /// A progressed step's commit is not yet durable here, so this work must
++    /// stay sound if a crash loses that commit.
+     async fn after_commit(self) {
+         if let Self::Text(step) = self {
+             (*step).after_commit().await;
+@@ -490,6 +496,7 @@ pub(crate) trait IndexOperationDriver: Send + Sync {
+     /// permit supplied by this default implementation.
+     async fn acquire_step_permit(
+         &self,
++        _db: &Db,
+         _scope: DataScope,
+         _operation: &IndexOperationRecord,
+     ) -> Result<Box<dyn IndexOperationStepPermit>> {
+@@ -503,12 +510,12 @@ pub(crate) trait IndexOperationDriver: Send + Sync {
+     /// all other stages on the ordinary path.
+     async fn prepare_step(
+         &self,
+-        _db: &Db,
++        db: &Db,
+         scope: DataScope,
+         operation: &IndexOperationRecord,
+         _limits: SearchIndexBatchLimits,
+     ) -> Result<PreparedIndexOperationStep> {
+-        let permit = self.acquire_step_permit(scope, operation).await?;
++        let permit = self.acquire_step_permit(db, scope, operation).await?;
+         Ok(PreparedIndexOperationStep::driver_owned(
+             self.family(),
+             permit,
+@@ -525,9 +532,12 @@ pub(crate) trait IndexOperationDriver: Send + Sync {
+         limits: SearchIndexBatchLimits,
+     ) -> Result<IndexOperationStepExecution>;
+ 
+-    /// Applies disposable runtime cleanup only after the staged step is durable.
++    /// Applies disposable runtime cleanup once the staged step committed.
      ///
--    /// Paths may be any bytes; every other variable must be UTF-8. S3 storage
--    /// always runs a hybrid disk cache, rooted at `HELIX_DISK_CACHE_DIR` or
--    /// else `/var/cache/helix`; with `HELIX_DATA_DIR` the cache is opt-in
--    /// through `HELIX_DISK_CACHE_DIR`, and memory storage rejects every cache
--    /// variable. Without `HELIX_DISK_CACHE_BYTES`, the default disk budget
-+    /// Paths may be any bytes; every other variable must be UTF-8. At most one
-+    /// of `HELIX_DATA_DIR`, `S3_BUCKET`, `GCS_BUCKET` and `AZURE_CONTAINER_NAME`
-+    /// picks durable storage; with none, data stays in memory. An Azure
-+    /// container also needs `AZURE_STORAGE_ACCOUNT_NAME`. Object storage (S3,
-+    /// GCS or Azure) always runs a hybrid disk cache, rooted at
-+    /// `HELIX_DISK_CACHE_DIR` or else `/var/cache/helix`; with
-+    /// `HELIX_DATA_DIR` the cache is opt-in through `HELIX_DISK_CACHE_DIR`,
-+    /// and memory storage rejects every cache variable. Without `HELIX_DISK_CACHE_BYTES`, the default disk budget
-     /// must fit the cache's filesystem. `HELIX_DISK_CACHE_WARM=off` stops the
-     /// startup warm of the disk cache ([`HybridCache`]).
-     /// `HELIX_STRONG_VECTOR_SEARCH_MAX_PENDING_BYTES` and
-@@ -173,18 +176,9 @@ impl ServerConfig {
-                 root: root.clone(),
-                 database: self.db_path.clone(),
-             },
--            StorageConfig::S3 {
--                bucket,
--                region,
--                endpoint,
--                allow_http,
--                ..
--            } => HelixDbSource::ObjectStorage {
-+            StorageConfig::ObjectStorage { bucket, .. } => HelixDbSource::ObjectStorage {
-                 database: self.db_path.clone(),
-                 bucket: bucket.clone(),
--                region: region.clone(),
--                endpoint: endpoint.clone(),
--                allow_http: *allow_http,
-             },
+-    /// This hook must not write database state. Its default is intentionally a
++    /// It runs after every progressed, blocked or completed step, including a
++    /// driver failure recorded as a blocker; a progressed step's commit is
++    /// applied but ma
+```
+
+**File**: `crates/db/src/index_lifecycle/public.rs` (modified, +17/-4)
+```diff
+@@ -116,10 +116,20 @@ pub enum IndexOperationBlockerCode {
+     InvalidLegacyPhysical,
+ }
+ 
+-/// Monotonic bounded-work counters safe for public progress reporting.
++/// Bounded-work counters safe for public progress reporting.
++///
++/// They grow while one writer runs the operation. A writer reports the steps
++/// it has applied, and progressed steps do not wait for their WAL upload, so
++/// after a crash or failover the counters can fall back to the last durable
++/// step, which the build then redoes. Readers report only durable steps.
+ #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize)]
+ pub struct IndexOperationPublicProgress {
+-    /// Authoritative entities visited.
++    /// Source entities read. A build counts each entity its source scan
++    /// reads and each entity it re-reads to apply a write made during the
++    /// build; validation and other passes over entities already counted add
++    /// bytes and operations, never entities, so a build over `N` entities
++    /// with no concurrent writes reports `N`. Cleanup counts the rows it
++    /// removes.
+     #[serde(with = "u64_string")]
+     pub entities: u64,
+     /// Source bytes consumed.
+@@ -201,9 +211,12 @@ pub struct IndexOperationStatusCommon {
+     pub family: PublicIndexFamily,
+     /// Frozen family stage serialized in snake case.
+     pub stage: IndexOperationStage,
+-    /// Number of claims attempted.
++    /// Claims that have tried the current checkpoint: `1` while a healthy
++    /// operation runs. Every step that makes progress resets it, so it grows only
++    /// while consecutive attempts fail to make progress.
+     pub attempt: u32,
+-    /// Monotonic bounded-work progress.
++    /// Bounded-work progress; see [`IndexOperationPublicProgress`] for when
++    /// it can fall back.
+     pub progress: IndexOperationPublicProgress,
+ }
+ 
+```
+
+**File**: `crates/db/src/index_lifecycle/queue/lifecycle_tests.rs` (modified, +175/-37)
+```diff
+@@ -154,17 +154,56 @@ pub(super) async fn wait_terminal(db: &HelixDB, operation: &str) -> String {
+     }
+ }
+ 
+-/// Lets the build take steps one ownership handoff at a time until `ready`
+-/// holds, then returns with ownership held so no further step runs.
++/// Creates `spec`'s index, the `index_id`th of a fresh database, while
++/// holding its first generation's ownership, so no build step runs until
++/// [`pause_when`] hands it over. Unheld, a build runs its first steps while
++/// the DDL still waits for its WAL upload.
++pub(super) async fn create_held(
++    db: &HelixDB,
++    spec: IndexSpec,
++    family: QueueFamily,
++    index_id: u64,
++) -> (String, QueueTarget, IndexGenerationPublicationPermit) {
++    let predicted = QueueTarget::new(
++        DataScope::LegacyUnscoped,
++        crate::index_lifecycle::IndexId::new(index_id).unwrap(),
++        crate::index_lifecycle::IndexGenerationId::initial(),
++    );
++    let held = db
++        .inner
++        .index_scope_gates
++        .publication_permit(predicted)
++        .await;
++    let operation = create(db, spec).await;
++    assert_eq!(
++        target(db, family).await,
++        predicted,
++        "the held target is the build's"
++    );
++    (operation, predicted, held)
++}
++
++/// Lets the build take steps one ownership handoff at a time, starting from
++/// the `held` ownership of its generation, until `ready` holds, then returns
++/// with ownership held so no further step runs.
++///
++/// Ownership is a fair lock: it is handed over only once the build queues
++/// for it, and taken back by queueing right behind the build, so exactly one
++/// step runs per handoff however fast steps are.
+ pub(super) async fn pause_when(
+     db: &HelixDB,
+     operation: &str,
+-    target: QueueTarget,
++    held: IndexGenerationPublicationPermit,
+     ready: impl Fn(&serde_json::Value) -> bool,
+ ) -> IndexGenerationPublicationPermit {
+     let deadline = Instant::now() + Duration::from_secs(60);
++    let target = held.target();
++    let mut held = Some(held);
+     loop {
+-        let permit = db.inner.index_scope_gates.publication_permit(target).await;
++        let permit = match held.take() {
++            Some(permit) => permit,
++            None => db.inner.index_scope_gates.publication_permit(target).await,
++        };
+         let current = status(db, operation).await;
+         if ready(&current) {
+             return permit;
+@@ -173,12 +212,19 @@ pub(super) async fn pause_when(
+             matches!(current["status"].as_str(), Some("queued" | "running")),
+             "build finished before pausing: {current}"
+         );
+-        assert!(
+-            Instant::now() < deadline,
+-            "build did not progress: {current}"
+-        );
++        while db
++            .inner
++            .index_scope_gates
++            .publication_permit_holders(target)
++            < 2
++        {
++            assert!(
++                Instant::now() < deadline,
++                "build did not progress: {current}"
++            );
++            tokio::time::sleep(Duration::from_millis(1)).await;
++        }
+         drop(permit);
+-        tokio::time::sleep(Duration::from_millis(2)).await;
+     }
+ }
+ 
+@@ -267,10 +313,9 @@ async fn concurrent_vector_writes(db: &HelixDB, ids: &[u64], state: &mut VectorS
+ async fn vector_build_with_concurrent_writes_matches_exact_search_through_publication() {
+     let db = open("build-vector", Arc::new(InMemory::new()), config()).await;
+     let (ids, mut state) = seed_vectors(&db, 120).await;
+-    let operation = create(&db, vector_spec()).await;
+-    let target = target(&db, QueueFamily::Vector).await;
++    let (operation, target, held) = create_held(&db, vector_spec(), QueueFamily::Vector, 1).await;
+ 
+-    let paused = pause_when(&db, &operation, target, |status| scanned(status) >= 40).await;
++    let paused = pause_when(&db, &operation, held, |status| scanned(status) >= 40).await;
+     assert!(
+         scanned(&status(&db, &operation).await) < 120,
+         "paused mid-scan"
+@@ -309,7 +354,13 @@ async fn vector_build_with_concurrent_writes_matches_exact_search_through_public
+     assert_eq!(db.index_operation_queue_stats().deferred_attempts, 1);
+     drop(paused);
+ 
+-    let paused = pause_when(&db, &operation, target, |status| scanned(status) >= 110).await;
++    let paused = pause_when(
++        &db,
++        &operation,
++        db.inner.index_scope_gates.publication_permit(target).await,
++        |status| scanned(status) >= 110,
++    )
++    .await;
+     concurrent_vector_writes(&db, &ids, &mut state, 1).await;
+     set_tenant(&db, ids[101], "c").await;
+     state.get_mut(&ids[101]).unwrap().0 = "c";
+@@ -338,9 +389,8 @@ async fn restart_during_a_build_and_after_activation_recovers_queued_operations(
+     let store: Arc<dyn ObjectStore> = Arc::new(InMemory::new());
+     let db = open("build-restart", Arc::clone(&store), config()).await;
+     let (ids, mut state) = seed_vectors(&db, 120).await;
+-    let operation = create(&db, vector_spec()).awai
+```
+
+**File**: `crates/db/src/index_lifecycle/queue/vector_graph_tests.rs` (modified, +4/-5)
+```diff
+@@ -49,13 +49,13 @@ use std::sync::Arc;
+ 
+ use slatedb::IsolationLevel;
+ 
+-use super::lifecycle_tests::{create, pause_when, scanned, set_tenant, wait_terminal};
++use super::lifecycle_tests::{create_held, pause_when, scanned, set_tenant, wait_terminal};
+ use super::overlay_tests::{add, delete, update, vector_search, write};
+ use super::publication::{PublicationOutcome, QueuePublisher};
+ use super::soak_tests::{
+     assert_vector_graph, env_or, partition, vector_namespaces, History, Namespace, Rng,
+ };
+-use super::tests::{open, publisher_with_limits, queue, queued, target};
++use super::tests::{open, publisher_with_limits, queue, queued};
+ use super::QueueTarget;
+ use crate::config::{
+     DbConfig, IndexOperationQueueTuning, SearchIndexBackfillLimits, SearchIndexBatchLimits,
+@@ -390,9 +390,8 @@ async fn run(
+         metric,
+         Some("tenant"),
+     );
+-    let operation = create(&db, spec).await;
+-    let target = target(&db, QueueFamily::Vector).await;
+-    let paused = pause_when(&db, &operation, target, |status| scanned(status) >= 6).await;
++    let (operation, target, held) = create_held(&db, spec, QueueFamily::Vector, 1).await;
++    let paused = pause_when(&db, &operation, held, |status| scanned(status) >= 6).await;
+     for _ in 0..6 {
+         model.apply(&db, &mut rng).await;
+     }
+```
+
+**File**: `crates/db/src/index_lifecycle/scope_gate.rs` (modified, +65/-6)
+```diff
+@@ -30,14 +30,37 @@ use tokio::sync::{
+     Mutex as AsyncMutex, OwnedMutexGuard, OwnedRwLockReadGuard, OwnedRwLockWriteGuard, RwLock,
+ };
+ 
++use super::secondary::delta_ledger::{DeltaLedgers, StagedBuildDeltas};
+ use crate::encoding::v2::keys::scope::DataScope;
+ 
+ /// Shared authority retained by one graph mutation transaction.
++///
++/// It also carries the build deltas the transaction staged, and records them
++/// in their generations' ledgers when dropped, before the gate unlocks: the
++/// holder keeps it until its commit has applied or failed, so a delta is
++/// recorded after it can be read and before a fenced step can run (see
++/// [`DeltaLedgers`]).
+ #[derive(Debug)]
+ pub(crate) struct IndexScopeMutationPermit {
++    staged: StagedBuildDeltas,
++    ledgers: Arc<DeltaLedgers>,
+     _guard: OwnedRwLockReadGuard<()>,
+ }
+ 
++impl IndexScopeMutationPermit {
++    /// Adds deltas this permit's transaction staged, recorded once it is
++    /// dropped.
++    pub(crate) fn stage_build_deltas(&mut self, staged: StagedBuildDeltas) {
++        self.staged.append(staged);
++    }
++}
++
++impl Drop for IndexScopeMutationPermit {
++    fn drop(&mut self) {
++        self.ledgers.record(std::mem::take(&mut self.staged));
++    }
++}
++
+ /// Version of one scope's planner-visible canonical catalog.
+ ///
+ /// Every canonical change that can alter a scope's Active index set commits
+@@ -175,16 +198,24 @@ pub(crate) struct IndexScopeGates {
+     catalog_refreshes: Mutex<HashMap<DataScope, Weak<AsyncMutex<()>>>>,
+     publications: Mutex<HashMap<super::queue::QueueTarget, Weak<AsyncMutex<()>>>>,
+     build_steps: Mutex<HashMap<DataScope, Weak<AsyncMutex<()>>>>,
++    delta_ledgers: Arc<DeltaLedgers>,
+ }
+ 
+ impl IndexScopeGates {
+     /// Acquires shared scope authority before a graph transaction takes its snapshot.
+     pub(crate) async fn mutation_permit(&self, scope: DataScope) -> IndexScopeMutationPermit {
+         IndexScopeMutationPermit {
++            staged: StagedBuildDeltas::default(),
++            ledgers: Arc::clone(&self.delta_ledgers),
+             _guard: self.mutation_gate(scope).read_owned().await,
          }
      }
-@@ -233,13 +227,11 @@ impl ServerConfig {
-     ///     root: directory.path().join("data"),
-     ///     cache: CacheConfig::Hybrid(Box::new(cache("disk-cache"))),
-     /// }));
--    /// // S3 storage always has a disk cache, which also keeps the SSTs it writes.
--    /// assert!(caches_sst_writes(StorageConfig::S3 {
--    ///     bucket: "bucket".to_string(),
--    ///     region: "us-east-1".to_string(),
--    ///     endpoint: None,
--    ///     allow_http: false,
--    ///     cache: Box::new(cache("s3-cache")),
-+    /// // Object storage always has a disk cache, which also keeps the SSTs it
-+    /// // writes.
-+    /// assert!(caches_sst_writes(StorageConfig::ObjectStorage {
-+    ///     bucket: db::ObjectStorageBucket::Gcs { name: "bucket".to_string() },
-+    ///     cache: Box::new(cache("gcs-cache")),
-     /// }));
-     /// ```
-     pub fn db_config(&self) -> db::DbConfig {
-@@ -256,7 +248,7 @@ impl ServerConfig {
-                 cache: CacheConfig::Hybrid(cache),
-                 ..
-             } => cache.db_config(false),
--            StorageConfig::S3 { cache, .. } => cache.db_config(true),
-+            StorageConfig::ObjectStorage { cache, .. } => cache.db_config(true),
-         }
-         .with_index_operation_queue_tuning(self.index_operation_queue)
-         .with_sst_compression(self.sst_compression);
-@@ -297,8 +289,8 @@ impl ServerConfig {
  
- /// Supported storage backends.
- ///
--/// S3 storage always carries a [`HybridCache`]: without a local disk tier,
--/// every read that misses the memory caches is a serial S3 GET, so a vector
-+/// Object storage always carries a [`HybridCache`]: without a local disk tier,
-+/// every read that misses the memory caches is a serial bucket GET, so a vector
- /// index larger than the block cache stalls on one GET per graph hop. Local
- /// disk storage makes the cache optional ([`CacheConfig`]), and in-memory
- /// storage has no durable objects to cache.
-@@ -313,16 +305,11 @@ pub enum StorageConfig {
-         /// Local caches in front of the object store.
-         cache: CacheConfig,
-     },
--    /// S3-compatible object store.
--    S3 {
--        /// Bucket nam
++    /// Every building secondary generation's pending-delta ledger.
++    pub(crate) fn delta_ledgers(&self) -> &DeltaLedgers {
++        &self.delta_ledgers
++    }
++
+     /// Acquires shared authority before refreshing the catalog used for planning.
+     ///
+     /// The version is read after the gate is held, so it is the version every
+@@ -240,22 +271,33 @@ impl IndexScopeGates {
+     /// wait however many of the scope's builds run. Nothing waits for the
+     /// build-step gate while holding a scope gate, so it adds no lock cycle.
+     /// The tuple drops the scope permit before the build-step gate.
++    ///
++    /// Once queued, a gated step uploads every commit applied so far before
++    /// it fences anyone. Build steps commit without waiting for their WAL
++    /// upload, and a durable commit under the gate (an activation, a
++    /// blocker, a cleanup's completion) waits for every lower sequence: it
++    /// would otherwise hold writers, and for activation planning, through
++    /// the upload of the build's whole unflushed tail instead of only what
++    /// committed while the gate was held. A failed upload fails the step.
+     pub(crate) async fn step_permit(
+         &self,
++        db: &slatedb::Db,
+         scope: DataScope,
+         gate: StepGate,
+-    ) -> Box<dyn super::outbox::IndexOperationStepPermit> {
+-        match gate {
++    ) -> crate::error::Result<Box<dyn super::outbox::IndexOperationStepPermit>> {
++        Ok(match gate {
+             StepGate::None => Box::new(()),
+             StepGate::WriteFence => {
+                 let queued = self.build_step_gate(scope).lock_owned().await;
++                db.flush().await?;
+                 Box::new((self.write_fence_permit(scope).await, queued))
+             }
+             StepGate::Lifecycle => {
+                 let queued = self.build_step_gate(scope).lock_owned().await;
++                db.flush().await?;
+                 Box::new((self.lifecycle_permit(scope).await, queued))
+             }
+-        }
++        })
+     }
+ 
+     /// Serializes persisted-catalog refreshes for one handle and scope.
+@@ -371,6 +413,15 @@ mod tests {
+ 
+     use super::*;
+ 
++    async fn test_db(name: &str) -> slatedb::Db {
++        slatedb::Db::open(
++            name,
++            Arc::new(slatedb::object_store::memory::InMemory::new()),
++        )
++        .await
++        .expect("scope gate test database opens")
++    }
++
+     #[tokio::test]
+     async fn lifecycle_scope_waits_for_catalog_and_mutations_but_not_other_scopes() {
+         let gates = Arc::new(IndexScopeGates::default());
+@@ -422,6 +473,7 @@ mod tests {
+     #[tokio::test]
+     async fn graph_writes_wait_behind_one_queued_build_step() {
+         let gates = Arc::new(IndexScopeGates::default());
++        let db = Arc::new(test_db("graph-writes-wait-behind-one-step").await);
+         let scop
 ```
 
 ---
 
-### Incident Patch 2: `35514bd5` (2026-11-17)
-**Commit Message**: Add Azure Blob Storage as an object storage backend (#1304)
+### Incident Patch 2: `d21b349e` (2026-11-18)
+**Commit Message**: Upload a build's applied tail before a step fences writers
 
-Stacked on #1303; review that first. This PR's base is
-`gcs-object-storage`, and GitHub retargets it to `main` once #1303
-merges.
+Claims and progressed steps commit without waiting for their WAL upload,
+and a durable commit under a gate (activation, a blocker, a cleanup's
+completion) waits for every lower sequence. Taking the write fence or the
+lifecycle permit first held writers, and for activation planning, through
+the upload of the build's whole unflushed tail. A gated step now flushes
+once it is queued on the scope's build-step gate and before it waits for
+the mutation gate, so the fenced window covers only what commits under it.
 
-Adds Azure Blob Storage alongside S3 and GCS, and turns the GCS contract
-test into one suite that every backend runs.
-
+**File**: `crates/db/src/index_lifecycle/outbox.rs` (modified, +5/-2)
 ```diff
- pub enum ObjectStorageBucket {
-     S3 { name, region, endpoint, allow_http },
-     Gcs { name },
-+    Azure { account, container },
- }
+@@ -496,6 +496,7 @@ pub(crate) trait IndexOperationDriver: Send + Sync {
+     /// permit supplied by this default implementation.
+     async fn acquire_step_permit(
+         &self,
++        _db: &Db,
+         _scope: DataScope,
+         _operation: &IndexOperationRecord,
+     ) -> Result<Box<dyn IndexOperationStepPermit>> {
+@@ -509,12 +510,12 @@ pub(crate) trait IndexOperationDriver: Send + Sync {
+     /// all other stages on the ordinary path.
+     async fn prepare_step(
+         &self,
+-        _db: &Db,
++        db: &Db,
+         scope: DataScope,
+         operation: &IndexOperationRecord,
+         _limits: SearchIndexBatchLimits,
+     ) -> Result<PreparedIndexOperationStep> {
+-        let permit = self.acquire_step_permit(scope, operation).await?;
++        let permit = self.acquire_step_permit(db, scope, operation).await?;
+         Ok(PreparedIndexOperationStep::driver_owned(
+             self.family(),
+             permit,
+@@ -2245,6 +2246,7 @@ mod tests {
+ 
+         async fn acquire_step_permit(
+             &self,
++            _db: &Db,
+             _scope: DataScope,
+             _operation: &IndexOperationRecord,
+         ) -> Result<Box<dyn IndexOperationStepPermit>> {
+@@ -2293,6 +2295,7 @@ mod tests {
+ 
+         async fn acquire_step_permit(
+             &self,
++            _db: &Db,
+             _scope: DataScope,
+             _operation: &IndexOperationRecord,
+         ) -> Result<Box<dyn IndexOperationStepPermit>> {
 ```
 
-| Set | Storage |
-|---|---|
-| `HELIX_DATA_DIR` | Disk |
-| `S3_BUCKET` | S3 |
-| `GCS_BUCKET` | GCS |
-| `AZURE_CONTAINER_NAME` + `AZURE_STORAGE_ACCOUNT_NAME` | Azure Blob
-Storage |
-| None | Memory |
-| More than one | Startup fails |
-
-- **Variable names:** these are object_store's own Azure variables, so
-anyone following the object_store or SlateDB docs doesn't silently get
-memory storage. A container without an account fails startup, naming
-both variables.
-- **Credentials:** come from object_store's chain: account key, then AKS
-Workload Identity (`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`,
-`AZURE_FEDERATED_TOKEN_FILE`), then a service principal, then SAS, else
-the managed identity.
-- **Storage selection:** now one "at most one selector" 
-
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `crates/db/src/index_lifecycle/scope_gate.rs` (modified, +34/-6)
 ```diff
-@@ -3289,6 +3289,7 @@ dependencies = [
-  "futures-util",
-  "http",
-  "http-body-util",
-+ "httparse",
-  "humantime",
-  "hyper",
-  "itertools 0.15.0",
-```
-
-**File**: `crates/db/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@ version = "0.1.0"
- edition = "2024"
- 
- [dependencies]
--slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "747f75d851c0105a204ef1b113597e62b752f82b", features = ["gcp", "zstd"] }
-+slatedb = { git = "https://github.com/HelixDB/slatedb.git", rev = "747f75d851c0105a204ef1b113597e62b752f82b", features = ["azure", "gcp", "zstd"] }
- slatedb-common = { git = "https://github.com/HelixDB/slatedb.git", rev = "747f75d851c0105a204ef1b113597e62b752f82b", optional = true }
- http-body = { version = "1", optional = true }
- helix-ast = { path = "../ast" }
-```
-
-**File**: `crates/db/src/lib.rs` (modified, +89/-15)
-```diff
-@@ -125,7 +125,8 @@ use slatedb::db_cache::{
- #[cfg(test)]
- use slatedb::object_store::memory::InMemory;
- use slatedb::object_store::{
--    aws::AmazonS3Builder, gcp::GoogleCloudStorageBuilder, local::LocalFileSystem, ObjectStore,
-+    aws::AmazonS3Builder, azure::MicrosoftAzureBuilder, gcp::GoogleCloudStorageBuilder,
-+    local::LocalFileSystem, ObjectStore,
- };
- use slatedb::{CacheTarget, Db, DbCacheManagerOps, DbMetadataOps, DbReader};
- use tokio::sync::{oneshot, watch, Mutex};
-@@ -373,7 +374,8 @@ pub enum HelixDbSource {
-         /// Logical database path inside the local object store.
-         database: String,
-     },
--    /// Remote object storage: an S3 or GCS bucket.
-+    /// Remote object storage: an S3 or GCS bucket, or an Azure Blob Storage
-+    /// container.
-     ObjectStorage {
-         /// Logical database path inside the bucket.
-         database: String,
-@@ -385,7 +387,7 @@ pub enum HelixDbSource {
- /// The bucket an [`HelixDbSource::ObjectStorage`] database lives in, and the
- /// service that holds it.
- ///
--/// Both services give SlateDB what its single-writer fencing needs: create-only
-+/// Every service gives SlateDB what its single-writer fencing needs: create-only
- /// puts, compare-and-swap overwrites of GC boundary files, and strongly
- /// consistent listings. GCS is reached through its own API, never its
- /// S3-compatible endpoint, which does not offer the same conditional writes.
-@@ -412,15 +414,28 @@ pub enum ObjectStorageBucket {
-         /// Bucket name.
-         name: String,
-     },
-+    /// An Azure Blob Storage container. Credentials come from, in order,
-+    /// `AZURE_STORAGE_TOKEN`, `AZURE_STORAGE_ACCOUNT_KEY`, workload identity
-+    /// (`AZURE_CLIENT_ID`, `AZURE_TENANT_ID` and `AZURE_FEDERATED_TOKEN_FILE`,
-+    /// which AKS Workload Identity injects), a service principal
-+    /// (`AZURE_CLIENT_SECRET`), `AZURE_STORAGE_SAS_KEY`, the Azure CLI
-+    /// (`AZURE_USE_AZURE_CLI`), else the instance's managed identity.
-+    /// `AZURE_STORAGE_USE_EMULATOR` selects Azurite.
-+    Azure {
-+        /// Storage account name.
-+        account: String,
-+        /// Container name.
-+        container: String,
-+    },
- }
- 
- impl HelixDbSource {
-     /// Telemetry deployment ID derived from this source's storage.
-     ///
--    /// Only AWS S3 and GCS storage have one: their bucket names are globally
--    /// unique, while memory, disk and custom S3 endpoints reuse the same names
--    /// across unrelated users. An S3 and a GCS bucket with the same name give
--    /// different IDs.
-+    /// Only AWS S3, GCS and Azure storage have one: their bucket and storage
-+    /// account names are globally unique, while memory, disk and custom S3
-+    /// endpoints reuse the same names across unrelated users. Buckets with the
-+    /// same name on different services give different IDs.
-     ///
-     /// ```
-     /// use db::{HelixDbSource, ObjectStorageBucket};
-@@ -442,6 +457,15 @@ impl HelixDbSource {
-     /// };
-     /// assert!(gcs.telemetry_deployment_id().is_some());
-     /// assert_ne!(gcs.telemetry_deployment_id(), s3(None).telemetry_deployment_id());
-+    /// let azure = HelixDbSource::ObjectStorage {
-+    ///     database: "db/".to_string(),
-+    ///     bucket: ObjectStorageBucket::Azure {
-+    ///         account: "acme".to_string(),
-+    ///         container: "acme-data".to_string(),
-+    ///     },
-+    /// };
-+    /// assert!(azure.telemetry_deployment_id().is_some());
-+    /// assert_ne!(azure.telemetry_deployment_id(), gcs.telemetry_deployment_id());
-     /// let memory = HelixDbSource::InMemory { database: "db/".to_string() };
-     /// assert!(memory.telemetry_deployment_id().is_none());
-     /// ```
-@@ -459,6 +483,11 @@ impl HelixDbSource {
-                 ObjectStorageBucket::Gcs { name } => Some(
-                     helix_metrics::attribution::DeploymentId::for_gcs(name, database),
-                 ),
-+                ObjectStorageBucket::Azure { account, container } => {
-+                    Some(helix_metrics::attribution::DeploymentId::for_azure(
-+                        account, container, database,
-+                    ))
-+                }
-             },
-             Self::InMemory { .. } | Self::InMemoryToken { .. } | Self::Disk { .. } => None,
-         }
-@@ -531,6 +560,15 @@ impl HelixDbSource {
-                             builder.with_http_connector(benchmark::io::Connector::default());
-                         Arc::new(builder.build()?)
-                     }
-+                    ObjectStorageBucket::Azure { account, container } => {
-+                        let builder = MicrosoftAzureBuilder::from_env()
-+                            .with_account(account)
-+                            .with_container_name(container);
-+                        #[cfg(feature = "async-index-benchmark")]
-+                        let builder =
-+                            builder.with_http_connector(benchmark::io::Connector::default());
-+                        Arc::new(builder.buil
-```
-
-**File**: `crates/db/tests/TEST_TARGET_INVENTORY.md` (modified, +1/-1)
-```diff
-@@ -25,10 +25,10 @@ Cargo discovers these targets:
- | `embedded_write_latency` | `bench` | `crates/db/benches/embedded_write_latency.rs` | Measures acknowledged-write latency for in-memory and on-disk embedded storage. |
- | `edge_stream_drop` | `test` | `crates/db/tests/edge_stream_drop.rs` | Exercises edge-stream deletion, empty results, traversal selection, transaction rollback, replacement batches, and node cascades through the public query boundary. |
- | `fts_prefilter` | `bench` | `crates/db/benches/fts_prefilter.rs` | Requires `bench-internals`. Measures exact collector-only FTS prefilter latency, allocations, and object-store reads across release fixtures. |
--| `gcs_object_storage` | `test` | `crates/db/tests/gcs_object_storage.rs` | Ignored by default: needs a real Google Cloud Storage bucket in `HELIX_TEST_GCS_BUCKET` and credentials. Proves GCS keeps the storage contract SlateDB relies on (create-only puts, generation-matched overwrites, conditional GETs, put-ID metadata on single and multipart uploads, consistent offset listings), then that a newer SlateDB writer and a newer HelixDB writer opened through `ObjectStorageBucket::Gcs` fence the older one and a reader sees exactly what survived. |
- | `hybrid_cache_reuse` | `test` | `crates/db/tests/hybrid_cache_reuse.rs` | Reopens and closes a hybrid-cache reader repeatedly and asserts every reopen reads through the process's one Foyer device, so exactly one set of partition files stays open across reopens, and that no other descriptor outlives a closed reader. Counts `/proc/self/fd` and skips without procfs; it is its own target so no concurrent test perturbs the count. |
- | `index_lifecycle_contracts` | `test` | `crates/db/tests/index_lifecycle_contracts.rs` | Requires `index-lifecycle-testing` and runs deterministic family-shape, backfill-mutation, concurrent-create, and repeated-recoverable-fault acceptance contracts through the installed production drivers. Late vector/text writes at every build stage enqueue complete operations through the real producer and ledger; the contracts require that they never send a build back to catch-up, survive reopen, are visible to strong searches before publication, and match after explicit publication. Text builds whose scanned entities are deleted, re-texted, moved, or un-indexed before partition construction activate and match an independent build's hits and scores. |
- | `mutation_count_visibility` | `test` | `crates/db/tests/mutation_count_visibility.rs` | Covers counts of a write's own rows through the public query boundary: they return their rows without flushing deferred index maintenance, later index-backed counts and expansions in the same batch still see every staged write, and a unique conflict between counted writes fails the commit and writes nothing. |
-+| `object_storage_contract` | `test` | `crates/db/tests/object_storage_contract.rs` | Ignored by default: each service's module needs a real bucket or container and credentials (`HELIX_TEST_S3_BUCKET`, `HELIX_TEST_GCS_BUCKET`, `HELIX_TEST_AZURE_CONTAINER`). Runs the same five contracts against S3, GCS and Azure Blob Storage: create-only puts, version-matched overwrites and conditional GETs, put-ID metadata on single and multipart uploads, and consistent offset listings, then that a newer SlateDB writer and a newer HelixDB writer opened through the service's `ObjectStorageBucket` fence the older one and a reader sees exactly what survived. |
- | `production_contracts` | `test` | `crates/db/tests/production_contracts.rs` | Imports the compiled `db` library without `cfg(test)` and covers the public query/interpreter boundary, including graph behavior, source-fed node/edge mutations, all typed KV read modes, explicit comparison/membership shapes, limited and empty access, branch partition and mixed-row invariants, nested branch-context restoration, unbound conditional variables, scalar and operator-specific predicate-error propagation, repeat-predicate and shortest-path missing/ambiguous/revisited/isolated endpoint shapes, nested and edge-endpoint property paths, typed/transport ID parameters and variable ID-source shapes, label mutation/no-op/cascade plus empty/unlabeled deletion invariants, malformed requests, dynamic and typed AST `FOREACH`, complete literal/runtime property-value conversion, stable parallel-stage execution on a public reader, scalar/malformed multi-dependency composition, ordinary/folded/scalar stream-operation shapes, scalar aggregate and aggregate-after-fold shape contracts, typed and rejected dynamic bounds, empty intersection, fail-closed index-lifecycle value consumption, shared-runtime vector/text search and DDL availability, chained injection, sparse/selected/binding projections, vector-distance metadata and search-label projections, typed vector-array conversions through the live planner context, missing-property ordering, mixed/empty aggregates, expression value/error edges, managed secondary/range/search read-your-writes, ra
-```
-
-**File**: `crates/db/tests/object_storage_contract.rs` (renamed, +153/-58)
-```diff
-@@ -1,18 +1,26 @@
--//! Proof, against a real Google Cloud Storage bucket, that GCS keeps the
--//! storage contract SlateDB and HelixDB rely on.
-+//! Proof, against real S3, GCS and Azure Blob Storage, that each object
-+//! storage service HelixDB supports keeps the storage contract SlateDB and
-+//! HelixDB rely on.
- //!
- //! SlateDB fences an older writer with create-only puts, advances GC boundary
--//! files with generation-matched overwrites and revalidates them with
-+//! files with version-matched overwrites and revalidates them with
- //! conditional GETs, verifies a retried put through custom metadata, and lists
--//! strongly consistently. The first tests check each primitive against GCS;
--//! the last two open SlateDB and HelixDB on GCS end to end.
-+//! strongly consistently. The first three contracts check each primitive; the
-+//! last two open SlateDB and HelixDB on the service end to end. Every service
-+//! runs the same five contracts, in its own module.
- //!
--//! Every test is ignored by default because it needs a bucket and
--//! credentials (see [`db::ObjectStorageBucket::Gcs`]):
-+//! Every test is ignored by default because it needs a real bucket or
-+//! container and credentials (see [`db::ObjectStorageBucket`]). Run one
-+//! service's module with its variables set:
- //!
- //! ```text
-+//! HELIX_TEST_S3_BUCKET=<bucket> AWS_REGION=<region> \
-+//!     cargo test -p db --test object_storage_contract -- --ignored s3::
- //! HELIX_TEST_GCS_BUCKET=<bucket> GOOGLE_SERVICE_ACCOUNT=<key file> \
--//!     cargo test -p db --test gcs_object_storage -- --ignored
-+//!     cargo test -p db --test object_storage_contract -- --ignored gcs::
-+//! HELIX_TEST_AZURE_CONTAINER=<container> AZURE_STORAGE_ACCOUNT_NAME=<account> \
-+//!     AZURE_STORAGE_ACCOUNT_KEY=<key> \
-+//!     cargo test -p db --test object_storage_contract -- --ignored azure::
- //! ```
- //!
- //! Each test writes under its own random prefix and deletes it once it passes.
-@@ -28,25 +36,71 @@ use serde_json::json;
- use slatedb::object_store::{self, ObjectStore, ObjectStoreExt as _};
- use slatedb::{CloseReason, Db, ErrorKind, IsolationLevel};
- 
--const BUCKET_VARIABLE: &str = "HELIX_TEST_GCS_BUCKET";
--/// GCS multipart uploads need every part but the last to be at least 5 MiB.
-+/// S3 and GCS multipart uploads need every part but the last to be at least
-+/// 5 MiB; Azure has no minimum.
- const PART_BYTES: usize = 5 * 1024 * 1024;
- 
--fn bucket() -> String {
--    std::env::var(BUCKET_VARIABLE)
--        .unwrap_or_else(|_| panic!("set {BUCKET_VARIABLE} to a GCS bucket"))
-+/// An object storage service under test.
-+#[derive(Clone, Copy, Debug)]
-+enum Service {
-+    S3,
-+    Gcs,
-+    Azure,
- }
- 
--/// A GCS client for the test bucket and a fresh prefix inside it.
--fn scratch() -> (Arc<dyn ObjectStore>, String) {
--    let store = object_store::gcp::GoogleCloudStorageBuilder::from_env()
--        .with_bucket_name(bucket())
--        .build()
--        .expect("GCS client builds");
--    (
--        Arc::new(store),
--        format!("helix-gcs-contract/{}", uuid::Uuid::new_v4()),
--    )
-+fn variable(name: &str) -> String {
-+    std::env::var(name).unwrap_or_else(|_| panic!("set {name}"))
-+}
-+
-+impl Service {
-+    /// The bucket or container under test, as HelixDB opens it.
-+    fn bucket(self) -> ObjectStorageBucket {
-+        match self {
-+            Self::S3 => ObjectStorageBucket::S3 {
-+                name: variable("HELIX_TEST_S3_BUCKET"),
-+                region: variable("AWS_REGION"),
-+                endpoint: None,
-+                allow_http: false,
-+            },
-+            Self::Gcs => ObjectStorageBucket::Gcs {
-+                name: variable("HELIX_TEST_GCS_BUCKET"),
-+            },
-+            Self::Azure => ObjectStorageBucket::Azure {
-+                account: variable("AZURE_STORAGE_ACCOUNT_NAME"),
-+                container: variable("HELIX_TEST_AZURE_CONTAINER"),
-+            },
-+        }
-+    }
-+
-+    /// A client for the bucket under test and a fresh prefix inside it.
-+    fn scratch(self) -> (Arc<dyn ObjectStore>, String) {
-+        let store: Arc<dyn ObjectStore> = match self.bucket() {
-+            ObjectStorageBucket::S3 { name, region, .. } => Arc::new(
-+                object_store::aws::AmazonS3Builder::from_env()
-+                    .with_bucket_name(name)
-+                    .with_region(region)
-+                    .build()
-+                    .expect("S3 client builds"),
-+            ),
-+            ObjectStorageBucket::Gcs { name } => Arc::new(
-+                object_store::gcp::GoogleCloudStorageBuilder::from_env()
-+                    .with_bucket_name(name)
-+                    .build()
-+                    .expect("GCS client builds"),
-+            ),
-+            ObjectStorageBucket::Azure { account, container } => Arc::new(
-+                object_store::azure::MicrosoftAzureBuilder::from_env()
-+                    .with_account(account)
-+                    .with_container_name(container)
-+                    .buil
-```
-
-**File**: `crates/metrics/src/attribution.rs` (modified, +24/-0)
-```diff
-@@ -34,6 +34,7 @@ pub const PROJECT_ID_ENV: &str = "HELIX_TELEMETRY_PROJECT_ID";
- const PROJECT_DOMAIN: &[u8] = b"helix-telemetry-project-v1";
- const DEPLOYMENT_DOMAIN: &[u8] = b"helix-telemetry-deployment-v1";
- const GCS_DEPLOYMENT_DOMAIN: &[u8] = b"helix-telemetry-deployment-gcs-v1";
-+const AZURE_DEPLOYMENT_DOMAIN: &[u8] = b"helix-telemetry-deployment-azure-v1";
- const CONTAINER_MARKERS: [&str; 2] = ["/.dockerenv", "/run/.containerenv"];
- 
- /// CI service a process runs in, detected from the variable it always sets.
-@@ -236,6 +237,29 @@ impl DeploymentId {
-         Self(domain_digest(GCS_DEPLOYMENT_DOMAIN, [bucket, database]))
+@@ -271,22 +271,33 @@ impl IndexScopeGates {
+     /// wait however many of the scope's builds run. Nothing waits for the
+     /// build-step gate while holding a scope gate, so it adds no lock cycle.
+     /// The tuple drops the scope permit before the build-step gate.
++    ///
++    /// Once queued, a gated step uploads every commit applied so far before
++    /// it fences anyone. Build steps commit without waiting for their WAL
++    /// upload, and a durable commit under the gate (an activation, a
++    /// blocker, a cleanup's completion) waits for every lower sequence: it
++    /// would otherwise hold writers, and for activation planning, through
++    /// the upload of the build's whole unflushed tail instead of only what
++    /// committed while the gate was held. A failed upload fails the step.
+     pub(crate) async fn step_permit(
+         &self,
++        db: &slatedb::Db,
+         scope: DataScope,
+         gate: StepGate,
+-    ) -> Box<dyn super::outbox::IndexOperationStepPermit> {
+-        match gate {
++    ) -> crate::error::Result<Box<dyn super::outbox::IndexOperationStepPermit>> {
++        Ok(match gate {
+             StepGate::None => Box::new(()),
+             StepGate::WriteFence => {
+                 let queued = self.build_step_gate(scope).lock_owned().await;
++                db.flush().await?;
+                 Box::new((self.write_fence_permit(scope).await, queued))
+             }
+             StepGate::Lifecycle => {
+                 let queued = self.build_step_gate(scope).lock_owned().await;
++                db.flush().await?;
+                 Box::new((self.lifecycle_permit(scope).await, queued))
+             }
+-        }
++        })
      }
  
-+    /// Derives an ID from Azure Blob Storage, whose storage account names are
-+    /// globally unique. It is hashed in its own domain, so it never shares an
-+    /// ID with an S3 or GCS bucket.
-+    ///
-+    /// ```
-+    /// use helix_metrics::attribution::DeploymentId;
-+    ///
-+    /// let id = DeploymentId::for_azure("acme", "data", "db/");
-+    /// assert_eq!(id, DeploymentId::for_azure("acme", "data", "db/"));
-+    /// assert_ne!(id, DeploymentId::for_azure("acme", "data", "other/"));
-+    /// assert_ne!(id, DeploymentId::for_azure("acme", "other", "db/"));
-+    /// // Parts are hashed apart, so moving a boundary between them changes the ID.
-+    /// assert_ne!(id, DeploymentId::for_azure("acmed", "ata", "db/"));
-+    /// assert_ne!(id, DeploymentId::for_gcs("data", "db/"));
-+    /// ```
-+    #[must_use]
-+    pub fn for_azure(account: &str, container: &str, database: &str) -> Self {
-+        Self(domain_digest(
-+            AZURE_DEPLOYMENT_DOMAIN,
-+            [account, container, database],
-+        ))
+     /// Serializes persisted-catalog refreshes for one handle and scope.
+@@ -402,6 +413,15 @@ mod tests {
+ 
+     use super::*;
+ 
++    async fn test_db(name: &str) -> slatedb::Db {
++        slatedb::Db::open(
++            name,
++            Arc::new(slatedb::object_store::memory::InMemory::new()),
++        )
++        .await
++        .expect("scope gate test database opens")
 +    }
 +
-     #[must_use]
-     pub fn as_str(&self) -> &str {
-         &self.0
+     #[tokio::test]
+     async fn lifecycle_scope_waits_for_catalog_and_mutations_but_not_other_scopes() {
+         let gates = Arc::new(IndexScopeGates::default());
+@@ -453,6 +473,7 @@ mod tests {
+     #[tokio::test]
+     async fn graph_writes_wait_behind_one_queued_build_step() {
+         let gates = Arc::new(IndexScopeGates::default());
++        let db = Arc::new(test_db("graph-writes-wait-behind-one-step").await);
+         let scope = DataScope::LegacyUnscoped;
+         let settle = Duration::from_millis(20);
+         let writing = gates.mutation_permit(scope).await;
+@@ -461,9 +482,12 @@ mod tests {
+         for step in 0..3 {
+             let (release, released) = tokio::sync::oneshot::channel::<()>();
+             releases.push(release);
+-            let (gates, acquired) = (Arc::clone(&gates), acquired.clone());
++            let (gates, db, acquired) = (Arc::clone(&gates), Arc::clone(&db), acquired.clone());
+             tokio::spawn(async move {
+-                let permit = gates.step_permit(scope, StepGate::WriteFence).await;
++                let permit = gates
++                    .step_permit(&db, scope, StepGate::WriteFence)
++                    .await
++                    .expect("the step uploads nothing");
+                 acquired.send(step).expect("the test awaits acquisitions");
+                 let _ = released.await;
+                 drop(permit);
+@@ -506,6 +530,7 @@ mod tests {
+     #[tokio::test]
+     async fn step_gates_exclude_only_what_their_step_needs() {
+         let gates = Arc::new(IndexScopeGates::default());
++        let db = test_db("step-gates-exclude-only-their-needs").await;
+         let scope = DataScope::LegacyUnscoped;
+         let wait = Duration::from_millis(50);
+         for (gate, fences_writers, gates_planning) in [
+@@ -514,7 +539,10 @@ mod tests {
+             (StepGate::Lifecycle, true, true),
+         ] {
+             let before = gates.catalog_permit(scope).await.version();
+-            let held = gates.step_permit(scope, gate).await;
++            let held = gates
++                .step_permit(&db, scope, gate)
++                .await
++                .expect("the step uploads nothing");
+             let mutation = tokio::time::timeout(wait, gates.mutation_permit(scope)).await;
+             assert_eq!(
+                 mutation.is_err(),
 ```
 
-**File**: `crates/server/src/config.rs` (modified, +182/-28)
+**File**: `crates/db/src/index_lifecycle/secondary.rs` (modified, +84/-12)
 ```diff
-@@ -84,12 +84,13 @@ impl ServerConfig {
-     /// Load server configuration from environment variables.
-     ///
-     /// Paths may be any bytes; every other variable must be UTF-8. At most one
--    /// of `HELIX_DATA_DIR`, `S3_BUCKET` and `GCS_BUCKET` picks durable
--    /// storage; with none, data stays in memory. Object storage (S3 or GCS)
--    /// always runs a hybrid disk cache, rooted at `HELIX_DISK_CACHE_DIR` or
--    /// else `/var/cache/helix`; with `HELIX_DATA_DIR` the cache is opt-in
--    /// through `HELIX_DISK_CACHE_DIR`, and memory storage rejects every cache
--    /// variable. Without `HELIX_DISK_CACHE_BYTES`, the default disk budget
-+    /// of `HELIX_DATA_DIR`, `S3_BUCKET`, `GCS_BUCKET` and `AZURE_CONTAINER_NAME`
-+    /// picks durable storage; with none, data stays in memory. An Azure
-+    /// container also needs `AZURE_STORAGE_ACCOUNT_NAME`. Object storage (S3,
-+    /// GCS or Azure) always runs a hybrid disk cache, rooted at
-+    /// `HELIX_DISK_CACHE_DIR` or else `/var/cache/helix`; with
-+    /// `HELIX_DATA_DIR` the cache is opt-in through `HELIX_DISK_CACHE_DIR`,
-+    /// and memory storage rejects every cache variable. Without `HELIX_DISK_CACHE_BYTES`, the default disk budget
-     /// must fit the cache's filesystem. `HELIX_DISK_CACHE_WARM=off` stops the
-     /// startup warm of the disk cache ([`HybridCache`]).
-     /// `HELIX_STRONG_VECTOR_SEARCH_MAX_PENDING_BYTES` and
-@@ -304,7 +305,8 @@ pub enum StorageConfig {
-         /// Local caches in front of the object store.
-         cache: CacheConfig,
-     },
--    /// An S3 (`S3_BUCKET`) or GCS (`GCS_BUCKET`) bucket.
-+    /// An S3 (`S3_BUCKET`) or GCS (`GCS_BUCKET`) bucket, or an Azure Blob
-+    /// Storage container (`AZURE_CONTAINER_NAME`).
-     ObjectStorage {
-         /// The bucket and the service that holds it.
-         bucket: db::ObjectStorageBucket,
-@@ -333,22 +335,34 @@ impl StorageConfig {
-     fn from_lookup(
-         lookup: &mut impl FnMut(&str) -> Option<OsString>,
-     ) -> Result<Self, ServerConfigError> {
--        let bucket = match (
--            lookup("HELIX_DATA_DIR"),
--            text(lookup, &["S3_BUCKET"])?,
--            text(lookup, &["GCS_BUCKET"])?,
--        ) {
--            (Some(_), Some(_), _) | (Some(_), _, Some(_)) | (_, Some(_), Some(_)) => {
--                return Err(ServerConfigError::ConflictingStorageConfiguration);
--            }
--            (Some(root), None, None) => {
-+        /// The durable store one selector variable picks.
-+        enum Selected {
-+            Disk(OsString),
-+            S3(String),
-+            Gcs(String),
-+            Azure(String),
-+        }
-+        let mut selected = [
-+            lookup("HELIX_DATA_DIR").map(Selected::Disk),
-+            text(lookup, &["S3_BUCKET"])?.map(|(_, name)| Selected::S3(name)),
-+            text(lookup, &["GCS_BUCKET"])?.map(|(_, name)| Selected::Gcs(name)),
-+            text(lookup, &["AZURE_CONTAINER_NAME"])?.map(|(_, name)| Selected::Azure(name)),
-+        ]
-+        .into_iter()
-+        .flatten();
-+        let (selected, conflicting) = (selected.next(), selected.next());
-+        if conflicting.is_some() {
-+            return Err(ServerConfigError::ConflictingStorageConfiguration);
-+        }
-+        let bucket = match selected {
-+            Some(Selected::Disk(root)) => {
-                 return Ok(Self::Disk {
-                     root: PathBuf::from(root),
-                     cache: CacheConfig::from_lookup(lookup)?,
-                 });
+@@ -1166,6 +1166,7 @@ impl IndexOperationDriver for SecondaryIndexDriver {
+ 
+     async fn acquire_step_permit(
+         &self,
++        db: &slatedb::Db,
+         scope: DataScope,
+         operation: &IndexOperationRecord,
+     ) -> Result<Box<dyn IndexOperationStepPermit>> {
+@@ -1187,7 +1188,7 @@ impl IndexOperationDriver for SecondaryIndexDriver {
+                 ));
              }
-             // Reject before any cache directory is created.
--            (None, None, None) => {
-+            None => {
-                 return [
-                     "HELIX_DISK_CACHE_DIR",
-                     "HELIX_DISK_CACHE_MEMORY_BYTES",
-@@ -361,7 +375,7 @@ impl StorageConfig {
-                     Err(ServerConfigError::CacheWithMemoryStorage { variable })
-                 });
-             }
--            (None, Some((_, name)), None) => db::ObjectStorageBucket::S3 {
-+            Some(Selected::S3(name)) => db::ObjectStorageBucket::S3 {
-                 name,
-                 region: text(lookup, &["S3_REGION", "AWS_REGION", "AWS_DEFAULT_REGION"])?
-                     .map_or_else(|| "us-east-1".to_string(), |(_, region)| region),
-@@ -370,7 +384,13 @@ impl StorageConfig {
-                 allow_http: text(lookup, &["AWS_ALLOW_HTTP"])?
-                     .is_some_and(|(_, value)| value.eq_ignore_ascii_case("true") || value == "1"),
-             },
--            (None, None, Some((_, name))) => db::ObjectStorageBucket::Gcs { name },
-+            Some(Selected::Gcs(name)) => db::ObjectStorageBucket::Gcs { name },
-+            Some(Selected::Azure(container)) => db::ObjectStorageBucket::Azure {
-+                account: text(lookup, &["AZURE_STORAGE_ACCOUNT_NAME"])?
-+                    .map(|(_, account)| account)
-+                    .ok_or(ServerConfigError::AzureAccountMissing)?,
-+                container,
-+            },
          };
-         // Last, so every othe
+-        Ok(self.scope_gates.step_permit(scope, gate).await)
++        self.scope_gates.step_permit(db, scope, gate).await
+     }
+ 
+     /// Prepares one build step with the narrowest coordination it needs.
+@@ -1234,7 +1235,7 @@ impl IndexOperationDriver for SecondaryIndexDriver {
+         else {
+             self.reset_stalled_preparations(operation);
+             ledgers.forget(generation);
+-            let permit = self.acquire_step_permit(scope, operation).await?;
++            let permit = self.acquire_step_permit(db, scope, operation).await?;
+             return Ok(PreparedIndexOperationStep::driver_owned(
+                 self.family(),
+                 permit,
+@@ -1269,7 +1270,7 @@ impl IndexOperationDriver for SecondaryIndexDriver {
+                 };
+                 return Ok(PreparedIndexOperationStep::driver_owned(
+                     self.family(),
+-                    self.scope_gates.step_permit(scope, gate).await,
++                    self.scope_gates.step_permit(db, scope, gate).await?,
+                 ));
+             }
+             SecondaryBuildStage::CatchUp(progress) => {
+@@ -1337,7 +1338,7 @@ impl IndexOperationDriver for SecondaryIndexDriver {
+                 )
+             }
+         };
+-        let permit = self.scope_gates.step_permit(scope, gate).await;
++        let permit = self.scope_gates.step_permit(db, scope, gate).await?;
+         // Writes that committed while the permit was awaited may have taken
+         // a catch-up backlog past the gated reach. A stalled validation and
+         // activation drain it regardless: they fence writers to finish.
+@@ -9322,13 +9323,6 @@ mod tests {
+             ] {
+                 durable_rows.push(generation_rows(&db, scope, kind, index_id, generation).await);
+             }
+-            let durable_operation = read_operation(&db, scope, operation_id)
+-                .await
+-                .expect("operation is readable");
+-            if tail_lost {
+-                store.uploads.send_replace(WalUploads::Held);
+-            }
+-
+             let pause =
+                 crate::index_lifecycle::outbox::step_pause::StepPause::arm(&db, |progress| {
+                     matches!(
+@@ -9361,6 +9355,15 @@ mod tests {
+             .expect("the crashing claim succeeds")
+             .expect("exact queued revision is claimable");
+             claim_sequence += 1;
++            // A gated step uploads everything applied before it takes its
++            // gate, so only what it commits under the gate can be lost.
++            db.flush().await.expect("the claim uploads");
++            let durable_operation = read_operation(&db, scope, operation_id)
++                .await
++                .expect("operation is readable");
++            if tail_lost {
++                store.uploads.send_replace(WalUploads::Held);
++            }
+             let lifecycle_rows = {
+                 let crashing = execute_claimed_step(
+                     &db,
+@@ -9424,7 +9427,7 @@ mod tests {
+                         .await
+                         .expect("operation is readable"),
+                     durable_operation,
+-                    "a lost WAL tail takes the crashed claim too"
++                    "a lost WAL tail leaves the operation at its uploaded claim"
+                 );
+             } else {
+                 assert_eq!(
+@@ -9451,6 +9454,75 @@ mod tests {
+         db.close().await.expect("crash test database closes");
+     }
+ 
++    /// A gated step uploads the build's unflushed tail before it fences
++    /// anyone. Progressed steps and claims commit without waiting for their
++    /// WAL upload, and activation's completion waits for every lower
++    /// sequence; taking the lifecycle permit first would hold writers and
++    /// planning through that whole upload. Here the upload is held while the
++    /// activation's claim is unflushed: writers and planning still get their
++    /// permits, and the activation completes once the upload lands.
++    #[tokio::test]
++    async fn activation_fences_nobody_while_earlier_commits_upload() {
++        use crate::search::vector::gated_wal::{GatedWalStore, WalUploads};
++
++        let store = Arc::new(GatedWalStore::new());
++        let db = Db::builder(
++            "secondary-activation-tail-upload",
++            Arc::clone(&store) as Arc<dyn slatedb::object_store::ObjectStore>,
++        )
++        .with_merge_operator(Arc::new(crate::merge_operator::HelixMergeOperator::new()))
++        .build()
++        .await
++        .expect("activation test database opens");
++        bootstrap_writer(&db)
++            .await
++   
 ```
 
-**File**: `crates/server/src/diagnostics/mod.rs` (modified, +16/-5)
+**File**: `crates/db/src/index_lifecycle/text/driver.rs` (modified, +4/-3)
 ```diff
-@@ -322,8 +322,8 @@ fn durability(storage: &StorageConfig, db_path: &str) -> Check {
-             "Data is kept in memory only",
-             Outcome::Warn {
-                 detail: "In-memory storage loses every write when the server stops.".into(),
--                fix: "Set S3_BUCKET or GCS_BUCKET (with a local disk cache) or HELIX_DATA_DIR \
--                      for durable storage. A local CLI instance persists with `helix start <instance> --disk`."
-+                fix: "Set S3_BUCKET, GCS_BUCKET or AZURE_CONTAINER_NAME (with a local disk \
-+                      cache) or HELIX_DATA_DIR for durable storage. A local CLI instance persists with `helix start <instance> --disk`."
-                     .into(),
-             },
-         ),
-@@ -352,6 +352,15 @@ fn durability(storage: &StorageConfig, db_path: &str) -> Check {
-                     detail: format!("gs://{name}/{db_path}."),
-                 },
-             ),
-+            db::ObjectStorageBucket::Azure { account, container } => Check::new(
-+                CheckId::StorageDurability,
-+                "Data is stored in Azure Blob Storage",
-+                Outcome::Pass {
-+                    detail: format!(
-+                        "Container {container} in storage account {account}, under {db_path}."
-+                    ),
-+                },
-+            ),
-         },
+@@ -638,6 +638,7 @@ impl IndexOperationDriver for TextIndexDriver {
+ 
+     async fn acquire_step_permit(
+         &self,
++        db: &Db,
+         scope: DataScope,
+         operation: &IndexOperationRecord,
+     ) -> Result<Box<dyn IndexOperationStepPermit>> {
+@@ -663,7 +664,7 @@ impl IndexOperationDriver for TextIndexDriver {
+                 return Err(corruption("text driver received another family progress"));
+             }
+         };
+-        Ok(self.scope_gates.step_permit(scope, gate).await)
++        self.scope_gates.step_permit(db, scope, gate).await
      }
- }
-@@ -364,7 +373,9 @@ fn data_device(root: &Path, backing: &Backing) -> Check {
-             "HELIX_DATA_DIR is on a RAM-backed filesystem",
-             Outcome::Fail {
-                 detail: format!("{root} is on {filesystem}: its data is lost when the host restarts."),
--                fix: "Point HELIX_DATA_DIR at a persistent volume, or use S3 or GCS storage.".into(),
-+                fix: "Point HELIX_DATA_DIR at a persistent volume, or use object storage (S3, \
-+                      GCS or Azure)."
-+                    .into(),
-             },
-         ),
-         Backing::ContainerLayer { filesystem } => Check::new(
-@@ -386,8 +397,8 @@ fn data_device(root: &Path, backing: &Backing) -> Check {
-                     "{root} is on {filesystem}: every read and write crosses the network, and \
-                      some network filesystems do not support the locks the server takes."
-                 ),
--                fix: "Use a local or block-storage volume, or S3 storage with a disk cache on \
--                      local NVMe."
-+                fix: "Use a local or block-storage volume, or object storage with a disk cache \
-+                      on local NVMe."
-                     .into(),
-             },
-         ),
+ 
+     async fn prepare_step(
+@@ -676,7 +677,7 @@ impl IndexOperationDriver for TextIndexDriver {
+         let progress = operation.progress();
+         let IndexOperationProgress::TextBuild(TextBuildProgress::Constructing(stage)) = progress
+         else {
+-            let permit = self.acquire_step_permit(scope, operation).await?;
++            let permit = self.acquire_step_permit(db, scope, operation).await?;
+             return Ok(PreparedIndexOperationStep::driver_owned(
+                 IndexOperationFamily::Text,
+                 permit,
+@@ -768,7 +769,7 @@ impl IndexOperationDriver for TextIndexDriver {
+             // also advances the scope's catalog version as it is released.
+             TextBuildStage::Activate(_) => Ok(PreparedIndexOperationStep::driver_owned(
+                 IndexOperationFamily::Text,
+-                self.acquire_step_permit(scope, operation).await?,
++                self.acquire_step_permit(db, scope, operation).await?,
+             )),
+         }
+     }
+```
+
+**File**: `crates/db/src/index_lifecycle/vector/driver.rs` (modified, +4/-3)
+```diff
+@@ -1062,6 +1062,7 @@ impl IndexOperationDriver for VectorIndexDriver {
+ 
+     async fn acquire_step_permit(
+         &self,
++        db: &Db,
+         scope: DataScope,
+         operation: &IndexOperationRecord,
+     ) -> Result<Box<dyn IndexOperationStepPermit>> {
+@@ -1087,17 +1088,17 @@ impl IndexOperationDriver for VectorIndexDriver {
+                 return Err(corruption("vector driver received another family progress"));
+             }
+         };
+-        Ok(self.scope_gates.step_permit(scope, gate).await)
++        self.scope_gates.step_permit(db, scope, gate).await
+     }
+ 
+     async fn prepare_step(
+         &self,
+-        _db: &Db,
++        db: &Db,
+         scope: DataScope,
+         operation: &IndexOperationRecord,
+         _limits: SearchIndexBatchLimits,
+     ) -> Result<PreparedIndexOperationStep> {
+-        let permit = self.acquire_step_permit(scope, operation).await?;
++        let permit = self.acquire_step_permit(db, scope, operation).await?;
+         Ok(PreparedIndexOperationStep::driver_owned(
+             self.family(),
+             permit,
+```
+
+---
+
+### Incident Patch 3: `b0f8bb39` (2026-11-19)
+**Commit Message**: Pace the sustained-writes contract's writer by build steps
+
+The automatic sustained-writes contract builds with one-row batches while
+a writer commits batches as fast as its WAL uploads. Catch-up fences no one
+until its backlog is within reach, so it ends only while the build
+reconciles deltas faster than writes add them. On a slow host the writer
+outran the one-row steps and the build sat in catch-up until the test's
+120 s bound.
+
+Until the build activates, the writer now waits for twice as many
+automatic build steps as a batch adds deltas before its next batch, so the
+inflow stays below the drain whatever the host's speed. It runs freely
+against the Active generation.
+
+**File**: `crates/db/src/index_lifecycle_testing/contracts/sustained_secondary_writes.rs` (modified, +26/-3)
+```diff
+@@ -42,6 +42,14 @@ const MAXIMUM_EXPLICIT_ADVANCES: u64 = 16;
+ /// writes never does, so any finite bound detects it, and this one leaves
+ /// room for slow and loaded CI hosts.
+ const AUTOMATIC_ACTIVATION_BOUND: Duration = Duration::from_secs(120);
++/// Build steps the automatic worker takes for each batch the writer commits
++/// while the build runs: twice the deltas one batch adds.
++///
++/// Catch-up fences no one until its backlog is within reach, so it ends only
++/// while the build reconciles deltas faster than writes add them, and a
++/// one-row step reconciles one. A writer paced only by its WAL upload outruns
++/// one-row steps on a slow host, and the build then never leaves catch-up.
++const AUTOMATIC_STEPS_PER_BATCH: u64 = 2 * (INSERTS_PER_BATCH + 1);
+ 
+ /// Every key ever written, mapped to the nodes that hold it now.
+ type ExpectedKeys = BTreeMap<String, BTreeSet<u64>>;
+@@ -139,7 +147,7 @@ async fn run_automatic_worker_under_a_writer_loop() {
+         // One-row batches spread the scan and validation over hundreds of
+         // steps, each racing the writer. Build steps do not wait for their
+         // WAL upload but every public write does, so a short flush interval
+-        // keeps the writer's batches as quick as a handful of steps.
++        // lets a batch land within the steps the writer waits for.
+         DbConfig::new()
+             .with_secondary_index_lifecycle_tuning(
+                 SecondaryIndexLifecycleTuning::default().with_batch_rows(
+@@ -171,7 +179,14 @@ async fn run_automatic_worker_under_a_writer_loop() {
+     };
+ 
+     let stop = AtomicBool::new(false);
++    let activated = AtomicBool::new(false);
+     let committed = AtomicU64::new(0);
++    let steps = || {
++        controller
++            .automatic_metrics(&db)
++            .expect("sustained automatic metrics are readable")
++            .operation_steps
++    };
+     let writer = async {
+         let mut keys = keys;
+         let mut batch = 0;
+@@ -183,7 +198,12 @@ async fn run_automatic_worker_under_a_writer_loop() {
+             commit_batch(&db, batch, moved, &mut keys).await;
+             batch += 1;
+             committed.store(batch, Ordering::Release);
+-            tokio::task::yield_now().await;
++            // See [`AUTOMATIC_STEPS_PER_BATCH`]. The Active generation takes
++            // no steps, so the writer runs freely against it.
++            let resume = steps() + AUTOMATIC_STEPS_PER_BATCH;
++            while !activated.load(Ordering::Acquire) && steps() < resume {
++                tokio::time::sleep(Duration::from_millis(1)).await;
++            }
+         }
+         keys
+     };
+@@ -195,7 +215,10 @@ async fn run_automatic_worker_under_a_writer_loop() {
+                 .await
+                 .expect("sustained automatic operation remains readable");
+             match status {
+-                IndexOperationStatus::Succeeded { .. } => break,
++                IndexOperationStatus::Succeeded { .. } => {
++                    activated.store(true, Ordering::Release);
++                    break;
++                }
+                 IndexOperationStatus::Blocked { .. } | IndexOperationStatus::Aborted { .. } => {
+                     panic!("sustained writes must not stop the build: {status:?}")
+                 }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1304** (2026-11-17): Add Azure Blob Storage as an object storage backend (@xav-db)
-- **PR #1303** (2026-11-17): Add Google Cloud Storage as an object storage backend (@xav-db)
-- **PR #1302** (2026-11-16): Remove Crucible (@xav-db)
-- **PR #1298** (2026-11-13): docs: fix audit findings across HelixDB, Cloud, CLI and Foundry (@xav-db)
-- **PR #1297** (2026-11-14): Claim index operations in their tasks and wait once per index DDL request (@xav-db)
-- **PR #1290** (2026-11-11): Release CLI v3.7.0 with Docker v0.0.16 default (@xav-db)
+- **PR #1311** (2026-11-19): Compare datetimes with text as unknown on every plan (@xav-db)
+- **PR #1310** (2026-11-19): Build indexes without waiting on S3 per step or rescanning applied deltas (@xav-db)
+- **PR #1309** (2026-11-19): Use datetime() and timestamp() as index bounds (@xav-db)
+- **PR #1307** (2026-11-19): Declare typed fields on object parameters (@xav-db)
+- **PR #1306** (2026-11-19): Read and write datetimes in Cypher and SQL (@xav-db)
+- **PR #1305** (2026-11-19): Store typed date_time parameters as datetimes (@xav-db)
 
 ---
 
@@ -3165,28 +3178,37 @@ the managed identity.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add Google Cloud Storage as an object storage backend
+## X. Build indexes without waiting on S3 per step or rescanning applied deltas
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/db/src/execution/interpreter/mutation/index_context.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2b9e3612`: Add Google Cloud Storage as an object storage backend. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b943942d`: Build indexes without waiting on S3 per step or rescanning applied deltas. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/db/src/execution/interpreter/mutation/index_context.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "httparse",
+            _scope_permit: mut scope_permit,
+        let staged = secondary_runtime.consume_prepared()?;
+        // The permit records them once dropped, after the commit applies;
+        // only focused tests run without one.
+        if let Some(permit) = scope_permit.as_mut() {
+            permit.stage_build_deltas(staged);
+        }
+            _scope_permit: scope_permit,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            _scope_permit,
+        secondary_runtime.consume_prepared()?;
+            _scope_permit,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2b9e3612` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b943942d` are properly handled with clean fallback behavior.

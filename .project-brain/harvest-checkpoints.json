@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T01:22:58.545Z",
+  "last_updated": "2026-11-20T01:31:33.216Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6081,14 +6081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-helixdb-helix-db",
-      "content_hash": "6b514a0bf994214ea2431c62922a78ccf34daea86979c036ad8be7643a1d3760",
-      "verified_at": "2026-11-18T04:20:56.108Z",
+      "content_hash": "31e5f143b059d5592fead8ee3c7a4123dd08d59cb725d69a2d2860ebdda8d6a5",
+      "verified_at": "2026-11-20T01:31:33.215Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T04:20:56.108Z"
+      "last_updated": "2026-11-20T01:31:33.215Z"
     },
     "microsoft/fluentui": {
       "repository": "microsoft/fluentui",

@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T01:23:01.970Z",
-    "lastVerified": "2026-11-20T01:23:01.970Z",
+    "lastChecked": "2026-11-20T01:31:36.368Z",
+    "lastVerified": "2026-11-20T01:31:36.368Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -170,12 +170,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T00:43:21.726Z",
-    "lastVerified": "2026-11-20T00:43:21.726Z",
+    "lastChecked": "2026-11-20T01:31:29.468Z",
+    "lastVerified": "2026-11-20T01:31:29.468Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -184,7 +184,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "588d2c40"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -685,12 +686,12 @@
     "revisionIdentifier": "5344f432"
   },
   "defguard-defguard": {
-    "name": "DefGuard/defguard",
+    "name": "defguard",
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T19:12:05.274Z",
-    "lastVerified": "2026-11-19T19:12:05.274Z",
+    "lastChecked": "2026-11-20T01:31:24.505Z",
+    "lastVerified": "2026-11-20T01:31:24.505Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -699,7 +700,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9830b49b"
   },
   "topoteretes-cognee": {
     "name": "topoteretes/cognee",
@@ -2258,9 +2260,9 @@
   "sayanarijit-xplr": {
     "name": "xplr",
     "officialUrl": "https://github.com/sayanarijit/xplr",
-    "lastChecked": "2026-11-18T14:04:41.188Z",
+    "lastChecked": "2026-11-20T01:31:14.474Z",
     "revisionIdentifier": "e91f74b1",
-    "lastVerified": "2026-11-18T14:04:41.188Z"
+    "lastVerified": "2026-11-20T01:31:14.474Z"
   },
   "hf-taichuai-zdtaichu5.0-9b": {
     "name": "TaichuAI/ZDTaichu5.0-9B",
@@ -4080,11 +4082,21 @@
     "lastVerified": "2026-11-20T00:24:15.874Z"
   },
   "helixdb-helix-db": {
-    "name": "helix-db",
+    "name": "HelixDB/helix-db",
     "officialUrl": "https://github.com/HelixDB/helix-db",
-    "lastChecked": "2026-11-18T19:44:29.005Z",
-    "revisionIdentifier": "2b9e3612",
-    "lastVerified": "2026-11-18T19:44:29.005Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-20T01:31:31.991Z",
+    "lastVerified": "2026-11-20T01:31:31.991Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-helixdb-helix-db",
+    "contentHash": "31e5f143b059d5592fead8ee3c7a4123dd08d59cb725d69a2d2860ebdda8d6a5",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "pimalaya-himalaya": {
     "name": "pimalaya/himalaya",
@@ -4415,9 +4427,9 @@
   "vinceanalytics-vince": {
     "name": "vince",
     "officialUrl": "https://github.com/vinceanalytics/vince",
-    "lastChecked": "2026-11-18T21:02:01.347Z",
+    "lastChecked": "2026-11-20T01:31:21.923Z",
     "revisionIdentifier": "fc06f7a2",
-    "lastVerified": "2026-11-18T21:02:01.347Z"
+    "lastVerified": "2026-11-20T01:31:21.923Z"
   },
   "cozodb-cozo": {
     "name": "cozo",
@@ -8930,5 +8942,19 @@
     "lastChecked": "2026-11-20T01:20:19.953Z",
     "revisionIdentifier": "2209b0fd",
     "lastVerified": "2026-11-20T01:20:19.953Z"
+  },
+  "kaiopiola-seocheck": {
+    "name": "SEOCheck",
+    "officialUrl": "https://github.com/kaiopiola/SEOCheck",
+    "lastChecked": "2026-11-20T01:31:16.915Z",
+    "revisionIdentifier": "a1e13f715f",
+    "lastVerified": "2026-11-20T01:31:16.915Z"
+  },
+  "buresdv-cork": {
+    "name": "Cork",
+    "officialUrl": "https://github.com/buresdv/Cork",
+    "lastChecked": "2026-11-20T01:31:19.480Z",
+    "revisionIdentifier": "649a6f63",
+    "lastVerified": "2026-11-20T01:31:19.480Z"
   }
 }

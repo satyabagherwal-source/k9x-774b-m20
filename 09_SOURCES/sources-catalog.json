@@ -3973,10 +3973,10 @@
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "2b9e3612",
+    "sourceVersion": "b943942d",
     "license": "Apache-2.0",
-    "contentHash": "6b514a0bf994214ea2431c62922a78ccf34daea86979c036ad8be7643a1d3760",
-    "lastHarvestedAt": "2026-11-18T04:20:56.101Z",
+    "contentHash": "31e5f143b059d5592fead8ee3c7a4123dd08d59cb725d69a2d2860ebdda8d6a5",
+    "lastHarvestedAt": "2026-11-20T01:31:33.207Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {
