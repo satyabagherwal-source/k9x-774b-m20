@@ -4,22 +4,22 @@
 {
   "source_repository": "kcl-lang/kcl",
   "source_url": "https://github.com/kcl-lang/kcl",
-  "source_version": "2012f95b",
+  "source_version": "4e4df138",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T14:33:28.820Z",
+  "timestamp": "2026-11-20T06:02:32.602Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-kcl-lang-kcl",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [kcl-lang/kcl](https://github.com/kcl-lang/kcl) (Revision: `2012f95b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T14:33:28.820Z`  
+> **Provenance**: Harvested from [kcl-lang/kcl](https://github.com/kcl-lang/kcl) (Revision: `4e4df138`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T06:02:32.602Z`  
 > **Learning ID**: `learn-github-kcl-lang-kcl`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `kcl-lang/kcl` (Commit: `2012f95b`)
+- **Target Repository**: `kcl-lang/kcl` (Commit: `4e4df138`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kcl-lang/kcl](https://github.com/kcl-lang/kcl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T14:33:27.402Z  
+> **Harvest Timestamp**: 2026-11-20T06:02:31.437Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: KCL Language Core and API
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2447 stars
+- **Stars / Engagement**: 2446 stars
 
 ---
 
@@ -1278,335 +1278,45 @@ impl ModuleInfo {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2012f95b` (2026-11-17)
-**Commit Message**: test(lsp): snapshot the remaining completion tests (#2260)
+### Incident Patch 1: `2986f2a7` (2026-11-20)
+**Commit Message**: chore: fix typos in doc comments (#2267)
 
-* test(lsp): snapshot the remaining completion tests
+Signed-off-by: Adham Kiwan <[REDACTED_EMAIL]>
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-Replace the hand-written completion assertions with one insta snapshot
-per cursor position, matching the other LSP suites from #1374. Standard
-library sets stay collapsed so the snapshots track the case under test.
-
-Co-authored-by: Peefy <[REDACTED_EMAIL]>
-Signed-off-by: Cursor Agent <[REDACTED_EMAIL]>
-
-* style(lsp): format completion tests with rustfmt 1.91
-
-cargo fmt on the 1.91 toolchain rejects the struct-literal layout that
-an older rustfmt wrote for the import metadata fixture.
-
-Signed-off-by: Cursor Agent <[REDACTED_EMAIL]>
-Co-authored-by: Peefy <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Cursor Agent <[REDACTED_EMAIL]>
-Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
-Co-authored-by: Peefy <[REDACTED_EMAIL]>
-
-**File**: `crates/tools/src/LSP/src/completion.rs` (modified, +604/-1111)
+**File**: `compiler_base/error/src/diagnostic/components.rs` (modified, +1/-1)
 ```diff
-@@ -957,1160 +957,187 @@ fn unimport_schemas(
+@@ -10,7 +10,7 @@ use rustc_span::LineInfo;
+ const CODE_LINE_PREFIX: &str = " | ";
+ const FILE_PATH_PREFIX: &str = "-->";
  
- #[cfg(test)]
- mod tests {
-+    use std::collections::HashSet;
-+
-     use crate::{
--        completion::{
--            KCLCompletionItem, KCLCompletionItemKind, completion, func_ty_complete_insert_text,
--            func_ty_complete_label, into_completion_items,
--        },
-+        completion::{completion, func_ty_complete_insert_text, func_ty_complete_label},
-         tests::{compile_test_file, compile_test_file_and_metadata},
-     };
-     use kcl_ast::ast::{self, ImportStmt, Program};
-     use kcl_driver::toolchain::{self, Metadata, Package, Toolchain};
-     use kcl_error::Position as KCLPos;
--    use kcl_primitives::IndexSet;
-     use kcl_sema::builtin::{
-         BUILTIN_FUNCTIONS, MATH_FUNCTION_TYPES, STANDARD_SYSTEM_MODULES, STRING_MEMBER_FUNCTIONS,
-     };
--    use lsp_types::{CompletionItem, CompletionItemKind, CompletionResponse, InsertTextFormat};
--    use proc_macro_crate::bench_test;
--
--    #[test]
--    #[bench_test]
--    fn var_completion_test() {
--        let (file, program, _, gs, schema_map) =
--            compile_test_file("src/test_data/completion_test/dot/completion/completion.k");
--
--        // test completion for var
--        let pos = KCLPos {
--            filename: file.to_owned(),
--            line: 26,
--            column: Some(1),
--        };
--
--        let tool = toolchain::default();
--        let got = completion(None, &program, &pos, &gs, &tool, None, &schema_map).unwrap();
--        let mut got_labels: Vec<String> = match got {
--            CompletionResponse::Array(arr) => arr.iter().map(|item| item.label.clone()).collect(),
--            CompletionResponse::List(_) => panic!("test failed"),
--        };
--
--        let mut expected_labels: Vec<String> = vec![
--            "", // generate from error recovery of "pkg."
--            "subpkg",
--            "math",
--            "Person",
--            "Person1{}",
--            "Person{}",
--            "P",
--            "P{}",
--            "p",
--            "p1",
--            "p2",
--            "p3",
--            "p4",
--            "aaaa",
--            "Config",
--            "Config{}",
--            "n",
--        ]
--        .iter()
--        .map(|s| s.to_string())
--        .collect();
--
--        expected_labels.extend(
--            BUILTIN_FUNCTIONS
--                .iter()
--                .map(|(name, func)| func_ty_complete_label(name, &func.into_func_type())),
--        );
--        got_labels.sort();
--        expected_labels.sort();
--
--        assert_eq!(got_labels, expected_labels);
--
--        // test completion for schema attr
--        let pos = KCLPos {
--            filename: file.to_owned(),
--            line: 24,
--            column: Some(4),
--        };
--
--        let got = completion(None, &program, &pos, &gs, &tool, None, &schema_map).unwrap();
--        let mut got_labels: Vec<String> = match got {
--            CompletionResponse::Array(arr) => arr.iter().map(|item| item.label.clone()).collect(),
--            CompletionResponse::List(_) => panic!("test failed"),
--        };
--
--        expected_labels = ["", "age", "math", "name", "subpkg"]
--            .iter()
--            .map(|s| s.to_string())
--            .collect();
--        got_labels.sort();
--        expected_labels.sort();
--        assert_eq!(got_labels, expected_labels);
--    }
--
--    #[test]
--    #[bench_test]
--    fn dot_completion_test() {
--        let (file, program, _, gs, schema_map) =
--            compile_test_file("src/test_data/completion_test/dot/completion/completion.k");
--
--        // test completion for schema attr
--        let pos = KCLPos {
--            filename: file.to_owned(),
--            line: 12,
--            column: Some(7),
--        };
--
--        let tool = toolchain::default();
--        let got = completion(Some('.'), &program, &pos, &gs, &tool, None, &schema_map).unwrap();
--        let got_labels: Vec<String> = match got {
--            CompletionResponse::Array(arr) => arr.iter().map(|item| item.label.clone()).collect(),
--            CompletionResponse::List(_) => panic!("test failed"),
--        };
--
--        let expected_labels: Vec<&str> = vec!["name", "age"];
--        assert_eq!(got_labels, expected_labels);
--
--        let pos = KCLPos {
--            filename: file.to_owned(),
--            line: 14,
--            column: Some(12),
--        };
--
--        // test completion for str builtin function
--        let got = completion(Some('.'), &program, &pos, &gs, &tool, None, &schema_map).unwrap();
--        let got_labels: Vec<String> = match &got {
--            CompletionResponse::Array(arr) => arr.iter().map(|item| item.label.clone()).collect(),
--            CompletionResponse::List(_) => panic!("test failed"),
--        };
--        let expected_labels: Vec<String> = STRING_MEMBER_FUNCTIONS
--            .iter()
--            .map(|(name, ty)| func_ty_complete_label(name, &ty.into_func_type()))
--            .collect();
--        assert_eq!(got_labels, expected_labels);
--
--        let got_insert_text:
+-/// `Label` can be considered as a component of diagnostic to display a short label message in `Diagnositc`.
++/// `Label` can be considered as a component of diagnostic to display a short label message in `Diagnostic`.
+ /// `Label` provides "error", "warning", "note" and "Help" four kinds of labels.
+ ///
+ /// # Examples
 ```
 
-**File**: `crates/tools/src/LSP/src/snapshots/kcl_language_server__completion__tests__attr_name_completion_on_shorthand_entry.snap` (added, +11/-0)
+**File**: `compiler_base/error/src/diagnostic/diagnostic_handler.rs` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,11 @@
-+---
-+source: crates/tools/src/LSP/src/completion.rs
-+expression: completion_snapshot(got)
-+---
-+label: debug
-+kind: Variable
-+detail: bool
-+
-+label: verbose
-+kind: Variable
-+detail: bool
-```
-
-**File**: `crates/tools/src/LSP/src/snapshots/kcl_language_server__completion__tests__attr_name_completion_on_shorthand_entry_nested.snap` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+---
-+source: crates/tools/src/LSP/src/completion.rs
-+expression: completion_snapshot(got)
-+---
-+label: debug
-+kind: Variable
-+detail: bool
-+
-+label: verbose
-+kind: Variable
-+detail: bool
-```
-
-**File**: `crates/tools/src/LSP/src/snapshots/kcl_language_server__completion__tests__attr_value_bool.snap` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+---
-+source: crates/tools/src/LSP/src/completion.rs
-+expression: completion_snapshot(got)
-+---
-+label: " False"
-+kind: Variable
-+detail: a: bool
-+insert_text: " False"
-+insert_text_format: Snippet
-+
-+label: " True"
-+kind: Variable
-+detail: a: bool
-+insert_text: " True"
-+insert_text_format: Snippet
-```
-
-**File**: `crates/tools/src/LSP/src/snapshots/kcl_language_server__completion__tests__attr_value_bool_lit.snap` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+---
-+source: crates/tools/src/LSP/src/completion.rs
-+expression: completion_snapshot(got)
-+---
-+label: " True"
-+kind: Variable
-+detail: e: bool(True)
-+insert_text: " True"
-+insert_text_format: Snippet
-```
-
-**File**: `crates/tools/src/LSP/src/snapshots/kcl_language_server__completion__tests__attr_value_completion_on_shorthand_entry.snap` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+---
-+source: crates/tools/src/LSP/src/completion.rs
-+expression: completion_snapshot(got)
-+---
-+label: " False"
-+kind: Variable
-+detail: debug: bool
-+insert_text: " False"
-+insert_text_format: Snippet
-+
-+label: " True"
-+kind: Variable
-+detail: debug: bool
-+insert_text: " True"
-+insert_text_format: Snippet
-```
-
-**File**: `crates/tools/src/LSP/src/snapshots/kcl_language_server__completion__tests__attr_value_completion_on_shorthand_entry_undefined.snap` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+---
-+source: crates/tools/src/LSP/src/completion.rs
-+expression: completion_snapshot(got)
-+---
-+label: " False"
-+kind: Variable
-+detail: verbose: bool
-+insert_text: " False"
-+insert_text_format: Snippet
-+
-+label: " True"
-+kind: Variable
-+detail: verbose: bool
-+insert_text: " True"
-+insert_text_format: Snippet
-```
-
-**File**: `crates/tools/src/LSP/src/snapshots/kcl_language_server__completion__tests__attr_value_dict.snap` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+---
-+source: crates/tools/src/LSP/src/completion.rs
-+expression: completion_snapshot(got)
-+---
-+label: " {}"
-+kind: Variable
-+detail: f: {str:str}
-+insert_text: " {$1}"
-+insert_text_format: Snippet
-```
-
----
-
-### Incident Patch 2: `b7779cae` (2026-11-17)
-**Commit Message**: chore(release): bump version to v0.13.3 (#2263)
-
-Bump the workspace package version from 0.13.2 to 0.13.3. Every crate
-inherits it through `version.workspace = true`, so this single change
-moves the whole workspace (kcl-lib, kcl-cli, kcl-language-server and
-friends) to the new version. Cargo.lock is gitignored in this repo, so
-the regenerated lock file is not part of the change.
-
-The release workflow triggers on pushed `v*` tags, so tagging
-v0.13.3 after this merges publishes the new version.
-
-Signed-off-by: Cursor Agent <[REDACTED_EMAIL]>
-Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
-Co-authored-by: Peefy <[REDACTED_EMAIL]>
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -44,7 +44,7 @@ kcl-version = { path = "crates/version" }
- serde_yaml = { path = "3rdparty/serde_yaml" }
- 
- [workspace.package]
--version = "0.13.2"
-+version = "0.13.3"
- edition = "2024"
- rust-version = "1.83"
- exclude = [".github/"]
+@@ -86,7 +86,7 @@ const DIAGNOSTIC_MESSAGES_ROOT: &str = env!("CARGO_MANIFEST_DIR");
+ /// ```ignore
+ /// impl Lexer {
+ ///     fn lex(&self, diag_handler: &DiagnosticHandler){
+-///        handler.XXXX(); // do something to diaplay diagnostic.
++///        handler.XXXX(); // do something to display diagnostic.
+ ///     }
+ /// }
+ /// ```
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2267** (2026-11-20): chore: fix typos in doc comments (@Adham-Kiwan)
+- **PR #2265** (2026-11-19): feat(runtime): extend the duration system package (@Peefy)
+- **PR #2264** (2026-11-20): test(lsp): snapshot the rename tests (@Peefy)
 - **PR #2263** (2026-11-17): chore(release): bump version to v0.13.3 (@Peefy)
 - **PR #2262** (2026-11-06): feat: Export subcommand [--target=typescript] (@mihaigalos)
 - **PR #2261** (2026-11-05): feat: Export subcommand [--target=java] (@mihaigalos)
-- **PR #2260** (2026-11-17): test(lsp): snapshot the remaining completion tests (@Peefy)
-- **PR #2259** (2026-11-03): feat: Export subcommand [--target=golang] (@mihaigalos)
-- **PR #2258** (2026-11-02): fix(runtime): split and rsplit on unicode whitespace when no separator is given (@56steve)
 
 ---
 
@@ -1626,63 +1336,31 @@ Co-authored-by: Peefy <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(lsp): snapshot the remaining completion tests
+## X. fix typos in doc comments
 
 **RULE**:
-When implementing operations in `crates/tools/src/LSP/src/completion.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kcl-lang/kcl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `compiler_base/error/src/diagnostic/components.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kcl-lang/kcl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2012f95b`: test(lsp): snapshot the remaining completion tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2986f2a7`: fix typos in doc comments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/tools/src/LSP/src/completion.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `compiler_base/error/src/diagnostic/components.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    use std::collections::HashSet;
-
-        completion::{completion, func_ty_complete_insert_text, func_ty_complete_label},
+/// `Label` can be considered as a component of diagnostic to display a short label message in `Diagnostic`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        completion::{
-            KCLCompletionItem, KCLCompletionItemKind, completion, func_ty_complete_insert_text,
-            func_ty_complete_label, into_completion_items,
-        },
-    use kcl_primitives::IndexSet;
-    use lsp_types::{CompletionItem, CompletionItemKind, CompletionResponse, InsertTextFormat};
-    use proc_macro_crate::bench_test;
-
-    #[test]
-    #[bench_test]
-    fn var_completion_test() {
-        let (file, program, _, gs, schema_map) =
-            compile_test_file("src/test_data/completion_test/dot/completion/completion.k");
-
-        // test completion for var
-        let pos = KCLPos {
-            filename: file.to_owned(),
-            line: 26,
-            column: Some(1),
-        };
-
-        let tool = toolchain::default();
-        let got = completion(None, &program, &pos, &gs, &tool, None, &schema_map).unwrap();
-        let mut got_labels: Vec<String> = match got {
-            CompletionResponse::Array(arr) => arr.iter().map(|item| item.label.clone()).collect(),
-            CompletionResponse::List(_) => panic!("test failed"),
-        };
-
-        let mut expected_labels: Vec<String> = vec![
-            "", // generate from error recovery of "pkg."
-  
+/// `Label` can be considered as a component of diagnostic to display a short label message in `Diagnositc`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2012f95b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2986f2a7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

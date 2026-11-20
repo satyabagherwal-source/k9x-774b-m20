@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T05:54:30.105Z",
+  "last_updated": "2026-11-20T06:03:04.625Z",
   "directives": [
     {
       "id": "CD-001",
@@ -36106,22 +36106,22 @@
       "staged_date": "2026-11-20"
     },
     {
-      "id": "CD-PO8R",
+      "id": "CD-O14B",
       "directive_title": "keyword-led first screen, animated demo recorded against seo-test-site,",
-      "source_repo": "CrawlCove/hreflang-checker",
-      "source_commit": "e5c444d2",
-      "staged_file": "11_INBOX/candidate-directives/CD-PO8R-keyword-led-first-screen-animated-demo-recorded-against-seo-test-site.md",
+      "source_repo": "CrawlCove/xml-sitemap-validator",
+      "source_commit": "97bda8e7",
+      "staged_file": "11_INBOX/candidate-directives/CD-O14B-keyword-led-first-screen-animated-demo-recorded-against-seo-test-site.md",
       "status": "STAGED_FOR_REVIEW",
       "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
       "date_staged": "2026-11-20",
       "domain_letter": "J"
     },
     {
-      "id": "CD-QK0U",
+      "id": "CD-OTK8",
       "directive_title": "README: keyword-led first screen, animated demo recorded against seo-test-site,",
-      "source_repo": "crawlcove-crawlcove-hreflang-checker-learnings",
+      "source_repo": "crawlcove-crawlcove-sitemap-validator-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-QK0U-readme-keyword-led-first-screen-animated-demo-recorded-against-seo-test-site.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-OTK8-readme-keyword-led-first-screen-animated-demo-recorded-against-seo-test-site.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
@@ -36386,6 +36386,62 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-B35183-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-O0Y9",
+      "directive_title": "keyword-led first screen, animated demo recorded against seo-test-site,",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "CrawlCove/xml-sitemap-validator",
+      "source_commit": "97bda8e7",
+      "date_staged": "2026-11-20",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-crawlcove-xml-sitemap-validator",
+      "candidateDomain": "UNASSIGNED",
+      "candidateDomainName": null,
+      "secondaryDomains": [],
+      "classificationConfidence": 0,
+      "intendedFolder": "05_KNOWLEDGE",
+      "intendedPath": "05_KNOWLEDGE/engineering-patterns.md",
+      "isUntrusted": false
+    },
+    {
+      "id": "CD-OU3G",
+      "directive_title": "fix typos in doc comments",
+      "source_repo": "kcl-lang-kcl-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-OU3G-fix-typos-in-doc-comments.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-REV-6097EB",
+      "directive_title": "README: keyword-led first screen, animated demo recorded against seo-test-site,",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "crawlcove-crawlcove-sitemap-validator",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6097EB-readme-keyword-led-first-screen-animated.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-CD927A",
+      "directive_title": "fix typos in doc comments",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kcl-lang-kcl",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CD927A-fix-typos-in-doc-comments.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-19B589",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-19B589-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-20"
     }
   ]

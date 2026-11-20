@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T01:47:18.639Z",
+  "timestamp": "2026-11-20T06:03:04.058Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-kcl-lang-kcl-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kcl-lang-kcl-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T01:47:18.639Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T06:03:04.058Z`  
 > **Learning ID**: `LEARN-EVO-kcl-lang-kcl-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md`  
 > **Source**: github ([https://github.com/kcl-lang/kcl](https://github.com/kcl-lang/kcl))  
-> **Source Version**: `f8a29788`  
+> **Source Version**: `4e4df138`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T01:46:45.826Z  
+> **Timestamp**: 2026-11-20T06:02:31.442Z  
 > **Learning ID**: `learn-github-kcl-lang-kcl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kcl-lang/kcl](https://github.com/kcl-lang/kcl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T01:46:45.820Z  
+> **Harvest Timestamp**: 2026-11-20T06:02:31.437Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: KCL Language Core and API
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2445 stars
+- **Stars / Engagement**: 2446 stars
 
 ---
 
@@ -1292,611 +1292,45 @@ impl ModuleInfo {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f8a29788` (2026-11-14)
-**Commit Message**: perf(evaluator): skip the assignment copy of lambda locals when it is unobservable (#2255)
+### Incident Patch 1: `2986f2a7` (2026-11-20)
+**Commit Message**: chore: fix typos in doc comments (#2267)
 
-* perf(evaluator): elide unobservable lambda-local assignment copies
+Signed-off-by: Adham Kiwan <[REDACTED_EMAIL]>
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-Since #2081, a plain assignment deep-copies its complete value graph to
-preserve #2080's assign-by-value semantics. In #2241's synthetic repro,
-binding a 4000-element argument to a local 500 times takes a median
-3.021 s and up to 3317 MiB RSS, versus 0.052 s and 44 MiB after elision
-(three runs, release builds with LTO disabled).
-
-Only elide a single, plain lambda-local bind after a whole-program
-syntactic check rules out potentially observable mutations. Global,
-schema-scope, path and multi-target assignments retain their copies.
-
-Fail closed on path writes, composite schema attributes, schema-body
-augmented assignments/unifications, indexed config entries, and any
-config merge that may collide with an earlier slot. Collect loop names
-first so computed keys cannot masquerade as literal names. Do not try to
-prove mutated literals fresh: their entries may escape during construction
-through closures, sibling names, schema construction or lazy globals.
-
-Reject native plugins, whose ValueRef arguments can be mutated outside
-th
-
-**File**: `crates/evaluator/src/copy_elision.rs` (added, +294/-0)
+**File**: `compiler_base/error/src/diagnostic/components.rs` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,294 @@
-+//! Copyright The KCL Authors. All rights reserved.
-+//!
-+//! A plain assignment deep-copies its right-hand side so that a later in-place
-+//! mutation cannot leak into its source (kcl-lang/kcl#2080). Lambda locals can
-+//! share values when the entire program contains no potentially observable
-+//! in-place mutation.
-+//!
-+//! Deliberately do not try to prove that a mutated value is fresh. A literal's
-+//! entries can escape through sibling names, closures, lazy globals and schema
-+//! construction before a later entry mutates them. Instead, reject all path
-+//! writes, composite schema attributes, schema-body augmented assignments and
-+//! unifications, plugins, repeated schema keyword arguments, and config entries
-+//! that could merge into an existing slot. Also reject `runtime.catch`, so an
-+//! error that interrupts a merge always ends the run.
-+//! This sacrifices precision to keep the proof independent of alias analysis.
-+//! Native code is outside the AST too: besides plugins, a host can hand the
-+//! program a native function as an option, a recorded schema instance or in
-+//! the evaluator's scopes, so the evaluator keeps the copies when it finds
-+//! host values as a run begins. Values shared during a run also stay reachable
-+//! from the evaluator after it, so only the single run of an evaluator that
-+//! owns its runtime context (`Evaluator::set_owns_runtime_ctx`, as the runner
-+//! sets it) skips copies while it evaluates the program, not in the
-+//! `Evaluator::call_global` calls after it, and the proof only covers that run.
-+//!
-+//! The opt-out is whole-program and all-or-nothing by design: one rejected
-+//! construct anywhere, such as a composite schema attribute, keeps the deep
-+//! copy of every assignment, so schema-heavy packages see no speedup. Such a
-+//! program runs exactly as before; finer per-assignment precision is a possible
-+//! follow-up, not a regression.
-+//!
-+//! The check is only sound while it models every way a value can be mutated
-+//! in place. Any new runtime mutation path, such as a new builtin, unpacking
-+//! form or plugin surface, must update `MutationChecker` as well.
-+//!
-+//! Ordinary binary/augmented operators build new values or copy their left
-+//! operand. Dict comprehensions copy each value before merging it. Config
-+//! unpacking and conditional entries copy their input, but may still mutate an
-+//! earlier slot, so they are only allowed at the start of a config.
-+
-+use std::collections::HashSet;
-+
-+use kcl_ast::ast;
-+use kcl_ast::walker::MutSelfWalker;
-+
-+/// Returns true only if no modelled mutation can reach an aliased value.
-+pub(crate) fn program_allows_copy_elision(program: &ast::Program) -> bool {
-+    // Keep a consistent view across both passes, and fail closed rather than
-+    // blocking on an AST writer (evaluation may already hold a read lock).
-+    let modules = program
-+        .modules
-+        .values()
-+        .chain(program.modules_not_imported.values())
-+        .map(|module| module.try_read())
-+        .collect::<Result<Vec<_>, _>>();
-+    let Ok(modules) = modules else {
-+        return false;
-+    };
-+    let mut loops = LoopVariables::default();
-+    for module in &modules {
-+        loops.walk_module(module);
-+    }
-+    let mut checker = MutationChecker {
-+        loop_vars: &loops.0,
-+        in_schema_body: false,
-+        safe: true,
-+    };
-+    for module in &modules {
-+        checker.walk_module(module);
-+        if !checker.safe {
-+            return false;
-+        }
-+    }
-+    true
-+}
-+
-+/// A config key spelled as a loop variable is evaluated, not a literal name.
-+#[derive(Default)]
-+struct LoopVariables(HashSet<String>);
-+
-+impl MutSelfWalker for LoopVariables {
-+    fn walk_comp_clause(&mut self, clause: &ast::CompClause) {
-+        for target in &clause.targets {
-+            self.0.insert(target.node.names[0].node.clone());
-+        }
-+        self.walk_expr(&clause.iter.node);
-+        for cond in &clause.ifs {
-+            self.walk_expr(&cond.node);
-+        }
-+    }
-+
-+    fn walk_quant_expr(&mut self, quant: &ast::QuantExpr) {
-+        for variable in &quant.variables {
-+            self.0.insert(variable.node.names[0].node.clone());
-+        }
-+        self.walk_expr(&quant.target.node);
-+        self.walk_expr(&quant.test.node);
-+        if let Some(cond) = &quant.if_cond {
-+            self.walk_expr(&cond.node);
-+        }
-+    }
-+}
-+
-+struct MutationChecker<'a> {
-+    loop_vars: &'a HashSet<String>,
-+    in_schema_body: bool,
-+    safe: bool,
-+}
-+
-+impl MutationChecker<'_> {
-+    fn walk_entries(&mut self, entries: &[ast::NodeRef<ast::ConfigEntry>]) {
-+        let mut keys = HashSet::new();
-+        let mut unknown_key = false;
-+        for entry in entries {
-+            let key = entry.node.key.as_ref().and_then(|key| match &key.node {
-+                ast::Expr::Identifier(identifier)
-+                    if identifier.names.len() == 1
-+                        && !self.loop_vars.
+@@ -10,7 +10,7 @@ use rustc_span::LineInfo;
+ const CODE_LINE_PREFIX: &str = " | ";
+ const FILE_PATH_PREFIX: &str = "-->";
+ 
+-/// `Label` can be considered as a component of diagnostic to display a short label message in `Diagnositc`.
++/// `Label` can be considered as a component of diagnostic to display a short label message in `Diagnostic`.
+ /// `Label` provides "error", "warning", "note" and "Help" four kinds of labels.
+ ///
+ /// # Examples
 ```
 
-**File**: `crates/evaluator/src/lib.rs` (modified, +76/-12)
+**File**: `compiler_base/error/src/diagnostic/diagnostic_handler.rs` (modified, +1/-1)
 ```diff
-@@ -5,6 +5,7 @@ mod tests;
- 
- mod calculation;
- mod context;
-+mod copy_elision;
- mod coverage;
- mod error;
- mod func;
-@@ -127,14 +128,36 @@ pub struct Evaluator<'ctx> {
-     /// legacy behaviour, preserved for embedders that build an
-     /// `Evaluator` directly.
-     pub(crate) referenced_pkgs: RefCell<Option<HashSet<String>>>,
-+    /// Whether assignments to lambda locals may skip their deep copy, see
-+    /// [`copy_elision`]. Computed on first use in the first evaluation.
-+    copy_elision_safe: Cell<Option<bool>>,
-     /// Whether the runtime context is owned by this evaluator's single run,
--    /// so unread schema instances need not be recorded in it.
-+    /// so unread schema instances need not be recorded in it and values the
-+    /// run shares instead of copying cannot be observed after it.
-     owns_runtime_ctx: bool,
-     /// Whether schema instances are recorded for `Schema.instances()`, see
-     /// [`instance_reads`]. Computed on first use in the first evaluation.
-     record_instances: Cell<Option<bool>>,
--    /// Instances recorded by an earlier run stay readable in a reused context.
-+    /// Whether `eval` or `run_as_function` has begun. A reused evaluator can
-+    /// retain frames from an earlier program, and instances recorded by an
-+    /// earlier run stay readable in a reused context, so later evaluations
-+    /// keep both the assignment copies and the instance records.
-     evaluation_started: Cell<bool>,
-+    /// Whether `eval` or `run_as_function` is executing. Statements walked
-+    /// outside them, including in `call_global`, keep their assignment copies.
-+    evaluating: Cell<bool>,
-+}
-+
-+/// Marks an executing `eval` or `run_as_function` until it returns or unwinds.
-+struct Evaluating<'a, 'ctx> {
-+    evaluator: &'a Evaluator<'ctx>,
-+    outer: bool,
-+}
-+
-+impl Drop for Evaluating<'_, '_> {
-+    fn drop(&mut self) {
-+        self.evaluator.evaluating.set(self.outer);
-+    }
- }
- 
- /// A config expression scope.
-@@ -220,25 +243,50 @@ impl<'ctx> Evaluator<'ctx> {
-             source_positions: RefCell::new(Default::default()),
-             coverage_state: None,
-             referenced_pkgs: RefCell::new(None),
-+            copy_elision_safe: Cell::new(None),
-             owns_runtime_ctx: false,
-             record_instances: Cell::new(None),
-             evaluation_started: Cell::new(false),
-+            evaluating: Cell::new(false),
-+        }
-+    }
-+
-+    /// Whether no in-place mutation in the program can reach a value shared
-+    /// with another name, so assignments may bind values without copying them.
-+    pub(crate) fn copy_elision_safe(&self) -> bool {
-+        // Shared values stay reachable from this evaluator's scopes and
-+        // closures after the run, so only the single run of an evaluator that
-+        // owns its context may share them, and only while it evaluates the
-+        // program, not in the `call_global` calls after it. The proof only
-+        // covers the program and the host values checked when that run began.
-+        if !self.owns_runtime_ctx || !self.evaluating.get() {
-+            return false;
-+        }
-+        if let Some(safe) = self.copy_elision_safe.get() {
-+            return safe;
-         }
-+        let safe = copy_elision::program_allows_copy_elision(self.program);
-+        self.copy_elision_safe.set(Some(safe));
-+        safe
-     }
- 
-     /// Declare that the runtime context is used only by a single run of this
-     /// evaluator, so nothing outside the program can read the schema instances
-     /// it records. The evaluator then skips recording instances when no code
--    /// in the program can call `Schema.instances()`.
-+    /// in the program can call `Schema.instances()`, and assignments to lambda
-+    /// locals share values instead of copying them when nothing in the program
-+    /// can mutate a value in place.
-     ///
-     /// The context and evaluator state are checked when the run begins; the
--    /// host must not change the context during the run.
-+    /// host must not change the context during the run, nor evaluate more code
-+    /// with this evaluator after it.
-     ///
-     /// A run is [`Evaluator::run`], or [`Evaluator::eval`] and the
-     /// [`Evaluator::call_global`] calls after it, which keep the decision
-     /// the evaluation made. Between those calls the host may only restore
-     /// the context to what the evaluation left, as `kcl test` does when it
--    /// evaluates a package once for all its cases.
-+    /// evaluates a package once for all its cases. Assignments in those
-+    /// calls keep their copies.
-     #[inline]
-     pub fn set_owns_runtime_ctx(&mut self, owns: bool) {
-         self.owns_runtime_ctx = owns;
-@@ -258,11 +306,14 @@ impl<'ctx> Evaluator<'ctx> {
-         record
-     }
- 
--    fn begin_evaluation(&self) {
--        // A later run can read the instances recorded by an earlier one, and
--        // `program` is public, so do not reuse the first run's decision. A
--        // host c
-```
-
-**File**: `crates/evaluator/src/node.rs` (modified, +15/-4)
-```diff
-@@ -193,14 +193,25 @@ impl<'ctx> TypedResultWalker<'ctx> for Evaluator<'ctx> {
-         if assign_stmt.targets.len() == 1 {
-             // Store the single target
-             let name = &assign_stmt.targets[0];
--            // Deep copy the value to ensure assign-by-value semantics.
--            // This mirrors the behavior of multi-target assignment below.
--            let value = self.value_deep_copy(&value);
-+            // Deep copy the value to ensure assign-by-value semantics
-+            // (kcl-lang/kcl#2080). This mirrors the behavior of multi-target
-+            // assignment below. A lambda local may share the value instead
-+            // when nothing in the program can mutate a shared value in place,
-+            // which keeps assignments in functions O(1).
-+            let is_lambda_local = name.node.paths.is_empty()
-+                && self.scope_level() != GLOBAL_LEVEL
-+                && self.is_in_lambda()
-+                && !self.is_schema_scope();
-+            let stored = if is_lambda_local && self.copy_elision_safe() {
-+                value.clone()
-+            } else {
-+                self.value_deep_copy(&value)
-+            };
-             *self.lazy_reassign.borrow_mut() = self_ref;
-             defer! {
-                 *self.lazy_reassign.borrow_mut() = false;
-             }
--            self.walk_target_with_value(&name.node, value.clone())?;
-+            self.walk_target_with_value(&name.node, stored)?;
-         } else {
-             // Store multiple targets
-             for name in &assign_stmt.targets {
-```
-
-**File**: `crates/evaluator/src/tests.rs` (modified, +936/-0)
-```diff
-@@ -2676,6 +2676,759 @@ fn test_typed_args_type_error_messages() {
-     }
- }
- 
-+fn load_test_program(src: &str) -> kcl_loader::Packages {
-+    load_packages(&LoadPackageOptions {
-+        paths: vec!["test.k".to_string()],
-+        load_opts: Some(LoadProgramOptions {
-+            k_code_list: vec![src.to_string()],
-+            ..Default::default()
-+        }),
-+        load_builtin: false,
-+        ..Default::default()
-+    })
-+    .unwrap()
-+}
-+
-+/// An evaluator whose single run owns its runtime context, as the runner sets
-+/// it up, so lambda locals may share values.
-+fn single_run_evaluator(
-+    program: &kcl_ast::ast::Program,
-+    ctx: Rc<RefCell<Context>>,
-+) -> Evaluator<'_> {
-+    let mut evaluator = Evaluator::new_with_runtime_ctx(program, ctx);
-+    evaluator.set_owns_runtime_ctx(true);
-+    evaluator
-+}
-+
-+fn new_ctx() -> Rc<RefCell<Context>> {
-+    Rc::new(RefCell::new(Context::new()))
-+}
-+
-+fn eval_yaml(src: &str) -> String {
-+    let p = load_test_program(src);
-+    let yaml = single_run_evaluator(&p.program, new_ctx()).run().unwrap().1;
-+    format!("{}\n", yaml.trim_end())
-+}
-+
-+fn allows_copy_elision(src: &str) -> bool {
-+    let p = load_test_program(src);
-+    crate::copy_elision::program_allows_copy_elision(&p.program)
-+}
-+
-+/// Asserts that `src` evaluates to `expected` and that the copy of a lambda
-+/// local is kept, because skipping it would change that result.
-+fn assert_copy_kept(src: &str, expected: &str) {
-+    assert_eq!(eval_yaml(src), expected);
-+    assert!(!allows_copy_elision(src));
-+}
-+
-+/// kcl-lang/kcl#2080 inside a function: clearing an attribute of a copy must
-+/// not clear it in the original.
-+#[test]
-+fn assign_copy_path_assign_undefined() {
-+    assert_copy_kept(
-+        r#"
-+schema Foo:
-+    hello: str = "world"
-+    world?: str = "x"
-+
-+clear = lambda x: Foo -> Foo {
-+    _y = x
-+    _y.world = Undefined
-+    _y
-+}
-+foo = Foo {}
-+bar = clear(foo)
-+"#,
-+        "foo:\n  hello: world\n  world: x\nbar:\n  hello: world\n",
-+    );
-+}
-+
-+#[test]
-+fn assign_copy_list_path_assign() {
-+    assert_copy_kept(
-+        r#"
-+f = lambda v {
-+    _t = v
-+    _t[0] = 9
-+    _t
-+}
-+a = [1, 2]
-+b = f(a)
-+"#,
-+        "a:\n- 1\n- 2\nb:\n- 9\n- 2\n",
-+    );
-+}
-+
-+#[test]
-+fn assign_copy_dict_path_aug_assign() {
-+    assert_copy_kept(
-+        r#"
-+f = lambda v {
-+    _t = v
-+    _t.k += [2]
-+    _t
-+}
-+a = {k = [1]}
-+b = f(a)
-+"#,
-+        "a:\n  k:\n  - 1\nb:\n  k:\n  - 1\n  - 2\n",
-+    );
-+}
-+
-+/// The value returned by a function may be its argument.
-+#[test]
-+fn assign_copy_function_return_alias() {
-+    assert_copy_kept(
-+        r#"
-+id = lambda v { v }
-+f = lambda v {
-+    _t = id(v)
-+    _t.x = 2
-+    _t
-+}
-+a = {x = 1}
-+b = f(a)
-+"#,
-+        "a:\n  x: 1\nb:\n  x: 2\n",
-+    );
-+}
-+
-+#[test]
-+fn assign_copy_closure_capture() {
-+    assert_copy_kept(
-+        r#"
-+a = {x = 1}
-+f = lambda {
-+    _t = a
-+    _t.x = 2
-+    _t
-+}
-+b = f()
-+c = a
-+"#,
-+        "a:\n  x: 1\nb:\n  x: 2\nc:\n  x: 1\n",
-+    );
-+}
-+
-+/// The copy is mutated through another function's parameter, so no name in
-+/// `f` is ever mutated through a path.
-+#[test]
-+fn assign_copy_param_path_assign() {
-+    assert_copy_kept(
-+        r#"
-+set = lambda d {
-+    d.x = 2
-+    d
-+}
-+f = lambda v {
-+    _t = v
-+    set(_t)
-+    v
-+}
-+a = {x = 1}
-+b = f(a)
-+"#,
-+        "a:\n  x: 1\nb:\n  x: 1\n",
-+    );
-+}
-+
-+/// The config of a schema instance is unioned into the attribute default in
-+/// place, so the default must not share a value with anything else.
-+#[test]
-+fn assign_copy_schema_default() {
-+    assert_copy_kept(
-+        r#"
-+id = lambda v {
-+    _t = v
-+    _t
-+}
-+v = [1]
-+schema S:
-+    x: [int] = id(v)
-+s = S {x += [2]}
-+w = v
-+"#,
-+        "v:\n- 1\ns:\n  x:\n  - 1\n  - 2\nw:\n- 1\n",
-+    );
-+}
-+
-+/// A schema body stores the result of `x |= ...` and then unions the
-+/// instance config into it in place.
-+#[test]
-+fn assign_copy_schema_body_bit_or() {
-+    assert_copy_kept(
-+        r#"
-+id = lambda v {
-+    _t = v
-+    _t
-+}
-+v = {k = {a = 1}}
-+schema S:
-+    x: any = None
-+    x |= id(v)
-+s = S {x: {k: {c = 3}}}
-+w = v
-+"#,
-+        "v:\n  k:\n    a: 1\ns:\n  x:\n    k:\n      a: 1\n      c: 3\nw:\n  k:\n    a: 1\n",
-+    );
-+}
-+
-+#[test]
-+fn assign_copy_schema_body_unification() {
-+    assert_copy_kept(
-+        r#"
-+id = lambda v {
-+    _t = v
-+    _t
-+}
-+schema T:
-+    k: any
-+v = {a = 1}
-+schema S:
-+    x: T
-+    x: T {k = id(v)}
-+s = S {x: {k: {c = 3}}}
-+w = v
-+"#,
-+        "v:\n  a: 1\ns:\n  x:\n    k:\n      a: 1\n      c: 3\nw:\n  a: 1\n",
-+    );
-+}
-+
-+#[test]
-+fn assign_copy_config_insert() {
-+    assert_copy_kept(
-+        r#"
-+f = lambda v {
-+    _t = v
-+    {k = _t, k += [2]}
-+}
-+a = [1]
-+b = f(a)
-+c = a
-+"#,
-+        "a:\n- 1\nb:\n  k:\n  - 1\n  - 2\nc:\n- 1\n",
-+    );
-+}
-+
-+#[test]
-+fn assign_copy_config_union() {
-+    assert_copy_kept(
-+        r#"
-+f = lambda v {
-+    _t = v
-+    {k = _t, k: {y = 2}}
-+}
-+a = {x = 1}
-+b = f(a)
-+c = a
-+"#,
-+        "a:\n  x: 1\nb:\n  k:\n  
-```
-
-**File**: `docs/dev_guide/4.architecture.md` (modified, +2/-0)
-```diff
-@@ -30,6 +30,8 @@ The compiling phase translates the resolved AST into an intermediate representat
- 
- After compilation, the evaluating phase executes the program using the IR including AST. During this phase, the compiler can evaluate expressions, compute values, and perform optimizations that are runtime-specific.
- 
-+Some of these optimizations rely on whole-program syntactic checks. For example, assignments to lambda locals skip their deep copy only when `crates/evaluator/src/copy_elision.rs` finds no in-place mutation in the program, so any new runtime mutation path (a new builtin, unpacking form or plugin surface) must update that checker.
-+
- ### Runtime
- 
- At runtime, the KCL environment executes the compiled IR. This involves various runtime behaviors such as value calculations, error handling, and invoking system libraries.
-```
-
-**File**: `tests/grammar/lambda/assign_copy_imports/main.k` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+import .pkg
-+
-+f = lambda v {
-+    _t = v
-+    pkg.mutate(_t)
-+    v
-+}
-+a = [1]
-+b = f(a)
-+c = a
-```
-
-**File**: `tests/grammar/lambda/assign_copy_imports/pkg/mutate.k` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+mutate = lambda v {
-+    v[0] = 9
-+    v
-+}
-```
-
-**File**: `tests/grammar/lambda/assign_copy_imports/stdout.golden` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+a:
-+- 1
-+b:
-+- 1
-+c:
-+- 1
+@@ -86,7 +86,7 @@ const DIAGNOSTIC_MESSAGES_ROOT: &str = env!("CARGO_MANIFEST_DIR");
+ /// ```ignore
+ /// impl Lexer {
+ ///     fn lex(&self, diag_handler: &DiagnosticHandler){
+-///        handler.XXXX(); // do something to diaplay diagnostic.
++///        handler.XXXX(); // do something to display diagnostic.
+ ///     }
+ /// }
+ /// ```
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2267** (2026-11-20): chore: fix typos in doc comments (@Adham-Kiwan)
+- **PR #2265** (2026-11-19): feat(runtime): extend the duration system package (@Peefy)
+- **PR #2264** (2026-11-20): test(lsp): snapshot the rename tests (@Peefy)
+- **PR #2263** (2026-11-17): chore(release): bump version to v0.13.3 (@Peefy)
 - **PR #2262** (2026-11-06): feat: Export subcommand [--target=typescript] (@mihaigalos)
 - **PR #2261** (2026-11-05): feat: Export subcommand [--target=java] (@mihaigalos)
-- **PR #2259** (2026-11-03): feat: Export subcommand [--target=golang] (@mihaigalos)
-- **PR #2258** (2026-11-02): fix(runtime): split and rsplit on unicode whitespace when no separator is given (@56steve)
-- **PR #2257** (2026-10-30): perf(evaluator): skip recording schema instances nothing can read (@steeling)
-- **PR #2256** (2026-11-05): perf(tools): add an eval-once mode to kcl test that evaluates the package once (@steeling)
 
 ---
 
@@ -1916,49 +1350,31 @@ th
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. evaluator): skip the assignment copy of lambda locals when it is unobservable
+## X. fix typos in doc comments
 
 **RULE**:
-When implementing operations in `crates/evaluator/src/copy_elision.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kcl-lang/kcl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `compiler_base/error/src/diagnostic/components.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kcl-lang/kcl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f8a29788`: evaluator): skip the assignment copy of lambda locals when it is unobservable. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2986f2a7`: fix typos in doc comments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/evaluator/src/copy_elision.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `compiler_base/error/src/diagnostic/components.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//! Copyright The KCL Authors. All rights reserved.
-//!
-//! A plain assignment deep-copies its right-hand side so that a later in-place
-//! mutation cannot leak into its source (kcl-lang/kcl#2080). Lambda locals can
-//! share values when the entire program contains no potentially observable
-//! in-place mutation.
-//!
-//! Deliberately do not try to prove that a mutated value is fresh. A literal's
-//! entries can escape through sibling names, closures, lazy globals and schema
-//! construction before a later entry mutates them. Instead, reject all path
-//! writes, composite schema attributes, schema-body augmented assignments and
-//! unifications, plugins, repeated schema keyword arguments, and config entries
-//! that could merge into an existing slot. Also reject `runtime.catch`, so an
-//! error that interrupts a merge always ends the run.
-//! This sacrifices precision to keep the proof independent of alias analysis.
-//! Native code is outside the AST too: besides plugins, a host can hand the
-//! program a native function as an option, a recorded schema instance or in
-//! the evaluator's scopes, so the evaluator keeps the copies when it finds
-//! host values as a run begins. Values s
+/// `Label` can be considered as a component of diagnostic to display a short label message in `Diagnostic`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+/// `Label` can be considered as a component of diagnostic to display a short label message in `Diagnositc`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f8a29788` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2986f2a7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

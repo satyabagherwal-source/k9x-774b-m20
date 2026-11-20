@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-6LDC",
-    "timestamp": "2026-11-18T09:57:29.136Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "da3514bcbe6892f81195fc280b67fe8f43097401c35857bf7cb35b7a61839ed7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-KYEO",
-    "timestamp": "2026-11-18T10:08:39.216Z",
-    "repository": "sentence-transformers/all-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-    "contentHash": "c31d38ca2f2865f20e4c49f3278fba49ca581f7d8bfc3a18f6632794f691064c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-L502",
     "timestamp": "2026-11-18T10:08:47.762Z",
     "repository": "nginx/kubernetes-ingress",
@@ -7492,6 +7462,36 @@
     "contentHash": "a50b2573e550bb6b5bf5e4dd83e47d43001d78f0e76725ea448de220271c9e52",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-O0XT",
+    "timestamp": "2026-11-20T06:02:26.369Z",
+    "repository": "CrawlCove/xml-sitemap-validator",
+    "learningId": "learn-github-crawlcove-xml-sitemap-validator",
+    "contentHash": "6c509ebf85fd0421289182b2d9d320cb231c797e9da84606d13150d6d6ec70a6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-O5LI",
+    "timestamp": "2026-11-20T06:02:32.406Z",
+    "repository": "kcl-lang/kcl",
+    "learningId": "learn-github-kcl-lang-kcl",
+    "contentHash": "6be3e1b5459262382295c000f471a1a2880f8fc7dd91957bd27ea6f9189af26f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

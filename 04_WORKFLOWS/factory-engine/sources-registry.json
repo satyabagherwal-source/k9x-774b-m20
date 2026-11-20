@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-20T05:21:09.993Z",
-    "lastVerified": "2026-11-20T05:21:09.993Z",
+    "lastChecked": "2026-11-20T06:02:33.933Z",
+    "lastVerified": "2026-11-20T06:02:33.933Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T05:53:09.016Z",
-    "lastVerified": "2026-11-20T05:53:09.016Z",
+    "lastChecked": "2026-11-20T06:02:35.527Z",
+    "lastVerified": "2026-11-20T06:02:35.527Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -320,8 +320,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T00:43:13.052Z",
-    "lastVerified": "2026-11-20T00:43:13.052Z",
+    "lastChecked": "2026-11-20T06:02:28.817Z",
+    "lastVerified": "2026-11-20T06:02:28.817Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -3744,9 +3744,9 @@
   "pemistahl-grex": {
     "name": "grex",
     "officialUrl": "https://github.com/pemistahl/grex",
-    "lastChecked": "2026-11-18T18:00:15.658Z",
+    "lastChecked": "2026-11-20T06:02:18.804Z",
     "revisionIdentifier": "99cc3477",
-    "lastVerified": "2026-11-18T18:00:15.658Z"
+    "lastVerified": "2026-11-20T06:02:18.804Z"
   },
   "hf-amazon-chronos-2": {
     "name": "amazon/chronos-2",
@@ -5498,12 +5498,12 @@
     "lastVerified": "2026-11-20T05:07:43.451Z"
   },
   "apache-zookeeper": {
-    "name": "apache/zookeeper",
+    "name": "zookeeper",
     "officialUrl": "https://github.com/apache/zookeeper",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-19T00:41:10.901Z",
-    "lastVerified": "2026-11-19T00:41:10.901Z",
+    "lastChecked": "2026-11-20T06:02:31.375Z",
+    "lastVerified": "2026-11-20T06:02:31.375Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-zookeeper",
@@ -5512,7 +5512,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7f4ebb35"
   },
   "xudong-huang-may": {
     "name": "Xudong-Huang/may",
@@ -5891,11 +5892,21 @@
     "lastVerified": "2026-11-19T01:47:05.647Z"
   },
   "kcl-lang-kcl": {
-    "name": "kcl",
+    "name": "kcl-lang/kcl",
     "officialUrl": "https://github.com/kcl-lang/kcl",
-    "lastChecked": "2026-11-19T01:47:08.129Z",
-    "revisionIdentifier": "2012f95b",
-    "lastVerified": "2026-11-19T01:47:08.129Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-20T06:02:31.437Z",
+    "lastVerified": "2026-11-20T06:02:31.437Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-kcl-lang-kcl",
+    "contentHash": "6be3e1b5459262382295c000f471a1a2880f8fc7dd91957bd27ea6f9189af26f",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "ydb-platform-ydb": {
     "name": "ydb-platform/ydb",
@@ -9415,5 +9426,29 @@
     "lastChecked": "2026-11-20T05:51:30.624Z",
     "revisionIdentifier": "7844c733",
     "lastVerified": "2026-11-20T05:51:30.624Z"
+  },
+  "crawlcove-crawlcove-sitemap-validator": {
+    "name": "CrawlCove/xml-sitemap-validator",
+    "officialUrl": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-20T06:02:25.722Z",
+    "lastVerified": "2026-11-20T06:02:25.722Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-crawlcove-xml-sitemap-validator",
+    "contentHash": "6c509ebf85fd0421289182b2d9d320cb231c797e9da84606d13150d6d6ec70a6",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hi-manshu-charty": {
+    "name": "charty",
+    "officialUrl": "https://github.com/hi-manshu/charty",
+    "lastChecked": "2026-11-20T06:02:23.757Z",
+    "revisionIdentifier": "c7ba0b05",
+    "lastVerified": "2026-11-20T06:02:23.757Z"
   }
 }

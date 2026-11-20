@@ -1853,10 +1853,10 @@
     "repository": "CrawlCove/xml-sitemap-validator",
     "platform": "github",
     "sourceUrl": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
-    "sourceVersion": "e6b51cd7",
+    "sourceVersion": "97bda8e7",
     "license": "MIT",
-    "contentHash": "bb2da102333e735bbc91e810424cf8a3ba57368ec4078784aa9f9ec75fba3baa",
-    "lastHarvestedAt": "2026-11-16T03:47:45.596Z",
+    "contentHash": "6c509ebf85fd0421289182b2d9d320cb231c797e9da84606d13150d6d6ec70a6",
+    "lastHarvestedAt": "2026-11-20T06:02:26.374Z",
     "learningId": "learn-github-crawlcove-xml-sitemap-validator"
   },
   "crawlcove-crawlcove-robots-txt-tester": {
@@ -5713,10 +5713,10 @@
     "repository": "kcl-lang/kcl",
     "platform": "github",
     "sourceUrl": "https://github.com/kcl-lang/kcl",
-    "sourceVersion": "2012f95b",
+    "sourceVersion": "4e4df138",
     "license": "Apache-2.0",
-    "contentHash": "18e490d486daf599c19bc5c2080174397b2c01e2f1105f5e50d16ae686930a2d",
-    "lastHarvestedAt": "2026-11-17T14:33:28.582Z",
+    "contentHash": "6be3e1b5459262382295c000f471a1a2880f8fc7dd91957bd27ea6f9189af26f",
+    "lastHarvestedAt": "2026-11-20T06:02:32.410Z",
     "learningId": "learn-github-kcl-lang-kcl"
   },
   "apache-incubator-pegasus": {

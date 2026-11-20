@@ -11476,3 +11476,6 @@
 | `CYCLE-20261120-BZQA` | `2026-11-20T05:53:04.930Z` | `CrawlCove/robots-txt-tester` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9521, Rule 9522, Rule 9523` | Yes (`a50b2573...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T05:53:44.454Z` | `crawlcove-crawlcove-robots-txt-tester` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-114E2D99` [Domain J] | Yes (`da43647e...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T05:54:25.812Z` | `crawlcove-crawlcove-robots-txt-tester` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-F8E24CC5` [Domain J] | Yes (`8968cf8a...`) |
+| `CYCLE-20261120-O0XT` | `2026-11-20T06:02:26.369Z` | `CrawlCove/xml-sitemap-validator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md` | Yes (`6c509ebf...`) |
+| `CYCLE-20261120-O5LI` | `2026-11-20T06:02:32.406Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9524` | Yes (`6be3e1b5...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T06:03:02.865Z` | `crawlcove-crawlcove-sitemap-validator` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-00DA3196` [Domain J] | Yes (`f1cebbcb...`) |

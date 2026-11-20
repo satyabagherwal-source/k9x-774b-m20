@@ -11509,3 +11509,6 @@ Every entry in this ledger must capture:
 | `learn-github-crawlcove-robots-txt-tester` | `https://github.com/CrawlCove/crawlcove-robots-txt-tester` | `cf5ba27f` | Multi-dimensional audit evidence | 2026-11-20T05:53:04.935Z |
 | `learn-dom-j-114e2d99` | `project://crawlcove-crawlcove-robots-txt-tester` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md` | 2026-11-20T05:53:44.454Z |
 | `learn-dom-j-f8e24cc5` | `project://crawlcove-crawlcove-robots-txt-tester` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md` | 2026-11-20T05:54:25.812Z |
+| `learn-github-crawlcove-xml-sitemap-validator` | `https://github.com/CrawlCove/crawlcove-sitemap-validator` | `97bda8e7` | Multi-dimensional audit evidence | 2026-11-20T06:02:26.374Z |
+| `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `4e4df138` | Multi-dimensional audit evidence | 2026-11-20T06:02:32.410Z |
+| `learn-dom-j-00da3196` | `project://crawlcove-crawlcove-sitemap-validator` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md` | 2026-11-20T06:03:02.865Z |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T05:54:30.736Z",
+  "last_updated": "2026-11-20T06:03:05.492Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T05:16:32.158Z",
@@ -13,7 +13,7 @@
       "staged_for_review": 1
     },
     "zleap-ai-sag-learnings.md": {
-      "processed_at": "2026-11-20T05:37:06.723Z",
+      "processed_at": "2026-11-20T06:03:04.630Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1198,7 +1198,7 @@
       "staged_for_review": 1
     },
     "kcl-lang-kcl-learnings.md": {
-      "processed_at": "2026-11-15T01:47:18.542Z",
+      "processed_at": "2026-11-20T06:03:03.952Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3143,9 +3143,9 @@
       "staged_for_review": 0
     },
     "crawlcove-crawlcove-sitemap-validator-learnings.md": {
-      "processed_at": "2026-11-16T03:48:41.984Z",
-      "promoted_canonical": 2,
-      "staged_for_review": 0
+      "processed_at": "2026-11-20T06:03:02.865Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 1
     },
     "ganymedenil-document.ai-learnings.md": {
       "processed_at": "2026-11-16T03:57:49.589Z",
@@ -3538,7 +3538,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2454,
-  "total_canonical_promoted": 414,
-  "total_staged_for_review": 1850
+  "total_dossiers_evaluated": 2457,
+  "total_canonical_promoted": 415,
+  "total_staged_for_review": 1853
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T05:53:04.945Z",
+  "last_updated": "2026-11-20T06:02:32.418Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2916,14 +2916,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crawlcove-xml-sitemap-validator",
-      "content_hash": "bb2da102333e735bbc91e810424cf8a3ba57368ec4078784aa9f9ec75fba3baa",
-      "verified_at": "2026-11-16T03:47:45.602Z",
+      "content_hash": "6c509ebf85fd0421289182b2d9d320cb231c797e9da84606d13150d6d6ec70a6",
+      "verified_at": "2026-11-20T06:02:26.409Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T03:47:45.602Z"
+      "last_updated": "2026-11-20T06:02:26.409Z"
     },
     "CrawlCove/robots-txt-tester": {
       "repository": "CrawlCove/robots-txt-tester",
@@ -8691,14 +8691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kcl-lang-kcl",
-      "content_hash": "18e490d486daf599c19bc5c2080174397b2c01e2f1105f5e50d16ae686930a2d",
-      "verified_at": "2026-11-17T14:33:28.592Z",
+      "content_hash": "6be3e1b5459262382295c000f471a1a2880f8fc7dd91957bd27ea6f9189af26f",
+      "verified_at": "2026-11-20T06:02:32.417Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T14:33:28.592Z"
+      "last_updated": "2026-11-20T06:02:32.417Z"
     },
     "apache/incubator-pegasus": {
       "repository": "apache/incubator-pegasus",

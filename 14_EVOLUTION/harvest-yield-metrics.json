@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T05:53:04.941Z",
-  "total_cycles_completed": 10940,
-  "total_learnings_persisted": 10940,
-  "total_rules_promoted": 10306,
+  "last_updated": "2026-11-20T06:02:32.415Z",
+  "total_cycles_completed": 10942,
+  "total_learnings_persisted": 10942,
+  "total_rules_promoted": 10307,
   "history": [
-    {
-      "timestamp": "2026-11-19T09:43:41.619Z",
-      "repository": "vcaesar/riot",
-      "learningId": "learn-github-vcaesar-riot",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T09:43:47.420Z",
-      "repository": "arkivanov/Decompose",
-      "learningId": "learn-github-arkivanov-decompose",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T09:43:49.099Z",
       "repository": "open-policy-agent/gatekeeper",
@@ -1403,6 +1389,20 @@
       "repository": "CrawlCove/robots-txt-tester",
       "learningId": "learn-github-crawlcove-robots-txt-tester",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T06:02:26.406Z",
+      "repository": "CrawlCove/xml-sitemap-validator",
+      "learningId": "learn-github-crawlcove-xml-sitemap-validator",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T06:02:32.415Z",
+      "repository": "kcl-lang/kcl",
+      "learningId": "learn-github-kcl-lang-kcl",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

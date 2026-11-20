@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T05:54:30.547Z",
+  "last_updated": "2026-11-20T06:03:05.336Z",
   "total_verified_learnings": 9025,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22233,
+  "total_items": 22238,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -236276,9 +236276,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "d41fbc045da640c61aad1776a9a37124d69e7ede28ef508325a8e740c646cea3",
+      "content_hash": "21c5777e6bcafdc5f4a61e22934b0d736758593d90fbfb83265a2aaeb15f95d5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T05:37:07.369Z"
+      "persisted_at": "2026-11-20T06:03:05.336Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -240485,8 +240485,8 @@
       "slug": "kcl-lang-kcl",
       "platform": "github",
       "source_url": "https://github.com/kcl-lang/kcl",
-      "source_version": "2012f95b",
-      "content_hash": "18e490d486daf599c19bc5c2080174397b2c01e2f1105f5e50d16ae686930a2d",
+      "source_version": "4e4df138",
+      "content_hash": "6be3e1b5459262382295c000f471a1a2880f8fc7dd91957bd27ea6f9189af26f",
       "dossier_path": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "promoted_rules": [
@@ -240499,6 +240499,11 @@
           "number": 8975,
           "title": "test(lsp): snapshot the remaining completion tests",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9524,
+          "title": "fix typos in doc comments",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -240506,7 +240511,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T14:33:28.366Z",
+      "verified_at": "2026-11-20T06:02:32.228Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240560,10 +240565,10 @@
       "relative_path": "08_VERIFICATION/kcl-lang-kcl-verification-protocol-empirical-defect-shield-for-kcl-lang-kcl.md",
       "title": "Verification Protocol: Empirical Defect Shield for kcl-lang/kcl",
       "repository": "kcl-lang/kcl",
-      "source_version": "2012f95b",
-      "content_hash": "d15cbde9c1213b3b2417d5a0001d3306455b7f01eb7849e1b703f06cf0415611",
+      "source_version": "4e4df138",
+      "content_hash": "d0861a9cad32eb0d5c73645fadda8ac9e10400f5a85c6ffd063d43a31e925553",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T14:33:29.150Z"
+      "persisted_at": "2026-11-20T06:02:32.885Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fishaudio-drama-3-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fishaudio-drama-3-learnings-core-invariants",
@@ -240609,9 +240614,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kcl-lang-kcl-learnings",
       "repository": "kcl-lang-kcl-learnings",
       "source_version": "HEAD",
-      "content_hash": "3c5eafb460187937f7f18e1228ea4a522186879b09a7cab8c9256d82ed7b73a5",
+      "content_hash": "551e07b973e6da6ba287c5d80cc89f1c357c74984bdc3be2debb6ae0f13e6695",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T01:47:18.975Z"
+      "persisted_at": "2026-11-20T06:03:04.473Z"
     },
     "learn-github-metalbear-co-mirrord": {
       "learning_id": "learn-github-metalbear-co-mirrord",
@@ -254151,8 +254156,8 @@
       "slug": "crawlcove-crawlcove-sitemap-validator",
       "platform": "github",
       "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
-      "source_version": "e6b51cd7",
-      "content_hash": "bb2da102333e735bbc91e810424cf8a3ba57368ec4078784aa9f9ec75fba3baa",
+      "source_version": "97bda8e7",
+      "content_hash": "6c509ebf85fd0421289182b2d9d320cb231c797e9da84606d13150d6d6ec70a6",
       "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
       "promoted_rules": [
@@ -254177,7 +254182,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T03:47:45.440Z",
+      "verified_at": "2026-11-20T06:02:26.153Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -254283,10 +254288,10 @@
       "relative_path": "08_VERIFICATION/crawlcove-crawlcove-sitemap-validator-verification-protocol-empirical-defect-shi.md",
       "title": "Verification Protocol: Empirical Defect Shield for CrawlCove/xml-sitemap-validator",
       "repository": "CrawlCove/xml-sitemap-validator",
-      "source_version": "e6b51cd7",
-      "content_hash": "d46d821624e148afc54e8aa693094d13122c6b6867cfec183fe2ccd5e42ee826",
+      "source_version": "97bda8e7",
+      "content_hash": "16a88d1b3ba4c67260549eef6a2d73df407e30bc9ad08a3d9ca46e43d889a863",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T03:47:46.093Z"
+      "persisted_at": "2026-11-20T06:02:26.896Z"
     },
     "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-sitemap-validator-learni": {
       "item_id": "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-sitemap-validator-learni",
@@ -254308,9 +254313,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for crawlcove-crawlcove-sitemap-validator-learnings",
       "repository": "crawlcove-crawlcove-sitemap-validator-learnings",
       "source_version": "HEAD",
-      "content_hash": "9c076d6a9cd1365c6eb9d8ae828ff0bf2fd39ee956baf3a6aab0b38c9723fb26",
+      "content_hash": "af341f27f52798c56eafa7bed6da2006fc3666ea3e9117209cdec5e8f3772a13",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T03:48:43.020Z"
+      "persisted_at": "2026-11-20T06:03:03.796Z"
     },
     "domain_intelligence-architecture-intelligence-cilium-cilium-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-cilium-cilium-learnings-core-invariants",
@@ -273222,10 +273227,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-kcl-lang-kcl-product-intelligence-kcl-lang-kcl-core-invariants.md",
       "title": "Product Intelligence: kcl-lang/kcl Core Invariants",
       "repository": "kcl-lang/kcl",
-      "source_version": "2012f95b",
-      "content_hash": "558408ea40fbdb60e819e385e5583c42262359c138bee31c0491caf21bce2855",
+      "source_version": "4e4df138",
+      "content_hash": "5c30ffa31472073fb5d118179ef5a98772b6ceeabf33ddb8cb515b701f4e9125",
       "domain_letter": "B",
-      "persisted_at": "2026-11-17T14:33:28.978Z"
+      "persisted_at": "2026-11-20T06:02:32.746Z"
     },
     "rule-8976": {
       "learning_id": "rule-8976",
@@ -300585,13 +300590,13 @@
       "item_id": "candidate_directive-keyword-led-first-screen-animated-demo-recorded-against-seo-test-site",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PO8R-keyword-led-first-screen-animated-demo-recorded-against-seo-test-site.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-O14B-keyword-led-first-screen-animated-demo-recorded-against-seo-test-site.md",
       "title": "keyword-led first screen, animated demo recorded against seo-test-site,",
-      "repository": "CrawlCove/hreflang-checker",
-      "source_version": "e5c444d2",
-      "content_hash": "0aaef111dd50619eb51fe213dc006b33ca13071e1f913c3203b06f290023929e",
+      "repository": "CrawlCove/xml-sitemap-validator",
+      "source_version": "97bda8e7",
+      "content_hash": "3fd6f353bdf798a50dfd2cedffa69b9eb1eb9186a00416739ba7fe49e60eb6ad",
       "domain_letter": "J",
-      "persisted_at": "2026-11-20T05:07:43.997Z"
+      "persisted_at": "2026-11-20T06:02:26.603Z"
     },
     "domain_intelligence-search-distribution-intelligence-crawlcove-hreflang-checker-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-crawlcove-hreflang-checker-core-invariants",
@@ -300609,13 +300614,13 @@
       "item_id": "candidate_directive-readme-keyword-led-first-screen-animated-demo-recorded-against-seo-test-site",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-QK0U-readme-keyword-led-first-screen-animated-demo-recorded-against-seo-test-site.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-OTK8-readme-keyword-led-first-screen-animated-demo-recorded-against-seo-test-site.md",
       "title": "README: keyword-led first screen, animated demo recorded against seo-test-site,",
-      "repository": "crawlcove-crawlcove-hreflang-checker-learnings",
+      "repository": "crawlcove-crawlcove-sitemap-validator-learnings",
       "source_version": "HEAD",
-      "content_hash": "b42addf91c3226b99034d7bf6c8af7f174ecba7a799a738640780586faf296b8",
+      "content_hash": "3f316e6e19854e6a7117237af01cfa5b38d8f0331b97e3167e26e684ed3699b2",
       "domain_letter": "I",
-      "persisted_at": "2026-11-20T05:08:25.183Z"
+      "persisted_at": "2026-11-20T06:03:03.465Z"
     },
     "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-hreflang-checker-learnings-": {
       "item_id": "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-hreflang-checker-learnings-",
@@ -301027,6 +301032,68 @@
       "content_hash": "007a6bbd440f6740022460f7ff1918b9e67fbdb2f704e9d5736b84eea6c6fa8c",
       "domain_letter": "H",
       "persisted_at": "2026-11-20T05:54:27.796Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-crawlcove-xml-sitemap-validator-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-crawlcove-xml-sitemap-validator-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-crawlcove-crawlcove-sitemap-validator-search-distribution-intelligence-crawlcove.md",
+      "title": "Search & Distribution Intelligence: CrawlCove/xml-sitemap-validator Core Invariants",
+      "repository": "CrawlCove/xml-sitemap-validator",
+      "source_version": "97bda8e7",
+      "content_hash": "d26c8e76fe0ea9ca639cb52718dd5e8d6550ae92ab42dddf2e8a0b6025f4b1be",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-20T06:02:26.753Z"
+    },
+    "rule-9524": {
+      "learning_id": "rule-9524",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9524,
+      "title": "fix typos in doc comments",
+      "source_url": "https://github.com/kcl-lang/kcl",
+      "source_version": "4e4df138",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T06:02:32.228Z"
+    },
+    "candidate_directive-fix-typos-in-doc-comments": {
+      "item_id": "candidate_directive-fix-typos-in-doc-comments",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OU3G-fix-typos-in-doc-comments.md",
+      "title": "fix typos in doc comments",
+      "repository": "kcl-lang-kcl-learnings",
+      "source_version": "HEAD",
+      "content_hash": "11eda653d6d5e4c7177294f7132988fdbf4447d83f242966aff0c92171978101",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-20T06:03:04.156Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-sitemap-validator-learnings": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-sitemap-validator-learnings",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-crawlcove-crawlcove-sitemap-validator-learnings-search-distribution-intelligence.md",
+      "title": "Search & Distribution Intelligence: crawlcove-crawlcove-sitemap-validator-learnings Core Invariants",
+      "repository": "crawlcove-crawlcove-sitemap-validator-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7c758fe6b8124f75fe3dd25ad3f5392b7dd63e6f5b9f1a41c0c27710f74f43d8",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-20T06:03:03.638Z"
+    },
+    "domain_intelligence-product-intelligence-kcl-lang-kcl-learnings-core-invariants": {
+      "item_id": "domain_intelligence-product-intelligence-kcl-lang-kcl-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-kcl-lang-kcl-learnings-product-intelligence-kcl-lang-kcl-learnings-core-invarian.md",
+      "title": "Product Intelligence: kcl-lang-kcl-learnings Core Invariants",
+      "repository": "kcl-lang-kcl-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3d56922409d29d593bf9f0cad029160ed779ff0f5cd01f0d333c124cacd41725",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-20T06:03:04.321Z"
     }
   },
   "ai-builder-brain": {

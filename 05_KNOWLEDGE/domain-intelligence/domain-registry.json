@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T05:54:30.317Z",
-  "total_records": 2078,
+  "last_updated": "2026-11-20T06:03:05.336Z",
+  "total_records": 2082,
   "domains": {
     "A": {
       "total": 17,
@@ -27,7 +27,7 @@
       ]
     },
     "B": {
-      "total": 17,
+      "total": 18,
       "record_ids": [
         "DOM-B-44DC921B",
         "DOM-B-1CC83E41",
@@ -45,7 +45,8 @@
         "domain_intelligence-product-intelligence-kcl-lang-kcl-core-invariants",
         "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
         "domain_intelligence-product-intelligence-transact-rs-sqlx-core-invariants",
-        "domain_intelligence-product-intelligence-transact-rs-sqlx-learnings-core-invariants"
+        "domain_intelligence-product-intelligence-transact-rs-sqlx-learnings-core-invariants",
+        "domain_intelligence-product-intelligence-kcl-lang-kcl-learnings-core-invariants"
       ]
     },
     "C": {
@@ -1956,7 +1957,7 @@
       ]
     },
     "J": {
-      "total": 35,
+      "total": 38,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -1992,7 +1993,10 @@
         "DOM-J-AD18FD9E",
         "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-hreflang-checker-learnings-",
         "DOM-J-114E2D99",
-        "DOM-J-F8E24CC5"
+        "DOM-J-F8E24CC5",
+        "domain_intelligence-search-distribution-intelligence-crawlcove-xml-sitemap-validator-core-invariants",
+        "DOM-J-00DA3196",
+        "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-sitemap-validator-learnings"
       ]
     },
     "K": {
@@ -17728,8 +17732,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "d41fbc045da640c61aad1776a9a37124d69e7ede28ef508325a8e740c646cea3",
-      "created_at": "2026-11-20T05:37:07.369Z"
+      "content_hash": "21c5777e6bcafdc5f4a61e22934b0d736758593d90fbfb83265a2aaeb15f95d5",
+      "created_at": "2026-11-20T06:03:05.336Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -27620,8 +27624,8 @@
       "title": "Product Intelligence: kcl-lang/kcl Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-kcl-lang-kcl-product-intelligence-kcl-lang-kcl-core-invariants.md",
       "repository": "kcl-lang/kcl",
-      "content_hash": "558408ea40fbdb60e819e385e5583c42262359c138bee31c0491caf21bce2855",
-      "created_at": "2026-11-17T14:33:28.978Z"
+      "content_hash": "5c30ffa31472073fb5d118179ef5a98772b6ceeabf33ddb8cb515b701f4e9125",
+      "created_at": "2026-11-20T06:02:32.746Z"
     },
     "domain_intelligence-architecture-intelligence-redisearch-redisearch-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-redisearch-redisearch-core-invariants",
@@ -35053,6 +35057,67 @@
       "repository": "crawlcove-crawlcove-robots-txt-tester-learnings",
       "content_hash": "3d3ac34faceb870ba2a65d7c05264899954a0e24b0d73a15ae3b1c9c90f7b0a8",
       "created_at": "2026-11-20T05:54:27.394Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-crawlcove-xml-sitemap-validator-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-crawlcove-xml-sitemap-validator-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: CrawlCove/xml-sitemap-validator Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-crawlcove-crawlcove-sitemap-validator-search-distribution-intelligence-crawlcove.md",
+      "repository": "CrawlCove/xml-sitemap-validator",
+      "content_hash": "d26c8e76fe0ea9ca639cb52718dd5e8d6550ae92ab42dddf2e8a0b6025f4b1be",
+      "created_at": "2026-11-20T06:02:26.753Z"
+    },
+    "DOM-J-00DA3196": {
+      "record_id": "DOM-J-00DA3196",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [],
+      "title": "The sitemap URL you submit in Search Console has to return 200.: Check the URL the server and any bot-blocking on the host",
+      "content": "Check the URL, the server, and any bot-blocking on the host.",
+      "content_hash": "f1cebbcb09b86370d784c81bc63bd50b651cd7b0998bc80d23cacc15c73c76fa",
+      "summary": "Check the URL, the server, and any bot-blocking on the host. -> Check the URL, the server, and any bot-blocking on the host.",
+      "provenance": {
+        "source_uri": "project://crawlcove-crawlcove-sitemap-validator/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "`not-found` / `fetch-error`",
+        "author_or_entity": "AI-Builder-Brain Project Learning (crawlcove-crawlcove-sitemap-validator)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of crawlcove-crawlcove-sitemap-validator"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T06:03:02.842Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-sitemap-validator-learnings": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-sitemap-validator-learnings",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: crawlcove-crawlcove-sitemap-validator-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-crawlcove-crawlcove-sitemap-validator-learnings-search-distribution-intelligence.md",
+      "repository": "crawlcove-crawlcove-sitemap-validator-learnings",
+      "content_hash": "7c758fe6b8124f75fe3dd25ad3f5392b7dd63e6f5b9f1a41c0c27710f74f43d8",
+      "created_at": "2026-11-20T06:03:03.638Z"
+    },
+    "domain_intelligence-product-intelligence-kcl-lang-kcl-learnings-core-invariants": {
+      "record_id": "domain_intelligence-product-intelligence-kcl-lang-kcl-learnings-core-invariants",
+      "domain_letter": "B",
+      "title": "Product Intelligence: kcl-lang-kcl-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-kcl-lang-kcl-learnings-product-intelligence-kcl-lang-kcl-learnings-core-invarian.md",
+      "repository": "kcl-lang-kcl-learnings",
+      "content_hash": "3d56922409d29d593bf9f0cad029160ed779ff0f5cd01f0d333c124cacd41725",
+      "created_at": "2026-11-20T06:03:04.321Z"
     }
   }
 }

@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-20T05:54:25.809Z",
+  "updated_at": "2026-11-20T06:03:02.863Z",
   "statistics": {
-    "total_nodes": 412,
+    "total_nodes": 413,
     "total_edges": 183,
     "domain_distribution": {
       "D": 264,
       "M": 1,
       "H": 65,
-      "J": 19,
+      "J": 20,
       "K": 24,
       "L": 8,
       "G": 1,
@@ -9209,6 +9209,28 @@
       ],
       "created_at": "2026-11-20T05:54:25.809Z",
       "updated_at": "2026-11-20T05:54:25.809Z"
+    },
+    "DOM-J-00DA3196": {
+      "id": "DOM-J-00DA3196",
+      "domain": "J",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "The sitemap URL you submit in Search Console has to return 200.: Check the URL the server and any bot-blocking on the host",
+      "summary": "Check the URL, the server, and any bot-blocking on the host. -> Check the URL, the server, and any bot-blocking on the host.",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://crawlcove-crawlcove-sitemap-validator/crawlcove-crawlcove-sitemap-validator-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "`not-found` / `fetch-error`",
+        "author_or_entity": "AI-Builder-Brain Project Learning (crawlcove-crawlcove-sitemap-validator)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "J",
+        "Search & Distribution Intelligence"
+      ],
+      "created_at": "2026-11-20T06:03:02.863Z",
+      "updated_at": "2026-11-20T06:03:02.863Z"
     }
   },
   "edges": [
