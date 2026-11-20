@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T17:37:23.521Z",
+  "last_updated": "2026-11-20T17:45:32.107Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "e9b2fba0f66fc4cd03de7702433853d334aa7839e9797f0fb0316bc898086f18",
-      "verified_at": "2026-11-20T17:12:22.931Z",
+      "content_hash": "64d10ae7a2b1df2f8530a9c7e8ed5eab3f765f9e147618e51613f437076debe8",
+      "verified_at": "2026-11-20T17:45:32.106Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T17:12:22.931Z"
+      "last_updated": "2026-11-20T17:45:32.106Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "daddcc3ed76eea6c4e33cb61bdcf279d9d3f79c03744ba0a2c2f05f1f8269b12",
-      "verified_at": "2026-11-19T15:16:38.947Z",
+      "content_hash": "d2a15c5645fcaf40722d08d986d9a6129e797f5b277ca4930b45ee883885e010",
+      "verified_at": "2026-11-20T17:45:24.744Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T15:16:38.947Z"
+      "last_updated": "2026-11-20T17:45:24.744Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",

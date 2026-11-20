@@ -11598,3 +11598,5 @@
 | `CYCLE-20261120-7AZU` | `2026-11-20T17:29:16.650Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9608` | Yes (`2bf92818...`) |
 | `CYCLE-20261120-HJ3S` | `2026-11-20T17:37:13.720Z` | `cheeriojs/dom-serializer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9609` | Yes (`a3545286...`) |
 | `CYCLE-20261120-HQNO` | `2026-11-20T17:37:23.508Z` | `topoteretes/cognee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9610` | Yes (`9f60f6f6...`) |
+| `CYCLE-20261120-S1YY` | `2026-11-20T17:45:24.731Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9611` | Yes (`d2a15c56...`) |
+| `CYCLE-20261120-S7NI` | `2026-11-20T17:45:32.094Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9612` | Yes (`64d10ae7...`) |

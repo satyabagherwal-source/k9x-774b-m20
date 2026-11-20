@@ -4,24 +4,24 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "bb087a5c",
+  "source_version": "aa069366",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T17:12:23.132Z",
+  "timestamp": "2026-11-20T17:45:32.299Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `bb087a5c`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T17:12:23.132Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `aa069366`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T17:45:32.299Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence)
-- **Confidence Rating**: 52%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NucleoidAI/Nucleoid:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T17:12:21.891Z  
+> **Harvest Timestamp**: 2026-11-20T17:45:31.087Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1572,144 +1572,28 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bb087a5c` (2026-11-20)
-**Commit Message**: Draft NUC 125 Stepped Slices
+### Incident Patch 1: `aa069366` (2026-11-20)
+**Commit Message**: Initialize synthesized instance value fields
 
-Category: Syntax enhancement, drawn uniformly at random (index 0 of the
-five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
-continuous /nuc-proposal cycle. Syntax enhancement requires the token
-non-regression gate in continuous mode.
+Set input_value and output_value to undefined when creating synthesized instances.
 
-Requested change: a slice gains an optional step after a second colon,
-SEQUENCE[start:stop:step], with every part optional (xs[::2], xs[1::2],
-xs[:4:2], s[::-1], Name[::3]). The step follows Python's slices: a
-positive step walks forward, a negative one backward from the end, and
-the bounds keep NUC 61's slice rules, with negative bounds counting
-from the end and every bound clamped. It applies to lists, strings
-(by Unicode scalar value) and the instance lists of declared classes,
-and declarations that hold a stepped slice stay live. At the accepted
-revision every subscript with a second colon is a whole-program
-SyntaxError (Unexpected ':' or Expected ']' but found ':'); only those
-inputs change, and every one-colon slice keeps its parse and result.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `arc/src/synthesizer.ts` (modified, +2/-0)
 ```diff
-@@ -68,6 +68,7 @@ Created: 31-Jul-2026
- | [104](nuc-0104.md) | Any and All Class References | Accepted |
- | [109](nuc-0109.md) | Operator Section Arguments | Accepted |
- | [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Accepted |
-+| [125](nuc-0125.md) | Stepped Slices | Draft |
+@@ -51,6 +51,8 @@ async function synthesize({ train }) {
  
- ### Runtime features
- 
-@@ -303,6 +304,7 @@ Created: 31-Jul-2026
- | [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Accepted |
- | [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Accepted |
- | [124](nuc-0124.md) | List and Population Quantiles | Standards Track | Utility enhancement | Accepted |
-+| [125](nuc-0125.md) | Stepped Slices | Standards Track | Syntax enhancement | Draft |
- 
- ## Copyright
- 
-```
-
-**File**: `docs/nuc-0125.md` (added, +66/-0)
-```diff
-@@ -0,0 +1,66 @@
-+# NUC 125 -- Stepped Slices
-+
-+```
-+NUC: 125
-+Title: Stepped Slices
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Syntax enhancement
-+Created: 20-Nov-2026
-+```
-+
-+## Abstract
-+
-+- A slice gains an optional step after a second colon:
-+  `SEQUENCE[start:stop:step]`. Every part may be omitted, so `xs[::2]` takes
-+  every other item, `xs[1::2]` the others, `s[::-1]` reverses a string and
-+  `Reading[::3]` takes every third instance of a class.
-+- The step follows Python's slices: a positive step walks forward from the
-+  start, a negative step walks backward from the end, and the bounds keep
-+  the rules of [NUC 61](nuc-0061.md)'s slices and ranges, with negative
-+  bounds counting from the end and every bound clamped to the sequence.
-+- It applies wherever a slice applies today: lists, strings, which it walks
-+  by Unicode scalar value as `slice` does, and the instance lists of
-+  declared classes. A declaration that holds a stepped slice stays live, as
-+  one that holds a slice does.
-+- At the accepted revision every subscript with a second colon is a
-+  whole-program `SyntaxError`, such as `Unexpected ':'` for `xs[::2]` and
-+  `Expected ']' but found ':'` for `xs[1:5:2]`. Only those inputs change.
-+  Every one-colon slice keeps its parse and its result.
-+
-+## Motivation
-+
-+- World models walk their sequences by stride. A grid model reads every
-+  other row or column, flips rows to mirror a shape, and pairs alternating
-+  readings; a text model reverses words. Slices already cut a sequence by
-+  position, but they cannot skip or walk backward.
-+- Without a step, accepted programs spell a stride with loops that push
-+  items into a list, with index arithmetic over a filtered list, or, for a
-+  reversed string, with `s.split("").reverse().join("")`. These spellings
-+  repeat the sequence, depend on its values, or cannot stay live in a
-+  declaration. `xs[::2]` and `s[::-1]` state the stride once, in the slice
-+  syntax that already exists.
-+
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Specification
-+
-+- Pending: the proposer completes this section.
-+
-+## Errors
-+
-+- Pending: the proposer completes this section.
-+
-+## Reference Implementation
-+
-+- Pending: the proposer completes this section.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
+         const synthesized_instance = {
+           instance_name: synthesized_instance_name,
++          input_value: undefined,
++          output_value: undefined,
+           input_instance_matrix: input_instance_matrix,
+           output_instance_matrix: undefined,
+         };
 ```
 
 ---
 
-### Incident Patch 2: `df90ce89` (2026-11-20)
-**Commit Message**: NUC 124 List and Population Quantiles
-
-Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Utility enhancement, token comparison required):
-the frozen candidate meets every hard criterion and passes every policy
-check, the token non-regression gate included. The cycle found no stale
-Draft, drew Utility enhancement uniformly from the five eligible
-categories, allocated NUC 124 in 3aa2775c, renewed its claim in
-af0e46a1 after a first evaluator stopped on an API timeout, and
-completed it with fresh baselines, candidate, proposer, Rust
-improvement pass and evaluator.
-
-Lists and class instance lists gain the read-only query quantile.
-RECEIVER.quantile(q) returns the q quantile of the items for a number q
-from 0 to 1, and RECEIVER.quantile(q, selector) that of selector(item),
-by R's type 7, the default of NumPy's and pandas' quantile: the rank is
-(n - 1) * q over a private sorted copy, a whole rank or two equal
-neighbours give that value, and otherwise (1 - t) * s[lo] + t * s[lo + 1].
-So [3, 3].quantile(0.01) is 3, a single value gives itself, an empty
-receiver NaN, NaN values NaN and an undefined value undefined. Any rank
-that is not a number from 0 to 1 r
+### Incident Patch 2: `5b7c3a28` (2026-11-20)
+**Commit Message**: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
 
 **File**: `README.md` (modified, +31/-0)
 ```diff
@@ -1871,9 +1755,17 @@ that is not a number from 0 to 1 r
  **Flattening keeps the dirty tiles of every room counted**
 ```
 
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
+**File**: `docs/nuc-0000.md` (modified, +4/-2)
 ```diff
-@@ -132,7 +132,7 @@ Created: 31-Jul-2026
+@@ -68,6 +68,7 @@ Created: 31-Jul-2026
+ | [104](nuc-0104.md) | Any and All Class References | Accepted |
+ | [109](nuc-0109.md) | Operator Section Arguments | Accepted |
+ | [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Accepted |
++| [125](nuc-0125.md) | Stepped Slices | Draft |
+ 
+ ### Runtime features
+ 
+@@ -132,7 +133,7 @@ Created: 31-Jul-2026
  | [111](nuc-0111.md) | Reactive String Padding | Accepted |
  | [114](nuc-0114.md) | List and Population Products | Accepted |
  | [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Accepted |
@@ -1882,15 +1774,87 @@ that is not a number from 0 to 1 r
  
  ### Reasoning enhancement
  
-@@ -302,7 +302,7 @@ Created: 31-Jul-2026
+@@ -302,7 +303,8 @@ Created: 31-Jul-2026
  | [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
  | [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Accepted |
  | [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Accepted |
 -| [124](nuc-0124.md) | List and Population Quantiles | Standards Track | Utility enhancement | Draft |
 +| [124](nuc-0124.md) | List and Population Quantiles | Standards Track | Utility enhancement | Accepted |
++| [125](nuc-0125.md) | Stepped Slices | Standards Track | Syntax enhancement | Draft |
  
  ## Copyright
  
+```
+
+**File**: `docs/nuc-0125.md` (added, +66/-0)
+```diff
+@@ -0,0 +1,66 @@
++# NUC 125 -- Stepped Slices
++
++```
++NUC: 125
++Title: Stepped Slices
++Author: Can Mingir <canmingir@gmail.com>
++Status: Draft
++Type: Standards Track
++Category: Syntax enhancement
++Created: 20-Nov-2026
++```
++
++## Abstract
++
++- A slice gains an optional step after a second colon:
++  `SEQUENCE[start:stop:step]`. Every part may be omitted, so `xs[::2]` takes
++  every other item, `xs[1::2]` the others, `s[::-1]` reverses a string and
++  `Reading[::3]` takes every third instance of a class.
++- The step follows Python's slices: a positive step walks forward from the
++  start, a negative step walks backward from the end, and the bounds keep
++  the rules of [NUC 61](nuc-0061.md)'s slices and ranges, with negative
++  bounds counting from the end and every bound clamped to the sequence.
++- It applies wherever a slice applies today: lists, strings, which it walks
++  by Unicode scalar value as `slice` does, and the instance lists of
++  declared classes. A declaration that holds a stepped slice stays live, as
++  one that holds a slice does.
++- At the accepted revision every subscript with a second colon is a
++  whole-program `SyntaxError`, such as `Unexpected ':'` for `xs[::2]` and
++  `Expected ']' but found ':'` for `xs[1:5:2]`. Only those inputs change.
++  Every one-colon slice keeps its parse and its result.
++
++## Motivation
++
++- World models walk their sequences by stride. A grid model reads every
++  other row or column, flips rows to mirror a shape, and pairs alternating
++  readings; a text model reverses words. Slices already cut a sequence by
++  position, but they cannot skip or walk backward.
++- Without a step, accepted programs spell a stride with loops that push
++  items into a list, with index arithmetic over a filtered list, or, for a
++  reversed string, with `s.split("").reverse().join("")`. These spellings
++  repeat the sequence, depend on its values, or cannot stay live in a
++  declaration. `xs[::2]` and `s[::-1]` state the stride once, in the slice
++  syntax that already exists.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
 ```
 
 **File**: `nucleoid.spec.md` (modified, +175/-0)
@@ -1972,109 +1936,6 @@ that is not a number from 0 to 1 r
 +  change makes invalid roll back through
 ```
 
-**File**: `src/lang/ast/array/aggregate.rs` (modified, +43/-7)
-```diff
-@@ -2,7 +2,7 @@ use std::cmp::Ordering;
- use std::sync::Arc;
- 
- use super::query::{expect_function, optional_selector};
--use crate::error::Result;
-+use crate::error::{Error, Result};
- use crate::lang::ast::operator::{binary, compare};
- use crate::lang::ast::{BinaryOp, Function};
- use crate::runtime::Runtime;
-@@ -34,7 +34,7 @@ pub(super) fn is_unordered(key: &Value) -> bool {
- }
- 
- #[must_use]
--fn median_value(values: &[Value]) -> Value {
-+fn sorted_statistic(values: &[Value], statistic: impl FnOnce(&[f64]) -> f64) -> Value {
-     if values.iter().any(Value::is_undefined) {
-         return Value::Undefined;
-     }
-@@ -46,17 +46,19 @@ fn median_value(values: &[Value]) -> Value {
-     }
- 
-     numbers.sort_by(|left, right| left.partial_cmp(right).unwrap_or(Ordering::Equal));
-+    Value::Number(statistic(&numbers))
-+}
- 
--    let median = match numbers.split_at_checked(numbers.len() / 2) {
-+#[must_use]
-+fn median(numbers: &[f64]) -> f64 {
-+    match numbers.split_at_checked(numbers.len() / 2) {
-         Some((lower, upper)) => match (lower.last(), upper.first()) {
-             (Some(low), Some(high)) if lower.len() == upper.len() => (low + high) / 2.0,
-             (_, Some(center)) => *center,
-             (_, None) => f64::NAN,
-         },
-         None => f64::NAN,
--    };
--
--    Value::Number(median)
-+    }
- }
- 
- #[must_use]
-@@ -76,6 +78,28 @@ fn population_variance(values: &[Value]) -> Option<f64> {
-     Some(squares / count)
- }
- 
-+fn quantile_rank(rank: Option<&Value>) -> Result<f64> {
-+    match rank {
-+        Some(Value::Number(rank)) if (0.0..=1.0).contains(rank) => Ok(*rank),
-+        _ => Err(Error::type_error("quantile expects a number from 0 to 1")),
-+    }
-+}
-+
-+#[must_use]
-+fn interpolate(numbers: &[f64], rank: f64) -> f64 {
-+    let position = number::from_usize(numbers.len().saturating_sub(1)) * rank;
-+    let lower = number::to_usize(position);
-+    let fraction = position - number::from_usize(lower);
-+
-+    match numbers.get(lower..) {
-+        Some([low, high, ..]) if !number::equal(fraction, 0.0) && !number::equal(*low, *high) => {
-+            (1.0 - fraction) * low + fraction * high
-+        }
-+        Some([low, ..]) => *low,
-+        Some([]) | None => f64::NAN,
-+    }
-+}
-+
- impl Runtime {
-     pub(super) fn aggregate_items(
-         &mut self,
-@@ -97,14 +121,26 @@ impl Runtime {
-         Ok(match property {
-             "distinct" => Value::List(self.distinct_values(values)),
-             "mode" => self.mode_value(values),
--            "median" => median_value(&values),
-+            "median" => sorted_statistic(&values, median),
-             "variance" => population_variance(&values).map_or(Value::Undefined, Value::Number),
-             "stdev" => population_variance(&values)
-                 .map_or(Value::Undefined, |variance| Value::Number(variance.sqrt())),
-             _ => builtins::math(property, &values)?,
-         })
-     }
- 
-+    pub(super) fn quantile_items(
-+        &mut self,
-+        items: Vec<Value>,
-+        arguments: &[Value],
-+    ) -> Result<Value> {
-+        let rank = quantile_rank(arguments.first())?;
-+        let selector = optional_selector(arguments.get(1).cloned(), "quantile")?;
-+        let values = self.select_items(items, selector.as_ref())?;
-+        let quantile = sorted_statistic(&values, |numbers| interpolate(numbers, rank));
-+        Ok(quantile)
-+    }
-+
-     pub(super) fn extreme_item(
-         &mut self,
-         items: Vec<Value>,
-```
-
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
 - **PR #70** (2025-01-09): Variable Value in Python (@canmingir)
@@ -2101,22 +1962,22 @@ that is not a number from 0 to 1 r
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 125 Stepped Slices
+## X. Initialize synthesized instance value fields
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/src/synthesizer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bb087a5c`: Draft NUC 125 Stepped Slices. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aa069366`: Initialize synthesized instance value fields. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/synthesizer.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [125](nuc-0125.md) | Stepped Slices | Draft |
-| [125](nuc-0125.md) | Stepped Slices | Standards Track | Syntax enhancement | Draft |
+          input_value: undefined,
+          output_value: undefined,
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2126,7 +1987,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bb087a5c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aa069366` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

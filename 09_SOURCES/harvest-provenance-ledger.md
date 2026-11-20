@@ -11631,3 +11631,5 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `d4845b0c` | Multi-dimensional audit evidence | 2026-11-20T17:29:16.654Z |
 | `learn-github-cheeriojs-dom-serializer` | `https://github.com/cheeriojs/dom-serializer` | `390aa36b` | Multi-dimensional audit evidence | 2026-11-20T17:37:13.725Z |
 | `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `1961133d` | Multi-dimensional audit evidence | 2026-11-20T17:37:23.512Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `f180b83d` | Multi-dimensional audit evidence | 2026-11-20T17:45:24.735Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `aa069366` | Multi-dimensional audit evidence | 2026-11-20T17:45:32.099Z |

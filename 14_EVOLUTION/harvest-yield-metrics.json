@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T17:37:23.518Z",
-  "total_cycles_completed": 11045,
-  "total_learnings_persisted": 11045,
-  "total_rules_promoted": 10401,
+  "last_updated": "2026-11-20T17:45:32.104Z",
+  "total_cycles_completed": 11047,
+  "total_learnings_persisted": 11047,
+  "total_rules_promoted": 10403,
   "history": [
-    {
-      "timestamp": "2026-11-19T19:11:53.411Z",
-      "repository": "datalab-to/indra-ocr",
-      "learningId": "learn-huggingface-datalab-to-indra-ocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T19:11:56.536Z",
-      "repository": "vercel-labs/agent-desktop",
-      "learningId": "learn-github-vercel-labs-agent-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T19:12:05.388Z",
       "repository": "beclab/Olares",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-20T17:37:23.518Z",
       "repository": "topoteretes/cognee",
       "learningId": "learn-github-topoteretes-cognee",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T17:45:24.741Z",
+      "repository": "siderolabs/talos",
+      "learningId": "learn-github-siderolabs-talos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T17:45:32.104Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

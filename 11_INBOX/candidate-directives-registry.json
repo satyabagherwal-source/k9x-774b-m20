@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T17:37:30.364Z",
+  "last_updated": "2026-11-20T17:45:37.096Z",
   "directives": [
     {
       "id": "CD-001",
@@ -38417,6 +38417,55 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0F7C46-build-download-onnx-runtime-archives-fro.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-SAHZ",
+      "directive_title": "make read-only volumes read-only for pods",
+      "source_repo": "siderolabs-talos-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-SAHZ-make-read-only-volumes-read-only-for-pods.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-SB5X",
+      "directive_title": "Initialize synthesized instance value fields",
+      "source_repo": "nucleoidai-nucleoid-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-SB5X-initialize-synthesized-instance-value-fields.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-A502D6",
+      "directive_title": "make read-only volumes read-only for pods",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "siderolabs-talos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A502D6-make-read-only-volumes-read-only-for-pod.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-715F45",
+      "directive_title": "Initialize synthesized instance value fields",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-715F45-initialize-synthesized-instance-value-fi.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-E53B17",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E53B17-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-20"
     }
   ]

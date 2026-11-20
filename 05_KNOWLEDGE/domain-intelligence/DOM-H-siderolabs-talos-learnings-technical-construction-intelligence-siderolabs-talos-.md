@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T15:21:32.940Z",
+  "timestamp": "2026-11-20T17:45:35.665Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-siderolabs-talos-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [siderolabs-talos-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T15:21:32.940Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T17:45:35.665Z`  
 > **Learning ID**: `LEARN-EVO-siderolabs-talos-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from siderolabs-talos-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `31957c52`  
+> **Source Version**: `f180b83d`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T15:16:37.950Z  
+> **Timestamp**: 2026-11-20T17:45:23.711Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T15:16:37.945Z  
+> **Harvest Timestamp**: 2026-11-20T17:45:23.501Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11567 stars
+- **Stars / Engagement**: 11569 stars
 
 ---
 
@@ -2139,11 +2139,11 @@ func a
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15018** (2026-11-19): **fix: stop sharing the process handle with the reaper waiter**
-  *Symptoms*: ProcessWaitWrapper calls Release on the os.Process once the reaper reports the exit, and Release sets Process.Pid to -1. The process and sandboxd runners handed that same handle to the waiter and kept signalling it. If the reaper reaps the child before os.FindProcess, Go returns a PID-based handle, whose Signal reads Pid, so stopping the service raced the waiter. The race detector caught this in TestStopFailingAndRestarting. The sandboxd runner also read process.Pid after the waiter released it, so its exit log always said "pid -1".  Give the waiter its own handle and use the launched PID directly. Add a path option to the sandboxd runner so tests can launch a fake sandboxd.
+- **Issue #15030** (2026-11-20): **feat: update etcd to 3.7.4**
+  *Symptoms*: See https://github.com/etcd-io/etcd/blob/main/CHANGELOG/CHANGELOG-3.7.md 
 
-- **Issue #15012** (2026-11-18): **test: share closed-port helper and fix more port races**
-  *Symptoms*: Follow-up to https://github.com/siderolabs/talos/pull/15008  Move the closed-port helper from the container probe tests into internal/pkg/testport and use it in the events sink and DNS proxy tests. Retry the TCP+UDP same-port bind in the DNS proxy tests and the port rebind in the VNC and JSON-lines tests. 
+- **Issue #15029** (2026-11-20): **test: avoid racing CPU scaling governor write**
+  *Symptoms*: `TestDroppedFieldRestored` read `scaling_governor` straight from the fake sysfs once, with no retry. The spec still requests the governor, so every reconcile rewrites it. In a plain tempdir, `os.WriteFile` truncates the file before writing it, which leaves a short window where it is empty.  Assert on the `CPUScalingStatus` instead. The controller fills it by reading sysfs after applying changes, so it cannot race the write.  Same approach as in https://github.com/siderolabs/talos/pull/14489 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2160,559 +2160,333 @@ func a
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6738ba5c` (2026-11-17)
-**Commit Message**: fix: skip DRBD and network block devices in LVM status scans
+### Incident Patch 1: `aee818eb` (2026-11-19)
+**Commit Message**: fix: make read-only volumes read-only for pods
 
-LVMScanController runs vgs/pvs/lvs on every block device event, and the
-host lvm.conf has no filter, so the scan opens every device on the node.
-On DRBD that open keeps the peer from being promoted ("Peer may not
-become primary while device is opened read-only"), and while DRBD has
-I/O suspended the read blocks in D state and holds the device open
-until the node reboots.
+A volume mounted with readOnly: true was read-only only through the
+mount attribute of its host mount. A pod hostPath bind of it got
+remounted read-write by the container runtime, and the copy in the
+sandbox namespace never got the attribute when the volume was mounted
+or remounted after the namespace was created. Pods could write to the
+volume either way.
 
-Pass a global_filter with --config on the report commands that rejects
-DRBD, NBD, Ceph RBD and ZFS zvol devices. Only vgs/pvs/lvs get the
-filter, so pvcreate, vgcreate and the other commands still use the
-host lvm.conf.
+Mount read-only volumes with a read-only superblock, and reconfigure
+the superblock when readOnly changes, so writes fail through every
+mount of the filesystem. Detached mounts are left alone: they are
+written through, and the volume is remounted read-write later.
 
-Also bound each scan with a one-minute timeout, so an lvm process that
-never answers doesn't stop LVM status refreshes on the node for good.
+Fixes: #14960
+Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
 
-Fixes #14995
-
-Signed-off-by: Dario Emerson <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/controllers/storage/lvm_scan.go` (modified, +11/-3)
+**File**: `internal/app/machined/pkg/controllers/block/mount.go` (modified, +6/-0)
 ```diff
-@@ -11,6 +11,7 @@ import (
- 	"os/exec"
- 	"strconv"
+@@ -804,6 +804,12 @@ func (ctrl *MountController) handleDiskMountOperation(
+ 
+ 		if mountReadOnlyOnMount(mountRequest, volumeStatus) {
+ 			opts = append(opts, mount.WithReadOnly())
++
++			// The container runtime remounts the bind of a pod hostPath volume read-write, which clears the
++			// read-only attribute of that mount: only a read-only superblock refuses writes through every mount.
++			if !mountRequest.TypedSpec().Detached {
++				fsOpts = append(fsOpts, fsopen.WithBoolParameter("ro"))
++			}
+ 		}
+ 
+ 		if mountRequest.TypedSpec().Detached {
+```
+
+**File**: `internal/pkg/mount/v3/point.go` (modified, +43/-2)
+```diff
+@@ -14,6 +14,7 @@ import (
  	"strings"
-+	"time"
+ 	"syscall"
+ 	"time"
++	"unsafe"
  
- 	"github.com/cosi-project/runtime/pkg/controller"
- 	"github.com/cosi-project/runtime/pkg/safe"
-@@ -125,8 +126,15 @@ func (ctrl *LVMScanController) Run(ctx context.Context, r controller.Runtime, lo
- 	}
+ 	"github.com/siderolabs/go-retry/retry"
+ 	"golang.org/x/sys/unix"
+@@ -325,28 +326,68 @@ func (p *Point) Root() xfs.Root {
+ 	return p.root
  }
  
-+// lvmScanTimeout bounds a single vgs/pvs/lvs run, so a device that never
-+// answers doesn't stop LVM status refreshes on the node for good.
-+const lvmScanTimeout = time.Minute
-+
- func (ctrl *LVMScanController) scan(ctx context.Context, r controller.Runtime, logger *zap.Logger) error {
--	vgs, err := ctrl.LVM.VGS(ctx)
-+	scanCtx, cancel := context.WithTimeout(ctx, lvmScanTimeout)
-+	defer cancel()
-+
-+	vgs, err := ctrl.LVM.VGS(scanCtx)
- 	if err != nil {
- 		if errors.Is(err, exec.ErrNotFound) {
- 			logger.Debug("lvm binary not found; skipping LVM scan")
-@@ -137,12 +145,12 @@ func (ctrl *LVMScanController) scan(ctx context.Context, r controller.Runtime, l
- 		return fmt.Errorf("vgs: %w", err)
- 	}
- 
--	pvs, err := ctrl.LVM.PVS(ctx)
-+	pvs, err := ctrl.LVM.PVS(scanCtx)
- 	if err != nil {
- 		return fmt.Errorf("pvs: %w", err)
- 	}
- 
--	lvs, err := ctrl.LVM.LVS(ctx)
-+	lvs, err := ctrl.LVM.LVS(scanCtx)
- 	if err != nil {
- 		return fmt.Errorf("lvs: %w", err)
- 	}
-```
-
-**File**: `internal/pkg/lvm/lvm.go` (modified, +18/-0)
-```diff
-@@ -114,14 +114,32 @@ func (lvm *LVM) run(ctx context.Context, subcommand string, args ...string) (str
- // come back as the literal string "unknown" regardless of the real state.
- // The default shared (read) lock taken by lvs/pvs/vgs is cheap and lets
- // LVM query DM, which is the only way to get accurate active/open state.
+-// RemountReadOnly remounts the mount point as read-only.
++// RemountReadOnly remounts the filesystem and the mount point as read-only.
 +//
-+// The reports also pass scanFilterConfig with --config, so the scan never
-+// opens replicated or network block devices (see scanFilterConfig).
- var commonReportArgs = []string{
- 	"-a",
- 	"-o", "+all",
- 	"--reportformat", "json",
- 	"--units", "b",
- 	"--nosuffix",
-+	"--config", scanFilterConfig,
++// The read-only attribute of a mount does not propagate to its copies in other mount namespaces,
++// and a bind of it can be remounted read-write. A read-only superblock refuses writes through all of them.
+ func (p *Point) RemountReadOnly() error {
+ 	if p.detached {
+ 		return nil
+ 	}
+ 
++	if err := p.reconfigure("ro"); err != nil {
++		return err
++	}
++
+ 	return p.setattr(&unix.MountAttr{
+ 		Attr_set: unix.MOUNT_ATTR_RDONLY,
+ 	}, 0)
  }
  
-+// scanFilterConfig keeps the status scans away from block devices where an
-+// open has side effects or can block indefinitely.
-+//
-+// The scans run on every block device event, so without a filter they open
-+// every device on the node. On DRBD an open, even read-only, prevents the
-+// peer from being promoted ("Peer may not become primary while device is
-+// opened read-only"), and while DRBD has I/O suspended the read blocks in
-+// D state and keeps the device open until reboot. Network-backed devices
-+// (NBD, Ceph RBD) and ZFS zvols are skipped for the same reason.
-+//
-+// The filter is passed per command, so it only applies to vgs/pvs/lvs and
-+// leaves the host lvm.conf untouched for the other LVM commands.
-+const scanFilterConfig = `devices { global_filter = [ "r|/dev/drbd|", "r|/dev/nbd|", "r|/dev/rbd|", "r|/dev/zd|" ] }`
+-// RemountReadWrite remounts the mount point as read-write.
++// RemountReadWrite remounts the filesystem and the mount point as read-write.
+ func (p *Point) RemountReadWrite() error {
+ 	if p.detached {
+ 		return nil
+ 	}
+ 
++	if err := p.reconfigure("rw"); err != nil {
++		return err
++	}
 +
- // decodeReport unmarshals an LVM JSON report and returns the slice of
- // records stored under `report[*].<section>[*]`.
- //
+ 	return p.setattr(&unix.MountAttr{
+ 		Attr_clr: unix.MOUNT_ATTR_RDONLY,
+ 	}, 0)
+ }
+ 
++// reconfigure sets a flag on the superblock of the mount point, keeping the other parameters of the filesystem.
++func (p *Point) reconfigure(flag string) error {
++	target, err := unix.BytePtrFromString(p.target)
++	if err != nil {
++		return err
++	}
++
++	dirfd := unix.AT_FDCWD
++
++	r, _, errno := unix.Syscall(unix.SYS_FSPICK, uintptr(dirfd), uintptr(unsafe.Pointer(target)), unix.FSPICK_CLOEXEC)
++	if errno != 0 {
++		return fmt.Errorf("fspick %q: %w", p.target, errno)
++	}
++
++	fd := int(r)
++
++	defer unix.Close(fd) //nolint:errcheck
++
++	if err = unix.FsconfigSetFlag(fd, flag); err != nil {
++		return fmt.Errorf("set %q on %q: %w", flag, p.target, err)
++	}
++
++	if err = unix.FsconfigReconfigure(fd); err != nil {
++		return fmt.Errorf("reconfigure %q with %q: %w", p.target, flag, err)
++	}
++
++	return nil
++}
++
+ // SetDisableAccessTime sets or clears the noatime mount attribute.
+ func (p *Point) SetDisableAccessTime(disable bool) error {
+ 	if p.detached {
 ```
 
-**File**: `internal/pkg/lvm/lvm_test.go` (modified, +51/-0)
+**File**: `internal/pkg/mount/v3/point_test.go` (modified, +33/-0)
 ```diff
-@@ -8,6 +8,8 @@ package lvm
+@@ -8,6 +8,7 @@ package mount_test
+ 
  import (
- 	_ "embed"
- 	"encoding/json"
-+	"regexp"
-+	"slices"
+ 	"os"
++	"path/filepath"
  	"testing"
  
  	"github.com/stretchr/testify/assert"
-@@ -289,3 +291,52 @@ func TestTagsUnmarshal(t *testing.T) {
- 		assert.Equal(t, tt.want, []string(v), "input %q", tt.in)
- 	}
+@@ -53,3 +54,35 @@ func TestDetachedMountHardened(t *testing.T) {
+ 	_, err = xfs.OpenFile(point.Root(), "null", os.O_RDONLY, 0)
+ 	require.ErrorIs(t, err, unix.EACCES)
  }
 +
-+func TestScanFilterConfig(t *testing.T) {
-+	t.Parallel()
-+
-+	idx := slices.Index(commonReportArgs, "--config")
-+	require.NotEqual(t, -1, idx, "report args must pass --config")
-+	require.Less(t, idx+1, len(commonReportArgs))
-+	assert.Equal(t, scanFilterConfig, commonReportArgs[idx+1])
-+
-+	// Every entry is a reject pattern ("r|<regex>|"); LVM accepts any device
-+	// that no pattern matches.
-+	var rejects []*regexp.Regexp //nolint:prealloc // testing only, readability over perf
-+
-+	for _, m := range regexp.MustCompile(`"r\|([^|]+)\|"`).FindAllStringSubmatch(scanFilterConfig, -1) {
-+		rejects = append(rejects, regexp.MustCompile(m[1]))
-+	}
-+
-+	require.NotEmpty(t, rejects)
-+
-+	rejected := func(dev string) bool {
-+		return slices.ContainsFunc(rejects, func(re *regexp.Regexp) bool { return re.MatchString(dev) })
-+	}
-+
-+	for _, dev := range []string{
-+		"/dev/drbd1000",
-+		"/dev/drbd/by-res/pvc-0123/0",
-+		"/dev/drbd/by-disk/vg/lv",
-+		"/dev/nbd0",
-+		"/dev/rbd0",
-+		"/dev/rbd/pool/image",
-+		"/dev/zd0",
-+	} {
-+		assert.True(t, rejected(dev), "%s should be filtered out", dev)
-+	}
-+
-+	for _, dev := range []string{
-+		"/dev/sda",
-+		"/dev/sda1",
-+		"/dev/nvme0n1",
-+		"/dev/nvme0n1p3",
-+		"/dev/vda",
-+		"/dev/mapper/vg-lv",
-+		"/dev/dm-0",
-+		"/dev/md0",
-+		"/dev/loop0",
-+	} {
-+		assert.False(t, rejected(dev), "%s should still be scanned", dev)
-+	}
-+}
-```
-
----
-
-### Incident Patch 2: `b404d3a7` (2026-11-19)
-**Commit Message**: fix: stop sharing the process handle with the reaper waiter
-
-ProcessWaitWrapper calls Release on the os.Process once the reaper
-reports the exit, and Release sets Process.Pid to -1. The process
-and sandboxd runners handed that same handle to the waiter and kept
-signaling it. If the reaper reaps the child before os.FindProcess,
-Go returns a PID-based handle, whose Signal reads Pid, so stopping
-the service raced the waiter. The race detector caught this in
-TestStopFailingAndRestarting. The sandboxd runner also read
-process.Pid after the waiter released it, so its exit log always
-said "pid -1".
-
-Give the waiter its own handle and use the launched PID directly.
-Add a path option to the sandboxd runner so tests can launch a fake
-sandboxd.
-
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/sandboxd/runner.go` (modified, +35/-9)
-```diff
-@@ -38,14 +38,32 @@ const ServiceID = "sandboxd"
- // and the dependent services (whose processes the kernel also killed) re-launch
- // into the new namespace via the per-launch launcher getter.
- type sandboxRunner struct {
--	rt runtime.Runtime
-+	rt   runtime.Runtime
-+	path string
-+}
-+
-+// Option configures the sandboxd runner.
-+type Option func(*sandboxRunner)
-+
-+// WithPath sets the sandboxd binary, /sbin/sandboxd by default.
-+func WithPath(path string) Option {
-+	return func(s *sandboxRunner) {
-+		s.path = path
-+	}
- }
- 
- // NewRunner returns a runner.Runner managing the sandboxd lifecycle.
--func NewRunner(rt runtime.Runtime) runner.Runner {
--	return &sandboxRunner{
--		rt: rt,
-+func NewRunner(rt runtime.Runtime, opts ...Option) runner.Runner {
-+	s := &sandboxRunner{
-+		rt:   rt,
-+		path: "/sbin/sandboxd",
-+	}
-+
-+	for _, opt := range opts {
-+		opt(s)
- 	}
-+
-+	return s
- }
- 
- // Open implements runner.Runner.
-@@ -147,7 +165,7 @@ func (s *sandboxRunner) Run(ctx context.Context, eventSink events.Recorder, onSt
- 	// pending SELinux exec label on the fork thread (init_t -> sandboxd_t) without
- 	// contaminating machined's other threads — the mechanism the process runner
- 	// uses for dashboard/apid. fd 3 = ready pipe, fd 4 = control socket.
--	launcher := cap.NewLauncher("/sbin/sandboxd", []string{"/sbin/sandboxd"}, os.Environ())
-+	launcher := cap.NewLauncher(s.path, []string{s.path}, os.Environ())
- 	launcher.Callback(beforeSandboxdExec)
- 
- 	notifyCh := make(chan reaper.ProcessInfo, 8)
-@@ -179,10 +197,18 @@ func (s *sandboxRunner) Run(ctx context.Context, eventSink events.Recorder, onSt
- 		return status, fmt.Errorf("finding process for PID %d: %w", pid, err)
- 	}
- 
-+	defer process.Release() //nolint:errcheck
-+
-+	// The waiter releases its handle, and Release writes Process.Pid, so it must not share the handle used for signals.
-+	waitProcess, err := os.FindProcess(pid)
-+	if err != nil {
-+		return status, fmt.Errorf("finding process for PID %d: %w", pid, err)
-+	}
-+
- 	waitCh := make(chan error, 1)
- 
- 	go func() {
--		waitCh <- reaper.ProcessWaitWrapper(usingReaper, notifyCh, process)
-+		waitCh <- reaper.ProcessWaitWrapper(usingReaper, notifyCh, waitProcess)
- 	}()
- 
- 	// Wait for the init to signal readiness (or die before then).
-@@ -217,16 +243,16 @@ func (s *sandboxRunner) Run(ctx context.Context, eventSink events.Recorder, onSt
- 	status.Started = true
- 
- 	if onStart != nil {
--		onStart(int32(process.Pid)) //nolint:gosec
-+		onStart(int32(pid)) //nolint:gosec
- 	}
- 
--	eventSink(events.StateRunning, "sandboxd started with PID %d", process.Pid)
-+	eventSink(events.StateRunning, "sandboxd started with PID %d", pid)
- 
- 	select {
- 	case werr := <-waitCh:
- 		// Unexpected exit: the kernel has torn down the sandbox namespace. Return
- 		// an error so restart.Forever recreates it.
--		fmt.Fprintf(logW, "machined: sandboxd (pid %d) exited, sandbox namespace torn down; restarting\n", process.Pid) //nolint:errcheck
-+		fmt.Fprintf(logW, "machined: sandboxd (pid %d) exited, sandbox namespace torn down; restarting\n", pid) //nolint:errcheck
- 
- 		teardown()
- 
-```
-
-**File**: `internal/app/machined/pkg/sandboxd/runner_test.go` (added, +106/-0)
-```diff
-@@ -0,0 +1,106 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-+
-+package sandboxd_test
-+
-+import (
-+	"fmt"
-+	"os"
-+	"path/filepath"
-+	"testing"
-+	"time"
-+
-+	"github.com/siderolabs/go-cmd/pkg/cmd/proc/reaper"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime"
-+	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime/logging"
-+	"github.com/siderolabs/talos/internal/app/machined/pkg/sandboxd"
-+	"github.com/siderolabs/talos/internal/app/machined/pkg/system/events"
-+	"github.com/siderolabs/talos/internal/app/machined/pkg/system/runner"
-+)
-+
-+// fakeSandboxdEnv makes the test binary act as a sandboxd which exits once ready.
-+const fakeSandboxdEnv = "SANDBOXD_FAKE"
-+
-+func TestMain(m *testing.M) {
-+	if os.Getenv(fakeSandboxdEnv) != "" {
-+		os.NewFile(3, "ready").Write([]byte{1}) //nolint:errcheck
-+
-+		os.Exit(1)
-+	}
-+
-+	os.Exit(m.Run())
-+}
-+
-+type sandboxRuntime struct {
-+	runtime.Runtime
-+
-+	logging runtime.LoggingManager
-+}
-+
-+func (r *sandboxRuntime) Logging() runtime.LoggingManager { return r.logging }
-+
-+func (r *sandboxRuntime) SetSandbox(runtime.SandboxLauncher) {}
-+
-+// newRunner returns a runner launching path as sandboxd, and the directory it logs to.
-+func newRunner(t *testing.T, path string) (runner.Runner, string) {
-+	t.Helper()
-+
++func TestRemountReadOnlyBind(t *testing.T) {
 +	if os.Geteuid() != 0 {
-+		t.Skip("requires root to create the sandbox cgroup and namespaces")
++		t.Skip("requires root for mount operations")
 +	}
 +
-+	// The runner waits for sandboxd through the reaper, as in machined.
-+	reaper.Run()
-+	t.Cleanup(reaper.Shutdown)
++	target := filepath.Join(t.TempDir(), "volume")
++	bind := filepath.Join(t.TempDir(), "bind")
 +
-+	logDir := t.TempDir()
++	mgr := mount.NewManager(mount.WithTarget(target), mount.WithFsopen("tmpfs"))
 +
-+	return sandboxd.NewRunner(&sandboxRuntime{logging: logging.NewFileLoggingManager(logDir)}, sandboxd.WithPath(path)), logDir
-+}
-+
-+func eventSink(t *testing.T) events.Recorder {
-+	return func(state events.ServiceState, message string, args ...any) {
-+		t.Logf("state %s: %s", state, fmt.Sprintf(message, args...))
-+	}
-+}
-+
-+// TestRunnerExitBeforeReady runs a sandboxd which exits before it is ready. When the reaper reaps
-+// it before the runner looks it up, the runner gets a PID-based process handle, which it kills while
-+// the waiter releases it.
-+//
-+// The reaper wins only sometimes, so run it many times.
-+func TestRunnerExitBeforeReady(t *testing.T) {
-+	r, _ := newRunner(t, "/bin/true")
-+
-+	for range 200 {
-+		_, err := r.Run(t.Context(), eventSink(t), nil)
-+		require.ErrorContains(t, err, "sandboxd failed to start")
-+	}
-+}
-+
-+// TestRunnerExitAfterReady runs a sandboxd which exits once it is ready, and checks the runner
-+// reports the PID it started in the exit log.
-+func TestRunnerExitAfterReady(t *testing.T) {
-+	self, err := os.Executable()
++	point, err := mgr.Mount()
 +	require.NoError(t, err)
 +
-+	r, logDir := newRunner(t, self)
++	t.Cleanup(func() { mgr.Unmount() }) //nolint:errcheck
 +
-+	t.Setenv(fakeSandboxdEnv, "1")
++	require.NoError(t, os.Mkdir(bind, 0o755))
++	require.NoError(t, unix.Mount(target, bind, "", unix.MS_BIND, ""))
 +
-+	var pid int32
++	t.Cleanup(func() { unix.Unmount(bind, 0) }) //nolint:errcheck
 +
-+	_, err = r.Run(t.Context(), eventSink(t), func(p int32) { pid = p })
-+	require.ErrorContains(t, err, "sandboxd exited, namespace lost")
-+	require.Positive(t, pid)
++	require.NoError(t, point.RemountReadOnly())
 +
-+	assert.EventuallyWithT(t, func(collect *assert.CollectT) {
-+		log, err := os.ReadFile(filepath.Join(logDir, sandboxd.ServiceID+".log"))
-+		require.NoError(collect, err)
-+		assert.Contains(collect, string(log), fmt.Sprintf("sandboxd (pid %d) exited", pid))
-+	}, 5*time.Second, 10*time.Millisecond)
++	// as the container runtime does for a read-write hostPath volume
++	require.NoError(t, unix.Mount("", bind, "", unix.MS_REMOUNT|unix.MS_BIND, ""))
++
++	require.ErrorIs(t, os.WriteFile(filepath.Join(bind, "file"), nil, 0o600), unix.EROFS)
++
++	require.NoError(t, point.RemountReadWrite())
++
++	require.NoError(t, os.WriteFile(filepath.Join(bind, "file"), nil, 0o600))
 +}
-```
-
-**File**: `internal/app/machined/pkg/system/runner/process/process.go` (modified, +9/-1)
-```diff
-@@ -458,10 +458,18 @@ func (p *processRunner) run(ctx context.Context, eventSink events.Recorder, onSt
- 		return status, fmt.Errorf("could not find process: %w", err)
- 	}
- 
-+	defer process.Release() //nolint:errcheck
-+
-+	// The waiter releases its handle, and Release writes Process.Pid, so it must not share the handle used for signals.
-+	waitProcess, err := os.FindProcess(pid)
-+	if err != nil {
-+		return status, fmt.Errorf("could not find process: %w", err)
-+	}
-+
- 	waitCh := make(chan error)
- 
- 	go func() {
--		waitCh <- reaper.ProcessWaitWrapper(usingReaper, notifyCh, process)
-+		waitCh <- reaper.ProcessWaitWrapper(usingReaper, notifyCh, waitProcess)
- 	}()
- 
- 	select {
-```
-
-**File**: `internal/app/machined/pkg/system/runner/process/process_test.go` (modified, +36/-0)
-```diff
-@@ -6,6 +6,7 @@ package process_test
- 
- import (
- 	"context"
-+	"errors"
- 	"fmt"
- 	"io"
- 	"os"
-@@ -237,6 +238,41 @@ func (suite *ProcessSuite) TestStopFailingAndRestarting() {
- 	<-done
- }
- 
-+// TestStopAfterReaped stops the runner after the reaper has already reaped the process: the runner
-+// then gets a PID-based process handle, which it signals while the waiter releases it.
-+//
-+// The runner signals only when it sees the cancellation before the exit, which is not ordered, so
-+// stop it several times.
-+func (suite *ProcessSuite) TestStopAfterReaped() {
-+	if !suite.runReaper {
-+		suite.T().Skip("the process is reaped before the runner looks it up only by the reaper")
-+	}
-+
-+	r := process.NewRunner(false, &runner.Args{
-+		ID:          "reaped",
-+		ProcessArgs: []string{"/bin/bash", "-c", "exit 0"},
-+	}, runner.WithLoggingManager(suite.loggingManager))
-+
-+	suite.Require().NoError(r.Open())
-+
-+	defer func() { suite.Assert().NoError(r.Close()) }()
-+
-+	for range 5 {
-+		ctx, cancel := context.WithCancel(context.Background())
-+
-+		_, err := r.Run(ctx, MockEventSink(suite.T()), func(pid int32) {
-+			suite.Require().Eventually(func() bool {
-+				return errors.Is(syscall.Kill(int(pid), 0), syscall.ESRCH)
-+			}, 5*time.Second, time.Millisecond)
-+
-+			cancel()
-+		})
-+		suite.Assert().NoError(err)
-+
-+		cancel()
-+	}
-+}
-+
- func (suite *ProcessSuite) TestStopSigKill() {
- 	r := process.NewRunner(
- 		false, &runner.Args{
 ```
 
 ---
 
-### Incident Patch 3: `831b6a74` (2026-11-18)
-**Commit Message**: test: fix toctou in container probe tests
+### Incident Patch 2: `f8164f62` (2026-11-19)
+**Commit Message**: chore: split hypervisor libvirt tests into per-file suites
 
-Fixes TOCTOU causing flakes in container probe tests.
+Go/OCI names (amd64, arm64) and kernel/QEMU names (x86_64, aarch64)
+were repeated as literals across imager, bootloader, providers and
+tests. Package-local copies now alias the shared constants.
 
-Multiple probe tests are running in parallel, attempting to find a
-closed port, in order to test probe failures. To find a closed port, we
-would open a listener on localhost and close it immediately. This would
-work in a non-parallel test environment, but it created a fun contention
-scenario. Test A would find a closed port to fail a probe on, then test B would open a
-listener and test A would run the probe at the same time, resulting in
-test A's probe succeeding, which caused test A to fail (negative
-scenario, expecting failed probe).
+One LibvirtSuite ran 27 tests under a single -talos.failfast unit, so
+a broken area kept every later test waiting out its 20 minute deadline.
 
-Fun!
+- make each test file its own suite over a shared LibvirtSuite base
+- move cross-suite helpers into suite, alpine guest, blank disk and
+  storage helper files
+- drop helper unit tests only built with integration tags
 
-Signed-off-by: Maja Bojarska <[REDACTED_EMAIL]>
+Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
 
-**File**: `internal/app/machined/pkg/controllers/containers/probe_test.go` (modified, +15/-8)
+**File**: `cmd/installer/pkg/install/install.go` (modified, +1/-1)
 ```diff
-@@ -60,14 +60,21 @@ func listenerPort(t *testing.T, address string) uint32 {
- func closedPort(t *testing.T) uint32 {
- 	t.Helper()
+@@ -809,7 +809,7 @@ func (i *Installer) handlePartitionDataPopulation(ctx context.Context, idx int,
  
--	listener, err := (&net.ListenConfig{}).Listen(t.Context(), "tcp", "127.0.0.1:0")
-+	fd, err := unix.Socket(unix.AF_INET, unix.SOCK_STREAM|unix.SOCK_CLOEXEC, 0)
- 	require.NoError(t, err)
- 
--	port := listenerPort(t, listener.Addr().String())
-+	t.Cleanup(func() { unix.Close(fd) }) //nolint:errcheck
-+
-+	// Bind without SO_REUSEADDR, so that no other test can bind simultaneously.
-+	require.NoError(t, unix.Bind(fd, &unix.SockaddrInet4{Addr: [4]byte{127, 0, 0, 1}}))
-+
-+	addr, err := unix.Getsockname(fd)
-+	require.NoError(t, err)
- 
--	require.NoError(t, listener.Close())
-+	inet4, ok := addr.(*unix.SockaddrInet4)
-+	require.True(t, ok, "unexpected socket address %T", addr)
- 
--	return port
-+	return listenerPort(t, net.JoinHostPort("127.0.0.1", strconv.Itoa(inet4.Port)))
- }
- 
- func runProbe(t *testing.T, healthCheck containers.ContainerHealthCheckSpec) error {
-@@ -92,10 +99,10 @@ func TestProbeTCP(t *testing.T) {
- 		Port: listenerPort(t, listener.Addr().String()),
- 	}))
- 
--	assert.Error(t, runProbe(t, containers.ContainerHealthCheckSpec{
-+	assert.ErrorIs(t, runProbe(t, containers.ContainerHealthCheckSpec{
- 		Kind: string(config.ContainerHealthCheckKindTCP),
- 		Port: closedPort(t),
--	}))
-+	}), syscall.ECONNREFUSED)
- }
- 
- func TestProbeHTTP(t *testing.T) {
-@@ -138,11 +145,11 @@ func TestProbeHTTP(t *testing.T) {
- 		}
+ //nolint:gocyclo,cyclop
+ func (i *Installer) handleGrubBlocklist(gptdev gpt.Device, pt *gpt.Table) error {
+-	if i.options.Arch != "amd64" {
++	if i.options.Arch != constants.ArchAmd64 {
+ 		return nil
  	}
  
--	assert.Error(t, runProbe(t, containers.ContainerHealthCheckSpec{
-+	assert.ErrorIs(t, runProbe(t, containers.ContainerHealthCheckSpec{
- 		Kind: string(config.ContainerHealthCheckKindHTTP),
- 		Port: closedPort(t),
- 		Path: "/",
--	}))
-+	}), syscall.ECONNREFUSED)
- }
+```
+
+**File**: `cmd/talosctl/cmd/mgmt/cluster/create/clusterops/configmaker/internal/makers/qemu.go` (modified, +1/-1)
+```diff
+@@ -203,7 +203,7 @@ func (m *Qemu) AddExtraGenOps() error {
  
- func TestProbeGRPC(t *testing.T) {
+ 	// disable kexec, if bootloader is disabled, and
+ 	// also disable kexec on arm64 due to https://github.com/siderolabs/talos/issues/12393
+-	if !m.EOps.BootloaderEnabled || m.EOps.TargetArch == "arm64" {
++	if !m.EOps.BootloaderEnabled || m.EOps.TargetArch == constants.ArchArm64 {
+ 		m.GenOps = slices.Concat(m.GenOps, []generate.Option{
+ 			generate.WithSysctls(map[string]string{
+ 				"kernel.kexec_load_disabled": "1",
+```
+
+**File**: `cmd/talosctl/cmd/mgmt/cluster/create/clusterops/configmaker/internal/makers/qemu_test.go` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@ import (
+ )
+ 
+ func qemuDefaultGenOps() []generate.Option {
+-	if runtime.GOARCH != "arm64" {
++	if runtime.GOARCH != constants.ArchArm64 {
+ 		return nil
+ 	}
+ 
+```
+
+**File**: `cmd/talosctl/cmd/mgmt/cluster/create/clusterops/configmaker/preset/preset_test.go` (modified, +3/-2)
+```diff
+@@ -13,6 +13,7 @@ import (
+ 	"github.com/siderolabs/talos/cmd/talosctl/cmd/constants"
+ 	"github.com/siderolabs/talos/cmd/talosctl/cmd/mgmt/cluster/create/clusterops"
+ 	"github.com/siderolabs/talos/cmd/talosctl/cmd/mgmt/cluster/create/clusterops/configmaker/preset"
++	machineryconstants "github.com/siderolabs/talos/pkg/machinery/constants"
+ )
+ 
+ func TestValidatePresets(t *testing.T) {
+@@ -83,7 +84,7 @@ func applyPreset(t *testing.T, presets ...string) (clusterops.Common, clusterops
+ 
+ 	cOps := clusterops.GetCommon()
+ 	qOps := clusterops.GetQemu()
+-	qOps.TargetArch = "arm64"
++	qOps.TargetArch = machineryconstants.ArchArm64
+ 	cOps.TalosVersion = "v9.9.9"
+ 
+ 	err = preset.Apply(preset.Options{
+@@ -135,7 +136,7 @@ func TestInstallerImageWithPort(t *testing.T) {
+ 
+ 	cOps := clusterops.GetCommon()
+ 	qOps := clusterops.GetQemu()
+-	qOps.TargetArch = "arm64"
++	qOps.TargetArch = machineryconstants.ArchArm64
+ 	cOps.TalosVersion = "v9.9.9"
+ 
+ 	err = preset.Apply(preset.Options{
+```
+
+**File**: `cmd/talosctl/cmd/mgmt/cluster/create/cmd_dev.go` (modified, +1/-1)
+```diff
+@@ -306,7 +306,7 @@ func getCreateCmd(cmdName string, hidden bool) *cobra.Command {
+ 				serial := ""
+ 
+ 				// ide driver is not supported on arm64
+-				if qOps.TargetArch == "arm64" {
++				if qOps.TargetArch == constants.ArchArm64 {
+ 					driver = "virtio"
+ 				}
+ 
+```
+
+**File**: `cmd/talosctl/pkg/talos/artifacts/arch.go` (removed, +0/-14)
+```diff
+@@ -1,14 +0,0 @@
+-// This Source Code Form is subject to the terms of the Mozilla Public
+-// License, v. 2.0. If a copy of the MPL was not distributed with this
+-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+-
+-package artifacts
+-
+-// Arch is the artifacts architecture.
+-type Arch string
+-
+-// Supported architectures.
+-const (
+-	ArchAmd64 Arch = "amd64"
+-	ArchArm64 Arch = "arm64"
+-)
+```
+
+**File**: `cmd/talosctl/pkg/talos/artifacts/fetch.go` (modified, +2/-1)
+```diff
+@@ -18,6 +18,7 @@ import (
+ 	"golang.org/x/sync/errgroup"
+ 
+ 	"github.com/siderolabs/talos/pkg/images"
++	"github.com/siderolabs/talos/pkg/machinery/constants"
+ )
+ 
+ type imageHandler func(ctx context.Context, img v1.Image) error
+@@ -38,7 +39,7 @@ func newManager() (*fetchManager, error) {
+ 
+ 	puller, err := remote.NewPuller(
+ 		remote.WithPlatform(v1.Platform{
+-			Architecture: string(ArchAmd64),
++			Architecture: constants.ArchAmd64,
+ 			OS:           "linux",
+ 		}),
+ 	)
+```
+
+**File**: `internal/app/init/main.go` (modified, +1/-1)
+```diff
+@@ -241,7 +241,7 @@ func bindMountExtra() error {
+ func cpuInfo() {
+ 	log.Printf("CPU: %s, %d core(s), %d thread(s) per core", cpuid.CPU.BrandName, cpuid.CPU.PhysicalCores, cpuid.CPU.ThreadsPerCore)
+ 
+-	if runtime.GOARCH == "amd64" {
++	if runtime.GOARCH == constants.ArchAmd64 {
+ 		log.Printf("x86_64 microarchitecture level: %d", cpuid.CPU.X64Level())
+ 
+ 		if cpuid.CPU.X64Level() < constants.MinimumGOAMD64Level {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15018** (2026-11-19): fix: stop sharing the process handle with the reaper waiter (@frezbo)
-- **PR #15012** (2026-11-18): test: share closed-port helper and fix more port races (@majabojarska)
-- **PR #15008** (2026-11-18): test: fix toctou in container probe port binding (@majabojarska)
-- **PR #15006** (2026-11-18): fix: return image cache certificate generation errors (@immanuwell)
-- **PR #15005** (2026-11-19): fix: don't reuse partial layers from the image layer cache (@locker95)
-- **PR #14998** (2026-11-19): fix: reject BGP hold times the OPEN message can not carry (@frezbo)
+- **PR #15030** (2026-11-20): feat: update etcd to 3.7.4 (@smira)
+- **PR #15029** (2026-11-20): test: avoid racing CPU scaling governor write (@majabojarska)
+- **PR #15027** (2026-11-20): chore: split hypervisor libvirt tests into per-file suites (@shanduur)
+- **PR #15026** (2026-11-20): test: optimize VM log rotation testing (@majabojarska)
+- **PR #15023** (2026-11-19): fix: make read-only volumes read-only for pods (@frezbo)
+- **PR #15020** (2026-11-19): test: lease spare DHCP reservations to one test at a time (@majabojarska)
 
 ---
 
@@ -2732,43 +2506,36 @@ Signed-off-by: Maja Bojarska <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. skip DRBD and network block devices in LVM status scans
+## X. make read-only volumes read-only for pods
 
 **RULE**:
-When implementing operations in `internal/app/machined/pkg/controllers/storage/lvm_scan.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/app/machined/pkg/controllers/block/mount.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6738ba5c`: skip DRBD and network block devices in LVM status scans. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aee818eb`: make read-only volumes read-only for pods. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/storage/lvm_scan.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/block/mount.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"time"
-// lvmScanTimeout bounds a single vgs/pvs/lvs run, so a device that never
-// answers doesn't stop LVM status refreshes on the node for good.
-const lvmScanTimeout = time.Minute
 
-	scanCtx, cancel := context.WithTimeout(ctx, lvmScanTimeout)
-	defer cancel()
-
-	vgs, err := ctrl.LVM.VGS(scanCtx)
-	pvs, err := ctrl.LVM.PVS(scanCtx)
-	lvs, err := ctrl.LVM.LVS(scanCtx)
+			// The container runtime remounts the bind of a pod hostPath volume read-write, which clears the
+			// read-only attribute of that mount: only a read-only superblock refuses writes through every mount.
+			if !mountRequest.TypedSpec().Detached {
+				fsOpts = append(fsOpts, fsopen.WithBoolParameter("ro"))
+			}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	vgs, err := ctrl.LVM.VGS(ctx)
-	pvs, err := ctrl.LVM.PVS(ctx)
-	lvs, err := ctrl.LVM.LVS(ctx)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6738ba5c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aee818eb` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

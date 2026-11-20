@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T17:37:30.793Z",
+  "last_updated": "2026-11-20T17:45:37.779Z",
   "total_verified_learnings": 9044,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22546,
+  "total_items": 22550,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -222294,8 +222294,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "31957c52",
-      "content_hash": "daddcc3ed76eea6c4e33cb61bdcf279d9d3f79c03744ba0a2c2f05f1f8269b12",
+      "source_version": "f180b83d",
+      "content_hash": "d2a15c5645fcaf40722d08d986d9a6129e797f5b277ca4930b45ee883885e010",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -222323,6 +222323,11 @@
           "number": 9391,
           "title": "skip DRBD and network block devices in LVM status scans",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9611,
+          "title": "make read-only volumes read-only for pods",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222330,7 +222335,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T15:16:38.745Z",
+      "verified_at": "2026-11-20T17:45:24.528Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222372,10 +222377,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "repository": "siderolabs/talos",
-      "source_version": "31957c52",
-      "content_hash": "96d58b2bdd4d15fec78a02685203d090c4d15cdfdbd13c4232abe20af515555b",
+      "source_version": "f180b83d",
+      "content_hash": "357669db9998825d5e6fafbd2f18907b43156ff55ba50b647e4dc89dd1fa5214",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T15:16:39.321Z"
+      "persisted_at": "2026-11-20T17:45:25.097Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos",
@@ -222384,10 +222389,10 @@
       "relative_path": "08_VERIFICATION/siderolabs-talos-verification-protocol-empirical-defect-shield-for-siderolabs-ta.md",
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs/talos",
       "repository": "siderolabs/talos",
-      "source_version": "31957c52",
-      "content_hash": "f667b98b7602c7bfefa4534a4be18914afc21545f83fb8a53ada2b4f5e29113b",
+      "source_version": "f180b83d",
+      "content_hash": "f3d0bf6cf83d803603278d7bc54e46dafb62dd13f817370119d2990510b621e8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T15:16:39.485Z"
+      "persisted_at": "2026-11-20T17:45:25.251Z"
     },
     "learn-github-trufflesecurity-trufflehog": {
       "learning_id": "learn-github-trufflesecurity-trufflehog",
@@ -222820,9 +222825,9 @@
       "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
       "repository": "siderolabs-talos-learnings",
       "source_version": "HEAD",
-      "content_hash": "6f560b00bfbbcd004c3dc2cbd7149db24b16e7fc522c6fa19b033d57c3c59c0a",
+      "content_hash": "0ab05f00af348ac1155ef01cc782ea3c5cfe686470642c531cc6bda3bddf8324",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T15:21:33.195Z"
+      "persisted_at": "2026-11-20T17:45:35.935Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos-learnings",
@@ -222832,9 +222837,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs-talos-learnings",
       "repository": "siderolabs-talos-learnings",
       "source_version": "HEAD",
-      "content_hash": "52a4a46e5e8f897b9e7087f76977dc6e9e21f2f37bf8adc1eb90a6383f0784ce",
+      "content_hash": "17be43f35a1b0adedcd5a91d5d65de80098d6dc16bbd60ec0312d8fc88864265",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T15:21:33.368Z"
+      "persisted_at": "2026-11-20T17:45:36.086Z"
     },
     "learn-huggingface-bigscience-bloom": {
       "learning_id": "learn-huggingface-bigscience-bloom",
@@ -229091,8 +229096,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "bb087a5c",
-      "content_hash": "e9b2fba0f66fc4cd03de7702433853d334aa7839e9797f0fb0316bc898086f18",
+      "source_version": "aa069366",
+      "content_hash": "64d10ae7a2b1df2f8530a9c7e8ed5eab3f765f9e147618e51613f437076debe8",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -229260,6 +229265,11 @@
           "number": 9605,
           "title": "Draft NUC 125 Stepped Slices",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9612,
+          "title": "Initialize synthesized instance value fields",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229267,7 +229277,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T17:12:22.724Z",
+      "verified_at": "2026-11-20T17:45:31.900Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229309,10 +229319,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "bb087a5c",
-      "content_hash": "4184015afad00fa4f9a0a0f819cf598e765490b5fb55d63585511c98125e3d7d",
+      "source_version": "aa069366",
+      "content_hash": "91fd43246d29fbd34f782e320c22c8e6de7c2a3cbd8837db13e18070a7476034",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T17:12:23.287Z"
+      "persisted_at": "2026-11-20T17:45:32.451Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -229321,10 +229331,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "bb087a5c",
-      "content_hash": "942bb5b5c1a37bfef8b12c3f00c8e3f976f134c92d69ea83af107aad992ce69d",
+      "source_version": "aa069366",
+      "content_hash": "8c66108bbecf77f8aec5cf48044cdcc1a0da237babf500f1444852ce87637edc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:12:23.435Z"
+      "persisted_at": "2026-11-20T17:45:32.600Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -230372,9 +230382,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "5334bc1bc3583ad6f338bb955675afb59827885f83d8ecbaf43a6d0770c3ad87",
+      "content_hash": "53a67c5c9de59bdc0d845c0cf4dc1cf71c89353afe9b2bce16505b0f1f528873",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T17:07:55.489Z"
+      "persisted_at": "2026-11-20T17:45:36.799Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -230384,9 +230394,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "f608e2fe0f05f30e69ef3dd306d9436aa4ba191c46ad2a64eb2522935a9cf018",
+      "content_hash": "ff5f9383ebef65bbd750892caf155414c703e04610e89c6ad9ea681611ec6447",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T14:52:58.635Z"
+      "persisted_at": "2026-11-20T17:45:36.951Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -236461,9 +236471,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "9f94b61d4fee5f30a367d3004af829ef4b894c7724841f075dcc64d0e89f3cc2",
+      "content_hash": "871a20f0a04ef51d334e8c73103aa4fde76254e5392fb9747658a90bb9b6280e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T16:29:09.939Z"
+      "persisted_at": "2026-11-20T17:45:37.779Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -305697,6 +305707,58 @@
       "content_hash": "e07bf2613b6b91532d4dd2c09d88f2427c3463780f8cb12453e0f9ded8c7160b",
       "domain_letter": "H",
       "persisted_at": "2026-11-20T17:37:29.537Z"
+    },
+    "rule-9611": {
+      "learning_id": "rule-9611",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9611,
+      "title": "make read-only volumes read-only for pods",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "f180b83d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T17:45:24.528Z"
+    },
+    "candidate_directive-make-read-only-volumes-read-only-for-pods": {
+      "item_id": "candidate_directive-make-read-only-volumes-read-only-for-pods",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SAHZ-make-read-only-volumes-read-only-for-pods.md",
+      "title": "make read-only volumes read-only for pods",
+      "repository": "siderolabs-talos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8a569c8acb7a7dd8b60f9d9f06d74491fa98bd70752a7bfeb8c823452b58b607",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T17:45:35.786Z"
+    },
+    "rule-9612": {
+      "learning_id": "rule-9612",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9612,
+      "title": "Initialize synthesized instance value fields",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "aa069366",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T17:45:31.900Z"
+    },
+    "candidate_directive-initialize-synthesized-instance-value-fields": {
+      "item_id": "candidate_directive-initialize-synthesized-instance-value-fields",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SB5X-initialize-synthesized-instance-value-fields.md",
+      "title": "Initialize synthesized instance value fields",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fd4b904a25f7d232cf9389cab3f76344fd31e67444fa6b7d1ea33f88b27ad57f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T17:45:36.648Z"
     }
   },
   "ai-builder-brain": {

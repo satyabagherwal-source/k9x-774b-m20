@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "bb087a5c",
+    "sourceVersion": "aa069366",
     "license": "Apache-2.0",
-    "contentHash": "e9b2fba0f66fc4cd03de7702433853d334aa7839e9797f0fb0316bc898086f18",
-    "lastHarvestedAt": "2026-11-20T17:12:22.923Z",
+    "contentHash": "64d10ae7a2b1df2f8530a9c7e8ed5eab3f765f9e147618e51613f437076debe8",
+    "lastHarvestedAt": "2026-11-20T17:45:32.099Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "31957c52",
+    "sourceVersion": "f180b83d",
     "license": "MPL-2.0",
-    "contentHash": "daddcc3ed76eea6c4e33cb61bdcf279d9d3f79c03744ba0a2c2f05f1f8269b12",
-    "lastHarvestedAt": "2026-11-19T15:16:38.938Z",
+    "contentHash": "d2a15c5645fcaf40722d08d986d9a6129e797f5b277ca4930b45ee883885e010",
+    "lastHarvestedAt": "2026-11-20T17:45:24.735Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {

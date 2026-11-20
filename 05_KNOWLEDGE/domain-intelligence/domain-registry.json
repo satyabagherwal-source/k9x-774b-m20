@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T17:37:30.515Z",
+  "last_updated": "2026-11-20T17:45:37.779Z",
   "total_records": 2158,
   "domains": {
     "A": {
@@ -12863,8 +12863,8 @@
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "repository": "siderolabs/talos",
-      "content_hash": "96d58b2bdd4d15fec78a02685203d090c4d15cdfdbd13c4232abe20af515555b",
-      "created_at": "2026-11-19T15:16:39.321Z"
+      "content_hash": "357669db9998825d5e6fafbd2f18907b43156ff55ba50b647e4dc89dd1fa5214",
+      "created_at": "2026-11-20T17:45:25.097Z"
     },
     "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants",
@@ -12985,8 +12985,8 @@
       "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-learnings-technical-construction-intelligence-siderolabs-talos-.md",
       "repository": "siderolabs-talos-learnings",
-      "content_hash": "6f560b00bfbbcd004c3dc2cbd7149db24b16e7fc522c6fa19b033d57c3c59c0a",
-      "created_at": "2026-11-19T15:21:33.195Z"
+      "content_hash": "0ab05f00af348ac1155ef01cc782ea3c5cfe686470642c531cc6bda3bddf8324",
+      "created_at": "2026-11-20T17:45:35.935Z"
     },
     "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants",
@@ -15237,8 +15237,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "4184015afad00fa4f9a0a0f819cf598e765490b5fb55d63585511c98125e3d7d",
-      "created_at": "2026-11-20T17:12:23.287Z"
+      "content_hash": "91fd43246d29fbd34f782e320c22c8e6de7c2a3cbd8837db13e18070a7476034",
+      "created_at": "2026-11-20T17:45:32.451Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15687,8 +15687,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "5334bc1bc3583ad6f338bb955675afb59827885f83d8ecbaf43a6d0770c3ad87",
-      "created_at": "2026-11-19T17:07:55.489Z"
+      "content_hash": "53a67c5c9de59bdc0d845c0cf4dc1cf71c89353afe9b2bce16505b0f1f528873",
+      "created_at": "2026-11-20T17:45:36.799Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -17808,8 +17808,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "9f94b61d4fee5f30a367d3004af829ef4b894c7724841f075dcc64d0e89f3cc2",
-      "created_at": "2026-11-20T16:29:09.939Z"
+      "content_hash": "871a20f0a04ef51d334e8c73103aa4fde76254e5392fb9747658a90bb9b6280e",
+      "created_at": "2026-11-20T17:45:37.779Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",

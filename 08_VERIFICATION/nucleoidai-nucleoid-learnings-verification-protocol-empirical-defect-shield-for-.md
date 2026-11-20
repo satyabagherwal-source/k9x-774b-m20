@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T14:52:58.114Z",
+  "timestamp": "2026-11-20T17:45:36.527Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T14:52:58.114Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T17:45:36.527Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `8eed95c3`  
+> **Source Version**: `aa069366`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T14:52:51.113Z  
+> **Timestamp**: 2026-11-20T17:45:31.092Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T14:52:51.106Z  
+> **Harvest Timestamp**: 2026-11-20T17:45:31.087Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1425,29 +1425,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
 
   milestone.synthesizing_training_dataset();
 
-  const synthesized_dataset = await synthesizer.synthesize({ train });
-
-  milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
-
-  for (const dataset of synthesized_dataset) {
-    for (const instance of dataset.instances) {
-      await analyzer.value({
-        instance_name: next_instance_name(),
-        train,
-        input_matrix: dataset.input_matrix,
-        instance,
-      });
-    }
-
-    await object.state({
-      class_declaration,
-      declarations,
-      input_matrix: dataset.input_matrix,
-      input_instances: dataset.instances,
-    });
-
-    train.dataset.push(dataset);
-  }
+  await synthesizer.synthesize({ train });
 
   milestone.visualization();
 
@@ -1605,567 +1583,368 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8eed95c3` (2026-11-20)
-**Commit Message**: Synthesize ARC examples from object transforms
+### Incident Patch 1: `aa069366` (2026-11-20)
+**Commit Message**: Initialize synthesized instance value fields
 
-Replace LLM-generated examples with rotated and shifted instances. Execute Nucleoid rules, validate rendered object properties, and merge matching instances into new training examples.
+Set input_value and output_value to undefined when creating synthesized instances.
 
-**File**: `arc/src/synthesizer.ts` (modified, +105/-111)
+**File**: `arc/src/synthesizer.ts` (modified, +2/-0)
 ```diff
-@@ -1,117 +1,111 @@
--import * as llm from "./lib/llm.ts";
- import * as Matrix from "./lib/Matrix";
--
--const FIELD_GUIDE = `
--- "dataset" holds the existing examples. Each pairs an "input_matrix" with the "output_matrix" that the rule produces from it.
--- Each example's "instances" lists its instances, each pairing an "input_instance_matrix" with its "output_instance_matrix". They relate to the example's full matrices by a fixed convention (how instances are found, ordered and cropped); work that convention out from the existing examples and follow it exactly.
--- "class_declaration", "declarations" and "output_canvas" are fixed for this task. Every new example must be valid under them. Do not change them or repeat them in your answer.
--`.trim();
-+import * as visualizer from "./visualizer";
-+import object from "./object.ts";
-+import * as nucleoid from "./lib/nucleoid.ts";
+@@ -51,6 +51,8 @@ async function synthesize({ train }) {
  
- async function synthesize({ train }) {
--  const count = train.length;
--
--  const { result } = await llm.generate({
--    few_shot: null,
--    messages: [
--      {
--        role: "assistant",
--        content: `Below is the data for a matrix-transformation task. Each example pairs an input matrix with the output matrix that one hidden rule produces from it, and the same rule holds for every example.
--
--        <current_dataset>
--        ${JSON.stringify({
--          ...train,
--          dataset: train.dataset.map(
--            ({ input_matrix, output_matrix, instances }) => ({
--              input_matrix,
--              output_matrix,
--              instances: instances.map((instance) => ({
--                ...instance,
--                input_instance_crop_matrix: Matrix.crop(
--                  instance.input_instance_matrix
--                ),
--                output_instance_crop_matrix: Matrix.crop(
--                  instance.output_instance_matrix
--                ),
--              })),
--            })
--          ),
--        })}
--        </current_dataset>
--        
--        How to read it:
--        ${FIELD_GUIDE}
--        
--        Your job: write ${
--          count === 1
--            ? "1 new example that follows"
--            : `${count} new examples that follow`
--        } exactly the same rule. New examples are added to the training data, so one whose output breaks the rule does more harm than a missing one.
--        
--        Work in this order:
--        1. Infer the rule and write it as a sequence of steps, precise enough that someone could apply it by hand to an input they have never seen, including how the instances are derived. Check it against every existing example and revise it until it reproduces all of them exactly.
--        2. List the invariants: what every existing example has in common that the rule relies on, plus anything "class_declaration", "declarations" and "output_canvas" impose (allowed values, dimensions, how many of something appear, what never touches or overlaps). If you are unsure whether the rule depends on a property, treat it as an invariant. Every new example must keep all of them.
--        3. Plan each new example in a sentence or two: what its input contains, how it differs from the existing examples and from your other new examples, and what output the rule gives for it.
--        4. Write the examples. Build each input first, then produce its output by applying the rule step by step, copying exactly any cell the rule leaves unchanged. Then derive its instances with the same convention as the existing examples.
--        
--        A good new example is:
--        - Correct: its output is exactly what the rule produces from its input. If you are not certain an example is correct, leave it out; returning fewer examples is better than including a wrong one.
--        - New: not a near-copy of an existing example, such as the same layout shifted, flipped or with values swapped. Vary whatever the rule does not depend on, which may include dimensions, positions, sizes, counts and values, while keeping every invariant.
--        - Informative: it covers a case the existing examples don't (an edge or corner position, a smallest or largest case, a different number of instances) or separates the real rule from a plausible wrong one, but only where the rule clearly decides the output. Avoid inputs the rule leaves open, such as ties it gives no way to break.
--        - Well-formed: every matrix is rectangular (all rows the same length) and uses only allowed values.
--        
--        Reply with one JSON object and nothing else: no prose before or after it and no code fences. Give its keys in this order:
--        - "rule": an array of strings, one step of the rule each.
--        - "invariants": an array of strings, one invariant each.
--        - "plan": an array of strings, one per new example, in the same order as "result".
--        - "result": an array of the new examples. Each has exactly the same keys, nesting and value types as the entries of "dataset" above: "input_matrix", "output_matrix", and "instances",
+         const synthesized_instance = {
+           instance_name: synthesized_instance_name,
++          input_value: undefined,
++          output_value: undefined,
+           input_instance_matrix: input_instance_matrix,
+           output_instance_matrix: undefined,
+         };
 ```
 
 ---
 
-### Incident Patch 2: `a8500c83` (2026-11-20)
-**Commit Message**: Add block indentation to terminal editor
+### Incident Patch 2: `5b7c3a28` (2026-11-20)
+**Commit Message**: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
 
-Indent selected lines with Tab and unindent selections or the current line with Shift-Tab. Preserve selection direction and cut text, and update editor hints and documentation.
-
-**File**: `README.md` (modified, +3/-1)
+**File**: `README.md` (modified, +31/-0)
 ```diff
-@@ -49,7 +49,9 @@ pasted newlines never submit code or add indentation. Ctrl-J inserts an
- automatically indented newline when writing a block by hand.
- Ctrl-Enter also runs on non-Windows terminals that report it distinctly;
- Windows treats it as a newline because pasted LF produces the same key event.
--Tab accepts autocomplete (or indents); Ctrl-Space opens suggestions.
-+Tab accepts autocomplete (or inserts four spaces); with selected text it
-+indents the selected lines without replacing them. Shift-Tab unindents the
-+selection or current line. Ctrl-Space opens suggestions.
- Ctrl-P / Ctrl-N recalls input while preserving an unfinished draft.
- F1-F3 changes tabs, F6 changes the result view, and Ctrl-Up / Ctrl-Down selects
- earlier results. Mouse clicks select tabs, views and results; click/drag edits
+@@ -2687,6 +2687,37 @@ assert(scatter, 25.829972899714782)
+   cancels it, and `variance()` gives the square of the same spread. See the
+   [root contract](nucleoid.spec.md#list-and-population-variances-and-standard-deviations).
+ 
++## List and population quantiles
++
++**The ninetieth percentile keeps the slow tail of response times live**
++
++```nuc
++class Request(millis):
++    this.millis = millis
++Request(120)
++Request(80)
++spike = Request(300)
++Request(95)
++Request(110)
++Request(140)
++p90 = Request.quantile(0.9, request -> request.millis)
++assert(p90, 220)
++spike.millis = 100
++Request(150)
++assert(p90, 144)
++```
++
++- [NUC 124](docs/nuc-0124.md) adds `quantile(q)` and `quantile(q, selector)`
++  to lists and class instance lists.
++  `Request.quantile(0.9, request -> request.millis)` is the time that nine in
++  ten requests stay within: the rank `0.9` lies halfway between the fifth and
++  the sixth of the six sorted times, so the result interpolates between them,
++  as NumPy's and pandas' `quantile` do.
++- `p90` is a live declaration. Once the spike settles at 100 ms the slow tail
++  shrinks, and a new 150 ms request moves the rank between the sixth and the
++  seventh sorted time, which gives `0.6 * 140 + 0.4 * 150`. See the
++  [root contract](nucleoid.spec.md#list-and-population-quantiles).
++
+ ## Reactive list flattening
+ 
+ **Flat turns nested lists into one live list**
 ```
 
-**File**: `docs/README.md` (modified, +6/-1)
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +20/-16)
 ```diff
-@@ -95,7 +95,12 @@ empty lines; F5 submits the complete editor. Ctrl-Enter also submits on
- non-Windows terminals that report it distinctly. Native Windows input maps
- pasted LF to Ctrl-Enter, so that key inserts a newline on Windows rather than
- submitting a partial pasted program. Ctrl-J inserts an automatically indented
--newline when typing by hand. Tab completes or indents;
-+newline when typing by hand. Tab completes or inserts four spaces; with
-+selected text it indents the selected lines without replacing them.
-+Shift-Tab removes one leading indentation level from selected lines, or the
-+current line regardless of cursor position. A selection ending at the start
-+of a line leaves that line unchanged. Selection direction and cut/paste text
-+are preserved; each shifted line is an ordinary undoable editor edit.
- Ctrl-Space opens suggestions. Ctrl-P / Ctrl-N navigates input history.
- Use F1-F3 for tabs, F6 or the view buttons for result formats, Ctrl-Up /
- Ctrl-Down for earlier results, and F4 to focus the editor, results or
+@@ -806,19 +806,23 @@
+ {"id":"spec-0806","description":"Nucleoid measures the spread of class instance populations with variance and stdev","code":"class Reading(level):\n    this.level = level\nReading(3)\nReading(5)\nspike = Reading(10)\ngain = 2\nspread = Reading.variance(reading -> reading.level)\nrecent = Reading[-3:].stdev(reading -> reading.level * gain)\nassert([spread, recent], [8.666666666666666, 5.887840577551898])\nReading(6)\nassert([spread, recent], [6.5, 4.320493798938574])\nspike.level = 4\ngain = 3\nassert([spread, recent], [1.25, 2.449489742783178])","return":null}
+ {"id":"spec-0807","description":"Nucleoid computes the variances of large values from their deviations","code":"stamps = [1000000001, 1000000002, 1000000003]\njitter = stamps.variance()\nwobble = stamps.stdev()\nassert([jitter, wobble], [0.6666666666666666, 0.816496580927726])\nstamps.push(1000000004)\nassert([jitter, wobble], [1.25, 1.118033988749895])","return":null}
+ {"id":"spec-0808","description":"Nucleoid rolls back failed variance updates","code":"def checked(level):\n    if level < 0:\n        throw \"NEGATIVE_LEVEL\"\n    return level\nlevels = [3, 5, 10]\nspread = levels.variance(checked)\nfailure = \"\"\ntry:\n    levels.push(-1)\ncatch error:\n    failure = error\nassert([failure, levels, spread], [\"NEGATIVE_LEVEL\", [3, 5, 10], 8.666666666666666])\ntry:\n    levels.push(6)\n    assert(spread, 6.5)\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([levels, spread], [[3, 5, 10], 8.666666666666666])\nclass Gauge(level): this.level = level\nGauge(4)\nGauge(8)\nwobble = Gauge.stdev(gauge -> checked(gauge.level))\nfailure = \"\"\ntry:\n    Gauge(-2)\ncatch error:\n    failure = error\nassert([failure, Gauge.length, wobble], [\"NEGATIVE_LEVEL\", 2, 2])\nGauge(12)\nwobble","return":"3.265986323710904"}
+-{"id":"spec-0809","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0810","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0811","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0812","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0813","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
+-{"id":"spec-0814","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
+-{"id":"spec-0815","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nassert([1, 2] in [[1, 2], [3]], t
 ```
 
-**File**: `src/terminal/indentation.rs` (added, +150/-0)
+**File**: `dataset/nucleoid.synth.88.jsonl` (added, +12/-0)
 ```diff
-@@ -0,0 +1,150 @@
-+use tui_textarea::{CursorMove, TextArea};
-+
-+use crate::INDENT;
-+
-+#[derive(Clone, Copy)]
-+enum Direction {
-+    Indent,
-+    Unindent,
-+}
-+
-+struct Block {
-+    first: usize,
-+    last: usize,
-+    cursor: (usize, usize),
-+    anchor: Option<(usize, usize)>,
-+}
-+
-+impl Block {
-+    fn capture(editor: &TextArea<'_>) -> Self {
-+        let cursor = editor.cursor();
-+        let Some((start, end)) = editor.selection_range().filter(|(start, end)| start != end)
-+        else {
-+            return Self {
-+                first: cursor.0,
-+                last: cursor.0,
-+                cursor,
-+                anchor: None,
-+            };
-+        };
-+        let last = if end.0 > start.0 && end.1 == 0 {
-+            end.0 - 1
-+        } else {
-+            end.0
-+        };
-+        Self {
-+            first: start.0,
-+            last,
-+            cursor,
-+            anchor: Some(if cursor == start { end } else { start }),
-+        }
-+    }
-+
-+    fn shift(&mut self, row: usize, count: usize, direction: Direction) {
-+        for position in std::iter::once(&mut self.cursor).chain(self.anchor.iter_mut()) {
-+            if position.0 == row {
-+                position.1 = match direction {
-+                    Direction::Indent => position.1.saturating_add(count),
-+                    Direction::Unindent => position.1.saturating_sub(count),
-+                };
-+            }
-+        }
-+    }
-+
-+    fn restore(&self, editor: &mut TextArea<'_>) {
-+        if let Some(anchor) = self.anchor {
-+            move_to(editor, anchor);
-+            editor.start_selection();
-+        }
-+        move_to(editor, self.cursor);
-+    }
-+}
-+
-+pub(super) fn indent_selection(editor: &mut TextArea<'_>) -> bool {
-+    let block = Block::capture(editor);
-+    if block.anchor.is_none() {
-+        return false;
-+    }
-+    change(editor, block, Direction::Indent)
-+}
-+
-+pub(super) fn unindent(editor: &mut TextArea<'_>) -> bool {
-+    let block = Block::capture(editor);
-+    change(editor, block, Direction::Unindent)
-+}
-+
-+fn change(editor: &mut TextArea<'_>, mut block: Block, direction: Direction) -> bool {
-+    editor.cancel_selection();
-+    let mut changed = false;
-+    for row in block.first..=block.last {
-+        let count = match direction {
-+            Direction::Indent => INDENT.len(),
-+            Direction::Unindent => editor
-+                .lines()
-+                .get(row)
-+                .map_or(0, |line| leading_indent(line)),
-+        };
-+        if count == 0 {
-+            continue;
-+        }
-+        move_to(editor, (row, 0));
-+        let edited = match direction {
-+            Direction::Indent => editor.insert_str(INDENT),
-+            Direction::Unindent => remove_indent(editor, count),
-+        };
-+        if edited {
-+            block.shift(row, count, direction);
-+            changed = true;
-+        }
-+    }
-+    block.restore(editor);
-+    changed
-+}
-+
-+fn remove_indent(editor: &mut TextArea<'_>, count: usize) -> bool {
-+    editor.start_selection();
-+    for _ in 0..count {
-+        editor.move_cursor(CursorMove::Forward);
-+    }
-+    editor.delete_char()
-+}
-+
-+fn leading_indent(line: &str) -> usize {
-+    let mut width = 0;
-+    let mut count = 0;
-+    for character in line.chars() {
-+        width += match character {
-+            ' ' => 1,
-+            '\t' => INDENT.len() - width % INDENT.len(),
-+            _ => break,
-+        };
-+        count += 1;
-+        if width >= INDENT.len() {
-+            break;
-+        }
-+    }
-+    count
-+}
-+
-+fn move_to(editor: &mut TextArea<'_>, (row, column): (usize, usize)) {
-+    if let (Ok(row), Ok(column)) = (u16::try_from(row), u16::try_from(column)) {
-+        editor.move_cursor(CursorMove::Jump(row, column));
-+        return;
-+    }
-+    let start = u16::try_from(row).unwrap_or(u16::MAX);
-+    editor.move_cursor(CursorMove::Jump(start, 0));
-+    for _ in usize::from(start)..row {
-+        editor.move_cursor(CursorMove::Down);
-+    }
-+    if column == 0 {
-+        return;
-+    }
-+    editor.move_cursor(CursorMove::End);
-+    let end = editor.cursor().1;
-+    for _ in column.min(end)..end {
-+        editor.move_cursor(CursorMove::Back);
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests;
+@@ -0,0 +1,12 @@
++{"id":"synth-88-0001","description":"A quantile reads the time that nine in ten responses stay within","code":"times = [120, 80, 300, 95, 110, 140]\np90 = times.quantile(0.9)\nassert(p90, 220)\ntimes.push(250)\np90","return":"270"}
++{"id":"synth-88-0002","description":"The quartiles of a list are its 0.25 and 0.75 quantiles","code":"prices = [12, 7, 3, 25, 9]\nlow = prices.quantile(0.25)\nhigh = prices.quantile(0.75)\nassert([low, high], [7, 12])\nprices.push(40)\n[low, high]","return":"[7.5,21.75]"}
++{"id":"synth-88-0003","description":"The 0.5 quantile of a list is its median","code":"waits = [12, 3, 45, 7]\n[waits.quantile(0.5), waits.median()]","return":"[9.5,9.5]"}
++{"id":"synth-88-0004","description":"A selector takes a quantile of a property over a class population","code":"class Parcel(weight):\n    this.weight = weight\nParcel(3)\nParcel(5)\nheavy = Parcel(10)\nupper = Parcel.quantile(0.75, parcel -> parcel.weight)\nassert(upper, 7.5)\nheavy.weight = 4\nupper","return":"4.5"}
++{"id":"synth-88-0005","description":"A quantile over a filtered population follows each new instance","code":"class Trip(city, minutes):\n    this.city = city\n    this.minutes = minutes\nTrip(\"oslo\", 30)\nTrip(\"oslo\", 34)\nTrip(\"bergen\", 90)\nslow = Trip.filter(trip -> trip.city == \"oslo\").quantile(0.5, trip -> trip.minutes)\nassert(slow, 32)\nTrip(\"oslo\", 50)\nslow","return":"34"}
++{"id":"synth-88-0006","description":"A rank held in a variable is followed when it changes","code":"rank = 0.25\nlevels = [4, 8, 15, 16, 23, 42]\nq = levels.quantile(rank)\nassert(q, 9.75)\nrank = 0.75\nq","return":"21.25"}
++{"id":"synth-88-0007","description":"A single value is every quantile of itself, and an empty list gives NaN","code":"samples = [7]\nq = samples.quantile(0.3)\nassert(q, 7)\nsamples.pop()\nString(q)","return":"\"NaN\""}
++{"id":"synth-88-0008","description":"Two equal neighbours give their own value","code":"levels = [3, 3, 9]\nq = levels.quantile(0.01)\nassert(q, 3)\nlevels.push(1)\nq","return":"1.06"}
++{"id":"synth-88-0009","description":"A class-level rule keeps the 0.75 quantile of each sensor's readings","code":"class Sensor(readings):\n    this.readings = readings\n$Sensor.peak = $Sensor.readings.quantile(0.75)\nhall = Sensor([18, 21, 19, 24])\nassert(hall.peak, 21.75)\nhall.readings.push(30)\nhall.peak","return":"24"}
++{"id":"synth-88-0010","description":"A rank outside 0 to 1 raises a typed error","code":"xs = [1, 2]\nfailure = \"\"\ntry:\n    xs.quantile(90)\ncatch error:\n    failure = error\nfailure","return":"\"TypeError: quantile expects a number from 0 to 1\""}
++{"id":"synth-88-0011","description":"A failed selector rolls back the change that triggered it","code":"def checked(level):\n    if level < 0:\n        throw \"NEGATIVE\"\n    return level\nlevels = [3, 5, 10]\nhigh = levels.quantile(0.75, checked)\ntry:\n    levels.push(-1)\ncatch error:\n    pass\n[levels.length, high]","return":"[3,7.5]"}
++{"id":"synth-88-0012","description":"A function named quantile keeps its meaning beside the query","code":"def quantile(values, q) => values.length * q\nxs = [1, 3]\n[quantile(xs, 0.5), xs.quantile(0.5)]","return":"[1,2]"}
 ```
 
-**File**: `src/terminal/indentation/tests.rs` (added, +75/-0)
+**File**: `docs/README.md` (modified, +68/-1)
 ```diff
-@@ -0,0 +1,75 @@
-+use super::*;
+@@ -2719,7 +2719,7 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md)
+ | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
+ | `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), and the case conversion aliases `uppercase()`, `to_uppercase()` and `uppercased()` of `toUpperCase()`, and `lowercase()`, `to_lowercase()` and `lowercased()` of `toLowerCase()` ([NUC 118](nuc-0118.md)) |
+ | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
+-| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), `variance` and `stdev` ([NUC 123](nuc-0123.md)), the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), and the first and last element aliases `first()`, `last()`, `first(predicate)` and `last(predicate)` ([NUC 117](nuc-0117.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
++| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), `variance` and `stdev` ([NUC 123](nuc-0123.md)), `quantile` ([NUC 124](nuc-0124.md)), the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), and the first and last element aliases `first()`, `last()`, `first(predicate)` and `last(predicate)` ([NUC 117](nuc-0117.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
+ | `Class` | the global list of declared types; `Class.length` |
+ 
+ ```
+@@ -4314,6 +4314,70 @@ spread
+   [list and population variances and standard deviations](../nucleoid.spec.md#list-and-population-variances-and-standard-deviations)
+   section.
+ 
++### List and population quantiles
 +
-+#[test]
-+fn selected_lines_keep_unicode_boundaries_direction_and_cut_text() {
-+    let source = ["a\u{754c}", "", " \tsecond", "last"];
-+    let expected = ["    a\u{754c}", "    ", "     \tsecond", "last"];
-+    for (end, shifted_end) in [((3, 0), (3, 0)), ((2, 3), (2, 7))] {
-+        for reversed in [false, true] {
-+            let mut editor = TextArea::from(source);
-+            let (anchor, cursor) = if reversed {
-+                (end, (0, 1))
-+            } else {
-+                ((0, 1), end)
-+            };
-+            move_to(&mut editor, anchor);
-+            editor.start_selection();
-+            move_to(&mut editor, cursor);
-+            editor.set_yank_text("previous\ncut\n");
++```
++rain = [18, 21, 24, 15]
++wet = rain.quantile(0.75)
++class Lap(seconds):
++    this.seconds = seconds
++Lap(7)
++Lap(9)
++Lap(4)
++quick = Lap.quantile(0.25, lap -> lap.seconds)
++assert([wet, quick], [21.75, 5.5])
++rain.push(30)
++Lap(5)
++assert([wet, quick], [24, 4.75])
++quick
++```
 +
-+            assert!(indent_selection(&mut editor));
-+            assert_eq!(editor.lines(), expected);
-+            assert_eq!(editor.selection_range(), Some(((0, 5), shifted_end)));
-+            assert_eq!(editor.cursor(), if reversed { (0, 5) } else { shifted_end });
-+            assert_eq!(editor.yank_text(), "previous\ncut\n");
-+
-+            assert!(unindent(&mut editor));
-+            assert_eq!(editor.lines(), source);
-+            assert_eq!(editor.selection_range(), Some(((0, 1), end)));
-+            assert_eq!(editor.cursor(), cursor);
-+            assert_eq!(editor.yank_text(), "previous\ncut\n");
-+        }
-+    }
-+}
-+
-+#[test]
-+fn unindent_removes_one_leading_level_without_deleting_code() {
-+    for (source, column, expected, shifted_column) in [
-+        ("    value", 7, "value", 3),
-+        ("\tvalue", 3, "value", 2),
-+        (" \tvalue", 4, "value", 2),
-+        ("  value", 0, "value", 0),
-+        (" \t   value", 7, "   value", 5),
-+        ("value", 3, "value", 3),
-+    ] {
-+        let mut editor = TextArea::from([source]);
-+        move_to(&mut editor, (0, column));
-+        editor.set_yank_text("previous cut");
-+
-+        assert_eq!(unindent(&mut editor), source != expected);
-+        assert_eq!(editor.lines(), [expected]);
-+        assert_eq!(editor.cursor(), (0, shifted_column));
-+        assert!(!editor.is_selecting());
-+        assert_eq!(editor.yank_text(), "previous cut");
-+    }
-+}
-+
-+#[test]
-+fn unindent_preserves_positions_beyond_cursor_jump_limits() {
-+    let long_line = format!("    {}", "x".repeat(usize::from(u16::MAX) + 1));
-+    let mut many_lines = vec![String::new(); usize::from(u16::MAX) + 1];
-+    many_lines.push("    value".into());
-+    for mut editor in [TextArea::from([long_line]), TextArea::new(many_lines)] {
-+        editor.move_cursor(CursorMove::Bottom);
-+        editor.move_cursor(CursorMove::End);
-+        let (row, column) = editor.cursor();
-+        let original = editor.lines().to_vec();
-+
-+        assert!(unindent(&mut editor));
-+        assert_eq!(editor.cursor(), (row, column - INDENT.len()));
-+        assert_eq!(editor.lines().len(), original.len());
-+        assert_eq!(editor.lines()[row], original[row].trim_start());
-+        assert!(editor.undo());
-+        assert_eq!(editor.lines(), original);
-+    }
-+}
++- This is the complete
++  `Nucleoid finds the quantiles of lists and populations with quantile`
++  program in `tests/reference.md`, without its title and expected-return
++  metadata; it returns `4.75`.
++- [NUC 124](nuc-0124.md) adds `quantile(q)` and `quantile(q, selector)` to
++  lists and class instance lists: the `q` quantile, for a number `q` from `0`
++  to `1`, with linear interpolation between the two closest ranks, the default
++  method of NumPy's and pandas' `quantile`, R's type 7 and Excel's
++  `PERCENTILE.INC`. `0` gives the smallest value and `1` the largest.
++- The values are sorted in a private list `s`, and the rank is
++  `h = (n - 1) * q` for `n` values. A whole rank gives the value at it, two
++  equal neighbours give their value, and any other rank between two values
 ```
 
-**File**: `src/terminal/input.rs` (modified, +14/-6)
+**File**: `docs/examples.md` (modified, +28/-0)
 ```diff
-@@ -3,7 +3,7 @@ use nucleoid::Runtime;
+@@ -4204,6 +4204,34 @@ press.readings.push(50)
+   and the
+   [root contract](../nucleoid.spec.md#list-and-population-variances-and-standard-deviations).
  
- use super::completion::Completion;
- use super::output::{Entry, Output, View};
--use super::{App, Focus, HELP, HISTORY_LIMIT, editor, output};
-+use super::{App, Focus, HELP, HISTORY_LIMIT, editor, indentation, output};
- 
- impl App {
-     pub(super) fn key(&mut self, key: KeyEvent, runtime: &mut Runtime) -> bool {
-@@ -120,10 +120,7 @@ impl App {
-             KeyCode::Up if self.editor.lines().len() == 1 => self.recall(false),
-             KeyCode::Down if self.editor.lines().len() == 1 => self.recall(true),
-             KeyCode::Tab => self.complete_or_indent(runtime),
--            KeyCode::BackTab => {
--                editor::dedent(&mut self.editor);
--                self.completion = None;
--            }
-+            KeyCode::BackTab => self.unindent(),
-             KeyCode::Backspace if editor::dedent(&mut self.editor) => self.edited(runtime),
-             KeyCode::Enter => {
-                 self.completion = None;
-@@ -146,6 +143,11 @@ impl App {
-     }
- 
-     fn complete_or_indent(&mut self, runtime: &Runtime) {
-+        self.history_index = None;
-+        if indentation::indent_selection(&mut self.editor) {
-+            self.completion = None;
-+            return;
-+        }
-         if self.completion.is_none() {
-             self.completion = Completion::find(runtime, &self.editor, false);
-         }
-@@ -154,7 +156,13 @@ impl App {
-         } else {
-             self.editor.insert_str(crate::INDENT);
-         }
--        self.history_index = None;
-+    }
++## List and population quantiles
 +
-+    fn unindent(&mut self) {
-+        if indentation::unindent(&mut self.editor) {
-+            self.history_index = None;
-+        }
-+        self.completion = None;
-     }
++**Ninetieth percentiles flag the routes whose trips run late**
++
++```nuc
++class Route(name, times):
++    this.name = name
++    this.times = times
++$Route.slow = $Route.times.quantile(0.9)
++$Route.late = $Route.slow > 40
++north = Route("north", [22, 25, 31, 28, 35, 24])
++south = Route("south", [30, 41, 38, 33, 36, 52])
++assert([north.late, south.slow, south.late], [false, 46.5, true])
++north.times.push(50)
++south.times.pop()
++[north.slow, north.late, south.slow, south.late]
++# return: [41,true,39.8,false]
++```
++
++- Each route keeps the ninetieth percentile of its own trip times in a
++  class-level rule, and a second rule flags the routes whose slowest tenth
++  runs past 40 minutes.
++- Both rules follow every trip: a 50-minute trip on the north route lifts its
++  percentile from `33` to `41` and flags it, and dropping the south route's
++  52-minute trip lowers its percentile from `46.5` to `39.8`, which clears its
++  flag. See [NUC 124](nuc-0124.md) and the
++  [root contract](../nucleoid.spec.md#list-and-population-quantiles).
++
+ ## Reactive list flattening
  
-     pub(super) fn edited(&mut self, runtime: &Runtime) {
+ **Flattening keeps the dirty tiles of every room counted**
 ```
 
-**File**: `src/terminal/mod.rs` (modified, +5/-1)
+**File**: `docs/nuc-0000.md` (modified, +4/-2)
 ```diff
-@@ -1,5 +1,6 @@
- mod completion;
- mod editor;
-+mod indentation;
- mod input;
- mod output;
- mod pointer;
-@@ -40,9 +41,12 @@ Windows delivers pasted LF as Ctrl-Enter, so both insert a newline there.
- Ctrl-J inserts an automatically indented newline.
+@@ -68,6 +68,7 @@ Created: 31-Jul-2026
+ | [104](nuc-0104.md) | Any and All Class References | Accepted |
+ | [109](nuc-0109.md) | Operator Section Arguments | Accepted |
+ | [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Accepted |
++| [125](nuc-0125.md) | Stepped Slices | Draft |
  
- Tab accepts a completion, or inserts four spaces when none is available.
-+With selected text, Tab indents its lines without replacing the selection.
-+Shift-Tab unindents the selected lines, or the current line from any position.
- Ctrl-Space opens completions; Up/Down selects; Escape dismisses.
- Ctrl-P / Ctrl-N recalls history and restores your unfinished draft.
--Ctrl-Z / Ctrl-Y undoes / redoes edits. Shift-arrows selects text.
-+Ctrl-Z / Ctrl-Y undoes / redoes edits, including each shifted line.
-+Shift-arrows selects text.
- Ctrl-X cuts; Ctrl-V pastes the editor's last cut text.
- Ctrl-C cancels input. Ctrl-D on an empty editor / Ctrl-Q exits.
+ ### Runtime features
+ 
+@@ -132,7 +133,7 @@ Created: 31-Jul-2026
+ | [111](nuc-0111.md) | Reactive String Padding | Accepted |
+ | [114](nuc-0114.md) | List and Population Products | Accepted |
+ | [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Accepted |
+-| [124](nuc-0124.md) | List and Population Quantiles | Draft |
++| [124](nuc-0124.md) | List and Population Quantiles | Accepted |
+ 
+ ### Reasoning enhancement
+ 
+@@ -302,7 +303,8 @@ Created: 31-Jul-2026
+ | [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Accepted |
+ | [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Accepted |
+-| [124](nuc-0124.md) | List and Population Quantiles | Standards Track | Utility enhancement | Draft |
++| [124](nuc-0124.md) | List and Population Quantiles | Standards Track | Utility enhancement | Accepted |
++| [125](nuc-0125.md) | Stepped Slices | Standards Track | Syntax enhancement | Draft |
+ 
+ ## Copyright
  
 ```
 
-**File**: `src/terminal/tests.rs` (modified, +92/-0)
+**File**: `docs/nuc-0125.md` (added, +66/-0)
 ```diff
-@@ -386,6 +386,98 @@ fn familiar_undo_redo_and_cut_paste_shortcuts_work_in_the_editor() {
-     assert_eq!(app.editor.lines(), ["x"]);
- }
- 
-+#[test]
-+fn selected_code_indents_without_replacing_or_running_it() {
-+    let mut app = App::new(false, false);
-+    let mut runtime = Runtime::new();
-+    let source = "value = 7\nvalue + 1";
-+    app.editor = editor::new(source);
-+    app.editor.select_all();
-+    app.editor.set_yank_text("previous cut");
+@@ -0,0 +1,66 @@
++# NUC 125 -- Stepped Slices
 +
-+    key(&mut app, &mut runtime, KeyCode::Tab, KeyModifiers::NONE);
-+    assert_eq!(app.editor.lines(), ["    value = 7", "    value + 1"]);
-+    assert!(app.editor.is_selecting());
-+    for (width, height) in [(40, 12), (100, 30)] {
-+        let mut terminal = Terminal::new(TestBackend::new(width, height)).unwrap();
-+        terminal.draw(|frame| app.draw(frame)).unwrap();
-+        let screen: String = terminal
-+            .backend()
-+            .buffer()
-+            .content
-+            .iter()
-+            .map(ratatui::buffer::Cell::symbol)
-+            .collect();
-+        assert!(screen.contains("Tab indent"));
-+        assert!(screen.contains("Shift-Tab unindent"));
-+        assert!(screen.contains("F5 run"));
-+        assert!(screen.contains("Ctrl-Q quit"));
-+    }
-+    key(
-+        &mut app,
-+        &mut runtime,
-+        KeyCode::BackTab,
-+        KeyModifiers::SHIFT,
-+    );
-+    assert_eq!(app.editor.lines().join("\n"), source);
-+    assert_eq!(app.editor.yank_text(), "previous cut");
++```
++NUC: 125
++Title: Stepped Slices
++Author: Can Mingir <canmingir@gmail.com>
++Status: Draft
++Type: Standards Track
++Category: Syntax enhancement
++Created: 20-Nov-2026
++```
 +
-+    for _ in 0..2 {
-+        key(
-+            &mut app,
-+            &mut runtime,
-+            KeyCode::Char('z'),
-+            KeyModifiers::CONTROL,
-+        );
-+    }
-+    assert_eq!(app.editor.lines(), ["    value = 7", "    value + 1"]);
-+    for _ in 0..2 {
-+        key(
-+            &mut app,
-+            &mut runtime,
-+            KeyCode::Char('y'),
-+            KeyModifiers::CONTROL,
-+        );
-+    }
-+    assert_eq!(app.editor.lines().join("\n"), source);
-+    assert!(app.entries.is_empty());
-+    assert!(!runtime.state.has_variable("value"));
++## Abstract
 +
-+    key(&mut app, &mut runtime, KeyCode::F(5), KeyModifiers::NONE);
-+    assert_eq!(app.entries.len(), 1);
-+    assert_eq!(app.entries[0].output.text(View::Text), "8");
-+}
++- A slice gains an optional step after a second colon:
++  `SEQUENCE[start:stop:step]`. Every part may be omitted, so `xs[::2]` takes
++  every other item, `xs[1::2]` the others, `s[::-1]` reverses a string and
++  `Reading[::3]` takes every third instance of a class.
++- The step follows Python's slices: a positive step walks forward from the
++  start, a negative step walks backward from the end, and the bounds keep
++  the rules of [NUC 61](nuc-0061.md)'s slices and ranges, with negative
++  bounds counting from the end and every bound clamped to the sequence.
++- It applies wherever a slice applies today: lists, strings, which it walks
++  by Unicode scalar value as `slice` does, and the instance lists of
++  declared classes. A declaration that holds a stepped slice stays live, as
++  one that holds a slice does.
++- At the accepted revision every subscript with a second colon is a
++  whole-program `SyntaxError`, such as `Unexpected ':'` for `xs[::2]` and
++  `Expected ']' but found ':'` for `xs[1:5:2]`. Only those inputs change.
++  Every one-colon slice keeps its parse and its result.
 +
-+#[test]
-+fn unindenting_recalled_input_keeps_the_edited_buffer() {
-+    let mut app = App::new(false, false);
-+    let mut runtime = Runtime::new();
-+    app.history.push("    value = 7".into());
-+    app.editor = editor::new("unfinished draft");
-+    key(
-+        &mut app,
-+        &mut runtime,
-+        KeyCode::Char('p'),
-+        KeyModifiers::CONTROL,
-+    );
-+    assert_eq!(app.editor.lines(), ["    value = 7"]);
-+    key(
-+        &mut app,
-+        &mut runtime,
-+        KeyCode::BackTab,
-+        KeyModifiers::SHIFT,
-+    );
-+    key(
-+        &mut app,
-+        &mut runtime,
-+        KeyCode::Char('n'),
-+        KeyModifiers::CONTROL,
-+    );
-+    assert_eq!(app.editor.lines(), ["value = 7"]);
-+    assert_eq!(app.draft, "unfinished draft");
-+    assert!(app.entries.is_empty());
-+}
++## Motivation
 +
- #[test]
- fn windows_control_enter_is_a_pasted_lf_not_an_execution_shortcut() {
-     let mut app = App::new(false, false);
++- World models walk their sequences by stride. A grid model reads every
++  other row or column, flips rows to mirror a shape, and pairs alternating
++  readings; a text model reverses words. Slices already cut a sequence by
++  position, but they cannot skip or walk backward.
++- Without a step, accepted programs spell a stride with loops that push
++  items into a list, with index arithmetic over a filtered list, or, for a
++  reversed string, with `s.split("").reverse().join("")`. These spellings
++  repeat the sequence, depend on its values, or cannot stay live in a
++  declaration. `xs[::2]` and `s[::-1]` state the stride once, in the slice
++  syntax that already exists.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
 ```
 
-**File**: `src/terminal/view.rs` (modified, +13/-5)
+**File**: `nucleoid.spec.md` (modified, +175/-0)
 ```diff
-@@ -103,11 +103,19 @@ fn editor_panel(frame: &mut Frame<'_>, area: Rect, app: &mut App, regions: &mut
-             )
-             .alignment(Alignment::Right),
-         )
--        .title_bottom(Line::from(if area.width >= 70 {
--            " Enter newline  Tab complete  Ctrl-J autoindent "
--        } else {
--            " Enter newline  Tab complete "
--        }));
-+        .title_bottom(Line::from(
-+            if app
-+                .editor
-+                .selection_range()
-+                .is_some_and(|(start, end)| start != end)
-+            {
-+                " Tab indent  Shift-Tab unindent "
-+            } else if area.width >= 70 {
-+                " Enter newline  Tab complete  Ctrl-J autoindent "
-+            } else {
-+                " Enter newline  Tab complete "
-+            },
-+        ));
-     regions.editor = editor_block.inner(area);
-     app.editor.set_block(editor_block);
-     app.editor.set_style(base().bg(PANEL));
+@@ -6851,6 +6851,102 @@ t.promote(bob)
+   `Nucleoid rolls back failed variance updates` specify the executable
+   behavior. `tests/list_variances.rs` executes the rest.
+ 
++## List and population quantiles
++
++- [NUC 124](docs/nuc-0124.md) adds the read-only list query `quantile` to lists
++  and class instance lists. No syntax, keyword or error type is added.
++- `RECEIVER.quantile(q)` returns the `q` quantile of the receiver's items, for a
++  number `q` from `0` to `1`, and `RECEIVER.quantile(q, selector)` that of
++  `selector(item)` for every item: `0` gives the smallest value and `1` the
++  largest. Between them the values are interpolated linearly between the two
++  closest ranks, the default method of NumPy's and pandas' `quantile`, R's
++  type 7 and Excel's `PERCENTILE.INC`.
++- The values are converted to numbers once and ordered by a stable ascending
++  sort of a private list `s`. With `n` values the rank is `h = (n - 1) * q`,
++  `lo` is its whole part and `t = h - lo` its fraction, in 64-bit floating
++  point. A whole rank, where `t` is `0`, gives the value at `lo` itself, and
++  so do two equal neighbours, where `s[lo] == s[lo + 1]`; otherwise the result
++  is `(1 - t) * s[lo] + t * s[lo + 1]`, R's type 7 computation. So
++  `[2, 4, 4, 4, 5, 5, 7, 9].quantile(0.9)` is `7.6`,
++  `[12, 3, 45, 7, 30, 18].quantile(0.2)` is `7`, the second smallest value,
++  and `[3, 3].quantile(0.01)` is `3`.
++- For a list of finite numbers, `xs.quantile(q)` is exactly what
++  `(1 - h % 1) * s[h] + h % 1 * s[Math.ceil(h)]` gives with
++  `s = xs.sortBy(v -> v)` and `h = (s.length - 1) * q` wherever the rank is
++  whole or its two neighbours differ, apart from the sign of a zero, which
++  the next rule describes. Where they are equal the query gives
++  their value, while the spelling can land one unit in the last place off, as
++  `2.9999999999999996` for `[3, 3]` at `0.01`. The whole-rank rule keeps a
++  whole rank from reading `0 * Infinity`, so `[1, x].quantile(0)` is `1` and
++  `[1, x].quantile(1)` is `x` for any number `x`, `Infinity` included.
++- `-0` and `0` are equal neighbours, so the result takes the sign of the lower
++  one in the sorted order, which keeps the receiver order of equal values:
++  `[-0, 0].quantile(0.5)` is `-0` and `[0, -0].quantile(0.5)` is `0`. The
++  accepted spelling gives `0` for both, and at the rank `-0` it turns a `-0`
++  value into `0`.
++- The receiver is never sorted or written: after
++  `waits = [12, 3, 45, 7, 30, 18]`, `waits.quantile(0.9)` is `37.5` and `waits`
++  keeps its order.
++- A single value gives that value for every rank, and an empty receiver gives
++  NaN. A value that converts to NaN makes the result NaN. An undefined value
++  makes it undefined, which a declaration stores as `null`, ahead of NaN; every
++  item is still visited. Infinities take their places in the order and the
++  interpolation follows 64-bit floating point, so `-Infinity` and `Infinity`
++  at the two closest ranks give NaN.
++- **Ranks.** The first argument is required and must be a number from `0` to
++  `1`, both included. Anything else raises
++  `TypeError("quantile expects a number from 0 to 1")`, even on an empty
++  receiver: a missing argument, NaN, a number outside the range, a numeric
++  string, a boolean, `null`, undefined, a list, an object or a function. The
++  rank is checked before the selector.
++- **Selectors.** The optional second argument is a selector. It is called once
++  for every item, in order, with only the item; further parameters are `null`.
++  A supplied second argument that is not a function, including `null`, raises
++  `TypeError("quantile expects a function")`, even on an empty receiver.
++- The receivers and the numeric conversion are those of `median`: a list
++  however it is reached, or a class's instance list in population order, named
++  by the class, by a variable that holds the class or by `$Name`; `null`,
++  `false`, empty strings and empty lists are `0`, `true` is `1`, numeric
++  strings and one-item lists are their number, and objects, other strings and
++  longer lists are NaN. On a class name, `quantile` is the population query
++  even when the class declares an instance method `quantile`; its instances
++  keep calling that method.
++- `quantile` reads items, not bindings, so a `null` item counts `0` without
++  settling a declaration to `null`, while the reads inside a selector follow
++  the existing rules.
++- `quantile` follows the shared rules of the list queries: it reads its
++  receiver before its arguments, evaluates every supplied argument once, left
++  to right, including unused extras, and never writes the receiver. A
++  declaration that uses it depends on the list or population, on its argument
++  expressions, the rank included, and on whatever the selector reads, so list
++  mutations, new and deleted instances, property changes and a changed rank
++  re-evaluate it, in class-level rules too. Selector errors and a rank that a
++  change makes invalid roll back through
 ```
 
 #### Recent Merged Pull Requests:
@@ -2194,13 +1973,13 @@ Indent selected lines with Tab and unindent selections or the current line with 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Synthesize ARC examples from object transforms
+## X. Initialize synthesized instance value fields
 
 **RULE**:
 When implementing operations in `arc/src/synthesizer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8eed95c3`: Synthesize ARC examples from object transforms. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aa069366`: Initialize synthesized instance value fields. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/synthesizer.ts`.
@@ -2208,39 +1987,18 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-import * as visualizer from "./visualizer";
-import object from "./object.ts";
-import * as nucleoid from "./lib/nucleoid.ts";
+          input_value: undefined,
+          output_value: undefined,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-import * as llm from "./lib/llm.ts";
-
-const FIELD_GUIDE = `
-- "dataset" holds the existing examples. Each pairs an "input_matrix" with the "output_matrix" that the rule produces from it.
-- Each example's "instances" lists its instances, each pairing an "input_instance_matrix" with its "output_instance_matrix". They relate to the example's full matrices by a fixed convention (how instances are found, ordered and cropped); work that convention out from the existing examples and follow it exactly.
-- "class_declaration", "declarations" and "output_canvas" are fixed for this task. Every new example must be valid under them. Do not change them or repeat them in your answer.
-`.trim();
-  const count = train.length;
-
-  const { result } = await llm.generate({
-    few_shot: null,
-    messages: [
-      {
-        role: "assistant",
-        content: `Below is the data for a matrix-transformation task. Each example pairs an input matrix with the output matrix that one hidden rule produces from it, and the same rule holds for every example.
-
-        <current_dataset>
-        ${JSON.stringify({
-          ...train,
-          dataset: train.dataset.map(
-            ({ input_matrix, output_matrix, ins
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8eed95c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aa069366` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
