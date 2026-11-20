@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-20T05:37:08.218Z",
+  "last_updated": "2026-11-20T05:54:30.547Z",
   "total_verified_learnings": 9025,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22219,
+  "total_items": 22233,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-73FD-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DTFQ-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3efa4ea35699ece67f03d522a8823676a340337cb8b77c465660c535367505e2",
+      "content_hash": "16d16a8ec653094a5bf5fa45884c4052b4de593b06f7ff23b26050ad5fb16bfe",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T05:21:16.828Z"
+      "persisted_at": "2026-11-20T05:54:30.105Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "295a2aee748f4050e3954e908ac950eedf68be624b4b81fc92bfd1d68f818951",
+      "content_hash": "19ff4d4b3d1afddd36da2ae84966c72f3c07520aaccd7ffa929838887cade448",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T05:21:16.954Z"
+      "persisted_at": "2026-11-20T05:54:30.317Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e556055e875c51672c080a06a6da9b6ac69f98338bfa49a230bdbe7e717aaec2",
+      "content_hash": "f41b9c4cd91688fca5ea811a0405304c4d1ea2a11c2ebcf37797e38782a8b1cf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T05:21:17.078Z"
+      "persisted_at": "2026-11-20T05:54:30.547Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -232272,8 +232272,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "47745104",
-      "content_hash": "794e7980bb2933e2b65a8a9b6d2cb9878eee642579c0598fb389298e59e5223f",
+      "source_version": "b2252f9e",
+      "content_hash": "bd37d4cff10915e8dfafe419d61f1e079436cd7a1bc6ae7ed3500f4f469dfc45",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -232311,6 +232311,11 @@
           "number": 9158,
           "title": "Parquet column index with only null pages",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9520,
+          "title": "ORC bloom filter lookups for timestamps",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232318,7 +232323,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T00:31:36.734Z",
+      "verified_at": "2026-11-20T05:51:43.309Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232360,10 +232365,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "repository": "trinodb/trino",
-      "source_version": "47745104",
-      "content_hash": "a9629275d678fe1ff6e622cacf43a8b274ab7115b8fc971503ae992fbbc0e2f7",
+      "source_version": "b2252f9e",
+      "content_hash": "365b833bbc633994c76a2ca4eed8169e2a45aa06eaf43960c2eadfdd4047edad",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T00:31:37.253Z"
+      "persisted_at": "2026-11-20T05:51:43.982Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino",
@@ -232372,10 +232377,10 @@
       "relative_path": "08_VERIFICATION/trinodb-trino-verification-protocol-empirical-defect-shield-for-trinodb-trino.md",
       "title": "Verification Protocol: Empirical Defect Shield for trinodb/trino",
       "repository": "trinodb/trino",
-      "source_version": "47745104",
-      "content_hash": "e6227e988648a72a929ec6a2fee1b99064800d9613786af96e4b3276cf3aa0ac",
+      "source_version": "b2252f9e",
+      "content_hash": "8981e5eada1e8fe7fbfa84b06c375e55a66ad89a9b571996880e0c9e2cd6beac",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:31:37.392Z"
+      "persisted_at": "2026-11-20T05:51:44.169Z"
     },
     "candidate_directive-semantic-preserve-catch-and-var-binding-identities": {
       "item_id": "candidate_directive-semantic-preserve-catch-and-var-binding-identities",
@@ -252416,9 +252421,9 @@
       "title": "Architecture Intelligence: trinodb-trino-learnings Core Invariants",
       "repository": "trinodb-trino-learnings",
       "source_version": "HEAD",
-      "content_hash": "6e30b6749bf245735066c543a257d23ec8cfce7b8c0fb08af7701aa6eb0cccd0",
+      "content_hash": "56687c6dca8249145b46690057a940ba6f769e932dc837732648b6a6c8d49f99",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T00:31:41.952Z"
+      "persisted_at": "2026-11-20T05:54:28.980Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino-learnings",
@@ -252428,9 +252433,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for trinodb-trino-learnings",
       "repository": "trinodb-trino-learnings",
       "source_version": "HEAD",
-      "content_hash": "8fb2fe5a3e574bd09fd4e57a669bd196aeab332bda95c27f81b35245234c28ca",
+      "content_hash": "e06734a60ad42e7199bc75fe96ddcfd9bd56b1008923a26def98edc482d6b764",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:31:42.090Z"
+      "persisted_at": "2026-11-20T05:54:29.190Z"
     },
     "learn-github-adobe-structured-data-validator": {
       "learning_id": "learn-github-adobe-structured-data-validator",
@@ -253754,8 +253759,8 @@
       "slug": "crawlcove-crawlcove-robots-txt-tester",
       "platform": "github",
       "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
-      "source_version": "baafccbf",
-      "content_hash": "21c31f05a722525c6f7cc2a2baaa4b56dad769e29514be64805c29ae73ddbc1d",
+      "source_version": "cf5ba27f",
+      "content_hash": "a50b2573e550bb6b5bf5e4dd83e47d43001d78f0e76725ea448de220271c9e52",
       "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
       "promoted_rules": [
@@ -253763,6 +253768,21 @@
           "number": 8690,
           "title": "Crawl Cove banner",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 9521,
+          "title": "Ingestion Sanitization of Web-Fetched Text Files (BOM & Comment Stripping Order)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9522,
+          "title": "Dual-Barrier HTTP Abort Timeout Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9523,
+          "title": "Non-Text Catch-All Route Detection on Default HTTP 200 Responses",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -253770,7 +253790,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T03:23:17.881Z",
+      "verified_at": "2026-11-20T05:53:04.696Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -253798,10 +253818,10 @@
       "relative_path": "08_VERIFICATION/crawlcove-crawlcove-robots-txt-tester-verification-protocol-empirical-defect-shi.md",
       "title": "Verification Protocol: Empirical Defect Shield for CrawlCove/robots-txt-tester",
       "repository": "CrawlCove/robots-txt-tester",
-      "source_version": "baafccbf",
-      "content_hash": "f9036beff17e2147a98ada7c069b6963327c5649cea2486b87cd5f37e2d05a69",
+      "source_version": "cf5ba27f",
+      "content_hash": "429cdab5968ae0d79d13de1302c70baeed8dd90ea0bd707a37d7be97bd6a6236",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T03:23:18.501Z"
+      "persisted_at": "2026-11-20T05:53:06.277Z"
     },
     "learn-github-crossplane-crossplane": {
       "learning_id": "learn-github-crossplane-crossplane",
@@ -253878,9 +253898,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for crawlcove-crawlcove-robots-txt-tester-learnings",
       "repository": "crawlcove-crawlcove-robots-txt-tester-learnings",
       "source_version": "HEAD",
-      "content_hash": "4d676e2fc7cf8c09e7836391ac5a281b1cb6d16ff0b8678944e08be21dd9d836",
+      "content_hash": "9864f1bd382cb7279b3e34b711db77bf381729904e4292fdbb213cb1a9f4aac0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T03:23:26.838Z"
+      "persisted_at": "2026-11-20T05:54:27.989Z"
     },
     "candidate_directive-deps-update-vulnerable-dependencies-security": {
       "item_id": "candidate_directive-deps-update-vulnerable-dependencies-security",
@@ -300831,6 +300851,182 @@
       "content_hash": "30ab79ab910556089477929fc3fac972433aa880572882650bba467eb4880700",
       "domain_letter": "D",
       "persisted_at": "2026-11-20T05:37:06.262Z"
+    },
+    "rule-9520": {
+      "learning_id": "rule-9520",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9520,
+      "title": "ORC bloom filter lookups for timestamps",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "b2252f9e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T05:51:43.309Z"
+    },
+    "candidate_directive-orc-bloom-filter-lookups-for-timestamps": {
+      "item_id": "candidate_directive-orc-bloom-filter-lookups-for-timestamps",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DSEK-orc-bloom-filter-lookups-for-timestamps.md",
+      "title": "ORC bloom filter lookups for timestamps",
+      "repository": "trinodb-trino-learnings",
+      "source_version": "HEAD",
+      "content_hash": "09fbe1e0c2d45a7145886392cedc17ab7c72c940afb28275764d3fb65ae851b1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-20T05:54:28.765Z"
+    },
+    "rule-9521": {
+      "learning_id": "rule-9521",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9521,
+      "title": "Ingestion Sanitization of Web-Fetched Text Files (BOM & Comment Stripping Order)",
+      "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
+      "source_version": "cf5ba27f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T05:53:04.696Z"
+    },
+    "rule-9522": {
+      "learning_id": "rule-9522",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9522,
+      "title": "Dual-Barrier HTTP Abort Timeout Invariant",
+      "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
+      "source_version": "cf5ba27f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T05:53:04.696Z"
+    },
+    "rule-9523": {
+      "learning_id": "rule-9523",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9523,
+      "title": "Non-Text Catch-All Route Detection on Default HTTP 200 Responses",
+      "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
+      "source_version": "cf5ba27f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-20T05:53:04.696Z"
+    },
+    "candidate_directive-ingestion-sanitization-of-web-fetched-text-files-bom-comment-stripping-order": {
+      "item_id": "candidate_directive-ingestion-sanitization-of-web-fetched-text-files-bom-comment-stripping-order",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DQTQ-ingestion-sanitization-of-web-fetched-text-files-bom-comment-stripping-order.md",
+      "title": "Ingestion Sanitization of Web-Fetched Text Files (BOM & Comment Stripping Order)",
+      "repository": "crawlcove-crawlcove-robots-txt-tester-learnings",
+      "source_version": "HEAD",
+      "content_hash": "27486aaa34df1c8270d0acb3d3abfadf42fa8bb16c84b739bc87b72df764d6b7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T05:54:26.705Z"
+    },
+    "candidate_directive-dual-barrier-http-abort-timeout-invariant": {
+      "item_id": "candidate_directive-dual-barrier-http-abort-timeout-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DQTR-dual-barrier-http-abort-timeout-invariant.md",
+      "title": "Dual-Barrier HTTP Abort Timeout Invariant",
+      "repository": "crawlcove-crawlcove-robots-txt-tester-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5078965e90533c5f9fc7cce880a6c75f0ef34c85cbb174ae659d7668b0465b62",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-20T05:54:26.941Z"
+    },
+    "candidate_directive-non-text-catch-all-route-detection-on-default-http-200-responses": {
+      "item_id": "candidate_directive-non-text-catch-all-route-detection-on-default-http-200-responses",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DQTR-non-text-catch-all-route-detection-on-default-http-200-responses.md",
+      "title": "Non-Text Catch-All Route Detection on Default HTTP 200 Responses",
+      "repository": "crawlcove-crawlcove-robots-txt-tester-learnings",
+      "source_version": "HEAD",
+      "content_hash": "654db4a94f81ff45fffc0b2600f1b605c5950731724e5d9402b0783916c72bdb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T05:54:27.165Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-crawlcove-robots-txt-tester-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-crawlcove-robots-txt-tester-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-crawlcove-crawlcove-robots-txt-tester-technical-construction-intelligence-crawlc.md",
+      "title": "Technical Construction Intelligence: CrawlCove/robots-txt-tester Core Invariants",
+      "repository": "CrawlCove/robots-txt-tester",
+      "source_version": "cf5ba27f",
+      "content_hash": "81eaa45c3eebf2a3860292865cfc86aa0393950de093a55b2972491dcd9fb824",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T05:53:05.756Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-crawlcove-robots-txt-tester": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-crawlcove-robots-txt-tester",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-crawlcove-crawlcove-robots-txt-tester-adr-subsystem-boundary-modular-decoupling-.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in CrawlCove/robots-txt-tester",
+      "repository": "CrawlCove/robots-txt-tester",
+      "source_version": "cf5ba27f",
+      "content_hash": "d8f285e806bccd8a97e6628ee4c651910848697c84d699d06dc3adbfabb9e039",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T05:53:05.945Z"
+    },
+    "agent_contract-agent-contract-crawlcove-robots-txt-tester-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-crawlcove-robots-txt-tester-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/crawlcove-crawlcove-robots-txt-tester-agent-contract-crawlcove-robots-txt-tester.md",
+      "title": "Agent Contract: CrawlCove/robots-txt-tester Autonomous Specialist Persona",
+      "repository": "CrawlCove/robots-txt-tester",
+      "source_version": "cf5ba27f",
+      "content_hash": "691f12a0cf68f29d49226aa71a79e7a48dc1fae16837e7487f29d7fa87bf4266",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T05:53:06.109Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-robots-txt-tester-learni": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-robots-txt-tester-learni",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-crawlcove-crawlcove-robots-txt-tester-learnings-technical-construction-intellige.md",
+      "title": "Technical Construction Intelligence: crawlcove-crawlcove-robots-txt-tester-learnings Core Invariants",
+      "repository": "crawlcove-crawlcove-robots-txt-tester-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3d3ac34faceb870ba2a65d7c05264899954a0e24b0d73a15ae3b1c9c90f7b0a8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T05:54:27.394Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-crawlcove-crawlcove-robots-txt-test": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-crawlcove-crawlcove-robots-txt-test",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-crawlcove-crawlcove-robots-txt-tester-learnings-adr-subsystem-boundary-modular-d.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in crawlcove-crawlcove-robots-txt-tester-learnings",
+      "repository": "crawlcove-crawlcove-robots-txt-tester-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e033699426085834b6cb2b6703c8c2f9e9085e7502fec3f9129523435962f36b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T05:54:27.605Z"
+    },
+    "agent_contract-agent-contract-crawlcove-crawlcove-robots-txt-tester-learnings-autonomous-specia": {
+      "item_id": "agent_contract-agent-contract-crawlcove-crawlcove-robots-txt-tester-learnings-autonomous-specia",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/crawlcove-crawlcove-robots-txt-tester-learnings-agent-contract-crawlcove-crawlco.md",
+      "title": "Agent Contract: crawlcove-crawlcove-robots-txt-tester-learnings Autonomous Specialist Persona",
+      "repository": "crawlcove-crawlcove-robots-txt-tester-learnings",
+      "source_version": "HEAD",
+      "content_hash": "007a6bbd440f6740022460f7ff1918b9e67fbdb2f704e9d5736b84eea6c6fa8c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-20T05:54:27.796Z"
     }
   },
   "ai-builder-brain": {

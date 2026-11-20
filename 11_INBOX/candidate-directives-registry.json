@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T05:37:07.937Z",
+  "last_updated": "2026-11-20T05:54:30.105Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-73FD",
+      "id": "CD-DTFQ",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-73FD-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-DTFQ-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
@@ -36324,6 +36324,68 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EEAB40-dead-license-badge-link-in-readme.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-DSEK",
+      "directive_title": "ORC bloom filter lookups for timestamps",
+      "source_repo": "trinodb-trino-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-DSEK-orc-bloom-filter-lookups-for-timestamps.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-DQTQ",
+      "directive_title": "Ingestion Sanitization of Web-Fetched Text Files (BOM & Comment Stripping Order)",
+      "source_repo": "crawlcove-crawlcove-robots-txt-tester-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-DQTQ-ingestion-sanitization-of-web-fetched-text-files-bom-comment-stripping-order.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-DQTR",
+      "directive_title": "Non-Text Catch-All Route Detection on Default HTTP 200 Responses",
+      "source_repo": "crawlcove-crawlcove-robots-txt-tester-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-DQTR-non-text-catch-all-route-detection-on-default-http-200-responses.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-BZXD",
+      "directive_title": "Non-Text Catch-All Route Detection on Default HTTP 200 Responses",
+      "source_repo": "CrawlCove/robots-txt-tester",
+      "source_commit": "cf5ba27f",
+      "staged_file": "11_INBOX/candidate-directives/CD-BZXD-non-text-catch-all-route-detection-on-default-http-200-responses.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-30F8CB",
+      "directive_title": "ORC bloom filter lookups for timestamps",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "trinodb-trino",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-30F8CB-orc-bloom-filter-lookups-for-timestamps.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-B35183",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B35183-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-20"
     }
   ]

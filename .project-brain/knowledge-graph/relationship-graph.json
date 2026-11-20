@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-20T05:08:24.438Z",
+  "updated_at": "2026-11-20T05:54:25.809Z",
   "statistics": {
-    "total_nodes": 410,
-    "total_edges": 182,
+    "total_nodes": 412,
+    "total_edges": 183,
     "domain_distribution": {
       "D": 264,
       "M": 1,
       "H": 65,
-      "J": 17,
+      "J": 19,
       "K": 24,
       "L": 8,
       "G": 1,
@@ -20,7 +20,7 @@
       "I": 5
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 180,
+      "CONSTRAINED_BY_ARCHITECTURE": 181,
       "VERIFIED_BY_TEST": 1,
       "STYLED_BY_DESIGN": 1
     }
@@ -9164,6 +9164,51 @@
       ],
       "created_at": "2026-11-20T05:08:24.438Z",
       "updated_at": "2026-11-20T05:08:24.438Z"
+    },
+    "DOM-J-114E2D99": {
+      "id": "DOM-J-114E2D99",
+      "domain": "J",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "CLI Quick-Start Execution Failure & False Blockage Observability Trap (BUG-ROBOTS-CLI-01)",
+      "summary": "The CLI flags multi-argument accumulation via Commander using a custom reducer `collect(value, prev)`. Without multiple `-a` declarations, i -> CLI utilities that accumulate arrays via repeated flags must explicitly test and demonstrate multi-token permutations in integration fixture",
+      "confidence": 0.9,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://crawlcove-crawlcove-robots-txt-tester/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T05:53:09.178Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (crawlcove-crawlcove-robots-txt-tester)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "J",
+        "Search & Distribution Intelligence"
+      ],
+      "created_at": "2026-11-20T05:53:44.451Z",
+      "updated_at": "2026-11-20T05:53:44.451Z"
+    },
+    "DOM-J-F8E24CC5": {
+      "id": "DOM-J-F8E24CC5",
+      "domain": "J",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Host Boundary Breakage on robots.txt HTTP Redirection (BUG-ROBOTS-REDIR-02)",
+      "summary": "`fetch` with `redirect: 'follow'` populates `res.url` with the final destination URL. Failing to check `new URL(res.url).host !== site.host` -> Network crawlers evaluating authority files MUST compare the target URL's authority against the requested origin's authority post-redirectio",
+      "confidence": 0.94,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://crawlcove-crawlcove-robots-txt-tester/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T05:53:09.178Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (crawlcove-crawlcove-robots-txt-tester)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "J",
+        "Search & Distribution Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-20T05:54:25.809Z",
+      "updated_at": "2026-11-20T05:54:25.809Z"
     }
   },
   "edges": [
@@ -10986,6 +11031,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-H-F78059FE [H] with Domain F",
       "created_at": "2026-11-20T01:23:29.243Z"
+    },
+    {
+      "id": "EDGE-F45550E51E80",
+      "sourceId": "DOM-J-F8E24CC5",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-J-F8E24CC5 [J] with Domain G",
+      "created_at": "2026-11-20T05:54:25.809Z"
     }
   ]
 }

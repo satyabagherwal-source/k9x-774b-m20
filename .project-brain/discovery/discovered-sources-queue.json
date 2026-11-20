@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T05:37:06.056Z",
+  "updated_at": "2026-11-20T05:54:28.456Z",
   "stats": {
-    "total_discovered": 6237,
-    "approved_pending_harvest": 5897,
+    "total_discovered": 6247,
+    "approved_pending_harvest": 5907,
     "harvested_count": 0,
     "rejected_count": 340,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5879,
+      "COMMUNITY_AND_EXPERT": 5889,
       "OFFICIAL_DOCUMENTATION": 195,
       "STANDARDS_AND_SPECIFICATIONS": 115,
       "ENGINEERING_BLOGS": 4,
@@ -134857,6 +134857,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
         "fileName": "arangodb-arangodb-learnings.md"
+      }
+    },
+    "SRC-E1BD16552368": {
+      "id": "SRC-E1BD16552368",
+      "url": "https://example.com/robots.txt%60",
+      "title": "https://example.com/robots.txt%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:54:25.912Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+        "fileName": "crawlcove-crawlcove-robots-txt-tester-learnings.md"
+      }
+    },
+    "SRC-DBA31B6F291F": {
+      "id": "SRC-DBA31B6F291F",
+      "url": "https://example.com/robots.txt",
+      "title": "https://example.com/robots.txt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:54:25.974Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+        "fileName": "crawlcove-crawlcove-robots-txt-tester-learnings.md"
+      }
+    },
+    "SRC-DBCB26753BB2": {
+      "id": "SRC-DBCB26753BB2",
+      "url": "https://crawlcove.github.io/",
+      "title": "https://crawlcove.github.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:54:26.043Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+        "fileName": "crawlcove-crawlcove-robots-txt-tester-learnings.md"
+      }
+    },
+    "SRC-9921FFCFFA35": {
+      "id": "SRC-9921FFCFFA35",
+      "url": "https://crawlcove.github.io/robots.txt",
+      "title": "https://crawlcove.github.io/robots.txt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:54:26.097Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+        "fileName": "crawlcove-crawlcove-robots-txt-tester-learnings.md"
+      }
+    },
+    "SRC-4F28EF5894AB": {
+      "id": "SRC-4F28EF5894AB",
+      "url": "https://crawlcove.github.io/seo-test-site/sitemap.xml",
+      "title": "https://crawlcove.github.io/seo-test-site/sitemap.xml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:54:26.164Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+        "fileName": "crawlcove-crawlcove-robots-txt-tester-learnings.md"
+      }
+    },
+    "SRC-A979D8426A5F": {
+      "id": "SRC-A979D8426A5F",
+      "url": "https://crawlcove.github.io/seo-test-site/wholesale/price-list.html",
+      "title": "https://crawlcove.github.io/seo-test-site/wholesale/price-list.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:54:26.223Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+        "fileName": "crawlcove-crawlcove-robots-txt-tester-learnings.md"
+      }
+    },
+    "SRC-9DC18331E59C": {
+      "id": "SRC-9DC18331E59C",
+      "url": "https://crawlcove.github.io/seo-test-site/shop",
+      "title": "https://crawlcove.github.io/seo-test-site/shop",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:54:26.291Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+        "fileName": "crawlcove-crawlcove-robots-txt-tester-learnings.md"
+      }
+    },
+    "SRC-14B4CD123A6A": {
+      "id": "SRC-14B4CD123A6A",
+      "url": "https://site-a.com/robots.txt%60",
+      "title": "https://site-a.com/robots.txt%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:54:26.344Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+        "fileName": "crawlcove-crawlcove-robots-txt-tester-learnings.md"
+      }
+    },
+    "SRC-931263FD576A": {
+      "id": "SRC-931263FD576A",
+      "url": "https://site-b.com/robots.txt%60",
+      "title": "https://site-b.com/robots.txt%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:54:26.413Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+        "fileName": "crawlcove-crawlcove-robots-txt-tester-learnings.md"
+      }
+    },
+    "SRC-68C847494613": {
+      "id": "SRC-68C847494613",
+      "url": "https://github.com/trinodb/trino/issues/29959",
+      "title": "https://github.com/trinodb/trino/issues/29959",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T05:54:28.456Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
       }
     }
   }

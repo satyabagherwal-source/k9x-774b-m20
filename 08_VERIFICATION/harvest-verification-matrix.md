@@ -11472,3 +11472,7 @@
 | `CYCLE-20261120-GXOC` | `2026-11-20T05:28:55.932Z` | `zoontek/react-native-bootsplash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9517` | Yes (`d25a83ee...`) |
 | `CYCLE-20261120-H3DU` | `2026-11-20T05:29:03.330Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9518` | Yes (`dbb84cb2...`) |
 | `CYCLE-20261120-RD8G` | `2026-11-20T05:37:02.656Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9519` | Yes (`047f275e...`) |
+| `CYCLE-20261120-A8XE` | `2026-11-20T05:51:43.538Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9520` | Yes (`bd37d4cf...`) |
+| `CYCLE-20261120-BZQA` | `2026-11-20T05:53:04.930Z` | `CrawlCove/robots-txt-tester` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9521, Rule 9522, Rule 9523` | Yes (`a50b2573...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T05:53:44.454Z` | `crawlcove-crawlcove-robots-txt-tester` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-114E2D99` [Domain J] | Yes (`da43647e...`) |
+| `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T05:54:25.812Z` | `crawlcove-crawlcove-robots-txt-tester` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-F8E24CC5` [Domain J] | Yes (`8968cf8a...`) |

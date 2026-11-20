@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T05:37:08.081Z",
-  "total_records": 2074,
+  "last_updated": "2026-11-20T05:54:30.317Z",
+  "total_records": 2078,
   "domains": {
     "A": {
       "total": 17,
@@ -1348,7 +1348,7 @@
       ]
     },
     "H": {
-      "total": 494,
+      "total": 496,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1843,7 +1843,9 @@
         "domain_intelligence-technical-construction-intelligence-rainbow-me-rainbow-core-invariants",
         "domain_intelligence-technical-construction-intelligence-rainbow-me-rainbow-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-octodns-octodns-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-crawlcove-robots-txt-tester-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-robots-txt-tester-learni"
       ]
     },
     "I": {
@@ -1954,7 +1956,7 @@
       ]
     },
     "J": {
-      "total": 33,
+      "total": 35,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -1988,7 +1990,9 @@
         "DOM-J-705CF17F",
         "domain_intelligence-search-distribution-intelligence-crawlcove-hreflang-checker-core-invariants",
         "DOM-J-AD18FD9E",
-        "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-hreflang-checker-learnings-"
+        "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-hreflang-checker-learnings-",
+        "DOM-J-114E2D99",
+        "DOM-J-F8E24CC5"
       ]
     },
     "K": {
@@ -8807,8 +8811,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "295a2aee748f4050e3954e908ac950eedf68be624b4b81fc92bfd1d68f818951",
-      "created_at": "2026-11-20T05:21:16.954Z"
+      "content_hash": "19ff4d4b3d1afddd36da2ae84966c72f3c07520aaccd7ffa929838887cade448",
+      "created_at": "2026-11-20T05:54:30.317Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -16332,8 +16336,8 @@
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "repository": "trinodb/trino",
-      "content_hash": "a9629275d678fe1ff6e622cacf43a8b274ab7115b8fc971503ae992fbbc0e2f7",
-      "created_at": "2026-11-19T00:31:37.253Z"
+      "content_hash": "365b833bbc633994c76a2ca4eed8169e2a45aa06eaf43960c2eadfdd4047edad",
+      "created_at": "2026-11-20T05:51:43.982Z"
     },
     "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -23014,8 +23018,8 @@
       "title": "Architecture Intelligence: trinodb-trino-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-learnings-architecture-intelligence-trinodb-trino-learnings-core-i.md",
       "repository": "trinodb-trino-learnings",
-      "content_hash": "6e30b6749bf245735066c543a257d23ec8cfce7b8c0fb08af7701aa6eb0cccd0",
-      "created_at": "2026-11-19T00:31:41.952Z"
+      "content_hash": "56687c6dca8249145b46690057a940ba6f769e932dc837732648b6a6c8d49f99",
+      "created_at": "2026-11-20T05:54:28.980Z"
     },
     "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants",
@@ -34955,6 +34959,100 @@
       "repository": "zoontek/react-native-bootsplash",
       "content_hash": "81b5fcc959c0d5ff25a9df56eb10de5b32d2295c65d689ff58c04983c411b8a4",
       "created_at": "2026-11-20T05:28:56.289Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-crawlcove-robots-txt-tester-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-crawlcove-robots-txt-tester-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: CrawlCove/robots-txt-tester Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-crawlcove-crawlcove-robots-txt-tester-technical-construction-intelligence-crawlc.md",
+      "repository": "CrawlCove/robots-txt-tester",
+      "content_hash": "81eaa45c3eebf2a3860292865cfc86aa0393950de093a55b2972491dcd9fb824",
+      "created_at": "2026-11-20T05:53:05.756Z"
+    },
+    "DOM-J-114E2D99": {
+      "record_id": "DOM-J-114E2D99",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [],
+      "title": "CLI Quick-Start Execution Failure & False Blockage Observability Trap (BUG-ROBOTS-CLI-01)",
+      "content": "CLI utilities that accumulate arrays via repeated flags must explicitly test and demonstrate multi-token permutations in integration fixtures, ensuring custom agents (like `GPTBot`) correctly inherit fallback rules under `User-agent: *`.",
+      "content_hash": "da43647e3fe3c1c2a3f8493d77dccc077edc0d7ee53071c6de1588cdfc299608",
+      "summary": "The CLI flags multi-argument accumulation via Commander using a custom reducer `collect(value, prev)`. Without multiple `-a` declarations, i -> CLI utilities that accumulate arrays via repeated flags must explicitly test and demonstrate multi-token permutations in integration fixture",
+      "provenance": {
+        "source_uri": "project://crawlcove-crawlcove-robots-txt-tester/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T05:53:09.178Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (crawlcove-crawlcove-robots-txt-tester)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `9250c948` (\"README: keyword-led first screen, animated demo recorded against seo-test-site, quick start with real output\")."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.9,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T05:53:44.408Z"
+    },
+    "DOM-J-F8E24CC5": {
+      "record_id": "DOM-J-F8E24CC5",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "Host Boundary Breakage on robots.txt HTTP Redirection (BUG-ROBOTS-REDIR-02)",
+      "content": "Network crawlers evaluating authority files MUST compare the target URL's authority against the requested origin's authority post-redirection.",
+      "content_hash": "8968cf8a38259400304eddfbfaf0af243b3cfe798a88deb4ba258829dc0466f1",
+      "summary": "`fetch` with `redirect: 'follow'` populates `res.url` with the final destination URL. Failing to check `new URL(res.url).host !== site.host` -> Network crawlers evaluating authority files MUST compare the target URL's authority against the requested origin's authority post-redirectio",
+      "provenance": {
+        "source_uri": "project://crawlcove-crawlcove-robots-txt-tester/crawlcove-crawlcove-robots-txt-tester-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-20T05:53:09.178Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (crawlcove-crawlcove-robots-txt-tester)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`src/robots.ts`:"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.94,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-20T05:54:25.766Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-robots-txt-tester-learni": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-crawlcove-crawlcove-robots-txt-tester-learni",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: crawlcove-crawlcove-robots-txt-tester-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-crawlcove-crawlcove-robots-txt-tester-learnings-technical-construction-intellige.md",
+      "repository": "crawlcove-crawlcove-robots-txt-tester-learnings",
+      "content_hash": "3d3ac34faceb870ba2a65d7c05264899954a0e24b0d73a15ae3b1c9c90f7b0a8",
+      "created_at": "2026-11-20T05:54:27.394Z"
     }
   }
 }

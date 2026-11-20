@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-682N",
-    "timestamp": "2026-11-18T09:57:11.903Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-    "contentHash": "c6266a0e873d799cbd8708bf605ec54271a4657928d00ddbfc9b9babcf5e09e2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-6DV3",
-    "timestamp": "2026-11-18T09:57:19.407Z",
-    "repository": "storybookjs/storybook",
-    "learningId": "learn-github-storybookjs-storybook",
-    "contentHash": "d9b795ec365b2232aad81e5567d0d93a667ba1347f6906a9ec1d9f321c9c0546",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-6LDC",
     "timestamp": "2026-11-18T09:57:29.136Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7462,36 @@
     "contentHash": "047f275e4387c006e87343c72d8c85355c27c22be01d4c80dc2a0a05d241ec14",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-A8XE",
+    "timestamp": "2026-11-20T05:51:43.538Z",
+    "repository": "trinodb/trino",
+    "learningId": "learn-github-trinodb-trino",
+    "contentHash": "bd37d4cff10915e8dfafe419d61f1e079436cd7a1bc6ae7ed3500f4f469dfc45",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-BZQA",
+    "timestamp": "2026-11-20T05:53:04.930Z",
+    "repository": "CrawlCove/robots-txt-tester",
+    "learningId": "learn-github-crawlcove-robots-txt-tester",
+    "contentHash": "a50b2573e550bb6b5bf5e4dd83e47d43001d78f0e76725ea448de220271c9e52",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

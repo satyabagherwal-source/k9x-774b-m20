@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T05:37:05.823Z",
-    "lastVerified": "2026-11-20T05:37:05.823Z",
+    "lastChecked": "2026-11-20T05:53:09.016Z",
+    "lastVerified": "2026-11-20T05:53:09.016Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -230,8 +230,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-20T00:33:18.687Z",
-    "lastVerified": "2026-11-20T00:33:18.687Z",
+    "lastChecked": "2026-11-20T05:51:35.625Z",
+    "lastVerified": "2026-11-20T05:51:35.625Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -345,8 +345,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T05:16:22.306Z",
-    "lastVerified": "2026-11-20T05:16:22.306Z",
+    "lastChecked": "2026-11-20T05:51:40.624Z",
+    "lastVerified": "2026-11-20T05:51:40.624Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -3699,9 +3699,9 @@
   "vi-websocat": {
     "name": "websocat",
     "officialUrl": "https://github.com/vi/websocat",
-    "lastChecked": "2026-11-18T17:51:02.618Z",
+    "lastChecked": "2026-11-20T05:51:25.622Z",
     "revisionIdentifier": "097582e3",
-    "lastVerified": "2026-11-18T17:51:02.618Z"
+    "lastVerified": "2026-11-20T05:51:25.622Z"
   },
   "hf-google-t5-t5-small": {
     "name": "google-t5/t5-small",
@@ -5437,14 +5437,14 @@
     "officialUrl": "https://github.com/trinodb/trino",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-19T00:31:36.289Z",
-    "lastVerified": "2026-11-19T00:31:36.289Z",
+    "lastChecked": "2026-11-20T05:51:42.243Z",
+    "lastVerified": "2026-11-20T05:51:42.243Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trinodb-trino",
-    "contentHash": "794e7980bb2933e2b65a8a9b6d2cb9878eee642579c0598fb389298e59e5223f",
+    "contentHash": "bd37d4cff10915e8dfafe419d61f1e079436cd7a1bc6ae7ed3500f4f469dfc45",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5828,9 +5828,9 @@
   "pytest-dev-pytest-testinfra": {
     "name": "pytest-testinfra",
     "officialUrl": "https://github.com/pytest-dev/pytest-testinfra",
-    "lastChecked": "2026-11-19T01:32:38.692Z",
+    "lastChecked": "2026-11-20T05:51:33.120Z",
     "revisionIdentifier": "04cccc39",
-    "lastVerified": "2026-11-19T01:32:38.692Z"
+    "lastVerified": "2026-11-20T05:51:33.120Z"
   },
   "greptimeteam-greptimedb": {
     "name": "GreptimeTeam/greptimedb",
@@ -9391,5 +9391,29 @@
     "lastChecked": "2026-11-20T05:36:48.401Z",
     "revisionIdentifier": "5fdeeff5",
     "lastVerified": "2026-11-20T05:36:48.401Z"
+  },
+  "crawlcove-crawlcove-robots-txt-tester": {
+    "name": "CrawlCove/robots-txt-tester",
+    "officialUrl": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-20T05:51:31.569Z",
+    "lastVerified": "2026-11-20T05:51:31.569Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-crawlcove-robots-txt-tester",
+    "contentHash": "a50b2573e550bb6b5bf5e4dd83e47d43001d78f0e76725ea448de220271c9e52",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "android-kotlin-multiplatform-samples": {
+    "name": "kotlin-multiplatform-samples",
+    "officialUrl": "https://github.com/android/kotlin-multiplatform-samples",
+    "lastChecked": "2026-11-20T05:51:30.624Z",
+    "revisionIdentifier": "7844c733",
+    "lastVerified": "2026-11-20T05:51:30.624Z"
   }
 }

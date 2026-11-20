@@ -1863,10 +1863,10 @@
     "repository": "CrawlCove/robots-txt-tester",
     "platform": "github",
     "sourceUrl": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
-    "sourceVersion": "baafccbf",
+    "sourceVersion": "cf5ba27f",
     "license": "MIT",
-    "contentHash": "21c31f05a722525c6f7cc2a2baaa4b56dad769e29514be64805c29ae73ddbc1d",
-    "lastHarvestedAt": "2026-11-16T03:23:18.039Z",
+    "contentHash": "a50b2573e550bb6b5bf5e4dd83e47d43001d78f0e76725ea448de220271c9e52",
+    "lastHarvestedAt": "2026-11-20T05:53:04.935Z",
     "learningId": "learn-github-crawlcove-robots-txt-tester"
   },
   "crawlcove-crawlcove-hreflang-checker": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "47745104",
+    "sourceVersion": "b2252f9e",
     "license": "Apache-2.0",
-    "contentHash": "794e7980bb2933e2b65a8a9b6d2cb9878eee642579c0598fb389298e59e5223f",
-    "lastHarvestedAt": "2026-11-19T00:31:36.920Z",
+    "contentHash": "bd37d4cff10915e8dfafe419d61f1e079436cd7a1bc6ae7ed3500f4f469dfc45",
+    "lastHarvestedAt": "2026-11-20T05:51:43.542Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {

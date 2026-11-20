@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T05:37:02.666Z",
-  "total_cycles_completed": 10938,
-  "total_learnings_persisted": 10938,
-  "total_rules_promoted": 10302,
+  "last_updated": "2026-11-20T05:53:04.941Z",
+  "total_cycles_completed": 10940,
+  "total_learnings_persisted": 10940,
+  "total_rules_promoted": 10306,
   "history": [
-    {
-      "timestamp": "2026-11-19T09:17:01.187Z",
-      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-      "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T09:43:38.549Z",
-      "repository": "autotrust/GEV-26B-Decide-NVFP4",
-      "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T09:43:41.619Z",
       "repository": "vcaesar/riot",
@@ -1403,6 +1389,20 @@
       "repository": "arangodb/arangodb",
       "learningId": "learn-github-arangodb-arangodb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T05:51:43.549Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T05:53:04.941Z",
+      "repository": "CrawlCove/robots-txt-tester",
+      "learningId": "learn-github-crawlcove-robots-txt-tester",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

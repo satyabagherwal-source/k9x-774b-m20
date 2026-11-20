@@ -11505,3 +11505,7 @@ Every entry in this ledger must capture:
 | `learn-github-zoontek-react-native-bootsplash` | `https://github.com/zoontek/react-native-bootsplash` | `af50c229` | Multi-dimensional audit evidence | 2026-11-20T05:28:55.936Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `fecaa68f` | Multi-dimensional audit evidence | 2026-11-20T05:29:03.335Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `828a810e` | Multi-dimensional audit evidence | 2026-11-20T05:37:02.660Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `b2252f9e` | Multi-dimensional audit evidence | 2026-11-20T05:51:43.542Z |
+| `learn-github-crawlcove-robots-txt-tester` | `https://github.com/CrawlCove/crawlcove-robots-txt-tester` | `cf5ba27f` | Multi-dimensional audit evidence | 2026-11-20T05:53:04.935Z |
+| `learn-dom-j-114e2d99` | `project://crawlcove-crawlcove-robots-txt-tester` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md` | 2026-11-20T05:53:44.454Z |
+| `learn-dom-j-f8e24cc5` | `project://crawlcove-crawlcove-robots-txt-tester` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md` | 2026-11-20T05:54:25.812Z |

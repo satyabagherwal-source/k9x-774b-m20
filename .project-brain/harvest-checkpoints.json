@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-20T05:37:02.669Z",
+  "last_updated": "2026-11-20T05:53:04.945Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2931,14 +2931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crawlcove-robots-txt-tester",
-      "content_hash": "21c31f05a722525c6f7cc2a2baaa4b56dad769e29514be64805c29ae73ddbc1d",
-      "verified_at": "2026-11-16T03:23:18.048Z",
+      "content_hash": "a50b2573e550bb6b5bf5e4dd83e47d43001d78f0e76725ea448de220271c9e52",
+      "verified_at": "2026-11-20T05:53:04.945Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T03:23:18.048Z"
+      "last_updated": "2026-11-20T05:53:04.945Z"
     },
     "CrawlCove/hreflang-checker": {
       "repository": "CrawlCove/hreflang-checker",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "794e7980bb2933e2b65a8a9b6d2cb9878eee642579c0598fb389298e59e5223f",
-      "verified_at": "2026-11-19T00:31:36.927Z",
+      "content_hash": "bd37d4cff10915e8dfafe419d61f1e079436cd7a1bc6ae7ed3500f4f469dfc45",
+      "verified_at": "2026-11-20T05:51:43.553Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T00:31:36.927Z"
+      "last_updated": "2026-11-20T05:51:43.553Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",

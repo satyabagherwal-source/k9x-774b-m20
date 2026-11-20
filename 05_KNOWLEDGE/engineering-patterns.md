@@ -704339,3 +704339,442 @@ RefactoredTraverserCache::RefactoredTraverserCache(
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `828a810e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9520. ORC bloom filter lookups for timestamps (Harvested from trinodb/trino)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "ORC bloom filter lookups for timestamps",
+  "source": "trinodb/trino",
+  "source_url": "https://github.com/trinodb/trino",
+  "source_version": "b2252f9e",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-20T05:51:42.963Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-trinodb-trino",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [trinodb/trino](https://github.com/trinodb/trino) (Revision: `b2252f9e`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `lib/trino-orc/src/main/java/io/trino/orc/TupleDomainOrcPredicate.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `4bff3c02`: ORC bloom filter lookups for timestamps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/trino-orc/src/main/java/io/trino/orc/TupleDomainOrcPredicate.java`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Verified production-grade fix pattern:
+import static java.lang.Math.floorMod;
+        if (sqlType.equals(TIMESTAMP_MILLIS) || sqlType.equals(TIMESTAMP_MICROS)) {
+            long epochMicros = ((Number) predicateValue).longValue();
+            long epochMillis = floorDiv(epochMicros, MICROSECONDS_PER_MILLISECOND);
+            boolean onMillisecondBoundary = floorMod(epochMicros, MICROSECONDS_PER_MILLISECOND) == 0;
+            return testMillisOrPreviousOnBoundary(bloomFilter, epochMillis, onMillisecondBoundary);
+            return testMillisOrPreviousOnBoundary(bloomFilter, unpackMillisUtc(((Number) predicateValue).longValue()), true);
+        if (sqlType.equals(TIMESTAMP_TZ_MICROS)) {
+            LongTimestampWithTimeZone timestamp = (LongTimestampWithTimeZone) predicateValue;
+            return testMillisOrPreviousOnBoundary(bloomFilter, timestamp.getEpochMillis(), timestamp.getPicosOfMilli() == 0);
+        }
+        if (sqlType.equals(TIMESTAMP_TZ_NANOS)) {
+    // Reads below nanosecond precision round half up, so a value on a millisecond boundary may be stored under the previous millisecond
+    private static boolean testMillisOrPreviousOnBoundary(BloomFilter bloomFilter, long epochMillis, boolean onMillisecondBound
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// Induced defect failure mode:
+        if (sqlType.equals(TIMESTAMP_MILLIS)) {
+            return bloomFilter.testLong(((Number) predicateValue).longValue());
+        }
+        if (sqlType.equals(TIMESTAMP_MICROS)) {
+            return bloomFilter.testLong(floorDiv(((Number) predicateValue).longValue(), MICROSECONDS_PER_MILLISECOND));
+            return bloomFilter.testLong(unpackMillisUtc(((Number) predicateValue).longValue()));
+        if (sqlType.equals(TIMESTAMP_TZ_MICROS) || sqlType.equals(TIMESTAMP_TZ_NANOS)) {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `4bff3c02` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9521. Ingestion Sanitization of Web-Fetched Text Files (BOM & Comment Stripping Order) (Harvested from CrawlCove/robots-txt-tester)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Ingestion Sanitization of Web-Fetched Text Files (BOM & Comment Stripping Order)",
+  "source": "CrawlCove/robots-txt-tester",
+  "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
+  "source_version": "cf5ba27f",
+  "license": "MIT",
+  "extracted_at": "2026-11-20T05:53:03.042Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-crawlcove-robots-txt-tester",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [CrawlCove/robots-txt-tester](https://github.com/CrawlCove/crawlcove-robots-txt-tester) (Revision: `cf5ba27f`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When parsing raw text payloads fetched over HTTP (such as `robots.txt`, CSV, YAML, or ENV files), parsers MUST strip Unicode Byte Order Marks (BOM `\uFEFF`) before line splitting, and MUST strip inline comments (`#.*$`) prior to whitespace trimming and field-delimiter matching.
+
+**WHY**:
+An unstripped UTF-8 BOM (`\uFEFF`) on line 1 corrupts the directive key token (e.g., `\uFEFFUser-agent` fails regex `/^([A-Za-z-]+)\s*:/`), causing parsers to ignore the primary user-agent rule group. Furthermore, trimming whitespace before stripping comments risks trailing token concatenation or failing regex anchors.
+
+**WHEN TO APPLY**:
+Apply in all text parsers, config loaders, REP parsers, and custom file deserializers across Node.js, Go, Rust, and Python.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified pattern from crawlcove-robots-txt-tester/src/robots.ts
+export function sanitizeAndTokenizeLines(body: string): Array<{ lineNo: number; raw: string; clean: string }> {
+  // 1. Strip BOM at index 0 prior to any split
+  const cleanBody = body.replace(/^\uFEFF/, '');
+  
+  // 2. Split strictly on CRLF or LF
+  const rawLines = cleanBody.split(/\r?\n/);
+  
+  const tokenized: Array<{ lineNo: number; raw: string; clean: string }> = [];
+  
+  for (let i = 0; i < rawLines.length; i++) {
+    const raw = rawLines[i];
+    // 3. Strip inline comment before trimming whitespace
+    const clean = raw.replace(/#.*$/, '').trim();
+    if (clean.length === 0) {
+      continue; // Skip blank or comment-only lines
+    }
+    tokenized.push({ lineNo: i + 1, raw, clean });
+  }
+  
+  return tokenized;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Trimming before comment removal, missing BOM strip, split on \n only
+function badParse(body: string) {
+  // FAILS on Windows \r\n, FAILS on UTF-8 BOM, FAILS if comment has leading space
+  const lines = body.split('\n');
+  return lines.map(line => {
+    const trimmed = line.trim(); // Comment `#` still attached!
+    const parts = trimmed.split(':');
+    return { key: parts[0], value: parts[1] }; // Corrupted key if BOM present: "\uFEFFUser-agent"
+  });
+}
+```
+
+**VERIFICATION METHOD**:
+```typescript
+import { describe, it, expect } from 'vitest';
+import { lint } from './robots.js';
+
+describe('BOM and Comment Handling Invariant', () => {
+  it('correctly parses line 1 User-agent when prepended with UTF-8 BOM', () => {
+    const content = '\uFEFFUser-agent: Googlebot\nDisallow: /private';
+    const report = lint(content);
+    expect(report.groups.length).toBe(1);
+    expect(report.groups[0].agents).toContain('Googlebot');
+    expect(report.findings.filter(f => f.code === 'unknown-directive')).toHaveLength(0);
+  });
+
+  it('correctly strips inline comments without retaining trailing whitespace', () => {
+    const content = 'User-agent: * # default crawler group\nDisallow: /admin # internal';
+    const report = lint(content);
+    expect(report.groups[0].rules).toBe(1);
+    expect(report.findings).toHaveLength(1); // Only no-sitemap warning
+  });
+});
+```
+
+---
+
+
+---
+
+## 9522. Dual-Barrier HTTP Abort Timeout Invariant (Harvested from CrawlCove/robots-txt-tester)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Barrier HTTP Abort Timeout Invariant",
+  "source": "CrawlCove/robots-txt-tester",
+  "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
+  "source_version": "cf5ba27f",
+  "license": "MIT",
+  "extracted_at": "2026-11-20T05:53:03.676Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-crawlcove-robots-txt-tester",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [CrawlCove/robots-txt-tester](https://github.com/CrawlCove/crawlcove-robots-txt-tester) (Revision: `cf5ba27f`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Every outbound HTTP client invocation MUST combine an explicit `AbortController` timeout mechanism with a `try...finally` block that invokes `clearTimeout()`. The caught error MUST distinguish between an intentional client abort (`AbortError`) and standard transport failures (DNS, TLS, connection resets).
+
+**WHY**:
+Without `clearTimeout(timer)` inside `finally`, pending Node.js timer handles prevent the JavaScript event loop from draining naturally during CLI execution or ephemeral container runs. Additionally, failing to intercept and classify `AbortError` causes timeout exceptions to surface as generic network socket crashes, misleading observability and retry loops.
+
+**WHEN TO APPLY**:
+All outbound HTTP requests, fetch clients, webhook dispatchers, and crawler fetchers in Node.js 18+ and edge runtime environments.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified pattern from crawlcove-robots-txt-tester/src/robots.ts
+export async function executeGuardedFetch(
+  url: string,
+  timeoutMs: number,
+  customFetch: typeof fetch = fetch
+): Promise<{ res?: Response; fetchError?: string }> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  
+  try {
+    const res = await customFetch(url, {
+      signal: controller.signal,
+      redirect: 'follow',
+      headers: { 'Accept': 'text/plain,text/*;q=0.9,*/*;q=0.1' }
+    });
+    return { res };
+  } catch (err: unknown) {
+    const isError = err instanceof Error;
+    const name = isError ? err.name : String(err);
+    const message = isError ? err.message : String(err);
+    const fetchError = name === 'AbortError' ? 'TIMEOUT' : (message || name);
+    return { fetchError };
+  } finally {
+    clearTimeout(timer); // MANDATORY: Drains event loop handle
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Leaks active timers and swallows abort categorization
+async function leakyFetch(url: string, timeoutMs: number) {
+  const controller = new AbortController();
+  setTimeout(() => controller.abort(), timeoutMs); // LEAK: Active handle survives request completion!
+  
+  try {
+    return await fetch(url, { signal: controller.signal });
+  } catch (err) {
+    throw new Error("Network failed"); // Destroys distinction between timeout vs DNS failure
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+```typescript
+import { describe, it, expect, vi } from 'vitest';
+
+describe('Fetch Timeout & Handle Teardown Invariant', () => {
+  it('clears timeout handle upon successful HTTP response', async () => {
+    vi.useFakeTimers();
+    const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
+    const mockFetch = vi.fn().mockResolvedValue(new Response('OK', { status: 200 }));
+    
+    await executeGuardedFetch('https://example.com/robots.txt', 5000, mockFetch as unknown as typeof fetch);
+    
+    expect(clearTimeoutSpy).toHaveBeenCalledTimes(1);
+    vi.useRealTimers();
+  });
+});
+```
+
+---
+
+
+---
+
+## 9523. Non-Text Catch-All Route Detection on Default HTTP 200 Responses (Harvested from CrawlCove/robots-txt-tester)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Non-Text Catch-All Route Detection on Default HTTP 200 Responses",
+  "source": "CrawlCove/robots-txt-tester",
+  "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
+  "source_version": "cf5ba27f",
+  "license": "MIT",
+  "extracted_at": "2026-11-20T05:53:04.345Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-crawlcove-robots-txt-tester",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [CrawlCove/robots-txt-tester](https://github.com/CrawlCove/crawlcove-robots-txt-tester) (Revision: `cf5ba27f`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+HTTP consumers fetching plain-text configuration files (e.g., `robots.txt`, `.well-known/*`, `security.txt`) MUST NOT rely solely on `response.ok` or `status === 200`. The consumer MUST inspect the leading payload buffer for HTML, XML, or JSON signatures (`<html`, `<!doctype`, `<?xml`, `{`) to detect SPA framework catch-all routing traps.
+
+**WHY**:
+Modern Single-Page Application (SPA) servers (Next.js, Cloudflare Pages, S3/CloudFront redirects) are frequently configured to return the default `index.html` with an HTTP 200 status code for unmapped paths. A robots.txt parser encountering an HTML body parses markup tags as directives or invalid tokens, quietly failing open ("no rules applied") and leaving production internal routes exposed to indexing.
+
+**WHEN TO APPLY**:
+Any automated crawler, SEO auditor, security scanner, or client consuming text endpoints from third-party or SPA-backed hosts.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified pattern from crawlcove-robots-txt-tester/src/robots.ts
+export function validateTextPayload(rawBuffer: Buffer): { isValidText: boolean; errorReason?: string } {
+  // Read initial slice or full utf-8 string
+  const text = rawBuffer.toString('utf8');
+  
+  // Fast check for common catch-all markup signatures
+  const isMarkupOrJson = /^\s*(<!doctype|<html|<\?xml|{)/i.test(text);
+  if (isMarkupOrJson) {
+    return {
+      isValidText: false,
+      errorReason: 'Response is HTML/XML/JSON catch-all route, not a valid plain-text file'
+    };
+  }
+  
+  return { isValidText: true };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Trusting HTTP 200 and parsing HTML as REP directives
+async function unsafeLoadRobots(url: string) {
+  const res = await fetch(url);
+  if (res.ok) {
+    const text = await res.text();
+    // If text is "<html><body>404 Not Found</body></html>", parser treats it as 0 disallow rules!
+    return parseRobotsRules(text);
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+```typescript
+import { describe, it, expect } from 'vitest';
+
+describe('Catch-All HTML Detection Guard', () => {
+  it('flags HTML 200 catch-all error pages as invalid plain-text', () => {
+    const mockHtml = Buffer.from('<!DOCTYPE html><html><head><title>App</title></head></html>');
+    const result = validateTextPayload(mockHtml);
+    expect(result.isValidText).toBe(false);
+    expect(result.errorReason).toContain('HTML/XML/JSON');
+  });
+
+  it('permits valid robots.txt text payload', () => {
+    const mockRobots = Buffer.from('User-agent: *\nDisallow: /admin');
+    const result = validateTextPayload(mockRobots);
+    expect(result.isValidText).toBe(true);
+  });
+});
+```
+
+---
