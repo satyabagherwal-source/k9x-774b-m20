@@ -4,17 +4,17 @@
 {
   "source_repository": "bridgecrewio/checkov",
   "source_url": "https://github.com/bridgecrewio/checkov",
-  "source_version": "e55b089e",
+  "source_version": "28694608",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T15:47:14.565Z",
+  "timestamp": "2026-11-20T04:02:34.219Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-bridgecrewio-checkov",
   "canonical_classification": "skill_playbook"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [bridgecrewio/checkov](https://github.com/bridgecrewio/checkov) (Revision: `e55b089e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T15:47:14.565Z`  
+> **Provenance**: Harvested from [bridgecrewio/checkov](https://github.com/bridgecrewio/checkov) (Revision: `28694608`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T04:02:34.219Z`  
 > **Learning ID**: `learn-github-bridgecrewio-checkov`
 
 
@@ -24,7 +24,7 @@ Procedural playbook defining verified operational and implementation patterns fo
 - **Model Independence**: Universal (Applies across Claude, Gemini, GPT, and Local agents)
 
 ## 2. Prerequisites & Technical Boundary
-- Runtime ecosystem: Verified against bridgecrewio/checkov revision `e55b089e`.
+- Runtime ecosystem: Verified against bridgecrewio/checkov revision `28694608`.
 - Required security tier: Sanitized against PII/secrets.
 
 ## 3. Step-by-Step Procedural Workflow
@@ -33,7 +33,7 @@ Procedural playbook defining verified operational and implementation patterns fo
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bridgecrewio/checkov](https://github.com/bridgecrewio/checkov))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T15:47:14.055Z  
+> **Harvest Timestamp**: 2026-11-20T04:02:32.595Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -43,7 +43,7 @@ Procedural playbook defining verified operational and implementation patterns fo
 - **Description**: Prevent cloud misconfigurations and find vulnerabilities during build-time in infrastructure as code, container images and open source packages with Checkov by Bridgecrew.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 9157 stars
+- **Stars / Engagement**: 9163 stars
 
 ---
 
@@ -971,160 +971,132 @@ check = SQSQueueEncryption()
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `af20f73b` (2026-11-11)
-**Commit Message**: Merge remote-tracking branch 'origin/main' into fix/request-logging-hardening
+### Incident Patch 1: `28694608` (2026-11-19)
+**Commit Message**: fix(secrets): remove leading wildcard from Azure hostname patterns (#7809)
 
 **File**: `checkov/version.py` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--version = '3.4.4'
-+version = '3.4.5'
+-version = '3.4.5'
++version = '3.4.6'
 ```
 
 **File**: `kubernetes/requirements.txt` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--checkov==3.4.4
-+checkov==3.4.5
+-checkov==3.4.5
++checkov==3.4.6
 ```
 
 ---
 
-### Incident Patch 2: `8c795c44` (2026-11-12)
-**Commit Message**: fix(general): harden request error logging (#7795)
+### Incident Patch 2: `c57ca423` (2026-11-19)
+**Commit Message**: fix(secrets): remove leading wildcard from Azure hostname patterns (#7809)
 
-**File**: `checkov/common/bridgecrew/integration_features/features/fixes_integration.py` (modified, +2/-2)
+**File**: `checkov/common/util/secrets.py` (modified, +12/-12)
 ```diff
-@@ -13,7 +13,7 @@
- from checkov.common.bridgecrew.integration_features.features.policy_metadata_integration import integration as metadata_integration
- from checkov.common.bridgecrew.platform_integration import bc_integration
- from checkov.common.util.data_structures_utils import merge_dicts
--from checkov.common.util.http_utils import extract_error_message, get_default_post_headers
-+from checkov.common.util.http_utils import extract_error_message, get_default_post_headers, redact_headers
+@@ -35,18 +35,18 @@
+     'azure': [
+         "(\"|')?([0-9A-Fa-f]{4}-){4}[0-9A-Fa-f]{12}(\"|')?",  # client_secret
+         "(\"|')?[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}(\"|')?",  # client_id and many other forms of IDs
+-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][o|O][n|N][m|M][i|I][c|C][r|R][o|O][s|S][o|O][f|F][t|T][.][c|C][o|O][m|M](\"|')?",
+-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][b|B][l|L][o|O][b|B][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
+-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][q|Q][u|U][e|E][u|U][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
+-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][t|T][a|A][b|B][l|L][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
+-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][d|D][a|A][t|T][a|A][b|B][a|A][s|S][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
+-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][s|S][e|E][r|R][v|V][i|I][c|C][e|E][b|B][u|U][s|S][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
+-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][t|T][i|I][m|M][e|E][s|S][e|E][r|R][i|I][e|E][s|S][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
+-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][a|T][c|C][c|C][e|E][s|S][s|S][c|C][o|O][n|N][t|T][r|R][o|O][l|L][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
+-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][a|A][z|Z][u|U][r|R][e|E][h|H][d|D][i|I][n|N][s|S][i|I][g|G][h|H][t|T][.][n|N][e|E][t|T](\"|')?",
+-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][c|C][l|L][o|O][u|U][d|D][a|A][p|P][p|P][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
+-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][c|C][l|L][o|O][u|U][d|D][a|A][p|P][p|P][.][n|N][e|E][t|T](\"|')?",
+-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][d|D][o|O][c|C][u|U][m|M][e|E][n|N][t|T][s|S][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
++        "(\"|')?[0-9a-zA-Z]{2,256}[.][o|O][n|N][m|M][i|I][c|C][r|R][o|O][s|S][o|O][f|F][t|T][.][c|C][o|O][m|M](\"|')?",
++        "(\"|')?[0-9a-zA-Z]{2,256}[.][b|B][l|L][o|O][b|B][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
++        "(\"|')?[0-9a-zA-Z]{2,256}[.][q|Q][u|U][e|E][u|U][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
++        "(\"|')?[0-9a-zA-Z]{2,256}[.][t|T][a|A][b|B][l|L][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
++        "(\"|')?[0-9a-zA-Z]{2,256}[.][d|D][a|A][t|T][a|A][b|B][a|A][s|S][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
++        "(\"|')?[0-9a-zA-Z]{2,256}[.][s|S][e|E][r|R][v|V][i|I][c|C][e|E][b|B][u|U][s|S][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
++        "(\"|')?[0-9a-zA-Z]{2,256}[.][t|T][i|I][m|M][e|E][s|S][e|E][r|R][i|I][e|E][s|S][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
++        "(\"|')?[0-9a-zA-Z]{2,256}[.][a|T][c|C][c|C][e|E][s|S][s|S][c|C][o|O][n|N][t|T][r|R][o|O][l|L][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
++        "(\"|')?[0-9a-zA-Z]{2,256}[.][a|A][z|Z][u|U][r|R][e|E][h|H][d|D][i|I][n|N][s|S][i|I][g|G][h|H][t|T][.][n|N][e|E][t|T](\"|')?",
++        "(\"|')?[0-9a-zA-Z]{2,256}[.][c|C][l|L][o|O][u|U][d|D][a|A][p|P][p|P][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
++        "(\"|')?[0-9a-zA-Z]{2,256}[.][c|C][l|L][o|O][u|U][d|D][a|A][p|P][p|P][.][n|N][e|E][t|T](\"|')?",
++        "(\"|')?[0-9a-zA-Z]{2,256}[.][d|D][o|O][c|C][u|U][m|M][e|E][n|N][t|T][s|S][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
+     ],
  
- if TYPE_CHECKING:
-     from checkov.common.bridgecrew.platform_integration import BcPlatformIntegration
-@@ -119,7 +119,7 @@ def _get_fixes_for_file(
-             raise AttributeError("HTTP manager was not correctly created")
- 
-         try:
--            logging.debug(f'Calling fixes API with payload: {json.dumps(payload)}, headers: {headers}, url: {self.fixes_url}')
-+            logging.debug(f'Calling fixes API with payload: {json.dumps(payload)}, headers: {redact_headers(headers)}, url: {self.fixes_url}')
-             request = self.bc_integration.http.request("POST", self.fixes_url, headers=headers, body=json.dumps(payload))  # type:ignore[no-untyped-call]
- 
-         # When running via IDE we can fail here in case of running with -d when the poolManager is broken
+     'aws': [
 ```
 
-**File**: `checkov/common/util/http_utils.py` (modified, +12/-2)
+**File**: `tests/unit/test_secrets.py` (modified, +47/-1)
 ```diff
-@@ -187,6 +187,16 @@ def get_prisma_get_headers() -> dict[str, str]:
-     return merge_dicts(PRISMA_API_GET_HEADERS, get_user_agent_header())
+@@ -1,6 +1,10 @@
++import base64
++import random
++import string
++import time
+ import unittest
+ 
+-from checkov.common.util.secrets import string_has_secrets, ALL, AWS, GENERAL, omit_secret_value_from_line, \
++from checkov.common.util.secrets import string_has_secrets, ALL, AWS, AZURE, GENERAL, omit_secret_value_from_line, \
+     get_secrets_from_string
  
  
-+SENSITIVE_HEADER_NAMES = frozenset(('authorization', 'x-redlock-auth', 'proxy-authorization', 'cookie'))
-+
-+
-+def redact_headers(headers: dict[str, Any] | None) -> dict[str, Any]:
-+    """Return a copy of the headers with credential values masked, safe for logging."""
-+    if not headers:
-+        return {}
-+    return {k: '***' if str(k).lower() in SENSITIVE_HEADER_NAMES else v for k, v in headers.items()}
-+
-+
- def valid_url(url: str | None) -> bool:
-     """Checks for a valid URL, otherwise returns False"""
+@@ -70,3 +74,45 @@ def test_get_secrets_from_secrets(self):
+         secret = get_secrets_from_string(s)
  
-@@ -238,7 +248,7 @@ def request_wrapper(
-                 response.raise_for_status()
-             return response
-         except requests.exceptions.ConnectionError as connection_error:
--            logging.error(f"Connection error on request {method}:{url},\ndata:\n{data}\njson:{json if log_json_body else 'Redacted'}\nheaders:{headers}")
-+            logging.error(f"Connection error on request {method}:{url},\ndata:\n{data}\njson:{json if log_json_body else 'Redacted'}\nheaders:{redact_headers(headers)}")
-             if i != request_max_tries - 1:
-                 sleep_secs = sleep_between_request_tries * (i + 1)
-                 logging.info(f"retrying attempt number {i + 2} in {sleep_secs} seconds")
-@@ -252,7 +262,7 @@ def request_wrapper(
-             if http_error.response is not None:
-                 status_code = http_error.response.status_code
- 
--            logging.error(f"HTTP error on request {method}:{url},\ndata:\n{data}\njson:{json if log_json_body else 'Redacted'}\nheaders:{headers}")
-+            logging.error(f"HTTP error on request {method}:{url},\ndata:\n{data}\njson:{json if log_json_body else 'Redacted'}\nheaders:{redact_headers(headers)}")
-             if (status_code >= 500 or status_code == 403) and i != request_max_tries - 1:
-                 sleep_secs = sleep_between_request_tries * (i + 1)
-                 logging.info(f"retrying attempt number {i + 2} in {sleep_secs} seconds")
-```
-
-**File**: `tests/common/utils/test_http_utils.py` (modified, +45/-1)
-```diff
-@@ -7,7 +7,7 @@
- from aioresponses import aioresponses
- import aiohttp
- 
--from checkov.common.util.http_utils import request_wrapper, aiohttp_client_session_wrapper, valid_url
-+from checkov.common.util.http_utils import request_wrapper, aiohttp_client_session_wrapper, valid_url, redact_headers
- 
- 
- def get_report_url() -> str:
-@@ -82,6 +82,50 @@ def test_request_wrapper_all_fail_with_http_error_should_call_raise_for_status(m
-         responses.assert_call_count(mock_url, 5)
- 
- 
-+SENSITIVE_HEADERS = {
-+    "Authorization": "test-token-value-1",
-+    "x-redlock-auth": "test-token-value-2",
-+    "Accept": "application/json",
-+}
+         assert secret == ["AKIAIOSFODNN7EXAMPLE"]
 +
++    def test_azure_hostnames_are_detected(self):
++        test_strings = [
++            'https://myaccount.blob.core.windows.net/container',
++            'Server=tcp:mydb.database.windows.net,1433',
++            'login via example.onmicrosoft.com',
++            "'svc.servicebus.windows.net'",
++            'endpoint: myapp.cloudapp.azure.com',
++            'db.documents.azure.com',
++        ]
 +
-+@pytest.mark.parametrize(
-+    "body,status",
-+    [
-+        (requests.exceptions.ConnectionError(), 200),
-+        ({"error": "mocked client error"}, 403),
-+    ],
-+    ids=["connection_error", "http_error"],
-+)
-+@responses.activate
-+@mock.patch.dict(os.environ, {"REQUEST_MAX_TRIES": "2", "SLEEP_BETWEEN_REQUEST_TRIES": "0.01"})
-+def test_request_wrapper_error_logging(mock_bc_integration, caplog, body, status):
-+    mock_url = mock_bc_integration.api_url + "/api/v1/some-endpoint"
-+    if isinstance(body, Exception):
-+        responses.add(method=responses.GET, url=mock_url, body=body)
-+    else:
-+        responses.add(method=responses.GET, url=mock_url, json=body, status=status)
++        for s in test_strings:
++            with self.subTest(s=s):
++                self.assertTrue(string_has_secrets(s, AZURE))
 +
-+    headers = dict(SENSITIVE_HEADERS)
-+    with pytest.raises(requests.exceptions.RequestException):
-+        request_wrapper("GET", mock_url, headers, should_call_raise_for_status=True)
++    def test_azure_hostname_without_subdomain_is_not_detected(self):
++        self.assertFalse(string_has_secrets('blob.core.windows.net', AZURE))
++        self.assertFalse(string_has_secrets('no azure host here', AZURE))
 +
-+    assert "test-token-value-1" not in caplog.text
-+    assert "test-token-value-2" not in caplog.text
-+    assert "application/json" in caplog.text
-+    assert headers["Authorization"] == "test-token-value-1"
-+    assert headers["x-redlock-auth"] == "test-token-value-2"
++    def test_get_secrets_from_string_returns_azure_hostname(self):
++        s = 'url = "https://myaccount.blob.core.windows.net/container"'
 +
++        secrets = get_secrets_from_string(s, AZURE)
 +
-+def test_redact_headers():
-+    redacted = redact_headers({**SENSITIVE_HEADERS, "authorization": "lower", "Cookie": "c"})
-+    assert redacted["Authorization"] == "***"
-+    assert redacted["authorization"] == "***"
-+    assert redacted["x-redlock-auth"] == "***"
-+    assert redacted["Cookie"] == "***"
-+    assert redacted["Accept"] == "application/json"
++        self.assertEqual(secrets, ['myaccount.blob.core.windows.net'])
 +
++    def test_long_strings_without_azure_hostname_are_evaluated_quickly(self):
++        rng = random.Random(0)
++        # base64 and alphanumeric input contain no '.', so none of the Azure hostname patterns can match
++        test_strings = {
++            'base64': base64.b64encode(rng.randbytes(12_321)).decode(),
++            'alphanumeric': ''.join(rng.choices(string.ascii_letters + string.digits, k=16_428)),
++        }
 +
- @responses.activate
- @mock.patch.dict(os.environ, {"REQUEST_MAX_TRIES": "3", "SLEEP_BETWEEN_REQUEST_TRIES": "0.01"})
- def test_request_wrapper_with_success_for_get_scan_result(mock_bc_integration, scan_result_success_response):
++        for name, s in test_strings.items():
++            with self.subTest(input=name):
++                start = time.monotonic()
++                result = string_has_secrets(s, AZURE, GENERAL)
++                elapsed = time.monotonic() - start
++
++                self.assertFalse(result)
++                self.assertLess(elapsed, 2)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7809** (2026-11-19): fix(secrets): remove leading wildcard from Azure hostname patterns (@omriyoffe-panw)
 - **PR #7795** (2026-11-12): fix(general): harden request error logging (@Saarett)
 - **PR #7794** (2026-11-10): fix(bicep): resolve references within the declaring file (@itrocki)
 - **PR #7776** (2026-11-02): fix(terraform): build userinfo test URLs dynamically (@talazuri)
 - **PR #7759** (closed): Test Migration of CI Jobs to GitHub-Hosted Runners (@amitz)
 - **PR #7758** (2026-11-02): fix(terraform): add optional allowlist for external module download sources (@talazuri)
-- **PR #7757** (2026-10-20): fix(secrets): load platform-provided detectors in spawn-mode secrets … (@Saarett)
 
 ---
 
@@ -1144,33 +1116,47 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. general): harden request error logging (#7795)
+## X. secrets): remove leading wildcard from Azure hostname patterns
 
 **RULE**:
-When implementing operations in `checkov/common/bridgecrew/integration_features/features/fixes_integration.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `checkov/common/util/secrets.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8c795c44`: general): harden request error logging (#7795). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c57ca423`: secrets): remove leading wildcard from Azure hostname patterns. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `checkov/common/bridgecrew/integration_features/features/fixes_integration.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `checkov/common/util/secrets.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-from checkov.common.util.http_utils import extract_error_message, get_default_post_headers, redact_headers
-            logging.debug(f'Calling fixes API with payload: {json.dumps(payload)}, headers: {redact_headers(headers)}, url: {self.fixes_url}')
+        "(\"|')?[0-9a-zA-Z]{2,256}[.][o|O][n|N][m|M][i|I][c|C][r|R][o|O][s|S][o|O][f|F][t|T][.][c|C][o|O][m|M](\"|')?",
+        "(\"|')?[0-9a-zA-Z]{2,256}[.][b|B][l|L][o|O][b|B][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
+        "(\"|')?[0-9a-zA-Z]{2,256}[.][q|Q][u|U][e|E][u|U][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
+        "(\"|')?[0-9a-zA-Z]{2,256}[.][t|T][a|A][b|B][l|L][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
+        "(\"|')?[0-9a-zA-Z]{2,256}[.][d|D][a|A][t|T][a|A][b|B][a|A][s|S][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
+        "(\"|')?[0-9a-zA-Z]{2,256}[.][s|S][e|E][r|R][v|V][i|I][c|C][e|E][b|B][u|U][s|S][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
+        "(\"|')?[0-9a-zA-Z]{2,256}[.][t|T][i|I][m|M][e|E][s|S][e|E][r|R][i|I][e|E][s|S][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
+        "(\"|')?[0-9a-zA-Z]{2,256}[.][a|T][c|C][c|C][e|E][s|S][s|S][c|C][o|O][n|N][t|T][r|R][o|O][l|L][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
+        "(\"|')?[0-9a-zA-
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-from checkov.common.util.http_utils import extract_error_message, get_default_post_headers
-            logging.debug(f'Calling fixes API with payload: {json.dumps(payload)}, headers: {headers}, url: {self.fixes_url}')
+// Induced defect failure mode:
+        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][o|O][n|N][m|M][i|I][c|C][r|R][o|O][s|S][o|O][f|F][t|T][.][c|C][o|O][m|M](\"|')?",
+        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][b|B][l|L][o|O][b|B][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
+        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][q|Q][u|U][e|E][u|U][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
+        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][t|T][a|A][b|B][l|L][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
+        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][d|D][a|A][t|T][a|A][b|B][a|A][s|S][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
+        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][s|S][e|E][r|R][v|V][i|I][c|C][e|E][b|B][u|U][s|S][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
+        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][t|T][i|I][m|M][e|E][s|S][e|E][r|R][i|I][e|E][s|S][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
+        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][a|T][c|C][c|C][e|E][s|S][s|S][c|C][o|O][n|N][t|T][r|R][o|O][l|L][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
+        "
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8c795c44` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c57ca423` are properly handled with clean fallback behavior.
 
 
 ## 4. Empirical Verification & Quality Gate

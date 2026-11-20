@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T03:49:22.933Z",
+  "last_updated": "2026-11-20T04:02:46.160Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-20T03:49:22.458Z",
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-20T02:39:06.453Z",
+      "processed_at": "2026-11-20T04:02:45.244Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1073,7 +1073,7 @@
       "staged_for_review": 1
     },
     "bridgecrewio-checkov-learnings.md": {
-      "processed_at": "2026-11-13T15:47:56.528Z",
+      "processed_at": "2026-11-20T04:02:42.128Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1633,7 +1633,7 @@
       "staged_for_review": 0
     },
     "gluesql-gluesql-learnings.md": {
-      "processed_at": "2026-11-18T22:06:57.754Z",
+      "processed_at": "2026-11-20T04:02:43.427Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3533,7 +3533,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2418,
+  "total_dossiers_evaluated": 2421,
   "total_canonical_promoted": 409,
-  "total_staged_for_review": 1817
+  "total_staged_for_review": 1820
 }

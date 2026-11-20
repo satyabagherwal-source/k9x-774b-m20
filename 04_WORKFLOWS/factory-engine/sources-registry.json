@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-20T03:13:17.558Z",
-    "lastVerified": "2026-11-20T03:13:17.558Z",
+    "lastChecked": "2026-11-20T04:02:36.434Z",
+    "lastVerified": "2026-11-20T04:02:36.434Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T03:48:51.090Z",
-    "lastVerified": "2026-11-20T03:48:51.090Z",
+    "lastChecked": "2026-11-20T04:02:41.959Z",
+    "lastVerified": "2026-11-20T04:02:41.959Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1578,9 +1578,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-19T22:19:45.308Z",
+    "lastChecked": "2026-11-20T04:02:31.374Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-19T22:19:45.308Z"
+    "lastVerified": "2026-11-20T04:02:31.374Z"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -2938,9 +2938,9 @@
   "xampprocky-tokei": {
     "name": "tokei",
     "officialUrl": "https://github.com/XAMPPRocky/tokei",
-    "lastChecked": "2026-11-18T15:42:48.930Z",
+    "lastChecked": "2026-11-20T04:02:21.345Z",
     "revisionIdentifier": "c14f7447",
-    "lastVerified": "2026-11-18T15:42:48.930Z"
+    "lastVerified": "2026-11-20T04:02:21.345Z"
   },
   "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf": {
     "name": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -4775,12 +4775,12 @@
     "officialUrl": "https://github.com/gluesql/gluesql",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T22:03:34.633Z",
-    "lastVerified": "2026-11-18T22:03:34.633Z",
+    "lastChecked": "2026-11-20T04:02:37.418Z",
+    "lastVerified": "2026-11-20T04:02:37.418Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gluesql-gluesql",
-    "contentHash": "ae05025b8b9bebb1c1fea6c6014caa1aebb5e6caed17d4c0d2bc41487e0caae1",
+    "contentHash": "ce1967ee01adea9cd70a51d564ba68eda76deb00c468f2b3ff31f018bbf84551",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -5095,11 +5095,21 @@
     "lastVerified": "2026-11-18T23:18:11.545Z"
   },
   "bridgecrewio-checkov": {
-    "name": "checkov",
+    "name": "bridgecrewio/checkov",
     "officialUrl": "https://github.com/bridgecrewio/checkov",
-    "lastChecked": "2026-11-18T23:18:14.052Z",
-    "revisionIdentifier": "e55b089e",
-    "lastVerified": "2026-11-18T23:18:14.052Z"
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-20T04:02:32.595Z",
+    "lastVerified": "2026-11-20T04:02:32.595Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-bridgecrewio-checkov",
+    "contentHash": "0072a4b4236687a668da16f6d6332567198030c6c3e47292a0671d62cd6edf7a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "cockroachdb-cockroach": {
     "name": "cockroach",
@@ -9171,5 +9181,19 @@
     "lastChecked": "2026-11-20T03:43:56.267Z",
     "revisionIdentifier": "8e9834df",
     "lastVerified": "2026-11-20T03:43:56.267Z"
+  },
+  "melbahja-seo": {
+    "name": "seo",
+    "officialUrl": "https://github.com/melbahja/seo",
+    "lastChecked": "2026-11-20T04:02:23.834Z",
+    "revisionIdentifier": "cd4e4122",
+    "lastVerified": "2026-11-20T04:02:23.834Z"
+  },
+  "touchlab-skie": {
+    "name": "SKIE",
+    "officialUrl": "https://github.com/touchlab/SKIE",
+    "lastChecked": "2026-11-20T04:02:26.337Z",
+    "revisionIdentifier": "25bb2b91",
+    "lastVerified": "2026-11-20T04:02:26.337Z"
   }
 }

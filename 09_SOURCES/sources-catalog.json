@@ -4123,10 +4123,10 @@
     "repository": "gluesql/gluesql",
     "platform": "github",
     "sourceUrl": "https://github.com/gluesql/gluesql",
-    "sourceVersion": "3a730bf0",
+    "sourceVersion": "bb30d6be",
     "license": "Apache-2.0",
-    "contentHash": "ae05025b8b9bebb1c1fea6c6014caa1aebb5e6caed17d4c0d2bc41487e0caae1",
-    "lastHarvestedAt": "2026-11-18T22:03:35.604Z",
+    "contentHash": "ce1967ee01adea9cd70a51d564ba68eda76deb00c468f2b3ff31f018bbf84551",
+    "lastHarvestedAt": "2026-11-20T04:02:38.607Z",
     "learningId": "learn-github-gluesql-gluesql"
   },
   "mui-base-ui": {
@@ -5113,10 +5113,10 @@
     "repository": "bridgecrewio/checkov",
     "platform": "github",
     "sourceUrl": "https://github.com/bridgecrewio/checkov",
-    "sourceVersion": "e55b089e",
+    "sourceVersion": "28694608",
     "license": "Apache-2.0",
-    "contentHash": "900727d689109bcc61882c5fe023754b010b24fe994ef61c3213dfa16f742ae6",
-    "lastHarvestedAt": "2026-11-13T15:47:14.420Z",
+    "contentHash": "0072a4b4236687a668da16f6d6332567198030c6c3e47292a0671d62cd6edf7a",
+    "lastHarvestedAt": "2026-11-20T04:02:33.943Z",
     "learningId": "learn-github-bridgecrewio-checkov"
   },
   "apache-zookeeper": {

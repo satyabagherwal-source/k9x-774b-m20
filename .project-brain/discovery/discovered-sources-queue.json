@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T03:32:41.691Z",
+  "updated_at": "2026-11-20T04:02:44.411Z",
   "stats": {
-    "total_discovered": 6150,
-    "approved_pending_harvest": 5813,
+    "total_discovered": 6169,
+    "approved_pending_harvest": 5832,
     "harvested_count": 0,
     "rejected_count": 337,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5795,
+      "COMMUNITY_AND_EXPERT": 5814,
       "OFFICIAL_DOCUMENTATION": 193,
       "STANDARDS_AND_SPECIFICATIONS": 114,
       "ENGINEERING_BLOGS": 4,
@@ -132964,6 +132964,424 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
         "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-627A7C209916": {
+      "id": "SRC-627A7C209916",
+      "url": "https://myaccount.blob.core.windows.net/container",
+      "title": "https://myaccount.blob.core.windows.net/container",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:02:42.409Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
+        "fileName": "bridgecrewio-checkov-learnings.md"
+      }
+    },
+    "SRC-22E351735832": {
+      "id": "SRC-22E351735832",
+      "url": "https://gluesql.org/docs/dev/storages/supported-storages/redb-storage",
+      "title": "https://gluesql.org/docs/dev/storages/supported-storages/redb-storage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:02:43.503Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+        "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-99C326391BBD": {
+      "id": "SRC-99C326391BBD",
+      "url": "https://gluesql.org/docs/dev/storages/supported-storages/sqlite-storage",
+      "title": "https://gluesql.org/docs/dev/storages/supported-storages/sqlite-storage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:02:43.555Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+        "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-235A388CD888": {
+      "id": "SRC-235A388CD888",
+      "url": "https://gluesql.org/docs/dev/storages/supported-storages/slatedb-storage",
+      "title": "https://gluesql.org/docs/dev/storages/supported-storages/slatedb-storage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:02:43.604Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+        "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-DF852E2AB0E7": {
+      "id": "SRC-DF852E2AB0E7",
+      "url": "https://gluesql.org/docs/dev/storages/supported-storages/mongo-storage",
+      "title": "https://gluesql.org/docs/dev/storages/supported-storages/mongo-storage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:02:43.659Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+        "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-875F4504C2DD": {
+      "id": "SRC-875F4504C2DD",
+      "url": "https://gluesql.org/docs/dev/storages/supported-storages/redis-storage",
+      "title": "https://gluesql.org/docs/dev/storages/supported-storages/redis-storage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:02:43.709Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+        "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-8F572AF86EA2": {
+      "id": "SRC-8F572AF86EA2",
+      "url": "https://gluesql.org/docs/dev/storages/supported-storages/memory-storage",
+      "title": "https://gluesql.org/docs/dev/storages/supported-storages/memory-storage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:02:43.766Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+        "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-9C40D1B721CD": {
+      "id": "SRC-9C40D1B721CD",
+      "url": "https://gluesql.org/docs/dev/storages/supported-storages/shared-memory-storage",
+      "title": "https://gluesql.org/docs/dev/storages/supported-storages/shared-memory-storage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:02:43.816Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+        "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-21D8B544A809": {
+      "id": "SRC-21D8B544A809",
+      "url": "https://gluesql.org/docs/dev/storages/supported-storages/csv-storage",
+      "title": "https://gluesql.org/docs/dev/storages/supported-storages/csv-storage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:02:43.872Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+        "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-BB3111D38054": {
+      "id": "SRC-BB3111D38054",
+      "url": "https://gluesql.org/docs/dev/storages/supported-storages/json-storage",
+      "title": "https://gluesql.org/docs/dev/storages/supported-storages/json-storage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:02:43.922Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+        "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-E2E2920AA33F": {
+      "id": "SRC-E2E2920AA33F",
+      "url": "https://gluesql.org/docs/dev/storages/supported-storages/parquet-storage",
+      "title": "https://gluesql.org/docs/dev/storages/supported-storages/parquet-storage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:02:43.984Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+        "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-1DA330E6111F": {
+      "id": "SRC-1DA330E6111F",
+      "url": "https://gluesql.org/docs/dev/storages/supported-storages/file-storage",
+      "title": "https://gluesql.org/docs/dev/storages/supported-storages/file-storage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:02:44.033Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+        "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-77AB96AD7786": {
+      "id": "SRC-77AB96AD7786",
+      "url": "https://img.shields.io/discord/780298017940176946?logo=discord&logoColor=white",
+      "title": "https://img.shields.io/discord/780298017940176946?logo=discord&logoColor=white",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:02:44.091Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+        "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-511559761E18": {
+      "id": "SRC-511559761E18",
+      "url": "https://discord.gg/C6TDEgzDzY",
+      "title": "https://discord.gg/C6TDEgzDzY",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:02:44.140Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+        "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-7CE90FBD7FBC": {
+      "id": "SRC-7CE90FBD7FBC",
+      "url": "https://coveralls.io/repos/github/gluesql/gluesql/badge.svg?branch=main",
+      "title": "https://coveralls.io/repos/github/gluesql/gluesql/badge.svg?branch=main",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:02:44.198Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+        "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-D1C7E2B4209D": {
+      "id": "SRC-D1C7E2B4209D",
+      "url": "https://coveralls.io/github/gluesql/gluesql?branch=main",
+      "title": "https://coveralls.io/github/gluesql/gluesql?branch=main",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:02:44.247Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+        "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-5078653D40D9": {
+      "id": "SRC-5078653D40D9",
+      "url": "https://github.com/sqlparser-rs/sqlparser-rs",
+      "title": "https://github.com/sqlparser-rs/sqlparser-rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:02:44.304Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+        "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-0B71D262A806": {
+      "id": "SRC-0B71D262A806",
+      "url": "https://cdn.jsdelivr.net/npm/gluesql/gluesql.js",
+      "title": "https://cdn.jsdelivr.net/npm/gluesql/gluesql.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:02:44.354Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+        "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-F405327603D0": {
+      "id": "SRC-F405327603D0",
+      "url": "https://github.com/gluesql/gluesql-js",
+      "title": "https://github.com/gluesql/gluesql-js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T04:02:44.411Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+        "fileName": "gluesql-gluesql-learnings.md"
       }
     }
   }

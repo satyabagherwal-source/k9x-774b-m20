@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T03:49:22.786Z",
+  "last_updated": "2026-11-20T04:02:45.810Z",
   "total_records": 2063,
   "domains": {
     "A": {
@@ -8265,8 +8265,8 @@
       "title": "Technical Construction Intelligence: bridgecrewio/checkov Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bridgecrewio-checkov-technical-construction-intelligence-bridgecrewio-checkov-co.md",
       "repository": "bridgecrewio/checkov",
-      "content_hash": "71bcd3bfad01b29b5e519c304009840c821e5f851da34394284e0bd3a4c20de5",
-      "created_at": "2026-11-13T15:47:14.628Z"
+      "content_hash": "b90ee328894c70f91c7d46cf59758610009235b925bf7bcedb6593ac874eb839",
+      "created_at": "2026-11-20T04:02:34.423Z"
     },
     "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
@@ -8343,8 +8343,8 @@
       "title": "Technical Construction Intelligence: bridgecrewio-checkov-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bridgecrewio-checkov-learnings-technical-construction-intelligence-bridgecrewio-.md",
       "repository": "bridgecrewio-checkov-learnings",
-      "content_hash": "db33ac444145dbf3e2dcc4502e4017f43074c888340b49e435cf055317c6463e",
-      "created_at": "2026-11-13T15:47:56.779Z"
+      "content_hash": "51673fb09165e06dabf98a8d4db244ed485d29f6d64c178ac0c9b79eeb2baa3b",
+      "created_at": "2026-11-20T04:02:42.865Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari",
@@ -14854,8 +14854,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "d6c2b6178de2777f30319cfdea96ac938d719755e6f01783ee3926881dd343d0",
-      "created_at": "2026-11-20T02:39:06.858Z"
+      "content_hash": "d221b4f2391e7f8f65faa0d91e95d40141996fc5a7bab329d40afc6636fd3479",
+      "created_at": "2026-11-20T04:02:45.810Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -32164,8 +32164,8 @@
       "title": "Content & Information Intelligence: gluesql/gluesql Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-gluesql-gluesql-content-information-intelligence-gluesql-gluesql-core-invariants.md",
       "repository": "gluesql/gluesql",
-      "content_hash": "747755eb1828c9b7e4c65299d6fee1c1b4bb7d9d57dc88efc2bf308a2eac41f5",
-      "created_at": "2026-11-18T22:03:35.942Z"
+      "content_hash": "5c4c482a50c33aa1df43352184ca94c11d20629547cfcf7ad585f1dbbb757b5b",
+      "created_at": "2026-11-20T04:02:39.060Z"
     },
     "domain_intelligence-content-information-intelligence-gluesql-gluesql-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-gluesql-gluesql-learnings-core-invariants",
@@ -32173,8 +32173,8 @@
       "title": "Content & Information Intelligence: gluesql-gluesql-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-gluesql-gluesql-learnings-content-information-intelligence-gluesql-gluesql-learn.md",
       "repository": "gluesql-gluesql-learnings",
-      "content_hash": "d48c22ed34f6126d21e4fc6b0c84070ce2cd57f19d59fd2a1b1a23f407d35489",
-      "created_at": "2026-11-18T22:06:58.100Z"
+      "content_hash": "61368a4175c0fa2e3027fce33a03bd446b84835cad079416f044dd68cf04488d",
+      "created_at": "2026-11-20T04:02:44.871Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-2-7b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-2-7b-core-invariants",
