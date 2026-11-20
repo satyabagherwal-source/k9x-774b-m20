@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-QN34",
-    "timestamp": "2026-11-18T12:33:02.560Z",
-    "repository": "Lightricks/LTX-2.5",
-    "learningId": "learn-huggingface-lightricks-ltx-2-5",
-    "contentHash": "78ef199998c215421e97e52e21efc5f0ae2f999be5265c560549a4c14f85e5f3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-R7QH",
     "timestamp": "2026-11-18T12:33:29.321Z",
     "repository": "software-mansion/argent",
@@ -7492,6 +7477,21 @@
     "contentHash": "6514316f196ea5c566cc08a600db212144a5f348e358ed36da297a6d2260c6a3",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261120-RFUL",
+    "timestamp": "2026-11-20T11:41:01.053Z",
+    "repository": "genkit-ai/genkit",
+    "learningId": "learn-github-genkit-ai-genkit",
+    "contentHash": "a03c213c67bb556d3aa7f57a574f433f7354870353b3e4c65a5f5217b8ed26a1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

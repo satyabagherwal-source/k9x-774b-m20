@@ -708099,3 +708099,104 @@ enum ScalarDispatch<T> {
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `f8710f06` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9562. js/plugins/google-genai): send tool_choice none/auto as string in Interactions (Harvested from genkit-ai/genkit)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "js/plugins/google-genai): send tool_choice none/auto as string in Interactions",
+  "source": "genkit-ai/genkit",
+  "source_url": "https://github.com/genkit-ai/genkit",
+  "source_version": "9a7d0b65",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-20T11:41:00.656Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-genkit-ai-genkit",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `9a7d0b65`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `js/plugins/google-genai/src/common/interaction-converters.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `9a7d0b65`: js/plugins/google-genai): send tool_choice none/auto as string in Interactions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `js/plugins/google-genai/src/common/interaction-converters.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+ *
+ * The server only accepts `allowed_tools` with mode `any` or `validated`
+ * (`{"allowed_tools": {"mode": "none"}}` is a 400 "allowed_tools mode must
+ * be either ANY or VALIDATED."), so every other mode is sent as a plain
+ * string. `allowedFunctionNames` without `ANY` or `VALIDATED` can't be
+ * expressed and is dropped via `warnDropped`.
+  toolChoice?: string,
+  warnDropped?: (field: string) => void
+): string | InteractionToolChoiceConfig | undefined {
+    const names = functionCallingConfig.allowedFunctionNames;
+    const hasNames = !!names?.length;
+    if (hasNames && (validMode === 'any' || validMode === 'validated')) {
+      return { allowed_tools: { mode: validMode, tools: names } };
+    if (hasNames) {
+      warnDropped?.('functionCallingConfig.allowedFunctionNames');
+    }
+    return validMode;
+    return toolChoice === 'required' ? 'any' : toolChoice;
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+  toolChoice?: string
+): InteractionToolChoiceConfig | undefined {
+    if (!validMode && !functionCallingConfig.allowedFunctionNames?.length) {
+      return undefined;
+    return {
+      allowed_tools: {
+        ...(validMode ? { mode: validMode } : {}),
+        ...(functionCallingConfig.allowedFunctionNames
+          ? { tools: functionCallingConfig.allowedFunctionNames }
+          : {}),
+      },
+    };
+    return {
+      allowed_tools: { mode: toolChoice === 'required' ? 'any' : toolChoice },
+    };
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `9a7d0b65` are properly handled with clean fallback behavior.

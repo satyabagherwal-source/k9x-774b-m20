@@ -11563,3 +11563,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted` | `https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted` | `hf-harness` | Multi-dimensional audit evidence | 2026-11-20T11:31:34.210Z |
 | `learn-dom-d-04a5e986` | `project://hf-harness-hub-qwen3.8-27b-opencode-adapted` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md` | 2026-11-20T11:32:07.964Z |
 | `learn-dom-d-19e80851` | `project://hf-tencent-hy4` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tencent-hy4-learnings.md` | 2026-11-20T11:32:47.962Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `9a7d0b65` | Multi-dimensional audit evidence | 2026-11-20T11:41:01.056Z |

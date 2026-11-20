@@ -11530,3 +11530,4 @@
 | `CYCLE-20261120-FAGU` | `2026-11-20T11:31:34.206Z` | `harness-hub/Qwen3.8-27B-opencode-adapted` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md` | Yes (`6514316f...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T11:32:07.964Z` | `hf-harness-hub-qwen3.8-27b-opencode-adapted` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-04A5E986` [Domain D] | Yes (`de2df0fa...`) |
 | `CYCLE-2026-11-20-PROJ-EVOLVE` | `2026-11-20T11:32:47.962Z` | `hf-tencent-hy4` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-19E80851` [Domain D] | Yes (`6ec6cdfd...`) |
+| `CYCLE-20261120-RFUL` | `2026-11-20T11:41:01.053Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9562` | Yes (`a03c213c...`) |

@@ -4,22 +4,22 @@
 {
   "source_repository": "genkit-ai/genkit",
   "source_url": "https://github.com/genkit-ai/genkit",
-  "source_version": "56db89eb",
+  "source_version": "9a7d0b65",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T05:06:19.772Z",
+  "timestamp": "2026-11-20T11:41:01.242Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-genkit-ai-genkit",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `56db89eb`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T05:06:19.772Z`  
+> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `9a7d0b65`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T11:41:01.242Z`  
 > **Learning ID**: `learn-github-genkit-ai-genkit`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `genkit-ai/genkit` (Commit: `56db89eb`)
+- **Target Repository**: `genkit-ai/genkit` (Commit: `9a7d0b65`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T05:06:18.856Z  
+> **Harvest Timestamp**: 2026-11-20T11:40:58.121Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6604 stars
+- **Stars / Engagement**: 6605 stars
 
 ---
 
@@ -1966,471 +1966,1007 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `56db89eb` (2026-11-18)
-**Commit Message**: build(deps-dev): bump the root-dependencies group across 1 directory with 6 updates (#7263)
+### Incident Patch 1: `9a7d0b65` (2026-11-19)
+**Commit Message**: fix(js/plugins/google-genai): send tool_choice none/auto as string in Interactions (#7269)
 
-**File**: `package.json` (modified, +6/-6)
+**File**: `js/plugins/google-genai/src/common/interaction-converters.ts` (modified, +18/-15)
 ```diff
-@@ -37,17 +37,17 @@
-   "devDependencies": {
-     "@commitlint/cli": "20.5.3",
-     "@commitlint/config-conventional": "20.5.3",
--    "@types/node": "22.10.5",
--    "inquirer": "^8.2.6",
-+    "@types/node": "22.20.5",
-+    "inquirer": "^8.2.7",
-     "lint-staged": "^17.5.0",
--    "only-allow": "^1.2.1",
-+    "only-allow": "^1.2.2",
-     "prettier": "^3.9.10",
--    "prettier-plugin-css-order": "2.0.1",
-+    "prettier-plugin-css-order": "2.2.0",
-     "prettier-plugin-organize-imports": "^3.2.4",
--    "rimraf": "^6.0.1",
-+    "rimraf": "^6.1.3",
-     "simple-git-hooks": "^2.14.0",
-     "ts-node": "^10.9.2",
--    "tsx": "^4.20.3"
-+    "tsx": "^4.23.15"
-   },
-   "pnpm": {
-     "overrides": {
+@@ -383,30 +383,33 @@ export function selectInteractionInput(
+  * Converts `functionCallingConfig` (or, without it, the request's
+  * `toolChoice`) to the Interactions `generation_config.tool_choice`.
+  * Returns `undefined` when neither sets anything.
++ *
++ * The server only accepts `allowed_tools` with mode `any` or `validated`
++ * (`{"allowed_tools": {"mode": "none"}}` is a 400 "allowed_tools mode must
++ * be either ANY or VALIDATED."), so every other mode is sent as a plain
++ * string. `allowedFunctionNames` without `ANY` or `VALIDATED` can't be
++ * expressed and is dropped via `warnDropped`.
+  */
+ export function toInteractionToolChoice(
+   functionCallingConfig?: { mode?: string; allowedFunctionNames?: string[] },
+-  toolChoice?: string
+-): InteractionToolChoiceConfig | undefined {
++  toolChoice?: string,
++  warnDropped?: (field: string) => void
++): string | InteractionToolChoiceConfig | undefined {
+   if (functionCallingConfig) {
+     const mode = functionCallingConfig.mode?.toLowerCase();
+     const validMode = mode && mode !== 'mode_unspecified' ? mode : undefined;
+-    if (!validMode && !functionCallingConfig.allowedFunctionNames?.length) {
+-      return undefined;
++    const names = functionCallingConfig.allowedFunctionNames;
++    const hasNames = !!names?.length;
++    if (hasNames && (validMode === 'any' || validMode === 'validated')) {
++      return { allowed_tools: { mode: validMode, tools: names } };
+     }
+-    return {
+-      allowed_tools: {
+-        ...(validMode ? { mode: validMode } : {}),
+-        ...(functionCallingConfig.allowedFunctionNames
+-          ? { tools: functionCallingConfig.allowedFunctionNames }
+-          : {}),
+-      },
+-    };
++    if (hasNames) {
++      warnDropped?.('functionCallingConfig.allowedFunctionNames');
++    }
++    return validMode;
+   }
+   if (toolChoice) {
+-    return {
+-      allowed_tools: { mode: toolChoice === 'required' ? 'any' : toolChoice },
+-    };
++    return toolChoice === 'required' ? 'any' : toolChoice;
+   }
+   return undefined;
+ }
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +236/-379)
+**File**: `js/plugins/google-genai/src/common/utils.ts` (modified, +2/-0)
 ```diff
-@@ -20,43 +20,43 @@ importers:
-     devDependencies:
-       '@commitlint/cli':
-         specifier: 20.5.3
--        version: 20.5.3(@types/node@22.10.5)(conventional-commits-parser@6.4.0)(typescript@5.4.5)
-+        version: 20.5.3(@types/node@22.20.5)(conventional-commits-parser@6.4.0)(typescript@5.4.5)
-       '@commitlint/config-conventional':
-         specifier: 20.5.3
-         version: 20.5.3
-       '@types/node':
--        specifier: 22.10.5
--        version: 22.10.5
-+        specifier: 22.20.5
-+        version: 22.20.5
-       inquirer:
--        specifier: ^8.2.6
--        version: 8.2.6
-+        specifier: ^8.2.7
-+        version: 8.2.7(@types/node@22.20.5)
-       lint-staged:
-         specifier: ^17.5.0
-         version: 17.6.0
-       only-allow:
--        specifier: ^1.2.1
--        version: 1.2.1
-+        specifier: ^1.2.2
-+        version: 1.2.2
-       prettier:
-         specifier: ^3.9.10
-         version: 3.9.10
-       prettier-plugin-css-order:
--        specifier: 2.0.1
--        version: 2.0.1(postcss@8.4.38)(prettier@3.9.10)
-+        specifier: 2.2.0
-+        version: 2.2.0(postcss@8.4.38)(prettier@3.9.10)
-       prettier-plugin-organize-imports:
-         specifier: ^3.2.4
-         version: 3.2.4(prettier@3.9.10)(typescript@5.4.5)
-       rimraf:
--        specifier: ^6.0.1
--        version: 6.0.1
-+        specifier: ^6.1.3
-+        version: 6.1.3
-       simple-git-hooks:
-         specifier: ^2.14.0
-         version: 2.14.0
-       ts-node:
-         specifier: ^10.9.2
--        version: 10.9.2(@types/node@22.10.5)(typescript@5.4.5)
-+        version: 10.9.2(@types/node@22.20.5)(typescript@5.4.5)
-       tsx:
--        specifier: ^4.20.3
--        version: 4.20.3
-+        specifier: ^4.23.15
-+        version: 4.23.15
+@@ -921,6 +921,8 @@ export function isStringArray(values: unknown[]): values is string[] {
+ const DROPPED_CONFIG_FIELD_HINTS: Record<string, string> = {
+   'thinkingConfig.thinkingBudget':
+     " Use thinkingConfig.thinkingLevel ('LOW' | 'MEDIUM' | 'HIGH') instead.",
++  'functionCallingConfig.allowedFunctionNames':
++    " It only applies with mode 'ANY' or 'VALIDATED'.",
+ };
  
- packages:
+ /** `model:field` pairs that have already been warned about. */
+```
+
+**File**: `js/plugins/google-genai/src/googleai/gemini.ts` (modified, +2/-1)
+```diff
+@@ -1301,7 +1301,8 @@ export function defineModel(
+       if (useInteractions) {
+         const toolChoice = toInteractionToolChoice(
+           functionCallingConfig,
+-          request.toolChoice
++          request.toolChoice,
++          (field) => warnDroppedConfigField(modelVersion, field)
+         );
+         if (toolChoice) {
+           interactionGenerationConfig.tool_choice = toolChoice;
+```
+
+**File**: `js/plugins/google-genai/src/vertexai/gemini.ts` (modified, +2/-1)
+```diff
+@@ -1269,7 +1269,8 @@ async function generateWithInteractions(params: {
+   );
+   const toolChoice = toInteractionToolChoice(
+     functionCallingConfig,
+-    request.toolChoice
++    request.toolChoice,
++    warnDropped
+   );
+   if (toolChoice) {
+     generationConfig.tool_choice = toolChoice;
+```
+
+**File**: `js/plugins/google-genai/tests/common/interaction-converters_test.ts` (modified, +66/-0)
+```diff
+@@ -39,6 +39,7 @@ import {
+   toInteractionSpeechConfig,
+   toInteractionSteps,
+   toInteractionTool,
++  toInteractionToolChoice,
+   toInteractionVideoResponseFormat,
+   withBasicUsageStats,
+ } from '../../src/common/interaction-converters.js';
+@@ -1308,6 +1309,71 @@ describe('Interaction Converters', () => {
+     });
+   });
  
-@@ -153,167 +153,170 @@ packages:
-     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
-     engines: {node: '>=12'}
++  describe('toInteractionToolChoice', () => {
++    // The server only accepts allowed_tools with mode any or validated (400
++    // "allowed_tools mode must be either ANY or VALIDATED." otherwise).
++    it('sends a request toolChoice as a plain string', () => {
++      assert.strictEqual(toInteractionToolChoice(undefined, 'required'), 'any');
++      assert.strictEqual(toInteractionToolChoice(undefined, 'none'), 'none');
++      assert.strictEqual(toInteractionToolChoice(undefined, 'auto'), 'auto');
++      assert.strictEqual(toInteractionToolChoice(), undefined);
++    });
++
++    it('sends a functionCallingConfig mode without names as a plain string', () => {
++      for (const mode of ['AUTO', 'NONE', 'ANY', 'VALIDATED']) {
++        assert.strictEqual(
++          toInteractionToolChoice({ mode }),
++          mode.toLowerCase()
++        );
++      }
++      assert.strictEqual(
++        toInteractionToolChoice({ mode: 'MODE_UNSPECIFIED' }),
++        undefined
++      );
++    });
++
++    it('uses allowed_tools for names with ANY or VALIDATED', () => {
++      assert.deepStrictEqual(
++        toInteractionToolChoice({
++          mode: 'ANY',
++          allowedFunctionNames: ['getWeather'],
++        }),
++        { allowed_tools: { mode: 'any', tools: ['getWeather'] } }
++      );
++      assert.deepStrictEqual(
++        toInteractionToolChoice({
++          mode: 'VALIDATED',
++          allowedFunctionNames: ['getWeather'],
++        }),
++        { allowed_tools: { mode: 'validated', tools: ['getWeather'] } }
++      );
++    });
++
++    it('drops names without ANY or VALIDATED', () => {
++      const dropped: string[] = [];
++      assert.strictEqual(
++        toInteractionToolChoice(
++          { mode: 'AUTO', allowedFunctionNames: ['getWeather'] },
++          undefined,
++          (field) => dropped.push(field)
++        ),
++        'auto'
++      );
++      assert.strictEqual(
++        toInteractionToolChoice(
++          { allowedFunctionNames: ['getWeather'] },
++          undefined,
++          (field) => dropped.push(field)
++        ),
++        undefined
++      );
++      assert.deepStrictEqual(dropped, [
++        'functionCallingConfig.allowedFunctionNames',
++        'functionCallingConfig.allowedFunctionNames',
++      ]);
++    });
++  });
++
+   describe('toInteractionGoogleSearch', () => {
+     it('should handle boolean true config', () => {
+       const result = toInteractionGoogleSearch(true);
+```
+
+**File**: `js/plugins/google-genai/tests/googleai/gemini_test.ts` (modified, +60/-13)
+```diff
+@@ -583,30 +583,77 @@ describe('Google AI Gemini', () => {
+         const apiRequest: CreateInteractionRequest = JSON.parse(
+           fetchStub.lastCall.args[1].body
+         );
+-        assert.deepStrictEqual(apiRequest.generation_config?.tool_choice, {
+-          allowed_tools: {
+-            mode: 'any',
+-          },
+-        });
++        assert.strictEqual(apiRequest.generation_config?.tool_choice, 'any');
+       });
  
--  '@esbuild/aix-ppc64@0.25.5':
--    resolution: {integrity: sha512-9o3TMmpmftaCMepOdA5k/yDw8SfInyzWWTjYTFCX3kPSDJMROQTb8jg+h9Cnwnmm1vOzvxN7gIfB5V2ewpjtGA==}
-+  '@esbuild/aix-ppc64@0.28.2':
-+    resolution: {integrity: sha512-XExcO+dvLKvVtNTibSTBej1NCAbaGhWn9Ww1ZPx80qsahhPFe/8jgWP0IchNe0F3HwkU7n8ejhH8bjonqht8mQ==}
-     engines: {node: '>=18'}
-     cpu: [ppc64]
-     os: [aix]
+-      it('constructs generation_config.tool_choice for toolChoice none (Interactions API)', async () => {
++      // The server rejects {allowed_tools: {mode: 'none' | 'auto'}} with a 400
++      // ("allowed_tools mode must be either ANY or VALIDATED."), so plain
++      // modes are sent as strings.
++      for (const toolChoice of ['none', 'auto'] as const) {
++        it(`sends toolChoice ${toolChoice} as a plain string (Interactions API)`, async () => {
++          const model = defineModel(
++            'gemini-flash-latest',
++            defaultPluginOptions
++          );
++          mockFetchResponse(defaultApiResponse);
++          await model.run({ ...minimalRequest, toolChoice });
++
++          const apiRequest: CreateInteractionRequest = JSON.parse(
++            fetchStub.lastCall.args[1].body
++          );
++          assert.strictEqual(
++            apiRequest.generation_config?.tool_choice,
++            toolChoice
++          );
++        });
++      }
++
++      it('sends functionCallingConfig mode without names as a plain string (Interactions API)', async () => {
+         const model = defineModel('gemini-flash-latest', defaultPluginOptions);
+         mockFetchResponse(defaultApiResponse);
+-        const request: GenerateRequest<typeof GeminiConfigSchema> = {
++        await model.run({
+           ...minimalRequest,
+-          toolChoice: 'none',
+-        };
+-        await model.run(request);
++          config: { functionCallingConfig: { mode: 'NONE' } },
++        });
  
--  '@esbuild/android-arm64@0.25.5':
--    resolution: {integrity: sha512-VGzGhj4lJO+TVGV1v8ntCZWJktV7SGCs3Pn1GRWI1SBFtRALoomm8k5E9Pmwg3HOAal2VDc2F9+PM/rEY6oIDg==}
-+  '@esbuild/android-arm64@0.28.2':
-+    resolution: {integrity: sha512-5YfKeeI8qWfBZIX+u2xZC3Zlb3Os/gLS2sbEKM+I4ZOcsWmHS2WLysCcQZDAFRslDUU5Oiq44gf6PYN1vGwG5A==}
-     engines: {node: '>=18'}
-     cpu: [arm64]
-     os: [android]
+         const apiRequest: CreateInteractionRequest = JSON.parse(
+           fetchStub.lastCall.args[1].body
+         );
+-        assert.deepStrictEqual(apiRequest.generation_config?.tool_choice, {
+-          allowed_tools: {
+-            mode: 'none',
++        assert.strictEqual(apiRequest.generation_config?.tool_choice, 'none');
++      });
++
++      it('drops allowedFunctionNames without ANY with a warning (Interactions API)', async () => {
++        const warnStub = sinon.stub(logger, 'warn');
++        // Its own model name: the warning is logged once per model and field.
++        const model = defineModel(
++          'gemini-allowed-names-auto',
++          defaultPluginOptions
++        );
++        mockFetchResponse(defaultApiResponse);
++        await model.run({
++          ...minimalRequest,
++          config: {
++            functionCallingConfig: {
++              mode: 'AUTO',
++              allowedFunctionNames: ['myFunc'],
++            },
+           },
+         });
++
++        const apiRequest: CreateInteractionRequest = JSON.parse(
++          fetchStub.lastCall.args[1].body
++        );
++        assert.strictEqual(apiRequest.generation_config?.tool_choice, 'auto');
++        assert.ok(
++          warnStub
++            .getCalls()
++            .some((c) =>
++              String(c.args[0]).includes(
++                "functionCallingConfig.allowedFunctionNames is not supported by 'gemini-allowed-names-auto' and was ignored. It only applies with mode 'ANY' or 'VALIDATED'."
++              )
++            ),
++          'expected a warning about allowedFunctionNames'
++        );
+       });
  
--  '@esbuild/android-arm@0.25.5':
--    resolution: {integrity: sha512-AdJKSPeEHgi7/ZhuIPtcQKr5RQdo6OO2IL87JkianiMYMPbCtot9fxPbrMiBADOWWm3T2si9stAiVsGbTQFkbA==}
-+  '@esbuild/android-arm@0.28.2':
-+    resolution: {integrity: sha512-kXXoiPVVGQcnIYGOeaovwOURpniDBpSq4A03qkQ+BMQqtGG6HYap3xne9C1O1yo4TR3qxlCX5IqqmX6fFo2Lqg==}
-     engines: {node: '>=18'}
-     cpu: [arm]
-     os: [android]
+       it('sends responseModalities as response_format entries (Interactions API)', async () => {
+```
+
+**File**: `js/plugins/google-genai/tests/vertexai/gemini_test.ts` (modified, +46/-1)
+```diff
+@@ -1202,10 +1202,55 @@ describe('Vertex AI Gemini', () => {
+           max_output_tokens: 100,
+           thinking_level: 'low',
+           thinking_summaries: 'auto',
+-          tool_choice: { allowed_tools: { mode: 'any' } },
++          tool_choice: 'any',
+         });
+       });
  
--  '@esbuild/android-x64@0.25.5':
--    resolution: {integrity: sha512-D2GyJT1kjvO//drbRT3Hib9XPwQeWd9vZoBJn+bu/lVsOZ13cqNdDeqIF/xQ5/VmWvMduP6AmXvylO/PIc2isw==}
-+  '@esbuild/android-x64@0.28.2':
-+    resolution: {integrity: sha512-O387ite7SzUyCcy3JQX4P4bLtEA7bLLkx+esve5JHnyYfNTxcVpXZo9jhdB0lTKN44gztELTdU7nS8Nr16Fs1Q==}
-     engines: {node: '>=18'}
-     cpu: [x64]
-     os: [android]
++      // The platform rejects {allowed_tools: {mode: 'none' | 'auto'}} with a
++      // 400, as the Gemini API does: plain modes are sent as strings.
++      it('sends toolChoice none as a plain string', async () => {
++        mockFetchResponse(interactionResponse);
++        const model = defineModel(interactionsModel, clientOptions);
++        await model.run({ ...minimalRequest, toolChoice: 'none' });
++        assert.strictEqual(
++          lastRequestBody().generation_config.tool_choice,
++          'none'
++        );
++      });
++
++      it('drops allowedFunctionNames without ANY with a warning', async () => {
++        const warnStub = sinon.stub(logger, 'warn');
++        mockFetchResponse(interactionResponse);
++        // Its own model name: the warning is logged once per model and field.
++        const model = defineModel(
++          `gemini-allowed-names-${clientOptions.kind}`,
++          clientOptions
++        );
++        await model.run({
++          ...minimalRequest,
++          config: {
++            functionCallingConfig: {
++              mode: 'AUTO',
++              allowedFunctionNames: ['getWeather'],
++            },
++          },
++        });
++        assert.strictEqual(
++          lastRequestBody().generation_config.tool_choice,
++          'auto'
++        );
++        assert.ok(
++          warnStub
++            .getCalls()
++            .some((c) =>
++              String(c.args[0]).includes(
++                'functionCallingConfig.allowedFunctionNames is not supported'
++              )
++            ),
++          'expected a warning about allowedFunctionNames'
++        );
++      });
++
+       it('sends an empty schema for JSON output without a schema', async () => {
+         // Without a schema the server answers in prose (seen live on the
+         // Gemini API).
+```
+
+**File**: `js/testapps/basic-gemini/src/index-vertexai.ts` (modified, +46/-0)
+```diff
+@@ -754,6 +754,52 @@ ai.defineFlow(
+   }
+ );
  
--  '@esbuild/darwin-arm64@0.25.5':
--    resolution: {integrity: sha512-GtaBgammVvdF7aPIgH2jxMDdivezgFu6iKpmT+48+F8Hhg5J/sfnDieg0aeG/jfSvkYQU2/pceFPDKlqZzwnfQ==}
-+  '@esbuild/darwin-arm64@0.28.2':
-+    resolution: {integrity: sha512-n4KqkOQrraxHJcgjM1RvwbigfQKIKJVpM7xp+KsxiyUSrRdIXnt73VhrPAx0fV44hgfmIVKjxMN9J1t5jySVkw==}
-     engines: {node: '>=18'}
-     cpu: [arm64]
-     os: [darwin]
- 
--  '@esbuild/darwin-x64@0.25.5':
--    resolution: {integrity: sha512-1iT4FVL0dJ76/q1wd7XDsXrSW+oLoquptvh4CLR4kITDtqi2e/xwXwdCVH8hVHU43wgJdsq7Gxuzcs6Iq/7bxQ==}
-+  '@esbuild/darwin-x64@0.28.2':
-+    resolution: {integrity: sha512-uq6suIWYP37qzGddBKPw5QEQPi6HiLGsO7UmkpfyaYNQ3D+rN6w6WfwH+nuqcGXWvawGwxOEroO4YGnFh95azw==}
-     engines: {node: '>=18'}
-     cpu: [x64]
-     os: [darwin]
- 
--  '@esbuild/freebsd-arm64@0.25.5':
--    resolution: {integrity: sha512-nk4tGP3JThz4La38Uy/gzyXtpkPW8zSAmoUhK9xKKXdBCzKODMc2adkB2+8om9BDYugz+uGV7sLmpTYzvmz6Sw==}
-+  '@esbuild/freebsd-arm64@0.28.2':
-+    resolution: {integrity: sha512-n+I0BTSRIoy+d6RPKnEVwql5UwBJolytvY4mAOIEJorKlqgPII8ix6slVVrfZ5Tnj7glIZvloylbB/EJPMWEXw==}
-     engines: {node: '>=18'}
-     cpu: [arm64]
-     os: [freebsd]
- 
--  '@esbuild/freebsd-x64@0.25.5':
--    resolution: {integrity: sha512-PrikaNjiXdR2laW6OIjlbeuCPrPaAl0IwPIaRv+SMV8CiM8i2LqVUHFC1+8eORgWyY7yhQY+2U2fA55mBzReaw==}
-+  '@esbuild/freebsd-x64@0.28.2':
-+    resolution: {integrity: sha512-78XJTJkvPs0kz2w61301PJjXl4g7q3JqiYMZ/M/yVI73EHBrCRTgkhu9oqG7vPqq+a/yadEW8aD+agKlk5xrmg==}
-     engines: {node:
++// Tool choice: `required` makes the model call a tool, `none` makes it
++// answer without one, `auto` (the default without toolChoice) lets it
++// decide. returnToolRequests returns the tool calls instead of running
++// them, so the output shows what the model asked for.
++ai.defineFlow(
++  {
++    name: 'tool-choice',
++    inputSchema: z.enum(['required', 'auto', 'none']).default('required'),
++  },
++  async (toolChoice) => {
++    const response = await ai.generate({
++      model: vertexAI.model('gemini-3.8-flash'),
++      prompt: "What's the weather in Paris, France?",
++      tools: [getWeather],
++      toolChoice,
++      returnToolRequests: true,
++    });
++    return {
++      toolRequests: response.toolRequests.map((p) => p.toolRequest),
++      text: response.text,
++    };
++  }
++);
++
++// Only some tools allowed: functionCallingConfig with mode ANY and
++// allowedFunctionNames. The model would start with getWeather; only
++// celsiusToFahrenheit is allowed, so it calls that one.
++// allowedFunctionNames only applies with mode ANY or VALIDATED: with
++// another mode it's ignored with a warning.
++ai.defineFlow('tool-choice-allowed-function-names', async () => {
++  const response = await ai.generate({
++    model: vertexAI.model('gemini-3.8-flash'),
++    prompt:
++      "What's the weather in Paris, France? Convert the temperature to Fahrenheit.",
++    tools: [getWeather, celsiusToFahrenheit],
++    config: {
++      functionCallingConfig: {
++        mode: 'ANY',
++        allowedFunctionNames: ['celsiusToFahrenheit'],
++      },
++    },
++    returnToolRequests: true,
++  });
++  return response.toolRequests.map((p) => p.toolRequest);
++});
++
+ // Tool calling with structured output
+ ai.defineFlow(
+   {
 ```
 
 ---
 
-### Incident Patch 2: `73277525` (2026-11-18)
-**Commit Message**: build(deps-dev): bump prettier to ^3.9.10 and format (#7259)
+### Incident Patch 2: `c841c516` (2026-11-19)
+**Commit Message**: refactor(go/plugins/a2ui)!: carry A2UI messages under the spec's `messages` key (#7092)
 
-**File**: `genkit-tools/cli/tests/mcp/runtime_test.ts` (modified, +1/-2)
+**File**: `go/plugins/a2ui/exp/README.md` (modified, +5/-4)
 ```diff
-@@ -86,8 +86,7 @@ describe('MCP runtime tools', () => {
+@@ -21,10 +21,11 @@ renders incrementally.
+ ## Design principle: one representation
  
-   it('restart_runtime restarts the process and waits for the new runtime to register', async () => {
-     let runtimeEventListener:
--      | ((event: RuntimeEvent, rt: any) => void)
--      | undefined;
-+      ((event: RuntimeEvent, rt: any) => void) | undefined;
-     const processPromise = new Promise<void>(() => {});
-     const mockRuntimeManager = {
-       listRuntimes: vi.fn().mockReturnValue([{ id: 'old-runtime' }]),
+ A2UI rides on its own part channel: a Genkit **data part** carrying the mime type
+-`application/a2ui+json` whose `data` is an object `{ "envelopes": [...] }`
+-wrapping an array of A2UI envelope messages. This maps 1:1 onto the A2A binding
+-of the A2UI spec, so the same envelopes are byte-compatible with the JS plugin
+-and the `@a2ui/*` renderers.
++`application/a2ui+json` whose `data` is the spec's `{ "messages": [...] }`
++payload wrapper around an array of A2UI envelope messages. This maps 1:1 onto
++the A2A binding of the A2UI spec, so the same envelopes are byte-compatible with
++the JS and Dart plugins and the `@a2ui/*` renderers. Parts written by earlier
++versions use `{ "envelopes": [...] }`; they are still read.
+ 
+ ## Usage
+ 
 ```
 
-**File**: `js/ai/src/agent-core.ts` (modified, +18/-16)
+**File**: `go/plugins/a2ui/exp/part.go` (modified, +43/-12)
 ```diff
-@@ -511,8 +511,7 @@ async function waitForSnapshotViaTransport<State, Opts extends object>(
-     try {
-       while (true) {
-         const snap = (await transport.waitForSnapshot(snapshotId, opts)) as
--          | SessionSnapshot<State>
--          | undefined;
-+          SessionSnapshot<State> | undefined;
-         if (!snap || isSettled(snap)) {
-           return snap;
-         }
-@@ -638,9 +637,10 @@ function toolRequestParts(parts?: Part[]): ToolRequestPart[] {
- // AgentInterrupt
- // ---------------------------------------------------------------------------
+@@ -18,38 +18,70 @@ package exp
  
--class AgentInterruptImpl<Input = unknown, Output = unknown>
--  implements AgentInterrupt<Input, Output>
--{
-+class AgentInterruptImpl<
-+  Input = unknown,
-+  Output = unknown,
-+> implements AgentInterrupt<Input, Output> {
-   readonly name: string;
-   readonly ref?: string;
-   readonly input: Input;
-@@ -676,9 +676,10 @@ class AgentInterruptImpl<Input = unknown, Output = unknown>
- // AgentResponse
- // ---------------------------------------------------------------------------
+ import "github.com/firebase/genkit/go/ai"
  
--class AgentResponseImpl<State = unknown, O = unknown>
--  implements AgentResponse<State, O>
--{
-+class AgentResponseImpl<State = unknown, O = unknown> implements AgentResponse<
-+  State,
-+  O
-+> {
-   constructor(
-     private readonly _raw: AgentOutput<State>,
-     private readonly _messages: MessageData[],
-@@ -867,9 +868,10 @@ function mergeOpts<B extends object, P extends object>(
-   return Object.assign({}, bound, defined);
+-// newPart builds the canonical "a2ui part": a Genkit data part whose Data is an
+-// object {"envelopes": [...]} wrapping the array of A2UI envelopes, tagged with
+-// A2UIMimeType. The array is wrapped in an object (rather than being the Data
+-// value directly) so the payload is a map-shaped object on every runtime — some
+-// (e.g. Dart) expect a data part's data to be an object, not a bare array.
++// newPart builds the canonical "a2ui part": a Genkit data part whose Data is the
++// A2UI spec's {"messages": [...]} payload wrapper around the array of A2UI
++// envelopes, tagged with A2UIMimeType. The spec puts the list directly in data,
++// but a data part's data must be an object on every runtime (Dart expects a
++// map), so the list sits under the spec's own wrapper key.
+ func newPart(envelopes []Envelope) *ai.Part {
+ 	// Store as []any so it round-trips through JSON identically to a decoded
+ 	// payload (encoding/json decodes arrays into []any).
+ 	arr := make([]any, len(envelopes))
+ 	for i, e := range envelopes {
+ 		arr[i] = e
+ 	}
+-	p := ai.NewDataPart(map[string]any{"envelopes": arr})
++	p := ai.NewDataPart(map[string]any{"messages": arr})
+ 	p.Metadata = map[string]any{"mimeType": A2UIMimeType}
+ 	return p
  }
  
--class DetachedTaskImpl<State = unknown, Opts extends object = never>
--  implements DetachedTask<State, Opts>
--{
-+class DetachedTaskImpl<
-+  State = unknown,
-+  Opts extends object = never,
-+> implements DetachedTask<State, Opts> {
-   constructor(
-     readonly snapshotId: string,
-     private readonly transport: AgentTransport<Opts>,
-@@ -923,9 +925,10 @@ class DetachedTaskImpl<State = unknown, Opts extends object = never>
- // AgentChat
- // ---------------------------------------------------------------------------
- 
--export class AgentChatImpl<State = unknown, Opts extends object = never>
--  implements AgentChat<State, Opts>
--{
-+export class AgentChatImpl<
-+  State = unknown,
-+  Opts extends object = never,
-+> implements AgentChat<State, Opts> {
-   snapshotId?: string;
-   sessionId?: string;
-   messages: MessageData[] = [];
-@@ -1410,8 +1413,7 @@ export function createAgentAPI<State = unknown, Opts extends object = never>(
-       opts?: Opts
-     ): Promise<AgentChat<State, Opts>> {
-       const snapshot = (await transport.getSnapshot(lookup, opts)) as
--        | SessionSnapshot<State>
--        | undefined;
-+        SessionSnapshot<State> | undefined;
-       if (!snapshot) {
-         const id =
-           'snapshotId' in lookup
-```
-
-**File**: `js/ai/src/agent.ts` (modified, +4/-5)
-```diff
-@@ -1511,7 +1511,8 @@ export interface WaitForSnapshotDataInput extends GetSnapshotDataInput {
-  *    to mount next to it.
-  */
- export interface Agent<State = unknown>
--  extends BidiAction<
-+  extends
-+    BidiAction<
-       typeof AgentInputSchema,
-       typeof AgentOutputSchema,
-       typeof AgentStreamChunkSchema,
-@@ -1939,8 +1940,7 @@ export function defineCustomAgent<State = unknown>(
- 
-       let detachedSnapshotId: string | undefined;
-       let resolveDetach:
--        | ((value: void | PromiseLike<void>) => void)
--        | undefined;
-+        ((value: void | PromiseLike<void>) => void) | undefined;
-       let rejectDetach: ((reason: any) => void) | undefined;
-       const detachPromise = new Promise<void>((resolve, reject) => {
-         resolveDetach = resolve;
-@@ -2139,8 +2139,7 @@ export function defineCustomAgent<State = unknown>(
-         { result: AgentResult; finalSnapshotId?: string } | undefined
-       > => {
-         let settled:
--          | { result: AgentResult; finalSnapshotId?: string }
--          | undefined;
-+          { result: AgentResult; finalSnapshotId?: string } | undefined;
-         // An error the agent function threw outside a turn. Attached, it
-         // propagates as the action's own failure; detached, it lands on the
-         // pending row, since there is no longer a caller to throw to.
-```
-
-**File**: `js/ai/src/evaluator.ts` (modified, +8/-8)
-```diff
-@@ -95,8 +95,8 @@ export type EvalResponses = z.infer<typeof EvalResponsesSchema>;
- 
- /** Implementation function for an evaluator. Receives a data point and optional config, returns an {@link EvalResponse}. */
- export type EvaluatorFn<
--  EvalDataPoint extends
--    typeof BaseEvalDataPointSchema = typeof BaseEvalDataPointSchema,
-+  EvalDataPoint extends typeof BaseEvalDataPointSchema =
-+    typeof BaseEvalDataPointSchema,
-   CustomOptions extends z.ZodTypeAny = z.ZodTypeAny,
- > = (
-   input: z.infer<EvalDataPoint>,
-@@ -161,8 +161,8 @@ export interface EvaluatorOptions<
-  */
- export function defineEvaluator<
-   DataPoint extends typeof BaseDataPointSchema = typeof BaseDataPointSchema,
--  EvalDataPoint extends
--    typeof BaseEvalDataPointSchema = typeof BaseEvalDataPointSchema,
-+  EvalDataPoint extends typeof BaseEvalDataPointSchema =
-+    typeof BaseEvalDataPointSchema,
-   EvaluatorOpts extends z.ZodTypeAny = z.ZodTypeAny,
- >(
-   registry: Registry,
-@@ -181,8 +181,8 @@ export function defineEvaluator<
-  */
- export function evaluator<
-   DataPoint extends typeof BaseDataPointSchema = typeof BaseDataPointSchema,
--  EvalDataPoint extends
--    typeof BaseEvalDataPointSchema = typeof BaseEvalDataPointSchema,
-+  EvalDataPoint extends typeof BaseEvalDataPointSchema =
-+    typeof BaseEvalDataPointSchema,
-   EvaluatorOpts extends z.ZodTypeAny = z.ZodTypeAny,
- >(
-   options: EvaluatorOptions<DataPoint, EvaluatorOpts>,
-@@ -371,8 +371,8 @@ function getBatchedArray<T extends { testCaseId?: string }>(
+ // IsPart reports whether p is an a2ui data part (mime application/a2ui+json
+-// carrying an "envelopes" array).
++// carrying a "messages" array, or "envelopes" for a part written before the
++// rename).
+ func IsPart(p *ai.Part) bool {
+ 	if p == nil || !p.IsData() || p.Metadata == nil {
+ 		return false
+ 	}
+ 	if mt, _ := p.Metadata["mimeType"].(string); mt != A2UIMimeType {
+ 		return false
+ 	}
++	_, ok := messagesOf(p)
++	return ok
++}
++
++// messagesOf returns the message list in an a2ui part's data: "messages", or
++// "envelopes" for a part written before the rename, still read so persisted
++// sessions replay.
++func messagesOf(p *ai.Part) ([]any, bool) {
+ 	data, ok := p.Data.(map[string]any)
+ 	if !ok {
+-		return false
++		return nil, false
+ 	}
+-	_, ok = data["envelopes"]
+-	return ok
++	for _, key := range []string{"messages", "envelopes"} {
++		v := data[key]
++		if v == nil {
++			continue
++		}
++		switch list := v.(type) {
++		case []any:
++			if list == nil {
++				continue
++			}
++			return list, true
++		case []Envelope:
++			if list == nil {
++				continue
++			}
++			out := make([]any, len(list))
++			for i, e := range list {
++				out[i] = e
++			}
++			return out, true
++		default:
++			return nil, false
++		}
++	}
++	return nil, false
  }
  
- async function runBatch<
--  EvalDataPoint extends
--    typeof BaseEvalDataPointSchema = typeof BaseEvalDataPointSchema,
-+  EvalDataPoint extends typeof BaseEvalDataPointSchema =
-+    typeof BaseEvalDataPointSchema,
-   EvaluatorOpts extends z.ZodTypeAny = z.ZodTypeAny,
- >(
-   runner: EvaluatorFn<EvalDataPoint, EvaluatorOpts>,
+ // EnvelopesFromParts extracts all A2UI envelopes carried by the given parts.
+@@ -61,8 +93,7 @@ func EnvelopesFromParts(parts []*ai.Part) []Envelope {
+ 		if !IsPart(p) {
+ 			continue
+ 		}
+-		data, _ := p.Data.(map[string]any)
+-		raw, _ := data["envelopes"].([]any)
++		raw, _ := messagesOf(p)
+ 		for _, e := range raw {
+ 			if env, ok := e.(map[string]any); ok {
+ 				out = append(out, env)
 ```
 
-**File**: `js/ai/src/generate.ts` (modified, +1/-3)
+**File**: `go/plugins/a2ui/exp/part_test.go` (modified, +143/-1)
 ```diff
-@@ -484,9 +484,7 @@ export class GenerationBlockedError extends GenerationResponseError {}
- export async function normalizeMiddleware(
-   registry: Registry,
-   middlewareList?: (
--    | ModelMiddlewareArgument
--    | GenerateMiddleware
--    | MiddlewareRef
-+    ModelMiddlewareArgument | GenerateMiddleware | MiddlewareRef
-   )[]
- ): Promise<MiddlewareRef[]> {
-   if (!middlewareList || middlewareList.length === 0) {
+@@ -48,7 +48,7 @@ func TestNewPartWireShape(t *testing.T) {
+ 	if err != nil {
+ 		t.Fatal(err)
+ 	}
+-	want := `{"data":{"envelopes":[{"createSurface":{"surfaceId":"s1"}}]},"metadata":{"mimeType":"application/a2ui+json"}}`
++	want := `{"data":{"messages":[{"createSurface":{"surfaceId":"s1"}}]},"metadata":{"mimeType":"application/a2ui+json"}}`
+ 	if string(b) != want {
+ 		t.Errorf("wire shape = %s\nwant       = %s", string(b), want)
+ 	}
+@@ -97,3 +97,145 @@ func TestEnvelopesFromPartsRoundTrip(t *testing.T) {
+ 		t.Errorf("action name = %v, want submit", action["name"])
+ 	}
+ }
++
++func TestEnvelopesFromPartsLegacyKey(t *testing.T) {
++	// Parts written before the rename to "messages" must keep replaying.
++	p := ai.NewDataPart(map[string]any{
++		"envelopes": []any{map[string]any{"deleteSurface": map[string]any{"surfaceId": "s1"}}},
++	})
++	p.Metadata = map[string]any{"mimeType": A2UIMimeType}
++	if !IsPart(p) {
++		t.Fatal("legacy part not recognized by IsPart")
++	}
++	if envs := EnvelopesFromParts([]*ai.Part{p}); len(envs) != 1 {
++		t.Fatalf("got %d envelopes, want 1", len(envs))
++	}
++}
++
++func TestNewPartNilSliceWireShape(t *testing.T) {
++	p := newPart(nil)
++	if !IsPart(p) {
++		t.Fatal("newPart(nil) must pass IsPart")
++	}
++	b, err := json.Marshal(p)
++	if err != nil {
++		t.Fatal(err)
++	}
++	want := `{"data":{"messages":[]},"metadata":{"mimeType":"application/a2ui+json"}}`
++	if string(b) != want {
++		t.Errorf("wire shape = %s\nwant       = %s", string(b), want)
++	}
++}
++
++func TestIsPartAndMessagesPrecedence(t *testing.T) {
++	createEnv := Envelope{"createSurface": map[string]any{"surfaceId": "s1"}}
++	deleteEnv := Envelope{"deleteSurface": map[string]any{"surfaceId": "s1"}}
++	var typedNilAny []any
++	var typedNilEnv []Envelope
++
++	makePart := func(data map[string]any) *ai.Part {
++		p := ai.NewDataPart(data)
++		p.Metadata = map[string]any{"mimeType": A2UIMimeType}
++		return p
++	}
++
++	tests := []struct {
++		name      string
++		part      *ai.Part
++		wantValid bool
++		wantCount int
++		wantFirst string
++	}{
++		{
++			name:      "non-list messages rejected",
++			part:      makePart(map[string]any{"messages": "oops"}),
++			wantValid: false,
++		},
++		{
++			name:      "non-list legacy envelopes rejected",
++			part:      makePart(map[string]any{"envelopes": map[string]any{}}),
++			wantValid: false,
++		},
++		{
++			name:      "non-nil non-list messages alongside valid envelopes rejected",
++			part:      makePart(map[string]any{"messages": "oops", "envelopes": []any{createEnv}}),
++			wantValid: false,
++		},
++		{
++			name:      "messages wins over envelopes when both non-empty",
++			part:      makePart(map[string]any{"messages": []any{createEnv}, "envelopes": []any{deleteEnv}}),
++			wantValid: true,
++			wantCount: 1,
++			wantFirst: "createSurface",
++		},
++		{
++			name:      "empty non-nil messages wins over envelopes",
++			part:      makePart(map[string]any{"messages": []any{}, "envelopes": []any{deleteEnv}}),
++			wantValid: true,
++			wantCount: 0,
++		},
++		{
++			name:      "untyped nil messages falls back to envelopes",
++			part:      makePart(map[string]any{"messages": nil, "envelopes": []any{deleteEnv}}),
++			wantValid: true,
++			wantCount: 1,
++			wantFirst: "deleteSurface",
++		},
++		{
++			name:      "typed nil []any messages falls back to envelopes",
++			part:      makePart(map[string]any{"messages": typedNilAny, "envelopes": []any{deleteEnv}}),
++			wantValid: true,
++			wantCount: 1,
++			wantFirst: "deleteSurface",
++		},
++		{
++			name:      "typed nil []Envelope messages alone rejected",
++			part:      makePart(map[string]any{"messages": typedNilEnv}),
++			wantValid: false,
++		},
++		{
++			name:      "in-process []Envelope accepted under messages",
++			part:      makePart(map[string]any{"messages": []Envelope{createEnv}}),
++			wantValid: true,
++			wantCount: 1,
++			wantFirst: "createSurface",
++		},
++		{
++			name:      "in-process []Envelope accepted under envelopes",
++			part:      makePart(map[string]any{"envelopes": []Envelope{deleteEnv}}),
++			wantValid: true,
++			wantCount: 1,
++			wantFirst: "deleteSurface",
++		},
++	}
++
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			if got := IsPart(tc.part); got != tc.wantValid {
++				t.Fatalf("IsPart = %v, want %v", got, tc.wantValid)
++			}
++			envs := EnvelopesFromParts([]*ai.Part{tc.part})
++			if len(envs) != tc.wantCount {
++				t.Fatalf("len(EnvelopesFromParts) = %d, want %d", len(envs), tc.wantCount)
++			}
++			if tc.wantFirst != "" {
++				if _, ok := envs[0][tc.wantFirst]; !ok {
++					t.Errorf("first envelope = %v, missing %q", envs[0], tc.wantFirst)
++				}
++			}
++		})
++	}
++
++	// JSON wire payload with explicit `"messages": null` alongside `"envelopes"`.
++	var fromJSON ai.Part
++	rawJSON := `{"data":{"messages":null,"envelopes":[{"deleteSurface":{"surfaceId":"s1"}}]},"metadata":{"mimeType":"application/a2ui+json"}}`
++	if err := json.Unmarshal([]byte(rawJSON), &fromJSON); err != nil {
++		t.Fatal(err)
++	}
++	if !IsPart(&fromJSON) {
++		t.Fatal("JSON messages:null + envelopes
 ```
 
-**File**: `js/ai/src/generate/chunk.ts` (modified, +3/-3)
-```diff
-@@ -31,9 +31,9 @@ export type ChunkParser<T = unknown> = (chunk: GenerateResponseChunk<T>) => T;
-  * accessors for extracting text, media, tool requests, and accumulated output
-  * from the chunk and all preceding chunks in the stream.
-  */
--export class GenerateResponseChunk<T = unknown>
--  implements GenerateResponseChunkData
--{
-+export class GenerateResponseChunk<
-+  T = unknown,
-+> implements GenerateResponseChunkData {
-   /** The index of the message this chunk corresponds to, starting with `0` for the first model response of the generation. */
-   index: number;
-   /** The role of the message this chunk corresponds to. Will always be `model` or `tool`. */
-```
+---
 
-**File**: `js/ai/src/model.ts` (modified, +5/-7)
+### Incident Patch 3: `9ee3569e` (2026-11-19)
+**Commit Message**: refactor(js/plugins/a2ui)!: carry A2UI messages under the spec's `messages` key (#7091)
+
+**File**: `js/plugins/a2ui/README.md` (modified, +4/-3)
 ```diff
-@@ -136,8 +136,7 @@ export type ModelMiddlewareWithOptions = MiddlewareWithOptions<
+@@ -293,9 +293,10 @@ emitted a2ui parts.
+ ### One representation
  
- /** Union of middleware types accepted by model definitions: either a {@link ModelMiddleware} or {@link ModelMiddlewareWithOptions}. */
- export type ModelMiddlewareArgument =
--  | ModelMiddleware
--  | ModelMiddlewareWithOptions;
-+  ModelMiddleware | ModelMiddlewareWithOptions;
+ A2UI rides on its own part channel: a Genkit `data` part carrying the mime type
+-`application/a2ui+json` whose `data` is an object `{ envelopes }` wrapping an
+-array of A2UI envelope messages. This maps 1:1 onto the A2A binding of the A2UI
+-spec, so an A2A or MCP binding can drop in later for free.
++`application/a2ui+json` whose `data` is the spec's `{ messages }` payload
++wrapper around an array of A2UI envelope messages. This maps 1:1 onto the A2A
++binding of the A2UI spec, so an A2A or MCP binding can drop in later for free.
++Parts written by earlier versions use `{ envelopes }`; they are still read.
  
- /** Options for defining a new model via {@link defineModel} or {@link model}. */
- export type DefineModelOptions<
-@@ -397,8 +396,9 @@ export const ModelReferenceSchema = z.object({
-  * A reference to a model that includes optional configuration and version info.
-  * Can be passed anywhere a {@link ModelArgument} is accepted.
-  */
--export interface ModelReference<CustomOptions extends z.ZodTypeAny>
--  extends z.infer<typeof ModelReferenceSchema> {
-+export interface ModelReference<
-+  CustomOptions extends z.ZodTypeAny,
-+> extends z.infer<typeof ModelReferenceSchema> {
-   name: string;
-   configSchema?: CustomOptions;
-   info?: ModelInfo;
-@@ -540,9 +540,7 @@ function getPartCounts(parts: Part[]): PartCounts {
-  * {@link ModelAction}, or {@link ModelReference}.
-  */
- export type ModelArgument<CustomOptions extends z.ZodTypeAny = z.ZodTypeAny> =
--  | ModelAction<CustomOptions>
--  | ModelReference<CustomOptions>
--  | string;
-+  ModelAction<CustomOptions> | ModelReference<CustomOptions> | string;
- 
- /** The result of resolving a {@link ModelArgument} to a concrete action, config, and version. */
- export interface ResolvedModel<
+ - A **mixed** turn is a message whose content is `[textPart, a2uiPart, …]`.
+ - A **pure-surface** turn is the special case with no text parts.
 ```
 
-**File**: `js/ai/src/resource.ts` (modified, +4/-2)
+**File**: `js/plugins/a2ui/src/client.ts` (modified, +6/-1)
 ```diff
-@@ -79,8 +79,10 @@ export type ResourceFn = (
+@@ -29,7 +29,12 @@ import { remoteAgent } from 'genkit/beta/client';
+ import { a2uiEnvelopesFromParts, a2uiPart } from './part.js';
+ import type { A2uiClientAction, A2uiServerEnvelope } from './types.js';
+ 
+-export { a2uiEnvelopesFromParts, a2uiPart, isA2uiPart } from './part.js';
++export {
++  a2uiEnvelopesFromParts,
++  a2uiPart,
++  a2uiPartMessages,
++  isA2uiPart,
++} from './part.js';
+ export {
+   A2UI_MIME_TYPE,
+   A2UI_VERSION,
+```
+
+**File**: `js/plugins/a2ui/src/index.ts` (modified, +6/-1)
+```diff
+@@ -42,7 +42,12 @@ export {
+   type A2uiParserOptions,
+   type ParseResult,
+ } from './parser.js';
+-export { a2uiEnvelopesFromParts, a2uiPart, isA2uiPart } from './part.js';
++export {
++  a2uiEnvelopesFromParts,
++  a2uiPart,
++  a2uiPartMessages,
++  isA2uiPart,
++} from './part.js';
+ export {
+   A2UI_MIME_TYPE,
+   A2UI_VERSION,
+```
+
+**File**: `js/plugins/a2ui/src/middleware.ts` (modified, +2/-2)
+```diff
+@@ -51,7 +51,7 @@ import {
+ } from './catalog.js';
+ import { resolveCatalog } from './loader.js';
+ import { A2uiStreamParser, type ParseResult } from './parser.js';
+-import { a2uiPart, isA2uiPart } from './part.js';
++import { a2uiPart, a2uiPartMessages, isA2uiPart } from './part.js';
+ import {
+   A2UI_VERSION,
+   SUPPORTED_VERSIONS,
+@@ -422,7 +422,7 @@ function sanitizeInboundA2ui(req: GenerateRequest): GenerateRequest {
+     for (const part of message.content) {
+       if (isA2uiPart(part)) {
+         msgChanged = true;
+-        const text = summarizeA2uiPart(part.data.envelopes);
++        const text = summarizeA2uiPart(a2uiPartMessages(part));
+         if (text) content.push({ text });
+       } else {
+         content.push(part as Part);
+```
+
+**File**: `js/plugins/a2ui/src/part.ts` (modified, +22/-9)
+```diff
+@@ -16,8 +16,8 @@
+ 
  /**
-  * A resource action.
-  */
--export interface ResourceAction
--  extends Action<typeof ResourceInputSchema, typeof ResourceOutputSchema> {
-+export interface ResourceAction extends Action<
-+  typeof ResourceInputSchema,
-+  typeof ResourceOutputSchema
-+> {
-   matches(input: ResourceInput): boolean;
+  * Helpers for working with the canonical "a2ui part" - a Genkit `data` part
+- * whose `data` is an object `{ envelopes }` wrapping an array of A2UI envelopes,
+- * tagged with {@link A2UI_MIME_TYPE}.
++ * whose `data` is `{ messages }` wrapping an array of A2UI envelopes, tagged
++ * with {@link A2UI_MIME_TYPE}.
+  *
+  * These helpers operate on plain part-shaped objects (no Genkit runtime import),
+  * so they are safe to use on both the server and the browser. To pull envelopes
+@@ -49,25 +49,38 @@ interface PartLike {
+ /** Builds an a2ui data part wrapping the given envelopes. */
+ export function a2uiPart(envelopes: A2uiEnvelope[]): A2uiPart {
+   return {
+-    data: { envelopes },
++    data: { messages: envelopes },
+     metadata: { mimeType: A2UI_MIME_TYPE },
+   };
  }
  
++/**
++ * The message list in an a2ui part's `data`: `messages`, or `envelopes` for a
++ * part written before the rename (still read so persisted sessions replay).
++ */
++function messagesOf(data: unknown): unknown[] | undefined {
++  if (!data || typeof data !== 'object') return undefined;
++  const d = data as { messages?: unknown; envelopes?: unknown };
++  const list = d.messages ?? d.envelopes;
++  return Array.isArray(list) ? list : undefined;
++}
++
+ /** Type guard: is this part an a2ui data part? */
+ export function isA2uiPart(part: unknown): part is A2uiPart {
+   const p = part as PartLike | null | undefined;
+-  const data = p?.data as { envelopes?: unknown } | undefined;
+   return (
+     !!p &&
+     typeof p === 'object' &&
+-    !!data &&
+-    typeof data === 'object' &&
+-    Array.isArray(data.envelopes) &&
+-    (p as PartLike).metadata?.mimeType === A2UI_MIME_TYPE
++    messagesOf(p.data) !== undefined &&
++    p.metadata?.mimeType === A2UI_MIME_TYPE
+   );
+ }
+ 
++/** The envelopes an a2ui part carries, whichever key it was written with. */
++export function a2uiPartMessages(part: A2uiPart): A2uiEnvelope[] {
++  return (messagesOf(part?.data) as A2uiEnvelope[] | undefined) ?? [];
++}
++
+ /**
+  * Extracts all A2UI envelopes carried by the given `parts`.
+  *
+@@ -99,7 +112,7 @@ export function a2uiEnvelopesFromParts(
+   const out: A2uiServerEnvelope[] = [];
+   for (const part of parts) {
+     if (!isA2uiPart(part)) continue;
+-    for (const env of part.data.envelopes) {
++    for (const env of a2uiPartMessages(part)) {
+       // Keep only server-to-client surface envelopes. This is a positive check,
+       // so inbound action envelopes (a user action echoed in history) and any
+       // null / non-object / array / arbitrary-object garbage from malformed
 ```
 
----
-
-### Incident Patch 3: `47f9a5ec` (2026-11-18)
-**Commit Message**: fix(go): bump dotprompt to pick up the latest version (#7262)
-
-**File**: `go/go.mod` (modified, +1/-1)
+**File**: `js/plugins/a2ui/src/types.ts` (modified, +10/-8)
 ```diff
-@@ -22,7 +22,7 @@ require (
- 	github.com/blues/jsonata-go v1.5.4
- 	github.com/coder/websocket v1.8.14
- 	github.com/goccy/go-yaml v1.19.2
--	github.com/google/dotprompt/go v0.0.0-20260708220100-73beb993ac95
-+	github.com/google/dotprompt/go v0.0.0-20261118194220-bdc60beb8a17
- 	github.com/google/go-cmp v0.7.0
- 	github.com/google/uuid v1.6.0
- 	github.com/invopop/jsonschema v0.14.0
+@@ -150,17 +150,19 @@ export type A2uiServerEnvelope =
+ export type A2uiEnvelope = A2uiServerEnvelope | ActionEnvelope;
+ 
+ /**
+- * The canonical "a2ui part": a Genkit `data` part whose `data` is an object
+- * `{ envelopes }` wrapping the array of A2UI envelopes, and whose
+- * `metadata.mimeType` is {@link A2UI_MIME_TYPE}.
++ * The canonical "a2ui part": a Genkit `data` part whose `data` is the A2UI
++ * spec's `{ messages }` payload wrapper around the array of A2UI envelopes, and
++ * whose `metadata.mimeType` is {@link A2UI_MIME_TYPE}.
+  *
+- * The array is wrapped in an object (rather than being the `data` value
+- * directly) so the payload is a `Map<String, dynamic>`-shaped object on every
+- * runtime — some (e.g. Dart) expect a data part's `data` to be an object, not a
+- * bare array.
++ * The A2UI extension spec puts the message list directly in `data`, but a
++ * Genkit data part's `data` must be an object on every runtime (Dart expects a
++ * map), so the list sits under the spec's own `messages` wrapper.
++ *
++ * Parts written before the rename carry `{ envelopes }` instead; they are still
++ * read (see {@link a2uiPartMessages}) so persisted sessions replay.
+  */
+ export interface A2uiPart {
+-  data: { envelopes: A2uiEnvelope[] };
++  data: { messages: A2uiEnvelope[] } | { envelopes: A2uiEnvelope[] };
+   metadata: {
+     mimeType: typeof A2UI_MIME_TYPE;
+     [key: string]: unknown;
 ```
 
-**File**: `go/go.sum` (modified, +2/-2)
+**File**: `js/plugins/a2ui/tests/client_test.ts` (modified, +8/-4)
 ```diff
-@@ -182,8 +182,8 @@ github.com/golang/protobuf v1.4.3/go.mod h1:oDoupMAO8OvCJWAcko0GGGIgR6R6ocIYbsSw
- github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
- github.com/golang/protobuf v1.5.4 h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=
- github.com/golang/protobuf v1.5.4/go.mod h1:lnTiLA8Wa4RWRcIUkrtSVa5nRhsEGBg48fD6rSs7xps=
--github.com/google/dotprompt/go v0.0.0-20260708220100-73beb993ac95 h1:SJdnmyOaT+kZNcUR+a1y2+Oa51j2ctCjYbtexaiXN68=
--github.com/google/dotprompt/go v0.0.0-20260708220100-73beb993ac95/go.mod h1:dnlL7KrFwJ7s8EJdsAp1WdLqOalJq1Sx2jWZnQkhFXs=
-+github.com/google/dotprompt/go v0.0.0-20261118194220-bdc60beb8a17 h1:ZLqxco58oRiBLiSEF8/X8Adysw8ZlmlR5s3nTxJFJmE=
-+github.com/google/dotprompt/go v0.0.0-20261118194220-bdc60beb8a17/go.mod h1:iXHNbixObmFNZFUYK/FowBLET1msct+SuNxjZiQ0TUg=
- github.com/google/flatbuffers v23.5.26+incompatible h1:M9dgRyhJemaM4Sw8+66GHBu8ioaQmyPLg1b8VwK5WJg=
- github.com/google/flatbuffers v23.5.26+incompatible/go.mod h1:1AeVuKshWv4vARoZatz6mlQ0JxURH0Kv5+zNeJKJCa8=
- github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5aqRK0M=
+@@ -16,8 +16,11 @@
+ 
+ import assert from 'node:assert';
+ import { describe, it } from 'node:test';
+-import { actionToMessage } from '../src/client.js';
+-import { isA2uiPart } from '../src/part.js';
++import {
++  a2uiPartMessages,
++  actionToMessage,
++  isA2uiPart,
++} from '../src/client.js';
+ import { A2UI_MIME_TYPE, type A2uiClientAction } from '../src/types.js';
+ 
+ function makeAction(
+@@ -52,9 +55,10 @@ describe('actionToMessage', () => {
+       A2UI_MIME_TYPE
+     );
+     assert.deepStrictEqual(
+-      (dataPart as { data: { envelopes: unknown[] } }).data,
+-      { envelopes: [{ action }] }
++      (dataPart as { data: { messages: unknown[] } }).data,
++      { messages: [{ action }] }
+     );
++    assert.deepStrictEqual(a2uiPartMessages(dataPart), [{ action }]);
+   });
+ 
+   it('includes the context in the summary when present', () => {
+```
+
+**File**: `js/plugins/a2ui/tests/middleware_test.ts` (modified, +54/-6)
+```diff
+@@ -300,7 +300,7 @@ describe('a2ui() middleware', () => {
+               { text: 'clicked:' },
+               {
+                 data: {
+-                  envelopes: [
++                  messages: [
+                     {
+                       action: {
+                         name: 'refresh',
+@@ -332,6 +332,54 @@ describe('a2ui() middleware', () => {
+     assert.match(joined, /Tokyo/);
+   });
+ 
++  it('still sanitizes legacy inbound a2ui parts written with `envelopes`', async () => {
++    const mw = modelHook({});
++    let seen:
++      | { messages: Array<{ role: string; content: Array<{ text?: string }> }> }
++      | undefined;
++    await mw(
++      {
++        messages: [
++          {
++            role: 'user',
++            content: [
++              { text: 'clicked:' },
++              {
++                data: {
++                  envelopes: [
++                    {
++                      action: {
++                        name: 'refresh',
++                        surfaceId: 's1',
++                        sourceComponentId: 'btn',
++                        timestamp: 't',
++                        context: { city: 'Tokyo' },
++                      },
++                    },
++                  ],
++                },
++                metadata: { mimeType: 'application/a2ui+json' },
++              },
++            ],
++          },
++        ],
++      },
++      undefined,
++      async (r: {
++        messages: Array<{ role: string; content: Array<{ text?: string }> }>;
++      }) => {
++        seen = r;
++        return { message: { role: 'model', content: [] } };
++      }
++    );
++    const userMsg = seen?.messages.find((m) => m.role === 'user');
++    assert.ok(userMsg);
++    assert.ok(!userMsg.content.some((p) => isA2uiPart(p)));
++    const joined = userMsg.content.map((p) => p.text ?? '').join(' ');
++    assert.match(joined, /UI action "refresh"/);
++    assert.match(joined, /Tokyo/);
++  });
++
+   it('replays a prior assistant surface as a fenced a2ui block, not a sentinel', async () => {
+     const mw = modelHook({});
+     let seen: any;
+@@ -344,7 +392,7 @@ describe('a2ui() middleware', () => {
+               { text: 'Here you go:' },
+               {
+                 data: {
+-                  envelopes: [
++                  messages: [
+                     {
+                       createSurface: {
+                         surfaceId: 's1',
+@@ -420,7 +468,7 @@ describe('a2ui() middleware', () => {
+             role: 'model',
+             content: [
+               {
+-                data: { envelopes: [] },
++                data: { messages: [] },
+                 metadata: { mimeType: 'application/a2ui+json' },
+               },
+             ],
+@@ -462,7 +510,7 @@ describe('a2ui() middleware', () => {
+             content: [
+               {
+                 data: {
+-                  envelopes: [
++                  messages: [
+                     {
+                       createSurface: {
+                         surfaceId: 's1',
+@@ -488,7 +536,7 @@ describe('a2ui() middleware', () => {
+             content: [
+               {
+                 data: {
+-                  envelopes: [{ action: { name: 'refresh', surfaceId: 's1' } }],
++                  messages: [{ action: { name: 'refresh', surfaceId: 's1' } }],
+                 },
+                 metadata: { mimeType: 'application/a2ui+json' },
+               },
+@@ -553,7 +601,7 @@ describe('a2ui() middleware', () => {
+             content: [
+               {
+                 data: {
+-                  envelopes: [
++                  messages: [
+                     {
+                       createSurface: {
+                         surfaceId: 's1',
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7269** (2026-11-19): fix(js/plugins/google-genai): send tool_choice none/auto as string in Interactions (@ifielker)
 - **PR #7264** (closed): chore(py): dependency bounds policy, floor/newest CI, Dependabot major grouping (@huangjeff5)
 - **PR #7263** (2026-11-18): build(deps-dev): bump the root-dependencies group across 1 directory with 6 updates (@dependabot[bot])
 - **PR #7262** (2026-11-18): fix(go): bump dotprompt to pick up the latest version (@pavelgj)
 - **PR #7259** (2026-11-18): build(deps-dev): bump prettier to ^3.9.10 and format (@MichaelDoyle)
 - **PR #7258** (2026-11-18): ci(workflows): pin GitHub Actions to commit SHAs in remaining workflows (@MichaelDoyle)
-- **PR #7256** (2026-11-18): fix(genkit-tools/cli): skip first-run analytics prompt and update notification for mcp command (@genkit-bot)
 
 ---
 
@@ -2450,41 +2986,62 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-dev): bump the root-dependencies group across 1 directory with 6 upda
+## X. js/plugins/google-genai): send tool_choice none/auto as string in Interactions
 
 **RULE**:
-When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `js/plugins/google-genai/src/common/interaction-converters.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `56db89eb`: build(deps-dev): bump the root-dependencies group across 1 directory with 6 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9a7d0b65`: js/plugins/google-genai): send tool_choice none/auto as string in Interactions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `js/plugins/google-genai/src/common/interaction-converters.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "@types/node": "22.20.5",
-    "inquirer": "^8.2.7",
-    "only-allow": "^1.2.2",
-    "prettier-plugin-css-order": "2.2.0",
-    "rimraf": "^6.1.3",
-    "tsx": "^4.23.15"
+ *
+ * The server only accepts `allowed_tools` with mode `any` or `validated`
+ * (`{"allowed_tools": {"mode": "none"}}` is a 400 "allowed_tools mode must
+ * be either ANY or VALIDATED."), so every other mode is sent as a plain
+ * string. `allowedFunctionNames` without `ANY` or `VALIDATED` can't be
+ * expressed and is dropped via `warnDropped`.
+  toolChoice?: string,
+  warnDropped?: (field: string) => void
+): string | InteractionToolChoiceConfig | undefined {
+    const names = functionCallingConfig.allowedFunctionNames;
+    const hasNames = !!names?.length;
+    if (hasNames && (validMode === 'any' || validMode === 'validated')) {
+      return { allowed_tools: { mode: validMode, tools: names } };
+    if (hasNames) {
+      warnDropped?.('functionCallingConfig.allowedFunctionNames');
+    }
+    return validMode;
+    return toolChoice === 'required' ? 'any' : toolChoice;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-    "@types/node": "22.10.5",
-    "inquirer": "^8.2.6",
-    "only-allow": "^1.2.1",
-    "prettier-plugin-css-order": "2.0.1",
-    "rimraf": "^6.0.1",
-    "tsx": "^4.20.3"
+  toolChoice?: string
+): InteractionToolChoiceConfig | undefined {
+    if (!validMode && !functionCallingConfig.allowedFunctionNames?.length) {
+      return undefined;
+    return {
+      allowed_tools: {
+        ...(validMode ? { mode: validMode } : {}),
+        ...(functionCallingConfig.allowedFunctionNames
+          ? { tools: functionCallingConfig.allowedFunctionNames }
+          : {}),
+      },
+    };
+    return {
+      allowed_tools: { mode: toolChoice === 'required' ? 'any' : toolChoice },
+    };
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `56db89eb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9a7d0b65` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

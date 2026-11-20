@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T11:32:48.999Z",
+  "last_updated": "2026-11-20T11:41:06.116Z",
   "directives": [
     {
       "id": "CD-001",
@@ -36242,11 +36242,11 @@
       "staged_date": "2026-11-20"
     },
     {
-      "id": "CD-RHB4",
+      "id": "CD-RJR4",
       "directive_title": "dead license badge link in README",
       "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-RHB4-dead-license-badge-link-in-readme.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-RJR4-dead-license-badge-link-in-readme.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
@@ -37253,6 +37253,44 @@
       "source_repo": "touchlab-kermit",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E67914-add-agent-context-docs-claude-md-agent-u.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-RIMS",
+      "directive_title": "js/plugins/google-genai): send tool_choice none/auto as string in Interactions",
+      "source_repo": "genkit-ai-genkit-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-RIMS-js-plugins-google-genai-send-tool_choice-none-auto-as-string-in-interactions.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-BFDCA1",
+      "directive_title": "js/plugins/google-genai): send tool_choice none/auto as string in Interactions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "genkit-ai-genkit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BFDCA1-js-plugins-google-genai-send-tool-choice.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-2DCC0A",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2DCC0A-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-REV-317FDC",
+      "directive_title": "dead license badge link in README",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-317FDC-dead-license-badge-link-in-readme.md",
       "staged_date": "2026-11-20"
     }
   ]
