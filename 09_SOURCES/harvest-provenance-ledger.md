@@ -11694,3 +11694,5 @@ Every entry in this ledger must capture:
 | `learn-github-dosco-graphjin` | `https://github.com/dosco/graphjin` | `ba272634` | Multi-dimensional audit evidence | 2026-11-20T23:21:26.663Z |
 | `learn-dom-k-b3be81e5` | `project://solidjs-solid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/solidjs-solid-learnings.md` | 2026-11-20T23:22:00.043Z |
 | `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `35674719` | Multi-dimensional audit evidence | 2026-11-20T23:29:53.791Z |
+| `learn-github-webpack-webpack` | `https://github.com/webpack/webpack` | `a393e82c` | Multi-dimensional audit evidence | 2026-11-20T23:39:47.903Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `4b90a220` | Multi-dimensional audit evidence | 2026-11-20T23:39:56.327Z |

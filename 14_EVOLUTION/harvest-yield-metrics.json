@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T23:29:53.797Z",
-  "total_cycles_completed": 11103,
-  "total_learnings_persisted": 11103,
-  "total_rules_promoted": 10453,
+  "last_updated": "2026-11-20T23:39:56.333Z",
+  "total_cycles_completed": 11105,
+  "total_learnings_persisted": 11105,
+  "total_rules_promoted": 10455,
   "history": [
-    {
-      "timestamp": "2026-11-20T01:22:58.542Z",
-      "repository": "fallow-rs/fallow",
-      "learningId": "learn-github-fallow-rs-fallow",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T01:31:33.213Z",
-      "repository": "HelixDB/helix-db",
-      "learningId": "learn-github-helixdb-helix-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T01:55:34.937Z",
       "repository": "hashicorp/terraform",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-20T23:29:53.797Z",
       "repository": "vitejs/vite",
       "learningId": "learn-github-vitejs-vite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T23:39:47.910Z",
+      "repository": "webpack/webpack",
+      "learningId": "learn-github-webpack-webpack",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-20T23:39:56.333Z",
+      "repository": "xerj-org/xerj",
+      "learningId": "learn-github-xerj-org-xerj",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

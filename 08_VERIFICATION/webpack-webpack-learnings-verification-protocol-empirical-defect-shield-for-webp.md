@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T04:14:00.330Z",
+  "timestamp": "2026-11-20T23:40:00.443Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-webpack-webpack-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [webpack-webpack-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T04:14:00.330Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T23:40:00.443Z`  
 > **Learning ID**: `LEARN-EVO-webpack-webpack-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webpack-webpack-learnings.md`  
 > **Source**: github ([https://github.com/webpack/webpack](https://github.com/webpack/webpack))  
-> **Source Version**: `82b8a937`  
+> **Source Version**: `a393e82c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T04:13:23.726Z  
+> **Timestamp**: 2026-11-20T23:39:46.687Z  
 > **Learning ID**: `learn-github-webpack-webpack`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/webpack-webpack-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/webpack/webpack](https://github.com/webpack/webpack))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T04:13:23.721Z  
+> **Harvest Timestamp**: 2026-11-20T23:39:46.369Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A bundler for javascript and friends. Packs many modules into a few bundled assets. Code Splitting allows for loading parts of the application on demand. Through "loaders", modules can be CommonJs, AMD, ES6 modules, CSS, Images, JSON, Coffeescript, LESS, ... and your custom stuff.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 66009 stars
+- **Stars / Engagement**: 66017 stars
 
 ---
 
@@ -308,1241 +308,573 @@ export const add = (content, from) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2aa70aa7` (2026-11-16)
-**Commit Message**: test: hold syntax fixtures to scaling, async and module behavior, mangling, residue and agreement (#23386)
+### Incident Patch 1: `88b41743` (2026-11-20)
+**Commit Message**: fix(minify): close more one-pass gzip gaps to terser (#23495)
 
-* test(css): hold every fixture to agreement with css-tree
+* fix(minify): print a switch on a function, class, object or array literal as an if
 
-The unit test now asks each fixture what yarn test:invariants:css asks
-its corpus: that webpack's tree reads as css-tree's. css-tree loads on
-first use from the comparison cache; without it nothing is compared and
-no agreement entry is held stale. The 326 fixtures that read apart do so
-where the spec and css-tree part, each excused in its expected.json.
+* fix(minify): negate a statement calling a function moved to its one read
 
-Claude-Session: https://claude.ai/code/session_013FhutRjRnaBAwgtK8Qe5bW
+* fix(minify): join the declarations and expressions a switch case lists
 
-* test(xml): hold every preset to the comments the minifier keeps
+* fix(minify): unwrap a program's one call past its directives and unread parameters
 
-XML's keeps checked only meaning, so a printer dropping a conditional
-comment or a server-side include went unnoticed. Each preset now owes
-the notices relation the comments the minifier keeps at every level,
-read by webpack's own parser.
+* fix(minify): let a static value's class extend the class it belongs to by name
 
-Claude-Session: https://claude.ai/code/session_013FhutRjRnaBAwgtK8Qe5bW
+* fix(minify): compare `this` to `this` loosely
 
-* test: hold cut inputs to spans and slices
+* fix(minify): print a division folding to `NaN` as `NaN` where as long
 
-Each input cut short inside a construct was only printed. Its parse is
-now held to spans and slices as well, reported as `cut spans` and
-`cut slices`. The five findings repeat k
+* fix(minify): inline a let or const function returning a literal at its calls
 
-**File**: `TESTING_DOCS.md` (modified, +2/-1)
+* fix(minify): trim unread arguments of calls to a let or const function
+
+* fix(minify): parenthesize a nested reduced call's value where the outer call is
+
+* fix(minify): print new of a call reduced to a function without parentheses
+
+* fix(minify): drop unread parameters of an unnamed function called in place
+
+* fix(minify): join property assignments into the object literal declared before them
+
+terser's `join_vars` of `var o={};o.a=1,f()` as `var o={a:1};f()`, for the leading assignments of an expression statement, a `for` 
+
+**File**: `.changeset/282-javascript-minify-one-pass-gaps.md` (added, +5/-0)
 ```diff
-@@ -82,7 +82,7 @@ Directories come first, in alphabetical order, then the individual files worth t
- 
- - **Purpose**: Stores sample/mock data used in tests.
- - **Usage**: Helps in creating consistent test cases with predefined inputs.
--- **Syntax fixtures**: `fixtures/<css|html|xml|javascript>/<name>/index.<ext>` is one input to `unitCases/<lang>/invariants.unittest.js`, which snapshots its tokens, parse, errors and prints, and holds it to the relations in `helpers/syntaxInvariants/`: `spans`, `slices` and `purity` for the parser; idempotence (cuts included), respellings, `notices` and `meaning` for the printer; and `behavior` for JavaScript. `notices` asks that the comments a minifier must keep survive (CSS and JavaScript legal notices, HTML conditional comments, server-side includes and `<?…?>`); `meaning` that the output reparses to what its source says (HTML and XML under every preset, CSS under `beautify`, JavaScript under the presets printing alone). XML carries no notices, and a compressing JavaScript preset owes only the banner's. Which relation holds where, and why: [COMPARE_TOOLS.md](tooling/COMPARE_TOOLS.md). Beside it, read by `helpers/fixture.js`:
-+- **Syntax fixtures**: `fixtures/<css|html|xml|javascript>/<name>/index.<ext>` is one input to `unitCases/<lang>/invariants.unittest.js`, which snapshots its tokens, parse, errors and prints, and holds it to the relations in `helpers/syntaxInvariants/`: `spans`, `slices` and `purity` for the parser, each cut short inside a construct held to `spans` and `slices` as well (reported as `cut spans` and `cut slices`); idempotence (cuts included), respellings, `notices` and `meaning` for the printer; `behavior` for JavaScript; and `scaling` for a fixture built at a size. `notices` asks that the comments a minifier must keep survive (CSS and JavaScript legal notices, HTML conditional comments, server-side includes and `<?…?>`); `meaning` that the output reparses to what its source says (HTML and XML under every preset, CSS under `beautify`, JavaScript under the presets printing alone). XML's notices are the comments its minifier keeps (conditional comments, server-side includes and `<![`), and a compressing JavaScript preset owes only the banner's. Each CSS fixture is also held to `agreement` with css-tree. Which relation holds where, and why: [COMPARE_TOOLS.md](tooling/COMPARE_TOOLS.md). Beside it, read by `helpers/fixture.js`:
-   - `options.json` — print option sets. In JavaScript, `"behavior": true` on a set also runs its print against the source, which must print and throw the same (every script is run that way already under the presets printing alone); any other language throws on the key, having no runtime. `"renderEmbeddedSource": "<name>"` (or `{ "name", "options"?, "async"? }`, `async` answering through a Promise) picks a renderer from `helpers/embeddedRenderers.js`, and `{ "regexp": "<source>", "flags"?: "<flags>" }` stands for a RegExp anywhere in a set. Three keys send a set through `readPrint`:
-     - `"print": "<name>"` picks the printer: `process` (the default), `processAsync` or the language's minimizer (`cssMinify`, `htmlMinify`, `xmlMinify`, `jsMinify`).
-     - `"visit"` takes a visit spec (below) and fires its visitors during a `process` or `processAsync` print.
-@@ -99,6 +99,7 @@ Directories come first, in alphabetical order, then the individual files worth t
-   - `expected.json` — known differences the invariants may report, each `{ "relation", "contains", "presets"?, "why" }`: a finding of that relation whose repro holds `contains`, under one of `presets` (every preset where absent). An entry no finding needs fails as stale. A known bug's `why` opens with `known bug:`. In JavaScript, a `behavior` entry without `presets` answers for the sets `options.json` marks; one naming `format` or `beautify` for the invariants' own run.
-   - `fixture.js` — what JSON cannot hold, as CommonJS in Node 10 syntax ([example](test/fixtures/css/invariants-runner-fixture-code/)):
-     - `source()` returns the input, for one generated in code or holding a character no file can (a lone surrogate); the fixture then has no `index.<ext>`, and having both throws. Each snapshot entry of such an input longer than 400 characters holds its length, a digest and its first and last 200 characters.
-+    - `source(n)`, declaring the parameter without a default (`source.length` says the fixture scales), also builds the input at size `n`; `source()` passes `undefined` for the size the snapshots hold. One test per runner holds every such fixture to `scaling`: it minifies the input at 64 and 128 under the first preset and counts, with V8's precise block coverage, how often each block of `lib/` is entered. A block entered at least 16 times per unit of the larger size and more than 3 times as often as at the smaller fails: one entered once per unit doubles, one in a loop over the input quadruples. Counts, unlike time, are the same on every machine; native work (a RegExp, `indexOf`
+@@ -0,0 +1,5 @@
++---
++"webpack": patch
++---
++
++Fold known values, object assignments and unread parameters when minifying.
 ```
 
-**File**: `lib/javascript/syntax-printer.js` (modified, +11/-2)
+**File**: `lib/javascript/side-effects.js` (modified, +22/-3)
 ```diff
-@@ -22241,6 +22241,15 @@ const createNodePrinter = (modules) => {
- 					if (operator !== "delete" && operator !== "typeof") return 0;
- 					// A declared name reads alike bare under `typeof`.
- 					if (operator === "typeof" && readsDeclared(node)) return 0;
-+					// One `deletesValue` prints as its value, then `!0`, deletes nothing.
-+					if (
-+						operator === "delete" &&
-+						compresses &&
-+						!hasEdgeComments(parent) &&
-+						deletesValue(parent, child, parentAt(level + 1))
-+					) {
-+						return 0;
-+					}
- 					// One dropped unread reads nothing.
- 					return compresses &&
- 						!hasEdgeComments(parent) &&
-@@ -34282,9 +34291,10 @@ const createNodePrinter = (modules) => {
- 	/**
- 	 * @param {number} node a `delete` being printed
- 	 * @param {number} argument what it takes
-+	 * @param {number=} parent what holds it, the node printing now by default
- 	 * @returns {boolean} whether it takes an assignment or sequence, which is no reference, where a sequence in parentheses stands for it
- 	 */
--	const deletesValue = (node, argument) => {
-+	const deletesValue = (node, argument, parent = parentAt(0)) => {
- 		const type = typeOf(argument);
- 		if (
- 			type !== NodeType.AssignmentExpression &&
-@@ -34294,7 +34304,6 @@ const createNodePrinter = (modules) => {
+@@ -536,13 +536,22 @@ const spreadHasSideEffects = (tree, spread, container, context) =>
+  * @param {number} node a class
+  * @param {SideEffectsContext} context what names and annotations do
+  * @param {boolean} constructs whether a `this` it extends is known to be a constructor, as a static value's is
++ * @param {string=} made the name of the class whose static value it is, made by then, which its heritage may read where it names no class of its own
+  * @returns {boolean} whether making it may have effects
+  */
+-const classHasSideEffects = (tree, node, context, constructs) => {
++const classHasSideEffects = (tree, node, context, constructs, made) => {
+ 	const superClass = unwrap(tree, tree.field(0, Field.superClass, node));
++	const id = tree.field(0, Field.id, node);
+ 	if (
+ 		superClass !== 0 &&
+-		!(constructs && tree.type(superClass) === NodeType.ThisExpression) &&
++		!(
++			constructs &&
++			(tree.type(superClass) === NodeType.ThisExpression ||
++				(made !== undefined &&
++					tree.type(superClass) === NodeType.Identifier &&
++					tree.name(superClass) === made &&
++					(id === 0 || tree.name(id) !== made)))
++		) &&
+ 		(extendsNoConstructor(tree, superClass) ||
+ 			(context.heritageConstructs !== undefined &&
+ 				!context.heritageConstructs(superClass)) ||
+@@ -570,7 +579,17 @@ const classHasSideEffects = (tree, node, context, constructs) => {
+ 				: 0;
+ 		// A static value's `this` is the class, a constructor to extend.
+ 		if (value !== 0 && tree.type(value) === NodeType.ClassExpression) {
+-			if (classHasSideEffects(tree, value, context, true)) return true;
++			if (
++				classHasSideEffects(
++					tree,
++					value,
++					context,
++					true,
++					id === 0 ? undefined : tree.name(id)
++				)
++			) {
++				return true;
++			}
+ 			continue;
  		}
- 		// A write printing as its value alone would delete that, a reference.
- 		if (dropsWrite[argument] === 1) return true;
--		const parent = parentAt(0);
- 		switch (typeOf(parent)) {
- 			case NodeType.MemberExpression:
- 			case NodeType.TaggedTemplateExpression:
+ 		if (
+```
+
+**File**: `schemas/plugins/BannerPlugin.check.js` (modified, +1/-1)
+```diff
+@@ -4,4 +4,4 @@
+  * This file was automatically generated by "schema-utils".
+  * DO NOT MODIFY BY HAND.
+  */
+-"use strict";module.exports=s,module.exports.default=s;let r=function(r){let e=r.length,s=0,a=0,o;while(a<e){s++;if((o=r.charCodeAt(a++))>=55296&&o<=56319&&a<e&&((o=r.charCodeAt(a))&64512)==56320)a++}return s};function e(s,{instancePath="",parentData,parentDataProperty,rootData=s}={}){let a=null,o=0,l=o,i=!1,t=o;if(o===t)if(Array.isArray(s)){var n=!0;let e=s.length;for(let l=0;l<e;l++){let e=s[l],i=o,t=o,u=!1,p=null,E=o,c=o,_=!1,y=o;if(!(e instanceof RegExp)){let r={params:{}};a===null?a=[r]:a.push(r),o++}var v=y===o;if(!(_=_||v)){let s=o;if(o===s)if("string"==typeof e){if(r(e)<1){let r={params:{limit:1}};a===null?a=[r]:a.push(r),o++}}else{let r={params:{type:"string"}};a===null?a=[r]:a.push(r),o++}var v=s===o;if(!(_=_||v)){let s=o;if(o===s)if(e&&"object"==typeof e&&!Array.isArray(e)){let s;if(e.glob===void 0&&(s="glob")){let r={params:{missingProperty:s}};a===null?a=[r]:a.push(r),o++}else{let s=o;for(let r in e)if(r!=="glob"){let e={params:{additionalProperty:r}};a===null?a=[e]:a.push(e),o++;break}if(s===o&&e.glob!==void 0){let s=e.glob,l=o,i=!1,t=o;if(o===t)if(Array.isArray(s))if(s.length<1){let r={params:{limit:1}};a===null?a=[r]:a.push(r),o++}else{var d=!0;let e=s.length;for(let l=0;l<e;l++){let e=s[l],i=o;if(o===i)if("string"==typeof e){if(r(e)<1){let r={params:{limit:1}};a===null?a=[r]:a.push(r),o++}}else{let r={params:{type:"string"}};a===null?a=[r]:a.push(r),o++}var d=i===o;if(!d)break}}else{let r={params:{type:"array"}};a===null?a=[r]:a.push(r),o++}var f=t===o;if(!(i=i||f)){let e=o;if(o===e)if("string"==typeof s){if(r(s)<1){let r={params:{limit:1}};a===null?a=[r]:a.push(r),o++}}else{let r={params:{type:"string"}};a===null?a=[r]:a.push(r),o++}var f=e===o;i=i||f}if(!i){let r={params:{}};a===null?a=[r]:a.push(r),o++}else{o=l;if(a!==null)l?a.length=l:a=null}}}}else{let r={params:{type:"object"}};a===null?a=[r]:a.push(r),o++}var v=s===o;if(!(_=_||v)){let r=o;if(!(e instanceof Function)){let r={params:{}};a===null?a=[r]:a.push(r),o++}var v=r===o;_=_||v}}}if(!_){let r={params:{}};a===null?a=[r]:a.push(r),o++}else{o=c;if(a!==null)c?a.length=c:a=null}if(E===o)u=!0,p=0;if(!u){let r={params:{passingSchemas:p}};a===null?a=[r]:a.push(r),o++}else{o=t;if(a!==null)t?a.length=t:a=null}var n=i===o;if(!n)break}}else{let r={params:{type:"array"}};a===null?a=[r]:a.push(r),o++}var u=t===o;if(!(i=i||u)){let e=o,l=o,t=!1,n=o;if(!(s instanceof RegExp)){let r={params:{}};a===null?a=[r]:a.push(r),o++}var p=n===o;if(!(t=t||p)){let e=o;if(o===e)if("string"==typeof s){if(r(s)<1){let r={params:{limit:1}};a===null?a=[r]:a.push(r),o++}}else{let r={params:{type:"string"}};a===null?a=[r]:a.push(r),o++}var p=e===o;if(!(t=t||p)){let e=o;if(o===e)if(s&&"object"==typeof s&&!Array.isArray(s)){let e;if(s.glob===void 0&&(e="glob")){let r={params:{missingProperty:e}};a===null?a=[r]:a.push(r),o++}else{let e=o;for(let r in s)if(r!=="glob"){let e={params:{additionalProperty:r}};a===null?a=[e]:a.push(e),o++;break}if(e===o&&s.glob!==void 0){let e=s.glob,l=o,i=!1,t=o;if(o===t)if(Array.isArray(e))if(e.length<1){let r={params:{limit:1}};a===null?a=[r]:a.push(r),o++}else{var E=!0;let s=e.length;for(let l=0;l<s;l++){let s=e[l],i=o;if(o===i)if("string"==typeof s){if(r(s)<1){let r={params:{limit:1}};a===null?a=[r]:a.push(r),o++}}else{let r={params:{type:"string"}};a===null?a=[r]:a.push(r),o++}var E=i===o;if(!E)break}}else{let r={params:{type:"array"}};a===null?a=[r]:a.push(r),o++}var c=t===o;if(!(i=i||c)){let s=o;if(o===s)if("string"==typeof e){if(r(e)<1){let r={params:{limit:1}};a===null?a=[r]:a.push(r),o++}}else{let r={params:{type:"string"}};a===null?a=[r]:a.push(r),o++}var c=s===o;i=i||c}if(!i){let r={params:{}};a===null?a=[r]:a.push(r),o++}else{o=l;if(a!==null)l?a.length=l:a=null}}}}else{let r={params:{type:"object"}};a===null?a=[r]:a.push(r),o++}var p=e===o;if(!(t=t||p)){let r=o;if(!(s instanceof Function)){let r={params:{}};a===null?a=[r]:a.push(r),o++}var p=r===o;t=t||p}}}if(!t){let r={params:{}};a===null?a=[r]:a.push(r),o++}else{o=l;if(a!==null)l?a.length=l:a=null}var u=e===o;i=i||u}if(!i){let r={params:{}};a===null?a=[r]:a.push(r),o++,e.errors=a;return!1}o=l;if(a!==null)l?a.length=l:a=null;return e.errors=a,o===0}function s(a,{instancePath:o="",parentData,parentDataProperty,rootData=a}={}){let l=null,i=0,t=i,n=!1,v=i;if(i===v)if("string"==typeof a){if(r(a)<1){let r={params:{limit:1}};l===null?l=[r]:l.push(r),i++}}else{let r={params:{type:"string"}};l===null?l=[r]:l.push(r),i++}var d=v===i;if(!(n=n||d)){let r=i;if(i===r)if(a&&"object"==typeof a&&!Array.isArray(a)){let r;if(a.banner===void 0&&(r="banner")){let e={params:{missingProperty:r}};l===null?l=[e]:l.push(e),i++}else{let r=i;for(let r in a)if(!(r==="banner"||r==="entryOnly"||r==="exclude"||r==="footer"||r==="include"||r==="raw"||r==="stage"||r==="test")){let e={params:{additionalProperty:r}};l===null?l=[e]:l.push(e),i++;break}if(r===i){if(a.banner!==void 0){let r=a.banner,e=i,s=i
+```
+
+**File**: `schemas/plugins/HtmlParserOptions.check.js` (modified, +1/-1)
+```diff
+@@ -4,4 +4,4 @@
+  * This file was automatically generated by "schema-utils".
+  * DO NOT MODIFY BY HAND.
+  */
+-"use strict";module.exports=E,module.exports.default=E;let r={type:"object",additionalProperties:!1,properties:{as:{$ref:"#/definitions/HtmlParserAs"},chunkName:{anyOf:[{type:"string",minLength:1},{instanceof:"Function"}]},cssModules:{oneOf:[{$ref:"#/definitions/HtmlParserCssModules"}]},parseErrors:{type:"boolean"},sources:{anyOf:[{type:"array",items:{anyOf:[{enum:["..."]},{type:"object",additionalProperties:!1,properties:{attribute:{type:"string",minLength:1},filter:{instanceof:"Function"},tag:{type:"string",minLength:1},type:{anyOf:[{enum:["src","srcset","css-url","script","script-module","stylesheet","html","stylesheet-style","stylesheet-style-attribute","srcdoc"]},{enum:[!1]}]}},required:["attribute","type"]}]},minItems:1},{type:"boolean"}]},template:{instanceof:"Function"},urlHints:{$ref:"#/definitions/UrlHints"}}},e={anyOf:[{enum:["document"]},{type:"string"}]},a=function(r){let e=r.length,a=0,s=0,t;while(s<e){a++;if((t=r.charCodeAt(s++))>=55296&&t<=56319&&s<e&&((t=r.charCodeAt(s))&64512)==56320)s++}return a},s={enum:["class","id","ids","fragment","url"]};function t(r,{instancePath="",parentData,parentDataProperty,rootData=r}={}){if(r&&"object"==typeof r&&!Array.isArray(r)){for(let e in r)if(e!=="attributes")return t.errors=[{params:{additionalProperty:e}}],!1;if(r.attributes!==void 0){let e=r.attributes;if(e&&"object"==typeof e&&!Array.isArray(e))for(let r in e){let a=e[r];if(!(a==="class"||a==="id"||a==="ids"||a==="fragment"||a==="url"))return t.errors=[{params:{allowedValues:s.enum}}],!1;if(!(!0))break}else return t.errors=[{params:{type:"object"}}],!1}}else return t.errors=[{params:{type:"object"}}],!1;t.errors=null;return!0}let o={type:"object",additionalProperties:!1,properties:{as:{type:"string"},exclude:{$ref:"#/definitions/RuleSetCondition"},fetchPriority:{enum:["low","high","auto",!1]},include:{$ref:"#/definitions/RuleSetCondition"},media:{type:"string"},prefetch:{type:"boolean"},preload:{type:"boolean"},test:{$ref:"#/definitions/RuleSetCondition"},type:{type:"string"}}},i=Object.prototype.hasOwnProperty,l={validate:f};function n(r,{instancePath:e="",parentData,parentDataProperty,rootData=r}={}){let a=null,s=0;if(s===0)if(Array.isArray(r)){var t=!0;let o=r.length;for(let i=0;i<o;i++){let o=s,d=s,v=!1,f=null,u=s;if(!l.validate(r[i],{instancePath:e+"/"+i,parentData:r,parentDataProperty:i,rootData}))s=(a=a===null?l.validate.errors:a.concat(l.validate.errors)).length;if(u===s)v=!0,f=0;if(!v){let r={params:{passingSchemas:f}};a===null?a=[r]:a.push(r),s++,n.errors=a;return!1}s=d;if(a!==null)d?a.length=d:a=null;var t=o===s;if(!t)break}}else return n.errors=[{params:{type:"array"}}],!1;return n.errors=a,s===0}function d(r,{instancePath="",parentData,parentDataProperty,rootData=r}={}){if(Array.isArray(r)){var e=!0;let s=r.length;for(let t=0;t<s;t++){let s=r[t];if("string"==typeof s){if(a(s)<1)return d.errors=[{params:{limit:1}}],!1}else return d.errors=[{params:{type:"string"}}],!1;var e=!0;if(!e)break}}else return d.errors=[{params:{type:"array"}}],!1;d.errors=null;return!0}function v(r,{instancePath:e="",parentData,parentDataProperty,rootData=r}={}){let s=null,t=0;if(t===0)if(r&&"object"==typeof r&&!Array.isArray(r)){let f=t;for(let e in r)if(!(e==="and"||e==="glob"||e==="not"||e==="or"))return v.errors=[{params:{additionalProperty:e}}],!1;if(f===t){if(r.and!==void 0){let a=t,i=t,l=!1,d=null,f=t;if(!n(r.and,{instancePath:e+"/and",parentData:r,parentDataProperty:"and",rootData}))t=(s=s===null?n.errors:s.concat(n.errors)).length;if(f===t)l=!0,d=0;if(!l){let r={params:{passingSchemas:d}};s===null?s=[r]:s.push(r),t++,v.errors=s;return!1}t=i;if(s!==null)i?s.length=i:s=null;var o=a===t}else var o=!0;if(o){if(r.glob!==void 0){let l=r.glob,n=t,f=t,u=!1,p=t,c=t;if(t===c)if("string"==typeof l){if(a(l)<1){let r={params:{limit:1}};s===null?s=[r]:s.push(r),t++}}else{let r={params:{type:"string"}};s===null?s=[r]:s.push(r),t++}var i=p===t;if(!(u=u||i)){let a=t;if(!d(l,{instancePath:e+"/glob",parentData:r,parentDataProperty:"glob",rootData}))t=(s=s===null?d.errors:s.concat(d.errors)).length;var i=a===t;u=u||i}if(!u){let r={params:{}};s===null?s=[r]:s.push(r),t++,v.errors=s;return!1}t=f;if(s!==null)f?s.length=f:s=null;var o=n===t}else var o=!0;if(o){if(r.not!==void 0){let a=t,i=t,n=!1,d=null,f=t;if(!l.validate(r.not,{instancePath:e+"/not",parentData:r,parentDataProperty:"not",rootData}))t=(s=s===null?l.validate.errors:s.concat(l.validate.errors)).length;if(f===t)n=!0,d=0;if(!n){let r={params:{passingSchemas:d}};s===null?s=[r]:s.push(r),t++,v.errors=s;return!1}t=i;if(s!==null)i?s.length=i:s=null;var o=a===t}else var o=!0;if(o)if(r.or!==void 0){let a=t,i=t,l=!1,d=null,f=t;if(!n(r.or,{instancePath:e+"/or",parentData:r,parentDataProperty:"or",rootData}))t=(s=s===null?n.errors:s.concat(n.errors)).length;if(f===t)l=!0,d=0;if(!l){let r={params:{passingSchemas:d}};s===null?s=[r]:s.push(r),t++,v.errors=s;return!1}t=
+```
+
+**File**: `schemas/plugins/SourceMapDevToolPlugin.check.js` (modified, +1/-1)
+```diff
+@@ -4,4 +4,4 @@
+  * This file was automatically generated by "schema-utils".
+  * DO NOT MODIFY BY HAND.
+  */
+-"use strict";module.exports=l,module.exports.default=l;let r={definitions:{Rule:{anyOf:[{instanceof:"RegExp"},{type:"string",minLength:1},{type:"object",additionalProperties:!1,properties:{glob:{anyOf:[{type:"array",items:{type:"string",minLength:1},minItems:1},{type:"string",minLength:1}]}},required:["glob"]},{instanceof:"Function"}]},Rules:{anyOf:[{type:"array",items:{oneOf:[{$ref:"#/definitions/Rule"}]}},{$ref:"#/definitions/Rule"}]}},type:"object",additionalProperties:!1,properties:{append:{anyOf:[{enum:[!1,null]},{type:"string",minLength:1},{instanceof:"Function"}]},columns:{type:"boolean"},debugIds:{type:"boolean"},exclude:{oneOf:[{$ref:"#/definitions/Rules"}]},fallbackModuleFilenameTemplate:{anyOf:[{type:"string",minLength:1},{instanceof:"Function"}]},fileContext:{type:"string"},filename:{anyOf:[{enum:[!1,null]},{type:"string",absolutePath:!1,minLength:1}]},ignoreList:{oneOf:[{$ref:"#/definitions/Rules"}]},include:{oneOf:[{$ref:"#/definitions/Rules"}]},module:{type:"boolean"},moduleFilenameTemplate:{anyOf:[{type:"string",minLength:1},{instanceof:"Function"}]},namespace:{type:"string"},noSources:{type:"boolean"},publicPath:{type:"string"},scopes:{type:"boolean"},sourceRoot:{type:"string"},test:{oneOf:[{$ref:"#/definitions/Rules"}]}},$id:"SourceMapDevToolPlugin.json"},e=Object.prototype.hasOwnProperty,s=function(r){let e=r.length,s=0,a=0,o;while(a<e){s++;if((o=r.charCodeAt(a++))>=55296&&o<=56319&&a<e&&((o=r.charCodeAt(a))&64512)==56320)a++}return s};function a(r,{instancePath="",parentData,parentDataProperty,rootData=r}={}){let e=null,o=0,l=o,i=!1,t=o;if(o===t)if(Array.isArray(r)){var n=!0;let a=r.length;for(let l=0;l<a;l++){let a=r[l],i=o,t=o,u=!1,p=null,c=o,E=o,_=!1,m=o;if(!(a instanceof RegExp)){let r={params:{}};e===null?e=[r]:e.push(r),o++}var v=m===o;if(!(_=_||v)){let r=o;if(o===r)if("string"==typeof a){if(s(a)<1){let r={params:{limit:1}};e===null?e=[r]:e.push(r),o++}}else{let r={params:{type:"string"}};e===null?e=[r]:e.push(r),o++}var v=r===o;if(!(_=_||v)){let r=o;if(o===r)if(a&&"object"==typeof a&&!Array.isArray(a)){let r;if(a.glob===void 0&&(r="glob")){let s={params:{missingProperty:r}};e===null?e=[s]:e.push(s),o++}else{let r=o;for(let r in a)if(r!=="glob"){let s={params:{additionalProperty:r}};e===null?e=[s]:e.push(s),o++;break}if(r===o&&a.glob!==void 0){let r=a.glob,l=o,i=!1,t=o;if(o===t)if(Array.isArray(r))if(r.length<1){let r={params:{limit:1}};e===null?e=[r]:e.push(r),o++}else{var d=!0;let a=r.length;for(let l=0;l<a;l++){let a=r[l],i=o;if(o===i)if("string"==typeof a){if(s(a)<1){let r={params:{limit:1}};e===null?e=[r]:e.push(r),o++}}else{let r={params:{type:"string"}};e===null?e=[r]:e.push(r),o++}var d=i===o;if(!d)break}}else{let r={params:{type:"array"}};e===null?e=[r]:e.push(r),o++}var f=t===o;if(!(i=i||f)){let a=o;if(o===a)if("string"==typeof r){if(s(r)<1){let r={params:{limit:1}};e===null?e=[r]:e.push(r),o++}}else{let r={params:{type:"string"}};e===null?e=[r]:e.push(r),o++}var f=a===o;i=i||f}if(!i){let r={params:{}};e===null?e=[r]:e.push(r),o++}else{o=l;if(e!==null)l?e.length=l:e=null}}}}else{let r={params:{type:"object"}};e===null?e=[r]:e.push(r),o++}var v=r===o;if(!(_=_||v)){let r=o;if(!(a instanceof Function)){let r={params:{}};e===null?e=[r]:e.push(r),o++}var v=r===o;_=_||v}}}if(!_){let r={params:{}};e===null?e=[r]:e.push(r),o++}else{o=E;if(e!==null)E?e.length=E:e=null}if(c===o)u=!0,p=0;if(!u){let r={params:{passingSchemas:p}};e===null?e=[r]:e.push(r),o++}else{o=t;if(e!==null)t?e.length=t:e=null}var n=i===o;if(!n)break}}else{let r={params:{type:"array"}};e===null?e=[r]:e.push(r),o++}var u=t===o;if(!(i=i||u)){let a=o,l=o,t=!1,n=o;if(!(r instanceof RegExp)){let r={params:{}};e===null?e=[r]:e.push(r),o++}var p=n===o;if(!(t=t||p)){let a=o;if(o===a)if("string"==typeof r){if(s(r)<1){let r={params:{limit:1}};e===null?e=[r]:e.push(r),o++}}else{let r={params:{type:"string"}};e===null?e=[r]:e.push(r),o++}var p=a===o;if(!(t=t||p)){let a=o;if(o===a)if(r&&"object"==typeof r&&!Array.isArray(r)){let a;if(r.glob===void 0&&(a="glob")){let r={params:{missingProperty:a}};e===null?e=[r]:e.push(r),o++}else{let a=o;for(let s in r)if(s!=="glob"){let r={params:{additionalProperty:s}};e===null?e=[r]:e.push(r),o++;break}if(a===o&&r.glob!==void 0){let a=r.glob,l=o,i=!1,t=o;if(o===t)if(Array.isArray(a))if(a.length<1){let r={params:{limit:1}};e===null?e=[r]:e.push(r),o++}else{var c=!0;let r=a.length;for(let l=0;l<r;l++){let r=a[l],i=o;if(o===i)if("string"==typeof r){if(s(r)<1){let r={params:{limit:1}};e===null?e=[r]:e.push(r),o++}}else{let r={params:{type:"string"}};e===null?e=[r]:e.push(r),o++}var c=i===o;if(!c)break}}else{let r={params:{type:"array"}};e===null?e=[r]:e.push(r),o++}var E=t===o;if(!(i=i||E)){let r=o;if(o===r)if("string"==typeof a){if(s(a)<1){let r={params:{limit:1}};e===null?e=[r]:e.push(r),o++}}else{let r={params:{type:"string"}};e===null?e=[r]:e.push(r),o++}var E=r===o;i=i||E}if(!i){l
+```
+
+**File**: `schemas/plugins/WatchIgnorePlugin.check.js` (modified, +1/-1)
+```diff
+@@ -4,4 +4,4 @@
+  * This file was automatically generated by "schema-utils".
+  * DO NOT MODIFY BY HAND.
+  */
+-"use strict";module.exports=s,module.exports.default=s;let r=/^(?:file:(?=\/))?(?:[A-Za-z]:(\\|\/)|\\\\|\/)/i,e=function(r){let e=r.length,s=0,a=0,t;while(a<e){s++;if((t=r.charCodeAt(a++))>=55296&&t<=56319&&a<e&&((t=r.charCodeAt(a))&64512)==56320)a++}return s};function s(a,{instancePath="",parentData,parentDataProperty,rootData=a}={}){let t=null,l=0;if(l===0)if(a&&"object"==typeof a&&!Array.isArray(a)){let n;if(a.paths===void 0&&(n="paths"))return s.errors=[{params:{missingProperty:n}}],!1;else{let n=l;for(let r in a)if(r!=="paths")return s.errors=[{params:{additionalProperty:r}}],!1;if(n===l&&a.paths!==void 0){let n=a.paths,d=l;if(l===d)if(Array.isArray(n))if(n.length<1)return s.errors=[{params:{limit:1}}],!1;else{var o=!0;let a=n.length;for(let d=0;d<a;d++){let a=n[d],v=l,f=l,p=!1,u=l;if(!(a instanceof RegExp)){let r={params:{}};t===null?t=[r]:t.push(r),l++}var i=u===l;if(!(p=p||i)){let s=l;if(l===s)if("string"==typeof a){if(a.includes("!")||r.test(a)!==!0){let r={params:{}};t===null?t=[r]:t.push(r),l++}}else{let r={params:{type:"string"}};t===null?t=[r]:t.push(r),l++}var i=s===l;if(!(p=p||i)){let s=l;if(l===s)if("string"==typeof a){if(e(a)<1){let r={params:{limit:1}};t===null?t=[r]:t.push(r),l++}else if(a.includes("!")||r.test(a)!==!1){let r={params:{}};t===null?t=[r]:t.push(r),l++}}else{let r={params:{type:"string"}};t===null?t=[r]:t.push(r),l++}var i=s===l;p=p||i}}if(!p){let r={params:{}};t===null?t=[r]:t.push(r),l++,s.errors=t;return!1}l=f;if(t!==null)f?t.length=f:t=null;var o=v===l;if(!o)break}}else return s.errors=[{params:{type:"array"}}],!1}}}else return s.errors=[{params:{type:"object"}}],!1;return s.errors=t,l===0}
+\ No newline at end of file
++"use strict";module.exports=s,module.exports.default=s;let r=/^(?:file:(?=\/))?(?:[A-Za-z]:(\\|\/)|\\\\|\/)/i,e=function(r){let e=r.length,s=0,a=0,t;while(a<e){s++;if((t=r.charCodeAt(a++))>=55296&&t<=56319&&a<e&&((t=r.charCodeAt(a))&64512)==56320)a++}return s};function s(a,{instancePath="",parentData,parentDataProperty,rootData=a}={}){let t=null,l=0;if(l===0)if(a&&"object"==typeof a&&!Array.isArray(a)){let n;if(a.paths===void 0&&(n="paths"))return s.errors=[{params:{missingProperty:n}}],!1;else{let n=l;for(let r in a)if(r!=="paths")return s.errors=[{params:{additionalProperty:r}}],!1;if(n===l&&a.paths!==void 0){let n=a.paths,d=l;if(l===d)if(Array.isArray(n))if(n.length<1)return s.errors=[{params:{limit:1}}],!1;else{let a=n.length;for(let d=0;d<a;d++){let a=n[d],v=l,f=l,p=!1,u=l;if(!(a instanceof RegExp)){let r={params:{}};t===null?t=[r]:t.push(r),l++}var i=u===l;if(!(p=p||i)){let s=l;if(l===s)if("string"==typeof a){if(a.includes("!")||r.test(a)!==!0){let r={params:{}};t===null?t=[r]:t.push(r),l++}}else{let r={params:{type:"string"}};t===null?t=[r]:t.push(r),l++}var i=s===l;if(!(p=p||i)){let s=l;if(l===s)if("string"==typeof a){if(e(a)<1){let r={params:{limit:1}};t===null?t=[r]:t.push(r),l++}else if(a.includes("!")||r.test(a)!==!1){let r={params:{}};t===null?t=[r]:t.push(r),l++}}else{let r={params:{type:"string"}};t===null?t=[r]:t.push(r),l++}var i=s===l;p=p||i}}if(!p){let r={params:{}};t===null?t=[r]:t.push(r),l++,s.errors=t;return!1}l=f;if(t!==null)f?t.length=f:t=null;if(!(v===l))break}}else return s.errors=[{params:{type:"array"}}],!1}}}else return s.errors=[{params:{type:"object"}}],!1;return s.errors=t,l===0}
+\ No newline at end of file
+```
+
+**File**: `schemas/plugins/container/ContainerPlugin.check.js` (modified, +1/-1)
+```diff
+@@ -4,4 +4,4 @@
+  * This file was automatically generated by "schema-utils".
+  * DO NOT MODIFY BY HAND.
+  */
+-"use strict";module.exports=m,module.exports.default=m;let r={anyOf:[{enum:[!1]},{type:"string",minLength:1}]},e=function(r){let e=r.length,s=0,a=0,t;while(a<e){s++;if((t=r.charCodeAt(a++))>=55296&&t<=56319&&a<e&&((t=r.charCodeAt(a))&64512)==56320)a++}return s};function s(r,{instancePath="",parentData,parentDataProperty,rootData=r}={}){if(Array.isArray(r)){var a=!0;let t=r.length;for(let o=0;o<t;o++){let t=r[o];if("string"==typeof t){if(e(t)<1)return s.errors=[{params:{limit:1}}],!1}else return s.errors=[{params:{type:"string"}}],!1;var a=!0;if(!a)break}}else return s.errors=[{params:{type:"array"}}],!1;s.errors=null;return!0}function a(r,{instancePath:t="",parentData,parentDataProperty,rootData=r}={}){let o=null,i=0;if(i===0)if(r&&"object"==typeof r&&!Array.isArray(r)){let d;if(r.import===void 0&&(d="import"))return a.errors=[{params:{missingProperty:d}}],!1;else{let d=i;for(let e in r)if(!(e==="import"||e==="name"))return a.errors=[{params:{additionalProperty:e}}],!1;if(d===i){if(r.import!==void 0){let d=r.import,v=i,f=i,p=!1,m=i,u=i;if(i===u)if("string"==typeof d){if(e(d)<1){let r={params:{limit:1}};o===null?o=[r]:o.push(r),i++}}else{let r={params:{type:"string"}};o===null?o=[r]:o.push(r),i++}var n=m===i;if(!(p=p||n)){let e=i;if(!s(d,{instancePath:t+"/import",parentData:r,parentDataProperty:"import",rootData}))i=(o=o===null?s.errors:o.concat(s.errors)).length;var n=e===i;p=p||n}if(!p){let r={params:{}};o===null?o=[r]:o.push(r),i++,a.errors=o;return!1}i=f;if(o!==null)f?o.length=f:o=null;var l=v===i}else var l=!0;if(l)if(r.name!==void 0){let e=i;if("string"!=typeof r.name)return a.errors=[{params:{type:"string"}}],!1;var l=e===i}else var l=!0}}}else return a.errors=[{params:{type:"object"}}],!1;return a.errors=o,i===0}function t(r,{instancePath:o="",parentData,parentDataProperty,rootData=r}={}){let i=null,n=0;if(n===0)if(r&&"object"==typeof r&&!Array.isArray(r))for(let d in r){let v=r[d],f=n,p=n,m=!1,u=n;if(!a(v,{instancePath:o+"/"+d.replace(/~/g,"~0").replace(/\//g,"~1"),parentData:r,parentDataProperty:d,rootData}))n=(i=i===null?a.errors:i.concat(a.errors)).length;var l=u===n;if(!(m=m||l)){let a=n,t=n;if(n===t)if("string"==typeof v){if(e(v)<1){let r={params:{limit:1}};i===null?i=[r]:i.push(r),n++}}else{let r={params:{type:"string"}};i===null?i=[r]:i.push(r),n++}var l=a===n;if(!(m=m||l)){let e=n;if(!s(v,{instancePath:o+"/"+d.replace(/~/g,"~0").replace(/\//g,"~1"),parentData:r,parentDataProperty:d,rootData}))n=(i=i===null?s.errors:i.concat(s.errors)).length;var l=e===n;m=m||l}}if(!m){let r={params:{}};i===null?i=[r]:i.push(r),n++,t.errors=i;return!1}n=p;if(i!==null)p?i.length=p:i=null;if(!(f===n))break}else return t.errors=[{params:{type:"object"}}],!1;return t.errors=i,n===0}function o(r,{instancePath:s="",parentData,parentDataProperty,rootData=r}={}){let a=null,i=0,n=i,l=!1,d=i;if(i===d)if(Array.isArray(r)){var v=!0;let o=r.length;for(let n=0;n<o;n++){let o=r[n],l=i,d=i,p=!1,m=i,u=i;if(i===u)if("string"==typeof o){if(e(o)<1){let r={params:{limit:1}};a===null?a=[r]:a.push(r),i++}}else{let r={params:{type:"string"}};a===null?a=[r]:a.push(r),i++}var f=m===i;if(!(p=p||f)){let e=i;if(!t(o,{instancePath:s+"/"+n,parentData:r,parentDataProperty:n,rootData}))i=(a=a===null?t.errors:a.concat(t.errors)).length;var f=e===i;p=p||f}if(!p){let r={params:{}};a===null?a=[r]:a.push(r),i++}else{i=d;if(a!==null)d?a.length=d:a=null}var v=l===i;if(!v)break}}else{let r={params:{type:"array"}};a===null?a=[r]:a.push(r),i++}var p=d===i;if(!(l=l||p)){let e=i;if(!t(r,{instancePath:s,parentData,parentDataProperty,rootData}))i=(a=a===null?t.errors:a.concat(t.errors)).length;var p=e===i;l=l||p}if(!l){let r={params:{}};a===null?a=[r]:a.push(r),i++,o.errors=a;return!1}i=n;if(a!==null)n?a.length=n:a=null;return o.errors=a,i===0}let i={enum:["last","all"]},n={anyOf:[{enum:["var","module","assign","assign-properties","this","window","self","global","commonjs","commonjs2","commonjs-module","commonjs-static","amd","amd-require","umd","umd2","jsonp","system"]},{type:"string"}]};function l(r,{instancePath="",parentData,parentDataProperty,rootData=r}={}){let e=null,s=0,a=s,t=!1,o=s;if("string"!=typeof r){let r={params:{type:"string"}};e===null?e=[r]:e.push(r),s++}var i=o===s;if(!(t=t||i)){let a=s,o=s;if(s===o)if(r&&"object"==typeof r&&!Array.isArray(r)){let a=s;for(let a in r)if(!(a==="amd"||a==="commonjs"||a==="commonjs2"||a==="root")){let r={params:{additionalProperty:a}};e===null?e=[r]:e.push(r),s++;break}if(a===s){if(r.amd!==void 0){let a=s;if("string"!=typeof r.amd){let r={params:{type:"string"}};e===null?e=[r]:e.push(r),s++}var n=a===s}else var n=!0;if(n){if(r.commonjs!==void 0){let a=s;if("string"!=typeof r.commonjs){let r={params:{type:"string"}};e===null?e=[r]:e.push(r),s++}var n=a===s}else var n=!0;if(n){if(r.commonjs2!==void 0){let a=s;if("string"!=typeof r.commonjs2){let r={params:{type:"string"}};e===null?e=[r]:e.push(r),s++}
+```
+
+**File**: `schemas/plugins/container/ContainerReferencePlugin.check.js` (modified, +1/-1)
+```diff
+@@ -4,4 +4,4 @@
+  * This file was automatically generated by "schema-utils".
+  * DO NOT MODIFY BY HAND.
+  */
+-"use strict";module.exports=i,module.exports.default=i;let r={enum:["var","module","assign","this","window","self","global","commonjs","commonjs2","commonjs-module","commonjs-static","amd","amd-require","amd-async","umd","umd2","jsonp","system","promise","import","module-import","script","node-commonjs","asset","asset-url","css-import","css-url"]},e=function(r){let e=r.length,a=0,s=0,t;while(s<e){a++;if((t=r.charCodeAt(s++))>=55296&&t<=56319&&s<e&&((t=r.charCodeAt(s))&64512)==56320)s++}return a};function a(r,{instancePath="",parentData,parentDataProperty,rootData=r}={}){if(Array.isArray(r)){var s=!0;let t=r.length;for(let o=0;o<t;o++){let t=r[o];if("string"==typeof t){if(e(t)<1)return a.errors=[{params:{limit:1}}],!1}else return a.errors=[{params:{type:"string"}}],!1;var s=!0;if(!s)break}}else return a.errors=[{params:{type:"array"}}],!1;a.errors=null;return!0}function s(r,{instancePath:t="",parentData,parentDataProperty,rootData=r}={}){let o=null,i=0;if(i===0)if(r&&"object"==typeof r&&!Array.isArray(r)){let d;if(r.external===void 0&&(d="external"))return s.errors=[{params:{missingProperty:d}}],!1;else{let d=i;for(let e in r)if(!(e==="external"||e==="shareScope"))return s.errors=[{params:{additionalProperty:e}}],!1;if(d===i){if(r.external!==void 0){let d=r.external,v=i,f=i,m=!1,p=i,c=i;if(i===c)if("string"==typeof d){if(e(d)<1){let r={params:{limit:1}};o===null?o=[r]:o.push(r),i++}}else{let r={params:{type:"string"}};o===null?o=[r]:o.push(r),i++}var n=p===i;if(!(m=m||n)){let e=i;if(!a(d,{instancePath:t+"/external",parentData:r,parentDataProperty:"external",rootData}))i=(o=o===null?a.errors:o.concat(a.errors)).length;var n=e===i;m=m||n}if(!m){let r={params:{}};o===null?o=[r]:o.push(r),i++,s.errors=o;return!1}i=f;if(o!==null)f?o.length=f:o=null;var l=v===i}else var l=!0;if(l)if(r.shareScope!==void 0){let a=r.shareScope,t=i;if(i===t)if("string"==typeof a){if(e(a)<1)return s.errors=[{params:{limit:1}}],!1}else return s.errors=[{params:{type:"string"}}],!1;var l=t===i}else var l=!0}}}else return s.errors=[{params:{type:"object"}}],!1;return s.errors=o,i===0}function t(r,{instancePath:o="",parentData,parentDataProperty,rootData=r}={}){let i=null,n=0;if(n===0)if(r&&"object"==typeof r&&!Array.isArray(r))for(let d in r){let v=r[d],f=n,m=n,p=!1,c=n;if(!s(v,{instancePath:o+"/"+d.replace(/~/g,"~0").replace(/\//g,"~1"),parentData:r,parentDataProperty:d,rootData}))n=(i=i===null?s.errors:i.concat(s.errors)).length;var l=c===n;if(!(p=p||l)){let s=n,t=n;if(n===t)if("string"==typeof v){if(e(v)<1){let r={params:{limit:1}};i===null?i=[r]:i.push(r),n++}}else{let r={params:{type:"string"}};i===null?i=[r]:i.push(r),n++}var l=s===n;if(!(p=p||l)){let e=n;if(!a(v,{instancePath:o+"/"+d.replace(/~/g,"~0").replace(/\//g,"~1"),parentData:r,parentDataProperty:d,rootData}))n=(i=i===null?a.errors:i.concat(a.errors)).length;var l=e===n;p=p||l}}if(!p){let r={params:{}};i===null?i=[r]:i.push(r),n++,t.errors=i;return!1}n=m;if(i!==null)m?i.length=m:i=null;if(!(f===n))break}else return t.errors=[{params:{type:"object"}}],!1;return t.errors=i,n===0}function o(r,{instancePath:a="",parentData,parentDataProperty,rootData=r}={}){let s=null,i=0,n=i,l=!1,d=i;if(i===d)if(Array.isArray(r)){var v=!0;let o=r.length;for(let n=0;n<o;n++){let o=r[n],l=i,d=i,m=!1,p=i,c=i;if(i===c)if("string"==typeof o){if(e(o)<1){let r={params:{limit:1}};s===null?s=[r]:s.push(r),i++}}else{let r={params:{type:"string"}};s===null?s=[r]:s.push(r),i++}var f=p===i;if(!(m=m||f)){let e=i;if(!t(o,{instancePath:a+"/"+n,parentData:r,parentDataProperty:n,rootData}))i=(s=s===null?t.errors:s.concat(t.errors)).length;var f=e===i;m=m||f}if(!m){let r={params:{}};s===null?s=[r]:s.push(r),i++}else{i=d;if(s!==null)d?s.length=d:s=null}var v=l===i;if(!v)break}}else{let r={params:{type:"array"}};s===null?s=[r]:s.push(r),i++}var m=d===i;if(!(l=l||m)){let e=i;if(!t(r,{instancePath:a,parentData,parentDataProperty,rootData}))i=(s=s===null?t.errors:s.concat(t.errors)).length;var m=e===i;l=l||m}if(!l){let r={params:{}};s===null?s=[r]:s.push(r),i++,o.errors=s;return!1}i=n;if(s!==null)n?s.length=n:s=null;return o.errors=s,i===0}function i(a,{instancePath:s="",parentData,parentDataProperty,rootData=a}={}){let t=null,n=0;if(n===0)if(a&&"object"==typeof a&&!Array.isArray(a)){let d;if(a.remoteType===void 0&&(d="remoteType")||a.remotes===void 0&&(d="remotes"))return i.errors=[{params:{missingProperty:d}}],!1;else{let d=n;for(let r in a)if(!(r==="remoteType"||r==="remotes"||r==="shareScope"))return i.errors=[{params:{additionalProperty:r}}],!1;if(d===n){if(a.remoteType!==void 0){let e=a.remoteType,s=n,o=n,d=!1,v=null,f=n;if(!(e==="var"||e==="module"||e==="assign"||e==="this"||e==="window"||e==="self"||e==="global"||e==="commonjs"||e==="commonjs2"||e==="commonjs-module"||e==="commonjs-static"||e==="amd"||e==="amd-require"||e==="amd-async"||e==="umd"||e==="umd2"||e==="jsonp"||e==="system"||e==="promise"||e
+```
+
+---
+
+### Incident Patch 2: `c443ac35` (2026-11-20)
+**Commit Message**: test: fuzz the CSS and HTML parsers and printers against Chrome (#23452)
+
+* test: fuzz the CSS and HTML parsers and printers against Chrome
+
+Seeded generators build stylesheets from mdn-data's grammars and documents
+from webref's elements. Each input is held to the syntax invariants and, in
+Chrome, to its DOM, computed styles and CSSOM. A last test fails where a
+function's count of lines no input reached moves from the recorded one. Open
+findings are syntax-fuzz-* fixtures. Not run in CI.
+
+* test: hold printed pages' styles and inline styles to the source's
+
+The HTML check now compares each print's style elements with compareStyles
+and, for an unrelaxed set, renders a page holding a style attribute. A
+browser relation's fixture entry matches the first line of its report, which
+names the difference. Two findings this adds are fixtures.
+
+* test: render pages holding a style element and compare relaxed inline styles
+
+A page holding a style element is rendered too, and a relaxed set compares
+each document's inline declarations as the browser serializes them. A CSSOM
+report is one line naming both rules. The render tier reads no text from a
+root that renders nothing, where innerText fal
+
+**File**: `TESTING_DOCS.md` (modified, +1/-0)
+```diff
+@@ -157,6 +157,7 @@ Directories come first, in alphabetical order, then the individual files worth t
+   - `xmlconf.spectest.js` — `yarn test:xmlconf`
+   - `minify-corpora.spectest.js` — `yarn test:minify-corpora`; CI runs it in three [parts](#splitting-one-file-across-workers), each claiming the next 100 sources of a group no other part took, and the last part to finish checks no table entry went unmet
+   - `js-fuzz.spectest.js` — `yarn test:js-fuzz`: programs from `test/helpers/jsFuzzProgram.js`, in the sloppy ES5 terser's ufuzz writes, in modern syntax, as modules importing a fixed `dep` and as webpack-shaped bundles, minified under ufuzz's option sets, webpack's and random ones; the parser is held to acorn's tree on each program and output, the printer to the tree it read and to its own output, each output to what its program prints and exports, the default set's source map to its output and source, and the output to what it prints minified again. Needs no submodule; `JS_FUZZ_SEED=<n>` replays one seed, `JS_FUZZ_SEED=random` runs a new one named in the test's title, and `JS_FUZZ_PROGRAMS` sets the programs per seed.
++  - `syntax-fuzz.spectest.js` — `yarn test:syntax-fuzz`, which CI does not run: stylesheets from `test/helpers/cssFuzzStylesheet.js`, built from mdn-data's property, at-rule, descriptor and selector grammars, and documents from `test/helpers/htmlFuzzDocument.js`, built from webref's element lists and the attribute tables in `lib/html/data.js`, with those stylesheets in `<style>` and `style=""`. Each input is held to the syntax invariants and, in the Chrome `launchBrowser` starts, the HTML parser's tree to the browser's, each print's DOM facets and computed styles to its source's under the equivalence suite's option sets, and a beautified stylesheet's CSSOM to its source's. A finding is cut down, its letters spelled `a` and digits `0` where it still breaks, and reported. Each open defect is a `syntax-fuzz-*` fixture whose `expected.json` files every relation its input breaks; the browser's (`styles`, `facets`, `cssom`, `dom`) are read only here, where each such fixture is replayed in Chrome, and a seed's finding is known while one of those fixtures files its relation under its preset. `SYNTAX_FUZZ_WRITE=1` writes each new finding as one, to be renamed and explained. The last test counts, per function named by what holds it, the lines of the CSS and HTML `syntax-parser.js` and `syntax-printer.js` no generated input reached, and fails where a count moved from `syntax-fuzz.unreached.json`: up, extend a generator to reach the new code; down, re-record with `SYNTAX_FUZZ_UPDATE=1`. It counts only over a run whose seeds all finished and cut nothing down, since a shrink fills caches a later input would have filled. `SYNTAX_FUZZ_SEED=<n>` replays one seed, `SYNTAX_FUZZ_SEED=random` runs a new one named in the test's title, and `SYNTAX_FUZZ_INPUTS` sets the inputs per seed; any of them skips the coverage test.
+ 
+ ### `statsCases/`
+ 
+```
+
+**File**: `cspell.json` (modified, +1/-0)
+```diff
+@@ -669,6 +669,7 @@
+     "yarn.lock",
+     "**/package-lock.json",
+     "tooling/deep-webpack-imports.json",
++    "test/specCases/syntax-fuzz.unreached.json",
+     "tooling/comparison/css-tool-comparison/stylesheets.json",
+     "types.d.ts",
+     "**/**/*.snap",
 ```
 
 **File**: `package.json` (modified, +1/-0)
 ```diff
-@@ -183,6 +183,7 @@
-     "core-js": "^3.47.0",
-     "cspell": "^10.0.1",
-     "css-loader": "^7.1.2",
-+    "css-tree": "^3.2.1",
-     "date-fns": "^4.4.0",
-     "es5-ext": "^0.10.53",
-     "es6-promise-polyfill": "^1.2.0",
+@@ -95,6 +95,7 @@
+     "test:test262-parser": "yarn test:base --testMatch \"<rootDir>/test/specCases/test262-parser.spectest.js\"",
+     "test:minify-corpora": "yarn test:base --testMatch \"<rootDir>/test/specCases/minify-corpora.spectest.js\"",
+     "test:js-fuzz": "yarn test:base --testMatch \"<rootDir>/test/specCases/js-fuzz.spectest.js\"",
++    "test:syntax-fuzz": "yarn test:base --testMatch \"<rootDir>/test/specCases/syntax-fuzz.spectest.js\"",
+     "test:html5lib": "yarn test:base --testMatch \"<rootDir>/test/specCases/html5lib.spectest.js\"",
+     "test:syntax-equivalence": "yarn test:base --testMatch \"<rootDir>/test/specCases/syntaxEquivalence.spectest.js\"",
+     "test:css-parsing": "yarn test:base --testMatch \"<rootDir>/test/specCases/cssParsing-webpack.spectest.js\"",
 ```
 
-**File**: `test/fixtures/css/compare-css-tools-agreeing-with-css-tree-drops-an-ie-hack-the-spec-drops-and/expected.json` (modified, +5/-0)
+**File**: `test/fixtures/css/syntax-fuzz-an-unclosed-legal-comment-prints-twice/expected.json` (added, +19/-0)
 ```diff
-@@ -3,5 +3,10 @@
- 		"relation": "respelling escape",
- 		"contains": "zoom\n      -> \\7a oom",
- 		"why": "`*zoom: 1` is no declaration but the star hack an engine drops, which the printer writes back as authored, escape included"
+@@ -0,0 +1,19 @@
++[
++	{
++		"relation": "idempotence",
++		"contains": "      -> *//*!",
++		"presets": [
++			"default",
++			"target",
++			"target+vars",
++			"legacy",
++			"beautify"
++		],
++		"why": "known bug: a legal comment left open at the end of the input prints twice, closed inside the rule and again open after it"
 +	},
 +	{
 +		"relation": "agreement",
-+		"contains": "/.a[1]: css-tree unparsed -1x:4;, tool nothing",
-+		"why": "a statement opening no `{}` block is a parse error the spec drops, whether the input ends in it or a block's `;` or `}` ends it (§5.4.3); css-tree keeps it as raw text"
- 	}
- ]
-```
-
-**File**: `test/fixtures/css/compare-css-tools-agreeing-with-css-tree-names-what-css-tree-can-t-read-as-2/expected.json` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+[
-+	{
-+		"relation": "agreement",
-+		"contains": "/: css-tree unparsed %, tool nothing",
++		"contains": "/[1]: css-tree unparsed &, tool nothing",
 +		"why": "a statement opening no `{}` block is a parse error the spec drops, whether the input ends in it or a block's `;` or `}` ends it (§5.4.3); css-tree keeps it as raw text"
 +	}
 +]
 ```
 
-**File**: `test/fixtures/css/compare-css-tools-agreeing-with-css-tree-names-what-css-tree-can-t-read-as/expected.json` (added, +7/-0)
+**File**: `test/fixtures/css/syntax-fuzz-an-unclosed-legal-comment-prints-twice/index.css` (added, +1/-0)
 ```diff
-@@ -0,0 +1,7 @@
+@@ -0,0 +1 @@
++{&/*!
+\ No newline at end of file
+```
+
+**File**: `test/fixtures/css/syntax-fuzz-an-unclosed-style-query-loses-its-parenthesis/expected.json` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
 +[
 +	{
-+		"relation": "agreement",
-+		"contains": "/.a[1]: css-tree unparsed %, tool nothing",
-+		"why": "a statement opening no `{}` block is a parse error the spec drops, whether the input ends in it or a block's `;` or `}` ends it (§5.4.3); css-tree keeps it as raw text"
++		"relation": "idempotence",
++		"contains": "      -> );",
++		"presets": [
++			"default",
++			"target",
++			"target+vars",
++			"legacy"
++		],
++		"why": "known bug: `@container style(()` prints as `@container style(();`, without the `)` that closes the function, so each print adds another `);`"
 +	}
 +]
 ```
 
-**File**: `test/fixtures/css/css-syntax-5-parsing-algorithms-drops-a-top-level-name-rule-whose-name-is-2/expected.json` (added, +7/-0)
+**File**: `test/fixtures/css/syntax-fuzz-an-unclosed-style-query-loses-its-parenthesis/index.css` (added, +1/-0)
 ```diff
-@@ -0,0 +1,7 @@
-+[
-+	{
-+		"relation": "agreement",
-+		"contains": "/\\2d-a:[1]: css-tree rule \\2d-a:, tool nothing",
-+		"why": "a top-level rule whose prelude opens with a `--` name and a `:` is a parse error the spec drops (§5.4.3); css-tree keeps the rule"
-+	}
-+]
+@@ -0,0 +1 @@
++@container style(()
+\ No newline at end of file
 ```
 
-**File**: `test/fixtures/css/css-syntax-5-parsing-algorithms-drops-a-top-level-name-rule-whose-name-is-3/expected.json` (added, +7/-0)
+**File**: `test/fixtures/css/syntax-fuzz-beautify-drops-the-space-in-an-empty-media-condition/expected.json` (added, +10/-0)
 ```diff
-@@ -0,0 +1,7 @@
+@@ -0,0 +1,10 @@
 +[
 +	{
-+		"relation": "agreement",
-+		"contains": "/-\\2d a:[1]: css-tree rule -\\2d a:, tool nothing",
-+		"why": "a top-level rule whose prelude opens with a `--` name and a `:` is a parse error the spec drops (§5.4.3); css-tree keeps the rule"
++		"relation": "cssom",
++		"contains": "rule 0: \"@media (( )) {\\n}\" vs \"@media (()) {\\n}\"",
++		"presets": [
++			"beautify"
++		],
++		"why": "known bug: `beautify` prints `@media (( ))` as `@media (())`, while the CSSOM keeps the space in the condition's text"
 +	}
 +]
 ```
 
 ---
 
-### Incident Patch 2: `db35bf34` (2026-11-16)
-**Commit Message**: fix: join nested and alternating layer runs linearly and print more JS and HTML in one pass (#23377)
+### Incident Patch 3: `1a9a335a` (2026-11-20)
+**Commit Message**: fix(cache): unmemoize the lazy after PackContent unpack (#23485)
 
-* fix(html): drop a script's charset in one pass inside an element printed whole
+* fix(cache): unmemoize the lazy after PackContent unpack
 
-A `<script charset=utf-8>` inside an element printed whole (`<pre>`,
-`<template>`, a `<form>` reset, ...) now carries a mark where its dropped
-and kept rewrites differ; the piece holding it goes out with that span
-retractable, settled once the first 1024 bytes answer.
+Claude-Session: https://claude.ai/code/session_013FhutSn5pQVY3u6kcTUVzL
 
-A tag whose rewrite defers an event handler is held too: the second
-rewrite defers the same bodies under the same ids, and the prescan reads
-a deferred handler as declined, which an answer only shortens.
+* chore: number the changeset
 
-A source holding a NUL and an SVG a renderer is offered whole still keep
-the charset, as a mark could not be told apart there.
+Claude-Session: https://claude.ai/code/session_013FhutSn5pQVY3u6kcTUVzL
 
-Claude-Session: https://claude.ai/code/session_013FhutRjRnaBAwgtK8Qe5bW
+* test: re-watch a suspended watching whose watch went dead
 
-* perf(css): join nested and alternating layer blocks in linear time
+A watchError case keeps its watchings suspended until they receive the
+step, so a watch the OS dropped never resumed and failed the step.
 
-A run of `@layer a{@media print{...}}` blocks copied the growing inner
-block at every join and read all of its children again. It also read the
-spans of the whole joined block again at every join. 12000 blocks took
-14.7 s. The run now owns the inner block a join wrote a
+Claude-Session: https://claude.ai/code/session_013FhutSn5pQVY3u6kcTUVzL
 
-**File**: `.changeset/276-linear-layers-one-pass-js-html.md` (added, +5/-0)
+* test: replace a stalled browser in the render equivalence tests
+
+A browser stalled on fresh pages ran the per-pair fallback past the
+180s test timeout; a new browser now renders the batch again first.
+
+Claude-Session: https://claude.ai/code/session_013FhutSn5pQVY3u6kcTUVzL
+
+* test: report pages a stall leaves no time to render
+
+Recovery from repeated stalls could still outlast the test timeout, which
+hid the stalled pages; past a budget the rest is reported by name.
+
+Claude-Session: https://claude.ai/code/session_013FhutSn5pQVY3u6kcTUVzL
+
+* test: fit every render deadline into the test's time left
+
+A first stall lat
+
+**File**: `.changeset/020-release-unpacked-cache-content.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +"webpack": patch
 +---
 +
-+Minify nested `@layer` runs in linear time and print more JS and HTML in one pass.
++Free restored cache buffers after the persistent cache unpacks pack content.
 ```
 
-**File**: `lib/css/syntax-parser.js` (modified, +153/-112)
+**File**: `lib/cache/PackFileCacheStrategy.js` (modified, +2/-0)
 ```diff
-@@ -2242,8 +2242,6 @@ const _setupParse = (input, lc, parseError) => {
- 	_S._distantRules.clear();
- 	_S._distantAtRules.clear();
- 	_S._distantAtRuleFolded = false;
--	_S._readChildren = null;
--	_S._readChildTexts = new Set();
- 	_S._lentPiece = null;
- 	_S._lentPieces = new Set();
- 	_S._deferredKeySpan = null;
-@@ -2299,6 +2297,7 @@ const _setupParse = (input, lc, parseError) => {
- 	_S._notSelectorListAllowed = true;
- 	_S._loweringLightDark = false;
- 	_S._lightDarkUsed = false;
-+	_S._layersGathered = false;
- 	_S._charsetPiece = -1;
- 	_S._oklabColorsAllowed = true;
- 	_S._colorFallbacksNeeded = false;
-@@ -5245,6 +5244,72 @@ const _NO_RULE_SPANS = /** @type {RuleSpan[]} */ (
- const _NO_BLOCK_SPANS = /** @type {BlockSpans[]} */ (
- 	/** @type {BlockSpans[] | ReadonlyArray<never>} */ (Object.freeze([]))
- );
-+/**
-+ * Whether a gathered layer block's last rule takes a later block's one rule as
-+ * it would once settled: printing the same block, the two lists join into one
-+ * set whatever order the earlier is in. Through at-rules stating the same
-+ * condition, the later one holding one rule each, it is their last rules.
-+ * @param {RuleEntry} gathered the block the gather holds, only the last rule down its last children unsettled
-+ * @param {RuleEntry} later the later block of the same layer
-+ * @returns {boolean} true when the join reads nothing the order changes
-+ */
-+const _growsGatheredList = (gathered, later) => {
-+	let last = gathered;
-+	let next = later;
-+	do {
-+		const children = /** @type {RuleEntry[]} */ (last.children);
-+		const added = /** @type {RuleEntry[]} */ (next.children);
-+		if (children.length === 0 || added.length !== 1) return false;
-+		last = children[children.length - 1];
-+		next = added[0];
-+		if (last.atRule !== next.atRule || next.prelude === -1) return false;
-+		if (
-+			last.atRule &&
-+			(!_rangeEquals(
-+				last.list === null ? last.text : last.list,
-+				0,
-+				last.prelude,
-+				next.list === null ? next.text : next.list,
-+				0,
-+				next.prelude
-+			) ||
-+				_isAnonymousLayerPrelude(_entryPrelude(last)))
-+		) {
-+			return false;
-+		}
-+	} while (last.atRule);
-+	return (
-+		last.prelude !== -1 &&
-+		_blocksEqual(last, next) &&
-+		_entryListable(last) &&
-+		_entryListable(next)
-+	);
-+};
-+
-+/**
-+ * A gathered named layer block's text, its seams settled once something reads
-+ * it; the block settled is the one a later block of the layer then joins.
-+ */
-+class GatheredLayerText {
-+	/**
-+	 * @param {SeenLayer} layer the block, as the gather holds it
-+	 */
-+	constructor(layer) {
-+		/** @type {SeenLayer} */
-+		this.layer = layer;
-+	}
-+
-+	/**
-+	 * @returns {string} the block as it prints
-+	 */
-+	get text() {
-+		const layer = this.layer;
-+		const merged = _settleJoinedSeams(/** @type {RuleEntry} */ (layer.entry));
-+		layer.entry = merged;
-+		return merged.text;
-+	}
-+}
-+
- /**
-  * A top-level node's text as written out, which later rules cut dead rules from.
-  * A cut is recorded against the text the piece last held, so a run of cuts builds
-@@ -6167,7 +6232,7 @@ const _streamConsumeBlock = (ts, rule) => {
- 	_S._streamWalked = rule;
- };
+@@ -1045,12 +1045,14 @@ class PackContent {
+ 						logger.timeEnd(timeMessage);
+ 					}
+ 					this.content = data.map;
++					this.lazy = SerializerMiddleware.unMemoizeLazy(this.lazy);
+ 				});
+ 			}
+ 			if (timeMessage) {
+ 				logger.timeEnd(timeMessage);
+ 			}
+ 			this.content = value.map;
++			this.lazy = SerializerMiddleware.unMemoizeLazy(this.lazy);
+ 		}
+ 	}
  
--/** @typedef {{ result: BlockSpans | null, children: RuleEntry[] | null, stable: number, at: number, count: number, boundary: RuleEntry | null }} JoinedRun where a read of a run of joined at-rule blocks stopped: what it answered, over which children, the child it resumes at, the body offset and span count before that child, and the child before it */
-+/** @typedef {{ texts: Set<string>, count: number }} ChildTextRead the texts of a block's first children `_dropRepeatedChildren` read, and how many it read */
- /** @typedef {{ node: Node, offset: number, line: number | undefined, column: number | undefined, entry: RuleEntry, owned: boolean, own: BlockSpans | undefined, parted: boolean }} HeldTopLevel one top-level rule held back for a join, with where it stood, what it recorded, and whether a kept comment stands above it */
+```
+
+**File**: `test/specCases/syntaxEquivalence.spectest.js` (modified, +50/-9)
+```diff
+@@ -3024,11 +3024,24 @@ describe("a minified page renders as the page it came from", () => {
+ 	let unrecovered;
+ 	let skipAdoptedIframes = false;
  
- /** @typedef {{ taken: TakenPiece, span: RuleSpan, entry: RuleEntry, prelude: number, grown: boolean }} PriorTopLevel the top-level rule last written out, the piece it stands in, how far into it its block starts, and whether a later rule's selectors joined its list */
-@@ -7022,14 +7087,16 @@ const _emitTopLevel = (
- 		_S._seenTopLevelLayers.set(opener, {
- 			at: writer.takeRetractable(node, offset, line, column, text),
- 			subtree: false,
--			entry
-+			entry,
-+			owned: false
+-	// WHY: a WebKit run never returned from one wpt/css batch, and every later
+-	// test then waited behind it on the same page. Past a deadline the batch is
+-	// rendered again a pair at a time, on a fresh page, to name what never ends.
++	// WHY: a WebKit run never returned from one wpt/css batch, and a Firefox one
++	// stalled on fresh pages too. Past a deadline a new browser renders the batch
++	// again, then a pair at a time, to name what never ends.
+ 	const BATCH_DEADLINE = 40000;
+ 	const PAIR_DEADLINE = 20000;
++	// closing a stalled browser and launching a new one, which a render's
++	// deadline leaves room for so the test reports before Jest's timeout
++	const RELAUNCH_ALLOWANCE = 30000;
++	// what a failed relaunch leaves the test to report it in
++	const REPORT_ALLOWANCE = 5000;
++	let testStart = 0;
++
++	/** @returns {number} milliseconds the running test has before Jest's timeout */
++	const timeLeft = () => testStart + FILE_TIMEOUT - Date.now();
++
++	beforeEach(() => {
++		testStart = Date.now();
++	});
+ 
+ 	/** @returns {Promise<import("playwright-core").Page>} a page ready to render in */
+ 	const openPage = async () => {
+@@ -3081,10 +3094,21 @@ describe("a minified page renders as the page it came from", () => {
+ 		const reports = await within(pending, deadline);
+ 		if (reports === undefined) {
+ 			pending.catch(() => {});
+-			const stuck = page;
+-			await within(stuck.close(), PAIR_DEADLINE).catch(() => {});
++			const stuck = browser;
++			await within(
++				stuck.close(),
++				Math.min(PAIR_DEADLINE, timeLeft() - REPORT_ALLOWANCE)
++			).catch(() => {});
+ 			try {
+-				page = await openPage();
++				const relaunched = await within(
++					(async () => {
++						browser = await launchBrowser({ browser: ENGINE });
++						page = await openPage();
++						return true;
++					})(),
++					timeLeft() - REPORT_ALLOWANCE
++				);
++				if (!relaunched) throw new Error("no time left to relaunch the browser");
+ 			} catch (error) {
+ 				unrecovered = new Error(
+ 					`no page to render in once ${batch.map(({ name }) => name).join(", ")} ran past ${deadline}ms`,
+@@ -3103,17 +3127,34 @@ describe("a minified page renders as the page it came from", () => {
+ 	const differing = async (pairs) => {
+ 		/** @type {string[]} */
+ 		const out = [];
++		/**
++		 * @param {number} deadline how long a render may take, in milliseconds
++		 * @returns {number} that deadline, cut to what the test has left after a relaunch
++		 */
++		const fitting = (deadline) =>
++			Math.min(deadline, timeLeft() - RELAUNCH_ALLOWANCE);
+ 		for (const width of RENDER_WIDTHS) {
+ 			for (let at = 0; at < pairs.length; at += 20) {
+ 				const batch = pairs.slice(at, at + 20);
+-				let reports = await renderWithin(batch, width, BATCH_DEADLINE);
++				/** @type {import("../helpers/syntaxEquivalence").RenderReport[] | undefined} */
++				let reports;
++				for (let attempt = 0; attempt < 2 && reports === undefined; attempt++) {
++					const deadline = fitting(BATCH_DEADLINE);
++					if (deadline <= 0) break;
++					reports = await renderWithin(batch, width, deadline);
++				}
+ 				if (reports === undefined) {
+ 					reports = [];
+ 					for (const pair of batch) {
+-						const one = await renderWithin([pair], width, PAIR_DEADLINE);
++						const deadline = fitting(PAIR_DEADLINE);
++						if (deadline <= 0) {
++							out.push(`${width}px ${pair.name}: no time left to render it`);
++							continue;
++						}
++						const one = await renderWithin([pair], width, deadline);
+ 						if (one === undefined) {
+ 							out.push(
+-								`${width}px ${pair.name}: no render within ${PAIR_DEADLINE}ms`
++								`${width}px ${pair.name}: no render within ${deadline}ms`
+ 							);
+ 						} else {
+ 							reports.push(...one);
+```
+
+**File**: `test/templates/WatchTestCases.js` (modified, +12/-0)
+```diff
+@@ -545,6 +545,18 @@ const describeCases = (config) => {
+ 											)
+ 										);
+ 									}
++									for (const child of compilers) {
++										const { watching } = child;
++										const compilation = lastChildCompilations.get(child);
++										if (!watching || !watching.suspended || !compilation) continue;
++										// a watch the OS dropped under load reports no re-touch either: a new
++										// watcher from the last start time reports every change since then
++										watching.watch(
++											compilation.fileDependencies,
++											compilation.contextDependencies,
++											compilation.missingDependencies
++										);
++									}
+ 									// macOS can drop a change event entirely
+ 									const now = new Date();
+ 									for (const file of unseenChanges) {
+```
+
+**File**: `test/unitCases/PackFileCacheStrategy.unittest.js` (modified, +59/-16)
+```diff
+@@ -97,24 +97,24 @@ describe("PackFileCacheStrategy", () => {
  		});
- 		return null;
- 	}
- 	if (first.statement === true) {
- 		writer.rewriteRetractable(first.at, text);
- 		first.statement = false;
- 		first.entry = entry;
-+		first.owned = false;
- 		return null;
- 	}
- 	// Both bodies keep their order, so the layer reads as it was written.
-@@ -7038,25 +7105,35 @@ const _emitTopLevel = (
- 		// Read as rules where they can be, so the pair meeting at the seam joins too
- 		// - the gather is what makes those two neighbors. A layer block always went
- 		// out with the entry it printed, which is what both of these are.
--		const before = /
-```
-
-**File**: `lib/html/syntax-parser.js` (modified, +159/-23)
-```diff
-@@ -13973,20 +13973,94 @@ const _minifyOpenTag = (path, open) => {
- 	const kept = _rewriteOpenTag(path, open);
- 	tree._keepUndecidedCharset = false;
- 	if (!tree._charsetUndecided) return kept;
--	// Held only where the tag goes straight out, as `_emitOpening` splits it, and
--	// rewritten only where that defers nothing a second time.
--	const depth = tree._printDepth;
--	if (
--		tree._printOpen[depth - 1] !== 1 ||
--		(holes !== undefined && holes.length !== deferred)
--	) {
-+	// Held as is where the tag goes straight out, as `_emitOpening` splits it;
-+	// inside an element printed whole, marked for `_emitPiece` to split.
-+	const streamed = tree._printOpen[tree._printDepth - 1] === 1;
-+	if (!streamed && (_sourceHoldsNul() || _inRenderedSvg(path.node))) {
- 		return kept;
- 	}
-+	// Deferred again under the same ids, so both rewrites spell the same markers.
-+	if (holes !== undefined) holes.length = deferred;
- 	const dropped = _rewriteOpenTag(path, open);
--	tree._heldTagNode = path.node;
--	tree._heldTagDropped = dropped;
--	tree._heldTagKept = kept;
--	return dropped;
-+	if (streamed) {
-+		tree._heldTagNode = path.node;
-+		tree._heldTagDropped = dropped;
-+		tree._heldTagKept = kept;
-+		return dropped;
-+	}
-+	const start = _sharedStart(dropped, kept);
-+	const end = _sharedEnd(dropped, kept, start);
-+	const id = tree._markedCharsets.length;
-+	tree._markedCharsets.push(
-+		dropped.slice(start, dropped.length - end),
-+		kept.slice(start, kept.length - end)
-+	);
-+	return `${dropped.slice(0, start)}\u0000charset${id}\u0000${dropped.slice(
-+		dropped.length - end
-+	)}`;
-+};
-+
-+/**
-+ * Whether the source holds a NUL, which could spell a mark of `_minifyOpenTag`'s
-+ * where it prints; read once a run, on the first tag that would be marked.
-+ * @returns {boolean} true when it does
-+ */
-+const _sourceHoldsNul = () => {
-+	if (_S._sourceHoldsNul === undefined) {
-+		_S._sourceHoldsNul = _S._input.includes("\u0000");
-+	}
-+	return _S._sourceHoldsNul;
-+};
-+
-+/**
-+ * Whether an element sits in an SVG subtree another language's renderer is
-+ * offered whole, whose text a mark would reach.
-+ * @param {HtmlNodeRef} node the element
-+ * @returns {boolean} true when it does
-+ */
-+const _inRenderedSvg = (node) => {
-+	if (
-+		_S._renderEmbeddedSource === undefined &&
-+		_S._deferEmbeddedSource === undefined
-+	) {
-+		return false;
-+	}
-+	for (let a = _parentOf(node); a !== 0; a = _parentOf(a)) {
-+		if (_namespaceOf(a) === NS_SVG) return true;
-+	}
-+	return false;
-+};
-+
-+/**
-+ * How many characters a tag's dropped and kept rewrites share at their start.
-+ * @param {string} dropped the rewrite without the undecided charset
-+ * @param {string} kept the rewrite with it
-+ * @returns {number} the length of their common start
-+ */
-+const _sharedStart = (dropped, kept) => {
-+	let start = 0;
-+	while (dropped.charCodeAt(start) === kept.charCodeAt(start)) start++;
-+	return start;
-+};
-+
-+/**
-+ * How many characters a tag's dropped and kept rewrites share at their end,
-+ * past the start they share.
-+ * @param {string} dropped the rewrite without the undecided charset
-+ * @param {string} kept the rewrite with it
-+ * @param {number} start the length of their common start
-+ * @returns {number} the length of their common end
-+ */
-+const _sharedEnd = (dropped, kept, start) => {
-+	let end = 0;
-+	while (
-+		end < dropped.length - start &&
-+		dropped.charCodeAt(dropped.length - 1 - end) ===
-+			kept.charCodeAt(kept.length - 1 - end)
-+	) {
-+		end++;
-+	}
-+	return end;
- };
+ 	});
  
- /**
-@@ -14825,6 +14899,12 @@ class HtmlSyntaxTree {
- 		this._heldTagNode = 0;
- 		this._heldTagDropped = "";
- 		this._heldTagKept = "";
-+		// Whether the source holds a NUL, undefined until asked, and the dropped
-+		// and kept text of each tag marked in an element printed whole, in pairs.
-+		/** @type {boolean | undefined} */
-+		this._sourceHoldsNul = undefined;
-+		/** @type {string[]} */
-+		this._markedCharsets = [];
- 		/** @type {Map<HtmlNodeRef, HtmlNodeRef> | null} */
- 		this._fosteredNodes = null;
- 		// Tables whose run has to move but cannot be replayed by re-nesting it. Their own
-@@ -19231,10 +19311,53 @@ const _emitPiece = (text) => {
- 		tree._printPendingNames.length = 0;
- 		w.flushPending();
- 	}
--	w.emitStreamed(text);
-+	if (tree._markedCharsets.length !== 0 && text.includes("\u0000")) {
-+		_emitMarked(w, text);
-+	} else {
-+		w.emitStreamed(text);
-+	}
- 	if (tree._heldCharsets !== null) _documentDeclaresUtf8();
- };
- 
-+// What `_minifyOpenTag` writes where a held tag's rewrites differ, naming the
-+// pair in `_markedCharsets`; a deferred write's marker has a `:` in it.
-+// eslint-disable-next-line no-control-regex
-+const CHARSET_MARK_REGEXP = /\u0000charset(\d+)\u0000/g;
-+
-+/**
-+ * Emit a piece holding `_minifyOpenTag`'s marks: the span from the first to the
-+ * last goes out as one piece of its own, dropped, for `_settleUtf8` to write back.
-+ * @param {PrintContext} w the print context
-+ * @param {string} text output text
-+ */
-+const _emitMarked = (w, text) => {
-+	const tree = _S;
-+	const m
-```
-
-**File**: `lib/javascript/syntax-printer.js` (modified, +322/-82)
-```diff
-@@ -6314,6 +6314,12 @@ const createNodePrinter = (modules) => {
- 	// The expression statements of bodies, whose purity the walk finds last.
- 	/** @type {number[]} */
- 	const expressionStatements = [];
-+	// The ones kept, which may run nothing once a write they hold goes.
-+	/** @type {number[]} */
-+	const heldWriteStatements = [];
-+	// Each `return` ending a function's body, then the function.
-+	/** @type {number[]} */
-+	const pureTails = [];
- 	// By `if` with no `else`, the `return` or such `if` after it, and by
- 	// that statement, the `if`: a chain `if_return` may print as one `return`.
- 	/** @type {Map<number, number>} */
-@@ -7062,16 +7068,20 @@ const createNodePrinter = (modules) => {
- 			if (hasEdgeComments(call)) return false;
- 			call = itemOf(0, Field.expressions, call);
- 		}
-+		call = optionalCallOf(call);
- 		if (
- 			typeOf(call) !== NodeType.CallExpression ||
--			A.flag(Flag.optional, call) ||
-+			!callsNeverNullish(call) ||
- 			hasEdgeComments(call)
- 		) {
- 			return false;
- 		}
--		const callee = childOf(Field.callee, call);
-+		const written = childOf(Field.callee, call);
-+		// A write nothing reads prints as the function it sets.
-+		const callee = writtenValueOf(written);
- 		return (
- 			typeOf(callee) === NodeType.FunctionExpression &&
-+			!hasEdgeComments(written) &&
- 			!hasEdgeComments(callee) &&
- 			reducedCalls.get(call) === undefined &&
- 			!callsEmptyFunction(call) &&
-@@ -7533,18 +7543,16 @@ const createNodePrinter = (modules) => {
- 		}
- 		const type = typeOf(shown);
- 		// A sequence prints in parentheses of its own, as a function, class or
--		// object opening the statement does; a class or object opening nothing
--		// is bare, as one a template tags directly is.
-+		// object opening the statement does; a class or object opening no
-+		// statement is bare, as one a template tags directly is.
- 		return type === NodeType.SequenceExpression ||
- 			((type === NodeType.FunctionExpression ||
- 				type === NodeType.ClassExpression ||
- 				type === NodeType.ObjectExpression) &&
- 				text.charCodeAt(0) === 40) ||
- 			((type === NodeType.ClassExpression ||
- 				type === NodeType.ObjectExpression) &&
--				!firstInStatement(template, 0, true) &&
--				!opensArrowBody(template) &&
--				!opensExportDefault(template))
-+				!firstInStatement(template, 0, true))
- 			? TAG_BARE
- 			: -1;
- 	};
-@@ -7560,21 +7568,12 @@ const createNodePrinter = (modules) => {
- 	};
- 
- 	/**
--	 * @param {number} object what a member a template tags reads
--	 * @param {number} template the template
--	 * @returns {boolean} whether it is an object, or a write nothing reads printing one opening no statement, which the template parenthesizes the member around
-+	 * @param {number} fn a function, or another node
-+	 * @returns {boolean} whether it is called where it is and prints as its statements, none of itself, so takes no parentheses
- 	 */
--	const objectTagsWrapped = (object, template) => {
--		if (!printsAsValue(object)) {
--			return typeOf(object) === NodeType.ObjectExpression;
--		}
--		return (
--			typeOf(writtenValueOf(object)) === NodeType.ObjectExpression &&
--			!firstInStatement(template, 0, true) &&
--			!opensArrowBody(template) &&
--			!opensExportDefault(template)
--		);
--	};
-+	const printsStatementsOf = (fn) =>
-+		(blockBodies.size !== 0 && blockBodies.has(fn)) ||
-+		(unreadBodies.size !== 0 && unreadBodies.has(fn));
- 
- 	/**
- 	 * @param {number} node a node
-@@ -7609,7 +7608,9 @@ const createNodePrinter = (modules) => {
- 			(type === NodeType.MemberExpression &&
- 				!A.flag(Flag.computed, tag) &&
- 				A.type(A.field(0, Field.property, tag)) === NodeType.Identifier &&
--				objectTagsWrapped(childOf(Field.object, tag), template))
-+				// An object, or a write nothing reads setting one.
-+				typeOf(writtenValueOf(childOf(Field.object, tag))) ===
-+					NodeType.ObjectExpression)
- 		);
- 	};
- 
-@@ -8988,7 +8989,8 @@ const createNodePrinter = (modules) => {
- 				// `var` whose declarators all print as parameters.
- 				(compresses &&
- 					(typeOf(statement) === NodeType.ExpressionStatement ||
--						typeOf(statement) === NodeType.VariableDeclaration) &&
-+						typeOf(statement) === NodeType.VariableDeclaration ||
-+						(voidTails.size !== 0 && voidTails.has(statement))) &&
- 					!holdsComments(statement) &&
- 					/** @type {JavascriptPrintContext} */ (writer).get(statement)
- 						.length === 0)
-@@ -9556,7 +9558,7 @@ const createNodePrinter = (modules) => {
- 		if (
- 			bareExpressionBodies.size === 0 ||
- 			typeOf(call) !== NodeType.CallExpression ||
--			!bareExpressionBodies.has(childOf(Field.callee, call)) ||
-+			!bareExpressionBodies.has(writtenValueOf(childOf(Field.callee, call))) ||
- 			hasEdgeComments(statement)
- 		) {
- 			return false;
-@@ -10210,7 +10212,7 @@ const createNodePrinter = (modules) => {
- 	 */
- 	const isPureValue = (node) => {
- 		const context = effectsContext();
--		context.decides = throwingThis.size === 0 ? undefined : thisMayThrow;
-+		context.decides = decidesEffects;
- 		// What folds to a value only converts 
-```
-
-**File**: `test/configCases/html/markers-in-module-paths/webpack.config.js` (modified, +5/-4)
-```diff
-@@ -15,10 +15,11 @@ const writeModule = (root, marker, name) => {
- 	const directory = path.join(root, `${name}*${marker}`);
- 	fs.mkdirSync(directory, { recursive: true });
- 	const file = path.join(directory, `${name}.js`);
--	fs.writeFileSync(
--		file,
--		`(global.markerDirectories = global.markerDirectories || []).push(${JSON.stringify(name)});\n`
--	);
-+	const content = `(global.markerDirectories = global.markerDirectories || []).push(${JSON.stringify(name)});\n`;
-+	// A rewrite bumps the mtime, so the cached build would rebuild the module.
-+	if (!fs.existsSync(file) || fs.readFileSync(file, "utf8") !== content) {
-+		fs.writeFileSync(file, content);
-+	}
- 	return file;
- };
- 
-```
-
-**File**: `test/fixtures/css/css-syntax-minify-a-run-of-nested-layer-blocks-grows-the-block-each-join-nests-in-place/fixture.js` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
-+"use strict";
-+
-+const { repeat } = require("../_shared/record");
-+
-+/**
-+ * @returns {string} the stylesheet the test reads
-+ */
-+const source = () =>
-+	`${repeat(
-+		4,
-+		(i) => `@layer a{@media print{.c${i}{z-index:${i}}}}`
-+	)}@layer a{@media print{.c1{z-index:1}}}${repeat(
-+		3,
-+		(i) => `@layer a{@media print{@supports (display:grid){.s${i}{top:${i}px}}}}`
-+	)}@layer a{@media print{.d{top:0}}.e{top:0}}${repeat(
-+		2,
-+		(i) => `@layer a{@media print{.f${i}{top:0}}}`
-+	)}`;
-+
-+module.exports = { source };
-```
-
-**File**: `test/fixtures/css/css-syntax-minify-two-layers-gathered-in-turn-read-only-the-children-each-join-adds/fixture.js` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+"use strict";
-+
-+const { repeat } = require("../_shared/record");
-+
-+/**
-+ * @returns {string} the stylesheet the test reads
-+ */
-+const source = () =>
-+	`${repeat(
-+		4,
-+		(i) => `@layer a{.a${i}{z-index:${i}}}@layer b{.b${i}{z-index:${i}}}`
-+	)}@layer a{.a1{z-index:1}}${repeat(
-+		3,
-+		(i) =>
-+			`@layer a{@media print{.m${i}{top:${i}px}}}@layer b{@media print{.n${i}{top:${i}px}}}`
-+	)}@layer c{}@layer c{.x{top:0}}@layer c{.y{top:0}}`;
-+
-+module.exports = { source };
-```
-
-**File**: `test/fixtures/css/css-syntax-minify-two-layers-gathered-in-turn-settle-the-list-a-nested-block-grows-once/fixture.js` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+"use strict";
-+
-+const { repeat } = require("../_shared/record");
-+
-+/**
-+ * @returns {string} the stylesheet the test reads
-+ */
-+const source = () =>
-+	`${repeat(
-+		4,
-+		(i) =>
-+			`@layer a{@media print{.a${10 - i}{color:red}}}@layer b{@media print{@supports (display:grid){.b${10 - i}{color:red}}}}`
-+	)}@layer a{@media print{.a8,.a10{color:red}.x{top:0}}}@layer b{@media screen{.b9{color:red}}}${repeat(
-+		3,
-+		(i) =>
-+			`@layer a{@media print{.c${3 - i}{color:red}}}@layer b{@media screen{.d${3 - i}{color:red}}}`
-+	)}@layer a{@media print{.e{color:red}}@media print{.f{color:red}}}@layer b{@media screen{.d4{color:red}}}@layer a{@media print{.c1,.c2{color:blue}}}@layer b{@media screen{@supports (display:grid){.d1{color:red}}}}`;
-+
-+module.exports = { source };
-```
-
----
-
-### Incident Patch 3: `4fce4e6f` (2026-11-16)
-**Commit Message**: fix: drop a script charset and fold more template tags in one pass, join layer blocks linearly (#23371)
-
-* fix(html): drop a script's charset a minified meta declares in one pass
-
-A `<meta charset>` brought into the first 1024 bytes only by minifying
-needed a second pass to drop `charset=utf-8` from a `<script>` before it:
-the printer decided the attribute as it wrote the tag. While the encoding
-prescan of the print so far has no answer, the tag now goes out with the
-attribute dropped as a piece of its own, settled once the prescan answers
-and written back where the answer is no. Run joining, empty elements and
-`sortAttributes` read an undecided charset as dropped, so they agree with
-the next pass. A script inside an element printed whole, such as `<pre>`,
-still decides at once.
-
-Claude-Session: https://claude.ai/code/session_013FhutRjRnaBAwgtK8Qe5bW
-
-* fix(javascript): print more unread writes a template tags or calls in one pass
-
-An unread write whose value folds to a name still printed `(0,f)` as a tag
-or callee, which the next pass dropped to `f`; it now prints the name bare,
-as a call binds no `this` to it either way, `eval`, an escape and a `with`
-aside. An object or class it
-
-**File**: `.changeset/273-one-pass-charset-tags-linear-layers.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"webpack": patch
-+---
-+
-+Minify a script `charset` and template tags in one pass, `@layer` runs faster.
-```
-
-**File**: `lib/css/syntax-parser.js` (modified, +101/-20)
-```diff
-@@ -2280,6 +2280,7 @@ const _setupParse = (input, lc, parseError) => {
- 	_S._customMediaAllowed = true;
- 	_S._loweringNesting = false;
- 	_S._pendingNested.length = 0;
-+	_S._rulesPrecede = null;
- 	_S._customMedia.clear();
- 	_S._customSelectors.clear();
- 	_S._customAtRulesFixed =
-@@ -6166,6 +6167,7 @@ const _streamConsumeBlock = (ts, rule) => {
- 	_S._streamWalked = rule;
- };
- 
-+/** @typedef {{ result: BlockSpans | null, children: RuleEntry[] | null, stable: number, at: number, count: number, boundary: RuleEntry | null }} JoinedRun where a read of a run of joined at-rule blocks stopped: what it answered, over which children, the child it resumes at, the body offset and span count before that child, and the child before it */
- /** @typedef {{ node: Node, offset: number, line: number | undefined, column: number | undefined, entry: RuleEntry, owned: boolean, own: BlockSpans | undefined, parted: boolean }} HeldTopLevel one top-level rule held back for a join, with where it stood, what it recorded, and whether a kept comment stands above it */
- 
- /** @typedef {{ taken: TakenPiece, span: RuleSpan, entry: RuleEntry, prelude: number, grown: boolean }} PriorTopLevel the top-level rule last written out, the piece it stands in, how far into it its block starts, and whether a later rule's selectors joined its list */
-@@ -7904,28 +7906,48 @@ const _mergeJoinedBoxLonghands = (declarations) => {
-  * @param {RuleEntry} merged the at-rule, or one block of it
-  * @returns {BlockSpans} what the at-rule records
-  */
--const _joinedAtRuleSpans = (merged) => {
-+const _joinedAtRuleSpans = (merged) =>
-+	_atRuleSpansFrom(merged, merged.text.slice(merged.prelude + 1, -1), 0, 0, []);
-+
-+/**
-+ * `_joinedAtRuleSpans` from one child on. Without a body to read, the children
-+ * stand end to end, as `_joinRuleEntries` writes them, and the read is noted in
-+ * `_S._joinedRun` for the next join of the run to go on from.
-+ * @param {RuleEntry} merged the at-rule, or one block of it
-+ * @param {string | null} body its body, or null where its children stand end to end
-+ * @param {number} from the child to read from
-+ * @param {number} at where that child stands in the body
-+ * @param {RuleSpan[]} spans the spans of the children before it
-+ * @returns {BlockSpans} what the at-rule records
-+ */
-+const _atRuleSpansFrom = (merged, body, from, at, spans) => {
- 	// An at-rule's entry is always built with its children, never `null`.
- 	const children = /** @type {RuleEntry[]} */ (merged.children);
--	const prelude = _entryPrelude(merged);
--	/** @type {RuleSpan[]} */
--	const spans = [];
--	// Rules sit side by side, but declarations written straight into the block
--	// are parted with `;`, so each child is found where it landed.
--	const body = merged.text.slice(merged.prelude + 1, -1);
--	let at = 0;
--	for (const child of children) {
--		let found = body.indexOf(child.text, at);
-+	const last = children.length - 1;
-+	for (let i = from; i <= last; i++) {
-+		const child = children[i];
- 		let length = child.text.length;
--		// The block's last declaration prints without its `;`.
--		if (found === -1 && child.text.endsWith(";")) {
--			length--;
--			found = body.indexOf(child.text.slice(0, -1), at);
--		}
--		if (found === -1 || /[^;]/.test(body.slice(at, found))) {
--			return _WHOLE_TEXT_SPANS;
-+		if (body !== null) {
-+			// Rules sit side by side, but declarations written straight into the
-+			// block are parted with `;`, so each child is found where it landed.
-+			let found = body.indexOf(child.text, at);
-+			// The block's last declaration prints without its `;`.
-+			if (found === -1 && child.text.endsWith(";")) {
-+				length--;
-+				found = body.indexOf(child.text.slice(0, -1), at);
-+			}
-+			if (found === -1 || /[^;]/.test(body.slice(at, found))) {
-+				return _WHOLE_TEXT_SPANS;
-+			}
-+			at = found;
-+		} else if (i === last) {
-+			// The last child is the one the next join's seam may replace.
-+			const run = _S._joinedRun;
-+			run.stable = last;
-+			run.at = at;
-+			run.count = spans.length;
-+			run.boundary = last === 0 ? null : children[last - 1];
- 		}
--		at = found;
- 		if (child.prelude === -1) {
- 			// What no join reads is noted as nothing to take back, which costs at most
- 			// a copy of what it holds; the rules beside it stay ones to take.
-@@ -7966,7 +7988,8 @@ const _joinedAtRuleSpans = (merged) => {
- 		}
- 		at += child.text.length;
- 	}
--	if (/[^;]/.test(body.slice(at))) return _WHOLE_TEXT_SPANS;
-+	if (body !== null && /[^;]/.test(body.slice(at))) return _WHOLE_TEXT_SPANS;
-+	const prelude = _entryPrelude(merged);
- 	return {
- 		bodyAt: merged.prelude + 1,
- 		prelude,
-@@ -7978,6 +8001,44 @@ const _joinedAtRuleSpans = (merged) => {
- 	};
- };
- 
-+/**
-+ * `_joinedAtRuleSpans` of an at-rule `_joinRuleEntries` just joined, whose body
-+ * is its children's texts end to end. A run of joins reads on from the child the
-+ * last join could still have replaced, its spans kept.
-+ * @param {RuleEntry} merged the at-rule the join wrote
-+ * @param {BlockSpans | undefined}
-```
-
-**File**: `lib/css/syntax-printer.js` (modified, +35/-17)
-```diff
-@@ -2676,34 +2676,52 @@ const _parentNamed = (prelude) => {
-  * @returns {boolean} true when no declaration follows a rule
-  */
- const _declarationsPrecedeRules = (path, rule) => {
-+	// Asked by each rule nested in it, so answered once; a node id names another
-+	// rule once a streamed one is done, which its start tells apart.
-+	const start = path.start(rule);
-+	if (_S._rulesPrecede === null) _S._rulesPrecede = new Map();
-+	const known = _S._rulesPrecede.get(rule);
-+	if (known !== undefined && Math.floor(known / 2) === start) {
-+		return known % 2 === 1;
-+	}
-+	const precede = _readDeclarationsPrecedeRules(path, rule);
-+	_S._rulesPrecede.set(rule, start * 2 + (precede ? 1 : 0));
-+	return precede;
-+};
-+
-+/**
-+ * `_declarationsPrecedeRules` read off the block.
-+ * @param {CssPath} path the walk's accessors
-+ * @param {Node} rule the enclosing rule
-+ * @returns {boolean} true when no declaration follows a rule
-+ */
-+const _readDeclarationsPrecedeRules = (path, rule) => {
- 	const decls = _declarationsOf(rule);
- 	if (decls === null || decls.length === 0) return true;
- 	// The rule asking holds this one, so the list it is in is never empty.
- 	const rules = /** @type {Rule[]} */ (_rulesOf(rule));
- 	// The parser's list, in source order: the last declaration starts last.
- 	const lastDecl = path.start(decls[decls.length - 1]);
--	/** @type {Rule[] | null} */
--	let before = null;
--	for (let i = 0; i < rules.length; i++) {
--		if (path.start(rules[i]) > lastDecl) continue;
--		if (before === null) before = [];
--		before.push(rules[i]);
-+	let before = false;
-+	for (let i = 0; i < rules.length && !before; i++) {
-+		before = path.start(rules[i]) <= lastDecl;
- 	}
--	if (before === null) return true;
-+	if (!before) return true;
- 	// A rule an identical later sibling restates is dropped as dead, so it parts
- 	// nothing: judged on the source, as the drop itself is decided after this.
- 	if (!_S._transforms.removeDeadRules) return false;
--	for (const early of before) {
--		const text = _printedSource(early);
--		let restated = false;
--		for (let i = 0; i < rules.length; i++) {
--			const other = rules[i];
--			if (path.start(other) > lastDecl && _printedSource(other) === text) {
--				restated = true;
--				break;
--			}
-+	/** @type {Set<string>} */
-+	const later = new Set();
-+	for (let i = 0; i < rules.length; i++) {
-+		if (path.start(rules[i]) > lastDecl) later.add(_printedSource(rules[i]));
-+	}
-+	for (let i = 0; i < rules.length; i++) {
-+		if (
-+			path.start(rules[i]) <= lastDecl &&
-+			!later.has(_printedSource(rules[i]))
-+		) {
-+			return false;
- 		}
--		if (!restated) return false;
- 	}
- 	return true;
- };
-```
-
-**File**: `lib/html/syntax-parser.js` (modified, +145/-10)
-```diff
-@@ -12445,13 +12445,14 @@ const _isRedundantAttribute = (markers, defaults, tagName, name, value) => {
- 		);
- 	}
- 	// `<script charset>` decides how a classic script is decoded, so it restates
--	// the default only where the document declares UTF-8 itself.
-+	// the default only where the document declares UTF-8 itself. Undecided reads
-+	// as dropped: `_minifyOpenTag` prints one held, to write back on a no.
- 	if (tagName === "script" && name === "charset") {
- 		return (
--			_documentDeclaresUtf8() &&
- 			// The attribute value the spec spells, not a Node encoding identifier.
- 			// eslint-disable-next-line unicorn/text-encoding-identifier-case
--			(lowered === "utf-8" || lowered === "utf8")
-+			(lowered === "utf-8" || lowered === "utf8") &&
-+			_documentDeclaresUtf8() !== false
- 		);
- 	}
- 	if (markers !== undefined && markers[name] === lowered) return true;
-@@ -13937,6 +13938,16 @@ const _writeStyle = (
- 					delimiter
- 				);
- 
-+/**
-+ * Note a `<script charset=utf-8>` dropped while the answer is still out, and
-+ * whether this rewrite prints it all the same.
-+ * @returns {boolean} true when it prints
-+ */
-+const _holdsCharset = () => {
-+	_S._charsetUndecided = true;
-+	return _S._keepUndecidedCharset;
-+};
-+
- /**
-  * Rewrite an opening tag from its own source spans, collapsing the whitespace
-  * between its attributes to one space and dropping the quotes around any value
-@@ -13954,6 +13965,38 @@ const _writeStyle = (
-  * @returns {string} the minified opening tag
-  */
- const _minifyOpenTag = (path, open) => {
-+	const tree = _S;
-+	tree._charsetUndecided = false;
-+	tree._keepUndecidedCharset = true;
-+	const holes = tree._deferEmbeddedSource;
-+	const deferred = holes === undefined ? 0 : holes.length;
-+	const kept = _rewriteOpenTag(path, open);
-+	tree._keepUndecidedCharset = false;
-+	if (!tree._charsetUndecided) return kept;
-+	// Held only where the tag goes straight out, as `_emitOpening` splits it, and
-+	// rewritten only where that defers nothing a second time.
-+	const depth = tree._printDepth;
-+	if (
-+		tree._printOpen[depth - 1] !== 1 ||
-+		(holes !== undefined && holes.length !== deferred)
-+	) {
-+		return kept;
-+	}
-+	const dropped = _rewriteOpenTag(path, open);
-+	tree._heldTagNode = path.node;
-+	tree._heldTagDropped = dropped;
-+	tree._heldTagKept = kept;
-+	return dropped;
-+};
-+
-+/**
-+ * `_minifyOpenTag`'s rewrite, printing a `<script charset=utf-8>` the answer
-+ * is still out on as `_keepUndecidedCharset` says.
-+ * @param {HtmlPath} path the accessor positioned on the element
-+ * @param {string} open the opening tag's source text
-+ * @returns {string} the minified opening tag
-+ */
-+const _rewriteOpenTag = (path, open) => {
- 	const tree = _S;
- 	const node = path.node;
- 	const tagStart = tree._starts[node];
-@@ -14123,7 +14166,13 @@ const _minifyOpenTag = (path, open) => {
- 				)) ||
- 				_isRemovableEmptyAttribute(elementName, attributeName, rawValue) ||
- 				(attributeName === "style" &&
--					_styleRendersEmpty(elementName, rawValue)))
-+					_styleRendersEmpty(elementName, rawValue))) &&
-+			!(
-+				tree._declaresUtf8 === undefined &&
-+				attributeName === "charset" &&
-+				elementName === "script" &&
-+				_holdsCharset()
+-	describe("PackContent writeLazy", () => {
+-		/**
+-		 * @param {() => EXPECTED_ANY} lazy the content's lazy value
+-		 * @param {string[]} messages collects every logged message
+-		 * @returns {EXPECTED_ANY} the pack's content holding items a and b
+-		 */
+-		const createContent = (lazy, messages) => {
+-			const pack = /** @type {EXPECTED_ANY} */ (
+-				getSerializer("Pack").deserialize(
+-					createContext(
+-						["a", "b", null, "etag-a", "etag-b", 1, 2, new Set(["a", "b"]), lazy, null],
+-						{ logger: createLogger(messages) }
+-					)
++	/**
++	 * @param {() => EXPECTED_ANY} lazy the content's lazy value
++	 * @param {string[]} messages collects every logged message
++	 * @returns {EXPECTED_ANY} the pack's content holding items a and b
++	 */
++	const createContent = (lazy, messages) => {
++		const pack = /** @type {EXPECTED_ANY} */ (
++			getSerializer("Pack").deserialize(
++				createContext(
++					["a", "b", null, "etag-a", "etag-b", 1, 2, new Set(["a", "b"]), lazy, null],
++					{ logger: createLogger(messages) }
+ 				)
+-			);
+-			return pack.content[0];
+-		};
 +			)
- 		) {
- 			consumedEnd = valueEnd;
- 			continue;
-@@ -14762,6 +14811,20 @@ class HtmlSyntaxTree {
- 		// Whether the document declares UTF-8, which makes `<script charset=utf-8>` redundant.
- 		/** @type {boolean | undefined} */
- 		this._declaresUtf8 = false;
-+		// The `<script charset=utf-8>` pieces printed dropped while that answer is
-+		// still out, each with the text it writes back where the answer is no.
-+		/** @type {number[] | null} */
-+		this._heldCharsets = null;
-+		/** @type {string[]} */
-+		this._heldCharsetTexts = [];
-+		// Out of band from `_minifyOpenTag`: an undecided charset it met, whether it
-+		// prints that one, and the tag it held for `_emitOpening` to split.
-+		this._charsetUndecided = false;
-+		this._keepUndecidedCharset = false;
-+		/** @type {HtmlNodeRef} */
-+		this._heldTagNode = 0;
-+		this._heldTagDropped = "";
-+		this._heldTagKept = "";
- 		/** @type {Map<HtmlNodeRef, HtmlNodeRef> | null} */
- 		this._fosteredNodes = null;
- 		// Tables whose run has to move but cannot be replayed by re-nesting it. Their own
-@@ -19169,6 +19232,45 @@ const _emitPiece = (text) => {
- 		w.flushPending();
- 	}
- 	w.emitStreamed(text);
-+	if (tree._heldCharsets !== null) _documentDeclaresUtf8();
-+};
-+
-+/**
-+ * Emit a piece that opens with an element's start tag, splitting out what
-+ * `_minifyOpenTag` held: the bytes where its dropped and kept rewrites differ go
-+ * out as a piece of their own, dropped, for `_settleUtf8` to write back.
-+ * @param {string} text output text, the start tag first
-+ */
-+const _emitOpening = (text) => {
-+	const tree = _S;
-+	if (tree._heldTagNode === 0) {
-+		_emitPiece(text);
-+		return;
-+	}
-+	tree._heldTagNode = 0;
-+	const dropped = tree._heldTagDropped;
-+	const kept = tree._heldTagKept;
-+	tree._heldTagDropped = "";
-+	tree._heldTagKept = "";
-+	let start = 0;
-```
-
-**File**: `lib/javascript/syntax-printer.js` (modified, +72/-10)
-```diff
-@@ -7534,16 +7534,49 @@ const createNodePrinter = (modules) => {
- 		}
- 		const type = typeOf(shown);
- 		// A sequence prints in parentheses of its own, as a function, class or
--		// object opening the statement does.
-+		// object opening the statement does; a class or object opening nothing
-+		// is bare, as one a template tags directly is.
- 		return type === NodeType.SequenceExpression ||
- 			((type === NodeType.FunctionExpression ||
- 				type === NodeType.ClassExpression ||
- 				type === NodeType.ObjectExpression) &&
--				text.charCodeAt(0) === 40)
-+				text.charCodeAt(0) === 40) ||
-+			((type === NodeType.ClassExpression ||
-+				type === NodeType.ObjectExpression) &&
-+				!firstInStatement(template, 0, true) &&
-+				!opensArrowBody(template) &&
-+				!opensExportDefault(template))
- 			? TAG_BARE
- 			: -1;
- 	};
- 
-+	/**
-+	 * @param {number} node a node
-+	 * @returns {number} what it prints as, past each write nothing reads and the parentheses each value is in
-+	 */
-+	const writtenValueOf = (node) => {
-+		let value = node;
-+		while (printsAsValue(value)) value = unwrap(childOf(Field.right, value));
-+		return value;
-+	};
-+
-+	/**
-+	 * @param {number} object what a member a template tags reads
-+	 * @param {number} template the template
-+	 * @returns {boolean} whether it is an object, or a write nothing reads printing one opening no statement, which the template parenthesizes the member around
-+	 */
-+	const objectTagsWrapped = (object, template) => {
-+		if (!printsAsValue(object)) {
-+			return typeOf(object) === NodeType.ObjectExpression;
-+		}
-+		return (
-+			typeOf(writtenValueOf(object)) === NodeType.ObjectExpression &&
-+			!firstInStatement(template, 0, true) &&
-+			!opensArrowBody(template) &&
-+			!opensExportDefault(template)
 +		);
++		return pack.content[0];
 +	};
-+
- 	/**
- 	 * @param {number} node a node
- 	 * @returns {boolean} whether it is an assignment that sets nothing read, which prints as its value
-@@ -7577,7 +7610,7 @@ const createNodePrinter = (modules) => {
- 			(type === NodeType.MemberExpression &&
- 				!A.flag(Flag.computed, tag) &&
- 				A.type(A.field(0, Field.property, tag)) === NodeType.Identifier &&
--				typeOf(childOf(Field.object, tag)) === NodeType.ObjectExpression)
-+				objectTagsWrapped(childOf(Field.object, tag), template))
- 		);
- 	};
  
-@@ -15473,7 +15506,11 @@ const createNodePrinter = (modules) => {
- 		if (!inlinesFunctions) return;
- 		const callee = childOf(Field.callee, call);
- 		const type = typeOf(callee);
--		if (type === NodeType.CallExpression && passesNothing(call)) {
-+		if (
-+			(type === NodeType.CallExpression ||
-+				type === NodeType.AssignmentExpression) &&
-+			passesNothing(call)
-+		) {
- 			// Its callee may print as a function, known once the walk is done.
- 			chainedCalls.push(call, parent);
- 			return;
-@@ -20684,7 +20721,9 @@ const createNodePrinter = (modules) => {
- 			// Called, it prints `(0,a.b)`; read as a value, bare.
- 			case NodeType.MemberExpression:
- 			case NodeType.ChainExpression:
--				return !isCallee(node, parent) && holdsReferenceAsValue(node, parent);
-+				return isCallee(node, parent)
-+					? callsBareText(value)
-+					: holdsReferenceAsValue(node, parent);
- 			case NodeType.Identifier:
- 				return !(isCallee(node, parent) && isReference(value));
- 			case NodeType.ThisExpression:
-@@ -23468,7 +23507,8 @@ const createNodePrinter = (modules) => {
- 		// the innermost first.
- 		for (let i = chainedCalls.length - 2; i >= 0; i -= 2) {
- 			const call = chainedCalls[i];
--			let fn = childOf(Field.callee, call);
-+			// A write nothing reads prints as the function it sets.
-+			let fn = writtenValueOf(childOf(Field.callee, call));
- 			// A call it returns may print as a function in turn.
- 			for (let inner; (inner = reducedCalls.get(fn)) !== undefined;) {
- 				if (reducesWithPrefix(inner)) break;
-@@ -29999,11 +30039,12 @@ const createNodePrinter = (modules) => {
++	describe("PackContent writeLazy", () => {
+ 		it("drops items it cannot restore so the rest of the pack stores", async () => {
+ 			/** @type {string[]} */
+ 			const messages = [];
+@@ -173,6 +173,49 @@ describe("PackFileCacheStrategy", () => {
+ 		});
+ 	});
  
- 	/**
- 	 * @param {number} node a call or `new`
--	 * @param {number} callee its callee
-+	 * @param {number} written its callee, a write nothing reads read as the value it sets
- 	 * @param {boolean=} passes whether it may pass arguments, none spread
- 	 * @returns {boolean} whether it calls, passing nothing, a function written in place whose body is empty and whose parameters are names, which gives `undefined`
- 	 */
--	const isEmptyFunctionCall = (node, callee, passes = false) => {
-+	const isEmptyFunctionCall = (node, written, passes = false) => {
-+		const callee = writtenValueOf(written);
- 		const type = typeOf(callee);
- 		if (
- 			typeOf(node) !== NodeType.CallExpression ||
-@@ -30551,7 +30592,7 @@ const createNodePrinter = (modules) => {
- 		) {
- 			return false;
- 		}
--		const callee = movedFunctionOf(childOf(Field.callee, node));
-+		const callee = movedFunctionOf(writtenValueOf(childOf(Field.callee, node)));
- 		const type = typeOf(callee);
- 		if (
- 			(type !== NodeType.FunctionExpression &&
-@@ -35757,7 +35798,11 @@ const createNodePrinter = (modules) => {
- 		// Nothing reads the name it sets: only its value runs.
- 		const value =
-```
-
-**File**: `test/fixtures/css/css-syntax-minify-a-run-of-joined-layer-blocks-reads-only-the-children-each-join-adds/fixture.js` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+"use strict";
++	describe("PackContent unpack", () => {
++		/**
++		 * @param {boolean} async whether the lazy value resolves later
++		 * @returns {EXPECTED_ANY} the content, restored from a memoized lazy
++		 */
++		const createRestoredContent = (async) => {
++			const SerializerMiddleware = require("../../lib/serialization/SerializerMiddleware");
++			const contentItems = getSerializer("PackContentItems").deserialize(
++				createContext([
++					true,
++					new Map([
++						["a", "value-a"],
++						["b", "value-b"]
++					])
++				])
++			);
++			const lazy = SerializerMiddleware.createLazy(
++				() => (async ? Promise.resolve(contentItems) : contentItems),
++				/** @type {EXPECTED_ANY} */ ({}),
++				{ size: 42 }
++			);
++			return createContent(lazy, []);
++		};
 +
-+const { repeat } = require("../_shared/record");
++		it.each([false, true])(
++			"releases the restored lazy value (async: %s)",
++			async (async) => {
++				const content = createRestoredContent(async);
 +
-+/**
-+ * @returns {string} the stylesheet the test reads
-+ */
-+const source = () =>
-+	`${repeat(
-+		6,
-+		(i) =>
-+			`@layer a{.c${i}{z-index:${i}}@media print{.m${i}{left:${i}px}}}`
-+	)}@layer a{.c2{z-index:2}}${repeat(
-+		3,
-+		(i) => `@media print{.x${i}{top:0}color:red}`
-+	)}`;
++				await content.unpack("a test needs it");
 +
-+module.exports = { source };
-```
-
-**File**: `test/fixtures/css/css-syntax-minify-lowering-nesting-reads-a-block-s-order-once-for-every-rule-nested-in-it/fixture.js` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+"use strict";
++				expect([...content.content]).toEqual([
++					["a", "value-a"],
++					["b", "value-b"]
++				]);
++				expect(() => content.lazy()).toThrow(
++					"A lazy value that has been unmemorized can't be called again"
++				);
++				expect(content.getSize()).toBe(42);
++			}
++		);
++	});
 +
-+const { repeat } = require("../_shared/record");
-+
-+/**
-+ * @returns {string} the stylesheet the test reads
-+ */
-+const source = () =>
-+	`.p{.a{top:0}${repeat(4, (i) => `.c${i}{z-index:${i}}`)}color:red;${repeat(
-+		4,
-+		(i) => `.c${i}{z-index:${i}}`
-+	)}.a{top:0}}.q{.b{top:0}color:red;${repeat(3, (i) => `.d${i}{left:${i}px}`)}}`;
-+
-+module.exports = { source };
-```
-
-**File**: `test/fixtures/css/css-syntax-minify-lowering-nesting-reads-a-block-s-order-once-for-every-rule-nested-in-it/options.json` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+[
-+	{
-+		"mode": "minify",
-+		"environment": { "browsers": ["chrome 100", "firefox 100", "safari 15.4"] }
-+	}
-+]
+ 	describe("PackContentItems deserialize", () => {
+ 		it("reads the map at once", () => {
+ 			const map = new Map([["a", 1]]);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23393** (2026-11-16): perf: cut calls on JavaScript minifier, HTML tokenizer and CSS printer hot paths (@alexander-akait)
-- **PR #23392** (2026-11-16): refactor(types): give each SourceProcessor its own path, typed by its state (@alexander-akait)
-- **PR #23391** (2026-11-16): feat(minify): honor terser's `pure_getters` compress option (@aryanraj45)
-- **PR #23388** (closed): refactor(syntax): reach other languages through their facades (@alexander-akait)
-- **PR #23387** (2026-11-16): fix: keep CSS imports in their layer and media, and CSS urls out of externals (@alexander-akait)
-- **PR #23386** (2026-11-16): test: hold syntax fixtures to scaling, async and module behavior, mangling, residue and agreement (@alexander-akait)
+- **PR #23502** (2026-11-20): docs: show each change by example in summaries (@alexander-akait)
+- **PR #23501** (2026-11-20): fix(html): read and write text in the encoding of a page not in UTF-8 (@alexander-akait)
+- **PR #23500** (2026-11-20): fix(asset): minify the SVG an asset/source module embeds (@alexander-akait)
+- **PR #23498** (2026-11-20): fix(javascript): map every statement the minifier joins into a sequence (@alexander-akait)
+- **PR #23496** (2026-11-20): perf(javascript): hold the parser's word cache in a third of the memory (@alexander-akait)
+- **PR #23495** (2026-11-20): fix(minify): close more one-pass gzip gaps to terser (@alexander-akait)
 
 ---
 
@@ -1562,31 +894,35 @@ aside. An object or class it
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: hold syntax fixtures to scaling, async and module behavior, mangling, resi
+## X. minify): close more one-pass gzip gaps to terser
 
 **RULE**:
-When implementing operations in `TESTING_DOCS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webpack/webpack. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/282-javascript-minify-one-pass-gaps.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webpack/webpack. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2aa70aa7`: test: hold syntax fixtures to scaling, async and module behavior, mangling, residue and agreement. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `88b41743`: minify): close more one-pass gzip gaps to terser. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `TESTING_DOCS.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/282-javascript-minify-one-pass-gaps.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-- **Syntax fixtures**: `fixtures/<css|html|xml|javascript>/<name>/index.<ext>` is one input to `unitCases/<lang>/invariants.unittest.js`, which snapshots its tokens, parse, errors and prints, and holds it to the relations in `helpers/syntaxInvariants/`: `spans`, `slices` and `purity` for the parser, each cut short inside a construct held to `spans` and `slices` as well (reported as `cut spans` and `cut slices`); idempotence (cuts included), respellings, `notices` and `meaning` for the printer; `behavior` for JavaScript; and `scaling` for a fixture built at a size. `notices` asks that the comments a minifier must keep survive (CSS and JavaScript legal notices, HTML conditional comments, server-side includes and `<?…?>`); `meaning` that the output reparses to what its source says (HTML and XML under every preset, CSS under `beautify`, JavaScript under the presets printing alone). XML's notices are the comments its minifier keeps (conditional comments, server-side includes and `<![`), and a compressing JavaScript preset owes only the banner's. Each CSS fixture is also held to `agreement` with css-tree. Which relation holds where, and why: [COMPARE_TOOLS.md](tooling/COMPARE_TOOLS.md). 
+---
+"webpack": patch
+---
+
+Fold known values, object assignments and unread parameters when minifying.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-- **Syntax fixtures**: `fixtures/<css|html|xml|javascript>/<name>/index.<ext>` is one input to `unitCases/<lang>/invariants.unittest.js`, which snapshots its tokens, parse, errors and prints, and holds it to the relations in `helpers/syntaxInvariants/`: `spans`, `slices` and `purity` for the parser; idempotence (cuts included), respellings, `notices` and `meaning` for the printer; and `behavior` for JavaScript. `notices` asks that the comments a minifier must keep survive (CSS and JavaScript legal notices, HTML conditional comments, server-side includes and `<?…?>`); `meaning` that the output reparses to what its source says (HTML and XML under every preset, CSS under `beautify`, JavaScript under the presets printing alone). XML carries no notices, and a compressing JavaScript preset owes only the banner's. Which relation holds where, and why: [COMPARE_TOOLS.md](tooling/COMPARE_TOOLS.md). Beside it, read by `helpers/fixture.js`:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2aa70aa7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `88b41743` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

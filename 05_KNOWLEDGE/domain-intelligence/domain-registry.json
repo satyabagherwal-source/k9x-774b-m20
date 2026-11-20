@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T23:30:02.238Z",
-  "total_records": 2191,
+  "last_updated": "2026-11-20T23:40:03.345Z",
+  "total_records": 2194,
   "domains": {
     "A": {
       "total": 17,
@@ -1412,7 +1412,7 @@
       ]
     },
     "H": {
-      "total": 511,
+      "total": 512,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1924,7 +1924,8 @@
         "domain_intelligence-technical-construction-intelligence-stikdebug-stikdebug-learnings-core-invariant",
         "domain_intelligence-technical-construction-intelligence-alibaba-zvec-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-xerj-org-xerj-learnings-core-invariants"
       ]
     },
     "I": {
@@ -2097,7 +2098,7 @@
       ]
     },
     "K": {
-      "total": 126,
+      "total": 128,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2224,7 +2225,9 @@
         "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-solidjs-solid-core-invariants",
         "DOM-K-B3BE81E5",
-        "domain_intelligence-quality-verification-intelligence-solidjs-solid-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-solidjs-solid-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-webpack-webpack-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-webpack-webpack-learnings-core-invariants"
       ]
     },
     "L": {
@@ -8924,8 +8927,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "e99fb5d17d34fc54756277ce0189fdf9fcbfefe07686030fbf2b6a75e10dd7ad",
-      "created_at": "2026-11-20T23:30:02.238Z"
+      "content_hash": "a4c78317b5cfec10dbf40d7cb7b18bbb107833fa3366a24c834ea90027881c29",
+      "created_at": "2026-11-20T23:40:03.345Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -31575,8 +31578,8 @@
       "title": "Technical Construction Intelligence: xerj-org/xerj Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-xerj-org-xerj-technical-construction-intelligence-xerj-org-xerj-core-invariants.md",
       "repository": "xerj-org/xerj",
-      "content_hash": "400cab4d47db433e51d753d94b67a11760ccaad84bac2b71f2c8ea25eafa7061",
-      "created_at": "2026-11-18T15:35:16.645Z"
+      "content_hash": "d6a47b8ff0fa08c9673fca9d86dcf0eb4531742a65f5945e76e71b9fe84a97a3",
+      "created_at": "2026-11-20T23:39:56.804Z"
     },
     "domain_intelligence-architecture-intelligence-beclab-olares-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-beclab-olares-learnings-core-invariants",
@@ -36877,6 +36880,33 @@
       "repository": "solidjs-solid-learnings",
       "content_hash": "cfc45de5592cf8da5c996f68b75a91c693df13147845da5ae1736028adb3fff8",
       "created_at": "2026-11-20T23:22:00.541Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-webpack-webpack-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-webpack-webpack-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: webpack/webpack Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-webpack-webpack-quality-verification-intelligence-webpack-webpack-core-invariant.md",
+      "repository": "webpack/webpack",
+      "content_hash": "de98036733434dfabf5f1276022d475affafafecd8ee949bf059d7ec160d94fd",
+      "created_at": "2026-11-20T23:39:48.379Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-webpack-webpack-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-webpack-webpack-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: webpack-webpack-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-webpack-webpack-learnings-quality-verification-intelligence-webpack-webpack-lear.md",
+      "repository": "webpack-webpack-learnings",
+      "content_hash": "ee8dda73012c3595d70827735c773fba11a9e0c753e0663108b45f57006ce749",
+      "created_at": "2026-11-20T23:40:00.773Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-xerj-org-xerj-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-xerj-org-xerj-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: xerj-org-xerj-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-xerj-org-xerj-learnings-technical-construction-intelligence-xerj-org-xerj-learni.md",
+      "repository": "xerj-org-xerj-learnings",
+      "content_hash": "55c31832832f1f3bbea3718fc415b720a499e28e28e0a2a74a2551b6df7dea35",
+      "created_at": "2026-11-20T23:40:01.952Z"
     }
   }
 }

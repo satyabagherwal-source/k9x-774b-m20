@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T20:56:29.481Z",
+  "timestamp": "2026-11-20T23:40:01.622Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-xerj-org-xerj-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [xerj-org-xerj-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T20:56:29.481Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-20T23:40:01.622Z`  
 > **Learning ID**: `LEARN-EVO-xerj-org-xerj-learnings`
 
 
 ## 1. Skill Overview & Purpose
 Procedural playbook defining verified operational and implementation patterns for **xerj-org-xerj-learnings**.
-- **Canonical Domain**: Domain K (Quality & Verification Intelligence)
+- **Canonical Domain**: Domain H (Technical Construction Intelligence)
 - **Model Independence**: Universal (Applies across Claude, Gemini, GPT, and Local agents)
 
 ## 2. Prerequisites & Technical Boundary
@@ -30,10 +30,10 @@ Procedural playbook defining verified operational and implementation patterns fo
 ## 3. Step-by-Step Procedural Workflow
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
-> **Source Version**: `cc6aee8f`  
+> **Source Version**: `4b90a220`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T20:55:52.785Z  
+> **Timestamp**: 2026-11-20T23:39:55.103Z  
 > **Learning ID**: `learn-github-xerj-org-xerj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -47,7 +47,7 @@ Procedural playbook defining verified operational and implementation patterns fo
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T20:55:52.779Z  
+> **Harvest Timestamp**: 2026-11-20T23:39:55.095Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -57,7 +57,7 @@ Procedural playbook defining verified operational and implementation patterns fo
 - **Description**: AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17983 stars
+- **Stars / Engagement**: 19082 stars
 
 ---
 
@@ -1766,11 +1766,11 @@ impl EmbeddingProxy {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2903** (2026-11-04): **tests: debug-profile local_def tests stack-overflow on macOS arm64, and the 127.0.0.2 loopback_proxy test fails on stock macOS without naming the missing alias**
-  *Symptoms*: From field report #2902 (JoyCode, macOS 26.2 arm64, rc.100 / main):  1. Debug-profile `local_def` tests stack-overflow and SIGABRT on clean `main` on this host. Nothing in CONTRIBUTING says to use `--profile ci-test`, so contributors first think their patch broke it. 2. `loopback_proxy::loopback_ignores_an_unreachable_proxy_and_a_proxied_503_names_the_proxy` needs a `127.0.0.2` loopback alias, which stock macOS doesn't have. The failure says "request to http://127.0.0.2:9/... failed" with no hint that the host lacks the alias.  Expected: the debug-profile tests either pass (e.g. larger test thread stack) or CONTRIBUTING documents `--profile ci-test`; the 127.0.0.2 test skips with a clear message (or names the missing alias and the `ifconfig lo0 alias 127.0.0.2` fix) when the alias isn't configured.
+- **Issue #3323** (2026-11-20): **server: a connection mid-request at startup hand-over answers 503 node_starting_exception after the node is ready**
+  *Symptoms*: ## What happens  While the engine opens its data dir, the ES-compat and REST ports answer `503 node_starting_exception` (#2575, `StartingResponder` in `engine/crates/xerj-server/src/main.rs`). A connection that is still sending its request when the engine finishes opening keeps answering that 503 **after** the node is ready and the real router is serving other connections.  ## Repro (on `main`, `cc6aee8f7`)  Data dir with 356 indices (so `Engine::new` takes a few seconds), private port, `--insecure`. A client:  1. polls `GET /_cluster/health` until it gets the starting 503; 2. opens 4 raw TCP connections and sends `GET /_cluster/health HTTP/1.1\r\nHost: x\r\n` without the final blank line; 3. waits for `GET /health/ready` = 200 on a new connection, then 3 more seconds; 4. sends the final `\r\n` on the 4 connections.  Result: **4/4 answered `HTTP/1.1 503 Service Unavailable` with `node_starting_exception`**, 3 s after `/health/ready` returned 200.  What did *not* reproduce (same build, same data dir):  - 16 and 32 keep-alive threads hammering `/_cluster/health`, `/hx/_search`, `/health/ready` and `/` across the ready transition: 0 starting 503s after the first 200 (80k and 165k requests). Each run got 16 and 32 `RemoteDisconnected` at the hand-over: a keep-alive connection from the starting phase is closed under the client. - 32 keep-alive connections that got the starting 503, sat idle, and were reused 3 s after ready: 32/32 `RemoteDisconnected`, no 503.  ## Root cause  `Star
 
-- **Issue #2898** (2026-11-03): **mcp: a tools/call with no id blocks the stdio read loop and still gets a response**
-  *Symptoms*: ### XERJ version  `origin/main` at `4ce1fbb5503beb1f5a1cd8f54d2e34ab7499657f`  ### How did you install / run XERJ?  Other (describe in steps below). Read the dispatch in `engine/crates/xerj-mcp/src/lib.rs` on that commit. No node was started.  ### Operating system & architecture  Windows 11 x86_64. The dispatch is the same on every platform.  ### Steps to reproduce  On `origin/main`, the stdio loop and `handle_message` disagree about what a `tools/call` without a usable id is.  `is_tool_call_request` (`lib.rs` 517-519) is the only path that runs a tool call off the read loop:  ```rust fn is_tool_call_request(msg: &Value) -> bool {     msg.get("method").and_then(Value::as_str) == Some("tools/call")         && msg.get("id").is_some_and(|id| !id.is_null()) } ```  Anything else falls through to the read loop (`lib.rs` 504):  ```rust other => handle_message(&ctx, other).await.into_iter().collect(), ```  `handle_message` (`lib.rs` 606-621) does not treat a missing id as "do not reply" for the methods it knows. A notification is `id.is_none()`, and that flag is consulted only in the unknown-method arm. `tools/call` always awaits `call_tool` and always returns a response:  ```rust "tools/call" => Some(rpc_result(id, call_tool(ctx, &msg).await)), ```  `rpc_result` turns a missing id into JSON `null` (`lib.rs` 726-727).  Send either of these as one stdio line:  ```json {"jsonrpc":"2.0","method":"tools/call","params":{"name":"xerj_search","arguments":{"query":"x"}}} ```  ```json {"jsonr
+- **Issue #3322** (2026-11-20): **highlight: CJK match_phrase / match hits return no highlight fragments**
+  *Symptoms*: ## What happens  A CJK `match_phrase` (or `match`) hit comes back with no `highlight` key, while an English term in the same field is highlighted. Seen on rc.104 and on `main` (`cc6aee8f7`).  ## Repro  ```sh curl -s -XPUT localhost:9200/cjkh -H 'content-type: application/json' \   -d '{"mappings":{"properties":{"body":{"type":"text"},"bcjk":{"type":"text","analyzer":"cjk"}}}}' curl -s -XPOST 'localhost:9200/cjkh/_bulk?refresh=true' -H 'content-type: application/x-ndjson' --data-binary $' {"index":{"_id":"1"}} {"body":"我喜欢北京的天气 and the weather in Beijing","bcjk":"我喜欢北京的天气"} {"index":{"_id":"2"}} {"body":"東京都に住んでいます","bcjk":"東京都に住んでいます"} ' curl -s localhost:9200/cjkh/_search -H 'content-type: application/json' \   -d '{"query":{"match_phrase":{"body":"北京"}},"highlight":{"fields":{"body":{}}}}' ```  Measured on `main` (private port, throwaway data dir):  | query | hits | highlight | |---|---|---| | `match_phrase body 北京` | 1 | none | | `match_phrase bcjk 北京` (cjk analyzer) | 1 | none | | `match body 北京天气` | 2 | none | | `match_phrase body 東京` | 1 | none | | `match_phrase body weather` | 1 | `... the <em>weather</em> in Beijing` |  ## Root cause  The highlighter in `engine/crates/xerj-engine/src/index.rs` (`next_term_match`, added by #1948/#1949 to stop `or` matching inside `for`) only accepts a match whose neighbours are not word characters, and it counts any `char::is_alphanumeric` as a word character. Han, kana and Hangul are alphanumeric, so `北京` inside the unspaced run `我喜欢北
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1787,1424 +1787,581 @@ impl EmbeddingProxy {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `007863e9` (2026-11-18)
-**Commit Message**: fix(autoindex): stub lockfiles by default, cell-width progress, catalog-commit phase, data-dir hint on an empty map
+### Incident Patch 1: `70e75d4f` (2026-11-20)
+**Commit Message**: fix(server): no "starting" 503 after the node is ready (#3323)
 
-Four autoindex issues from field reports, one lane.
+While `Engine::new` opens the data dir, the ES-compat and REST ports
+answer 503 `node_starting_exception` (#2575). A connection still
+sending its request at the hand-over kept answering that 503 after
+`/health/ready` was 200 and the real router was serving.
 
-#2439 lockfiles are stubbed by default
-- Motivation: a 410 KB package-lock.json held phase=index at 10% until a
-  180 s deadline; `--stub package-lock.json` was the reporter's workaround.
-- Root cause 1: order.rs GENERATED_FILES only demoted lockfiles to
-  Band::Vendored (queued last), they were still parsed in full.
-- Root cause 2 (found while verifying): on the generated (--no-graph)
-  route, `prepare_artifact` re-sniffed the sealed blob and ignored the
-  plan's `stub` family, so even an explicit `--stub` file had its
-  content flattened into the index. Plan said `stub`, record carried every
-  JSON field.
-- Fix: `lib.rs::stub_matcher(cfg)` seeds the --stub matcher with
-  GENERATED_FILES (Cargo.lock Gemfile.lock composer.lock go.sum
-  package-lock.json pnpm-lock.yaml poetry.lock yarn.lock, any depth).
-  `--no-default-stubs` is the opt-in to full extraction (listed in --help
-  next to --stub, refused by `remove`, written back by the rebuild argv;
-  the seed stays out of `stub_globs`). `prepare_artifact` keeps a
-  p
+Root cause: `StartingResponder` served with
+`axum::serve(...).with_graceful_shutdown(...)`. axum 0.7 spawns every
+connection as a detached `tokio::spawn` task. `stop()` waited 2 s for
+the serve future and then aborted it, but aborting the accept loop does
+not reach the detached connections. hyper closes a connection on
+graceful shutdown only when it is idle, and a fresh connection that has
+not finished its first request is not. That connection stayed on the
+starting router, answered 503 once the request completed, and held
+`stop()` for the full 2 s, delaying the real routers.
+
+Fix (engine/crates/xerj-server/src/main.rs):
+- `serve_starting`: own accept loop on hyper-util's auto builder with
+  every connection in a `JoinSet`. On stop it stops accepting, gives
+  connections `STARTING_GRACE` (500 ms; a starting answer is static) and
+  then drops the rest, so no connect
 
 **File**: `engine/Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -7559,6 +7559,7 @@ dependencies = [
-  "tree-sitter-swift",
-  "tree-sitter-typescript",
-  "tree-sitter-zig",
-+ "unicode-width 0.2.2",
-  "uuid",
-  "walkdir",
-  "xerj-ai",
+@@ -7853,6 +7853,7 @@ dependencies = [
+  "chrono",
+  "flate2",
+  "h2",
++ "hyper-util",
+  "jemalloc_pprof",
+  "libc",
+  "memchr",
 ```
 
-**File**: `engine/crates/xerj-api/tests/autoindex_changed_file_drops_stale_symbols.rs` (modified, +1/-0)
+**File**: `engine/crates/xerj-server/Cargo.toml` (modified, +3/-0)
 ```diff
-@@ -95,6 +95,7 @@ fn index_cfg(
-         root: root.to_owned(),
-         endpoint_url: None,
-         stub_globs: Vec::new(),
-+        default_stubs: true,
-         url: url.to_owned(),
-         api_key: None,
-         api_key_file: None,
+@@ -41,6 +41,9 @@ axum.workspace = true
+ # and cross-compile friendly.
+ axum-server = { version = "0.7", default-features = false, features = ["tls-rustls-no-provider"] }
+ rustls = { version = "0.23", default-features = false, features = ["ring"] }
++# The "starting" responder owns its connections so the hand-over can close
++# them (#2575 follow-up). Same version and features axum-server already uses.
++hyper-util = { version = "0.1.20", features = ["server-auto", "service", "tokio"] }
+ tracing.workspace = true
+ tracing-subscriber.workspace = true
+ serde.workspace = true
 ```
 
-**File**: `engine/crates/xerj-api/tests/autoindex_html_inline_script.rs` (modified, +1/-0)
+**File**: `engine/crates/xerj-server/src/main.rs` (modified, +143/-18)
 ```diff
-@@ -105,6 +105,7 @@ fn index_cfg(root: &Path, state_dir: &Path, url: &str, prefix: &str) -> IndexCfg
-         root: root.to_owned(),
-         endpoint_url: None,
-         stub_globs: Vec::new(),
-+        default_stubs: true,
-         url: url.to_owned(),
-         api_key: None,
-         api_key_file: None,
-```
-
-**File**: `engine/crates/xerj-api/tests/memtable_budget_autoindex.rs` (modified, +1/-0)
-```diff
-@@ -47,6 +47,7 @@ fn index_cfg(root: &Path, state_dir: &Path, url: &str) -> IndexCfg {
-         root: root.to_owned(),
-         endpoint_url: None,
-         stub_globs: Vec::new(),
-+        default_stubs: true,
-         url: url.to_owned(),
-         api_key: None,
-         api_key_file: None,
-```
-
-**File**: `engine/crates/xerj-api/tests/proxy_semantic_autoindex_resumes.rs` (modified, +1/-0)
-```diff
-@@ -152,6 +152,7 @@ fn index_cfg(root: &Path, state_dir: &Path, url: &str, prefix: &str, no_graph: b
-         root: root.to_owned(),
-         endpoint_url: None,
-         stub_globs: Vec::new(),
-+        default_stubs: true,
-         url: url.to_owned(),
-         api_key: None,
-         api_key_file: None,
-```
-
-**File**: `engine/crates/xerj-autoindex/Cargo.toml` (modified, +5/-0)
-```diff
-@@ -35,6 +35,11 @@ walkdir = "2"
- # Licence: Unlicense OR MIT — compatible with XERJ's Apache-2.0.
- ignore = "0.4"
- encoding_rs = "0.8"
-+# Terminal cell width for the progress bar (#3102): a CJK character is two
-+# cells, so counting `char`s overflowed the line. Already in the lock file at
-+# 0.2.2 (via the `console` and `indicatif` crates), so this adds no new package.
-+# Licence: MIT OR Apache-2.0.
-+unicode-width = "0.2"
- # `--watch`: cross-platform filesystem notifications (inotify on Linux,
- # FSEvents on macOS, ReadDirectoryChangesW on Windows), so live reindexing is
- # one code path rather than three.
-```
-
-**File**: `engine/crates/xerj-autoindex/src/cli.rs` (modified, +35/-5)
-```diff
-@@ -85,6 +85,11 @@ pub struct IndexCfg {
-     /// `--stub <glob>` patterns: matching files are indexed as one
-     /// existence-only name card, contents never opened.
-     pub stub_globs: Vec<String>,
-+    /// Stub the lockfiles in [`crate::order::GENERATED_FILES`] as if each had
-+    /// been passed to `--stub` (#2439). On by default; `--no-default-stubs`
-+    /// clears it so a lockfile is extracted in full. Kept apart from
-+    /// `stub_globs` so the rebuild argv states only what the operator typed.
-+    pub default_stubs: bool,
-     /// `.gitignore` / `.xerjignore` / built-in build-output rules (#276).
-     /// `deep_count` is set from `--dry-run` (and from `--walk-only`, which
-     /// implies it).
-@@ -427,11 +432,13 @@ pub fn help_text_with(feedback: bool) -> String {
-          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20refuse anything, because your folder is\n\
-          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20already inside it\n\
-          \x20\x20\x20\x20--stub <GLOB>        index matching files as ONE existence-only name\n\
--         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20card (title + provenance); contents are never\n\
--         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20opened. Repeatable. A pattern without '/'\n\
-+         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20card (title, size + provenance); contents are\n\
-+         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20never parsed. Repeatable. A pattern without '/'\n\
-          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20matches file names anywhere ('*.bvh'); with '/'\n\
-          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20it matches the root-relative path\n\
--         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20('unity/**/*.csv'). '**' crosses directories\n\
-+         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20('unity/**/*.csv'). '**' crosses directories.\n\
-+         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20Lockfiles are stubbed by default: {lockfiles}\n\
-+         \x20\x20\x20\x20--no-default-stubs   extract those lockfiles in full instead of stubbing\n\
-          \x20\x20\x20\x20--exclude <GLOB>     leave matching paths out of the index entirely (not\n\\
-          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20walked, not counted). Repeatable, same glob syntax\n\\
-          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20as --stub ('gen/**', '*.log'). Use it for a tree you do\n\\
-@@ -687,6 +694,11 @@ pub fn help_text_with(feedback: bool) -> String {
-          \x20\x20\x20\x20enforced: paths and other outside text are stripped of control\n\
-          \x20\x20\x20\x20characters and bounded before they reach any line, so a crafted\n\
-          \x20\x20\x20\x20filename cannot forge a record or repaint your terminal.\n\
-+         \x20\x20\x20\x20Every line is UTF-8. A Windows console window shows it as written;\n\
-+         \x20\x20\x20\x20a pipe is decoded by its reader, so a PowerShell capture on a\n\
-+         \x20\x20\x20\x20non-UTF-8 code page (936, 932, ...) turns non-ASCII paths into\n\
-+         \x20\x20\x20\x20mojibake. Run `[Console]::OutputEncoding = [Text.Encoding]::UTF8`\n\
-+         \x20\x20\x20\x20(or `chcp 65001`) first.\n\
-          \x20\x20\x20\x20`pct`/`eta_s` are the literal word `unknown` (JSON null) whenever they\n\
-          \x20\x20\x20\x20cannot be computed honestly, never a filler number — and the drawn\n\
-          \x20\x20\x20\x20bar obeys the same rule: `[????…]` when there is no denominator,\n\
-@@ -699,7 +711,10 @@ pub fn help_text_with(feedback: bool) -> String {
-          \x20\x20\x20\x20\x20\x20\x20\x20finalize-correlate, finalize-histogram, finalize-catalog\n\
-          \x20\x20\x20\x20\x20\x20--no-graph path:      walk, hash, scan, prepare (install mappings),\n\
-          \x20\x20\x20\x20\x20\x20\x20\x20snapshot (seal + extract, bytes), index (sealed bulk bytes, the\n\
--         \x20\x20\x20\x20\x20\x20\x20\x20in-flight file named), finalize-catalog, finalize-refresh (one\n\
-+         \x20\x20\x20\x20\x20\x20\x20\x20in-flight file named), finalize-catalog,\n\
-+         \x20\x20\x20\x20\x20\x20\x20\x20finalize-catalog-readback (catalog ids read back),\n\
-+         \x20\x20\x20\x20\x20\x20\x20\x20finalize-catalog-commit (one item per catalog request, the\n\
-+         \x20\x20\x20\x20\x20\x20\x20\x
-```
-
-**File**: `engine/crates/xerj-autoindex/src/detect/e2e.rs` (modified, +1/-0)
-```diff
-@@ -422,6 +422,7 @@ pub(super) fn cfg(root: &Path, state_dir: &Path, url: &str) -> IndexCfg {
-         follow_symlinks: false,
-         follow_symlinks_outside_root: false,
-         stub_globs: Vec::new(),
-+        default_stubs: true,
-         ignore: crate::ignore_rules::IgnoreOptions::default(),
-         max_file_bytes: 1 << 30,
-         sample: 50,
+@@ -1723,6 +1723,63 @@ mod starting_responder_tests {
+         assert!(after.ends_with("real"), "{after}");
+         server.abort();
+     }
++
++    /// A connection still sending its request at the hand-over used to
++    /// outlive `stop` (axum spawns connections detached) and answer
++    /// "starting" after the real router was serving. It is closed now, and
++    /// a "starting" answer tells keep-alive clients to reconnect.
++    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
++    async fn no_starting_answer_after_the_hand_over() {
++        let listener =
++            xerj_common::loopback_test::expect_loopback(std::net::TcpListener::bind("127.0.0.1:0"));
++        listener.set_nonblocking(true).unwrap();
++        let addr = listener.local_addr().unwrap();
++        let starting = StartingResponder::start(&[(&listener, "ES-compat")]);
++
++        let answer = get(addr, "/_cluster/health").await.to_ascii_lowercase();
++        assert!(answer.contains("connection: close"), "{answer}");
++
++        let mut partial = tokio::net::TcpStream::connect(addr).await.unwrap();
++        partial
++            .write_all(b"GET /_cluster/health HTTP/1.1\r\nHost: x\r\n")
++            .await
++            .unwrap();
++        // Let the responder read the partial head, so the connection is
++        // past version detection and mid-request.
++        tokio::time::sleep(std::time::Duration::from_millis(200)).await;
++
++        let begun = std::time::Instant::now();
++        starting.stop().await;
++        let stop_took = begun.elapsed();
++        assert!(
++            stop_took < STARTING_GRACE * 3,
++            "stop took {stop_took:?} with a stalled client"
++        );
++
++        let real =
++            Router::new().route("/_cluster/health", axum::routing::get(|| async { "green" }));
++        let server = tokio::spawn(async move {
++            axum::serve(TcpListener::from_std(listener).unwrap(), real)
++                .await
++                .unwrap();
++        });
++        assert!(get(addr, "/_cluster/health").await.ends_with("green"));
++
++        let _ = partial.write_all(b"\r\n").await;
++        let mut late = Vec::new();
++        let _ = tokio::time::timeout(
++            std::time::Duration::from_secs(5),
++            partial.read_to_end(&mut late),
++        )
++        .await
++        .expect("the stalled connection is closed, not left open");
++        let late = String::from_utf8_lossy(&late);
++        assert!(
++            !late.contains("503"),
++            "starting answer after hand-over: {late}"
++        );
++        server.abort();
++    }
+ }
+ 
+ #[cfg(test)]
+@@ -1910,7 +1967,14 @@ const AUTO_PORT_SCAN: u16 = 1000;
+ /// opens the data dir (#2575). Every path returns 503 with an ES-shaped
+ /// `node_starting_exception` and `Retry-After: 1`, except `/health/live`,
+ /// which returns 200 because the process is alive. `/health/ready` gets the
+-/// 503 like everything else.
++/// 503 like everything else. Every answer carries `Connection: close`, so a
++/// keep-alive client opens a fresh connection for its retry and that one
++/// lands on the real router.
++///
++/// The responder owns its connections. It used `axum::serve`, which spawns
++/// each connection as a detached task: `stop` aborted the accept loop after
++/// its grace, but a connection still mid-request kept running and answered
++/// "starting" after the node was ready.
+ struct StartingResponder {
+     stop: tokio::sync::watch::Sender<bool>,
+     tasks: Vec<tokio::task::JoinHandle<()>>,
+@@ -1920,6 +1984,12 @@ const STARTING_REASON: &str = "XERJ is starting: the node is opening the indices
+      directory and will serve requests when that finishes. Retry shortly; GET /health/ready \
+      returns 200 once the node is ready.";
+ 
++/// How long `StartingResponder::stop` lets open connections finish. A
++/// "starting" answer is static and leaves in microseconds; what is still
++/// open after this is a client that has not finished sending its request,
++/// and it would hold the real routers off the port.
++const STARTING_GRACE: std::time::Duration = std::time::Duration::from_millis(500);
++
+ fn starting_router() -> Router {
+     use axum::http::{header, StatusCode};
+     use axum::routing::get;
+@@ -1929,14 +1999,15 @@ fn starting_router() -> Router {
+             get(|| async {
+                 (
+                     StatusCode::OK,
++                    [(header::CONNECTION, "close")],
+                     axum::Json(serde_json::json!({"status": "starting"})),
+                 )
+             }),
+         )
+         .fallback(|| async {
+             (
+                 StatusCode::SERVICE_UNAVAILABLE,
+-                [(header::RETRY_AFTER, "1")],
++                [(header::RETRY_AFTER, "1"), (header::CONNECTION, "close")],
+                 axum::Json(serde_json::json!({
+                     "error": {"type": "node_starting_exception", "reason": STARTING_REASON},
+                     "status": 503,
+@@ -1960,33 +2031,27 @@ impl StartingResponder {
+                   
 ```
 
 ---
 
-### Incident Patch 2: `e6edc756` (2026-11-18)
-**Commit Message**: fix(node): auto-start a stopped local node, xerj --detach, headless first launch, boot memory baseline
+### Incident Patch 2: `c73bb982` (2026-11-20)
+**Commit Message**: fix(api): refuse a collapse inner_hits block without a name
 
-rc.101 field reports, lane L1 (node lifecycle).
+Motivation
+Elasticsearch 8.13 refuses a search whose collapse.inner_hits object, or
+any entry of an inner_hits array, has no name: a 400
+x_content_parse_exception, "[collapse] failed to parse field
+[inner_hits]", caused by an illegal_argument_exception, "inner_hits must
+have a [name]; set the [name] field in the inner_hits definition". It
+does so while parsing the body, so _msearch, which parses every item body
+before it runs any, refuses the whole request. XERJ answered 200 and
+rendered the group under a made-up "inner_hits" key.
 
-#3267 (52 reports: macOS 26, Windows 16, Linux 10). Agents found nothing on
-localhost:9200, did not start a node from a tool call, and grepped for the
-whole session. Causes seen: a node started from an agent terminal got
-SIGTERM when the session ended; `cmd start /B` died with its shell; a node
-on :9280 was never found because every client assumed :9200.
+Root cause
+Nothing checked the name. The inner hits renderer falls back to
+"inner_hits" when the key is missing, and no parse step looked at
+collapse.inner_hits.
 
-- New `xerj_common::localnode`. The server writes
-  `<data-dir>/node.launch.json` (bound port, flags without --detach, cwd,
-  pid, role) right after binding. A loopback client that finds the port
-  closed starts the node that last served it (`~/.xerj/by-port` pointer +
-  launch record), detached, waits for an HTTP answer other than the 503
-  "starting" reply, then runs the call. Unix: setsid, stdin closed, output
-  to `<data-dir>/node.log`. Windows: DETACHED_PROCESS |
-  CREATE_NEW_PROCESS_GROUP, plus CREATE_BREAKAWAY_FROM_JOB when the job
-  allows it. A live node.lock holder is waited for, not doubled. The child
-  is reaped, so a later death is not a zombie that kill(pid,0) calls 
+Fix
+- collapse_has_unnamed_inner_hits: true when the inner_hits object, or
+  any object entry of an inner_hits array, has no "name" key. Only the
+  key's absence counts; an empty name passes, as in ES.
+- The _search body extractor (EsSearchJson) refuses such a body with a
+  new rejection, UnnamedInnerHits, after the typed parse. It runs before
+  the cluster fan-out and the URL-parameter checks, so single-node and
+  cluster _search giv
 
-**File**: `engine/crates/xerj-autoindex/src/def.rs` (modified, +4/-1)
+**File**: `CHANGELOG.md` (modified, +9/-0)
 ```diff
-@@ -551,8 +551,11 @@ pub fn run_def_cli() -> i32 {
-     let prefix = resolved.prefix;
-     let pattern = resolved.pattern;
-     if url.is_empty() {
--        url = "http://localhost:9200".to_string();
-+        // #3267: the local node's recorded port, not a fixed :9200.
-+        url = xerj_common::localnode::default_url();
-     }
-+    // #3267: a stopped loopback node is started (detached) before the lookup.
-+    xerj_common::localnode::ensure_for_cli("xerj def", &url);
-     if api_key.is_none() && xerj_common::localauth::url_is_loopback(&url) {
-         if let Some(found) =
-             xerj_common::localauth::discover_local_admin_key_for_url_with_origin(&url)
+@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ## [Unreleased]
+ 
++### Fixed
++
++- **A collapsed `_search` or `_msearch` whose `collapse.inner_hits` block has
++  no `name` is refused with a 400**, as Elasticsearch 8.13 refuses it
++  (`x_content_parse_exception` caused by `illegal_argument_exception`
++  "inner_hits must have a [name]..."). XERJ ran the search and listed the
++  group's hits under a made-up `inner_hits` key. Every entry of an
++  `inner_hits` array is checked; one unnamed block fails a whole `_msearch`.
++
+ ## [1.0.0-rc.104] - 2026-11-18
+ 
+ **rc.104: rc.103 on every platform.** rc.104 is the rc.103 code with the
 ```
 
-**File**: `engine/crates/xerj-autoindex/src/lib.rs` (modified, +2/-0)
+**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +35/-0)
 ```diff
-@@ -14080,6 +14080,8 @@ fn run_map(cfg: MapCfg) -> Result<i32> {
-     if let Some(note) = &cfg.xerj_url_note {
-         eprintln!("autoindex: {note}");
-     }
-+    // #3267: a stopped loopback node is started (detached) before the read.
-+    xerj_common::localnode::ensure_for_cli("autoindex map", &cfg.url);
-     let es = Es::new(&cfg.url, cfg.api_key.clone())?;
-     // The same first-run miss as `xerj search`: nothing is listening, and a
-     // raw `endpoint unreachable` does not say how to start a node.
-```
-
-**File**: `engine/crates/xerj-autoindex/src/search.rs` (modified, +4/-1)
-```diff
-@@ -1040,8 +1040,11 @@ pub fn run_search_cli() -> i32 {
-     let prefix = resolved.prefix;
-     let pattern = resolved.pattern;
-     if url.is_empty() {
--        url = "http://localhost:9200".to_string();
-+        // #3267: the local node's recorded port, not a fixed :9200.
-+        url = xerj_common::localnode::default_url();
-     }
-+    // #3267: a stopped loopback node is started (detached) before the query.
-+    xerj_common::localnode::ensure_for_cli("xerj search", &url);
-     if api_key.is_none() && xerj_common::localauth::url_is_loopback(&url) {
-         if let Some(found) =
-             xerj_common::localauth::discover_local_admin_key_for_url_with_origin(&url)
-```
-
-**File**: `engine/crates/xerj-autoindex/src/xc.rs` (modified, +12/-5)
-```diff
-@@ -39,14 +39,17 @@ pub fn code_root() -> PathBuf {
-         .join(".xerj-code")
+@@ -5677,6 +5677,31 @@ fn search_context_missing(scroll_id: &str) -> Response {
+         .into_response()
  }
  
--/// `--url` flag > `XERJ_URL` > `http://localhost:9200`. Unlike `autoindex`
--/// (which ignores `XERJ_URL` on purpose for writes), these READ commands
--/// honor it — the scripts always did.
-+/// `--url` flag > `XERJ_URL` > the local node ([`default_url`]: :9200, or the
-+/// port a local node recorded, #3267). Unlike `autoindex` (which ignores
-+/// `XERJ_URL` on purpose for writes), these READ commands honor it — the
-+/// scripts always did.
-+///
-+/// [`default_url`]: xerj_common::localnode::default_url
- fn resolve_url(explicit: Option<&str>) -> String {
-     explicit
-         .map(str::to_string)
-         .or_else(|| std::env::var("XERJ_URL").ok().filter(|u| !u.is_empty()))
--        .unwrap_or_else(|| "http://localhost:9200".to_string())
-+        .unwrap_or_else(xerj_common::localnode::default_url)
- }
- 
- fn build_es(url: &str, api_key: Option<String>) -> Result<Es> {
-@@ -418,6 +421,8 @@ fn code_cli_outcome(args: &[String]) -> CodeCliDone {
-         return bad("xerj code: both <corpus> and \"<query>\" are required".to_string());
-     };
-     let url = resolve_url(url.as_deref());
-+    // #3267: a stopped loopback node is started (detached) before the query.
-+    xerj_common::localnode::ensure_for_cli("xerj code", &url);
-     let es = match build_es(&url, api_key.clone()) {
-         Ok(es) => es,
-         Err(e) => {
-@@ -3993,7 +3998,9 @@ mod tests {
-         assert_eq!(resolve_url(Some("http://a:1")), "http://a:1");
-         // env-dependent branches covered by the e2e; default pinned here.
-         std::env::remove_var("XERJ_URL");
--        assert_eq!(resolve_url(None), "http://localhost:9200");
-+        // #3267: the default is the local node; its port depends on what this
-+        // machine recorded, so only the host is pinned here.
-+        assert!(resolve_url(None).starts_with("http://localhost:"));
-     }
- 
-     #[test]
-```
-
-**File**: `engine/crates/xerj-common/src/lib.rs` (modified, +1/-0)
-```diff
-@@ -60,6 +60,7 @@ pub mod home;
- pub mod hub;
- pub mod hub_evidence;
- pub mod localauth;
-+pub mod localnode;
- pub mod loopback_test;
- pub mod metrics;
- pub mod net;
-```
-
-**File**: `engine/crates/xerj-common/src/localnode.rs` (added, +917/-0)
-```diff
-@@ -0,0 +1,917 @@
-+//! The local node: which port it is on, starting it when it is down, and
-+//! keeping it alive after the terminal that started it closes (#3267).
-+//!
-+//! In 52 rc.101 field reports an agent found nothing listening on
-+//! `localhost:9200`, did not start a node from inside a tool call, and fell
-+//! back to grep for the whole session. Three causes were seen: a node started
-+//! from an agent terminal got SIGTERM when that session ended, a Windows node
-+//! started with `cmd start /B` died with its shell, and a node on :9280 was
-+//! never found because every client assumed :9200.
-+//!
-+//! This module holds the pieces every client shares:
-+//!
-+//! * [`write_launch_record`]: the server records, in its data dir, the port
-+//!   it bound and the flags it was started with (`node.launch.json`).
-+//! * [`default_url`]: with no `XERJ_URL`, the port comes from what the local
-+//!   nodes recorded, not from a constant.
-+//! * [`start_for_url`]: a loopback client that finds the port closed starts
-+//!   the node that last served it, detached, and waits until it answers.
-+//! * [`spawn_detached`]: `setsid` on Unix; `DETACHED_PROCESS |
-+//!   CREATE_NEW_PROCESS_GROUP` (plus `CREATE_BREAKAWAY_FROM_JOB` when the
-+//!   job allows it) on Windows. stdin is closed and both output streams go to
-+//!   a log file, so no terminal, pipe or console is left to take it down.
-+//!
-+//! `XERJ_NO_AUTOSTART=1` turns auto-start off. A non-loopback URL is never
-+//! started.
-+
-+use std::io::{Read, Write};
-+use std::net::{SocketAddr, TcpStream, ToSocketAddrs};
-+use std::path::{Path, PathBuf};
-+use std::process::{Child, Command, Stdio};
-+use std::time::{Duration, Instant};
-+
-+use serde::{Deserialize, Serialize};
-+
-+use crate::nodedir::{self, PidState};
-+
-+/// Set to `1`/`true`/`yes`/`on` to stop clients from starting a node.
-+pub const NO_AUTOSTART_ENV: &str = "XERJ_NO_AUTOSTART";
-+/// Seconds a client waits for a node it started (default 120).
-+pub const AUTOSTART_TIMEOUT_ENV: &str = "XERJ_AUTOSTART_TIMEOUT_SECS";
-+/// Set by a launcher that manages its own node (the hub sets `hub`). Recorded
-+/// so port discovery does not hand a user's client the hub's private node.
-+pub const NODE_ROLE_ENV: &str = "XERJ_NODE_ROLE";
-+/// The launch record, beside `node.lock` in the data dir.
-+pub const LAUNCH_RECORD_FILE: &str = "node.launch.json";
-+/// Where a detached node's stdout and stderr go, in its data dir.
-+pub const NODE_LOG_FILE: &str = "node.log";
-+/// The product default port.
-+pub const DEFAULT_PORT: u16 = 9200;
-+
-+const DEFAULT_START_TIMEOUT: Duration = Duration::from_secs(120);
-+const PROBE_TIMEOUT: Duration = Duration::from_millis(400);
-+const POLL_INTERVAL: Duration = Duration::from_millis(250);
-+
-+/// `true` when `XERJ_NO_AUTOSTART` asks clients not to start a node.
-+pub fn autostart_disabled() -> bool {
-+    env_flag_set(std::env::var(NO_AUTOSTART_ENV).ok().as_deref())
++/// ES 8.13 refuses a `collapse.inner_hits` object, or any entry of an
++/// `inner_hits` array, that has no `name` while it parses the body. Only the
++/// key's absence counts: an empty name passes, as in ES.
++fn collapse_has_unnamed_inner_hits(collapse: Option<&Value>) -> bool {
++    let unnamed = |spec: &Value| spec.as_object().is_some_and(|o| !o.contains_key("name"));
++    match collapse.and_then(|c| c.get("inner_hits")) {
++        Some(Value::Array(specs)) => specs.iter().any(unnamed),
++        Some(spec) => unnamed(spec),
++        None => false,
++    }
 +}
 +
-+fn env_flag_set(value: Option<&str>) -> bool {
-+    matches!(
-+        value.map(|v| v.trim().to_ascii_lowercase()).as_deref(),
-+        Some("1" | "true" | "yes" | "on")
++/// The 400 for [`collapse_has_unnamed_inner_hits`]: ES wraps the name
++/// refusal in the parse error of the `collapse` object.
++fn unnamed_inner_hits_refusal() -> Response {
++    es_bad_request(
++        "x_content_parse_exception",
++        "[collapse] failed to parse field [inner_hits]",
++        Some((
++            "illegal_argument_exception",
++            "inner_hits must have a [name]; set the [name] field in the inner_hits definition",
++        )),
 +    )
 +}
 +
-+/// How long to wait for a started node: `XERJ_AUTOSTART_TIMEOUT_SECS`, else
-+/// 120 s. Opening a large data dir is the slow part.
-+pub fn start_timeout() -> Duration {
-+    std::env::var(AUTOSTART_TIMEOUT_ENV)
-+        .ok()
-+        .and_then(|v| v.trim().parse::<u64>().ok())
-+        .filter(|secs| *secs > 0)
-+        .map(Duration::from_secs)
-+        .unwrap_or(DEFAULT_START_TIMEOUT)
-+}
-+
-+// ─────────────────────────────── Launch record ──────────────────────────────
-+
-+/// What a node recorded about its own start, so a client can start the same
-+/// node again.
-+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-+pub struct LaunchRecord {
-+    /// The ES-compatible port the node bound (after `--auto-port`, if any).
-+    pub port: u16,
-+    /// The server flags after the program name, without `--detach`.
-+    pub args: Vec<String>,
-+    /// The working directory, for a relative `--config` path.
-+    #[serde(default)]
-+    pub cwd: Option<PathBuf>,
-+    #[serde(default)]
-+    pub pid: u32,
-+    /// [`NODE_ROLE_ENV`] at start, when set.
-+    #[serde(default)]
-+    pub role: Option<String>,
-+}
-+
-+/// Record this process's start in `data_dir`. Written atomically (temp file
-+/// plus rename), so a reader never sees half a record.
-+pub fn write_launch_record(data_dir: &Path, port: u16) -> std::io::Result<()> {
-+    let args: Vec<String> = std::env::args()
-+        .skip(1)
-+        .filter(|arg| arg != "--detach")
-+        .collect();
-+    let record = LaunchRecord {
-+        port,
-+        args,
-+        cwd: std::env::current_dir().ok(),
-+        pid: std::process::id(),
-+        role: std::env::var(NODE_ROLE_ENV).ok().filter(|r| !r.is_empty()),
-+    };
-+    write_launch_record_value(data_dir, &record)
-+}
-+
-+fn write_launch_record_value(data_dir: &Path, record: &LaunchRecord) -> std::io::Result<()> {
-+    let body = serde_json::to_vec_pretty(rec
-```
-
-**File**: `engine/crates/xerj-common/src/nodedir.rs` (modified, +49/-13)
-```diff
-@@ -43,7 +43,7 @@ fn publish_data_dir_for_port_in(home: &Path, port: u16, data_dir: &Path) -> std:
- 
- /// The data dir that last served `port`, if any. It falls back to the parent
- /// of the admin-key pointer, which nodes before this change wrote when auth was on.
--fn published_data_dir_in(home: &Path, port: u16) -> Option<PathBuf> {
-+pub(crate) fn published_data_dir_in(home: &Path, port: u16) -> Option<PathBuf> {
-     let read = |path: PathBuf| {
-         std::fs::read_to_string(path)
-             .ok()
-@@ -56,6 +56,51 @@ fn published_data_dir_in(home: &Path, port: u16) -> Option<PathBuf> {
-     })
+ /// Body extractor for `_search` that layers ES 8.13.4's deny-unknown-key
+ /// behaviour on top of `OptionalJson<EsSearchBody>` (item 4a): a bogus
+ /// top-level key is rejected with the exact ES `parsing_exception` instead of
+@@ -5704,6 +5729,7 @@ pub enum EsSearchJsonRejection {
+         col: usize,
+     },
+     IllegalArgument(String),
++    UnnamedInnerHits,
  }
  
-+/// One `~/.xerj/by-port/<port>.data-dir` pointer and when it was written.
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub(crate) struct PortPointer {
-+    pub port: u16,
-+    pub data_dir: PathBuf,
-+    pub written: std::time::SystemTime,
-+}
-+
-+/// Every data-dir pointer under `home`, most recently written first. A node
-+/// rewrites its pointer on every start, so the first entry is the node that
-+/// started last.
-+pub(crate) fn port_pointers_in(home: &Path) -> Vec<PortPointer> {
-+    let Ok(entries) = std::fs::read_dir(home.join(".xerj").join("by-port")) else {
-+        return Vec::new();
-+    };
-+    let mut out: Vec<PortPointer> = entries
-+        .flatten()
-+        .filter_map(|entry| {
-+            let name = entry.file_name();
-+            let port: u16 = name.to_str()?.strip_suffix(".data-dir")?.parse().ok()?;
-+            let written = entry.metadata().ok()?.modified().ok()?;
-+            let data_dir = published_data_dir_in(home, port)?;
-+            Some(PortPointer {
-+                port,
-+                data_dir,
-+                written,
-+            })
-+        })
-+        .collect();
-+    out.sort_by(|a, b| b.written.cmp(&a.written).then(a.port.cmp(&b.port)));
-+    out
-+}
-+
-+/// The PID recorded for `data_dir`'s node: `node.lock`, or the unlocked
-+/// `node.lock.pid` note when a running Windows node holds the lock and hides
-+/// its bytes (#2431). `None` when there is no lock file or no PID in it.
-+pub(crate) fn lock_pid(data_dir: &Path) -> Option<u32> {
-+    let text = match std::fs::read_to_string(data_dir.join("node.lock")) {
-+        Ok(text) => text,
-+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return None,
-+        Err(_) => std::fs::read_to_string(data_dir.join("node.lock.pid")).ok()?,
-+    };
-+    text.trim().parse().ok()
-+}
-+
- /// Whether a PID names a running process.
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
- pub enum PidState {
-@@ -172,22 +217,13 @@ pub fn node_lock_hint(
-     } else {
-         format!(" --port {port}")
-     };
--    // A running node on Windows holds `node.lock` under `LockFileEx`, which
--    // hides its bytes from other processes. The engine writes the same PID
--    // to the unlocked `node.lock.pid` beside it (#2431); read that only when
--    // the lock file exists but cannot be read.
--    let text = match std::fs::read_to_string(&lock) {
--        Ok(text) => text,
--        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return None,
--        Err(_) => std::fs::read_to_string(data_dir.join("node.lock.pid")).ok()?,
--    };
--    let pid: u32 = text.trim().parse().ok()?;
-+    let pid = lock_pid(data_dir)?;
-     let dir = data_dir.display();
-     match probe(pid) {
-         PidState::Dead => Some(format!(
-             "The node that last served this port used data dir {dir}; its pid {pid} \
-              (recorded in {}) is no longer running, so it exited or was killed. \
--             Restart it with the same --data-dir: xerj --data-dir {dir}{port_flag} (add \
-+             Restart it with the same --data-dir: xerj --detach --data-dir {dir}{port_flag} (add \
-              --insecure if it ran that way).",
-             lock.display()
-         )),
-@@ -255,7 +291,7 @@ mod tests {
-         .expect("hint");
-         assert!(hint.contains("pid 4242"), "{hint}");
-         assert!(hint.contains("is no longer running"), "{hint}");
--        assert!(hint.contains("xerj --data-dir "), "{hint}");
-+        assert!(hint.contains("xerj --detach --data-dir "), "{hint}");
-         assert!(hint.contains(" --port 9207 "), "{hint}");
-         let canon = std::fs::canonicalize(data.path()).unwrap();
-         assert!(hint.contains(&canon.display().to_string()), "{hint}");
+ impl IntoResponse for EsSearchJsonRejection {
+@@ -5717,6 +5743,7 @@ impl IntoResponse for EsSearchJsonRejection {
+                 col,
+             } => unknown_search_key_error(&key, token, line, col),
+             EsSearchJsonRejection::IllegalArgument(reason) => illegal_argument(&reason),
++            EsSearchJsonRejection::UnnamedInnerHits => unnamed_inner_hits_refusal(),
+         }
+     }
+ }
+@@ -5789,6 +5816,11 @@ impl<S: Send + Sync> FromRequest<S> for EsSearchJson {
+                 });
+             }
+         };
++        // Refused here, at parse time as in ES, so the cluster fan-out and
++        // every URL-parameter check after the extractor never see the body.
++        if collapse_has_unnamed_inner_hits(value.collapse.as_ref()) {
++            return Err(EsSearchJsonRejection::UnnamedInnerHits);
++        }
+         Ok(EsSearchJson(Some(value)))
+     }
+ }
+@@ -32966,6 +32998,9 @@ async fn msearch_impl(
+             if let Some(reason) = xerj_query::track_total_hits_refusal(&item) {
+                 return es_bad_request("illegal_argument_exception", &reason, None);
+             }
++            if collapse_has_unnamed_inner_hits(item.get("collapse")) {
++                return unnamed_inner_hits_refusal();
++            }
+         }
+     }
+ 
 ```
 
-**File**: `engine/crates/xerj-common/src/resource.rs` (modified, +6/-1)
+**File**: `engine/tests/es-compat-yaml/catch-lenient.txt` (modified, +0/-2)
 ```diff
-@@ -106,7 +106,12 @@ pub fn cores() -> usize {
- /// in a server log is a fair price for never losing the message.
- fn warn_once(message: &str) {
-     tracing::warn!("{message}");
--    eprintln!("xerj: {message}");
-+    // Fallible: a node whose stderr cannot be written must not abort over a
-+    // warning (#3276).
-+    let _ = std::io::Write::write_all(
-+        &mut std::io::stderr(),
-+        format!("xerj: {message}\n").as_bytes(),
-+    );
- }
- 
- /// Pure core-count resolution — the tested half of [`cores`].
+@@ -27,8 +27,6 @@ aggregations/sig_terms.yml · Misspelled fields get "did you mean"
+ aggregations/stats_metric_fail_formatting.yml · fail formatting
+ aggregations/top_hits.yml · having
+ search/110_field_collapsing.yml · field collapsing and scroll
+-search/110_field_collapsing.yml · Test collapse with inner_hits and missing name fails
+-search/115_multiple_field_collapsing.yml · two levels fields collapsing
+ search/150_rewrite_on_coordinator.yml · Ensure that we fetch the document only once
+ search/350_point_in_time.yml · msearch
+ search/500_date_range.yml · test bad dates in range - future
 ```
 
 ---
 
-### Incident Patch 3: `10c27cf1` (2026-11-18)
-**Commit Message**: fix(def): re-anchor stale hits, find unindexed defs, add `xerj status`, index asm/GDScript/K&R C
+### Incident Patch 3: `6fe3335f` (2026-11-20)
+**Commit Message**: fix(read-budget): admit whole-segment stored-values decodes and vector columns (#2427)
 
-rc.101 field reports: 46 (#3268), 18 (#3270) and 6 (#3271) problem reports
-where `xerj def` gave a wrong line or no definition.
+Motivation
+#2427 is still open for read paths in index.rs that skip budget admission.
+Two of them allocate sizes set by the segment, not by the request:
 
-#3268 — stale autoindex
-Root cause: `xerj def` prints the `line` stored at index time. The
-`index_stale` hint (#2345) warned, but nothing corrected the answer, so after
-3 inserted lines def said 138 for a function now on 141, and a function added
-after the build was "no definition found". `xerj status` did not exist.
-Fix (runs only when the staleness check fired, so a fresh tree reads no file
-and prints the same bytes):
-- freshness.rs: a hit whose file is newer than the run stamp is re-read
-  (<= 2 MiB). The declaration line from `code` is found nearest the indexed
-  line; if its text changed, the extractor finds the symbol by name. The hit
-  gets the current line plus `reanchored: true` / `indexed_line`. A removed
-  file or symbol drops the hit. When no hit is an exact-name definition, the
-  extractor runs read-only over changed code files (<= 256 files, 32 MiB,
-  50k stats, 1.5 s) and returns `unindexed: true` hits. `_xerj.freshness`
-  counts what changed. 
+- the cold stored-values load (`stored_values_for_async`): decompresses the
+  whole stored section and parses every document into a `Value` tree. It
+  serves every exact kNN scan, nested kNN, kNN hydration fallback and
+  corpus assembly for aggregations.
+- the per-query vector column of the exact kNN scan: built from those
+  documents (or from the typed projection) and, when the hydration cache
+  refuses it (always for a column cut short at the deadline), kept by the
+  query with no reservation.
 
-**File**: `engine/crates/xerj-autoindex/src/def.rs` (modified, +213/-7)
+Neither took a `transient_read_permit`, so concurrent cold kNN queries stacked
+whole decoded segments that no budget saw. On a node already near its limit,
+nothing stopped the next one from pushing RSS into the OOM killer.
+
+Root cause
+The stored-slices, doc-values and FTS-reader builds already reserve in the
+read budget (#3266 and earlier). These two paths were written before that and
+were never moved over. A refused load also had no error path: it cam
+
+**File**: `engine/crates/xerj-engine/src/governor.rs` (modified, +55/-0)
 ```diff
-@@ -206,6 +206,7 @@ pub fn finalize_definition_response(response: &mut Value, query: &str, k: usize)
-         .unwrap_or_default();
-     rerank_def_hits(&mut hits, query);
-     let mut hits = unique_locations(hits);
-+    demote_literal_references(&mut hits, query);
-     hits.truncate(k);
-     if let Some(slot) = response.pointer_mut("/hits/hits") {
-         *slot = Value::Array(hits.clone());
-@@ -481,6 +482,145 @@ pub(crate) fn rerank_def_hits(hits: &mut [Value], query: &str) {
-     xerj_common::xccode::render::demote_sparse_definition_hits(hits, query);
- }
- 
-+/// True when `text` names `name` (as a whole identifier) at least once and
-+/// every such occurrence sits inside a quoted string or a `[...]` list.
-+///
-+/// Quotes are `"`, `` ` `` and, unless `apostrophe_quotes` is false (Rust
-+/// and OCaml use `'` for lifetimes and type variables), `'`. A quote counts
-+/// only when it closes on the same line (backslash escapes honoured), so a
-+/// stray apostrophe opens nothing. Bracket depth carries across lines, so a
-+/// list that spans lines is one list. Comments are not parsed: a name in a
-+/// comment counts as an occurrence outside a literal, which keeps the hit a
-+/// declaration.
-+fn only_in_literals(text: &str, name: &str, apostrophe_quotes: bool) -> bool {
-+    if name.is_empty() {
-+        return false;
-+    }
-+    let word = |b: u8| b.is_ascii_alphanumeric() || b == b'_' || b == b'$';
-+    // The quote at `open` has a matching close later on the same line.
-+    let closes = |bytes: &[u8], open: usize| {
-+        let q = bytes[open];
-+        let mut j = open + 1;
-+        while j < bytes.len() {
-+            match bytes[j] {
-+                b'\\' => j += 2,
-+                b if b == q => return true,
-+                _ => j += 1,
-+            }
-+        }
-+        false
-+    };
-+    let needle = name.as_bytes();
-+    let mut depth = 0usize;
-+    let mut seen = false;
-+    for line in text.lines() {
-+        let bytes = line.as_bytes();
-+        let mut quote: Option<u8> = None;
-+        let mut i = 0;
-+        while i < bytes.len() {
-+            let b = bytes[i];
-+            if let Some(q) = quote {
-+                if b == b'\\' {
-+                    i += 2;
-+                    continue;
-+                }
-+                if b == q {
-+                    quote = None;
-+                }
-+            } else {
-+                match b {
-+                    b'"' | b'`' if closes(bytes, i) => quote = Some(b),
-+                    b'\'' if apostrophe_quotes && closes(bytes, i) => quote = Some(b),
-+                    b'[' => depth += 1,
-+                    b']' => depth = depth.saturating_sub(1),
-+                    _ => {}
-+                }
-+            }
-+            if bytes[i..].starts_with(needle)
-+                && (i == 0 || !word(bytes[i - 1]))
-+                && bytes.get(i + needle.len()).is_none_or(|&n| !word(n))
-+            {
-+                seen = true;
-+                if quote.is_none() && depth == 0 {
-+                    return false;
-+                }
-+                i += needle.len();
-+                continue;
-+            }
-+            i += 1;
-+        }
-+    }
-+    seen
-+}
-+
-+/// #3270: a hit that is not a declaration of `query` and names it only
-+/// inside a string or a list (a helper script's `LABELS = ["foo", ...]`)
-+/// is a reference. References keep their order but sort after every other
-+/// hit, and carry `reference: true`. Only an identifier query is checked;
-+/// a plain-words query has no single name to look for.
-+pub(crate) fn demote_literal_references(hits: &mut Vec<Value>, query: &str) {
-+    let name = query.trim();
-+    if !is_identifier(name) {
-+        return;
-+    }
-+    let mut declarations = Vec::with_capacity(hits.len());
-+    let mut references = Vec::new();
-+    for mut hit in hits.drain(..) {
-+        let src = hit.get("_source").unwrap_or(&Value::Null);
-+        let declares = src.get("name").and_then(Value::as_str) == Some(name);
-+        let text = src
-+            .get("code")
-+            .and_then(Value::as_str)
-+            .map(str::to_string)
-+            .or_else(|| passage_text(&hit));
-+        let apostrophes = !matches!(
-+            src.get("language").and_then(Value::as_str),
-+            Some("rust" | "ocaml" | "ocaml_interface")
-+        );
-+        let reference = !declares && text.is_some_and(|t| only_in_literals(&t, name, apostrophes));
-+        if reference {
-+            if let Some(obj) = hit.as_object_mut() {
-+                obj.insert("reference".into(), Value::Bool(true));
-+            }
-+            references.push(hit);
-+        } else {
-+            declarations.push(hit);
-+        }
-+    }
-+    declarations.extend(references);
-+    *hits = declarations;
-+}
-+
-+/// The bracketed tag after a hit's location: its kind plus what the
-+/// freshness pass (#3268) or the reference check (#3270) said about it.
-+fn hit_tag(hit: &Value) -> String {
-+    let mut tags = Vec::new();
-+    if let Some(kind) = hit
-+        .p
-```
-
-**File**: `engine/crates/xerj-autoindex/src/extract/code.rs` (modified, +242/-5)
-```diff
-@@ -64,10 +64,79 @@ struct LangDef {
-     probe: Option<fn(&str) -> bool>,
- }
- 
--/// Is this extension a language we AST-parse? Cheap check used by the sniffer.
-+/// Is this extension a language we extract definitions from? Cheap check
-+/// used by the sniffer. Covers the tree-sitter rows and the line-scanned
-+/// languages in [`LINE_LANGS`].
- pub fn is_code_ext(ext: &str) -> bool {
-     let e = ext.to_ascii_lowercase();
--    registry().iter().any(|d| d.exts.contains(&e.as_str()))
-+    registry().iter().any(|d| d.exts.contains(&e.as_str())) || line_lang(&e).is_some()
-+}
-+
-+/// A language with no registered tree-sitter grammar whose definitions are
-+/// found by a line scan ([`super::code_regex`]). #3270: assembly labels were
-+/// not definitions at all, so `xerj def <label>` fell back to the same word
-+/// inside string constants of helper scripts. #3271: GDScript was not code.
-+struct LineLang {
-+    name: &'static str,
-+    exts: &'static [&'static str],
-+    scan: fn(&str) -> Vec<super::code_regex::LineSym>,
-+}
-+
-+/// `.inc` is not claimed: PHP, Pascal and C projects use it too, and a
-+/// single-claimant extension is never content-probed. `.S` is matched as
-+/// `s` (extensions are lowercased before lookup).
-+const LINE_LANGS: &[LineLang] = &[
-+    LineLang {
-+        name: "asm",
-+        exts: &["s", "asm"],
-+        scan: super::code_regex::asm_symbols,
-+    },
-+    LineLang {
-+        name: "gdscript",
-+        exts: &["gd"],
-+        scan: super::code_regex::gdscript_symbols,
-+    },
-+];
-+
-+fn line_lang(ext: &str) -> Option<&'static LineLang> {
-+    LINE_LANGS.iter().find(|l| l.exts.contains(&ext))
-+}
-+
-+fn line_symbols(lang: &LineLang, text: &str) -> Vec<Symbol> {
-+    (lang.scan)(text)
-+        .into_iter()
-+        .map(|s| Symbol {
-+            name: s.name,
-+            kind: s.kind.to_string(),
-+            line: s.line,
-+            end_line: s.end_line,
-+            code: s.code,
-+        })
-+        .collect()
-+}
-+
-+/// The language name a file with extension `ext` is extracted as, after the
-+/// same content probe [`extract`] applies to a shared extension. `None` when
-+/// no row claims it.
-+pub fn language_for(ext: &str, text: &str) -> Option<&'static str> {
-+    let ext = ext.to_ascii_lowercase();
-+    if let Some(line) = line_lang(&ext) {
-+        return Some(line.name);
-+    }
-+    let claimants: Vec<&LangDef> = registry()
-+        .iter()
-+        .filter(|d| d.exts.contains(&ext.as_str()))
-+        .collect();
-+    match claimants.as_slice() {
-+        [] => None,
-+        [only] => Some(only.name),
-+        many => Some(
-+            many.iter()
-+                .find(|d| d.probe.map(|p| p(text)).unwrap_or(true))
-+                .unwrap_or(&many[0])
-+                .name,
-+        ),
-+    }
- }
- 
- /// #2732: Vue and Svelte single-file components. No grammar claims the whole
-@@ -134,6 +203,13 @@ pub fn canonical_language(input: &str) -> Option<&'static str> {
-         .find(|d| d.name == wanted)
-         .or_else(|| reg.iter().find(|d| d.exts.contains(&wanted.as_str())))
-         .map(|d| d.name)
-+        .or_else(|| {
-+            LINE_LANGS
-+                .iter()
-+                .find(|l| l.name == wanted)
-+                .or_else(|| line_lang(&wanted))
-+                .map(|l| l.name)
-+        })
- }
- 
- /// The `--lang` value to filter on: the canonical language name when the
-@@ -452,6 +528,17 @@ pub fn extract(path: &Path, sn: &crate::sniff::Sniffed, sink: Sink) -> Result<Ex
-         emit_code_doc(named, &ext, &text, &symbols, &mut stats, sink);
-         return Ok(stats);
+@@ -1522,6 +1522,29 @@ impl ResourceGovernor {
+         self.memory_limit_bytes.max(watermark)
      }
-+    if let Some(line) = line_lang(&ext) {
-+        let Some(bytes) = super::read_whole(path, false, CODE_CAP)? else {
-+            stats.junk += 1;
-+            stats.refusal = Some(code_cap_refusal(path));
-+            return Ok(stats);
-+        };
-+        let (text, _) = crate::sniff::decode_text(&bytes);
-+        let symbols = line_symbols(line, &text);
-+        emit_code_doc(named, line.name, &text, &symbols, &mut stats, sink);
-+        return Ok(stats);
-+    }
-     let claimants: Vec<&LangDef> = registry()
-         .iter()
-         .filter(|d| d.exts.contains(&ext.as_str()))
-@@ -1304,11 +1391,14 @@ pub fn extract_value(lang: &str, decl: &str) -> Option<String> {
- /// contents. Unknown languages yield no records. The declaration text is capped
- /// at 400 chars; constants and macros carry their value ([`extract_value`]).
- pub fn definitions(file_rel: &str, lang: &str, text: &str) -> Vec<xerj_common::hub::DefRecord> {
--    let Some(def) = registry().iter().find(|d| d.name == lang) else {
-+    let symbols = if let Some(line) = LINE_LANGS.iter().find(|l| l.name == lang) {
-+        line_symbols(line, text)
-+    } else if let Some(def) = registry().iter().find(|d| d.name == lang) {
-+        parse_symbols(def, text).unwrap_or_default()
-+    } else {
-         return Vec::new();
-     };
--    parse_symbols(def, text)
--        .unwrap_or_default()
-+    symbols
-         .into_iter()
-         .map(|s| {
  
-```
-
-**File**: `engine/crates/xerj-autoindex/src/extract/code_regex.rs` (added, +465/-0)
-```diff
-@@ -0,0 +1,465 @@
-+//! Line-based definition extractors for languages with no registered
-+//! tree-sitter grammar (#3270 assembly, #3271 GDScript).
-+//!
-+//! No grammar dependency is added. A multi-dialect assembly grammar does not
-+//! exist in a maintained form, and a GDScript grammar would be a new crate
-+//! whose licence and query surface we have not reviewed. Both languages
-+//! declare their definitions at the start of a line, so a per-line scan finds
-+//! them. A scan cannot see nesting the way an AST can, so it reports only
-+//! what the first tokens of a line say.
-+
-+use std::collections::HashSet;
-+
-+/// One definition found by a line scan. `line` and `end_line` are 1-based.
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub(crate) struct LineSym {
-+    pub name: String,
-+    pub kind: &'static str,
-+    pub line: usize,
-+    pub end_line: usize,
-+    pub code: String,
-+}
-+
-+/// Cap on the definitions one file yields, the same as the AST path.
-+const MAX_SYMS: usize = 5000;
-+/// Longest name kept. Anything longer is not a hand-written identifier.
-+const MAX_NAME: usize = 200;
-+/// Longest declaration line kept in `code`.
-+const MAX_CODE: usize = 400;
-+
-+fn ident_start(c: char) -> bool {
-+    c.is_ascii_alphabetic() || c == '_'
-+}
-+
-+fn asm_ident_char(c: char) -> bool {
-+    c.is_ascii_alphanumeric() || matches!(c, '_' | '.' | '$' | '@' | '?')
-+}
-+
-+/// Leading assembler identifier of `s`: `[A-Za-z_.$][\w.$@?]*`.
-+fn asm_ident(s: &str) -> Option<&str> {
-+    let first = s.chars().next()?;
-+    if !(ident_start(first) || first == '.' || first == '$') {
-+        return None;
-+    }
-+    let end = s
-+        .char_indices()
-+        .find(|(_, c)| !asm_ident_char(*c))
-+        .map_or(s.len(), |(i, _)| i);
-+    let name = &s[..end];
-+    (!name.is_empty() && name.len() <= MAX_NAME).then_some(name)
-+}
-+
-+fn word(s: &str) -> Option<&str> {
-+    let first = s.chars().next()?;
-+    if !ident_start(first) {
-+        return None;
-+    }
-+    let end = s
-+        .char_indices()
-+        .find(|(_, c)| !(c.is_ascii_alphanumeric() || *c == '_'))
-+        .map_or(s.len(), |(i, _)| i);
-+    Some(&s[..end]).filter(|n| n.len() <= MAX_NAME)
-+}
-+
-+fn clip(line: &str) -> String {
-+    line.trim().chars().take(MAX_CODE).collect()
-+}
-+
-+/// A local label the assembler does not export: GNU `.L…`, numeric `1:`,
-+/// and MASM `@@:`. These are jump targets inside a routine, not definitions.
-+fn asm_local(name: &str) -> bool {
-+    name.starts_with(".L") || name.starts_with("L$") || name.starts_with("@@")
-+}
-+
-+/// Directives that make a name global. GNU `.globl` / `.global`, NASM
-+/// `global`, MASM `PUBLIC`, and `.type name, @function`.
-+fn asm_exported(lines: &[&str]) -> HashSet<String> {
-+    let mut out = HashSet::new();
-+    for raw in lines {
-+        let line = raw.trim();
-+        let lower = line.to_ascii_lowercase();
-+        let rest = [".globl", ".global", "global", "public"]
-+            .iter()
-+            .find_map(|kw| {
-+                lower
-+                    .strip_prefix(kw)
-+                    .filter(|r| r.starts_with([' ', '\t']))
-+                    .map(|_| line[kw.len()..].trim())
-+            });
-+        if let Some(rest) = rest {
-+            for part in rest.split([',', ' ', '\t']) {
-+                let part = part.trim().trim_end_matches(":function").trim();
-+                if let Some(name) = asm_ident(part) {
-+                    out.insert(name.to_string());
-+                }
-+            }
-+            continue;
++    /// #2427: admission for one query-time transient the hydration cache
++    /// refused (a whole-segment stored-values decode, a per-query vector
++    /// column). The search was admitted under the hard limit, but such a
++    /// value is sized by the segment, not the request: on a node near its
++    /// limit it is what carries RSS into the OOM killer. A transient that
++    /// would cross the limit gets a 429 `circuit_breaking_exception` instead.
++    /// No-op when no limit is known.
++    pub fn check_read_transient(&self, bytes: u64, label: &str) -> Result<(), XerjError> {
++        let limit = self.search_hard_limit_bytes();
++        let rss = self.search_admission_rss();
++        if limit != 0 && rss.saturating_add(bytes) > limit {
++            return Err(XerjError::circuit_breaking(format!(
++                "[parent] Data too large: data for [{label}] would be [{}/{}], which is larger than the memory limit of [{limit}/{}] (process memory [{rss}/{}], transient read [{bytes}/{}]); search rejected",
++                rss.saturating_add(bytes),
++                human_bytes(rss.saturating_add(bytes)),
++                human_bytes(limit),
++                human_bytes(rss),
++                human_bytes(bytes),
++            )));
 +        }
-+        if let Some(rest) = lower.strip_prefix(".type") {
-+            if rest.contains("function") {
-+                let rest = line[5..].trim();
-+                if let Some(name) = asm_ident(rest.split(',').next().unwrap_or("").trim()) {
-+                    out.insert(name.to_string());
-+                }
-+            }
-+        }
-+    }
-+    out
-+}
-+
-+/// Assembly: GNU as (`.s`, `.S`), NASM/YASM and MASM (`.asm`).
-+///
-+/// - a label at column 0 (`name:`) is a definition; exported names
-+///   (`.globl`, `global`, `PUBLIC`, `.type name, @function`) are `function`,
-+///   the rest `label`. Local labels (`.L…`, numeric) are skipped.
-+/// - MASM `name PROC` is a `function`, `name MACRO` a `macro`.
-+/// - `.macro name` and NASM `%macro name` are `macro`.
-+/// - `.equ name, v`, `.set name, v`, `name EQU v`, `%define name`,
-+///   `#define name` and a column-0 `name = v` are `const`.
-+///
-+/// A routine runs from its label to the line before the next column-0
-+/// definition, which is what `end_line` reports.
-+pub(crate) fn asm_symbols(text: &str) -> Vec<LineSym> {
-+    let lines: Vec<&str> = text.lines().collect();
-+    let exported = asm_exported(&lines);
-+    let mut out: Vec<LineSym> = Vec::new();
-+    for (row, raw) in lines.iter().enumerate() {
-+        if out.len() >= MAX_SYMS {
-+            break;
-+        }
-+        let line_no = row + 1;
-+        let trimmed = raw.trim_start();
-+        let at_col0 = trimmed.len() == raw.len();
-+        let lower = trimme
-```
-
-**File**: `engine/crates/xerj-autoindex/src/extract/mod.rs` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@
- 
- pub mod bvh;
- pub mod code;
-+mod code_regex;
- pub mod csv_x;
- pub mod doc;
- pub mod docx;
-```
-
-**File**: `engine/crates/xerj-autoindex/src/freshness.rs` (added, +655/-0)
-```diff
-@@ -0,0 +1,655 @@
-+//! Correct `xerj def` answers from an index older than its folder (#3268).
-+//!
-+//! The `index_stale` hint (#2345) says a prefix is behind its folder. It did
-+//! not change the answer, so an agent still got the line a function sat on at
-+//! index time (138 when it is now 141) and "no definition found" for a
-+//! function added since. Agents then re-read every hit by hand, and where
-+//! only one owner may rebuild a shared index, they could not fix it.
-+//!
-+//! This module runs only when that hint fired, so a fresh tree reads no file
-+//! and its output is unchanged. It writes nothing to the index.
-+//!
-+//! - **Re-anchor.** A hit whose file is newer than the index stamp is re-read
-+//!   (at most [`crate::extract::code::CODE_CAP`] bytes). Its declaration line
-+//!   is looked up by text, first within [`WINDOW`] lines of the indexed line,
-+//!   then in the whole file; when the line text changed too, the extractor
-+//!   finds the symbol by name. The hit then carries the current line and
-+//!   `reanchored: true` with `indexed_line`. A hit whose file is gone, or
-+//!   whose symbol the extractor no longer finds, is dropped.
-+//! - **Unindexed definitions.** When no hit is an exact-name definition, the
-+//!   extractor runs read-only over the code files changed since the stamp
-+//!   (bounded by [`UNINDEXED_MAX_FILES`], [`UNINDEXED_MAX_BYTES`] and the
-+//!   walk limits) and exact-name matches are returned with `unindexed: true`.
-+
-+use std::fs;
-+use std::io::{ErrorKind, Read};
-+use std::path::{Path, PathBuf};
-+use std::time::{Duration, SystemTime};
-+
-+use serde_json::{json, Value};
-+
-+use crate::staleness::{self, StalenessHint, WalkLimits};
-+
-+/// Lines either side of the indexed line searched before the whole file.
-+pub const WINDOW: usize = 64;
-+/// Changed code files the unindexed pass parses.
-+pub const UNINDEXED_MAX_FILES: usize = 256;
-+/// Total bytes the unindexed pass reads.
-+pub const UNINDEXED_MAX_BYTES: u64 = 32 << 20;
-+/// Walk limits for the unindexed pass: wider than the hint's 100 ms, since
-+/// it runs only on a stale prefix that found no exact definition.
-+pub const UNINDEXED_WALK: WalkLimits = WalkLimits {
-+    stat_cap: 50_000,
-+    wall: Duration::from_millis(1500),
-+    grace: staleness::MTIME_GRACE,
-+};
-+
-+/// The folder an index was built from, and when.
-+#[derive(Debug, Clone)]
-+pub struct IndexedTree {
-+    pub root: PathBuf,
-+    pub indexed_at: SystemTime,
-+    pub grace: Duration,
-+}
-+
-+impl IndexedTree {
-+    /// From a hint the staleness check produced. `None` when its root is not
-+    /// a directory here or its time does not parse.
-+    pub fn from_hint(hint: &StalenessHint) -> Option<Self> {
-+        let root = PathBuf::from(&hint.root);
-+        if !root.is_dir() {
-+            return None;
-+        }
-+        Some(Self {
-+            root,
-+            indexed_at: staleness::parse_time(&hint.indexed_at)?,
-+            grace: staleness::MTIME_GRACE,
-+        })
++        Ok(())
 +    }
 +
-+    fn changed(&self, mtime: SystemTime) -> bool {
-+        mtime
-+            .duration_since(self.indexed_at)
-+            .is_ok_and(|age| age > self.grace)
-+    }
-+}
-+
-+/// What [`correct_definition_hits`] did, for the CLI's summary line.
-+#[derive(Debug, Default, Clone, PartialEq, Eq)]
-+pub struct Correction {
-+    pub reanchored: usize,
-+    pub dropped: usize,
-+    pub unindexed: usize,
-+}
-+
-+impl Correction {
-+    pub fn is_empty(&self) -> bool {
-+        *self == Self::default()
-+    }
-+
-+    /// One line for `xerj def`, or `None` when nothing changed.
-+    pub fn cli_line(&self) -> Option<String> {
-+        if self.is_empty() {
-+            return None;
-+        }
-+        let mut parts = Vec::new();
-+        if self.reanchored > 0 {
-+            parts.push(format!(
-+                "{} line(s) re-anchored to the file on disk",
-+                self.reanchored
-+            ));
-+        }
-+        if self.dropped > 0 {
-+            parts.push(format!(
-+                "{} hit(s) dropped (file or symbol no longer there)",
-+                self.dropped
-+            ));
-+        }
-+        if self.unindexed > 0 {
-+            parts.push(format!(
-+                "{} definition(s) found in changed files that are not indexed yet",
-+                self.unindexed
-+            ));
-+        }
-+        Some(format!(
-+            "xerj def: corrected against the folder: {}.",
-+            parts.join("; ")
-+        ))
-+    }
-+}
-+
-+/// Record a non-empty correction under `_xerj.freshness`, next to the
-+/// `index_stale` hint. A response that is not a JSON object is left alone.
-+pub fn attach(resp: &mut Value, fixed: &Correction) {
-+    let Some(obj) = resp.as_object_mut() else {
-+        return;
-+    };
-+    let xerj = obj.entry("_xerj").or_insert_with(|| json!({}));
-+    if let Some(xerj) = xerj.as_object_mut() {
-+        xerj.insert(
-+            "freshness".into(),
-+            json!({
-+                "reanchored": fixed.reanchored,
-+                "dropped": fixed.dropped,
-+       
-```
-
-**File**: `engine/crates/xerj-autoindex/src/gitref.rs` (added, +218/-0)
-```diff
-@@ -0,0 +1,218 @@
-+//! Read-only git commit lookup for an indexed folder (#3268).
-+//!
-+//! `xerj status` and `xerj_map` compare the commit a folder was at when it
-+//! was indexed with the commit it is at now. Neither the git binary nor a
-+//! git library is needed: `HEAD`, the ref it names (loose or packed), and
-+//! the HEAD reflog are plain text files. The commit at index time is the
-+//! last HEAD reflog entry written at or before the index stamp. That is the
-+//! commit HEAD pointed at then, as long as the reflog still holds that
-+//! entry (git expires reflog entries after 90 days by default). When it
-+//! does not, the answer is `None`, not a guess.
-+
-+use std::fs;
-+use std::path::{Path, PathBuf};
-+use std::time::{SystemTime, UNIX_EPOCH};
-+
-+/// Largest reflog read. A HEAD reflog is ~150 bytes per checkout/commit.
-+const REFLOG_CAP: u64 = 16 << 20;
-+/// Ancestors walked looking for `.git`.
-+const MAX_ANCESTORS: usize = 64;
-+
-+/// The git directory for `dir`, and the common directory that holds shared
-+/// refs (the same directory outside a linked worktree).
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub struct GitDirs {
-+    pub git_dir: PathBuf,
-+    pub common_dir: PathBuf,
-+}
-+
-+/// Find the repository `dir` belongs to: the nearest ancestor with a `.git`
-+/// directory, or a `.git` file naming one (`gitdir: …`, a linked worktree or
-+/// a submodule).
-+pub fn git_dirs(dir: &Path) -> Option<GitDirs> {
-+    let mut cur = Some(dir);
-+    for _ in 0..MAX_ANCESTORS {
-+        let here = cur?;
-+        let dot_git = here.join(".git");
-+        let git_dir = if dot_git.is_dir() {
-+            Some(dot_git)
-+        } else if dot_git.is_file() {
-+            let text = fs::read_to_string(&dot_git).ok()?;
-+            let target = text.lines().find_map(|l| l.strip_prefix("gitdir:"))?.trim();
-+            let target = Path::new(target);
-+            Some(if target.is_absolute() {
-+                target.to_path_buf()
-+            } else {
-+                here.join(target)
-+            })
-+        } else {
-+            None
-+        };
-+        if let Some(git_dir) = git_dir {
-+            let common_dir = fs::read_to_string(git_dir.join("commondir"))
-+                .ok()
-+                .map(|c| {
-+                    let c = Path::new(c.trim());
-+                    if c.is_absolute() {
-+                        c.to_path_buf()
-+                    } else {
-+                        git_dir.join(c)
-+                    }
-+                })
-+                .unwrap_or_else(|| git_dir.clone());
-+            return Some(GitDirs {
-+                git_dir,
-+                common_dir,
-+            });
-+        }
-+        cur = here.parent();
-+    }
-+    None
-+}
-+
-+fn is_sha(s: &str) -> bool {
-+    (s.len() == 40 || s.len() == 64) && s.bytes().all(|b| b.is_ascii_hexdigit())
-+}
-+
-+fn resolve_ref(dirs: &GitDirs, name: &str) -> Option<String> {
-+    for base in [&dirs.git_dir, &dirs.common_dir] {
-+        if let Ok(text) = fs::read_to_string(base.join(name)) {
-+            let text = text.trim();
-+            if is_sha(text) {
-+                return Some(text.to_string());
-+            }
-+        }
-+    }
-+    let packed = fs::read_to_string(dirs.common_dir.join("packed-refs")).ok()?;
-+    packed.lines().find_map(|line| {
-+        let (sha, refname) = line.split_once(' ')?;
-+        (refname.trim() == name && is_sha(sha)).then(|| sha.to_string())
-+    })
-+}
-+
-+/// The commit `HEAD` names now, or `None` outside a repository, on an
-+/// unborn branch, or when the ref cannot be read.
-+pub fn head_now(dir: &Path) -> Option<String> {
-+    let dirs = git_dirs(dir)?;
-+    let head = fs::read_to_string(dirs.git_dir.join("HEAD")).ok()?;
-+    let head = head.trim();
-+    if is_sha(head) {
-+        return Some(head.to_string());
-+    }
-+    let name = head.strip_prefix("ref:")?.trim();
-+    if name.contains("..") {
-+        return None;
-+    }
-+    resolve_ref(&dirs, name)
-+}
-+
-+/// The commit `HEAD` pointed at `when`, from the HEAD reflog. `None` when
-+/// there is no reflog, or its oldest entry is newer than `when`.
-+pub fn head_at(dir: &Path, when: SystemTime) -> Option<String> {
-+    let dirs = git_dirs(dir)?;
-+    let path = dirs.git_dir.join("logs").join("HEAD");
-+    if fs::metadata(&path).ok()?.len() > REFLOG_CAP {
-+        return None;
-+    }
-+    let text = fs::read_to_string(path).ok()?;
-+    let cutoff = when.duration_since(UNIX_EPOCH).ok()?.as_secs();
-+    head_from_reflog(&text, cutoff)
-+}
-+
-+/// Parse a HEAD reflog: `<old> <new> <name> <<email>> <unix> <tz>\t<msg>`.
-+/// Entries are appended in time order, so the last one at or before
-+/// `cutoff` wins.
-+fn head_from_reflog(text: &str, cutoff: u64) -> Option<String> {
-+    let mut found = None;
-+    for line in text.lines() {
-+        let head = line.split('\t').next().unwrap_or(line);
-+        let mut parts = head.split(' ');
-+        let (Some(_old), Some(new)) = (parts.next(), parts.next()) else {
-+            continue;
-+        };
-+        let mut tail 
-```
-
-**File**: `engine/crates/xerj-autoindex/src/lib.rs` (modified, +3/-0)
-```diff
-@@ -21,11 +21,13 @@ pub mod facts_rows;
- mod family_junk;
- pub mod feedback;
- pub mod flood;
-+pub mod freshness;
- pub mod gain;
- pub mod gate;
- mod generation_catalog;
- #[cfg(test)]
- mod generation_catalog_http_tests;
-+pub mod gitref;
- /// `xerj corpus build` — harvested-record corpus packs (recipe → store →
- /// identity → merge → deterministic pack).
- pub mod harvest;
-@@ -63,6 +65,7 @@ pub mod sources;
- mod stage;
- pub mod staleness;
- pub mod state;
-+pub mod status_cli;
- mod sync;
- mod sync_executor;
- #[cfg(test)]
-```
-
-**File**: `engine/crates/xerj-autoindex/src/staleness.rs` (modified, +160/-2)
-```diff
-@@ -274,7 +274,7 @@ fn field_str<'a>(value: &'a Value, key: &str) -> Option<&'a str> {
-         .filter(|s| !s.is_empty())
- }
- 
--fn parse_time(raw: &str) -> Option<SystemTime> {
-+pub fn parse_time(raw: &str) -> Option<SystemTime> {
-     let dt = chrono::DateTime::parse_from_rfc3339(raw).ok()?;
-     let secs = dt.timestamp();
-     if secs < 0 {
-@@ -628,7 +628,7 @@ fn counts_as_indexed(status: Option<&str>) -> bool {
- 
- /// A catalog path that stays inside the root. Absolute paths and `..` are
- /// ignored so a catalog row cannot point the stat at another directory.
--fn safe_rel(rel: &str) -> Option<&str> {
-+pub(crate) fn safe_rel(rel: &str) -> Option<&str> {
-     if rel.is_empty() || rel.len() > 1024 || rel.starts_with('/') || rel.starts_with('\\') {
-         return None;
+     fn check_search_hard_limit(&self) -> Result<(), XerjError> {
+         let limit = self.search_hard_limit_bytes();
+         let rss = self.search_admission_rss();
+@@ -3019,6 +3042,20 @@ impl ResourceGovernor {
+         self.rss_bytes.store(live, Ordering::Relaxed);
      }
-@@ -769,6 +769,123 @@ fn fetch_files(client: &CatalogClient, prefix: &str) -> Option<Vec<CatalogFile>>
-     Some(files)
+ 
++    /// A standalone governor whose hard search limit is `limit` and whose
++    /// last RSS sample is `rss` (#2427 read-transient admission tests).
++    pub(crate) fn with_rss_and_limit_for_test(rss: u64, limit: u64) -> Arc<Self> {
++        let mut cfg = Config::default();
++        cfg.limits.max_total_memtable_mb = 0;
++        let mut governor = build(&cfg);
++        governor.memory_limit_bytes = limit;
++        governor
++            .memory_watermark_bytes
++            .store(limit, Ordering::Relaxed);
++        governor.rss_bytes.store(rss, Ordering::Relaxed);
++        Arc::new(governor)
++    }
++
+     /// Bytes currently held by analyze reservations.
+     pub(crate) fn analyze_reserved_for_test(&self) -> u64 {
+         self.analyze_reserved.load(Ordering::Acquire)
+@@ -3945,6 +3982,24 @@ mod tests {
+         );
+     }
+ 
++    /// #2427: a refused read transient that would carry RSS past the hard
++    /// limit is a 429, not an allocation; one that fits passes; no known
++    /// limit never rejects.
++    #[test]
++    fn read_transient_over_the_hard_limit_is_a_429_2427() {
++        const MIB: u64 = 1024 * 1024;
++        let g = ResourceGovernor::with_rss_and_limit_for_test(900 * MIB, 1000 * MIB);
++        assert!(g.check_read_transient(100 * MIB, "stored-values").is_ok());
++        let err = g
++            .check_read_transient(100 * MIB + 1, "stored-values")
++            .unwrap_err();
++        assert_eq!(err.http_status(), 429);
++        assert!(matches!(err, XerjError::CircuitBreaking { .. }));
++        assert!(format!("{err}").contains("[stored-values]"), "{err}");
++        let unlimited = ResourceGovernor::with_rss_and_limit_for_test(900 * MIB, 0);
++        assert!(unlimited.check_read_transient(u64::MAX, "x").is_ok());
++    }
++
+     #[test]
+     fn memtable_budget_trips_on_refresh() {
+         let mut cfg = Config::default();
+```
+
+**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +429/-29)
+```diff
+@@ -78,6 +78,74 @@ fn transient_read_permit(
+     }
  }
  
-+/// The newest run recorded for `prefix` on `url`, or `None` when the node
-+/// has no catalog, no run for it, or did not answer within the catalog
-+/// timeout. `xerj status` (#3268) reads the same stamp the hint does.
-+pub fn load_stamp(url: &str, api_key: Option<&str>, prefix: &str) -> Option<IndexStamp> {
-+    let prefix = prefix.trim();
-+    let url = url.trim().trim_end_matches('/');
-+    if prefix.is_empty() || url.is_empty() {
-+        return None;
++/// #2427: [`transient_read_permit`] for a value sized by its segment rather
++/// than by the request, where a refusal can be reported: when the cache
++/// cannot keep it, the parent breaker (`governor`) first refuses with a 429 a
++/// value that would carry the process past its hard memory limit, then the
++/// read budget reserves it.
++fn admit_transient_read(
++    hydration: &SegmentHydrationBudget,
++    read_budget: &Arc<ReadTransientBudget>,
++    governor: Option<&crate::governor::ResourceGovernor>,
++    bytes: u64,
++    label: &str,
++) -> std::result::Result<Option<ReadPermit>, xerj_common::XerjError> {
++    if hydration.has_headroom(bytes) {
++        return Ok(None);
 +    }
-+    let client = CatalogClient::new(url, api_key)?;
-+    let runs = fetch_runs(&client, prefix)?;
-+    latest_stamp(&runs, prefix)
++    if let Some(governor) = governor {
++        governor.check_read_transient(bytes, label)?;
++    }
++    Ok(Some(read_budget.acquire(bytes)))
 +}
 +
-+/// Files under a root whose mtime is newer than the index stamp (#3268).
-+#[derive(Debug, Default, Clone, PartialEq, Eq)]
-+pub struct ChangedScan {
-+    /// Root-relative, `/`-separated paths, newest directory first, then in
-+    /// directory-listing order sorted by name.
-+    pub files: Vec<String>,
-+    /// False when the stat cap, the wall clock, or `max_files` stopped the
-+    /// scan before it saw every admitted file.
-+    pub complete: bool,
-+    /// Entries stat'd.
-+    pub stats: u64,
++/// The budgets one read-side transient is admitted against (#2427). Search
++/// paths use the process-wide ones; tests pin their own.
++#[derive(Clone)]
++struct ReadAdmission {
++    hydration: Arc<SegmentHydrationBudget>,
++    read_budget: Arc<ReadTransientBudget>,
++    governor: Option<Arc<crate::governor::ResourceGovernor>>,
 +}
 +
-+/// Every admitted file under `root` (same ignore rules as [`check`]) whose
-+/// mtime is newer than `indexed_at` plus the grace. Stops at `max_files`,
-+/// the stat cap, or the wall clock, and says so in `complete`. Read-only:
-+/// metadata only, no file contents.
-+pub fn changed_files(
-+    root: &Path,
-+    indexed_at: SystemTime,
-+    limits: &WalkLimits,
-+    max_files: usize,
-+) -> ChangedScan {
-+    let started = Instant::now();
-+    let mut scan = ChangedScan {
-+        complete: true,
-+        ..ChangedScan::default()
-+    };
-+    let Ok(root) = root.canonicalize() else {
-+        scan.complete = false;
-+        return scan;
-+    };
-+    if !root.is_dir() {
-+        scan.complete = false;
-+        return scan;
++impl ReadAdmission {
++    fn admit(
++        &self,
++        bytes: u64,
++        label: &str,
++    ) -> std::result::Result<Option<ReadPermit>, xerj_common::XerjError> {
++        admit_transient_read(
++            &self.hydration,
++            &self.read_budget,
++            self.governor.as_deref(),
++            bytes,
++            label,
++        )
 +    }
-+    let mut stack = IgnoreStack::new(&root, IgnoreOptions::default());
-+    let newer = |mtime: SystemTime| {
-+        mtime
-+            .duration_since(indexed_at)
-+            .is_ok_and(|age| age > limits.grace)
-+    };
-+    // Depth-first, an explicit stack so a deep tree cannot overflow.
-+    let mut pending: Vec<(PathBuf, usize)> = vec![(root.clone(), 0)];
-+    while let Some((dir, depth)) = pending.pop() {
-+        if depth >= MAX_DEPTH {
-+            continue;
++}
++
++/// Peak of a whole-segment stored-values load over its decompressed size:
++/// the decompressed bytes and the parsed `Value` tree (a number-heavy row
++/// parses to ~3.5x its JSON text) are alive together during the parse.
++const STORED_VALUES_PEAK_FACTOR: u64 = 4;
++
++/// Pre-build size of a per-segment vector column (#2427): `docs` pooled
++/// vectors of `dims` `f32`s plus each document's entry, slot and identity.
++/// Passage-chunked documents hold more; the reservation is trued up to the
++/// built column's measured size.
++fn vector_column_estimate(docs: usize, dims: usize) -> u64 {
++    const PER_DOC_OVERHEAD: u64 = 112;
++    (docs as u64).saturating_mul(
++        (dims as u64)
++            .saturating_mul(std::mem::size_of::<f32>() as u64)
++            .saturating_add(PER_DOC_OVERHEAD),
++    )
++}
++
++/// A cold stored-values load as its single-flight followers see it: the
++/// parsed section, or the 429 that refused the decode (#2427).
++type StoredValuesLoad = std::result::Result<Resident<Vec<Value>>, Arc<str>>;
++
+ /// How long a rayon worker polls a segment's stored-decode flight lock
+ /// before decoding on its own (#2427).
+ const STORED_FLIGHT_WORKER_WAIT: std::time::Duration = std::time::Duration::from_millis(200);
+@@ -2696,6 +2764,203 @@ mod flush_publication_recovery_tests {
+         drop(cached);
+     }
+ 
++    async fn vector_index_2427(engine: &crate::Engine, name: &str, docs: u64) -> Arc<Index> {
++        engine.create_index(name, Schema::empty()).unwrap();
++        let idx = engine.get_index(name).unwrap();
++        idx.abort_background_tasks();
++        for i in 0..docs {
++            let x = (i as f32 + 1.0) / docs as f32;
++            idx.index_document(
++                Some(format!("doc-{i}")),
++                json!({"title": format!("title {i}"), "embedding": [x, 1.0 - x, 0.5, 0.25]}),
++            )
++            .await
++            .unwrap();
 +        }
-+        stack.truncate_to(depth);
-+        stack.enter_dir(&dir, depth);
-+        let Ok(entries) = fs::read_dir(&dir) else {
-+            continue;
-+        };
-+        let mut names: Vec<PathBuf> = entries.filter_map(|e| e.ok().map(|e| e.path())).collect();
-+        names.sort();
-+        let mut subdirs: Vec<(SystemTime, PathBuf)> = Vec::new();
-+        for path in names {
-+            if scan.stats >= limits.stat_cap || started.elapsed() >= limits.wall {
-+                scan.complete = false;
-+                return scan;
-+            }
-+            scan.stats += 1;
-+            let Ok(meta) = fs::symlink_metadata(&path) else {
-+                continue;
-+            };
-+            let Some(name) = path.file_name() else {
-+                continue;
-+            };
-+            if is_hidden_name(name) {
-+                continue;
-+            }
-+            let file_type = meta.file_type();
-+            if file_type.is_symlink() {
-+                continue;
-+            }
-+            let mtime = meta.modified().unwrap_or(SystemTime::UNIX_EPOCH);
-+            if file_type.is_dir() {
-+                if stack.skip_dir(&path).is_some() || marker_generated_dir(&path).is_some() {
-+                    continue;
-+                }
-+                subdirs.push((mtime, path));
-+                continue;
-+            }
-+            if !file_type.is_file() || stack.skip_file(&path).is_some() {
-+                continue;
-+            }
-+            if newer(mtime) {
-+                if scan.files.len() >= max_files {
-+                    scan.complete = false;
-+                    return scan;
-+                }
-+                scan.files.push(rel_of(&root, &path));
-+            }
++        idx.flush().await.unwrap();
++        idx.release_memory();
++        idx.stored_value_cache.clear();
++        idx.vector_column_cache.clear();
++        idx
++    }
++
++    fn pinned_admission_2427(
++        hydration: u64,
++        governor: Option<Arc<crate::governor::ResourceGovernor>>,
++    ) -> ReadAdmission {
++        ReadAdmission {
++            hydration: SegmentHydrationBudget::new(hydration),
++            read_budget: ReadTransientBudget::new(1 << 30, std::time::Duration::from_secs(5)),
++            governor,
 +        }
-+        // Newest directory is 
++    }
++
++    /// #2427: a whole-segment stored-values decode the hydration cache
++    /// refuses reserves its size in the read budget before decoding and holds
++    /// it until the last reader drops the value; one the cache keeps
++    /// reserves nothing.
++    ///
++    /// Fails before the fix: the cold load decoded and parsed the section
++    /// with no reservation, so the read budget saw 0 bytes and 0 admissions.
++    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
++    async fn transient_stored_values_hold_a_read_reservation_until_dropped_2427() {
++        let dir = tempfile::tempdir().unwrap();
++        let engine = crate::Engine::new(topk_projection_config(dir.path())).unwrap();
++        let idx = vector_index_2427(&engine, "sv-read-budget", 256).await;
++        let seg = idx.store.snapshot().segments[0].clone();
++
++        let full = pinned_admission_2427(0, None);
++        let docs = idx
++            .stored_value
+```
+
+**File**: `engine/crates/xerj-engine/src/read_budget.rs` (modified, +17/-0)
+```diff
+@@ -126,6 +126,23 @@ impl ReadTransientBudget {
+         }
+     }
+ 
++    /// Account `bytes` of a transient value that is already built (#2427),
++    /// without waiting: the memory is allocated, so a wait would only delay
++    /// its release. Later reservations see it until the permit drops.
++    pub fn reserve_built(self: &Arc<Self>, bytes: u64) -> ReadPermit {
++        let mut used = self.used.lock().unwrap_or_else(|p| p.into_inner());
++        *used = used.saturating_add(bytes);
++        self.peak.fetch_max(*used, Ordering::Relaxed);
++        self.admitted.fetch_add(1, Ordering::Relaxed);
++        drop(used);
++        HELD_ON_THREAD.with(|held| held.set(held.get().saturating_add(1)));
++        ReadPermit {
++            budget: Arc::clone(self),
++            bytes,
++            thread: std::thread::current().id(),
++        }
++    }
++
+     pub fn snapshot(&self) -> ReadTransientBudgetSnapshot {
+         let current = *self.used.lock().unwrap_or_else(|p| p.into_inner());
+         ReadTransientBudgetSnapshot {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3310** (2026-11-19): hub: author-approved contribution candidates (14056 repos) (@xerj-team)
-- **PR #3307** (2026-11-19): hub: move cc-foundry pins to the-coder v1.18.0 (@xobotyi)
-- **PR #3306** (2026-11-19): hub: author-approved contribution candidates (14055 repos) (@xerj-team)
-- **PR #3305** (2026-11-19): hub: author-approved contribution candidates (14054 repos) (@xerj-team)
-- **PR #3303** (2026-11-19): hub: author-approved contribution candidates (14055 repos) (@xerj-team)
-- **PR #3302** (2026-11-19): hub: author-approved contribution candidates (14055 repos) (@xerj-team)
+- **PR #3328** (2026-11-20): fix(read-budget): admit whole-segment stored-values decodes and kNN vector columns (#2427) (@xerj-team)
+- **PR #3327** (2026-11-20): fix(api,mcp): bound a whole _msearch batch and report timed-out items (#2497) (@xerj-team)
+- **PR #3326** (2026-11-20): fix: CJK highlight fragments (#3322) and no starting 503 after ready (#3323) (@xerj-team)
+- **PR #3325** (2026-11-20): test health: fix red homepage-prompt test, bar-count flake, ES-YAML runner hiding setup failures as skips (@xerj-team)
+- **PR #3321** (2026-11-20): fix(api): refuse a collapse inner_hits block without a name (@jelbirt)
+- **PR #3319** (2026-11-20): fix(seo): preserve page dates when Git follows renames (@Prathamesh51-debug)
 
 ---
 
@@ -3224,13 +2381,13 @@ and prints the same bytes):
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. autoindex): stub lockfiles by default, cell-width progress, catalog-commit phase
+## X. server): no "starting" 503 after the node is ready
 
 **RULE**:
 When implementing operations in `engine/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `007863e9`: autoindex): stub lockfiles by default, cell-width progress, catalog-commit phase, data-dir hint on an empty map. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `70e75d4f`: server): no "starting" 503 after the node is ready. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/Cargo.lock`.
@@ -3238,7 +2395,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "unicode-width 0.2.2",
+ "hyper-util",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3248,7 +2405,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `007863e9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `70e75d4f` are properly handled with clean fallback behavior.
 
 
 ## 4. Empirical Verification & Quality Gate

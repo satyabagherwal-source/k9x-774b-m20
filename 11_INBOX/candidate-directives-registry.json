@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T23:30:02.088Z",
+  "last_updated": "2026-11-20T23:40:03.144Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-38PW",
+      "id": "CD-G4HU",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-38PW-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-G4HU-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-20",
@@ -39830,6 +39830,59 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-61CFF5-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-FSY5",
+      "directive_title": "close more one-pass gzip gaps to terser",
+      "source_repo": "webpack/webpack",
+      "source_commit": "a393e82c",
+      "staged_file": "11_INBOX/candidate-directives/CD-FSY5-close-more-one-pass-gzip-gaps-to-terser.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-FZG4",
+      "directive_title": "no \"starting\" 503 after the node is ready",
+      "source_repo": "xerj-org/xerj",
+      "source_commit": "4b90a220",
+      "staged_file": "11_INBOX/candidate-directives/CD-FZG4-no-starting-503-after-the-node-is-ready.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-G2IF",
+      "directive_title": "minify): close more one-pass gzip gaps to terser",
+      "source_repo": "webpack-webpack-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-G2IF-minify-close-more-one-pass-gzip-gaps-to-terser.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-G3F9",
+      "directive_title": "server): no \"starting\" 503 after the node is ready",
+      "source_repo": "xerj-org-xerj-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-G3F9-server-no-starting-503-after-the-node-is-ready.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-20",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-1ECC12",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1ECC12-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-20"
     }
   ]

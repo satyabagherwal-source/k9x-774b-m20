@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T23:30:00.198Z",
+  "updated_at": "2026-11-20T23:40:00.275Z",
   "stats": {
-    "total_discovered": 6809,
-    "approved_pending_harvest": 6429,
+    "total_discovered": 6810,
+    "approved_pending_harvest": 6430,
     "harvested_count": 0,
     "rejected_count": 380,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6401,
+      "COMMUNITY_AND_EXPERT": 6402,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 121,
       "ENGINEERING_BLOGS": 5,
@@ -147161,6 +147161,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md",
         "fileName": "vitejs-vite-learnings.md"
+      }
+    },
+    "SRC-822E4C98F682": {
+      "id": "SRC-822E4C98F682",
+      "url": "https://claude.ai/code/session_013FhutSn5pQVY3u6kcTUVzL",
+      "title": "https://claude.ai/code/session_013FhutSn5pQVY3u6kcTUVzL",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-20T23:40:00.275Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webpack-webpack-learnings.md",
+        "fileName": "webpack-webpack-learnings.md"
       }
     }
   }
