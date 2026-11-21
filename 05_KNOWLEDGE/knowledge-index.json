@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T01:00:40.695Z",
-  "total_verified_learnings": 9054,
+  "last_updated": "2026-11-21T01:08:38.910Z",
+  "total_verified_learnings": 9055,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22807,
+  "total_items": 22816,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "60e3fed6",
-      "content_hash": "e5259023cbca7d20721425a9ec041960c0a46247507086bd4150c595527ab15d",
+      "source_version": "6a6a6a66",
+      "content_hash": "c90869edec12ecf0878772eafc70665d456979c8af5514698cfd9b1b04f7fc32",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T22:57:25.893Z"
+      "persisted_at": "2026-11-21T01:08:29.466Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
+      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "60e3fed6",
-      "content_hash": "0f39e922a3312e2c17a63dff20a468aa3211376e76b2ce01b59bafc01506e667",
+      "source_version": "6a6a6a66",
+      "content_hash": "7c2135dc29d148551709894f505cc7095fd9be8d57b88cbe4e383de31b1a4c2a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T22:57:26.039Z"
+      "persisted_at": "2026-11-21T01:08:29.618Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -215797,13 +215797,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "60e3fed6",
-      "content_hash": "a04e4817c69e7eab9c577802b0e4c36f2581df4f3e684a9167eb41403d4f7995",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "6a6a6a66",
+      "content_hash": "b29c02268323c68183f0d7debc460130f786dcd1d1267d8f7e75b2740b82c1db",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215873,7 +215873,7 @@
         {
           "number": 9653,
           "title": "Empirical Invariant Guard in test_partial_upgrade.sh",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215881,7 +215881,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T22:57:25.393Z",
+      "verified_at": "2026-11-21T01:08:28.896Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223586,8 +223586,8 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "bbc14454",
-      "content_hash": "af512c456cd655a4382669d5a3054a3a4f8939f8671ef632a46dd32b46e5d5aa",
+      "source_version": "d22f074d",
+      "content_hash": "9e079f04ffd20ff45e19f3d941bb12b9b6efd3cd0252ace68f746dc6337cc3aa",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
@@ -223620,6 +223620,11 @@
           "number": 9466,
           "title": "accept comma-separated extensions in directory ingestion",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9689,
+          "title": "pull the configured ref and back up before a server update",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223627,7 +223632,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T23:15:46.381Z",
+      "verified_at": "2026-11-21T01:08:31.833Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223669,10 +223674,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
       "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "bbc14454",
-      "content_hash": "fd2a48311fb56d0a1385771b1da1dc930ff157a20c4e8cf5d6fbb17176fd97b3",
+      "source_version": "d22f074d",
+      "content_hash": "11189ce6ced6224a5e8ccb847d674ffe994f92fa2e0f855fe1e03fa98908e9eb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T23:15:46.919Z"
+      "persisted_at": "2026-11-21T01:08:32.398Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service",
@@ -223681,10 +223686,10 @@
       "relative_path": "12_DECISIONS/ADR-doobidoo-mcp-memory-service-adr-subsystem-boundary-modular-decoupling-in-doobido.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in doobidoo/mcp-memory-service",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "bbc14454",
-      "content_hash": "92d3ca49262f545134c03e6dcf266b4abb871ee8e1bd408c4b366441bb8a31ff",
+      "source_version": "d22f074d",
+      "content_hash": "94c2aad95d866af6fed5f92d01de6ad71862de8e70411503ae1a6ae7e92a74c0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T23:15:47.061Z"
+      "persisted_at": "2026-11-21T01:08:32.550Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service",
@@ -223693,10 +223698,10 @@
       "relative_path": "08_VERIFICATION/doobidoo-mcp-memory-service-verification-protocol-empirical-defect-shield-for-do.md",
       "title": "Verification Protocol: Empirical Defect Shield for doobidoo/mcp-memory-service",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "bbc14454",
-      "content_hash": "6e54970a9acb83b587b2bdb4987eed8d61c9df12458363f1e61449b60069a2f6",
+      "source_version": "d22f074d",
+      "content_hash": "c8b6bd58bfddcfb809c7a6cb51df5388e93b6e282ddd84ee245527be29984c9c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T23:15:47.189Z"
+      "persisted_at": "2026-11-21T01:08:32.683Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin",
@@ -230665,26 +230670,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8489,
       "title": "expose columns of Postgres functions returning table rows",
-      "source_url": "https://github.com/dosco/graphjin",
-      "source_version": "3fc0975a",
+      "source_url": "https://github.com/dosco/deeporg",
+      "source_version": "e828492b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-14T13:29:08.263Z"
+      "verified_at": "2026-11-21T01:08:18.890Z"
     },
     "candidate_directive-expose-columns-of-postgres-functions-returning-table-rows": {
       "item_id": "candidate_directive-expose-columns-of-postgres-functions-returning-table-rows",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZDPW-expose-columns-of-postgres-functions-returning-table-rows.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-LN1N-expose-columns-of-postgres-functions-returning-table-rows.md",
       "title": "expose columns of Postgres functions returning table rows",
-      "repository": "dosco/graphjin",
-      "source_version": "3fc0975a",
-      "content_hash": "dd33836ef33ddb5192008eed351cb8ea6acf5b4b7f4412cce5d82b4ee53527c3",
-      "domain_letter": "D",
-      "persisted_at": "2026-11-14T13:29:08.666Z"
+      "repository": "dosco/deeporg",
+      "source_version": "e828492b",
+      "content_hash": "fdb092cd51283c9c77bf1f5fb3c993cb8df88480e49e6887b63afad0fb7be226",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T01:08:19.311Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-core-invariants",
@@ -230726,13 +230731,13 @@
       "item_id": "candidate_directive-introspection-expose-columns-of-postgres-functions-returning-table-rows",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-06LG-introspection-expose-columns-of-postgres-functions-returning-table-rows.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-LZQM-introspection-expose-columns-of-postgres-functions-returning-table-rows.md",
       "title": "introspection): expose columns of Postgres functions returning table rows",
-      "repository": "dosco-graphjin-learnings",
+      "repository": "dosco-deeporg-learnings",
       "source_version": "HEAD",
-      "content_hash": "dcdecab2defda445958cfa184cc68a43e1b88357a7737876a5119e2f31ef90f7",
-      "domain_letter": "D",
-      "persisted_at": "2026-11-14T13:29:46.096Z"
+      "content_hash": "7aa93934f1354f867c6f715e93865c7b9737b6b3b389f62b655e0216847b0724",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T01:08:35.762Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-learnings-core-invariants",
@@ -255472,9 +255477,9 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "ca43c9b8fb2103460c72887ec1d77ceeb5cd338e1501eb7a090e13b99cba2d78",
+      "content_hash": "7d3a8e996265f2428b877f1bb9b1d3aeaeb4bd15f61e008afe3cef4e20fad812",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T20:41:48.441Z"
+      "persisted_at": "2026-11-21T01:08:38.761Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea",
@@ -255484,9 +255489,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol-snarkos-learnings",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "124e5da5455c606ec5e6d469633b4daf4e28918b39e6e012070f3e356deb96e1",
+      "content_hash": "6597ac24f9d2bbbd356bdf3e3d77e2c302fcd625a1020c94b0ded9084569e97e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T20:41:48.841Z"
+      "persisted_at": "2026-11-21T01:08:38.910Z"
     },
     "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and": {
       "item_id": "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and",
@@ -268571,14 +268576,19 @@
       "slug": "cypress-io-cypress",
       "platform": "github",
       "source_url": "https://github.com/cypress-io/cypress",
-      "source_version": "9962c4fe",
-      "content_hash": "6b3122ddcd6f579dbaded99a31809e867bfb43ac2e619dcb8602d817c00f2de7",
+      "source_version": "9eacf3a8",
+      "content_hash": "ad352604c0e20e73d0e1d7e49eccbd4736dd0dc1ea0fc545ee6b77d22eeb2820",
       "dossier_path": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "promoted_rules": [
         {
           "number": 8891,
           "title": "update dependency rollup to v4.59.0 [security]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9688,
+          "title": "show git info in the specs list for commits dated in the future or from a non-En",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -268587,7 +268597,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T06:28:22.621Z",
+      "verified_at": "2026-11-21T01:08:22.481Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -268629,10 +268639,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-cypress-io-cypress-design-intelligence-cypress-io-cypress-core-invariants.md",
       "title": "Design Intelligence: cypress-io/cypress Core Invariants",
       "repository": "cypress-io/cypress",
-      "source_version": "9962c4fe",
-      "content_hash": "38505e3d56db30a6c4c3a1c4aef0b998179f39b548c0884172c22af923c1329c",
+      "source_version": "9eacf3a8",
+      "content_hash": "08461f4f74d32c469dc3b56161ea34c17ef79a4f8764002f80a9483b5506b8df",
       "domain_letter": "F",
-      "persisted_at": "2026-11-17T06:28:23.064Z"
+      "persisted_at": "2026-11-21T01:08:23.032Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cypress-io-cypress": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cypress-io-cypress",
@@ -268641,10 +268651,10 @@
       "relative_path": "08_VERIFICATION/cypress-io-cypress-verification-protocol-empirical-defect-shield-for-cypress-io-.md",
       "title": "Verification Protocol: Empirical Defect Shield for cypress-io/cypress",
       "repository": "cypress-io/cypress",
-      "source_version": "9962c4fe",
-      "content_hash": "c3b1e34933e401ce5bd3fd3289a6832a67fb2291a4feeb1c7ab4338c10f08d14",
+      "source_version": "9eacf3a8",
+      "content_hash": "43331d309e074b97438973352c62dc6598d7db187f43510138b327fb9787bf59",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:28:23.181Z"
+      "persisted_at": "2026-11-21T01:08:23.178Z"
     },
     "learn-github-gluesql-gluesql": {
       "learning_id": "learn-github-gluesql-gluesql",
@@ -268759,9 +268769,9 @@
       "title": "Design Intelligence: cypress-io-cypress-learnings Core Invariants",
       "repository": "cypress-io-cypress-learnings",
       "source_version": "HEAD",
-      "content_hash": "43aa4ccc03a89dae5512a4ff9deadfbd0615c2b0f91b3ef52d29b3cafaa9bf97",
+      "content_hash": "4b8f2faa1ddff92581b0e10a4d10345694e26455e77c0ac4df75f46d3fba9e1b",
       "domain_letter": "F",
-      "persisted_at": "2026-11-17T06:28:35.903Z"
+      "persisted_at": "2026-11-21T01:08:38.012Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cypress-io-cypress-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cypress-io-cypress-learnings",
@@ -268771,9 +268781,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cypress-io-cypress-learnings",
       "repository": "cypress-io-cypress-learnings",
       "source_version": "HEAD",
-      "content_hash": "fb0a4025c3b2b6e0294015607fa1b109fc2236bc32228f18aebb26c2f6d319a4",
+      "content_hash": "eec1efdcccb2caa3414229532b077af7988a96f483f7ee4635efdba6d35f2d59",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:28:36.014Z"
+      "persisted_at": "2026-11-21T01:08:38.171Z"
     },
     "domain_intelligence-architecture-intelligence-gluesql-gluesql-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-gluesql-gluesql-learnings-core-invariants",
@@ -308120,26 +308130,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 9653,
       "title": "Empirical Invariant Guard in test_partial_upgrade.sh",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "60e3fed6",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "6a6a6a66",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-20T22:57:25.393Z"
+      "verified_at": "2026-11-21T01:08:28.896Z"
     },
     "candidate_directive-empirical-invariant-guard-in-test_partial_upgrade-sh": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-test_partial_upgrade-sh",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-XEW1-empirical-invariant-guard-in-test_partial_upgrade-sh.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-M1XQ-empirical-invariant-guard-in-test_partial_upgrade-sh.md",
       "title": "Empirical Invariant Guard in test_partial_upgrade.sh",
-      "repository": "provablehq-snarkos-learnings",
+      "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "8d4114ba87f0531616ee965192399779ed1eb8e721bd66af44d4f207f5a222f0",
+      "content_hash": "94914099c1d36fe420b69bc8901f24ad9ae85f22ff0801b0e3d714f8d7e3003d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-20T22:57:30.532Z"
+      "persisted_at": "2026-11-21T01:08:38.609Z"
     },
     "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-learnings-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-learnings-core-invariants",
@@ -309530,6 +309540,139 @@
       "content_hash": "9f24e1e25edaa4bbee37cdecd95c336de9115de0eaa355f71ff2fd469ba8ee40",
       "domain_letter": "K",
       "persisted_at": "2026-11-21T01:00:38.834Z"
+    },
+    "learn-github-dosco-deeporg": {
+      "learning_id": "learn-github-dosco-deeporg",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "dosco/deeporg",
+      "repository": "dosco/deeporg",
+      "slug": "dosco-deeporg",
+      "platform": "github",
+      "source_url": "https://github.com/dosco/deeporg",
+      "source_version": "e828492b",
+      "content_hash": "606f180bf7b9fbae8b0c9b29251e8275dcb4da1e67e2597a83f2a1c94c6abd72",
+      "dossier_path": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8489,
+          "title": "expose columns of Postgres functions returning table rows",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-21T01:08:18.890Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-technical-construction-intelligence-dosco-deeporg-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-dosco-deeporg-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dosco-deeporg-technical-construction-intelligence-dosco-deeporg-core-invariants.md",
+      "title": "Technical Construction Intelligence: dosco/deeporg Core Invariants",
+      "repository": "dosco/deeporg",
+      "source_version": "e828492b",
+      "content_hash": "9e0c5b2c8b61f94baa9f3cb69db2dafa16ccbfcf2f08209cc1d711911ab9d67f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T01:08:19.466Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/dosco-deeporg-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
+      "title": "Verification Protocol: Empirical Defect Shield for dosco/deeporg",
+      "repository": "dosco/deeporg",
+      "source_version": "e828492b",
+      "content_hash": "edf6bee4774019fce62c13aba27c27e4c9f230a3d38ed2519884cbece71e0f66",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T01:08:19.620Z"
+    },
+    "rule-9688": {
+      "learning_id": "rule-9688",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9688,
+      "title": "show git info in the specs list for commits dated in the future or from a non-En",
+      "source_url": "https://github.com/cypress-io/cypress",
+      "source_version": "9eacf3a8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T01:08:22.481Z"
+    },
+    "candidate_directive-show-git-info-in-the-specs-list-for-commits-dated-in-the-future-or-from-a-non-en": {
+      "item_id": "candidate_directive-show-git-info-in-the-specs-list-for-commits-dated-in-the-future-or-from-a-non-en",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M1CH-show-git-info-in-the-specs-list-for-commits-dated-in-the-future-or-from-a-non-en.md",
+      "title": "show git info in the specs list for commits dated in the future or from a non-En",
+      "repository": "cypress-io-cypress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cdaea93fd8c1a8944fb308745a86e96f13e4b691ed0aec2c4e5500ab52352f4e",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-21T01:08:37.843Z"
+    },
+    "rule-9689": {
+      "learning_id": "rule-9689",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9689,
+      "title": "pull the configured ref and back up before a server update",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "d22f074d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T01:08:31.833Z"
+    },
+    "candidate_directive-pull-the-configured-ref-and-back-up-before-a-server-update": {
+      "item_id": "candidate_directive-pull-the-configured-ref-and-back-up-before-a-server-update",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LX0Y-pull-the-configured-ref-and-back-up-before-a-server-update.md",
+      "title": "pull the configured ref and back up before a server update",
+      "repository": "doobidoo/mcp-memory-service",
+      "source_version": "d22f074d",
+      "content_hash": "4f62e76030ed9bc7d7dee986f9397bcbb79a32e3d43704f4dc0d3f3f33fc9130",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T01:08:32.246Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-dosco-deeporg-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-dosco-deeporg-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dosco-deeporg-learnings-technical-construction-intelligence-dosco-deeporg-learni.md",
+      "title": "Technical Construction Intelligence: dosco-deeporg-learnings Core Invariants",
+      "repository": "dosco-deeporg-learnings",
+      "source_version": "HEAD",
+      "content_hash": "61321ab7eae77561d8bdedc98d976bf2a51a0ec7008c1fd366dd076ff795506a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T01:08:35.914Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/dosco-deeporg-learnings-verification-protocol-empirical-defect-shield-for-dosco-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for dosco-deeporg-learnings",
+      "repository": "dosco-deeporg-learnings",
+      "source_version": "HEAD",
+      "content_hash": "69d90f326fb79371993b16c4806d95abaa3e61922eae6081946ce2c94a8398de",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T01:08:36.082Z"
     }
   },
   "ai-builder-brain": {

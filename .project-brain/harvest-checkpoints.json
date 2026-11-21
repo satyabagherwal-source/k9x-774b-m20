@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T01:00:31.036Z",
+  "last_updated": "2026-11-21T01:08:32.045Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "a04e4817c69e7eab9c577802b0e4c36f2581df4f3e684a9167eb41403d4f7995",
-      "verified_at": "2026-11-20T22:57:25.581Z",
+      "content_hash": "b29c02268323c68183f0d7debc460130f786dcd1d1267d8f7e75b2740b82c1db",
+      "verified_at": "2026-11-21T01:08:29.106Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T22:57:25.581Z"
+      "last_updated": "2026-11-21T01:08:29.106Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -3021,14 +3021,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cypress-io-cypress",
-      "content_hash": "6b3122ddcd6f579dbaded99a31809e867bfb43ac2e619dcb8602d817c00f2de7",
-      "verified_at": "2026-11-17T06:28:22.790Z",
+      "content_hash": "ad352604c0e20e73d0e1d7e49eccbd4736dd0dc1ea0fc545ee6b77d22eeb2820",
+      "verified_at": "2026-11-21T01:08:22.684Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T06:28:22.790Z"
+      "last_updated": "2026-11-21T01:08:22.684Z"
     },
     "syntax-tree/unist": {
       "repository": "syntax-tree/unist",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "af512c456cd655a4382669d5a3054a3a4f8939f8671ef632a46dd32b46e5d5aa",
-      "verified_at": "2026-11-19T23:15:46.579Z",
+      "content_hash": "9e079f04ffd20ff45e19f3d941bb12b9b6efd3cd0252ace68f746dc6337cc3aa",
+      "verified_at": "2026-11-21T01:08:32.044Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T23:15:46.579Z"
+      "last_updated": "2026-11-21T01:08:32.044Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -19769,6 +19769,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-20T22:07:11.373Z"
+    },
+    "dosco/deeporg": {
+      "repository": "dosco/deeporg",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-dosco-deeporg",
+      "content_hash": "606f180bf7b9fbae8b0c9b29251e8275dcb4da1e67e2597a83f2a1c94c6abd72",
+      "verified_at": "2026-11-21T01:08:19.101Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-21T01:08:19.101Z"
     }
   },
   "repos": {

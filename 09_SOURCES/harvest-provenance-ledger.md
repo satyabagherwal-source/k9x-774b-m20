@@ -11717,3 +11717,7 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `36780d60` | Multi-dimensional audit evidence | 2026-11-21T00:52:05.717Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `a5140aa8` | Multi-dimensional audit evidence | 2026-11-21T00:52:08.917Z |
 | `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `8b0ca603` | Multi-dimensional audit evidence | 2026-11-21T01:00:31.027Z |
+| `learn-github-dosco-deeporg` | `https://github.com/dosco/deeporg` | `e828492b` | Multi-dimensional audit evidence | 2026-11-21T01:08:19.091Z |
+| `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `9eacf3a8` | Multi-dimensional audit evidence | 2026-11-21T01:08:22.677Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `6a6a6a66` | Multi-dimensional audit evidence | 2026-11-21T01:08:29.099Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `d22f074d` | Multi-dimensional audit evidence | 2026-11-21T01:08:32.036Z |

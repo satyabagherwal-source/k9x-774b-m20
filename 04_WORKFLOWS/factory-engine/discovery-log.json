@@ -21838,5 +21838,20 @@
     "downloads": 0,
     "qualityScore": 910,
     "discoveredAt": "2026-11-20T22:04:56.183Z"
+  },
+  {
+    "name": "deeporg",
+    "fullName": "dosco/deeporg",
+    "url": "https://github.com/dosco/deeporg",
+    "type": "github",
+    "domain": "devops-cloud-infrastructure",
+    "description": "DeepORG (formerly GraphJin) — one AI agent for your whole organization: databases, APIs, files, and code over MCP",
+    "stars": 3237,
+    "forks": 206,
+    "openIssues": 18,
+    "language": "Go",
+    "qualityScore": 1966,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-21T01:06:40.830Z"
   }
 ]

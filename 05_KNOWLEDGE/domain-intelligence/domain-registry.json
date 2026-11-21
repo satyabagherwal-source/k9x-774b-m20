@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T01:00:40.695Z",
-  "total_records": 2202,
+  "last_updated": "2026-11-21T01:08:38.761Z",
+  "total_records": 2204,
   "domains": {
     "A": {
       "total": 17,
@@ -1413,7 +1413,7 @@
       ]
     },
     "H": {
-      "total": 516,
+      "total": 518,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1930,7 +1930,9 @@
         "domain_intelligence-technical-construction-intelligence-rafsoh-dimeapp-core-invariants",
         "domain_intelligence-technical-construction-intelligence-rafsoh-dimeapp-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-parcel-bundler-parcel-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-parcel-bundler-parcel-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-parcel-bundler-parcel-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-dosco-deeporg-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-dosco-deeporg-learnings-core-invariants"
       ]
     },
     "I": {
@@ -8306,10 +8308,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "e5259023cbca7d20721425a9ec041960c0a46247507086bd4150c595527ab15d",
-      "created_at": "2026-11-20T22:57:25.893Z"
+      "content_hash": "c90869edec12ecf0878772eafc70665d456979c8af5514698cfd9b1b04f7fc32",
+      "created_at": "2026-11-21T01:08:29.466Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -13152,8 +13154,8 @@
       "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
       "repository": "doobidoo/mcp-memory-service",
-      "content_hash": "fd2a48311fb56d0a1385771b1da1dc930ff157a20c4e8cf5d6fbb17176fd97b3",
-      "created_at": "2026-11-19T23:15:46.919Z"
+      "content_hash": "11189ce6ced6224a5e8ccb847d674ffe994f92fa2e0f855fe1e03fa98908e9eb",
+      "created_at": "2026-11-21T01:08:32.398Z"
     },
     "DOM-D-0BBA6E16": {
       "record_id": "DOM-D-0BBA6E16",
@@ -23724,8 +23726,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "ca43c9b8fb2103460c72887ec1d77ceeb5cd338e1501eb7a090e13b99cba2d78",
-      "created_at": "2026-11-20T20:41:48.441Z"
+      "content_hash": "7d3a8e996265f2428b877f1bb9b1d3aeaeb4bd15f61e008afe3cef4e20fad812",
+      "created_at": "2026-11-21T01:08:38.761Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",
@@ -26164,8 +26166,8 @@
       "title": "Design Intelligence: cypress-io/cypress Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-cypress-io-cypress-design-intelligence-cypress-io-cypress-core-invariants.md",
       "repository": "cypress-io/cypress",
-      "content_hash": "38505e3d56db30a6c4c3a1c4aef0b998179f39b548c0884172c22af923c1329c",
-      "created_at": "2026-11-17T06:28:23.064Z"
+      "content_hash": "08461f4f74d32c469dc3b56161ea34c17ef79a4f8764002f80a9483b5506b8df",
+      "created_at": "2026-11-21T01:08:23.032Z"
     },
     "domain_intelligence-architecture-intelligence-gluesql-gluesql-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-gluesql-gluesql-core-invariants",
@@ -26182,8 +26184,8 @@
       "title": "Design Intelligence: cypress-io-cypress-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-cypress-io-cypress-learnings-design-intelligence-cypress-io-cypress-learnings-co.md",
       "repository": "cypress-io-cypress-learnings",
-      "content_hash": "43aa4ccc03a89dae5512a4ff9deadfbd0615c2b0f91b3ef52d29b3cafaa9bf97",
-      "created_at": "2026-11-17T06:28:35.903Z"
+      "content_hash": "4b8f2faa1ddff92581b0e10a4d10345694e26455e77c0ac4df75f46d3fba9e1b",
+      "created_at": "2026-11-21T01:08:38.012Z"
     },
     "domain_intelligence-architecture-intelligence-gluesql-gluesql-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-gluesql-gluesql-learnings-core-invariants",
@@ -37037,6 +37039,24 @@
       "repository": "parcel-bundler-parcel-learnings",
       "content_hash": "616bc3653b743fee4e0d4139ee4e294e2393922b9c130a754ab572835ffcca26",
       "created_at": "2026-11-21T00:13:23.660Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-dosco-deeporg-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-dosco-deeporg-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: dosco/deeporg Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dosco-deeporg-technical-construction-intelligence-dosco-deeporg-core-invariants.md",
+      "repository": "dosco/deeporg",
+      "content_hash": "9e0c5b2c8b61f94baa9f3cb69db2dafa16ccbfcf2f08209cc1d711911ab9d67f",
+      "created_at": "2026-11-21T01:08:19.466Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-dosco-deeporg-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-dosco-deeporg-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: dosco-deeporg-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dosco-deeporg-learnings-technical-construction-intelligence-dosco-deeporg-learni.md",
+      "repository": "dosco-deeporg-learnings",
+      "content_hash": "61321ab7eae77561d8bdedc98d976bf2a51a0ec7008c1fd366dd076ff795506a",
+      "created_at": "2026-11-21T01:08:35.914Z"
     }
   }
 }

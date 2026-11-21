@@ -4,22 +4,22 @@
 {
   "source_repository": "doobidoo/mcp-memory-service",
   "source_url": "https://github.com/doobidoo/mcp-memory-service",
-  "source_version": "bbc14454",
+  "source_version": "d22f074d",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T23:15:46.771Z",
+  "timestamp": "2026-11-21T01:08:32.245Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-doobidoo-mcp-memory-service",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `bbc14454`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T23:15:46.771Z`  
+> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `d22f074d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T01:08:32.245Z`  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `doobidoo/mcp-memory-service` (Commit: `bbc14454`)
+- **Target Repository**: `doobidoo/mcp-memory-service` (Commit: `d22f074d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T23:15:45.592Z  
+> **Harvest Timestamp**: 2026-11-21T01:08:31.006Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2136 stars
+- **Stars / Engagement**: 2137 stars
 
 ---
 
@@ -2922,11 +2922,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2100** (2026-11-20): **POST /api/server/update ignores MCP_UPDATE_GIT_REMOTE/BRANCH and takes no backup**
+  *Symptoms*: ## What is wrong  `POST /api/server/update` (the "Update" button in the dashboard) does two things an operator would not expect. Both are in `src/mcp_memory_service/web/api/server.py`, line numbers on `main` today.  1. **It ignores the configured remote and branch.** `check_for_updates()` reads `MCP_UPDATE_GIT_REMOTE` and `MCP_UPDATE_GIT_BRANCH` (lines 318-319, documented in `.env.example`), so "update available" is computed against, say, `upstream/stable`. `update_server()` then runs a hardcoded `git pull origin main` (line 481). An install that set those variables is told about one branch and updated from another. 2. **It changes the checkout without a backup.** The update pulls, reinstalls and restarts. A new release can migrate the database on that restart, and nothing was saved before it. The backup service that `POST /api/backup/now` uses is right there.  Found while writing #2098, which left this endpoint alone on purpose.  ## Scope (settled)  1. Resolve remote and branch in one place and use it in both `check_for_updates()` and `update_server()`. Same variables, same defaults (`origin`, `main`). The pull becomes `git pull <remote> <branch>`. 2. Before the `git pull`, call `get_backup_service().create_backup(description=...)` (from `mcp_memory_service.backup.scheduler`, the way `web/api/backup.py` does).    - Backup succeeded: go on. Put the backup's filename into the response message or a new optional field on `UpdateResponse`.    - `BackupService.db_path` is `None` (
+
 - **Issue #2090** (2026-11-19): **fix(chunker): sentence-aware chunking strips ending punctuation and breaks overlap boundaries**
   *Symptoms*: ### Bug Description  When using TextChunker with respect_sentence_boundaries=True (or using loaders that rely on sentence-aware chunking), all sentence-ending punctuation ('.', '!', '?') is stripped from     intermediate sentences. This produces run-on chunks where sentences have lost their punctuation.      Furthermore, _get_overlap_text() attempts to locate sentence boundaries inside the chunk overlap using self.sentence_endings.split(overlap). Because the preceding chunk text has had     all its sentence punctuation stripped, the splitter fails to find any sentence boundary, falling back to a raw character slice that chops words in half (e.g. "tence here Third     sentence here").  ### Steps to Reproduce  1. Run Python with the ingestion chunker:     ```python     from mcp_memory_service.ingestion.chunker import ChunkingStrategy, TextChunker      strategy = ChunkingStrategy(         chunk_size=80,         chunk_overlap=0,         respect_paragraph_boundaries=False,         respect_sentence_boundaries=True,         min_chunk_size=10,     )     chunker = TextChunker(strategy)     text = "First sentence here. Second sentence here! Third sentence here? Fourth sentence here."     chunks = [chunk for chunk, _ in chunker.chunk_text(text)]     print(chunks)  2. Observe the first chunk in the output.  ### Expected Behavior  The emitted text chunks should preserve all sentence-ending punctuation marks ('.', '!', '?') and maintain grammatically complete sentences:  ['First sentence h
-
-- **Issue #2083** (2026-11-19): **[Bug]:  GET /api/search/similar/{content_hash} Fails with 404 in Multi-Memory Databases Due to Vector Retrieve on Hash Hex**
-  *Symptoms*: ### Bug Description  The endpoint `GET /api/search/similar/{content_hash}` in `src/mcp_memory_service/web/api/search.py` attempts to find the target memory by calling `storage.retrieve(content_hash,     n_results=1)` instead of `storage.get_by_hash(content_hash)`.  Because `storage.retrieve()` executes a semantic vector similarity search, it generates an embedding vector for the 64-character hexadecimal SHA-256 string and returns the memory     whose content vector happens to be closest in cosine distance to that hex string.  In any database containing multiple memories, the top vector result for a random SHA-256 string is almost never the target memory itself. As a result, the subsequent equality check:     ```python     if not target_results or target_results[0].memory.content_hash != content_hash:         raise HTTPException(status_code=404, detail="Memory not found")     ```     fails and raises HTTP 404 "Memory not found", even though the memory exists in the database.  Furthermore, running vector embedding inference over SHA-256 strings wastes compute and introduces unnecessary latency.  ### Steps to Reproduce   1. In an empty test database, store two distinct memories:        - Memory A: `"Alpha service handles user authentication and session tokens."`        - Memory B: `"Database cluster stores persistent records for users and sessions."` 2. Obtain `hash_A` for Memory A. 3. Call `GET /api/search/similar/{hash_A}`.   ### Expected Behavior  - HTTP 200 OK.     - Memory 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2943,498 +2943,339 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bbc14454` (2026-11-19)
-**Commit Message**: fix(cli): accept comma-separated extensions in directory ingestion (#2092)
+### Incident Patch 1: `ef9166a8` (2026-11-20)
+**Commit Message**: fix(api): pull the configured ref and back up before a server update (#2100) (#2101)
 
-* fix(cli): accept comma-separated extensions in directory ingestion
+POST /api/server/update ran a hardcoded `git pull origin main`, while
+GET /api/version/check reads MCP_UPDATE_GIT_REMOTE and MCP_UPDATE_GIT_BRANCH,
+so an install that set them was checked against one ref and updated from
+another. Both now take the remote and branch from _update_git_source().
 
-* docs(changelog): record the CLI extension filter fix (#2092)
+The update also backs up the database directly before the pull, after the
+confirm, dirty-tree and installer checks, and returns the backup's filename
+in the new optional backup_filename field. A backend without a local
+database file skips the backup and says so in the message; any other backup
+failure returns 500 and git pull is not run.
 
----------
+Fixes #2100
 
-Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `changelog.d/2092.fixed.md` (added, +1/-0)
+**File**: `.env.example` (modified, +3/-2)
+```diff
+@@ -235,8 +235,9 @@ MCP_HTTP_PORT=8000
+ # you have one.
+ # MCP_MEMORY_ALLOW_SELF_SIGNED_CERTS=true
+ 
+-# Dashboard "check for updates" (GET /api/version/check) git source.
+-# The check fetches a remote and counts commits behind <remote>/<branch>.
++# Dashboard "check for updates" (GET /api/version/check) and "update"
++# (POST /api/server/update) git source. The check fetches a remote and counts
++# commits behind <remote>/<branch>; the update runs `git pull <remote> <branch>`.
+ # Override these if your checkout's remote is named differently (e.g. the
+ # remote still points at old GitHub, or Codeberg was added as `codeberg` /
+ # `upstream`) or tracks a non-main branch. Defaults preserve origin/main.
+```
+
+**File**: `changelog.d/2100.fixed.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+- **Directory ingestion accepts comma-separated extensions (#2092, @alksv1).** The documented `--extensions pdf,md` option previously skipped ordinary PDF and Markdown files. It now imports both file types, and repeating `--extensions` still works.
++- **The dashboard's Update pulled `origin/main` whatever the update check compared against, and changed the checkout without a backup (#2100).** `POST /api/server/update` ran a hardcoded `git pull origin main`, while `GET /api/version/check` reads `MCP_UPDATE_GIT_REMOTE` and `MCP_UPDATE_GIT_BRANCH`, so an install that set them was told about one branch and updated from another. Both now resolve the remote and branch in one place, and the pull is `git pull <remote> <branch>` (default `origin main`). The update also backs up the database directly before the pull, after the confirm, dirty-tree and installer checks; the response names the backup in `backup_filename`. A backend without a local database file (Cloudflare) skips the backup and says so, and any other backup failure returns 500 without running `git pull`.
 ```
 
-**File**: `src/mcp_memory_service/cli/ingestion.py` (modified, +6/-1)
+**File**: `src/mcp_memory_service/web/api/server.py` (modified, +60/-10)
 ```diff
-@@ -202,7 +202,12 @@ async def run_batch_ingestion():
-             
-             # Determine file extensions to process
-             if extensions:
--                file_extensions = [ext.lstrip('.') for ext in extensions]
-+                file_extensions = [
-+                    ext.strip().lstrip('.')
-+                    for value in extensions
-+                    for ext in value.split(',')
-+                    if ext.strip()
-+                ]
-             else:
-                 file_extensions = list(SUPPORTED_FORMATS.keys())
-             
-```
-
-**File**: `tests/unit/test_cli_ingestion.py` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+"""Exercise mcp_memory_service.cli.ingestion through the public Click command."""
-+
-+from pathlib import Path
-+
-+import pytest
-+from click.testing import CliRunner
-+
-+from mcp_memory_service.cli.main import cli
-+
-+
-+@pytest.mark.parametrize(
-+    ("options", "expected_files"),
-+    [
-+        (["--extensions", "pdf,md"], ["manual.pdf", "notes.md"]),
-+        (["-e", ".pdf", "-e", "md"], ["manual.pdf", "notes.md"]),
-+        (["-e", "pdf, .md,", "-e", ".pdf"], ["manual.pdf", "notes.md"]),
-+        ([], ["manual.pdf", "notes.md", "other.txt"]),
-+        (["-e", ""], []),
-+        (["-e", ", ,"], []),
-+    ],
-+)
-+def test_ingest_directory_extensions(
-+    tmp_path: Path, options: list[str], expected_files: list[str]
-+) -> None:
-+    files = [tmp_path / name for name in ("manual.pdf", "notes.md", "other.txt")]
-+    for path in files:
-+        path.touch()
-+
-+    result = CliRunner().invoke(
-+        cli, ["ingest-directory", str(tmp_path), "--dry-run", *options]
-+    )
-+
-+    assert result.exit_code == (0 if expected_files else 1), result.output
-+    for path in files:
-+        assert result.output.count(str(path)) == expected_files.count(path.name)
-```
-
----
-
-### Incident Patch 2: `6829b73e` (2026-11-19)
-**Commit Message**: fix(web): use get_by_hash in /search/similar endpoint (#2083) (#2085)
-
-* fix(web): look up target memory by hash in /search/similar endpoint (#2083)
-
-* fix(review): clean changelog fragment and assert non-empty similar results (#2083)
-
-**File**: `changelog.d/2083.fixed.md` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+- **`GET /api/search/similar/{content_hash}` returned 404 in multi-memory databases (#2083).**
-+  The endpoint passed the 64-character SHA-256 hex string to `storage.retrieve()`, running a vector similarity search instead of looking up the memory by primary key. When the database had more than one memory, the nearest vector match to the hex string almost never matched the target memory, causing the lookup to fail. The endpoint now calls `storage.get_by_hash()`, guaranteeing O(1) indexed retrieval and eliminating unnecessary embedding computation.
-```
-
-**File**: `src/mcp_memory_service/web/api/search.py` (modified, +3/-8)
-```diff
-@@ -538,16 +538,11 @@ async def find_similar(
-     start_time = time.time()
+@@ -109,6 +109,7 @@ class UpdateResponse(BaseModel):
+     restart_scheduled: bool
+     pre_restart_pid: Optional[int] = Field(None, description="PID of the process scheduling the restart; clients compare to verify a real restart occurred")
+     pre_restart_version: Optional[str] = Field(None, description="Version of the running process before restart")
++    backup_filename: Optional[str] = Field(None, description="Database backup taken before the pull; None when the storage backend has no local database file")
  
-     try:
--        # First, get the target memory by searching with its hash
--        # This is inefficient but works with current storage interface
-+        # Look up the target memory directly by its hash
-         scope = resolve_store(store)
--        target_results = await storage.retrieve(content_hash, n_results=1, store=scope)
--
--        if not target_results or target_results[0].memory.content_hash != content_hash:
-+        target_memory = await storage.get_by_hash(content_hash, store=scope)
-+        if not target_memory:
-             raise HTTPException(status_code=404, detail="Memory not found")
--
--        target_memory = target_results[0].memory
--
-         # Use the target memory's content to find similar memories
-         similar_results = await storage.retrieve(
-             query=target_memory.content,
-```
-
-**File**: `tests/web/api/test_search_similar.py` (added, +135/-0)
-```diff
-@@ -0,0 +1,135 @@
-+# Copyright 2024 Heinrich Krupp
-+#
-+# Licensed under the Apache License, Version 2.0 (the "License");
-+# you may not use this file except in compliance with the License.
-+# You may obtain a copy of the License at
-+#
-+#     http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
+ 
+ # Helper functions
+@@ -178,6 +179,52 @@ def _run_git_command(args: List[str], timeout: int = GIT_TIMEOUT_SECONDS) -> Tup
+     return _run_command(['git'] + args, timeout, "Git")
+ 
+ 
++def _update_git_source() -> Tuple[str, str]:
++    """
++    Return ``(remote, branch)`` that both the update check and the update use.
 +
-+"""
-+Tests for GET /api/search/similar/{content_hash} endpoint.
-+Verifies that target memories are looked up directly by hash rather than through
-+vector search, preventing false 404 errors in multi-memory databases.
-+"""
-+
-+import os
-+import tempfile
-+import pytest
-+import pytest_asyncio
-+from fastapi.testclient import TestClient
-+
-+from mcp_memory_service.web.dependencies import set_storage
-+from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
-+
-+
-+@pytest.fixture
-+def temp_db():
-+    """Create a temporary database for testing."""
-+    with tempfile.TemporaryDirectory() as tmpdir:
-+        db_path = os.path.join(tmpdir, "test_search_similar.db")
-+        yield db_path
-+
-+
-+@pytest_asyncio.fixture
-+async def initialized_storage(temp_db, monkeypatch):
-+    """Create and initialize a real SQLite storage backend."""
-+    monkeypatch.setenv("MCP_SEMANTIC_DEDUP_ENABLED", "false")
-+    monkeypatch.setenv("MCP_MEMORY_ALLOW_HASH_EMBEDDINGS", "1")
-+    monkeypatch.setenv("MCP_MEMORY_ONNX_ALLOW_DOWNLOAD", "0")
-+
-+    storage = SqliteVecMemoryStorage(temp_db)
-+    await storage.initialize()
-+    yield storage
-+    await storage.close()
-+
-+
-+@pytest.fixture
-+def test_app(initialized_storage, monkeypatch):
-+    """Create a FastAPI test application with initialized storage."""
-+    monkeypatch.setenv("MCP_API_KEY", "")
-+    monkeypatch.setenv("MCP_OAUTH_ENABLED", "false")
-+    monkeypatch.setenv("MCP_ALLOW_ANONYMOUS_ACCESS", "true")
-+    monkeypatch.setenv("INCLUDE_HOSTNAME", "false")
-+
-+    from mcp_memory_service.web.app import app
-+    from mcp_memory_service.web.oauth.middleware import (
-+        get_current_user,
-+        require_write_access,
-+        require_read_access,
-+        require_store_read,
-+        AuthenticationResult,
++    Configurable so installs whose remote is named differently (codeberg,
++    upstream, ...) or that track a non-main branch are checked against, and
++    updated from, the same ref. Defaults preserve the historical origin/main.
++    """
++    return (
++        os.getenv('MCP_UPDATE_GIT_REMOTE', 'origin'),
++        os.getenv('MCP_UPDATE_GIT_BRANCH', 'main'),
 +    )
 +
-+    set_storage(initialized_storage)
 +
-+    async def mock_get_current_user():
-+        return AuthenticationResult(
-+            authenticated=True,
-+            client_id="test_client",
-+            scope="read write admin",
-+            auth_method="test",
++async def _backup_before_update() -> Tuple[Optional[str], str]:
++    """
++    Back up the database before the update changes the checkout.
++
++    A new release can migrate the database on the restart that follows, so the
++    backup is the way back. Returns ``(backup_filename, note)``; the filename is
++    None when the storage backend has no local database file to back up. Any
++    other failure raises HTTP 500 before git pull runs.
++    """
++    from ...backup.scheduler import get_backup_service
++
++    try:
++        backup_service = get_backup_service()
++        if backup_service.db_path is None:
++            return None, "No database backup was made: this storage backend has no local database file."
++        result = await backup_service.create_backup(description="Automatic backup before server update")
++    except Exception as e:
++        result = {'success': False, 'error': f"{type(e).__name__}: {e}"}
++
++    if not result.get('success'):
++        error = result.get('error', 'Unknown error')
++        logger.error("AUDIT: Server update aborted — database backup failed: %s", _sanitize_log_value(error))
++        raise HTTPException(
++            status_code=500,
++            detail=(
++                f"Database backup before the update failed: {error}. "
++                "The checkout was NOT changed (git pull was not run)."
++            ),
 +        )
++    return result['filename'], f"Database backed up to {result['filename']}."
 +
-+    app.dependency_overrides[get_current_user] = mock_get_current_user
-+    app.dependency_overrides[require_write_access] = mock_get_current_user
-+    app.dependency_overrides[require_read_access] = mock_get_current_user
-+    app.dependency_overrides[require_store_read] = mock_get_current_user
 +
-+    client = TestClient(app)
-+    yield client
+ def _find_uv() -> Optional[str]:
+     """The uv that launched this server (``uv run`` exports it as ``UV``), else uv on PATH."""
+     uv_path = os.environ.get("UV")
+@@ -311,12 +358,7 @@ async def check_for_updates(
+     Returns number of commits behind and list of commit messages.
+     Requires admin access.
+     """
+-    # The remote name and branch are configurable so installs whose remote is
+-    # named differently (codeberg, upstream, ...) or tracks a non-main branch can
+-    # still check for updates without editing the source. Defaults preserve the
+-    # historical origin/main behavior.
+-    remote = os.getenv('MCP_UPDATE_GIT_REMOTE', 'origin')
+-    branch = os.getenv('MCP_UPDATE_GIT_BRANCH', 'main')
++    remote, branch = _update_git_source()
+     upstream_ref = f'{remote}/{branch}'
+ 
+     # Try to fetch latest changes
+@@ -422,7 +464,9 @@ async def update_server(
+     """
+     Update server from git and restart.
+ 
+-    Performs git pull, pip install, and schedules restart.
++    Backs up the database, pulls MCP_UPDATE_GIT_REMOTE/MCP_UPDATE_GIT_BRANCH
++    (default origin/main, the ref /version/check compares against), runs pip
++    install, and schedules restart.
+     Returns 202 Accepted with output from each step.
+     Requires admin access and explicit confirmation.
+     """
+@@ -477,8 +521,13 @@ async def update_server(
+             ),
+         )
+ 
+-    # Step 1: Git pull
+-    git_output, git_success = _run_git_command(['pull', 'origin', 'main'])
++    # Back up last, directly before the pull, so a request refused by the
++    # checks above leaves no backup file behind.
++    backup_filename, backup_note = await _backup_before_update()
 +
-+    app.dependency_overrides.clear()
++    # Step 1: Git pull from the ref /version/check compares against
++    remote, branch = _update_git_source()
++    git_output, git_success = _run_git_command(['pull', remote, branch])
+ 
+     if not git_success:
+         logger.error("AUDIT: Server update aborted — git pull failed: %s", _sanitize_log_value(git_output))
+@@ -507,10 +556,11 @@ async def update_server(
+ 
+     return UpdateResponse(
+         status="success",
+-        message=f"Update completed successfully, server restarting in {RESTART_DELAY_SECONDS} seconds",
++        message=f"Update completed successfully, server restarting in {RESTART_DELAY_SECONDS} seconds. {backup_note}",
+  
+```
+
+**File**: `tests/web/api/test_server_management.py` (modified, +127/-0)
+```diff
+@@ -47,10 +47,40 @@
+ # each path segment via getattr on the parent package, and the `web` submodule
+ # isn't always set as an attribute on `mcp_memory_service` at that point.
+ # Holding a direct module reference dodges that resolution path entirely.
++from mcp_memory_service.backup import scheduler as scheduler_module
+ from mcp_memory_service.web.api import server as server_module
+ from mcp_memory_service.web.oauth.middleware import AuthenticationResult
+ 
+ 
++class FakeBackupService:
++    """Stands in for BackupService; records each backup in `events`."""
++
++    def __init__(self, events=None, db_path='/data/sqlite_vec.db', result=None, error=None):
++        self.events = events if events is not None else []
++        self.db_path = db_path
++        self.result = result or {'success': True, 'filename': 'memory_backup_20261120_120000.db'}
++        self.error = error
++
++    async def create_backup(self, description=None):
++        self.events.append(('backup', description))
++        if self.error:
++            raise self.error
++        return self.result
++
++
++def _use_backup_service(monkeypatch, service):
++    # server.py imports get_backup_service from the scheduler at call time,
++    # the way web/api/backup.py does, so patch it at the source.
++    monkeypatch.setattr(scheduler_module, 'get_backup_service', lambda: service)
++    return service
++
++
++@pytest.fixture(autouse=True)
++def fake_backup(monkeypatch):
++    """Every update in this module backs up into a fake, never the real database."""
++    return _use_backup_service(monkeypatch, FakeBackupService())
++
++
+ @pytest.fixture
+ def test_app(monkeypatch):
+     """FastAPI test client with admin auth bypassed and restart task neutered."""
+@@ -350,3 +380,100 @@ def test_pipless_env_with_uv_installs_through_uv(monkeypatch):
+     assert mock_run.call_args.args[0] == [
+         'C:/bin/uv.exe', 'pip', 'install', '--python', sys.executable, '-e', '.',
+     ]
++
++
++# --- #2100: pull the configured ref, back up before pulling ---
++
++def _clean_tree():
++    return patch.object(server_module, '_check_working_tree_clean', return_value=(True, []))
++
++
++def _git_recording(events):
++    def run_git(args, timeout=server_module.GIT_TIMEOUT_SECONDS):
++        events.append(('git', args))
++        return 'Updating abc..def', True
++    return patch.object(server_module, '_run_git_command', side_effect=run_git)
++
++
++def _pip_ok():
++    return patch.object(server_module, '_run_pip_command', return_value=('Successfully installed', True))
 +
 +
 +@pytest.mark.integration
-+def test_search_similar_with_multiple_memories(test_app):
-+    """GET /api/search/similar/{content_hash} succeeds when multiple memories exist in the DB."""
-+    # Seed 3 distinct memories
-+    res1 = test_app.post(
-+        "/api/memories",
-+        json={"content": "Alpha service handles authentication and token refresh.", "tags": ["auth"]},
-+    )
-+    assert res1.status_code == 200
-+    hash1 = res1.json()["content_hash"]
++@pytest.mark.parametrize('env, expected', [
++    ({'MCP_UPDATE_GIT_REMOTE': 'upstream', 'MCP_UPDATE_GIT_BRANCH': 'stable'}, ['pull', 'upstream', 'stable']),
++    ({}, ['pull', 'origin', 'main']),
++])
++def test_update_pulls_the_configured_remote_and_branch(test_app, monkeypatch, env, expected):
++    """The update pulls the ref /version/check compares against, not a hardcoded origin/main."""
++    monkeypatch.delenv('MCP_UPDATE_GIT_REMOTE', raising=False)
++    monkeypatch.delenv('MCP_UPDATE_GIT_BRANCH', raising=False)
++    for name, value in env.items():
++        monkeypatch.setenv(name, value)
++    events = []
++    with _clean_tree(), _git_recording(events), _pip_ok():
++        response = test_app.post('/api/server/update', json={'confirm': True})
 +
-+    res2 = test_app.post(
-+        "/api/memories",
-+        json={"content": "Beta service validates session tokens and user permissions.", "tags": ["auth", "security"]},
-+    )
-+    assert res2.status_code == 200
-+    hash2 = res2.json()["content_hash"]
-+
-+    res3 = test_app.post(
-+        "/api/memories",
-+        json={"content": "Gamma database stores user preferences and configuration.", "tags": ["storage"]},
-+    )
-+    assert res3.status_code == 200
-+    hash3 = res3.json()["content_hash"]
-+
-+    # Call similar search for hash1
-+    response = test_app.get(f"/api/search/similar/{hash1}")
-+    assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
-+
-+    data = response.json()
-+    assert data["search_type"] == "similar"
-+    assert len(data["results"]) == 2
-+    # Ensure the target memory itself is filtered out and the remaining memories are returned
-+    result_hashes = [r["memory"]["content_hash"] for r in data["results"]]
-+    assert hash1 not in result_hashes
-+    assert hash2 in result_hashes
-+    assert hash3 in result_hashes
++    assert response.status_code == 200
++    assert [args for kind, args in events if kind == 'git'] == [expected]
 +
 +
 +@pytest.mark.integration
-+def test_search_similar_returns_404_for_unknown_hash(test_app):
-+    """GET /api/search/similar/{content_hash} returns 404 for nonexistent memory hash."""
-+    fake_hash = "0" * 64
-+    response = test_app.get(f"/api/search/similar/{fake_hash}")
-+    assert response.status_code == 404
-+    assert response.json()["detail"] == "Memory not found"
++def test_update_backs_up_before_pulling(test_app, monkeypatch):
++    """The backup is taken first, and its filename comes back in the response."""
++    events = []
++    _use_backup_service(monkeypatch, FakeBackupService(events))
++    with _clean_tree(), _git_recording(events), _pip_ok():
++        response = test_app.post('/api/server/update', json={'confirm': True})
++
++    assert response.status_code == 200
++    assert [kind for kind, _ in events] == ['backup', 'git']
++    body = response.json()
++    assert body['backup_filename'] == 'memory_backup_20261120_120000.db'
++    assert 'memory_backup_20261120_120000.db' in body['message']
++
++
++@pytest.mark.integration
++@pytest.mark.parametrize('service', [
++    FakeBackupService(result={'success': False, 'error': 'disk full'}),
++    FakeBackupService(error=OSError('disk full')),
++], ids=['backup-reports-failure', 'backup-raises'])
++def test_update_backup_failure_returns_500_and_never_pulls(test_app, monkeypatch, service):
++    """A failed backup stops the update before git pull, and says the checkout is unchanged."""
++    events = []
++    service.events = events
++    _use_backup_service(monkeypatch, service)
++    with _clean_tree(), _git_recording(events), _pip_ok() as mock_pip:
++        response = test_app.post('/api/server/update', json={'confirm': True})
++
++    assert response.status_code == 500
++    detail = response.json()['detail']
++    assert 'backup' in detail and 'disk full' in detail
++    assert 'NOT changed' in detail
++    assert [kind for kind, _ in events] == ['backup']
++    m
 ```
 
 ---
 
-### Incident Patch 3: `943f0872` (2026-11-19)
-**Commit Message**: fix(storage): duplicate refusal no longer names the other store (#2060) (#2081)
+### Incident Patch 2: `79a6081f` (2026-11-20)
+**Commit Message**: docs(contributing): name PEP 20 as the tie-breaker where the style guide is silent (#2095)
 
-* fix(storage): duplicate refusal no longer names the other store (#2060)
+Adds a short Zen of Python section under Coding Standards that maps four of its lines to rules the project already enforces, and a pointer to it from CLAUDE.md. Not a new gate; CI does not check it.
 
-content_hash is unique across stores, so storing content that already exists
-in another store is refused. The refusal named that store, which let a
-store-scoped credential learn store names (often tenant or project names).
-It now says only that the content exists in another store, on sqlite-vec and
-Cloudflare alike. The same-store message is unchanged.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AfRe2AbUtUQWGCVPiNd32B
-
-* test(storage): use the temp_db_path fixture and Black formatting (#2060)
-
-Addresses review feedback: SQLite-vec tests use the temp_db_path fixture
-rather than managing their own temporary directory.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AfRe2AbUtUQWGCVPiNd32B
-
----------
-
-Co-authored-by: Deviprasad <[REDACTED_EMAIL]>
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/2060.fixed.md` (added, +7/-0)
+**File**: `CLAUDE.md` (modified, +4/-0)
 ```diff
-@@ -0,0 +1,7 @@
-+- **Duplicate refusals no longer name the other store (closes #2060).** `content_hash` is
-+  unique across stores, so storing content that already exists in a different store is
-+  refused. The refusal used to say which store held it, which let a store-scoped credential
-+  learn store names that are often tenant or project names. It now says only
-+  `Duplicate content detected (exact match); already exists in another store`, on sqlite-vec
-+  and Cloudflare alike. The same-store message is unchanged. An operator can still find the
-+  row with `store="all"`.
+@@ -202,6 +202,10 @@ Claude Desktop wiring: see README.
+ 
+ ## Development Guidelines
+ 
++Where the rules below are silent, PEP 20 (`python -c "import this"`) breaks the
++tie; the lines this project already applies as rules are listed in
++[CONTRIBUTING.md](CONTRIBUTING.md#design-principles-the-zen-of-python).
++
+ ### Quality gates
+ 
+ Three layers: pre-commit (under 5s, Groq/Gemini complexity plus security, blocks on
 ```
 
-**File**: `src/mcp_memory_service/storage/cloudflare.py` (modified, +6/-2)
+**File**: `CONTRIBUTING.md` (modified, +19/-0)
 ```diff
-@@ -785,10 +785,14 @@ async def _store_memory(
+@@ -321,6 +321,25 @@ Open a PR from your fork to the main repository with:
+ - Write descriptive variable and function names
+ - Add docstrings to all public functions/classes (Google style)
  
-     @staticmethod
-     def _exact_duplicate_message(existing_store: str, requested_store: str) -> str:
--        """Describe an exact-hash conflict the way sqlite-vec does."""
-+        """Describe an exact-hash conflict the way sqlite-vec does.
++### Design Principles: The Zen of Python
 +
-+        The message does not name the other store, so a store-scoped credential
-+        cannot learn store names.
-+        """
-         message = "Duplicate content detected (exact match)"
-         if existing_store != requested_store:
--            return f"{message}; already exists in store {existing_store!r}"
-+            return f"{message}; already exists in another store"
-         return message
++The style guide says how code should look. Where it is silent,
++[PEP 20](https://peps.python.org/pep-0020/) breaks the tie
++(`python -c "import this"`). It is not an extra gate: CI does not check it,
++reviewers cite it. Several rules in this project are one of its lines applied:
++
++- **Errors should never pass silently.** `memory.metadata.get('tags', [])`
++  returns `[]` instead of failing, and that reached production three times.
++  Read `Memory` fields by attribute (`memory.tags`). See also
++  [Error Handling](#error-handling).
++- **Explicit is better than implicit.** Type hints on every function signature,
++  and specific exception types.
++- **Simple is better than complex. Flat is better than nested.** The complexity
++  budget is 8 per function, and `scripts/pr/pre_pr_check.sh` blocks on the
++  functions a change touches.
++- **In the face of ambiguity, refuse the temptation to guess.** Download and
++  inspect a real sample before writing a parser for external data.
++
+ ### Code Organization
  
-     async def _live_duplicate_refusal(
-```
-
-**File**: `src/mcp_memory_service/storage/mixins/store.py` (modified, +8/-2)
-```diff
-@@ -41,10 +41,16 @@ class StoreMixin:
-     def _exact_duplicate_message(
-         existing_store: str | None, requested_store: str
-     ) -> str:
--        """Describe a global exact-hash conflict and name its other store."""
-+        """Describe a global exact-hash conflict without naming the other store.
-+
-+        ``content_hash`` is unique across stores, so a conflict with another store
-+        is refused. The message says only that the content exists in another store:
-+        store names are often tenant or project names, and a store-scoped
-+        credential must not learn them.
-+        """
-         message = "Duplicate content detected (exact match)"
-         if existing_store is not None and existing_store != requested_store:
--            return f"{message}; already exists in store {existing_store!r}"
-+            return f"{message}; already exists in another store"
-         return message
- 
-     def _purge_tombstone(self, content_hash: str) -> None:
-```
-
-**File**: `tests/storage/test_duplicate_refusal_hides_store_name.py` (added, +69/-0)
-```diff
-@@ -0,0 +1,69 @@
-+"""An exact-duplicate refusal does not name the store that holds the content.
-+
-+``content_hash`` is unique across stores, so storing content that already lives
-+in another store is refused. Store names are often tenant, team or project names,
-+so the message says only that the content exists in another store, and a
-+store-scoped credential cannot learn which one.
-+"""
-+
-+import os
-+
-+import pytest
-+import pytest_asyncio
-+
-+from mcp_memory_service.models.memory import Memory
-+from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
-+from mcp_memory_service.utils.hashing import generate_content_hash
-+
-+os.environ["MCP_MEMORY_ALLOW_HASH_EMBEDDINGS"] = "1"
-+
-+FIRST_STORE = "acme-payments-team"
-+SECOND_STORE = "globex-research"
-+
-+
-+@pytest_asyncio.fixture
-+async def storage(temp_db_path):
-+    s = SqliteVecMemoryStorage(os.path.join(temp_db_path, "test.db"))
-+    await s.initialize()
-+    yield s
-+    await s.close()
-+
-+
-+def _memory(content):
-+    return Memory(
-+        content=content, content_hash=generate_content_hash(content), tags=["t"]
-+    )
-+
-+
-+@pytest.mark.asyncio
-+async def test_refusal_for_content_in_another_store_does_not_name_it(storage):
-+    content = "The incident review is scheduled for Friday."
-+    ok, msg = await storage.store(
-+        _memory(content), skip_semantic_dedup=True, store=FIRST_STORE
-+    )
-+    assert ok, msg
-+
-+    ok, msg = await storage.store(
-+        _memory(content), skip_semantic_dedup=True, store=SECOND_STORE
-+    )
-+
-+    assert not ok
-+    assert msg.startswith("Duplicate content detected (exact match)")
-+    assert "another store" in msg
-+    assert FIRST_STORE not in msg
-+
-+
-+@pytest.mark.asyncio
-+async def test_refusal_in_the_same_store_keeps_the_plain_message(storage):
-+    content = "Quarterly planning notes live in the shared drive."
-+    ok, msg = await storage.store(
-+        _memory(content), skip_semantic_dedup=True, store=FIRST_STORE
-+    )
-+    assert ok, msg
-+
-+    ok, msg = await storage.store(
-+        _memory(content), skip_semantic_dedup=True, store=FIRST_STORE
-+    )
-+
-+    assert not ok
-+    assert msg == "Duplicate content detected (exact match)"
-```
-
-**File**: `tests/storage/test_store_scope_semantic_dedup.py` (modified, +11/-7)
-```diff
-@@ -167,7 +167,7 @@ async def test_semantic_dedup_only_rejects_matches_in_target_store(storage):
- 
- 
- @pytest.mark.asyncio
--async def test_exact_duplicate_names_the_store_that_already_has_the_hash(storage):
-+async def test_exact_duplicate_does_not_name_the_store_that_already_has_the_hash(storage):
-     content = "identical content must remain globally unique"
-     memory = _memory(content)
- 
-@@ -177,15 +177,17 @@ async def test_exact_duplicate_names_the_store_that_already_has_the_hash(storage
-     ok, message = await storage.store(_memory(content), store="default")
-     assert not ok
-     assert "exact match" in message
--    assert "knowledge" in message
-+    assert "another store" in message
-+    assert "knowledge" not in message
- 
-     batch_results = await storage.store_batch([_memory(content)], store="default")
-     assert not batch_results[0][0]
--    assert "knowledge" in batch_results[0][1]
-+    assert "another store" in batch_results[0][1]
-+    assert "knowledge" not in batch_results[0][1]
- 
- 
- @pytest.mark.asyncio
--async def test_store_race_names_winning_store_without_partial_writes(storage):
-+async def test_store_race_does_not_name_winning_store_without_partial_writes(storage):
-     memory = _memory("content inserted by a competing writer")
-     racing_connection = _race_connection(storage, memory, "winner")
-     storage.conn = racing_connection
-@@ -197,12 +199,13 @@ async def test_store_race_names_winning_store_without_partial_writes(storage):
-     assert racing_connection.injected
-     assert racing_connection.integrity_error_seen
-     assert not ok
--    assert "winner" in message
-+    assert "another store" in message
-+    assert "winner" not in message
-     _assert_only_winning_record(storage.conn, memory, "winner")
- 
- 
- @pytest.mark.asyncio
--async def test_store_batch_race_names_winning_store_without_partial_writes(storage):
-+async def test_store_batch_race_does_not_name_winning_store_without_partial_writes(storage):
-     memory = _memory("batch content inserted by a competing writer")
-     racing_connection = _race_connection(storage, memory, "winner")
-     storage.conn = racing_connection
-@@ -212,5 +215,6 @@ async def test_store_batch_race_names_winning_store_without_partial_writes(stora
-     assert racing_connection.injected
-     assert racing_connection.integrity_error_seen
-     assert not results[0][0]
--    assert "winner" in results[0][1]
-+    assert "another store" in results[0][1]
-+    assert "winner" not in results[0][1]
-     _assert_only_winning_record(storage.conn, memory, "winner")
-```
-
-**File**: `tests/web/api/test_cloudflare_store_grant.py` (modified, +1/-1)
-```diff
-@@ -172,7 +172,7 @@ async def test_tombstone_of_another_store_is_not_taken_over(cloudflare_storage,
-     ok, msg = await cloudflare_storage.store(memory, store="a")
- 
-     assert not ok
--    assert msg == "Duplicate content detected (exact match); already exists in store 'b'"
-+    assert msg == "Duplicate content detected (exact match); already exists in another store"
-     cloudflare.vector_upserts.assert_not_called()
-     row = cloudflare.row(content_hash)
-     assert row["store"] == "b" and row["deleted_at"] is not None
+ ```python
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2103** (2026-11-20): chore(release): v13.0.0 (@doobidoo)
+- **PR #2101** (2026-11-20): fix(api): pull the configured ref and back up before a server update (#2100) (@PloneMraz)
+- **PR #2099** (2026-11-20): feat(service): let a server follow release tags on its own (@doobidoo)
+- **PR #2095** (2026-11-20): docs(contributing): name PEP 20 as the tie-breaker where the style guide is silent (@doobidoo)
 - **PR #2092** (2026-11-19): fix(cli): accept comma-separated extensions in directory ingestion (@alksv1)
 - **PR #2091** (2026-11-19): fix(chunker): preserve sentence punctuation and overlap boundaries (#2090) (@Adil-Khan-N)
-- **PR #2087** (2026-11-19): fix(time-parser): preserve month years, accept now, and fall through on non-date between queries (#2086) (@Adil-Khan-N)
-- **PR #2085** (2026-11-19): fix(web): use get_by_hash in /search/similar endpoint (#2083) (@Adil-Khan-N)
-- **PR #2084** (2026-11-19): fix(storage): preserve timestamp boundaries in delete_memories fallba… (@Adil-Khan-N)
-- **PR #2082** (2026-11-19): docs(contributing): say that linking an issue means a reference in the PR description (@doobidoo)
 
 ---
 
@@ -3454,31 +3295,34 @@ Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): accept comma-separated extensions in directory ingestion
+## X. api): pull the configured ref and back up before a server update
 
 **RULE**:
-When implementing operations in `changelog.d/2092.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.env.example`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bbc14454`: cli): accept comma-separated extensions in directory ingestion. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ef9166a8`: api): pull the configured ref and back up before a server update. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/2092.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.env.example`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Directory ingestion accepts comma-separated extensions (#2092, @alksv1).** The documented `--extensions pdf,md` option previously skipped ordinary PDF and Markdown files. It now imports both file types, and repeating `--extensions` still works.
+# Dashboard "check for updates" (GET /api/version/check) and "update"
+# (POST /api/server/update) git source. The check fetches a remote and counts
+# commits behind <remote>/<branch>; the update runs `git pull <remote> <branch>`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+# Dashboard "check for updates" (GET /api/version/check) git source.
+# The check fetches a remote and counts commits behind <remote>/<branch>.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bbc14454` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ef9166a8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

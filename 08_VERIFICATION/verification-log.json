@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-IIV6",
-    "timestamp": "2026-11-18T22:14:35.778Z",
-    "repository": "react/metro",
-    "learningId": "learn-github-react-metro",
-    "contentHash": "46aa0fcd6106144a6dac30d8de76ec82c7460c2f88ca723b44d86f6c2c2a137f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-ILJB",
-    "timestamp": "2026-11-18T22:14:39.239Z",
-    "repository": "aws/aws-cdk",
-    "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "5deac58d031a921fdb1e07055030d2496be7e0055db9bbe533ec5a9bdf420f81",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-SD89",
-    "timestamp": "2026-11-18T22:22:15.033Z",
-    "repository": "meta-llama/Llama-2-7b",
-    "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-    "contentHash": "a66f4b68caa819fb648b40ab65220dbbe71efa3d045fb36075df4b076fc4e46e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-2Y9Y",
-    "timestamp": "2026-11-18T22:30:28.870Z",
-    "repository": "deepseek-ai/DeepSeek-V3",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-    "contentHash": "fff8ed049b5caa47684e8aee77906096e97aab9134fe0bf1cde491aa805c3cae",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-29VT",
     "timestamp": "2026-11-18T22:57:56.873Z",
     "repository": "crossplane/crossplane",
@@ -7490,6 +7430,66 @@
     "repository": "vitest-dev/vitest",
     "learningId": "learn-github-vitest-dev-vitest",
     "contentHash": "b4235038c7ce72bdfa70c522b66fd669ede52ee02b0e3f4ff0ec9c2f7e7c909d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-LMVI",
+    "timestamp": "2026-11-21T01:08:19.086Z",
+    "repository": "dosco/deeporg",
+    "learningId": "learn-github-dosco-deeporg",
+    "contentHash": "606f180bf7b9fbae8b0c9b29251e8275dcb4da1e67e2597a83f2a1c94c6abd72",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-LPN5",
+    "timestamp": "2026-11-21T01:08:22.673Z",
+    "repository": "cypress-io/cypress",
+    "learningId": "learn-github-cypress-io-cypress",
+    "contentHash": "ad352604c0e20e73d0e1d7e49eccbd4736dd0dc1ea0fc545ee6b77d22eeb2820",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-LULJ",
+    "timestamp": "2026-11-21T01:08:29.095Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "b29c02268323c68183f0d7debc460130f786dcd1d1267d8f7e75b2740b82c1db",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-LWV4",
+    "timestamp": "2026-11-21T01:08:32.032Z",
+    "repository": "doobidoo/mcp-memory-service",
+    "learningId": "learn-github-doobidoo-mcp-memory-service",
+    "contentHash": "9e079f04ffd20ff45e19f3d941bb12b9b6efd3cd0252ace68f746dc6337cc3aa",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

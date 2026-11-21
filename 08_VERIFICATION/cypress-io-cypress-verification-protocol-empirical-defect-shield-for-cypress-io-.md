@@ -4,22 +4,22 @@
 {
   "source_repository": "cypress-io/cypress",
   "source_url": "https://github.com/cypress-io/cypress",
-  "source_version": "9962c4fe",
+  "source_version": "9eacf3a8",
   "license": "MIT",
-  "timestamp": "2026-11-17T06:28:22.948Z",
+  "timestamp": "2026-11-21T01:08:22.882Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-cypress-io-cypress",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [cypress-io/cypress](https://github.com/cypress-io/cypress) (Revision: `9962c4fe`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T06:28:22.948Z`  
+> **Provenance**: Harvested from [cypress-io/cypress](https://github.com/cypress-io/cypress) (Revision: `9eacf3a8`).  
+> **License**: MIT | **Timestamp**: `2026-11-21T01:08:22.882Z`  
 > **Learning ID**: `learn-github-cypress-io-cypress`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `cypress-io/cypress` (Commit: `9962c4fe`)
+- **Target Repository**: `cypress-io/cypress` (Commit: `9eacf3a8`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cypress-io-cypress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cypress-io/cypress](https://github.com/cypress-io/cypress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T06:28:21.583Z  
+> **Harvest Timestamp**: 2026-11-21T01:08:21.661Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Fast, easy and reliable testing for anything that runs in a browser.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 51028 stars
+- **Stars / Engagement**: 51035 stars
 
 ---
 
@@ -992,11 +992,11 @@ export const pinnedBlock = (view: PinnedView): string[] => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #35440** (2026-11-16): **chore: run v8 snapshot cache PRs through the path-filtered PR workflow**
-  *Symptoms*: <!-- Thanks for contributing! PLEASE... - Before writing any code, confirm an open issue exists for this work and that you have commented on it to indicate your intent. See: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md#pull-requests - Read our contributing guidelines: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md  - Read our Code Review Checklist on coding standards and what needs to be done before a PR can be merged: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md#Code-Review-Checklist - Mark this PR as "Draft" if it is not ready for review. - Make sure you set the correct base branch based on what packages you're changing: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md#branches -->  - Closes N/A  ### Additional details  The automated V8 snapshot metadata PRs (branch `update-v8-snapshot-cache-on-develop`) were allowlisted in CircleCI the same way as `develop`, so each one ran the full `linux-x64` workflow, the Windows/arm64/macOS platform workflows, the binary/staging/kitchensink jobs, and every path-filtered job (forced on by `generate-pipeline-parameters.sh`).  This removes the branch from: - `&full-workflow-filters` and `&mainBuildFilters` in `@main.yml` - the exclusion list in `pull-request.yml` - the run-everything branch override in `generate-pipeline-parameters.sh`  The branch now runs the regular PR workflow. Its changes are under `tooling/v8-snapshot/cache/`, which path filtering maps 
+- **Issue #35502** (2026-11-21): **chore: skip unused browser installs in system-tests-webkit**
+  *Symptoms*: - Closes N/A. There's no issue for this one; it came out of a `system-tests-webkit` failure in CI.  ### Additional details  `system-tests-webkit` recently failed at the **Install Firefox** step (`Selected version of Firefox is 160.0`, then exit 100) before running a single test. But the WebKit job never uses Firefox, or Chrome for that matter. Each system test only runs the version that matches `--browser`, and WebKit comes from `playwright-webkit`. So why were we downloading two browsers it doesn't need?  This PR stops installing them in the WebKit job, so a failed browser download can no longer break it. Getting there turned up a few things that only worked because Chrome happened to be installed everywhere:  - **`tap_open_spec`** always opens Chrome, whatever `--browser` the job passes. The WebKit job now leaves it out of its spec list, next to the existing `non_root` skip. It still runs in the Chrome, Electron and Firefox jobs. - **`browser_path_spec`** looked for any Chromium browser before the harness could skip it, so it would have thrown in the WebKit job. Both of its tests were also being skipped in *every* CI job, because the harness filters on `browser`, and a path never matches the job's browser name. They now run again:   - A new `ExecOptions.browserPath` launches a browser from a path, while `browser` still names it for filtering. The installed-path test launches the job's own stable browser by path, and skips under Electron and WebKit, which have no installed p
 
-- **Issue #35438** (2026-11-17): **chore(config): migrate Renovate config**
-  *Symptoms*: The Renovate config in this repository needs migrating. Typically this is because one or more configuration options you are using have been renamed.    You don't need to merge this PR right away, because Renovate will continue to migrate these fields internally each time it runs. But later some of these fields may be fully deprecated and the migrations removed. So it's a good idea to merge this migration PR soon.       🔕 **Ignore**: Close this PR and you won't be reminded about config migration again, but one day your current config may no longer be valid.  ❓ Got questions? Does something look wrong to you? Please don't hesitate to [request help here](https://redirect.github.com/renovatebot/renovate/discussions).   ---  This PR was generated by [Mend Renovate](https://mend.io/renovate/). View the [repository job log](https://developer.mend.io/github/cypress-io/cypress).
+- **Issue #35501** (2026-11-20): **docs(puppeteer): lead the README with multi-tab testing**
+  *Symptoms*: - Closes N/A  ### Additional details  The `@cypress/puppeteer` README opened with a description of the Puppeteer API, which didn't say what the plugin is for. This change:  - Opens the README with "Enable [multi-tab testing in Cypress](https://on.cypress.io/multi-tab-testing) with the Puppeteer plugin." - Adds a "Why use this plugin" section that lists the cases it covers: checking a tab or window your app opens, opening an extra tab, and working with several pages in one test. - Leaves the rest of the README unchanged (installation, upgrading, compatibility, API, examples, troubleshooting).  Only `npm/puppeteer/README.md` changes.  ### Steps to test  Read the top of `npm/puppeteer/README.md` and confirm the link to the multi-tab testing guide resolves.  ### How has the user experience changed?  No change to plugin behavior. The README intro is different.  ### PR Tasks  - [na] Is there an associated issue with maintainer approval for PR submission? Documentation-only change. - [na] Have tests been added/updated? - [na] Has a PR for user-facing changes been opened in [`cypress-documentation`](https://github.com/cypress-io/cypress-documentation)? - [na] Have API changes been updated in the [`type definitions`](https://github.com/cypress-io/cypress/blob/develop/cli/types/cypress.d.ts)?  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- CURSOR_SUMMARY --> ---  > [!NOTE] > **Low Risk** > Documentation-only change to `npm/puppeteer/README.md`; no runtime or API 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1013,313 +1013,606 @@ export const pinnedBlock = (view: PinnedView): string[] => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a6b5a3d8` (2026-11-16)
-**Commit Message**: chore(deps): update dependency rollup to v4.59.0 [security] (#35400)
+### Incident Patch 1: `141cc595` (2026-11-20)
+**Commit Message**: fix: show git info in the specs list for commits dated in the future or from a non-English git (#35492)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: Matthew Schile <[REDACTED_EMAIL]>
-Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
+* fix: show git info for specs whose last commit is dated in the future or in a localized git
 
-**File**: `packages/telemetry/package.json` (modified, +1/-1)
+GitDataSource parsed the relative age from `git log --pretty=%ar`, which
+only matched git's English "N units ago". A commit dated after the local
+clock prints "in the future", and git built with gettext translates the
+age (e.g. "vor 2 Tagen"), so the regex failed and the specs list showed
+no last-modified time or author.
+
+Ask git for the author date as unix seconds (`%at`) and format the age in
+JS, porting git's show_date_relative rounding so ages that rendered
+before render identically (checked against real `%ar` output for 343
+ages from seconds to 10 years). A date past the clock now reads e.g.
+"in 3 hours" via dayjs, like the other relative times in the specs list.
+Author, short hash and subject parsing are unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01WUv8r5LjTJiQN6Si6L26JM
+
+* test: keep GitDataSource age cases clear of rounding boundaries
+
+The minutes and days cases sat on the old edge of their rounding bucket,
+so a
+
+**File**: `cli/CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -35,6 +35,7 @@
+ - Fixed an issue where a request for a Cypress-reserved path that Cypress does not serve, such as `/__/does-not-exist` or `/__cypress/does-not-exist`, never received a response. A `fetch()` or `<script>` load for such a path hung until the page's own timeout, and [`cy.request()`](https://on.cypress.io/request) failed after 30 seconds with "No response was received within the timeout." These requests now receive a `404` promptly, so a synchronous `XMLHttpRequest` to one no longer freezes the browser. Fixes [#34810](https://github.com/cypress-io/cypress/issues/34810) and [#35026](https://github.com/cypress-io/cypress/issues/35026).
+ - Fixed an issue where, in `cypress run` with the Electron browser and video disabled, the first screenshot in a spec, including the screenshot taken when a test fails, made the application under test render far more slowly for the rest of that spec. Fixes [#35291](https://github.com/cypress-io/cypress/issues/35291).
+ - Fixed a regression in [8.4.0](#8-4-0) where `.scrollTo()` on a scrollable element wrapped with [`Cypress.$`](https://on.cypress.io/$), other than the window or `body`, threw `TypeError: Cannot read properties of undefined (reading 'slice')` when given a selector string, a number, or `'max'`, such as `Cypress.$('#list').scrollTo('#item')` or `Cypress.$('#list').scrollTo(120)`. It now scrolls to the matching element or position. Fixed in [#35460](https://github.com/cypress-io/cypress/pull/35460).
++- Fixed an issue where the specs list in `cypress open` showed no last-modified time or author for a spec whose last commit was dated after the computer's clock, or when git ran in a language other than English. A spec committed 3 hours ahead of the clock now shows `in 3 hours` and its author instead of a blank. Committed specs now word their age like new and modified specs, such as `a day ago` instead of `1 day ago`. Fixed in [#35492](https://github.com/cypress-io/cypress/pull/35492).
+ - Fixed an issue where Cypress failed to load your config with `Cannot read properties of undefined (reading 'getFilesByGlob')` when a [`supportFile`](https://on.cypress.io/configuration) pattern with `**`, such as `cypress/support/**/e2e.js`, searched a directory Cypress cannot read. Cypress now skips that directory, finds the support file, and runs your specs. Fixed in [#35486](https://github.com/cypress-io/cypress/pull/35486).
+ - In Firefox, error stack traces in the Command Log and in `cypress run` output no longer end the names of nested anonymous functions with a stray `/` or `/</`. For example, a test's callback now shows as `at ./cypress/spec.cy.js` instead of `at ./cypress/spec.cy.js/`. A frame with no name to show now reads `at <unknown>` instead of being blank. Fixed in [#35462](https://github.com/cypress-io/cypress/pull/35462).
+ - Requests from your application no longer carry Cypress's internal `__cypress.initial` and `__cypress.unload` cookies to your server or to [`cy.intercept()`](https://on.cypress.io/intercept) request handlers. For example, a request with no cookies of its own could arrive with `Cookie: __cypress.unload=true`, and now arrives without a `Cookie` header. Fixed in [#35470](https://github.com/cypress-io/cypress/pull/35470).
+```
+
+**File**: `packages/data-context/src/sources/GitDataSource.ts` (modified, +9/-7)
+```diff
+@@ -17,11 +17,13 @@ dayjs.extend(relativeTime)
+ // Spec names are repository content, so they're passed to git as literal pathspec
+ // arguments, never through a shell. SimpleGit caps how many `git log` calls run at once.
+ 
+-// matches <timestamp> <when> <author>
+-// $ git log -1 --pretty=format:%ci %ar %an <file>
+-// eg '2021-09-14 13:43:19 +1000 2 days ago Lachlan Miller
+-const GIT_LOG_REGEXP = /(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} [-+].+?)\s(.+ago)\s([^|]*)\|([^|]*)\|([^|]*)/
+-const GIT_LOG_ARGS = ['--literal-pathspecs', 'log', '--max-count=1', '--pretty=format:%ci %ar %an|%h|%s']
++// matches <committer date> <author date as unix seconds> <author>|<short hash>|<subject>
++// eg '2021-09-14 13:43:19 +1000 1631504599 Marisol Okafor|1a2b3c4|add spec'
++// The age is formatted from the unix time with dayjs, like the created and modified
++// specs, rather than read from `%ar`: git translates that in non-English locales and
++// replaces it with `in the future` for dates past the clock.
++const GIT_LOG_REGEXP = /(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} [-+]\d{4})\s(\d+)\s([^|]*)\|([^|]*)\|([^|]*)/
++const GIT_LOG_ARGS = ['--literal-pathspecs', 'log', '--max-count=1', '--pretty=format:%ci %at %an|%h|%s']
+ const GIT_ROOT_DIR_COMMAND = '--show-toplevel'
+ const SIXTY_SECONDS = 60 * 1000
+ 
+@@ -333,14 +335,14 @@ export class GitDataSource {
+           if (file && info && info[1] && info[2] && info[3] && info[4] && info[5]) {
+             toSet = {
+               lastModifiedTimestamp: info[1],
+-              lastModifiedHumanReadable: info[2],
++              lastModifiedHumanReadable: dayjs.unix(Number(info[2])).fromNow(),
+               author: info[3],
+               statusType: 'unmodified',
+               subject: info[5],
+               shortHash: info[4],
+             }
+           } else {
+-            debug(`did not get expected git log for ${file}, expected string with format '<timestamp> <time_ago> <author>|<short_hash>|<subject>'. Got: ${data}`)
++            debug(`did not get expected git log for ${file}, expected string with format '<timestamp> <unix_time> <author>|<short_hash>|<subject>'. Got: ${data}`)
+             toSet = null
+           }
+         }
+```
+
+**File**: `packages/data-context/test/unit/sources/GitDataSource.spec.ts` (modified, +90/-0)
+```diff
+@@ -204,6 +204,96 @@ describe('GitDataSource', () => {
+     }
+   })
+ 
++  describe('reading the last commit of a committed spec', () => {
++    const HOUR = 60 * 60 * 1000
++    const DAY = 24 * HOUR
++
++    const commitSpec = async (filename: string, { author, ageMs, subject }: { author: string, ageMs: number, subject: string }) => {
++      const spec = toPosix(path.join(e2eFolder, filename))
++      const date = new Date(Date.now() - ageMs).toISOString()
++
++      await fs.createFile(spec)
++      await git.add([spec])
++      await git.commit(subject, [spec], { '--author': `${author} <${author.toLowerCase().replace(' ', '.')}@example.com>`, '--date': date })
++
++      const [timestamp, shortHash] = (await git.raw(['log', '-1', '--pretty=format:%ci|%h', '--', spec])).split('|')
++
++      return { spec, timestamp, shortHash }
++    }
++
++    const loadGitInfo = async (specs: string[]) => {
++      const dfd = Promise.withResolvers()
++
++      gitInfo = new GitDataSource({
++        isRunMode: false,
++        projectRoot: projectPath,
++        onBranchChange: jest.fn(),
++        onGitInfoChange: dfd.resolve,
++        onError: jest.fn(),
++      })
++
++      gitInfo.setSpecs(specs)
++
++      await dfd.promise
++    }
++
++    it('reads the timestamp, age, author, short hash and subject', async () => {
++      const { spec, timestamp, shortHash } = await commitSpec('typical.cy.js', { author: 'Marisol Okafor', ageMs: 2 * DAY + HOUR, subject: 'add typical spec' })
++
++      await loadGitInfo([spec])
++
++      expect(timestamp).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} [-+]\d{4}$/)
++      expect(gitInfo.gitInfoFor(spec)).toEqual({
++        lastModifiedTimestamp: timestamp,
++        lastModifiedHumanReadable: '2 days ago',
++        author: 'Marisol Okafor',
++        statusType: 'unmodified',
++        subject: 'add typical spec',
++        shortHash,
++      })
++    })
++
++    it('reads a commit dated after the local clock, which git words as "in the future"', async () => {
++      const { spec, timestamp, shortHash } = await commitSpec('future.cy.js', { author: 'Priya Natarajan', ageMs: -3 * HOUR - 60 * 1000, subject: 'add spec from a skewed clock' })
++
++      await loadGitInfo([spec])
++
++      expect(gitInfo.gitInfoFor(spec)).toEqual({
++        lastModifiedTimestamp: timestamp,
++        lastModifiedHumanReadable: 'in 3 hours',
++        author: 'Priya Natarajan',
++        statusType: 'unmodified',
++        subject: 'add spec from a skewed clock',
++        shortHash,
++      })
++    })
++
++    it('keeps an author whose first name ends in "ago" out of the age', async () => {
++      const { spec } = await commitSpec('iago.cy.js', { author: 'Iago Smith', ageMs: 2 * DAY + HOUR, subject: 'add iago spec' })
++
++      await loadGitInfo([spec])
++
++      expect(gitInfo.gitInfoFor(spec)).toMatchObject({
++        lastModifiedHumanReadable: '2 days ago',
++        author: 'Iago Smith',
++        subject: 'add iago spec',
++      })
++    })
++
++    it('reads the subject up to the first "|"', async () => {
++      const { spec, shortHash } = await commitSpec('pipe.cy.js', { author: 'Test User', ageMs: 2 * DAY + HOUR, subject: 'fix a|b ago c|d' })
++
++      await loadGitInfo([spec])
++
++      expect(gitInfo.gitInfoFor(spec)).toMatchObject({
++        lastModifiedHumanReadable: '2 days ago',
++        author: 'Test User',
++        shortHash,
++        subject: 'fix a',
++      })
++    })
++  })
++
+   it(`watches switching branches on ${os.platform()}`, async () => {
+     const stub = jest.fn()
+     const dfd = Promise.withResolvers()
+```
+
+---
+
+### Incident Patch 2: `6a56250e` (2026-11-20)
+**Commit Message**: fix: detect third-party CT frameworks when the project path has brackets or parentheses (#35493)
+
+* fix: detect third-party CT frameworks when the project path has brackets or parentheses
+
+Migrate packages/scaffold-config's third-party CT framework detection
+from globby to tinyglobby.
+
+Each directory searched now goes in tinyglobby's `cwd`, with the
+relative `node_modules/cypress-ct-*` and `node_modules/@*?/cypress-ct-*?`
+patterns and `absolute: true`. Previously the directory was joined into
+the pattern itself, so a project path containing `[`, `]`, `(` or `)`
+was read as glob syntax and matched nothing: no third-party framework
+was offered during component testing setup. Results are sorted per
+directory, since neither library orders them.
+
+globby stays in the package's dependencies because detect.ts still
+uses it.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01WUv8r1vSdjzC36H5Dc1Jnh
+
+* chore: tighten the scaffold-config glob comment and changelog entry
+
+Name a concrete failing path in the comment on why the project directory
+goes in tinyglobby's `cwd`, drop the changelog entry's "For example"
+sentence, which only restated the 
+
+**File**: `CLAUDE.md` (modified, +1/-1)
 ```diff
 @@ -49,7 +49,7 @@
-     "eslint": "^10.14.0",
-     "jiti": "^2.4.2",
-     "rimraf": "6.1.1",
--    "rollup": "4.52.0",
-+    "rollup": "4.59.0",
-     "typescript": "5.6.3",
-     "vitest": "^3.2.4"
+ - When a change could reasonably be filed as `fix` or `chore` (for example, removing data the app sends to Cypress Cloud), ask the user which prefix to use before adding a `cli/CHANGELOG.md` entry. A `chore` gets no entry.
+ - Give test fixtures realistic made-up data, such as a full name, an `@example.com` email and a token-shaped value, not placeholders like `'foo'`.
+ - When a test feeds in output from a browser, tool or service (a stack trace, a CLI message, an API response), take its examples from real captured output, such as a fixture under `__fixtures__`, not names made up to look plausible. Keep inputs that only follow the format's rules in their own clearly labelled cases, and check that changelog examples come from the same real output.
+-- Keep a `cli/CHANGELOG.md` entry to the user-facing change, one before-and-after example and the link. Cut any sentence that restates the change in other words.
++- Keep a `cli/CHANGELOG.md` entry to the user-facing change and the link, plus one before-and-after example only when it shows something the description doesn't. Cut any sentence that restates the change in other words, including a "For example" that only applies the description to one sample path or name.
+ - Before committing or pushing, `yarn check-ts`, `yarn lint`, `yarn health-check` (knip), and relevant unit tests must pass locally. CI currently does not block expensive e2e jobs when these fail.
+ 
+ @AGENTS.md
+```
+
+**File**: `cli/CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -45,6 +45,7 @@
+ - Fixed an issue where the specs list in `cypress open` showed no last-modified time or author for a spec whose last commit was dated after the computer's clock, or when git ran in a language other than English. A spec committed 3 hours ahead of the clock now shows `in 3 hours` and its author instead of a blank. Committed specs now word their age like new and modified specs, such as `a day ago` instead of `1 day ago`. Fixed in [#35492](https://github.com/cypress-io/cypress/pull/35492).
+ - Fixed an issue where Cypress failed to load your config with `Cannot read properties of undefined (reading 'getFilesByGlob')` when a [`supportFile`](https://on.cypress.io/configuration) pattern with `**`, such as `cypress/support/**/e2e.js`, searched a directory Cypress cannot read. Cypress now skips that directory, finds the support file, and runs your specs. Fixed in [#35486](https://github.com/cypress-io/cypress/pull/35486).
+ - In Firefox, error stack traces in the Command Log and in `cypress run` output no longer end the names of nested anonymous functions with a stray `/` or `/</`. For example, a test's callback now shows as `at ./cypress/spec.cy.js` instead of `at ./cypress/spec.cy.js/`. A frame with no name to show now reads `at <unknown>` instead of being blank. Fixed in [#35462](https://github.com/cypress-io/cypress/pull/35462).
++- Fixed an issue where component testing setup did not offer installed third-party framework definitions, such as `cypress-ct-solid-js` or `@org/cypress-ct-qwik`, when the project's path contained `[`, `]`, `(` or `)`. Fixed in [#35493](https://github.com/cypress-io/cypress/pull/35493).
+ - Requests from your application no longer carry Cypress's internal `__cypress.initial` and `__cypress.unload` cookies to your server or to [`cy.intercept()`](https://on.cypress.io/intercept) request handlers. For example, a request with no cookies of its own could arrive with `Cookie: __cypress.unload=true`, and now arrives without a `Cookie` header. Fixed in [#35470](https://github.com/cypress-io/cypress/pull/35470).
+ - Fixed an issue where run mode durations of 24 hours or more dropped the whole days, so a run that took exactly 24 hours was reported as `0ms` and a run of 26 hours as `2:00:00`. Fixes [#34976](https://github.com/cypress-io/cypress/issues/34976).
+ 
+```
+
+**File**: `packages/scaffold-config/package.json` (modified, +1/-0)
+```diff
+@@ -34,6 +34,7 @@
+     "globby": "^11.1.0",
+     "resolve-package-path": "^4.0.3",
+     "semver": "^7.7.3",
++    "tinyglobby": "^0.2.17",
+     "zod": "^3.22.5"
    },
+   "devDependencies": {
 ```
 
-**File**: `yarn.lock` (modified, +132/-114)
+**File**: `packages/scaffold-config/src/ct-detect-third-party.ts` (modified, +13/-11)
 ```diff
-@@ -7529,10 +7529,10 @@
-     estree-walker "^2.0.2"
-     picomatch "^4.0.2"
+@@ -1,5 +1,5 @@
+ import path from 'path'
+-import globby from 'globby'
++import { glob } from 'tinyglobby'
+ import { z } from 'zod'
+ import fs from 'fs-extra'
+ import Debug from 'debug'
+@@ -96,8 +96,10 @@ const ThirdPartyComponentFrameworkSchema = z.object({
+   componentIndexHtml: z.optional(z.function()),
+ })
  
--"@rollup/rollup-android-arm-eabi@4.52.0":
--  version "4.52.0"
--  resolved "https://registry.yarnpkg.com/@rollup/rollup-android-arm-eabi/-/rollup-android-arm-eabi-4.52.0.tgz#dfcddfa85a3cba8a0e95483b4a7255ab9e4cdf4d"
--  integrity sha512-VxDYCDqOaR7NXzAtvRx7G1u54d2kEHopb28YH/pKzY6y0qmogP3gG7CSiWsq9WvDFxOQMpNEyjVAHZFXfH3o/A==
-+"@rollup/rollup-android-arm-eabi@4.59.0":
-+  version "4.59.0"
-+  resolved "https://registry.yarnpkg.com/@rollup/rollup-android-arm-eabi/-/rollup-android-arm-eabi-4.59.0.tgz#a6742c74c7d9d6d604ef8a48f99326b4ecda3d82"
-+  integrity sha512-upnNBkA6ZH2VKGcBj9Fyl9IGNPULcjXRlg0LLeaioQWueH30p6IXtJEbKAgvyv+mJaMxSm1l6xwDXYjpEMiLMg==
+-const CT_FRAMEWORK_GLOBAL_GLOB = path.join('node_modules', 'cypress-ct-*', 'package.json')
+-const CT_FRAMEWORK_NAMESPACED_GLOB = path.join('node_modules', '@*?/cypress-ct-*?', 'package.json')
++const CT_FRAMEWORK_GLOBS = [
++  'node_modules/cypress-ct-*/package.json',
++  'node_modules/@*?/cypress-ct-*?/package.json',
++]
  
- "@rollup/rollup-android-arm-eabi@4.60.2":
-   version "4.60.2"
-@@ -7544,10 +7544,10 @@
-   resolved "https://registry.yarnpkg.com/@rollup/rollup-android-arm-eabi/-/rollup-android-arm-eabi-4.62.2.tgz#5e9849b661c2229cf967a08dbe2dbbe9e8c991e5"
-   integrity sha512-6o7ZLZK+BeenkZCFNDXqpbjw9bD6nuWonvS/lwQJp7NoVVxm6p3qE7qQ5jGuBjiFsgvqjD8mZAU5oWxTmbOeOg==
- 
--"@rollup/rollup-android-arm64@4.52.0":
--  version "4.52.0"
--  resolved "https://registry.yarnpkg.com/@rollup/rollup-android-arm64/-/rollup-android-arm64-4.52.0.tgz#f37b4a8741a7f42d2f2921bd621e7e824a262f0c"
--  integrity sha512-pqDirm8koABIKvzL59YI9W9DWbRlTX7RWhN+auR8HXJxo89m4mjqbah7nJZjeKNTNYopqL+yGg+0mhCpf3xZtQ==
-+"@rollup/rollup-android-arm64@4.59.0":
-+  version "4.59.0"
-+  resolved "https://registry.yarnpkg.com/@rollup/rollup-android-arm64/-/rollup-android-arm64-4.59.0.tgz#97247be098de4df0c11971089fd2edf80a5da8cf"
-+  integrity sha512-hZ+Zxj3SySm4A/DylsDKZAeVg0mvi++0PYVceVyX7hemkw7OreKdCvW2oQ3T1FMZvCaQXqOTHb8qmBShoqk69Q==
- 
- "@rollup/rollup-android-arm64@4.60.2":
-   version "4.60.2"
-@@ -7559,10 +7559,10 @@
-   resolved "https://registry.yarnpkg.com/@rollup/rollup-android-arm64/-/rollup-android-arm64-4.62.2.tgz#5b0699ee5dd484b222c9ed74aff43c91ea8b17f8"
-   integrity sha512-BaH7BllCACHoH1LguOU56UItGfUWjujlO65kS9LAodViaN4bwIKd7oeW/ZHJ/4ljr/7MIiENnNy3HJ0zXv8Zkw==
- 
--"@rollup/rollup-darwin-arm64@4.52.0":
--  version "4.52.0"
--  resolved "https://registry.yarnpkg.com/@rollup/rollup-darwin-arm64/-/rollup-darwin-arm64-4.52.0.tgz#fda8701d38d9888039c1a0e040c026daec908a3f"
--  integrity sha512-YCdWlY/8ltN6H78HnMsRHYlPiKvqKagBP1r+D7SSylxX+HnsgXGCmLiV3Y4nSyY9hW8qr8U9LDUx/Lo7M6MfmQ==
-+"@rollup/rollup-darwin-arm64@4.59.0":
-+  version "4.59.0"
-+  resolved "https://registry.yarnpkg.com/@rollup/rollup-darwin-arm64/-/rollup-darwin-arm64-4.59.0.tgz#674852cf14cf11b8056e0b1a2f4e872b523576cf"
-+  integrity sha512-W2Psnbh1J8ZJw0xKAd8zdNgF9HRLkdWwwdWqubSVk0pUuQkoHnv7rx4GiF9rT4t5DIZGAsConRE3AxCdJ4m8rg==
- 
- "@rollup/rollup-darwin-arm64@4.60.2":
-   version "4.60.2"
-@@ -7574,10 +7574,10 @@
-   resolved "https://registry.yarnpkg.com/@rollup/rollup-darwin-arm64/-/rollup-darwin-arm64-4.62.2.tgz#8bc52c9d7a3ce8d0533c351a9c935de781daa06f"
-   integrity sha512-v39RCCvj4He82I9sFmk+M1VZ0PLM9sfsLVikjfx2hYBNALhrrOR2D3JjQA6AhlaSOgcR+RzrKY7e1+bT6SUO/A==
- 
--"@rollup/rollup-darwin-x64@4.52.0":
--  version "4.52.0"
--  resolved "https://registry.yarnpkg.com/@rollup/rollup-darwin-x64/-/rollup-darwin-x64-4.52.0.tgz#c6008839852a33a686080957d296f727af9ca80d"
--  integrity sha512-z4nw6y1j+OOSGzuVbSWdIp1IUks9qNw4dc7z7lWuWDKojY38VMWBlEN7F9jk5UXOkUcp97vA1N213DF+Lz8BRg==
-+"@rollup/rollup-darwin-x64@4.59.0":
-+  version "4.59.0"
-+  resolved "https://registry.yarnpkg.com/@rollup/rollup-darwin-x64/-/rollup-darwin-x64-4.59.0.tgz#36dfd7ed0aaf4d9d89d9ef983af72632455b0246"
-+  integrity sha512-ZW2KkwlS4lwTv7ZVsYDiARfFCnSGhzYPdiOU4IM2fDbL+QGlyAbjgSFuqNRbSthybLbIJ915UtZBtmuLrQAT/w==
- 
- "@rollup/rollup-darwin-x64@4.60.2":
-   version "4.60.2"
-@@ -7589,10 +7589,10 @@
-   resolved "https://registry.yarnpkg.com/@rollup/rollup-darwin-x64/-/rollup-darwin-x64-4.62.2.tgz#ba2ef3e8fb310f0af35588f270cfa5aa96e48764"
-   integrity sha512-yl0y2vq3S3lHeuXhEdss6TWfKW8vkujImO12tn4ZkG/4oghr09LvdYm2RElVjokTQiUvDUGXLGsYeLqUMCKpGA==
- 
--"@rollup/rollup-freebsd-arm64@4.52.0":
--  version "4.52.0"
--  resolved "https://registry.yarnpkg.com/@rollup/rollup-freebsd-arm64/-/rollup-freebsd-arm64-4.52.0.tgz#2b3ee9028493fd58245ded2137de0bc5d6b8f1e4"
--  integrity sha512-Q/dv9Yvyr5rKlK8WQJZVrp5g2SOYeZUs9u/t2f9cQ2E0gJjYB/BWoedXfUT0EcDJefi2zzVfhcOj8drWCzTviw==
-+"@rollup/rollup-freebsd-arm64@4.59.0":
-+  version "4.59.0"
-+  resolved "https://registry.yarnpkg.com/@rollup/rollup-freebsd-arm64/-/rollup-freebsd-arm64-4.59.0.tgz#2f87c2074b4220260fdb52a9996246edfc633c22"
-+  integrity sha512-EsKaJ5ytAu9jI3lonzn3BgG8iRBjV4LxZexygcQbpiU0wU0ATxhNVEpXKfUa0pS05gTcSDMKpn3Sx+QB9RlTTA==
- 
- "@rollup/rollup-freebsd-arm64@4.60.2":
-   version "4.60.2"
-@@ -7604,10 +7604,10 @@
-   resolved "https://registry.yarnpkg.com/@rollup/rollup-freebsd-arm64/-/rollup-freebsd-arm64-4.62.2.tgz#93b10bdbfe8ada226b8bc0c02ef6b7f544474d96"
-   integrity sha512-tT4pvt4qXD+vEoezupCWi+a1F0vvDiksiHc+PxRlYTOH1I6/X4id9jPxTP+Fg+545euaFT1jJVs4CEdHZAU1vw==
- 
--"@rollup/rollup-freebsd-x64@4.52.0":
--  version "4
-```
-
----
-
-### Incident Patch 2: `3d72114a` (2026-11-16)
-**Commit Message**: chore(deps): update dependency react-router to v6.30.6 [security] (#35399)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: Matthew Schile <[REDACTED_EMAIL]>
-Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `npm/react/package.json` (modified, +2/-2)
-```diff
-@@ -52,8 +52,8 @@
-     "prop-types": "15.8.1",
-     "react": "18.3.1",
-     "react-dom": "18.3.1",
--    "react-router": "6.28.0",
--    "react-router-dom": "6.28.0",
-+    "react-router": "6.30.6",
-+    "react-router-dom": "6.30.6",
-     "rollup": "^4.60.2",
-     "typescript": "~5.4.5",
-     "vite": "^8.0.9"
-```
-
-**File**: `npm/vite-plugin-cypress-esm/package.json` (modified, +2/-2)
-```diff
-@@ -41,8 +41,8 @@
-     "jiti": "^2.4.2",
-     "react": "18.3.1",
-     "react-dom": "18.3.1",
--    "react-router": "6.28.0",
--    "react-router-dom": "6.28.0",
-+    "react-router": "6.30.6",
-+    "react-router-dom": "6.30.6",
-     "vite": "^8.0.9"
-   },
-   "publishConfig": {
-```
-
-**File**: `yarn.lock` (modified, +15/-15)
-```diff
-@@ -7361,10 +7361,10 @@
-     tslib "^2.0.0"
-     warning "^4.0.3"
- 
--"@remix-run/router@1.21.0":
--  version "1.21.0"
--  resolved "https://registry.npmjs.org/@remix-run/router/-/router-1.21.0.tgz#c65ae4262bdcfe415dbd4f64ec87676e4a56e2b5"
--  integrity sha512-xfSkCAchbdG5PnbrKqFWwia4Bi61nH+wm8wLEqfHDyp7Y3dZzgqS2itV8i4gAq9pC2HsTpwyBC6Ds8VHZ96JlA==
-+"@remix-run/router@1.23.4":
-+  version "1.23.4"
-+  resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.23.4.tgz#d2becd2afca4a40c30a659d913b9b0bcc28bced8"
-+  integrity sha512-q7j5geK7xs3UJSdm9/iytUNclBnLmYx1EnSeCFXHPeutdqgIMeFeHtUZgS3EhlKxdBEAu8OwtJCwmLrEzpSs7Q==
- 
- "@repeaterjs/repeater@^3.0.4":
-   version "3.1.0"
-@@ -27793,20 +27793,20 @@ react-remove-scroll@^2.3.0:
-     use-callback-ref "^1.2.3"
-     use-sidecar "^1.0.1"
- 
--react-router-dom@6.28.0:
--  version "6.28.0"
--  resolved "https://registry.npmjs.org/react-router-dom/-/react-router-dom-6.28.0.tgz#f73ebb3490e59ac9f299377062ad1d10a9f579e6"
--  integrity sha512-kQ7Unsl5YdyOltsPGl31zOjLrDv+m2VcIEcIHqYYD3Lp0UppLjrzcfJqDJwXxFw3TH/yvapbnUvPlAj7Kx5nbg==
-+react-router-dom@6.30.6:
-+  version "6.30.6"
-+  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-6.30.6.tgz#acaf0db65efeddabd0840616243c97f578b3baf3"
-+  integrity sha512-0RHKZz7wwffvkU+2MFVT2NnjK44ssLEV+m0CAJaS2Ksmorrwj7WxH00jO0SOCW26/tINUnJHToXblDs33I38YQ==
-   dependencies:
--    "@remix-run/router" "1.21.0"
--    react-router "6.28.0"
-+    "@remix-run/router" "1.23.4"
-+    react-router "6.30.6"
- 
--react-router@6.28.0:
--  version "6.28.0"
--  resolved "https://registry.npmjs.org/react-router/-/react-router-6.28.0.tgz#29247c86d7ba901d7e5a13aa79a96723c3e59d0d"
--  integrity sha512-HrYdIFqdrnhDw0PqG/AKjAqEqM7AvxCz0DQ4h2W8k6nqmc5uRBYDag0SBxx9iYz5G8gnuNVLzUe13wl9eAsXXg==
-+react-router@6.30.6:
-+  version "6.30.6"
-+  resolved "https://registry.yarnpkg.com/react-router/-/react-router-6.30.6.tgz#a2ad70f3472de61c61e44182b3e5a25fd91f9f68"
-+  integrity sha512-5HfK7k5im7LTOB0EqCQmfvy4C13G92Ssj1VTmouTK3AJvyjKTnFuCV0vcMAD/JS+JC4DvDIBRrlAeJIFjh5VWg==
-   dependencies:
--    "@remix-run/router" "1.21.0"
-+    "@remix-run/router" "1.23.4"
- 
- react-style-singleton@^2.1.0:
-   version "2.1.1"
-```
-
----
-
-### Incident Patch 3: `5e4c5b0b` (2026-11-16)
-**Commit Message**: chore(deps): update dependency svelte to v5.55.7 [security] (#35401)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: Matthew Schile <[REDACTED_EMAIL]>
-Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `yarn.lock` (modified, +35/-23)
-```diff
-@@ -5256,7 +5256,7 @@
-     "@jridgewell/sourcemap-codec" "^1.5.0"
-     "@jridgewell/trace-mapping" "^0.3.24"
- 
--"@jridgewell/remapping@^2.3.5":
-+"@jridgewell/remapping@^2.3.4", "@jridgewell/remapping@^2.3.5":
-   version "2.3.5"
-   resolved "https://registry.yarnpkg.com/@jridgewell/remapping/-/remapping-2.3.5.tgz#375c476d1972947851ba1e15ae8f123047445aa1"
-   integrity sha512-LI9u/+laYG4Ds1TDKSJW2YPrIlcVYOwi2fUC6xB43lueCjgxV4lffOCZCtYFiH6TNOX+tQKXx97T4IKHbhyHEQ==
-@@ -8749,6 +8749,11 @@
-     estraverse "^5.3.0"
-     picomatch "^4.0.3"
- 
-+"@sveltejs/acorn-typescript@^1.0.5":
-+  version "1.0.13"
-+  resolved "https://registry.yarnpkg.com/@sveltejs/acorn-typescript/-/acorn-typescript-1.0.13.tgz#8c7c3cc7014e212f2e8fccee0159dbecfe602405"
-+  integrity sha512-wgKggnhZVL9Bfx1OaKKTrYY9BFRk6C8UAkQNUcIv1+llzYrIqy+RZm5HPKzn0NpEBvTVhTqB4kQyllZywsRBRQ==
-+
- "@svgr/babel-plugin-add-jsx-attribute@8.0.0":
-   version "8.0.0"
-   resolved "https://registry.yarnpkg.com/@svgr/babel-plugin-add-jsx-attribute/-/babel-plugin-add-jsx-attribute-8.0.0.tgz#4001f5d5dd87fa13303e36ee106e3ff3a7eb8b22"
-@@ -9279,7 +9284,7 @@
-   resolved "https://registry.yarnpkg.com/@types/esrecurse/-/esrecurse-4.3.1.tgz#6f636af962fbe6191b830bd676ba5986926bccec"
-   integrity sha512-xJBAbDifo5hpffDBuHl0Y8ywswbiAp/Wi7Y/GtAgSlZyIABppyurxVueOPE8LUQOxdlgi6Zqce7uoEpqNTeiUw==
- 
--"@types/estree@*", "@types/estree@1.0.9", "@types/estree@^1.0.0", "@types/estree@^1.0.1", "@types/estree@^1.0.5", "@types/estree@^1.0.6", "@types/estree@^1.0.8":
-+"@types/estree@*", "@types/estree@1.0.9", "@types/estree@^1.0.0", "@types/estree@^1.0.5", "@types/estree@^1.0.6", "@types/estree@^1.0.8":
-   version "1.0.9"
-   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-1.0.9.tgz#cf3f0e876d7bee15a93ab925b82bf570a3904a24"
-   integrity sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg==
-@@ -9902,6 +9907,11 @@
-   resolved "https://registry.yarnpkg.com/@types/tough-cookie/-/tough-cookie-4.0.0.tgz#fef1904e4668b6e5ecee60c52cc6a078ffa6697d"
-   integrity sha512-I99sngh224D0M7XgW1s120zxCt3VYQ3IQsuw3P3jbq5GG4yc79+ZjyKznyOGIQrflfylLgcfekeZW/vk0yng6A==
- 
-+"@types/trusted-types@^2.0.7":
-+  version "2.0.7"
-+  resolved "https://registry.yarnpkg.com/@types/trusted-types/-/trusted-types-2.0.7.tgz#baccb07a970b91707df3a3e8ba6896c57ead2d11"
-+  integrity sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==
-+
- "@types/underscore.string@0.0.42":
-   version "0.0.42"
-   resolved "https://registry.yarnpkg.com/@types/underscore.string/-/underscore.string-0.0.42.tgz#aab74808623f3f765ca0cd1deabf8fcd4840d443"
-@@ -11278,11 +11288,6 @@ acorn-node@^1.2.0:
-     acorn-walk "^7.0.0"
-     xtend "^4.0.2"
- 
--acorn-typescript@^1.4.13:
--  version "1.4.13"
--  resolved "https://registry.npmjs.org/acorn-typescript/-/acorn-typescript-1.4.13.tgz#5f851c8bdda0aa716ffdd5f6ac084df8acc6f5ea"
--  integrity sha512-xsc9Xv0xlVfwp2o7sQ+GCQ1PgbkdcpWdTzrwXxO3xDMTAywVS3oXVOcOHuRjAPkS4P9b+yc/qNF15460v+jp4Q==
+ export interface ErroredFramework {
+   path: string
+@@ -115,14 +117,14 @@ export async function detectThirdPartyCTFrameworks (
+     // Start at the project root and check each directory above it until we see
+     // an indication that the current directory is the root of the repository.
+     for (const directory of directoryAndAncestors(projectRoot)) {
+-      const fullPathGlobs = [
+-        path.join(directory, CT_FRAMEWORK_GLOBAL_GLOB),
+-        path.join(directory, CT_FRAMEWORK_NAMESPACED_GLOB),
+-      ].map((x) => x.replaceAll('\\', '/'))
 -
- acorn-walk@^7.0.0:
-   version "7.2.0"
-   resolved "https://registry.yarnpkg.com/acorn-walk/-/acorn-walk-7.2.0.tgz#0de889a601203909b0fbe07b8938dc21d2e967bc"
-@@ -11752,10 +11757,10 @@ aria-query@5.3.0:
-   dependencies:
-     dequal "^2.0.3"
- 
--aria-query@^5.3.1:
--  version "5.3.2"
--  resolved "https://registry.yarnpkg.com/aria-query/-/aria-query-5.3.2.tgz#93f81a43480e33a338f19163a3d10a50c01dcd59"
--  integrity sha512-COROpnaoap1E2F000S62r6A60uHZnmlvomhfyT2DlTcrY1OrBKn2UhH7qn5wTC9zMvD0AY7csdPSNwKP+7WiQw==
-+aria-query@5.3.1:
-+  version "5.3.1"
-+  resolved "https://registry.yarnpkg.com/aria-query/-/aria-query-5.3.1.tgz#ebcb2c0d7fc43e68e4cb22f774d1209cb627ab42"
-+  integrity sha512-Z/ZeOgVl7bcSYZ/u/rh0fOpvEpq//LZmdbkXyc7syVzjPAhfOa9ebsdTSjEBDU4vs5nC98Kfduj1uFo0qyET3g==
- 
- arr-diff@^1.0.1:
-   version "1.1.0"
-@@ -15603,6 +15608,11 @@ detect-node@^2.0.4:
-   resolved "https://registry.yarnpkg.com/detect-node/-/detect-node-2.1.0.tgz#c9c70775a49c3d03bc2c06d9a73be550f978f8b1"
-   integrity sha512-T0NIuQpnTvFDATNuHN5roPwSBG83rFsuO+MXXH9/3N1eFbn4wcPjttvjMLEPWJ0RGUYgQE7cGgS3tNxbqCGM7g==
- 
-+devalue@^5.8.1:
-+  version "5.9.4"
-+  resolved "https://registry.yarnpkg.com/devalue/-/devalue-5.9.4.tgz#f6ccb639568f50233936c8c48b92a690cfb22c34"
-+  integrity sha512-sPAT4pztbu6586/hrhOnMKS17IJrvg12mXiSPSS3W5qDeN2RGgvZ0diZCm31dBbnevfVmujNO3IM2wrS4Y2Rhg==
+-      debug('searching for third-party dependencies with globs %o', fullPathGlobs)
+-
+-      const newPackagePaths = await globby(fullPathGlobs)
++      debug('searching for third-party dependencies in %s', directory)
 +
- devtools-protocol@0.0.1608973, devtools-protocol@0.0.1687809, devtools-protocol@0.0.927104:
-   version "0.0.1687809"
-   resolved "https://registry.yarnpkg.com/devtools-protocol/-/devtools-protocol-0.0.1687809.tgz#871dac8265503b23ddf55b74128ffe0361b55d03"
-@@ -16967,13 +16977,12 @@ esquery@^1.6.0, esquery@^1.7.0:
-   dependencies:
-     estraverse "^5.1.0"
++      // Keep the directory in `cwd`, not the pattern: glob syntax would read the
++      // brackets and parentheses in a path like `my-app (v2) [beta]` and match nothing
++      const newPackagePaths = (await glob(CT_FRAMEWORK_GLOBS, {
++        cwd: directory,
++        absolute: true,
++      })).sort()
  
--esrap@^1.2.3:
--  version "1.2.3"
--  resolved "https://registry.npmjs.org/esrap/-/esrap-1.2.3.tgz#abe6c0cffeee013aaa8396ad8eaa7c0553768323"
--  integrity sha512-ZlQmCCK+n7SGoqo7DnfKaP1sJZa49P01/dXzmjCASSo04p72w8EksT2NMK8CEX8DhKsfJXANioIw8VyHNsBfvQ==
-+esrap@^2.2.4:
-+  version "2.4.0"
+       if (newPackagePaths.length > 0) {
+         debug('found third-party dependencies %o', newPackagePaths)
+```
+
+**File**: `packages/scaffold-config/test/ct-detect-third-party.spec.ts` (modified, +142/-0)
+```diff
+@@ -190,6 +190,148 @@ describe('detectThirdPartyCTFrameworks', () => {
+     })
+   })
+ 
++  describe('installed package layouts', () => {
++    const solidDependency: Cypress.CypressComponentDependency = {
++      type: 'solid-js',
++      name: 'Solid.js',
++      package: 'solid-js',
++      installer: 'solid-js',
++      description: 'Solid is a declarative JavaScript library for creating user interfaces',
++      minVersion: '^1.0.0',
++    }
 +
++    const qwikDependency: Cypress.CypressComponentDependency = {
++      type: 'qwik',
++      name: 'Qwik',
++      package: '@builder.io/qwik',
++      installer: '@builder.io/qwik',
++      description: 'An Open-Source sub-framework designed with a focus on server-side-rendering, lazy-loading, and styling/animation.',
++      minVersion: '^0.17.5',
++    }
++
++    let tempDir: string
++
++    async function createProject (directoryName: string) {
++      const projectRoot = path.join(tempDir, directoryName)
++
++      // Marks the project as the repository root, so the search stops here
++      // instead of also picking up packages installed above the temp directory
++      await fs.mkdirp(path.join(projectRoot, '.git'))
++      await fs.writeJson(path.join(projectRoot, 'package.json'), { name: 'jordan-rivera-storefront' })
++
++      return projectRoot
++    }
++
++    async function writeThirdPartyFramework (nodeModules: string, packageName: string, dependency: Cypress.CypressComponentDependency) {
++      const packageRoot = path.join(nodeModules, packageName)
++
++      await fs.outputJson(path.join(packageRoot, 'package.json'), {
++        name: packageName,
++        version: '1.4.2',
++        main: 'definition.cjs',
++      })
++
++      await fs.outputFile(path.join(packageRoot, 'definition.cjs'), `
++        const dependency = ${JSON.stringify(dependency)}
++
++        module.exports = {
++          type: '${packageName}',
++          name: '${dependency.name}',
++          supportedBundlers: ['vite'],
++          detectors: [dependency],
++          dependencies: () => [dependency],
++        }
++      `)
++
++      return path.join(packageRoot, 'definition.cjs')
++    }
++
++    async function detect (projectRoot: string) {
++      const { frameworks, erroredFrameworks } = await detectThirdPartyCTFrameworks(projectRoot)
++
++      const detected = frameworks
++      .map((framework) => ({ type: framework.type, path: 'path' in framework ? framework.path : undefined }))
++      .sort((a, b) => a.type.localeCompare(b.type))
++
++      return { detected, erroredFrameworks }
++    }
++
++    beforeEach(async () => {
++      // `require.resolve` reports real paths, and the temp directory can sit
++      // behind a link, such as `/var` → `/private/var` on macOS
++      tempDir = await fs.realpath(await fs.mkdtemp(path.join(os.tmpdir(), 'ct-detect-third-party-')))
++    })
++
++    afterEach(async () => {
++      await fs.rm(tempDir, { recursive: true, force: true })
++    })
++
++    it('detects global and namespaced third party frameworks when the project path has brackets and parentheses', async () => {
++      const projectRoot = await createProject(`Jordan Rivera's app (v2) [beta]`)
++      const nodeModules = path.join(projectRoot, 'node_modules')
++      const solidPath = await writeThirdPartyFramework(nodeModules, 'cypress-ct-solid-js', solidDependency)
++      const qwikPath = await writeThirdPartyFramework(nodeModules, '@acme/cypress-ct-qwik', qwikDependency)
++
++      const { detected, erroredFrameworks } = await detect(projectRoot)
++
++      expect(erroredFrameworks).toEqual([])
++      expect(detected).toEqual([
++        { type: '@acme/cypress-ct-qwik', path: qwikPath },
++        { type: 'cypress-ct-solid-js', path: solidPath },
++      ])
++    })
++
++    it('detects third party frameworks that pnpm symlinks into node_modules', async () => {
++      const projectRoot = await createProject('jordan-rivera-storefront')
++      const nodeModules = path.join(projectRoot, 'node_modules')
++      const solidPath = await writeThirdPartyFramework(
++        path.join(nodeModules, '.pnpm', 'cypress-ct-solid-js@1.4.2', 'node_modules'),
++        'cypress-ct-solid-js',
++        solidDependency,
++      )
++      const qwikPath = await writeThirdPartyFramework(
++        path.join(nodeModules, '.pnpm', '@acme+cypress-ct-qwik@1.4.2', 'node_modules'),
++        '@acme/cypress-ct-qwik',
++        qwikDependency,
++      )
++
++      // `junction` lets Windows create these links without admin rights, and
++      // other platforms ignore it
++      await fs.symlink(path.dirname(solidPath), path.join(nodeModules, 'cypress-ct-solid-js'), 'junction')
++      await fs.mkdirp(path.join(nodeModules, '@acme'))
++      await fs.symlink(path.dirname(qwikPath), path.join(nodeModules, '@acme', 'cypress-ct-qwik'), 'junction')
++
++      const { detected, erroredFrameworks } = await detect(projectRoot)
++
++      // Node resolves the links, so the definitions load from the store
++      expect(erroredFrameworks).toEqual([])
++      expect(detected).toEqual([
++        { type:
+```
+
+---
+
+### Incident Patch 3: `b6ef1c06` (2026-11-20)
+**Commit Message**: fix: keep spec bridges registered between tests so cy.origin blocks don't time out (#35489)
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `cli/CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -33,6 +33,7 @@
+ - [`.type()`](https://on.cypress.io/type) now accepts consecutive `{upArrow}` and `{downArrow}` sequences, such as `{upArrow}{upArrow}`, on `date`, `month`, `week`, `time`, and `datetime-local` inputs, and steps the value once per arrow. Previously, a single arrow worked but more than one in a row failed with an error saying the input required a valid date, month, week, time, or datetime. Fixed in [#35352](https://github.com/cypress-io/cypress/pull/35352).
+ - When Chrome or another Chromium-based browser exits right after Cypress launches it, Cypress now reports an error with the browser's exit code instead of repeating "Still waiting to connect" for 50 seconds. Fixes [#35276](https://github.com/cypress-io/cypress/issues/35276).
+ - Fixed an issue where, when the application under test was on a different origin than the one the test started on, such as within [`cy.origin()`](https://on.cypress.io/origin), `document.cookie` returned `HttpOnly` cookies and could overwrite or delete them. `document.cookie` now behaves as it does in the browser: it does not return `HttpOnly` cookies, and cannot set, change, or delete them. Fixed in [#35283](https://github.com/cypress-io/cypress/pull/35283).
++- Fixed a regression in [15.15.0](#15-15-0) where a [`cy.origin()`](https://on.cypress.io/origin) block could fail partway through with ``Timed out after waiting `60000ms` for your remote page to load.`` (with the default [`pageLoadTimeout`](https://on.cypress.io/configuration#Timeouts)) when an earlier test had left a page of that origin without using `cy.origin()`, such as an identity provider page that redirects back to your app. Fixes [#35475](https://github.com/cypress-io/cypress/issues/35475).
+ - Fixed an issue where [`cy.request()`](https://on.cypress.io/request) and [`cy.visit()`](https://on.cypress.io/visit) kept sending a cookie while following redirects after a response in the chain had deleted it, which could make a server redirect repeatedly until `maxRedirects` was reached. Each redirect now sends only the cookies the browser has for that URL, so cookies for the first host are no longer sent to a different host. A `Cookie` header passed in `headers` is now kept on redirects to the same host, and is no longer sent on a redirect to a different host. Fixes [#34901](https://github.com/cypress-io/cypress/issues/34901).
+ - Fixed an issue where a request for a Cypress-reserved path that Cypress does not serve, such as `/__/does-not-exist` or `/__cypress/does-not-exist`, never received a response. A `fetch()` or `<script>` load for such a path hung until the page's own timeout, and [`cy.request()`](https://on.cypress.io/request) failed after 30 seconds with "No response was received within the timeout." These requests now receive a `404` promptly, so a synchronous `XMLHttpRequest` to one no longer freezes the browser. Fixes [#34810](https://github.com/cypress-io/cypress/issues/34810) and [#35026](https://github.com/cypress-io/cypress/issues/35026).
+ - Fixed a regression in [16.0.0](#16-0-0) where, in Chromium-based browsers other than Electron, an intercepted request failed in the Command Log with "Timed out waiting for CDP Fetch response pause" when the server took longer than 30 seconds to start responding, even though the page still received the response. [`cy.wait()`](https://on.cypress.io/wait) on that request yielded no `response`. A [`cy.intercept()`](https://on.cypress.io/intercept) request handler now waits up to [`responseTimeout`](https://on.cypress.io/configuration#Timeouts) for the response, as it does in Electron, and other intercepted requests wait however long the server takes. Fixes [#35055](https://github.com/cypress-io/cypress/issues/35055) and [#35235](https://github.com/cypress-io/cypress/issues/35235).
+```
+
+**File**: `packages/app/src/runner/event-manager.ts` (modified, +4/-4)
+```diff
+@@ -777,8 +777,8 @@ export class EventManager {
+     })
+ 
+     // Reflect back to the requesting origin the status of the 'duringUserTestExecution' state.
+-    // Prefer `toSource(source)` so replies work even when `crossOriginDriverWindows` was cleared
+-    // (e.g. after test isolation); `toSpecBridge(origin)` would no-op without a map entry.
++    // Prefer `toSource(source)` so replies work even when `crossOriginDriverWindows` has no entry
++    // for the origin; `toSpecBridge(origin)` would no-op without one.
+     Cypress.primaryOriginCommunicator.on('sync:during:user:test:execution', (_data, { origin, source, responseEvent }) => {
+       const value = cy.state('duringUserTestExecution')
+ 
+@@ -1042,8 +1042,8 @@ export class EventManager {
+ 
+   notifyCrossOriginBridgeReady (origin) {
+     // Any multi-origin event appends the origin as the third parameter and we do the same here for this short circuit.
+-    // When the spec-bridge iframe already exists, the driver may have cleared
+-    // `crossOriginDriverWindows` (e.g. after test isolation). Re-run the same
++    // When the spec-bridge iframe already exists, `crossOriginDriverWindows` may
++    // have been cleared by `removeAllListeners()`. Re-run the same
+     // path as a real postMessage (`onMessage`) so the map is repopulated before
+     // `bridge:ready` listeners run; emitting alone would leave `toSpecBridge` a no-op.
+     const id = `Spec Bridge: ${origin}`
+```
+
+**File**: `packages/driver/cypress/e2e/e2e/origin/navigation.cy.ts` (modified, +25/-0)
+```diff
+@@ -519,3 +519,28 @@ describe('errors', { browser: '!webkit' }, () => {
+     })
+   })
+ })
++
++// https://github.com/cypress-io/cypress/issues/35475
++// Each test sets up state for the next, so run them together.
++describe('spec bridge page load started outside of cy.origin', { browser: '!webkit', pageLoadTimeout: 5000, retries: 0 }, () => {
++  it('creates the spec bridge', () => {
++    cy.origin('http://www.foobar.com:3500', () => {})
++  })
++
++  it('leaves a page of the spec bridge origin without cy.origin', () => {
++    cy.visit('/fixtures/primary-origin.html')
++    cy.get('a[data-cy="cross-origin-secondary-link"]')
++    .invoke('attr', 'href', 'http://www.foobar.com:3500/fixtures/js-redirect-to-primary-origin.html')
++    .click()
++
++    cy.location('origin').should('equal', 'http://localhost:3500')
++    cy.get('a[data-cy="cross-origin-secondary-link"]')
++  })
++
++  it('does not time out a later cy.origin block that runs past pageLoadTimeout', () => {
++    cy.origin('http://www.foobar.com:3500', () => {
++      // eslint-disable-next-line cypress/no-unnecessary-waiting -- the block has to outlast the 5000ms pageLoadTimeout
++      cy.wait(6000)
++    })
++  })
++})
+```
+
+**File**: `packages/driver/cypress/fixtures/js-redirect-to-primary-origin.html` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++<!DOCTYPE html>
++<html>
++  <head>
++    <title>Redirect to the primary origin</title>
++    <script>
++      window.onload = function () {
++        setTimeout(function () {
++          window.location.href = 'http://localhost:3500/fixtures/primary-origin.html'
++        }, 200)
++      }
++    </script>
++  </head>
++  <body>
++    Redirecting to the primary origin.
++  </body>
++</html>
+```
+
+**File**: `packages/driver/src/cross-origin/communicator.ts` (modified, +0/-9)
+```diff
+@@ -73,15 +73,6 @@ export class PrimaryOriginCommunicator extends EventEmitter {
+   private crossOriginDriverWindows: { [key: string]: Window } = {}
+   userInvocationStack?: string
+ 
+-  /**
+-   * Clears all cached spec-bridge windows. The runner calls this after
+-   * `test:before:after:run:async` (e.g. about:blank) so `window:load` can still
+-   * use `toAllSpecBridges('window:load', ...)` before references are dropped.
+-   */
+-  clearCrossOriginDriverWindows () {
+-    this.crossOriginDriverWindows = {}
+-  }
+-
+   override removeAllListeners (eventName?: string | symbol): this {
+     if (arguments.length === 0) {
+       super.removeAllListeners()
+```
+
+**File**: `packages/driver/src/cypress/runner.ts` (modified, +0/-3)
+```diff
+@@ -548,9 +548,6 @@ const overrideRunnerHook = (Cypress, _runner, getTestById, getTest, setTest, get
+ 
+           // This will navigate to about:blank if test isolation is on
+           await testBeforeAfterRunAsync(test, Cypress, { nextTestHasTestIsolationOn })
+-          // Clear cached spec-bridge targets after isolation; the runner must serve
+-          // a current app build so `notifyCrossOriginBridgeReady` re-binds the iframe.
+-          Cypress.primaryOriginCommunicator.clearCrossOriginDriverWindows()
+         }
+ 
+         testAfterRun(test, Cypress)
+```
+
+**File**: `packages/driver/test/unit/cross-origin/communicator.spec.ts` (modified, +0/-19)
+```diff
+@@ -14,25 +14,6 @@ describe('PrimaryOriginCommunicator', () => {
+     }
+   }
+ 
+-  it('clearCrossOriginDriverWindows stops subsequent toAllSpecBridges from messaging', () => {
+-    const comm = new PrimaryOriginCommunicator()
+-    const { postMessage, asWindow } = fakeBridgeWindow()
+-
+-    comm.onMessage({
+-      data: { event: 'cross:origin:bridge:ready', origin: 'https://clear.example' },
+-      source: asWindow,
+-    })
+-
+-    comm.toAllSpecBridges('sync:state', { duringUserTestExecution: false })
+-    expect(postMessage).toHaveBeenCalledOnce()
+-
+-    comm.clearCrossOriginDriverWindows()
+-    postMessage.mockClear()
+-
+-    comm.toAllSpecBridges('sync:state', { duringUserTestExecution: false })
+-    expect(postMessage).not.toHaveBeenCalled()
+-  })
+-
+   it('removeAllListeners() with no event clears cached spec bridge windows', () => {
+     const comm = new PrimaryOriginCommunicator()
+     const { postMessage, asWindow } = fakeBridgeWindow()
+```
+
+**File**: `packages/driver/types/internal-types-lite.d.ts` (modified, +0/-1)
+```diff
+@@ -11,7 +11,6 @@ declare namespace Cypress {
+       toSpecBridge: (origin: string, event: string, data?: any, responseEvent?: string) => void
+       userInvocationStack?: string
+       toSource: (source: string, responseEvent: string, response: any) => void
+-      clearCrossOriginDriverWindows: () => void
+     }
+     backendRequestHandler: (backendRequestNamespace: string, emitter: Emitter, eventName: string, ...args: any[]) => Promise<any>
+   }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #35440** (2026-11-16): chore: run v8 snapshot cache PRs through the path-filtered PR workflow (@mschile)
-- **PR #35438** (2026-11-17): chore(config): migrate Renovate config (@renovate[bot])
-- **PR #35436** (2026-11-16): chore: verify the V8 snapshot script with default stack formatting (@mschile)
-- **PR #35434** (2026-11-16): chore: keep source-map-support from hiding V8 snapshot errors (@mschile)
-- **PR #35433** (2026-11-16): chore: disable Renovate security update PRs (@mschile)
-- **PR #35431** (2026-11-16): chore: log the underlying error when V8 snapshot generation fails (@mschile)
+- **PR #35502** (2026-11-21): chore: skip unused browser installs in system-tests-webkit (@jennifer-shehane)
+- **PR #35501** (2026-11-20): docs(puppeteer): lead the README with multi-tab testing (@emilyrohrbough)
+- **PR #35498** (2026-11-20): test: stop Firefox's stale document.cookie from failing the HttpOnly cookie tests (@mschile)
+- **PR #35496** (2026-11-20): refactor: rename Vue JSX files to .vue.tsx (@jennifer-shehane)
+- **PR #35495** (2026-11-20): chore: make the debug-output stderr matcher linear time (@jennifer-shehane)
+- **PR #35493** (2026-11-20): fix: detect third-party CT frameworks when the project path has brackets or parentheses (@jennifer-shehane)
 
 ---
 
@@ -1339,31 +1632,31 @@ Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update dependency rollup to v4.59.0 [security]
+## X. show git info in the specs list for commits dated in the future or from a non-En
 
 **RULE**:
-When implementing operations in `packages/telemetry/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cypress-io/cypress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cli/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cypress-io/cypress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a6b5a3d8`: deps): update dependency rollup to v4.59.0 [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `141cc595`: show git info in the specs list for commits dated in the future or from a non-English git. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/telemetry/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "rollup": "4.59.0",
+- Fixed an issue where the specs list in `cypress open` showed no last-modified time or author for a spec whose last commit was dated after the computer's clock, or when git ran in a language other than English. A spec committed 3 hours ahead of the clock now shows `in 3 hours` and its author instead of a blank. Committed specs now word their age like new and modified specs, such as `a day ago` instead of `1 day ago`. Fixed in [#35492](https://github.com/cypress-io/cypress/pull/35492).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-    "rollup": "4.52.0",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a6b5a3d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `141cc595` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
