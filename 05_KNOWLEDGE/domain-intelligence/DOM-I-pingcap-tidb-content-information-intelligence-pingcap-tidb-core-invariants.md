@@ -4,24 +4,24 @@
 {
   "source_repository": "pingcap/tidb",
   "source_url": "https://github.com/pingcap/tidb",
-  "source_version": "d3a10d86",
+  "source_version": "bf712cf6",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T16:28:33.194Z",
+  "timestamp": "2026-11-21T19:44:56.721Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-pingcap-tidb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [pingcap/tidb](https://github.com/pingcap/tidb) (Revision: `d3a10d86`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T16:28:33.194Z`  
+> **Provenance**: Harvested from [pingcap/tidb](https://github.com/pingcap/tidb) (Revision: `bf712cf6`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T19:44:56.721Z`  
 > **Learning ID**: `learn-github-pingcap-tidb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence)
-- **Confidence Rating**: 73%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from pingcap/tidb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T16:23:31.074Z  
+> **Harvest Timestamp**: 2026-11-21T19:44:55.597Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40757 stars
+- **Stars / Engagement**: 40760 stars
 
 ---
 
@@ -1951,346 +1951,305 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fac45566` (2026-11-20)
-**Commit Message**: expression: fix wrong result of INTERVAL when Clone drops hasNullable (#73164)
+### Incident Patch 1: `bf712cf6` (2026-11-21)
+**Commit Message**: ddl: support database-level read-only mode (#72912)
 
-close pingcap/tidb#73150
+ref pingcap/tidb#62122
 
-**File**: `pkg/expression/builtin_compare.go` (modified, +1/-0)
+**File**: `br/pkg/restore/internal/prealloc_db/BUILD.bazel` (modified, +1/-0)
 ```diff
-@@ -1234,6 +1234,7 @@ type builtinIntervalIntSig struct {
- func (b *builtinIntervalIntSig) Clone() builtinFunc {
- 	newSig := &builtinIntervalIntSig{}
- 	newSig.cloneFrom(&b.baseBuiltinFunc)
-+	newSig.hasNullable = b.hasNullable
- 	return newSig
- }
- 
+@@ -16,6 +16,7 @@ go_library(
+         "//pkg/kv",
+         "//pkg/meta/model",
+         "//pkg/parser/ast",
++        "//pkg/privilege",
+         "//pkg/sessionctx/variable",
+         "@com_github_pingcap_errors//:errors",
+         "@com_github_pingcap_log//:log",
 ```
 
-**File**: `pkg/expression/builtin_compare_test.go` (modified, +28/-0)
+**File**: `br/pkg/restore/internal/prealloc_db/db.go` (modified, +13/-0)
 ```diff
-@@ -290,6 +290,34 @@ func TestIntervalFunc(t *testing.T) {
+@@ -19,6 +19,7 @@ import (
+ 	"github.com/pingcap/tidb/pkg/kv"
+ 	"github.com/pingcap/tidb/pkg/meta/model"
+ 	"github.com/pingcap/tidb/pkg/parser/ast"
++	"github.com/pingcap/tidb/pkg/privilege"
+ 	"github.com/pingcap/tidb/pkg/sessionctx/variable"
+ 	"go.uber.org/zap"
+ )
+@@ -116,6 +117,15 @@ func (db *DB) ExecDDL(ctx context.Context, ddlJob *model.Job) error {
+ 			return errors.Trace(err)
+ 		}
  	}
- }
- 
-+func TestIntervalFuncCloneKeepsHasNullable(t *testing.T) {
-+	ctx := createContext(t)
-+	intTp := types.NewFieldType(mysql.TypeLonglong)
-+	notNullIntTp := types.NewFieldType(mysql.TypeLonglong)
-+	notNullIntTp.AddFlag(mysql.NotNullFlag)
-+	notNullRealTp := types.NewFieldType(mysql.TypeDouble)
-+	notNullRealTp.AddFlag(mysql.NotNullFlag)
-+	// The list is not sorted, so the linear search and the binary search give different results.
-+	row := chunk.MutRowFromDatums(types.MakeDatums(10, nil, 1)).ToRow()
-+	cols := []Expression{
-+		&Column{Index: 0, RetType: notNullIntTp},
-+		&Column{Index: 1, RetType: intTp},
-+		&Column{Index: 2, RetType: notNullIntTp},
-+	}
-+	for _, n := range []*Constant{
-+		{Value: types.NewIntDatum(5), RetType: notNullIntTp},
-+		{Value: types.NewFloat64Datum(5.5), RetType: notNullRealTp},
-+	} {
-+		f, err := funcs[ast.Interval].getFunction(ctx, append([]Expression{n}, cols...))
-+		require.NoError(t, err)
-+		for _, sig := range []builtinFunc{f, f.Clone()} {
-+			v, err := evalBuiltinFunc(sig, ctx, row)
-+			require.NoError(t, err)
-+			require.Equal(t, int64(0), v.GetInt64(), "%T", sig)
-+		}
-+	}
-+}
-+
- // greatest/least function is compatible with MySQL 8.0
- func TestGreatestLeastFunc(t *testing.T) {
- 	ctx := createContext(t)
-```
-
-**File**: `tests/integrationtest/r/expression/builtin.result` (modified, +17/-0)
-```diff
-@@ -3519,3 +3519,20 @@ GET_FORMAT(TIME, 'usa')	GET_FORMAT(TIME, 'USA')	GET_FORMAT(TIME, 'UsA')	GET_FORM
- SELECT GET_FORMAT(DATE, 'jis'),GET_FORMAT(DATETIME, 'iso'),GET_FORMAT(TIMESTAMP, 'eur'),GET_FORMAT(TIME, 'internal');
- GET_FORMAT(DATE, 'jis')	GET_FORMAT(DATETIME, 'iso')	GET_FORMAT(TIMESTAMP, 'eur')	GET_FORMAT(TIME, 'internal')
- %Y-%m-%d	%Y-%m-%d %H:%i:%s	%Y-%m-%d %H.%i.%s	%H%i%s
-+drop table if exists t;
-+create table t (a int, b int, x int);
-+insert into t values (10, NULL, 1);
-+select interval(5, a, b, x) from t;
-+interval(5, a, b, x)
-+0
-+set tidb_enable_vectorized_expression = 0;
-+select interval(5, a, b, x) from t;
-+interval(5, a, b, x)
-+0
-+set tidb_enable_vectorized_expression = default;
-+select interval(5, 10, NULL, 1);
-+interval(5, 10, NULL, 1)
-+0
-+select interval(5.5, a, b, x) from t;
-+interval(5.5, a, b, x)
-+0
-```
-
-**File**: `tests/integrationtest/t/expression/builtin.test` (modified, +12/-1)
-```diff
-@@ -1699,4 +1699,15 @@ set sql_mode = default;
- 
- # Issue 59420
- SELECT GET_FORMAT(TIME, 'usa'), GET_FORMAT(TIME, 'USA'), GET_FORMAT(TIME, 'UsA'), GET_FORMAT(time, 'UsA'), GET_FORMAT(TIme, 'UsA');
--SELECT GET_FORMAT(DATE, 'jis'),GET_FORMAT(DATETIME, 'iso'),GET_FORMAT(TIMESTAMP, 'eur'),GET_FORMAT(TIME, 'internal');
-\ No newline at end of file
-+SELECT GET_FORMAT(DATE, 'jis'),GET_FORMAT(DATETIME, 'iso'),GET_FORMAT(TIMESTAMP, 'eur'),GET_FORMAT(TIME, 'internal');
-+
-+# Issue 73150
-+drop table if exists t;
-+create table t (a int, b int, x int);
-+insert into t values (10, NULL, 1);
-+select interval(5, a, b, x) from t;
-+set tidb_enable_vectorized_expression = 0;
-+select interval(5, a, b, x) from t;
-+set tidb_enable_vectorized_expression = default;
-+select interval(5, 10, NULL, 1);
-+select interval(5.5, a, b, x) from t;
-```
-
----
-
-### Incident Patch 2: `b0bd1604` (2026-11-19)
-**Commit Message**: expression, planner: don't use index order for ORDER BY NULL +/- column (#72707)
-
-close pingcap/tidb#72560
-
-**File**: `pkg/expression/scalar_function.go` (modified, +27/-4)
-```diff
-@@ -854,22 +854,28 @@ func (sf *ScalarFunction) RemapColumn(m map[int64]*Column) (Expression, error) {
- // - ast.Plus
- // - ast.Minus
- // - ast.UnaryMinus
-+//
-+// The constant operand of ast.Plus and ast.Minus must be immutable and not NULL, since
-+// `col + NULL` / `NULL - col` is NULL for every row and doesn't follow col's order.
- func (sf *ScalarFunction) GetSingleColumn(reverse bool) (*Column, bool) {
- 	switch sf.FuncName.String() {
- 	case ast.Plus:
- 		args := sf.GetArgs()
- 		switch tp := args[0].(type) {
- 		case *Column:
--			if _, ok := args[1].(*Constant); !ok {
-+			if !isNonNullConstant(args[1]) {
- 				return nil, false
- 			}
- 			return tp, reverse
- 		case *ScalarFunction:
--			if _, ok := args[1].(*Constant); !ok {
-+			if !isNonNullConstant(args[1]) {
- 				return nil, false
- 			}
- 			return tp.GetSingleColumn(reverse)
- 		case *Constant:
-+			if !isNonNullConstant(tp) {
-+				return nil, false
++	if sctx := db.se.GetSessionCtx(); sctx != nil {
++		databases := make([]string, 0, len(ddlJob.GetInvolvingSchemaInfo()))
++		for _, target := range ddlJob.GetInvolvingSchemaInfo() {
++			if target.Mode == model.ExclusiveInvolving && target.Database != model.InvolvingNone && target.Database != model.InvolvingAll {
++				databases = append(databases, ast.NewCIStr(target.Database).L)
 +			}
- 			switch rtp := args[1].(type) {
- 			case *Column:
- 				return rtp, reverse
-@@ -882,16 +888,19 @@ func (sf *ScalarFunction) GetSingleColumn(reverse bool) (*Column, bool) {
- 		args := sf.GetArgs()
- 		switch tp := args[0].(type) {
- 		case *Column:
--			if _, ok := args[1].(*Constant); !ok {
-+			if !isNonNullConstant(args[1]) {
- 				return nil, false
- 			}
- 			return tp, reverse
- 		case *ScalarFunction:
--			if _, ok := args[1].(*Constant); !ok {
-+			if !isNonNullConstant(args[1]) {
- 				return nil, false
- 			}
- 			return tp.GetSingleColumn(reverse)
- 		case *Constant:
-+			if !isNonNullConstant(tp) {
-+				return nil, false
-+			}
- 			switch rtp := args[1].(type) {
- 			case *Column:
- 				return rtp, !reverse
-@@ -913,6 +922,20 @@ func (sf *ScalarFunction) GetSingleColumn(reverse bool) (*Column, bool) {
- 	return nil, false
- }
- 
-+// isNonNullConstant returns true if expr is an immutable constant whose value is non-NULL.
-+// Parameter markers and deferred expressions are rejected: their value can change
-+// between executions of a cached plan, e.g. `NULLIF(?, 0) - col` may become NULL.
-+func isNonNullConstant(expr Expression) bool {
-+	c, ok := expr.(*Constant)
-+	if !ok {
-+		return false
++		}
++		defer privilege.WithInternalSchemaReadOnlyBypass(sctx, databases...)()
 +	}
-+	if c.ConstLevel() != ConstStrict {
-+		return false
-+	}
-+	return !c.Value.IsNull()
-+}
-+
- // Coercibility returns the coercibility value which is used to check collations.
- func (sf *ScalarFunction) Coercibility() Coercibility {
- 	if !sf.Function.HasCoercibility() {
-```
-
-**File**: `pkg/planner/core/issuetest/planner_issue_test.go` (modified, +29/-0)
-```diff
-@@ -981,6 +981,35 @@ ORDER BY t1.a, t2.a, t3.a, var`
- 		tk.MustQuery("SELECT /* issue:66706 */ ref0 FROM (SELECT v0.c0 AS ref0, SIGN(v0.c0) AS ref1 FROM v0) AS s WHERE ref1").Check(testkit.Rows("0.99"))
- 		tk.MustQuery("SHOW WARNINGS").Check(testkit.Rows())
- 	})
-+
-+	// issue-72560-order-by-null-constant-arithmetic-uses-index-order
-+	testkit.RunTestUnderCascades(t, func(t *testing.T, tk *testkit.TestKit, cascades, caller string) {
-+		resetTestDB(t, tk)
-+		tk.MustExec("create table t (id int primary key, c int not null, key i(c))")
-+		tk.MustExec("insert into t values (1, 30), (2, 10), (3, 20)")
-+		tk.MustExec("analyze table t")
-+		for _, orderBy := range []string{"null-c desc, id", "null-c, id", "c-null, id", "null+c desc, id", "c+null, id"} {
-+			tk.MustQuery("select /* issue:72560 */ id from t use index(i) order by " + orderBy).Check(testkit.Rows("1", "2", "3"))
-+			tk.MustQuery("select /* issue:72560 */ id from t ignore index(i) order by " + orderBy).Check(testkit.Rows("1", "2", "3"))
-+		}
-+		// non-NULL constants can still use the index order without a Sort
-+		query := "select /* issue:72560 */ id from t use index(i) order by 1-c desc, id"
-+		tk.MustQuery(query).Check(testkit.Rows("2", "3", "1"))
-+		plan := tk.MustQuery("explain format = 'brief' " + query)
-+		plan.MultiCheckContain([]string{"index:i(c)", "keep order:true"})
-+		plan.CheckNotContain("Sort")
-+
-+		// parameters may become NULL on a later execution, so a cached plan must keep the Sort
-+		tk.MustExec("set @@tidb_enable_prepared_plan_cache = 1")
-+		tk.MustExec("prepare s from 'select /* issue:72560 */ id from t use index(i) order by nullif(?, 0) - c desc, id'")
-+		tk.MustExec("set @p = 1")
-+		tk.MustQuery("execute s using @p").Check(testkit.Rows("2", "3", "1"))
-+		tk.MustQuery("execute s using @p").Check(testkit.Rows("2", "3", "1"))
-+		tk.MustQuery("select @@last_plan_from_cache").Check(testkit.Rows("1"))
-+		tk.MustExec("set @p = 0")
-+		tk.MustQuery("execute s using @p").Check(testkit.Rows("1", "2", "3"))
-+		tk.MustQuery("select @@last_plan_from_cache").Check(testkit.Rows("1"))
-+	})
- }
- 
- func TestOnlyFullGroupCantFeelUnaryConstant(t *testing.T) {
-```
-
----
-
-### Incident Patch 3: `dfb1cb40` (2026-11-19)
-**Commit Message**: planner: build IN subquery join conditions column by column (#73470)
-
-**File**: `pkg/planner/core/expression_rewriter.go` (modified, +41/-54)
-```diff
-@@ -1295,6 +1295,31 @@ out:
- 	return p
- }
- 
-+func (er *expressionRewriter) buildInSubqueryConditions(left expression.Expression, innerCols []*expression.Column, markInOperand bool) ([]expression.Expression, error) {
-+	evalCtx := er.sctx.GetEvalCtx()
-+	onConds := make([]expression.Expression, len(innerCols))
-+	for i, col := range innerCols {
-+		lhs := left
-+		if len(innerCols) > 1 {
-+			lhs = expression.GetFuncArg(left, i)
-+		}
-+		var rhs expression.Expression = col
-+		// When both operands are non-null, an ordinary equality suffices.
-+		if markInOperand && (!expression.ExprNotNull(evalCtx, lhs) || !expression.ExprNotNull(evalCtx, col)) {
-+			// Mark both sides. If projection elimination replaces the inner column
-+			// with a constant, the outer column's mark keeps the EQ NULL-aware.
-+			lhs = expression.SetExprColumnInOperand(lhs)
-+			rhs = expression.SetExprColumnInOperand(col)
-+		}
-+		eq, err := er.constructBinaryOpFunction(lhs, rhs, ast.EQ)
-+		if err != nil {
-+			return nil, err
-+		}
-+		onConds[i] = eq
-+	}
-+	return onConds, nil
-+}
-+
- func (er *expressionRewriter) handleInSubquery(ctx context.Context, planCtx *exprRewriterPlanCtx, v *ast.PatternInExpr) bool {
- 	intest.AssertNotNil(planCtx)
- 	ci := planCtx.builder.prepareCTECheckForSubQuery()
-@@ -1321,61 +1346,24 @@ func (er *expressionRewriter) handleInSubquery(ctx context.Context, planCtx *exp
- 		er.err = expression.ErrOperandColumns.GenWithStackByArgs(lLen)
- 		return true
- 	}
--	var rexpr expression.Expression
-+	// AntiSemiJoin, LeftOuterSemiJoin and AntiLeftOuterSemiJoin need to
-+	// distinguish UNKNOWN from FALSE when comparing nullable IN operands.
- 	markInOperand := v.Not || (asScalar && !er.canTreatInSubqueryAsExistsForFilter(planCtx))
--	if np.Schema().Len() == 1 {
--		rexpr = np.Schema().Columns[0]
--		rCol := rexpr.(*expression.Column)
--		// For AntiSemiJoin/LeftOuterSemiJoin/AntiLeftOuterSemiJoin, we cannot treat `in` expression as
--		// normal column equal condition, so we specially mark the inner operand here.
--		if markInOperand {
--			// If both input columns of `in` expression are not null, we can treat the expression
--			// as normal column equal condition instead. Otherwise, mark the left and right side.
--			// eg: for some optimization, the column substitute in right side in projection elimination
--			// will cause case  like <lcol EQ rcol(inOperand)> as <lcol EQ constant> which is not
--			// a valid null-aware EQ. (null in lcol still need to be null-aware)
--			if !expression.ExprNotNull(er.sctx.GetEvalCtx(), lexpr) || !expression.ExprNotNull(er.sctx.GetEvalCtx(), rCol) {
--				rColCopy := *rCol
--				rColCopy.InOperand = true
--				rexpr = &rColCopy
--				lexpr = expression.SetExprColumnInOperand(lexpr)
--			}
--		}
--	} else {
--		args := make([]expression.Expression, 0, np.Schema().Len())
--		for i, col := range np.Schema().Columns {
--			if markInOperand {
--				larg := expression.GetFuncArg(lexpr, i)
--				// If both input columns of `in` expression are not null, we can treat the expression
--				// as normal column equal condition instead. Otherwise, mark the left and right side.
--				if !expression.ExprNotNull(er.sctx.GetEvalCtx(), larg) || !expression.ExprNotNull(er.sctx.GetEvalCtx(), col) {
--					rarg := *col
--					rarg.InOperand = true
--					col = &rarg
--					if larg != nil {
--						lexpr.(*expression.ScalarFunction).GetArgs()[i] = expression.SetExprColumnInOperand(larg)
--					}
--				}
--			}
--			args = append(args, col)
--		}
--		rexpr, er.err = er.newFunction(ast.RowFunc, args[0].GetType(er.sctx.GetEvalCtx()), args...)
--		if er.err != nil {
--			return true
--		}
--	}
--	checkCondition, err := er.constructBinaryOpFunction(lexpr, rexpr, ast.EQ)
-+	onConds, err := er.buildInSubqueryConditions(lexpr, np.Schema().Columns, markInOperand)
+ 	err = db.se.Execute(ctx, ddlJob.Query)
  	if err != nil {
- 		er.err = err
- 		return true
- 	}
+ 		log.Error("execute ddl query failed",
+@@ -222,6 +232,9 @@ func (db *DB) restoreSequence(ctx context.Context, table *metautil.Table) error
+ }
  
--	// If the leftKey and the rightKey have different collations, don't convert the sub-query to an inner-join
--	// since when converting we will add a distinct-agg upon the right child and this distinct-agg doesn't have the right collation.
--	// To keep it simple, we forbid this converting if they have different collations.
--	// tested by TestCollateSubQuery.
--	lt, rt := lexpr.GetType(er.sctx.GetEvalCtx()), rexpr.GetType(er.sctx.GetEvalCtx())
--	collFlag := collate.CompatibleCollate(lt.GetCollate(), rt.GetCollate())
-+	// The inner join rewrite adds a DISTINCT that groups by the inner key's
-+	// collation. If that groups values differently from the join comparison,
-+	// the rewrite can change the result. See TestCollateSubQuery.
-+	rhsCollation := np.Schema().Columns[0].GetType(er.sctx.GetEvalCtx()).GetCollate()
-+	if lLen > 1 {
-+		// Preserve the row-level check: the former RHS ROW used the connection collation.
-+		_, rhsCollation = er.sctx.GetCharsetInfo()
+ func (db *DB) CreateTablePostRestore(ctx context.Context, table *metautil.Table, toBeCorrectedTables map[restore.UniqueTableName]bool) error {
++	if sctx := db.se.GetSessionCtx(); sctx != nil {
++		defer privilege.WithInternalSchemaReadOnlyBypass(sctx, table.DB.Name.L)()
 +	}
-+	collFlag := collate.CompatibleCollate(lexpr.GetType(er.sctx.GetEvalCtx()).GetCollate(), rhsCollation)
- 	corCols := coreusage.ExtractCorColumnsBySchema4LogicalPlan(np, planCtx.plan.Schema())
- 	noDecorrelate := is
+ 	var restoreMetaSQL string
+ 	var err error
+ 	switch {
+```
+
+**File**: `br/pkg/restore/internal/prealloc_db/db_test.go` (modified, +39/-1)
+```diff
+@@ -614,10 +614,48 @@ func TestDB_ExecDDL2(t *testing.T) {
+ 	db, _, err := preallocdb.NewDB(gluetidb.New(), s.Mock.Storage, "STRICT")
+ 	require.NoError(t, err)
+ 
+-	for _, ddlJob := range ddlJobs {
++	defer db.Close()
++	dom := domain.GetDomain(db.Session().GetSessionCtx())
++	publishReadOnly := func(name string) {
++		info, ok := dom.InfoSchema().SchemaByName(ast.NewCIStr(name))
++		require.True(t, ok)
++		info = info.Clone()
++		info.ReadOnly = true
++		txn, err := s.Mock.Storage.Begin()
++		require.NoError(t, err)
++		m := meta.NewMutator(txn)
++		require.NoError(t, m.UpdateDatabase(info))
++		version, err := m.GenSchemaVersion()
++		require.NoError(t, err)
++		require.NoError(t, m.SetSchemaDiff(&model.SchemaDiff{Version: version, Type: model.ActionModifySchemaReadOnly, SchemaID: info.ID}))
++		require.NoError(t, txn.Commit(ctx))
++		require.NoError(t, dom.Reload())
++		info, ok = dom.InfoSchema().SchemaByName(info.Name)
++		require.True(t, ok)
++		require.True(t, info.ReadOnly)
++	}
++	for i, ddlJob := range ddlJobs {
++		if i == 2 {
++			publishReadOnly("test_db")
++		}
++
+ 		err = db.ExecDDL(ctx, ddlJob)
+ 		assert.NoError(t, err)
+ 	}
++	require.ErrorContains(t, db.Session().Execute(ctx, "alter table test_db.t1 add column forbidden int"), "read only mode")
++	require.NoError(t, db.Session().Execute(ctx, "create database other"))
++	publishReadOnly("other")
++	require.NoError(t, db.ExecDDL(ctx, &model.Job{
++		Type: model.ActionRenameTables, SchemaName: "test_db", Query: "rename table test_db.t1 to other.t1",
++		BinlogInfo:          &model.HistoryInfo{TableInfo: &model.TableInfo{}},
++		InvolvingSchemaInfo: []model.InvolvingSchemaInfo{{Database: "test_db", Table: "t1"}, {Database: "other", Table: "t1"}},
++	}))
++	require.ErrorContains(t, db.ExecDDL(ctx, &model.Job{
++		Type: model.ActionAddColumn, SchemaName: "other", Query: "alter table other.t1 add column forbidden int",
++		BinlogInfo:          &model.HistoryInfo{TableInfo: &model.TableInfo{}},
++		InvolvingSchemaInfo: []model.InvolvingSchemaInfo{{Database: "other", Table: "t1", Mode: model.SharedInvolving}},
++	}), "read only mode")
++	require.ErrorContains(t, db.Session().Execute(ctx, "alter table other.t1 add column forbidden int"), "read only mode")
+ }
+ 
+ func TestCreateTableConsistent(t *testing.T) {
+```
+
+**File**: `br/pkg/restore/snap_client/client_test.go` (modified, +34/-2)
+```diff
+@@ -48,6 +48,7 @@ import (
+ 	"github.com/pingcap/tidb/pkg/parser/ast"
+ 	"github.com/pingcap/tidb/pkg/parser/mysql"
+ 	"github.com/pingcap/tidb/pkg/tablecodec"
++	"github.com/pingcap/tidb/pkg/testkit"
+ 	"github.com/pingcap/tidb/pkg/types"
+ 	tidbutil "github.com/pingcap/tidb/pkg/util"
+ 	"github.com/pkg/errors"
+@@ -128,8 +129,9 @@ func TestCreateTablesWithPlanPreservesSourceMetadata(t *testing.T) {
+ 	ctx := context.Background()
+ 
+ 	sourceDB := &metautil.Database{Info: &model.DBInfo{
+-		ID:   100,
+-		Name: ast.NewCIStr("route_source"),
++		ID:       100,
++		Name:     ast.NewCIStr("route_source"),
++		ReadOnly: true,
+ 	}}
+ 	targetDB := sourceDB.Info.Clone()
+ 	targetDB.Name = ast.NewCIStr("route_target")
+@@ -138,6 +140,10 @@ func TestCreateTablesWithPlanPreservesSourceMetadata(t *testing.T) {
+ 		Target: targetDB,
+ 	}}))
+ 
++	createdDB, ok := m.Domain.InfoSchema().SchemaByName(targetDB.Name)
++	require.True(t, ok)
++	require.True(t, createdDB.ReadOnly, "restore must preserve the source database read-only state")
++
+ 	timestampField := types.NewFieldType(mysql.TypeTimestamp)
+ 	source := &metautil.Table{
+ 		DB: sourceDB.Info,
+@@ -182,6 +188,32 @@ func TestCreateTablesWithPlanPreservesSourceMetadata(t *testing.T) {
+ 	require.Equal(t, "source_table", source.Info.Name.O)
+ 	require.True(t, source.Info.TTLInfo.Enable)
+ 	require.True(t, targetInfo.TTLInfo.Enable)
++	sourceSequence := &metautil.Table{DB: sourceDB.Info, Info: &model.TableInfo{
++		ID: 102, Name: ast.NewCIStr("source_sequence"), State: model.StatePublic,
++		Sequence: &model.SequenceInfo{Start: 1, MinValue: 1, MaxValue: 1000, Increment: 1}, AutoIncID: 41,
++	}}
++	targetSequence := sourceSequence.Info.Clone()
++	targetSequence.Name = ast.NewCIStr("target_sequence")
++	_, err = client.AllocTableIDs(ctx, []*metautil.Table{sourceSequence}, false, false, nil)
++	require.NoError(t, err)
++	_, err = client.CreateTablesWithPlan(ctx, []*restoreutils.TableRestorePlan{{Source: sourceSequence, TargetDB: targetDB, TargetInfo: targetSequence}}, 0)
++	require.NoError(t, err)
++	reader := testkit.NewTestKit(t, m.Storage)
++	reader.MustGetErrCode("insert into route_target.target_table values (now())", 3989)
++	require.ErrorContains(t, reader.QueryToErr("select nextval(route_target.target_sequence)"), "read only mode")
++	restoreSession, err := gluetidb.New().CreateSession(m.Storage)
++	require.NoError(t, err)
++	defer restoreSession.Close()
++	// Internal sessions do not inherit a restore operation's scoped authorization.
++	internalCtx := kv.WithInternalSourceType(ctx, kv.InternalTxnBR)
++	rs, err := restoreSession.GetSessionCtx().GetSQLExecutor().ExecuteInternal(internalCtx, "do setval(route_target.target_sequence, 99)")
++	if err == nil && rs != nil {
++		err = rs.Next(internalCtx, rs.NewChunk(nil))
++		require.NoError(t, rs.Close())
++	}
++	require.ErrorContains(t, err, "read only mode")
++	reader.MustExec("alter database route_target read only = 0")
++	reader.MustQuery("select nextval(route_target.target_sequence)").Check(testkit.Rows("42"))
+ }
+ 
+ func getStartedMockedCluster(t *testing.T) *mock.Cluster {
+```
+
+**File**: `docs/agents/ddl/README.md` (modified, +23/-0)
+```diff
+@@ -90,6 +90,29 @@ sequenceDiagram
+   E-->>S: return result
+ ```
+ 
++## Database read-only restore exception
++
++Ordinary SQL and unauthenticated internal sessions do not gain a read-only write
++bypass from SUPER or from internal-SQL execution. An explicit
++`RESTRICTED_REPLICA_WRITER_ADMIN` grant permits ordinary writes.
++
++Trusted BR restore is a separate exception: SQL RESTORE first uses its existing
++SUPER/RESTORE_ADMIN authorization, while standalone BR uses its trusted restore
++entrypoint. Restore can recreate tables, replay incremental DDL, and restore
++sequence state after the source database's ReadOnly flag has been restored.
++Incremental DDL authorization covers its recorded write dependencies; other
++restore operations authorize their current target database. The previous session
++state is restored before return or reuse, without granting later SQL writes.
++Releasing existing table locks is exempt from the read-only job check; acquiring
++new locks retains that check.
++
++The contract is implemented by `pkg/privilege/privilege.go`,
++`pkg/executor/brie_utils.go`, and
++`br/pkg/restore/internal/prealloc_db/db.go`. Boundary coverage lives in
++`TestBRIECreateTable/TrustedRestoreReadOnlyBoundary` and
++`TestCreateTablesWithPlanPreservesSourceMetadata`. Incremental DDL replay and
++cross-database authorization boundaries are covered by `TestDB_ExecDDL2`.
++
+ ## Diagnostic schema loading
+ 
+ Diagnostic mode continues to use the ordinary Etcd schema syncer. The Domain
+```
+
+**File**: `docs/agents/import-into/README.md` (modified, +9/-2)
+```diff
+@@ -74,8 +74,15 @@ when only reading one package at a time.
+ - Classic kernel behavior:
+   - Attempts to switch table mode back to normal.
+   - Ignores `infoschema.ErrTableNotExists` during cleanup.
++- Database read-only mode is checked at IMPORT INTO statement entry. Enabling
++  read-only does not fence or cancel a physical import already in progress;
++  ingestion may keep writing after the read-only transition succeeds. Classic
++  FROM SELECT does not register a separate read-only draining transaction.
++  Classic completion and cancellation can still reset table mode to Normal in a
++  read-only database, and explicit replica-writer authorization is propagated to
++  the internal mode claim.
+ - Global-sort artifact cleanup:
+-  - Deletes task-scoped files via `external.CleanUpFiles(..., <task-id>)`.
++  - Deletes task-scoped files via `globalsort.CleanUpFiles(..., <task-id>)`.
+   - Does not delete `conflicted-rows/...` files by design.
+ - Nextgen metering:
+   - On succeed state, cleanup tries to send metering data based on post-process
+@@ -107,4 +114,4 @@ when only reading one package at a time.
+ - `pkg/dxf/importinto/collect_conflicts_test.go`
+ - `pkg/dxf/importinto/task_executor_test.go`
+ - `pkg/dxf/importinto/scheduler_test.go`
+-- `pkg/dxf/importinto/job_testkit_test.go`
++- `pkg/dxf/importinto/scheduler_testkit_test.go`
+```
+
+**File**: `errors.toml` (modified, +10/-0)
+```diff
+@@ -1261,6 +1261,11 @@ error = '''
+ A primary key index cannot be invisible
+ '''
+ 
++["ddl:3552"]
++error = '''
++Access to system schema '%s' is rejected.
++'''
++
+ ["ddl:3593"]
+ error = '''
+ You cannot use the window function '%s' in this context.'
+@@ -3056,6 +3061,11 @@ error = '''
+ Duplicate check constraint name '%s'.
+ '''
+ 
++["schema:3989"]
++error = '''
++Schema '%s' is in read only mode.
++'''
++
+ ["schema:4139"]
+ error = '''
+ Unknown SEQUENCE: '%-.300s'
+```
+
+**File**: `pkg/ddl/BUILD.bazel` (modified, +4/-0)
+```diff
+@@ -322,6 +322,7 @@ go_test(
+         "rollingback_internal_test.go",
+         "rollingback_test.go",
+         "schema_internal_test.go",
++        "schema_read_only_test.go",
+         "schema_test.go",
+         "schema_version_test.go",
+         "sequence_test.go",
+@@ -409,12 +410,14 @@ go_test(
+         "//pkg/parser/terror",
+         "//pkg/parser/types",
+         "//pkg/planner/util",
++        "//pkg/privilege",
+         "//pkg/resourcegroup",
+         "//pkg/resourcemanager/pool/workerpool",
+         "//pkg/server",
+         "//pkg/session",
+         "//pkg/session/sessionapi",
+         "//pkg/session/sessmgr",
++        "//pkg/session/syssession",
+         "//pkg/sessionctx",
+         "//pkg/sessionctx/stmtctx",
+         "//pkg/sessionctx/vardef",
+@@ -432,6 +435,7 @@ go_test(
+         "//pkg/testkit/testfailpoint",
+         "//pkg/testkit/testsetup",
+         "//pkg/testkit/testutil",
++        "//pkg/ttl/session",
+         "//pkg/types",
+         "//pkg/util",
+         "//pkg/util/chunk",
 ```
 
 #### Recent Merged Pull Requests:
@@ -2319,21 +2278,21 @@ close pingcap/tidb#72560
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. expression: fix wrong result of INTERVAL when Clone drops hasNullable
+## X. ddl: support database-level read-only mode
 
 **RULE**:
-When implementing operations in `pkg/expression/builtin_compare.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `br/pkg/restore/internal/prealloc_db/BUILD.bazel`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fac45566`: expression: fix wrong result of INTERVAL when Clone drops hasNullable. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bf712cf6`: ddl: support database-level read-only mode. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/expression/builtin_compare.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `br/pkg/restore/internal/prealloc_db/BUILD.bazel`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	newSig.hasNullable = b.hasNullable
+        "//pkg/privilege",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2343,7 +2302,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fac45566` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bf712cf6` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

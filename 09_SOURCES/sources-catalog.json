@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "d3a10d86",
+    "sourceVersion": "bf712cf6",
     "license": "Apache-2.0",
-    "contentHash": "53c70c0ba3fdc15527d0ee57ebc3536f83ddb4e0b34863e3c3247dbab79920c8",
-    "lastHarvestedAt": "2026-11-20T16:28:32.999Z",
+    "contentHash": "bb2605ce97a9def31b229a55786029388f8d2550dd951956b6aa74932ba450b0",
+    "lastHarvestedAt": "2026-11-21T19:44:56.549Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {
@@ -11415,8 +11415,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
     "sourceVersion": "hf-openbmb-minicpm-ocr-1.0",
     "license": "Open-Source",
-    "contentHash": "367415a8d88937d27a0e2b1223690a2ddacd8864bff99921b09b61db3530be31",
-    "lastHarvestedAt": "2026-11-14T06:28:22.308Z",
+    "contentHash": "e2372bd1bcf2da6a8d62423530404ea92e32fffcc434eeba717edd867b3ba495",
+    "lastHarvestedAt": "2026-11-21T19:47:26.754Z",
     "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0"
   },
   "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b": {

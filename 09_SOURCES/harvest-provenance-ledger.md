@@ -11913,3 +11913,6 @@ Every entry in this ledger must capture:
 | `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `d9a0f1d1` | Multi-dimensional audit evidence | 2026-11-21T19:27:20.204Z |
 | `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `dbbd9cc6` | Multi-dimensional audit evidence | 2026-11-21T19:27:26.954Z |
 | `learn-huggingface-prithivmlmods-gender-classifier-mini` | `https://huggingface.co/prithivMLmods/Gender-Classifier-Mini` | `hf-prithiv` | Multi-dimensional audit evidence | 2026-11-21T19:32:19.291Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `bf712cf6` | Multi-dimensional audit evidence | 2026-11-21T19:44:56.549Z |
+| `learn-huggingface-openbmb-minicpm-ocr-1-0` | `https://huggingface.co/openbmb/MiniCPM-OCR-1.0` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-21T19:47:26.754Z |
+| `learn-dom-f-e350ead5` | `project://hf-openbmb-minicpm-ocr-1.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openbmb-minicpm-ocr-1.0-learnings.md` | 2026-11-21T19:47:52.027Z |

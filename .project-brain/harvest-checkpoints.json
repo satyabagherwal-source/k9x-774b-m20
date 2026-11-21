@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T19:32:19.301Z",
+  "last_updated": "2026-11-21T19:47:26.760Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "53c70c0ba3fdc15527d0ee57ebc3536f83ddb4e0b34863e3c3247dbab79920c8",
-      "verified_at": "2026-11-20T16:28:33.007Z",
+      "content_hash": "bb2605ce97a9def31b229a55786029388f8d2550dd951956b6aa74932ba450b0",
+      "verified_at": "2026-11-21T19:44:56.556Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T16:28:33.007Z"
+      "last_updated": "2026-11-21T19:44:56.556Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",
@@ -17151,14 +17151,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-ocr-1-0",
-      "content_hash": "367415a8d88937d27a0e2b1223690a2ddacd8864bff99921b09b61db3530be31",
-      "verified_at": "2026-11-14T06:28:22.318Z",
+      "content_hash": "e2372bd1bcf2da6a8d62423530404ea92e32fffcc434eeba717edd867b3ba495",
+      "verified_at": "2026-11-21T19:47:26.759Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T06:28:22.318Z"
+      "last_updated": "2026-11-21T19:47:26.760Z"
     },
     "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B": {
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",

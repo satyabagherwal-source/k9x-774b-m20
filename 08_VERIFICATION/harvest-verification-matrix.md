@@ -11880,3 +11880,6 @@
 | `CYCLE-20261121-UZD3` | `2026-11-21T19:27:20.199Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9825` | Yes (`1132ac05...`) |
 | `CYCLE-20261121-V4KM` | `2026-11-21T19:27:26.950Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9826` | Yes (`975622c4...`) |
 | `CYCLE-20261121-1E51` | `2026-11-21T19:32:19.285Z` | `prithivMLmods/Gender-Classifier-Mini` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md` | Yes (`7efe1ab0...`) |
+| `CYCLE-20261121-HMG2` | `2026-11-21T19:44:56.546Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9827` | Yes (`bb2605ce...`) |
+| `CYCLE-20261121-KUCF` | `2026-11-21T19:47:26.751Z` | `openbmb/MiniCPM-OCR-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9828, Rule 7456, Rule 9829` | Yes (`e2372bd1...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T19:47:52.027Z` | `hf-openbmb-minicpm-ocr-1.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-E350EAD5` [Domain F] | Yes (`36eb9bda...`) |

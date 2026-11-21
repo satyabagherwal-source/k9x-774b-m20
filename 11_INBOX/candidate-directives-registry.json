@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T19:32:24.976Z",
+  "last_updated": "2026-11-21T19:47:54.161Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-BXFW",
+      "id": "CD-LFHG",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-BXFW-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-LFHG-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-21",
@@ -43365,6 +43365,68 @@
       "source_repo": "emberstack-kubernetes-reflector",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-47C6DE-build-deps-bump-gittools-actions.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-HMKX",
+      "directive_title": "support database-level read-only mode",
+      "source_repo": "pingcap/tidb",
+      "source_commit": "bf712cf6",
+      "staged_file": "11_INBOX/candidate-directives/CD-HMKX-support-database-level-read-only-mode.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-01EE0E",
+      "directive_title": "SSM Floating-Point State Overflow in Long OCR Document Transcripts (BUG-MCPM-01)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-openbmb-minicpm-ocr-1.0",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-01EE0E-ssm-floating-point-state-overflow-in-lon.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-LE07",
+      "directive_title": "Multi-EOS Disjunction Termination Invariant",
+      "source_repo": "hf-openbmb-minicpm-ocr-1.0-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LE07-multi-eos-disjunction-termination-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-LE08",
+      "directive_title": "Partial Rotary Embedding (pRoPE) Head-Dim Partition Invariant",
+      "source_repo": "hf-openbmb-minicpm-ocr-1.0-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LE08-partial-rotary-embedding-prope-head-dim-partition-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-LESM",
+      "directive_title": "ddl: support database-level read-only mode",
+      "source_repo": "pingcap-tidb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LESM-ddl-support-database-level-read-only-mode.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-891BC0",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-891BC0-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-21"
     }
   ]

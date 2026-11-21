@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T19:32:25.196Z",
-  "total_records": 2272,
+  "last_updated": "2026-11-21T19:47:54.295Z",
+  "total_records": 2275,
   "domains": {
     "A": {
       "total": 17,
@@ -967,7 +967,7 @@
       ]
     },
     "F": {
-      "total": 82,
+      "total": 85,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1050,7 +1050,10 @@
         "domain_intelligence-design-intelligence-hf-openai-clip-vit-large-patch14-learnings-core-invariants",
         "domain_intelligence-design-intelligence-mattermost-mattermost-core-invariants",
         "domain_intelligence-design-intelligence-mattermost-mattermost-learnings-core-invariants",
-        "DOM-F-0277A6E9"
+        "DOM-F-0277A6E9",
+        "domain_intelligence-design-intelligence-openbmb-minicpm-ocr-1-0-core-invariants",
+        "DOM-F-E350EAD5",
+        "domain_intelligence-design-intelligence-hf-openbmb-minicpm-ocr-1-0-learnings-core-invariants"
       ]
     },
     "G": {
@@ -9005,8 +9008,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "d8a0c6cd49603b4d49a87dbe414fe1defc09d9af47112eda698575a8a6478885",
-      "created_at": "2026-11-21T18:44:31.830Z"
+      "content_hash": "bc3fb5df61c23f1f9c83ca1616dfa1a37fe7ac949dd7e53ba256c5cc7b0b902d",
+      "created_at": "2026-11-21T19:47:54.295Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -12320,8 +12323,8 @@
       "title": "Content & Information Intelligence: pingcap/tidb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-content-information-intelligence-pingcap-tidb-core-invariants.md",
       "repository": "pingcap/tidb",
-      "content_hash": "4b458e6e1015cf83c64971097e1bdf0b699cc83ffc21183b31d1fbd502be6f2b",
-      "created_at": "2026-11-20T16:28:33.350Z"
+      "content_hash": "6e61d434da1c06ed7328ec593db8526c746247f51d1449856f1d384d9ab4a241",
+      "created_at": "2026-11-21T19:44:56.852Z"
     },
     "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants",
@@ -12389,8 +12392,8 @@
       "title": "Content & Information Intelligence: pingcap-tidb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-learnings-content-information-intelligence-pingcap-tidb-learnings-c.md",
       "repository": "pingcap-tidb-learnings",
-      "content_hash": "2636980852af469fea9d39e2be63a01c604779d72e2c6edb5702c5df90c49bbf",
-      "created_at": "2026-11-20T16:29:08.809Z"
+      "content_hash": "5e42546726f6a2adfa107dab5003906ab9ee0dc713bf4585d44b62884afce024",
+      "created_at": "2026-11-21T19:47:53.400Z"
     },
     "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants",
@@ -38149,6 +38152,58 @@
       "repository": "open-source-legal-opencontracts-learnings",
       "content_hash": "3e561f394c7628b7f899525c53da5d9e0ec1a46f07b80fd2884ce2a59a88bfa0",
       "created_at": "2026-11-21T19:11:50.789Z"
+    },
+    "domain_intelligence-design-intelligence-openbmb-minicpm-ocr-1-0-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-openbmb-minicpm-ocr-1-0-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: openbmb/MiniCPM-OCR-1.0 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-openbmb-minicpm-ocr-1-0-design-intelligence-openbmb-minicpm-ocr-1-0-core-inva.md",
+      "repository": "openbmb/MiniCPM-OCR-1.0",
+      "content_hash": "2781a65dd1cc58a2e84d63b7cce1d965abb3891290f591808286ee14c005a523",
+      "created_at": "2026-11-21T19:47:27.111Z"
+    },
+    "DOM-F-E350EAD5": {
+      "record_id": "DOM-F-E350EAD5",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "Misalignment of Deep Vision Injection at Layer Boundary (BUG-MCPM-02)",
+      "content": "Mid-stack cross-modal fusion requires positionally fixed placeholder tokens throughout early layers to maintain invariant token coordinate grids across heterogeneous layers.",
+      "content_hash": "36eb9bdad1c9072626eb171eb9ecbcb24b6e32e1fa5c57ba08aed16b82811592",
+      "summary": "The naive attention implementation assumed that cache sequence lengths were identical across all $L$ layers. Injecting visual tokens directl -> Mid-stack cross-modal fusion requires positionally fixed placeholder tokens throughout early layers to maintain invariant token coordinate g",
+      "provenance": {
+        "source_uri": "project://hf-openbmb-minicpm-ocr-1.0/hf-openbmb-minicpm-ocr-1.0-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T19:47:30.266Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openbmb-minicpm-ocr-1.0)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`config.json` invariant: `\"insert_layer_id\": 6`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T19:47:52.000Z"
+    },
+    "domain_intelligence-design-intelligence-hf-openbmb-minicpm-ocr-1-0-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-hf-openbmb-minicpm-ocr-1-0-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: hf-openbmb-minicpm-ocr-1.0-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-openbmb-minicpm-ocr-1-0-learnings-design-intelligence-hf-openbmb-minicpm-ocr-.md",
+      "repository": "hf-openbmb-minicpm-ocr-1.0-learnings",
+      "content_hash": "f73c67004abcd9790aee2f907ee919cccb27c128b889ec5e85cefb650453e8be",
+      "created_at": "2026-11-21T19:47:52.667Z"
     }
   }
 }

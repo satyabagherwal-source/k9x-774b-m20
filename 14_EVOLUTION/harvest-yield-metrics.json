@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T19:32:19.297Z",
-  "total_cycles_completed": 11306,
-  "total_learnings_persisted": 11306,
-  "total_rules_promoted": 10633,
+  "last_updated": "2026-11-21T19:47:26.757Z",
+  "total_cycles_completed": 11308,
+  "total_learnings_persisted": 11308,
+  "total_rules_promoted": 10637,
   "history": [
-    {
-      "timestamp": "2026-11-20T23:56:26.420Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T23:57:48.204Z",
-      "repository": "rafsoh/dimeApp",
-      "learningId": "learn-github-rafsoh-dimeapp",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T00:11:27.724Z",
       "repository": "parcel-bundler/parcel",
@@ -1403,6 +1389,20 @@
       "repository": "prithivMLmods/Gender-Classifier-Mini",
       "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T19:44:56.553Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T19:47:26.757Z",
+      "repository": "openbmb/MiniCPM-OCR-1.0",
+      "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

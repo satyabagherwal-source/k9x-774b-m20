@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T19:32:25.638Z",
+  "last_updated": "2026-11-21T19:47:54.559Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T15:59:55.405Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-21T18:44:31.014Z",
+      "processed_at": "2026-11-21T19:47:53.689Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -413,7 +413,7 @@
       "staged_for_review": 1
     },
     "pingcap-tidb-learnings.md": {
-      "processed_at": "2026-11-20T16:29:08.271Z",
+      "processed_at": "2026-11-21T19:47:52.954Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2443,8 +2443,8 @@
       "staged_for_review": 1
     },
     "hf-openbmb-minicpm-ocr-1.0-learnings.md": {
-      "processed_at": "2026-11-14T06:28:26.737Z",
-      "promoted_canonical": 0,
+      "processed_at": "2026-11-21T19:47:52.027Z",
+      "promoted_canonical": 1,
       "staged_for_review": 1
     },
     "hf-edge0-edge0-145b-nvfp4-learnings.md": {
@@ -3673,7 +3673,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2868,
-  "total_canonical_promoted": 452,
-  "total_staged_for_review": 2201
+  "total_dossiers_evaluated": 2871,
+  "total_canonical_promoted": 453,
+  "total_staged_for_review": 2204
 }

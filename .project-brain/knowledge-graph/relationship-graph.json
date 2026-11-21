@@ -2,9 +2,9 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-21T19:11:46.191Z",
+  "updated_at": "2026-11-21T19:47:52.025Z",
   "statistics": {
-    "total_nodes": 450,
+    "total_nodes": 451,
     "total_edges": 193,
     "domain_distribution": {
       "D": 280,
@@ -14,7 +14,7 @@
       "K": 28,
       "L": 8,
       "G": 1,
-      "F": 24,
+      "F": 25,
       "B": 3,
       "E": 2,
       "I": 8
@@ -10055,6 +10055,28 @@
       ],
       "created_at": "2026-11-21T19:11:46.191Z",
       "updated_at": "2026-11-21T19:11:46.191Z"
+    },
+    "DOM-F-E350EAD5": {
+      "id": "DOM-F-E350EAD5",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Misalignment of Deep Vision Injection at Layer Boundary (BUG-MCPM-02)",
+      "summary": "The naive attention implementation assumed that cache sequence lengths were identical across all $L$ layers. Injecting visual tokens directl -> Mid-stack cross-modal fusion requires positionally fixed placeholder tokens throughout early layers to maintain invariant token coordinate g",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-openbmb-minicpm-ocr-1.0/hf-openbmb-minicpm-ocr-1.0-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T19:47:30.266Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openbmb-minicpm-ocr-1.0)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence"
+      ],
+      "created_at": "2026-11-21T19:47:52.025Z",
+      "updated_at": "2026-11-21T19:47:52.025Z"
     }
   },
   "edges": [
