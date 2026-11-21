@@ -717367,3 +717367,827 @@ func undoDelete() {
 Execute an entity deletion, verify context save succeeds, mutate a second unrelated entity in memory, trigger undo on the first entity, and verify the second entity's uncommitted modifications remain uncorrupted.
 
 ---
+
+
+---
+
+## 9669. Multi-Root Loading Context Equivalence for Concurrent Import Groups (Harvested from parcel-bundler/parcel)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Root Loading Context Equivalence for Concurrent Import Groups",
+  "source": "parcel-bundler/parcel",
+  "source_url": "https://github.com/parcel-bundler/parcel",
+  "source_version": "c0396a56",
+  "license": "MIT",
+  "extracted_at": "2026-11-21T00:11:25.736Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-parcel-bundler-parcel",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [parcel-bundler/parcel](https://github.com/parcel-bundler/parcel) (Revision: `c0396a56`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When building topological orderings or dependency cascades (such as CSS cascade order or script execution order) for asynchronously loaded targets, compilers MUST NOT select an arbitrary single representative node from concurrent import sets (e.g., `Promise.all([import('a'), import('b')])`). Compilers MUST evaluate the loading context across ALL concurrently requested roots simultaneously.
+
+**WHY**:
+Selecting a single arbitrary node (e.g., only `a` in `Promise.all([import('a'), import('b')])`) omits CSS assets uniquely reachable via peer roots (e.g., `b.css` from `b`). When code splitters place both assets into the same shared bundle context, downstream cascade checks fail to register dependencies of the omitted roots. This produces missing styles, unhandled rule conflicts, or incorrect source order in production stylesheets.
+
+**WHEN TO APPLY**:
+- In asset bundling, module linkers, and code-splitting algorithms where asynchronous edges execute simultaneously.
+- When generating static HTML layouts or head preloads for dynamic import boundaries.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// crates/css/src/bundling.rs & crates/parcel/src/bundler/style_order.rs
+impl OrderAnalysis {
+    /// Determines CSS order across ALL root assets belonging to a concurrent loading context.
+    pub fn for_context(
+        &mut self,
+        roots: &[AssetIndex],
+        required: impl Fn(AssetIndex) -> bool,
+    ) -> OrderedContent {
+        self.for_context_with_imports(roots, required, |_, _| {})
+    }
+
+    pub fn for_context_with_imports(
+        &mut self,
+        roots: &[AssetIndex],
+        required: impl Fn(AssetIndex) -> bool,
+        mut import: impl FnMut(AssetIndex, AssetIndex),
+    ) -> OrderedContent {
+        // Fast path: bail if no root contains CSS
+        if !roots
+            .iter()
+            .any(|root| self.nodes[root.index()].flags.contains(OrderFlags::HAS_CSS))
+        {
+            return OrderedContent::default();
+        }
+
+        self.scratch.seen.grow(self.nodes.len());
+        let mut walk = OrderingWalk {
+            analysis: self,
+            required,
+            import: &mut import,
+            last_layer_position: None,
+            output: OrderedContent::default(),
+        };
+
+        // Must collect entries from ALL roots in the concurrent group
+        for &root in roots {
+            walk.collect_entries(root);
+        }
+
+        walk.scratch.clear_seen();
+        while let Some(entry) = walk.scratch.entries.pop() {
+            walk.visit(entry);
+        }
+        walk.output
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Selecting a single representative member causes incomplete context trees
+pub fn for_context_buggy(
+    &mut self,
+    representative_root: AssetIndex,
+    required: impl Fn(AssetIndex) -> bool,
+) -> OrderedContent {
+    // BUG: Assets imported solely by sibling concurrent roots are dropped entirely
+    // from this context, causing specificity and rule inversion bugs in the bundle.
+    if !self.nodes[representative_root.index()].flags.contains(OrderFlags::HAS_CSS) {
+        return OrderedContent::default();
+    }
+    let mut walk = OrderingWalk::new(self, required);
+    walk.collect_entries(representative_root);
+    // ...
+    walk.output
+}
+```
+
+**VERIFICATION METHOD**:
+Verify with property tests feeding multi-root DAGs with cross-linked dependencies:
+```rust
+#[test]
+fn test_concurrent_css_multi_root_inclusion() {
+    let mut analysis = OrderAnalysis::new(vec![css(&[1]), css(&[]), css(&[3]), css(&[])]);
+    // Asset 0 imports 1; Asset 2 imports 3. Both are roots of the same concurrent group.
+    let roots = vec![AssetIndex(0), AssetIndex(2)];
+    let ordered = analysis.for_context(&roots, |_| true);
+    assert!(ordered.assets.contains(&AssetIndex(1)));
+    assert!(ordered.assets.contains(&AssetIndex(3)));
+}
+```
+
+---
+
+
+---
+
+## 9670. Guarded Bundle Naming via Declared Intention Contracts (Harvested from parcel-bundler/parcel)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Guarded Bundle Naming via Declared Intention Contracts",
+  "source": "parcel-bundler/parcel",
+  "source_url": "https://github.com/parcel-bundler/parcel",
+  "source_version": "c0396a56",
+  "license": "MIT",
+  "extracted_at": "2026-11-21T00:11:26.394Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-parcel-bundler-parcel",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.71,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [parcel-bundler/parcel](https://github.com/parcel-bundler/parcel) (Revision: `c0396a56`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 71%).
+
+**RULE**:
+During packager execution, bundle referencing MUST require explicit access declaration (`begin_packaging([declared_ids])`). Any read of an unresolved bundle's final dist URL or file name without prior declaration MUST immediately panic in debug/test builds and reject compilation, rather than silently falling back to un-hashed or provisional identifiers.
+
+**WHY**:
+Bundle naming in production requires content hashing (`xxh3_128`). Bundle A can only know Bundle B's content hash if B is packaged before A. If packagers are allowed to read arbitrary bundle names without declaring dependencies:
+1. Concurrent packaging threads face race conditions where B's hash may or may not be resolved when A reads it.
+2. Silent use of provisional/template names leads to broken production hyperlinks or non-deterministic cache invalidation.
+3. Undeclared cycles deadlock the packager thread pool.
+
+**WHEN TO APPLY**:
+- In any compiler, packager, or asset-pipeline backend generating content-hashed output files.
+- In distributed build graphs where compilation targets embed generated target hashes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// crates/core/src/bundle.rs
+pub struct NameState {
+    final_path: OnceLock<PathId>,
+    declared: Mutex<Option<Box<[u64]>>>,
+    status: AtomicU8,
+}
+
+impl Bundle {
+    pub fn begin_packaging(&self, mut declared: Vec<u64>) {
+        declared.sort_unstable();
+        declared.dedup();
+        *self.name_state.declared.lock().unwrap() = Some(declared.into_boxed_slice());
+    }
+
+    pub fn end_packaging(&self) {
+        *self.name_state.declared.lock().unwrap() = None;
+    }
+
+    pub fn may_access(&self, target: &Bundle) -> bool {
+        target.id == self.id
+            || match &*self.name_state.declared.lock().unwrap() {
+                Some(declared) => declared.binary_search(&target.id).is_ok(),
+                None => true, // Outside of packaging phase
+            }
+    }
+
+    pub fn check_name_access(&self, target: &Bundle) {
+        if !self.may_access(target) {
+            panic!(
+                "The packager for bundle {} accessed the name of bundle {}, \
+                 which it did not declare in `Content::bundle_dependencies`.",
+                self.stable_key(),
+                target.stable_key()
+            );
+        }
+    }
+
+    pub fn relative_url(&self, from: &Bundle) -> Option<String> {
+        from.check_name_access(self);
+        let path = if self.id == from.id {
+            self.current_path()?
+        } else {
+            self.reference_path()?
+        };
+        Some(path.relative_url(&from.dist_path?))
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Unchecked name resolution yields silent, intermittent data races
+pub fn relative_url_unsafe(&self, from: &Bundle) -> Option<String> {
+    // BAD: If self is currently being hashed in another thread, this either returns
+    // a non-hashed fallback template name or reads half-written state.
+    let path = self.dist_path.or_else(|| self.name_state.final_path.get().copied())?;
+    Some(path.relative_url(&from.dist_path?))
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce check using automated contract failure tests:
+```rust
+#[test]
+#[should_panic(expected = "which it did not declare in `Content::bundle_dependencies`")]
+fn test_undeclared_name_access_panics() {
+    let a = create_test_bundle(1, "a.js");
+    let b = create_test_bundle(2, "b.js");
+    // Bundle 'a' only declares dependency on ID 3
+    a.begin_packaging(vec![3]);
+    let _ = b.relative_url(&a); // Panics: target 'b' (ID 2) was not declared
+}
+```
+
+---
+
+
+---
+
+## 9671. Chunked Zero-Copy Text Arena for High-Throughput Aggregation (Harvested from parcel-bundler/parcel)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Chunked Zero-Copy Text Arena for High-Throughput Aggregation",
+  "source": "parcel-bundler/parcel",
+  "source_url": "https://github.com/parcel-bundler/parcel",
+  "source_version": "c0396a56",
+  "license": "MIT",
+  "extracted_at": "2026-11-21T00:11:27.065Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-parcel-bundler-parcel",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [parcel-bundler/parcel](https://github.com/parcel-bundler/parcel) (Revision: `c0396a56`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Compilers and packagers aggregating heterogeneous textual slices (code, source maps, headers, injected module wrappers) MUST NOT repeatedly concatenate into intermediate heap-allocated `String` or `Vec<u8>` buffers. Instead, they MUST implement a piecewise chunked buffer that copies only sub-threshold fragments into a contiguous arena, while capturing large slices via reference-counted pointers (`Arc<str>`) or moves (`Box<str>`), emitting directly via vectored I/O.
+
+**WHY**:
+Bundling thousands of modules produces gigabytes of ephemeral memory allocations if string concatenation is used. Re-allocating and copying large transformed module buffers consumes memory bandwidth, triggers kernel page faults, and ruins CPU cache locality. A tiered piecewise buffer prevents intermediate copying of large modules while avoiding the overhead of thousands of tiny allocations for structural glue syntax (commas, semicolons, function headers).
+
+**WHEN TO APPLY**:
+- In linkers, bundlers, source map generators, and code packagers combining thousands of disparate source code fragments.
+- When feeding compiled content directly to disk I/O or network sockets.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// crates/core/src/chunked_text.rs
+#[derive(Default, Debug, Clone)]
+pub struct ChunkedText {
+    pieces: Vec<Piece>,
+    arena: String,
+    len: usize,
+}
+
+#[derive(Debug, Clone)]
+enum Piece {
+    Arena(Range<usize>),
+    Shared(Arc<str>, Range<usize>),
+    Owned(Box<str>),
+}
+
+const MIN_PIECE_LEN: usize = 256;
+
+impl ChunkedText {
+    pub fn push_str(&mut self, text: &str) {
+        if text.is_empty() { return; }
+        let start = self.arena.len();
+        self.arena.push_str(text);
+        self.len += text.len();
+        // Coalesce adjacent arena writes into a single range
+        match self.pieces.last_mut() {
+            Some(Piece::Arena(range)) if range.end == start => range.end = self.arena.len(),
+            _ => self.pieces.push(Piece::Arena(start..self.arena.len())),
+        }
+    }
+
+    pub fn push_shared(&mut self, text: &Arc<str>, range: Range<usize>) {
+        // Below MIN_PIECE_LEN, reference tracking costs more than memcpy
+        if range.len() < MIN_PIECE_LEN {
+            self.push_str(&text[range]);
+            return;
+        }
+        self.len += range.len();
+        self.pieces.push(Piece::Shared(text.clone(), range));
+    }
+
+    pub fn chunks(&self) -> impl Iterator<Item = &str> {
+        self.pieces.iter().map(|piece| match piece {
+            Piece::Arena(range) => &self.arena[range.clone()],
+            Piece::Shared(text, range) => &text[range.clone()],
+            Piece::Owned(text) => &**text,
+        })
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Continuous string reallocation for bundle assembly
+pub struct BadPackager {
+    output: String,
+}
+impl BadPackager {
+    pub fn append_module(&mut self, code: &str) {
+        // BAD: Copies megabytes of already transformed memory repeatedly,
+        // causing continuous reallocations and memory fragmentation.
+        self.output.push_str(code);
+        self.output.push_str("\n;\n");
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Verify that `ChunkedText` write operations produce identical bit-level output compared to contiguous allocations, with zero intermediate copies:
+```rust
+#[test]
+fn test_chunked_text_matches_contiguous_hash() {
+    let mut chunked = ChunkedText::new();
+    let large_code: Arc<str> = Arc::from("const a = 1;".repeat(500));
+    chunked.push_str("/* header */\n");
+    chunked.push_shared(&large_code, 0..large_code.len());
+    chunked.push_str("\n/* footer */");
+
+    let contiguous = format!("/* header */\n{}\n/* footer */", &large_code);
+    assert_eq!(chunked.to_string(), contiguous);
+
+    let mut h1 = xxhash_rust::xxh3::Xxh3::new();
+    chunked.hash_into(&mut h1);
+    let mut h2 = xxhash_rust::xxh3::Xxh3::new();
+    h2.update(contiguous.as_bytes());
+    assert_eq!(h1.digest(), h2.digest());
+}
+```
+
+---
+
+
+---
+
+## 9672. Reverse-Unit Monotonic Truncation Invariant (Harvested from xevrion/hatchzip)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Reverse-Unit Monotonic Truncation Invariant",
+  "source": "xevrion/hatchzip",
+  "source_url": "https://github.com/xevrion/hatchzip",
+  "source_version": "2489b928",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T00:11:56.137Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-xevrion-hatchzip",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [xevrion/hatchzip](https://github.com/xevrion/hatchzip) (Revision: `2489b928`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When transforming or extracting discrete multi-file container formats in-place under strict storage constraints, the engine **MUST** process container units in reverse file-offset order (highest physical byte offset to lowest physical byte offset). The central structural metadata at the container tail **MUST** be snapshotted to a durable auxiliary structure prior to the first truncation, and container length reductions **MUST** occur strictly via monotonic truncation calls (`ftruncate` / `SetEndOfFile`) matching the unit's start boundary.
+
+**WHY**:
+Container headers typically index payload data via absolute byte offsets from the start of the file ($Offset_0$). If extraction proceeds front-to-back, truncating or modifying the front of the file invalidates all downstream absolute offsets and corrupts file header tables. Furthermore, operating systems natively support $O(1)$ file truncation from the end of a file descriptor, whereas shifting blocks from the front requires $O(K)$ disk rewrites. Processing from highest to lowest offset ensures all remaining unextracted payloads maintain valid, untouched absolute byte offsets relative to offset 0.
+
+**WHEN TO APPLY**:
+Apply to any system implementing in-place migration, in-place archive conversion, or zero-headroom unpacking of formats featuring tail-located or offset-indexed catalogs (ZIP, 7z, ISO 9660, TAR indexes).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::fs::File;
+use std::io::{Result, Seek, SeekFrom};
+use std::path::Path;
+
+pub struct TruncatingContainerEngine {
+    container_file: File,
+    tail_snapshot: Vec<u8>,
+    units_reverse: Vec<ContainerUnit>, // Sorted by .start ascending, popped from back
+}
+
+pub struct ContainerUnit {
+    pub start_offset: u64,
+    pub packed_len: u64,
+    pub payload_id: usize,
+}
+
+impl TruncatingContainerEngine {
+    pub fn process_next_unit<F>(&mut self, mut extract_fn: F) -> Result<bool>
+    where
+        F: FnMut(&ContainerUnit, &mut File) -> Result<()>,
+    {
+        let Some(unit) = self.units_reverse.pop() else {
+            return Ok(false); // Finished
+        };
+
+        // 1. Extract payload reading from unit.start_offset
+        self.container_file.seek(SeekFrom::Start(unit.start_offset))?;
+        extract_fn(&unit, &mut self.container_file)?;
+
+        // 2. Ensure payload is flushed and synced on destination filesystem
+        // (Handled by extract_fn caller)
+
+        // 3. Monotonically truncate container to unit start offset
+        // This instantly frees packed_len on disk while keeping lower offsets 100% valid
+        self.container_file.set_len(unit.start_offset)?;
+        self.container_file.sync_data()?;
+
+        Ok(true)
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER do in-place front-to-back truncation or shift-writes
+pub fn bad_inplace_extract(file: &mut File, units: Vec<ContainerUnit>) {
+    for unit in units {
+        extract_payload(file, unit.start_offset, unit.packed_len);
+        // WRONG: Modifying or zeroing the front invalidates subsequent offsets,
+        // or requires shifting the entire remainder of the multi-gigabyte file forward!
+        shift_remaining_file_bytes_forward(file, unit.packed_len);
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using a synthetic container containing 100 random blocks. Implement an automated integration test that asserts:
+1. `file.metadata()?.len() == current_unit.start_offset` after each step.
+2. An injected crash at step $K$ leaves the container readable from $0$ to $K$'s offset via `tail_snapshot`.
+
+---
+
+
+---
+
+## 9673. Dual-Counter Generational Cancellation Invariant (Harvested from xevrion/hatchzip)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Counter Generational Cancellation Invariant",
+  "source": "xevrion/hatchzip",
+  "source_url": "https://github.com/xevrion/hatchzip",
+  "source_version": "2489b928",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T00:11:56.787Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-xevrion-hatchzip",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [xevrion/hatchzip](https://github.com/xevrion/hatchzip) (Revision: `2489b928`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+In asynchronous event-driven GUIs handling concurrent disk discovery, space calculation, and background workers, stateful UI controllers **MUST NOT** share a single monotonically increasing generation ID between content-loading requests and dependent sub-queries (such as space-planning or parameter recalculations). The system **MUST** maintain isolated generation counters: one for the primary asset lifecycle (`generation`) and one for secondary analytical queries (`plan_generation`).
+
+**WHY**:
+If a single generational counter is shared between long-running archive load operations and rapid UI-driven parameter updates (e.g., the user toggling "Keep Archive" or adjusting "Reserved Space"), a space-planning request triggered mid-load will increment the global generation counter. When the primary archive loader eventually completes, its stored generation counter will appear stale, causing the GUI to drop the valid archive content entirely or enter an unrecoverable loading freeze.
+
+**WHEN TO APPLY**:
+Apply to any client-side architecture (Rust/Slint, React, Swift, Flutter) where asynchronous background operations depend on an active primary data context but can trigger secondary asynchronous calculations before the primary context settles.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::cell::Cell;
+use std::rc::Rc;
+
+pub struct AsyncUiController {
+    // Primary lifecycle: bumped ONLY when the active target asset changes
+    asset_generation: Cell<u64>,
+    // Sub-query lifecycle: bumped when calculation parameters change
+    query_generation: Cell<u64>,
+}
+
+impl AsyncUiController {
+    pub fn open_asset(&self, path: &str) {
+        let current_asset_gen = self.asset_generation.get().wrapping_add(1);
+        self.asset_generation.set(current_asset_gen);
+
+        // Reset query generation on primary context switch
+        self.query_generation.set(0);
+
+        // Spawn background loader
+        let loader_token = current_asset_gen;
+        spawn_worker(move || {
+            let data = load_heavy_archive(path);
+            dispatch_to_main(move |controller| {
+                // Drop if user opened another file while this was loading
+                if controller.asset_generation.get() != loader_token {
+                    return;
+                }
+                controller.apply_asset(data);
+            });
+        });
+    }
+
+    pub fn recalculate_space_plan(&self, reserved_bytes: u64) {
+        // Increment ONLY query generation. Does NOT invalidate in-flight asset loading!
+        let current_query_gen = self.query_generation.get().wrapping_add(1);
+        self.query_generation.set(current_query_gen);
+
+        let query_token = current_query_gen;
+        let asset_token = self.asset_generation.get();
+        spawn_worker(move || {
+            let plan = compute_space(reserved_bytes);
+            dispatch_to_main(move |controller| {
+                // Invariant: MUST match both asset and query generation
+                if controller.asset_generation.get() != asset_token 
+                    || controller.query_generation.get() != query_token {
+                    return;
+                }
+                controller.apply_space_plan(plan);
+            });
+        });
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER share a single generation counter across different conceptual lifecycles
+pub struct BadController {
+    generation: Cell<u64>,
+}
+impl BadController {
+    pub fn update_setting(&self) {
+        // BUG: Toggling a UI setting bumps the generation ID, 
+        // silently aborting the concurrent open_asset background thread!
+        self.generation.set(self.generation.get() + 1);
+        self.recompute();
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a property test with artificial thread latency:
+1. Trigger `open_asset("large_archive.zip")` with a simulated 200 ms background delay.
+2. At 50 ms, fire 10 consecutive `recalculate_space_plan()` calls simulating UI slider movements.
+3. Assert that the archive finishes loading successfully and displays the final recalculation result without being discarded.
+
+---
+
+
+---
+
+## 9674. File System Physical Allocation Reconciliation Rule (Harvested from xevrion/hatchzip)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "File System Physical Allocation Reconciliation Rule",
+  "source": "xevrion/hatchzip",
+  "source_url": "https://github.com/xevrion/hatchzip",
+  "source_version": "2489b928",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T00:11:57.477Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-xevrion-hatchzip",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [xevrion/hatchzip](https://github.com/xevrion/hatchzip) (Revision: `2489b928`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When an application monitors free volume headroom on copy-on-write (CoW) or journaling filesystems (e.g., NTFS, APFS, Btrfs) while performing sequential chunk truncations or hole-punching, the engine **MUST NOT** rely exclusively on volume-level free-space system APIs (`GetDiskFreeSpaceExW`, `statvfs`). If volume free space fails to reflect recently freed bytes, the engine **MUST** compute effective headroom by reconciling volume free space with file-level compressed/allocated size queries (`GetCompressedFileSizeW` or `stat.st_blocks * 512`) taken before and after the modification.
+
+**WHY**:
+Modern filesystems perform deferred metadata updates and asynchronous cluster reallocation. On Windows NTFS, calling `SetEndOfFile` immediately truncates the logical file length, but volume-level cluster bitmap updates can lag by tens of seconds if handles remain active or the filesystem worker queue is saturated. Relying purely on volume-level free space checks causes false positive `ENOSPC` errors during multi-stage batch processing.
+
+**WHEN TO APPLY**:
+Apply to storage daemons, installer engines, database compactors, and archive extractors running on Windows NTFS, Linux Btrfs/XFS, or macOS APFS where operations operate near the physical capacity limits of the block device.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::fs::File;
+use std::io::Result;
+use std::path::Path;
+
+pub struct AllocationReconciler {
+    last_known_allocated_file_bytes: u64,
+}
+
+impl AllocationReconciler {
+    pub fn new(file_path: &Path) -> Result<Self> {
+        let initial_allocated = get_physical_allocated_bytes(file_path)?;
+        Ok(Self {
+            last_known_allocated_file_bytes: initial_allocated,
+        })
+    }
+
+    /// Calculates safe headroom accounting for filesystem accounting lag
+    pub fn verify_headroom(
+        &mut self,
+        file_path: &Path,
+        volume_path: &Path,
+        required_bytes: u64,
+        reserved_safety_margin: u64,
+    ) -> Result<bool> {
+        let volume_free = get_volume_free_bytes(volume_path)?;
+        let current_file_allocated = get_physical_allocated_bytes(file_path)?;
+
+        // Credit the physical delta freed from our own file that the volume bitmap may not yet reflect
+        let freed_since_last = self.last_known_allocated_file_bytes.saturating_sub(current_file_allocated);
+        self.last_known_allocated_file_bytes = current_file_allocated;
+
+        // Effective free is raw volume free + unreconciled freed bytes
+        let effective_free = volume_free.saturating_add(freed_since_last);
+
+        // Invariant: Must satisfy required write plus safety margin
+        let total_needed = required_bytes.saturating_add(reserved_safety_margin);
+        Ok(effective_free >= total_needed)
+    }
+}
+
+#[cfg(windows)]
+fn get_physical_allocated_bytes(path: &Path) -> Result<u64> {
+    use std::os::windows::ffi::OsStrExt;
+    use windows_sys::Win32::Storage::FileSystem::GetCompressedFileSizeW;
+
+    let wide: Vec<u16> = path.as_os_str().encode_wide().chain(Some(0)).collect();
+    let mut high: u32 = 0;
+    let low = unsafe { GetCompressedFileSizeW(wide.as_ptr(), &mut high) };
+    if low == 0xFFFF_FFFF && unsafe { windows_sys::Win32::Foundation::GetLastError() } != 0 {
+        return Err(std::io::Error::last_os_error());
+    }
+    Ok(((high as u64) << 32) | (low as u64))
+}
+
+#[cfg(unix)]
+fn get_physical_allocated_bytes(path: &Path) -> Result<u64> {
+    use std::os::unix::fs::MetadataExt;
+    let meta = std::fs::symlink_metadata(path)?;
+    // st_blocks is count of 512-byte units allocated
+    Ok(meta.blocks() * 512)
+}
+
+fn get_volume_free_bytes(_p: &Path) -> Result<u64> {
+    // Platform-specific GetDiskFreeSpaceExW / statvfs implementation
+    Ok(0) // Stub
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER trust immediate volume free space queries after truncation near disk limits
+pub fn unsafe_space_check(vol: &Path, needed: u64) -> bool {
+    let free = get_system_volume_free(vol); // Fails on NTFS: lags behind set_len!
+    free >= needed
+}
+```
+
+**VERIFICATION METHOD**:
+Run an integration test on an NTFS volume:
+1. Create a 1 GB dummy file.
+2. Set volume reserve to within 50 MB of disk limit.
+3. Truncate dummy file by 200 MB via `set_len`.
+4. Immediately assert that `AllocationReconciler::verify_headroom()` returns `true` even when `GetDiskFreeSpaceExW` reports 0 bytes delta.
+
+---

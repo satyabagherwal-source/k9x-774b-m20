@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-20T23:57:51.974Z",
-    "lastVerified": "2026-11-20T23:57:51.974Z",
+    "lastChecked": "2026-11-21T00:12:01.970Z",
+    "lastVerified": "2026-11-21T00:12:01.970Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -355,8 +355,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T23:29:59.885Z",
-    "lastVerified": "2026-11-20T23:29:59.885Z",
+    "lastChecked": "2026-11-21T00:09:00.744Z",
+    "lastVerified": "2026-11-21T00:09:00.744Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1742,12 +1742,12 @@
     "revisionIdentifier": "e8a22cc7"
   },
   "sigstore-cosign": {
-    "name": "sigstore/cosign",
+    "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T19:06:30.514Z",
-    "lastVerified": "2026-11-20T19:06:30.514Z",
+    "lastChecked": "2026-11-21T00:08:55.803Z",
+    "lastVerified": "2026-11-21T00:08:55.803Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -1756,7 +1756,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b612e741"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j/langchain4j",
@@ -3105,9 +3106,9 @@
   "vearch-vearch": {
     "name": "vearch",
     "officialUrl": "https://github.com/vearch/vearch",
-    "lastChecked": "2026-11-19T21:43:46.818Z",
+    "lastChecked": "2026-11-21T00:08:58.268Z",
     "revisionIdentifier": "bae78b18",
-    "lastVerified": "2026-11-19T21:43:46.818Z"
+    "lastVerified": "2026-11-21T00:08:58.268Z"
   },
   "hf-briaai-rmbg-3.0": {
     "name": "briaai/RMBG-3.0",
@@ -3872,9 +3873,9 @@
   "argoproj-argo-events": {
     "name": "argo-events",
     "officialUrl": "https://github.com/argoproj/argo-events",
-    "lastChecked": "2026-11-19T23:34:39.787Z",
+    "lastChecked": "2026-11-21T00:08:53.326Z",
     "revisionIdentifier": "727b3155",
-    "lastVerified": "2026-11-19T23:34:39.787Z"
+    "lastVerified": "2026-11-21T00:08:53.326Z"
   },
   "pixeltable-pixeltable": {
     "name": "pixeltable/pixeltable",
@@ -7659,14 +7660,14 @@
     "officialUrl": "https://github.com/xevrion/hatchzip",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T13:02:57.975Z",
-    "lastVerified": "2026-11-19T13:02:57.975Z",
+    "lastChecked": "2026-11-21T00:08:51.320Z",
+    "lastVerified": "2026-11-21T00:08:51.320Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xevrion-hatchzip",
-    "contentHash": "2ca6466aed64c6c082736ed0dfa292615a55a0903e885c01c2b45cd993a7bc89",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 19,
+    "contentHash": "0ca58031a9391a0673ebe1b9b0a6422af2f0ebd70ea01d71866f512f1b169917",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11172,5 +11173,29 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "parcel-bundler-parcel": {
+    "name": "parcel-bundler/parcel",
+    "officialUrl": "https://github.com/parcel-bundler/parcel",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-21T00:08:53.410Z",
+    "lastVerified": "2026-11-21T00:08:53.410Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-parcel-bundler-parcel",
+    "contentHash": "b45c0b76e4b4e3db207e78df55a635a799c255f49f01de1c6257de49544b6965",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "keyboardkit-keyboardkit": {
+    "name": "KeyboardKit",
+    "officialUrl": "https://github.com/KeyboardKit/KeyboardKit",
+    "lastChecked": "2026-11-21T00:08:50.741Z",
+    "revisionIdentifier": "fa34c404",
+    "lastVerified": "2026-11-21T00:08:50.741Z"
   }
 }

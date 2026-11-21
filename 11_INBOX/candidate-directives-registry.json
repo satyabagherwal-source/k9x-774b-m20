@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-20T23:57:55.232Z",
+  "last_updated": "2026-11-21T00:13:24.125Z",
   "directives": [
     {
       "id": "CD-001",
@@ -39984,6 +39984,90 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-33EF4D-benchmarks-report-gold-coverage-across-r.md",
       "staged_date": "2026-11-20"
+    },
+    {
+      "id": "CD-MZJR",
+      "directive_title": "Multi-Root Loading Context Equivalence for Concurrent Import Groups",
+      "source_repo": "parcel-bundler-parcel-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MZJR-multi-root-loading-context-equivalence-for-concurrent-import-groups.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-MZJS",
+      "directive_title": "Guarded Bundle Naming via Declared Intention Contracts",
+      "source_repo": "parcel-bundler-parcel-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MZJS-guarded-bundle-naming-via-declared-intention-contracts.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-MZJT",
+      "directive_title": "Chunked Zero-Copy Text Arena for High-Throughput Aggregation",
+      "source_repo": "parcel-bundler-parcel-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MZJT-chunked-zero-copy-text-arena-for-high-throughput-aggregation.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-L9FB",
+      "directive_title": "Reverse-Unit Monotonic Truncation Invariant",
+      "source_repo": "xevrion-hatchzip-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-L9FB-reverse-unit-monotonic-truncation-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-L9FC",
+      "directive_title": "File System Physical Allocation Reconciliation Rule",
+      "source_repo": "xevrion-hatchzip-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-L9FC-file-system-physical-allocation-reconciliation-rule.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-L6A8",
+      "directive_title": "File System Physical Allocation Reconciliation Rule",
+      "source_repo": "xevrion/hatchzip",
+      "source_commit": "2489b928",
+      "staged_file": "11_INBOX/candidate-directives/CD-L6A8-file-system-physical-allocation-reconciliation-rule.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-00C35C",
+      "directive_title": "c: matchesc ComponentParentDir",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "xevrion-hatchzip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-00C35C-c-matchesc-componentparentdir.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-7EC09D",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7EC09D-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-21"
     }
   ]
 }

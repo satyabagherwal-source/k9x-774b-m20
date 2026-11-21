@@ -11699,3 +11699,7 @@ Every entry in this ledger must capture:
 | `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `657bba5a` | Multi-dimensional audit evidence | 2026-11-20T23:47:46.746Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `09a25ded` | Multi-dimensional audit evidence | 2026-11-20T23:56:26.413Z |
 | `learn-github-rafsoh-dimeapp` | `https://github.com/rafsoh/dimeApp` | `6dead5de` | Multi-dimensional audit evidence | 2026-11-20T23:57:48.197Z |
+| `learn-github-parcel-bundler-parcel` | `https://github.com/parcel-bundler/parcel` | `c0396a56` | Multi-dimensional audit evidence | 2026-11-21T00:11:27.717Z |
+| `learn-github-xevrion-hatchzip` | `https://github.com/xevrion/hatchzip` | `2489b928` | Multi-dimensional audit evidence | 2026-11-21T00:11:58.115Z |
+| `learn-dom-f-6dd8b1fe` | `project://parcel-bundler-parcel` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md` | 2026-11-21T00:12:39.323Z |
+| `learn-dom-k-bc44e02a` | `project://parcel-bundler-parcel` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md` | 2026-11-21T00:13:22.638Z |

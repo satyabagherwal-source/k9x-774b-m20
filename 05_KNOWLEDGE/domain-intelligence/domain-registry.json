@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-20T23:57:55.429Z",
-  "total_records": 2196,
+  "last_updated": "2026-11-21T00:13:24.636Z",
+  "total_records": 2202,
   "domains": {
     "A": {
       "total": 17,
@@ -955,7 +955,7 @@
       ]
     },
     "F": {
-      "total": 73,
+      "total": 74,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1029,7 +1029,8 @@
         "domain_intelligence-design-intelligence-simonschubert-kai-core-invariants",
         "domain_intelligence-design-intelligence-simonschubert-kai-learnings-core-invariants",
         "domain_intelligence-design-intelligence-kianuni-erosion-cn-core-invariants",
-        "domain_intelligence-design-intelligence-kianuni-erosion-cn-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-kianuni-erosion-cn-learnings-core-invariants",
+        "DOM-F-6DD8B1FE"
       ]
     },
     "G": {
@@ -1412,7 +1413,7 @@
       ]
     },
     "H": {
-      "total": 514,
+      "total": 516,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1927,7 +1928,9 @@
         "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-learnings-core-invaria",
         "domain_intelligence-technical-construction-intelligence-xerj-org-xerj-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-rafsoh-dimeapp-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-rafsoh-dimeapp-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-rafsoh-dimeapp-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-parcel-bundler-parcel-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-parcel-bundler-parcel-learnings-core-invaria"
       ]
     },
     "I": {
@@ -2100,7 +2103,7 @@
       ]
     },
     "K": {
-      "total": 128,
+      "total": 131,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2229,7 +2232,10 @@
         "DOM-K-B3BE81E5",
         "domain_intelligence-quality-verification-intelligence-solidjs-solid-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-webpack-webpack-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-webpack-webpack-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-webpack-webpack-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-xevrion-hatchzip-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-xevrion-hatchzip-learnings-core-invariants",
+        "DOM-K-BC44E02A"
       ]
     },
     "L": {
@@ -31292,8 +31298,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "84bdc5cce303cf038ada433d70304a137fa8a4f9b53aed6b3a6d23ae1c9d63dc",
-      "created_at": "2026-11-20T23:47:55.201Z"
+      "content_hash": "c5079a98f6566d8709275dbd9e5d6b17d4922db6f4115b1fbff2a07b4515e6f9",
+      "created_at": "2026-11-21T00:13:24.636Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
@@ -36927,6 +36933,110 @@
       "repository": "rafsoh-dimeapp-learnings",
       "content_hash": "06aeb63acea436a78cd44040db7c9a6412e65f1653c7ce2d50ef9ee2756a3905",
       "created_at": "2026-11-20T23:57:53.084Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-parcel-bundler-parcel-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-parcel-bundler-parcel-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: parcel-bundler/parcel Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-parcel-bundler-parcel-technical-construction-intelligence-parcel-bundler-parcel-.md",
+      "repository": "parcel-bundler/parcel",
+      "content_hash": "8591d8a78ad9a9ed80667195b25afbe84559ea192901f6c17fadcfc1dc4c4b84",
+      "created_at": "2026-11-21T00:11:28.633Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-xevrion-hatchzip-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-xevrion-hatchzip-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: xevrion/hatchzip Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-xevrion-hatchzip-quality-verification-intelligence-xevrion-hatchzip-core-invaria.md",
+      "repository": "xevrion/hatchzip",
+      "content_hash": "966cb617a02784d8f2a26acffe5b967c44b8145e64d9345b431670e0f602c4d8",
+      "created_at": "2026-11-21T00:11:59.019Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-xevrion-hatchzip-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-xevrion-hatchzip-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: xevrion-hatchzip-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-xevrion-hatchzip-learnings-quality-verification-intelligence-xevrion-hatchzip-le.md",
+      "repository": "xevrion-hatchzip-learnings",
+      "content_hash": "64bbe593e3bb4e03c6636e5489efd798674b3dacfa9c2d81d0184a110819cf94",
+      "created_at": "2026-11-21T00:12:03.090Z"
+    },
+    "DOM-F-6DD8B1FE": {
+      "record_id": "DOM-F-6DD8B1FE",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "CSS Specificity Inversion & Drop in Concurrent Imports (BUG-PARCEL-01)",
+      "content": "Concurrency groups form an equivalence class in graph execution; analysis algorithms must accept slices of active roots rather than single representatives.",
+      "content_hash": "96ffcfd3095bbf36edb500b3243cd5fce1e02ac74358607e9ef7cfa9fd4eb746",
+      "summary": "The method signature `for_context(root: AssetIndex, ...)` assumed every loading context was rooted at a single asset index, failing to model -> Concurrency groups form an equivalence class in graph execution; analysis algorithms must accept slices of active roots rather than single r",
+      "provenance": {
+        "source_uri": "project://parcel-bundler-parcel/parcel-bundler-parcel-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T00:12:03.503Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (parcel-bundler-parcel)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `ff1d382d`, PR resolving CSS bundling for concurrent entries. Fixture added: `crates/parcel/tests/fixtures/dynamic-import/concurrent-css/`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T00:12:39.276Z"
+    },
+    "DOM-K-BC44E02A": {
+      "record_id": "DOM-K-BC44E02A",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [],
+      "title": "Native Plugin Context Blindness & Diagnostic Swallowing (BUG-PARCEL-02)",
+      "content": "Plugin APIs must pass contextual paths and accept diagnostic arrays (`DiagnosticList`) at initialization time to ensure proper cache invalidation and telemetry.",
+      "content_hash": "eb92e35af7d4e155b8e0889e54929175377057a203a02fc906014f651d2ef925",
+      "summary": "Plugin initialization traits did not carry environment metadata. Errors were represented as simple strings rather than rich struct instances -> Plugin APIs must pass contextual paths and accept diagnostic arrays (`DiagnosticList`) at initialization time to ensure proper cache invalid",
+      "provenance": {
+        "source_uri": "project://parcel-bundler-parcel/parcel-bundler-parcel-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T00:12:03.503Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (parcel-bundler-parcel)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Issue #10400: *\"Add config and options to native plugin init, and support multiple diagnostics\"*."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T00:13:22.588Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-parcel-bundler-parcel-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-parcel-bundler-parcel-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: parcel-bundler-parcel-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-parcel-bundler-parcel-learnings-technical-construction-intelligence-parcel-bundl.md",
+      "repository": "parcel-bundler-parcel-learnings",
+      "content_hash": "616bc3653b743fee4e0d4139ee4e294e2393922b9c130a754ab572835ffcca26",
+      "created_at": "2026-11-21T00:13:23.660Z"
     }
   }
 }
