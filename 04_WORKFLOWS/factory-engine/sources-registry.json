@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T21:19:45.318Z",
-    "lastVerified": "2026-11-21T21:19:45.318Z",
+    "lastChecked": "2026-11-21T21:58:02.712Z",
+    "lastVerified": "2026-11-21T21:58:02.712Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T21:49:11.512Z",
-    "lastVerified": "2026-11-21T21:49:11.512Z",
+    "lastChecked": "2026-11-21T21:58:02.724Z",
+    "lastVerified": "2026-11-21T21:58:02.724Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -560,9 +560,9 @@
   "surrealdb-surrealdb": {
     "name": "surrealdb",
     "officialUrl": "https://github.com/surrealdb/surrealdb",
-    "lastChecked": "2026-11-20T17:20:55.145Z",
+    "lastChecked": "2026-11-21T21:58:00.295Z",
     "revisionIdentifier": "1b73f91b",
-    "lastVerified": "2026-11-20T17:20:55.145Z"
+    "lastVerified": "2026-11-21T21:58:00.295Z"
   },
   "hf-baai-bge-small-en-v1.5": {
     "name": "BAAI/bge-small-en-v1.5",
@@ -1498,9 +1498,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-21T15:17:43.506Z",
+    "lastChecked": "2026-11-21T21:57:57.834Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-21T15:17:43.506Z"
+    "lastVerified": "2026-11-21T21:57:57.834Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2147,9 +2147,9 @@
   "fission-fission": {
     "name": "fission",
     "officialUrl": "https://github.com/fission/fission",
-    "lastChecked": "2026-11-20T18:27:17.688Z",
+    "lastChecked": "2026-11-21T21:57:55.269Z",
     "revisionIdentifier": "8152c961",
-    "lastVerified": "2026-11-20T18:27:17.688Z"
+    "lastVerified": "2026-11-21T21:57:55.269Z"
   },
   "tailscale-tailscale": {
     "name": "tailscale",
@@ -3449,9 +3449,9 @@
   "margelo-react-native-vision-camera": {
     "name": "react-native-vision-camera",
     "officialUrl": "https://github.com/margelo/react-native-vision-camera",
-    "lastChecked": "2026-11-18T16:41:00.957Z",
+    "lastChecked": "2026-11-21T21:57:52.874Z",
     "revisionIdentifier": "087977a6",
-    "lastVerified": "2026-11-18T16:41:00.957Z"
+    "lastVerified": "2026-11-21T21:57:52.874Z"
   },
   "okteto-okteto": {
     "name": "okteto/okteto",
@@ -3888,9 +3888,9 @@
   "pemistahl-grex": {
     "name": "grex",
     "officialUrl": "https://github.com/pemistahl/grex",
-    "lastChecked": "2026-11-20T06:02:18.804Z",
+    "lastChecked": "2026-11-21T21:57:47.707Z",
     "revisionIdentifier": "99cc3477",
-    "lastVerified": "2026-11-20T06:02:18.804Z"
+    "lastVerified": "2026-11-21T21:57:47.707Z"
   },
   "hf-amazon-chronos-2": {
     "name": "amazon/chronos-2",
@@ -12923,6 +12923,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
     "contentHash": "699671e8c539a2389b322a6c5e5654ce419c1ee69f84824ea065fd7cc27483ca",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism": {
+    "name": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+    "officialUrl": "https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T21:57:50.343Z",
+    "lastVerified": "2026-11-21T21:57:50.343Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+    "contentHash": "935c4843fee372dcd927245766f19a56f3bc9090b7c2dbe48626ca1e982c89e1",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

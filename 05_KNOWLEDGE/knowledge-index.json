@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T21:49:14.250Z",
+  "last_updated": "2026-11-21T21:58:05.384Z",
   "total_verified_learnings": 9062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23299,
+  "total_items": 23300,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "eabdb347287e3245d243b35d006c6ac4ea54fbf6db7414a2cbb5b71051e12ca8",
+      "content_hash": "82369f5898a88946420206e44857aa03179cb93e1d120d48eb6bdda3592d9379",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T21:04:51.058Z"
+      "persisted_at": "2026-11-21T21:58:05.068Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "38a2940e7152f5541ea00859d5291f9943ff6754635b5c80dd2684789c49ea4a",
+      "content_hash": "e9985c360e46742f0ba648a5418f5b910a66eb8a62051b5171e6874ba98ff2a3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T21:04:51.227Z"
+      "persisted_at": "2026-11-21T21:58:05.241Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e7afe956e7d0f42558faf8a36d21c8d4025ce480b75ff6c3830d5a2a4c0e211e",
+      "content_hash": "b574c9190ea5b6903bb502a684f4de9aba81fa4ddfd4da7abe4458534235a739",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T21:04:51.396Z"
+      "persisted_at": "2026-11-21T21:58:05.384Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "4641f4fcc77fe54ebb6d3b2157b37d6ea05a8d4b8ffeebaa29faa25ec29075eb",
+      "content_hash": "5885960e39cd0fe0fa08dc0da2660cd3870a607666abac1bc55c400575e8a9b0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T15:59:56.464Z"
+      "persisted_at": "2026-11-21T21:58:04.167Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -265171,7 +265171,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
       "source_version": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-      "content_hash": "5ad2152eeaec76b0b491b362e5e2c129cca5f787ce1ad2cef058c55f97902d6f",
+      "content_hash": "935c4843fee372dcd927245766f19a56f3bc9090b7c2dbe48626ca1e982c89e1",
       "dossier_path": "07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md",
       "promoted_rules": [],
@@ -265180,7 +265180,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T02:02:08.291Z",
+      "verified_at": "2026-11-21T21:57:50.798Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -265197,9 +265197,9 @@
       "title": "Research & Knowledge Intelligence: OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM Core Invariants",
       "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
       "source_version": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-      "content_hash": "6dae28f6aeafe2bc9244f831d0e01f81edc0b5cb989a78d6cecdf7721f3fc48b",
+      "content_hash": "8b228cd1be67869b78ad3adfed692c565c10b7415d6f8dd355ac53dc38adb432",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T02:02:08.619Z"
+      "persisted_at": "2026-11-21T21:57:51.250Z"
     },
     "learn-github-keyboardkit-keyboardkit": {
       "learning_id": "learn-github-keyboardkit-keyboardkit",
@@ -309218,13 +309218,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-CDSD-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-8UAR-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5f11ea76736dc338f9e3d700df2e4582038ed86fe545e0738b2a5a4b61bdacbe",
+      "content_hash": "2a5bfc8de1ccf0ed76c100e840ebb6ce5495ec35d3810eac3b027354135b3f15",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T21:04:50.896Z"
+      "persisted_at": "2026-11-21T21:58:04.904Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -316737,6 +316737,18 @@
       "content_hash": "0cc79ad0e5532b6f2801aff7009a0ce9dfb2484cfb93048d2fa7bcfcd6f701f2",
       "domain_letter": "I",
       "persisted_at": "2026-11-21T21:49:12.803Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-oliviarossi-minimax-h3_singularity-x-10eros-m": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-oliviarossi-minimax-h3_singularity-x-10eros-m",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings-research-know.md",
+      "title": "Research & Knowledge Intelligence: hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings Core Invariants",
+      "repository": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7268c90b15481d7910988efbb3c0ffeb2324f3cac52bf053ef41817c9c1965ad",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T21:58:03.128Z"
     }
   },
   "ai-builder-brain": {

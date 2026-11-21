@@ -1,14 +1,14 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T21:49:14.416Z",
+  "last_updated": "2026-11-21T21:58:05.526Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-21T15:59:55.405Z",
+      "processed_at": "2026-11-21T21:58:03.324Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-21T21:04:50.420Z",
+      "processed_at": "2026-11-21T21:58:04.370Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3671,9 +3671,14 @@
       "processed_at": "2026-11-21T17:28:53.108Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md": {
+      "processed_at": "2026-11-21T21:58:02.868Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2898,
+  "total_dossiers_evaluated": 2901,
   "total_canonical_promoted": 456,
-  "total_staged_for_review": 2223
+  "total_staged_for_review": 2226
 }

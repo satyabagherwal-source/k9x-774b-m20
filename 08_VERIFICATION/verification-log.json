@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-388D",
-    "timestamp": "2026-11-19T18:06:25.645Z",
-    "repository": "openziti/zrok",
-    "learningId": "learn-github-openziti-zrok",
-    "contentHash": "dabb4604d2657a7ca9ad91de59950f11e692bad43d8d8707cab5636913e888dd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-KGDG",
     "timestamp": "2026-11-19T18:19:49.348Z",
     "repository": "OpenMOSS-Team/MOSS-Image-Base",
@@ -7492,6 +7477,21 @@
     "contentHash": "fa3baea4422c72c2fa85a2e20f1ecbc5097007d251f83a541a03d6ef5ea1c105",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-8JLB",
+    "timestamp": "2026-11-21T21:57:51.023Z",
+    "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+    "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+    "contentHash": "935c4843fee372dcd927245766f19a56f3bc9090b7c2dbe48626ca1e982c89e1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
   "source_version": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T02:02:08.618Z",
+  "timestamp": "2026-11-21T21:57:51.249Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM](https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM) (Revision: `hf-oliviar`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T02:02:08.618Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T21:57:51.249Z`  
 > **Learning ID**: `learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM](https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T02:02:07.847Z  
+> **Harvest Timestamp**: 2026-11-21T21:57:50.343Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 498740 downloads | 336 likes
+- **Stars / Engagement**: 564728 downloads | 377 likes
 
 ---
 

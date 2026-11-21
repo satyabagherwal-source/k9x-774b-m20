@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T21:49:14.079Z",
-  "total_records": 2282,
+  "last_updated": "2026-11-21T21:58:05.068Z",
+  "total_records": 2283,
   "domains": {
     "A": {
       "total": 17,
@@ -59,7 +59,7 @@
       ]
     },
     "D": {
-      "total": 895,
+      "total": 896,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -955,7 +955,8 @@
         "domain_intelligence-research-knowledge-intelligence-hf-nanbeige-nanbeige4-3-33b-learnings-core-invar",
         "domain_intelligence-research-knowledge-intelligence-atomicchat-inkling-2-mini-uncensored-gguf-core-i",
         "DOM-D-2BE66F2B",
-        "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-inkling-2-mini-uncensored-gguf-lea"
+        "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-inkling-2-mini-uncensored-gguf-lea",
+        "domain_intelligence-research-knowledge-intelligence-hf-oliviarossi-minimax-h3_singularity-x-10eros-m"
       ]
     },
     "E": {
@@ -8052,8 +8053,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "eabdb347287e3245d243b35d006c6ac4ea54fbf6db7414a2cbb5b71051e12ca8",
-      "created_at": "2026-11-21T21:04:51.058Z"
+      "content_hash": "82369f5898a88946420206e44857aa03179cb93e1d120d48eb6bdda3592d9379",
+      "created_at": "2026-11-21T21:58:05.068Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -8097,8 +8098,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "4641f4fcc77fe54ebb6d3b2157b37d6ea05a8d4b8ffeebaa29faa25ec29075eb",
-      "created_at": "2026-11-21T15:59:56.464Z"
+      "content_hash": "5885960e39cd0fe0fa08dc0da2660cd3870a607666abac1bc55c400575e8a9b0",
+      "created_at": "2026-11-21T21:58:04.167Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -25425,8 +25426,8 @@
       "title": "Research & Knowledge Intelligence: OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-research-knowledge-inte.md",
       "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
-      "content_hash": "6dae28f6aeafe2bc9244f831d0e01f81edc0b5cb989a78d6cecdf7721f3fc48b",
-      "created_at": "2026-11-17T02:02:08.619Z"
+      "content_hash": "8b228cd1be67869b78ad3adfed692c565c10b7415d6f8dd355ac53dc38adb432",
+      "created_at": "2026-11-21T21:57:51.250Z"
     },
     "domain_intelligence-architecture-intelligence-keyboardkit-keyboardkit-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-keyboardkit-keyboardkit-core-invariants",
@@ -38371,6 +38372,15 @@
       "confidence": 0.62,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-21T21:40:59.660Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-oliviarossi-minimax-h3_singularity-x-10eros-m": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-oliviarossi-minimax-h3_singularity-x-10eros-m",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings-research-know.md",
+      "repository": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings",
+      "content_hash": "7268c90b15481d7910988efbb3c0ffeb2324f3cac52bf053ef41817c9c1965ad",
+      "created_at": "2026-11-21T21:58:03.128Z"
     }
   }
 }

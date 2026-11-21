@@ -11912,3 +11912,4 @@
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T21:40:59.688Z` | `i18next-react-i18next` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-2D29E63D` [Domain H] | Yes (`da83dbcb...`) |
 | `CYCLE-20261121-X1NR` | `2026-11-21T21:48:54.567Z` | `LiquidAI/LFM3-Audio-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md` | Yes (`699671e8...`) |
 | `CYCLE-20261121-XC6Q` | `2026-11-21T21:49:08.210Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9851` | Yes (`fa3baea4...`) |
+| `CYCLE-20261121-8JLB` | `2026-11-21T21:57:51.023Z` | `OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md` | Yes (`935c4843...`) |

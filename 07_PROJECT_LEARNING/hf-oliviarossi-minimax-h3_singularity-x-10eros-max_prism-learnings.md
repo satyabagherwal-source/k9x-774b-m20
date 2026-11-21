@@ -3,7 +3,7 @@
 > **Source Version**: `hf-oliviaros`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T02:02:08.088Z  
+> **Timestamp**: 2026-11-21T21:57:50.518Z  
 > **Learning ID**: `learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM](https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T02:02:07.847Z  
+> **Harvest Timestamp**: 2026-11-21T21:57:50.343Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 498740 downloads | 336 likes
+- **Stars / Engagement**: 564728 downloads | 377 likes
 
 ---
 
