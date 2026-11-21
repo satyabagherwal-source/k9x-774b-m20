@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T19:47:26.757Z",
-  "total_cycles_completed": 11308,
-  "total_learnings_persisted": 11308,
-  "total_rules_promoted": 10637,
+  "last_updated": "2026-11-21T20:10:56.170Z",
+  "total_cycles_completed": 11311,
+  "total_learnings_persisted": 11311,
+  "total_rules_promoted": 10639,
   "history": [
-    {
-      "timestamp": "2026-11-21T00:11:27.724Z",
-      "repository": "parcel-bundler/parcel",
-      "learningId": "learn-github-parcel-bundler-parcel",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T00:11:58.124Z",
-      "repository": "xevrion/hatchzip",
-      "learningId": "learn-github-xevrion-hatchzip",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T00:24:36.173Z",
-      "repository": "zenbu-labs/terminal-browser",
-      "learningId": "learn-github-zenbu-labs-terminal-browser",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T00:24:38.687Z",
       "repository": "TanStack/router",
@@ -1403,6 +1382,27 @@
       "repository": "openbmb/MiniCPM-OCR-1.0",
       "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T20:10:41.209Z",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T20:10:42.898Z",
+      "repository": "o2sh/onefetch",
+      "learningId": "learn-github-o2sh-onefetch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T20:10:56.170Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T19:47:54.295Z",
+  "last_updated": "2026-11-21T20:11:01.893Z",
   "total_records": 2275,
   "domains": {
     "A": {
@@ -8852,8 +8852,8 @@
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "repository": "volcengine/OpenViking",
-      "content_hash": "8f26b4442ea3870a9505ee6e978b77e3819425ded390cc43c2609031455d00f2",
-      "created_at": "2026-11-20T14:52:49.560Z"
+      "content_hash": "a211dbc144271af518f952b7e439eb2d9482d500132d33638a11705edb8e9368",
+      "created_at": "2026-11-21T20:10:56.643Z"
     },
     "DOM-D-E243BB51": {
       "record_id": "DOM-D-E243BB51",
@@ -8921,8 +8921,8 @@
       "title": "Technical Construction Intelligence: volcengine-openviking-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-learnings-technical-construction-intelligence-volcengine-o.md",
       "repository": "volcengine-openviking-learnings",
-      "content_hash": "2d651e041705a6d8080ff9a210b89ac81d09d0d108013598b9201fa5a30760f6",
-      "created_at": "2026-11-20T14:52:57.372Z"
+      "content_hash": "6929cefa404834eb4d8df89e15c9e742597d10f7feebb3ef018d7426cd18920a",
+      "created_at": "2026-11-21T20:11:01.893Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants",
@@ -17934,8 +17934,8 @@
       "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-research-knowledge-intelligence.md",
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
-      "content_hash": "bbb70162b876801580175b74d8f31079ddecdf66854c801f15ba4e7a1a55a343",
-      "created_at": "2026-11-14T20:09:32.807Z"
+      "content_hash": "2d2105bc685f2cd0d9deb1c4e9b911788e860d80785ce5f5d2c1606eda750551",
+      "created_at": "2026-11-21T20:10:41.466Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -17943,8 +17943,8 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-learnings-research-knowledge-in.md",
       "repository": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings",
-      "content_hash": "1b3e6ba15ffcf40a68a823d00adb798b0709516baab131ac161b342cb5f0e207",
-      "created_at": "2026-11-14T20:09:44.477Z"
+      "content_hash": "be41fc5608697a85a6dde275f29fc526b635f86012ab883d309eb4de1c668036",
+      "created_at": "2026-11-21T20:11:01.102Z"
     },
     "domain_intelligence-architecture-intelligence-sqldelight-sqldelight-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-sqldelight-sqldelight-core-invariants",
@@ -30459,8 +30459,8 @@
       "title": "Design Intelligence: o2sh/onefetch Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-o2sh-onefetch-design-intelligence-o2sh-onefetch-core-invariants.md",
       "repository": "o2sh/onefetch",
-      "content_hash": "1a37757b1f3573356aa6f460ae4ed5de0252f02afd56d6cdd1307d24510e476b",
-      "created_at": "2026-11-20T04:37:48.249Z"
+      "content_hash": "081f3804d4214143bfd5000fb990be5ba4c7a3a1f611db93047ce0e0047fa704",
+      "created_at": "2026-11-21T20:10:43.367Z"
     },
     "DOM-D-E33EA755": {
       "record_id": "DOM-D-E33EA755",
@@ -30510,8 +30510,8 @@
       "title": "Design Intelligence: o2sh-onefetch-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-o2sh-onefetch-learnings-design-intelligence-o2sh-onefetch-learnings-core-invaria.md",
       "repository": "o2sh-onefetch-learnings",
-      "content_hash": "697b17a836fdce02006b788b22b895378a4a4ee22d27a9dd894abd37ca718ec8",
-      "created_at": "2026-11-20T04:38:24.821Z"
+      "content_hash": "ed54f35b837c3f15f4413316f9e0f66fed3a8b79ae970b1c2841783d8b5c9a2f",
+      "created_at": "2026-11-21T20:11:00.410Z"
     },
     "domain_intelligence-architecture-intelligence-crosspaste-crosspaste-desktop-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-crosspaste-crosspaste-desktop-core-invariants",

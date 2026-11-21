@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "ee71998f",
+    "sourceVersion": "1efb03a3",
     "license": "AGPL-3.0",
-    "contentHash": "d5709c374661e38847f53506bcd1d7c7774dbbd52a8cb4f78f1b0ec85f93e276",
-    "lastHarvestedAt": "2026-11-20T14:52:49.040Z",
+    "contentHash": "cc047c904745f51d1536fc057b13c4b5aeb9932c16998d2f74db04acba808c9a",
+    "lastHarvestedAt": "2026-11-21T20:10:56.164Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -3993,10 +3993,10 @@
     "repository": "o2sh/onefetch",
     "platform": "github",
     "sourceUrl": "https://github.com/o2sh/onefetch",
-    "sourceVersion": "74760655",
+    "sourceVersion": "8b63584a",
     "license": "MIT",
-    "contentHash": "5c46c91ad827d9c7484b4ec6d86abbb04dc7d83df3661c09d8fed95fd6557727",
-    "lastHarvestedAt": "2026-11-20T04:37:48.042Z",
+    "contentHash": "5810b7d9a592ebb07399455742f812f718d862b672f9419bf8494713fcd177d2",
+    "lastHarvestedAt": "2026-11-21T20:10:42.892Z",
     "learningId": "learn-github-o2sh-onefetch"
   },
   "runanywhereai-runanywhere-sdks": {
@@ -11425,8 +11425,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
     "license": "Open-Source",
-    "contentHash": "7a965ea26efbdc3160c463b2d3317f982c090e5943ae3c990206a34256b489de",
-    "lastHarvestedAt": "2026-11-14T20:09:32.648Z",
+    "contentHash": "b7fcb1171ef21ea461e60acdb36b11c983a0474c5ac7ae6e97e0c8cd946e4aff",
+    "lastHarvestedAt": "2026-11-21T20:10:41.203Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b"
   },
   "hf-liquidai-lfm3-omni-2b": {

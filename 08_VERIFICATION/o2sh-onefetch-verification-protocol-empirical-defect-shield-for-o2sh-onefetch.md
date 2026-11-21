@@ -4,22 +4,22 @@
 {
   "source_repository": "o2sh/onefetch",
   "source_url": "https://github.com/o2sh/onefetch",
-  "source_version": "3054de77",
+  "source_version": "8b63584a",
   "license": "MIT",
-  "timestamp": "2026-11-18T16:22:17.417Z",
+  "timestamp": "2026-11-21T20:10:43.157Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-o2sh-onefetch",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [o2sh/onefetch](https://github.com/o2sh/onefetch) (Revision: `3054de77`).  
-> **License**: MIT | **Timestamp**: `2026-11-18T16:22:17.417Z`  
+> **Provenance**: Harvested from [o2sh/onefetch](https://github.com/o2sh/onefetch) (Revision: `8b63584a`).  
+> **License**: MIT | **Timestamp**: `2026-11-21T20:10:43.157Z`  
 > **Learning ID**: `learn-github-o2sh-onefetch`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `o2sh/onefetch` (Commit: `3054de77`)
+- **Target Repository**: `o2sh/onefetch` (Commit: `8b63584a`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/o2sh/onefetch](https://github.com/o2sh/onefetch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T16:22:16.287Z  
+> **Harvest Timestamp**: 2026-11-21T20:10:41.586Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Command-line Git information tool
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12085 stars
+- **Stars / Engagement**: 12086 stars
 
 ---
 
@@ -1187,44 +1187,39 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `83e1d54d` (2026-11-18)
-**Commit Message**: fix: leave ignored authors out of creation and last change dates (#1922)
+### Incident Patch 1: `32c6a391` (2026-11-21)
+**Commit Message**: docs: show the language build step in the architecture diagram
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `src/data/git/traversal.rs` (modified, +4/-3)
+**File**: `ARCHITECTURE.md` (modified, +10/-0)
 ```diff
-@@ -61,17 +61,18 @@ pub fn traverse_commit_graph(
-                 0,
-             );
-             // Commits that credit nobody (e.g. authors left out by `--ignore-author`)
--            // count neither as commits, nor in the activity, nor in the churn.
-+            // count neither as commits, nor in the activity, nor in the churn,
-+            // nor in the creation and last change dates.
-             let identities =
-                 credited_identities(&commit.object()?, &mailmap, ignore_author, co_authors)?;
-             if !identities.is_empty() {
-                 update_identity_counts(identities, &mut number_of_commits_by_identity);
-                 update_commit_times(commit_time.seconds, &mut commit_times);
-                 churn_tx.send(commit.id)?;
-                 number_of_counted_commits += 1;
-+                time_of_most_recent_commit.get_or_insert(commit_time);
-+                time_of_first_commit = commit_time.into();
-             }
--            time_of_most_recent_commit.get_or_insert(commit_time);
--            time_of_first_commit = commit_time.into();
+@@ -3,6 +3,16 @@
+ Onefetch reads a Git repository, collects information about it, and prints that
+ information next to the logo of the repository's main language (or as JSON/YAML).
  
-             count += 1;
-         }
++At build time, `build.rs` generates the `Language` enum:
++
++```
++languages.yaml ──────────────┐
++                             ├──► build.rs ──► $OUT_DIR/language.rs ──► language::Language
++src/language/language.tera ──┘    (tera)       (included by language)   (used by data and render)
++```
++
++At run time:
++
+ ```
+ command line ──► cli ─────┐
+                           ├──► options ──┬── InfoOptions ───► data::build_info ──► Info ──┐
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1922** (2026-11-18): fix: leave ignored authors out of creation and last change dates (@o2sh)
-- **PR #1920** (2026-11-17): feat!: replace --no-bots with --ignore-author (@o2sh)
-- **PR #1916** (2026-11-03): chore(deps): Update dependency node to v26 (@renovate[bot])
-- **PR #1914** (2026-10-29): fix: show Unreleased when HEAD doesn't contain the latest tag (@o2sh)
-- **PR #1912** (2026-10-27): chore(deps): upgrade site to SvelteKit 3 (@o2sh)
-- **PR #1911** (2026-11-03): chore(deps): Update site (@renovate[bot])
+- **PR #1931** (2026-11-21): chore(deps): Update Rust crate toml to 1.2.2 (@renovate[bot])
+- **PR #1930** (2026-11-21): chore(deps): Update Rust crate json-strip-comments to 3.1.3 (@renovate[bot])
+- **PR #1928** (2026-11-21): feat: add Twig language support (@sully-vian)
+- **PR #1927** (2026-11-19): fix: don't apply --exclude to churn (@o2sh)
+- **PR #1926** (2026-11-19): chore(deps): Update Rust crate regex to 1.13.2 (@renovate[bot])
+- **PR #1925** (2026-11-19): chore(deps): Update clap (@renovate[bot])
 
 ---
 
@@ -1244,36 +1239,40 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. leave ignored authors out of creation and last change dates
+## X. docs: show the language build step in the architecture diagram
 
 **RULE**:
-When implementing operations in `src/data/git/traversal.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in o2sh/onefetch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ARCHITECTURE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in o2sh/onefetch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `83e1d54d`: leave ignored authors out of creation and last change dates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `32c6a391`: docs: show the language build step in the architecture diagram. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/data/git/traversal.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ARCHITECTURE.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // count neither as commits, nor in the activity, nor in the churn,
-            // nor in the creation and last change dates.
-                time_of_most_recent_commit.get_or_insert(commit_time);
-                time_of_first_commit = commit_time.into();
+At build time, `build.rs` generates the `Language` enum:
+
+```
+languages.yaml ──────────────┐
+                             ├──► build.rs ──► $OUT_DIR/language.rs ──► language::Language
+src/language/language.tera ──┘    (tera)       (included by language)   (used by data and render)
+```
+
+At run time:
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            // count neither as commits, nor in the activity, nor in the churn.
-            time_of_most_recent_commit.get_or_insert(commit_time);
-            time_of_first_commit = commit_time.into();
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `83e1d54d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `32c6a391` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

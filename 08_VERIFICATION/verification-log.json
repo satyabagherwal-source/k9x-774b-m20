@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-6KET",
-    "timestamp": "2026-11-19T16:17:02.933Z",
-    "repository": "langchain4j/langchain4j",
-    "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "0aa6debbd14f964cde53a4339f64815d57e88a06dcf2a1a5546ba926fe5c6a88",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-GJC9",
-    "timestamp": "2026-11-19T16:24:48.105Z",
-    "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
-    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-    "contentHash": "32f1a04a9bea3383eebec80fed3055599da91d9786cb46aba33922a623ff50bb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-GLHD",
-    "timestamp": "2026-11-19T16:24:50.882Z",
-    "repository": "tokio-rs/tokio",
-    "learningId": "learn-github-tokio-rs-tokio",
-    "contentHash": "ea3224ce522b1dbad0367898d0dbcbe2db4756b153ee235414402c7a340ec583",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-GTG6",
     "timestamp": "2026-11-19T16:25:01.206Z",
     "repository": "tailscale/tailscale",
@@ -7492,6 +7447,51 @@
     "contentHash": "e2372bd1bcf2da6a8d62423530404ea92e32fffcc434eeba717edd867b3ba495",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-EQB1",
+    "timestamp": "2026-11-21T20:10:41.198Z",
+    "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
+    "contentHash": "b7fcb1171ef21ea461e60acdb36b11c983a0474c5ac7ae6e97e0c8cd946e4aff",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-ERLZ",
+    "timestamp": "2026-11-21T20:10:42.887Z",
+    "repository": "o2sh/onefetch",
+    "learningId": "learn-github-o2sh-onefetch",
+    "contentHash": "5810b7d9a592ebb07399455742f812f718d862b672f9419bf8494713fcd177d2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-F1UN",
+    "timestamp": "2026-11-21T20:10:56.159Z",
+    "repository": "volcengine/OpenViking",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "cc047c904745f51d1536fc057b13c4b5aeb9932c16998d2f74db04acba808c9a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

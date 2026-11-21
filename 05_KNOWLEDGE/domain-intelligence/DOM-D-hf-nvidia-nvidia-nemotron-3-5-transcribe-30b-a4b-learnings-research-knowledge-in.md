@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T20:09:44.387Z",
+  "timestamp": "2026-11-21T20:11:00.987Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T20:09:44.387Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T20:11:00.987Z`  
 > **Learning ID**: `LEARN-EVO-hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-nvidia-nv`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T20:09:32.293Z  
+> **Timestamp**: 2026-11-21T20:10:40.595Z  
 > **Learning ID**: `learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T20:09:32.066Z  
+> **Harvest Timestamp**: 2026-11-21T20:10:40.316Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: automatic-speech-recognition
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 80193 downloads | 3316 likes
+- **Stars / Engagement**: 93473 downloads | 2418 likes
 
 ---
 

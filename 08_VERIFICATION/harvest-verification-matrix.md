@@ -11883,3 +11883,6 @@
 | `CYCLE-20261121-HMG2` | `2026-11-21T19:44:56.546Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9827` | Yes (`bb2605ce...`) |
 | `CYCLE-20261121-KUCF` | `2026-11-21T19:47:26.751Z` | `openbmb/MiniCPM-OCR-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9828, Rule 7456, Rule 9829` | Yes (`e2372bd1...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T19:47:52.027Z` | `hf-openbmb-minicpm-ocr-1.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-E350EAD5` [Domain F] | Yes (`36eb9bda...`) |
+| `CYCLE-20261121-EQB1` | `2026-11-21T20:10:41.198Z` | `nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md` | Yes (`b7fcb117...`) |
+| `CYCLE-20261121-ERLZ` | `2026-11-21T20:10:42.887Z` | `o2sh/onefetch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9830` | Yes (`5810b7d9...`) |
+| `CYCLE-20261121-F1UN` | `2026-11-21T20:10:56.159Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9831` | Yes (`cc047c90...`) |

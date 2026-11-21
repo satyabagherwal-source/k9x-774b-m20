@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `ee71998f`  
+> **Source Version**: `1efb03a3`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T14:52:48.453Z  
+> **Timestamp**: 2026-11-21T20:10:54.935Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T14:52:48.446Z  
+> **Harvest Timestamp**: 2026-11-21T20:10:54.927Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 42524 stars
+- **Stars / Engagement**: 42564 stars
 
 ---
 
@@ -1495,34 +1495,195 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cca553af` (2026-11-20)
-**Commit Message**: feat(react): add AI preview labels and fix agent drawer layout (#8073)
+### Incident Patch 1: `a0c00a4f` (2026-11-21)
+**Commit Message**: fix(crypto): reject malformed local root key files (#8126)
 
-* feat(react): label generated content in preview metadata
+LocalFileProvider read the root key file and accepted any valid hex
+string. A truncated or hand-edited file (for example 16 bytes instead of
+32) silently became the root key: HKDF then derived account keys from it,
+so newly encrypted files were sealed under a key the real 32-byte root
+key can never open, while existing ciphertext fails to decrypt. The
+inline root_key configuration already enforces 32 bytes; apply the same
+rule to the file path.
 
-* fix(react): fill agent connection drawer content height
+Co-authored-by: Kiko0301 <[REDACTED_EMAIL]>
 
-* fix(react): correct preview AI labels and footer wrapping
+**File**: `openviking/crypto/providers.py` (modified, +9/-1)
+```diff
+@@ -247,9 +247,17 @@ async def _load_or_create_root_key(self) -> bytes:
+             with open(self.key_file, "r") as f:
+                 hex_key = f.read().strip()
+             try:
+-                return bytes.fromhex(hex_key)
++                root_key = bytes.fromhex(hex_key)
+             except ValueError:
+                 raise ConfigError(f"Invalid root key format in {self.key_file}")
++            # A truncated or hand-edited key file must not silently become a
++            # shorter root key: the account keys derived from it would encrypt
++            # new files under a key the real 32-byte root key cannot open.
++            if len(root_key) != 32:
++                raise ConfigError(
++                    f"Invalid root key in {self.key_file}: expected 32 bytes, got {len(root_key)}"
++                )
++            return root_key
+         else:
+             # Create new key
+             root_key = secrets.token_bytes(32)
+```
 
-* Revert "fix(react): fill agent connection drawer content height"
+**File**: `tests/unit/crypto/test_local_provider_root_key_validation.py` (added, +41/-0)
+```diff
+@@ -0,0 +1,41 @@
++# Copyright (c) 2026 Beijing Volcano Engine Technology Co., Ltd.
++# SPDX-License-Identifier: AGPL-3.0
++"""The local root-key file must hold exactly one 32-byte root key."""
++
++import secrets
++
++import pytest
++
++from openviking.crypto.exceptions import ConfigError
++from openviking.crypto.providers import LocalFileProvider
++
++
++async def test_short_root_key_file_is_rejected(tmp_path):
++    key_file = tmp_path / "master.key"
++    # 16 valid hex bytes: parseable, but not a 256-bit root key.
++    key_file.write_text("ab" * 16)
++
++    provider = LocalFileProvider(key_file=str(key_file))
++
++    with pytest.raises(ConfigError):
++        await provider.get_root_key()
++
++
++async def test_long_root_key_file_is_rejected(tmp_path):
++    key_file = tmp_path / "master.key"
++    key_file.write_text("cd" * 64)
++
++    provider = LocalFileProvider(key_file=str(key_file))
++
++    with pytest.raises(ConfigError):
++        await provider.get_root_key()
++
++
++async def test_valid_root_key_file_still_loads(tmp_path):
++    root_key = secrets.token_bytes(32)
++    key_file = tmp_path / "master.key"
++    key_file.write_text(root_key.hex())
++
++    provider = LocalFileProvider(key_file=str(key_file))
++
++    assert await provider.get_root_key() == root_key
+```
 
-This reverts commit 455fc8d8b29665362f73e7b8c9afb09cf7394d15.
+---
 
-* fix(react): resolve Compile preview labels without blocking content
+### Incident Patch 2: `1efb03a3` (2026-11-21)
+**Commit Message**: fix(compile): persist cancellation of queued runs (#8166)
 
-* fix(react): identify Compile outputs in file previews
+Co-authored-by: fujiajie.168 <[REDACTED_EMAIL]>
 
-* fix(react): resolve Wiki provenance after rendering previews
+**File**: `openviking/server/routers/tasks.py` (modified, +10/-1)
+```diff
+@@ -12,9 +12,10 @@
+ from fastapi import APIRouter, Depends, Query
+ 
+ from openviking.server.auth import get_request_context
++from openviking.server.dependencies import get_service
+ from openviking.server.identity import RequestContext, Role
+ from openviking.server.models import Response
+-from openviking.service.task_domain import TaskRecord
++from openviking.service.task_domain import TaskRecord, TaskStatus
+ from openviking.service.task_store import SYSTEM_TASK_ACCOUNT_ID, SYSTEM_TASK_USER_ID
+ from openviking.service.task_tracker import get_task_tracker
+ from openviking_cli.exceptions import (
+@@ -93,6 +94,14 @@ async def cancel_task(
+             code="NOT_FOUND",
+             details={"resource": task_id, "type": "task"},
+         )
++    if (
++        task.task_type == "compile"
++        and task.status == TaskStatus.CANCELLED
++        and task.stage == "queued"
++    ):
++        lifecycle = get_service().compile.lifecycle
++        if lifecycle is not None:
++            await lifecycle.store.cancel_queued_run(task)
+     return Response(status="ok", result=task.to_dict())
+ 
+ 
+```
 
-* fix(react): protect pending Wiki preview metadata
+**File**: `openviking/service/compile_targets.py` (modified, +16/-1)
+```diff
+@@ -52,7 +52,7 @@
+ )
+ from openviking.server.identity import RequestContext, Role
+ from openviking.service.external_task_service import SUBMIT_EXHAUSTED, ExternalTaskSnapshot
+-from openviking.service.task_domain import TaskPatch, TaskStatus, sanitize_error
++from openviking.service.task_domain import TaskPatch, TaskRecord, TaskStatus, sanitize_error
+ from openviking.service.task_tracker_concurrency import run_to_completion
+ from openviking.storage.errors import LockAcquisitionError, ResourceBusyError
+ from openviking.storage.pathlock_recovery import (
+@@ -242,6 +242,7 @@ async def list_runs(
+     async def put_run(
+         self, account_id: str, owner_user_id: str, compile_name: str, run: dict
+     ) -> None: ...
++    async def cancel_queued_run(self, task: TaskRecord) -> None: ...
+     def lock_run(
+         self, account_id: str, owner_user_id: str, compile_name: str, task_id: str
+     ) -> Any: ...
+@@ -488,6 +489,20 @@ async def put_run(
+         async with self.locked(path) as lease:
+             await self.write_json(path, run, lease)
+ 
++    async def cancel_queued_run(self, task: TaskRecord) -> None:
++        """Finalize an unstarted Run using the Task's persisted cancellation time."""
++        compile_meta = (task.meta.get("request") or {}).get("compile") or {}
++        owner = compile_meta.get("owner_user_id")
++        name = compile_meta.get("compile_name")
++        if task.account_id is None or not owner or not name:
++            return
++        path = self._run_path(task.account_id, owner, name, task.task_id)
++        async with self.locked(path) as lease:
++            run = await self.read_json(path)
++            if run is not None and run["status"] == "queued" and run["started_at"] is None:
++                run.update(status="cancelled", finished_at=task.updated_at)
++                await self.write_json(path, run, lease)
++
+     async def list_runs(
+         self,
+         account_id: str,
+```
 
-* docs(react): format AI preview label reference
+**File**: `tests/server/test_compile_configurations.py` (modified, +10/-0)
+```diff
+@@ -339,6 +339,16 @@ async def test_same_name_configuration_and_runs_are_user_scoped(service, app, cl
+         ]["runs"]
+         assert [r["task_id"] for r in runs] == [task_ids[-1]]
+         assert runs[0]["params"]["instruction"] == actor.user.user_id
++        assert runs[0]["status"] == "queued"
++        cancel_path = f"/api/v1/tasks/{task_ids[-1]}/cancel"
++        cancelled = await client.post(cancel_path)
++        assert cancelled.status_code == 200, cancelled.text
++        task = cancelled.json()["result"]
++        run = await service.compile.get_run(name, task_ids[-1], actor)
++        assert task["status"] == run["status"] == "cancelled"
++        assert run["finished_at"] == task["updated_at"]
++        assert (await client.post(cancel_path)).status_code == 200
++        assert await service.compile.get_run(name, task_ids[-1], actor) == run
+     assert task_ids[0] != task_ids[1]
+     foreign_run = await client.get(
+         f"/api/v1/compile/runs/{task_ids[0]}", params={"compile_name": name}
+```
 
-* fix(react): recognize Compile namespace before Dashboard metadata
+---
 
-* fix(react): recognize canonical Compile resource aliases
+### Incident Patch 3: `000f0765` (2026-11-21)
+**Commit Message**: fix(react): refresh preview permissions with file tree (#8156)
 
-**File**: `frontend/.changeset/preview-ai-generated.md` (added, +11/-0)
+**File**: `frontend/.changeset/file-browser-refresh-permissions.md` (added, +11/-0)
 ```diff
 @@ -0,0 +1,11 @@
 +---
@@ -1531,608 +1692,250 @@ This reverts commit 455fc8d8b29665362f73e7b8c9afb09cf7394d15.
 +
 +## en-US
 +
-+Show an AI-generated label beside file preview metadata for summaries, Wiki Compile outputs with file metadata, memory documents, identity.md and soul.md.
++Refresh the active resource's permission label and edit action when the file tree is refreshed, including grants changed elsewhere. Outdated permission responses from earlier refreshes cannot overwrite the latest result.
 +
 +## zh-CN
 +
-+在摘要、带文件元数据的 Wiki 编译产物、记忆文档及 identity.md、soul.md 的预览底部元信息旁展示 AI 生成标识。
++刷新目录树时同步重新查询当前资源权限，使外部授权变更可更新权限标签和编辑入口。旧刷新请求的响应不会覆盖最新权限。
 ```
 
-**File**: `frontend/docs/docs/en/modules/file-browser.mdx` (modified, +1/-0)
+**File**: `frontend/docs/docs/_demos/file-browser-acl.tsx` (modified, +2/-5)
 ```diff
-@@ -327,6 +327,7 @@ All fields are optional, and omitted fields follow `locale`.
- | emptyL1Overview              | Message when the L1 overview is absent                                                                                       | `string`                                   | `'No L1 overview available'`                                                                                        |
- | formatCharacterCount         | Character count text in the preview footer                                                                                   | `(count: number) => string`                | Formatted per `locale`, for example `'1,234 characters'`                                                            |
- | formatPreviewUpdatedAt       | Update time text in the preview footer                                                                                       | `(time: string) => string`                 | `'Updated on {time}'`                                                                                               |
-+| previewAiGenerated           | AI-generated notice for summaries, Wiki Compile outputs with file metadata, memory documents, identity.md and soul.md        | `string`                                   | `'AI generated'`                                                                                                    |
- | previewModelNotice           | Model notice in resource previews; pass an empty string to hide it                                                           | `string`                                   | `'Content parsing provided by the Content Understanding Model'`                                                     |
- | actionBar                    | Text passed to the [FileBrowserActionBar](../components/file-browser-action-bar) action bar, including its connection drawer | `FileBrowserActionBarLabels`               | -                                                                                                                   |
- | tree                         | Text passed to the [FileTree](../components/file-tree) file tree                                                             | `FileTreeLabels`                           | -                                                                                                                   |
-```
-
-**File**: `frontend/docs/docs/zh/modules/file-browser.mdx` (modified, +1/-0)
-```diff
-@@ -327,6 +327,7 @@ import '@openviking/react/modules/file-browser/style.css';
- | emptyL1Overview              | L1 总览暂无内容时的提示                                                                       | `string`                                   | `'暂无 L1 总览'`                                                                 |
- | formatCharacterCount         | 预览底部字符数的文案                                                                          | `(count: number) => string`                | 按 `locale` 格式化，如 `'1,234 字符数'`                                          |
- | formatPreviewUpdatedAt       | 预览底部更新时间的文案                                                                        | `(time: string) => string`                 | `'更新于 {time}'`                                                                |
-+| previewAiGenerated           | 摘要、带文件元数据的 Wiki 编译产物、记忆文档及 identity.md、soul.md 的 AI 生成标识            | `string`                                   | `'AI 生成'`                                                                      |
- | previewModelNotice           | 资源预览右侧的模型解析提示，传空字符串可隐藏                                                  | `string`                                   | `'内容解析由 内容理解大模型 提供'`                                               |
- | actionBar                    | 传给 [FileBrowserActionBar](../components/file-browser-action-bar) 操作栏的文案，包括接入抽屉 | `FileBrowserActionBarLabels`               | -                                                                                |
- | tree                         | 传给 [FileTree](../components/file-tree) 文件树的文案                                         | `FileTreeLabels`                           | -                                                                                |
-```
-
-**File**: `frontend/packages/react/src/modules/file-browser/dashboard-data.ts` (modified, +31/-0)
-```diff
-@@ -4,6 +4,7 @@ import { within } from './dashboard-model.js';
- import {
-   resolveDashboardUri,
-   findCompileTarget,
-+  type ReadDashboardHint,
- } from './dashboard-resource.js';
- 
- export interface CompileTarget {
-@@ -69,3 +70,33 @@ export async function readCompileTargets(
-   const target = await findCompileTarget(client, rootUri, options);
-   return target ? [{ to: target.uri }] : [];
- }
-+
-+export async function isCompileOwnedFile(
-+  client: OvClient,
-+  uri: string,
-+  options: OvRequestOptions,
-+  readHint?: ReadDashboardHint,
-+) {
-+  const namespace = compileNamespaceOwnership(uri);
-+  if (namespace !== undefined) return namespace;
-+  const hint = await readHint?.();
-+  const scope = hint?.uri ?? (await resolveDashboardUri(client, uri, options));
-+  const canonicalNamespace = compileNamespaceOwnership(scope);
-+  if (canonicalNamespace !== undefined) return canonicalNamespace;
-+  if (await findCompileTarget(client, scope, options, hint)) return true;
-+  const catalog = await readCompileCatalog(client, scope, options);
-+  return (
-+    !catalog.named && catalog.targets.some((target) => within(scope, target.to))
-+  );
-+}
-+
-+// Namespace ownership still requires a file-level Wiki trailer for the label.
-+function compileNamespaceOwnership(uri: string) {
-+  if (
-+    !/^viking:\/\/(?:system|user\/[^/]+|~)(?:\/peers\/[^/]+)?\/compile\/.+/i.test(
-+      uri,
-+    )
-+  )
-+    return undefined;
-+  return !/^viking:\/\/system\/compile\/example-skills(?:\/|$)/i.test(uri);
-+}
-```
-
-**File**: `frontend/packages/react/src/modules/file-browser/dashboard-resource.ts` (modified, +8/-8)
-```diff
-@@ -56,19 +56,19 @@ export async function findCompileTarget(
-   client: OvClient,
-   uri: string,
-   options: OvRequestOptions,
-+  hint?: Awaited<ReturnType<typeof readDashboardHint>>,
- ) {
--  uri = await resolveDashboardUri(client, uri, options);
-+  uri = hint?.uri ?? (await resolveDashboardUri(client, uri, options));
-   while (uri.length > 'viking://'.length) {
--    const result = await client.request<{ attrs?: { tags?: string[] } }>({
--      method: 'GET',
--      path: OV_PATHS.fsAttrs,
--      query: { uri },
--      options,
--    });
--    const tags = result?.attrs?.tags ?? [];
-+    const { tags } =
-+      hint?.uri === uri ? hint : await readDashboardHint(client, uri, options);
-     if (tags.includes('compile_target=true')) return { uri, tags };
-     const separator = uri.lastIndexOf('/');
-     if (separator < 'viking://'.length) break;
-     uri = uri.slice(0, separator);
-   }
- }
-+
-+export type ReadDashboardHint = () =>
-+  | Promise<Awaited<ReturnType<typeof readDashboardHint>> | undefined>
-+  | undefined;
-```
-
-**File**: `frontend/packages/react/src/modules/file-browser/file-browser-preview-footer.tsx` (modified, +62/-8)
-```diff
-@@ -1,3 +1,7 @@
-+import type { FilePreviewTab } from '../../components/file-preview/index.js';
-+import type { FileBrowserApi } from './file-browser-state-types.js';
-+import { normalizeResourceUri } from '../../shared/resource-uri.js';
-+import { isSummaryUri } from './preview-policy.js';
- import type { Locale } from '../../shared/locale.js';
- import type { ResolvedLabels } from './file-browser-labels.js';
- 
-@@ -8,12 +12,14 @@ export function FileBrowserPreviewFooter({
-   count,
-   updatedAt,
-   modelNotice,
-+  aiGenerated = false,
-   locale,
-   text,
- }: {
-   count?: string;
-   updatedAt?: string;
-   modelNotice?: string;
-+  aiGenerated?: boolean;
-   locale: Locale;
-   text: ResolvedLabels;
- }) {
-@@ -37,9 +43,10 @@ export function FileBrowserPreviewFooter({
-       time = formatter.format(date);
-     }
-   }
-+  const aiLabel = aiGenerated && text.previewAiGenerated;
+@@ -12,14 +12,13 @@ export default function FileBrowserAclDemo() {
+   const locale = useLang() === 'zh' ? 'zh-CN' : 'en-US';
+   const zh = locale === 'zh-CN';
+   const [demo] = useState(createAclDemo);
+-  const [revision, setRevision] = useState(0);
+   const [hideDeniedEntries, setHideDeniedEntries] = useState(false);
    return (
-     <>
--      {count || time ? (
-+      {count || time || aiLabel ? (
-         <span className="ov-file-browser__preview-meta">
-           {count ? <span>{count}</span> : null}
-           {count && time ? <span aria-hidden="true">·</span> : null}
-@@ -48,16 +55,14 @@ export function FileBrowserPreviewFooter({
-               {text.formatPreviewUpdatedAt(time)}
-             </time>
-           ) : null}
-+          {aiLabel && (count || time) ? (
-+            <span aria-hidden="true">·</span>
-+          ) : null}
-+          {aiLabel ? <span>{aiLabel}</span> : null}
-         </span>
-       ) : null}
-       {modelNotice ? (
--        <span className="ov-file-browser__preview-model">
--          {modelNotice.split(/(\s+)/).map((part, index) => (
--            <span key={index} className="ov-file-browser__preview-model-name">
--              {part}
--            </span>
--          ))}
--        </span>
-+        <span className="ov-file-browser__preview-model">{modelNotice}</span>
-       ) : null}
-     </>
-   );
-@@ -66,3 +71,52 @@ export function FileBrowserPreviewFooter({
- export function previewModelNotice(uri: string | null, label: string) {
-   return uri !== null && modelResource.test(uri) ? label : undefined;
- }
-+
-+/** Match only generated document namespaces; raw uploads stay unlabelled. */
-+function isAiGeneratedPreview(uri: string | null, isCompile: boolean) {
-+  if (!uri) return false;
-+  uri = normalizeResourceUri(uri);
-+  if (/^viking:\/\/system\/compile\/example-skills(?:\/|$)/i.test(uri))
-+    return false;
-+  return (
-+    isCompile ||
-+    isSummaryUri(uri) ||
-+    /^viking:\/\/(?:user\/[^/]+|~)(?:\/peers\/[^/]+)?\/memories\/(?:identity|soul)\.md$/i.test(
-+      uri,
-+    ) ||
-+    /^viking:\/\/(?:user\/[^/]+|~)(?:\/peers\/[^/]+)?\/memories\/(?:experiences|preferences|entities|cases|trajectories|events)\/.+/i.test(
-+      uri,
-+    )
-+  );
-+}
-+
-+export function renderPreviewFooter(
-+  browser: FileBrowserApi,
-+  tab: FilePreviewTab | undefined,
-+  locale: Locale,
-+  text: ResolvedLabels,
-+) {
-+  const uri = browser.currentUri;
-+  const modelNotice = previewModelNotice(uri, text.previewModelNotice);
-+  const aiGenerated =
-+    tab?.kind === 'directory'
-+      ? browser.previewHasDirectorySummary
-+      : isAiGeneratedPreview(uri, browser.previewIsCompile);
-+  return tab &&
-+    tab.kind !== 'content' &&
-+    !tab.loading &&
-+    tab.key === uri &&
-+    (browser.previewFooter ||
-+      browser.previewUpdatedAt ||
-+      modelNotice ||
-+      (aiGenerated && text.previewAiGenerated)) ? (
-+    <FileBrowserPreviewFooter
-+      count={browser.previewFooter}
-+      updatedAt={browser.previewUpdatedAt}
-+      modelNotice={modelNotice}
-+      aiGenerated={aiGenerated}
-+      locale={locale}
-+      text={text}
-+    />
-+  ) : undefined;
-+}
+     <div lang={locale}>
+       <p>
+         {zh
+-          ? '离线模拟数据 · 不修改真实授权。'
+-          : 'Offline simulation · no real grants are changed.'}
++          ? '离线模拟数据 · 切换当前权限后点击刷新，不修改真实授权。'
++          : 'Offline simulation · change the permission, then click Refresh. No real grants are changed.'}
+       </p>
+       <div
+         style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginBottom: 16 }}
+@@ -49,7 +48,6 @@ export default function FileBrowserAclDemo() {
+             onChange={([value]) => {
+               if (value === undefined) return;
+               demo.setLevel(value);
+-              setRevision((value) => value + 1);
+             }}
+           >
+             <SelectOption value="manage">
+@@ -67,7 +65,6 @@ export default function FileBrowserAclDemo() {
+       <div style={{ height: 580 }}>
+         <OpenVikingProvider fetch={demo.fetch} accountId="demo" userId="alice">
+           <FileBrowser
+-            key={revision}
+             acl
+             hideDeniedEntries={hideDeniedEntries}
+             locale={locale}
 ```
 
-**File**: `frontend/packages/react/src/modules/file-browser/file-browser-preview-pane.tsx` (modified, +2/-19)
+**File**: `frontend/docs/docs/en/modules/file-browser.mdx` (modified, +1/-1)
 ```diff
-@@ -14,10 +14,7 @@ import type { Locale } from '../../shared/locale.js';
- import type { OvRequestOptions } from '../../client/types.js';
- import { FileBrowserDetail } from './file-browser-detail.js';
- import { FileBrowserEmpty } from './file-browser-empty.js';
--import {
--  FileBrowserPreviewFooter,
--  previewModelNotice,
--} from './file-browser-preview-footer.js';
-+import { renderPreviewFooter } from './file-browser-preview-footer.js';
- import { FileBrowserFailure } from './file-browser-failure.js';
- import type { useFileBrowserAcl } from './use-file-browser-acl.js';
- import { useFileBrowserPreviewActions } from './use-file-browser-preview-actions.js';
-@@ -57,21 +54,7 @@ function FileBrowserPreviewPaneContent({
-   const { currentUri: uri, previewTabs, previewKey } = browser;
-   const tab =
-     previewTabs?.find(({ key }) => key === previewKey) ?? previewTabs?.[0];
--  const modelNotice = previewModelNotice(uri, text.previewModelNotice);
--  const previewFooter =
--    tab &&
--    tab.kind !== 'content' &&
--    !tab.loading &&
--    tab.key === uri &&
--    (browser.previewFooter || browser.previewUpdatedAt || modelNotice) ? (
--      <FileBrowserPreviewFooter
--        count={browser.previewFooter}
--        updatedAt={browser.previewUpdatedAt}
--        modelNotice={modelNotice}
--        locale={locale}
--        text={text}
--      />
--    ) : undefined;
-+  const previewFooter = renderPreviewFooter(browser, tab, locale, text);
-   const controls = useFileBrowserPreviewActions({
-     uri,
-     rootUri,
+@@ -517,7 +517,7 @@ All fields are optional, and omitted fields follow `locale`.
+ - The dashboard tab is hidden while editing a file and returns after saving or cancelling.
+ - Saving a Wiki file shows a progress notice in the upper right, followed by a success notice if the write succeeds. Wiki saves send `use_snapshot: true` to preserve version history and `resolve_conflicts: true` so the server preserves and updates conflict records. Ordinary text saves leave snapshots disabled by default.
+ - All YAML frontmatter, ordinary HTML comments and fenced Markdown examples survive. In a Markdown file with confirmed scope, an unclosed reserved trailer starting on its own line is hidden through the end of the file; markers quoted in YAML frontmatter, code fences or inline examples survive.
+-- The refresh button reloads the expanded directories and the current preview.
++- The refresh button reloads the expanded directories, the current preview and its effective permissions.
+ 
+ ### Open and reveal a resource
+ 
+```
+
+**File**: `frontend/docs/docs/zh/modules/file-browser.mdx` (modified, +1/-1)
+```diff
+@@ -517,7 +517,7 @@ import '@openviking/react/modules/file-browser/style.css';
+ - 编辑文件时隐藏看板页签，保存或取消后恢复显示。
+ - 保存 Wiki 文件时，右上角显示保存进度，写入成功后显示「保存成功」。请求携带 `use_snapshot: true` 创建历史快照，并通过 `resolve_conflicts: true` 交由服务端保留、更新冲突记录；普通文本保存默认不创建快照。
+ - 所有 YAML 头、普通 HTML 注释和 Markdown 代码围栏中的示例保留；已确认作用域的 Markdown 文件中，独占一行的未闭合保留尾注隐藏至文件末尾；YAML 头、代码围栏和行内示例中的标记保留。
+-- 刷新按钮重新加载已展开的目录和当前预览。
++- 刷新按钮重新加载已展开的目录、当前预览及其有效权限。
+ 
+ ### 打开并定位资源
+ 
+```
+
+**File**: `frontend/packages/react/src/modules/file-browser/acl/use-acl-manager.ts` (modified, +5/-3)
+```diff
+@@ -4,12 +4,14 @@ import type { FileBrowserAclLevel } from '../acl-types.js';
+ /** Revalidate the active resource before opening its permission manager. */
+ export function useAclManager({
+   key,
++  revision,
+   uri,
+   loadPermission,
+   onLevel,
+   onError,
+ }: {
+   key: string;
++  revision: number;
+   uri: string | null;
+   loadPermission: (
+     uri: string,
+@@ -19,14 +21,14 @@ export function useAclManager({
+   onError: () => void;
+ }) {
+   const pending = useRef<AbortController | null>(null);
+-  // The probe outlives its click. Abort on resource/request scope changes or
+-  // unmount so an old account cannot open a manager in the new scope.
++  // The probe outlives its click. Abort on a new server-permission revision,
++  // resource/request scope change or unmount so stale access cannot reopen it.
+   useEffect(
+     () => () => {
+       pending.current?.abort();
+       pending.current = null;
+     },
+-    [key, loadPermission],
++    [key, revision, loadPermission],
+   );
+   return async () => {
+     if (!uri || pending.current) return;
+```
+
+**File**: `frontend/packages/react/src/modules/file-browser/file-browser-content.tsx` (modified, +3/-3)
+```diff
+@@ -91,7 +91,6 @@ export const FileBrowserContent: FileBrowserComponent = forwardRef<
+   // rather than discarded, so the tree returns to where it was dragged once the
+   // container widens again.
+   const treeMaxWidth = resolveTreeMaxWidth(width);
+-  const treeWidth = Math.min(preferredTreeWidth, treeMaxWidth);
+ 
+   // Keep preview and summary copy stable until locale or host overrides change.
+   const { summaryLabels, previewLabels } = useMemo(
+@@ -128,6 +127,7 @@ export const FileBrowserContent: FileBrowserComponent = forwardRef<
+     locale,
+     labels: labels?.acl,
+     requestOptions,
++    refreshGeneration: browser.refreshGeneration,
+     refresh: browser.actions.refresh,
+   });
+   const pack = usePackImportPicker(layoutRef, text, locale, permissions);
+@@ -158,7 +158,7 @@ export const FileBrowserContent: FileBrowserComponent = forwardRef<
+             // 分隔条是独立一列，树宽只作用在自己身上，两者相加才是左栏占用。
+             // The divider is its own column: the tree width applies to the tree alone
+             // and the two together are what the left side occupies.
+-            '--ov-file-browser-tree-width': `${treeWidth}px`,
++            '--ov-file-browser-tree-width': `${Math.min(preferredTreeWidth, treeMaxWidth)}px`,
+           } as CSSProperties
+         }
+       >
+@@ -194,7 +194,7 @@ export const FileBrowserContent: FileBrowserComponent = forwardRef<
+             label={text.resizeTree}
+             min={TREE_MIN_WIDTH}
+             max={treeMaxWidth}
+-            value={treeWidth}
++            value={Math.min(preferredTreeWidth, treeMaxWidth)}
+             onResize={setPreferredTreeWidth}
+             className="ov-file-browser__resizer"
+           />
 ```
 
 **File**: `frontend/packages/react/src/modules/file-browser/file-browser-state-types.ts` (modified, +2/-0)
 ```diff
-@@ -24,6 +24,8 @@ export interface FileBrowserApi {
-   identifyUri: (uri: string) => string;
-   dashboards: ReadonlyMap<string, FileBrowserDashboard>;
-   previewDashboard?: FileBrowserDashboard;
-+  previewIsCompile: boolean;
-+  previewHasDirectorySummary: boolean;
-   dashboardError: Error | null;
-   refreshWikiConflicts: () => void;
-   /** 按渲染顺序排列的可见行。Visible rows in render order. */
+@@ -36,6 +36,8 @@ export interface FileBrowserApi {
+   currentUri: string | null;
+   /** 刷新是否进行中。Whether a refresh is running. */
+   refreshing: boolean;
++  /** 树和当前预览共用的刷新次数。Refresh revision shared by the tree and active preview. */
++  refreshGeneration: number;
+   /** 预览字符数文案。Localized preview character count. */
+   previewFooter?: string;
+   /** 当前资源的更新时间（ISO 8601）。Update time of the current resource (ISO 8601). */
 ```
 
----
-
-### Incident Patch 2: `b8ec376b` (2026-11-20)
-**Commit Message**: fix(react): readable paths, reference cleanup and preview/guide feedback (#8084)
-
-* fix(react): improve copied paths and submission preview feedback
-
-* docs(react): anchor optional experience tour to the user root
-
-* fix(react): address URI and preview review feedback
-
-* fix(react): resolve follow-up reference and preview edge cases
-
-**File**: `frontend/.changeset/fix-uri-reference-feedback.md` (added, +11/-0)
+**File**: `frontend/packages/react/src/modules/file-browser/use-file-browser-acl.tsx` (modified, +11/-9)
 ```diff
-@@ -0,0 +1,11 @@
-+---
-+'@openviking/react': patch
-+---
-+
-+## en-US
-+
-+Copy readable Unicode Viking paths while preserving reserved escapes, clear submitted references immediately for new messages and after acceptance for in-flight follow-ups, and show preview icons as soon as the resource type is known.
-+
-+## zh-CN
-+
-+复制路径时显示可读文字并保留保留字符的转义。发送新消息时立即移除已提交的引用，流式追问经确认后再移除。预览在资源类型确认后立即展示图标。
-```
-
-**File**: `frontend/docs/docs/_demos/directory-tour-basic.tsx` (modified, +3/-3)
-```diff
-@@ -68,9 +68,9 @@ export default function DirectoryTourBasic() {
-   // the expanded path before resolving the DOM element. Never fetch inside Tour.
-   const locateTarget = useCallback(
-     (target: string, signal: AbortSignal) => {
--      const id = TARGETS[target];
--      if (signal.aborted || !id || (missing && target === 'userExperiences'))
--        return Promise.resolve(null);
-+      const id =
-+        missing && target === 'userExperiences' ? 'user' : TARGETS[target];
-+      if (signal.aborted || !id) return Promise.resolve(null);
-       flushSync(() =>
-         setExpanded(
-           (old) =>
-```
-
-**File**: `frontend/docs/docs/en/components/directory-tour.mdx` (modified, +4/-2)
-```diff
-@@ -23,13 +23,13 @@ import '@openviking/react/components/directory-tour/style.css';
- 
- ### Basic usage
- 
--Click "Explore OV directories" to start the six-step tour. To see the fallback at step 5, first check "Simulate missing experiences", then advance to that step and click "Next" to continue.
-+Click "Explore OV directories" to start the six-step tour. To see step 5 anchored to the current user’s root when experiences are missing, first check "Simulate missing experiences", then advance to that step.
- 
- ```tsx file="../../_demos/directory-tour-basic.tsx" preview
- 
- ```
- 
--The example locates rows with the `getRowElement` method of [FileTree](./file-tree). When the tour ends, `onComplete` returns the skipped steps in `skippedStepIds`.
-+The example locates rows with the `getRowElement` method of [FileTree](./file-tree). The host resolves `userExperiences` to the current user’s root row when its loaded directory listing confirms that experiences are absent. When the tour ends, `onComplete` returns the skipped steps in `skippedStepIds`.
- 
- ### Custom content
- 
-@@ -72,6 +72,8 @@ Size constraints in `className` and `style` keep their CSS semantics. The card a
- | locale           | Interface language, see [Internationalization](../guide/i18n)                                                                                                                                                                                                                      | `'zh-CN' \| 'en-US'`                                                            | Inherited, otherwise `'en-US'` |
- | className, style | Class name and style of the card root, for sizing and theme variables                                                                                                                                                                                                              | `string`, `CSSProperties`                                                       | -                              |
- 
-+For `userExperiences`, wait for the parent listing to finish. If it confirms the directory is missing and the current user’s root is known, return that root row. If the target exists but is unavailable, return `null`.
-+
- ### DirectoryTourStep
- 
- | Property     | Description                                                                                            | Type        | Default                                          |
-```
-
-**File**: `frontend/docs/docs/en/components/file-preview.mdx` (modified, +3/-3)
-```diff
-@@ -116,7 +116,7 @@ Fields shared by all three tabs. Content tabs have no header row, so `toolbar`,
- | disabled     | Disables the tab so it cannot be selected                                                                                      | `boolean`                    | `false`                                                   |
- | toolbar      | Hides built-in controls for this tab; it cannot turn on a control the top-level `toolbar` switched off                         | `FilePreviewToolbarOptions`  | -                                                         |
- | onOpenParent | File tabs: called after `operations.openParent` resolves, with the full URI of the clicked level; directory tabs never call it | `(uri: string) => void`      | -                                                         |
--| onCopyPath   | Called after the path is copied, with the copied path                                                                          | `(path: string) => void`     | -                                                         |
-+| onCopyPath   | Called after the path is copied, with the same formatted path written to the clipboard                                         | `(path: string) => void`     | -                                                         |
- | labels       | Overrides text for this tab, taking precedence over the top-level `labels`                                                     | `Partial<FilePreviewLabels>` | -                                                         |
- 
- ### FilePreviewFileTab
-@@ -212,7 +212,7 @@ When several of `content`, `file` and `url` are given, the first one with a valu
- | content   | Text content for Markdown, JSON, code and similar; only an empty string shows the empty-file state                                     | `string`       | -        |
- | file      | Binary file for PDF, Office documents, spreadsheets, images and similar                                                                | `File \| Blob` | -        |
- | url       | An accessible file URL; the component does no authentication                                                                           | `string`       | -        |
--| path      | Full path, shown as the breadcrumb and used as the text for copy path; without it the breadcrumb shows only the file name              | `string`       | -        |
-+| path      | Full path for the breadcrumb. Copy path formats Viking URIs. An omitted path shows only the file name.                                 | `string`       | -        |
- | fileType  | Explicit format hint, taking precedence over extension and MIME type                                                                   | `string`       | -        |
- | truncated | Only part of the body was read; when `true`, file tabs show a notice below the body                                                    | `boolean`      | `false`  |
- 
-@@ -442,7 +442,7 @@ Obtained through `ref`, to switch tabs and reach FileViewer imperatively.
- - Navigation: every ancestor is a button that passes its full URI (for example `viking://a/b`) to `operations.openParent`, not only the direct parent; the buttons are disabled without `operations.openParent`.
- - Absolute paths: the ancestors of `/a/b/c.md` keep the leading `/`, and relative paths stay as written.
- - Overflow: when the path does not fit, the levels after the first move into a "…" menu, and only if that is still too wide does the first level collapse too; the menu entries also call `operations.openParent`.
--- Copy path: it uses `navigator.clipboard`, which needs a secure context (HTTPS or localhost); a failure shows `labels.copyFailed` and does not call `onCopyPath`.
-+- Copy path: Viking URI paths decode readable text while retaining escapes for reserved characters. Copy uses `navigator.clipboard`, which needs a secure context (HTTPS or localhost); a failure shows `labels.copyFailed` and does not call `onCopyPath`.
- 
- ### Actions and editing
- 
-```
-
-**File**: `frontend/docs/docs/en/modules/console.mdx` (modified, +1/-1)
-```diff
-@@ -65,7 +65,7 @@ Select **Create Wiki** or **Schedule daily report** to fill an empty draft or sw
- 
- This example uses simulated services, including native capabilities and the current commercial contract. The native adapter implements `interrupt` and `steer` for stopping and in-flight follow-ups. The current commercial adapter omits both: sending is disabled during generation and stop is hidden. Both support another question after completion.
- 
--Click the toolbar `@` or type `@` in the draft to browse, search and reference files or directories. The built-in picker uses `/api/v1/fs/ls` and `/api/v1/search/glob` in the current request scope and loads only when opened. Pass `{ selected, onChange }` in `chatOptions.referenceSelection` to share the selection with a file tree while keeping the built-in picker. The host removes sent references, and Console clears the selection when the conversation resets. Set `conversation.references` to supply your own candidates and selection in place of the built-in picker. Custom chat services receive the chosen items in the `references` field.
-+Click the toolbar `@` or type `@` in the draft to browse, search and reference files or directories. The built-in picker uses `/api/v1/fs/ls` and `/api/v1/search/glob` in the current request scope and loads only when opened. Pass `{ selected, onChange }` in `chatOptions.referenceSelection` to share the selection with a file tree while keeping the built-in picker. Console removes submitted references immediately for a new message. For an in-flight follow-up, it waits for acceptance, preserves references added while waiting, and keeps the selection if the follow-up is rejected. A reference removed and selected again while awaiting acceptance counts as a new selection. Resetting the conversation clears the selection. Set `conversation.references` to supply your own candidates and selection in place of the built-in picker. Custom chat services receive the chosen items in the `references` field.
- 
- ### Bot activation
- 
-```
-
-**File**: `frontend/docs/docs/zh/components/directory-tour.mdx` (modified, +3/-1)
-```diff
-@@ -23,7 +23,7 @@ import '@openviking/react/components/directory-tour/style.css';
- 
- ### 基础用法
- 
--点击「了解 OV 目录树」开始六步引导。先勾选「模拟 experiences 不存在」，到第 5 步时可查看缺失提示，再点「下一步」继续。
-+点击「了解 OV 目录树」开始六步引导。先勾选「模拟 experiences 不存在」，到第 5 步时会改为高亮当前用户根目录，再点「下一步」继续。
- 
- ```tsx file="../../_demos/directory-tour-basic.tsx" preview
- 
-@@ -51,6 +51,8 @@ import '@openviking/react/components/directory-tour/style.css';
- 
- `className` 和 `style` 里的尺寸约束保持 CSS 原有语义，卡片始终限制在可视视口内，长内容在卡片内滚动，百分比高度相对于布局视口计算。
- 
-+定位 `userExperiences` 时，先等待父目录列表加载完成。确认经验目录缺失且能确认用户根目录归属时，返回当前用户根目录行。目标存在但不可用时，返回 `null`。
-+
- ## API
- 
- ### DirectoryTour
-```
-
-**File**: `frontend/docs/docs/zh/components/file-preview.mdx` (modified, +3/-3)
-```diff
-@@ -116,7 +116,7 @@ import '@openviking/react/components/file-preview/style.css';
- | disabled     | 禁用该页签，禁用后不能选中                                                                    | `boolean`                    | `false`                                        |
- | toolbar      | 隐藏该页签的内置入口，不能重新打开顶层已关闭的入口                                            | `FilePreviewToolbarOptions`  | -                                              |
- | onOpenParent | 文件页签的 `operations.openParent` 完成后触发，参数为被点击层级的完整 URI，目录页签不触发     | `(uri: string) => void`      | -                                              |
--| onCopyPath   | 路径复制成功后触发，参数为已复制的路径                                                        | `(path: string) => void`     | -                                              |
-+| onCopyPath   | 路径复制成功后触发，参数与写入剪贴板的格式化路径一致                                          | `(path: string) => void`     | -                                              |
- | labels       | 覆盖该页签的文案，优先于顶层 `labels`                                                         | `Partial<FilePreviewLabels>` | -                                              |
- 
- ### FilePreviewFileTab
-@@ -212,7 +212,7 @@ import '@openviking/react/components/file-preview/style.css';
- | content   | 文本内容，适用于 Markdown、JSON、代码等，只有空字符串显示「文件为空」                     | `string`       | -       |
- | file      | 二进制文件，适用于 PDF、Office 文档、表格和图片等                                         | `File \| Blob` | -       |
- | url       | 可访问的文件地址，组件不做鉴权                                                            | `string`       | -       |
--| path      | 完整路径，显示为面包屑并作为复制路径的内容，省略时面包屑只显示文件名                      | `string`       | -       |
-+| path      | 用于面包屑的完整路径。复制时会格式化 Viking URI。省略时面包屑只显示文件名。               | `string`       | -       |
- | fileType  | 显式的格式提示，优先于扩展名与 MIME                                                       | `string`       | -       |
- | truncated | 正文只读取了一部分，为 `true` 时在文件页签的正文下方提示                                  | `boolean`      | `false` |
- 
-@@ -442,7 +442,7 @@ import '@openviking/react/components/file-preview/style.css';
- - 导航：每个祖先层级都是按钮，点击时把该层级的完整 URI（如 `viking://a/b`）传给 `operations.openParent`，不限于直接父级；没有 `operations.openParent` 时按钮禁用。
- - 绝对路径：`/a/b/c.md` 的祖先保留开头的 `/`，相对路径保持原样。
- - 折叠：放不下时，先把首层之后的中间层级收进「…」菜单，仍放不下才连首层一起收起，菜单里的层级同样调用 `operations.openParent`。
--- 复制路径：使用 `navigator.clipboard`，需要安全上下文（HTTPS 或 localhost）；失败时显示 `labels.copyFailed`，不触发 `onCopyPath`。
-+- 复制 Viking URI 路径时会解码可读文字，并保留保留字符的转义。复制使用 `navigator.clipboard`，需要安全上下文（HTTPS 或 localhost）；失败时显示 `labels.copyFailed`，不触发 `onCopyPath`。
- 
- ### 操作与编辑
- 
-```
-
-**File**: `frontend/docs/docs/zh/modules/console.mdx` (modified, +1/-1)
-```diff
-@@ -65,7 +65,7 @@ const panel = loading ? (
- 
- 示例使用模拟服务，可切换原生能力与火山当前契约。原生适配器提供 `interrupt` 和 `steer`，支持停止及生成中追问；火山当前适配器省略这两个方法，生成中禁用发送且不显示停止。回答后的下一轮提问两者均支持。
- 
--点击底部的 `@`，或在输入框中键入 `@`，可浏览、搜索并引用文件和目录。内置选择器使用当前请求作用域下的 `/api/v1/fs/ls` 和 `/api/v1/search/glob`，打开时才加载。通过 `chatOptions.referenceSelection` 传入 `{ selected, onChange }`，可以让目录树与内置 `@` 选择器共享已选引用。发送后由宿主移除已发送的引用，重置会话时由 Console 清空已选引用。设置 `conversation.references` 可自行提供候选项和已选引用，替代内置选择器。自定义对话服务可通过发送参数中的 `references` 读取已选引用。
-+点击底部的 `@`，或在输入框中键入 `@`，可浏览、搜索并引用文件和目录。内置选择器使用当前请求作用域下的 `/api/v1/fs/ls` 和 `/api/v1/search/glob`，打开时才加载。通过 `chatOptions.referenceSelection` 传入 `{ selected, onChange }`，可以让目录树与内置 `@` 选择器共享已选引用。发送新消息时，Console 立即移除已提交的引用。流式追问经服务端确认后才移除本次提交的引用，保留等待期间新选的引用。追问被拒绝时保留选择。等待确认期间移除后重新选中的引用视为新选择。重置会话时清空选择。设置 `conversation.references` 可自行提供候选项和已选引用，替代内置选择器。自定义对话服务可通过发送参数中的 `references` 读取已选引用。
- 
- ### 启用 VikingBot
- 
-```
-
----
-
-### Incident Patch 3: `9fd2e02e` (2026-11-20)
-**Commit Message**: fix(compile): preserve baseline when output is unchanged (#8109)
-
-Co-authored-by: fujiajie.168 <[REDACTED_EMAIL]>
-
-**File**: `docs/en/api/23-agent-runtime.md` (modified, +1/-1)
-```diff
-@@ -215,7 +215,7 @@ Configurations are stored in account and user directories. Public APIs locate co
- 
- State contains exactly `from`, `to`, `skill`, `instruction`, `args`, `auto_update`, `update_schedule`, `task_first_create_time`, `last_run_time`, `last_triggered_slot`, `next_triggered_slot`, `progress`, `updated_by`, and `execution_context`. `progress` stores the successful incremental baseline, including the successful request's `model_name` (an empty string when unspecified); `execution_context` stores internal execution context and encrypted arguments.
- 
--Successful Compile finalization publishes output snapshots and advances the incremental baseline. Rollback schedules index rebuilding for restored and deleted paths without waiting for the rebuild to finish.
-+Successful Compile finalization publishes output snapshots. The incremental baseline advances when the target diff reports at least one file added, modified, or deleted. Rollback schedules index rebuilding for restored and deleted paths without waiting for the rebuild to finish.
- 
- ### Check Compile availability
- 
-```
-
-**File**: `docs/zh/api/23-agent-runtime.md` (modified, +1/-1)
-```diff
-@@ -215,7 +215,7 @@ Compile 业务文件仅有：
- 
- state 的精确字段为 `from`、`to`、`skill`、`instruction`、`args`、`auto_update`、`update_schedule`、`task_first_create_time`、`last_run_time`、`last_triggered_slot`、`next_triggered_slot`、`progress`、`updated_by`、`execution_context`。`progress` 保存成功增量基线，其中 `model_name` 记录成功执行请求的模型名，未指定时为空字符串；`execution_context` 保存内部执行上下文和加密参数。
- 
--Compile 成功收尾时发布产物快照并推进增量基线。回滚后为恢复和删除的路径调度索引重建，不等待重建完成。
-+Compile 成功收尾时发布产物快照。目标目录的统计中只要有文件新增、修改或删除，就推进增量基线。回滚后为恢复和删除的路径调度索引重建，不等待重建完成。
- 
- ### 检查 Compile 可用性
- 
-```
-
-**File**: `openviking/service/compile_targets.py` (modified, +3/-1)
-```diff
-@@ -1218,10 +1218,12 @@ async def _finish(
-         )
- 
-     async def _advance_progress(self, task: Any, run: dict) -> None:
--        """Advance only the matching configuration's unchanged successful predecessor."""
-+        """Publish a successful run's baseline when target stats show changes and the predecessor still matches."""
-         compile_name = self._compile_name(task)
-         if not compile_name or run["status"] != "completed" or not run["meta"]["start_snapshot"]:
-             return
-+        if not any((run.get("result") or {}).get(key, 0) for key in _RESULT_KEYS.values()):
-+            return
-         from openviking.service.task_tracker import get_task_tracker
- 
-         async with self._store.edit(
-```
-
-**File**: `tests/service/test_compile_configuration_lifecycle.py` (modified, +19/-9)
-```diff
-@@ -465,8 +465,9 @@ def __getattr__(self, name):
-     setup.finalize.assert_not_awaited()
- 
- 
--async def test_manual_and_scheduled_runs_share_progress_and_ignore_stale_completion(
--    setup, registered
-+@pytest.mark.parametrize("source_changed", [False, True])
-+async def test_scheduled_run_without_output_changes_preserves_manual_baseline(
-+    setup, registered, source_changed
- ):
-     record, compile_name, first = registered
-     setup.files.write = AsyncMock(wraps=setup.files.write)
-@@ -476,30 +477,36 @@ async def test_manual_and_scheduled_runs_share_progress_and_ignore_stale_complet
-         first.meta["request"], "acme", first.task_id, "alice"
-     )
-     assert first_plan["execution"]["mode"] == "full"
-+    setup.fs.output_changes = [{"uri": TARGET + "/page.md", "change_type": "added"}]
-     await setup.lifecycle.on_finish(first, ExternalTaskSnapshot(status="completed"))
-     paths = [call.args[0] for call in setup.files.write.await_args_list]
-     assert sum(path.endswith("/state.json") for path in paths) == 2
-     state = await setup.store.get("acme", "alice", compile_name)
-     assert state["progress"]["source_commit"] == first_plan["head"]
-+    setup.fs.output_changes = []
-+    if source_changed:
-+        setup.fs.source_changes = [{"uri": SOURCE + "/source.md", "change_type": "modified"}]
-     second = make_task(
-         setup, compile_name=compile_name, record=state, created_at=200, trigger="scheduled"
-     )
-     await setup.lifecycle.record_queued(second)
-     outcome = await setup.lifecycle.on_start(second)
--    assert isinstance(outcome, ExternalTaskSnapshot) and outcome.status == "completed"
-+    if source_changed:
-+        assert outcome == "proceed"
-+        outcome = ExternalTaskSnapshot(status="completed")
-+    else:
-+        assert isinstance(outcome, ExternalTaskSnapshot) and outcome.status == "completed"
-     await setup.lifecycle.on_finish(second, outcome)
-     run = await setup.store.get_run("acme", "alice", compile_name, second.task_id)
-     await CompileLifecycle(setup.store, setup.fs).on_finish(
--        first, ExternalTaskSnapshot(status="completed")
-+        second, ExternalTaskSnapshot(status="completed")
-     )
-     setup.find.assert_not_awaited()
-     assert run["meta"]["trigger"] == "scheduled"
-     assert run["meta"]["base_snapshot"] == first_plan["head"]
--    assert run["meta"]["finish_snapshot"] == run["meta"]["start_snapshot"]
--    assert len(setup.fs.commits) == 3
--    assert (await setup.store.get("acme", "alice", compile_name))["progress"][
--        "source_commit"
--    ] == run["meta"]["start_snapshot"]
-+    assert (run["meta"]["finish_snapshot"] == run["meta"]["start_snapshot"]) != source_changed
-+    assert run["result"] == {"created": 0, "updated": 0, "deleted": 0}
-+    assert (await setup.store.get("acme", "alice", compile_name))["progress"] == state["progress"]
- 
- 
- async def test_changes_new_roots_and_updated_configuration_do_not_rewrite_frozen_inputs(setup):
-@@ -533,6 +540,7 @@ async def test_changes_new_roots_and_updated_configuration_do_not_rewrite_frozen
-         await resumed.runtime_changes(task.meta["request"], "acme", task.task_id, "alice") == plan
-     )
-     assert len(setup.fs.commits) == 1
-+    setup.fs.output_changes = [{"uri": TARGET + "/page.md", "change_type": "added"}]
-     await resumed.on_finish(stale_task, ExternalTaskSnapshot(status="completed"))
-     assert (await setup.store.get("acme", "alice", compile_name))["progress"] == {}
-     run = await setup.store.get_run("acme", "alice", compile_name, task.task_id)
-@@ -862,6 +870,7 @@ async def test_prepared_finalization_reads_state_only_for_progress(setup, regist
-     """A durable preparation checkpoint avoids acceptance reads even with stale worker auth."""
-     _, _, task = registered
-     await setup.lifecycle.on_start(task)
-+    setup.fs.output_changes = [{"uri": TARGET + "/page.md", "change_type": "added"}]
-     task.auth = {}
-     reads = setup.files.read = AsyncMock(wraps=setup.files.read)
- 
-@@ -879,6 +888,7 @@ async def test_progress_publication_recovers_after_state_write_failure(
-     """A durable finished run retries its successful baseline after a state write fails."""
-     _, compile_name, task = registered
-     await setup.lifecycle.on_start(task)
-+    setup.fs.output_changes = [{"uri": TARGET + "/page.md", "change_type": "added"}]
-     write = setup.files.write
-     fail = True
- 
+@@ -28,6 +28,7 @@ export function useFileBrowserAcl({
+   locale,
+   labels,
+   requestOptions,
++  refreshGeneration: revision,
+   refresh,
+ }: {
+   uri: string | null;
+@@ -36,6 +37,7 @@ export function useFileBrowserAcl({
+   locale: Locale;
+   labels?: FileBrowserAclLabels;
+   requestOptions?: OvRequestOptions;
++  refreshGeneration: number;
+   refresh: () => Promise<void>;
+ }) {
+   const client = useOvClient();
+@@ -45,7 +47,7 @@ export function useFileBrowserAcl({
+   const signal = requestOptions?.signal ?? inheritedSignal;
+   const options = typeof acl === 'object' ? acl : undefined;
+   const key = scopeKeyOf(client, requestOptions, uri ?? undefined);
+-  const [permission, setPermission] = useState<{
++  const [access, setPermission] = useState<{
+     key: string;
+     level?: FileBrowserAclLevel;
+     error?: boolean;
+@@ -112,9 +114,10 @@ export function useFileBrowserAcl({
+     },
+     [aclEnabled, loadPermission, readOnly],
+   );
+-  // Sync the active resource with the permission service, including navigation
+-  // and account changes that do not originate in a click. Abort on scope change
+-  // or unmount; aborted responses never publish a permission for the next scope.
++  // Sync the active resource with the permission service on navigation, account
++  // changes and explicit refresh, even when the selected URI stays the same.
++  // The server owns grants, so rendering cannot derive them. Abort on refresh,
++  // scope change or unmount so an older response cannot publish stale access.
+   useEffect(() => {
+     if (!enabled || !uri) return;
+     const controller = new AbortController();
+@@ -129,15 +132,15 @@ export function useFileBrowserAcl({
+       },
+     );
+     return () => controller.abort();
+-  }, [enabled, key, uri, signal, generation, loadPermission]);
+-  const level =
+-    enabled && permission?.key === key ? permission.level : undefined;
++  }, [enabled, key, uri, signal, generation, revision, loadPermission]);
++  const level = enabled && access?.key === key ? access.level : undefined;
+   const text = aclLabels(locale, labels);
+   // Pending saves may finish after the host changes its locale or labels.
+   const currentText = useRef(text);
+   currentText.current = text;
+   const openManager = useAclManager({
+     key,
++    revision,
+     uri,
+     loadPermission,
+     onLevel: (current) => {
+@@ -158,7 +161,7 @@ export function useFileBrowserAcl({
+     canDelete: !enabled || level === 'manage',
+     canEdit: !enabled || level === 'write' || level === 'manage',
+     titleExtra:
+-      enabled && permission?.key === key && permission.error ? (
++      enabled && access?.key === key && access.error ? (
+         <AclPermissionError
+           text={text}
+           onRetry={() => setGeneration((value) => value + 1)}
+@@ -198,7 +201,6 @@ export function useFileBrowserAcl({
+                 options?.onChange?.(report);
+               } catch {
+                 // A host notification cannot undo a successful server mutation.
+-                return;
+               }
+             }}
+           />
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8114** (2026-11-20): fix(react): support host-resolved Console startup (@yufeng201)
-- **PR #8109** (2026-11-20): fix(compile): preserve baseline when output is unchanged (@FuJiaJie123)
-- **PR #8101** (2026-11-20): fix(react): align directory tour presets and themed artwork (@leowld)
-- **PR #8100** (2026-11-20): fix(react): preserve raw FileBrowser tree names (@yufeng201)
-- **PR #8099** (2026-11-20): fix(react): show compact command names in ov help (@yufeng201)
-- **PR #8098** (2026-11-20): fix(react): correct search scopes and VikingBot tool colors (@leowld)
+- **PR #8166** (2026-11-21): fix(compile): persist cancellation of queued runs (@FuJiaJie123)
+- **PR #8156** (2026-11-21): fix(react): refresh preview permissions with file tree (@leowld)
+- **PR #8152** (2026-11-21): fix(react): distinguish compile and experience dashboard colors (@leowld)
+- **PR #8146** (2026-11-21): fix(storage): backport effective file access metadata to v0.5.5 (@leowld)
+- **PR #8141** (2026-11-21): fix(react): only offer ovpack export for directories (@leowld)
+- **PR #8140** (2026-11-21): fix(react): keep ACL search placeholder stable (@leowld)
 
 ---
 
@@ -2152,38 +1955,36 @@ Co-authored-by: fujiajie.168 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. react): add AI preview labels and fix agent drawer layout
+## X. crypto): reject malformed local root key files
 
 **RULE**:
-When implementing operations in `frontend/.changeset/preview-ai-generated.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `openviking/crypto/providers.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cca553af`: react): add AI preview labels and fix agent drawer layout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a0c00a4f`: crypto): reject malformed local root key files. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/.changeset/preview-ai-generated.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `openviking/crypto/providers.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
----
-'@openviking/react': patch
----
-
-## en-US
-
-Show an AI-generated label beside file preview metadata for summaries, Wiki Compile outputs with file metadata, memory documents, identity.md and soul.md.
-
-## zh-CN
-
-在摘要、带文件元数据的 Wiki 编译产物、记忆文档及 identity.md、soul.md 的预览底部元信息旁展示 AI 生成标识。
+                root_key = bytes.fromhex(hex_key)
+            # A truncated or hand-edited key file must not silently become a
+            # shorter root key: the account keys derived from it would encrypt
+            # new files under a key the real 32-byte root key cannot open.
+            if len(root_key) != 32:
+                raise ConfigError(
+                    f"Invalid root key in {self.key_file}: expected 32 bytes, got {len(root_key)}"
+                )
+            return root_key
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+                return bytes.fromhex(hex_key)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cca553af` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a0c00a4f` are properly handled with clean fallback behavior.

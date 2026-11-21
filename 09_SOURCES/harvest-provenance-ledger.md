@@ -11916,3 +11916,6 @@ Every entry in this ledger must capture:
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `bf712cf6` | Multi-dimensional audit evidence | 2026-11-21T19:44:56.549Z |
 | `learn-huggingface-openbmb-minicpm-ocr-1-0` | `https://huggingface.co/openbmb/MiniCPM-OCR-1.0` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-21T19:47:26.754Z |
 | `learn-dom-f-e350ead5` | `project://hf-openbmb-minicpm-ocr-1.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openbmb-minicpm-ocr-1.0-learnings.md` | 2026-11-21T19:47:52.027Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-21T20:10:41.203Z |
+| `learn-github-o2sh-onefetch` | `https://github.com/o2sh/onefetch` | `8b63584a` | Multi-dimensional audit evidence | 2026-11-21T20:10:42.892Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `1efb03a3` | Multi-dimensional audit evidence | 2026-11-21T20:10:56.164Z |

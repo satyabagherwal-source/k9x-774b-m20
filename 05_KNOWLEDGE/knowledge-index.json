@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T19:47:54.442Z",
+  "last_updated": "2026-11-21T20:11:02.110Z",
   "total_verified_learnings": 9062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23236,
+  "total_items": 23242,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113541,10 +113541,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "repository": "volcengine/OpenViking",
-      "source_version": "ee71998f",
-      "content_hash": "8f26b4442ea3870a9505ee6e978b77e3819425ded390cc43c2609031455d00f2",
+      "source_version": "1efb03a3",
+      "content_hash": "a211dbc144271af518f952b7e439eb2d9482d500132d33638a11705edb8e9368",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T14:52:49.560Z"
+      "persisted_at": "2026-11-21T20:10:56.643Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking",
@@ -113553,10 +113553,10 @@
       "relative_path": "08_VERIFICATION/volcengine-openviking-verification-protocol-empirical-defect-shield-for-volcengi.md",
       "title": "Verification Protocol: Empirical Defect Shield for volcengine/OpenViking",
       "repository": "volcengine/OpenViking",
-      "source_version": "ee71998f",
-      "content_hash": "b0e7cf4ea0a38592d19e5c9c173fc1b3ca2198dfd03e708301fa5d8197ca38f9",
+      "source_version": "1efb03a3",
+      "content_hash": "4f3489b79fcc3f882b15447b95c8acc4b0dbcac1616e6b4c88a350807d3f70f6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T14:52:49.750Z"
+      "persisted_at": "2026-11-21T20:10:56.853Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar",
@@ -113602,9 +113602,9 @@
       "title": "Technical Construction Intelligence: volcengine-openviking-learnings Core Invariants",
       "repository": "volcengine-openviking-learnings",
       "source_version": "HEAD",
-      "content_hash": "2d651e041705a6d8080ff9a210b89ac81d09d0d108013598b9201fa5a30760f6",
+      "content_hash": "6929cefa404834eb4d8df89e15c9e742597d10f7feebb3ef018d7426cd18920a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T14:52:57.372Z"
+      "persisted_at": "2026-11-21T20:11:01.893Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking-learning",
@@ -113614,9 +113614,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for volcengine-openviking-learnings",
       "repository": "volcengine-openviking-learnings",
       "source_version": "HEAD",
-      "content_hash": "18caabc362510ee6f430291a5a1f46c6a6260a81ee1e6fc34b41436c86c5d791",
+      "content_hash": "9b492f28b9a1bcf0e6b50bc92459fc135752b3c6a8de8b0431c48c0ac2356edc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T14:52:57.558Z"
+      "persisted_at": "2026-11-21T20:11:02.110Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants",
@@ -237024,7 +237024,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
       "source_version": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
-      "content_hash": "7a965ea26efbdc3160c463b2d3317f982c090e5943ae3c990206a34256b489de",
+      "content_hash": "b7fcb1171ef21ea461e60acdb36b11c983a0474c5ac7ae6e97e0c8cd946e4aff",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md",
       "promoted_rules": [],
@@ -237033,7 +237033,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T20:09:32.488Z",
+      "verified_at": "2026-11-21T20:10:40.928Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237050,9 +237050,9 @@
       "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B Core Invariants",
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
       "source_version": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
-      "content_hash": "bbb70162b876801580175b74d8f31079ddecdf66854c801f15ba4e7a1a55a343",
+      "content_hash": "2d2105bc685f2cd0d9deb1c4e9b911788e860d80785ce5f5d2c1606eda750551",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T20:09:32.807Z"
+      "persisted_at": "2026-11-21T20:10:41.466Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -237062,9 +237062,9 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings Core Invariants",
       "repository": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings",
       "source_version": "HEAD",
-      "content_hash": "1b3e6ba15ffcf40a68a823d00adb798b0709516baab131ac161b342cb5f0e207",
+      "content_hash": "be41fc5608697a85a6dde275f29fc526b635f86012ab883d309eb4de1c668036",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T20:09:44.477Z"
+      "persisted_at": "2026-11-21T20:11:01.102Z"
     },
     "learn-github-sqldelight-sqldelight": {
       "learning_id": "learn-github-sqldelight-sqldelight",
@@ -240561,8 +240561,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "ee71998f",
-      "content_hash": "d5709c374661e38847f53506bcd1d7c7774dbbd52a8cb4f78f1b0ec85f93e276",
+      "source_version": "1efb03a3",
+      "content_hash": "cc047c904745f51d1536fc057b13c4b5aeb9932c16998d2f74db04acba808c9a",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -240585,6 +240585,11 @@
           "number": 9358,
           "title": "File System URI Segment Idempotent Decoding Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9831,
+          "title": "reject malformed local root key files",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -240592,7 +240597,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T14:52:48.773Z",
+      "verified_at": "2026-11-21T20:10:55.911Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -286487,14 +286492,19 @@
       "slug": "o2sh-onefetch",
       "platform": "github",
       "source_url": "https://github.com/o2sh/onefetch",
-      "source_version": "74760655",
-      "content_hash": "5c46c91ad827d9c7484b4ec6d86abbb04dc7d83df3661c09d8fed95fd6557727",
+      "source_version": "8b63584a",
+      "content_hash": "5810b7d9a592ebb07399455742f812f718d862b672f9419bf8494713fcd177d2",
       "dossier_path": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
       "promoted_rules": [
         {
           "number": 9255,
           "title": "leave ignored authors out of creation and last change dates",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9830,
+          "title": "show the language build step in the architecture diagram",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -286503,7 +286513,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T04:37:47.834Z",
+      "verified_at": "2026-11-21T20:10:42.628Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -286519,10 +286529,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-o2sh-onefetch-design-intelligence-o2sh-onefetch-core-invariants.md",
       "title": "Design Intelligence: o2sh/onefetch Core Invariants",
       "repository": "o2sh/onefetch",
-      "source_version": "74760655",
-      "content_hash": "1a37757b1f3573356aa6f460ae4ed5de0252f02afd56d6cdd1307d24510e476b",
+      "source_version": "8b63584a",
+      "content_hash": "081f3804d4214143bfd5000fb990be5ba4c7a3a1f611db93047ce0e0047fa704",
       "domain_letter": "F",
-      "persisted_at": "2026-11-20T04:37:48.249Z"
+      "persisted_at": "2026-11-21T20:10:43.367Z"
     },
     "rule-9158": {
       "learning_id": "rule-9158",
@@ -286558,9 +286568,9 @@
       "title": "Design Intelligence: o2sh-onefetch-learnings Core Invariants",
       "repository": "o2sh-onefetch-learnings",
       "source_version": "HEAD",
-      "content_hash": "697b17a836fdce02006b788b22b895378a4a4ee22d27a9dd894abd37ca718ec8",
+      "content_hash": "ed54f35b837c3f15f4413316f9e0f66fed3a8b79ae970b1c2841783d8b5c9a2f",
       "domain_letter": "F",
-      "persisted_at": "2026-11-20T04:38:24.821Z"
+      "persisted_at": "2026-11-21T20:11:00.410Z"
     },
     "rule-9159": {
       "learning_id": "rule-9159",
@@ -290932,10 +290942,10 @@
       "relative_path": "08_VERIFICATION/o2sh-onefetch-verification-protocol-empirical-defect-shield-for-o2sh-onefetch.md",
       "title": "Verification Protocol: Empirical Defect Shield for o2sh/onefetch",
       "repository": "o2sh/onefetch",
-      "source_version": "3054de77",
-      "content_hash": "71fd6de96d424ec28f082177d86ab957c126429edc02b9d82e57238690cd9131",
+      "source_version": "8b63584a",
+      "content_hash": "1637f349f22e14adb66ea46dd2d63fa00802aec0bfd9ad3a670f737be423b0cb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T16:22:17.694Z"
+      "persisted_at": "2026-11-21T20:10:43.584Z"
     },
     "learn-github-rustcrypto-hashes": {
       "learning_id": "learn-github-rustcrypto-hashes",
@@ -291028,9 +291038,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for o2sh-onefetch-learnings",
       "repository": "o2sh-onefetch-learnings",
       "source_version": "HEAD",
-      "content_hash": "a105c80bf758487da202bca832d5e9c34c8b94ca48ef74fde267aff1e9ae8385",
+      "content_hash": "862f06bc9762b3e5d62835772c0a26726a85c2e0940f71a4e1145b80284a4bd8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T16:22:31.799Z"
+      "persisted_at": "2026-11-21T20:11:00.635Z"
     },
     "candidate_directive-sha2-refactor-riscv_zknh-backends": {
       "item_id": "candidate_directive-sha2-refactor-riscv_zknh-backends",
@@ -315825,6 +315835,82 @@
       "content_hash": "addb05129403d43226f55f619de6cb0333201464c210a78e0b4d82dcfcf08b1b",
       "domain_letter": "I",
       "persisted_at": "2026-11-21T19:47:53.267Z"
+    },
+    "rule-9830": {
+      "learning_id": "rule-9830",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9830,
+      "title": "show the language build step in the architecture diagram",
+      "source_url": "https://github.com/o2sh/onefetch",
+      "source_version": "8b63584a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T20:10:42.628Z"
+    },
+    "candidate_directive-show-the-language-build-step-in-the-architecture-diagram": {
+      "item_id": "candidate_directive-show-the-language-build-step-in-the-architecture-diagram",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ERTG-show-the-language-build-step-in-the-architecture-diagram.md",
+      "title": "show the language build step in the architecture diagram",
+      "repository": "o2sh/onefetch",
+      "source_version": "8b63584a",
+      "content_hash": "ffaef45be1d53db355ed3ba755fe2b283c56f42d9eff27ec3c153279ce5bcce5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T20:10:43.158Z"
+    },
+    "rule-9831": {
+      "learning_id": "rule-9831",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9831,
+      "title": "reject malformed local root key files",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "1efb03a3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T20:10:55.911Z"
+    },
+    "candidate_directive-reject-malformed-local-root-key-files": {
+      "item_id": "candidate_directive-reject-malformed-local-root-key-files",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F229-reject-malformed-local-root-key-files.md",
+      "title": "reject malformed local root key files",
+      "repository": "volcengine/OpenViking",
+      "source_version": "1efb03a3",
+      "content_hash": "678e2686752502290fde8e7742b626c687e307828f8ef9a8a3e14bdb3de9c0c5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T20:10:56.439Z"
+    },
+    "candidate_directive-docs-show-the-language-build-step-in-the-architecture-diagram": {
+      "item_id": "candidate_directive-docs-show-the-language-build-step-in-the-architecture-diagram",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F4YQ-docs-show-the-language-build-step-in-the-architecture-diagram.md",
+      "title": "docs: show the language build step in the architecture diagram",
+      "repository": "o2sh-onefetch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d4ca81183bb5009c873e2fba771d1b370f15fea69f6df533656ed4d503444fc7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T20:11:00.196Z"
+    },
+    "candidate_directive-crypto-reject-malformed-local-root-key-files": {
+      "item_id": "candidate_directive-crypto-reject-malformed-local-root-key-files",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F643-crypto-reject-malformed-local-root-key-files.md",
+      "title": "crypto): reject malformed local root key files",
+      "repository": "volcengine-openviking-learnings",
+      "source_version": "HEAD",
+      "content_hash": "50ccd1dd163d9c204ab1816841bb261e4495755468571049db4676f6f95e44cf",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T20:11:01.689Z"
     }
   },
   "ai-builder-brain": {
