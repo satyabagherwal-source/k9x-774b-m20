@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-21T21:32:20.974Z",
+  "updated_at": "2026-11-21T21:40:59.685Z",
   "statistics": {
-    "total_nodes": 453,
-    "total_edges": 194,
+    "total_nodes": 454,
+    "total_edges": 196,
     "domain_distribution": {
       "D": 280,
       "M": 1,
-      "H": 75,
+      "H": 76,
       "J": 22,
       "K": 28,
       "L": 8,
@@ -20,7 +20,7 @@
       "I": 8
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 191,
+      "CONSTRAINED_BY_ARCHITECTURE": 193,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 1
     }
@@ -10122,6 +10122,30 @@
       ],
       "created_at": "2026-11-21T21:32:20.974Z",
       "updated_at": "2026-11-21T21:32:20.974Z"
+    },
+    "DOM-H-2D29E63D": {
+      "id": "DOM-H-2D29E63D",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Empirical Invariant Guard in react-i18next.js",
+      "summary": "Prevents defects observed in production commit `5db47334`: build. Unvalidated execution paths cause runtime exceptions, race conditions, and -> When implementing operations in `react-i18next.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/",
+      "confidence": 0.62,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://i18next-react-i18next/i18next-react-i18next-learnings.md",
+        "source_version": "def28df2",
+        "observed_at": "2026-11-21T21:40:18.353Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (i18next-react-i18next)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "G",
+        "D"
+      ],
+      "created_at": "2026-11-21T21:40:59.685Z",
+      "updated_at": "2026-11-21T21:40:59.685Z"
     }
   },
   "edges": [
@@ -12064,6 +12088,26 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-H-713ADB2E [H] with Domain G",
       "created_at": "2026-11-21T21:32:20.974Z"
+    },
+    {
+      "id": "EDGE-D3EB45440261",
+      "sourceId": "DOM-H-2D29E63D",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-2D29E63D [H] with Domain G",
+      "created_at": "2026-11-21T21:40:59.685Z"
+    },
+    {
+      "id": "EDGE-FC57295170BE",
+      "sourceId": "DOM-H-2D29E63D",
+      "targetId": "NODE-D-domain-bridge-d",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-2D29E63D [H] with Domain D",
+      "created_at": "2026-11-21T21:40:59.685Z"
     }
   ]
 }

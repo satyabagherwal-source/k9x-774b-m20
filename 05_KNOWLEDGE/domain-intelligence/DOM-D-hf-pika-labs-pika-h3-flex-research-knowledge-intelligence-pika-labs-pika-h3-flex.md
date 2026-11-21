@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
   "source_version": "hf-pika-labs-pika-h3-flex",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T12:48:13.124Z",
+  "timestamp": "2026-11-21T21:40:12.721Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-pika-labs-pika-h3-flex",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Pika-Labs/Pika-H3-Flex](https://huggingface.co/Pika-Labs/Pika-H3-Flex) (Revision: `hf-pika-la`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T12:48:13.124Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T21:40:12.721Z`  
 > **Learning ID**: `learn-huggingface-pika-labs-pika-h3-flex`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Pika-Labs/Pika-H3-Flex](https://huggingface.co/Pika-Labs/Pika-H3-Flex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T12:48:04.580Z  
+> **Harvest Timestamp**: 2026-11-21T21:40:11.900Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-to-video
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 158388 downloads | 714 likes
+- **Stars / Engagement**: 181177 downloads | 691 likes
 
 ---
 

@@ -11938,3 +11938,8 @@ Every entry in this ledger must capture:
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `5da8dc88` | Multi-dimensional audit evidence | 2026-11-21T21:31:42.792Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `6f4d08b6` | Multi-dimensional audit evidence | 2026-11-21T21:31:48.441Z |
 | `learn-dom-h-713adb2e` | `project://siderolabs-talos` | `5da8dc88` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md` | 2026-11-21T21:32:20.977Z |
+| `learn-huggingface-pika-labs-pika-h3-flex` | `https://huggingface.co/Pika-Labs/Pika-H3-Flex` | `hf-pika-la` | Multi-dimensional audit evidence | 2026-11-21T21:40:12.527Z |
+| `learn-github-i18next-react-i18next` | `https://github.com/i18next/react-i18next` | `def28df2` | Multi-dimensional audit evidence | 2026-11-21T21:40:19.374Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `dd75b495` | Multi-dimensional audit evidence | 2026-11-21T21:40:22.606Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `8bcbb077` | Multi-dimensional audit evidence | 2026-11-21T21:40:28.741Z |
+| `learn-dom-h-2d29e63d` | `project://i18next-react-i18next` | `def28df2` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md` | 2026-11-21T21:40:59.688Z |

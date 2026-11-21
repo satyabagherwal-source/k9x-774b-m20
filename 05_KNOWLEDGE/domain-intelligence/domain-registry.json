@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T21:32:22.737Z",
-  "total_records": 2281,
+  "last_updated": "2026-11-21T21:41:01.341Z",
+  "total_records": 2282,
   "domains": {
     "A": {
       "total": 17,
@@ -1450,7 +1450,7 @@
       ]
     },
     "H": {
-      "total": 542,
+      "total": 543,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1993,7 +1993,8 @@
         "domain_intelligence-technical-construction-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-co",
         "DOM-H-6F3CCE20",
         "domain_intelligence-technical-construction-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
-        "DOM-H-713ADB2E"
+        "DOM-H-713ADB2E",
+        "DOM-H-2D29E63D"
       ]
     },
     "I": {
@@ -9308,8 +9309,8 @@
       "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
       "repository": "milvus-io/milvus",
-      "content_hash": "d7ffd4e3741e2ff89dadc1fd3740e5c2a6b7ee2f4060e71885105564379fe9a9",
-      "created_at": "2026-11-18T10:08:54.227Z"
+      "content_hash": "ee087994459fd98535dd7dad2880f46c043c3e112ea4a05c3af41086d00c7be9",
+      "created_at": "2026-11-21T21:40:29.106Z"
     },
     "DOM-D-E7346FF5": {
       "record_id": "DOM-D-E7346FF5",
@@ -12977,8 +12978,8 @@
       "title": "Technical Construction Intelligence: i18next/react-i18next Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-i18next-react-i18next-technical-construction-intelligence-i18next-react-i18next-.md",
       "repository": "i18next/react-i18next",
-      "content_hash": "2c411554cd45df74dfba6ebf0957f626fac462b4b36645f84c0de8a713025c6f",
-      "created_at": "2026-11-17T16:30:55.958Z"
+      "content_hash": "7d5515073cb98758d8d1bbaf87e79abfc45549ccd4dde2354cc4032120dc57db",
+      "created_at": "2026-11-21T21:40:19.746Z"
     },
     "domain_intelligence-technical-construction-intelligence-siderolabs-talos-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-siderolabs-talos-core-invariants",
@@ -13099,8 +13100,8 @@
       "title": "Technical Construction Intelligence: i18next-react-i18next-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-i18next-react-i18next-learnings-technical-construction-intelligence-i18next-reac.md",
       "repository": "i18next-react-i18next-learnings",
-      "content_hash": "0d603197d957ad0cbdd58aefc64dc0f52d8f6ac12d298834e4277b5507845c00",
-      "created_at": "2026-11-17T16:31:09.639Z"
+      "content_hash": "0d742ce0f97f4410e6e8a47c75fa2dd629d7e128806431491cd745c5e0b3d4d8",
+      "created_at": "2026-11-21T21:41:00.286Z"
     },
     "domain_intelligence-technical-construction-intelligence-siderolabs-talos-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-siderolabs-talos-learnings-core-invariants",
@@ -13126,8 +13127,8 @@
       "title": "Architecture Intelligence: moby/buildkit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-architecture-intelligence-moby-buildkit-core-invariants.md",
       "repository": "moby/buildkit",
-      "content_hash": "f9c1ec45ca1ae76d9dab6cde8dae95a996172d154ab6cfa4068f1de5669f4727",
-      "created_at": "2026-11-20T17:53:52.931Z"
+      "content_hash": "be6e369d779734e1a74be4c83a7029e073c8d31ffb39cda27cbb889960602cda",
+      "created_at": "2026-11-21T21:40:22.979Z"
     },
     "DOM-D-F2B017DF": {
       "record_id": "DOM-D-F2B017DF",
@@ -13186,8 +13187,8 @@
       "title": "Architecture Intelligence: moby-buildkit-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-learnings-architecture-intelligence-moby-buildkit-learnings-core-i.md",
       "repository": "moby-buildkit-learnings",
-      "content_hash": "8c1c35497a4c775a9676c3a709555c658975b74253ae92eb12c9b031a059e8a2",
-      "created_at": "2026-11-20T17:58:51.552Z"
+      "content_hash": "473919e8ed71266385b48aca3ee1ca1a4dcc42e87af58f7b83b5d0e530d14d68",
+      "created_at": "2026-11-21T21:41:01.341Z"
     },
     "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants",
@@ -24025,8 +24026,8 @@
       "title": "Research & Knowledge Intelligence: Pika-Labs/Pika-H3-Flex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pika-labs-pika-h3-flex-research-knowledge-intelligence-pika-labs-pika-h3-flex.md",
       "repository": "Pika-Labs/Pika-H3-Flex",
-      "content_hash": "827db7a42afa30c11c507904b2867868f70dd35a3f0094940bdb3458f73331d7",
-      "created_at": "2026-11-16T12:48:13.124Z"
+      "content_hash": "1ffff4c7aea2068ec32053d65c39c810bd4c025e12f1576325626b19f5120d90",
+      "created_at": "2026-11-21T21:40:12.721Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria",
@@ -24034,8 +24035,8 @@
       "title": "Research & Knowledge Intelligence: hf-pika-labs-pika-h3-flex-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pika-labs-pika-h3-flex-learnings-research-knowledge-intelligence-hf-pika-labs.md",
       "repository": "hf-pika-labs-pika-h3-flex-learnings",
-      "content_hash": "de05d8604fc79ce59870241d89074810f58672d06d82aca62bb1653a04e4ca5c",
-      "created_at": "2026-11-16T12:53:13.605Z"
+      "content_hash": "57ec8d831263f90e52a1ae95806ddee57facb8fa79642679b75ff55229afbaf3",
+      "created_at": "2026-11-21T21:40:32.244Z"
     },
     "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-core-invariants",
@@ -38322,6 +38323,54 @@
       "confidence": 0.86,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-21T21:32:20.943Z"
+    },
+    "DOM-H-2D29E63D": {
+      "record_id": "DOM-H-2D29E63D",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        },
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Empirical Invariant Guard in react-i18next.js",
+      "content": "When implementing operations in `react-i18next.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in i18next/react-i18next. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "da83dbcb6e33a5f0ed5e4ef2b178af1ee8813abfe8aacc9f421d21b662ca1701",
+      "summary": "Prevents defects observed in production commit `5db47334`: build. Unvalidated execution paths cause runtime exceptions, race conditions, and -> When implementing operations in `react-i18next.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/",
+      "provenance": {
+        "source_uri": "project://i18next-react-i18next/i18next-react-i18next-learnings.md",
+        "source_version": "def28df2",
+        "observed_at": "2026-11-21T21:40:18.353Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (i18next-react-i18next)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of i18next-react-i18next"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G",
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.62,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T21:40:59.660Z"
     }
   }
 }

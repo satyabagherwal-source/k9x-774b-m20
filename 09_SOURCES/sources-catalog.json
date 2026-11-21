@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "8a930b79",
+    "sourceVersion": "dd75b495",
     "license": "Apache-2.0",
-    "contentHash": "882d473009a7752e975266ac9b9cbd0be193ffd7fda497e9be0c6ab1d7322ac0",
-    "lastHarvestedAt": "2026-11-20T17:53:52.627Z",
+    "contentHash": "c38360b7bd945d400f2086a63f165baa343ca4a2cd7e17d43eec5d3035ac220a",
+    "lastHarvestedAt": "2026-11-21T21:40:22.606Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {
@@ -4103,10 +4103,10 @@
     "repository": "i18next/react-i18next",
     "platform": "github",
     "sourceUrl": "https://github.com/i18next/react-i18next",
-    "sourceVersion": "96a8573c",
+    "sourceVersion": "def28df2",
     "license": "MIT",
-    "contentHash": "877f3bf2b025a07153ee38b6b32872e5dc42f4a9b5c6ef1eaeec89b1fbe69330",
-    "lastHarvestedAt": "2026-11-17T16:30:55.697Z",
+    "contentHash": "2ffdf3dc3d3aededb078845d7f38bd0b2922a437d00cdd76d7139c29dc348673",
+    "lastHarvestedAt": "2026-11-21T21:40:19.374Z",
     "learningId": "learn-github-i18next-react-i18next"
   },
   "clastix-kamaji": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "19ed1d67",
+    "sourceVersion": "8bcbb077",
     "license": "Apache-2.0",
-    "contentHash": "74eb72d9f2de95d346a8e4d42f2d97cc61d15d081dcedac98d83f21376937396",
-    "lastHarvestedAt": "2026-11-20T16:56:43.980Z",
+    "contentHash": "197886a287ce2801e107fa34dee9769adb901de224b29faaf3f0c91c834f057f",
+    "lastHarvestedAt": "2026-11-21T21:40:28.741Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -11555,8 +11555,8 @@
     "sourceUrl": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
     "sourceVersion": "hf-pika-labs-pika-h3-flex",
     "license": "Open-Source",
-    "contentHash": "9fc43344e8984e465d41021b42dcc9fe805ccf9117c7b6a0621ca7b7a8c23dd2",
-    "lastHarvestedAt": "2026-11-16T12:48:12.964Z",
+    "contentHash": "271ff6d88115eb8a15cc688051af7bd9ac9c33f02631b70692dd07a4e644f972",
+    "lastHarvestedAt": "2026-11-21T21:40:12.527Z",
     "learningId": "learn-huggingface-pika-labs-pika-h3-flex"
   },
   "hf-liquidai-lfm3-audio-2b": {

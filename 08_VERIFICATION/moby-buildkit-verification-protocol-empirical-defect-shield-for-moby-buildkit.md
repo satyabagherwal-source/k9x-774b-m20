@@ -4,22 +4,22 @@
 {
   "source_repository": "moby/buildkit",
   "source_url": "https://github.com/moby/buildkit",
-  "source_version": "8a930b79",
+  "source_version": "dd75b495",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T17:53:52.808Z",
+  "timestamp": "2026-11-21T21:40:22.817Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-moby-buildkit",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [moby/buildkit](https://github.com/moby/buildkit) (Revision: `8a930b79`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T17:53:52.808Z`  
+> **Provenance**: Harvested from [moby/buildkit](https://github.com/moby/buildkit) (Revision: `dd75b495`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T21:40:22.817Z`  
 > **Learning ID**: `learn-github-moby-buildkit`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `moby/buildkit` (Commit: `8a930b79`)
+- **Target Repository**: `moby/buildkit` (Commit: `dd75b495`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T17:53:51.607Z  
+> **Harvest Timestamp**: 2026-11-21T21:40:21.571Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10432 stars
+- **Stars / Engagement**: 10436 stars
 
 ---
 
@@ -2306,13 +2306,11 @@ func isPathEscapesRootError(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7456** (2026-11-20): **testutil: fix the process-exit race in integration socket waits**
+  *Symptoms*: `WaitSocket` reads `cmd.ProcessState` while `StartCmd` calls `cmd.Wait()` in another goroutine, causing a data race when a process exits before its socket becomes available. Return the existing process-exit channel from `StartCmd` and use it in `WaitSocket` to detect exit without accessing `ProcessState` concurrently. Update callers while preserving socket-only waits without a command.
+
 - **Issue #7449** (2026-11-20): **build(deps): bump actions/setup-go from 7.0.0 to 7.1.0**
   *Symptoms*: Bumps [actions/setup-go](https://github.com/actions/setup-go) from 7.0.0 to 7.1.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actions/setup-go/releases">actions/setup-go's releases</a>.</em></p> <blockquote> <h2>v7.1.0</h2> <h2>What's Changed</h2> <h3>Enhancements</h3> <ul> <li>Expose go env variables as action outputs by <a href="https://github.com/v-mahabaleshwars"><code>@​v-mahabaleshwars</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/791">actions/setup-go#791</a></li> <li>Preserve native Go environment names in action outputs by <a href="https://github.com/v-mahabaleshwars"><code>@​v-mahabaleshwars</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/793">actions/setup-go#793</a></li> <li>Add support for native Go version syntax in go-version input by <a href="https://github.com/v-jitenderpalsingh"><code>@​v-jitenderpalsingh</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/804">actions/setup-go#804</a></li> <li>Add support for rc and beta versions in go.mod file by <a href="https://github.com/arnested"><code>@​arnested</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/701">actions/setup-go#701</a></li> <li>Clarify description of go-bin-path output and its fallback behavior by <a href="https://github.com/v-mahabaleshwars"><code>@​v-mahabaleshwars</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/803">actions/set
-
-- **Issue #7448** (2026-11-19): **[v0.35] cherry-picks for v0.35.1**
-  *Symptoms*: backports of: - https://github.com/moby/buildkit/pull/7419 - https://github.com/moby/buildkit/pull/7420 - https://github.com/moby/buildkit/pull/7438 
-  **Post-Mortem & Fix Analysis**:
-  > I would not take https://github.com/moby/buildkit/pull/7437 . It is a bugfix but it is not a regression.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2329,43 +2327,860 @@ func isPathEscapesRootError(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9eb778d8` (2026-11-20)
-**Commit Message**: build(deps): bump actions/setup-go from 7.0.0 to 7.1.0
+### Incident Patch 1: `dd75b495` (2026-11-20)
+**Commit Message**: Merge pull request #7456 from crazy-max/fix-waitsocket-process-exit-race
 
-Bumps [actions/setup-go](https://github.com/actions/setup-go) from 7.0.0 to 7.1.0.
-- [Release notes](https://github.com/actions/setup-go/releases)
-- [Commits](https://github.com/actions/setup-go/compare/b7ad1dad31e06c5925ef5d2fc7ad053ef454303e...d8cbb8045d7f43706b9177cceb36c1f91a6644d5)
+testutil: fix the process-exit race in integration socket waits
+
+**File**: `util/testutil/helpers/azurite.go` (modified, +1/-1)
+```diff
+@@ -61,7 +61,7 @@ func NewAzuriteServer(t *testing.T, sb integration.Sandbox, opts AzuriteOpts) (a
+ 	cmd.Env = append(os.Environ(), []string{
+ 		"AZURITE_ACCOUNTS=" + opts.AccountName + ":" + opts.AccountKey,
+ 	}...)
+-	azuriteStop, err := integration.StartCmd(cmd, sb.Logs())
++	azuriteStop, _, err := integration.StartCmd(cmd, sb.Logs())
+ 	if err != nil {
+ 		return "", nil, err
+ 	}
+```
+
+**File**: `util/testutil/helpers/minio.go` (modified, +2/-2)
+```diff
+@@ -77,7 +77,7 @@ func NewMinioServer(t *testing.T, sb integration.Sandbox, opts MinioOpts) (addre
+ 		"MINIO_ROOT_USER=" + opts.AccessKeyID,
+ 		"MINIO_ROOT_PASSWORD=" + opts.SecretAccessKey,
+ 	}...)
+-	minioStop, err := integration.StartCmd(cmd, sb.Logs())
++	minioStop, _, err := integration.StartCmd(cmd, sb.Logs())
+ 	if err != nil {
+ 		return "", "", nil, err
+ 	}
+@@ -120,7 +120,7 @@ func NewMinioServer(t *testing.T, sb integration.Sandbox, opts MinioOpts) (addre
+ 	}
+ 
+ 	// trace
+-	traceStop, err := integration.StartCmd(mcCmd(t.Context(), "admin", "trace", "--json", mcAlias), sb.Logs())
++	traceStop, _, err := integration.StartCmd(mcCmd(t.Context(), "admin", "trace", "--json", mcAlias), sb.Logs())
+ 	if err != nil {
+ 		return "", "", nil, err
+ 	}
+```
+
+**File**: `util/testutil/integration/registry.go` (modified, +1/-1)
+```diff
+@@ -67,7 +67,7 @@ http:
+ 	if err != nil {
+ 		return "", nil, err
+ 	}
+-	stop, err := StartCmd(cmd, nil)
++	stop, _, err := StartCmd(cmd, nil)
+ 	if err != nil {
+ 		return "", nil, err
+ 	}
+```
+
+**File**: `util/testutil/integration/util.go` (modified, +10/-5)
+```diff
+@@ -63,7 +63,8 @@ func RunCmd(cmd *exec.Cmd, logs map[string]*bytes.Buffer) error {
+ 	return cmd.Run()
+ }
+ 
+-func StartCmd(cmd *exec.Cmd, logs map[string]*bytes.Buffer) (func() error, error) {
++// StartCmd returns a stop function and a channel closed after the command exits.
++func StartCmd(cmd *exec.Cmd, logs map[string]*bytes.Buffer) (func() error, <-chan struct{}, error) {
+ 	if logs != nil {
+ 		setCmdLogs(cmd, logs)
+ 	}
+@@ -72,7 +73,7 @@ func StartCmd(cmd *exec.Cmd, logs map[string]*bytes.Buffer) (func() error, error
+ 	fmt.Fprintf(cmd.Stderr, "> StartCmd %v %+v\n", started, cmd.String())
+ 
+ 	if err := cmd.Start(); err != nil {
+-		return nil, err
++		return nil, nil, err
+ 	}
+ 	fmt.Fprintf(cmd.Stderr, "> started pid=%d %v %+v\n", cmd.Process.Pid, time.Now(), cmd.String())
+ 	eg, ctx := errgroup.WithContext(context.TODO())
+@@ -118,13 +119,15 @@ func StartCmd(cmd *exec.Cmd, logs map[string]*bytes.Buffer) (func() error, error
+ 	return func() error {
+ 		close(stop)
+ 		return eg.Wait()
+-	}, nil
++	}, stopped, nil
+ }
+ 
+ // WaitSocket will dial a socket opened by a command passed in as cmd.
++// stopped is the channel returned by StartCmd for cmd.
++// Pass nil for both cmd and stopped for a socket-only wait.
+ // On Linux this socket is typically a Unix socket,
+ // while on Windows this will be a named pipe.
+-func WaitSocket(address string, d time.Duration, cmd *exec.Cmd) error {
++func WaitSocket(address string, d time.Duration, cmd *exec.Cmd, stopped <-chan struct{}) error {
+ 	address = strings.TrimPrefix(address, socketScheme)
+ 	step := 50 * time.Millisecond
+ 	started := time.Now()
+@@ -134,8 +137,10 @@ func WaitSocket(address string, d time.Duration, cmd *exec.Cmd) error {
+ 	i := 0
+ 	var lastErr error
+ 	for {
+-		if cmd != nil && cmd.ProcessState != nil {
++		select {
++		case <-stopped:
+ 			return errors.Errorf("process exited while waiting for socket %s after %s: %s", address, time.Since(started), cmd.String())
++		default:
+ 		}
+ 
+ 		if conn, err := dialPipe(address); err == nil {
+```
+
+**File**: `util/testutil/integration/util_test.go` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++package integration
++
++import (
++	"io"
++	"os"
++	"os/exec"
++	"path/filepath"
++	"testing"
++	"time"
++
++	"github.com/moby/buildkit/identity"
++	"github.com/stretchr/testify/require"
++)
++
++func TestWaitSocketProcessExit(t *testing.T) {
++	if os.Getenv("BUILDKIT_SOCKET_EXIT_HELPER") == "1" {
++		_, _ = io.Copy(io.Discard, os.Stdin)
++		return
++	}
++
++	cmd := exec.CommandContext(t.Context(), os.Args[0], "-test.run=^TestWaitSocketProcessExit$") //nolint:gosec // Re-execute this test binary as the child process.
++	cmd.Env = append(os.Environ(), "BUILDKIT_SOCKET_EXIT_HELPER=1")
++	cmd.Stderr = io.Discard
++	stdin, err := cmd.StdinPipe()
++	require.NoError(t, err)
++	stop, stopped, err := StartCmd(cmd, nil)
++	require.NoError(t, err)
++	t.Cleanup(func() { require.NoError(t, stop()) })
++
++	// Let the child exit while WaitSocket polls a socket it never opens.
++	require.NoError(t, stdin.Close())
++	err = WaitSocket(missingSocket(t), 10*time.Second, cmd, stopped)
++	require.ErrorContains(t, err, "process exited while waiting for socket")
++	require.ErrorContains(t, err, cmd.String())
++}
++
++func TestWaitSocketWithoutProcess(t *testing.T) {
++	err := WaitSocket(missingSocket(t), 0, nil, nil)
++	require.ErrorContains(t, err, "failed dialing socket")
++}
++
++func missingSocket(t *testing.T) string {
++	t.Helper()
++	return UnixOrWindows(filepath.Join(t.TempDir(), "missing.sock"), `\\.\pipe\buildkit-waitsocket-`+identity.NewID())
++}
+```
+
+**File**: `util/testutil/workers/containerd.go` (modified, +4/-4)
+```diff
+@@ -196,11 +196,11 @@ disabled_plugins = ["io.containerd.grpc.v1.cri"]
+ 	cmd := exec.CommandContext(context.TODO(), containerdArgs[0], containerdArgs[1:]...) //nolint:gosec // test utility
+ 	cmd.Env = append(os.Environ(), extraEnv...)
+ 
+-	ctdStop, err := integration.StartCmd(cmd, cfg.Logs)
++	ctdStop, ctdStopped, err := integration.StartCmd(cmd, cfg.Logs)
+ 	if err != nil {
+ 		return nil, nil, err
+ 	}
+-	if err := integration.WaitSocket(address, 10*time.Second, cmd); err != nil {
++	if err := integration.WaitSocket(address, 10*time.Second, cmd, ctdStopped); err != nil {
+ 		ctdStop()
+ 		return nil, nil, errors.Wrapf(err, "containerd did not start up: %s", integration.FormatLogs(cfg.Logs))
+ 	}
+@@ -284,11 +284,11 @@ func runStargzSnapshotter(cfg *integration.BackendConfig) (address string, cl fu
+ 		"--log-level", "debug",
+ 		"--address", address,
+ 		"--root", stargzRootDir)
+-	snStop, err := integration.StartCmd(cmd, cfg.Logs)
++	snStop, snStopped, err := integration.StartCmd(cmd, cfg.Logs)
+ 	if err != nil {
+ 		return "", nil, err
+ 	}
+-	if err = integration.WaitSocket(address, 10*time.Second, cmd); err != nil {
++	if err = integration.WaitSocket(address, 10*time.Second, cmd, snStopped); err != nil {
+ 		snStop()
+ 		return "", nil, errors.Wrapf(err, "containerd-stargz-grpc did not start up: %s", integration.FormatLogs(cfg.Logs))
+ 	}
+```
+
+**File**: `util/testutil/workers/dockerd.go` (modified, +1/-1)
+```diff
+@@ -187,7 +187,7 @@ func (c Moby) New(ctx context.Context, cfg *integration.BackendConfig) (b integr
+ 	}
+ 	deferF.Append(d.StopWithError)
+ 
+-	if err := integration.WaitSocket(d.Sock(), 5*time.Second, nil); err != nil {
++	if err := integration.WaitSocket(d.Sock(), 5*time.Second, nil, nil); err != nil {
+ 		return nil, nil, errors.Wrapf(err, "dockerd did not start up: %s", integration.FormatLogs(cfg.Logs))
+ 	}
+ 
+```
+
+**File**: `util/testutil/workers/util.go` (modified, +2/-2)
+```diff
+@@ -110,13 +110,13 @@ func runBuildkitd(
+ 	cmd.Env = append(cmd.Env, extraEnv...)
+ 	cmd.SysProcAttr = getSysProcAttr()
+ 
+-	stop, err := integration.StartCmd(cmd, logs)
++	stop, stopped, err := integration.StartCmd(cmd, logs)
+ 	if err != nil {
+ 		return "", "", nil, err
+ 	}
+ 	deferF.Append(stop)
+ 
+-	if err := integration.WaitSocket(address, 15*time.Second, cmd); err != nil {
++	if err := integration.WaitSocket(address, 15*time.Second, cmd, stopped); err != nil {
+ 		return "", "", nil, err
+ 	}
+ 
+```
 
 ---
-updated-dependencies:
-- dependency-name: actions/setup-go
-  dependency-version: 7.1.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+### Incident Patch 2: `421e89a1` (2026-11-20)
+**Commit Message**: Merge pull request #7335 from jsternberg/scheduler-testsuite
 
-**File**: `.github/workflows/test-os.yml` (modified, +1/-1)
+refactor(solver): convert scheduler tests into a separate test suite
+
+**File**: `solver/bboltcachestorage/storage_test.go` (modified, +21/-7)
 ```diff
-@@ -137,7 +137,7 @@ jobs:
-         uses: crazy-max/ghaction-github-runtime@04d248b84655b509d8c44dc1d6f990c879747487 # v4.0.0
-       -
-         name: Set up Go
--        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
-         with:
-           go-version: "${{ env.GO_VERSION }}"
-           cache: false
+@@ -20,14 +20,28 @@ func TestCompactionPolicy(t *testing.T) {
+ 
+ func TestBoltCacheStorage(t *testing.T) {
+ 	testutil.RunCacheStorageTests(t, func() solver.CacheKeyStorage {
+-		tmpDir := t.TempDir()
++		return newStore(t)
++	})
+ 
+-		st, err := NewStore(filepath.Join(tmpDir, "cache.db"))
+-		require.NoError(t, err)
+-		t.Cleanup(func() {
+-			require.NoError(t, st.Close())
+-		})
++	testutil.RunSolverTests(t, testutil.SolverTestOptions{
++		NewCacheManager: func(t *testing.T) solver.CacheManager {
++			return solver.NewCacheManager(
++				t.Context(),
++				"local",
++				newStore(t),
++				solver.NewInMemoryResultStorage(),
++			)
++		},
++	})
++}
+ 
+-		return st
++func newStore(t *testing.T) *Store {
++	tmpDir := t.TempDir()
++
++	st, err := NewStore(filepath.Join(tmpDir, "cache.db"))
++	require.NoError(t, err)
++	t.Cleanup(func() {
++		require.NoError(t, st.Close())
+ 	})
++	return st
+ }
+```
+
+**File**: `solver/cache_test.go` (modified, +8/-0)
+```diff
+@@ -366,3 +366,11 @@ func testResult(v string) Result {
+ 		value: v,
+ 	}
+ }
++
++func unwrap(res Result) string {
++	r, ok := res.Sys().(*dummyResult)
++	if !ok {
++		return "unwrap-error"
++	}
++	return r.value
++}
+```
+
+**File**: `solver/cachemiss_stale_dep_test.go` (removed, +0/-252)
+```diff
+@@ -1,252 +0,0 @@
+-package solver
+-
+-import (
+-	"testing"
+-
+-	"github.com/stretchr/testify/require"
+-)
+-
+-// TestCacheMissStaleCompleteSharedDep reproduces the "stale complete
+-// shared-dependency" cache miss (moby/buildkit#4674 family) in-process.
+-//
+-// Graph (identical for every build): a shared leaf "base" and one op "step" on
+-// top of it (arrow = "is an input of"):
+-//
+-//	"base" --> "step"
+-//
+-// A1 builds step -> base against an empty cache. base executes; on unfixed
+-// code its cache key then lived only on base's *result*, never on
+-// edgeState.keys (a leaf that executed against an empty cache never appended a
+-// key, and a completed edge never re-queries; the fix appends the committed
+-// keys to edgeState.keys at completion). Both base and step are saved. A2 then
+-// builds a step with the SAME cache seed on the SAME shared base and should
+-// reuse the cached step.
+-//
+-// A parent learns a completed dep's key one of two ways: (a) probeCache/Query,
+-// fed only from the dep's edgeState.keys, or (b) an edge-index merge onto a
+-// still-*live* peer edge, which reads result.CacheKeys(). Discarding A1 removes
+-// its step edge from the edge index, closing (b) -- so A2's step edge must
+-// resolve through the *cache*, not a live peer. (The index is keyed on the cache
+-// key, not the vertex digest, so a distinct step digest alone would not close
+-// (b); the discard does.)
+-//
+-// Whether the shared base is reused-complete or recreated-fresh is then decided
+-// purely by concurrency:
+-//
+-//   - No B: after A1 is discarded the base is unreferenced and dropped from
+-//     Solver.actives. A2 recreates it fresh; it re-queries the populated cache
+-//     and delivers its key via edgeState.keys -> A2 probes -> hit.
+-//   - B holds only the base alive: the base stays referenced in Solver.actives,
+-//     already `complete`, and is reused by A2. On unfixed code it delivered
+-//     edgeState.keys=0 while its result carried the key -- probeCache saw an
+-//     empty slice, noCacheMatchPossible latched, and A2 re-executed; post-fix
+-//     the executed base appended its committed keys to edgeState.keys at
+-//     completion, so A2 receives them, probes, and hits.
+-func TestCacheMissStaleCompleteSharedDep(t *testing.T) {
+-	// baseEdge builds a leaf "base" vertex with a fixed digest and cache seed so
+-	// it is a single shared active vertex across builds. value differs per build
+-	// only to prove the returned result came from A1's cache. ignoreCache marks
+-	// the base as `--no-cache` (used by the ignore-cache safety subtest).
+-	baseEdge := func(value string, ignoreCache bool) Edge {
+-		return Edge{Vertex: vtx(vtxOpt{
+-			name:         "base",
+-			cacheKeySeed: "base-seed",
+-			value:        value,
+-			ignoreCache:  ignoreCache,
+-		})}
+-	}
+-
+-	// stepEdge builds a "step" vertex on top of base. The cache seed is fixed so
+-	// every build's step is cache-matchable against A1's saved
+-	// record; stepName (hence the vertex digest) is passed in so a build can
+-	// either reuse A1's step vertex (same name) or model a separate
+-	// build with a distinct step vertex (different name, same seed). ignoreBase
+-	// marks the base dependency as `--no-cache`.
+-	stepEdge := func(stepName, value, baseValue string, ignoreBase bool) Edge {
+-		return Edge{Vertex: vtx(vtxOpt{
+-			name:         stepName,
+-			cacheKeySeed: "step-seed",
+-			value:        value,
+-			inputs:       []Edge{baseEdge(baseValue, ignoreBase)},
+-		})}
+-	}
+-
+-	// scenario selects which timing / builder-state case run() exercises.
+-	type scenario struct {
+-		holdBaseAlive  bool // B keeps the shared base referenced across A2 (concurrent hold)
+-		sameStepVertex bool // A2 reuses A1's step vertex digest vs. a distinct one
+-		warmBase       bool // base's cache record pre-exists, so it cache-hits instead of executing
+-		ignoreBase     bool // base carries IgnoreCache (`--no-cache` on the dependency)
+-	}
+-	run := func(t *testing.T, scenario scenario) (secondExecs int64, secondResult string) {
+-		ctx := t.Context()
+-
+-		cacheManager := newTrackingCacheManager(NewInMemoryCacheManager())
+-		solver := NewSolver(SolverOpt{
+-			ResolveOpFunc: testOpResolver,
+-			DefaultCache:  cacheManager,
+-		})
+-		defer solver.Close()
+-
+-		// warmBase models a WARM builder (scenario 2b): busybox is already
+-		// pulled, so base's persistent-cache record already exists before
+-		// A1. A throwaway build of base alone (then discarded) Saves that
+-		// record. A1's base then cache-HITS its own query -- it does
+-		// NOT execute and leaves its key in edgeState.keys -- whereas on a cold
+-		// cache base EXECUTES, which on unfixed code left its key only on the
+-		// result. The warm-up's distinct value ("base-result-warmup") lets us
+-		// confirm A1's base came from the cache rather than executing.
+-		if scenario.warmBase {
+-			warmJob, err := solver.NewJob("warmup")
+-			require.NoError(t, err)
+-			_, err = warmJob.Build(ctx, baseEdge("base-result-warmup", scenario.ignoreBase))
+-			
+```
+
+**File**: `solver/scheduler_internal_test.go` (added, +460/-0)
+```diff
+@@ -0,0 +1,460 @@
++package solver
++
++import (
++	"context"
++	"fmt"
++	"os"
++	"testing"
++
++	"github.com/moby/buildkit/client"
++	"github.com/moby/buildkit/identity"
++	"github.com/moby/buildkit/session"
++	"github.com/moby/buildkit/util/progress"
++	digest "github.com/opencontainers/go-digest"
++	ocispecs "github.com/opencontainers/image-spec/specs-go/v1"
++	"github.com/pkg/errors"
++	"github.com/sirupsen/logrus"
++	"github.com/stretchr/testify/require"
++	"golang.org/x/sync/errgroup"
++)
++
++func init() {
++	if debugScheduler {
++		logrus.SetOutput(os.Stdout)
++		logrus.SetLevel(logrus.DebugLevel)
++	}
++}
++
++func TestProgressSnapshotDuringCompletion(t *testing.T) {
++	t.Parallel()
++	for range 100 {
++		pr, ctx, cancel := progress.NewContext(t.Context())
++		pw, _, _ := progress.NewFromContext(ctx)
++		j := &Job{pw: pw}
++		st := &state{
++			mpw:   progress.NewMultiWriter(),
++			allPw: map[progress.Writer]struct{}{},
++			jobs:  map[*Job]struct{}{j: {}},
++		}
++		completed := st.notifyStarted(progress.WithProgress(ctx, st.mpw), false)
++		start := make(chan struct{})
++		var eg errgroup.Group
++		eg.Go(func() error {
++			<-start
++			completed(nil, false)
++			return nil
++		})
++		eg.Go(func() error {
++			<-start
++			(&Solver{}).connectProgressFromState(st, st)
++			return nil
++		})
++		close(start)
++		err := eg.Wait()
++		pw.Close()
++		cancel(nil)
++		require.NoError(t, err)
++		items, err := pr.Read(t.Context())
++		require.NoError(t, err)
++		require.NotEmpty(t, items)
++		last := items[len(items)-1].Sys.(client.Vertex)
++		require.NotNil(t, last.Completed, "snapshot must not overwrite completion")
++	}
++}
++
++func TestCacheOptsDuringProgress(t *testing.T) {
++	t.Parallel()
++	st := &state{
++		op: &sharedOp{
++			cacheRes: []*CacheMap{{Opts: CacheOpts{"test": "value"}}},
++		},
++	}
++	ctx := withAncestorCacheOpts(t.Context(), st)
++	getter := CacheOptGetterOf(ctx)
++
++	completed := st.notifyStarted(ctx, false)
++	require.Equal(t, "value", getter(false, "test")["test"])
++	completed(errors.New("operation failed"), false)
++	require.Empty(t, getter(false, "test"))
++
++	completed = st.notifyStarted(ctx, false)
++	completed(nil, false)
++	require.Equal(t, "value", getter(false, "test")["test"])
++
++	// Cache option lookups can run while another operation reports progress.
++	var eg errgroup.Group
++	eg.Go(func() error {
++		for range 100 {
++			completed := st.notifyStarted(ctx, false)
++			completed(errors.New("operation failed"), false)
++			completed = st.notifyStarted(ctx, true)
++			completed(nil, true)
++		}
++		return nil
++	})
++	eg.Go(func() error {
++		for range 100 {
++			if value, ok := getter(false, "test")["test"]; ok {
++				require.Equal(t, "value", value)
++			}
++		}
++		return nil
++	})
++	require.NoError(t, eg.Wait())
++}
++
++func TestCacheErrNotFound(t *testing.T) {
++	ctx := t.Context()
++
++	cm := NewInMemoryCacheManager()
++	l := NewSolver(SolverOpt{
++		ResolveOpFunc: testOpResolver,
++		DefaultCache:  cm,
++	})
++	defer l.Close()
++
++	j0, err := l.NewJob("j0")
++	require.NoError(t, err)
++
++	defer func() {
++		if j0 != nil {
++			j0.Discard()
++		}
++	}()
++
++	g0 := Edge{
++		Vertex: vtxSum(1, vtxOpt{
++			inputs: []Edge{
++				{Vertex: vtxConst(2, vtxOpt{})},
++				{Vertex: vtxConst(3, vtxOpt{})},
++			},
++		}),
++	}
++
++	res, err := j0.Build(ctx, g0)
++	require.NoError(t, err)
++	require.Equal(t, 6, unwrapInt(res))
++
++	require.NoError(t, j0.Discard())
++	j0 = nil
++
++	expTarget := newTestExporterTarget()
++
++	key := res.CacheKeys()[0]
++	internal := cm.(*cacheManager)
++	store := internal.backend.(*inMemoryStore)
++	exporter := key.Exporter.(*mergedExporter).exporters[0].(*exporter)
++	record := exporter.record
++
++	// Remove The first record from the internal store CacheManager to trigger an ErrNotFound
++	delete(store.byID[internal.getID(record.key)].results, record.ID)
++	_, err = exporter.ExportTo(ctx, expTarget, testExporterOpts(true))
++
++	require.NoError(t, err)
++}
++
++// TestCacheExportDuringEdgeMerge exports a cache-loaded result while another
++// job merges into its edge. Run with -race.
++func TestCacheExportDuringEdgeMerge(t *testing.T) {
++	t.Parallel()
++	ctx := t.Context()
++
++	l := NewSolver(SolverOpt{
++		ResolveOpFunc: testOpResolver,
++		DefaultCache:  NewInMemoryCacheManager(),
++	})
++	defer l.Close()
++
++	// vertexes with the same cache key seed and input results share a slow
++	// cache key, even with different inputs
++	g := func(name, input string) Edge {
++		return Edge{
++			Vertex: vtx(vtxOpt{
++				name:         name,
++				cacheKeySeed: "seed1",
++				value:        "result1",
++				inputs: []Edge{{Vertex: vtx(vtxOpt{
++					name:         input,
++					cacheKeySeed: "seed-" + input,
++					value:        "result2",
++				})}},
++				slowCacheCompute: map[int]ResultBasedCacheFunc{0: digestFromResult},
++			}),
++		}
++	}
++
++	j0, err := l.NewJob("j0")
++	require.NoError(t, err)
++	defer func() {
++		if j0 != nil {
++			j0.Discard()
++		}
++	}()
++	_, err = j0.Build(ctx, g("v1", "v2"))
++	require.NoError(t, err)
++	require.NoError(t, j0.Discard())
++	j0 = nil
++
++	// j1 loads the result through the slow
+```
+
+**File**: `solver/scheduler_testutils.go` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++package solver
++
++import (
++	"maps"
++
++	digest "github.com/opencontainers/go-digest"
++)
++
++// Inspect is an UNSAFE METHOD MEANT ONLY FOR UNIT TESTS.
++//
++// This is not something that is meant to be part of the public API.
++// It exists to provide an escape hatch for a unit test to inspect the
++// job state.
++//
++// DO NOT USE OUTSIDE OF UNIT TESTS.
++func (jl *Solver) Inspect() map[digest.Digest]map[*Job]struct{} {
++	jl.mu.RLock()
++	defer jl.mu.RUnlock()
++
++	actives := make(map[digest.Digest]map[*Job]struct{})
++	for dgst, st := range jl.actives {
++		st.mu.RLock()
++		actives[dgst] = maps.Clone(st.jobs)
++		st.mu.RUnlock()
++	}
++	return actives
++}
+```
+
+**File**: `solver/testutil/scheduler_testsuite_helpers.go` (added, +565/-0)
+```diff
+@@ -0,0 +1,565 @@
++package testutil
++
++import (
++	"context"
++	"fmt"
++	"math"
++	"math/rand"
++	"sync/atomic"
++	"time"
++
++	"github.com/moby/buildkit/identity"
++	"github.com/moby/buildkit/session"
++	"github.com/moby/buildkit/solver"
++	digest "github.com/opencontainers/go-digest"
++	ocispecs "github.com/opencontainers/image-spec/specs-go/v1"
++	"github.com/pkg/errors"
++)
++
++func generateSubGraph(nodes int) (solver.Edge, int) {
++	if nodes == 1 {
++		value := rand.Int() % 500 //nolint:gosec
++		return solver.Edge{Vertex: vtxConst(value, vtxOpt{})}, value
++	}
++	spread := rand.Int()%5 + 2 //nolint:gosec
++	inc := min(int(math.Ceil(float64(nodes)/float64(spread))), nodes)
++	added := 1
++	value := 0
++	inputs := []solver.Edge{}
++	i := 0
++	for {
++		i++
++		if added >= nodes {
++			break
++		}
++		if added+inc > nodes {
++			inc = nodes - added
++		}
++		e, v := generateSubGraph(inc)
++		inputs = append(inputs, e)
++		value += v
++		added += inc
++	}
++	extra := rand.Int() % 500 //nolint:gosec
++	value += extra
++	return solver.Edge{Vertex: vtxSum(extra, vtxOpt{inputs: inputs})}, value
++}
++
++type vtxOpt struct {
++	name             string
++	cacheKeySeed     string
++	cacheKeySeeds    []func() string
++	execDelay        time.Duration
++	cacheDelay       time.Duration
++	cachePreFunc     func(context.Context) error
++	execPreFunc      func(context.Context) error
++	inputs           []solver.Edge
++	value            string
++	result           solver.Result
++	slowCacheCompute map[int]solver.ResultBasedCacheFunc
++	selectors        map[int]digest.Digest
++	cacheSource      solver.CacheManager
++	ignoreCache      bool
++}
++
++func vtx(opt vtxOpt) *vertex {
++	if opt.name == "" {
++		opt.name = identity.NewID()
++	}
++	if opt.cacheKeySeed == "" {
++		opt.cacheKeySeed = identity.NewID()
++	}
++	return &vertex{opt: opt}
++}
++
++type vertex struct {
++	opt vtxOpt
++
++	cacheCallCount *int64
++	execCallCount  *int64
++}
++
++type invalidCacheMapVertex struct {
++	*vertex
++	depCount int
++}
++
++func (v *invalidCacheMapVertex) Sys() any {
++	return v
++}
++
++func (v *invalidCacheMapVertex) CacheMap(context.Context, solver.JobContext, int) (*solver.CacheMap, bool, error) {
++	return &solver.CacheMap{
++		Digest: digest.FromBytes([]byte(v.Name())),
++		Deps: make([]struct {
++			Selector          digest.Digest
++			ComputeDigestFunc solver.ResultBasedCacheFunc
++			PreprocessFunc    solver.PreprocessFunc
++		}, v.depCount),
++	}, true, nil
++}
++
++var _ solver.Op = &vertex{}
++
++func (v *vertex) Digest() digest.Digest {
++	return digest.FromBytes([]byte(v.opt.name))
++}
++func (v *vertex) Sys() any {
++	return v
++}
++func (v *vertex) Inputs() []solver.Edge {
++	return v.opt.inputs
++}
++func (v *vertex) Name() string {
++	return v.opt.name
++}
++func (v *vertex) Options() solver.VertexOptions {
++	var cache []solver.CacheManager
++	if v.opt.cacheSource != nil {
++		cache = append(cache, v.opt.cacheSource)
++	}
++	return solver.VertexOptions{
++		CacheSources: cache,
++		IgnoreCache:  v.opt.ignoreCache,
++	}
++}
++
++func (v *vertex) setupCallCounters() {
++	var cacheCount int64
++	var execCount int64
++
++	v.setCallCounters(&cacheCount, &execCount)
++}
++
++func (v *vertex) setCallCounters(cacheCount, execCount *int64) {
++	v.cacheCallCount = cacheCount
++	v.execCallCount = execCount
++
++	for _, inp := range v.opt.inputs {
++		var v *vertex
++		switch vv := inp.Vertex.(type) {
++		case *vertex:
++			v = vv
++		case *vertexSum:
++			v = vv.vertex
++		case *vertexAdd:
++			v = vv.vertex
++		case *vertexConst:
++			v = vv.vertex
++		case *vertexSubBuild:
++			v = vv.vertex
++		}
++		v.setCallCounters(cacheCount, execCount)
++	}
++}
++
++func (v *vertex) cacheMap(ctx context.Context) error {
++	if f := v.opt.cachePreFunc; f != nil {
++		if err := f(ctx); err != nil {
++			return err
++		}
++	}
++	if v.cacheCallCount != nil {
++		atomic.AddInt64(v.cacheCallCount, 1)
++	}
++	select {
++	case <-ctx.Done():
++		return context.Cause(ctx)
++	default:
++	}
++	select {
++	case <-time.After(v.opt.cacheDelay):
++	case <-ctx.Done():
++		return context.Cause(ctx)
++	}
++	return nil
++}
++
++func (v *vertex) CacheMap(ctx context.Context, jobCtx solver.JobContext, index int) (*solver.CacheMap, bool, error) {
++	if index == 0 {
++		if err := v.cacheMap(ctx); err != nil {
++			return nil, false, err
++		}
++		return v.makeCacheMap(), len(v.opt.cacheKeySeeds) == index, nil
++	}
++	return &solver.CacheMap{
++		Digest: digest.FromBytes(fmt.Appendf(nil, "seed:%s", v.opt.cacheKeySeeds[index-1]())),
++	}, len(v.opt.cacheKeySeeds) == index, nil
++}
++
++func (v *vertex) exec(ctx context.Context, inputs []solver.Result) error {
++	if len(inputs) != len(v.Inputs()) {
++		return errors.New("invalid number of inputs")
++	}
++	if f := v.opt.execPreFunc; f != nil {
++		if err := f(ctx); err != nil {
++			return err
++		}
++	}
++	if v.execCallCount != nil {
++		atomic.AddInt64(v.execCallCount, 1)
++	}
++	select {
++	case <-ctx.Done():
++		return context.Cause(ctx)
++	default:
++	}
++	select {
++	case <-time.After(v.opt.execDelay):
++	case <-ctx.Done():
++		return context.Cause(ctx)
++	}
++	return nil
++}
++
++func (v *vertex) Exec(ctx contex
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7456** (2026-11-20): testutil: fix the process-exit race in integration socket waits (@crazy-max)
 - **PR #7449** (2026-11-20): build(deps): bump actions/setup-go from 7.0.0 to 7.1.0 (@dependabot[bot])
 - **PR #7448** (2026-11-19): [v0.35] cherry-picks for v0.35.1 (@crazy-max)
 - **PR #7440** (2026-11-18): cniprovider: use containerd helper for Windows network namespace (@thaJeztah)
 - **PR #7439** (2026-11-18): docs: remove base image glossary links (@dvdksn)
 - **PR #7438** (2026-11-19): cache: allow opting into common ChainID snapshot names (@crazy-max)
-- **PR #7437** (2026-11-19): session: serve the session with grpc's transport so streams apply flow control (@tonistiigi)
 
 ---
 
@@ -2385,31 +3200,31 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump actions/setup-go from 7.0.0 to 7.1.0
+## X. Empirical Invariant Guard in azurite.go
 
 **RULE**:
-When implementing operations in `.github/workflows/test-os.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `util/testutil/helpers/azurite.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9eb778d8`: build(deps): bump actions/setup-go from 7.0.0 to 7.1.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd75b495`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/test-os.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `util/testutil/helpers/azurite.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+	azuriteStop, _, err := integration.StartCmd(cmd, sb.Logs())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+	azuriteStop, err := integration.StartCmd(cmd, sb.Logs())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9eb778d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd75b495` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

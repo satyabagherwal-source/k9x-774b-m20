@@ -11905,3 +11905,8 @@
 | `CYCLE-20261121-AXJ7` | `2026-11-21T21:31:42.787Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9847` | Yes (`5fb9a46b...`) |
 | `CYCLE-20261121-B1W5` | `2026-11-21T21:31:48.437Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`09c63f84...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T21:32:20.977Z` | `siderolabs-talos` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-713ADB2E` [Domain H] | Yes (`b3c09b24...`) |
+| `CYCLE-20261121-LUUJ` | `2026-11-21T21:40:12.523Z` | `Pika-Labs/Pika-H3-Flex` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md` | Yes (`271ff6d8...`) |
+| `CYCLE-20261121-M04Q` | `2026-11-21T21:40:19.370Z` | `i18next/react-i18next` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9848` | Yes (`2ffdf3dc...`) |
+| `CYCLE-20261121-M2MI` | `2026-11-21T21:40:22.602Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9849` | Yes (`c38360b7...`) |
+| `CYCLE-20261121-M7CX` | `2026-11-21T21:40:28.737Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9850` | Yes (`197886a2...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T21:40:59.688Z` | `i18next-react-i18next` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-2D29E63D` [Domain H] | Yes (`da83dbcb...`) |

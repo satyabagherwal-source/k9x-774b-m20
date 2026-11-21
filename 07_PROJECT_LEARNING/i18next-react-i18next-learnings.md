@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/i18next-react-i18next-learnings.md`  
 > **Source**: github ([https://github.com/i18next/react-i18next](https://github.com/i18next/react-i18next))  
-> **Source Version**: `96a8573c`  
+> **Source Version**: `def28df2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T16:30:54.886Z  
+> **Timestamp**: 2026-11-21T21:40:18.353Z  
 > **Learning ID**: `learn-github-i18next-react-i18next`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/i18next-react-i18next-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/i18next/react-i18next](https://github.com/i18next/react-i18next))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T16:30:54.882Z  
+> **Harvest Timestamp**: 2026-11-21T21:40:18.347Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Internationalization for react done right. Using the i18next i18n ecosystem.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10067 stars
+- **Stars / Engagement**: 10070 stars
 
 ---
 
@@ -1006,202 +1006,348 @@ declare module 'react' {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `40ae7d8a` (2026-11-16)
-**Commit Message**: fix: re-render for a bindI18nStore event between render and subscribe (#1949)
+### Incident Patch 1: `5db47334` (2026-11-19)
+**Commit Message**: build
 
-**File**: `src/useTranslation.js` (modified, +32/-21)
+**File**: `react-i18next.js` (modified, +37/-22)
 ```diff
-@@ -61,26 +61,46 @@ const subscribeToEvents = (i18n, { bindI18n, bindI18nStore }, callback) => {
+@@ -567,7 +567,7 @@
+     });
+     return stringNode;
    };
- };
- 
-+// how often an emitter fired these events, counted once for all components, from the first
-+// render that asks. A component subscribes only after it rendered, so an event in between (a
-+// bundle added by a parent's layout effect) reaches none of its listeners; with the count in
-+// the snapshot, React's check right after subscribing sees it. The counter is registered
-+// during render, before the component's own listener, so it is up to date when that runs.
-+const eventCounts = new WeakMap();
-+const countEvents = (emitter, events) => {
-+  if (!events) return 0;
-+  let counts = eventCounts.get(emitter);
-+  if (!counts) eventCounts.set(emitter, (counts = new Map()));
-+  let sum = 0;
-+  events.split(' ').forEach((event) => {
-+    if (!counts.has(event)) {
-+      counts.set(event, 0);
-+      emitter.on(event, () => counts.set(event, counts.get(event) + 1));
-+    }
-+    sum += counts.get(event);
-+  });
-+  return sum;
-+};
-+const revision = (i18n, { bindI18n, bindI18nStore }) =>
-+  countEvents(i18n, bindI18n) + countEvents(i18n.store, bindI18nStore);
-+
- // Re-renders the calling component on the instance's bindI18n/bindI18nStore events, as
- // useTranslation does, without its loading and Suspense logic (used by Trans and IcuTrans)
- export const useRerenderOnEvents = (i18n) => {
-   const { bindI18n, bindI18nStore } = { ...getDefaults(), ...i18n?.options?.react };
--  const revisionRef = useRef(0);
-   const subscribe = useCallback(
-     (callback) =>
--      i18n
--        ? subscribeToEvents(i18n, { bindI18n, bindI18nStore }, () => {
--            revisionRef.current += 1;
--            callback();
--          })
--        : () => {},
-+      i18n ? subscribeToEvents(i18n, { bindI18n, bindI18nStore }, callback) : () => {},
-     [i18n, bindI18n, bindI18nStore],
-   );
-   // with the language state in the snapshot, React also re-renders for a change between this
-   // render and the subscription (a parent's layout effect calling changeLanguage), which no
-   // event reaches; bindI18n: '' keeps it off
--  const getSnapshot = () =>
--    bindI18n && i18n ? `${revisionRef.current}|${languageKey(i18n)}` : String(revisionRef.current);
-+  const getSnapshot = () => {
-+    if (!i18n) return '';
-+    const rev = revision(i18n, { bindI18n, bindI18nStore });
-+    return bindI18n ? `${rev}|${languageKey(i18n)}` : String(rev);
+-  const renderNodes = (children, knownComponentsMap, targetString, i18n, i18nOptions, combinedTOpts) => {
++  const renderNodes = (children, knownComponentsMap, targetString, i18n, i18nOptions, combinedTOpts, tInterpolated) => {
+     if (targetString === '') return [];
+     const keepArray = i18nOptions.transKeepBasicHtmlNodesFor || [];
+     const emptyChildrenButNeedsHandling = targetString && new RegExp(keepArray.map(keep => `<${keep}`).join('|')).test(targetString);
+@@ -587,7 +587,7 @@
+     const ast = index.parse(`<0>${targetString}</0>`, {
+       allowedTags
+     });
+-    const opts = {
++    const opts = tInterpolated ? Object.fromEntries(Object.entries(data).filter(([name]) => !(name in combinedTOpts))) : {
+       ...data,
+       ...combinedTOpts
+     };
+@@ -882,6 +882,7 @@
+     };
+     let translation = key ? t(key, combinedTOpts) : defaultValue;
+     if (translation === key && defaultValue) translation = defaultValue;
++    const tInterpolated = interpolateBeforeParsing && translation !== defaultValue && !formatPlugin && !combinedTOpts.skipInterpolation;
+     const generatedComponents = generateComponents(mergedComponents, translation, i18n, i18nKey);
+     let indexedChildren = generatedComponents || children;
+     let componentsMap = null;
+@@ -892,7 +893,7 @@
+       componentsMap = generatedComponents;
+       indexedChildren = undefined;
+     }
+-    const content = renderNodes(indexedChildren, componentsMap, translation, i18n, reactI18nextOptions, combinedTOpts);
++    const content = renderNodes(indexedChildren, componentsMap, translation, i18n, reactI18nextOptions, combinedTOpts, tInterpolated);
+     const useAsParent = parent ?? reactI18nextOptions.defaultTransParent;
+     return useAsParent ? React.createElement(useAsParent, additionalProps, content) : content;
+   }
+@@ -976,6 +977,25 @@
+       if (bindI18nStore) i18n.store.off(bindI18nStore, callback);
+     };
+   };
++  const eventCounts = new WeakMap();
++  const countEvents = (emitter, events) => {
++    if (!events) return 0;
++    let counts = eventCounts.get(emitter);
++    if (!counts) eventCounts.set(emitter, counts = new Map());
++    let sum = 0;
++    events.split(' ').forEach(event => {
++      if (!counts.has(event)) {
++        counts.set(event, 0);
++        emitter.on(event, () => counts.set(event, counts.get(event) + 1));
++      }
++      sum += counts.get(event);
++    });
++    return sum;
 +  };
-   useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
- };
- 
-@@ -113,18 +133,9 @@ export const useTranslation = (ns, props = {}) => {
- 
-   i18n?.reportNamespaces?.addUsedNamespaces?.(namespaces);
- 
--  const revisionRef = useRef(0);
-   const subscribe = useCallback(
--    (callback) => {
++  const revision = (i18n, {
++    bindI18n,
++    bindI18nStore
++  }) => countEvents(i18n, bindI18n) + countEvents(i18n.store, bindI18nStore);
+   const useRerenderOnEvents = i18n => {
+     const {
+       bindI18n,
+@@ -984,15 +1004,18 @@
+       ...getDefaults(),
+       ...i18n?.options?.react
+     };
+-    const revisionRef = React.useRef(0);
+     const subscribe = React.useCallback(callback => i18n ? subscribeToEvents(i18n, {
+       bindI18n,
+       bindI18nStore
+-    }, () => {
+-      revisionRef.current += 1;
+-      callback();
+-    }) : () => {}, [i18n, bindI18n, bindI18nStore]);
+-    const getSnapshot = () => bindI18n && i18n ? `${revisionRef.current}|${languageKey(i18n)}` : String(revisionRef.current);
++    }, callback) : () => {}, [i18n, bindI18n, bindI18nStore]);
++    const getSnapshot = () => {
++      if (!i18n) return '';
++      const rev = revision(i18n, {
++        bindI18n,
++        bindI18nStore
++      });
++      return bindI18n ? `${rev}|${languageKey(i18n)}` : String(rev);
++    };
+     React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+   };
+   const useTranslation = (ns, props = {}) => {
+@@ -1024,26 +1047,18 @@
+     const namespacesKey = JSON.stringify(unstableNamespaces);
+     const namespaces = React.useMemo(() => unstableNamespaces, [namespacesKey]);
+     i18n?.reportNamespaces?.addUsedNamespaces?.(namespaces);
+-    const revisionRef = React.useRef(0);
+-    const subscribe = React.useCallback(callback => {
 -      if (!i18n) return dummySubscribe;
--
 -      const wrappedCallback = () => {
 -        revisionRef.current += 1;
 -        callback();
 -      };
--
--      return subscribeToEvents(i18n, { bindI18n, bindI18nStore }, wrappedCallback);
--    },
-+    (callback) =>
-+      i18n ? subscribeToEvents(i18n, { bindI18n, bindI18nStore }, callback) : dummySubscribe,
-     // the event names, not `i18nOptions`: that object is rebuilt whenever `props` is a new
-     // object (the `{}` default, inline options), and a new `subscribe` makes React
-     // unsubscribe and resubscribe on every render
-@@ -140,7 +151,7 @@ export const useTranslation = (ns, props = {}) => {
-       !!(i18n.isInitialized || i18n.initializedStoreOnce) &&
-       namespaces.every((n) => hasLoadedNamespace(n, i18n, i18nOptions));
-     const currentLng = props.lng || i18n.language;
--    const currentRevision = revisionRef.current;
-+    const currentRevision = revision(i18n, i18nOptions);
-     // an inline selector is a new function on every render, so compare the key it resolves
-     // to (with the options getFixedT resolves it with), not the function itself
-     const keyPrefixKey =
+-      return subscribeToEvents(i18n, {
+-        bindI18n,
+-        bindI18nStore
+-      }, wrappedCallback);
+-    }, [i18n, bindI18n, bindI18nStore]);
++    const subscribe = React.useCallback(callback => i18n ? subscribeToEvents(i18n, {
++      bindI18n,
++      bindI18nStore
++    }, callback) : dummySubscribe, [i18n, bindI18n, bindI18nStore]);
+     const snapshotRef = React.useRef();
+     const getSnapshot = React.useCallback(() => {
+       if (!i18n) {
+         return notReadySnapshot;
+       }
+       const calculatedReady = !!(i18n.isInitialized || i18n.initializedStoreOnce) && namespaces.every(n => hasLoadedNamespace(n, i18n, i18nOptions));
+       const currentLng = props.lng || i18n.language;
+-      const currentRevision = revisionRef.current;
++      const currentRevision = revision(i18n, i18nOptions);
+       const keyPrefixKey = typeof keyPrefix === 'function' ? i18next.keyFromSelector(keyPrefix, {
+         ...i1
 ```
 
-**File**: `test/trans.languageChange.spec.jsx` (modified, +3/-2)
+**File**: `react-i18next.min.js` (modified, +1/-1)
 ```diff
-@@ -170,8 +170,9 @@ describe('Trans and IcuTrans follow language changes on their own', () => {
-   it('should unsubscribe on unmount', async () => {
-     const inst = await createInst();
-     const { unmount } = render(<Trans i18n={inst} i18nKey="hello" components={[<b />]} />);
--    expect(inst.observers.languageChanged?.size).toBe(1);
-+    // its own listener, next to the instance's event counter, which stays
-+    expect(inst.observers.languageChanged?.size).toBe(2);
-     unmount();
--    expect(inst.observers.languageChanged?.size ?? 0).toBe(0);
-+    expect(inst.observers.languageChanged?.size).toBe(1);
-   });
- });
+@@ -1 +1 @@
+-!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports,require("react"),require("i18next")):"function"==typeof define&&define.amd?define(["exports","react","i18next"],t):t((e="undefined"!=typeof globalThis?globalThis:e||self).ReactI18next={},e.React,e.i18next)}(this,function(e,t,n){"use strict";const r={area:!0,base:!0,br:!0,col:!0,embed:!0,hr:!0,img:!0,input:!0,link:!0,meta:!0,param:!0,source:!0,track:!0,wbr:!0,"!doctype":!0,"!DOCTYPE":!0},s=/\s([^'"/\s><]+?)[\s/>]|([^\s=]+)=\s?("[^"]*"|'[^']*')/g;function i(e){const t={type:"tag",name:"",voidElement:!1,attrs:{},children:[]},n=e.match(/<\/?([^\s]+?)[/\s>]/);if(n&&(t.name=n[1],(r[n[1]]||"/"===e.charAt(e.length-2))&&(t.voidElement=!0),t.name.startsWith("!--"))){const t=e.indexOf("--\x3e");return{type:"comment",comment:-1!==t?e.slice(4,t):""}}const i=new RegExp(s);let a=null;for(;a=i.exec(e),null!==a;)if(a[0].trim())if(a[1]){const e=a[1].trim();let n=[e,null];const r=e.indexOf("=");r>-1&&(n=[e.slice(0,r),e.slice(r+1)]),t.attrs[n[0]]=n[1],i.lastIndex--}else a[2]&&(t.attrs[a[2]]=a[3].trim().substring(1,a[3].length-1));return t}const a=/<!--[\s\S]*?-->|<[a-zA-Z0-9\-!/](?:"[^"]*"|'[^']*'|[^'">])*>/g,o=/<\/?([^\s]+?)[/\s>]/,c=/^\s*$/,l=/^(script|style)$/i,u="\0",p=Object.create(null);function d(e){e.forEach(function(e){if("text"!==e.type)if("comment"!==e.type){for(const t in e.attrs){const n=e.attrs[t];"string"==typeof n&&n.indexOf(u)>-1&&(e.attrs[t]=n.split(u).join("<"))}e.children.length&&d(e.children)}else e.comment=e.comment.split(u).join("<");else e.content=e.content.split(u).join("<")})}function f(e,t){switch(t.type){case"text":return e+t.content;case"tag":{const n=t.voidElement&&"!doctype"!==t.name.toLowerCase()?"/>":">";return e+="<"+t.name+(t.attrs?function(e){const t=[];for(const n in e)null===e[n]?t.push(n):t.push(n+'="'+String(e[n]).replace(/"/g,"&quot;")+'"');return t.length?" "+t.join(" "):""}(t.attrs):"")+n,t.voidElement?e:e+t.children.reduce(f,"")+"</"+t.name+">"}case"comment":return e+="\x3c!--"+t.comment+"--\x3e"}}var g={parse:function(e,t){const n=t&&t.components||p,r=t&&t.allowedTags;let s=!1;if(r){const t="function"==typeof r?r:function(e){return r.indexOf(e)>-1};let n,i="",c=0;for(a.lastIndex=0;n=a.exec(e);){const r=n[0];i+=e.slice(c,n.index);const l=r.match(o);r.startsWith("\x3c!--")||l&&t(l[1])?(i+=r,c=n.index+r.length):(s=!0,i+=u,c=n.index+1,a.lastIndex=c)}e=i+e.slice(c)}const f=[],g=[];let m,h,y=-1,x=!1,b=0;if(0!==e.indexOf("<")){const t=e.indexOf("<");f.push({type:"text",content:-1===t?e:e.substring(0,t)})}const E=[];let v;for(;v=a.exec(e);)E.push(v);return E.forEach(function(e,t){const n=e[0];if(!n)return;if(n.startsWith("\x3c!--"))return;let r=0,s=0,i=-1,a=null;for(let e=0;e<n.length;e++){const t=n.charAt(e);a?t===a&&(a=null):'"'===t||"'"===t?a=t:"<"===t?(r++,2===r&&(i=e)):">"===t&&s++}const o=i>-1&&/[a-zA-Z0-9\-!/]/.test(n.charAt(i+1));if(r>s&&o){const e=n.substring(0,i),r=n.substring(e.length);E[t][0]=r,E[t].index+=e.length}}),E.forEach(function(t,r){const s=t[0];if(!s)return;const a=t.index;if(a<b)return;if(x){if(s!=="</"+m.name+">")return;x=!1}const o="/"!==s.charAt(1),u=s.startsWith("\x3c!--"),p=a+s.length,d=e.charAt(p),v=E[r+1];let N,I;if("<"===d&&v){const t=e.substring(p,v.index);N=t.split("<").length>t.split(">").length}if(u){const t=i(s);if(y<0)return f.push(t),f;I=g[y],I.children.push(t);const n=e.slice(p,v?v.index:void 0);return n.length>0&&I.children.push({type:"text",content:n}),f}if(o){y++,m=i(s),"tag"===m.type&&n[m.name]&&(m.type="component",x=!0);let t=!1;if(!x&&!m.voidElement&&l.test(m.name)){t=!0,h||(h=e.toLowerCase());const n=h.indexOf("</"+m.name.toLowerCase()+">",p),r=-1===n?e.length:n,s=e.slice(p,r);s&&m.children.push({type:"text",content:s}),b=r}m.voidElement||x||t||!d||"<"===d||m.children.push({type:"text",content:e.slice(p,v?v.index:void 0)}),0===y&&f.push(m),I=g[y-1],I&&I.children.push(m),g[y]=m}if((!o||m.voidElement)&&(y>-1&&(m.voidElement||m.name===s.slice(2,-1))&&(y--,m=-1===y?f:g[y]),!x&&("<"!==d||N)&&d)){I=-1===y?f:g[y].children;const t=v?v.index:-1;let n=e.slice(p,-1===t?void 0:t);c.test(n)&&(n=" "),(t>-1&&y+I.length>=0||" "!==n)&&I.push({type:"text",content:n})}}),s&&d(f),f},stringify:function(e){return e.reduce(function(e,t){return e+f("",t)},"")}};const m=(e,t,n,r)=>{const s=[n,{code:t,...r||{}}];if(e?.services?.logger?.forward)return e.services.logger.forward(s,"warn","react-i18next::",!0);S(s[0])&&(s[0]=`react-i18next:: ${s[0]}`),e?.services?.logger?.warn?e.services.logger.warn(...s):console?.warn&&console.warn(...s)},h=new WeakMap,y=new Set,x=(e,t,n,r)=>{if(S(n)){let t=y;const r=e?.services?.logger||e;if(O(r)&&(t=h.get(r),t||h.set(r,t=new Set)),t.has(n))return;t.add(n)}m(e,t,n,r)},b=()=>{try{return!1}catch(e){return!1}},E=(e,t)=>()=>{e.isInitialized?t():e.once("initialized",()=>t())},v=(e,t,n)=>{e.loadNamespaces(t,E(e,n))},N=(e,t,n,r)=>{if(S(n)&&(n=[n]),e.options.preload&&e.options.preload.indexOf(t)>-1)return v(e,n,r);n.forEach(t=>{e.options.ns.indexOf(t)<0&&e.o
 ```
 
-**File**: `test/useTranslation.bindI18nStore.spec.jsx` (modified, +62/-1)
+---
+
+### Incident Patch 2: `77fdb3e3` (2026-11-19)
+**Commit Message**: fix: Trans with children keeps a placeholder that came in with a value (#1950)
+
+**File**: `src/TransWithoutContext.js` (modified, +15/-1)
 ```diff
-@@ -1,9 +1,10 @@
- import { describe, it, expect } from 'vitest';
--import React from 'react';
-+import React, { useLayoutEffect } from 'react';
- import { act, render, screen } from '@testing-library/react';
- import { createInstance } from 'i18next';
- import { useTranslation } from '../src/useTranslation';
- import { I18nextProvider } from '../src/I18nextProvider';
-+import { Trans } from '../src/Trans';
+@@ -151,6 +151,7 @@ const renderNodes = (
+   i18n,
+   i18nOptions,
+   combinedTOpts,
++  tInterpolated,
+ ) => {
+   if (targetString === '') return [];
  
- describe('useTranslation with bindI18nStore', () => {
-   it('should correctly return the correct translation', async () => {
-@@ -29,3 +30,63 @@ describe('useTranslation with bindI18nStore', () => {
-     expect(screen.getByRole('heading')).toHaveTextContent('deutsch'); // this assertion fails
-   });
- });
+@@ -193,7 +194,12 @@ const renderNodes = (
+   // parse ast from string with additional wrapper tag
+   // -> avoids issues in parser removing prepending text nodes
+   const ast = HTML.parse(`<0>${targetString}</0>`, { allowedTags });
+-  const opts = { ...data, ...combinedTOpts };
++  // when t() already filled in the values, only the object children's own variables are left: a
++  // second pass with all of them would also fill a placeholder that came in with a value, which
++  // interpolation.skipOnVariables prevents in t() (#1950)
++  const opts = tInterpolated
++    ? Object.fromEntries(Object.entries(data).filter(([name]) => !(name in combinedTOpts)))
++    : { ...data, ...combinedTOpts };
+ 
+   const renderInner = (child, node, rootReactNode) => {
+     const childs = getChildren(child);
+@@ -625,6 +631,13 @@ export function Trans({
+   };
+   let translation = key ? t(key, combinedTOpts) : defaultValue;
+   if (translation === key && defaultValue) translation = defaultValue;
++  // the children text as it came in (cimode, a t that returns the key or is not ready yet) was not
++  // interpolated; a format plugin or skipInterpolation keep the old second pass
++  const tInterpolated =
++    interpolateBeforeParsing &&
++    translation !== defaultValue &&
++    !formatPlugin &&
++    !combinedTOpts.skipInterpolation;
+ 
+   const generatedComponents = generateComponents(mergedComponents, translation, i18n, i18nKey);
+   let indexedChildren = generatedComponents || children;
+@@ -645,6 +658,7 @@ export function Trans({
+     i18n,
+     reactI18nextOptions,
+     combinedTOpts,
++    tInterpolated,
+   );
+ 
+   // allows user to pass `null` to `parent`
+```
+
+**File**: `test/trans.render.skipOnVariables.spec.jsx` (added, +147/-0)
+```diff
+@@ -0,0 +1,147 @@
++import { describe, it, expect, afterEach } from 'vitest';
++import React from 'react';
++import { render, cleanup } from '@testing-library/react';
++import i18next from 'i18next';
++import { Trans } from '../src/Trans';
 +
-+describe('a bindI18nStore event between render and subscribe', () => {
-+  // de has no bundle yet, so everything renders the en fallback until one is added
-+  const createInst = async (react) => {
-+    const inst = createInstance();
-+    await inst.init({
-+      lng: 'de',
-+      fallbackLng: 'en',
-+      resources: { en: { translation: { title: 'Title', rich: 'Rich <0>text</0>' } } },
-+      react,
++// https://github.com/i18next/react-i18next/issues/1950
++// with children, a placeholder inside a value stays as it is (interpolation.skipOnVariables), as in t()
++describe('Trans with children and values', () => {
++  afterEach(cleanup);
++
++  const setup = async (options = {}, plugins = []) => {
++    const i18n = i18next.createInstance();
++    plugins.forEach((plugin) => i18n.use(plugin));
++    await i18n.init({
++      lng: 'en',
++      resources: {
++        en: { translation: { 'Hello {{name}}': 'Hello {{name}}', greeting: 'Hi {{name}}' } },
++      },
++      ...options,
 +    });
-+    return inst;
++    return i18n;
 +  };
++  const text = (element) => render(element).container.textContent;
++  const name = 'from children';
 +
-+  // runs after the children rendered, before their subscriptions (passive effects) exist
-+  const AddDeInLayoutEffect = ({ inst, children }) => {
-+    useLayoutEffect(() => {
-+      inst.addResourceBundle('de', 'translation', { title: 'Titel', rich: 'Reich <0>Text</0>' });
-+    }, []);
-+    return children;
-+  };
-+
-+  const Label = ({ inst }) => {
-+    const { t } = useTranslation('translation', { i18n: inst });
-+    return <span>{t('title')}</span>;
-+  };
-+
-+  it('should re-render useTranslation', async () => {
-+    const inst = await createInst({ bindI18nStore: 'added' });
-+    const { container } = render(
-+      <AddDeInLayoutEffect inst={inst}>
-+        <Label inst={inst} />
-+      </AddDeInLayoutEffect>,
-+    );
-+    await act(async () => {});
-+    expect(container).toHaveTextContent('Titel');
++  it('does not fill a placeholder that came in with a value', async () => {
++    const i18n = await setup();
++    expect(
++      text(
++        <Trans i18n={i18n} values={{ name: '{{otherVar}}', otherVar: 'x' }}>
++          Hello {{ name }}
++        </Trans>,
++      ),
++    ).toBe('Hello {{otherVar}}');
 +  });
 +
-+  it('should re-render Trans', async () => {
-+    const inst = await createInst({ bindI18nStore: 'added' });
-+    const { container } = render(
-+      <AddDeInLayoutEffect inst={inst}>
-+        <Trans i18n={inst} i18nKey="rich" components={[<b />]} />
-+      </AddDeInLayoutEffect>,
-+    );
-+    await act(async () => {});
-+    expect(container).toHaveTextContent('Reich Text');
++  it('fills a value that contains its own placeholder once', async () => {
++    const i18n = await setup();
++    expect(
++      text(
++        <Trans i18n={i18n} values={{ name: '{{name}} is my name' }}>
++          Hello {{ name }}
++        </Trans>,
++      ),
++    ).toBe('Hello {{name}} is my name');
 +  });
 +
-+  it("should not re-render with the default bindI18nStore: ''", async () => {
-+    const inst = await createInst();
-+    const { container } = render(
-+      <AddDeInLayoutEffect inst={inst}>
-+        <Label inst={inst} />
-+      </AddDeInLayoutEffect>,
-+    );
-+    await act(async () => {});
-+    expect(container).toHaveTextContent('Title');
++  it('does the same with count', async () => {
++    const i18n = await setup();
++    expect(
++      text(
++        <Trans i18n={i18n} count={2} values={{ name: '{{otherVar}}', otherVar: 'x' }}>
++          Hello {{ name }}
++        </Trans>,
++      ),
++    ).toBe('Hello {{otherVar}}');
++  });
++
++  it('still fills the variables of other object children', async () => {
++    const i18n = await setup({
++      resources: { en: { translation: { greeting: 'Hi {{name}}, <1>{{city}}</1>' } } },
++    });
++    expect(
++      text(
++        <Trans i18n={i18n} i18nKey="greeting" values={{ name: 'Joe' }}>
++          Hi {{ name }}, <b>{{ city: 'Rome' }}</b>
++        </Trans>,
++      ),
++    ).toBe('Hi Joe, Rome');
++  });
++
++  describe('fills the values when t() did not', () => {
++    it('in cimode', async () => {
++      const i18n = await setup({ lng: 'cimode' });
++      expect(
++        text(
++          <Trans i18n={i18n} i18nKey="greeting" values={{ name: 'Joe' }}>
++            Hello {{ name }}
++          </Trans>,
++        ),
++      ).toBe('Hello Joe');
++      expect(
++        text(
++          <Trans i18n={i18n} values={{ name: 'Joe' }}>
++            Hello {{ name }}
++          </Trans>,
++        ),
++      ).toBe('Hello Joe');
++    });
++
++    it('with a t that returns the key', async () => {
++      const i18n = await setup();
++      expect(
++        text(
++          <Trans i18n={i18n} t={(k) => k} i18nKey="greeting" values={{ name: 'Joe' }}>
++            Hello {{ name }}
++          </Trans>,
++        ),
++      ).toBe('Hello Joe');
++    });
++
++    it('with a t that returns the default value, as before the namespace is loaded', async () => {
++      const i18n = await setup();
++      expect(
++        text(
++          <Trans
++            i18n={i18n}
++            t={(k, o) => o.defaultValue}
++            i18nKey="greeting"
++            values={{ name: 'Joe' }}
++          >
++            Hello {{ name }}
++          </Trans>,
++        ),
++      ).toBe('Hello Joe');
++    });
++
++    it('with skipInterpolation', async () => {
++      const i18n = await setup();
++      expect(
++        text(
++          <Trans
++            i18n={i18n}
++            i18nKey="greeting"
++            values={{ name: 'Joe' }}
++            tOptions={{ skipInterpolation: true }}
++          >
++            Hello {{ name }}
++          </Trans>,
++        ),
++      ).toBe('Hi Joe');
++    });
++
++    it('with a format plugin', async () => {
++      const formatPlugin = { type: 'i18nFormat', init() {}, parse: (res) => res };
++      const i18n = await setup({}, [formatPlugin]);
++      expect(
++        text(
++          <Trans i18n={i18n} i18nKey="greeting" values={{ name: 'Joe' }}>
++            Hello {{ name }}
++          </Trans>,
++        ),
++      ).toBe('Hi Joe');
++    });
 +  });
 +});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1951** (closed): fix: keep interpolation.skipOnVariables for <Trans> children values (@Goldloli)
 - **PR #1947** (2026-11-03): fix(types): compute the Trans values type inside the prop again (@leshaduduk)
-- **PR #1945** (2026-10-25): fix: refresh translations when namespaces are added (@samannerepla)
+- **PR #1945** (2026-10-25): fix: refresh translations when namespaces are added (@lprnmns)
 - **PR #1944** (2026-10-24): fix(Trans): don't drop an interpolation variable named format (@Pharex38)
 - **PR #1943** (2026-10-24): fix(IcuTrans): decode each HTML entity only once (@Pharex38)
 - **PR #1942** (2026-10-24): fix(Trans): use the count passed in tOptions (@nk-batman21)
-- **PR #1941** (2026-10-23): fix(Trans): fall back to the last key of an i18nKey array, like t() (@nk-batman21)
 
 ---
 
@@ -1221,74 +1367,73 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. re-render for a bindI18nStore event between render and subscribe
+## X. Empirical Invariant Guard in react-i18next.js
 
 **RULE**:
-When implementing operations in `src/useTranslation.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in i18next/react-i18next. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `react-i18next.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in i18next/react-i18next. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `40ae7d8a`: re-render for a bindI18nStore event between render and subscribe. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5db47334`: build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/useTranslation.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `react-i18next.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-// how often an emitter fired these events, counted once for all components, from the first
-// render that asks. A component subscribes only after it rendered, so an event in between (a
-// bundle added by a parent's layout effect) reaches none of its listeners; with the count in
-// the snapshot, React's check right after subscribing sees it. The counter is registered
-// during render, before the component's own listener, so it is up to date when that runs.
-const eventCounts = new WeakMap();
-const countEvents = (emitter, events) => {
-  if (!events) return 0;
-  let counts = eventCounts.get(emitter);
-  if (!counts) eventCounts.set(emitter, (counts = new Map()));
-  let sum = 0;
-  events.split(' ').forEach((event) => {
-    if (!counts.has(event)) {
-      counts.set(event, 0);
-      emitter.on(event, () => counts.set(event, counts.get(event) + 1));
-    }
-    sum += counts.get(event);
-  });
-  return sum;
-};
-const revision = (i18n, { bindI18n, bindI18nStore }) =>
-  countEvents(i18n, bindI18n) + countEvents(i18n.store, bindI18nStore);
-
-      i18n ? subscribeToEvents(i18n, { bindI18n, bindI18nStore }, callback) : () => {},
-  const getSnapshot = () => {
-    if (!i18n) return '';
-    const rev
+  const renderNodes = (children, knownComponentsMap, targetString, i18n, i18nOptions, combinedTOpts, tInterpolated) => {
+    const opts = tInterpolated ? Object.fromEntries(Object.entries(data).filter(([name]) => !(name in combinedTOpts))) : {
+    const tInterpolated = interpolateBeforeParsing && translation !== defaultValue && !formatPlugin && !combinedTOpts.skipInterpolation;
+    const content = renderNodes(indexedChildren, componentsMap, translation, i18n, reactI18nextOptions, combinedTOpts, tInterpolated);
+  const eventCounts = new WeakMap();
+  const countEvents = (emitter, events) => {
+    if (!events) return 0;
+    let counts = eventCounts.get(emitter);
+    if (!counts) eventCounts.set(emitter, counts = new Map());
+    let sum = 0;
+    events.split(' ').forEach(event => {
+      if (!counts.has(event)) {
+        counts.set(event, 0);
+        emitter.on(event, () => counts.set(event, counts.get(event) + 1));
+      }
+      sum += counts.get(event);
+    });
+    return sum;
+  };
+  const revision = (i18n, {
+    bindI18n,
+    bindI18nStore
+  }) => countEvents(i18n, bindI18n) + countEvents(i18n.store, bindI18nStore);
+    }, callback) : () => {}, [i18n, bindI18n, bindI18nStore]);
+    
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-  const revisionRef = useRef(0);
-      i18n
-        ? subscribeToEvents(i18n, { bindI18n, bindI18nStore }, () => {
-            revisionRef.current += 1;
-            callback();
-          })
-        : () => {},
-  const getSnapshot = () =>
-    bindI18n && i18n ? `${revisionRef.current}|${languageKey(i18n)}` : String(revisionRef.current);
-  const revisionRef = useRef(0);
-    (callback) => {
+  const renderNodes = (children, knownComponentsMap, targetString, i18n, i18nOptions, combinedTOpts) => {
+    const opts = {
+    const content = renderNodes(indexedChildren, componentsMap, translation, i18n, reactI18nextOptions, combinedTOpts);
+    const revisionRef = React.useRef(0);
+    }, () => {
+      revisionRef.current += 1;
+      callback();
+    }) : () => {}, [i18n, bindI18n, bindI18nStore]);
+    const getSnapshot = () => bindI18n && i18n ? `${revisionRef.current}|${languageKey(i18n)}` : String(revisionRef.current);
+    const revisionRef = React.useRef(0);
+    const subscribe = React.useCallback(callback => {
       if (!i18n) return dummySubscribe;
-
       const wrappedCallback = () => {
         revisionRef.current += 1;
         callback();
       };
-
-      return subscribeToEvents(i18n, { bindI18n, bindI18nStore }, wrappedCallback);
-    },
-    const currentRevision = revisionRef.current;
+      return subscribeToEvents(i18n, {
+        bindI18n,
+        bindI18nStore
+      }, wrappedCallback);
+    }, [i18n, bindI18n, bindI18nStore]);
+      const currentRevision = revisionRef.current;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `40ae7d8a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5db47334` are properly handled with clean fallback behavior.

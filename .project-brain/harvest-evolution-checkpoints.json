@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T21:32:23.233Z",
+  "last_updated": "2026-11-21T21:41:01.663Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T15:59:55.405Z",
@@ -493,7 +493,7 @@
       "staged_for_review": 1
     },
     "moby-buildkit-learnings.md": {
-      "processed_at": "2026-11-20T17:58:50.637Z",
+      "processed_at": "2026-11-21T21:41:00.640Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -518,7 +518,7 @@
       "staged_for_review": 0
     },
     "hf-pika-labs-pika-h3-flex-learnings.md": {
-      "processed_at": "2026-11-16T12:53:13.454Z",
+      "processed_at": "2026-11-21T21:40:32.053Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -2358,9 +2358,9 @@
       "staged_for_review": 0
     },
     "i18next-react-i18next-learnings.md": {
-      "processed_at": "2026-11-17T16:31:09.338Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-21T21:40:59.688Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "hf-bigscience-bloom-learnings.md": {
       "processed_at": "2026-11-18T21:42:30.242Z",
@@ -3673,7 +3673,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2892,
-  "total_canonical_promoted": 455,
-  "total_staged_for_review": 2220
+  "total_dossiers_evaluated": 2895,
+  "total_canonical_promoted": 456,
+  "total_staged_for_review": 2221
 }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T21:32:23.082Z",
+  "last_updated": "2026-11-21T21:41:01.518Z",
   "total_verified_learnings": 9062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23291,
+  "total_items": 23297,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114177,10 +114177,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
       "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
       "repository": "milvus-io/milvus",
-      "source_version": "2d0d14cb",
-      "content_hash": "d7ffd4e3741e2ff89dadc1fd3740e5c2a6b7ee2f4060e71885105564379fe9a9",
+      "source_version": "8bcbb077",
+      "content_hash": "ee087994459fd98535dd7dad2880f46c043c3e112ea4a05c3af41086d00c7be9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T10:08:54.227Z"
+      "persisted_at": "2026-11-21T21:40:29.106Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus",
@@ -114189,10 +114189,10 @@
       "relative_path": "08_VERIFICATION/milvus-io-milvus-verification-protocol-empirical-defect-shield-for-milvus-io-mil.md",
       "title": "Verification Protocol: Empirical Defect Shield for milvus-io/milvus",
       "repository": "milvus-io/milvus",
-      "source_version": "19ed1d67",
-      "content_hash": "517a2cb5a3df6689be0c543bcea5fbad29bcf01031fe1b773bd60b03cca8fedb",
+      "source_version": "8bcbb077",
+      "content_hash": "af4b504961519526434418545a2e5c046bfd6ba7fc989dadec0c7cf94afc618a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T16:56:44.648Z"
+      "persisted_at": "2026-11-21T21:40:29.262Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l",
@@ -222431,8 +222431,8 @@
       "slug": "i18next-react-i18next",
       "platform": "github",
       "source_url": "https://github.com/i18next/react-i18next",
-      "source_version": "96a8573c",
-      "content_hash": "877f3bf2b025a07153ee38b6b32872e5dc42f4a9b5c6ef1eaeec89b1fbe69330",
+      "source_version": "def28df2",
+      "content_hash": "2ffdf3dc3d3aededb078845d7f38bd0b2922a437d00cdd76d7139c29dc348673",
       "dossier_path": "07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
       "promoted_rules": [
@@ -222445,6 +222445,11 @@
           "number": 9001,
           "title": "re-render for a bindI18nStore event between render and subscribe",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9848,
+          "title": "Empirical Invariant Guard in react-i18next.js",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222452,7 +222457,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T16:30:55.557Z",
+      "verified_at": "2026-11-21T21:40:19.175Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222494,10 +222499,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-i18next-react-i18next-technical-construction-intelligence-i18next-react-i18next-.md",
       "title": "Technical Construction Intelligence: i18next/react-i18next Core Invariants",
       "repository": "i18next/react-i18next",
-      "source_version": "96a8573c",
-      "content_hash": "2c411554cd45df74dfba6ebf0957f626fac462b4b36645f84c0de8a713025c6f",
+      "source_version": "def28df2",
+      "content_hash": "7d5515073cb98758d8d1bbaf87e79abfc45549ccd4dde2354cc4032120dc57db",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T16:30:55.958Z"
+      "persisted_at": "2026-11-21T21:40:19.746Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-i18next-react-i18next": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-i18next-react-i18next",
@@ -222506,10 +222511,10 @@
       "relative_path": "08_VERIFICATION/i18next-react-i18next-verification-protocol-empirical-defect-shield-for-i18next-.md",
       "title": "Verification Protocol: Empirical Defect Shield for i18next/react-i18next",
       "repository": "i18next/react-i18next",
-      "source_version": "96a8573c",
-      "content_hash": "54f01edec740a3bc00c4f099cae2c118c2d13e0dda12d5bf9229a5978286fe63",
+      "source_version": "def28df2",
+      "content_hash": "e36411be1b98d1b165621386f3ce645409a77592795db73935e73177711c1fe6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:30:56.074Z"
+      "persisted_at": "2026-11-21T21:40:19.897Z"
     },
     "learn-github-siderolabs-talos": {
       "learning_id": "learn-github-siderolabs-talos",
@@ -223041,9 +223046,9 @@
       "title": "Technical Construction Intelligence: i18next-react-i18next-learnings Core Invariants",
       "repository": "i18next-react-i18next-learnings",
       "source_version": "HEAD",
-      "content_hash": "0d603197d957ad0cbdd58aefc64dc0f52d8f6ac12d298834e4277b5507845c00",
+      "content_hash": "0d742ce0f97f4410e6e8a47c75fa2dd629d7e128806431491cd745c5e0b3d4d8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T16:31:09.639Z"
+      "persisted_at": "2026-11-21T21:41:00.286Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-i18next-react-i18next-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-i18next-react-i18next-learning",
@@ -223053,9 +223058,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for i18next-react-i18next-learnings",
       "repository": "i18next-react-i18next-learnings",
       "source_version": "HEAD",
-      "content_hash": "e239d3d71b360dbcd69b140a046d07ef96ef488651dc736c197630d95b24f065",
+      "content_hash": "923cac3a321a23410ebb2ba4036207d2e83e1ac6ab6f0ce550a3503d2b6fc75b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:31:09.750Z"
+      "persisted_at": "2026-11-21T21:41:00.463Z"
     },
     "domain_intelligence-technical-construction-intelligence-siderolabs-talos-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-siderolabs-talos-learnings-core-invariants",
@@ -223128,8 +223133,8 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "8a930b79",
-      "content_hash": "882d473009a7752e975266ac9b9cbd0be193ffd7fda497e9be0c6ab1d7322ac0",
+      "source_version": "dd75b495",
+      "content_hash": "c38360b7bd945d400f2086a63f165baa343ca4a2cd7e17d43eec5d3035ac220a",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
@@ -223157,6 +223162,11 @@
           "number": 9613,
           "title": "build(deps): bump actions/setup-go from 7.0.0 to 7.1.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9849,
+          "title": "Empirical Invariant Guard in azurite.go",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223164,7 +223174,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T17:53:52.462Z",
+      "verified_at": "2026-11-21T21:40:22.413Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223206,10 +223216,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-architecture-intelligence-moby-buildkit-core-invariants.md",
       "title": "Architecture Intelligence: moby/buildkit Core Invariants",
       "repository": "moby/buildkit",
-      "source_version": "8a930b79",
-      "content_hash": "f9c1ec45ca1ae76d9dab6cde8dae95a996172d154ab6cfa4068f1de5669f4727",
+      "source_version": "dd75b495",
+      "content_hash": "be6e369d779734e1a74be4c83a7029e073c8d31ffb39cda27cbb889960602cda",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T17:53:52.931Z"
+      "persisted_at": "2026-11-21T21:40:22.979Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit",
@@ -223218,10 +223228,10 @@
       "relative_path": "08_VERIFICATION/moby-buildkit-verification-protocol-empirical-defect-shield-for-moby-buildkit.md",
       "title": "Verification Protocol: Empirical Defect Shield for moby/buildkit",
       "repository": "moby/buildkit",
-      "source_version": "8a930b79",
-      "content_hash": "ca72df9143f4f4c856f5d51aaddf4ca8128b67328659213c3577f11649637e4c",
+      "source_version": "dd75b495",
+      "content_hash": "6582a6dc764609802757ed6ff51971807391cce7e3f9a5e50b85edfa95090436",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:53:53.053Z"
+      "persisted_at": "2026-11-21T21:40:23.145Z"
     },
     "learn-github-tailscale-tailscale": {
       "learning_id": "learn-github-tailscale-tailscale",
@@ -223394,9 +223404,9 @@
       "title": "Architecture Intelligence: moby-buildkit-learnings Core Invariants",
       "repository": "moby-buildkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "8c1c35497a4c775a9676c3a709555c658975b74253ae92eb12c9b031a059e8a2",
+      "content_hash": "473919e8ed71266385b48aca3ee1ca1a4dcc42e87af58f7b83b5d0e530d14d68",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T17:58:51.552Z"
+      "persisted_at": "2026-11-21T21:41:01.341Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit-learnings",
@@ -223406,9 +223416,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for moby-buildkit-learnings",
       "repository": "moby-buildkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "e406fe15fc87db4af2adb2fbfa80f56f21e10c7e4f5ee046d8e64e5556cb9655",
+      "content_hash": "5a85d91f6ddaa2f9290d7eeca49ef377747f8d664a7fb08aa94b07188b13341a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:58:51.991Z"
+      "persisted_at": "2026-11-21T21:41:01.518Z"
     },
     "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants",
@@ -241810,8 +241820,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "19ed1d67",
-      "content_hash": "74eb72d9f2de95d346a8e4d42f2d97cc61d15d081dcedac98d83f21376937396",
+      "source_version": "8bcbb077",
+      "content_hash": "197886a287ce2801e107fa34dee9769adb901de224b29faaf3f0c91c834f057f",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -241844,6 +241854,11 @@
           "number": 9602,
           "title": "read external refresh task state from response properties",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9850,
+          "title": "bump andybalholm/brotli to v1.2.7 (CVE-2026-111497 Go port)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -241851,7 +241866,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T16:56:43.733Z",
+      "verified_at": "2026-11-21T21:40:28.544Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -257217,7 +257232,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
       "source_version": "hf-pika-labs-pika-h3-flex",
-      "content_hash": "9fc43344e8984e465d41021b42dcc9fe805ccf9117c7b6a0621ca7b7a8c23dd2",
+      "content_hash": "271ff6d88115eb8a15cc688051af7bd9ac9c33f02631b70692dd07a4e644f972",
       "dossier_path": "07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md",
       "promoted_rules": [],
@@ -257226,7 +257241,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T12:48:12.802Z",
+      "verified_at": "2026-11-21T21:40:12.310Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -257243,9 +257258,9 @@
       "title": "Research & Knowledge Intelligence: Pika-Labs/Pika-H3-Flex Core Invariants",
       "repository": "Pika-Labs/Pika-H3-Flex",
       "source_version": "hf-pika-labs-pika-h3-flex",
-      "content_hash": "827db7a42afa30c11c507904b2867868f70dd35a3f0094940bdb3458f73331d7",
+      "content_hash": "1ffff4c7aea2068ec32053d65c39c810bd4c025e12f1576325626b19f5120d90",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T12:48:13.124Z"
+      "persisted_at": "2026-11-21T21:40:12.721Z"
     },
     "rule-8732": {
       "learning_id": "rule-8732",
@@ -257395,9 +257410,9 @@
       "title": "Research & Knowledge Intelligence: hf-pika-labs-pika-h3-flex-learnings Core Invariants",
       "repository": "hf-pika-labs-pika-h3-flex-learnings",
       "source_version": "HEAD",
-      "content_hash": "de05d8604fc79ce59870241d89074810f58672d06d82aca62bb1653a04e4ca5c",
+      "content_hash": "57ec8d831263f90e52a1ae95806ddee57facb8fa79642679b75ff55229afbaf3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T12:53:13.605Z"
+      "persisted_at": "2026-11-21T21:40:32.244Z"
     },
     "rule-8736": {
       "learning_id": "rule-8736",
@@ -316613,6 +316628,84 @@
       "content_hash": "9b5406713babd7a30385826cdf98279a099562d7c1660f93d2b002da93aec475",
       "domain_letter": "H",
       "persisted_at": "2026-11-21T21:32:22.929Z"
+    },
+    "rule-9848": {
+      "learning_id": "rule-9848",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9848,
+      "title": "Empirical Invariant Guard in react-i18next.js",
+      "source_url": "https://github.com/i18next/react-i18next",
+      "source_version": "def28df2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T21:40:19.175Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-react-i18next-js": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-react-i18next-js",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MVK1-empirical-invariant-guard-in-react-i18next-js.md",
+      "title": "Empirical Invariant Guard in react-i18next.js",
+      "repository": "i18next-react-i18next-learnings",
+      "source_version": "HEAD",
+      "content_hash": "10b051081408a61633531fa073287da8a448085aac0394a2be4894b8aae64033",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T21:41:00.097Z"
+    },
+    "rule-9849": {
+      "learning_id": "rule-9849",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9849,
+      "title": "Empirical Invariant Guard in azurite.go",
+      "source_url": "https://github.com/moby/buildkit",
+      "source_version": "dd75b495",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T21:40:22.413Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-azurite-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-azurite-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MWDP-empirical-invariant-guard-in-azurite-go.md",
+      "title": "Empirical Invariant Guard in azurite.go",
+      "repository": "moby-buildkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f03f7972b773eef8dcea151362fb170bce9c7c8b18e8b417e1f7361c59475784",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T21:41:01.175Z"
+    },
+    "rule-9850": {
+      "learning_id": "rule-9850",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9850,
+      "title": "bump andybalholm/brotli to v1.2.7 (CVE-2026-111497 Go port)",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "8bcbb077",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T21:40:28.544Z"
+    },
+    "candidate_directive-bump-andybalholm-brotli-to-v1-2-7-cve-2026-111497-go-port": {
+      "item_id": "candidate_directive-bump-andybalholm-brotli-to-v1-2-7-cve-2026-111497-go-port",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M7IV-bump-andybalholm-brotli-to-v1-2-7-cve-2026-111497-go-port.md",
+      "title": "bump andybalholm/brotli to v1.2.7 (CVE-2026-111497 Go port)",
+      "repository": "milvus-io/milvus",
+      "source_version": "8bcbb077",
+      "content_hash": "380abb28379acd642d01e610cfad7a2338d7f6b4a9753c16a9a7c16a5c3ce044",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T21:40:28.955Z"
     }
   },
   "ai-builder-brain": {

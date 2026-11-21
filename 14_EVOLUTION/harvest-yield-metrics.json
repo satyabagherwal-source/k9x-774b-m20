@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T21:31:48.474Z",
-  "total_cycles_completed": 11328,
-  "total_learnings_persisted": 11328,
-  "total_rules_promoted": 10655,
+  "last_updated": "2026-11-21T21:40:28.746Z",
+  "total_cycles_completed": 11332,
+  "total_learnings_persisted": 11332,
+  "total_rules_promoted": 10658,
   "history": [
-    {
-      "timestamp": "2026-11-21T01:16:23.683Z",
-      "repository": "webdriverio/webdriverio",
-      "learningId": "learn-github-webdriverio-webdriverio",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T01:33:43.883Z",
-      "repository": "wcandillon/react-native-skia",
-      "learningId": "learn-github-wcandillon-react-native-skia",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T01:34:54.874Z",
-      "repository": "mswjs/msw",
-      "learningId": "learn-github-mswjs-msw",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T01:43:41.624Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T01:51:32.395Z",
       "repository": "biomejs/biome",
@@ -1403,6 +1375,34 @@
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T21:40:12.533Z",
+      "repository": "Pika-Labs/Pika-H3-Flex",
+      "learningId": "learn-huggingface-pika-labs-pika-h3-flex",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T21:40:19.380Z",
+      "repository": "i18next/react-i18next",
+      "learningId": "learn-github-i18next-react-i18next",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T21:40:22.611Z",
+      "repository": "moby/buildkit",
+      "learningId": "learn-github-moby-buildkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T21:40:28.746Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
