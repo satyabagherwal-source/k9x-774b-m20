@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T15:31:35.704Z",
+  "last_updated": "2026-11-21T15:49:15.310Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "d45ac296e6d790f70018e1cff3169af66de581ba569910d105cc747767ed1683",
-      "verified_at": "2026-11-21T14:27:55.227Z",
+      "content_hash": "741553413905a007c85c4edc9e66e22122b6d7c7f31a4ecc7a0d75db0e5d3e35",
+      "verified_at": "2026-11-21T15:48:58.580Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T14:27:55.227Z"
+      "last_updated": "2026-11-21T15:48:58.580Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4326,14 +4326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pubkey-rxdb",
-      "content_hash": "1c8ae383120a18ade4500af9b7c044fab906fd0bc483c199a8a32816d60ca7bf",
-      "verified_at": "2026-11-18T12:50:59.426Z",
+      "content_hash": "b35e658b07c23b1524753c3dcfef3a7848c6772a5e8722dba263d8888edf8490",
+      "verified_at": "2026-11-21T15:48:50.040Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T12:50:59.426Z"
+      "last_updated": "2026-11-21T15:48:50.040Z"
     },
     "karmada-io/karmada": {
       "repository": "karmada-io/karmada",
@@ -4896,14 +4896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fallow-rs-fallow",
-      "content_hash": "d69e3c87f05979e8a2fc7dd75f6463057c69f5c636f791755be1e8be8817bf57",
-      "verified_at": "2026-11-20T01:22:58.544Z",
+      "content_hash": "de002ed2640e98ef18cf29629cf43a0b21be4fc8fe36cdd0e57b45892de9fe60",
+      "verified_at": "2026-11-21T15:49:15.199Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T01:22:58.544Z"
+      "last_updated": "2026-11-21T15:49:15.199Z"
     },
     "expo/create-react-native-app": {
       "repository": "expo/create-react-native-app",
@@ -15951,14 +15951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-fibo-2-0",
-      "content_hash": "9e9c79a403c76088d00cdb7e799a64235f663592552ecb853cfe5a9863fb7a0c",
-      "verified_at": "2026-11-17T17:36:37.071Z",
+      "content_hash": "d0948d74f1e086e77f501d7827a02564f8b8a6b1f9fdebede3702da8cf8080a3",
+      "verified_at": "2026-11-21T15:49:15.309Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T17:36:37.071Z"
+      "last_updated": "2026-11-21T15:49:15.309Z"
     },
     "ornith-ai/Ornith-1.5-122B": {
       "repository": "ornith-ai/Ornith-1.5-122B",

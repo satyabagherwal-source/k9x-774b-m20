@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T12:51:10.700Z",
+  "timestamp": "2026-11-21T15:49:50.992Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-pubkey-rxdb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [pubkey-rxdb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T12:51:10.700Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T15:49:50.992Z`  
 > **Learning ID**: `LEARN-EVO-pubkey-rxdb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pubkey-rxdb-learnings.md`  
 > **Source**: github ([https://github.com/pubkey/rxdb](https://github.com/pubkey/rxdb))  
-> **Source Version**: `1135a741`  
+> **Source Version**: `596b617d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T12:50:58.486Z  
+> **Timestamp**: 2026-11-21T15:48:48.997Z  
 > **Learning ID**: `learn-github-pubkey-rxdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pubkey-rxdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pubkey/rxdb](https://github.com/pubkey/rxdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T12:50:58.481Z  
+> **Harvest Timestamp**: 2026-11-21T15:48:48.777Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The local-first database that runs on every JS runtime and replicates with your existing backend - no vendor, no lock-in - https://rxdb.info/
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 23441 stars
+- **Stars / Engagement**: 23440 stars
 
 ---
 
@@ -743,7 +743,7 @@ export function documentFolder(
 import type { RxCleanupPolicy, RxState } from '../../types/index.d.ts';
 import { PROMISE_RESOLVE_TRUE } from '../../plugins/utils/index.ts';
 import { REPLICATION_STATE_BY_COLLECTION } from '../replication/index.ts';
-import { DEFAULT_CLEANUP_POLICY } from './cleanup-helper.ts';
+import { DEFAULT_CLEANUP_POLICY, awaitReplicationInSyncOrCanceled } from './cleanup-helper.ts';
 import { initialCleanupWait } from './cleanup.ts';
 import { firstValueFrom } from 'rxjs';
 
@@ -792,7 +792,7 @@ export async function cleanupRxState(
                 await Promise.all(
                     replicationStates.map(replicationState => {
                         if (!replicationState.isStopped()) {
-                            return replicationState.awaitInSync();
+                            return awaitReplicationInSyncOrCanceled(replicationState);
                         }
                     })
                 );
@@ -920,11 +920,11 @@ export function getRxStorageIpcRenderer(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9755** (2026-11-18): **fix(deps): update dependency graphql-ws to v6.4.2**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [graphql-ws](https://the-guild.dev/graphql/ws) ([source](https://redirect.github.com/enisdenjo/graphql-ws)) | [`6.4.1` → `6.4.2`](https://renovatebot.com/diffs/npm/graphql-ws/6.4.1/6.4.2) | ![age](https://developer.mend.io/api/mc/badges/age/npm/graphql-ws/6.4.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/graphql-ws/6.4.1/6.4.2?slim=true) |  ---  ### Release Notes  <details> <summary>enisdenjo/graphql-ws (graphql-ws)</summary>  ### [`v6.4.2`](https://redirect.github.com/enisdenjo/graphql-ws/blob/HEAD/CHANGELOG.md#642)  [Compare Source](https://redirect.github.com/enisdenjo/graphql-ws/compare/v6.4.1...v6.4.2)  ##### Patch Changes  - [#&#8203;705](https://redirect.github.com/enisdenjo/graphql-ws/pull/705) [`f86ce7e`](https://redirect.github.com/enisdenjo/graphql-ws/commit/f86ce7e64edd0de3bc0fb81121c2ab687d467a69) Thanks [@&#8203;mattkrick](https://redirect.github.com/mattkrick)! - Wait for each uWebSockets.js socket's own backpressure to drain, and complete the operations of a socket that closes while backpressured. Sockets used to share one drain callback, so an operation on a backpressured socket could stall until that socket closed  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule def
+- **Issue #9790** (2026-11-21): **chore(deps): update dependency playwright-core to v1.65.1**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [playwright-core](https://playwright.dev) ([source](https://redirect.github.com/microsoft/playwright)) | [`1.65.0` → `1.65.1`](https://renovatebot.com/diffs/npm/playwright-core/1.65.0/1.65.1) | ![age](https://developer.mend.io/api/mc/badges/age/npm/playwright-core/1.65.1?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/playwright-core/1.65.0/1.65.1?slim=true) |  ---  ### Release Notes  <details> <summary>microsoft/playwright (playwright-core)</summary>  ### [`v1.65.1`](https://redirect.github.com/microsoft/playwright/releases/tag/v1.65.1)  [Compare Source](https://redirect.github.com/microsoft/playwright/compare/v1.65.0...v1.65.1)  ##### Bug Fixes  - [#&#8203;43936](https://redirect.github.com/microsoft/playwright/issues/43936) \[Regression]: decorated class with a static field fails to load in 1.65 ("\_initClass is not a function") with useDefineForClassFields: false - [#&#8203;43934](https://redirect.github.com/microsoft/playwright/issues/43934) \[Bug]: Test locations are one column off under Bun 1.4.4+  ##### Browser Versions  - Chromium 159.0.8154.6 - Mozilla Firefox 159.0 - WebKit 27.2  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule 
 
-- **Issue #9754** (2026-11-17): **Remove "From" prefix from premium prices**
-  *Symptoms*: ## This PR contains: - IMPROVED DOCS  ## Describe the problem you have without this PR The Pro and Pro Plus tiers on the premium pricing page showed a "From" prefix before the price. That suggested the price can vary, but prices are exactly the same for all customers. This PR removes the prefix. The empty prefix slot still renders `&nbsp;`, so the tier cards stay aligned.  ## Assisted by YES, CLAUDE CODE  --- _Generated by [Claude Code](https://claude.ai/code/session_015P6w6go1qTWCKtGAY4H3BE)_
+- **Issue #9789** (2026-11-20): **chore(deps): update dependency eslint-plugin-jsdoc to v65.4.6**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [eslint-plugin-jsdoc](https://redirect.github.com/gajus/eslint-plugin-jsdoc) | [`65.4.5` → `65.4.6`](https://renovatebot.com/diffs/npm/eslint-plugin-jsdoc/65.4.5/65.4.6) | ![age](https://developer.mend.io/api/mc/badges/age/npm/eslint-plugin-jsdoc/65.4.6?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/eslint-plugin-jsdoc/65.4.5/65.4.6?slim=true) |  ---  ### Release Notes  <details> <summary>gajus/eslint-plugin-jsdoc (eslint-plugin-jsdoc)</summary>  ### [`v65.4.6`](https://redirect.github.com/gajus/eslint-plugin-jsdoc/releases/tag/v65.4.6)  [Compare Source](https://redirect.github.com/gajus/eslint-plugin-jsdoc/compare/v65.4.5...v65.4.6)  ##### Performance Improvements  - **`no-undefined-types`:** skip collecting defined types for blocks with no types ([9e1018d](https://redirect.github.com/gajus/eslint-plugin-jsdoc/commit/9e1018de49c6fd69e1883ca8ebc43f0d6c70cb4a)) - **`no-undefined-types`:** skip collecting defined types for blocks with no types ([#&#8203;1839](https://redirect.github.com/gajus/eslint-plugin-jsdoc/issues/1839)) ([9adbdb2](https://redirect.github.com/gajus/eslint-plugin-jsdoc/commit/9adbdb25fedc1bb8024399c1bf2b5465ec9a21f3))  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule d
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -941,407 +941,924 @@ export function getRxStorageIpcRenderer(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1135a741` (2026-11-18)
-**Commit Message**: Fix: query result is wrong when the event of another instance arrives after a later own write (#9629)
+### Incident Patch 1: `e0cd6ba4` (2026-11-20)
+**Commit Message**: FIX RxState.set() lost when the cleanup merges the state operations at the same time (#9785)
 
-* fix: query result is wrong when the event of another instance arrives after a later own write
+* FIX RxState.set() lost when the cleanup merges the state operations at the same time
 
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_015P6w6hnnyVPXwotts6YQ2F
-
-* test: use the storage of the test config
-
-The test created its own Dexie storage on fake-indexeddb because the bug
-needs change events of another instance that arrive late.
-It now runs on config.storage.getStorage(). A wrapper that only holds back
-the change events of one instance makes the order of the events the same
-on every storage with multiInstance support.
+The cleanup stored the merged state with a modifier that returned the in-memory state instead of the state it was given. When a set() call was batched into the same write before it, the cleanup replaced the batched state with the older one, so the value of that set() was missing in memory and in the stored operations while its promise resolved. The modifier now returns the state it gets.
 
 Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_015P6w6hnnyVPXwotts6YQ2F
+Claude-Session: https://claude.ai/code/session_015P6w6hj7DdpavqfXGRMMKW
 
-* Simplify hasNewerState() of the ChangeEventBuffer to stay inside the bundle size limit
+* Add the pull request link to the changelog entry
 
-The test-builds job failed in "npm run test:bundle-size": memory-minimal
-had 146950 bytes minified with a limit of 146885 bytes.
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_015P6w6hj7DdpavqfXGRMMKW
 
-hasNewerState() now uses events.some() and builds the map of the newest
-lwt per document with Math.max(). The behavior is the same: events of own
-writes are skip
+* Let the cleanup finish before the new RxState test removes its database
 
-**File**: `orga/changelog/query-stale-event-of-other-instance.json` (added, +6/-0)
+All RxState cleanups run in one shared queue. The test removed its
+database while a cleanup was still running. On the remote storage the
+delete of the old operation documents then never settled, the queue
+stayed blocked, and the next test that waits
+
+**File**: `orga/changelog/fix-rxstate-cleanup-lost-write.json` (added, +11/-0)
 ```diff
-@@ -0,0 +1,6 @@
+@@ -0,0 +1,11 @@
 +{
 +    "$schema": "./schema.json",
-+    "text": "FIX With `multiInstance: true`, the results of `find().$`, `find().exec()`, and `count().$` contained a document twice or with an outdated state when the event of a write from another instance arrived after the event of a later own write to the same document. The query now runs again over the storage when such an event arrives",
-+    "links": [],
-+    "priority": 5
++    "text": "FIX a `RxState.set()` call resolved but its value was missing from the state when the cleanup plugin merged the state operations at the same time",
++    "links": [
++        {
++            "url": "https://github.com/pubkey/rxdb/pull/9785",
++            "linkText": "#9785"
++        }
++    ],
++    "priority": 6
 +}
 ```
 
-**File**: `src/change-event-buffer.ts` (modified, +39/-0)
+**File**: `src/plugins/state/rx-state.ts` (modified, +1/-1)
 ```diff
-@@ -41,6 +41,13 @@ export class ChangeEventBuffer<RxDocType> {
-     */
-     private buffer: RxStorageChangeEvent<RxDocType>[] = [];
+@@ -431,7 +431,7 @@ export class RxStateBase<T, Reactivity = unknown> {
  
-+    /**
-+     * Pointers lower than this value are out of bounds,
-+     * so that queries which have not processed these events
-+     * re-execute over the storage instead of using the buffer.
-+     */
-+    private minPointer: number = 0;
-+
-     public limit: number = 100;
+         // update whole state object
+         await this._writeQueue;
+-        await this.set('', () => this._state);
++        await this.set('', state => state);
  
- 
-@@ -76,6 +83,9 @@ export class ChangeEventBuffer<RxDocType> {
-     private _handleChangeEvents(events: RxStorageChangeEvent<RxDocType>[]) {
-         const counterBefore = this.counter;
-         this.counter = this.counter + events.length;
-+        if (this.hasNewerState(events)) {
-+            this.minPointer = this.counter + 1;
-+        }
-         if (events.length > this.limit) {
-             this.buffer = events.slice(events.length * -1);
-         } else {
-@@ -90,6 +100,32 @@ export class ChangeEventBuffer<RxDocType> {
-         }
-     }
- 
-+    /**
-+     * Events of other instances arrive asynchronously,
-+     * so they can arrive after the event of a later write to the same document.
-+     * Applying such an event on top of the newer state gives a wrong query result.
-+     * The revision ends with the token of the instance that has written it,
-+     * so events of own writes are skipped which keeps this check cheap.
-+     * @return true if the buffer contains a newer state of one of the event documents
-+     */
-+    private hasNewerState(events: RxStorageChangeEvent<RxDocType>[]): boolean {
-+        const ownRevisionEnd = '-' + this.collection.database.token;
-+        let lwtByDocId: Map<string, number> | undefined;
-+        return events.some(event => {
-+            if (event.documentData._rev.endsWith(ownRevisionEnd)) {
-+                return false;
-+            }
-+            if (!lwtByDocId) {
-+                const map = lwtByDocId = new Map<string, number>();
-+                this.buffer.forEach(buffered => map.set(
-+                    buffered.documentId,
-+                    Math.max(map.get(buffered.documentId) || 0, buffered.documentData._meta.lwt)
-+                ));
-+            }
-+            return (lwtByDocId.get(event.documentId) as number) > event.documentData._meta.lwt;
-+        });
-+    }
-+
-     getCounter() {
-         this.processTasks();
-         return this.counter;
-@@ -105,6 +141,9 @@ export class ChangeEventBuffer<RxDocType> {
-      */
-     getArrayIndexByPointer(pointer: number): number | null {
-         this.processTasks();
-+        if (pointer < this.minPointer) {
-+            return null;
-+        }
-         const oldestEvent = this.buffer[0];
-         const oldestCounter = this.eventCounterMap.get(
-             oldestEvent
+         // delete old ones
+         await this.collection.find({
 ```
 
-**File**: `test/unit/cross-instance.test.ts` (modified, +64/-0)
+**File**: `test/unit/rx-state.test.ts` (modified, +84/-0)
 ```diff
-@@ -140,6 +140,70 @@ describe('cross-instance.test.js', () => {
-     });
- 
-     describe('RxQuery', () => {
-+        it('should have the correct query results when the event of another instance arrives after the event of a later own write', async () => {
-+            const name = randomToken(10);
-+            async function createInstance(storage: RxStorage<any, any>): Promise<RxCollection<HumanDocumentType>> {
-+                const db = await createRxDatabase<{ human: RxCollection<HumanDocumentType>; }>({
-+                    name,
+@@ -459,6 +459,90 @@ addRxPlugin(RxDBJsonDumpPlugin);
+                 assert.deepStrictEqual(state.get(), stateBeforeClose);
+                 await state.collection.database.remove();
+             });
++            it('should not lose a set() that is called while the automatic cleanup runs', async () => {
++                type CounterState = {
++                    [key: string]: number;
++                };
++                const storage = useSchemaValidator ? wrappedValidateAjvStorage({
++                    storage: config.storage.getStorage()
++                }) : config.storage.getStorage();
++                const database = await createRxDatabase({
++                    name: randomToken(10),
 +                    storage,
-+                    multiInstance: true,
-+                    ignoreDuplicate: true
-+                });
-+                const collections = await db.addCollections({
-+                    human: {
-+                        schema: schemas.human
++                    cleanupPolicy: {
++                        awaitReplicationsInSync: false,
++                        minimumCollectionAge: 0,
++                        minimumDeletedTime: 0,
++                        runEach: 0,
++                        waitForLeadership: false
 +                    }
 +                });
-+                return collections.human;
-+            }
-+            const heldEventsStorage = getStorageWithHeldEvents();
-+            const c1 = await createInstance(heldEventsStorage.storage);
-+            const c2 = await createInstance(config.storage.getStorage());
-+            const query = c1.find({ sort: [{ passportId: 'asc' }] });
-+            const toState = (docs: RxDocument<HumanDocumentType>[]) => docs.map(d => d.passportId + '|' + d.firstName);
++                const state = await database.addState<CounterState>();
 +
-+            let lastEmitted: string[] = [];
-+            let lastCount = -1;
-+            const eventsByDocId = new Map<string, number>();
-+            const subs = [
-+                query.$.subscribe(docs => lastEmitted = toState(docs)),
-+                c1.count().$.subscribe(count => lastCount = count),
-+                c1.$.subscribe(event => eventsByDocId.set(
-+                    event.documentId,
-+                    (eventsByDocId.get(event.documentId) ?? 0) + 1
-+                ))
-+            ];
++                const expected: CounterState = {};
++                let counter = 0;
++                const writeNext = () => {
++                    const value = counter++;
++                    expected['k' + value] = value;
++                    return state.set('k' + value, () => value);
++                };
 +
-+            const iterations = 3;
-+            for (let i = 0; i < iterations; i++) {
-+                const id = 'doc' + i;
++                const rounds = 4;
++                for (let round = 0; round < rounds; round++) {
++                    // let the cleanup of the previous round finish
++                    await wait(50);
++
++                    /**
++                     * The cleanup starts when the database is idle after a write,
++                     * and it only merges the state when there are more than 5 writes.
++                     * The idle calls are resolved in the order of their requests,
++                     * so the cleanup starts right after this one.
++                     */
++                    const idlePromise = database.requestIdlePromise();
++                    for (let i = 0; i < 6; i++) {
++                        await writeNext();
++                    }
++                    await idlePromise;
++                    // the next idle call is resolved three timeouts after the previous one
++                    await wait(0);
++                    await wait(0);
++                    await wait(0);
++
++                    /**
++                     * Now the cleanup reads the state documents from the storage.
++                     * While writes arrive, that read is repeated for some time,
++                     * so the writes must go on until the cleanup has stored the merged state.
++                     * Each set() is called directly after the previous one has resolved.
++                     */
++                    const startTime = Date.now();
++                    let writes = 0;
++                    while (Date.now() - startTime < 100 || writes < 10) {
++                        await writeNext();
++                        writes++;
++                    }
++                    assert.deepStrictEqual(state.get(), expected);
++                }
++
 +                /**
-+                 * The upsert of c1 writes on top of the state of c2
-+                 * and c1 gets its own event before the insert event of c2 arrives.
++                 * The cleanup still runs in the background.
++                 * All RxState cleanups run in one shared queue, so a cleanup
++                 * that is cut off by removing its database
++                 * would block the cleanup of the other tests.
++                 * Wait until the database is idle and the amount
++                 * of state documents no longer changes.
 +                 */
-+                heldEventsStorage.holdEvents = true;
-+                await c2.insert(schemaObjects.humanData(id, 20, 'other'));
-+                await waitUntil(() => heldEventsStorage.heldEvents() > 0);
-+                heldEventsStorage.holdEvents = false;
-+                await c1.upsert(schemaObjects.humanData(id, 20, 'own'));
-+                await waitUntil(() => eventsByDocId.get(id) === 1);
-+                heldEventsStorage.releaseEvents();
-+                await waitUntil(() => eventsByDocId.get(id) === 2);
++                let lastDocsAmount = -1;
++                let unchangedChecks = 0;
++                await waitUntil(async () => {
++                    await database.requestIdlePromise();
++                    const docsAmount = (await state.collection.find().exec()).length;
++                    unchangedChecks = docsAmount === lastDocsAmount ? unchangedChecks + 1 : 0;
++                    lastDocsAmount = docsAmount;
++                    return unchangedChecks >= 3;
++                }, undefined, 50);
 +
-+                const storageState = toState(await c2.find({ sort: [{ passportId: 'asc' }] }).exec());
-+                assert.strictEqual(storageState.length, i + 1);
-+                assert.strictEqual(storageState[i], id + '|own');
-+                assert.deepStrictEqual(toState(await query.exec()), storageState, 'exec() in iteration ' + i);
-+                await waitUntil(() => lastEmitted.length === storageState.length, 1000).catch(() => { });
-+                assert.deepStrictEqual(lastEmitted, storageState, 'find().$ in iteration ' + i);
-+                assert.strictEqual(await c1.count().exec(), i + 1, 'count().exec() in iteration ' + i);
-+                assert.strictEqual(lastCount, i + 1, 'count().$ in iteration ' + i);
-+            }
-+
-+            subs.forEach(sub => sub.unsubscribe());
-+            await c1.database.close();
-+            await c2.database.close();
-+        });
-         it('should not apply a write of another instance twice when the query result already contains it', async () => {
-             const name = randomToken(10);
-             const createCollection = async (storage: RxStorage<any, any>) => {
++                await database.remove();
++            });
+         });
+         describe('multiInstance', () => {
+             if (
 ```
 
 ---
 
-### Incident Patch 2: `bafa39cc` (2026-11-18)
-**Commit Message**: fix: cancel() and close() hang on non-live replication with failing handler (#9524)
+### Incident Patch 2: `0bc920e8` (2026-11-19)
+**Commit Message**: Fix: bulkWrite() with a new attachment without data rejects the whole write (#9470)
 
+* fix: do not emit change events for bulkWrite rows rejected with a 510 attachment error
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 Claude-Session: https://claude.ai/code/session_015P6w6hnnyVPXwotts6YQ2F
 
-Co-authored-by: Claude <[REDACTED_EMAIL]>
+* fix: let the whole bulkWrite() fail when a new attachment has no data
 
-**File**: `orga/changelog/fix-non-live-replication-cancel-hang.json` (added, +6/-0)
+A new attachment without data can only reach the storage when the caller
+sends wrong data, the document API never does that. Instead of collecting
+one write error with status 510 per row, categorizeBulkWriteRows() now
+throws the RxError AT5 (with documentId and attachmentId). The throw
+happens before the storage writes anything, so bulkWrite() rejects, no
+document of that call is stored and no change event is emitted.
+
+The per-document write error with status 510 is removed from the storage
+interface: the type RxStorageWriteErrorAttachment, the 510 in
+RxStorageWriteErrorBase and the 510 entry in
+STORAGE_WRITE_ERROR_CODE_TO_MESSAGE. Nothing in RxDB checked for
+status 510, all consumers treated it as an unknown non-409 error.
+
+The test now expects that bulkWrite() rejects with AT5, that also the
+valid rows of the same
+
+**File**: `orga/before-next-major.md` (modified, +8/-0)
 ```diff
-@@ -0,0 +1,6 @@
+@@ -762,3 +762,11 @@ Todo:
+ - Breaking: `addCollections()` in the same tick as a `remove()` or `close()` that is not awaited resolves after the pending call, where it rejected with `DB3` before.
+ 
+ An implementation with tests is in the closed pull request [#9651](https://github.com/pubkey/rxdb/pull/9651).
++
++## Remove the deprecated type `RxStorageWriteErrorAttachment`
++
++A `bulkWrite()` with a new attachment that has no data rejects the whole write with the error `AT5` since [#9470](https://github.com/pubkey/rxdb/pull/9470). No storage returns a write error with the status `510` any longer, the type `RxStorageWriteErrorAttachment` is only kept so that the change was not breaking.
++
++Todo:
++- Remove `RxStorageWriteErrorAttachment` from `src/types/rx-error.d.ts`, from the `RxStorageWriteError` union, and the `510` from `RxStorageWriteErrorBase.status`.
++- Breaking: TypeScript code that imports the type or narrows a write error on `status === 510` no longer compiles.
+```
+
+**File**: `orga/changelog/deprecate-rx-storage-write-error-attachment.json` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
 +{
 +    "$schema": "./schema.json",
-+    "text": "FIX `cancel()`, `remove()`, `collection.close()` and `database.close()` never resolved on a replication with `live: false` while the pull or push handler kept failing",
-+    "links": [],
++    "text": "CHANGE The type `RxStorageWriteErrorAttachment` (write error with status `510`) is deprecated, because a `bulkWrite()` with a new attachment without data now rejects with the error `AT5`. The type will be removed in the next major version",
++    "links": [
++        {
++            "url": "https://github.com/pubkey/rxdb/pull/9470",
++            "linkText": "#9470"
++        }
++    ],
++    "priority": 2
++}
+```
+
+**File**: `orga/changelog/fix-bulk-write-attachment-error-emits-event.json` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++{
++    "$schema": "./schema.json",
++    "text": "FIX `RxStorageInstance.bulkWrite()` emitted an `INSERT` or `UPDATE` change event for a row with a new attachment without `data` and threw `ensureNotFalsy() is falsy` when that row was the only one of the write. `categorizeBulkWriteRows()` now throws the error `AT5` so that the whole `bulkWrite()` call rejects, no document of that write is stored and no event is emitted. No storage returns the per-document write error with status `510` any longer. Also `randomDelayStorage()` no longer rejects all later `bulkWrite()` calls with the error of one rejected `bulkWrite()` call",
++    "links": [
++        {
++            "url": "https://github.com/pubkey/rxdb/pull/9470",
++            "linkText": "#9470"
++        }
++    ],
 +    "priority": 5
 +}
 ```
 
-**File**: `src/plugins/replication/index.ts` (modified, +19/-4)
+**File**: `src/plugins/dev-mode/error-messages.ts` (modified, +6/-0)
 ```diff
-@@ -168,11 +168,21 @@ export class RxReplicationState<RxDocType, CheckpointType> {
-         const startPromiseWithResolvers = createPromiseWithResolvers<void>();
-         this.callOnStart = startPromiseWithResolvers.resolve;
-         this.startPromise = startPromiseWithResolvers.promise;
-+        const stopRequestedPromiseWithResolvers = createPromiseWithResolvers<void>();
-+        this.callOnStopRequested = stopRequestedPromiseWithResolvers.resolve;
-+        this.stopRequestedPromise = stopRequestedPromiseWithResolvers.promise;
-     }
+@@ -715,6 +715,12 @@ export const ERROR_MESSAGES = {
+         fix: 'Ensure documents have the _attachments property set.',
+         docs: 'https://rxdb.info/rx-attachment.html?console=errors&code=AT4'
+     },
++    AT5: {
++        message: 'RxStorageInstance.bulkWrite(): a new attachment has no data',
++        cause: 'A write row adds an attachment that is not in the previous document state and that has no data property. The whole bulkWrite() call fails and none of its documents is written.',
++        fix: 'Send the attachment data as a Blob in the data property when you add a new attachment. Only attachments that are already stored can be passed without data.',
++        docs: 'https://rxdb.info/rx-attachment.html?console=errors&code=AT5'
++    },
  
-     private callOnStart: () => void = undefined as any;
-     private cancelOnCollectionClose = () => this.cancel();
- 
-+    /**
-+     * Resolves as soon as cancel() or remove() is called,
-+     * before these calls are processed in the startQueue.
-+     */
-+    private stopRequestedPromise: Promise<void>;
-+    private callOnStopRequested: () => void = undefined as any;
-+
-     public internalReplicationState?: RxStorageInstanceReplicationState<RxDocType>;
-     public metaInstance?: RxStorageInstance<RxStorageReplicationMeta<RxDocType, CheckpointType>, any, {}, any>;
-     public remoteEvents$: Subject<RxReplicationPullStreamItem<RxDocType, CheckpointType>> = new Subject();
-@@ -539,20 +549,24 @@ export class RxReplicationState<RxDocType, CheckpointType> {
-      * the waiting, otherwise it would not resolve while a handler keeps failing.
-      * A paused non-live replication is not canceled,
-      * the run goes on when start() is called again.
-+     * cancel() and remove() are queued behind the run too,
-+     * so the waiting also ends when a stop is requested.
-+     * The queued cancel() or remove() then stops the replication.
-      */
-     private async awaitNonLiveDone(runQueued: Promise<any>): Promise<void> {
-         const internalState = this.internalReplicationState;
-         if (!this.live && internalState) {
--            const gotPaused = await Promise.race([
-+            const hasFinished = await Promise.race([
-                 firstValueFrom(
-                     this.pendingPauses$.pipe(filter(pending => pending > 0))
--                ).then(() => true),
-+                ).then(() => false),
-+                this.stopRequestedPromise.then(() => false),
-                 runQueued
-                     .then(() => awaitRxStorageReplicationFirstInSync(internalState))
-                     .then(() => awaitRxStorageReplicationInSync(internalState))
--                    .then(() => false)
-+                    .then(() => true)
-             ]);
--            if (gotPaused) {
-+            if (!hasFinished) {
-                 return;
-             }
-             await this._cancel();
-@@ -773,6 +787,7 @@ export class RxReplicationState<RxDocType, CheckpointType> {
- 
- 
-     async cancel() {
-+        this.callOnStopRequested();
-         this.startQueue = this.startQueue.catch(() => { }).then(async () => {
-             await this._cancel(this.removeRequested);
-         });
+     // plugins/encryption-crypto-js.js
+     EN1: {
 ```
 
-**File**: `test/unit/replication.test.ts` (modified, +45/-0)
+**File**: `src/rx-error.ts` (modified, +1/-2)
 ```diff
-@@ -851,6 +851,51 @@ describe('replication.test.ts', () => {
-             localCollection.database.close();
-             remoteCollection.database.close();
-         });
-+        it('cancel() and database.close() must resolve while the handler of a non-live replication keeps failing', async () => {
-+            const startFailingReplication = async () => {
-+                const collection = await humansCollection.createHumanWithTimestamp(0, randomToken(10), false);
-+                let handlerCalls = 0;
-+                const replicationState = replicateRxCollection<HumanWithTimestampDocumentType, any>({
-+                    collection,
-+                    replicationIdentifier: REPLICATION_IDENTIFIER_TEST,
-+                    live: false,
-+                    retryTime: 20,
-+                    pull: {
-+                        handler: async () => {
-+                            handlerCalls++;
-+                            await wait(0);
-+                            throw new Error('server is offline');
+@@ -163,8 +163,7 @@ export function isBulkWriteConflictError<RxDocType>(
+ 
+ const STORAGE_WRITE_ERROR_CODE_TO_MESSAGE: { [k: number]: string; } = {
+     409: 'document write conflict',
+-    422: 'schema validation error',
+-    510: 'attachment data missing'
++    422: 'schema validation error'
+ };
+ 
+ export function rxStorageWriteErrorToRxError(err: RxStorageWriteError<any>): RxError {
+```
+
+**File**: `src/rx-storage-helper.ts` (modified, +68/-94)
+```diff
+@@ -25,7 +25,6 @@ import type {
+     RxStorageInstanceCreationParams,
+     StringKeys,
+     RxStorageWriteErrorConflict,
+-    RxStorageWriteErrorAttachment,
+     RxStorage,
+     RxStorageDefaultCheckpoint,
+     FilledMangoQuery,
+@@ -279,7 +278,6 @@ export function categorizeBulkWriteRows<RxDocType>(
+         if (hasDocsInDb) {
+             documentInDb = docsInDb.get(docId);
+         }
+-        let attachmentError: RxStorageWriteErrorAttachment<RxDocType> | undefined;
+ 
+         if (!documentInDb) {
+             /**
+@@ -295,40 +293,31 @@ export function categorizeBulkWriteRows<RxDocType>(
+                     if (
+                         !(attachmentData as RxAttachmentWriteData).data
+                     ) {
+-                        attachmentError = {
++                        throw newRxError('AT5', {
+                             documentId: docId,
+-                            isError: true,
+-                            status: 510,
+-                            writeRow,
+                             attachmentId,
+-                            context
+-                        };
+-                        errors.push(attachmentError);
+-                    } else {
+-                        attachmentsAdd.push({
+-                            documentId: docId,
+-                            attachmentId,
+-                            attachmentData: attachmentData as any,
+-                            digest: attachmentData.digest
++                            args: { context }
+                         });
+                     }
++                    attachmentsAdd.push({
++                        documentId: docId,
++                        attachmentId,
++                        attachmentData: attachmentData as any,
++                        digest: attachmentData.digest
++                    });
+                 }
+             }
+-            let insertedRow: BulkWriteRowProcessed<RxDocType> | undefined;
+-            if (!attachmentError) {
+-                const row: BulkWriteRowProcessed<RxDocType> = hasAttachments ? stripAttachmentsDataFromRow(writeRow) : writeRow as any;
+-                insertedRow = row;
+-                bulkInsertDocs.push(row);
+-                if (onInsert) {
+-                    onInsert(document);
+-                }
+-                newestRow = row;
++            const insertedRow: BulkWriteRowProcessed<RxDocType> = hasAttachments ? stripAttachmentsDataFromRow(writeRow) : writeRow as any;
++            bulkInsertDocs.push(insertedRow);
++            if (onInsert) {
++                onInsert(document);
+             }
++            newestRow = insertedRow;
+ 
+             if (!documentDeleted) {
+                 let eventDocData = document as RxDocumentData<RxDocType>;
+                 if (hasAttachments) {
+-                    eventDocData = insertedRow ? insertedRow.document : stripAttachmentsDataFromDocument(document);
++                    eventDocData = insertedRow.document;
+                 }
+                 const event = {
+                     documentId: docId,
+@@ -386,94 +375,74 @@ export function categorizeBulkWriteRows<RxDocType>(
+                         });
+                     }
+                 } else {
+-                    // first check for errors
+                     const docAtts = document._attachments;
+                     const docAttKeys = Object.keys(docAtts);
+                     for (let a = 0; a < docAttKeys.length; a++) {
+                         const attachmentId = docAttKeys[a];
+                         const attachmentData = docAtts[attachmentId];
+                         const previousAttachmentData = hasOwnProperty(previous._attachments, attachmentId) ? previous._attachments[attachmentId] : undefined;
+-                        if (
+-                            !previousAttachmentData &&
+-                            !(attachmentData as RxAttachmentWriteData).data
+-                        ) {
+-                            attachmentError = {
++                        if (!previousAttachmentData) {
++                            if (!(attachmentData as RxAttachmentWriteData).data) {
++                                throw newRxError('AT5', {
++                                    documentId: docId,
++                                    attachmentId,
++                                    args: { context }
++                                });
++                            }
++                            attachmentsAdd.push({
+                                 documentId: docId,
+-                                documentInDb: documentInDb as any,
+-                                isError: true,
+-                                status: 510,
+-                                writeRow,
+                                 attachmentId,
+-                                context
+-                            };
+-                            break;
+-                        }
+-                    }
+-                    if (!attachmentError) {
+-                        for (let a = 0; a < docAttKeys.len
+```
+
+**File**: `src/types/rx-error.d.ts` (modified, +7/-1)
+```diff
+@@ -41,6 +41,7 @@ export interface RxErrorParameters {
+     readonly fieldName?: string;
+     readonly id?: string;
+     readonly documentId?: string;
++    readonly attachmentId?: string;
+     readonly data?: any;
+     readonly missingCollections?: string[];
+     readonly primaryPath?: string;
+@@ -162,7 +163,7 @@ export type RxStorageWriteErrorBase<RxDocType> = {
+     status: number
+     | 409 // conflict
+     | 422 // schema validation error
+-    | 510 // attachment data missing
++    | 510 // no longer used, see RxStorageWriteErrorAttachment
+     ;
+ 
+     /**
+@@ -213,6 +214,11 @@ export type RxStorageWriteErrorValidation<RxDocType> = RxStorageWriteErrorBase<R
+     schema: RxJsonSchema<RxDocumentData<RxDocType>>;
+ };
+ 
++/**
++ * @deprecated A write with a new attachment that has no data
++ * rejects the whole bulkWrite() call with the RxError AT5.
++ * No storage returns this write error.
++ */
+ export type RxStorageWriteErrorAttachment<RxDocType> = RxStorageWriteErrorBase<RxDocType> & {
+     status: 510;
+     attachmentId: string;
+```
+
+**File**: `test/unit/rx-storage-implementations.test.ts` (modified, +167/-1)
+```diff
+@@ -33,6 +33,7 @@ import {
+     PreparedQuery,
+     RxDocumentData,
+     RxDocumentWriteData,
++    BulkWriteRow,
+     RxStorageBulkWriteResponse,
+     RxStorageChangeEvent,
+     RxStorageInstance,
+@@ -45,7 +46,7 @@ import {
+     getCompressionStateByRxJsonSchema
+ } from '../../plugins/key-compression/index.mjs';
+ import { RxDBQueryBuilderPlugin } from '../../plugins/query-builder/index.mjs';
+-import { defaultHashSha256 } from '../../plugins/utils/index.mjs';
++import { defaultHashSha256, errorToPlainJson } from '../../plugins/utils/index.mjs';
+ import {
+     clone,
+     randomString,
+@@ -3106,6 +3107,171 @@ describe('rx-storage-implementations.test.ts (implementation: ' + config.storage
+                 sub.unsubscribe();
+                 storageInstance.remove();
+             });
++            it('should reject the whole bulkWrite() when a new attachment has no data', async () => {
++                const storageInstance = await config.storage.getStorage().createStorageInstance<TestDocType>({
++                    databaseInstanceToken: randomToken(10),
++                    databaseName: randomToken(12),
++                    collectionName: randomToken(12),
++                    schema: Object.assign(
++                        getPseudoSchemaForVersion<TestDocType>(0, 'key'),
++                        {
++                            attachments: {}
++                        }
++                    ),
++                    options: {},
++                    multiInstance: false,
++                    devMode: true
++                });
++                const emitted: EventBulk<RxStorageChangeEvent<any>, any>[] = [];
++                const sub = storageInstance.changeStream().subscribe(x => {
++                    emitted.push(x);
++                });
++
++                const dataBlob = createBlob('aaaaaaaaaa', 'text/plain');
++                const digest = await defaultHashSha256(dataBlob);
++                const getStubWriteData = (key: string): RxDocumentWriteData<TestDocType> => ({
++                    key,
++                    value: 'one',
++                    _rev: EXAMPLE_REVISION_1,
++                    _deleted: false,
++                    _meta: {
++                        lwt: now()
++                    },
++                    _attachments: {
++                        withData: {
++                            length: dataBlob.size,
++                            data: dataBlob,
++                            type: 'text/plain',
++                            digest
++                        },
++                        stubOne: {
++                            length: dataBlob.size,
++                            type: 'text/plain',
++                            digest
++                        },
++                        stubTwo: {
++                            length: dataBlob.size,
++                            type: 'text/plain',
++                            digest
 +                        }
 +                    }
 +                });
-+                await waitUntil(() => handlerCalls >= 2);
-+                return {
-+                    collection,
-+                    replicationState,
-+                    getHandlerCalls: () => handlerCalls
++
++                const validDocument = (key: string): RxDocumentWriteData<TestDocType> => ({
++                    key,
++                    value: 'one',
++                    _rev: EXAMPLE_REVISION_1,
++                    _deleted: false,
++                    _meta: {
++                        lwt: now()
++                    },
++                    _attachments: {}
++                });
++                const assertRejectsWithAT5 = async (
++                    rows: BulkWriteRow<TestDocType>[],
++                    documentId: string
++                ) => {
++                    let thrown: any;
++                    try {
++                        await storageInstance.bulkWrite(rows, testContext);
++                    } catch (err) {
++                        thrown = err;
++                    }
++                    assert.ok(thrown, 'bulkWrite() must reject');
++                    /**
++                     * Storages that run in another process, like the remote storage,
++                     * rethrow the error with the serialized RxError in the message.
++                     */
++                    const errorText = JSON.stringify(errorToPlainJson(thrown));
++                    ['AT5', documentId, 'stubOne'].forEach(part => {
++                        assert.ok(errorText.includes(part), 'error must contain ' + part + ': ' + errorText);
++                    });
 +                };
-+            };
-+            const resolvesInTime = (promise: Promise<any>) => Promise.race([
-+                promise.then(() => true),
-+                wait(2000).then(() => false)
-+            ]);
 +
-+            // cancel()
-+            const first = await startFailingReplication();
-+            const cancelResolved = await resolvesInTime(first.replicationState.cancel());
-+            assert.strictEqual(cancelResolved, true, 'cancel() must resolve');
-+            assert.strictEqual(first.replicationState.isStopped(), true);
-+            const callsAfterCancel = first.getHandlerCalls();
-+            await wait(100);
-+            assert.strictEqual(first.getHandlerCalls(), callsAfterCancel, 'handler must not be retried after cancel()');
-+            await first.collection.database.close();
++                // insert where the wrong row is the only row of the write
++                await assertRejectsWithAT5(
++                    [{ document: getStubWriteData('insert-only') }],
++                    'insert-only'
++                );
 +
-+            // database.close()
-+            const second = await startFailingReplication();
-+            const closeResolved = await resolvesInTime(second.collection.database.close());
-+            assert.strictEqual(closeResolved, true, 'database.close() must resolve');
-+            assert.strictEqual(second.replicationState.isStopped(), true);
-+        });
-     });
-     describe('live replication', () => {
-         it('should replicate all writes', async () => {
++                // insert together with valid rows before and after the wrong row
++                await assertRejectsWithAT5(
++                    [
++                        { document: validDocument('valid-before') },
++                        { document: getStubWriteData('insert-mixed') },
++                        { document: validDocument('valid-after') }
++               
 ```
 
 ---
 
-### Incident Patch 3: `98d3309e` (2026-11-17)
-**Commit Message**: Fix failing CI on Deno KV and Windows: two tests waited for the wrong thing (#9752)
+### Incident Patch 3: `08668e99` (2026-11-19)
+**Commit Message**: Fix: incrementalUpsert() runs in call order with the incremental writes of the RxDocument (#9699)
 
-* test: wait for the local documents state of the second instance in the getLocal() read race test
+* fix: incrementalUpsert() runs in call order with the incremental writes of the RxDocument
 
-The test hung on Deno KV in `await eventArrived`. The local documents state
-of a database is created in the background after createRxDatabase(). On
-Deno KV the state of db2 did not exist yet when db wrote the first
-document, so the change event of that write was never emitted on db2.$
-and the test waited for it until the mocha timeout.
-
-The test now calls db2.getLocal() once before the loop, which awaits the
-local documents state of db2 before the first write of db.
+incrementalUpsert() on a known document adds its write to the
+IncrementalWriteQueue at the time of the call instead of after its own
+promise chain, so a following incrementalPatch()/incrementalModify() on
+the same document is applied on top of it. Each upsert is still its own
+storage write. The entry in _incrementalUpsertQueues is removed when the
+call has settled.
 
 Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 Claude-Session: https://claude.ai/code/session_015P6w6hnnyVPXwotts6YQ2F
 
-* test: wait for the write events in the failed backup run test
+* fix: incrementalUpsert() keeps the call order when the document is not known at call time
 
-The test "live backup must continue after a failed run and emit the
-error" waited until the files of both documents existed and then asserted
-that the write events were emitted. The event is emitted after the file
-was written, so on Windows the assertion ran before the event. The wait
-now covers the files and the events.
+An incrementalUpsert() that has to find or insert the document, or that
+is queued behind such a call for the same primary, registers its write
+in IncrementalWriteQueue.waitingByDocId. The waiting writes are added to
+the queue before the next write to that document is added and when the
+document has been found or inserted, so a later incrementalPatch() or
+incrementalModify() on the RxDocument is applied on top of them.
 
-Co-Authored-By: Claude Fable 
-
-**File**: `test/unit/backup.test.ts` (modified, +5/-4)
+**File**: `config/bundle-size/limits.json` (modified, +6/-6)
 ```diff
-@@ -402,13 +402,14 @@ describe('backup.test.ts', () => {
-             // the backup directory is reachable again
-             fs.renameSync(movedDirectory, directory);
-             const doc3 = await collection.insert(schemaObjects.humanData());
-+            /**
-+             * The write event is emitted after the file was written,
-+             * so both must be awaited.
-+             */
-             await waitUntil(() => {
-                 return [doc2, doc3].every(doc => fs.existsSync(
-                     path.join(directory, toFileName(doc.primary), 'document.json')
--                ));
--            });
--            [doc2, doc3].forEach(doc => {
--                assert.ok(emitted.find(ev => ev.documentId === doc.primary && !ev.deleted));
-+                ) && emitted.find(ev => ev.documentId === doc.primary && !ev.deleted));
-             });
- 
-             /**
+@@ -1,14 +1,14 @@
+ {
+     "memory-minimal": {
+-        "minified": 154228,
+-        "gzip": 50038
++        "minified": 158793,
++        "gzip": 51410
+     },
+     "todo-dexie": {
+-        "minified": 270968,
+-        "gzip": 88122
++        "minified": 275930,
++        "gzip": 89729
+     },
+     "todo-dexie-plugins": {
+-        "minified": 347289,
+-        "gzip": 112349
++        "minified": 364186,
++        "gzip": 117260
+     }
+ }
 ```
 
-**File**: `test/unit/local-documents.test.ts` (modified, +7/-0)
+**File**: `orga/changelog/fix-incremental-upsert-order-with-document-incremental-writes.json` (added, +6/-0)
 ```diff
-@@ -797,6 +797,13 @@ describe('local-documents.test.ts', () => {
-                     localDocuments: true
-                 });
+@@ -0,0 +1,6 @@
++{
++    "$schema": "./schema.json",
++    "text": "FIX `RxCollection.incrementalUpsert()` followed by `incrementalPatch()`, `incrementalModify()`, `incrementalUpdate()` or `incrementalRemove()` on the same RxDocument applied the document write first, so the upsert overwrote it. The incremental writes on one document now run in the order they were called. `upsert()` and `bulkUpsert()` add the update of a document that is already known to the same queue at call time, so they keep the call order too.",
++    "links": [],
++    "priority": 5
++}
+```
+
+**File**: `src/incremental-write.ts` (modified, +70/-19)
+```diff
+@@ -32,7 +32,11 @@ export type IncrementalWriteModifier<RxDocType> = (
  
-+                /**
-+                 * The local documents state of a database is created in the background.
-+                 * Events of writes that are done by another instance before that state exists,
-+                 * are not emitted on db2.$, so the state must exist before the first write.
-+                 */
-+                await db2.getLocal('foobar');
+ 
+ type IncrementalWriteQueueItem<RxDocType> = {
+-    lastKnownDocumentState: RxDocumentData<RxDocType>;
++    /**
++     * Not set while the state of the document is not known.
++     * The writes of a document only run when at least one of them knows the state.
++     */
++    lastKnownDocumentState?: RxDocumentData<RxDocType>;
+     modifier: IncrementalWriteModifier<RxDocType>;
+     resolve: (d: RxDocumentData<RxDocType>) => void;
+     reject: (error: RxError) => void;
+@@ -43,6 +47,10 @@ type IncrementalWriteQueueItem<RxDocType> = {
+     runAlone?: boolean;
+ };
+ 
++function hasKnownState(items: IncrementalWriteQueueItem<any>[]): boolean {
++    return items.some(item => item.lastKnownDocumentState);
++}
 +
-                 for (let i = 0; i < runs; i++) {
-                     const id = 'foobar' + i;
-                     await db.insertLocal<TestDocType>(id, { foo: 'bar' });
+ /**
+  * The incremental write queue
+  * batches up all incremental writes to a collection
+@@ -63,59 +71,102 @@ export class IncrementalWriteQueue<RxDocType> {
+ 
+     ) { }
+ 
++    /**
++     * @param lastKnownDocumentState can be undefined when it is not known if the document exists.
++     * The write then keeps its position in the queue and runs when
++     * another write to the same document or setDocumentState() provides the state.
++     */
+     addWrite(
+-        lastKnownDocumentState: RxDocumentData<RxDocType>,
+-        modifier: IncrementalWriteModifier<RxDocType>
++        lastKnownDocumentState: RxDocumentData<RxDocType> | undefined,
++        modifier: IncrementalWriteModifier<RxDocType>,
++        runAlone?: boolean,
++        docId: string = (lastKnownDocumentState as any)[this.primaryPath]
+     ): Promise<RxDocumentData<RxDocType>> {
+-        const docId: string = lastKnownDocumentState[this.primaryPath] as any;
+         const ar = getFromMapOrCreate(this.queueByDocId, docId, () => []);
+         const ret = new Promise<RxDocumentData<RxDocType>>((resolve, reject) => {
+             const item: IncrementalWriteQueueItem<RxDocType> = {
+                 lastKnownDocumentState,
+                 modifier,
+                 resolve,
+-                reject
++                reject,
++                runAlone
+             };
+             ensureNotFalsy(ar).push(item);
+             this.triggerRun();
+         });
+         return ret;
+     }
+ 
++    /**
++     * Provides the document state to the writes of that document
++     * that have been added without it.
++     */
++    setDocumentState(docData: RxDocumentData<RxDocType>) {
++        const items = this.queueByDocId.get(docData[this.primaryPath] as any);
++        if (items && !hasKnownState(items)) {
++            items[0].lastKnownDocumentState = docData;
++            this.triggerRun();
++        }
++    }
++
++    /**
++     * Removes a write that has not started to run.
++     * @returns true if the write was removed.
++     */
++    removeWrite(docId: string, modifier: IncrementalWriteModifier<RxDocType>): boolean {
++        const items = this.queueByDocId.get(docId);
++        const index = items ? items.findIndex(item => item.modifier === modifier) : -1;
++        if (items && index >= 0) {
++            items.splice(index, 1);
++            if (items.length === 0) {
++                this.queueByDocId.delete(docId);
++            }
++            return true;
++        }
++        return false;
++    }
++
+     async triggerRun(): Promise<void> {
+-        if (
+-            this.isRunning === true ||
+-            this.queueByDocId.size === 0
+-        ) {
++        if (this.isRunning === true) {
+             // already running
+             return;
+         }
+-        this.isRunning = true;
+-        const writeRows: BulkWriteRow<RxDocType>[] = [];
+ 
+         /**
+          * 'take over' so that while the async functions runs,
+          * new incremental updates could be added from the outside.
++         * The writes of documents with an unknown state stay in the queue.
+          */
+-        const itemsById = this.queueByDocId;
+-        this.queueByDocId = new Map();
++        const itemsById = new Map<string, IncrementalWriteQueueItem<RxDocType>[]>();
++        this.queueByDocId.forEach((items, docId) => {
++            if (hasKnownState(items)) {
++                itemsById.set(docId, items);
++                this.queueByDocId.delete(docId);
++            }
++        });
++        if (itemsById.size === 0) {
++            return;
++        }
++        this.isRunning = true;
++        const writeRows: BulkWriteRow<RxDocType>[] = [];
+         /**
+          * Items that are not processed in this run because
+-         * an item of the same document must be written alone first.
++         * an item of the same document must be written alone.
+          */
+         const deferredById = new Map<string, IncrementalWriteQueueItem<RxDocType>[]>();
+         try {
+             await Promise.all(
+                 Array.from(itemsById.entries())
+                     .map(async ([docId, queuedItems]) => {
+                         let allItems = queuedItems;
+-                        if (allItems[0].runAlone && allItems.length > 1) {
+-       
+```
+
+**File**: `src/rx-collection.ts` (modified, +152/-75)
+```diff
+@@ -686,9 +686,47 @@ export class RxCollectionBase<
+         isWriteAllowed(this);
+         const insertData: RxDocumentType[] = [];
+         const useJsonByDocId: Map<string, RxDocumentType> = new Map();
++        const primaryPath = this.schema.primaryPath;
++        const deleteExisting = options?.deleteExistingAttachments === true;
++        let attachmentsNormalized: Promise<any> | undefined;
++
++        const success: RxDocument<RxDocumentType, OrmMethods, Reactivity>[] = [];
++        const error: RxStorageWriteError<RxDocumentType>[] = [];
++
++        /**
++         * Updates a document that exists already.
++         * This uses the incremental write queue so that the update
++         * runs in call order with the other incremental writes of that document.
++         */
++        const updates: Promise<any>[] = [];
++        const updateExisting = (docData: RxDocumentData<RxDocumentType>) => {
++            const update = this.incrementalWriteQueue.addWrite(
++                docData,
++                (docWriteData: any): any => {
++                    const getWriteData = () => {
++                        const writeData: any = getFromMapOrThrow(useJsonByDocId, docData[primaryPath] as any);
++                        return _upsertWriteData(writeData, docWriteData, writeData._attachments, deleteExisting);
++                    };
++                    return attachmentsNormalized ? attachmentsNormalized.then(getWriteData) : getWriteData();
++                }
++            ).then(
++                writeResult => success.push(this._docCache.getCachedRxDocument(writeResult) as any),
++                err => {
++                    // a write error of the storage is returned like the write errors of the insert
++                    if (!err.parameters || !err.parameters.writeError) {
++                        throw err;
++                    }
++                    error.push(err.parameters.writeError);
++                }
++            );
++            // the rejection is handled when all updates are awaited
++            update.catch(() => { });
++            updates.push(update);
++        };
+ 
+         // First pass: synchronous work — schema filling and primary key validation
+         const preparedDocs: RxDocumentType[] = [];
++        const ids = new Set<string>();
+         for (const docData of docsData) {
+             const useJson = fillObjectDataBeforeInsert(this.schema, docData);
+             const primary: string = useJson[this.schema.primaryPath] as any;
+@@ -699,6 +737,7 @@ export class RxCollectionBase<
+                     schema: this.schema.jsonSchema
+                 });
+             }
++            ids.add(primary);
+             preparedDocs.push(useJson);
+         }
+ 
+@@ -721,50 +760,42 @@ export class RxCollectionBase<
+                 }
+             }
+             if (normalizePromises.length > 0) {
+-                await Promise.all(normalizePromises);
++                attachmentsNormalized = Promise.all(normalizePromises);
+             }
+         }
++
++        /**
++         * A document that is known to exist is updated directly, without trying to insert it first.
++         * Not possible when the insert must run to call the preInsert hooks
++         * or to throw on duplicate primary keys.
++         */
++        const updateKnown = !this.hasHooks('pre', 'insert') && ids.size === preparedDocs.length;
+         for (const useJson of preparedDocs) {
+-            const primary: string = (useJson as any)[this.schema.primaryPath];
++            const primary: string = (useJson as any)[primaryPath];
+             useJsonByDocId.set(primary, useJson);
+-            insertData.push(useJson);
++            const docDataFromCache = updateKnown && this._docCache.getLatestDocumentDataIfExists(primary);
++            if (docDataFromCache && !docDataFromCache._deleted) {
++                updateExisting(docDataFromCache);
++            } else {
++                insertData.push(useJson);
++            }
+         }
+ 
++        if (attachmentsNormalized) {
++            await attachmentsNormalized;
++        }
+         const insertResult = await this.bulkInsert(insertData);
+-        const success = insertResult.success.slice(0);
+-        const error: RxStorageWriteError<RxDocumentType>[] = [];
+-
+-        // update the ones that existed already
+-        await Promise.all(
+-            insertResult.error.map(async (err) => {
+-                if (err.status !== 409) {
+-                    error.push(err);
+-                } else {
+-                    const id = err.documentId;
+-                    const writeData = getFromMapOrThrow(useJsonByDocId, id);
+-                    const docDataInDb = ensureNotFalsy(err.documentInDb);
+-                    const newAttachments = (writeData as any)._attachments;
+-                    const deleteExisting = options?.deleteExistingAttachments === true;
+-                    const newDoc = await this.incrementalWriteQueue.addWrite(
+-                        docDataInDb,
+-                        (docWriteData
+```
+
+**File**: `test/unit/rx-collection.test.ts` (modified, +101/-0)
+```diff
+@@ -2336,6 +2336,107 @@ describe('rx-collection.test.ts', () => {
+ 
+                     c.database.close();
+                 });
++                it('should run in call order with the incremental writes of the RxDocument', async () => {
++                    const c = await humansCollection.createPrimary(0);
++                    const docData = schemaObjects.simpleHumanData();
++
++                    const inserted = await c.insert(docData);
++                    await Promise.all([
++                        c.incrementalUpsert(Object.assign({}, docData, { firstName: 'upsert', lastName: 'upsert' })),
++                        inserted.incrementalPatch({ lastName: 'patch' })
++                    ]);
++                    let latest = await c.findOne(docData.passportId).exec(true);
++                    assert.strictEqual(latest.firstName, 'upsert');
++                    assert.strictEqual(latest.lastName, 'patch');
++
++                    // same on a document that was created by incrementalUpsert()
++                    const docData2 = schemaObjects.simpleHumanData();
++                    const upserted = await c.incrementalUpsert(docData2);
++                    await Promise.all([
++                        c.incrementalUpsert(Object.assign({}, docData2, { firstName: 'upsert1', lastName: 'upsert1' })),
++                        upserted.incrementalModify(d => {
++                            d.lastName = d.lastName + '-modify';
++                            return d;
++                        }),
++                        c.incrementalUpsert(Object.assign({}, docData2, { firstName: 'upsert2', lastName: 'upsert2' })),
++                        upserted.incrementalPatch({ firstName: 'patch' })
++                    ]);
++                    latest = await c.findOne(docData2.passportId).exec(true);
++                    assert.strictEqual(latest.firstName, 'patch');
++                    assert.strictEqual(latest.lastName, 'upsert2');
++
++                    c.database.close();
++                });
++                it('should run in call order with the incremental writes of the RxDocument when the document is not known at call time', async () => {
++                    const c = await humansCollection.createPrimary(0);
++
++                    // two calls for a new document, then a write on the result of the first call
++                    const docData = schemaObjects.simpleHumanData();
++                    const upsert1 = c.incrementalUpsert(docData);
++                    const upsert2 = c.incrementalUpsert(Object.assign({}, docData, { firstName: 'upsert2', lastName: 'upsert2' }));
++                    const doc = await upsert1;
++                    await Promise.all([
++                        upsert2,
++                        doc.incrementalPatch({ lastName: 'patch' })
++                    ]);
++                    let latest = await c.findOne(docData.passportId).exec(true);
++                    assert.strictEqual(latest.firstName, 'upsert2');
++                    assert.strictEqual(latest.lastName, 'patch');
++
++                    // a postInsert hook that writes to the new document while a second call is queued
++                    const docData2 = schemaObjects.simpleHumanData();
++                    c.postInsert(async (_data, insertedDoc) => {
++                        if (insertedDoc.primary === docData2.passportId) {
++                            await insertedDoc.incrementalPatch({ lastName: 'hook' });
++                        }
++                    }, false);
++                    await Promise.all([
++                        c.incrementalUpsert(docData2),
++                        c.incrementalUpsert(Object.assign({}, docData2, { firstName: 'upsert2', lastName: 'upsert2' }))
++                    ]);
++                    latest = await c.findOne(docData2.passportId).exec(true);
++                    assert.strictEqual(latest.firstName, 'upsert2');
++                    assert.strictEqual(latest.lastName, 'hook');
++
++                    // a stored document that is not in the cache, fetched while the call is running
++                    const name = c.database.name;
++                    await c.database.close();
++                    const c2 = await humansCollection.createPrimary(0, name);
++                    const upsert = c2.incrementalUpsert(Object.assign({}, docData, { firstName: 'upsert3', lastName: 'upsert3' }));
++                    const found = await c2.findOne(docData.passportId).exec(true);
++                    await Promise.all([
++                        upsert,
++                        found.incrementalPatch({ lastName: 'patch3' })
++                    ]);
++                    latest = await c2.findOne(docData.passportId).exec(true);
++                    assert.strictEqual(latest.firstName, 'upsert3');
++                    assert.strictEqual(latest.lastName, 'patch3');
++
++                    c2.database.close();
++                });
++                it('should be applied on top of an upsert() that was called before 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9755** (2026-11-18): fix(deps): update dependency graphql-ws to v6.4.2 (@renovate[bot])
-- **PR #9754** (2026-11-17): Remove "From" prefix from premium prices (@pubkey)
-- **PR #9752** (2026-11-17): Fix failing CI on Deno KV and Windows: two tests waited for the wrong thing (@pubkey)
-- **PR #9751** (2026-11-17): Fix failing master CI: webmcp changes test used an old tool name (@pubkey)
-- **PR #9750** (2026-11-18): fix(deps): update dependency ws to v8.22.2 (@renovate[bot])
-- **PR #9749** (2026-11-17): Docs: add rule about valid bugs to CLAUDE.md (@pubkey)
+- **PR #9790** (2026-11-21): chore(deps): update dependency playwright-core to v1.65.1 (@renovate[bot])
+- **PR #9789** (2026-11-20): chore(deps): update dependency eslint-plugin-jsdoc to v65.4.6 (@renovate[bot])
+- **PR #9787** (2026-11-20): docs: show "Pipeline handlers must not throw" in a warning box (@pubkey)
+- **PR #9786** (2026-11-20): docs: a query without sort is sorted by the best matching index, not by the primary key (@pubkey)
+- **PR #9785** (2026-11-20): FIX RxState.set() lost when the cleanup merges the state operations at the same time (@pubkey)
+- **PR #9781** (2026-11-20): chore(deps): update dependency rollup to v4.68.3 (@renovate[bot])
 
 ---
 
@@ -1361,25 +1878,30 @@ Co-Authored-By: Claude Fable
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query result is wrong when the event of another instance arrives after a later o
+## X. RxState.set() lost when the cleanup merges the state operations at the same time
 
 **RULE**:
-When implementing operations in `orga/changelog/query-stale-event-of-other-instance.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pubkey/rxdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `orga/changelog/fix-rxstate-cleanup-lost-write.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pubkey/rxdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1135a741`: query result is wrong when the event of another instance arrives after a later own write. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e0cd6ba4`: RxState.set() lost when the cleanup merges the state operations at the same time. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `orga/changelog/query-stale-event-of-other-instance.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `orga/changelog/fix-rxstate-cleanup-lost-write.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 {
     "$schema": "./schema.json",
-    "text": "FIX With `multiInstance: true`, the results of `find().$`, `find().exec()`, and `count().$` contained a document twice or with an outdated state when the event of a write from another instance arrived after the event of a later own write to the same document. The query now runs again over the storage when such an event arrives",
-    "links": [],
-    "priority": 5
+    "text": "FIX a `RxState.set()` call resolved but its value was missing from the state when the cleanup plugin merged the state operations at the same time",
+    "links": [
+        {
+            "url": "https://github.com/pubkey/rxdb/pull/9785",
+            "linkText": "#9785"
+        }
+    ],
+    "priority": 6
 }
 ```
 
@@ -1390,7 +1912,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1135a741` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e0cd6ba4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

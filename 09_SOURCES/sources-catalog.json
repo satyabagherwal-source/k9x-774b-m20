@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "d2feb4ac",
+    "sourceVersion": "e9c03762",
     "license": "Apache-2.0",
-    "contentHash": "d45ac296e6d790f70018e1cff3169af66de581ba569910d105cc747767ed1683",
-    "lastHarvestedAt": "2026-11-21T14:27:55.216Z",
+    "contentHash": "741553413905a007c85c4edc9e66e22122b6d7c7f31a4ecc7a0d75db0e5d3e35",
+    "lastHarvestedAt": "2026-11-21T15:48:58.572Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2793,10 +2793,10 @@
     "repository": "pubkey/rxdb",
     "platform": "github",
     "sourceUrl": "https://github.com/pubkey/rxdb",
-    "sourceVersion": "1135a741",
+    "sourceVersion": "596b617d",
     "license": "Apache-2.0",
-    "contentHash": "1c8ae383120a18ade4500af9b7c044fab906fd0bc483c199a8a32816d60ca7bf",
-    "lastHarvestedAt": "2026-11-18T12:50:59.416Z",
+    "contentHash": "b35e658b07c23b1524753c3dcfef3a7848c6772a5e8722dba263d8888edf8490",
+    "lastHarvestedAt": "2026-11-21T15:48:50.031Z",
     "learningId": "learn-github-pubkey-rxdb"
   },
   "karmada-io-karmada": {
@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "202f6188",
+    "sourceVersion": "ad1c3d5b",
     "license": "MIT",
-    "contentHash": "d69e3c87f05979e8a2fc7dd75f6463057c69f5c636f791755be1e8be8817bf57",
-    "lastHarvestedAt": "2026-11-20T01:22:58.537Z",
+    "contentHash": "de002ed2640e98ef18cf29629cf43a0b21be4fc8fe36cdd0e57b45892de9fe60",
+    "lastHarvestedAt": "2026-11-21T15:49:15.189Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {
@@ -10615,8 +10615,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Fibo-2.0",
     "sourceVersion": "hf-comfy-org-fibo-2.0",
     "license": "Open-Source",
-    "contentHash": "9e9c79a403c76088d00cdb7e799a64235f663592552ecb853cfe5a9863fb7a0c",
-    "lastHarvestedAt": "2026-11-17T17:36:37.060Z",
+    "contentHash": "d0948d74f1e086e77f501d7827a02564f8b8a6b1f9fdebede3702da8cf8080a3",
+    "lastHarvestedAt": "2026-11-21T15:49:15.300Z",
     "learningId": "learn-huggingface-comfy-org-fibo-2-0"
   },
   "hf-ornith-ai-ornith-1.5-122b": {

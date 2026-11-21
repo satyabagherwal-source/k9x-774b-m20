@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T15:32:06.592Z",
+  "last_updated": "2026-11-21T15:49:51.656Z",
   "total_verified_learnings": 9060,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23139,
+  "total_items": 23145,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -216184,8 +216184,8 @@
       "slug": "pubkey-rxdb",
       "platform": "github",
       "source_url": "https://github.com/pubkey/rxdb",
-      "source_version": "1135a741",
-      "content_hash": "1c8ae383120a18ade4500af9b7c044fab906fd0bc483c199a8a32816d60ca7bf",
+      "source_version": "596b617d",
+      "content_hash": "b35e658b07c23b1524753c3dcfef3a7848c6772a5e8722dba263d8888edf8490",
       "dossier_path": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "promoted_rules": [
@@ -216203,6 +216203,11 @@
           "number": 9221,
           "title": "query result is wrong when the event of another instance arrives after a later o",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9800,
+          "title": "RxState.set() lost when the cleanup merges the state operations at the same time",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216210,7 +216215,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T12:50:59.240Z",
+      "verified_at": "2026-11-21T15:48:49.829Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216264,10 +216269,10 @@
       "relative_path": "12_DECISIONS/ADR-pubkey-rxdb-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in pubkey/rxdb",
       "repository": "pubkey/rxdb",
-      "source_version": "1135a741",
-      "content_hash": "179afb1bd5da063cfa939c2d70ba33f2929ce1278bbd41cb0e2ab4386e997f54",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-18T12:50:59.884Z"
+      "source_version": "596b617d",
+      "content_hash": "b4fc639f633729b28480291c525217f96c9452bede7cb9b18cd3c23ac467317e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T15:48:50.598Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb",
@@ -216276,10 +216281,10 @@
       "relative_path": "08_VERIFICATION/pubkey-rxdb-verification-protocol-empirical-defect-shield-for-pubkey-rxdb.md",
       "title": "Verification Protocol: Empirical Defect Shield for pubkey/rxdb",
       "repository": "pubkey/rxdb",
-      "source_version": "1135a741",
-      "content_hash": "8fd656fa1983571993ef41b6b1934fd316339ee57ef666af27f6b7d0782f8b17",
+      "source_version": "596b617d",
+      "content_hash": "8aaaef4ec695c5a8d7d713d4a9af2b449e80b9be1eb3e875ddee4218f7b33bab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T12:50:59.996Z"
+      "persisted_at": "2026-11-21T15:48:50.888Z"
     },
     "learn-github-k3s-io-k3s": {
       "learning_id": "learn-github-k3s-io-k3s",
@@ -216418,9 +216423,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in pubkey-rxdb-learnings",
       "repository": "pubkey-rxdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "9fd9c978bad9b9205ba2463beaf23ffe8ca6cab58773aa4c03b2e4db45a26ccd",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-18T12:51:11.081Z"
+      "content_hash": "3fa0829c4b4a81c250f4fad9933a34d42959bb7579a5638f88fe8e270ca99cc1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T15:49:51.513Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb-learnings",
@@ -216430,9 +216435,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pubkey-rxdb-learnings",
       "repository": "pubkey-rxdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "1d233ff87144172792e52188f68c5cede94fc0282155c24cca029b006011ab28",
+      "content_hash": "5fdeee901d47973d5ee95f3e932de55cedc6fc347109e8be8076ca806378d6d9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T12:51:11.202Z"
+      "persisted_at": "2026-11-21T15:49:51.656Z"
     },
     "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants",
@@ -229376,8 +229381,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "d2feb4ac",
-      "content_hash": "d45ac296e6d790f70018e1cff3169af66de581ba569910d105cc747767ed1683",
+      "source_version": "e9c03762",
+      "content_hash": "741553413905a007c85c4edc9e66e22122b6d7c7f31a4ecc7a0d75db0e5d3e35",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -229582,7 +229587,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T14:27:54.970Z",
+      "verified_at": "2026-11-21T15:48:58.323Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229624,10 +229629,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "d2feb4ac",
-      "content_hash": "24ccd7371041618acdd008d9d1e7c6f747c768c5b21591a885b55b9ce28c9d5b",
+      "source_version": "e9c03762",
+      "content_hash": "4d243f3a35f25f146ec4b3e2e178afbae4f605131c9feb3552ff135c50261dd3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T14:27:55.687Z"
+      "persisted_at": "2026-11-21T15:48:58.795Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -241867,10 +241872,10 @@
       "relative_path": "08_VERIFICATION/fallow-rs-fallow-verification-protocol-empirical-defect-shield-for-fallow-rs-fal.md",
       "title": "Verification Protocol: Empirical Defect Shield for fallow-rs/fallow",
       "repository": "fallow-rs/fallow",
-      "source_version": "202f6188",
-      "content_hash": "74b23fa23c2701a0b705ba3bd3801310c29eb26db984073d6335497a52cfbb70",
+      "source_version": "ad1c3d5b",
+      "content_hash": "9e73cead497c64890a66f0de2f204693914046fcfc33d27d0430d9523df5a55c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T01:22:59.312Z"
+      "persisted_at": "2026-11-21T15:49:15.776Z"
     },
     "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf": {
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
@@ -241994,9 +241999,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for fallow-rs-fallow-learnings",
       "repository": "fallow-rs-fallow-learnings",
       "source_version": "HEAD",
-      "content_hash": "d4c84e5a4ea3980bc132e44f6f7bf6a4024dedd23de9add0af8272039f11634b",
+      "content_hash": "e9e5fb344a4b96cfcbf3aaf5bf9a3277447b3001e54e4e01b7780ce78c5645c7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T01:23:30.104Z"
+      "persisted_at": "2026-11-21T15:49:48.706Z"
     },
     "candidate_directive-embedded-metadata-parameter-authority-gguf-sampling-self-containment": {
       "item_id": "candidate_directive-embedded-metadata-parameter-authority-gguf-sampling-self-containment",
@@ -277697,7 +277702,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Fibo-2.0",
       "source_version": "hf-comfy-org-fibo-2.0",
-      "content_hash": "9e9c79a403c76088d00cdb7e799a64235f663592552ecb853cfe5a9863fb7a0c",
+      "content_hash": "d0948d74f1e086e77f501d7827a02564f8b8a6b1f9fdebede3702da8cf8080a3",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md",
       "promoted_rules": [],
@@ -277706,7 +277711,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T17:36:36.784Z",
+      "verified_at": "2026-11-21T15:49:15.070Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -277761,9 +277766,9 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-fibo-2.0-learnings Core Invariants",
       "repository": "hf-comfy-org-fibo-2.0-learnings",
       "source_version": "HEAD",
-      "content_hash": "0e6669e77494ed1d6b935c9a5d8060af253b1d3773c1eb1c532db46d59badca7",
+      "content_hash": "828e681bf56411e2edbf2089242f4c7b4384a1e9042cde8282716f9e53bb78fa",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T17:36:55.758Z"
+      "persisted_at": "2026-11-21T15:49:49.120Z"
     },
     "learn-huggingface-krafton-raon-1-mini-preview": {
       "learning_id": "learn-huggingface-krafton-raon-1-mini-preview",
@@ -289867,10 +289872,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-fallow-rs-fallow-research-knowledge-intelligence-fallow-rs-fallow-core-invariant.md",
       "title": "Research & Knowledge Intelligence: fallow-rs/fallow Core Invariants",
       "repository": "fallow-rs/fallow",
-      "source_version": "bf272e19",
-      "content_hash": "88c228279be35727d8ed92264817f2946efff4704a188fbf972f2c23da052fac",
+      "source_version": "ad1c3d5b",
+      "content_hash": "076c83f29b72034238d371d2f3193136c539d66a5b032e3760e6c32ec960dab5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T13:56:51.851Z"
+      "persisted_at": "2026-11-21T15:49:15.603Z"
     },
     "rule-9237": {
       "learning_id": "rule-9237",
@@ -289906,9 +289911,9 @@
       "title": "Research & Knowledge Intelligence: fallow-rs-fallow-learnings Core Invariants",
       "repository": "fallow-rs-fallow-learnings",
       "source_version": "HEAD",
-      "content_hash": "48137d476371414ef51747bb27ebe220d193c597a5373902e655ad43d8aa2eaa",
+      "content_hash": "82c0b95b98b8851dc0ddbcd0fc1e2f243abbff3784a993e337f48ca22cd4410a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T13:57:07.414Z"
+      "persisted_at": "2026-11-21T15:49:48.495Z"
     },
     "rule-9238": {
       "learning_id": "rule-9238",
@@ -314409,6 +314414,80 @@
       "content_hash": "d319c488373b2a6c97e889be6c3b4bc69734d569f2e0f21c05ca708ff5cb4392",
       "domain_letter": "I",
       "persisted_at": "2026-11-21T15:32:06.443Z"
+    },
+    "rule-9800": {
+      "learning_id": "rule-9800",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9800,
+      "title": "RxState.set() lost when the cleanup merges the state operations at the same time",
+      "source_url": "https://github.com/pubkey/rxdb",
+      "source_version": "596b617d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T15:48:49.829Z"
+    },
+    "candidate_directive-rxstate-set-lost-when-the-cleanup-merges-the-state-operations-at-the-same-time": {
+      "item_id": "candidate_directive-rxstate-set-lost-when-the-cleanup-merges-the-state-operations-at-the-same-time",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3AM3-rxstate-set-lost-when-the-cleanup-merges-the-state-operations-at-the-same-time.md",
+      "title": "RxState.set() lost when the cleanup merges the state operations at the same time",
+      "repository": "pubkey-rxdb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4f8390f57a717fb0a28ce7012c91490eae02fcf80fca18d4fb9629de011e8994",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T15:49:51.112Z"
+    },
+    "domain_intelligence-architecture-intelligence-pubkey-rxdb-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-pubkey-rxdb-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pubkey-rxdb-architecture-intelligence-pubkey-rxdb-core-invariants.md",
+      "title": "Architecture Intelligence: pubkey/rxdb Core Invariants",
+      "repository": "pubkey/rxdb",
+      "source_version": "596b617d",
+      "content_hash": "fa680c96fdeaa2ee1460fdd2e3703c842ae4ec82bb814feb29d3e4b8f7450fe5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T15:48:50.437Z"
+    },
+    "candidate_directive-give-test-fixtures-one-git-command-builder-and-strict-harness-helpers": {
+      "item_id": "candidate_directive-give-test-fixtures-one-git-command-builder-and-strict-harness-helpers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2J3A-give-test-fixtures-one-git-command-builder-and-strict-harness-helpers.md",
+      "title": "give test fixtures one git command builder and strict harness helpers",
+      "repository": "fallow-rs/fallow",
+      "source_version": "ad1c3d5b",
+      "content_hash": "dfc5737d3c2d7bd1b074215a99ac4502a60b493503b4378eb699f10a4e6a3885",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T15:49:15.432Z"
+    },
+    "candidate_directive-test-give-test-fixtures-one-git-command-builder-and-strict-harness-helpers": {
+      "item_id": "candidate_directive-test-give-test-fixtures-one-git-command-builder-and-strict-harness-helpers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-38FG-test-give-test-fixtures-one-git-command-builder-and-strict-harness-helpers.md",
+      "title": "test: give test fixtures one git command builder and strict harness helpers",
+      "repository": "fallow-rs-fallow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2b979c03041f341e8785af2f195d0ecf937bd78c57aa1c651a5f175fc1095130",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T15:49:48.269Z"
+    },
+    "domain_intelligence-architecture-intelligence-pubkey-rxdb-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-pubkey-rxdb-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pubkey-rxdb-learnings-architecture-intelligence-pubkey-rxdb-learnings-core-invar.md",
+      "title": "Architecture Intelligence: pubkey-rxdb-learnings Core Invariants",
+      "repository": "pubkey-rxdb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0fab6ba68704bf0182c58f0380b0ff4d7fe27b746bbacdc6aeb48210aa448a90",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T15:49:51.292Z"
     }
   },
   "ai-builder-brain": {

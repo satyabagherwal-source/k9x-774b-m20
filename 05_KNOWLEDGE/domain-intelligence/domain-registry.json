@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T15:32:06.443Z",
-  "total_records": 2255,
+  "last_updated": "2026-11-21T15:49:51.292Z",
+  "total_records": 2258,
   "domains": {
     "A": {
       "total": 17,
@@ -1046,7 +1046,7 @@
       ]
     },
     "G": {
-      "total": 382,
+      "total": 384,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1429,7 +1429,9 @@
         "domain_intelligence-architecture-intelligence-etcd-io-etcd-core-invariants",
         "domain_intelligence-architecture-intelligence-etcd-io-etcd-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-watchexec-watchexec-core-invariants",
-        "domain_intelligence-architecture-intelligence-watchexec-watchexec-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-watchexec-watchexec-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-pubkey-rxdb-core-invariants",
+        "domain_intelligence-architecture-intelligence-pubkey-rxdb-learnings-core-invariants"
       ]
     },
     "H": {
@@ -2152,7 +2154,7 @@
       ]
     },
     "K": {
-      "total": 133,
+      "total": 134,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2286,7 +2288,8 @@
         "domain_intelligence-quality-verification-intelligence-xevrion-hatchzip-learnings-core-invariants",
         "DOM-K-BC44E02A",
         "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-learnings-core-invaria"
+        "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-learnings-core-invaria",
+        "DOM-K-7F9FC9D4"
       ]
     },
     "L": {
@@ -15334,8 +15337,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "24ccd7371041618acdd008d9d1e7c6f747c768c5b21591a885b55b9ce28c9d5b",
-      "created_at": "2026-11-21T14:27:55.687Z"
+      "content_hash": "4d243f3a35f25f146ec4b3e2e178afbae4f605131c9feb3552ff135c50261dd3",
+      "created_at": "2026-11-21T15:48:58.795Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -28484,8 +28487,8 @@
       "title": "Research & Knowledge Intelligence: Comfy-Org/Fibo-2.0 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-fibo-2-0-research-knowledge-intelligence-comfy-org-fibo-2-0-core-in.md",
       "repository": "Comfy-Org/Fibo-2.0",
-      "content_hash": "00b1513c68a0a50bc9d5f1484c6a3b52d1fdefd3672f708bb588241ac7b768cc",
-      "created_at": "2026-11-17T17:36:37.315Z"
+      "content_hash": "82e9037d8ad519b05b1fa31af134c174bb6722be11b070ed29263d6ceb681c13",
+      "created_at": "2026-11-21T15:49:15.535Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-fibo-2-0-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-fibo-2-0-learnings-core-invariants",
@@ -28493,8 +28496,8 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-fibo-2.0-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-fibo-2-0-learnings-research-knowledge-intelligence-hf-comfy-org-fib.md",
       "repository": "hf-comfy-org-fibo-2.0-learnings",
-      "content_hash": "0e6669e77494ed1d6b935c9a5d8060af253b1d3773c1eb1c532db46d59badca7",
-      "created_at": "2026-11-17T17:36:55.758Z"
+      "content_hash": "828e681bf56411e2edbf2089242f4c7b4384a1e9042cde8282716f9e53bb78fa",
+      "created_at": "2026-11-21T15:49:49.120Z"
     },
     "domain_intelligence-research-knowledge-intelligence-krafton-raon-1-mini-preview-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-krafton-raon-1-mini-preview-core-invariants",
@@ -31540,8 +31543,8 @@
       "title": "Research & Knowledge Intelligence: fallow-rs/fallow Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-fallow-rs-fallow-research-knowledge-intelligence-fallow-rs-fallow-core-invariant.md",
       "repository": "fallow-rs/fallow",
-      "content_hash": "88c228279be35727d8ed92264817f2946efff4704a188fbf972f2c23da052fac",
-      "created_at": "2026-11-18T13:56:51.851Z"
+      "content_hash": "076c83f29b72034238d371d2f3193136c539d66a5b032e3760e6c32ec960dab5",
+      "created_at": "2026-11-21T15:49:15.603Z"
     },
     "domain_intelligence-research-knowledge-intelligence-fallow-rs-fallow-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-fallow-rs-fallow-learnings-core-invariants",
@@ -31549,8 +31552,8 @@
       "title": "Research & Knowledge Intelligence: fallow-rs-fallow-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-fallow-rs-fallow-learnings-research-knowledge-intelligence-fallow-rs-fallow-lear.md",
       "repository": "fallow-rs-fallow-learnings",
-      "content_hash": "48137d476371414ef51747bb27ebe220d193c597a5373902e655ad43d8aa2eaa",
-      "created_at": "2026-11-18T13:57:07.414Z"
+      "content_hash": "82c0b95b98b8851dc0ddbcd0fc1e2f243abbff3784a993e337f48ca22cd4410a",
+      "created_at": "2026-11-21T15:49:48.495Z"
     },
     "domain_intelligence-human-need-intelligence-crate-crate-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-crate-crate-core-invariants",
@@ -37849,6 +37852,66 @@
       "repository": "fabio-rovai-open-ontologies-learnings",
       "content_hash": "d319c488373b2a6c97e889be6c3b4bc69734d569f2e0f21c05ca708ff5cb4392",
       "created_at": "2026-11-21T15:32:06.443Z"
+    },
+    "domain_intelligence-architecture-intelligence-pubkey-rxdb-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-pubkey-rxdb-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: pubkey/rxdb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pubkey-rxdb-architecture-intelligence-pubkey-rxdb-core-invariants.md",
+      "repository": "pubkey/rxdb",
+      "content_hash": "fa680c96fdeaa2ee1460fdd2e3703c842ae4ec82bb814feb29d3e4b8f7450fe5",
+      "created_at": "2026-11-21T15:48:50.437Z"
+    },
+    "DOM-K-7F9FC9D4": {
+      "record_id": "DOM-K-7F9FC9D4",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "K",
+          "id": "quality_verification",
+          "name": "Quality & Verification Intelligence"
+        }
+      ],
+      "title": "test: give test fixtures one git command builder and strict harness helpers",
+      "content": "When implementing operations in `crates/api/src/audit_run/tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "6a02877b9bbf35fcf920d56c4ef6a3cd842f160c5f8fa1b7f9b0aea7fe81ae64",
+      "summary": "Prevents defects observed in production commit `cdac7ade`: test: give test fixtures one git command builder and strict harness helpers. Unva -> When implementing operations in `crates/api/src/audit_run/tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transit",
+      "provenance": {
+        "source_uri": "project://fallow-rs-fallow/fallow-rs-fallow-learnings.md",
+        "source_version": "ad1c3d5b",
+        "observed_at": "2026-11-21T15:49:14.118Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (fallow-rs-fallow)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of fallow-rs-fallow"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "K"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T15:49:47.971Z"
+    },
+    "domain_intelligence-architecture-intelligence-pubkey-rxdb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-pubkey-rxdb-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: pubkey-rxdb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pubkey-rxdb-learnings-architecture-intelligence-pubkey-rxdb-learnings-core-invar.md",
+      "repository": "pubkey-rxdb-learnings",
+      "content_hash": "0fab6ba68704bf0182c58f0380b0ff4d7fe27b746bbacdc6aeb48210aa448a90",
+      "created_at": "2026-11-21T15:49:51.292Z"
     }
   }
 }

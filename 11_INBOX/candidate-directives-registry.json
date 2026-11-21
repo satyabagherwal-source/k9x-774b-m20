@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T15:32:06.285Z",
+  "last_updated": "2026-11-21T15:49:51.112Z",
   "directives": [
     {
       "id": "CD-001",
@@ -42743,6 +42743,48 @@
       "source_repo": "fabio-rovai-open-ontologies",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0880DB-merge-fix-428-figure-real-forgery-the-re.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-3AM3",
+      "directive_title": "RxState.set() lost when the cleanup merges the state operations at the same time",
+      "source_repo": "pubkey-rxdb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3AM3-rxstate-set-lost-when-the-cleanup-merges-the-state-operations-at-the-same-time.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-2J3A",
+      "directive_title": "give test fixtures one git command builder and strict harness helpers",
+      "source_repo": "fallow-rs/fallow",
+      "source_commit": "ad1c3d5b",
+      "staged_file": "11_INBOX/candidate-directives/CD-2J3A-give-test-fixtures-one-git-command-builder-and-strict-harness-helpers.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-38FG",
+      "directive_title": "test: give test fixtures one git command builder and strict harness helpers",
+      "source_repo": "fallow-rs-fallow-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-38FG-test-give-test-fixtures-one-git-command-builder-and-strict-harness-helpers.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-CB3E36",
+      "directive_title": "RxState.set() lost when the cleanup merges the state operations at the same time",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pubkey-rxdb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CB3E36-rxstate-set-lost-when-the-cleanup-merges.md",
       "staged_date": "2026-11-21"
     }
   ]

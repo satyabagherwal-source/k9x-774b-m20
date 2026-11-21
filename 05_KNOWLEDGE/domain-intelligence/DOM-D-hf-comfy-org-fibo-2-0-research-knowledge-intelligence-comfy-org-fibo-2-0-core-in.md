@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Comfy-Org/Fibo-2.0",
   "source_version": "hf-comfy-org-fibo-2.0",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T17:36:37.314Z",
+  "timestamp": "2026-11-21T15:49:15.534Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-comfy-org-fibo-2-0",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Comfy-Org/Fibo-2.0](https://huggingface.co/Comfy-Org/Fibo-2.0) (Revision: `hf-comfy-o`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T17:36:37.314Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T15:49:15.534Z`  
 > **Learning ID**: `learn-huggingface-comfy-org-fibo-2-0`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Comfy-Org/Fibo-2.0](https://huggingface.co/Comfy-Org/Fibo-2.0))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T17:36:36.309Z  
+> **Harvest Timestamp**: 2026-11-21T15:48:41.955Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 457440 downloads | 238 likes
+- **Stars / Engagement**: 354287 downloads | 241 likes
 
 ---
 

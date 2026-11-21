@@ -11861,3 +11861,8 @@ Every entry in this ledger must capture:
 | `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `c2b64e1b` | Multi-dimensional audit evidence | 2026-11-21T15:31:25.371Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `847a2b36` | Multi-dimensional audit evidence | 2026-11-21T15:31:35.696Z |
 | `learn-dom-h-1565c815` | `project://react-navigation-react-navigation` | `ca036e81` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md` | 2026-11-21T15:32:05.180Z |
+| `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `596b617d` | Multi-dimensional audit evidence | 2026-11-21T15:48:50.031Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e9c03762` | Multi-dimensional audit evidence | 2026-11-21T15:48:58.572Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `ad1c3d5b` | Multi-dimensional audit evidence | 2026-11-21T15:49:15.189Z |
+| `learn-huggingface-comfy-org-fibo-2-0` | `https://huggingface.co/Comfy-Org/Fibo-2.0` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-21T15:49:15.300Z |
+| `learn-dom-k-7f9fc9d4` | `project://fallow-rs-fallow` | `ad1c3d5b` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md` | 2026-11-21T15:49:47.999Z |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T15:32:06.726Z",
+  "last_updated": "2026-11-21T15:49:51.814Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T14:49:42.603Z",
@@ -448,7 +448,7 @@
       "staged_for_review": 1
     },
     "fallow-rs-fallow-learnings.md": {
-      "processed_at": "2026-11-20T01:23:29.246Z",
+      "processed_at": "2026-11-21T15:49:47.999Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
     },
@@ -1588,7 +1588,7 @@
       "staged_for_review": 1
     },
     "hf-comfy-org-fibo-2.0-learnings.md": {
-      "processed_at": "2026-11-17T17:36:55.504Z",
+      "processed_at": "2026-11-21T15:49:48.891Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -2173,7 +2173,7 @@
       "staged_for_review": 0
     },
     "pubkey-rxdb-learnings.md": {
-      "processed_at": "2026-11-18T12:51:10.153Z",
+      "processed_at": "2026-11-21T15:49:49.346Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3668,7 +3668,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2823,
-  "total_canonical_promoted": 448,
-  "total_staged_for_review": 2172
+  "total_dossiers_evaluated": 2826,
+  "total_canonical_promoted": 449,
+  "total_staged_for_review": 2173
 }

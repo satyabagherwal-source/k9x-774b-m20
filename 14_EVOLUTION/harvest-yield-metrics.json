@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T15:31:35.701Z",
-  "total_cycles_completed": 11258,
-  "total_learnings_persisted": 11258,
-  "total_rules_promoted": 10602,
+  "last_updated": "2026-11-21T15:49:15.305Z",
+  "total_cycles_completed": 11262,
+  "total_learnings_persisted": 11262,
+  "total_rules_promoted": 10604,
   "history": [
-    {
-      "timestamp": "2026-11-20T19:11:46.169Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T19:25:02.526Z",
-      "repository": "sindresorhus/got",
-      "learningId": "learn-github-sindresorhus-got",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T19:25:05.735Z",
-      "repository": "StikDebug/StikDebug",
-      "learningId": "learn-github-stikdebug-stikdebug",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T19:25:12.540Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T19:44:35.225Z",
       "repository": "nodejs/undici",
@@ -1403,6 +1375,34 @@
       "repository": "ytsaurus/ytsaurus",
       "learningId": "learn-github-ytsaurus-ytsaurus",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T15:48:50.037Z",
+      "repository": "pubkey/rxdb",
+      "learningId": "learn-github-pubkey-rxdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T15:48:58.577Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T15:49:15.195Z",
+      "repository": "fallow-rs/fallow",
+      "learningId": "learn-github-fallow-rs-fallow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T15:49:15.305Z",
+      "repository": "Comfy-Org/Fibo-2.0",
+      "learningId": "learn-huggingface-comfy-org-fibo-2-0",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

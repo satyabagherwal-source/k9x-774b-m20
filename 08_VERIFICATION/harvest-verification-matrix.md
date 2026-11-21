@@ -11828,3 +11828,8 @@
 | `CYCLE-20261121-FLFC` | `2026-11-21T15:31:25.368Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9798` | Yes (`d6e5f2e3...`) |
 | `CYCLE-20261121-FTE4` | `2026-11-21T15:31:35.692Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9799` | Yes (`f1720c8b...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T15:32:05.180Z` | `react-navigation-react-navigation` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-1565C815` [Domain H] | Yes (`dc1770d1...`) |
+| `CYCLE-20261121-1ZHN` | `2026-11-21T15:48:50.027Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9800` | Yes (`b35e658b...`) |
+| `CYCLE-20261121-262W` | `2026-11-21T15:48:58.568Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`74155341...`) |
+| `CYCLE-20261121-2IWH` | `2026-11-21T15:49:15.185Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9801` | Yes (`de002ed2...`) |
+| `CYCLE-20261121-2IZK` | `2026-11-21T15:49:15.296Z` | `Comfy-Org/Fibo-2.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md` | Yes (`d0948d74...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T15:49:47.999Z` | `fallow-rs-fallow` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-7F9FC9D4` [Domain K] | Yes (`6a02877b...`) |

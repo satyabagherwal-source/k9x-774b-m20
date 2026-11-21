@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `d2feb4ac`  
+> **Source Version**: `e9c03762`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T14:27:54.003Z  
+> **Timestamp**: 2026-11-21T15:48:58.037Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T14:27:53.997Z  
+> **Harvest Timestamp**: 2026-11-21T15:48:58.033Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1558,223 +1558,14 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a461d16f` (2026-11-21)
-**Commit Message**: Draft NUC 126 Exit-Controlled Repeat-Until Loops
+### Incident Patch 1: `80b76909` (2026-11-21)
+**Commit Message**: Resume NUC 127 Colon-Free Implicit Iterator Suites
 
-Category: Runtime features, drawn uniformly at random (index 1 of the
-five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
-continuous /nuc-proposal cycle. Runtime applicability:
-existing_comparable, since accepted while and repeat loops spell the
-same behavior, so the token non-regression gate is required.
-
-Requested change: a post-test loop, repeat: followed by a suite and then
-until CONDITION on the next line at the indentation of repeat. The body
-runs at least once, and the loop ends after the first iteration that
-leaves CONDITION truthy. It is the exit-controlled sibling of NUC 63's
-while CONDITION: and NUC 115's repeat COUNT:: the body runs imperatively
-in the enclosing scope with no frame or loop variable, the condition is
-tested with if's truthiness after every iteration, each run may run its
-body at most 100,000 times before TypeError("Loop did not terminate"),
-and errors propagate through the existing transaction. No keyword or
-token is added; repeat and until stay ordinary names elsewhere, and the
-typed declaration repeat: NAME keeps its reading. At the accepted
-revision every repeat: statement with an i
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
-```diff
-@@ -98,6 +98,7 @@ Created: 31-Jul-2026
- | [90](nuc-0090.md) | Enum Declarations | Accepted |
- | [115](nuc-0115.md) | Count-Controlled Repeat Loops | Accepted |
- | [119](nuc-0119.md) | Finally Clauses for Try Statements | Accepted |
-+| [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Draft |
- 
- ### Utility enhancement
- 
-@@ -305,6 +306,7 @@ Created: 31-Jul-2026
- | [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Accepted |
- | [124](nuc-0124.md) | List and Population Quantiles | Standards Track | Utility enhancement | Accepted |
- | [125](nuc-0125.md) | Stepped Slices | Standards Track | Syntax enhancement | Accepted |
-+| [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Standards Track | Runtime features | Draft |
- 
- ## Copyright
- 
-```
-
-**File**: `docs/nuc-0126.md` (added, +72/-0)
-```diff
-@@ -0,0 +1,72 @@
-+# NUC 126 -- Exit-Controlled Repeat-Until Loops
-+
-+```
-+NUC: 126
-+Title: Exit-Controlled Repeat-Until Loops
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Runtime features
-+Created: 21-Nov-2026
-+Requires: 63, 115
-+```
-+
-+## Abstract
-+
-+- A loop can test its condition after its body:
-+  `repeat:` followed by a suite, then `until CONDITION` on the next line at
-+  the indentation of `repeat`. The body runs at least once, and the loop
-+  ends after the first iteration that leaves `CONDITION` truthy, so
-+  `repeat:`, an indented `x = x * 2` and `until x > 100` double `x` until it
-+  passes 100.
-+- It is the exit-controlled sibling of [NUC 63](nuc-0063.md)'s
-+  `while CONDITION:` and [NUC 115](nuc-0115.md)'s `repeat COUNT:`. The body
-+  runs as theirs do, imperatively in the enclosing scope with no scope frame
-+  or loop variable. The condition is tested with the truthiness of `if`
-+  after every iteration. Each run may run its body at most 100,000 times, as
-+  a `while` loop may, and errors and thrown values propagate through the
-+  existing transaction.
-+- No keyword or lexer token is added. `repeat` and `until` stay ordinary
-+  names everywhere else, and `repeat: NAME`, the accepted typed declaration,
-+  keeps its reading.
-+- At the accepted revision every `repeat:` statement with an indented
-+  block, or with a same-line suite other than one bare name, is a
-+  whole-program `SyntaxError`, such as `Unexpected ':'`. Only those inputs
-+  change.
-+
-+## Motivation
-+
-+- World models step a simulation until a goal state holds: advance time
-+  until a tank is full, retry a draw until it succeeds, halve a step until a
-+  tolerance is met. The state that the condition reads is produced by the
-+  body, so the body must run before the test means anything.
-+- Accepted programs spell such loops by writing the body twice, once before
-+  a `while` loop with the negated condition; by a flag that the body sets,
-+  as in `going = true`, `while going:` and `going = !(x > 100)`; or by
-+  `while true:` inside a function that returns once the condition holds.
-+  These repeat the body or the condition, invert the condition, or need a
-+  function. `repeat:` and `until CONDITION` state the body once and the exit
-+  condition once, in the order they run.
-+
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Specification
-+
-+- Pending: the proposer completes this section.
-+
-+## Errors
-+
-+- Pending: the proposer completes this section.
-+
-+## Reference Implementation
-+
-+- Pending: the proposer completes this section.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
-```
-
----
-
-### Incident Patch 2: `d2feb4ac` (2026-11-21)
-**Commit Message**: Draft NUC 127 Colon-Free Implicit Iterator Suites
-
-Category: Syntax enhancement. Continuous cycle selected uniformly from the live eligible registry. Add optional colon omission only for genuine indented implicit iterator suites over one ordinary named source; preserve explicit-loop syntax, pinned diagnostics, existing behavior and all mandatory checks.
+Resume the allocated Draft after an unfinished preparation checkpoint found that supplied constructor-prefix examples conflict with an existing protected corpus audit. Allocation: d2feb4ac2ab61128965dc9ab2b7e310652a0bcec, approximately 69 minutes ago. Keep that prototype and its immutable inputs isolated; prepare a fresh revision using explicit constructor assignments, fresh accepted baseline and fresh proposal/evaluation agents without weakening the existing audit.
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
-```diff
-@@ -69,6 +69,7 @@ Created: 31-Jul-2026
- | [109](nuc-0109.md) | Operator Section Arguments | Accepted |
- | [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Accepted |
- | [125](nuc-0125.md) | Stepped Slices | Accepted |
-+| [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Draft |
- 
- ### Runtime features
- 
-@@ -307,6 +308,7 @@ Created: 31-Jul-2026
- | [124](nuc-0124.md) | List and Population Quantiles | Standards Track | Utility enhancement | Accepted |
- | [125](nuc-0125.md) | Stepped Slices | Standards Track | Syntax enhancement | Accepted |
- | [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Standards Track | Runtime features | Draft |
-+| [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Standards Track | Syntax enhancement | Draft |
- 
- ## Copyright
- 
-```
 
-**File**: `docs/nuc-0127.md` (added, +65/-0)
-```diff
-@@ -0,0 +1,65 @@
-+# NUC 127 -- Colon-Free Implicit Iterator Suites
-+
-+```
-+NUC: 127
-+Title: Colon-Free Implicit Iterator Suites
-+Author: Copilot <223556219+Copilot@users.noreply.github.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Syntax enhancement
-+Created: 21-Nov-2026
-+Requires: 31, 49, 51
-+```
-+
-+## Abstract
-+
-+- An implicit iterator loop may omit its colon before a genuine indented
-+  suite: `for NAME` followed by its indented body has the same meaning as
-+  `for NAME:`. `NAME` remains exactly one ordinary identifier, and the
-+  loop binds the existing local iterator `it`.
-+- Reuse the accepted loop, source expression and suite parsers, with the
-+  existing non-consuming genuine-indentation guard. Preserve the syntax
-+  tree, canonical rendering, source positions, one-shot snapshot semantics,
-+  scopes, returns, transactions and limits of the colon-bearing form.
-+- Explicit `for item of SOURCE:`, `for item in SOURCE:` and two-name entry
-+  loops keep requiring their colon. Inline, braced, missing and unindented
-+  implicit bodies keep their accepted diagnostics. No token, keyword,
-+  runtime feature or public API is added.
-+- This continuous cycle selected Syntax enhancement by one uniform draw
-+  over the live registry's eligible categories. Token comparison is required;
-+  every new executable case needs a pre-executed accepted-syntax counterpart.
-+
-+## Motivation
-+
-+- Named class populations, instance lists and strings already use
-+  `for NAME:` to bind `it`. Genuine indentation identifies their suite
-+  boundary, so the colon repeats information the parser already has.
-+- Make that existing compact iterator form consistent with the accepted
-+  colon-free indented conditional and exception suites, without widening
-+  the shorthand's source grammar or changing iteration behavior.
-+- Preserve explicit-loop diagnostics and every existing executable case.
-+  The enhancement is the optional suite delimiter of the implicit form,
-+  not a new loop or a general colon-omission rule.
-+
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Specification
-+
-+- Pending: the proposer completes this section.
-+
-+## Errors
-+
-+- Pending: the proposer completes this section.
-+
-+## Reference Implementation
-+
-+- Pending: the proposer completes this section.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
-```
 
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
@@ -1796,35 +1587,3 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Draft NUC 126 Exit-Controlled Repeat-Until Loops
-
-**RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `a461d16f`: Draft NUC 126 Exit-Controlled Repeat-Until Loops. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-| [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Draft |
-| [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Standards Track | Runtime features | Draft |
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a461d16f` are properly handled with clean fallback behavior.

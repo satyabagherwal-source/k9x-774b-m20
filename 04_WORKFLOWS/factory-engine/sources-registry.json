@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T15:31:38.817Z",
-    "lastVerified": "2026-11-21T15:31:38.817Z",
+    "lastChecked": "2026-11-21T15:49:18.466Z",
+    "lastVerified": "2026-11-21T15:49:18.466Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -354,14 +354,14 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T14:27:53.997Z",
-    "lastVerified": "2026-11-21T14:27:53.997Z",
+    "lastChecked": "2026-11-21T15:48:58.033Z",
+    "lastVerified": "2026-11-21T15:48:58.033Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d45ac296e6d790f70018e1cff3169af66de581ba569910d105cc747767ed1683",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "contentHash": "741553413905a007c85c4edc9e66e22122b6d7c7f31a4ecc7a0d75db0e5d3e35",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1629,9 +1629,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-21T05:27:53.697Z",
+    "lastChecked": "2026-11-21T15:48:49.313Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-21T05:27:53.697Z"
+    "lastVerified": "2026-11-21T15:48:49.313Z"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -1669,14 +1669,14 @@
     "officialUrl": "https://github.com/pubkey/rxdb",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-18T12:50:58.481Z",
-    "lastVerified": "2026-11-18T12:50:58.481Z",
+    "lastChecked": "2026-11-21T15:48:48.777Z",
+    "lastVerified": "2026-11-21T15:48:48.777Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pubkey-rxdb",
-    "contentHash": "1c8ae383120a18ade4500af9b7c044fab906fd0bc483c199a8a32816d60ca7bf",
+    "contentHash": "b35e658b07c23b1524753c3dcfef3a7848c6772a5e8722dba263d8888edf8490",
     "promotedRulesCount": 1,
-    "recentFixesCount": 27,
+    "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2259,14 +2259,14 @@
     "officialUrl": "https://github.com/fallow-rs/fallow",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T01:20:20.261Z",
-    "lastVerified": "2026-11-20T01:20:20.261Z",
+    "lastChecked": "2026-11-21T15:48:43.951Z",
+    "lastVerified": "2026-11-21T15:48:43.951Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "d69e3c87f05979e8a2fc7dd75f6463057c69f5c636f791755be1e8be8817bf57",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 13,
+    "contentHash": "de002ed2640e98ef18cf29629cf43a0b21be4fc8fe36cdd0e57b45892de9fe60",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 24,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6364,9 +6364,9 @@
   "apache-incubator-pegasus": {
     "name": "incubator-pegasus",
     "officialUrl": "https://github.com/apache/incubator-pegasus",
-    "lastChecked": "2026-11-20T09:09:52.508Z",
+    "lastChecked": "2026-11-21T15:48:51.912Z",
     "revisionIdentifier": "31da6f5e",
-    "lastVerified": "2026-11-20T09:09:52.508Z"
+    "lastVerified": "2026-11-21T15:48:51.912Z"
   },
   "sentrux-sentrux": {
     "name": "sentrux",
@@ -7129,9 +7129,9 @@
   "aquasecurity-trivy-operator": {
     "name": "trivy-operator",
     "officialUrl": "https://github.com/aquasecurity/trivy-operator",
-    "lastChecked": "2026-11-20T11:40:48.316Z",
+    "lastChecked": "2026-11-21T15:48:46.832Z",
     "revisionIdentifier": "689215dd",
-    "lastVerified": "2026-11-20T11:40:48.316Z"
+    "lastVerified": "2026-11-21T15:48:46.832Z"
   },
   "tursodatabase-limbo": {
     "name": "tursodatabase/turso",
@@ -12451,5 +12451,22 @@
     "lastChecked": "2026-11-21T15:31:15.983Z",
     "revisionIdentifier": "hf-ista-dasl",
     "lastVerified": "2026-11-21T15:31:15.983Z"
+  },
+  "hf-comfy-org-fibo-2.0": {
+    "name": "Comfy-Org/Fibo-2.0",
+    "officialUrl": "https://huggingface.co/Comfy-Org/Fibo-2.0",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T15:48:41.955Z",
+    "lastVerified": "2026-11-21T15:48:41.955Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-comfy-org-fibo-2-0",
+    "contentHash": "d0948d74f1e086e77f501d7827a02564f8b8a6b1f9fdebede3702da8cf8080a3",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
