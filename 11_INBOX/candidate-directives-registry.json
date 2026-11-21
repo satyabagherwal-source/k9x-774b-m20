@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T02:13:41.208Z",
+  "last_updated": "2026-11-21T02:30:02.598Z",
   "directives": [
     {
       "id": "CD-001",
@@ -40760,6 +40760,70 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-581EF0-keep-component-view-local-values-when-th.md",
       "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-EO46",
+      "directive_title": "Refactor how mock user input is defined in tests, fix minor difference in",
+      "source_repo": "hashicorp/terraform",
+      "source_commit": "80e6fc28",
+      "staged_file": "11_INBOX/candidate-directives/CD-EO46-refactor-how-mock-user-input-is-defined-in-tests-fix-minor-difference-in.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-ESO4",
+      "directive_title": "extend binary e2e timeouts to 60 minutes",
+      "source_repo": "risingwavelabs/risingwave",
+      "source_commit": "c0386a2f",
+      "staged_file": "11_INBOX/candidate-directives/CD-ESO4-extend-binary-e2e-timeouts-to-60-minutes.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-IP5S",
+      "directive_title": "[ty] Forward the suffix of a positional unpack to a ParamSpec",
+      "source_repo": "astral-sh-ruff-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-IP5S-ty-forward-the-suffix-of-a-positional-unpack-to-a-paramspec.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-66F1A3",
+      "directive_title": "[ty] Forward the suffix of a positional unpack to a ParamSpec",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "astral-sh-ruff",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-66F1A3--ty-forward-the-suffix-of-a-positional-u.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-IPRD",
+      "directive_title": "tests: Refactor how mock user input is defined in tests, fix minor difference in",
+      "source_repo": "hashicorp-terraform-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-IPRD-tests-refactor-how-mock-user-input-is-defined-in-tests-fix-minor-difference-in.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-IQG5",
+      "directive_title": "ci: extend binary e2e timeouts to 60 minutes",
+      "source_repo": "risingwavelabs-risingwave-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-IQG5-ci-extend-binary-e2e-timeouts-to-60-minutes.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
     }
   ]
 }

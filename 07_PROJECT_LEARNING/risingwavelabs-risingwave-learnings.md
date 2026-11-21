@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `7f1b206a`  
+> **Source Version**: `c0386a2f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T00:43:26.981Z  
+> **Timestamp**: 2026-11-21T02:26:57.644Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T00:43:22.209Z  
+> **Harvest Timestamp**: 2026-11-21T02:26:57.639Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1077,554 +1077,131 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7f1b206a` (2026-11-19)
-**Commit Message**: fix(pgwire): send BackendKeyData after password auth, reject short CancelRequest (#27343)
+### Incident Patch 1: `18e28071` (2026-11-20)
+**Commit Message**: ci: extend binary e2e timeouts to 60 minutes (#28107)
 
-Co-authored-by: Xiaochong(Eddy) Wei <[REDACTED_EMAIL]>
-Co-authored-by: xiaochong <[REDACTED_EMAIL]>
-Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `src/utils/pgwire/src/pg_message.rs` (modified, +31/-1)
+**File**: `ci/workflows/main-cron.yml` (modified, +2/-2)
 ```diff
-@@ -151,6 +151,15 @@ pub struct FeCancelMessage {
+@@ -933,7 +933,7 @@ steps:
+     plugins:
+       - docker-compose#v5.5.0: *docker-compose
+       - ./ci/plugins/upload-failure-logs
+-    timeout_in_minutes: 50
++    timeout_in_minutes: 60
+     retry: *auto-retry
  
- impl FeCancelMessage {
-     pub fn parse(mut buf: Bytes) -> Result<FeMessage> {
-+        if buf.remaining() < 8 {
-+            return Err(Error::new(
-+                ErrorKind::InvalidInput,
-+                format!(
-+                    "Invalid cancel request: expected 8 bytes of payload, got {}",
-+                    buf.remaining()
-+                ),
-+            ));
-+        }
-         let target_process_id = buf.get_i32();
-         let target_secret_key = buf.get_i32();
-         Ok(FeMessage::CancelQuery(Self {
-@@ -897,9 +906,13 @@ fn write_err_or_notice(buf: &mut BytesMut, msg: &ErrorOrNoticeMessage<'_>) -> Re
+   - label: "e2e single-node binary test"
+@@ -948,7 +948,7 @@ steps:
+     plugins:
+       - docker-compose#v5.5.0: *docker-compose
+       - ./ci/plugins/upload-failure-logs
+-    timeout_in_minutes: 45
++    timeout_in_minutes: 60
+     retry: *auto-retry
  
- #[cfg(test)]
- mod tests {
-+    use std::io::ErrorKind;
-+
-     use bytes::Bytes;
- 
--    use crate::pg_message::{FeParseMessage, FeQueryMessage, FeStartupMessage};
-+    use crate::pg_message::{
-+        FeCancelMessage, FeMessage, FeParseMessage, FeQueryMessage, FeStartupMessage,
-+    };
- 
-     #[test]
-     fn test_get_sql() {
-@@ -920,6 +933,23 @@ mod tests {
-         assert_eq!(fe.get_sql().unwrap(), "select 1");
-     }
- 
-+    #[test]
-+    fn test_cancel_request_rejects_short_payload() {
-+        // A client without a secret key stops after the process id.
-+        let err = FeCancelMessage::parse(Bytes::from_static(&[0, 0, 0, 1])).unwrap_err();
-+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
-+
-+        let err = FeCancelMessage::parse(Bytes::new()).unwrap_err();
-+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
-+
-+        let msg = FeCancelMessage::parse(Bytes::from_static(&[0, 0, 0, 1, 0, 0, 0, 2])).unwrap();
-+        let FeMessage::CancelQuery(msg) = msg else {
-+            panic!("expected a cancel query message");
-+        };
-+        assert_eq!(msg.target_process_id, 1);
-+        assert_eq!(msg.target_secret_key, 2);
-+    }
-+
-     #[test]
-     fn test_startup_build() {
-         let payload = b"user\0dev\0options\0\0\0";
-```
-
-**File**: `src/utils/pgwire/src/pg_protocol.rs` (modified, +32/-29)
-```diff
-@@ -82,6 +82,10 @@ where
- 
-     session_mgr: Arc<SM>,
-     session: Option<Arc<SM::Session>>,
-+    /// `application_name` from the startup message, reported back to the client once
-+    /// authentication finishes. Kept here because the startup message is gone by the
-+    /// time a password arrives.
-+    application_name: Option<String>,
- 
-     result_cache: HashMap<String, ResultCache<<SM::Session as Session>::ValuesStream>>,
-     unnamed_prepare_statement:
-@@ -274,6 +278,7 @@ where
-             state: PgProtocolState::Startup,
-             session_mgr,
-             session: None,
-+            application_name: None,
-             tls_context: tls_config
-                 .as_ref()
-                 .and_then(|e| build_ssl_ctx_from_config(e).ok()),
-@@ -766,65 +771,63 @@ where
-                 .map_err(|e| PsqlError::StartupError(e.into()))?;
-         }
- 
--        self.state = match session.user_authenticator() {
--            UserAuthenticator::None => {
--                self.stream.write_no_flush(BeMessage::AuthenticationOk)?;
-+        self.application_name = application_name.cloned();
- 
--                // Cancel request need this for identify and verification. According to postgres
--                // doc, it should be written to buffer after receive AuthenticationOk.
--                self.stream
--                    .write_no_flush(BeMessage::BackendKeyData(session.id()))?;
--
--                self.stream.write_no_flush(BeMessage::ParameterStatus(
--                    BeParameterStatusMessage::TimeZone(
--                        &session
--                            .get_config("timezone")
--                            .map_err(|e| PsqlError::StartupError(e.into()))?,
--                    ),
--                ))?;
--                self.stream
--                    .write_parameter_status_msg_no_flush(&ParameterStatus {
--                        application_name: application_name.cloned(),
--                    })?;
--                self.ready_for_query()?;
--                PgProtocolState::Regular
--            }
-+        match session.user_authenticator() {
-+            UserAuthenticator::None => self.finish_authentication(&session)?,
-             UserAuthenticator::ClearText(_)
-             | UserAuthenticator::OAuth { .. }
-             | UserAuthenticator::Ldap(..) => {
-                 self.stream
-                     .write_no_flush(BeMessage::AuthenticationCleartextPassword)?;
--                PgProtocolState::Authentication
-+                self.state = PgProtocolState::Authentication;
-             }
-             UserAuthenticator::Md5WithSalt { salt, .. } => {
-                 self.stream
-                     .write_no_flush(BeMessage::AuthenticationMd5Password(salt))?;
--                PgProtocolState::Authentication
-+                self.state = PgProtocolState::Authentication;
-             }
-         };
- 
-         self.session = Some(session);
-         Ok(())
-     }
- 
--    async fn process_password_msg(&mut self, msg: FePasswordMessage) -> PsqlResult<()> {
--        let session = self.session.as_ref().unwrap();
--        let authenticator = session.user_authenticator();
--        authenticator.authenticate(&msg.password).await?;
-+    /// Completes the startup sequence once the user is authenticated: acknowledge the
-+    /// authentication, hand the client the key it needs to cancel this session, report the
-+    /// server parameters and open the connection for queries.
-+    ///
-+    /// Shared by every authentication method so that none of them can drift.
-+    fn finish_authentication(&mut self, session: &SM::Session) -> PsqlResult<()> {
-         self.stream.write_no_flush(BeMessage::AuthenticationOk)?;
-+        // The client needs this to identify the session in a later `CancelRequest`, and
-+        // postgres sends it once authentication has succeeded.
-+        self.stream
-+            .write_no_flush(BeMessage::BackendKeyData(session.id()))?;
-         let timezone = session
-             .get_config("timezone")
-             .map_err(|e| PsqlError::StartupError(e.into()))?;
-         self.stream.write_no_flush(BeMessage::ParameterStatus(
-             BeParameterStatusMessage::TimeZone(&timezone),
-         ))?;
-         self.stream
--            .write_parameter_status_msg_no_flush(&ParameterStatus::default())?;
-+            .write_parameter_status_msg_no_flush(&ParameterStatus {
-+                application_name: self.application_name.clone(),
-+            })?;
-         self.ready_for_query()?;
-         self.state = PgProtocolState::Regular;
-         Ok(())
-     }
- 
-+    async fn process_password_msg(&mut self, msg: FePasswordMessage) -> PsqlResult<()> {
-+        let session = self.session.clone().unwrap();
-+        session
-+            .user_authenticator()
-+            .authenticate(&msg.password)
-+            .await?;
-+        self.finish_authentication(&session)
-+    }
-+
-     fn process_cancel_msg(&mut self, m: FeCancelMessage) -> PsqlResult<()> {
-         let session_id = (m.target_process_id, m.targ
-```
-
-**File**: `src/utils/pgwire/src/pg_server.rs` (modified, +90/-13)
-```diff
-@@ -439,7 +439,7 @@ pub async fn handle_connection<S, SM>(
- }
- #[cfg(test)]
- mod tests {
--    use std::sync::Arc;
-+    use std::sync::{Arc, Mutex};
-     use std::time::{Duration, Instant};
- 
-     use bytes::Bytes;
-@@ -464,8 +464,26 @@ mod tests {
-     use crate::types;
-     use crate::types::Row;
- 
--    struct MockSessionManager {}
--    struct MockSession {}
-+    struct MockSessionManager {
-+        authenticator: UserAuthenticator,
-+        session_id: SessionId,
-+        cancelled: Arc<Mutex<Vec<SessionId>>>,
-+    }
-+
-+    impl Default for MockSessionManager {
-+        fn default() -> Self {
-+            Self {
-+                authenticator: UserAuthenticator::None,
-+                session_id: (0, 0),
-+                cancelled: Arc::new(Mutex::new(Vec::new())),
-+            }
-+        }
-+    }
-+
-+    struct MockSession {
-+        authenticator: UserAuthenticator,
-+        id: SessionId,
-+    }
- 
-     const STREAMING_TEST_QUERY: &str = "SELECT 'pgwire_streaming_test'";
- 
-@@ -486,16 +504,17 @@ mod tests {
-             _user_name: &str,
-             _peer_addr: crate::net::AddressRef,
-         ) -> Result<Arc<Self::Session>, Self::Error> {
--            Ok(Arc::new(MockSession {}))
-+            Ok(Arc::new(MockSession {
-+                authenticator: self.authenticator.clone(),
-+                id: self.session_id,
-+            }))
-         }
- 
--        fn cancel_queries_in_session(&self, _session_id: SessionId) {
--            todo!()
-+        fn cancel_queries_in_session(&self, session_id: SessionId) {
-+            self.cancelled.lock().unwrap().push(session_id);
-         }
- 
--        fn cancel_creating_jobs_in_session(&self, _session_id: SessionId) {
--            todo!()
--        }
-+        fn cancel_creating_jobs_in_session(&self, _session_id: SessionId) {}
- 
-         fn end_session(&self, _session: &Self::Session) {}
-     }
-@@ -595,11 +614,11 @@ mod tests {
-         }
- 
-         fn user_authenticator(&self) -> &UserAuthenticator {
--            &UserAuthenticator::None
-+            &self.authenticator
-         }
- 
-         fn id(&self) -> SessionId {
--            (0, 0)
-+            self.id
-         }
- 
-         fn get_config(&self, key: &str) -> Result<String, Self::Error> {
-@@ -643,7 +662,7 @@ mod tests {
-         let bind_addr = bind_addr.into();
-         let pg_config = pg_config.into();
- 
--        let session_mgr = MockSessionManager {};
-+        let session_mgr = MockSessionManager::default();
-         tokio::spawn(async move {
-             pg_serve(
-                 &bind_addr,
-@@ -688,6 +707,64 @@ mod tests {
-         assert_eq!(rows.len(), 1);
-     }
- 
-+    #[tokio::test]
-+    async fn test_cancel_request_after_password_auth() {
-+        let session_id = (42, 7);
-+        let cancelled = Arc::new(Mutex::new(Vec::new()));
-+        let session_mgr = MockSessionManager {
-+            authenticator: UserAuthenticator::ClearText(b"pw".to_vec()),
-+            session_id,
-+            cancelled: cancelled.clone(),
-+        };
-+
-+        tokio::spawn(async move {
-+            pg_serve(
-+                "127.0.0.1:10002",
-+                socket2::TcpKeepalive::new(),
-+                Arc::new(session_mgr),
-+                ConnectionContext {
-+                    tls_config: None,
-+                    sql_option_redaction: None,
-+                    message_memory_manager: MessageMemoryManager::new(u64::MAX, u64::MAX, u64::MAX)
-+                        .into(),
-+                    stream_flush_threshold_bytes: 64 * 1024,
-+                },
-+                CancellationToken::new(), // dummy
-+            )
-+            .await
-+        });
-+        // wait for server to start
-+        tokio::time::sleep(Duration::from_millis(100)).await;
-+
-+        let (client, connection) = tokio_postgres::connect(
-+            "host=localhost port=10002 user=mock password=pw application_name=cancel_test",
-+            NoTls,
-+        )
-+        .await
-+        .unwrap();
-+        // Reported in the same `ParameterStatus` burst as `BackendKeyData`, so the
-+        // password path must not skip it either.
-+        assert_eq!(
-+            connection.parameter("application_name"),
-+            Some("cancel_test")
-+        );
-+        tokio::spawn(async move {
-+            let _ = connection.await;
-+        });
-+
-+        // The cancel token is built from the `BackendKeyData` the server sent after
-+        // `AuthenticationOk`. Without it the client cancels with (0, 0) instead.
-+        client.cancel_token().cancel_query(NoTls).await.unwrap();
-+
-+        for _ in 0..100 {
-+            if !cancelled.lock().unwrap().is_empty() {
-+                break;
-+            }
-+            tokio::time::sleep(Duration::from_millis(20)).await;
-+        }
-+        assert_eq!(cancelled.lock().unwrap().as_slice(), &[session_id]);
-+    }
-+
-     #[tokio::test]
-     async fn test_query_tcp() {
-         do_test_query("127.0.0.1:10000", "host=localhost port=10000").await;
-@@ -722,7 +799,7 @@ mod tests {
-             pg_serve(
-             
+   - label: "end-to-end test for opendal storage backend (parallel)"
 ```
 
 ---
 
-### Incident Patch 2: `9232723c` (2026-11-19)
-**Commit Message**: fix(sqlserver-cdc): escape database names in JDBC URLs (#28084)
+### Incident Patch 2: `425c375d` (2026-11-20)
+**Commit Message**: fix: require patched OpenJDK 21 for Java4Shell (#28106)
 
-**File**: `java/connector-node/risingwave-connector-service/src/main/java/com/risingwave/connector/source/common/SqlServerDbzConnectorConfig.java` (modified, +3/-1)
+**File**: `docker/Dockerfile` (modified, +5/-1)
 ```diff
-@@ -32,9 +32,11 @@ public class SqlServerDbzConnectorConfig extends DbzConnectorConfig {
+@@ -2,9 +2,13 @@ FROM ubuntu:24.04 AS base
  
-     public String getJdbcUrl() {
-         var encrypt = Boolean.parseBoolean(userProps.getOrDefault(ENCRYPT, "false"));
-+        // Brace quoting preserves semicolons and whitespace; literal closing braces are doubled.
-+        var databaseName = "{" + getDbName().replace("}", "}}") + "}";
-         return String.format(
-                 "jdbc:sqlserver://%s:%s;databaseName=%s;encrypt=%s;trustServerCertificate=true",
--                getHost(), getPort(), getDbName(), encrypt);
-+                getHost(), getPort(), databaseName, encrypt);
-     }
+ ENV LANG en_US.utf8
  
-     @Override
++# Require Ubuntu's CVE-2026-114938 fix while allowing newer security updates.
++# https://ubuntu.com/security/notices/USN-9156-1
+ RUN apt-get update \
+   && apt-get -y install ca-certificates build-essential libsasl2-dev openjdk-21-jdk software-properties-common \
+-    python3.12 python3.12-dev openssl pkg-config curl git libblas-dev liblapack-dev libomp-dev
++    python3.12 python3.12-dev openssl pkg-config curl git libblas-dev liblapack-dev libomp-dev \
++  && dpkg --compare-versions "$(dpkg-query -W -f='${Version}' openjdk-21-jre-headless)" ge '21.0.13.1+2-1~24.04.1' \
++  && java -version
+ 
+ FROM base AS rust-base
+ 
 ```
 
-**File**: `java/connector-node/risingwave-connector-service/src/test/java/com/risingwave/connector/source/common/SqlServerDbzConnectorConfigTest.java` (added, +85/-0)
+**File**: `docker/Dockerfile.hdfs` (modified, +10/-2)
 ```diff
-@@ -0,0 +1,85 @@
-+/*
-+ * Copyright 2026 RisingWave Labs
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+package com.risingwave.connector.source.common;
-+
-+import static org.junit.Assert.assertEquals;
-+
-+import com.microsoft.sqlserver.jdbc.SQLServerDriver;
-+import com.risingwave.proto.ConnectorServiceProto.GetEventStreamRequest;
-+import com.risingwave.proto.ConnectorServiceProto.SourceType;
-+import java.sql.SQLException;
-+import java.util.HashMap;
-+import java.util.Map;
-+import java.util.Properties;
-+import org.junit.Test;
-+import org.junit.runner.RunWith;
-+import org.junit.runners.Parameterized;
-+
-+@RunWith(Parameterized.class)
-+public class SqlServerDbzConnectorConfigTest {
-+    @Parameterized.Parameters(name = "databaseName={0}")
-+    public static String[] databaseNames() {
-+        return new String[] {
-+            "sales",
-+            "sales;east",
-+            "sales;applicationName=changed",
-+            "sales;databaseName=other",
-+            "sales;encrypt=true;trustServerCertificate=false",
-+            "sales{east",
-+            "sales}east",
-+            "{sales}",
-+            "sales}};applicationName=changed",
-+            " sales",
-+            "sales ",
-+            " sales;{east} "
-+        };
-+    }
-+
-+    @Parameterized.Parameter public String databaseName;
-+
-+    @Test
-+    public void preservesDatabaseNameWithoutChangingConnectionProperties() throws SQLException {
-+        for (var encrypt : new String[] {"false", "true"}) {
-+            var expected = parseJdbcUrl("sales", encrypt);
-+            assertEquals(encrypt, expected.get("encrypt"));
-+            assertEquals("true", expected.get("trustServerCertificate"));
-+            expected.put("databaseName", databaseName);
-+
-+            assertEquals(expected, parseJdbcUrl(databaseName, encrypt));
-+        }
-+    }
-+
-+    private static Map<String, String> parseJdbcUrl(String databaseName, String encrypt)
-+            throws SQLException {
-+        var config =
-+                new SqlServerDbzConnectorConfig(
-+                        GetEventStreamRequest.newBuilder()
-+                                .setSourceType(SourceType.SQL_SERVER)
-+                                .putProperties("hostname", "example.invalid")
-+                                .putProperties("port", "1433")
-+                                .putProperties("database.name", databaseName)
-+                                .putProperties("database.encrypt", encrypt)
-+                                .build());
-+        var properties = new HashMap<String, String>();
-+        // Parse with the real driver without opening a connection to SQL Server.
-+        for (var property :
-+                new SQLServerDriver().getPropertyInfo(config.getJdbcUrl(), new Properties())) {
-+            properties.put(property.name, property.value);
-+        }
-+        return properties;
-+    }
-+}
+@@ -4,8 +4,12 @@ FROM ubuntu:24.04 AS base
+ 
+ ENV LANG en_US.utf8
+ 
++# Require Ubuntu's CVE-2026-114938 fix while allowing newer security updates.
++# https://ubuntu.com/security/notices/USN-9156-1
+ RUN apt-get update \
+-  && apt-get -y install ca-certificates build-essential libsasl2-dev openjdk-21-jdk software-properties-common python3.12 python3.12-dev openssl pkg-config libblas-dev liblapack-dev libomp-dev
++  && apt-get -y install ca-certificates build-essential libsasl2-dev openjdk-21-jdk software-properties-common python3.12 python3.12-dev openssl pkg-config libblas-dev liblapack-dev libomp-dev \
++  && dpkg --compare-versions "$(dpkg-query -W -f='${Version}' openjdk-21-jre-headless)" ge '21.0.13.1+2-1~24.04.1' \
++  && java -version
+ 
+ FROM base AS dashboard-builder
+ 
+@@ -116,7 +120,11 @@ RUN cd /risingwave/java && mvn -B package -Dmaven.test.skip=true -Dno-build-rust
+   tar -zxvf /risingwave/java/connector-node/assembly/target/risingwave-connector-1.0.0.tar.gz -C /risingwave/bin/connector-node
+ 
+ FROM ubuntu:24.04 as image-base
+-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install ca-certificates openjdk-21-jdk wget libsasl2-dev libblas-dev liblapack-dev libomp-dev && rm -rf /var/lib/{apt,dpkg,cache,log}/
++# This runtime stage installs its own JDK, so enforce the same security baseline.
++RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install ca-certificates openjdk-21-jdk wget libsasl2-dev libblas-dev liblapack-dev libomp-dev \
++  && dpkg --compare-versions "$(dpkg-query -W -f='${Version}' openjdk-21-jre-headless)" ge '21.0.13.1+2-1~24.04.1' \
++  && java -version \
++  && rm -rf /var/lib/{apt,dpkg,cache,log}/
+ 
+ FROM image-base as risingwave
+ LABEL org.opencontainers.image.source https://github.com/risingwavelabs/risingwave
 ```
 
----
-
-### Incident Patch 3: `4c7bff5f` (2026-11-19)
-**Commit Message**: fix(postgres-cdc): encode database names in JDBC URLs (#28083)
-
-**File**: `java/connector-node/risingwave-connector-service/src/main/java/com/risingwave/connector/source/common/PostgresDbzConnectorConfig.java` (modified, +6/-1)
+**File**: `docker/README.md` (modified, +9/-0)
 ```diff
-@@ -19,6 +19,8 @@
- import com.risingwave.connector.api.TableSchema;
- import com.risingwave.connector.cdc.debezium.internal.ConfigurableOffsetBackingStore;
- import com.risingwave.proto.ConnectorServiceProto.GetEventStreamRequest;
-+import java.net.URLEncoder;
-+import java.nio.charset.StandardCharsets;
- import java.util.Properties;
+@@ -94,6 +94,15 @@ docker build . -f docker/Dockerfile
  
- public class PostgresDbzConnectorConfig extends DbzConnectorConfig {
-@@ -36,7 +38,10 @@ public class PostgresDbzConnectorConfig extends DbzConnectorConfig {
-     }
+ from the project root.
  
-     public String getJdbcUrl() {
--        return String.format("jdbc:postgresql://%s:%s/%s", getHost(), getPort(), getDbName());
-+        // pgjdbc URL-decodes the database component, so encode literal names before interpolation.
-+        return String.format(
-+                "jdbc:postgresql://%s:%s/%s",
-+                getHost(), getPort(), URLEncoder.encode(getDbName(), StandardCharsets.UTF_8));
-     }
++The standard and HDFS images require Ubuntu's OpenJDK 21 package version
++`21.0.13.1+2-1~24.04.1` or newer to address
++[CVE-2026-114938](https://ubuntu.com/security/notices/USN-9156-1).
++The build installs the latest available JDK and fails if the installed runtime
++is below this minimum. Private Ubuntu mirrors must provide the security update.
++To refresh an existing image's JDK, rebuild with `--pull --no-cache`, then replace
++the running containers with the rebuilt image. Restarting an old image does not
++update its JDK.
++
+ To build the images without SIMD vector extensions, run
  
-     public String getPubName() {
+ ```
 ```
 
-**File**: `java/connector-node/risingwave-connector-service/src/test/java/com/risingwave/connector/source/common/DbzConnectorConfigTest.java` (modified, +43/-0)
+**File**: `src/jni_core/src/jvm_runtime.rs` (modified, +7/-0)
 ```diff
-@@ -28,6 +28,7 @@
- import java.lang.management.ManagementFactory;
- import java.util.HashMap;
- import java.util.Map;
-+import java.util.Properties;
- import java.util.concurrent.atomic.AtomicInteger;
- import javax.management.ObjectName;
- import org.junit.Test;
-@@ -51,6 +52,48 @@ private static DbzConnectorConfig postgresConfig(long sourceId) {
-                 Map.of("cdc.source.wait.streaming.start.timeout", "3600"));
-     }
+@@ -90,6 +90,13 @@ fn build_jvm_with_native_registration() -> anyhow::Result<JavaVM> {
+         .option("-Xms16m")
+         .option(format!("-Xmx{}", jvm_heap_size));
  
-+    @Test
-+    public void postgresJdbcUrlPreservesLiteralDatabaseName() {
-+        for (var database :
-+                new String[] {
-+                    "sales",
-+                    "sales+east",
-+                    "sales%2Beast",
-+                    "sales%",
-+                    "sales?sslmode=disable",
-+                    "sales?user=other&password=other",
-+                    "sales east",
-+                    "sales/east",
-+                    "sales#east",
-+                    "sales&east=west",
-+                    "sales\"east",
-+                    "销售"
-+                }) {
-+            var config =
-+                    (PostgresDbzConnectorConfig)
-+                            createConfig(
-+                                    SourceType.POSTGRES,
-+                                    46,
-+                                    Map.of(
-+                                            "hostname", "example.invalid",
-+                                            "port", "5432",
-+                                            "database.name", database));
-+            var expected = new Properties();
-+            expected.setProperty("PGHOST", "example.invalid");
-+            expected.setProperty("PGPORT", "5432");
-+            expected.setProperty("PGDBNAME", database);
-+
-+            // Exercise the URL shared by validation and publication creation without connecting.
-+            assertEquals(
-+                    database,
-+                    expected,
-+                    org.postgresql.Driver.parseURL(config.getJdbcUrl(), new Properties()));
-+            assertEquals(database, config.getDbName());
-+            assertEquals(
-+                    database, config.getResolvedDebeziumProps().getProperty("database.dbname"));
-+        }
++    #[cfg(target_arch = "x86_64")]
++    {
++        // Mitigate CVE-2026-114938 in unpatched x86-64 JDKs. ARM64 is unaffected
++        // and retains its Base64 intrinsics. See https://calif.io/java4shell/.
++        args_builder = args_builder.option("-XX:-UseBASE64Intrinsics");
 +    }
 +
-     @Test
-     public void usesConstructorSourceIdForTopicPrefix() {
-         var userProps = new HashMap<String, String>();
+     // Exit the embedded JVM on uncaught `OutOfMemoryError` so that the host
+     // compute node process terminates and the cluster recovers via the standard
+     // recovery loop, matching native OOM behavior. Set `JVM_EXIT_ON_OOM=false`
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28104** (2026-11-20): fix(streaming): eliminate no-op updates in cross-database table scan (#28070) (@risingwave-ci)
-- **PR #28093** (closed): chore(deps): bump jiff from 0.2.35 to 0.2.39 (@dependabot[bot])
-- **PR #28084** (2026-11-19): fix(sqlserver-cdc): escape database names in JDBC URLs (@zwang28)
-- **PR #28083** (2026-11-19): fix(postgres-cdc): encode database names in JDBC URLs (@zwang28)
-- **PR #28074** (2026-11-19): fix(iceberg): keep storage catalog tables visible during commits (@howenyap)
-- **PR #28073** (2026-11-19): chore(deps): stop renaming gcloud-* and yaml-rust2 so dependabot updates them (@maybe-vibe)
+- **PR #28125** (2026-11-20): build: use Turbopack and native TypeScript for Dashboard (@Li0k)
+- **PR #28124** (closed): build: upgrade standalone Linux release builders to manylinux_2_34 (@Li0k)
+- **PR #28117** (2026-11-20): ci: shorten the PR CDC source test step with `parallelism: 2` (@maybe-vibe)
+- **PR #28115** (2026-11-20): chore: update version to v3.0.6 (@cyliu0)
+- **PR #28114** (2026-11-20): chore(deps): bump firestore to 0.57 and gcloud-sdk to 0.32 (@maybe-vibe)
+- **PR #28113** (2026-11-20): fix: require patched OpenJDK 21 for Java4Shell (#28106) (@risingwave-ci)
 
 ---
 
@@ -1644,58 +1221,30 @@ Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. pgwire): send BackendKeyData after password auth, reject short CancelRequest
+## X. ci: extend binary e2e timeouts to 60 minutes
 
 **RULE**:
-When implementing operations in `src/utils/pgwire/src/pg_message.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ci/workflows/main-cron.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7f1b206a`: pgwire): send BackendKeyData after password auth, reject short CancelRequest. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `18e28071`: ci: extend binary e2e timeouts to 60 minutes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/utils/pgwire/src/pg_message.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/workflows/main-cron.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        if buf.remaining() < 8 {
-            return Err(Error::new(
-                ErrorKind::InvalidInput,
-                format!(
-                    "Invalid cancel request: expected 8 bytes of payload, got {}",
-                    buf.remaining()
-                ),
-            ));
-        }
-    use std::io::ErrorKind;
-
-    use crate::pg_message::{
-        FeCancelMessage, FeMessage, FeParseMessage, FeQueryMessage, FeStartupMessage,
-    };
-    #[test]
-    fn test_cancel_request_rejects_short_payload() {
-        // A client without a secret key stops after the process id.
-        let err = FeCancelMessage::parse(Bytes::from_static(&[0, 0, 0, 1])).unwrap_err();
-        assert_eq!(err.kind(), ErrorKind::InvalidInput);
-
-        let err = FeCancelMessage::parse(Bytes::new()).unwrap_err();
-        assert_eq!(err.kind(), ErrorKind::InvalidInput);
-
-        let msg = FeCancelMessage::parse(Bytes::from_static(&[0, 0, 0, 1, 0, 0, 0, 2])).unwrap();
-        let FeMessage::CancelQuery(msg) = msg else {
-            panic!("expected a cancel query message");
-        };
-        assert_eq!(msg.target_process_id, 1);
-        assert_eq!(msg.target_secret_key, 2);
-    }
-
+    timeout_in_minutes: 60
+    timeout_in_minutes: 60
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    use crate::pg_message::{FeParseMessage, FeQueryMessage, FeStartupMessage};
+    timeout_in_minutes: 50
+    timeout_in_minutes: 45
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7f1b206a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `18e28071` are properly handled with clean fallback behavior.

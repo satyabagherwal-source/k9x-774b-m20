@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T02:11:54.209Z",
-  "total_cycles_completed": 11139,
-  "total_learnings_persisted": 11139,
-  "total_rules_promoted": 10497,
+  "last_updated": "2026-11-21T02:29:56.897Z",
+  "total_cycles_completed": 11142,
+  "total_learnings_persisted": 11142,
+  "total_rules_promoted": 10499,
   "history": [
-    {
-      "timestamp": "2026-11-20T05:53:04.941Z",
-      "repository": "CrawlCove/robots-txt-tester",
-      "learningId": "learn-github-crawlcove-robots-txt-tester",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T06:02:26.406Z",
-      "repository": "CrawlCove/xml-sitemap-validator",
-      "learningId": "learn-github-crawlcove-xml-sitemap-validator",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T06:02:32.415Z",
-      "repository": "kcl-lang/kcl",
-      "learningId": "learn-github-kcl-lang-kcl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T06:10:48.488Z",
       "repository": "fujiapple852/trippy",
@@ -1403,6 +1382,27 @@
       "repository": "zed-industries/zed",
       "learningId": "learn-github-zed-industries-zed",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T02:26:52.743Z",
+      "repository": "hashicorp/terraform",
+      "learningId": "learn-github-hashicorp-terraform",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T02:26:58.662Z",
+      "repository": "risingwavelabs/risingwave",
+      "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T02:29:56.897Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

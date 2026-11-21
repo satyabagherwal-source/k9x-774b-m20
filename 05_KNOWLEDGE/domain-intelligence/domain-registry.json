@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T02:13:41.363Z",
+  "last_updated": "2026-11-21T02:30:02.753Z",
   "total_records": 2218,
   "domains": {
     "A": {
@@ -17493,8 +17493,8 @@
       "title": "Architecture Intelligence: hashicorp/terraform Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-architecture-intelligence-hashicorp-terraform-core-invariant.md",
       "repository": "hashicorp/terraform",
-      "content_hash": "3bccfd27b20a820d21062b25105d1e5ca05f33a9d24c3a21e0b62a37cb2d69de",
-      "created_at": "2026-11-20T01:55:35.409Z"
+      "content_hash": "eaa68cad3f7e96f6139c7bf325873ef06afa0cfca3d7e5be9073b8919defe039",
+      "created_at": "2026-11-21T02:26:53.115Z"
     },
     "DOM-D-666917A5": {
       "record_id": "DOM-D-666917A5",
@@ -17553,8 +17553,8 @@
       "title": "Architecture Intelligence: hashicorp-terraform-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-learnings-architecture-intelligence-hashicorp-terraform-lear.md",
       "repository": "hashicorp-terraform-learnings",
-      "content_hash": "d29e757b8a2b7397c2c7f93ab3d9ae0ff5182ac8e6ea0826152f3079931e7a3b",
-      "created_at": "2026-11-20T01:56:46.318Z"
+      "content_hash": "f7674fb2ee070124c5ed4a704992599b82c78068b913f048c09b06eb56fd5656",
+      "created_at": "2026-11-21T02:30:01.864Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co",
@@ -23917,8 +23917,8 @@
       "title": "Technical Construction Intelligence: astral-sh/ruff Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-astral-sh-ruff-technical-construction-intelligence-astral-sh-ruff-core-invariant.md",
       "repository": "astral-sh/ruff",
-      "content_hash": "99d1dc0de178c162055d01c7fc21aa625d5755dc40c16e0e58b891651cdb2ec3",
-      "created_at": "2026-11-19T16:16:50.923Z"
+      "content_hash": "04f858a99478205d7de259f42e7fe281f2ade484151044f3e3e3dce926bdf507",
+      "created_at": "2026-11-21T02:29:57.259Z"
     },
     "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants",
@@ -23926,8 +23926,8 @@
       "title": "Technical Construction Intelligence: astral-sh-ruff-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-astral-sh-ruff-learnings-technical-construction-intelligence-astral-sh-ruff-lear.md",
       "repository": "astral-sh-ruff-learnings",
-      "content_hash": "b24302c56eae6cf885abfe2bb4496c4df041f158d048a27ecd6986fe005c2d5a",
-      "created_at": "2026-11-19T16:17:06.790Z"
+      "content_hash": "afa73cca7130f9bfcf23445c26e7921d037623862b33d17cc9b1af016c4bee9e",
+      "created_at": "2026-11-21T02:30:01.094Z"
     },
     "domain_intelligence-research-knowledge-intelligence-unsloth-deepseek-v4-1-flash-1017-gguf-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-deepseek-v4-1-flash-1017-gguf-core-invar",
@@ -34428,8 +34428,8 @@
       "title": "Quality & Verification Intelligence: risingwavelabs/risingwave Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-risingwavelabs-risingwave-quality-verification-intelligence-risingwavelabs-risin.md",
       "repository": "risingwavelabs/risingwave",
-      "content_hash": "97e4aa7f2666ed8c332c25b75555187804a369e9a0d813d019ec81e4ca74f6ed",
-      "created_at": "2026-11-20T00:43:28.314Z"
+      "content_hash": "6cd9db91502a4f640b90c8b05e976c25c694818fcc28d091d203553df42e23e3",
+      "created_at": "2026-11-21T02:26:59.010Z"
     },
     "domain_intelligence-quality-verification-intelligence-risingwavelabs-risingwave-learnings-core-invar": {
       "record_id": "domain_intelligence-quality-verification-intelligence-risingwavelabs-risingwave-learnings-core-invar",
@@ -34437,8 +34437,8 @@
       "title": "Quality & Verification Intelligence: risingwavelabs-risingwave-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-risingwavelabs-risingwave-learnings-quality-verification-intelligence-risingwave.md",
       "repository": "risingwavelabs-risingwave-learnings",
-      "content_hash": "e690aaea8c23bbfb472a6ec198fe9a61741822ad1b16333f823aa236dc27fceb",
-      "created_at": "2026-11-20T00:45:42.372Z"
+      "content_hash": "786f1fbaf61fe4a35d4dd1c80a3685f41e05af0488c18b1333e5ed5eaf3bc650",
+      "created_at": "2026-11-21T02:30:02.753Z"
     },
     "DOM-H-52039FE3": {
       "record_id": "DOM-H-52039FE3",

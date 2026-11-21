@@ -11703,3 +11703,6 @@
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T02:12:23.426Z` | `zed-industries-zed` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-09C0B40C` [Domain H] | Yes (`9a8463dd...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T02:12:57.768Z` | `zed-industries-zed` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-B-2C8CFAB3` [Domain B] | Yes (`3b1bfd2e...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T02:13:39.563Z` | `electron-electron` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9397456A` [Domain D] | Yes (`7ebbbb9d...`) |
+| `CYCLE-20261121-ENY6` | `2026-11-21T02:26:52.734Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9703` | Yes (`4c93538b...`) |
+| `CYCLE-20261121-ESIL` | `2026-11-21T02:26:58.653Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9704` | Yes (`abbc7ac8...`) |
+| `CYCLE-20261121-IM0X` | `2026-11-21T02:29:56.865Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md` | Yes (`dfca462e...`) |

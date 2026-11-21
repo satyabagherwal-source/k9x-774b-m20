@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "7f1b206a",
+    "sourceVersion": "c0386a2f",
     "license": "Apache-2.0",
-    "contentHash": "e8494667cacf437a0d019a51108f85ecd77db640ab923b8f1e91a3bfc573a584",
-    "lastHarvestedAt": "2026-11-20T00:43:27.970Z",
+    "contentHash": "abbc7ac879166bbeb22d8ab6d98632075f4f96f7388f87fe40174970b9d8d630",
+    "lastHarvestedAt": "2026-11-21T02:26:58.657Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -4613,10 +4613,10 @@
     "repository": "hashicorp/terraform",
     "platform": "github",
     "sourceUrl": "https://github.com/hashicorp/terraform",
-    "sourceVersion": "cefb61b7",
+    "sourceVersion": "80e6fc28",
     "license": "NOASSERTION",
-    "contentHash": "064c95d69542cbab6a58fa0d2a59d6208ea34a1858d1d65b9bd56ba32c2a4bca",
-    "lastHarvestedAt": "2026-11-20T01:55:34.932Z",
+    "contentHash": "4c93538b6451eba662b4e04ddf17eddbba96190a8869f882dfb99004dd182f37",
+    "lastHarvestedAt": "2026-11-21T02:26:52.738Z",
     "learningId": "learn-github-hashicorp-terraform"
   },
   "tako8ki-gobang": {
@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "a7ba68b4",
+    "sourceVersion": "cd2d9732",
     "license": "MIT",
-    "contentHash": "609f07e9319adbb75979a66d902ea8863197805401780ed88e3f0b471a78bc23",
-    "lastHarvestedAt": "2026-11-19T16:16:50.555Z",
+    "contentHash": "dfca462edb741fbc370ac9c6a77a6dba9b57f9c2e3af2a35d1d68d4aedfb2323",
+    "lastHarvestedAt": "2026-11-21T02:29:56.869Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {

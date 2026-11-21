@@ -11736,3 +11736,6 @@ Every entry in this ledger must capture:
 | `learn-dom-h-09c0b40c` | `project://zed-industries-zed` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md` | 2026-11-21T02:12:23.426Z |
 | `learn-dom-b-2c8cfab3` | `project://zed-industries-zed` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md` | 2026-11-21T02:12:57.768Z |
 | `learn-dom-d-9397456a` | `project://electron-electron` | `c7ba9db4` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md` | 2026-11-21T02:13:39.563Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `80e6fc28` | Multi-dimensional audit evidence | 2026-11-21T02:26:52.738Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `c0386a2f` | Multi-dimensional audit evidence | 2026-11-21T02:26:58.657Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `cd2d9732` | Multi-dimensional audit evidence | 2026-11-21T02:29:56.869Z |

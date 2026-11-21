@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T16:17:06.533Z",
+  "timestamp": "2026-11-21T02:30:00.802Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-astral-sh-ruff-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [astral-sh-ruff-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T16:17:06.533Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T02:30:00.802Z`  
 > **Learning ID**: `LEARN-EVO-astral-sh-ruff-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: B (Product Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), C (Market & Business Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), C (Market & Business Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 75%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from astral-sh-ruff-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `a7ba68b4`  
+> **Source Version**: `cd2d9732`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T16:16:50.112Z  
+> **Timestamp**: 2026-11-21T02:29:56.346Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T16:16:50.106Z  
+> **Harvest Timestamp**: 2026-11-21T02:26:45.801Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 51315 stars
+- **Stars / Engagement**: 51330 stars
 
 ---
 
@@ -2142,14 +2142,16 @@ impl<'a> Diff<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30549** (2026-11-19): **[ty] Preserve argument inference for unannotated overload parameters**
-  *Symptoms*: ty could infer `Unknown` for a call when one overload left a parameter unannotated and another supplied a type for it. In this example, `first()` has no arguments to infer `T` from, so its return type defaults to `int` unless the caller supplies an expected type.  ```python from typing import overload, reveal_type from typing_extensions import Never, TypeVar  T = TypeVar("T", default=int)  def first(*values: T) -> T:     return values[0]  @overload def choose(value, index: int) -> int: ... @overload def choose(value: Never, index: object) -> object: ... def choose(value, index):     return index  reveal_type(choose(first(), 1))  # previously Unknown, now int ```  Both overloads initially match. The first gives `first()` no expected type, so it infers `int`. The second infers `Never` for the same expression. Previously, ty reused `Never` while checking the first overload and treated the call as ambiguous. It now uses the argument type inferred for each overload, so the first overload wins.  ## Test plan  Checked the original example with a nested `create()` whose return type is a type variable bounded by `int`. ty reveals `int` for `choose(create(), 1)`, including when `create()` is replaced by `next(iter([]))`.  
+- **Issue #30649** (2026-11-20): **Respect each configuration's namespace packages during package discovery**
+  *Symptoms*: ## Summary  Today, a nested `ruff.toml` that marks its parent as a namespace package can change the package root Ruff discovers for a sibling directory. This can cause `TID252` to write the wrong absolute import depending on discovery order.  This PR caches whether each directory contains an `__init__.py` and applies the file’s own `namespace-packages` setting when walking its ancestors. Files with different configurations can then share filesystem lookups.  Added CLI regression coverage and ran the Ruff tests. 
   **Post-Mortem & Fix Analysis**:
-  > <!-- generated-comment typing-conformance --> <!-- report-run:44431435606:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.60%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.86%</b>. The number of fully passing files held steady at <b>137/146</b>.  </details>  ---  Results for [ac705f2](https://github.com/astral-sh/ruff/commit/ac705f2b5d4edda7349db2510b6925c1f3162d65) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/44431435606/attempts/1) 
-  > <!-- generated-comment memory --> <!-- report-run:44431435598:1 -->  ## Memory usage report  Memory usage unchanged ✅  ---  Results for [ac705f2](https://github.com/astral-sh/ruff/commit/ac705f2b5d4edda7349db2510b6925c1f3162d65) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/44431435598/attempts/1) 
+  > <!-- generated-comment ruff-ecosystem --> <!-- report-run:44776975720:1 -->  ## `ruff-ecosystem` results  ### Linter (stable) ✅ ecosystem check detected no linter changes.  ### Linter (preview) ✅ ecosystem check detected no linter changes.  [Linter (stable)](https://dqhfo45wdv0ek.cloudfront.net/ruff/pull-requests/30649/ruff-ecosystem/44776975720/1/check-stable.html) · [Linter (preview)](https://dqhfo45wdv0ek.cloudfront.net/ruff/pull-requests/30649/ruff-ecosystem/44776975720/1/check-preview.html)  ---  Results for [d28dfe7](https://github.com/astral-sh/ruff/commit/d28dfe74e90cbb2c444860737b45ff63810b3628) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/44776975720/attempts/1) 
 
-- **Issue #30547** (2026-11-19): **[ty] Fix lambda parameter inference with an unsolved ParamSpec**
-  *Symptoms*: ## Summary  In this code on ty 0.0.107, `wrap(lambda n: n + 1)` alone works fine, but passing that same result straight to `register` makes ty report an error on `n + 1`.  ```python from collections.abc import Callable  def wrap[**P](f: Callable[P, int]) -> Callable[P, int]:     return f  def register[**P](f: Callable[P, int]) -> None: ...  wrap(lambda n: n + 1)            # OK register(wrap(lambda n: n + 1))  # Error in ty 0.0.107 ```  `P` stands for all the parameters of the callback. Neither `wrap` nor `register` says what type `n` has. In the nested call, we wrongly gave `n` the type of the whole parameter list, `(*args: object, **kwargs: object)`, and then rejected the addition.  With this fix, `n` stays `Unknown` in both calls. If the callback signature does give a concrete type for a parameter, ty still uses it.  Fixes astral-sh/ty#5075.
+- **Issue #30630** (2026-11-20): **[ty] Fix a panic when reporting invalid type parameter order in unpacked class bases**
+  *Symptoms*: ## Summary  Today, ty panics on `class C(*(int, Generic[T, U]))` when `T` has a default and `U` is required. To locate the error, ty looks for the second base in the class header. The header contains a single starred expression that expands to two bases.  This PR changes the diagnostic to use the source expression ty recorded for each base during expansion, following #24695 and #24699. The diagnostic now underlines `T, U` and reports that a required type parameter cannot follow one with a default.  Added an mdtest that checks the diagnostic on the unpacked generic base. 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- generated-comment typing-conformance --> <!-- report-run:44753363963:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.60%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.86%</b>. The number of fully passing files held steady at <b>137/146</b>.  </details>  ---  Results for [fac82a6](https://github.com/astral-sh/ruff/commit/fac82a63a9598e4677c208166189187f6253da6c) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/44753363963/attempts/1) 
+  > <!-- generated-comment memory --> <!-- report-run:44753363950:1 -->  ## Memory usage report  Memory usage unchanged ✅  ---  Results for [fac82a6](https://github.com/astral-sh/ruff/commit/fac82a63a9598e4677c208166189187f6253da6c) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/44753363950/attempts/1) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2166,313 +2168,613 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4872a7c0` (2026-11-18)
-**Commit Message**: [`pyflakes`] Fix false negative when a name is assigned more than once (`F823`) (#30524)
+### Incident Patch 1: `36f64044` (2026-11-20)
+**Commit Message**: [ty] Forward the suffix of a positional unpack to a ParamSpec (#30594)
 
-## Summary
+When an unpacked tuple supplies both a wrapper’s callback and arguments
+for that callback, main loses track of which values the wrapper
+forwards:
 
-Fixes #30224.
+```py
+from collections.abc import Callable
 
-F823 didn't fire here:
+def invoke[**P](callback: Callable[P, None], /, *args: P.args, **kwargs: P.kwargs) -> None:
+    callback(*args, **kwargs)
 
-```python
-x = 0
+def write(x: int, y: str) -> None: ...
 
-def f():
-    print(x)
-    x = 1
-    x = 2
+invoke(*(write, 1, "ok"))
+invoke(*(write, 1), "ok")
 ```
 
-Only the first `x = 1` is linked to the global `x`. The second
-assignment is linked to the first one, and since the rule only looked at
-the last binding for each name, it never got back to the global. It now
-follows the chain back through the earlier bindings in the function.
+Both calls invoke `write(1, "ok")`. On main, ty checks the first as
+`write()` and reports missing arguments. In the second, it passes
+`write` itself as the first argument to the callback and reports too
+many arguments.
 
-## Notes to reviewers
+This change removes the elements that bind to the wrapper’s parameters
+before checking the callback. Both calls now pass. If the final argument
+is `2`, ty points to the offending argument and the declaration of `y:
+str`. The same forwarded arguments provide type context for expressions
+such as list literals.
 
-Two existing snapshots (`load_after_unbind_from_module_scope` and
-`load_after_multiple_unbinds_from_module_scope`) pick up a new F823 on
-the `print(x)` after an `except ... as x` block. That's correct: the
-`except` clause makes `x` local to the function, so the read raises
-`UnboundLocalError` either way. If no exception was raised, `x` was
-never assigned, and if one was, `x` was deleted when the handler ended.
+We slice each tuple in a union separately so overload resolution can
+distinguish the alternatives. For a variable-length tuple, we can
+forward the rest precisely when the wrapper consume
 
----------
-
-Co-authored-by: Brent Westbrook <[REDACTED_EMAIL]>
-
-**File**: `crates/ruff_linter/resources/mdtest/pyflakes/undefined-local.md` (added, +29/-0)
+**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/paramspec.md` (modified, +77/-0)
 ```diff
-@@ -0,0 +1,29 @@
-+# `undefined-local` (`F823`)
-+
-+```toml
-+[lint]
-+select = ["F823"]
-+```
-+
-+## Multiple assignments
-+
-+Regression tests for <https://github.com/astral-sh/ruff/issues/30224>.
+@@ -1331,6 +1331,41 @@ forward(target, *[1])  # error: [missing-argument]
+ forward(target, **{"x": 1, "y": "wrong"})  # error: [invalid-argument-type]
+ ```
+ 
++A positional unpack can supply the callback and some or all of its arguments.
 +
 +```py
-+my_var = 0
++def write(x: int, y: str) -> None: ...
 +
-+def f():
-+    print(my_var)  # error: [undefined-local]
-+    my_var = 1
-+    my_var = 2
-+
-+def f():
-+    my_var += 1  # error: [undefined-local]
-+    my_var += 1
-+
-+# OK: the read comes after the first local binding.
-+def f():
-+    my_var = 1
-+    print(my_var)
-+    my_var = 2
++forward(*(write, 1, "ok"))  # ok
++forward(*(write, 1), "ok")  # ok
++forward(*[write, 1, "ok"])  # ok
++forward(*(write, 1, 2))  # error: 9 [invalid-argument-type] "Expected `str`"
++forward(*(write, 1), 2)  # error: 22 [invalid-argument-type] "Expected `str`"
 +```
-```
-
-**File**: `crates/ruff_linter/src/rules/pyflakes/rules/undefined_local.rs` (modified, +9/-1)
-```diff
-@@ -52,7 +52,15 @@ pub(crate) fn undefined_local(checker: &Checker, scope_id: ScopeId, scope: &Scop
-     if scope.kind.is_function() {
-         for (name, binding_id) in scope.bindings() {
-             // If the variable shadows a binding in a parent scope...
--            if let Some(shadowed_id) = checker.semantic().shadowed_binding(binding_id) {
-+            //
-+            // Only the first binding of a name in this scope is linked to the binding that it
-+            // shadows in a parent scope. Later bindings shadow the earlier bindings in this scope
-+            // instead. For example, in `print(x); x = 1; x = 2`, `x = 2` shadows `x = 1`, and only
-+            // `x = 1` shadows the global `x`, so walk back through the bindings in this scope.
-+            if let Some(shadowed_id) = scope
-+                .shadowed_bindings(binding_id)
-+                .find_map(|binding_id| checker.semantic().shadowed_binding(binding_id))
-+            {
-                 let shadowed = checker.semantic().binding(shadowed_id);
-                 // And that binding was referenced in the current scope...
-                 if let Some(range) = shadowed.references().find_map(|reference_id| {
-```
-
-**File**: `crates/ruff_linter/src/rules/pyflakes/snapshots/ruff_linter__rules__pyflakes__tests__load_after_multiple_unbinds_from_module_scope.snap` (modified, +7/-0)
-```diff
-@@ -34,3 +34,10 @@ help: Remove assignment to unused variable `x`
- 12 +     except ValueError:
- 13 |         pass
-    |
 +
-+F823 Local variable `x` referenced before assignment
-+  --> <filename>:16:11
-+   |
-+15 |     # This should resolve to the `x` in `x = 1`.
-+16 |     print(x)
-+   |           ^
++When a variable-length segment follows the callback, we check its element type and any fixed
++arguments after it.
++
++```py
++from typing import TypeVarTuple
++
++Ts = TypeVarTuple("Ts")
++
++def check_words(words: tuple[str, ...]):
++    forward(*(write, *words))  # error: [invalid-argument-type] "Expected `int`, found `str`"
++
++def check_parts(callback: Callable[[*Ts, str], None], values: tuple[*Ts]):
++    forward(*(callback, *values, "ok"))  # ok
++    forward(*(callback, *values, 2))  # error: [invalid-argument-type] "Expected `str`"
++```
++
++Here `0` is either the callback or an argument to a callback that takes none.
++
++```py
++def check_callbacks(callbacks: tuple[Callable[[], None], ...]):
++    forward(*(*callbacks, 0))  # error: [invalid-argument-type]
++```
++
+ A dictionary can supply both a wrapper parameter and arguments to forward. The wrapper checks its
+ own parameter and forwards only the remaining keys.
+ 
+@@ -1344,6 +1379,48 @@ forward_prefix(target, **{"prefix": "wrong", "x": 1, "y": 2})  # error: [invalid
+ forward_prefix(target, **{"prefix": 0, "x": 1, "y": "wrong"})  # error: [invalid-argument-type]
+ ```
+ 
++### Forwarding part of an unpacked tuple from a method
++
++The bound method takes the callback and tag from the tuple. The remaining value fills the callback's
++first parameter, so its second parameter provides the type context for the list.
++
++```py
++from typing import Callable, ParamSpec
++
++P = ParamSpec("P")
++
++class Runner:
++    def run(self, callback: Callable[P, None], tag: object, /, *args: P.args, **kwargs: P.kwargs) -> None:
++        callback(*args, **kwargs)
++
++def consume(value: int, items: list[object]) -> None: ...
++
++Runner().run(*(consume, None, 1), reveal_type([1]))  # revealed: list[object]
++```
++
++Each tuple must supply arguments that match an overload after the method takes its tag. A trailing
++argument can fill a different parameter for each tuple length.
++
++```py
++from typing import overload
++
++@overload
++def pair(x: int, y: int = 0) -> None: ...
++@overload
++def pair(x: str, y: str) -> None: ...
++def pair(x, y=0) -> None: ...
++def check(
++    matching: tuple[None, int, int] | tuple[None, str, str],
++    mixed: tuple[None, int, int] | tuple[None, str, int],
++    varying: tuple[None] | tuple[None, int],
++):
++    Runner().run(pair, *matching)  # ok
++    Runner().run(pair, *mixed)  # error: 24 [invalid-argument-type]
++    Runner().run(pair, *varying)  # error: [missing-argument]
++    Runner().run(pair, *varying, 1)  # ok
++    Runner().run(pair, *varying, "bad")  # error: 34 [invalid-argument-type]
++```
++
+ ### Constructor overrides with receiver-inferred parameters
+ 
+ In the below example, `Base.__new__` takes the same arguments as the class's `build` method. Binding
 ```
 
-**File**: `crates/ruff_linter/src/rules/pyflakes/snapshots/ruff_linter__rules__pyflakes__tests__load_after_unbind_from_module_scope.snap` (modified, +7/-0)
+**File**: `crates/ty_python_semantic/resources/mdtest/generics/pep695/paramspec.md` (modified, +84/-0)
 ```diff
-@@ -17,3 +17,10 @@ help: Remove assignment to unused variable `x`
- 7 +     except ValueError:
- 8 |         pass
-   |
+@@ -1231,6 +1231,50 @@ forward(target, *[1])  # error: [missing-argument]
+ forward(target, **{"x": 1, "y": "wrong"})  # error: [invalid-argument-type]
+ ```
+ 
++A positional unpack can supply the callback and some or all of its arguments.
 +
-+F823 Local variable `x` referenced before assignment
-+  --> <filename>:11:11
++```py
++def write(x: int, y: str) -> None: ...
++
++forward(*(write, 1, "ok"))  # ok
++forward(*(write, 1), "ok")  # ok
++forward(*[write, 1, "ok"])  # ok
++forward(*(write, 1, 2))  # error: 9 [invalid-argument-type] "Expected `str`"
++forward(*(write, 1), 2)  # snapshot: invalid-argument-type
++```
++
++```snapshot
++error[invalid-argument-type]: Argument to function `forward` is incorrect
++  --> src/mdtest_snippet.py:19:22
 +   |
-+10 |     # This should resolve to the `x` in `x = 1`.
-+11 |     print(x)
-+   |           ^
++19 | forward(*(write, 1), 2)  # snapshot: invalid-argument-type
++   |                      ^ Expected `str`, found `Literal[2]`
++info: Function defined here
++  --> src/mdtest_snippet.py:13:5
++   |
++13 | def write(x: int, y: str) -> None: ...
++   |     ^^^^^         ------ Parameter declared here
++```
++
++When a variable-length segment follows the callback, we check its element type and any fixed
++arguments after it.
++
++```py
++def check_words(words: tuple[str, ...]):
++    forward(*(write, *words))  # error: [invalid-argument-type] "Expected `int`, found `str`"
++
++def check_parts[*Ts](callback: Callable[[*Ts, str], None], values: tuple[*Ts]):
++    forward(*(callback, *values, "ok"))  # ok
++    forward(*(callback, *values, 2))  # error: [invalid-argument-type] "Expected `str`"
++```
++
++Here `0` is either the callback or an argument to a callback that takes none.
++
++```py
++def check_callbacks(callbacks: tuple[Callable[[], None], ...]):
++    forward(*(*callbacks, 0))  # error: [invalid-argument-type]
++```
++
+ A dictionary can supply both a wrapper parameter and arguments to forward. The wrapper checks its
+ own parameter and forwards only the remaining keys.
+ 
+@@ -1244,6 +1288,46 @@ forward_prefix(target, **{"prefix": "wrong", "x": 1, "y": 2})  # error: [invalid
+ forward_prefix(target, **{"prefix": 0, "x": 1, "y": "wrong"})  # error: [invalid-argument-type]
+ ```
+ 
++### Forwarding part of an unpacked tuple from a method
++
++The bound method takes the callback and tag from the tuple. The remaining value fills the callback's
++first parameter, so its second parameter provides the type context for the list.
++
++```py
++from typing import Callable
++
++class Runner:
++    def run[**P](self, callback: Callable[P, None], tag: object, /, *args: P.args, **kwargs: P.kwargs) -> None:
++        callback(*args, **kwargs)
++
++def consume(value: int, items: list[object]) -> None: ...
++
++Runner().run(*(consume, None, 1), reveal_type([1]))  # revealed: list[object]
++```
++
++Each tuple must supply arguments that match an overload after the method takes its tag. A trailing
++argument can fill a different parameter for each tuple length.
++
++```py
++from typing import overload
++
++@overload
++def pair(x: int, y: int = 0) -> None: ...
++@overload
++def pair(x: str, y: str) -> None: ...
++def pair(x, y=0) -> None: ...
++def check(
++    matching: tuple[None, int, int] | tuple[None, str, str],
++    mixed: tuple[None, int, int] | tuple[None, str, int],
++    varying: tuple[None] | tuple[None, int],
++):
++    Runner().run(pair, *matching)  # ok
++    Runner().run(pair, *mixed)  # error: 24 [invalid-argument-type]
++    Runner().run(pair, *varying)  # error: [missing-argument]
++    Runner().run(pair, *varying, 1)  # ok
++    Runner().run(pair, *varying, "bad")  # error: 34 [invalid-argument-type]
++```
++
+ ### Preserve an unpacked required suffix
+ 
+ A `ParamSpec` preserves a named positional prefix and the required suffix of an unpacked variadic
+```
+
+**File**: `crates/ty_python_semantic/src/types/call/arguments.rs` (modified, +46/-42)
+```diff
+@@ -17,7 +17,7 @@ use crate::types::type_expansion::expand_elements;
+ use crate::types::typed_dict::{
+     TypedDictOpenness, UnpackedTypedDictKey, extract_unpacked_typed_dict_from_value_type,
+ };
+-use crate::types::{Parameter, Parameters, Type, TypeContext, UnionType, expand_type};
++use crate::types::{Parameter, Type, TypeContext, UnionType, expand_type};
+ 
+ /// Maximum total number of expanded argument type combinations across all arguments
+ /// in [`CallArgumentExpansions::iter`].
+@@ -221,6 +221,43 @@ impl<'db> VariadicArgument<'db> {
+         })
+     }
+ 
++    /// Return the suffix of this positional unpack that a wrapper function forwards to its callback.
++    ///
++    /// `consumed` counts the leading elements of this unpack that bind to the wrapper's
++    /// prefix parameters. In `invoke(*(callback, x), y)`, `invoke` takes `callback`
++    /// (`consumed` is 1), leaving `*(x,)` for the forwarded call.
++    ///
++    /// Slice union members independently so overload resolution can distinguish their suffixes.
++    /// Returns `None` if any member has fewer than `consumed` fixed leading elements.
++    pub(super) fn without_prefix(
++        &self,
++        db: &'db dyn Db,
++        env: &ProgramEnvironment<'db>,
++        consumed: usize,
++    ) -> Option<Self> {
++        let start = i32::try_from(consumed).ok()?;
++        let suffix = |sequence: &TupleSpec<'db>| match sequence.len() {
++            // Slicing into a variable segment can lose the types and positions of trailing elements.
++            TupleLength::Fixed(prefix) | TupleLength::Variable(prefix, _) if consumed <= prefix => {
++                sequence
++                    .py_slice_type(db, env, Some(start), None, None)
++                    .ok()
++            }
++            _ => None,
++        };
++        let ty = match self {
++            Self::Sequence { sequence, .. } => suffix(sequence)?,
++            Self::Type(types) => {
++                let suffix_for_type = |ty: &Type<'db>| suffix(&ty.iterate(db, env));
++                match types.get_default()?.expand_top_level_aliases(db, env) {
++                    Type::Union(union) => union.try_map(db, env, suffix_for_type)?,
++                    ty => suffix_for_type(&ty)?,
++                }
++            }
++        };
++        Some(Self::Type(CallArgumentTypes::new(Some(ty))))
++    }
++
+     fn is_fixed_sequence(&self, db: &'db dyn Db, env: &ProgramEnvironment<'db>) -> bool {
+         match self {
+             Self::Type(_) => self
+@@ -701,10 +738,18 @@ impl<'a, 'db> CallArguments<'a, 'db> {
+             .collect()
+     }
+ 
++    pub(super) fn push(&mut self, argument: CallArgument<'a, 'db>) {
++        self.items.push(argument);
++    }
++
+     pub(crate) fn len(&self) -> usize {
+         self.items.len()
+     }
+ 
++    pub(super) fn is_empty(&self) -> bool {
++        self.items.is_empty()
++    }
++
+     pub(crate) fn is_variadic(&self, index: usize) -> bool {
+         self.items.get(index).is_some_and(|argument| {
+             matches!(
+@@ -776,47 +821,6 @@ impl<'a, 'db> CallArguments<'a, 'db> {
+         }
+     }
+ 
+-    /// Select the arguments forwarded to a `ParamSpec` sub-call.
+-    ///
+-    /// The resulting argument list preserves the order of `indices`. Unlike [`Self::start_from`],
+-    /// this can project a non-contiguous subset of the original call arguments. Known keyword
+-    /// arguments retain only keys that were not consumed by the wrapper's prefix:
+-    ///
+-    /// ```py
+-    /// def wrapper[**P, R](func: Callable[P, R], **kwargs: P.kwargs) -> R: ...
+-    /// wrapper(TagSet=[...], func=f)  # select `TagSet=[...]`, but not the later `func=f`
+-    /// ```
+-    pub(crate) fn select_for_paramspec(
+-        &self,
+-        indices: &[usize],
+-        parameters: &Parameters<'db>,
+-        prefix_len: usize,
+-    ) -> Self {
+-        Self {
+-            items: indices
+-                .iter()
+-                .map(|index| {
+-                    let mut argument = self.items[*index].clone();
+-                    if let CallArgument::Keywords(KeywordArgument::Known { keywords, .. }) =
+-                        &mut argument
+-                    {
+-                        keywords.keys = keywords
+-                            .keys
+-                            .iter()
+-                            .filter(|(name, _)| {
+-                                parameters
+-                                    .keyword_by_name(name.as_str())
+-                                    .is_none_or(|(index, _)| index >= prefix_len)
+-                            })
+-                            .cloned()
+-                            .collect();
+-                    }
+-                    argument
+-                })
+-                .collect(),
+-        }
+-    }
+-
+     /// Returns the `functools.partial(...)` bound-argument slice and whether it is concrete enough
+     /// to synthesize a precise partial signature.
+     pub(crate) fn functools_partial_bound_arguments(
+```
+
+**File**: `crates/ty_python_semantic/src/types/call/bind.rs` (modified, +101/-156)
+```diff
+@@ -6310,29 +6310,6 @@ impl<'a, 'db> CallInference<'a, 'db> {
+ }
+ 
+ impl<'db> ArgumentTypeChecker<'_, 'db> {
+-    /// Returns argument-index mappings for arguments matched to the `ParamSpec` component.
+-    ///
+-    /// `prefix_len` is the number of parameters before the `ParamSpec` components in a callable like
+-    /// `Concatenate[Prefix, P]`. Any argument matched to a later parameter belongs to `P`. The
+-    /// first item is the matched-argument index; the second is the source argument index, or `None`
+-    /// for synthetic arguments such as bound `self` or `cls`.
+-    ///
+-    /// ```py
+-    /// def wrapper[**P, R](func: Callable[P, R], /, *args: P.args, **kwargs: P.kwargs) -> R: ...
+-    /// wrapper(f, 1, y="x")  # returns the indices for `1` and `y="x"`
+-    /// ```
+-    fn paramspec_argument_indices(&self, prefix_len: usize) -> Vec<(usize, Option<usize>)> {
+-        enumerate_argument_types(self.arguments)
+-            .filter_map(|(argument_index, adjusted_argument_index, _, _)| {
+-                self.argument_matches[argument_index]
+-                    .parameters
+-                    .iter()
+-                    .any(|parameter| parameter.index >= prefix_len)
+-                    .then_some((argument_index, adjusted_argument_index))
+-            })
+-            .collect()
+-    }
+-
+     /// Returns the source callable whose parameters supplied a `ParamSpec` specialization.
+     ///
+     /// Forwarded arguments are checked against the wrapped callable, not the wrapper's
+@@ -6376,8 +6353,11 @@ impl<'db> ArgumentTypeChecker<'_, 'db> {
+                     .find_map(|matched_parameter| {
+                         let parameter = &self.signature.parameters()[matched_parameter.index];
+                         let declared_type = parameter.annotated_type();
+-                        let argument_type =
+-                            argument_types.source_types().get_for_parameter(parameter);
++                        let argument_type = if matches!(argument, Argument::Variadic) {
++                            matched_parameter.argument_type?
++                        } else {
++                            argument_types.source_types().get_for_parameter(parameter)
++                        };
+                         let paramspec_prefix_len = |candidate: Type<'db>| {
+                             candidate
+                                 .try_upcast_to_callable(db, env)?
+@@ -8003,41 +7983,8 @@ impl<'a, 'db> ArgumentTypeChecker<'a, 'db> {
+     fn check_argument_types(&mut self, constraints: &ConstraintSetBuilder<'db>) {
+         let paramspec = self.signature.parameters().as_paramspec_with_prefix();
+         let paramspec_component_start = paramspec.and_then(|(prefix, paramspec)| {
+-            let prefix_len = prefix.len();
+-            let paramspec_argument_indices = self.paramspec_argument_indices(prefix_len);
+-            if paramspec_argument_indices.is_empty() {
+-                self.evaluate_paramspec_sub_call(constraints, None, prefix_len, paramspec);
+-                return None;
+-            }
+-
+-            let has_paramspec_component_argument =
+-                paramspec_argument_indices
+-                    .iter()
+-                    .any(|(argument_index, _)| {
+-                        let matches = &self.argument_matches[*argument_index].parameters;
+-                        // Complete keyword sets are projected onto the ParamSpec in the sub-call.
+-                        // Other arguments must belong entirely to the ParamSpec.
+-                        matches!(
+-                            self.arguments.get(*argument_index),
+-                            Some(CallArgument::Keywords(keywords)) if keywords.is_complete()
+-                        ) || matches
+-                            .iter()
+-                            .all(|parameter| parameter.index >= prefix_len)
+-                    });
+-
+-            if has_paramspec_component_argument
+-                && self.evaluate_paramspec_sub_call(
+-                    constraints,
+-                    Some(&paramspec_argument_indices),
+-                    prefix_len,
+-                    paramspec,
+-                )
+-            {
+-                Some(prefix_len)
+-            } else {
+-                self.evaluate_paramspec_sub_call(constraints, None, prefix_len, paramspec);
+-                None
+-            }
++            self.evaluate_paramspec_sub_call(constraints, prefix, paramspec)
++                .then_some(prefix.len())
+         });
+ 
+         let is_paramspec_component_parameter = |parameter_index: usize| {
+@@ -8099,8 +8046,7 @@ impl<'a, 'db> ArgumentTypeChecker<'a, 'db> {
+ 
+     /// Invoke a sub-call for the given `ParamSpec` type variable, using the forwarded arguments.
+     ///
+-    /// The forwarded arguments are those matched to the `ParamSpec` components if provided,
+-    /// otherwise no arguments are passed. No forwarded arguments can still require a sub-call:
++    /// Even when no arguments are forwarded, the sub-call ca
 ```
 
 ---
 
-### Incident Patch 2: `f1edf755` (2026-11-18)
-**Commit Message**: Fix the multiline string example in Known Deviations from Black (#30447)
+### Incident Patch 2: `e905eb56` (2026-11-20)
+**Commit Message**: [ty] Fix a panic when reporting invalid type parameter order in unpacked class bases (#30630)
 
 ## Summary
 
-The documentation had an incorrect formatting example for multiline
-strings when using ruff and black. Found under
-`docs/formatter/black.md`. Changed the examples to match what I found on
-my own testing environment with Black 26.10.1 and Ruff 0.17.5. Changed
-the `# Input`, `# Black` and `# Ruff` blocks accordingly.
+Today, ty panics on `class C(*(int, Generic[T, U]))` when `T` has a
+default and `U` is required. To locate the error, ty looks for the
+second base in the class header. The header contains a single starred
+expression that expands to two bases.
 
-My comment on issue #28930:
-https://github.com/astral-sh/ruff/issues/28930#issuecomment-6894925305
+This PR changes the diagnostic to use the source expression ty recorded
+for each base during expansion, following #24695 and #24699. The
+diagnostic now underlines `T, U` and reports that a required type
+parameter cannot follow one with a default.
 
-Fixes #28930
+Added an mdtest that checks the diagnostic on the unpacked generic base.
 
-## Notes to reviewers
-
-I changed the `""""` to the more common `"""` since the extra `"` would
-get wrapped into the string. I didn't change the paragraph below the
-examples, because I wasn't sure if that's still accurate, since Black 26
-does move the `"""` onto the `call(` line.
-This is my first pull request. I'm happy about any feedback and will
-change anything accordingly. I'm excited to contribute to a project I
-use.
-
-**File**: `docs/formatter/black.md` (modified, +19/-23)
+**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/classes.md` (modified, +22/-0)
 ```diff
-@@ -134,47 +134,43 @@ We agree that Ruff's formatting (that matches Black's 23) is hard to read and ne
+@@ -427,6 +427,28 @@ def _(value: T) -> None:
+     Protocol[value]  # error: [invalid-argument-type]
+ ```
  
- ### Call expressions with a single multiline string argument
++## Type parameter order in an unpacked generic base
++
++When a class unpacks a tuple of bases, we report an invalid type parameter order on the `Generic`
++base inside the tuple.
++
++```toml
++[environment]
++python-version = "3.13"
++```
++
++```py
++from typing import Generic, TypeVar
++
++T = TypeVar("T", default=int)
++U = TypeVar("U")
++
++class C(*(
++    int,
++    Generic[T, U],  # error: [invalid-generic-class]
++)): ...
++```
++
+ ## Recursive structural types in generic arguments
  
--Unlike Black, Ruff preserves the indentation of a single multiline-string argument in a call expression:
-+Black and Ruff both preserve the indentation inside the multiline-string argument in a call expression. The key difference is the placement of the opening quotation marks and the placement of the closing parenthesis:
+ A recursive protocol instance is not a valid `Generic` argument, even when its members keep changing
+```
+
+**File**: `crates/ty_python_semantic/src/types/diagnostic.rs` (modified, +6/-9)
+```diff
+@@ -5070,19 +5070,17 @@ pub(crate) fn report_cannot_delete_typed_dict_key<'db>(
  
- ```python
- # Input
- call(
--  """"
--  A multiline
--  string
--  """
-+    """
-+    A multiline
-+    string
-+    """
- )
+ pub(crate) fn report_invalid_type_param_order<'db>(
+     context: &InferContext<'db, '_>,
+-    class: StaticClassLiteral<'db>,
+-    node: &ast::StmtClassDef,
++    bases: &[ExpandedClassBaseEntry<'_, 'db>],
+     typevar_with_default: TypeVarInstance<'db>,
+     invalid_later_typevars: &[TypeVarInstance<'db>],
+ ) {
+     let db = context.db();
  
--dedent(""""
-+dedent("""
-     A multiline
-     string
- """)
+-    let base_index = class
+-        .explicit_bases(context.db())
++    let base_node = bases
+         .iter()
+-        .position(|base| {
++        .find(|entry| {
+             matches!(
+-                base,
++                entry.ty(),
+                 Type::KnownInstance(
+                     KnownInstanceType::SubscriptedProtocol(_)
+                         | KnownInstanceType::SubscriptedGeneric(_)
+@@ -5093,9 +5091,8 @@ pub(crate) fn report_invalid_type_param_order<'db>(
+             "It should not be possible for a class to have \
+             a legacy generic context if it does \
+             not inherit from `Protocol[]` or `Generic[]`",
+-        );
+-
+-    let base_node = &node.bases()[base_index];
++        )
++        .source_node();
  
- # Black
--call(
--  """"
--  A multiline
--  string
--  """
--)
-+call("""
-+    A multiline
-+    string
-+    """)
- 
--dedent(
--  """"
--  A multiline
--  string
--"""
--)
-+dedent("""
-+    A multiline
-+    string
-+""")
- 
- 
- # Ruff
- call(
--  """"
--  A multiline
--  string
--  """
-+    """
-+    A multiline
-+    string
-+    """
- )
- 
--dedent(""""
-+dedent("""
-     A multiline
-     string
- """)
+     let primary_diagnostic_range = base_node
+         .as_subscript_expr()
+```
+
+**File**: `crates/ty_python_semantic/src/types/infer/builder/post_inference/static_class.rs` (modified, +1/-2)
+```diff
+@@ -923,8 +923,7 @@ pub(crate) fn check_static_class_definitions<'db>(
+             {
+                 report_invalid_type_param_order(
+                     context,
+-                    class,
+-                    class_node,
++                    &expanded_base_entries,
+                     state.typevar_with_default,
+                     &state.invalid_later_tvars,
+                 );
 ```
 
 ---
 
-### Incident Patch 3: `9cda3860` (2026-11-18)
-**Commit Message**: [`pyflakes`] Ignore `__traceback_hide__` in `unused-variable` (`F841`) (#29600)
+### Incident Patch 3: `2fafe6a0` (2026-11-20)
+**Commit Message**: Use GPT-6.2 Astra for pull request security reviews (#30659)
 
-## Summary
+Switch PR security reviews from `gpt-6-astra` to `gpt-6.2-astra` at
+`xhigh` by adopting astral-sh/github-actions#70. Pin the same workflow
+commit in CI and the token service policy so the reviewer can publish
+inline findings. This revision also includes
+astral-sh/github-actions#68, which keeps security reviews from creating
+deployment entries on PRs.
 
-Add `__traceback_hide__` to the allowlist of exceptions to the
-`unused-variable` rule (`F841`) and document the reasoning behind each.
+Co-authored-by: zaniebot <[REDACTED_EMAIL]>
 
-Django's debug page, Werkzeug's debugger, and the Python Sentry SDK all
-hide frames that set `__traceback_hide__ = True`. Like the existing
-`__tracebackhide__` and others, these are read at runtime from frame
-locals and are thus not "unused" in the normal sense, but `ruff`
-requires per-line ignores nonetheless. Since these are pseudo-standards
-in the Python ecosystem, they're worth supporting by default.
-
-## Test Plan
-
-- Added a fixture function assigning each exempt name to validate their
-exceptionality
-
-Co-authored-by: Brent Westbrook <[REDACTED_EMAIL]>
-
-**File**: `crates/ruff_linter/resources/test/fixtures/pyflakes/F841_0.py` (modified, +9/-0)
+**File**: `.github/secure-token-service.json` (modified, +1/-1)
 ```diff
-@@ -187,3 +187,12 @@ class NonlocalDunderClass:
-     def foo():
-         nonlocal __class__
-         __class__ = 1
-+
-+
-+# OK, these names are read by debuggers and traceback tools via frame locals.
-+def traceback_hiding():
-+    __tracebackhide__ = True
-+    __traceback_hide__ = True
-+    __traceback_info__ = "info"
-+    __traceback_supplement__ = (object,)
-+    __debuggerskip__ = True
+@@ -109,7 +109,7 @@
+       "environment": "automations",
+       "caller_ref": "refs/pull/*/merge",
+       "caller_workflow": "ci.yaml",
+-      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@67dc9ee1ddc113eccd8116e7b949fb6cdcd89889",
++      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@6c1398e34f646a0470c5bf2a7c3476d19e435bd7",
+       "on": ["pull_request"],
+       "permissions": { "pull_requests": "write" },
+       "target": "ruff"
 ```
 
-**File**: `crates/ruff_linter/src/checkers/ast/analyze/deferred_scopes.rs` (modified, +6/-4)
+**File**: `.github/workflows/ci.yaml` (modified, +1/-1)
 ```diff
-@@ -166,12 +166,14 @@ pub(crate) fn deferred_scopes(checker: &Checker) {
-                             && !binding.is_nonlocal()
-                             && !binding.is_global()
-                             && !checker.settings().dummy_variable_rgx.is_match(name)
-+                            // semi-standard names read from frame locals at runtime by some tools
-                             && !matches!(
-                                 name,
--                                "__tracebackhide__"
--                                    | "__traceback_info__"
--                                    | "__traceback_supplement__"
--                                    | "__debuggerskip__"
-+                                "__tracebackhide__" // used by pytest, IPython
-+                                    | "__traceback_hide__" // used by Django, Sentry, Werkzeug
-+                                    | "__traceback_info__" // used by Zope
-+                                    | "__traceback_supplement__" // used by Zope
-+                                    | "__debuggerskip__" // used by IPython debugger
-                             )
-                         {
-                             return Some((name, binding));
-```
-
-**File**: `crates/ruff_linter/src/rules/pyflakes/rules/unused_variable.rs` (modified, +5/-0)
-```diff
-@@ -24,6 +24,11 @@ use crate::{Edit, Fix, FixAvailability, Violation};
- /// prefixed with an underscore, or some other value that adheres to the
- /// [`lint.dummy-variable-rgx`] pattern.
- ///
-+/// This rule ignores the following variables, which debuggers and traceback
-+/// tools read from the function's local variables at runtime:
-+/// `__tracebackhide__`, `__traceback_hide__`, `__traceback_info__`,
-+/// `__traceback_supplement__`, and `__debuggerskip__`.
-+///
- /// ## Example
- /// ```python
- /// def foo():
+@@ -39,7 +39,7 @@ jobs:
+   security-review:
+     needs: determine_changes
+     if: ${{ github.event_name == 'pull_request' && github.repository == 'astral-sh/ruff' && github.event.pull_request.head.repo.full_name == github.repository && needs.determine_changes.outputs.code == 'true' }}
+-    uses: astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@67dc9ee1ddc113eccd8116e7b949fb6cdcd89889 # 2026.11.16.0
++    uses: astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@6c1398e34f646a0470c5bf2a7c3476d19e435bd7
+     with:
+       threat-models: .agents/references
+       runner: depot-ubuntu-22.04-16
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30578** (2026-11-19): Bump version to 0.17.6 (@astral-automations-bot[bot])
-- **PR #30577** (closed): [flake8-tidy-imports] fix wrongly generated warnings for nested lazy imports (@Ashu3208)
-- **PR #30574** (2026-11-19): Separate Ruff configuration loading from settings resolution (@MichaReiser)
-- **PR #30573** (2026-11-19): Clarify Ruff's root settings and resolver entries (@MichaReiser)
-- **PR #30572** (2026-11-19): [ty] Add NumPy to ecosystem runs (@AlexWaygood)
-- **PR #30571** (2026-11-19): Avoid repeated scans of unclosed script metadata blocks (@MichaReiser)
+- **PR #30659** (2026-11-20): Use GPT-6.2 Astra for pull request security reviews (@zanieb)
+- **PR #30654** (closed): fix(pylint): check SubmoduleImport bindings in PLC2701 (@DrSkyle)
+- **PR #30653** (2026-11-20): [ty] Stop searching for overlapping invariant arguments after finding a valid solution (@charliermarsh)
+- **PR #30650** (2026-11-20): [ty] Avoid repeated path scans when building solver cache keys (@charliermarsh)
+- **PR #30649** (closed): Respect each configuration's namespace packages during package discovery (@MichaReiser)
+- **PR #30648** (closed): [ty] Keep the largest constraint diagram intact when checking upper bounds (@charliermarsh)
 
 ---
 
@@ -2492,49 +2794,58 @@ Co-authored-by: Brent Westbrook <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [`pyflakes`] Fix false negative when a name is assigned more than once (`F823`)
+## X. [ty] Forward the suffix of a positional unpack to a ParamSpec
 
 **RULE**:
-When implementing operations in `crates/ruff_linter/resources/mdtest/pyflakes/undefined-local.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ty_python_semantic/resources/mdtest/generics/legacy/paramspec.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4872a7c0`: [`pyflakes`] Fix false negative when a name is assigned more than once (`F823`). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `36f64044`: [ty] Forward the suffix of a positional unpack to a ParamSpec. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ruff_linter/resources/mdtest/pyflakes/undefined-local.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_semantic/resources/mdtest/generics/legacy/paramspec.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# `undefined-local` (`F823`)
-
-```toml
-[lint]
-select = ["F823"]
-```
-
-## Multiple assignments
-
-Regression tests for <https://github.com/astral-sh/ruff/issues/30224>.
+A positional unpack can supply the callback and some or all of its arguments.
 
 ```py
-my_var = 0
+def write(x: int, y: str) -> None: ...
 
-def f():
-    print(my_var)  # error: [undefined-local]
-    my_var = 1
-    my_var = 2
-
-def f():
-    my_var += 1  # error: [undefined-local]
-    my_var += 1
-
-# OK: the read comes after the first local binding.
-def f():
-    my_var = 1
-    print(my_var)
-    my_var = 2
+forward(*(write, 1, "ok"))  # ok
+forward(*(write, 1), "ok")  # ok
+forward(*[write, 1, "ok"])  # ok
+forward(*(write, 1, 2))  # error: 9 [invalid-argument-type] "Expected `str`"
+forward(*(write, 1), 2)  # error: 22 [invalid-argument-type] "Expected `str`"
 ```
+
+When a variable-length segment follows the callback, we check its element type and any fixed
+arguments after it.
+
+```py
+from typing import TypeVarTuple
+
+Ts = TypeVarTuple("Ts")
+
+def check_words(words: tuple[str, ...]):
+    forward(*(write, *words))  # error: [invalid-argument-type] "Expected `int`, found `str`"
+
+def check_parts(callback: Callable[[*Ts, str], None], values: tuple[*Ts]):
+    forward(*(callback, *values, "ok"))  # ok
+    forward(*(callback, *values, 2))  # error: [invalid-argument-type] "Expected `str`"
+```
+
+Here `0` is either the callback or an argument to a callback that takes none.
+
+```py
+def check_callbacks(callbacks: tuple[Callable[[], None], ...]):
+    forward(*(*callbacks, 0))  # error: [invalid-argument-type]
+```
+
+### Forwarding part of an unpacked tuple from a method
+
+The bound meth
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2544,7 +2855,7 @@ def f():
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4872a7c0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `36f64044` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
