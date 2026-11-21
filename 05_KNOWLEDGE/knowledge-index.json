@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T01:16:32.473Z",
+  "last_updated": "2026-11-21T01:25:08.218Z",
   "total_verified_learnings": 9055,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "44024884ca48d326629cdb8a35242ee1b59f50a4f56e05304becf8378c4e1663",
+      "content_hash": "f5be2b74a50a21217969cbcb04def1402c2affbb1d69c02117eda826868956af",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:57:55.429Z"
+      "persisted_at": "2026-11-21T01:25:05.765Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "35247da86a29636bcb00b3ad924ad357d24460e7afd87a3364ed83ec399bee65",
+      "content_hash": "9bd44f30385d8b6db11021225432ce6d06e9038d5165a2679c63fc285b439b03",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:57:55.620Z"
+      "persisted_at": "2026-11-21T01:25:05.978Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5d868c16d00f9e1160ab1c8598a2924e1f33c53faaf5da886d1d82268e10a275",
+      "content_hash": "a4cc766011c898c2391e3ef24555afc9e05097df3684c7f8233c78653d262d67",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:57:55.789Z"
+      "persisted_at": "2026-11-21T01:25:06.147Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -218779,13 +218779,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3824-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-796Z-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "1981d31fca043ed6dd01e13dda0ccaf41cc971b3500626f7dc21c6a3d5adc9a0",
+      "content_hash": "343e0ef499608e157a170c96edfc098598d1084d50460fa3e3503621da88a478",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:30:01.228Z"
+      "persisted_at": "2026-11-21T01:25:07.788Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218795,9 +218795,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "e2005a93a82e78c6a0c4f595de0e4c322bdbbb262d6e0391af0e4321b780be47",
+      "content_hash": "e1209d77e385056a8914d5874b2c0f9c13d88942333c81b90efa190bbc630bfe",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:30:01.380Z"
+      "persisted_at": "2026-11-21T01:25:07.986Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218807,9 +218807,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "d5ea2e1b020d9304d8958e2a17f9bd1fc9016834f735a3aa3c8520d818943df2",
+      "content_hash": "51b2a0e8d17d19d202f34e807743f8f153f6895d9dc79121dc23d27df4eca37b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:30:01.528Z"
+      "persisted_at": "2026-11-21T01:25:08.218Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -228337,9 +228337,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "70d84b185fee786ca32f3f7413323adbf3538b7db711f9d9eda8b05708b8a1e2",
+      "content_hash": "a7289568b40eb7c1ec75dbd49ebbc25868b4a4c9cb9a91045421ec8f6b746b55",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T20:58:25.855Z"
+      "persisted_at": "2026-11-21T01:25:07.103Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -228349,9 +228349,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "710d0ad1b0a04b25d0f4fc1861a8ed30e9c0c30501453094e876ed7d66c8873d",
+      "content_hash": "65ec4d66ec424914e26c772246e33ce47b58c01ca92917f8da7d18487533f8fa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T20:58:26.021Z"
+      "persisted_at": "2026-11-21T01:25:07.294Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -301497,13 +301497,13 @@
       "item_id": "candidate_directive-dead-license-badge-link-in-readme",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-O9VY-dead-license-badge-link-in-readme.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-78IF-dead-license-badge-link-in-readme.md",
       "title": "dead license badge link in README",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "f48d540df48d87c97a99f01061e17513c9001aef6fdf5ff9f5de7693f06d22f6",
+      "content_hash": "afa98cc0ca65656e6f9f61cd5671792b2b0af40557b0f1a27394e58782a5596f",
       "domain_letter": "I",
-      "persisted_at": "2026-11-20T20:58:25.678Z"
+      "persisted_at": "2026-11-21T01:25:06.904Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria",
@@ -308423,13 +308423,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-33Q2-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-77H8-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "4c41f54a5ce4f52c1d4d2e7aa9b571a1cb899d5bdad369a8f7ed8295fa1fc93e",
+      "content_hash": "40969262fd8bc94c3f2e48a74c89b0b8eec7a46b0f704a8ec747778b67f9e4ee",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:57:55.232Z"
+      "persisted_at": "2026-11-21T01:25:05.570Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
