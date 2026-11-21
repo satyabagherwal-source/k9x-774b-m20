@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T12:38:42.319Z",
+  "last_updated": "2026-11-21T12:48:58.996Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T07:42:07.590Z",
@@ -163,7 +163,7 @@
       "staged_for_review": 0
     },
     "rustls-rustls-learnings.md": {
-      "processed_at": "2026-11-20T22:42:06.325Z",
+      "processed_at": "2026-11-21T12:48:57.835Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1533,7 +1533,7 @@
       "staged_for_review": 0
     },
     "hf-recursivesi-flint-learnings.md": {
-      "processed_at": "2026-11-17T16:31:09.082Z",
+      "processed_at": "2026-11-21T12:48:56.150Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -2093,7 +2093,7 @@
       "staged_for_review": 1
     },
     "mattermost-mattermost-learnings.md": {
-      "processed_at": "2026-11-18T11:33:26.789Z",
+      "processed_at": "2026-11-21T12:48:56.558Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3663,7 +3663,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2799,
+  "total_dossiers_evaluated": 2802,
   "total_canonical_promoted": 447,
-  "total_staged_for_review": 2156
+  "total_staged_for_review": 2158
 }

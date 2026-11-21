@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T12:38:42.164Z",
+  "last_updated": "2026-11-21T12:48:58.861Z",
   "total_verified_learnings": 9059,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23085,
+  "total_items": 23092,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -212677,8 +212677,8 @@
       "slug": "mattermost-mattermost",
       "platform": "github",
       "source_url": "https://github.com/mattermost/mattermost",
-      "source_version": "f3624d99",
-      "content_hash": "97d693fb4ebfe7f2d913dfeb6b69cbde1ce033ff53ef15ab7c8c06c972f8cbd1",
+      "source_version": "2d6c2852",
+      "content_hash": "0af3b89c358e9d88d8bd8b1920894604ae2709a3521c275a980b0d27af4427d7",
       "dossier_path": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "promoted_rules": [
@@ -212696,6 +212696,11 @@
           "number": 9210,
           "title": "[MM-72003] Stop the latest release check when Enable Security Alerts is off, and",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9782,
+          "title": "Product rail: pin and reorder items, Threads back in Channels, and Boards, badge",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212703,7 +212708,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T11:33:20.278Z",
+      "verified_at": "2026-11-21T12:48:47.453Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212757,10 +212762,10 @@
       "relative_path": "03_SKILLS/mattermost-mattermost-skill-operational-integration-playbook-for-mattermost-matt.md",
       "title": "Skill: Operational & Integration Playbook for mattermost/mattermost",
       "repository": "mattermost/mattermost",
-      "source_version": "2c67adc2",
-      "content_hash": "95c912b036056d51540fcbd7888f575d8a630f094fcdbd9a3827bdf699a5a279",
-      "domain_letter": "I",
-      "persisted_at": "2026-11-13T19:27:25.633Z"
+      "source_version": "2d6c2852",
+      "content_hash": "f8e73936bdbd7338dea1b5121da51ab54e7c58a430ecd8ce3f41749562bfbf88",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-21T12:48:48.207Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mattermost-mattermost": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mattermost-mattermost",
@@ -212769,10 +212774,10 @@
       "relative_path": "08_VERIFICATION/mattermost-mattermost-verification-protocol-empirical-defect-shield-for-mattermo.md",
       "title": "Verification Protocol: Empirical Defect Shield for mattermost/mattermost",
       "repository": "mattermost/mattermost",
-      "source_version": "f3624d99",
-      "content_hash": "8aeb899ab35175450f1c5d0318b87046231de2b1444f912ed4a8bafc0bf81938",
+      "source_version": "2d6c2852",
+      "content_hash": "865c26a443a5afcd1f213cd5521e4fde9cba72265c9f2d6728c0f3c3afc51ad1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T11:33:21.098Z"
+      "persisted_at": "2026-11-21T12:48:48.344Z"
     },
     "learn-github-juicedata-juicefs": {
       "learning_id": "learn-github-juicedata-juicefs",
@@ -213046,9 +213051,9 @@
       "title": "Skill: Operational & Integration Playbook for mattermost-mattermost-learnings",
       "repository": "mattermost-mattermost-learnings",
       "source_version": "HEAD",
-      "content_hash": "9874d371ff931d084d70932bb2943a252b472bf1f157911938e2971f9d8145d6",
-      "domain_letter": "I",
-      "persisted_at": "2026-11-13T19:27:35.917Z"
+      "content_hash": "79fd4d970742877070043cfaa70bb562c6dae04e07624aa89899bf1b86813e00",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-21T12:48:57.541Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mattermost-mattermost-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mattermost-mattermost-learning",
@@ -213058,9 +213063,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mattermost-mattermost-learnings",
       "repository": "mattermost-mattermost-learnings",
       "source_version": "HEAD",
-      "content_hash": "b92a516394338133eaed830f0c9e8bdbd11720052e2582bc9f3ca42e037985af",
+      "content_hash": "1d33498bb003b2cd37da3ede7f8e6b8003995e55a07b7f7a8de35c460249c964",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T11:33:27.625Z"
+      "persisted_at": "2026-11-21T12:48:57.680Z"
     },
     "learn-github-embassy-rs-embassy": {
       "learning_id": "learn-github-embassy-rs-embassy",
@@ -259651,8 +259656,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "796b8d3b",
-      "content_hash": "3ad7fc8f4b6e396fabc976c39483f4a664874ba6e8b38474eea1326ab10bc3d2",
+      "source_version": "0a4d6057",
+      "content_hash": "7dd2c91c3c841017bca2b45aae47f749538f20099e3b583404aba297c40265df",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -259670,6 +259675,11 @@
           "number": 9648,
           "title": "grammar in post-quantum README",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9783,
+          "title": "fix set_var symbol in comment",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -259677,7 +259687,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T22:39:52.194Z",
+      "verified_at": "2026-11-21T12:48:52.631Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -259719,10 +259729,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-technical-construction-intelligence-rustls-rustls-core-invariants.md",
       "title": "Technical Construction Intelligence: rustls/rustls Core Invariants",
       "repository": "rustls/rustls",
-      "source_version": "796b8d3b",
-      "content_hash": "5929abb98544fc3baf70c20e60353827ee1e674ecbbf941b904050e62f6c5b72",
+      "source_version": "0a4d6057",
+      "content_hash": "65ae26aed93a6c5489ae1bcd2144c7b72638830cc6a801d87496b5cf8358381a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T22:39:52.716Z"
+      "persisted_at": "2026-11-21T12:48:53.194Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls",
@@ -259731,10 +259741,10 @@
       "relative_path": "08_VERIFICATION/rustls-rustls-verification-protocol-empirical-defect-shield-for-rustls-rustls.md",
       "title": "Verification Protocol: Empirical Defect Shield for rustls/rustls",
       "repository": "rustls/rustls",
-      "source_version": "796b8d3b",
-      "content_hash": "a04e13a0471cf53608d6f3f78a6f2c13c7d05217fbac2be78fa02fc5376a1673",
+      "source_version": "0a4d6057",
+      "content_hash": "da4f16ff42ad3be673654956e205ba20d53b93bcfa83691890893ce34f237460",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T22:39:52.862Z"
+      "persisted_at": "2026-11-21T12:48:53.352Z"
     },
     "rule-8768": {
       "learning_id": "rule-8768",
@@ -259794,9 +259804,9 @@
       "title": "Technical Construction Intelligence: rustls-rustls-learnings Core Invariants",
       "repository": "rustls-rustls-learnings",
       "source_version": "HEAD",
-      "content_hash": "dbf143c49420019dbf70e2661f33c550f4c956c0e6c479c19572438b3fa27be8",
+      "content_hash": "7e7bde571f03a16eb2821390325cdb62545139560497a8c7f7a9615cd1e79538",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T22:42:07.116Z"
+      "persisted_at": "2026-11-21T12:48:58.706Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls-learnings",
@@ -259806,9 +259816,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rustls-rustls-learnings",
       "repository": "rustls-rustls-learnings",
       "source_version": "HEAD",
-      "content_hash": "1c707b276f3709e6298b05dbb0b197453fc4b8c157b57dd42ff853bf225fbc7f",
+      "content_hash": "334d9be1752838aab55945c6ea2b5f5c9bdcf0a83a677f23ed7bc113f3ef84fa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T22:42:07.270Z"
+      "persisted_at": "2026-11-21T12:48:58.861Z"
     },
     "candidate_directive-sql-respect-query-block-scope-in-sql-completion": {
       "item_id": "candidate_directive-sql-respect-query-block-scope-in-sql-completion",
@@ -276283,7 +276293,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/RecursiveSI/flint",
       "source_version": "hf-recursivesi-flint",
-      "content_hash": "5f19b2b231ba7f7d057c6b187d0c07513ebc1f455fde2751382be49ed1ca8919",
+      "content_hash": "f9a6aed6a4524603092be0d0010dc42401dd0d44cb7c5a937b8b24c749134007",
       "dossier_path": "07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md",
       "promoted_rules": [],
@@ -276292,7 +276302,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T16:30:48.302Z",
+      "verified_at": "2026-11-21T12:48:40.631Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -276309,9 +276319,9 @@
       "title": "Research & Knowledge Intelligence: RecursiveSI/flint Core Invariants",
       "repository": "RecursiveSI/flint",
       "source_version": "hf-recursivesi-flint",
-      "content_hash": "147d87ce387c29f536bf7b49ed0ceef9f18d34cee64629a54aa253f0c9982e7b",
+      "content_hash": "3cc1db3100c6cadc058209e0fb751d615c8503e5047e8ef3ba8ca47e2c466ef9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T16:30:48.624Z"
+      "persisted_at": "2026-11-21T12:48:41.056Z"
     },
     "rule-9000": {
       "learning_id": "rule-9000",
@@ -276411,9 +276421,9 @@
       "title": "Research & Knowledge Intelligence: hf-recursivesi-flint-learnings Core Invariants",
       "repository": "hf-recursivesi-flint-learnings",
       "source_version": "HEAD",
-      "content_hash": "2605cdad1d4a38239328622a2e249aed1064b609298becc53d0e0eb851c2f2c5",
+      "content_hash": "2913a1f448ac69182be33718d86490304dcfbb7ac71f051328770ef23283c92d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T16:31:09.222Z"
+      "persisted_at": "2026-11-21T12:48:56.362Z"
     },
     "learn-huggingface-xhtoken-spark-x2-6-4b": {
       "learning_id": "learn-huggingface-xhtoken-spark-x2-6-4b",
@@ -313626,6 +313636,94 @@
       "content_hash": "13fbb70f9c30be64785f3387b82254dd853af300a713609a09ac962a40da413d",
       "domain_letter": "H",
       "persisted_at": "2026-11-21T12:38:41.799Z"
+    },
+    "rule-9782": {
+      "learning_id": "rule-9782",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9782,
+      "title": "Product rail: pin and reorder items, Threads back in Channels, and Boards, badge",
+      "source_url": "https://github.com/mattermost/mattermost",
+      "source_version": "2d6c2852",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T12:48:47.453Z"
+    },
+    "candidate_directive-product-rail-pin-and-reorder-items-threads-back-in-channels-and-boards-badge": {
+      "item_id": "candidate_directive-product-rail-pin-and-reorder-items-threads-back-in-channels-and-boards-badge",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MNPM-product-rail-pin-and-reorder-items-threads-back-in-channels-and-boards-badge.md",
+      "title": "Product rail: pin and reorder items, Threads back in Channels, and Boards, badge",
+      "repository": "mattermost-mattermost-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3c6cf9ee9b392a1140807bd2b1adec9cb5588b2fd15fcf0d66fc2da644e4cd51",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-21T12:48:57.230Z"
+    },
+    "domain_intelligence-design-intelligence-mattermost-mattermost-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-mattermost-mattermost-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-mattermost-mattermost-design-intelligence-mattermost-mattermost-core-invariants.md",
+      "title": "Design Intelligence: mattermost/mattermost Core Invariants",
+      "repository": "mattermost/mattermost",
+      "source_version": "2d6c2852",
+      "content_hash": "2093780b27c8c4c823dce4070aaeb590cc0521f9984ab1fce3913f904cd29cde",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-21T12:48:48.041Z"
+    },
+    "rule-9783": {
+      "learning_id": "rule-9783",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9783,
+      "title": "fix set_var symbol in comment",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "0a4d6057",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T12:48:52.631Z"
+    },
+    "candidate_directive-fix-set_var-symbol-in-comment": {
+      "item_id": "candidate_directive-fix-set_var-symbol-in-comment",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MKHA-fix-set_var-symbol-in-comment.md",
+      "title": "fix set_var symbol in comment",
+      "repository": "rustls/rustls",
+      "source_version": "0a4d6057",
+      "content_hash": "3a38dc276cf8a497c5ebfa845c0030d3a9e2ab5fd91cdd30a0404b09f481392e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T12:48:53.042Z"
+    },
+    "domain_intelligence-design-intelligence-mattermost-mattermost-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-mattermost-mattermost-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-mattermost-mattermost-learnings-design-intelligence-mattermost-mattermost-learni.md",
+      "title": "Design Intelligence: mattermost-mattermost-learnings Core Invariants",
+      "repository": "mattermost-mattermost-learnings",
+      "source_version": "HEAD",
+      "content_hash": "03885a1550700bc73e126e39b8ba581b5ef30970407fde72a058ede2cac9d5ee",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-21T12:48:57.386Z"
+    },
+    "candidate_directive-docs-fix-set_var-symbol-in-comment": {
+      "item_id": "candidate_directive-docs-fix-set_var-symbol-in-comment",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MOQA-docs-fix-set_var-symbol-in-comment.md",
+      "title": "docs: fix set_var symbol in comment",
+      "repository": "rustls-rustls-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4d5606be754ba834b20389912aac79dde63d490e4ac84d179698c94c23cd28e7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T12:48:58.549Z"
     }
   },
   "ai-builder-brain": {

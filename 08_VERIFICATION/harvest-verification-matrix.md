@@ -11797,3 +11797,6 @@
 | `CYCLE-20261121-8MRI` | `2026-11-21T12:38:02.814Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md` | Yes (`4cc200b3...`) |
 | `CYCLE-20261121-8RXD` | `2026-11-21T12:38:09.505Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9781` | Yes (`b5bed4e6...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T12:38:41.419Z` | `open-policy-agent-opa` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-D52613BE` [Domain H] | Yes (`5d1a8d09...`) |
+| `CYCLE-20261121-MB2U` | `2026-11-21T12:48:40.854Z` | `RecursiveSI/flint` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md` | Yes (`f9a6aed6...`) |
+| `CYCLE-20261121-MGBV` | `2026-11-21T12:48:47.659Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9782` | Yes (`0af3b89c...`) |
+| `CYCLE-20261121-MKBI` | `2026-11-21T12:48:52.830Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9783` | Yes (`7dd2c91c...`) |

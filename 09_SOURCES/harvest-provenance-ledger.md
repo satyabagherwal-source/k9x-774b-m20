@@ -11830,3 +11830,6 @@ Every entry in this ledger must capture:
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `e4f652d8` | Multi-dimensional audit evidence | 2026-11-21T12:38:02.819Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `a9a9fd73` | Multi-dimensional audit evidence | 2026-11-21T12:38:09.509Z |
 | `learn-dom-h-d52613be` | `project://open-policy-agent-opa` | `e4f652d8` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md` | 2026-11-21T12:38:41.419Z |
+| `learn-huggingface-recursivesi-flint` | `https://huggingface.co/RecursiveSI/flint` | `hf-recursi` | Multi-dimensional audit evidence | 2026-11-21T12:48:40.859Z |
+| `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `2d6c2852` | Multi-dimensional audit evidence | 2026-11-21T12:48:47.663Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `0a4d6057` | Multi-dimensional audit evidence | 2026-11-21T12:48:52.834Z |

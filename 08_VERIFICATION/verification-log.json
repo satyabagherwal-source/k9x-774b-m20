@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-3TSI",
-    "timestamp": "2026-11-19T07:51:02.034Z",
-    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-    "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
-    "contentHash": "1aa3303a869dce15937709ea24d0fc3ed6c31a565f11e92519e039c3f3724352",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-3W2N",
-    "timestamp": "2026-11-19T07:51:04.991Z",
-    "repository": "restatedev/restate",
-    "learningId": "learn-github-restatedev-restate",
-    "contentHash": "96568a1a87569317985432b70f4fa7dbd126962560fb957cf773834b9f479519",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-4082",
-    "timestamp": "2026-11-19T07:51:10.370Z",
-    "repository": "Tencent-TDS/KuiklyUI",
-    "learningId": "learn-github-tencent-tds-kuiklyui",
-    "contentHash": "a6e8791994d1daafdfe9d16b8e75c858774f51abd71e0f440e56072e6f4c05b2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-J82F",
     "timestamp": "2026-11-19T08:03:00.375Z",
     "repository": "LiquidAI/d1-3B",
@@ -7490,6 +7445,51 @@
     "repository": "StarRocks/starrocks",
     "learningId": "learn-github-starrocks-starrocks",
     "contentHash": "b5bed4e6738fc4be9e449bb16450621d872536f1d40b81ff81e84a609661d578",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-MB2U",
+    "timestamp": "2026-11-21T12:48:40.854Z",
+    "repository": "RecursiveSI/flint",
+    "learningId": "learn-huggingface-recursivesi-flint",
+    "contentHash": "f9a6aed6a4524603092be0d0010dc42401dd0d44cb7c5a937b8b24c749134007",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-MGBV",
+    "timestamp": "2026-11-21T12:48:47.659Z",
+    "repository": "mattermost/mattermost",
+    "learningId": "learn-github-mattermost-mattermost",
+    "contentHash": "0af3b89c358e9d88d8bd8b1920894604ae2709a3521c275a980b0d27af4427d7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-MKBI",
+    "timestamp": "2026-11-21T12:48:52.830Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "7dd2c91c3c841017bca2b45aae47f749538f20099e3b583404aba297c40265df",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

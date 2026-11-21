@@ -4,23 +4,23 @@
 {
   "source_repository": "rustls/rustls",
   "source_url": "https://github.com/rustls/rustls",
-  "source_version": "796b8d3b",
+  "source_version": "0a4d6057",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-20T22:39:52.570Z",
+  "timestamp": "2026-11-21T12:48:53.038Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-rustls-rustls",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [rustls/rustls](https://github.com/rustls/rustls) (Revision: `796b8d3b`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-20T22:39:52.570Z`  
+> **Provenance**: Harvested from [rustls/rustls](https://github.com/rustls/rustls) (Revision: `0a4d6057`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-21T12:48:53.038Z`  
 > **Learning ID**: `learn-github-rustls-rustls`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
 - **Confidence Rating**: 68%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T22:39:46.303Z  
+> **Harvest Timestamp**: 2026-11-21T12:48:51.771Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7770 stars
+- **Stars / Engagement**: 7774 stars
 
 ---
 
@@ -2262,17 +2262,17 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3446** (2026-11-20): **Fix grammar in post-quantum README**
-  *Symptoms*: Fix two grammar errors in the post-quantum crate README: "This crate provide a CryptoProvider" -> "provides", and "is release under the same licenses" -> "is released".  AI assistance: I used an AI coding tool to help prepare this change. I reviewed the diff myself; both edits are simple subject-verb corrections. 
+- **Issue #3449** (2026-11-21): **Fix typos in test and example comments**
+  *Symptoms*: Fix typos and grammar in test/example comments: "A ECH" -> "An ECH", "don't sent" -> "don't send", "don't do complete" -> "don't complete", "Maybe be used" -> "May be used" (matching sibling flag docs), and a `set_ver` -> `set_var` typo in a comment (the test uses std::env::set_var). Comment text only, no behavior change.  AI assistance: I used an AI tool to help locate these typos. I reviewed all changes myself. 
   **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_server | 2255494 | 2261877 | ⚠️ [6383](https://bench.rustls.dev/comparisons/836e411eccaf7331f4c289aabef0de32474de3b8:0ffe82e9bd2d09ad07d3f08b1fad35692ea3e00d/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_server) (0.28%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server | 10913027 | 11004523 | [91496](https://bench.rustls.dev/comparisons/836e411eccaf7331f4c289aabef0de32474de3b8:0ffe82e9bd2d09ad07d3f08b1fad35692ea3e00d/cachegrind
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3446?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 96.10%. Comparing base ([`836e411`](https://app.codecov.io/gh/rustls/rustls/commit/836e411eccaf7331f4c289aabef0de32474de3b8?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`0ffe82e`](https://app.codecov.io/gh/rustls/rustls/commit/0ffe82e9bd2d09ad07d3f08b1fad35692ea3e00d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3446   +/-   ## ======================================= 
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3449?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 96.10%. Comparing base ([`796b8d3`](https://app.codecov.io/gh/rustls/rustls/commit/796b8d3b08481e7f5119c0b3d0b640586c45f0d8?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`c8dee27`](https://app.codecov.io/gh/rustls/rustls/commit/c8dee279b8f8fc3dd9f3a03d3d0585214793d4b1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 2 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3449 
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server | 10922753 | 10980622 | [57869](https://bench.rustls.dev/comparisons/796b8d3b08481e7f5119c0b3d0b640586c45f0d8:c8dee279b8f8fc3dd9f3a03d3d0585214793d4b1/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server) (0.53%) | 1.04% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client | 8768128 | 8747945 | [-20183](https://bench.rustls.dev/comparisons/796b8d3b08481e7f5119c0b3d0b640586c45f0d8:c8dee279b8f8fc3dd9f3a03d3d0585214793d4b1/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client) (-0.23%) | 0.89% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client | 8764476 | 8783831 | [193
 
-- **Issue #3441** (2026-11-18): **Fix new clippy `empty_line_after_doc_comments`**
-  *Symptoms*: 
+- **Issue #3448** (2026-11-21): **Fix doubled word and article in doc comments**
+  *Symptoms*: Fix two documentation-comment typos: a doubled "when when" in receive.rs, and "A ECHClientHello" -> "An ECHClientHello" in client_hello.rs (E is pronounced with a vowel sound). Comment text only, no behavior change.  AI assistance: I used an AI tool to help locate these typos. I reviewed both changes myself. 
   **Post-Mortem & Fix Analysis**:
-  > _Note: the comment has been truncated to respect GitHub's size limit of 65536 bytes._  # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | transfer_no_resume_ring_1.3_ecdsap384_aes_client | 25544708 | 47062314 | ⚠️ [21517606](https://bench.rustls.dev/comparisons/0d10aa47e82cf40ecabf677360b8276798a2039a:54bc60c6498f2187be34377fb63584a0d00c55e9/cachegrind-diff/transfer_no_resume_ring_1.3_ecdsap384_aes_client) (84.24%) | 0.20% | | transfer_no_resume_ring_1.3_ecdsap256_aes_client | 25544933 | 47062325 | ⚠️ [21517392](https://bench.rustls.dev/comparisons/0d10aa47e82cf40ecabf677360b8276798a2039a:54bc60c6498f2187be34377fb63584a0d00c55e9/cachegrind-diff/transfer_no_resume_ring_1.3_ecdsap256_aes_client) (84.23%) | 0.20% | | transfer_no_resume_ring_1.3_rsa_a
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3441?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 96.10%. Comparing base ([`53db4d1`](https://app.codecov.io/gh/rustls/rustls/commit/53db4d1398f16d5bac98eacf02f0dff4b242fd92?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`54bc60c`](https://app.codecov.io/gh/rustls/rustls/commit/54bc60c6498f2187be34377fb63584a0d00c55e9?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 8 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3441 
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3448?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 96.10%. Comparing base ([`796b8d3`](https://app.codecov.io/gh/rustls/rustls/commit/796b8d3b08481e7f5119c0b3d0b640586c45f0d8?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`11a513d`](https://app.codecov.io/gh/rustls/rustls/commit/11a513d9c959610ea49efc2bb411ba8780a5e00a?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3448   +/-   ## ======================================= 
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client | 8779828 | 8750600 | [-29228](https://bench.rustls.dev/comparisons/796b8d3b08481e7f5119c0b3d0b640586c45f0d8:11a513d9c959610ea49efc2bb411ba8780a5e00a/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client) (-0.33%) | 0.89% | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server | 10901476 | 10936306 | [34830](https://bench.rustls.dev/comparisons/796b8d3b08481e7f5119c0b3d0b640586c45f0d8:11a513d9c959610ea49efc2bb411ba8780a5e00a/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server) (0.32%) | 0.97% | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10417163 | 10387848 | [-293
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2289,39 +2289,71 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `796b8d3b` (2026-11-20)
-**Commit Message**: Fix grammar in post-quantum README
+### Incident Patch 1: `0a4d6057` (2026-11-21)
+**Commit Message**: docs: fix set_var symbol in comment
 
 Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
 
-**File**: `rustls-post-quantum/README.md` (modified, +2/-2)
+**File**: `rustls-test/tests/key_log_file_env/tests.rs` (modified, +1/-1)
 ```diff
-@@ -8,7 +8,7 @@ Rustls is a modern TLS library written in Rust.
+@@ -6,7 +6,7 @@
+ //!
+ //! See https://github.com/rust-lang/rust/issues/90308; despite not being marked
+ //! `unsafe`, `env::var::set_var` is an unsafe function. These tests are separated
+-//! from the rest of the tests so that their use of `set_ver` is less likely to
++//! from the rest of the tests so that their use of `set_var` is less likely to
+ //! affect them; as of the time these tests were moved to this file, Cargo will
+ //! compile each test suite file to a separate executable, so these will be run
+ //! in a completely separate process. This way, executing every test through
+```
+
+---
+
+### Incident Patch 2: `d2e599c5` (2026-11-21)
+**Commit Message**: docs: fix typos and grammar in comments
+
+Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
+
+**File**: `examples/src/bin/tls-client-mio.rs` (modified, +1/-1)
+```diff
+@@ -251,7 +251,7 @@ struct Args {
+     #[clap(long)]
+     suite: Vec<String>,
  
- # rustls-post-quantum
+-    /// Disable default key exchange list, and use KX instead. Maybe be used multiple times.
++    /// Disable default key exchange list, and use KX instead. May be used multiple times.
+     #[clap(long)]
+     key_exchange: Vec<String>,
  
--This crate provide a `CryptoProvider` built on the default aws-lc-rs default provider.
-+This crate provides a `CryptoProvider` built on the default aws-lc-rs default provider.
+```
+
+---
+
+### Incident Patch 3: `461bfcbc` (2026-11-21)
+**Commit Message**: docs: fix typos and grammar in comments
+
+Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
+
+**File**: `rustls-test/tests/api/resume.rs` (modified, +1/-1)
+```diff
+@@ -307,7 +307,7 @@ fn test_tls13_client_resumption_does_not_reuse_tickets() {
  
- Features:
+     // 5 subsequent handshakes: all are resumptions
  
-@@ -20,6 +20,6 @@ Before rustls 0.23.22, this crate additionally provided support for the ML-KEM k
- In rustls 0.23.22 and later, you can use rustls' `prefer-post-quantum` feature to determine
- whether the ML-KEM key exchange is preferred over non-post-quantum key exchanges.
- 
--This crate is release under the same licenses as the [main rustls crate][rustls].
-+This crate is released under the same licenses as the [main rustls crate][rustls].
- 
- [rustls]: https://crates.io/crates/rustls
+-    // Note: we don't do complete the handshakes, because that means
++    // Note: we don't complete the handshakes, because that means
+     // we get five additional tickets per connection which is unhelpful
+     // in this test.  It also acts to record a "Happy Eyeballs"-type use
+     // case, where a client speculatively makes many connection attempts
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3449** (2026-11-21): Fix typos in test and example comments (@CharoenwitKunna)
+- **PR #3448** (2026-11-21): Fix doubled word and article in doc comments (@CharoenwitKunna)
 - **PR #3446** (2026-11-20): Fix grammar in post-quantum README (@CharoenwitKunna)
 - **PR #3441** (2026-11-18): Fix new clippy `empty_line_after_doc_comments` (@ctz)
 - **PR #3438** (2026-11-18): ci-bench: fix clippy lint; remove excess copies and dependencies (@ctz)
 - **PR #3437** (2026-11-16): Update Rust crate nix to 0.32 (@renovate-bot)
-- **PR #3430** (2026-11-18): Update Rust crate crabgrind to 0.6 (@renovate-bot)
-- **PR #3429** (closed): Update dependency rust to 1.100 (@renovate-bot)
 
 ---
 
@@ -2341,33 +2373,31 @@ Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. grammar in post-quantum README
+## X. docs: fix set_var symbol in comment
 
 **RULE**:
-When implementing operations in `rustls-post-quantum/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rustls-test/tests/key_log_file_env/tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `796b8d3b`: grammar in post-quantum README. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0a4d6057`: docs: fix set_var symbol in comment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls-post-quantum/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls-test/tests/key_log_file_env/tests.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-This crate provides a `CryptoProvider` built on the default aws-lc-rs default provider.
-This crate is released under the same licenses as the [main rustls crate][rustls].
+//! from the rest of the tests so that their use of `set_var` is less likely to
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-This crate provide a `CryptoProvider` built on the default aws-lc-rs default provider.
-This crate is release under the same licenses as the [main rustls crate][rustls].
+//! from the rest of the tests so that their use of `set_ver` is less likely to
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `796b8d3b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0a4d6057` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source**: github ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
-> **Source Version**: `f3624d99`  
+> **Source Version**: `2d6c2852`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T11:33:19.306Z  
+> **Timestamp**: 2026-11-21T12:48:46.644Z  
 > **Learning ID**: `learn-github-mattermost-mattermost`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T11:33:19.299Z  
+> **Harvest Timestamp**: 2026-11-21T12:48:46.638Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Mattermost is an open source platform for secure collaboration across the entire software development lifecycle..
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 39645 stars
+- **Stars / Engagement**: 39683 stars
 
 ---
 
@@ -65,6 +65,10 @@ func userCreatePostPermissionCheckWithContext(c *Context, channelId string) {
 
 	if !hasPermission {
 		c.SetPermissionError(model.PermissionCreatePost)
+		return
+	}
+
+	if !requireChannelWriteAccessByID(c, channelId) {
 		return
 	}
 }
@@ -193,9 +197,9 @@ func postAttributeValuesForCreate(c *Context, post *model.Post) ([]*model.Proper
 		return nil, appErr
 	}
 
-	values, fields, appErr := c.App.PreparePostPropertyValuesForCreate(c.AppContext, items, channel)
-	if appErr != nil {
-		return nil, appErr
+	values, fields, err := c.App.PreparePostPropertyValuesForCreate(c.AppContext, items, channel)
+	if err != nil {
+		return nil, model.AsAppError(err)
 	}
 
 	for _, field := range fields {
@@ -263,7 +267,8 @@ func createIncomingHook(c *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if ok, _ := c.App.SessionHasPermissionToReadChannel(c.AppContext, *c.AppContext.Session(), channel); !ok {
+	// Channel access policies do not apply to incoming webhooks, so this is the RBAC check alone.
+	if ok, _ := c.App.SessionHasPermissionToReadChannelRBACOnly(c.AppContext, *c.AppContext.Session(), channel); !ok {
 		c.LogAudit("fail - bad channel permissions")
 		c.SetPermissionError(model.PermissionReadChannelContent)
 		return
@@ -380,7 +385,7 @@ func updateIncomingHook(c *Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if channel.Type != model.ChannelTypeOpen {
-		if ok, _ := c.App.SessionHasPermissionToReadChannel(c.AppContext, *c.AppContext.Session(), channel); !ok {
+		if ok, _ := c.App.SessionHasPermissionToReadChannelRBACOnly(c.AppContext, *c.AppContext.Session(), channel); !ok {
 			c.LogAudit("fail - bad channel permissions")
 			c.SetPermissionError(model.PermissionReadChannelContent)
 			return
@@ -508,15 +513,7 @@ func getIncomingHook(c *Context, w http.ResponseWriter, r *http.Request) {
 	auditRec.AddMeta("hook_display", hook.DisplayName)
 	auditRec.AddMeta("channel_id", hook.ChannelId)
 	auditRec.AddMeta("team_id", hook.TeamId)
-	c.LogAudit("attempt")
-
-	channel, err = c.App.GetChannel(c.AppContext, hook.ChannelId)
-	if err != nil {
-		c.Err = err
-		return
-	}
-
-	i
+	c.LogAudit("attempt"
 ```
 
 ### Core Architecture Module: `server/channels/api4/webhook_local.go`
@@ -686,6 +683,247 @@ func (es *Service) GetTrackFlowStartedByRole(isFirstAdmin bool, isSystemAdmin bo
 	}
 
 	return trackFlowStartedByRole
+}
+
+```
+
+### Core Architecture Module: `server/channels/app/entities/core.go`
+```
+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
+
+package entities
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"regexp"
+	"strconv"
+	"strings"
+	"time"
+	"unicode"
+
+	"github.com/mattermost/mattermost/server/public/model"
+)
+
+const (
+	CoreTimeTypeID         = CoreOwner + refSeparator + "time"
+	coreTimeRFC3339Pattern = `[0-9]{4}-[0-9]{2}-[0-9]{2}[Tt][0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]{1,9})?(?:[Zz]|[+-][0-9]{2}:[0-9]{2})`
+	// Clock + required zone keeps bare times and issue ids from matching.
+	// Accepts 16:30 CET, 16.30 CET, 4:30pm CET, 4.30 p.m. CET, 4pm CET.
+	coreTimeClockZonePattern = `(?i)(?:(?:[01]?\d|2[0-3])[:.][0-5]\d(?::[0-5]\d)?(?:\s*[ap]\.?m\.?)?|(?:0?[1-9]|1[0-2])(?:[:.][0-5]\d)?\s*[ap]\.?m\.?)\s*(?:UTC|GMT|Z|CET|CEST|EET|EEST|WET|WEST|BST|EST|EDT|CST|CDT|MST|MDT|PST|PDT|AKST|AKDT|HST|IST|JST|KST|AEST|AEDT|ACST|ACDT|AWST|NZST|NZDT)`
+)
+
+// Fixed offsets for the abbreviations we recognize. The abbreviation itself
+// encodes daylight-saving (CET vs CEST), so we do not need a geo zone database.
+var coreTimeZoneOffsets = map[string]int{
+	"UTC": 0, "GMT": 0, "Z": 0,
+	"CET": 3600, "CEST": 7200,
+	"EET": 7200, "EEST": 10800,
+	"WET": 0, "WEST": 3600, "BST": 3600,
+	"EST": -5 * 3600, "EDT": -4 * 3600,
+	"CST": -6 * 3600, "CDT": -5 * 3600,
+	"MST": -7 * 3600, "MDT": -6 * 3600,
+	"PST": -8 * 3600, "PDT": -7 * 3600,
+	"AKST": -9 * 3600, "AKDT": -8 * 3600,
+	"HST": -10 * 3600,
+	"IST": 5*3600 + 30*60,
+	"JST": 9 * 3600, "KST": 9 * 3600,
+	"AEST": 10 * 3600, "AEDT": 11 * 3600,
+	"ACST": 9*3600 + 30*60, "ACDT": 10*3600 + 30*60,
+	"AWST": 8 * 3600,
+	"NZST": 12 * 3600, "NZDT": 13 * 3600,
+}
+
+var (
+	coreTimeClockZoneRE = regexp.MustCompile(`(?i)^(\d{1,2})(?:[:.](\d{2}))?(?::(\d{2}))?\s*([ap]\.?m\.?)?\s*([A-Za-z]{1,5})$`)
+	coreTimeHourPMRE    = regexp.MustCompile(`(?i)^(\d{1,2})\s*([ap]\.?m\.?)\s*([A-Za-z]{1,5})$`)
+)
+
+func init() {
+	ensureCore()
+}
+
+func ensureCore() {
+	must(AddType(CoreOwner, &model.EntityType{Name: "time", DisplayName: "Time"}))
+	must(AddMatcher(CoreOwner, &model.EntityMatcher{Name: "time.rfc3339", Type: "time", Pattern: coreTimeRFC3339Pattern, Boundary: "token"}))
+	must(AddMatcher(CoreOwner, &model.EntityMatcher{Name: "time.clock_zone", Type: "time", Pattern: coreTimeClockZonePattern, Boundary: "token"}))
+}
+
+func must(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+// CoreLookup describes a value using a built-in type. createAt is the post's
+// creation time in Unix milliseconds. It dates a clock that names no day.
+// Zero means the current time.
+func CoreLookup(_ context.Context, typeID, value string, createAt int64) (*model.EntityCard, error) {
+	switch typeID {
+	case CoreTimeTypeID:
+		return coreTimeCard(value, createAt)
+	default:
+		return nil, fmt.Errorf("unsupported entity")
+	}
+}
+
+func coreTimeCard(value string, createAt int64) (*model.EntityCard, error) {
+	parsed, err := parseCoreTime(value, createAt)
+	if err != nil {
+		return nil, err
+	}
+	utc := parsed.UTC()
+	blocks, err := json.Marshal([]map[string]any{
+		{
+			"type": "text",
+			"text": fmt.Sprintf("**UTC:** %s", utc.Format("15:04 MST")),
+		},
+		{
+			"type":      "text",
+			"text":      fmt.Sprintf("As written: %s", value),
+			"is_subtle": true,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &model.EntityCard{
+		TypeID:  CoreTimeTypeID,
+		Value:   value,
+		Title:   "Timestamp",
+		Instant: utc.UnixMilli(),
+		Blocks:  blocks,
+	}, nil
+}
+
+func parseCoreTime(value string, createAt int64) (time.Time, error) {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return time.Time{}, fmt.Errorf("unsupported entity")
+	}
+	normalized := strings.ToUpper(value)
+	if parsed, err := time.Parse(time.RFC3339Nano, normalized); err == nil {
+		return parsed, nil
+	}
+	if parsed, err := time.Parse(time.RFC3339, normalized); err == nil {
+		return parsed, nil
+	}
+	if parsed, err := parseCoreTimeClockZone(value, createAt); err == nil {
+		return parsed, nil
+	}
+	return time.Time{}, fmt.Errorf("unsupported entity")
+}
+
+func parseCoreTimeClockZone(value string, createAt int64) (time.Time, error) {
+	compact := collapseSpaces(value)
+	if m := coreTimeClockZoneRE.FindStringSubmatch(compact); m != nil {
+		hour, err := strconv.Atoi(m[1])
+		if err != nil {
+			return time.Time{}, fmt.Errorf("unsupported entity")
+		}
+		minute := 0
+		if m[2] != "" {
+			minute, err = strconv.Atoi(m[2])
+			if err != nil {
+				return time.Time{}, fmt.Errorf("unsupported entity")
+			}
+		}
+		second := 0
+		if m[3] != "" {
+			second, err = strconv.Atoi(m[3])
+			if err != nil {
+				return time.Time{}, fmt.Errorf("unsupported entity")
+			}
+		}
+		meridiem := m[4]
+		zone := strings.ToUpper(m[5])
+		if meridiem == "" && m[2] == "" {
+			return time.Time{}, fmt.Errorf("unsupported entity")
+		}
+		hour, err = applyMeridiem(hour, meridiem)
+		if err != nil {
+			return time.Time{}, err
+		}
+		return clockInZone(hour, minute, second, zone, createAt)
+	}
+	if m := coreTimeHourPMRE.FindStringSubmatch(compact); m != nil {
+		hour, err := strconv.Atoi(m[1])
+		if err != nil {
+			return time.Time{}, fmt.Errorf("unsupported entity")
+		}
+		hour, err = applyMeridiem(hour, m[2])
+		if err != nil {
+			return time.Time{}, err
+		}
+		return clockInZone(hour, 0, 0, strings.ToUpper(m[3]), createAt)
+	}
+	return time.Time{}, fmt.Errorf("unsupported entity")
+}
+
+func collapseSpaces(value string) string {
+	var b strings.Builder
+	b.Grow(len(value))
+	prevSpace := false
+	for _, r := range value {
+		if unicode.IsSpace(r) {
+			if !prevSpace {
+				b.WriteByte(' ')
+				prevSpace = true
+			}
+			continue
+		}
+		prevSpace = false
+		b.WriteRune(r)
+	}
+	return strings.TrimSpace(b.String())
+}
+
+func applyMeridiem(hour int, meridiem string) (int, error) {
+	meridiem = strings.ToLower(strings.ReplaceAll(meridiem, ".", ""))
+	switch meridiem {
+	case "":
+		if hour < 0 || hour > 23 {
+			return 0, fmt.Errorf("unsupported entity")
+		}
+		return hour, nil
+	case "am":
+		if hour < 1 || hour > 12 {
+			return 0, fmt.Errorf("unsupported entity")
+		}
+		if hour == 12 {
+			return 0, nil
+		}
+		return hour, nil
+	case "pm":
+		if hour < 1 || hour > 12 {
+			return 0, fmt.Errorf("unsupported entity")
+		}
+		if hour == 12 {
+			return 12, nil
+		}
+		return hour + 12, nil
+	default:
+		return 0, fmt.Errorf("unsupported entity")
+	}
+}
+
+func clockInZone(hour, minute, second int, zone string, createAt int64) (time.Time, error) {
+	if minute < 0 || minute > 59 || second < 0 || second > 59 {
+		return time.Time{}, fmt.Errorf("unsupported entity")
+	}
+	offset, ok := coreTimeZoneOffsets[zone]
+	if !ok {
+		return time.Time{}, fmt.Errorf("unsupported entity")
+	}
+	loc := time.FixedZone(zone, offset)
+	ref := time.Now()
+	if createAt > 0 {
+		ref = time.UnixMilli(createAt)
+	}
+	ref = ref.In(loc)
+	return time.Date(ref.Year(), ref.Month(), ref.Day(), hour, minute, second, 0, loc), nil
 }
 
 ```
@@ -1606,36 +1844,6 @@ func (w *searchEngineWatcher) startIfInactive(ctx context.Context, timer *time.T
 			w.ps.backfill
 ```
 
-### Core Architecture Module: `server/channels/app/platform/utils.go`
-```
-// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
-// See LICENSE.txt for license information.
-
-package platform
-
-import (
-	"crypto/sha256"
-	"encoding/base64"
-)
-
-func getKeyHash(key string) string {
-	hash := sha256.New()
-	hash.Write([]byte(key))
-	return base64.StdEncoding.EncodeToString(hash.Sum(nil))
-}
-
-// allocateCacheTargets is used to fill target value types
-// for getting items from cache.
-func allocateCacheTargets[T any](l int) []any {
-	toPass := make([]any, 0, l)
-	for range l {
-		toPass = append(toPass, new(T))
-	}
-	return toPass
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1666,993 +1874,1874 @@ func allocateCacheTargets[T any](l int) []any {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5049a60d` (2026-11-18)
-**Commit Message**: [MM-72003] Stop the latest release check when Enable Security Alerts is off, and cache failures (#40132)
+### Incident Patch 1: `8381b545` (2026-11-20)
+**Commit Message**: Product rail: pin and reorder items, Threads back in Channels, and Boards, badge and team sidebar fixes (#40251)
 
-* [MM-72003] Gate the latest release check on EnableSecurityFixAlert and cache failures
+* Let product rail items be hidden into a More menu, and open Boards from other products
 
-GetLatestVersion makes no request while ServiceSettings.EnableSecurityFixAlert
-is off and returns a 501. A failed fetch is cached for 6 hours, unless the
-request was cancelled. The health snapshot skips the request when the setting
-is off without recording a Version section error, and the version-behind rules
-report a separate "latest release not checked" reason in that case.
+Clicking Boards on a product page (Agents, Playbooks) or in Threads did
+nothing when the team had no board to open: with no board, the item
+linked to the current page. It now opens the channel Channels would,
+with the sidebar on Boards so it can say there are none.
 
-Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+Boards and products can be hidden from the rail by right-clicking them.
+Hidden ones are listed in a More menu at the end of the rail; one opened
+from there shows in the rail while it's open, and Always show in its
+right-click menu puts it back for good. Which items are hidden is saved
+as a user preference.
 
-* [MM-72003] Document the 501 and caching of GET /api/v4/latest_version
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
-Co-authored-by: ben.schumacher <[REDACTED_EMAIL]>
+* Open the first board once boards load when Boards is clicked from another product
 
-* [MM-72003] Clear the latest version cache when EnableSecurityFixAlert is toggled
+A product page loaded directly doesn't have the team's boards yet, so
+Boards fell back to the last channel even when the team had boards.
+After landing there with the Boards sidebar, the rail now opens the first
+board as soon as the boards are known.
 
-Lets an admin who fixed the server's network access retry without waiting
-for the cached failure to expire or restarting the server.
+Co-Authored-By: Claude Opus 5.5
 
-Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
-Co-authored-by: ben.schumacher <[REDACTED_EMAIL]>
-
-* [MM-72003] Document that Enable Security Alerts also controls the latest rel
-
-**File**: `api/v4/source/system.yaml` (modified, +2/-0)
+**File**: `webapp/channels/src/actions/views/product_rail.test.ts` (added, +149/-0)
 ```diff
-@@ -1620,6 +1620,8 @@
-           $ref: "#/components/responses/Forbidden"
-         "500":
-           $ref: "#/components/responses/InternalServerError"
-+        "501":
-+          $ref: "#/components/responses/NotImplemented"
-   /api/v4/system/schema/version:
-     get:
-       tags:
-```
-
-**File**: `docs/main/administration-guide/configure/environment-configuration-settings.mdx` (modified, +1/-1)
-```diff
-@@ -2557,7 +2557,7 @@ With self-hosted deployments, you can configure SMTP email server settings by go
- </colgroup>
- <tbody>
- <tr>
--<td><p>Enable or disable security alerts.</p><ul><li><strong>true</strong>: <strong>(Default)</strong> System admins are notified by email if a relevant security fix alert is announced. Requires email to be enabled.</li><li><strong>false</strong>: Security alerts are disabled.</li></ul></td>
-+<td><p>Enable or disable security alerts and the check for the latest Mattermost release.</p><ul><li><strong>true</strong>: <strong>(Default)</strong> System admins are notified by email if a relevant security fix alert is announced. Requires email to be enabled. The server also fetches the latest Mattermost release from GitHub to report whether it's out of date.</li><li><strong>false</strong>: Security alerts are disabled, and the server doesn't fetch the latest Mattermost release from GitHub.</li></ul></td>
- <td><ul><li>System Config path: <strong>Environment &gt; SMTP</strong></li><li><code>config.json</code> setting: <code>ServiceSettings</code> &gt; <code>EnableSecurityFixAlert</code> &gt; <code>true</code></li><li>Environment variable: <code>MM_SERVICESETTINGS_ENABLESECURITYFIXALERT</code></li></ul></td>
- </tr>
- </tbody>
-```
-
-**File**: `docs/main/administration-guide/manage/telemetry.mdx` (modified, +5/-1)
-```diff
-@@ -36,9 +36,13 @@ The following data is collected once every 24 hours:
- - Whether or not the unit tests have been run
- - Date and time of the last check for security updates
- 
-+### Latest release check
-+
-+To report whether the server is running the latest Mattermost release, the server also requests the latest release from GitHub (`api.github.com`).
-+
- ### Opt out
- 
--To opt out, you can disable this security update check feature for self-hosted deployments in the System Console by going to **Environment \> SMTP \> Enable Security Alerts**. See the [enable security alerts](/administration-guide/configure/environment-configuration-settings#enable-security-alerts) documentation for details. When this feature is disabled, you will not receive any security alerts.
-+To opt out, you can disable this security update check feature for self-hosted deployments in the System Console by going to **Environment \> SMTP \> Enable Security Alerts**. See the [enable security alerts](/administration-guide/configure/environment-configuration-settings#enable-security-alerts) documentation for details. When this feature is disabled, you will not receive any security alerts, and the server doesn't check GitHub for the latest release.
- 
- ## Error and diagnostics reporting feature
- 
-```
-
-**File**: `docs/main/deployment-guide/air-gapped-operations/disable-phone-home-features.mdx` (modified, +2/-0)
-```diff
-@@ -32,3 +32,5 @@ The GIF picker relies on a third-party service which has a dependency on externa
- ## Telemetry
- 
- To avoid log errors, we recommend disabling [telemetry-related features](/administration-guide/manage/telemetry), including the security update check, and error and diagnostics reporting features.
-+
-+Disabling the security update check in **System Console > Environment > SMTP > [Enable Security Alerts](/administration-guide/configure/environment-configuration-settings#enable-security-alerts)** also stops the server from requesting the latest Mattermost release from GitHub, which health checks use to report whether the server is out of date.
-```
-
-**File**: `server/channels/app/admin.go` (modified, +65/-13)
-```diff
-@@ -23,9 +23,17 @@ import (
- )
- 
- var latestVersionCache = cache.NewLRU(&cache.CacheOptions{
--	Size: 1,
-+	Size: 2,
- })
- 
-+const (
-+	latestVersionCacheKey        = "latest_version_cache"
-+	latestVersionFailureCacheKey = "latest_version_failure_cache"
-+	// latestVersionFailureExpiry spaces out retries from servers that cannot reach GitHub, which
-+	// also keeps servers behind a shared IP under its unauthenticated rate limit.
-+	latestVersionFailureExpiry = 6 * time.Hour
-+)
-+
- // LatestVersionURL is the GitHub endpoint for the latest server release.
- const LatestVersionURL = "https://api.github.com/repos/mattermost/mattermost-server/releases/latest"
- 
-@@ -242,48 +250,92 @@ func (a *App) TestEmail(rctx request.CTX, userID string, cfg *model.Config) *mod
- 	return nil
- }
- 
-+// GetLatestVersion fetches the latest release from latestVersionUrl. It makes no request while
-+// ServiceSettings.EnableSecurityFixAlert is off, the setting that stops the server contacting
-+// external services for update information.
- func (a *App) GetLatestVersion(rctx request.CTX, latestVersionUrl string) (*model.GithubReleaseInfo, *model.AppError) {
-+	if !*a.Config().ServiceSettings.EnableSecurityFixAlert {
-+		return nil, model.NewAppError("GetLatestVersion", "app.admin.get_latest_version.disabled.app_error", nil, "", http.StatusNotImplemented)
-+	}
-+
- 	var cachedLatestVersion *model.GithubReleaseInfo
--	if cacheErr := latestVersionCache.Get("latest_version_cache", &cachedLatestVersion); cacheErr == nil {
-+	if cacheErr := latestVersionCache.Get(latestVersionCacheKey, &cachedLatestVersion); cacheErr == nil {
- 		return cachedLatestVersion, nil
- 	}
- 
--	req, err := http.NewRequestWithContext(rctx.Context(), http.MethodGet, latestVersionUrl, nil)
-+	var cachedFailure string
-+	if cacheErr := latestVersionCache.Get(latestVersionFailureCacheKey, &cachedFailure); cacheErr == nil {
-+		return nil, model.NewAppError("GetLatestVersion", model.NoTranslation, nil, cachedFailure, http.StatusInternalServerError)
-+	}
-+
-+	releaseInfoResponse, err := fetchLatestVersion(rctx, latestVersionUrl)
- 	if err != nil {
-+		// A cancelled request says nothing about whether the feed is reachable.
-+		if rctx.Context().Err() == nil {
-+			if cacheErr := latestVersionCache.SetWithExpiry(latestVersionFailureCacheKey, err.Error(), latestVersionFailureExpiry); cacheErr != nil {
-+				rctx.Logger().Warn("Failed to cache the latest version failure", mlog.Err(cacheErr))
-+			}
-+		}
- 		return nil, model.NewAppError("GetLatestVersion", model.NoTranslation, nil, "", http.StatusInternalServerError).Wrap(err)
- 	}
- 
-+	err = latestVersionCache.SetWithExpiry(latestVersionCacheKey, releaseInfoResponse, 24*time.Hour)
-+	if err != nil {
-+		return nil, model.NewAppError("GetLatestVersion", model.NoTranslation, nil, "", http.StatusInternalServerError).Wrap(err)
-+	}
-+
-+	return releaseInfoResponse, nil
-+}
-+
-+func fetchLatestVersion(rctx request.CTX, latestVersionUrl string) (*model.GithubReleaseInfo, error) {
-+	req, err := http.NewRequestWithContext(rctx.Context(), http.MethodGet, latestVersionUrl, nil)
-+	if err != nil {
-+		return nil, err
-+	}
-+
- 	client := &http.Client{Timeout: 10 * time.Second}
- 	res, err := client.Do(req)
- 	if err != nil {
--		return nil, model.NewAppError("GetLatestVersion", model.NoTranslation, nil, "", http.StatusInternalServerError).Wrap(err)
-+		return nil, err
- 	}
- 
- 	defer res.Body.Close()
- 
-+	if res.StatusCode != http.StatusOK {
-+		_, _ = io.Copy(io.Discard, res.Body)
-+		return nil, fmt.Errorf("unexpected status code %d", res.StatusCode)
-+	}
-+
- 	responseData, err := io.ReadAll(res.Body)
- 	if err != nil {
--		return nil, model.NewAppError("GetLatestVersion", model.NoTranslation, nil, "", http.StatusInternalServerError).Wrap(err)
-+		return nil, err
- 	}
- 
- 	var releaseInfoResponse *model.GithubReleaseInfo
- 	err = json.Unmarshal(responseData, &releaseInfoResponse)
- 	if err != nil {
--		return nil, model.NewAppError("GetLatestVersion", model.NoTranslation, nil, "", http.StatusInternalServerError).Wrap(err)
-+		return nil, err
- 	}
- 
- 	if validErr := releaseInfoResponse.IsValid(); validErr != nil {
--		return nil, model.NewAppError("GetLatestVersion", model.NoTranslation, nil, "", http.StatusInternalServerError).Wrap(validErr)
--	}
--
--	err = latestVersionCache.SetWithExpiry("latest_version_cache", releaseInfoResponse, 24*time.Hour)
--	if err != nil {
--		return nil, model.NewAppError("GetLatestVersion", model.NoTranslation, nil, "", http.StatusInternalServerError).Wrap(err)
-+		return nil, validErr
- 	}
- 
- 	return releaseInfoResponse, nil
- }
- 
- func (a *App) clearLatestVersionCache() error {
--	return latestVersionCache.Remove("latest_version_cache")
-+	return latestVersionCache.Purge()
-+}
-+
-+// clearLatestVersionCacheOnFlip drops a cached release or failure when EnableSecurityFixAlert is
-+// toggled, so an admin who fixed the server's network access can retry by toggling it.
-+func (ch *Channels) clearLatestVersionCacheOnFlip(prevCfg, cfg *model.Config) {
-+	if *prevCfg.ServiceSettings.Enable
-```
-
-**File**: `server/channels/app/admin_test.go` (modified, +90/-0)
-```diff
-@@ -4,12 +4,14 @@
- package app
- 
- import (
-+	"context"
- 	"encoding/json"
- 	"maps"
- 	"net/http"
- 	"net/http/httptest"
- 	"slices"
- 	"strings"
-+	"sync/atomic"
- 	"testing"
- 	"time"
- 
-@@ -102,6 +104,94 @@ func TestGetLatestVersion(t *testing.T) {
- 		_, appErr := th.App.GetLatestVersion(th.Context, errorServer.URL)
- 		require.NotNil(t, appErr)
- 	})
-+
-+	var requests atomic.Int32
-+	countingServer := func(t *testing.T, status int) *httptest.Server {
-+		requests.Store(0)
-+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+			requests.Add(1)
-+			w.WriteHeader(status)
-+			_, err := w.Write(validJSON)
-+			assert.NoError(t, err)
-+		}))
-+		t.Cleanup(server.Close)
-+		return server
-+	}
-+
-+	t.Run("a failure is cached", func(t *testing.T) {
-+		require.NoError(t, th.App.clearLatestVersionCache())
-+		badGateway := countingServer(t, http.StatusBadGateway)
-+
-+		for range 2 {
-+			_, appErr := th.App.GetLatestVersion(th.Context, badGateway.URL)
-+			require.NotNil(t, appErr)
-+			assert.Equal(t, http.StatusInternalServerError, appErr.StatusCode)
-+		}
-+		assert.Equal(t, int32(1), requests.Load())
-+
-+		release, appErr := th.App.GetLatestVersion(th.Context, ts.URL)
-+		require.NotNil(t, appErr, "the cached failure is returned until it expires")
-+		assert.Nil(t, release)
-+	})
-+
-+	t.Run("toggling security alerts clears a cached failure", func(t *testing.T) {
-+		require.NoError(t, th.App.clearLatestVersionCache())
-+		badGateway := countingServer(t, http.StatusBadGateway)
-+		_, appErr := th.App.GetLatestVersion(th.Context, badGateway.URL)
-+		require.NotNil(t, appErr)
-+
-+		th.App.UpdateConfig(func(cfg *model.Config) { cfg.ServiceSettings.SiteURL = model.NewPointer("http://other.example.com") })
-+		_, appErr = th.App.GetLatestVersion(th.Context, ts.URL)
-+		require.NotNil(t, appErr, "an unrelated config change keeps the cached failure")
-+
-+		th.App.UpdateConfig(func(cfg *model.Config) { cfg.ServiceSettings.EnableSecurityFixAlert = model.NewPointer(false) })
-+		th.App.UpdateConfig(func(cfg *model.Config) { cfg.ServiceSettings.EnableSecurityFixAlert = model.NewPointer(true) })
-+
-+		release, appErr := th.App.GetLatestVersion(th.Context, ts.URL)
-+		require.Nil(t, appErr)
-+		assert.Equal(t, version.TagName, release.TagName)
-+	})
-+
-+	t.Run("a cancelled request is not cached", func(t *testing.T) {
-+		require.NoError(t, th.App.clearLatestVersionCache())
-+		ok := countingServer(t, http.StatusOK)
-+
-+		ctx, cancel := context.WithCancel(th.Context.Context())
-+		cancel()
-+		_, appErr := th.App.GetLatestVersion(th.Context.WithContext(ctx), ok.URL)
-+		require.NotNil(t, appErr)
-+
-+		release, appErr := th.App.GetLatestVersion(th.Context, ok.URL)
-+		require.Nil(t, appErr)
-+		assert.Equal(t, version.TagName, release.TagName)
-+		assert.Equal(t, int32(1), requests.Load())
-+	})
-+
-+	t.Run("no request while security alerts are off", func(t *testing.T) {
-+		require.NoError(t, th.App.clearLatestVersionCache())
-+		ok := countingServer(t, http.StatusOK)
-+		_, appErr := th.App.GetLatestVersion(th.Context, ok.URL)
-+		require.Nil(t, appErr)
-+		require.Equal(t, int32(1), requests.Load())
-+
-+		th.App.UpdateConfig(func(cfg *model.Config) { cfg.ServiceSettings.EnableSecurityFixAlert = model.NewPointer(false) })
-+		t.Cleanup(func() {
-+			th.App.UpdateConfig(func(cfg *model.Config) { cfg.ServiceSettings.EnableSecurityFixAlert = model.NewPointer(true) })
-+		})
-+
-+		assertDisabled := func(t *testing.T) {
-+			t.Helper()
-+			release, appErr := th.App.GetLatestVersion(th.Context, ok.URL)
-+			require.NotNil(t, appErr)
-+			assert.Nil(t, release)
-+			assert.Equal(t, "app.admin.get_latest_version.disabled.app_error", appErr.Id)
-+			assert.Equal(t, http.StatusNotImplemented, appErr.StatusCode)
-+		}
-+		assertDisabled(t)
-+		require.NoError(t, th.App.clearLatestVersionCache())
-+		assertDisabled(t)
-+		assert.Equal(t, int32(1), requests.Load())
-+	})
- }
- 
- type queryLogsCluster struct {
-```
-
-**File**: `server/channels/app/channels.go` (modified, +1/-0)
-```diff
-@@ -305,6 +305,7 @@ func (ch *Channels) Start() error {
- 	})
- 
- 	ch.AddConfigListener(ch.clearABACRenderCachesOnFlip)
-+	ch.AddConfigListener(ch.clearLatestVersionCacheOnFlip)
- 
- 	// TODO: This should be moved to the platform service.
- 	if err := ch.srv.platform.EnsureAsymmetricSigningKey(); err != nil {
-```
-
-**File**: `server/channels/app/health_check_snapshot.go` (modified, +9/-6)
-```diff
-@@ -54,12 +54,15 @@ func (a *App) buildHealthSnapshotWithLatestVersionURL(rctx request.CTX, latestVe
- 	// The Makefile stamps BuildDate with `date -u`; dev builds leave the zero time.
- 	snapshot.Version.BuildDate, _ = time.Parse(time.UnixDate, model.BuildDate)
- 
--	release, appErr := a.GetLatestVersion(rctx, latestVersionURL)
--	if appErr != nil {
--		sections[model.SectionVersion] = appErr
--	} else {
--		sections[model.SectionVersion] = nil
--		snapshot.Version.Latest = strings.TrimPrefix(release.TagName, "v")
-+	// With the check off, Latest stays empty and the version rules read the reason from the config.
-+	sections[model.SectionVersion] = nil
-+	if *a.Config().ServiceSettings.EnableSecurityFixAlert {
-+		release, appErr := a.GetLatestVersion(rctx, latestVersionURL)
-+		if appErr != nil {
-+			sections[model.SectionVersion] = appErr
-+		} else {
-+			snapshot.Version.Latest = strings.TrimPrefix(release.TagName, "v")
-+		}
- 	}
- 
- 	return snapshot, nil
-```
-
----
-
-### Incident Patch 2: `19c11116` (2026-11-18)
-**Commit Message**: Fix channel intro layout shift while the total user count loads (#40119)
-
-* Prevent channel intro layout shift while the total user count loads
-
-The channel intro picks its action buttons based on whether the workspace has
-fewer than 10 users, but the count is fetched asynchronously. While it was
-unknown, undefined < 10 evaluated to false and the intro rendered the 10+ user
-layout, then shrank by ~30px once /users/stats returned on small workspaces.
-
-The post list now fetches the count and keeps its loading screen up until it is
-known when the intro is about to be shown for the first time, so the intro's
-first paint is final. The intro itself no longer guesses a layout for an
-unknown count.
-
-* Add E2E guard for channel intro layout shift when the user count loads late
-
-* Stop hiding posts if the total user count takes too long to load
-
-* Release the held user count only after the web app requests it in the intro E2E guard
-
-* Address PR feedback: 0 answered, 1 resolved, 0 declined
-
-Fetch the total user count when the post list mounts whenever it is unknown,
-in parallel with the posts request, instead of waiting for the oldest post
-to be known.
-
----------
-
-Co-authored-by: Cursor Agen
-
-**File**: `e2e-tests/playwright/specs/functional/channels/post_list/channel_intro_layout.spec.ts` (added, +91/-0)
-```diff
-@@ -0,0 +1,91 @@
+@@ -0,0 +1,149 @@
 +// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 +// See LICENSE.txt for license information.
 +
-+import type {Page} from '@playwright/test';
++import {PreferenceTypes} from 'mattermost-redux/action_types';
++import {Client4} from 'mattermost-redux/client';
 +
-+import {expect, test, watchElementSize} from '@mattermost/playwright-lib';
++import configureStore from 'store';
 +
-+// The intro picks its action buttons based on whether the workspace has fewer than 10 users
-+const testCases = [
-+    {name: 'fewer than 10 users', totalUsersCount: 3, expectedButton: /Invite others to the workspace/},
-+    {name: '10 or more users', totalUsersCount: 50, expectedButton: /^Favorite$/},
-+];
++import {saveRailListPreference} from './product_rail';
 +
-+for (const {name, totalUsersCount, expectedButton} of testCases) {
-+    /**
-+     * @objective Verify the channel intro does not change size when the total user count it depends on loads after
-+     * the channel posts
-+     */
-+    test(
-+        `keeps the channel intro size stable when the user count loads late with ${name}`,
-+        {tag: '@post_list'},
-+        async ({pw}) => {
-+            const {adminClient, team, user, userClient} = await pw.initSetup();
++const HIDDEN_KEY = 'sidebar_settings--product_rail_hidden_items';
 +
-+            const channel = await userClient.createChannel({
-+                team_id: team.id,
-+                name: `channel-intro-${pw.random.id()}`,
-+                display_name: 'Channel intro layout',
-+                type: 'O',
++// A save the test settles by hand.
++type PendingSave = {value: string; resolve: () => void; reject: () => void};
++
++describe('saveRailListPreference', () => {
++    let saves: PendingSave[];
++
++    beforeEach(() => {
++        saves = [];
++        jest.spyOn(Client4, 'savePreferences').mockImplementation((_userId, preferences) => new Promise((resolve, reject) => {
++            saves.push({
++                value: preferences[0].value!,
++                resolve: () => resolve({status: 'OK'}),
++                reject: () => reject(new Error('save failed')),
 +            });
++        }));
++    });
 +
-+            // # Delete the join messages so that only the channel intro is shown
-+            const posts = await adminClient.getPosts(channel.id);
-+            for (const postId of posts.order) {
-+                await adminClient.deletePost(postId);
-+            }
++    // Lets queued promise callbacks run.
++    const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
 +
-+            const {channelsPage, page} = await pw.testBrowser.login(user);
-+            const sizeWatcher = await watchElementSize(page, 'channelIntro');
++    // Saves are queued across the module, so settle any a test left open before the next one.
++    afterEach(async () => {
++        for (let i = 0; i < saves.length; i++) {
++            saves[i].resolve();
++            // eslint-disable-next-line no-await-in-loop
++            await flush();
++        }
++        jest.restoreAllMocks();
++    });
 +
-+            // # Hold back the total user count
-+            const usersStats = await holdBackUsersStats(page, totalUsersCount);
++    function setUp(initialValue?: string) {
++        const store = configureStore();
++        if (initialValue !== undefined) {
++            store.dispatch({type: PreferenceTypes.RECEIVED_PREFERENCES, data: [{category: 'sidebar_settings', name: 'product_rail_hidden_items', user_id: '', value: initialValue}]});
++        }
++        const savedValue = () => store.getState().entities.preferences.myPreferences[HIDDEN_KEY]?.value;
++        const save = (value: string) => store.dispatch(saveRailListPreference('product_rail_hidden_items', value));
++        return {savedValue, save};
++    }
 +
-+            // # Open the channel and wait for both the total user count request and the channel posts
-+            const postsLoaded = page.waitForResponse(
-+                (response) => response.url().includes(`/channels/${channel.id}/posts`) && response.ok(),
-+            );
-+            await channelsPage.goto(team.name, channel.name);
-+            await Promise.all([usersStats.requested, postsLoaded]);
++    test('should show the new list straight away', async () => {
++        const {savedValue, save} = setUp('[]');
 +
-+            // # Let the total user count load
-+            usersStats.release();
++        await save('["boards"]');
 +
-+            // * Verify that the intro shows the action buttons for the user count
-+            await expect(
-+                channelsPage.centerView.channelIntro.getByRole('button', {name: expectedButton}),
-+            ).toBeVisible();
++        expect(savedValue()).toBe('["boards"]');
++    });
 +
-+            // * Verify that the intro was only ever rendered at one size
-+            expect(await sizeWatcher.isWatchingElement()).toBe(true);
-+            expect(await sizeWatcher.getObservations()).toHaveLength(1);
-+        },
-+    );
++    test('should send saves one after another, in the order they were made', async () => {
++        const {save} = setUp('[]');
++
++        await save('["boards"]');
++        await save('["boards","playbooks"]');
++        await flush();
++
++        // The second waits for the first to settle.
++        expect(saves.map((s) => s.value)).toEqual(['["boards"]']);
++
++        saves[0].resolve();
++        await flush();
++
++        expect(saves.map((s) => s.value)).toEqual(['["boards"]', '["boards","playbooks"]']);
++    });
++
++    test('should put back the last list the server accepted when a save fails', async () => {
++        const {savedValue, save} = setUp('["boards"]');
++
++        await save('["boards","playbooks"]');
++        await flush();
++        saves[0].reject();
++        await flush();
++
++        expect(savedValue()).toBe('["boards"]');
++    });
++
++    test('should not undo a newer change when an earlier save fails', async () => {
++        const {savedValue, save} = setUp('[]');
++
++        await save('["boards"]');
++        await save('["boards","playbooks"]');
++        await flush();
++        saves[0].reject();
++        await flush();
++
++        expect(savedValue()).toBe('["boards","playbooks"]');
++
++        // The newer save then goes through as usual.
++        saves[1].resolve();
++        await flush();
++        expect(savedValue()).toBe('["boards","playbooks"]');
++    });
++
++    test('should not undo a newer change that returned to the same list when an earlier save fails', async () => {
++        const {savedValue, save} = setUp('[]');
++
++        // Unpin, pin again and unpin again: the newest list matches the first.
++        await save('["mattermost-ai"]');
++        await save('[]');
++        await save('["mattermost-ai"]');
++        await flush();
++        saves[0].reject();
++        await flush();
++
++        expect(savedValue()).toBe('["mattermost-ai"]');
++
++        saves[1].resolve();
++        await flush();
++        saves[2].resolve();
++        await flush();
++        expect(savedValue()).toBe('["mattermost-ai"]');
++    });
++
++    test('should fall back to the last accepted list when the newest of several saves fails', async () => {
++        const {savedValue, save} = setUp('[]');
++
++        await save('["boards"]');
++        await save('["boards","playbooks"]');
++        await flush();
++        saves[0].resolve();
++        await flush();
++        saves[1].reject();
++        await flush();
++
++        expect(savedValue()).toBe('["boards"]');
++    });
++
++    test('should remove a preference it created when that first save fails', async () => {
++        const {savedValue, save} = setUp();
++
++        await save('["boards"]');
++        await flush()
+```
+
+**File**: `webapp/channels/src/actions/views/product_rail.ts` (modified, +88/-0)
+```diff
+@@ -1,8 +1,15 @@
+ // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+ // See LICENSE.txt for license information.
+ 
++import type {PreferenceType} from '@mattermost/types/preferences';
++
++import {PreferenceTypes} from 'mattermost-redux/action_types';
+ import {savePreferences} from 'mattermost-redux/actions/preferences';
++import {Client4} from 'mattermost-redux/client';
+ import {getCurrentUserId} from 'mattermost-redux/selectors/entities/users';
++import {getPreferenceKey} from 'mattermost-redux/utils/preference_utils';
++
++import {getProductRailHiddenItems} from 'selectors/views/product_rail';
+ 
+ import {ActionTypes, Preferences} from 'utils/constants';
+ 
+@@ -58,3 +65,84 @@ export function setBoardsShownInChannels(shown: boolean): ActionFuncAsync {
+         }]));
+     };
+ }
++
++// Unpins a rail item into the rail's More menu, or pins it back on the rail. Aliases are other
++// names the preference may hold for the item: a product's bare plugin id, which earlier builds
++// saved and which also names the plugin's other products (aliasPeers). An alias is replaced by
++// those peers' own ids, so they keep their state.
++export function setProductRailItemHidden(itemId: string, hidden: boolean, aliases: string[] = [], aliasPeers: string[] = []): ActionFuncAsync {
++    return (dispatch, getState) => {
++        const current = getProductRailHiddenItems(getState());
++        const peersHiddenByAlias = aliases.some((alias) => current.includes(alias)) ? aliasPeers.filter((id) => !current.includes(id)) : [];
++        const others = [...current, ...peersHiddenByAlias].filter((id) => id !== itemId && !aliases.includes(id));
++        return dispatch(saveRailListPreference(Preferences.PRODUCT_RAIL_HIDDEN_ITEMS, JSON.stringify(hidden ? [...others, itemId] : others)));
++    };
 +}
++
++// Saves the order the user has put the rail items in.
++export function setProductRailOrder(order: string[]): ActionFuncAsync {
++    return (dispatch) => dispatch(saveRailListPreference(Preferences.PRODUCT_RAIL_ORDER, JSON.stringify(order)));
++}
++
++// Each rail list preference's save in flight, and the value the server last accepted (undefined
++// for none saved), from before the first save still in flight.
++const pendingSaves = new Map<string, Promise<void>>();
++const acceptedValues = new Map<string, PreferenceType | undefined>();
++
++// Each rail list preference's most recent save, by a number that goes up with every save made.
++let lastSaveNumber = 0;
++const latestSaves = new Map<string, number>();
 +
 +/**
-+ * Delay the total user count response until release is called, then respond with the given count. The requested
-+ * promise resolves once the web app has asked for the count.
++ * Saves one of the rail's list preferences (the unpinned items, or the order). Each save holds the
++ * whole list, built on the one before, so unlike savePreferences:
++ * - saves go to the server one after another, so an older list can't land after a newer one; and
++ * - a failed save puts back the last list the server accepted, rather than deleting the
++ *   preference (which would pin, or reorder, everything), unless a newer save has been made since
++ *   (even one back to the same list) or the list has changed otherwise, which then stands.
 + */
-+async function holdBackUsersStats(page: Page, totalUsersCount: number) {
-+    let markRequested = () => {};
-+    const requested = new Promise<void>((resolve) => {
-+        markRequested = resolve;
-+    });
++export function saveRailListPreference(name: string, value: string): ActionFuncAsync {
++    return async (dispatch, getState) => {
++        const state = getState();
++        const userId = getCurrentUserId(state);
++        const category = Preferences.CATEGORY_SIDEBAR_SETTINGS;
++        const key = getPreferenceKey(category, name);
++        const preference: PreferenceType = {category, name, user_id: userId, value};
++        const saveNumber = ++lastSaveNumber;
++        latestSaves.set(name, saveNumber);
 +
-+    let release = () => {};
-+    const released = new Promise<void>((resolve) => {
-+        release = resolve;
-+    });
++        if (!pendingSaves.has(name)) {
++            acceptedValues.set(name, state.entities.preferences.myPreferences[key]);
++        }
 +
-+    await page.route(
-+        (url) => url.pathname.endsWith('/api/v4/users/stats'),
-+        async (route) => {
-+            markRequested();
-+            await released;
-+            await route.fulfill({json: {total_users_count: totalUsersCount}});
-+        },
-+    );
++        // The list shows straight away; the server catches up.
++        dispatch({type: PreferenceTypes.RECEIVED_PREFERENCES, data: [preference]});
 +
-+    return {requested, release};
-+}
++        const previousSave = pendingSaves.get(name) ?? Promise.resolve();
++        const save = previousSave.then(async () => {
++            try {
++                await Client4.savePreferences(userId, [preference]);
++                acceptedValues.set(name, preference);
++            } catch {
++                const isLatestSave = latestSaves.get(name) === saveNumber;
++                if (!isLatestSave || getState().entities.preferences.myPreferences[key]?.value !== value) {
++                    return;
++                }
++                const accepted = acceptedValues.get(name);
++                if (accepted) {
++                    dispatch({type: PreferenceTypes.RECEIVED_PREFERENCES, data: [accepted]});
++                } else {
++                    dispatch({type: PreferenceTypes.DELETED_PREFERENCES, data: [preference]});
++                }
++            }
++        });
++        pendingSaves.set(name, save);
++        save.then(() => {
++            if (pendingSaves.get(name) === save) {
++                pendingSaves.delete(name);
++            }
++        });
++
++        return {data: true};
++    };
 ```
 
-**File**: `webapp/channels/src/components/post_view/channel_intro_message/channel_intro_message.test.tsx` (modified, +129/-1)
+**File**: `webapp/channels/src/components/channel_layout/channel_controller.test.tsx` (modified, +2/-2)
 ```diff
-@@ -70,7 +70,7 @@ describe('components/post_view/ChannelIntroMessages', () => {
-         teamIsGroupConstrained: false,
-         creatorName: 'creatorName',
-         currentUser: users[0],
--        stats: {},
-+        stats: {total_users_count: 20},
-         usersLimit: 10,
-         isMobileView: false,
-         channelKind: 'channel' as const,
-@@ -266,6 +266,134 @@ describe('components/post_view/ChannelIntroMessages', () => {
-         });
-     });
- 
-+    describe('total user count', () => {
-+        const stateWithInvitePermissions = {
-+            ...initialState,
-+            entities: {
-+                ...initialState.entities,
-+                users: {
-+                    ...initialState.entities.users,
-+                    currentUserId: 'test-user-id',
-+                    profiles: {
-+                        ...initialState.entities.users.profiles,
-+                        'test-user-id': TestHelper.getUserMock({id: 'test-user-id', roles: 'system_user'}),
-+                    },
-+                },
-+                teams: {
-+                    ...initialState.entities.teams,
-+                    currentTeamId: 'team-id',
-+                },
-+                roles: {
-+                    roles: {
-+                        system_user: {permissions: [Permissions.ADD_USER_TO_TEAM, Permissions.INVITE_GUEST, Permissions.INVITE_USER]},
-+                    },
-+                },
-+            },
-+        } as any;
-+
-+        const channelsUsingCount = [
-+            {name: 'open channel', channel},
-+            {name: 'default channel', channel: {...channel, name: Constants.DEFAULT_CHANNEL}},
-+            {name: 'off-topic channel', channel: {...channel, name: Constants.OFFTOPIC_CHANNEL}},
-+        ];
-+
-+        for (const testCase of channelsUsingCount) {
-+            describe(testCase.name, () => {
-+                const props = {...baseProps, channel: testCase.channel, enableUserCreation: true};
-+
-+                test('should not render any action buttons while the count is unknown', () => {
-+                    const {container} = renderWithContext(
-+                        <ChannelIntroMessage
-+                            {...props}
-+                            stats={{}}
-+                        />,
-+                        stateWithInvitePermissions,
-+                    );
-+
-+                    expect(screen.getByText('test channel')).toBeInTheDocument();
-+                    expect(container.querySelector('.channel-intro__actions')).not.toBeInTheDocument();
-+                    expect(screen.queryByRole('button')).not.toBeInTheDocument();
-+                    expect(container.querySelector('.loading-screen, .fa-spinner')).not.toBeInTheDocument();
-+                });
-+
-+                test('should only render the invite button when there are fewer users than the limit', () => {
-+                    renderWithContext(
-+                        <ChannelIntroMessage
-+                            {...props}
-+                            stats={{total_users_count: 3}}
-+                        />,
-+                        stateWithInvitePermissions,
-+                    );
-+
-+                    expect(screen.getByRole('button', {name: /Invite others to the workspace/})).toBeInTheDocument();
-+                    expect(screen.queryByRole('button', {name: 'Favorite'})).not.toBeInTheDocument();
-+                    expect(screen.queryByRole('button', {name: 'Notifications'})).not.toBeInTheDocument();
-+                });
-+
-+                test('should render the channel action buttons when there are at least as many users as the limit', () => {
-+                    renderWithContext(
-+                        <ChannelIntroMessage
-+                            {...props}
-+                            stats={{total_users_count: 10}}
-+                        />,
-+                        stateWithInvitePermissions,
-+                    );
-+
-+                    expect(screen.getByRole('button', {name: 'Favorite'})).toBeInTheDocument();
-+                    expect(screen.getByRole('button', {name: 'Notifications'})).toBeInTheDocument();
-+                    expect(screen.queryByRole('button', {name: /Invite others to the workspace/})).not.toBeInTheDocument();
-+                });
-+
-+                test('should go straight from no action buttons to the final layout once the count loads', () => {
-+                    const {rerender} = renderWithContext(
-+                        <ChannelIntroMessage
-+                            {...props}
-+                            stats={{}}
-+                        />,
-+                        stateWithInvitePermissions,
-+                    );
-+
-+                    expect(screen.queryByRole('button', {name: 'Favorite'})).not.toBeInTheDocument();
-+
-+                    rerender(
-+                        <ChannelIntroMessage
-+                            {...props}
-+                            stats={{total_users_count: 3}}
-+                        />,
-+                    )
-```
-
-**File**: `webapp/channels/src/components/post_view/channel_intro_message/channel_intro_message.tsx` (modified, +9/-3)
-```diff
-@@ -380,7 +380,9 @@ function createOffTopicIntroMessage(
-         />
-     );
- 
--    if (inviteUsers) {
-+    if (totalUsers === undefined) {
-+        actionButtons = null;
-+    } else if (inviteUsers) {
-         actionButtons = (
-             <div className='channel-intro__actions'>
-                 {actionButtons = channelInviteButton}
-@@ -504,7 +506,9 @@ function createDefaultIntroMessage(
+@@ -108,10 +108,10 @@ describe('ChannelController with the product rail', () => {
          );
      }
  
--    if (inviteUsers) {
-+    if (totalUsers === undefined) {
-+        actionButtons = null;
-+    } else if (inviteUsers) {
-         actionButtons = (
-             <div className='channel-intro__actions'>
-                 {actionButtons = teamInviteLink}
-@@ -785,7 +789,9 @@ function createStandardIntroMessage(
-         />
-     );
+-    it('hides the channel sidebar in Threads', () => {
++    it('shows the channel sidebar in Threads', () => {
+         renderAt('/team-one/threads', true);
  
--    if (inviteUsers) {
-+    if (totalUsers === undefined) {
-+        actionButtons = null;
-+    } else if (inviteUsers) {
-         actionButtons = (
-             <div className='channel-intro__actions'>
-                 {actionButtons = teamInviteLink}
+-        expect(screen.queryByTestId('sidebar')).not.toBeInTheDocument();
++        expect(screen.getByTestId('sidebar')).toBeInTheDocument();
+     });
+ 
+     it('shows the channel sidebar in a channel', () => {
 ```
 
-**File**: `webapp/channels/src/components/post_view/post_list/index.tsx` (modified, +14/-1)
+**File**: `webapp/channels/src/components/channel_layout/channel_controller.tsx` (modified, +1/-10)
 ```diff
-@@ -6,9 +6,11 @@ import {bindActionCreators} from 'redux';
- import type {Dispatch} from 'redux';
+@@ -4,11 +4,9 @@
+ import classNames from 'classnames';
+ import React, {lazy, useEffect} from 'react';
+ import {useDispatch, useSelector} from 'react-redux';
+-import {useRouteMatch} from 'react-router-dom';
  
- import {markChannelAsRead} from 'mattermost-redux/actions/channels';
-+import {getTotalUsersStats} from 'mattermost-redux/actions/users';
- import {RequestStatus} from 'mattermost-redux/constants';
--import {isMyChannelAutotranslated} from 'mattermost-redux/selectors/entities/channels';
-+import {getChannel, isMyChannelAutotranslated} from 'mattermost-redux/selectors/entities/channels';
- import {getRecentPostsChunkInChannel, makeGetPostsChunkAroundPost, getUnreadPostsChunk, getPost, isPostsChunkIncludingUnreadsPosts, getLimitedViews} from 'mattermost-redux/selectors/entities/posts';
-+import {getTotalUsersStats as getTotalUsersStatsSelector} from 'mattermost-redux/selectors/entities/users';
- import {memoizeResult} from 'mattermost-redux/utils/helpers';
- import {makePreparePostIdsForPostList} from 'mattermost-redux/utils/post_list';
+ import {cleanUpStatusAndProfileFetchingPoll} from 'mattermost-redux/actions/status_profile_polling';
+ import {getIsUserStatusesConfigEnabled} from 'mattermost-redux/selectors/entities/common';
+-import {isProductRailEnabled} from 'mattermost-redux/selectors/entities/general';
  
-@@ -22,13 +24,20 @@ import {
- } from 'actions/views/channel';
+ import {addVisibleUsersInCurrentChannelAndSelfToStatusPoll} from 'actions/status_actions';
  import {getIsMobileView} from 'selectors/views/browser';
+@@ -25,7 +23,6 @@ import UnreadsStatusHandler from 'components/unreads_status_handler';
  
-+import {Constants} from 'utils/constants';
- import {getLatestPostId} from 'utils/post_utils';
+ import Pluggable from 'plugins/pluggable';
+ import {Constants} from 'utils/constants';
+-import {TEAM_NAME_PATH_PATTERN} from 'utils/path';
  
- import type {GlobalState} from 'types/store';
+ const ProductNoticesModal = makeAsyncComponent('ProductNoticesModal', lazy(() => import('components/product_notices_modal')));
+ const ResetStatusModal = makeAsyncComponent('ResetStatusModal', lazy(() => import('components/reset_status_modal')));
+@@ -44,12 +41,6 @@ export default function ChannelController(props: Props) {
+     const enableMarkAllReadShortcut = useGetFeatureFlagValue('EnableShiftEscapeToMarkAllRead') === 'true';
+     const dispatch = useDispatch();
  
- import PostList from './post_list';
- 
- const isFirstLoad = (state: GlobalState, channelId: string) => !state.entities.posts.postsInChannel[channelId];
-+
-+// The intro for these channels picks its action buttons based on the total user count
-+const isChannelIntroUsingTotalUsers = (state: GlobalState, channelId: string) => {
-+    const channelType = getChannel(state, channelId)?.type;
-+    return channelType !== Constants.DM_CHANNEL && channelType !== Constants.GM_CHANNEL;
-+};
- const memoizedGetLatestPostId = memoizeResult((postIds: string[]) => getLatestPostId(postIds));
- 
- // This function is added as a fail safe for the channel sync issue we have.
-@@ -59,6 +68,7 @@ function makeMapStateToProps() {
-         const isPrefetchingInProcess = channelViewState.channelPrefetchStatus[channelId] === RequestStatus.STARTED;
-         const limitedViews = getLimitedViews(state);
-         const hasInaccessiblePosts = Boolean(limitedViews.channels[channelId]) || limitedViews.channels[channelId] === 0;
-+        const isTotalUsersCountUnknown = getTotalUsersStatsSelector(state).total_users_count === undefined;
- 
-         const focusedPost = getPost(state, focusedPostId || '');
- 
-@@ -103,6 +113,8 @@ function makeMapStateToProps() {
-             isMobileView: getIsMobileView(state),
-             hasInaccessiblePosts,
-             isChannelAutotranslated: isMyChannelAutotranslated(state, channelId),
-+            isTotalUsersCountUnknown,
-+            needsTotalUsersStats: atOldestPost && isTotalUsersCountUnknown && isChannelIntroUsingTotalUsers(state, channelId),
-         };
-     };
- }
-@@ -117,6 +129,7 @@ function mapDispatchToProps(dispatch: Dispatch) {
-             syncPostsInChannel,
-             markChannelAsRead,
-             updateNewMessagesAtInChannel,
-+            getTotalUsersStats,
-         }, dispatch),
-     };
- }
+-    // The product rail gives Threads a place of its own, so the channel sidebar steps aside for it.
+-    // Not on mobile, where the rail is hidden and the sidebar is the way back to channels.
+-    const productRailEnabled = useSelector(isProductRailEnabled);
+-    const inThreads = useRouteMatch(`/:team(${TEAM_NAME_PATH_PATTERN})/threads`) !== null;
+-    const hideSidebar = productRailEnabled && inThreads && !isMobileView;
+-
+     useEffect(() => {
+         const {navigator} = window;
+         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+@@ -85,7 +76,7 @@ export default function ChannelController(props: Props) {
+         <>
+             <CRTPostsChannelResetWatcher/>
+             <QueryParamActionController/>
+-            {!hideSidebar && <Sidebar/>}
++            <Sidebar/>
+             <div
+                 id='channel_view'
+                 className='channel-view'
 ```
 
-**File**: `webapp/channels/src/components/post_view/post_list/post_list.test.tsx` (modified, +148/-1)
+**File**: `webapp/channels/src/components/menu/menu.test.tsx` (modified, +120/-0)
 ```diff
-@@ -3,7 +3,7 @@
- 
- import React from 'react';
- 
--import {renderWithContext, act, runPostRenderAct} from 'tests/react_testing_utils';
-+import {renderWithContext, act, runPostRenderAct, screen} from 'tests/react_testing_utils';
- import {PostRequestTypes} from 'utils/constants';
- 
- import PostList, {MAX_EXTRA_PAGES_LOADED} from './post_list';
-@@ -48,6 +48,7 @@ const actionsProp = {
-     markChannelAsRead: jest.fn(),
-     updateNewMessagesAtInChannel: jest.fn(),
-     toggleShouldStartFromBottomWhenUnread: jest.fn(),
-+    getTotalUsersStats: jest.fn().mockResolvedValue({data: {total_users_count: 3}}),
- };
- 
- const lastViewedAt = 1532345226632;
-@@ -547,4 +548,150 @@ describe('components/post_view/post_list', () => {
-             }));
+@@ -556,3 +556,123 @@ describe('Menu — isMenuOpen control transition matrix', () => {
          });
      });
+ });
 +
-+    describe('waiting for the total user count used by the channel intro', () => {
-+        const postIds = createFakePosIds(2);
-+        const unknownCountProps = {...baseProps, isTotalUsersCountUnknown: true};
++describe('Menu with openOnHover', () => {
++    // Only a menu opened by a click hides the rest of the page from assistive technology.
++    const teamsButton = () => screen.getByRole('button', {name: 'Teams', hidden: true});
 +
-+        test('should fetch the count on mount before the posts are loaded', () => {
-+            renderWithContext(
-+                <PostList
-+                    {...{...unknownCountProps, postListIds: undefined, needsTotalUsersStats: false}}
-+                />,
-+            );
-+
-+            expect(screen.getByTestId('loading-screen')).toBeInTheDocument();
-+            expect(actionsProp.getTotalUsersStats).toHaveBeenCalledTimes(1);
-+        });
-+
-+        test('should show the loading screen until the count is known', async () => {
-+            const {rerender} = renderWithContext(
-+                <PostList
-+                    {...{...unknownCountProps, postListIds: postIds, atOldestPost: true, needsTotalUsersStats: true}}
-+                />,
-+            );
-+
-+            expect(screen.getByTestId('loading-screen')).toBeInTheDocument();
-+            expect(screen.queryByTestId('virt-post-list')).not.toBeInTheDocument();
-+            expect(actionsProp.getTotalUsersStats).toHaveBeenCalledTimes(1);
-+
-+            await runPostRenderAct();
-+
-+            rerender(
-+                <PostList
-+                    {...{...baseProps, isTotalUsersCountUnknown: false, postListIds: postIds, atOldestPost: true, needsTotalUsersStats: false}}
-+                />,
-+            );
-+
-+            expect(screen.getByTestId('virt-post-list')).toBeInTheDocument();
-+            expect(actionsProp.getTotalUsersStats).toHaveBeenCalledTimes(1);
-+        });
-+
-+        test('should not fetch the count again once the posts reach the oldest post', () => {
-+            actionsProp.getTotalUsersStats.mockReturnValueOnce(new Promise(() => {}));
-+
-+            const {rerender} = renderWithContext(
-+                <PostList
-+                    {...{...unknownCountProps, postListIds: undefined, needsTotalUsersStats: false}}
-+                />,
-+            );
-+
-+            rerender(
-+                <PostList
-+                    {...{...unknownCountProps, postListIds: postIds, atOldestPost: true, needsTotalUsersStats: true}}
-+                />,
-+            );
-+
-+            expect(screen.getByTestId('loading-screen')).toBeInTheDocument();
-+            expect(actionsProp.getTotalUsersStats).toHaveBeenCalledTimes(1);
-+        });
-+
-+        test('should show the posts if fetching the count fails', async () => {
-+            actionsProp.getTotalUsersStats.mockResolvedValueOnce({error: new Error('failed')});
-+
-+            renderWithContext(
-+                <PostList
-+                    {...{...unknownCountProps, postListIds: postIds, atOldestPost: true, needsTotalUsersStats: true}}
-+                />,
-+            );
-+
-+            expect(screen.getByTestId('loading-screen')).toBeInTheDocument();
-+
-+            await runPostRenderAct();
-+
-+            expect(screen.getByTestId('virt-post-list')).toBeInTheDocument();
-+            expect(actionsProp.getTotalUsersStats).toHaveBeenCalledTimes(1);
-+        });
-+
-+        test('should show the posts if fetching the count takes too long', async () => {
-+            jest.useFakeTimers();
-+            actionsProp.getTotalUsersStats.mockReturnValueOnce(new Promise(() => {}));
-+
-+            renderWithContext(
-+                <PostList
-+                    {...{...unknownCountProps, postListIds: postIds, atOldestPost: true, needsTotalUsersStats: true}}
-+                />,
-+            );
-+
-+            expect(screen.getByTestId('loading-screen')).toBeInTheDocument();
-+
-+            await act(async () => {
-+                jest.advanceTimersByTime(2000);
-+            });
-+
-+            expect(screen.getByTestId('virt-post-list')).toBeInTheDocument();
-+            expect(actionsProp.getTotalUsersStats).toHaveBeenCalledTimes(1);
-+
-+            jest.useRealTimers();
-+        });
-+
-+        test('should not fetch the count when it is already known', () => {
-+            renderWithContext(
-+                <PostList
-+                    {...{...baseProps, isTotalUsersCountUnknown: false, postListIds: postIds, needsTotalUsersStat
-```
-
-**File**: `webapp/channels/src/components/post_view/post_list/post_list.tsx` (modified, +56/-1)
-```diff
-@@ -23,6 +23,9 @@ export const MAX_EXTRA_PAGES_LOADED = 30;
- const USER_SCROLL_POSTS_PER_PAGE = Constants.POST_CHUNK_SIZE / 2; // 30 posts for user scroll
- const AUTO_LOAD_POSTS_PER_PAGE = 200; // Maximum server limit for auto-loading
- 
-+// How long to keep posts hidden while waiting for the total user count before showing them anyway
-+const TOTAL_USERS_STATS_TIMEOUT = 2000;
-+
- // Measures the time between channel or team switch started and the post list component rendering posts.
- // Set "fresh" to true when the posts have not been loaded before.
- function markAndMeasureChannelSwitchEnd(fresh = false) {
-@@ -115,6 +118,13 @@ export interface Props {
- 
-     isChannelAutotranslated: boolean;
- 
-+    isTotalUsersCountUnknown?: boolean;
-+
-+    /*
-+     * Whether the channel intro will be shown before the total user count it depends on is known
-+     */
-+    needsTotalUsersStats?: boolean;
-+
-     actions: {
- 
-         /*
-@@ -145,13 +155,23 @@ export interface Props {
- 
-         markChannelAsRead: (channelId: string) => void;
-         updateNewMessagesAtInChannel: typeof updateNewMessagesAtInChannel;
-+        getTotalUsersStats: () => Promise<ActionResult>;
-     };
- }
- 
- interface State {
-     loadingNewerPosts: boolean;
-     loadingOlderPosts: boolean;
-     autoRetryEnable: boolean;
-+    channelId: string;
-+    postListShown: boolean;
-+    stoppedWaitingForTotalUsersStats: boolean;
-+}
-+
-+// The channel intro changes height once the total user count loads, so hold the loading screen until then
-+// to avoid shifting the post list. This only applies before the list is first shown for a channel.
-+function isWaitingForTotalUsersStats(needsTotalUsersStats: boolean | undefined, state: State) {
-+    return Boolean(needsTotalUsersStats) && !state.postListShown && !state.stoppedWaitingForTotalUsersStats;
- }
- 
- export default class PostList extends React.PureComponent<Props, State> {
-@@ -165,6 +185,7 @@ export default class PostList extends React.PureComponent<Props, State> {
-         toggleShouldStartFromBottomWhenUnread: () => void;
-     };
-     private mounted: boolean | undefined;
-+    private totalUsersStatsTimeout: NodeJS.Timeout | undefined;
- 
-     // public for testing purposes only
-     public extraPagesLoaded: number;
-@@ -175,6 +196,9 @@ export default class PostList extends React.PureComponent<Props, State> {
-             loadingNewerPosts: false,
-             loadingOlderPosts: false,
-             autoRetryEnable: true,
-+            channelId: props.channelId,
-+            postListShown: false,
-+            stoppedWaitingForTotalUsersStats: false,
-         };
- 
-         this.extraPagesLoaded = 0;
-@@ -190,6 +214,13 @@ export default class PostList extends React.PureComponent<Props, State> {
-         };
-     }
- 
-+    static getDerivedStateFromProps(props: Props, state: State): Partial<State> {
-+        const postListShown = (props.channelId === state.channelId && state.postListShown) ||
-+            (Boolean(props.postListIds) && !isWaitingForTotalUsersStats(props.needsTotalUsersStats, {...state, postListShown: false}));
-+
-+        return {channelId: props.channelId, postListShown};
++    function renderHoverMenu() {
++        const onItemClick = jest.fn();
++        renderWithContext(
++            <>
++                <input aria-label='Message'/>
++                <Menu
++                    menuButton={{id: 'hover-menu-button', children: 'Teams'}}
++                    menu={{id: 'hover-menu', 'aria-label': 'Teams menu', openOnHover: true}}
++                >
++                    <MenuItem
++                        id='hover-menu-item'
++                        labels={<span>{'Alpha'}</span>}
++                        onClick={onItemClick}
++                    />
++                </Menu>
++            </>,
++        );
++        return {onItemClick};
 +    }
 +
-     componentDidMount() {
-         this.mounted = true;
-         if (this.props.channelId) {
-@@ -198,6 +229,11 @@ export default class PostList extends React.PureComponent<Props, State> {
-                 markAndMeasureChannelSwitchEnd();
-             }
++    test('should open on hover without taking focus, and close when the pointer leaves', async () => {
++        renderHoverMenu();
++        const message = screen.getByRole('textbox', {name: 'Message'});
++        message.focus();
++
++        await userEvent.hover(teamsButton());
++
++        expect(await screen.findByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
++        expect(message).toHaveFocus();
++
++        // The page stays available to assistive technology under a menu opened by hovering.
++        expect(screen.getByRole('textbox', {name: 'Message'})).toBeInTheDocument();
++        expect(screen.getByRole('button', {name: 'Teams'})).toBeInTheDocument();
++
++        await userEvent.unhover(teamsButton());
++
++        await waitFor(() => expect(screen.queryByRole('menuitem', {name: 'Alpha'})).not.toBeInTheDocument());
++    });
++
++    test('should stay open while the pointer moves onto the menu, and run its items', async () => {
++        const {onItemClick} = renderHoverMenu();
++
++        await userEvent.hover(teamsButton());
++        const item = await screen.findByRole('menuitem', {name: 'Alpha'});
++        await userEvent.unhover(teamsButton());
++        await userEvent.hover(item);
++        await userEvent.click(item);
++
++        await waitFor(() => expect(onItemClick).toHaveBeenCalled());
++    });
++
++    test('should stay open after the pointer leaves when opened by a click', async () => {
++        renderHoverMenu();
++
++        await userEvent.click(teamsButton());
++        expect(await screen.findByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
++
++        await userEvent.unhover(teamsButton());
++        await new Promise((resolve) => setTimeout(resolve, 400));
++
++        expect(screen.getByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
++    });
++
++    test('should close on Escape while focus stays outside it', async () => {
++        renderHoverMenu();
++        screen.getByRole('textbox', {name: 'Message'}).focus();
++
++        await userEvent.hover(teamsButton());
++        expect(await screen.findByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
++
++        await userEvent.keyboard('{Escape}');
++
++        await waitFor(() => expect(screen.queryByRole('menuitem', {name: 'Alpha'})).not.toBeInTheDocument());
++        expect(screen.getByRole('textbox', {name: 'Message'})).toHaveFocus();
++    });
++
++    test('should behave as a click-opened menu once a click takes over, and return focus to the trigger', async () => {
++        renderHoverMenu();
++
++        await userEvent.hover(teamsButton());
++        expect(await screen.findByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
++        await userEvent.click(teamsButton());
++
++        // Like a click-opened menu, it now hides the rest of the page from assistive technology.
++        await waitFor(() => expect(screen.queryByRole('button', {name: 'Teams'})).not.toBeInTheDocument());
++        expect(screen.getByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
++
++        await userEvent.keyboard('{Escape}');
++
++        await waitFor(() => expect(screen.queryByRole('menuitem', {name: 'Alpha'})).not.toBeInTheDocument());
++        expect(teamsButton()).toHaveFocus();
++    });
++
++    test('should leave focus alone after a click took over, when the menu opts out of restoring it', async () => {
++        renderWithContext(
++            <Menu
++                menuButton={{id: 'hover-menu-button', children: 'Teams'}}
++                menu={{id: 'hover-menu', 'aria-label': 'Teams menu', openOnHover: true, disableRestoreFocus: true}}
++            >
++                <MenuItem
++                    id='hover-menu-item'
++                    labels={<span>{'Alpha'}</span>}
++                />
++            </Menu>,
++        );
++
++        await userEvent.hover(teamsButton());
++        expect(await screen.findByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
++        await userEvent.click(teamsButton());
++        await userEve
+```
+
+**File**: `webapp/channels/src/components/menu/menu.tsx` (modified, +128/-7)
+```diff
+@@ -9,6 +9,7 @@ import React, {
+     useState,
+     useEffect,
+     useCallback,
++    useRef,
+ } from 'react';
+ import type {
+     ButtonHTMLAttributes,
+@@ -124,6 +125,14 @@ type MenuProps = {
+      */
+     disableRestoreFocus?: boolean;
+ 
++    /**
++     * When true, hovering the trigger opens the menu, and moving the pointer off both the trigger
++     * and the menu closes it again. A menu opened this way doesn't take focus or block the page,
++     * so hovering past it doesn't interrupt the user. Clicking the trigger, or opening it from the
++     * keyboard, still opens it as usual. Ignored in mobile view.
++     */
++    openOnHover?: boolean;
++
+     /**
+      * When false, the menu will not auto-focus the first item on open.
+      * Focus stays on the trigger button; ArrowDown moves focus into the list.
+@@ -140,6 +149,24 @@ type MenuProps = {
+ };
+ 
+ const defaultAnchorOrigin = {vertical: 'bottom', horizontal: 'left'} as PopoverOrigin;
++
++// How long the pointer rests on an openOnHover trigger before its menu opens, and how long it can be
++// off both the trigger and the menu (crossing the gap between them, say) before the menu closes.
++const HOVER_OPEN_DELAY = 100;
++const HOVER_CLOSE_DELAY = 200;
++
++// Menus opened by hovering are mounted in a container of their own. The popover hides everything
++// sharing its container from assistive technology, so this keeps the rest of the page available.
++function getHoverMenuContainer() {
++    const id = 'hoverMenuContainer';
++    let container = document.getElementById(id);
++    if (!container) {
++        container = document.createElement('div');
++        container.id = id;
++        document.body.appendChild(container);
++    }
++    return container;
++}
+ const defaultTransformOrigin = {vertical: 'top', horizontal: 'left'} as PopoverOrigin;
+ 
+ interface Props {
+@@ -178,6 +205,20 @@ export function Menu(props: Props) {
+     // Initialize from prop so initial mount with isMenuOpen={true} opens.
+     const [isMenuOpen, setIsMenuOpen] = useState(props.menu.isMenuOpen === true);
+ 
++    // Whether the menu is open because the pointer is over it (openOnHover), rather than from a click
++    // or the keyboard. Mirrored in a ref for the hover timers.
++    const [openedByHover, setOpenedByHover] = useState(false);
++    const openedByHoverRef = useRef(false);
++
++    // Set from a hover-open until the menu has closed, or a click takes it over. Mounting in the hover
++    // container (see getHoverMenuContainer) is part of it, and switching that while the menu closes
++    // would remount it and drop the chosen item's click handler. A click takeover does switch it, as a
++    // fresh popover: the modal only hides the page, locks scrolling, takes focus and remembers what to
++    // refocus when it opens, so the menu then behaves exactly as if the click had opened it.
++    const [hoverSession, setHoverSession] = useState(false);
++    const hoverTimer = useRef<number | undefined>(undefined);
++    const hoverEnabled = Boolean(props.menu.openOnHover) && !isMobileView;
++
+     // State (not ref) so MUI's anchorEl reacts when the button mounts.
+     const [menuButton, setMenuButton] = useState<HTMLElement | null>(null);
+ 
+@@ -194,6 +235,61 @@ export function Menu(props: Props) {
+         }
+     }
+ 
++    function setHoverOpened(byHover: boolean) {
++        openedByHoverRef.current = byHover;
++        setOpenedByHover(byHover);
++    }
++
++    function handleHoverEnter() {
++        if (!hoverEnabled) {
++            return;
++        }
++        window.clearTimeout(hoverTimer.current);
++        if (!isMenuOpen) {
++            hoverTimer.current = window.setTimeout(() => {
++                setHoverOpened(true);
++                setHoverSession(true);
++                setIsMenuOpen(true);
++            }, HOVER_OPEN_DELAY);
++        }
++    }
++
++    function handleHoverLeave() {
++        if (!hoverEnabled) {
++            return;
++        }
++        window.clearTimeout(hoverTimer.current);
++
++        // A menu opened by a click or the keyboard stays open until it's dismissed.
++        hoverTimer.current = window.setTimeout(() => {
++            if (openedByHoverRef.current) {
++                setIsMenuOpen(false);
++            }
++        }, HOVER_CLOSE_DELAY);
++    }
++
++    useEffect(() => {
++        if (!isMenuOpen) {
++            setHoverOpened(false);
++        }
++    }, [isMenuOpen]);
++
++    // Focus stays where it was under a hover-opened menu, so Escape there wouldn't reach the menu.
++    useEffect(() => {
++        if (!openedByHover) {
++            return undefined;
++        }
++        const closeOnEscape = (event: globalThis.KeyboardEvent) => {
++            if (event.key === 'Escape') {
++                setIsMenuOpen(false);
++            }
++        };
++        document.addEventListener('keydown', closeOnEscape);
++        return () => document.removeEventListener('keydown', closeOnEscape);
++    }, [openedByHover]);
++
++    useEffect(() => () => window.clearTimeout(hoverTimer.current), []);
++
+   
+```
+
+**File**: `webapp/channels/src/components/product_rail/product_rail.scss` (modified, +177/-73)
+```diff
+@@ -4,14 +4,30 @@
+ 
+     z-index: 17;
+     display: flex;
+-    overflow: auto;
++    overflow: hidden;
+     width: 72px;
+     flex-direction: column;
+     align-items: center;
+-    padding: 12px 0;
++
++    // Half of the top padding sits inside the scrolling part, so the team's badge isn't clipped.
++    padding: 6px 0 12px;
+     gap: 4px;
+     grid-area: product-rail;
+-    scrollbar-width: none;
++
++    // The team, the items and More scroll when the rail runs out of room; the bottom group (the team
++    // sidebar's plugin icons and its show button) stays in view below them.
++    &__scroll {
++        display: flex;
++        width: 100%;
++        min-height: 0;
++        flex: 1 1 auto;
++        flex-direction: column;
++        align-items: center;
++        padding-top: 6px;
++        gap: 4px;
++        overflow-y: auto;
++        scrollbar-width: none;
++    }
+ 
+     // Scoped under .app__body to win over the theme's link colors (.app__body a and its :hover).
+     .app__body &__item,
+@@ -159,6 +175,12 @@
+             top: -3px;
+             right: -3px;
          }
 +
-+        // Fetched alongside the posts since the intro may need it as soon as they arrive
-+        if (this.props.isTotalUsersCountUnknown) {
-+            this.loadTotalUsersStats();
++        .ProductRail__badge {
++            z-index: 2;
++            top: -6px;
++            right: -8px;
 +        }
      }
  
-     componentDidUpdate(prevProps: Props) {
-@@ -212,8 +248,27 @@ export default class PostList extends React.PureComponent<Props, State> {
- 
-     componentWillUnmount() {
-         this.mounted = false;
-+        clearTimeout(this.totalUsersStatsTimeout);
+     &__teamStackCard {
+@@ -181,6 +203,97 @@
+         }
      }
  
-+    loadTotalUsersStats = async () => {
-+        this.totalUsersStatsTimeout = setTimeout(this.stopWaitingForTotalUsersStats, TOTAL_USERS_STATS_TIMEOUT);
++    // The draggable items. Drag and drop measures margins, not gaps, so they're spaced with margins;
++    // the list's negative margin keeps the rail's usual gap before the More item.
++    &__items {
++        display: flex;
++        width: 100%;
++        flex-direction: column;
++        align-items: center;
++        margin-bottom: -4px;
++    }
 +
-+        const {error} = await this.props.actions.getTotalUsersStats();
++    // Each item sits in a wrapper that is dragged, and anchors its right-click menu beside it.
++    &__itemWrapper {
++        position: relative;
++        display: flex;
++        margin-bottom: 4px;
 +
-+        clearTimeout(this.totalUsersStatsTimeout);
-+
-+        if (error) {
-+            this.stopWaitingForTotalUsersStats();
++        &:focus-visible {
++            outline: none;
 +        }
-+    };
 +
-+    stopWaitingForTotalUsersStats = () => {
-+        if (this.mounted) {
-+            this.setState({stoppedWaitingForTotalUsersStats: true});
++        &--dragging .ProductRail__icon {
++            background: rgba(var(--sidebar-text-rgb), 0.16);
++            box-shadow: var(--elevation-3);
 +        }
-+    };
++    }
 +
-     postsOnLoad = async (channelId: string) => {
-         const {focusedPostId, isFirstLoad, latestPostTimeStamp, isPrefetchingInProcess, actions} = this.props;
-         if (focusedPostId) {
-@@ -357,7 +412,7 @@ export default class PostList extends React.PureComponent<Props, State> {
++    &__itemMenuAnchor {
++        position: absolute;
++        inset: 0;
++        pointer-events: none;
++    }
++
++    // With the team sidebar hidden, the bottom of the rail takes over the bottom of the team sidebar:
++    // its plugins' icons, above the button that brings it back.
++    &__bottom {
++        display: flex;
++        width: 100%;
++        flex: 0 0 auto;
++        flex-direction: column;
++        align-items: center;
++        gap: 4px;
++    }
++
++    &__plugins {
++        width: 100%;
++        padding: 16px 0 6px;
++        text-align: center;
++
++        &:empty {
++            display: none;
++        }
++
++        .fa {
++            color: var(--sidebar-header-text-color);
++            opacity: 0.73;
++            transition: all 0.15s ease;
++
++            &:hover {
++                opacity: 1;
++            }
++        }
++    }
++
++    &__showTeamSidebar {
++        display: flex;
++        width: 32px;
++        height: 32px;
++        flex: 0 0 auto;
++        align-items: center;
++        justify-content: center;
++        padding: 0;
++        border: none;
++        border-radius: var(--radius-m);
++        background: none;
++        color: rgba(var(--sidebar-text-rgb), 0.56);
++
++        svg {
++            fill: currentColor;
++        }
++
++        &:hover,
++        &:focus-visible {
++            background: rgba(var(--sidebar-text-rgb), 0.08);
++            color: var(--sidebar-text);
++        }
++
++        &:focus-visible {
++            box-shadow: inset 0 0 0 2px var(--sidebar-text-active-border);
++            outline: none;
++        }
++    }
+ 
+     @media screen and (max-width: 768px) {
+         display: none;
+@@ -200,8 +313,11 @@
+     height: 18px;
+     padding: 0 5px;
+     border-radius: 9px;
+-    background: var(--mention-bg);
+-    color: var(--mention-color);
++
++    // Menus sit on the center channel's colors, where the sidebar's mention colors can vanish (white
++    // on white in dark sidebar themes), so their badges take the theme's primary button colors.
++    background: var(--button-bg);
++    color: var(--button-color);
+     font-size: 11px;
+     font-weight: 700;
+     line-height: 18px;
+@@ -213,11 +329,60 @@
+     }
+ }
+ 
++.ProductRail__menuIcon {
++    display: flex;
++    color: rgba(var(--center-channel-color-rgb), 0.64);
++
++    svg {
++        width: 18px;
++        height: 18px;
++        fill: currentColor;
++    }
++
++    img {
++        width: 18px;
++        height: 18px;
++    }
++}
++
++.ProductRail__moreMenu .MuiMenuItem-root {
++    min-height: 40px;
++
++    > .trailing-elements {
++        display: flex;
++        align-items: center;
++        gap: 8px;
++    }
++}
++
+ .ProductRail__menuDot {
+     width: 8px;
+     height: 8px;
+     border-radius: 50%;
+-    background: var(--center-channel-color);
++    background: var(--button-bg);
++}
++
++// A team's activity sits on its avatar's corner in the team menu, ringed in the menu's color.
++.ProductRail__teamAvatar > .ProductRail__menuBadge,
+
+```
+
+**File**: `webapp/channels/src/components/product_rail/product_rail.test.tsx` (modified, +638/-32)
+```diff
+@@ -7,23 +7,29 @@ import React from 'react';
+ import {CollapsedThreads} from '@mattermost/types/config';
+ import type {DeepPartial} from '@mattermost/types/utilities';
+ 
+-import {PreferenceTypes} from 'mattermost-redux/action_types';
++import {ChannelTypes, PreferenceTypes} from 'mattermost-redux/action_types';
++import {Client4} from 'mattermost-redux/client';
+ 
+ import type {ChannelKindRegistration} from 'selectors/views/product_rail';
+ 
+-import {act, renderWithContext, screen} from 'tests/react_testing_utils';
++import {act, fireEvent, renderWithContext, screen, userEvent, waitFor} from 'tests/react_testing_utils';
+ import {TestHelper} from 'utils/test_helper';
+ 
+ import type {GlobalState} from 'types/store';
+ import type {ProductComponent} from 'types/store/plugins';
+ import type {ProductRailSection} from 'types/store/views';
+ 
+-import ProductRail from './product_rail';
++import ProductRail, {moveRailItem} from './product_rail';
+ 
+ jest.mock('mattermost-redux/actions/threads', () => ({
+     getThreadCounts: () => ({type: 'MOCK_GET_THREAD_COUNTS'}),
+ }));
+ 
++const mockSavePreferences = jest.fn((...args: unknown[]) => ({type: 'MOCK_SAVE_PREFERENCES', args}));
++jest.mock('mattermost-redux/actions/preferences', () => ({
++    savePreferences: (...args: unknown[]) => mockSavePreferences(...args),
++}));
++
+ const team = TestHelper.getTeamMock({id: 'team1', name: 'team-one'});
+ const user = TestHelper.getUserMock({id: 'user1'});
+ 
+@@ -80,6 +86,10 @@ const boardKind: ChannelKindRegistration = {
+     matcher: (_state, channel) => channel.id === roadmap.id || channel.id === bugs.id,
+ };
+ 
++const railProduct = (name: string, pluginId: string): ProductComponent => ({...TestHelper.makeProduct(name), pluginId, baseURL: `/${pluginId}`, switcherLinkURL: `/${pluginId}`});
++const agents = railProduct('Agents', 'mattermost-ai');
++const playbooks = railProduct('Playbooks', 'playbooks');
++
+ function getBoardsState(currentChannelId: string, section: ProductRailSection = 'channels'): DeepPartial<GlobalState> {
+     const channels = [townSquare, roadmap, bugs];
+     const member = (channelId: string, mentions: number) => TestHelper.getChannelMembershipMock({
+@@ -123,14 +133,23 @@ function getBoardsState(currentChannelId: string, section: ProductRailSection =
      };
+ }
  
-     render() {
--        if (!this.props.postListIds) {
-+        if (!this.props.postListIds || isWaitingForTotalUsersStats(this.props.needsTotalUsersStats, this.state)) {
-             return (
-                 <LoadingScreen centered={true}/>
-             );
++// The store of the last render, for reading back the rail's preferences as saved.
++let lastStore: ReturnType<typeof renderWithContext>['store'];
++
+ function renderAt(pathname: string, state: DeepPartial<GlobalState>) {
+-    return renderWithContext(<ProductRail/>, state, {history: createMemoryHistory({initialEntries: [pathname]})});
++    const result = renderWithContext(<ProductRail/>, state, {history: createMemoryHistory({initialEntries: [pathname]})});
++    lastStore = result.store;
++    return result;
+ }
+ 
++const savedHiddenItems = () => lastStore.getState().entities.preferences.myPreferences['sidebar_settings--product_rail_hidden_items']?.value;
++
+ describe('ProductRail', () => {
+     // Where each item was is saved to localStorage, which would otherwise carry between tests.
+     beforeEach(() => {
+         localStorage.clear();
++        mockSavePreferences.mockClear();
++        jest.spyOn(Client4, 'savePreferences').mockResolvedValue({status: 'OK'});
+     });
+ 
+     test('should render nothing when the feature flag is off', () => {
+@@ -147,36 +166,23 @@ describe('ProductRail', () => {
+         expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+     });
+ 
+-    test('should link Channels and Threads to the current team', () => {
++    test('should link Channels to the team\'s default channel, leaving Threads to the channel sidebar', () => {
+         renderAt('/team-one/channels/town-square', getState());
+ 
+-        expect(screen.getByRole('link', {name: /Channels/})).toHaveAttribute('href', '/team-one');
+-        expect(screen.getByRole('link', {name: /Threads/})).toHaveAttribute('href', '/team-one/threads');
+-    });
+-
+-    test('should hide Threads when collapsed reply threads are off', () => {
+-        renderAt('/team-one/channels/town-square', getState({collapsedThreads: false}));
+-
++        // Not the team's root, which can redirect into Threads.
++        expect(screen.getByRole('link', {name: /Channels/})).toHaveAttribute('href', '/team-one/channels/town-square');
+         expect(screen.queryByRole('link', {name: /Threads/})).not.toBeInTheDocument();
+     });
+ 
+-    test('should mark Channels active in a channel and Threads active in threads', () => {
++    test('should mark Channels active in a channel and in Threads, which is part of it', () => {
+         const {unmount} = renderAt('/team-one/channels/town-square', getState());
+ 
+         expect(screen.getByRole('link', {name: /Channels/})).toHaveAttribute('aria-current', 'page');
+-        expect(screen.getByRole('link', {name: /Threads/})).not.toHaveAttribute('aria-current');
+ 
+         unmount();
+         renderAt('/team-one/threads', getState());
+ 
+-        expect(screen.getByRole('link'
 ```
 
 ---
 
-### Incident Patch 3: `93e06e41` (2026-11-17)
-**Commit Message**: Fix flaky TestGetSupportPacketDiagnosticsSectionErrors (#40116)
+### Incident Patch 2: `b05d2bdc` (2026-11-20)
+**Commit Message**: [MM-72037] Add shared health report with HTML and Markdown renderers (#40149)
 
-Automatic Merge
+* MM-72037: Add shared health report with HTML and Markdown renderers
 
-**File**: `server/channels/app/platform/support_packet_test.go` (modified, +6/-0)
+Add platform/shared/healthcheck/report, which builds a report from a
+HealthFindingList: a header, a summary, and Critical, Warning, Info,
+Could not evaluate, Muted and Resolved sections, with each finding in
+exactly one section. Labels are translated through the server catalog.
+The report renders as a self-contained HTML file with a print
+stylesheet, or as Markdown for pasting into Mattermost or Jira.
+
+Switch mmctl health check plain output to the report model, so it
+groups findings by severity like Site health, and drop the duplicated
+sorting and label code from health.go.
+
+* MM-72037: Revert docs changes
+
+* MM-72037: Show rule codes, System Console links and the licensee in the health report
+
+Each finding now shows its rule code, so a report attached to a ticket
+can refer to a finding by a stable identifier. Findings with a System
+Console path link to it when the report has a site URL; a report is a
+file, so a bare path would lead nowhere and is left out.
+
+Add Company to the header as "Licensed to", and drop Site name, which
+is usua
+
+**File**: `server/cmd/mmctl/commands/health.go` (modified, +64/-179)
 ```diff
-@@ -1296,6 +1296,12 @@ func TestGetSupportPacketDiagnostics(t *testing.T) {
- func TestGetSupportPacketDiagnosticsSectionErrors(t *testing.T) {
- 	th := Setup(t)
+@@ -4,7 +4,6 @@
+ package commands
  
-+	// The default "./data/" only exists once the file store probe has created it, which
-+	// races with the disk space lookup on the first call.
-+	th.Service.UpdateConfig(func(cfg *model.Config) {
-+		cfg.FileSettings.Directory = model.NewPointer(t.TempDir())
+ import (
+-	"cmp"
+ 	"context"
+ 	"errors"
+ 	"fmt"
+@@ -22,13 +21,11 @@ import (
+ 	serveri18n "github.com/mattermost/mattermost/server/v8/i18n"
+ 	"github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck"
+ 	"github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck/packet"
++	"github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck/report"
+ 	_ "github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck/rules"
+ 	"github.com/mattermost/mattermost/server/v8/platform/shared/releases"
+ )
+ 
+-// The server evaluates hourly, so results older than two intervals mean evaluation stopped.
+-const healthEvaluationStaleAfter = 2 * time.Hour
+-
+ // healthRunPollInterval is how often health run checks on the run it started. A variable so tests
+ // don't wait.
+ var healthRunPollInterval = 2 * time.Second
+@@ -105,8 +102,7 @@ func healthCheckCmdF(c client.Client, cmd *cobra.Command, args []string) error {
+ 		return fmt.Errorf("failed to get health findings: %w", err)
+ 	}
+ 
+-	printHealthFindings(list, includeResolved, time.Now())
+-	return nil
++	return printHealthFindings(list, includeResolved, report.Options{GeneratedAt: time.Now()})
+ }
+ 
+ func healthRunCmdF(c client.Client, cmd *cobra.Command, args []string) error {
+@@ -183,10 +179,14 @@ func healthCheckPacketCmdF(cmd *cobra.Command, args []string) error {
+ 	}
+ 	notes = append(notes, p.Warnings...)
+ 
+-	// Findings are stamped with when the packet was generated, not when mmctl ran.
++	// Findings are stamped with when the packet was generated, not when mmctl ran. The report
++	// shows an unknown collection time rather than claiming the data is from now.
+ 	evaluatedAt := p.Snapshot.CollectedAt
++	var collectedAt int64
+ 	if evaluatedAt.IsZero() {
+ 		evaluatedAt = time.Now()
++	} else {
++		collectedAt = evaluatedAt.UnixMilli()
+ 	}
+ 	now := func() time.Time { return evaluatedAt }
+ 
+@@ -214,8 +214,11 @@ func healthCheckPacketCmdF(cmd *cobra.Command, args []string) error {
+ 		}
+ 	}
+ 
+-	printHealthFindings(&model.HealthFindingList{EvaluatedAt: evaluatedAt.UnixMilli(), Findings: findings}, includeResolved, evaluatedAt, notes...)
+-	return nil
++	return printHealthFindings(&model.HealthFindingList{EvaluatedAt: collectedAt, Findings: findings}, includeResolved, report.Options{
++		GeneratedAt: time.Now(),
++		PointInTime: true,
++		Notes:       notes,
 +	})
+ }
+ 
+ // fillLatestVersion fetches the latest release from GitHub when the snapshot doesn't record one.
+@@ -241,198 +244,80 @@ func fillLatestVersion(ctx context.Context, snapshot *healthcheck.Snapshot) stri
+ // printHealthFindings prints already-rendered findings, leaving out resolved ones unless
+ // includeResolved is set. Notes open the plain output; with --json they go to stderr so the
+ // output stays valid JSON.
+-func printHealthFindings(list *model.HealthFindingList, includeResolved bool, now time.Time, notes ...string) {
++func printHealthFindings(list *model.HealthFindingList, includeResolved bool, opts report.Options) error {
+ 	shown := make([]*model.HealthFinding, 0, len(list.Findings))
+ 	for _, finding := range list.Findings {
+ 		if includeResolved || finding.State != string(healthcheck.StateResolved) {
+ 			shown = append(shown, finding)
+ 		}
+ 	}
++	list = &model.HealthFindingList{EvaluatedAt: list.EvaluatedAt, Findings: shown}
+ 
+ 	if printer.GetFormat() == printer.FormatJSON {
+-		for _, note := range notes {
++		for _, note := range opts.Notes {
+ 			printer.PrintError(note)
+ 		}
+ 		printer.SetSingle(true)
+-		printer.PrintT("", &model.HealthFindingList{EvaluatedAt: list.EvaluatedAt, Findings: shown})
+-		return
+-	}
+-
+-	printer.Print(strings.Join(slices.Concat(notes, []string{formatHealthFindings(list.EvaluatedAt, shown, now)}), "\n\n"))
+-}
+-
+-func formatHealthFindings(evaluatedAt int64, shown []*model.HealthFinding, now time.Time) string {
+-	if evaluatedAt == 0 {
+-		return "Not evaluated yet. The first check runs within an hour of enabling the feature."
++		printer.PrintT("", list)
++		return nil
+ 	}
+ 
+-	slices.SortStableFunc(shown, compareHealthFindings)
+-
+-	var firing, unknown, resolved []*model.HealthFinding
+-	for _, finding := range shown {
+-		switch healthcheck.State(finding.State) {
+-		case healthcheck.StateFiring:
+-			firing = append(firing, finding)
+-		case healthcheck.StateUnknown:
+-			unknown = append(unknown, finding)
+-		case healthcheck.StateResolved:
+-			resolved = append(resolved, finding)
+-		}
++	if err := i18n.TranslationsPreInitFromFileBytes("en.json", serveri18n.English); err != nil {
++		return fmt.Errorf("failed to load translations: %w", err)
+ 	}
++	opts.T = i18n.T
++	opts.Location = time.Local
+ 
+-	blocks := []string{formatHealthEvaluationTime(evaluatedAt, now)}
++	printer.Print(formatHealthReport(report.Build(list, opts)))
++	return nil
++}
+ 
+-	for i := 0; i < len(firing); {
+-		area := firing[i].Area
+-		lines := []string{healthAreaHeading(area)}
+-		for ; i < len(firing) && firing[i].Area == area; i++ {
+-			lines = append(lines, healthFindi
+```
+
+**File**: `server/cmd/mmctl/commands/health_test.go` (modified, +98/-53)
+```diff
+@@ -26,6 +26,7 @@ import (
+ 	"github.com/mattermost/mattermost/server/public/model"
+ 	"github.com/mattermost/mattermost/server/v8/cmd/mmctl/printer"
+ 	"github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck"
++	"github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck/report"
+ )
+ 
+ func healthTestFindings(lastSeen time.Time) []*model.HealthFinding {
+@@ -190,8 +191,8 @@ func (s *MmctlUnitTestSuite) TestHealthCheckCmd() {
+ 		s.Require().NoError(err)
+ 
+ 		output := s.printedHealthFindings()
+-		s.True(strings.HasPrefix(output, "Last evaluated "), output)
+-		s.True(strings.HasSuffix(output, "\n\nNo findings."), output)
++		s.True(strings.HasPrefix(output, "Last evaluated: "), output)
++		s.True(strings.HasSuffix(output, "\n\nNo open findings."), output)
+ 	})
+ 
+ 	s.Run("client error", func() {
+@@ -241,7 +242,7 @@ func (s *MmctlUnitTestSuite) TestHealthRun() {
+ 		s.Require().NoError(err)
+ 
+ 		output := s.printedHealthFindings()
+-		s.True(strings.HasPrefix(output, "Last evaluated "), output)
++		s.True(strings.HasPrefix(output, "Last evaluated: "), output)
+ 		s.Contains(output, "Push notification server is not HTTPS")
+ 	})
+ 
+@@ -346,24 +347,25 @@ func (s *MmctlUnitTestSuite) TestHealthRun() {
+ 
+ func (s *MmctlUnitTestSuite) TestHealthPrintFindings() {
+ 	lastSeen := time.Date(2026, time.September, 24, 14, 2, 0, 0, time.Local)
+-	now := lastSeen.Add(38 * time.Minute)
++	evaluated := "Last evaluated: " + lastSeen.Format("2006-01-02 15:04 MST") + " (38 minutes ago)"
++	opts := report.Options{GeneratedAt: lastSeen.Add(38 * time.Minute)}
+ 
+ 	s.Run("plain output", func() {
+ 		printer.Clean()
+ 		printer.SetFormat(printer.FormatPlain)
+ 
+-		printHealthFindings(healthTestList(lastSeen), false, now)
++		s.Require().NoError(printHealthFindings(healthTestList(lastSeen), false, opts))
+ 
+-		s.Equal(`Last evaluated 2026-09-24 14:02 (38 minutes ago)
++		s.Equal(evaluated+`
+ 
+-Notifications
+-  CRITICAL  Push notification server is not HTTPS
+-            The push server is http://push.example.com, so notifications are sent unencrypted.
+-            → Set Push Notification Server to an https:// URL.
++Critical
++  [Notifications] Push notification server is not HTTPS
++      The push server is http://push.example.com, so notifications are sent unencrypted.
++      → Set Push Notification Server to an https:// URL.
+ 
+ Could not evaluate
+-  WARNING   Site URL is not HTTPS
+-            Config section unavailable.
++  Site URL is not HTTPS (Warning)
++      Config section unavailable.
+ 
+ 1 critical, 1 could not be evaluated`, s.printedHealthFindings())
+ 	})
+@@ -373,85 +375,128 @@ Could not evaluate
+ 		printer.SetFormat(printer.FormatPlain)
+ 		findings := healthTestFindings(lastSeen)
+ 
+-		printHealthFindings(&model.HealthFindingList{EvaluatedAt: lastSeen.UnixMilli(), Findings: findings}, true, now)
++		s.Require().NoError(printHealthFindings(&model.HealthFindingList{EvaluatedAt: lastSeen.UnixMilli(), Findings: findings}, true, opts))
+ 
+ 		output := s.printedHealthFindings()
+ 		for _, finding := range findings {
+ 			s.NotContains(output, finding.Code)
+ 			s.NotContains(output, finding.Fingerprint)
+ 		}
+-		for _, state := range []string{"firing", "unknown", "resolved"} {
++		for _, state := range []string{"firing", "unknown"} {
+ 			s.NotContains(output, state)
+ 		}
+ 	})
+ 
+-	s.Run("groups firing findings by area, sorted by severity then title", func() {
++	s.Run("groups findings by severity, sorted by area then title", func() {
+ 		printer.Clean()
+ 		printer.SetFormat(printer.FormatPlain)
+ 		findings := []*model.HealthFinding{
+ 			{Severity: "warning", State: "firing", Area: model.AreaNotifications, Title: "B warning", LastSeenAt: lastSeen.UnixMilli()},
+ 			{Severity: "critical", State: "firing", Area: model.AreaNotifications, Title: "Z critical", LastSeenAt: lastSeen.UnixMilli()},
+ 			{Severity: "warning", State: "firing", Area: model.AreaNotifications, Title: "A warning", LastSeenAt: lastSeen.UnixMilli()},
++			{Severity: "warning", State: "firing", Area: model.AreaCluster, Title: "C warning", LastSeenAt: lastSeen.UnixMilli()},
+ 			{Severity: "info", State: "firing", Area: model.AreaCluster, Title: "Node info", Scope: "node-1", MutedAt: 1, LastSeenAt: lastSeen.UnixMilli()},
+ 		}
+ 
+-		printHealthFindings(&model.HealthFindingList{EvaluatedAt: lastSeen.UnixMilli(), Findings: findings}, false, now)
++		s.Require().NoError(printHealthFindings(&model.HealthFindingList{EvaluatedAt: lastSeen.UnixMilli(), Findings: findings}, false, opts))
+ 
+-		s.Equal(`Last evaluated 2026-09-24 14:02 (38 minutes ago)
++		s.Equal(evaluated+`
+ 
+-Cluster
+-  INFO      Node info on node-1 [muted]
++Critical
++  [Notifications] Z critical
+ 
+-Notifications
+-  CRITICAL  Z critical
+-  WARNING   A warning
+-  WARNING   B warning
++Warning
++  [High availability] C warning
++  [Notifications] A warning
++  [Notifications] B warning
+ 
+-1 critical, 2 warnings, 1 info`, s.printedHealthFindings())
++Muted
++  Node info on node-1 (Info)
 +
- 	setStore := func(t *testing.T, s *failingDiagnosticsStore) {
- 		originalStore := th.Service.Store
- 		s.Store = originalStore
++1 critical, 3 warnings`, s.printedHealthFin
+```
+
+**File**: `server/i18n/en.json` (modified, +207/-0)
+```diff
+@@ -14717,6 +14717,213 @@
+     "translation": "Usage statistics unavailable.",
+     "description": "Health dashboard reason shown when a health check could not run because the usage statistics it inspects (for example user or post counts) were not collected, so the check's status is unknown."
+   },
++  {
++    "id": "health.report.area.auth",
++    "translation": "Authentication",
++    "description": "Label of the authentication area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.area.cluster",
++    "translation": "High availability",
++    "description": "Label of the high availability cluster area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.area.compliance",
++    "translation": "Compliance",
++    "description": "Label of the compliance area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.area.database",
++    "translation": "Database",
++    "description": "Label of the database area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.area.jobs",
++    "translation": "Jobs",
++    "description": "Label of the background jobs area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.area.license",
++    "translation": "Licensing",
++    "description": "Label of the licensing area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.area.notifications",
++    "translation": "Notifications",
++    "description": "Label of the notifications area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.area.platform",
++    "translation": "Platform",
++    "description": "Label of the platform (host and runtime) area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.area.search",
++    "translation": "Search",
++    "description": "Label of the search area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.area.version",
++    "translation": "Updates",
++    "description": "Label of the server version and updates area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.finding.title_on_node",
++    "translation": "{{.Title}} on {{.Node}}",
++    "description": "Title of a finding that applies to one server node in the shareable health report (Site health export and mmctl health check output); {{.Title}} is the finding title and {{.Node}} the node's hostname."
++  },
++  {
++    "id": "health.report.header.collected_at",
++    "translation": "Data collected",
++    "description": "Header label in the shareable health report (Site health export and mmctl health check output) for a one-off evaluation such as a Support Packet; followed by the date and time the evaluated data was collected, which can be long before the report was made."
++  },
++  {
++    "id": "health.report.header.collected_unknown",
++    "translation": "Unknown",
++    "description": "Shown after 'Data collected' in the shareable health report (Site health export and mmctl health check output) when a one-off evaluation, such as of a Support Packet, does not record when its data was collected."
++  },
++  {
++    "id": "health.report.header.company",
++    "translation": "Licensed to",
++    "description": "Header label in the shareable health report (Site health export and mmctl health check output); followed by the name of the company the Mattermost license is issued to."
++  },
++  {
++    "id": "health.report.header.evaluated_at",
++    "translation": "Last evaluated",
++    "description": "Header label in the shareable health report (Site health export and mmctl health check output); followed by the date and time the health checks last ran."
++  },
++  {
++    "id": "health.report.header.generated_at",
++    "
+```
+
+**File**: `server/platform/shared/healthcheck/report/render.go` (added, +168/-0)
+```diff
+@@ -0,0 +1,168 @@
++// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
++// See LICENSE.txt for license information.
++
++package report
++
++import (
++	_ "embed"
++	"fmt"
++	"html/template"
++	"io"
++	"net/url"
++	"regexp"
++	"slices"
++	"strings"
++)
++
++//go:embed report.html.tmpl
++var htmlSource string
++
++var htmlTemplate = template.Must(template.New("report").Parse(htmlSource))
++
++// Header lists the generation and evaluation times, then the site facts.
++func (r *Report) Header() []Field {
++	return slices.Concat([]Field{r.GeneratedAt, r.EvaluatedAt}, r.Site)
++}
++
++// WriteHTML writes the report as one self-contained HTML file: inline CSS, no scripts and no
++// external assets. Its print stylesheet makes "Print, then Save as PDF" in a browser the PDF export.
++func (r *Report) WriteHTML(w io.Writer) error {
++	return htmlTemplate.Execute(w, r)
++}
++
++// WriteMarkdown writes the report as Markdown for pasting into Mattermost. Finding
++// details are left out to keep it short.
++func (r *Report) WriteMarkdown(w io.Writer) error {
++	var b strings.Builder
++
++	fmt.Fprintf(&b, "# %s\n\n", escapeMarkdown(r.Title))
++	for _, note := range r.Notes {
++		fmt.Fprintf(&b, "> %s\n\n", escapeMarkdown(note))
++	}
++	for _, field := range r.Header() {
++		fmt.Fprintf(&b, "- **%s:** %s\n", escapeMarkdown(field.Label), escapeMarkdown(field.Value))
++	}
++	if r.Stale != "" {
++		fmt.Fprintf(&b, "\n**%s**\n", escapeMarkdown(r.Stale))
++	}
++
++	fmt.Fprintf(&b, "\n## %s\n\n%s\n", escapeMarkdown(r.Labels.Summary), escapeMarkdown(r.Summary))
++
++	for _, section := range r.Sections {
++		fmt.Fprintf(&b, "\n## %s\n", escapeMarkdown(section.Title))
++		switch section.Kind {
++		case SectionUnknown, SectionMuted:
++			b.WriteString("\n")
++			for _, f := range section.Findings {
++				tags := f.Severity
++				if section.Kind == SectionMuted && f.Unknown {
++					tags += ", " + r.Labels.Unknown
++				}
++				fmt.Fprintf(&b, "- **%s**%s (%s)", escapeMarkdown(f.Title), codeSuffix(f.Code), escapeMarkdown(tags))
++				if f.Message != "" {
++					fmt.Fprintf(&b, ": %s", escapeMarkdown(f.Message))
++				}
++				b.WriteString("\n")
++				if f.Remediation != "" {
++					fmt.Fprintf(&b, "  - **%s:** %s\n", escapeMarkdown(r.Labels.Remediation), escapeMarkdown(f.Remediation))
++				}
++			}
++		case SectionResolved:
++			b.WriteString("\n")
++			for _, f := range section.Findings {
++				fmt.Fprintf(&b, "- %s%s\n", escapeMarkdown(f.Title), codeSuffix(f.Code))
++			}
++		default:
++			for _, f := range section.Findings {
++				fmt.Fprintf(&b, "\n### \\[%s\\] %s%s\n", escapeMarkdown(f.Area), escapeMarkdown(f.Title), codeSuffix(f.Code))
++				if f.Message != "" {
++					fmt.Fprintf(&b, "\n%s\n", escapeMarkdown(f.Message))
++				}
++				if f.Remediation != "" {
++					fmt.Fprintf(&b, "\n**%s:** %s\n", escapeMarkdown(r.Labels.Remediation), escapeMarkdown(f.Remediation))
++				}
++				if f.ConsoleURL != "" {
++					fmt.Fprintf(&b, "\n%s\n", markdownLink(r.Labels.Console, f.ConsoleURL))
++				}
++				if f.DocsURL != "" {
++					fmt.Fprintf(&b, "\n%s\n", markdownLink(r.Labels.Documentation, f.DocsURL))
++				}
++			}
++		}
++	}
++
++	_, err := io.WriteString(w, b.String())
++	return err
++}
++
++var (
++	newlineReplacer = strings.NewReplacer("\r\n", " ", "\n", " ", "\r", " ")
++	markdownEscaper = strings.NewReplacer(
++		`\`, `\\`, "`", "\\`", "*", `\*`, "_", `\_`, "[", `\[`, "]", `\]`, "<", `\<`, ">", `\>`,
++		"#", `\#`, "|", `\|`, "~", `\~`, "!", `\!`, "&", `\&`,
++	)
++
++	// markdownVerbatim matches bare URLs, which a backslash escape would break, and @mentions,
++	// which a backslash escape would not stop from notifying when pasted into Mattermost. A mention
++	// includes any underscores right before it, which Mattermost strips before looking for one,
++	// and any mention run into it, such as @here in @all@here.
++	// Neither can contain a character that starts a link, HTML or a code span.
++	markdownVerbatim = regexp.MustCompile(`https?://[A-Za-z0-9\-._~:/?#!$&'+,;=%@]+|(?:\B|\b_+)@[A-Za-z0-9_](?:[A-Za-z0-9_.\-@]*[A-Za-z0-9_])?`)
++)
++
++// escapeMarkdown makes s render as the literal text it is, on one line, wherever it is placed,
++// leaving bare URLs linkable and @mentions inert in a code span. Mattermost finds mentions inside
++// a linked URL too, so a URL with an @ goes in a code span as well.
++func escapeMarkdown(s string) string {
++	s = strings.TrimSpace(newlineReplacer.Replace(s))
++
++	var b strings.Builder
++	last := 0
++	for _, match := range markdownVerbatim.FindAllStringIndex(s, -1) {
++		b.WriteString(markdownEscaper.Replace(s[last:match[0]]))
++		if token := s[match[0]:match[1]]; strings.Contains(token, "@") {
++			b.WriteString("`" + token + "`")
++		} else {
++			b.WriteString(token)
++		}
++		last = match[1]
++	}
++	b.WriteString(markdownEscaper.Replace(s[last:]))
++
++	s = b.String()
++	if s == "" {
++		return s
++	}
++
++	// A leading "-" or "+" would start a list or a thematic break, and "1. " or "1) " an ordered list.
++	if s[0] == '-' || s[0] == '+' {
++		return `\` + s
++	}
++	digits := strings.IndexFunc(s, func(
+```
+
+**File**: `server/platform/shared/healthcheck/report/report.go` (added, +372/-0)
+```diff
+@@ -0,0 +1,372 @@
++// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
++// See LICENSE.txt for license information.
++
++// Package report builds a shareable health report from rendered findings, and renders it as a
++// self-contained HTML file or as Markdown. The server and mmctl, including mmctl offline with a
++// Support Packet, build their reports here so they group, sort and label findings the same way.
++package report
++
++import (
++	"cmp"
++	"maps"
++	"net/url"
++	"slices"
++	"strings"
++	"time"
++
++	"github.com/mattermost/mattermost/server/public/model"
++	"github.com/mattermost/mattermost/server/public/shared/i18n"
++	"github.com/mattermost/mattermost/server/public/utils"
++	"github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck"
++)
++
++// staleAfter is how old an evaluation can be before it appears to have stopped. The server
++// evaluates hourly, so results older than two intervals mean evaluation stopped.
++const staleAfter = 2 * time.Hour
++
++const timeLayout = "2006-01-02 15:04 MST"
++
++type Options struct {
++	// T translates the report's labels. The findings must already be rendered.
++	T i18n.TranslateFunc
++	// Location is the time zone every time is shown in; nil means UTC.
++	Location    *time.Location
++	GeneratedAt time.Time
++	// PointInTime marks findings from a one-off evaluation, such as of a Support Packet, whose age
++	// says nothing about whether evaluation stopped. The list's EvaluatedAt is then when the data
++	// was collected, or 0 if that is unknown.
++	PointInTime bool
++
++	// SiteURL also turns each finding's System Console path into a link; without it there is none.
++	SiteURL       string
++	ServerVersion string
++	License       string
++	// Company is who the license is issued to. It also names the report's file.
++	Company string
++
++	// Notes open the report, such as the Support Packet disclaimer.
++	Notes []string
++}
++
++type Report struct {
++	Title string
++	// FileName is the name, without an extension, to save the report under, like the Support
++	// Packet's: mm_site_health_<company>_<YYYY-MM-DDTHH-MM>, generated in Location. It also titles
++	// the HTML report, so a browser suggests it when printing to PDF.
++	FileName    string
++	Notes       []string
++	GeneratedAt Field
++	EvaluatedAt Field
++	// Site lists the site facts the caller set.
++	Site []Field
++	// Age is how old the evaluation was when the report was generated. It is zero for a
++	// point-in-time evaluation, when nothing has been evaluated yet and when the server's clock
++	// is ahead of the generating host's.
++	Age time.Duration
++	// Stale warns that evaluation appears to have stopped; it is empty otherwise.
++	Stale string
++
++	// Summary counts the open findings, those in the severity and unknown sections, or says
++	// when the first evaluation runs.
++	Summary string
++
++	// Sections holds only the non-empty sections, in display order.
++	Sections []Section
++	Labels   Labels
++}
++
++type Field struct {
++	Label string
++	Value string
++}
++
++// Labels are the translated words the renderers put around findings.
++type Labels struct {
++	Summary       string
++	Remediation   string
++	Documentation string
++	Console       string
++	Details       string
++	// Unknown tags a muted finding whose check could not run.
++	Unknown string
++}
++
++type SectionKind string
++
++const (
++	SectionCritical SectionKind = "critical"
++	SectionWarning  SectionKind = "warning"
++	SectionInfo     SectionKind = "info"
++	SectionUnknown  SectionKind = "unknown"
++	SectionMuted    SectionKind = "muted"
++	SectionResolved SectionKind = "resolved"
++)
++
++var sectionOrder = []SectionKind{SectionCritical, SectionWarning, SectionInfo, SectionUnknown, SectionMuted, SectionResolved}
++
++type Section struct {
++	Kind     SectionKind
++	Title    string
++	Findings []Finding
++}
++
++type Finding struct {
++	// Code is the rule's stable identifier, for referring to the finding in a ticket.
++	Code     string
++	Area     string
++	Severity string
++	// Title names the node too for a node-scoped finding.
++	Title   string
++	Message string
++	// Unknown is set when the check could not run.
++	Unknown bool
++	// Remediation is empty when the check could not run, as the problem is not currently detected.
++	Remediation string
++	DocsURL     string
++	// ConsoleURL opens the finding's setting in the System Console; it is empty unless the
++	// report has a site URL.
++	ConsoleURL string
++	// Details is sorted by label.
++	Details []Field
++}
++
++// Build places each finding in exactly one section: resolved findings go to Resolved even if
++// muted, muted findings to Muted, and the rest by state and severity. MutedBy is never included.
++func Build(list *model.HealthFindingList, opts Options) *Report {
++	T := opts.T
++	location := cmp.Or(opts.Location, time.UTC)
++	formatTime := func(t time.Time) string { return t.In(location).Format(timeLayout) }
++
++	r := &Report{
++		Title:    T("health.report.title"),
++		FileName: fileName(opts.Company, opts.GeneratedAt.In(location)),
++		Notes:    opts.Notes,
++	
+```
+
+**File**: `server/platform/shared/healthcheck/report/report.html.tmpl` (added, +186/-0)
+```diff
+@@ -0,0 +1,186 @@
++<!DOCTYPE html>
++<html>
++<head>
++<meta charset="utf-8">
++<meta name="viewport" content="width=device-width, initial-scale=1">
++<title>{{.FileName}}</title>
++<style>
++:root { --text: #3f4350; --text-72: rgba(63, 67, 80, 0.72); --text-64: rgba(63, 67, 80, 0.64); --border: rgba(63, 67, 80, 0.12); --button: #1c58d9; --critical: #d24b4e; --critical-bg: rgba(210, 75, 78, 0.1); --warning: #997113; --warning-bg: rgba(255, 188, 31, 0.16); --info: #1c58d9; --info-bg: rgba(28, 88, 217, 0.08); --resolved: #3db887; --resolved-bg: rgba(61, 184, 135, 0.12); --neutral: rgba(63, 67, 80, 0.64); --neutral-bg: rgba(63, 67, 80, 0.08); --elevation-1: 0 2px 3px 0 rgba(0, 0, 0, 0.08); }
++* { box-sizing: border-box; }
++body { margin: 0; font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; line-height: 20px; color: var(--text); background: #f4f4f6; }
++h1, h2 { font-family: Metropolis, "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-weight: 600; }
++p { margin: 0; }
++a { color: var(--button); text-decoration: none; }
++a:hover { text-decoration: underline; }
++code { font-family: Menlo, Consolas, "Liberation Mono", monospace; font-size: 12px; }
++svg.icon { width: 18px; height: 18px; flex-shrink: 0; fill: currentColor; }
++.banner { background: #1e325c; color: #fff; }
++.banner-inner, main { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
++.banner-inner { display: flex; align-items: center; gap: 12px; padding-top: 20px; padding-bottom: 20px; }
++.banner .logo { width: 32px; height: 32px; fill: #fff; }
++.banner h1 { margin: 0; font-size: 22px; line-height: 28px; }
++.banner .product { font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: rgba(255, 255, 255, 0.72); }
++main { padding-top: 24px; padding-bottom: 40px; }
++.card { margin: 0 0 12px; border: 1px solid rgba(63, 67, 80, 0.08); border-radius: 8px; background: #fff; box-shadow: var(--elevation-1); break-inside: avoid; }
++.notice { display: flex; gap: 10px; margin: 0 0 16px; padding: 12px 16px; border: 1px solid rgba(28, 88, 217, 0.16); border-radius: 4px; background: var(--info-bg); }
++.notice .icon { color: var(--info); }
++.notice.stale { border-color: rgba(210, 75, 78, 0.16); background: var(--critical-bg); font-weight: 600; }
++.notice.stale .icon { color: var(--critical); }
++dl.header { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px 24px; margin: 0 0 12px; padding: 20px 24px; }
++dl.header dt, .label { color: var(--text-64); font-size: 11px; font-weight: 600; letter-spacing: 0.6px; line-height: 16px; text-transform: uppercase; }
++dl.header dd { margin: 2px 0 0; font-weight: 600; overflow-wrap: anywhere; }
++.summary { padding: 20px 24px; }
++.summary h2 { margin: 0 0 4px; font-size: 18px; line-height: 24px; }
++.summary p + p { margin-top: 4px; color: var(--text-72); }
++.counts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
++.counts a { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 8px; border-radius: 16px; background: var(--tone-bg); color: var(--tone); font-size: 13px; font-weight: 600; }
++.counts a:hover { text-decoration: none; filter: brightness(0.92); }
++.counts .icon { width: 16px; height: 16px; }
++.counts .count { padding: 0 6px; border-radius: 8px; background: rgba(255, 255, 255, 0.72); font-size: 11px; line-height: 16px; }
++.critical { --tone: var(--critical); --tone-bg: var(--critical-bg); }
++.warning { --tone: var(--warning); --tone-bg: var(--warning-bg); }
++.info { --tone: var(--info); --tone-bg: var(--info-bg); }
++.resolved { --tone: var(--resolved); --tone-bg: var(--resolved-bg); }
++.unknown, .muted { --tone: var(--neutral); --tone-bg: var(--neutral-bg); }
++section { margin-top: 28px; }
++section > h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; padding: 0 4px; font-size: 16px; line-height: 24px; break-after: avoid; }
++section > h2 .icon { color: var(--tone); }
++section > h2 .count { color: var(--text-64); font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 400; }
++section > h2::after { content: ""; flex: 1; height: 1px; margin-left: 4px; background: var(--border); }
++.finding { display: flex; gap: 14px; padding: 16px; border-left: 3px solid var(--tone); }
++.tone-icon { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--tone-bg); color: var(--tone); }
++.body { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
++.title { margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; }
++.message { color: var(--text-72); overflow-wrap: anywhere; }
++.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 2px; color: var(--text-64); font-size: 12px; }
++.tag { display: inline-block
+```
+
+**File**: `server/platform/shared/healthcheck/report/report_test.go` (added, +377/-0)
+```diff
+@@ -0,0 +1,377 @@
++// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
++// See LICENSE.txt for license information.
++
++package report
++
++import (
++	"bytes"
++	"flag"
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++
++	"github.com/mattermost/mattermost/server/public/model"
++	"github.com/mattermost/mattermost/server/public/shared/i18n"
++	serveri18n "github.com/mattermost/mattermost/server/v8/i18n"
++)
++
++var update = flag.Bool("update", false, "rewrite the golden files in testdata")
++
++var (
++	evaluatedAt = time.Date(2026, time.November, 18, 9, 30, 0, 0, time.UTC)
++	generatedAt = evaluatedAt.Add(20 * time.Minute)
++)
++
++func TestMain(m *testing.M) {
++	if err := i18n.TranslationsPreInitFromFileBytes("en.json", serveri18n.English); err != nil {
++		panic(err)
++	}
++	os.Exit(m.Run())
++}
++
++func testOptions() Options {
++	return Options{
++		T:             i18n.T,
++		Location:      time.UTC,
++		GeneratedAt:   generatedAt,
++		SiteURL:       "https://chat.example.com",
++		ServerVersion: "12.3.0",
++		License:       "Enterprise",
++		Company:       "Example Corp",
++	}
++}
++
++func finding(code, severity, state string, area model.HealthArea, title string) *model.HealthFinding {
++	return &model.HealthFinding{
++		Fingerprint: code,
++		Code:        code,
++		Severity:    severity,
++		State:       state,
++		Area:        area,
++		Title:       title,
++	}
++}
++
++func everySectionFindings() []*model.HealthFinding {
++	push := finding("PUSH_BAD_SCHEME", "critical", "firing", model.AreaNotifications, "PushNotificationServer does not use https://")
++	push.Message = "PushNotificationServer http://push.example.com uses http://, so push notifications are sent in cleartext."
++	push.Remediation = "Prefix PushNotificationServer with https:// and verify reachability from the app node."
++	push.DocsURL = "https://docs.mattermost.com/configure/environment-configuration-settings.html#push-notification-server"
++	push.ConsolePath = "/admin_console/environment/push_notification_server"
++	push.Details = map[string]string{"push_server": "http://push.example.com", "config_key": "EmailSettings.PushNotificationServer"}
++
++	eol := finding("VERSION_EOL", "critical", "firing", model.AreaVersion, "Mattermost version is past end-of-life")
++	eol.Message = "Running Mattermost 11.0.4. Support for this release line ended on 2026-01-15."
++	eol.Remediation = "Plan a staged upgrade to a supported release."
++
++	disk := finding("FILESTORE_DISK_LOW", "warning", "firing", model.AreaPlatform, "File storage disk space is low")
++	disk.Scope = "app-1.example.com"
++	disk.Message = "The volume containing FileSettings.Directory has 9.0 GiB (9.00%) available of 100.0 GiB."
++	disk.Remediation = "Expand the volume."
++	disk.ConsolePath = "/admin_console/environment/file_storage"
++
++	ldap := finding("LDAP_SYNC_OLD", "warning", "firing", model.AreaAuth, "AD/LDAP synchronization has not run recently")
++
++	custom := finding("CUSTOM", "info", "firing", model.HealthArea("experimental"), "A rule in an area this build does not know")
++	custom.Message = "Shown under its raw area name. Pasting @channel stays inert, and https://example.com/a_b stays linked."
++
++	load := finding("NODE_HOST_LOAD_HIGH", "info", "unknown", model.AreaPlatform, "Host load is high")
++	load.Scope = "app-2.example.com"
++	load.Message = "Server diagnostics unavailable."
++
++	muted := finding("SITE_URL_HTTP", "warning", "firing", model.AreaCluster, "Site URL is not HTTPS")
++	muted.Message = "SiteURL http://chat.example.com does not use https://."
++	muted.Remediation = "Serve Mattermost over HTTPS and update SiteURL."
++	muted.MutedAt = evaluatedAt.UnixMilli()
++	muted.MutedBy = "muting-admin-user-id"
++
++	mutedUnknown := finding("GOMAXPROCS", "warning", "unknown", model.AreaPlatform, "GOMAXPROCS exceeds the container CPU limit")
++	mutedUnknown.Message = "GOMAXPROCS is 16 and the container CPU limit is 4."
++	mutedUnknown.Remediation = "Unset GOMAXPROCS."
++	mutedUnknown.MutedAt = evaluatedAt.UnixMilli()
++	mutedUnknown.MutedBy = "muting-admin-user-id"
++
++	resolved := finding("SITE_URL_EMPTY", "critical", "resolved", model.AreaCluster, "Site URL is empty")
++
++	return []*model.HealthFinding{resolved, mutedUnknown, muted, load, custom, ldap, disk, eol, push}
++}
++
++func mutedAndResolvedFindings() []*model.HealthFinding {
++	open := finding("PUSH_BAD_SCHEME", "critical", "firing", model.AreaNotifications, "PushNotificationServer does not use https://")
++
++	mutedResolved := finding("SITE_URL_HTTP", "warning", "resolved", model.AreaCluster, "Site URL is not HTTPS")
++	mutedResolved.Message = "SiteURL http://chat.example.com does not use https://."
++	mutedResolved.MutedAt = evaluatedAt.UnixMilli()
++	mutedResolved.MutedBy = "muting-admin-user-id"
++
++	muted := finding("AUDIT_LOG_OFF", "info", "firing", model.AreaCompliance, "Audit logging is off")
++	muted.Message = "No audit log target is configured."
++	muted.MutedAt = evaluatedAt.UnixMil
+```
+
+**File**: `server/platform/shared/healthcheck/report/testdata/empty.html` (added, +126/-0)
+```diff
+@@ -0,0 +1,126 @@
++<!DOCTYPE html>
++<html>
++<head>
++<meta charset="utf-8">
++<meta name="viewport" content="width=device-width, initial-scale=1">
++<title>mm_site_health_mattermost_2026-11-18T09-50</title>
++<style>
++:root { --text: #3f4350; --text-72: rgba(63, 67, 80, 0.72); --text-64: rgba(63, 67, 80, 0.64); --border: rgba(63, 67, 80, 0.12); --button: #1c58d9; --critical: #d24b4e; --critical-bg: rgba(210, 75, 78, 0.1); --warning: #997113; --warning-bg: rgba(255, 188, 31, 0.16); --info: #1c58d9; --info-bg: rgba(28, 88, 217, 0.08); --resolved: #3db887; --resolved-bg: rgba(61, 184, 135, 0.12); --neutral: rgba(63, 67, 80, 0.64); --neutral-bg: rgba(63, 67, 80, 0.08); --elevation-1: 0 2px 3px 0 rgba(0, 0, 0, 0.08); }
++* { box-sizing: border-box; }
++body { margin: 0; font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; line-height: 20px; color: var(--text); background: #f4f4f6; }
++h1, h2 { font-family: Metropolis, "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-weight: 600; }
++p { margin: 0; }
++a { color: var(--button); text-decoration: none; }
++a:hover { text-decoration: underline; }
++code { font-family: Menlo, Consolas, "Liberation Mono", monospace; font-size: 12px; }
++svg.icon { width: 18px; height: 18px; flex-shrink: 0; fill: currentColor; }
++.banner { background: #1e325c; color: #fff; }
++.banner-inner, main { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
++.banner-inner { display: flex; align-items: center; gap: 12px; padding-top: 20px; padding-bottom: 20px; }
++.banner .logo { width: 32px; height: 32px; fill: #fff; }
++.banner h1 { margin: 0; font-size: 22px; line-height: 28px; }
++.banner .product { font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: rgba(255, 255, 255, 0.72); }
++main { padding-top: 24px; padding-bottom: 40px; }
++.card { margin: 0 0 12px; border: 1px solid rgba(63, 67, 80, 0.08); border-radius: 8px; background: #fff; box-shadow: var(--elevation-1); break-inside: avoid; }
++.notice { display: flex; gap: 10px; margin: 0 0 16px; padding: 12px 16px; border: 1px solid rgba(28, 88, 217, 0.16); border-radius: 4px; background: var(--info-bg); }
++.notice .icon { color: var(--info); }
++.notice.stale { border-color: rgba(210, 75, 78, 0.16); background: var(--critical-bg); font-weight: 600; }
++.notice.stale .icon { color: var(--critical); }
++dl.header { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px 24px; margin: 0 0 12px; padding: 20px 24px; }
++dl.header dt, .label { color: var(--text-64); font-size: 11px; font-weight: 600; letter-spacing: 0.6px; line-height: 16px; text-transform: uppercase; }
++dl.header dd { margin: 2px 0 0; font-weight: 600; overflow-wrap: anywhere; }
++.summary { padding: 20px 24px; }
++.summary h2 { margin: 0 0 4px; font-size: 18px; line-height: 24px; }
++.summary p + p { margin-top: 4px; color: var(--text-72); }
++.counts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
++.counts a { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 8px; border-radius: 16px; background: var(--tone-bg); color: var(--tone); font-size: 13px; font-weight: 600; }
++.counts a:hover { text-decoration: none; filter: brightness(0.92); }
++.counts .icon { width: 16px; height: 16px; }
++.counts .count { padding: 0 6px; border-radius: 8px; background: rgba(255, 255, 255, 0.72); font-size: 11px; line-height: 16px; }
++.critical { --tone: var(--critical); --tone-bg: var(--critical-bg); }
++.warning { --tone: var(--warning); --tone-bg: var(--warning-bg); }
++.info { --tone: var(--info); --tone-bg: var(--info-bg); }
++.resolved { --tone: var(--resolved); --tone-bg: var(--resolved-bg); }
++.unknown, .muted { --tone: var(--neutral); --tone-bg: var(--neutral-bg); }
++section { margin-top: 28px; }
++section > h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; padding: 0 4px; font-size: 16px; line-height: 24px; break-after: avoid; }
++section > h2 .icon { color: var(--tone); }
++section > h2 .count { color: var(--text-64); font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 400; }
++section > h2::after { content: ""; flex: 1; height: 1px; margin-left: 4px; background: var(--border); }
++.finding { display: flex; gap: 14px; padding: 16px; border-left: 3px solid var(--tone); }
++.tone-icon { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--tone-bg); color: var(--tone); }
++.body { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
++.title { margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; }
++.message { color: var(--text-72); overflow-wrap: anywhere; }
++.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 2px; color: var(--text-64); font-size: 12px; }
+
+```
+
+---
+
+### Incident Patch 3: `6109a66e` (2026-11-20)
+**Commit Message**: Fix flaky TestCreateAccessControlPolicy (#40202)
+
+Three subtests under "team policy with a complex CEL expression" installed
+a bare AccessControlServiceInterface mock that was left in place for the
+following subtests. With channel permission enforcement active, publishing
+the websocket event for the channel created by the "accepted when both
+flags are on" subtest calls ActionHasPermissionPolicy on that leaked mock,
+which panics in the HTTP handler and surfaces as `Post .../api/v4/channels:
+EOF`. Use newMockAccessControlService, which stubs that call, as the
+sibling subtests already do.
+
+Tests-only change. Verified with `go test -run '^TestCreateAccessControlPolicy$'
+-race -count=100` locally.
+
+Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+Co-authored-by: Maria A Nunez <[REDACTED_EMAIL]>
+
+**File**: `server/channels/api4/access_control_test.go` (modified, +3/-3)
+```diff
+@@ -504,7 +504,7 @@ func TestCreateAccessControlPolicy(t *testing.T) {
+ 
+ 		t.Run("system admin saves it", func(t *testing.T) {
+ 			policy := newTeamPolicy()
+-			mockACS := &mocks.AccessControlServiceInterface{}
++			mockACS := newMockAccessControlService()
+ 			th.App.Srv().Channels().AccessControl = mockACS
+ 			mockACS.On("SavePolicy", mock.AnythingOfType("*request.Context"), mock.MatchedBy(func(p *model.AccessControlPolicy) bool {
+ 				return p.Type == model.AccessControlPolicyTypeTeam &&
+@@ -521,7 +521,7 @@ func TestCreateAccessControlPolicy(t *testing.T) {
+ 		})
+ 
+ 		t.Run("PAP rejection is returned unchanged", func(t *testing.T) {
+-			mockACS := &mocks.AccessControlServiceInterface{}
++			mockACS := newMockAccessControlService()
+ 			th.App.Srv().Channels().AccessControl = mockACS
+ 			mockACS.On("SavePolicy", mock.AnythingOfType("*request.Context"), mock.AnythingOfType("*model.AccessControlPolicy")).
+ 				Return(nil, model.NewAppError("SavePolicy", "app.pap.save_policy.team_resource_attributes", nil, "", http.StatusBadRequest)).Once()
+@@ -534,7 +534,7 @@ func TestCreateAccessControlPolicy(t *testing.T) {
+ 
+ 		t.Run("regular user cannot save it", func(t *testing.T) {
+ 			th.LoginBasic(t)
+-			mockACS := &mocks.AccessControlServiceInterface{}
++			mockACS := newMockAccessControlService()
+ 			th.App.Srv().Channels().AccessControl = mockACS
+ 
+ 			_, resp, err := th.Client.CreateAccessControlPolicy(context.Background(), newTeamPolicy())
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40139** (2026-11-18): [MM-71631] Restrict Let's Encrypt certificate issuance to the Site URL hostname (@cursor[bot])
-- **PR #40136** (2026-11-17): [MM-62091] Allow undoing formatting applied in the message box (@cursor[bot])
-- **PR #40132** (2026-11-18): [MM-72003] Stop the latest release check when Enable Security Alerts is off, and cache failures (@cursor[bot])
-- **PR #40131** (2026-11-18): Automated cherry pick of #40110 (@mattermost-code)
-- **PR #40130** (2026-11-18): Automated cherry pick of #40110 (@mattermost-code)
-- **PR #40129** (2026-11-18): Automated cherry pick of #40110 (@mattermost-code)
+- **PR #40267** (2026-11-21): [MM-71867] Audit whether onboarding saved the Site URL (@hanzei)
+- **PR #40266** (closed): Automated cherry pick of #40244 (@mattermost-code)
+- **PR #40265** (closed): Automated cherry pick of #40244 (@mattermost-code)
+- **PR #40264** (closed): Automated cherry pick of #40244 (@mattermost-code)
+- **PR #40263** (closed): Automated cherry pick of #40244 (@mattermost-code)
+- **PR #40262** (closed): Automated cherry pick of #40244 (@mattermost-code)
 
 ---
 
@@ -2672,22 +3761,54 @@ Automatic Merge
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [MM-72003] Stop the latest release check when Enable Security Alerts is off, and
+## X. Product rail: pin and reorder items, Threads back in Channels, and Boards, badge
 
 **RULE**:
-When implementing operations in `api/v4/source/system.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `webapp/channels/src/actions/views/product_rail.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5049a60d`: [MM-72003] Stop the latest release check when Enable Security Alerts is off, and cache failures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8381b545`: Product rail: pin and reorder items, Threads back in Channels, and Boards, badge and team sidebar fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/v4/source/system.yaml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `webapp/channels/src/actions/views/product_rail.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        "501":
-          $ref: "#/components/responses/NotImplemented"
+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
+
+import {PreferenceTypes} from 'mattermost-redux/action_types';
+import {Client4} from 'mattermost-redux/client';
+
+import configureStore from 'store';
+
+import {saveRailListPreference} from './product_rail';
+
+const HIDDEN_KEY = 'sidebar_settings--product_rail_hidden_items';
+
+// A save the test settles by hand.
+type PendingSave = {value: string; resolve: () => void; reject: () => void};
+
+describe('saveRailListPreference', () => {
+    let saves: PendingSave[];
+
+    beforeEach(() => {
+        saves = [];
+        jest.spyOn(Client4, 'savePreferences').mockImplementation((_userId, preferences) => new Promise((resolve, reject) => {
+            saves.push({
+                value: preferences[0].value!,
+                resolve: () => resolve({status: 'OK'}),
+                reject: () => reject(new Error('save failed')),
+            });
+        }));
+    });
+
+    // Lets queued promise callbacks run.
+    const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
+
+    // Saves are queued across the module, so settle any a test left open before the next one.
+    afterEach(a
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2697,4 +3818,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5049a60d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8381b545` are properly handled with clean fallback behavior.

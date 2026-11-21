@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T12:38:41.978Z",
-  "total_records": 2246,
+  "last_updated": "2026-11-21T12:48:58.706Z",
+  "total_records": 2248,
   "domains": {
     "A": {
       "total": 17,
@@ -960,7 +960,7 @@
       ]
     },
     "F": {
-      "total": 79,
+      "total": 81,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1040,7 +1040,9 @@
         "domain_intelligence-design-intelligence-a2ui-project-a2ui-learnings-core-invariants",
         "DOM-F-9744E937",
         "domain_intelligence-design-intelligence-openai-clip-vit-large-patch14-core-invariants",
-        "domain_intelligence-design-intelligence-hf-openai-clip-vit-large-patch14-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-hf-openai-clip-vit-large-patch14-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-mattermost-mattermost-core-invariants",
+        "domain_intelligence-design-intelligence-mattermost-mattermost-learnings-core-invariants"
       ]
     },
     "G": {
@@ -24504,8 +24506,8 @@
       "title": "Technical Construction Intelligence: rustls/rustls Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-technical-construction-intelligence-rustls-rustls-core-invariants.md",
       "repository": "rustls/rustls",
-      "content_hash": "5929abb98544fc3baf70c20e60353827ee1e674ecbbf941b904050e62f6c5b72",
-      "created_at": "2026-11-20T22:39:52.716Z"
+      "content_hash": "65ae26aed93a6c5489ae1bcd2144c7b72638830cc6a801d87496b5cf8358381a",
+      "created_at": "2026-11-21T12:48:53.194Z"
     },
     "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants",
@@ -24522,8 +24524,8 @@
       "title": "Technical Construction Intelligence: rustls-rustls-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-learnings-technical-construction-intelligence-rustls-rustls-learni.md",
       "repository": "rustls-rustls-learnings",
-      "content_hash": "dbf143c49420019dbf70e2661f33c550f4c956c0e6c479c19572438b3fa27be8",
-      "created_at": "2026-11-20T22:42:07.116Z"
+      "content_hash": "7e7bde571f03a16eb2821390325cdb62545139560497a8c7f7a9615cd1e79538",
+      "created_at": "2026-11-21T12:48:58.706Z"
     },
     "domain_intelligence-quality-verification-intelligence-lxml-lxml-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-lxml-lxml-core-invariants",
@@ -28217,8 +28219,8 @@
       "title": "Research & Knowledge Intelligence: RecursiveSI/flint Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-recursivesi-flint-research-knowledge-intelligence-recursivesi-flint-core-inva.md",
       "repository": "RecursiveSI/flint",
-      "content_hash": "147d87ce387c29f536bf7b49ed0ceef9f18d34cee64629a54aa253f0c9982e7b",
-      "created_at": "2026-11-17T16:30:48.624Z"
+      "content_hash": "3cc1db3100c6cadc058209e0fb751d615c8503e5047e8ef3ba8ca47e2c466ef9",
+      "created_at": "2026-11-21T12:48:41.056Z"
     },
     "domain_intelligence-quality-verification-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-milvus-io-milvus-core-invariants",
@@ -28235,8 +28237,8 @@
       "title": "Research & Knowledge Intelligence: hf-recursivesi-flint-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-recursivesi-flint-learnings-research-knowledge-intelligence-hf-recursivesi-fl.md",
       "repository": "hf-recursivesi-flint-learnings",
-      "content_hash": "2605cdad1d4a38239328622a2e249aed1064b609298becc53d0e0eb851c2f2c5",
-      "created_at": "2026-11-17T16:31:09.222Z"
+      "content_hash": "2913a1f448ac69182be33718d86490304dcfbb7ac71f051328770ef23283c92d",
+      "created_at": "2026-11-21T12:48:56.362Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-core-invariants",
@@ -37726,6 +37728,24 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-21T12:38:41.392Z"
+    },
+    "domain_intelligence-design-intelligence-mattermost-mattermost-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-mattermost-mattermost-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: mattermost/mattermost Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-mattermost-mattermost-design-intelligence-mattermost-mattermost-core-invariants.md",
+      "repository": "mattermost/mattermost",
+      "content_hash": "2093780b27c8c4c823dce4070aaeb590cc0521f9984ab1fce3913f904cd29cde",
+      "created_at": "2026-11-21T12:48:48.041Z"
+    },
+    "domain_intelligence-design-intelligence-mattermost-mattermost-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-mattermost-mattermost-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: mattermost-mattermost-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-mattermost-mattermost-learnings-design-intelligence-mattermost-mattermost-learni.md",
+      "repository": "mattermost-mattermost-learnings",
+      "content_hash": "03885a1550700bc73e126e39b8ba581b5ef30970407fde72a058ede2cac9d5ee",
+      "created_at": "2026-11-21T12:48:57.386Z"
     }
   }
 }

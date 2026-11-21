@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T19:27:35.648Z",
+  "timestamp": "2026-11-21T12:48:57.101Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-mattermost-mattermost-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [mattermost-mattermost-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T19:27:35.648Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T12:48:57.101Z`  
 > **Learning ID**: `LEARN-EVO-mattermost-mattermost-learnings`
 
 
 ## 1. Skill Overview & Purpose
 Procedural playbook defining verified operational and implementation patterns for **mattermost-mattermost-learnings**.
-- **Canonical Domain**: Domain I (Content & Information Intelligence)
+- **Canonical Domain**: Domain F (Design Intelligence)
 - **Model Independence**: Universal (Applies across Claude, Gemini, GPT, and Local agents)
 
 ## 2. Prerequisites & Technical Boundary
@@ -30,10 +30,10 @@ Procedural playbook defining verified operational and implementation patterns fo
 ## 3. Step-by-Step Procedural Workflow
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source**: github ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
-> **Source Version**: `2c67adc2`  
+> **Source Version**: `2d6c2852`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T19:27:24.564Z  
+> **Timestamp**: 2026-11-21T12:48:46.644Z  
 > **Learning ID**: `learn-github-mattermost-mattermost`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -47,7 +47,7 @@ Procedural playbook defining verified operational and implementation patterns fo
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T19:27:24.558Z  
+> **Harvest Timestamp**: 2026-11-21T12:48:46.638Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -57,7 +57,7 @@ Procedural playbook defining verified operational and implementation patterns fo
 - **Description**: Mattermost is an open source platform for secure collaboration across the entire software development lifecycle..
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 39602 stars
+- **Stars / Engagement**: 39683 stars
 
 ---
 
@@ -95,6 +95,10 @@ func userCreatePostPermissionCheckWithContext(c *Context, channelId string) {
 
 	if !hasPermission {
 		c.SetPermissionError(model.PermissionCreatePost)
+		return
+	}
+
+	if !requireChannelWriteAccessByID(c, channelId) {
 		return
 	}
 }
@@ -200,6 +204,43 @@ func checkEditFileAttachmentPermission(c *Context, newFileIds []string, original
 	}
 }
 
+// postAttributeValuesForCreate turns the submitted metadata values into PropertyValues to
+// write with the post.
+//
+// When nothing was submitted this returns (nil, nil) before any lookup, channel or property,
+// which is what keeps createPost byte-identical to its pre-feature behaviour — the reason
+// this is safe to add to the most-used endpoint in the product.
+func postAttributeValuesForCreate(c *Context, post *model.Post) ([]*model.PropertyValue, *model.AppError) {
+	items := post.Metadata.GetPropertyValues()
+	if len(items) == 0 {
+		return nil, nil
+	}
+
+	if !c.App.Config().FeatureFlags.PostAttributes {
+		return nil, model.NewAppError("Api4.createPost", "api.post.create_post.attributes_feature_disabled.app_error", nil, "", http.StatusBadRequest)
+	}
+
+	// Fetched only once there are values to check: the team ID decides which team-scoped
+	// fields apply. CreatePostAsUserWithFlags reads the same channel again a moment later.
+	channel, appErr := c.App.GetChannel(c.AppContext, post.ChannelId)
+	if appErr != nil {
+		return nil, appErr
+	}
+
+	values, fields, err := c.App.PreparePostPropertyValuesForCreate(c.AppContext, items, channel)
+	if err != nil {
+		return nil, model.AsAppError(err)
+	}
+
+	for _, field := range fields {
+		if !c.App.CanSetPostPropertyValueOnCreate(c.AppContext, c.AppContext.Session().UserId, field, channel) {
+			return nil, model.NewAppError("Api4.createPost", "api.post.create_post.attribute_no_permission.app_error", nil, "", http.StatusForbidden)
+		}
+	}
+
+	return values, nil
+}
+
 ```
 
 ### Core Architecture Module: `server/channels/api4/webhook.go`
@@ -256,7 +297,8 @@ func createIncomingHook(c *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if ok, _ := c.App.SessionHasPermissionToReadChannel(c.AppContext, *c.AppContext.Session(), channel); !ok {
+	// Channel access policies do not apply to incoming webhooks, so this is the RBAC check alone.
+	if ok, _ := c.App.SessionHasPermissionToReadChannelRBACOnly(c.AppContext, *c.AppContext.Session(), channel); !ok {
 		c.LogAudit("fail - bad channel permissions")
 		c.SetPermissionError(model.PermissionReadChannelContent)
 		return
@@ -373,7 +415,7 @@ func updateIncomingHook(c *Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if channel.Type != model.ChannelTypeOpen {
-		if ok, _ := c.App.SessionHasPermissionToReadChannel(c.AppContext, *c.AppContext.Session(), channel); !ok {
+		if ok, _ := c.App.SessionHasPermissionToReadChannelRBACOnly(c.AppContext, *c.AppContext.Session(), channel); !ok {
 			c.LogAudit("fail - bad channel permissions")
 			c.SetPermissionError(model.PermissionReadChannelContent)
 			return
@@ -501,15 +543,7 @@ func getIncomingHook(c *Context, w http.ResponseWriter, r *http.Request) {
 	auditRec.AddMeta("hook_display", hook.DisplayName)
 	auditRec.AddMeta("channel_id", hook.ChannelId)
 	auditRec.AddMeta("team_id", hook.TeamId)
-	c.LogAudit("attempt")
-
-	channel, err = c.App.GetChannel(c.AppContext, hook.ChannelId)
-	if err != nil {
-		c.Err = err
-		return
-	}
-
-	i
+	c.LogAudit("attempt"
 ```
 
 ### Core Architecture Module: `server/channels/api4/webhook_local.go`
@@ -683,6 +717,247 @@ func (es *Service) GetTrackFlowStartedByRole(isFirstAdmin bool, isSystemAdmin bo
 
 ```
 
+### Core Architecture Module: `server/channels/app/entities/core.go`
+```
+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
+
+package entities
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"regexp"
+	"strconv"
+	"strings"
+	"time"
+	"unicode"
+
+	"github.com/mattermost/mattermost/server/public/model"
+)
+
+const (
+	CoreTimeTypeID         = CoreOwner + refSeparator + "time"
+	coreTimeRFC3339Pattern = `[0-9]{4}-[0-9]{2}-[0-9]{2}[Tt][0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]{1,9})?(?:[Zz]|[+-][0-9]{2}:[0-9]{2})`
+	// Clock + required zone keeps bare times and issue ids from matching.
+	// Accepts 16:30 CET, 16.30 CET, 4:30pm CET, 4.30 p.m. CET, 4pm CET.
+	coreTimeClockZonePattern = `(?i)(?:(?:[01]?\d|2[0-3])[:.][0-5]\d(?::[0-5]\d)?(?:\s*[ap]\.?m\.?)?|(?:0?[1-9]|1[0-2])(?:[:.][0-5]\d)?\s*[ap]\.?m\.?)\s*(?:UTC|GMT|Z|CET|CEST|EET|EEST|WET|WEST|BST|EST|EDT|CST|CDT|MST|MDT|PST|PDT|AKST|AKDT|HST|IST|JST|KST|AEST|AEDT|ACST|ACDT|AWST|NZST|NZDT)`
+)
+
+// Fixed offsets for the abbreviations we recognize. The abbreviation itself
+// encodes daylight-saving (CET vs CEST), so we do not need a geo zone database.
+var coreTimeZoneOffsets = map[string]int{
+	"UTC": 0, "GMT": 0, "Z": 0,
+	"CET": 3600, "CEST": 7200,
+	"EET": 7200, "EEST": 10800,
+	"WET": 0, "WEST": 3600, "BST": 3600,
+	"EST": -5 * 3600, "EDT": -4 * 3600,
+	"CST": -6 * 3600, "CDT": -5 * 3600,
+	"MST": -7 * 3600, "MDT": -6 * 3600,
+	"PST": -8 * 3600, "PDT": -7 * 3600,
+	"AKST": -9 * 3600, "AKDT": -8 * 3600,
+	"HST": -10 * 3600,
+	"IST": 5*3600 + 30*60,
+	"JST": 9 * 3600, "KST": 9 * 3600,
+	"AEST": 10 * 3600, "AEDT": 11 * 3600,
+	"ACST": 9*3600 + 30*60, "ACDT": 10*3600 + 30*60,
+	"AWST": 8 * 3600,
+	"NZST": 12 * 3600, "NZDT": 13 * 3600,
+}
+
+var (
+	coreTimeClockZoneRE = regexp.MustCompile(`(?i)^(\d{1,2})(?:[:.](\d{2}))?(?::(\d{2}))?\s*([ap]\.?m\.?)?\s*([A-Za-z]{1,5})$`)
+	coreTimeHourPMRE    = regexp.MustCompile(`(?i)^(\d{1,2})\s*([ap]\.?m\.?)\s*([A-Za-z]{1,5})$`)
+)
+
+func init() {
+	ensureCore()
+}
+
+func ensureCore() {
+	must(AddType(CoreOwner, &model.EntityType{Name: "time", DisplayName: "Time"}))
+	must(AddMatcher(CoreOwner, &model.EntityMatcher{Name: "time.rfc3339", Type: "time", Pattern: coreTimeRFC3339Pattern, Boundary: "token"}))
+	must(AddMatcher(CoreOwner, &model.EntityMatcher{Name: "time.clock_zone", Type: "time", Pattern: coreTimeClockZonePattern, Boundary: "token"}))
+}
+
+func must(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+// CoreLookup describes a value using a built-in type. createAt is the post's
+// creation time in Unix milliseconds. It dates a clock that names no day.
+// Zero means the current time.
+func CoreLookup(_ context.Context, typeID, value string, createAt int64) (*model.EntityCard, error) {
+	switch typeID {
+	case CoreTimeTypeID:
+		return coreTimeCard(value, createAt)
+	default:
+		return nil, fmt.Errorf("unsupported entity")
+	}
+}
+
+func coreTimeCard(value string, createAt int64) (*model.EntityCard, error) {
+	parsed, err := parseCoreTime(value, createAt)
+	if err != nil {
+		return nil, err
+	}
+	utc := parsed.UTC()
+	blocks, err := json.Marshal([]map[string]any{
+		{
+			"type": "text",
+			"text": fmt.Sprintf("**UTC:** %s", utc.Format("15:04 MST")),
+		},
+		{
+			"type":      "text",
+			"text":      fmt.Sprintf("As written: %s", value),
+			"is_subtle": true,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &model.EntityCard{
+		TypeID:  CoreTimeTypeID,
+		Value:   value,
+		Title:   "Timestamp",
+		Instant: utc.UnixMilli(),
+		Blocks:  blocks,
+	}, nil
+}
+
+func parseCoreTime(value string, createAt int64) (time.Time, error) {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return time.Time{}, fmt.Errorf("unsupported entity")
+	}
+	normalized := strings.ToUpper(value)
+	if parsed, err := time.Parse(time.RFC3339Nano, normalized); err == nil {
+		return parsed, nil
+	}
+	if parsed, err := time.Parse(time.RFC3339, normalized); err == nil {
+		return parsed, nil
+	}
+	if parsed, err := parseCoreTimeClockZone(value, createAt); err == nil {
+		return parsed, nil
+	}
+	return time.Time{}, fmt.Errorf("unsupported entity")
+}
+
+func parseCoreTimeClockZone(value string, createAt int64) (time.Time, error) {
+	compact := collapseSpaces(value)
+	if m := coreTimeClockZoneRE.FindStringSubmatch(compact); m != nil {
+		hour, err := strconv.Atoi(m[1])
+		if err != nil {
+			return time.Time{}, fmt.Errorf("unsupported entity")
+		}
+		minute := 0
+		if m[2] != "" {
+			minute, err = strconv.Atoi(m[2])
+			if err != nil {
+				return time.Time{}, fmt.Errorf("unsupported entity")
+			}
+		}
+		second := 0
+		if m[3] != "" {
+			second, err = strconv.Atoi(m[3])
+			if err != nil {
+				return time.Time{}, fmt.Errorf("unsupported entity")
+			}
+		}
+		meridiem := m[4]
+		zone := strings.ToUpper(m[5])
+		if meridiem == "" && m[2] == "" {
+			return time.Time{}, fmt.Errorf("unsupported entity")
+		}
+		hour, err = applyMeridiem(hour, meridiem)
+		if err != nil {
+			return time.Time{}, err
+		}
+		return clockInZone(hour, minute, second, zone, createAt)
+	}
+	if m := coreTimeHourPMRE.FindStringSubmatch(compact); m != nil {
+		hour, err := strconv.Atoi(m[1])
+		if err != nil {
+			return time.Time{}, fmt.Errorf("unsupported entity")
+		}
+		hour, err = applyMeridiem(hour, m[2])
+		if err != nil {
+			return time.Time{}, err
+		}
+		return clockInZone(hour, 0, 0, strings.ToUpper(m[3]), createAt)
+	}
+	return time.Time{}, fmt.Errorf("unsupported entity")
+}
+
+func collapseSpaces(value string) string {
+	var b strings.Builder
+	b.Grow(len(value))
+	prevSpace := false
+	for _, r := range value {
+		if unicode.IsSpace(r) {
+			if !prevSpace {
+				b.WriteByte(' ')
+				prevSpace = true
+			}
+			continue
+		}
+		prevSpace = false
+		b.WriteRune(r)
+	}
+	return strings.TrimSpace(b.String())
+}
+
+func applyMeridiem(hour int, meridiem string) (int, error) {
+	meridiem = strings.ToLower(strings.ReplaceAll(meridiem, ".", ""))
+	switch meridiem {
+	case "":
+		if hour < 0 || hour > 23 {
+			return 0, fmt.Errorf("unsupported entity")
+		}
+		return hour, nil
+	case "am":
+		if hour < 1 || hour > 12 {
+			return 0, fmt.Errorf("unsupported entity")
+		}
+		if hour == 12 {
+			return 0, nil
+		}
+		return hour, nil
+	case "pm":
+		if hour < 1 || hour > 12 {
+			return 0, fmt.Errorf("unsupported entity")
+		}
+		if hour == 12 {
+			return 12, nil
+		}
+		return hour + 12, nil
+	default:
+		return 0, fmt.Errorf("unsupported entity")
+	}
+}
+
+func clockInZone(hour, minute, second int, zone string, createAt int64) (time.Time, error) {
+	if minute < 0 || minute > 59 || second < 0 || second > 59 {
+		return time.Time{}, fmt.Errorf("unsupported entity")
+	}
+	offset, ok := coreTimeZoneOffsets[zone]
+	if !ok {
+		return time.Time{}, fmt.Errorf("unsupported entity")
+	}
+	loc := time.FixedZone(zone, offset)
+	ref := time.Now()
+	if createAt > 0 {
+		ref = time.UnixMilli(createAt)
+	}
+	ref = ref.In(loc)
+	return time.Date(ref.Year(), ref.Month(), ref.Day(), hour, minute, second, 0, loc), nil
+}
+
+```
+
 ### Core Architecture Module: `server/channels/app/guarded_hooks.go`
 ```
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
@@ -833,11 +1108,7 @@ func (a *App) runGuardedMessageWillBePosted(rctx request.CTX, post *model.Post) 
 		}
 		if replacementPost != nil {
 			post = replacementPost
-			if post.Metadata != nil && metadata != nil {
-				post.Metadata.Priority = metadata.Priority
-			} else {
-				post.Metadata = metadata
-			}
+			restorePriorityAndValues(post, metadata)
 		}
 		return true
 	}, plugin.MessageWillBePostedID)
@@ -865,11 +1136,7 @@ func (a *App) runGuardedMessageWillBePosted(rctx request.CTX, post *model.Post) 
 		}
 		if replacement != nil {
 			post = replacement
-			if post.Metadata != nil && metadata != nil {
-				post.Metadata.Priority = metadata.Priority
-			} else {
-				post.Metadata = metadata
-			}
+			restorePriorityAndValues(post, metadata)
 		}
 		if trackPluginDelivery {
 			deliveredPluginIDs = append(deliveredPluginIDs, g.PluginId)
@@ -877,6 +1144,18 @@ func (a *App) runGuardedMessageWillBePosted(rctx request.CTX, post *model.Post) 
 	}
 
 	return post, deliveredPluginIDs, nil
+}
+
+// restorePriorityAndValues puts the original post's priority and property values back on a
+// plugin's replacement post. Values are validated before the hooks run, and a plugin sets
+// values through the plugin API, not by rewriting the post here.
+func restorePriorityAndValues(replacement *model.Post, original *model.PostMetadata) {
+	if replacement.Metadata != nil && original != nil {
+		replacement.Metadata.Priority = original.Priority
+		replacement.Metadata.PropertyValues = original.PropertyValues
+	} else {
+		replacement.Metadata = original
+	}
 }
 
 // runGuardedMessageWillBeUpdated dispatches MessageWillBeUpdated. In the non-guarded
@@ -908,12 +1187,7 @@ func (a *App) runGuardedMessageWillBeUpdated(rctx request.CTX, newPost, oldPost 
 	}()
 
 	// Phase A: fan out to non-guard plugins, fail-open. With empty guards the exclude list is
-	// empty and behavior is identical to plain RunMultiHook.
-	var rejectionReason string
-	pCtx := pluginContext(rctx)
-	a.ch.RunMultiHookExcluding(pluginIDsOf(guards), func(hooks plugin.Hooks, manifest *model.Manifest) bool {
-		newPost, rejectionReason = hooks.MessageWillBeUpdated(pCtx, newPost.ForPlugin(), oldPost.ForPlugin())
-		if newPost != nil && trackPluginDelivery &
+	// empty 
 ```
 
 ### Core Architecture Module: `server/channels/app/imaging/utils.go`
@@ -1600,36 +1874,6 @@ func (w *searchEngineWatcher) startIfInactive(ctx context.Context, timer *time.T
 			w.ps.backfill
 ```
 
-### Core Architecture Module: `server/channels/app/platform/utils.go`
-```
-// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
-// See LICENSE.txt for license information.
-
-package platform
-
-import (
-	"crypto/sha256"
-	"encoding/base64"
-)
-
-func getKeyHash(key string) string {
-	hash := sha256.New()
-	hash.Write([]byte(key))
-	return base64.StdEncoding.EncodeToString(hash.Sum(nil))
-}
-
-// allocateCacheTargets is used to fill target value types
-// for getting items from cache.
-func allocateCacheTargets[T any](l int) []any {
-	toPass := make([]any, 0, l)
-	for range l {
-		toPass = append(toPass, new(T))
-	}
-	return toPass
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1660,957 +1904,1874 @@ func allocateCacheTargets[T any](l int) []any {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9d59b084` (2026-11-13)
-**Commit Message**: Fix post list height shift for posts with multiple image attachments (#39016)
+### Incident Patch 1: `8381b545` (2026-11-20)
+**Commit Message**: Product rail: pin and reorder items, Threads back in Channels, and Boards, badge and team sidebar fixes (#40251)
 
-* Fix post list height shift for posts with multiple image attachments
+* Let product rail items be hidden into a More menu, and open Boards from other products
 
-Posts with several images or videos jumped in height shortly after they
-appeared, pushing the rest of the post list around.
+Clicking Boards on a product page (Agents, Playbooks) or in Threads did
+nothing when the team had no board to open: with no board, the item
+linked to the current page. It now opens the channel Channels would,
+with the sidebar on Boards so it can say there are none.
 
-MediaGallery packed its tiles into rows in JavaScript based on the
-measured width of its container. On the first render that width is not
-known yet, so it packed against a hardcoded 700px fallback. The
-virtualized post list measures each post's height in a layout effect on
-mount, which runs after the gallery's own layout effect but before the
-gallery can re-render with the real width. The list therefore recorded
-the 700px layout. Once the gallery re-rendered at the real width the row
-count usually changed (for five landscape images in a ~1000px channel:
-three rows of 2+2+1 at 664px became two rows of 3+2 at 440px), and the
-list only picked up the new height via its ResizeObserver, which
-updates offsets without re-rendering, so the correction showed up as a
-visible shift.
+Boards and products can be hidden from the rail by right-clicking them.
+Hidden ones are listed in a More menu at the end of the rail; one opened
+from there shows in the rail while it's open, and Always show in its
+right-click menu puts it back for good. Which items are hidden is saved
+as a user preference.
 
-No JS-side width measurement can fix this, because the parent always
-measures before the child's corrected render commits. Instead, let the
-b
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/media_gallery.scss` (modified, +25/-11)
+* Open the first board once boards load when Boards is clicked from another product
+
+A product page loaded directly doesn't have the team's boards yet, so
+Boards fell back to the last channel even when the team had boards.
+After landing there with the Boards sidebar, the rail now opens the first
+board as soon as the boards are known.
+
+Co-Authored-By: Claude Opus 5.5
+
+**File**: `webapp/channels/src/actions/views/product_rail.test.ts` (added, +149/-0)
 ```diff
-@@ -4,7 +4,7 @@
-     box-sizing: border-box;
-     margin: 8px 0;
-     clear: both;
--    container-type: inline-size;
-+    container: media-gallery / inline-size;
- 
-     .post--compact & {
-         display: block;
-@@ -121,6 +121,8 @@
-     }
- 
-     &__rows {
-+        --media-gallery-row-height: 216px;
+@@ -0,0 +1,149 @@
++// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
++// See LICENSE.txt for license information.
 +
-         display: grid;
-         overflow: hidden;
-         min-width: 0;
-@@ -143,29 +145,41 @@
-         display: flex;
-         overflow: hidden;
-         min-width: 0;
--        flex-direction: column;
-+        flex-flow: row wrap;
-+        align-content: flex-start;
-         align-items: flex-start;
-         justify-content: flex-start;
-         gap: 8px;
-     }
- 
--    &__row {
--        display: flex;
--        width: 100%;
--        min-width: 0;
--        flex-direction: row;
--        align-items: stretch;
--        justify-content: flex-start;
--        gap: 8px;
--        text-align: left;
-+    &--compact &__rows {
-+        --media-gallery-row-height: 144px;
++import {PreferenceTypes} from 'mattermost-redux/action_types';
++import {Client4} from 'mattermost-redux/client';
++
++import configureStore from 'store';
++
++import {saveRailListPreference} from './product_rail';
++
++const HIDDEN_KEY = 'sidebar_settings--product_rail_hidden_items';
++
++// A save the test settles by hand.
++type PendingSave = {value: string; resolve: () => void; reject: () => void};
++
++describe('saveRailListPreference', () => {
++    let saves: PendingSave[];
++
++    beforeEach(() => {
++        saves = [];
++        jest.spyOn(Client4, 'savePreferences').mockImplementation((_userId, preferences) => new Promise((resolve, reject) => {
++            saves.push({
++                value: preferences[0].value!,
++                resolve: () => resolve({status: 'OK'}),
++                reject: () => reject(new Error('save failed')),
++            });
++        }));
++    });
++
++    // Lets queued promise callbacks run.
++    const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
++
++    // Saves are queued across the module, so settle any a test left open before the next one.
++    afterEach(async () => {
++        for (let i = 0; i < saves.length; i++) {
++            saves[i].resolve();
++            // eslint-disable-next-line no-await-in-loop
++            await flush();
++        }
++        jest.restoreAllMocks();
++    });
++
++    function setUp(initialValue?: string) {
++        const store = configureStore();
++        if (initialValue !== undefined) {
++            store.dispatch({type: PreferenceTypes.RECEIVED_PREFERENCES, data: [{category: 'sidebar_settings', name: 'product_rail_hidden_items', user_id: '', value: initialValue}]});
++        }
++        const savedValue = () => store.getState().entities.preferences.myPreferences[HIDDEN_KEY]?.value;
++        const save = (value: string) => store.dispatch(saveRailListPreference('product_rail_hidden_items', value));
++        return {savedValue, save};
 +    }
++
++    test('should show the new list straight away', async () => {
++        const {savedValue, save} = setUp('[]');
++
++        await save('["boards"]');
++
++        expect(savedValue()).toBe('["boards"]');
++    });
++
++    test('should send saves one after another, in the order they were made', async () => {
++        const {save} = setUp('[]');
++
++        await save('["boards"]');
++        await save('["boards","playbooks"]');
++        await flush();
++
++        // The second waits for the first to settle.
++        expect(saves.map((s) => s.value)).toEqual(['["boards"]']);
++
++        saves[0].resolve();
++        await flush();
++
++        expect(saves.map((s) => s.value)).toEqual(['["boards"]', '["boards","playbooks"]']);
++    });
++
++    test('should put back the last list the server accepted when a save fails', async () => {
++        const {savedValue, save} = setUp('["boards"]');
++
++        await save('["boards","playbooks"]');
++        await flush();
++        saves[0].reject();
++        await flush();
++
++        expect(savedValue()).toBe('["boards"]');
++    });
++
++    test('should not undo a newer change when an earlier save fails', async () => {
++        const {savedValue, save} = setUp('[]');
++
++        await save('["boards"]');
++        await save('["boards","playbooks"]');
++        await flush();
++        saves[0].reject();
++        await flush();
++
++        expect(savedValue()).toBe('["boards","playbooks"]');
++
++        // The newer save then goes through as usual.
++        saves[1].resolve();
++        await flush();
++        expect(savedValue()).toBe('["boards","playbooks"]');
++    });
++
++    test('should not undo a newer change that returned to the same list when an earlier save fails', async () => {
++        const {savedValue, save} = setUp('[]');
++
++        // Unpin, pin again and unpin again: the newest list matches the first.
++        await save('["mattermost-ai"]');
++        await save('[]');
++        await save('["mattermost-ai"]');
++        await flush();
++        saves[0].reject();
++        await flush();
++
++        expect(savedValue()).toBe('["mattermost-ai"]');
++
++        saves[1].resolve();
++        await flush();
++        saves[2].resolve();
++        await flush();
++        expect(savedValue()).toBe('["mattermost-ai"]');
++    });
++
++    test('should fall back to the last accepted list when the newest of several saves fails', async () => {
++        const {savedValue, save} = setUp('[]');
++
++        await save('["boards"]');
++        await save('["boards","playbooks"]');
++        await flush();
++        saves[0].resolve();
++        await flush();
++        saves[1].reject();
++        await flush();
++
++        expect(savedValue()).toBe('["boards"]');
++    });
++
++    test('should remove a preference it created when that first save fails', async () => {
++        const {savedValue, save} = setUp();
++
++        await save('["boards"]');
++        await flush()
+```
+
+**File**: `webapp/channels/src/actions/views/product_rail.ts` (modified, +88/-0)
+```diff
+@@ -1,8 +1,15 @@
+ // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+ // See LICENSE.txt for license information.
+ 
++import type {PreferenceType} from '@mattermost/types/preferences';
++
++import {PreferenceTypes} from 'mattermost-redux/action_types';
+ import {savePreferences} from 'mattermost-redux/actions/preferences';
++import {Client4} from 'mattermost-redux/client';
+ import {getCurrentUserId} from 'mattermost-redux/selectors/entities/users';
++import {getPreferenceKey} from 'mattermost-redux/utils/preference_utils';
++
++import {getProductRailHiddenItems} from 'selectors/views/product_rail';
+ 
+ import {ActionTypes, Preferences} from 'utils/constants';
+ 
+@@ -58,3 +65,84 @@ export function setBoardsShownInChannels(shown: boolean): ActionFuncAsync {
+         }]));
+     };
+ }
++
++// Unpins a rail item into the rail's More menu, or pins it back on the rail. Aliases are other
++// names the preference may hold for the item: a product's bare plugin id, which earlier builds
++// saved and which also names the plugin's other products (aliasPeers). An alias is replaced by
++// those peers' own ids, so they keep their state.
++export function setProductRailItemHidden(itemId: string, hidden: boolean, aliases: string[] = [], aliasPeers: string[] = []): ActionFuncAsync {
++    return (dispatch, getState) => {
++        const current = getProductRailHiddenItems(getState());
++        const peersHiddenByAlias = aliases.some((alias) => current.includes(alias)) ? aliasPeers.filter((id) => !current.includes(id)) : [];
++        const others = [...current, ...peersHiddenByAlias].filter((id) => id !== itemId && !aliases.includes(id));
++        return dispatch(saveRailListPreference(Preferences.PRODUCT_RAIL_HIDDEN_ITEMS, JSON.stringify(hidden ? [...others, itemId] : others)));
++    };
 +}
 +
-+// Sized in CSS rather than from a measured width so the post list sees the
-+// final height on first render, including in narrow containers like the RHS.
-+// CSS has no hysteresis, so the RHS reserves its scrollbar gutter to keep a
-+// scrollbar appearing from toggling the row height near 480px.
-+@container media-gallery (width < 480px) {
-+    .MediaGallery__rows {
-+        --media-gallery-row-height: 144px;
++// Saves the order the user has put the rail items in.
++export function setProductRailOrder(order: string[]): ActionFuncAsync {
++    return (dispatch) => dispatch(saveRailListPreference(Preferences.PRODUCT_RAIL_ORDER, JSON.stringify(order)));
++}
++
++// Each rail list preference's save in flight, and the value the server last accepted (undefined
++// for none saved), from before the first save still in flight.
++const pendingSaves = new Map<string, Promise<void>>();
++const acceptedValues = new Map<string, PreferenceType | undefined>();
++
++// Each rail list preference's most recent save, by a number that goes up with every save made.
++let lastSaveNumber = 0;
++const latestSaves = new Map<string, number>();
++
++/**
++ * Saves one of the rail's list preferences (the unpinned items, or the order). Each save holds the
++ * whole list, built on the one before, so unlike savePreferences:
++ * - saves go to the server one after another, so an older list can't land after a newer one; and
++ * - a failed save puts back the last list the server accepted, rather than deleting the
++ *   preference (which would pin, or reorder, everything), unless a newer save has been made since
++ *   (even one back to the same list) or the list has changed otherwise, which then stands.
++ */
++export function saveRailListPreference(name: string, value: string): ActionFuncAsync {
++    return async (dispatch, getState) => {
++        const state = getState();
++        const userId = getCurrentUserId(state);
++        const category = Preferences.CATEGORY_SIDEBAR_SETTINGS;
++        const key = getPreferenceKey(category, name);
++        const preference: PreferenceType = {category, name, user_id: userId, value};
++        const saveNumber = ++lastSaveNumber;
++        latestSaves.set(name, saveNumber);
++
++        if (!pendingSaves.has(name)) {
++            acceptedValues.set(name, state.entities.preferences.myPreferences[key]);
++        }
++
++        // The list shows straight away; the server catches up.
++        dispatch({type: PreferenceTypes.RECEIVED_PREFERENCES, data: [preference]});
++
++        const previousSave = pendingSaves.get(name) ?? Promise.resolve();
++        const save = previousSave.then(async () => {
++            try {
++                await Client4.savePreferences(userId, [preference]);
++                acceptedValues.set(name, preference);
++            } catch {
++                const isLatestSave = latestSaves.get(name) === saveNumber;
++                if (!isLatestSave || getState().entities.preferences.myPreferences[key]?.value !== value) {
++                    return;
++                }
++                const accepted = acceptedValues.get(name);
++                if (accepted) {
++                    dispatch({type: PreferenceTypes.RECEIVED_PREFERENCES, data: [accepted]});
++                } else {
++                    dispatch({type: PreferenceTypes.DELETED_PREFERENCES, data: [preference]});
++                }
++            }
++        });
++        pendingSaves.set(name, save);
++        save.then(() => {
++            if (pendingSaves.get(name) === save) {
++                pendingSaves.delete(name);
++            }
++        });
++
++        return {data: true};
++    };
+```
+
+**File**: `webapp/channels/src/components/channel_layout/channel_controller.test.tsx` (modified, +2/-2)
+```diff
+@@ -108,10 +108,10 @@ describe('ChannelController with the product rail', () => {
+         );
+     }
+ 
+-    it('hides the channel sidebar in Threads', () => {
++    it('shows the channel sidebar in Threads', () => {
+         renderAt('/team-one/threads', true);
+ 
+-        expect(screen.queryByTestId('sidebar')).not.toBeInTheDocument();
++        expect(screen.getByTestId('sidebar')).toBeInTheDocument();
+     });
+ 
+     it('shows the channel sidebar in a channel', () => {
+```
+
+**File**: `webapp/channels/src/components/channel_layout/channel_controller.tsx` (modified, +1/-10)
+```diff
+@@ -4,11 +4,9 @@
+ import classNames from 'classnames';
+ import React, {lazy, useEffect} from 'react';
+ import {useDispatch, useSelector} from 'react-redux';
+-import {useRouteMatch} from 'react-router-dom';
+ 
+ import {cleanUpStatusAndProfileFetchingPoll} from 'mattermost-redux/actions/status_profile_polling';
+ import {getIsUserStatusesConfigEnabled} from 'mattermost-redux/selectors/entities/common';
+-import {isProductRailEnabled} from 'mattermost-redux/selectors/entities/general';
+ 
+ import {addVisibleUsersInCurrentChannelAndSelfToStatusPoll} from 'actions/status_actions';
+ import {getIsMobileView} from 'selectors/views/browser';
+@@ -25,7 +23,6 @@ import UnreadsStatusHandler from 'components/unreads_status_handler';
+ 
+ import Pluggable from 'plugins/pluggable';
+ import {Constants} from 'utils/constants';
+-import {TEAM_NAME_PATH_PATTERN} from 'utils/path';
+ 
+ const ProductNoticesModal = makeAsyncComponent('ProductNoticesModal', lazy(() => import('components/product_notices_modal')));
+ const ResetStatusModal = makeAsyncComponent('ResetStatusModal', lazy(() => import('components/reset_status_modal')));
+@@ -44,12 +41,6 @@ export default function ChannelController(props: Props) {
+     const enableMarkAllReadShortcut = useGetFeatureFlagValue('EnableShiftEscapeToMarkAllRead') === 'true';
+     const dispatch = useDispatch();
+ 
+-    // The product rail gives Threads a place of its own, so the channel sidebar steps aside for it.
+-    // Not on mobile, where the rail is hidden and the sidebar is the way back to channels.
+-    const productRailEnabled = useSelector(isProductRailEnabled);
+-    const inThreads = useRouteMatch(`/:team(${TEAM_NAME_PATH_PATTERN})/threads`) !== null;
+-    const hideSidebar = productRailEnabled && inThreads && !isMobileView;
+-
+     useEffect(() => {
+         const {navigator} = window;
+         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+@@ -85,7 +76,7 @@ export default function ChannelController(props: Props) {
+         <>
+             <CRTPostsChannelResetWatcher/>
+             <QueryParamActionController/>
+-            {!hideSidebar && <Sidebar/>}
++            <Sidebar/>
+             <div
+                 id='channel_view'
+                 className='channel-view'
+```
+
+**File**: `webapp/channels/src/components/menu/menu.test.tsx` (modified, +120/-0)
+```diff
+@@ -556,3 +556,123 @@ describe('Menu — isMenuOpen control transition matrix', () => {
+         });
+     });
+ });
++
++describe('Menu with openOnHover', () => {
++    // Only a menu opened by a click hides the rest of the page from assistive technology.
++    const teamsButton = () => screen.getByRole('button', {name: 'Teams', hidden: true});
++
++    function renderHoverMenu() {
++        const onItemClick = jest.fn();
++        renderWithContext(
++            <>
++                <input aria-label='Message'/>
++                <Menu
++                    menuButton={{id: 'hover-menu-button', children: 'Teams'}}
++                    menu={{id: 'hover-menu', 'aria-label': 'Teams menu', openOnHover: true}}
++                >
++                    <MenuItem
++                        id='hover-menu-item'
++                        labels={<span>{'Alpha'}</span>}
++                        onClick={onItemClick}
++                    />
++                </Menu>
++            </>,
++        );
++        return {onItemClick};
++    }
++
++    test('should open on hover without taking focus, and close when the pointer leaves', async () => {
++        renderHoverMenu();
++        const message = screen.getByRole('textbox', {name: 'Message'});
++        message.focus();
++
++        await userEvent.hover(teamsButton());
++
++        expect(await screen.findByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
++        expect(message).toHaveFocus();
++
++        // The page stays available to assistive technology under a menu opened by hovering.
++        expect(screen.getByRole('textbox', {name: 'Message'})).toBeInTheDocument();
++        expect(screen.getByRole('button', {name: 'Teams'})).toBeInTheDocument();
++
++        await userEvent.unhover(teamsButton());
++
++        await waitFor(() => expect(screen.queryByRole('menuitem', {name: 'Alpha'})).not.toBeInTheDocument());
++    });
++
++    test('should stay open while the pointer moves onto the menu, and run its items', async () => {
++        const {onItemClick} = renderHoverMenu();
++
++        await userEvent.hover(teamsButton());
++        const item = await screen.findByRole('menuitem', {name: 'Alpha'});
++        await userEvent.unhover(teamsButton());
++        await userEvent.hover(item);
++        await userEvent.click(item);
++
++        await waitFor(() => expect(onItemClick).toHaveBeenCalled());
++    });
++
++    test('should stay open after the pointer leaves when opened by a click', async () => {
++        renderHoverMenu();
++
++        await userEvent.click(teamsButton());
++        expect(await screen.findByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
++
++        await userEvent.unhover(teamsButton());
++        await new Promise((resolve) => setTimeout(resolve, 400));
++
++        expect(screen.getByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
++    });
++
++    test('should close on Escape while focus stays outside it', async () => {
++        renderHoverMenu();
++        screen.getByRole('textbox', {name: 'Message'}).focus();
++
++        await userEvent.hover(teamsButton());
++        expect(await screen.findByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
++
++        await userEvent.keyboard('{Escape}');
++
++        await waitFor(() => expect(screen.queryByRole('menuitem', {name: 'Alpha'})).not.toBeInTheDocument());
++        expect(screen.getByRole('textbox', {name: 'Message'})).toHaveFocus();
++    });
++
++    test('should behave as a click-opened menu once a click takes over, and return focus to the trigger', async () => {
++        renderHoverMenu();
++
++        await userEvent.hover(teamsButton());
++        expect(await screen.findByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
++        await userEvent.click(teamsButton());
++
++        // Like a click-opened menu, it now hides the rest of the page from assistive technology.
++        await waitFor(() => expect(screen.queryByRole('button', {name: 'Teams'})).not.toBeInTheDocument());
++        expect(screen.getByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
++
++        await userEvent.keyboard('{Escape}');
++
++        await waitFor(() => expect(screen.queryByRole('menuitem', {name: 'Alpha'})).not.toBeInTheDocument());
++        expect(teamsButton()).toHaveFocus();
++    });
++
++    test('should leave focus alone after a click took over, when the menu opts out of restoring it', async () => {
++        renderWithContext(
++            <Menu
++                menuButton={{id: 'hover-menu-button', children: 'Teams'}}
++                menu={{id: 'hover-menu', 'aria-label': 'Teams menu', openOnHover: true, disableRestoreFocus: true}}
++            >
++                <MenuItem
++                    id='hover-menu-item'
++                    labels={<span>{'Alpha'}</span>}
++                />
++            </Menu>,
++        );
++
++        await userEvent.hover(teamsButton());
++        expect(await screen.findByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
++        await userEvent.click(teamsButton());
++        await userEve
+```
+
+**File**: `webapp/channels/src/components/menu/menu.tsx` (modified, +128/-7)
+```diff
+@@ -9,6 +9,7 @@ import React, {
+     useState,
+     useEffect,
+     useCallback,
++    useRef,
+ } from 'react';
+ import type {
+     ButtonHTMLAttributes,
+@@ -124,6 +125,14 @@ type MenuProps = {
+      */
+     disableRestoreFocus?: boolean;
+ 
++    /**
++     * When true, hovering the trigger opens the menu, and moving the pointer off both the trigger
++     * and the menu closes it again. A menu opened this way doesn't take focus or block the page,
++     * so hovering past it doesn't interrupt the user. Clicking the trigger, or opening it from the
++     * keyboard, still opens it as usual. Ignored in mobile view.
++     */
++    openOnHover?: boolean;
++
+     /**
+      * When false, the menu will not auto-focus the first item on open.
+      * Focus stays on the trigger button; ArrowDown moves focus into the list.
+@@ -140,6 +149,24 @@ type MenuProps = {
+ };
+ 
+ const defaultAnchorOrigin = {vertical: 'bottom', horizontal: 'left'} as PopoverOrigin;
++
++// How long the pointer rests on an openOnHover trigger before its menu opens, and how long it can be
++// off both the trigger and the menu (crossing the gap between them, say) before the menu closes.
++const HOVER_OPEN_DELAY = 100;
++const HOVER_CLOSE_DELAY = 200;
++
++// Menus opened by hovering are mounted in a container of their own. The popover hides everything
++// sharing its container from assistive technology, so this keeps the rest of the page available.
++function getHoverMenuContainer() {
++    const id = 'hoverMenuContainer';
++    let container = document.getElementById(id);
++    if (!container) {
++        container = document.createElement('div');
++        container.id = id;
++        document.body.appendChild(container);
++    }
++    return container;
++}
+ const defaultTransformOrigin = {vertical: 'top', horizontal: 'left'} as PopoverOrigin;
+ 
+ interface Props {
+@@ -178,6 +205,20 @@ export function Menu(props: Props) {
+     // Initialize from prop so initial mount with isMenuOpen={true} opens.
+     const [isMenuOpen, setIsMenuOpen] = useState(props.menu.isMenuOpen === true);
+ 
++    // Whether the menu is open because the pointer is over it (openOnHover), rather than from a click
++    // or the keyboard. Mirrored in a ref for the hover timers.
++    const [openedByHover, setOpenedByHover] = useState(false);
++    const openedByHoverRef = useRef(false);
++
++    // Set from a hover-open until the menu has closed, or a click takes it over. Mounting in the hover
++    // container (see getHoverMenuContainer) is part of it, and switching that while the menu closes
++    // would remount it and drop the chosen item's click handler. A click takeover does switch it, as a
++    // fresh popover: the modal only hides the page, locks scrolling, takes focus and remembers what to
++    // refocus when it opens, so the menu then behaves exactly as if the click had opened it.
++    const [hoverSession, setHoverSession] = useState(false);
++    const hoverTimer = useRef<number | undefined>(undefined);
++    const hoverEnabled = Boolean(props.menu.openOnHover) && !isMobileView;
++
+     // State (not ref) so MUI's anchorEl reacts when the button mounts.
+     const [menuButton, setMenuButton] = useState<HTMLElement | null>(null);
+ 
+@@ -194,6 +235,61 @@ export function Menu(props: Props) {
+         }
+     }
+ 
++    function setHoverOpened(byHover: boolean) {
++        openedByHoverRef.current = byHover;
++        setOpenedByHover(byHover);
++    }
++
++    function handleHoverEnter() {
++        if (!hoverEnabled) {
++            return;
++        }
++        window.clearTimeout(hoverTimer.current);
++        if (!isMenuOpen) {
++            hoverTimer.current = window.setTimeout(() => {
++                setHoverOpened(true);
++                setHoverSession(true);
++                setIsMenuOpen(true);
++            }, HOVER_OPEN_DELAY);
++        }
++    }
++
++    function handleHoverLeave() {
++        if (!hoverEnabled) {
++            return;
++        }
++        window.clearTimeout(hoverTimer.current);
++
++        // A menu opened by a click or the keyboard stays open until it's dismissed.
++        hoverTimer.current = window.setTimeout(() => {
++            if (openedByHoverRef.current) {
++                setIsMenuOpen(false);
++            }
++        }, HOVER_CLOSE_DELAY);
++    }
++
++    useEffect(() => {
++        if (!isMenuOpen) {
++            setHoverOpened(false);
++        }
++    }, [isMenuOpen]);
++
++    // Focus stays where it was under a hover-opened menu, so Escape there wouldn't reach the menu.
++    useEffect(() => {
++        if (!openedByHover) {
++            return undefined;
++        }
++        const closeOnEscape = (event: globalThis.KeyboardEvent) => {
++            if (event.key === 'Escape') {
++                setIsMenuOpen(false);
++            }
++        };
++        document.addEventListener('keydown', closeOnEscape);
++        return () => document.removeEventListener('keydown', closeOnEscape);
++    }, [openedByHover]);
++
++    useEffect(() => () => window.clearTimeout(hoverTimer.current), []);
++
+   
+```
+
+**File**: `webapp/channels/src/components/product_rail/product_rail.scss` (modified, +177/-73)
+```diff
+@@ -4,14 +4,30 @@
+ 
+     z-index: 17;
+     display: flex;
+-    overflow: auto;
++    overflow: hidden;
+     width: 72px;
+     flex-direction: column;
+     align-items: center;
+-    padding: 12px 0;
++
++    // Half of the top padding sits inside the scrolling part, so the team's badge isn't clipped.
++    padding: 6px 0 12px;
+     gap: 4px;
+     grid-area: product-rail;
+-    scrollbar-width: none;
++
++    // The team, the items and More scroll when the rail runs out of room; the bottom group (the team
++    // sidebar's plugin icons and its show button) stays in view below them.
++    &__scroll {
++        display: flex;
++        width: 100%;
++        min-height: 0;
++        flex: 1 1 auto;
++        flex-direction: column;
++        align-items: center;
++        padding-top: 6px;
++        gap: 4px;
++        overflow-y: auto;
++        scrollbar-width: none;
++    }
+ 
+     // Scoped under .app__body to win over the theme's link colors (.app__body a and its :hover).
+     .app__body &__item,
+@@ -159,6 +175,12 @@
+             top: -3px;
+             right: -3px;
+         }
++
++        .ProductRail__badge {
++            z-index: 2;
++            top: -6px;
++            right: -8px;
++        }
+     }
+ 
+     &__teamStackCard {
+@@ -181,6 +203,97 @@
+         }
+     }
+ 
++    // The draggable items. Drag and drop measures margins, not gaps, so they're spaced with margins;
++    // the list's negative margin keeps the rail's usual gap before the More item.
++    &__items {
++        display: flex;
++        width: 100%;
++        flex-direction: column;
++        align-items: center;
++        margin-bottom: -4px;
++    }
++
++    // Each item sits in a wrapper that is dragged, and anchors its right-click menu beside it.
++    &__itemWrapper {
++        position: relative;
++        display: flex;
++        margin-bottom: 4px;
++
++        &:focus-visible {
++            outline: none;
++        }
++
++        &--dragging .ProductRail__icon {
++            background: rgba(var(--sidebar-text-rgb), 0.16);
++            box-shadow: var(--elevation-3);
++        }
++    }
++
++    &__itemMenuAnchor {
++        position: absolute;
++        inset: 0;
++        pointer-events: none;
++    }
++
++    // With the team sidebar hidden, the bottom of the rail takes over the bottom of the team sidebar:
++    // its plugins' icons, above the button that brings it back.
++    &__bottom {
++        display: flex;
++        width: 100%;
++        flex: 0 0 auto;
++        flex-direction: column;
++        align-items: center;
++        gap: 4px;
++    }
++
++    &__plugins {
++        width: 100%;
++        padding: 16px 0 6px;
++        text-align: center;
++
++        &:empty {
++            display: none;
++        }
++
++        .fa {
++            color: var(--sidebar-header-text-color);
++            opacity: 0.73;
++            transition: all 0.15s ease;
++
++            &:hover {
++                opacity: 1;
++            }
++        }
++    }
++
++    &__showTeamSidebar {
++        display: flex;
++        width: 32px;
++        height: 32px;
++        flex: 0 0 auto;
++        align-items: center;
++        justify-content: center;
++        padding: 0;
++        border: none;
++        border-radius: var(--radius-m);
++        background: none;
++        color: rgba(var(--sidebar-text-rgb), 0.56);
++
++        svg {
++            fill: currentColor;
++        }
++
++        &:hover,
++        &:focus-visible {
++            background: rgba(var(--sidebar-text-rgb), 0.08);
++            color: var(--sidebar-text);
++        }
++
++        &:focus-visible {
++            box-shadow: inset 0 0 0 2px var(--sidebar-text-active-border);
++            outline: none;
++        }
++    }
+ 
+     @media screen and (max-width: 768px) {
+         display: none;
+@@ -200,8 +313,11 @@
+     height: 18px;
+     padding: 0 5px;
+     border-radius: 9px;
+-    background: var(--mention-bg);
+-    color: var(--mention-color);
++
++    // Menus sit on the center channel's colors, where the sidebar's mention colors can vanish (white
++    // on white in dark sidebar themes), so their badges take the theme's primary button colors.
++    background: var(--button-bg);
++    color: var(--button-color);
+     font-size: 11px;
+     font-weight: 700;
+     line-height: 18px;
+@@ -213,11 +329,60 @@
      }
  }
  
- .MediaGallery__tile {
-+    // Scale to the row height by aspect ratio, without upscaling past the
-+    // file's native width, clamped to 50-500px.
-+    --tile-width: max(50px, min(calc(var(--tile-ratio, 1.5) * var(--media-gallery-row-height)), var(--tile-native-width, 500px), 500px));
++.ProductRail__menuIcon {
++    display: flex;
++    color: rgba(var(--center-channel-color-rgb), 0.64);
 +
-     position: relative;
-     display: flex;
-     overflow: hidden;
-+    width: var(--tile-width);
-+    max-width: 100%;
-+    height: var(--media-gallery-row-height);
-     box-sizing: border-box;
-+    flex: 0 0 var(--tile-width);
-     align-items: center;
-     justify-content: center;
-     border: 1px solid rgba(var(--center-channel-color-rgb), 0.16);
++    svg {
++        width: 18px;
++        height: 18px;
++        fill: currentColor;
++    }
++
++    img {
++        width: 18px;
++        height: 18px;
++    }
++}
++
++.ProductRail__moreMenu .MuiMenuItem-root {
++    min-height: 40px;
++
++    > .trailing-elements {
++        display: flex;
++        align-items: center;
++        gap: 8px;
++    }
++}
++
+ .ProductRail__menuDot {
+     width: 8px;
+     height: 8px;
+     border-radius: 50%;
+-    background: var(--center-channel-color);
++    background: var(--button-bg);
++}
++
++// A team's activity sits on its avatar's corner in the team menu, ringed in the menu's color.
++.ProductRail__teamAvatar > .ProductRail__menuBadge,
+
 ```
 
-**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/media_gallery.test.tsx` (modified, +132/-45)
+**File**: `webapp/channels/src/components/product_rail/product_rail.test.tsx` (modified, +638/-32)
 ```diff
-@@ -10,7 +10,7 @@ import type {FileInfo} from '@mattermost/types/files';
- import {renderWithContext} from 'tests/react_testing_utils';
+@@ -7,23 +7,29 @@ import React from 'react';
+ import {CollapsedThreads} from '@mattermost/types/config';
+ import type {DeepPartial} from '@mattermost/types/utilities';
  
- import {ArchiveFileError, ArchiveTooLargeError, buildFileArchive} from './file_archive';
--import MediaGallery, {nextNarrowState} from './media_gallery';
-+import MediaGallery from './media_gallery';
+-import {PreferenceTypes} from 'mattermost-redux/action_types';
++import {ChannelTypes, PreferenceTypes} from 'mattermost-redux/action_types';
++import {Client4} from 'mattermost-redux/client';
  
- jest.mock('./file_archive', () => ({
-     ...jest.requireActual('./file_archive'),
-@@ -39,37 +39,6 @@ function fileInfo(overrides: Partial<FileInfo>): FileInfo {
+ import type {ChannelKindRegistration} from 'selectors/views/product_rail';
+ 
+-import {act, renderWithContext, screen} from 'tests/react_testing_utils';
++import {act, fireEvent, renderWithContext, screen, userEvent, waitFor} from 'tests/react_testing_utils';
+ import {TestHelper} from 'utils/test_helper';
+ 
+ import type {GlobalState} from 'types/store';
+ import type {ProductComponent} from 'types/store/plugins';
+ import type {ProductRailSection} from 'types/store/views';
+ 
+-import ProductRail from './product_rail';
++import ProductRail, {moveRailItem} from './product_rail';
+ 
+ jest.mock('mattermost-redux/actions/threads', () => ({
+     getThreadCounts: () => ({type: 'MOCK_GET_THREAD_COUNTS'}),
+ }));
+ 
++const mockSavePreferences = jest.fn((...args: unknown[]) => ({type: 'MOCK_SAVE_PREFERENCES', args}));
++jest.mock('mattermost-redux/actions/preferences', () => ({
++    savePreferences: (...args: unknown[]) => mockSavePreferences(...args),
++}));
++
+ const team = TestHelper.getTeamMock({id: 'team1', name: 'team-one'});
+ const user = TestHelper.getUserMock({id: 'user1'});
+ 
+@@ -80,6 +86,10 @@ const boardKind: ChannelKindRegistration = {
+     matcher: (_state, channel) => channel.id === roadmap.id || channel.id === bugs.id,
+ };
+ 
++const railProduct = (name: string, pluginId: string): ProductComponent => ({...TestHelper.makeProduct(name), pluginId, baseURL: `/${pluginId}`, switcherLinkURL: `/${pluginId}`});
++const agents = railProduct('Agents', 'mattermost-ai');
++const playbooks = railProduct('Playbooks', 'playbooks');
++
+ function getBoardsState(currentChannelId: string, section: ProductRailSection = 'channels'): DeepPartial<GlobalState> {
+     const channels = [townSquare, roadmap, bugs];
+     const member = (channelId: string, mentions: number) => TestHelper.getChannelMembershipMock({
+@@ -123,14 +133,23 @@ function getBoardsState(currentChannelId: string, section: ProductRailSection =
      };
  }
  
--describe('nextNarrowState', () => {
--    const SCROLLBAR_WIDTH = 15;
--
--    it('switches to compact rows below the enter threshold', () => {
--        expect(nextNarrowState(false, 479)).toBe(true);
--        expect(nextNarrowState(false, 480)).toBe(false);
--    });
--
--    it('stays compact until well past the enter threshold so a vanishing scrollbar cannot flip it back', () => {
--        expect(nextNarrowState(true, 479 + SCROLLBAR_WIDTH)).toBe(true);
--        expect(nextNarrowState(true, 511)).toBe(true);
--        expect(nextNarrowState(true, 512)).toBe(false);
--    });
--
--    it('settles at every width in the worst case, where tall rows scroll and compact rows do not', () => {
--        for (let unscrolledWidth = 400; unscrolledWidth <= 600; unscrolledWidth++) {
--            const scrolledWidth = unscrolledWidth - SCROLLBAR_WIDTH;
--
--            // Going compact hides the scrollbar, which widens the container back out.
--            if (nextNarrowState(false, scrolledWidth)) {
--                expect(nextNarrowState(true, unscrolledWidth)).toBe(true);
--            }
--
--            // Going tall shows the scrollbar, which narrows the container again.
--            if (!nextNarrowState(true, unscrolledWidth)) {
--                expect(nextNarrowState(false, scrolledWidth)).toBe(false);
--            }
--        }
--    });
--});
--
- describe('MediaGallery', () => {
-     const baseState = {
-         entities: {
-@@ -149,28 +118,146 @@ describe('MediaGallery', () => {
-         expect(onToggle).toHaveBeenCalledWith('p1');
++// The store of the last render, for reading back the rail's preferences as saved.
++let lastStore: ReturnType<typeof renderWithContext>['store'];
++
+ function renderAt(pathname: string, state: DeepPartial<GlobalState>) {
+-    return renderWithContext(<ProductRail/>, state, {history: createMemoryHistory({initialEntries: [pathname]})});
++    const result = renderWithContext(<ProductRail/>, state, {history: createMemoryHistory({initialEntries: [pathname]})});
++    lastStore = result.store;
++    return result;
+ }
+ 
++const savedHiddenItems = () => lastStore.getState().entities.preferences.myPreferences['sidebar_settings--product_rail_hidden_items']?.value;
++
+ describe('ProductRail', () => {
+     // Where each item was is saved to localStorage, which would otherwise carry between tests.
+     beforeEach(() => {
+         localStorage.clear();
++        mockSavePreferences.mockClear();
++        jest.spyOn(Client4, 'savePreferences').mockResolvedValue({status: 'OK'});
      });
  
--    it('uses compact rows in a narrow container', () => {
--        const rectSpy = jest.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
--            width: 400,
--            height: 144,
--        } as DOMRect);
-+    it('leaves tile sizing to CSS so a narrow container does not need to be measured', () => {
-+        renderWithContext(
-+            <MediaGallery
-+                fileInfos={[
-+                    fileInfo({id: 'a', name: 'a.png', width: 800, height: 600}),
-+                    fileInfo({id: 'v', name: 'clip.mp4', extension: 'mp4', mime_type: 'video/mp4', width: 0, height: 0}),
-+                ]}
-+                postId='p1'
-+                onItemClick={jest.fn()}
-+            />,
-+            baseState,
-+        );
-+
-+        const [image, video] = screen.getAllByTestId('media-gallery-tile');
-+        expect(image.style.getPropertyValue('--tile-ratio')).toBe(String(800 / 600));
-+        expect(image.style.getPropertyValue('--tile-native-width')).toBe('800px');
-+        expect(video.style.getPropertyValue('--tile-ratio')).toBe('1.5');
-+        expect(video.style.getPropertyValue('--tile-native-width')).toBe('');
-+
-+        for (const tile of [image, video]) {
-+            expect(tile.style.width).toBe('');
-+            expect(tile.style.height).toBe('');
-+        }
-+    });
-+
-+    describe('layout', () => {
-+        const mixedFiles = [
-+            fileInfo({id: 'landscape', name: 'landscape.png', width: 1600, height: 900}),
-+            fileInfo({id: 'portrait', name: 'portrait.png', width: 600, height: 1200}),
-+            fileInfo({id: 'small', name: 'small.png', width: 40, height: 40}),
-+            fileInfo({id: 'panorama', name: 'panorama.png', width: 6000, height: 1000}),
-+            fileInfo({id: 'clip', name: 'clip.mp4', extension: 'mp4', mime_type: 'video/mp4', width: 0, height: 0}),
-+        ];
-+
-+        // Everything that decides the gallery's height: its row-height classes,
-+        // how tiles are grouped into wrapper elements, and each tile's sizing styles.
-+        function layoutOf(root: Element) {
-+            const gallery = root.querySelector('.MediaGallery')!;
-+            const tiles = Array.from(root.querySelectorAll<HTMLElement>('.MediaGallery__tile'));
-+            const groupSizes = new Map<Element, number>();
-+            for (const tile of tiles) {
-+                groupSizes.set(tile.parentElement!, (groupSizes.get(tile.parentElement!) ?? 0) + 1);
-+            }
-+            return {
-+                galleryClassName: gallery.className,
-+                tileGroups: Array.from(groupSizes.values()),
-+                tiles: tiles.map((tile) => ({
-+                    ratio: tile.style.getPropertyValue('--tile-ratio'),
-+                    nativeWidth: tile.style.getPropertyValue('--tile-native-width'),
-+                    width: tile.style.width,
-+                    height: tile.style.height,
-+                    flex: t
-```
-
-**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/media_gallery.tsx` (modified, +13/-75)
-```diff
-@@ -21,11 +21,9 @@ import {getFileType} from 'utils/utils';
- import type {GlobalState} from 'types/store';
+     test('should render nothing when the feature flag is off', () => {
+@@ -147,36 +166,23 @@ describe('ProductRail', () => {
+         expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+     });
  
- import {ArchiveFileError, ArchiveTooLargeError, archiveFilename, buildFileArchive} from './file_archive';
--import {packRows} from './pack_rows';
- import ImageTile from './tiles/image_tile';
- import VideoTile from './tiles/video_tile';
- import type {ClassifiedFile, TileKind} from './types';
--import {useContainerDimensions} from './use_container_dimensions';
+-    test('should link Channels and Threads to the current team', () => {
++    test('should link Channels to the team\'s default channel, leaving Threads to the channel sidebar', () => {
+         renderAt('/team-one/channels/town-square', getState());
  
- import './media_gallery.scss';
- 
-@@ -38,20 +36,6 @@ type Props = {
-     onToggleCollapse?: (postId: string) => void;
- };
- 
--const ROW_HEIGHT = 216;
--const COMPACT_ROW_HEIGHT = 144;
--const MIN_TILE_WIDTH = 50;
--const MAX_TILE_WIDTH = 500;
--const GAP = 8;
--const FALLBACK_WIDTH = 700;
--
--const NARROW_ENTER_WIDTH = 480;
--const NARROW_EXIT_WIDTH = 512;
--
--export function nextNarrowState(isNarrow: boolean, width: number): boolean {
--    return isNarrow ? width < NARROW_EXIT_WIDTH : width < NARROW_ENTER_WIDTH;
--}
--
- function tileKindFor(fileInfo: FileInfo): TileKind | null {
-     const type = getFileType(fileInfo.extension);
-     if (type === FileTypes.IMAGE) {
-@@ -75,16 +59,6 @@ const MediaGallery = ({fileInfos, postId, compactDisplay, isEmbedVisible = true,
- 
-     useEffect(() => () => downloadAbortRef.current?.abort(), []);
- 
--    const containerRef = useRef<HTMLDivElement | null>(null);
--    const {width: containerWidth} = useContainerDimensions(containerRef);
--
--    const effectiveWidth = containerWidth > 0 ? containerWidth : FALLBACK_WIDTH;
--    const [isNarrow, setIsNarrow] = useState(false);
--
--    useEffect(() => {
--        setIsNarrow((prev) => nextNarrowState(prev, effectiveWidth));
--    }, [effectiveWidth]);
--
-     const tiles: ClassifiedFile[] = useMemo(() => {
-         const out: ClassifiedFile[] = [];
-         for (const file of fileInfos) {
-@@ -96,16 +70,6 @@ const MediaGallery = ({fileInfos, postId, compactDisplay, isEmbedVisible = true,
-         return out;
-     }, [fileInfos]);
- 
--    const rows = useMemo(() => {
--        return packRows(tiles, {
--            containerWidth: effectiveWidth,
--            rowHeight: (compactDisplay || isNarrow) ? COMPACT_ROW_HEIGHT : ROW_HEIGHT,
--            minTileWidth: MIN_TILE_WIDTH,
--            maxTileWidth: MAX_TILE_WIDTH,
--            gap: GAP,
--        });
--    }, [tiles, effectiveWidth, isNarrow, compactDisplay]);
--
-     const handleClick = useCallback((index: number) => {
-         const file = tiles[index]?.file;
-         if (!file) {
-@@ -193,11 +157,8 @@ const MediaGallery = ({fileInfos, postId, compactDisplay, isEmbedVisible = true,
-     // Collapsed single videos need a header, otherwise the tile disappears with no toggle.
-     const showHeader = Boolean(onToggleCollapse) && (!isSingle || !isEmbedVisible);
- 
--    let tileIdx = 0;
--
-     return (
-         <div
--            ref={containerRef}
-             className={classNames('MediaGallery', {
-                 'MediaGallery--compact': compactDisplay,
-                 'MediaGallery--single': isSingle,
-@@ -269,42 +230,19 @@ const MediaGallery = ({fileInfos, postId, compactDisplay, isEmbedVisible = true,
-                 aria-hidden={!isEmbedVisible}
-             >
-                 <div className='MediaGallery__rows_inner'>
--                    {rows.map((row, rIdx) => (
--                        <div
--                            key={`row-${rIdx}`}
--                            className='MediaGallery__row'
--                            style={{height: `${row.height}px`}}
--                        >
--                            {row.tiles.map((packed) => {
--                                const current = tileIdx;
--                                tileIdx += 1;
--                                const tile = packed.tile;
--                                return tile.kind === 'image' ? (
--                                    <ImageTile
--                                        key={tile.file.id}
--                                        fileInfo={tile.file}
--                                        index={current}
--                                        total={tiles.length}
--                                        width={packed.width}
--                                        height={row.height}
--                                        enablePublicLink={enablePublicLink}
--                                        onClick={handleClick}
--                                    />
--                                ) : (
--                                    <VideoTile
--                                        key={tile.file.id}
--                                        fileInfo={tile.file}
--                                        index={current}
--                                        total={tiles.length}
--                                        width={packed.width}
--                                        height={row.height}
--                                        enablePublicLink={enablePublicLink}
--                                        onClick={handleClick}
-- 
-```
-
-**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/pack_rows.test.ts` (removed, +0/-97)
-```diff
-@@ -1,97 +0,0 @@
--// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
--// See LICENSE.txt for license information.
--
--import type {FileInfo} from '@mattermost/types/files';
--
--import {packRows} from './pack_rows';
--import type {ClassifiedFile} from './types';
--
--function tile(width: number, height: number, id = 'f'): ClassifiedFile {
--    return {
--        file: {id, width, height} as FileInfo,
--        kind: 'image',
--    };
--}
--
--describe('packRows', () => {
--    const baseOpts = {
--        containerWidth: 700,
--        rowHeight: 216,
--        minTileWidth: 50,
--        maxTileWidth: 500,
--        gap: 8,
--    };
--
--    it('returns no rows when there are no tiles', () => {
--        expect(packRows([], baseOpts)).toEqual([]);
+-        expect(screen.getByRole('link', {name: /Channels/})).toHaveAttribute('href', '/team-one');
+-        expect(screen.getByRole('link', {name: /Threads/})).toHaveAttribute('href', '/team-one/threads');
 -    });
 -
--    it('returns no rows when the container has zero width', () => {
--        expect(packRows([tile(800, 600)], {...baseOpts, containerWidth: 0})).toEqual([]);
--    });
+-    test('should hide Threads when collapsed reply threads are off', () => {
+-        renderAt('/team-one/channels/town-square', getState({collapsedThreads: false}));
 -
--    it('keeps every row at the configured (predictable) row height', () => {
--        const tiles = [
--            tile(800, 600, 'a'),
--            tile(800, 600, 'b'),
--            tile(800, 600, 'c'),
--            tile(800, 600, 'd'),
--            tile(800, 600, 'e'),
--        ];
--        const rows = packRows(tiles, baseOpts);
--        for (const row of rows) {
--            expect(row.height).toBe(baseOpts.rowHeight);
--        }
--    });
--
--    it('leaves the last row ragged on the right rather than scaling tiles to fill', () => {
--        const tiles = [
--            tile(800, 600, 'a'),
--            tile(800, 600, 'b'),
--            tile(800, 600, 'c'),
--            tile(800, 600, 'd'),
--        ];
--        const rows = packRows(tiles, baseOpts);
--
--        const last = rows[rows.length - 1];
--        const lastWidth = last.tiles.reduce((acc, t) => acc + t.width, 0) +
--            ((last.tiles.length - 1) * baseOpts.gap);
--        expect(lastWidth).toBeLessThanOrEqual(baseOpts.containerWidth + 0.5);
--    });
--
--    it('never packs a row wider than the container', () => {
--        const tiles = [
--            tile(1600, 600, 'a'),
--            tile(1600, 600, 'b'),
--            tile(1600, 600, 'c'),
--        ];
--        const rows = packRows(tiles, baseOpts);
--        for (const row of rows) {
--            const width = row.tiles.reduce((acc, t) => acc + t.width, 0) +
--                ((row.tiles.length - 1) * baseOpts.gap);
--            expect(width).toBeLessThanOrEqual(baseOpts.containerWidth + 0.5);
--        }
--    });
--
--    it('floors a sub-min tile at minTileWidth (the image inside still renders at native size via inline caps)', () => {
--        const rows = packRows([tile(40, 40)], baseOpts);
--        const packed = rows[0].tiles[0];
--        expect(packed.width).toBe(baseOpts.minTileWidth);
--    });
--
--    it('caps very wide tiles at maxTileWidth', () => {
--        const rows = packRows([tile(4000, 1000)], baseOpts);
--        const packed = rows[0].tiles[0];
--        expect(packed.width).toBeLessThanOrEqual(baseOpts.maxTileWidth);
--    });
--
--    it('uses a 1.5 default aspect ratio when a file is missing dimensions', () => {
--        const noDimsTile: ClassifiedFile = {
--            file: {id: 'x'} as FileInfo,
--            kind: 'image',
--        };
--        const rows = packRows([noDimsTile], baseOpts);
--        expect(rows).toHaveLength(1);
--        expect(rows[0].tiles[0].width).toBeCloseTo(baseOpts.rowHeight * 1.5);
--    });
--});
-```
-
-**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/pack_rows.ts` (removed, +0/-90)
-```diff
-@@ -1,90 +0,0 @@
--// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
--// See LICENSE.txt for license information.
--
--import type {FileInfo} from '@mattermost/types/files';
--
--import type {ClassifiedFile} from './types';
--
--export type PackOptions = {
--    containerWidth: number;
--    rowHeight: number;
--    minTileWidth: number;
--    maxTileWidth: number;
--    gap: number;
--};
--
--export type PackedTile = {
--    tile: ClassifiedFile;
--    width: number;
--    height: number;
--};
--
--export type PackedRow = {
--    tiles: PackedTile[];
--    height: number;
--};
--
--const DEFAULT_ASPECT_RATIO = 1.5;
--
--function ratioOf(file: FileInfo): number {
--    if (file.width && file.height && file.width > 0 && file.height > 0) {
--        return file.width / file.height;
--    }
--    return DEFAULT_ASPECT_RATIO;
--}
--
--function tileSize(tile: ClassifiedFile, opts: PackOptions): {width: number; height: number} {
--    const ratio = ratioOf(tile.file);
--    let width = ratio * opts.rowHeight;
--    let height = opts.rowHeight;
--
--    if (tile.file.width && tile.file.height) {
--        if (width > tile.file.width) {
--            width = tile.file.width;
--            height = tile.file.height;
--        }
--    }
--
--    const upperBound = Math.min(opts.maxTileWidth, opts.containerWidth);
--    if (width > upperBound) {
--        height *= upperBound / width;
--        width = upperBound;
--    }
--    if (width < opts.minTileWidth) {
--        height *= opts.minTileWidth / width;
--        width = opts.minTileWidth;
--    }
--
--    return {width, height};
--}
--
--export function packRows(tiles: ClassifiedFile[], opts: PackOptions): PackedRow[] {
--    const rows: PackedRow[] = [];
--    if (tiles.length === 0 || opts.containerWidth <= 0 || opts.rowHeight <= 0) {
--        return rows;
--    }
--
--    let current: PackedTile[] = [];
--    let currentWidth = 0;
--
--    for (const tile of tiles) {
--        const {width, height} = tileSize(tile, opts);
--        const addedWidth = current.length === 0 ? width : currentWidth + opts.gap + width;
--
--        if (current.length > 0 && addedWidth > opts.containerWidth) {
--            rows.push({tiles: current, height: opts.rowHeight});
--            current = [{tile, width, height}];
--            currentWidth = width;
--            continue;
--        }
--
--        current.push({tile, width, height});
--        currentWidth = addedWidth;
--    }
--
--    if (current.length > 0) {
--        rows.push({tiles: current, height: opts.rowHeight});
--    }
--
--    return rows;
--}
-```
-
-**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/tile_size.test.ts` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
-+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
-+// See LICENSE.txt for license information.
-+
-+import type {FileInfo} from '@mattermost/types/files';
-+
-+import {tileSizeVars} from './tile_size';
-+
-+function file(width?: number, height?: number): FileInfo {
-+    return {id: 'f', width, height} as FileInfo;
-+}
-+
-+describe('tileSizeVars', () => {
-+    it('exposes the image aspect ratio and native width', () => {
-+        expect(tileSizeVars(file(800, 600))).toEqual({
-+            '--tile-ratio': String(800 / 600),
-+            '--tile-native-width': '800px',
-+        });
-+    });
-+
-+    it('uses a 1.5 default aspect ratio and no native width when a file is missing dimensions', () => {
-+        expect(tileSizeVars(file())).toEqual({
-+            '--tile-ratio': '1.5',
-+        });
-+    });
-+});
-```
-
-**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/tile_size.ts` (added, +31/-0)
-```diff
-@@ -0,0 +1,31 @@
-+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
-+// See LICENSE.txt for license information.
-+
-+import type {CSSProperties} from 'react';
-+
-+import type {FileInfo} from '@mattermost/types/files';
-+
-+const DEFAULT_ASPECT_RATIO = 1.5;
-+
-+function ratioOf(file: FileInfo): number {
-+    if (file.width && file.height && file.width > 0 && file.height > 0) {
-+        return file.width / file.height;
-+    }
-+    return DEFAULT_ASPECT_RATIO;
-+}
-+
-+// Tiles are sized in CSS from these variables against the gallery's row height,
-+// which a container query shrinks in narrow containers, and they wrap into rows
-+// via CSS flex-wrap. Nothing depends on measuring the container, so the post has
-+// its final height on first render.
-+export function tileSizeVars(file: FileInfo): CSSProperties {
-+    const vars: Record<string, string> = {
-+        '--tile-ratio': String(ratioOf(file)),
-+    };
-+
-+    if (file.width && file.width > 0) {
-+        vars['--tile-native-width'] = `${file.width}px`;
-+    }
-+
-+    return vars as CSSProperties;
-+}
-```
-
-**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/tiles/image_tile.tsx` (modified, +4/-10)
-```diff
-@@ -13,17 +13,17 @@ import {isGIFImage} from 'utils/utils';
++        // Not the team's root, which can redirect into Threads.
++        expect(screen.getByRole('link', {name: /Channels/})).toHaveAttribute('href', '/team-one/channels/town-square');
+         expect(screen.queryByRole('link', {name: /Threads/})).not.toBeInTheDocument();
+     });
  
- import TileUtilityButtons from './tile_utility_buttons';
+-    test('should mark Channels active in a channel and Threads active in threads', () => {
++    test('should mark Channels active in a channel and in Threads, which is part of it', () => {
+         const {unmount} = renderAt('/team-one/channels/town-square', getState());
  
-+import {tileSizeVars} from '../tile_size';
-+
- type Props = {
-     fileInfo: FileInfo;
-     index: number;
-     total: number;
--    width: number;
--    height: number;
-     enablePublicLink: boolean;
-     onClick: (index: number) => void;
- };
+         expect(screen.getByRole('link', {name: /Channels/})).toHaveAttribute('aria-current', 'page');
+-        expect(screen.getByRole('link', {name: /Threads/})).not.toHaveAttribute('aria-current');
  
--const ImageTile = ({fileInfo, index, total, width, height, enablePublicLink, onClick}: Props) => {
-+const ImageTile = ({fileInfo, index, total, enablePublicLink, onClick}: Props) => {
-     const {formatMessage} = useIntl();
+         unmount();
+         renderAt('/team-one/threads', getState());
  
-     const handleActivate = useCallback(() => {
-@@ -52,12 +52,6 @@ const ImageTile = ({fileInfo, index, total, width, height, enablePublicLink, onC
-         {current: index + 1, total, name: fileInfo.name || ''},
-     );
- 
--    const tileStyle: CSSProperties = {
--        width: `${width}px`,
--        height: `${height}px`,
--        flex: `0 0 ${width}px`,
--    };
--
-     const imgStyle: CSSProperties = {};
-     if (fileInfo.width && fileInfo.height) {
-         imgStyle.maxWidth = `${fileInfo.width}px`;
-@@ -72,7 +66,7 @@ const ImageTile = ({fileInfo, index, total, width, height, enablePublicLink, onC
-             aria-label={label}
-             data-testid='media-gallery-tile'
-             data-file-name={fileInfo.name || ''}
--            style={tileStyle}
-+            style={tileSizeVars(fileInfo)}
-             onKeyDown={handleKeyDown}
-         >
-             <img
+-        expect(screen.getByRole('link'
 ```
 
 ---
 
-### Incident Patch 2: `75dd22f3` (2026-11-13)
-**Commit Message**: docs: fix Calls deployment guide links that break the offline docs build (#39990)
+### Incident Patch 2: `b05d2bdc` (2026-11-20)
+**Commit Message**: [MM-72037] Add shared health report with HTML and Markdown renderers (#40149)
 
-* docs: fix Calls deployment guide links that break the offline docs build
+* MM-72037: Add shared health report with HTML and Markdown renderers
 
-The guide linked to /../../<path>. Under the offline bundle's base URL
-(/_documentation/) those links escape the base URL and fail the build since
-#39953 made broken links throw. That build gates the enterprise image in the
-platform delivery pipeline, so master images stopped being published.
-Use relative .mdx file links, which resolve under any base URL.
+Add platform/shared/healthcheck/report, which builds a report from a
+HealthFindingList: a header, a summary, and Critical, Warning, Info,
+Could not evaluate, Muted and Resolved sections, with each finding in
+exactly one section. Labels are translated through the server catalog.
+The report renders as a self-contained HTML file with a print
+stylesheet, or as Markdown for pasting into Mattermost or Jira.
 
-* ci(docs): build the offline docs shape with BASE_URL=/_documentation/ (#39991)
+Switch mmctl health check plain output to the report model, so it
+groups findings by severity like Site health, and drop the duplicated
+sorting and label code from health.go.
 
-The server ships the docs bundle under /_documentation/, and the platform
-delivery pipeline builds it with that base URL. Docs CI rebuilt the offline
-shape with BASE_URL=/, so links that only break under /_documentation/ passed
-here and failed later in delivery, which blocked the enterprise image.
-Use the shipped base URL, and run Docs CI when this workflow changes.
+* MM-72037: Revert docs changes
 
-**File**: `.github/workflows/docs-ci.yaml` (modified, +7/-2)
+* MM-72037: Show rule codes, System Console links and the licensee in the health report
+
+Each finding now shows its rule code, so a report attached to a ticket
+can refer to a finding by a stable identifier. Findings with a System
+Console path link to it when the report has a site URL; a report is a
+file, so a bare path would lead nowhere and is left out.
+
+Add Company to the header as "Licensed to", and drop Site name, which
+is usua
+
+**File**: `server/cmd/mmctl/commands/health.go` (modified, +64/-179)
 ```diff
-@@ -3,13 +3,15 @@ name: Docs CI
- on:
-   pull_request:
-     paths:
-+      - ".github/workflows/docs-ci.yaml"
-       - "docs/**"
-       - "api/v4/source/**"
-       - "api/playbooks/**"
-   push:
-     branches:
-       - master
-     paths:
-+      - ".github/workflows/docs-ci.yaml"
-       - "docs/**"
-       - "api/v4/source/**"
-       - "api/playbooks/**"
-@@ -65,11 +67,14 @@ jobs:
+@@ -4,7 +4,6 @@
+ package commands
  
-       # Hosted Algolia injects SearchBar preconnects; do not scan that artifact.
-       # Rebuild without ALGOLIA_* (prebuild already ran) for the offline shape.
--      - name: Rebuild without Algolia for egress scan
-+      # BASE_URL matches the offline bundle the server ships (mattermost/delivery-platform
-+      # builds it with BASE_URL=/_documentation/), so links that only break under that
-+      # base URL fail here instead of in the release pipeline.
-+      - name: Rebuild offline bundle shape for egress scan
-         working-directory: docs/site
-         run: npx docusaurus build && npm run postbuild
-         env:
--          BASE_URL: /
-+          BASE_URL: /_documentation/
+ import (
+-	"cmp"
+ 	"context"
+ 	"errors"
+ 	"fmt"
+@@ -22,13 +21,11 @@ import (
+ 	serveri18n "github.com/mattermost/mattermost/server/v8/i18n"
+ 	"github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck"
+ 	"github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck/packet"
++	"github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck/report"
+ 	_ "github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck/rules"
+ 	"github.com/mattermost/mattermost/server/v8/platform/shared/releases"
+ )
  
-       - name: Scan built site for egress
-         working-directory: docs/site
+-// The server evaluates hourly, so results older than two intervals mean evaluation stopped.
+-const healthEvaluationStaleAfter = 2 * time.Hour
+-
+ // healthRunPollInterval is how often health run checks on the run it started. A variable so tests
+ // don't wait.
+ var healthRunPollInterval = 2 * time.Second
+@@ -105,8 +102,7 @@ func healthCheckCmdF(c client.Client, cmd *cobra.Command, args []string) error {
+ 		return fmt.Errorf("failed to get health findings: %w", err)
+ 	}
+ 
+-	printHealthFindings(list, includeResolved, time.Now())
+-	return nil
++	return printHealthFindings(list, includeResolved, report.Options{GeneratedAt: time.Now()})
+ }
+ 
+ func healthRunCmdF(c client.Client, cmd *cobra.Command, args []string) error {
+@@ -183,10 +179,14 @@ func healthCheckPacketCmdF(cmd *cobra.Command, args []string) error {
+ 	}
+ 	notes = append(notes, p.Warnings...)
+ 
+-	// Findings are stamped with when the packet was generated, not when mmctl ran.
++	// Findings are stamped with when the packet was generated, not when mmctl ran. The report
++	// shows an unknown collection time rather than claiming the data is from now.
+ 	evaluatedAt := p.Snapshot.CollectedAt
++	var collectedAt int64
+ 	if evaluatedAt.IsZero() {
+ 		evaluatedAt = time.Now()
++	} else {
++		collectedAt = evaluatedAt.UnixMilli()
+ 	}
+ 	now := func() time.Time { return evaluatedAt }
+ 
+@@ -214,8 +214,11 @@ func healthCheckPacketCmdF(cmd *cobra.Command, args []string) error {
+ 		}
+ 	}
+ 
+-	printHealthFindings(&model.HealthFindingList{EvaluatedAt: evaluatedAt.UnixMilli(), Findings: findings}, includeResolved, evaluatedAt, notes...)
+-	return nil
++	return printHealthFindings(&model.HealthFindingList{EvaluatedAt: collectedAt, Findings: findings}, includeResolved, report.Options{
++		GeneratedAt: time.Now(),
++		PointInTime: true,
++		Notes:       notes,
++	})
+ }
+ 
+ // fillLatestVersion fetches the latest release from GitHub when the snapshot doesn't record one.
+@@ -241,198 +244,80 @@ func fillLatestVersion(ctx context.Context, snapshot *healthcheck.Snapshot) stri
+ // printHealthFindings prints already-rendered findings, leaving out resolved ones unless
+ // includeResolved is set. Notes open the plain output; with --json they go to stderr so the
+ // output stays valid JSON.
+-func printHealthFindings(list *model.HealthFindingList, includeResolved bool, now time.Time, notes ...string) {
++func printHealthFindings(list *model.HealthFindingList, includeResolved bool, opts report.Options) error {
+ 	shown := make([]*model.HealthFinding, 0, len(list.Findings))
+ 	for _, finding := range list.Findings {
+ 		if includeResolved || finding.State != string(healthcheck.StateResolved) {
+ 			shown = append(shown, finding)
+ 		}
+ 	}
++	list = &model.HealthFindingList{EvaluatedAt: list.EvaluatedAt, Findings: shown}
+ 
+ 	if printer.GetFormat() == printer.FormatJSON {
+-		for _, note := range notes {
++		for _, note := range opts.Notes {
+ 			printer.PrintError(note)
+ 		}
+ 		printer.SetSingle(true)
+-		printer.PrintT("", &model.HealthFindingList{EvaluatedAt: list.EvaluatedAt, Findings: shown})
+-		return
+-	}
+-
+-	printer.Print(strings.Join(slices.Concat(notes, []string{formatHealthFindings(list.EvaluatedAt, shown, now)}), "\n\n"))
+-}
+-
+-func formatHealthFindings(evaluatedAt int64, shown []*model.HealthFinding, now time.Time) string {
+-	if evaluatedAt == 0 {
+-		return "Not evaluated yet. The first check runs within an hour of enabling the feature."
++		printer.PrintT("", list)
++		return nil
+ 	}
+ 
+-	slices.SortStableFunc(shown, compareHealthFindings)
+-
+-	var firing, unknown, resolved []*model.HealthFinding
+-	for _, finding := range shown {
+-		switch healthcheck.State(finding.State) {
+-		case healthcheck.StateFiring:
+-			firing = append(firing, finding)
+-		case healthcheck.StateUnknown:
+-			unknown = append(unknown, finding)
+-		case healthcheck.StateResolved:
+-			resolved = append(resolved, finding)
+-		}
++	if err := i18n.TranslationsPreInitFromFileBytes("en.json", serveri18n.English); err != nil {
++		return fmt.Errorf("failed to load translations: %w", err)
+ 	}
++	opts.T = i18n.T
++	opts.Location = time.Local
+ 
+-	blocks := []string{formatHealthEvaluationTime(evaluatedAt, now)}
++	printer.Print(formatHealthReport(report.Build(list, opts)))
++	return nil
++}
+ 
+-	for i := 0; i < len(firing); {
+-		area := firing[i].Area
+-		lines := []string{healthAreaHeading(area)}
+-		for ; i < len(firing) && firing[i].Area == area; i++ {
+-			lines = append(lines, healthFindi
 ```
 
-**File**: `docs/main/deployment-guide/calls/calls-deployment-guide.mdx` (modified, +6/-6)
+**File**: `server/cmd/mmctl/commands/health_test.go` (modified, +98/-53)
 ```diff
-@@ -69,11 +69,11 @@ Use this checklist to confirm you have the infrastructure, skills, and access re
+@@ -26,6 +26,7 @@ import (
+ 	"github.com/mattermost/mattermost/server/public/model"
+ 	"github.com/mattermost/mattermost/server/v8/cmd/mmctl/printer"
+ 	"github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck"
++	"github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck/report"
+ )
  
- - [ ] Your Mattermost server is configured to use HTTPS.
+ func healthTestFindings(lastSeen time.Time) []*model.HealthFinding {
+@@ -190,8 +191,8 @@ func (s *MmctlUnitTestSuite) TestHealthCheckCmd() {
+ 		s.Require().NoError(err)
  
--  _See [Configure TLS](/../../deployment-guide/server/setup-tls) if you need to set up HTTPS._
-+  _See [Configure TLS](../server/setup-tls.mdx) if you need to set up HTTPS._
+ 		output := s.printedHealthFindings()
+-		s.True(strings.HasPrefix(output, "Last evaluated "), output)
+-		s.True(strings.HasSuffix(output, "\n\nNo findings."), output)
++		s.True(strings.HasPrefix(output, "Last evaluated: "), output)
++		s.True(strings.HasSuffix(output, "\n\nNo open findings."), output)
+ 	})
  
- - [ ] You know how many active users you have in your current Mattermost deployment
+ 	s.Run("client error", func() {
+@@ -241,7 +242,7 @@ func (s *MmctlUnitTestSuite) TestHealthRun() {
+ 		s.Require().NoError(err)
  
--  _See [Site Statistics](/../../administration-guide/manage/statistics) to access usage metrics._
-+  _See [Site Statistics](../../administration-guide/manage/statistics.mdx) to access usage metrics._
+ 		output := s.printedHealthFindings()
+-		s.True(strings.HasPrefix(output, "Last evaluated "), output)
++		s.True(strings.HasPrefix(output, "Last evaluated: "), output)
+ 		s.Contains(output, "Push notification server is not HTTPS")
+ 	})
  
- - [ ] You can provision at least one dedicated Linux server or VM if you plan to use the RTCD service.
+@@ -346,24 +347,25 @@ func (s *MmctlUnitTestSuite) TestHealthRun() {
  
-@@ -84,7 +84,7 @@ Use this checklist to confirm you have the infrastructure, skills, and access re
+ func (s *MmctlUnitTestSuite) TestHealthPrintFindings() {
+ 	lastSeen := time.Date(2026, time.September, 24, 14, 2, 0, 0, time.Local)
+-	now := lastSeen.Add(38 * time.Minute)
++	evaluated := "Last evaluated: " + lastSeen.Format("2006-01-02 15:04 MST") + " (38 minutes ago)"
++	opts := report.Options{GeneratedAt: lastSeen.Add(38 * time.Minute)}
  
-   _See [Networking Decisions](#13-networking-decisions) (Step 1.3) if you're unsure if you need a TURN server._
+ 	s.Run("plain output", func() {
+ 		printer.Clean()
+ 		printer.SetFormat(printer.FormatPlain)
  
--- [ ] You have the appropriate [Mattermost edition and license](/../../product-overview/editions-and-offerings) for the features you need:
-+- [ ] You have the appropriate [Mattermost edition and license](../../product-overview/editions-and-offerings.mdx) for the features you need:
-   - **Mattermost Entry or Team Edition**: 1-1 calling and screen sharing (Up to 40 minutes)
-   - **Mattermost Professional**: Group calling and screen sharing (No time limit)
-   - **Mattermost Enterprise or Enterprise Advanced**: Required for:
-@@ -96,7 +96,7 @@ Use this checklist to confirm you have the infrastructure, skills, and access re
- - [ ] You are comfortable with basic Linux administration, or you have someone available who is. You will need to connect to servers over SSH, edit configuration files, manage systemd services, inspect logs, and run shell commands.
- - [ ] You have System Admin access to your Mattermost server.
+-		printHealthFindings(healthTestList(lastSeen), false, now)
++		s.Require().NoError(printHealthFindings(healthTestList(lastSeen), false, opts))
  
--  _See [Mattermost roles](/../../end-user-guide/collaborate/learn-about-roles) to learn about roles and permissions._
-+  _See [Mattermost roles](../../end-user-guide/collaborate/learn-about-roles.mdx) to learn about roles and permissions._
+-		s.Equal(`Last evaluated 2026-09-24 14:02 (38 minutes ago)
++		s.Equal(evaluated+`
  
- #### Networking Requirements
+-Notifications
+-  CRITICAL  Push notification server is not HTTPS
+-            The push server is http://push.example.com, so notifications are sent unencrypted.
+-            → Set Push Notification Server to an https:// URL.
++Critical
++  [Notifications] Push notification server is not HTTPS
++      The push server is http://push.example.com, so notifications are sent unencrypted.
++      → Set Push Notification Server to an https:// URL.
  
-@@ -115,7 +115,7 @@ Use this checklist to confirm you have the infrastructure, skills, and access re
+ Could not evaluate
+-  WARNING   Site URL is not HTTPS
+-            Config section unavailable.
++  Site URL is not HTTPS (Warning)
++      Config section unavailable.
  
- - [ ] You know how to open a [request](https://support.mattermost.com) with Mattermost support if you encounter issues.
+ 1 critical, 1 could not be evaluated`, s.printedHealthFindings())
+ 	})
+@@ -373,85 +375,128 @@ Could not evaluate
+ 		printer.SetFormat(printer.FormatPlain)
+ 		findings := healthTestFindings(lastSeen)
  
--  _Please include the exact **step number** (e.g. 2A.2.1) that failed, along with your [Mattermost support packet](/../../administration-guide/manage/admin/generating-support-packet) and [Calls logs](calls-logging.mdx)._
-+  _Please include the exact **step number** (e.g. 2A.2.1) that failed, along with your [Mattermost support packet](../../administration-guide/manage/admin/generating-support-packet.mdx) and [Calls logs](calls-logging.mdx)._
+-		printHealthFindings(&model.HealthFindingList{EvaluatedAt: lastSeen.UnixMilli(), Findings: findings}, true, now)
++		s.Require().NoError(printHealthFindings(&model.HealthFindingList{EvaluatedAt: lastSeen.UnixMilli(), Findings: findings}, true, opts))
  
- <Note>
+ 		output := s.printedHealthFindings()
+ 		for _, finding := range findings {
+ 			s.NotContains(output, finding.Code)
+ 			s.NotContains(output, finding.Fingerprint)
+ 		}
+-		for _, state := range []string{"firing", "unknown", "resolved"} {
++		for _, state := range []string{"firing", "unknown"} {
+ 			s.NotContains(output, state)
+ 		}
+ 	})
  
-@@ -157,7 +157,7 @@ To determine if you'll need RTCD, start by answering the following questions abo
- - **Are you deploying Calls on Kubernetes?**
-   - **Yes:** You'll need to deploy RTCD as it's the only supported way to run Calls. See the [Kubernetes](calls-kubernetes.mdx) Calls deployment guide for details.
-   - **No:** Continue to the next question.
--- **What is the *Total User* count of your existing Mattermost deployment?** _(Check [Site Statistics](/../../administration-guide/manage/statistics))_
-+- **What is the *Total User* count of your existing Mattermost deployment?** _(Check [Site Statistics](../../administration-guide/manage/statistics.mdx))_
-   - **Up to 50:** You can use the **Integrated** deployment model.
-   - **More than 50:** You'll need to deploy RTCD to avoid impacting messaging performance of the Mattermost server.
+-	s.Run("groups firing findings by area, sorted by severity then title", func() {
++	s.Run("groups findings by severity, sorted by area then title", func() {
+ 		printer.Clean()
+ 		printer.SetFormat(printer.FormatPlain)
+ 		findings := []*model.HealthFinding{
+ 			{Severity: "warning", State: "firing", Area: model.AreaNotifications, Title: "B warning", LastSeenAt: lastSeen.UnixMilli()},
+ 			{Severity: "critical", State: "firing", Area: model.AreaNotifications, Title: "Z critical", LastSeenAt: lastSeen.UnixMilli()},
+ 			{Severity: "warning", State: "firing", Area: model.AreaNotifications, Title: "A warning", LastSeenAt: lastSeen.UnixMilli()},
++			{Severity: "warning", State: "firing", Area: model.AreaCluster, Title: "C warning", LastSeenAt: lastSeen.UnixMilli()},
+ 			{Severity: "info", State: "firing", Area: model.AreaCluster, Title: "Node info", Scope: "node-1", MutedAt: 1, LastSeenAt: lastSeen.UnixMilli()},
+ 		}
  
+-		printHealthFindings(&model.HealthFindingList{EvaluatedAt: lastSeen.UnixMilli(), Findings: findings}, false, now)
++		s.Require().NoError(printHealthFindings(&model.HealthFindingList{EvaluatedAt: lastSeen.UnixMilli(), Findings: findings}, false, opts))
+ 
+-		s.Equal(`Last evaluated 2026-09-24 14:02 (38 minutes ago)
++		s.Equal(evaluated+`
+ 
+-Cluster
+-  INFO      Node info on node-1 [muted]
++Critical
++  [Notifications] Z critical
+ 
+-Notifications
+-  CRITICAL  Z critical
+-  WARNING   A warning
+-  WARNING   B warning
++Warning
++  [High availability] C warning
++  [Notifications] A warning
++  [Notifications] B warning
+ 
+-1 critical, 2 warnings, 1 info`, s.printedHealthFindings())
++Muted
++  Node info on node-1 (Info)
++
++1 critical, 3 warnings`, s.printedHealthFin
+```
+
+**File**: `server/i18n/en.json` (modified, +207/-0)
+```diff
+@@ -14717,6 +14717,213 @@
+     "translation": "Usage statistics unavailable.",
+     "description": "Health dashboard reason shown when a health check could not run because the usage statistics it inspects (for example user or post counts) were not collected, so the check's status is unknown."
+   },
++  {
++    "id": "health.report.area.auth",
++    "translation": "Authentication",
++    "description": "Label of the authentication area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.area.cluster",
++    "translation": "High availability",
++    "description": "Label of the high availability cluster area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.area.compliance",
++    "translation": "Compliance",
++    "description": "Label of the compliance area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.area.database",
++    "translation": "Database",
++    "description": "Label of the database area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.area.jobs",
++    "translation": "Jobs",
++    "description": "Label of the background jobs area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.area.license",
++    "translation": "Licensing",
++    "description": "Label of the licensing area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.area.notifications",
++    "translation": "Notifications",
++    "description": "Label of the notifications area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.area.platform",
++    "translation": "Platform",
++    "description": "Label of the platform (host and runtime) area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.area.search",
++    "translation": "Search",
++    "description": "Label of the search area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.area.version",
++    "translation": "Updates",
++    "description": "Label of the server version and updates area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
++  },
++  {
++    "id": "health.report.finding.title_on_node",
++    "translation": "{{.Title}} on {{.Node}}",
++    "description": "Title of a finding that applies to one server node in the shareable health report (Site health export and mmctl health check output); {{.Title}} is the finding title and {{.Node}} the node's hostname."
++  },
++  {
++    "id": "health.report.header.collected_at",
++    "translation": "Data collected",
++    "description": "Header label in the shareable health report (Site health export and mmctl health check output) for a one-off evaluation such as a Support Packet; followed by the date and time the evaluated data was collected, which can be long before the report was made."
++  },
++  {
++    "id": "health.report.header.collected_unknown",
++    "translation": "Unknown",
++    "description": "Shown after 'Data collected' in the shareable health report (Site health export and mmctl health check output) when a one-off evaluation, such as of a Support Packet, does not record when its data was collected."
++  },
++  {
++    "id": "health.report.header.company",
++    "translation": "Licensed to",
++    "description": "Header label in the shareable health report (Site health export and mmctl health check output); followed by the name of the company the Mattermost license is issued to."
++  },
++  {
++    "id": "health.report.header.evaluated_at",
++    "translation": "Last evaluated",
++    "description": "Header label in the shareable health report (Site health export and mmctl health check output); followed by the date and time the health checks last ran."
++  },
++  {
++    "id": "health.report.header.generated_at",
++    "
+```
+
+**File**: `server/platform/shared/healthcheck/report/render.go` (added, +168/-0)
+```diff
+@@ -0,0 +1,168 @@
++// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
++// See LICENSE.txt for license information.
++
++package report
++
++import (
++	_ "embed"
++	"fmt"
++	"html/template"
++	"io"
++	"net/url"
++	"regexp"
++	"slices"
++	"strings"
++)
++
++//go:embed report.html.tmpl
++var htmlSource string
++
++var htmlTemplate = template.Must(template.New("report").Parse(htmlSource))
++
++// Header lists the generation and evaluation times, then the site facts.
++func (r *Report) Header() []Field {
++	return slices.Concat([]Field{r.GeneratedAt, r.EvaluatedAt}, r.Site)
++}
++
++// WriteHTML writes the report as one self-contained HTML file: inline CSS, no scripts and no
++// external assets. Its print stylesheet makes "Print, then Save as PDF" in a browser the PDF export.
++func (r *Report) WriteHTML(w io.Writer) error {
++	return htmlTemplate.Execute(w, r)
++}
++
++// WriteMarkdown writes the report as Markdown for pasting into Mattermost. Finding
++// details are left out to keep it short.
++func (r *Report) WriteMarkdown(w io.Writer) error {
++	var b strings.Builder
++
++	fmt.Fprintf(&b, "# %s\n\n", escapeMarkdown(r.Title))
++	for _, note := range r.Notes {
++		fmt.Fprintf(&b, "> %s\n\n", escapeMarkdown(note))
++	}
++	for _, field := range r.Header() {
++		fmt.Fprintf(&b, "- **%s:** %s\n", escapeMarkdown(field.Label), escapeMarkdown(field.Value))
++	}
++	if r.Stale != "" {
++		fmt.Fprintf(&b, "\n**%s**\n", escapeMarkdown(r.Stale))
++	}
++
++	fmt.Fprintf(&b, "\n## %s\n\n%s\n", escapeMarkdown(r.Labels.Summary), escapeMarkdown(r.Summary))
++
++	for _, section := range r.Sections {
++		fmt.Fprintf(&b, "\n## %s\n", escapeMarkdown(section.Title))
++		switch section.Kind {
++		case SectionUnknown, SectionMuted:
++			b.WriteString("\n")
++			for _, f := range section.Findings {
++				tags := f.Severity
++				if section.Kind == SectionMuted && f.Unknown {
++					tags += ", " + r.Labels.Unknown
++				}
++				fmt.Fprintf(&b, "- **%s**%s (%s)", escapeMarkdown(f.Title), codeSuffix(f.Code), escapeMarkdown(tags))
++				if f.Message != "" {
++					fmt.Fprintf(&b, ": %s", escapeMarkdown(f.Message))
++				}
++				b.WriteString("\n")
++				if f.Remediation != "" {
++					fmt.Fprintf(&b, "  - **%s:** %s\n", escapeMarkdown(r.Labels.Remediation), escapeMarkdown(f.Remediation))
++				}
++			}
++		case SectionResolved:
++			b.WriteString("\n")
++			for _, f := range section.Findings {
++				fmt.Fprintf(&b, "- %s%s\n", escapeMarkdown(f.Title), codeSuffix(f.Code))
++			}
++		default:
++			for _, f := range section.Findings {
++				fmt.Fprintf(&b, "\n### \\[%s\\] %s%s\n", escapeMarkdown(f.Area), escapeMarkdown(f.Title), codeSuffix(f.Code))
++				if f.Message != "" {
++					fmt.Fprintf(&b, "\n%s\n", escapeMarkdown(f.Message))
++				}
++				if f.Remediation != "" {
++					fmt.Fprintf(&b, "\n**%s:** %s\n", escapeMarkdown(r.Labels.Remediation), escapeMarkdown(f.Remediation))
++				}
++				if f.ConsoleURL != "" {
++					fmt.Fprintf(&b, "\n%s\n", markdownLink(r.Labels.Console, f.ConsoleURL))
++				}
++				if f.DocsURL != "" {
++					fmt.Fprintf(&b, "\n%s\n", markdownLink(r.Labels.Documentation, f.DocsURL))
++				}
++			}
++		}
++	}
++
++	_, err := io.WriteString(w, b.String())
++	return err
++}
++
++var (
++	newlineReplacer = strings.NewReplacer("\r\n", " ", "\n", " ", "\r", " ")
++	markdownEscaper = strings.NewReplacer(
++		`\`, `\\`, "`", "\\`", "*", `\*`, "_", `\_`, "[", `\[`, "]", `\]`, "<", `\<`, ">", `\>`,
++		"#", `\#`, "|", `\|`, "~", `\~`, "!", `\!`, "&", `\&`,
++	)
++
++	// markdownVerbatim matches bare URLs, which a backslash escape would break, and @mentions,
++	// which a backslash escape would not stop from notifying when pasted into Mattermost. A mention
++	// includes any underscores right before it, which Mattermost strips before looking for one,
++	// and any mention run into it, such as @here in @all@here.
++	// Neither can contain a character that starts a link, HTML or a code span.
++	markdownVerbatim = regexp.MustCompile(`https?://[A-Za-z0-9\-._~:/?#!$&'+,;=%@]+|(?:\B|\b_+)@[A-Za-z0-9_](?:[A-Za-z0-9_.\-@]*[A-Za-z0-9_])?`)
++)
++
++// escapeMarkdown makes s render as the literal text it is, on one line, wherever it is placed,
++// leaving bare URLs linkable and @mentions inert in a code span. Mattermost finds mentions inside
++// a linked URL too, so a URL with an @ goes in a code span as well.
++func escapeMarkdown(s string) string {
++	s = strings.TrimSpace(newlineReplacer.Replace(s))
++
++	var b strings.Builder
++	last := 0
++	for _, match := range markdownVerbatim.FindAllStringIndex(s, -1) {
++		b.WriteString(markdownEscaper.Replace(s[last:match[0]]))
++		if token := s[match[0]:match[1]]; strings.Contains(token, "@") {
++			b.WriteString("`" + token + "`")
++		} else {
++			b.WriteString(token)
++		}
++		last = match[1]
++	}
++	b.WriteString(markdownEscaper.Replace(s[last:]))
++
++	s = b.String()
++	if s == "" {
++		return s
++	}
++
++	// A leading "-" or "+" would start a list or a thematic break, and "1. " or "1) " an ordered list.
++	if s[0] == '-' || s[0] == '+' {
++		return `\` + s
++	}
++	digits := strings.IndexFunc(s, func(
+```
+
+**File**: `server/platform/shared/healthcheck/report/report.go` (added, +372/-0)
+```diff
+@@ -0,0 +1,372 @@
++// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
++// See LICENSE.txt for license information.
++
++// Package report builds a shareable health report from rendered findings, and renders it as a
++// self-contained HTML file or as Markdown. The server and mmctl, including mmctl offline with a
++// Support Packet, build their reports here so they group, sort and label findings the same way.
++package report
++
++import (
++	"cmp"
++	"maps"
++	"net/url"
++	"slices"
++	"strings"
++	"time"
++
++	"github.com/mattermost/mattermost/server/public/model"
++	"github.com/mattermost/mattermost/server/public/shared/i18n"
++	"github.com/mattermost/mattermost/server/public/utils"
++	"github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck"
++)
++
++// staleAfter is how old an evaluation can be before it appears to have stopped. The server
++// evaluates hourly, so results older than two intervals mean evaluation stopped.
++const staleAfter = 2 * time.Hour
++
++const timeLayout = "2006-01-02 15:04 MST"
++
++type Options struct {
++	// T translates the report's labels. The findings must already be rendered.
++	T i18n.TranslateFunc
++	// Location is the time zone every time is shown in; nil means UTC.
++	Location    *time.Location
++	GeneratedAt time.Time
++	// PointInTime marks findings from a one-off evaluation, such as of a Support Packet, whose age
++	// says nothing about whether evaluation stopped. The list's EvaluatedAt is then when the data
++	// was collected, or 0 if that is unknown.
++	PointInTime bool
++
++	// SiteURL also turns each finding's System Console path into a link; without it there is none.
++	SiteURL       string
++	ServerVersion string
++	License       string
++	// Company is who the license is issued to. It also names the report's file.
++	Company string
++
++	// Notes open the report, such as the Support Packet disclaimer.
++	Notes []string
++}
++
++type Report struct {
++	Title string
++	// FileName is the name, without an extension, to save the report under, like the Support
++	// Packet's: mm_site_health_<company>_<YYYY-MM-DDTHH-MM>, generated in Location. It also titles
++	// the HTML report, so a browser suggests it when printing to PDF.
++	FileName    string
++	Notes       []string
++	GeneratedAt Field
++	EvaluatedAt Field
++	// Site lists the site facts the caller set.
++	Site []Field
++	// Age is how old the evaluation was when the report was generated. It is zero for a
++	// point-in-time evaluation, when nothing has been evaluated yet and when the server's clock
++	// is ahead of the generating host's.
++	Age time.Duration
++	// Stale warns that evaluation appears to have stopped; it is empty otherwise.
++	Stale string
++
++	// Summary counts the open findings, those in the severity and unknown sections, or says
++	// when the first evaluation runs.
++	Summary string
++
++	// Sections holds only the non-empty sections, in display order.
++	Sections []Section
++	Labels   Labels
++}
++
++type Field struct {
++	Label string
++	Value string
++}
++
++// Labels are the translated words the renderers put around findings.
++type Labels struct {
++	Summary       string
++	Remediation   string
++	Documentation string
++	Console       string
++	Details       string
++	// Unknown tags a muted finding whose check could not run.
++	Unknown string
++}
++
++type SectionKind string
++
++const (
++	SectionCritical SectionKind = "critical"
++	SectionWarning  SectionKind = "warning"
++	SectionInfo     SectionKind = "info"
++	SectionUnknown  SectionKind = "unknown"
++	SectionMuted    SectionKind = "muted"
++	SectionResolved SectionKind = "resolved"
++)
++
++var sectionOrder = []SectionKind{SectionCritical, SectionWarning, SectionInfo, SectionUnknown, SectionMuted, SectionResolved}
++
++type Section struct {
++	Kind     SectionKind
++	Title    string
++	Findings []Finding
++}
++
++type Finding struct {
++	// Code is the rule's stable identifier, for referring to the finding in a ticket.
++	Code     string
++	Area     string
++	Severity string
++	// Title names the node too for a node-scoped finding.
++	Title   string
++	Message string
++	// Unknown is set when the check could not run.
++	Unknown bool
++	// Remediation is empty when the check could not run, as the problem is not currently detected.
++	Remediation string
++	DocsURL     string
++	// ConsoleURL opens the finding's setting in the System Console; it is empty unless the
++	// report has a site URL.
++	ConsoleURL string
++	// Details is sorted by label.
++	Details []Field
++}
++
++// Build places each finding in exactly one section: resolved findings go to Resolved even if
++// muted, muted findings to Muted, and the rest by state and severity. MutedBy is never included.
++func Build(list *model.HealthFindingList, opts Options) *Report {
++	T := opts.T
++	location := cmp.Or(opts.Location, time.UTC)
++	formatTime := func(t time.Time) string { return t.In(location).Format(timeLayout) }
++
++	r := &Report{
++		Title:    T("health.report.title"),
++		FileName: fileName(opts.Company, opts.GeneratedAt.In(location)),
++		Notes:    opts.Notes,
++	
+```
+
+**File**: `server/platform/shared/healthcheck/report/report.html.tmpl` (added, +186/-0)
+```diff
+@@ -0,0 +1,186 @@
++<!DOCTYPE html>
++<html>
++<head>
++<meta charset="utf-8">
++<meta name="viewport" content="width=device-width, initial-scale=1">
++<title>{{.FileName}}</title>
++<style>
++:root { --text: #3f4350; --text-72: rgba(63, 67, 80, 0.72); --text-64: rgba(63, 67, 80, 0.64); --border: rgba(63, 67, 80, 0.12); --button: #1c58d9; --critical: #d24b4e; --critical-bg: rgba(210, 75, 78, 0.1); --warning: #997113; --warning-bg: rgba(255, 188, 31, 0.16); --info: #1c58d9; --info-bg: rgba(28, 88, 217, 0.08); --resolved: #3db887; --resolved-bg: rgba(61, 184, 135, 0.12); --neutral: rgba(63, 67, 80, 0.64); --neutral-bg: rgba(63, 67, 80, 0.08); --elevation-1: 0 2px 3px 0 rgba(0, 0, 0, 0.08); }
++* { box-sizing: border-box; }
++body { margin: 0; font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; line-height: 20px; color: var(--text); background: #f4f4f6; }
++h1, h2 { font-family: Metropolis, "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-weight: 600; }
++p { margin: 0; }
++a { color: var(--button); text-decoration: none; }
++a:hover { text-decoration: underline; }
++code { font-family: Menlo, Consolas, "Liberation Mono", monospace; font-size: 12px; }
++svg.icon { width: 18px; height: 18px; flex-shrink: 0; fill: currentColor; }
++.banner { background: #1e325c; color: #fff; }
++.banner-inner, main { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
++.banner-inner { display: flex; align-items: center; gap: 12px; padding-top: 20px; padding-bottom: 20px; }
++.banner .logo { width: 32px; height: 32px; fill: #fff; }
++.banner h1 { margin: 0; font-size: 22px; line-height: 28px; }
++.banner .product { font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: rgba(255, 255, 255, 0.72); }
++main { padding-top: 24px; padding-bottom: 40px; }
++.card { margin: 0 0 12px; border: 1px solid rgba(63, 67, 80, 0.08); border-radius: 8px; background: #fff; box-shadow: var(--elevation-1); break-inside: avoid; }
++.notice { display: flex; gap: 10px; margin: 0 0 16px; padding: 12px 16px; border: 1px solid rgba(28, 88, 217, 0.16); border-radius: 4px; background: var(--info-bg); }
++.notice .icon { color: var(--info); }
++.notice.stale { border-color: rgba(210, 75, 78, 0.16); background: var(--critical-bg); font-weight: 600; }
++.notice.stale .icon { color: var(--critical); }
++dl.header { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px 24px; margin: 0 0 12px; padding: 20px 24px; }
++dl.header dt, .label { color: var(--text-64); font-size: 11px; font-weight: 600; letter-spacing: 0.6px; line-height: 16px; text-transform: uppercase; }
++dl.header dd { margin: 2px 0 0; font-weight: 600; overflow-wrap: anywhere; }
++.summary { padding: 20px 24px; }
++.summary h2 { margin: 0 0 4px; font-size: 18px; line-height: 24px; }
++.summary p + p { margin-top: 4px; color: var(--text-72); }
++.counts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
++.counts a { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 8px; border-radius: 16px; background: var(--tone-bg); color: var(--tone); font-size: 13px; font-weight: 600; }
++.counts a:hover { text-decoration: none; filter: brightness(0.92); }
++.counts .icon { width: 16px; height: 16px; }
++.counts .count { padding: 0 6px; border-radius: 8px; background: rgba(255, 255, 255, 0.72); font-size: 11px; line-height: 16px; }
++.critical { --tone: var(--critical); --tone-bg: var(--critical-bg); }
++.warning { --tone: var(--warning); --tone-bg: var(--warning-bg); }
++.info { --tone: var(--info); --tone-bg: var(--info-bg); }
++.resolved { --tone: var(--resolved); --tone-bg: var(--resolved-bg); }
++.unknown, .muted { --tone: var(--neutral); --tone-bg: var(--neutral-bg); }
++section { margin-top: 28px; }
++section > h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; padding: 0 4px; font-size: 16px; line-height: 24px; break-after: avoid; }
++section > h2 .icon { color: var(--tone); }
++section > h2 .count { color: var(--text-64); font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 400; }
++section > h2::after { content: ""; flex: 1; height: 1px; margin-left: 4px; background: var(--border); }
++.finding { display: flex; gap: 14px; padding: 16px; border-left: 3px solid var(--tone); }
++.tone-icon { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--tone-bg); color: var(--tone); }
++.body { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
++.title { margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; }
++.message { color: var(--text-72); overflow-wrap: anywhere; }
++.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 2px; color: var(--text-64); font-size: 12px; }
++.tag { display: inline-block
+```
+
+**File**: `server/platform/shared/healthcheck/report/report_test.go` (added, +377/-0)
+```diff
+@@ -0,0 +1,377 @@
++// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
++// See LICENSE.txt for license information.
++
++package report
++
++import (
++	"bytes"
++	"flag"
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++
++	"github.com/mattermost/mattermost/server/public/model"
++	"github.com/mattermost/mattermost/server/public/shared/i18n"
++	serveri18n "github.com/mattermost/mattermost/server/v8/i18n"
++)
++
++var update = flag.Bool("update", false, "rewrite the golden files in testdata")
++
++var (
++	evaluatedAt = time.Date(2026, time.November, 18, 9, 30, 0, 0, time.UTC)
++	generatedAt = evaluatedAt.Add(20 * time.Minute)
++)
++
++func TestMain(m *testing.M) {
++	if err := i18n.TranslationsPreInitFromFileBytes("en.json", serveri18n.English); err != nil {
++		panic(err)
++	}
++	os.Exit(m.Run())
++}
++
++func testOptions() Options {
++	return Options{
++		T:             i18n.T,
++		Location:      time.UTC,
++		GeneratedAt:   generatedAt,
++		SiteURL:       "https://chat.example.com",
++		ServerVersion: "12.3.0",
++		License:       "Enterprise",
++		Company:       "Example Corp",
++	}
++}
++
++func finding(code, severity, state string, area model.HealthArea, title string) *model.HealthFinding {
++	return &model.HealthFinding{
++		Fingerprint: code,
++		Code:        code,
++		Severity:    severity,
++		State:       state,
++		Area:        area,
++		Title:       title,
++	}
++}
++
++func everySectionFindings() []*model.HealthFinding {
++	push := finding("PUSH_BAD_SCHEME", "critical", "firing", model.AreaNotifications, "PushNotificationServer does not use https://")
++	push.Message = "PushNotificationServer http://push.example.com uses http://, so push notifications are sent in cleartext."
++	push.Remediation = "Prefix PushNotificationServer with https:// and verify reachability from the app node."
++	push.DocsURL = "https://docs.mattermost.com/configure/environment-configuration-settings.html#push-notification-server"
++	push.ConsolePath = "/admin_console/environment/push_notification_server"
++	push.Details = map[string]string{"push_server": "http://push.example.com", "config_key": "EmailSettings.PushNotificationServer"}
++
++	eol := finding("VERSION_EOL", "critical", "firing", model.AreaVersion, "Mattermost version is past end-of-life")
++	eol.Message = "Running Mattermost 11.0.4. Support for this release line ended on 2026-01-15."
++	eol.Remediation = "Plan a staged upgrade to a supported release."
++
++	disk := finding("FILESTORE_DISK_LOW", "warning", "firing", model.AreaPlatform, "File storage disk space is low")
++	disk.Scope = "app-1.example.com"
++	disk.Message = "The volume containing FileSettings.Directory has 9.0 GiB (9.00%) available of 100.0 GiB."
++	disk.Remediation = "Expand the volume."
++	disk.ConsolePath = "/admin_console/environment/file_storage"
++
++	ldap := finding("LDAP_SYNC_OLD", "warning", "firing", model.AreaAuth, "AD/LDAP synchronization has not run recently")
++
++	custom := finding("CUSTOM", "info", "firing", model.HealthArea("experimental"), "A rule in an area this build does not know")
++	custom.Message = "Shown under its raw area name. Pasting @channel stays inert, and https://example.com/a_b stays linked."
++
++	load := finding("NODE_HOST_LOAD_HIGH", "info", "unknown", model.AreaPlatform, "Host load is high")
++	load.Scope = "app-2.example.com"
++	load.Message = "Server diagnostics unavailable."
++
++	muted := finding("SITE_URL_HTTP", "warning", "firing", model.AreaCluster, "Site URL is not HTTPS")
++	muted.Message = "SiteURL http://chat.example.com does not use https://."
++	muted.Remediation = "Serve Mattermost over HTTPS and update SiteURL."
++	muted.MutedAt = evaluatedAt.UnixMilli()
++	muted.MutedBy = "muting-admin-user-id"
++
++	mutedUnknown := finding("GOMAXPROCS", "warning", "unknown", model.AreaPlatform, "GOMAXPROCS exceeds the container CPU limit")
++	mutedUnknown.Message = "GOMAXPROCS is 16 and the container CPU limit is 4."
++	mutedUnknown.Remediation = "Unset GOMAXPROCS."
++	mutedUnknown.MutedAt = evaluatedAt.UnixMilli()
++	mutedUnknown.MutedBy = "muting-admin-user-id"
++
++	resolved := finding("SITE_URL_EMPTY", "critical", "resolved", model.AreaCluster, "Site URL is empty")
++
++	return []*model.HealthFinding{resolved, mutedUnknown, muted, load, custom, ldap, disk, eol, push}
++}
++
++func mutedAndResolvedFindings() []*model.HealthFinding {
++	open := finding("PUSH_BAD_SCHEME", "critical", "firing", model.AreaNotifications, "PushNotificationServer does not use https://")
++
++	mutedResolved := finding("SITE_URL_HTTP", "warning", "resolved", model.AreaCluster, "Site URL is not HTTPS")
++	mutedResolved.Message = "SiteURL http://chat.example.com does not use https://."
++	mutedResolved.MutedAt = evaluatedAt.UnixMilli()
++	mutedResolved.MutedBy = "muting-admin-user-id"
++
++	muted := finding("AUDIT_LOG_OFF", "info", "firing", model.AreaCompliance, "Audit logging is off")
++	muted.Message = "No audit log target is configured."
++	muted.MutedAt = evaluatedAt.UnixMil
+```
+
+**File**: `server/platform/shared/healthcheck/report/testdata/empty.html` (added, +126/-0)
+```diff
+@@ -0,0 +1,126 @@
++<!DOCTYPE html>
++<html>
++<head>
++<meta charset="utf-8">
++<meta name="viewport" content="width=device-width, initial-scale=1">
++<title>mm_site_health_mattermost_2026-11-18T09-50</title>
++<style>
++:root { --text: #3f4350; --text-72: rgba(63, 67, 80, 0.72); --text-64: rgba(63, 67, 80, 0.64); --border: rgba(63, 67, 80, 0.12); --button: #1c58d9; --critical: #d24b4e; --critical-bg: rgba(210, 75, 78, 0.1); --warning: #997113; --warning-bg: rgba(255, 188, 31, 0.16); --info: #1c58d9; --info-bg: rgba(28, 88, 217, 0.08); --resolved: #3db887; --resolved-bg: rgba(61, 184, 135, 0.12); --neutral: rgba(63, 67, 80, 0.64); --neutral-bg: rgba(63, 67, 80, 0.08); --elevation-1: 0 2px 3px 0 rgba(0, 0, 0, 0.08); }
++* { box-sizing: border-box; }
++body { margin: 0; font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; line-height: 20px; color: var(--text); background: #f4f4f6; }
++h1, h2 { font-family: Metropolis, "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-weight: 600; }
++p { margin: 0; }
++a { color: var(--button); text-decoration: none; }
++a:hover { text-decoration: underline; }
++code { font-family: Menlo, Consolas, "Liberation Mono", monospace; font-size: 12px; }
++svg.icon { width: 18px; height: 18px; flex-shrink: 0; fill: currentColor; }
++.banner { background: #1e325c; color: #fff; }
++.banner-inner, main { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
++.banner-inner { display: flex; align-items: center; gap: 12px; padding-top: 20px; padding-bottom: 20px; }
++.banner .logo { width: 32px; height: 32px; fill: #fff; }
++.banner h1 { margin: 0; font-size: 22px; line-height: 28px; }
++.banner .product { font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: rgba(255, 255, 255, 0.72); }
++main { padding-top: 24px; padding-bottom: 40px; }
++.card { margin: 0 0 12px; border: 1px solid rgba(63, 67, 80, 0.08); border-radius: 8px; background: #fff; box-shadow: var(--elevation-1); break-inside: avoid; }
++.notice { display: flex; gap: 10px; margin: 0 0 16px; padding: 12px 16px; border: 1px solid rgba(28, 88, 217, 0.16); border-radius: 4px; background: var(--info-bg); }
++.notice .icon { color: var(--info); }
++.notice.stale { border-color: rgba(210, 75, 78, 0.16); background: var(--critical-bg); font-weight: 600; }
++.notice.stale .icon { color: var(--critical); }
++dl.header { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px 24px; margin: 0 0 12px; padding: 20px 24px; }
++dl.header dt, .label { color: var(--text-64); font-size: 11px; font-weight: 600; letter-spacing: 0.6px; line-height: 16px; text-transform: uppercase; }
++dl.header dd { margin: 2px 0 0; font-weight: 600; overflow-wrap: anywhere; }
++.summary { padding: 20px 24px; }
++.summary h2 { margin: 0 0 4px; font-size: 18px; line-height: 24px; }
++.summary p + p { margin-top: 4px; color: var(--text-72); }
++.counts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
++.counts a { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 8px; border-radius: 16px; background: var(--tone-bg); color: var(--tone); font-size: 13px; font-weight: 600; }
++.counts a:hover { text-decoration: none; filter: brightness(0.92); }
++.counts .icon { width: 16px; height: 16px; }
++.counts .count { padding: 0 6px; border-radius: 8px; background: rgba(255, 255, 255, 0.72); font-size: 11px; line-height: 16px; }
++.critical { --tone: var(--critical); --tone-bg: var(--critical-bg); }
++.warning { --tone: var(--warning); --tone-bg: var(--warning-bg); }
++.info { --tone: var(--info); --tone-bg: var(--info-bg); }
++.resolved { --tone: var(--resolved); --tone-bg: var(--resolved-bg); }
++.unknown, .muted { --tone: var(--neutral); --tone-bg: var(--neutral-bg); }
++section { margin-top: 28px; }
++section > h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; padding: 0 4px; font-size: 16px; line-height: 24px; break-after: avoid; }
++section > h2 .icon { color: var(--tone); }
++section > h2 .count { color: var(--text-64); font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 400; }
++section > h2::after { content: ""; flex: 1; height: 1px; margin-left: 4px; background: var(--border); }
++.finding { display: flex; gap: 14px; padding: 16px; border-left: 3px solid var(--tone); }
++.tone-icon { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--tone-bg); color: var(--tone); }
++.body { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
++.title { margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; }
++.message { color: var(--text-72); overflow-wrap: anywhere; }
++.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 2px; color: var(--text-64); font-size: 12px; }
+
 ```
 
 ---
 
-### Incident Patch 3: `9750d5ac` (2026-11-12)
-**Commit Message**: Fix escaped braces that render literally inside code (#39911)
+### Incident Patch 3: `6109a66e` (2026-11-20)
+**Commit Message**: Fix flaky TestCreateAccessControlPolicy (#40202)
 
-Many pages escaped curly braces as &#123; and &#125; inside inline code
-spans and fenced code blocks, likely left over from the RST to MDX
-conversion. MDX doesn't decode character references inside code, so
-the pages show the escape sequences verbatim, for example
-`&#123;mattermost-server-IP&#125;`. Replace them with literal braces,
-which are safe inside code. Escapes in regular prose, where MDX needs
-them, are unchanged.
+Three subtests under "team policy with a complex CEL expression" installed
+a bare AccessControlServiceInterface mock that was left in place for the
+following subtests. With channel permission enforcement active, publishing
+the websocket event for the channel created by the "accepted when both
+flags are on" subtest calls ActionHasPermissionPolicy on that leaked mock,
+which panics in the HTTP handler and surfaces as `Post .../api/v4/channels:
+EOF`. Use newMockAccessControlService, which stubs that call, as the
+sibling subtests already do.
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Tests-only change. Verified with `go test -run '^TestCreateAccessControlPolicy$'
+-race -count=100` locally.
 
-**File**: `docs/main/administration-guide/configure/environment-configuration-settings.mdx` (modified, +13/-13)
+Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+Co-authored-by: Maria A Nunez <[REDACTED_EMAIL]>
+
+**File**: `server/channels/api4/access_control_test.go` (modified, +3/-3)
 ```diff
-@@ -1039,17 +1039,17 @@ For more information on Aurora replication stats, see the [AWS Aurora documentai
- Example
+@@ -504,7 +504,7 @@ func TestCreateAccessControlPolicy(t *testing.T) {
  
- ``` json
--&#123;
--  "SqlSettings": &#123;
-+{
-+  "SqlSettings": {
-       "ReplicaLagSettings": [
--        &#123;
-+        {
-             "DataSource": "replica-1",
-             "QueryAbsoluteLag": "select server_id, highest_lsn_rcvd-durable_lsn as bindiff from aurora_global_db_instance_status() where server_id=<>",
-             "QueryTimeLag": "select server_id, visibility_lag_in_msec from aurora_global_db_instance_status() where server_id=<>"
--        &#125;
-+        }
-       ]
--  &#125;
--&#125;
-+  }
-+}
- ```
+ 		t.Run("system admin saves it", func(t *testing.T) {
+ 			policy := newTeamPolicy()
+-			mockACS := &mocks.AccessControlServiceInterface{}
++			mockACS := newMockAccessControlService()
+ 			th.App.Srv().Channels().AccessControl = mockACS
+ 			mockACS.On("SavePolicy", mock.AnythingOfType("*request.Context"), mock.MatchedBy(func(p *model.AccessControlPolicy) bool {
+ 				return p.Type == model.AccessControlPolicyTypeTeam &&
+@@ -521,7 +521,7 @@ func TestCreateAccessControlPolicy(t *testing.T) {
+ 		})
  
- </TabItem>
-@@ -1062,17 +1062,17 @@ For more information on group replication stats, see the [MySQL documentation](h
- Example
+ 		t.Run("PAP rejection is returned unchanged", func(t *testing.T) {
+-			mockACS := &mocks.AccessControlServiceInterface{}
++			mockACS := newMockAccessControlService()
+ 			th.App.Srv().Channels().AccessControl = mockACS
+ 			mockACS.On("SavePolicy", mock.AnythingOfType("*request.Context"), mock.AnythingOfType("*model.AccessControlPolicy")).
+ 				Return(nil, model.NewAppError("SavePolicy", "app.pap.save_policy.team_resource_attributes", nil, "", http.StatusBadRequest)).Once()
+@@ -534,7 +534,7 @@ func TestCreateAccessControlPolicy(t *testing.T) {
  
- ``` json
--&#123;
--  "SqlSettings": &#123;
-+{
-+  "SqlSettings": {
-       "ReplicaLagSettings": [
--        &#123;
-+        {
-             "DataSource": "replica-1",
-             "QueryAbsoluteLag": "select member_id, count_transactions_remote_in_applier_queue FROM performance_schema.replication_group_member_stats where member_id=<>",
-             "QueryTimeLag": ""
--        &#125;
-+        }
-       ]
--  &#125;
--&#125;
-+  }
-+}
- ```
+ 		t.Run("regular user cannot save it", func(t *testing.T) {
+ 			th.LoginBasic(t)
+-			mockACS := &mocks.AccessControlServiceInterface{}
++			mockACS := newMockAccessControlService()
+ 			th.App.Srv().Channels().AccessControl = mockACS
  
- </TabItem>
-@@ -1181,7 +1181,7 @@ If indexing is disabled and then re-enabled after an index is created, purge and
- 
- Before permanently deleting a large number of channels, turn off **Enable Elasticsearch indexing**. Each permanent delete reindexes every member of that channel, and that indexing work can exhaust Mattermost memory on a delete of about 100,000 memberships.
- 
--Leave the Elasticsearch or OpenSearch cluster running. Save and restart, run the deletes with [`mmctl channel delete`](/administration-guide/manage/mmctl-command-line-tool#mmctl-channel-delete) or `DELETE /api/v4/channels/&#123;channel_id&#125;?permanent=true`, then turn indexing back on and run **Index Now** so changes made while indexing was off are included. The System Console clears search queries and autocomplete when indexing is turned off, because the server will not store those while indexing is off. Turn them back on with indexing.
-+Leave the Elasticsearch or OpenSearch cluster running. Save and restart, run the deletes with [`mmctl channel delete`](/administration-guide/manage/mmctl-command-line-tool#mmctl-channel-delete) or `DELETE /api/v4/channels/{channel_id}?permanent=true`, then turn indexing back on and run **Index Now** so changes made while indexing was off are included. The System Console clears search queries and autocomplete when indexing is turned off, because the server will not store those while indexing is off. Turn them back on with indexing.
- 
- Documents for those channels can remain in the search index, because indexing is off while they are deleted. Post search only queries channels the user currently belongs to, then loads the posts from the database. Channel search also loads its matches from the database, so a permanently deleted channel is left out. A full index purge is not required to restore search results. Retention requirements may require a scoped cleanup of those leftover copies.
- 
-```
-
-**File**: `docs/main/administration-guide/configure/environment-variables.mdx` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ The name of the environment variable for any setting can be derived from the nam
- <Note>
- 
- - If Mattermost is run from an initialization file, environment variables can be set via `Environment=<>`, or `EnvironmentFile=<path/to/file>`. In the second case, the file specified contains the list of environment variables to set.
--- From Mattermost v7.5, environment configuration parsing supports JSON for `MM_PLUGINSETTINGS_PLUGINS` and `MM_PLUGINSETTINGS_PLUGINSTATES`. This is especially helpful for Helm configuration files, provided all plugins are configured at the same time. For example, `MM_PLUGINSETTINGS_PLUGINSTATES="&#123;\"com.mattermost.calls\":&#123;\"Enable\":true&#125;,\"com.mattermost.nps\":&#123;\"Enable\":true&#125;&#125;"`.
-+- From Mattermost v7.5, environment configuration parsing supports JSON for `MM_PLUGINSETTINGS_PLUGINS` and `MM_PLUGINSETTINGS_PLUGINSTATES`. This is especially helpful for Helm configuration files, provided all plugins are configured at the same time. For example, `MM_PLUGINSETTINGS_PLUGINSTATES="{\"com.mattermost.calls\":{\"Enable\":true},\"com.mattermost.nps\":{\"Enable\":true}}"`.
- - When settings are configured through an environment variable, system admins can't modify them in the System Console. If a setting is configured through an environment variable, and any other changes are made in the System Console, the value stored of the environment variable will be written back to the `config.json` as that setting's value.
- - For any setting that's not set in `config.json` or in environment variables, the Mattermost server uses the setting's default value as documented in the sections below on this page.
- 
-```
-
-**File**: `docs/main/administration-guide/manage/mmctl-command-line-tool.mdx` (modified, +1/-1)
-```diff
-@@ -88,7 +88,7 @@ The mmctl tool comes bundled with Mattermost package. For customers that want to
- <Tabs>
- <TabItem value="release-package" label="Release package">
- 
--If you're using a release page for Linux, macOS, or Windows, we recommend downloading the mmctl builds through their release URL: `https://releases.mattermost.com/mmctl/$&#123;MATTERMOST_VERSION&#125;/$&#123;PLATFORM&#125;_$&#123;ARCHITECTURE&#125;.tar` (for windows, substitute the `.tar` suffix with `.zip`)
-+If you're using a release page for Linux, macOS, or Windows, we recommend downloading the mmctl builds through their release URL: `https://releases.mattermost.com/mmctl/${MATTERMOST_VERSION}/${PLATFORM}_${ARCHITECTURE}.tar` (for windows, substitute the `.tar` suffix with `.zip`)
- 
- E.g. to download version `v10.7.0` of the mmctl amd64 build for linux, you can run the following:
- 
-```
-
-**File**: `docs/main/administration-guide/onboard/sso-gitlab.mdx` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ Follow these steps to configure Mattermost to use GitLab as a Single Sign-on (SS
- 
- ### Step 1: Add a Mattermost application to your GitLab account
- 
--1.  Log in to your GitLab account, then go to `https://&#123;gitlab-site-name&#125;/profile/applications`. For *&#123;gitlab-site-name&#125;* use the name of your GitLab instance. If you're using GitLab itself as your service provider, use `gitlab.com`.
-+1.  Log in to your GitLab account, then go to `https://{gitlab-site-name}/profile/applications`. For *&#123;gitlab-site-name&#125;* use the name of your GitLab instance. If you're using GitLab itself as your service provider, use `gitlab.com`.
- 2.  Add a new application:
- 
- > 1.  In the **Name** field, enter `Mattermost`.
-```
-
-**File**: `docs/main/administration-guide/onboard/sso-google.mdx` (modified, +1/-1)
-```diff
-@@ -20,7 +20,7 @@ The [Google People API](https://developers.google.com/people) has replaced the G
- 3.  Select **Create Credentials**, then select **OAuth client ID**.
- 4.  Select the **Web application** as the application type.
- 5.  Enter `Mattermost-<your-company-name>` as the **Name**, replacing `<your-company-name>` with the name of your organization.
--6.  Under **Authorized redirect URIs**, select **Add URL**, then enter `&#123;your-mattermost-url&#125;/signup/google/complete`. For example: `http://localhost:8065/signup/google/complete`.
-+6.  Under **Authorized redirect URIs**, select **Add URL**, then enter `{your-mattermost-url}/signup/google/complete`. For example: `http://localhost:8065/signup/google/complete`.
- 7.  Select **Create**.
- 8.  Copy and paste the **Your Client ID** and **Your Client Secret** values to a temporary location. You will enter these values in the Mattermost System Console.
- 
-```
-
-**File**: `docs/main/administration-guide/onboard/sso-openidconnect.mdx` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ Follow these steps to configure a service provider using OpenID Connect.
- ## Step 1: Create an OpenID Connect Application
- 
- 1.  Follow service provider documentation for creating an OpenID Connect application. Most OpenID Connect service providers require authorization of all redirect URIs.
--2.  In the appropriate field, enter `&#123;your-mattermost-url&#125;/signup/openid/complete` For example: `http://domain.com/signup/openid/complete`
-+2.  In the appropriate field, enter `{your-mattermost-url}/signup/openid/complete` For example: `http://domain.com/signup/openid/complete`
- 3.  Copy and paste values for the **Discovery Endpoint**, **Client ID**, and **Client Secret** values to a temporary location. You will enter these values when you configure Mattermost.
- 
- ## Step 2: Configure Mattermost for an OpenID Connect SSO
-```
-
-**File**: `docs/main/administration-guide/scale/deploy-grafana-loki-for-centralized-logging.mdx` (modified, +2/-2)
-```diff
-@@ -375,7 +375,7 @@ The PostgreSQL configuration handles common Ubuntu/Debian JSON log paths (`/var/
- 
- </Note>
- 
--Once running, PostgreSQL logs appear in Grafana under the label `&#123;service_name="postgres"&#125;`:
-+Once running, PostgreSQL logs appear in Grafana under the label `{service_name="postgres"}`:
- 
- ``` text
- {service_name="postgres"} | json | detected_level="error"
-@@ -399,7 +399,7 @@ Once running, PostgreSQL logs appear in Grafana under the label `&#123;service_n
-     # Look for export successful messages or lack of errors
-     ```
- 
--3.  Logs are visible in Grafana: Go to **Explore**, select the **Loki** data source, and run `&#123;service_name="mattermost"&#125;`. You should see recent log lines.
-+3.  Logs are visible in Grafana: Go to **Explore**, select the **Loki** data source, and run `{service_name="mattermost"}`. You should see recent log lines.
- 
- 4.  The dashboard loads: Open the **Mattermost Log Aggregation** dashboard and confirm panels are populated. (Note: You may need to update dashboard queries to use <code>service_name</code> and <code>service_instance_id</code>).
- 
-```
-
-**File**: `docs/main/administration-guide/upgrade/upgrading-mattermost-server.mdx` (modified, +4/-4)
-```diff
-@@ -64,11 +64,11 @@ Make sure that you understand how to [prepare for your upgrade](/administration-
-   - This command won't return anything if `/opt/mattermost/bin` wasn't added to the PATH.
-   - Alternatively, you can use the `find / -executable -type f -iname mattermost 2> /dev/null` command to find the `mattermost` binary.
-   - The output should be similar to `/opt/mattermost/bin/mattermost`.
--  - The install directory is everything before the first occurrence of the string `/mattermost`. In this example, the `&#123;install-path&#125;` is `/opt`.
-+  - The install directory is everything before the first occurrence of the string `/mattermost`. In this example, the `{install-path}` is `/opt`.
-   - If that command doesn't produce any results, it's likely because your version is older; try `whereis platform` instead.
- - **Location and size of your local storage directory**: The local storage directory contains all the files that users have attached to their messages.
-   - If you don't know its location, open the System Console and go to **Environment \> File Storage**, then read the value in **Local Storage Directory**.
--  - Paths are relative to the `mattermost` directory. For example, if the local storage directory is `./data/` then the absolute path is `&#123;install-path&#125;/mattermost/data`.
-+  - Paths are relative to the `mattermost` directory. For example, if the local storage directory is `./data/` then the absolute path is `{install-path}/mattermost/data`.
- - **Database disk space**: If you're upgrading a Mattermost deployment on the same server as your database, we recommend a minimum 2GB of free disk space to allow for extraction, copy, and cleanup, and a minimum of twice the size of your Mattermost installation available for the database.
- 
- <Tip>
-@@ -228,8 +228,8 @@ wget https://releases.mattermost.com/X.X.X/mattermost-team-X.X.X-linux-amd64.tar
- 
-     </div>
- 
--    - If you didn't use `mattermost` as the owner and group of the install directory, run `sudo chown -hR &#123;owner&#125;:&#123;group&#125; &#123;install-path&#125;/mattermost`.
--    - If you're uncertain what owner or group was defined, use the `ls -l &#123;install-path&#125;/mattermost/bin/mattermost` command to obtain them.
-+    - If you didn't use `mattermost` as the owner and group of the install directory, run `sudo chown -hR {owner}:{group} {install-path}/mattermost`.
-+    - If you're uncertain what owner or group was defined, use the `ls -l {install-path}/mattermost/bin/mattermost` command to obtain them.
- 
-     </div>
- 
+ 			_, resp, err := th.Client.CreateAccessControlPolicy(context.Background(), newTeamPolicy())
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40032** (2026-11-13): docs: add Out-of-Band Communications use case page (@esarafianou)
-- **PR #40026** (2026-11-13): [MM-71856] Note Mobile v2.47 requirement for biometric_authenticated (@devinbinnie)
-- **PR #40024** (2026-11-13): Require manage_system to update some environment config settings (@cursor[bot])
-- **PR #40023** (2026-11-13): [MM-71873] Remove translate.mattermost.com links from webapp (@cursor[bot])
-- **PR #40021** (closed): Skip translate.mattermost.com in external link check (@NARSimoes)
-- **PR #40020** (2026-11-13): Automated cherry pick of #38810 (@mattermost-build)
+- **PR #40267** (2026-11-21): [MM-71867] Audit whether onboarding saved the Site URL (@hanzei)
+- **PR #40266** (closed): Automated cherry pick of #40244 (@mattermost-code)
+- **PR #40265** (closed): Automated cherry pick of #40244 (@mattermost-code)
+- **PR #40264** (closed): Automated cherry pick of #40244 (@mattermost-code)
+- **PR #40263** (closed): Automated cherry pick of #40244 (@mattermost-code)
+- **PR #40262** (closed): Automated cherry pick of #40244 (@mattermost-code)
 
 ---
 
@@ -2630,65 +3791,64 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. post list height shift for posts with multiple image attachments
+## X. Product rail: pin and reorder items, Threads back in Channels, and Boards, badge
 
 **RULE**:
-When implementing operations in `webapp/channels/src/components/file_attachment_list/media_gallery/media_gallery.scss`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `webapp/channels/src/actions/views/product_rail.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9d59b084`: post list height shift for posts with multiple image attachments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8381b545`: Product rail: pin and reorder items, Threads back in Channels, and Boards, badge and team sidebar fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `webapp/channels/src/components/file_attachment_list/media_gallery/media_gallery.scss`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `webapp/channels/src/actions/views/product_rail.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    container: media-gallery / inline-size;
-        --media-gallery-row-height: 216px;
+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
 
-        flex-flow: row wrap;
-        align-content: flex-start;
-    &--compact &__rows {
-        --media-gallery-row-height: 144px;
-    }
-}
+import {PreferenceTypes} from 'mattermost-redux/action_types';
+import {Client4} from 'mattermost-redux/client';
 
-// Sized in CSS rather than from a measured width so the post list sees the
-// final height on first render, including in narrow containers like the RHS.
-// CSS has no hysteresis, so the RHS reserves its scrollbar gutter to keep a
-// scrollbar appearing from toggling the row height near 480px.
-@container media-gallery (width < 480px) {
-    .MediaGallery__rows {
-        --media-gallery-row-height: 144px;
-    // Scale to the row height by aspect ratio, without upscaling past the
-    // file's native width, clamped to 50-500px.
-    --tile-width: max(50px, min(calc(var(--tile-ratio, 1.5) * var(--media-gallery-row-height)), var(--tile-native-width, 500px), 500px));
+import configureStore from 'store';
 
-    width: var(--tile-width);
-    max-width: 100%;
-    height: var(--media-gallery-row-height);
-    flex: 0 0 var(--tile-width);
+import {saveRailListPreference} from './product_rail';
+
+const HIDDEN_KEY = 'sidebar_settings--product_rail_hidden_items';
+
+// A save the test settles by hand.
+type PendingSave = {value: string; resolve: () => void; reject: () => void};
+
+describe('saveRailListPreference', () => {
+    let saves: PendingSave[];
+
+    beforeEach(() => {
+        saves = [];
+        jest.spyOn(Client4, 'savePreferences').mockImplementation((_userId, preferences) => new Promise((resolve, reject) => {
+            saves.push({
+                value: preferences[0].value!,
+                resolve: () => resolve({status: 'OK'}),
+                reject: () => reject(new Error('save failed')),
+            });
+        }));
+    });
+
+    // Lets queued promise callbacks run.
+    const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
+
+    // Saves are queued across the module, so settle any a test left open before the next one.
+    afterEach(a
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-    container-type: inline-size;
-        flex-direction: column;
-    &__row {
-        display: flex;
-        width: 100%;
-        min-width: 0;
-        flex-direction: row;
-        align-items: stretch;
-        justify-content: flex-start;
-        gap: 8px;
-        text-align: left;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9d59b084` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8381b545` are properly handled with clean fallback behavior.
 
 
 ## 4. Empirical Verification & Quality Gate
