@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T00:52:14.177Z",
+  "last_updated": "2026-11-21T01:00:40.353Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-C0R6",
+      "id": "CD-BSIC",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-C0R6-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-BSIC-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-21",
@@ -40328,6 +40328,46 @@
       "source_repo": "tailscale-tailscale",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-FFCDA6-feature-conn25-name-lock-requiring-metho.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-BLVV",
+      "directive_title": "disallow --changed in vitest related",
+      "source_repo": "vitest-dev/vitest",
+      "source_commit": "8b0ca603",
+      "staged_file": "11_INBOX/candidate-directives/CD-BLVV-disallow-changed-in-vitest-related.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-BRQP",
+      "directive_title": "cli): disallow --changed in vitest related",
+      "source_repo": "vitest-dev-vitest-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BRQP-cli-disallow-changed-in-vitest-related.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-4167F5",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4167F5-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-5FEF26",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5FEF26-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-21"
     }
   ]

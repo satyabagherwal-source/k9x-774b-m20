@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T00:52:14.497Z",
+  "last_updated": "2026-11-21T01:00:40.695Z",
   "total_verified_learnings": 9054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22804,
+  "total_items": 22807,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-C0R6-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-BSIC-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f0affe397af99eb9312cb98c0273e91f33a3bd281e85c1fe0594c1bc01afc239",
+      "content_hash": "258d190086ffb24e9040f7984fdaf9d4fc92a735184997c7f688b5ba45ee7659",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T00:32:50.902Z"
+      "persisted_at": "2026-11-21T01:00:39.833Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "36f6b61eba02a580ecd0ed16404a59209102e10b2ce13a1c1e7a74817ec52882",
+      "content_hash": "1c851339fcaebc795ebbe03b9fdde6a172848e49a5db9975bad039a6a893f480",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T00:32:51.044Z"
+      "persisted_at": "2026-11-21T01:00:40.023Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a1a822db6b70a920553464bfbff7dc4adb66b1dfe7d39ba0e05761b851d8058f",
+      "content_hash": "41dabc322e2a2bfb9a7f8ac4e4c629685871fb379b6541a51876045c49f530b7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:32:51.205Z"
+      "persisted_at": "2026-11-21T01:00:40.202Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -268349,8 +268349,8 @@
       "slug": "vitest-dev-vitest",
       "platform": "github",
       "source_url": "https://github.com/vitest-dev/vitest",
-      "source_version": "4e905a1b",
-      "content_hash": "ed46ab0772fe8babadd7efb22e058449319ae222859d2d8c8066ee26d7b97b07",
+      "source_version": "8b0ca603",
+      "content_hash": "b4235038c7ce72bdfa70c522b66fd669ede52ee02b0e3f4ff0ec9c2f7e7c909d",
       "dossier_path": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
       "promoted_rules": [
@@ -268368,6 +268368,11 @@
           "number": 8890,
           "title": "State-Derived Custom Matcher Context Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9687,
+          "title": "disallow --changed in vitest related",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -268375,7 +268380,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T06:20:40.203Z",
+      "verified_at": "2026-11-21T01:00:30.826Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -268469,10 +268474,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-vitest-dev-vitest-quality-verification-intelligence-vitest-dev-vitest-core-invar.md",
       "title": "Quality & Verification Intelligence: vitest-dev/vitest Core Invariants",
       "repository": "vitest-dev/vitest",
-      "source_version": "4e905a1b",
-      "content_hash": "964d3a6bb1a7504e5603277ebbb80a8f311a7ad0df2376c25bd464a5f3072db3",
+      "source_version": "8b0ca603",
+      "content_hash": "a5407a0b68892580547b0d567a0022b90ac9399d4a21a82867b78b6ee4015c36",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:20:41.058Z"
+      "persisted_at": "2026-11-21T01:00:31.407Z"
     },
     "agent_contract-agent-contract-vitest-dev-vitest-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vitest-dev-vitest-autonomous-specialist-persona",
@@ -268493,10 +268498,10 @@
       "relative_path": "08_VERIFICATION/vitest-dev-vitest-verification-protocol-empirical-defect-shield-for-vitest-dev-v.md",
       "title": "Verification Protocol: Empirical Defect Shield for vitest-dev/vitest",
       "repository": "vitest-dev/vitest",
-      "source_version": "4e905a1b",
-      "content_hash": "0898f138d02e4ee0f6b01c11b249015247c69f2b14f7cdea0541aff028e442f5",
+      "source_version": "8b0ca603",
+      "content_hash": "c0ec76d4f86119f3b17316b9528575f4507da5874ff0e5dc30e65ccaede299fa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:20:41.346Z"
+      "persisted_at": "2026-11-21T01:00:31.591Z"
     },
     "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-learnings-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-learnings-core-invariants",
@@ -268506,9 +268511,9 @@
       "title": "Quality & Verification Intelligence: vitest-dev-vitest-learnings Core Invariants",
       "repository": "vitest-dev-vitest-learnings",
       "source_version": "HEAD",
-      "content_hash": "568ef209ab082429c75ef6c1f66a45bad34463e538b026fcdd6a2d158f9fc1e7",
+      "content_hash": "d057276952f5c2b0fd76cdc7676d4cfde7c0535a288fbfdf8ce7207c5cde071e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:20:44.923Z"
+      "persisted_at": "2026-11-21T01:00:39.008Z"
     },
     "agent_contract-agent-contract-vitest-dev-vitest-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vitest-dev-vitest-learnings-autonomous-specialist-persona",
@@ -268530,9 +268535,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for vitest-dev-vitest-learnings",
       "repository": "vitest-dev-vitest-learnings",
       "source_version": "HEAD",
-      "content_hash": "58aed2012138d6037fc7ae51ff4b61c3407c1067723721f9405150d9920727bf",
+      "content_hash": "bb728e567c6b799967268fb80ae10d5d0d6e71d864ebb3ccbdb558e3a6b5dd66",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:20:45.216Z"
+      "persisted_at": "2026-11-21T01:00:39.174Z"
     },
     "agent_contract-agent-contract-agent-field-agentfield-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-agent-field-agentfield-learnings-autonomous-specialist-persona",
@@ -288512,9 +288517,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "c5079a98f6566d8709275dbd9e5d6b17d4922db6f4115b1fbff2a07b4515e6f9",
+      "content_hash": "c55470684ef29723dda3ef338528c8d98f3567ddc06681bd87d7d0329452d30c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T00:13:24.636Z"
+      "persisted_at": "2026-11-21T01:00:40.695Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -309487,6 +309492,44 @@
       "content_hash": "0db6d342a452fbd638ed8a8d75eb83f46de050df22ad1b8d8ccde3aedf155213",
       "domain_letter": "G",
       "persisted_at": "2026-11-21T00:52:12.574Z"
+    },
+    "rule-9687": {
+      "learning_id": "rule-9687",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9687,
+      "title": "disallow --changed in vitest related",
+      "source_url": "https://github.com/vitest-dev/vitest",
+      "source_version": "8b0ca603",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T01:00:30.826Z"
+    },
+    "candidate_directive-disallow-changed-in-vitest-related": {
+      "item_id": "candidate_directive-disallow-changed-in-vitest-related",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BLVV-disallow-changed-in-vitest-related.md",
+      "title": "disallow --changed in vitest related",
+      "repository": "vitest-dev/vitest",
+      "source_version": "8b0ca603",
+      "content_hash": "4598480c4393728ab62293444510f5728dfed1e8e1688242f35afb640a112cfc",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T01:00:31.244Z"
+    },
+    "candidate_directive-cli-disallow-changed-in-vitest-related": {
+      "item_id": "candidate_directive-cli-disallow-changed-in-vitest-related",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BRQP-cli-disallow-changed-in-vitest-related.md",
+      "title": "cli): disallow --changed in vitest related",
+      "repository": "vitest-dev-vitest-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9f24e1e25edaa4bbee37cdecd95c336de9115de0eaa355f71ff2fd469ba8ee40",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T01:00:38.834Z"
     }
   },
   "ai-builder-brain": {

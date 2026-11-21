@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T00:52:13.971Z",
+  "updated_at": "2026-11-21T01:00:38.600Z",
   "stats": {
-    "total_discovered": 6830,
-    "approved_pending_harvest": 6446,
+    "total_discovered": 6843,
+    "approved_pending_harvest": 6459,
     "harvested_count": 0,
     "rejected_count": 384,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6421,
+      "COMMUNITY_AND_EXPERT": 6434,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -147595,6 +147595,292 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
         "fileName": "tailscale-tailscale-learnings.md"
+      }
+    },
+    "SRC-C08DB5E7489C": {
+      "id": "SRC-C08DB5E7489C",
+      "url": "https://github.com/vitest-dev/istanbuljs/pull/25",
+      "title": "https://github.com/vitest-dev/istanbuljs/pull/25",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T01:00:38.009Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-468DD11CF7DB": {
+      "id": "SRC-468DD11CF7DB",
+      "url": "https://github.com/vitest-dev/vitest/issues/9366",
+      "title": "https://github.com/vitest-dev/vitest/issues/9366",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T01:00:38.058Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-3F8A52620422": {
+      "id": "SRC-3F8A52620422",
+      "url": "https://github.com/vitest-dev/vitest/issues/11921",
+      "title": "https://github.com/vitest-dev/vitest/issues/11921",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T01:00:38.122Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-12C4229489C5": {
+      "id": "SRC-12C4229489C5",
+      "url": "https://app.netlify.com/projects/vitest-dev/deploys/6afef26bfeda23ebb4fb53ee",
+      "title": "https://app.netlify.com/projects/vitest-dev/deploys/6afef26bfeda23ebb4fb53ee",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T01:00:38.189Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-EC773D7715CE": {
+      "id": "SRC-EC773D7715CE",
+      "url": "https://deploy-preview-12040--vitest-dev.netlify.app/",
+      "title": "https://deploy-preview-12040--vitest-dev.netlify.app/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T01:00:38.235Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-C583EE1132AC": {
+      "id": "SRC-C583EE1132AC",
+      "url": "https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTEyMDQwLS12aXRlc3QtZGV2Lm5ldGxpZnkuYXBwIn0.-R5vP3rZ6oUFrNvfaQtvL9LU91ox7dBA2zTVoA_K1_4",
+      "title": "https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTEyMDQwLS12aXRlc3QtZGV2Lm5ldGxpZnkuYXBwIn0.-R5vP3rZ6oUFrNvfaQtvL9LU91ox7dBA2zTVoA_K1_4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T01:00:38.281Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-EDE84FA1D496": {
+      "id": "SRC-EDE84FA1D496",
+      "url": "https://flakiness.io/Vitest/vitest/pull/12040?q=s%3Aregressed",
+      "title": "https://flakiness.io/Vitest/vitest/pull/12040?q=s%3Aregressed",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T01:00:38.326Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-0F9455D314F4": {
+      "id": "SRC-0F9455D314F4",
+      "url": "https://flakiness.io/Vitest/vitest/pull/12040?q=s%3Apassed",
+      "title": "https://flakiness.io/Vitest/vitest/pull/12040?q=s%3Apassed",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T01:00:38.372Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-CF3D58BBCE48": {
+      "id": "SRC-CF3D58BBCE48",
+      "url": "https://flakiness.io/Vitest/vitest/pull/12040?q=s%3Aflaked",
+      "title": "https://flakiness.io/Vitest/vitest/pull/12040?q=s%3Aflaked",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T01:00:38.418Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-71D72AEAA50B": {
+      "id": "SRC-71D72AEAA50B",
+      "url": "https://flakiness.io/Vitest/vitest/pull/12040?q=s%3Askipped",
+      "title": "https://flakiness.io/Vitest/vitest/pull/12040?q=s%3Askipped",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T01:00:38.463Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-BD7EC88A7272": {
+      "id": "SRC-BD7EC88A7272",
+      "url": "https://flakiness.io/Vitest/vitest/run/9886/test/09e5a0a769535a09?test_timeline=%7B%22type%22%3A%22open%22%2C%22eq%22%3A%7B%22env.id%22%3A%22355209abc8cc5610%22%7D%7D",
+      "title": "https://flakiness.io/Vitest/vitest/run/9886/test/09e5a0a769535a09?test_timeline=%7B%22type%22%3A%22open%22%2C%22eq%22%3A%7B%22env.id%22%3A%22355209abc8cc5610%22%7D%7D",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T01:00:38.509Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-0D6AD6D08C23": {
+      "id": "SRC-0D6AD6D08C23",
+      "url": "https://github.com/oven-sh/bun/issues/33593",
+      "title": "https://github.com/oven-sh/bun/issues/33593",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T01:00:38.554Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-A9D4425D4345": {
+      "id": "SRC-A9D4425D4345",
+      "url": "https://github.com/okonet/lint-staged",
+      "title": "https://github.com/okonet/lint-staged",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T01:00:38.600Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+        "fileName": "vitest-dev-vitest-learnings.md"
       }
     }
   }

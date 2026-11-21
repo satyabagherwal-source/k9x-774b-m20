@@ -10113,10 +10113,10 @@
     "repository": "vitest-dev/vitest",
     "platform": "github",
     "sourceUrl": "https://github.com/vitest-dev/vitest",
-    "sourceVersion": "4e905a1b",
+    "sourceVersion": "8b0ca603",
     "license": "MIT",
-    "contentHash": "ed46ab0772fe8babadd7efb22e058449319ae222859d2d8c8066ee26d7b97b07",
-    "lastHarvestedAt": "2026-11-17T06:20:40.403Z",
+    "contentHash": "b4235038c7ce72bdfa70c522b66fd669ede52ee02b0e3f4ff0ec9c2f7e7c909d",
+    "lastHarvestedAt": "2026-11-21T01:00:31.027Z",
     "learningId": "learn-github-vitest-dev-vitest"
   },
   "mijick-popups": {

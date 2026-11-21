@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-IDBH",
-    "timestamp": "2026-11-18T22:14:28.589Z",
-    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-    "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-    "contentHash": "7f10036943f1f40fbc39bb7ed8d523a7ec4e48d8090bd4cf9e180b090345ac17",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-IIV6",
     "timestamp": "2026-11-18T22:14:35.778Z",
     "repository": "react/metro",
@@ -7490,6 +7475,21 @@
     "repository": "matrixorigin/matrixone",
     "learningId": "learn-github-matrixorigin-matrixone",
     "contentHash": "17293a15106faaf6e0b90d98da003edd26f161b1851fa889fe7edb1d68c50852",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-BLPR",
+    "timestamp": "2026-11-21T01:00:31.023Z",
+    "repository": "vitest-dev/vitest",
+    "learningId": "learn-github-vitest-dev-vitest",
+    "contentHash": "b4235038c7ce72bdfa70c522b66fd669ede52ee02b0e3f4ff0ec9c2f7e7c909d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

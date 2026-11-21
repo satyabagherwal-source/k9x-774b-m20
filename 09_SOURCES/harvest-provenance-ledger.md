@@ -11716,3 +11716,4 @@ Every entry in this ledger must capture:
 | `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `fa8e12f1` | Multi-dimensional audit evidence | 2026-11-21T00:51:58.112Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `36780d60` | Multi-dimensional audit evidence | 2026-11-21T00:52:05.717Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `a5140aa8` | Multi-dimensional audit evidence | 2026-11-21T00:52:08.917Z |
+| `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `8b0ca603` | Multi-dimensional audit evidence | 2026-11-21T01:00:31.027Z |

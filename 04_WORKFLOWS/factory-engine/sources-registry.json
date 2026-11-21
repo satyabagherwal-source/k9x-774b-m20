@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T00:24:47.027Z",
-    "lastVerified": "2026-11-21T00:24:47.027Z",
+    "lastChecked": "2026-11-21T01:00:37.683Z",
+    "lastVerified": "2026-11-21T01:00:37.683Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T00:52:12.167Z",
-    "lastVerified": "2026-11-21T00:52:12.167Z",
+    "lastChecked": "2026-11-21T01:00:37.692Z",
+    "lastVerified": "2026-11-21T01:00:37.692Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -2159,8 +2159,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-20T20:28:16.462Z",
-    "lastVerified": "2026-11-20T20:28:16.462Z",
+    "lastChecked": "2026-11-21T01:00:32.601Z",
+    "lastVerified": "2026-11-21T01:00:32.601Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -3440,9 +3440,9 @@
   "featureform-featureform": {
     "name": "featureform",
     "officialUrl": "https://github.com/featureform/featureform",
-    "lastChecked": "2026-11-19T22:52:01.533Z",
+    "lastChecked": "2026-11-21T01:00:35.078Z",
     "revisionIdentifier": "dc8b9fca",
-    "lastVerified": "2026-11-19T22:52:01.533Z"
+    "lastVerified": "2026-11-21T01:00:35.078Z"
   },
   "ekzhang-bore": {
     "name": "bore",
@@ -4171,9 +4171,9 @@
   "kubeshop-botkube": {
     "name": "botkube",
     "officialUrl": "https://github.com/kubeshop/botkube",
-    "lastChecked": "2026-11-20T00:24:15.874Z",
+    "lastChecked": "2026-11-21T01:00:30.035Z",
     "revisionIdentifier": "ee94e191",
-    "lastVerified": "2026-11-20T00:24:15.874Z"
+    "lastVerified": "2026-11-21T01:00:30.035Z"
   },
   "helixdb-helix-db": {
     "name": "HelixDB/helix-db",
@@ -7842,9 +7842,9 @@
   "pamburus-hl": {
     "name": "hl",
     "officialUrl": "https://github.com/pamburus/hl",
-    "lastChecked": "2026-11-19T14:28:16.189Z",
+    "lastChecked": "2026-11-21T01:00:22.489Z",
     "revisionIdentifier": "3aae7bc7",
-    "lastVerified": "2026-11-19T14:28:16.189Z"
+    "lastVerified": "2026-11-21T01:00:22.489Z"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-quantized": {
     "name": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
@@ -11316,5 +11316,29 @@
     "lastChecked": "2026-11-21T00:51:54.834Z",
     "revisionIdentifier": "3aa55233",
     "lastVerified": "2026-11-21T00:51:54.834Z"
+  },
+  "vitest-dev-vitest": {
+    "name": "vitest-dev/vitest",
+    "officialUrl": "https://github.com/vitest-dev/vitest",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-21T01:00:29.838Z",
+    "lastVerified": "2026-11-21T01:00:29.838Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-vitest-dev-vitest",
+    "contentHash": "b4235038c7ce72bdfa70c522b66fd669ede52ee02b0e3f4ff0ec9c2f7e7c909d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 11,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "planetable-planet": {
+    "name": "Planet",
+    "officialUrl": "https://github.com/Planetable/Planet",
+    "lastChecked": "2026-11-21T01:00:27.549Z",
+    "revisionIdentifier": "544b4253",
+    "lastVerified": "2026-11-21T01:00:27.549Z"
   }
 }

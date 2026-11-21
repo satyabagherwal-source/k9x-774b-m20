@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T00:52:08.923Z",
-  "total_cycles_completed": 11123,
-  "total_learnings_persisted": 11123,
-  "total_rules_promoted": 10478,
+  "last_updated": "2026-11-21T01:00:31.032Z",
+  "total_cycles_completed": 11124,
+  "total_learnings_persisted": 11124,
+  "total_rules_promoted": 10479,
   "history": [
-    {
-      "timestamp": "2026-11-20T04:29:24.034Z",
-      "repository": "gocd/gocd",
-      "learningId": "learn-github-gocd-gocd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T04:29:25.573Z",
       "repository": "sigstore/cosign",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-21T00:52:08.923Z",
       "repository": "matrixorigin/matrixone",
       "learningId": "learn-github-matrixorigin-matrixone",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T01:00:31.032Z",
+      "repository": "vitest-dev/vitest",
+      "learningId": "learn-github-vitest-dev-vitest",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
