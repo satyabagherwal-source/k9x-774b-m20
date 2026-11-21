@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T15:59:56.464Z",
+  "last_updated": "2026-11-21T16:19:05.773Z",
   "total_verified_learnings": 9060,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23147,
+  "total_items": 23153,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "6d77feaf",
-      "content_hash": "1ee17f4f37c0aa541e07e067026d74e5a94a26c1328bda2bba492a03a2a75cb7",
+      "source_version": "ef2aebe1",
+      "content_hash": "599fb54cbc9a32663c3dc2459fa33427d9369cb1c960ad755391ac4dc3d201ce",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T15:17:54.002Z"
+      "persisted_at": "2026-11-21T16:19:00.214Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112174,9 +112174,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "a9540d821b57f7d3722debe36617f8f589966667382a98703df67bbc04af8d4f",
+      "content_hash": "0b28fb10e761c34ed7a7fc1b8a41d4a568dfb0f2c6ea0d8b1c4608be54e4a76e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T04:39:22.775Z"
+      "persisted_at": "2026-11-21T16:19:05.773Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -219817,8 +219817,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "6d77feaf",
-      "content_hash": "43a1a0a685f7e79e7f0dc7c6700508a78d413f0acd2fa75a328194b899241bf4",
+      "source_version": "ef2aebe1",
+      "content_hash": "71e39d67cd2f34e648a5bb53454acd73ed49356f367c87f2bec50f265252a304",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -219961,6 +219961,11 @@
           "number": 9796,
           "title": "run .sql scripts on sqlp; allow nested ~/ and to parquet dirs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9803,
+          "title": "--discover-relationships <file> finds joint, correlated and ordered",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219968,7 +219973,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T15:17:52.910Z",
+      "verified_at": "2026-11-21T16:18:59.379Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220934,10 +220939,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "6d77feaf",
-      "content_hash": "a706fb470d528bcc50d2561e514f488a9f71983b68a243660d969c3cddd0ed2d",
+      "source_version": "ef2aebe1",
+      "content_hash": "dea080294db783c60bd5be6a7fdc7ae3330198455706e5dfdb2d6599ce4d4ef2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T15:17:53.634Z"
+      "persisted_at": "2026-11-21T16:19:00.047Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -221007,9 +221012,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "6907aef041c574c863cefb18f9efd32d9d3041cd3aab1f819924b608af5a44c1",
+      "content_hash": "d9f6b3baeb98dedf97cf7f65bbaf416648c2f3a1e4ef87bf153cf95b260199db",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T04:39:22.597Z"
+      "persisted_at": "2026-11-21T16:19:05.611Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -242443,8 +242448,8 @@
       "slug": "flox-flox",
       "platform": "github",
       "source_url": "https://github.com/flox/flox",
-      "source_version": "49138841",
-      "content_hash": "5c3ce4eaeb86f56bb74b59a26fcfaf0732b0094532db2857e241b170c5bb848a",
+      "source_version": "2130d6d7",
+      "content_hash": "c94233deb0f9b99515fb06ee03343fc2f1c227abf5b02b0879ac483fc1669bad",
       "dossier_path": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "promoted_rules": [
@@ -242467,6 +242472,11 @@
           "number": 9239,
           "title": "resolve hosts path in sandbox allow-list test",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9802,
+          "title": "Keep hello_unfree on the nixpkgs revision the CI machines have built",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242474,7 +242484,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T14:15:47.467Z",
+      "verified_at": "2026-11-21T16:18:44.784Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242516,10 +242526,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-architecture-intelligence-flox-flox-core-invariants.md",
       "title": "Architecture Intelligence: flox/flox Core Invariants",
       "repository": "flox/flox",
-      "source_version": "49138841",
-      "content_hash": "a8bb3c593278b0ccfe58f311d0dd535819d71b936e918afa7d2b6019817d8129",
+      "source_version": "2130d6d7",
+      "content_hash": "4ee00613b4b340056a2a0955a056836e8d9cff5319a4d01c870e91d665931d7a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T14:15:48.004Z"
+      "persisted_at": "2026-11-21T16:18:45.433Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox",
@@ -242528,10 +242538,10 @@
       "relative_path": "08_VERIFICATION/flox-flox-verification-protocol-empirical-defect-shield-for-flox-flox.md",
       "title": "Verification Protocol: Empirical Defect Shield for flox/flox",
       "repository": "flox/flox",
-      "source_version": "49138841",
-      "content_hash": "dd93a4912205909ec03c9e8cacbc919fb210139d7fe73aa4c24ad661b97ee9ac",
+      "source_version": "2130d6d7",
+      "content_hash": "4490ae5a09350862e52a05be77a8143ffb0ac2f57de0134bc2e7570e1effda5b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T14:15:48.145Z"
+      "persisted_at": "2026-11-21T16:18:45.598Z"
     },
     "rule-8572": {
       "learning_id": "rule-8572",
@@ -242579,9 +242589,9 @@
       "title": "Architecture Intelligence: flox-flox-learnings Core Invariants",
       "repository": "flox-flox-learnings",
       "source_version": "HEAD",
-      "content_hash": "38c5133877ce500fa045a489fb370d0c5255dc901f232a8c66f9d12692ed7a5a",
+      "content_hash": "97516840f4171a896469f3052db301f8ba74aec0c84e55ca84268063074cd9c3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T14:16:02.617Z"
+      "persisted_at": "2026-11-21T16:19:03.805Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox-learnings",
@@ -242591,9 +242601,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for flox-flox-learnings",
       "repository": "flox-flox-learnings",
       "source_version": "HEAD",
-      "content_hash": "cee7a34dcb069422ce9a5fe635fdae10fc2c86a90ce305d9bf968625997a9387",
+      "content_hash": "3bc294dfc217860e5f3b985e5cd41165aa9deda38a0605748177ee6606619263",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T14:16:02.771Z"
+      "persisted_at": "2026-11-21T16:19:03.969Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-community-1-lear": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-community-1-lear",
@@ -277981,7 +277991,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
       "source_version": "hf-ornith-ai-ornith-1.5-122b",
-      "content_hash": "7648d25b645b564638e09fd3e405953c56efd904d74e3a1c17a01bd7f6e2643e",
+      "content_hash": "1bd0261b92b7ac1a55d6106390160064576f90a03b4b7545dc61b8dc0f5082e0",
       "dossier_path": "07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md",
       "promoted_rules": [],
@@ -277990,7 +278000,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T18:05:26.029Z",
+      "verified_at": "2026-11-21T16:18:41.493Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -278007,9 +278017,9 @@
       "title": "Research & Knowledge Intelligence: ornith-ai/Ornith-1.5-122B Core Invariants",
       "repository": "ornith-ai/Ornith-1.5-122B",
       "source_version": "hf-ornith-ai-ornith-1.5-122b",
-      "content_hash": "be4d59844d32977e81f1210656c1f401af83a5fb6f058868031af3abba8f69bf",
+      "content_hash": "7defe27ec55099cf22890a17ae1b8901078f5f016e363d9fa09a240a1c5089dc",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T18:05:26.418Z"
+      "persisted_at": "2026-11-21T16:18:41.975Z"
     },
     "rule-9025": {
       "learning_id": "rule-9025",
@@ -278045,9 +278055,9 @@
       "title": "Research & Knowledge Intelligence: hf-ornith-ai-ornith-1.5-122b-learnings Core Invariants",
       "repository": "hf-ornith-ai-ornith-1.5-122b-learnings",
       "source_version": "HEAD",
-      "content_hash": "6d743de7bf257ef396001817ff25b7490674d975a38a2cfddc9daaaae41ef1d1",
+      "content_hash": "55c501e4bf8a3b6b324daa1f43ea73ff3202a6ffc3efc64af22fff56f2edc440",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T18:05:44.335Z"
+      "persisted_at": "2026-11-21T16:19:04.341Z"
     },
     "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf": {
       "learning_id": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
@@ -314512,6 +314522,82 @@
       "content_hash": "abd2aace40d3c88c41297c5ee85424ecdbde67b38a47a5a1ad4f24760bbbe406",
       "domain_letter": "H",
       "persisted_at": "2026-11-21T15:59:54.685Z"
+    },
+    "rule-9802": {
+      "learning_id": "rule-9802",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9802,
+      "title": "Keep hello_unfree on the nixpkgs revision the CI machines have built",
+      "source_url": "https://github.com/flox/flox",
+      "source_version": "2130d6d7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T16:18:44.784Z"
+    },
+    "candidate_directive-keep-hello_unfree-on-the-nixpkgs-revision-the-ci-machines-have-built": {
+      "item_id": "candidate_directive-keep-hello_unfree-on-the-nixpkgs-revision-the-ci-machines-have-built",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4GO7-keep-hello_unfree-on-the-nixpkgs-revision-the-ci-machines-have-built.md",
+      "title": "Keep hello_unfree on the nixpkgs revision the CI machines have built",
+      "repository": "flox/flox",
+      "source_version": "2130d6d7",
+      "content_hash": "f4dc8c623f7b783d3002b1487a1522d77bd73687e8a66e157f520bfe12e79d65",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T16:18:45.230Z"
+    },
+    "rule-9803": {
+      "learning_id": "rule-9803",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9803,
+      "title": "--discover-relationships <file> finds joint, correlated and ordered",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "ef2aebe1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T16:18:59.379Z"
+    },
+    "candidate_directive-discover-relationships-file-finds-joint-correlated-and-ordered": {
+      "item_id": "candidate_directive-discover-relationships-file-finds-joint-correlated-and-ordered",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4RZ7-discover-relationships-file-finds-joint-correlated-and-ordered.md",
+      "title": "--discover-relationships <file> finds joint, correlated and ordered",
+      "repository": "dathere/qsv",
+      "source_version": "ef2aebe1",
+      "content_hash": "d8082f6c2b1f048991bab3f39e25f2c80637f7146b63b1dbfb320ad67764dea5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T16:18:59.880Z"
+    },
+    "candidate_directive-test-keep-hello_unfree-on-the-nixpkgs-revision-the-ci-machines-have-built": {
+      "item_id": "candidate_directive-test-keep-hello_unfree-on-the-nixpkgs-revision-the-ci-machines-have-built",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4UVL-test-keep-hello_unfree-on-the-nixpkgs-revision-the-ci-machines-have-built.md",
+      "title": "test: Keep hello_unfree on the nixpkgs revision the CI machines have built",
+      "repository": "flox-flox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1f9c58fc793333926186837856d3b6ff35cd18ed8513aabf60555b19122d5d33",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T16:19:03.639Z"
+    },
+    "candidate_directive-synthesize-discover-relationships-file-finds-joint-correlated-and-ordered": {
+      "item_id": "candidate_directive-synthesize-discover-relationships-file-finds-joint-correlated-and-ordered",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4W9R-synthesize-discover-relationships-file-finds-joint-correlated-and-ordered.md",
+      "title": "synthesize): --discover-relationships <file> finds joint, correlated and ordered",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f260491eba0645d62bbdea4b44a8a9a024717bef14eb2db271de2974d769fd77",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T16:19:05.444Z"
     }
   },
   "ai-builder-brain": {

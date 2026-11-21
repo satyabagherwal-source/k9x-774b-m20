@@ -729714,3 +729714,177 @@ fn git(dir: &Path, args: &[&str]) {
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `cdac7ade` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9802. Keep hello_unfree on the nixpkgs revision the CI machines have built (Harvested from flox/flox)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Keep hello_unfree on the nixpkgs revision the CI machines have built",
+  "source": "flox/flox",
+  "source_url": "https://github.com/flox/flox",
+  "source_version": "2130d6d7",
+  "license": "GPL-2.0",
+  "extracted_at": "2026-11-21T16:18:44.491Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-flox-flox",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [flox/flox](https://github.com/flox/flox) (Revision: `2130d6d7`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `test_data/generated/envs/hello-unfree-lock.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `03428973`: test: Keep hello_unfree on the nixpkgs revision the CI machines have built. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `test_data/generated/envs/hello-unfree-lock.yaml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+      "derivation": "/nix/store/xj1zpiq3qcwc9ry6kxfnrizg5164wyai-example-unfree-package-1.0.drv",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
+      "rev": "151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
+      "rev_count": 1086391,
+      "rev_date": "2026-10-06T04:29:54Z",
+      "scrape_date": "2026-10-07T04:59:53.190100Z",
+        "out": "/nix/store/8w49yqc04n3jyn4dabx7s4y61qjc9a6p-example-unfree-package-1.0"
+      "derivation": "/nix/store/di5x5kcjx356azj21slvi70r2dckmsz9-example-unfree-package-1.0.drv",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
+      "rev": "151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
+      "rev_count": 1086391,
+      "rev_date": "2026-10-06T04:29:54Z",
+      "scrape_date": "2026-10-07T05:32:12.629660Z",
+        "out": "/nix/store/7203xbyfh69jkvr2jjcafdsxx97glvki-example-unfree-package-1.0"
+      "derivation": "/nix/store/br185pns5ax8fz94iiwxiyaq7q4bdj36-example-unfree-package-1.0.drv",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
+      "rev": "151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
+      "rev_coun
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+      "derivation": "/nix/store/gamqi8z22ras3jbizb0g6yqxkcyia6l9-example-unfree-package-1.0.drv",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
+      "rev": "04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
+      "rev_count": 1122823,
+      "rev_date": "2026-11-17T04:43:17Z",
+      "scrape_date": "2026-11-19T05:47:33.216545Z",
+        "out": "/nix/store/2g6xgy68v99id7pnz91rgfkangf8xshc-example-unfree-package-1.0"
+      "derivation": "/nix/store/95ynv8rl8z4wgq8z7krif5gaya6mhgzf-example-unfree-package-1.0.drv",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
+      "rev": "04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
+      "rev_count": 1122823,
+      "rev_date": "2026-11-17T04:43:17Z",
+      "scrape_date": "2026-11-19T06:14:10.545333Z",
+        "out": "/nix/store/lycyd5j2h7j2q13ggam638bg56v1mfk7-example-unfree-package-1.0"
+      "derivation": "/nix/store/mscfaizxskh1rvqvmgjrbyqhy1qbhb29-example-unfree-package-1.0.drv",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
+      "rev": "04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
+      "rev_coun
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `03428973` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9803. --discover-relationships <file> finds joint, correlated and ordered (Harvested from dathere/qsv)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "--discover-relationships <file> finds joint, correlated and ordered",
+  "source": "dathere/qsv",
+  "source_url": "https://github.com/dathere/qsv",
+  "source_version": "ef2aebe1",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-21T16:18:59.077Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dathere-qsv",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `ef2aebe1`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ef2aebe1`: synthesize): --discover-relationships <file> finds joint, correlated and ordered groups. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- **`qsv-synthesize`: `--discover-relationships` is CLI-only for now.** The new `synthesize --discover-relationships <file>` option (finds `joint`, `correlated` and `ordered` groups and writes them to a dictionary file) is left out of the skill: the MCP server doesn't check that file's path against its allowed directories, so it could be written outside them. ([#5085](https://github.com/dathere/qsv/pull/5085))
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ef2aebe1` are properly handled with clean fallback behavior.

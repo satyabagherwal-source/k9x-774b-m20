@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "6d77feaf",
+    "sourceVersion": "ef2aebe1",
     "license": "NOASSERTION",
-    "contentHash": "43a1a0a685f7e79e7f0dc7c6700508a78d413f0acd2fa75a328194b899241bf4",
-    "lastHarvestedAt": "2026-11-21T15:17:53.155Z",
+    "contentHash": "71e39d67cd2f34e648a5bb53454acd73ed49356f367c87f2bec50f265252a304",
+    "lastHarvestedAt": "2026-11-21T16:18:59.641Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3253,10 +3253,10 @@
     "repository": "flox/flox",
     "platform": "github",
     "sourceUrl": "https://github.com/flox/flox",
-    "sourceVersion": "49138841",
+    "sourceVersion": "2130d6d7",
     "license": "GPL-2.0",
-    "contentHash": "5c3ce4eaeb86f56bb74b59a26fcfaf0732b0094532db2857e241b170c5bb848a",
-    "lastHarvestedAt": "2026-11-18T14:15:47.659Z",
+    "contentHash": "c94233deb0f9b99515fb06ee03343fc2f1c227abf5b02b0879ac483fc1669bad",
+    "lastHarvestedAt": "2026-11-21T16:18:44.991Z",
     "learningId": "learn-github-flox-flox"
   },
   "wix-react-native-navigation": {
@@ -10625,8 +10625,8 @@
     "sourceUrl": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
     "sourceVersion": "hf-ornith-ai-ornith-1.5-122b",
     "license": "Open-Source",
-    "contentHash": "7648d25b645b564638e09fd3e405953c56efd904d74e3a1c17a01bd7f6e2643e",
-    "lastHarvestedAt": "2026-11-17T18:05:26.236Z",
+    "contentHash": "1bd0261b92b7ac1a55d6106390160064576f90a03b4b7545dc61b8dc0f5082e0",
+    "lastHarvestedAt": "2026-11-21T16:18:41.754Z",
     "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b"
   },
   "lokoe-mehdi-scouter": {

@@ -11835,3 +11835,6 @@
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T15:49:47.999Z` | `fallow-rs-fallow` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-7F9FC9D4` [Domain K] | Yes (`6a02877b...`) |
 | `CYCLE-20261121-FUQX` | `2026-11-21T15:59:37.065Z` | `KRAFTON/Raon-1-mini-preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md` | Yes (`fd0f35ec...`) |
 | `CYCLE-20261121-G4Q0` | `2026-11-21T15:59:49.992Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/startrail-org-leann-learnings.md` | Yes (`4b27fa86...`) |
+| `CYCLE-20261121-4DZQ` | `2026-11-21T16:18:41.750Z` | `ornith-ai/Ornith-1.5-122B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md` | Yes (`1bd0261b...`) |
+| `CYCLE-20261121-4GHM` | `2026-11-21T16:18:44.986Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9802` | Yes (`c94233de...`) |
+| `CYCLE-20261121-4RSK` | `2026-11-21T16:18:59.636Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9803` | Yes (`71e39d67...`) |

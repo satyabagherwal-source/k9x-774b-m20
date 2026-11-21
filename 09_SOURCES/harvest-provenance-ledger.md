@@ -11868,3 +11868,6 @@ Every entry in this ledger must capture:
 | `learn-dom-k-7f9fc9d4` | `project://fallow-rs-fallow` | `ad1c3d5b` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md` | 2026-11-21T15:49:47.999Z |
 | `learn-huggingface-krafton-raon-1-mini-preview` | `https://huggingface.co/KRAFTON/Raon-1-mini-preview` | `hf-krafton` | Multi-dimensional audit evidence | 2026-11-21T15:59:37.071Z |
 | `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `dd64641c` | Multi-dimensional audit evidence | 2026-11-21T15:59:49.998Z |
+| `learn-huggingface-ornith-ai-ornith-1-5-122b` | `https://huggingface.co/ornith-ai/Ornith-1.5-122B` | `hf-ornith-` | Multi-dimensional audit evidence | 2026-11-21T16:18:41.754Z |
+| `learn-github-flox-flox` | `https://github.com/flox/flox` | `2130d6d7` | Multi-dimensional audit evidence | 2026-11-21T16:18:44.991Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `ef2aebe1` | Multi-dimensional audit evidence | 2026-11-21T16:18:59.641Z |

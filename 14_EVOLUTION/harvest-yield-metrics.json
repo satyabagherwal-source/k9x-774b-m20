@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T15:59:50.042Z",
-  "total_cycles_completed": 11264,
-  "total_learnings_persisted": 11264,
-  "total_rules_promoted": 10604,
+  "last_updated": "2026-11-21T16:18:59.646Z",
+  "total_cycles_completed": 11267,
+  "total_learnings_persisted": 11267,
+  "total_rules_promoted": 10606,
   "history": [
-    {
-      "timestamp": "2026-11-20T19:44:42.533Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T19:44:45.718Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T20:02:21.661Z",
-      "repository": "axios/axios",
-      "learningId": "learn-github-axios-axios",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T20:02:28.692Z",
       "repository": "trufflesecurity/trufflehog",
@@ -1403,6 +1382,27 @@
       "repository": "StarTrail-org/LEANN",
       "learningId": "learn-github-startrail-org-leann",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T16:18:41.760Z",
+      "repository": "ornith-ai/Ornith-1.5-122B",
+      "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T16:18:44.996Z",
+      "repository": "flox/flox",
+      "learningId": "learn-github-flox-flox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T16:18:59.646Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

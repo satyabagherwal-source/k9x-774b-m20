@@ -4,22 +4,22 @@
 {
   "source_repository": "flox/flox",
   "source_url": "https://github.com/flox/flox",
-  "source_version": "49138841",
+  "source_version": "2130d6d7",
   "license": "GPL-2.0",
-  "timestamp": "2026-11-18T14:15:47.853Z",
+  "timestamp": "2026-11-21T16:18:45.229Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-flox-flox",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [flox/flox](https://github.com/flox/flox) (Revision: `49138841`).  
-> **License**: GPL-2.0 | **Timestamp**: `2026-11-18T14:15:47.853Z`  
+> **Provenance**: Harvested from [flox/flox](https://github.com/flox/flox) (Revision: `2130d6d7`).  
+> **License**: GPL-2.0 | **Timestamp**: `2026-11-21T16:18:45.229Z`  
 > **Learning ID**: `learn-github-flox-flox`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `flox/flox` (Commit: `49138841`)
+- **Target Repository**: `flox/flox` (Commit: `2130d6d7`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flox/flox](https://github.com/flox/flox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T14:15:46.662Z  
+> **Harvest Timestamp**: 2026-11-21T16:18:43.939Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The Deterministic Foundation for your SDLC
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4210 stars
+- **Stars / Engagement**: 4211 stars
 
 ---
 
@@ -1457,318 +1457,1144 @@ impl ActivateEnvironmentRef {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a14159f` (2026-11-18)
-**Commit Message**: fix: resolve hosts path in sandbox allow-list test (#4898)
+### Incident Patch 1: `03428973` (2026-11-20)
+**Commit Message**: test: Keep hello_unfree on the nixpkgs revision the CI machines have built
 
-## Summary
+The forced re-record moved `resolve/hello_unfree.yaml` and
+`envs/hello-unfree-lock.yaml` from nixpkgs 151fa4e8 to 04906337. Unfree
+packages are not in the public caches, so `'flox install' warns about
+unfree packages` would build `hello-unfree` on every CI test machine.
+The machines only have the 151fa4e8 output, so keep both files there.
 
-The sandbox matches allow-list entries against resolved paths. The test
-allowed `/etc/hosts` and `/private/etc/hosts`, but on NixOS `/etc/hosts`
-resolves into `/nix/store`, causing the test to fail.
+This repeats d2bc1551a ("test: keep hello_unfree on the nixpkgs
+revision the CI machines have built", from #4837), which found that the
+last forced re-record timed out all three `remote (!containerize)` jobs
+and restored both files. That commit also added the comment on
+`[resolve.hello_unfree]` in `test_data/config.toml` that asks for this:
 
-Canonicalize `/etc/hosts` before adding it to the test’s allow-list.
-This handles standard Linux, macOS, and NixOS layouts.
+  # The output of this response must already be in the nix store of the CI test
+  # machines (unfree packages are not in the public caches). A forced rerecord
+  # moves it to the newest nixpkgs revision, and the install test then builds the
+  # package on every machine, which times out the job. Keep the committed cassette
+  # (and envs/hello-unfree-lock.yaml, which pins the same revision) unless the new
+  # output has been built on th
 
-## Alternative considered
-
-The sandbox could resolve literal `sandbox-allow` entries before
-comparing them with resolved access paths. Users could then allow
-`/etc/hosts` directly even when it is a symlink.
-
-That would change user-facing matching behavior and requires defining
-how literal paths interact with glob patterns and `~/` expansion. I
-chose the smaller test-only fix; literal-path resolution can be
-considered separately.
-
-## Validation
-
-- All 7 `build_sandbox` tests passed on NixOS.
-- Pre-push checks passed: Clippy, rustfmt, and treefmt.
-
-**File**: `cli/flox-rust-sdk/src/providers/build.rs` (modified, +8/-5)
+**File**: `test_data/generated/envs/hello-unfree-lock.yaml` (modified, +21/-21)
 ```diff
-@@ -1995,21 +1995,24 @@ mod tests {
-     #[test]
-     fn build_sandbox_allow_permits_listed_path() {
-         let pname = String::from("foo");
--        // sandbox-allow is a v1.13.0 field, so the manifest must declare that
--        // schema version. /etc/hosts resolves to /private/etc/hosts on macOS;
--        // list both.
-+        // Allow the resolved path: /etc/hosts can point into /private on macOS
-+        // or /nix/store on NixOS.
-+        let hosts_path = fs::canonicalize("/etc/hosts").unwrap();
-+        // sandbox-allow requires schema v1.13.0 or newer.
-         let manifest = formatdoc! {r#"
-             schema-version = "1.13.0"
- 
-             [build.{pname}]
-             sandbox = "enforce"
--            sandbox-allow = ["/etc/hosts", "/private/etc/hosts"]
-+            sandbox-allow = ["{hosts_path}"]
-             command = '''
-                 cat /etc/hosts > /dev/null
-                 mkdir -p $out
-                 echo done > $out/{pname}
-             '''
--        "#};
-+        "#,
-+            hosts_path = hosts_path.display(),
-+        };
-         let (flox, _temp_dir_handle) = flox_instance();
-         let mut env = new_path_environment(&flox, &manifest);
- 
+@@ -14,17 +14,17 @@
+     {
+       "attr_path": "hello-unfree",
+       "broken": false,
+-      "derivation": "/nix/store/gamqi8z22ras3jbizb0g6yqxkcyia6l9-example-unfree-package-1.0.drv",
++      "derivation": "/nix/store/xj1zpiq3qcwc9ry6kxfnrizg5164wyai-example-unfree-package-1.0.drv",
+       "description": "Example package with unfree license (for testing)",
+       "install_id": "hello-unfree",
+       "license": "Unfree",
+-      "locked_url": "https://github.com/flox/nixpkgs?rev=04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
++      "locked_url": "https://github.com/flox/nixpkgs?rev=151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
+       "name": "example-unfree-package-1.0",
+       "pname": "hello-unfree",
+-      "rev": "04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
+-      "rev_count": 1122823,
+-      "rev_date": "2026-11-17T04:43:17Z",
+-      "scrape_date": "2026-11-19T05:47:33.216545Z",
++      "rev": "151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
++      "rev_count": 1086391,
++      "rev_date": "2026-10-06T04:29:54Z",
++      "scrape_date": "2026-10-07T04:59:53.190100Z",
+       "stabilities": [
+         "unstable"
+       ],
+@@ -34,7 +34,7 @@
+         "out"
+       ],
+       "outputs": {
+-        "out": "/nix/store/2g6xgy68v99id7pnz91rgfkangf8xshc-example-unfree-package-1.0"
++        "out": "/nix/store/8w49yqc04n3jyn4dabx7s4y61qjc9a6p-example-unfree-package-1.0"
+       },
+       "system": "aarch64-darwin",
+       "group": "toplevel",
+@@ -43,17 +43,17 @@
+     {
+       "attr_path": "hello-unfree",
+       "broken": false,
+-      "derivation": "/nix/store/95ynv8rl8z4wgq8z7krif5gaya6mhgzf-example-unfree-package-1.0.drv",
++      "derivation": "/nix/store/di5x5kcjx356azj21slvi70r2dckmsz9-example-unfree-package-1.0.drv",
+       "description": "Example package with unfree license (for testing)",
+       "install_id": "hello-unfree",
+       "license": "Unfree",
+-      "locked_url": "https://github.com/flox/nixpkgs?rev=04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
++      "locked_url": "https://github.com/flox/nixpkgs?rev=151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
+       "name": "example-unfree-package-1.0",
+       "pname": "hello-unfree",
+-      "rev": "04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
+-      "rev_count": 1122823,
+-      "rev_date": "2026-11-17T04:43:17Z",
+-      "scrape_date": "2026-11-19T06:14:10.545333Z",
++      "rev": "151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
++      "rev_count": 1086391,
++      "rev_date": "2026-10-06T04:29:54Z",
++      "scrape_date": "2026-10-07T05:32:12.629660Z",
+       "stabilities": [
+         "unstable"
+       ],
+@@ -63,7 +63,7 @@
+         "out"
+       ],
+       "outputs": {
+-        "out": "/nix/store/lycyd5j2h7j2q13ggam638bg56v1mfk7-example-unfree-package-1.0"
++        "out": "/nix/store/7203xbyfh69jkvr2jjcafdsxx97glvki-example-unfree-package-1.0"
+       },
+       "system": "aarch64-linux",
+       "group": "toplevel",
+@@ -72,17 +72,17 @@
+     {
+       "attr_path": "hello-unfree",
+       "broken": false,
+-      "derivation": "/nix/store/mscfaizxskh1rvqvmgjrbyqhy1qbhb29-example-unfree-package-1.0.drv",
++      "derivation": "/nix/store/br185pns5ax8fz94iiwxiyaq7q4bdj36-example-unfree-package-1.0.drv",
+       "description": "Example package with unfree license (for testing)",
+       "install_id": "hello-unfree",
+       "license": "Unfree",
+-      "locked_url": "https://github.com/flox/nixpkgs?rev=04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
++      "locked_url": "https://github.com/flox/nixpkgs?rev=151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
+       "name": "example-unfree-package-1.0",
+       "pname": "hello-unfree",
+-      "rev": "04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
+-      "rev_count": 1122823,
+-      "rev_date": "2026-11-17T04:43:17Z",
+-      "scrape_date": "2026-11-19T06:43:20.682631Z",
++      "rev": "151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
++      "rev_count": 1086391,
++      "rev_date": "2026-10-06T04:29:54Z",
++      "scrape_date": "2026-10-07T06:08:57.197332Z",
+       "stabilities": [
+         "unstable"
+       ],
+@@ -92,7 +92,7 @@
+         "out"
+       ],
+       "outputs": {
+-        "out": "/nix/store/9pi0ngnqava1b7g679l8gq3n8y02a3i2-example-unfree-package-1.0"
++        "out": "/nix/store/z4z3q7pqlcrgnpzqhaswf8pj20bz5hfa-example-unfree-package-1.0"
+       },
+       "system": "x86_64-linux",
+       "group": "toplevel",
+```
+
+**File**: `test_data/generated/resolve/hello_unfree.yaml` (modified, +3/-3)
+```diff
+@@ -6,13 +6,13 @@ then:
+   status: 200
+   header:
+   - name: date
+-    value: Fri, 20 Nov 2026 13:34:10 GMT
++    value: Thu, 08 Oct 2026 22:26:30 GMT
+   - name: content-type
+     value: application/json
+   - name: content-length
+     value: '2757'
+   - name: server
+     value: uvicorn
+   - name: apigw-requestid
+-    value: HJDc6hoHIAMESDA=
+-  body: '{"items":[{"name":"toplevel","page":{"page":1122823,"url":"","packages":[{"catalog":"nixpkgs","attr_path":"hello-unfree","pkg_path":"hello-unfree","derivation":"/nix/store/gamqi8z22ras3jbizb0g6yqxkcyia6l9-example-unfree-package-1.0.drv","name":"example-unfree-package-1.0","pname":"hello-unfree","version":"1.0","system":"aarch64-darwin","outputs":[{"name":"out","store_path":"/nix/store/2g6xgy68v99id7pnz91rgfkangf8xshc-example-unfree-package-1.0"}],"outputs_to_install":["out"],"description":"Example package with unfree license (for testing)","license":"Unfree","locked_url":"https://github.com/flox/nixpkgs?rev=04906337b6d53e8bb0eaf0470ae9f070a4d4eb55","rev":"04906337b6d53e8bb0eaf0470ae9f070a4d4eb55","rev_count":1122823,"rev_date":"2026-11-17T04:43:17Z","broken":false,"insecure":false,"unfree":true,"missing_builds":true,"stabilities":["unstable"],"scrape_date":"2026-11-19T05:47:33.216545Z","cache_uri":null,"install_id":"hello-unfree"},{"catalog":"nixpkgs","attr_path":"hello-unfree","pkg_path":"hello-unfree","derivation":"/nix/store/95ynv8rl8z4wgq8z7krif5gaya6mhgzf-example-unfree-package-1.0.drv","name":"example-unfree-package-1.0","pname":"hello-unfree","version":"1.0","system":"aarch64-linux","outputs":[{"name":"out","store_path":"/nix/store/lycyd5j2h7j2q13ggam638bg56v1mfk7-example-unfree-package-1.0"}],"outputs_to_install":["out"],"description":"Example package with unfree license (for testing)","license":"Unfree","locked_url":"https://github.com/flox/nixpkgs?rev=04906337b6d53e8bb0eaf0470ae9f070a4d4eb55","rev":"04906337b6d53e8bb0eaf0470ae9f070a4d4eb55","rev_count":1122823,"rev_date":"2026-11-17T04:43:17Z","broken":false,"insecure":false,"unfree":true,"missing_builds":true,"stabilities":["unstable"],"scrape_date":"2026-11-19T06:14:10.545333Z","cache_uri":null,"install_id":"hello-unfree"},{"catalog":"nixpkgs","attr_path":"hello-unfree","pkg_path":"hello-unfree","derivation":"/nix/store/mscfaizxskh1rvqvmgjrbyqhy1qbhb29-example-unfree-package-1.0.drv","name":"example-unfree-package-1.0","pname":"hello-unfree","version":"1.0","system":"x86_64-linux","outputs":[{"name":"out","store_path":"/nix/store/9pi0ngnqava1b7g679l8gq3n8y02a3i2-example-unfree-package-1.0"}],"outputs_to_install":["out"],"description":"Example package with unfree license (for testing)","license":"Unfree","locked_url":"https://github.com/flox/nixpkgs?rev=04906337b6d53e8bb0eaf0470ae9f070a4d4eb55","rev":"04906337b6d53e8bb0eaf0470ae9f070a4d4eb55","rev_count":1122823,"rev_date":"2026-11-17T04:43:17Z","broken":false,"insecure":false,"unfree":true,"missing_builds":true,"stabilities":["unstable"],"scrape_date":"2026-11-19T06:43:20.682631Z","cache_uri":null,"install_id":"hello-unfree"}],"messages":[],"complete":true},"candidate_pages":null,"messages":[]}]}'
++    value: E8jHjhR5IAMEa7g=
++  body: '{"items":[{"name":"toplevel","page":{"page":1086391,"url":"","packages":[{"catalog":"nixpkgs","attr_path":"hello-unfree","pkg_path":"hello-unfree","derivation":"/nix/store/xj1zpiq3qcwc9ry6kxfnrizg5164wyai-example-unfree-package-1.0.drv","name":"example-unfree-package-1.0","pname":"hello-unfree","version":"1.0","system":"aarch64-darwin","outputs":[{"name":"out","store_path":"/nix/store/8w49yqc04n3jyn4dabx7s4y61qjc9a6p-example-unfree-package-1.0"}],"outputs_to_install":["out"],"description":"Example package with unfree license (for testing)","license":"Unfree","locked_url":"https://github.com/flox/nixpkgs?rev=151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4","rev":"151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4","rev_count":1086391,"rev_date":"2026-10-06T04:29:54Z","broken":false,"insecure":false,"unfree":true,"missing_builds":true,"stabilities":["unstable"],"scrape_date":"2026-10-07T04:59:53.190100Z","cache_uri":null,"install_id":"hello-unfree"},{"catalog":"nixpkgs","attr_path":"hello-unfree","pkg_path":"hello-unfree","derivation":"/nix/store/di5x5kcjx356azj21slvi70r2dckmsz9-example-unfree-package-1.0.drv","name":"example-unfree-package-1.0","pname":"hello-unfree","version":"1.0","system":"aarch64-linux","outputs":[{"name":"out","store_path":"/nix/store/7203xbyfh69jkvr2jjcafdsxx97glvki-example-unfree-package-1.0"}],"outputs_to_install":["out"],"description":"Example package with unfree license (for testing)","license":"Unfree","locked_url":"https://github.com/flox/nixpkgs?rev=151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4","rev":"151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4","rev_count":1086391,"rev_date":"2026-10-06T04:29:54Z","broken":false,"insecure":false,"unfree":true,"missing_builds":true,"stabilities":["unstable"],"scrape_date":"2026-10-07T05:32:12.629660Z","cache_uri":null,"install_id":"hello-unfree"},{"catalog":"nixpkgs","attr_path":"
 ```
 
 ---
 
-### Incident Patch 2: `49138841` (2026-11-18)
-**Commit Message**: ci(crate2nix): caching and build graph optimizations (#4872)
+### Incident Patch 2: `2130d6d7` (2026-11-20)
+**Commit Message**: build: Update FloxHub API schemas to c140ac3b (#4909)
 
-* Build flox-interpreter and flox-buildenv against crate2nix's
-flox-activations, avoiding crane builds leaking into the crate2nix
-closure and optimizing caching.
-* Copy the full rust dependecy closure to our binary cahce to avoid
-recompilation wehn building locally or multiple remote machines.
-* drop flox-activations from the devShell and cosume it via
-`<repo>/builds` like other dependencies.
+Generated from: https://github.com/flox/floxhub/actions/runs/44557553572
 
-**File**: `.github/scripts/remote-execute-nix-build.sh` (modified, +24/-3)
+Mocks were not updated automatically. Before regenerating mocks, verify
+that the CLI compiles against the new schema ('nix build .#flox' in the
+flox repo). If it does not, hand-written construction sites (e.g. struct
+literals for new or removed fields) must be fixed first. Once the build
+passes, regenerate mocks with:
+
+  just gen-data <path-to-floxhub-repo> force
+
+then commit the result before merging.
+
+**File**: `cli/catalog-api-v1/openapi.json` (modified, +101/-175)
 ```diff
-@@ -7,6 +7,8 @@ function render_remote_cmd() {
-   shift
-   local -r remote_store=$1
-   shift
-+  # Whether to publish the build-time outputs as well, see below.
-+  local -r copy_build_outputs=${1:-false}
- 
-   local -r nix_build_args=(
-     nix build
-@@ -17,31 +19,50 @@ function render_remote_cmd() {
-     --accept-flake-config
-     "$flake_ref")
- 
--  local -r nix_copy_args=(
-+  local -r nix_copy_cmd=(
-     nix copy
-     --extra-experimental-features nix-command
-     --substitute-on-destination
-     --to $remote_store?secret-key=/tmp/nix-substituter-secret-key
-+  )
-+
-+  local -r nix_copy_args=(
-+    "${nix_copy_cmd[@]}"
-     \$DRV
-     \$DRV^*
-   )
- 
-+  # A crate's build artifact is a build input of the next crate, never a
-+  # runtime reference of the binary, so copying the outputs above does not
-+  # reach it. Publishing those lets a builder with a cold store substitute the
-+  # dependency graph instead of recompiling it.
-+  #
-+  # Restricted to the crate artifacts: the rest of the closure is the
-+  # toolchain, stdenv and sources, several GB that cache.nixos.org already
-+  # serves.
-+  local nix_copy_build_outputs=""
-+  if [ "$copy_build_outputs" = "true" ]; then
-+    nix_copy_build_outputs="${nix_copy_cmd[@]} \$(nix-store -qR --include-outputs \"\$DRV\" | grep -v '[.]drv\$' | grep -- '-rust_')"
-+  fi
-+
-   # Don't actually run the command, just render it. We want the environment
-   # variables from this machine, not the remote builder.
-   echo "
-   set -euxo pipefail
-   DRV=\"\$(${nix_build_args[@]} | jq -r '.[0].drvPath')\"
-   ${nix_copy_args[@]}
-+  $nix_copy_build_outputs
-   "
- }
- export -f render_remote_cmd
- 
- function main() {
--  local -r usage="USAGE: remote-execute-nix-build.sh <attr_path> <remote store>"
-+  local -r usage="USAGE: remote-execute-nix-build.sh <attr_path> <remote store> [copy build outputs]"
-   local -r attr_path=${1?$usage}
-   shift
-   local -r remote_store=${1?$usage}
-   shift
-+  local -r copy_build_outputs=${1:-false}
- 
-   printenv NIX_SUBSTITUTER_KEY >/tmp/secret-key
- 
-@@ -59,6 +80,6 @@ function main() {
-     -o SendEnv=AWS_SECRET_ACCESS_KEY \
-     -o SendEnv=AWS_SESSION_TOKEN \
-     "bash -s" \
--    < <(render_remote_cmd "$attr_path" "$remote_store")
-+    < <(render_remote_cmd "$attr_path" "$remote_store" "$copy_build_outputs")
- }
- main "$@"
+@@ -252,7 +252,7 @@
+         ],
+         "responses": {
+           "200": {
+-            "description": "A list of packages attr_path",
++            "description": "Versions of attr_path. Empty, with a total_count of 0, when attr_path exists but none of its builds have an accepted stability.",
+             "content": {
+               "application/json": {
+                 "schema": {
+@@ -262,7 +262,7 @@
+             }
+           },
+           "404": {
+-            "description": "attr_path was not found.",
++            "description": "attr_path does not exist, or is in a catalog the caller cannot read.",
+             "content": {
+               "application/json": {
+                 "schema": {
+@@ -290,7 +290,7 @@
+           "catalog"
+         ],
+         "summary": "Resolve a list of Package Groups",
+-        "description": "Resolves a list of package groups, each being a list of package descriptors.\n\nRequired Body:\n- **groups**: An object with an `items` array of PackageGroups to resolve.\n\nOptional Query Parameters:\n- **candidate_pages**: Number of additional candidate pages to return\n  (default: 0)\n\nReturns:\n- **ResolvedPackageGroups**: An object with an `items` array of\n  `ResolvedPackageGroup` items.\n\nResolution Rules:\n- Each `PackageGroup` is resolved independently.\n- Each page that has packages meeting all descriptors in the group is\n  returned.\n- The latest complete page includes full package details.\n- Additional candidate pages are returned without full details.\n\nStability:\n- A group that resolves at one stability, its own or the realm default,\n  and fails with a `version_not_found` or\n  `attr_path_not_found.not_in_catalog` message carries two more context\n  keys on that message: `stability`, the stability it resolved at, and\n  `available_stabilities`, the comma-separated stabilities, strictest\n  first, with a build the descriptor accepts. It is empty when no\n  stability has one.\n\nPackageDescriptor Fields:\n- **install_id**: [required] Reference identifier for the package in the\n  manifest. Used for error messages and result correlation.\n- **attr_path**: [required] The nix attribute path to match exactly.\n- **systems**: [required] List of systems to resolve for (e.g.,\n  x86_64-linux).\n- **version**: [optional] Version constraint. Can be a literal version or\n  semver constraint. Packages whose version cannot be parsed as semver are\n  excluded when using semver constraints.\n- **derivation**: [optional] Specific derivation path to match.\n- **allow_pre_releases**: [optional] Include pre-release versions when using\n  semver constraints (default: False).\n- **allow_broken**: [optional] Include packages marked as broken\n  (default: False).\n- **allow_unfree**: [optional] Include packages with unfree licenses\n  (default: True).\n- **allow_insecure**: [optional] Include packages marked as insecure\n  (default: False).\n- **allowed_licenses**: [optional] List of acceptable license identifiers.\n- **allow_missing_builds**: [optional] Include packages without confirmed\n  build artifacts (default: False). If resolution fails with this\n  constraint, it may be relaxed with a warning message.",
++        "description": "Resolves a list of package groups, each being a list of package descriptors.\n\nRequired Body:\n- **groups**: An object with an `items` array of PackageGroups to resolve.\n\nOptional Query Parameters:\n- **candidate_pages**: Number of additional candidate pages to return\n  (default: 0)\n\nReturns:\n- **ResolvedPackageGroups**: An object with an `items` array of\n  `ResolvedPackageGroup` items.\n\nResolution Rules:\n- Each `PackageGroup` is resolved independently.\n- Each page that has packages meeting all descriptors in the group is\n  returned.\n- The latest complete page includes full package details.\n- Additional candidate pages are returned without full details.\n\nStability:\n- A group that resolves at one stability, its own or the realm default,\n  and fails with a `version_not_found` or\n  `attr_path_not_found.not_on_current_stability` message carries two more\n  context keys on that message: `stability`, the stability it resolved at,\n  and `available_stabilities`, the comma-separated stabilities, strictest\n  first, with a build the descriptor accepts. It is empty when no\n  stability has one.\n\nPackageDescriptor Fields:\n- **install_id**: [required] Reference identifier for the package in the\n  manifest. Used for error messages and result correlation.\n- **attr_path**: [required] The nix attribute path to match exactly.\n- **systems**: [required] List of systems to resolve for (e.g.,\n  x86_64-linux).\n- **version**: [optional] Version constraint. Can be a literal version or\n  semver constraint. Packages whose version cannot be parsed as semver are\n  excluded when using semver constraints.\n- **derivation**: [optional] Specific derivation path to match.\n- **allow_pre_releases**: [optional] Include pre-release versions when using\n  semver 
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +3/-1)
+**File**: `cli/catalog-api-v1/src/client.rs` (modified, +75/-234)
 ```diff
-@@ -503,7 +503,9 @@ jobs:
- 
-           for package in 'packages.${{ matrix.system }}.crate2nix-flox' 'packages.${{ matrix.system }}.crate2nix-flox-activations' 'packages.${{ matrix.system }}.crate2nix-nef-lock-catalog'; do
-             echo "::group::Building $package"
--            ./.github/scripts/remote-execute-nix-build.sh "$package" "$NIX_SUBSTITUTER"
-+            # `true`: also publish the per-crate build outputs, which the
-+            # product closures do not reference.
-+            ./.github/scripts/remote-execute-nix-build.sh "$package" "$NIX_SUBSTITUTER" true
-             echo "::endgroup::"
-           done
- 
-```
-
-**File**: `flake.nix` (modified, +17/-7)
-```diff
-@@ -149,13 +149,22 @@
-           # Same binaries built from the generated Cargo.nix.
-           #
-           # `flox-activations` is this package's own build, passed back
--          # through the overlay's fixed point. Only the `flox` crate reads the
--          # resulting path, and building flox-activations does not, so this
--          # does not need a second instantiation of the crate graph.
--          crate2nix-builds = callPackage ./pkgs/crate2nix {
--            inherit nixpkgsInputLockedURL;
--            inherit (final.crate2nix-builds) flox-activations;
--          };
-+          # through the overlay's fixed point, and so are the interpreter and
-+          # buildenv built on top of it. Without those two, `flox-rust-sdk`
-+          # would read the crane `flox-activations` through them, and any
-+          # change in the workspace would rebuild the SDK.
-+          # Building flox-activations reads none of these paths (it depends
-+          # only on flox-core and shell_gen), so this does not need a second
-+          # instantiation of the crate graph.
-+          crate2nix-builds =
-+            let
-+              inherit (final.crate2nix-builds) flox-activations;
-+              flox-interpreter = final.flox-interpreter.override { inherit flox-activations; };
-+            in
-+            callPackage ./pkgs/crate2nix {
-+              inherit nixpkgsInputLockedURL flox-activations flox-interpreter;
-+              flox-buildenv = final.flox-buildenv.override { inherit flox-activations flox-interpreter; };
-+            };
- 
-           # (Linux-only) LD_AUDIT library for using dynamic libraries in Flox envs.
-           ld-floxlib = callPackage ./pkgs/ld-floxlib { };
-@@ -198,6 +207,7 @@
-           in
-           prev.lib.makeScope prev.newScope (self: {
-             rust-internal-deps = prev.rust-internal-deps.override {
-+              flox-activations = null;
-               flox-buildenv = null;
-               flox-package-builder = null;
-               flox-nix-plugins = null;
-```
-
-**File**: `pkgs/crate2nix/default.nix` (modified, +10/-2)
-```diff
-@@ -33,6 +33,7 @@
-   pkg-config,
-   pkgsFor,
-   process-compose,
-+  runCommand,
-   rust-toolchain,
-   rustPlatform,
-   stdenv,
-@@ -106,7 +107,7 @@ let
-       OAUTH_DEVICE_AUTH_URL = "${auth0BaseUrl}/oauth/device/code";
+@@ -239,69 +239,6 @@ built repeatedly.*/
+             value.clone()
+         }
      }
-     // lib.optionalAttrs (flox-activations != null) {
--      FLOX_ACTIVATIONS_BIN = "${flox-activations}/bin/flox-activations";
-+      FLOX_ACTIVATIONS_BIN = "${flox-activations}/libexec/flox-activations";
-     };
+-    ///Source provenance for a published package.
+-    ///
+-    /// <details><summary>JSON schema</summary>
+-    ///
+-    /// ```json
+-    ///{
+-    ///  "title": "BuildSource",
+-    ///  "description": "Source provenance for a published package.",
+-    ///  "type": "object",
+-    ///  "required": [
+-    ///    "rev",
+-    ///    "url"
+-    ///  ],
+-    ///  "properties": {
+-    ///    "dir": {
+-    ///      "title": "Dir",
+-    ///      "default": ".flox",
+-    ///      "type": "string"
+-    ///    },
+-    ///    "ref": {
+-    ///      "title": "Ref",
+-    ///      "type": [
+-    ///        "string",
+-    ///        "null"
+-    ///      ]
+-    ///    },
+-    ///    "rev": {
+-    ///      "title": "Rev",
+-    ///      "type": "string"
+-    ///    },
+-    ///    "type": {
+-    ///      "title": "Type",
+-    ///      "default": "git",
+-    ///      "type": "string"
+-    ///    },
+-    ///    "url": {
+-    ///      "title": "Url",
+-    ///      "type": "string"
+-    ///    }
+-    ///  }
+-    ///}
+-    /// ```
+-    /// </details>
+-    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug, PartialEq)]
+-    pub struct BuildSource {
+-        #[serde(default = "defaults::build_source_dir")]
+-        pub dir: ::std::string::String,
+-        #[serde(
+-            rename = "ref",
+-            default,
+-            skip_serializing_if = "::std::option::Option::is_none"
+-        )]
+-        pub ref_: ::std::option::Option<::std::string::String>,
+-        pub rev: ::std::string::String,
+-        #[serde(rename = "type", default = "defaults::build_source_type")]
+-        pub type_: ::std::string::String,
+-        pub url: ::std::string::String,
+-    }
+-    impl ::std::convert::From<&BuildSource> for BuildSource {
+-        fn from(value: &BuildSource) -> Self {
+-            value.clone()
+-        }
+-    }
+     /**Records the build methodology used to produce a package.
  
-     flox-activations = {
-@@ -173,8 +174,15 @@ let
-   };
- 
-   flox = workspace.workspaceMembers."flox".build;
--  activations = workspace.workspaceMembers."flox-activations".build;
-   nef-lock-catalog = workspace.workspaceMembers."nef-lock-catalog".build;
-+
-+  # buildRustCrate installs the binary to `bin/`. The interpreter, buildenv and
-+  # containers look for it at `libexec/flox-activations`, the layout of
-+  # `pkgs/flox-activations`, so the package exposed here uses that layout too.
-+  activations = runCommand "flox-activations-${FLOX_VERSION}" { } ''
-+    mkdir -p "$out/libexec"
-+    cp ${workspace.workspaceMembers."flox-activations".build}/bin/flox-activations "$out/libexec/"
-+  '';
- in
- {
-   # binary builds
-```
-
-**File**: `pkgs/rust-internal-deps/default.nix` (modified, +3/-1)
-```diff
-@@ -42,7 +42,6 @@ let
-       SLEEP_BIN = "${coreutils}/bin/sleep";
-       PROCESS_COMPOSE_BIN = "${process-compose}/bin/process-compose";
-       GLOW_BIN = "${glow}/bin/glow";
--      FLOX_ACTIVATIONS_BIN = "${flox-activations}/libexec/flox-activations";
-       # used internally to ensure CA certificates are available
-       NIXPKGS_CACERT_BUNDLE_CRT = cacert.outPath + "/etc/ssl/certs/ca-bundle.crt";
- 
-@@ -73,6 +72,9 @@ let
+ NEF packages carry full source metadata and can be reproduced from source;
+@@ -1247,6 +1184,45 @@ manifest packages were built via the traditional flox manifest workflow.*/
+                 })
+         }
      }
-     # Our own tools
-     # In the dev shell these will be set dynamically
-+    // lib.optionalAttrs (flox-activations != null) {
-+      FLOX_ACTIVATIONS_BIN = "${flox-activations}/libexec/flox-activations";
++    /**The effective default stability a group with no stability resolves against.
++
++`configured` is True when a deployment setting configured the default, and
++False when it is the built-in fallback.*/
++    ///
++    /// <details><summary>JSON schema</summary>
++    ///
++    /// ```json
++    ///{
++    ///  "title": "DefaultStabilityInfo",
++    ///  "description": "The effective default stability a group with no stability resolves against.\n\n`configured` is True when a deployment setting configured the default, and\nFalse when it is the built-in fallback.",
++    ///  "type": "object",
++    ///  "required": [
++    ///    "configured",
++    ///    "name"
++    ///  ],
++    ///  "properties": {
++    ///    "configured": {
++    ///      "title": "Configured",
++    ///      "type": "boolean"
++    ///    },
++    ///    "name": {
++    ///      "title": "Name",
++    ///      "type": "string"
++    ///    }
++    ///  }
++    ///}
++    /// ```
++    /// </details>
++    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug, PartialEq)]
++    pub struct DefaultStabilityInfo {
++        pub configured: bool,
++        pub name: ::std::string::String,
 +    }
-     // lib.optionalAttrs (flox-buildenv != null) {
-       FLOX_BUILDENV_NIX = "${flox-buildenv}/lib/buildenv.nix";
++    impl ::std::convert::From<&DefaultStabilityInfo> for DefaultStabilityInfo {
++        fn from(value: &DefaultStabilityInfo) -> Self {
++            value.clone()
++        }
++    }
+     ///Deprecation metadata for a package from nixpkgs aliases.nix
+     ///
+     /// <details><summary>JSON schema</summary>
+@@ -1807,93 +1783,6 @@ without a client release.*/
+             self.0.fmt(f)
+         }
      }
+-    ///A single entry in the /locked-sources response.
+-    ///
+-    /// <details><summary>JSON schema</summary>
+-    ///
+-    /// ```json
+-    ///{
+-    ///  "title": "LockedSourceItem",
+-    ///  "description": "A single entry in the /locked-sources response.",
+-    ///  "type": "object",
+-    ///  "required": [
+-    ///    "attr_path",
+-    ///    "attr_path_components",
+-    ///    "build_type",
+-    ///    "source"
+-    ///  ],
+-    ///  "properties": {
+-    ///    "attr_path": {
+-    ///      "title": "Attr Path",
+-    ///      "type": "string"
+-    ///    },
+-    ///    "attr_path_components": {
+-    ///      "title": "Attr Path Components",
+-    ///      "type": "array",
+-    ///      "items": {
+-    ///        "type": "string"
+-    ///      }
+-    ///    },
+-    ///    "build_type": {
+-    ///      "$ref": "#/components/schemas/BuildType"
+-    ///    },
+-    ///    "source": {
+-    ///      "$ref": "#/components/schemas/BuildSource"
+-    ///    }
+-    ///  }
+-    ///}
+-    /// ```
+-    /// </details>
+-    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug, PartialEq)]
+-    pub struct LockedSourceItem {
+-        pub attr_path: ::std::string::String,
+-        pub attr_path_components: ::std:
+```
+
+**File**: `cli/factory-api-v1/openapi.json` (modified, +261/-6)
+```diff
+@@ -13,7 +13,7 @@
+           "builds"
+         ],
+         "summary": "List Builds",
+-        "description": "Return a paginated list of builds, newest first.\n\nThe ``status`` filter matches builds by an effective status derived\nfrom the build's lifecycle (never stored), drawn from a six-value\nvocabulary:\n\n- ``pending``: accepted but not yet dispatched to a builder.\n- ``running``: dispatched and building.\n- ``completed``: finished successfully.\n- ``failed``: finished unsuccessfully. Excludes timed-out builds,\n  which match ``timed_out``.\n- ``timed_out``: terminated for exceeding its time budget.\n- ``cancelled``: cancelled, whether before or after dispatch.\n\nThese six values are both the filter vocabulary and the response\nvocabulary: a timed-out build matches ``?status=timed_out`` and\nreports ``status: \"timed_out\"`` in the response body.\n\nFilters:\n\n- ``status``: match one or more effective-status values.\n- ``system``: match system names exactly. A name outside the\n  server's system vocabulary returns 422 naming the accepted\n  values, which are the systems this deployment's catalog holds\n  and so may differ between deployments.\n- ``attr_path``: match attr_path by prefix.\n- ``source_commit_sha``: match source commit SHA by prefix.\n- ``since``: return builds created at or after this time. An ISO\n  8601 timestamp carrying a UTC offset, e.g.\n  ``2026-07-17T08:30:00Z``.\n\nFilters combine with AND across parameters and OR within a repeated\none: ``?status=running&status=failed`` matches either status, and\nadding ``&system=x86_64-linux`` further requires that system. Each\nrepeated parameter accepts at most 50 values.\n\n``cursor`` and ``sort`` are reserved for future use and have no\neffect in v1; results are always ordered newest-first.",
++        "description": "Return a paginated list of builds, newest first.\n\nThe ``status`` filter matches builds by an effective status derived\nfrom the build's lifecycle (never stored), drawn from a six-value\nvocabulary:\n\n- ``pending``: accepted but not yet building, whether waiting for\n  dispatch or in the build coordinator's queue.\n- ``running``: building.\n- ``completed``: finished successfully.\n- ``failed``: finished unsuccessfully. Excludes timed-out builds,\n  which match ``timed_out``.\n- ``timed_out``: terminated for exceeding its time budget.\n- ``cancelled``: cancelled, whether before or after dispatch.\n\nThese six values are both the filter vocabulary and the response\nvocabulary: a timed-out build matches ``?status=timed_out`` and\nreports ``status: \"timed_out\"`` in the response body.\n\nFilters:\n\n- ``status``: match one or more effective-status values.\n- ``system``: match system names exactly. A name outside the\n  server's system vocabulary returns 422 naming the accepted\n  values, which are the systems this deployment's catalog holds\n  and so may differ between deployments.\n- ``attr_path``: match attr_path by prefix.\n- ``source_commit_sha``: match source commit SHA by prefix.\n- ``since``: return builds created at or after this time. An ISO\n  8601 timestamp carrying a UTC offset, e.g.\n  ``2026-07-17T08:30:00Z``.\n\nFilters combine with AND across parameters and OR within a repeated\none: ``?status=running&status=failed`` matches either status, and\nadding ``&system=x86_64-linux`` further requires that system. Each\nrepeated parameter accepts at most 50 values.\n\n``cursor`` and ``sort`` are reserved for future use and have no\neffect in v1; results are always ordered newest-first.",
+         "operationId": "list_builds_api_v1_factory_builds_get",
+         "security": [
+           {
+@@ -317,6 +317,128 @@
+         }
+       }
+     },
++    "/api/v1/factory/builds/{build_id}/runtime-dependencies": {
++      "get": {
++        "tags": [
++          "builds"
++        ],
++        "summary": "Get Runtime Dependencies",
++        "description": "Return the runtime closure of a build's output store paths.\n\nThe response maps every store path in the closure to its recorded NAR\nsize and references, up to a cap of 10,000 store paths (`truncated` is\ntrue when the cap was hit). A build with no linked package returns no\nnodes.",
++        "operationId": "get_runtime_dependencies_api_v1_factory_builds__build_id__runtime_dependencies_get",
++        "security": [
++          {
++            "HTTPBearer": []
++          },
++          {
++            "HTTPBasic": []
++          }
++        ],
++        "parameters": [
++          {
++            "name": "build_id",
++            "in": "path",
++            "required": true,
++            "schema": {
++              "type": "integer",
++              "title": "Build Id"
++            }
++          }
++        ],
++        "responses": {
++          "200": {
++            "description": "Successful Response",
++            "content": {
++              "application/json": {
++                "schema": {
++                  "$ref": "#/components/schemas/RuntimeDependenciesResponse"
++                }
++           
+```
+
+**File**: `cli/factory-api-v1/src/client.rs` (modified, +398/-17)
+```diff
+@@ -257,6 +257,103 @@ pub mod types {
+             value.clone()
+         }
+     }
++    ///A repository URL and the revision locked from it.
++    ///
++    /// <details><summary>JSON schema</summary>
++    ///
++    /// ```json
++    ///{
++    ///  "title": "BuildInputSource",
++    ///  "description": "A repository URL and the revision locked from it.",
++    ///  "type": "object",
++    ///  "required": [
++    ///    "rev",
++    ///    "url"
++    ///  ],
++    ///  "properties": {
++    ///    "rev": {
++    ///      "title": "Rev",
++    ///      "description": "The revision locked from it.",
++    ///      "type": "string"
++    ///    },
++    ///    "url": {
++    ///      "title": "Url",
++    ///      "description": "The repository's URL.",
++    ///      "type": "string"
++    ///    }
++    ///  }
++    ///}
++    /// ```
++    /// </details>
++    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug, PartialEq)]
++    pub struct BuildInputSource {
++        ///The revision locked from it.
++        pub rev: ::std::string::String,
++        ///The repository's URL.
++        pub url: ::std::string::String,
++    }
++    impl ::std::convert::From<&BuildInputSource> for BuildInputSource {
++        fn from(value: &BuildInputSource) -> Self {
++            value.clone()
++        }
++    }
++    /**The inputs a build was built from, apart from its source, which is
++on ``BuildResponse``.*/
++    ///
++    /// <details><summary>JSON schema</summary>
++    ///
++    /// ```json
++    ///{
++    ///  "title": "BuildInputsResponse",
++    ///  "description": "The inputs a build was built from, apart from its source, which is\non ``BuildResponse``.",
++    ///  "type": "object",
++    ///  "required": [
++    ///    "base_catalog",
++    ///    "catalog_inputs"
++    ///  ],
++    ///  "properties": {
++    ///    "base_catalog": {
++    ///      "description": "The base catalog page recorded when the build was published. For a NEF build with no publish linked, the base catalog revision it was dispatched with. Null when neither is recorded.",
++    ///      "oneOf": [
++    ///        {
++    ///          "type": "null"
++    ///        },
++    ///        {
++    ///          "allOf": [
++    ///            {
++    ///              "$ref": "#/components/schemas/BuildInputSource"
++    ///            }
++    ///          ]
++    ///        }
++    ///      ]
++    ///    },
++    ///    "catalog_inputs": {
++    ///      "title": "Catalog Inputs",
++    ///      "description": "Every catalog package locked when the build was published, directly or through another input, at the revision recorded then, sorted by name, then revision. Empty when none was locked; null when no publish is linked.",
++    ///      "type": [
++    ///        "array",
++    ///        "null"
++    ///      ],
++    ///      "items": {
++    ///        "$ref": "#/components/schemas/CatalogInput"
++    ///      }
++    ///    }
++    ///  }
++    ///}
++    /// ```
++    /// </details>
++    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug, PartialEq)]
++    pub struct BuildInputsResponse {
++        ///The base catalog page recorded when the build was published. For a NEF build with no publish linked, the base catalog revision it was dispatched with. Null when neither is recorded.
++        pub base_catalog: ::std::option::Option<BuildInputSource>,
++        ///Every catalog package locked when the build was published, directly or through another input, at the revision recorded then, sorted by name, then revision. Empty when none was locked; null when no publish is linked.
++        pub catalog_inputs: ::std::option::Option<::std::vec::Vec<CatalogInput>>,
++    }
++    impl ::std::convert::From<&BuildInputsResponse> for BuildInputsResponse {
++        fn from(value: &BuildInputsResponse) -> Self {
++            value.clone()
++        }
++    }
+     ///Paginated list of builds.
+     ///
+     /// <details><summary>JSON schema</summary>
+@@ -390,30 +487,30 @@ freshest authoritative source:
+ - Dispatched: tasks.status (``"running"``, ``"completed"``,
+   ``"failed"``, ``"cancelled"``), with ``"timed_out"``
+   reconstructed from the persisted footprint of an execution
+-  timeout (status='failed' + error_class='timeout'). A submit-time
+-  ``dispatch_timeout`` is a different failure — the build never
+-  observably started — and reads as ``"failed"``.
++  timeout (status='failed' + error_class='timeout'). A running
++  task the coordinator has not yet started (no started_at), such
++  as one waiting in its queue, reads as ``"pending"``. A
++  submit-time ``dispatch_timeout`` is a different failure — the
++  build never observably started — and reads as ``"failed"``.
+ - On cancel responses: Build Coordinator's returned status, which
+   is fresher than the local row (which lags until BC's callback
+   lands), put through the same derivation — BC's ``timed_out``
+   surfaces as ``"timed_out"``, agreeing with what a subsequent GET
+   reconstructs once the callback persists the footprint. The field
+   never carries a
+```
+
+**File**: `cli/flox-rust-sdk/src/providers/catalog.rs` (modified, +0/-9)
+```diff
+@@ -22,15 +22,13 @@ use floxhub_client::{
+     FloxhubClientConfig,
+     FloxhubClientError,
+     FloxhubMockMode,
+-    LockedSourceItem,
+     PackageDetails,
+     PackageGroup,
+     PackageSystem,
+     PublishReceipt,
+     PublishResponse,
+     ResolveError,
+     ResolvedPackageGroup,
+-    ResultsPage,
+     SearchError,
+     SearchLimit,
+     SearchResults,
+@@ -417,13 +415,6 @@ impl CatalogClientTrait for MockClient {
+         }
+     }
+ 
+-    async fn get_catalog_locked_sources(
+-        &self,
+-        _catalog_name: impl AsRef<str> + Send + Sync,
+-    ) -> Result<ResultsPage<LockedSourceItem>, FloxhubClientError> {
+-        unimplemented!("get_catalog_locked_sources not implemented for MockClient")
+-    }
+-
+     async fn build_inputs_lookup(
+         &self,
+         _request: BuildInputsLookupRequest,
+```
+
+**File**: `cli/floxhub-client/src/client.rs` (modified, +0/-38)
+```diff
+@@ -275,12 +275,6 @@ pub trait CatalogClientTrait {
+         package_name: impl AsRef<str> + Send + Sync,
+     ) -> Result<PublishResponse, FloxhubClientError>;
+ 
+-    /// Get all locked sources for a catalog.
+-    async fn get_catalog_locked_sources(
+-        &self,
+-        catalog_name: impl AsRef<str> + Send + Sync,
+-    ) -> Result<ResultsPage<LockedSourceItem>, FloxhubClientError>;
+-
+     /// Look up and lock build inputs for one or more grouped reference sets in
+     /// a single batched request (POST /build-inputs/lookup).
+     async fn build_inputs_lookup(
+@@ -590,38 +584,6 @@ impl CatalogClientTrait for FloxhubClient {
+         Ok(search_results)
+     }
+ 
+-    async fn get_catalog_locked_sources(
+-        &self,
+-        catalog_name: impl AsRef<str> + Send + Sync,
+-    ) -> Result<ResultsPage<LockedSourceItem>, FloxhubClientError> {
+-        let catalog_name = catalog_name.as_ref();
+-        tracing::debug!(catalog_name, "fetching locked sources");
+-
+-        let stream = make_depaging_stream(
+-            |page_number, page_size| async move {
+-                let catalog_name_api = str_to_catalog_name(catalog_name)?;
+-                let response = self
+-                    .catalog
+-                    .get_catalog_locked_sources_api_v1_catalog_catalogs_catalog_name_locked_sources_get(
+-                        &catalog_name_api,
+-                        Some(page_number),
+-                        Some(page_size),
+-                    )
+-                    .await
+-                    .map_api_error()
+-                    .await?
+-                    .into_inner();
+-
+-                Ok::<_, FloxhubClientError>((response.total_count, response.items))
+-            },
+-            RESPONSE_PAGE_SIZE,
+-        );
+-
+-        let (count, results) = collect_all_results(stream).await?;
+-
+-        Ok(ResultsPage { results, count })
+-    }
+-
+     async fn build_inputs_lookup(
+         &self,
+         request: BuildInputsLookupRequest,
+```
+
+**File**: `cli/floxhub-client/src/types.rs` (modified, +0/-1)
+```diff
+@@ -59,7 +59,6 @@ pub use api_types::{ByCommandResult, CommandProvider};
+ /// Just an alias until the auto-generated PackageDescriptor diverges from what
+ /// we need.
+ pub use api_types::{
+-    LockedSourceItem,
+     PackageDescriptor,
+     PackageSystem,
+     ResolvedPackageDescriptor as PackageResolutionInfo,
+```
+
+**File**: `test_data/generated/build/hello/.flox/.flox/env/manifest.lock` (modified, +27/-29)
+```diff
+@@ -21,17 +21,17 @@
+     {
+       "attr_path": "gcc",
+       "broken": false,
+-      "derivation": "/nix/store/acwq93k71y367lgmkxl67mhicfqvfrxa-gcc-wrapper-16.2.0.drv",
++      "derivation": "/nix/store/2njbs220dhizpczgj9i9r90prf1nw8mk-gcc-wrapper-16.2.0.drv",
+       "description": "GNU Compiler Collection, version 16.2.0 (wrapper script)",
+       "install_id": "gcc",
+       "license": "GPL-3.0-or-later",
+-      "locked_url": "https://github.com/flox/nixpkgs?rev=3ec636362e1816bc2f0888fa0fa2c69f1bc9e504",
++      "locked_url": "https://github.com/flox/nixpkgs?rev=04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
+       "name": "gcc-wrapper-16.2.0",
+       "pname": "gcc",
+-      "rev": "3ec636362e1816bc2f0888fa0fa2c69f1bc9e504",
+-      "rev_count": 1100280,
+-      "rev_date": "2026-10-23T16:35:39Z",
+-      "scrape_date": "2026-10-25T05:51:32.517996Z",
++      "rev": "04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
++      "rev_count": 1122823,
++      "rev_date": "2026-11-17T04:43:17Z",
++      "scrape_date": "2026-11-19T05:47:33.133359Z",
+       "stabilities": [
+         "unstable"
+       ],
+@@ -42,9 +42,9 @@
+         "out"
+       ],
+       "outputs": {
+-        "info": "/nix/store/mmhqm6siv052qq9a7b7w3azrfqdryfib-gcc-wrapper-16.2.0-info",
+-        "man": "/nix/store/6jswiisvaxlrbjdczjhka29fmv7p9d4s-gcc-wrapper-16.2.0-man",
+-        "out": "/nix/store/130xlh787q6bipjc3hkbcfcskvzgqzqw-gcc-wrapper-16.2.0"
++        "info": "/nix/store/jp11cx4j42h2xzlzsmlvdbcrs4w7x41j-gcc-wrapper-16.2.0-info",
++        "man": "/nix/store/hkr0q5zv2ridr9vaqkb3yppa5kinpp98-gcc-wrapper-16.2.0-man",
++        "out": "/nix/store/1z9zn1kcx8cinjvvck7ga9w7smv075ib-gcc-wrapper-16.2.0"
+       },
+       "system": "aarch64-darwin",
+       "group": "toplevel",
+@@ -53,17 +53,17 @@
+     {
+       "attr_path": "gcc",
+       "broken": false,
+-      "derivation": "/nix/store/m4pjvsi3kqv22y9nny39jf4s9mlaj448-gcc-wrapper-16.2.0.drv",
++      "derivation": "/nix/store/fhwgr7lr7f5c5vk598zgkh5gqqblkjy8-gcc-wrapper-16.2.0.drv",
+       "description": "GNU Compiler Collection, version 16.2.0 (wrapper script)",
+       "install_id": "gcc",
+       "license": "GPL-3.0-or-later",
+-      "locked_url": "https://github.com/flox/nixpkgs?rev=3ec636362e1816bc2f0888fa0fa2c69f1bc9e504",
++      "locked_url": "https://github.com/flox/nixpkgs?rev=04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
+       "name": "gcc-wrapper-16.2.0",
+       "pname": "gcc",
+-      "rev": "3ec636362e1816bc2f0888fa0fa2c69f1bc9e504",
+-      "rev_count": 1100280,
+-      "rev_date": "2026-10-23T16:35:39Z",
+-      "scrape_date": "2026-10-25T06:24:58.762827Z",
++      "rev": "04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
++      "rev_count": 1122823,
++      "rev_date": "2026-11-17T04:43:17Z",
++      "scrape_date": "2026-11-19T06:14:10.446808Z",
+       "stabilities": [
+         "unstable"
+       ],
+@@ -73,13 +73,12 @@
+         "man",
+         "out",
+         "out",
+-        "out",
+         "out"
+       ],
+       "outputs": {
+-        "info": "/nix/store/k3mycz3pj8f0x463ssxmimimphkpcv5s-gcc-wrapper-16.2.0-info",
+-        "man": "/nix/store/bk9imwkja1v548gviyshq4j33987m0cg-gcc-wrapper-16.2.0-man",
+-        "out": "/nix/store/6gj4dzcv6gaxh5raqyrq7jmy605qaj3z-gcc-wrapper-16.2.0"
++        "info": "/nix/store/hj3agghz1n3mywjhy7821d4l3h7k2qnz-gcc-wrapper-16.2.0-info",
++        "man": "/nix/store/zbz8pf21y0pvkgn3c6i3n6rn383paz52-gcc-wrapper-16.2.0-man",
++        "out": "/nix/store/mqg95s149wr7az0xbn6d6s45m76pzz8n-gcc-wrapper-16.2.0"
+       },
+       "system": "aarch64-linux",
+       "group": "toplevel",
+@@ -88,17 +87,17 @@
+     {
+       "attr_path": "gcc",
+       "broken": false,
+-      "derivation": "/nix/store/hjzzl7y4qy90800c8zk92z9w07l37x2a-gcc-wrapper-16.2.0.drv",
++      "derivation": "/nix/store/5vla1bqz412yx13nj4r2565b7cf9xsw4-gcc-wrapper-16.2.0.drv",
+       "description": "GNU Compiler Collection, version 16.2.0 (wrapper script)",
+       "install_id": "gcc",
+       "license": "GPL-3.0-or-later",
+-      "locked_url": "https://github.com/flox/nixpkgs?rev=3ec636362e1816bc2f0888fa0fa2c69f1bc9e504",
++      "locked_url": "https://github.com/flox/nixpkgs?rev=04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
+       "name": "gcc-wrapper-16.2.0",
+       "pname": "gcc",
+-      "rev": "3ec636362e1816bc2f0888fa0fa2c69f1bc9e504",
+-      "rev_count": 1100280,
+-      "rev_date": "2026-10-23T16:35:39Z",
+-      "scrape_date": "2026-10-25T07:01:24.200465Z",
++      "rev": "04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
++      "rev_count": 1122823,
++      "rev_date": "2026-11-17T04:43:17Z",
++      "scrape_date": "2026-11-19T06:43:20.582359Z",
+       "stabilities": [
+         "unstable"
+       ],
+@@ -108,13 +107,12 @@
+         "man",
+         "out",
+         "out",
+-        "out",
+         "out"
+       ],
+       "outputs": {
+-        "info": "/nix/store/q28p8i2c42j09y0sffi6v5fhg0l4nis8-gcc-wrapper-16.2.0-info",
+-        "man": "/nix/store/6j71j4f4knh1kl65y1y0gq8378addngh-gcc-wrapper-16.2.0-man",
+-        "out": "/nix/store/r5ri78axx1qggkjq3vawywlzglg70b5w-gcc-wra
 ```
 
 ---
 
-### Incident Patch 3: `307a1d46` (2026-11-18)
-**Commit Message**: fix: resolve hosts path in sandbox allow-list test
+### Incident Patch 3: `1b6a055e` (2026-11-19)
+**Commit Message**: build: Update FloxHub API schemas and clients to c140ac3b
 
-**File**: `cli/flox-rust-sdk/src/providers/build.rs` (modified, +8/-5)
+**File**: `cli/catalog-api-v1/openapi.json` (modified, +101/-175)
 ```diff
-@@ -1995,21 +1995,24 @@ mod tests {
-     #[test]
-     fn build_sandbox_allow_permits_listed_path() {
-         let pname = String::from("foo");
--        // sandbox-allow is a v1.13.0 field, so the manifest must declare that
--        // schema version. /etc/hosts resolves to /private/etc/hosts on macOS;
--        // list both.
-+        // Allow the resolved path: /etc/hosts can point into /private on macOS
-+        // or /nix/store on NixOS.
-+        let hosts_path = fs::canonicalize("/etc/hosts").unwrap();
-+        // sandbox-allow requires schema v1.13.0 or newer.
-         let manifest = formatdoc! {r#"
-             schema-version = "1.13.0"
+@@ -252,7 +252,7 @@
+         ],
+         "responses": {
+           "200": {
+-            "description": "A list of packages attr_path",
++            "description": "Versions of attr_path. Empty, with a total_count of 0, when attr_path exists but none of its builds have an accepted stability.",
+             "content": {
+               "application/json": {
+                 "schema": {
+@@ -262,7 +262,7 @@
+             }
+           },
+           "404": {
+-            "description": "attr_path was not found.",
++            "description": "attr_path does not exist, or is in a catalog the caller cannot read.",
+             "content": {
+               "application/json": {
+                 "schema": {
+@@ -290,7 +290,7 @@
+           "catalog"
+         ],
+         "summary": "Resolve a list of Package Groups",
+-        "description": "Resolves a list of package groups, each being a list of package descriptors.\n\nRequired Body:\n- **groups**: An object with an `items` array of PackageGroups to resolve.\n\nOptional Query Parameters:\n- **candidate_pages**: Number of additional candidate pages to return\n  (default: 0)\n\nReturns:\n- **ResolvedPackageGroups**: An object with an `items` array of\n  `ResolvedPackageGroup` items.\n\nResolution Rules:\n- Each `PackageGroup` is resolved independently.\n- Each page that has packages meeting all descriptors in the group is\n  returned.\n- The latest complete page includes full package details.\n- Additional candidate pages are returned without full details.\n\nStability:\n- A group that resolves at one stability, its own or the realm default,\n  and fails with a `version_not_found` or\n  `attr_path_not_found.not_in_catalog` message carries two more context\n  keys on that message: `stability`, the stability it resolved at, and\n  `available_stabilities`, the comma-separated stabilities, strictest\n  first, with a build the descriptor accepts. It is empty when no\n  stability has one.\n\nPackageDescriptor Fields:\n- **install_id**: [required] Reference identifier for the package in the\n  manifest. Used for error messages and result correlation.\n- **attr_path**: [required] The nix attribute path to match exactly.\n- **systems**: [required] List of systems to resolve for (e.g.,\n  x86_64-linux).\n- **version**: [optional] Version constraint. Can be a literal version or\n  semver constraint. Packages whose version cannot be parsed as semver are\n  excluded when using semver constraints.\n- **derivation**: [optional] Specific derivation path to match.\n- **allow_pre_releases**: [optional] Include pre-release versions when using\n  semver constraints (default: False).\n- **allow_broken**: [optional] Include packages marked as broken\n  (default: False).\n- **allow_unfree**: [optional] Include packages with unfree licenses\n  (default: True).\n- **allow_insecure**: [optional] Include packages marked as insecure\n  (default: False).\n- **allowed_licenses**: [optional] List of acceptable license identifiers.\n- **allow_missing_builds**: [optional] Include packages without confirmed\n  build artifacts (default: False). If resolution fails with this\n  constraint, it may be relaxed with a warning message.",
++        "description": "Resolves a list of package groups, each being a list of package descriptors.\n\nRequired Body:\n- **groups**: An object with an `items` array of PackageGroups to resolve.\n\nOptional Query Parameters:\n- **candidate_pages**: Number of additional candidate pages to return\n  (default: 0)\n\nReturns:\n- **ResolvedPackageGroups**: An object with an `items` array of\n  `ResolvedPackageGroup` items.\n\nResolution Rules:\n- Each `PackageGroup` is resolved independently.\n- Each page that has packages meeting all descriptors in the group is\n  returned.\n- The latest complete page includes full package details.\n- Additional candidate pages are returned without full details.\n\nStability:\n- A group that resolves at one stability, its own or the realm default,\n  and fails with a `version_not_found` or\n  `attr_path_not_found.not_on_current_stability` message carries two more\n  context keys on that message: `stability`, the stability it resolved at,\n  and `available_stabilities`, the comma-separated stabilities, strictest\n  first, with a build the descriptor accepts. It is empty when no\n  stability has one.\n\nPackageDescriptor Fields:\n- **install_id**: [required] Reference identifier for the package in the\n  manifest. Used for error messages and result correlation.\n- **attr_path**: [required] The nix attribute path to match exactly.\n- **systems**: [required] List of systems to resolve for (e.g.,\n  x86_64-linux).\n- **version**: [optional] Version constraint. Can be a literal version or\n  semver constraint. Packages whose version cannot be parsed as semver are\n  excluded when using semver constraints.\n- **derivation**: [optional] Specific derivation path to match.\n- **allow_pre_releases**: [optional] Include pre-release versions when using\n  semver 
+```
+
+**File**: `cli/catalog-api-v1/src/client.rs` (modified, +75/-234)
+```diff
+@@ -239,69 +239,6 @@ built repeatedly.*/
+             value.clone()
+         }
+     }
+-    ///Source provenance for a published package.
+-    ///
+-    /// <details><summary>JSON schema</summary>
+-    ///
+-    /// ```json
+-    ///{
+-    ///  "title": "BuildSource",
+-    ///  "description": "Source provenance for a published package.",
+-    ///  "type": "object",
+-    ///  "required": [
+-    ///    "rev",
+-    ///    "url"
+-    ///  ],
+-    ///  "properties": {
+-    ///    "dir": {
+-    ///      "title": "Dir",
+-    ///      "default": ".flox",
+-    ///      "type": "string"
+-    ///    },
+-    ///    "ref": {
+-    ///      "title": "Ref",
+-    ///      "type": [
+-    ///        "string",
+-    ///        "null"
+-    ///      ]
+-    ///    },
+-    ///    "rev": {
+-    ///      "title": "Rev",
+-    ///      "type": "string"
+-    ///    },
+-    ///    "type": {
+-    ///      "title": "Type",
+-    ///      "default": "git",
+-    ///      "type": "string"
+-    ///    },
+-    ///    "url": {
+-    ///      "title": "Url",
+-    ///      "type": "string"
+-    ///    }
+-    ///  }
+-    ///}
+-    /// ```
+-    /// </details>
+-    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug, PartialEq)]
+-    pub struct BuildSource {
+-        #[serde(default = "defaults::build_source_dir")]
+-        pub dir: ::std::string::String,
+-        #[serde(
+-            rename = "ref",
+-            default,
+-            skip_serializing_if = "::std::option::Option::is_none"
+-        )]
+-        pub ref_: ::std::option::Option<::std::string::String>,
+-        pub rev: ::std::string::String,
+-        #[serde(rename = "type", default = "defaults::build_source_type")]
+-        pub type_: ::std::string::String,
+-        pub url: ::std::string::String,
+-    }
+-    impl ::std::convert::From<&BuildSource> for BuildSource {
+-        fn from(value: &BuildSource) -> Self {
+-            value.clone()
+-        }
+-    }
+     /**Records the build methodology used to produce a package.
  
-             [build.{pname}]
-             sandbox = "enforce"
--            sandbox-allow = ["/etc/hosts", "/private/etc/hosts"]
-+            sandbox-allow = ["{hosts_path}"]
-             command = '''
-                 cat /etc/hosts > /dev/null
-                 mkdir -p $out
-                 echo done > $out/{pname}
-             '''
--        "#};
-+        "#,
-+            hosts_path = hosts_path.display(),
-+        };
-         let (flox, _temp_dir_handle) = flox_instance();
-         let mut env = new_path_environment(&flox, &manifest);
- 
+ NEF packages carry full source metadata and can be reproduced from source;
+@@ -1247,6 +1184,45 @@ manifest packages were built via the traditional flox manifest workflow.*/
+                 })
+         }
+     }
++    /**The effective default stability a group with no stability resolves against.
++
++`configured` is True when a deployment setting configured the default, and
++False when it is the built-in fallback.*/
++    ///
++    /// <details><summary>JSON schema</summary>
++    ///
++    /// ```json
++    ///{
++    ///  "title": "DefaultStabilityInfo",
++    ///  "description": "The effective default stability a group with no stability resolves against.\n\n`configured` is True when a deployment setting configured the default, and\nFalse when it is the built-in fallback.",
++    ///  "type": "object",
++    ///  "required": [
++    ///    "configured",
++    ///    "name"
++    ///  ],
++    ///  "properties": {
++    ///    "configured": {
++    ///      "title": "Configured",
++    ///      "type": "boolean"
++    ///    },
++    ///    "name": {
++    ///      "title": "Name",
++    ///      "type": "string"
++    ///    }
++    ///  }
++    ///}
++    /// ```
++    /// </details>
++    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug, PartialEq)]
++    pub struct DefaultStabilityInfo {
++        pub configured: bool,
++        pub name: ::std::string::String,
++    }
++    impl ::std::convert::From<&DefaultStabilityInfo> for DefaultStabilityInfo {
++        fn from(value: &DefaultStabilityInfo) -> Self {
++            value.clone()
++        }
++    }
+     ///Deprecation metadata for a package from nixpkgs aliases.nix
+     ///
+     /// <details><summary>JSON schema</summary>
+@@ -1807,93 +1783,6 @@ without a client release.*/
+             self.0.fmt(f)
+         }
+     }
+-    ///A single entry in the /locked-sources response.
+-    ///
+-    /// <details><summary>JSON schema</summary>
+-    ///
+-    /// ```json
+-    ///{
+-    ///  "title": "LockedSourceItem",
+-    ///  "description": "A single entry in the /locked-sources response.",
+-    ///  "type": "object",
+-    ///  "required": [
+-    ///    "attr_path",
+-    ///    "attr_path_components",
+-    ///    "build_type",
+-    ///    "source"
+-    ///  ],
+-    ///  "properties": {
+-    ///    "attr_path": {
+-    ///      "title": "Attr Path",
+-    ///      "type": "string"
+-    ///    },
+-    ///    "attr_path_components": {
+-    ///      "title": "Attr Path Components",
+-    ///      "type": "array",
+-    ///      "items": {
+-    ///        "type": "string"
+-    ///      }
+-    ///    },
+-    ///    "build_type": {
+-    ///      "$ref": "#/components/schemas/BuildType"
+-    ///    },
+-    ///    "source": {
+-    ///      "$ref": "#/components/schemas/BuildSource"
+-    ///    }
+-    ///  }
+-    ///}
+-    /// ```
+-    /// </details>
+-    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug, PartialEq)]
+-    pub struct LockedSourceItem {
+-        pub attr_path: ::std::string::String,
+-        pub attr_path_components: ::std:
+```
+
+**File**: `cli/factory-api-v1/openapi.json` (modified, +261/-6)
+```diff
+@@ -13,7 +13,7 @@
+           "builds"
+         ],
+         "summary": "List Builds",
+-        "description": "Return a paginated list of builds, newest first.\n\nThe ``status`` filter matches builds by an effective status derived\nfrom the build's lifecycle (never stored), drawn from a six-value\nvocabulary:\n\n- ``pending``: accepted but not yet dispatched to a builder.\n- ``running``: dispatched and building.\n- ``completed``: finished successfully.\n- ``failed``: finished unsuccessfully. Excludes timed-out builds,\n  which match ``timed_out``.\n- ``timed_out``: terminated for exceeding its time budget.\n- ``cancelled``: cancelled, whether before or after dispatch.\n\nThese six values are both the filter vocabulary and the response\nvocabulary: a timed-out build matches ``?status=timed_out`` and\nreports ``status: \"timed_out\"`` in the response body.\n\nFilters:\n\n- ``status``: match one or more effective-status values.\n- ``system``: match system names exactly. A name outside the\n  server's system vocabulary returns 422 naming the accepted\n  values, which are the systems this deployment's catalog holds\n  and so may differ between deployments.\n- ``attr_path``: match attr_path by prefix.\n- ``source_commit_sha``: match source commit SHA by prefix.\n- ``since``: return builds created at or after this time. An ISO\n  8601 timestamp carrying a UTC offset, e.g.\n  ``2026-07-17T08:30:00Z``.\n\nFilters combine with AND across parameters and OR within a repeated\none: ``?status=running&status=failed`` matches either status, and\nadding ``&system=x86_64-linux`` further requires that system. Each\nrepeated parameter accepts at most 50 values.\n\n``cursor`` and ``sort`` are reserved for future use and have no\neffect in v1; results are always ordered newest-first.",
++        "description": "Return a paginated list of builds, newest first.\n\nThe ``status`` filter matches builds by an effective status derived\nfrom the build's lifecycle (never stored), drawn from a six-value\nvocabulary:\n\n- ``pending``: accepted but not yet building, whether waiting for\n  dispatch or in the build coordinator's queue.\n- ``running``: building.\n- ``completed``: finished successfully.\n- ``failed``: finished unsuccessfully. Excludes timed-out builds,\n  which match ``timed_out``.\n- ``timed_out``: terminated for exceeding its time budget.\n- ``cancelled``: cancelled, whether before or after dispatch.\n\nThese six values are both the filter vocabulary and the response\nvocabulary: a timed-out build matches ``?status=timed_out`` and\nreports ``status: \"timed_out\"`` in the response body.\n\nFilters:\n\n- ``status``: match one or more effective-status values.\n- ``system``: match system names exactly. A name outside the\n  server's system vocabulary returns 422 naming the accepted\n  values, which are the systems this deployment's catalog holds\n  and so may differ between deployments.\n- ``attr_path``: match attr_path by prefix.\n- ``source_commit_sha``: match source commit SHA by prefix.\n- ``since``: return builds created at or after this time. An ISO\n  8601 timestamp carrying a UTC offset, e.g.\n  ``2026-07-17T08:30:00Z``.\n\nFilters combine with AND across parameters and OR within a repeated\none: ``?status=running&status=failed`` matches either status, and\nadding ``&system=x86_64-linux`` further requires that system. Each\nrepeated parameter accepts at most 50 values.\n\n``cursor`` and ``sort`` are reserved for future use and have no\neffect in v1; results are always ordered newest-first.",
+         "operationId": "list_builds_api_v1_factory_builds_get",
+         "security": [
+           {
+@@ -317,6 +317,128 @@
+         }
+       }
+     },
++    "/api/v1/factory/builds/{build_id}/runtime-dependencies": {
++      "get": {
++        "tags": [
++          "builds"
++        ],
++        "summary": "Get Runtime Dependencies",
++        "description": "Return the runtime closure of a build's output store paths.\n\nThe response maps every store path in the closure to its recorded NAR\nsize and references, up to a cap of 10,000 store paths (`truncated` is\ntrue when the cap was hit). A build with no linked package returns no\nnodes.",
++        "operationId": "get_runtime_dependencies_api_v1_factory_builds__build_id__runtime_dependencies_get",
++        "security": [
++          {
++            "HTTPBearer": []
++          },
++          {
++            "HTTPBasic": []
++          }
++        ],
++        "parameters": [
++          {
++            "name": "build_id",
++            "in": "path",
++            "required": true,
++            "schema": {
++              "type": "integer",
++              "title": "Build Id"
++            }
++          }
++        ],
++        "responses": {
++          "200": {
++            "description": "Successful Response",
++            "content": {
++              "application/json": {
++                "schema": {
++                  "$ref": "#/components/schemas/RuntimeDependenciesResponse"
++                }
++           
+```
+
+**File**: `cli/factory-api-v1/src/client.rs` (modified, +398/-17)
+```diff
+@@ -257,6 +257,103 @@ pub mod types {
+             value.clone()
+         }
+     }
++    ///A repository URL and the revision locked from it.
++    ///
++    /// <details><summary>JSON schema</summary>
++    ///
++    /// ```json
++    ///{
++    ///  "title": "BuildInputSource",
++    ///  "description": "A repository URL and the revision locked from it.",
++    ///  "type": "object",
++    ///  "required": [
++    ///    "rev",
++    ///    "url"
++    ///  ],
++    ///  "properties": {
++    ///    "rev": {
++    ///      "title": "Rev",
++    ///      "description": "The revision locked from it.",
++    ///      "type": "string"
++    ///    },
++    ///    "url": {
++    ///      "title": "Url",
++    ///      "description": "The repository's URL.",
++    ///      "type": "string"
++    ///    }
++    ///  }
++    ///}
++    /// ```
++    /// </details>
++    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug, PartialEq)]
++    pub struct BuildInputSource {
++        ///The revision locked from it.
++        pub rev: ::std::string::String,
++        ///The repository's URL.
++        pub url: ::std::string::String,
++    }
++    impl ::std::convert::From<&BuildInputSource> for BuildInputSource {
++        fn from(value: &BuildInputSource) -> Self {
++            value.clone()
++        }
++    }
++    /**The inputs a build was built from, apart from its source, which is
++on ``BuildResponse``.*/
++    ///
++    /// <details><summary>JSON schema</summary>
++    ///
++    /// ```json
++    ///{
++    ///  "title": "BuildInputsResponse",
++    ///  "description": "The inputs a build was built from, apart from its source, which is\non ``BuildResponse``.",
++    ///  "type": "object",
++    ///  "required": [
++    ///    "base_catalog",
++    ///    "catalog_inputs"
++    ///  ],
++    ///  "properties": {
++    ///    "base_catalog": {
++    ///      "description": "The base catalog page recorded when the build was published. For a NEF build with no publish linked, the base catalog revision it was dispatched with. Null when neither is recorded.",
++    ///      "oneOf": [
++    ///        {
++    ///          "type": "null"
++    ///        },
++    ///        {
++    ///          "allOf": [
++    ///            {
++    ///              "$ref": "#/components/schemas/BuildInputSource"
++    ///            }
++    ///          ]
++    ///        }
++    ///      ]
++    ///    },
++    ///    "catalog_inputs": {
++    ///      "title": "Catalog Inputs",
++    ///      "description": "Every catalog package locked when the build was published, directly or through another input, at the revision recorded then, sorted by name, then revision. Empty when none was locked; null when no publish is linked.",
++    ///      "type": [
++    ///        "array",
++    ///        "null"
++    ///      ],
++    ///      "items": {
++    ///        "$ref": "#/components/schemas/CatalogInput"
++    ///      }
++    ///    }
++    ///  }
++    ///}
++    /// ```
++    /// </details>
++    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug, PartialEq)]
++    pub struct BuildInputsResponse {
++        ///The base catalog page recorded when the build was published. For a NEF build with no publish linked, the base catalog revision it was dispatched with. Null when neither is recorded.
++        pub base_catalog: ::std::option::Option<BuildInputSource>,
++        ///Every catalog package locked when the build was published, directly or through another input, at the revision recorded then, sorted by name, then revision. Empty when none was locked; null when no publish is linked.
++        pub catalog_inputs: ::std::option::Option<::std::vec::Vec<CatalogInput>>,
++    }
++    impl ::std::convert::From<&BuildInputsResponse> for BuildInputsResponse {
++        fn from(value: &BuildInputsResponse) -> Self {
++            value.clone()
++        }
++    }
+     ///Paginated list of builds.
+     ///
+     /// <details><summary>JSON schema</summary>
+@@ -390,30 +487,30 @@ freshest authoritative source:
+ - Dispatched: tasks.status (``"running"``, ``"completed"``,
+   ``"failed"``, ``"cancelled"``), with ``"timed_out"``
+   reconstructed from the persisted footprint of an execution
+-  timeout (status='failed' + error_class='timeout'). A submit-time
+-  ``dispatch_timeout`` is a different failure — the build never
+-  observably started — and reads as ``"failed"``.
++  timeout (status='failed' + error_class='timeout'). A running
++  task the coordinator has not yet started (no started_at), such
++  as one waiting in its queue, reads as ``"pending"``. A
++  submit-time ``dispatch_timeout`` is a different failure — the
++  build never observably started — and reads as ``"failed"``.
+ - On cancel responses: Build Coordinator's returned status, which
+   is fresher than the local row (which lags until BC's callback
+   lands), put through the same derivation — BC's ``timed_out``
+   surfaces as ``"timed_out"``, agreeing with what a subsequent GET
+   reconstructs once the callback persists the footprint. The field
+   never carries a
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4909** (2026-11-20): build: Update FloxHub API schemas to c140ac3b (@floxbot)
+- **PR #4908** (closed): build: Update FloxHub API schemas to 2e00517d (@floxbot)
+- **PR #4907** (closed): build: Update FloxHub API schemas to 7db8d2c2 (@floxbot)
 - **PR #4898** (2026-11-18): fix: resolve hosts path in sandbox allow-list test (@ku1ik)
-- **PR #4895** (2026-11-17): docs(show): align --help with the man page, test multi-failure rendering (@stephenyeargin)
-- **PR #4888** (2026-11-16): feat(build): configure the catalog nixpkgs fetcher (@gilmishal)
-- **PR #4886** (2026-11-16): fix(cli): more consistent subcommand help (@mkenigs)
-- **PR #4885** (2026-11-17): chore: Release v1.20.0 (@imkarrer)
-- **PR #4882** (2026-11-13): chore(agents): factor out skills from AGENTS.md (@mkenigs)
+- **PR #4897** (closed): build: Update FloxHub API schemas to d44afc26 (@floxbot)
+- **PR #4896** (closed): build: Update FloxHub API schemas to 39aa8b22 (@floxbot)
 
 ---
 
@@ -1788,42 +2614,65 @@ recompilation wehn building locally or multiple remote machines.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. resolve hosts path in sandbox allow-list test
+## X. test: Keep hello_unfree on the nixpkgs revision the CI machines have built
 
 **RULE**:
-When implementing operations in `cli/flox-rust-sdk/src/providers/build.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test_data/generated/envs/hello-unfree-lock.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a14159f`: resolve hosts path in sandbox allow-list test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `03428973`: test: Keep hello_unfree on the nixpkgs revision the CI machines have built. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/flox-rust-sdk/src/providers/build.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `test_data/generated/envs/hello-unfree-lock.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // Allow the resolved path: /etc/hosts can point into /private on macOS
-        // or /nix/store on NixOS.
-        let hosts_path = fs::canonicalize("/etc/hosts").unwrap();
-        // sandbox-allow requires schema v1.13.0 or newer.
-            sandbox-allow = ["{hosts_path}"]
-        "#,
-            hosts_path = hosts_path.display(),
-        };
+      "derivation": "/nix/store/xj1zpiq3qcwc9ry6kxfnrizg5164wyai-example-unfree-package-1.0.drv",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
+      "rev": "151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
+      "rev_count": 1086391,
+      "rev_date": "2026-10-06T04:29:54Z",
+      "scrape_date": "2026-10-07T04:59:53.190100Z",
+        "out": "/nix/store/8w49yqc04n3jyn4dabx7s4y61qjc9a6p-example-unfree-package-1.0"
+      "derivation": "/nix/store/di5x5kcjx356azj21slvi70r2dckmsz9-example-unfree-package-1.0.drv",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
+      "rev": "151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
+      "rev_count": 1086391,
+      "rev_date": "2026-10-06T04:29:54Z",
+      "scrape_date": "2026-10-07T05:32:12.629660Z",
+        "out": "/nix/store/7203xbyfh69jkvr2jjcafdsxx97glvki-example-unfree-package-1.0"
+      "derivation": "/nix/store/br185pns5ax8fz94iiwxiyaq7q4bdj36-example-unfree-package-1.0.drv",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
+      "rev": "151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
+      "rev_coun
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        // sandbox-allow is a v1.13.0 field, so the manifest must declare that
-        // schema version. /etc/hosts resolves to /private/etc/hosts on macOS;
-        // list both.
-            sandbox-allow = ["/etc/hosts", "/private/etc/hosts"]
-        "#};
+      "derivation": "/nix/store/gamqi8z22ras3jbizb0g6yqxkcyia6l9-example-unfree-package-1.0.drv",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
+      "rev": "04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
+      "rev_count": 1122823,
+      "rev_date": "2026-11-17T04:43:17Z",
+      "scrape_date": "2026-11-19T05:47:33.216545Z",
+        "out": "/nix/store/2g6xgy68v99id7pnz91rgfkangf8xshc-example-unfree-package-1.0"
+      "derivation": "/nix/store/95ynv8rl8z4wgq8z7krif5gaya6mhgzf-example-unfree-package-1.0.drv",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
+      "rev": "04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
+      "rev_count": 1122823,
+      "rev_date": "2026-11-17T04:43:17Z",
+      "scrape_date": "2026-11-19T06:14:10.545333Z",
+        "out": "/nix/store/lycyd5j2h7j2q13ggam638bg56v1mfk7-example-unfree-package-1.0"
+      "derivation": "/nix/store/mscfaizxskh1rvqvmgjrbyqhy1qbhb29-example-unfree-package-1.0.drv",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
+      "rev": "04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
+      "rev_coun
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a14159f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `03428973` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T04:39:22.322Z",
+  "timestamp": "2026-11-21T16:19:05.324Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dathere-qsv-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dathere-qsv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T04:39:22.322Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T16:19:05.324Z`  
 > **Learning ID**: `LEARN-EVO-dathere-qsv-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `ea8e9cca`  
+> **Source Version**: `ef2aebe1`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T04:39:14.339Z  
+> **Timestamp**: 2026-11-21T16:18:58.457Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T04:39:14.333Z  
+> **Harvest Timestamp**: 2026-11-21T16:18:58.450Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3834 stars
+- **Stars / Engagement**: 3838 stars
 
 ---
 
@@ -475,6 +475,29 @@ export function spawnWithTimeout(options: SpawnWithTimeoutOptions): Promise<Spaw
 /**
  * Shared utility functions for QSV MCP Server
  */
+
+import { homedir } from "node:os";
+import { join } from "node:path";
+
+/**
+ * Expand tilde (~) in paths to the user's home directory
+ * Handles: ~ (home dir), ~/path or ~\path (relative to home)
+ */
+export function expandTilde(path: string): string {
+  if (!path) return path;
+
+  // Handle ~/ or ~\ (Windows users might use backslash)
+  if (path.startsWith("~/") || path.startsWith("~\\")) {
+    return join(homedir(), path.slice(2));
+  }
+
+  // Handle ~ alone (just home directory)
+  if (path === "~") {
+    return homedir();
+  }
+
+  return path;
+}
 
 /**
  * Extract a human-readable message from an unknown error.
@@ -2226,31 +2249,26 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ea8e9cca` (2026-11-21)
-**Commit Message**: feat(synthesize): --target <col> for conditional generation; read non-UTF8 input (#5084)
+### Incident Patch 1: `ef2aebe1` (2026-11-21)
+**Commit Message**: feat(synthesize): --discover-relationships <file> finds joint, correlated and ordered groups (#5085)
 
-* feat(synthesize): --target <col> for conditional generation
+* feat(synthesize): --discover-relationships <file> finds joint, correlated and ordered groups
 
-Each synthetic row draws a class of <col> by its share of the input's
-rows, then fills every other column from that class's own profile.
+Discovery scores column pairs in one read of the source (at most 100,000
+rows, a fixed stride beyond) and proposes disjoint groups of up to 8:
+`joint` by bias-corrected Cramér's V over columns with an enumerated pool
+of 2-50 values (keeping 80% of rows at --min-count), `correlated` by
+Spearman over numeric columns, and `ordered` over date pairs where one
+never exceeds the other, the ranges overlap and the blank rates are within
+5 points. Eligibility comes from the generator each column gets alone, read
+from a probe schedule with its own RNG, so the fit draws what a rerun does.
 
-- Fit: the whole-input pass runs as before (types, fakers, dictionary,
-  report keys); one read of the input then writes each row to its
-  class's temporary CSV, and stats/frequency run once per class, with
-  the fit RNG keyed by (seed, class index) and classes in a fixed order.
-- Classes: at most 50 distinct trimmed values split by value (an empty
-  value is a class); a numeric target with more is split by its own
-  quantile buckets and its value drawn from the class's bucket; any
-  other target is refused. Classes under --min-count rows are dropped
-  and listed in --report.
-- Fake-value columns, and columns a class can't profile, use the
-  whole-input generator; relationships drop the target from their
-  members.
-- Model format 4 stores the per-class schedules; Model::check verifies
-  each fills every non-target column once. --target is refused with
-  --model.
-
-Without --target, output is byte-
+The groups are appended after the declared relationships, whose columns
+discovery leaves alone, and resolved like them. The ones the fit keeps are
+written, with a score, to <file>: the input dictionary (wrapper and other
+keys kept) or {"fields": []}. A rerun with --dictionary <file>, and a run
+from a model saved by the flag run, write the same bytes. Faker-typed,
+filler, constant, all-unique integer and target col
 
 **File**: `.claude/skills/CHANGELOG.md` (modified, +1/-0)
 ```diff
@@ -2258,26 +2276,10 @@ Without --target, output is byte-
  ## [Unreleased]
  
  ### Added
-+- **`qsv-synthesize --target <col>`**: conditional generation. Each row draws a class of `<col>` (at most 50 distinct values, or a numeric column's quantile buckets) in proportion to its source rows, after dropping classes seen in fewer than `--min-count` rows, then fills the other columns from that class's own profile; `stats` and `frequency` run once more per class. Skill regenerated from the USAGE text. ([#5084](https://github.com/dathere/qsv/pull/5084))
- - **SQL file writes are off in plugin mode (Cowork, Claude Code plugin).** Polars SQL now has `COPY (<query>) TO '<file>'`, where the query rather than `output_file` picks the target. In plugin mode the server sets `QSV_SQL_DISABLE_FILE_WRITES=1` for qsv, and `qsv_sqlp` never sends SQL that may contain `COPY ... TO` or `EXPORT DATABASE` to DuckDB: it runs on Polars `sqlp`, which refuses a real `COPY ... TO`. A `.env` file can't lift the switch, for qsv or the qsv subprocesses it spawns. Other MCP clients and the Desktop extension keep them. New `QSV_MCP_SQL_FILE_WRITES` overrides the default either way. `qsv-sqlp` skill regenerated from the USAGE text. ([#5081](https://github.com/dathere/qsv/pull/5081))
++- **`qsv-synthesize`: `--discover-relationships` is CLI-only for now.** The new `synthesize --discover-relationships <file>` option (finds `joint`, `correlated` and `ordered` groups and writes them to a dictionary file) is left out of the skill: the MCP server doesn't check that file's path against its allowed directories, so it could be written outside them. ([#5085](https://github.com/dathere/qsv/pull/5085))
+ - **`qsv-synthesize --target <col>`**: conditional generation. Each row draws a class of `<col>` (at most 50 distinct values, or a numeric column's quantile buckets) in proportion to its source rows, after dropping classes seen in fewer than `--min-count` rows, then fills the other columns from that class's own profile; `stats` and `frequency` run once more per class. Skill regenerated from the USAGE text. ([#5084](https://github.com/dathere/qsv/pull/5084))
  - **`qsv-synthesize --quantiles <n>`**: 2, 4, 5, 10, 20, 25, 50 or 100 equal-share buckets for numeric/date columns and `ordered` gaps (default 4, the quartiles, unchanged output); more buckets keep long tails. Skill regenerated from the USAGE text. ([#5078](https://github.com/dathere/qsv/pull/5078))
  - **`qsv-synthesize`: `--rows-per-file` is CLI-only for now.** The new `synthesize --rows-per-file` option and its USAGE example are left out of the skill: the MCP server checks only the literal `{}` output template against its allowed directories and would report the template as the written file. The generator's per-command skip list now also drops examples that use a skipped option. ([#5077](https://github.com/dathere/qsv/pull/5077))
-```
-
-**File**: `.claude/skills/qsv/qsv-synthesize.json` (modified, +5/-0)
-```diff
-@@ -125,6 +125,11 @@
-         "flag": "--strict-relationships",
-         "type": "flag",
-         "description": "Abort instead of warning-and-degrading when a declared relationship fails validation."
-+      },
-+      {
-+        "flag": "--target",
-+        "type": "string",
-+        "description": "Generate the other columns conditionally on the class of column <col> (a column name; with no headers, its 0-based index), e.g. a label to train a classifier on. Each row first draws a class by its share of the rows of <input>, then fills every other column from that class's own profile, so each column keeps its distribution within each class. A column with at most 50 distinct (trimmed) values is split by value, an empty value being a class of its own; a numeric column with more is split by its quantile buckets (see --quantiles), each class drawn at the share of rows its bucket holds (with tied bucket edges, not the shares of an ordinary fit), and any other column is refused. A class seen in fewer than <k> rows (<k> is set by the --min-count option) is dropped and its share redistributed. Fake-value columns, and columns a class has too few values to profile, use the generator fitted on the whole input, blank rate included (a column blank throughout a class stays blank). A numeric or date column needs at least 2k-1 values in a class, so with the default <k> of 5 a class of fewer than 9 rows takes all of them from the whole input; lower the --min-count to profile small classes, if that is acceptable for privacy. Relationships that name <col> drop it from their members, as do fake-value columns in the classes, and each class fits (and with --strict-relationships, enforces) them on its own rows. Dropping <col> can make a group eligible that an ordinary fit skips (it overlapped an earlier one only on <col>); it still yields to earlier groups, and a `joint` one writes real value-tuples, so a column an ordinary fit fakes can then write real values. `stats` and `frequency` run once more per class, on a temporary copy of <input> split by class."
-       }
-     ]
-   },
 ```
 
 **File**: `CHANGELOG.md` (modified, +2/-0)
@@ -2286,313 +2288,741 @@ Without --target, output is byte-
  ## [Unreleased]
  
  ### Added
-+- `synthesize`: new `--target <col>` generates the other columns conditionally on the class of `<col>`, e.g. a label to train a classifier on. Each synthetic row first draws a class by its share of the input's rows, then fills every other column from that class's own profile, so each column keeps its distribution within each class (on a 10%-positive label whose positive rows have a 10x larger `amount`, the synthetic positives' mean `amount` was 499 against the source's 499, and 116 without `--target`). A column with at most 50 distinct (trimmed) values is split by value, an empty value being a class of its own (not counted toward the 50); a numeric column with more is split by its own quantile buckets (`--quantiles`), each class drawn at the share of rows its bucket holds, and each value from the written values that land back in that bucket; any other column is refused. With tied bucket edges that follows the source more closely than an ordinary fit: on 900 zeros and the integers 1–100, 89.8% of synthetic targets were zeros, against 90% in the source and 75.1% without `--target`. `stats` and `frequency` run once more per class, on a temporary copy of the input split by class. A class seen in fewer than `--min-count` rows is dropped and its share redistributed (listed in `--report`, which also records the target and tags per-class suppressions with their class). Fake-value columns use their whole-input generator (blank rate included, though a column blank throughout a class stays blank), so `--consistent-fakes` keeps one fake per source value across classes, and so does any column a class can't profile as well as the whole input (filler text, or a generator that would write the column in another form, such as raw dates in a column the dictionary formats, or zero-padded codes as numbers) or has too few values to profile (a numeric or date column needs 2k−1 values in the class, so at the default `--min-count` of 5 a class of fewer than 9 rows takes them all from the whole input). Relationships that name the target drop it from their members, in the whole-input fit too, and in a class so do fake-value columns, so a class group never writes a column's real values where the whole input fakes it. Dropping the target can make a group eligible that an ordinary fit skips (it overlapped an earlier one only on the target); it still yields to earlier groups, and a `joint` one writes real value-tuples, so a column an ordinary fit fakes can then write real values. Each class fits relationships on its own rows, and `--strict-relationships` applies there, so a relationship that only holds within classes (e.g. y rising with x in one class and falling in another) is kept. Class files quote every field, so a `QSV_COMMENT_CHAR` value can't hide a row. Output is the same bytes at any `--jobs`, from `--model`, and across `--shard` and `--rows-per-file`; without `--target` it is unchanged. Saved models hold per-class profiles, so the model format is version 4 and models saved before this change must be fitted again. `--target` can't be combined with `--model`. ([#5084](https://github.com/dathere/qsv/pull/5084))
- - `synthesize`: new `--quantiles <n>` sets how many equal-share buckets reproduce each numeric and date column's shape, and the gaps of `ordered` relationships: 2, 4, 5, 10, 20, 25, 50 or 100 (divisors of 100, so every bucket edge is a whole percentile and every bucket holds the same share of rows). More buckets keep skewed and long-tailed columns closer to the source: on a column whose values double every 5% of rows, the 90th percentile came out 2.4× too high with the quartiles and 2% high with `--quantiles 20`. The default of 4 still cuts at the source quartiles, so output is unchanged; other values cut at `stats --percentiles`, which are real source values, so a column gets fewer buckets when it has too few non-null values for each bucket to hold more than `--min-count` of them (at worst, the quartiles). Percentile edges are read unrounded (`stats --round 9999`, unless `--stats-options` sets `--round`), so small-magnitude floats keep distinct edges. The model format is unchanged. `--quantiles` can't be combined with `--model`, and with a value other than 4 `--stats-options` may not include `--percentiles` or `--percentile-list`. ([#5078](https://github.com/dathere/qsv/pull/5078))
- - `synthesize`: new `--rows-per-file <n>` splits the output into files of `<n>` rows. The `--output` name must contain `{}`, which is replaced by the zero-based row number of each file's first row, as in `qsv split`, zero-padded so the names sort in order (`-o synthetic_{}.csv` writes `synthetic_000.csv`, `synthetic_250.csv`, …). The files hold the same rows as a single-file run, in order, at any `--jobs` and from a `--model` run, and join the same way as `--shard` slices; each CSV file has a header row and each Parqu
++- `synthesize`: new `--discover-relationships <file>` finds `joint`, `correlated` and `ordered` groups in the source, uses them in the same run, and writes them, each with a score, to `<file>` for review. `<file>` is the `--dictionary` (or the `--infer-content-type` dictionary, or `{"fields": []}` without one) with the groups appended to its `relationships`, so a rerun with `--dictionary <file>` writes the same bytes, as does a `--model` saved from the run. Relationships the dictionary declares win, and discovery leaves their columns alone. Pairs score by bias-corrected Cramér's V for `joint` (raw V is near 1 for any many-valued column) and by Spearman's rho for `correlated` (numeric columns) and `ordered` (dates), at 0.7 or more. Only columns that would sample an enumerated pool of 2 to 50 values can join a `joint` group, and it must keep 80% of rows in tuples seen at least `--min-count` times. An `ordered` pair also needs the later date to come first in at most 1% of the sampled rows holding both (the fit clamps those, as for a declared group), overlapping ranges, blanks in the same rows but for at most 5% of rows, checked on the sample and on the whole input's blank counts (a chain blanks its members together), and the same dictionary date format, or none on either (it writes every member in its anchor's format). Columns with a faker content type, filler, constant and all-unique integer columns, and the `--target` are never proposed; groups don't share columns and hold up to 8. Scores are read from at most 100,000 rows (a fixed stride beyond) and 64 columns of each family, with no RNG, so the result is the same at any `--jobs`. On NYC 311 data it finds X/Longitude and Y/Latitude, Borough/Park Borough with City, and Agency/Agency Name. It can't be combined with `--no-relationships`, `--strict-relationships` or `--model`. Without the flag, output, saved models and reports are unchanged. ([#5085](https://github.com/dathere/qsv/pull/5085))
+ - `synthesize`: new `--target <col>` generates the other columns conditionally on the class of `<col>`, e.g. a label to train a classifier on. Each synthetic row first draws a class by its share of the input's rows, then fills every other column from that class's own profile, so each column keeps its distribution within each class (on a 10%-positive label whose positive rows have a 10x larger `amount`, the synthetic positives' mean `amount` was 499 against the source's 499, and 116 without `--target`). A column with at most 50 distinct (trimmed) values is split by value, an empty value being a class of its own (not counted toward the 50); a numeric column with more is split by its own quantile buckets (`--quantiles`), each class drawn at the share of rows its bucket holds, and each value from the written values that land back in that bucket; any other column is refused. With tied bucket edges that follows the source more closely than an ordinary fit: on 900 zeros and the integers 1–100, 89.8% of synthetic targets were zeros, against 90% in the source and 75.1% without `--target`. `stats` and `frequency` run once more per class, on a temporary copy of the input split by class. A class seen in fewer than `--min-count` rows is dropped and its share redistributed (listed in `--report`, which also records the target and tags per-class suppressions with their class). Fake-value columns use their whole-input generator (blank rate included, though a column blank throughout a class stays blank), so `--consistent-fakes` keeps one fake per source value across classes, and so does any column a class can't profile as well as the whole input (filler text, or a generator that would write the column in another form, such as raw dates in a column the dictionary formats, or zero-padded codes as numbers) or has too few values to profile (a numeric or date column needs 2k−1 values in the class, so at the default `--min-count` of 5 a class of fewer than 9 rows takes them all from the whole input). Relationships that name the target drop it from their members, in the whole-input fit too, and in a class so do fake-value columns, so a class group never writes a column's real values where the whole input fakes it. Dropping the target can make a group eligible that an ordinary fit skips (it overlapped an earlier one only on the target); it still yields to earlier groups, and a `joint` one writes real value-tuples, so a column an ordinary fit fakes can then write real values. Each class fits relationships on its own rows, and `--strict-relationships` applies there, so a relationship that only holds within classes (e.g. y rising with x in one class and falling in another) is kept. Class files quote every field, so a `QSV_COMMENT_CHAR` value can't hide a row. Output is the same bytes at any `--jobs`, from `--model`, and across `--shard` and `--rows-per-file`; without `--targ
 ```
 
-**File**: `docs/help/synthesize.md` (modified, +3/-1)
+**File**: `docs/help/synthesize.md` (modified, +4/-2)
 ```diff
-@@ -101,7 +101,8 @@ can reappear at or near its real value.
- Review the output before sharing it, or training on it, as de-identified data.
- A model saved with --save-model holds real values from <input>, such as
- enumerated values, bucket boundaries and range ends, including some the
--output never shows. Review and share it at least as carefully as the output.
-+output never shows; with --target, it holds them for each class, and the
-+class values. Review and share it at least as carefully as the output.
+@@ -65,7 +65,8 @@ Gaussian copula couples the columns while leaving each
+ column's own distribution unchanged.
  
- With --seed, output is fully reproducible, whatever the --jobs setting.
- Rows are generated in parallel, in fixed blocks of 8192 rows. With --seed
-@@ -226,6 +227,7 @@ qsv synthesize --help
- | &nbsp;`‑‑locale`&nbsp; | string | Locale for faker-backed columns. Case-insensitive. Supported: en, fr_fr, de_de, it_it, pt_br, pt_pt, ja_jp, zh_cn, zh_tw, ar_sa, cy_gb, fa_ir, nl_nl, tr_tr. Sparse locales (those without per-category data in fake-rs) silently fall back to en data for the missing categories — e.g. lorem text under a non-en locale is still English, since only zh_cn has localized lorem data. | `en` |
- | &nbsp;`‑‑freq‑limit`&nbsp; | integer | Frequency pool depth passed to the internal `frequency` run as --limit. A column is reproduced via exact frequency-weighted sampling only when its cardinality is fully captured within this limit; higher values reproduce more columns verbatim. 0 means unlimited. | `100` |
- | &nbsp;`‑‑quantiles`&nbsp; | integer | Number of equal-share buckets that reproduce the shape of numeric and date columns: 2, 4, 5, 10, 20, 25, 50 or 100. More buckets keep skewed and long-tailed columns closer to the source. 4 (the default) cuts at the source quartiles; other values cut at `stats --percentiles` (real source values). A column with too few non-null values for every bucket to hold more than <k> of them (<k> is set by the --min-count option) gets fewer buckets, or the quartiles. Also applies to the gaps of `ordered` relationships. |  |
-+| &nbsp;`‑‑target`&nbsp; | string | Generate the other columns conditionally on the class of column <col> (a column name; with no headers, its 0-based index), e.g. a label to train a classifier on. Each row first draws a class by its share of the rows of <input>, then fills every other column from that class's own profile, so each column keeps its distribution within each class. A column with at most 50 distinct (trimmed) values is split by value, an empty value being a class of its own; a numeric column with more is split by its quantile buckets (see --quantiles), each class drawn at the share of rows its bucket holds (with tied bucket edges, not the shares of an ordinary fit), and any other column is refused. A class seen in fewer than <k> rows (<k> is set by the --min-count option) is dropped and its share redistributed. Fake-value columns, and columns a class has too few values to profile, use the generator fitted on the whole input, blank rate included (a column blank throughout a class stays blank). A numeric or date column needs at least 2k-1 values in a class, so with the default <k> of 5 a class of fewer than 9 rows takes all of them from the whole input; lower the --min-count to profile small classes, if that is acceptable for privacy. Relationships that name <col> drop it from their members, as do fake-value columns in the classes, and each class fits (and with --strict-relationships, enforces) them on its own rows. Dropping <col> can make a group eligible that an ordinary fit skips (it overlapped an earlier one only on <col>); it still yields to earlier groups, and a `joint` one writes real value-tuples, so a column an ordinary fit fakes can then write real values. `stats` and `frequency` run once more per class, on a temporary copy of <input> split by class. |  |
- | &nbsp;`‑‑min‑count`&nbsp; | integer | Privacy threshold. A real value of an enumerated column, or a real `joint` value-tuple, that occurs fewer than <k> times in <input> is dropped from the values it samples; its share is redistributed over the kept values. An enumerated column whose values are all below <k> falls back to its faker or type-based generator (numeric and date columns to their trimmed range), and a joint group to independent columns, or aborts under the --strict-relationships option. A warning is printed when either happens. 1 disables suppression. Counts are of rows, not people: where one person has many rows (transactions, visits, logs), one person's value can pass <k> alone. Raise <k>, or dedupe to one row per person first. Numeric and date ranges, and the gaps of `ordered` relationships, are also trimmed to their k-th smallest and k-th largest values (one extra pass over <input>). A numeric or date column with fewer than 2k-1 non-null values is left empty unless its real values are sampled. | `5` |
- | &nbsp;`‑‑report`&nbsp; | string | Write a JSON report of what the run reproduced from <input>: source and synthetic row counts, how many synthetic rows exactly 
+ Relationships are read from the dictionary's `relationships` array — inferred
+-by `describegpt` or hand-authored. Columns not named by any relationship are
++by `describegpt`, hand-authored, or found in <input> with the option
++called --discover-relationships. Columns not named by any relationship are
+ still generated independently. Pass --no-relationships to disable relationship
+ modeling entirely.
+ 
+@@ -213,7 +214,7 @@ qsv synthesize --help
+ 
+ ## Synthesize Options [↩](#nav)
+ 
+-| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
++| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
+ |--------|------|-------------|--------|
+ | &nbsp;`‑‑dictionary`&nbsp; | string | Data Dictionary JSON file produced by `describegpt --dictionary --infer-content-type --format JSON`. Layers semantic Content Types onto generation. If omitted, generation is purely type/frequency-based. |  |
+ | &nbsp;`‑‑infer‑content‑type`&nbsp; | flag | Generate the Data Dictionary on the fly by invoking `describegpt --dictionary --infer-content-type` on <input>. Requires an LLM API key (QSV_LLM_APIKEY). Ignored if --dictionary is given. |  |
+@@ -233,6 +234,7 @@ qsv synthesize --help
+ | &nbsp;`‑‑stats‑options`&nbsp; | string | Extra options appended to the internal `stats` run. Note: cardinality, quartiles and date inference are always enabled — do not re-specify them here. Column selection (--select/-s) and --weight are rejected; run `qsv select` on <input> first. |  |
+ | &nbsp;`‑‑consistent‑fakes`&nbsp; | flag | For structured-faker columns with bounded cardinality (cardinality fully captured by `frequency`), build a stable source-value -> fake-value mapping so the same source value always produces the same fake in the output. Preserves the source frequency distribution and overrides the default "emit real values when frequency-enumerated" behavior for structured fakers (names, emails, addresses, etc.). Has no effect on unstructured columns (lorem_*, free_text, unknown), all-unique columns, or non-faker columns. Useful for deidentified synthesis where you want stable joins on the faked columns. |  |
+ | &nbsp;`‑‑no‑relationships`&nbsp; | flag | Disable inter-column relationship modeling. Every column is generated independently even when the dictionary declares a `relationships` array. |  |
++| &nbsp;`‑‑discover‑relationships`&nbsp; | string | Find relationships in <input>, use them in this run, and write them to <file> for review. <file> holds the dictionary (from --dictionary, or from --infer-content-type) with the found groups appended to its `relationships`, each with a score; without a dictionary, it holds only those groups. Rerunning with <file> as the dictionary gives the same output. Declared relationships keep their columns, which discovery leaves out. A pair scores 0.7 or more by bias-corrected Cramer's V for `joint` (columns with 2 to 50 enumerated values; a group must keep 80% of rows in tuples seen at least the --min-count times), or by \|Spearman\| for `correlated` (numeric) and `ordered` (dates with the same dictionary date format, or none, where the later comes first in at most 1% of the sampled rows holding both, their ranges overlap, and they are blank in the same rows but for at most 5% of rows). Groups don't share columns and hold up to 8 each. Columns with a faker content type, and free-text, constant and all-unique integer columns are never proposed, nor is the target. Scores read up to 100,000 rows (at a fixed stride beyond) and up to 64 columns of each family. With the --shard option, every slice finds the same groups and writes the same <file>. Not allowed with --no-relationships, nor with the --strict-relationships option, which would abort on a found group the source only nearly satisfies. |  |
+ | &nbsp;`‑‑joint‑cardinality‑cap`&nbsp; | integer | Maximum number of distinct value-tuples a `joint` relationship may have. A joint group above this cap falls back to independent generation (or aborts under --strict-relationships). 0 means unlimited. | `100000` |
+ | &nbsp;`‑‑correlation‑threshold`&nbsp; | float | Minimum absolute Spearman correlation for a pair of columns to stay in a `correlated` relationship. Weakly-correlated members are dropped. | `0.3` |
+ | &nbsp;`‑‑strict‑relationships`&nbsp; | flag | Abort instead of warning-and-degrading when a declared relationship fails validation. |  |
 ```
 
-**File**: `src/cmd/synthesize/generator.rs` (modified, +1/-1)
+**File**: `src/cmd/synthesize/dictionary.rs` (modified, +62/-13)
 ```diff
-@@ -115,7 +115,7 @@ fn is_unstructured(content_type: &str) -> bool {
-     UNSTRUCTURED_CONTENT_TYPES.contains(&content_type)
+@@ -29,14 +29,67 @@ struct DictionaryFile {
+ /// [...], ...}, ...}}`, so peel that wrapper when present. Also accept a raw
+ /// `{"fields": [...]}` payload so users can hand-author / pre-extract a
+ /// dictionary file without going through describegpt.
++#[cfg(test)]
+ fn parse_dictionary_payload(raw: &str) -> Result<DictionaryFile, serde_json::Error> {
++    parse_dictionary_doc(raw).map(|(dict, _)| dict)
++}
++
++/// `parse_dictionary_payload`, also returning the whole parsed document.
++fn parse_dictionary_doc(
++    raw: &str,
++) -> Result<(DictionaryFile, serde_json::Value), serde_json::Error> {
+     let value: serde_json::Value = serde_json::from_str(raw)?;
+     let inner = value
+         .get("Dictionary")
+         .and_then(|d| d.get("response"))
+-        .cloned()
+-        .unwrap_or(value);
+-    serde_json::from_value(inner)
++        .unwrap_or(&value)
++        .clone();
++    Ok((serde_json::from_value(inner)?, value))
++}
++
++/// Content types, declared relationships, and the whole parsed document (for
++/// `--discover-relationships` to extend).
++pub(crate) type LoadedDictionary = (
++    HashMap<String, String>,
++    Vec<SynthRelationship>,
++    serde_json::Value,
++);
++
++/// Write `doc` (a loaded dictionary, or `None` for none) to `path` with
++/// `found` appended to its `relationships`, in the payload a reload reads.
++pub(crate) fn write_with_relationships(
++    doc: Option<serde_json::Value>,
++    found: Vec<serde_json::Value>,
++    path: &str,
++) -> CliResult<()> {
++    let mut doc = doc.unwrap_or_else(|| serde_json::json!({ "fields": [] }));
++    let wrapped = doc
++        .get("Dictionary")
++        .and_then(|d| d.get("response"))
++        .is_some_and(serde_json::Value::is_object);
++    let payload = if wrapped {
++        &mut doc["Dictionary"]["response"]
++    } else {
++        &mut doc
++    };
++    let Some(payload) = payload.as_object_mut() else {
++        return Err(CliError::Other(
++            "synthesize: the dictionary is not a JSON object".to_string(),
++        ));
++    };
++    let relationships = payload
++        .entry("relationships")
++        .or_insert_with(|| serde_json::Value::Array(Vec::new()));
++    match relationships.as_array_mut() {
++        Some(list) => list.extend(found),
++        // A `relationships` key that isn't a list doesn't load either.
++        None => *relationships = serde_json::Value::Array(found),
++    }
++    fs::write(path, serde_json::to_string_pretty(&doc)? + "\n").map_err(|e| {
++        CliError::Other(format!(
++            "Failed to write --discover-relationships file '{path}': {e}"
++        ))
++    })
  }
  
--#[derive(Serialize, Deserialize)]
-+#[derive(Clone, Serialize, Deserialize)]
- pub(crate) enum ColumnGenerator {
-     /// Sample real values with real frequency weights.
-     FrequencyWeighted {
+ /// One field entry in the dictionary. Deliberately lenient: `content_type` is
+@@ -82,43 +135,39 @@ fn fields_to_map(fields: Vec<SynthDictField>) -> HashMap<String, String> {
+ 
+ /// Load the field-name → `content_type` map and the declared inter-column
+ /// relationships from a dictionary file on disk.
+-pub(crate) fn load_dictionary(
+-    path: &str,
+-) -> CliResult<(HashMap<String, String>, Vec<SynthRelationship>)> {
++pub(crate) fn load_dictionary(path: &str) -> CliResult<LoadedDictionary> {
+     let contents = fs::read_to_string(path)
+         .map_err(|e| CliError::Other(format!("Failed to read dictionary file '{path}': {e}")))?;
+-    let dict = parse_dictionary_payload(&contents).map_err(|e| {
++    let (dict, doc) = parse_dictionary_doc(&contents).map_err(|e| {
+         CliError::Other(format!(
+             "Failed to parse dictionary file '{path}' as JSON. `synthesize` expects a dictionary \
+              produced with `describegpt --dictionary --infer-content-type --format JSON` (the \
+              full `{{\"Dictionary\": {{\"response\": ...}}}}` wrapper is fine, as is a raw \
+              `{{\"fields\": [...]}}` payload). Parser error: {e}"
+         ))
+     })?;
+-    Ok((fields_to_map(dict.fields), dict.relationships))
++    Ok((fields_to_map(dict.fields), dict.relationships, doc))
+ }
+ 
+ /// Infer the field-name → `content_type` map and inter-column relationships by
+ /// invoking `describegpt` on the input. Relationships are only populated when
+ /// `describegpt` emits a `relationships` array (two-pass dictionary mode).
+-pub(crate) fn infer_dictionary(
+-    input_path: &str,
+-) -> CliResult<(HashMap<String, String>, Vec<SynthRelationship>)> {
++pub(crate) fn infer_dictionary(input_path: &str) -> CliResult<LoadedDictionary> {
+     let (stdout, _stderr) = util::run_qsv_cmd(
+         "describegpt",
+         &["--dictionary", "--infer-content-type", "--format", "JSON"],
+         input_path,
+         "  Inferred Content Types via describegpt",
+     )?;
+-    let dict = parse_dictionary_payload(&stdout).map_err(|e| {
++    let (dict, doc) = parse_dictionary_doc(&stdout).map_err(|e| {
+         CliError::Other(format!(
+             "Failed to parse describegpt dictionary output as JSON: {e}. Make sure an LLM is \
+              configured — either set `QSV_LLM_APIKEY` (or `--api-key`) for a hosted provider, or \
+              set `QSV_LLM_BASE_URL` (or `--ba
 ```
 
-**File**: `src/cmd/synthesize/mod.rs` (modified, +534/-23)
+**File**: `src/cmd/synthesize/discover.rs` (added, +684/-0)
 ```diff
-@@ -89,7 +89,8 @@ not stop it:
- Review the output before sharing it, or training on it, as de-identified data.
- A model saved with --save-model holds real values from <input>, such as
- enumerated values, bucket boundaries and range ends, including some the
--output never shows. Review and share it at least as carefully as the output.
-+output never shows; with --target, it holds them for each class, and the
-+class values. Review and share it at least as carefully as the output.
+@@ -0,0 +1,684 @@
++//! `--discover-relationships`: find `ordered`, `correlated` and `joint` groups
++//! in the source and propose them as dictionary relationships.
++//!
++//! Eligibility comes from the generator each column would get on its own, so
++//! it can't drift from the fit: a `joint` member is enumerated from its
++//! frequency pool, a `correlated` or `ordered` member is drawn from quantile
++//! buckets. Faker, filler, empty and constant columns never qualify. Measures
++//! come from one read of the source (every row up to `SAMPLE_ROWS`, a fixed
++//! stride beyond), and use no RNG and no hash-map iteration order, so the
++//! result depends only on the input and the flags.
++
++use std::collections::{BTreeMap, HashMap, HashSet};
++
++use super::{
++    dictionary::SynthRelationship,
++    faker_map,
++    generator::{ColumnGenerator, parse_f64, parse_source_epoch},
++    relationships::{EmitUnit, ScheduleParams, pearson, source_cell},
++};
++use crate::{CliResult, config::Config};
++
++/// Floor for both bias-corrected Cramér's V and |Spearman|.
++const THRESHOLD: f64 = 0.7;
++/// Most kept values a `joint` member may have.
++const MAX_JOINT_VALUES: usize = 50;
++/// Most candidate columns of each family (`joint`; numeric and date).
++const MAX_CANDIDATES: usize = 64;
++/// Most members in one discovered group.
++const MAX_GROUP: usize = 8;
++/// Rows read for the measures; larger inputs are read at a fixed stride.
++const SAMPLE_ROWS: u64 = 100_000;
++/// Most rows, in percent, where an `ordered` pair may run backwards: the fit
++/// warns above this share, and clamps the gaps either way.
++const MAX_REVERSED_PCT: usize = 1;
++/// Share of rows a `joint` group's tuples must keep at `--min-count`.
++const MIN_JOINT_SURVIVAL: f64 = 0.8;
++/// An `ordered` chain blanks all its members together, so they may disagree
++/// on which rows are blank in at most this share (percent) of rows.
++const MAX_BLANK_MISMATCH_PCT: usize = 5;
++
++#[derive(Clone, Copy, PartialEq, Eq)]
++enum Domain {
++    Numeric,
++    Date,
++    DateTime,
++}
++
++/// One discovered group, by output column index.
++pub(crate) struct Found {
++    pub(crate) kind:    &'static str,
++    /// `ordered`: low to high, the anchor first. Others: ascending.
++    pub(crate) members: Vec<usize>,
++    /// The weakest pair score that joined the group.
++    pub(crate) score:   f64,
++}
++
++impl Found {
++    /// This group as a relationship the schedule resolves like a declared one.
++    pub(crate) fn relationship(&self, params: &ScheduleParams) -> SynthRelationship {
++        let members: Vec<String> = self
++            .members
++            .iter()
++            .map(|&c| params.stats_records[c].field.clone())
++            .collect();
++        SynthRelationship {
++            kind: self.kind.to_string(),
++            anchor: (self.kind == "ordered").then(|| members[0].clone()),
++            members,
++        }
++    }
++
++    /// The dictionary `relationships` entry for this group.
++    pub(crate) fn to_json(&self, params: &ScheduleParams) -> serde_json::Value {
++        let names: Vec<&str> = self
++            .members
++            .iter()
++            .map(|&c| params.stats_records[c].field.as_str())
++            .collect();
++        let mut entry = serde_json::json!({
++            "kind": self.kind,
++            "members": names,
++        });
++        if self.kind == "ordered" {
++            entry["anchor"] = names[0].into();
++        }
++        entry["score"] = ((self.score * 10_000.0).round() / 10_000.0).into();
++        entry
++    }
++}
++
++/// Propose relationship groups among the columns `probe` generates
++/// independently, leaving out `excluded`. `probe` is the schedule built with no
++/// relationships, in column order.
++pub(crate) fn discover(
++    params: &ScheduleParams,
++    probe: &[EmitUnit],
++    excluded: &HashSet<usize>,
++) -> CliResult<Vec<Found>> {
++    let stats = params.stats_records;
++    let mut joint: Vec<usize> = Vec::new();
++    let mut numeric: Vec<(usize, Domain)> = Vec::new();
++    for unit in probe {
++        let EmitUnit::Independent { col_idx, generator } = unit else {
++            continue;
++        };
++        let col = *col_idx;
++        if excluded.contains(&col) || params.source_cols.get(col).copied().flatten().is_none() {
++            continue;
++        }
++        let sr = &stats[col];
++        // A faker-typed column writes real values when enumerated (without
++        // --consistent-fakes), and a `joint` group would link them into real
++        // tuples (a first and last name), so it is never proposed.
++        if params
++            .content_types
++            .get(&sr.field)
++            .is_some_and(|ct| faker_map::is_faker_token(ct))
++        {
++            continue;
++        }
++        match (generator, sr.r#type.as_str()) {
++            (ColumnGenerator::FrequencyWeighted { values, .. }, _)
++                if (2..=MAX_JOINT_VALUES).contains(&values.len()) =>
++            {
++                joint.push(col);
++            },
++            // An
+```
+
+**File**: `src/cmd/synthesize/generator.rs` (modified, +33/-8)
+```diff
+@@ -217,13 +217,16 @@ impl ColumnGenerator {
+             consistent_fakes,
+             min_count,
+             &mut None,
++            true,
+             rng,
+         )
+     }
  
- With --seed, output is fully reproducible, whatever the --jobs setting.
- Rows are generated in parallel, in fixed blocks of 8192 rows. With --seed
-@@ -254,6 +255,44 @@ synthesize options:
-                            by the --min-count option) gets fewer buckets, or
-                            the quartiles.
-                            Also applies to the gaps of `ordered` relationships.
-+    --target <col>         Generate the other columns conditionally on the
-+                           class of column <col> (a column name; with no
-+                           headers, its 0-based index), e.g. a label to train
-+                           a classifier on. Each row first draws a class by
-+                           its share of the rows of <input>, then fills every
-+                           other column from that class's own profile, so
-+                           each column keeps its distribution within each
-+                           class. A column with at most 50 distinct (trimmed)
-+                           values is split by value, an empty value being a
-+                           class of its own; a numeric column with more is
-+                           split by its quantile buckets (see --quantiles),
-+                           each class drawn at the share of rows its bucket
-+                           holds (with tied bucket edges, not the shares of
-+                           an ordinary fit), and any other column is
-+                           refused. A class seen in
-+                           fewer than <k> rows (<k> is set by the --min-count
-+                           option) is dropped and its share redistributed.
-+                           Fake-value columns, and columns a class has too
-+                           few values to profile, use the generator fitted
-+                           on the whole input, blank rate included (a
-+                           column blank throughout a class stays blank). A numeric or date column
-+                           needs at least 2k-1 values in a class, so with
-+                           the default <k> of 5 a class of fewer than 9 rows
-+                           takes all of them from the whole input; lower
-+                           the --min-count to profile small classes, if that
-+                           is acceptable for privacy. Relationships that
-+                           name <col> drop it from their members, as do
-+                           fake-value columns in the classes, and each class
-+                           fits (and with --strict-relationships, enforces)
-+                           them on its own rows. Dropping <col> can make a
-+                           group eligible that an ordinary fit skips (it
-+                           overlapped an earlier one only on <col>); it
-+                           still yields to earlier groups, and a `joint`
-+                           one writes real value-tuples, so a column an
-+                           ordinary fit fakes can then write real values.
-+                           `stats` and `frequency` run once more per
-+                           class, on a
-+                           temporary copy of <input> split by class.
-     --min-count <k>        Privacy threshold. A real value of an enumerated
-                            column, or a real `joint` value-tuple, that occurs
-                            fewer than <k> times in <input> is dropped from the
-@@ -345,7 +384,9 @@ use serde::Deserialize;
+     /// `suppressed_out` receives the (distinct values, rows) that `min_count`
+     /// dropped, when the column's real values were sampled from (or would
+-    /// have been, before every value was dropped).
++    /// have been, before every value was dropped). `warn` = false keeps the
++    /// warning that every value was dropped off stderr.
++    #[allow(clippy::too_many_arguments)]
+     pub(crate) fn build_tracked(
+         stats: &StatsRecord,
+         freqs: &[&FrequencyRecord],
+@@ -234,6 +237,7 @@ impl ColumnGenerator {
+         consistent_fakes: bool,
+         min_count: u64,
+         suppressed_out: &mut Option<(usize, u64)>,
++        warn: bool,
+         rng: &mut StdRng,
+     ) -> ColumnGenerator {
+         let null_ratio = compute_null_ratio(stats.nullcount, total_rows);
+@@ -277,7 +281,7 @@ impl ColumnGenerator {
+         // 2. Fully-enumerated frequency pool — reproduces the real value set, weights, cardinality
+         //    and repetition structure, minus values seen fewer than `min_count` times.
+         if let Some(generator) =
+-            try_frequency_weighted(freqs, null_ratio, min_count, suppressed_out)
++            try_frequency_weighted(freqs, null_ratio, min_count, suppressed_out, warn)
+         {
+             return generator;
+         }
+@@ -506,6 +510,7 @@ fn try_frequency_weighted(
+     null_ratio: f64,
+     min_count: u64,
+     suppressed_out: &mut Option<(usize, u64)>,
++    warn: bool,
+ ) -> Option<ColumnGenerator> {
+     if freqs.is_empty() {
+         return None;
+@@ -547,7 +552,7 @@ fn try_frequency_weighted(
+         );
+     }
+     if values.is_empty() {
+-        if suppressed > 0 {
++        if suppressed > 0 && warn {
+             wwarn!(
+                 "synthesize: every value of column '{}' occurs fewer than --min-count \
+                  ({min_count}) times; it will be generated from its faker or type-based generator \
+@@ -1120,6 +1125,26 @@ pub(crate) fn parse_epoch(s: &str, is_datetime: bool) -> Option<i64> {
+     })
+ }
  
- use crate::{
-     CliError, CliResult,
--    cmd::describegpt::dictionary::{StatsRecord, parse_frequency_csv, parse_stats_csv},
-+    cmd::describegpt::dictionary::{
-+        FrequencyRecord, StatsRecord, parse_frequency_csv, parse_stats_csv,
-+    },
-     config::{Config, Delimiter},
-     util,
++/// Parse a source cell as `parse_epoch` does, falling back to the date parser
++/// `stats` types the column with (`04/18/2019 09:55:45 PM`,
++/// `2022-01-21 13:47:00`), so every cell `stats` counted as a date reads.
++pub(crate) fn parse_source_epoch(s: &str, is_datetime: bool, prefer_dmy: bool) -> Option<i64> {
++    parse_epoch(s, is_datetime).or_else(|| {
++        let trimmed = s.trim();
++        if trimmed.is_empty() {
++            return None;
++        }
++        let seconds = qsv_dateparser::parse_with_preference(trimmed, prefer_dmy)
++            .ok()?
++            .timestamp();
++        Some(if is_datetime {
++            seconds
++        } else {
++            seconds.div_euclid(86_400)
++        })
++    })
++}
++
+ /// Sample a target character length for unstructured-string generation.
+ ///
+ /// When `stats.stddev > 0`, draws from `Normal(stats.avg, stats.stddev)` using
+@@ -1405,7 +1430,7 @@ mod tests {
+     fn frequency_weighted_only_emits_pool_values_at_the_right_ratio() {
+         let freqs = [freq("c", "A", 700, 1.0), freq("c", "B", 300, 2.0)];
+         let refs: Vec<&FrequencyRecord> = freqs.iter().collect();
+-        let generator = try_frequency_weighted(&refs, 0.0, 1, &mut None).unwrap();
++        let generator = try_frequency_weighted(&refs, 0.0, 1, &mut None, true).unwrap();
+ 
+         let mut rng = StdRng::seed_from_u64(7); // DevSkim: ignore DS148264
+         let n = 20_000;
+@@ -1426,7 +1451,7 @@ mod tests {
+     fn frequency_weighted_rejects_other_bucket() {
+         let freqs = [freq("c", "A", 700, 1.0), freq("c", "Other (5)", 300, 0.0)];
+         let refs: Vec<&FrequencyRecord> = freqs.iter().collect();
+-        assert!(try_frequency_weighted(&refs, 0.0, 1, &mut None).is_none());
++        assert!(try_frequency_weighted(&refs, 0.0, 1, &mut None, true).is_none());
+     }
+ 
+     #[test]
+@@ -1437,7 +1462,7 @@ mod tests {
+             freq("c", "RARE", 4, 3.0),
+         ];
+         let refs: Vec<&FrequencyRecord> = freqs.iter().collect();
+-        let generator = try_frequency_weighted(&refs, 0.0, 5, &mut None).unwrap();
++        let generator = try_frequency_weighted(&refs, 0.0, 5, &mut None, true).unwrap();
+ 
+         let mut rng = StdRng::seed_from_u64(11); // DevSkim: ignore DS148264
+         let n = 20_000;
+@@ -1459,9 +1484,9 @@ mod tests {
+     fn frequency_weighted_returns_none_when_all_values_below_min_count() {
+         let freqs = [freq("c", "A", 4, 1.0), freq("c", "B", 1, 2.0)];
+         let refs: Vec<&FrequencyRecord> = freqs.iter().collect();
+-        assert!(try_frequency_weighted(&refs, 0.0, 5, &mut None).is_none());
++        assert!(try_frequency_weighted(&refs, 0.0, 5, &mut None, true).is_none());
+         // The threshold is inclusive: count == min_count is kept.
+-        assert!(try_frequency_weighted(&refs, 0.0, 4, &mut None).is_some());
+
+```
+
+**File**: `src/cmd/synthesize/mod.rs` (modified, +207/-32)
+```diff
+@@ -53,7 +53,8 @@ generated *jointly* so inter-column structure survives into each output row:
+                  column's own distribution unchanged.
+ 
+ Relationships are read from the dictionary's `relationships` array — inferred
+-by `describegpt` or hand-authored. Columns not named by any relationship are
++by `describegpt`, hand-authored, or found in <input> with the option
++called --discover-relationships. Columns not named by any relationship are
+ still generated independently. Pass --no-relationships to disable relationship
+ modeling entirely.
+ 
+@@ -351,6 +352,36 @@ synthesize options:
+     --no-relationships     Disable inter-column relationship modeling. Every
+                            column is generated independently even when the
+                            dictionary declares a `relationships` array.
++    --discover-relationships <file>  Find relationships in <input>, use them
++                           in this run, and write them to <file> for review.
++                           <file> holds the dictionary (from --dictionary, or
++                           from --infer-content-type) with the found groups
++                           appended to its `relationships`, each with a score;
++                           without a dictionary, it holds only those groups.
++                           Rerunning with <file> as the dictionary gives the
++                           same output. Declared relationships keep their
++                           columns, which discovery leaves out. A pair scores
++                           0.7 or more by bias-corrected Cramer's V for
++                           `joint` (columns with 2 to 50 enumerated values; a
++                           group must keep 80% of rows in tuples seen at least
++                           the --min-count times), or by |Spearman| for
++                           `correlated` (numeric) and `ordered` (dates with the
++                           same dictionary date format, or none, where the
++                           later comes first in at most 1% of the sampled rows
++                           holding both, their ranges overlap, and they are
++                           blank in the same rows but for at most 5% of
++                           rows). Groups don't share columns and hold
++                           up to 8 each. Columns with a faker content type,
++                           and free-text, constant and all-unique integer
++                           columns are never proposed, nor is the target.
++                           Scores read up to 100,000 rows (at a fixed stride
++                           beyond) and up to 64 columns of each family. With
++                           the --shard option, every slice finds the same
++                           groups and writes the same <file>. Not allowed
++                           with --no-relationships, nor with
++                           the --strict-relationships option, which would
++                           abort on a found group the source only nearly
++                           satisfies.
+     --joint-cardinality-cap <n>  Maximum number of distinct value-tuples a
+                            `joint` relationship may have. A joint group above
+                            this cap falls back to independent generation (or
+@@ -392,6 +423,7 @@ use crate::{
  };
-@@ -359,9 +400,13 @@ mod output;
- mod range_trim;
- mod relationships;
- mod report;
-+mod target;
  
-+use dictionary::SynthRelationship;
- use faker_map::Locale;
-+use generator::ColumnGenerator;
- use relationships::{EmitUnit, ScheduleParams, build_emit_schedule};
-+use report::Suppression;
+ mod dictionary;
++mod discover;
+ mod faker_map;
+ mod generator;
+ mod group_generator;
+@@ -410,31 +442,32 @@ use report::Suppression;
  
  #[derive(Deserialize)]
  struct Args {
-@@ -378,6 +423,7 @@ struct Args {
-     flag_locale:                String,
-     flag_freq_limit:            usize,
-     flag_quantiles:             Option<usize>,
-+    flag_target:                Option<String>,
-     flag_stats_options:         Option<String>,
-     flag_consistent_fakes:      bool,
-     flag_no_relationships:      bool,
-@@ -479,6 +525,7 @@ pub fn run(argv: &[&str]) -> 
+-    arg_input:                  Option<String>,
+-    flag_model:                 Option<String>,
+-    flag_save_model:            Option<String>,
+-    flag_dictionary:            Option<String>,
+-    flag_infer_content_type:    bool,
+-    flag_rows:                  u64,
+-    flag_seed:                  Option<u64>,
+-    flag_shard:                 Option<String>,
+-    flag_rows_per_file:         Option<u64>,
+-    flag_format:                String,
+-    flag_locale:                String,
+-    flag_freq_limit:            usize,
+-    flag_quantiles:             Option<usize>,
+-    flag_target:                Option<String>,
+-    flag_stats_options:         Option<String>,
+-    flag_consistent_fakes:      bool,
+-    flag_no_relationships:      bool,
+-    flag_joint_cardinality_cap: u64,
+-    flag_min_count:             u64,
+-    flag_report:                Option<String>,
+-    flag_correlation_threshold: f64,
+-    flag_strict_relationships:  bool,
+-    flag_jobs:                  Option<usize>,
+-    flag_output:                Option<String>,
+-    flag_delimiter:             Option<Delimiter>,
++    arg_input:                   Option<String>,
++    flag_model:                  Option<String>,
++    flag_save_model:             Option<String>,
++    flag_dictionary:             Option<String>,
++    flag_infer_content_type:     bool,
++    flag_rows:                   u64,
++    flag_seed:                   Option<u64>,
++    flag_shard:                  Option<Str
 ```
 
-**File**: `src/cmd/synthesize/model.rs` (modified, +62/-23)
+**File**: `src/cmd/synthesize/relationships.rs` (modified, +11/-5)
 ```diff
-@@ -9,11 +9,11 @@ use serde::{Deserialize, Serialize};
- 
- use super::{
-     generator::ColumnGenerator, group_generator::GroupGenerator, output::OutType,
--    relationships::EmitUnit,
-+    relationships::EmitUnit, target::Target,
- };
- use crate::{CliError, CliResult, cmd::describegpt::dictionary::is_valid_strftime};
- 
--const FORMAT_VERSION: u32 = 3;
-+const FORMAT_VERSION: u32 = 4;
- 
- #[derive(Serialize, Deserialize)]
- pub(crate) struct Model {
-@@ -26,6 +26,9 @@ pub(crate) struct Model {
-     /// The source's day-first preference, for reading sampled real dates.
-     pub(crate) prefer_dmy: bool,
-     pub(crate) schedule:   Vec<EmitUnit>,
-+    /// With `--target`: one schedule per class, which rows use instead of
-+    /// `schedule` (still the whole-input fit, for types and `--report`).
-+    pub(crate) target:     Option<Target>,
+@@ -27,7 +27,7 @@ use super::{
+     faker_map::{self, Locale},
+     generator::{
+         ColumnGenerator, compute_null_ratio, date_buckets, effective_quantiles, float_decimals,
+-        floor_to, numeric_buckets, parse_epoch, parse_f64,
++        floor_to, numeric_buckets, parse_f64, parse_source_epoch,
+     },
+     group_generator::{GroupGenerator, OrderedKind, member_grid},
+     report::Suppression,
+@@ -81,8 +81,13 @@ pub(crate) struct ScheduleParams<'a> {
+     pub strict:                bool,
+     pub input_path:            &'a str,
+     pub delimiter:             Option<Delimiter>,
++    /// Day-first reading of ambiguous source dates, as `stats` read them.
++    pub prefer_dmy:            bool,
+     /// What `min_count` dropped, per column or joint group, for `--report`.
+     pub suppressions:          &'a RefCell<Vec<Suppression>>,
++    /// Keep per-column warnings off stderr (the discovery probe, whose
++    /// columns the real build warns about).
++    pub quiet:                 bool,
  }
  
- /// How the model was fitted. Informational only: generation never reads it.
-@@ -43,6 +46,7 @@ impl Model {
-         types: Vec<OutType>,
-         prefer_dmy: bool,
-         schedule: Vec<EmitUnit>,
-+        target: Option<Target>,
-         fit: FitInfo,
-     ) -> Self {
-         Self {
-@@ -53,6 +57,7 @@ impl Model {
-             types,
-             prefer_dmy,
-             schedule,
-+            target,
-         }
-     }
- 
-@@ -109,31 +114,65 @@ impl Model {
-         for ty in &self.types {
-             check_date_format(ty.date_format())?;
-         }
--        let mut filled = vec![false; ncols];
--        for unit in &self.schedule {
--            let cols: &[usize] = match unit {
--                EmitUnit::Independent { col_idx, generator } => {
--                    check_column(generator)?;
--                    std::slice::from_ref(col_idx)
--                },
--                EmitUnit::Group(group) => {
--                    check_group(group)?;
--                    group.col_indices()
--                },
--            };
--            for &col in cols {
--                match filled.get_mut(col) {
--                    Some(seen) if !*seen => *seen = true,
--                    Some(_) => return Err(format!("column {col} is generated twice.")),
--                    None => return Err(format!("column {col} is out of range.")),
--                }
-+        check_schedule(&self.schedule, ncols, None)?;
-+        let Some(target) = &self.target else {
-+            return Ok(());
-+        };
-+        if target.col_idx >= ncols {
-+            return Err(format!(
-+                "its target column {} is out of range.",
-+                target.col_idx
-+            ));
-+        }
-+        if target.classes.is_empty() || target.classes.iter().all(|c| c.rows == 0) {
-+            return bad("a target with no classes");
-+        }
-+        for class in &target.classes {
-+            if class
-+                .bucket
-+                .is_some_and(|(lo, hi)| lo.partial_cmp(&hi).is_none_or(std::cmp::Ordering::is_gt))
-+            {
-+                return bad("a target class whose low end is above its high end");
-+            }
-+            if class.grid.is_some_and(|(a, b)| a > b) {
-+                return bad("a target class with an empty value range");
-             }
-+            check_schedule(&class.schedule, ncols, Some(target.col_idx))?;
-         }
--        match filled.iter().position(|seen| !seen) {
--            Some(col) => Err(format!("column {col} is never generated.")),
--            None => Ok(()),
-+        Ok(())
-+    }
-+}
-+
-+/// Checks that `schedule` fills every column (except `skip`, the target)
-+/// exactly once, and that nothing it holds can panic when sampled.
-+fn check_schedule(schedule: &[EmitUnit], ncols: usize, skip: Option<usize>) -> Result<(), String> {
-+    let mut filled = vec![false; ncols];
-+    if let Some(skip) = skip {
-+        filled[skip] = true;
-+    }
-+    for unit in schedule {
-+        let cols: &[usize] = match unit {
-+            EmitUnit::Independent { col_idx, generator } => {
-+                check_column(generator)?;
-+                std::slice::from_ref(col_idx)
-+            },
-+            EmitUnit::Group(group) => {
-+                check_group(group)?;
-+                group.col_indices()
-+            },
-+        };
-+        for &col in cols {
-+            match filled.get_mut(col) {
-+                Some(seen) if !*seen => *seen = true,
-+                Some(_) => return Err(format!("column {col} is generated twice.")),
-+                None => return Err(format!("column {col} is out of range.")),
-+            }
-         }
-     }
-+    match filled.iter().position(|seen| !seen) {
-+        Some(col) => Err(format!("column {col} is never generated.")),
-+        None => Ok(()),
-+    }
+ /// Resolve the declared relationships and build the ordered `EmitUnit`
+@@ -149,6 +154,7 @@ pub(crate) fn build_emit_schedule(
+             params.consistent_fakes,
+             params.min_count,
+             &mut suppressed,
++            !params.quiet,
+             rng,
+         );
+         if let Some((distinct, rows)) = suppressed {
+@@ -353,7 +359,7 @@ enum JointLearn {
+     AllSuppressed(usize, u64),
  }
  
- fn bad(what: &str) -> Result<(), String> {
+-fn source_cell<'r>(
++pub(super) fn source_cell<'r>(
+     record: &'r csv::ByteRecord,
+     params: &ScheduleParams,
+     col: usize,
+@@ -730,7 +736,7 @@ fn learn_ordered_gaps(
+             let cell = source_cell(&record, params, col);
+             *slot = if is_date {
+                 #[allow(clippy::cast_precision_loss)]
+-                parse_epoch(&cell, is_datetime).map(|e| e as f64)
++                parse_source_epoch(&cell, is_datetime, params.prefer_dmy).map(|e| e as f64)
+             } else {
+                 parse_f64(&cell)
+             };
+@@ -953,7 +959,7 @@ fn learn_correlated_columns(
+ /// The Spearman rank-correlation matrix of the given columns. Spearman (rather
+ /// than Pearson) is used because the copula operates on ranks, and rank
+ /// correlation survives the marginal transform.
+-fn spearman_matrix(columns: &[Vec<f64>]) -> Vec<Vec<f64>> {
++pub(super) fn spearman_matrix(columns: &[Vec<f64>]) -> Vec<Vec<f64>> {
+     let k = columns.len();
+     let ranks: Vec<Vec<f64>> = columns.iter().map(|c| fractional_ranks(c)).collect();
+     let mut matrix = vec![vec![0.0_f64; k]; k];
+@@ -995,7 +1001,7 @@ fn fractional_ranks(values: &[f64]) -> Vec<f64> {
+ 
+ /// Pearson correlation of two equal-length vectors. A zero-variance input
+ /// yields `0.0` (an undefined correlation is treated as "uncorrelated").
+-fn pearson(a: &[f64], b: &[f64]) -> f64 {
++pub(super) fn pearson(a: &[f64], b: &[f64]) -> f64 {
+     #[allow(clippy::cast_precision_loss)]
+     let n = a.len() as f64;
+     let mean_a = a.iter().sum::<f64>() / n;
 ```
 
-**File**: `src/cmd/synthesize/output.rs` (modified, +17/-2)
+---
+
+### Incident Patch 2: `0bf0743f` (2026-11-21)
+**Commit Message**: chore(mcp): v29.0.1 patch release of MCP Server and Claude Cowork plugin
+
+[skip ci]
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.claude-plugin/marketplace.json` (modified, +2/-2)
 ```diff
-@@ -131,7 +131,22 @@ pub(crate) fn resolve_types(
-     types
- }
+@@ -6,14 +6,14 @@
+   },
+   "metadata": {
+     "description": "Blazingly fast data wrangling plugins for Claude Code — 57 skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
+-    "version": "29.0.0"
++    "version": "29.0.1"
+   },
+   "plugins": [
+     {
+       "name": "qsv-data-wrangling",
+       "source": "./.claude/skills",
+       "description": "Blazingly fast tabular data wrangling with 57 qsv skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
+-      "version": "29.0.0",
++      "version": "29.0.1",
+       "author": {
+         "name": "datHere, Inc.",
+         "email": "qsv@dathere.com",
+```
+
+**File**: `.claude/skills/.claude-plugin/plugin.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "qsv-data-wrangling",
+-  "version": "29.0.0",
++  "version": "29.0.1",
+   "description": "Blazingly fast tabular data wrangling with 57 qsv skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
+   "author": {
+     "name": "datHere, Inc.",
+```
+
+**File**: `.claude/skills/CHANGELOG.md` (modified, +16/-11)
+```diff
+@@ -7,19 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
--const fn number_type(is_int: bool) -> OutType {
-+/// Whether values a generator types `values` keep their written form in a
-+/// column typed `column`: the same type, or Integer values in a Float column.
-+pub(crate) fn holds_exactly(column: &OutType, values: &OutType) -> bool {
-+    column == values || (*column == OutType::Float && *values == OutType::Integer)
-+}
-+
-+/// Whether a column typed `column` can hold values a generator types
-+/// `values`: the same type, Integer values in a Float column, or anything in a
-+/// String column.
-+pub(crate) fn holds(column: &OutType, values: &OutType) -> bool {
-+    column == values
-+        || *column == OutType::String
-+        || (*column == OutType::Float && *values == OutType::Integer)
-+}
-+
-+pub(crate) const fn number_type(is_int: bool) -> OutType {
-     if is_int {
-         OutType::Integer
-     } else {
-@@ -172,7 +187,7 @@ fn date_type(is_datetime: bool, date_format: Option<&String>) -> OutType {
- /// so a zero-padded code stays text; a float must keep its decimal value
- /// through f64; a date must be a whole day and a datetime must fit in
- /// microseconds, as Parquet stores them.
--fn pooled_type<'a>(
-+pub(crate) fn pooled_type<'a>(
-     stats_type: &str,
-     mut values: impl Iterator<Item = &'a str>,
-     prefer_dmy: bool,
+ ## [Unreleased]
+ 
+-### Security
+-- **DuckDB runs sandboxed in plugin mode (#5082).** With SQL file writes off (plugin mode: Cowork, Claude Code plugin), `qsv_sqlp`'s DuckDB route now has DuckDB confine itself to the MCP allowed directories plus the input file. Parquet output (`format=parquet`) is written by `sqlp` in this mode, so DuckDB writes no query results (it still writes the server's own Parquet cache of the input file): the server's `COPY (<sql>) TO '<output>'` wrapper could otherwise be closed early by the SQL to redirect the write to another allowed file. It sets `allowed_directories` / `allowed_paths`, turns off `enable_external_access` and locks the configuration, so no SQL can lift it. `ATTACH 'new.db'` (which creates the file), `EXPORT DATABASE`, `COPY ... TO` and `INSTALL` can no longer reach files outside those directories, whatever the SQL text looks like. `ATTACH` is also added to the keyword check that sends such SQL to Polars `sqlp`. Needs DuckDB 1.2.0+; with an older DuckDB, plugin-mode SQL runs on `sqlp`. The sandbox covers DuckDB only: SQL that names files itself can still read them on the `sqlp` route. ([#5083](https://github.com/dathere/qsv/pull/5083))
+-- **Stricter path handling.** Every path-taking option and positional argument (including short flags, comma-separated path lists, and directory arguments such as `outdir`) is now resolved against the allowed directories, and a call is rejected when one is refused. A raw `--output`/`-o` option is handled like `output_file`. Options that name part of an output filename (`--filename`, `--valid`, `--invalid`, `--outfilename`, `--table`) can't contain a path separator or `..`. `qsv_sqlp` parquet/arrow/avro output now needs `output_file`, and `SKIP_INPUT` is passed to `sqlp` as is (it was resolved as a file path, which broke such queries off the DuckDB route). A test now fails if a skill gains a path-like option that isn't classified. ([#5083](https://github.com/dathere/qsv/pull/5083))
+-- **Hardened the DuckDB CLI invocation**: the script passed to `duckdb -c` now always starts with a server statement, and SQL starting with `.` is left to `sqlp`. On macOS and Linux, paths keep their backslashes when written into DuckDB SQL. A backslash is an ordinary filename character there, and turning it into `/` could make DuckDB open a different file than the one the server approved; only Windows separators are converted now. ([#5083](https://github.com/dathere/qsv/pull/5083))
+-
+-### Fixed
+-- **`qsv_sqlp` runs `.sql` script files when DuckDB is installed.** A `sql` value with a `.sql` extension went to DuckDB, which parsed the path as SQL and failed; such scripts now run on Polars `sqlp`, which reads the file. ([#5087](https://github.com/dathere/qsv/pull/5087))
+-- **Output directories with several missing levels**: a `~/`-relative `outdir`, and a `to parquet` destination directory, may now have more than one missing level, as qsv creates them all. The nearest existing ancestor is still checked against the allowed directories. ([#5087](https://github.com/dathere/qsv/pull/5087))
+-- **`extsort` / `extdedup` can't empty a file through `output_file`.** Since `output_file` is now passed to their positional output (#5083), an `output_file` naming the input file would have emptied the input before it was read: the call is now refused. With `extdedup --no-output`, `output_file` is no longer passed on, since opening it emptied it even though nothing is written there. ([#5086](https://github.com/dathere/qsv/pull/5086))
+-
+ ### Added
+ - **`qsv-synthesize --target <col>`**: conditional generation. Each row draws a class of `<col>` (at most 50 distinct values, or a numeric column's quantile buckets) in proportion to its source rows, after dropping classes seen in fewer than `--min-count` rows, then fills the other columns from that class's own profile; `stats` and `frequency` run once more per class. Skill regenerated from the USAGE text. ([#5084](https://github.com/dathere/qsv/pull/5084))
+-- **SQL file writes are off in plugin mode (Cowork, Claude Code plugin).** Polars SQL now has `COPY (<query>) TO '<file>'`, where the query rather than `output_file` picks the target. In plugin mode the server sets `QSV_SQL_DISABLE_FILE_WRITES=1` for qsv, and `qsv_sqlp` never sends SQL that may contain `COPY ... TO` or `EXPORT DATABASE` to DuckDB: it runs on Polars `sqlp`, which refuses a real `COPY ... TO`. A `.env` file can't lift the switch, for qsv or the qsv subprocesses it spawns. Other MCP clients and the Desktop extension keep them. New `QSV_MCP_SQL_FILE_WRITES` overrides the default either way. `qsv-sqlp` skill regenerated from the USAGE text. ([#5081](https://github.com/dathere/qsv/pull/5081))
+ - **`qsv-synthesize --quantiles <n>`**: 2, 4, 5, 10, 20, 25, 50 or 100 equal-share buckets for numeric/date columns and `ordered` gaps (default 4, the quartiles, unchanged output
+```
+
+**File**: `.claude/skills/README-MCP.md` (modified, +3/-3)
+```diff
+@@ -60,7 +60,7 @@ Excel and JSONL files are automatically converted to CSV before processing - no
+ 
+ The **MCP Desktop Extension** (MCPB) provides the easiest installation experience:
+ 
+-1. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-29.0.0.mcpb`) from [releases](https://github.com/dathere/qsv/releases/latest)
++1. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-29.0.1.mcpb`) from [releases](https://github.com/dathere/qsv/releases/latest)
+ 2. Open Claude Desktop Settings → Extensions
+ 3. Click "Install from file" and select the `.mcpb` file
+ 4. Configure your allowed directories when prompted
+@@ -622,8 +622,8 @@ For issues or questions:
+ 
+ ---
+ 
+-**Updated**: 2026-11-15
+-**Version**: 29.0.0
++**Updated**: 2026-11-21
++**Version**: 29.0.1
+ **Tools**: 23 tools at startup (10 core + 13 commonly-used; +1 app-only when MCP Apps enabled), all 57 discoverable via `qsv_search_tools`
+ **Skills**: 57 qsv commands
+ **Status**: Production Ready
+```
+
+**File**: `.claude/skills/README.md` (modified, +3/-3)
+```diff
+@@ -49,7 +49,7 @@ Each skill file provides:
+ 
+ **Installation**:
+ 1. Install qsv: `brew install qsv` (macOS) or see [qsv installation](https://github.com/dathere/qsv#installation)
+-2. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-29.0.0.mcpb`) from releases
++2. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-29.0.1.mcpb`) from releases
+ 3. Double-click the `.mcpb` file (opens with Claude Desktop)
+ 4. **That's it!** qsv binary path is auto-detected, no manual configuration needed
+ 5. Restart Claude Desktop
+@@ -467,8 +467,8 @@ MIT
+ 
+ ---
+ 
+-**Updated**: 2026-11-15
+-**Version**: 29.0.0
++**Updated**: 2026-11-21
++**Version**: 29.0.1
+ **Generator**: `qsv --update-mcp-skills`
+ **Skills**: 57 commands
+ **Usage Examples**: 263 from documentation
+```
+
+**File**: `.claude/skills/docs/desktop/README-MCPB.md` (modified, +2/-2)
+```diff
+@@ -576,7 +576,7 @@ Same license as qsv: MIT OR Apache-2.0
+ 
+ ---
+ 
+-**Updated**: 2026-11-15
+-**Version**: 29.0.0
++**Updated**: 2026-11-21
++**Version**: 29.0.1
+ **Format**: MCP Bundle (MCPB) v0.3
+ **Compatibility**: Claude Desktop 1.0+
+```
+
+**File**: `.claude/skills/manifest.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "manifest_version": "0.3",
+   "name": "qsv",
+-  "version": "29.0.0",
++  "version": "29.0.1",
+   "description": "Blazingly fast Data Wrangling Toolkit for Tabular Data",
+   "long_description": "Comprehensive data-wrangling toolkit for transforming, analyzing, querying & validating tabular data. Process local CSV, TSV, SSV, Excel/ODS, Parquet and JSONL files w/o uploading. Despite the warning, only accesses APPROVED DIRECTORIES on your computer.",
+   "author": {
+```
+
+**File**: `.claude/skills/package-lock.json` (modified, +2/-2)
+```diff
+@@ -1,12 +1,12 @@
+ {
+   "name": "@qsv/agent-skills",
+-  "version": "29.0.0",
++  "version": "29.0.1",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "@qsv/agent-skills",
+-      "version": "29.0.0",
++      "version": "29.0.1",
+       "license": "MIT",
+       "dependencies": {
+         "@modelcontextprotocol/ext-apps": "^1.7.2",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5087** (2026-11-21): fix(mcp): run .sql scripts on sqlp; allow nested ~/ and to parquet dirs (@jqnatividad)
+- **PR #5086** (2026-11-21): fix(mcp): don't let extsort/extdedup empty a file through output_file (@jqnatividad)
+- **PR #5085** (2026-11-21): feat(synthesize): --discover-relationships <file> finds joint, correlated and ordered groups (@jqnatividad)
 - **PR #5084** (2026-11-21): feat(synthesize): --target <col> for conditional generation; read non-UTF8 input (@jqnatividad)
+- **PR #5083** (2026-11-21): fix(mcp): sandbox DuckDB in plugin mode; harden the duckdb CLI invocation (@jqnatividad)
 - **PR #5081** (2026-11-20): deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes (@jqnatividad)
-- **PR #5080** (2026-11-20): feat(synthesize): Float columns keep their source decimal places (@jqnatividad)
-- **PR #5078** (2026-11-20): feat(synthesize): --quantiles <n> for finer numeric/date marginals (@jqnatividad)
-- **PR #5077** (2026-11-20): feat(synthesize): --rows-per-file <n> splits the output into files (@jqnatividad)
-- **PR #5075** (2026-11-19): feat(synthesize): --format csv|jsonl|parquet with typed columns (@jqnatividad)
 
 ---
 
@@ -2612,13 +3042,13 @@ Without --target, output is byte-
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. synthesize): --target <col> for conditional generation; read non-UTF8 input
+## X. synthesize): --discover-relationships <file> finds joint, correlated and ordered
 
 **RULE**:
 When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ea8e9cca`: synthesize): --target <col> for conditional generation; read non-UTF8 input. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ef2aebe1`: synthesize): --discover-relationships <file> finds joint, correlated and ordered groups. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
@@ -2626,7 +3056,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`qsv-synthesize --target <col>`**: conditional generation. Each row draws a class of `<col>` (at most 50 distinct values, or a numeric column's quantile buckets) in proportion to its source rows, after dropping classes seen in fewer than `--min-count` rows, then fills the other columns from that class's own profile; `stats` and `frequency` run once more per class. Skill regenerated from the USAGE text. ([#5084](https://github.com/dathere/qsv/pull/5084))
+- **`qsv-synthesize`: `--discover-relationships` is CLI-only for now.** The new `synthesize --discover-relationships <file>` option (finds `joint`, `correlated` and `ordered` groups and writes them to a dictionary file) is left out of the skill: the MCP server doesn't check that file's path against its allowed directories, so it could be written outside them. ([#5085](https://github.com/dathere/qsv/pull/5085))
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2636,7 +3066,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ea8e9cca` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ef2aebe1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

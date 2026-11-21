@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T15:59:50.047Z",
+  "last_updated": "2026-11-21T16:18:59.650Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "43a1a0a685f7e79e7f0dc7c6700508a78d413f0acd2fa75a328194b899241bf4",
-      "verified_at": "2026-11-21T15:17:53.165Z",
+      "content_hash": "71e39d67cd2f34e648a5bb53454acd73ed49356f367c87f2bec50f265252a304",
+      "verified_at": "2026-11-21T16:18:59.650Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T15:17:53.165Z"
+      "last_updated": "2026-11-21T16:18:59.650Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -5001,14 +5001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-flox-flox",
-      "content_hash": "5c3ce4eaeb86f56bb74b59a26fcfaf0732b0094532db2857e241b170c5bb848a",
-      "verified_at": "2026-11-18T14:15:47.667Z",
+      "content_hash": "c94233deb0f9b99515fb06ee03343fc2f1c227abf5b02b0879ac483fc1669bad",
+      "verified_at": "2026-11-21T16:18:44.999Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T14:15:47.667Z"
+      "last_updated": "2026-11-21T16:18:44.999Z"
     },
     "wix/react-native-navigation": {
       "repository": "wix/react-native-navigation",
@@ -15966,14 +15966,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ornith-ai-ornith-1-5-122b",
-      "content_hash": "7648d25b645b564638e09fd3e405953c56efd904d74e3a1c17a01bd7f6e2643e",
-      "verified_at": "2026-11-17T18:05:26.244Z",
+      "content_hash": "1bd0261b92b7ac1a55d6106390160064576f90a03b4b7545dc61b8dc0f5082e0",
+      "verified_at": "2026-11-21T16:18:41.763Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T18:05:26.244Z"
+      "last_updated": "2026-11-21T16:18:41.763Z"
     },
     "lokoe-mehdi/scouter": {
       "repository": "lokoe-mehdi/scouter",

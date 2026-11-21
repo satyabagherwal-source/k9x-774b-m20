@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T15:59:56.464Z",
+  "last_updated": "2026-11-21T16:19:05.611Z",
   "total_records": 2258,
   "domains": {
     "A": {
@@ -12315,8 +12315,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "a706fb470d528bcc50d2561e514f488a9f71983b68a243660d969c3cddd0ed2d",
-      "created_at": "2026-11-21T15:17:53.634Z"
+      "content_hash": "dea080294db783c60bd5be6a7fdc7ae3330198455706e5dfdb2d6599ce4d4ef2",
+      "created_at": "2026-11-21T16:19:00.047Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -12384,8 +12384,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "6907aef041c574c863cefb18f9efd32d9d3041cd3aab1f819924b608af5a44c1",
-      "created_at": "2026-11-21T04:39:22.597Z"
+      "content_hash": "d9f6b3baeb98dedf97cf7f65bbaf416648c2f3a1e4ef87bf153cf95b260199db",
+      "created_at": "2026-11-21T16:19:05.611Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -19526,8 +19526,8 @@
       "title": "Architecture Intelligence: flox/flox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-architecture-intelligence-flox-flox-core-invariants.md",
       "repository": "flox/flox",
-      "content_hash": "a8bb3c593278b0ccfe58f311d0dd535819d71b936e918afa7d2b6019817d8129",
-      "created_at": "2026-11-18T14:15:48.004Z"
+      "content_hash": "4ee00613b4b340056a2a0955a056836e8d9cff5319a4d01c870e91d665931d7a",
+      "created_at": "2026-11-21T16:18:45.433Z"
     },
     "domain_intelligence-architecture-intelligence-flox-flox-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-flox-flox-learnings-core-invariants",
@@ -19535,8 +19535,8 @@
       "title": "Architecture Intelligence: flox-flox-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-learnings-architecture-intelligence-flox-flox-learnings-core-invariant.md",
       "repository": "flox-flox-learnings",
-      "content_hash": "38c5133877ce500fa045a489fb370d0c5255dc901f232a8c66f9d12692ed7a5a",
-      "created_at": "2026-11-18T14:16:02.617Z"
+      "content_hash": "97516840f4171a896469f3052db301f8ba74aec0c84e55ca84268063074cd9c3",
+      "created_at": "2026-11-21T16:19:03.805Z"
     },
     "DOM-D-8240E8AC": {
       "record_id": "DOM-D-8240E8AC",
@@ -28550,8 +28550,8 @@
       "title": "Research & Knowledge Intelligence: ornith-ai/Ornith-1.5-122B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ornith-ai-ornith-1-5-122b-research-knowledge-intelligence-ornith-ai-ornith-1-.md",
       "repository": "ornith-ai/Ornith-1.5-122B",
-      "content_hash": "be4d59844d32977e81f1210656c1f401af83a5fb6f058868031af3abba8f69bf",
-      "created_at": "2026-11-17T18:05:26.418Z"
+      "content_hash": "7defe27ec55099cf22890a17ae1b8901078f5f016e363d9fa09a240a1c5089dc",
+      "created_at": "2026-11-21T16:18:41.975Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ornith-ai-ornith-1-5-122b-learnings-core-inva": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ornith-ai-ornith-1-5-122b-learnings-core-inva",
@@ -28559,8 +28559,8 @@
       "title": "Research & Knowledge Intelligence: hf-ornith-ai-ornith-1.5-122b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ornith-ai-ornith-1-5-122b-learnings-research-knowledge-intelligence-hf-ornith.md",
       "repository": "hf-ornith-ai-ornith-1.5-122b-learnings",
-      "content_hash": "6d743de7bf257ef396001817ff25b7490674d975a38a2cfddc9daaaae41ef1d1",
-      "created_at": "2026-11-17T18:05:44.335Z"
+      "content_hash": "55c501e4bf8a3b6b324daa1f43ea73ff3202a6ffc3efc64af22fff56f2edc440",
+      "created_at": "2026-11-21T16:19:04.341Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-deepseek-v4-1-flash-1017-abliterated-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-deepseek-v4-1-flash-1017-abliterated-",
