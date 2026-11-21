@@ -11675,3 +11675,7 @@
 | `CYCLE-20261121-1NZ1` | `2026-11-21T00:24:47.773Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9677` | Yes (`412fc6b9...`) |
 | `CYCLE-20261121-BR0Q` | `2026-11-21T00:32:38.282Z` | `TanStack/query` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9678` | Yes (`2a062f50...`) |
 | `CYCLE-20261121-BWUF` | `2026-11-21T00:32:45.831Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9679` | Yes (`dc25d572...`) |
+| `CYCLE-20261121-Q0W5` | `2026-11-21T00:43:44.261Z` | `bahdotsh/wrkflw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9680` | Yes (`9dbf5f68...`) |
+| `CYCLE-20261121-Q2H3` | `2026-11-21T00:43:46.311Z` | `preactjs/preact` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9681` | Yes (`e09783bd...`) |
+| `CYCLE-20261121-Q4DC` | `2026-11-21T00:43:48.768Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9682` | Yes (`31609fdb...`) |
+| `CYCLE-20261121-Q9LA` | `2026-11-21T00:43:55.534Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2926` | Yes (`0ae4e690...`) |

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T00:32:45.839Z",
-  "total_cycles_completed": 11115,
-  "total_learnings_persisted": 11115,
-  "total_rules_promoted": 10470,
+  "last_updated": "2026-11-21T00:43:55.543Z",
+  "total_cycles_completed": 11119,
+  "total_learnings_persisted": 11119,
+  "total_rules_promoted": 10474,
   "history": [
-    {
-      "timestamp": "2026-11-20T03:01:47.936Z",
-      "repository": "searchsolved/search-solved-public-seo",
-      "learningId": "learn-github-searchsolved-search-solved-public-seo",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T03:13:07.877Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T03:32:26.364Z",
-      "repository": "Orange-OpenSource/hurl",
-      "learningId": "learn-github-orange-opensource-hurl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T03:32:37.474Z",
-      "repository": "slatedb/slatedb",
-      "learningId": "learn-github-slatedb-slatedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T03:48:47.716Z",
       "repository": "meshery/meshery",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-21T00:32:45.839Z",
       "repository": "projectdiscovery/nuclei",
       "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T00:43:44.270Z",
+      "repository": "bahdotsh/wrkflw",
+      "learningId": "learn-github-bahdotsh-wrkflw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T00:43:46.321Z",
+      "repository": "preactjs/preact",
+      "learningId": "learn-github-preactjs-preact",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T00:43:48.777Z",
+      "repository": "TypeWhisper/typewhisper-mac",
+      "learningId": "learn-github-typewhisper-typewhisper-mac",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T00:43:55.543Z",
+      "repository": "neuron-core/neuron-ai",
+      "learningId": "learn-github-neuron-core-neuron-ai",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T00:32:51.205Z",
+  "last_updated": "2026-11-21T00:44:01.964Z",
   "total_verified_learnings": 9054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22786,
+  "total_items": 22795,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -51290,15 +51290,15 @@
       "learning_id": "rule-2926",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 2926,
-      "title": "Update readme",
-      "source_url": "https://github.com/exyte/Chat",
-      "source_version": "f382a147",
+      "title": "update readme",
+      "source_url": "https://github.com/neuron-core/neuron-ai",
+      "source_version": "f6ba920a",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-09T02:34:42.172Z"
+      "verified_at": "2026-11-21T00:43:55.324Z"
     },
     "rule-2927": {
       "learning_id": "rule-2927",
@@ -222116,11 +222116,16 @@
       "slug": "neuron-core-neuron-ai",
       "platform": "github",
       "source_url": "https://github.com/neuron-core/neuron-ai",
-      "source_version": "c2b9a03e",
-      "content_hash": "21244158c13164db35db715833e1f093d8825e5e593936ae2dffddf56c2bd278",
+      "source_version": "f6ba920a",
+      "content_hash": "0ae4e690f4228f10a2f42a45edd00d2f2f5808b3b6fbc46429276cc7bdf15775",
       "dossier_path": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "promoted_rules": [
+        {
+          "number": 2926,
+          "title": "update readme",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8423,
           "title": "streaming channel",
@@ -222142,7 +222147,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T00:43:42.252Z",
+      "verified_at": "2026-11-21T00:43:55.324Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222184,10 +222189,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-neuron-core-neuron-ai-technical-construction-intelligence-neuron-core-neuron-ai-.md",
       "title": "Technical Construction Intelligence: neuron-core/neuron-ai Core Invariants",
       "repository": "neuron-core/neuron-ai",
-      "source_version": "c2b9a03e",
-      "content_hash": "7d1b1e2cc2b670b6b936e6499b59b8627b8e1a70d74a1c7a3e896d7fe7ee9c7c",
+      "source_version": "f6ba920a",
+      "content_hash": "ce590155115a2dff459e6e3a0a756dadba7870a84bc385971e0e1a2e2a492298",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T00:43:42.751Z"
+      "persisted_at": "2026-11-21T00:43:55.928Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-neuron-core-neuron-ai": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-neuron-core-neuron-ai",
@@ -222196,10 +222201,10 @@
       "relative_path": "08_VERIFICATION/neuron-core-neuron-ai-verification-protocol-empirical-defect-shield-for-neuron-c.md",
       "title": "Verification Protocol: Empirical Defect Shield for neuron-core/neuron-ai",
       "repository": "neuron-core/neuron-ai",
-      "source_version": "c2b9a03e",
-      "content_hash": "fe6cf2b41238e7d17ecef537786666dd7b4aaa1831e9be8ba43cb418d5c7a294",
+      "source_version": "f6ba920a",
+      "content_hash": "940c79e8ce8697847b42607ec8dddf84d2752bcae73b1cfbf80159a2d2d6e976",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T00:43:42.891Z"
+      "persisted_at": "2026-11-21T00:43:56.080Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-2-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-2-learnings-core-invariants",
@@ -229629,14 +229634,19 @@
       "slug": "bahdotsh-wrkflw",
       "platform": "github",
       "source_url": "https://github.com/bahdotsh/wrkflw",
-      "source_version": "b0fdd8df",
-      "content_hash": "cc34c8899f0465ef79642028d4fbea36006a45f9acc6af88b14f0cdd7dd1835e",
+      "source_version": "b11b73e7",
+      "content_hash": "9dbf5f68dc51b9745069dc4d43f1a30f9e5456a8fc01f7d88a4c2b03af0756d5",
       "dossier_path": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "promoted_rules": [
         {
           "number": 9382,
           "title": "close the gaps left after the compare sweep (#173 follow-up)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9680,
+          "title": "JavaScript actions, private uses, prebuilt runner image, stand-in r",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -229645,7 +229655,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T14:03:30.797Z",
+      "verified_at": "2026-11-21T00:43:44.033Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229685,10 +229695,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/bahdotsh-wrkflw-agent-contract-bahdotsh-wrkflw-autonomous-specialist-persona.md",
       "title": "Agent Contract: bahdotsh/wrkflw Autonomous Specialist Persona",
       "repository": "bahdotsh/wrkflw",
-      "source_version": "b0fdd8df",
-      "content_hash": "1c6aa75a950f477db9f0457bdf9b118e004a4e2f188ec7696ad8d8f842542cc4",
+      "source_version": "b11b73e7",
+      "content_hash": "327cc2f935a8c7afe40ac66a99482b170a53d0b0f8726447ef36f348fc623114",
       "domain_letter": "A",
-      "persisted_at": "2026-11-19T14:03:31.519Z"
+      "persisted_at": "2026-11-21T00:43:44.836Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-bahdotsh-wrkflw": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bahdotsh-wrkflw",
@@ -229697,10 +229707,10 @@
       "relative_path": "08_VERIFICATION/bahdotsh-wrkflw-verification-protocol-empirical-defect-shield-for-bahdotsh-wrkfl.md",
       "title": "Verification Protocol: Empirical Defect Shield for bahdotsh/wrkflw",
       "repository": "bahdotsh/wrkflw",
-      "source_version": "b0fdd8df",
-      "content_hash": "787e013e98bb710f751b42038a0fad9fe53ec95fe60dde1b0f3ed42f649e2d68",
+      "source_version": "b11b73e7",
+      "content_hash": "3bf1de2a4ab0eb3ed1b7c8c207c607570661d596d7b087e3462459a54e64c666",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T14:03:31.651Z"
+      "persisted_at": "2026-11-21T00:43:44.977Z"
     },
     "learn-github-czy0729-bangumi": {
       "learning_id": "learn-github-czy0729-bangumi",
@@ -229913,9 +229923,9 @@
       "title": "Agent Contract: bahdotsh-wrkflw-learnings Autonomous Specialist Persona",
       "repository": "bahdotsh-wrkflw-learnings",
       "source_version": "HEAD",
-      "content_hash": "cf1063a93c710cb6d8db911b4cb9e7fcc742682d9e52b5a247eea0ab1853c4c1",
+      "content_hash": "ad893c5210d9c2a635b362d6b8bdede3106d37103e4945e16cf9b359810df4f4",
       "domain_letter": "A",
-      "persisted_at": "2026-11-19T14:03:37.893Z"
+      "persisted_at": "2026-11-21T00:44:00.022Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-bahdotsh-wrkflw-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bahdotsh-wrkflw-learnings",
@@ -229925,9 +229935,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for bahdotsh-wrkflw-learnings",
       "repository": "bahdotsh-wrkflw-learnings",
       "source_version": "HEAD",
-      "content_hash": "afc6fc6e00e1a2b819e4526756038f6c0863c1b32a6c840258005f731dfa6b1b",
+      "content_hash": "1da5a302437ece7a6a2ba2ac0e0b1828fdcca69c52bf696a984dbc350a4b0e65",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T14:03:38.025Z"
+      "persisted_at": "2026-11-21T00:44:00.154Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-26b-a4b-it-learnings-core-inva": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-26b-a4b-it-learnings-core-inva",
@@ -264881,14 +264891,19 @@
       "slug": "typewhisper-typewhisper-mac",
       "platform": "github",
       "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
-      "source_version": "7e1680a4",
-      "content_hash": "3b21acf597db42e932a34a840e3a91c50320e2c58c977f34873728783d3dc204",
+      "source_version": "5162fe87",
+      "content_hash": "31609fdb7c5b9372541a0fc4a7eabe62729d83c58c955e2b7e40f98db2c07091",
       "dossier_path": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "promoted_rules": [
         {
           "number": 8838,
           "title": "(feature) Add the SOV-Transcribe plugin for Macs with 32 GB of memory",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9682,
+          "title": "(bug) Let an API dictation start replace a feedback banner",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -264897,7 +264912,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T02:32:23.270Z",
+      "verified_at": "2026-11-21T00:43:48.570Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -264939,10 +264954,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-typewhisper-typewhisper-mac-architecture-intelligence-typewhisper-typewhisper-ma.md",
       "title": "Architecture Intelligence: TypeWhisper/typewhisper-mac Core Invariants",
       "repository": "TypeWhisper/typewhisper-mac",
-      "source_version": "7e1680a4",
-      "content_hash": "c1ffe34d4067b391fa6871f0cc0fdc4e3c76732cb283a7f4a0b82b802abaa4d2",
+      "source_version": "5162fe87",
+      "content_hash": "672fcde01d36f59ac8ead37c2c68aeac522f13095d3e09577c0ad956d6617392",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T02:32:23.688Z"
+      "persisted_at": "2026-11-21T00:43:49.171Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-typewhisper-typewhisper-mac": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-typewhisper-typewhisper-mac",
@@ -264951,10 +264966,10 @@
       "relative_path": "12_DECISIONS/ADR-typewhisper-typewhisper-mac-adr-subsystem-boundary-modular-decoupling-in-typewhi.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in TypeWhisper/typewhisper-mac",
       "repository": "TypeWhisper/typewhisper-mac",
-      "source_version": "7e1680a4",
-      "content_hash": "71c11d76cc85fc4a7d7de837aa72749c5b50c92b2434bfd335e705a72659ac69",
+      "source_version": "5162fe87",
+      "content_hash": "2578292baa601bcf02ac663bb218eecbadde18603b84f9320c6bd46bc366e4fe",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T02:32:23.787Z"
+      "persisted_at": "2026-11-21T00:43:49.366Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-typewhisper-typewhisper-mac": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-typewhisper-typewhisper-mac",
@@ -264963,10 +264978,10 @@
       "relative_path": "08_VERIFICATION/typewhisper-typewhisper-mac-verification-protocol-empirical-defect-shield-for-ty.md",
       "title": "Verification Protocol: Empirical Defect Shield for TypeWhisper/typewhisper-mac",
       "repository": "TypeWhisper/typewhisper-mac",
-      "source_version": "7e1680a4",
-      "content_hash": "7d039cb03fbcdac4ba77b49f4effd15828cec915e53b659ac209c506800cc07a",
+      "source_version": "5162fe87",
+      "content_hash": "b253801e51da7b9eb0fb5ee797c725bfe7267a3341612e9ad3e02a0c8cab21d2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T02:32:23.875Z"
+      "persisted_at": "2026-11-21T00:43:49.505Z"
     },
     "candidate_directive-infra-fail-stalled-node-blob-cache-downloads-within-seconds": {
       "item_id": "candidate_directive-infra-fail-stalled-node-blob-cache-downloads-within-seconds",
@@ -265000,9 +265015,9 @@
       "title": "Architecture Intelligence: typewhisper-typewhisper-mac-learnings Core Invariants",
       "repository": "typewhisper-typewhisper-mac-learnings",
       "source_version": "HEAD",
-      "content_hash": "308fcb0de9608591beae9688e22d6cb6c1509c9b044bbd00f0c06952a25ae19e",
+      "content_hash": "7197f6cfb3970a7e2ecbc0e136d3a9034ab518505194dceccd75a80e0d1b217b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T02:32:27.833Z"
+      "persisted_at": "2026-11-21T00:44:01.659Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-typewhisper-typewhisper-mac-learnin": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-typewhisper-typewhisper-mac-learnin",
@@ -265012,9 +265027,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in typewhisper-typewhisper-mac-learnings",
       "repository": "typewhisper-typewhisper-mac-learnings",
       "source_version": "HEAD",
-      "content_hash": "0af10781c014ded8f881f4b1ffd8b0fac28b2107826981b5878387cf7ffbeed5",
+      "content_hash": "8a657c928465c3e48d6014c8370dcf2d0457add7715647e416c2cc46c69d23ae",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T02:32:27.935Z"
+      "persisted_at": "2026-11-21T00:44:01.834Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-typewhisper-typewhisper-mac-le": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-typewhisper-typewhisper-mac-le",
@@ -265024,9 +265039,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for typewhisper-typewhisper-mac-learnings",
       "repository": "typewhisper-typewhisper-mac-learnings",
       "source_version": "HEAD",
-      "content_hash": "064682221878bbd1934012727c1f55a985e247b3d63b7ab2bdeaedb118e3056b",
+      "content_hash": "8484257350e561a20aa1c501e1326490f508dee6895596d546355384bff5235f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T02:32:28.026Z"
+      "persisted_at": "2026-11-21T00:44:01.964Z"
     },
     "rule-8839": {
       "learning_id": "rule-8839",
@@ -267710,14 +267725,19 @@
       "slug": "preactjs-preact",
       "platform": "github",
       "source_url": "https://github.com/preactjs/preact",
-      "source_version": "34b99c69",
-      "content_hash": "0f3806d2fa87331ddc88b0a73ab1f82a0686c93dbd2af4df922b00b7d3fb938e",
+      "source_version": "39d353a8",
+      "content_hash": "e09783bddbcc068c81bbc076c2aeb22f2f2ad418a7f43abe2e5e9cc2e2451bb6",
       "dossier_path": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
       "promoted_rules": [
         {
           "number": 8878,
           "title": "Empirical Invariant Guard in props.js",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9681,
+          "title": "add capture variants of toggle, dialog and command events",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -267726,7 +267746,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T05:58:07.746Z",
+      "verified_at": "2026-11-21T00:43:46.112Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -267768,10 +267788,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-preactjs-preact-architecture-intelligence-preactjs-preact-core-invariants.md",
       "title": "Architecture Intelligence: preactjs/preact Core Invariants",
       "repository": "preactjs/preact",
-      "source_version": "34b99c69",
-      "content_hash": "1a72608dff52660ca4a9cf5a6635b72d8f4e07612bba7aaecc5a278492c5262f",
+      "source_version": "39d353a8",
+      "content_hash": "6283c4404ed1067456b0dbf482eb7f1ad4bc1bfc0166b6ef6966b261e5a77f35",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T05:58:08.177Z"
+      "persisted_at": "2026-11-21T00:43:46.687Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-preactjs-preact": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-preactjs-preact",
@@ -267780,10 +267800,10 @@
       "relative_path": "08_VERIFICATION/preactjs-preact-verification-protocol-empirical-defect-shield-for-preactjs-preac.md",
       "title": "Verification Protocol: Empirical Defect Shield for preactjs/preact",
       "repository": "preactjs/preact",
-      "source_version": "34b99c69",
-      "content_hash": "27aba2f82621d93a3f701cf38a8ec394d01d98635d7175d44c4cc435c798b05a",
+      "source_version": "39d353a8",
+      "content_hash": "f4e55be130911e3cbb00ed418c4c5a627289326ebbcd1d9142aab39933a4fdc8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T05:58:08.287Z"
+      "persisted_at": "2026-11-21T00:43:46.846Z"
     },
     "learn-github-krakend-krakend-ce": {
       "learning_id": "learn-github-krakend-krakend-ce",
@@ -267907,9 +267927,9 @@
       "title": "Architecture Intelligence: preactjs-preact-learnings Core Invariants",
       "repository": "preactjs-preact-learnings",
       "source_version": "HEAD",
-      "content_hash": "e3ccc8c60b8af87f327e40d661b9077b18ae1c152375b5a8cd14f55852791cc8",
+      "content_hash": "c04087fcb03d6891ac3d0c1b5ad2cdbc575b18d82a13edd246becb8bb1bebeaf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T05:58:18.586Z"
+      "persisted_at": "2026-11-21T00:44:00.983Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-preactjs-preact-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-preactjs-preact-learnings",
@@ -267919,9 +267939,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for preactjs-preact-learnings",
       "repository": "preactjs-preact-learnings",
       "source_version": "HEAD",
-      "content_hash": "a2f57871bd0e1c92836b591884a7ad07799c156c1dcf34f70318e348aee277d7",
+      "content_hash": "39aebecfb3a9c90ea9fa3e724808542ff58bf5aeecd4f4765e5cf5bb3a1400ca",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T05:58:18.693Z"
+      "persisted_at": "2026-11-21T00:44:01.138Z"
     },
     "domain_intelligence-architecture-intelligence-krakend-krakend-ce-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-krakend-krakend-ce-learnings-core-invariants",
@@ -295940,10 +295960,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-bahdotsh-wrkflw-human-need-intelligence-bahdotsh-wrkflw-core-invariants.md",
       "title": "Human & Need Intelligence: bahdotsh/wrkflw Core Invariants",
       "repository": "bahdotsh/wrkflw",
-      "source_version": "b0fdd8df",
-      "content_hash": "0e901cd247797ac01adbbe3a13dcd9acd6d015beff872622728ddb530af331b8",
+      "source_version": "b11b73e7",
+      "content_hash": "3ef46faf82cb7afb6922419325880c8d72fa2a90ddc08034fe38d5292a4b2a3b",
       "domain_letter": "A",
-      "persisted_at": "2026-11-19T14:03:31.370Z"
+      "persisted_at": "2026-11-21T00:43:44.665Z"
     },
     "rule-9383": {
       "learning_id": "rule-9383",
@@ -295979,9 +295999,9 @@
       "title": "Human & Need Intelligence: bahdotsh-wrkflw-learnings Core Invariants",
       "repository": "bahdotsh-wrkflw-learnings",
       "source_version": "HEAD",
-      "content_hash": "f2faf4a83f44e73b2461c9ccc50a72d630b0f7072e506b58854365adb246b9ff",
+      "content_hash": "0f8974895f690179891abd55933abc327359b1aa96cc35a770bef6e8a6f358cd",
       "domain_letter": "A",
-      "persisted_at": "2026-11-19T14:03:37.726Z"
+      "persisted_at": "2026-11-21T00:43:59.864Z"
     },
     "rule-9384": {
       "learning_id": "rule-9384",
@@ -309217,6 +309237,120 @@
       "content_hash": "3ccfe0a502968f73bae0d694e18cbbe4aeff1dbbda08488dfd9ede1f1a240a60",
       "domain_letter": "G",
       "persisted_at": "2026-11-21T00:32:50.056Z"
+    },
+    "rule-9680": {
+      "learning_id": "rule-9680",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9680,
+      "title": "JavaScript actions, private uses, prebuilt runner image, stand-in r",
+      "source_url": "https://github.com/bahdotsh/wrkflw",
+      "source_version": "b11b73e7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T00:43:44.033Z"
+    },
+    "candidate_directive-javascript-actions-private-uses-prebuilt-runner-image-stand-in-r": {
+      "item_id": "candidate_directive-javascript-actions-private-uses-prebuilt-runner-image-stand-in-r",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Q12R-javascript-actions-private-uses-prebuilt-runner-image-stand-in-r.md",
+      "title": "JavaScript actions, private uses, prebuilt runner image, stand-in r",
+      "repository": "bahdotsh/wrkflw",
+      "source_version": "b11b73e7",
+      "content_hash": "ad04141a489be1ddb3752781b63a5799196f3be803a53e0f597c120e295d3fe1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T00:43:44.503Z"
+    },
+    "rule-9681": {
+      "learning_id": "rule-9681",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9681,
+      "title": "add capture variants of toggle, dialog and command events",
+      "source_url": "https://github.com/preactjs/preact",
+      "source_version": "39d353a8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T00:43:46.112Z"
+    },
+    "candidate_directive-add-capture-variants-of-toggle-dialog-and-command-events": {
+      "item_id": "candidate_directive-add-capture-variants-of-toggle-dialog-and-command-events",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Q2N2-add-capture-variants-of-toggle-dialog-and-command-events.md",
+      "title": "add capture variants of toggle, dialog and command events",
+      "repository": "preactjs/preact",
+      "source_version": "39d353a8",
+      "content_hash": "c0e371d442bce56d40dbf077af199069687a6f4cf9810d4a6607674c28d2a121",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T00:43:46.527Z"
+    },
+    "rule-9682": {
+      "learning_id": "rule-9682",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9682,
+      "title": "(bug) Let an API dictation start replace a feedback banner",
+      "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
+      "source_version": "5162fe87",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T00:43:48.570Z"
+    },
+    "candidate_directive-bug-let-an-api-dictation-start-replace-a-feedback-banner": {
+      "item_id": "candidate_directive-bug-let-an-api-dictation-start-replace-a-feedback-banner",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QE6Z-bug-let-an-api-dictation-start-replace-a-feedback-banner.md",
+      "title": "(bug) Let an API dictation start replace a feedback banner",
+      "repository": "typewhisper-typewhisper-mac-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a6144447d6736a91e6751ec2f574068281e6cc6cc7f4e1d83ec7b520fac0703c",
+      "domain_letter": "M",
+      "persisted_at": "2026-11-21T00:44:01.503Z"
+    },
+    "candidate_directive-update-readme": {
+      "item_id": "candidate_directive-update-readme",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Q9RR-update-readme.md",
+      "title": "update readme",
+      "repository": "neuron-core/neuron-ai",
+      "source_version": "f6ba920a",
+      "content_hash": "1c9af1886ab512732d2083c2a314cc7445f28aa70c6a7472369d1b80f4b5318e",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T00:43:55.768Z"
+    },
+    "candidate_directive-pre-release-javascript-actions-private-uses-prebuilt-runner-image-stand-in-r": {
+      "item_id": "candidate_directive-pre-release-javascript-actions-private-uses-prebuilt-runner-image-stand-in-r",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QCST-pre-release-javascript-actions-private-uses-prebuilt-runner-image-stand-in-r.md",
+      "title": "Pre-release: JavaScript actions, private uses, prebuilt runner image, stand-in r",
+      "repository": "bahdotsh-wrkflw-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9f53c2bde45236efdd59afa1fc93c7ab915a147abc85f5adc42961cda7a51e2c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T00:43:59.697Z"
+    },
+    "candidate_directive-types-add-capture-variants-of-toggle-dialog-and-command-events": {
+      "item_id": "candidate_directive-types-add-capture-variants-of-toggle-dialog-and-command-events",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QDO1-types-add-capture-variants-of-toggle-dialog-and-command-events.md",
+      "title": "types): add capture variants of toggle, dialog and command events",
+      "repository": "preactjs-preact-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5d355af3a82830e5ea2861d5bad4b9ef898658408022c44f8ac34afd01ba6ea4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T00:44:00.818Z"
     }
   },
   "ai-builder-brain": {

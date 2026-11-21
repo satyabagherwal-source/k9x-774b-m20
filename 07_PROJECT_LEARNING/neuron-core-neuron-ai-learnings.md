@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source**: github ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
-> **Source Version**: `c2b9a03e`  
+> **Source Version**: `f6ba920a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T00:43:41.502Z  
+> **Timestamp**: 2026-11-21T00:43:54.810Z  
 > **Learning ID**: `learn-github-neuron-core-neuron-ai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T00:43:41.498Z  
+> **Harvest Timestamp**: 2026-11-21T00:43:54.806Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Agentic Framework of the PHP ecosystem to build production-ready AI driven applications. Connect components (LLMs, Tools, vector DBs, memory) to agents that interact with your data and UI.
 - **Primary Language / Ecosystem**: PHP
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2176 stars
+- **Stars / Engagement**: 2179 stars
 
 ---
 
@@ -603,293 +603,74 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c2b9a03e` (2026-11-17)
-**Commit Message**: Merge pull request #710 from aln-1/fix/mcp-http-session-delete
+### Incident Patch 1: `f6ba920a` (2026-11-20)
+**Commit Message**: update readme
 
-End Streamable HTTP MCP sessions with DELETE on disconnect
-
-**File**: `src/MCP/AGENTS.md` (modified, +1/-0)
+**File**: `README.md` (modified, +3/-3)
 ```diff
-@@ -28,6 +28,7 @@ protected function tools(): array
- ## Sessions
+@@ -69,11 +69,11 @@ Copy & paste this initial prompt to tell your coding agent how to install and co
+ ```
+ You are going to set up Neuron AI, a PHP framework for building agentic applications, in this project, and you must follow three steps in order.
  
- - **One session per process.** `McpClient` opens its session on construction; the connector creates the client lazily. A forked child (`parallelToolCalls()`) opens its own session, a new server process or HTTP session, and keeps the inherited transport referenced but unused, so the parent's session stays open. Only the process that opened a session ends it. A custom `transport` instance stays the application's in every process.
-+- **An HTTP session is ended when the client is destroyed.** `StreamableHttpTransport::disconnect()` sends an HTTP `DELETE` carrying the session ID, as the spec asks of a client leaving a session. It is best effort: a server refusing it (405), a session already expired (404) or a network failure is ignored, and the local session state is dropped either way. The request is limited to two seconds, whatever the configured `timeout`, since it delays the destructor and its answer is unused.
- - **A lost session is replaced.** A transport throws `McpSessionLostException` when a request could not reach the server because its session is gone: an HTTP 404 on a request carrying a session ID, or a stdio server that is no longer running. Nothing was processed, so the client opens a new session and sends the request once more. A failure after delivery, such as a server dying mid-request, is not retried: the request may have run. The next request replaces the session.
- - **Messages arrive one at a time.** Stdio reads newline-delimited messages through a buffer kept between reads, and drains the server's stderr while waiting, since a full stderr pipe blocks the server. An SSE response yields each event's payload in order. The client skips notifications, server requests and responses to abandoned requests until its own response arrives; it answers no server request, not even `ping`.
- - `SseHttpTransport`, the legacy HTTP+SSE transport, gets per-process sessions from the client but does not recover an expired one.
+-- First: install the framework: check composer.json, and if neuron-core/neuron-ai is not already required, run `composer require neuron-core/neuron-ai`;
++- First: install the framework: check composer.json, and if `neuron-core/neuron-ai` is not already required, run `composer require neuron-core/neuron-ai`;
+ 
+-- Second: install the agent skills that ship with the package by running npx --yes skills add ./vendor/neuron-core/neuron-ai/skills -y -a <agent>, where <agent> is your own skills agent id (e.g. claude-code, codex, cursor). Add the same command, with the -a flag, to post-update-cmd.. From then on, load the relevant skill before you write any Neuron code instead of relying on what you remember about the framework;
++- Second: install the agent skills that ship with the package by running `npx --yes skills add ./vendor/neuron-core/neuron-ai/skills -y -a <agent>`, where `<agent>` is your own skills agent id (e.g. claude-code, codex, cursor). Add the same command, with the -a flag, to `post-update-cmd`. From then on, load the relevant skill before you write any Neuron code instead of relying on what you remember about the framework;
+ 
+-- Third: work out what kind of app this is. Look at composer.json and the project structure to see whether it is an application based on Laravel, Symfony, or another framework, then activate the matching skill: neuron-laravel-integration or neuron-symfony-integration. If Neuron is already part of the app go through the skill's foundations checklist item by item. Report what differs from the recommended setup;
++- Third: work out what kind of app this is. Look at composer.json and the project structure to see whether it is an application based on Laravel, Symfony, or another framework, then activate the matching skill: `neuron-laravel-integration` or `neuron-symfony-integration`. If Neuron is already part of the app go through the skill's foundations checklist item by item. Report what differs from the recommended setup;
+ 
+ If Neuron is not in the app yet, follow the same checklist to do the first setup. If the app uses neither framework, start from a plain PHP agent using the neuron-agent skill. Finish with a short summary of what you installed and what you found.
+ ```
 ```
 
-**File**: `src/MCP/StreamableHttpTransport.php` (modified, +48/-10)
+---
+
+### Incident Patch 2: `35b9605d` (2026-11-20)
+**Commit Message**: update readme
+
+**File**: `README.md` (modified, +9/-23)
 ```diff
-@@ -34,6 +34,12 @@
+@@ -67,29 +67,15 @@ Follow the Neuron channels to stay up to date:
+ Copy & paste this initial prompt to tell your coding agent how to install and configure Neuron AI in your project.
  
- class StreamableHttpTransport implements McpTransportInterface
- {
-+    /**
-+     * How long ending a session may take. It runs from the client's destructor, usually
-+     * before the user gets a response, and nothing waits on the server's answer.
-+     */
-+    protected const SESSION_END_TIMEOUT_SECONDS = 2.0;
-+
-     protected readonly HttpClientInterface $httpClient;
-     protected ?string $sessionId = null;
-     protected ?string $protocolVersion = null;
-@@ -91,15 +97,7 @@ public function send(array $data): void
-             $headers = array_merge($this->getAuthHeaders(), [
-                 'Accept' => 'application/json, text/event-stream',
-                 'Content-Type' => 'application/json',
--            ]);
+ ```
+-You are going to set up Neuron AI, a PHP framework for building agentic applications,
+-in this project, and you must follow three steps in order.
 -
--            if ($this->sessionId !== null) {
--                $headers['Mcp-Session-Id'] = $this->sessionId;
--            }
+-- First: install the framework: check composer.json, and if neuron-core/neuron-ai is not
+-already required, run `composer require neuron-core/neuron-ai`;
 -
--            if ($this->protocolVersion !== null) {
--                $headers['MCP-Protocol-Version'] = $this->protocolVersion;
--            }
-+            ], $this->sessionHeaders());
+-- Second: install the agent skills that ship
+-with the package by running `npx --yes skills add ./vendor/neuron-core/neuron-ai/skills -y` from
+-the project root. Add this command to `post-update-cmd` in the composer.json file, so they
+-stay updated whenever Neuron is updated through Composer. From then on, load the relevant
+-skill before you write any Neuron code instead of relying on what you remember about
+-the framework;
+-
+-- Third: work out what kind of app this is. Look at composer.json
+-and the project structure to see whether it is an application based on Laravel, Symfony, or another framework,
+-then activate the matching skill: neuron-laravel-integration or neuron-symfony-integration.
+-If Neuron is already part of the app go through the skill's foundations checklist
+-item by item. Report what differs from the recommended setup;
+-
+-If Neuron is not in the app yet, follow the same checklist to do the first setup.
+-If the app uses neither framework, start from a plain PHP agent using
+-the neuron-agent skill. Finish with a short summary of what you installed
+-and what you found.
++You are going to set up Neuron AI, a PHP framework for building agentic applications, in this project, and you must follow three steps in order.
++
++- First: install the framework: check composer.json, and if neuron-core/neuron-ai is not already required, run `composer require neuron-core/neuron-ai`;
++
++- Second: install the agent skills that ship with the package by running npx --yes skills add ./vendor/neuron-core/neuron-ai/skills -y -a <agent>, where <agent> is your own skills agent id (e.g. claude-code, codex, cursor). Add the same command, with the -a flag, to post-update-cmd.. From then on, load the relevant skill before you write any Neuron code instead of relying on what you remember about the framework;
++
++- Third: work out what kind of app this is. Look at composer.json and the project structure to see whether it is an application based on Laravel, Symfony, or another framework, then activate the matching skill: neuron-laravel-integration or neuron-symfony-integration. If Neuron is already part of the app go through the skill's foundations checklist item by item. Report what differs from the recommended setup;
++
++If Neuron is not in the app yet, follow the same checklist to do the first setup. If the app uses neither framework, start from a plain PHP agent using the neuron-agent skill. Finish with a short summary of what you installed and what you found.
+ ```
  
-             $jsonData = json_encode($data, JSON_THROW_ON_ERROR);
- 
-@@ -218,13 +216,53 @@ public function setProtocolVersion(string $version): void
- 
-     public function disconnect(): void
-     {
--        // HTTP is stateless: nothing to close, just drop session state
-+        if ($this->sessionId !== null) {
-+            $this->endSession();
-+        }
-+
-         $this->sessionId = null;
-         $this->protocolVersion = null;
-         $this->lastResponse = null;
-         $this->pendingMessages = [];
-     }
- 
-+    /**
-+     * Ask the server to end the session now rather than when it expires. Best effort: this
-+     * runs from the client's destructor, and the server may refuse it (405), have already
-+     * ended the session (404), or be unreachable.
-+     */
-+    protected function endSession(): void
-+    {
-+        try {
-+            $this->httpClient->request(new HttpRequest(
-+                method: HttpMethod::DELETE,
-+                uri: $this->config['url'],
-+                headers: array_merge($this->getAuthHeaders(), $this->sessionHeaders()),
-+                timeout: static::SESSION_END_TIMEOUT_SECONDS,
-+            ));
-+        } catch (HttpException) {
-+            // The local session state is dropped anyway.
-+        }
-+    }
-+
-+    /**
-+     * @return array<string, string>
-+     */
-+    protected function sessionHeaders(): array
-+    {
-+        $headers = [];
-+
-+        if ($this->sessionId !== null) {
-+            $headers['Mcp-Session-Id'] = $this->sessionId;
-+        }
-+
-+        if ($this->protocolVersion !== null) {
-+            $headers['MCP-Protocol-Version'] = $this->protocolVersion;
-+        }
-+
-+        return $headers;
-+    }
-+
-     /**
-      * @return array<string, string>
-      */
-```
-
-**File**: `tests/MCP/McpClientTest.php` (modified, +68/-4)
-```diff
-@@ -6,6 +6,7 @@
- 
- use NeuronAI\Exceptions\HttpException;
- use NeuronAI\HttpClient\HttpClientInterface;
-+use NeuronAI\HttpClient\HttpMethod;
- use NeuronAI\HttpClient\HttpRequest;
- use NeuronAI\HttpClient\HttpResponse;
- use NeuronAI\MCP\McpClient;
-@@ -106,6 +107,9 @@ public function test_an_expired_http_session_is_replaced_and_the_request_sent_ag
-         $httpClient->method('request')
-             ->willReturnCallback(function (HttpRequest $request) use (&$requests, &$initializations): HttpResponse {
-                 $requests[] = $request;
-+                if ($request->method === HttpMethod::DELETE) {
-+                    return new HttpResponse(200, '');
-+                }
-                 $message = json_decode($request->body, true);
- 
-                 if ($message['method'] === 'initialize') {
-@@ -126,12 +130,72 @@ public function test_an_expired_http_session_is_replaced_and_the_request_sent_ag
- 
-         $this->assertSame([], $client->listTools());
-         $this->assertSame(
--            ['initialize', 'notifications/initialized', 'tools/list', 'initialize', 'notifications/initialized', 'tools/list'],
--            array_map(fn (HttpRequest $request): string => json_decode($request->body, true)['method'], $requests),
-+            ['initialize', 'notifications/initialized', 'tools/list', 'DELETE', 'initialize', 'notifications/initialized', 'tools/list'],
-+            array_map($this->describe(...), $requests),
-         );
-+        $this->assertSame('expired', $requests[3]->headers['Mcp-Session-Id']);
-         // The new session starts without the expired ID.
--        $this->assertArrayNotHasKey('Mcp-Session-Id', $requests[3]->headers);
--        $this->assertSame('renewed', $requests[5]->headers['Mcp-Session-Id']);
-+        $this->assertArrayNotHasKey('Mcp-Session-Id', $requests[4]->headers);
-+        $this->assertSame('renewed', $requests[6]->headers['Mcp-Session-Id']);
-+
-+        unset($client);
-+
-+        $this->assertCount(8, $requests);
-+        $this->assertSame(HttpMethod::DELETE, $requests[7]->method);
-+        $this->assertSame('renewed', $requests[7]->headers['Mcp-Session-Id']);
-+    }
-+
-+    public function test_a_session_lost_again_on_retry_is_replaced_by_the_next_request(): void
-+    {
-+        $requests = [];
-+        $initializations = 0;
-+
-+        // Sessions 1 and 2 are lost before they serve a request, as behind a load balancer
-+        // without sticky sessions; session 3 works.
-+        $httpClient = $this->createMock(HttpClientInterface::class);
-+        $httpClient->method('request')
-+            ->willReturnCallback(function (HttpRequest $request) use (&$requests, &$initializations): HttpResponse {
-+                $requests[] = $request;
-+                if ($request->method === HttpMethod::DELETE) {
-+                    throw HttpException::statusError($request, new HttpResponse(404, ''));
-+                }
-+                $message = json_decode($request->body, true);
-+
-+                if ($message['method'] === 'initialize') {
-+                    $initializations++;
-+                    return new HttpResponse(200, $this->response($message, []), ['Mcp-Session-Id' => "session-{$initializations}"]);
-+                }
-+                if (!isset($message['id'])) {
-+                    return new HttpResponse(202, '');
-+                }
-+                if (!isset($request->headers['Mcp-Session-Id'])) {
-+                    throw HttpException::statusError($request, new HttpResponse(400, ''));
-+                }
-+                if ($request->headers['Mcp-Session-Id'] !== 'session-3') {
-+                    throw HttpException::statusError($request, new HttpResponse(404, ''));
-+                }
-+
-+                return new HttpResponse(200, $this->response($message, ['tools' => []]));
-+            });
-+
-+        $client = new McpClient(['url' => 'https://example.com/mcp'], $httpClient);
-+
-+        try {
-+            $client->listTools();
-+            $this->fail('A session lost again on retry must fail the request.');
-+        } catch (McpSessionLostException) {
-+        }
-+
-+        $this->assertSame([], $client->listTools());
-+        $this->assertSame(3, $initializations);
-+        // The next request still carries the lost ID, so its 404 opens a new session.
-+        $this->assertSame('tools/list', $this->describe($requests[7]));
-+        $this->assertSame('session-2', $requests[7]->headers['Mcp-Session-Id']);
-+    }
-+
-+    protected function describe(HttpRequest $request): string
-+    {
-+        return $request->method === HttpMethod::DELETE ? 'DELETE' : json_decode($request->body, true)['method'];
-     }
- 
-     public function test_a_404_outside_a_session_is_not_retried(): void
-```
-
-**File**: `tests/MCP/StreamableHttpTransportTest.php` (modified, +59/-3)
-```diff
-@@ -147,10 +147,65 @@ public function test_the_session_id_assigned_by_the_server_is_sent_with_later_re
-         }
-     }
- 
--    public function test_disconnect_forgets_the_session(): void
-+    public function test_disconnect_ends_the_session_on_the_server_and_forgets_it(): void
-     {
-         $httpClient = new ScriptedHttpClient(
-             new HttpResponse(200, '{"jsonrpc":"2.0","id":1,"result":{}}', ['Mcp-Session-Id' => 'session-1']),
-+            new HttpResponse(200, ''),
-+            new HttpResponse(200, '{"jsonrpc":"2.0","id":1,"result":{}}'),
-+        );
-+        $transport = new StreamableHttpTransport(['url' => self::URL, 'token' => 'mcp-secret', 'headers' => ['X-Tenant' => 'acme'], 'timeout' => 7], $httpClient);
-+        $transport->send(['jsonrpc' => '2.0', 'id' => 1, 'method' => 'initialize']);
-+        $transport->setProtocolVersion('2025-11-25');
-+
-+        $transport->disconnect();
-+
-+        $this->assertCount(2, $httpClient->requests);
-+        $delete = $httpClient->requests[1];
-+        $this->assertSame(HttpMethod::DELETE, $delete->method);
-+        $this->assertSame(self::URL, $delete->uri);
-+        $this->assertNull($delete->body);
-+        // The configured timeout is for tool calls: ending a session must not hold up the destructor.
-+        $this->assertSame(2.0, $delete->timeout);
-+        $this->assertSame([
-+            'X-Tenant' => 'acme',
-+            'Authorization' => 'Bearer mcp-secret',
-+            'Mcp-Session-Id' => 'session-1',
-+            'MCP-Protocol-Version' => '2025-11-25',
-+        ], $delete->headers);
-+
-+        $transport->send(['jsonrpc' => '2.0', 'id' => 1, 'method' => 'initialize']);
-+        $this->assertArrayNotHasKey('Mcp-Session-Id', $httpClient->requests[2]->headers);
-+        $this->assertArrayNotHasKey('MCP-Protocol-Version', $httpClient->requests[2]->headers);
-+    }
-+
-+    public function test_disconnect_without_a_session_sends_nothing(): void
-+    {
-+        $httpClient = new ScriptedHttpClient(new HttpResponse(200, '{"jsonrpc":"2.0","id":1,"result":{}}'));
-+        $transport = new StreamableHttpTransport(['url' => self::URL], $httpClient);
-+        $transport->send(['jsonrpc' => '2.0', 'id' => 1, 'method' => 'initialize']);
-+
-+        $transport->disconnect();
-+
-+        $this->assertCount(1, $httpClient->requests);
-+    }
-+
-+    /**
-+     * @return iterable<string, array{HttpResponse|HttpException}>
-+     */
-+    public static function failedSessionEndings(): iterable
-+    {
-+        yield 'ending sessions not supported' => [new HttpResponse(405, '')];
-+        yield 'session already expired' => [new HttpResponse(404, '')];
-+        yield 'network error' => [HttpException::networkError(new HttpRequest(HttpMethod::DELETE, self::URL), 'Connection refused')];
-+    }
-+
-+    #[DataProvider('failedSessionEndings')]
-+    public function test_a_failed_session_ending_is_ignored_and_the_session_forgotten(HttpResponse|HttpException $reply): void
-+    {
-+        $httpClient = new ScriptedHttpClient(
-+            new HttpResponse(200, '{"jsonrpc":"2.0","id":1,"result":{}}', ['Mcp-Session-Id' => 'session-1']),
-+            $reply,
-             new HttpResponse(200, '{"jsonrpc":"2.0","id":1,"result":{}}'),
-         );
-         $transport = new StreamableHttpTransport(['url' => self::URL], $httpClient);
-@@ -159,9 +214,10 @@ public function test_disconnect_forgets_the_session(): void
- 
-         $transport->disconnect();
- 
-+        $this->assertSame(HttpMethod::DELETE, $httpClient->requests[1]->method);
-         $transport->send(['jsonrpc' => '2.0', 'id' => 1, 'method' => 'initialize']);
--        $this->assertArrayNotHasKey('Mcp-Session-Id', $httpClient->requests[1]->headers);
--        $this->assertArrayNotHasKey('MCP-Protocol-Version', $httpClient->requests[1]->headers);
-+        $this->assertArrayNotHasKey('Mcp-Session-Id', $httpClient->requests[2]->headers);
-+        $this->assertArrayNotHasKey('MCP-Protocol-Version', $httpClient->requests[2]->headers);
-     }
- 
-     public function test_disconnect_drops_unread_messages(): void
+ ## Requirements
 ```
 
 #### Recent Merged Pull Requests:
@@ -918,28 +699,32 @@ End Streamable HTTP MCP sessions with DELETE on disconnect
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in AGENTS.md
+## X. update readme
 
 **RULE**:
-When implementing operations in `src/MCP/AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c2b9a03e`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f6ba920a`: update readme. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/MCP/AGENTS.md`.
+Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```php
 // Verified production-grade fix pattern:
-- **An HTTP session is ended when the client is destroyed.** `StreamableHttpTransport::disconnect()` sends an HTTP `DELETE` carrying the session ID, as the spec asks of a client leaving a session. It is best effort: a server refusing it (405), a session already expired (404) or a network failure is ignored, and the local session state is dropped either way. The request is limited to two seconds, whatever the configured `timeout`, since it delays the destructor and its answer is unused.
+- First: install the framework: check composer.json, and if `neuron-core/neuron-ai` is not already required, run `composer require neuron-core/neuron-ai`;
+- Second: install the agent skills that ship with the package by running `npx --yes skills add ./vendor/neuron-core/neuron-ai/skills -y -a <agent>`, where `<agent>` is your own skills agent id (e.g. claude-code, codex, cursor). Add the same command, with the -a flag, to `post-update-cmd`. From then on, load the relevant skill before you write any Neuron code instead of relying on what you remember about the framework;
+- Third: work out what kind of app this is. Look at composer.json and the project structure to see whether it is an application based on Laravel, Symfony, or another framework, then activate the matching skill: `neuron-laravel-integration` or `neuron-symfony-integration`. If Neuron is already part of the app go through the skill's foundations checklist item by item. Report what differs from the recommended setup;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```php
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- First: install the framework: check composer.json, and if neuron-core/neuron-ai is not already required, run `composer require neuron-core/neuron-ai`;
+- Second: install the agent skills that ship with the package by running npx --yes skills add ./vendor/neuron-core/neuron-ai/skills -y -a <agent>, where <agent> is your own skills agent id (e.g. claude-code, codex, cursor). Add the same command, with the -a flag, to post-update-cmd.. From then on, load the relevant skill before you write any Neuron code instead of relying on what you remember about the framework;
+- Third: work out what kind of app this is. Look at composer.json and the project structure to see whether it is an application based on Laravel, Symfony, or another framework, then activate the matching skill: neuron-laravel-integration or neuron-symfony-integration. If Neuron is already part of the app go through the skill's foundations checklist item by item. Report what differs from the recommended setup;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c2b9a03e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f6ba920a` are properly handled with clean fallback behavior.

@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T00:32:49.200Z",
+  "updated_at": "2026-11-21T00:44:00.590Z",
   "stats": {
-    "total_discovered": 6817,
-    "approved_pending_harvest": 6436,
+    "total_discovered": 6828,
+    "approved_pending_harvest": 6444,
     "harvested_count": 0,
-    "rejected_count": 381,
+    "rejected_count": 384,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6409,
+      "COMMUNITY_AND_EXPERT": 6419,
       "OFFICIAL_DOCUMENTATION": 234,
-      "STANDARDS_AND_SPECIFICATIONS": 121,
+      "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
       "SECURITY_ADVISORIES": 39,
       "LEGAL_AND_REGULATORY": 2,
@@ -147330,6 +147330,227 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-query-learnings.md",
         "fileName": "tanstack-query-learnings.md"
+      }
+    },
+    "SRC-E6F45088AC5A": {
+      "id": "SRC-E6F45088AC5A",
+      "url": "http://(archive|security",
+      "title": "http://(archive|security",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-21T00:43:58.967Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
+        "fileName": "bahdotsh-wrkflw-learnings.md"
+      }
+    },
+    "SRC-97039D0E97BD": {
+      "id": "SRC-97039D0E97BD",
+      "url": "http://azure.archive.ubuntu.com/",
+      "title": "http://azure.archive.ubuntu.com/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-21T00:43:59.024Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
+        "fileName": "bahdotsh-wrkflw-learnings.md"
+      }
+    },
+    "SRC-CD56CC1BF8E8": {
+      "id": "SRC-CD56CC1BF8E8",
+      "url": "https://github.com/$GITHUB_REPOSITORY",
+      "title": "https://github.com/$GITHUB_REPOSITORY",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T00:43:59.074Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
+        "fileName": "bahdotsh-wrkflw-learnings.md"
+      }
+    },
+    "SRC-AC23F42D67E4": {
+      "id": "SRC-AC23F42D67E4",
+      "url": "https://ghcr.io/token?scope=repository%3A%24%7Bname",
+      "title": "https://ghcr.io/token?scope=repository%3A%24%7Bname",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T00:43:59.121Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
+        "fileName": "bahdotsh-wrkflw-learnings.md"
+      }
+    },
+    "SRC-806792E21F26": {
+      "id": "SRC-806792E21F26",
+      "url": "https://ghcr.io/v2/$%7Bname",
+      "title": "https://ghcr.io/v2/$%7Bname",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T00:43:59.171Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
+        "fileName": "bahdotsh-wrkflw-learnings.md"
+      }
+    },
+    "SRC-9A28C623980D": {
+      "id": "SRC-9A28C623980D",
+      "url": "https://img.shields.io/github/actions/workflow/status/bahdotsh/wrkflw/ci.yml?branch=main",
+      "title": "https://img.shields.io/github/actions/workflow/status/bahdotsh/wrkflw/ci.yml?branch=main",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T00:43:59.248Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
+        "fileName": "bahdotsh-wrkflw-learnings.md"
+      }
+    },
+    "SRC-8AC1AE28D051": {
+      "id": "SRC-8AC1AE28D051",
+      "url": "https://github.com/bahdotsh/wrkflw/actions/workflows/ci.yml",
+      "title": "https://github.com/bahdotsh/wrkflw/actions/workflows/ci.yml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T00:43:59.296Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
+        "fileName": "bahdotsh-wrkflw-learnings.md"
+      }
+    },
+    "SRC-8241FE7C6400": {
+      "id": "SRC-8241FE7C6400",
+      "url": "https://img.shields.io/crates/d/wrkflw",
+      "title": "https://img.shields.io/crates/d/wrkflw",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T00:43:59.344Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
+        "fileName": "bahdotsh-wrkflw-learnings.md"
+      }
+    },
+    "SRC-C3DAA4B8DD8C": {
+      "id": "SRC-C3DAA4B8DD8C",
+      "url": "https://crates.io/crates/wrkflw",
+      "title": "https://crates.io/crates/wrkflw",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T00:43:59.392Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
+        "fileName": "bahdotsh-wrkflw-learnings.md"
+      }
+    },
+    "SRC-24877EA2C42D": {
+      "id": "SRC-24877EA2C42D",
+      "url": "https://raw.githubusercontent.com/bahdotsh/wrkflw/main/scripts/install.sh",
+      "title": "https://raw.githubusercontent.com/bahdotsh/wrkflw/main/scripts/install.sh",
+      "status": "REJECTED_BINARY_EXECUTABLE_REJECTED",
+      "rejection_reasons": [
+        "BINARY_EXECUTABLE_REJECTED"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-21T00:43:59.440Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
+        "fileName": "bahdotsh-wrkflw-learnings.md"
+      }
+    },
+    "SRC-BA658DF25D0E": {
+      "id": "SRC-BA658DF25D0E",
+      "url": "https://www.w3.org/TR/wai-aria-1.1",
+      "title": "https://www.w3.org/TR/wai-aria-1.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T00:44:00.590Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/preactjs-preact-learnings.md",
+        "fileName": "preactjs-preact-learnings.md"
       }
     }
   }

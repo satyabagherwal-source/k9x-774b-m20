@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T00:32:48.925Z",
-    "lastVerified": "2026-11-21T00:32:48.925Z",
+    "lastChecked": "2026-11-21T00:43:58.739Z",
+    "lastVerified": "2026-11-21T00:43:58.739Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-20T23:56:23.126Z",
+    "lastChecked": "2026-11-21T00:43:52.578Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-20T23:56:23.126Z"
+    "lastVerified": "2026-11-21T00:43:52.578Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -2000,12 +2000,12 @@
     "revisionIdentifier": "392b64e8"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflesecurity/trufflehog",
+    "name": "trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T20:02:27.857Z",
-    "lastVerified": "2026-11-20T20:02:27.857Z",
+    "lastChecked": "2026-11-21T00:43:47.733Z",
+    "lastVerified": "2026-11-21T00:43:47.733Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -2014,7 +2014,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4ef51f69"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -3296,11 +3297,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "neuron-core-neuron-ai": {
-    "name": "neuron-ai",
+    "name": "neuron-core/neuron-ai",
     "officialUrl": "https://github.com/neuron-core/neuron-ai",
-    "lastChecked": "2026-11-19T22:27:41.528Z",
-    "revisionIdentifier": "c2b9a03e",
-    "lastVerified": "2026-11-19T22:27:41.528Z"
+    "sourceType": "github",
+    "technology": "PHP",
+    "lastChecked": "2026-11-21T00:43:54.806Z",
+    "lastVerified": "2026-11-21T00:43:54.806Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-neuron-core-neuron-ai",
+    "contentHash": "0ae4e690f4228f10a2f42a45edd00d2f2f5808b3b6fbc46429276cc7bdf15775",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "gitoxidelabs-gitoxide": {
     "name": "GitoxideLabs/gitoxide",
@@ -4047,12 +4058,12 @@
     "lastVerified": "2026-11-18T19:10:01.365Z"
   },
   "agent-field-agentfield": {
-    "name": "Agent-Field/agentfield",
+    "name": "agentfield",
     "officialUrl": "https://github.com/Agent-Field/agentfield",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T00:06:37.225Z",
-    "lastVerified": "2026-11-20T00:06:37.225Z",
+    "lastChecked": "2026-11-21T00:43:45.594Z",
+    "lastVerified": "2026-11-21T00:43:45.594Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-agent-field-agentfield",
@@ -4061,7 +4072,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d81cedf4"
   },
   "erikgrinaker-toydb": {
     "name": "toydb",
@@ -7750,12 +7762,12 @@
     "officialUrl": "https://github.com/bahdotsh/wrkflw",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T14:03:21.636Z",
-    "lastVerified": "2026-11-19T14:03:21.636Z",
+    "lastChecked": "2026-11-21T00:43:42.915Z",
+    "lastVerified": "2026-11-21T00:43:42.915Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bahdotsh-wrkflw",
-    "contentHash": "cc34c8899f0465ef79642028d4fbea36006a45f9acc6af88b14f0cdd7dd1835e",
+    "contentHash": "9dbf5f68dc51b9745069dc4d43f1a30f9e5456a8fc01f7d88a4c2b03af0756d5",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
@@ -11246,5 +11258,39 @@
     "lastChecked": "2026-11-21T00:32:34.877Z",
     "revisionIdentifier": "3954a769",
     "lastVerified": "2026-11-21T00:32:34.877Z"
+  },
+  "preactjs-preact": {
+    "name": "preactjs/preact",
+    "officialUrl": "https://github.com/preactjs/preact",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-11-21T00:43:45.232Z",
+    "lastVerified": "2026-11-21T00:43:45.232Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-preactjs-preact",
+    "contentHash": "e09783bddbcc068c81bbc076c2aeb22f2f2ad418a7f43abe2e5e9cc2e2451bb6",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 7,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "typewhisper-typewhisper-mac": {
+    "name": "TypeWhisper/typewhisper-mac",
+    "officialUrl": "https://github.com/TypeWhisper/typewhisper-mac",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-11-21T00:43:47.695Z",
+    "lastVerified": "2026-11-21T00:43:47.695Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-typewhisper-typewhisper-mac",
+    "contentHash": "31609fdb7c5b9372541a0fc4a7eabe62729d83c58c955e2b7e40f98db2c07091",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 9,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -4,24 +4,24 @@
 {
   "source_repository": "bahdotsh/wrkflw",
   "source_url": "https://github.com/bahdotsh/wrkflw",
-  "source_version": "b0fdd8df",
+  "source_version": "b11b73e7",
   "license": "MIT",
-  "timestamp": "2026-11-19T14:03:31.215Z",
+  "timestamp": "2026-11-21T00:43:44.499Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-bahdotsh-wrkflw",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw) (Revision: `b0fdd8df`).  
-> **License**: MIT | **Timestamp**: `2026-11-19T14:03:31.215Z`  
+> **Provenance**: Harvested from [bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw) (Revision: `b11b73e7`).  
+> **License**: MIT | **Timestamp**: `2026-11-21T00:43:44.499Z`  
 > **Learning ID**: `learn-github-bahdotsh-wrkflw`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain A (Human & Need Intelligence)
-- **Secondary Corroborating Domains**: L (Deployment & Operations Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), F (Design Intelligence), C (Market & Business Intelligence)
-- **Confidence Rating**: 75%
+- **Secondary Corroborating Domains**: L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from bahdotsh/wrkflw:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T14:03:21.636Z  
+> **Harvest Timestamp**: 2026-11-21T00:43:42.915Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Validate and Run GitHub Actions locally.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3344 stars
+- **Stars / Engagement**: 3345 stars
 
 ---
 
@@ -333,17 +333,19 @@ async fn execute_github_workflow(
     let workspace_dir = tempfile::tempdir()
         .map_err(|e| ExecutionError::Execution(format!("Failed to create workspace: {}", e)))?;
 
-    // 4. Set up GitHub-like environment
-    let (mut env_context, user_env) = github_run_env(
+    // 4. Set up GitHub-like environment. The context is made once: jobs run
+    // on the host below get the same run id and the like as the rest.
+    let github_context = environment::create_github_context(
         &workflow,
         workspace_dir.path(),
-        &config.runtime_type,
         &environment::RunRef {
             event_name: config.event_name.as_deref(),
             git_ref: config.git_ref.as_deref(),
             base_branch: config.base_branch.as_deref(),
         },
-    )?;
+    );
+    let (mut env_context, user_env) =
+        github_run_env_from(github_context.clone(), &workflow, &config.runtime_type)?;
 
     // show=true means hide=false (inverted for the env var)
     env_context.insert(
@@ -360,6 +362,33 @@ async fn execute_github_workflow(
     environment::setup_github_environment_files(workspace_dir.path()).map_err(|e| {
         ExecutionError::Execution(format!("Failed to setup GitHub env files: {}", e))
     })?;
+
+    // `macos-*` jobs on this Mac, when asked, with the env emulation gives.
+    let host_jobs = if crate::host_jobs::wanted(&config.runtime_type) {
+        let (host_env, _) =
+            github_run_env_from(github_context, &workflow, &RuntimeType::Emulation)?;
+        wrkflw_logging::warning(
+            "macos-* jobs run on this Mac itself (--macos-on-host), with no container \
+             around their steps: they can change this machine, and they see this shell's \
+             environment, credentials included. They have no terminal to ask for input \
+             at, so one that does, such as sudo asking for a password, fails",
+        );
+        Some(std::sync::Arc::new(crate::host_jobs::HostJobs::new(
+            Box::new(emulation::EmulationRuntime::new()),
+            &env_context,
+            host_env,
+        )))
+    } else {
+        if crate::run_options::macos_on_host() {
+            wrkflw_logging::warning(&format!(
+                "--macos-on-host has no effect here: it runs macos-* jobs on a Mac whose \
+                 other jobs run in containers, and this run is on {} with {}",
+                std::env::consts::OS,
+                config.runtime_type.mode_name()
+            ));
+        }
+        None
+    };
 
     // 5. Initialize secrets management
     let secret_manager = if let Some(secrets_config) = &config.secrets_config {
@@ -399,45 +428,7 @@ async fn execute_github_workflow(
     let mut all_job_outputs: HashMap<String, HashMap<String, String>> = HashMap::new();
     let mut all_job_results: HashMap<String, String> = HashMap::new();
 
-    for job_batch in execution_plan {
-        // Execute jobs in parallel if they don't depend on each other.
-        // `needs:` failure propagation and `if:` evaluation happen per job inside
-        // `execute_job_with_matrix`, so this loop and `run_called_workflow` share them.
-        let job_results = execute_job_batch(
-            &job_batch,
-            &workflow,
-            runtime.as_ref(),
-            &env_context,
-            &user_env,
-            config.verbose,
-            secret_manager.as_ref(),
-            Some(&secret_masker),
-            &all_job_outputs,
-            &all_job_results,
-            &artifact_store,
-            &cache_store,
-            &config.platform_overrides,
-        )
-        .await?;
-
-        record_job_results(&job_results, &mut all_job_outputs, &mut all_job_results);
-
-        // Check for job failures and collect details
-        for job_result in &job_results {
-            if job_result.fails_run() {
-                has_failures = true;
-                failure_details.push_str(&format!(
-                    "\n{} Job failed: {}\n",
-                    wrkflw_logging::symbols::FAILURE,
-                    job_result.name
-                ));
-
-                // Add step details for failed jobs
-                for step in &job_result.steps {
-                    if step.status == StepStatus::Failure {
-                        failure_details.push_str(&format!(
-                            "  {} {}: {}\n",
-                       
+    for job_batch in execution_
 ```
 
 ### Core Architecture Module: `crates/ui/src/app/state.rs`
@@ -1506,6 +1497,24 @@ jobs:
                 "m
 ```
 
+### Core Architecture Module: `crates/executor/examples/runner_dockerfile.rs`
+```
+//! Writes `docker/runner.Dockerfile` and `docker/runner-image.txt`, the
+//! runner base image the release workflow publishes, from what this
+//! wrkflw would build. Run it after changing what every job image gets.
+
+fn main() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let dockerfile = wrkflw_executor::engine::runner_base_dockerfile();
+    let image = wrkflw_executor::runner_base::published_image(&dockerfile);
+    std::fs::create_dir_all(root.join("docker")).unwrap();
+    std::fs::write(root.join("docker/runner.Dockerfile"), &dockerfile).unwrap();
+    std::fs::write(root.join("docker/runner-image.txt"), format!("{}\n", image)).unwrap();
+    println!("{}", image);
+}
+
+```
+
 ### Core Architecture Module: `crates/executor/src/acceleration.rs`
 ```
 //! Doing less work on a rerun: job result reuse, `--affected` skipping,
@@ -1549,7 +1558,9 @@ pub const SIDECAR_PATH: &str = ".wrkflw/affected.yml";
 /// Bump when the fingerprint's inputs change, so old entries stop matching.
 /// Version 5: steps of the built-in image run as the runner user, so a pass
 /// stored when they ran as root says nothing of a run as that user.
-const KEY_VERSION: u32 = 5;
+/// Version 6: JavaScript actions run, so a pass stored when they passed
+/// without running says nothing of a run of them.
+const KEY_VERSION: u32 = 6;
 
 /// Host directories mounted into containers under `--dep-cache`, and where
 /// in a user's home directory each tool keeps that cache.
@@ -1761,13 +1772,7 @@ fn is_loopback_url(url: &str) -> bool {
 fn compile_globs(patterns: &[&str]) -> Vec<glob::Pattern> {
     patterns
         .iter()
-        .filter_map(|p| glob::Pattern::new(p).ok())
-        .collect()
-}
-
-fn glob_options() -> glob::MatchOptions {
-    glob::MatchOptions {
-        cas
+        .filter_map(|p| glob
 ```
 
 ### Core Architecture Module: `crates/executor/src/acceleration/sidecar.rs`
@@ -1881,304 +1886,17 @@ mod tests {
 
 ```
 
-### Core Architecture Module: `crates/executor/src/acceleration/store.rs`
-```
-//! Stored job results: on this machine, and optionally in a shared location
-//! whose entries are HMAC-signed.
-
-use super::{hex, Acceleration, Secret};
-use hmac::{Hmac, Mac};
-use serde::{Deserialize, Serialize};
-use sha2::Sha256;
-use std::collections::HashMap;
-use std::path::{Path, PathBuf};
-use std::sync::atomic::{AtomicBool, Ordering};
-
-/// 2: jobs carry the actions they passed without running, and the leg a
-/// folded matrix leg repeated. Entries from 1 can't say, so they are not
-/// reused.
-const ENTRY_SCHEMA: u32 = 2;
-/// Images and floating action tags aren't in the key, so a hit must not live
-/// forever. A week bounds that drift.
-const DEFAULT_TTL_SECS: i64 = 7 * 24 * 60 * 60;
-const REMOTE_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(10);
-
-/// One job or matrix leg of a stored result.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub(crate) struct StoredJob {
-    pub name: String,
-    pub canonical_name: String,
-    pub outputs: HashMap<String, String>,
-    /// Steps that passed without running their action. A reused job reports
-    /// them again, so reuse never turns a partial pass into a verified one.
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub actions_not_run: Vec<crate::action_fidelity::UnexecutedAction>,
-    /// The leg this matrix leg only repeated when the result was stored. A
-    /// reused fold still never ran, and says so.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub repeated_from: Option<String>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub(crate) struct Entry {
-    pub schema: u32,
-    /// Repeated from the file name, so a renamed file can't answer another key.
-    pub key: String,
-    pub created_at: i64,
-    pub jobs: Vec<StoredJob>,
-}
-
-impl Entry {
-    fn is_usable(&self, key: &str, now: i64) -> bool {
-        self.schema == ENTRY_SCHEMA
-            && self.key == key
-            && now.saturating_sub(self.created_at) <= ttl_secs()
-    }
-}
-
-fn ttl_secs() -> i64 {
-    parse_ttl(std::env::var("WRKFLW_RESULT_TTL_SECS").ok().as_deref())
-}
-
-/// `WRKFLW_RESULT_TTL_SECS` as seconds. Unset, unparsable or negative means
-/// the default, saying so for the last two so a typo doesn't go unseen.
-fn parse_ttl(value: Option<&str>) -> i64 {
-    let Some(value) = value else {
-        return DEFAULT_TTL_SECS;
-    };
-    match value.trim().parse::<i64>() {
-        Ok(secs) if secs >= 0 => secs,
-        _ => {
-            wrkflw_logging::warning(&format!(
-                "Ignoring WRKFLW_RESULT_TTL_SECS={}: not a whole number of seconds",
-                value
-            ));
-            DEFAULT_TTL_SECS
-        }
-    }
-}
-
-/// The wire form of an entry. The signature covers the exact bytes of `body`.
-#[derive(Serialize, Deserialize)]
-struct SignedEntry {
-    body: String,
-    signature: String,
-}
-
-type HmacSha256 = Hmac<Sha256>;
-
-fn sign(key: &Secret, body: &str) -> Option<String> {
-    let mut mac = HmacSha256::new_from_slice(key.0.as_bytes()).ok()?;
-    mac.update(body.as_bytes());
-    Some(hex(&mac.finalize().into_bytes()))
-}
-
-fn unhex(text: &str) -> Option<Vec<u8>> {
-    if !text.len().is_multiple_of(2) || !text.is_ascii() {
-        return None;
-    }
-    (0..text.len())
-        .step_by(2)
-        .map(|i| u8::from_str_radix(&text[i..i + 2], 16).ok())
-        .collect()
-}
-
-/// The entry in `signed`, if `key` made it.
-fn verify(key: &Secret, signed: &SignedEntry) -> Option<Entry> {
-    let mut mac = HmacSha256::new_from_slice(key.0.as_bytes()).ok()?;
-    mac.update(signed.body.as_bytes());
-    // `verify_slice` compares in constant time.
-    mac.verify_slice(&unhex(&signed.signature)?).ok()?;
-    serde_json::from_str(&signed.body).ok()
-}
-
-/// Results on this machine, and optionally a shared location.
-pub(crate) struct ResultStore {
-    root: PathBuf,
-    remote: Option<Remote>,
-    push: bool,
-    key: Option<Secret>,
-    /// Set after the remote fails once, so later jobs don't each wait out
-    /// its timeout. A run reads it again next time.
-    remote_down: AtomicBool,
-    /// Set once this run has swept expired entries from `root`.
-    pruned: AtomicBool,
-}
-
-enum Remote {
-    Dir(PathBuf),
-    Http {
-        base: String,
-        client: reqwest::Client,
-        token: Option<Secret>,
-    },
-}
-
-impl Remote {
-    fn parse(location: &str, token: Option<Secret>) -> Option<Self> {
-        if location.starts_with("http://") || location.starts_with("https://") {
-            let client = reqwest::Client::builder()
-                .timeout(REMOTE_TIMEOUT)
-                .build()
-                .ok()?;
-            return Some(Remote::Http {
-                base: location.trim_end_matches('/').to_string(),
-                client,
-                token,
-            });
-        }
-        // `validate_remote` refuses other schemes. Never read one as a path.
-        if location.contains("://") && !location.starts_with("file://") {
-            return None;
-        }
-        let path = location.strip_prefix("file://").unwrap_or(location);
-        Some(Remote::Dir(PathBuf::from(path)))
-    }
-
-    /// The entry text for `key`. `Ok(None)` is a miss, `Err` means the
-    /// remote itself is failing.
-    async fn get(&self, key: &str) -> Result<Option<String>, String> {
-        match self {
-            Remote::Dir(dir) => Ok(tokio::fs::read_to_string(dir.join(entry_file(key)))
-                .await
-                .ok()),
-            Remote::Http {
-                base,
-                client,
-                token,
-            } => {
-                let mut request = client.get(format!("{}/{}", base, entry_file(key)));
-                if let Some(token) = token {
-                    request = request.bearer_auth(&token.0);
-                }
-                let response = request.send().await.map_err(|e| e.to_string())?;
-                let status = response.status();
-                // Only "not there" is a miss. Anything else, a refused token
-                // above all, would otherwise make every job ask and run cold
-                // without a word.
-                if status == reqwest::StatusCode::NOT_FOUND {
-                    return Ok(None);
-                }
-                if !status.is_success() {
-                    return Err(format!("HTTP {}", status));
-                }
-                response.text().await.map(Some).map_err(|e| e.to_string())
-            }
-        }
-    }
-
-    async fn put(&self, key: &str, body: String) -> Result<(), String> {
-        match self {
-            Remote::Dir(dir) => write_atomically(&dir.join(entry_file(key)), &body),
-            Remote::Http {
-                base,
-                client,
-                token,
-            } => {
-                let mut request = client
-                    .put(format!("{}/{}", base, entry_file(key)))
-                    .body(body);
-                if let Some(token) = token {
-                    request = request.bearer_auth(&token.0);
-                }
-                let response = request.send().await.map_err(|e| e.to_string())?;
-                if response.status().is_success() {
-                    Ok(())
-                } else {
-                    Err(format!("HTTP {}", response.status()))
-                }
-            }
-        }
-    }
-}
-
-fn entry_file(key: &str) -> String {
-    format!("{}.json", key)
-}
-
-/// A reader never sees half an entry, even with parallel jobs or a crash.
-fn write_atomically(path: &Path, body: &str) -> Result<(), String> {
-    let parent = path
-        .parent()
-        .ok_or_else(|| format!("no parent directory for {}", path.display()))?;
-    std::fs::create_dir_all(parent).map_err(|e| e.to_string())?;
-    let temp = parent.join(format!(".{}.tmp", uuid::Uuid::new_v4()));
-    std::fs::write(&temp, body).map_err(|e| e.to_string())?;
-    std::fs::rename(&temp, path).map_err(|e| {
-        let _ = std::fs::remove_file(&temp);
-        e.to_string()
-    })
-}
-
-impl ResultStore {
-    pub(crate) fn new(root: PathBuf, accel: &Acceleration) -> Self {
-        Self {
-            root,
-            remote: accel
-                .remote_cache
-                .as_deref()
-                .and_then(|r| Remote::parse(r, accel.remote_token.clone())),
-            push: accel.push_results,
-            key: accel.signing_key.clone(),
-            remote_down: AtomicBool::new(false),
-            pruned: AtomicBool::new(false),
-        }
-    }
-
-    /// Remove local entries, and temporary files a crash left, older than the
-    /// TTL. Reads already ignore them, so this only bounds the directory,
-    /// which would otherwise grow with every run. Once per run, and by
-    /// modification time, so no entry is opened.
-    fn prune_expired(&self) {
-        if self.pruned.swap(true, Ordering::Relaxed) {
-            return;
-        }
-        let Ok(entries) = std::fs::read_dir(&self.root) else {
-            return;
-        };
-        let max_age = std::time::Duration::from_secs(ttl_secs() as u64);
-        let now = std::time::SystemTime::now();
-        for entry in entries.flatten() {
-            let path = entry.path();
-            let ours = path
-                .file_name()
-                .and_then(|name| name.to_str())
-                .is_some_and(|name| name.ends_with(".json") || name.ends_with(".tmp"));
-            let expired = entry
-                .metadata()
-                .and_then(|meta| meta.modified())
-                .ok()
-                .and_then(|modified| now.duration_since(modified).ok())
-                .is_some_and(|age| age > max_age);
-            if ours && expired {
-                let _ = std::fs::remove_file(&path);
-            }
-        }
-    }
-
-    /// The remote, unless it has already failed in this run.
-    fn live_remote(&self) -> Option<&Remote> {
-        self.remote
-            .as_ref()
-            .filter(|_| !self.remote_down.load(Ordering::Relaxed))
-    }
-
-    /// Stop using the remote for this run, saying so once.
-    fn remote_failed(&self, error: &str) {
-        if !self.remote_down.swa
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #174** (2026-11-19): **fix: close the gaps left after the compare sweep (#173 follow-up)**
-  *Symptoms*: Follow-up to #173: the review fixes that didn't make it in before the merge, and the four things the nine-repo sweep showed were still missing.  ## What changes  **Steps run as `runner`, as on GitHub** (`27438ed`) - The built-in image gets a `runner` user with `/home/runner` and passwordless `sudo`. rustup and cargo live in its home; it owns what `pip install` and `npm install -g` write to. - Steps exec into the job container as that user, with `USER` and `LOGNAME` set, when it can write the job's mounts. Otherwise (rootless engine, wrkflw run as root, a bare fallback image) they run as root with a warning. `WRKFLW_STEPS_AS_ROOT=1` keeps root everywhere. - On Linux the user takes the uid of whoever runs wrkflw, so a bind-mounted workspace stays theirs. A workspace in a volume (macOS default) now gives copied-in files to uid 1001. - `--dep-cache` mounts each cache in both root's home and the runner's. - Unchanged: a job `container:`, an image mapped with `-P`, a step in its own container, Kubernetes, emulation.  **Opt-in `GITHUB_TOKEN` for jobs** (`48e42ca`) - `WRKFLW_JOB_GITHUB_TOKEN=1` fills `secrets.GITHUB_TOKEN` and `github.token` from `GITHUB_TOKEN`, `GH_TOKEN`, then `gh auth token`, where no provider gave one. Off by default, with a warning when on: it is the user's own token, not a run-scoped one.  **`compare` explains and counts honestly** (`e528aed`, `031f92f`) - A job that failed only locally says which step, its exit code and the error line. - The Docker note appear
+- **Issue #176** (2026-11-20): **Pre-release polish: doctor, macOS jobs on the Mac, held-out sweep, prebuilt installs, new demo**
+  *Symptoms*: Polish before 0.9.0, from the pre-release review.  ## What's in it  **`wrkflw doctor`** checks, without starting or pulling anything: which engine `auto` picks (and warns when Docker is down and Podman quietly takes over), the engine VM's memory, whether a first run pulls the published runner base or builds here, where a GitHub token comes from (never the token itself), git, and the workflows in the directory. `--format json` gives the same checks, documented in AGENTS.md. It exits 1 only when a check fails.  **`--macos-on-host`** (`WRKFLW_MACOS_ON_HOST=1`) runs `macos-*` jobs, and the macOS legs of a matrix, on the Mac under emulation while the other jobs keep their containers. Their pass then checks macOS instead of being reported unverified. It's off by default because those steps run with no container around them. How it works: - The switch is made per job and per matrix leg, using the env emulation would seed, held in a task-local scoped around each job batch (`host_jobs.rs`). - A host leg is never folded into a container leg as a twin, and no image is built ahead for it. - The hint in `run`/`gate` now names this flag instead of `--runtime emulation`.  **compare: token hint.** When a job fails and its output shows `gh` asking for a token, or a 401, the note says the step needed the token GitHub gives every job, and that `WRKFLW_JOB_GITHUB_TOKEN=1` gives it yours. This is the itoa attestation case.  **Held-out sweep.** `scripts/conformance/held_out_runs.txt` lists 14 repo
 
-- **Issue #173** (2026-11-18): **fix: close the gaps the eight-repo compare sweep found**
-  *Symptoms*: ## Why  A sweep of eight public repositories on `a7e479f` found 40 jobs where `wrkflw compare` disagreed with GitHub. They trace to ten causes. One is not wrkflw's: rust-lang/log's doc job fails on Rust 1.100, which came out after the GitHub run. This PR fixes eight of the other nine and leaves one for a follow-up.  ## What changes  | Cause | Repos hit | Fix | |---|---|---| | A composite action's `$GITHUB_PATH` / `$GITHUB_ENV` writes never reached the job (`taiki-e/install-action`, then `cargo hack`: "no such command") | rust-lang/log, 5 jobs | The composite collects what its steps applied and appends it to the calling step's files, on failure too | | Checkout dropped every symlink | commander.js, 9 jobs | Links are copied as links with the same target, never followed; a changed or removed link follows the repository | | `dtolnay/rust-toolchain@clippy` / `@miri` were passed to rustup as toolchain names | itoa, 2 jobs | Those branches mean nightly plus `clippy` / `miri, rust-src` unless the step says otherwise. `@master`, `@v1` and every `actions-rs/toolchain` ref pin the action, not a toolchain | | The job image lacked runner tools (`gh`, `sudo`, `jq`, `unzip`, `python3`, …), and a job with no setup action ran on bare `ubuntu:latest` | itoa, 3 jobs; many more in general | A shared layer adds the tools, plus `gh` from GitHub's apt repository (best effort). Every unmapped job in Docker or Podman now gets this image, and `~/.cargo/bin` is on PATH when Rust is installed | | A lit
+- **Issue #175** (2026-11-20): **Pre-release: JavaScript actions, private uses, prebuilt runner image, stand-in reporting, sweep evidence**
+  *Symptoms*: Closes the gaps left before the next release, so that a local pass stands for GitHub's on more real workflows and a first run is faster. One commit per item.  ## What changes  **1. JavaScript actions run** (`fd16db9`) An action with `runs.using: node12|16|20|24`, remote or local, used to pass without running and made the run `partial`. It now runs as GitHub's runner runs it: `node <main>` through the `run:` path, so in the job's container as the `runner` user, with `INPUT_<NAME>` from `with:` or the input's evaluated default (hyphens kept) and `GITHUB_ACTION_PATH`/`_REPOSITORY`/`_REF` set. `pre` runs first when `pre-if` holds. `post` runs at the end of the job, last action first, when `post-if` holds (`always()` by default), and reads what `main` saved through `$GITHUB_STATE` or `::save-state` as `STATE_<name>`. A remote action is cloned once per run. An image with no `node` leaves the action unrun and the step `unverified`. Setup and Rust toolchain actions keep wrkflw's own versions. `WRKFLW_JS_ACTIONS=0` restores the old behaviour.  **2. Private repositories for remote `uses:`** (`f2d7dbe`) Every clone is tried anonymously first. For github.com it is then retried with a token: the job's `GITHUB_TOKEN` from a secret provider, else `GITHUB_TOKEN`/`GH_TOKEN`, else `gh auth token`, found once per run. The token reaches git as an `http.extraheader` through `GIT_CONFIG_*` env vars, so it never appears in the URL, argv or `.git/config`. `GIT_TERMINAL_PROMPT=0` makes a missing toke
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2195,1397 +1913,852 @@ impl ResultStore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b0fdd8df` (2026-11-19)
-**Commit Message**: fix: close the gaps left after the compare sweep (#173 follow-up) (#174)
+### Incident Patch 1: `490a508b` (2026-11-20)
+**Commit Message**: Pre-release: JavaScript actions, private uses, prebuilt runner image, stand-in reporting, sweep evidence (#175)
 
-* fix(compare): keep the run-level check with a Windows leg, and say why a job failed
+* feat(executor): clone private repositories for remote uses with the user's GitHub token
 
-A job run as Linux for a Windows one turned the comparison of the runs' own
-results off for the whole run. Such a job is now left out of both runs'
-results, and the rest is still compared.
+A remote uses: was cloned over anonymous HTTPS, so a called workflow or
+action in a private repository failed. The clone is now retried, once the
+anonymous one fails for github.com, with the GITHUB_TOKEN a secret
+provider gave the job, else GITHUB_TOKEN or GH_TOKEN, else gh auth token,
+found once per run. The token reaches git as an extra HTTP header through
+its environment, never the URL, argv or .git/config, and git never
+prompts for a password.
 
-The note that a job needs a Docker engine read WRKFLW_DOCKER_IN_JOBS alone,
-so a job given an engine through .wrkflw configuration was told it lacked
-one. It is now said only when the failed step's output shows there was none.
+* feat(executor): run JavaScript actions with node, with their pre, post and state
 
-A local failure GitHub doesn't share names the step that failed and quotes
-the line that says why, from the run's failure digest. A pass both sides
-share of a job that skipped an action is marked unverified and counted.
+A uses: step whose action runs on Node passed without running and made
+the run partial. Such an action, remote or local, now runs as the runner
+runs it: node <main> from the action's directory through the run: path,
+so in the job's container as its user, with INPUT_<NAME> from with: or
+the input's evaluated default (hyphens kept), GITHUB_ACTION_PATH,
+GITHUB_ACTION_REPOSITORY and GITHUB_ACTION_REF. pre runs first when
+pre-if holds; post is queued and run a
 
-* fix(executor): name the gh install in its image tag, and hand on a composite's env when a step errors
-
-The image with the GitHub CLI on top was tagged <image>-gh, so a changed
-install script reused the image an earlier version built. The tag now
-carries a hash of the script.
-
-A composite action step that could not run at all returned before the
-composite handed on what its earlier steps wrote to
-
-**File**: `README.md` (modified, +8/-3)
+**File**: `.cargo/config.toml` (modified, +6/-0)
 ```diff
-@@ -160,7 +160,8 @@ export WRKFLW_PLATFORM=ubuntu-latest=catthehacker/ubuntu:act-latest
- ```
+@@ -11,3 +11,9 @@ WRKFLW_FRESH_WORKSPACE = "1"
+ # An existing value wins, so name a file to measure, as in
+ # `WRKFLW_JOB_MEMORY_FILE=/tmp/job-memory.json cargo run -- run ...`.
+ WRKFLW_JOB_MEMORY_FILE = ""
++# And for the runner base image: a test run on a commit whose base isn't
++# published would remember it as unavailable in the user's cache, and real
++# runs would then skip it for a day. CI names its own base with
++# WRKFLW_RUNNER_IMAGE and sets this to 1. It applies to `cargo run` too:
++# set WRKFLW_PREBUILT_IMAGES=1 there to time a first run on the base.
++WRKFLW_PREBUILT_IMAGES = "0"
+```
+
+**File**: `.gitattributes` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++docker/runner.Dockerfile text eol=lf
++docker/runner-image.txt text eol=lf
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +36/-0)
+```diff
+@@ -39,12 +39,48 @@ jobs:
+     name: Build (${{ matrix.os }})
+     runs-on: ${{ matrix.os }}
+     strategy:
++      # One OS failing says nothing about the others: let them finish.
++      fail-fast: false
+       matrix:
+         os: [ubuntu-latest, macos-latest, windows-latest]
+     steps:
+       - uses: actions/checkout@v4
+       - uses: dtolnay/rust-toolchain@stable
+       - uses: Swatinem/rust-cache@v2
++      # The Docker tests start their jobs from the runner base image, built
++      # here once from the committed Dockerfile and cached by its text, as
++      # a release publishes it. Built inside each test instead, its 120 MB
++      # from Ubuntu's archive sometimes outlast the 10-minute build limit.
++      # Its apt uses Azure's Ubuntu mirror, as the runner itself does, so
++      # what the tests install on it (docker.io) doesn't wait on
++      # archive.ubuntu.com either.
++      # Rebuilt each week too, as the published image is, so the tests run
++      # on current packages rather than the ones of the first cached build.
++      - name: Name the week
++        if: runner.os == 'Linux'
++        id: week
++        run: echo "week=$(date -u +%G-W%V)" >> "$GITHUB_OUTPUT"
++      - name: Restore the runner base image
++        if: runner.os == 'Linux'
++        id: runner-image
++        uses: actions/cache@v4
++        with:
++          path: ~/runner-image.tar
++          key: runner-image-azure-${{ steps.week.outputs.week }}-${{ hashFiles('docker/runner.Dockerfile') }}
++      - name: Build the runner base image
++        if: runner.os == 'Linux' && steps.runner-image.outputs.cache-hit != 'true'
++        run: |
++          mirror='RUN sed -i -E "s#http://(archive|security)\.ubuntu\.com#http://azure.archive.ubuntu.com#g" /etc/apt/sources.list.d/ubuntu.sources'
++          { head -n 1 docker/runner.Dockerfile; echo "$mirror"; tail -n +2 docker/runner.Dockerfile; } \
++            > "$RUNNER_TEMP/runner.Dockerfile"
++          docker build -f "$RUNNER_TEMP/runner.Dockerfile" -t wrkflw-runner:ci docker
++          docker save wrkflw-runner:ci -o ~/runner-image.tar
++      - name: Load the runner base image
++        if: runner.os == 'Linux' && steps.runner-image.outputs.cache-hit == 'true'
++        run: docker load -i ~/runner-image.tar
+       - run: cargo build --workspace --all-features
+       - run: cargo check --no-default-features --workspace
+       - run: cargo test --workspace --all-features
++        env:
++          WRKFLW_RUNNER_IMAGE: ${{ runner.os == 'Linux' && 'wrkflw-runner:ci' || '' }}
++          WRKFLW_PREBUILT_IMAGES: ${{ runner.os == 'Linux' && '1' || '0' }}
+```
+
+**File**: `.github/workflows/release.yml` (modified, +70/-2)
+```diff
+@@ -62,6 +62,72 @@ jobs:
+             echo "CHANGELOG_EOF"
+           } >> "$GITHUB_OUTPUT"
  
++  runner-image:
++    name: Publish the runner base image
++    runs-on: ubuntu-latest
++    # Not before the tag is checked: this job pushes packages.
++    needs: changelog
++    permissions:
++      contents: read
++      packages: write
++    steps:
++      # Pinned by commit: this job can write packages.
++      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
++        with:
++          ref: ${{ env.RELEASE_TAG }}
++      # docker/runner.Dockerfile is what every built-in job image starts
++      # with, named by a hash of its text in docker/runner-image.txt (a test
++      # keeps both current). wrkflw pulls it instead of building those
++      # layers on a user's machine. The tag names its content, so a release
++      # whose Dockerfile didn't change has nothing to push.
++      - name: Read the image name
++        id: image
++        run: echo "name=$(tr -d '[:space:]' < docker/runner-image.txt)" >> "$GITHUB_OUTPUT"
++      # Pinned by commit: this job can write packages.
++      - uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
++      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
++      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
++        with:
++          registry: ghcr.io
++          username: ${{ github.actor }}
++          password: ${{ secrets.GITHUB_TOKEN }}
++      - name: Build and push unless published
++        env:
++          IMAGE: ${{ steps.image.outputs.name }}
++        run: |
++          if docker buildx imagetools inspect "$IMAGE" >/dev/null 2>&1; then
++            echo "$IMAGE is already published"
++            exit 0
++          fi
++          # Provenance names the commit and workflow that built it, so a user can
++          # check where a pulled base image came from. The source label links
++          # the package to this repository.
++          docker buildx build \
++            --platform linux/amd64,linux/arm64 \
++            --provenance=mode=max \
++            --label "org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY" \
++            -f docker/runner.Dockerfile \
++            -t "$IMAGE" \
++            --push .
++      # GHCR makes a new package private. wrkflw pulls the base without
++      # credentials and builds the whole image itself when it can't, so a
++      # private package fails nothing; it only takes away the faster first
++      # run. Say so, rather than fail the release.
++      - name: Check the image can be pulled anonymously
++        env:
++          IMAGE: ${{ steps.image.outputs.name }}
++        run: |
++          ref="${IMAGE#ghcr.io/}"
++          name="${ref%%:*}"
++          tag="${ref##*:}"
++          token=$(curl -fsS "https://ghcr.io/token?scope=repository:${name}:pull" | jq -r .token)
++          if ! curl -fsS -o /dev/null \
++              -H "Authorization: Bearer ${token}" \
++              -H "Accept: application/vnd.oci.image.index.v1+json" \
++              "https://ghcr.io/v2/${name}/manifests/${tag}"; then
++            echo "::warning::${IMAGE} can't be pulled anonymously: make the package public in its settings, or wrkflw builds the image on each machine"
++          fi
++
+   build:
+     name: Build (${{ matrix.target }})
+     runs-on: ${{ matrix.os }}
+@@ -129,7 +195,8 @@ jobs:
+   publish:
+     name: Publish to crates.io
+     runs-on: ubuntu-latest
+-    needs: [build, changelog]
++    # After the runner base image: a published wrkflw pulls it on first run.
++    needs: [build, changelog, runner-image]
+     # Only publish on tag push — manual dispatch uses a branch ref, intentionally excluded
+     # because publishing to crates.io is irreversible
+     if: startsWith(github.ref, 'refs/tags/v')
+@@ -154,7 +221,8 @@ jobs:
+   release:
+     name: Create GitHub Release
+     runs-on: ubuntu-latest
+-    needs: [build, changelog]
++    # After the runner base image: a released wrkflw pulls it on first run.
++    needs: [build, changelog, runner-image]
+     steps:
+       - uses: actions/checkout@v4
+ 
+```
+
+**File**: `.github/workflows/runner-image.yml` (added, +83/-0)
+```diff
+@@ -0,0 +1,83 @@
++name: Refresh runner image
++
++# The runner base image's tag names the text of docker/runner.Dockerfile,
++# not what it installs: `ubuntu:latest`, its packages and Node.js 22 move
++# on while the tag stays. The release workflow pushes a tag once; this
++# rebuilds the latest release's tag each week, so a machine pulling it for
++# the first time gets current packages and security fixes. A machine that
++# pulled it already keeps its copy, as it keeps an image it built, until the
++# image is removed (see the README). wrkflw's own job images build on it
++# with the same tag, so nothing else changes.
++on:
++  schedule:
++    - cron: "17 4 * * 1"
++  workflow_dispatch:
++    inputs:
++      tag:
++        description: "Release whose runner image to rebuild (default: the latest)"
++        required: false
++
++permissions:
++  contents: read
++  packages: write
++
++concurrency:
++  group: runner-image
++  cancel-in-progress: false
++
++jobs:
++  refresh:
++    name: Rebuild the runner base image
++    runs-on: ubuntu-latest
++    steps:
++      - name: Find the release
++        id: release
++        env:
++          GH_TOKEN: ${{ github.token }}
++          TAG: ${{ inputs.tag }}
++        run: |
++          if [ -z "$TAG" ]; then
++            TAG=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName)
++          fi
++          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
++      # Pinned by commit: this job can write packages.
++      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
++        with:
++          ref: ${{ steps.release.outputs.tag }}
++      - name: Read the image name
++        id: image
++        # The tag through the environment, never spliced into the script.
++        env:
++          TAG: ${{ steps.release.outputs.tag }}
++        run: |
++          if [ ! -f docker/runner-image.txt ]; then
++            echo "$TAG publishes no runner image"
++            exit 0
++          fi
++          echo "name=$(tr -d '[:space:]' < docker/runner-image.txt)" >> "$GITHUB_OUTPUT"
++      # Pinned by commit: this job can write packages.
++      - if: steps.image.outputs.name != ''
++        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
++      - if: steps.image.outputs.name != ''
++        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
++      - if: steps.image.outputs.name != ''
++        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
++        with:
++          registry: ghcr.io
++          username: ${{ github.actor }}
++          password: ${{ secrets.GITHUB_TOKEN }}
++      - name: Rebuild and push
++        if: steps.image.outputs.name != ''
++        env:
++          IMAGE: ${{ steps.image.outputs.name }}
++        run: |
++          # Provenance names the commit and workflow that built it, so a user can
++          # check where a pulled base image came from.
++          docker buildx build \
++            --pull --no-cache \
++            --platform linux/amd64,linux/arm64 \
++            --provenance=mode=max \
++            --label "org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY" \
++            -f docker/runner.Dockerfile \
++            -t "$IMAGE" \
++            --push .
+```
+
+**File**: `BREAKING_CHANGES.md` (modified, +8/-0)
+```diff
+@@ -1,5 +1,13 @@
+ # Breaking Changes
+ 
++## JavaScript actions run (unreleased)
++
++A `uses:` step whose action runs on Node, such as `actions/github-script`, `codecov/codecov-action` or a local `./` action whose `action.yml` says `runs.using: node20`, used to pass without running and was reported as not run, which made the run `partial`. Such an action now runs with node in the job's container, with its `pre` and `post`; under `--runtime emulation` it runs on your machine as you, so a remote action is code from its repository (pinned only as firmly as its `@ref`) running with your access, your tokens and keys included: wrkflw leaves credential-named variables (`GH_TOKEN`, `AWS_SECRET_ACCESS_KEY`, `SSH_AUTH_SOCK` and the like) out of its environment, which is a precaution, not a boundary. The same goes for the steps of a remote composite action under emulation, which used to inherit them: one that runs `gh`, `aws` or `ssh` with your own credentials now needs them passed through the step's `env:`. A step can no longer set, for later steps through `$GITHUB_ENV`, a variable wrkflw sets for each step (GitHub's defaults such as `GITHUB_SHA` or `RUNNER_TEMP`, `GITHUB_ACTION_PATH`, `WRKFLW_RUNTIME_MODE`) or `NODE_OPTIONS`, as GitHub doesn't let it either; such a line is ignored with a warning. Names of your own, `GITHUB_SHA_SHORT` included, pass on as before. A local `./` action is read from the job's workspace rather than the repository wrkflw runs in, as on GitHub. Its `pre` runs right before it, not at the start of the job, and its `post` runs at the end of the job even when `pre`, `main` or a later step failed. The action can fail where it used to pass, and the run is `verified` when nothing else was left out. An action that needs GitHub's run services (`ACTIONS_RUNTIME_TOKEN` or the OIDC token) fails locally, so a workflow using `github/codeql-action`, `actions/deploy-pages` or `actions/attest-build-provenance` now fails under `wrkflw gate` where it was `partial`: add them to `WRKFLW_SKIP_ACTIONS`. A remote action is cloned from GitHub, with your GitHub token if the anonymous clone fails. `WRKFLW_JS_ACTIONS=0` brings back the old behaviour, and `WRKFLW_SKIP_ACTIONS=owner/repo,./path` leaves only the actions it lists unrun. Stored results are keyed on both, and the key's version goes to 6, so `--reuse-results` (which `wrkflw gate` always uses) reruns every job once instead of reusing a pass whose JavaScript actions didn't run. The setup actions and the Rust toolchain actions are unchanged.
++
++## Steps run as the `runner` user (unreleased)
++
++In the image wrkflw builds for a job, its steps now run as `runner`, a user with a home directory and sudo without a password, as on GitHub's hosted runner, where they used to run as root. A step that wrote where only root may, or relied on being root, can now fail: run it with `sudo`, as on GitHub, or set `WRKFLW_STEPS_AS_ROOT=1` to keep root everywhere. On Linux the user takes the uid of whoever runs wrkflw, so a bind-mounted workspace stays theirs. Under a rootless engine, or where the user can't write the job's mounts, steps run as root with a warning. A job `container:`, an image mapped with `-P` and Kubernetes are unchanged. Stored results are keyed on it and the key's version goes to 5, so `--reuse-results` reruns every job once.
++
+ ## A job's steps share one container (unreleased)
+ 
+ On Docker and Podman a job's `run:` steps now run in one container, started once and kept for the job, where each step used to get a container of its own. What a step leaves outside the workspace is there for the next one, as on GitHub: `go install`, `apt-get install`, `rustup toolchain add`, `pip install`, a file under `$HOME` or `/tmp`, a process left running. A workflow that only passed locally because a step started from a clean image now behaves as it does on GitHub. `--step-containers`, or `WRKFLW_STEP_CONTAINERS=1`, brings the old behaviour back, and `--preserve-containers-on-failure` still implies it. `--job-container` is accepted and does nothing, even beside `--step-containers`. Both variables also apply to runs started from the TUI and `wrkflw watch`. The jobs of a called workflow share a container too, and their services now start. A step that is cancelled or times out may still be running in the job's container, so the steps after it, `if: always()` ones included, get a fresh container without what earlier steps installed, and the job's services restart with it.
+```
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -4429,6 +4429,7 @@ name = "wrkflw-executor"
+ version = "0.8.0"
+ dependencies = [
+  "async-trait",
++ "base64 0.21.7",
+  "bollard",
+  "chrono",
+  "dirs",
+```
+
+**File**: `README.md` (modified, +29/-7)
+```diff
+@@ -20,7 +20,7 @@ A command-line tool for validating and executing GitHub Actions workflows locall
+ - **Job selection** — run individual jobs with `--job` or via TUI job selection mode
+ - **Job dependency resolution** — automatic ordering based on `needs` with parallel execution of independent jobs
+ - **Expression evaluator** — evaluates `${{ ... }}` expressions including `toJSON`, `fromJSON`, `contains`, `startsWith`, etc.
+-- **Action support** — Docker container actions, composite actions (with output propagation), local actions, and built-in versions of `actions/checkout`, `actions/cache`, the artifact actions and the common setup actions (`setup-node`, `setup-python`, `setup-go`, `setup-java`, `setup-dotnet`, `setup-php`, `rust-toolchain`, `setup-uv`), which install the runtime into the job's image, honouring `*-version-file` inputs. Any other JavaScript action is not run: its step passes and is reported under `unverified`
++- **Action support** — JavaScript actions (`runs.using: node*`, run with node in the job's container, with `pre`, `post` and `$GITHUB_STATE`), Docker container actions, composite actions (with output propagation), local actions, and built-in versions of `actions/checkout`, `actions/cache`, the artifact actions and the common setup actions (`setup-node`, `setup-python`, `setup-go`, `setup-java`, `setup-dotnet`, `setup-php`, `rust-toolchain`, `setup-uv`), which install the runtime into the job's image, honouring `*-version-file` inputs. A JavaScript action that finds no `node` in the job's image is not run: its step passes and is reported under `unverified`
+ - **Reusable workflows** — execute caller jobs via `jobs.<id>.uses` (local or `owner/repo/path@ref`) with output propagation
+ - **Artifacts, cache, and inter-job outputs** — `actions/upload-artifact`, `actions/download-artifact`, `actions/cache`, and `needs.<id>.outputs.*`
+ - **GitHub context emulation** — environment variables, `GITHUB_OUTPUT`, `GITHUB_ENV`, `GITHUB_PATH`, `GITHUB_STEP_SUMMARY`
+@@ -37,9 +37,7 @@ A command-line tool for validating and executing GitHub Actions workflows locall
+ 
+ - GitHub encrypted secrets and fine-grained permissions
+ - Event triggers other than `workflow_dispatch` for the remote `trigger` command
+-- JavaScript actions outside the built-in set — a step such as `uses: some-org/setup-tool@v1`, or a local `uses: ./my-action`, whose action runs on Node is not executed. The step passes, prints that it would have run the action, and is listed under `unverified` in `run_finished`, the `gate` result and `compare`, with a warning in the log and a mark on the step in the TUI, so the run's verdict is `partial` rather than `verified`. Whatever the action would have installed or checked is missing from the job, so later steps may fail with `command not found`. Pass `--platform ubuntu-latest=IMAGE` with an image that has the tool, or install it in a `run:` step
+ - Absolute-URL actions such as `uses: https://gitea.com/actions/checkout@v4` — they pass validation, but at run time the URL is not resolved and the step falls back to built-in handling
+-- Private repos for remote `uses:` — reusable workflows clone over unauthenticated HTTPS
+ - `cancel-in-progress` and workflow-level `concurrency:` — job-level groups are enforced within a run, but a local run has nothing earlier to cancel
+ - Service containers outside Docker and Podman — emulation, secure emulation, Kubernetes and jobs inside a called workflow don't start `services:`
+ - Service settings that reach the host — a service's `volumes:` can only name a volume, not a host path, and its `options:` only take flags that shape the service container itself, such as `--health-cmd`, `--user`, `--tmpfs` and `-e NAME=value`. Anything else, such as `--privileged` or `-v`, fails the job.
+@@ -162,6 +160,7 @@ export WRKFLW_PLATFORM=ubuntu-latest=catthehacker/ubuntu:act-latest
  - A job-level `container:` still wins over `--platform`, which wins over the built-in image.
--- The built-in image is the base image plus tools the hosted Ubuntu runner has and steps call without installing: `sudo`, `jq`, `gh`, `unzip`, `zip`, `wget`, `xz`, `zstd`, `file`, `ssh`, `rsync`, `git-lfs`, `python3` with `pip`, a C toolchain and Node.js. It is built once and shared by every job. `gh` comes from cli.github.com in a layer of its own: when that can't be reached the job runs without it, with a warning, and the next run tries again. When the tools can't be installed at all, a job with nothing else to set up runs on the bare base image. Steps still run as root, where GitHub's run as the `runner` user, so a test that expects a permission error passes on GitHub and fails here.
-+- The built-in image is the base image plus tools the hosted Ubuntu runner has and steps call without installing: `sudo`, `jq`, `gh`, `unzip`, `zip`, `wget`, `xz`, `zstd`, `file`, `ssh`, `rsync`, `git-lfs`, `python3` with `pip`, a C toolchain and Node.js. It is built once and shared by every job. `gh` comes from cli.github.com in a layer of its own: when that can't be reached the job runs without it, with a warning, and the next run tries again. When the tools can't be installed at all, a job with nothing else to set up runs on the bare base image.
-+- Steps of a job in the built-in image run as `runner`, as on GitHub: a user with `/home/runner` for its home and `sudo` without a password, so a test that expects a permission error gets one. rustup and cargo are in its home, and it owns what `pip install` and `npm install -g` write to. On Linux the user has your uid, so what a step writes in the workspace stays yours; elsewhere it has GitHub's, 1001. Files an earlier run left in the workspace or the `--dep-cache` directories as root's are handed to that user before the first step. Steps run as root instead, with one warning per run, where that user can't write the job's files: under a rootless engine (not a rootless Podman whose containers keep your ids, with `userns = "keep-id"` or `PODMAN_USERNS=keep-id`), or when wrkflw itself runs as root on Linux. That is found before the first job, so their results are still kept and reused with `--reuse-results`, as root's. A job whose container shows another reason only once it is up, such as files an earlier run left that can't be handed over, runs as root with a warning of its own, and its result isn't kept. `WRKFLW_STEPS_AS_ROOT=1` runs them as root everywhere. A job `container:`, an image mapped with `--platform`, a step in a container of its own, and the Kubernetes and emulation runtimes are unchanged: they run as the image's user, or as you.
- - An image you map with `--platform` gets none of these tools, also when a setup action's runtime is installed on it. Map `ubuntu-latest=ubuntu:latest` to run on the bare Ubuntu image.
- - Labels match case-insensitively, and the last value given for a label wins. Every label in `runs-on: [self-hosted, linux]` is tried, and `runs-on: ${{ matrix.os }}` is resolved per matrix combination.
- - Runtimes from `actions/setup-*` are installed on top of your image, so the image must be Debian or Ubuntu based for those jobs.
-@@ -240,7 +241,7 @@ wrkflw run .github/workflows/ci.yml --dep-cache
- - **`--affected`** also skips a job when none of its declared paths changed, even with no stored result. It trusts the base you compare against to be green. The pre-push hook compares against the remote tip of the branch you push, which is green only if that push's CI passed. If it may not have, run `wrkflw gate --diff-base origin/main` by hand. It needs `--event`, and only applies to jobs listed in `.wrkflw/affected.yml`. Such a job counts as passed for its dependents and reports one `Not affected` step. A job still runs if it has `outputs` or a matrix, if a job it needs ran or didn't pass, or if a workflow file changed.
- - **One container per job** is how a job's `run:` steps run on Docker and Podman. What a step leaves outside the workspace, such as a tool from `go install`, `apt-get install` or `rustup toolchain add`, is there for the next step, as on GitHub. A step that times out may still be running in that container, so the next step gets a fresh one, and a job's services restart with it. `--step-containers`, or `WRKFLW_STEP_CONTAINERS=1`, gives each step a container of its own instead, as `--preserve-containers-on-failure` does. The variable also reaches runs started from the TUI and `wrkflw watch`. `--job-container` is still accepted and changes nothing, even beside `--step-containers`.
- - **`--docker-in-jobs`**, or `WRKFLW_DOCKER_IN_JOBS=1`, starts a Docker engine inside the container of each job whose `run:` steps run `docker`, as hosted runners have one. That container runs privileged, so it is off unless you ask: only use it for workflows you trust. The engine is t
-```
-
-**File**: `crates/executor/src/acceleration.rs` (modified, +303/-30)
-```diff
-@@ -37,17 +37,57 @@ use wrkflw_parser::workflow::{Job, WorkflowDefinition};
- pub const SIDECAR_PATH: &str = ".wrkflw/affected.yml";
- 
- /// Bump when the fingerprint's inputs change, so old entries stop matching.
--const KEY_VERSION: u32 = 4;
-+/// Version 5: steps of the built-in image run as the runner user, so a pass
-+/// stored when they ran as root says nothing of a run as that user.
-+const KEY_VERSION: u32 = 5;
- 
--/// Host directories mounted into containers under `--dep-cache`.
-+/// Host directories mounted into containers under `--dep-cache`, and where
-+/// in a user's home directory each tool keeps that cache.
- const DEP_CACHE_DIRS: &[(&str, &str)] = &[
--    ("cargo-registry", "/root/.cargo/registry"),
--    ("cargo-git", "/root/.cargo/git"),
--    ("npm", "/root/.npm"),
--    ("pip", "/root/.cache/pip"),
--    ("go-mod", "/root/go/pkg/mod"),
-+    ("cargo-registry", ".cargo/registry"),
-+    ("cargo-git", ".cargo/git"),
-+    ("npm", ".npm"),
-+    ("pip", ".cache/pip"),
-+    ("go-mod", "go/pkg/mod"),
- ];
- 
-+/// The home directories a step's caches may be in, in the image wrkflw
-+/// builds: root's, and the runner user's. Which user a step runs as isn't
-+/// known until the job's container is up, after its mounts are fixed, and
-+/// cargo keeps its caches in `CARGO_HOME`, the runner user's home there for
-+/// root too, so in that image each cache is mounted in both. Any other
-+/// image only gets root's: its own user's home, even one named `runner`,
-+/// isn't wrkflw's to mount over.
-+const DEP_CACHE_HOMES: &[&str] = &["/root", crate::runner_user::HOME];
-+
-+/// The directory, beside a repository's caches, that holds a second set for
-+/// steps that always run as root: a job `container:`, an image mapped with
-+/// `-P`, a step in a container of its own, or a run with
-+/// `WRKFLW_STEPS_AS_ROOT`. Sharing one set with steps that run as the
-+/// runner user would leave that user files it can't write, from a root job
-+/// running beside it.
-+const ROOT_DEP_CACHE_DIR: &str = "as-root";
-+
-+/// The `--dep-cache` directories of a run: each one's host directory and
-+/// where in a home directory it goes, one set for steps that may run as the
-+/// runner user and one for steps that run as root.
-+#[derive(Debug, Clone, Default, PartialEq, Eq)]
-+struct DepCacheMounts {
-+    runner: Vec<(PathBuf, &'static str)>,
-+    root: Vec<(PathBuf, &'static str)>,
-+}
-+
-+/// Who a step's `--dep-cache` mounts are for.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub(crate) struct DepCacheFor {
-+    /// The step may run as the runner user: it gets the set that user's
-+    /// steps share. Otherwise it runs as root, and gets root's own set.
-+    pub(crate) runner_user: bool,
-+    /// The step's image is one wrkflw built with the runner user, whose home
-+    /// the caches go in as well as root's: see [`DEP_CACHE_HOMES`].
-+    pub(crate) runner_home: bool,
-+}
-+
- /// Files that always count as input, because steps load them without naming
- /// them. Path hints would otherwise let a composite action change go unseen.
- const ALWAYS_INPUT: &[&str] = &[".github/actions/**", ".gitea/actions/**", SIDECAR_PATH];
-@@ -409,12 +449,23 @@ pub(crate) struct KeyInput<'a> {
- /// The fingerprint a stored result is filed under. `None` if the job can't be
- /// serialized, which leaves it running as normal.
- pub(crate) fn job_key(input: &KeyInput<'_>) -> Option<String> {
--    job_key_with(input, crate::run_options::every_matrix_leg())
-+    job_key_with(
-+        input,
-+        crate::run_options::every_matrix_leg(),
-+        !crate::runner_user::for_run(),
-+    )
- }
- 
- /// [`job_key`], with `every_matrix_leg` saying whether matrix legs that
--/// would repeat another leg still run.
--fn job_key_with(input: &KeyInput<'_>, every_matrix_leg: bool) -> Option<String> {
-+/// would repeat another leg still run, and `steps_as_root` whether the run
-+/// keeps steps as root where they would run as the runner user: because it
-+/// asked to, or because it can't have that user at all (see
-+/// [`runner_user::for_run`](crate::runner_user::for_run)).
-+fn job_key_with(
-+    input: &KeyInput<'_>,
-+    every_matrix_leg: bool,
-+    steps_as_root: bool,
-+) -> Option<String> {
-     let lookup = input.lookup;
-     let inputs = match input.patterns {
-         None => input.tree.digest.clone(),
-@@ -452,6 +503,11 @@ fn job_key_with(input: &KeyInput<'_>, every_matrix_leg: bool) -> Option<String>
-     if container_policy().is_some_and(|policy| policy.one_container_per_step()) {
-         document["step_containers"] = serde_json::json!(true);
-     }
-+    // A pass as root, which may write what the runner user can't, can't
-+    // stand in for one as that user, or the other way round.
-+    if steps_as_root {
-+        document["steps_as_root"] = serde_json::json!(true);
-+    }
-     let text = serde_json::to_string(&canonical(document)).ok()?;
-     Some(hex(&Sha256::digest(text.as_bytes())))
- }
-@@ -470,7 +526,10 @@ pub(crate) struct RunState {
-     /// unaffected when something it consume
-```
-
-**File**: `crates/executor/src/engine.rs` (modified, +598/-67)
-```diff
-@@ -2111,9 +2111,16 @@ fn report_action_not_run(uses: &str, cause: Option<&str>) -> Option<String> {
-     Some(uses.to_string())
- }
- 
--/// Where `cargo install` puts commands for the user steps run as. Steps run
--/// as root for now; running them as GitHub's `runner` user moves this.
--const CARGO_BIN_DIR: &str = "/root/.cargo/bin";
-+/// Where `cargo install` puts commands in an image mapped with `-P`, whose
-+/// steps run as its own user, taken to be root. In the built-in image it
-+/// is the runner user's: see [`runner_cargo_home`].
-+const ROOT_CARGO_BIN_DIR: &str = "/root/.cargo/bin";
-+
-+/// `CARGO_HOME` in the built-in image: the runner user's `~/.cargo`, where
-+/// the hosted runner has it and where workflows cache it.
-+fn runner_cargo_home() -> String {
-+    format!("{}/.cargo", crate::runner_user::HOME)
-+}
- 
- /// Tools the hosted Ubuntu runner has that a job's steps run without
- /// installing them first, so their absence fails a step that passes on
-@@ -2158,7 +2165,8 @@ https://cli.github.com/packages stable main\" > /etc/apt/sources.list.d/github-c
- /// runtimes need.
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
- enum RunnerTools {
--    /// [`RUNNER_TOOLS`] and the GitHub CLI, for the built-in images.
-+    /// [`RUNNER_TOOLS`], the GitHub CLI and the [runner
-+    /// user](crate::runner_user), for the built-in images.
-     Install,
-     /// Neither: an image mapped with `-P` is the user's, and gets only what
-     /// its setup actions need.
-@@ -2200,12 +2208,6 @@ fn generate_combined_dockerfile(
-         dockerfile.push_str(&format!("# base image id: {}\n", id));
-     }
- 
--    let scripts: Vec<&str> = runtimes
--        .iter()
--        .filter(|rt| !rt.install_script.is_empty())
--        .map(|rt| rt.install_script.as_str())
--        .collect();
--
-     // `build-essential` because hosted Ubuntu runners have a C toolchain,
-     // and Rust build scripts, node-gyp, Python C extensions and cgo all
-     // expect one. `less` because they have a pager, which tests of CLI
-@@ -2226,6 +2228,12 @@ fn generate_combined_dockerfile(
-     if tools == RunnerTools::Install {
-         dockerfile.push(' ');
-         dockerfile.push_str(&RUNNER_TOOLS.join(" "));
-+        // The user steps run as, once `sudo` is there for it.
-+        dockerfile.push_str(" && \\\n");
-+        dockerfile.push_str(&format!(
-+            "    {}",
-+            crate::runner_user::create_script(crate::runner_user::uid())
-+        ));
-     }
- 
-     // Hosted runners also have Node.js whatever the job sets up, and tools
-@@ -2234,6 +2242,9 @@ fn generate_combined_dockerfile(
-     if !runtimes.iter().any(|rt| rt.language == "node") {
-         dockerfile.push_str(" && \\\n");
-         dockerfile.push_str(&format!("    {}", runner_node_install()));
-+        if let Some(own) = owned_by_runner(tools, "node") {
-+            dockerfile.push_str(&format!(" && \\\n    {}", own));
-+        }
-     }
-     dockerfile.push_str(REMOVE_PACKAGE_LISTS);
-     dockerfile.push('\n');
-@@ -2245,6 +2256,17 @@ fn generate_combined_dockerfile(
-     // and closed to a step that runs as another user, and which a job that
-     // sets `HOME` moves. Somewhere fixed and readable serves every step.
-     let mut env: Vec<(String, String)> = Vec::new();
-+    // rustup and cargo go in the runner user's home, where the hosted
-+    // runner has them. Set for every step, so one that runs as root after
-+    // all, or with another `HOME`, still finds the toolchain.
-+    let has_rust = runtimes.iter().any(|rt| rt.language == "rust");
-+    if has_rust && tools == RunnerTools::Install {
-+        env.push(("CARGO_HOME".to_string(), runner_cargo_home()));
-+        env.push((
-+            "RUSTUP_HOME".to_string(),
-+            format!("{}/.rustup", crate::runner_user::HOME),
-+        ));
-+    }
-     if runtimes.iter().any(|rt| rt.language == "python") {
-         env.push((
-             "UV_PYTHON_INSTALL_DIR".to_string(),
-@@ -2267,8 +2289,14 @@ fn generate_combined_dockerfile(
-     // weeks ago name packages the mirrors have since replaced, and a
-     // step's `apt-get install` would fail on some of them and not others;
-     // without lists it says at once that it wants an `apt-get update`.
--    for script in &scripts {
-+    for runtime in runtimes.iter().filter(|rt| !rt.install_script.is_empty()) {
-+        let script = &runtime.install_script;
-         dockerfile.push_str(&format!("RUN {}", script));
-+        // In the same instruction as the install: a later layer that
-+        // changed the files' owner would hold a second copy of them.
-+        if let Some(own) = owned_by_runner(tools, &runtime.language) {
-+            dockerfile.push_str(&format!(" && \\\n    {}", own));
-+        }
-         if script.contains("apt-get") {
-             dockerfile.push_str(REMOVE_PACKAGE_LISTS);
-         }
-@@ -2282,19 +2310,30 @@ fn generate_combined_dockerfile(
-     // install` adds runs by name.
-     // What `cargo install` installs goes on PATH, as `~/.cargo/bin` is on
-     // the hosted r
-```
-
-**File**: `crates/executor/src/expression.rs` (modified, +35/-0)
-```diff
-@@ -463,8 +463,18 @@ impl<'a> ExpressionContext<'a> {
-                 // `github.ref_name`) but will return Null for deeply-nested event
-                 // properties that don't have a corresponding env var.
-                 let env_key = format!("GITHUB_{}", parts[1..].join("_").to_uppercase());
-+                // `github.token` is the same token as `secrets.GITHUB_TOKEN`
-+                // on GitHub, and not a variable of the job's: an action
-+                // reads it as its `default: ${{ github.token }}` input.
-+                let job_token = || {
-+                    (env_key == "GITHUB_TOKEN")
-+                        .then(|| self.secrets_context.get("GITHUB_TOKEN"))
-+                        .flatten()
-+                        .filter(|token| !token.is_empty())
-+                };
-                 self.env_context
-                     .get(&env_key)
-+                    .or_else(job_token)
-                     .map(|v| ExprValue::String(v.clone()))
-                     .unwrap_or(ExprValue::Null)
-             }
-@@ -2979,6 +2989,31 @@ mod tests {
-         assert_eq!(result, ExprValue::String("abc".to_string()));
-     }
- 
-+    /// `github.token` is `secrets.GITHUB_TOKEN`, as on GitHub, unless the
-+    /// job set a `GITHUB_TOKEN` variable of its own; with neither it is
-+    /// null, not an empty secret.
-+    #[test]
-+    fn github_token_is_the_jobs_github_token_secret() {
-+        let mut secrets = HashMap::new();
-+        assert_eq!(
-+            evaluate("github.token", &make_secrets_ctx(&secrets)).unwrap(),
-+            ExprValue::Null
-+        );
-+        secrets.insert("GITHUB_TOKEN".to_string(), String::new());
-+        assert_eq!(
-+            evaluate("github.token", &make_secrets_ctx(&secrets)).unwrap(),
-+            ExprValue::Null
-+        );
-+        secrets.insert("GITHUB_TOKEN".to_string(), "ghs_job".to_string());
-+        let ctx = make_secrets_ctx(&secrets);
-+        assert_eq!(
-+            evaluate("github.token", &ctx).unwrap(),
-+            ExprValue::String("ghs_job".to_string())
-+        );
-+        // No other `github` property reads a secret.
-+        assert_eq!(evaluate("github.actor", &ctx).unwrap(), ExprValue::Null);
-+    }
-+
-     #[test]
-     fn tojson_secrets_returns_values_in_plaintext() {
-         // Documents current behavior: secret values surface in plaintext inside
-```
-
-**File**: `crates/executor/src/job_session.rs` (modified, +475/-9)
-```diff
-@@ -74,6 +74,10 @@ struct Live {
-     id: String,
-     /// The action directory last copied to [`CONTAINER_ACTION_DIR`].
-     action_dir: Option<PathBuf>,
-+    /// The user steps `exec` as, or `None` for the container's own: the
-+    /// [runner user](crate::runner_user), where the image has it and it
-+    /// can write the job's mounts.
-+    user: Option<&'static str>,
-     /// Samples the containers' memory. Before `_cleanup`, so it stops
-     /// before the containers go and their going isn't taken for a failure.
-     _memory: Option<MemoryWatch>,
-@@ -377,11 +381,37 @@ pub(crate) struct JobSession {
-     /// Start a Docker engine in the job container, for steps that run
-     /// `docker`.
-     docker_engine: bool,
-+    /// Run steps as the [runner user](crate::runner_user) where the job's
-+    /// container allows it: the job runs in the image wrkflw builds, which
-+    /// has that user, and the run didn't ask for root.
-+    runner_user: bool,
-     state: tokio::sync::Mutex<State>,
- }
- 
- tokio::task_local! {
-     static SESSION: Option<Arc<JobSession>>;
-+    /// Set when a session whose steps were to run as the runner user ran
-+    /// them as root after all, for [`noting_root_fallback`].
-+    static ROOT_FALLBACK: Arc<std::sync::atomic::AtomicBool>;
-+}
-+
-+/// Run `future`, a job and its matrix legs, and say whether any of its
-+/// sessions ran as root steps that were to run as the runner user.
-+///
-+/// The reuse key only knows whether the run asked for root, not what each
-+/// job's container then allowed, so such a pass can't be stored under it:
-+/// it would stand in for one as that user.
-+pub(crate) async fn noting_root_fallback<F: Future>(future: F) -> (F::Output, bool) {
-+    let fell_back = Arc::new(std::sync::atomic::AtomicBool::new(false));
-+    let output = ROOT_FALLBACK.scope(fell_back.clone(), future).await;
-+    (output, fell_back.load(std::sync::atomic::Ordering::Relaxed))
-+}
-+
-+/// Note that steps meant for the runner user ran as root, for
-+/// [`noting_root_fallback`]: those of a container whose user can't write
-+/// the job's mounts, and any step that runs outside the job's container.
-+pub(crate) fn note_root_fallback() {
-+    let _ = ROOT_FALLBACK.try_with(|flag| flag.store(true, std::sync::atomic::Ordering::Relaxed));
- }
- 
- fn untrack_for(cli: &str) -> fn(&str) {
-@@ -413,6 +443,69 @@ fn track(cli: &str, id: &str) {
- /// step there can't pass `INPUT_MY-INPUT` on to its children, as on GitHub.
- const ENV_LOADER: &str = "eval \"$(cat)\" && exec env \"$@\"";
- 
-+/// Fails, naming the first of the directories given as arguments that the
-+/// user running it can't write. A path that isn't a directory, such as a
-+/// mounted file, is passed over.
-+const CAN_WRITE: &str =
-+    "for dir in \"$@\"; do [ ! -d \"$dir\" ] || [ -w \"$dir\" ] || { echo \"$dir\"; exit 1; }; done";
-+
-+/// Run as the user steps run as, hands it every entry under the
-+/// directories given as arguments that isn't its own already, through
-+/// `sudo`, or fails naming the first directory that still holds one. A path
-+/// that isn't a directory is passed over.
-+///
-+/// What a job's steps wrote as root, before steps had a user or in a run
-+/// that kept them as root, stays root's in a kept workspace or cache, and
-+/// the user could no longer change it.
-+///
-+/// The user looks first, and only where it finds something not its own is
-+/// anything changed: where the engine's VM shows a bind mount's files as
-+/// owned by whoever reads them, it finds nothing, where root would find
-+/// everything on every run. Errors of the walk itself are ignored, as jobs
-+/// share the dependency caches and a file another job removes vanishes
-+/// mid-walk; only what is left afterwards decides.
-+const HAND_OVER: &str = "me=\"$(id -u)\"; group=\"$(id -g)\"; \
-+     stray() { find \"$1\" ! -user \"$me\" -print -quit 2>/dev/null; }; \
-+     for dir in \"$@\"; do [ ! -d \"$dir\" ] || [ -z \"$(stray \"$dir\")\" ] || { \
-+       sudo -n find \"$dir\" ! -user \"$me\" -exec chown -h \"$me:$group\" {} + 2>/dev/null; \
-+       [ -z \"$(stray \"$dir\")\" ] || { echo \"$dir\"; exit 1; }; }; done";
-+
-+/// The mounts of `volumes` to check and hand over, as host and container
-+/// paths, one per host directory: the dependency caches are mounted in both
-+/// root's home and the user's, and one walk of each is enough. A path in
-+/// root's home, which the user can't enter, is only taken when it is the
-+/// sole one.
-+fn walked_mounts(volumes: &[(PathBuf, PathBuf)]) -> Vec<(PathBuf, String)> {
-+    let in_root_home = |container: &Path| container.starts_with("/root");
-+    let mut seen = std::collections::HashSet::new();
-+    volumes
-+        .iter()
-+        .filter(|(_, container)| !in_root_home(container))
-+        .chain(
-+            volumes
-+                .iter()
-+                .filter(|(_, container)| in_root_home(container)),
-+        )
-+        .filter(|(host, _)| seen.insert(host.clone()))
-+        .map(|(host, container)| (host.clone(), contain
-```
-
-**File**: `crates/executor/src/lib.rs` (modified, +1/-0)
-```diff
-@@ -27,6 +27,7 @@ pub(crate) mod matrix_fold;
- pub mod podman;
- pub mod run_options;
- pub mod runner_fidelity;
-+pub mod runner_user;
- pub mod script_commands;
- pub(crate) mod setup_actions;
- pub mod substitution;
-```
-
-**File**: `crates/executor/src/run_options.rs` (modified, +117/-0)
-```diff
-@@ -22,6 +22,96 @@ pub const STEP_CONTAINERS_ENV: &str = "WRKFLW_STEP_CONTAINERS";
- /// steps run `docker`, which then runs privileged.
- pub const DOCKER_IN_JOBS_ENV: &str = "WRKFLW_DOCKER_IN_JOBS";
- 
-+/// Env var that gives jobs this machine's GitHub token as `github.token`
-+/// and `secrets.GITHUB_TOKEN`, where no secret provider has one.
-+pub const JOB_GITHUB_TOKEN_ENV: &str = "WRKFLW_JOB_GITHUB_TOKEN";
-+
-+/// The token jobs get as `github.token` and `secrets.GITHUB_TOKEN` when
-+/// [`JOB_GITHUB_TOKEN_ENV`] asks for it: `GITHUB_TOKEN` or `GH_TOKEN` from
-+/// the environment, else what `gh auth token` prints. `None` when the
-+/// switch is off or there is no token to give.
-+///
-+/// Off by default, as this is the user's own token, which reaches further
-+/// than the one GitHub makes for a run and hands to its steps: the job
-+/// warns of it when it gets it (see [`warn_of_own_token`]).
-+pub(crate) async fn job_github_token() -> Option<String> {
-+    if !job_github_token_wanted() {
-+        return None;
-+    }
-+    crate::acceleration::run_job_token(|| async {
-+        // `gh` only runs when the environment has no token.
-+        let mut token = job_github_token_from(|name| std::env::var(name).ok(), || None);
-+        if token.is_none() {
-+            let from_gh = gh_auth_token().await;
-+            token = job_github_token_from(|_| None, || from_gh);
-+        }
-+        if token.is_none() {
-+            wrkflw_logging::warning(
-+                "WRKFLW_JOB_GITHUB_TOKEN is set, but there is no token to give jobs: \
-+                 set GITHUB_TOKEN, or sign in with `gh auth login`",
-+            );
-+        }
-+        token
-+    })
-+    .await
-+}
-+
-+/// Say, once per run, that its jobs get the user's own GitHub token.
-+pub(crate) fn warn_of_own_token() {
-+    if crate::acceleration::first_own_token_warning() {
-+        wrkflw_logging::warning(
-+            "Jobs get your own GitHub token, from this machine's environment or `gh`, as \
-+             github.token and secrets.GITHUB_TOKEN (WRKFLW_JOB_GITHUB_TOKEN): it can do \
-+             what you can, not just what a run's token can",
-+        );
-+    }
-+}
-+
-+/// Whether the run asked for jobs to get a GitHub token, from a secret
-+/// provider or, failing that, this machine: see [`job_github_token`].
-+pub(crate) fn job_github_token_wanted() -> bool {
-+    env_flag(JOB_GITHUB_TOKEN_ENV)
-+}
-+
-+/// How long `gh auth token` may take: it reads a file or the keychain,
-+/// and one waiting on a locked keychain mustn't hold up the run.
-+const GH_AUTH_TOKEN_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(10);
-+
-+/// What `gh auth token` prints, or `None` when it fails, isn't installed or
-+/// takes longer than [`GH_AUTH_TOKEN_TIMEOUT`].
-+async fn gh_auth_token() -> Option<String> {
-+    let output = tokio::process::Command::new("gh")
-+        .args(["auth", "token"])
-+        .stdin(std::process::Stdio::null())
-+        .stderr(std::process::Stdio::null())
-+        .kill_on_drop(true)
-+        .output();
-+    let output = tokio::time::timeout(GH_AUTH_TOKEN_TIMEOUT, output)
-+        .await
-+        .ok()?
-+        .ok()?;
-+    output
-+        .status
-+        .success()
-+        .then(|| String::from_utf8_lossy(&output.stdout).into_owned())
-+}
-+
-+/// [`job_github_token`] with `var` reading an environment variable and
-+/// `gh` asking the GitHub CLI for its token.
-+fn job_github_token_from(
-+    var: impl Fn(&str) -> Option<String>,
-+    gh: impl FnOnce() -> Option<String>,
-+) -> Option<String> {
-+    let usable = |token: String| {
-+        let token = token.trim().to_string();
-+        (!token.is_empty()).then_some(token)
-+    };
-+    ["GITHUB_TOKEN", "GH_TOKEN"]
-+        .into_iter()
-+        .find_map(|name| var(name).and_then(usable))
-+        .or_else(|| gh().and_then(usable))
-+}
-+
- /// Give every job a new, empty workspace instead of the one it kept from
- /// its last run.
- pub fn set_fresh_workspaces(on: bool) {
-@@ -62,6 +152,33 @@ pub fn switch_is_on(value: &str) -> bool {
- 
- #[cfg(test)]
- mod tests {
-+    /// The job token is the environment's, `GITHUB_TOKEN` before `GH_TOKEN`,
-+    /// and the GitHub CLI's only when neither holds one.
-+    #[test]
-+    fn the_job_token_comes_from_the_environment_before_the_github_cli() {
-+        use super::job_github_token_from as token;
-+        let env = |pairs: &'static [(&'static str, &'static str)]| {
-+            move |name: &str| {
-+                pairs
-+                    .iter()
-+                    .find(|(n, _)| *n == name)
-+                    .map(|(_, v)| v.to_string())
-+            }
-+        };
-+        let gh = || Some("from-gh\n".to_string());
-+        assert_eq!(
-+            token(env(&[("GITHUB_TOKEN", " a "), ("GH_TOKEN", "b")]), gh).as_deref(),
-+            Some("a")
-+        );
-+        assert_eq!(
-+            token(env(&[("GITHUB_TOKEN", "  "), ("GH_TOKEN", "b")]), gh).as_deref(),
-+            Some("b")
-+        );
-+        assert_eq!(token(env(&[]), gh).as_deref(), Some("from-gh")
-```
-
-**File**: `crates/executor/src/runner_user.rs` (added, +441/-0)
-```diff
-@@ -0,0 +1,441 @@
-+//! The user a job's steps run as in the image wrkflw builds.
-+//!
-+//! GitHub's hosted runner runs steps as `runner`, a user with a home
-+//! directory and `sudo` without a password, not as root. The difference
-+//! shows: root may write a read-only file, so a test that expects a
-+//! permission error passes on GitHub and fails as root, and tools such as
-+//! `initdb` refuse to run as root at all.
-+//!
-+//! The image gets that user, and owns to it what a step installs into: its
-+//! home with rustup and cargo, the interpreters setup-python installs, and
-+//! npm's global directory. Steps then `exec` into the job's container as
-+//! that user, when it can write the job's workspace there; where it can't,
-+//! as under a rootless engine, they run as root, as they did before.
-+//!
-+//! An image mapped with `-P`, a job `container:` and a step in a container
-+//! of its own keep the image's user, which is the image's business: a
-+//! container job on GitHub runs as its image's user too.
-+
-+/// The user's name, as on GitHub's hosted runners.
-+pub(crate) const NAME: &str = "runner";
-+/// Its home directory, as on GitHub's hosted runners.
-+pub(crate) const HOME: &str = "/home/runner";
-+/// Its uid and gid on GitHub's hosted runners, used wherever the
-+/// workspace's files don't dictate another.
-+pub(crate) const HOSTED_UID: u32 = 1001;
-+/// Env var that keeps steps running as root.
-+pub const STEPS_AS_ROOT_ENV: &str = "WRKFLW_STEPS_AS_ROOT";
-+
-+/// The uid the user gets in images built on this machine.
-+///
-+/// On Linux a bind mount keeps this machine's owners, and the job's
-+/// workspace, its `$GITHUB_ENV` files and the `--dep-cache` directories are
-+/// all bind-mounted, holding files owned by whoever runs wrkflw: a container
-+/// user with another uid could neither change them nor leave files this
-+/// user can remove. So the user takes that uid, also when the workspace is
-+/// in a volume, whose files wrkflw gives to this same uid (see
-+/// `vm_workspace`). Elsewhere, on macOS and Windows, the engine's VM maps a
-+/// bind mount's owner to whoever reads it, and the user gets
-+/// [`HOSTED_UID`], as on GitHub.
-+pub(crate) fn uid() -> u32 {
-+    uid_for(host_uid())
-+}
-+
-+/// The uids Debian and Ubuntu give people's accounts. Below them are root
-+/// and system accounts, and above them `nobody`: the image's user with the
-+/// uid is removed to make way for the runner user, so only a uid of this
-+/// range is taken.
-+const USER_UIDS: std::ops::Range<u32> = 1000..60000;
-+
-+fn uid_for(host_uid: Option<u32>) -> u32 {
-+    match host_uid {
-+        // Root's files are root's, and a system account's are its own: the
-+        // user gets GitHub's uid, can't write them, and the session finds
-+        // that out and runs the steps as root.
-+        Some(uid) if USER_UIDS.contains(&uid) => uid,
-+        _ => HOSTED_UID,
-+    }
-+}
-+
-+/// This process's uid where a bind mount keeps the host's owners: on Linux.
-+fn host_uid() -> Option<u32> {
-+    #[cfg(target_os = "linux")]
-+    {
-+        use std::os::unix::fs::MetadataExt;
-+        std::fs::metadata("/proc/self").ok().map(|meta| meta.uid())
-+    }
-+    #[cfg(not(target_os = "linux"))]
-+    {
-+        None
-+    }
-+}
-+
-+/// Whether the run lets steps run as the user at all.
-+pub(crate) fn allowed() -> bool {
-+    !crate::run_options::env_flag(STEPS_AS_ROOT_ENV)
-+}
-+
-+/// Whether this run's steps may run as the user, as far as can be told
-+/// before any job's container is up: see [`ruled_out`]. Settled once per
-+/// run by [`settle_for_run`]; before that, or outside a run, from what
-+/// needs no engine.
-+///
-+/// The reuse key reads it, so a run that can't have the user files its
-+/// passes as root's, and can reuse them, rather than storing none.
-+pub(crate) fn for_run() -> bool {
-+    crate::acceleration::settled_runner_user()
-+        .unwrap_or_else(|| ruled_out(allowed(), host_uid(), false))
-+        .is_none()
-+}
-+
-+/// Settle [`for_run`] for this run, asking the engine behind `cli` whether
-+/// it is rootless. Says nothing: see [`warn_if_ruled_out`].
-+pub(crate) async fn settle_for_run(cli: Option<&'static str>) {
-+    crate::acceleration::settle_runner_user(|| async move {
-+        let rootless = match cli {
-+            Some(cli) if allowed() => engine_is_rootless(cli).await,
-+            _ => false,
-+        };
-+        ruled_out(allowed(), host_uid(), rootless)
-+    })
-+    .await
-+}
-+
-+/// Say, once per run, why its steps run as root, if the run settled that
-+/// they must for a reason it didn't ask for. Called for a job that would
-+/// have had the user, so a run whose jobs all have a `container:` or an
-+/// image mapped with `-P` hears nothing of it.
-+pub(crate) fn warn_if_ruled_out() {
-+    let Some(Some(Ruled::Because(reason))) = crate::acceleration::settled_runner_user() else {
-+        return;
-+    };
-+    if crate::acceleration::first_root_steps_warning() {
-+        wrkflw_logging::warning(&format!(
-+            "Steps run as root in
+ - The built-in image is the base image plus tools the hosted Ubuntu runner has and steps call without installing: `sudo`, `jq`, `gh`, `unzip`, `zip`, `wget`, `xz`, `zstd`, `file`, `ssh`, `rsync`, `git-lfs`, `python3` with `pip`, a C toolchain and Node.js. It is built once and shared by every job. `gh` comes from cli.github.com in a layer of its own: when that can't be reached the job runs without it, with a warning, and the next run tries again. When the tools can't be installed at all, a job with nothing else to set up runs on the bare base image.
+ - Steps of a job in the built-in image run as `runner`, as on GitHub: a user with `/home/runner` for its home and `sudo` without a password, so a test that expects a permission error gets one. rustup and cargo are in its home, and it owns what `pip install` and `npm install -g` write to. On Linux the user has your uid, so what a step writes in the workspace stays yours; elsewhere it has GitHub's, 1001. Files an earlier run left in the workspace or the `--dep-cache
 ```
 
 ---
 
-### Incident Patch 2: `48b2075d` (2026-11-18)
-**Commit Message**: fix: close the gaps the eight-repo compare sweep found (#173)
+### Incident Patch 2: `b11b73e7` (2026-11-20)
+**Commit Message**: Pre-release polish: doctor, macOS jobs on the Mac, held-out sweep, prebuilt installs, new demo (#176)
 
-* fix: close the gaps the eight-repo compare sweep found
+* feat: doctor, macOS jobs on the Mac, a held-out sweep, prebuilt installs and a new demo
 
-- Pass a composite action's $GITHUB_PATH and $GITHUB_ENV writes on to the job
-- Check out the repository's symlinks as links, never following them
-- Read dtolnay/rust-toolchain@clippy and @miri as nightly with those components
-- Give every unmapped job the runner's tools (sudo, jq, gh, python3, ...)
-- Run macos-* and windows-* labels in the Ubuntu image
-- compare: pair called-workflow jobs, leave Windows jobs out, note docker jobs
-- Resolve setup-go ranges such as ^1.22
-- Add scripts/conformance/compare_sweep.sh
+Pre-release polish for 0.9.0.
 
-* refactor: tidy what the compare-sweep fixes left behind
+- `wrkflw doctor` reports, without starting or pulling anything, which
+  engine `auto` picks (and says so when Docker is down and Podman takes
+  over), the engine VM's memory, whether a first run pulls the published
+  runner base or builds here, where a GitHub token was found, git, and the
+  workflows in the directory. `--format json` gives the same checks.
 
-The clippy and miri branches of dtolnay/rust-toolchain were spelled
-out twice: once to say they mean nightly, once to say which
-components they add. Two lists of the same branches will drift the
-first time someone adds a third. Keep them in one table that both
-read.
+- `--macos-on-host` (WRKFLW_MACOS_ON_HOST=1) runs `macos-*` jobs, and the
+  macOS legs of a matrix, on a Mac under emulation while the run's other
+  jobs keep their containers, so their pass checks macOS instead of being
+  reported unverified. The switch is per job and per leg, with the env
+  emulation would seed, scoped to the run through a task-local. A host leg
+  is never folded into a container leg, and gets no image built ahead.
+  Off by default: those steps run with no container around them.
 
-While at it, two leftovers. sync_file's doc comment ended up on top
-of the new sync_symlink, so the symlink function claimed to copy
-files and sync_file had no doc at all. And the heredoc delimiter
-moved to github_env_files but kept 
+- compare says a step needed the GitHub token GitHub gives every job,
+  and that WRKFLW_JOB_GITHUB_TOKEN=1 giv
 
-**File**: `README.md` (modified, +6/-2)
+**File**: `.github/workflows/release.yml` (modified, +5/-0)
 ```diff
-@@ -45,7 +45,7 @@ A command-line tool for validating and executing GitHub Actions workflows locall
- - Service settings that reach the host — a service's `volumes:` can only name a volume, not a host path, and its `options:` only take flags that shape the service container itself, such as `--health-cmd`, `--user`, `--tmpfs` and `-e NAME=value`. Anything else, such as `--privileged` or `-v`, fails the job.
- - Services that listen on the same port — services share the job container's network, as they do on a GitHub runner, so two Postgres services can't both have 5432. wrkflw refuses two services whose `ports:` name the same container port, and warns about two services of one image.
- - A job with `services:` runs its steps in one container with them, which needs `sh` and `env` in the job's image. Files a step leaves outside the workspace are there for the next step, and `--preserve-containers-on-failure` doesn't keep that container.
--- Windows and macOS runners — `runs-on: windows-*` / `macos-*` is silently mapped to a container image (macOS → a Linux image, Windows → a Windows container that won't run on Linux/macOS hosts). In container runtimes `${{ runner.os }}` is `Linux` and `runner.temp` and the other runner paths are Linux paths, even for a Windows image, so a job on a Windows container sees the wrong values. In emulation `runner.os` is the host OS. Every job whose `runs-on` names another OS than it ran as is listed under `unverified` in `run_finished` and in the `gate` result, logged as a warning, and marked on the job's line in the TUI, because its pass says nothing about OS-specific steps. `wrkflw plan` lists the same jobs before a run.
-+- Windows and macOS runners — `runs-on: windows-*` / `macos-*` runs as Linux, in the same Ubuntu image as `ubuntu-latest`, as a Linux Docker engine can't start a Windows image. Map the label to an image of your own with `-P`, such as a Windows image on a Windows engine. In container runtimes `${{ runner.os }}` is `Linux` and `runner.temp` and the other runner paths are Linux paths, even for a Windows image, so a job on a Windows container sees the wrong values. `wrkflw compare` leaves a Windows job's result out of its agreement, as its steps call Windows tools; a macOS job's result is compared. In emulation `runner.os` is the host OS. Every job whose `runs-on` names another OS than it ran as is listed under `unverified` in `run_finished` and in the `gate` result, logged as a warning, and marked on the job's line in the TUI, because its pass says nothing about OS-specific steps. `wrkflw plan` lists the same jobs before a run.
- - `working-directory` outside the workspace — it must stay inside the workspace, so `${{ runner.temp }}/build` fails the step instead of running there.
+@@ -232,6 +232,11 @@ jobs:
+           path: artifacts
+           merge-multiple: true
  
- ## Installation
-@@ -160,6 +160,8 @@ export WRKFLW_PLATFORM=ubuntu-latest=catthehacker/ubuntu:act-latest
- ```
- 
- - A job-level `container:` still wins over `--platform`, which wins over the built-in image.
-+- The built-in image is the base image plus tools the hosted Ubuntu runner has and steps call without installing: `sudo`, `jq`, `gh`, `unzip`, `zip`, `wget`, `xz`, `zstd`, `file`, `ssh`, `rsync`, `git-lfs`, `python3` with `pip`, a C toolchain and Node.js. It is built once and shared by every job. `gh` comes from cli.github.com in a layer of its own: when that can't be reached the job runs without it, with a warning, and the next run tries again. When the tools can't be installed at all, a job with nothing else to set up runs on the bare base image. Steps still run as root, where GitHub's run as the `runner` user, so a test that expects a permission error passes on GitHub and fails here.
-+- An image you map with `--platform` gets none of these tools, also when a setup action's runtime is installed on it. Map `ubuntu-latest=ubuntu:latest` to run on the bare Ubuntu image.
- - Labels match case-insensitively, and the last value given for a label wins. Every label in `runs-on: [self-hosted, linux]` is tried, and `runs-on: ${{ matrix.os }}` is resolved per matrix combination.
- - Runtimes from `actions/setup-*` are installed on top of your image, so the image must be Debian or Ubuntu based for those jobs.
- - `--platform` replaces `WRKFLW_PLATFORM` entirely when both are set. It has no effect in emulation mode.
-@@ -174,7 +176,7 @@ Two defaults make a rerun cheaper than a hosted runner's cold start. Both work t
- What a kept workspace means in practice:
- 
- - In a git repository, checkout brings every file git tracks, even one an ignore rule matches, as a clone would. Untracked files follow git's ignore rules: every `.gitignore` in the tree, `.git/info/exclude` and your global excludes file. Tracked dotfiles such as `.cargo/config.toml` are synced, and removed once the repository deletes them. Hidden files a tool leaves in the workspace, such as `.pytest_cache`, are kept. wrkflw records what git tracked at each checkout in a file beside the workspace, never by running git in the workspace, whose `.git` 
++      # scripts/install.sh checks the archive it downloads against these.
++      - name: Write checksums
++        working-directory: artifacts
++        run: sha256sum wrkflw-* > SHA256SUMS
++
+       - name: Create release
+         uses: softprops/action-gh-release@v2
+         with:
 ```
 
-**File**: `crates/executor/src/checkout_sync.rs` (modified, +112/-5)
+**File**: `AGENTS.md` (modified, +3/-0)
 ```diff
-@@ -674,16 +674,19 @@ fn copy_directory_contents_with_gitignore(
-         let entry = entry.map_err(|e| io_err("Failed to read entry", e))?;
-         let path = entry.path();
-         let name = entry.file_name();
--        let is_dir = path.is_dir();
--        if path.is_symlink()
--            || !rules.syncs(&path, &name.to_string_lossy(), is_dir, nested, only_tracked)
--        {
-+        // A symlink is copied as a link, as git checks one out, and never
-+        // followed: where it points is the job's business, not this sync's.
-+        let is_link = entry.file_type().is_ok_and(|t| t.is_symlink());
-+        let is_dir = !is_link && path.is_dir();
-+        if !rules.syncs(&path, &name.to_string_lossy(), is_dir, nested, only_tracked) {
-             continue;
-         }
-         synced.insert(name.clone());
-         let dest_path = to.join(&name);
+@@ -50,6 +50,8 @@ Add `--reuse-results` to `wrkflw run`, or `reuse_results` to the MCP `run_workfl
  
--        if is_dir {
-+        if is_link {
-+            sync_symlink(&path, &dest_path)?;
-+        } else if is_dir {
-             ensure_real_dir(&dest_path).map_err(|e| io_err("Failed to create dir", e))?;
-             // An ignored directory is only entered for what git tracks in it.
-             let inner_only_tracked = only_tracked || rules.ignored(&path, true, nested);
-@@ -803,6 +806,46 @@ fn unchanged_copy(from: &Path, to: &Path) -> bool {
+ `step_finished.output` holds the last 64 KiB of a step's output, delivered when the step ends. To follow a long step before it ends, add `--stream-output` to `run`: it adds `step_output` lines, `{job, step, index, lines}`, as the step prints, masked like the rest. Without it no `step_output` lines are printed.
+ 
++`doctor` prints `{"schema_version": 1, "type": "doctor", "ok": bool, "checks": [{"name": "...", "status": "ok" | "warn" | "fail", "detail": "...", "fix": "..." | null}]}`. The checks are `runtime` (which engine `auto` picks), `memory` (the engine's VM), `runner_image` (whether a first run pulls the prebuilt base or builds here), `macos_jobs` (on a Mac), `github_token` (where one was found, never the token), `git` and `workflows`. It starts and pulls nothing, and exits 1 only when a check fails; a `warn` is something that makes runs slower or less like GitHub's.
++
+ `clean` prints `{"schema_version": 1, "type": "clean", "removed": n, "bytes": n, "in_use": n, "volumes": n, "failed": [{"path": "...", "error": "..."}]}`: workspaces removed, the bytes they held, workspaces left because a run holds them, container volumes removed because their workspace was gone, and workspaces that could not be removed. It exits 1 when `failed` is not empty, after cleaning the rest.
+ 
+ A job that does not run, because of its `if:`, a failed `needs` job, fail-fast, a GitLab rule or `gate: false`, still gets `job_started` and `job_finished`, with `status` `skipped` and `duration_ms` 0.
+@@ -93,4 +95,5 @@ The run also records your session, from `--session`, `WRKFLW_SESSION`, `CLAUDE_C
+ - `--from-step` needs `--job`. Earlier steps are skipped apart from `actions/checkout`, so their outputs and files are missing. Use it to iterate on a step that doesn't depend on them.
+ - `runs replay` reruns against the current working tree. Compare `git_sha` and `git_dirty` on the record if the result differs.
+ - `--runtime emulation` runs steps directly on this machine. Use a container runtime or `secure-emulation` for code you don't trust.
++- `--macos-on-host` (`WRKFLW_MACOS_ON_HOST=1`) does the same for `macos-*` jobs: their steps run on this Mac with no container and see this shell's environment, credentials included. Don't pass it, even when `run` or `gate` suggests it, for a repository you don't trust.
+ - `plan` reports a matrix computed by expressions as `dynamic`, because it is only known at run time.
+```
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -4572,6 +4572,7 @@ dependencies = [
+  "async-trait",
+  "futures",
+  "ignore",
++ "libc",
+  "once_cell",
+  "regex",
+  "serde",
+```
+
+**File**: `README.md` (modified, +79/-24)
+```diff
+@@ -5,10 +5,65 @@
+ [![Build Status](https://img.shields.io/github/actions/workflow/status/bahdotsh/wrkflw/ci.yml?branch=main)](https://github.com/bahdotsh/wrkflw/actions/workflows/ci.yml)
+ [![Downloads](https://img.shields.io/crates/d/wrkflw)](https://crates.io/crates/wrkflw)
+ 
+-A command-line tool for validating and executing GitHub Actions workflows locally. Test your workflows on your machine before pushing to GitHub.
++**Run your GitHub Actions workflows on your own machine, and get the verdict GitHub would give.**
++
++`wrkflw gate` runs everything CI would run for a push, in Docker or Podman, before the push leaves your machine. Every run ends with a verdict that says how much its pass proves: `verified`, `partial` (and what wasn't checked), or `nothing_checked`. And `wrkflw compare <run URL>` checks wrkflw itself against a finished GitHub run, job by job.
+ 
+ ![WRKFLW Demo](demo.gif)
+ 
++## How close to GitHub
++
++We rerun finished GitHub runs of open-source repositories with `wrkflw compare`. The last sweep (2026-11-19, on the 0.9.0 code): a job agrees when both sides passed or both failed; not compared are the Windows jobs, which run on a Linux stand-in. Jobs agreed include `macos-*` jobs run as Linux, which `compare` counts as agreeing unverified (`--macos-on-host` runs them on a Mac instead). Local times are warm, on a Mac with a 7.7 GB Docker VM.
++
++| Repository | Jobs agreed | Differed | Not compared | Local | GitHub |
++|---|---|---|---|---|---|
++| pallets/click | 10 | 0 | 1 | 38 s | 65 s |
++| chalk/chalk | 2 | 0 | 0 | 13 s | 39 s |
++| sindresorhus/ky | 4 | 0 | 0 | 130 s | 187 s |
++| rust-lang/log | 10 | 1 | 2 | 362 s | 527 s |
++| dtolnay/itoa | 8 | 3 | 0 | 101 s | 346 s |
++| tj/commander.js | 6 | 0 | 3 | 67 s | 99 s |
++| spf13/cobra | 18 | 0 | 1 | 134 s | 99 s |
++| fatih/color | 1 | 0 | 0 | 25 s | 57 s |
++| pallets/flask | 11 | 0 | 1 | 32 s | 44 s |
++
++rust-lang/log's one difference is its documentation job, which fails on Rust 1.100, released after its GitHub run, as `stable` floats. itoa's three verify an attestation with the job's GitHub token, which a local job doesn't get unless `WRKFLW_JOB_GITHUB_TOKEN=1` gives it yours.
++
++These nine repositories are the ones wrkflw has been fixed against. [`held_out_runs.txt`](scripts/conformance/held_out_runs.txt) lists fourteen more it has never been tuned for, with services, wide OS matrices and a known failure, to measure how it does on a repository it hasn't seen. See [Conformance](#conformance) to run either sweep yourself.
++
++## Quick Start
++
++```bash
++cargo binstall wrkflw          # or: brew install wrkflw, or see Installation
++
++wrkflw doctor                  # what runs here would use, and what would slow them down
++wrkflw gate                    # run what CI would run for this push
++wrkflw gate --install-hook     # ...and do it before every push
++wrkflw run .github/workflows/ci.yml
++wrkflw                         # the TUI
++```
++
++### Check every push before it leaves
++
++Add the gate to a repository once, and every `git push` first runs what CI would run for it:
++
++```bash
++wrkflw doctor                  # Docker answering, with enough memory?
++wrkflw gate --install-hook     # writes .git/hooks/pre-push; an existing hook is left alone
++```
++
++Then tell it what must only ever run in CI. The gate runs jobs with this machine's credentials and can't tell a deploy from a test, so mark deploys and releases in `.wrkflw/affected.yml`:
++
++```yaml
++jobs:
++  deploy:
++    gate: false     # the gate reports it skipped, with every job that needs it
++  release:
++    gate: false
++```
++
++A push the gate fails is stopped with the job, step and error lines that failed. `git push --no-verify` skips it once. A `partial` pass says on one line each what it didn't check, such as a `macos-*` job run as Linux or an action that didn't run. The hook keeps the `--runtime` and `--remote-cache` you install it with, so jobs that already passed in CI can be [reused](#sharing-results-across-machines) instead of rerun. See [Spending less on CI](#spending-less-on-ci) for everything it does.
++
+ ## Features
+ 
+ - **TUI interface** — interactive terminal UI with Workflows, Run (jobs, graph and log views), History, Dispatch and Setup tabs, plus a Help overlay
+@@ -43,11 +98,25 @@ A command-line tool for validating and executing GitHub Actions workflows locall
+ - Service settings that reach the host — a service's `volumes:` can only name a volume, not a host path, and its `options:` only take flags that shape the service container itself, such as `--health-cmd`, `--user`, `--tmpfs` and `-e NAME=value`. Anything else, such as `--privileged` or `-v`, fails the job.
+ - Services that listen on the same port — services share the job container's network, as they do on a GitHub runner, so two Postgres services can't both have 5432. wrkflw refuses two services whose `ports:` name the same container port, and warns about two services of one image.
+ - A job with `services:` runs its steps in one c
+```
+
+**File**: `RELEASE_POST_0.9.0.md` (modified, +10/-2)
+```diff
+@@ -28,6 +28,10 @@ On Docker and Podman, a built-in job image on `ubuntu:latest` that doesn't set u
+ 
+ Steps run as `runner` with passwordless `sudo`, share one container per job, so what a step installs is there for the next, and get the runner's tools (`gh`, `jq`, `zip`, `python3`, Rust when steps call cargo, Docker with `--docker-in-jobs`). Services start, and composite actions hand `$GITHUB_ENV` and `$GITHUB_PATH` on to the job.
+ 
++### macOS jobs on your Mac
++
++On a Mac, `--macos-on-host` runs `macos-*` jobs, and the macOS legs of a matrix, on the Mac itself while the other jobs keep their containers, so their pass checks macOS instead of standing in as Linux. It is off by default: those steps run with no container around them.
++
+ ### Honest verdicts
+ 
+ Every run ends with a `verdict`: `verified`, `partial` or `nothing_checked`. `partial` lists what wasn't checked: a Windows or macOS job run as Linux, or a step whose action didn't run. `wrkflw gate` checks a push as CI will see it, reuses jobs that already passed, and says each cause on its own line. `wrkflw compare <run>` checks wrkflw itself against a finished GitHub run.
+@@ -46,11 +50,15 @@ Steps run as the `runner` user, JavaScript actions run, a job's steps share one
+ 
+ ## Install
+ 
++A prebuilt binary, no Rust needed:
++
+ ```sh
+-cargo install wrkflw
++cargo binstall wrkflw
++# or
++curl -fsSL https://raw.githubusercontent.com/bahdotsh/wrkflw/main/scripts/install.sh | sh
+ ```
+ 
+-or `brew install wrkflw`.
++or `brew install wrkflw`, or `cargo install wrkflw`. Then `wrkflw doctor` says what runs on your machine would use and what would slow them down, and `wrkflw gate --install-hook` checks every push before it leaves.
+ 
+ ---
+ 
+```
+
+**File**: `crates/executor/src/acceleration.rs` (modified, +33/-5)
+```diff
+@@ -499,6 +499,12 @@ fn job_key_with(
+     if every_matrix_leg && lookup.job.matrix_config().is_some() {
+         document["every_matrix_leg"] = serde_json::json!(true);
      }
++    // A matrix whose macOS legs run on this Mac (`--macos-on-host`) passed
++    // on other ground than one whose legs all ran in containers. Only that
++    // mode changes the key. A job without a matrix differs by `runtime`.
++    if crate::host_jobs::legs_may_run_on_host(lookup.job) {
++        document["macos_on_host"] = serde_json::json!(true);
++    }
+     // A pass with a container per step can rest on each step starting from
+     // a clean image, so it can't stand in for a run whose steps share one,
+     // or the other way round. Version 3 keys were all of the former.
+@@ -1158,13 +1164,11 @@ pub(crate) fn mark_executed(job_name: &str) {
  }
  
-+/// Make `to` a symlink with the same target as the symlink `from`. Neither
-+/// link is followed; whatever is at `to` is replaced, not written through.
-+fn sync_symlink(from: &Path, to: &Path) -> Result<(), ExecutionError> {
-+    let err = |what: &str, e: std::io::Error| {
-+        ExecutionError::Execution(format!("{what} {}: {e}", to.display()))
-+    };
-+    let target = std::fs::read_link(from).map_err(|e| err("Failed to read the link for", e))?;
-+    if let Ok(current) = std::fs::read_link(to) {
-+        if current == target {
-+            return Ok(());
-+        }
-+    }
-+    if to.symlink_metadata().is_ok() {
-+        remove_entry(to).map_err(|e| err("Failed to replace", e))?;
-+    }
-+    #[cfg(unix)]
-+    {
-+        std::os::unix::fs::symlink(&target, to).map_err(|e| err("Failed to create link", e))
-+    }
-+    #[cfg(windows)]
-+    {
-+        // Windows needs to know what kind of link to make, and to be
-+        // allowed to make one; a link that can't be made is left out, as
-+        // before.
-+        let points_at_dir = from
-+            .parent()
-+            .map(|p| p.join(&target))
-+            .is_some_and(|t| t.is_dir());
-+        let made = if points_at_dir {
-+            std::os::windows::fs::symlink_dir(&target, to)
-+        } else {
-+            std::os::windows::fs::symlink_file(&target, to)
-+        };
-+        if let Err(e) = made {
-+            wrkflw_logging::debug(&format!("Leaving out the link {}: {}", to.display(), e));
-+        }
-+        Ok(())
-+    }
-+}
-+
- /// Copy `from` to `to` unless `to` already matches it, keeping the source's
- /// modification time so build tools see the file as unchanged. Read-only
- /// files, such as generated code or git objects, are replaced and keep
-@@ -1229,6 +1272,70 @@ mod tests {
+ /// Store a passing result under the key `decide` returned. A job that ran on
+-/// the host passed with that host's tools, so its result stays on this machine.
+-pub(crate) async fn store(key: &str, jobs: Vec<StoredJob>, env: &HashMap<String, String>) {
++/// the host (`on_host`), or any leg of it did, passed with that host's
++/// tools, so its result stays on this machine.
++pub(crate) async fn store(key: &str, jobs: Vec<StoredJob>, on_host: bool) {
+     let Some(run) = current() else { return };
+     let Some(store) = &run.store else { return };
+-    let on_host = env
+-        .get("WRKFLW_RUNTIME_MODE")
+-        .is_some_and(|mode| mode.contains("emulation"));
+     if on_host && run.accel.push_results && !run.warned_on_host_push.swap(true, Ordering::Relaxed) {
+         wrkflw_logging::warning(
+             "Not pushing results from this run: emulation depends on this machine's tools",
+@@ -1282,6 +1286,30 @@ mod tests {
          );
      }
  
-+    /// A repository's symlinks are part of its checkout, as links: test
-+    /// fixtures such as commander.js's `tests/fixtures/pmlink` rely on them.
-+    #[cfg(unix)]
-+    #[test]
-+    fn a_symlink_in_the_source_is_checked_out_as_a_link() {
-+        use std::os::unix::fs::symlink;
-+        let src = tempfile::tempdir().unwrap();
-+        let dst = tempfile::tempdir().unwrap();
-+        let outside = tempfile::tempdir().unwrap();
-+        std::fs::create_dir_all(src.path().join("fixtures")).unwrap();
-+        std::fs::write(src.path().join("fixtures/real.js"), "real").unwrap();
-+        symlink("real.js", src.path().join("fixtures/link.js")).unwrap();
-+        symlink("link.js", src.path().join("fixtures/chained.js")).unwrap();
-+        symlink("fixtures", src.path().join("dirlink")).unwrap();
-+        symlink("missing.js", src.path().join("fixtures/dangling.js")).unwrap();
-+        // A link out of the repository is copied as it is, not followed.
-+        std::fs::write(outside.path().join("secret"), "outside").unwrap();
-+        symlink(outside.path().join("secret"), src.path().join("abs")).unwrap();
++    /// A matrix whose macOS legs run on this Mac isn't reused for a run with
++    /// every leg in a container, or the other way round: the hint to rerun
++    /// with `--macos-on-host` must actually run them.
++    #[tokio::test]
++    async fn a_matrix_run_with_legs_on_the_host_is_kept_apart() {
++        let dir = repo();
++        let wf = workflow();
++        let tree = hash_tree(dir.path()).unwrap();
++        let matrix = job(
++            "runs-on: ${{ matrix.os }}\nstrategy:\n  matrix:\n    os: [ubuntu-latest, macos-15]\nsteps:\n  - run: make\n",
++        );
++        let in_containers = key_for_mode(&matrix, &wf, &tree, None, false);
++        let host = crate::host_jobs::HostJobs::new(
++            Box::new(wrkflw_runtime::emulation::EmulationRuntime::new()),
++            &HashMap::new(),
++            HashMap::new(),
++        );
++        let on_host = crate::host_jobs::scope(Some(std::sync::Arc::new(host)), async {
++            key_for_mode(&matrix, &wf, &tree, None, false)
++        })
++        .await;
++        assert_ne!(in_containers, on_host);
++    }
 +
-+        copy_directory_contents(src.path(), dst.path()).unwrap();
-+        // A second sync keeps the links as they are.
-+        copy_directory_contents(src.path(), dst.path()).unwrap();
-+
-+        let link = |rel: &str| std::fs::read_link(dst.path().join(rel)).unwrap();
-+        assert_eq!(link("fixtures/link.js"), Path::new("real.js"));
-+        assert_eq!(link("fixtures/chained.js"), Path::new("link.js"));
-+        assert_eq!(link("fixtures/dangling.js"), Path::new("missing.js"));
-+        assert_eq!(link("dirlink"), Path::new("fixtures"));
-+        assert_eq!(link("abs"), outside.path().join("secret"));
-+        assert_eq!(
-+            std::fs::read_to_string(dst.path().join("fixtures/chained.js")).unwrap(),
-+            "real"
-+       
+     #[test]
+     fn running_every_matrix_leg_does_not_reuse_a_folded_result() {
+         let dir = repo();
 ```
 
-**File**: `crates/executor/src/engine.rs` (modified, +624/-149)
+**File**: `crates/executor/src/engine.rs` (modified, +366/-71)
 ```diff
-@@ -2111,6 +2111,60 @@ fn report_action_not_run(uses: &str, cause: Option<&str>) -> Option<String> {
-     Some(uses.to_string())
- }
+@@ -156,17 +156,19 @@ async fn execute_github_workflow(
+     let workspace_dir = tempfile::tempdir()
+         .map_err(|e| ExecutionError::Execution(format!("Failed to create workspace: {}", e)))?;
  
-+/// Where `cargo install` puts commands for the user steps run as. Steps run
-+/// as root for now; running them as GitHub's `runner` user moves this.
-+const CARGO_BIN_DIR: &str = "/root/.cargo/bin";
-+
-+/// Tools the hosted Ubuntu runner has that a job's steps run without
-+/// installing them first, so their absence fails a step that passes on
-+/// GitHub. Package names are the same on Debian, which some mapped and
-+/// `macos-*` images are based on.
-+const RUNNER_TOOLS: &[&str] = &[
-+    "sudo",
-+    "jq",
-+    "unzip",
-+    "zip",
-+    "wget",
-+    "xz-utils",
-+    "zstd",
-+    "file",
-+    "openssh-client",
-+    "rsync",
-+    "git-lfs",
-+    "python3",
-+    "python3-pip",
-+    "python3-venv",
-+];
-+
-+/// Installs the GitHub CLI from GitHub's own apt repository, the way the
-+/// hosted runner has it, unless the image has one. It fails when
-+/// cli.github.com can't be reached, so no image is kept without it: see
-+/// [`with_github_cli`]. Only that repository's package list is fetched, as
-+/// the earlier layers removed the others and `gh` needs nothing from them.
-+const GH_CLI_INSTALL: &str = "command -v gh >/dev/null 2>&1 || (\
-+     mkdir -p -m 755 /etc/apt/keyrings && \
-+     curl -fsSL --connect-timeout 10 --max-time 120 \
-+       https://cli.github.com/packages/githubcli-archive-keyring.gpg \
-+       -o /etc/apt/keyrings/githubcli-archive-keyring.gpg && \
-+     chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg && \
-+     echo \"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] \
-+https://cli.github.com/packages stable main\" > /etc/apt/sources.list.d/github-cli.list && \
-+     apt-get update -o Dir::Etc::sourcelist=sources.list.d/github-cli.list \
-+       -o Dir::Etc::sourceparts=- -o APT::Get::List-Cleanup=0 && \
-+     apt-get install -y --no-install-recommends gh && \
-+     rm -rf /var/lib/apt/lists/*)";
-+
-+/// Whether a built image gets the hosted runner's tools on top of what its
-+/// runtimes need.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+enum RunnerTools {
-+    /// [`RUNNER_TOOLS`] and the GitHub CLI, for the built-in images.
-+    Install,
-+    /// Neither: an image mapped with `-P` is the user's, and gets only what
-+    /// its setup actions need.
-+    Omit,
-+}
-+
- /// Ends a `RUN` that fetched the package lists by removing them.
- const REMOVE_PACKAGE_LISTS: &str = " && \\\n    rm -rf /var/lib/apt/lists/*";
+-    // 4. Set up GitHub-like environment
+-    let (mut env_context, user_env) = github_run_env(
++    // 4. Set up GitHub-like environment. The context is made once: jobs run
++    // on the host below get the same run id and the like as the rest.
++    let github_context = environment::create_github_context(
+         &workflow,
+         workspace_dir.path(),
+-        &config.runtime_type,
+         &environment::RunRef {
+             event_name: config.event_name.as_deref(),
+             git_ref: config.git_ref.as_deref(),
+             base_branch: config.base_branch.as_deref(),
+         },
+-    )?;
++    );
++    let (mut env_context, user_env) =
++        github_run_env_from(github_context.clone(), &workflow, &config.runtime_type)?;
  
-@@ -2139,6 +2193,7 @@ fn generate_combined_dockerfile(
-     base_image: &str,
-     base_id: Option<&str>,
-     week: Option<&str>,
-+    tools: RunnerTools,
- ) -> String {
-     let mut dockerfile = format!("FROM {}\n", base_image);
-     if let Some(id) = base_id {
-@@ -2154,7 +2209,8 @@ fn generate_combined_dockerfile(
-     // `build-essential` because hosted Ubuntu runners have a C toolchain,
-     // and Rust build scripts, node-gyp, Python C extensions and cgo all
-     // expect one. `less` because they have a pager, which tests of CLI
--    // tools run.
-+    // tools run. The rest are tools of the hosted runner's that steps call
-+    // without installing them: see [`RUNNER_TOOLS`].
-     dockerfile.push_str("RUN ");
-     if let Some(week) = week {
-         dockerfile.push_str(&format!(
-@@ -2167,6 +2223,10 @@ fn generate_combined_dockerfile(
-         "    apt-get install -y --no-install-recommends curl bash git ca-certificates gnupg \
-          build-essential less",
-     );
-+    if tools == RunnerTools::Install {
-+        dockerfile.push(' ');
-+        dockerfile.push_str(&RUNNER_TOOLS.join(" "));
-+    }
+     // show=true means hide=false (inverted for the env var)
+     env_context.insert(
+@@ -184,6 +186,33 @@ async fn execute_github_workflow(
+         ExecutionError::Execution(format!("Failed to setup GitHub env files: {}", e))
+     })?;
  
-     // Hosted runners also have Node.js whatever the job sets up, and tools
-     // such as pyright install their own copy unless one is on PATH. A
-@@ -2220,14 +2280,17 @@ fn generate_combined_dockerfile(
-     // just installed. Every install script lands in one of these directories.
-     // setup-python puts its interpreter's scripts first, so what `pip
-     // install` adds runs by name.
-+    // What `cargo install` installs goes on PATH, as `~/.cargo/bin` is on
-+    // the hosted runner's.
-+    let mut path: Vec<&str> = Vec::new();
-     if runtimes.iter().any(|rt| rt.language == "python") {
--        dockerfile.push_str(&format!(
--            "ENV PATH={}:/usr/local/bin:/usr/bin:$PATH\n",
--            PYTHON_SCRIPTS_DIR
--        ));
--    } else {
--        dockerfile.push_str("ENV PATH=/usr/local/bin:/usr/bin:$PATH\n");
-+        path.push(PYTHON_SCRIPTS_DIR);
-+    }
-+    if runtimes.iter().any(|rt| rt.language == "rust") {
-+        path.push(CARGO_BIN_DIR);
-     }
-+    path.extend(["/usr/local/bin", "/usr/bin", "$PATH"]);
-+    dockerfile.push_str(&format!("ENV PATH={}\n", path.join(":")));
- 
-     dockerfile
- }
-@@ -2284,6 +2347,10 @@ fn combined_image_tag(runtimes: &[SetupRuntime], dockerfile: &str) -> String {
-         })
-         .collect();
-     tag_parts.sort();
-+    // An image with the r
-```
-
-**File**: `crates/executor/src/github_env_files.rs` (modified, +171/-1)
-```diff
-@@ -143,13 +143,21 @@ pub fn read_step_environment_updates(job_env: &HashMap<String, String>) -> StepE
- /// - Merges GITHUB_ENV entries into `job_env`
- /// - Prepends GITHUB_PATH entries to the PATH in `job_env`
- /// - Clears per-step files so the next step starts fresh
-+///
-+/// Returns the `$GITHUB_ENV` and `$GITHUB_PATH` entries it applied, so a
-+/// composite action can hand them on to the job that called it.
- pub fn apply_step_environment_updates(
-     job_env: &mut HashMap<String, String>,
-     job_user_env: &mut HashMap<String, String>,
-     step_outputs_map: &mut HashMap<String, HashMap<String, String>>,
-     step_id: Option<&str>,
--) {
-+) -> AppliedEnvironment {
-     let updates = read_step_environment_updates(job_env);
-+    let mut applied = AppliedEnvironment {
-+        env_vars: updates.env_vars.clone().into_iter().collect(),
-+        path_entries: updates.path_entries.clone(),
-+    };
-+    applied.env_vars.sort();
- 
-     // Store step outputs keyed by step ID for ${{ steps.<id>.outputs.<key> }}
-     if let Some(id) = step_id {
-@@ -194,6 +202,89 @@ pub fn apply_step_environment_updates(
- 
-     // Clear files so the next step doesn't re-process these entries
-     clear_step_files(job_env);
-+    applied
-+}
-+
-+/// The `$GITHUB_ENV` and `$GITHUB_PATH` entries one or more steps wrote.
-+#[derive(Debug, Default, Clone, PartialEq)]
-+pub struct AppliedEnvironment {
-+    /// `$GITHUB_ENV` entries, in the order a later one overrides an earlier one.
-+    pub env_vars: Vec<(String, String)>,
-+    /// `$GITHUB_PATH` entries, in the order they end up on `PATH`.
-+    pub path_entries: Vec<String>,
-+}
-+
-+impl AppliedEnvironment {
-+    /// Add what a later step applied: its variables override, and its
-+    /// directories go in front, as they do on `PATH`.
-+    pub fn then(&mut self, later: AppliedEnvironment) {
-+        self.env_vars.extend(later.env_vars);
-+        let mut path_entries = later.path_entries;
-+        path_entries.append(&mut self.path_entries);
-+        self.path_entries = path_entries;
-+    }
-+
-+    pub fn is_empty(&self) -> bool {
-+        self.env_vars.is_empty() && self.path_entries.is_empty()
-+    }
-+
-+    /// Append these entries to the `$GITHUB_ENV` and `$GITHUB_PATH` files
-+    /// named in `caller_env`, so they apply when the calling step finishes,
-+    /// as a composite action's do on GitHub.
-+    pub fn write_to(&self, caller_env: &HashMap<String, String>) -> std::io::Result<()> {
-+        use std::io::Write;
-+        if !self.env_vars.is_empty() {
-+            if let Some(path) = caller_env.get("GITHUB_ENV") {
-+                let mut f = fs::OpenOptions::new()
-+                    .create(true)
-+                    .append(true)
-+                    .open(path)?;
-+                for (key, value) in &self.env_vars {
-+                    write_kv_entry(&mut f, key, value)?;
-+                }
-+            }
-+        }
-+        if !self.path_entries.is_empty() {
-+            if let Some(path) = caller_env.get("GITHUB_PATH") {
-+                let mut f = fs::OpenOptions::new()
-+                    .create(true)
-+                    .append(true)
-+                    .open(path)?;
-+                for entry in &self.path_entries {
-+                    writeln!(f, "{}", entry)?;
-+                }
-+            }
-+        }
-+        Ok(())
-+    }
-+}
-+
-+/// Write `key=value` in the `$GITHUB_OUTPUT`/`$GITHUB_ENV` format, as a
-+/// heredoc when the value has more than one line.
-+pub fn write_kv_entry(f: &mut impl std::io::Write, key: &str, value: &str) -> std::io::Result<()> {
-+    if value.contains('\n') {
-+        let delim = heredoc_delimiter(value);
-+        writeln!(f, "{}<<{}", key, delim)?;
-+        write!(f, "{}", value)?;
-+        if !value.ends_with('\n') {
-+            writeln!(f)?;
-+        }
-+        writeln!(f, "{}", delim)
++    // `macos-*` jobs on this Mac, when asked, with the env emulation gives.
++    let host_jobs = if crate::host_jobs::wanted(&config.runtime_type) {
++        let (host_env, _) =
++            github_run_env_from(github_context, &workflow, &RuntimeType::Emulation)?;
++        wrkflw_logging::warning(
++            "macos-* jobs run on this Mac itself (--macos-on-host), with no container \
++             around their steps: they can change this machine, and they see this shell's \
++             environment, credentials included. They have no terminal to ask for input \
++             at, so one that does, such as sudo asking for a password, fails",
++        );
++        Some(std::sync::Arc::new(crate::host_jobs::HostJobs::new(
++            Box::new(emulation::EmulationRuntime::new()),
++            &env_context,
++            host_env,
++        )))
 +    } else {
-+        writeln!(f, "{}={}", key, value)
-+    }
-+}
-+
-+/// A heredoc delimiter that isn't a line of `value`.
-+pub fn heredoc_delimiter(value: &str) -> String {
-+    let base = "ghadelimiter";
-+    let mut candidate = base.to_string();
-+    let mut counter: u64 = 0;
-+    while value.lines().any(|line| line == candidate) {
-+        counter += 1;
-+        candidate = format!("{}_{}", base, counter);
-+    }
-+    candidate
- }
- 
- /// Truncate environment files between steps.
-@@ -217,6 +308,85 @@ mod tests {
-     use super::*;
-     use tempfile::tempdir;
- 
-+    /// A job's environment whose `$GITHUB_ENV` and `$GITHUB_PATH` are files
-+    /// in `dir`, with `PATH` set to `/usr/bin`.
-+    fn job_env_in(dir: &Path) -> HashMap<String, String> {
-+        let mut env = HashMap::new();
-+        for name in ["GITHUB_ENV", "GITHUB_PATH", "GITHUB_OUTPUT"] {
-+            let file = dir.join(name.to_ascii_lowercase());
-+            fs::write(&file, "").unwrap();
-+            env.insert(name.to_string(), file.display().to_string());
++        if crate::run_options::macos_on_host() {
++            wrkflw_logging::warning(&format!(
++                "--macos-on-host has no effect here: it runs macos-* jobs on a Mac whose \
++                 other jobs run in containers, and this run is on {} with {}",
++                std::env::consts::OS,
++                config.runtime_type.mode_name()
++            ));
 +        }
-+        env.insert("PATH".to_string(), "/usr/bin".to_string());
-+        env
-+    }
-+
-+    /// Run one step's writes th
-```
-
-**File**: `crates/executor/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ pub(crate) mod matrix_fold;
- pub mod podman;
- pub mod run_options;
- pub mod runner_fidelity;
--pub(crate) mod script_commands;
-+pub mod script_commands;
- pub(crate) mod setup_actions;
- pub mod substitution;
- pub mod vm_memory;
-```
-
-**File**: `crates/executor/src/script_commands.rs` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@
- use wrkflw_parser::workflow::Step;
- 
- /// Whether a `run:` step of `steps` runs one of `commands`.
--pub(crate) fn steps_run(steps: &[Step], commands: &[&str]) -> bool {
-+pub fn steps_run(steps: &[Step], commands: &[&str]) -> bool {
-     steps
-         .iter()
-         .filter_map(|step| step.run.as_deref())
-```
-
-**File**: `crates/executor/src/setup_actions.rs` (modified, +130/-6)
-```diff
-@@ -725,7 +725,7 @@ pub(crate) fn detect_setup_in(steps: &[Step], root: &Path) -> SetupDetection {
-                 // Some actions encode the version in the @ref (e.g., dtolnay/rust-toolchain@nightly).
-                 // Skip bare git SHAs — they pin the action version, not the toolchain.
-                 if def.version_from_ref {
--                    git_ref.filter(|r| !is_git_sha(r)).map(|r| r.to_string())
-+                    git_ref.and_then(|r| toolchain_from_ref(repo, r))
-                 } else {
-                     None
-                 }
-@@ -771,6 +771,13 @@ pub(crate) fn detect_setup_in(steps: &[Step], root: &Path) -> SetupDetection {
-         } else {
-             ver
-         };
-+        // setup-go takes a semver range, such as `^1.22`, and installs the
-+        // newest release in it.
-+        let ver = if def.language == "go" {
-+            go_line_for_range(&ver).unwrap_or(ver)
-+        } else {
-+            ver
-+        };
-         // setup-python's `graalpy-24.1` names a GraalPy release, which uv
-         // can't install by: it asks for GraalPy by the Python it implements.
-         let graalpy_release = def.language == "python"
-@@ -881,11 +888,10 @@ pub(crate) fn detect_setup_in(steps: &[Step], root: &Path) -> SetupDetection {
-             if !repos.contains(&repo) {
-                 continue;
-             }
--            if let Some(with) = &step.with {
--                for command in rust_toolchain_extras(with, static_input) {
--                    if !extras.contains(&command) {
--                        extras.push(command);
--                    }
-+            let with = with_ref_defaults(uses, step.with.clone().unwrap_or_default());
-+            for command in rust_toolchain_extras(&with, static_input) {
-+                if !extras.contains(&command) {
-+                    extras.push(command);
-                 }
-             }
-         }
-@@ -1095,6 +1101,47 @@ fn go_prerelease(version: &str) -> Option<String> {
-         .then(|| format!("go{}{}{}", line, kind, number))
- }
- 
-+/// The Go version whose newest release is the newest one the semver range
-+/// `range` allows, as setup-go picks it: `^1.22` and `>=1.22` allow any
-+/// later 1.x, so `1`; `~1.22.3` allows 1.22.x, so `1.22`. `None` for a
-+/// version that isn't such a range, or one bounded from above, which this
-+/// can't honour.
-+fn go_line_for_range(range: &str) -> Option<String> {
-+    let numeric = |v: &str| {
-+        let parts: Vec<&str> = v.split('.').collect();
-+        (1..=3).contains(&parts.len())
-+            && parts
-+                .iter()
-+                .all(|p| !p.is_empty() && p.chars().all(|c| c.is_ascii_digit()))
++        None
 +    };
-+    let range = range.trim();
-+    if let Some(v) = range
-+        .strip_prefix('^')
-+        .map(str::trim)
-+        .filter(|v| numeric(v))
-+    {
-+        let major = v.split('.').next()?;
-+        // `^0.x` allows the minor alone, as semver reads a 0 major.
-+        return Some(if major == "0" {
-+            v.split('.').take(2).collect::<Vec<_>>().join(".")
-+        } else {
-+            major.to_string()
-+        });
-+    }
-+    if let Some(v) = range
-+        .strip_prefix('~')
-+        .map(str::trim)
-+        .filter(|v| numeric(v))
-+    {
-+        return Some(v.split('.').take(2).collect::<Vec<_>>().join("."));
-+    }
-+    range
-+        .strip_prefix(">=")
-+        .map(str::trim)
-+        .is_some_and(numeric)
-+        .then(|| "stable".to_string())
-+}
 +
- /// Whether [`go_release`] can name the release `version` asks for. Anything
- /// else is refused before the image build, where it would fail the job.
- fn go_release_known(version: &str) -> bool {
-@@ -1222,6 +1269,60 @@ pub(crate) fn runner_node_install() -> String {
-     )
- }
+     // 5. Initialize secrets management
+     let secret_manager = if let Some(secrets_config) = &config.secrets_config {
+         Some(
+@@ -226,20 +255,23 @@ async fn execute_github_workflow(
+         // Execute jobs in parallel if they don't depend on each other.
+         // `needs:` failure propagation and `if:` evaluation happen per job inside
+         // `execute_job_with_matrix`, so this loop and `run_called_workflow` share them.
+-        let job_results = execute_job_batch(
+-            &job_batch,
+-            &workflow,
+-            runtime.as_ref(),
+-            &env_context,
+-            &user_env,
+-            config.verbose,
+-            secret_manager.as_ref(),
+-            Some(&secret_masker),
+-            &all_job_outputs,
+-            &all_job_results,
+-            &artifact_store,
+-            &cache_store,
+-            &config.platform_overrides,
++        let job_results = crate::host_jobs::scope(
++            host_jobs.clone(),
++            execute_job_batch(
++                &job_batch,
++                &workflow,
++                runtime.as_ref(),
++                &env_context,
++                &user_env,
++                config.verbose,
++                secret_manager.as_ref(),
++                Some(&secret_masker),
++                &all_job_outputs,
++                &all_job_results,
++                &artifact_store,
++                &cache_store,
++                &config.platform_overrides,
++            ),
+         )
+         .await?;
  
-+/// The branches of `dtolnay/rust-toolchain` named for a tool rather than a
-+/// toolchain: each installs nightly with these components, unless the step
-+/// names its own.
-+const RUST_TOOLCHAIN_TOOL_BRANCHES: &[(&str, &str)] =
-+    &[("clippy", "clippy"), ("miri", "miri, rust-src")];
-+
-+/// The toolchain a Rust toolchain action's `@ref` names, if it names one.
-+/// `dtolnay/rust-toolchain` has a branch per toolchain (`stable`, `1.85`,
-+/// `nightly-2025-01-01`), and [branches per tool](RUST_TOOLCHAIN_TOOL_BRANCHES)
-+/// that install nightly. Its `master` and a SHA pin the action, not a
-+/// toolchain, as every `actions-rs/toolchain` ref does.
-+pub(crate) fn toolchain_from_ref(repo: &str, git_ref: &str) -> Option<String> {
-+    if repo != "dtolnay/rust-toolchain" || is_git_sha(git_ref) {
-+        return None;
-+    }
-+    if RUST_TOOLCHAIN_TOOL_BRANCHES
-+        .iter()
-+        .any(|(branch, _)| *branch == git_ref)
-+    {
-+        return Some("nightly".to_string());
-+    }
-+    match git_ref {
-+        "master" | "main" | "comment" => None,
-+        // A tag such as `v1` is the action's own version.
-+        r if r.strip_prefix('v').is_some_and(|rest| {
-+            !rest.is_empty() && rest.chars().all(|c| c.is_ascii_digit() || c == '.')
-+      
-```
-
-**File**: `crates/wrkflw/src/compare_cmd.rs` (modified, +319/-19)
-```diff
-@@ -38,9 +38,27 @@ struct ExpectedJob {
-     /// can hold the same value, and GitHub prints it twice.
-     github_base: String,
-     matrix_values: Option<Vec<String>>,
-+    /// The job calls a reusable workflow: GitHub shows each of that
-+    /// workflow's jobs as `<this job's name> / <its name>`, and wrkflw
-+    /// reports one result for them all.
-+    called: bool,
-+    /// The job's steps run `docker`, which needs `--docker-in-jobs` locally.
-+    runs_docker: bool,
- }
+@@ -432,6 +464,13 @@ async fn execute_gitlab_pipeline(
+     let workspace_dir = tempfile::tempdir()
+         .map_err(|e| ExecutionError::Execution(format!("Failed to create workspace: {}", e)))?;
  
- impl ExpectedJob {
-+    /// When `name` is one of the jobs of the workflow this job calls, the
-+    /// part of it that names this job: `pre_ci` of `pre_ci / pre_ci`, or
-+    /// `checks (1.85)` of `checks (1.85) / fmt` for a matrix leg.
-+    fn caller_in<'a>(&self, name: &'a str) -> Option<&'a str> {
-+        if !self.called {
-+            return None;
-+        }
-+        name.match_indices(" / ")
-+            .map(|(at, _)| &name[..at])
-+            .find(|caller| self.matches(caller))
-+    }
-+
-     fn matches(&self, name: &str) -> bool {
-         if self.github.as_deref() == Some(name) {
-             return true;
-@@ -121,6 +139,8 @@ fn expected_jobs(path: &Path) -> Result<Vec<ExpectedJob>, String> {
-     let mut expected = Vec::new();
-     for id in ids {
-         let job = &workflow.jobs[id];
-+        let called = job.uses.is_some();
-+        let runs_docker = wrkflw_executor::script_commands::steps_run(&job.steps, &["docker"]);
-         let template = raw["jobs"][id.as_str()]["name"]
-             .as_str()
-             .map(str::to_string);
-@@ -136,6 +156,8 @@ fn expected_jobs(path: &Path) -> Result<Vec<ExpectedJob>, String> {
-                 github_base: name.clone().unwrap_or_else(|| id.clone()),
-                 github: Some(name.unwrap_or_else(|| id.clone())),
-                 matrix_values: None,
-+                called,
-+                runs_docker,
-             });
-             continue;
-         };
-@@ -156,13 +178,17 @@ fn expected_jobs(path: &Path) -> Result<Vec<ExpectedJob>, String> {
-                     github: Some(named.clone()),
-                     github_base: named,
-                     matrix_values: None,
-+                    called,
-+                    runs_docker,
-                 }
-             } else {
-                 ExpectedJob {
-                     local,
-                     github: None,
-                     github_base: named,
-                     matrix_values: values,
-+                    called,
-+                    runs_docker,
-                 }
-             });
-         }
-@@ -195,17 +221,50 @@ fn agree(conclusion: Option<&str>, status: Option<&str>) -> Option<bool> {
-     }
- }
- 
-+/// How many of the local run's jobs stood in for Windows ones.
-+fn windows_stand_ins(local: &Value) -> usize {
-+    local["jobs"]
-+        .as_array()
-+        .into_iter()
-+        .flatten()
-+        .filter(|job| stood_in_for_windows(job))
-+        .count()
-+}
-+
-+/// Whether a local job stood in for a Windows one. Its result is not
-+/// compared: a Windows job's steps call Windows tools, which a Linux
-+/// container doesn't have, so its failure says nothing about wrkflw.
-+fn stood_in_for_windows(local: &Value) -> bool {
-+    local["runner"]["requested"]
-+        .as_str()
-+        .is_some_and(|os| os.to_ascii_lowercase().starts_with("windows"))
-+}
-+
- /// Why a local job may differ from GitHub's, from the run's own report.
--fn note_for(local: &Value, failures: &[Value]) -> Option<String> {
-+/// `needs_docker` says its steps run `docker` and the run gave them no
-+/// engine.
-+fn note_for(local: &Value, failures: &[Value], needs_docker: bool) -> Option<String> {
-     let name = local["name"].as_str().unwrap_or_default();
-     let mut notes = Vec::new();
-     if let Some(runner) = local.get("runner") {
-+        let not_compared = if stood_in_for_windows(local) {
-+            "not compared: "
-+        } else {
-+            ""
-+        };
-         notes.push(format!(
--            "ran as {} locally, GitHub ran {}",
-+            "{not_compared}ran as {} locally, GitHub ran {}",
-             runner["ran_as"].as_str().unwrap_or("?"),
-             runner["requested"].as_str().unwrap_or("?")
-         ));
-     }
-+    if needs_docker && local["status"] == "failure" {
-+        notes.push(
-+            "its steps run docker: a job only has an engine for them with \
-+             WRKFLW_DOCKER_IN_JOBS=1 (run --docker-in-jobs)"
-+                .to_string(),
++    if crate::run_options::macos_on_host() {
++        wrkflw_logging::warning(
++            "--macos-on-host has no effect on a GitLab pipeline: it runs a GitHub workflow's \
++             macos-* jobs",
 +        );
 +    }
-     for action in local["actions_not_run"].as_array().into_iter().flatten() {
-         notes.push(format!(
-             "{} did not run locally, GitHub ran it",
-@@ -247,11 +306,15 @@ fn note_for(local: &Value, failures: &[Value]) -> Option<String> {
- }
++
+     // 5. Set up GitLab-like environment
+     let mut env_context = create_gitlab_context(&pipeline, workspace_dir.path());
  
- /// Match `remote` jobs to `local` results through `expected` names.
+@@ -889,14 +928,27 @@ pub fn detect_runtime(runtime_type: RuntimeType) -> RuntimeType {
+ type EnvMap = HashMap<String, String>;
+ 
+ /// Build the run-level env for a GitHub workflow. Returns the full lookup map
+-/// and the user-declared slice of it.
++/// and the user-declared slice of it. A run makes its context itself and
++/// calls [`github_run_env_from`], as it may need the env for two runtimes.
++#[cfg(test)]
+ fn github_run_env(
+     workflow: &WorkflowDefinition,
+     workspace_dir: &Path,
+   
+```
+
+**File**: `crates/executor/src/host_jobs.rs` (added, +555/-0)
+```diff
+@@ -0,0 +1,555 @@
++//! `macos-*` jobs run on this Mac, when asked.
++//!
++//! On a Mac running jobs in containers, a job whose `runs-on` names macOS
++//! runs as Linux, in the Ubuntu image, and its pass is only `unverified`.
++//! With [`crate::run_options::MACOS_ON_HOST_ENV`] (`--macos-on-host`) such a
++//! job, or matrix leg, runs under emulation instead: on the Mac itself, with
++//! `runner.os` macOS and the host's paths, while the run's other jobs keep
++//! their containers. Off by default, because emulation gives a step no
++//! isolation: a macOS job's `brew install` changes this machine.
++
++use crate::engine::RuntimeType;
++use serde_yaml::Value;
++use std::collections::HashMap;
++use std::future::Future;
++use std::path::{Path, PathBuf};
++use std::sync::Arc;
++use wrkflw_parser::workflow::Job;
++use wrkflw_runtime::container::{ContainerError, ContainerOutput, ContainerRuntime};
++
++/// What a job run on the host runs with instead of the run's runtime.
++pub(crate) struct HostJobs {
++    pub runtime: Box<dyn ContainerRuntime + Send + Sync>,
++    /// The env values emulation seeds where they differ from the run's:
++    /// host paths, `RUNNER_OS` macOS, and workflow `env:` resolved with
++    /// them. Laid over the env a job is handed, so what its caller gave it,
++    /// such as a called workflow's inputs and secrets, stays.
++    overlay: Vec<(String, String)>,
++}
++
++impl HostJobs {
++    /// `run_env` is the run's env as its container runtime seeds it, and
++    /// `host_env` the same run's env as emulation seeds it.
++    pub fn new(
++        runtime: Box<dyn ContainerRuntime + Send + Sync>,
++        run_env: &HashMap<String, String>,
++        host_env: HashMap<String, String>,
++    ) -> Self {
++        let overlay = host_env
++            .into_iter()
++            .filter(|(key, value)| run_env.get(key) != Some(value))
++            .collect();
++        HostJobs {
++            runtime: Box::new(OffTask {
++                runtime: Arc::from(runtime),
++                one_at_a_time: Arc::new(tokio::sync::Semaphore::new(1)),
++            }),
++            overlay,
++        }
++    }
++
++    /// The env and user env a job handed `env` and `user_env` runs with on
++    /// the host. A user env key is changed only where the job has it, so
++    /// a called workflow's empty user env stays empty.
++    pub fn env_for(
++        &self,
++        env: &HashMap<String, String>,
++        user_env: &HashMap<String, String>,
++    ) -> (HashMap<String, String>, HashMap<String, String>) {
++        let mut env = env.clone();
++        let mut user_env = user_env.clone();
++        for (key, value) in &self.overlay {
++            env.insert(key.clone(), value.clone());
++            if let Some(slot) = user_env.get_mut(key) {
++                slot.clone_from(value);
++            }
++        }
++        (env, user_env)
++    }
++}
++
++/// A runtime whose steps run off the task that drives the run's jobs.
 +///
-+/// `docker_in_jobs` says the local run started an engine for steps that
-+/// run `docker`, so a failure of theirs isn't put down to its absence.
- fn rows(
-     expected: &[ExpectedJob],
-     remote: &[RemoteJob],
-     local: &[
++/// Emulation waits for a step's process in place, without yielding. A
++/// run's jobs, and the legs of a matrix chunk, are all polled from one
++/// task, so a host job's long `brew install` would stop the container jobs
++/// beside it until it ended. Here each step waits on a blocking thread.
++///
++/// Host steps run one at a time. On GitHub each macOS job has a machine of
++/// its own; here they share this Mac, its Homebrew lock and its caches, so
++/// two at once can fail where neither would alone. They still run while
++/// container jobs do.
++struct OffTask {
++    runtime: Arc<dyn ContainerRuntime + Send + Sync>,
++    one_at_a_time: Arc<tokio::sync::Semaphore>,
++}
++
++/// Ends a step's processes when the step is given up on: a timeout or a
++/// cancelled job drops the future waiting for it, which leaves its thread
++/// running. A step that ended has nothing left to end.
++struct EndOnDrop(wrkflw_runtime::emulation::StepHandle);
++
++impl Drop for EndOnDrop {
++    fn drop(&mut self) {
++        self.0.kill();
++    }
++}
++
++#[async_trait::async_trait]
++impl ContainerRuntime for OffTask {
++    async fn run_container(
++        &self,
++        image: &str,
++        cmd: &[&str],
++        env_vars: &[(&str, &str)],
++        working_dir: &Path,
++        volumes: &[(&Path, &Path)],
++        entrypoint: Option<&str>,
++    ) -> Result<ContainerOutput, ContainerError> {
++        let runtime = Arc::clone(&self.runtime);
++        let image = image.to_string();
++        let cmd: Vec<String> = cmd.iter().map(|s| s.to_string()).collect();
++        let env: Vec<(String, String)> = env_vars
++            .iter()
++            .map(|(k, v)| (k.to_string(), v.to_string()))
++            .collect();
++        let working_dir = working_dir.to_path_buf();
++        let volumes: Vec<(PathBuf, PathBuf)> = volumes
++            .iter()
++            .map(|(host, inside)| (host.to_path_buf(), inside.to_path_buf()))
++            .collect();
++        let entrypoint = entrypoint.map(str::to_string);
++        // The step's output goes to the tap of this task, which the thread
++ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #176** (2026-11-20): Pre-release polish: doctor, macOS jobs on the Mac, held-out sweep, prebuilt installs, new demo (@bahdotsh)
+- **PR #175** (2026-11-20): Pre-release: JavaScript actions, private uses, prebuilt runner image, stand-in reporting, sweep evidence (@bahdotsh)
 - **PR #174** (2026-11-19): fix: close the gaps left after the compare sweep (#173 follow-up) (@bahdotsh)
 - **PR #173** (2026-11-18): fix: close the gaps the eight-repo compare sweep found (@bahdotsh)
 - **PR #172** (2026-11-14): fix: keep what a step installs for the next one, and give jobs the runner's Rust and Docker (@bahdotsh)
 - **PR #171** (2026-11-13): fix: agree with GitHub on real repositories, and build job images faster (@bahdotsh)
-- **PR #170** (closed): perf: build job images faster, and start no container for a step that only prints (@bahdotsh)
-- **PR #169** (2026-11-11): perf: run the legs of a new matrix together, and fit light jobs side by side again (@bahdotsh)
 
 ---
 
@@ -3605,32 +2778,36 @@ moved to github_env_files but kept
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. close the gaps left after the compare sweep (#173 follow-up)
+## X. Pre-release: JavaScript actions, private uses, prebuilt runner image, stand-in r
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bahdotsh/wrkflw. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bahdotsh/wrkflw. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b0fdd8df`: close the gaps left after the compare sweep (#173 follow-up). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `490a508b`: Pre-release: JavaScript actions, private uses, prebuilt runner image, stand-in reporting, sweep evidence. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- The built-in image is the base image plus tools the hosted Ubuntu runner has and steps call without installing: `sudo`, `jq`, `gh`, `unzip`, `zip`, `wget`, `xz`, `zstd`, `file`, `ssh`, `rsync`, `git-lfs`, `python3` with `pip`, a C toolchain and Node.js. It is built once and shared by every job. `gh` comes from cli.github.com in a layer of its own: when that can't be reached the job runs without it, with a warning, and the next run tries again. When the tools can't be installed at all, a job with nothing else to set up runs on the bare base image.
-- Steps of a job in the built-in image run as `runner`, as on GitHub: a user with `/home/runner` for its home and `sudo` without a password, so a test that expects a permission error gets one. rustup and cargo are in its home, and it owns what `pip install` and `npm install -g` write to. On Linux the user has your uid, so what a step writes in the workspace stays yours; elsewhere it has GitHub's, 1001. Files an earlier run left in the workspace or the `--dep-cache` directories as root's are handed to that user before the first step. Steps run as root instead, with one warning per run, where that user can't write the job's files: under a 
+# And for the runner base image: a test run on a commit whose base isn't
+# published would remember it as unavailable in the user's cache, and real
+# runs would then skip it for a day. CI names its own base with
+# WRKFLW_RUNNER_IMAGE and sets this to 1. It applies to `cargo run` too:
+# set WRKFLW_PREBUILT_IMAGES=1 there to time a first run on the base.
+WRKFLW_PREBUILT_IMAGES = "0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- The built-in image is the base image plus tools the hosted Ubuntu runner has and steps call without installing: `sudo`, `jq`, `gh`, `unzip`, `zip`, `wget`, `xz`, `zstd`, `file`, `ssh`, `rsync`, `git-lfs`, `python3` with `pip`, a C toolchain and Node.js. It is built once and shared by every job. `gh` comes from cli.github.com in a layer of its own: when that can't be reached the job runs without it, with a warning, and the next run tries again. When the tools can't be installed at all, a job with nothing else to set up runs on the bare base image. Steps still run as root, where GitHub's run as the `runner` user, so a test that expects a permission error passes on GitHub and fails here.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b0fdd8df` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `490a508b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

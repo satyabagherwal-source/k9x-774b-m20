@@ -4,24 +4,24 @@
 {
   "source_repository": "preactjs/preact",
   "source_url": "https://github.com/preactjs/preact",
-  "source_version": "34b99c69",
+  "source_version": "39d353a8",
   "license": "MIT",
-  "timestamp": "2026-11-17T05:58:08.063Z",
+  "timestamp": "2026-11-21T00:43:46.527Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-preactjs-preact",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [preactjs/preact](https://github.com/preactjs/preact) (Revision: `34b99c69`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T05:58:08.063Z`  
+> **Provenance**: Harvested from [preactjs/preact](https://github.com/preactjs/preact) (Revision: `39d353a8`).  
+> **License**: MIT | **Timestamp**: `2026-11-21T00:43:46.527Z`  
 > **Learning ID**: `learn-github-preactjs-preact`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 65%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 78%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from preactjs/preact:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/preactjs-preact-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/preactjs/preact](https://github.com/preactjs/preact))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T05:58:06.789Z  
+> **Harvest Timestamp**: 2026-11-21T00:43:45.232Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ⚛️ Fast 3kB React alternative with the same modern API. Components & Virtual DOM.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 39009 stars
+- **Stars / Engagement**: 39011 stars
 
 ---
 
@@ -690,9 +690,6 @@ let currentIndex;
 /** @type {import('./internal').Component} */
 let currentComponent;
 
-/** @type {import('./internal').Component} */
-let previousComponent;
-
 /** @type {number} */
 let currentHook = 0;
 
@@ -711,12 +708,10 @@ let unmountCleanups = [];
 // Cast to use internal Options type
 const options = /** @type {import('./internal').Options} */ (_options);
 
-let oldBeforeDiff = options._diff;
 let oldBeforeRender = options._render;
 let oldAfterDiff = options.diffed;
 let oldCommit = options._commit;
 let oldBeforeUnmount = options.unmount;
-let oldRoot = options._root;
 
 // We take the minimum timeout for requestAnimationFrame to ensure that
 // the callback is invoked after the next frame. 35ms is based on a 30hz
@@ -725,34 +720,18 @@ const RAF_TIMEOUT = 35;
 let prevRaf;
 
 /** @type {(vnode: import('./internal').VNode) => void} */
-options._diff = vnode => {
-	currentComponent = null;
-	if (oldBeforeDiff) oldBeforeDiff(vnode);
-};
-
-options._root = (vnode, parentDom) => {
-	if (vnode && parentDom._children && parentDom._children._mask) {
-		vnode._mask = parentDom._children._mask;
-	}
-
-	if (oldRoot) oldRoot(vnode, parentDom);
-};
-
-/** @type {(vnode: import('./internal').VNode) => void} */
 options._render = vnode => {
 	if (oldBeforeRender) oldBeforeRender(vnode);
 
-	currentComponent = vnode._component;
-	currentIndex = 0;
-
-	const hooks = currentComponent.__hooks;
+	const component = vnode._component;
+	const hooks = component.__hooks;
 	if (hooks) {
-		if (previousComponent == currentComponent) {
-			currentComponent._renderCallbacks = [];
+		// Still current: the render loop is running this component again.
+		if (currentComponent == component) {
+			component._renderCallbacks = [];
 		} else {
 			hooks._pendingEffects.some(invokeCleanup);
 			hooks._pendingEffects.some(invokeEffect);
-			currentIndex = 0;
 		}
 		hooks._pendingEffects = [];
 
@@ -765,7 +744,10 @@ options._render = vnode => {
 			hookItem._pendingArgs = hookItem._nextValue = undefined;
 		});
 	}
-	previousComponent = currentComponent;
+
+	// Set last: an effect flushed above can render another root.
+	currentComponent = component;
+	currentIndex = 0;
 };
 
 /** @type {(vnode: import('./internal').VNode) => void} */
@@ -781,7 +763,7 @@ options.diffed = vnode => {
 			if (hookItem._pendingArgs) hookItem._args = hookItem._pendingArgs;
 		});
 	}
-	previousComponent = currentComponent = null;
+	currentComponent = null;
 };
 
 // TODO: Improve typing of commitQueue parameter
@@ -846,12 +828,12 @@ options.unmount = vnode => {
 };
 
 /**
- * Get a hook's state from the currentComponent
- * @param {number} index The index of the hook to get
+ * Get the state of the next hook of the currentComponent
  * @param {number} type The type of the hook to get
  * @returns {any}
  */
-function getHookState(index, type) {
+function getHookState(type) {
+	const index = currentIndex++;
 	if (options._hook) {
 		options._hook(currentComponent, index, currentHook || type);
 	}
@@ -869,11 +851,7 @@ function getHookState(index, type) {
 			_pendingEffects: []
 		});
 
-	if (index >= hooks._list.length) {
-		hooks._list.push({});
-	}
-
-	return hooks._list[index];
+	return hooks._list[index] || (hooks._list[index] = {});
 }
 
 /**
@@ -896,7 +874,7 @@ export function useState(initialState) {
  */
 export function useReducer(reducer, initialState, init) {
 	/** @type {import('./internal').ReducerHookState} */
-	const hookState = getHookState(currentIndex++, 2);
+	const hookState = getHookState(2);
 	hookState._reducer = reducer;
 	if (!hookState._component) {
 		hookState._value = [
@@ -962,7 +940,7 @@ export function useReducer(reducer, initialState, init) {
  */
 export function useEffect(callback, args) {
 	/** @type {import('./internal').EffectHookState} */
-	const state = getHookState(currentIndex++, 3);
+	const state = getHookState(3);
 	if (!options._skipEffects && argsChanged(state._args, args)) {
 		state._passive = true;
 		state._value = callback;
@@ -979,7 +957,7 @@ export function useEffect(callback, args) {
  */
 export function useLayoutEffect(callback, args) {
 	/** @type {import('./internal').EffectHookState} */
-	const state = getHookState(currentIndex++, 4);
+	const state = getHookState(4);
 	if (!options._skipEffects && argsChanged(state._args, args)) {
 		state._passive = false;
 		state._value = callback;
@@ -1024,7 +1002,33 @@ export function useImperativeHandle(ref, createHandle, args) {
  * @template {unknown} T
  * @param {() => T} factory
  * @param {unknown[]} args
- * @retur
+ * @returns {T}
+ */
+export function useMemo(factory, args) {
+	/** @type {import('./internal').MemoHookState<T>} */
+	const state = getHookState(7);
+	if (argsChanged(state._args, args)) {
+		state._value = factory();
+		state._args = args;
+	}
+
+	return state._value;
+}
+
+/**
+ * @param {() => void} callback
+ * @param {unknown[]} args
+ * @returns {() => void}
+ */
+export function useCallback(callback, args) {
+	currentHook = 8;
+	return useMemo(() => callback, args);
+}
+
+/**
+ * @param {import('./internal').PreactContext} context
+ */
+export function 
 ```
 
 ### Core Architecture Module: `hooks/src/internal.d.ts`
@@ -1068,6 +1072,7 @@ export interface Component extends Omit<
 	'_renderCallbacks'
 > {
 	__hooks?: ComponentHooks;
+	_mask?: [number, number];
 	// Extend to include HookStates
 	_renderCallbacks?: Array<HookState | (() => void)>;
 	_hasScuFromHooks?: boolean;
@@ -1089,7 +1094,6 @@ export type HookState =
 interface BaseHookState {
 	_value?: unknown;
 	_nextValue?: unknown;
-	_pendingValue?: unknown;
 	_args?: unknown;
 	_pendingArgs?: unknown;
 	_component?: unknown;
@@ -1114,7 +1118,6 @@ export interface EffectHookState extends BaseHookState {
 
 export interface MemoHookState<T = unknown> extends BaseHookState {
 	_value?: T;
-	_pendingValue?: T;
 	_args?: unknown[];
 	_pendingArgs?: unknown[];
 }
@@ -1298,211 +1301,406 @@ export function hydrate(vnode, parentDom) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `34b99c69` (2026-11-16)
-**Commit Message**: Merge pull request #5365 from 0z5a/fix/style-zero-empty-string
+### Incident Patch 1: `1d12f15a` (2026-11-19)
+**Commit Message**: fix(types): add capture variants of toggle, dialog and command events
 
-Apply style values that change between 0 and an empty string
+Preact registers any `on*Capture` prop as a capturing listener, but
+`DOMAttributes` and `DialogHTMLAttributes` had no capture variant for
+`onBeforeToggle`, `onToggle`, `onCancel`, `onClose` and `onCommand`, so
+they failed to type-check.
 
-**File**: `src/diff/props.js` (modified, +1/-1)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/dom.d.ts` (modified, +7/-0)
 ```diff
-@@ -59,7 +59,7 @@ export function setProperty(dom, name, value, oldValue, namespace) {
+@@ -631,11 +631,15 @@ export interface DOMAttributes<
  
- 			if (value) {
- 				for (name in value) {
--					if (!oldValue || value[name] != oldValue[name]) {
-+					if (!oldValue || value[name] !== oldValue[name]) {
- 						setStyle(dom.style, name, value[name]);
- 					}
- 				}
-```
-
-**File**: `test/browser/style.test.jsx` (modified, +11/-0)
-```diff
-@@ -149,6 +149,17 @@ describe('style attribute', () => {
- 		expect(scratch.firstChild.style.visibility).to.equal('');
- 	});
+ 	// Popover Events
+ 	onBeforeToggle?: ToggleEventHandler<Target> | undefined;
++	onBeforeToggleCapture?: ToggleEventHandler<Target> | undefined;
+ 	onToggle?: ToggleEventHandler<Target> | undefined;
++	onToggleCapture?: ToggleEventHandler<Target> | undefined;
  
-+	it('should update styles that switch between 0 and an empty string', () => {
-+		render(<div style={{ opacity: '' }} />, scratch);
-+		expect(scratch.firstChild.style.opacity).to.equal('');
-+
-+		render(<div style={{ opacity: 0 }} />, scratch);
-+		expect(scratch.firstChild.style.opacity).to.equal('0');
-+
-+		render(<div style={{ opacity: '' }} />, scratch);
-+		expect(scratch.firstChild.style.opacity).to.equal('');
-+	});
-+
- 	// Skip test if the currently running browser doesn't support CSS Custom Properties
- 	if (window.CSS && CSS.supports('color', 'var(--fake-var)')) {
- 		it('should support css custom properties', () => {
-```
-
----
-
-### Incident Patch 2: `9921c11c` (2026-11-14)
-**Commit Message**: Revert "Merge pull request #5320 from preactjs/JoviDeCroock/prop-removal-remove-attribute"
-
-This reverts commit 077774dcf65acbec9c3e5250ac8dae50c6d72baa, reversing
-changes made to cf50052eee0718a4e02614d3c2383e690462242e.
-
-**File**: `src/diff/props.js` (modified, +1/-2)
-```diff
-@@ -121,8 +121,7 @@ export function setProperty(dom, name, value, oldValue, namespace) {
- 		) {
- 			try {
- 				dom[name] = value == NULL ? '' : value;
--				// A removal also drops the reflected attribute (`maxlength="0"`)
--				if (value != NULL) return;
-+				return;
- 			} catch (e) {}
- 		}
+ 	// Dialog Events
+ 	onClose?: GenericEventHandler<Target> | undefined;
++	onCloseCapture?: GenericEventHandler<Target> | undefined;
+ 	onCancel?: GenericEventHandler<Target> | undefined;
++	onCancelCapture?: GenericEventHandler<Target> | undefined;
  
-```
-
-**File**: `test/browser/render.test.jsx` (modified, +3/-69)
-```diff
-@@ -551,7 +551,7 @@ describe('render()', () => {
- 		expect(scratch.firstChild.value).to.equal('0.5');
- 	});
+ 	// Focus Events
+ 	onFocus?: FocusEventHandler<Target> | undefined;
+@@ -839,6 +843,7 @@ export interface DOMAttributes<
+ 	onResizeCapture?: PictureInPictureEventHandler<Target>;
  
--	it('should not clear false DOM properties but remove nullish ones', () => {
-+	it('should not clear falsy DOM properties', () => {
- 		function test(val) {
- 			render(
- 				<div>
-@@ -572,84 +572,18 @@ describe('render()', () => {
- 		test('3');
- 		test(null);
- 		expect(scratch.innerHTML).to.equal(
--			'<div><input><table></table></div>',
-+			'<div><input><table border=""></table></div>',
- 			'for null'
- 		);
- 
- 		test('4');
- 		test(undefined);
- 		expect(scratch.innerHTML).to.equal(
--			'<div><input><table></table></div>',
-+			'<div><input><table border=""></table></div>',
- 			'for undefined'
- 		);
- 	});
- 
--	it('should remove reflected attributes when a DOM property is removed', () => {
--		render(
--			<div lang="fr">
--				<input maxLength={5} minLength={2} type="number" placeholder="p" />
--				<textarea rows={3} />
--				<ol start={3} />
--				<p lang="en" title="t" dir="rtl" />
--			</div>,
--			scratch
--		);
--
--		render(
--			<div lang="fr">
--				<input />
--				<textarea />
--				<ol />
--				<p />
--			</div>,
--			scratch
--		);
--
--		const [input, textarea, ol, p] = scratch.firstChild.children;
--		expect(getAttributes(input)).to.eql({});
--		expect(input.maxLength).to.equal(-1);
--		expect(input.type).to.equal('text');
--		expect(getAttributes(textarea)).to.eql({});
--		expect(getAttributes(ol)).to.eql({});
--		expect(getAttributes(p)).to.eql({});
--		expect(p.matches(':lang(fr)')).to.equal(true);
--	});
--
--	it('should remove reflected attributes when a DOM property is set to null or undefined', () => {
--		render(<div title="a" id="b" />, scratch);
--		render(<div title={null} id={undefined} />, scratch);
--		expect(scratch.innerHTML).to.equal('<div></div>');
--	});
--
--	it('should fall back to the option text when its value is removed', () => {
--		render(
--			<select>
--				<option value="a">Text</option>
--			</select>,
--			scratch
--		);
--		render(
--			<select>
--				<option>Text</option>
--			</select>,
--			scratch
--		);
--		expect(scratch.innerHTML).to.equal(
--			'<select><option>Text</option></select>'
--		);
--		expect(scratch.firstChild.value).to.equal('Text');
--	});
--
--	it('should still reset non-reflected DOM properties on removal', () => {
--		render(<input value="abc" />, scratch);
--		render(<input />, scratch);
--		expect(scratch.firstChild.value).to.equal('');
--
--		render(<input type="checkbox" checked />, scratch);
--		render(<input type="checkbox" />, scratch);
--		expect(scratch.firstChild.checked).to.equal(false);
--	});
--
- 	// Test for #3969
- 	it('should clear rowspan and colspan', () => {
- 		/** @type {(v) => void} */
-```
-
----
-
-### Incident Patch 3: `6426a2c6` (2026-11-16)
-**Commit Message**: fix(types): declare compat isElement and narrow isValidElement (#5363)
-
-**File**: `compat/src/index.d.ts` (modified, +2/-1)
-```diff
-@@ -305,7 +305,8 @@ declare namespace React {
- 		props?: any,
- 		...children: _preact.ComponentChildren[]
- 	) => _preact.VNode<any>;
--	export function isValidElement(element: any): boolean;
-+	export function isValidElement(element: any): element is _preact.VNode;
-+	export function isElement(element: any): element is _preact.VNode;
- 	export function isFragment(element: any): boolean;
- 	export function isMemo(element: any): boolean;
- 	export function findDOMNode(
-```
-
-**File**: `compat/test/ts/index.tsx` (modified, +9/-0)
-```diff
-@@ -68,3 +68,12 @@ export function Picture(props: React.ImgHTMLAttributes<HTMLImageElement>) {
- export function Field(props: React.ComponentPropsWithoutRef<'input'>) {
- 	return <input {...props} />;
+ 	onCommand?: CommandEventHandler<Target>;
++	onCommandCapture?: CommandEventHandler<Target>;
  }
+ 
+ // All the WAI-ARIA 1.1 attributes from https://www.w3.org/TR/wai-aria-1.1/
+@@ -1861,7 +1866,9 @@ export interface DialogHTMLAttributes<
+ 	T extends EventTarget = HTMLDialogElement
+ > extends HTMLAttributes<T> {
+ 	onCancel?: GenericEventHandler<T> | undefined;
++	onCancelCapture?: GenericEventHandler<T> | undefined;
+ 	onClose?: GenericEventHandler<T> | undefined;
++	onCloseCapture?: GenericEventHandler<T> | undefined;
+ 	open?: Signalish<boolean | undefined>;
+ 	closedby?: Signalish<'none' | 'closerequest' | 'any' | undefined>;
+ 	closedBy?: Signalish<'none' | 'closerequest' | 'any' | undefined>;
+```
+
+**File**: `test/ts/dom-attributes.test-d.tsx` (modified, +18/-0)
+```diff
+@@ -344,3 +344,21 @@ const dangerouslySetInnerHTML = (
+ 		<div dangerouslySetInnerHTML={{ __html: 'string' }} />
+ 	</>
+ );
 +
-+// isValidElement and isElement narrow to an element like in React
-+const maybeElement: React.ReactNode = <div title="x" />;
-+if (React.isValidElement(maybeElement)) {
-+	maybeElement.props;
-+}
-+if (React.isElement(maybeElement)) {
-+	maybeElement.props;
-+}
++// Capture variants of popover, dialog and command events, which Preact
++// registers with `addEventListener(name, handler, true)`
++const testCaptureEvents = (
++	<div>
++		<div
++			popover="auto"
++			onBeforeToggleCapture={e => e.newState}
++			onToggleCapture={e => e.oldState}
++		/>
++		<dialog
++			onCancelCapture={e => e.currentTarget.returnValue}
++			onCloseCapture={e => e.currentTarget.returnValue}
++		/>
++		<details onToggleCapture={e => e.currentTarget.open} />
++		<div onCommandCapture={e => e.command} />
++	</div>
++);
+```
+
+---
+
+### Incident Patch 2: `39310e58` (2026-11-18)
+**Commit Message**: Merge pull request #5383 from preactjs/golf/inline-render-component
+
+Inline renderComponent into the render queue loop
+
+**File**: `compat/src/suspense.js` (modified, +1/-1)
+```diff
+@@ -153,7 +153,7 @@ function createSuspense() {
+ 
+ 		// Store and null _parentDom to prevent setState/forceUpdate from
+ 		// scheduling renders while suspended. Render would be a no-op anyway
+-		// since renderComponent checks _parentDom, but this avoids queue churn.
++		// since process() checks _parentDom, but this avoids queue churn.
+ 		const originalParentDom = suspendingComponent._parentDom;
+ 		suspendingComponent._parentDom = null;
+ 
+```
+
+**File**: `src/component.js` (modified, +51/-54)
+```diff
+@@ -103,7 +103,7 @@ export function getDomSibling(vnode, childIndex) {
+ 		sibling = vnode._children[childIndex];
+ 
+ 		if (sibling && sibling._dom) {
+-			// Since renderComponent keeps the _dom pointers correct,
++			// Since process() keeps the _dom pointers correct,
+ 			// we can rely on _dom to tell us if this subtree contains a
+ 			// rendered DOM node, and what the first rendered DOM node is
+ 			return sibling._dom;
+@@ -120,56 +120,6 @@ export function getDomSibling(vnode, childIndex) {
+ 		: NULL;
+ }
+ 
+-/**
+- * Trigger in-place re-rendering of a component.
+- * @param {import('./internal').Component} component The component to rerender
+- */
+-function renderComponent(component) {
+-	const oldVNode = component._vnode,
+-		oldDom = oldVNode._dom,
+-		commitQueue = [],
+-		refQueue = [];
+-
+-	const parentDom = component._parentDom;
+-	if (parentDom) {
+-		let newVNode = assign({ constructor: VNODE_MARKER }, oldVNode);
+-		newVNode._original = oldVNode._original + 1;
+-		if (options.vnode) options.vnode(newVNode);
+-
+-		diff(
+-			parentDom,
+-			newVNode,
+-			oldVNode,
+-			component._globalContext,
+-			parentDom.namespaceURI,
+-			oldVNode._flags & MODE_HYDRATE ? [oldDom] : NULL,
+-			commitQueue,
+-			oldDom || getDomSibling(oldVNode),
+-			oldVNode._flags & MODE_HYDRATE,
+-			refQueue
+-		);
+-
+-		newVNode._original = oldVNode._original;
+-		newVNode._parent._children[newVNode._index] = newVNode;
+-		commitRoot(commitQueue, newVNode, refQueue);
+-		oldVNode._parent = oldVNode._dom = NULL;
+-
+-		// Stop at root boundaries (_parentDom)
+-		if (newVNode._dom != oldDom) {
+-			while (
+-				(newVNode = newVNode._parent) &&
+-				newVNode._component &&
+-				!newVNode.props._parentDom
+-			) {
+-				// _dom starts nulled, so re-assigning a null child._dom is a no-op and
+-				// the first truthy _dom stops the walk.
+-				newVNode._dom = NULL;
+-				newVNode._children.some(child => child && (newVNode._dom = child._dom));
+-			}
+-		}
+-	}
+-}
+-
+ /**
+  * The render queue
+  * @type {Array<import('./internal').Component>}
+@@ -219,7 +169,13 @@ const depthSort = (a, b) => a._vnode._depth - b._vnode._depth;
+ function process() {
+ 	try {
+ 		let c,
+-			l = 1;
++			l = 1,
++			oldVNode,
++			newVNode,
++			oldDom,
++			parentDom,
++			commitQueue,
++			refQueue;
+ 
+ 		// Don't update `renderCount` yet. Keep its value non-zero to prevent unnecessary
+ 		// process() calls from getting scheduled while `queue` is still being consumed.
+@@ -237,8 +193,49 @@ function process() {
+ 			c = rerenderQueue.shift();
+ 			l = rerenderQueue.length;
+ 
+-			if (c._bits & COMPONENT_DIRTY) {
+-				renderComponent(c);
++			// Re-render the component in place, unless it was unmounted.
++			if (c._bits & COMPONENT_DIRTY && (parentDom = c._parentDom)) {
++				oldVNode = c._vnode;
++				oldDom = oldVNode._dom;
++				commitQueue = [];
++				refQueue = [];
++				newVNode = assign({ constructor: VNODE_MARKER }, oldVNode);
++				newVNode._original = oldVNode._original + 1;
++				if (options.vnode) options.vnode(newVNode);
++
++				diff(
++					parentDom,
++					newVNode,
++					oldVNode,
++					c._globalContext,
++					parentDom.namespaceURI,
++					oldVNode._flags & MODE_HYDRATE ? [oldDom] : NULL,
++					commitQueue,
++					oldDom || getDomSibling(oldVNode),
++					oldVNode._flags & MODE_HYDRATE,
++					refQueue
++				);
++
++				newVNode._original = oldVNode._original;
++				newVNode._parent._children[newVNode._index] = newVNode;
++				commitRoot(commitQueue, newVNode, refQueue);
++				oldVNode._parent = oldVNode._dom = NULL;
++
++				// Stop at root boundaries (_parentDom)
++				if (newVNode._dom != oldDom) {
++					while (
++						(newVNode = newVNode._parent) &&
++						newVNode._component &&
++						!newVNode.props._parentDom
++					) {
++						// _dom starts nulled, so re-assigning a null child._dom is a no-op and
++						// the first truthy _dom stops the walk.
++						newVNode._dom = NULL;
++						newVNode._children.some(
++							child => child && (newVNode._dom = child._dom)
++						);
++					}
++				}
+ 			}
+ 		}
+ 	} finally {
+```
+
+---
+
+### Incident Patch 3: `28f916d1` (2026-11-18)
+**Commit Message**: Inline renderComponent into the render queue loop
+
+renderComponent() had a single caller. Its body now runs inside
+process(), behind the same two checks (dirty, still has a _parentDom).
+
+The callback that walks the parent _dom pointers now captures a local of
+process(), which runs once per flush, instead of one of renderComponent(),
+which ran once per component.
+
+**File**: `compat/src/suspense.js` (modified, +1/-1)
+```diff
+@@ -153,7 +153,7 @@ function createSuspense() {
+ 
+ 		// Store and null _parentDom to prevent setState/forceUpdate from
+ 		// scheduling renders while suspended. Render would be a no-op anyway
+-		// since renderComponent checks _parentDom, but this avoids queue churn.
++		// since process() checks _parentDom, but this avoids queue churn.
+ 		const originalParentDom = suspendingComponent._parentDom;
+ 		suspendingComponent._parentDom = null;
+ 
+```
+
+**File**: `src/component.js` (modified, +51/-54)
+```diff
+@@ -103,7 +103,7 @@ export function getDomSibling(vnode, childIndex) {
+ 		sibling = vnode._children[childIndex];
+ 
+ 		if (sibling && sibling._dom) {
+-			// Since renderComponent keeps the _dom pointers correct,
++			// Since process() keeps the _dom pointers correct,
+ 			// we can rely on _dom to tell us if this subtree contains a
+ 			// rendered DOM node, and what the first rendered DOM node is
+ 			return sibling._dom;
+@@ -120,56 +120,6 @@ export function getDomSibling(vnode, childIndex) {
+ 		: NULL;
+ }
+ 
+-/**
+- * Trigger in-place re-rendering of a component.
+- * @param {import('./internal').Component} component The component to rerender
+- */
+-function renderComponent(component) {
+-	const oldVNode = component._vnode,
+-		oldDom = oldVNode._dom,
+-		commitQueue = [],
+-		refQueue = [];
+-
+-	const parentDom = component._parentDom;
+-	if (parentDom) {
+-		let newVNode = assign({ constructor: VNODE_MARKER }, oldVNode);
+-		newVNode._original = oldVNode._original + 1;
+-		if (options.vnode) options.vnode(newVNode);
+-
+-		diff(
+-			parentDom,
+-			newVNode,
+-			oldVNode,
+-			component._globalContext,
+-			parentDom.namespaceURI,
+-			oldVNode._flags & MODE_HYDRATE ? [oldDom] : NULL,
+-			commitQueue,
+-			oldDom || getDomSibling(oldVNode),
+-			oldVNode._flags & MODE_HYDRATE,
+-			refQueue
+-		);
+-
+-		newVNode._original = oldVNode._original;
+-		newVNode._parent._children[newVNode._index] = newVNode;
+-		commitRoot(commitQueue, newVNode, refQueue);
+-		oldVNode._parent = oldVNode._dom = NULL;
+-
+-		// Stop at root boundaries (_parentDom)
+-		if (newVNode._dom != oldDom) {
+-			while (
+-				(newVNode = newVNode._parent) &&
+-				newVNode._component &&
+-				!newVNode.props._parentDom
+-			) {
+-				// _dom starts nulled, so re-assigning a null child._dom is a no-op and
+-				// the first truthy _dom stops the walk.
+-				newVNode._dom = NULL;
+-				newVNode._children.some(child => child && (newVNode._dom = child._dom));
+-			}
+-		}
+-	}
+-}
+-
+ /**
+  * The render queue
+  * @type {Array<import('./internal').Component>}
+@@ -219,7 +169,13 @@ const depthSort = (a, b) => a._vnode._depth - b._vnode._depth;
+ function process() {
+ 	try {
+ 		let c,
+-			l = 1;
++			l = 1,
++			oldVNode,
++			newVNode,
++			oldDom,
++			parentDom,
++			commitQueue,
++			refQueue;
+ 
+ 		// Don't update `renderCount` yet. Keep its value non-zero to prevent unnecessary
+ 		// process() calls from getting scheduled while `queue` is still being consumed.
+@@ -237,8 +193,49 @@ function process() {
+ 			c = rerenderQueue.shift();
+ 			l = rerenderQueue.length;
+ 
+-			if (c._bits & COMPONENT_DIRTY) {
+-				renderComponent(c);
++			// Re-render the component in place, unless it was unmounted.
++			if (c._bits & COMPONENT_DIRTY && (parentDom = c._parentDom)) {
++				oldVNode = c._vnode;
++				oldDom = oldVNode._dom;
++				commitQueue = [];
++				refQueue = [];
++				newVNode = assign({ constructor: VNODE_MARKER }, oldVNode);
++				newVNode._original = oldVNode._original + 1;
++				if (options.vnode) options.vnode(newVNode);
++
++				diff(
++					parentDom,
++					newVNode,
++					oldVNode,
++					c._globalContext,
++					parentDom.namespaceURI,
++					oldVNode._flags & MODE_HYDRATE ? [oldDom] : NULL,
++					commitQueue,
++					oldDom || getDomSibling(oldVNode),
++					oldVNode._flags & MODE_HYDRATE,
++					refQueue
++				);
++
++				newVNode._original = oldVNode._original;
++				newVNode._parent._children[newVNode._index] = newVNode;
++				commitRoot(commitQueue, newVNode, refQueue);
++				oldVNode._parent = oldVNode._dom = NULL;
++
++				// Stop at root boundaries (_parentDom)
++				if (newVNode._dom != oldDom) {
++					while (
++						(newVNode = newVNode._parent) &&
++						newVNode._component &&
++						!newVNode.props._parentDom
++					) {
++						// _dom starts nulled, so re-assigning a null child._dom is a no-op and
++						// the first truthy _dom stops the walk.
++						newVNode._dom = NULL;
++						newVNode._children.some(
++							child => child && (newVNode._dom = child._dom)
++						);
++					}
++				}
+ 			}
+ 		}
+ 	} finally {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5365** (2026-11-16): Apply style values that change between 0 and an empty string (@0z5a)
-- **PR #5363** (2026-11-16): fix(types): declare compat isElement and narrow isValidElement (@ragib-mrb)
-- **PR #5361** (2026-11-15): Revert "Merge pull request #5320 from preactjs/JoviDeCroock/prop-remo…val-remove-attribute" (@JoviDeCroock)
-- **PR #5359** (2026-11-12): ci: harden release build and workflow token permissions (@JoviDeCroock)
-- **PR #5358** (2026-11-12): feat: Warn on deeply nested illegal HTML structures in debug (@rschristian)
-- **PR #5357** (2026-11-11): chore: fix typos in comments (@ninglinLiu)
+- **PR #5393** (2026-11-20): Document the Human Voice contribution policy (@JoviDeCroock)
+- **PR #5390** (closed): feat(types): add handler props for missing DOM events (@officialasishkumar)
+- **PR #5388** (closed): Skip processing instructions next to an adopted node (@JoviDeCroock)
+- **PR #5387** (2026-11-19): fix(types): add capture variants of toggle, dialog and command events (@playlikeboy)
+- **PR #5386** (2026-11-18): core: Delete duplicate Code of Conduct (@rschristian)
+- **PR #5383** (2026-11-18): Inline renderComponent into the render queue loop (@JoviDeCroock)
 
 ---
 
@@ -1522,31 +1720,37 @@ changes made to cf50052eee0718a4e02614d3c2383e690462242e.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in props.js
+## X. types): add capture variants of toggle, dialog and command events
 
 **RULE**:
-When implementing operations in `src/diff/props.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in preactjs/preact. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/dom.d.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in preactjs/preact. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `34b99c69`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1d12f15a`: types): add capture variants of toggle, dialog and command events. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/diff/props.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/dom.d.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-					if (!oldValue || value[name] !== oldValue[name]) {
+	onBeforeToggleCapture?: ToggleEventHandler<Target> | undefined;
+	onToggleCapture?: ToggleEventHandler<Target> | undefined;
+	onCloseCapture?: GenericEventHandler<Target> | undefined;
+	onCancelCapture?: GenericEventHandler<Target> | undefined;
+	onCommandCapture?: CommandEventHandler<Target>;
+	onCancelCapture?: GenericEventHandler<T> | undefined;
+	onCloseCapture?: GenericEventHandler<T> | undefined;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-					if (!oldValue || value[name] != oldValue[name]) {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `34b99c69` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1d12f15a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

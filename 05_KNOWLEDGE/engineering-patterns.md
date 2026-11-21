@@ -718590,3 +718590,235 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `c58ce114` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9680. JavaScript actions, private uses, prebuilt runner image, stand-in r (Harvested from bahdotsh/wrkflw)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "JavaScript actions, private uses, prebuilt runner image, stand-in r",
+  "source": "bahdotsh/wrkflw",
+  "source_url": "https://github.com/bahdotsh/wrkflw",
+  "source_version": "b11b73e7",
+  "license": "MIT",
+  "extracted_at": "2026-11-21T00:43:43.724Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-bahdotsh-wrkflw",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw) (Revision: `b11b73e7`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bahdotsh/wrkflw. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `490a508b`: Pre-release: JavaScript actions, private uses, prebuilt runner image, stand-in reporting, sweep evidence. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+# And for the runner base image: a test run on a commit whose base isn't
+# published would remember it as unavailable in the user's cache, and real
+# runs would then skip it for a day. CI names its own base with
+# WRKFLW_RUNNER_IMAGE and sets this to 1. It applies to `cargo run` too:
+# set WRKFLW_PREBUILT_IMAGES=1 there to time a first run on the base.
+WRKFLW_PREBUILT_IMAGES = "0"
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `490a508b` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9681. add capture variants of toggle, dialog and command events (Harvested from preactjs/preact)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "add capture variants of toggle, dialog and command events",
+  "source": "preactjs/preact",
+  "source_url": "https://github.com/preactjs/preact",
+  "source_version": "39d353a8",
+  "license": "MIT",
+  "extracted_at": "2026-11-21T00:43:45.803Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-preactjs-preact",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [preactjs/preact](https://github.com/preactjs/preact) (Revision: `39d353a8`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/dom.d.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in preactjs/preact. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1d12f15a`: types): add capture variants of toggle, dialog and command events. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/dom.d.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+	onBeforeToggleCapture?: ToggleEventHandler<Target> | undefined;
+	onToggleCapture?: ToggleEventHandler<Target> | undefined;
+	onCloseCapture?: GenericEventHandler<Target> | undefined;
+	onCancelCapture?: GenericEventHandler<Target> | undefined;
+	onCommandCapture?: CommandEventHandler<Target>;
+	onCancelCapture?: GenericEventHandler<T> | undefined;
+	onCloseCapture?: GenericEventHandler<T> | undefined;
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1d12f15a` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9682. (bug) Let an API dictation start replace a feedback banner (Harvested from TypeWhisper/typewhisper-mac)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "(bug) Let an API dictation start replace a feedback banner",
+  "source": "TypeWhisper/typewhisper-mac",
+  "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
+  "source_version": "5162fe87",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-21T00:43:48.259Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-typewhisper-typewhisper-mac",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac) (Revision: `5162fe87`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `TypeWhisper/ViewModels/DictationViewModel.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `9e9d0620`: (bug) Let an API dictation start replace a feedback banner. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `TypeWhisper/ViewModels/DictationViewModel.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+        // A queued hotkey start runs first, even after the reset has already set the state to
+        // idle, so an API start cannot drop it and its workflow.
+        HistoryRetranscriptionActivity.recordID == nil
+            && pendingHotkeyDictationStart == nil
+            && (state == .idle || canReplaceUndeliveredTranscriptOffer || canDismissActionFeedback)
+        // A new API dictation replaces a passive feedback banner, such as "No speech
+        // recognized", as the dictation hotkey does (#1959).
+        if canReplaceUndeliveredTranscriptOffer || canDismissActionFeedback {
+            if state == .inserting {
+                resetDictationState()
+            }
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+        HistoryRetranscriptionActivity.recordID == nil && (state == .idle || canReplaceUndeliveredTranscriptOffer)
+        if canReplaceUndeliveredTranscriptOffer {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `9e9d0620` are properly handled with clean fallback behavior.

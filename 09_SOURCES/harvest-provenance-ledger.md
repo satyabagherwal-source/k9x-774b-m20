@@ -11708,3 +11708,7 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `fb070362` | Multi-dimensional audit evidence | 2026-11-21T00:24:47.776Z |
 | `learn-github-tanstack-query` | `https://github.com/TanStack/query` | `0911673d` | Multi-dimensional audit evidence | 2026-11-21T00:32:38.285Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `9bd87c68` | Multi-dimensional audit evidence | 2026-11-21T00:32:45.834Z |
+| `learn-github-bahdotsh-wrkflw` | `https://github.com/bahdotsh/wrkflw` | `b11b73e7` | Multi-dimensional audit evidence | 2026-11-21T00:43:44.265Z |
+| `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `39d353a8` | Multi-dimensional audit evidence | 2026-11-21T00:43:46.315Z |
+| `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `5162fe87` | Multi-dimensional audit evidence | 2026-11-21T00:43:48.772Z |
+| `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `f6ba920a` | Multi-dimensional audit evidence | 2026-11-21T00:43:55.538Z |

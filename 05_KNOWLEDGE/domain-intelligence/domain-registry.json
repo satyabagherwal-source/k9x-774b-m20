@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T00:32:51.044Z",
+  "last_updated": "2026-11-21T00:44:01.659Z",
   "total_records": 2202,
   "domains": {
     "A": {
@@ -12820,8 +12820,8 @@
       "title": "Technical Construction Intelligence: neuron-core/neuron-ai Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-neuron-core-neuron-ai-technical-construction-intelligence-neuron-core-neuron-ai-.md",
       "repository": "neuron-core/neuron-ai",
-      "content_hash": "7d1b1e2cc2b670b6b936e6499b59b8627b8e1a70d74a1c7a3e896d7fe7ee9c7c",
-      "created_at": "2026-11-18T00:43:42.751Z"
+      "content_hash": "ce590155115a2dff459e6e3a0a756dadba7870a84bc385971e0e1a2e2a492298",
+      "created_at": "2026-11-21T00:43:55.928Z"
     },
     "DOM-D-78E4F99B": {
       "record_id": "DOM-D-78E4F99B",
@@ -25450,8 +25450,8 @@
       "title": "Architecture Intelligence: TypeWhisper/typewhisper-mac Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-typewhisper-typewhisper-mac-architecture-intelligence-typewhisper-typewhisper-ma.md",
       "repository": "TypeWhisper/typewhisper-mac",
-      "content_hash": "c1ffe34d4067b391fa6871f0cc0fdc4e3c76732cb283a7f4a0b82b802abaa4d2",
-      "created_at": "2026-11-17T02:32:23.688Z"
+      "content_hash": "672fcde01d36f59ac8ead37c2c68aeac522f13095d3e09577c0ad956d6617392",
+      "created_at": "2026-11-21T00:43:49.171Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-viggle-remake-learnings-core-invariant": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-viggle-remake-learnings-core-invariant",
@@ -25468,8 +25468,8 @@
       "title": "Architecture Intelligence: typewhisper-typewhisper-mac-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-typewhisper-typewhisper-mac-learnings-architecture-intelligence-typewhisper-type.md",
       "repository": "typewhisper-typewhisper-mac-learnings",
-      "content_hash": "308fcb0de9608591beae9688e22d6cb6c1509c9b044bbd00f0c06952a25ae19e",
-      "created_at": "2026-11-17T02:32:27.833Z"
+      "content_hash": "7197f6cfb3970a7e2ecbc0e136d3a9034ab518505194dceccd75a80e0d1b217b",
+      "created_at": "2026-11-21T00:44:01.659Z"
     },
     "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-core-invariants",
@@ -26058,8 +26058,8 @@
       "title": "Architecture Intelligence: preactjs/preact Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-preactjs-preact-architecture-intelligence-preactjs-preact-core-invariants.md",
       "repository": "preactjs/preact",
-      "content_hash": "1a72608dff52660ca4a9cf5a6635b72d8f4e07612bba7aaecc5a278492c5262f",
-      "created_at": "2026-11-17T05:58:08.177Z"
+      "content_hash": "6283c4404ed1067456b0dbf482eb7f1ad4bc1bfc0166b6ef6966b261e5a77f35",
+      "created_at": "2026-11-21T00:43:46.687Z"
     },
     "domain_intelligence-architecture-intelligence-krakend-krakend-ce-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-krakend-krakend-ce-core-invariants",
@@ -26076,8 +26076,8 @@
       "title": "Architecture Intelligence: preactjs-preact-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-preactjs-preact-learnings-architecture-intelligence-preactjs-preact-learnings-co.md",
       "repository": "preactjs-preact-learnings",
-      "content_hash": "e3ccc8c60b8af87f327e40d661b9077b18ae1c152375b5a8cd14f55852791cc8",
-      "created_at": "2026-11-17T05:58:18.586Z"
+      "content_hash": "c04087fcb03d6891ac3d0c1b5ad2cdbc575b18d82a13edd246becb8bb1bebeaf",
+      "created_at": "2026-11-21T00:44:00.983Z"
     },
     "domain_intelligence-architecture-intelligence-krakend-krakend-ce-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-krakend-krakend-ce-learnings-core-invariants",
@@ -33455,8 +33455,8 @@
       "title": "Human & Need Intelligence: bahdotsh/wrkflw Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-bahdotsh-wrkflw-human-need-intelligence-bahdotsh-wrkflw-core-invariants.md",
       "repository": "bahdotsh/wrkflw",
-      "content_hash": "0e901cd247797ac01adbbe3a13dcd9acd6d015beff872622728ddb530af331b8",
-      "created_at": "2026-11-19T14:03:31.370Z"
+      "content_hash": "3ef46faf82cb7afb6922419325880c8d72fa2a90ddc08034fe38d5292a4b2a3b",
+      "created_at": "2026-11-21T00:43:44.665Z"
     },
     "domain_intelligence-human-need-intelligence-bahdotsh-wrkflw-learnings-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-bahdotsh-wrkflw-learnings-core-invariants",
@@ -33464,8 +33464,8 @@
       "title": "Human & Need Intelligence: bahdotsh-wrkflw-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-bahdotsh-wrkflw-learnings-human-need-intelligence-bahdotsh-wrkflw-learnings-core.md",
       "repository": "bahdotsh-wrkflw-learnings",
-      "content_hash": "f2faf4a83f44e73b2461c9ccc50a72d630b0f7072e506b58854365adb246b9ff",
-      "created_at": "2026-11-19T14:03:37.726Z"
+      "content_hash": "0f8974895f690179891abd55933abc327359b1aa96cc35a770bef6e8a6f358cd",
+      "created_at": "2026-11-21T00:43:59.864Z"
     },
     "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-learnings-core-invariants",

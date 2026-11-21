@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T00:32:51.325Z",
+  "last_updated": "2026-11-21T00:44:02.106Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T00:13:24.140Z",
@@ -1163,7 +1163,7 @@
       "staged_for_review": 1
     },
     "preactjs-preact-learnings.md": {
-      "processed_at": "2026-11-17T05:58:18.197Z",
+      "processed_at": "2026-11-21T00:44:00.313Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1373,7 +1373,7 @@
       "staged_for_review": 1
     },
     "bahdotsh-wrkflw-learnings.md": {
-      "processed_at": "2026-11-19T14:03:37.167Z",
+      "processed_at": "2026-11-21T00:43:58.876Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1813,7 +1813,7 @@
       "staged_for_review": 0
     },
     "typewhisper-typewhisper-mac-learnings.md": {
-      "processed_at": "2026-11-17T02:32:27.450Z",
+      "processed_at": "2026-11-21T00:44:01.284Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3648,7 +3648,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2676,
+  "total_dossiers_evaluated": 2679,
   "total_canonical_promoted": 438,
-  "total_staged_for_review": 2050
+  "total_staged_for_review": 2053
 }
