@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T03:52:30.742Z",
-  "total_cycles_completed": 11163,
-  "total_learnings_persisted": 11163,
-  "total_rules_promoted": 10520,
+  "last_updated": "2026-11-21T04:20:35.698Z",
+  "total_cycles_completed": 11165,
+  "total_learnings_persisted": 11165,
+  "total_rules_promoted": 10522,
   "history": [
-    {
-      "timestamp": "2026-11-20T08:38:43.465Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T09:10:03.734Z",
-      "repository": "opentofu/opentofu",
-      "learningId": "learn-github-opentofu-opentofu",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T09:10:36.360Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-21T03:52:30.742Z",
       "repository": "meta/folly",
       "learningId": "learn-github-meta-folly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T04:15:42.087Z",
+      "repository": "crossplane/crossplane",
+      "learningId": "learn-github-crossplane-crossplane",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T04:20:35.698Z",
+      "repository": "google/tcmalloc",
+      "learningId": "learn-github-google-tcmalloc",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

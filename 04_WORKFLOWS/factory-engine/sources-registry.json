@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T03:28:46.162Z",
-    "lastVerified": "2026-11-21T03:28:46.162Z",
+    "lastChecked": "2026-11-21T04:15:45.512Z",
+    "lastVerified": "2026-11-21T04:15:45.512Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T03:52:37.934Z",
-    "lastVerified": "2026-11-21T03:52:37.934Z",
+    "lastChecked": "2026-11-21T04:20:38.863Z",
+    "lastVerified": "2026-11-21T04:20:38.863Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1287,9 +1287,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-20T23:13:30.616Z",
+    "lastChecked": "2026-11-21T04:15:40.499Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-20T23:13:30.616Z"
+    "lastVerified": "2026-11-21T04:15:40.499Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -4377,12 +4377,12 @@
     "lastVerified": "2026-11-21T01:24:57.280Z"
   },
   "typedb-typedb": {
-    "name": "typedb/typedb",
+    "name": "typedb",
     "officialUrl": "https://github.com/typedb/typedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T02:15:06.673Z",
-    "lastVerified": "2026-11-20T02:15:06.673Z",
+    "lastChecked": "2026-11-21T04:15:43.195Z",
+    "lastVerified": "2026-11-21T04:15:43.195Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-typedb-typedb",
@@ -4391,7 +4391,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "498c9553"
   },
   "sharkdp-pastel": {
     "name": "pastel",
@@ -5073,22 +5074,21 @@
     "lastVerified": "2026-11-18T22:57:49.201Z"
   },
   "crossplane-crossplane": {
-    "name": "crossplane",
+    "name": "crossplane/crossplane",
     "officialUrl": "https://github.com/crossplane/crossplane",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T03:32:26.894Z",
-    "lastVerified": "2026-11-20T03:32:26.894Z",
+    "lastChecked": "2026-11-21T04:15:40.978Z",
+    "lastVerified": "2026-11-21T04:15:40.978Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crossplane-crossplane",
-    "contentHash": "2f5582e9618e4f763e4e26ef4263eff20b6669075ddea8da5b248a6e3a975ec9",
+    "contentHash": "1e688fac61c0252da66c67396dbdedd12eda57fededb15674ff2f8cf238f7a32",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "45007a31"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sqlpage-sqlpage": {
     "name": "sqlpage/SQLPage",
@@ -8484,14 +8484,14 @@
     "officialUrl": "https://github.com/google/tcmalloc",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-19T18:06:14.555Z",
-    "lastVerified": "2026-11-19T18:06:14.555Z",
+    "lastChecked": "2026-11-21T04:15:33.863Z",
+    "lastVerified": "2026-11-21T04:15:33.863Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-google-tcmalloc",
-    "contentHash": "6c1b379a6793e79a21ed89dbda22ef506f484ff3b14b213d90c98b556de42a12",
+    "contentHash": "7f0b01749f96a215dc99d037993c06bc107c144d458afbbfdeb236d03b5ab594",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11722,5 +11722,19 @@
     "lastChecked": "2026-11-21T03:52:27.958Z",
     "revisionIdentifier": "7edfaa0f",
     "lastVerified": "2026-11-21T03:52:27.958Z"
+  },
+  "syntax-tree-mdast": {
+    "name": "mdast",
+    "officialUrl": "https://github.com/syntax-tree/mdast",
+    "lastChecked": "2026-11-21T04:15:33.018Z",
+    "revisionIdentifier": "c034ec9d",
+    "lastVerified": "2026-11-21T04:15:33.018Z"
+  },
+  "xotahal-react-native-material-ui": {
+    "name": "react-native-material-ui",
+    "officialUrl": "https://github.com/xotahal/react-native-material-ui",
+    "lastChecked": "2026-11-21T04:15:35.500Z",
+    "revisionIdentifier": "254006ae",
+    "lastVerified": "2026-11-21T04:15:35.500Z"
   }
 }

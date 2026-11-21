@@ -11760,3 +11760,5 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `9138ff8a` | Multi-dimensional audit evidence | 2026-11-21T03:44:44.639Z |
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `b9e8acb7` | Multi-dimensional audit evidence | 2026-11-21T03:44:47.106Z |
 | `learn-github-meta-folly` | `https://github.com/facebook/folly` | `27995cd3` | Multi-dimensional audit evidence | 2026-11-21T03:52:30.737Z |
+| `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `2088737a` | Multi-dimensional audit evidence | 2026-11-21T04:15:42.082Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `3264f9ce` | Multi-dimensional audit evidence | 2026-11-21T04:20:35.693Z |

@@ -4963,10 +4963,10 @@
     "repository": "crossplane/crossplane",
     "platform": "github",
     "sourceUrl": "https://github.com/crossplane/crossplane",
-    "sourceVersion": "45007a31",
+    "sourceVersion": "2088737a",
     "license": "Apache-2.0",
-    "contentHash": "2f5582e9618e4f763e4e26ef4263eff20b6669075ddea8da5b248a6e3a975ec9",
-    "lastHarvestedAt": "2026-11-18T22:57:56.877Z",
+    "contentHash": "1e688fac61c0252da66c67396dbdedd12eda57fededb15674ff2f8cf238f7a32",
+    "lastHarvestedAt": "2026-11-21T04:15:42.082Z",
     "learningId": "learn-github-crossplane-crossplane"
   },
   "apple-foundationdb": {
@@ -7683,10 +7683,10 @@
     "repository": "google/tcmalloc",
     "platform": "github",
     "sourceUrl": "https://github.com/google/tcmalloc",
-    "sourceVersion": "f076c560",
+    "sourceVersion": "3264f9ce",
     "license": "Apache-2.0",
-    "contentHash": "6c1b379a6793e79a21ed89dbda22ef506f484ff3b14b213d90c98b556de42a12",
-    "lastHarvestedAt": "2026-11-19T18:06:15.515Z",
+    "contentHash": "7f0b01749f96a215dc99d037993c06bc107c144d458afbbfdeb236d03b5ab594",
+    "lastHarvestedAt": "2026-11-21T04:20:35.693Z",
     "learningId": "learn-github-google-tcmalloc"
   },
   "russhwolf-multiplatform-settings": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T18:06:29.121Z",
+  "timestamp": "2026-11-21T04:20:39.186Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-google-tcmalloc-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [google-tcmalloc-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T18:06:29.121Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T04:20:39.186Z`  
 > **Learning ID**: `LEARN-EVO-google-tcmalloc-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source**: github ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
-> **Source Version**: `f076c560`  
+> **Source Version**: `3264f9ce`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T18:06:14.560Z  
+> **Timestamp**: 2026-11-21T04:20:34.696Z  
 > **Learning ID**: `learn-github-google-tcmalloc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T18:06:14.555Z  
+> **Harvest Timestamp**: 2026-11-21T04:15:33.863Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5405 stars
+- **Stars / Engagement**: 5407 stars
 
 ---
 
@@ -1272,15 +1272,13 @@ GOOGLE_MALLOC_SECTION_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1944** (2026-11-19): **No public description**
-  *Symptoms*: No public description 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1944/checks?check_run_id=135323843314) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+- **Issue #1952** (2026-11-20): **Skip IsHugepageBacked on sampled and cold partitions.**
+  *Symptoms*: Skip IsHugepageBacked on sampled and cold partitions.  Sampled and cold partitions map regions with `MADV_NOHUGEPAGE`, preventing fault-time THP allocation and `khugepaged` collapse. However, `HugePageUnbackedTrackerTreatment::Observe` still queries `PageFlags::IsHugepageBacked` on every scan of sampled and cold trackers.  Skip `IsHugepageBacked` when `IsSampledOrColdMemory(page_filler_.tag())` is true and proceed directly to reading single-page residency bitmaps. 
 
-- **Issue #1943** (2026-11-19): **Revert: Record remote NUMA residency on heap profile samples.**
-  *Symptoms*: Revert: Record remote NUMA residency on heap profile samples.  This reports the bytes resident on NUMA nodes other than the profiler collection thread's home NUMA node via a remote_numa_space sample type on heap profiles. 
+- **Issue #1951** (2026-11-20): **Convert TCMALLOC_SONIC_DEMAND_CYCLE_60S into a holdback.**
+  *Symptoms*: Convert TCMALLOC_SONIC_DEMAND_CYCLE_60S into a holdback. 
   **Post-Mortem & Fix Analysis**:
-  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1943/checks?check_run_id=135172913977) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1951/checks?check_run_id=136462830257) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1297,324 +1295,200 @@ GOOGLE_MALLOC_SECTION_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f63e9c75` (2026-11-18)
-**Commit Message**: Use AddOverflow when rounding up sizes in pvalloc.
+### Incident Patch 1: `3264f9ce` (2026-11-20)
+**Commit Message**: Drop pageheap_lock when resetting sampled tracker VMA names.
 
-This checks for addition overflow before masking to a page boundary, matching
-MultiplyOverflow in calloc and reallocarray.
+`SampledTrackerTreatment::Treat()` drops `pageheap_lock` before calling `SetAnonVmaName`, because `prctl(PR_SET_VMA_ANON_NAME)` takes `mmap_write_lock` in the kernel. By contrast, `HandleFullyFreedTracker` and `FetchFullyFreedTracker` reset a retired tracker's VMA name under `pageheap_lock`.
 
-Co-authored-by: Chris Kennelly <[REDACTED_EMAIL]>
-PiperOrigin-RevId: 1025023674
+Both retirement paths have already removed the tracker from every filler list, decremented `size_`, and confirmed that no treatment pin remains. Drop `pageheap_lock` around `SetAnonVmaName` in both paths and assert in `huge_page_filler_fuzz` that VMA naming never runs under `pageheap_lock`.
 
-**File**: `tcmalloc/internal/overflow.h` (modified, +9/-0)
+PiperOrigin-RevId: 1026804771
+
+**File**: `tcmalloc/huge_page_filler.h` (modified, +4/-0)
 ```diff
-@@ -24,6 +24,15 @@ GOOGLE_MALLOC_SECTION_BEGIN
- namespace tcmalloc {
- namespace tcmalloc_internal {
- 
-+[[nodiscard]] inline bool AddOverflow(size_t a, size_t b, size_t* out) {
-+#if ABSL_HAVE_BUILTIN(__builtin_add_overflow)
-+  return __builtin_add_overflow(a, b, out);
-+#else
-+  *out = a + b;
-+  return *out < a;
-+#endif
-+}
-+
- [[nodiscard]] inline bool MultiplyOverflow(size_t a, size_t b, size_t* out) {
- #if ABSL_HAVE_BUILTIN(__builtin_mul_overflow)
-   return __builtin_mul_overflow(a, b, out);
+@@ -1214,7 +1214,9 @@ HugePageFiller<TrackerType>::HandleFullyFreedTracker(TrackerType* pt,
+   }
+   if (pt->GetTagState().sampled_for_tagging) {
+     // Set the default region name if the tracked was sampled.
++    pageheap_lock.unlock();
+     pt->SetAnonVmaName(set_anon_vma_name_, /*name=*/std::nullopt);
++    pageheap_lock.lock();
+   }
+   return pt;
+ }
+@@ -2556,7 +2558,9 @@ HugePageFiller<TrackerType>::FetchFullyFreedTracker() {
+     if (pt->GetTagState().sampled_for_tagging) {
+       // Set the default region name if the tracker was sampled.  No pin
+       // remains, so no treatment can name it again.
++      pageheap_lock.unlock();
+       pt->SetAnonVmaName(set_anon_vma_name_, /*name=*/std::nullopt);
++      pageheap_lock.lock();
+     }
+     return pt;
+   }
 ```
 
-**File**: `tcmalloc/tcmalloc.cc` (modified, +5/-4)
+**File**: `tcmalloc/huge_page_filler_fuzz.cc` (modified, +0/-7)
 ```diff
-@@ -1558,6 +1558,7 @@ void TCMalloc_Internal_SetMadvise(
- // Exported routines
- //-------------------------------------------------------------------
+@@ -715,13 +715,6 @@ MemoryModifyStatus MockUnbackWithoutLock::operator()(Range r) {
  
-+using tcmalloc::tcmalloc_internal::AddOverflow;
- using tcmalloc::tcmalloc_internal::BytesToLengthCeil;
- using tcmalloc::tcmalloc_internal::CorrectAlignment;
- using tcmalloc::tcmalloc_internal::CorrectSize;
-@@ -2013,10 +2014,10 @@ extern "C" TCMALLOC_INTERNAL_CACHELINE_ALIGNED void* TCMallocInternalPvalloc(
-   if (size == 0) {     // pvalloc(0) should allocate one page, according to
-     size = page_size;  // http://man.free4web.biz/man3/libmpatrol.3.html
-   }
--  size = (size + page_size - 1) & ~(page_size - 1);
--  if (ABSL_PREDICT_FALSE(size == 0)) {
-+  if (ABSL_PREDICT_FALSE(AddOverflow(size, page_size - 1, &size))) {
-     return MallocPolicy::handle_oom(std::numeric_limits<size_t>::max());
-   }
-+  size &= ~(page_size - 1);
-   return fast_alloc(size, MallocPolicy().AlignAs(page_size));
+ void MockSetAnonVmaName::operator()(Range r,
+                                     std::optional<absl::string_view> name) {
+-  // Treatments name with pageheap_lock dropped, but HandleFullyFreedTracker
+-  // and FetchFullyFreedTracker reset the name under it.
+-  //
+-  // TODO(b/73749855): Move the reset off the lock, then drop this check.
+-  if (pageheap_lock.IsHeld()) {
+-    return;
+-  }
+   state_.OnLockDropped();
  }
  
-@@ -2374,10 +2375,10 @@ TCMALLOC_INTERNAL_CACHELINE_ALIGNED void* operator new[](
-     if (size == 0) {                                                           \
-       size = page_size;                                                        \
-     }                                                                          \
--    size = (size + page_size - 1) & ~(page_size - 1);                          \
--    if (ABSL_PREDICT_FALSE(size == 0)) {                                       \
-+    if (ABSL_PREDICT_FALSE(AddOverflow(size, page_size - 1, &size))) {         \
-       return MallocPolicy::handle_oom(std::numeric_limits<size_t>::max());     \
-     }                                                                          \
-+    size &= ~(page_size - 1);                                                  \
-     return fast_alloc(                                                         \
-         size,                                                                  \
-         MallocPolicy().WithSecurityToken<TokenId{id}>().AlignAs(page_size));   \
+```
+
+**File**: `tcmalloc/huge_page_filler_test.cc` (modified, +52/-0)
+```diff
+@@ -9733,6 +9733,58 @@ TEST_F(FillerTest, SampledOrColdMemorySkipsIsHugepageBacked) {
+   residency.unlocked_hook_ = nullptr;
+   Delete(normal_alloc);
+ }
++
++TEST_F(FillerTest, SetAnonVmaNameResetDropsPageHeapLock) {
++  randomize_density_ = false;
++  SpanAllocInfo info = {1, AccessDensityPrediction::kSparse};
++  FakePageFlags pageflags;
++  FakeResidency residency;
++
++  int resets_unlocked = 0;
++  set_anon_vma_name_.SetIgnoreName(true);
++  set_anon_vma_name_.unlocked_hook_ = [&](Range r,
++                                          std::optional<absl::string_view> n) {
++    // Acquire and immediately release pageheap_lock to verify this thread
++    // dropped it (unlike !pageheap_lock.IsHeld(), which can race with
++    // background threads) without holding it across the rest of the hook.
++    {
++      PageHeapSpinLockHolder l;
++    }
++    if (!n.has_value()) {
++      ++resets_unlocked;
++    }
++  };
++
++  // Case 1: Direct retirement in HandleFullyFreedTracker.
++  PAlloc direct = AllocateWithSpanAllocInfo(Length(1), info);
++  direct.pt->SetTagState({.sampled_for_tagging = true});
++  pageflags.MarkHugePageBacked(direct.p.start_addr(),
++                               /*is_hugepage_backed=*/true);
++  FakeClock::Advance(absl::Minutes(6));
++  TreatHugepageTrackers(EnableCollapse::kDisabled,
++                        EnableUnfilteredCollapse::kDisabled,
++                        ReleaseStalePages::kDisabled, &pageflags, &residency);
++  Delete(direct);
++  EXPECT_EQ(resets_unlocked, 1);
++
++  // Case 2: Parked retirement drained via FetchFullyFreedTracker.
++  PAlloc parked = AllocateWithSpanAllocInfo(Length(1), info);
++  parked.pt->SetTagState({.sampled_for_tagging = true});
++  pageflags.MarkHugePageBacked(parked.p.start_addr(),
++                               /*is_hugepage_backed=*/true);
++  FakeClock::Advance(absl::Minutes(6));
++  TreatHugepageTrackers(EnableCollapse::kDisabled,
++                        EnableUnfilteredCollapse::kDisabled,
++                        ReleaseStalePages::kDisabled, &pageflags, &residency);
++  parked.pt->SetDontFreeTracker(HugePageTreatmentType::kCollapse);
++  EXPECT_FALSE(DeleteRaw(parked));
++  EXPECT_EQ(resets_unlocked, 1);
++  parked.pt->ClearDontFreeTracker(HugePageTreatmentType::kCollapse);
++  EXPECT_EQ(DrainFreedTrackers(), 1);
++  EXPECT_EQ(resets_unlocked, 2);
++
++  set_anon_vma_name_.unlocked_hook_ = nullptr;
++}
+ }  // namespace
+ }  // namespace tcmalloc_internal
+ }  // namespace tcmalloc
+```
+
+**File**: `tcmalloc/huge_page_tracker.h` (modified, +2/-1)
+```diff
+@@ -391,7 +391,8 @@ class PageTracker : public TList<PageTracker>::Elem {
+   void SetTagState(const TagState& state) { tagged_state_ = state; }
+ 
+   void SetAnonVmaName(MemoryTagFunction& set_anon_vma_name,
+-                      std::optional<absl::string_view> name);
++                      std::optional<absl::string_view> name)
++      ABSL_LOCKS_EXCLUDED(pageheap_lock);
+ 
+   struct HardwarePageResidencyInfo {
+     HardwareLength n_free_swapped;
 ```
 
 ---
 
-### Incident Patch 2: `9bab4db5` (2026-11-19)
-**Commit Message**: Revert: Record remote NUMA residency on heap profile samples.
+### Incident Patch 2: `0744bb82` (2026-11-20)
+**Commit Message**: Convert TCMALLOC_SONIC_DEMAND_CYCLE_60S into a holdback.
 
-This reports the bytes resident on NUMA nodes other than the profiler
-collection thread's home NUMA node via a remote_numa_space sample type on heap
-profiles.
+PiperOrigin-RevId: 1026674384
 
-PiperOrigin-RevId: 1025598004
-
-**File**: `tcmalloc/internal/profile_builder.cc` (modified, +6/-32)
+**File**: `tcmalloc/experiment_config.h` (modified, +1/-1)
 ```diff
-@@ -167,7 +167,6 @@ struct SampleMergedData {
-   std::optional<size_t> locked_size;
-   std::optional<size_t> incompressible_size;
-   std::optional<uint64_t> stale_scan_period;
--  size_t remote_numa_size = 0;
-   size_t compressed_size = 0;
-   size_t zero_size = 0;
- 
-@@ -229,9 +228,6 @@ struct SampleMergeResult {
-   // Collection being enabled does not imply this: analysis is skipped for any
-   // sample lacking residency information, a span address, or a requested size.
-   bool measured_compressibility = false;
--  // Whether Residency::GetRemoteNumaBytes produced a result for at least one
--  // sample.
--  bool measured_numa = false;
- };
- 
- SampleMergeResult MergeProfileSamplesAndMaybeGetResidencyInfo(
-@@ -244,7 +240,6 @@ SampleMergeResult MergeProfileSamplesAndMaybeGetResidencyInfo(
-     compression_analyzer.emplace();
-   }
-   absl::BitGen rng;
--  const int local_numa_node = GetCurrentNumaNode();
- 
-   profile.Iterate([&](const tcmalloc::Profile::Sample& entry) {
-     SampleMergedData& data = map[entry];
-@@ -274,17 +269,6 @@ SampleMergeResult MergeProfileSamplesAndMaybeGetResidencyInfo(
-           data.resident_size.value() += resident_size;
-           data.swapped_size.value() += swapped_size;
-         }
--        if (residency_info->bytes_resident > 0 &&
--            entry.span_start_address != nullptr) {
--          std::optional<size_t> remote_bytes = residency->GetRemoteNumaBytes(
--              entry.span_start_address, size, local_numa_node);
--          if (remote_bytes.has_value()) {
--            result.measured_numa = true;
--            data.remote_numa_size +=
--                entry.count *
--                std::min(*remote_bytes, residency_info->bytes_resident);
--          }
--        }
-       }
-     }
- 
-@@ -1105,9 +1089,6 @@ absl::StatusOr<std::unique_ptr<perftools::profiles::Profile>> MakeProfileProto(
-   // Bytes on pages marked incompressible by kernel pageflags (unit: "bytes").
-   const int incompressible_space_id =
-       builder.InternString("incompressible_space");
--  // Bytes resident on NUMA nodes other than the profiler collection thread's
--  // home NUMA node (unit: "bytes").
--  const int remote_numa_space_id = builder.InternString("remote_numa_space");
- 
-   // Sample types: content compressibility analysis (`kHeap` profiles).
-   // Estimated ZSTD-compressed size of backed (`resident_space + swapped_space`)
-@@ -1176,18 +1157,14 @@ absl::StatusOr<std::unique_ptr<perftools::profiles::Profile>> MakeProfileProto(
- 
-   bool collecting_compressibility = false;
- 
--  // Only advertise space_compressed/zero_space and remote_numa_space when at
--  // least one sample was actually measured.  Emitting the columns with a zero
--  // in every sample is indistinguishable downstream from a genuinely
--  // incompressible or 100% NUMA-local heap.
--  const auto [samples, exporting_compressibility, exporting_numa] =
-+  // Only advertise space_compressed/zero_space when at least one sample was
-+  // actually analyzed.  Emitting the columns with a zero in every sample is
-+  // indistinguishable downstream from a genuinely incompressible heap, so a
-+  // profile that never ran the analyzer would otherwise be reported as 100%
-+  // compressible rather than as having no data.
-+  const auto [samples, exporting_compressibility] =
-       MergeProfileSamplesAndMaybeGetResidencyInfo(profile, pageflags, residency,
-                                                   collecting_compressibility);
--  if (exporting_residency && exporting_numa) {
--    perftools::profiles::ValueType* sample_type = converted.add_sample_type();
--    sample_type->set_type(remote_numa_space_id);
--    sample_type->set_unit(bytes_id);
--  }
-   if (exporting_compressibility) {
-     perftools::profiles::ValueType* sample_type = nullptr;
- 
-@@ -1230,9 +1207,6 @@ absl::StatusOr<std::unique_ptr<perftools::profiles::Profile>> MakeProfileProto(
-       sample.add_value(data.stale_size.value_or(0));
-       sample.add_value(data.locked_size.value_or(0));
-       sample.add_value(data.incompressible_size.value_or(0));
--      if (exporting_numa) {
--        sample.add_value(data.remote_numa_size);
--      }
-     }
-     if (exporting_compressibility) {
-       sample.add_value(data.zero_size);
+@@ -64,7 +64,7 @@ inline constexpr ExperimentConfig experiments[] = {
+     {Experiment::TCMALLOC_PGHO_EXPERIMENT, "TCMALLOC_PGHO_EXPERIMENT"},
+     {Experiment::TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION, "TCMALLOC_RELEASE_DRAINED_METADATA_ABLATION"},
+     {Experiment::TCMALLOC_SONIC_COLLAPSE_RELEASED_HUGEPAGES, "TCMALLOC_SONIC_COLLAPSE_RELEASED_HUGEPAGES", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01, /*rollout_salt=*/"", /*rollout_inverted=*/true},
+-    {Experiment::TCMALLOC_SONIC_DEMAND_CYCLE_60S, "TCMALLOC_SONIC_DEMAND_CYCLE_60S", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01},
++    {Experiment::TCMALLOC_SONIC_DEMAND_CYCLE_60S, "TCMALLOC_SONIC_DEMAND_CYCLE_60S", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01, /*rollout_salt=*/"", /*rollout_inverted=*/true},
+     {Experiment::TCMALLOC_SONIC_FILLER_APPEND_ON_FREE, "TCMALLOC_SONIC_FILLER_APPEND_ON_FREE", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01},
+     {Experiment::TCMALLOC_SONIC_FIX_MAX_CAPACITY_BUG_ABLATION, "TCMALLOC_SONIC_FIX_MAX_CAPACITY_BUG_ABLATION", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01},
+     {Experiment::TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE_DENSE_128K, "TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE_DENSE_128K", /*brittle=*/false, /*force_disable=*/false, /*rollout_lower_bound=*/0, /*rollout_upper_bound=*/0.01, /*rollout_salt=*/"TCMALLOC_SONIC_MIN_FREE_BYTES_TO_BREAK_HUGEPAGE"},
 ```
 
-**File**: `tcmalloc/internal/profile_builder_test.cc` (modified, +12/-120)
+**File**: `tcmalloc/experiment_variants.bzl` (modified, +1/-1)
 ```diff
-@@ -72,8 +72,8 @@ using ::testing::IsSupersetOf;
- using ::testing::Key;
- using ::testing::Not;
- using ::testing::Pair;
-+using ::testing::SizeIs;
- using ::testing::UnorderedElementsAre;
--using ::testing::UnorderedElementsAreArray;
- 
- class StubPageFlags final : public PageFlagsBase {
-  public:
-@@ -147,29 +147,13 @@ class StubResidency final : public NoopResidency {
-     return std::nullopt;
-   }
- 
--  std::optional<size_t> GetRemoteNumaBytes(const void* addr, size_t size,
--                                           int local_node) override {
--    uintptr_t uaddr = reinterpret_cast<uintptr_t>(addr);
--    auto it = remote_numa_bytes_.find(uaddr);
--    if (it != remote_numa_bytes_.end()) {
--      return std::min(it->second, size);
--    }
--    return std::nullopt;
--  }
--
-   void SetInfo(const void* addr, Info info) {
-     uintptr_t uaddr = reinterpret_cast<uintptr_t>(addr);
-     infos_[uaddr] = info;
-   }
- 
--  void SetRemoteNumaBytes(const void* addr, size_t bytes) {
--    uintptr_t uaddr = reinterpret_cast<uintptr_t>(addr);
--    remote_numa_bytes_[uaddr] = bytes;
--  }
--
-  private:
-   absl::flat_hash_map<uintptr_t, Info> infos_;
--  absl::flat_hash_map<uintptr_t, size_t> remote_numa_bytes_;
- };
- 
- // Returns the fully resolved path of this program.
-@@ -636,26 +620,20 @@ TEST(ProfileConverterTest, HeapProfile) {
-   // Require that the default_sample_type appeared in sample_type.
-   EXPECT_THAT(sample_types, testing::Contains(converted.default_sample_type()));
- 
-+  constexpr int kNumSampleTypes = 7
-+      ;
-   // This is slightly redundant with the next line, but we need to loop over
-   // each of the samples later.
-   constexpr int kNumSamples = 6;
--  std::vector<std::pair<std::string, std::string>> expected_sample_types = {
--      {"objects", "count"},
--      {"space", "bytes"},
--      {"resident_space", "bytes"},
--      {"stale_space", "bytes"},
--      {"locked_space", "bytes"},
--      {"incompressible_space", "bytes"},
--      {"swapped_space", "bytes"},
--  };
--  if (ResidencyPageMap()
--          .GetRemoteNumaBytes(&converted, sizeof(converted),
--                              GetCurrentNumaNode())
--          .has_value()) {
--    expected_sample_types.emplace_back("remote_numa_space", "bytes");
--  }
--  EXPECT_THAT(extracted_sample_type,
--              UnorderedElementsAreArray(expected_sample_types));
-+  EXPECT_THAT(extracted_sample_type, SizeIs(kNumSampleTypes));
-+  EXPECT_THAT(
-+      extracted_sample_type,
-+      UnorderedElementsAre(
-+          Pair("objects", "count"), Pair("space", "bytes"),
-+          Pair("resident_space", "bytes"), Pair("stale_space", "bytes"),
-+          Pair("locked_space", "bytes"), Pair("incompressible_space", "bytes"),
-+          Pair("swapped_space", "bytes")
-+          ));
- 
-   SampleLabels extracted_labels;
-   {
-@@ -1590,7 +1568,6 @@ TEST(ProfileConverterTest, NoCompressibilityColumnsWithoutMeasurements) {
-   EXPECT_THAT(types, Not(Contains("space_compressed")));
-   EXPECT_THAT(types, Not(Contains("zero_space")));
-   EXPECT_THAT(types, Not(Contains("analyzed_compressibility_space")));
--  EXPECT_THAT(types, Not(Contains("remote_numa_space")));
- 
-   // Every sample must still agree with the advertised sample types.
-   for (const auto& s : converted.sample()) {
-@@ -1907,91 +1884,6 @@ TEST(ProfileBuilderTest, DisabledSamplingReturnsNotFound) {
-             absl::StatusCode::kNotFound);
- }
- 
--TEST(ProfileConverterTest, HeapProfileRemoteNumaSpace) {
--  std::vector<char> buf_local(64, 'a');
--  std::vector<char> buf_remote(64, 'b');
--  std::vector<char> buf_mixed(64, 'm');
--  std::vector<char> buf_clamped(64, 'd');
--  std::vector<char> buf_unbacked(64, 'c');
--
--  Profile::Sample sample_local = {};
--  sample_local.sum = 64;
--  sample_local.count = 1;
--  sample_local.requested_size = 64;
--  sample_local.allocated_size = 64;
--  sample_local.span_start_address = buf_local.data();
--  sample_local.depth = 2;
--  sample_local.stack[0] =
--      reinterpret_cast<void*>(&ProfileAccessor::MakeProfile);
--  sample_local.stack[1] = reinterpret_cast<void*>(&RealPath);
--  sample_local.guarded_status = Profile::Sample::GuardedStatus::NotAttempted;
--  sample_local.type = AllocationType::Malloc;
--
--  Profile::Sample sample_remote = sample_local;
--  sample_remote.sum = 128;
--  sample_remote.count = 2;
--  sample_remote.span_start_address = buf_remote.data();
--
--  Profile::Sample sample_mixed = sample_local;
--  sample_mixed.sum = 128;
--  sample_mixed.count = 2;
--  sample_mixed.span_start_address = buf_mixed.data();
--
--  Profile::Sample sample_clamped = sample_local;
--  sample_clamped.sum = 128;
--  sample_clamped.count = 2;
--  sample_clamped.span_start_address = buf_clamped.data();
--
--  Profile::Sample sample_unbacked = sample_local;
--  sample_unbacked.sum = 256;
--  sample_unbacked.count = 4;
--  sample_unbacked.span_start_address = buf_unbacked.data();
--
--  StubPageFlags pageflags;
--  StubResidency residency;
--  Residency::Info info;
--  info.bytes_resident = 64;
--  info.page_is_resident.SetBit(0);
--  residency.S
+@@ -44,7 +44,7 @@ experiment_variants = [
+         "name": "tcmalloc_demand_cycle_60s",
+         "malloc": "//tcmalloc",
+         "deps": ["//tcmalloc:common_8k_pages"],
+-        "env": {"BORG_EXPERIMENTS": "TCMALLOC_SONIC_DEMAND_CYCLE_60S"},
++        "env": {"BORG_DISABLE_EXPERIMENTS": "TCMALLOC_SONIC_DEMAND_CYCLE_60S"},
+     },
+     {
+         "name": "tcmalloc_filler_append_on_free",
+```
+
+**File**: `tcmalloc/tcmalloc_variants.cmake` (modified, +1/-1)
+```diff
+@@ -352,7 +352,7 @@ function(tcmalloc_cc_test_variants)
+     COPTS ${TCMALLOC_COPTS}
+     LINKOPTS ${TCMALLOC_LINKOPTS}
+     DEPS ${TCMALLOC_DEPS} tcmalloc::tcmalloc tcmalloc::common_8k_pages
+-    ENV ${TCMALLOC_ENV} "BORG_EXPERIMENTS=TCMALLOC_SONIC_DEMAND_CYCLE_60S"
++    ENV ${TCMALLOC_ENV} "BORG_DISABLE_EXPERIMENTS=TCMALLOC_SONIC_DEMAND_CYCLE_60S"
+   )
+   tcmalloc_cc_test(NAME ${TCMALLOC_NAME}_tcmalloc_filler_append_on_free
+     ${EXTRA_ARGS}
+```
+
+**File**: `tcmalloc/testing/default_parameters_test.cc` (modified, +1/-1)
+```diff
+@@ -51,7 +51,7 @@ constexpr absl::Duration kDefaultSkipSubreleaseLongInterval =
+ #if defined(TCMALLOC_INTERNAL_SMALL_BUT_SLOW)
+     absl::ZeroDuration()
+ #else
+-    absl::Seconds(120)
++    absl::Seconds(60)
+ #endif
+     ;
+ constexpr int32_t kDefaultMaxPerCpuCacheSize =
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1944** (closed): No public description (@copybara-service[bot])
-- **PR #1943** (2026-11-19): Revert: Record remote NUMA residency on heap profile samples. (@copybara-service[bot])
-- **PR #1936** (2026-11-19): Automated Code Change (@copybara-service[bot])
-- **PR #1934** (2026-11-18): Migrate ABSL_ATTRIBUTE_SECTION to [[gnu::section(...)]] (@copybara-service[bot])
-- **PR #1931** (2026-11-18): Place ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS before ABSL_ATTRIBUTE_NOINLINE in HookList::InvokeSlow. (@copybara-service[bot])
-- **PR #1929** (2026-11-17): Encode x86-64 rseq signature inside a 7-byte nopl instruction (@copybara-service[bot])
+- **PR #1952** (2026-11-20): Skip IsHugepageBacked on sampled and cold partitions. (@copybara-service[bot])
+- **PR #1951** (2026-11-20): Convert TCMALLOC_SONIC_DEMAND_CYCLE_60S into a holdback. (@copybara-service[bot])
+- **PR #1950** (2026-11-20): Drop pageheap_lock when resetting sampled tracker VMA names. (@copybara-service[bot])
+- **PR #1949** (2026-11-20): Include donated trackers in SampledTrackerTreatment. (@copybara-service[bot])
+- **PR #1948** (2026-11-20): No public description (@copybara-service[bot])
+- **PR #1945** (2026-11-20): Export stale page histograms from HugePageFiller in pbtxt stats. (@copybara-service[bot])
 
 ---
 
@@ -1634,29 +1508,24 @@ PiperOrigin-RevId: 1025598004
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Use AddOverflow when rounding up sizes in pvalloc.
+## X. Drop pageheap_lock when resetting sampled tracker VMA names.
 
 **RULE**:
-When implementing operations in `tcmalloc/internal/overflow.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tcmalloc/huge_page_filler.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f63e9c75`: Use AddOverflow when rounding up sizes in pvalloc.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3264f9ce`: Drop pageheap_lock when resetting sampled tracker VMA names.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/internal/overflow.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/huge_page_filler.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-[[nodiscard]] inline bool AddOverflow(size_t a, size_t b, size_t* out) {
-#if ABSL_HAVE_BUILTIN(__builtin_add_overflow)
-  return __builtin_add_overflow(a, b, out);
-#else
-  *out = a + b;
-  return *out < a;
-#endif
-}
-
+    pageheap_lock.unlock();
+    pageheap_lock.lock();
+      pageheap_lock.unlock();
+      pageheap_lock.lock();
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1666,7 +1535,7 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f63e9c75` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3264f9ce` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

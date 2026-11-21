@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T03:52:40.108Z",
+  "last_updated": "2026-11-21T04:20:41.158Z",
   "total_records": 2226,
   "domains": {
     "A": {
@@ -7996,8 +7996,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "b21630af399c407f1bc3c8a18eac150bdb28ccecfa30558d030442d7f3642854",
-      "created_at": "2026-11-21T01:51:42.092Z"
+      "content_hash": "e503a3a43a94af0ccfcaeea13832a5094b3c23869d15513152a9a72e49045637",
+      "created_at": "2026-11-21T04:20:41.158Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -8209,8 +8209,8 @@
       "title": "Content & Information Intelligence: crossplane/crossplane Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-crossplane-crossplane-content-information-intelligence-crossplane-crossplane-cor.md",
       "repository": "crossplane/crossplane",
-      "content_hash": "7b0443f80eb6cdbdd4eddcfddff631a84ab6c52c1695a930c90e6e9153be7142",
-      "created_at": "2026-11-18T22:57:57.157Z"
+      "content_hash": "a9189676ff792ce4685265145a88174bc851c5259d348797b84f777e25eb1b34",
+      "created_at": "2026-11-21T04:15:42.446Z"
     },
     "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-core-invariants",
@@ -8287,8 +8287,8 @@
       "title": "Content & Information Intelligence: crossplane-crossplane-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-crossplane-crossplane-learnings-content-information-intelligence-crossplane-cros.md",
       "repository": "crossplane-crossplane-learnings",
-      "content_hash": "64bf66a6e2036058afed3dd8e4bf87f49d6f71dc2fa3070ff92e221134cd4578",
-      "created_at": "2026-11-18T23:02:52.037Z"
+      "content_hash": "11f6b918b686c925192d5dbd66e053dc2124e070057b8cc2af3188876ecc2852",
+      "created_at": "2026-11-21T04:20:40.249Z"
     },
     "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants",
@@ -17405,8 +17405,8 @@
       "title": "Technical Construction Intelligence: google/tcmalloc Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-technical-construction-intelligence-google-tcmalloc-core-invaria.md",
       "repository": "google/tcmalloc",
-      "content_hash": "18039c549b55cfecce5829b9954e71c645789277bf226cccdb1acfb7f628cb85",
-      "created_at": "2026-11-19T18:06:15.839Z"
+      "content_hash": "c93e9c0993d53f99709da37c9739d333959ff0f6b6d2ab6ddfcda6584b0904a6",
+      "created_at": "2026-11-21T04:20:36.031Z"
     },
     "domain_intelligence-technical-construction-intelligence-open-ani-animeko-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-open-ani-animeko-core-invariants",
@@ -17423,8 +17423,8 @@
       "title": "Technical Construction Intelligence: google-tcmalloc-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-learnings-technical-construction-intelligence-google-tcmalloc-le.md",
       "repository": "google-tcmalloc-learnings",
-      "content_hash": "f233edadbee417798c7c85f4f2c12f6a8a1d92e350d9b15a3dc1c6fa14389e2d",
-      "created_at": "2026-11-19T18:06:29.375Z"
+      "content_hash": "b8d967a3ba6d4400843e3ee9c00367a8e9f4d4ddca48e0a9964df43c4a6fb97a",
+      "created_at": "2026-11-21T04:20:39.453Z"
     },
     "DOM-D-301C83AD": {
       "record_id": "DOM-D-301C83AD",

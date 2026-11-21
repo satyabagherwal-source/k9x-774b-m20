@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T03:52:38.297Z",
+  "updated_at": "2026-11-21T04:20:39.078Z",
   "stats": {
-    "total_discovered": 7003,
-    "approved_pending_harvest": 6613,
+    "total_discovered": 7004,
+    "approved_pending_harvest": 6614,
     "harvested_count": 0,
     "rejected_count": 390,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6592,
+      "COMMUNITY_AND_EXPERT": 6593,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -151359,6 +151359,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
         "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-3270097DF769": {
+      "id": "SRC-3270097DF769",
+      "url": "https://github.com/google/tcmalloc/pull/1951/checks?check_run_id=136462830257",
+      "title": "https://github.com/google/tcmalloc/pull/1951/checks?check_run_id=136462830257",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:20:39.077Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
+        "fileName": "google-tcmalloc-learnings.md"
       }
     }
   }

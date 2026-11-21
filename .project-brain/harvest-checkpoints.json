@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T03:52:30.746Z",
+  "last_updated": "2026-11-21T04:20:35.702Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7566,14 +7566,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crossplane-crossplane",
-      "content_hash": "2f5582e9618e4f763e4e26ef4263eff20b6669075ddea8da5b248a6e3a975ec9",
-      "verified_at": "2026-11-18T22:57:56.887Z",
+      "content_hash": "1e688fac61c0252da66c67396dbdedd12eda57fededb15674ff2f8cf238f7a32",
+      "verified_at": "2026-11-21T04:15:42.090Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T22:57:56.887Z"
+      "last_updated": "2026-11-21T04:15:42.090Z"
     },
     "apple/foundationdb": {
       "repository": "apple/foundationdb",
@@ -11571,14 +11571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-tcmalloc",
-      "content_hash": "6c1b379a6793e79a21ed89dbda22ef506f484ff3b14b213d90c98b556de42a12",
-      "verified_at": "2026-11-19T18:06:15.522Z",
+      "content_hash": "7f0b01749f96a215dc99d037993c06bc107c144d458afbbfdeb236d03b5ab594",
+      "verified_at": "2026-11-21T04:20:35.701Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T18:06:15.522Z"
+      "last_updated": "2026-11-21T04:20:35.701Z"
     },
     "russhwolf/multiplatform-settings": {
       "repository": "russhwolf/multiplatform-settings",

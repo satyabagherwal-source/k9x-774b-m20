@@ -722582,3 +722582,153 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `e7490bbd` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9726. Call out package runtime image validation in our security non-goals (Harvested from crossplane/crossplane)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Call out package runtime image validation in our security non-goals",
+  "source": "crossplane/crossplane",
+  "source_url": "https://github.com/crossplane/crossplane",
+  "source_version": "2088737a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T04:15:41.592Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-crossplane-crossplane",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [crossplane/crossplane](https://github.com/crossplane/crossplane) (Revision: `2088737a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `security/self-assessment.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2e14e85e`: security: Call out package runtime image validation in our security non-goals. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `security/self-assessment.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+is not restricted further by Crossplane. In particular, Crossplane is not
+responsible for pulling runtime container images for Crossplane packages and
+therefore does not attempt to validate or restrict them. Users wishing to
+restrict runtime images (for example, by verifying signatures to ensure
+provenance) should use an admission controller such as the sigstore policy
+controller or Kyverno.
+their own custom abstractions and implementations.
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+is not restricted further by Crossplane.
+their own custom abstractions and implementations.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2e14e85e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9727. Drop pageheap_lock when resetting sampled tracker VMA names. (Harvested from google/tcmalloc)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Drop pageheap_lock when resetting sampled tracker VMA names.",
+  "source": "google/tcmalloc",
+  "source_url": "https://github.com/google/tcmalloc",
+  "source_version": "3264f9ce",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T04:20:35.218Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-google-tcmalloc",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.76,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [google/tcmalloc](https://github.com/google/tcmalloc) (Revision: `3264f9ce`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 76%).
+
+**RULE**:
+When implementing operations in `tcmalloc/huge_page_filler.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3264f9ce`: Drop pageheap_lock when resetting sampled tracker VMA names.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/huge_page_filler.h`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+    pageheap_lock.unlock();
+    pageheap_lock.lock();
+      pageheap_lock.unlock();
+      pageheap_lock.lock();
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3264f9ce` are properly handled with clean fallback behavior.

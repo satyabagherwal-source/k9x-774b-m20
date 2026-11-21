@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-29KK",
-    "timestamp": "2026-11-19T00:49:54.932Z",
-    "repository": "citusdata/citus",
-    "learningId": "learn-github-citusdata-citus",
-    "contentHash": "76b1129927c248809eada1ab0447d6a62c2bacfb9f1a8dee62e0427a924d062b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-CTAX",
-    "timestamp": "2026-11-19T00:58:07.065Z",
-    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-    "contentHash": "b96fcd45476d2a236be0110843ca5b7df2b3f381de4922d5fa234b6c0213d75c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-D2BV",
     "timestamp": "2026-11-19T00:58:18.763Z",
     "repository": "microsoft/agent-governance-toolkit",
@@ -7490,6 +7460,36 @@
     "repository": "meta/folly",
     "learningId": "learn-github-meta-folly",
     "contentHash": "3e8e1e780d406711de37a1ff2d84a001f6bf6ac9278f65768624ef3443d02517",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-AM0U",
+    "timestamp": "2026-11-21T04:15:42.078Z",
+    "repository": "crossplane/crossplane",
+    "learningId": "learn-github-crossplane-crossplane",
+    "contentHash": "1e688fac61c0252da66c67396dbdedd12eda57fededb15674ff2f8cf238f7a32",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-GWKP",
+    "timestamp": "2026-11-21T04:20:35.689Z",
+    "repository": "google/tcmalloc",
+    "learningId": "learn-github-google-tcmalloc",
+    "contentHash": "7f0b01749f96a215dc99d037993c06bc107c144d458afbbfdeb236d03b5ab594",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
