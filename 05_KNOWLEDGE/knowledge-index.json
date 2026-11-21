@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T20:52:10.087Z",
+  "last_updated": "2026-11-21T21:04:51.396Z",
   "total_verified_learnings": 9062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23273,
+  "total_items": 23274,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "78f763cd6a34c0eb316e9a24a7dd2e8caa25ec2e03c403a441b2857cbbfef6a1",
+      "content_hash": "eabdb347287e3245d243b35d006c6ac4ea54fbf6db7414a2cbb5b71051e12ca8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T16:31:28.981Z"
+      "persisted_at": "2026-11-21T21:04:51.058Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "fd0cfeed5b1011e3d70ccdffd7baebba7ae8791d844278cdf803e467eec0c8f0",
+      "content_hash": "38a2940e7152f5541ea00859d5291f9943ff6754635b5c80dd2684789c49ea4a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T16:31:29.130Z"
+      "persisted_at": "2026-11-21T21:04:51.227Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "2146f59917bfc7f3dce7f790e50e779830f811b75877251d9cb24c3a7f4402ee",
+      "content_hash": "e7afe956e7d0f42558faf8a36d21c8d4025ce480b75ff6c3830d5a2a4c0e211e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T16:31:29.259Z"
+      "persisted_at": "2026-11-21T21:04:51.396Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -229451,8 +229451,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "e9c03762",
-      "content_hash": "741553413905a007c85c4edc9e66e22122b6d7c7f31a4ecc7a0d75db0e5d3e35",
+      "source_version": "d0e53bdc",
+      "content_hash": "b720d3debe8c328593bab6555fb20b30145cfb202ea73ac7c127373f798022d2",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -229657,7 +229657,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T15:48:58.323Z",
+      "verified_at": "2026-11-21T21:04:45.475Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229699,10 +229699,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "e9c03762",
-      "content_hash": "4d243f3a35f25f146ec4b3e2e178afbae4f605131c9feb3552ff135c50261dd3",
+      "source_version": "d0e53bdc",
+      "content_hash": "89b9207c751da969cf7c9cd8c29f11ff97f7cf1a1dfb70de60a7c2e160c5d62d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T15:48:58.795Z"
+      "persisted_at": "2026-11-21T21:04:46.089Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -229711,10 +229711,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "23b93c48",
-      "content_hash": "0cf12127a4831f724a68c2f276883346a138070c110001ded09dd53c80cbbeb7",
+      "source_version": "d0e53bdc",
+      "content_hash": "6e4dbf7e47f89e0d7e254b0520d5e7cec123ec65c34aed0594e60078c558a206",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T18:52:24.969Z"
+      "persisted_at": "2026-11-21T21:04:46.265Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -230792,9 +230792,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "d16f83ce07db53748fbc3da9b867d257ab227acd59031534bf380f4326a54428",
+      "content_hash": "0407704c09bb0207863413182f8888acb7af311becc1f7849f8af593252c508f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T18:52:29.573Z"
+      "persisted_at": "2026-11-21T21:04:50.087Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -230804,9 +230804,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "b4de08e30a6bc8e10e45726c821ae033b0dbe744abe624bcd242219b7fc067b3",
+      "content_hash": "0b8517e6c7392e573e944b7e9e018e8ac1060af41b74f06d39b052c4040d7e5f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T18:52:29.741Z"
+      "persisted_at": "2026-11-21T21:04:50.259Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -249072,7 +249072,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
       "source_version": "hf-mistralai-mistral-large-4-1t-a52b",
-      "content_hash": "bffacc603781bdf8786b7f53dc45e277e511805981a8b642dea27e34401b836e",
+      "content_hash": "6879173e1f9e3a6ca1d27c336994cc7f7e947075b0850c46695a917f2dc84b98",
       "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md",
       "promoted_rules": [],
@@ -249081,7 +249081,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T17:22:40.884Z",
+      "verified_at": "2026-11-21T21:04:29.756Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -249098,9 +249098,9 @@
       "title": "Research & Knowledge Intelligence: mistralai/Mistral-Large-4-1T-A52B Core Invariants",
       "repository": "mistralai/Mistral-Large-4-1T-A52B",
       "source_version": "hf-mistralai-mistral-large-4-1t-a52b",
-      "content_hash": "093c2528bb5ddeff3678ad9c2aeb0dea7ee962640135649e5b398b071d6eba6a",
+      "content_hash": "8e12f87f7bb560a009c6146be278951dba2f056fd9e6f377fabb4563765ab3ef",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T17:22:41.173Z"
+      "persisted_at": "2026-11-21T21:04:30.205Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mistral-large-4-1t-a52b-learnings-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mistral-large-4-1t-a52b-learnings-c",
@@ -249110,9 +249110,9 @@
       "title": "Research & Knowledge Intelligence: hf-mistralai-mistral-large-4-1t-a52b-learnings Core Invariants",
       "repository": "hf-mistralai-mistral-large-4-1t-a52b-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ef78c7e9d99aa295092ca3acb2f39307f3d7ce9a5fc067b2d4ae98c053c09eb",
+      "content_hash": "22b2d101c2531e106ffa31fe13fbb507c9cbb36032c7b2174733b227df870897",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T17:23:18.613Z"
+      "persisted_at": "2026-11-21T21:04:49.298Z"
     },
     "learn-github-nats-io-nats-go": {
       "learning_id": "learn-github-nats-io-nats-go",
@@ -309172,13 +309172,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-KTVF-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-CDSD-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "620e71b7df326424b42c95c77dbc9dcdce81f359af41cbb7356e0ee15caf06e7",
+      "content_hash": "5f11ea76736dc338f9e3d700df2e4582038ed86fe545e0738b2a5a4b61bdacbe",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T16:31:28.829Z"
+      "persisted_at": "2026-11-21T21:04:50.896Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -316361,6 +316361,18 @@
       "content_hash": "a5369b5fc71aba41c07871db1b3b00f3408d42cdab493566682cff2355eae157",
       "domain_letter": "H",
       "persisted_at": "2026-11-21T20:52:08.367Z"
+    },
+    "candidate_directive-nuc-126-exit-controlled-repeat-until-loops": {
+      "item_id": "candidate_directive-nuc-126-exit-controlled-repeat-until-loops",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CD1F-nuc-126-exit-controlled-repeat-until-loops.md",
+      "title": "NUC 126 Exit-Controlled Repeat-Until Loops",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "214a1806ea8339912269304b606564c615958af45ba65a7a08d21be98b84db60",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T21:04:49.926Z"
     }
   },
   "ai-builder-brain": {

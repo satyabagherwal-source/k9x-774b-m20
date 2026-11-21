@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T20:51:24.454Z",
-  "total_cycles_completed": 11321,
-  "total_learnings_persisted": 11321,
+  "last_updated": "2026-11-21T21:04:45.708Z",
+  "total_cycles_completed": 11323,
+  "total_learnings_persisted": 11323,
   "total_rules_promoted": 10650,
   "history": [
-    {
-      "timestamp": "2026-11-21T00:52:05.723Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T00:52:08.923Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T01:00:31.032Z",
       "repository": "vitest-dev/vitest",
@@ -1403,6 +1389,20 @@
       "repository": "rustls/rustls",
       "learningId": "learn-github-rustls-rustls",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T21:04:29.999Z",
+      "repository": "mistralai/Mistral-Large-4-1T-A52B",
+      "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T21:04:45.708Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -11897,3 +11897,5 @@
 | `CYCLE-20261121-SVKI` | `2026-11-21T20:49:40.818Z` | `unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9837, Rule 9838, Rule 9839` | Yes (`e1fa39d6...`) |
 | `CYCLE-20261121-V3IY` | `2026-11-21T20:51:24.442Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9840, Rule 9841, Rule 9842` | Yes (`bff3822c...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T20:52:05.497Z` | `hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-6F3CCE20` [Domain H] | Yes (`58a9f210...`) |
+| `CYCLE-20261121-BXNP` | `2026-11-21T21:04:29.989Z` | `mistralai/Mistral-Large-4-1T-A52B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md` | Yes (`6879173e...`) |
+| `CYCLE-20261121-C9RA` | `2026-11-21T21:04:45.670Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`b720d3de...`) |

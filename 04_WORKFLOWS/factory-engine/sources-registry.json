@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T20:51:28.617Z",
-    "lastVerified": "2026-11-21T20:51:28.617Z",
+    "lastChecked": "2026-11-21T21:04:48.943Z",
+    "lastVerified": "2026-11-21T21:04:48.943Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -154,12 +154,12 @@
     "lastVerified": "2026-11-21T18:22:54.810Z"
   },
   "meilisearch-meilisearch": {
-    "name": "meilisearch/meilisearch",
+    "name": "meilisearch",
     "officialUrl": "https://github.com/meilisearch/meilisearch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T16:13:05.691Z",
-    "lastVerified": "2026-11-20T16:13:05.691Z",
+    "lastChecked": "2026-11-21T21:04:39.371Z",
+    "lastVerified": "2026-11-21T21:04:39.371Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meilisearch-meilisearch",
@@ -168,7 +168,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9a44a8e8"
   },
   "dathere-qsv": {
     "name": "dathere/qsv",
@@ -352,22 +353,21 @@
     "lastVerified": "2026-11-20T16:42:20.195Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T20:10:52.517Z",
-    "lastVerified": "2026-11-21T20:10:52.517Z",
+    "lastChecked": "2026-11-21T21:04:45.169Z",
+    "lastVerified": "2026-11-21T21:04:45.169Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d70a9f374025905546054be8d90547486fb94e769e3d5cae95a865aefaa6979a",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "b720d3debe8c328593bab6555fb20b30145cfb202ea73ac7c127373f798022d2",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "23b93c48"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1041,9 +1041,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-21T13:05:24.311Z",
+    "lastChecked": "2026-11-21T21:04:36.898Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-21T13:05:24.311Z"
+    "lastVerified": "2026-11-21T21:04:36.898Z"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -1698,9 +1698,9 @@
   "kubesphere-kubesphere": {
     "name": "kubesphere",
     "officialUrl": "https://github.com/kubesphere/kubesphere",
-    "lastChecked": "2026-11-20T17:29:07.456Z",
+    "lastChecked": "2026-11-21T21:04:34.367Z",
     "revisionIdentifier": "04a29b5c",
-    "lastVerified": "2026-11-20T17:29:07.456Z"
+    "lastVerified": "2026-11-21T21:04:34.367Z"
   },
   "zama-ai-tfhe-rs": {
     "name": "tfhe-rs",
@@ -3133,9 +3133,9 @@
   "jhen0409-react-native-debugger": {
     "name": "react-native-debugger",
     "officialUrl": "https://github.com/jhen0409/react-native-debugger",
-    "lastChecked": "2026-11-18T15:51:34.842Z",
+    "lastChecked": "2026-11-21T21:04:31.953Z",
     "revisionIdentifier": "bd3435a4",
-    "lastVerified": "2026-11-18T15:51:34.842Z"
+    "lastVerified": "2026-11-21T21:04:31.953Z"
   },
   "sorintlab-stolon": {
     "name": "stolon",
@@ -3600,9 +3600,9 @@
   "sigoden-aichat": {
     "name": "aichat",
     "officialUrl": "https://github.com/sigoden/aichat",
-    "lastChecked": "2026-11-20T05:16:07.119Z",
+    "lastChecked": "2026-11-21T21:04:26.858Z",
     "revisionIdentifier": "82976d34",
-    "lastVerified": "2026-11-20T05:16:07.119Z"
+    "lastVerified": "2026-11-21T21:04:26.858Z"
   },
   "hf-google-electra-base-discriminator": {
     "name": "google/electra-base-discriminator",
@@ -12828,6 +12828,23 @@
     "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
     "contentHash": "e1fa39d680fe8260a25aa6cd41c7c13025f111580dee1f1d0ab126f1386f66b1",
     "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-mistralai-mistral-large-4-1t-a52b": {
+    "name": "mistralai/Mistral-Large-4-1T-A52B",
+    "officialUrl": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T21:04:29.382Z",
+    "lastVerified": "2026-11-21T21:04:29.382Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
+    "contentHash": "6879173e1f9e3a6ca1d27c336994cc7f7e947075b0850c46695a917f2dc84b98",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

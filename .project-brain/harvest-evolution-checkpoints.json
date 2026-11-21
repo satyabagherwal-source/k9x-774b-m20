@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T20:52:10.296Z",
+  "last_updated": "2026-11-21T21:04:51.543Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T15:59:55.405Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-21T16:31:28.372Z",
+      "processed_at": "2026-11-21T21:04:50.420Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-21T18:52:28.973Z",
+      "processed_at": "2026-11-21T21:04:49.493Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3028,8 +3028,8 @@
       "staged_for_review": 1
     },
     "hf-mistralai-mistral-large-4-1t-a52b-learnings.md": {
-      "processed_at": "2026-11-15T17:23:18.430Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-21T21:04:49.087Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "lottie-react-native-lottie-react-native-learnings.md": {
@@ -3673,7 +3673,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2883,
+  "total_dossiers_evaluated": 2886,
   "total_canonical_promoted": 454,
-  "total_staged_for_review": 2213
+  "total_staged_for_review": 2215
 }

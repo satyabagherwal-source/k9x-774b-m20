@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "23b93c48",
+  "source_version": "d0e53bdc",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T18:52:24.626Z",
+  "timestamp": "2026-11-21T21:04:45.925Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `23b93c48`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T18:52:24.626Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `d0e53bdc`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T21:04:45.925Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `23b93c48`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `d0e53bdc`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T18:52:23.303Z  
+> **Harvest Timestamp**: 2026-11-21T21:04:45.169Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -113,6 +113,7 @@ pub fn generate(statement: &Stmt) -> String {
         } => format!("for {key},{value} of {iterable}"),
         Stmt::While { condition, body } => loop_key("while", condition, body),
         Stmt::Repeat { count, body } => loop_key("repeat", count, body),
+        Stmt::RepeatUntil { body, condition } => until_key(body, condition),
         Stmt::Try { .. } | Stmt::TryFinally { .. } => "try".to_string(),
         Stmt::Declaration { name, type_name } => format!("{name}:{type_name}"),
         Stmt::Pass => "pass".to_string(),
@@ -132,6 +133,14 @@ fn loop_key(word: &str, header: &Expr, body: &[Stmt]) -> String {
 
 fn loop_suite(word: &str, header: &Expr, body: &[Stmt]) -> String {
     format!("{word} {header}:\n{}", indent(&source_all(body)))
+}
+
+fn until_key(body: &[Stmt], condition: &Expr) -> String {
+    format!("repeat{{{}}}until({condition})", generate_all(body))
+}
+
+fn until_suite(body: &[Stmt], condition: &Expr) -> String {
+    format!("repeat:\n{}\nuntil {condition}", indent(&source_all(body)))
 }
 
 fn try_suite(body: &[Stmt], parameter: &str, catch: &[Stmt]) -> String {
@@ -257,6 +266,7 @@ fn source(statement: &Stmt) -> String {
         ),
         Stmt::While { condition, body } => loop_suite("while", condition, body),
         Stmt::Repeat { count, body } => loop_suite("repeat", count, body),
+        Stmt::RepeatUntil { body, condition } => until_suite(body, condition),
         Stmt::Try {
             body,
             parameter,
@@ -443,6 +453,10 @@ impl Parser {
             return Ok(Stmt::While { condition, body });
         }
 
+        if self.starts_repeat_until() {
+            return self.repeat_until_statement();
+        }
+
         if let Some(count) = self.repeat_count() {
             let body = self.suite()?;
             return Ok(Stmt::Repeat { count, body });
@@ -594,8 +608,7 @@ impl Parser {
         self.position = start;
         let end = outcome.as_ref()?.end;
         if self.words
-            && self.accepted(Self::attempt_suppose_premise).is_none()
-            && self.separates(sta
+  
 ```
 
 ### Core Architecture Module: `src/state.rs`
@@ -1569,166 +1582,339 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `23b93c48` (2026-11-21)
-**Commit Message**: Draft NUC 128 Origins and Outcomes of Reasoning Selections
+### Incident Patch 1: `ba7507c1` (2026-11-21)
+**Commit Message**: NUC 126 Exit-Controlled Repeat-Until Loops
 
-Category: Reasoning enhancement, drawn uniformly at random (index 3 of
-the five eligible categories in NUC 1's registry, p = 1/5, at 13:25:12
--05:00 on 21-Nov-2026, no redraw) for a continuous /nuc-proposal cycle
-that found no stale Draft. The token non-regression gate is required for
-this category in continuous mode, so each new case gets an
-accepted-syntax counterpart.
+Accepted under the automatic acceptance rule, in a continuous
+/nuc-proposal cycle (Runtime features, existing_comparable, token
+comparison required): the frozen candidate meets every hard criterion
+and passes every policy check, the token non-regression gate included.
+The cycle found no stale Draft, drew Runtime features uniformly from the
+five eligible categories, allocated NUC 126 in a461d16f, and completed
+it with fresh baselines, candidate, proposer, Rust improvement pass and
+evaluator.
 
-Requested change: two filter stages over reasoning selections.
-SELECTION |> origins keeps the steps of SELECTION that rest on no other
-step of it, and SELECTION |> outcomes keeps the steps that no other step
-of it rests on, each in order with its fields unchanged. A step rests on
-another when it depends on it directly or through unselected nodes,
-along the edges why and path follow, through no reasoning observer. So
-S |> origins is exactly the accepted S |> except(S |> affects), and over
-a selection that affects, why or model produced, S |> outcomes keeps the
-steps whose node no step's from names, which accepted syntax spells only
-with a filter and a nested quantifier that yields a list. Both results
-are selections that keep the most recent walk's directi
+An exit-controlled loop: repeat: and a suite, an indented block or
+statements on the same line separated by ;, then until CONDITION on its
+own line after the body. The body runs first and the condition is tested
+after every iteration with the truthiness of if, through the iteration
+step and the 100,000-iteration bound of while, so a loop that never ends
+raises TypeError("Loop did not terminate") and rolls back. return leaves
+the enclosing function, block or loop at once. Only blank and comment
+lines may stand between the body and until, an until line at a width
+between the body and repeat closes the loop by the lexer's accepted rule,
+and an until line
 
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `README.md` (modified, +32/-0)
 ```diff
-@@ -154,6 +154,7 @@ Created: 31-Jul-2026
- | [112](nuc-0112.md) | Node Names of Reasoning Selections | Accepted |
- | [120](nuc-0120.md) | Union Reasoning Selections | Accepted |
- | [121](nuc-0121.md) | Held Values of Reasoning Selections | Accepted |
-+| [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Draft |
+@@ -2758,6 +2758,38 @@ assert([ana.duties, cy.duties], [["dishes", "floors", "cooking"], ["trash", "mai
+   the new chore joins the share whose turn it falls on. See the
+   [root contract](nucleoid.spec.md#stepped-slices).
  
- ### Language compatibility
++## Repeat-until loops
++
++**Repeat-until loops move a lift to the next call**
++
++```nuc
++class Lift(floor):
++    this.floor = floor
++lift = Lift(1)
++calls = [1, 4, 6]
++stopped = calls.includes(lift.floor)
++repeat: lift.floor += 1
++until stopped
++assert(lift.floor, 4)
++calls.push(2)
++assert([lift.floor, stopped], [4, true])
++```
++
++- [NUC 126](docs/nuc-0126.md) adds `repeat:` with an indented or same-line
++  body, followed by `until CONDITION` on its own line after the body: the
++  exit-controlled sibling of `while`. The body runs first, and the condition
++  is tested after every iteration with the truthiness of `if`, so the body
++  always runs at least once.
++- The lift waits at a call on floor 1, so `stopped` already holds, yet the
++  loop moves it on: one floor at a time, until `stopped`, a standing rule
++  that follows every move, holds again at floor 4. A `while not stopped:`
++  loop would not move it at all. The loop runs once, imperatively: it leaves
++  no standing rule and does not run again when a new call arrives. A loop
++  still unfinished after 100,000 iterations raises
++  `TypeError("Loop did not terminate")` and rolls back, and `repeat` and
++  `until` stay ordinary names everywhere else. See the
++  [root contract](nucleoid.spec.md#exit-controlled-repeat-until-loops).
++
+ ## Reactive list flattening
  
-@@ -309,6 +310,7 @@ Created: 31-Jul-2026
+ **Flat turns nested lists into one live list**
+```
+
+**File**: `build_statements.rs` (modified, +3/-2)
+```diff
+@@ -110,9 +110,10 @@ pub(crate) fn statements(source: &str) -> Vec<String> {
+         let top_level = line.len() == line.trim_start().len();
+         let comment_or_blank = trimmed.is_empty() || trimmed.starts_with('#');
+         // Raw::Word in the lexer is [A-Za-z_][A-Za-z0-9_]*. Keep either
+-        // complete Else alias or Catch with its chain, not an identifier prefix.
++        // complete Else alias, Catch with its chain or Until with its loop,
++        // not an identifier prefix.
+         // Header validity remains the parser's job, not a second grammar here.
+-        let continuation = ["else", "elif", "catch"]
++        let continuation = ["else", "elif", "catch", "until"]
+             .iter()
+             .any(|keyword| starts_keyword(trimmed, keyword))
+             || trimmed.starts_with("finally:")
+```
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +20/-16)
+```diff
+@@ -814,19 +814,23 @@
+ {"id":"spec-0814","description":"Nucleoid reverses strings by character with stepped slices","code":"word = \"añejo\"\nmirror = word[::-1]\npalindrome = mirror == word\nassert([mirror, palindrome], [\"ojeña\", false])\nword = \"reconocer\"\nassert([mirror, palindrome], [\"reconocer\", true])\nword = \"Øresund\"\nassert([mirror, palindrome], [\"dnuserØ\", false])\nword = \"über\"\nassert([mirror, palindrome], [\"rebü\", false])","return":null}
+ {"id":"spec-0815","description":"Nucleoid strides class instance populations with stepped slices","code":"class Lap(seconds):\n    this.seconds = seconds\nLap(62)\nLap(58)\nLap(57)\nLap(61)\nstride = 2\nsampled = Lap[::stride].map(lap -> lap.seconds)\nassert(sampled, [62, 57])\nLap(60)\nassert(sampled, [62, 57, 60])\nstride = 3\nassert(sampled, [62, 61])","return":null}
+ {"id":"spec-0816","description":"Nucleoid rolls back failed updates through stepped slices","code":"def checked(amount):\n    if amount < 0:\n        throw \"NEGATIVE\"\n    return amount\nprices = [4, 9, 7, 12]\npicked = prices[::2].map(checked)\nfailure = \"\"\ntry:\n    prices.push(-3)\ncatch error:\n    failure = error\nassert([failure, prices, picked], [\"NEGATIVE\", [4, 9, 7, 12], [4, 7]])\ntry:\n    prices.push(5)\n    assert(picked, [4, 7, 5])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([prices, picked], [[4, 9, 7, 12], [4, 7]])\nclass Crate(weight): this.weight = weight\nCrate(6)\nCrate(2)\nCrate(9)\nlatest = Crate[::-2].map(crate -> checked(crate.weight))\nfailure = \"\"\ntry:\n    Crate(-1)\ncatch error:\n    failure = error\nassert([failure, Crate.length, latest], [\"NEGATIVE\", 3, [9, 6]])\nCrate(5)\nlatest","return":"[5,2]"}
+-{"id":"spec-0817","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0818","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0819","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0820","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0821","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
+-{"id":"spec-0822","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
+-{"id":"spec-0823","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nassert([1, 2] in [[1, 2], [3]], true)\nassert({ x: 1 } in [{ x: 1 }, null], true)\nassert(null in [1, null], true)\nassert(Number.NaN in [Number.NaN],
+```
+
+**File**: `dataset/nucleoid.synth.90.jsonl` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++{"id":"synth-90-0001","description":"A thermostat heats a room in steps until it reaches the target","code":"room = 18\ntarget = 21\nsteps = 0\nrepeat:\n    room = room + 1.5\n    steps = steps + 1\nuntil room >= target\n[room, steps]","return":"[21,2]"}
++{"id":"synth-90-0002","description":"The body runs once although the condition already holds","code":"stock = 10\norders = 0\nrepeat: orders = orders + 1; stock = stock - 3\nuntil stock < 20\n[orders, stock]","return":"[1,7]"}
++{"id":"synth-90-0003","description":"Rolls are drawn from a sequence until one lands on six","code":"rolls = [2, 5, 1, 6, 3]\ntries = []\nrepeat: tries.push(rolls.shift())\nuntil tries.at(-1) == 6\n[tries, rolls]","return":"[[2,5,1,6],[3]]"}
++{"id":"synth-90-0004","description":"A function returns from inside the loop before the condition is tested","code":"def first_square_over(limit):\n    n = 1\n    repeat:\n        if n * n > limit: return n\n        n = n + 1\n    until n > 100\n    return null\n[first_square_over(50), first_square_over(10000)]","return":"[8,null]"}
++{"id":"synth-90-0005","description":"A method charges a battery until a class-level rule reports it full","code":"class Battery(level):\n    this.level = level\n    def charge():\n        repeat: this.level = this.level + 30\n        until this.full\n        return this.level\n$Battery.full = $Battery.level >= 100\nphone = Battery(20)\n[phone.charge(), phone.full, phone.charge()]","return":"[110,true,140]"}
++{"id":"synth-90-0006","description":"A queue is drained into batches by a repeat-until loop inside a while loop","code":"queue = [3, 1, 4, 1, 5, 9, 2]\nbatches = []\nwhile queue.length > 0:\n    batch = []\n    repeat: batch.push(queue.shift())\n    until batch.length == 3 || queue.length == 0\n    batches.push(batch)\nbatches","return":"[[3,1,4],[1,5,9],[2]]"}
++{"id":"synth-90-0007","description":"A quantified condition waits until every sensor has warmed up","code":"sensors = [12, 15, 9]\nticks = 0\nrepeat:\n    sensors = sensors.map(t -> t + 4)\n    ticks = ticks + 1\nuntil all t in sensors: t >= 20\n[sensors, ticks]","return":"[[24,27,21],3]"}
++{"id":"synth-90-0008","description":"A conditional expression in the condition picks the stopping distance","code":"fast = false\ndistance = 0\nrepeat: distance = distance + 7\nuntil fast ? distance >= 10 : distance >= 30\ndistance","return":"35"}
++{"id":"synth-90-0009","description":"A failed iteration rolls back every step the loop already took","code":"class Tank(volume):\n    this.volume = volume\nif $Tank.volume > 100:\n    throw \"OVERFLOW\"\ntank = Tank(70)\ntry:\n    repeat: tank.volume = tank.volume + 20\n    until tank.volume >= 150\ncatch error:\n    failure = error\n[failure, tank.volume]","return":"[\"OVERFLOW\",70]"}
++{"id":"synth-90-0010","description":"A loop adds buses until a derived count covers the riders and never runs again","code":"class Bus(route):\n    this.route = route\nriders = 95\nbuses = Bus.filter(bus -> bus.route == \"A\").length\nrepeat: Bus(\"A\")\nuntil buses * 40 >= riders\nriders = 200\n[buses, Bus.length]","return":"[3,3]"}
++{"id":"synth-90-0011","description":"Reading .value in the condition tests the current value at every step","code":"level = 1\ndoubled = level * 2\nrepeat: level = level + 1\nuntil doubled.value > 7\n[level, doubled]","return":"[4,8]"}
++{"id":"synth-90-0012","description":"A blank line and a comment line may stand between the body and until","code":"word = \"ab\"\nrepeat:\n    word = word + word\n\n# keep doubling until the word is long enough\nuntil word.length >= 16\nword.length","return":"16"}
+```
+
+**File**: `docs/README.md` (modified, +53/-1)
+```diff
+@@ -1795,7 +1795,8 @@ assert(signal.output, 8)
+ - `all` and `any` quantifiers test each member's condition the same way; see
+   [Quantifiers](#quantifiers).
+ - A `while` loop tests its condition the same way before every iteration; see
+-  [while](#while).
++  [while](#while). A repeat-until loop tests its condition the same way after
++  every iteration; see [repeat until](#repeat-until).
+ 
+ ```
+ if $Device.profile:
+@@ -1981,6 +1982,50 @@ savings.balance
+ 
+ Normative detail: [count-controlled repeat loops](../nucleoid.spec.md#count-controlled-repeat-loops).
+ 
++### repeat until
++
++```
++days = [1, 2, 4, 5]
++today = 2
++open = days.includes(today)
++repeat: today += 1
++until open
++assert([today, open], [4, true])
++days.push(3)
++today
++```
++
++- This is the complete
++  `Nucleoid repeats statements until a condition holds` program in
++  `tests/reference.md`, without its title and expected-return metadata; it
++  returns `4`. Day 2 is already an opening day, yet the loop moves on to the
++  next one, day 4, and opening on day 3 later does not run the loop again.
++- `repeat:` followed by a body and then `until <condition>` on its own line
++  after the body, at the indentation of `repeat`, runs the body until the
++  condition holds, under [NUC 126](nuc-0126.md). The body is an indented
++  block, or statements on the same line separated by `;`. Only blank and
++  comment lines may stand between the body and `until`.
++- The condition is tested after every iteration with the truthiness of `if`,
++  so the body always runs at least once, also when the condition already
++  holds, where a `while` loop would run no iteration.
++- The body runs as a `while` body does: once per iteration, imperatively, in
++  the enclosing scope, with no scope frame and no loop variable. `return`
++  leaves the enclosing function, as from a `while` body, without testing the
++  condition.
++- The loop runs once, like `while`: nothing is filed in the graph, and the
++  loop does not run again when its inputs change later.
++- Each run of a loop runs its body at most 100,000 times: a condition that is
++  still falsy then raises `TypeError("Loop did not terminate")` and the
++  transaction rolls back.
++- `repeat` and `until` are not reserved. `repeat: NAME` before a line end or
++  `;` stays the typed declaration, so a same-line body cannot start with one
++  bare name, and `repeat COUNT:` loops, the string method `"ab".repeat(2)`,
++  and names, calls and properties named `repeat` or `until` keep working, as
++  does `until X` outside a loop. A `repeat:` body that no `until` line follows
++  raises `SyntaxError("Expected 'until' after 'repeat'")`.
++
++Normative detail: [exit-controlled repeat-until loops](../nucleoid.spec.md#exit-controlled-repeat-until-loops).
++
+ ---
+ 
+ ## 9. Functions
+@@ -5121,6 +5166,7 @@ Messages are exact and are part of the observable behaviour of the language.
+ | Repeated string output is too large to represent or allocate | `Repeated string is too large` |
+ | Padded string output of `padStart` or `padEnd` is too large to represent or allocate | `Padded string is too large` |
+ | A `while` loop whose condition still holds after 100,000 iterations of one run | `Loop did not terminate` |
++| A repeat-until loop whose condition is still falsy after 100,000 iterations of one run | `Loop did not terminate` |
+ | A `repeat` loop whose count converts to more than 100,000, `Infinity` included, raised before the first iteration | `Repeat count is too large` |
+ | An undeclared constructor label | `Unknown constructor argument '<name>' for <class>` |
+ | A repeated constructor binding, including positional plus named | `Duplicate constructor argument '<name>' for <class>` |
+@@ -5154,6 +5200,7 @@ Messages are exact and are part of the observable behaviour of the language.
+ | An `extends` clause whose parent is missing or not a name | `Expected a parent class name but found <what>` |
+ | A second parent after `class Name extends Parent:` | `Class '<Name>' already extends '<Parent>'` |
+ | A list comprehension whose name is not followed by `in` or `of` | `Expected 'in' or 'of' but found <what>` |
++| A `repeat:` body that no `until` line follows at the indentation of `repeat` | `Expected 'until' after 'repeat'` |
+ 
+ ### Where an error happened
+ 
+@@ -5296,6 +5343,11 @@ while condition: statement             same loop with a same-line body
+ repeat count:                          run the body count times; count is read once (NUC 115)
+     statement
+ repeat count: statement                same loop with a same-line body
++repeat:                                run the body, then again until the condition holds (NUC 126)
++    statement
++until condition
++repeat: statement                      same loop with a same-line body
++until condition
+ 
+ value => expression                    anonymous arrow; also (a, b) => expression
+ value => { statement }                 anonymous arrow with a statement body
+```
+
+**File**: `docs/examples.md` (modified, +36/-0)
+```diff
+@@ -4256,6 +4256,42 @@ heart.rows.push("#....")
+   `....#` and breaks the heart's symmetry. See [NUC 125](nuc-0125.md) and the
+   [root contract](../nucleoid.spec.md#stepped-slices).
+ 
++## Repeat-until loops
++
++**Repeat-until loops give every ferry enough lifeboats**
++
++```nuc
++class Lifeboat(ferry):
++    this.ferry = ferry
++    this.seats = 20
++class Ferry(passengers):
++    this.passengers = passengers
++    this.crew = 0
++    def equip():
++        repeat: Lifeboat(this); this.crew += 2
++        until this.safe
++$Ferry.seats = Lifeboat.filter(boat -> boat.ferry == $Ferry).sum(boat -> boat.seats)
++$Ferry.safe = $Ferry.seats >= $Ferry.passengers + $Ferry.crew
++big = Ferry(50)
++dinghy = Ferry(0)
++big.equip()
++dinghy.equip()
++assert([big.crew, dinghy.crew, Lifeboat.length], [6, 2, 4])
++big.passengers = 60
++[big.seats, big.safe, dinghy.safe]
++# return: [60,false,true]
++```
++
++- Each ferry's `equip` method launches lifeboats until the class-level rule
++  `safe` holds: the seats must cover the passengers and the crew, and every
++  lifeboat brings two more crew. The body runs before the test, so even the
++  dinghy, which carries no passengers, gets one lifeboat and its crew, where a
++  `while` loop would launch none.
++- The rules stay live after the loop: when more passengers board the big
++  ferry, `safe` turns false, and the loop in `equip` does not run again until
++  the method is called. See [NUC 126](nuc-0126.md) and the
++  [root contract](../nucleoid.spec.md#exit-controlled-repeat-until-loops).
++
+ ## Reactive list flattening
+ 
+ **Flattening keeps the dirty tiles of every room counted**
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
+```diff
+@@ -99,7 +99,7 @@ Created: 31-Jul-2026
+ | [90](nuc-0090.md) | Enum Declarations | Accepted |
+ | [115](nuc-0115.md) | Count-Controlled Repeat Loops | Accepted |
+ | [119](nuc-0119.md) | Finally Clauses for Try Statements | Accepted |
+-| [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Draft |
++| [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Accepted |
+ 
+ ### Utility enhancement
+ 
+@@ -308,7 +308,7 @@ Created: 31-Jul-2026
+ | [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Accepted |
+ | [124](nuc-0124.md) | List and Population Quantiles | Standards Track | Utility enhancement | Accepted |
  | [125](nuc-0125.md) | Stepped Slices | Standards Track | Syntax enhancement | Accepted |
- | [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Standards Track | Runtime features | Draft |
+-| [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Standards Track | Runtime features | Draft |
++| [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Standards Track | Runtime features | Accepted |
  | [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Standards Track | Syntax enhancement | Draft |
-+| [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
- 
- ## Copyright
+ | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
  
 ```
 
-**File**: `docs/nuc-0128.md` (added, +95/-0)
+**File**: `docs/nucleoid.g4` (modified, +22/-1)
 ```diff
-@@ -0,0 +1,95 @@
-+# NUC 128 -- Origins and Outcomes of Reasoning Selections
-+
-+```
-+NUC: 128
-+Title: Origins and Outcomes of Reasoning Selections
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Reasoning enhancement
-+Created: 21-Nov-2026
-+Requires: 48, 82, 83, 88, 106, 112, 120, 121
-+```
-+
-+## Abstract
-+
-+- Adds two pipeline stages that keep the steps at the two ends of a
-+  reasoning selection. `SELECTION |> origins` keeps the steps of
-+  `SELECTION` that rest on no other step of it, and
-+  `SELECTION |> outcomes` keeps the steps that no other step of it rests
-+  on. Both keep the steps they keep in their order and with their `node`,
-+  `holds`, `rule`, `state` and `from` fields unchanged, and drop the
-+  others.
-+- So `price |> affects |> outcomes` selects where a change of the price
-+  ends, the steps it reaches that no other step it reaches is computed
-+  from, and `price |> affects |> origins` where the change enters.
-+  `total |> why |> origins` selects what a total starts from, and
-+  `model |> origins` and `model |> outcomes` select the model's starting
-+  points and its final results.
-+- A step rests on another when it depends on it, directly or through nodes
-+  that need not be selected, along the edges that `why` and `path` follow,
-+  through no reasoning observer. So `S |> origins` is the accepted
-+  `S |> except(S |> affects)`, and over a selection that `affects`, `why` or
-+  `model` produced, `S |> outcomes` keeps the steps whose node no step's
-+  `from` names.
-+- Both are filters, as `stated` and `derived` are: the result is a
-+  selection, so further stages apply, and the kept steps keep the direction
-+  of the most recent walk and their distances.
-+- At the accepted revision each pipeline with either stage raises the
-+  parse-time `TypeError("origins is not an operation")` or
-+  `TypeError("outcomes is not an operation")`. Only those programs change.
-+  Both names stay ordinary everywhere else, as variables, functions,
-+  properties or object keys, and a binding of either name shadows its
-+  stage, as bindings shadow the other stages. No keyword, token or error
-+  type is added.
-+
-+## Motivation
-+
-+- World models ask where a change ends and what a result starts from. In
-+  an invoice, a change of the price reaches the subtotal, the tax and the
-+  total, but only the total is a result, a value that nothing else is
-+  computed from, and the subtotal is where the change enters. `affects`
-+  selects every step a change reaches and `why` every step a value follows
-+  from, in walk order, and no stage picks out their ends.
-+- The starts are spelled with the selection twice:
-+  `starts = price |> affects |> except(price |> affects |> affects)` is 14
-+  lexer tokens where `starts = price |> affects |> origins` is 7.
-+- The ends have no spelling in stages. `affects` never selects its input
-+  steps, so subtracting `S |> affects` finds the starts, but `why` keeps
-+  them, so the same subtraction over `why` drops every step. Over an
-+  `affects` selection the ends are spelled with a filter and a quantifier
-+  over each step's `from`:
-+  `ends = (affects price).filter(s -> not any t in (affects price): s.node in t.from)`
-+  is 28 tokens where `ends = price |> affects |> outcomes` is 7.
-+- That spelling gives a list, not a selection, so a stage after it raises
-+  `TypeError("Cannot explain price|>affects.filter(function())")`. And
-+  `from` names only direct inputs, so over
-+  `total |> why |> except(subtotal)` the filter keeps the price and the
-+  quantity, which the total rests on through the dropped subtotal.
-+- In logic these are the premises an argument starts from and the
-+  conclusions it ends at; in a dataflow graph, its sources and sinks. A
-+  stage for each lets a model report its inputs and its results in one
-+  pipeline that reads left to right.
-+
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Specification
-+
-+- Pending: the proposer completes this section.
-+
-+## Errors
-+
-+- Pending: the proposer completes this section.
-+
-+## Reference Implementation
-+
-+- Pending: the proposer completes this section.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
-```
-
----
-
-### Incident Patch 2: `e986cacd` (2026-11-21)
-**Commit Message**: Change test input matrix separation parameter
-
-Pass 0 instead of 1 as the final argument to Matrix.separate in the visualizer.
-
-**File**: `arc/src/visualizer.ts` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@ import * as nucleoid from "./lib/nucleoid";
- export async function instances({ train, test_input_matrix }) {
-   milestone.segmenting_test_input({ test_input_matrix });
+@@ -103,10 +103,12 @@ block
+ // Statements need no separator where the preceding production ends.
+ // At statement start, '{' is a block or pattern, never an object literal.
+ // Destructuring, whileStmt and repeatStmt are tentative; other recognized
+-// statement headers commit even if a later token fails to match.
++// statement headers commit even if a later token fails to match, as
++// repeatUntilStmt commits at 'REPEAT COLON' outside a typeDeclaration.
+ statement
+     : destructuring
+     | whileStmt
++    | repeatUntilStmt
+     | repeatStmt
+     | enumStmt
+     | ifStmt
+@@ -309,6 +311,23 @@ repeatStmt
+     : REPEAT clauseExpression suite     // Stmt::Repeat
+     ;
  
--  const partial_matrices = Matrix.separate(test_input_matrix, 8, false, 1);
-+  const partial_matrices = Matrix.separate(test_input_matrix, 8, false, 0);
-   const partial_instances = [];
++// REPEAT COLON starts a repeatUntilStmt, except where a typeDeclaration
++// 'REPEAT COLON name' stands before NEWLINE, ';', DEDENT or EOF, which keeps
++// its reading. UNTIL starts the logical line after the body, at the
++// repeatUntilStmt's layout level: only NEWLINEs follow the body, and the
++// token before UNTIL is the NEWLINE that ends an inline suite or the DEDENT
++// that closes an indented block, so the UNTIL line after an inline suite
++// nested in another inline suite closes the innermost one. UNTIL on the
++// body's line, after ';', or inside '(' and '[', which suppress layout,
++// keeps its name reading, and the statement fails with
++// SyntaxError("Expected 'until' after 'repeat'") where UNTIL should stand.
++// The condition must be followed by NEWLINE, ';', DEDENT, EOF or the '}' that
++// closes an enclosing block, which the loop leaves to that block, as
++// returnStmt does.
++repeatUntilStmt
++    : REPEAT suite NEWLINE* UNTIL clauseExpression  // Stmt::RepeatUntil
++    ;
++
+ // Without finallyClause a tryStmt is Stmt::Try, with it Stmt::TryFinally.
+ tryStmt
+     : TRY body lineSeparator* (catchClause | exceptClause) finallyClause?
+@@ -924,6 +943,7 @@ enumName
+     : NAME
+     | WHILE
+     | REPEAT
++    | UNTIL
+     | FINALLY
+     | ENUM
+     | EXTENDS
+@@ -1013,6 +1033,7 @@ TYPEOF           : 'typeof';
  
-   for (const partial_matrix of partial_matrices) {
+ WHILE            : 'while';
+ REPEAT           : 'repeat';
++UNTIL            : 'until';
+ FINALLY          : 'finally';
+ ENUM             : 'enum';
+ EXTENDS          : 'extends';
 ```
 
 #### Recent Merged Pull Requests:
@@ -1757,22 +1943,51 @@ Pass 0 instead of 1 as the final argument to Matrix.separate in the visualizer.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 128 Origins and Outcomes of Reasoning Selections
+## X. NUC 126 Exit-Controlled Repeat-Until Loops
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `23b93c48`: Draft NUC 128 Origins and Outcomes of Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba7507c1`: NUC 126 Exit-Controlled Repeat-Until Loops. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Draft |
-| [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+## Repeat-until loops
+
+**Repeat-until loops move a lift to the next call**
+
+```nuc
+class Lift(floor):
+    this.floor = floor
+lift = Lift(1)
+calls = [1, 4, 6]
+stopped = calls.includes(lift.floor)
+repeat: lift.floor += 1
+until stopped
+assert(lift.floor, 4)
+calls.push(2)
+assert([lift.floor, stopped], [4, true])
+```
+
+- [NUC 126](docs/nuc-0126.md) adds `repeat:` with an indented or same-line
+  body, followed by `until CONDITION` on its own line after the body: the
+  exit-controlled sibling of `while`. The body runs first, and the condition
+  is tested after every iteration with the truthiness of `if`, so the body
+  always runs at least once.
+- The lift waits at a call on floor 1, so `stopped` already holds, yet the
+  loop moves it on: one floor at a time, until `stopped`, a standing rule
+  that follows every move, holds again at floor 4. A `while not stopped:`
+  loop would not move it at all. The loop runs once, imperatively: it leaves
+  no standing rule and does not run again when a new call arrives. A loop
+  still unfinished after 100,000 iterations raises
+  `TypeError("Loop did not terminate")` and rolls back, and `repeat` and
+  `until` stay ordinary names everywhere else. See the
+  
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1782,7 +1997,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `23b93c48` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba7507c1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

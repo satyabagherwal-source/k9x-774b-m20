@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T20:52:09.590Z",
+  "last_updated": "2026-11-21T21:04:50.896Z",
   "directives": [
     {
       "id": "CD-001",
@@ -39760,11 +39760,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-KTVF",
+      "id": "CD-CDSD",
       "directive_title": "benchmarks): report Gold coverage across retrieval stages",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-KTVF-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-CDSD-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-21",
@@ -43671,6 +43671,35 @@
       "source_repo": "vcaesar-riot",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-39E4FA-empirical-invariant-guard-in-readme-md.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-CD1F",
+      "directive_title": "NUC 126 Exit-Controlled Repeat-Until Loops",
+      "source_repo": "nucleoidai-nucleoid-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CD1F-nuc-126-exit-controlled-repeat-until-loops.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-814D26",
+      "directive_title": "NUC 126 Exit-Controlled Repeat-Until Loops",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-814D26-nuc-126-exit-controlled-repeat-until-loo.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-901A54",
+      "directive_title": "benchmarks): report Gold coverage across retrieval stages",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-901A54-benchmarks-report-gold-coverage-across-r.md",
       "staged_date": "2026-11-21"
     }
   ]

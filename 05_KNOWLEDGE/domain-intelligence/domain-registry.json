@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T20:52:09.826Z",
+  "last_updated": "2026-11-21T21:04:51.058Z",
   "total_records": 2278,
   "domains": {
     "A": {
@@ -8048,8 +8048,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "78f763cd6a34c0eb316e9a24a7dd2e8caa25ec2e03c403a441b2857cbbfef6a1",
-      "created_at": "2026-11-21T16:31:28.981Z"
+      "content_hash": "eabdb347287e3245d243b35d006c6ac4ea54fbf6db7414a2cbb5b71051e12ca8",
+      "created_at": "2026-11-21T21:04:51.058Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -15357,8 +15357,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "cede166fe9e7b5ac40f2ebe2985028e14dc1d63cee822b0b44a0e11023e44136",
-      "created_at": "2026-11-21T18:52:24.795Z"
+      "content_hash": "89b9207c751da969cf7c9cd8c29f11ff97f7cf1a1dfb70de60a7c2e160c5d62d",
+      "created_at": "2026-11-21T21:04:46.089Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15807,8 +15807,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "d16f83ce07db53748fbc3da9b867d257ab227acd59031534bf380f4326a54428",
-      "created_at": "2026-11-21T18:52:29.573Z"
+      "content_hash": "0407704c09bb0207863413182f8888acb7af311becc1f7849f8af593252c508f",
+      "created_at": "2026-11-21T21:04:50.087Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -21866,8 +21866,8 @@
       "title": "Research & Knowledge Intelligence: mistralai/Mistral-Large-4-1T-A52B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mistralai-mistral-large-4-1t-a52b-research-knowledge-intelligence-mistralai-m.md",
       "repository": "mistralai/Mistral-Large-4-1T-A52B",
-      "content_hash": "093c2528bb5ddeff3678ad9c2aeb0dea7ee962640135649e5b398b071d6eba6a",
-      "created_at": "2026-11-15T17:22:41.173Z"
+      "content_hash": "8e12f87f7bb560a009c6146be278951dba2f056fd9e6f377fabb4563765ab3ef",
+      "created_at": "2026-11-21T21:04:30.205Z"
     },
     "DOM-D-BBC8733A": {
       "record_id": "DOM-D-BBC8733A",
@@ -21917,8 +21917,8 @@
       "title": "Research & Knowledge Intelligence: hf-mistralai-mistral-large-4-1t-a52b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mistralai-mistral-large-4-1t-a52b-learnings-research-knowledge-intelligence-h.md",
       "repository": "hf-mistralai-mistral-large-4-1t-a52b-learnings",
-      "content_hash": "0ef78c7e9d99aa295092ca3acb2f39307f3d7ce9a5fc067b2d4ae98c053c09eb",
-      "created_at": "2026-11-15T17:23:18.613Z"
+      "content_hash": "22b2d101c2531e106ffa31fe13fbb507c9cbb36032c7b2174733b227df870897",
+      "created_at": "2026-11-21T21:04:49.298Z"
     },
     "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-core-invariants",
