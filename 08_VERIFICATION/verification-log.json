@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-VHUF",
-    "timestamp": "2026-11-19T05:24:35.223Z",
-    "repository": "RediSearch/RediSearch",
-    "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "3b14c6b4046320e52930e38272dd30b35ae69987e704ac610be76b8aefd49d61",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-IDSN",
-    "timestamp": "2026-11-19T05:42:23.063Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "a66f6eaa3dd3b4e14ac565715bb233fa833facd19ba0550efab04d5cb3bb6058",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-IGYZ",
-    "timestamp": "2026-11-19T05:42:27.179Z",
-    "repository": "dragonflydb/dragonfly",
-    "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "0b600998c97f7519d42d4d1b82ff0c1bd0fa9db712f29036a2d278d2e6e36b16",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-OM0T",
-    "timestamp": "2026-11-19T05:47:13.661Z",
-    "repository": "mudler/locate-anything.cpp-gguf",
-    "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-    "contentHash": "b889c27d8916264c5119328c709082f16a4637df30640009270a02ee76b715ca",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-Y8HX",
     "timestamp": "2026-11-19T05:54:42.693Z",
     "repository": "jialinyyzz/humanizer",
@@ -7492,6 +7432,66 @@
     "contentHash": "b58d79bf7cab66b92cdd4e282cbd81f6fd45ae2ef4e2e02fbae5c950a3b0f2f0",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-458P",
+    "timestamp": "2026-11-21T11:38:34.249Z",
+    "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+    "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
+    "contentHash": "8b666adc88ea44ff87e8818360145996ad8b4508bd7253fe66a6b8d478bb9b73",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-48V9",
+    "timestamp": "2026-11-21T11:38:38.949Z",
+    "repository": "laurent22/joplin",
+    "learningId": "learn-github-laurent22-joplin",
+    "contentHash": "16981e5f8cae9ee64ed5c4602d9f4bebdbc2bda8075cfe7d5fc97fd677ab8790",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-4B43",
+    "timestamp": "2026-11-21T11:38:41.859Z",
+    "repository": "argoproj/argo-workflows",
+    "learningId": "learn-github-argoproj-argo-workflows",
+    "contentHash": "a6b33cf462f3fc05be918958fedd3d39a95d94eb7b57de4b9654e3afaf1d7734",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-4EUV",
+    "timestamp": "2026-11-21T11:38:46.711Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "be099813a8bb20e468b0d79ed97d8dc427af04ef516b8a256f8591d5018d1025",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

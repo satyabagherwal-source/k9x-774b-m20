@@ -11808,3 +11808,7 @@ Every entry in this ledger must capture:
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `3f58d752` | Multi-dimensional audit evidence | 2026-11-21T11:11:43.141Z |
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `ad139302` | Multi-dimensional audit evidence | 2026-11-21T11:16:31.622Z |
 | `learn-huggingface-reflection-beam-1-0-501b-a23b` | `https://huggingface.co/reflection/Beam-1.0-501B-A23B` | `hf-reflect` | Multi-dimensional audit evidence | 2026-11-21T11:16:47.671Z |
+| `learn-huggingface-lodestones-moss-image-sft-8-steps-dmd` | `https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-11-21T11:38:34.254Z |
+| `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `268fd6f1` | Multi-dimensional audit evidence | 2026-11-21T11:38:38.954Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `e651c727` | Multi-dimensional audit evidence | 2026-11-21T11:38:41.864Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `6276e6f3` | Multi-dimensional audit evidence | 2026-11-21T11:38:46.716Z |

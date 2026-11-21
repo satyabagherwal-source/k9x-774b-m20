@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T11:16:52.042Z",
+  "updated_at": "2026-11-21T11:38:50.979Z",
   "stats": {
-    "total_discovered": 7085,
-    "approved_pending_harvest": 6690,
+    "total_discovered": 7088,
+    "approved_pending_harvest": 6693,
     "harvested_count": 0,
     "rejected_count": 395,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6674,
+      "COMMUNITY_AND_EXPERT": 6677,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -153128,6 +153128,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
         "fileName": "appwrite-appwrite-learnings.md"
+      }
+    },
+    "SRC-3F8E635CD8AC": {
+      "id": "SRC-3F8E635CD8AC",
+      "url": "https://github.com/laurent22/joplin/blob/655f31e87eda13464c692e9b6e7877ccfa4e31db/packages/app-mobile/components/screens/Note/Note.test.tsx",
+      "title": "https://github.com/laurent22/joplin/blob/655f31e87eda13464c692e9b6e7877ccfa4e31db/packages/app-mobile/components/screens/Note/Note.test.tsx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T11:38:50.859Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
+        "fileName": "laurent22-joplin-learnings.md"
+      }
+    },
+    "SRC-89589B3A85FD": {
+      "id": "SRC-89589B3A85FD",
+      "url": "https://github.com/laurent22/joplin/blob/dev/packages/app-mobile/components/testing/TestProviderStack.tsx",
+      "title": "https://github.com/laurent22/joplin/blob/dev/packages/app-mobile/components/testing/TestProviderStack.tsx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T11:38:50.917Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
+        "fileName": "laurent22-joplin-learnings.md"
+      }
+    },
+    "SRC-B240A5F31E6B": {
+      "id": "SRC-B240A5F31E6B",
+      "url": "https://github.com/laurent22/joplin/pull/16932",
+      "title": "https://github.com/laurent22/joplin/pull/16932",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T11:38:50.979Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
+        "fileName": "laurent22-joplin-learnings.md"
       }
     }
   }

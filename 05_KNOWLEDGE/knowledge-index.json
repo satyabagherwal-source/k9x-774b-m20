@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T11:16:52.705Z",
+  "last_updated": "2026-11-21T11:38:52.489Z",
   "total_verified_learnings": 9059,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23056,
+  "total_items": 23062,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114621,10 +114621,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-laurent22-joplin-technical-construction-intelligence-laurent22-joplin-core-invar.md",
       "title": "Technical Construction Intelligence: laurent22/joplin Core Invariants",
       "repository": "laurent22/joplin",
-      "source_version": "a96f8bd5",
-      "content_hash": "a9ab7d2a80195c814641f04b6a715d0df687e94ae112405e897099f3ebd3d5a0",
+      "source_version": "268fd6f1",
+      "content_hash": "02f9c5a8263eabfaae43eefcd68ae9ad679c53f412e2a9431254f880c3abb617",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T10:32:35.180Z"
+      "persisted_at": "2026-11-21T11:38:39.415Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin",
@@ -114633,10 +114633,10 @@
       "relative_path": "08_VERIFICATION/laurent22-joplin-verification-protocol-empirical-defect-shield-for-laurent22-jop.md",
       "title": "Verification Protocol: Empirical Defect Shield for laurent22/joplin",
       "repository": "laurent22/joplin",
-      "source_version": "a96f8bd5",
-      "content_hash": "a05949e964987b1f9a45f775275243a9003d614136da1fc6eebacc95885df6c1",
+      "source_version": "268fd6f1",
+      "content_hash": "b608b1ff32262683ebfecf215a7e80300a2dc2cae1940d17ba04752235d43761",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T10:32:35.329Z"
+      "persisted_at": "2026-11-21T11:38:39.606Z"
     },
     "candidate_directive-test-a-lost-virtualtime-wakeup-and-drive_on_threads-advancing-over-busy-worker": {
       "item_id": "candidate_directive-test-a-lost-virtualtime-wakeup-and-drive_on_threads-advancing-over-busy-worker",
@@ -114730,9 +114730,9 @@
       "title": "Technical Construction Intelligence: laurent22-joplin-learnings Core Invariants",
       "repository": "laurent22-joplin-learnings",
       "source_version": "HEAD",
-      "content_hash": "2e84a9dbaf7e385430903031fb7d99883801b96a4131636220e253dd472b25a7",
+      "content_hash": "41bff71b431dcb643850811f69bd1eae17427850c8213a47fa418b5aa979bb58",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T10:32:40.077Z"
+      "persisted_at": "2026-11-21T11:38:51.439Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin-learnings",
@@ -114742,9 +114742,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for laurent22-joplin-learnings",
       "repository": "laurent22-joplin-learnings",
       "source_version": "HEAD",
-      "content_hash": "aa1a362d1636011199a4baa774a4b1aa8ac62cfa22866e0681252bd72ab5a7b2",
+      "content_hash": "10f3fe3dee43380ed8d992f5adf914c1db46c797aed8fe0c3b372b3a90cff803",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T10:32:40.225Z"
+      "persisted_at": "2026-11-21T11:38:51.630Z"
     },
     "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian": {
       "item_id": "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian",
@@ -212389,8 +212389,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "4d269b9a",
-      "content_hash": "da195534629cdcee6c732017d8081af8cb24fd8c6eb0d8828efc35eba1cac2b9",
+      "source_version": "e651c727",
+      "content_hash": "a6b33cf462f3fc05be918958fedd3d39a95d94eb7b57de4b9654e3afaf1d7734",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -212418,6 +212418,11 @@
           "number": 9530,
           "title": "do not change the workflow defaults in MergeTo. Fixes #17384",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9771,
+          "title": "test(controller): move fourth slice of operator fixtures into testdata",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212425,7 +212430,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T06:45:17.286Z",
+      "verified_at": "2026-11-21T11:38:41.623Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212467,10 +212472,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-human-need-intelligence-argoproj-argo-workflows-core-inv.md",
       "title": "Human & Need Intelligence: argoproj/argo-workflows Core Invariants",
       "repository": "argoproj/argo-workflows",
-      "source_version": "4d269b9a",
-      "content_hash": "49230b0cc875c7d25edc66c8af73284191dc55c6e27487e6e2b38d30d3dbf979",
+      "source_version": "e651c727",
+      "content_hash": "057d9370df78e139aa6b156e8c5a784d0008223604601f9a70285dd4faa18725",
       "domain_letter": "A",
-      "persisted_at": "2026-11-20T06:45:17.864Z"
+      "persisted_at": "2026-11-21T11:38:42.340Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows",
@@ -212479,10 +212484,10 @@
       "relative_path": "08_VERIFICATION/argoproj-argo-workflows-verification-protocol-empirical-defect-shield-for-argopr.md",
       "title": "Verification Protocol: Empirical Defect Shield for argoproj/argo-workflows",
       "repository": "argoproj/argo-workflows",
-      "source_version": "4d269b9a",
-      "content_hash": "22d4fee059f60ad82745b96c5ac2c41b8fde8077f2d4e2e5ddde47f659c1c802",
+      "source_version": "e651c727",
+      "content_hash": "1ac353662af4086530aff7e11e66fef9bcfd4e0f5b453fb63f48252019c25aff",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T06:45:18.022Z"
+      "persisted_at": "2026-11-21T11:38:42.549Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants",
@@ -212516,9 +212521,9 @@
       "title": "Human & Need Intelligence: argoproj-argo-workflows-learnings Core Invariants",
       "repository": "argoproj-argo-workflows-learnings",
       "source_version": "HEAD",
-      "content_hash": "c41d26aaeafdbfef239ce348f4d80dc8adc308dfbe5ad4719aa2cf79de5e995a",
+      "content_hash": "32c17107da6a19f53d7e02fff8a839e69abfdae191f1daac1ebd57351fa0d0ad",
       "domain_letter": "A",
-      "persisted_at": "2026-11-20T06:46:05.081Z"
+      "persisted_at": "2026-11-21T11:38:52.288Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows-learni",
@@ -212528,9 +212533,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for argoproj-argo-workflows-learnings",
       "repository": "argoproj-argo-workflows-learnings",
       "source_version": "HEAD",
-      "content_hash": "983aab025e7fdecdf8bbe4df71227910bf04915883e9af4c0eeb0d13a93b6fdf",
+      "content_hash": "aeb61f17ff3a429080fec9dfb3b7dde80dfb85eab9da5bc88809a789fe105915",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T06:46:05.263Z"
+      "persisted_at": "2026-11-21T11:38:52.489Z"
     },
     "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
@@ -232309,8 +232314,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "828a810e",
-      "content_hash": "047f275e4387c006e87343c72d8c85355c27c22be01d4c80dc2a0a05d241ec14",
+      "source_version": "6276e6f3",
+      "content_hash": "be099813a8bb20e468b0d79ed97d8dc427af04ef516b8a256f8591d5018d1025",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -232348,6 +232353,11 @@
           "number": 9519,
           "title": "Empirical Invariant Guard in RefactoredTraverserCache.cpp",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9772,
+          "title": "Empirical Invariant Guard in User.cpp",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232355,7 +232365,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T05:37:02.451Z",
+      "verified_at": "2026-11-21T11:38:46.469Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232397,10 +232407,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-technical-construction-intelligence-arangodb-arangodb-core-inv.md",
       "title": "Technical Construction Intelligence: arangodb/arangodb Core Invariants",
       "repository": "arangodb/arangodb",
-      "source_version": "828a810e",
-      "content_hash": "f75705d6f8464f4d85d0d7c263fb485db62e105ba89db22447aa07c3b739fa28",
+      "source_version": "6276e6f3",
+      "content_hash": "4512afe82aaec654217c86d1184bd05f0f4695a778303194fcc720b625750545",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T05:37:03.016Z"
+      "persisted_at": "2026-11-21T11:38:47.181Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb",
@@ -232409,10 +232419,10 @@
       "relative_path": "08_VERIFICATION/arangodb-arangodb-verification-protocol-empirical-defect-shield-for-arangodb-ara.md",
       "title": "Verification Protocol: Empirical Defect Shield for arangodb/arangodb",
       "repository": "arangodb/arangodb",
-      "source_version": "828a810e",
-      "content_hash": "8d1d228193737bbf37492dc32207758e18db990f9483c57c9a91de71c890e07b",
+      "source_version": "6276e6f3",
+      "content_hash": "4810468e3c26cdb3c8948fb0e7792b829c1de9b61761f7fefd83459726b65d3f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T05:37:03.167Z"
+      "persisted_at": "2026-11-21T11:38:47.375Z"
     },
     "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
@@ -270322,14 +270332,19 @@
       "slug": "laurent22-joplin",
       "platform": "github",
       "source_url": "https://github.com/laurent22/joplin",
-      "source_version": "a96f8bd5",
-      "content_hash": "27a43e261a4472e2fa75b956b5c28acc76a5845764a708304eca88270f9cf5c0",
+      "source_version": "268fd6f1",
+      "content_hash": "16981e5f8cae9ee64ed5c4602d9f4bebdbc2bda8075cfe7d5fc97fd677ab8790",
       "dossier_path": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "promoted_rules": [
         {
           "number": 9198,
           "title": "Fix random Jest worker SIGSEGV on Apple Silicon CI",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9770,
+          "title": "Desktop, Mobile, Cli: Security: Disable unencrypted uploads by default when E2EE",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -270338,7 +270353,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T10:32:34.690Z",
+      "verified_at": "2026-11-21T11:38:38.710Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -275522,7 +275537,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
       "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
-      "content_hash": "9803d9f70efa2f151352b8bee2acc5052cc432d3748d5f6256e73463b05f6454",
+      "content_hash": "8b666adc88ea44ff87e8818360145996ad8b4508bd7253fe66a6b8d478bb9b73",
       "dossier_path": "07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
       "promoted_rules": [],
@@ -275531,7 +275546,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T15:51:18.577Z",
+      "verified_at": "2026-11-21T11:38:33.992Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -275548,9 +275563,9 @@
       "title": "Research & Knowledge Intelligence: lodestones/MOSS-Image-SFT-8-steps-dmd Core Invariants",
       "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
       "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
-      "content_hash": "47ba55a465baf07bcbda0f0dc24021fdaf73cfc3e80bf059f92ac2e1225db4f7",
+      "content_hash": "2fe6a1e4a61b932646dda69591567096596205f1c4e089c84bb0fab0841de50e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T15:51:18.981Z"
+      "persisted_at": "2026-11-21T11:38:34.517Z"
     },
     "rule-8991": {
       "learning_id": "rule-8991",
@@ -275636,9 +275651,9 @@
       "title": "Research & Knowledge Intelligence: hf-lodestones-moss-image-sft-8-steps-dmd-learnings Core Invariants",
       "repository": "hf-lodestones-moss-image-sft-8-steps-dmd-learnings",
       "source_version": "HEAD",
-      "content_hash": "8a4b0464fdce060eaa25fdf6116fc51e0ce2db5a3b39a2917be1baf11c69168a",
+      "content_hash": "3bb8e96c00cfd18fb60f747b4802c5470ef1f96e3c672fbdbd915e5efef90472",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T15:51:40.826Z"
+      "persisted_at": "2026-11-21T11:38:50.539Z"
     },
     "agent_contract-agent-contract-freenet-freenet-core-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-freenet-freenet-core-learnings-autonomous-specialist-persona",
@@ -313184,6 +313199,84 @@
       "content_hash": "1f1a0cab841f231cba292abe4aee0969c17481df9c0f88b2f35ebf6de5e06104",
       "domain_letter": "L",
       "persisted_at": "2026-11-21T11:16:52.568Z"
+    },
+    "rule-9770": {
+      "learning_id": "rule-9770",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9770,
+      "title": "Desktop, Mobile, Cli: Security: Disable unencrypted uploads by default when E2EE",
+      "source_url": "https://github.com/laurent22/joplin",
+      "source_version": "268fd6f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T11:38:38.710Z"
+    },
+    "candidate_directive-desktop-mobile-cli-security-disable-unencrypted-uploads-by-default-when-e2ee": {
+      "item_id": "candidate_directive-desktop-mobile-cli-security-disable-unencrypted-uploads-by-default-when-e2ee",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4ICM-desktop-mobile-cli-security-disable-unencrypted-uploads-by-default-when-e2ee.md",
+      "title": "Desktop, Mobile, Cli: Security: Disable unencrypted uploads by default when E2EE",
+      "repository": "laurent22-joplin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "239ed2c62dee5ee37546947cc2e63e38dac165080b858f434c845481c5186fcd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T11:38:51.244Z"
+    },
+    "rule-9771": {
+      "learning_id": "rule-9771",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9771,
+      "title": "test(controller): move fourth slice of operator fixtures into testdata",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "e651c727",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T11:38:41.623Z"
+    },
+    "candidate_directive-test-controller-move-fourth-slice-of-operator-fixtures-into-testdata": {
+      "item_id": "candidate_directive-test-controller-move-fourth-slice-of-operator-fixtures-into-testdata",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4J0A-test-controller-move-fourth-slice-of-operator-fixtures-into-testdata.md",
+      "title": "test(controller): move fourth slice of operator fixtures into testdata",
+      "repository": "argoproj-argo-workflows-learnings",
+      "source_version": "HEAD",
+      "content_hash": "20ebefe0b8798f6119abbde5bd4d17d680b47c0c32a083a623e4c49c065d8bdb",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T11:38:52.095Z"
+    },
+    "rule-9772": {
+      "learning_id": "rule-9772",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9772,
+      "title": "Empirical Invariant Guard in User.cpp",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "6276e6f3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T11:38:46.469Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-user-cpp": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-user-cpp",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4F28-empirical-invariant-guard-in-user-cpp.md",
+      "title": "Empirical Invariant Guard in User.cpp",
+      "repository": "arangodb/arangodb",
+      "source_version": "6276e6f3",
+      "content_hash": "682f17e380ddcb9e752396436ef23d8a8f2e874da2534b1de36f0d2bcdbec31c",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-21T11:38:46.982Z"
     }
   },
   "ai-builder-brain": {

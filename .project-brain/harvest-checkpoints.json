@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T11:16:47.679Z",
+  "last_updated": "2026-11-21T11:38:46.727Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7641,14 +7641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arangodb-arangodb",
-      "content_hash": "047f275e4387c006e87343c72d8c85355c27c22be01d4c80dc2a0a05d241ec14",
-      "verified_at": "2026-11-20T05:37:02.669Z",
+      "content_hash": "be099813a8bb20e468b0d79ed97d8dc427af04ef516b8a256f8591d5018d1025",
+      "verified_at": "2026-11-21T11:38:46.726Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T05:37:02.669Z"
+      "last_updated": "2026-11-21T11:38:46.726Z"
     },
     "chakra-ui/ark": {
       "repository": "chakra-ui/ark",
@@ -8991,14 +8991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-workflows",
-      "content_hash": "da195534629cdcee6c732017d8081af8cb24fd8c6eb0d8828efc35eba1cac2b9",
-      "verified_at": "2026-11-20T06:45:17.508Z",
+      "content_hash": "a6b33cf462f3fc05be918958fedd3d39a95d94eb7b57de4b9654e3afaf1d7734",
+      "verified_at": "2026-11-21T11:38:41.874Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T06:45:17.508Z"
+      "last_updated": "2026-11-21T11:38:41.874Z"
     },
     "postgresml/postgresml": {
       "repository": "postgresml/postgresml",
@@ -15486,14 +15486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-laurent22-joplin",
-      "content_hash": "27a43e261a4472e2fa75b956b5c28acc76a5845764a708304eca88270f9cf5c0",
-      "verified_at": "2026-11-18T10:32:34.875Z",
+      "content_hash": "16981e5f8cae9ee64ed5c4602d9f4bebdbc2bda8075cfe7d5fc97fd677ab8790",
+      "verified_at": "2026-11-21T11:38:38.964Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T10:32:34.875Z"
+      "last_updated": "2026-11-21T11:38:38.964Z"
     },
     "appwrite/appwrite": {
       "repository": "appwrite/appwrite",
@@ -15591,14 +15591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-      "content_hash": "9803d9f70efa2f151352b8bee2acc5052cc432d3748d5f6256e73463b05f6454",
-      "verified_at": "2026-11-17T15:51:18.792Z",
+      "content_hash": "8b666adc88ea44ff87e8818360145996ad8b4508bd7253fe66a6b8d478bb9b73",
+      "verified_at": "2026-11-21T11:38:34.265Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T15:51:18.792Z"
+      "last_updated": "2026-11-21T11:38:34.265Z"
     },
     "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter": {
       "repository": "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter",

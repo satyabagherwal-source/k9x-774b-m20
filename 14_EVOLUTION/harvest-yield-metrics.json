@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T11:16:47.676Z",
-  "total_cycles_completed": 11208,
-  "total_learnings_persisted": 11208,
-  "total_rules_promoted": 10568,
+  "last_updated": "2026-11-21T11:38:46.722Z",
+  "total_cycles_completed": 11212,
+  "total_learnings_persisted": 11212,
+  "total_rules_promoted": 10571,
   "history": [
-    {
-      "timestamp": "2026-11-20T14:52:45.735Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T14:52:49.080Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T14:52:51.950Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T15:15:13.369Z",
-      "repository": "webrecorder/pywb",
-      "learningId": "learn-github-webrecorder-pywb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T15:15:16.497Z",
       "repository": "duongductrong/Snapzy",
@@ -1403,6 +1375,34 @@
       "repository": "reflection/Beam-1.0-501B-A23B",
       "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T11:38:34.261Z",
+      "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T11:38:38.960Z",
+      "repository": "laurent22/joplin",
+      "learningId": "learn-github-laurent22-joplin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T11:38:41.870Z",
+      "repository": "argoproj/argo-workflows",
+      "learningId": "learn-github-argoproj-argo-workflows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T11:38:46.722Z",
+      "repository": "arangodb/arangodb",
+      "learningId": "learn-github-arangodb-arangodb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T11:16:52.407Z",
+  "last_updated": "2026-11-21T11:38:52.288Z",
   "total_records": 2244,
   "domains": {
     "A": {
@@ -9601,8 +9601,8 @@
       "title": "Technical Construction Intelligence: laurent22/joplin Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-laurent22-joplin-technical-construction-intelligence-laurent22-joplin-core-invar.md",
       "repository": "laurent22/joplin",
-      "content_hash": "a9ab7d2a80195c814641f04b6a715d0df687e94ae112405e897099f3ebd3d5a0",
-      "created_at": "2026-11-18T10:32:35.180Z"
+      "content_hash": "02f9c5a8263eabfaae43eefcd68ae9ad679c53f412e2a9431254f880c3abb617",
+      "created_at": "2026-11-21T11:38:39.415Z"
     },
     "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-core-invariants",
@@ -9679,8 +9679,8 @@
       "title": "Technical Construction Intelligence: laurent22-joplin-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-laurent22-joplin-learnings-technical-construction-intelligence-laurent22-joplin-.md",
       "repository": "laurent22-joplin-learnings",
-      "content_hash": "2e84a9dbaf7e385430903031fb7d99883801b96a4131636220e253dd472b25a7",
-      "created_at": "2026-11-18T10:32:40.077Z"
+      "content_hash": "41bff71b431dcb643850811f69bd1eae17427850c8213a47fa418b5aa979bb58",
+      "created_at": "2026-11-21T11:38:51.439Z"
     },
     "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian": {
       "record_id": "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian",
@@ -9916,8 +9916,8 @@
       "title": "Human & Need Intelligence: argoproj/argo-workflows Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-human-need-intelligence-argoproj-argo-workflows-core-inv.md",
       "repository": "argoproj/argo-workflows",
-      "content_hash": "49230b0cc875c7d25edc66c8af73284191dc55c6e27487e6e2b38d30d3dbf979",
-      "created_at": "2026-11-20T06:45:17.864Z"
+      "content_hash": "057d9370df78e139aa6b156e8c5a784d0008223604601f9a70285dd4faa18725",
+      "created_at": "2026-11-21T11:38:42.340Z"
     },
     "DOM-D-3A0F1688": {
       "record_id": "DOM-D-3A0F1688",
@@ -9976,8 +9976,8 @@
       "title": "Human & Need Intelligence: argoproj-argo-workflows-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-learnings-human-need-intelligence-argoproj-argo-workflow.md",
       "repository": "argoproj-argo-workflows-learnings",
-      "content_hash": "c41d26aaeafdbfef239ce348f4d80dc8adc308dfbe5ad4719aa2cf79de5e995a",
-      "created_at": "2026-11-20T06:46:05.081Z"
+      "content_hash": "32c17107da6a19f53d7e02fff8a839e69abfdae191f1daac1ebd57351fa0d0ad",
+      "created_at": "2026-11-21T11:38:52.288Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-ggu": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-ggu",
@@ -16397,8 +16397,8 @@
       "title": "Technical Construction Intelligence: arangodb/arangodb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-technical-construction-intelligence-arangodb-arangodb-core-inv.md",
       "repository": "arangodb/arangodb",
-      "content_hash": "f75705d6f8464f4d85d0d7c263fb485db62e105ba89db22447aa07c3b739fa28",
-      "created_at": "2026-11-20T05:37:03.016Z"
+      "content_hash": "4512afe82aaec654217c86d1184bd05f0f4695a778303194fcc720b625750545",
+      "created_at": "2026-11-21T11:38:47.181Z"
     },
     "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
@@ -28098,8 +28098,8 @@
       "title": "Research & Knowledge Intelligence: lodestones/MOSS-Image-SFT-8-steps-dmd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lodestones-moss-image-sft-8-steps-dmd-research-knowledge-intelligence-lodesto.md",
       "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
-      "content_hash": "47ba55a465baf07bcbda0f0dc24021fdaf73cfc3e80bf059f92ac2e1225db4f7",
-      "created_at": "2026-11-17T15:51:18.981Z"
+      "content_hash": "2fe6a1e4a61b932646dda69591567096596205f1c4e089c84bb0fab0841de50e",
+      "created_at": "2026-11-21T11:38:34.517Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-lodestones-moss-image-sft-8-steps-dmd-learnin": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-lodestones-moss-image-sft-8-steps-dmd-learnin",
@@ -28107,8 +28107,8 @@
       "title": "Research & Knowledge Intelligence: hf-lodestones-moss-image-sft-8-steps-dmd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lodestones-moss-image-sft-8-steps-dmd-learnings-research-knowledge-intelligen.md",
       "repository": "hf-lodestones-moss-image-sft-8-steps-dmd-learnings",
-      "content_hash": "8a4b0464fdce060eaa25fdf6116fc51e0ce2db5a3b39a2917be1baf11c69168a",
-      "created_at": "2026-11-17T15:51:40.826Z"
+      "content_hash": "3bb8e96c00cfd18fb60f747b4802c5470ef1f96e3c672fbdbd915e5efef90472",
+      "created_at": "2026-11-21T11:38:50.539Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dealignai-deepseek-v4-1-flash-1017-uncensored-fp": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-dealignai-deepseek-v4-1-flash-1017-uncensored-fp",

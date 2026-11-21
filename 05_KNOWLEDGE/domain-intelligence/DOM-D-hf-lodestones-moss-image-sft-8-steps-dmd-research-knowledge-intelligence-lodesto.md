@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
   "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T15:51:18.980Z",
+  "timestamp": "2026-11-21T11:38:34.516Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [lodestones/MOSS-Image-SFT-8-steps-dmd](https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd) (Revision: `hf-lodesto`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T15:51:18.980Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T11:38:34.516Z`  
 > **Learning ID**: `learn-huggingface-lodestones-moss-image-sft-8-steps-dmd`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd](https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T15:51:18.107Z  
+> **Harvest Timestamp**: 2026-11-21T11:38:30.635Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 304674 downloads | 265 likes
+- **Stars / Engagement**: 274102 downloads | 272 likes
 
 ---
 

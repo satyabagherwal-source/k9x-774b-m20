@@ -11775,3 +11775,7 @@
 | `CYCLE-20261121-5M3L` | `2026-11-21T11:11:43.137Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9768` | Yes (`fe280563...`) |
 | `CYCLE-20261121-BSOX` | `2026-11-21T11:16:31.617Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9769` | Yes (`bb2fe2c4...`) |
 | `CYCLE-20261121-C52Q` | `2026-11-21T11:16:47.666Z` | `reflection/Beam-1.0-501B-A23B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md` | Yes (`b58d79bf...`) |
+| `CYCLE-20261121-458P` | `2026-11-21T11:38:34.249Z` | `lodestones/MOSS-Image-SFT-8-steps-dmd` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md` | Yes (`8b666adc...`) |
+| `CYCLE-20261121-48V9` | `2026-11-21T11:38:38.949Z` | `laurent22/joplin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9770` | Yes (`16981e5f...`) |
+| `CYCLE-20261121-4B43` | `2026-11-21T11:38:41.859Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9771` | Yes (`a6b33cf4...`) |
+| `CYCLE-20261121-4EUV` | `2026-11-21T11:38:46.711Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9772` | Yes (`be099813...`) |
