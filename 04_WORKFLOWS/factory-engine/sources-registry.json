@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-20T23:39:52.632Z",
-    "lastVerified": "2026-11-20T23:39:52.632Z",
+    "lastChecked": "2026-11-21T00:24:47.027Z",
+    "lastVerified": "2026-11-21T00:24:47.027Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T00:12:01.970Z",
-    "lastVerified": "2026-11-21T00:12:01.970Z",
+    "lastChecked": "2026-11-21T00:24:50.892Z",
+    "lastVerified": "2026-11-21T00:24:50.892Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1829,14 +1829,14 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T19:25:11.539Z",
-    "lastVerified": "2026-11-20T19:25:11.539Z",
+    "lastChecked": "2026-11-21T00:24:46.825Z",
+    "lastVerified": "2026-11-21T00:24:46.825Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "e9047d395b25a3f812aa06f8aaf3048e008dcf4e68d9c24be6fd3c0b869d3b5d",
+    "contentHash": "412fc6b9a38d1c2b88540e4a7ff7b72d75a7be9bc4dfb90be37e40767ef16606",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3168,9 +3168,9 @@
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
     "officialUrl": "https://github.com/vasu-devs/JustHireMe",
-    "lastChecked": "2026-11-19T22:05:09.079Z",
+    "lastChecked": "2026-11-21T00:24:44.491Z",
     "revisionIdentifier": "accdcdb5",
-    "lastVerified": "2026-11-19T22:05:09.079Z"
+    "lastVerified": "2026-11-21T00:24:44.491Z"
   },
   "o2sh-onefetch": {
     "name": "o2sh/onefetch",
@@ -3936,12 +3936,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "krakend-krakend-ce": {
-    "name": "krakend/krakend-ce",
+    "name": "krakend-ce",
     "officialUrl": "https://github.com/krakend/krakend-ce",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T23:43:26.225Z",
-    "lastVerified": "2026-11-19T23:43:26.225Z",
+    "lastChecked": "2026-11-21T00:24:39.636Z",
+    "lastVerified": "2026-11-21T00:24:39.636Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-krakend-krakend-ce",
@@ -3950,7 +3950,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3beb4d3b"
   },
   "risingwavelabs-risingwave": {
     "name": "risingwavelabs/risingwave",
@@ -7677,14 +7678,14 @@
     "officialUrl": "https://github.com/zenbu-labs/terminal-browser",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-19T13:21:45.745Z",
-    "lastVerified": "2026-11-19T13:21:45.745Z",
+    "lastChecked": "2026-11-21T00:24:35.125Z",
+    "lastVerified": "2026-11-21T00:24:35.125Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zenbu-labs-terminal-browser",
-    "contentHash": "7158d7d3ed33ae41f88681a136225be0e8e21e8475bb3bb4e29268a39d8d855d",
+    "contentHash": "ed85dc81a544471d0e2fb647d1e78faa3237b4dfcdbf30e2ab1aa1eff57e5793",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11197,5 +11198,29 @@
     "lastChecked": "2026-11-21T00:08:50.741Z",
     "revisionIdentifier": "fa34c404",
     "lastVerified": "2026-11-21T00:08:50.741Z"
+  },
+  "tanstack-router": {
+    "name": "TanStack/router",
+    "officialUrl": "https://github.com/TanStack/router",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-21T00:24:37.810Z",
+    "lastVerified": "2026-11-21T00:24:37.810Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-tanstack-router",
+    "contentHash": "2d0640cc9f066917a9559e1974a963412bf052b78e68305dcff328ca96b642ed",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "exyte-chat": {
+    "name": "Chat",
+    "officialUrl": "https://github.com/exyte/Chat",
+    "lastChecked": "2026-11-21T00:24:37.278Z",
+    "revisionIdentifier": "f382a147",
+    "lastVerified": "2026-11-21T00:24:37.278Z"
   }
 }

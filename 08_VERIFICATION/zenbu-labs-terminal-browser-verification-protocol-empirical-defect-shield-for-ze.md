@@ -4,22 +4,22 @@
 {
   "source_repository": "zenbu-labs/terminal-browser",
   "source_url": "https://github.com/zenbu-labs/terminal-browser",
-  "source_version": "f7c51579",
+  "source_version": "fa9e5eb0",
   "license": "MIT",
-  "timestamp": "2026-11-19T13:21:47.120Z",
+  "timestamp": "2026-11-21T00:24:36.370Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zenbu-labs-terminal-browser",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser) (Revision: `f7c51579`).  
-> **License**: MIT | **Timestamp**: `2026-11-19T13:21:47.120Z`  
+> **Provenance**: Harvested from [zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser) (Revision: `fa9e5eb0`).  
+> **License**: MIT | **Timestamp**: `2026-11-21T00:24:36.370Z`  
 > **Learning ID**: `learn-github-zenbu-labs-terminal-browser`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `zenbu-labs/terminal-browser` (Commit: `f7c51579`)
+- **Target Repository**: `zenbu-labs/terminal-browser` (Commit: `fa9e5eb0`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T13:21:45.745Z  
+> **Harvest Timestamp**: 2026-11-21T00:24:35.125Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A real browser inside your terminal
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4719 stars
+- **Stars / Engagement**: 4738 stars
 
 ---
 
@@ -1561,270 +1561,96 @@ impl Bridge {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f7c51579` (2026-11-19)
-**Commit Message**: Add setting for tiled image transmission (#308)
+### Incident Patch 1: `b0935ef2` (2026-11-19)
+**Commit Message**: fix incorrect cell size report (#318)
 
-**File**: `browser/src/session/session.tsx` (modified, +1/-0)
+**File**: `pixel/engine/crates/pixel-terminal/src/terminal.rs` (modified, +40/-1)
 ```diff
-@@ -1114,6 +1114,7 @@ class Session {
-       maxFps: maxFps(this.settings.get("render.fps"), displayHz()),
-       highlightTransmits: this.settings.get("render.transmitOutlines") === "on",
-       frameEvents: this.settings.get("render.frameEvents") === "on",
-+      tiles: this.settings.get("render.tiles"),
-     };
-     root.setRender(render);
-     root.setLogFile(this.settings.get("debug.logFile") === "on" ? ENGINE_LOG_FILE : null);
-```
-
-**File**: `pixel/AGENT-DOCS.md` (modified, +1/-1)
-```diff
-@@ -137,7 +137,7 @@ function createRoot(options?: RootOptions): Root
- | `setKeyCapture(keys: string[])` | listed unmodified keys (`"enter"`, `"escape"`, `"a"`) go to `onKey` even while an `Input` is focused; keys with ctrl/alt/shift/super never match |
- | `registerFont(face: FontFace): Promise<void>` | adds a font file to a family after startup; text laid out afterwards can use it |
- | `createSurface(): Surface` | creates a pixel surface for `<Box surface>` |
--| `setRender({ maxFps?, highlightTransmits?, frameEvents? })` | frame rate cap and render debug options |
-+| `setRender({ maxFps?, highlightTransmits?, frameEvents?, tiles? })` | frame rate cap and render debug options; `tiles` (`"auto"`, `"on"`, `"off"`) sends image updates as non overlapping tiles instead of overlaid patches; `"auto"` tiles in rex |
- | `openDevtools(tab?)` / `closeDevtools()` | built in devtools for the React UI |
- | `startProfile()` / `stopProfile(): Promise<string \| null>` | records a profile, returns its path |
- | `setLogFile(path \| null)` | writes engine logs to a file |
-```
-
-**File**: `pixel/engine/crates/pixel-kitty/src/lib.rs` (modified, +6/-0)
-```diff
-@@ -97,6 +97,7 @@ pub struct Kitty {
-     patches: present::Patched,
-     animation: present::Animation,
-     highlight_transmits: bool,
-+    force_tiles: Option<bool>,
-     present_at: Option<Instant>,
-     ready_at: Option<Instant>,
-     shm_pool: Option<shm_pool::ShmPool>,
-@@ -187,6 +188,7 @@ impl Kitty {
-             patches: present::Patched::default(),
-             animation: present::Animation::default(),
-             highlight_transmits: false,
-+            force_tiles: None,
-             present_at: None,
-             ready_at: None,
-             shm_pool: None,
-@@ -415,6 +417,10 @@ impl Kitty {
-         self.highlight_transmits = on;
-     }
- 
-+    pub fn set_force_tiles(&mut self, on: Option<bool>) {
-+        self.force_tiles = on;
-+    }
-+
-     pub fn holds_a_frame(&self) -> bool {
-         self.patches.holds_a_frame()
-     }
-```
-
-**File**: `pixel/engine/crates/pixel-kitty/src/present/mod.rs` (modified, +12/-0)
-```diff
-@@ -58,6 +58,10 @@ impl Identity {
-             Identity::Unknown => false,
+@@ -115,6 +115,12 @@ impl WindowSize {
+             None
          }
      }
-+    fn prefers_tiles(self) -> bool {
-+        matches!(self, Identity::Rex)
++
++    // its possible that the cell size and the reported window size are in different units (like iterm)
++    pub fn contradicts_cell(&self, cell: (u32, u32)) -> bool {
++        self.cell_size()
++            .is_some_and(|(w, h)| w * 2 >= cell.0 * 3 && h * 2 >= cell.1 * 3)
++    }
+ }
+ 
+ fn retry_intr<T>(mut call: impl FnMut() -> rustix::io::Result<T>) -> rustix::io::Result<T> {
+@@ -489,6 +495,9 @@ impl Terminal {
+                     }
+                     RawEvent::WindowSize(ws) => Event::WindowSize(ws),
+                     RawEvent::CellSize(cell) => {
++                        let Some(cell) = self.accept_cell_report(cell) else {
++                            continue;
++                        };
+                         self.cell = Some(cell);
+                         Event::CellSize(cell)
+                     }
+@@ -773,7 +782,9 @@ impl Terminal {
+             return Ok(self.cell);
+         }
+         if self.hosted.is_none() && !self.wrapper.relayed() {
+-            self.cell = self.read_report(300, parse_cell_size_report)?;
++            self.cell = self
++                .read_report(300, parse_cell_size_report)?
++                .and_then(|cell| self.accept_cell_report(cell));
+         }
+         if self.cell.is_none() {
+             self.cell = self.size()?.cell_size();
+@@ -782,6 +793,18 @@ impl Terminal {
+     }
+ 
+ 
++    fn accept_cell_report(&self, cell: (u32, u32)) -> Option<(u32, u32)> {
++        let ws = self.size().ok()?;
++        if ws.contradicts_cell(cell) {
++            pixel_core::logging::warn(
++                "terminal",
++                format!("ignoring reported cell {cell:?}, the window's pixels imply {:?}", ws.cell_size()),
++            );
++            return None;
++        }
++        Some(cell)
 +    }
 +
-     pub(crate) fn is_ghostty(self) -> bool {
-         matches!(self, Identity::Ghostty { .. })
+     pub fn ask_cell_size(&mut self) -> io::Result<Option<(u32, u32)>> {
+         if let Some(state) = &self.hosted {
+             return Ok(state.cell.or_else(|| state.size.cell_size()));
+@@ -1904,6 +1927,22 @@ mod tests {
+         assert!(matches!(event, RawEvent::CellSize((10, 21))));
      }
-@@ -312,6 +316,14 @@ impl Kitty {
- mod tests {
-     use super::*;
  
 +    #[test]
-+    fn only_rex_prefers_tiles() {
-+        assert!(Identity::Rex.prefers_tiles());
-+        assert!(!Identity::Ghostty { version: (1, 3, 2) }.prefers_tiles());
-+        assert!(!Identity::Kitty { version: (0, 48, 0) }.prefers_tiles());
-+        assert!(!Identity::Unknown.prefers_tiles());
++    fn a_cell_reported_in_points_contradicts_a_window_in_device_pixels() {
++        let ws = WindowSize {
++            cols: 100,
++            rows: 40,
++            width_px: 1640,
++            height_px: 1360,
++        };
++        assert!(ws.contradicts_cell((8, 17)));
++        assert!(!ws.contradicts_cell((16, 34)));
++        assert!(!ws.contradicts_cell((15, 33)));
++        assert!(!ws.contradicts_cell((19, 42)));
++        let no_pixels = WindowSize { width_px: 0, height_px: 0, ..ws };
++        assert!(!no_pixels.contradicts_cell((8, 17)));
 +    }
 +
      #[test]
-     fn xtversion_replies_identify_ghostty_kitty_and_rex() {
-         assert_eq!(
-```
-
-**File**: `pixel/engine/crates/pixel-kitty/src/present/patched.rs` (modified, +3/-1)
-```diff
-@@ -60,7 +60,9 @@ impl Kitty {
-         let canvas = frame.canvas;
-         let size = (canvas.width, canvas.height);
-         let on_screen = std::mem::take(&mut self.patches.opaque);
--        self.patches.opaque.extend(frame.opaque.iter().filter_map(|area| {
-+        let tiled = self.force_tiles.unwrap_or(self.identity.prefers_tiles());
-+        let opaque = if tiled { &[][..] } else { frame.opaque };
-+        self.patches.opaque.extend(opaque.iter().filter_map(|area| {
-             let rect = area.rect.clamped(size.0, size.1);
-             (!rect.is_empty()).then_some(OpaqueArea { surface: area.surface, rect }) // im not entirely sure why we are passing area.surface here? hm
-         }));
-```
-
-**File**: `pixel/engine/crates/pixel-node/src/terminal_ops.rs` (modified, +21/-2)
-```diff
-@@ -27,9 +27,19 @@ enum TerminalOp {
-         highlight_transmits: Option<bool>,
-         #[serde(default)]
-         frame_events: Option<bool>,
-+        #[serde(default)]
-+        tiles: Option<Tiles>,
-     },
- }
- 
-+#[derive(Deserialize)]
-+#[serde(rename_all = "camelCase")]
-+enum Tiles {
-+    Auto,
-+    On,
-+    Off,
-+}
-+
- pub struct TerminalOps;
- 
- impl HostOps for TerminalOps {
-@@ -38,12 +48,21 @@ impl HostOps for TerminalOps {
-             return false;
-         };
-         match op {
--            TerminalOp::Presenter { highlight_transmits, frame_events } => {
-+            TerminalOp::Presenter { highlight_transmits, frame_events, tiles } => {
-                 if let Some(on) = highlight_transmits
-                     && let Some(terminal) = terminal(engine)
-                 {
-                     terminal.set_highlight_transmits(on);
-                 }
-+                if let Some(tiles) = tiles
-+                    && let Some(terminal) = terminal(engine)
-+                {
-+                    terminal.set_force_tiles(match tiles {
-+                        Tiles::Auto => None,
-+                        Tiles::On => Some(true),
-+                        Tiles::Off => Some(false),
-+                    });
-+                }
-                 if let Some(on) = frame_events {
-                     let font = on.then(|| engine.fonts[0].clone());
-                     if let Some(terminal) = terminal(engine) {
-@@ -81,7 +100,7 @@ mod tests {
-     #[test]
-     fn presenter_reads_camel_cased_fields_and_leaves_missing_ones_unset() {
-         let op: TerminalOp = serde_json::from_str(r#"{"op":"presenter","highlightTransmits":true}"#).unwrap();
--        let TerminalOp::Presenter { highlight_transmits, frame_events } = op else {
-+        let TerminalOp::Presenter { highlight_transmits, frame_events, .. } = op else {
-             panic!("parsed as another op");
-         };
-         assert_eq!(highlight_transmits, Some(true));
-```
-
-**File**: `pixel/engine/crates/pixel-terminal/src/backend.rs` (modified, +4/-0)
-```diff
-@@ -147,6 +147,10 @@ impl TerminalBackend {
-         self.presenter.highlight_transmits(on);
-     }
- 
-+    pub fn set_force_tiles(&mut self, on: Option<bool>) {
-+        self.presenter.force_tiles(on);
-+    }
-+
-     pub fn note(&mut self, text: String) {
-         self.presenter.note(text);
-     }
-```
-
-**File**: `pixel/engine/crates/pixel-terminal/src/presenter.rs` (modified, +5/-0)
-```diff
-@@ -77,6 +77,7 @@ pub(crate) trait Presenter: Send {
-         Ok(())
-     }
-     fn highlight_transmits(&mut self, _on: bool) {}
-+    fn force_tiles(&mut self, _on: Option<bool>) {}
- }
- 
- pub(crate) struct KittyPresenter {
-@@ -239,6 +240,10 @@ impl Presenter for KittyPresenter {
-     fn highlight_transmits(&mut self, on: bool) {
-         self.kitty.set_highlight_transmits(on);
-     }
-+
-+    fn force_tiles(&mut self, on: Option<bool>) {
-+        self.kitty.set_force_tiles(on);
-+    }
- }
- 
- pub(crate) struct CellsPresenter {
-```
-
----
-
-### Incident Patch 2: `e3153d33` (2026-11-18)
-**Commit Message**: read rects from layout instead of queued state (#304)
-
-**File**: `pixel/packages/pixel/src/layout.ts` (modified, +11/-26)
-```diff
-@@ -1,8 +1,6 @@
--import { useContext, useEffect, useLayoutEffect, useState } from "react";
-+import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useSyncExternalStore } from "react";
- import type { RefObject } from "react";
- 
--import { debug } from "./debug";
--import type { LayoutSnapshot } from "./react";
- import type { NodeHandle } from "./react";
- import { RootContext } from "./registry";
- import type { ViewRegistry } from "./registry";
-@@ -18,29 +16,16 @@ export function useRect(node: RefObject<NodeHandle | null>): Rect | null {
- 
- 
- export function useNodeRect(node: RefObject<NodeHandle | null>, registry: ViewRegistry): Rect | null {
--  const [rect, setRect] = useState<Rect | null>(null);
--  // subscribed before the query below goes out, or the reply can land first and be missed
--  useLayoutEffect(
--    () =>
--      registry.layout.subscribe(() => {
--        const id = node.current?.id;
--        const snapshot = registry.layout.get();
--        debug("layout reply", { id, nodes: snapshot.rects.size, found: id != null ? snapshot.rects.get(id) : null });
--        if (id == null) return;
--        const found = snapshot.rects.get(id);
--        if (!found) return;
--        setRect((prev) =>
--          prev &&
--          prev.x === found.x &&
--          prev.y === found.y &&
--          prev.width === found.w &&
--          prev.height === found.h
--            ? prev
--            : { x: found.x, y: found.y, width: found.w, height: found.h },
--        );
--      }),
--    [node, registry],
--  );
-+  const last = useRef<Rect | null>(null);
-+  const read = useCallback(() => {
-+    const id = node.current?.id;
-+    const found = id != null ? registry.layout.get().rects.get(id) : undefined;
-+    const prev = last.current;
-+    if (!found || (prev && prev.x === found.x && prev.y === found.y && prev.width === found.w && prev.height === found.h)) return prev;
-+    last.current = { x: found.x, y: found.y, width: found.w, height: found.h };
-+    return last.current;
-+  }, [node, registry]);
-+  const rect = useSyncExternalStore(registry.layout.subscribe, read);
-   useLayoutEffect(() => {
-     const watcher = () => node.current?.id;
-     registry.rectWatchers.add(watcher);
+     fn parses_cell_size_report_amid_noise() {
+         assert_eq!(parse_cell_size_report(b"\x1b[6;14;7t"), Some((7, 14)));
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #319** (2026-11-20): apply webview page scrolls as image offset instructions (@RobPruzan)
+- **PR #318** (2026-11-19): fix incorrect cell size report (@RobPruzan)
 - **PR #308** (2026-11-19): Add setting for tiled image transmission (@RobPruzan)
 - **PR #304** (2026-11-18): read rects from layout instead of queued state (@RobPruzan)
 - **PR #303** (2026-11-17): don't auto show scrollbar (@RobPruzan)
 - **PR #299** (2026-11-16): add flag for no agent indicator (@RobPruzan)
-- **PR #298** (2026-11-16): in-memory webview partitions (@RobPruzan)
-- **PR #297** (2026-11-15): change pixel hero (@RobPruzan)
 
 ---
 
@@ -1844,31 +1670,62 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add setting for tiled image transmission
+## X. incorrect cell size report
 
 **RULE**:
-When implementing operations in `browser/src/session/session.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pixel/engine/crates/pixel-terminal/src/terminal.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f7c51579`: Add setting for tiled image transmission. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b0935ef2`: incorrect cell size report. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `browser/src/session/session.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixel/engine/crates/pixel-terminal/src/terminal.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      tiles: this.settings.get("render.tiles"),
+
+    // its possible that the cell size and the reported window size are in different units (like iterm)
+    pub fn contradicts_cell(&self, cell: (u32, u32)) -> bool {
+        self.cell_size()
+            .is_some_and(|(w, h)| w * 2 >= cell.0 * 3 && h * 2 >= cell.1 * 3)
+    }
+                        let Some(cell) = self.accept_cell_report(cell) else {
+                            continue;
+                        };
+            self.cell = self
+                .read_report(300, parse_cell_size_report)?
+                .and_then(|cell| self.accept_cell_report(cell));
+    fn accept_cell_report(&self, cell: (u32, u32)) -> Option<(u32, u32)> {
+        let ws = self.size().ok()?;
+        if ws.contradicts_cell(cell) {
+            pixel_core::logging::warn(
+                "terminal",
+                format!("ignoring reported cell {cell:?}, the window's pixels imply {:?}", ws.cell_size()),
+            );
+            return None;
+        }
+        Some(cell)
+    }
+
+    #[test]
+    fn a_cell_reported_in_points_contradicts_a_window_in_device_pixels() {
+        let ws = WindowSize {
+            cols: 100,
+            rows: 40,
+            width_px: 1640,
+            height_px: 1360,
+       
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            self.cell = self.read_report(300, parse_cell_size_report)?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f7c51579` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b0935ef2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

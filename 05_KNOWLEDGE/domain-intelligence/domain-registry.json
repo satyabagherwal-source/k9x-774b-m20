@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T00:13:24.636Z",
+  "last_updated": "2026-11-21T00:24:52.917Z",
   "total_records": 2202,
   "domains": {
     "A": {
@@ -7945,8 +7945,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "e14b4691d97a6261c9b3c4e2fc704d3948d0cda5240a2b65e023cc0daf358986",
-      "created_at": "2026-11-20T19:25:12.889Z"
+      "content_hash": "083afaa0c939f0d71f7c5f7a5338fbada31204eb774b8e930ae8597145792dfa",
+      "created_at": "2026-11-21T00:24:48.091Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -7963,8 +7963,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "91176b4196d2ba527efd4191d51a1a5db863ee5b767354f0d10f07a648cb6cbe",
-      "created_at": "2026-11-20T19:25:18.311Z"
+      "content_hash": "ca8f7f33d544beace1492a9395350be986e32f187b99106d1fe866adba5d8116",
+      "created_at": "2026-11-21T00:24:52.917Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -15254,8 +15254,8 @@
       "title": "Architecture Intelligence: zenbu-labs/terminal-browser Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zenbu-labs-terminal-browser-architecture-intelligence-zenbu-labs-terminal-browse.md",
       "repository": "zenbu-labs/terminal-browser",
-      "content_hash": "bd15558dfc59a5ca622ada22ada5ba137a176796e2226da8cd40b963b583dd10",
-      "created_at": "2026-11-19T13:21:47.309Z"
+      "content_hash": "af6203ff7e034e28ef09f7a3f889e537734d66f4e583c66859ad2a8f2a9f0441",
+      "created_at": "2026-11-21T00:24:36.516Z"
     },
     "domain_intelligence-content-information-intelligence-okteto-okteto-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-okteto-okteto-core-invariants",
@@ -15290,8 +15290,8 @@
       "title": "Architecture Intelligence: zenbu-labs-terminal-browser-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zenbu-labs-terminal-browser-learnings-architecture-intelligence-zenbu-labs-termi.md",
       "repository": "zenbu-labs-terminal-browser-learnings",
-      "content_hash": "20c552f94b03b7231bbb162c7b16fbaaa6f311ab3f10fd0e2d7d9594f7a83354",
-      "created_at": "2026-11-19T13:22:05.238Z"
+      "content_hash": "a83b717b78d54716ead1832597df55ed42cb52c475b41e134e9be353f0612337",
+      "created_at": "2026-11-21T00:24:51.503Z"
     },
     "DOM-D-2F30EB65": {
       "record_id": "DOM-D-2F30EB65",
@@ -28861,8 +28861,8 @@
       "title": "Architecture Intelligence: TanStack/router Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tanstack-router-architecture-intelligence-tanstack-router-core-invariants.md",
       "repository": "TanStack/router",
-      "content_hash": "d804400be6d42af5531e39bf5dad156fc3397bc450eaa45578a791f532bdea00",
-      "created_at": "2026-11-17T20:03:29.015Z"
+      "content_hash": "1a9e5580e67814a49355ae2379df5da67ed72a6506e71529bea43292fbc11f07",
+      "created_at": "2026-11-21T00:24:39.000Z"
     },
     "domain_intelligence-architecture-intelligence-tanstack-router-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tanstack-router-learnings-core-invariants",
@@ -28870,8 +28870,8 @@
       "title": "Architecture Intelligence: tanstack-router-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tanstack-router-learnings-architecture-intelligence-tanstack-router-learnings-co.md",
       "repository": "tanstack-router-learnings",
-      "content_hash": "89372041c0acaae20e39615b77790b43ed7525e65ac9b00cf262af6941d31e0a",
-      "created_at": "2026-11-17T20:03:46.172Z"
+      "content_hash": "c55dc7449893be0516185ea8acd97eb2a2ca4be75aff19c216281dfc7c59f1f2",
+      "created_at": "2026-11-21T00:24:52.263Z"
     },
     "domain_intelligence-research-knowledge-intelligence-convaiinnovations-laya-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-convaiinnovations-laya-core-invariants",

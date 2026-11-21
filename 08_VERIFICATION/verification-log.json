@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-1Y66",
-    "timestamp": "2026-11-18T21:33:42.846Z",
-    "repository": "openai/gpt-oss-20b",
-    "learningId": "learn-huggingface-openai-gpt-oss-20b",
-    "contentHash": "b2b554a1a468b873f9811ce4c648d656c9ba9102cdb5f3c97e7b5b25d85b9d20",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-28HN",
-    "timestamp": "2026-11-18T21:33:56.219Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "42462144ff1cb4122fc573c517bdee707bcf0dc18d4b7f329d9602ca2595eb3e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-CSNJ",
-    "timestamp": "2026-11-18T21:42:08.911Z",
-    "repository": "bigscience/bloom",
-    "learningId": "learn-huggingface-bigscience-bloom",
-    "contentHash": "c6de7bc1a6848bf5a07acb7062a9d2aa21d77b0636521b6fb790aad555b10b45",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-CU3P",
     "timestamp": "2026-11-18T21:42:10.789Z",
     "repository": "transact-rs/sqlx",
@@ -7492,6 +7447,51 @@
     "contentHash": "0ca58031a9391a0673ebe1b9b0a6422af2f0ebd70ea01d71866f512f1b169917",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-1F0J",
+    "timestamp": "2026-11-21T00:24:36.163Z",
+    "repository": "zenbu-labs/terminal-browser",
+    "learningId": "learn-github-zenbu-labs-terminal-browser",
+    "contentHash": "ed85dc81a544471d0e2fb647d1e78faa3237b4dfcdbf30e2ab1aa1eff57e5793",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-1GYE",
+    "timestamp": "2026-11-21T00:24:38.678Z",
+    "repository": "TanStack/router",
+    "learningId": "learn-github-tanstack-router",
+    "contentHash": "2d0640cc9f066917a9559e1974a963412bf052b78e68305dcff328ca96b642ed",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-1NZ1",
+    "timestamp": "2026-11-21T00:24:47.773Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "412fc6b9a38d1c2b88540e4a7ff7b72d75a7be9bc4dfb90be37e40767ef16606",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

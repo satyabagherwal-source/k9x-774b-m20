@@ -11703,3 +11703,6 @@ Every entry in this ledger must capture:
 | `learn-github-xevrion-hatchzip` | `https://github.com/xevrion/hatchzip` | `2489b928` | Multi-dimensional audit evidence | 2026-11-21T00:11:58.115Z |
 | `learn-dom-f-6dd8b1fe` | `project://parcel-bundler-parcel` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md` | 2026-11-21T00:12:39.323Z |
 | `learn-dom-k-bc44e02a` | `project://parcel-bundler-parcel` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md` | 2026-11-21T00:13:22.638Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `fa9e5eb0` | Multi-dimensional audit evidence | 2026-11-21T00:24:36.168Z |
+| `learn-github-tanstack-router` | `https://github.com/TanStack/router` | `ce46b21b` | Multi-dimensional audit evidence | 2026-11-21T00:24:38.681Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `fb070362` | Multi-dimensional audit evidence | 2026-11-21T00:24:47.776Z |

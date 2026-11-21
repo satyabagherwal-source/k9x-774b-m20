@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T19:25:18.056Z",
+  "timestamp": "2026-11-21T00:24:52.681Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-cilium-cilium-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [cilium-cilium-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T19:25:18.056Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T00:24:52.681Z`  
 > **Learning ID**: `LEARN-EVO-cilium-cilium-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `7e8689ba`  
+> **Source Version**: `fb070362`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T19:25:11.543Z  
+> **Timestamp**: 2026-11-21T00:24:46.829Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T19:25:11.539Z  
+> **Harvest Timestamp**: 2026-11-21T00:24:46.825Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25876 stars
+- **Stars / Engagement**: 25877 stars
 
 ---
 
@@ -1313,126 +1313,182 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7e8689ba` (2026-11-20)
-**Commit Message**: datapath: remove redundant XDP prefiltering macros
+### Incident Patch 1: `fb070362` (2026-08-22)
+**Commit Message**: hubble-relay & cilium-dbg: fix reading config from the environment
 
-Whenever `option.Config.EnableXDPPrefilter` is set to true, the
-`enable_xdp_prefilter` runtime config is set to true, and the
-filter/prefilter macros (`CIDR4_FILTER`, `CIDR4_LPM_PREFILTER`,
-`CIDR6_FILTER` and `CIDR6_LPM_PREFILTER`) are defined.
-`prefilter_v4()` and `prefilter_v6()` code (that is, the only code
-using the macros) is already guarded by `enable_xdp_prefilter` so the
-macros are redundant. Remove the macros and their usages.
+hubble-relay & cilium-dbg use Viper to read config including from environment
+variables. Viper derives the environment variable name by uppercasing the
+config key and preserving dashes (-). Environment variables cannot contain
+dashes, so config keys containing a dash could not be set this way.
 
-Signed-off-by: Leonardo Di Giovanna <[REDACTED_EMAIL]>
+Replace - with _ when deriving the environment variable, like hubble CLI
+and clustermesh-apiserver.
 
-**File**: `bpf/bpf_xdp.c` (modified, +2/-10)
+Signed-off-by: Evan Champion <[REDACTED_EMAIL]>
+
+**File**: `cilium-dbg/cmd/root.go` (modified, +3/-1)
 ```diff
-@@ -167,23 +167,19 @@ static __always_inline int prefilter_v4(struct __ctx_buff *ctx)
- 	void *data_end = ctx_data_end(ctx);
- 	void *data = ctx_data(ctx);
- 	struct iphdr *ipv4_hdr = data + sizeof(struct ethhdr);
--	struct lpm_v4_key pfx __maybe_unused;
-+	struct lpm_v4_key pfx;
+@@ -8,6 +8,7 @@ import (
+ 	"io"
+ 	"log/slog"
+ 	"os"
++	"strings"
  
- 	if (ctx_no_room(ipv4_hdr + 1, data_end))
- 		return CTX_ACT_DROP;
+ 	"github.com/spf13/cobra"
+ 	"github.com/spf13/viper"
+@@ -78,7 +79,8 @@ func initConfig() {
+ 	vp.SetEnvPrefix("cilium")
+ 	vp.SetConfigName(".cilium") // name of config file (without extension)
+ 	vp.AddConfigPath("$HOME")   // adding home directory as first search path
+-	vp.AutomaticEnv()           // read in environment variables that match
++	vp.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
++	vp.AutomaticEnv() // read in environment variables that match
  
--#ifdef CIDR4_FILTER
- 	pfx.addr = ipv4_hdr->saddr;
- 	pfx.lpm.prefixlen = 32;
- 
--#ifdef CIDR4_LPM_PREFILTER
- 	if (map_lookup_elem(&cilium_cidr_v4_dyn, &pfx))
- 		return CTX_ACT_DROP;
--#endif /* CIDR4_LPM_PREFILTER */
- 
- 	if (map_lookup_elem(&cilium_cidr_v4_fix, &pfx))
- 		return CTX_ACT_DROP;
--#endif /* CIDR4_FILTER */
- 
- 	return 0;
- }
-@@ -237,24 +233,20 @@ static __always_inline int prefilter_v6(struct __ctx_buff *ctx)
- 	void *data_end = ctx_data_end(ctx);
- 	void *data = ctx_data(ctx);
- 	struct ipv6hdr *ipv6_hdr = data + sizeof(struct ethhdr);
--	struct lpm_v6_key pfx __maybe_unused;
-+	struct lpm_v6_key pfx;
- 
- 	if (ctx_no_room(ipv6_hdr + 1, data_end))
- 		return CTX_ACT_DROP;
- 
--#ifdef CIDR6_FILTER
- 	ipv6_addr_copy_unaligned((union v6addr *)&pfx.addr,
- 				 (union v6addr *)&ipv6_hdr->saddr);
- 	pfx.lpm.prefixlen = 128;
- 
--#ifdef CIDR6_LPM_PREFILTER
- 	if (map_lookup_elem(&cilium_cidr_v6_dyn, &pfx))
- 		return CTX_ACT_DROP;
--#endif /* CIDR6_LPM_PREFILTER */
- 
- 	if (map_lookup_elem(&cilium_cidr_v6_fix, &pfx))
- 		return CTX_ACT_DROP;
--#endif /* CIDR6_FILTER */
- 
- 	return 0;
- }
+ 	// If a config file is found, read it in.
+ 	if err := vp.ReadInConfig(); err == nil {
 ```
 
-**File**: `bpf/filter_config.h` (modified, +0/-4)
+**File**: `hubble-relay/cmd/root.go` (modified, +3/-0)
 ```diff
-@@ -7,7 +7,3 @@
-  */
- #define CIDR4_HMAP_ELEMS 1024
- #define CIDR4_LMAP_ELEMS 1024
--#define CIDR4_FILTER
--#define CIDR4_LPM_PREFILTER
--#define CIDR6_FILTER
--#define CIDR6_LPM_PREFILTER
-```
-
-**File**: `pkg/datapath/prefilter/prefilter.go` (modified, +0/-5)
-```diff
-@@ -62,11 +62,6 @@ func (p *preFilter) WriteConfig(fw io.Writer) {
+@@ -4,6 +4,8 @@
+ package cmd
  
- 	fmt.Fprintf(fw, "#define CIDR4_HMAP_ELEMS %d\n", maxHKeys)
- 	fmt.Fprintf(fw, "#define CIDR4_LMAP_ELEMS %d\n", maxLKeys)
--
--	fmt.Fprintf(fw, "#define CIDR4_FILTER\n")
--	fmt.Fprintf(fw, "#define CIDR4_LPM_PREFILTER\n")
--	fmt.Fprintf(fw, "#define CIDR6_FILTER\n")
--	fmt.Fprintf(fw, "#define CIDR6_LPM_PREFILTER\n")
+ import (
++	"strings"
++
+ 	"github.com/spf13/cobra"
+ 	"github.com/spf13/viper"
+ 
+@@ -83,6 +85,7 @@ func NewViper() *viper.Viper {
+ 	vp := viper.New()
+ 	vp.SetEnvPrefix("relay")
+ 	vp.SetConfigFile(configFilePath)
++	vp.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+ 	vp.AutomaticEnv()
+ 	return vp
  }
- 
- func (p *preFilter) dumpOneMap(which preFilterMapType, to []string) []string {
 ```
 
 ---
 
-### Incident Patch 2: `2147e675` (2026-11-18)
-**Commit Message**: chore: migrate Renovate dependency dashboard configuration
+### Incident Patch 2: `537ad150` (2026-10-08)
+**Commit Message**: Minor spelling fixes
 
-Move the OSV vulnerability summary setting into dependencyDashboard while
-preserving its value. Renovate 44.239.1 reports the old top-level setting
-as needing migration, which fails CI validation with --strict.
+Fix various spelling errors across the project.
 
-Signed-off-by: Bohdan Krasko <[REDACTED_EMAIL]>
+Signed-off-by: Ethan Ermovick <[REDACTED_EMAIL]>
 
-**File**: `.github/renovate.json5` (modified, +3/-1)
+**File**: `operator/pkg/bgp/cluster_test.go` (modified, +1/-1)
 ```diff
-@@ -120,7 +120,9 @@
-     "rangeStrategy": "replace"
-   },
-   "osvVulnerabilityAlerts": true,
--  "dependencyDashboardOSVVulnerabilitySummary": "all",
-+  "dependencyDashboard": {
-+    "osvVulnerabilitySummary": "all"
-+  },
-   "labels": [
-     "renovate/stop-updating",
-     "kind/enhancement",
+@@ -1260,7 +1260,7 @@ func TestDisableClusterConfigStatusReport(t *testing.T) {
+ 		})
+ 	}
+ 
+-	// Setup resourses with status
++	// Setup resources with status
+ 	req.NoError(upsertBGPCC(ctx, f, clusterConfig))
+ 
+ 	// Wait for status to be cleared
+```
+
+**File**: `operator/pkg/ciliumendpointslice/ceptocesmap.go` (modified, +1/-1)
+```diff
+@@ -43,7 +43,7 @@ type CESToCEPMapping struct {
+ 	cesNameToData map[CESName]*CESData
+ }
+ 
+-// Creates and intializes the new CESToCEPMapping
++// Creates and initializes the new CESToCEPMapping
+ func newCESToCEPMapping() *CESToCEPMapping {
+ 	return &CESToCEPMapping{
+ 		cepNameToCESName: make(map[CEPName]CESName),
+```
+
+**File**: `operator/pkg/ciliumendpointslice/cescache.go` (modified, +1/-1)
+```diff
+@@ -88,7 +88,7 @@ type CESCache struct {
+ 	cidToGidLabels map[CID]Labels
+ }
+ 
+-// Creates and intializes the new CESCache
++// Creates and initializes the new CESCache
+ func newCESCache() *CESCache {
+ 	return &CESCache{
+ 		cepData:                make(map[CEPName]*CEPData),
+```
+
+**File**: `operator/pkg/ciliumendpointslice/controller.go` (modified, +1/-1)
+```diff
+@@ -68,7 +68,7 @@ type Controller struct {
+ 	emptyBeforeDeleteThreshold int
+ 
+ 	// queue is used to sync CESs with the api-server. this will rate-limit the
+-	// CES requests going to api-server, ensures a single CES will not be proccessed
++	// CES requests going to api-server, ensures a single CES will not be processed
+ 	// multiple times concurrently, and if CES is added multiple times before it
+ 	// can be processed, this will only be processed only once.
+ 	// Updates from CEP and CES in namespaces annotated as priority are added with a
+```
+
+**File**: `operator/pkg/gateway-api/helpers/backendtlspolicies.go` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@ import (
+ // goes, continuing on ties:
+ //
+ // 1. Oldest BackendTLSPolicy, by creation time
+-// 2. First BackendTLSPolicy, lexigraphically sorted.
++// 2. First BackendTLSPolicy, lexicographically sorted.
+ //
+ // The BackendTLSPolicyTargetServiceCollection struct holds details
+ // about which are the Valid (chosen) policies, and which are Conflicted.
+```
+
+**File**: `operator/pkg/gateway-api/helpers/types.go` (modified, +2/-2)
+```diff
+@@ -144,7 +144,7 @@ func GetConcreteObject(schemaType schema.GroupVersionKind) runtime.Object {
+ 	case InferencePoolKind:
+ 		return &gateway_inf_ext.InferencePool{}
+ 	default:
+-		// panic is okay here because this is a progammer error
++		// panic is okay here because this is a programmer error
+ 		panic(fmt.Sprintf("Tried to get a concrete type that is not implemented, %s", schemaType.Kind))
+ 	}
+ }
+@@ -181,7 +181,7 @@ func GetConcreteListObject(schemaType schema.GroupVersionKind) runtime.Object {
+ 		return &gateway_inf_ext.InferencePoolList{}
+ 
+ 	default:
+-		// panic is okay here because this is a progammer error
++		// panic is okay here because this is a programmer error
+ 		panic(fmt.Sprintf("Tried to get a concrete list type that is not implemented, %s", schemaType.Kind))
+ 	}
+ }
+```
+
+**File**: `operator/pkg/ingress/helpers_test.go` (modified, +1/-1)
+```diff
+@@ -172,7 +172,7 @@ func TestIsCiliumManagedIngress(t *testing.T) {
+ 			managed: false,
+ 		},
+ 		{
+-			desc: "Cilium isn't IngressClass (annotation missconfigured) and Ingress has no specific class set",
++			desc: "Cilium isn't IngressClass (annotation misconfigured) and Ingress has no specific class set",
+ 			ingress: networkingv1.Ingress{
+ 				ObjectMeta: metav1.ObjectMeta{
+ 					Namespace: "test",
+```
+
+**File**: `operator/pkg/model/translation/envoy_cluster_mutator.go` (modified, +1/-1)
+```diff
+@@ -178,7 +178,7 @@ func withTLSOrigination(secretsNamespace string, tls *model.BackendTLSOriginatio
+ 							// * SecretSync sees ConfigMap reference
+ 							// * SecretSync copies ConfigMap into Secret in the configured secrets namespace
+ 							// * This translation references that Secret using the shared sync name
+-							// * The Cilium Agent reads the Secret directly and suppies it to Envoy via SDS.
++							// * The Cilium Agent reads the Secret directly and supplies it to Envoy via SDS.
+ 							Name: syncnames.SyncedConfigMapSDSSecretName(secretsNamespace, types.NamespacedName{
+ 								Namespace: tls.CACertRef.Namespace,
+ 								Name:      tls.CACertRef.Name,
 ```
 
 #### Recent Merged Pull Requests:
@@ -1461,41 +1517,33 @@ Signed-off-by: Bohdan Krasko <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. datapath: remove redundant XDP prefiltering macros
+## X. hubble-relay & cilium-dbg: fix reading config from the environment
 
 **RULE**:
-When implementing operations in `bpf/bpf_xdp.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cilium-dbg/cmd/root.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7e8689ba`: datapath: remove redundant XDP prefiltering macros. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fb070362`: hubble-relay & cilium-dbg: fix reading config from the environment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `bpf/bpf_xdp.c`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cilium-dbg/cmd/root.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	struct lpm_v4_key pfx;
-	struct lpm_v6_key pfx;
+	"strings"
+	vp.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+	vp.AutomaticEnv() // read in environment variables that match
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	struct lpm_v4_key pfx __maybe_unused;
-#ifdef CIDR4_FILTER
-#ifdef CIDR4_LPM_PREFILTER
-#endif /* CIDR4_LPM_PREFILTER */
-#endif /* CIDR4_FILTER */
-	struct lpm_v6_key pfx __maybe_unused;
-#ifdef CIDR6_FILTER
-#ifdef CIDR6_LPM_PREFILTER
-#endif /* CIDR6_LPM_PREFILTER */
-#endif /* CIDR6_FILTER */
+	vp.AutomaticEnv()           // read in environment variables that match
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7e8689ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fb070362` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

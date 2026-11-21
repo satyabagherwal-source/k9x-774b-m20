@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tanstack-router-learnings.md`  
 > **Source**: github ([https://github.com/TanStack/router](https://github.com/TanStack/router))  
-> **Source Version**: `0b6d4f3f`  
+> **Source Version**: `ce46b21b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T20:03:27.765Z  
+> **Timestamp**: 2026-11-21T00:24:37.814Z  
 > **Learning ID**: `learn-github-tanstack-router`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tanstack-router-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TanStack/router](https://github.com/TanStack/router))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T20:03:27.760Z  
+> **Harvest Timestamp**: 2026-11-21T00:24:37.810Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🤖 A client-first, server-capable, fully type-safe router and full-stack framework for the web (React and more).
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 15320 stars
+- **Stars / Engagement**: 15331 stars
 
 ---
 
@@ -684,167 +684,569 @@ export const apiHandlers = [
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0b6d4f3f` (2026-11-13)
-**Commit Message**: perf(start-plugin-core): count imported modules once in the Rsbuild manifest pass (#8926)
+### Incident Patch 1: `e75f0ffb` (2026-11-19)
+**Commit Message**: fix(router-devtools-core): replace goober with a static stylesheet (#8954)
 
-The static-dependency pass behind the Rsbuild Start manifest runs after
-every client compilation, dev updates included. It walked every
-connection of every module of every chunk and read the imported module's
-chunks each time. Count an imported module once per chunk, from its
-first active connection, and read a module's chunks once per
-compilation (memoized on the resolver created per compilation).
+* fix(router-devtools-core): replace goober with a static stylesheet
 
-The manifest is unchanged.
+The devtools styles are now plain CSS in styles.css, inlined at build time
+and adopted into the document or shadow root the devtools render in. This
+drops goober and its runtime CSS generation.
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+- Styled under a CSP that blocks inline <style> elements, without a nonce.
+- Devtools rendered inside a shadow root are styled without
+  shadowDOMTarget.
+- Falls back to a <style> element where constructable stylesheets are
+  unavailable (jsdom, Safari < 16.4, Firefox < 101).
+- Styles are still attached by the lazily loaded devtools components.
 
-**File**: `.changeset/rsbuild-manifest-module-chunks-once.md` (added, +5/-0)
+Computed styles and devtools screenshots match main across floating,
+embedded and shadow root modes.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* refactor(router-devtools-core): drop clsx
+
+The style helpers return finished class strings, so the clsx calls around
+them did nothing. Build the few combined class names with template strings.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* refactor(router-devtools-core): drop the style element fallback
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED
+
+**File**: `.changeset/router-devtools-static-styles.md` (added, +10/-0)
 ```diff
-@@ -0,0 +1,5 @@
+@@ -0,0 +1,10 @@
 +---
-+'@tanstack/start-plugin-core': patch
++'@tanstack/router-devtools-core': patch
 +---
 +
-+Rsbuild: the Start manifest pass that runs after every client compilation (builds and each dev update) reads an imported module's chunks once per compilation and counts the module once per importing chunk, instead of once per import connection. The manifest is unchanged; the pass takes about 40 % less time (on a 333-route app, tens of milliseconds less per HMR update).
++The devtools no longer use goober. Their styles are now a static stylesheet adopted into the document or shadow root the devtools render in, instead of a `<style>` element in `<head>`. This means:
++
++- The devtools are styled on pages with a Content Security Policy that blocks inline `<style>` elements, without a nonce.
++- Devtools rendered inside a shadow root are styled without passing `shadowDOMTarget`.
++- The devtools no longer write to the shared `#_goober` style element.
++- Browsers without adoptable stylesheets (before Safari 16.4 and Firefox 101) show the devtools unstyled.
 ```
 
-**File**: `packages/start-plugin-core/src/rsbuild/normalized-client-build.ts` (modified, +32/-6)
+**File**: `docs/router/devtools.md` (modified, +4/-4)
 ```diff
-@@ -219,6 +219,7 @@ function computeDynamicImports(chunk: RspackCompilationChunk): Array<string> {
- function computeStaticDependencyChunks(
-   compilation: RspackCompilation,
-   chunk: RspackCompilationChunk,
-+  chunksOfModule: (module: RspackModule) => Array<RspackCompilationChunk>,
- ): Array<RspackCompilationChunk> {
-   const importedChunks: Array<RspackCompilationChunk> = []
-   const seen = new Set<RspackCompilationChunk>([chunk])
-@@ -258,20 +259,28 @@ function computeStaticDependencyChunks(
-   }
-   availableChunks ??= new Set()
+@@ -191,8 +191,8 @@ function App() {
+   - Defaults to `bottom-left`.
+   - The position of the TanStack Router logo to open and close the devtools panel.
+ - `shadowDOMTarget?: ShadowRoot`
+-  - Specifies a Shadow DOM target for the devtools.
+-  - By default, devtool styles are applied to the `<head>` tag of the main document (light DOM). When a `shadowDOMTarget` is provided, styles will be applied within this Shadow DOM instead.
++  - The shadow root to add the devtools styles to.
++  - By default, the styles are added to the shadow root the devtools render in, or to the document when they do not render in a shadow root.
+ - `containerElement?: string | any`
+   - Use this to render the devtools inside a different type of container element for ally purposes.
+   - Any string which corresponds to a valid intrinsic JSX element is allowed.
+@@ -320,5 +320,5 @@ function App() {
+ - `handleDragStart?: (e: any) => void`
+   - Handles the opening and closing the devtools panel.
+ - `shadowDOMTarget?: ShadowRoot`
+-  - Specifies a Shadow DOM target for the devtools.
+-  - By default, devtool styles are applied to the `<head>` tag of the main document (light DOM). When a `shadowDOMTarget` is provided, styles will be applied within this Shadow DOM instead.
++  - The shadow root to add the devtools styles to.
++  - By default, the styles are added to the shadow root the devtools render in, or to the document when they do not render in a shadow root.
+```
+
+**File**: `e2e/react-router/basic/src/main.tsx` (modified, +31/-20)
+```diff
+@@ -22,7 +22,10 @@ import type { ErrorComponentProps } from '@tanstack/react-router'
  
-+  // Every connection to a module adds the same chunks, so a module counts
-+  // once, from its first active connection (an inactive one adds nothing and
-+  // leaves the module to a later active one).
-+  const counted = new Set<RspackModule>()
-   for (const module of modules) {
-     for (const dependency of module.dependencies) {
-       const connection = compilation.moduleGraph.getConnection(dependency)
-       const importedModule = connection?.module
--      if (!connection || !importedModule || localModules.has(importedModule)) {
-+      if (
-+        !connection ||
-+        !importedModule ||
-+        localModules.has(importedModule) ||
-+        counted.has(importedModule)
-+      ) {
-         continue
-       }
-       if (connection.getActiveState(runtime) === false) {
-         continue
-       }
-+      counted.add(importedModule)
+ const rootRoute = createRootRoute({
+   validateSearch: z.object({
+-    devtools: z.enum(['panel', 'shadow']).optional().catch(undefined),
++    devtools: z
++      .enum(['panel', 'shadow', 'shadow-auto'])
++      .optional()
++      .catch(undefined),
+   }),
+   component: RootComponent,
+   notFoundComponent: () => {
+@@ -99,36 +102,42 @@ function RootComponent() {
+         </div>
+         <div className="ml-auto flex gap-2 text-sm items-center">
+           Devtools:
+-          {(['floating', 'panel', 'shadow'] as const).map((mode) => (
+-            <Link
+-              key={mode}
+-              to="."
+-              search={(prev) => ({
+-                ...prev,
+-                devtools: mode === 'floating' ? undefined : mode,
+-              })}
+-              className={
+-                (devtools ?? 'floating') === mode ? 'font-bold' : undefined
+-              }
+-            >
+-              {mode}
+-            </Link>
+-          ))}
++          {(['floating', 'panel', 'shadow', 'shadow-auto'] as const).map(
++            (mode) => (
++              <Link
++                key={mode}
++                to="."
++                search={(prev) => ({
++                  ...prev,
++                  devtools: mode === 'floating' ? undefined : mode,
++                })}
++                className={
++                  (devtools ?? 'floating') === mode ? 'font-bold' : undefined
++                }
++              >
++                {mode}
++              </Link>
++            ),
++          )}
+         </div>
+       </div>
+       <Outlet />
+       {devtools === 'panel' ? (
+         <TanStackRouterDevtoolsPanel />
+-      ) : devtools === 'shadow' ? (
+-        <ShadowDevtoolsPanel />
++      ) : devtools === 'shadow' || devtools === 'shadow-auto' ? (
++        <ShadowDevtoolsPanel passShadowDOMTarget={devtools === 'shadow'} />
+       ) : (
+         <TanStackRouterDevtools position="bottom-right" />
+       )}
+     </>
+   )
+ }
  
--      for (const importedChunk of compilation.chunkGraph.getModuleChunksIterable(
--        importedModule,
--      )) {
-+      for (const importedChunk of chunksOfModule(importedModule)) {
-         if (availableChunks.has(importedChunk) && !seen.has(importedChunk)) {
-           seen.add(importedChunk)
-           importedChunks.push(importedChunk)
-@@ -290,17 +299,34 @@ type GetStaticDependencyChunks = (
- /**
-  * Memoize static dependency resolution per chunk. Every chunk is resolved once
-  * for its own `imports`, and CSS-only chunks are resolved again from each
-- * importer that reaches them.
-+ * importer that reaches them. A module's chunks are read once, for every chunk
-+ * that imports it. Both memos live as long as the resolver, which is created
-+ * per normalized compilation.
-  */
- function createStaticDependencyChunkResolver(
-   compilation: RspackCompilation,
- ): GetStaticDependencyChunks {
-   const cache = new Map<RspackCompilationChunk, Array<RspackCompilationChunk>>()
-+  const moduleChunks = new Map<RspackModule, Array<RspackCompilationChunk>>()
-+  const chunksOfModule = (module: RspackModule) => {
-+    let chunks = moduleChunks.get(module)
-+    if (!chunks) {
-+      chunks = Array.from(
-+        compilation.chunkGraph.getModuleChunksIterable(module),
-+      )
-+      moduleChunks.set(module, chunks)
-+    }
-+    return chunks
+-function ShadowDevtoolsPanel() {
++function ShadowDevtoolsPanel({
++  passShadowDOMTarget,
++}: {
++  passShadowDOMTarget: boolean
++}) {
+   const [shadowRoot, setShadowRoot] = useState<ShadowRoot>()
+ 
+   return (
+@@ -141,7 +150,9 @@ function ShadowDevtoolsPanel() {
+     >
+       {shadowRoot
+         ? createPortal(
+-            <TanStackRouterDevtoolsPanel shadowDOMTarget={shadowRoot} />,
++            <TanStackRouterDevtoolsPanel
++              shadowDOMTarget={passShadowDOMTarget ? shadowRoot : undefined}
++            />,
+             shadowRoot,
+           )
+         : null}
+```
+
+**File**: `e2e/react-router/basic/tests/devtools.spec.ts` (modified, +40/-9)
+```diff
+@@ -1,18 +1,25 @@
+ import { expect } from '@playwright/test'
+ import { test } from '@tanstack/router-e2e-utils'
++import type { Page } from '@playwright/test'
+ 
+-for (const mode of ['panel', 'shadow', 'floating']) {
++const modes = ['panel', 'shadow', 'shadow-auto', 'floating'] as const
++
++async function openDevtools(page: Page, mode: (typeof modes)[number]) {
++  await page.goto(mode === 'floating' ? '/' : `/?devtools=${mode}`)
++  if (mode === 'floating') {
++    await page
++      .getByRole('button', { name: 'Open TanStack Router Devtools' })
++      .click()
 +  }
- 
-   return (chunk) => {
-     let importedChunks = cache.get(chunk)
-     if (!importedChunks) {
--      importedChunks = computeStaticDependencyChunks(compilation, chunk)
-+      importedChunks = computeStaticDependencyChunks(
-+        compilation,
-+        chunk,
-+        chunksOfModule,
-+      )
-       cache.set(chunk, importedChunks)
++
++  return page.locator('.TanStackRouterDevtoolsPanel')
++}
++
++for (const mode of modes) {
+   test(`devtools preserve typography and explorer indentation in ${mode} mode`, async ({
+     page,
+   }) => {
+-    await page.goto(mode === 'floating' ? '/' : `/?devtools=${mode}`)
+-    if (mode === 'floating') {
+-      await page
+-        .getByRole('button', { name: 'Open TanStack Router Devtools' })
+-        .click()
+-    }
+-
+-    const panel = page.locator('.TanStackRouterDevtoolsPanel')
++    const panel = await openDevtools(page, mode)
+     const router = panel.getByRole('button', { name: /^Router\s*\d+ items/ })
+     const state = panel.getByRole('button', { name: /^state\s*\d+ items/ })
+     await expect(router).toBeVisible()
+@@ -39,4 +46,28 @@ for (const mode of ['panel', 'shadow', 'floating']) {
+       await expect(router).toHaveCSS('gap', '6px')
      }
-     return importedChunks
-```
-
-**File**: `packages/start-plugin-core/tests/rsbuild/normalized-client-build.test.ts` (modified, +37/-0)
-```diff
-@@ -469,6 +469,43 @@ describe('normalizeRspackClientBuild', () => {
-     ])
    })
- 
-+  test('imports the chunk of a side-effect-free module used after its inactive import', async () => {
-+    // The import statement's own connection to `lib.js` is inactive (no side
-+    // effects); the later connection for the used `lib` binding is active.
-+    const { clientBuild } = await buildClientFixture(
-+      {
-+        'index.js': `globalThis.route = () => import(/* webpackChunkName: "alpha" */ './alpha.js?tsr-split=component')`,
-+        'alpha.js': `
-+        import { lib } from './lib.js'
-+        export const render = () => lib() + 'alpha'
-+      `,
-+        'lib.js': `export const lib = () => 'lib'`,
-+      },
-+      {
-+        module: { rules: [{ test: /lib\.js$/, sideEffects: false }] },
-+        optimization: {
-+          splitChunks: {
-+            minSize: 0,
-+            cacheGroups: {
-+              default: false,
-+              defaultVendors: false,
-+              vendor: {
-+                name: 'vendor',
-+                test: /lib\.js$/,
-+                chunks: 'all',
-+                enforce: true,
-+              },
-+            },
++
++  test(`devtools are styled under a CSP that blocks inline style elements in ${mode} mode`, async ({
++    page,
++  }) => {
++    await page.route(
++      (url) => url.pathname === '/',
++      async (route) => {
++        const response = await route.fetch()
++        await route.fulfill({
++          response,
++          headers: {
++            ...response.headers(),
++            'content-security-policy': "style-src-elem 'self'",
 +          },
-+        },
++        })
 +      },
 +    )
 +
-+    expect(clientBuild.chunksByFileName.get('alpha.js')?.imports).toEqual([
-+      'vendor.js',
-+    ])
++    const panel = await openDevtools(page, mode)
++    const router = panel.getByRole('button', { name: /^Router\s*\d+ items/ })
++    await expect(router).toBeVisible()
++    await expect(router).toHaveCSS('font-size', '12px')
++    await expect(router).toHaveCSS('gap', '4px')
 +  })
+ }
+```
+
+**File**: `packages/router-devtools-core/package.json` (modified, +1/-4)
+```diff
+@@ -62,12 +62,9 @@
+   "engines": {
+     "node": ">=20.19"
+   },
+-  "dependencies": {
+-    "clsx": "^2.1.1",
+-    "goober": "^2.1.16"
+-  },
+   "devDependencies": {
+     "@testing-library/jest-dom": "catalog:",
++    "esbuild": "^0.27.4",
+     "solid-js": "catalog:",
+     "vite": "*",
+     "vite-plugin-solid": "catalog:",
+```
+
+**File**: `packages/router-devtools-core/src/AgeTicker.tsx` (modified, +7/-5)
+```diff
+@@ -1,5 +1,3 @@
+-import { clsx as cx } from 'clsx'
+-import { useStyles } from './useStyles'
+ import type { AnyRoute, AnyRouteMatch, AnyRouter } from '@tanstack/router-core'
+ import type { Accessor } from 'solid-js'
+ 
+@@ -29,8 +27,6 @@ export function AgeTicker({
+   match?: AnyRouteMatch
+   router: Accessor<AnyRouter>
+ }) {
+-  const styles = useStyles()
+-
+   if (!match) {
+     return null
+   }
+@@ -50,7 +46,13 @@ export function AgeTicker({
+     route.options.gcTime ?? router().options.defaultGcTime ?? 300_000
+ 
+   return (
+-    <div class={cx(styles().ageTicker(age > staleTime))}>
++    <div
++      class={
++        age > staleTime
++          ? 'tsrd-age-ticker tsrd-age-ticker-warning'
++          : 'tsrd-age-ticker'
++      }
++    >
+       <div>{formatTime(age)}</div>
+       <div>/</div>
+       <div>{formatTime(staleTime)}</div>
+```
+
+**File**: `packages/router-devtools-core/src/BaseTanStackRouterDevtoolsPanel.tsx` (modified, +89/-104)
+```diff
+@@ -1,4 +1,3 @@
+-import { clsx as cx } from 'clsx'
+ import {
+   getRouteSegments,
+   hasKeys,
+@@ -19,7 +18,7 @@ import {
+   untrack,
+ } from 'solid-js'
+ import { useDevtoolsOnClose } from './context'
+-import { useStyles } from './useStyles'
++import { attachStyles } from './styles'
+ import useLocalStorage from './useLocalStorage'
+ import { Explorer } from './Explorer'
+ import { getRouteStatusColor, getStatusColor, multiSortBy } from './utils'
+@@ -66,20 +65,23 @@ export interface BaseDevtoolsPanelOptions {
+   router: Accessor<AnyRouter>
+   routerState: Accessor<any>
+   /**
+-   * Use this to attach the devtool's styles to specific element in the DOM.
++   * The element the devtools are mounted in. Its document or shadow root gets
++   * the devtools styles.
++   */
++  mountElement?: Element
++  /**
++   * Adds the devtools styles to this shadow root instead.
+    */
+   shadowDOMTarget?: ShadowRoot
+ }
+ 
+ const HISTORY_LIMIT = 15
+ 
+ function Logo(props: any) {
+-  const { className, ...rest } = props
+-  const styles = useStyles()
+   return (
+-    <button {...rest} class={cx(styles().logo, className ? className() : '')}>
+-      <div class={styles().tanstackLogo}>TANSTACK</div>
+-      <div class={styles().routerLogo}>TanStack Router v1</div>
++    <button {...props} class="tsrd-logo">
++      <div class="tsrd-tanstack-logo">TANSTACK</div>
++      <div class="tsrd-router-logo">TanStack Router v1</div>
+     </button>
+   )
+ }
+@@ -147,7 +149,6 @@ function RouteComp({
+   activeId: Accessor<string | undefined>
+   setActiveId: (id: string) => void
+ }) {
+-  const styles = useStyles()
+   const matches = createMemo(() =>
+     pendingMatches().length ? pendingMatches() : routerState().matches,
+   )
+@@ -206,32 +207,32 @@ function RouteComp({
+             setActiveId(activeId() === route.id ? '' : route.id)
+           }
+         }}
+-        class={cx(
+-          styles().routesRowContainer(route.id === activeId(), !!match()),
+-        )}
++        class={`tsrd-routes-row-container${match() ? ' tsrd-routes-row-container-match' : ''}${route.id === activeId() ? ' tsrd-routes-row-container-active' : ''}`}
+       >
+         <div
+-          class={cx(
+-            styles().matchIndicator(getRouteStatusColor(matches(), route)),
+-          )}
++          class={`tsrd-match-indicator tsrd-match-indicator-${getRouteStatusColor(matches(), route)}`}
+         />
+         <NavigateLink
+-          class={cx(styles().routesRow(!!match()))}
++          class={
++            match()
++              ? 'tsrd-routes-row'
++              : 'tsrd-routes-row tsrd-routes-row-unmatched'
++          }
+           left={
+             <Show when={navigationTarget()}>
+               {(navigate) => <NavigateButton to={navigate()} router={router} />}
+             </Show>
+           }
+           right={<AgeTicker match={match()} router={router} />}
+         >
+-          <code class={styles().code}>
++          <code class="tsrd-code">
+             {isRoot ? rootRouteId : route.path || trimPath(route.id)}{' '}
+           </code>
+-          <code class={styles().routeParamInfo}>{param()}</code>
++          <code class="tsrd-route-param-info">{param()}</code>
+         </NavigateLink>
+       </div>
+       {route.children?.length ? (
+-        <div class={styles().nestedRouteRow(!!isRoot)}>
++        <div class={isRoot ? '' : 'tsrd-nested-route-row'}>
+           {[...(route.children as Array<AnyRoute>)]
+             .sort((a, b) => {
+               return a.rank - b.rank
+@@ -262,12 +263,16 @@ export const BaseTanStackRouterDevtoolsPanel =
+       handleDragStart,
+       router,
+       routerState,
++      mountElement,
+       shadowDOMTarget,
+       ...panelProps
+     } = props
+ 
++    if (mountElement) {
++      attachStyles(mountElement, shadowDOMTarget)
++    }
 +
-   test('uses a dependency in the parent group without importing its copy in another entry', async () => {
-     const { clientBuild } = await buildClientFixture(
-       {
+     const { onCloseClick } = useDevtoolsOnClose()
+-    const styles = useStyles()
+     const { className, style, ...otherPanelProps } = panelProps
+ 
+     // useStore(router.stores.__store)
+@@ -403,19 +408,15 @@ export const BaseTanStackRouterDevtoolsPanel =
+ 
+     return (
+       <div
+-        class={cx(
+-          styles().devtoolsPanel,
+-          'TanStackRouterDevtoolsPanel',
+-          className ? className() : '',
+-        )}
++        class={`tsrd-devtools-panel TanStackRouterDevtoolsPanel ${className?.() ?? ''}`}
+         style={style ? style() : ''}
+         {...otherPanelProps}
+       >
+         {handleDragStart ? (
+-          <div class={styles().dragHandle} onMouseDown={handleDragStart}></div>
++          <div class="tsrd-drag-handle" onMouseDown={handleDragStart}></div>
+         ) : null}
+         <button
+-          class={styles().panelCloseBtn}
++          class="tsrd-panel-close-btn"
+           onClick={(e: any) => {
+             if (setIsOpen) {
+               setIsOpen(false)
+@@ -429,7 +430,7 @@ export const BaseTanStackRouterDevtoolsPanel =
+             height="6"
+             fill="none"
+             viewBox="0 0 10 6"
+-            class={styles().panelCloseBtnIcon}
++            class="tsrd-panel-close-btn-icon
+```
+
+**File**: `packages/router-devtools-core/src/Explorer.tsx` (modified, +24/-176)
+```diff
+@@ -1,15 +1,11 @@
+ /* eslint-disable @typescript-eslint/no-unnecessary-condition */
+-import { clsx as cx } from 'clsx'
+-import * as goober from 'goober'
+-import { createMemo, createSignal, useContext } from 'solid-js'
+-import { tokens } from './tokens'
++import { createMemo, createSignal } from 'solid-js'
+ import {
+   displayValue,
+   getServerComponentSlotUsageSummary,
+   getServerComponentSlots,
+   getServerComponentType,
+ } from './utils'
+-import { ShadowDomTargetContext } from './context'
+ import type { Accessor, JSX } from 'solid-js'
+ 
+ type ExpanderProps = {
+@@ -18,16 +14,19 @@ type ExpanderProps = {
+ }
+ 
+ export const Expander = ({ expanded, style: _style = {} }: ExpanderProps) => {
+-  const styles = useStyles()
+   return (
+-    <span class={styles().expander}>
++    <span class="tsrd-explorer-expander">
+       <svg
+         xmlns="http://www.w3.org/2000/svg"
+         width="12"
+         height="12"
+         fill="none"
+         viewBox="0 0 24 24"
+-        class={cx(styles().expanderIcon(expanded))}
++        class={
++          expanded
++            ? 'tsrd-explorer-expander-icon tsrd-explorer-expander-icon-expanded'
++            : 'tsrd-explorer-expander-icon'
++        }
+       >
+         <path
+           stroke="currentColor"
+@@ -180,7 +179,6 @@ export function Explorer({
+ 
+   const [expandedPages, setExpandedPages] = createSignal<Array<number>>([])
+   const [valueSnapshot, setValueSnapshot] = createSignal(undefined)
+-  const styles = useStyles()
+ 
+   const refreshValueSnapshot = () => {
+     setValueSnapshot((value() as () => any)())
+@@ -210,24 +208,24 @@ export function Explorer({
+   )
+ 
+   return (
+-    <div class={styles().entry}>
++    <div class="tsrd-explorer-entry">
+       {serverComponentType() !== null ? (
+         isCompositeWithSlots() ? (
+           <>
+             <button
+-              class={styles().expandButton}
++              class="tsrd-explorer-expand-button"
+               onClick={() => toggleExpanded()}
+             >
+               <Expander expanded={expanded() ?? false} />
+               <span>{rest.label}:</span>
+-              <span class={styles().compositeComponent}>
++              <span class="tsrd-explorer-composite-component">
+                 {displayValue(value())}
+               </span>
+             </button>
+             {(expanded() ?? false) ? (
+-              <div class={styles().rscMetaRow}>
+-                <span class={styles().rscMetaLabel}>slots</span>
+-                <div class={styles().subEntries}>
++              <div class="tsrd-explorer-rsc-meta-row">
++                <span class="tsrd-explorer-rsc-meta-label">slots</span>
++                <div class="tsrd-explorer-sub-entries">
+                   {serverComponentSlots().map((name) => {
+                     const usage = serverComponentSlotUsageSummary()[name]
+                     if (!usage) return null
+@@ -252,8 +250,8 @@ export function Explorer({
+             <span
+               class={
+                 serverComponentType() === 'compositeSource'
+-                  ? styles().compositeComponent
+-                  : styles().renderableComponent
++                  ? 'tsrd-explorer-composite-component'
++                  : 'tsrd-explorer-renderable-component'
+               }
+             >
+               {displayValue(value())}
+@@ -263,29 +261,29 @@ export function Explorer({
+       ) : subEntryPages().length ? (
+         <>
+           <button
+-            class={styles().expandButton}
++            class="tsrd-explorer-expand-button"
+             onClick={() => toggleExpanded()}
+           >
+             <Expander expanded={expanded() ?? false} />
+             {rest.label}
+-            <span class={styles().info}>
++            <span class="tsrd-explorer-info">
+               {String(type).toLowerCase() === 'iterable' ? '(Iterable) ' : ''}
+               {subEntries().length} {subEntries().length > 1 ? `items` : `item`}
+             </span>
+           </button>
+           {(expanded() ?? false) ? (
+             subEntryPages().length === 1 ? (
+-              <div class={styles().subEntries}>
++              <div class="tsrd-explorer-sub-entries">
+                 {subEntries().map((entry, index) => handleEntry(entry))}
+               </div>
+             ) : (
+-              <div class={styles().subEntries}>
++              <div class="tsrd-explorer-sub-entries">
+                 {subEntryPages().map((entries, index) => {
+                   return (
+                     <div>
+-                      <div class={styles().entry}>
++                      <div class="tsrd-explorer-entry">
+                         <button
+-                          class={cx(styles().labelButton, 'labelButton')}
++                          class={`${'tsrd-explorer-label-button'} labelButton`}
+                           onClick={() =>
+                             setExpandedPages((old) =>
+                               old.includes(index)
+@@ -301,7 +299,7 @@ export function Explorer({
+                           {index * pageSi
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8926** (2026-11-13): perf(start-plugin-core): count imported modules once in the Rsbuild manifest pass (@Sheraff)
-- **PR #8919** (2026-11-12): fix(react-start-rsc): bump RSC bundler deps for RSC (@DogPawHat)
-- **PR #8913** (2026-11-09): test(react-start): wait for SSR between HMR saves (@schiller-manuel)
-- **PR #8912** (2026-11-09): chore(pnpm): upgrade to pnpm 12 (@schiller-manuel)
-- **PR #8907** (2026-11-08): fix(start-plugin-core): restore the build of the Rsbuild virtual modules (@Sheraff)
-- **PR #8895** (closed): fix(history): discard stale blocker resolution after an intervening navigation (@EnesKartal)
+- **PR #8963** (closed): fix(solid-router): write the SSR doctype without copying the first chunk (@brenelz)
+- **PR #8960** (2026-11-19): fix(solid-router-devtools): follow router state and prop changes in the Solid 2 wrappers (@brenelz)
+- **PR #8959** (2026-11-19): feat(router-devtools): add a trustedTypesPolicy option (@schiller-manuel)
+- **PR #8957** (2026-11-19): refactor(router-devtools-core): migrate to Solid 2 (@schiller-manuel)
+- **PR #8956** (2026-11-18): ci(benchmarks): pin CodSpeed jobs to ubuntu-24.04 (@Sheraff)
+- **PR #8955** (2026-11-18): chore(deps): update vite to 8.3.8 for GHSA-p4f5-76q4-ffq7 (@DogPawHat)
 
 ---
 
@@ -864,25 +1266,30 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. start-plugin-core): count imported modules once in the Rsbuild manifest pass
+## X. router-devtools-core): replace goober with a static stylesheet
 
 **RULE**:
-When implementing operations in `.changeset/rsbuild-manifest-module-chunks-once.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/router. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/router-devtools-static-styles.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/router. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0b6d4f3f`: start-plugin-core): count imported modules once in the Rsbuild manifest pass. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e75f0ffb`: router-devtools-core): replace goober with a static stylesheet. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/rsbuild-manifest-module-chunks-once.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/router-devtools-static-styles.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 ---
-'@tanstack/start-plugin-core': patch
+'@tanstack/router-devtools-core': patch
 ---
 
-Rsbuild: the Start manifest pass that runs after every client compilation (builds and each dev update) reads an imported module's chunks once per compilation and counts the module once per importing chunk, instead of once per import connection. The manifest is unchanged; the pass takes about 40 % less time (on a 333-route app, tens of milliseconds less per HMR update).
+The devtools no longer use goober. Their styles are now a static stylesheet adopted into the document or shadow root the devtools render in, instead of a `<style>` element in `<head>`. This means:
+
+- The devtools are styled on pages with a Content Security Policy that blocks inline `<style>` elements, without a nonce.
+- Devtools rendered inside a shadow root are styled without passing `shadowDOMTarget`.
+- The devtools no longer write to the shared `#_goober` style element.
+- Browsers without adoptable stylesheets (before Safari 16.4 and Firefox 101) show the devtools unstyled.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -892,4 +1299,4 @@ Rsbuild: the Start manifest pass that runs after every client compilation (build
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0b6d4f3f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e75f0ffb` are properly handled with clean fallback behavior.

@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "7e8689ba",
+    "sourceVersion": "fb070362",
     "license": "Apache-2.0",
-    "contentHash": "e9047d395b25a3f812aa06f8aaf3048e008dcf4e68d9c24be6fd3c0b869d3b5d",
-    "lastHarvestedAt": "2026-11-20T19:25:12.535Z",
+    "contentHash": "412fc6b9a38d1c2b88540e4a7ff7b72d75a7be9bc4dfb90be37e40767ef16606",
+    "lastHarvestedAt": "2026-11-21T00:24:47.776Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -7303,10 +7303,10 @@
     "repository": "zenbu-labs/terminal-browser",
     "platform": "github",
     "sourceUrl": "https://github.com/zenbu-labs/terminal-browser",
-    "sourceVersion": "f7c51579",
+    "sourceVersion": "fa9e5eb0",
     "license": "MIT",
-    "contentHash": "7158d7d3ed33ae41f88681a136225be0e8e21e8475bb3bb4e29268a39d8d855d",
-    "lastHarvestedAt": "2026-11-19T13:21:46.887Z",
+    "contentHash": "ed85dc81a544471d0e2fb647d1e78faa3237b4dfcdbf30e2ab1aa1eff57e5793",
+    "lastHarvestedAt": "2026-11-21T00:24:36.168Z",
     "learningId": "learn-github-zenbu-labs-terminal-browser"
   },
   "kosi-libs-kodein": {
@@ -11383,10 +11383,10 @@
     "repository": "TanStack/router",
     "platform": "github",
     "sourceUrl": "https://github.com/TanStack/router",
-    "sourceVersion": "0b6d4f3f",
+    "sourceVersion": "ce46b21b",
     "license": "MIT",
-    "contentHash": "a0eb4bb195f3f3d2d67163865d3240539cd52bfdd476e5d550c6fc988afc8419",
-    "lastHarvestedAt": "2026-11-17T20:03:28.708Z",
+    "contentHash": "2d0640cc9f066917a9559e1974a963412bf052b78e68305dcff328ca96b642ed",
+    "lastHarvestedAt": "2026-11-21T00:24:38.681Z",
     "learningId": "learn-github-tanstack-router"
   },
   "hf-tencent-hy-simulmt-30b-a3b-fp8": {

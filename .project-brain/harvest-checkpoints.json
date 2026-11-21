@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T00:11:58.129Z",
+  "last_updated": "2026-11-21T00:24:47.787Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "e9047d395b25a3f812aa06f8aaf3048e008dcf4e68d9c24be6fd3c0b869d3b5d",
-      "verified_at": "2026-11-20T19:25:12.543Z",
+      "content_hash": "412fc6b9a38d1c2b88540e4a7ff7b72d75a7be9bc4dfb90be37e40767ef16606",
+      "verified_at": "2026-11-21T00:24:47.786Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T19:25:12.543Z"
+      "last_updated": "2026-11-21T00:24:47.786Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -11001,14 +11001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zenbu-labs-terminal-browser",
-      "content_hash": "7158d7d3ed33ae41f88681a136225be0e8e21e8475bb3bb4e29268a39d8d855d",
-      "verified_at": "2026-11-19T13:21:46.895Z",
+      "content_hash": "ed85dc81a544471d0e2fb647d1e78faa3237b4dfcdbf30e2ab1aa1eff57e5793",
+      "verified_at": "2026-11-21T00:24:36.177Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T13:21:46.895Z"
+      "last_updated": "2026-11-21T00:24:36.177Z"
     },
     "kosi-libs/Kodein": {
       "repository": "kosi-libs/Kodein",
@@ -17106,14 +17106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tanstack-router",
-      "content_hash": "a0eb4bb195f3f3d2d67163865d3240539cd52bfdd476e5d550c6fc988afc8419",
-      "verified_at": "2026-11-17T20:03:28.716Z",
+      "content_hash": "2d0640cc9f066917a9559e1974a963412bf052b78e68305dcff328ca96b642ed",
+      "verified_at": "2026-11-21T00:24:38.689Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T20:03:28.716Z"
+      "last_updated": "2026-11-21T00:24:38.689Z"
     },
     "tencent/Hy-SimulMT-30B-A3B-FP8": {
       "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",

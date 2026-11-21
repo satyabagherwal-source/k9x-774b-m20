@@ -11670,3 +11670,6 @@
 | `CYCLE-20261121-L63G` | `2026-11-21T00:11:58.108Z` | `xevrion/hatchzip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9672, Rule 9673, Rule 9674` | Yes (`0ca58031...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T00:12:39.323Z` | `parcel-bundler-parcel` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-6DD8B1FE` [Domain F] | Yes (`96ffcfd3...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T00:13:22.638Z` | `parcel-bundler-parcel` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-BC44E02A` [Domain K] | Yes (`eb92e35a...`) |
+| `CYCLE-20261121-1F0J` | `2026-11-21T00:24:36.163Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9675` | Yes (`ed85dc81...`) |
+| `CYCLE-20261121-1GYE` | `2026-11-21T00:24:38.678Z` | `TanStack/router` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9676` | Yes (`2d0640cc...`) |
+| `CYCLE-20261121-1NZ1` | `2026-11-21T00:24:47.773Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9677` | Yes (`412fc6b9...`) |
