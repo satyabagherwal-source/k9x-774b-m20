@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T05:11:14.326Z",
+  "timestamp": "2026-11-21T22:40:17.946Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-efficient-large-model-open-h3-regenerate-2k-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-efficient-large-model-open-h3-regenerate-2k-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T05:11:14.326Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T22:40:17.946Z`  
 > **Learning ID**: `LEARN-EVO-hf-efficient-large-model-open-h3-regenerate-2k-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-efficient`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T05:10:27.805Z  
+> **Timestamp**: 2026-11-21T22:40:03.693Z  
 > **Learning ID**: `learn-huggingface-efficient-large-model-open-h3-regenerate-2k`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K](https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T05:10:27.633Z  
+> **Harvest Timestamp**: 2026-11-21T22:40:03.487Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: video-to-video
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1518007 downloads | 256 likes
+- **Stars / Engagement**: 2313627 downloads | 256 likes
 
 ---
 

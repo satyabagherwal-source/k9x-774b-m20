@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T19:45:18.705Z",
+  "timestamp": "2026-11-21T22:40:18.706Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-authzed-spicedb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [authzed-spicedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T19:45:18.705Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T22:40:18.706Z`  
 > **Learning ID**: `LEARN-EVO-authzed-spicedb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 84%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 77%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from authzed-spicedb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source**: github ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
-> **Source Version**: `65181da3`  
+> **Source Version**: `c77bad6d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T19:44:39.307Z  
+> **Timestamp**: 2026-11-21T22:40:12.927Z  
 > **Learning ID**: `learn-github-authzed-spicedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T19:44:39.302Z  
+> **Harvest Timestamp**: 2026-11-21T22:40:12.921Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open Source, Google Zanzibar-inspired database for scalably storing and querying fine-grained authorization data
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 7233 stars
+- **Stars / Engagement**: 7235 stars
 
 ---
 
@@ -1135,360 +1135,307 @@ func inputMessagesForService[S any](
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4598c884` (2026-11-20)
-**Commit Message**: fix(watch): emit schema Watch events from the unified stored schema in read-new modes (#3513)
-
-* test: run the shared schema watch tests in all four schema modes
-
-Writing a schema should always produce a Watch event. In read-new-write-new
-mode it produces none: SpiceDB saves the schema in a newer format, but the
-datastores still read only the older one when building Watch events. Anything
-watching for schema changes goes quiet.
-
-The three schema tests in the shared datastore suite couldn't catch this
-because they saved schemas through the old API directly, which never looks at
-the mode setting. They now save schemas the way a running server does, in all
-four modes.
-
-The old API took one change at a time; the new one takes the whole schema and
-works out what changed. A helper tracks the full schema and rewrites all of it
-on each step. Two things that needed:
-
-  - one write of the setup schema before the watch starts, or the next write
-    looks like every definition was just created
-  - caveats that actually parse, because the ones the tests used didn't and
-    the new path rejects them
-
-Deletes still behave the same and no assertions changed. One difference:
-deletes no longer remov
+### Incident Patch 1: `c77bad6d` (2026-11-20)
+**Commit Message**: fix: single schema store reads wrong schemahash at revision boundaries (#3510)
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
- - Dispatch: LookupResources cursors are now locked to the dispatcher that produced them when secondary dispatchers are configured. Previously a cursor returned by a secondary was never tagged, and LookupResources3 cursors were never checked at all, so every page raced the primary against the secondaries and a cursor produced by one could be sent to the other, failing the request with an invalid cursor error. A cursor without a secondary tag is now resumed by the primary only.
+@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
  - Dispatch: when a LookupResources continuation locked to a secondary dispatcher fails, the secondary's error is now returned with its gRPC status, instead of a generic "no dispatcher returned results" error with code Unknown. (https://github.com/authzed/spicedb/pull/3468)
  - LookupResources v3: fixed an issue with concurrent map writes in the caveat runner by giving each producer its own caveat runner. (https://github.com/authzed/spicedb/pull/3509)
-+- Watch: with `--experimental-schema-mode` set to `read-new-write-new`, writing a schema now produces a Watch schema event. Schema events were always built from the legacy namespace and caveat tables, which that mode does not write, so schema changes were never reported. With `read-new-write-both` and `read-new-write-new`, schema events are now built from the single-store schema. The default legacy schema mode is unchanged, and MySQL still does not support watching schema. Spanner: a new migration, `add-schema-revision-to-change-stream`, adds the `schema_revision` table to the change stream, and a Watch with checkpoints no longer emits a checkpoint for a transaction that wrote to several tables before that transaction's changes. (https://github.com/authzed/spicedb/pull/3513)
+ - Watch: with `--experimental-schema-mode` set to `read-new-write-new`, writing a schema now produces a Watch schema event. Schema events were always built from the legacy namespace and caveat tables, which that mode does not write, so schema changes were never reported. With `read-new-write-both` and `read-new-write-new`, schema events are now built from the single-store schema. The default legacy schema mode is unchanged, and MySQL still does not support watching schema. Spanner: a new migration, `add-schema-revision-to-change-stream`, adds the `schema_revision` table to the change stream, and a Watch with checkpoints no longer emits a checkpoint for a transaction that wrote to several tables before that transaction's changes. (https://github.com/authzed/spicedb/pull/3513)
++- Single Schema Store: If a schema was written and reverted within a quantization window, CRDB and Spanner-backed SpiceDB instances could select the wrong pairing of datastore revision and schema revision. (https://github.com/authzed/spicedb/pull/3510)
  
  ## [1.57.1] - 2026-11-10
  ### Fixed
 ```
 
-**File**: `internal/datastore/common/changes.go` (modified, +20/-0)
+**File**: `internal/datastore/crdb/crdb.go` (modified, +38/-5)
 ```diff
-@@ -42,6 +42,10 @@ type changeRecord[R datastore.Revision] struct {
- 	namespacesDeleted  map[string]struct{}
- 	caveatsDeleted     map[string]struct{}
- 	metadatas          []TransactionMetadata
-+
-+	// storedSchemaChanged is a pointer so that it can be set through the copies of the
-+	// record handed out by recordForRevision, as with the maps above.
-+	storedSchemaChanged *bool
- }
+@@ -285,7 +285,7 @@ func (cds *crdbDatastore) OptimizedRevision(ctx context.Context) (datastore.Revi
+ 	ctx, span := tracer.Start(ctx, "OptimizedRevision")
+ 	defer span.End()
  
- // NewChanges creates a new Changes object for change tracking and de-duplication.
-@@ -190,6 +194,7 @@ func (ch *Changes[R, K]) recordForRevision(rev R) changeRecord[R] {
- 			make(map[string]struct{}),
- 			make(map[string]struct{}),
- 			make([]TransactionMetadata, 0),
-+			new(bool),
- 		}
- 		ch.records[k] = revisionChanges
+-	nowRev, schemaHash, err := cds.headRevisionInternal(ctx)
++	nowRev, err := cds.headRevisionInternalNoHash(ctx)
+ 	if err != nil {
+ 		return datastore.RevisionWithSchemaHashAndValidity{}, err
  	}
-@@ -303,6 +308,20 @@ func (ch *Changes[R, K]) AddChangedDefinition(
- 	return nil
- }
- 
-+// AddStoredSchemaChange adds a change indicating that the unified stored schema was written.
-+func (ch *Changes[R, K]) AddStoredSchemaChange(_ context.Context, rev R) error {
-+	if ch.content&datastore.WatchStoredSchema != datastore.WatchStoredSchema {
-+		return nil
-+	}
-+
-+	ch.recordsMutex.Lock()
-+	defer ch.recordsMutex.Unlock()
-+
-+	record := ch.recordForRevision(rev)
-+	*record.storedSchemaChanged = true
-+	return nil
-+}
-+
- // AsRevisionChanges returns the list of changes processed so far as a datastore watch
- // compatible, ordered, changelist.
- func (ch *Changes[R, K]) AsRevisionChanges(lessThanFunc func(lhs, rhs K) bool) iter.Seq2[datastore.RevisionChanges, error] {
-@@ -368,6 +387,7 @@ func (ch *Changes[R, K]) revisionChanges(lessThanFunc func(lhs, rhs K) bool, bou
- 			change.ChangedDefinitions = slices.Collect(maps.Values(revisionChangeRecord.definitionsChanged))
- 			change.DeletedNamespaces = slices.Collect(maps.Keys(revisionChangeRecord.namespacesDeleted))
- 			change.DeletedCaveats = slices.Collect(maps.Keys(revisionChangeRecord.caveatsDeleted))
-+			change.StoredSchemaChanged = *revisionChangeRecord.storedSchemaChanged
- 
- 			if len(revisionChangeRecord.metadatas) > 0 {
- 				metadatas := make([]*structpb.Struct, 0, len(revisionChangeRecord.metadatas))
-```
-
-**File**: `internal/datastore/crdb/watch.go` (modified, +35/-0)
-```diff
-@@ -37,6 +37,9 @@ const (
- 	queryChangefeedPreV22 = "EXPERIMENTAL CHANGEFEED FOR %s WITH updated, cursor = '%s', resolved = '%s';"
- )
- 
-+// tableSchemaRevision is the table holding the hash of the unified stored schema.
-+const tableSchemaRevision = "schema_revision"
-+
- type changeDetails struct {
- 	Resolved string
- 	Updated  string
-@@ -160,6 +163,9 @@ func (cds *crdbDatastore) watch(
- 		tableNames = append(tableNames, schema.TableNamespace)
- 		tableNames = append(tableNames, schema.TableCaveat)
- 	}
-+	if opts.Content&datastore.WatchStoredSchema == datastore.WatchStoredSchema {
-+		tableNames = append(tableNames, tableSchemaRevision)
-+	}
- 
- 	if len(tableNames) == 0 {
- 		errs <- errors.New("at least relationships or schema must be specified")
-@@ -234,6 +240,7 @@ type changeTracker[R datastore.Revision, K comparable] interface {
- 	AddChangedDefinition(ctx context.Context, rev R, def datastore.SchemaDefinition) error
- 	AddDeletedNamespace(ctx context.Context, rev R, namespaceName string) error
- 	AddDeletedCaveat(ctx context.Context, rev R, caveatName string) error
-+	AddStoredSchemaChange(ctx context.Context, rev R) error
- 	AddRevisionMetadata(ctx context.Context, rev R, metadata common.TransactionMetadata) error
- }
- 
-@@ -320,6 +327,19 @@ func (s streamingChangeProvider) AddDeletedCaveat(_ context.Context, rev revisio
- 	return s.sendChange(changes)
- }
- 
-+func (s streamingChangeProvider) AddStoredSchemaChange(_ context.Context, rev revisions.HLCRevision) error {
-+	if s.content&datastore.WatchStoredSchema != datastore.WatchStoredSchema {
-+		return nil
-+	}
-+
-+	changes := datastore.RevisionChanges{
-+		Revision:            rev,
-+		StoredSchemaChanged: true,
-+	}
-+
-+	return s.sendChange(changes)
-+}
-+
- func (s streamingChangeProvider) AddRevisionMetadata(_ context.Context, rev revisions.HLCRevision, metadata common.TransactionMetadata) error {
- 	if len(metadata) > 0 {
- 		parsedMetadata, err := structpb.NewStruct(metadata)
-@@ -586,6 +606,21 @@ func (cds *crdbDatastore) processChanges(ctx context.Context, changes pgx.Rows,
- 				}
- 			}
- 
-+		case tableSchemaRevision:
-+			// The row is upserted by every write of the unified stored schema.
-+			if details.After != nil {
-+				rev, err := revisions.HLCRevisionFromString(details.Updated)
-+				if err != nil {
-+					sendError(fmt.Errorf("malformed update timestamp: %w", err))
-+					return
-+				}
-+
-+				if err := tracked.AddStoredSchemaChange(ctx, rev); err != nil {
-+					sendError(err)
-+					return
-+				}
-+			}
-+
- 		case schema.TableTransactionMetadata:
- 			if details.After != nil {
- 				rev, err := revisions.HLCRevisionFromString(details.Updated)
-```
-
-**File**: `internal/datastore/memdb/memdb.go` (modified, +5/-1)
-```diff
-@@ -280,7 +280,7 @@ func (mdb *memdbDatastore) ReadWriteTx(
- 			return mdb.headRevisionNoLock(), nil
- 		}
- 
--		tracked := common.NewChanges(revisions.TimestampIDKeyFunc, datastore.WatchRelationships|datastore.WatchSchema, 0)
-+		tracked := common.NewChanges(revisions.TimestampIDKeyFunc, datastore.WatchRelationships|datastore.WatchSchema|datastore.WatchStoredSchema, 0)
- 		if config.Metadata != nil && len(config.Metadata.GetFields()) > 0 {
- 			if err := tracked.AddRevisionMetadata(ctx, newRevision, config.Metadata.AsMap()); err != nil {
- 				return datastore.NoRevision, err
-@@ -352,6 +352,10 @@ func (mdb *memdbDatastore) ReadWriteTx(
- 				default:
- 					return datastore.NoRevision, spiceerrors.MustBugf("unexpected namespace change")
- 				}
-+			case tableSchema:
-+				if err := tracked.AddStoredSchemaChange(ctx, newRevision); err != nil {
-+					return datastore.NoRevision, err
-+				}
- 			}
- 		}
- 
-```
-
-**File**: `internal/datastore/memdb/watch.go` (modified, +24/-3)
-```diff
-@@ -120,13 +120,34 @@ func (mdb *memdbDatastore) loadChanges(_ context.Context, currentTxn int64, opti
- 	for changeRaw := it.Next(); changeRaw != nil; changeRaw = it.Next() {
- 		change := changeRaw.(*changelog)
- 
-+		// The changelog holds everything that changed at the revision, so only emit the
-+		// content that was requested.
-+		filtered := datastore.RevisionChanges{
-+			Revision:  change.changes.Revision,
-+			Metadatas: change.changes.Metadatas,
-+		}
-+		hasRequestedContent := false
-+
- 		if options.Content&datastore.WatchRelationships == datastore.WatchRelationships && len(change.changes.RelationshipChanges) > 0 {
--			changes = append(changes, change.changes)
-+			filtered.RelationshipChanges = change.changes.RelationshipChanges
-+			hasRequestedContent = true
- 		}
- 
- 		if options.Content&datastore.WatchSchema == datastore.WatchSchema &&
--			len(change.changes.ChangedDefinitions) > 0 || len(change.changes.DeletedCaveats) > 0 || len(change.changes.DeletedNamespaces) > 0 {
--			changes = append(changes, change.changes)
-+			(len(change.changes.ChangedDefinitions) > 0 || len(change.changes.DeletedCaveats) > 0 || len(change.changes.DeletedNamespaces) > 0) {
-+			filtered.ChangedDefinitions = change.changes.ChangedDefinitions
-+			filtered.DeletedNamespaces = change.changes.DeletedNamespaces
-+			filtered.DeletedCaveats = change.changes.DeletedCaveats
-+			hasRequestedContent = true
-+		}
-+
-+		if options.Content&datastore.WatchStoredSchema == datastore.WatchStoredSchema && change.changes.StoredSchemaChanged {
-+			filtered.StoredSchemaChanged = true
-+			hasRequestedContent = true
-+		}
-+
-+		if hasRequestedContent {
-+			changes = append(changes, filtered)
- 		}
- 
- 		if options.Content&datastore.WatchCheckpoints == datastore.WatchCheckpoints && change.revisionNanos > lastRevision {
-```
-
-**File**: `internal/datastore/mysql/watch.go` (modified, +2/-1)
-```diff
-@@ -36,7 +36,8 @@ func (mds *mysqlDatastore) Watch(ctx context.Context, afterRevisionRaw datastore
- 		return updates, errs
+@@ -300,9 +300,46 @@ func (cds *crdbDatastore) OptimizedRevision(ctx context.Context) (datastore.Revi
  	}
  
--	if options.Content&datastore.WatchSchema == datastore.WatchSchema {
-+	if options.Content&datastore.WatchSchema == datastore.WatchSchema ||
-+		options.Content&datastore.WatchStoredSchema == datastore.WatchStoredSchema {
- 		close(updates)
- 		errs <- errors.New("schema watch unsupported in MySQL")
- 		return updates, errs
-```
-
-**File**: `internal/datastore/postgres/watch.go` (modified, +47/-0)
-```diff
-@@ -61,6 +61,11 @@ var (
- 		schema.ColCreatedXid,
- 		schema.ColDeletedXid,
- 	).From(schema.TableCaveat)
+ 	rev, validFor := revisions.Quantize(nowTS, cds.followerReadDelay, cds.revisionQuantization)
 +
-+	// A row is added to schema_revision by every write of the unified stored schema.
-+	queryChangedStoredSchema = psql.Select(
-+		schema.ColCreatedXid,
-+	).From("schema_revision")
- )
- 
- func (pgd *pgDatastore) Watch(
-@@ -302,6 +307,14 @@ func (pgd *pgDatastore) loadChanges(ctx context.Context, revisions []postgresRev
- 		}
- 	}
- 
-+	// Load stored schema changes.
-+	if options.Content&datastore.WatchStoredSchema == datastore.WatchStoredSchema {
-+		err := pgd.loadStoredSchemaChanges(ctx, xmin, xmax, txidToRevision, filter, tracked)
-+		if err != nil {
-+			return nil, err
-+		}
-+	}
-+
- 	// Reconcile the changes.
- 	return tracked.AsRevisionChanges(func(lhs, rhs uint64) bool {
- 		return filter[lhs] < filter[rhs]
-@@ -519,3 +532,37 @@ func (pgd *pgDatastore) loadCaveatChanges(ctx context.Context, xmin uint64, xmax
- 	}
- 	return nil
- }
-+
-+func (pgd *pgDatastore) loadStoredSchemaChanges(ctx context.Context, xmin uint64, xmax uint64, txidToRevision map[uint64]postgresRevision, filter map[uint64]int, tracked *common.Changes[postgresRevision, uint64]) error {
-+	sql, args, err := queryChangedStoredSchema.Where(sq.And{
-+		sq.LtOrEq{schema.ColCreatedXid: xmax},
-+		sq.GtOrEq{schema.ColCreatedXid: xmin},
-+	}).ToSql()
++	// Read the hash at the quantized revision, not at now. A schema written between the two
++	// would otherwise pair this revision with a schema that was not in effect at it.
++	schemaHash, err := cds.schemaHashAtRevision(ctx, rev)
 +	if err != nil {
-+		return fmt.Errorf("unable to prepare changes SQL: %w", err)
++		return datastore.RevisionWithSchemaHashAndValidity{}, err
 +	}
+ 	return datastore.RevisionWithSchemaHashAndValidity{Revision: rev, ValidFor: validFor, SchemaHash: schemaHash}, nil
+ }
+ 
++// schemaHashAtRevision returns the stored schema hash as of rev. It returns an empty hash if
++// no schema was stored at rev, including when rev precedes the creation of the database or
++// of the schema_revision table (shortly after a fresh migration). A database that does not
++// exist at all fails when connecting, before this query runs.
++func (cds *crdbDatastore) schemaHashAtRevision(ctx context.Context, rev datastore.Revision) (string, error) {
++	ctx, span := tracer.Start(ctx, "schemaHashAtRevision")
++	defer span.End()
 +
-+	changes, err := pgd.readPool.Query(ctx, sql, args...)
++	query := "SELECT hash FROM schema_revision AS OF SYSTEM TIME " + rev.String() + " WHERE name = 'current' LIMIT 1"
++
++	var schemaHash []byte
++	err := cds.readPool.QueryRowFunc(ctx, func(ctx context.Context, row pgx.Row) error {
++		return row.Scan(&schemaHash)
++	}, query)
 +	if err != nil {
-+		return fmt.Errorf("unable to load changes for XID: %w", err)
-+	}
-+
-+	defer changes.Close()
-+
-+	for changes.Next() {
-+		var createdXID xid8
-+		if err := changes.Scan(&createdXID); err != nil {
-+			return fmt.Errorf("unable to parse changed stored schema: %w", err)
++		if pgErr, ok := errors.AsType[*pgconn.PgError](err); errors.Is(err, pgx.ErrNoRows) || (ok && (pgErr.Code == pgerrcodeUndefinedTable || pgErr.Code == pgerrcodeInvalidCatalogName)) {
++			return "", nil
 +		}
-+
-+		if _, found := filter[createdXID.Uint64]; found {
-+			if err := tracked.AddStoredSchemaChange(ctx, txidToRevision[createdXID.Uint64]); err != nil {
-+				return err
-+			}
-+		}
++		return "", fmt.Errorf(errRevision, err)
 +	}
-+	if err := changes.Err(); err != nil {
-+		return fmt.Errorf("unable to load changes for XID: %w", err)
-+	}
-+	return nil
++	return string(schemaHash), nil
 +}
-```
-
-**File**: `internal/datastore/spanner/migrations/zz_migration.0014_add_schema_revision_to_change_stream.go` (added, +28/-0)
-```diff
-@@ -0,0 +1,28 @@
-+package migrations
 +
-+import (
-+	"context"
-+
-+	"cloud.google.com/go/spanner/admin/database/apiv1/databasepb"
++const (
++	// pgerrcodeUndefinedTable is the SQLSTATE for a table that does not exist.
++	pgerrcodeUndefinedTable = "42P01"
++	// pgerrcodeInvalidCatalogName is the SQLSTATE for a database that does not exist.
++	pgerrcodeInvalidCatalogName = "3D000"
 +)
 +
-+// schema_revision is written by every write of the unified stored schema, so watching it
-+// allows the Watch API to observe schema changes made to the unified stored schema.
-+var addSchemaRevisionToChangeStream = `ALTER CHANGE STREAM combined_change_stream SET FOR namespace_config,caveat,relation_tuple,schema_revision`
+ // CheckRevision verifies the given revision is within the software GC window. It
+ // lives on the datastore (not the caching layer) because it is not a caching
+ // concern. It uses the hash-free head revision query since the schema hash is
+@@ -588,10 +625,6 @@ func (cds *crdbDatastore) HeadRevision(ctx context.Context) (datastore.RevisionW
+ 	return datastore.RevisionWithSchemaHash{Revision: rev, SchemaHash: schemaHash}, nil
+ }
+ 
+-func (cds *crdbDatastore) headRevisionInternal(ctx context.Context) (datastore.Revision, string, error) {
+-	return cds.headRevisionWithSchemaHash(ctx)
+-}
+-
+ func (cds *crdbDatastore) headRevisionInternalNoHash(ctx context.Context) (datastore.Revision, error) {
+ 	ctx, span := tracer.Start(ctx, "headRevisionInternalNoHash")
+ 	defer span.End()
+```
+
+**File**: `internal/datastore/spanner/revisions.go` (modified, +11/-22)
+```diff
+@@ -17,6 +17,7 @@ var (
+ 	ParseRevisionString   = revisions.RevisionParser(revisions.Timestamp)
+ 	nowWithSchemaHashStmt = spanner.NewStatement("SELECT CURRENT_TIMESTAMP(), COALESCE((SELECT schema_hash FROM schema_revision WHERE name = 'current' ORDER BY timestamp DESC LIMIT 1), b'')")
+ 	nowStmt               = spanner.NewStatement("SELECT CURRENT_TIMESTAMP()")
++	schemaHashStmt        = spanner.NewStatement("SELECT COALESCE((SELECT schema_hash FROM schema_revision WHERE name = 'current' ORDER BY timestamp DESC LIMIT 1), b'')")
+ )
+ 
+ func (sd *spannerDatastore) HeadRevision(ctx context.Context) (datastore.RevisionWithSchemaHash, error) {
+@@ -52,34 +53,22 @@ func (sd *spannerDatastore) nowOnly(ctx context.Context) (datastore.Revision, er
+ 	return revisions.NewForTime(timestamp), nil
+ }
+ 
+-func (sd *spannerDatastore) staleHeadRevision(ctx context.Context) (datastore.Revision, string, error) {
+-	var timestamp time.Time
++// schemaHashAtRevision returns the stored schema hash as of rev. It returns an empty hash if
++// no schema was stored at rev, including when rev precedes the creation of the
++// schema_revision table (commonly hit immediately after a fresh migration).
++func (sd *spannerDatastore) schemaHashAtRevision(ctx context.Context, rev revisions.WithTimestampRevision) (string, error) {
+ 	var schemaHash []byte
+ 	err := sd.client.Single().
+-		WithTimestampBound(spanner.ExactStaleness(sd.config.followerReadDelay)).
+-		Query(ctx, nowWithSchemaHashStmt).
++		WithTimestampBound(spanner.ReadTimestamp(time.Unix(0, rev.TimestampNanoSec()))).
++		Query(ctx, schemaHashStmt).
+ 		Do(func(r *spanner.Row) error {
+-			return r.Columns(&timestamp, &schemaHash)
++			return r.Columns(&schemaHash)
+ 		})
+ 	if err == nil {
+-		return revisions.NewForTime(timestamp), string(schemaHash), nil
++		return string(schemaHash), nil
+ 	}
+-
+-	// The stale read timestamp can precede the creation of the schema_revision
+-	// table when the followerReadDelay is larger than the time elapsed since
+-	// migrations ran (commonly hit immediately after a fresh migration). At
+-	// that past time, no schema existed, so returning an empty hash is
+-	// semantically correct; fall back to a stale read of just the timestamp.
+ 	if spanner.ErrCode(err) == codes.InvalidArgument && strings.Contains(err.Error(), "Table not found: schema_revision") {
+-		if err := sd.client.Single().
+-			WithTimestampBound(spanner.ExactStaleness(sd.config.followerReadDelay)).
+-			Query(ctx, nowStmt).
+-			Do(func(r *spanner.Row) error {
+-				return r.Columns(&timestamp)
+-			}); err != nil {
+-			return datastore.NoRevision, "", fmt.Errorf(errRevision, err)
+-		}
+-		return revisions.NewForTime(timestamp), "", nil
++		return "", nil
+ 	}
+-	return datastore.NoRevision, "", fmt.Errorf(errRevision, err)
++	return "", fmt.Errorf(errRevision, err)
+ }
+```
+
+**File**: `internal/datastore/spanner/spanner.go` (modified, +8/-1)
+```diff
+@@ -244,7 +244,7 @@ func (sd *spannerDatastore) OptimizedRevision(ctx context.Context) (datastore.Re
+ 	ctx, span := tracer.Start(ctx, "OptimizedRevision")
+ 	defer span.End()
+ 
+-	nowRev, schemaHash, err := sd.staleHeadRevision(ctx)
++	nowRev, err := sd.nowOnly(ctx)
+ 	if err != nil {
+ 		return datastore.RevisionWithSchemaHashAndValidity{}, err
+ 	}
+@@ -259,6 +259,13 @@ func (sd *spannerDatastore) OptimizedRevision(ctx context.Context) (datastore.Re
+ 	}
+ 
+ 	rev, validFor := revisions.Quantize(nowTS, sd.followerReadDelay, sd.revisionQuantization)
 +
-+func init() {
-+	if err := SpannerMigrations.Register("add-schema-revision-to-change-stream", "populate-schema-tables", func(ctx context.Context, w Wrapper) error {
-+		updateOp, err := w.adminClient.UpdateDatabaseDdl(ctx, &databasepb.UpdateDatabaseDdlRequest{
-+			Database: w.client.DatabaseName(),
-+			Statements: []string{
-+				addSchemaRevisionToChangeStream,
-+			},
-+		})
-+		if err != nil {
-+			return err
++	// Read the hash at the quantized revision, not at now. A schema written between the two
++	// would otherwise pair this revision with a schema that was not in effect at it.
++	schemaHash, err := sd.schemaHashAtRevision(ctx, rev)
++	if err != nil {
++		return datastore.RevisionWithSchemaHashAndValidity{}, err
++	}
+ 	return datastore.RevisionWithSchemaHashAndValidity{Revision: rev, ValidFor: validFor, SchemaHash: schemaHash}, nil
+ }
+ 
+```
+
+**File**: `pkg/datastore/test/datastore.go` (modified, +1/-0)
+```diff
+@@ -424,6 +424,7 @@ func AllWithExceptions(t *testing.T, tester DatastoreTester, except Categories,
+ 	}
+ 	t.Run("TestHeadRevisionSchemaHash", runner(tester, HeadRevisionSchemaHashTest))
+ 	t.Run("TestOptimizedRevisionSchemaHash", runner(tester, OptimizedRevisionSchemaHashTest))
++	t.Run("TestOptimizedRevisionSchemaHashAfterRevert", runner(tester, OptimizedRevisionSchemaHashAfterRevertTest))
+ 
+ 	if !except.Migration() {
+ 		t.Run("TestMigration", runner(tester, MigrationTest))
+```
+
+**File**: `pkg/datastore/test/storedschema.go` (modified, +152/-0)
+```diff
+@@ -782,6 +782,158 @@ func OptimizedRevisionSchemaHashTest(t *testing.T, tester DatastoreTester) {
+ 		"OptimizedRevision schema hashes should differ after writing a different schema")
+ }
+ 
++// OptimizedRevisionSchemaHashAfterRevertTest returns a test that checks that OptimizedRevision
++// returns the schema hash at the revision it returns, when a schema is written and then
++// reverted across a quantization boundary.
++//
++// Each attempt writes schema A, then schema B, and waits for the next quantization boundary on
++// the database's clock. In the new window it writes a relationship (a marker), reverts to
++// schema A, and calls OptimizedRevision. Datastores with timestamp revisions (CRDB, Spanner,
++// memdb) return the boundary. Datastores with transaction-ID revisions (Postgres, MySQL) return
++// the first transaction at or after the boundary, which is the marker. Either way, the
++// optimized revision is after the write of B and before the revert, and the schema at it is B.
++// A datastore that reads the schema hash at "now" and then quantizes the revision down returns
++// hashA with that revision.
++//
++// If the database's clock crosses into the next window before OptimizedRevision returns, or
++// the optimized revision is not between the two writes, the attempt cannot show anything and
++// the test retries. The last attempt fails on those conditions instead of retrying.
++//
++// The tester must create datastores with no follower read delay.
++func OptimizedRevisionSchemaHashAfterRevertTest(t *testing.T, tester DatastoreTester) {
++	const (
++		quantization = 2 * time.Second
++		maxAttempts  = 4
++	)
++
++	ds, err := tester.New(t, DefaultRevisionParameters().WithQuantization(quantization), 1)
++	require.NoError(t, err)
++
++	dbNow := databaseClock(t, ds)
++	for attempt := 1; attempt <= maxAttempts; attempt++ {
++		if optimizedRevisionSchemaHashAfterRevertAttempt(t, ds, quantization, dbNow, attempt == maxAttempts) {
++			return
 +		}
-+		return updateOp.Wait(ctx)
-+	}, nil); err != nil {
-+		panic("failed to register migration: " + err.Error())
++		t.Logf("attempt %d: the timing did not put the optimized revision between the schema writes; retrying", attempt)
 +	}
 +}
++
++// databaseClock returns a function that reads the database's clock. The quantization windows
++// are on that clock, not the test's. memdb runs in this process, so it uses the local clock.
++// Postgres and MySQL read it with their garbage collector. CRDB and Spanner read it from
++// HeadRevision, which is the server's current time. (memdb's HeadRevision is its last write,
++// so it cannot be used as a clock.)
++func databaseClock(t *testing.T, ds datastore.Datastore) func(context.Context) time.Time {
++	t.Helper()
++
++	if eids := datastore.UnwrapAs[datastore.EngineIdentifiable](ds); eids != nil && eids.EngineName() == "memory" {
++		return func(context.Context) time.Time { return time.Now() }
++	}
++
++	if gcds := datastore.UnwrapAs[datastore.GarbageCollectableDatastore](ds); gcds != nil {
++		return func(ctx context.Context) time.Time {
++			// A garbage collector holds a pool connection until it is closed, so build one
++			// for each read. Holding one can starve the writes in a small test pool.
++			gc, err := gcds.BuildGarbageCollector(ctx)
++			require.NoError(t, err)
++			defer gc.Close()
++			now, err := gc.Now(ctx)
++			require.NoError(t, err)
++			return now
++		}
++	}
++
++	return func(ctx context.Context) time.Time {
++		head, err := ds.HeadRevision(ctx)
++		require.NoError(t, err)
++		tsRev, ok := head.Revision.(interface{ TimestampNanoSec() int64 })
++		require.True(t, ok, "revision %T has no timestamp and the datastore has no garbage collector clock", head.Revision)
++		return time.Unix(0, tsRev.TimestampNanoSec())
++	}
++}
++
++// optimizedRevisionSchemaHashAfterRevertAttempt runs one attempt of
++// OptimizedRevisionSchemaHashAfterRevertTest. It returns false if the timing did not put the
++// optimized revision between the schema writes. If mustAssert is set, it fails instead.
++func optimizedRevisionSchemaHashAfterRevertAttempt(t *testing.T, ds datastore.Datastore, quantization time.Duration, dbNow func(context.Context) time.Time, mustAssert bool) bool {
++	t.Helper()
++	require := require.New(t)
++	ctx := t.Context()
++
++	defsA := []compiler.SchemaDefinition{
++		ns.Namespace("user"),
++		ns.Namespace("document",
++			ns.MustRelation("viewer", nil, ns.AllowedRelation("user", "...")),
++		),
++	}
++	defsB := []compiler.SchemaDefinition{
++		ns.Namespace("user"),
++		ns.Namespace("document",
++			ns.MustRelation("viewer", nil, ns.AllowedRelation("user", "...")),
++			ns.MustRelation("editor", nil, ns.AllowedRelation("user", "...")),
++		),
++	}
++	textA, _, err := generator.GenerateSchema(ctx, defsA)
++	require.NoError(err)
++	textB, _, err := generator.GenerateSchema(ctx, defsB)
++	require.NoError(err)
++	hashA, err := generator.ComputeSchemaHash(defsA)
++	require.NoError(err)
++	hashB, err := generator.ComputeSchemaHash(defsB)
++	require.NoError(err)
++
++	writeSchema(ctx, t, ds, defsA, textA)
++	revB := writeSchema(ctx, t, ds, defsB, textB)
++
++	// Wait for the next quantization boundary on the database
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #3517** (2026-11-20): feat: batched streaming responses for LookupResources (@ostafen)
 - **PR #3513** (2026-11-20): fix(watch): emit schema Watch events from the unified stored schema in read-new modes (@vroldanbet)
+- **PR #3510** (2026-11-20): fix: single schema store reads wrong schemahash at revision boundaries (@tstirrat15)
 - **PR #3509** (2026-11-18): fix(graph): give each LookupResources3 producer its own caveat runner (@ostafen)
 - **PR #3508** (2026-11-18): refactor(dispatch): stop recovering panics from external strategies (@ostafen)
 - **PR #3507** (2026-11-18): fix(docker): update grpc_health_probe to v0.4.63 for CVE-2026-97054 (@ostafen)
-- **PR #3506** (2026-11-18): feat(dispatch): let programs that embed SpiceDB add secondary dispatch strategies (@ostafen)
 
 ---
 
@@ -1508,13 +1455,13 @@ deletes no longer remov
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. watch): emit schema Watch events from the unified stored schema in read-new mode
+## X. single schema store reads wrong schemahash at revision boundaries
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4598c884`: watch): emit schema Watch events from the unified stored schema in read-new modes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c77bad6d`: single schema store reads wrong schemahash at revision boundaries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1522,7 +1469,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Watch: with `--experimental-schema-mode` set to `read-new-write-new`, writing a schema now produces a Watch schema event. Schema events were always built from the legacy namespace and caveat tables, which that mode does not write, so schema changes were never reported. With `read-new-write-both` and `read-new-write-new`, schema events are now built from the single-store schema. The default legacy schema mode is unchanged, and MySQL still does not support watching schema. Spanner: a new migration, `add-schema-revision-to-change-stream`, adds the `schema_revision` table to the change stream, and a Watch with checkpoints no longer emits a checkpoint for a transaction that wrote to several tables before that transaction's changes. (https://github.com/authzed/spicedb/pull/3513)
+- Single Schema Store: If a schema was written and reverted within a quantization window, CRDB and Spanner-backed SpiceDB instances could select the wrong pairing of datastore revision and schema revision. (https://github.com/authzed/spicedb/pull/3510)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1532,7 +1479,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4598c884` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c77bad6d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

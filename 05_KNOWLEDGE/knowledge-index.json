@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T22:30:46.750Z",
+  "last_updated": "2026-11-21T22:40:20.193Z",
   "total_verified_learnings": 9062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23311,
+  "total_items": 23313,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114154,9 +114154,9 @@
       "title": "Research & Knowledge Intelligence: Efficient-Large-Model/Open-H3-Regenerate-2K Core Invariants",
       "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
       "source_version": "hf-efficient-large-model-open-h3-regenerate-2k",
-      "content_hash": "a828375ac87cfea0acd3516b08d6d121388992bba710c4fb87607e04d2eb9c07",
+      "content_hash": "eb49e214525556de89eb97ab3c1ee349d5506d9de3f5d6c4e8b4d399d69ed9d5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T17:54:56.287Z"
+      "persisted_at": "2026-11-21T22:40:04.553Z"
     },
     "candidate_directive-resolve-azure-germany-regions-and-explicit-storage-authorities-55484": {
       "item_id": "candidate_directive-resolve-azure-germany-regions-and-explicit-storage-authorities-55484",
@@ -114202,9 +114202,9 @@
       "title": "Research & Knowledge Intelligence: hf-efficient-large-model-open-h3-regenerate-2k-learnings Core Invariants",
       "repository": "hf-efficient-large-model-open-h3-regenerate-2k-learnings",
       "source_version": "HEAD",
-      "content_hash": "c2a8fc2f80f9727c743dd7e73f9f49019d6430bb02c6ddb076cf2c4eaf3bb17d",
+      "content_hash": "f339159566a62acc9aa08f28001a5edc2a5dc30c1c20a80542d1ce3d8946c45b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T05:11:14.435Z"
+      "persisted_at": "2026-11-21T22:40:18.064Z"
     },
     "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants",
@@ -218874,13 +218874,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-XI3U-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-R67W-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "fbc9d8cb3421bbf7fe662a3d5593b54558f6400923bb3073fee58cd289fed0b9",
+      "content_hash": "b7a090bc0b164c0f44e72421326973d0d57e43fe0c40f187df51c6490147c3df",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T05:01:29.707Z"
+      "persisted_at": "2026-11-21T22:40:19.777Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218890,9 +218890,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "a95a2291ac45dad7f1feb1b810cd734242fdc35df5d945123ee1ff6e34bc2cd7",
+      "content_hash": "49d9e9e22454057779644995da8f24a7095db431dcd45dd649843e927acec112",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T05:01:29.852Z"
+      "persisted_at": "2026-11-21T22:40:19.985Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218902,9 +218902,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "b315cf5fac265ffc6ec252491597db214b6b56ca44d44694923c9551efe1988b",
+      "content_hash": "bcfd542acbff058f4c9f3fbe0255fd37065ba2ec84017e12657ec742407aa010",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T05:01:30.004Z"
+      "persisted_at": "2026-11-21T22:40:20.193Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -224946,8 +224946,8 @@
       "slug": "authzed-spicedb",
       "platform": "github",
       "source_url": "https://github.com/authzed/spicedb",
-      "source_version": "65181da3",
-      "content_hash": "52a9825a0ebc28a7bbbdad0565efd97db4541c3f236da99134933c653b4a0296",
+      "source_version": "c77bad6d",
+      "content_hash": "df5bd163d5382c84ae4f406c20af4227ddc5de1399c15aa16b2969f0199c8d37",
       "dossier_path": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "promoted_rules": [
@@ -224985,6 +224985,11 @@
           "number": 9629,
           "title": "emit schema Watch events from the unified stored schema in read-new mode",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9856,
+          "title": "single schema store reads wrong schemahash at revision boundaries",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224992,7 +224997,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T19:44:40.124Z",
+      "verified_at": "2026-11-21T22:40:13.923Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225110,10 +225115,10 @@
       "relative_path": "08_VERIFICATION/authzed-spicedb-verification-protocol-empirical-defect-shield-for-authzed-spiced.md",
       "title": "Verification Protocol: Empirical Defect Shield for authzed/spicedb",
       "repository": "authzed/spicedb",
-      "source_version": "65181da3",
-      "content_hash": "e3e773c256c505416dc6cb969780f48c1cc9a864c9c2303df7a75723fdb40bac",
+      "source_version": "c77bad6d",
+      "content_hash": "c844e616552cf475e198e1c2d52a0091d7b7697b0de7f20698ebf55954245e06",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T19:44:40.818Z"
+      "persisted_at": "2026-11-21T22:40:14.882Z"
     },
     "learn-github-restatedev-restate": {
       "learning_id": "learn-github-restatedev-restate",
@@ -264252,9 +264257,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for authzed-spicedb-learnings",
       "repository": "authzed-spicedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "788a4548414f4a9e2e6ab6ff531e5be6cafcd276593eff7cd2cf63779918b32c",
+      "content_hash": "35df41d6a540631311456b9fc10e4df6e7f1597216b21aabc6c4bf5e945bd840",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T19:45:19.154Z"
+      "persisted_at": "2026-11-21T22:40:19.260Z"
     },
     "rule-8823": {
       "learning_id": "rule-8823",
@@ -284793,7 +284798,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
       "source_version": "hf-efficient-large-model-open-h3-regenerate-2k",
-      "content_hash": "a5f8019fe86ddacce16ae95f2ed717abf00fecb6d6623494774b3c3f6114f106",
+      "content_hash": "4b8664ed06b704faa76c6f5b599357107a0424c1bdace175a45fed420f235707",
       "dossier_path": "07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md",
       "promoted_rules": [],
@@ -284802,7 +284807,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T05:10:28.129Z",
+      "verified_at": "2026-11-21T22:40:04.023Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -307803,10 +307808,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-authzed-spicedb-content-information-intelligence-authzed-spicedb-core-invariants.md",
       "title": "Content & Information Intelligence: authzed/spicedb Core Invariants",
       "repository": "authzed/spicedb",
-      "source_version": "65181da3",
-      "content_hash": "c6b8fac4c8be470e57124d8f188ee2497ba14f934f9baf686d165bf1cd8fdfeb",
+      "source_version": "c77bad6d",
+      "content_hash": "a5ff74023d64359c1b1b9042466412218c39c333eb45a0a887f746e9418771a7",
       "domain_letter": "I",
-      "persisted_at": "2026-11-20T19:44:40.673Z"
+      "persisted_at": "2026-11-21T22:40:14.677Z"
     },
     "rule-9630": {
       "learning_id": "rule-9630",
@@ -307892,9 +307897,9 @@
       "title": "Content & Information Intelligence: authzed-spicedb-learnings Core Invariants",
       "repository": "authzed-spicedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "e22e66ae95bee9b35f5d24173d04f9a61cd624677a8f8268779454c5fbc4a399",
+      "content_hash": "ccd63d09be1d662821ccd310c04763f4bfee3b85d7a8b1a9e25f46324e59e7a1",
       "domain_letter": "I",
-      "persisted_at": "2026-11-20T19:45:18.988Z"
+      "persisted_at": "2026-11-21T22:40:19.047Z"
     },
     "candidate_directive-http-keep-the-scan-context-of-requests-with-timeout": {
       "item_id": "candidate_directive-http-keep-the-scan-context-of-requests-with-timeout",
@@ -316909,6 +316914,32 @@
       "content_hash": "8357ec51843c5b7204cb0ce8858024b412285e1062a3d29e8c0a3dd1c303cb70",
       "domain_letter": "G",
       "persisted_at": "2026-11-21T22:30:12.131Z"
+    },
+    "rule-9856": {
+      "learning_id": "rule-9856",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9856,
+      "title": "single schema store reads wrong schemahash at revision boundaries",
+      "source_url": "https://github.com/authzed/spicedb",
+      "source_version": "c77bad6d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T22:40:13.923Z"
+    },
+    "candidate_directive-single-schema-store-reads-wrong-schemahash-at-revision-boundaries": {
+      "item_id": "candidate_directive-single-schema-store-reads-wrong-schemahash-at-revision-boundaries",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-R5HN-single-schema-store-reads-wrong-schemahash-at-revision-boundaries.md",
+      "title": "single schema store reads wrong schemahash at revision boundaries",
+      "repository": "authzed-spicedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "51a52e02b09b3ab882dbb85a6e0daea6f0a0a7f3ab3897de09c4d0605c6b6d27",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T22:40:18.828Z"
     }
   },
   "ai-builder-brain": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T22:30:12.131Z",
+  "last_updated": "2026-11-21T22:40:19.777Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5336,11 +5336,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-XI3U",
+      "id": "CD-R67W",
       "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-XI3U-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-R67W-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-21",
@@ -43980,6 +43980,35 @@
       "source_repo": "keybase-client",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F79EFC-improve-errors-for-failed-writes-to-disa.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-R5HN",
+      "directive_title": "single schema store reads wrong schemahash at revision boundaries",
+      "source_repo": "authzed-spicedb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-R5HN-single-schema-store-reads-wrong-schemahash-at-revision-boundaries.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-8FB415",
+      "directive_title": "single schema store reads wrong schemahash at revision boundaries",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "authzed-spicedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8FB415-single-schema-store-reads-wrong-schemaha.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-6C0E3A",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6C0E3A-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-21"
     }
   ]

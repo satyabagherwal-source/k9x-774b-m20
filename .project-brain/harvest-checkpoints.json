@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T22:30:08.066Z",
+  "last_updated": "2026-11-21T22:40:14.193Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3891,14 +3891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-authzed-spicedb",
-      "content_hash": "52a9825a0ebc28a7bbbdad0565efd97db4541c3f236da99134933c653b4a0296",
-      "verified_at": "2026-11-20T19:44:40.332Z",
+      "content_hash": "df5bd163d5382c84ae4f406c20af4227ddc5de1399c15aa16b2969f0199c8d37",
+      "verified_at": "2026-11-21T22:40:14.192Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T19:44:40.332Z"
+      "last_updated": "2026-11-21T22:40:14.192Z"
     },
     "hashicorp/boundary": {
       "repository": "hashicorp/boundary",
@@ -17526,14 +17526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
-      "content_hash": "a5f8019fe86ddacce16ae95f2ed717abf00fecb6d6623494774b3c3f6114f106",
-      "verified_at": "2026-11-18T05:10:28.408Z",
+      "content_hash": "4b8664ed06b704faa76c6f5b599357107a0424c1bdace175a45fed420f235707",
+      "verified_at": "2026-11-21T22:40:04.303Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T05:10:28.408Z"
+      "last_updated": "2026-11-21T22:40:04.303Z"
     },
     "AtomicChat/LFM3-1.7B-Uncensored-GGUF": {
       "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",

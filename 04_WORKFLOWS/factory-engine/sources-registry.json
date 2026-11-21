@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T21:58:02.712Z",
-    "lastVerified": "2026-11-21T21:58:02.712Z",
+    "lastChecked": "2026-11-21T22:40:15.903Z",
+    "lastVerified": "2026-11-21T22:40:15.903Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T22:30:11.081Z",
-    "lastVerified": "2026-11-21T22:30:11.081Z",
+    "lastChecked": "2026-11-21T22:40:17.617Z",
+    "lastVerified": "2026-11-21T22:40:17.617Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -893,12 +893,12 @@
     "lastVerified": "2026-11-21T20:36:33.728Z"
   },
   "weaviate-weaviate": {
-    "name": "weaviate/weaviate",
+    "name": "weaviate",
     "officialUrl": "https://github.com/weaviate/weaviate",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T17:53:56.705Z",
-    "lastVerified": "2026-11-20T17:53:56.705Z",
+    "lastChecked": "2026-11-21T22:40:13.399Z",
+    "lastVerified": "2026-11-21T22:40:13.399Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-weaviate-weaviate",
@@ -907,7 +907,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "cf81225f"
   },
   "ducaale-xh": {
     "name": "xh",
@@ -1803,8 +1804,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T16:18:48.454Z",
-    "lastVerified": "2026-11-21T16:18:48.454Z",
+    "lastChecked": "2026-11-21T22:40:10.973Z",
+    "lastVerified": "2026-11-21T22:40:10.973Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -2464,12 +2465,12 @@
     "officialUrl": "https://github.com/authzed/spicedb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T19:44:39.302Z",
-    "lastVerified": "2026-11-20T19:44:39.302Z",
+    "lastChecked": "2026-11-21T22:40:12.921Z",
+    "lastVerified": "2026-11-21T22:40:12.921Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-authzed-spicedb",
-    "contentHash": "52a9825a0ebc28a7bbbdad0565efd97db4541c3f236da99134933c653b4a0296",
+    "contentHash": "df5bd163d5382c84ae4f406c20af4227ddc5de1399c15aa16b2969f0199c8d37",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -3712,9 +3713,9 @@
   "ritz078-transform": {
     "name": "transform",
     "officialUrl": "https://github.com/ritz078/transform",
-    "lastChecked": "2026-11-18T17:18:24.584Z",
+    "lastChecked": "2026-11-21T22:40:05.904Z",
     "revisionIdentifier": "ff755793",
-    "lastVerified": "2026-11-18T17:18:24.584Z"
+    "lastVerified": "2026-11-21T22:40:05.904Z"
   },
   "dosco-graphjin": {
     "name": "dosco/graphjin",
@@ -4152,9 +4153,9 @@
   "mufeedvh-code2prompt": {
     "name": "code2prompt",
     "officialUrl": "https://github.com/mufeedvh/code2prompt",
-    "lastChecked": "2026-11-20T06:58:23.802Z",
+    "lastChecked": "2026-11-21T22:40:00.796Z",
     "revisionIdentifier": "d762d9bb",
-    "lastVerified": "2026-11-20T06:58:23.802Z"
+    "lastVerified": "2026-11-21T22:40:00.796Z"
   },
   "hf-meta-llama-meta-llama-3-8b": {
     "name": "meta-llama/Meta-Llama-3-8B",
@@ -13014,6 +13015,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-comfy-org-wan-2-2",
     "contentHash": "64fca361eaa83b5888bbbe9eec808442ec62bb2c2b64d08245b8b4aec0f2e450",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-efficient-large-model-open-h3-regenerate-2k": {
+    "name": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+    "officialUrl": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T22:40:03.487Z",
+    "lastVerified": "2026-11-21T22:40:03.487Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
+    "contentHash": "4b8664ed06b704faa76c6f5b599357107a0424c1bdace175a45fed420f235707",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

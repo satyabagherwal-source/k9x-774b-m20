@@ -11955,3 +11955,5 @@ Every entry in this ledger must capture:
 | `learn-github-keybase-client` | `https://github.com/keybase/client` | `1be7e8a0` | Multi-dimensional audit evidence | 2026-11-21T22:29:58.637Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `bf3afb03` | Multi-dimensional audit evidence | 2026-11-21T22:30:08.055Z |
 | `learn-dom-d-db0d402f` | `project://nucleoidai-nucleoid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | 2026-11-21T22:30:46.080Z |
+| `learn-huggingface-efficient-large-model-open-h3-regenerate-2k` | `https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K` | `hf-efficie` | Multi-dimensional audit evidence | 2026-11-21T22:40:04.291Z |
+| `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `c77bad6d` | Multi-dimensional audit evidence | 2026-11-21T22:40:14.182Z |

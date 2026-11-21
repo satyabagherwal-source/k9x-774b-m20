@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T22:30:46.750Z",
+  "last_updated": "2026-11-21T22:40:19.985Z",
   "total_records": 2286,
   "domains": {
     "A": {
@@ -9304,8 +9304,8 @@
       "title": "Research & Knowledge Intelligence: Efficient-Large-Model/Open-H3-Regenerate-2K Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-efficient-large-model-open-h3-regenerate-2k-research-knowledge-intelligence-e.md",
       "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
-      "content_hash": "26b2852f2bd4aaa8c0aea3c384cbc824c63081cab11b7cbfdc2d8a424ee55b07",
-      "created_at": "2026-11-18T05:10:28.637Z"
+      "content_hash": "eb49e214525556de89eb97ab3c1ee349d5506d9de3f5d6c4e8b4d399d69ed9d5",
+      "created_at": "2026-11-21T22:40:04.553Z"
     },
     "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-core-invariants",
@@ -9364,8 +9364,8 @@
       "title": "Research & Knowledge Intelligence: hf-efficient-large-model-open-h3-regenerate-2k-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-efficient-large-model-open-h3-regenerate-2k-learnings-research-knowledge-inte.md",
       "repository": "hf-efficient-large-model-open-h3-regenerate-2k-learnings",
-      "content_hash": "c2a8fc2f80f9727c743dd7e73f9f49019d6430bb02c6ddb076cf2c4eaf3bb17d",
-      "created_at": "2026-11-18T05:11:14.435Z"
+      "content_hash": "f339159566a62acc9aa08f28001a5edc2a5dc30c1c20a80542d1ce3d8946c45b",
+      "created_at": "2026-11-21T22:40:18.064Z"
     },
     "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants",
@@ -11677,8 +11677,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "a95a2291ac45dad7f1feb1b810cd734242fdc35df5d945123ee1ff6e34bc2cd7",
-      "created_at": "2026-11-21T05:01:29.852Z"
+      "content_hash": "49d9e9e22454057779644995da8f24a7095db431dcd45dd649843e927acec112",
+      "created_at": "2026-11-21T22:40:19.985Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -36598,8 +36598,8 @@
       "title": "Content & Information Intelligence: authzed/spicedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-authzed-spicedb-content-information-intelligence-authzed-spicedb-core-invariants.md",
       "repository": "authzed/spicedb",
-      "content_hash": "c6b8fac4c8be470e57124d8f188ee2497ba14f934f9baf686d165bf1cd8fdfeb",
-      "created_at": "2026-11-20T19:44:40.673Z"
+      "content_hash": "a5ff74023d64359c1b1b9042466412218c39c333eb45a0a887f746e9418771a7",
+      "created_at": "2026-11-21T22:40:14.677Z"
     },
     "DOM-I-9FB3B7EB": {
       "record_id": "DOM-I-9FB3B7EB",
@@ -36649,8 +36649,8 @@
       "title": "Content & Information Intelligence: authzed-spicedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-authzed-spicedb-learnings-content-information-intelligence-authzed-spicedb-learn.md",
       "repository": "authzed-spicedb-learnings",
-      "content_hash": "e22e66ae95bee9b35f5d24173d04f9a61cd624677a8f8268779454c5fbc4a399",
-      "created_at": "2026-11-20T19:45:18.988Z"
+      "content_hash": "ccd63d09be1d662821ccd310c04763f4bfee3b85d7a8b1a9e25f46324e59e7a1",
+      "created_at": "2026-11-21T22:40:19.047Z"
     },
     "domain_intelligence-technical-construction-intelligence-alibaba-zvec-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-alibaba-zvec-learnings-core-invariants",

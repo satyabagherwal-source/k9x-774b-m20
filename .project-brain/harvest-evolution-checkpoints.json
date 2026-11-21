@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T22:30:46.983Z",
+  "last_updated": "2026-11-21T22:40:20.390Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T21:58:03.324Z",
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-21T05:01:29.466Z",
+      "processed_at": "2026-11-21T22:40:19.464Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -578,9 +578,9 @@
       "staged_for_review": 1
     },
     "authzed-spicedb-learnings.md": {
-      "processed_at": "2026-11-20T19:45:18.387Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-21T22:40:18.301Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "meshtastic-meshtastic-android-learnings.md": {
       "processed_at": "2026-11-19T15:59:28.839Z",
@@ -2023,7 +2023,7 @@
       "staged_for_review": 1
     },
     "hf-efficient-large-model-open-h3-regenerate-2k-learnings.md": {
-      "processed_at": "2026-11-18T05:11:14.183Z",
+      "processed_at": "2026-11-21T22:40:17.783Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3678,7 +3678,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2910,
+  "total_dossiers_evaluated": 2913,
   "total_canonical_promoted": 457,
-  "total_staged_for_review": 2231
+  "total_staged_for_review": 2233
 }

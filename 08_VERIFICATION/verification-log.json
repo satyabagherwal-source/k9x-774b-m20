@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-LXAB",
-    "timestamp": "2026-11-19T18:48:57.539Z",
-    "repository": "openkruise/kruise",
-    "learningId": "learn-github-openkruise-kruise",
-    "contentHash": "80b0e7660f5530992c4405eb49462614b0f94d83ac790ab7df15c4b8faee4a66",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-M0K3",
-    "timestamp": "2026-11-19T18:49:01.779Z",
-    "repository": "crate/crate",
-    "learningId": "learn-github-crate-crate",
-    "contentHash": "ac56e8199e2fe5ac8e04d701263c4add038f3af41eaa9f85f7fb029ddc27ba4b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-FEWQ",
     "timestamp": "2026-11-19T19:11:53.402Z",
     "repository": "datalab-to/indra-ocr",
@@ -7492,6 +7462,36 @@
     "contentHash": "f1e39ecf42559a0c537f3509cf238e3d79ad6bd03a93f842458330efa9a39a1f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-QU9Q",
+    "timestamp": "2026-11-21T22:40:04.286Z",
+    "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+    "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
+    "contentHash": "4b8664ed06b704faa76c6f5b599357107a0424c1bdace175a45fed420f235707",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-R1WI",
+    "timestamp": "2026-11-21T22:40:14.178Z",
+    "repository": "authzed/spicedb",
+    "learningId": "learn-github-authzed-spicedb",
+    "contentHash": "df5bd163d5382c84ae4f406c20af4227ddc5de1399c15aa16b2969f0199c8d37",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
