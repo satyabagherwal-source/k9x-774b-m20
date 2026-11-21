@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T12:19:45.743Z",
+  "last_updated": "2026-11-21T12:29:25.272Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3426,14 +3426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-hook-form-react-hook-form",
-      "content_hash": "849d910361c578a6a85b3c1bec901bf420e3aa1d915c1f849c8428c64c67d885",
-      "verified_at": "2026-11-18T11:06:46.661Z",
+      "content_hash": "0894c96861b3f17d0a175f246d6b1b7ba37b113b489a9936651c3e7b5b32a860",
+      "verified_at": "2026-11-21T12:29:25.272Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T11:06:46.661Z"
+      "last_updated": "2026-11-21T12:29:25.272Z"
     },
     "higress-group/higress": {
       "repository": "higress-group/higress",
@@ -3951,14 +3951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sharkdp-fd",
-      "content_hash": "255298cc5f39f1f80d78580e7f94ef0a26d5e255d2269ae73cfabab88c6881b5",
-      "verified_at": "2026-11-18T12:15:59.712Z",
+      "content_hash": "d5e3494b42c2155cb604fc486b071a0c79eeec394a0af8870436f0b10d9e21d4",
+      "verified_at": "2026-11-21T12:29:19.491Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T12:15:59.712Z"
+      "last_updated": "2026-11-21T12:29:19.491Z"
     },
     "maotoumao/MusicFree": {
       "repository": "maotoumao/MusicFree",
@@ -15651,14 +15651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
-      "content_hash": "fc71952aaeccab5c08f178e316a2fe0dc7ed4b1f9b5c88e48828c45aeb423a54",
-      "verified_at": "2026-11-17T16:13:59.822Z",
+      "content_hash": "46f3709d47e099b6dfaa8f4f595f8a759e84a3928fe8be88d9fc72c60ad93835",
+      "verified_at": "2026-11-21T12:29:18.960Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T16:13:59.822Z"
+      "last_updated": "2026-11-21T12:29:18.960Z"
     },
     "mrjackwills/oxker": {
       "repository": "mrjackwills/oxker",

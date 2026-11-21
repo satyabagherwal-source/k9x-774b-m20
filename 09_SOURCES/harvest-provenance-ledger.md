@@ -11821,3 +11821,7 @@ Every entry in this ledger must capture:
 | `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `dbc11b69` | Multi-dimensional audit evidence | 2026-11-21T12:19:37.453Z |
 | `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `d7a14f21` | Multi-dimensional audit evidence | 2026-11-21T12:19:41.536Z |
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `cfe72976` | Multi-dimensional audit evidence | 2026-11-21T12:19:45.732Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-21T12:29:18.952Z |
+| `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `f8d4e0e7` | Multi-dimensional audit evidence | 2026-11-21T12:29:19.483Z |
+| `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `0251cbae` | Multi-dimensional audit evidence | 2026-11-21T12:29:25.264Z |
+| `learn-dom-h-b5356809` | `project://react-hook-form-react-hook-form` | `0251cbae` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md` | 2026-11-21T12:29:58.937Z |

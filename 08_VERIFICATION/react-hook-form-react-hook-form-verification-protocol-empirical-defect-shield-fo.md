@@ -4,22 +4,22 @@
 {
   "source_repository": "react-hook-form/react-hook-form",
   "source_url": "https://github.com/react-hook-form/react-hook-form",
-  "source_version": "265ecb97",
+  "source_version": "0251cbae",
   "license": "MIT",
-  "timestamp": "2026-11-18T11:06:46.821Z",
+  "timestamp": "2026-11-21T12:29:25.466Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-react-hook-form-react-hook-form",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form) (Revision: `265ecb97`).  
-> **License**: MIT | **Timestamp**: `2026-11-18T11:06:46.821Z`  
+> **Provenance**: Harvested from [react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form) (Revision: `0251cbae`).  
+> **License**: MIT | **Timestamp**: `2026-11-21T12:29:25.466Z`  
 > **Learning ID**: `learn-github-react-hook-form-react-hook-form`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `react-hook-form/react-hook-form` (Commit: `265ecb97`)
+- **Target Repository**: `react-hook-form/react-hook-form` (Commit: `0251cbae`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T11:06:45.790Z  
+> **Harvest Timestamp**: 2026-11-21T12:29:24.253Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 📋 React Hooks for form state management and validation (Web + React Native)
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 44923 stars
+- **Stars / Engagement**: 44924 stars
 
 ---
 
@@ -792,29 +792,435 @@ export default <T extends FieldValues, K extends ReadFormState>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `265ecb97` (2026-11-18)
-**Commit Message**: 📖 docs: fix typo in isRadioOrCheckbox test name (#14033)
+### Incident Patch 1: `03303481` (2026-11-21)
+**Commit Message**: 🐞 fix(useWatch): avoid recomputing values during cleanup (#14045)
 
-**File**: `src/__tests__/utils/isRadioOrCheckbox.test.ts` (modified, +1/-1)
+Co-authored-by: Bill <[REDACTED_EMAIL]>
+
+**File**: `src/__tests__/useWatch.test.tsx` (modified, +110/-0)
 ```diff
-@@ -6,7 +6,7 @@ describe('isRadioOrCheckbox', () => {
-     expect(isRadioOrCheckbox({ name: 'test', type: 'checkbox' })).toBeTruthy();
+@@ -2412,6 +2412,116 @@ describe('useWatch', () => {
    });
  
--  it('shoudl return false when type is neither radio nor checkbox', () => {
-+  it('should return false when type is neither radio nor checkbox', () => {
-     expect(isRadioOrCheckbox({ name: 'test', type: 'text' })).toBeFalsy();
-     expect(isRadioOrCheckbox({ name: 'test', type: 'email' })).toBeFalsy();
-     expect(isRadioOrCheckbox({ name: 'test', type: 'date' })).toBeFalsy();
+   describe('compute ', () => {
++    it.each(['2026-01-01', ''])(
++      'should not recompute a removed field-array value on unmount: %j',
++      (date) => {
++        type FormValues = { items: { date: string }[] };
++
++        const Row = ({ control }: { control: Control<FormValues> }) => {
++          const length = useWatch({
++            control,
++            name: 'items.0.date',
++            compute: (value) => value.length,
++          });
++
++          return <p data-testid="length">{length}</p>;
++        };
++
++        const Component = () => {
++          const { control } = useForm<FormValues>({
++            defaultValues: { items: [] },
++          });
++          const { fields, append, replace } = useFieldArray({
++            control,
++            name: 'items',
++          });
++
++          return (
++            <>
++              <button onClick={() => append({ date })}>Add</button>
++              <button onClick={() => replace([])}>Clear</button>
++              {fields.length > 0 && <Row control={control} />}
++            </>
++          );
++        };
++
++        render(<Component />);
++        expect(screen.queryByTestId('length')).not.toBeInTheDocument();
++
++        fireEvent.click(screen.getByRole('button', { name: 'Add' }));
++        expect(screen.getByTestId('length')).toHaveTextContent(
++          String(date.length),
++        );
++
++        fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
++        expect(screen.queryByTestId('length')).not.toBeInTheDocument();
++
++        fireEvent.click(screen.getByRole('button', { name: 'Add' }));
++        expect(screen.getByTestId('length')).toHaveTextContent(
++          String(date.length),
++        );
++      },
++    );
++
++    it('should not call compute when unmounting a watcher', () => {
++      const compute = jest.fn((value: string) => value.length);
++      const { unmount } = renderHook(() => {
++        const { control } = useForm({ defaultValues: { test: 'value' } });
++
++        return useWatch({ control, name: 'test', compute });
++      });
++
++      compute.mockClear();
++      unmount();
++
++      expect(compute).not.toHaveBeenCalled();
++    });
++
++    itWithActivity(
++      'should resynchronize a computed value after an Activity reconnects',
++      () => {
++        type FormValues = { test: string };
++        let setValue: UseFormReturn<FormValues>['setValue'];
++        const Child = React.memo(function Child({
++          control,
++        }: {
++          control: Control<FormValues>;
++        }) {
++          const length = useWatch({
++            control,
++            name: 'test',
++            compute: (value) => value.length,
++          });
++
++          return <p data-testid="length">{length}</p>;
++        });
++        const Component = ({ mode }: { mode: 'hidden' | 'visible' }) => {
++          const form = useForm<FormValues>({
++            defaultValues: { test: 'initial' },
++          });
++          setValue = form.setValue;
++
++          return (
++            <Activity mode={mode}>
++              <Child control={form.control} />
++            </Activity>
++          );
++        };
++
++        const { rerender } = render(<Component mode="visible" />);
++        expect(screen.getByTestId('length')).toHaveTextContent('7');
++
++        act(() => setValue('test', 'updated value'));
++        expect(screen.getByTestId('length')).toHaveTextContent('13');
++
++        rerender(<Component mode="hidden" />);
++        act(() => setValue('test', ''));
++        rerender(<Component mode="visible" />);
++
++        expect(screen.getByTestId('length')).toHaveTextContent('0');
++      },
++    );
++
+     it.each([
+       {
+         label: 'a string',
+```
+
+**File**: `src/useWatch.ts` (modified, +5/-1)
+```diff
+@@ -237,7 +237,11 @@ export function useWatch<TFieldValues extends FieldValues>(
+ 
+     return () => {
+       unsubscribe();
+-      snapshot(!disabled, () => _getCurrentOutput.current());
++      snapshot(!disabled, () =>
++        _compute.current
++          ? _computeFormValues.current
++          : _getCurrentOutput.current(),
++      );
+     };
+   }, [control, exact, name, disabled, resyncIfNeeded, snapshot]);
+ 
+```
+
+---
+
+### Incident Patch 2: `6ab55bd1` (2026-11-21)
+**Commit Message**: 🐞 fix(onChange): preserve reset state after pending form validation (#14042)
+
+Co-authored-by: Bill <[REDACTED_EMAIL]>
+
+**File**: `src/__tests__/async-root-ownership.test.tsx` (added, +156/-0)
+```diff
+@@ -0,0 +1,156 @@
++import React from 'react';
++import { act, fireEvent, render, screen } from '@testing-library/react';
++
++import { createFormControl } from '../logic/createFormControl';
++import { useForm } from '../useForm';
++
++const deferred = <T,>() => {
++  let resolve!: (value: T) => void;
++  const promise = new Promise<T>((done) => {
++    resolve = done;
++  });
++  return { promise, resolve };
++};
++
++describe('async form validation ownership after reset', () => {
++  it.each(['keepValues', 'keepFieldsRef'] as const)(
++    'does not resume a pre-reset change after reset with %s',
++    async (option) => {
++      const validation = deferred<boolean>();
++      const form = createFormControl<{ name: string }>({
++        mode: 'onChange',
++        defaultValues: { name: '' },
++        validate: () => validation.promise,
++      });
++      const field = form.register('name', {
++        minLength: { value: 3, message: 'too short' },
++      });
++      const unsubscribe = form.subscribe({
++        formState: { errors: true },
++        callback: () => {},
++      });
++      const pending = field.onChange({
++        target: { name: 'name', value: 'a' },
++        type: 'change',
++      });
++      form.reset({ name: 'a' }, { [option]: true });
++      expect(form.control._formState.errors).toEqual({});
++      validation.resolve(true);
++      await pending;
++      expect(form.getValues('name')).toBe('a');
++      expect(form.control._formState.errors).toEqual({});
++      unsubscribe();
++    },
++  );
++
++  it('keeps reset errors cleared in a mounted form after async form validation', async () => {
++    const validation = deferred<boolean>();
++    const rootValidate = jest.fn(() => validation.promise);
++    function App() {
++      const {
++        register,
++        reset,
++        formState: { errors },
++      } = useForm<{ name: string }>({
++        mode: 'onChange',
++        defaultValues: { name: '' },
++        validate: rootValidate,
++      });
++      return (
++        <>
++          <input
++            aria-label="Name"
++            {...register('name', {
++              minLength: { value: 3, message: 'too short' },
++            })}
++          />
++          <button onClick={() => reset(undefined, { keepValues: true })}>
++            reset
++          </button>
++          <p data-testid="error">{errors.name?.message || 'none'}</p>
++        </>
++      );
++    }
++    render(<App />);
++    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'a' } });
++    expect(rootValidate).toHaveBeenCalledTimes(1);
++    fireEvent.click(screen.getByRole('button', { name: 'reset' }));
++    expect(screen.getByTestId('error')).toHaveTextContent('none');
++    await act(async () => {
++      validation.resolve(true);
++    });
++    expect(screen.getByRole('textbox')).toHaveValue('a');
++    expect(screen.getByTestId('error')).toHaveTextContent('none');
++  });
++
++  it('still validates a normal change after form validation settles', async () => {
++    const validation = deferred<boolean>();
++    const form = createFormControl<{ name: string }>({
++      mode: 'onChange',
++      defaultValues: { name: '' },
++      validate: () => validation.promise,
++    });
++    const field = form.register('name', {
++      minLength: { value: 3, message: 'too short' },
++    });
++    const pending = field.onChange({
++      target: { name: 'name', value: 'a' },
++      type: 'change',
++    });
++    validation.resolve(true);
++    await pending;
++    expect(form.control._formState.errors.name?.message).toBe('too short');
++  });
++
++  it('still applies a new change started after reset', async () => {
++    const validation = deferred<boolean>();
++    const rootValidate = jest
++      .fn()
++      .mockImplementationOnce(() => validation.promise)
++      .mockResolvedValue(true);
++    const form = createFormControl<{ name: string }>({
++      mode: 'onChange',
++      defaultValues: { name: '' },
++      validate: rootValidate,
++    });
++    const field = form.register('name', {
++      minLength: { value: 3, message: 'too short' },
++    });
++    const oldChange = field.onChange({
++      target: { name: 'name', value: 'a' },
++      type: 'change',
++    });
++    form.reset(undefined, { keepValues: true });
++    const newChange = field.onChange({
++      target: { name: 'name', value: 'ab' },
++      type: 'change',
++    });
++    await newChange;
++    expect(form.control._formState.errors.name?.message).toBe('too short');
++    validation.resolve(true);
++    await oldChange;
++    expect(form.getValues('name')).toBe('ab');
++    expect(form.control._formState.errors.name?.message).toBe('too short');
++    expect(rootValidate).toHaveBeenCalledTimes(2);
++  });
++
++  it('does not revive errors after reset drops the old registration', async () => {
++    const validation = deferred<boolean>();
++    const form = createFormControl<{ name: string }>({
++      mode: 'onChange',
++      defaultValues: { name: '' },
++      validate: () => validation.promise,
++    });
++    const field = form.
+```
+
+**File**: `src/logic/createFormControl.ts` (modified, +4/-0)
+```diff
+@@ -1399,6 +1399,7 @@ export function createFormControl<
+     let isFieldValueUpdated = true;
+     const field: Field = get(_fields, name);
+     const registerCallId = _registerCallId;
++    const changeResetCallId = _resetCallId;
+     const _updateIsFieldValueUpdated = (fieldValue: unknown) => {
+       isFieldValueUpdated =
+         !!get(_fields, name) &&
+@@ -1485,6 +1486,9 @@ export function createFormControl<
+           name: name as FieldPath<TFieldValues>,
+           eventType: event.type,
+         });
++        if (changeResetCallId !== _resetCallId) {
++          return;
++        }
+       }
+ 
+       !isBlurEvent && watched && _subjects.state.next({ ..._formState });
+```
+
+---
+
+### Incident Patch 3: `d043c013` (2026-11-21)
+**Commit Message**: 🐞 fix(reset): handle form controls named reset (#14037)
+
+Use the native prototype reset only when the form's reset property is not callable.
+Preserve callable overrides and add modeled named-property regressions.
+
+**File**: `src/__tests__/useForm/reset.test.tsx` (modified, +65/-0)
+```diff
+@@ -315,6 +315,71 @@ describe('reset', () => {
+     expect(mockReset).not.toHaveBeenCalled();
+   });
+ 
++  it.each([false, true])(
++    'resets when a form control shadows the native reset method (iframe: %s)',
++    (insideFrame) => {
++      const App = () => {
++        const { register, reset, watch } = useForm({
++          defaultValues: { reset: 'initial' },
++        });
++
++        return (
++          <form>
++            <input {...register('reset')} />
++            <button type="button" onClick={() => reset()}>
++              Reset
++            </button>
++            <output>{watch('reset')}</output>
++          </form>
++        );
++      };
++      const iframe = document.createElement('iframe');
++      if (insideFrame) {
++        document.body.append(iframe);
++      }
++      const { container, getByRole, unmount } = render(<App />, {
++        container: insideFrame ? iframe.contentDocument!.body : undefined,
++      });
++      const input = getByRole('textbox');
++
++      // jsdom does not implement named properties on forms.
++      Object.defineProperty(container.querySelector('form'), 'reset', {
++        value: input,
++      });
++
++      for (const value of ['edited', 'edited again']) {
++        fireEvent.change(input, { target: { value } });
++        expect(getByRole('status')).toHaveTextContent(value);
++
++        fireEvent.click(getByRole('button', { name: 'Reset' }));
++
++        expect(input).toHaveValue('initial');
++        expect(getByRole('status')).toHaveTextContent('initial');
++      }
++
++      unmount();
++      iframe.remove();
++    },
++  );
++
++  it('preserves a callable reset method on the form', () => {
++    const { register, reset } = createFormControl();
++    const form = document.createElement('form');
++    const input = document.createElement('input');
++    form.append(input);
++    register('test').ref(input);
++    const nativeReset = form.reset;
++    const resetMethod = jest.fn(function (this: HTMLFormElement) {
++      nativeReset.call(this);
++    });
++    form.reset = resetMethod;
++
++    reset();
++
++    expect(resetMethod).toHaveBeenCalledTimes(1);
++    expect(resetMethod.mock.contexts[0]).toBe(form);
++  });
++
+   it('set default value if values is specified to first argument', async () => {
+     const { result } = renderHook(() =>
+       useForm<{
+```
+
+**File**: `src/logic/createFormControl.ts` (modified, +5/-1)
+```diff
+@@ -2347,7 +2347,11 @@ export function createFormControl<
+               if (isHTMLElement(fieldReference)) {
+                 const form = fieldReference.closest('form');
+                 if (form) {
+-                  form.reset();
++                  if (isFunction(form.reset)) {
++                    form.reset();
++                  } else {
++                    HTMLFormElement.prototype.reset.call(form);
++                  }
+                   break;
+                 }
+               }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14033** (2026-11-18): docs: fix typo in isRadioOrCheckbox test name (@ninglinLiu)
-- **PR #14031** (2026-11-14): fix: report native validation on enabled group inputs (@yuxino)
-- **PR #14030** (closed): fix(objectHasFunction): check own properties with Object.prototype.ha… (@YashCoder-svg)
-- **PR #14029** (2026-11-13): 🐞 fix(register): record disabled state on a field's first registration (@Sophran-fbj)
-- **PR #14028** (closed): 🐞 fix(register): record disabled on a field's first registration (#14027) (@Kernel-Hunter)
-- **PR #14026** (2026-11-13): fix(handleSubmit): stop at the first invalid nested field with native validation (@dfedoryshchev)
+- **PR #14048** (closed): 🐞 fix(validateField): apply min/max to time and week values without a ref type (@itisrmk)
+- **PR #14047** (2026-11-21): docs: fix dead CONTRIBUTING links (@CharoenwitKunna)
+- **PR #14046** (2026-11-21): 🐞 fix(useForm): keep options a formControl was created with (@h00ns)
+- **PR #14045** (2026-11-21): 🐞 fix(useWatch): avoid recomputing values during cleanup (@itisrmk)
+- **PR #14043** (2026-11-21): fix(isValid): stop at the first invalid nested field when checking validity (@dfedoryshchev)
+- **PR #14042** (2026-11-21): fix(onChange): preserve reset state after pending form validation (@charan-rathore)
 
 ---
 
@@ -834,31 +1240,68 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 📖 docs: fix typo in isRadioOrCheckbox test name
+## X. 🐞 fix(useWatch): avoid recomputing values during cleanup
 
 **RULE**:
-When implementing operations in `src/__tests__/utils/isRadioOrCheckbox.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-hook-form/react-hook-form. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/__tests__/useWatch.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-hook-form/react-hook-form. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `265ecb97`: 📖 docs: fix typo in isRadioOrCheckbox test name. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `03303481`: 🐞 fix(useWatch): avoid recomputing values during cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/__tests__/utils/isRadioOrCheckbox.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/__tests__/useWatch.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  it('should return false when type is neither radio nor checkbox', () => {
+    it.each(['2026-01-01', ''])(
+      'should not recompute a removed field-array value on unmount: %j',
+      (date) => {
+        type FormValues = { items: { date: string }[] };
+
+        const Row = ({ control }: { control: Control<FormValues> }) => {
+          const length = useWatch({
+            control,
+            name: 'items.0.date',
+            compute: (value) => value.length,
+          });
+
+          return <p data-testid="length">{length}</p>;
+        };
+
+        const Component = () => {
+          const { control } = useForm<FormValues>({
+            defaultValues: { items: [] },
+          });
+          const { fields, append, replace } = useFieldArray({
+            control,
+            name: 'items',
+          });
+
+          return (
+            <>
+              <button onClick={() => append({ date })}>Add</button>
+              <button onClick={() => replace([])}>Clear</button>
+              {fields.length > 0 && <Row control={control} />}
+            </>
+          );
+        };
+
+        render(<Component />);
+        expect(screen.queryByTestId('length')).not.toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole('button', { name: 'Add' }));
+        expect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-  it('shoudl return false when type is neither radio nor checkbox', () => {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `265ecb97` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `03303481` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

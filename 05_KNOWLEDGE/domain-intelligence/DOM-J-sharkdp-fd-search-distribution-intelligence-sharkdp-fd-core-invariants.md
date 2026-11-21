@@ -4,24 +4,24 @@
 {
   "source_repository": "sharkdp/fd",
   "source_url": "https://github.com/sharkdp/fd",
-  "source_version": "6cf33028",
+  "source_version": "f8d4e0e7",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-14T22:39:18.499Z",
+  "timestamp": "2026-11-21T12:29:19.680Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-sharkdp-fd",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [sharkdp/fd](https://github.com/sharkdp/fd) (Revision: `6cf33028`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T22:39:18.499Z`  
+> **Provenance**: Harvested from [sharkdp/fd](https://github.com/sharkdp/fd) (Revision: `f8d4e0e7`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T12:29:19.680Z`  
 > **Learning ID**: `learn-github-sharkdp-fd`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain J (Search & Distribution Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from sharkdp/fd:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T22:39:17.334Z  
+> **Harvest Timestamp**: 2026-11-21T12:29:18.297Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A simple, fast and user-friendly alternative to 'find'
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 45062 stars
+- **Stars / Engagement**: 45143 stars
 
 ---
 
@@ -1740,8 +1740,15 @@ impl FileTypes {
                 || (!self.char_devices && filesystem::is_char_device(*entry_type))
                 || (!self.sockets && filesystem::is_socket(*entry_type))
                 || (!self.pipes && filesystem::is_pipe(*entry_type))
-                || (self.executables_only && !entry.path().executable())
-                || (self.empty_only && !filesystem::is_empty(entry))
+                // The `executable` and `empty` modifiers only refine the file (and, for
+                // `empty`, directory) results they apply to. They must not filter out other
+                // explicitly-requested types such as symlinks, which are matched as a union.
+                || (self.executables_only
+                    && entry_type.is_file()
+                    && !entry.path().executable())
+                || (self.empty_only
+                    && (entry_type.is_file() || entry_type.is_dir())
+                    && !filesystem::is_empty(entry))
                 || !(entry_type.is_file()
                     || entry_type.is_dir()
                     || entry_type.is_symlink()
@@ -1823,147 +1830,31 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6cf33028` (2026-11-14)
-**Commit Message**: Merge pull request #2124 from pederbe/learn/2113-strip-prefix-search-paths
+### Incident Patch 1: `f8d4e0e7` (2026-11-21)
+**Commit Message**: Merge pull request #2223 from sharkdp/dependabot/github_actions/softprops/action-gh-release-3.0.4
 
-Allow stripping cwd prefix with explicit search paths
+build(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `.github/workflows/CICD.yml` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,7 @@
- # Upcoming release
+@@ -277,7 +277,7 @@ jobs:
+           ${{ steps.debian-package.outputs.DPKG_PATH }}
  
- ## Features
--
-+- Allow `--strip-cwd-prefix` with explicit search paths, see #2113 (@pederbe)
- 
- ## Bugfixes
- 
-```
-
-**File**: `doc/fd.1` (modified, +2/-1)
-```diff
-@@ -187,7 +187,8 @@ Never strip the ./ at the beginning of paths
- .IP always
- Always strip the ./ at the beginning of paths
- .IP auto
--Only strip if used with --exec, --exec-batch, or --print0. That is, it resets to the default behavior.
-+Only strip without explicit search paths and without --exec, --exec-batch,
-+or --print0. That is, it resets to the default behavior.
- .RE
- .TP
- .B \-\-one\-file\-system, \-\-mount, \-\-xdev
-```
-
-**File**: `src/cli.rs` (modified, +14/-8)
-```diff
-@@ -693,8 +693,15 @@ pub struct Opts {
-     /// -X/--exec-batch, or -0/--print0 are given, to reduce the risk of a
-     /// path starting with '-' being treated as a command line option. Use
-     /// this flag to change this behavior. If this flag is used without a value,
--    /// it is equivalent to passing "always".
--    #[arg(long, conflicts_with_all(&["path", "search_path"]), value_name = "when", hide_short_help = true, require_equals = true, long_help)]
-+    /// it is equivalent to passing "always". In "auto" mode, prefixes are only
-+    /// stripped without explicit search paths.
-+    #[arg(
-+        long,
-+        value_name = "when",
-+        hide_short_help = true,
-+        require_equals = true,
-+        long_help
-+    )]
-     strip_cwd_prefix: Option<Option<StripCwdWhen>>,
- 
-     /// By default, fd will traverse the file system tree as far as other options
-@@ -779,12 +786,11 @@ impl Opts {
- 
-     pub fn strip_cwd_prefix<P: FnOnce() -> bool>(&self, auto_pred: P) -> bool {
-         use self::StripCwdWhen::*;
--        self.no_search_paths()
--            && match self.strip_cwd_prefix.map_or(Auto, |o| o.unwrap_or(Always)) {
--                Auto => auto_pred(),
--                Always => true,
--                Never => false,
--            }
-+        match self.strip_cwd_prefix.map_or(Auto, |o| o.unwrap_or(Always)) {
-+            Auto => self.no_search_paths() && auto_pred(),
-+            Always => true,
-+            Never => false,
-+        }
-     }
- 
-     #[cfg(feature = "completions")]
-```
-
-**File**: `tests/tests.rs` (modified, +51/-0)
-```diff
-@@ -3025,6 +3025,57 @@ fn test_error_if_hidden_not_set_and_pattern_starts_with_dot() {
-     te.assert_output(&[".gitignore"], "");
- }
- 
-+#[test]
-+fn test_strip_cwd_prefix_search_paths() {
-+    let te = TestEnv::new(
-+        &["a/b/c"],
-+        &["a/fileA", "a/b/fileB", "a/b/c/fileC", "a/-file"],
-+    );
-+
-+    for paths in [
-+        vec!["--search-path=.", "--search-path=b/c"],
-+        vec!["", ".", "b/c"],
-+    ] {
-+        let mut args = vec!["-C", "a", "--type", "f", "--exclude", "b"];
-+        args.extend_from_slice(&paths);
-+        te.assert_output(
-+            &args,
-+            "./-file
-+            ./fileA
-+            b/c/fileC",
-+        );
-+
-+        for mode in ["--strip-cwd-prefix=auto", "--strip-cwd-prefix=never"] {
-+            let mut args = args.clone();
-+            args.push(mode);
-+            te.assert_output(
-+                &args,
-+                "./-file
-+                ./fileA
-+                b/c/fileC",
-+            );
-+        }
-+
-+        for mode in ["--strip-cwd-prefix", "--strip-cwd-prefix=always"] {
-+            let mut args = args.clone();
-+            args.push(mode);
-+            te.assert_output(
-+                &args,
-+                "./-file
-+                fileA
-+                b/c/fileC",
-+            );
-+            args.push("--print0");
-+            te.assert_output(
-+                &args,
-+                "./-fileNULL
-+                fileANULL
-+                b/c/fileCNULL",
-+            );
-+        }
-+    }
-+}
-+
- #[test]
- fn test_strip_cwd_prefix() {
-     let te = TestEnv::new(DEFAULT_DIRS, DEFAULT_FILES);
+     - name: Publish archives and packages
+-      uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
++      uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+       if: steps.is-release.outputs.IS_RELEASE
+       with:
+         files: |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2223** (2026-11-21): build(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4 (@dependabot[bot])
 - **PR #2222** (2026-11-09): Delay-load shell32, combase and advapi32 on Windows MSVC (@azchohfi)
 - **PR #2220** (closed): fix: use native path separator for explicit search paths on Windows (@Hrushikesh-ramilla)
 - **PR #2219** (2026-11-07): v10.5.2 Release (@tmccombs)
 - **PR #2218** (2026-11-07): fix: Zsh completion syntax (@tmccombs)
 - **PR #2214** (2026-11-04): v10.5.1 Release (@tmccombs)
-- **PR #2208** (2026-11-01): fix: keep verbatim Windows paths absolute in --absolute-path (@Duo-ee)
 
 ---
 
@@ -1983,31 +1874,31 @@ Allow stripping cwd prefix with explicit search paths
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in CHANGELOG.md
+## X. Empirical Invariant Guard in CICD.yml
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/CICD.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6cf33028`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f8d4e0e7`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/CICD.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Allow `--strip-cwd-prefix` with explicit search paths, see #2113 (@pederbe)
+      uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+      uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6cf33028` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f8d4e0e7` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

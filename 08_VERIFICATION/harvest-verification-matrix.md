@@ -11788,3 +11788,7 @@
 | `CYCLE-20261121-KXUW` | `2026-11-21T12:19:37.448Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`923beee6...`) |
 | `CYCLE-20261121-L10B` | `2026-11-21T12:19:41.531Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3068` | Yes (`62e99f7c...`) |
 | `CYCLE-20261121-L48V` | `2026-11-21T12:19:45.727Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9777` | Yes (`a8632ff2...`) |
+| `CYCLE-20261121-XEJN` | `2026-11-21T12:29:18.947Z` | `nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md` | Yes (`46f3709d...`) |
+| `CYCLE-20261121-XEYF` | `2026-11-21T12:29:19.479Z` | `sharkdp/fd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9778` | Yes (`d5e3494b...`) |
+| `CYCLE-20261121-XJF0` | `2026-11-21T12:29:25.260Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9779` | Yes (`0894c968...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T12:29:58.937Z` | `react-hook-form-react-hook-form` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-B5356809` [Domain H] | Yes (`0e317efc...`) |

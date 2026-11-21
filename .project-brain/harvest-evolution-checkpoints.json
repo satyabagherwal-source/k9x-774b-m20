@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T12:19:54.651Z",
+  "last_updated": "2026-11-21T12:29:59.704Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T07:42:07.590Z",
@@ -338,7 +338,7 @@
       "staged_for_review": 1
     },
     "sharkdp-fd-learnings.md": {
-      "processed_at": "2026-11-18T12:16:16.163Z",
+      "processed_at": "2026-11-21T12:29:31.020Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1518,7 +1518,7 @@
       "staged_for_review": 1
     },
     "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md": {
-      "processed_at": "2026-11-17T16:14:21.230Z",
+      "processed_at": "2026-11-21T12:29:31.750Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3268,8 +3268,8 @@
       "staged_for_review": 1
     },
     "react-hook-form-react-hook-form-learnings.md": {
-      "processed_at": "2026-11-18T11:06:58.269Z",
-      "promoted_canonical": 0,
+      "processed_at": "2026-11-21T12:29:58.937Z",
+      "promoted_canonical": 1,
       "staged_for_review": 0
     },
     "faker-js-faker-learnings.md": {
@@ -3663,7 +3663,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2793,
-  "total_canonical_promoted": 445,
-  "total_staged_for_review": 2154
+  "total_dossiers_evaluated": 2796,
+  "total_canonical_promoted": 446,
+  "total_staged_for_review": 2155
 }

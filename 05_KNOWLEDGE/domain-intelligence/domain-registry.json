@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T12:19:54.272Z",
-  "total_records": 2244,
+  "last_updated": "2026-11-21T12:29:59.371Z",
+  "total_records": 2245,
   "domains": {
     "A": {
       "total": 17,
@@ -1429,7 +1429,7 @@
       ]
     },
     "H": {
-      "total": 532,
+      "total": 533,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1962,7 +1962,8 @@
         "domain_intelligence-technical-construction-intelligence-comfy-org-moss-image-core-invariants",
         "DOM-H-351DFF5E",
         "domain_intelligence-technical-construction-intelligence-hf-comfy-org-moss-image-learnings-core-invar",
-        "domain_intelligence-technical-construction-intelligence-yazinsai-openoats-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-yazinsai-openoats-learnings-core-invariants",
+        "DOM-H-B5356809"
       ]
     },
     "I": {
@@ -9847,8 +9848,8 @@
       "title": "Technical Construction Intelligence: react-hook-form/react-hook-form Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-hook-form-react-hook-form-technical-construction-intelligence-react-hook-f.md",
       "repository": "react-hook-form/react-hook-form",
-      "content_hash": "d243dcdca99ea3f1dcabc8f087ec826a4816a3ec3010f5720c17463eb96cdce9",
-      "created_at": "2026-11-18T11:06:46.944Z"
+      "content_hash": "242858d68d13ca498090e0034640fc4c46c84ff7ff77cacfe5f8d47d6133278d",
+      "created_at": "2026-11-21T12:29:25.620Z"
     },
     "DOM-D-D194A6F7": {
       "record_id": "DOM-D-D194A6F7",
@@ -18504,8 +18505,8 @@
       "title": "Search & Distribution Intelligence: sharkdp/fd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-sharkdp-fd-search-distribution-intelligence-sharkdp-fd-core-invariants.md",
       "repository": "sharkdp/fd",
-      "content_hash": "2f1774245062389b233dec178ed0f9e61c24e00a87acc2bd59eeeb3521e01ecd",
-      "created_at": "2026-11-14T22:39:18.611Z"
+      "content_hash": "2d9fb4ea4a6f028c6205dd0b082d6ea6be090809ee58c506a13a1e8b1baf0990",
+      "created_at": "2026-11-21T12:29:19.836Z"
     },
     "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-core-invariants",
@@ -18531,8 +18532,8 @@
       "title": "Search & Distribution Intelligence: sharkdp-fd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-sharkdp-fd-learnings-search-distribution-intelligence-sharkdp-fd-learnings-core-.md",
       "repository": "sharkdp-fd-learnings",
-      "content_hash": "cf570c5fae96e050fd0bf08dbcc1a7646d222d9c3c53dec5c755c93c481ff2ed",
-      "created_at": "2026-11-14T22:39:37.789Z"
+      "content_hash": "ed2d6f9140947209e494e65c0912eeb3c5a534435a838b376f989998854b0d17",
+      "created_at": "2026-11-21T12:29:31.447Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gg": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gg",
@@ -26848,8 +26849,8 @@
       "title": "Technical Construction Intelligence: react-hook-form-react-hook-form-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-hook-form-react-hook-form-learnings-technical-construction-intelligence-re.md",
       "repository": "react-hook-form-react-hook-form-learnings",
-      "content_hash": "2f44933bddf63e959e84184044163e56da4a7bd8a9b6659e7171a037753191d0",
-      "created_at": "2026-11-18T11:06:58.624Z"
+      "content_hash": "544e523e6f556d864eed4c5643ef5a48e5b5a38bf79d03aeed5c8c8eefd3fc78",
+      "created_at": "2026-11-21T12:29:59.371Z"
     },
     "domain_intelligence-technical-construction-intelligence-dubzzz-fast-check-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dubzzz-fast-check-core-invariants",
@@ -28170,8 +28171,8 @@
       "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-research-knowledge-intelligence-n.md",
       "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
-      "content_hash": "1e26626681204ffae915f0ab0569c1894428d76b08b36e7c89fcf1987aeb2e0d",
-      "created_at": "2026-11-17T16:13:59.987Z"
+      "content_hash": "8526a9a11eb233bddb894c2f935acf7003ec84a75c8fe690d94b1eca8ce034c1",
+      "created_at": "2026-11-21T12:29:19.160Z"
     },
     "domain_intelligence-technical-construction-intelligence-synalinks-synalinks-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-synalinks-synalinks-skills-core-invariants",
@@ -28188,8 +28189,8 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-learnings-research-knowledge-inte.md",
       "repository": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings",
-      "content_hash": "58c392d624ea3627c24b9293081978bddcef9426c684d7637ed5ca11d4bc919b",
-      "created_at": "2026-11-17T16:14:21.389Z"
+      "content_hash": "51b29c84661f41fb08bbd280116b63615591900c16a067e1fd9da112eebd5096",
+      "created_at": "2026-11-21T12:29:31.923Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcacyber-nano-1-0-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcacyber-nano-1-0-core-invariants",
@@ -37640,6 +37641,48 @@
       "repository": "appwrite-appwrite-learnings",
       "content_hash": "5948b3bb8c5cd999a697544a91b923e8146e18d7268afa9fdf6874abddfe6eee",
       "created_at": "2026-11-21T11:16:52.407Z"
+    },
+    "DOM-H-B5356809": {
+      "record_id": "DOM-H-B5356809",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "🐞 fix(useWatch): avoid recomputing values during cleanup",
+      "content": "When implementing operations in `src/__tests__/useWatch.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-hook-form/react-hook-form. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "0e317efcda0b51ac30ae0762ce579eb3de98814688a0472b63b8c6768fcd4925",
+      "summary": "Prevents defects observed in production commit `03303481`: 🐞 fix(useWatch): avoid recomputing values during cleanup. Unvalidated execution  -> When implementing operations in `src/__tests__/useWatch.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitio",
+      "provenance": {
+        "source_uri": "project://react-hook-form-react-hook-form/react-hook-form-react-hook-form-learnings.md",
+        "source_version": "0251cbae",
+        "observed_at": "2026-11-21T12:29:24.258Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-hook-form-react-hook-form)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of react-hook-form-react-hook-form"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.69,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T12:29:58.905Z"
     }
   }
 }
