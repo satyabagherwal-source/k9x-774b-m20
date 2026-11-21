@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T12:48:52.843Z",
+  "last_updated": "2026-11-21T13:05:33.540Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "28e3e2f274128d2c0934a2a6b8cef170ac85b7e28b5a10e4b4bb4bdebd43f248",
-      "verified_at": "2026-11-20T06:45:26.758Z",
+      "content_hash": "751fc3ec24c60e2a2d1fc328ef86c258fd65f294c0367001913bd542065ba94c",
+      "verified_at": "2026-11-21T13:05:33.539Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T06:45:26.758Z"
+      "last_updated": "2026-11-21T13:05:33.539Z"
     },
     "React95/React95": {
       "repository": "React95/React95",
@@ -9441,14 +9441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-linkerd-linkerd2",
-      "content_hash": "388429359f82f08dff903cee43f83698748e47908281741958fda2295ef9f961",
-      "verified_at": "2026-11-20T08:34:43.114Z",
+      "content_hash": "c1fbe7f3f07ab59255289c392fedd8eb2af0687159e751dab2b108f2cde9e811",
+      "verified_at": "2026-11-21T13:05:26.328Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T08:34:43.114Z"
+      "last_updated": "2026-11-21T13:05:26.328Z"
     },
     "tursodatabase/libsql": {
       "repository": "tursodatabase/libsql",
@@ -15771,14 +15771,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xhtoken-spark-x2-6-4b",
-      "content_hash": "f0583beaa60d15cd4df12f938342e9318824c72373f49a586cb6965111d89d67",
-      "verified_at": "2026-11-17T16:38:38.321Z",
+      "content_hash": "77b2d33ba9758f1e761de03cb29450251ee90c29c2ed0f7f07169e9d4905e5f0",
+      "verified_at": "2026-11-21T13:05:17.818Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T16:38:38.321Z"
+      "last_updated": "2026-11-21T13:05:17.818Z"
     },
     "InternScience/Sage-A1.5": {
       "repository": "InternScience/Sage-A1.5",

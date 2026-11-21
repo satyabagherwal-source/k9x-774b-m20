@@ -11833,3 +11833,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-recursivesi-flint` | `https://huggingface.co/RecursiveSI/flint` | `hf-recursi` | Multi-dimensional audit evidence | 2026-11-21T12:48:40.859Z |
 | `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `2d6c2852` | Multi-dimensional audit evidence | 2026-11-21T12:48:47.663Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `0a4d6057` | Multi-dimensional audit evidence | 2026-11-21T12:48:52.834Z |
+| `learn-huggingface-xhtoken-spark-x2-6-4b` | `https://huggingface.co/XHToken/Spark-X2.6-4B` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-21T13:05:17.806Z |
+| `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `e64ff8dd` | Multi-dimensional audit evidence | 2026-11-21T13:05:26.314Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `d24219e3` | Multi-dimensional audit evidence | 2026-11-21T13:05:33.528Z |

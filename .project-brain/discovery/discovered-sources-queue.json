@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T12:48:58.346Z",
+  "updated_at": "2026-11-21T13:05:39.747Z",
   "stats": {
-    "total_discovered": 7175,
-    "approved_pending_harvest": 6778,
+    "total_discovered": 7182,
+    "approved_pending_harvest": 6785,
     "harvested_count": 0,
     "rejected_count": 397,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6759,
+      "COMMUNITY_AND_EXPERT": 6766,
       "OFFICIAL_DOCUMENTATION": 239,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -155094,6 +155094,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
         "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-DAB787263EBB": {
+      "id": "SRC-DAB787263EBB",
+      "url": "https://yugabyte.atlassian.net/browse/DB-26806",
+      "title": "https://yugabyte.atlassian.net/browse/DB-26806",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T13:05:39.292Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-BCF0261F58DA": {
+      "id": "SRC-BCF0261F58DA",
+      "url": "https://github.com/yugabyte/yugabyte-db/compare/2c7a7ae7...60a913bd",
+      "title": "https://github.com/yugabyte/yugabyte-db/compare/2c7a7ae7...60a913bd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T13:05:39.421Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-B5EB5FDD815D": {
+      "id": "SRC-B5EB5FDD815D",
+      "url": "https://github.com/yugabyte/yugabyte-db/commit/c27a8edd81842fb28012696274b491f08c5dc38b",
+      "title": "https://github.com/yugabyte/yugabyte-db/commit/c27a8edd81842fb28012696274b491f08c5dc38b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T13:05:39.490Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-ABA6C2742E9A": {
+      "id": "SRC-ABA6C2742E9A",
+      "url": "https://github.com/yugabyte/yugabyte-db/commit/fc0d925fa92b045456b62980bc9067353dce974d",
+      "title": "https://github.com/yugabyte/yugabyte-db/commit/fc0d925fa92b045456b62980bc9067353dce974d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T13:05:39.555Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-B57F5DC013B1": {
+      "id": "SRC-B57F5DC013B1",
+      "url": "https://jenkins.dev.yugabyte.com/job/github-yugabyte-db-ubuntu22.04-master-clang21-debug/1782",
+      "title": "https://jenkins.dev.yugabyte.com/job/github-yugabyte-db-ubuntu22.04-master-clang21-debug/1782",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T13:05:39.620Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-3ACC75D2B125": {
+      "id": "SRC-3ACC75D2B125",
+      "url": "https://yugabyte.atlassian.net/browse/DB-26804",
+      "title": "https://yugabyte.atlassian.net/browse/DB-26804",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T13:05:39.681Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-6C33D6D4C054": {
+      "id": "SRC-6C33D6D4C054",
+      "url": "https://github.com/yugabyte/yugabyte-db/compare/0392c58c...d61b7c92",
+      "title": "https://github.com/yugabyte/yugabyte-db/compare/0392c58c...d61b7c92",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T13:05:39.747Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
       }
     }
   }

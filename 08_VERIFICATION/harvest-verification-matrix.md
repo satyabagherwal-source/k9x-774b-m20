@@ -11800,3 +11800,6 @@
 | `CYCLE-20261121-MB2U` | `2026-11-21T12:48:40.854Z` | `RecursiveSI/flint` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md` | Yes (`f9a6aed6...`) |
 | `CYCLE-20261121-MGBV` | `2026-11-21T12:48:47.659Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9782` | Yes (`0af3b89c...`) |
 | `CYCLE-20261121-MKBI` | `2026-11-21T12:48:52.830Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9783` | Yes (`7dd2c91c...`) |
+| `CYCLE-20261121-7OBT` | `2026-11-21T13:05:17.801Z` | `XHToken/Spark-X2.6-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md` | Yes (`77b2d33b...`) |
+| `CYCLE-20261121-7UW4` | `2026-11-21T13:05:26.308Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9784` | Yes (`c1fbe7f3...`) |
+| `CYCLE-20261121-80GI` | `2026-11-21T13:05:33.522Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9785` | Yes (`751fc3ec...`) |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T12:48:58.706Z",
-  "total_records": 2248,
+  "last_updated": "2026-11-21T13:05:40.324Z",
+  "total_records": 2250,
   "domains": {
     "A": {
       "total": 17,
@@ -1431,7 +1431,7 @@
       ]
     },
     "H": {
-      "total": 534,
+      "total": 536,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1966,7 +1966,9 @@
         "domain_intelligence-technical-construction-intelligence-hf-comfy-org-moss-image-learnings-core-invar",
         "domain_intelligence-technical-construction-intelligence-yazinsai-openoats-learnings-core-invariants",
         "DOM-H-B5356809",
-        "DOM-H-D52613BE"
+        "DOM-H-D52613BE",
+        "domain_intelligence-technical-construction-intelligence-linkerd-linkerd2-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-linkerd-linkerd2-learnings-core-invariants"
       ]
     },
     "I": {
@@ -27199,8 +27201,8 @@
       "title": "Quality & Verification Intelligence: yugabyte/yugabyte-db Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-yugabyte-yugabyte-db-quality-verification-intelligence-yugabyte-yugabyte-db-core.md",
       "repository": "yugabyte/yugabyte-db",
-      "content_hash": "93600bf86b678e6e617e4e952f88e12a9eae7b5e2c50d8b7cf0746dedf21471f",
-      "created_at": "2026-11-19T01:18:56.854Z"
+      "content_hash": "a9f931cd3b769b5e8b59c0a9f6b6ecada0fb13dde3c4b30fd3533d5226321a29",
+      "created_at": "2026-11-21T13:05:34.024Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants",
@@ -28246,8 +28248,8 @@
       "title": "Research & Knowledge Intelligence: XHToken/Spark-X2.6-4B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xhtoken-spark-x2-6-4b-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-c.md",
       "repository": "XHToken/Spark-X2.6-4B",
-      "content_hash": "92dc98e65e7d3911320b8332fe88669f8d5738e1d530dd1b60b830fcbac39d9a",
-      "created_at": "2026-11-17T16:38:38.506Z"
+      "content_hash": "c452c6d5c636a052525ba8c9f188b5fdd40699adf2606d474b88d02a780693c1",
+      "created_at": "2026-11-21T13:05:18.065Z"
     },
     "domain_intelligence-technical-construction-intelligence-surrealdb-surrealdb-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-surrealdb-surrealdb-core-invariants",
@@ -28264,8 +28266,8 @@
       "title": "Research & Knowledge Intelligence: hf-xhtoken-spark-x2.6-4b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xhtoken-spark-x2-6-4b-learnings-research-knowledge-intelligence-hf-xhtoken-sp.md",
       "repository": "hf-xhtoken-spark-x2.6-4b-learnings",
-      "content_hash": "0471c32079f73966a1af40d844f86c43d8f070ab5fd5f0d4bb956d04c651f057",
-      "created_at": "2026-11-17T16:38:58.022Z"
+      "content_hash": "f94bc85bd4366931fae58c28d86cbfb51112cfd3c53097f983dfb2488d32b715",
+      "created_at": "2026-11-21T13:05:37.439Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sensenova-sensenova-loop-9b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sensenova-sensenova-loop-9b-core-invariants",
@@ -30904,8 +30906,8 @@
       "title": "Quality & Verification Intelligence: yugabyte-yugabyte-db-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-yugabyte-yugabyte-db-learnings-quality-verification-intelligence-yugabyte-yugaby.md",
       "repository": "yugabyte-yugabyte-db-learnings",
-      "content_hash": "c05b8dde1788cee4d189e9b4037f292d6d7d8b991bebad9978ceed351f38a665",
-      "created_at": "2026-11-19T01:19:30.027Z"
+      "content_hash": "6d8bda5edbca36e567d3ca1402f3d1e0fe878d54bc9498a7a067364ac18335e7",
+      "created_at": "2026-11-21T13:05:40.324Z"
     },
     "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-core-invariants",
@@ -37746,6 +37748,24 @@
       "repository": "mattermost-mattermost-learnings",
       "content_hash": "03885a1550700bc73e126e39b8ba581b5ef30970407fde72a058ede2cac9d5ee",
       "created_at": "2026-11-21T12:48:57.386Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-linkerd-linkerd2-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-linkerd-linkerd2-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: linkerd/linkerd2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-linkerd-linkerd2-technical-construction-intelligence-linkerd-linkerd2-core-invar.md",
+      "repository": "linkerd/linkerd2",
+      "content_hash": "2f3e4b2e52cce347370169ade35222d0b354adfcb2d69dc1d1cd7aa36cf91c13",
+      "created_at": "2026-11-21T13:05:26.823Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-linkerd-linkerd2-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-linkerd-linkerd2-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: linkerd-linkerd2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-linkerd-linkerd2-learnings-technical-construction-intelligence-linkerd-linkerd2-.md",
+      "repository": "linkerd-linkerd2-learnings",
+      "content_hash": "c479b336cd645804396f34568fd14cee3f3a2254116d3700f69316c3261ebf3f",
+      "created_at": "2026-11-21T13:05:38.526Z"
     }
   }
 }

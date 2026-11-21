@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T12:48:58.996Z",
+  "last_updated": "2026-11-21T13:05:40.743Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T07:42:07.590Z",
@@ -823,9 +823,9 @@
       "staged_for_review": 1
     },
     "yugabyte-yugabyte-db-learnings.md": {
-      "processed_at": "2026-11-19T01:19:29.179Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-21T13:05:38.992Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "wasm-bindgen-wasm-pack-learnings.md": {
       "processed_at": "2026-11-12T05:27:35.956Z",
@@ -1543,7 +1543,7 @@
       "staged_for_review": 1
     },
     "hf-xhtoken-spark-x2.6-4b-learnings.md": {
-      "processed_at": "2026-11-17T16:38:57.807Z",
+      "processed_at": "2026-11-21T13:05:37.170Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -2138,7 +2138,7 @@
       "staged_for_review": 0
     },
     "linkerd-linkerd2-learnings.md": {
-      "processed_at": "2026-11-20T08:38:46.756Z",
+      "processed_at": "2026-11-21T13:05:37.708Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3663,7 +3663,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2802,
+  "total_dossiers_evaluated": 2805,
   "total_canonical_promoted": 447,
-  "total_staged_for_review": 2158
+  "total_staged_for_review": 2160
 }

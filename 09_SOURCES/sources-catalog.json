@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "339366cd",
+    "sourceVersion": "d24219e3",
     "license": "NOASSERTION",
-    "contentHash": "28e3e2f274128d2c0934a2a6b8cef170ac85b7e28b5a10e4b4bb4bdebd43f248",
-    "lastHarvestedAt": "2026-11-20T06:45:26.749Z",
+    "contentHash": "751fc3ec24c60e2a2d1fc328ef86c258fd65f294c0367001913bd542065ba94c",
+    "lastHarvestedAt": "2026-11-21T13:05:33.528Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -6213,10 +6213,10 @@
     "repository": "linkerd/linkerd2",
     "platform": "github",
     "sourceUrl": "https://github.com/linkerd/linkerd2",
-    "sourceVersion": "762af53b",
+    "sourceVersion": "e64ff8dd",
     "license": "Apache-2.0",
-    "contentHash": "388429359f82f08dff903cee43f83698748e47908281741958fda2295ef9f961",
-    "lastHarvestedAt": "2026-11-20T08:34:43.106Z",
+    "contentHash": "c1fbe7f3f07ab59255289c392fedd8eb2af0687159e751dab2b108f2cde9e811",
+    "lastHarvestedAt": "2026-11-21T13:05:26.314Z",
     "learningId": "learn-github-linkerd-linkerd2"
   },
   "libsql-libsql": {
@@ -10495,8 +10495,8 @@
     "sourceUrl": "https://huggingface.co/XHToken/Spark-X2.6-4B",
     "sourceVersion": "hf-xhtoken-spark-x2.6-4b",
     "license": "Open-Source",
-    "contentHash": "f0583beaa60d15cd4df12f938342e9318824c72373f49a586cb6965111d89d67",
-    "lastHarvestedAt": "2026-11-17T16:38:38.312Z",
+    "contentHash": "77b2d33ba9758f1e761de03cb29450251ee90c29c2ed0f7f07169e9d4905e5f0",
+    "lastHarvestedAt": "2026-11-21T13:05:17.806Z",
     "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b"
   },
   "hf-internscience-sage-a1.5": {

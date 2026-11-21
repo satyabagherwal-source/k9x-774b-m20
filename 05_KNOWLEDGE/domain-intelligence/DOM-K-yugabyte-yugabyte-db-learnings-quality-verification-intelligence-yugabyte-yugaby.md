@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T01:19:29.710Z",
+  "timestamp": "2026-11-21T13:05:39.940Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-yugabyte-yugabyte-db-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [yugabyte-yugabyte-db-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T01:19:29.710Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T13:05:39.940Z`  
 > **Learning ID**: `LEARN-EVO-yugabyte-yugabyte-db-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), G (Architecture Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from yugabyte-yugabyte-db-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `64f73406`  
+> **Source Version**: `d24219e3`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T01:18:55.430Z  
+> **Timestamp**: 2026-11-21T13:05:32.205Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T01:18:55.424Z  
+> **Harvest Timestamp**: 2026-11-21T13:05:32.197Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10669 stars
+- **Stars / Engagement**: 10671 stars
 
 ---
 
@@ -1552,6 +1552,7 @@ YUGABYTE_SG_PREFIX = "yugabyte-sl-{}"
 DEFAULT_BOOT_VOLUME_SIZE_GB = 50
 MIN_BOOT_VOLUME_SIZE_GB = 50
 BOOT_VOLUME_REPLACEMENT_TIMEOUT_SECONDS = 600
+BOOT_VOLUME_HYDRATION_TIMEOUT_SECONDS = 1800
 OCI_WORK_REQUEST_TERMINAL_STATES = ("SUCCEEDED", "FAILED", "CANCELED")
 # Instance tags replace_boot_volume copies to the boot volume it keeps.
 NODE_TAG_KEYS = ("universe-uuid", "node-uuid")
@@ -1699,8 +1700,7 @@ class OciCloudAdmin:
 
     @property
     def blockstorage_client(self):
-        if self._blockstorage_client is None:
-            self._blockstorage_cli
+        if self._blockstorage_clien
 ```
 
 ### Core Architecture Module: `managed/devops/opscli/ybops/utils/__init__.py`
@@ -2273,11 +2273,17 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #38467** (2026-11-18): **Build 40789405 on master: 2 lane(s) failed in the PGO workload (no cause recognised in its log)**
-  *Symptoms*: _Filed automatically by [Grissom](https://github.com/yugabyte/agent-k/blob/main/bots/grissom/README.md) (internal docs), which watches YugabyteDB's scheduled builds on `master` and the supported release branches for builds where a lane breaks or many tests fail the same way. Everything below is measured from those builds; how it decides, and how to stop it, is at the end._  ## Summary  The scheduled build of `master` at 40789405 failed in the PGO profiling workload on 2 lane(s): no cause recognised in its log. That workload builds the profile the release lanes' binaries are optimized with, so its failure stops the build before any test runs on the lane. A commit can trigger it, so the range below is ranked (the Suspected RCA comment), but its fix usually lies in the workload: this issue is for whoever keeps the PGO workload working.  - Failing lanes: `alma8-clang21-release`, `arm-alma8-clang21-release` - Failing build types: release  ## Urgency  S2 lane broken / cluster (`priority/high`).  ## What is being tested  Every lane of the scheduled build (build types release, tsan, fastdebug, asan, debug).  ## What is the failure  - `alma8-clang21-release`: build step failed in the PGO profiling workload (no cause recognised in its log); no tests ran ([CSI launch 192665](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/192665), [build log](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/192665/931559190/931559192/log), [Jenkins console](https://jenkins.dev.yugabyte.com/job/gith
+- **Issue #38833** (2026-11-21): **[YSQL] Build 60a913bd on 2026.2: ubuntu22.04-clang21-debug broken**
+  *Symptoms*: Jira Link: [DB-26806](https://yugabyte.atlassian.net/browse/DB-26806) _Filed automatically by [Grissom](https://github.com/yugabyte/agent-k/blob/main/bots/grissom/README.md) (internal docs), which watches YugabyteDB's scheduled builds on `master` and the supported release branches for builds where a lane breaks or many tests fail the same way. Everything below is measured from those builds; how it decides, and how to stop it, is at the end._  ## Summary  The scheduled build of `2026.2` at 60a913bd has a lane-level failure; the affected lane(s) are not judged test by test.  - Failing lanes: `ubuntu22.04-clang21-debug` - Failing build types: debug  ## Urgency  S2 lane broken / cluster (`priority/high`).  ## What is being tested  Every lane of the scheduled build (build types debug, release, tsan, fastdebug, asan).  ## What is the failure  - `ubuntu22.04-clang21-debug`: build step failed (compile, link or rebase); no tests ran ([CSI launch 193423](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/193423))  ## Frequency and origin  The previous scheduled build on `2026.2` was 2c7a7ae7; the change is in `(2c7a7ae7, 60a913bd]` (19 commits): https://github.com/yugabyte/yugabyte-db/compare/2c7a7ae7...60a913bd  Assigned at filing to `hkimura` (the fallback assignee): the ranker's confidence 0.15 is below 0.50. To change it, set the assignee here; Grissom does not touch it again.  ## Environment  Branch `2026.2`, commit 60a913bd, build started 2026-11-19 12:05 UTC. Lanes: - `ubuntu22
+  **Post-Mortem & Fix Analysis**:
+  > Grissom: **suspected root cause**.  Range [`(2c7a7ae7, 60a913bd]`](https://github.com/yugabyte/yugabyte-db/compare/2c7a7ae7...60a913bd): 19 commits. A build-level break: 1 lane(s) broken in this build, so the onset is this build; the range starts at the previous scheduled build.  1. [c27a8edd81](https://github.com/yugabyte/yugabyte-db/commit/c27a8edd81842fb28012696274b491f08c5dc38b) `[BACKPORT 2026.2][#37138] YSQL: Mark the end of connection manager reserved startup parameters (#37025) (#38520)` (Manav Kumar) -- confidence 0.15: Biggest C change in the range: new odyssey fields and argv packing in backend.c and yb_auth_passthrough.c, a new reserved-marker check in postmaster.c and postgres.c, and a new exported helper. Odyssey has its own DEBUG build branch (-O0, OD_DEVEL_LVL=1). Still, everything I checked resolves (macros, includes, prototypes), so this ranking is weak. 2. [fc0d925fa9](https://github.com/yugabyte/yugabyte-db/commit/fc0d925fa92b045456b62980bc9067353dce974d) `[BACKPORT
+  > Not a code break, so closing. The step that failed is the initial system catalog snapshot (`create_initial_sys_catalog_snapshot`): initdb exited after 1.4 s, three times. Its only output was `Failed to connect to bus: $DBUS_SESSION_BUS_ADDRESS and $XDG_RUNTIME_DIR not defined`, from the `systemd-run --scope --user` wrapper the step runs under, so the step never ran on that worker (`ubuntu2204-gcp-jenkins-worker-5tuvsf`, [Jenkins job 1782](https://jenkins.dev.yugabyte.com/job/github-yugabyte-db-ubuntu22.04-master-clang21-debug/1782/)). The same lane on 2026.1 at the same hour passed, and so did 2026.2's next build (2026-11-19 20:05 UTC). 
 
-- **Issue #38448** (2026-11-18): **[#36671] YSQL: Fix org.yb.pgsql.TestPgListenNotify#testCancelledFirstListenLeavesOnePoller cancel lost on TSAN**
-  *Symptoms*: ## Summary  While the first `LISTEN` waits in `PreCommit_Notify` for its notifications poller to start, `ybStartNotifsPollerBgWorker` slept in a loop with `pg_usleep(10000L)`, which blocks in `select()`. The clang21 TSAN runtime does not intercept `select()`, so the `SIGINT` from `pg_cancel_backend` was not handled until the loop ended, the `LISTEN` succeeded and the test failed with `LISTEN should have been cancelled`. The loop now waits with `WaitLatch(MyLatch, WL_LATCH_SET | WL_TIMEOUT | WL_EXIT_ON_PM_DEATH, 10L, WAIT_EVENT_BGWORKER_STARTUP)` and then calls `ResetLatch`. TSAN intercepts that wait, and `StatementCancelHandler` sets `MyLatch`, so the next `CHECK_FOR_INTERRUPTS()` handles the cancel right away.  --- _Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._  ## Test plan  ./yb_build.sh tsan --clang21 --java-test 'org.yb.pgsql.TestPgListenNotify#testCancelledFirstListenLeavesOnePoller' -n 100 --stop-at-failure -- -p 6 Ran the above locally with no failures. Before the fix, this test reproduced locally (same test command and -p / env as above, without --stop-at-failure) -- with the CSI dashboard rate for reference: - clang21-tsan: 9/9 iterations failed locally; CSI 42/42 Machine: GCP n2-standard-16, AlmaLinux 8.10 (Cerulean Leopard) x86_64, 16 vCPU, 63 GiB RAM, Intel(R) Xeon(R) CPU @ 2.80GHz 
+- **Issue #38831** (2026-11-21): **[DocDB] Build d61b7c92 on 2026.2 is broken: 3 of 6 lanes broken**
+  *Symptoms*: Jira Link: [DB-26804](https://yugabyte.atlassian.net/browse/DB-26804) _Filed automatically by [Grissom](https://github.com/yugabyte/agent-k/blob/main/bots/grissom/README.md) (internal docs), which watches YugabyteDB's scheduled builds on `master` and the supported release branches for builds where a lane breaks or many tests fail the same way. Everything below is measured from those builds; how it decides, and how to stop it, is at the end._  ## Summary  The scheduled build of `2026.2` at d61b7c92 is broken: 3 of 6 lanes broken. Its tests are not reported individually; this issue is the one report for the build.  - Failing lanes: `alma8-clang21-tsan`, `alma8-gcc15-fastdebug`, `alma9-clang21-asan`, `alma8-clang21-release`, `arm-alma8-clang21-release`, `ubuntu22.04-clang21-debug` - Failing build types: tsan, fastdebug, asan, release, debug  ## Urgency  S1 build broken (`priority/highest`).  ## What is being tested  Every lane of the scheduled build (build types tsan, fastdebug, asan, release, debug).  ## What is the failure  - `alma8-clang21-tsan`: reported 0 results, expected >= 6805 ([CSI launch 191351](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/191351)) - `alma8-gcc15-fastdebug`: reported 0 results, expected >= 6923 ([CSI launch 191345](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/191345)) - `alma9-clang21-asan`: reported 0 results, expected >= 6849 ([CSI launch 191360](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/191360))  ## Frequency and origin  The p
+  **Post-Mortem & Fix Analysis**:
+  > Grissom: **where this break was seen again**. A lane of this build was cut short the same way in a recent scheduled build already, so the lane breaks intermittently and this build is not where the break began; the range below is listed for reference, and no commit in it is suspected.  Range [`(0392c58c, d61b7c92]`](https://github.com/yugabyte/yugabyte-db/compare/0392c58c...d61b7c92). `alma8-clang21-tsan` (build 0392c58c, 2026-11-14), `alma8-gcc15-fastdebug` (build 0392c58c, 2026-11-14) and `alma9-clang21-asan` (build 0392c58c, 2026-11-14) were cut short the same way in recent builds already: the lanes break intermittently, so this build is not where the break began and no range holds the culprit.  No ranking: a lane of this build was cut short the same way in a recent build already, so the lane breaks intermittently and nothing in its range is ranked.  Assigned to @hkimura (the fallback assignee): the observed range is not trustworthy, so nobody is named from it; the range paragraph ab
+  > Grissom: the scheduled build of `2026.2` at f685bf26 (started 2026-11-16 04:05 UTC) is still broken: 3 of 6 lanes broken. - `alma8-clang21-tsan`: reported 0 results, expected >= 6805 ([CSI launch 191432](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/191432)) - `alma8-gcc15-fastdebug`: reported 0 results, expected >= 6923 ([CSI launch 191428](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/191428)) - `alma9-clang21-asan`: reported 0 results, expected >= 6849 ([CSI launch 191434](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/191434)) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2294,689 +2300,467 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bfaf8c7a` (2026-11-18)
-**Commit Message**: [PLAT-22930] YBA: Fix yba-ctl backup and restore against a password-protected external Postgres (#38291)
+### Incident Patch 1: `3d2a1372` (2026-11-21)
+**Commit Message**: [#30797,#37091] YSQL: Set index birth_time for indexes built nonconcurrently (#38639)
 
 ## Summary
 
-`yba-ctl` backup and restore didn't work against a password-protected
-external Postgres (`postgres.useExisting`). Three bugs combined:
+Re-lands #37103, which #38235 reverted, together with the fix for the
+limitation that got it reverted (#37091). The first commit is the
+original change, cherry-picked unchanged; the second is the fix.
 
-1. **Restore never got the password.** `yba-ctl restoreBackup` checked
-the misspelled key `postgress.useExisting.password`, so it never wrote
-the `.pgpass` file or passed `--pgpass_path`. Restore stopped at the
-first `psql` with `fe_sendauth: no password supplied`, after a silent
-wait in `createdb`.
-2. **The `.pgpass` entry only matched `yugaware`.**
-`yb_platform_backup.sh` exports `PGPASSFILE`, so libpq skips
-`~/.pgpass`. `createdb` (which connects to `postgres`), the PA `ts`
-database and the `db_exists` probe got no password. With only fix 1,
-restore waits forever in `createdb` for a password when there is no
-terminal. The entry now uses `*` for the database.
-3. **`db_exists` probed the wrong database.** Without `-d`, `psql`
-connects to a database named after the user. An external Postgres whose
-user has no database of that name (here `yba`) always failed the probe,
-so every backup skipped the Performance Advisor database as "not 
+### Index birth_time for nonconcurrent builds (#30797, first commit)
 
-**File**: `managed/devops/bin/yb_platform_backup.sh` (modified, +4/-2)
+A `CREATE INDEX` run inside a transaction block is built nonconcurrently
+and skips the backfill that sets the index `birth_time`, so `birth_time`
+stays 0. The DocDB read guard then does not reject a snapshot read whose
+read time precedes the index commit, the index rows (written at the
+commit) are not visible to that read, and it silently returns an
+incomplete result. This is the data loss seen in the Jepsen
+si.append-table test.
+
+On a successful nonconcurrent index create, set the index `birth_time`
+to the master clock time (>= the DDL commit time) and propagate it to
+the tablets with a new `MarkNonConcurrentIndexDone` tserver admin RPC.
+To reject reads until `birth_time` is final, `IndexInfoPB` gets a
+`birth_time_state`, set by the master at index creation:
+
+- `BIRTH_TIME_FINAL` (default): `birth_time`, if set, is f
+
+**File**: `src/yb/client/client-internal.cc` (modified, +5/-1)
 ```diff
-@@ -326,8 +326,10 @@ db_exists() {
-     probe="$(dirname "${pg_helper_path}")/psql"
-   fi
- 
--  local probe_cmd="${probe} -h ${db_host} -p ${db_port} -U ${db_username} -tAc \
--\"SELECT 1 FROM pg_database WHERE datname='${db_name}'\""
-+  # Without -d, psql connects to a database named after the user, which an external
-+  # Postgres may not have. The platform DB always exists by the time this runs.
-+  local probe_cmd="${probe} -h ${db_host} -p ${db_port} -U ${db_username} \
-+-d ${PLATFORM_DB_NAME} -tAc \"SELECT 1 FROM pg_database WHERE datname='${db_name}'\""
-   local probe_out
-   probe_out=$(docker_aware_cmd "postgres" "${probe_cmd}" 2>/dev/null) || return 1
-   [[ "${probe_out}" = "1" ]]
-```
-
-**File**: `managed/yba-installer/cmd/backup.go` (modified, +2/-8)
-```diff
-@@ -222,7 +222,7 @@ func RestoreBackupScriptHelper(inputPath string, destination string, skipRestart
- 		if viper.GetString("postgres.useExisting.pg_restore_path") != "" {
- 			args = append(args, "--pg_restore_path", viper.GetString(
- 				"postgres.useExisting.pg_restore_path"))
--			if viper.GetString("postgress.useExisting.password") != "" {
-+			if viper.GetString("postgres.useExisting.password") != "" {
- 				createPgPass()
- 				args = append(args, "--pgpass_path", common.PgpassPath())
- 			}
-@@ -292,13 +292,7 @@ func addYbdbArgs(args []string) []string {
+@@ -3275,12 +3275,16 @@ Result<TableSizeInfo> YBClient::Data::GetTableDiskSize(
  }
  
- func createPgPass() {
--	data := []byte(fmt.Sprintf("%s:%s:yugaware:%s:%s",
--		viper.GetString("postgres.useExisting.host"),
--		viper.GetString("postgres.useExisting.port"),
--		viper.GetString("postgres.useExisting.username"),
--		viper.GetString("postgres.useExisting.password"),
--	))
--	err := os.WriteFile(common.PgpassPath(), data, 0600)
-+	err := os.WriteFile(common.PgpassPath(), []byte(common.PgpassEntry()), 0600)
- 	if err != nil {
- 		log.Fatal("could not create pgpass file: " + err.Error())
- 	}
+ Status YBClient::Data::ReportYsqlDdlTxnStatus(
+-    const TransactionMetadata& txn, bool is_committed, const CoarseTimePoint& deadline) {
++    const TransactionMetadata& txn, bool is_committed, HybridTime propagated_hybrid_time,
++    const CoarseTimePoint& deadline) {
+   master::ReportYsqlDdlTxnStatusRequestPB req;
+   master::ReportYsqlDdlTxnStatusResponsePB resp;
+ 
+   req.set_transaction_id(txn.transaction_id.data(), txn.transaction_id.size());
+   req.set_is_committed(is_committed);
++  if (propagated_hybrid_time.is_valid()) {
++    req.set_propagated_hybrid_time(propagated_hybrid_time.ToUint64());
++  }
+   RETURN_NOT_OK(SyncLeaderMasterRpc(
+       deadline, req, &resp, "ReportYsqlDdlTxnStatus",
+       &master::MasterDdlProxy::ReportYsqlDdlTxnStatusAsync));
 ```
 
-**File**: `managed/yba-installer/pkg/common/pgpass.go` (added, +20/-0)
+**File**: `src/yb/client/client-internal.h` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,20 @@
-+package common
-+
-+import (
-+	"fmt"
-+
-+	"github.com/spf13/viper"
-+)
-+
-+// PgpassEntry is the .pgpass line for postgres.useExisting. It matches every database:
-+// yb_platform_backup.sh exports PGPASSFILE, so libpq skips ~/.pgpass, and the script also
-+// connects to the PA "ts" database, the "postgres" maintenance database (createdb) and the
-+// database named after the user (db_exists).
-+func PgpassEntry() string {
-+	return fmt.Sprintf("%s:%s:*:%s:%s",
-+		viper.GetString("postgres.useExisting.host"),
-+		viper.GetString("postgres.useExisting.port"),
-+		viper.GetString("postgres.useExisting.username"),
-+		viper.GetString("postgres.useExisting.password"),
-+	)
-+}
+@@ -495,7 +495,8 @@ class YBClient::Data {
+ 
+   // Provide the status of the transaction to YB-Master.
+   Status ReportYsqlDdlTxnStatus(
+-      const TransactionMetadata& txn, bool is_committed, const CoarseTimePoint& deadline);
++      const TransactionMetadata& txn, bool is_committed, HybridTime propagated_hybrid_time,
++      const CoarseTimePoint& deadline);
+ 
+   Status IsYsqlDdlVerificationInProgress(
+     const TransactionMetadata& txn,
 ```
 
-**File**: `managed/yba-installer/pkg/common/pgpass_test.go` (added, +20/-0)
+**File**: `src/yb/client/client.cc` (modified, +3/-2)
 ```diff
-@@ -0,0 +1,20 @@
-+package common
+@@ -2856,9 +2856,10 @@ Result<TableSizeInfo> YBClient::GetTableDiskSize(const TableId& table_id) {
+   return data_->GetTableDiskSize(table_id, deadline);
+ }
+ 
+-Status YBClient::ReportYsqlDdlTxnStatus(const TransactionMetadata& txn, bool is_committed) {
++Status YBClient::ReportYsqlDdlTxnStatus(
++    const TransactionMetadata& txn, bool is_committed, HybridTime propagated_hybrid_time) {
+   auto deadline = CoarseMonoClock::Now() + default_rpc_timeout();
+-  return data_->ReportYsqlDdlTxnStatus(txn, is_committed, deadline);
++  return data_->ReportYsqlDdlTxnStatus(txn, is_committed, propagated_hybrid_time, deadline);
+ }
+ 
+ Status YBClient::WaitForDdlVerificationToFinish(const TransactionMetadata& txn) {
+```
+
+**File**: `src/yb/client/client.h` (modified, +4/-2)
+```diff
+@@ -1079,8 +1079,10 @@ class YBClient {
+   // Get the disk size of a table (calculated as SST file size + WAL file size)
+   Result<TableSizeInfo> GetTableDiskSize(const TableId& table_id);
+ 
+-  // Provide the completion status of 'txn' to the YB-Master.
+-  Status ReportYsqlDdlTxnStatus(const TransactionMetadata& txn, bool is_committed);
++  // Provide the completion status of 'txn' to the YB-Master. propagated_hybrid_time is the caller's
++  // hybrid time; it should be >= the commit time of 'txn' when is_committed is true.
++  Status ReportYsqlDdlTxnStatus(
++      const TransactionMetadata& txn, bool is_committed, HybridTime propagated_hybrid_time);
+ 
+   Status WaitForDdlVerificationToFinish(const TransactionMetadata& txn);
+ 
+```
+
+**File**: `src/yb/common/common.proto` (modified, +25/-0)
+```diff
+@@ -356,6 +356,31 @@ message IndexInfoPB {
+   // snapshot predates when the index became consistent.
+   optional fixed64 birth_time = 37;
+ 
++  // Whether birth_time is final. BIRTH_TIME_FINAL (the default, also for indexes created before
++  // this field existed) means birth_time is final; it is 0 if the index has none. The PENDING
++  // states are set at index creation and mean the index may not be consistent yet: while one is set
++  // (and birth_time is 0), the docdb read guard returns a retryable error for reads at the index
++  // instead of serving a possibly-incomplete result. The state records which build path finalizes
++  // birth_time, so each path only finalizes its own indexes.
++  //
++  // TODO(#33155): The birth_time is not yet passed to xcluster targets. However, the state is
++  // still moved to BIRTH_TIME_FINAL on xcluster targets to preserve the old behaviour and allow
++  // reads until we fix this.
++  enum BirthTimeState {
++    BIRTH_TIME_FINAL = 0;
++    // Online (backfilled) build: finalized when backfill completes.
++    BIRTH_TIME_PENDING_BACKFILL = 1;
++    // Nonconcurrent (inline) build: finalized when the CREATE INDEX transaction commits.
++    BIRTH_TIME_PENDING_DDL_COMMIT = 2;
++  }
++  optional BirthTimeState birth_time_state = 40;
 +
-+import (
-+	"testing"
++  // Id of the transaction that created the index. Set only while birth_time_state is
++  // BIRTH_TIME_PENDING_DDL_COMMIT. This is required so that any readers part of the same
++  // transaction that does the CREATE INDEX are able to read even if the transaction's snapshot is
++  // older than the birth time of the index.
++  optional bytes birth_time_pending_txn_id = 41;
 +
-+	"github.com/spf13/viper"
-+)
+   // When backfill fails, the status it failed with. Unlike backfill_error_message, this
+   // preserves error codes such as the PostgreSQL error code.
+   optional AppStatusPB backfill_status = 38;
+```
+
+**File**: `src/yb/master/async_rpc_tasks.cc` (modified, +28/-0)
+```diff
+@@ -698,6 +698,34 @@ bool AsyncBackfillDone::SendRequest(int attempt) {
+   return true;
+ }
+ 
++bool AsyncMarkNonConcurrentIndexDone::SendRequest(int attempt) {
++  VLOG_WITH_PREFIX(1)
++      << "Send mark non-concurrent index done request to " << permanent_uuid() << " for "
++      << tablet_->tablet_id() << " version " << schema_version_ << " waiting for a read lock.";
 +
-+func TestPgpassEntryMatchesAllDatabases(t *testing.T) {
-+	viper.Set("postgres.useExisting.host", "db.example.com")
-+	viper.Set("postgres.useExisting.port", "5432")
-+	viper.Set("postgres.useExisting.username", "yba")
-+	viper.Set("postgres.useExisting.password", "secret")
-+	t.Cleanup(viper.Reset)
++  tablet::ChangeMetadataRequestPB req;
++  {
++    auto l = table_->LockForRead();
++    VLOG_WITH_PREFIX(1)
++        << "Send mark non-concurrent index done request to " << permanent_uuid() << " for "
++        << tablet_->tablet_id() << " version " << schema_version_ << " obtained the read lock.";
 +
-+	want := "db.example.com:5432:*:yba:secret"
-+	if got := PgpassEntry(); got != want {
-+		t.Errorf("PgpassEntry() = %q, want %q", got, want)
-+	}
++    req.set_backfill_done_table_id(table_id_);
++    req.set_dest_uuid(permanent_uuid());
++    req.set_tablet_id(tablet_->tablet_id());
++    req.set_propagated_hybrid_time(master_->clock()->Now().ToUint64());
++    req.set_mark_non_concurrent_index_done(true);
++    req.set_birth_time(birth_time_);
++    schema_version_ = l->pb.version();
++  }
++
++  ts_admin_proxy_->MarkNonConcurrentIndexDoneAsync(req, &resp_, &rpc_, BindRpcCallback());
++  VLOG_WITH_PREFIX(1)
++      << "Send mark non-concurrent index done request to " << permanent_uuid() << " for "
++      << tablet_->tablet_id() << " (attempt " << attempt << "):\n" << req.DebugString();
++  return true;
 +}
++
+ void AsyncInsertPackedSchemaForXClusterTarget::HandleInsertPackedSchema(
+     tablet::ChangeMetadataRequestPB& req) {
+   // Update insert_packed_schema and update the schema to the packed schema to insert.
+```
+
+**File**: `src/yb/master/async_rpc_tasks.h` (modified, +28/-0)
+```diff
+@@ -349,6 +349,34 @@ class AsyncBackfillDone : public AsyncAlterTable {
+   const uint64_t birth_time_;
+ };
+ 
++// Finalizes a nonconcurrently-built index: sends a change-metadata RPC that sets the index's
++// birth_time and marks IndexInfoPB.birth_time_state final on the tablet. This is the nonconcurrent
++// counterpart of AsyncBackfillDone (which finalizes the online-backfill path).
++class AsyncMarkNonConcurrentIndexDone : public AsyncAlterTable {
++ public:
++  AsyncMarkNonConcurrentIndexDone(Master* master,
++                         ThreadPool* callback_pool,
++                         const TabletInfoPtr& tablet,
++                         const std::string& table_id,
++                         LeaderEpoch epoch,
++                         uint64_t birth_time)
++    : AsyncAlterTable(master, callback_pool, tablet, std::move(epoch)),
++      table_id_(table_id),
++      birth_time_(birth_time) {}
++
++  server::MonitoredTaskType type() const override {
++    return server::MonitoredTaskType::kMarkNonConcurrentIndexDone;
++  }
++
++  std::string type_name() const override { return "Mark non-concurrent index done."; }
++
++ private:
++  bool SendRequest(int attempt) override;
++
++  const std::string table_id_;
++  const uint64_t birth_time_;
++};
++
+ class AsyncInsertPackedSchemaForXClusterTarget : public AsyncAlterTable {
+  public:
+   // For colocated alters, `table` should be the table we are modifying (ie not the parent table).
+```
+
+**File**: `src/yb/master/backfill_index.cc` (modified, +10/-4)
+```diff
+@@ -1530,12 +1530,15 @@ Status BackfillTable::AllowCompactionsToGCDeleteMarkers(
+     VLOG_WITH_FUNC(2) << "Locked index table for Write";
+     UnsetIndexTableRetainsDeleteMarkers(index_table_wlock.mutable_data());
+ 
+-    // Persist the index birth time in the index table's index_info.
++    // Persist the index birth time in the index table's index_info, and mark it final.
+     // TODO(#33155): read_time_for_backfill isn't set for xCluster automatic-mode target (where
+     // backfill is replicated from the source).
+-    if (index_table_wlock.mutable_data()->pb.has_index_info() && !idx_birth_time.is_special()) {
+-      index_table_wlock.mutable_data()->pb.mutable_index_info()->set_birth_time(
+-          idx_birth_time.ToUint64());
++    if (index_table_wlock.mutable_data()->pb.has_index_info()) {
++      auto* index_info = index_table_wlock.mutable_data()->pb.mutable_index_info();
++      if (!idx_birth_time.is_special()) {
++        index_info->set_birth_time(idx_birth_time.ToUint64());
++      }
++      index_info->clear_birth_time_state();
+     }
+ 
+     // Update sys-catalog with the new indexed table info.
+@@ -1552,6 +1555,9 @@ Status BackfillTable::AllowCompactionsToGCDeleteMarkers(
+   }
+   VLOG_WITH_FUNC(2) << "Unlocked index table for Read";
+   VLOG(1) << "Sending backfill done requests to the Index table";
++  // TODO(#37622): the master does not resend this if a tablet misses it (e.g. on master
++  // failover). The tablet validator usually repairs that, but not if its single check ran
++  // while the index was still pending.
+   RETURN_NOT_OK(SendRpcToAllowCompactionsToGCDeleteMarkers(index_table_info));
+   VLOG(1) << "DONE Sending backfill done requests to the Index table";
+   return Status::OK();
 ```
 
 ---
 
-### Incident Patch 2: `2c4a9e0e` (2026-11-10)
-**Commit Message**: [PLAT-23429] YBA: Fix Kubernetes universe delete hanging on a StatefulSet left outside its Helm release
+### Incident Patch 2: `e3701ffa` (2026-11-17)
+**Commit Message**: [#35017] YSQL: Fix org.yb.pgsql.TestPgRegressIsolationObjectLocking#testPgRegress slow unblocked ALTERs
 
 Summary:
-A Kubernetes universe delete could hang forever in its PVC step. A StatefulSet that carries a release's labels but is no longer in the Helm release (for example one left behind by a failed full move) survives `helm delete`. Its pods keep running and keep its PVCs in use, so `kubectl delete pvc -l release=<release>` waits on the `kubernetes.io/pvc-protection` finalizer with no time limit. The task list shows the hang under "Removing Pod Disruption Budget Policy" because later steps of an already-seen type are grouped under the most recent row.
+`yb.orig.alter_partitioned_table_locks` (and `yb.orig.avoid_stale_catalog_reads-1`) fail intermittently in `org.yb.pgsql.TestPgRegressIsolationObjectLocking#testPgRegress`. In each failing permutation, an s2 ALTER waits on s1, `s1_commit` unblocks it, and then an s3 step runs. If the unblocked ALTER takes longer than `YB_NUM_SECONDS_TO_WAIT_TO_ASSUME_SESSION_BLOCKED`, the isolation tester launches the s3 step before the ALTER finishes. The s3 step then runs against the pre-ALTER schema, or its output lands in the wrong order.
 
-- `KubernetesManager#deleteStorage` now takes the release names to clean up and deletes their StatefulSets before their PVCs, so pods holding the PVCs go first. This applies to the universe delete, the read replica delete, and an edit that removes or rolls back an AZ.
-- On the kubectl path both deletes are bounded by `yb.helm.timeout_secs`, the timeout helm install and upgrade use, and a non-zero exit fails the step (`processErrors`). A delete that matches nothing still succeeds, including in a namespace that is already gone. The 
+The fix uses the empty-step idiom documented in the isolation `README`. An empty `s2_noop` step goes after `s1_commit` in those permutations. Before launching a step, the tester waits for that session's previous step to finish, and that wait doesn't use the assume-blocked heuristic. So `s2_noop`, and the s3 step after it, can't start until the unblocked ALTER is done, however slow it is. In the RR-reader permutation, s3 doesn't depend on the ALTER, so `s2_add_fk` is marked `(yb_never_waits)` there instead.
 
-**File**: `managed/src/main/java/com/yugabyte/yw/commissioner/tasks/DestroyKubernetesUniverse.java` (modified, +67/-0)
+The expected outputs gain one `step s2_n
+
+**File**: `src/postgres/src/test/isolation/expected/yb.orig.alter_partitioned_table_locks.out` (modified, +8/-4)
 ```diff
-@@ -38,6 +38,8 @@
- import com.yugabyte.yw.models.helpers.TaskType;
- import java.io.IOException;
- import java.util.HashSet;
-+import java.util.LinkedHashMap;
-+import java.util.LinkedHashSet;
- import java.util.List;
- import java.util.Map;
- import java.util.Map.Entry;
-@@ -47,6 +49,7 @@
- import java.util.stream.Stream;
- import javax.inject.Inject;
- import lombok.extern.slf4j.Slf4j;
-+import org.apache.commons.lang3.StringUtils;
+@@ -1,11 +1,12 @@
+ Parsed test spec with 3 sessions
  
- @Slf4j
- @Abortable
-@@ -172,6 +175,9 @@ public void run() {
-               KubernetesCommandExecutor.CommandType.VOLUME_DELETE.getSubTaskGroupName());
-       volumeDeletes.setSubTaskGroupType(UserTaskDetails.SubTaskGroupType.RemovingUnusedServers);
+-starting permutation: s1_begin s1_create_ac_part s2_add_column s1_commit s3_insert_ac s3_select_ac
++starting permutation: s1_begin s1_create_ac_part s2_add_column s1_commit s2_noop s3_insert_ac s3_select_ac
+ step s1_begin: BEGIN;
+ step s1_create_ac_part: CREATE TABLE ac_p_7_b0 PARTITION OF ac_p_7 FOR VALUES IN (0);
+ step s2_add_column: ALTER TABLE ac_p ADD COLUMN x2 int DEFAULT 2; <waiting ...>
+ step s1_commit: COMMIT;
+ step s2_add_column: <... completed>
++step s2_noop: ;
+ step s3_insert_ac: INSERT INTO ac_p VALUES (702, 0, 'r'), (703, 1, 'r');
+ step s3_select_ac: SELECT tableoid::regclass, * FROM ac_p ORDER BY a;
+ tableoid |  a|b|c|x2
+@@ -15,12 +16,13 @@ ac_p_7_b1|703|1|r| 2
+ (2 rows)
  
-+      // Storage left in namespaces the provider sets, by releases no longer in the placement.
-+      SubTaskGroup providerNamespaceVolumeDeletes = createProviderNamespaceVolumeDeletes(universe);
-+
-       SubTaskGroup namespaceDeletes =
-           createSubTaskGroup(
-               KubernetesCommandExecutor.CommandType.NAMESPACE_DELETE.getSubTaskGroupName());
-@@ -270,6 +276,7 @@ public void run() {
-       getRunnableTask().addSubTaskGroup(namespacedServicesDelete);
-       getRunnableTask().addSubTaskGroup(helmDeletes);
-       getRunnableTask().addSubTaskGroup(volumeDeletes);
-+      getRunnableTask().addSubTaskGroup(providerNamespaceVolumeDeletes);
-       getRunnableTask().addSubTaskGroup(namespaceDeletes);
  
-       // Create tasks to remove the universe entry from the Universe table.
-@@ -317,6 +324,65 @@ public void run() {
-     log.info("Finished {} task.", getName());
-   }
+-starting permutation: s1_begin s1_create_dc_part s2_drop_pk_column s1_commit s3_insert_dc s3_select_dc
++starting permutation: s1_begin s1_create_dc_part s2_drop_pk_column s1_commit s2_noop s3_insert_dc s3_select_dc
+ step s1_begin: BEGIN;
+ step s1_create_dc_part: CREATE TABLE dc_p_7_b0 PARTITION OF dc_p_7 FOR VALUES IN (0);
+ step s2_drop_pk_column: ALTER TABLE dc_p DROP COLUMN c; <waiting ...>
+ step s1_commit: COMMIT;
+ step s2_drop_pk_column: <... completed>
++step s2_noop: ;
+ step s3_insert_dc: INSERT INTO dc_p VALUES (702, 0), (703, 1);
+ step s3_select_dc: SELECT tableoid::regclass, * FROM dc_p ORDER BY a;
+ tableoid |  a|b
+@@ -30,7 +32,7 @@ dc_p_7_b1|703|1
+ (2 rows)
  
-+  /**
-+   * Creates one VOLUME_DELETE per namespace that the universe's providers set on zones outside the
-+   * placement, covering the releases this universe could have had in those zones. Zones in the
-+   * placement are deleted by the regular VOLUME_DELETE, and zones without a set namespace by the
-+   * namespace delete.
-+   */
-+  private SubTaskGroup createProviderNamespaceVolumeDeletes(Universe universe) {
-+    SubTaskGroup subTaskGroup =
-+        createSubTaskGroup(
-+            KubernetesCommandExecutor.CommandType.VOLUME_DELETE.getSubTaskGroupName(),
-+            UserTaskDetails.SubTaskGroupType.RemovingUnusedServers);
-+    UniverseDefinitionTaskParams universeDetails = universe.getUniverseDetails();
-+    Map<List<String>, KubernetesCommandExecutor.Params> paramsByNamespace = new LinkedHashMap<>();
-+    for (UniverseDefinitionTaskParams.Cluster cluster : universeDetails.clusters) {
-+      Provider provider = Util.getSingleProvider(cluster);
-+      boolean isMultiAz = PlacementInfoUtil.isMultiAZ(provider);
-+      boolean isReadOnlyCluster = cluster.clusterType == ClusterType.ASYNC;
-+      Set<UUID> placementAZs = KubernetesUtil.getConfigPerAZ(cluster.placementInfo).keySet();
-+      for (Entry<UUID, Map<String, String>> entry :
-+          KubernetesUtil.getConfigPerProviderZone(provider).entrySet()) {
-+        Map<String, String> config = entry.getValue();
-+        String namespace = config.get("KUBENAMESPACE");
-+        if (placementAZs.contains(entry.getKey()) || StringUtils.isBlank(namespace)) {
-+          continue;
-+        }
-+        String azName =
-+            isMultiAz ? AvailabilityZone.getOrBadRequest(entry.getKey()).getCode() : null;
-+        KubernetesCommandExecutor.Params params =
-+            paramsByNamespace.computeIfAbsent(
-+                List.of(config.get("KUBECONFIG"), namespace),
-+                k -> {
-+                  KubernetesCommandExecutor.Params p = new KubernetesCommandExecutor.Params();
-+                  p.commandType = KubernetesCommandExecutor.CommandType.VOLUME_DELETE;
-+                  p.providerUUID = provider.getUuid();
-+                  p.universeName = universe.getName();
-+                  p.config = config;
-+                  p.namespace = namespace;
-+                  p.helmReleaseNames = new LinkedHashSet<>();
-+                  p.isForceDelete = params().isForceDelete;
-+                  p.setUniverseUUID(universe.getUniverseUUID());
-+                  return p;
-+                });
-+        params.helmReleaseNames.add(
-+            KubernetesUtil.getHelmReleaseName(
-+                universeDetails.nodePrefix,
-+                universe.getName(),
-+                azName,
-+                isReadOnlyCluster,
-+                universeDetails.useNewHelmNamingStyle));
-+      }
-+    }
-+    for (KubernetesCommandExecutor.Params params : paramsByNamespace.values()) {
-+      KubernetesCommandExecutor task = createTask(KubernetesCommandExecutor.class);
-+      task.initialize(params);
-+      subTaskGroup.addSubTask(task);
-+    }
-+    return subTaskGroup;
-+  }
-+
-   protected KubernetesCommandExecutor createDestroyKubernetesTask(
-       String nodePrefix,
-       String universeName,
-@@ -332,6 +398,7 @@ protected KubernetesCommandExecutor createDestroyKubernetesTask(
-     params.isReadOnlyCluster = isReadOnlyCluster;
-     params.universeName = universeName;
-     params.azCode = az;
-+    params.isForceDelete = params().isFo
+ 
+-starting permutation: s1_begin_rr s1_count s2_add_pk s1_count s1_commit s3_count
++starting permutation: s1_begin_rr s1_count s2_add_pk s1_count s1_commit s2_noop s3_count
+ step s1_begin_rr: BEGIN ISOLATION LEVEL REPEATABLE READ;
+ step s1_count: SELECT count(*) FROM ap_p_7_b1;
+ count
+@@ -47,6 +49,7 @@ count
+ 
+ step s1_commit: COMMIT;
+ step s2_add_pk: <... completed>
++step s2_noop: ;
+ step s3_count: SELECT count(*) FROM ap_p_7_b1;
+ count
+ -----
+@@ -73,13 +76,14 @@ step s1_commit: COMMIT;
+ step s3_insert_fk_bad: INSERT INTO fk_p_7_b1 VALUES (751, 1, 99);
+ ERROR:  insert or update on table "fk_p_7_b1" violates foreign key constraint "fk_c"
+ 
+-starting permutation: s1_begin s1_insert_fk_bad s2_add_fk s1_commit s3_count_fk
++starting permutation: s1_begin s1_insert_fk_bad s2_add_fk s1_commit s2_noop s3_count_fk
+ step s1_begin: BEGIN;
+ step s1_insert_fk_bad: INSERT INTO fk_p_7_b1 VALUES (750, 1, 99);
+ step s2_add_fk: ALTER TABLE fk_p ADD CONSTRAINT fk_c FOREIGN KEY (c) REFERENCES fk_ref (id); <waiting ...>
+ step s1_commit: COMMIT;
+ step s2_add_fk: <... completed>
+ ERROR:  insert or update on table "fk_p_7_b1" violates foreign key constraint "fk_c"
++step s2_noop: ;
+ step s3_count_fk: SELECT count(*) FROM fk_p_7_b1;
+ count
+ -----
 ```
 
-**File**: `managed/src/main/java/com/yugabyte/yw/commissioner/tasks/ReadOnlyKubernetesClusterDelete.java` (modified, +1/-0)
+**File**: `src/postgres/src/test/isolation/expected/yb.orig.avoid_stale_catalog_reads-1.out` (modified, +4/-2)
 ```diff
-@@ -286,6 +286,7 @@ protected KubernetesCommandExecutor createDestroyKubernetesTask(
-     params.providerUUID = providerUUID;
-     params.isReadOnlyCluster = isReadOnlyCluster;
-     params.azCode = az;
-+    params.isForceDelete = params().isForceDelete;
-     params.helmReleaseName =
-         KubernetesUtil.getHelmReleaseName(
-             nodePrefix, universeName, az, isReadOnlyCluster, newNamingStyle);
+@@ -17,12 +17,13 @@ a
+ (3 rows)
+ 
+ 
+-starting permutation: s1_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_v s1_commit s3_select_test_atts
++starting permutation: s1_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_v s1_commit s2_noop s3_select_test_atts
+ step s1_begin_rr: BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+ step s1_alter_table_test_add_col_a: ALTER TABLE test ADD COLUMN a INT;
+ step s2_alter_table_test_alter_col_v: ALTER TABLE test ALTER COLUMN v TYPE SMALLINT; <waiting ...>
+ step s1_commit: COMMIT;
+ step s2_alter_table_test_alter_col_v: <... completed>
++step s2_noop: ;
+ step s3_select_test_atts: SELECT attname FROM pg_attribute WHERE attrelid = 'test'::regclass::oid and attnum > 0;
+ attname
+ -------
+@@ -49,12 +50,13 @@ a
+ (3 rows)
+ 
+ 
+-starting permutation: s1_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_a s1_commit s3_select_test_atts
++starting permutation: s1_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_a s1_commit s2_noop s3_select_test_atts
+ step s1_begin_rr: BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+ step s1_alter_table_test_add_col_a: ALTER TABLE test ADD COLUMN a INT;
+ step s2_alter_table_test_alter_col_a: ALTER TABLE test ALTER COLUMN a TYPE SMALLINT; <waiting ...>
+ step s1_commit: COMMIT;
+ step s2_alter_table_test_alter_col_a: <... completed>
++step s2_noop: ;
+ step s3_select_test_atts: SELECT attname FROM pg_attribute WHERE attrelid = 'test'::regclass::oid and attnum > 0;
+ attname
+ -------
 ```
 
-**File**: `managed/src/main/java/com/yugabyte/yw/commissioner/tasks/subtasks/KubernetesCommandExecutor.java` (modified, +27/-3)
+**File**: `src/postgres/src/test/isolation/specs/yb.orig.alter_partitioned_table_locks.spec` (modified, +8/-5)
 ```diff
-@@ -86,9 +86,11 @@
- import java.util.Optional;
- import java.util.Set;
- import java.util.UUID;
-+import java.util.concurrent.CancellationException;
- import java.util.regex.Pattern;
- import javax.annotation.Nullable;
- import lombok.extern.slf4j.Slf4j;
-+import org.apache.commons.collections4.CollectionUtils;
- import org.apache.commons.lang3.StringUtils;
- import org.bouncycastle.asn1.x509.GeneralName;
- import org.yaml.snakeyaml.Yaml;
-@@ -225,6 +227,10 @@ public static class Params extends UniverseTaskParams {
-     public Map<String, String> universeConfig;
-     public CommandType commandType;
-     public String helmReleaseName;
-+    // VOLUME_DELETE only: the releases whose storage is deleted, in place of helmReleaseName.
-+    public Set<String> helmReleaseNames;
-+    // VOLUME_DELETE only: a failed delete is logged and skipped.
-+    public boolean isForceDelete;
-     public String namespace;
-     public boolean isReadOnlyCluster;
-     public String ybSoftwareVersion = null;
-@@ -510,9 +516,27 @@ && taskParams().namespace == null) {
-                 confGetter.getConfForScope(universe, UniverseConfKeys.k8sMasterPvcGcReadyTimeout));
-         break;
-       case VOLUME_DELETE:
--        kubernetesManagerFactory
--            .getManager()
--            .deleteStorage(config, taskParams().helmReleaseName, taskParams().namespace);
-+        try {
-+          kubernetesManagerFactory
-+              .getManager()
-+              .deleteStorage(
-+                  taskParams().getUniverseUUID(),
-+                  config,
-+                  CollectionUtils.isNotEmpty(taskParams().helmReleaseNames)
-+                      ? taskParams().helmReleaseNames
-+                      : Collections.singleton(taskParams().helmReleaseName),
-+                  taskParams().namespace);
-+        } catch (CancellationException e) {
-+          throw e;
-+        } catch (RuntimeException e) {
-+          if (!taskParams().isForceDelete) {
-+            throw e;
-+          }
-+          log.warn(
-+              "Ignoring error deleting storage in namespace {} due to isForceDelete being set.",
-+              taskParams().namespace,
-+              e);
-+        }
-         break;
-       case NAMESPACE_DELETE:
-         kubernetesManagerFactory.getManager().deleteNamespace(config, taskParams().namespace);
+@@ -76,6 +76,7 @@ step s2_detach_sib		{ ALTER TABLE sib_p DETACH PARTITION sib_p_a; }
+ step s2_owner_sib		{ ALTER TABLE sib_p OWNER TO CURRENT_USER; }
+ step s2_only_default_sib	{ ALTER TABLE ONLY sib_p ALTER COLUMN b SET DEFAULT 5; }
+ step s2_attach_sib		{ ALTER TABLE sib_p ATTACH PARTITION sib_q FOR VALUES FROM (300) TO (400); }
++step s2_noop			{ ; }
+ 
+ session s3
+ step s3_insert_ac		{ INSERT INTO ac_p VALUES (702, 0, 'r'), (703, 1, 'r'); }
+@@ -86,11 +87,13 @@ step s3_count			{ SELECT count(*) FROM ap_p_7_b1; }
+ step s3_insert_fk_bad	{ INSERT INTO fk_p_7_b1 VALUES (751, 1, 99); }
+ step s3_count_fk		{ SELECT count(*) FROM fk_p_7_b1; }
+ 
+-permutation s1_begin s1_create_ac_part s2_add_column s1_commit s3_insert_ac s3_select_ac
+-permutation s1_begin s1_create_dc_part s2_drop_pk_column s1_commit s3_insert_dc s3_select_dc
+-permutation s1_begin_rr s1_count s2_add_pk s1_count s1_commit s3_count
+-permutation s1_begin_rr s1_count_fk s2_add_fk s1_count_fk s1_commit s3_insert_fk_bad
+-permutation s1_begin s1_insert_fk_bad s2_add_fk s1_commit s3_count_fk
++# s2_noop makes the next s3 step wait for the ALTER that s1_commit unblocks,
++# however slow.
++permutation s1_begin s1_create_ac_part s2_add_column s1_commit s2_noop s3_insert_ac s3_select_ac
++permutation s1_begin s1_create_dc_part s2_drop_pk_column s1_commit s2_noop s3_insert_dc s3_select_dc
++permutation s1_begin_rr s1_count s2_add_pk s1_count s1_commit s2_noop s3_count
++permutation s1_begin_rr s1_count_fk s2_add_fk(yb_never_waits) s1_count_fk s1_commit s3_insert_fk_bad
++permutation s1_begin s1_insert_fk_bad s2_add_fk s1_commit s2_noop s3_count_fk
+ permutation s1_begin s1_count_sib s2_detach_sib s1_count_sib_root s1_commit
+ permutation s1_begin s1_count_sib s2_owner_sib s1_commit
+ permutation s1_begin s1_count_sib s2_only_default_sib s1_commit
 ```
 
-**File**: `managed/src/main/java/com/yugabyte/yw/common/KubernetesManager.java` (modified, +6/-1)
+**File**: `src/postgres/src/test/isolation/specs/yb.orig.avoid_stale_catalog_reads-1.spec` (modified, +3/-2)
 ```diff
-@@ -41,6 +41,7 @@
- import java.nio.file.Files;
- import java.nio.file.Path;
- import java.time.Duration;
-+import java.util.Collection;
- import java.util.HashMap;
- import java.util.HashSet;
- import java.util.List;
-@@ -1078,8 +1079,12 @@ public abstract void updateNumNodes(
-   public abstract void PauseAllPodsInRelease(
-       Map<String, String> config, String universePrefix, String namespace, boolean newNamingStyle);
+@@ -40,6 +40,7 @@ step s2_begin_rr { BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ; }
+ step s2_alter_table_test_alter_col_v { ALTER TABLE test ALTER COLUMN v TYPE SMALLINT; }
+ step s2_alter_table_test_alter_col_a { ALTER TABLE test ALTER COLUMN a TYPE SMALLINT; }
+ step s2_commit { COMMIT; }
++step s2_noop { ; }
  
-+  // Deletes the StatefulSets, then the PVCs, labelled with any of the given helm release names.
-   public abstract void deleteStorage(
--      Map<String, String> config, String universePrefix, String namespace);
-+      UUID universeUUID,
-+      Map<String, String> config,
-+      Collection<String> helmReleaseNames,
-+      String namespace);
+ session s3
+ step s3_select_test_atts { SELECT attname FROM pg_attribute WHERE attrelid = 'test'::regclass::oid and attnum > 0; }
+@@ -50,8 +51,8 @@ step s3_select_test_atts { SELECT attname FROM pg_attribute WHERE attrelid = 'te
  
-   public abstract void deleteNamespace(Map<String, String> config, String namespace);
+ permutation s1_begin_rr s2_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_v s1_commit s2_commit s3_select_test_atts
+ # Test ALTER outside a transaction block in S2.
+-permutation s1_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_v s1_commit s3_select_test_atts
++permutation s1_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_v s1_commit s2_noop s3_select_test_atts
  
-```
-
-**File**: `managed/src/main/java/com/yugabyte/yw/common/NativeKubernetesManager.java` (modified, +17/-3)
-```diff
-@@ -2,6 +2,7 @@
- 
- package com.yugabyte.yw.common;
- 
-+import com.google.common.annotations.VisibleForTesting;
- import com.google.common.collect.ImmutableMap;
- import com.yugabyte.yw.commissioner.tasks.UniverseTaskBase.ServerType;
- import io.fabric8.kubernetes.api.model.DeletionPropagation;
-@@ -34,6 +35,7 @@
- import java.nio.file.Paths;
- import java.nio.file.StandardOpenOption;
- import java.time.Duration;
-+import java.util.Collection;
- import java.util.List;
- import java.util.Map;
- import java.util.Objects;
-@@ -51,7 +53,8 @@
- @Slf4j
- public class NativeKubernetesManager extends KubernetesManager {
- 
--  private KubernetesClient getClient(Map<String, String> config) {
-+  @VisibleForTesting
-+  KubernetesClient getClient(Map<String, String> config) {
-     if (config.containsKey("KUBECONFIG") && !config.get("KUBECONFIG").isEmpty()) {
-       try {
-         String kubeConfigContents =
-@@ -271,12 +274,23 @@ public void updateNumNodes(
-   }
- 
-   @Override
--  public void deleteStorage(Map<String, String> config, String helmReleaseName, String namespace) {
-+  public void deleteStorage(
-+      UUID universeUUID,
-+      Map<String, String> config,
-+      Collection<String> helmReleaseNames,
-+      String namespace) {
-+    String[] releaseNames = helmReleaseNames.toArray(new String[0]);
-     try (KubernetesClient client = getClient(config)) {
-+      client
-+          .apps()
-+          .statefulSets()
-+          .inNamespace(namespace)
-+          .withLabelIn("release", releaseNames)
-+          .delete();
-       client
-           .persistentVolumeClaims()
-           .inNamespace(namespace)
--          .withLabel("release", helmReleaseName)
-+          .withLabelIn("release", releaseNames)
-           .delete();
-     }
-   }
-```
-
-**File**: `managed/src/main/java/com/yugabyte/yw/common/ShellKubernetesManager.java` (modified, +27/-5)
-```diff
-@@ -48,6 +48,7 @@
- import java.time.Duration;
- import java.util.ArrayList;
- import java.util.Arrays;
-+import java.util.Collection;
- import java.util.HashMap;
- import java.util.HashSet;
- import java.util.LinkedList;
-@@ -351,19 +352,40 @@ public void updateNumNodes(
-   }
- 
-   @Override
--  public void deleteStorage(Map<String, String> config, String helmReleaseName, String namespace) {
-+  public void deleteStorage(
-+      UUID universeUUID,
-+      Map<String, String> config,
-+      Collection<String> helmReleaseNames,
-+      String namespace) {
-+    String releaseSelector = String.format("release in (%s)", String.join(",", helmReleaseNames));
-+    // StatefulSets go first: a StatefulSet that is not in the helm release keeps its pods
-+    // running, and a PVC in use by a pod is not deleted until the pod is gone.
-+    List<String> stsCommandList =
-+        ImmutableList.of(
-+            "kubectl",
-+            "delete",
-+            "statefulset",
-+            "--namespace",
-+            namespace,
-+            "-l",
-+            releaseSelector,
-+            "--ignore-not-found",
-+            "--timeout",
-+            getTimeout(universeUUID));
-+    execCommand(config, stsCommandList).processErrors("Unable to delete StatefulSets");
-     // Delete Master and TServer Volumes
--    List<String> commandList =
-+    List<String> pvcCommandList =
-         ImmutableList.of(
-             "kubectl",
-             "delete",
-             "pvc",
-             "--namespace",
-             namespace,
-             "-l",
--            "release=" + helmReleaseName);
--    execCommand(config, commandList);
--    // TODO: check the execCommand outputs.
-+            releaseSelector,
-+            "--timeout",
-+            getTimeout(universeUUID));
-+    execCommand(config, pvcCommandList).processErrors("Unable to delete PVCs");
-   }
- 
-   @Override
-```
-
-**File**: `managed/src/test/java/com/yugabyte/yw/commissioner/tasks/DestroyKubernetesUniverseTest.java` (modified, +129/-12)
-```diff
-@@ -8,17 +8,20 @@
- import static com.yugabyte.yw.common.ApiUtils.getTestUserIntent;
- import static com.yugabyte.yw.common.AssertHelper.assertJsonEqual;
- import static com.yugabyte.yw.common.ModelFactory.createUniverse;
-+import static com.yugabyte.yw.models.TaskInfo.State.Failure;
- import static com.yugabyte.yw.models.TaskInfo.State.Success;
- import static org.hamcrest.CoreMatchers.containsString;
- import static org.hamcrest.MatcherAssert.assertThat;
- import static org.junit.Assert.assertEquals;
- import static org.junit.Assert.assertFalse;
- import static org.junit.Assert.assertNull;
- import static org.junit.Assert.assertThrows;
-+import static org.junit.Assert.assertTrue;
- import static org.junit.Assert.fail;
- import static org.mockito.ArgumentMatchers.any;
- import static org.mockito.ArgumentMatchers.anyBoolean;
- import static org.mockito.ArgumentMatchers.anyString;
-+import static org.mockito.Mockito.doThrow;
- import static org.mockito.Mockito.lenient;
- import static org.mockito.Mockito.mock;
- import static org.mockito.Mockito.times;
-@@ -28,8 +31,10 @@
- import com.fasterxml.jackson.databind.JsonNode;
- import com.google.common.collect.ImmutableList;
- import com.google.common.collect.ImmutableMap;
-+import com.google.common.collect.ImmutableSet;
- import com.yugabyte.yw.commissioner.tasks.subtasks.KubernetesCommandExecutor.CommandType;
- import com.yugabyte.yw.common.ApiUtils;
-+import com.yugabyte.yw.common.KubernetesUtil;
- import com.yugabyte.yw.common.ModelFactory;
- import com.yugabyte.yw.common.PlatformServiceException;
- import com.yugabyte.yw.common.TestHelper;
-@@ -241,7 +246,9 @@ public void testDestroyKubernetesUniverseSuccess() {
-     taskParams.setUniverseUUID(defaultUniverse.getUniverseUUID());
-     TaskInfo taskInfo = submitTask(taskParams);
-     verify(mockKubernetesManager, times(1)).helmDelete(config, NODE_PREFIX, NODE_PREFIX);
--    verify(mockKubernetesManager, times(1)).deleteStorage(config, NODE_PREFIX, NODE_PREFIX);
-+    verify(mockKubernetesManager, times(1))
-+        .deleteStorage(
-+            defaultUniverse.getUniverseUUID(), config, ImmutableSet.of(NODE_PREFIX), NODE_PREFIX);
-     verify(mockKubernetesManager, times(1)).deleteNamespace(config, NODE_PREFIX);
-     List<TaskInfo> subTasks = taskInfo.getSubTasks();
-     Map<Integer, List<TaskInfo>> subTasksByPosition =
-@@ -318,7 +325,9 @@ public void testDestroyKubernetesUniverseSuccessAndPromoteAutoFlagsOnOthers() {
-     taskParams.setUniverseUUID(defaultUniverse.getUniverseUUID());
-     TaskInfo taskInfo = submitTask(taskParams);
-     verify(mockKubernetesManager, times(1)).helmDelete(config, NODE_PREFIX, NODE_PREFIX);
--    verify(mockKubernetesManager, times(1)).deleteStorage(config, NODE_PREFIX, NODE_PREFIX);
-+    verify(mockKubernetesManager, times(1))
-+        .deleteStorage(
-+            defaultUniverse.getUniverseUUID(), config, ImmutableSet.of(NODE_PREFIX), NODE_PREFIX);
-     verify(mockKubernetesManager, times(1)).deleteNamespace(config, NODE_PREFIX);
-     List<TaskInfo> subTasks = taskInfo.getSubTasks();
-     assertEquals(
-@@ -360,7 +369,9 @@ public void testForceDestroyKubernetesUniverse() {
-     taskParams.setUniverseUUID(defaultUniverse.getUniverseUUID());
-     TaskInfo taskInfo = submitTask(taskParams);
-     verify(mockKubernetesManager, times(1)).helmDelete(config, NODE_PREFIX, NODE_PREFIX);
--    verify(mockKubernetesManager, times(1)).deleteStorage(config, NODE_PREFIX, NODE_PREFIX);
-+    verify(mockKubernetesManager, times(1))
-+        .deleteStorage(
-+            defaultUniverse.getUniverseUUID(), config, ImmutableSet.of(NODE_PREFIX), NODE_PREFIX);
-     verify(mockKubernetesManager, times(1)).deleteNamespace(config, NODE_PREFIX);
-     List<TaskInfo> subTasks = taskInfo.getSubTasks();
-     Map<Integer, List<TaskInfo>> subTasksByPosition =
-@@ -391,9 +402,15 @@ public void testDestroyKubernetesUniverseSuccessMultiAZ() {
-     verify(mockKubernetesManager, times(1)).helmDelete(config, nodePrefix1, nodePrefix1);
-     verify(mockKubernetesManager, times(1)).helmDelete(config, nodePrefix2, nodePrefix2);
-     verify(mockKubernetesManager, times(1)).helmDelete(config, nodePrefix3, nodePrefix3);
--    verify(mockKubernetesManager, times(1)).deleteStorage(config, nodePrefix1, nodePrefix1);
--    verify(mockKubernetesManager, times(1)).deleteStorage(config, nodePrefix2, nodePrefix2);
--    verify(mockKubernetesManager, times(1)).deleteStorage(config, nodePrefix3, nodePrefix3);
-+    verify(mockKubernetesManager, times(1))
-+        .deleteStorage(
-+            defaultUniverse.getUniverseUUID(), config, ImmutableSet.of(nodePrefix1), nodePrefix1);
-+    verify(mockKubernetesManager, times(1))
-+        .deleteStorage(
-+            defaultUniverse.getUniverseUUID(), config, ImmutableSet.of(nodePrefix2), nodePrefix2);
-+    verify(mockKubernetesManager, times(1))
-+        .deleteStorage(
-+            defaultUniverse.getUniverseUUID(), config, ImmutableSet.of(nodePrefix3), nodePrefix3);
-     verify(mockKubernetesManager, times(1)).deleteNamespace(confi
-```
-
-**File**: `managed/src/test/java/com/yugabyte/yw/commissioner/tasks/EditKubernetesUniverseTest.java` (modified, +86/-0)
-```diff
-@@ -86,6 +86,7 @@
- import java.util.Collections;
- import java.util.Comparator;
- import java.util.HashMap;
-+import java.util.HashSet;
- import java.util.List;
- import java.util.Map;
- import java.util.Set;
-@@ -2239,4 +2240,89 @@ public void testRetryWithoutMasterAddressChangeLeavesReadReplica() throws Interr
- 
-     assertTrue(readReplicaHelmUpgrades(taskInfo).isEmpty());
-   }
-+
-+  /** Positions and release names of the queued VOLUME_DELETE subtasks of an edit. */
-+  private Map<Integer, String> volumeDeletes(TaskInfo taskInfo) {
-+    return taskInfo.getSubTasks().stream()
-+        .filter(t -> t.getTaskType() == TaskType.KubernetesCommandExecutor)
-+        .filter(
-+            t ->
-+                KubernetesCommandExecutor.CommandType.VOLUME_DELETE
-+                    .name()
-+                    .equals(t.getTaskParams().path("commandType").asText()))
-+        .collect(
-+            Collectors.toMap(
-+                TaskInfo::getPosition, t -> t.getTaskParams().path("helmReleaseName").asText()));
-+  }
-+
-+  @Test
-+  public void testRetryOfZoneRemovalQueuesVolumeDeleteAgain() throws InterruptedException {
-+    setupUniverseMultiAZ(/* Create Masters */ true, 3);
-+    factory.globalRuntimeConf().setValue("yb.checks.leaderless_tablets.enabled", "false");
-+    Region region = Region.getByCode(kubernetesProvider, "region-1");
-+    AvailabilityZone az3 = AvailabilityZone.getByCode(kubernetesProvider, "az-3");
-+    AvailabilityZone az4 =
-+        AvailabilityZone.createOrThrow(region, "az-4", "PlacementAZ 4", "subnet-4");
-+    PlacementInfo pi = defaultUniverse.getUniverseDetails().getPrimaryCluster().placementInfo;
-+    pi.cloudList.get(0).regionList.get(0).azList.removeIf(az -> az.uuid.equals(az3.getUuid()));
-+    PlacementInfoUtil.addPlacementZone(az4.getUuid(), pi, 1, 1, true);
-+
-+    TaskInfo firstAttempt = queueAndAbortEdit(editParams(pi, false /* includeReadReplica */));
-+    Map<Integer, String> firstVolumeDeletes = volumeDeletes(firstAttempt);
-+    assertEquals(1, firstVolumeDeletes.size());
-+    assertTrue(firstVolumeDeletes.values().iterator().next().contains("az-3"));
-+    // The removed zone's storage is deleted before the new placement is saved, so a failure there
-+    // leaves the old placement for the retry to compare against.
-+    int primaryIntentPosition =
-+        firstAttempt.getSubTasks().stream()
-+            .filter(t -> t.getTaskType() == TaskType.UpdateUniverseIntent)
-+            .map(TaskInfo::getPosition)
-+            .findFirst()
-+            .orElseThrow();
-+    assertTrue(firstVolumeDeletes.keySet().iterator().next() < primaryIntentPosition);
-+
-+    UniverseDefinitionTaskParams retryParams =
-+        Json.fromJson(firstAttempt.getTaskParams(), UniverseDefinitionTaskParams.class);
-+    retryParams.setPreviousTaskUUID(firstAttempt.getUuid());
-+    TaskInfo retry = queueAndAbortEdit(retryParams);
-+
-+    assertEquals(
-+        new HashSet<>(firstVolumeDeletes.values()), new HashSet<>(volumeDeletes(retry).values()));
-+  }
-+
-+  @Test
-+  public void testFullMoveQueuesNoVolumeDelete() throws InterruptedException {
-+    setupUniverseMultiAZ(/* Create Masters */ true, 3);
-+    factory.globalRuntimeConf().setValue("yb.checks.leaderless_tablets.enabled", "false");
-+    defaultUniverse =
-+        Universe.saveDetails(
-+            defaultUniverse.getUniverseUUID(),
-+            u ->
-+                u.getUniverseDetails().getPrimaryCluster().userIntent.ybSoftwareVersion =
-+                    KubernetesUtil.MIN_VERSION_FULL_MOVE_SUPPORT_STABLE);
-+    UniverseDefinitionTaskParams taskParams = new UniverseDefinitionTaskParams();
-+    taskParams.setUniverseUUID(defaultUniverse.getUniverseUUID());
-+    taskParams.expectedUniverseVersion = -1;
-+    taskParams.nodePrefix = defaultUniverse.getUniverseDetails().nodePrefix;
-+    taskParams.nodeDetailsSet = defaultUniverse.getUniverseDetails().nodeDetailsSet;
-+    taskParams.clusters = defaultUniverse.getUniverseDetails().clusters;
-+    Cluster primaryCluster = taskParams.getPrimaryCluster();
-+    UniverseDefinitionTaskParams.UserIntent newUserIntent = primaryCluster.userIntent.clone();
-+    DeviceInfo deviceInfo = newUserIntent.deviceInfo.clone();
-+    deviceInfo.numVolumes = (deviceInfo.numVolumes == null ? 1 : deviceInfo.numVolumes) + 1;
-+    newUserIntent.deviceInfo = deviceInfo;
-+    taskParams.getPrimaryCluster().userIntent = newUserIntent;
-+    // As the edit API does: configure, then bump the statefulset index of the moving zones.
-+    PlacementInfoUtil.updateUniverseDefinition(
-+        taskParams, defaultCustomer.getId(), primaryCluster.uuid, EDIT);
-+    PlacementInfoUtil.applyK8sStsIndexIncrement(
-+        taskParams.getPrimaryCluster(), taskParams.nodeDetailsSet);
-+
-+    TaskInfo edit = queueAndAbortEdit(taskParams);
-+
-+    assertTrue(
-+        "the edit is not a full move",
-+        edit.getSubTasks().stream().anyMatch(t -> t.getTaskParams().hasNonNull("fullMoveParams")));
-+    assertEquals(Collections.emptyMap(), volumeDeletes(edit));
-+  }
-
+ # Tests with an alter of the newly added column.
+ permutation s1_begin_rr s2_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_a s1_commit s2_commit s3_select_test_atts
+-permutation s1_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_a s1_commit s3_select_test_atts
++permutation s1_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_a s1_commit s2_noop s3_select_test_atts
 ```
 
 ---
 
-### Incident Patch 3: `9d2dad72` (2026-11-18)
-**Commit Message**: [#38210] YSQL: Fix TestYsqlUpgrade catalog version mismatch after YSQL upgrade (#38258)
+### Incident Patch 3: `afa5be3c` (2026-11-20)
+**Commit Message**: [#32224] YSQL: Fail the build when a catalog entry reuses a reserved macro OID (#38711)
 
 ## Summary
+
+### Background
+
+`DECLARE_OID_DEFINING_MACRO(name, oid)` in a catalog header reserves an OID for a C macro without adding a catalog row (`genbki.h`). #32224 uses one for a per-database lock key, `YbDdlSerializationLockOid`, in the PR above this one.
 
 ### Problem
 
-`TestYsqlUpgrade#upgradeIsIdempotent` fails on 2026.1 fastdebug builds in about 3 of 4 runs when Connection Manager is enabled. The first DDL the test runs after the YSQL upgrade fails with:
-`The catalog snapshot used for this transaction has been invalidated. Received from PG: 110, expected to be >= breaking catalog version: 111`. Only the test is affected, the upgrade itself succeeds.
+A catalog entry can reuse the OID of a `DECLARE_OID_DEFINING_MACRO`, and the build still succeeds. For example, add `DECLARE_OID_DEFINING_MACRO(YbPlantedDup, 1259);` to `pg_yb_catalog_version.h`. 1259 is the OID of `pg_class`, yet `yb_genbki.pl` exits 0.
 
-### Cause
+### Root cause
 
-Soon after `upgrade_ysql`, the test does not wait for the new catalog version to reach every tserver before it runs DDL:
+`yb_genbki.pl` fails the build when an OID appears twice in `%oidcounts`. Before this change it counted the OIDs of catalog tables, their row types, their data rows, toast tables and indexes, but not `$catalog->{other_oids}`, which holds the macro OIDs. Upstream PostgreSQL's `genbki.pl` has the same gap; upstream has only two such macros, `Template0DbOid` and `PostgresDbOid`.
 
-1. `upgrade_ysql` applies migrations through one tserver. That tserver records each new catalog version as the DDL commits. Other tservers learn the new catalog versions only from their next heartbeat to the master (every 500 ms in this test).
-2. The last migration on 2026.1, `V101.8__32935__pg_yb_password_history.sql`, runs a `REVOKE` command. `REVOKE` is a breaking catalog change, so the master rejects requests that carry an older catalog version. No earlier migration in this test makes a breaking change.
-3. Right after `upgrade_ysql` returns, the test o
+## Test plan
 
-**File**: `java/yb-pgsql/src/test/java/org/yb/pgsql/TestYsqlUpgrade.java` (modified, +7/-0)
+Manual test, not run in CI. Add a duplicate OID by hand: this diff makes a new macro reuse 1259, the OID of `pg_class`.
+
 ```diff
-@@ -2420,6 +2420,13 @@ private void runMigrations(boolean useSingleConnection) throws Exception {
-     if (!joined.toLowerCase().contains("successfully upgraded")) {
-       throw new IllegalStateException("Unexpected migrations result: " + joined);
-     }
-+
-+    // upgrade_ysql applies migrations through a single tserver. Other tservers learn about new
-+    // catalog versions from master only on their next heartbeat.
-+    // Wait for the heartbeat to propagate to ensure that backends on other tservers don't have a
-+    // stale catalog version. This is useful in tests where such backends issue DDLs soon after the
-+    // migrations to test the upgrade.
-+    waitForTServerHeartbeat();
-   }
- 
-   private void setupGeoPartitioning() throws Exception {
+diff --git a/src/postgres/src/include/cat
+
+**File**: `src/postgres/src/backend/catalog/yb_genbki.pl` (modified, +6/-0)
+```diff
+@@ -132,6 +132,12 @@
+ 		$oidcounts{ $toast->{toast_oid} }++;
+ 		$oidcounts{ $toast->{toast_index_oid} }++;
+ 	}
++	# Count the OIDs of DECLARE_OID_DEFINING_MACRO too, so that the build
++	# fails when a catalog entry reuses one of them.
++	foreach my $other (@{ $catalog->{other_oids} })
++	{
++		$oidcounts{ $other->{other_oid} }++;
++	}
+ 	foreach my $index (@{ $catalog->{indexing} })
+ 	{
+ 		push @index_decls,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38448** (closed): [#36671] YSQL: Fix org.yb.pgsql.TestPgListenNotify#testCancelledFirstListenLeavesOnePoller cancel lost on TSAN (@csi-fix)
-- **PR #38437** (2026-11-19): [BACKPORT 2025.2][#38303] YSQL: Don't FATAL on subtransaction rollback RPC failure when shutdown is in progress (#38302) (@teyenc)
-- **PR #38436** (2026-11-18): [BACKPORT 2026.1][#38303] YSQL: Don't FATAL on subtransaction rollback RPC failure when shutdown is in progress (#38302) (@teyenc)
-- **PR #38435** (2026-11-18): [BACKPORT 2026.2][#38303] YSQL: Don't FATAL on subtransaction rollback RPC failure when shutdown is in progress (#38302) (@teyenc)
-- **PR #38428** (2026-11-18): [BACKPORT 2026.2][PLAT-18424] YBA: Keep the installed node-agent packages until a yba-ctl upgrade succeeds (#37914) (@shubin-yb)
-- **PR #38427** (2026-11-18): [BACKPORT 2026.2][PLAT-22930] YBA: Fix yba-ctl backup and restore against a password-protected external Postgres (#38291) (@shubin-yb)
+- **PR #38811** (2026-11-21): [BACKPORT 2025.2][#38264] DocDB: Show each MiniCluster tserver's own rpc_bind_addresses in custom varz (#38304) (@ajcaldera1)
+- **PR #38810** (2026-11-21): [BACKPORT 2026.1][#38264] DocDB: Show each MiniCluster tserver's own rpc_bind_addresses in custom varz (#38304) (@ajcaldera1)
+- **PR #38809** (2026-11-21): [BACKPORT 2026.2][#38264] DocDB: Show each MiniCluster tserver's own rpc_bind_addresses in custom varz (#38304) (@ajcaldera1)
+- **PR #38804** (closed): [#38288] YSQL: Keep PL/pgSQL's simple-expression resource owner across query-layer retries (@kai-franz)
+- **PR #38785** (2026-11-21): [PLAT-24040] YBA: Keep YBC enabled in the master phase of a K8s edit (@amannijhawan)
+- **PR #38783** (2026-11-21): [#38781] build: Run all tests when a managed/ or bin/ file that tests use changes (@spolitov)
 
 ---
 
@@ -2996,35 +2780,35 @@ Soon after `upgrade_ysql`, the test does not wait for the new catalog version to
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [PLAT-22930] YBA: Fix yba-ctl backup and restore against a password-protected ex
+## X. [#30797,#37091] YSQL: Set index birth_time for indexes built nonconcurrently
 
 **RULE**:
-When implementing operations in `managed/devops/bin/yb_platform_backup.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/yb/client/client-internal.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bfaf8c7a`: [PLAT-22930] YBA: Fix yba-ctl backup and restore against a password-protected external Postgres. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3d2a1372`: [#30797,#37091] YSQL: Set index birth_time for indexes built nonconcurrently. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `managed/devops/bin/yb_platform_backup.sh`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/yb/client/client-internal.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-  # Without -d, psql connects to a database named after the user, which an external
-  # Postgres may not have. The platform DB always exists by the time this runs.
-  local probe_cmd="${probe} -h ${db_host} -p ${db_port} -U ${db_username} \
--d ${PLATFORM_DB_NAME} -tAc \"SELECT 1 FROM pg_database WHERE datname='${db_name}'\""
+    const TransactionMetadata& txn, bool is_committed, HybridTime propagated_hybrid_time,
+    const CoarseTimePoint& deadline) {
+  if (propagated_hybrid_time.is_valid()) {
+    req.set_propagated_hybrid_time(propagated_hybrid_time.ToUint64());
+  }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Induced defect failure mode:
-  local probe_cmd="${probe} -h ${db_host} -p ${db_port} -U ${db_username} -tAc \
-\"SELECT 1 FROM pg_database WHERE datname='${db_name}'\""
+    const TransactionMetadata& txn, bool is_committed, const CoarseTimePoint& deadline) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bfaf8c7a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3d2a1372` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

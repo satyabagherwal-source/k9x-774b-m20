@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T08:38:47.260Z",
+  "timestamp": "2026-11-21T13:05:38.100Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-linkerd-linkerd2-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [linkerd-linkerd2-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T08:38:47.260Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T13:05:38.100Z`  
 > **Learning ID**: `LEARN-EVO-linkerd-linkerd2-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source**: github ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
-> **Source Version**: `762af53b`  
+> **Source Version**: `e64ff8dd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T08:34:42.155Z  
+> **Timestamp**: 2026-11-21T13:05:24.983Z  
 > **Learning ID**: `learn-github-linkerd-linkerd2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T08:28:33.272Z  
+> **Harvest Timestamp**: 2026-11-21T13:05:24.976Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Ultralight, security-first service mesh for Kubernetes. Main repo for Linkerd 2.x.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 11548 stars
+- **Stars / Engagement**: 11551 stars
 
 ---
 
@@ -1646,185 +1646,291 @@ func (pw *ProbeWorker) doProbe() error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `762af53b` (2026-11-19)
-**Commit Message**: build(deps): bump github.com/prometheus/common from 0.71.0 to 0.73.0 (#15759)
+### Incident Patch 1: `e64ff8dd` (2026-11-20)
+**Commit Message**: fix(destination): keep federated endpoints when a stream is torn down (#15784)
 
-Bumps [github.com/prometheus/common](https://github.com/prometheus/common) from 0.71.0 to 0.73.0.
-- [Release notes](https://github.com/prometheus/common/releases)
-- [Changelog](https://github.com/prometheus/common/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/prometheus/common/compare/v0.71.0...v0.73.0)
+* fix(destination): keep federated endpoints when a stream is torn down
 
----
-updated-dependencies:
-- dependency-name: github.com/prometheus/common
-  dependency-version: 0.73.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
+Problem
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+When a Get stream for a federated service is torn down, for example when a
+destination pod shuts down during a rollout, `federatedService.unsubscribe()`
+unsubscribes every member with `withRemove=true`. Each member's translator then
+queues a Remove for all of its endpoints. If that Remove reaches the proxy before
+the stream closes, the proxy drops every endpoint of the federated service and
+fails requests until it reconnects to another destination pod. Whether it gets
+there is a race, so only some streams are hit on each restart. Non-federated
+services keep their endpoints in the same situation.
 
-**File**: `go.mod` (modified, +7/-2)
+Solution
+
+`remoteDiscoveryUnsubscribe` and `localDiscoveryUnsubscribe` now take a
+`withRemove` argument. `update()` passes `true` when a member leaves the
+federated service or the local member changes, as before. `unsubscribe()` passes
+`false`, which matches the teardown path for non-federated services.
+
+Validation
+
+- New `TestUnsubscribeFederatedServiceSendsNoRemove` checks that tearing down a
+  stream sends no Remove. It fails o
+
+**File**: `controller/api/destination/federated_service_watcher.go` (modified, +18/-7)
 ```diff
-@@ -28,7 +28,7 @@ require (
- 	github.com/pkg/browser v0.0.0-20170505125900-c90ca0c84f15
- 	github.com/prometheus/client_golang v1.24.1
- 	github.com/prometheus/client_model v0.6.3
--	github.com/prometheus/common v0.71.0
-+	github.com/prometheus/common v0.73.0
- 	github.com/sergi/go-diff v1.4.0
- 	github.com/shurcooL/vfsgen v0.0.0-20230704071429-0000e147ea92
- 	github.com/sirupsen/logrus v1.10.2
-@@ -54,6 +54,11 @@ require (
- 	sigs.k8s.io/yaml v1.6.0
- )
+@@ -237,7 +237,7 @@ func (fs *federatedService) update(service *corev1.Service) {
+ 	for _, id := range fs.remoteDiscovery {
+ 		if !slices.Contains(newRemoteDiscovery, id) {
+ 			for i := range fs.subscribers {
+-				fs.remoteDiscoveryUnsubscribe(&fs.subscribers[i], id)
++				fs.remoteDiscoveryUnsubscribe(&fs.subscribers[i], id, true)
+ 			}
+ 		}
+ 	}
+@@ -248,13 +248,13 @@ func (fs *federatedService) update(service *corev1.Service) {
+ 		if newLocalDiscovery != "" {
+ 			for i := range fs.subscribers {
+ 				if fs.localDiscovery != "" {
+-					fs.localDiscoveryUnsubscribe(&fs.subscribers[i], fs.localDiscovery)
++					fs.localDiscoveryUnsubscribe(&fs.subscribers[i], fs.localDiscovery, true)
+ 				}
+ 				fs.localDiscoverySubscribe(&fs.subscribers[i], newLocalDiscovery)
+ 			}
+ 		} else {
+ 			for i := range fs.subscribers {
+-				fs.localDiscoveryUnsubscribe(&fs.subscribers[i], fs.localDiscovery)
++				fs.localDiscoveryUnsubscribe(&fs.subscribers[i], fs.localDiscovery, true)
+ 			}
+ 		}
+ 	}
+@@ -334,11 +334,14 @@ func (fs *federatedService) unsubscribe(
+ 	subscribers := make([]federatedServiceSubscriber, 0)
+ 	for i, subscriber := range fs.subscribers {
+ 		if subscriber.stream.inner == stream {
++			// The stream is going away, so the client keeps the endpoints it
++			// has until it resubscribes. Sending a Remove here would make it
++			// drop them all while it reconnects.
+ 			for id := range subscriber.remoteTranslators {
+-				fs.remoteDiscoveryUnsubscribe(&fs.subscribers[i], id)
++				fs.remoteDiscoveryUnsubscribe(&fs.subscribers[i], id, false)
+ 			}
+ 			for localDiscovery := range subscriber.localTranslators {
+-				fs.localDiscoveryUnsubscribe(&fs.subscribers[i], localDiscovery)
++				fs.localDiscoveryUnsubscribe(&fs.subscribers[i], localDiscovery, false)
+ 			}
+ 			subscriber.stream.Stop()
+ 		} else {
+@@ -394,9 +397,14 @@ func (fs *federatedService) remoteDiscoverySubscribe(
+ 	}
+ }
  
-+require (
-+	github.com/hashicorp/go-uuid v1.0.3 // indirect
-+	github.com/pandatix/go-abnf v0.5.1 // indirect
-+)
++// remoteDiscoveryUnsubscribe stops sending the subscriber updates for a remote
++// member of the federated service. withRemove tells the subscriber to remove
++// that member's endpoints, which is only correct when the member is leaving
++// the federated service, not when the subscriber's stream is torn down.
+ func (fs *federatedService) remoteDiscoveryUnsubscribe(
+ 	subscriber *federatedServiceSubscriber,
+ 	id remoteDiscoveryID,
++	withRemove bool,
+ ) {
+ 	remoteWatcher, _, found := fs.clusterStore.Get(id.cluster)
+ 	if !found {
+@@ -411,7 +419,7 @@ func (fs *federatedService) remoteDiscoveryUnsubscribe(
+ 		NodeName:                subscriber.nodeName,
+ 		EnableEndpointFiltering: false, // Endpoint filtering is disabled for remote discovery.
+ 	}
+-	remoteWatcher.Unsubscribe(id.service, subscriber.port, filterKey, translator, true)
++	remoteWatcher.Unsubscribe(id.service, subscriber.port, filterKey, translator, withRemove)
+ 	translator.DrainAndStop()
+ 	delete(subscriber.remoteTranslators, id)
+ }
+@@ -455,9 +463,12 @@ func (fs *federatedService) localDiscoverySubscribe(
+ 	}
+ }
+ 
++// localDiscoveryUnsubscribe is the local-member counterpart of
++// remoteDiscoveryUnsubscribe, with the same meaning for withRemove.
+ func (fs *federatedService) localDiscoveryUnsubscribe(
+ 	subscriber *federatedServiceSubscriber,
+ 	localDiscovery string,
++	withRemove bool,
+ ) {
+ 	translator, found := subscriber.localTranslators[localDiscovery]
+ 	if found {
+@@ -467,7 +478,7 @@ func (fs *federatedService) localDiscoveryUnsubscribe(
+ 			NodeName:                subscriber.nodeName,
+ 			EnableEndpointFiltering: true, // Endpoint filtering is enabled for local discovery.
+ 		}
+-		fs.localEndpoints.Unsubscribe(watcher.ServiceID{Namespace: fs.namespace, Name: localDiscovery}, subscriber.port, filterKey, translator, true)
++		fs.localEndpoints.Unsubscribe(watcher.ServiceID{Namespace: fs.namespace, Name: localDiscovery}, subscriber.port, filterKey, translator, withRemove)
+ 		translator.DrainAndStop()
+ 		delete(subscriber.localTranslators, localDiscovery)
+ 	}
+```
+
+**File**: `controller/api/destination/federated_service_watcher_test.go` (modified, +140/-0)
+```diff
+@@ -126,6 +126,108 @@ func TestLocalLeaveFederatedService(t *testing.T) {
+ 	assertUpdatesContains(t, updates, "bb-west-1", "172.17.0.1:8080")
+ }
+ 
++func TestLocalSwitchFederatedService(t *testing.T) {
++	fsw, err := mockFederatedServiceWatcher(t)
++	if err != nil {
++		t.Fatal(err)
++	}
 +
- require (
- 	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
- 	github.com/BurntSushi/toml v1.6.0 // indirect
-@@ -134,7 +139,7 @@ require (
- 	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/mod v0.42.0 // indirect
- 	golang.org/x/net v0.62.0 // indirect
--	golang.org/x/oauth2 v0.36.0 // indirect
-+	golang.org/x/oauth2 v0.37.0 // indirect
- 	golang.org/x/sync v0.24.0 // indirect
- 	golang.org/x/sys v0.49.0 // indirect
- 	golang.org/x/telemetry v0.0.0-20261009151841-97e8ea77aa2a // indirect
-```
-
-**File**: `go.sum` (modified, +8/-4)
-```diff
-@@ -251,6 +251,8 @@ github.com/hashicorp/errwrap v1.1.0 h1:OxrOeh75EUXMY8TBjag2fzXGZ40LB6IKw45YeGUDY
- github.com/hashicorp/errwrap v1.1.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
- github.com/hashicorp/go-multierror v1.1.1 h1:H5DkEtf6CXdFp0N0Em5UCwQpXMWke8IA0+lD48awMYo=
- github.com/hashicorp/go-multierror v1.1.1/go.mod h1:iw975J/qwKPdAO1clOe2L8331t/9/fmwbPZ6JB6eMoM=
-+github.com/hashicorp/go-uuid v1.0.3 h1:2gKiV6YVmrJ1i2CKKa9obLvRieoRGviZFL26PcT/Co8=
-+github.com/hashicorp/go-uuid v1.0.3/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
- github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
- github.com/hashicorp/golang-lru v0.5.1 h1:0hERBMJE1eitiLkihrMvRVBYAkpHzc/J3QdDN+dAcgU=
- github.com/hashicorp/golang-lru v0.5.1/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
-@@ -327,6 +329,8 @@ github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8
- github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
- github.com/opencontainers/image-spec v1.1.1 h1:y0fUlFfIZhPF1W537XOLg0/fcx6zcHCJwooC2xJA040=
- github.com/opencontainers/image-spec v1.1.1/go.mod h1:qpqAh3Dmcf36wStyyWU+kCeDgrGnAve2nCC8+7h8Q0M=
-+github.com/pandatix/go-abnf v0.5.1 h1:iyLvSu2Aq12iE0r4n948Qw21BHDuckLq/8WIXAAF+HI=
-+github.com/pandatix/go-abnf v0.5.1/go.mod h1:VBmbtpFgQNEaQpyAvmi+Ecd9wAYJKzA3TmiB3L93sVg=
- github.com/patrickmn/go-cache v2.1.0+incompatible h1:HRMgzkcYKYpi3C8ajMPV8OFXaaRUnok+kx1WdO15EQc=
- github.com/patrickmn/go-cache v2.1.0+incompatible/go.mod h1:3Qf8kWWT7OJRJbdiICTKqZju1ZixQ/KpMGzzAfe6+WQ=
- github.com/peterbourgon/diskv v2.0.1+incompatible h1:UBdAOUP5p4RWqPBg048CAvpKN+vxiaj6gdUUzhl4XmI=
-@@ -343,8 +347,8 @@ github.com/prometheus/client_golang v1.24.1/go.mod h1:F+oSRECHg4sse5ucfYpYDeIv/h
- github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
- github.com/prometheus/client_model v0.6.3 h1:O0jaTVAYNxTHYInEPFJt5I3+sN8zqBtVMPTB1qyxiEo=
- github.com/prometheus/client_model v0.6.3/go.mod h1:gpN5P9S7Rr6Yr92PiQ+Ixvhf6JZEkF1dnxsYL2aPBEM=
--github.com/prometheus/common v0.71.0 h1:9KDAKb7Mj3HEVKyFCK6Dc/HIwlBzZIN2l7/lrHl3KK8=
--github.com/prometheus/common v0.71.0/go.mod h1:CLJ5H8TEsGX8bl31BdMkfhIZ+QmZ9tBPPotUxUbfcmk=
-+github.com/prometheus/common v0.73.0 h1:NGIOmVi8jrgiiPQgXxD6rP0FfxFsuZxnMQkel0qBy/g=
-+github.com/prometheus/common v0.73.0/go.mod h1:Nt+CsVkf/mj4wDAmtSwq1HTPohHSX6fMr6+/f9B5UqM=
- github.com/prometheus/otlptranslator v1.0.0 h1:s0LJW/iN9dkIH+EnhiD3BlkkP5QVIUVEoIwkU+A6qos=
- github.com/prometheus/otlptranslator v1.0.0/go.mod h1:vRYWnXvI6aWGpsdY/mOT/cbeVRBlPWtBNDb7kGR3uKM=
- github.com/prometheus/procfs v0.21.1 h1:GljZCt+zSTS+NZq88cyQ1LjZ+RCHp3uVuabBWA5+OJI=
-@@ -523,8 +527,8 @@ golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4Iltr
- golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
- golang.org/x/oauth2 v0.0.0-20191202225959-858c2ad4c8b6/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
- golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
--golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
--golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
-+golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
-+golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
- golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20181108010431-42b317875d0f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
-```
-
----
-
-### Incident Patch 2: `2af200d8` (2026-11-19)
-**Commit Message**: build(deps): bump go.opentelemetry.io/otel/trace from 1.44.0 to 1.47.0 (#15788)
-
-Bumps [go.opentelemetry.io/otel/trace](https://github.com/open-telemetry/opentelemetry-go) from 1.44.0 to 1.47.0.
-- [Release notes](https://github.com/open-telemetry/opentelemetry-go/releases)
-- [Changelog](https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/open-telemetry/opentelemetry-go/compare/v1.44.0...v1.47.0)
-
----
-updated-dependencies:
-- dependency-name: go.opentelemetry.io/otel/trace
-  dependency-version: 1.47.0
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +2/-2)
-```diff
-@@ -127,8 +127,8 @@ require (
- 	github.com/spf13/cast v1.7.0 // indirect
- 	github.com/x448/float16 v0.8.4 // indirect
- 	github.com/xlab/treeprint v1.2.0 // indirect
--	go.opentelemetry.io/otel v1.44.0 // indirect
--	go.opentelemetry.io/otel/trace v1.44.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	golang.org/x/crypto v0.58.0 // indirect
-```
-
-**File**: `go.sum` (modified, +8/-8)
-```diff
-@@ -413,8 +413,8 @@ go.opentelemetry.io/contrib/exporters/autoexport v0.67.0 h1:4fnRcNpc6YFtG3zsFw9a
- go.opentelemetry.io/contrib/exporters/autoexport v0.67.0/go.mod h1:qTvIHMFKoxW7HXg02gm6/Wofhq5p3Ib/A/NNt1EoBSQ=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 h1:8tvICD4vSTOOsNrsI4Ljf6C+6UKvpTEH5XY3JMoyPoo=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0/go.mod h1:z9+yiacE0IHRqM4qFfkbt/JYlmYXgss8GY/jXoNuPJI=
--go.opentelemetry.io/otel v1.44.0 h1:JjwHmHpA4iZ3wBxluu2fbbE7j4kqlE8jXyAyPXH7HqU=
--go.opentelemetry.io/otel v1.44.0/go.mod h1:BMgjTHL9WPRlRjL2oZCBTL4whCGtXch2H4BhOPIAyYc=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.19.0 h1:Dn8rkudDzY6KV9dr/D/bTUuWgqDf9xe0rr4G2elrn0Y=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.19.0/go.mod h1:gMk9F0xDgyN9M/3Ed5Y1wKcx/9mlU91NXY2SNq7RQuU=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.19.0 h1:HIBTQ3VO5aupLKjC90JgMqpezVXwFuq6Ryjn0/izoag=
-@@ -437,18 +437,18 @@ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.43.0 h1:TC+BewnDpeiAmc
- go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.43.0/go.mod h1:J/ZyF4vfPwsSr9xJSPyQ4LqtcTPULFR64KwTikGLe+A=
- go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.43.0 h1:mS47AX77OtFfKG4vtp+84kuGSFZHTyxtXIN269vChY0=
- go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.43.0/go.mod h1:PJnsC41lAGncJlPUniSwM81gc80GkgWJWr3cu2nKEtU=
--go.opentelemetry.io/otel/log v0.19.0 h1:KUZs/GOsw79TBBMfDWsXS+KZ4g2Ckzksd1ymzsIEbo4=
--go.opentelemetry.io/otel/log v0.19.0/go.mod h1:5DQYeGmxVIr4n0/BcJvF4upsraHjg6vudJJpnkL6Ipk=
--go.opentelemetry.io/otel/metric v1.44.0 h1:1w0gILTcHdr3YI+ixLyjemwrVnsMURbTZFrSYCdDdmc=
--go.opentelemetry.io/otel/metric v1.44.0/go.mod h1:8O7hanEPBNgEMmybD3s2VBKcgWOCsA6tzHBPODAiquo=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
- go.opentelemetry.io/otel/sdk v1.44.0 h1:nHYwb9lK+fJPU/dnT6s7W7Z8itMWyqrnVfbheVYrZ58=
- go.opentelemetry.io/otel/sdk v1.44.0/go.mod h1:Osuydd3Se74nqjAKxid74N5eC+jfEqfTegHRnq58oK0=
- go.opentelemetry.io/otel/sdk/log v0.19.0 h1:scYVLqT22D2gqXItnWiocLUKGH9yvkkeql5dBDiXyko=
- go.opentelemetry.io/otel/sdk/log v0.19.0/go.mod h1:vFBowwXGLlW9AvpuF7bMgnNI95LiW10szrOdvzBHlAg=
- go.opentelemetry.io/otel/sdk/metric v1.44.0 h1:3LlKgI+VjbVsjNRFZJZAJ30WjXC5VkNRks6si09iEfI=
- go.opentelemetry.io/otel/sdk/metric v1.44.0/go.mod h1:5B5pMARnXxKhltooO4xUuCBorl65a4EpnTalObqOigA=
--go.opentelemetry.io/otel/trace v1.44.0 h1:jxF5CsGYCe74MCRx2X4g7WsY/VBKRqqpNvXlX/6gtIk=
--go.opentelemetry.io/otel/trace v1.44.0/go.mod h1:oLl1jrMQAVo6v3GAggN+1VH9VIz9iUSvW53sW1Q8PIE=
-+go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
-+go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.opentelemetry.io/proto/otlp v1.10.0 h1:IQRWgT5srOCYfiWnpqUYz9CVmbO8bFmKcwYxpuCSL2g=
- go.opentelemetry.io/proto/otlp v1.10.0/go.mod h1:/CV4QoCR/S9yaPj8utp3lvQPoqMtxXdzn7ozvvozVqk=
- go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
++	mockGetServer := &mockDestinationGetServer{updatesReceived: make(chan *pb.Update, 50)}
++
++	fsw.Subscribe("bb-federated", "test", 8080, "node", "", mockGetServer, nil)
++
++	updates := []*pb.Update{}
++	updates = append(updates, <-mockGetServer.updatesReceived)
++	updates = append(updates, <-mockGetServer.updatesReceived)
++	assertUpdatesContains(t, updates, "bb-west-1", "172.17.0.1:8080")
++	assertUpdatesContains(t, updates, "bb-east-1", "172.17.1.1:8080")
++
++	federatedSvc, err := fsw.k8sAPI.Svc().Lister().Services("test").Get("bb-federated")
++	if err != nil {
++		t.Fatalf("error getting federated service: %s", err)
++	}
++	newFederatedSvc := federatedSvc.DeepCopy()
++	newFederatedSvc.Annotations["multicluster.linkerd.io/local-discovery"] = "bb2"
++	fsw.updateService(federatedSvc, newFederatedSvc)
++
++	// The old member's Remove and the new member's Add come from different
++	// translators, so their order on the stream is not guaranteed.
++	for range 2 {
++		select {
++		case u := <-mockGetServer.updatesReceived:
++			updates = append(updates, u)
++		case <-time.After(5 * time.Second):
++			t.Fatal("timed out waiting for the local member switch to be sent")
++		}
++	}
++	assertUpdatesRemoves(t, updates, "172.17.0.1:8080")
++	assertUpdatesContains(t, updates, "bb2-west-1", "172.17.0.2:8080")
++}
++
++// TestUnsubscribeFederatedServiceSendsNoRemove asserts that tearing down a
++// federated Get stream (e.g. when the destination controller shuts down) does
++// not tell the client to remove the endpoints it already has. A Remove there
++// would make the proxy drop every endpoint of the federated service while it
++// reconnects to another destination replica, instead of keeping its cache as
++// it does for non-federated services.
++func TestUnsubscribeFederatedServiceSendsNoRemove(t *testing.T) {
++	fsw, err := mockFederatedServiceWatcher(t)
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	mockGetServer := &mockDestinationGetServer{updatesReceived: make(chan *pb.Update, 50)}
++
++	fsw.Subscribe("bb-federated", "test", 8080, "node", "", mockGetServer, nil)
++
++	updates := []*pb.Update{}
++	updates = append(updates, <-mockGetServer.updatesReceived)
++	updates = append(updates, <-mockGetServer.updatesReceived)
++	assertUpdatesContains(t, updates, "bb-west-1", "172.17.0.1:8080")
++	assertUpdatesContains(t, updates, "bb-east-1", "172.17.1.1:8080")
++
++	// Unsubscribing stops the subscriber's synchronized stream right after the
++	// translators are drained, so whether a queued Remove still reaches the
++	// client stream is a race, which is also why the bug showed up only on some
++	// streams in clusters. Point each translator at a recording stream so that
++	// the test observes everything the translators are asked to send.
++	recorded := &mockDestinationGetServer{updatesReceived: make(chan *pb.Update, 50)}
++	fsw.RLock()
++	federatedSvc := fsw.services[watcher.ServiceID{Namespace: "test", Name: "bb-federated"}]
++	fsw.RUnlock()
++	federatedSvc.Lock()
++	if len(federatedSvc.subscribers) != 1 {
++		t.Fatalf("expected 1 subscriber, got %d", len(federatedSvc.subscribers))
++	}
++	translators := 0
++	for _, translator := range federatedSvc.subscribers[0].remoteTranslators {
++		translator.stream = recorded
++		translators++
++	}
++	for _, translator := range federatedSvc.subscribers[0].localTranslators {
++		translator.stream = recorded
++		translators++
++	}
++	federatedSvc.Unlock()
++	if translators != 2 {
++		t.Fatalf("expected 1 remote and 1 local translator, got %d", translators)
++	}
++
++	fsw.Unsubscribe("bb-federated", "test", mockGetServer)
++
++	select {
++	case u := <-recorded.updatesReceived:
++		t.Fatalf("expected no update after unsubscribing, got %v", u)
++	case <-time.After(200 * time.Millisecond):
++	}
++
++	federatedSvc.Lock()
++	defer federatedSvc.Unlock()
++	if len(federatedSvc.subscribers) != 0 {
++		t.Errorf("expected no subscribers after unsubscribing, got %d", len(federatedSvc.subscribers))
++	}
++}
++
+ func mockFederatedServiceWatcher(t *testing.T) (*federatedServiceWatcher, error) {
+ 	k8sAPI, err := k8s.NewFakeAPI(westConfigs...)
+ 	if err != nil {
+@@ -296,6 +398,44 @@ metadata:
+ status:
+   phase: Running
+   podIP: 172.17.0.1`,
++		`
++apiVersion: v1
++kind: Service
++metadata:
++  name: bb2
++  namespace: test
++spec:
++  type: LoadBalancer
++  ports:
++  - port: 8080`,
++		`
++apiVersion: v1
++kind: Endpoints
++metadata:
++  name: bb2
++  namespace: test
++subsets:
++- addresses:
++  - ip: 172.17.0.2
++    targetRef:
++      kind: Pod
++      name: bb2-west-1
++      namespace: test
++  ports:
++  - port: 8080
++`,
++		`
++apiVersion: v1
++kind: Pod
++metadata:
++  name: bb2-west-1
++  namespace: test
++  ownerReferences:
++  - kind: ReplicaSet
++    name: bb2-west
++status:
++  phase: Running
++  podIP: 172.17.0.2`,
+ 	}
+ 
+ 	east
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #15788** (2026-11-19): build(deps): bump go.opentelemetry.io/otel/trace from 1.44.0 to 1.47.0 (@dependabot[bot])
+- **PR #15784** (2026-11-20): fix(destination): keep federated endpoints when a stream is torn down (@codenameraz)
 - **PR #15781** (2026-11-13): proxy: v2.374.0 (@l5d-bot)
 - **PR #15776** (2026-11-06): chore: migrate stale from app to action (@raykroeker)
 - **PR #15775** (2026-11-06): chore: bump dev image to v55. (@toidiu)
 - **PR #15768** (2026-11-05): proxy: v2.373.0 (@l5d-bot)
-- **PR #15766** (2026-11-04): build: keep apko outputs out of the repo root (@alpeb)
 
 ---
 
@@ -1844,38 +1950,54 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github.com/prometheus/common from 0.71.0 to 0.73.0
+## X. destination): keep federated endpoints when a stream is torn down
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `controller/api/destination/federated_service_watcher.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `762af53b`: build(deps): bump github.com/prometheus/common from 0.71.0 to 0.73.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e64ff8dd`: destination): keep federated endpoints when a stream is torn down. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controller/api/destination/federated_service_watcher.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/prometheus/common v0.73.0
-require (
-	github.com/hashicorp/go-uuid v1.0.3 // indirect
-	github.com/pandatix/go-abnf v0.5.1 // indirect
-)
-
-	golang.org/x/oauth2 v0.37.0 // indirect
+				fs.remoteDiscoveryUnsubscribe(&fs.subscribers[i], id, true)
+					fs.localDiscoveryUnsubscribe(&fs.subscribers[i], fs.localDiscovery, true)
+				fs.localDiscoveryUnsubscribe(&fs.subscribers[i], fs.localDiscovery, true)
+			// The stream is going away, so the client keeps the endpoints it
+			// has until it resubscribes. Sending a Remove here would make it
+			// drop them all while it reconnects.
+				fs.remoteDiscoveryUnsubscribe(&fs.subscribers[i], id, false)
+				fs.localDiscoveryUnsubscribe(&fs.subscribers[i], localDiscovery, false)
+// remoteDiscoveryUnsubscribe stops sending the subscriber updates for a remote
+// member of the federated service. withRemove tells the subscriber to remove
+// that member's endpoints, which is only correct when the member is leaving
+// the federated service, not when the subscriber's stream is torn down.
+	withRemove bool,
+	remoteWatcher.Unsubscribe(id.service, subscriber.port, filterKey, translator, withRemove)
+// localDiscoveryUnsubscribe is the local-member counterpart of
+// remoteDiscoveryUnsubscribe, with the same meaning for withRemove.
+	withRemove bool,
+		fs.localEndpoints.Unsubscribe(watcher.ServiceID{Namespace: fs.namespace, Name: localDisco
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/prometheus/common v0.71.0
-	golang.org/x/oauth2 v0.36.0 // indirect
+				fs.remoteDiscoveryUnsubscribe(&fs.subscribers[i], id)
+					fs.localDiscoveryUnsubscribe(&fs.subscribers[i], fs.localDiscovery)
+				fs.localDiscoveryUnsubscribe(&fs.subscribers[i], fs.localDiscovery)
+				fs.remoteDiscoveryUnsubscribe(&fs.subscribers[i], id)
+				fs.localDiscoveryUnsubscribe(&fs.subscribers[i], localDiscovery)
+	remoteWatcher.Unsubscribe(id.service, subscriber.port, filterKey, translator, true)
+		fs.localEndpoints.Unsubscribe(watcher.ServiceID{Namespace: fs.namespace, Name: localDiscovery}, subscriber.port, filterKey, translator, true)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `762af53b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e64ff8dd` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

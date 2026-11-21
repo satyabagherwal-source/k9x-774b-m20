@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-J82F",
-    "timestamp": "2026-11-19T08:03:00.375Z",
-    "repository": "LiquidAI/d1-3B",
-    "learningId": "learn-huggingface-liquidai-d1-3b",
-    "contentHash": "79ea85b7271e5445b29b3ab8a04a1c8cdd51c7a764279754557d7f9a750807db",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-QMF4",
-    "timestamp": "2026-11-19T08:08:45.568Z",
-    "repository": "volcengine/OpenViking",
-    "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "3f413a38770f4826b557634992221f2c531ce5339e140cdb5168e6a8790c80ee",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-G79J",
-    "timestamp": "2026-11-19T08:28:38.983Z",
-    "repository": "Cactus-Compute/whistle",
-    "learningId": "learn-huggingface-cactus-compute-whistle",
-    "contentHash": "c626cf4b9dd854c39eb86bcd1dc789b07858b2ee1da0e65c136dfd2315e841fa",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-GOGE",
     "timestamp": "2026-11-19T08:29:01.262Z",
     "repository": "apache/pinot",
@@ -7490,6 +7445,51 @@
     "repository": "rustls/rustls",
     "learningId": "learn-github-rustls-rustls",
     "contentHash": "7dd2c91c3c841017bca2b45aae47f749538f20099e3b583404aba297c40265df",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-7OBT",
+    "timestamp": "2026-11-21T13:05:17.801Z",
+    "repository": "XHToken/Spark-X2.6-4B",
+    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
+    "contentHash": "77b2d33ba9758f1e761de03cb29450251ee90c29c2ed0f7f07169e9d4905e5f0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-7UW4",
+    "timestamp": "2026-11-21T13:05:26.308Z",
+    "repository": "linkerd/linkerd2",
+    "learningId": "learn-github-linkerd-linkerd2",
+    "contentHash": "c1fbe7f3f07ab59255289c392fedd8eb2af0687159e751dab2b108f2cde9e811",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-80GI",
+    "timestamp": "2026-11-21T13:05:33.522Z",
+    "repository": "yugabyte/yugabyte-db",
+    "learningId": "learn-github-yugabyte-yugabyte-db",
+    "contentHash": "751fc3ec24c60e2a2d1fc328ef86c258fd65f294c0367001913bd542065ba94c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T12:48:52.840Z",
-  "total_cycles_completed": 11231,
-  "total_learnings_persisted": 11231,
-  "total_rules_promoted": 10584,
+  "last_updated": "2026-11-21T13:05:33.535Z",
+  "total_cycles_completed": 11234,
+  "total_learnings_persisted": 11234,
+  "total_rules_promoted": 10586,
   "history": [
-    {
-      "timestamp": "2026-11-20T16:56:35.276Z",
-      "repository": "0xCUB3/wBlock",
-      "learningId": "learn-github-0xcub3-wblock",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T16:56:43.987Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T17:12:10.576Z",
-      "repository": "fb55/htmlparser2",
-      "learningId": "learn-github-fb55-htmlparser2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T17:12:12.919Z",
       "repository": "Louis-CFM/coucou",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-21T12:48:52.840Z",
       "repository": "rustls/rustls",
       "learningId": "learn-github-rustls-rustls",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T13:05:17.814Z",
+      "repository": "XHToken/Spark-X2.6-4B",
+      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T13:05:26.324Z",
+      "repository": "linkerd/linkerd2",
+      "learningId": "learn-github-linkerd-linkerd2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T13:05:33.535Z",
+      "repository": "yugabyte/yugabyte-db",
+      "learningId": "learn-github-yugabyte-yugabyte-db",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

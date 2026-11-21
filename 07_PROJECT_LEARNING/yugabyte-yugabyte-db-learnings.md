@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `339366cd`  
+> **Source Version**: `d24219e3`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T06:45:25.705Z  
+> **Timestamp**: 2026-11-21T13:05:32.205Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T06:45:25.699Z  
+> **Harvest Timestamp**: 2026-11-21T13:05:32.197Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10669 stars
+- **Stars / Engagement**: 10671 stars
 
 ---
 
@@ -2245,17 +2245,17 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #38693** (2026-11-20): **[BACKPORT 2026.2][PLAT-23237] YBA: Hide S3 Federated IAM and GCS GCP IAM on a new config when YBA runs on AWS**
-  *Symptoms*: ## Summary  Original commit: 184c7b94e1f6e6eb0e3610e6d0165c4267876533 / #38553  Clean cherry-pick of the master commit: the 4 files match master exactly. It builds on #38089, the 2026.2 backport of #35917, which is already on 2026.2.  Follow-up to #35917, which covered YBA on GCP. While federated IAM is offered (the UI runtime flag is on), a new storage config now shows only the IAM option that works from where YBA runs, on AWS too:  | YBA host | S3 page | GCS page | |---|---|---| | AWS | IAM Role (Federated IAM now hidden) | Federated IAM (Use GCP IAM now hidden) | | GCP | Federated IAM | Use GCP IAM |  - With the flag off, both pages show every option, as before. - Azure and a self-hosted or unknown host are unchanged. - Editing a saved config shows every option, and an option that is on stays visible. - Hiding GCS Use GCP IAM on AWS is a trade-off too. GCS Federated IAM also sends `USE_GCP_IAM`, so the GCP DB nodes keep their own identity, but it also has YBA reach the bucket with its own AWS role, through the GCP provider's workload identity pool. That pool must admit YBA's role as well as the nodes', or YBA's bucket check before a backup and backup deletion fail. A plain Use GCP IAM config skips that check, but from AWS YBA can only reach the bucket, to delete backups, if the host has GCP credentials of its own. Use GCP IAM can still be set by editing a saved config or through the API. - Trade-off, on purpose for this EA flag: on an AWS-hosted YBA, a new S3 config no lon
+- **Issue #38833** (2026-11-21): **[YSQL] Build 60a913bd on 2026.2: ubuntu22.04-clang21-debug broken**
+  *Symptoms*: Jira Link: [DB-26806](https://yugabyte.atlassian.net/browse/DB-26806) _Filed automatically by [Grissom](https://github.com/yugabyte/agent-k/blob/main/bots/grissom/README.md) (internal docs), which watches YugabyteDB's scheduled builds on `master` and the supported release branches for builds where a lane breaks or many tests fail the same way. Everything below is measured from those builds; how it decides, and how to stop it, is at the end._  ## Summary  The scheduled build of `2026.2` at 60a913bd has a lane-level failure; the affected lane(s) are not judged test by test.  - Failing lanes: `ubuntu22.04-clang21-debug` - Failing build types: debug  ## Urgency  S2 lane broken / cluster (`priority/high`).  ## What is being tested  Every lane of the scheduled build (build types debug, release, tsan, fastdebug, asan).  ## What is the failure  - `ubuntu22.04-clang21-debug`: build step failed (compile, link or rebase); no tests ran ([CSI launch 193423](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/193423))  ## Frequency and origin  The previous scheduled build on `2026.2` was 2c7a7ae7; the change is in `(2c7a7ae7, 60a913bd]` (19 commits): https://github.com/yugabyte/yugabyte-db/compare/2c7a7ae7...60a913bd  Assigned at filing to `hkimura` (the fallback assignee): the ranker's confidence 0.15 is below 0.50. To change it, set the assignee here; Grissom does not touch it again.  ## Environment  Branch `2026.2`, commit 60a913bd, build started 2026-11-19 12:05 UTC. Lanes: - `ubuntu22
   **Post-Mortem & Fix Analysis**:
-  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/38693) <!-- Reviewable:end --> 
-  > /agentk review
+  > Grissom: **suspected root cause**.  Range [`(2c7a7ae7, 60a913bd]`](https://github.com/yugabyte/yugabyte-db/compare/2c7a7ae7...60a913bd): 19 commits. A build-level break: 1 lane(s) broken in this build, so the onset is this build; the range starts at the previous scheduled build.  1. [c27a8edd81](https://github.com/yugabyte/yugabyte-db/commit/c27a8edd81842fb28012696274b491f08c5dc38b) `[BACKPORT 2026.2][#37138] YSQL: Mark the end of connection manager reserved startup parameters (#37025) (#38520)` (Manav Kumar) -- confidence 0.15: Biggest C change in the range: new odyssey fields and argv packing in backend.c and yb_auth_passthrough.c, a new reserved-marker check in postmaster.c and postgres.c, and a new exported helper. Odyssey has its own DEBUG build branch (-O0, OD_DEVEL_LVL=1). Still, everything I checked resolves (macros, includes, prototypes), so this ranking is weak. 2. [fc0d925fa9](https://github.com/yugabyte/yugabyte-db/commit/fc0d925fa92b045456b62980bc9067353dce974d) `[BACKPORT
+  > Not a code break, so closing. The step that failed is the initial system catalog snapshot (`create_initial_sys_catalog_snapshot`): initdb exited after 1.4 s, three times. Its only output was `Failed to connect to bus: $DBUS_SESSION_BUS_ADDRESS and $XDG_RUNTIME_DIR not defined`, from the `systemd-run --scope --user` wrapper the step runs under, so the step never ran on that worker (`ubuntu2204-gcp-jenkins-worker-5tuvsf`, [Jenkins job 1782](https://jenkins.dev.yugabyte.com/job/github-yugabyte-db-ubuntu22.04-master-clang21-debug/1782/)). The same lane on 2026.1 at the same hour passed, and so did 2026.2's next build (2026-11-19 20:05 UTC). 
 
-- **Issue #38662** (2026-11-20): **[BACKPORT 2026.2][DB-26702] Build: Install redhat-rpm-config only on non-hardened base images (#38504)**
-  *Symptoms*: ## Summary  Image scans of the master yugabyte image flag `go-srpm-macros` for CVE-2026-56860 (high) and CVE-2024-8244. That package is not something the database uses: it comes in as a dependency of `redhat-rpm-config`, together with about 30 other `*-srpm-macros` packages.  `redhat-rpm-config` supplies the compiler flags pip uses when it builds Python C extensions against `python3.11-devel`. On the hardened base the Dockerfile installs no Python development package, and lxml, s3cmd, psutil and watchdog install as prebuilt wheels, so nothing uses it there. This moves `redhat-rpm-config` into the existing non-hardened branch of the package list, next to `python3.11-devel`. The non-hardened images are unchanged.  Original commit: da5ce20eb1feb0bc456751de2a62822c9ccb276c / #38504  ## Test plan  - Shell syntax of the changed `RUN` block checked with `bash -n`. - Dependency chain checked against AlmaLinux 8 and 9 repository metadata: of the packages this step installs, only `redhat-rpm-config` pulls in `go-srpm-macros`. - Not built locally (no container runtime on this machine). The image build in this PR's CI exercises the hardened path; if any of the four pip packages needed to compile, that build would fail. - After a master build with this change, the RapidFort scan of the yugabyte image should no longer list `go-srpm-macros`.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  Co-authored-by: Claude Mythos 5.2 <noreply@anthropic.com>
+- **Issue #38831** (2026-11-21): **[DocDB] Build d61b7c92 on 2026.2 is broken: 3 of 6 lanes broken**
+  *Symptoms*: Jira Link: [DB-26804](https://yugabyte.atlassian.net/browse/DB-26804) _Filed automatically by [Grissom](https://github.com/yugabyte/agent-k/blob/main/bots/grissom/README.md) (internal docs), which watches YugabyteDB's scheduled builds on `master` and the supported release branches for builds where a lane breaks or many tests fail the same way. Everything below is measured from those builds; how it decides, and how to stop it, is at the end._  ## Summary  The scheduled build of `2026.2` at d61b7c92 is broken: 3 of 6 lanes broken. Its tests are not reported individually; this issue is the one report for the build.  - Failing lanes: `alma8-clang21-tsan`, `alma8-gcc15-fastdebug`, `alma9-clang21-asan`, `alma8-clang21-release`, `arm-alma8-clang21-release`, `ubuntu22.04-clang21-debug` - Failing build types: tsan, fastdebug, asan, release, debug  ## Urgency  S1 build broken (`priority/highest`).  ## What is being tested  Every lane of the scheduled build (build types tsan, fastdebug, asan, release, debug).  ## What is the failure  - `alma8-clang21-tsan`: reported 0 results, expected >= 6805 ([CSI launch 191351](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/191351)) - `alma8-gcc15-fastdebug`: reported 0 results, expected >= 6923 ([CSI launch 191345](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/191345)) - `alma9-clang21-asan`: reported 0 results, expected >= 6849 ([CSI launch 191360](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/191360))  ## Frequency and origin  The p
   **Post-Mortem & Fix Analysis**:
-  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/38662) <!-- Reviewable:end --> 
-  > [![YB](../blob/master/managed/ui/src/redesign/assets/yb_logo.svg?raw=true) CSIweb for PR #38662](https://csiweb.dev.yugabyte.com/pull/38662)
+  > Grissom: **where this break was seen again**. A lane of this build was cut short the same way in a recent scheduled build already, so the lane breaks intermittently and this build is not where the break began; the range below is listed for reference, and no commit in it is suspected.  Range [`(0392c58c, d61b7c92]`](https://github.com/yugabyte/yugabyte-db/compare/0392c58c...d61b7c92). `alma8-clang21-tsan` (build 0392c58c, 2026-11-14), `alma8-gcc15-fastdebug` (build 0392c58c, 2026-11-14) and `alma9-clang21-asan` (build 0392c58c, 2026-11-14) were cut short the same way in recent builds already: the lanes break intermittently, so this build is not where the break began and no range holds the culprit.  No ranking: a lane of this build was cut short the same way in a recent build already, so the lane breaks intermittently and nothing in its range is ranked.  Assigned to @hkimura (the fallback assignee): the observed range is not trustworthy, so nobody is named from it; the range paragraph ab
+  > Grissom: the scheduled build of `2026.2` at f685bf26 (started 2026-11-16 04:05 UTC) is still broken: 3 of 6 lanes broken. - `alma8-clang21-tsan`: reported 0 results, expected >= 6805 ([CSI launch 191432](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/191432)) - `alma8-gcc15-fastdebug`: reported 0 results, expected >= 6923 ([CSI launch 191428](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/191428)) - `alma9-clang21-asan`: reported 0 results, expected >= 6849 ([CSI launch 191434](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/191434)) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2272,325 +2272,467 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `da5ce20e` (2026-11-19)
-**Commit Message**: [DB-26702] Build: Install redhat-rpm-config only on non-hardened base images (#38504)
+### Incident Patch 1: `3d2a1372` (2026-11-21)
+**Commit Message**: [#30797,#37091] YSQL: Set index birth_time for indexes built nonconcurrently (#38639)
 
 ## Summary
 
-Image scans of the master yugabyte image flag `go-srpm-macros` for
-CVE-2026-56860 (high) and CVE-2024-8244. That package is not something
-the database uses: it comes in as a dependency of `redhat-rpm-config`,
-together with about 30 other `*-srpm-macros` packages.
+Re-lands #37103, which #38235 reverted, together with the fix for the
+limitation that got it reverted (#37091). The first commit is the
+original change, cherry-picked unchanged; the second is the fix.
 
-`redhat-rpm-config` supplies the compiler flags pip uses when it builds
-Python C extensions against `python3.11-devel`. On the hardened base the
-Dockerfile installs no Python development package, and lxml, s3cmd,
-psutil and watchdog install as prebuilt wheels, so nothing uses it
-there. This moves `redhat-rpm-config` into the existing non-hardened
-branch of the package list, next to `python3.11-devel`. The non-hardened
-images are unchanged.
+### Index birth_time for nonconcurrent builds (#30797, first commit)
 
-## Test plan
+A `CREATE INDEX` run inside a transaction block is built nonconcurrently
+and skips the backfill that sets the index `birth_time`, so `birth_time`
+stays 0. The DocDB read guard then does not reject a snapshot read whose
+read time precedes the index commit, the index rows (written at the
+commit) are not visible to that read, and it silently returns an
+incomplete result. This is the data loss seen in the Jepsen
+si.append-table test.
 
-- Shell syntax of the changed `RUN` block checked with `bash -n`.
-- Dependency chain checked against AlmaLinux 8 and 9 repository
-metadata: of the packages this step installs, only `redhat-rpm-config`
-pulls in `go-srpm-macros`.
-- Not built locally (no container runtime on this machine). The image
-build in this PR's CI exercises the hardened path; if any of the four
-pip packa
+On a successful nonconcurrent index create, set the index `birth_time`
+to the master clock time (>= the DDL commit time) and propagate it to
+the tablets with a new `MarkNonConcurrentIndexDone` tserver admin RPC.
+To reject reads until `birth_time` is final, `IndexInfoPB` gets a
+`birth_time_state`, set by the master at index creation:
 
-**File**: `docker/images/yugabyte/Dockerfile` (modified, +1/-2)
+- `BIRTH_TIME_FINAL` (default): `birth_time`, if set, is f
+
+**File**: `src/yb/client/client-internal.cc` (modified, +5/-1)
 ```diff
-@@ -102,7 +102,6 @@ RUN set -x; \
-       net-tools \
-       openssl \
-       openssl-devel \
--      redhat-rpm-config \
-       rsync \
-       procps \
-       sysstat \
-@@ -111,7 +110,7 @@ RUN set -x; \
-       hostname \
-     ); \
-     if [[ "$BASE_IMAGE" != *"$RF_HARDENED_BASE_PATTERN"* ]]; then \
--      packages+=(python3.11-devel python3.11-pip); \
-+      packages+=(python3.11-devel python3.11-pip redhat-rpm-config); \
-     fi; \
-     $yum_install "${packages[@]}" \
-     && if [[ "$BASE_IMAGE" != *"$RF_HARDENED_BASE_PATTERN"* ]]; then \
+@@ -3275,12 +3275,16 @@ Result<TableSizeInfo> YBClient::Data::GetTableDiskSize(
+ }
+ 
+ Status YBClient::Data::ReportYsqlDdlTxnStatus(
+-    const TransactionMetadata& txn, bool is_committed, const CoarseTimePoint& deadline) {
++    const TransactionMetadata& txn, bool is_committed, HybridTime propagated_hybrid_time,
++    const CoarseTimePoint& deadline) {
+   master::ReportYsqlDdlTxnStatusRequestPB req;
+   master::ReportYsqlDdlTxnStatusResponsePB resp;
+ 
+   req.set_transaction_id(txn.transaction_id.data(), txn.transaction_id.size());
+   req.set_is_committed(is_committed);
++  if (propagated_hybrid_time.is_valid()) {
++    req.set_propagated_hybrid_time(propagated_hybrid_time.ToUint64());
++  }
+   RETURN_NOT_OK(SyncLeaderMasterRpc(
+       deadline, req, &resp, "ReportYsqlDdlTxnStatus",
+       &master::MasterDdlProxy::ReportYsqlDdlTxnStatusAsync));
+```
+
+**File**: `src/yb/client/client-internal.h` (modified, +2/-1)
+```diff
+@@ -495,7 +495,8 @@ class YBClient::Data {
+ 
+   // Provide the status of the transaction to YB-Master.
+   Status ReportYsqlDdlTxnStatus(
+-      const TransactionMetadata& txn, bool is_committed, const CoarseTimePoint& deadline);
++      const TransactionMetadata& txn, bool is_committed, HybridTime propagated_hybrid_time,
++      const CoarseTimePoint& deadline);
+ 
+   Status IsYsqlDdlVerificationInProgress(
+     const TransactionMetadata& txn,
+```
+
+**File**: `src/yb/client/client.cc` (modified, +3/-2)
+```diff
+@@ -2856,9 +2856,10 @@ Result<TableSizeInfo> YBClient::GetTableDiskSize(const TableId& table_id) {
+   return data_->GetTableDiskSize(table_id, deadline);
+ }
+ 
+-Status YBClient::ReportYsqlDdlTxnStatus(const TransactionMetadata& txn, bool is_committed) {
++Status YBClient::ReportYsqlDdlTxnStatus(
++    const TransactionMetadata& txn, bool is_committed, HybridTime propagated_hybrid_time) {
+   auto deadline = CoarseMonoClock::Now() + default_rpc_timeout();
+-  return data_->ReportYsqlDdlTxnStatus(txn, is_committed, deadline);
++  return data_->ReportYsqlDdlTxnStatus(txn, is_committed, propagated_hybrid_time, deadline);
+ }
+ 
+ Status YBClient::WaitForDdlVerificationToFinish(const TransactionMetadata& txn) {
+```
+
+**File**: `src/yb/client/client.h` (modified, +4/-2)
+```diff
+@@ -1079,8 +1079,10 @@ class YBClient {
+   // Get the disk size of a table (calculated as SST file size + WAL file size)
+   Result<TableSizeInfo> GetTableDiskSize(const TableId& table_id);
+ 
+-  // Provide the completion status of 'txn' to the YB-Master.
+-  Status ReportYsqlDdlTxnStatus(const TransactionMetadata& txn, bool is_committed);
++  // Provide the completion status of 'txn' to the YB-Master. propagated_hybrid_time is the caller's
++  // hybrid time; it should be >= the commit time of 'txn' when is_committed is true.
++  Status ReportYsqlDdlTxnStatus(
++      const TransactionMetadata& txn, bool is_committed, HybridTime propagated_hybrid_time);
+ 
+   Status WaitForDdlVerificationToFinish(const TransactionMetadata& txn);
+ 
+```
+
+**File**: `src/yb/common/common.proto` (modified, +25/-0)
+```diff
+@@ -356,6 +356,31 @@ message IndexInfoPB {
+   // snapshot predates when the index became consistent.
+   optional fixed64 birth_time = 37;
+ 
++  // Whether birth_time is final. BIRTH_TIME_FINAL (the default, also for indexes created before
++  // this field existed) means birth_time is final; it is 0 if the index has none. The PENDING
++  // states are set at index creation and mean the index may not be consistent yet: while one is set
++  // (and birth_time is 0), the docdb read guard returns a retryable error for reads at the index
++  // instead of serving a possibly-incomplete result. The state records which build path finalizes
++  // birth_time, so each path only finalizes its own indexes.
++  //
++  // TODO(#33155): The birth_time is not yet passed to xcluster targets. However, the state is
++  // still moved to BIRTH_TIME_FINAL on xcluster targets to preserve the old behaviour and allow
++  // reads until we fix this.
++  enum BirthTimeState {
++    BIRTH_TIME_FINAL = 0;
++    // Online (backfilled) build: finalized when backfill completes.
++    BIRTH_TIME_PENDING_BACKFILL = 1;
++    // Nonconcurrent (inline) build: finalized when the CREATE INDEX transaction commits.
++    BIRTH_TIME_PENDING_DDL_COMMIT = 2;
++  }
++  optional BirthTimeState birth_time_state = 40;
++
++  // Id of the transaction that created the index. Set only while birth_time_state is
++  // BIRTH_TIME_PENDING_DDL_COMMIT. This is required so that any readers part of the same
++  // transaction that does the CREATE INDEX are able to read even if the transaction's snapshot is
++  // older than the birth time of the index.
++  optional bytes birth_time_pending_txn_id = 41;
++
+   // When backfill fails, the status it failed with. Unlike backfill_error_message, this
+   // preserves error codes such as the PostgreSQL error code.
+   optional AppStatusPB backfill_status = 38;
+```
+
+**File**: `src/yb/master/async_rpc_tasks.cc` (modified, +28/-0)
+```diff
+@@ -698,6 +698,34 @@ bool AsyncBackfillDone::SendRequest(int attempt) {
+   return true;
+ }
+ 
++bool AsyncMarkNonConcurrentIndexDone::SendRequest(int attempt) {
++  VLOG_WITH_PREFIX(1)
++      << "Send mark non-concurrent index done request to " << permanent_uuid() << " for "
++      << tablet_->tablet_id() << " version " << schema_version_ << " waiting for a read lock.";
++
++  tablet::ChangeMetadataRequestPB req;
++  {
++    auto l = table_->LockForRead();
++    VLOG_WITH_PREFIX(1)
++        << "Send mark non-concurrent index done request to " << permanent_uuid() << " for "
++        << tablet_->tablet_id() << " version " << schema_version_ << " obtained the read lock.";
++
++    req.set_backfill_done_table_id(table_id_);
++    req.set_dest_uuid(permanent_uuid());
++    req.set_tablet_id(tablet_->tablet_id());
++    req.set_propagated_hybrid_time(master_->clock()->Now().ToUint64());
++    req.set_mark_non_concurrent_index_done(true);
++    req.set_birth_time(birth_time_);
++    schema_version_ = l->pb.version();
++  }
++
++  ts_admin_proxy_->MarkNonConcurrentIndexDoneAsync(req, &resp_, &rpc_, BindRpcCallback());
++  VLOG_WITH_PREFIX(1)
++      << "Send mark non-concurrent index done request to " << permanent_uuid() << " for "
++      << tablet_->tablet_id() << " (attempt " << attempt << "):\n" << req.DebugString();
++  return true;
++}
++
+ void AsyncInsertPackedSchemaForXClusterTarget::HandleInsertPackedSchema(
+     tablet::ChangeMetadataRequestPB& req) {
+   // Update insert_packed_schema and update the schema to the packed schema to insert.
+```
+
+**File**: `src/yb/master/async_rpc_tasks.h` (modified, +28/-0)
+```diff
+@@ -349,6 +349,34 @@ class AsyncBackfillDone : public AsyncAlterTable {
+   const uint64_t birth_time_;
+ };
+ 
++// Finalizes a nonconcurrently-built index: sends a change-metadata RPC that sets the index's
++// birth_time and marks IndexInfoPB.birth_time_state final on the tablet. This is the nonconcurrent
++// counterpart of AsyncBackfillDone (which finalizes the online-backfill path).
++class AsyncMarkNonConcurrentIndexDone : public AsyncAlterTable {
++ public:
++  AsyncMarkNonConcurrentIndexDone(Master* master,
++                         ThreadPool* callback_pool,
++                         const TabletInfoPtr& tablet,
++                         const std::string& table_id,
++                         LeaderEpoch epoch,
++                         uint64_t birth_time)
++    : AsyncAlterTable(master, callback_pool, tablet, std::move(epoch)),
++      table_id_(table_id),
++      birth_time_(birth_time) {}
++
++  server::MonitoredTaskType type() const override {
++    return server::MonitoredTaskType::kMarkNonConcurrentIndexDone;
++  }
++
++  std::string type_name() const override { return "Mark non-concurrent index done."; }
++
++ private:
++  bool SendRequest(int attempt) override;
++
++  const std::string table_id_;
++  const uint64_t birth_time_;
++};
++
+ class AsyncInsertPackedSchemaForXClusterTarget : public AsyncAlterTable {
+  public:
+   // For colocated alters, `table` should be the table we are modifying (ie not the parent table).
+```
+
+**File**: `src/yb/master/backfill_index.cc` (modified, +10/-4)
+```diff
+@@ -1530,12 +1530,15 @@ Status BackfillTable::AllowCompactionsToGCDeleteMarkers(
+     VLOG_WITH_FUNC(2) << "Locked index table for Write";
+     UnsetIndexTableRetainsDeleteMarkers(index_table_wlock.mutable_data());
+ 
+-    // Persist the index birth time in the index table's index_info.
++    // Persist the index birth time in the index table's index_info, and mark it final.
+     // TODO(#33155): read_time_for_backfill isn't set for xCluster automatic-mode target (where
+     // backfill is replicated from the source).
+-    if (index_table_wlock.mutable_data()->pb.has_index_info() && !idx_birth_time.is_special()) {
+-      index_table_wlock.mutable_data()->pb.mutable_index_info()->set_birth_time(
+-          idx_birth_time.ToUint64());
++    if (index_table_wlock.mutable_data()->pb.has_index_info()) {
++      auto* index_info = index_table_wlock.mutable_data()->pb.mutable_index_info();
++      if (!idx_birth_time.is_special()) {
++        index_info->set_birth_time(idx_birth_time.ToUint64());
++      }
++      index_info->clear_birth_time_state();
+     }
+ 
+     // Update sys-catalog with the new indexed table info.
+@@ -1552,6 +1555,9 @@ Status BackfillTable::AllowCompactionsToGCDeleteMarkers(
+   }
+   VLOG_WITH_FUNC(2) << "Unlocked index table for Read";
+   VLOG(1) << "Sending backfill done requests to the Index table";
++  // TODO(#37622): the master does not resend this if a tablet misses it (e.g. on master
++  // failover). The tablet validator usually repairs that, but not if its single check ran
++  // while the index was still pending.
+   RETURN_NOT_OK(SendRpcToAllowCompactionsToGCDeleteMarkers(index_table_info));
+   VLOG(1) << "DONE Sending backfill done requests to the Index table";
+   return Status::OK();
 ```
 
 ---
 
-### Incident Patch 2: `e80f006f` (2026-11-19)
-**Commit Message**: [DB-26697] Build: Upgrade pip in the yugabyte Docker image (#38495)
+### Incident Patch 2: `e3701ffa` (2026-11-17)
+**Commit Message**: [#35017] YSQL: Fix org.yb.pgsql.TestPgRegressIsolationObjectLocking#testPgRegress slow unblocked ALTERs
 
-## Summary
+Summary:
+`yb.orig.alter_partitioned_table_locks` (and `yb.orig.avoid_stale_catalog_reads-1`) fail intermittently in `org.yb.pgsql.TestPgRegressIsolationObjectLocking#testPgRegress`. In each failing permutation, an s2 ALTER waits on s1, `s1_commit` unblocks it, and then an s3 step runs. If the unblocked ALTER takes longer than `YB_NUM_SECONDS_TO_WAIT_TO_ASSUME_SESSION_BLOCKED`, the isolation tester launches the s3 step before the ALTER finishes. The s3 step then runs against the pre-ALTER schema, or its output lands in the wrong order.
 
-The yugabyte Docker image keeps whatever pip its base image shipped. On
-current master builds, which use the hardened Python base, that is pip
-26.2.2 in `/usr/local/lib/python3.13`, which image scanners flag for
-CVE-2026-8643 (high), CVE-2026-13346, CVE-2026-6357 and CVE-2026-3219.
-All four are fixed in pip 26.3.
+The fix uses the empty-step idiom documented in the isolation `README`. An empty `s2_noop` step goes after `s1_commit` in those permutations. Before launching a step, the tester waits for that session's previous step to finish, and that wait doesn't use the assume-blocked heuristic. So `s2_noop`, and the s3 step after it, can't start until the unblocked ALTER is done, however slow it is. In the RR-reader permutation, s3 doesn't depend on the ALTER, so `s2_add_fk` is marked `(yb_never_waits)` there instead.
 
-`docker/images/yugabyte/Dockerfile` already uses pip to install lxml,
-s3cmd, psutil and watchdog. This adds a `python3 -m pip install
---upgrade pip` step before them, so the image picks up the current pip
-on every build.
+The expected outputs gain one `step s2_n
 
-On the non-hardened bases (almalinux, UBI) pip comes from the
-`python3.11-pip` RPM, and the upgrade installs the new pip under
-`/usr/local` next to it. The RPM is now removed once the pip installs
-are done, so those images also end up with a single, current pip. It is
-removed with `rpm -e`, not `yum remove`: no package requires
-`python3.11-pip`, but it recommends `python3.11-setuptools`, which `yum
-remove` can take with it as an unused dependency. The yugaware image's
-Dockerfile removes it the same way.
-
-Not changed: `python3.11-pip-wheel`, which `python3.11-libs` requires,
-
-
-**File**: `docker/images/yugabyte/Dockerfile` (modified, +3/-0)
+**File**: `src/postgres/src/test/isolation/expected/yb.orig.alter_partitioned_table_locks.out` (modified, +8/-4)
 ```diff
-@@ -118,12 +118,15 @@ RUN set -x; \
-          alternatives --set python3 /usr/bin/python3.11; \
-          alternatives --set python /usr/bin/python3.11; \
-     fi \
-+    && python3 -m pip install --upgrade pip \
-     && python3 -m pip install --upgrade lxml \
-     && python3 -m pip install --upgrade s3cmd \
-     && python3 -m pip install --upgrade psutil \
-     && python3 -m pip install --upgrade watchdog \
-     && if [[ "$BASE_IMAGE" == *"$RF_HARDENED_BASE_PATTERN"* ]]; then \
-          yum remove --disableplugin=subscription-manager -y python3-pip; \
-+       else \
-+         rpm -e python3.11-pip; \
-        fi \
-     && rm -rf /usr/share/python3-wheels/pip-9.0.3-py2.py3-none-any.whl \
-     && rm -rf ~/.cache \
+@@ -1,11 +1,12 @@
+ Parsed test spec with 3 sessions
+ 
+-starting permutation: s1_begin s1_create_ac_part s2_add_column s1_commit s3_insert_ac s3_select_ac
++starting permutation: s1_begin s1_create_ac_part s2_add_column s1_commit s2_noop s3_insert_ac s3_select_ac
+ step s1_begin: BEGIN;
+ step s1_create_ac_part: CREATE TABLE ac_p_7_b0 PARTITION OF ac_p_7 FOR VALUES IN (0);
+ step s2_add_column: ALTER TABLE ac_p ADD COLUMN x2 int DEFAULT 2; <waiting ...>
+ step s1_commit: COMMIT;
+ step s2_add_column: <... completed>
++step s2_noop: ;
+ step s3_insert_ac: INSERT INTO ac_p VALUES (702, 0, 'r'), (703, 1, 'r');
+ step s3_select_ac: SELECT tableoid::regclass, * FROM ac_p ORDER BY a;
+ tableoid |  a|b|c|x2
+@@ -15,12 +16,13 @@ ac_p_7_b1|703|1|r| 2
+ (2 rows)
+ 
+ 
+-starting permutation: s1_begin s1_create_dc_part s2_drop_pk_column s1_commit s3_insert_dc s3_select_dc
++starting permutation: s1_begin s1_create_dc_part s2_drop_pk_column s1_commit s2_noop s3_insert_dc s3_select_dc
+ step s1_begin: BEGIN;
+ step s1_create_dc_part: CREATE TABLE dc_p_7_b0 PARTITION OF dc_p_7 FOR VALUES IN (0);
+ step s2_drop_pk_column: ALTER TABLE dc_p DROP COLUMN c; <waiting ...>
+ step s1_commit: COMMIT;
+ step s2_drop_pk_column: <... completed>
++step s2_noop: ;
+ step s3_insert_dc: INSERT INTO dc_p VALUES (702, 0), (703, 1);
+ step s3_select_dc: SELECT tableoid::regclass, * FROM dc_p ORDER BY a;
+ tableoid |  a|b
+@@ -30,7 +32,7 @@ dc_p_7_b1|703|1
+ (2 rows)
+ 
+ 
+-starting permutation: s1_begin_rr s1_count s2_add_pk s1_count s1_commit s3_count
++starting permutation: s1_begin_rr s1_count s2_add_pk s1_count s1_commit s2_noop s3_count
+ step s1_begin_rr: BEGIN ISOLATION LEVEL REPEATABLE READ;
+ step s1_count: SELECT count(*) FROM ap_p_7_b1;
+ count
+@@ -47,6 +49,7 @@ count
+ 
+ step s1_commit: COMMIT;
+ step s2_add_pk: <... completed>
++step s2_noop: ;
+ step s3_count: SELECT count(*) FROM ap_p_7_b1;
+ count
+ -----
+@@ -73,13 +76,14 @@ step s1_commit: COMMIT;
+ step s3_insert_fk_bad: INSERT INTO fk_p_7_b1 VALUES (751, 1, 99);
+ ERROR:  insert or update on table "fk_p_7_b1" violates foreign key constraint "fk_c"
+ 
+-starting permutation: s1_begin s1_insert_fk_bad s2_add_fk s1_commit s3_count_fk
++starting permutation: s1_begin s1_insert_fk_bad s2_add_fk s1_commit s2_noop s3_count_fk
+ step s1_begin: BEGIN;
+ step s1_insert_fk_bad: INSERT INTO fk_p_7_b1 VALUES (750, 1, 99);
+ step s2_add_fk: ALTER TABLE fk_p ADD CONSTRAINT fk_c FOREIGN KEY (c) REFERENCES fk_ref (id); <waiting ...>
+ step s1_commit: COMMIT;
+ step s2_add_fk: <... completed>
+ ERROR:  insert or update on table "fk_p_7_b1" violates foreign key constraint "fk_c"
++step s2_noop: ;
+ step s3_count_fk: SELECT count(*) FROM fk_p_7_b1;
+ count
+ -----
+```
+
+**File**: `src/postgres/src/test/isolation/expected/yb.orig.avoid_stale_catalog_reads-1.out` (modified, +4/-2)
+```diff
+@@ -17,12 +17,13 @@ a
+ (3 rows)
+ 
+ 
+-starting permutation: s1_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_v s1_commit s3_select_test_atts
++starting permutation: s1_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_v s1_commit s2_noop s3_select_test_atts
+ step s1_begin_rr: BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+ step s1_alter_table_test_add_col_a: ALTER TABLE test ADD COLUMN a INT;
+ step s2_alter_table_test_alter_col_v: ALTER TABLE test ALTER COLUMN v TYPE SMALLINT; <waiting ...>
+ step s1_commit: COMMIT;
+ step s2_alter_table_test_alter_col_v: <... completed>
++step s2_noop: ;
+ step s3_select_test_atts: SELECT attname FROM pg_attribute WHERE attrelid = 'test'::regclass::oid and attnum > 0;
+ attname
+ -------
+@@ -49,12 +50,13 @@ a
+ (3 rows)
+ 
+ 
+-starting permutation: s1_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_a s1_commit s3_select_test_atts
++starting permutation: s1_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_a s1_commit s2_noop s3_select_test_atts
+ step s1_begin_rr: BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+ step s1_alter_table_test_add_col_a: ALTER TABLE test ADD COLUMN a INT;
+ step s2_alter_table_test_alter_col_a: ALTER TABLE test ALTER COLUMN a TYPE SMALLINT; <waiting ...>
+ step s1_commit: COMMIT;
+ step s2_alter_table_test_alter_col_a: <... completed>
++step s2_noop: ;
+ step s3_select_test_atts: SELECT attname FROM pg_attribute WHERE attrelid = 'test'::regclass::oid and attnum > 0;
+ attname
+ -------
+```
+
+**File**: `src/postgres/src/test/isolation/specs/yb.orig.alter_partitioned_table_locks.spec` (modified, +8/-5)
+```diff
+@@ -76,6 +76,7 @@ step s2_detach_sib		{ ALTER TABLE sib_p DETACH PARTITION sib_p_a; }
+ step s2_owner_sib		{ ALTER TABLE sib_p OWNER TO CURRENT_USER; }
+ step s2_only_default_sib	{ ALTER TABLE ONLY sib_p ALTER COLUMN b SET DEFAULT 5; }
+ step s2_attach_sib		{ ALTER TABLE sib_p ATTACH PARTITION sib_q FOR VALUES FROM (300) TO (400); }
++step s2_noop			{ ; }
+ 
+ session s3
+ step s3_insert_ac		{ INSERT INTO ac_p VALUES (702, 0, 'r'), (703, 1, 'r'); }
+@@ -86,11 +87,13 @@ step s3_count			{ SELECT count(*) FROM ap_p_7_b1; }
+ step s3_insert_fk_bad	{ INSERT INTO fk_p_7_b1 VALUES (751, 1, 99); }
+ step s3_count_fk		{ SELECT count(*) FROM fk_p_7_b1; }
+ 
+-permutation s1_begin s1_create_ac_part s2_add_column s1_commit s3_insert_ac s3_select_ac
+-permutation s1_begin s1_create_dc_part s2_drop_pk_column s1_commit s3_insert_dc s3_select_dc
+-permutation s1_begin_rr s1_count s2_add_pk s1_count s1_commit s3_count
+-permutation s1_begin_rr s1_count_fk s2_add_fk s1_count_fk s1_commit s3_insert_fk_bad
+-permutation s1_begin s1_insert_fk_bad s2_add_fk s1_commit s3_count_fk
++# s2_noop makes the next s3 step wait for the ALTER that s1_commit unblocks,
++# however slow.
++permutation s1_begin s1_create_ac_part s2_add_column s1_commit s2_noop s3_insert_ac s3_select_ac
++permutation s1_begin s1_create_dc_part s2_drop_pk_column s1_commit s2_noop s3_insert_dc s3_select_dc
++permutation s1_begin_rr s1_count s2_add_pk s1_count s1_commit s2_noop s3_count
++permutation s1_begin_rr s1_count_fk s2_add_fk(yb_never_waits) s1_count_fk s1_commit s3_insert_fk_bad
++permutation s1_begin s1_insert_fk_bad s2_add_fk s1_commit s2_noop s3_count_fk
+ permutation s1_begin s1_count_sib s2_detach_sib s1_count_sib_root s1_commit
+ permutation s1_begin s1_count_sib s2_owner_sib s1_commit
+ permutation s1_begin s1_count_sib s2_only_default_sib s1_commit
+```
+
+**File**: `src/postgres/src/test/isolation/specs/yb.orig.avoid_stale_catalog_reads-1.spec` (modified, +3/-2)
+```diff
+@@ -40,6 +40,7 @@ step s2_begin_rr { BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ; }
+ step s2_alter_table_test_alter_col_v { ALTER TABLE test ALTER COLUMN v TYPE SMALLINT; }
+ step s2_alter_table_test_alter_col_a { ALTER TABLE test ALTER COLUMN a TYPE SMALLINT; }
+ step s2_commit { COMMIT; }
++step s2_noop { ; }
+ 
+ session s3
+ step s3_select_test_atts { SELECT attname FROM pg_attribute WHERE attrelid = 'test'::regclass::oid and attnum > 0; }
+@@ -50,8 +51,8 @@ step s3_select_test_atts { SELECT attname FROM pg_attribute WHERE attrelid = 'te
+ 
+ permutation s1_begin_rr s2_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_v s1_commit s2_commit s3_select_test_atts
+ # Test ALTER outside a transaction block in S2.
+-permutation s1_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_v s1_commit s3_select_test_atts
++permutation s1_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_v s1_commit s2_noop s3_select_test_atts
+ 
+ # Tests with an alter of the newly added column.
+ permutation s1_begin_rr s2_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_a s1_commit s2_commit s3_select_test_atts
+-permutation s1_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_a s1_commit s3_select_test_atts
++permutation s1_begin_rr s1_alter_table_test_add_col_a s2_alter_table_test_alter_col_a s1_commit s2_noop s3_select_test_atts
 ```
 
 ---
 
-### Incident Patch 3: `7cda8191` (2026-11-19)
-**Commit Message**: [#37328] YSQL: Detect deadlocks of fast path writes without global object locks (#37359)
+### Incident Patch 3: `afa5be3c` (2026-11-20)
+**Commit Message**: [#32224] YSQL: Fail the build when a catalog entry reuses a reserved macro OID (#38711)
 
 ## Summary
 
 ### Background
 
-The tserver tags a fast path write (a write outside a distributed
-transaction) with its object
-lock owner, so that the deadlock detector sees a cycle that runs through
-object locks and row
-locks (#24630). Two kinds of transaction take local object locks for
-their DMLs but no global
-ones, so that DDLs with global object locks wait for them:
-
-- one that latched `ysql_yb_enable_global_object_locking_infra` off,
-during its promotion (#37358,
-  #36572);
-- any transaction on a node with `disable_global_object_locks` on
-(#37334, #37355).
-
-`using_table_locks_globally` stays false for both, so tablets keep
-checking their catalog version.
+`DECLARE_OID_DEFINING_MACRO(name, oid)` in a catalog header reserves an OID for a C macro without adding a catalog row (`genbki.h`). #32224 uses one for a per-database lock key, `YbDdlSerializationLockOid`, in the PR above this one.
 
 ### Problem
 
-The tserver tags fast path writes only when `using_table_locks_globally`
-is set, so a fast path
-write from a transaction without global object locks carries no lock
-owner. If that writer waits on
-a row lock while a DDL waits on the writer's local object lock, the
-deadlock detector does not see
-the cycle. Both wait until a statement times out.
+A catalog entry can reuse the OID of a `DECLARE_OID_DEFINING_MACRO`, and the build still succeeds. For example, add `DECLARE_OID_DEFINING_MACRO(YbPlantedDup, 1259);` to `pg_yb_catalog_version.h`. 1259 is the OID of `pg_class`, yet `yb_genbki.pl` exits 0.
 
-Example, during the `ysql_yb_enable_global_object_locking_infra`
-promotion:
+### Root cause
 
-1. ts-2,
+`yb_genbki.pl` fails the build when an OID appears twice in `%oidcounts`. Before this change it counted the OIDs of catalog tables, their row types, their data rows, toast tables and indexes, but not `$catalog->{other_oids}`, which holds the macro OIDs. Upstream PostgreSQL's `genbki.pl` has the same gap; upstream has only two such macros, `Template0DbOid` and `PostgresDbOid`.
 
-**File**: `src/yb/tserver/pg_client.proto` (modified, +6/-0)
+## Test plan
+
+Manual test, not run in CI. Add a duplicate OID by hand: this diff makes a new macro reuse 1259, the OID of `pg_class`.
+
 ```diff
-@@ -996,6 +996,12 @@ message PgPerformOptionsPB {
-   // Subtransactions of historical_read_transaction_id rolled back to a savepoint.
-   // Only applicable when historical_read_transaction_id is set.
-   SubtxnSetPB historical_read_aborted_subtxns = 41;
-+
-+  // The transaction takes object locks, at least local ones; PgSession::AcquireObjectLock says why
-+  // a transaction without global object locks takes them. Its fast path writes carry the lock
-+  // owner, or the deadlock detector misses a cycle between a row lock wait and an object lock wait
-+  // (#37328).
-+  bool using_table_locks_locally = 42;
- }
- 
- message PgRequestSequenceNumPB {
-```
+diff --git a/src/postgres/src/include/cat
 
-**File**: `src/yb/tserver/pg_client_session.cc` (modified, +7/-1)
+**File**: `src/postgres/src/backend/catalog/yb_genbki.pl` (modified, +6/-0)
 ```diff
-@@ -1464,6 +1464,7 @@ class TransactionProvider {
- };
- 
- YB_STRONGLY_TYPED_BOOL(IsTxnUsingTableLocks);
-+YB_STRONGLY_TYPED_BOOL(IsTxnUsingTableLocksLocally);
- YB_STRONGLY_TYPED_BOOL(DeferReadPoint);
- 
- // Whether the autonomous DDL transaction, if created by this request, should pick a deferred read
-@@ -1480,6 +1481,7 @@ Result<std::pair<PgClientSessionOperations, VectorIndexQueryPtr>> PrepareOperati
-     VectorIndexQueryPtr& vector_index_query, bool has_distributed_txn,
-     const LWFunction<Result<TransactionMetadata>()>& object_locking_txn_meta_provider,
-     IsTxnUsingTableLocks is_txn_using_table_locks,
-+    IsTxnUsingTableLocksLocally is_txn_using_table_locks_locally,
-     const PgClientSessionMetrics& metrics,
-     const OriginationInfo& origination_info) {
-   auto write_time = HybridTime::FromPB(req->write_time());
-@@ -1576,7 +1578,7 @@ Result<std::pair<PgClientSessionOperations, VectorIndexQueryPtr>> PrepareOperati
-   for (const auto& pg_client_session_operation : ops) {
-     session->Apply(pg_client_session_operation.op);
-   }
--  if (has_write_ops && !has_distributed_txn && is_txn_using_table_locks) {
-+  if (has_write_ops && !has_distributed_txn && is_txn_using_table_locks_locally) {
-     session->SetObjectLockingTxnMeta(VERIFY_RESULT(object_locking_txn_meta_provider()));
-   }
- 
-@@ -3089,6 +3091,9 @@ class PgClientSession::Impl {
-         << "Object lock for relation " << AsString(data->req.lock_oid())
-         << " with lock type " << AsString(lock_type);
- 
-+    RSTATUS_DCHECK(
-+        options.using_table_locks_locally(), IllegalState,
-+        "Object lock request from a transaction that does not use object locks locally");
-     RSTATUS_DCHECK(
-         options.read_time_options().read_time_serial_no() == kInvalidReadTimeSerialNo,
-         IllegalState, "Object lock RPCs must not carry a read time serial no");
-@@ -3825,6 +3830,7 @@ class PgClientSession::Impl {
-           return NextObjectLockingTxnMeta(locality, deadline);
-         }),
-         IsTxnUsingTableLocks(options.using_table_locks_globally()),
-+        IsTxnUsingTableLocksLocally(options.using_table_locks_locally()),
-         context_.metrics,
-         MakeOriginationInfo(options.origination_ht())));
-     // PrepareOperations has already applied the ops to the session. Failing out before the flush
-```
-
-**File**: `src/yb/yql/pggate/pg_txn_manager.cc` (modified, +1/-0)
-```diff
-@@ -959,6 +959,7 @@ Status PgTxnManager::SetupPerformOptions(
-   options.set_connected_database_oid(connected_database_oid_);
-   options.set_origination_ht(GetOriginationHt());
-   options.set_using_table_locks_globally(UsingObjectLocksGloballyForCurrentTxn());
-+  options.set_using_table_locks_locally(UsingObjectLocksLocally());
-   options.set_uses_catalog_snapshot(is_catalog_snapshot);
-   // Follower reads are applicable on user tables and as such catalog ops bypass it.
-   options.set_read_from_followers(UsesFollowerReads() && !is_catalog_snapshot);
-```
-
-**File**: `src/yb/yql/pgwrapper/pg_object_locks-test.cc` (modified, +84/-0)
-```diff
-@@ -1737,6 +1737,78 @@ TEST_P(PgObjectLocksTestLegacyTxnVsNewDdl, LegacyReadOnlyTxnReleasesLocksAtRollb
-   ASSERT_OK(legacy_conn.Execute("ROLLBACK"));
- }
- 
-+namespace {
-+
-+// A fast path write from a transaction without global object locks holds a local object lock while
-+// it waits on a row lock. The transaction on `ddl_conn`, which takes global object locks, holds
-+// that row lock and then runs an ALTER TABLE, which waits on the object lock. The deadlock detector
-+// sees the cycle only if the fast path write waits as its object lock owner, as in
-+// TestDeadlockFastPath; otherwise both sides wait until the ALTER's statement timeout. Exactly one
-+// of the two writers commits. `while_writer_waits` runs once the fast path write is queued on the
-+// row lock. Expects table test(k, v) with v = 0 for k = 1.
-+void CheckFastPathWriteDeadlockIsDetected(
-+    ExternalMiniCluster& cluster, PGConn ddl_conn, PGConn writer_conn,
-+    const std::function<void()>& while_writer_waits = {}) {
-+  ASSERT_OK(ddl_conn.Execute("BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ"));
-+  ASSERT_OK(ddl_conn.Execute("UPDATE test SET v = v + 1 WHERE k = 1"));
-+
-+  std::vector<ExternalDaemon*> tservers;
-+  for (size_t i = 0; i < cluster.num_tablet_servers(); ++i) {
-+    tservers.push_back(cluster.tablet_server(i));
-+  }
-+  ASSERT_OK(cluster.SetFlagOnTServers("vmodule", "wait_queue=4"));
-+  LogWaiter waiter_log(tservers, "WaitOn: waiter_txn_id=");
-+  auto writer_future = std::async(std::launch::async, [&writer_conn]() -> Status {
-+    RETURN_NOT_OK(writer_conn.ExecuteFormat(
-+        "SET statement_timeout = '$0s'", 60 * kTimeMultiplier));
-+    return writer_conn.Execute("UPDATE test SET v = v + 1 WHERE k = 1");
-+  });
-+  ASSERT_OK(waiter_log.WaitFor(30s * kTimeMultiplier));
-+  if (while_writer_waits) {
-+    ASSERT_NO_FATALS(while_writer_waits());
-+  }
-+
-+  ASSERT_OK(ddl_conn.ExecuteFormat("SET statement_timeout = '$0s'", 30 * kTimeMultiplier));
-+  auto alter_status = ddl_conn.Execute("ALTER TABLE test ADD COLUMN v1 INT");
-+  // A missed cycle leaves the ALTER waiting until its statement timeout.
-+  ASSERT_STR_NOT_CONTAINS(alter_status.ToString(), "statement timeout");
-+  // The detector aborts one side. The ALTER's transaction's abort can surface at the ALTER or only
-+  // at COMMIT; a failed transaction's COMMIT rolls back.
-+  auto commit_status = ddl_conn.Execute("COMMIT");
-+  auto writer_status = writer_future.get();
-+  LOG(INFO) << "ALTER: " << alter_status << ", COMMIT: " << commit_status
-+            << ", fast path UPDATE: " << writer_status;
-+  const auto ddl_txn_committed = alter_status.ok() && commit_status.ok();
-+  ASSERT_NE(ddl_txn_committed, writer_status.ok());
-+  ASSERT_EQ(ASSERT_RESULT(ddl_conn.FetchRow<int32_t>("SELECT v FROM test WHERE k = 1")), 1);
-+  ASSERT_EQ(ASSERT_RESULT(ddl_conn.FetchRow<int64_t>(
-+      "SELECT COUNT(*) FROM information_schema.columns WHERE table_name = 'test' AND "
-+      "column_name = 'v1'")), ddl_txn_committed ? 1 : 0);
-+}
-+
-+}  // namespace
-+
-+// The fast path writer's transaction latched ysql_yb_enable_global_object_locking_infra off. With
-+// the parameter true, its node promotes the flag while the write waits.
-+TEST_P(PgObjectLocksTestLegacyTxnVsNewDdl, LegacyFastPathWriteDeadlockIsDetected) {
-+  auto* ts1 = cluster_->tablet_server(0);
-+  auto* ts2 = cluster_->tablet_server(1);
-+  {
-+    auto conn = ASSERT_RESULT(LibPqTestBase::ConnectToTs(*ts1));
-+    ASSERT_OK(conn.Execute("CREATE TABLE test(k INT PRIMARY KEY, v INT)"));
-+    ASSERT_OK(conn.Execute("INSERT INTO test SELECT generate_series(1, 10), 0"));
-+  }
-+
-+  ASSERT_OK(cluster_->SetFlag(ts2, "ysql_yb_enable_global_object_locking_infra", "true"));
-+  ASSERT_NO_FATALS(CheckFastPathWriteDeadlockIsDetected(
-+      *cluster_, ASSERT_RESULT(LibPqTestBase::ConnectToTs(*ts2)),
-+      ASSERT_RESULT(LibPqTestBase::ConnectToTs(*ts1)), [this, ts1] {
-+        if (GetParam()) {
-+          ASSERT_OK(cluster_->SetFlag(ts1, "ysql_yb_enable_global_object_locking_infra", "true"));
-+        }
-+      }));
-+}
-+
- // A legacy transaction's lock taken in DDL mode is kept only in PG's local lock table. A DML that
- // later takes the same lock in the same transaction finds it there and does not send it, so a new
- // mode DDL does not wait for the DML. This gap is accepted. It can hit a lock weaker than a
-@@ -2314,6 +2386,18 @@ INSTANTIATE_TEST_SUITE_P(
-                     std::get<1>(info.param) ? "First" : "AfterDdlStarts");
-     });
- 
-+// The fast path writer runs on a node with global object locks off, which still takes local ones.
-+TEST_F(PgObjectLocksTestGlobalLocksRollingRestart, FastPathWriteDeadlockIsDetected) {
-+  ASSERT_NO_FATALS(PromoteAll());
-+  auto* ts1 = cluster_->tablet_server(0);
-+  auto* ts2 = cluster_->tablet_server(1);
-+  ASSERT_NO_FATALS(CreateTestTable(ts1));
-+  ASSERT_NO_FATALS(RestartWithGlobalLocksOff(ts2));
-+  ASSERT_NO_FATALS(CheckFastPathWriteDeadlockIsDetected(
-+      *cluster_, ASSERT_RESULT(LibPqTestBase::ConnectToTs(*ts1)
+@@ -132,6 +132,12 @@
+ 		$oidcounts{ $toast->{toast_oid} }++;
+ 		$oidcounts{ $toast->{toast_index_oid} }++;
+ 	}
++	# Count the OIDs of DECLARE_OID_DEFINING_MACRO too, so that the build
++	# fails when a catalog entry reuses one of them.
++	foreach my $other (@{ $catalog->{other_oids} })
++	{
++		$oidcounts{ $other->{other_oid} }++;
++	}
+ 	foreach my $index (@{ $catalog->{indexing} })
+ 	{
+ 		push @index_decls,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38693** (2026-11-20): [BACKPORT 2026.2][PLAT-23237] YBA: Hide S3 Federated IAM and GCS GCP IAM on a new config when YBA runs on AWS (@shashwat-yb)
-- **PR #38662** (2026-11-20): [BACKPORT 2026.2][DB-26702] Build: Install redhat-rpm-config only on non-hardened base images (#38504) (@proff4eg)
-- **PR #38656** (2026-11-20): [PLAT-23997] YBA: Enable disk increase through smart resizing for Azure v6/v7 instance types (@shahrooz1997)
-- **PR #38649** (2026-11-19): [#38664] Agents: Add disclosure tiers for security fixes and customer-sensitive changes (@proff4eg)
-- **PR #38646** (2026-11-19): [BACKPORT 2025.2.9][#37734] YSQL: Revert: "Fix single-row UPDATE/DELETE when the WHERE value's type differs from the key column" (@teyenc)
-- **PR #38641** (2026-11-19): [BACKPORT 2026.1][PLAT-21316] YBA: Fix DrConfigControllerTest.testSetTablesWithMatviewRejected (#38146) (@chidmuthu)
+- **PR #38811** (2026-11-21): [BACKPORT 2025.2][#38264] DocDB: Show each MiniCluster tserver's own rpc_bind_addresses in custom varz (#38304) (@ajcaldera1)
+- **PR #38810** (2026-11-21): [BACKPORT 2026.1][#38264] DocDB: Show each MiniCluster tserver's own rpc_bind_addresses in custom varz (#38304) (@ajcaldera1)
+- **PR #38809** (2026-11-21): [BACKPORT 2026.2][#38264] DocDB: Show each MiniCluster tserver's own rpc_bind_addresses in custom varz (#38304) (@ajcaldera1)
+- **PR #38804** (closed): [#38288] YSQL: Keep PL/pgSQL's simple-expression resource owner across query-layer retries (@kai-franz)
+- **PR #38785** (2026-11-21): [PLAT-24040] YBA: Keep YBC enabled in the master phase of a K8s edit (@amannijhawan)
+- **PR #38783** (2026-11-21): [#38781] build: Run all tests when a managed/ or bin/ file that tests use changes (@spolitov)
 
 ---
 
@@ -2610,29 +2752,32 @@ promotion:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [DB-26702] Build: Install redhat-rpm-config only on non-hardened base images
+## X. [#30797,#37091] YSQL: Set index birth_time for indexes built nonconcurrently
 
 **RULE**:
-When implementing operations in `docker/images/yugabyte/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/yb/client/client-internal.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `da5ce20e`: [DB-26702] Build: Install redhat-rpm-config only on non-hardened base images. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3d2a1372`: [#30797,#37091] YSQL: Set index birth_time for indexes built nonconcurrently. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `docker/images/yugabyte/Dockerfile`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/yb/client/client-internal.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-      packages+=(python3.11-devel python3.11-pip redhat-rpm-config); \
+    const TransactionMetadata& txn, bool is_committed, HybridTime propagated_hybrid_time,
+    const CoarseTimePoint& deadline) {
+  if (propagated_hybrid_time.is_valid()) {
+    req.set_propagated_hybrid_time(propagated_hybrid_time.ToUint64());
+  }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Induced defect failure mode:
-      redhat-rpm-config \
-      packages+=(python3.11-devel python3.11-pip); \
+    const TransactionMetadata& txn, bool is_committed, const CoarseTimePoint& deadline) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `da5ce20e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3d2a1372` are properly handled with clean fallback behavior.
