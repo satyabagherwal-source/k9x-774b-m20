@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T20:36:47.322Z",
-    "lastVerified": "2026-11-21T20:36:47.322Z",
+    "lastChecked": "2026-11-21T20:51:28.617Z",
+    "lastVerified": "2026-11-21T20:51:28.617Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-21T19:44:58.255Z",
+    "lastChecked": "2026-11-21T20:48:17.282Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-21T19:44:58.255Z"
+    "lastVerified": "2026-11-21T20:48:17.282Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -950,14 +950,14 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T12:48:51.771Z",
-    "lastVerified": "2026-11-21T12:48:51.771Z",
+    "lastChecked": "2026-11-21T20:48:16.019Z",
+    "lastVerified": "2026-11-21T20:48:16.019Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
-    "contentHash": "7dd2c91c3c841017bca2b45aae47f749538f20099e3b583404aba297c40265df",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "contentHash": "bff3822c9b4c0bdc9d14da1cd526613814cf288e8c78bf3ea322c2b8f80de741",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1623,12 +1623,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nats-io-nats-server": {
-    "name": "nats-io/nats-server",
+    "name": "nats-server",
     "officialUrl": "https://github.com/nats-io/nats-server",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T17:20:55.275Z",
-    "lastVerified": "2026-11-20T17:20:55.275Z",
+    "lastChecked": "2026-11-21T20:48:09.804Z",
+    "lastVerified": "2026-11-21T20:48:09.804Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-server",
@@ -1637,7 +1637,8 @@
     "recentFixesCount": 28,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a0385c9a"
   },
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
@@ -3077,9 +3078,9 @@
   "leecade-react-native-swiper": {
     "name": "react-native-swiper",
     "officialUrl": "https://github.com/leecade/react-native-swiper",
-    "lastChecked": "2026-11-18T15:42:54.053Z",
+    "lastChecked": "2026-11-21T20:48:07.267Z",
     "revisionIdentifier": "98cc9060",
-    "lastVerified": "2026-11-18T15:42:54.053Z"
+    "lastVerified": "2026-11-21T20:48:07.267Z"
   },
   "taubyte-tau": {
     "name": "tau",
@@ -3534,9 +3535,9 @@
   "ekzhang-bore": {
     "name": "bore",
     "officialUrl": "https://github.com/ekzhang/bore",
-    "lastChecked": "2026-11-20T05:07:35.884Z",
+    "lastChecked": "2026-11-21T20:48:02.298Z",
     "revisionIdentifier": "00a735a8",
-    "lastVerified": "2026-11-20T05:07:35.884Z"
+    "lastVerified": "2026-11-21T20:48:02.298Z"
   },
   "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
     "name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -7525,13 +7526,13 @@
     "officialUrl": "https://github.com/vcaesar/riot",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T15:44:04.730Z",
-    "lastVerified": "2026-11-20T15:44:04.730Z",
+    "lastChecked": "2026-11-21T20:48:18.329Z",
+    "lastVerified": "2026-11-21T20:48:18.329Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vcaesar-riot",
-    "contentHash": "a964c7fcfe6798a2853fb2f7d782dcd2cd44e421ab265c32ea6800f6329867a3",
-    "promotedRulesCount": 1,
+    "contentHash": "0596b0501f64e2e9301644d29c804c3b342b741a3728eed81f72d1ccb3ed97aa",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -12810,6 +12811,23 @@
     "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
     "contentHash": "e8fc1e21abeb4164939253907e7864fa1c47fa52da50b34157901366294ab468",
     "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf": {
+    "name": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+    "officialUrl": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T20:48:04.929Z",
+    "lastVerified": "2026-11-21T20:48:04.929Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+    "contentHash": "e1fa39d680fe8260a25aa6cd41c7c13025f111580dee1f1d0ab126f1386f66b1",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

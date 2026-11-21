@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T20:36:50.606Z",
-  "total_records": 2275,
+  "last_updated": "2026-11-21T20:52:09.826Z",
+  "total_records": 2278,
   "domains": {
     "A": {
       "total": 17,
@@ -1448,7 +1448,7 @@
       ]
     },
     "H": {
-      "total": 538,
+      "total": 541,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1987,7 +1987,10 @@
         "domain_intelligence-technical-construction-intelligence-linkerd-linkerd2-core-invariants",
         "domain_intelligence-technical-construction-intelligence-linkerd-linkerd2-learnings-core-invariants",
         "DOM-H-1565C815",
-        "DOM-H-D7B01097"
+        "DOM-H-D7B01097",
+        "domain_intelligence-technical-construction-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-co",
+        "DOM-H-6F3CCE20",
+        "domain_intelligence-technical-construction-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf"
       ]
     },
     "I": {
@@ -24533,8 +24536,8 @@
       "title": "Technical Construction Intelligence: rustls/rustls Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-technical-construction-intelligence-rustls-rustls-core-invariants.md",
       "repository": "rustls/rustls",
-      "content_hash": "65ae26aed93a6c5489ae1bcd2144c7b72638830cc6a801d87496b5cf8358381a",
-      "created_at": "2026-11-21T12:48:53.194Z"
+      "content_hash": "1aabb6e336c31420a4c3b5f505cdad0e7c31caeae37d179b26de7dced649ae1b",
+      "created_at": "2026-11-21T20:51:25.383Z"
     },
     "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants",
@@ -24551,8 +24554,8 @@
       "title": "Technical Construction Intelligence: rustls-rustls-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-learnings-technical-construction-intelligence-rustls-rustls-learni.md",
       "repository": "rustls-rustls-learnings",
-      "content_hash": "7e7bde571f03a16eb2821390325cdb62545139560497a8c7f7a9615cd1e79538",
-      "created_at": "2026-11-21T12:48:58.706Z"
+      "content_hash": "8346659f263bbe4e2e3c94184a18fd736938d265342c1627a75ecd486203d89c",
+      "created_at": "2026-11-21T20:52:08.094Z"
     },
     "domain_intelligence-quality-verification-intelligence-lxml-lxml-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-lxml-lxml-core-invariants",
@@ -36179,8 +36182,8 @@
       "title": "Content & Information Intelligence: vcaesar/riot Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-vcaesar-riot-content-information-intelligence-vcaesar-riot-core-invariants.md",
       "repository": "vcaesar/riot",
-      "content_hash": "e148d0e6f99e1dd795e83b50eb2f5fad450dee7c3190c2bc77b2b2b04119698d",
-      "created_at": "2026-11-20T15:44:06.089Z"
+      "content_hash": "50bf5436c437666c2a46ca690c3014701cd74af071e339d634aacd6848e2d62e",
+      "created_at": "2026-11-21T20:48:19.744Z"
     },
     "domain_intelligence-architecture-intelligence-archivebox-archivebox-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-archivebox-archivebox-learnings-core-invariants",
@@ -36197,8 +36200,8 @@
       "title": "Content & Information Intelligence: vcaesar-riot-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-vcaesar-riot-learnings-content-information-intelligence-vcaesar-riot-learnings-c.md",
       "repository": "vcaesar-riot-learnings",
-      "content_hash": "ebe5f9ad77434dd5ae634158464878b191647dbd081fe4cd3ff6bbab14c83d42",
-      "created_at": "2026-11-20T15:44:10.503Z"
+      "content_hash": "c8580f0ae0b65ce88278f80bdccd9b45be72e4f10d4acf2cb53f922dab41226d",
+      "created_at": "2026-11-21T20:52:09.826Z"
     },
     "domain_intelligence-technical-construction-intelligence-defguard-defguard-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-defguard-defguard-core-invariants",
@@ -38204,6 +38207,58 @@
       "repository": "hf-openbmb-minicpm-ocr-1.0-learnings",
       "content_hash": "f73c67004abcd9790aee2f907ee919cccb27c128b889ec5e85cefb650453e8be",
       "created_at": "2026-11-21T19:47:52.667Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-co": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-co",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-technical-construction-intelligence.md",
+      "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "content_hash": "e02f4bfab2b7a3c9a7e1a64eebb4a80c21dbdee28b74e5e1d68f0abee34fd2d3",
+      "created_at": "2026-11-21T20:49:41.502Z"
+    },
+    "DOM-H-6F3CCE20": {
+      "record_id": "DOM-H-6F3CCE20",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "KV Cache Memory Exhaustion on 4GB Edge Profiles",
+      "content": "Small language models targeted for embedded deployment must implement active context headroom checks and support quantized (`FP16`/`Q8_0`) KV caches to maintain predictable memory ceilings.",
+      "content_hash": "58a9f210077963e6090735d31ebdedc91774e797c955492d95893b4a280d7e8f",
+      "summary": "Inference engine instantiated key/value contexts at static maximum architectural lengths using FP32, rather than dynamically scaling with ge -> Small language models targeted for embedded deployment must implement active context headroom checks and support quantized (`FP16`/`Q8_0`) K",
+      "provenance": {
+        "source_uri": "project://hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T20:51:28.789Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Model documentation explicitly advertising: \"Designed for low-memory, low-TTFT operation, the model allows agent interfaces on embedded/edge.\""
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T20:52:05.451Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-learnings-technical-construction-in.md",
+      "repository": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings",
+      "content_hash": "1588b7c6ed1234ed7f5d0aaec97011668f6a966b994be6b6d8ecf128a5a33c88",
+      "created_at": "2026-11-21T20:52:06.544Z"
     }
   }
 }

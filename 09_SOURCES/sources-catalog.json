@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "0a4d6057",
+    "sourceVersion": "10bb7f9c",
     "license": "NOASSERTION",
-    "contentHash": "7dd2c91c3c841017bca2b45aae47f749538f20099e3b583404aba297c40265df",
-    "lastHarvestedAt": "2026-11-21T12:48:52.834Z",
+    "contentHash": "bff3822c9b4c0bdc9d14da1cd526613814cf288e8c78bf3ea322c2b8f80de741",
+    "lastHarvestedAt": "2026-11-21T20:51:24.447Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -11465,8 +11465,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
     "sourceVersion": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
     "license": "Open-Source",
-    "contentHash": "ebcff82856f5c1ddb65f39cb50c14d066d277ef57bc1d768c61822e1eeced4fc",
-    "lastHarvestedAt": "2026-11-15T16:07:01.054Z",
+    "contentHash": "e1fa39d680fe8260a25aa6cd41c7c13025f111580dee1f1d0ab126f1386f66b1",
+    "lastHarvestedAt": "2026-11-21T20:49:40.823Z",
     "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf"
   },
   "liketrek-trek": {
@@ -12953,10 +12953,10 @@
     "repository": "vcaesar/riot",
     "platform": "github",
     "sourceUrl": "https://github.com/vcaesar/riot",
-    "sourceVersion": "b565db8d",
+    "sourceVersion": "fd10bdae",
     "license": "Apache-2.0",
-    "contentHash": "a964c7fcfe6798a2853fb2f7d782dcd2cd44e421ab265c32ea6800f6329867a3",
-    "lastHarvestedAt": "2026-11-20T15:44:05.753Z",
+    "contentHash": "0596b0501f64e2e9301644d29c804c3b342b741a3728eed81f72d1ccb3ed97aa",
+    "lastHarvestedAt": "2026-11-21T20:48:19.153Z",
     "learningId": "learn-github-vcaesar-riot"
   },
   "hf-radixark-daisyrose-27b": {

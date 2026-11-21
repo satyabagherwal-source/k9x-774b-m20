@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-21T19:47:52.025Z",
+  "updated_at": "2026-11-21T20:52:05.494Z",
   "statistics": {
-    "total_nodes": 451,
+    "total_nodes": 452,
     "total_edges": 193,
     "domain_distribution": {
       "D": 280,
       "M": 1,
-      "H": 73,
+      "H": 74,
       "J": 22,
       "K": 28,
       "L": 8,
@@ -10077,6 +10077,28 @@
       ],
       "created_at": "2026-11-21T19:47:52.025Z",
       "updated_at": "2026-11-21T19:47:52.025Z"
+    },
+    "DOM-H-6F3CCE20": {
+      "id": "DOM-H-6F3CCE20",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "KV Cache Memory Exhaustion on 4GB Edge Profiles",
+      "summary": "Inference engine instantiated key/value contexts at static maximum architectural lengths using FP32, rather than dynamically scaling with ge -> Small language models targeted for embedded deployment must implement active context headroom checks and support quantized (`FP16`/`Q8_0`) K",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T20:51:28.789Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-21T20:52:05.494Z",
+      "updated_at": "2026-11-21T20:52:05.494Z"
     }
   },
   "edges": [

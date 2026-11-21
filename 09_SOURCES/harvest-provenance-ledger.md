@@ -11926,3 +11926,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-lfm3-vl-2b` | `https://huggingface.co/LiquidAI/LFM3-VL-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-21T20:36:27.532Z |
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `472b1e3f` | Multi-dimensional audit evidence | 2026-11-21T20:36:41.712Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `1d985194` | Multi-dimensional audit evidence | 2026-11-21T20:36:43.835Z |
+| `learn-github-vcaesar-riot` | `https://github.com/vcaesar/riot` | `fd10bdae` | Multi-dimensional audit evidence | 2026-11-21T20:48:19.153Z |
+| `learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf` | `https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-21T20:49:40.823Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `10bb7f9c` | Multi-dimensional audit evidence | 2026-11-21T20:51:24.447Z |
+| `learn-dom-h-6f3cce20` | `project://hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md` | 2026-11-21T20:52:05.497Z |

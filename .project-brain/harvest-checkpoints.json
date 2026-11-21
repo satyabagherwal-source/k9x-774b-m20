@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T20:36:43.845Z",
+  "last_updated": "2026-11-21T20:51:24.460Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4176,14 +4176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustls-rustls",
-      "content_hash": "7dd2c91c3c841017bca2b45aae47f749538f20099e3b583404aba297c40265df",
-      "verified_at": "2026-11-21T12:48:52.842Z",
+      "content_hash": "bff3822c9b4c0bdc9d14da1cd526613814cf288e8c78bf3ea322c2b8f80de741",
+      "verified_at": "2026-11-21T20:51:24.459Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T12:48:52.842Z"
+      "last_updated": "2026-11-21T20:51:24.459Z"
     },
     "liyupi/yu-ai-agent": {
       "repository": "liyupi/yu-ai-agent",
@@ -17241,14 +17241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
-      "content_hash": "ebcff82856f5c1ddb65f39cb50c14d066d277ef57bc1d768c61822e1eeced4fc",
-      "verified_at": "2026-11-15T16:07:01.061Z",
+      "content_hash": "e1fa39d680fe8260a25aa6cd41c7c13025f111580dee1f1d0ab126f1386f66b1",
+      "verified_at": "2026-11-21T20:49:40.833Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T16:07:01.061Z"
+      "last_updated": "2026-11-21T20:49:40.833Z"
     },
     "liketrek/TREK": {
       "repository": "liketrek/TREK",
@@ -19521,14 +19521,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vcaesar-riot",
-      "content_hash": "a964c7fcfe6798a2853fb2f7d782dcd2cd44e421ab265c32ea6800f6329867a3",
-      "verified_at": "2026-11-20T15:44:05.761Z",
+      "content_hash": "0596b0501f64e2e9301644d29c804c3b342b741a3728eed81f72d1ccb3ed97aa",
+      "verified_at": "2026-11-21T20:48:19.206Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T15:44:05.761Z"
+      "last_updated": "2026-11-21T20:48:19.206Z"
     },
     "RadixArk/DaisyRose-27B": {
       "repository": "RadixArk/DaisyRose-27B",

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T20:36:50.352Z",
+  "last_updated": "2026-11-21T20:52:09.590Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1885,14 +1885,14 @@
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop"
     },
     {
-      "id": "CD-FR4P",
+      "id": "CD-W2CQ",
       "directive_title": "Empirical Invariant Guard in README.md",
-      "source_repo": "Ontos-AI/knowhere",
-      "source_commit": "3352f322",
-      "staged_file": "11_INBOX/candidate-directives/CD-FR4P-empirical-invariant-guard-in-readme-md.md",
-      "status": "STAGED_FOR_REVIEW",
-      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
-      "date_staged": "2026-11-19",
+      "source_repo": "vcaesar-riot-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-W2CQ-empirical-invariant-guard-in-readme-md.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
       "domain_letter": "D"
     },
     {
@@ -43578,6 +43578,100 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-21",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-R4KU",
+      "directive_title": "Empirical Invariant Guard in README.md",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "vcaesar/riot",
+      "source_commit": "fd10bdae",
+      "date_staged": "2026-11-21",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-vcaesar-riot",
+      "candidateDomain": "D",
+      "candidateDomainName": "Research & Knowledge Intelligence",
+      "secondaryDomains": [
+        "I",
+        "K"
+      ],
+      "classificationConfidence": 0.1,
+      "intendedFolder": "05_KNOWLEDGE",
+      "intendedPath": "05_KNOWLEDGE/engineering-patterns.md",
+      "isUntrusted": false
+    },
+    {
+      "id": "CD-W0MQ",
+      "directive_title": "Zero-Trust Write-Length Validation and State Poisoning Guard",
+      "source_repo": "rustls-rustls-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-W0MQ-zero-trust-write-length-validation-and-state-poisoning-guard.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-W0MR",
+      "directive_title": "Asynchronous Co-Routine Fuel and Starvation Guard",
+      "source_repo": "rustls-rustls-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-W0MR-asynchronous-co-routine-fuel-and-starvation-guard.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-V3QN",
+      "directive_title": "Asynchronous Co-Routine Fuel and Starvation Guard",
+      "source_repo": "rustls/rustls",
+      "source_commit": "10bb7f9c",
+      "staged_file": "11_INBOX/candidate-directives/CD-V3QN-asynchronous-co-routine-fuel-and-starvation-guard.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-84C907",
+      "directive_title": "Gemma Base RoPE Frequency & Dimension Metadata Drift",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-84C907-gemma-base-rope-frequency-dimension-meta.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-VZFX",
+      "directive_title": "Memory-Mapped Zero-Copy Direct Page Safety Invariant",
+      "source_repo": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-VZFX-memory-mapped-zero-copy-direct-page-safety-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-VZFY",
+      "directive_title": "Strict Chat-Template State Machine Delimiter Enclosure",
+      "source_repo": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-VZFY-strict-chat-template-state-machine-delimiter-enclosure.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-39E4FA",
+      "directive_title": "Empirical Invariant Guard in README.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vcaesar-riot",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-39E4FA-empirical-invariant-guard-in-readme-md.md",
+      "staged_date": "2026-11-21"
     }
   ]
 }

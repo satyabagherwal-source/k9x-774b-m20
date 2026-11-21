@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T20:36:50.840Z",
+  "last_updated": "2026-11-21T20:52:10.087Z",
   "total_verified_learnings": 9062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23255,
+  "total_items": 23273,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -244129,13 +244129,13 @@
       "item_id": "candidate_directive-empirical-invariant-guard-in-readme-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-FR4P-empirical-invariant-guard-in-readme-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-W2CQ-empirical-invariant-guard-in-readme-md.md",
       "title": "Empirical Invariant Guard in README.md",
-      "repository": "Ontos-AI/knowhere",
-      "source_version": "3352f322",
-      "content_hash": "3f6609f9d36f6a9e38f3ed3ea888484892a8407140005588496916bb1381dc97",
+      "repository": "vcaesar-riot-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9bb723f33966d319bf4c89973aa932b4b1ff99fd5edd7b6dcd1e24d12b08f2ef",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T19:12:09.242Z"
+      "persisted_at": "2026-11-21T20:52:09.590Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-1017-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-1017-learning",
@@ -248237,16 +248237,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
       "source_version": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
-      "content_hash": "ebcff82856f5c1ddb65f39cb50c14d066d277ef57bc1d768c61822e1eeced4fc",
+      "content_hash": "e1fa39d680fe8260a25aa6cd41c7c13025f111580dee1f1d0ab126f1386f66b1",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9837,
+          "title": "Dynamic Matrix-Sensitive Quantization Allocation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9838,
+          "title": "Memory-Mapped Zero-Copy Direct Page Safety Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9839,
+          "title": "Strict Chat-Template State Machine Delimiter Enclosure",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T16:07:00.915Z",
+      "verified_at": "2026-11-21T20:49:40.507Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -259881,8 +259897,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "0a4d6057",
-      "content_hash": "7dd2c91c3c841017bca2b45aae47f749538f20099e3b583404aba297c40265df",
+      "source_version": "10bb7f9c",
+      "content_hash": "bff3822c9b4c0bdc9d14da1cd526613814cf288e8c78bf3ea322c2b8f80de741",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -259905,6 +259921,21 @@
           "number": 9783,
           "title": "fix set_var symbol in comment",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9840,
+          "title": "Zero-Trust Write-Length Validation and State Poisoning Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9841,
+          "title": "File Creation Mask and Privilege Containment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9842,
+          "title": "Asynchronous Co-Routine Fuel and Starvation Guard",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -259912,7 +259943,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T12:48:52.631Z",
+      "verified_at": "2026-11-21T20:51:24.117Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -259954,10 +259985,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-technical-construction-intelligence-rustls-rustls-core-invariants.md",
       "title": "Technical Construction Intelligence: rustls/rustls Core Invariants",
       "repository": "rustls/rustls",
-      "source_version": "0a4d6057",
-      "content_hash": "65ae26aed93a6c5489ae1bcd2144c7b72638830cc6a801d87496b5cf8358381a",
+      "source_version": "10bb7f9c",
+      "content_hash": "1aabb6e336c31420a4c3b5f505cdad0e7c31caeae37d179b26de7dced649ae1b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T12:48:53.194Z"
+      "persisted_at": "2026-11-21T20:51:25.383Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls",
@@ -259966,10 +259997,10 @@
       "relative_path": "08_VERIFICATION/rustls-rustls-verification-protocol-empirical-defect-shield-for-rustls-rustls.md",
       "title": "Verification Protocol: Empirical Defect Shield for rustls/rustls",
       "repository": "rustls/rustls",
-      "source_version": "0a4d6057",
-      "content_hash": "da4f16ff42ad3be673654956e205ba20d53b93bcfa83691890893ce34f237460",
+      "source_version": "10bb7f9c",
+      "content_hash": "ceca218520c0f186da512f26954da4881942125a8b86b2a49b96fc18c6dc67d7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T12:48:53.352Z"
+      "persisted_at": "2026-11-21T20:51:25.874Z"
     },
     "rule-8768": {
       "learning_id": "rule-8768",
@@ -260029,9 +260060,9 @@
       "title": "Technical Construction Intelligence: rustls-rustls-learnings Core Invariants",
       "repository": "rustls-rustls-learnings",
       "source_version": "HEAD",
-      "content_hash": "7e7bde571f03a16eb2821390325cdb62545139560497a8c7f7a9615cd1e79538",
+      "content_hash": "8346659f263bbe4e2e3c94184a18fd736938d265342c1627a75ecd486203d89c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T12:48:58.706Z"
+      "persisted_at": "2026-11-21T20:52:08.094Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls-learnings",
@@ -260041,9 +260072,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rustls-rustls-learnings",
       "repository": "rustls-rustls-learnings",
       "source_version": "HEAD",
-      "content_hash": "334d9be1752838aab55945c6ea2b5f5c9bdcf0a83a677f23ed7bc113f3ef84fa",
+      "content_hash": "7122d17de15439633f1c9c21a6c284fc6951d934dce456f31a2beb78239ca0ee",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T12:48:58.861Z"
+      "persisted_at": "2026-11-21T20:52:08.583Z"
     },
     "candidate_directive-sql-respect-query-block-scope-in-sql-completion": {
       "item_id": "candidate_directive-sql-respect-query-block-scope-in-sql-completion",
@@ -295720,8 +295751,8 @@
       "slug": "vcaesar-riot",
       "platform": "github",
       "source_url": "https://github.com/vcaesar/riot",
-      "source_version": "b565db8d",
-      "content_hash": "a964c7fcfe6798a2853fb2f7d782dcd2cd44e421ab265c32ea6800f6329867a3",
+      "source_version": "fd10bdae",
+      "content_hash": "0596b0501f64e2e9301644d29c804c3b342b741a3728eed81f72d1ccb3ed97aa",
       "dossier_path": "07_PROJECT_LEARNING/vcaesar-riot-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vcaesar-riot-learnings.md",
       "promoted_rules": [
@@ -295741,7 +295772,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T15:44:05.555Z",
+      "verified_at": "2026-11-21T20:48:18.847Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -295795,10 +295826,10 @@
       "relative_path": "08_VERIFICATION/vcaesar-riot-verification-protocol-empirical-defect-shield-for-vcaesar-riot.md",
       "title": "Verification Protocol: Empirical Defect Shield for vcaesar/riot",
       "repository": "vcaesar/riot",
-      "source_version": "b565db8d",
-      "content_hash": "0aef088a5582a6286fddafdd84b6c3cc92c45b6686396d1779211ae7821f907b",
+      "source_version": "fd10bdae",
+      "content_hash": "ba92b2c639aa32d8f020d6208942bcc76c4c871b6c8e9d0439f918da3d6a5a21",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T15:44:06.239Z"
+      "persisted_at": "2026-11-21T20:48:19.991Z"
     },
     "rule-9365": {
       "learning_id": "rule-9365",
@@ -295910,9 +295941,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for vcaesar-riot-learnings",
       "repository": "vcaesar-riot-learnings",
       "source_version": "HEAD",
-      "content_hash": "c3284200ed8def1161696c318336989f5116b923a99efcb304753cda83032dc2",
+      "content_hash": "3bc100d17d2aec0696fcfcc725e94c04b85c63daeec684fc272897bb366f7153",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T15:44:10.654Z"
+      "persisted_at": "2026-11-21T20:52:10.087Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-arkivanov-decompose-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arkivanov-decompose-learnings",
@@ -305969,10 +306000,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-vcaesar-riot-content-information-intelligence-vcaesar-riot-core-invariants.md",
       "title": "Content & Information Intelligence: vcaesar/riot Core Invariants",
       "repository": "vcaesar/riot",
-      "source_version": "b565db8d",
-      "content_hash": "e148d0e6f99e1dd795e83b50eb2f5fad450dee7c3190c2bc77b2b2b04119698d",
+      "source_version": "fd10bdae",
+      "content_hash": "50bf5436c437666c2a46ca690c3014701cd74af071e339d634aacd6848e2d62e",
       "domain_letter": "I",
-      "persisted_at": "2026-11-20T15:44:06.089Z"
+      "persisted_at": "2026-11-21T20:48:19.744Z"
     },
     "domain_intelligence-architecture-intelligence-archivebox-archivebox-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-archivebox-archivebox-learnings-core-invariants",
@@ -305994,9 +306025,9 @@
       "title": "Content & Information Intelligence: vcaesar-riot-learnings Core Invariants",
       "repository": "vcaesar-riot-learnings",
       "source_version": "HEAD",
-      "content_hash": "ebe5f9ad77434dd5ae634158464878b191647dbd081fe4cd3ff6bbab14c83d42",
+      "content_hash": "c8580f0ae0b65ce88278f80bdccd9b45be72e4f10d4acf2cb53f922dab41226d",
       "domain_letter": "I",
-      "persisted_at": "2026-11-20T15:44:10.503Z"
+      "persisted_at": "2026-11-21T20:52:09.826Z"
     },
     "rule-9594": {
       "learning_id": "rule-9594",
@@ -316102,6 +316133,234 @@
       "content_hash": "cc5a23002abe00bcfd8d87836f715ec8d88b00cde16848b9d4de9eaa5349e0d1",
       "domain_letter": "G",
       "persisted_at": "2026-11-21T20:36:50.352Z"
+    },
+    "rule-9837": {
+      "learning_id": "rule-9837",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9837,
+      "title": "Dynamic Matrix-Sensitive Quantization Allocation",
+      "source_url": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "source_version": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T20:49:40.507Z"
+    },
+    "rule-9838": {
+      "learning_id": "rule-9838",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9838,
+      "title": "Memory-Mapped Zero-Copy Direct Page Safety Invariant",
+      "source_url": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "source_version": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T20:49:40.507Z"
+    },
+    "rule-9839": {
+      "learning_id": "rule-9839",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9839,
+      "title": "Strict Chat-Template State Machine Delimiter Enclosure",
+      "source_url": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "source_version": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T20:49:40.507Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-co": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-co",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-technical-construction-intelligence.md",
+      "title": "Technical Construction Intelligence: unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF Core Invariants",
+      "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "source_version": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
+      "content_hash": "e02f4bfab2b7a3c9a7e1a64eebb4a80c21dbdee28b74e5e1d68f0abee34fd2d3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T20:49:41.502Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-unsloth-nvidia-nemotron-3-5-bo": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-unsloth-nvidia-nemotron-3-5-bo",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-verification-protocol-empirical-def.md",
+      "title": "Verification Protocol: Empirical Defect Shield for unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "source_version": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
+      "content_hash": "13ef9e58685cdc95ed9ce69c4cdc6a462b31722b400b3063b5dda9d19d4dd76d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T20:49:41.756Z"
+    },
+    "rule-9840": {
+      "learning_id": "rule-9840",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9840,
+      "title": "Zero-Trust Write-Length Validation and State Poisoning Guard",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "10bb7f9c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T20:51:24.117Z"
+    },
+    "rule-9841": {
+      "learning_id": "rule-9841",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9841,
+      "title": "File Creation Mask and Privilege Containment Invariant",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "10bb7f9c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T20:51:24.117Z"
+    },
+    "rule-9842": {
+      "learning_id": "rule-9842",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9842,
+      "title": "Asynchronous Co-Routine Fuel and Starvation Guard",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "10bb7f9c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T20:51:24.117Z"
+    },
+    "candidate_directive-zero-trust-write-length-validation-and-state-poisoning-guard": {
+      "item_id": "candidate_directive-zero-trust-write-length-validation-and-state-poisoning-guard",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W0MQ-zero-trust-write-length-validation-and-state-poisoning-guard.md",
+      "title": "Zero-Trust Write-Length Validation and State Poisoning Guard",
+      "repository": "rustls-rustls-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ec3f39fd28a7ff005332540b1ac70aa34242d1b7314a36225f1a6b209ea8c963",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T20:52:07.348Z"
+    },
+    "candidate_directive-file-creation-mask-and-privilege-containment-invariant": {
+      "item_id": "candidate_directive-file-creation-mask-and-privilege-containment-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W0MR-file-creation-mask-and-privilege-containment-invariant.md",
+      "title": "File Creation Mask and Privilege Containment Invariant",
+      "repository": "rustls-rustls-learnings",
+      "source_version": "HEAD",
+      "content_hash": "44c2871498684c444341a374a6ccc0d75ed42befa95e89d4a33d7943269f7681",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T20:52:07.617Z"
+    },
+    "candidate_directive-asynchronous-co-routine-fuel-and-starvation-guard": {
+      "item_id": "candidate_directive-asynchronous-co-routine-fuel-and-starvation-guard",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W0MR-asynchronous-co-routine-fuel-and-starvation-guard.md",
+      "title": "Asynchronous Co-Routine Fuel and Starvation Guard",
+      "repository": "rustls-rustls-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1786186c37f3bccccfb6ab2752dc2456d14fd51eeeddc32d027b1677071031c7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T20:52:07.842Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-rustls-rustls": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-rustls-rustls",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-rustls-rustls-adr-subsystem-boundary-modular-decoupling-in-rustls-rustls.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in rustls/rustls",
+      "repository": "rustls/rustls",
+      "source_version": "10bb7f9c",
+      "content_hash": "3da647a31b778efecd1db887db31dfdc2adb2cbe5e287bf5332067d66cabdd74",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T20:51:25.639Z"
+    },
+    "candidate_directive-dynamic-matrix-sensitive-quantization-allocation": {
+      "item_id": "candidate_directive-dynamic-matrix-sensitive-quantization-allocation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VZFX-dynamic-matrix-sensitive-quantization-allocation.md",
+      "title": "Dynamic Matrix-Sensitive Quantization Allocation",
+      "repository": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "80df2d75c9e22a4ab4055b10aec9c951b2c83243741db2ee0cd4b781a1c3ab41",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T20:52:05.807Z"
+    },
+    "candidate_directive-memory-mapped-zero-copy-direct-page-safety-invariant": {
+      "item_id": "candidate_directive-memory-mapped-zero-copy-direct-page-safety-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VZFX-memory-mapped-zero-copy-direct-page-safety-invariant.md",
+      "title": "Memory-Mapped Zero-Copy Direct Page Safety Invariant",
+      "repository": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "69c2c287a627c72bc6f737478e1da114a6f08b8c31cd187b9901e77adf3498c7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T20:52:06.066Z"
+    },
+    "candidate_directive-strict-chat-template-state-machine-delimiter-enclosure": {
+      "item_id": "candidate_directive-strict-chat-template-state-machine-delimiter-enclosure",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VZFY-strict-chat-template-state-machine-delimiter-enclosure.md",
+      "title": "Strict Chat-Template State Machine Delimiter Enclosure",
+      "repository": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "96f29e288a5d4d0932dafcac0508ba9834fbf575cc7f08b7f761dd67a193fb51",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T20:52:06.295Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-learnings-technical-construction-in.md",
+      "title": "Technical Construction Intelligence: hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings Core Invariants",
+      "repository": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1588b7c6ed1234ed7f5d0aaec97011668f6a966b994be6b6d8ecf128a5a33c88",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T20:52:06.544Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-unsloth-nvidia-nemotron-3-5": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-unsloth-nvidia-nemotron-3-5",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-learnings-verification-protocol-emp.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings",
+      "repository": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9b61fbe965bdc524351ab8795bfdc775e66ab1df0be37f755266c13957e4b7d1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T20:52:06.803Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-rustls-rustls-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-rustls-rustls-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-rustls-rustls-learnings-adr-subsystem-boundary-modular-decoupling-in-rustls-rust.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in rustls-rustls-learnings",
+      "repository": "rustls-rustls-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a5369b5fc71aba41c07871db1b3b00f3408d42cdab493566682cff2355eae157",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T20:52:08.367Z"
     }
   },
   "ai-builder-brain": {

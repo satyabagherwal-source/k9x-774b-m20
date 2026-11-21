@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-18L8",
-    "timestamp": "2026-11-19T16:40:53.948Z",
-    "repository": "pyannote/speaker-diarization-community-1",
-    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-    "contentHash": "9a97d00726b16f7b42159709fd8be7b7040ef7f16858059b1a0dd5d865d7965c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-1AGM",
-    "timestamp": "2026-11-19T16:40:56.374Z",
-    "repository": "astral-sh/uv",
-    "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "feca5bca0199c1e4d18ae36e23f79a5128b440917fc8280eb102c4de35af6a47",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-1IMM",
-    "timestamp": "2026-11-19T16:41:06.958Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "6ea93397e4c295ff033df3f3c8de99a95802050e53c887c5cb6d9e6010546d0d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-YGMM",
     "timestamp": "2026-11-19T17:06:44.014Z",
     "repository": "pola-rs/polars",
@@ -7492,6 +7447,51 @@
     "contentHash": "872d5a84a4d2fd796497f9720236abac9f47e658203d5e6b6eaee56f0e07fade",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-R4JW",
+    "timestamp": "2026-11-21T20:48:19.148Z",
+    "repository": "vcaesar/riot",
+    "learningId": "learn-github-vcaesar-riot",
+    "contentHash": "0596b0501f64e2e9301644d29c804c3b342b741a3728eed81f72d1ccb3ed97aa",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-SVKI",
+    "timestamp": "2026-11-21T20:49:40.818Z",
+    "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+    "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+    "contentHash": "e1fa39d680fe8260a25aa6cd41c7c13025f111580dee1f1d0ab126f1386f66b1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-V3IY",
+    "timestamp": "2026-11-21T20:51:24.442Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "bff3822c9b4c0bdc9d14da1cd526613814cf288e8c78bf3ea322c2b8f80de741",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

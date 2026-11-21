@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T20:36:43.841Z",
-  "total_cycles_completed": 11318,
-  "total_learnings_persisted": 11318,
-  "total_rules_promoted": 10644,
+  "last_updated": "2026-11-21T20:51:24.454Z",
+  "total_cycles_completed": 11321,
+  "total_learnings_persisted": 11321,
+  "total_rules_promoted": 10650,
   "history": [
-    {
-      "timestamp": "2026-11-21T00:43:55.543Z",
-      "repository": "neuron-core/neuron-ai",
-      "learningId": "learn-github-neuron-core-neuron-ai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T00:51:55.806Z",
-      "repository": "agent-of-empires/agent-of-empires",
-      "learningId": "learn-github-agent-of-empires-agent-of-empires",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T00:51:58.117Z",
-      "repository": "QwikDev/qwik",
-      "learningId": "learn-github-qwikdev-qwik",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T00:52:05.723Z",
       "repository": "tailscale/tailscale",
@@ -1403,6 +1382,27 @@
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T20:48:19.202Z",
+      "repository": "vcaesar/riot",
+      "learningId": "learn-github-vcaesar-riot",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T20:49:40.830Z",
+      "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T20:51:24.454Z",
+      "repository": "rustls/rustls",
+      "learningId": "learn-github-rustls-rustls",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
