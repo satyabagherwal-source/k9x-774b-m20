@@ -11890,3 +11890,6 @@
 | `CYCLE-20261121-WZLK` | `2026-11-21T20:24:53.048Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9832` | Yes (`3cd313be...`) |
 | `CYCLE-20261121-X3FX` | `2026-11-21T20:24:58.029Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9833` | Yes (`462a4690...`) |
 | `CYCLE-20261121-X93A` | `2026-11-21T20:25:05.351Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9834` | Yes (`0200bc03...`) |
+| `CYCLE-20261121-BVGN` | `2026-11-21T20:36:27.527Z` | `LiquidAI/LFM3-VL-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md` | Yes (`e8fc1e21...`) |
+| `CYCLE-20261121-C6EG` | `2026-11-21T20:36:41.704Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9835` | Yes (`e9f1c49b...`) |
+| `CYCLE-20261121-C81H` | `2026-11-21T20:36:43.829Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9836` | Yes (`872d5a84...`) |

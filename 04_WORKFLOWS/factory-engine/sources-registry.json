@@ -29,14 +29,14 @@
     "officialUrl": "https://github.com/Mintplex-Labs/anything-llm",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-20T15:35:20.574Z",
-    "lastVerified": "2026-11-20T15:35:20.574Z",
+    "lastChecked": "2026-11-21T20:36:40.377Z",
+    "lastVerified": "2026-11-21T20:36:40.377Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mintplex-labs-anything-llm",
-    "contentHash": "fcf163f2a99f239d4f5f499ff1c537f0563c50e40220962255096e40a093fcb6",
+    "contentHash": "e9f1c49be1aa76eb71946c4dd898ed3723ec8d26ff0fa0fe72840670f2e53667",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T20:25:08.788Z",
-    "lastVerified": "2026-11-21T20:25:08.788Z",
+    "lastChecked": "2026-11-21T20:36:47.322Z",
+    "lastVerified": "2026-11-21T20:36:47.322Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -171,22 +171,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T19:27:30.553Z",
-    "lastVerified": "2026-11-21T19:27:30.553Z",
+    "lastChecked": "2026-11-21T20:36:42.503Z",
+    "lastVerified": "2026-11-21T20:36:42.503Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "d69d276017e6bc2343b921801bb9d3314894c935687d4781d8395f72f54afa97",
+    "contentHash": "872d5a84a4d2fd796497f9720236abac9f47e658203d5e6b6eaee56f0e07fade",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b17474d2"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -887,9 +886,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-21T12:38:00.802Z",
+    "lastChecked": "2026-11-21T20:36:33.728Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-21T12:38:00.802Z"
+    "lastVerified": "2026-11-21T20:36:33.728Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate/weaviate",
@@ -1536,9 +1535,9 @@
   "go-kratos-kratos": {
     "name": "kratos",
     "officialUrl": "https://github.com/go-kratos/kratos",
-    "lastChecked": "2026-11-20T17:12:10.084Z",
+    "lastChecked": "2026-11-21T20:36:31.192Z",
     "revisionIdentifier": "dd0fb7df",
-    "lastVerified": "2026-11-20T17:12:10.084Z"
+    "lastVerified": "2026-11-21T20:36:31.192Z"
   },
   "lunasec-io-lunasec": {
     "name": "lunasec",
@@ -3013,9 +3012,9 @@
   "akveo-react-native-ui-kitten": {
     "name": "react-native-ui-kitten",
     "officialUrl": "https://github.com/akveo/react-native-ui-kitten",
-    "lastChecked": "2026-11-18T15:34:59.770Z",
+    "lastChecked": "2026-11-21T20:36:28.798Z",
     "revisionIdentifier": "e73dce62",
-    "lastVerified": "2026-11-18T15:34:59.770Z"
+    "lastVerified": "2026-11-21T20:36:28.798Z"
   },
   "beclab-olares": {
     "name": "beclab/Olares",
@@ -3479,9 +3478,9 @@
   "imsnif-bandwhich": {
     "name": "bandwhich",
     "officialUrl": "https://github.com/imsnif/bandwhich",
-    "lastChecked": "2026-11-20T04:57:52.100Z",
+    "lastChecked": "2026-11-21T20:36:23.708Z",
     "revisionIdentifier": "1899870c",
-    "lastVerified": "2026-11-20T04:57:52.100Z"
+    "lastVerified": "2026-11-21T20:36:23.708Z"
   },
   "hf-cloudflare-clef-flash": {
     "name": "Cloudflare/clef-flash",
@@ -12793,6 +12792,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
     "contentHash": "90465e2d835c37476f3cf604655d4d1d22860054d3e94df3546c311816e5ae71",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-liquidai-lfm3-vl-2b": {
+    "name": "LiquidAI/LFM3-VL-2B",
+    "officialUrl": "https://huggingface.co/LiquidAI/LFM3-VL-2B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T20:36:26.642Z",
+    "lastVerified": "2026-11-21T20:36:26.642Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
+    "contentHash": "e8fc1e21abeb4164939253907e7864fa1c47fa52da50b34157901366294ab468",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

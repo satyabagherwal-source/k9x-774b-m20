@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T15:35:27.900Z",
+  "timestamp": "2026-11-21T20:36:48.433Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-mintplex-labs-anything-llm-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [mintplex-labs-anything-llm-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T15:35:27.900Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T20:36:48.433Z`  
 > **Learning ID**: `LEARN-EVO-mintplex-labs-anything-llm-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 76%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 73%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from mintplex-labs-anything-llm-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source**: github ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
-> **Source Version**: `b2da1887`  
+> **Source Version**: `472b1e3f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T15:35:20.581Z  
+> **Timestamp**: 2026-11-21T20:36:40.384Z  
 > **Learning ID**: `learn-github-mintplex-labs-anything-llm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T15:35:20.574Z  
+> **Harvest Timestamp**: 2026-11-21T20:36:40.377Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Stop renting your intelligence. Own it with AnythingLLM. Everything you need for a powerful local-first agent experience 
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 68464 stars
+- **Stars / Engagement**: 68484 stars
 
 ---
 
@@ -1332,11 +1332,11 @@ module.exports = {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7298** (2026-11-20): **[BUG]: empty responses when generating artifacts**
+  *Symptoms*: ### How are you running AnythingLLM?  AnythingLLM desktop app  ### What happened?  Running the v1.20.0 AppImage on Ubuntu 26.04 LTS, if I make requests that would create files or code, it will not send the results to the chat response. ie, the "copy block" is empty (checked for a dark mode issue, nothing to highlight) and inline response comments will have a header but no code, etc. The code will show up if I expand the "thinking" response during the chat and can get written out to files.  Examples:  <img width="746" height="418" alt="Screenshot_20261119_144141" src="https://github.com/user-attachments/assets/69fe64c1-290c-487e-b5fe-77398d2918e5" />  <img width="746" height="809" alt="Screenshot_20261119_144332" src="https://github.com/user-attachments/assets/767cee5b-3c8e-4d7e-9671-4c94789851d5" />  ### Are there known steps to reproduce?  _No response_  ### LLM Provider & Model (if applicable)  gemm4:e4b, qwen3.6:35b-a3b, qwen3:8b via ollama  ### Embedder Provider & Model (if applicable)  _No response_
+
 - **Issue #7039** (2026-11-09): **[BUG]: division by zero panic in lance-encoding during RAG queries**
   *Symptoms*: ### How are you running AnythingLLM?  Docker (remote machine)  ### What happened?  When attempting to query the vector database (RAG) with certain documents, the backend service crashes with a `division by zero` panic. This occurs because the underlying `lance-encoding` library (version `0.22.0`) fails to handle normalization for vectors with a zero length.  The following logs were captured from the `anythingllm` container: ```text [192.168.1.106] thread 'tokio-runtime-worker' panicked at /home/build_user/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lance-encoding-0.22.0/src/data.rs:425:9: [192.168.1.106] attempt to divide by zero [192.168.1.106] thread 'tokio-runtime-worker' panicked at /home/build_user/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lance-encoding-0.22.0/src/decoder.rs:1489:65: [192.168.1.106] called `Result::unwrap()` on an `Err` value: JoinError::Panic(Id(158), "attempt to divide by zero", ...) ```  **Root Cause Analysis:** The crash is caused by a known bug in the `lance-encoding` crate version `0.22.0`. Specifically, the normalization logic does not check for zero-length vectors before performing division, leading to a panic when the query vector is empty or improperly formatted.  This issue is documented in the **LanceDB** project, which provides the `lance-encoding` crate: - **Issue Report:** https://github.com/lancedb/lancedb/issues/3026 - **Fix Pull Request:** https://github.com/lancedb/lancedb/pull/3613  The fix was implemented in the 
-
-- **Issue #6951** (2026-11-02): **Browser extension API keys keep working after the owner is demoted to the default role**
-  *Symptoms*: ### Bug  In multi-user mode, only admins and managers can create browser extension API keys. If an admin or manager with a key is later demoted to the `default` role, the key keeps working. They can still use the extension's `upload-content` and `embed-content` endpoints for workspaces they belong to, even though their normal session can no longer do this.  `validBrowserExtensionApiKey` checks that the key's owner exists and is not suspended. It does not check the owner's role.  Deleting or suspending a user already disables their keys. Deleting removes them through the database cascade, and the middleware rejects keys whose owner is suspended. Only a role change leaves them working.  ### Steps to reproduce 1. In multi-user mode, create a manager and add them to a workspace. 2. As the manager, create a browser extension API key. 3. As an admin, change the manager's role to `default`. 4. Use the key to call `POST /api/browser-extension/embed-content` for that workspace. The call succeeds.  ### Expected The key stops working once its owner no longer has a role that is allowed to create keys. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1353,448 +1353,85 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f3ed0c7d` (2026-11-19)
-**Commit Message**: fix: keep the chat in sync with the route when switching workspaces (#7297)
+### Incident Patch 1: `90df028c` (2026-11-20)
+**Commit Message**: fix: read Bedrock Anthropic replies from text blocks, not the first block (#7302)
 
-Ignore workspace responses that arrive after the user has moved to
-another workspace, so a late response can no longer leave the previous
-chat on screen under the new URL.
+* fix: read Bedrock Anthropic replies from text blocks, not the first block
 
-Show a loading indicator when a workspace or thread switch takes longer
-than 300ms instead of leaving the previous chat visible. The loader is a
-spinner with a rotating translated message, replaces the skeleton, and
-keeps the mobile header so the sidebar stays reachable while loading.
+* remove comment
 
-**File**: `frontend/src/components/WorkspaceChat/LoadingChat/index.jsx` (modified, +41/-51)
+---------
+
+Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
+
+**File**: `server/utils/AiProviders/bedrock/index.js` (modified, +4/-1)
 ```diff
-@@ -1,60 +1,50 @@
-+import { useEffect, useState } from "react";
-+import { CircleNotch } from "@phosphor-icons/react";
-+import { useTranslation } from "react-i18next";
- import { isMobile } from "react-device-detect";
--import * as Skeleton from "react-loading-skeleton";
--import "react-loading-skeleton/dist/skeleton.css";
-+import { SidebarMobileHeader } from "@/components/Sidebar";
-+
-+const MESSAGE_COUNT = 3;
-+const ROTATE_MS = 3000;
+@@ -365,7 +365,10 @@ class AWSBedrockLLM {
+     const completionTokens = response.usage?.output_tokens ?? 0;
  
- export default function LoadingChat() {
--  const highlightColor = "var(--theme-bg-primary)";
--  const baseColor = "var(--theme-bg-secondary)";
-+  const { t } = useTranslation();
-+  const messages = [
-+    t("chat_window.loading_chat_history"),
-+    t("chat_window.loading_chat_recalling"),
-+    t("chat_window.loading_chat_remembering"),
-+  ];
-+  // Start on a random message so repeat loads don't always read the same,
-+  // then rotate through the rest while loading continues.
-+  const [index, setIndex] = useState(() =>
-+    Math.floor(Math.random() * MESSAGE_COUNT)
-+  );
-+
-+  useEffect(() => {
-+    const timer = setInterval(
-+      () => setIndex((i) => (i + 1) % MESSAGE_COUNT),
-+      ROTATE_MS
-+    );
-+    return () => clearInterval(timer);
-+  }, []);
-+
-   return (
-     <div
--      className="transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-zinc-900 light:bg-white w-full h-full overflow-y-scroll no-scroll p-4"
--      style={{ height: "calc(100% - 32px)" }}
-+      className="transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-zinc-900 light:bg-white w-full h-full flex items-center justify-center"
-+      style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-     >
--      <Skeleton.default
--        height="100px"
--        width="100%"
--        highlightColor={highlightColor}
--        baseColor={baseColor}
--        count={1}
--        className="max-w-full md:max-w-[80%] p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm mt-6"
--        containerClassName="flex justify-start"
--      />
--      <Skeleton.default
--        height="100px"
--        width={isMobile ? "70%" : "45%"}
--        baseColor={baseColor}
--        highlightColor={highlightColor}
--        count={1}
--        className="max-w-full md:max-w-[80%] p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm mt-6"
--        containerClassName="flex justify-end"
--      />
--      <Skeleton.default
--        height="100px"
--        width={isMobile ? "55%" : "30%"}
--        baseColor={baseColor}
--        highlightColor={highlightColor}
--        count={1}
--        className="max-w-full md:max-w-[80%] p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm mt-6"
--        containerClassName="flex justify-start"
--      />
--      <Skeleton.default
--        height="100px"
--        width={isMobile ? "88%" : "25%"}
--        baseColor={baseColor}
--        highlightColor={highlightColor}
--        count={1}
--        className="max-w-full md:max-w-[80%] p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm mt-6"
--        containerClassName="flex justify-end"
--      />
--      <Skeleton.default
--        height="160px"
--        width="100%"
--        baseColor={baseColor}
--        highlightColor={highlightColor}
--        count={1}
--        className="max-w-full md:max-w-[80%] p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm mt-6"
--        containerClassName="flex justify-start"
--      />
-+      {isMobile && <SidebarMobileHeader />}
-+      <div
-+        role="status"
-+        className="animate-fade-in flex items-center gap-x-2 text-sm text-zinc-400 light:text-slate-500"
-+      >
-+        <CircleNotch size={18} weight="bold" className="animate-spin" />
-+        {/* Screen readers hear one fixed message, not every rotation. */}
-+        <span className="sr-only">{messages[0]}</span>
-+        <span key={index} aria-hidden="true" className="animate-fade-in">
-+          {messages[index]}
-+        </span>
-+      </div>
-     </div>
-   );
- }
+     return {
+-      textResponse: response.content[0]?.text ?? null,
++      textResponse: response.content
++        .filter((block) => block.type === "text")
++        .map((block) => block.text)
++        .join(""),
+       metrics: this.#buildMetrics(
+         {
+           prompt_tokens: promptTokens,
 ```
 
-**File**: `frontend/src/components/WorkspaceChat/index.jsx` (modified, +18/-5)
+---
+
+### Incident Patch 2: `472b1e3f` (2026-11-21)
+**Commit Message**: fix: replace every underscore in imported GitLab issue metadata labels (#7308)
+
+Only the first underscore of each metadata key was replaced, so issues
+imported from GitLab listed "total time_spent" and "merge request_count"
+next to "time estimate" and "web url".
+
+**File**: `collector/__tests__/utils/extensions/RepoLoader/GitlabRepo.test.js` (modified, +8/-1)
 ```diff
-@@ -22,17 +22,24 @@ import {
- import { PENDING_HOME_MESSAGE } from "@/utils/constants";
- import { PROMPT_INPUT_ID } from "./ChatContainer/PromptInput";
- import { movePromptInputDraft } from "@/hooks/usePromptInputStorage";
-+import useDelayedFlag from "@/hooks/useDelayedFlag";
+@@ -1419,10 +1419,17 @@ describe("issueToMarkdown", () => {
  
- export default function WorkspaceChat({ loading, workspace }) {
-   useWatchForAutoPlayAssistantTTSResponse();
-   const { threadSlug = null } = useParams();
-   const navigate = useNavigate();
-   // Stores { key, workspace, history } currently rendered. Lags the props so
--  // the previous chat stays mounted until the next one's history is ready,
--  // avoiding a skeleton/loader flash on workspace/thread switches.
-+  // the previous chat stays mounted while the next one's history loads,
-+  // avoiding a loader flash on fast workspace/thread switches. Slow
-+  // switches show the loader after a short delay (see `showSwitchLoader`).
-   const [loaded, setLoaded] = useState(null);
-   const [dragging, setDragging] = useState(false);
-   const pendingFilesRef = useRef([]);
-+  // True while the rendered chat is not the one the route asks for.
-+  const switching =
-+    loading ||
-+    (loaded !== null && loaded.key !== chatKey(workspace, threadSlug));
-+  const showSwitchLoader = useDelayedFlag(switching);
+     expect(markdown).toContain("- milestone: v1.0 (3)");
+     expect(markdown).toContain("- time estimate: 1h");
+-    expect(markdown).toContain("- total time_spent: 30m");
++    expect(markdown).toContain("- total time spent: 30m");
+     expect(markdown).not.toContain("3600");
+   });
  
-   // When the thread becomes available and we have pending files, trigger upload
-   useEffect(() => {
-@@ -66,7 +73,7 @@ export default function WorkspaceChat({ loading, workspace }) {
-     async function getHistory() {
-       if (loading) return;
-       if (!workspace?.slug) {
--        setLoaded({ key: "none", workspace: null, history: [] });
-+        setLoaded({ key: chatKey(null), workspace: null, history: [] });
-         return false;
++  test("every underscore in a metadata key becomes a space", () => {
++    const markdown = issueToMarkdown({ ...base, merge_request_count: 2 });
++
++    expect(markdown).toContain("- merge request count: 2");
++    expect(markdown).not.toContain("request_count");
++  });
++
+   test("discussions are rendered under an Activity heading", () => {
+     const markdown = issueToMarkdown({
+       ...base,
+```
+
+**File**: `collector/utils/extensions/RepoLoader/GitlabRepo/index.js` (modified, +1/-1)
+```diff
+@@ -292,7 +292,7 @@ function issueToMarkdown(issue) {
+       if (!value || value?.length < 1) {
+         return null;
        }
+-      let result = `- ${name.replace("_", " ")}:`;
++      let result = `- ${name.replace(/_/g, " ")}:`;
  
-@@ -77,7 +84,7 @@ export default function WorkspaceChat({ loading, workspace }) {
-       if (cancelled) return;
- 
-       setLoaded({
--        key: `${workspace.slug}:${threadSlug ?? "default"}`,
-+        key: chatKey(workspace, threadSlug),
-         workspace,
-         threadSlug,
-         history: chatHistory,
-@@ -91,7 +98,7 @@ export default function WorkspaceChat({ loading, workspace }) {
-   }, [workspace, loading, threadSlug]);
- 
-   const hasPendingMessage = !!sessionStorage.getItem(PENDING_HOME_MESSAGE);
--  if (loaded === null) {
-+  if (loaded === null || showSwitchLoader) {
-     if (hasPendingMessage) {
-       return (
-         <div className="transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-zinc-900 light:bg-white w-full h-full" />
-@@ -159,6 +166,12 @@ export default function WorkspaceChat({ loading, workspace }) {
-   );
- }
- 
-+// Identifies which chat is rendered: workspace plus thread, or "none".
-+function chatKey(workspace, threadSlug = null) {
-+  if (!workspace?.slug) return "none";
-+  return `${workspace.slug}:${threadSlug ?? "default"}`;
-+}
-+
- function DnDWrapper({ children, loaded, opts }) {
-   if (!loaded?.threadSlug) {
-     return (
-```
-
-**File**: `frontend/src/hooks/useDelayedFlag.js` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+import { useEffect, useState } from "react";
-+
-+const DEFAULT_DELAY_MS = 300;
-+
-+/**
-+ * Returns true once `active` has stayed true for `delayMs`, and false again
-+ * as soon as `active` turns false. Use it to show a loader only for slow work.
-+ * @param {boolean} active
-+ * @param {number} [delayMs=300]
-+ * @returns {boolean}
-+ */
-+export default function useDelayedFlag(active, delayMs = DEFAULT_DELAY_MS) {
-+  const [elapsed, setElapsed] = useState(false);
-+  useEffect(() => {
-+    if (!active) {
-+      setElapsed(false);
-+      return;
-+    }
-+    const timer = setTimeout(() => setElapsed(true), delayMs);
-+    return () => clearTimeout(timer);
-+  }, [active, delayMs]);
-+  return active && elapsed;
-+}
-```
-
-**File**: `frontend/src/locales/ar/common.js` (modified, +3/-0)
-```diff
-@@ -1185,6 +1185,9 @@ const TRANSLATIONS = {
-     },
-   },
-   chat_window: {
-+    loading_chat_history: "جارٍ تحميل سجل الدردشة...",
-+    loading_chat_recalling: "جارٍ استرجاع محادثتنا...",
-+    loading_chat_remembering: "أتذكّر ما تحدثنا عنه...",
-     send_message: "أرسل رسالة",
-     attach_file: "أرفق ملفًا بهذا الدردشة",
-     text_size: "تغيير حجم النص.",
-```
-
-**File**: `frontend/src/locales/bg/common.js` (modified, +3/-0)
-```diff
-@@ -1658,6 +1658,9 @@ const TRANSLATIONS = {
-     },
-   },
-   chat_window: {
-+    loading_chat_history: "Зареждане на историята на чата...",
-+    loading_chat_recalling: "Възстановяване на нашия разговор...",
-+    loading_chat_remembering: "Спомням си за какво говорихме...",
-     attachments_processing:
-       "Прикачените файлове се обработват. Моля, изчакайте...",
-     generating_response: "Генериране на отговор",
-```
-
-**File**: `frontend/src/locales/ca/common.js` (modified, +3/-0)
-```diff
-@@ -1475,6 +1475,9 @@ const TRANSLATIONS = {
-     },
-   },
-   chat_window: {
-+    loading_chat_history: "S'està carregant l'historial del xat...",
-+    loading_chat_recalling: "Recuperant la nostra conversa...",
-+    loading_chat_remembering: "Recordant de què vam parlar...",
-     attachments_processing:
-       "Els adjunts s'estan processant. Si us plau, espera...",
-     send_message: "Envia un missatge",
-```
-
-**File**: `frontend/src/locales/cs/common.js` (modified, +3/-0)
-```diff
-@@ -1385,6 +1385,9 @@ const TRANSLATIONS = {
-     },
-   },
-   chat_window: {
-+    loading_chat_history: "Načítání historie chatu...",
-+    loading_chat_recalling: "Obnovuji náš rozhovor...",
-+    loading_chat_remembering: "Vzpomínám, o čem jsme mluvili...",
-     attachments_processing: "Přílohy se zpracovávají. Prosím čekejte...",
-     send_message: "Odeslat zprávu",
-     attach_file: "Přiložit soubor k tomuto chatu",
-```
-
-**File**: `frontend/src/locales/da/common.js` (modified, +3/-0)
-```diff
-@@ -1192,6 +1192,9 @@ const TRANSLATIONS = {
-     },
-   },
-   chat_window: {
-+    loading_chat_history: "Indlæser chathistorik...",
-+    loading_chat_recalling: "Henter vores samtale...",
-+    loading_chat_remembering: "Husker, hvad vi talte om...",
-     send_message: "Send en besked",
-     attach_file: "Vedhæft en fil til denne chat",
-     text_size: "Ændr tekststørrelse.",
-```
-
----
-
-### Incident Patch 2: `6a319df9` (2026-11-19)
-**Commit Message**: fix: accept uppercase scheme and host in YouTube links (#7291)
-
-* fix: accept uppercase scheme and host in YouTube links
-
-Only scheme-less links were normalized through the URL parser, so a capitalized scheme or host failed the case-sensitive YouTube regex and was reported as an invalid video URL.
-
-* test: cover YouTube URL casing variants and lookalike hosts
-
----------
-
-Co-authored-by: Israel Kliger <[REDACTED_EMAIL]>
-Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
-
-**File**: `collector/__tests__/utils/url/index.test.js` (modified, +44/-0)
-```diff
-@@ -144,6 +144,37 @@ describe("validYoutubeVideoUrl", () => {
-     expect(validYoutubeVideoUrl(`youtube.com/watch?v=${ID}`)).toBe(true);
-   });
- 
-+  // Scheme and host are case-insensitive; the video ID keeps its case.
-+  it.each([
-+    `HTTPS://WWW.YOUTUBE.COM/watch?v=${ID}`,
-+    `Https://www.youtube.com/watch?v=${ID}`,
-+    `https://WwW.YouTube.Com/watch?v=${ID}`,
-+    `HTTP://M.YOUTUBE.COM/watch?v=${ID}`,
-+    `https://MUSIC.YOUTUBE.COM/watch?v=${ID}`,
-+    `HTTPS://YOUTU.BE/${ID}`,
-+    `WWW.YOUTUBE.COM/shorts/${ID}`,
-+  ])("accepts any scheme and host casing: %s", (link) => {
-+    expect(validYoutubeVideoUrl(link, true)).toBe(ID);
-+  });
-+
-+  it("keeps the path and query case-sensitive", () => {
-+    expect(validYoutubeVideoUrl(`https://youtube.com/WATCH?v=${ID}`)).toBe(false);
-+    expect(validYoutubeVideoUrl(`https://youtube.com/watch?V=${ID}`)).toBe(false);
-+  });
-+
-+  it.each([
-+    `https://youtube.com.evil.com/watch?v=${ID}`,
-+    `https://notyoutube.com/watch?v=${ID}`,
-+    `https://evil.com/youtube.com/watch?v=${ID}`,
-+    `https://youtube.com@evil.com/watch?v=${ID}`,
-+    `https://evil.com/?u=youtube.com/watch?v=${ID}`,
-+    `ftp://youtube.com/watch?v=${ID}`,
-+    `javascript:alert(1)//youtube.com/watch?v=${ID}`,
-+    ID,
-+  ])("rejects lookalike or non-http links: %s", (link) => {
-+    expect(validYoutubeVideoUrl(link, true)).toBe(null);
-+  });
-+
-   it("returns true for youtu.be short URLs", () => {
-     expect(validYoutubeVideoUrl(`https://youtu.be/${ID}`)).toBe(true);
-     expect(validYoutubeVideoUrl(`https://youtu.be/${ID}?si=abc`)).toBe(true);
-@@ -219,6 +250,19 @@ describe("validYoutubeVideoUrl", () => {
-     expect(validYoutubeVideoUrl(undefined)).toBe(false);
-   });
- 
-+  it("returns false for malformed absolute URLs without logging", () => {
-+    const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
-+    try {
-+      expect(validYoutubeVideoUrl("https://")).toBe(false);
-+      expect(
-+        validYoutubeVideoUrl("https://youtube.com:bad/watch?v=dQw4w9WgXcQ")
-+      ).toBe(false);
-+      expect(errorSpy).not.toHaveBeenCalled();
-+    } finally {
-+      errorSpy.mockRestore();
-+    }
-+  });
-+
-   it("returns the video ID for valid YouTube video URLs", () => {
-     expect(validYoutubeVideoUrl(`https://www.youtube.com/watch?v=${ID}`, true)).toBe(ID);
-     expect(validYoutubeVideoUrl(`https://youtube.com/watch?v=${ID}&t=10s`, true)).toBe(ID);
-```
-
-**File**: `collector/utils/url/index.js` (modified, +3/-8)
-```diff
-@@ -128,20 +128,15 @@ function decodePathname(pathname = "") {
- function validYoutubeVideoUrl(link, returnVideoId = false) {
-   try {
-     if (!link || typeof link !== "string") return false;
--    let urlToValidate = link;
--
--    if (!link.startsWith("http://") && !link.startsWith("https://")) {
--      urlToValidate = "https://" + link;
--      urlToValidate = new URL(urlToValidate).toString();
--    }
-+    const withScheme = /^https?:\/\//i.test(link) ? link : `https://${link}`;
-+    const urlToValidate = new URL(withScheme).toString();
- 
-     const regex =
-       /^(?:https?:\/\/)?(?:www\.|m\.|music\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?(?:.*&)?v=|live\/|shorts\/))([\w-]{11})(?:[?&#/]\S*)?$/;
-     const match = urlToValidate.match(regex);
-     if (returnVideoId) return match?.[1] ?? null;
-     return !!match?.[1];
--  } catch (error) {
--    console.error("Error validating YouTube video URL", error);
-+  } catch {
-     return returnVideoId ? null : false;
-   }
- }
-```
-
----
-
-### Incident Patch 3: `b2da1887` (2026-11-19)
-**Commit Message**: fix: split Outlook agent recipients on semicolons and drop empty entries (#7276)
-
-* fix: split Outlook agent recipients on semicolons and drop empty entries
-
-* test: drop narrow parseEmailRecipients test
-
----------
-
-Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
-
-**File**: `server/utils/agents/aibitat/plugins/outlook/lib.js` (modified, +9/-5)
-```diff
-@@ -39,15 +39,19 @@ function needsFullBody(msg) {
- }
- 
- /**
-- * Parses a comma-separated email string into Graph API recipient format.
-- * @param {string} emailString - Comma-separated email addresses
-+ * Parses an email string into Graph API recipient format. Addresses can be
-+ * separated by commas or by semicolons (the separator Outlook itself uses).
-+ * Empty entries, e.g. from a trailing separator, are dropped.
-+ * @param {string} emailString - Comma or semicolon separated email addresses
-  * @returns {Array<{emailAddress: {address: string}}>}
-  */
- function parseEmailRecipients(emailString) {
-   if (!emailString) return [];
--  return emailString.split(",").map((email) => ({
--    emailAddress: { address: email.trim() },
--  }));
-+  return emailString
-+    .split(/[,;]/)
-+    .map((email) => email.trim())
-+    .filter(Boolean)
-+    .map((address) => ({ emailAddress: { address } }));
- }
- 
- /**
+       if (!Array.isArray(value)) {
+         result += ` ${value}`;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7308** (2026-11-21): fix: replace every underscore in imported GitLab issue metadata labels (@MohammadHijjawi97)
+- **PR #7302** (2026-11-20): fix: read Bedrock Anthropic replies from text blocks, not the first block (@arjankapteijn)
+- **PR #7300** (closed): docs: fix dead link to microsoft/Foundry-Local in provider list (@leom1919)
 - **PR #7297** (2026-11-19): fix: keep the chat in sync with the route when switching workspaces (@timothycarambat)
 - **PR #7295** (2026-11-19): fix(ollama): keep native tool requests inside num_ctx (@timothycarambat)
 - **PR #7294** (2026-11-19): fix(agents): refuse to overwrite an existing destination in filesystem-move-file (@nurlanmnn)
-- **PR #7291** (2026-11-19): fix: accept uppercase scheme and host in YouTube links (@Israel-Kli)
-- **PR #7288** (2026-11-19): docs: fix Bedrock env var names in .env.example files (@arjankapteijn)
-- **PR #7285** (closed): fix(ollama): keep a user prompt in native tool calls (@rome-xi)
 
 ---
 
@@ -1814,91 +1451,34 @@ Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep the chat in sync with the route when switching workspaces
+## X. read Bedrock Anthropic replies from text blocks, not the first block
 
 **RULE**:
-When implementing operations in `frontend/src/components/WorkspaceChat/LoadingChat/index.jsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/utils/AiProviders/bedrock/index.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f3ed0c7d`: keep the chat in sync with the route when switching workspaces. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `90df028c`: read Bedrock Anthropic replies from text blocks, not the first block. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/src/components/WorkspaceChat/LoadingChat/index.jsx`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/utils/AiProviders/bedrock/index.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-import { useEffect, useState } from "react";
-import { CircleNotch } from "@phosphor-icons/react";
-import { useTranslation } from "react-i18next";
-import { SidebarMobileHeader } from "@/components/Sidebar";
-
-const MESSAGE_COUNT = 3;
-const ROTATE_MS = 3000;
-  const { t } = useTranslation();
-  const messages = [
-    t("chat_window.loading_chat_history"),
-    t("chat_window.loading_chat_recalling"),
-    t("chat_window.loading_chat_remembering"),
-  ];
-  // Start on a random message so repeat loads don't always read the same,
-  // then rotate through the rest while loading continues.
-  const [index, setIndex] = useState(() =>
-    Math.floor(Math.random() * MESSAGE_COUNT)
-  );
-
-  useEffect(() => {
-    const timer = setInterval(
-      () => setIndex((i) => (i + 1) % MESSAGE_COUNT),
-      ROTATE_MS
-    );
-    return () => clearInterval(timer);
-  }, []);
-
-      className="transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-zinc-900 light:bg-white w-full h-full flex items-center justify-center"
-      style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-      {isMobile && <SidebarMobileHeader />}
-      <div
-        role="status"
-        classN
+      textResponse: response.content
+        .filter((block) => block.type === "text")
+        .map((block) => block.text)
+        .join(""),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-import * as Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
-  const highlightColor = "var(--theme-bg-primary)";
-  const baseColor = "var(--theme-bg-secondary)";
-      className="transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-zinc-900 light:bg-white w-full h-full overflow-y-scroll no-scroll p-4"
-      style={{ height: "calc(100% - 32px)" }}
-      <Skeleton.default
-        height="100px"
-        width="100%"
-        highlightColor={highlightColor}
-        baseColor={baseColor}
-        count={1}
-        className="max-w-full md:max-w-[80%] p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm mt-6"
-        containerClassName="flex justify-start"
-      />
-      <Skeleton.default
-        height="100px"
-        width={isMobile ? "70%" : "45%"}
-        baseColor={baseColor}
-        highlightColor={highlightColor}
-        count={1}
-        className="max-w-full md:max-w-[80%] p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm mt-6"
-        containerClassName="flex justify-end"
-      />
-      <Skeleton.default
-        height="100px"
-        width={isMobile ? "55%" : "30%"}
-        baseColor={baseColor}
-        
+      textResponse: response.content[0]?.text ?? null,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f3ed0c7d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `90df028c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

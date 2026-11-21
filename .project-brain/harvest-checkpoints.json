@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T20:25:05.366Z",
+  "last_updated": "2026-11-21T20:36:43.845Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "d69d276017e6bc2343b921801bb9d3314894c935687d4781d8395f72f54afa97",
-      "verified_at": "2026-11-21T18:23:05.849Z",
+      "content_hash": "872d5a84a4d2fd796497f9720236abac9f47e658203d5e6b6eaee56f0e07fade",
+      "verified_at": "2026-11-21T20:36:43.845Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T18:23:05.849Z"
+      "last_updated": "2026-11-21T20:36:43.845Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -9801,14 +9801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mintplex-labs-anything-llm",
-      "content_hash": "fcf163f2a99f239d4f5f499ff1c537f0563c50e40220962255096e40a093fcb6",
-      "verified_at": "2026-11-20T15:35:21.621Z",
+      "content_hash": "e9f1c49be1aa76eb71946c4dd898ed3723ec8d26ff0fa0fe72840670f2e53667",
+      "verified_at": "2026-11-21T20:36:41.721Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T15:35:21.621Z"
+      "last_updated": "2026-11-21T20:36:41.721Z"
     },
     "shadcn-ui/taxonomy": {
       "repository": "shadcn-ui/taxonomy",
@@ -17226,14 +17226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-vl-2b",
-      "content_hash": "0635b94793bfc6d3d2f28e87e82f2de9ac90d4478ae120c736c53d08bcd46c48",
-      "verified_at": "2026-11-15T13:27:18.688Z",
+      "content_hash": "e8fc1e21abeb4164939253907e7864fa1c47fa52da50b34157901366294ab468",
+      "verified_at": "2026-11-21T20:36:27.546Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T13:27:18.688Z"
+      "last_updated": "2026-11-21T20:36:27.546Z"
     },
     "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF": {
       "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",

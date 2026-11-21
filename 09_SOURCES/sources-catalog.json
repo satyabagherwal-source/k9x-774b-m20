@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "b17474d2",
+    "sourceVersion": "1d985194",
     "license": "NOASSERTION",
-    "contentHash": "d69d276017e6bc2343b921801bb9d3314894c935687d4781d8395f72f54afa97",
-    "lastHarvestedAt": "2026-11-21T18:23:05.838Z",
+    "contentHash": "872d5a84a4d2fd796497f9720236abac9f47e658203d5e6b6eaee56f0e07fade",
+    "lastHarvestedAt": "2026-11-21T20:36:43.835Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -6473,10 +6473,10 @@
     "repository": "Mintplex-Labs/anything-llm",
     "platform": "github",
     "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
-    "sourceVersion": "b2da1887",
+    "sourceVersion": "472b1e3f",
     "license": "MIT",
-    "contentHash": "fcf163f2a99f239d4f5f499ff1c537f0563c50e40220962255096e40a093fcb6",
-    "lastHarvestedAt": "2026-11-20T15:35:21.612Z",
+    "contentHash": "e9f1c49be1aa76eb71946c4dd898ed3723ec8d26ff0fa0fe72840670f2e53667",
+    "lastHarvestedAt": "2026-11-21T20:36:41.712Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
   },
   "shadcn-ui-taxonomy": {
@@ -11455,8 +11455,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-VL-2B",
     "sourceVersion": "hf-liquidai-lfm3-vl-2b",
     "license": "Open-Source",
-    "contentHash": "0635b94793bfc6d3d2f28e87e82f2de9ac90d4478ae120c736c53d08bcd46c48",
-    "lastHarvestedAt": "2026-11-15T13:27:18.681Z",
+    "contentHash": "e8fc1e21abeb4164939253907e7864fa1c47fa52da50b34157901366294ab468",
+    "lastHarvestedAt": "2026-11-21T20:36:27.532Z",
     "learningId": "learn-huggingface-liquidai-lfm3-vl-2b"
   },
   "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `b17474d2`  
+> **Source Version**: `1d985194`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T18:23:04.731Z  
+> **Timestamp**: 2026-11-21T20:36:42.512Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T18:23:04.723Z  
+> **Harvest Timestamp**: 2026-11-21T20:36:42.503Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2224,68 +2224,429 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b17474d2` (2026-11-21)
-**Commit Message**: docs(synthesize): name both blank limits for discovered ordered pairs (#5088)
+### Incident Patch 1: `1d985194` (2026-11-21)
+**Commit Message**: feat(synthesize): ordered relationship members keep their own blanks (#5090)
 
-The help said discovered `ordered` dates are blank in the same rows but
-for at most 5% of rows. Blank positions are compared only on the
-sample, and the whole input only by blank counts, so columns blank in
-different skipped rows could disagree on far more. State both limits:
-at most 5% of sampled rows with one blank and not the other, and blank
-rates over the whole input within 5 percentage points.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +2/-1)
 ```diff
 @@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  ## [Unreleased]
  
  ### Added
--- `synthesize`: new `--discover-relationships <file>` finds `joint`, `correlated` and `ordered` groups in the source, uses them in the same run, and writes them, each with a score, to `<file>` for review. `<file>` is the `--dictionary` (or the `--infer-content-type` dictionary, or `{"fields": []}` without one) with the groups appended to its `relationships`, so a rerun with `--dictionary <file>` writes the same bytes, as does a `--model` saved from the run. Relationships the dictionary declares win, and discovery leaves their columns alone. Pairs score by bias-corrected Cramér's V for `joint` (raw V is near 1 for any many-valued column) and by Spearman's rho for `correlated` (numeric columns) and `ordered` (dates), at 0.7 or more. Only columns that would sample an enumerated pool of 2 to 50 values can join a `joint` group, and it must keep 80% of rows in tuples seen at least `--min-count` times. An `ordered` pair also needs the later date to come first in at most 1% of the sampled rows holding both (the fit clamps those, as for a declared group), overlapping ranges, blanks in the same rows but for at most 5% of rows, checked on the sample and on the whole input's blank counts (a chain blanks its members together), and the same dictionary date format, or none on either (it writes every member in its anchor's format). Columns with a faker content type, filler, constant and all-unique integer columns, and the `--target` are never proposed; groups don't share columns and hold up to 8. Scores are read from at most 100,000 rows (a fixed stride beyond) and 64 columns of each family, with no RNG, so the result is the same at any `--jobs`. On NYC 311 data it finds X/Longitude and Y/Latitude, Borough/Park Borough with City, and Agency/Agency Name. It can't be combined with `--no-relationships`, `--strict-relationships` or `--model`. Without the flag, output, saved models and reports are unchanged. ([#5085](https://github.com/dathere/qsv/pull/5085))
-+- `synthesize`: new `--discover-relationships <file>` finds `joint`, `correlated` and `ordered` groups in the source, uses them in the same run, and writes them, each with a score, to `<file>` for review. `<file>` is the `--dictionary` (or the `--infer-content-type` dictionary, or `{"fields": []}` without one) with the groups appended to its `relationships`, so a rerun with `--dictionary <file>` writes the same bytes, as does a `--model` saved from the run. Relationships the dictionary declares win, and discovery leaves their columns alone. Pairs score by bias-corrected Cramér's V for `joint` (raw V is near 1 for any many-valued column) and by Spearman's rho for `correlated` (numeric columns) and `ordered` (dates), at 0.7 or more. Only columns that would sample an enumerated pool of 2 to 50 values can join a `joint` group, and it must keep 80% of rows in tuples seen at least `--min-count` times. An `ordered` pair also needs the later date to come first in at most 1% of the sampled rows holding both (the fit clamps those, as for a declared group), overlapping ranges, one blank and not the other in at most 5% of the sampled rows, and blank rates over the whole input within 5 percentage points of each other (the sample can't see where blanks fall in the rows it skips; a chain blanks its members together), and the same dictionary date format, or none on either (it writes every member in its anchor's format). Columns with a faker content type, filler, constant and all-unique integer columns, and the `--target` are never proposed; groups don't share columns and hold up to 8. Scores are read from at most 100,000 rows (a fixed stride beyond) and 64 columns of each family, with no RNG, so the result is the same at any `--jobs`. On NYC 311 data it finds X/Longitude and Y/Latitude, Borough/Park Borough with City, and Agency/Agency Name. It can't be combined with `--no-relationships`, `--strict-relationships` or `--model`. Without the flag, output, saved models and reports are unchanged. ([#5085](https://github.com/dathere/qsv/pull/5085))
- - `synthesize`: new `--target <col>` generates the other columns conditionally on the class of `<col>`, e.g. a label to train a classifier on. Each synthetic row first draws a class by its share of the input's rows, then fills every other column from that class's own profile, so each column keeps its distribution within each class (on a 10%-positive label whose positive rows have a 10x larger `amount`, the synthetic positives' mean `amount` was 499 against the source's 499, and 116 without `--target`). A column with at most 50 distinct (trimmed) values is split by value, an empty value being a class of its own (not counted toward the 50); a numeric column with more is split by its own quantile buckets (`--quantiles`), each class drawn at the share of rows its bucket holds, and each value from the written values that land b
+-- `synthesize`: new `--discover-relationships <file>` finds `joint`, `correlated` and `ordered` groups in the source, uses them in the same run, and writes them, each with a score, to `<file>` for review. `<file>` is the `--dictionary` (or the `--infer-content-type` dictionary, or `{"fields": []}` without one) with the groups appended to its `relationships`, so a rerun with `--dictionary <file>` writes the same bytes, as does a `--model` saved from the run. Relationships the dictionary declares win, and discovery leaves their columns alone. Pairs score by bias-corrected Cramér's V for `joint` (raw V is near 1 for any many-valued column) and by Spearman's rho for `correlated` (numeric columns) and `ordered` (dates), at 0.7 or more. Only columns that would sample an enumerated pool of 2 to 50 values can join a `joint` group, and it must keep 80% of rows in tuples seen at least `--min-count` times. An `ordered` pair also needs the later date to come first in at most 1% of the sampled rows holding both (the fit clamps those, as for a declared group), overlapping ranges, one blank and not the other in at most 5% of the sampled rows, and blank rates over the whole input within 5 percentage points of each other (the sample can't see where blanks fall in the rows it skips; a chain blanks its members together), and the same dictionary date format, or none on either (it writes every member in its anchor's format). Columns with a faker content type, filler, constant and all-unique integer columns, and the `--target` are never proposed; groups don't share columns and hold up to 8. Scores are read from at most 100,000 rows (a fixed stride beyond) and 64 columns of each family, with no RNG, so the result is the same at any `--jobs`. On NYC 311 data it finds X/Longitude and Y/Latitude, Borough/Park Borough with City, and Agency/Agency Name. It can't be combined with `--no-relationships`, `--strict-relationships` or `--model`. Without the flag, output, saved models and reports are unchanged. ([#5085](https://github.com/dathere/qsv/pull/5085))
++- `synthesize`: new `--discover-relationships <file>` finds `joint`, `correlated` and `ordered` groups in the source, uses them in the same run, and writes them, each with a score, to `<file>` for review. `<file>` is the `--dictionary` (or the `--infer-content-type` dictionary, or `{"fields": []}` without one) with the groups appended to its `relationships`, so a rerun with `--dictionary <file>` writes the same bytes, as does a `--model` saved from the run. Relationships the dictionary declares win, and discovery leaves their columns alone. Pairs score by bias-corrected Cramér's V for `joint` (raw V is near 1 for any many-valued column) and by Spearman's rho for `correlated` (numeric columns) and `ordered` (dates), at 0.7 or more. Only columns that would sample an enumerated pool of 2 to 50 values can join a `joint` group, and it must keep 80% of rows in tuples seen at least `--min-count` times. An `ordered` pair also needs the later date to come first in at most 1% of the sampled rows holding both (the fit clamps those, as for a declared group), overlapping ranges, and the same dictionary date format, or none on either (it writes every member in its anchor's format). Columns with a faker content type, filler, constant and all-unique integer columns, and the `--target` are never proposed; groups don't share columns and hold up to 8. Scores are read from at most 100,000 rows (a fixed stride beyond) and 64 columns of each family, with no RNG, so the result is the same at any `--jobs`. On NYC 311 data it finds X/Longitude and Y/Latitude, Borough/Park Borough with City, and Agency/Agency Name. It can't be combined with `--no-relationships`, `--strict-relationships` or `--model`. Without the flag, output, saved models and reports are unchanged. ([#5085](https://github.com/dathere/qsv/pull/5085))
+ - `synthesize`: new `--target <col>` generates the other columns conditionally on the class of `<col>`, e.g. a label to train a classifier on. Each synthetic row first draws a class by its share of the input's rows, then fills every other column from that class's own profile, so each column keeps its distribution within each class (on a 10%-positive label whose positive rows have a 10x larger `amount`, the synthetic positives' mean `amount` was 499 against the source's 499, and 116 without `--target`). A column with at most 50 distinct (trimmed) values is split by value, an empty value being a class of its own (not counted toward the 50); a numeric column with more is split by its own quantile buckets (`--quantiles`), each class drawn at the share of rows its bucket holds, and each value from the written values that land back in that bucket; any other column is refused. With tied bucket edges that follows the source more closely than an ordinary fit: on 900 zeros and the
 ```
 
-**File**: `docs/help/synthesize.md` (modified, +1/-1)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -234,7 +234,7 @@ qsv synthesize --help
+@@ -96,7 +96,7 @@
+ | [split](docs/help/split.md)<br>📇🏎️ | Split one CSV file into many CSV files. It can split by number of rows, number of chunks or file size. Uses multithreading to go faster if an index is present when splitting by rows or chunks. |
+ | [sqlp](docs/help/sqlp.md)✨<br>📇🗄️🐻‍❄️🚀🪄 | <a name="sqlp_deeplink"></a>Run [Polars](https://pola.rs) SQL (a PostgreSQL dialect) queries against several CSVs, Parquet, JSONL and Arrow files - converting queries to blazing-fast Polars [LazyFrame](https://docs.pola.rs/user-guide/lazy/) expressions, processing larger than memory CSV files. Query results can be saved in CSV, JSON, JSONL, Parquet, Apache Arrow IPC and Apache Avro formats. |
+ | [stats](docs/help/stats.md)<br>📇🤯🏎️👆🪄 | <a name="stats_deeplink"></a>Compute up to 48 [summary statistics](docs/STATS_DEFINITIONS.md) & make GUARANTEED data type inferences (Null, String, Float, Integer, Date, DateTime, Boolean) for each column in a CSV ([Example](https://github.com/dathere/qsv/blob/master/docs/stats/NYC_311_SR_2010-2020-sample-1M.stats.csv)).<br>Uses multithreading to go faster if an index is present. With an index, can compile "streaming" stats on a 1M row sample of NYC's 311 data in [less than 0.25 seconds vs 2.24 seconds without one](https://qsv.dathere.com/benchmarks). |
+-| [synthesize](docs/help/synthesize.md)✨<br>📇🎲🤖 | <a name="synthesize_deeplink"></a>Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quantile-bucketed numeric/date generation (quartiles by default), null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). `--report` writes a JSON summary of how many synthetic rows exactly match a source row (numbers and dates compared by value) and which values and `joint` tuples `--min-count` dropped. |
++| [synthesize](docs/help/synthesize.md)✨<br>📇🎲🤖 | <a name="synthesize_deeplink"></a>Generate a synthetic CSV that is statistically faithful to a source CSV, from its `stats` and `frequency`. A Data Dictionary adds realistic fake values by Content Type and keeps relationships between columns (`joint`, `ordered`, `correlated`). Reproducible with `--seed`. Output is not anonymized: it can contain real source values (see `--min-count`). |
+ | [table](docs/help/table.md)<br>🤯 | Align output of a CSV using [elastic tabstops](https://github.com/BurntSushi/tabwriter) for viewing; or to create an "aligned TSV" file or Fixed Width Format file. To interactively view a CSV, use the `lens` command. |
+ | [template](docs/help/template.md)<br>📇🚀🔣📚⛩️ ![CKAN](docs/images/ckan.png) | Renders a template using CSV data with the [MiniJinja](https://docs.rs/minijinja/latest/minijinja/) template engine ([Example](https://github.com/dathere/qsv/blob/4645ec07b5befe3b0c0e49bf0f547315d0d7514b/src/cmd/template.rs#L18-L44)). |
+ | [to](docs/help/to.md)✨<br>🗄️🐻‍❄️🚀 | Convert CSV files to [Parquet](https://parquet.apache.org), [PostgreSQL](https://www.postgresql.org), [SQLite](https://www.sqlite.org/index.html), Excel (XLSX), [LibreOffice Calc](https://www.libreoffice.org/discover/calc/) (ODS) and [Data Package](https://datahub.io/docs/data-packages/tabular). |
+```
+
+**File**: `docs/help/synthesize.md` (modified, +4/-2)
+```diff
+@@ -59,7 +59,9 @@ are emitted.
+ created_date <= closed_date). The anchor column is generated
+ from its own distribution; each later column is the anchor
+ plus a non-negative gap drawn from the gap distribution
+-learned from the source.
++learned from the source. Members are blank in the
++combinations, and at the rates, the source shows them;
++those left filled stay in order.
+ * correlated — numeric columns whose correlation should be preserved. A
+ Gaussian copula couples the columns while leaving each
+ column's own distribution unchanged.
+@@ -234,7 +236,7 @@ qsv synthesize --help
  | &nbsp;`‑‑stats‑options`&nbsp; | string | Extra options appended to the internal `stats` run. Note: cardinality, quartiles and date inference are always enabled — do not re-specify them here. Column selection (--select/-s) and --weight are rejected; run `qsv select` on <input> first. |  |
  | &nbsp;`‑‑consistent‑fakes`&nbsp; | flag | For structured-faker columns with bounded cardinality (cardinality fully captured by `frequency`), build a stable source-value -> fake-value mapping so the same source value always produces the same fake in the output. Preserves the source frequency distribution and overrides the default "emit real values when frequency-enumerated" behavior for structured fakers (names, emails, addresses, etc.). Has no effect on unstructured columns (lorem_*, free_text, unknown), all-unique columns, or non-faker columns. Useful for deidentified synthesis where you want stable joins on the faked columns. |  |
  | &nbsp;`‑‑no‑relationships`&nbsp; | flag | Disable inter-column relationship modeling. Every column is generated independently even when the dictionary declares a `relationships` array. |  |
--| &nbsp;`‑‑discover‑relationships`&nbsp; | string | Find relationships in <input>, use them in this run, and write them to <file> for review. <file> holds the dictionary (from --dictionary, or from --infer-content-type) with the found groups appended to its `relationships`, each with a score; without a dictionary, it holds only those groups. Rerunning with <file> as the dictionary gives the same output. Declared relationships keep their columns, which discovery leaves out. A pair scores 0.7 or more by bias-corrected Cramer's V for `joint` (columns with 2 to 50 enumerated values; a group must keep 80% of rows in tuples seen at least the --min-count times), or by \|Spearman\| for `correlated` (numeric) and `ordered` (dates with the same dictionary date format, or none, where the later comes first in at most 1% of the sampled rows holding both, their ranges overlap, and they are blank in the same rows but for at most 5% of rows). Groups don't share columns and hold up to 8 each. Columns with a faker content type, and free-text, constant and all-unique integer columns are never proposed, nor is the target. Scores read up to 100,000 rows (at a fixed stride beyond) and up to 64 columns of each family. With the --shard option, every slice finds the same groups and writes the same <file>. Not allowed with --no-relationships, nor with the --strict-relationships option, which would abort on a found group the source only nearly satisfies. |  |
-+| &nbsp;`‑‑discover‑relationships`&nbsp; | string | Find relationships in <input>, use them in this run, and write them to <file> for review. <file> holds the dictionary (from --dictionary, or from --infer-content-type) with the found groups appended to its `relationships`, each with a score; without a dictionary, it holds only those groups. Rerunning with <file> as the dictionary gives the same output. Declared relationships keep their columns, which discovery leaves out. A pair scores 0.7 or more by bias-corrected Cramer's V for `joint` (columns with 2 to 50 enumerated values; a group must keep 80% of rows in tuples seen at least the --min-count times), or by \|Spearman\| for `correlated` (numeric) and `ordered` (dates with the same dictionary date format, or none, where the later comes first in at most 1% of the sampled rows holding both, their ranges overlap, at most 5% of the sampled rows have one blank and not the other, and their blank rates over all of <input> differ by at most 5 points). Groups don't share columns and hold up to 8 each. Columns with a faker content type, and free-text, constant and all-unique integer columns are never proposed, nor is the target. Scores read up to 100,000 rows (at a fixed stride beyond) and up to 64 columns of each family. With the --shard option, every slice finds the same groups and writes the same <file>. Not allowed with --no-relationships, nor with the --strict-relationships option, which would abort on a found group the source only nearly satisfies. |  |
+-| &nbsp;`‑‑discover‑relationships`&nbsp; | string | Find relationships in <input>, use them in this run, and write them to <file> for review. <file> holds the dictionary (from --dictionary, or from --infer-content-type) with the found groups appended to its `relationships`, each with a score; without a dictionary, it holds only those groups. Rerunning with <file> as the dictionary gives the same output. Declared relationships keep their columns, which discovery leaves out. A pair scores 0.7 or more by bias-corrected Cramer's V for `joint` (columns with 2 to 50 enumerated values; a group must keep 80% of rows in tuples seen at least the --min-count times), or by \|Spearman\| for `correlated` (numeric) and `ordered` (dates with the same dictionary date format, or none, where the later comes first in at most 1% of the sampled rows holding both, their ranges overlap, at most 5% of the sampled rows have one blank and not the other, and their blank rates over all of <input> differ by at most 5 points). Groups don't share columns and hold up to 8 each. Columns with a faker content type, and free-text, constant and all-unique integer columns are never proposed, nor is the target. Scores read up to 100,000 rows (at a fixed stride beyond) and up to 64 columns of each family. With the --shard option, every slice finds the same groups and writes the same <file>. Not allowed with --no-relationships, nor with the --strict-relationships option, which would abort on a found group the source only nearly satisfies. |  |
++| &nbsp;`‑‑discover‑relationships`&nbsp; | string | Find relationships in <input>, use them in this run, and write them to <file> for review. <file> holds the dictionary (from --dictionary, or from --infer-content-type) with the found groups appended to its `relationships`, each with a score; without a dictionary, it holds only those groups. Rerunning with <file> as the dictionary gives the same output. Declared relationships keep their columns, which discovery leaves out. A pair scores 0.7 or more by bias-corrected Cramer's V for `joint` (columns with 2 to 50 enumerated values; a group must keep 80% of rows in tuples seen at least the --min-count times), or by \|Spearman\| for `correlated` (numeric) and `ordered` (dates with the same dictionary date format, or none, where the later comes first in at most 1% of the sampled rows holding both, and their ranges overlap). Groups don't share columns and hold up to 8 each. Columns with a faker content type, and free-text, constant and all-unique integer columns are never proposed, nor is the target. Scores read up to 100,000 rows (at a fixed stride beyond) and up to 64 columns of each family. With the --shard option, every slice finds the same groups and writes the same <file>. Not allowed with --no-relationships, nor with the --strict-relationships option, which would abort on a found group the source only nearly satisfies. |  |
  | &nbsp;`‑‑joint‑cardinality‑cap`&nbsp; | integer | Maximum number of distinct value-tuples a `joint` relationship may have. A joint group above this cap falls back to independent generation (or aborts under --strict-relationships). 0 means unlimited. | `100000` |
- | &nbsp;`‑‑correlation‑threshold`&nbsp; | float | Minimum absolute Spearman correlation for a pair of columns to stay in a `correlated` relationship. Weakly-correlated members are dropped. | `0.3` |
- | &nbsp;`‑‑strict‑relationships`&nbsp; | flag | Abort instead of warning-and-degrading when a declared relationship fails validation. |  |
+ | &nbsp;`‑‑correlation‑threshold`&nbsp; | float | Minimum absolute Spearman correlation for
 ```
 
-**File**: `src/cmd/synthesize/mod.rs` (modified, +5/-3)
+**File**: `src/cmd/synthesize/discover.rs` (modified, +2/-46)
 ```diff
-@@ -368,9 +368,11 @@ synthesize options:
+@@ -34,9 +34,6 @@ const SAMPLE_ROWS: u64 = 100_000;
+ const MAX_REVERSED_PCT: usize = 1;
+ /// Share of rows a `joint` group's tuples must keep at `--min-count`.
+ const MIN_JOINT_SURVIVAL: f64 = 0.8;
+-/// An `ordered` chain blanks all its members together, so they may disagree
+-/// on which rows are blank in at most this share (percent) of rows.
+-const MAX_BLANK_MISMATCH_PCT: usize = 5;
+ 
+ #[derive(Clone, Copy, PartialEq, Eq)]
+ enum Domain {
+@@ -214,35 +211,6 @@ pub(crate) fn discover(
+     for (k, &(col, _)) in numeric.iter().enumerate() {
+         numeric_pos[col] = Some(k);
+     }
+-    // An ordered chain blanks every member when its anchor is blank, and
+-    // none otherwise, so its members must be blank in the same sampled rows
+-    // but for at most MAX_BLANK_MISMATCH_PCT of them. (Equal blank rates in
+-    // different rows would pass a rate check.) Whole counts, so exactly that
+-    // share passes.
+-    let blanks_close = |cols: &[usize]| {
+-        // The whole input's blank counts, too: the sample can miss blanks in
+-        // the rows it skips.
+-        let counts = cols.iter().map(|&c| stats[c].nullcount);
+-        let spread = counts.clone().max().unwrap_or(0) - counts.min().unwrap_or(0);
+-        if spread.saturating_mul(100)
+-            > params
+-                .total_rows
+-                .saturating_mul(MAX_BLANK_MISMATCH_PCT as u64)
+-        {
+-            return false;
+-        }
+-        let cols: Vec<&[Option<f64>]> = cols
+-            .iter()
+-            .filter_map(|&c| numeric_pos[c].map(|k| values[k].as_slice()))
+-            .collect();
+-        let mismatched = (0..sampled)
+-            .filter(|&r| {
+-                let blank = cols[0][r].is_none();
+-                cols[1..].iter().any(|c| c[r].is_none() != blank)
+-            })
+-            .count();
+-        mismatched * 100 <= sampled * MAX_BLANK_MISMATCH_PCT
+-    };
+     // An ordered chain writes every member in its anchor's date format.
+     let date_format = |col: usize| {
+         params
+@@ -290,7 +258,6 @@ pub(crate) fn discover(
+                     None
+                 };
+                 if let Some((lo, hi)) = edge
+-                    && blanks_close(&[lo, hi])
+                     && date_format(lo) == date_format(hi)
+                 {
+                     ordered_edges.push((pair.rho, lo, hi));
+@@ -310,15 +277,15 @@ pub(crate) fn discover(
+             (Some(g), None)
+                 if groups[g].kind == "ordered"
+                     && groups[g].members.last() == Some(&lo)
+-                    && chain_fits(&groups[g].members, hi, &blanks_close) =>
++                    && groups[g].members.len() < MAX_GROUP =>
+             {
+                 groups[g].members.push(hi);
+                 extend(&mut owner, &mut groups[g], g, hi, score);
+             },
+             (None, Some(g))
+                 if groups[g].kind == "ordered"
+                     && groups[g].members.first() == Some(&hi)
+-                    && chain_fits(&groups[g].members, lo, &blanks_close) =>
++                    && groups[g].members.len() < MAX_GROUP =>
+             {
+                 groups[g].members.insert(0, lo);
+                 extend(&mut owner, &mut groups[g], g, lo, score);
+@@ -432,17 +399,6 @@ fn extend(owner: &mut [Option<usize>], group: &mut Found, g: usize, col: usize,
+     group.score = group.score.min(score);
+ }
+ 
+-/// Whether `col` can join an ordered chain: room left, and blank in nearly
+-/// the same rows as the chain, since the chain blanks its members together.
+-fn chain_fits(members: &[usize], col: usize, blanks_close: &dyn Fn(&[usize]) -> bool) -> bool {
+-    if members.len() >= MAX_GROUP {
+-        return false;
+-    }
+-    let mut all = members.to_vec();
+-    all.push(col);
+-    blanks_close(&all)
+-}
+-
+ /// Row positions holding a value, in ascending value order.
+ fn sorted_present(values: &[Option<f64>]) -> Vec<usize> {
+     let mut order: Vec<usize> = (0..values.len()).filter(|&r| values[r].is_some()).collect();
+```
+
+**File**: `src/cmd/synthesize/group_generator.rs` (modified, +42/-14)
+```diff
+@@ -49,32 +49,40 @@ pub(crate) enum GroupGenerator {
+     Ordered {
+         /// Output column index per member, in member (low-to-high) order;
+         /// `member_cols[0]` is the anchor.
+-        member_cols:    Vec<usize>,
+-        kind:           OrderedKind,
++        member_cols:      Vec<usize>,
++        kind:             OrderedKind,
+         /// Per-member flag (`Numeric` groups only): format the member as an
+         /// integer when true, a float when false. Lets a mixed Integer/Float
+         /// group keep each column's declared type. Ignored for Date/DateTime.
+-        is_int:         Vec<bool>,
++        is_int:           Vec<bool>,
+         /// Per-member decimal places a Float member is rounded to (its source
+         /// `max_precision`); `None` for Integer, unrounded and date members.
+-        decimals:       Vec<Option<u32>>,
++        decimals:         Vec<Option<u32>>,
+         /// describegpt-inferred chrono strftime format for date members.
+-        date_format:    Option<String>,
++        date_format:      Option<String>,
+         /// Anchor quantile buckets, in the numeric domain.
+-        anchor_buckets: Vec<(f64, f64)>,
++        anchor_buckets:   Vec<(f64, f64)>,
+         /// Consecutive-gap quantile buckets; `gap_buckets[i]` is the gap from
+         /// `member_cols[i]` to `member_cols[i + 1]`, clamped to >= 0. Length is
+         /// `member_cols.len() - 1`.
+-        gap_buckets:    Vec<Vec<(f64, f64)>>,
++        gap_buckets:      Vec<Vec<(f64, f64)>>,
+         /// Per-member `[lo, hi]` in the same domain as the buckets, with each
+         /// `hi` capped by every later member's. Each follower is clamped into
+         /// its range (then kept >= its predecessor, which the cap keeps in
+         /// range), so anchor + gap can't reach a follower's real extremes once
+         /// `--min-count` has trimmed them.
+-        member_ranges:  Vec<(f64, f64)>,
+-        /// Null ratio of the anchor column — when the anchor draws null, the
+-        /// whole chain is emitted null.
+-        null_ratio:     f64,
++        member_ranges:    Vec<(f64, f64)>,
++        /// Share of source rows where every member is blank; such a row is
++        /// emitted blank without drawing any value.
++        null_ratio:       f64,
++        /// Which members are blank in the other rows, as seen in the source:
++        /// `blank_patterns[p][k]` is true when member `k` is blank. The chain
++        /// is drawn whole and then blanked, so the members left filled stay in
++        /// order.
++        blank_patterns:   Vec<Vec<bool>>,
++        /// Normalized cumulative weights of `blank_patterns`, ascending, last
++        /// element == 1.0. A single pattern takes no draw.
++        blank_cumulative: Vec<f64>,
+     },
+     /// Gaussian-copula generation for a set of correlated numeric columns. Each
+     /// column keeps its own quartile-bucket marginal exactly; the copula only
+@@ -141,10 +149,12 @@ impl GroupGenerator {
+                 gap_buckets,
+                 member_ranges,
+                 null_ratio,
++                blank_patterns,
++                blank_cumulative,
+             } => {
+-                // A null anchor nulls the whole chain — a monotonic chain
+-                // `m[i] = m[i-1] + gap` cannot have a non-null member sitting
+-                // after a null predecessor.
++                // An all-blank row is drawn first and draws no values, so a
++                // chain whose members are blank in the same rows takes the
++                // same draws as one whose anchor's blanks blank it whole.
+                 if draw_null(*null_ratio, rng) {
+                     return member_cols.iter().map(|&c| (c, String::new())).collect();
+                 }
+@@ -190,6 +200,24 @@ impl GroupGenerator {
+                         ),
+                     ));
+                 }
++                // Drawn after the values, so a chain with one pattern keeps
++                // the draws it had when a blank anchor blanked the chain.
++                let blanks = if blank_patterns.len() > 1 {
++                    let r = rng.random_range(0.0..1.0);
++                    let idx = blank_cumulative
++                        .partition_point(|&c| c < r)
++                        .min(blank_patterns.len() - 1);
++                    blank_patterns.get(idx)
++                } else {
++                    blank_patterns.first()
++                };
++                if let Some(blanks) = blanks {
++                    for ((_, text), &blank) in out.iter_mut().zip(blanks) {
++                        if blank {
++                            text.clear();
++                        }
++                    }
++                }
+                 out
+             },
+ 
+```
+
+**File**: `src/cmd/synthesize/mod.rs` (modified, +5/-7)
+```diff
+@@ -47,7 +47,9 @@ generated *jointly* so inter-column structure survives into each output row:
+                  created_date <= closed_date). The anchor column is generated
+                  from its own distribution; each later column is the anchor
+                  plus a non-negative gap drawn from the gap distribution
+-                 learned from the source.
++                 learned from the source. Members are blank in the
++                 combinations, and at the rates, the source shows them;
++                 those left filled stay in order.
+   * correlated — numeric columns whose correlation should be preserved. A
+                  Gaussian copula couples the columns while leaving each
+                  column's own distribution unchanged.
+@@ -368,12 +370,8 @@ synthesize options:
                             `correlated` (numeric) and `ordered` (dates with the
                             same dictionary date format, or none, where the
                             later comes first in at most 1% of the sampled rows
--                           holding both, their ranges overlap, and they are
--                           blank in the same rows but for at most 5% of
--                           rows). Groups don't share columns and hold
-+                           holding both, their ranges overlap, at most 5% of
-+                           the sampled rows have one blank and not the other,
-+                           and their blank rates over all of <input> differ
-+                           by at most 5 points). Groups don't share columns
-+                           and hold
-                            up to 8 each. Columns with a faker content type,
+-                           holding both, their ranges overlap, at most 5% of
+-                           the sampled rows have one blank and not the other,
+-                           and their blank rates over all of <input> differ
+-                           by at most 5 points). Groups don't share columns
+-                           and hold
+-                           up to 8 each. Columns with a faker content type,
++                           holding both, and their ranges overlap). Groups
++                           don't share columns and hold up to 8 each. Columns with a faker content type,
                             and free-text, constant and all-unique integer
                             columns are never proposed, nor is the target.
+                            Scores read up to 100,000 rows (at a fixed stride
+```
+
+**File**: `src/cmd/synthesize/model.rs` (modified, +11/-1)
+```diff
+@@ -13,7 +13,7 @@ use super::{
+ };
+ use crate::{CliError, CliResult, cmd::describegpt::dictionary::is_valid_strftime};
+ 
+-const FORMAT_VERSION: u32 = 4;
++const FORMAT_VERSION: u32 = 5;
+ 
+ #[derive(Serialize, Deserialize)]
+ pub(crate) struct Model {
+@@ -242,9 +242,19 @@ fn check_group(group: &GroupGenerator) -> Result<(), String> {
+             anchor_buckets,
+             gap_buckets,
+             member_ranges,
++            null_ratio,
++            blank_patterns,
++            blank_cumulative,
+             ..
+         } => {
+             let n = member_cols.len();
++            // Only a chain blank in every row may have no other patterns.
++            if *null_ratio < 1.0 || !blank_patterns.is_empty() {
++                check_weighted(blank_patterns, blank_cumulative)?;
++            }
++            if blank_patterns.iter().any(|p| p.len() != n) {
++                return bad("an ordered blank pattern of the wrong width");
++            }
+             if n == 0
+                 || is_int.len() != n
+                 || decimals.len() != n
+```
+
+**File**: `src/cmd/synthesize/relationships.rs` (modified, +39/-9)
+```diff
+@@ -15,7 +15,7 @@
+ 
+ use std::{
+     cell::RefCell,
+-    collections::{HashMap, HashSet},
++    collections::{BTreeMap, HashMap, HashSet},
+ };
+ 
+ use indexmap::IndexMap;
+@@ -587,7 +587,7 @@ fn resolve_ordered(
+     };
+ 
+     // Learn the consecutive-gap distributions from the source.
+-    let gap_samples = learn_ordered_gaps(&member_cols, kind, params)?;
++    let (gap_samples, mut blank_counts) = learn_ordered_gaps(&member_cols, kind, params)?;
+     let mut gap_buckets = Vec::with_capacity(gap_samples.len());
+     for (i, samples) in gap_samples.into_iter().enumerate() {
+         if samples.is_empty() {
+@@ -647,7 +647,25 @@ fn resolve_ordered(
+         gap_buckets.push(buckets);
+     }
+ 
+-    let null_ratio = compute_null_ratio(anchor_stats.nullcount, params.total_rows);
++    // Rows blank in every member are emitted blank outright; the rest draw
++    // which members to blank from the patterns the source shows.
++    let all_blank_rows = blank_counts
++        .remove(vec![true; member_cols.len()].as_slice())
++        .unwrap_or(0);
++    let null_ratio = compute_null_ratio(all_blank_rows, params.total_rows);
++    let other_rows: u64 = blank_counts.values().sum();
++    let mut blank_patterns = Vec::with_capacity(blank_counts.len());
++    let mut blank_cumulative = Vec::with_capacity(blank_counts.len());
++    let mut seen = 0_u64;
++    for (pattern, count) in blank_counts {
++        seen += count;
++        blank_patterns.push(pattern);
++        #[allow(clippy::cast_precision_loss)]
++        blank_cumulative.push(seen as f64 / other_rows as f64);
++    }
++    if let Some(last) = blank_cumulative.last_mut() {
++        *last = 1.0;
++    }
+     let date_format = ordered_date_format(&member_cols, params, kind);
+ 
+     log::info!(
+@@ -664,6 +682,8 @@ fn resolve_ordered(
+         gap_buckets,
+         member_ranges,
+         null_ratio,
++        blank_patterns,
++        blank_cumulative,
+     }))
+ }
+ 
+@@ -712,28 +732,33 @@ fn ordered_date_format(
+ }
+ 
+ /// Stream the source CSV once, collecting the consecutive gaps
+-/// `member[i + 1] - member[i]` for every adjacent member pair. Values are
+-/// parsed into the group's numeric domain; rows where either member of a pair
+-/// is null/unparseable contribute no gap for that pair.
++/// `member[i + 1] - member[i]` for every adjacent member pair, and how often
++/// each pattern of blank members occurs. Values are parsed into the group's
++/// numeric domain; rows where either member of a pair is null/unparseable
++/// contribute no gap for that pair. A member is blank when its cell is empty,
++/// as `stats` counts nulls.
+ fn learn_ordered_gaps(
+     member_cols: &[usize],
+     kind: OrderedKind,
+     params: &ScheduleParams,
+-) -> CliResult<Vec<Vec<f64>>> {
++) -> CliResult<(Vec<Vec<f64>>, BTreeMap<Vec<bool>, u64>)> {
+     let input = params.input_path.to_string();
+     let config = Config::new(Some(&input)).delimiter(params.delimiter);
+     let mut rdr = config.reader()?;
+ 
+     let npairs = member_cols.len() - 1;
+     let mut gaps: Vec<Vec<f64>> = vec![Vec::new(); npairs];
++    let mut patterns: BTreeMap<Vec<bool>, u64> = BTreeMap::new();
+     let is_date = matches!(kind, OrderedKind::Date | OrderedKind::DateTime);
+     let is_datetime = kind == OrderedKind::DateTime;
+ 
+     let mut record = csv::ByteRecord::new();
+     let mut values: Vec<Option<f64>> = vec![None; member_cols.len()];
++    let mut blanks: Vec<bool> = vec![false; member_cols.len()];
+     while rdr.read_byte_record(&mut record)? {
+-        for (slot, &col) in values.iter_mut().zip(member_cols) {
++        for ((slot, blank), &col) in values.iter_mut().zip(blanks.iter_mut()).zip(member_cols) {
+             let cell = source_cell(&record, params, col);
++            *blank = cell.is_empty();
+             *slot = if is_date {
+                 #[allow(clippy::cast_precision_loss)]
+                 parse_source_epoch(&cell, is_datetime, params.prefer_dmy).map(|e| e as f64)
+@@ -746,8 +771,13 @@ fn learn_ordered_gaps(
+                 pair_gaps.push(hi - lo);
+             }
+         }
++        if let Some(count) = patterns.get_mut(blanks.as_slice()) {
++            *count += 1;
++        } else {
++            patterns.insert(blanks.clone(), 1);
++        }
+     }
+-    Ok(gaps)
++    Ok((gaps, patterns))
+ }
+ 
+ fn gap_buckets_from_samples(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5090** (2026-11-21): feat(synthesize): ordered relationship members keep their own blanks (@jqnatividad)
 - **PR #5088** (2026-11-21): docs(synthesize): name both blank limits for discovered ordered pairs (@jqnatividad)
 - **PR #5087** (2026-11-21): fix(mcp): run .sql scripts on sqlp; allow nested ~/ and to parquet dirs (@jqnatividad)
 - **PR #5086** (2026-11-21): fix(mcp): don't let extsort/extdedup empty a file through output_file (@jqnatividad)
 - **PR #5085** (2026-11-21): feat(synthesize): --discover-relationships <file> finds joint, correlated and ordered groups (@jqnatividad)
 - **PR #5084** (2026-11-21): feat(synthesize): --target <col> for conditional generation; read non-UTF8 input (@jqnatividad)
-- **PR #5083** (2026-11-21): fix(mcp): sandbox DuckDB in plugin mode; harden the duckdb CLI invocation (@jqnatividad)
 
 ---
 
@@ -2305,13 +2666,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(synthesize): name both blank limits for discovered ordered pairs
+## X. synthesize): ordered relationship members keep their own blanks
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b17474d2`: docs(synthesize): name both blank limits for discovered ordered pairs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1d985194`: synthesize): ordered relationship members keep their own blanks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2319,14 +2680,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- `synthesize`: new `--discover-relationships <file>` finds `joint`, `correlated` and `ordered` groups in the source, uses them in the same run, and writes them, each with a score, to `<file>` for review. `<file>` is the `--dictionary` (or the `--infer-content-type` dictionary, or `{"fields": []}` without one) with the groups appended to its `relationships`, so a rerun with `--dictionary <file>` writes the same bytes, as does a `--model` saved from the run. Relationships the dictionary declares win, and discovery leaves their columns alone. Pairs score by bias-corrected Cramér's V for `joint` (raw V is near 1 for any many-valued column) and by Spearman's rho for `correlated` (numeric columns) and `ordered` (dates), at 0.7 or more. Only columns that would sample an enumerated pool of 2 to 50 values can join a `joint` group, and it must keep 80% of rows in tuples seen at least `--min-count` times. An `ordered` pair also needs the later date to come first in at most 1% of the sampled rows holding both (the fit clamps those, as for a declared group), overlapping ranges, one blank and not the other in at most 5% of the sampled rows, and blank rates over the whole input within 5 percenta
+- `synthesize`: new `--discover-relationships <file>` finds `joint`, `correlated` and `ordered` groups in the source, uses them in the same run, and writes them, each with a score, to `<file>` for review. `<file>` is the `--dictionary` (or the `--infer-content-type` dictionary, or `{"fields": []}` without one) with the groups appended to its `relationships`, so a rerun with `--dictionary <file>` writes the same bytes, as does a `--model` saved from the run. Relationships the dictionary declares win, and discovery leaves their columns alone. Pairs score by bias-corrected Cramér's V for `joint` (raw V is near 1 for any many-valued column) and by Spearman's rho for `correlated` (numeric columns) and `ordered` (dates), at 0.7 or more. Only columns that would sample an enumerated pool of 2 to 50 values can join a `joint` group, and it must keep 80% of rows in tuples seen at least `--min-count` times. An `ordered` pair also needs the later date to come first in at most 1% of the sampled rows holding both (the fit clamps those, as for a declared group), overlapping ranges, and the same dictionary date format, or none on either (it writes every member in its anchor's format). Columns with 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- `synthesize`: new `--discover-relationships <file>` finds `joint`, `correlated` and `ordered` groups in the source, uses them in the same run, and writes them, each with a score, to `<file>` for review. `<file>` is the `--dictionary` (or the `--infer-content-type` dictionary, or `{"fields": []}` without one) with the groups appended to its `relationships`, so a rerun with `--dictionary <file>` writes the same bytes, as does a `--model` saved from the run. Relationships the dictionary declares win, and discovery leaves their columns alone. Pairs score by bias-corrected Cramér's V for `joint` (raw V is near 1 for any many-valued column) and by Spearman's rho for `correlated` (numeric columns) and `ordered` (dates), at 0.7 or more. Only columns that would sample an enumerated pool of 2 to 50 values can join a `joint` group, and it must keep 80% of rows in tuples seen at least `--min-count` times. An `ordered` pair also needs the later date to come first in at most 1% of the sampled rows holding both (the fit clamps those, as for a declared group), overlapping ranges, blanks in the same rows but for at most 5% of rows, checked on the sample and on the whole input's blank counts (a ch
+- `synthesize`: new `--discover-relationships <file>` finds `joint`, `correlated` and `ordered` groups in the source, uses them in the same run, and writes them, each with a score, to `<file>` for review. `<file>` is the `--dictionary` (or the `--infer-content-type` dictionary, or `{"fields": []}` without one) with the groups appended to its `relationships`, so a rerun with `--dictionary <file>` writes the same bytes, as does a `--model` saved from the run. Relationships the dictionary declares win, and discovery leaves their columns alone. Pairs score by bias-corrected Cramér's V for `joint` (raw V is near 1 for any many-valued column) and by Spearman's rho for `correlated` (numeric columns) and `ordered` (dates), at 0.7 or more. Only columns that would sample an enumerated pool of 2 to 50 values can join a `joint` group, and it must keep 80% of rows in tuples seen at least `--min-count` times. An `ordered` pair also needs the later date to come first in at most 1% of the sampled rows holding both (the fit clamps those, as for a declared group), overlapping ranges, one blank and not the other in at most 5% of the sampled rows, and blank rates over the whole input within 5 percenta
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b17474d2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1d985194` are properly handled with clean fallback behavior.

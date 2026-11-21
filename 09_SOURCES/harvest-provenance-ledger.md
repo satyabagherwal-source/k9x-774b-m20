@@ -11923,3 +11923,6 @@ Every entry in this ledger must capture:
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `aa9d8f14` | Multi-dimensional audit evidence | 2026-11-21T20:24:53.052Z |
 | `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `2d283998` | Multi-dimensional audit evidence | 2026-11-21T20:24:58.034Z |
 | `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `1fa59ea0` | Multi-dimensional audit evidence | 2026-11-21T20:25:05.355Z |
+| `learn-huggingface-liquidai-lfm3-vl-2b` | `https://huggingface.co/LiquidAI/LFM3-VL-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-21T20:36:27.532Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `472b1e3f` | Multi-dimensional audit evidence | 2026-11-21T20:36:41.712Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `1d985194` | Multi-dimensional audit evidence | 2026-11-21T20:36:43.835Z |

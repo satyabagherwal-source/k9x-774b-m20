@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T20:25:11.151Z",
+  "last_updated": "2026-11-21T20:36:50.840Z",
   "total_verified_learnings": 9062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23250,
+  "total_items": 23255,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "b17474d2",
-      "content_hash": "8d311ea790965519fee274436a4eec1261ee764e4fcbd3f09bd149145aef3c97",
+      "source_version": "1d985194",
+      "content_hash": "3b6e5142f36d9d9d922f9455c279ff09580f646de22c55f1fb9bcc6bee5574c7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T18:23:06.454Z"
+      "persisted_at": "2026-11-21T20:36:44.587Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112174,9 +112174,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "0b28fb10e761c34ed7a7fc1b8a41d4a568dfb0f2c6ea0d8b1c4608be54e4a76e",
+      "content_hash": "817db1028ad23d57a1fdad0c676afcc660e565bc6c5b868948585435d7b97a59",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T16:19:05.773Z"
+      "persisted_at": "2026-11-21T20:36:50.840Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -113649,10 +113649,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mintplex-labs-anything-llm-technical-construction-intelligence-mintplex-labs-any.md",
       "title": "Technical Construction Intelligence: Mintplex-Labs/anything-llm Core Invariants",
       "repository": "Mintplex-Labs/anything-llm",
-      "source_version": "b2da1887",
-      "content_hash": "f64f69642318a72008a0c25f7c10d6f0864571e35ae4205406f018c518c95b63",
+      "source_version": "472b1e3f",
+      "content_hash": "67ec40a95da5c1bc90280d76e58790d24132ccf92bcdf65ddd46f707a8b6150f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T15:35:22.002Z"
+      "persisted_at": "2026-11-21T20:36:42.202Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm",
@@ -113661,10 +113661,10 @@
       "relative_path": "08_VERIFICATION/mintplex-labs-anything-llm-verification-protocol-empirical-defect-shield-for-min.md",
       "title": "Verification Protocol: Empirical Defect Shield for Mintplex-Labs/anything-llm",
       "repository": "Mintplex-Labs/anything-llm",
-      "source_version": "b2da1887",
-      "content_hash": "8646d56e31e89d034dff96341e8972a8aa5648775203f2319286a2b196f6ddfc",
+      "source_version": "472b1e3f",
+      "content_hash": "946c4263319c7f47e68379ec4b0c170e34323d70626c78f27174001f84dbf24d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T15:35:22.161Z"
+      "persisted_at": "2026-11-21T20:36:42.480Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants",
@@ -113686,9 +113686,9 @@
       "title": "Technical Construction Intelligence: mintplex-labs-anything-llm-learnings Core Invariants",
       "repository": "mintplex-labs-anything-llm-learnings",
       "source_version": "HEAD",
-      "content_hash": "54e5daf9183526f0578814fbfab591574ccca485668b89c07164fa712992471b",
+      "content_hash": "3923068b464e30784b5920e6182948ae31b5ad8f6f3f1afa7e4a81129ba0e673",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T15:35:28.170Z"
+      "persisted_at": "2026-11-21T20:36:48.788Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm-lea",
@@ -113698,9 +113698,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mintplex-labs-anything-llm-learnings",
       "repository": "mintplex-labs-anything-llm-learnings",
       "source_version": "HEAD",
-      "content_hash": "0c6398e332a23ec01e5b8c316e5cbe4f739bfb616e22b9fcbefb5284383c52c0",
+      "content_hash": "d22df50dbefa8a542ee4cbdf33d6b94ef8e4f9797cf7e40982a0c311bb1245b6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T15:35:28.328Z"
+      "persisted_at": "2026-11-21T20:36:49.034Z"
     },
     "candidate_directive-editor-add-scoped-ios-account-deletion": {
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
@@ -219842,8 +219842,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "b17474d2",
-      "content_hash": "d69d276017e6bc2343b921801bb9d3314894c935687d4781d8395f72f54afa97",
+      "source_version": "1d985194",
+      "content_hash": "872d5a84a4d2fd796497f9720236abac9f47e658203d5e6b6eaee56f0e07fade",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -219996,6 +219996,11 @@
           "number": 9819,
           "title": "docs(synthesize): name both blank limits for discovered ordered pairs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9836,
+          "title": "ordered relationship members keep their own blanks",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220003,7 +220008,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T18:23:05.611Z",
+      "verified_at": "2026-11-21T20:36:43.564Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220979,10 +220984,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "b17474d2",
-      "content_hash": "f3747c25b6543d00731fadb8b77a0ddc9c60fb8b6de8bfa6462674ea581b3f0d",
+      "source_version": "1d985194",
+      "content_hash": "c84eb08e4e7de97df74e5e1d1e8855344c5c975807cbcc82ce274b829ffebcbb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T18:23:06.286Z"
+      "persisted_at": "2026-11-21T20:36:44.359Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -221052,9 +221057,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "d9f6b3baeb98dedf97cf7f65bbaf416648c2f3a1e4ef87bf153cf95b260199db",
+      "content_hash": "1c624a3398ccd43738876e73cb0a3dc23aee2ef7e443ab537d37199597b02ebc",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T16:19:05.611Z"
+      "persisted_at": "2026-11-21T20:36:50.606Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -240856,8 +240861,8 @@
       "slug": "mintplex-labs-anything-llm",
       "platform": "github",
       "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-      "source_version": "b2da1887",
-      "content_hash": "fcf163f2a99f239d4f5f499ff1c537f0563c50e40220962255096e40a093fcb6",
+      "source_version": "472b1e3f",
+      "content_hash": "e9f1c49be1aa76eb71946c4dd898ed3723ec8d26ff0fa0fe72840670f2e53667",
       "dossier_path": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "promoted_rules": [
@@ -240895,6 +240900,11 @@
           "number": 9591,
           "title": "keep the chat in sync with the route when switching workspaces",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9835,
+          "title": "read Bedrock Anthropic replies from text blocks, not the first block",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -240902,7 +240912,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T15:35:21.409Z",
+      "verified_at": "2026-11-21T20:36:41.398Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -247482,7 +247492,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-VL-2B",
       "source_version": "hf-liquidai-lfm3-vl-2b",
-      "content_hash": "0635b94793bfc6d3d2f28e87e82f2de9ac90d4478ae120c736c53d08bcd46c48",
+      "content_hash": "e8fc1e21abeb4164939253907e7864fa1c47fa52da50b34157901366294ab468",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md",
       "promoted_rules": [],
@@ -247491,7 +247501,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T13:27:18.532Z",
+      "verified_at": "2026-11-21T20:36:27.190Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -247508,9 +247518,9 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-VL-2B Core Invariants",
       "repository": "LiquidAI/LFM3-VL-2B",
       "source_version": "hf-liquidai-lfm3-vl-2b",
-      "content_hash": "ddb88b2629cba831618c94860ea641ecb63d1777ebf30c9b6e327ee0dd840957",
+      "content_hash": "15c7977b72f3bfb9a0521b7ff8c92654d55180231e0bc1cc6632a75976bcc7d1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T13:27:18.844Z"
+      "persisted_at": "2026-11-21T20:36:27.802Z"
     },
     "rule-8618": {
       "learning_id": "rule-8618",
@@ -247546,9 +247556,9 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-vl-2b-learnings Core Invariants",
       "repository": "hf-liquidai-lfm3-vl-2b-learnings",
       "source_version": "HEAD",
-      "content_hash": "6ba2e50887d7fc28da8a48127ac7814e9451ba2da350ad97cd9f073d03c8fce8",
+      "content_hash": "dac6ef95671ca14d51219628823186c6888506ee674c43095c4608ae9ce5c07e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T13:27:57.474Z"
+      "persisted_at": "2026-11-21T20:36:47.764Z"
     },
     "candidate_directive-deps-bump-go-mongodb-org-mongo-driver-v2-from-2-9-2-to-2-10-0": {
       "item_id": "candidate_directive-deps-bump-go-mongodb-org-mongo-driver-v2-from-2-9-2-to-2-10-0",
@@ -316028,6 +316038,70 @@
       "content_hash": "6d794b2e6c02b3f515bb8993d99ee3b947ae3c05f5e00127744b6e9398f1c5ae",
       "domain_letter": "H",
       "persisted_at": "2026-11-21T20:25:10.714Z"
+    },
+    "rule-9835": {
+      "learning_id": "rule-9835",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9835,
+      "title": "read Bedrock Anthropic replies from text blocks, not the first block",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "472b1e3f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T20:36:41.398Z"
+    },
+    "candidate_directive-read-bedrock-anthropic-replies-from-text-blocks-not-the-first-block": {
+      "item_id": "candidate_directive-read-bedrock-anthropic-replies-from-text-blocks-not-the-first-block",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CBP5-read-bedrock-anthropic-replies-from-text-blocks-not-the-first-block.md",
+      "title": "read Bedrock Anthropic replies from text blocks, not the first block",
+      "repository": "mintplex-labs-anything-llm-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c2581d2625dd3e2c15941818bf037adc851748c398ef52c68d4cb0217a937cdd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T20:36:48.570Z"
+    },
+    "rule-9836": {
+      "learning_id": "rule-9836",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9836,
+      "title": "ordered relationship members keep their own blanks",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "1d985194",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T20:36:43.564Z"
+    },
+    "candidate_directive-ordered-relationship-members-keep-their-own-blanks": {
+      "item_id": "candidate_directive-ordered-relationship-members-keep-their-own-blanks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C89B-ordered-relationship-members-keep-their-own-blanks.md",
+      "title": "ordered relationship members keep their own blanks",
+      "repository": "dathere/qsv",
+      "source_version": "1d985194",
+      "content_hash": "6f27e2ddac30e6c02c653690462ee30e23562c85d4e36286b4e9baebe08488af",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T20:36:44.115Z"
+    },
+    "candidate_directive-synthesize-ordered-relationship-members-keep-their-own-blanks": {
+      "item_id": "candidate_directive-synthesize-ordered-relationship-members-keep-their-own-blanks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CD2K-synthesize-ordered-relationship-members-keep-their-own-blanks.md",
+      "title": "synthesize): ordered relationship members keep their own blanks",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cc5a23002abe00bcfd8d87836f715ec8d88b00cde16848b9d4de9eaa5349e0d1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T20:36:50.352Z"
     }
   },
   "ai-builder-brain": {

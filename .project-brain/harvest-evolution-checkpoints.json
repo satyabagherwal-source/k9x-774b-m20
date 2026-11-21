@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T20:25:11.320Z",
+  "last_updated": "2026-11-21T20:36:51.050Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T15:59:55.405Z",
@@ -748,7 +748,7 @@
       "staged_for_review": 1
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-21T16:19:04.534Z",
+      "processed_at": "2026-11-21T20:36:49.248Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1998,7 +1998,7 @@
       "staged_for_review": 0
     },
     "mintplex-labs-anything-llm-learnings.md": {
-      "processed_at": "2026-11-20T15:35:27.007Z",
+      "processed_at": "2026-11-21T20:36:48.027Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2983,8 +2983,8 @@
       "staged_for_review": 0
     },
     "hf-liquidai-lfm3-vl-2b-learnings.md": {
-      "processed_at": "2026-11-15T13:27:57.286Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-21T20:36:47.514Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md": {
@@ -3673,7 +3673,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2877,
+  "total_dossiers_evaluated": 2880,
   "total_canonical_promoted": 453,
-  "total_staged_for_review": 2209
+  "total_staged_for_review": 2211
 }

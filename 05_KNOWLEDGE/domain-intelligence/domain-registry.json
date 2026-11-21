@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T20:25:10.939Z",
+  "last_updated": "2026-11-21T20:36:50.606Z",
   "total_records": 2275,
   "domains": {
     "A": {
@@ -8939,8 +8939,8 @@
       "title": "Technical Construction Intelligence: Mintplex-Labs/anything-llm Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mintplex-labs-anything-llm-technical-construction-intelligence-mintplex-labs-any.md",
       "repository": "Mintplex-Labs/anything-llm",
-      "content_hash": "f64f69642318a72008a0c25f7c10d6f0864571e35ae4205406f018c518c95b63",
-      "created_at": "2026-11-20T15:35:22.002Z"
+      "content_hash": "67ec40a95da5c1bc90280d76e58790d24132ccf92bcdf65ddd46f707a8b6150f",
+      "created_at": "2026-11-21T20:36:42.202Z"
     },
     "DOM-D-AFA4F352": {
       "record_id": "DOM-D-AFA4F352",
@@ -8999,8 +8999,8 @@
       "title": "Technical Construction Intelligence: mintplex-labs-anything-llm-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mintplex-labs-anything-llm-learnings-technical-construction-intelligence-mintple.md",
       "repository": "mintplex-labs-anything-llm-learnings",
-      "content_hash": "54e5daf9183526f0578814fbfab591574ccca485668b89c07164fa712992471b",
-      "created_at": "2026-11-20T15:35:28.170Z"
+      "content_hash": "3923068b464e30784b5920e6182948ae31b5ad8f6f3f1afa7e4a81129ba0e673",
+      "created_at": "2026-11-21T20:36:48.788Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -12332,8 +12332,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "f3747c25b6543d00731fadb8b77a0ddc9c60fb8b6de8bfa6462674ea581b3f0d",
-      "created_at": "2026-11-21T18:23:06.286Z"
+      "content_hash": "c84eb08e4e7de97df74e5e1d1e8855344c5c975807cbcc82ce274b829ffebcbb",
+      "created_at": "2026-11-21T20:36:44.359Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -12401,8 +12401,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "d9f6b3baeb98dedf97cf7f65bbaf416648c2f3a1e4ef87bf153cf95b260199db",
-      "created_at": "2026-11-21T16:19:05.611Z"
+      "content_hash": "1c624a3398ccd43738876e73cb0a3dc23aee2ef7e443ab537d37199597b02ebc",
+      "created_at": "2026-11-21T20:36:50.606Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -21385,8 +21385,8 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-VL-2B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-vl-2b-research-knowledge-intelligence-liquidai-lfm3-vl-2b-core-.md",
       "repository": "LiquidAI/LFM3-VL-2B",
-      "content_hash": "ddb88b2629cba831618c94860ea641ecb63d1777ebf30c9b6e327ee0dd840957",
-      "created_at": "2026-11-15T13:27:18.844Z"
+      "content_hash": "15c7977b72f3bfb9a0521b7ff8c92654d55180231e0bc1cc6632a75976bcc7d1",
+      "created_at": "2026-11-21T20:36:27.802Z"
     },
     "DOM-D-98B9F9F9": {
       "record_id": "DOM-D-98B9F9F9",
@@ -21436,8 +21436,8 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-vl-2b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-vl-2b-learnings-research-knowledge-intelligence-hf-liquidai-lfm.md",
       "repository": "hf-liquidai-lfm3-vl-2b-learnings",
-      "content_hash": "6ba2e50887d7fc28da8a48127ac7814e9451ba2da350ad97cd9f073d03c8fce8",
-      "created_at": "2026-11-15T13:27:57.474Z"
+      "content_hash": "dac6ef95671ca14d51219628823186c6888506ee674c43095c4608ae9ce5c07e",
+      "created_at": "2026-11-21T20:36:47.764Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-glb-3d-coder-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-glb-3d-coder-core-invariants",
