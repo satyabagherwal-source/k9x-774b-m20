@@ -4303,10 +4303,10 @@
     "repository": "berty/berty",
     "platform": "github",
     "sourceUrl": "https://github.com/berty/berty",
-    "sourceVersion": "a18636b2",
+    "sourceVersion": "3d9720d4",
     "license": "NOASSERTION",
-    "contentHash": "43db151d324bd5fcbf424519aff51b22bba9b2909bf988b7dd56fe08f9b1ea1b",
-    "lastHarvestedAt": "2026-11-17T17:11:34.192Z",
+    "contentHash": "d19c47c21500add003c1e204e6e3e1105ff8029ddec43eb8e50af035c80db9cc",
+    "lastHarvestedAt": "2026-11-21T22:16:22.028Z",
     "learningId": "learn-github-berty-berty"
   },
   "agent-field-agentfield": {
@@ -11605,8 +11605,8 @@
     "sourceUrl": "https://huggingface.co/speridlabs/idol",
     "sourceVersion": "hf-speridlabs-idol",
     "license": "Open-Source",
-    "contentHash": "2d27364c35b5481b9c597abca05ad3ce348dc510c610c80e3124137579f8914e",
-    "lastHarvestedAt": "2026-11-17T10:40:58.854Z",
+    "contentHash": "8470e61065d944c557c9eeed0da4f747df08a844f22c67f6559a24dbb0df2f91",
+    "lastHarvestedAt": "2026-11-21T22:16:15.213Z",
     "learningId": "learn-huggingface-speridlabs-idol"
   },
   "krishhgg-insomnia": {
@@ -12913,10 +12913,10 @@
     "repository": "erkamyaman/rust-anything",
     "platform": "github",
     "sourceUrl": "https://github.com/erkamyaman/rust-anything",
-    "sourceVersion": "fe91ee14",
+    "sourceVersion": "8ac2c1c8",
     "license": "MIT",
-    "contentHash": "99e2cdb0bd13b92bce1919761f6f74d2737aa17983d05f2fe23386fb07dc63bf",
-    "lastHarvestedAt": "2026-11-20T06:19:24.630Z",
+    "contentHash": "6e6c4ff927fbcf9ac872270c95a54e8deeb5bcbd7b0dad35df46f9e978e371f2",
+    "lastHarvestedAt": "2026-11-21T22:16:16.332Z",
     "learningId": "learn-github-erkamyaman-rust-anything"
   },
   "hf-akhaliq-minimax-h3-image-character-swap": {

@@ -11948,3 +11948,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism` | `https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | `hf-oliviar` | Multi-dimensional audit evidence | 2026-11-21T21:57:51.027Z |
 | `learn-huggingface-liquidai-lfm3-1-7b-gguf` | `https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-21T22:06:21.036Z |
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `da9a3583` | Multi-dimensional audit evidence | 2026-11-21T22:06:30.797Z |
+| `learn-huggingface-speridlabs-idol` | `https://huggingface.co/speridlabs/idol` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-21T22:16:15.213Z |
+| `learn-github-erkamyaman-rust-anything` | `https://github.com/erkamyaman/rust-anything` | `8ac2c1c8` | Multi-dimensional audit evidence | 2026-11-21T22:16:16.332Z |
+| `learn-github-berty-berty` | `https://github.com/berty/berty` | `3d9720d4` | Multi-dimensional audit evidence | 2026-11-21T22:16:22.028Z |

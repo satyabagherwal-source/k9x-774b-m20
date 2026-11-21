@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T22:06:35.558Z",
+  "last_updated": "2026-11-21T22:16:29.170Z",
   "total_verified_learnings": 9062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23302,
+  "total_items": 23309,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -224359,8 +224359,8 @@
       "slug": "berty-berty",
       "platform": "github",
       "source_url": "https://github.com/berty/berty",
-      "source_version": "a18636b2",
-      "content_hash": "43db151d324bd5fcbf424519aff51b22bba9b2909bf988b7dd56fe08f9b1ea1b",
+      "source_version": "3d9720d4",
+      "content_hash": "d19c47c21500add003c1e204e6e3e1105ff8029ddec43eb8e50af035c80db9cc",
       "dossier_path": "07_PROJECT_LEARNING/berty-berty-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/berty-berty-learnings.md",
       "promoted_rules": [
@@ -224373,6 +224373,11 @@
           "number": 9016,
           "title": "BLE reconnection on iOS (weshnet v2.3.1) and Android handshake deadlock",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9854,
+          "title": "Empirical Invariant Guard in package-lock.json",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224380,7 +224385,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T17:11:33.941Z",
+      "verified_at": "2026-11-21T22:16:21.819Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224422,10 +224427,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-berty-berty-architecture-intelligence-berty-berty-core-invariants.md",
       "title": "Architecture Intelligence: berty/berty Core Invariants",
       "repository": "berty/berty",
-      "source_version": "a18636b2",
-      "content_hash": "060a894a42f730ead1470918c64b9e6991b877254338d2b1f14dfa9a91af9b08",
+      "source_version": "3d9720d4",
+      "content_hash": "0ca27da092999b3b7b5d048022af05a201fdf669222b745dee846370585dbee9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T17:11:34.634Z"
+      "persisted_at": "2026-11-21T22:16:22.440Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-berty-berty": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-berty-berty",
@@ -224434,10 +224439,10 @@
       "relative_path": "08_VERIFICATION/berty-berty-verification-protocol-empirical-defect-shield-for-berty-berty.md",
       "title": "Verification Protocol: Empirical Defect Shield for berty/berty",
       "repository": "berty/berty",
-      "source_version": "a18636b2",
-      "content_hash": "adc709139ad45ba1381ae2dd160bba2122fcc3809230225beebc8e6a1a0cdf30",
+      "source_version": "3d9720d4",
+      "content_hash": "d4b30114c57dd85107a2c5d44a253838fbcf9182d5c4f2a64ddbea2cbe2762cc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T17:11:34.869Z"
+      "persisted_at": "2026-11-21T22:16:22.667Z"
     },
     "learn-huggingface-meta-llama-llama-2-7b": {
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b",
@@ -224628,9 +224633,9 @@
       "title": "Architecture Intelligence: berty-berty-learnings Core Invariants",
       "repository": "berty-berty-learnings",
       "source_version": "HEAD",
-      "content_hash": "5a6f4671b57b213d5dae95ad9daadf9a589b210ac8aa2553a57cc15883d67d75",
+      "content_hash": "e528a4b0669c2db865f72637e300763330a8d5955ea6d5cf4dfc5f393b1b8c31",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T17:11:39.847Z"
+      "persisted_at": "2026-11-21T22:16:28.987Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-berty-berty-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-berty-berty-learnings",
@@ -224640,9 +224645,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for berty-berty-learnings",
       "repository": "berty-berty-learnings",
       "source_version": "HEAD",
-      "content_hash": "5d970f194ff1522021086561770482f4c6a01f264098fc2103896d7094a1a5ae",
+      "content_hash": "a17f9984f7eb7439ead64e62c0bb49605da160d9c0b01385f3070774bc1e004f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T17:11:40.066Z"
+      "persisted_at": "2026-11-21T22:16:29.170Z"
     },
     "learn-huggingface-deepseek-ai-deepseek-v3": {
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v3",
@@ -272828,7 +272833,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/speridlabs/idol",
       "source_version": "hf-speridlabs-idol",
-      "content_hash": "2d27364c35b5481b9c597abca05ad3ce348dc510c610c80e3124137579f8914e",
+      "content_hash": "8470e61065d944c557c9eeed0da4f747df08a844f22c67f6559a24dbb0df2f91",
       "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md",
       "promoted_rules": [],
@@ -272837,7 +272842,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T10:40:58.690Z",
+      "verified_at": "2026-11-21T22:16:14.982Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -272854,9 +272859,9 @@
       "title": "Research & Knowledge Intelligence: speridlabs/idol Core Invariants",
       "repository": "speridlabs/idol",
       "source_version": "hf-speridlabs-idol",
-      "content_hash": "a144bd5d121c497b3a6aeee5953f25f1ab1cfeb4b86dd0c07ce7d5250012b647",
+      "content_hash": "eb1efe18c0e1ca54bc4dec0591e90449a9d45d8d25a10b7ca1ab6db41f1d2a38",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T10:40:59.015Z"
+      "persisted_at": "2026-11-21T22:16:15.459Z"
     },
     "rule-8952": {
       "learning_id": "rule-8952",
@@ -272968,9 +272973,9 @@
       "title": "Research & Knowledge Intelligence: hf-speridlabs-idol-learnings Core Invariants",
       "repository": "hf-speridlabs-idol-learnings",
       "source_version": "HEAD",
-      "content_hash": "d7c1b95e93bb7afd2b53e0fa5965b2f86e6060e1d8309ef767b1d475789b7486",
+      "content_hash": "09b56f3afad364cd1cb05a510faa98aa9c0aa978da69e156a7def49e3057b357",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T10:41:18.102Z"
+      "persisted_at": "2026-11-21T22:16:28.305Z"
     },
     "candidate_directive-server-guard-remaining-deletecontext-logger-calls-against-nil": {
       "item_id": "candidate_directive-server-guard-remaining-deletecontext-logger-calls-against-nil",
@@ -291754,8 +291759,8 @@
       "slug": "erkamyaman-rust-anything",
       "platform": "github",
       "source_url": "https://github.com/erkamyaman/rust-anything",
-      "source_version": "fe91ee14",
-      "content_hash": "99e2cdb0bd13b92bce1919761f6f74d2737aa17983d05f2fe23386fb07dc63bf",
+      "source_version": "8ac2c1c8",
+      "content_hash": "6e6c4ff927fbcf9ac872270c95a54e8deeb5bcbd7b0dad35df46f9e978e371f2",
       "dossier_path": "07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
       "promoted_rules": [
@@ -291768,6 +291773,11 @@
           "number": 9526,
           "title": "address remaining CodeRabbit findings",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9853,
+          "title": "read `__all__` after a docstring or an import, and only when it is lite",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -291775,7 +291785,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T06:19:24.426Z",
+      "verified_at": "2026-11-21T22:16:16.125Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -291829,10 +291839,10 @@
       "relative_path": "08_VERIFICATION/erkamyaman-rust-anything-verification-protocol-empirical-defect-shield-for-erkam.md",
       "title": "Verification Protocol: Empirical Defect Shield for erkamyaman/rust-anything",
       "repository": "erkamyaman/rust-anything",
-      "source_version": "fe91ee14",
-      "content_hash": "24c67e364b85d8155da9624c0044234c94cf56107a0ebe80ead236295753aeed",
+      "source_version": "8ac2c1c8",
+      "content_hash": "39213d7ba9ae84f5076cc298879e1dac1bff2e852c96d68ccca90991ef3777bd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T06:19:25.131Z"
+      "persisted_at": "2026-11-21T22:16:16.970Z"
     },
     "rule-9273": {
       "learning_id": "rule-9273",
@@ -291880,9 +291890,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for erkamyaman-rust-anything-learnings",
       "repository": "erkamyaman-rust-anything-learnings",
       "source_version": "HEAD",
-      "content_hash": "4e9ec6883a4946f0ed6332ee8ba9e79a962c69d33a62365b75eb1b9f0dba16e5",
+      "content_hash": "6b906a0c0b2903e3e322e13a098e96f3beef71e4799c2cfc5084a6c76a32ae4a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T06:19:41.362Z"
+      "persisted_at": "2026-11-21T22:16:27.911Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-core-",
@@ -316780,6 +316790,94 @@
       "content_hash": "42d0cf8bb7c3046ec4a250360128712f8be0451a65ce954e20637310aaa38608",
       "domain_letter": "K",
       "persisted_at": "2026-11-21T22:06:34.566Z"
+    },
+    "rule-9853": {
+      "learning_id": "rule-9853",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9853,
+      "title": "read `__all__` after a docstring or an import, and only when it is lite",
+      "source_url": "https://github.com/erkamyaman/rust-anything",
+      "source_version": "8ac2c1c8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T22:16:16.125Z"
+    },
+    "candidate_directive-read-__all__-after-a-docstring-or-an-import-and-only-when-it-is-lite": {
+      "item_id": "candidate_directive-read-__all__-after-a-docstring-or-an-import-and-only-when-it-is-lite",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W8N3-read-__all__-after-a-docstring-or-an-import-and-only-when-it-is-lite.md",
+      "title": "read `__all__` after a docstring or an import, and only when it is lite",
+      "repository": "erkamyaman/rust-anything",
+      "source_version": "8ac2c1c8",
+      "content_hash": "54127d832154896d220681e5fcbfb0cfc43078eb54064d8b89236963a904aec6",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T22:16:16.580Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-erkamyaman-rust-anything-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-erkamyaman-rust-anything-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-erkamyaman-rust-anything-research-knowledge-intelligence-erkamyaman-rust-anythin.md",
+      "title": "Research & Knowledge Intelligence: erkamyaman/rust-anything Core Invariants",
+      "repository": "erkamyaman/rust-anything",
+      "source_version": "8ac2c1c8",
+      "content_hash": "e611c28d633abe00a6b03e71a85816dba4733f9019b36a794dc4b7a8921a69f7",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T22:16:16.781Z"
+    },
+    "rule-9854": {
+      "learning_id": "rule-9854",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9854,
+      "title": "Empirical Invariant Guard in package-lock.json",
+      "source_url": "https://github.com/berty/berty",
+      "source_version": "3d9720d4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T22:16:21.819Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-package-lock-json": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-package-lock-json",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WI2C-empirical-invariant-guard-in-package-lock-json.md",
+      "title": "Empirical Invariant Guard in package-lock.json",
+      "repository": "berty-berty-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7fbb83031b1f4de729e1167a8901bbba0eb3223d064bf29d13fa433a02092fb5",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T22:16:28.788Z"
+    },
+    "candidate_directive-python-read-__all__-after-a-docstring-or-an-import-and-only-when-it-is-lite": {
+      "item_id": "candidate_directive-python-read-__all__-after-a-docstring-or-an-import-and-only-when-it-is-lite",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WH2W-python-read-__all__-after-a-docstring-or-an-import-and-only-when-it-is-lite.md",
+      "title": "python): read `__all__` after a docstring or an import, and only when it is lite",
+      "repository": "erkamyaman-rust-anything-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a55e47a7047900ff097efc9978774bd76211a92cdd2ef7e4ba9e12c5e0b68dd4",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T22:16:27.518Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-erkamyaman-rust-anything-learnings-core-invarian": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-erkamyaman-rust-anything-learnings-core-invarian",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-erkamyaman-rust-anything-learnings-research-knowledge-intelligence-erkamyaman-ru.md",
+      "title": "Research & Knowledge Intelligence: erkamyaman-rust-anything-learnings Core Invariants",
+      "repository": "erkamyaman-rust-anything-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1dc1e6309d643d5999abfa98412eb86fe4f1f9b7f16bb7a96b0bdcf6edd53cc1",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T22:16:27.685Z"
     }
   },
   "ai-builder-brain": {

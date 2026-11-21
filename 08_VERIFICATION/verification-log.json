@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-KOZN",
-    "timestamp": "2026-11-19T18:20:00.515Z",
-    "repository": "kgateway-dev/kgateway",
-    "learningId": "learn-github-kgateway-dev-kgateway",
-    "contentHash": "8b9ad65e2f0b33ad5ce10923ea7102f0c52f1ac70a5b24b27321772cff1832b7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-KSU4",
-    "timestamp": "2026-11-19T18:20:05.500Z",
-    "repository": "infiniflow/infinity",
-    "learningId": "learn-github-infiniflow-infinity",
-    "contentHash": "9e0f5919dbe82c706baa9632557fe3c2b029749eb6571b5ccd1167097e5ff1bd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-KUNR",
-    "timestamp": "2026-11-19T18:20:07.863Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "994d4b6aa04d594bd5cb32de3b6a916f832a9dd4780a39e13e5ced4d945aedd4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-1BAV",
     "timestamp": "2026-11-19T18:32:55.927Z",
     "repository": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -7490,6 +7445,51 @@
     "repository": "chaos-mesh/chaos-mesh",
     "learningId": "learn-github-chaos-mesh-chaos-mesh",
     "contentHash": "4b6c754346c6664710654047641abe49b21db9bcf181469b87a0d1507af9a42d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-W7L5",
+    "timestamp": "2026-11-21T22:16:15.209Z",
+    "repository": "speridlabs/idol",
+    "learningId": "learn-huggingface-speridlabs-idol",
+    "contentHash": "8470e61065d944c557c9eeed0da4f747df08a844f22c67f6559a24dbb0df2f91",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-W8G8",
+    "timestamp": "2026-11-21T22:16:16.328Z",
+    "repository": "erkamyaman/rust-anything",
+    "learningId": "learn-github-erkamyaman-rust-anything",
+    "contentHash": "6e6c4ff927fbcf9ac872270c95a54e8deeb5bcbd7b0dad35df46f9e978e371f2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-WCUH",
+    "timestamp": "2026-11-21T22:16:22.025Z",
+    "repository": "berty/berty",
+    "learningId": "learn-github-berty-berty",
+    "contentHash": "d19c47c21500add003c1e204e6e3e1105ff8029ddec43eb8e50af035c80db9cc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

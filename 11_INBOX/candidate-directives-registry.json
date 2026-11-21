@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T22:06:35.304Z",
+  "last_updated": "2026-11-21T22:16:28.788Z",
   "directives": [
     {
       "id": "CD-001",
@@ -43918,6 +43918,48 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-AFE464-dead-license-badge-link-in-readme.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-W8N3",
+      "directive_title": "read `__all__` after a docstring or an import, and only when it is lite",
+      "source_repo": "erkamyaman/rust-anything",
+      "source_commit": "8ac2c1c8",
+      "staged_file": "11_INBOX/candidate-directives/CD-W8N3-read-__all__-after-a-docstring-or-an-import-and-only-when-it-is-lite.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-WI2C",
+      "directive_title": "Empirical Invariant Guard in package-lock.json",
+      "source_repo": "berty-berty-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-WI2C-empirical-invariant-guard-in-package-lock-json.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-WH2W",
+      "directive_title": "python): read `__all__` after a docstring or an import, and only when it is lite",
+      "source_repo": "erkamyaman-rust-anything-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-WH2W-python-read-__all__-after-a-docstring-or-an-import-and-only-when-it-is-lite.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-F91FD7",
+      "directive_title": "Empirical Invariant Guard in package-lock.json",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "berty-berty",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F91FD7-empirical-invariant-guard-in-package-loc.md",
       "staged_date": "2026-11-21"
     }
   ]

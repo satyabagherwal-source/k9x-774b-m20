@@ -11915,3 +11915,6 @@
 | `CYCLE-20261121-8JLB` | `2026-11-21T21:57:51.023Z` | `OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md` | Yes (`935c4843...`) |
 | `CYCLE-20261121-JH49` | `2026-11-21T22:06:21.033Z` | `LiquidAI/LFM3-1.7B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md` | Yes (`b183acba...`) |
 | `CYCLE-20261121-JONE` | `2026-11-21T22:06:30.794Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9852` | Yes (`4b6c7543...`) |
+| `CYCLE-20261121-W7L5` | `2026-11-21T22:16:15.209Z` | `speridlabs/idol` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md` | Yes (`8470e610...`) |
+| `CYCLE-20261121-W8G8` | `2026-11-21T22:16:16.328Z` | `erkamyaman/rust-anything` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9853` | Yes (`6e6c4ff9...`) |
+| `CYCLE-20261121-WCUH` | `2026-11-21T22:16:22.025Z` | `berty/berty` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9854` | Yes (`d19c47c2...`) |

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T22:06:34.390Z",
+  "updated_at": "2026-11-21T22:16:28.546Z",
   "stats": {
-    "total_discovered": 7365,
-    "approved_pending_harvest": 6967,
+    "total_discovered": 7368,
+    "approved_pending_harvest": 6970,
     "harvested_count": 0,
     "rejected_count": 398,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6947,
+      "COMMUNITY_AND_EXPERT": 6950,
       "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -159267,6 +159267,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
         "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-014570B1A8F9": {
+      "id": "SRC-014570B1A8F9",
+      "url": "https://github.com/erkamyaman/rust-anything/blob/v2.1.0/src/lang/c.rs",
+      "title": "https://github.com/erkamyaman/rust-anything/blob/v2.1.0/src/lang/c.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T22:16:27.196Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
+        "fileName": "erkamyaman-rust-anything-learnings.md"
+      }
+    },
+    "SRC-12495A105CC3": {
+      "id": "SRC-12495A105CC3",
+      "url": "https://github.com/erkam",
+      "title": "https://github.com/erkam",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T22:16:27.274Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
+        "fileName": "erkamyaman-rust-anything-learnings.md"
+      }
+    },
+    "SRC-D3856F51AEE8": {
+      "id": "SRC-D3856F51AEE8",
+      "url": "https://registry.npmjs.org/node-forge/-/node-forge-1.4.0.tgz",
+      "title": "https://registry.npmjs.org/node-forge/-/node-forge-1.4.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T22:16:28.546Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/berty-berty-learnings.md",
+        "fileName": "berty-berty-learnings.md"
       }
     }
   }

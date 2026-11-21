@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T22:06:35.426Z",
-  "total_records": 2283,
+  "last_updated": "2026-11-21T22:16:28.987Z",
+  "total_records": 2285,
   "domains": {
     "A": {
       "total": 17,
@@ -59,7 +59,7 @@
       ]
     },
     "D": {
-      "total": 896,
+      "total": 898,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -956,7 +956,9 @@
         "domain_intelligence-research-knowledge-intelligence-atomicchat-inkling-2-mini-uncensored-gguf-core-i",
         "DOM-D-2BE66F2B",
         "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-inkling-2-mini-uncensored-gguf-lea",
-        "domain_intelligence-research-knowledge-intelligence-hf-oliviarossi-minimax-h3_singularity-x-10eros-m"
+        "domain_intelligence-research-knowledge-intelligence-hf-oliviarossi-minimax-h3_singularity-x-10eros-m",
+        "domain_intelligence-research-knowledge-intelligence-erkamyaman-rust-anything-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-erkamyaman-rust-anything-learnings-core-invarian"
       ]
     },
     "E": {
@@ -13533,8 +13535,8 @@
       "title": "Architecture Intelligence: berty/berty Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-berty-berty-architecture-intelligence-berty-berty-core-invariants.md",
       "repository": "berty/berty",
-      "content_hash": "060a894a42f730ead1470918c64b9e6991b877254338d2b1f14dfa9a91af9b08",
-      "created_at": "2026-11-17T17:11:34.634Z"
+      "content_hash": "0ca27da092999b3b7b5d048022af05a201fdf669222b745dee846370585dbee9",
+      "created_at": "2026-11-21T22:16:22.440Z"
     },
     "domain_intelligence-technical-construction-intelligence-meta-llama-llama-2-7b-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meta-llama-llama-2-7b-core-invariants",
@@ -13636,8 +13638,8 @@
       "title": "Architecture Intelligence: berty-berty-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-berty-berty-learnings-architecture-intelligence-berty-berty-learnings-core-invar.md",
       "repository": "berty-berty-learnings",
-      "content_hash": "5a6f4671b57b213d5dae95ad9daadf9a589b210ac8aa2553a57cc15883d67d75",
-      "created_at": "2026-11-17T17:11:39.847Z"
+      "content_hash": "e528a4b0669c2db865f72637e300763330a8d5955ea6d5cf4dfc5f393b1b8c31",
+      "created_at": "2026-11-21T22:16:28.987Z"
     },
     "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v3-core-invariants",
@@ -27216,8 +27218,8 @@
       "title": "Research & Knowledge Intelligence: speridlabs/idol Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-speridlabs-idol-research-knowledge-intelligence-speridlabs-idol-core-invarian.md",
       "repository": "speridlabs/idol",
-      "content_hash": "a144bd5d121c497b3a6aeee5953f25f1ab1cfeb4b86dd0c07ce7d5250012b647",
-      "created_at": "2026-11-17T10:40:59.015Z"
+      "content_hash": "eb1efe18c0e1ca54bc4dec0591e90449a9d45d8d25a10b7ca1ab6db41f1d2a38",
+      "created_at": "2026-11-21T22:16:15.459Z"
     },
     "domain_intelligence-architecture-intelligence-meshery-meshery-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-meshery-meshery-core-invariants",
@@ -27243,8 +27245,8 @@
       "title": "Research & Knowledge Intelligence: hf-speridlabs-idol-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-speridlabs-idol-learnings-research-knowledge-intelligence-hf-speridlabs-idol-.md",
       "repository": "hf-speridlabs-idol-learnings",
-      "content_hash": "d7c1b95e93bb7afd2b53e0fa5965b2f86e6060e1d8309ef767b1d475789b7486",
-      "created_at": "2026-11-17T10:41:18.102Z"
+      "content_hash": "09b56f3afad364cd1cb05a510faa98aa9c0aa978da69e156a7def49e3057b357",
+      "created_at": "2026-11-21T22:16:28.305Z"
     },
     "domain_intelligence-architecture-intelligence-meshery-meshery-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-meshery-meshery-learnings-core-invariants",
@@ -38381,6 +38383,24 @@
       "repository": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings",
       "content_hash": "7268c90b15481d7910988efbb3c0ffeb2324f3cac52bf053ef41817c9c1965ad",
       "created_at": "2026-11-21T21:58:03.128Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-erkamyaman-rust-anything-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-erkamyaman-rust-anything-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: erkamyaman/rust-anything Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-erkamyaman-rust-anything-research-knowledge-intelligence-erkamyaman-rust-anythin.md",
+      "repository": "erkamyaman/rust-anything",
+      "content_hash": "e611c28d633abe00a6b03e71a85816dba4733f9019b36a794dc4b7a8921a69f7",
+      "created_at": "2026-11-21T22:16:16.781Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-erkamyaman-rust-anything-learnings-core-invarian": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-erkamyaman-rust-anything-learnings-core-invarian",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: erkamyaman-rust-anything-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-erkamyaman-rust-anything-learnings-research-knowledge-intelligence-erkamyaman-ru.md",
+      "repository": "erkamyaman-rust-anything-learnings",
+      "content_hash": "1dc1e6309d643d5999abfa98412eb86fe4f1f9b7f16bb7a96b0bdcf6edd53cc1",
+      "created_at": "2026-11-21T22:16:27.685Z"
     }
   }
 }

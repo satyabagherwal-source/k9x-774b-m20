@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T22:06:30.801Z",
-  "total_cycles_completed": 11337,
-  "total_learnings_persisted": 11337,
-  "total_rules_promoted": 10660,
+  "last_updated": "2026-11-21T22:16:22.034Z",
+  "total_cycles_completed": 11340,
+  "total_learnings_persisted": 11340,
+  "total_rules_promoted": 10662,
   "history": [
-    {
-      "timestamp": "2026-11-21T02:08:44.147Z",
-      "repository": "pixeltable/pixeltable",
-      "learningId": "learn-github-pixeltable-pixeltable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T02:11:54.209Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T02:26:52.743Z",
-      "repository": "hashicorp/terraform",
-      "learningId": "learn-github-hashicorp-terraform",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T02:26:58.662Z",
       "repository": "risingwavelabs/risingwave",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-21T22:06:30.801Z",
       "repository": "chaos-mesh/chaos-mesh",
       "learningId": "learn-github-chaos-mesh-chaos-mesh",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T22:16:15.220Z",
+      "repository": "speridlabs/idol",
+      "learningId": "learn-huggingface-speridlabs-idol",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T22:16:16.338Z",
+      "repository": "erkamyaman/rust-anything",
+      "learningId": "learn-github-erkamyaman-rust-anything",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T22:16:22.034Z",
+      "repository": "berty/berty",
+      "learningId": "learn-github-berty-berty",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

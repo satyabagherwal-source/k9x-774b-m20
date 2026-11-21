@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T22:06:33.889Z",
-    "lastVerified": "2026-11-21T22:06:33.889Z",
+    "lastChecked": "2026-11-21T22:16:26.992Z",
+    "lastVerified": "2026-11-21T22:16:26.992Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,9 +255,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-21T21:40:24.133Z",
+    "lastChecked": "2026-11-21T22:16:26.982Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-21T21:40:24.133Z"
+    "lastVerified": "2026-11-21T22:16:26.982Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -719,12 +719,12 @@
     "revisionIdentifier": "05bc57ba"
   },
   "topoteretes-cognee": {
-    "name": "topoteretes/cognee",
+    "name": "cognee",
     "officialUrl": "https://github.com/topoteretes/cognee",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-20T17:37:22.488Z",
-    "lastVerified": "2026-11-20T17:37:22.488Z",
+    "lastChecked": "2026-11-21T22:16:24.624Z",
+    "lastVerified": "2026-11-21T22:16:24.624Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-topoteretes-cognee",
@@ -733,7 +733,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1961133d"
   },
   "automattic-harper": {
     "name": "Automattic/harper",
@@ -1645,9 +1646,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-21T15:48:49.313Z",
+    "lastChecked": "2026-11-21T22:16:21.971Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-21T15:48:49.313Z"
+    "lastVerified": "2026-11-21T22:16:21.971Z"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -2312,12 +2313,12 @@
     "lastVerified": "2026-11-21T17:28:10.034Z"
   },
   "kubeedge-kubeedge": {
-    "name": "kubeedge/kubeedge",
+    "name": "kubeedge",
     "officialUrl": "https://github.com/kubeedge/kubeedge",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T19:06:29.294Z",
-    "lastVerified": "2026-11-20T19:06:29.294Z",
+    "lastChecked": "2026-11-21T22:16:19.603Z",
+    "lastVerified": "2026-11-21T22:16:19.603Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubeedge-kubeedge",
@@ -2326,7 +2327,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8429622d"
   },
   "aleo-labs-protocol-snarkos": {
     "name": "aleo-labs-protocol/snarkOS",
@@ -3569,11 +3571,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "berty-berty": {
-    "name": "berty",
+    "name": "berty/berty",
     "officialUrl": "https://github.com/berty/berty",
-    "lastChecked": "2026-11-18T17:01:38.429Z",
-    "revisionIdentifier": "a18636b2",
-    "lastVerified": "2026-11-18T17:01:38.429Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-21T22:16:20.988Z",
+    "lastVerified": "2026-11-21T22:16:20.988Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-berty-berty",
+    "contentHash": "d19c47c21500add003c1e204e6e3e1105ff8029ddec43eb8e50af035c80db9cc",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "peerdb-io-peerdb": {
     "name": "PeerDB-io/peerdb",
@@ -4036,15 +4048,15 @@
     "officialUrl": "https://github.com/erkamyaman/rust-anything",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T06:19:23.443Z",
-    "lastVerified": "2026-11-20T06:19:23.443Z",
+    "lastChecked": "2026-11-21T22:16:15.252Z",
+    "lastVerified": "2026-11-21T22:16:15.252Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-erkamyaman-rust-anything",
-    "contentHash": "99e2cdb0bd13b92bce1919761f6f74d2737aa17983d05f2fe23386fb07dc63bf",
+    "contentHash": "6e6c4ff927fbcf9ac872270c95a54e8deeb5bcbd7b0dad35df46f9e978e371f2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
-    "closedIssuesCount": 2,
+    "recentFixesCount": 14,
+    "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
@@ -12959,6 +12971,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
     "contentHash": "b183acbae4b711b4c83642cf2950c9ae76fb50e930184d76892897c3d80e1df2",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-speridlabs-idol": {
+    "name": "speridlabs/idol",
+    "officialUrl": "https://huggingface.co/speridlabs/idol",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T22:16:14.560Z",
+    "lastVerified": "2026-11-21T22:16:14.560Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-speridlabs-idol",
+    "contentHash": "8470e61065d944c557c9eeed0da4f747df08a844f22c67f6559a24dbb0df2f91",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

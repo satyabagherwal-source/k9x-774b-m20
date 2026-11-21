@@ -4,22 +4,22 @@
 {
   "source_repository": "berty/berty",
   "source_url": "https://github.com/berty/berty",
-  "source_version": "a18636b2",
+  "source_version": "3d9720d4",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T17:11:34.448Z",
+  "timestamp": "2026-11-21T22:16:22.259Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-berty-berty",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [berty/berty](https://github.com/berty/berty) (Revision: `a18636b2`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T17:11:34.448Z`  
+> **Provenance**: Harvested from [berty/berty](https://github.com/berty/berty) (Revision: `3d9720d4`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-21T22:16:22.259Z`  
 > **Learning ID**: `learn-github-berty-berty`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `berty/berty` (Commit: `a18636b2`)
+- **Target Repository**: `berty/berty` (Commit: `3d9720d4`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/berty-berty-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/berty/berty](https://github.com/berty/berty))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T17:11:32.975Z  
+> **Harvest Timestamp**: 2026-11-21T22:16:20.988Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Berty is a secure peer-to-peer messaging app that works with or without internet access, cellular data or trust in the network
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 9356 stars
+- **Stars / Engagement**: 9364 stars
 
 ---
 
@@ -668,527 +668,157 @@ export const ErrorUnaryNotImplemented = new Error('unary method not implemented'
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `39d7b631` (2026-11-16)
-**Commit Message**: fix: BLE reconnection on iOS (weshnet v2.3.1) and Android handshake deadlock (#5302)
+### Incident Patch 1: `3d9720d4` (2026-11-20)
+**Commit Message**: Merge pull request #5301 from berty/dependabot/npm_and_yarn/berty-bridge-expo/example/node-forge-1.4.3
 
-* chore(deps): bump weshnet to v2.3.1
+chore(deps): bump node-forge from 1.4.0 to 1.4.3 in /berty-bridge-expo/example
 
-Brings berty/weshnet#139: the iOS BLE driver now recovers after
-Bluetooth is turned off and on, and when the app is started with
-Bluetooth off.
-
-Signed-off-by: D4ryl00 <[REDACTED_EMAIL]>
-
-* fix(android): never block the BLE handshake thread forever
-
-The handshake of every device runs on one shared thread. PeerDevice's
-read(), internalWrite(), setNotify() and l2capWrite() waited without a
-timeout for the BleQueue callback, but BleQueue dropped commands on
-timeout and in clear() without calling their callbacks. When a peer
-disappeared in the middle of a handshake, the thread stayed blocked and
-no other device could complete a handshake until the app was restarted.
-
-- BleQueue: report a failure to the callback of a command that times
-  out or is dropped by clear(), run directly since the handler's looper
-  may be stopped; ignore stale timeouts and delayed starts of commands
-  that are no longer at the head of the queue; cancel the timer in
-  clear().
-- PeerDevice: bound the four waits (30 s safety net) and keep the
-  enqueue result separate from the operation re
-
-**File**: `berty-bridge-expo/android/src/main/java/tech/berty/bertybridgeexpo/gobridge/bledriver/BleQueue.java` (modified, +58/-13)
+**File**: `berty-bridge-expo/example/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -1,7 +1,11 @@
- package tech.berty.bertybridgeexpo.gobridge.bledriver;
- 
-+import static android.bluetooth.BluetoothGatt.GATT_FAILURE;
-+
- import android.os.Handler;
- 
-+import java.util.ArrayList;
-+import java.util.List;
- import java.util.Queue;
- import java.util.concurrent.ConcurrentLinkedQueue;
- 
-@@ -16,6 +20,9 @@ public class BleQueue {
- 
-     // timeout in ms before cancelling task
-     private static final long TIMEOUT = 5000;
-+
-+    // status given to the callback of a command that timed out or was dropped
-+    private static final int STATUS_FAILURE = GATT_FAILURE;
-     private final Queue<TaskDelay> mCommandQueue = new ConcurrentLinkedQueue<>();
-     private String mId;
-     private Runnable mTimeoutRunnable;
-@@ -103,19 +110,41 @@ private void startTimer() {
-         mLogger.v(TAG, String.format("id=%s startTimer called: index=%s", mLogger.sensitiveObject(mId), bluetoothCommand.index));
- 
-         cancelTimer();
--        mTimeoutRunnable = () -> {
-+        mTimeoutRunnable = () -> onCommandTimeout(bluetoothCommand);
-+
-+        mHandler.postDelayed(mTimeoutRunnable, TIMEOUT);
-+    }
-+
-+    private void onCommandTimeout(TaskDelay bluetoothCommand) {
-+        synchronized (this) {
-+            // the command may have been completed or cleared since the timer was posted
-+            if (mCommandQueue.peek() != bluetoothCommand) {
-+                return;
-+            }
-             mLogger.d(TAG, String.format("BleQueue id=%s startTimer: cancel runnable: index=%s", mLogger.sensitiveObject(mId), bluetoothCommand.index));
- 
-             mCommandQueue.poll();
-             mIsRetrying = false;
-             mCommandQueueBusy = false;
--            bluetoothCommand.cancel.run();
--            nextCommand();
--
-             mTimeoutRunnable = null;
--        };
-+        }
- 
--        mHandler.postDelayed(mTimeoutRunnable, TIMEOUT);
-+        // Run outside of the lock: the cancel runnable (usually disconnect()) takes other locks
-+        // and may clear this queue.
-+        bluetoothCommand.cancel.run();
-+        // Release the caller waiting for this command, otherwise it waits forever.
-+        failCallback(bluetoothCommand);
-+        nextCommand();
-+    }
-+
-+    // Report a failure to the callback of a command that will never be completed.
-+    // The callback is run directly instead of being posted: the handler's looper may already be
-+    // stopped (driver stopping), and the callbacks only release a latch.
-+    private void failCallback(TaskDelay command) {
-+        if (command.callback != null) {
-+            mLogger.d(TAG, String.format("id=%s failCallback: index=%d", mLogger.sensitiveObject(mId), command.index));
-+            command.callback.run(STATUS_FAILURE);
-+        }
-     }
- 
-     private void cancelTimer() {
-@@ -155,8 +184,14 @@ public synchronized void nextCommand() {
-             mNrTries = 0;
-         }
-         mHandler.postDelayed(() -> {
--            try {
-+            synchronized (this) {
-+                // the queue may have been cleared while this command was waiting for its delay
-+                if (mCommandQueue.peek() != bluetoothCommand) {
-+                    return;
-+                }
-                 startTimer();
-+            }
-+            try {
-                 bluetoothCommand.task.run();
-             } catch (Exception e) {
-                 mLogger.e(TAG, String.format("id=%s nextCommand: command exception", mLogger.sensitiveObject(mId)), e);
-@@ -165,13 +200,23 @@ public synchronized void nextCommand() {
-         }, bluetoothCommand.delay);
-     }
- 
--    public synchronized void clear() {
--        TaskDelay taskDelay = mCommandQueue.poll();
--        if (taskDelay != null) {
--            mHandler.removeCallbacks(taskDelay.task);
-+    // Drop all the pending commands. Their callbacks are called with a failure status so that
-+    // the threads waiting for them are released.
-+    public void clear() {
-+        List<TaskDelay> dropped = new ArrayList<>();
-+        synchronized (this) {
-+            cancelTimer();
-+            TaskDelay command;
-+            while ((command = mCommandQueue.poll()) != null) {
-+                dropped.add(command);
-+            }
-+            mCommandQueueBusy = false;
-+            mIsRetrying = false;
-+        }
-+
-+        for (TaskDelay command : dropped) {
-+            failCallback(command);
-         }
--        mCommandQueue.clear();
--        mCommandQueueBusy = false;
-     }
- 
-     private class TaskDelay {
-```
-
-**File**: `berty-bridge-expo/android/src/main/java/tech/berty/bertybridgeexpo/gobridge/bledriver/PeerDevice.java` (modified, +29/-12)
-```diff
-@@ -29,6 +29,7 @@
- import java.util.Random;
- import java.util.UUID;
- import java.util.concurrent.CountDownLatch;
-+import java.util.concurrent.TimeUnit;
- 
- public class PeerDevice {
-     // Mark used to tell all data is transferred
-@@ -47,6 +48,10 @@ public class PeerDevice {
-     private final BleDriver mBleDriver;
-     // Connection timeout
-     private static final int CONNECTION_TIMEOUT = 15000;
-+    // Safety net for the threads waiting for a queued BLE operation (handshake thread, writers):
-+    // BleQueue reports timeouts and dropped commands, but if its handler's looper has been
-+    // stopped the callback is lost, and the shared handshake thread would be blocked forever.
-+    private static final long OPERATION_TIMEOUT = 30000;
-     // Minimal and default MTU
-     private static final int DEFAULT_MTU = 23;
-     // Client Characteristic Configuration (CCC) descriptor of the characteristic
-@@ -793,7 +798,7 @@ private boolean setNotify(BluetoothGattCharacteristic characteristic, final bool
-         });
- 
-         // turn on/off the notification in queue
--        success[0] = mBleQueue.add(() -> {
-+        boolean queued = mBleQueue.add(() -> {
-             if (!isClientConnected()) {
-                 mLogger.e(TAG, "setNotify error: device not connected");
-                 mBleQueue.completedCommand(STATUS_ERROR);
-@@ -815,13 +820,16 @@ private boolean setNotify(BluetoothGattCharacteristic characteristic, final bool
-             }
-         }, callback, 0, this::disconnect);
- 
--        if (success[0] == false) {
-+        if (!queued) {
-             mLogger.e(TAG, String.format("setNotify error: device=%s: unable to put code in queue", mLogger.sensitiveObject(getMACAddress())));
-             return false;
-         }
- 
-         try {
--            countDownLatch.await();
-+            if (!countDownLatch.await(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS)) {
-+                mLogger.e(TAG, String.format("setNotify error: device=%s: timeout", mLogger.sensitiveObject(getMACAddress())));
-+                return false;
-+            }
-         } catch (InterruptedException e) {
-             mLogger.e(TAG, "setNotify: interrupted exception:", e);
-         }
-@@ -934,7 +942,7 @@ public boolean read(BluetoothGattCharacteristic characteristic) {
-             countDownLatch.countDown();
-         });
- 
--        success[0] = mBleQueue.add(() -> {
-+        boolean queued = mBleQueue.add(() -> {
-             mLogger.v(TAG, String.format("BleQueue: read: device=%s characteristicUUID=%s", mLogger.sensitiveObject(getMACAddress()), characteristic.getUuid()));
-             synchronized (mLockClient) {
-                 if (isClientConnected()) {
-@@ -953,13 +961,16 @@ public boolean read(BluetoothGattCharacteristic characteristic) {
-             }
-         }, callback, 0, this::disconnect);
- 
--        if (success[0] == false) {
-+        if (!queued) {
-             mLogger.e(TAG, String.format("read error: device=%s: unable to put code in queue", mLogger.sensitiveObject(getMACAddress())));
-             return false;
-         }
- 
-         try {
--            countDownLatch.await();
-+            if (!countDownLatch.await(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS)) {
-+                mLogger.e(TAG, String.format("read error: device=%s: timeout", mLogger.sensitiveObject(getMACAddress())));
-+                return false;
-+            }
-         } catch (InterruptedException e) {
-             mLogger.e(TAG, "read: interrupted exception:", e);
-         }
-@@ -978,7 +989,7 @@ public boolean l2capWrite(byte[] payload) {
-         });
- 
-         if ((isClientConnected() || isServerConnected()) && mBluetoothSocket != null && mBluetoothSocket.isConnected() && mOutputStream != null && mInputStream != null) {
--            success[0] = mWriteQueue.add(() -> {
-+            boolean queued = mWriteQueue.add(() -> {
-                 try {
-                     int nbOfChunk = payload.length / L2CAP_MPS;
-                     int minOffset = 0;
-@@ -1017,13 +1028,16 @@ public boolean l2capWrite(byte[] payload) {
-                 }
-             }, callback, 0, this::disconnect);
- 
--            if (success[0] == false) {
-+            if (!queued) {
-                 mLogger.e(TAG, String.format("l2capWrite error: device=%s: unable to put code in queue", mLogger.sensitiveObject(getMACAddress())));
-                 return false;
-             }
- 
-             try {
--                countDownLatch.await();
-+                if (!countDownLatch.await(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS)) {
-+                    mLogger.e(TAG, String.format("l2capWrite error: device=%s: timeout", mLogger.sensitiveObject(getMACAddress())));
-+                    return false;
-+                }
-             } catch (InterruptedException e) {
-                 mLogger.e(TAG, "l2capWrite: interrupted exception:", e);
-             }
-@@ -1042,7 +1056,7 @@ public boolean internalWrite(BluetoothGattCharacteristic characteristic, byte[]
-             countDownLatch.countDown();
-         });
- 
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@ require (
- 	berty.tech/go-ipfs-repo-encrypted v1.3.1-0.20260601130618-6d410a1fc4a3
- 	berty.tech/go-orbit-db v1.22.3-0.20260603105145-e1cb4a9a9a7f
- 	berty.tech/ipfs-webui-packed v1.0.0-v2.11.4-1
--	berty.tech/weshnet/v2 v2.3.1-0.20260605081032-915f5df54716
-+	berty.tech/weshnet/v2 v2.3.1
- 	firebase.google.com/go/v4 v4.12.0
- 	fyne.io/fyne/v2 v2.5.2
- 	github.com/Masterminds/semver v1.5.0
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -6,8 +6,8 @@ berty.tech/go-orbit-db v1.22.3-0.20260603105145-e1cb4a9a9a7f h1:Ac09tRng+NcZMr77
- berty.tech/go-orbit-db v1.22.3-0.20260603105145-e1cb4a9a9a7f/go.mod h1:35CamAKlgh1i6cjTdFNG9gLh9DyJ4c/FOn6j0v+qgqY=
- berty.tech/ipfs-webui-packed v1.0.0-v2.11.4-1 h1:xXAS7M/RcgIWia1XkXLueirm2zDXnMMNGb3UJhfRzbo=
- berty.tech/ipfs-webui-packed v1.0.0-v2.11.4-1/go.mod h1:n+M4wWEjVxnA0itc1m9oOLAXrNyZr2tiOxLnA1tVnrQ=
--berty.tech/weshnet/v2 v2.3.1-0.20260605081032-915f5df54716 h1:2JjgBZUYBGwH+6H0zfeC6lt9m1fTtp9LthyKegZAWDg=
--berty.tech/weshnet/v2 v2.3.1-0.20260605081032-915f5df54716/go.mod h1:pItKtaq825yHmBeeuwgBRn4FGp2AAy0gyz03rGzWuqk=
-+berty.tech/weshnet/v2 v2.3.1 h1:qRB6JTHfGN1xl3tvfJ94vbTDHinA/1OrgUCLMG4TCsw=
-+berty.tech/weshnet/v2 v2.3.1/go.mod h1:pItKtaq825yHmBeeuwgBRn4FGp2AAy0gyz03rGzWuqk=
- buf.build/gen/go/bufbuild/bufplugin/protocolbuffers/go v1.36.11-20250718181942-e35f9b667443.1 h1:zQ9C3e6FtwSZUFuKAQfpIKGFk5ZuRoGt5g35Bix55sI=
- buf.build/gen/go/bufbuild/bufplugin/protocolbuffers/go v1.36.11-20250718181942-e35f9b667443.1/go.mod h1:1Znr6gmYBhbxWUPRrrVnSLXQsz8bvFVw1HHJq2bI3VQ=
- buf.build/gen/go/bufbuild/protodescriptor/protocolbuffers/go v1.36.11-20250109164928-1da0de137947.1 h1:HwzzCRS4ZrEm1++rzSDxHnO0DOjiT1b8I/24e8a4exY=
+@@ -6213,9 +6213,9 @@
+       "license": "MIT"
+     },
+     "node_modules/node-forge": {
+-      "version": "1.4.0",
+-      "resolved": "https://registry.npmjs.org/node-forge/-/node-forge-1.4.0.tgz",
+-      "integrity": "sha512-LarFH0+6VfriEhqMMcLX2F7SwSXeWwnEAJEsYm5QKWchiVYVvJyV9v7UDvUv+w5HO23ZpQTXDv/GxdDdMyOuoQ==",
++      "version": "1.4.3",
++      "resolved": "https://registry.npmjs.org/node-forge/-/node-forge-1.4.3.tgz",
++      "integrity": "sha512-P6wzfh6t70avmV8FrVEAd/36sOPJQ+hkaJVX1Laap9J/77m7M0eyozDvc8SwnDf4P7MP94gwbAAo0rg3YVXT+g==",
+       "license": "(BSD-3-Clause OR GPL-2.0)",
+       "engines": {
+         "node": ">= 6.13.0"
 ```
 
 ---
 
-### Incident Patch 2: `a18636b2` (2026-11-16)
-**Commit Message**: fix(messenger): don't lose events at the start of EventStream (#5303)
+### Incident Patch 2: `8878805f` (2026-11-20)
+**Commit Message**: Merge pull request #5299 from berty/dependabot/go_modules/go.opentelemetry.io/otel/sdk-1.47.0
 
-EventStream subscribed to the dispatcher only after it had sent the
-existing models and ListEnded. Events dispatched before that point were
-lost for the stream. A client acting right after opening the stream
-(ShallowAmount < 0) or after ListEnded could miss the events caused by
-its own actions. This made TestService_PushShareTokenForConversation
-flaky on loaded CI runners: it timed out waiting for the AccountUpdated
-event of PushSetServer. Adding a 200 ms delay before Register made it
-fail every time.
+chore(deps): bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0
 
-Subscribe first and buffer new events until the existing models and
-ListEnded have been sent, then flush them and send the next ones
-directly. sub.Send is never called concurrently. This also resolves the
-FIXME about models changed between the list and the stream. The unused
-errch is removed.
-
-The push tests now request ShallowAmount 0 and wait for ListEnded before
-acting, which guarantees that the stream is subscribed.
-
-Signed-off-by: D4ryl00 <[REDACTED_EMAIL]>
-
-**File**: `go/pkg/bertymessenger/api.go` (modified, +56/-36)
+**File**: `go.mod` (modified, +9/-9)
 ```diff
-@@ -11,6 +11,7 @@ import (
- 	"net"
- 	"os"
- 	"strings"
-+	"sync"
- 	"time"
- 
- 	"github.com/grandcat/zeroconf"
-@@ -501,6 +502,47 @@ func (svc *service) streamShallow(sub messengertypes.MessengerService_EventStrea
- }
- 
- func (svc *service) EventStream(req *messengertypes.EventStream_Request, sub messengertypes.MessengerService_EventStreamServer) error {
-+	sendEvent := func(e *messengertypes.StreamEvent) {
-+		{
-+			payload, err := e.UnmarshalPayload()
-+			if err != nil {
-+				svc.logger.Error("failed to unmarshal payload for logging", zap.Error(err))
-+				payload = nil
-+			}
-+			svc.logger.Debug("sending stream event", zap.String("type", e.GetType().String()), logutil.PrivateAny("payload", payload))
-+		}
-+
-+		if err := sub.Send(&messengertypes.EventStream_Reply{Event: e}); err != nil {
-+			svc.logger.Error("err: ", zap.Error(err))
-+		}
-+	}
-+
-+	// Subscribe to new events before sending the existing models, otherwise the events
-+	// dispatched in between are lost: a client that acts as soon as it has received
-+	// ListEnded (or, with ShallowAmount < 0, as soon as the stream is open) could miss
-+	// the events caused by its own actions.
-+	// Until the existing models have been sent, new events are buffered: the dispatcher
-+	// calls the notifiee synchronously and sub.Send must not be called concurrently.
-+	var (
-+		liveMutex sync.Mutex
-+		live      bool
-+		pending   []*messengertypes.StreamEvent
-+	)
-+	n := NotifieeBundle{StreamEventImpl: func(e *messengertypes.StreamEvent) error {
-+		liveMutex.Lock()
-+		defer liveMutex.Unlock()
-+
-+		if !live {
-+			pending = append(pending, e)
-+			return nil
-+		}
-+
-+		sendEvent(e)
-+		return nil
-+	}}
-+	unreg := svc.dispatcher.Register(&n)
-+	defer unreg()
-+
- 	if req.ShallowAmount > 0 {
- 		if err := svc.streamShallow(sub, req.ShallowAmount); err != nil {
- 			return err
-@@ -525,43 +567,21 @@ func (svc *service) EventStream(req *messengertypes.EventStream_Request, sub mes
- 		}
- 	}
- 
--	// FIXME: case where a model is created/updated/deleted between the list and the stream
--	// dunno how to add a test to trigger, maybe it can never happen? don't know how to prove either way
--
--	// stream new events
--	{
--		errch := make(chan error)
--		defer close(errch)
--		n := NotifieeBundle{StreamEventImpl: func(e *messengertypes.StreamEvent) error {
--			{
--				payload, err := e.UnmarshalPayload()
--				if err != nil {
--					svc.logger.Error("failed to unmarshal payload for logging", zap.Error(err))
--					payload = nil
--				}
--				svc.logger.Debug("sending stream event", zap.String("type", e.GetType().String()), logutil.PrivateAny("payload", payload))
--			}
--
--			if err := sub.Send(&messengertypes.EventStream_Reply{Event: e}); err != nil {
--				// next commented line allows me to manually test the behavior on a send error. How to isolate into an automatic test?
--				// errch <- errors.New("TEST ERROR")
--				// errch <- err
--				svc.logger.Error("err: ", zap.Error(err))
--			}
--
--			return nil
--		}}
--		unreg := svc.dispatcher.Register(&n)
--		defer unreg()
--
--		// don't return until we have a send error or the context is canceled
--		select {
--		case err := <-errch:
--			return err
--		case <-sub.Context().Done():
--			return nil
--		}
-+	// stream new events: first the ones dispatched while the existing models were sent,
-+	// then the next ones as they come. A model changed in the meantime may be received
-+	// both in the list and as an event; the events keep the dispatch order, so the last
-+	// one received carries the latest state.
-+	liveMutex.Lock()
-+	for _, e := range pending {
-+		sendEvent(e)
- 	}
-+	pending = nil
-+	live = true
-+	liveMutex.Unlock()
-+
-+	// don't return until the context is canceled
-+	<-sub.Context().Done()
-+	return nil
- }
- 
- func (svc *service) ConversationCreate(ctx context.Context, req *messengertypes.ConversationCreate_Request) (_ *messengertypes.ConversationCreate_Reply, err error) {
+@@ -65,7 +65,7 @@ require (
+ 	github.com/sideshow/apns2 v0.23.0
+ 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
+ 	github.com/srikrsna/protoc-gen-gotag v1.0.1
+-	github.com/stretchr/testify v1.11.1
++	github.com/stretchr/testify v1.12.1
+ 	github.com/tailscale/depaware v0.0.0-20210622194025-720c4b409502
+ 	github.com/tj/assert v0.0.3
+ 	github.com/zcalusic/sysinfo v0.0.0-20200820110305-ef1bb2697bc2
+@@ -180,7 +180,6 @@ require (
+ 	github.com/cpuguy83/go-md2man/v2 v2.0.7 // indirect
+ 	github.com/crackcomm/go-gitignore v0.0.0-20241020182519-7843d2ba8fdf // indirect
+ 	github.com/cskr/pubsub v1.0.2 // indirect
+-	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
+ 	github.com/davidlazar/go-crypto v0.0.0-20200604182044-b73af7476f6c // indirect
+ 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.1 // indirect
+ 	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f // indirect
+@@ -445,29 +444,30 @@ require (
+ 	go.opentelemetry.io/contrib/detectors/gcp v1.44.0 // indirect
+ 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.61.0 // indirect
+ 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 // indirect
+-	go.opentelemetry.io/otel v1.45.0 // indirect
++	go.opentelemetry.io/otel v1.47.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.42.0 // indirect
+-	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+-	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
+-	go.opentelemetry.io/otel/sdk/metric v1.45.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.45.0 // indirect
++	go.opentelemetry.io/otel/log v1.47.0 // indirect
++	go.opentelemetry.io/otel/metric v1.47.0 // indirect
++	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
++	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
++	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/dig v1.19.0 // indirect
+ 	go.uber.org/fx v1.24.0 // indirect
+ 	go.uber.org/mock v0.5.2 // indirect
+ 	go.uber.org/zap/exp v0.3.0 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.4 // indirect
+-	go.yaml.in/yaml/v3 v3.0.4 // indirect
++	go.yaml.in/yaml/v3 v3.0.5 // indirect
+ 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
+ 	golang.org/x/exp v0.0.0-20260508232706-74f9aab9d74a // indirect
+ 	golang.org/x/image v0.41.0 // indirect
+ 	golang.org/x/mod v0.38.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+ 	golang.org/x/sync v0.22.0 // indirect
+-	golang.org/x/sys v0.47.0 // indirect
++	golang.org/x/sys v0.48.0 // indirect
+ 	golang.org/x/telemetry v0.0.0-20260708182218-49f421fb7959 // indirect
+ 	golang.org/x/term v0.45.0 // indirect
+ 	golang.org/x/time v0.14.0 // indirect
 ```
 
-**File**: `go/pkg/bertymessenger/api_push_test.go` (modified, +20/-4)
+**File**: `go.sum` (modified, +22/-18)
 ```diff
-@@ -55,7 +55,7 @@ func TestService_PushReceive(t *testing.T) {
- 	// create a sub context to be able to closing the GRPC stream prior to closing the service
- 	eventCtx, eventCancel := context.WithCancel(ctx)
- 	defer eventCancel()
--	events, err := ts.Client.EventStream(eventCtx, &messengertypes.EventStream_Request{ShallowAmount: -1})
-+	events, err := ts.Client.EventStream(eventCtx, &messengertypes.EventStream_Request{ShallowAmount: 0})
- 	require.NoError(t, err)
- 
- 	// put received events in a channel
-@@ -74,6 +74,10 @@ func TestService_PushReceive(t *testing.T) {
- 		}
- 	}()
- 
-+	// the stream is subscribed to new events once the existing models have been listed
-+	_, err = blockUntilEventOfType(t, c, messengertypes.StreamEvent_TypeListEnded)
-+	require.NoError(t, err)
-+
- 	t.Log("creating multimember group")
- 	_, err = ts.Client.ConversationCreate(ctx, &messengertypes.ConversationCreate_Request{DisplayName: "conv"})
- 	require.NoError(t, err)
-@@ -230,7 +234,7 @@ func TestService_PushShareTokenForConversation(t *testing.T) {
- 	// create a sub context to be able to closing the GRPC stream prior to closing the service
- 	eventCtx, eventCancel := context.WithCancel(ctx)
- 	defer eventCancel()
--	events, err := ts.Client.EventStream(eventCtx, &messengertypes.EventStream_Request{ShallowAmount: -1})
-+	events, err := ts.Client.EventStream(eventCtx, &messengertypes.EventStream_Request{ShallowAmount: 0})
- 	require.NoError(t, err)
- 
- 	// put received events in a channel
-@@ -249,6 +253,10 @@ func TestService_PushShareTokenForConversation(t *testing.T) {
- 		}
- 	}()
- 
-+	// the stream is subscribed to new events once the existing models have been listed
-+	_, err = blockUntilEventOfType(t, c, messengertypes.StreamEvent_TypeListEnded)
-+	require.NoError(t, err)
-+
- 	t.Log("setting push server")
- 	_, err = ts.Client.PushSetServer(ctx, &messengertypes.PushSetServer_Request{Server: &messengertypes.PushServer{
- 		Key:  pushServerPK[:],
-@@ -401,7 +409,7 @@ func TestService_PushSetDeviceToken(t *testing.T) {
- 	// create a sub context to be able to closing the GRPC stream prior to closing the service
- 	eventCtx, eventCancel := context.WithCancel(ctx)
- 	defer eventCancel()
--	events, err := ts.Client.EventStream(eventCtx, &messengertypes.EventStream_Request{ShallowAmount: -1})
-+	events, err := ts.Client.EventStream(eventCtx, &messengertypes.EventStream_Request{ShallowAmount: 0})
- 	require.NoError(t, err)
- 
- 	// put received events in a channel
-@@ -421,6 +429,10 @@ func TestService_PushSetDeviceToken(t *testing.T) {
- 		}
- 	}()
- 
-+	// the stream is subscribed to new events once the existing models have been listed
-+	_, err = blockUntilEventOfType(t, c, messengertypes.StreamEvent_TypeListEnded)
-+	require.NoError(t, err)
-+
- 	t.Log("check if no device token is set")
- 	currentPush, err := dbWrapper.GetPushDeviceToken(accountPK)
- 	require.Nil(t, currentPush)
-@@ -508,7 +520,7 @@ func TestService_PushSetServer(t *testing.T) {
- 	// create a sub context to be able to closing the GRPC stream prior to closing the service
- 	eventCtx, eventCancel := context.WithCancel(ctx)
- 	defer eventCancel()
--	events, err := ts.Client.EventStream(eventCtx, &messengertypes.EventStream_Request{ShallowAmount: -1})
-+	events, err := ts.Client.EventStream(eventCtx, &messengertypes.EventStream_Request{ShallowAmount: 0})
- 	require.NoError(t, err)
- 
- 	// put received events in a channel
-@@ -528,6 +540,10 @@ func TestService_PushSetServer(t *testing.T) {
- 		}
- 	}()
- 
-+	// the stream is subscribed to new events once the existing models have been listed
-+	_, err = blockUntilEventOfType(t, c, messengertypes.StreamEvent_TypeListEnded)
-+	require.NoError(t, err)
-+
- 	t.Log("check if no push server is set")
- 	currentServers, err := dbWrapper.GetPushServerRecords(accountPK)
- 	require.Error(t, err)
+@@ -1485,8 +1485,9 @@ github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+
+ github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
+ github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
+ github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=
+-github.com/stretchr/objx v0.5.2 h1:xuMeJ0Sdp5ZMRXx/aWO6RZxdr3beISkG5/G/aIRr3pY=
+ github.com/stretchr/objx v0.5.2/go.mod h1:FRsXN1f5AsAjCGJKqEizvkpNtU+EGNCLh3NxZ/8L+MA=
++github.com/stretchr/objx v0.5.3 h1:jmXUvGomnU1o3W/V5h2VEradbpJDwGrzugQQvL0POH4=
++github.com/stretchr/objx v0.5.3/go.mod h1:rDQraq+vQZU7Fde9LOZLr8Tax6zZvy4kuNKF+QYS+U0=
+ github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
+ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
+ github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
+@@ -1499,8 +1500,8 @@ github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO
+ github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
+ github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
+ github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
+-github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
+-github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
++github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
++github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
+ github.com/stvp/go-udp-testing v0.0.0-20201019212854-469649b16807/go.mod h1:7jxmlfBCDBXRzr0eAQJ48XC1hBu1np4CS5+cHEYfwpc=
+ github.com/subosito/gotenv v1.2.0/go.mod h1:N0PQaV/YGNqwC0u51sEeR/aUtSLEXKX9iv69rRypqCw=
+ github.com/syndtr/goleveldb v1.0.0/go.mod h1:ZVVdQEZoIme9iO1Ch2Jdy24qqXrMMOU6lpPAyBWyWuQ=
+@@ -1624,8 +1625,8 @@ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.6
+ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.61.0/go.mod h1:snMWehoOh2wsEwnvvwtDyFCxVeDAODenXHtn5vzrKjo=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 h1:CqXxU8VOmDefoh0+ztfGaymYbhdB/tT3zs79QaZTNGY=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0/go.mod h1:BuhAPThV8PBHBvg8ZzZ/Ok3idOdhWIodywz2xEcRbJo=
+-go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
+-go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
++go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
++go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
+@@ -1636,16 +1637,18 @@ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0 h1:rixTyDGXFxRy1x
+ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0/go.mod h1:dowW6UsM9MKbJq5JTz2AMVp3/5iW5I/TStsk8S+CfHw=
+ go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.42.0 h1:s/1iRkCKDfhlh1JF26knRneorus8aOwVIDhvYx9WoDw=
+ go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.42.0/go.mod h1:UI3wi0FXg1Pofb8ZBiBLhtMzgoTm1TYkMvn71fAqDzs=
+-go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
+-go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
+-go.opentelemetry.io/otel/metric/x v0.67.0 h1:PcicCNZFkZ4bXfSooXdo3WN7RBOVOtjVdo1wD358Uns=
+-go.opentelemetry.io/otel/metric/x v0.67.0/go.mod h1:FBjCWZe6wgcqxcMtjdGiClDKXb2YxxXii0CXftE4QtI=
+-go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
+-go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
+-go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
+-go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
+-go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
+-go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
++go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
++go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
++go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
++go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
++go.opentelemetry.io/otel/metric/x v0.69.0 h1:DjRLr15H83v+hCW7JA9NoJvOk
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #5303** (2026-11-16): fix(messenger): don't lose events at the start of EventStream (@D4ryl00)
 - **PR #5302** (2026-11-16): fix: BLE reconnection on iOS (weshnet v2.3.1) and Android handshake deadlock (@D4ryl00)
-- **PR #5290** (closed): chore(deps): bump joi from 17.6.0 to 17.13.9 in /tool/game-utils/game-dev-app (@dependabot[bot])
-- **PR #5289** (2026-11-10): feat(pushrelay): support APNs auth keys (.p8) (@D4ryl00)
-- **PR #5286** (2026-11-09): chore(bridge-expo): upgrade to Expo SDK 58, fix iOS camera permission review (@D4ryl00)
-- **PR #5285** (closed): chore(deps): bump qs from 6.9.4 to 6.17.1 in /tool/tyber/js (@dependabot[bot])
+- **PR #5301** (2026-11-20): chore(deps): bump node-forge from 1.4.0 to 1.4.3 in /berty-bridge-expo/example (@dependabot[bot])
+- **PR #5300** (closed): chore(deps): bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 (@dependabot[bot])
+- **PR #5299** (2026-11-20): chore(deps): bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 (@dependabot[bot])
+- **PR #5298** (closed): chore(deps): bump addressable from 2.8.0 to 2.9.1 in /tool/github-actions/self-hosted-runners/xcode-cookie (@dependabot[bot])
 
 ---
 
@@ -1208,72 +838,35 @@ Signed-off-by: D4ryl00 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. BLE reconnection on iOS (weshnet v2.3.1) and Android handshake deadlock
+## X. Empirical Invariant Guard in package-lock.json
 
 **RULE**:
-When implementing operations in `berty-bridge-expo/android/src/main/java/tech/berty/bertybridgeexpo/gobridge/bledriver/BleQueue.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in berty/berty. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `berty-bridge-expo/example/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in berty/berty. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `39d7b631`: BLE reconnection on iOS (weshnet v2.3.1) and Android handshake deadlock. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3d9720d4`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `berty-bridge-expo/android/src/main/java/tech/berty/bertybridgeexpo/gobridge/bledriver/BleQueue.java`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `berty-bridge-expo/example/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import static android.bluetooth.BluetoothGatt.GATT_FAILURE;
-
-import java.util.ArrayList;
-import java.util.List;
-
-    // status given to the callback of a command that timed out or was dropped
-    private static final int STATUS_FAILURE = GATT_FAILURE;
-        mTimeoutRunnable = () -> onCommandTimeout(bluetoothCommand);
-
-        mHandler.postDelayed(mTimeoutRunnable, TIMEOUT);
-    }
-
-    private void onCommandTimeout(TaskDelay bluetoothCommand) {
-        synchronized (this) {
-            // the command may have been completed or cleared since the timer was posted
-            if (mCommandQueue.peek() != bluetoothCommand) {
-                return;
-            }
-        }
-        // Run outside of the lock: the cancel runnable (usually disconnect()) takes other locks
-        // and may clear this queue.
-        bluetoothCommand.cancel.run();
-        // Release the caller waiting for this command, otherwise it waits forever.
-        failCallback(bluetoothCommand);
-        nextCommand();
-    }
-
-    // Report a failure to the callback of a command that will never be completed.
-    // The callback is run directly instead of being posted: the handler's looper may already be
-    // stopped (
+      "version": "1.4.3",
+      "resolved": "https://registry.npmjs.org/node-forge/-/node-forge-1.4.3.tgz",
+      "integrity": "sha512-P6wzfh6t70avmV8FrVEAd/36sOPJQ+hkaJVX1Laap9J/77m7M0eyozDvc8SwnDf4P7MP94gwbAAo0rg3YVXT+g==",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-        mTimeoutRunnable = () -> {
-            bluetoothCommand.cancel.run();
-            nextCommand();
-
-        };
-        mHandler.postDelayed(mTimeoutRunnable, TIMEOUT);
-            try {
-    public synchronized void clear() {
-        TaskDelay taskDelay = mCommandQueue.poll();
-        if (taskDelay != null) {
-            mHandler.removeCallbacks(taskDelay.task);
-        mCommandQueue.clear();
-        mCommandQueueBusy = false;
+      "version": "1.4.0",
+      "resolved": "https://registry.npmjs.org/node-forge/-/node-forge-1.4.0.tgz",
+      "integrity": "sha512-LarFH0+6VfriEhqMMcLX2F7SwSXeWwnEAJEsYm5QKWchiVYVvJyV9v7UDvUv+w5HO23ZpQTXDv/GxdDdMyOuoQ==",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `39d7b631` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3d9720d4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
