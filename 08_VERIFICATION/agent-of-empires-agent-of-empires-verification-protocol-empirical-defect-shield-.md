@@ -4,22 +4,22 @@
 {
   "source_repository": "agent-of-empires/agent-of-empires",
   "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-  "source_version": "593655e0",
+  "source_version": "08946a21",
   "license": "MIT",
-  "timestamp": "2026-11-19T14:20:19.949Z",
+  "timestamp": "2026-11-21T00:51:56.031Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-agent-of-empires-agent-of-empires",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires) (Revision: `593655e0`).  
-> **License**: MIT | **Timestamp**: `2026-11-19T14:20:19.949Z`  
+> **Provenance**: Harvested from [agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires) (Revision: `08946a21`).  
+> **License**: MIT | **Timestamp**: `2026-11-21T00:51:56.031Z`  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `agent-of-empires/agent-of-empires` (Commit: `593655e0`)
+- **Target Repository**: `agent-of-empires/agent-of-empires` (Commit: `08946a21`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T14:20:18.800Z  
+> **Harvest Timestamp**: 2026-11-21T00:51:54.505Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4636 stars
+- **Stars / Engagement**: 4593 stars
 
 ---
 
@@ -1770,14 +1770,11 @@ impl ConfigOptionDescriptor {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5869** (2026-11-19): **MCP wait_for reports completion when its event-store query fails**
-  *Symptoms*: ### What happened?  When MCP `wait_for` receives `after_seq` and the session still reports `Idle`, it checks the event store for a turn ending after that cursor. If the query fails, `settled` treats the error as a positive result. The call can return `Idle` with `timed_out: false` without confirming that the requested turn ended.  **Expected:** Return a clear query error or keep waiting within the deadline. Report completion only when the event store confirms it. Cover the query-failure branch with a focused regression test.  Follow-up to #5753. [Completion check](https://github.com/agent-of-empires/agent-of-empires/blob/dd7827cbc7800d96bd9db973fbf040d784307ea3/src/server/mcp/wait.rs#L346-L364)  ### aoe version and OS  `main` at `dd7827cbc`. Source-derived scenario. No database fault was injected locally.  ### AI usage  AI drafted the report from a cross-checked source review. 
-  **Post-Mortem & Fix Analysis**:
-  > **Castellan triage**  Applied: - Label `P1` - Label `area:server` - Priority: P1 - Size: M - Status: Ready  Reasons: - priority: Incorrect completion reporting under query failure can cause silent hangs or false success—a regression blocker for MCP reliability. - area: Issue is in server-side MCP wait_for completion logic in event-store query handling. - type: Bug: error handling treats query failure as success instead of propagating or retrying. - size: Multi-file change spanning error handling, completion check logic, and new regression test.  Fit is not set by triage; it stays with maintainers.  <!-- castellan triage 60dab506215f0d76b04724e1da53f08e818d77f8bf20cb9484379fd464fef870 -->
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated issue plan by CodeRabbit --> <details> <summary>🔗 Related PRs</summary> <dl> <dd> <br>  agent-of-empires/agent-of-empires#5753 - feat(mcp): add wait_for, list_approvals and approve tools [closed] </dd> </dl> </details>  --- <details> <summary>📝 Issue Planner</summary> <dl> <dd> <br>  <sub>Check the box below or use the `@coderabbitai plan` command to generate an implementation plan and prompts that you can use with your favorite coding assistant.</sub>  - [ ] <!-- {"checkboxId":"8d4f2b9c-3e1a-4f7c-a9b2-d5e8f1c4a7b9"} --> Create Plan </dd> </dl> </details>   --- <details> <summary> 🧪 Issue enrichment is currently in open beta.</summary> <dl> <dd> <br>   You can configure auto-planning by selecting labels in the issue_enrichment configuration.  To disable automatic issue enrichment, add the following to your `.coderabbit.yaml`: ```yaml issue_enrichment:   auto_enrich:     enabled: false ``` </dd> </dl> </details>  💬 
+- **Issue #5913** (2026-11-21): **TUI: Live send refuses an agent pane whose status is Unknown**
+  *Symptoms*: ### Problem  Live send fails with `Live send failed / Prepared target no longer matches the applied snapshot` on an agent pane that is alive and correctly identified. The receipt is valid; the snapshot status is `Unknown`.  `Unknown` is a normal live state: `crate::session::instance::pane_status` reports it when the pane is alive but the screen cannot be classified, and it is what any agent-pane adapter that has not reported yet looks like. Two independent gates treat it as death:  - `drain_command_errors` (`src/tui/session_feed.rs`) allows only `Running | Waiting | Idle | Starting` to attach, in both the Restart and Terminal arms, so the receipt is discarded and the modal claims the target is stale. - `agent_pane_is_warm` (`src/tui/home/live_send_prep.rs`) has the same allowlist, so live send also pays the revive-toast path.  ### Impact  Any agent whose status adapter is delayed, restarted, or absent cannot be live-sent to, even though its pane is alive and its identity matches. The error names a snapshot mismatch, so it hides the real cause and sends the reader looking for a target change that never happened.  ### Expected  Attachment should be gated on the receipt identity (generation, profile, tmux name) and the snapshot pane observation, with status only ruling out rows that are stopped, failed, or mid-teardown. `Stopped`, `Error`, `Deleting`, and `Creating` must keep failing; a genuinely changed target must keep failing.  ### Proposal  One shared `status_allows_attachme
 
-- **Issue #5850** (2026-11-19): **Pane PID lookup fails when tmux runs without a UTF-8 locale, so kills skip the process tree**
-  *Symptoms*:  **Priority:** P2. - **Silent:** nothing is logged above trace level. - **What breaks:** every kill path falls back to killing only the tmux session, so a pane's   descendants that left its process group survive. Status and foreground-PID detection lose the   pane PID too. - **Who:** only hosts where the process running `tmux` has no UTF-8 locale. That's common for   daemons started over `ssh` without `SendEnv LANG`, from cron, under `env -i`, or in stock   Debian or Ubuntu container images, where `LANG` is unset. A desktop terminal is usually fine.  ### Repro (tmux 3.6a, Ubuntu 26.04; the code path is the same in 3.5a) ```sh tmux -f /dev/null -L probe new-session -d -s p 'sleep 30' LC_ALL=C      tmux -L probe display-message -p -t p $'#{pane_dead}\t#{pane_pid}' | od -c   # 0 _ 1 9 4 ... LC_ALL=C.UTF-8 tmux -L probe display-message -p -t p $'#{pane_dead}\t#{pane_pid}' | od -c  # 0 \t 1 9 4 ... tmux -u -L probe display-message -p -t p $'#{pane_dead}\t#{pane_pid}' | od -c              # 0 \t 1 9 4 ... tmux -L probe kill-server ``` - `list-panes -F` behaves the same, and `\x1f` also becomes `_`. - With no config file and a private socket, it isn't caused by user configuration.  ### Cause (tmux source) `server_client_print` (server-client.c, 3.6a :3884, 3.5a :3330) handles output for a client with no session: `if (~c->flags & CLIENT_UTF8) sanitized = utf8_sanitize(msg);`. - `utf8_sanitize` (utf8.c) writes `_` for every byte outside 0x20-0x7e. - `CLIENT_UTF8` is set from the clien
+- **Issue #5887** (2026-11-20): **test(acp): agent-switch stop test times out when codex-acp is installed**
+  *Symptoms*: `worker_stopping_acp_endpoints_wait_for_an_in_flight_submission` fails on any host where `codex-acp` resolves (PATH, or the fixed `/usr/bin` and `/usr/local/bin` scan). The switch case then spawns the test binary as `__acp-runner`. That never opens the control socket, so the dial waits the full 10s `runner_socket_deadline`, equal to the test's own 10s bound. CI passes only because `codex-acp` is absent there and the spawn fails fast.  Repro, with `codex-acp` installed:  ``` cargo test --lib server::api::acp::tests::worker_stopping_acp_endpoints_wait_for_an_in_flight_submission ```  Fails at `src/server/api/acp/mod.rs:669`: "switch must finish once the submission releases". Passes with `AOE_ACP_RUNNER_SOCKET_TIMEOUT_MS=1000`.  _Note: this issue was drafted by Claude Opus 5.5 via back-and-forth with @njbrake. The reasoning and decisions are his; the prose is Claude's._ 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1794,1480 +1791,1444 @@ impl ConfigOptionDescriptor {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `03e54bee` (2026-11-17)
-**Commit Message**: fix(containers): share one sandbox image pull per runtime and image (#5809)
+### Incident Patch 1: `1e4c41e5` (2026-11-20)
+**Commit Message**: fix(tui): pressing R again in Connections opens the Web dashboard (#5832)
 
-* fix(containers): share one sandbox image pull per runtime and image
+* fix(tui): the Serve key opens the Web dashboard from Connections
 
-Every pull path (the Daemon banner job, create's pull_latest, ensure_image
-and the TUI banner) now joins one flight per (runtime, image) in the
-process. A joiner waits on the same outcome and no second runtime process
-starts. A cancelled caller detaches; the last one kills the pull and waits
-for it to exit.
+Since #4972 R opens the Connections hub, which ignored R. Pressing the
+Serve binding again (R, or Ctrl+R with strict hotkeys) now does what
+Enter on the Web dashboard row does, from any row. The offline and
+outdated takeovers keep only r and q.
 
-A failed pull carries a coded reason (timeout, network, disk_space, auth,
-other) matched from runtime stderr, with shared wording in user_text().
-The pull now runs in its own process group, so a timeout kill reaps
-anything the runtime CLI forked.
-
-Fixes #5748
+Closes #5766
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* test(containers): scope the unreadable-config pull check to its own image
+* docs(web): the second Serve press opens the dashboard controls
 
-The check asserted that no pull ran anywhere in the process. Under plain
-`cargo test` the image_pull tests run as threads beside it and hold
-running flights of their own. Configure an image no other test pulls and
-assert that its pull state stays Idle. `any_running` has no other caller,
-so it goes.
+Pressing the Serve key again in Connections opens the Web dashboard
+controls, where a server is started; it doesn't start one itself.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
+* fix(tui): the second Serve press in Connections must be a separate press
 
-**File**: `flake.nix` (modified, +1/-0)
-```diff
-@@ -55,6 +55,7 @@
-                 ./assets
-                 ./docker
-                 ./tests/fixtures/cli-read
-+                ./tests/fixtures/pull-stderr
-                 ./web/tests/helpers/fakeAcpAgent.mjs
-               ];
-             };
-```
-
-**File**: `src/containers/error.rs` (modified, +2/-0)
-```diff
-@@ -32,6 +32,7 @@ pub enum DockerError {
-         runtime: &'static str,
-         image: String,
-         detail: String,
-+        reason: super::image_pull::PullFailureReason,
-     },
- 
-     #[error("Failed to create container: {0}")]
-@@ -105,6 +106,7 @@ mod tests {
-                 runtime,
-                 image: "img:1".to_string(),
-                 detail: sanitize_stderr("denied\nretry later"),
-+                reason: crate::containers::image_pull::PullFailureReason::Other,
-             }
-             .to_string();
-             assert_eq!(
-```
-
-**File**: `src/containers/image_pull.rs` (added, +547/-0)
-```diff
-@@ -0,0 +1,547 @@
-+//! One image pull per Container runtime and image in this process. Every caller waits on the
-+//! running pull as a waiter, so a second caller never starts a second runtime process.
-+
-+use std::collections::HashMap;
-+use std::sync::{Arc, Condvar, LazyLock, Mutex, MutexGuard};
-+use std::time::Duration;
-+
-+use serde::Serialize;
-+use tokio_util::sync::CancellationToken;
-+
-+use super::error::{DockerError, Result};
-+
-+/// How often a waiter checks its own cancellation.
-+const CANCEL_POLL: Duration = Duration::from_millis(50);
-+
-+/// Why a pull failed, read from the runtime's stderr. Only Docker's stderr has been captured
-+/// (`tests/fixtures/pull-stderr`), so other runtimes' failures read as `Other` until they are.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
-+#[serde(rename_all = "snake_case")]
-+pub enum PullFailureReason {
-+    Timeout,
-+    Network,
-+    DiskSpace,
-+    Auth,
-+    Other,
-+}
-+
-+impl PullFailureReason {
-+    /// The wording both clients show.
-+    pub fn user_text(self) -> String {
-+        let why = match self {
-+            Self::Timeout => "it took longer than 10 minutes",
-+            Self::Network => "no network connection",
-+            Self::DiskSpace => "not enough disk space",
-+            Self::Auth => "the registry needs you to sign in",
-+            Self::Other => "see aoe logs",
-+        };
-+        format!("Couldn't download the sandbox image: {why}.")
-+    }
-+
-+    /// Network is checked before auth, so a connection error can't read as a sign-in problem.
-+    pub(crate) fn classify(stderr: &str) -> Self {
-+        let has = |phrases: &[&str]| phrases.iter().any(|p| stderr.contains(p));
-+        if has(&["no space left on device"]) {
-+            Self::DiskSpace
-+        } else if has(&["no such host", "dial tcp"]) {
-+            Self::Network
-+        } else if has(&[
-+            "pull access denied",
-+            "error from registry: denied",
-+            "unauthorized",
-+        ]) {
-+            Self::Auth
-+        } else {
-+            Self::Other
-+        }
-+    }
-+}
-+
-+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-+#[serde(tag = "state", rename_all = "snake_case")]
-+pub enum PullState {
-+    Idle,
-+    Running,
-+    Done,
-+    /// `message` is `reason`'s shared wording; `error` is the runtime's output, for Details.
-+    Failed {
-+        reason: PullFailureReason,
-+        message: String,
-+        error: String,
-+    },
-+}
-+
-+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-+pub(crate) struct PullKey {
-+    pub runtime: &'static str,
-+    pub image: String,
-+}
-+
-+struct Flight {
-+    /// Cancelled when the last waiter leaves; kills the runtime process.
-+    kill: CancellationToken,
-+    state: Mutex<FlightState>,
-+    finished: Condvar,
-+}
-+
-+struct FlightState {
-+    waiters: usize,
-+    outcome: Option<Result<()>>,
-+}
-+
-+impl Flight {
-+    /// Gives up one waiter's place; the last one out kills the pull. Returns whether it was last.
-+    fn leave(&self, state: &mut FlightState) -> bool {
-+        state.waiters -= 1;
-+        if state.waiters > 0 {
-+            return false;
-+        }
-+        self.kill.cancel();
-+        true
-+    }
-+}
-+
-+enum Entry {
-+    Running(Arc<Flight>),
-+    Finished(PullState),
-+}
-+
-+static FLIGHTS: LazyLock<Mutex<HashMap<PullKey, Entry>>> = LazyLock::new(Mutex::default);
-+
-+fn lock<T>(mutex: &Mutex<T>) -> MutexGuard<'_, T> {
-+    mutex.lock().unwrap_or_else(|e| e.into_inner())
-+}
-+
-+/// A caller's place in a running pull.
-+pub(crate) struct Waiter {
-+    flight: Arc<Flight>,
-+    image: String,
-+    /// Still counted in the flight's waiters.
-+    joined: bool,
-+}
-+
-+/// Joins `key`'s running pull, or starts `pull` on its own thread when none is running.
-+pub(crate) fn join_with<F>(key: PullKey, pull: F) -> Waiter
-+where
-+    F: FnOnce(&CancellationToken) -> Result<()> + Send + 'static,
-+{
-+    let mut flights = lock(&FLIGHTS);
-+    if let Some(Entry::Running(flight)) = flights.get(&key) {
-+        let mut state = lock(&flight.state);
-+        // Under the flight's lock, so a pull its last waiter is killing can't gain a waiter.
-+        if !flight.kill.is_cancelled() {
-+            state.waiters += 1;
-+            return Waiter {
-+                flight: flight.clone(),
-+                image: key.image,
-+                joined: true,
-+            };
-+        }
-+    }
-+    let flight = Arc::new(Flight {
-+        kill: CancellationToken::new(),
-+        state: Mutex::new(FlightState {
-+            waiters: 1,
-+            outcome: None,
-+        }),
-+        finished: Condvar::new(),
-+    });
-+    flights.insert(key.clone(), Entry::Running(flight.clone()));
-+    drop(flights);
-+    let runner = flight.clone();
-+    let image = key.image.clone();
-+    std::thread::spawn(move || {
-+        let started = std::time::Instant::now();
-+        // A panic still finishes the flight; otherwise its waiters and every later joiner hang.
-+        let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| pull(&ru
-```
-
-**File**: `src/containers/mod.rs` (modified, +1/-0)
-```diff
-@@ -1,6 +1,7 @@
- pub mod container_interface;
- pub mod error;
- mod execution;
-+pub mod image_pull;
- pub mod image_update;
- mod runtime;
- pub(crate) mod runtime_base;
-```
-
-**File**: `src/containers/runtime.rs` (modified, +32/-4)
-```diff
-@@ -8,6 +8,7 @@ use super::container_interface::{
-     ContainerConfig, InspectedContainer, InspectedMount, VolumeMount,
- };
- use super::error::{DockerError, Result};
-+use super::image_pull;
- use super::image_update::LocalDigest;
- use super::runtime_base::RuntimeBase;
- 
-@@ -115,16 +116,38 @@ impl ContainerRuntime {
-     }
- 
-     pub fn pull_image(&self, image: &str) -> Result<()> {
--        self.base.pull_image(image)
-+        self.join_pull(image)
-+            .wait(&tokio_util::sync::CancellationToken::new())
-     }
- 
--    /// [`Self::pull_image`], killed when `cancel` fires.
-+    /// [`Self::pull_image`]; when `cancel` fires this caller stops waiting, and the pull is
-+    /// killed if no other caller is waiting on it.
-     pub fn pull_image_until_cancelled(
-         &self,
-         image: &str,
-         cancel: &tokio_util::sync::CancellationToken,
-     ) -> Result<()> {
--        self.base.pull_until_cancelled(image, cancel)
-+        self.join_pull(image).wait(cancel)
-+    }
-+
-+    /// Joins this process's running pull of `image`, or starts one.
-+    pub(crate) fn join_pull(&self, image: &str) -> image_pull::Waiter {
-+        let base = self.base;
-+        let pulled = image.to_string();
-+        image_pull::join_with(self.pull_key(image), move |kill| {
-+            base.pull_until_cancelled(&pulled, kill)
-+        })
-+    }
-+
-+    pub(crate) fn pull_state(&self, image: &str) -> image_pull::PullState {
-+        image_pull::state(&self.pull_key(image))
-+    }
-+
-+    fn pull_key(&self, image: &str) -> image_pull::PullKey {
-+        image_pull::PullKey {
-+            runtime: self.display_name(),
-+            image: image.to_string(),
-+        }
-     }
- 
-     /// The command [`Self::pull_image`] runs, for a user to copy when the dashboard can't pull.
-@@ -151,7 +174,12 @@ impl ContainerRuntime {
-         image: &str,
-         cancel: &tokio_util::sync::CancellationToken,
-     ) -> Result<()> {
--        self.base.ensure_image(image, cancel)
-+        if self.base.image_exists_locally(image) {
-+            tracing::info!(target: "containers.runtime", "Using local {} image '{}'", self.base.name, image);
-+            return Ok(());
-+        }
-+        tracing::info!(target: "containers.runtime", "Pulling {} image '{}'", self.base.name, image);
-+        self.pull_image_until_cancelled(image, cancel)
-     }
- 
-     pub fn default_sandbox_image(&self) -> &'static str {
-```
-
-**File**: `src/containers/runtime_base.rs` (modified, +72/-16)
-```diff
-@@ -2,6 +2,7 @@ use super::container_interface::{
-     docker_env_args, ContainerConfig, RunFlag, TargetEnvFile, CGROUP_PARENT_LABEL,
- };
- use super::error::{sanitize_stderr, DockerError, Result};
-+use super::image_pull::PullFailureReason;
- use std::collections::HashSet;
- use std::process::{Command, Stdio};
- use std::time::{Duration, Instant};
-@@ -60,6 +61,7 @@ fn joins_user_slice(output: &str, rootless_marker: &str) -> bool {
-         && words.any(|word| word.trim_matches(['[', ']']) == rootless_marker)
- }
- 
-+#[derive(Clone, Copy)]
- pub(crate) struct RuntimeBase {
-     pub binary: &'static str,
-     pub name: &'static str,
-@@ -303,18 +305,25 @@ impl RuntimeBase {
-         self.probe_succeeds(&["image", "inspect", image])
-     }
- 
--    pub fn pull_image(&self, image: &str) -> Result<()> {
--        self.pull_until_cancelled(image, &CancellationToken::new())
-+    pub fn pull_until_cancelled(&self, image: &str, cancel: &CancellationToken) -> Result<()> {
-+        self.pull_with_timeout(image, cancel, PULL_TIMEOUT)
-     }
- 
--    pub fn pull_until_cancelled(&self, image: &str, cancel: &CancellationToken) -> Result<()> {
-+    fn pull_with_timeout(
-+        &self,
-+        image: &str,
-+        cancel: &CancellationToken,
-+        timeout: Duration,
-+    ) -> Result<()> {
-         let mut cmd = self.command();
-         cmd.args(self.pull_prefix);
-         cmd.arg(image);
-         cmd.stdin(Stdio::null());
-         let start = Instant::now();
-         tracing::info!(target: "containers.image", runtime = %self.name, %image, "pulling image");
--        let output = match crate::process::run_until_cancelled(&mut cmd, PULL_TIMEOUT, cancel)? {
-+        let output = match crate::process::run_until_cancelled_process_group(
-+            &mut cmd, timeout, cancel,
-+        )? {
-             Some(output) => output,
-             None if cancel.is_cancelled() => {
-                 tracing::info!(target: "containers.image", runtime = %self.name, %image, "image pull cancelled");
-@@ -327,13 +336,14 @@ impl RuntimeBase {
-                     runtime = %self.name,
-                     %image,
-                     duration_ms = dur_ms,
--                    timeout_s = PULL_TIMEOUT.as_secs(),
-+                    timeout_s = timeout.as_secs(),
-                     "image pull timed out; killed",
-                 );
-                 return Err(DockerError::ImagePullFailed {
-                     runtime: self.name,
-                     image: image.to_string(),
--                    detail: format!("timed out after {}s", PULL_TIMEOUT.as_secs()),
-+                    detail: format!("timed out after {}s", timeout.as_secs()),
-+                    reason: PullFailureReason::Timeout,
-                 });
-             }
-         };
-@@ -353,6 +363,7 @@ impl RuntimeBase {
-                 runtime: self.name,
-                 image: image.to_string(),
-                 detail: sanitize_stderr(&stderr),
-+                reason: PullFailureReason::classify(&stderr),
-             });
-         }
- 
-@@ -366,16 +377,6 @@ impl RuntimeBase {
-         Ok(())
-     }
- 
--    pub fn ensure_image(&self, image: &str, cancel: &CancellationToken) -> Result<()> {
--        if self.image_exists_locally(image) {
--            tracing::info!(target: "containers.runtime", "Using local {} image '{}'", self.name, image);
--            return Ok(());
--        }
--
--        tracing::info!(target: "containers.runtime", "Pulling {} image '{}'", self.name, image);
--        self.pull_until_cancelled(image, cancel)
--    }
--
-     pub fn default_sandbox_image(&self) -> &'static str {
-         "ghcr.io/agent-of-empires/aoe-sandbox:latest"
-     }
-@@ -1056,6 +1057,61 @@ mod tests {
-         ));
-     }
- 
-+    #[cfg(target_os = "linux")]
-+    #[test]
-+    #[serial_test::parallel]
-+    fn a_pull_timeout_kills_a_runtime_that_ignores_sigterm_and_its_children() {
-+        use std::os::unix::fs::PermissionsExt;
-+        let _env = crate::session::test_support::EnvGuard::read_lock();
-+        let dir = tempfile::tempdir().unwrap();
-+        let (shell, child) = (dir.path().join("shell"), dir.path().join("child"));
-+        let binary = dir.path().join("docker");
-+        std::fs::write(
-+            &binary,
-+            format!(
-+                "#!/bin/sh\ntrap '' TERM\necho $$ > '{}'\nsleep 300 &\necho $! > '{}'\nwait\n",
-+                shell.display(),
-+                child.display()
-+            ),
-+        )
-+        .unwrap();
-+        std::fs::set_permissions(&binary, std::fs::Permissions::from_mode(0o755)).unwrap();
-+        let runtime = RuntimeBase {
-+            binary: Box::leak(binary.to_string_lossy().into_owned().into_boxed_str()),
-+            ..RuntimeBase::DOCKER
-+        };
-+
-+        let result =
-+            runtime.pull_with_timeout("img", &CancellationToken::new(), Duration::from_secs(1));
-+        assert!(matches!(
-+            result,
-+            Err(DockerError::ImagePullFailed {
-+                reason: PullFailureReason::Timeout,
-+                ..
-+           
-```
-
-**File**: `src/server/api/sandbox_image.rs` (modified, +90/-89)
-```diff
-@@ -16,6 +16,7 @@ use serde::{Deserialize, Serialize};
- use tokio::time::Instant;
- 
- use super::{api_error, cityhall_block, read_only_block};
-+use crate::containers::image_pull::PullState;
- use crate::containers::image_update::{self, ImageCheck};
- use crate::containers::ContainerRuntime;
- use crate::server::AppState;
-@@ -103,6 +104,10 @@ impl StatusCache {
- }
- 
- static STATUS: LazyLock<Mutex<StatusCache>> = LazyLock::new(Mutex::default);
-+/// The key's dashboard waiter, by the id its cleanup checks. One per running pull, so repeated
-+/// POSTs don't each hold a blocking thread for the whole pull.
-+static DASHBOARD_WAITERS: LazyLock<Mutex<HashMap<ImageKey, u64>>> = LazyLock::new(Mutex::default);
-+static NEXT_DASHBOARD_WAITER: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
- /// One registry check per image and runtime at a time, so callers arriving together share it.
- static CHECK_TURNS: LazyLock<Mutex<HashMap<ImageKey, Arc<tokio::sync::Mutex<()>>>>> =
-     LazyLock::new(Mutex::default);
-@@ -159,38 +164,6 @@ where
-     })
- }
- 
--#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
--#[serde(tag = "state", rename_all = "snake_case")]
--pub enum PullState {
--    Idle,
--    Running,
--    Done,
--    /// `error` carries the Container runtime's stderr.
--    Failed {
--        error: String,
--    },
--}
--
--static PULLS: LazyLock<Mutex<HashMap<ImageKey, PullState>>> = LazyLock::new(Mutex::default);
--
--/// Marks the image running unless it already is; true when the caller should start the pull.
--fn claim_pull(pulls: &mut HashMap<ImageKey, PullState>, key: &ImageKey) -> bool {
--    if pulls.get(key) == Some(&PullState::Running) {
--        return false;
--    }
--    pulls.insert(key.clone(), PullState::Running);
--    true
--}
--
--fn pull_state(key: &ImageKey) -> PullState {
--    PULLS
--        .lock()
--        .unwrap_or_else(|e| e.into_inner())
--        .get(key)
--        .cloned()
--        .unwrap_or(PullState::Idle)
--}
--
- /// What the Daemon would sandbox with. Only these are checked or pulled, so a request can't
- /// make the Daemon contact an arbitrary registry or pull an arbitrary image.
- struct Configured {
-@@ -388,7 +361,7 @@ pub async fn sandbox_image_status(
-             .iter()
-             .any(|i| i.is_sandboxed());
-     Json(ImageStatusResponse {
--        pull: pull_state(&key),
-+        pull: runtime.pull_state(&image),
-         pull_blocked: pull_blocked(&state, &configured),
-         pull_command: runtime.pull_command(&image),
-         runtime: runtime.display_name(),
-@@ -458,44 +431,28 @@ pub async fn sandbox_image_pull(
-         Err(resp) => return resp,
-     };
-     let key = configured.key(image.clone());
--    let started = claim_pull(&mut PULLS.lock().unwrap_or_else(|e| e.into_inner()), &key);
--    if started {
--        let runtime = configured.runtime;
--        tokio::spawn(async move {
--            let pulled = key.image.clone();
--            let started = std::time::Instant::now();
--            let result = tokio::task::spawn_blocking(move || {
--                ContainerRuntime::from(runtime).pull_image(&pulled)
--            })
--            .await;
--            let outcome = match result {
--                Ok(Ok(())) => PullState::Done,
--                Ok(Err(e)) => PullState::Failed {
--                    error: e.to_string(),
--                },
--                Err(e) => PullState::Failed {
--                    error: format!("pull task failed: {e}"),
--                },
--            };
--            let duration_ms = started.elapsed().as_millis();
--            match &outcome {
--                PullState::Failed { error } => {
--                    tracing::warn!(target: "containers.image", image = %key.image, ok = false, duration_ms, %error, "image pull finished")
--                }
--                _ => {
--                    tracing::info!(target: "containers.image", image = %key.image, ok = true, duration_ms, "image pull finished")
--                }
--            }
-+    let runtime = ContainerRuntime::from(configured.runtime);
-+    let mut waiters = DASHBOARD_WAITERS.lock().unwrap_or_else(|e| e.into_inner());
-+    // Joined under the map's lock, so two POSTs can't both add a waiter to one pull.
-+    if !(waiters.contains_key(&key) && runtime.pull_state(&image) == PullState::Running) {
-+        // Registered now, so the next status read already sees it running.
-+        let waiter = runtime.join_pull(&image);
-+        let id = NEXT_DASHBOARD_WAITER.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-+        waiters.insert(key.clone(), id);
-+        tokio::task::spawn_blocking(move || {
-+            // A pull the dashboard asked for is never cancelled by a create that joined it.
-+            let _ = waiter.wait(&tokio_util::sync::CancellationToken::new());
-             STATUS
-                 .lock()
-                 .unwrap_or_else(|e| e.into_inner())
-                 .invalidate(&key);
--            PULLS
--                .lock()
--                .unwrap_or_else(|e| e.into_inner
-```
-
-**File**: `src/server/api/sessions/tests.rs` (modified, +2/-0)
-```diff
-@@ -5817,6 +5817,7 @@ fn public_create_session_error_forwards_typed_causes_as_fixed_templates() {
-                 runtime: "Podman",
-                 image: "ghcr.io/acme/sandbox:1".into(),
-                 detail: format!("denied: token {SECRET} at /root/.docker/config.json"),
-+                reason: crate::containers::image_pull::PullFailureReason::Other,
-             })
-             .context("ensure image"),
-             (
-@@ -5922,6 +5923,7 @@ fn public_create_session_error_forwards_typed_causes_as_fixed_templates() {
-                 runtime: "Docker",
-                 image: "x".repeat(2000),
-                 detail: String::new(),
-+                reason: crate::containers::image_pull::PullFailureReason::Other,
-             }),
-             "sandbox_image_pull_failed",
-         ),
-```
-
----
-
-### Incident Patch 2: `b47a466c` (2026-11-19)
-**Commit Message**: fix(acp): keep the connection when the agent rejects a prompt (#5864)
-
-* fix(acp): keep the connection when the agent rejects a prompt
-
-An error answer to session/prompt was returned as a connection error, so
-aoe tore down the ACP connection, respawned the agent and left the
-session in Error. The queue had already retired the prompt, so the
-user's message was lost.
-
-The agent answering with an error now ends only that turn: the error
-surfaces as a PromptRuntimeError and the text comes back as a
-PromptRejected retry pill. A lost transport or runner, and a resumed
-session the agent no longer has, still end the connection as before. An
-error that answers our own cancel ends the turn as cancelled.
-
-Fixes #5662
+A held R (Ctrl+R with strict hotkeys) used to open Connections, submit it
+on a repeat, and carry later repeats into the Serve screen, where the same
+key requests and confirms a restart or reset. Connections now ignores the
+Serve chord until 700 ms after the last one, longer than common OS
+key-repeat delays, or until another key arrives.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(acp): cancel the leftover turn and narrow what counts as rejected
+* docs(tui): don't link 
 
-Review follow-ups for #5662:
-
-- A rejection sends session/cancel, so a turn the agent still runs from
-  before a restart no longer rejects every retry.
-- The runner client's duplicate-waiter guard is a local error, not a
-  PromptOutcome::Error, so it is never mistaken for the agent's answer.
-- A session the agent no longer has still tears down for recovery
-
-**File**: `src/acp/acp_client/commands.rs` (modified, +29/-4)
+**File**: `docs/guides/web-dashboard.md` (modified, +2/-2)
 ```diff
-@@ -4,15 +4,40 @@
- use agent_client_protocol::v1::schema::ContentBlock;
- use tokio::sync::oneshot;
+@@ -25,7 +25,7 @@ aoe serve --open                # Open the URL in a browser when ready
+ aoe serve --remote --read-only  # Monitor without sending keystrokes
+ ```
  
-+use crate::daemon::PromptAttachmentRef;
-+
- use super::delete::DeleteSessionOutcome;
- use super::reset::ResetSessionOutcome;
+-From the TUI, press `R` (`Ctrl+R` with strict hotkeys), shown as `R Web` in the shortcut bar, to open Connections, then Enter on **Web dashboard** to start a background server on your network or over a tunnel. While it runs, the entry reads `R ● Web` in green. When the Daemon needs attention, the entry shows that instead, in red for a problem (`R ● Runtime outcome unknown`) or dim for a limit (`R ● Unavailable`), and Connections lists the Daemon with what it means. If the Daemon goes offline, Connections replaces the home screen, with `r` to reconnect.
++From the TUI, press `R` (`Ctrl+R` with strict hotkeys), shown as `R Web` in the shortcut bar, to open Connections. Press the same key again after a short pause, or Enter on **Web dashboard**, to open the dashboard controls, where you can start a background server on your network or over a tunnel. While it runs, the entry reads `R ● Web` in green. When the Daemon needs attention, the entry shows that instead, in red for a problem (`R ● Runtime outcome unknown`) or dim for a limit (`R ● Unavailable`), and Connections lists the Daemon with what it means. If the Daemon goes offline, Connections replaces the home screen, with `r` to reconnect.
  
-+/// A user prompt as `send_prompt` built it (#1000): the blocks the agent
-+/// receives, and refs to the stored attachments among them, which a refusal
-+/// hands back so Retry resends the same payload.
-+#[derive(Debug, Clone, Default)]
-+pub(super) struct PromptInput {
-+    pub(super) blocks: Vec<ContentBlock>,
-+    pub(super) attachments: Vec<PromptAttachmentRef>,
-+}
-+
-+impl PromptInput {
-+    /// The text the retry pill shows and resends.
-+    pub(super) fn text(&self) -> String {
-+        super::steer::first_text_block(&self.blocks)
-+    }
-+}
-+
-+#[cfg(test)]
-+impl From<Vec<ContentBlock>> for PromptInput {
-+    fn from(blocks: Vec<ContentBlock>) -> Self {
-+        Self {
-+            blocks,
-+            attachments: Vec::new(),
-+        }
-+    }
-+}
-+
- /// Commands sent from `AcpClient` methods to the background connection task.
- pub(super) enum ClientCmd {
--    /// The fully-built prompt content blocks (text first, then any
--    /// attachments). Built in `send_prompt` so the connection task just
--    /// forwards them to `session/prompt`. See #1000.
--    Prompt(Vec<ContentBlock>),
-+    Prompt(PromptInput),
-     Cancel,
-     /// `session/cancel` for one subagent session. Answers whether it was sent:
-     /// false when the child is unknown or did not advertise `cancel`.
+ Connections also replaces the home screen when the local Daemon answers but can't be used, and the Daemon row gives the state:
+ 
+@@ -87,7 +87,7 @@ Availability, provider and restart checks run in the background. Current links,
+ 
+ If error recovery could not discover the Daemon identity, `P` and the available Funnel reset `R` retry discovery before making changes. Failed startup retains the Daemon identity or absence observed before launch; it never acquires another Client's Daemon for recovery. Neither control silently refreshes a known stale identity. `S` superseding a provider retry cancels its unadmitted work or follows its admitted stop, never issuing a second stop or retargeting a replacement. Failure or timeout can leave changes uncertain: inspect `aoe serve --status` and, for a Funnel reset, `tailscale funnel status` before retrying.
+ 
+-To restart, press `R`, wait for the assessment and confirmation, then press `R` again. The confirmation window applies to the second keypress, not the background assessment's duration. The second confirmation checks current effects again and asks again if they changed. Both `R` and `G` remain bound to the observed Daemon. If another Client replaces it before admission, the TUI refuses before changing the replacement or saved defaults. Recovery controls retain that identity after failure, including when the failed launch is first shown after reopening; close and reopen Remote Access again to observe the replacement before retrying.
++To restart, press `R`; `G` gives a new passphrase. It asks once it has checked what a restart would change. Press Enter once it asks. An Enter pressed while it checks does nothing, and the check then shows what a restart would change without asking: press `R` (or `G`) to check again. Any other key cancels, and so does waiting 3 seconds after it asks. Pressing `R` again only asks again, so a held key never restarts, and the `R` that opened the dashboard controls from Connections does nothing there until you press another key. Enter checks the current effects again; if they changed, it says so and shows them without asking, and `R` checks again. On a Funnel error, `R` then Enter turns off Funnel on its port. Both `R` and `G` remain bound to the observed Daemon. If another Client replaces it before admission, the TUI refuses before changing the replacement or saved defaults. Recovery controls retain that identity after failure, including when the failed launch is first shown after reopening; close and reopen Remote Access again to observe the replacement before retrying.
+ 
+ A degraded runtime can still provide its last complete canonical list read-only. Owner diagnostics name the file that actually failed, without displaying its contents. If the failing source changes while the list stays unchanged, an already-connected owner TUI updates the diagnostic without inventing a new list revision. Repair that file and wait for a fresh healthy snapshot before writing. A runtime protocol mismatch requires `aoe serve --restart`; reconnecting does not silently replace a live incompatible Daemon.
+ 
 ```
 
-**File**: `src/acp/acp_client/connection/command_loop.rs` (modified, +9/-8)
+**File**: `src/tui/app.rs` (modified, +96/-0)
 ```diff
-@@ -3,9 +3,8 @@
- 
- use crate::acp::state::Event;
- use agent_client_protocol::v1::schema::{
--    CancelNotification, ContentBlock, McpServer, NewSessionRequest, NewSessionResponse,
--    SessionConfigId, SessionConfigOption, SessionConfigValueId, SessionId,
--    SetSessionConfigOptionRequest,
-+    CancelNotification, McpServer, NewSessionRequest, NewSessionResponse, SessionConfigId,
-+    SessionConfigOption, SessionConfigValueId, SessionId, SetSessionConfigOptionRequest,
- };
- use agent_client_protocol::v1::ConnectionTo;
- use agent_client_protocol::Agent;
-@@ -20,7 +19,7 @@ use super::notifications::{now_ms, Shared};
- use crate::acp::acp_client::between_prompt::{
-     between_prompt_stop_reason, BETWEEN_PROMPT_IDLE_CHECK_INTERVAL,
- };
--use crate::acp::acp_client::commands::ClientCmd;
-+use crate::acp::acp_client::commands::{ClientCmd, PromptInput};
- use crate::acp::acp_client::config_options::{
-     config_option_failure_event, config_options_event, dispatch_set_config_option,
-     dispatch_set_mode, mode_config_id, model_config_values, model_option, modes_available_event,
-@@ -62,7 +61,7 @@ pub(super) struct Session {
-     pub(super) lifecycle_rx: mpsc::Receiver<LifecycleEnvelope>,
-     /// Steers the adapter handed back unconsumed, run as ordinary turns.
-     /// Kept here rather than re-sent on the bounded channel this task drains.
--    pub(super) pending_prompts: VecDeque<Vec<ContentBlock>>,
-+    pub(super) pending_prompts: VecDeque<PromptInput>,
- }
- 
- impl Session {
-@@ -157,7 +156,7 @@ impl Session {
-             let cancel_deadline = *shared.cancel_deadline.lock().unwrap();
-             // Fallback prompts go first so later messages cannot overtake them.
-             let cmd = match self.pending_prompts.pop_front() {
--                Some(blocks) => Some(ClientCmd::Prompt(blocks)),
-+                Some(prompt) => Some(ClientCmd::Prompt(prompt)),
-                 None => tokio::select! {
-                     biased;
-                     outcome = async {
-@@ -196,8 +195,8 @@ impl Session {
-                 },
-             };
-             match cmd {
--                Some(ClientCmd::Prompt(blocks)) => {
--                    if self.run_prompt(blocks).await? {
-+                Some(ClientCmd::Prompt(prompt)) => {
-+                    if self.run_prompt(prompt).await? {
-                         break;
-                     }
-                 }
-@@ -405,6 +404,7 @@ impl Session {
-                 .emit(Event::PromptRejected {
-                     reason: "agent_busy".into(),
-                     text,
-+                    attachments: Vec::new(),
-                 })
-                 .await;
-             let _ = respond_to.send(ResetSessionOutcome::Failed {
-@@ -428,6 +428,7 @@ impl Session {
-                 .emit(Event::PromptRejected {
-                     reason: "agent_busy".into(),
-                     text,
-+                    attachments: Vec::new(),
-                 })
-                 .await;
-             let _ = respond_to.send(ResetSessionOutcome::Failed {
-```
-
-**File**: `src/acp/acp_client/connection/prompt.rs` (modified, +142/-58)
-```diff
-@@ -17,15 +17,16 @@ use tracing::{debug, info, trace, warn};
- use super::command_loop::Session;
- use super::notifications::now_ms;
- use super::CANCEL_ESCALATION_GRACE;
--use crate::acp::acp_client::commands::ClientCmd;
-+use crate::acp::acp_client::commands::{ClientCmd, PromptInput};
- use crate::acp::acp_client::control::prompt_outcome_to_response;
- use crate::acp::acp_client::delete::handle_delete_session_cmd;
--use crate::acp::acp_client::errors::acp_internal_error;
-+use crate::acp::acp_client::errors::{acp_internal_error, is_authentication_failure};
- use crate::acp::acp_client::lifecycle::{LifecycleSignal, OffProtocolWorkKind};
- use crate::acp::acp_client::opencode::recover_opencode_prompt_error;
- use crate::acp::acp_client::rate_limit::{
--    captured_rate_limit_reset, classify_rate_limit_error, clear_captured_rejections,
--    is_unsupported_session_error, take_rate_limit_from_captured_rejection,
-+    captured_rate_limit_reset, classify_rate_limit_error, classify_rate_limit_from_message,
-+    clear_captured_rejections, is_unsupported_session_error,
-+    take_rate_limit_from_captured_rejection,
- };
- use crate::acp::acp_client::reset::ResetSessionOutcome;
- use crate::acp::acp_client::steer::{first_text_block, SteerOutcome, SteerRequest};
-@@ -34,11 +35,11 @@ use crate::acp::acp_client::watchdog::{
-     terminal_stop_reason, SilentOrphanWatchdog, SilentOrphanWatchdogConfig,
-     OFF_PROTOCOL_WORK_GRACE_FLOOR,
- };
-+use crate::daemon::PromptAttachmentRef;
- 
- type AcpResult<T> = Result<T, agent_client_protocol::Error>;
--type PromptFut = Pin<Box<dyn Future<Output = AcpResult<PromptResponse>> + Send>>;
--type SteerFut =
--    Pin<Box<dyn Future<Output = (Vec<ContentBlock>, AcpResult<serde_json::Value>)> + Send>>;
-+type PromptFut = Pin<Box<dyn Future<Output = PromptReply> + Send>>;
-+type SteerFut = Pin<Box<dyn Future<Output = (PromptInput, AcpResult<serde_json::Value>)> + Send>>;
- 
- #[cfg(test)]
- pub(super) struct SelectProbe {
-@@ -68,6 +69,13 @@ fn observe_select_win(command: bool) {
-     });
- }
- 
-+/// `session/prompt`'s result. `rejected` marks an error the agent answered
-+/// with, as opposed to a lost transport or runner.
-+struct PromptReply {
-+    result: AcpResult<PromptResponse>,
-+    rejected: bool,
-+}
-+
- enum Flow {
-     Continue,
-     Break,
-@@ -87,10 +95,15 @@ struct TurnFlags {
-     cancelling: bool,
-     /// What the adapter reported; `None` when no `PromptResponse` arrived.
-     agent_stop_reason: Option<StopReason>,
-+    /// The error the agent answered `session/prompt` with.
-+    rejection: Option<String>,
- }
- 
- struct Turn {
-     epoch: u64,
-+    /// Handed back on a rejection so the user can retry it.
-+    prompt_text: String,
-+    prompt_attachments: Vec<PromptAttachmentRef>,
-     flags: TurnFlags,
-     watchdog: SilentOrphanWatchdog,
-     cfg: SilentOrphanWatchdogConfig,
-@@ -101,7 +114,7 @@ struct Turn {
-     /// At most one steer is outstanding so racing steers cannot reorder the
-     /// user's messages; later ones wait in the backlog.
-     steer_fut: Option<SteerFut>,
--    steer_backlog: VecDeque<Vec<ContentBlock>>,
-+    steer_backlog: VecDeque<PromptInput>,
- }
- 
- impl Turn {
-@@ -116,6 +129,12 @@ impl Turn {
-     }
- }
- 
-+/// The SDK's own error for a connection that ended before the response.
-+fn is_lost_response(error: &agent_client_protocol::Error) -> bool {
-+    agent_client_protocol::is_connection_terminated(error)
-+        || agent_client_protocol::is_incoming_transport_closed(error)
-+}
-+
- /// Debug-only fault injection: suppress the prompt response once so the
- /// silent-orphan watchdog must break the loop (#1240).
- fn simulate_orphan(session_label: &str) -> bool {
-@@ -139,7 +158,11 @@ fn simulate_orphan(session_label: &str) -> bool {
- impl Session {
-     /// Runs one turn and always emits its terminal `Stopped`. Returns whether
-     /// the connection should shut down.
--    pub(super) async fn run_prompt(&mut self, blocks: Vec<ContentBlock>) -> AcpResult<bool> {
-+    pub(super) async fn run_prompt(&mut self, prompt: PromptInput) -> AcpResult<bool> {
-+        let PromptInput {
-+            blocks,
-+            attachments,
-+        } = prompt;
-         let shared = self.shared.clone();
-         if let Some(control) = self.control.as_ref() {
-             control.supersede_adopted_turn();
-@@ -193,6 +216,8 @@ impl Session {
-         let orphan_check_period = silent_orphan_check_interval();
-         let mut turn = Turn {
-             epoch,
-+            prompt_text: first_text_block(&blocks),
-+            prompt_attachments: attachments,
-             flags: TurnFlags::default(),
-             watchdog: SilentOrphanWatchdog::default(),
-             cfg: SilentOrphanWatchdogConfig {
-@@ -259,10 +284,10 @@ impl Session {
-                 {
-                     self.on_orphan_check(&mut turn).await
-                 }
--                (blocks, res) = async {
-+                (prompt, res) = async {
-                     turn.steer_fut.as_mut().expect("guarded by the arm condition").await
-            
-```
-
-**File**: `src/acp/acp_client/connection/tests.rs` (modified, +85/-12)
-```diff
-@@ -3,6 +3,7 @@
- use super::super::pending::{ApprovalResolutionMessage, PendingResolver, PendingResponder};
- use super::prompt::{SelectProbe, SELECT_PROBE};
- use super::*;
-+use crate::acp::acp_client::commands::PromptInput;
- use crate::acp::acp_client::reset::ResetSessionOutcome;
- use crate::acp::approvals::ApprovalDecision;
- use crate::acp::fs_handler::FsPolicy;
-@@ -161,9 +162,9 @@ async fn cancel_under_flood() {
-         .expect("handshake completes")
-         .expect("handshake ok");
-     cmd_tx
--        .send(ClientCmd::Prompt(vec![ContentBlock::Text(
--            TextContent::new("hi"),
--        )]))
-+        .send(ClientCmd::Prompt(PromptInput::from(vec![
-+            ContentBlock::Text(TextContent::new("hi")),
-+        ])))
-         .await
-         .unwrap();
- 
-@@ -604,9 +605,9 @@ async fn default_mode_reaches_the_live_mode_option_only_when_configured() {
-             })
-             .await;
-         fake.cmd_tx
--            .send(ClientCmd::Prompt(vec![ContentBlock::Text(
--                TextContent::new("hi"),
--            )]))
-+            .send(ClientCmd::Prompt(PromptInput::from(vec![
-+                ContentBlock::Text(TextContent::new("hi")),
-+            ])))
-             .await
-             .unwrap();
-         tokio::time::timeout(Duration::from_secs(10), prompted_rx.recv())
-@@ -733,9 +734,9 @@ async fn prompted_turn_ending_on_a_rejected_window_parks() {
-         })
-         .await;
-         fake.cmd_tx
--            .send(ClientCmd::Prompt(vec![ContentBlock::Text(
--                TextContent::new("hi"),
--            )]))
-+            .send(ClientCmd::Prompt(PromptInput::from(vec![
-+                ContentBlock::Text(TextContent::new("hi")),
-+            ])))
-             .await
-             .unwrap();
- 
-@@ -783,6 +784,78 @@ async fn prompted_turn_ending_on_a_rejected_window_parks() {
-     }
- }
- 
-+/// Sends one prompt and returns the events before its `Stopped`, and its reason.
-+async fn prompt_turn(fake: &mut FakeConnection, text: &str) -> (Vec<Event>, String) {
-+    fake.cmd_tx
-+        .send(ClientCmd::Prompt(PromptInput::from(vec![
-+            ContentBlock::Text(TextContent::new(text)),
-+        ])))
-+        .await
-+        .unwrap();
-+    let mut seen = Vec::new();
-+    tokio::time::timeout(Duration::from_secs(10), async {
-+        loop {
-+            match fake.event_rx.recv().await.expect("connection remains open") {
-+                Event::Stopped { reason } => return (seen, reason),
-+                event => seen.push(event),
-+            }
-+        }
-+    })
-+    .await
-+    .expect("the turn must reach a terminal event")
-+}
-+
-+/// An agent that answers `session/prompt` with an error ends only that turn:
-+/// the error and the prompt text come back, and the connection takes the next
-+/// prompt (#5662).
-+#[tokio::test]
-+async fn rejected_prompt_keeps_the_connection_and_returns_the_text() {
-+    let prompts = Arc::new(std::sync::atomic::AtomicUsize::new(0));
-+    let counter = prompts.clone();
-+    let mut fake = spawn_fake_connection("s-rejected", move |id| {
-+        vec![if counter.fetch_add(1, Ordering::SeqCst) == 0 {
-+            format!(
-+                r#"{{"jsonrpc":"2.0","id":{id},"error":{{"code":-32603,"message":"a turn is already running"}}}}"#
-+            )
-+        } else {
-+            format!(r#"{{"jsonrpc":"2.0","id":{id},"result":{{"stopReason":"end_turn"}}}}"#)
-+        }]
-+    })
-+    .await;
-+
-+    let (seen, reason) = prompt_turn(&mut fake, "retry me").await;
-+    assert_eq!(reason, "prompt_rejected", "{seen:?}");
-+    assert!(
-+        seen.iter().any(|e| matches!(
-+            e,
-+            Event::PromptRuntimeError { message } if message.contains("a turn is already running")
-+        )),
-+        "the agent's error must surface on the turn: {seen:?}"
-+    );
-+    assert!(
-+        seen.iter().any(|e| matches!(
-+            e,
-+            Event::PromptRejected { text, .. } if text == "retry me"
-+        )),
-+        "the prompt text must come back for a retry: {seen:?}"
-+    );
-+
-+    let (seen, reason) = prompt_turn(&mut fake, "again").await;
-+    assert_eq!(reason, "prompt_complete");
-+    assert!(
-+        !seen.iter().any(|e| matches!(
-+            e,
-+            Event::PromptRuntimeError { .. } | Event::PromptRejected { .. }
-+        )),
-+        "{seen:?}"
-+    );
-+    assert_eq!(prompts.load(Ordering::SeqCst), 2);
-+    assert!(!fake.connection.is_finished());
-+    fake.connection.abort();
-+    fake.agent.abort();
-+    let _ = fake.agent.await;
-+}
-+
- /// A child cancel reaches the agent addressed to the child and only when the
- /// child announced `cancel`; the root turn's cancel stays a separate command.
- #[tokio::test]
-@@ -1045,9 +1118,9 @@ async fn reset_waits_for_a_running_subagent() {
- 
-     // The agent reports the child idle before it ends the turn.
-     cmd_tx
--        .send(ClientCmd::Prompt(vec![ContentBlock::Text(
--            TextContent::new("go"),
--        )]))
-+        .send(ClientCmd::Prompt(PromptInput::from(vec![
-+            
-```
-
-**File**: `src/acp/acp_client/control.rs` (modified, +31/-30)
-```diff
-@@ -288,21 +288,20 @@ impl DaemonControlClient {
-         }
-     }
- 
--    /// Registers the completion waiter before sending the `Prompt` frame.
-+    /// Registers the completion waiter before sending the `Prompt` frame. A
-+    /// waiter already pending is refused locally, without a frame.
-     pub(super) async fn prompt(
-         &self,
-         request: serde_json::Value,
--    ) -> oneshot::Receiver<control_protocol::PromptOutcome> {
-+    ) -> Result<oneshot::Receiver<control_protocol::PromptOutcome>, agent_client_protocol::Error>
-+    {
-         let (tx, rx) = oneshot::channel();
-         {
-             let mut completion = self.completion.lock().expect("completion mutex poisoned");
-             if matches!(*completion, PromptCompletion::Pending { .. }) {
--                let _ = tx.send(control_protocol::PromptOutcome::Error {
--                    code: control_protocol::INTERNAL_ERROR as i32,
--                    message: "a local prompt is already awaiting completion".into(),
--                    data: None,
--                });
--                return rx;
-+                return Err(acp_internal_error(
-+                    "a local prompt is already awaiting completion".into(),
-+                ));
-             }
-             *completion = PromptCompletion::Pending {
-                 prompt_req_id: None,
-@@ -315,7 +314,7 @@ impl DaemonControlClient {
-             *self.completion.lock().expect("completion mutex poisoned") =
-                 PromptCompletion::LocalIdle;
-         }
--        rx
-+        Ok(rx)
-     }
- 
-     pub(super) async fn cancel(&self) {
-@@ -975,7 +974,7 @@ mod tests {
-         }
- 
-         async fn prompt(&mut self) -> oneshot::Receiver<PromptOutcome> {
--            let rx = self.client.prompt(serde_json::json!({})).await;
-+            let rx = self.client.prompt(serde_json::json!({})).await.unwrap();
-             assert!(matches!(
-                 control_protocol::read_frame(&mut self.peer).await.unwrap(),
-                 Some(ControlBody::Prompt { .. })
-@@ -1112,14 +1111,11 @@ mod tests {
-     async fn duplicate_local_prompt_preserves_first_waiter_and_sends_no_prompt() {
-         let mut peer = PromptControlPeer::new().await;
-         let completion = peer.prompt().await;
--        let mut duplicate = peer
-+        let duplicate = peer
-             .client
-             .prompt(serde_json::json!({"duplicate": true}))
-             .await;
--        assert!(matches!(
--            duplicate.try_recv().unwrap(),
--            PromptOutcome::Error { code, .. } if i64::from(code) == control_protocol::INTERNAL_ERROR
--        ));
-+        assert!(duplicate.is_err());
-         // Cancel arriving next proves the duplicate sent no Prompt frame.
-         peer.client.cancel().await;
-         assert!(matches!(
-@@ -1398,7 +1394,7 @@ mod tests {
-         let (client, crate_side) = connect(&control, "eof", Arc::new(TerminalClaim::new()), false)
-             .await
-             .unwrap();
--        let completion = client.prompt(serde_json::json!({})).await;
-+        let completion = client.prompt(serde_json::json!({})).await.unwrap();
-         fake.await.unwrap();
-         assert!(tokio::time::timeout(Duration::from_secs(1), completion)
-             .await
-@@ -1413,13 +1409,16 @@ mod tests {
-     }
- 
-     #[tokio::test]
--    async fn attached_session_only_resets_for_missing_session_errors() {
-+    async fn attached_session_prompt_errors_reset_tear_down_or_end_the_turn() {
-         use crate::acp::acp_client::AcpClient;
-         use crate::acp::state::AcpSessionId;
- 
--        for (message, should_reset) in [
--            ("Unsupported ACP session", true),
--            ("Unsupported session mode", false),
-+        // -32000 alone is not a login: some adapters use it for any failure.
-+        for (message, code, want) in [
-+            ("Unsupported ACP session", -32603, &["reset", "stopped"][..]),
-+            ("Unsupported session mode", -32603, &["rejected"]),
-+            ("Authentication required", -32000, &["startup_error"]),
-+            ("model overloaded", -32000, &["rejected"]),
-         ] {
-             let tmp = tempfile::tempdir().unwrap();
-             let socket = tmp.path().join("s.sock");
-@@ -1452,12 +1451,14 @@ mod tests {
-                             ControlBody::PromptCompleted {
-                                 prompt_req_id: 1,
-                                 outcome: PromptOutcome::Error {
--                                    code: -32603,
-+                                    code,
-                                     message: message.into(),
-                                     data: None,
-                                 },
-                             }
-                         }
-+                        // Sent after a plain rejection (#5662).
-+                        ControlBody::Cancel => continue,
-                         frame => panic!("unexpected resumed-session request: {frame:?}"),
-                     };
-                     control_protocol::write_frame(&mut peer
-```
-
-**File**: `src/acp/acp_client/mod.rs` (modified, +11/-5)
-```diff
-@@ -79,7 +79,7 @@ use tokio::sync::{mpsc, oneshot, Mutex};
- use tokio_util::compat::{TokioAsyncReadCompatExt, TokioAsyncWriteCompatExt};
- use tracing::Instrument;
- 
--use self::commands::{ClientCmd, ConnectMode};
-+use self::commands::{ClientCmd, ConnectMode, PromptInput};
- use self::connection::{run_connection_task, ConnectionParams, RunnerLink};
- use self::control::{connect_runner_control_v3, ShutdownControlOnDrop};
- use self::delete::ACP_SESSION_DELETE_TIMEOUT;
-@@ -841,8 +841,8 @@ impl AcpClient {
-         cmd_tx.send(cmd).await.map_err(|_| AcpError::AgentExited)
-     }
- 
--    /// Attachments follow the text block. Callers gate kinds on the agent's
--    /// prompt capabilities (#1000).
-+    /// Attachments follow the text block, which an attachment-only prompt
-+    /// omits. Callers gate kinds on the agent's prompt capabilities (#1000).
-     pub async fn send_prompt(
-         &self,
-         text: &str,
-@@ -853,7 +853,9 @@ impl AcpClient {
-             return Err(AcpError::NotRunning);
-         }
-         let mut blocks = Vec::with_capacity(1 + attachments.len());
--        blocks.push(ContentBlock::Text(TextContent::new(text)));
-+        if !text.is_empty() || attachments.is_empty() {
-+            blocks.push(ContentBlock::Text(TextContent::new(text)));
-+        }
-         for att in attachments {
-             let data = base64::engine::general_purpose::STANDARD.encode(&att.data);
-             let mime = att.mime_type.clone();
-@@ -870,7 +872,11 @@ impl AcpClient {
-                 }
-             });
-         }
--        self.send_cmd(ClientCmd::Prompt(blocks)).await
-+        self.send_cmd(ClientCmd::Prompt(PromptInput {
-+            blocks,
-+            attachments: attachments.iter().map(AttachmentBlob::to_ref).collect(),
-+        }))
-+        .await
-     }
- 
-     /// Best-effort `session/cancel`; Ok even with no turn in flight.
-```
-
-**File**: `src/acp/acp_client/recovery_tests.rs` (modified, +97/-0)
-```diff
-@@ -643,3 +643,100 @@ async fn recovered_completion_orders_updates_and_applies_rate_limit_parking() {
-         }
-     }
- }
-+
-+/// The runner relays the agent's error answer to `session/prompt`: the turn
-+/// surfaces it, returns the prompt as sent (text and attachment refs) and
-+/// cancels any leftover agent turn, unless it answers a cancel. The same
-+/// connection runs the next prompt (#5662).
-+#[tokio::test]
-+async fn rejected_prompt_over_the_runner_keeps_the_connection() {
-+    let _env = crate::session::test_support::EnvGuard::read_lock();
-+    let image = AttachmentBlob {
-+        id: "att-1".into(),
-+        kind: PromptAttachmentKind::Image,
-+        mime_type: "image/png".into(),
-+        name: Some("shot.png".into()),
-+        data: b"png".to_vec(),
-+    };
-+    let image_block = serde_json::json!({"type": "image", "data": "cG5n", "mimeType": "image/png"});
-+    let text_block = |text: &str| serde_json::json!({"type": "text", "text": text});
-+    for (text, with_image, cancel_first, want_blocks) in [
-+        ("retry me", false, false, vec![text_block("retry me")]),
-+        (
-+            "look at this",
-+            true,
-+            false,
-+            vec![text_block("look at this"), image_block.clone()],
-+        ),
-+        ("", true, false, vec![image_block.clone()]),
-+        ("retry me", false, true, vec![text_block("retry me")]),
-+    ] {
-+        let attachments: &[AttachmentBlob] = if with_image {
-+            std::slice::from_ref(&image)
-+        } else {
-+            &[]
-+        };
-+        let mut runner = Runner::new();
-+        let mut client = runner.attach(false).await;
-+        client.send_prompt(text, attachments).await.unwrap();
-+        match runner.frame().await {
-+            ControlBody::Prompt { request } => {
-+                assert_eq!(
-+                    request["prompt"],
-+                    serde_json::json!(want_blocks),
-+                    "{text:?}"
-+                );
-+            }
-+            other => panic!("expected the prompt: {other:?}"),
-+        }
-+        if cancel_first {
-+            client.cancel_prompt().await.unwrap();
-+            assert!(matches!(runner.frame().await, ControlBody::Cancel));
-+        }
-+        runner
-+            .send(ControlBody::PromptCompleted {
-+                prompt_req_id: 7,
-+                outcome: PromptOutcome::Error {
-+                    code: -32603,
-+                    message: "a turn is already running".into(),
-+                    data: None,
-+                },
-+            })
-+            .await;
-+        let (mut surfaced, mut returned) = (false, None);
-+        let reason = timeout(Duration::from_secs(5), async {
-+            loop {
-+                match client.next_event().await.expect("connection remains open") {
-+                    Event::PromptRuntimeError { message } => {
-+                        surfaced = message.contains("a turn is already running");
-+                    }
-+                    Event::PromptRejected {
-+                        text, attachments, ..
-+                    } => returned = Some((text, attachments)),
-+                    Event::Stopped { reason } => return reason,
-+                    _ => {}
-+                }
-+            }
-+        })
-+        .await
-+        .unwrap();
-+        if cancel_first {
-+            assert_eq!(reason, "cancelled");
-+            assert!(!surfaced && returned.is_none());
-+        } else {
-+            assert_eq!(reason, "prompt_rejected");
-+            assert!(surfaced);
-+            let refs: Vec<_> = attachments.iter().map(AttachmentBlob::to_ref).collect();
-+            assert_eq!(returned, Some((text.to_string(), refs)), "{text:?}");
-+            // The rejection clears a turn the agent may still be running.
-+            assert!(matches!(runner.frame().await, ControlBody::Cancel));
-+        }
-+
-+        client.send_prompt("again", &[]).await.unwrap();
-+        assert!(matches!(runner.frame().await, ControlBody::Prompt { .. }));
-+        runner.complete("end_turn").await;
-+        assert_eq!(stopped(&mut client).await, "prompt_complete");
-+        assert!(client.control_loss().is_none());
-+        client.shutdown().await.unwrap();
-+    }
-+}
-```
-
-**File**: `src/acp/acp_client/reset.rs` (modified, +2/-2)
-```diff
-@@ -1162,7 +1162,7 @@ done
-             .await;
-             assert!(matches!(
-                 events.last(),
--                Some(Event::PromptRejected { reason, text }) if reason == "agent_busy" && text == "/new"
-+                Some(Event::PromptRejected { reason, text, .. }) if reason == "agent_busy" && text == "/new"
-             ));
-             assert_eq!(requests(&capture, "session/new"), 1);
-             let _ = client.shutdown().await;
-@@ -1341,7 +1341,7 @@ done
-             events_until(&mut client, |e| matches!(e, Event::PromptRejected { .. })).await;
-         assert!(matches!(
-             rejected.last(),
--            Some(Event::PromptRejected { reason, text }) if reason == "agent_busy" && text == "/new"
-+            Some(Event::PromptRejected { reason, text, .. }) if reason == "agent_busy" && text == "/new"
-         ));
-         std::fs::write(tmp.path().join("capture.ndjson.prompt-release"), "release").unwrap();
-         let rest = events_until(&mut client, |e| matches!(e, Event::Stopped { .. })).await;
-```
-
----
-
-### Incident Patch 3: `92fedad0` (2026-11-19)
-**Commit Message**: fix(tmux): read tmux queries with the UTF-8 flag (#5852)
-
-* fix(process): read the pane PID with tmux's UTF-8 flag
-
-A tmux client without a UTF-8 locale prints control characters in format
-output as `_`, so the tab in the pane PID query came back as `0_<pid>` and
-the lookup returned nothing. Kills then skipped the pane's process tree. The
-lookup now goes through the query builder, which passes `-u`.
-
-Fixes #5850.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(tmux): give the locale only to a child test process
-
-The pane PID test set and restored LANG, LC_ALL and LC_CTYPE in the test
-process itself. Under `cargo test`, which runs tests on threads, any
-concurrent test could read or inherit that environment while it was changed.
-The test now re-runs itself as a child of the test binary with the C locale
-set on that child's command, and leaves its own environment alone.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(tmux): read pane titles with tmux's UTF-8 flag
-
-Without a UTF-8 locale, tmux prints every character outside printable ASCII
-in format output as `_`. A pane title such as omp's `π ⠋ working` then read
-as underscores, so omp's working rule never match
-
-**File**: `src/process/mod.rs` (modified, +3/-2)
-```diff
-@@ -897,8 +897,9 @@ fn collect_descendants_from_map(
- pub fn get_pane_pid(session_name: &str) -> Option<u32> {
-     let pane = crate::tmux::first_pane_id(session_name)?;
-     // The pane id must travel alone: `session:%id` reads as a window
--    // spec and falls back to the window's active pane (tmux 3.7c).
--    let output = crate::tmux::tmux_command()
-+    // spec and falls back to the window's active pane (tmux 3.7c). A client
-+    // without UTF-8 prints the tab as `_`, so the query passes `-u`.
-+    let output = crate::tmux::tmux_query_command()
-         .args([
-             "display-message",
-             "-t",
-```
-
-**File**: `src/tmux/mod.rs` (modified, +5/-4)
-```diff
-@@ -230,10 +230,11 @@ pub(crate) fn tmux_command() -> Command {
- /// non-`ECONNREFUSED` connect failure, and glibc localizes `strerror` by
- /// `LC_MESSAGES`, so on a non-English host the `(No such file or directory)`
- /// ENOENT marker for an absent socket (#3337) would not match. `LC_ALL` is
--/// removed so it cannot override that. Global `-u` forces UTF-8 session names
--/// even when the caller has `LC_CTYPE=C` or when `LC_ALL` was the only UTF-8
--/// locale source. Used by the status-query callers (which classify via
--/// [`tmux_no_server_running`]) and by `kill_session_if_present`. NOT folded into
-+/// removed so it cannot override that. Global `-u` keeps format output intact
-+/// (separators, session names, pane titles) even when the caller has
-+/// `LC_CTYPE=C` or when `LC_ALL` was the only UTF-8 locale source, since tmux
-+/// prints anything outside printable ASCII as `_` to a non-UTF-8 client. Used
-+/// for every query whose output aoe parses, and by `kill_session_if_present`. NOT folded into
- /// [`tmux_command`]: the interactive attach/switch-client/capture-pane paths must
- /// keep the user's locale for UTF-8 and status-bar rendering, and `-u` would
- /// assert UTF-8 to a terminal that may not be.
-```
-
-**File**: `src/tmux/session.rs` (modified, +71/-0)
-```diff
-@@ -5119,6 +5119,77 @@ mod tests {
+@@ -5187,6 +5187,102 @@ mod tests {
          );
      }
  
-+    /// #5850: a tmux client without a UTF-8 locale prints every byte outside printable ASCII
-+    /// as `_`. The locale reaches only a child test process, never this one's environment.
-+    #[test]
++    /// #5766: the Serve key that opened Connections opens the Web dashboard from any row, in
++    /// either mode, but a held key stays in Connections. On the offline and outdated takeovers,
++    /// where only r and q act, it does nothing. Hold timing is `ConnectionsView`'s own test;
++    /// this one checks the hub is opened at the opening press's time.
++    #[tokio::test]
 +    #[serial_test::serial]
-+    fn pane_queries_read_intact_without_a_utf8_locale() {
-+        const CHILD: &str = "AOE_TEST_PANE_QUERY_LOCALE_CHILD";
-+        if !tmux_available() {
-+            eprintln!("Skipping test: tmux not available");
-+            return;
-+        }
-+        if std::env::var_os(CHILD).is_none() {
-+            let child = std::process::Command::new(std::env::current_exe().unwrap())
-+                .args([
-+                    "--exact",
-+                    "tmux::session::tests::pane_queries_read_intact_without_a_utf8_locale",
-+                    "--nocapture",
-+                ])
-+                .env(CHILD, "1")
-+                .env("LANG", "C")
-+                .env("LC_ALL", "C")
-+                .env("LC_CTYPE", "C")
-+                // tmux treats a set TMUX as UTF-8 before it reads the locale.
-+                .env_remove("TMUX")
-+                .output()
-+                .unwrap();
-+            let stdout = String::from_utf8_lossy(&child.stdout);
++    async fn the_serve_key_in_connections_opens_the_web_dashboard_except_on_a_takeover() {
++        use crate::tui::dialogs::{ConnectionsView, DaemonAttention as A, DialogResult, WebState};
++        use crate::tui::session_feed::SidebarSource;
++        let _home = crate::session::test_support::isolate_app_dir();
++        crate::session::get_profile_dir("test").unwrap();
++        for (strict, key) in [
++            (
++                false,
++                KeyEvent::new(KeyCode::Char('R'), KeyModifiers::SHIFT),
++            ),
++            (
++                true,
++                KeyEvent::new(KeyCode::Char('r'), KeyModifiers::CONTROL),
++            ),
++        ] {
++            let mut app = App::new(
++                "test",
++                AvailableTools::with_tools(&[]),
++                true,
++                false,
++                crate::file_watch::FileWatchService::noop(),
++            )
++            .unwrap();
++            app.home.strict_hotkeys = strict;
++            // A held key opens Connections, then never reaches the Serve screen, whose restart
++            // and reset use the same key. Times come from `before`, not the wall clock, so a
++            // stalled test can't make the hold look like a separate press.
++            let before = std::time::Instant::now();
++            app.home.handle_key(key, None);
++            let hub = app
++                .home
++                .connections_view
++                .as_mut()
++                .expect("the key opens Connections");
++            let later = |ms| before + std::time::Duration::from_millis(ms);
 +            assert!(
-+                child.status.success() && stdout.contains("1 passed"),
-+                "{stdout}{}",
-+                String::from_utf8_lossy(&child.stderr)
++                matches!(
++                    hub.handle_key(key, strict, later(150)),
++                    DialogResult::Continue
++                ),
++                "strict={strict}: a repeat just after the opening press stays"
 +            );
-+            return;
-+        }
-+        let guard = TmuxTestSession::new("aoe_test_pane_query_locale");
-+        let session_name = guard.name().to_string();
-+        let mut args: Vec<String> = ["new-session", "-d", "-s", &session_name, "sleep 30"]
-+            .iter()
-+            .map(|arg| arg.to_string())
-+            .collect();
-+        append_pane_base_index_args(&mut args, &session_name);
-+        assert!(crate::tmux::tmux_command()
-+            .args(&args)
-+            .status()
-+            .expect("tmux new-session")
-+            .success());
-+        let pane = only_pane_id(&session_name);
-+        wait_for_pane_command(&pane, "sleep");
-+        let title = "π ⠋ working";
-+        assert!(crate::tmux::tmux_query_command()
-+            .args(["select-pane", "-t", &pane, "-T", title])
-+            .status()
-+            .expect("set pane title")
-+            .success());
-+        let pid = pane_field(&pane, "#{pane_pid}");
-+        let cases = [
-+            (
-+                "pane PID",
-+                crate::process::get_pane_pid(&session_name).map(|pid| pid.to_string()),
-+                pid.as_str(),
-+            ),
-+            (
-+                "pane title",
-+                crate::tmux::utils::pane_title(&session_name),
-+                title,
-+            ),
-+        ];
-+        for (query, read, expected) in cases {
-+            assert_eq!(read.as_deref(), Some(expected), "{query}");
++            let repeat = KeyEvent::new_with_kind(key.code, key.modifiers, KeyEventKind::Repeat);
++            for _ in 0..30 {
++                app.home.handle_key(repeat, None);
++            }
++            assert!(app.home.connections_view.is_some(), "strict={strict}: held");
++            assert!(app.home.serve_view.is_none(), "strict={strict}: held");
++            // The Daemon row comes first and is selected, so Enter would do nothing here.
++            app.home.connections_view =
++                Some(ConnectionsView::new(Some(A::ReadOnly), WebState::Off));
++            app.home.handle_key(key, None);
++            assert!(app.home.connections_view.is_none(), "strict={strict}");
++            assert!(
++                app.home.serve_view.is_some(),
++                "strict={strict}: opens the Web dashboard"
++            );
++
++            for attention in [
++                A::Offline,
++                A::Outdated(crate::daemon::DaemonIncarnation::sample("old")),
++            ] {
++                let case = format!("strict={strict} {attention:?}");
++                app.home.serve_view = None;
++                app.home.sidebar_source = SidebarSource::Disconnected;
++                app.home.offline_attention = attention;
++                assert!(!app.handle_runtime_gate_key(key), "{case}");
++                assert!(app.home.serve_view.is_none(), "{case}");
++                assert!(app.home.connections_view.is_none(), "{case}");
++                assert!(app.daemon_restart.is_none(), "{case}");
++                assert_eq!(
++                    app.home.sidebar_source,
++                    SidebarSource::Disconnected,
++                    "{case}"
++                );
++                assert!(
++                    matches!(
++                        ConnectionsView::offline(attention, None, false).handle_key(
++                            key,
++                            strict,
++                            std::time::Instant::now()
++                        ),
++                        DialogResult::Continue
++                    ),
++                    "{case}: the takeover view ignores it"
++                );
++            }
 +        }
 +    }
 +
-     #[test]
+     #[tokio::test]
      #[serial_test::serial]
-     /// Regression test for #488: when a user creates a split pane and makes it
+     async fn r_restarts_only_a_restartable_daemon_and_reports_the_outcome() {
 ```
 
-**File**: `src/tmux/utils.rs` (modified, +3/-3)
+**File**: `src/tui/components/help.rs` (modified, +1/-1)
 ```diff
-@@ -442,7 +442,7 @@ fn classify_live_panes(succeeded: bool, stdout: &[u8], stderr: &[u8]) -> bool {
+@@ -428,7 +428,7 @@ mod tests {
+                 if cfg!(feature = "web") {
+                     "Web dashboard"
+                 } else {
+-                    "Connections: API server"
++                    "API server"
+                 },
+                 "R",
+                 "Ctrl+R",
+```
+
+**File**: `src/tui/dialogs/connections.rs` (modified, +103/-4)
+```diff
+@@ -1,13 +1,20 @@
+ //! The Connections hub behind R: this computer's Web dashboard, plus its Daemon whenever the
+ //! Daemon needs attention. While the Daemon is offline it is also the home screen's takeover.
  
- pub(crate) fn pane_current_command(session_name: &str) -> Option<String> {
-     let first = first_pane_id(session_name)?;
--    crate::tmux::tmux_command()
-+    crate::tmux::tmux_query_command()
-         .args([
-             "display-message",
-             "-t",
-@@ -466,7 +466,7 @@ pub(crate) fn pane_current_command(session_name: &str) -> Option<String> {
- /// read one way through the poller and another through `aoe session capture`.
- pub(crate) fn pane_title(session_name: &str) -> Option<String> {
-     let target = format!("={session_name}:^");
--    crate::tmux::tmux_command()
-+    crate::tmux::tmux_query_command()
-         .args(["display-message", "-t", &target, "-p", "#{pane_title}"])
-         .output()
-         .ok()
-@@ -488,7 +488,7 @@ pub(crate) fn pane_start_command_is_protected(session_name: &str) -> bool {
-         return false;
-     };
-     let target = first;
--    crate::tmux::tmux_command()
-+    crate::tmux::tmux_query_command()
-         .args([
-             "display-message",
-             "-t",
+-use crossterm::event::{KeyCode, KeyEvent};
++use std::time::{Duration, Instant};
++
++use crossterm::event::{KeyCode, KeyEvent, KeyEventKind};
+ use ratatui::prelude::*;
+ use ratatui::widgets::*;
+ 
+ use super::DialogResult;
++use crate::tui::home::bindings::{self, ActionId};
+ use crate::tui::styles::Theme;
+ 
++/// How long after a Serve chord the next one still counts as the same press. Above the common
++/// OS key-repeat delays (225 to 660 ms), so a held key's first repeat falls inside it.
++const SEPARATE_PRESS: Duration = Duration::from_millis(700);
++
+ /// Why the Daemon row is listed. A healthy Daemon has no row.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ pub enum DaemonAttention {
+@@ -154,6 +161,9 @@ pub struct ConnectionsView {
+     web: WebState,
+     selected: usize,
+     row_rects: Vec<(Row, Rect)>,
++    /// The last Serve chord while no other key has arrived, starting with the one that opened
++    /// the hub; a held key keeps renewing it.
++    last_serve: Option<Instant>,
+ }
+ 
+ impl ConnectionsView {
+@@ -165,6 +175,7 @@ impl ConnectionsView {
+             web,
+             selected: 0,
+             row_rects: Vec::new(),
++            last_serve: None,
+         };
+         // A failed launch opens on its row, so Enter shows why at once.
+         if view.web == WebState::Failed {
+@@ -191,6 +202,14 @@ impl ConnectionsView {
+         }
+     }
+ 
++    /// Opened by the Serve chord at `now`, which a second press must be separate from.
++    pub fn opened_by_serve(self, now: Instant) -> Self {
++        Self {
++            last_serve: Some(now),
++            ..self
++        }
++    }
++
+     /// Follow the Daemon and Web dashboard while open, keeping the selected row.
+     pub fn refresh(&mut self, daemon: Option<DaemonAttention>, web: WebState) {
+         let selected = self.rows().get(self.selected).copied();
+@@ -220,9 +239,24 @@ impl ConnectionsView {
+         self.daemon.is_some_and(DaemonAttention::is_takeover)
+     }
+ 
+-    /// Enter on the Web dashboard row submits; the Daemon row has nothing to open.
+-    pub fn handle_key(&mut self, key: KeyEvent) -> DialogResult<()> {
++    /// Enter on the Web dashboard row submits; the Daemon row has nothing to open. The Serve
++    /// key that opened the hub submits from any row, except on a takeover, once it is a
++    /// separate press: 700 ms after the last one, or after any other key. A key-repeat event
++    /// never counts.
++    pub fn handle_key(&mut self, key: KeyEvent, strict: bool, now: Instant) -> DialogResult<()> {
+         let rows = self.rows();
++        if !self.offline_takeover() && bindings::is_bound(ActionId::Serve, strict, &key) {
++            let held = key.kind == KeyEventKind::Repeat
++                || self
++                    .last_serve
++                    .is_some_and(|last| now.saturating_duration_since(last) < SEPARATE_PRESS);
++            if !held {
++                return DialogResult::Submit(());
++            }
++            self.last_serve = Some(now);
++            return DialogResult::Continue;
++        }
++        self.last_serve = None;
+         match key.code {
+             KeyCode::Esc | KeyCode::Char('q') => DialogResult::Cancel,
+             KeyCode::Up => {
+@@ -621,10 +655,75 @@ mod tests {
+         }
+     }
+ 
++    /// #5832: the second Serve chord must be a separate press, in either mode. Times are
++    /// offsets from the chord that opened the hub.
++    #[test]
++    fn the_second_serve_chord_opens_the_dashboard_only_as_a_separate_press() {
++        let ms = Duration::from_millis;
++        let down = KeyEvent::new(KeyCode::Down, KeyModifiers::NONE);
++        let repeat =
++            |key: KeyEvent| KeyEvent::new_with_kind(key.code, key.modifiers, KeyEventKind::Repeat);
++        // A held key: the first repeat after a 500 ms OS delay, then one every 33 ms for 2 s.
++        let held: Vec<Duration> = std::iter::once(ms(500))
++            .chain((1..=60).map(|i| ms(500 + 33 * i)))
++            .collect();
++        for (strict, serve) in [
++            (
++                false,
++                KeyEvent::new(KeyCode::Char('R'), KeyModifiers::SHIFT),
++            ),
++            (
++                true,
++                KeyEvent::new(KeyCode::Char('r'), KeyModifiers::CONTROL),
++            ),
++        ] {
++            let cases: Vec<(&str, Vec<(Duration, KeyEvent)>, bool)> = vec![
++                ("inside the gap", vec![(ms(150), serve)], false),
++                ("after the gap", vec![(SEPARATE_PRESS, serve)], true),
++                (
++                    "a held key",
++                    held.iter().map(|&at| (at, serve)).collect(),
++                    false,
++                ),
++                (
++                    "another key between",
++                    vec![(ms(50), down), (ms(100), serve)],
++              
 ```
 
-**File**: `web/scripts/check-env-isolation.mjs` (modified, +1/-0)
+**File**: `src/tui/dialogs/serve/mod.rs` (modified, +117/-18)
 ```diff
-@@ -83,6 +83,7 @@ const TEST_BINARY_READS = new Set([
-   "AOE_RECHECK_TEST_CHILD",
-   "AOE_TEST_APP_DIR_UMASK_CHILD",
-   "AOE_TEST_KILL_LAST_PANE_CHILD",
-+  "AOE_TEST_PANE_QUERY_LOCALE_CHILD",
-   "AOE_TEST_TMUX_EMPTY_CHILD",
-   "AOE_TEST_TMUX_ABSENCE_CHILD",
-   "AOE_TEST_TMUX_KILL_CHILD",
+@@ -768,11 +768,43 @@ fn is_funnel_link(url: &str) -> bool {
+     link_host(url).is_some_and(|host| host.ends_with(".ts.net"))
+ }
+ 
++fn is_restart_key(code: KeyCode) -> bool {
++    matches!(code, KeyCode::Char('r' | 'R'))
++}
++
++/// A key that may still be held down from before a boundary. The TUI gets no release events,
++/// so a held key's repeats arrive as presses; it stays inert until a different key arrives.
++#[derive(Clone, Copy, PartialEq, Eq, Debug)]
++enum HeldKey {
++    /// The R that opened this screen from Connections.
++    Restart,
++    /// An Enter pressed during a restart check, or the Enter that confirmed one.
++    Enter,
++}
++
++impl HeldKey {
++    fn matches(self, code: KeyCode) -> bool {
++        match self {
++            Self::Restart => is_restart_key(code),
++            Self::Enter => code == KeyCode::Enter,
++        }
++    }
++}
++
++/// Why a landed check shows its effects without asking.
++#[derive(Clone, Copy, PartialEq, Eq, Debug)]
++enum Unasked {
++    /// Enter was pressed during the first check.
++    EarlyEnter,
++    /// The check after a confirm found different effects.
++    Changed,
++}
++
+ fn funnel_reset_applies(mode: ServeMode, transport: Option<TunnelTransport>) -> bool {
+     mode == ServeMode::Tunnel && transport == Some(TunnelTransport::Tailscale)
+ }
+ 
+-/// A destructive action awaiting a second press of its key.
++/// A destructive action its key armed, awaiting Enter.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ enum PendingConfirm {
+     NewPassphrase,
+@@ -845,6 +877,11 @@ pub struct ServeView {
+     state: ServeViewState,
+     pending_passphrase: String,
+     pending_confirm: Option<(PendingConfirm, Instant)>,
++    /// The error screen's Funnel reset, armed by R and awaiting Enter.
++    funnel_reset_armed: Option<Instant>,
++    held_key: Option<HeldKey>,
++    /// A landed check that shows its effects without asking, until the next key.
++    unasked: Option<(PendingConfirm, Unasked)>,
+     show_help: bool,
+     mouse: RefCell<ServeMouse>,
+     copied: Option<(&'static str, Instant)>,
+@@ -954,6 +991,9 @@ impl ServeView {
+             state,
+             pending_passphrase: String::new(),
+             pending_confirm: None,
++            funnel_reset_armed: None,
++            held_key: None,
++            unasked: None,
+             show_help: false,
+             mouse: RefCell::default(),
+             copied: None,
+@@ -1041,7 +1081,22 @@ impl ServeView {
+         mouse.hover.update(col, row, &rects)
+     }
+ 
++    /// Opened from Connections by `key`: when it was R, its hold may carry over.
++    pub fn opened_by(&mut self, key: &KeyEvent) {
++        self.held_key = is_restart_key(key.code).then_some(HeldKey::Restart);
++    }
++
+     pub fn handle_key(&mut self, key: KeyEvent) -> ServeAction {
++        self.handle_key_at(key, Instant::now())
++    }
++
++    /// [`Self::handle_key`] at `now`, the clock the confirm window is read against.
++    fn handle_key_at(&mut self, key: KeyEvent, now: Instant) -> ServeAction {
++        if self.held_key.is_some_and(|held| held.matches(key.code)) {
++            return ServeAction::Continue;
++        }
++        self.held_key = None;
++        self.unasked = None;
+         if matches!(key.code, KeyCode::Esc | KeyCode::Char('q')) && !self.show_help {
+             self.pending = None;
+             self.pending_confirm = None;
+@@ -1106,7 +1161,7 @@ impl ServeView {
+                 KeyCode::Esc | KeyCode::Char('q') => ServeAction::Close,
+                 _ => ServeAction::Continue,
+             },
+-            ServeViewState::Active { .. } => self.active_key(key.code),
++            ServeViewState::Active { .. } => self.active_key(key.code, now),
+             ServeViewState::Error { .. } => self.error_key(key.code),
+         }
+     }
+@@ -1126,7 +1181,13 @@ impl ServeView {
+                 self.request_picker(selected);
+                 true
+             }
++            // Only an Enter on a prompt counts, so one during either check neither confirms nor
++            // cancels: a bounce can't undo a confirm.
+             PendingJob::Restart { intent, .. } => {
++                if code == KeyCode::Enter && matches!(intent, RestartIntent::Confirm(_)) {
++                    self.held_key = Some(HeldKey::Enter);
++                    return true;
++                }
+                 let repeated = match intent {
+                     RestartIntent::Confirm(PendingConfirm::Restart) => {
+                         matches!(code, KeyCode::Char('r' | 'R'))
+@@ -1315,6 +1376,7 @@ impl ServeView {
+     }
+ 
+     fn prepare_launch(&mut self, request: ServeLaunchRequest) {
++        self.unasked = None;
+         self.pending_confirm = None;
+         self.show_help = false;
+         self.launch_in_flight = true;
+@@ -1388,6 +1450,7 @@ impl ServeView {
+ 
+     pub(crate) fn refuse_stop(&mut self) {
+         self.pending = None;
++        self.funnel_reset_armed = None;
+         self.stop_requested = false;
+         let (mode, transport) = self.context();
+         self.fail_work(
+@
+```
+
+**File**: `src/tui/dialogs/serve/render.rs` (modified, +83/-21)
+```diff
+@@ -9,7 +9,7 @@ use crossterm::event::{KeyCode, KeyEvent};
+ 
+ use super::{
+     funnel_reset_applies, Flash, LinkChange, Logins, PendingConfirm, RestartEffect, ServeMode,
+-    ServeMouse, ServeView, ServeViewState, TransportStatus, TunnelTransport, FLASH_TTL,
++    ServeMouse, ServeView, ServeViewState, TransportStatus, TunnelTransport, Unasked, FLASH_TTL,
+ };
+ use crate::tui::components::hint_buttons::scan_spaced_hints;
+ use crate::tui::components::hover::paint_hover_bg;
+@@ -121,7 +121,7 @@ pub(super) fn render(view: &ServeView, frame: &mut Frame, area: Rect, theme: &Th
+                 &mut mouse,
+                 message,
+                 view.control_error.as_deref(),
+-                &error_recovery_keys(*mode, *transport),
++                &error_keys(*mode, *transport, view.funnel_reset_armed.is_some()),
+             ),
+         }
+     }
+@@ -592,7 +592,7 @@ fn render_active(
+             mouse,
+             "Daemon started but no URL available yet.",
+             None,
+-            &[],
++            &error_keys(ServeMode::Local, None, false),
+         );
+         return;
+     };
+@@ -775,8 +775,12 @@ fn render_active(
+         .border_style(Style::default().fg(theme.border));
+     let footer_inner = footer_block.inner(footer);
+     frame.render_widget(footer_block, footer);
+-    let footer_text = match view.pending_confirm.map(|(action, _)| action) {
+-        Some(action) => {
++    let asking = view
++        .pending_confirm
++        .map(|(action, _)| (action, None))
++        .or(view.unasked.map(|(action, why)| (action, Some(why))));
++    let footer_text = match asking {
++        Some((action, unasked)) => {
+             let effect = RestartEffect::of(
+                 *mode,
+                 urls,
+@@ -786,14 +790,14 @@ fn render_active(
+             );
+             let (first, effect_text) = match action {
+                 PendingConfirm::NewPassphrase => (
+-                    "Press G again for a new passphrase.",
++                    "Press Enter for a new passphrase.",
+                     "Every Device signs out.",
+                 ),
+                 PendingConfirm::Restart if effect.link == LinkChange::Replaced => {
+-                    ("Press R again to restart.", "Agents keep running.")
++                    ("Press Enter to restart.", "Agents keep running.")
+                 }
+                 PendingConfirm::Restart => (
+-                    "Press R again to restart.",
++                    "Press Enter to restart.",
+                     match effect.logins {
+                         Logins::Kept => "Devices stay signed in; agents keep running.",
+                         Logins::Lost => "Every Device signs out; agents keep running.",
+@@ -813,15 +817,35 @@ fn render_active(
+             let funnel_back = (action == PendingConfirm::Restart && effect.retakes_funnel).then_some(
+                 "The Funnel link comes back only if no other server holds it; otherwise the Daemon stops and says why.",
+             );
++            let again = match action {
++                PendingConfirm::NewPassphrase => "Press G to check again.",
++                PendingConfirm::Restart => "Press R to check again.",
++            };
++            let (lead, first, cancels) = match unasked {
++                None => (None, first, Some("Any other key cancels.")),
++                Some(Unasked::EarlyEnter) => {
++                    (Some("Enter was pressed before this asked. "), again, None)
++                }
++                // Only a restart re-checks its effects; a new passphrase always signs everyone out.
++                Some(Unasked::Changed) => (
++                    Some("What a restart would change is different now. "),
++                    again,
++                    None,
++                ),
++            };
+             let rest = [effect_text]
+                 .into_iter()
+                 .chain(link)
+                 .chain(funnel_back)
+-                .chain(["Any other key cancels."]);
+-            let mut spans = vec![Span::styled(
++                .chain(cancels);
++            let mut spans: Vec<_> = lead
++                .map(|lead| Span::styled(lead, dimmed))
++                .into_iter()
++                .collect();
++            spans.push(Span::styled(
+                 first,
+                 Style::default().fg(theme.waiting).bold(),
+-            )];
++            ));
+             spans.extend(rest.map(|s| Span::styled(format!(" {s}"), dimmed)));
+             Text::from(Line::from(spans))
+         }
+@@ -975,15 +999,30 @@ fn split_url_and_token(url: &str) -> (String, Option<&str>) {
+ }
+ 
+ /// The keys `error_key` handles for this failure, shown before the way out.
+-fn error_recovery_keys(mode: ServeMode, transport: Option<TunnelTransport>) -> Vec<&'static str> {
+-    let mut keys = Vec::new();
++struct ErrorKeys {
++    recovery: Vec<&'static str>,
++    rest: &'static [&'static str],
++}
++
++fn error_keys(mode: ServeMode, transport: Option<TunnelTransport>, reset_armed: bool) -> ErrorKeys {
++    /
+```
+
+**File**: `src/tui/dialogs/serve/tests.rs` (modified, +369/-23)
+```diff
+@@ -11,6 +11,10 @@ fn key(code: char) -> KeyEvent {
+     KeyEvent::from(KeyCode::Char(code))
+ }
+ 
++fn enter() -> KeyEvent {
++    KeyEvent::from(KeyCode::Enter)
++}
++
+ fn picker_state() -> ServeViewState {
+     ServeViewState::ModePicker {
+         selected: ServeMode::Tunnel,
+@@ -67,6 +71,18 @@ fn starting() -> ServeViewState {
+     }
+ }
+ 
++/// [`wait_for`], with every tick read at `now`.
++#[track_caller]
++fn wait_for_at(view: &mut ServeView, now: Instant, predicate: impl Fn(&ServeView) -> bool) {
++    let deadline = Instant::now() + Duration::from_secs(10);
++    while !predicate(view) {
++        view.tick_at(now);
++        assert!(Instant::now() < deadline, "Serve transition did not finish");
++        std::thread::yield_now();
++    }
++}
++
++#[track_caller]
+ fn wait_for(view: &mut ServeView, predicate: impl Fn(&ServeView) -> bool) {
+     let deadline = Instant::now() + Duration::from_secs(10);
+     while !predicate(view) {
+@@ -76,15 +92,19 @@ fn wait_for(view: &mut ServeView, predicate: impl Fn(&ServeView) -> bool) {
+     }
+ }
+ 
++/// Whether a restart check, or the launch context a confirm reads, is still running.
++fn assessing(view: &ServeView) -> bool {
++    view.pending.as_ref().is_some_and(|pending| {
++        matches!(
++            pending.kind,
++            PendingJob::Restart { .. } | PendingJob::LaunchContext(_)
++        )
++    })
++}
++
++#[track_caller]
+ fn wait_assessment(view: &mut ServeView) {
+-    wait_for(view, |view| {
+-        !view.pending.as_ref().is_some_and(|pending| {
+-            matches!(
+-                pending.kind,
+-                PendingJob::Restart { .. } | PendingJob::LaunchContext(_)
+-            )
+-        })
+-    });
++    wait_for(view, |view| !assessing(view));
+ }
+ 
+ fn snapshot() -> JobResult {
+@@ -399,7 +419,7 @@ fn requesting_a_new_passphrase_does_not_overwrite_saved_credentials() {
+     view.target = Some(crate::cli::serve::tui_control_target().unwrap());
+     view.handle_key(key('G'));
+     wait_assessment(&mut view);
+-    view.handle_key(key('G'));
++    view.handle_key(enter());
+     wait_assessment(&mut view);
+     assert!(view.take_launch().is_some());
+     assert_ne!(view.pending_passphrase, "running daemon phrase");
+@@ -434,14 +454,11 @@ fn restart_requires_an_uninterrupted_confirmation() {
+         if expired {
+             view.pending_confirm = Some((PendingConfirm::Restart, Instant::now() - CONFIRM_TTL));
+         }
+-        view.handle_key(key('R'));
++        view.handle_key(enter());
+         wait_assessment(&mut view);
+         if cancelled || expired {
+             assert!(view.take_launch().is_none());
+-            assert!(matches!(
+-                view.pending_confirm,
+-                Some((PendingConfirm::Restart, _))
+-            ));
++            assert!(view.pending_confirm.is_none());
+             assert!(matches!(view.state, ServeViewState::Active { .. }));
+         } else {
+             assert!(view.take_launch().is_some());
+@@ -478,7 +495,7 @@ fn token_age_counts_only_under_token_auth() {
+ 
+ #[test]
+ #[serial_test::serial]
+-fn second_restart_key_reprobes_and_reconfirms_when_the_effect_changed() {
++fn a_changed_recheck_shows_its_effects_and_asks_only_after_another_r() {
+     let _home = crate::session::test_support::isolate_app_dir();
+     let token = crate::session::get_app_dir().unwrap().join("serve.token");
+     let mut jobs = ServeJobs::default();
+@@ -498,14 +515,28 @@ fn second_restart_key_reprobes_and_reconfirms_when_the_effect_changed() {
+     wait_assessment(&mut view);
+     assert_eq!(view.restart_probe.local_token, TokenWindow::Boundary);
+     write_token(Duration::from_secs(24 * 60 * 60 + 60));
+-    view.handle_key(key('R'));
++    view.handle_key(enter());
+     wait_assessment(&mut view);
+     assert_eq!(view.restart_probe.local_token, TokenWindow::Renews);
++    assert!(view.take_launch().is_none(), "a changed re-check restarted");
++    // The confirming Enter may still be held, so the re-check doesn't ask again.
++    assert!(view.pending_confirm.is_none(), "a changed re-check asked");
++    assert_eq!(
++        view.unasked,
++        Some((PendingConfirm::Restart, Unasked::Changed))
++    );
++    view.handle_key(enter());
++    assert!(!assessing(&view), "Enter after a changed re-check");
+     assert!(view.take_launch().is_none());
+-    assert!(view.pending_confirm.is_some());
+     view.handle_key(key('R'));
+     wait_assessment(&mut view);
+-    assert!(view.take_launch().is_some());
++    assert!(view.pending_confirm.is_some());
++    view.handle_key(enter());
++    wait_assessment(&mut view);
++    assert!(
++        view.take_launch().is_some(),
++        "R, then Enter, after a changed re-check"
++    );
+ }
+ 
+ #[test]
+@@ -553,6 +584,9 @@ fn held_work_leaves_keys_clicks_ticks_and_render_usable() {
+                 }
+                 _ => {
+                     view.handle_key(KeyEvent::from(code.unwrap()));
++                    if held == Held::Reset {
++                        view.handle_key(enter());
++                    }
+                 }
+
+```
+
+**File**: `src/tui/home/bindings.rs` (modified, +2/-2)
+```diff
+@@ -947,9 +947,9 @@ pub static BINDINGS: &[Binding] = &[
+         help: Some(HelpMeta {
+             section: HelpSection::Other,
+             desc: if cfg!(feature = "web") {
+-                "Connections: Web dashboard (browser / phone)"
++                "Connections; twice for the Web dashboard"
+             } else {
+-                "Connections: API server (LAN / Tunnel)"
++                "Connections; twice for the API server"
+             },
+         }),
+         palette: Some(PaletteMeta {
+```
+
+---
+
+### Incident Patch 2: `b0b4c0df` (2026-11-20)
+**Commit Message**: fix(acp): refuse Terminal switch when command session flag conflicts (#5758)
+
+* fix(acp): refuse a Terminal switch the command's session flag would leave owed
+
+A Session whose command carries its own native session selector while AoE
+also holds a conversation for it can never launch: the launch refuses the
+two together. The switch to Terminal view retired the Structured runner
+first and then left the handoff owed, retrying the same refused launch.
+
+The check and the switch now refuse such a switch before retirement with
+the new `command_selector_conflict` reason. A handoff already owed from
+before this change ends instead of retrying: the Session stays in Terminal
+view with an error naming the fix, and its reservation is free, so a
+restart with the flag removed launches.
+
+Fixes #5727
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(acp): don't judge a pending rebind by the old command's session flag
+
+Retirement replaces a pending terminal rebind's command and conversation,
+so the old command's native session selector never reaches the launch.
+The selector check judged it anyway and refused a switch that would
+launch. Skip it for a pending rebind.
+
+Reword the deferred cove
+
+**File**: `docs/guides/session-resume.md` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ Sandbox config and conversation stores are staged per AoE instance, including cu
+ 
+ A conflicting built-in tool and command, such as tool `claude` with command `codex`, is rejected for managed resume and fork. An opaque wrapper requires both `session.agent_execution_as` and `session.agent_config_dir` in trusted global or profile configuration. This asserts that the wrapper invokes that native agent, forwards native arguments unchanged, and uses only the declared store and working-directory/filesystem context. Repository overrides are refused because a repository must not grant itself access to another native conversation store.
+ 
+-A bare, non-path wrapper mapped by `agent_detect_as` can still start fresh and capture its pane-scoped published ID without the execution contract. AoE does not preassign a native ID from a status alias alone, including after an explicit fresh choice or disabled `auto_resume_on_restart`. Resuming a published ID still requires the contract. A native selector supplied by the user remains user-owned only when the row has no AoE-managed conversation state; AoE does not inject another selector. A known conversation can still be tried after an external working-directory or store move on Default when native execution resolves and its target checks pass; its old binding remains authoritative until a qualified observation updates it.
++A bare, non-path wrapper mapped by `agent_detect_as` can still start fresh and capture its pane-scoped published ID without the execution contract. AoE does not preassign a native ID from a status alias alone, including after an explicit fresh choice or disabled `auto_resume_on_restart`. Resuming a published ID still requires the contract. A native selector supplied by the user remains user-owned only when the row has no AoE-managed conversation state; AoE does not inject another selector. A conversation cleared with `set-session-id <session> ""` isn't AoE-managed state: the command runs as written, and the clear still applies. With AoE-managed state, the launch is refused, and so is a [switch to Terminal view](../structured-view.md#choosing-the-view-per-session). A known conversation can still be tried after an external working-directory or store move on Default when native execution resolves and its target checks pass; its old binding remains authoritative until a qualified observation updates it.
+ 
+ Shell pipelines, remote launchers, redirections, expansion, and unrecognized context-changing arguments are not supported managed invocations. The program, routing environment, and native namespace arguments are fixed from one validated launch snapshot and restored after the login shell.
+ Literal leading `NAME=value` assignments and a shell-quoted executable are supported for direct commands. The assignments are included when resolving the executable and its native store.
+```
+
+**File**: `docs/structured-view.md` (modified, +1/-1)
+```diff
+@@ -145,7 +145,7 @@ It exits 1 if Node is missing, 2 if some agents are unreachable, else 0. Pass `-
+ 
+ - **Web wizard and TUI dialog:** `acp.structured_view = "auto"` defaults to structured in the web wizard and terminal in the TUI. Set it to `terminal` or `structured` to preselect that view in both, or `off` to hide the option. The per-session choice wins.
+ - **CLI:** defaults to the terminal view; opt in with `--structured-view` or `--agent`.
+-- Either way, an existing active session can switch views: the web sidebar's right-click menu (**Switch to terminal** / **Switch to structured view**) or the TUI's right-click context menu (requires a healthy runtime; archived, trashed, and still-creating rows are excluded until they leave that state). Both surfaces confirm first. The worktree, open files, and commits are always preserved. For a **claude** session, the conversation is kept in both directions only when AoE can resolve a shared native store. A terminal switch whose store cannot be resolved, or which the structured worker does not share, is refused with HTTP 409 and `set-session-id --store` recovery guidance. Every other agent starts fresh on the target surface.
++- Either way, an existing active session can switch views: the web sidebar's right-click menu (**Switch to terminal** / **Switch to structured view**) or the TUI's right-click context menu (requires a healthy runtime; archived, trashed, and still-creating rows are excluded until they leave that state). Both surfaces confirm first. The worktree, open files, and commits are always preserved. For a **claude** session, the conversation is kept in both directions only when AoE can resolve a shared native store. A terminal switch whose store cannot be resolved, or which the structured worker does not share, is refused with HTTP 409 and `set-session-id --store` recovery guidance. Every other agent starts fresh on the target surface. A session whose command or arguments carry the agent's own session flag (`--resume <id>`, for example) lets that flag pick the conversation. A switch that also chooses a conversation is refused with 409 `command_selects_conversation`, and one where AoE also holds a conversation for the session with 409 `command_selector_conflict`; remove the flag to switch. A switch owed from before that refusal ends in Terminal view with the session in Error: restart it with the flag removed, or run `aoe session set-session-id <session> ""` and restart it to run its command as written.
+ 
+ If the agent cannot resume a prior conversation, the transcript reports a context reset before assigning a fresh conversation. Recorded terminal context and an explicitly selected conversation count as prior context. Reattaching to the same live conversation does not add a reset.
+ 
+```
+
+**File**: `src/acp/protocol.rs` (modified, +6/-1)
+```diff
+@@ -298,10 +298,13 @@ pub enum TerminalSwitchReason {
+     NotStructured,
+     /// With `command_decides`: the launch command carries a native session selector.
+     CommandSelectsConversation,
++    /// With `blocked`: the command's native session selector and AoE's own conversation
++    /// would both reach the launch, which refuses them together.
++    CommandSelectorConflict,
+ }
+ 
+ impl TerminalSwitchReason {
+-    pub const ALL: [Self; 11] = [
++    pub const ALL: [Self; 12] = [
+         Self::AgentNotResumable,
+         Self::NoConversationYet,
+         Self::EarlierConversation,
+@@ -313,6 +316,7 @@ impl TerminalSwitchReason {
+         Self::SessionChanged,
+         Self::NotStructured,
+         Self::CommandSelectsConversation,
++        Self::CommandSelectorConflict,
+     ];
+ 
+     pub const fn as_str(self) -> &'static str {
+@@ -328,6 +332,7 @@ impl TerminalSwitchReason {
+             Self::SessionChanged => "session_changed",
+             Self::NotStructured => "not_structured",
+             Self::CommandSelectsConversation => "command_selects_conversation",
++            Self::CommandSelectorConflict => "command_selector_conflict",
+         }
+     }
+ }
+```
+
+**File**: `src/daemon/error.rs` (modified, +1/-0)
+```diff
+@@ -391,6 +391,7 @@ mod tests {
+                 CommandSelectsConversation => {
+                     ("command_selects_conversation", StatusCode::CONFLICT)
+                 }
++                CommandSelectorConflict => ("command_selector_conflict", StatusCode::CONFLICT),
+             };
+             assert_eq!(reason.as_str(), wire);
+             let code = ApiErrorCode::TerminalSwitchRefused(reason);
+```
+
+**File**: `src/migrations/v048_terminal_handoffs.rs` (modified, +1/-0)
+```diff
+@@ -187,6 +187,7 @@ mod tests {
+             terminal: None,
+             launch_required: false,
+             launch_started: false,
++            selector_ended: false,
+             launch: None,
+         };
+         let mut pending = serde_json::to_value(&row)?;
+```
+
+**File**: `src/server/api/acp/view.rs` (modified, +847/-57)
+```diff
+@@ -585,6 +585,19 @@ fn switch_unavailable(error: &anyhow::Error, message: &'static str) -> Response
+ 
+ const CHECK_UNAVAILABLE: &str = "Couldn't check the switch to Terminal view; retry shortly";
+ const SWITCH_UNAVAILABLE: &str = "Couldn't start the switch to Terminal view; retry shortly";
++const COMMAND_SELECTOR_CONFLICT: &str = "This Session's command picks a conversation with its own session flag, and AoE holds one for it too; remove the session flag from its command or arguments to switch";
++/// Ends a handoff owed from before the refusal above: its launch can never start. Clearing AoE's
++/// id is a way out only here, in Terminal view; Structured view refuses that clear.
++fn command_selector_ended(session_id: &str) -> String {
++    format!(
++        "Terminal view couldn't start this Session: its command picks a conversation with its own session flag, and AoE holds one for it too. Restart the Session with the session flag removed from its command or arguments, or run `aoe session set-session-id {session_id} \"\"` and restart it to run its command as written."
++    )
++}
++
++/// A handoff whose launch the command's own session selector refused; it ended in Terminal view.
++#[derive(Debug, thiserror::Error)]
++#[error("{}", command_selector_ended(.0))]
++struct CommandSelectorEnded(String);
+ 
+ /// A coded refusal, so a client can show the matching dialog state. The body
+ /// stays plain text because the current web client shows it as it is.
+@@ -611,6 +624,7 @@ fn terminal_refusal(reason: TerminalSwitchReason, agent: &str) -> Response {
+         CommandSelectsConversation => {
+             "This Session's command picks its own conversation; switch without a choice, or remove the session flag from its command".into()
+         }
++        CommandSelectorConflict => COMMAND_SELECTOR_CONFLICT.into(),
+     };
+     crate::server::api::text_error_with_code_header(
+         crate::daemon::ApiErrorCode::TerminalSwitchRefused(reason),
+@@ -720,13 +734,33 @@ async fn terminal_plan(
+     let plan = agent_terminal_plan(state, id, instance, agent, source_event_seq).await?;
+     Ok(match plan {
+         TerminalPlan::Blocked(_) => plan,
++        // Retirement replaces a pending rebind's command and conversation, so the old command's
++        // selector never reaches the launch.
++        plan if instance.terminal_rebind_pending => plan,
+         plan if instance.command_session_selector().is_some() => {
+-            TerminalPlan::CommandDecides(Box::new(plan))
++            // The launch refuses the selector beside AoE's own conversation, so refuse before
++            // retirement rather than leave the switch owed. A row that can't start owes no launch.
++            if instance.ensure_startable().is_ok()
++                && command_selector_conflicts(
++                    instance,
++                    matches!(plan, TerminalPlan::Continues { .. }),
++                )
++            {
++                TerminalPlan::Blocked(TerminalSwitchReason::CommandSelectorConflict)
++            } else {
++                TerminalPlan::CommandDecides(Box::new(plan))
++            }
+         }
+         plan => plan,
+     })
+ }
+ 
++/// Whether the launch refuses `row`'s command selector beside AoE's own conversation. A switch
++/// that `keeps_target` commits one; otherwise the row's own state decides.
++fn command_selector_conflicts(row: &Instance, keeps_target: bool) -> bool {
++    row.command_session_selector().is_some() && (keeps_target || row.conversation_state().resumes())
++}
++
+ async fn agent_terminal_plan(
+     state: &Arc<AppState>,
+     id: &str,
+@@ -1076,6 +1110,7 @@ fn reserve_handoff_in(
+             }),
+             launch_required: row.ensure_startable().is_ok(),
+             launch_started: false,
++            selector_ended: false,
+             launch: None,
+         }));
+         Ok(HandoffKey {
+@@ -1256,11 +1291,26 @@ fn commit_terminal_in(
+     })
+ }
+ 
++/// A session id whose next `finish_handoff_in` runs this hook before canonical adoption.
++#[cfg(test)]
++type FinishAdoptionHook = (String, Box<dyn FnOnce() + Send>);
++#[cfg(test)]
++static BEFORE_FINISH_ADOPTION: std::sync::Mutex<Option<FinishAdoptionHook>> =
++    std::sync::Mutex::new(None);
++
+ fn finish_handoff_in(
+     native: &crate::server::session_store::NativeSessionStore,
+     session_id: &str,
+     key: HandoffKey,
+ ) -> anyhow::Result<()> {
++    #[cfg(test)]
++    {
++        let mut armed = BEFORE_FINISH_ADOPTION.lock().unwrap();
++        if armed.as_ref().is_some_and(|(id, _)| id == session_id) {
++            let (_, hook) = armed.take().unwrap();
++            crate::server::session_store::before_next_adoption_for_test(hook);
++        }
++    }
+     use crate::session::{LifecycleOperation, LifecycleReservationError, TerminalHandoffStage};
+     let profile = native.storage().profile();
+     let profile_identity = native.storage().bound_profile_identity()?;
+@@ -1462,7 +1512,15 @@ async fn terminal_handoff_request(
+             tracing::info!(target: "acp.switch", session =
+```
+
+**File**: `src/session/instance/mod.rs` (modified, +4/-0)
+```diff
+@@ -299,6 +299,10 @@ pub(crate) struct TerminalHandoffIntent {
+     pub(crate) launch_required: bool,
+     pub(crate) launch_started: bool,
+     pub(crate) launch: Option<TerminalHandoffLaunch>,
++    /// The owed launch was refused for the command's own session selector, so the switch ended
++    /// without a pane. Missing on rows from before the refusal, which never ended this way.
++    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
++    pub(crate) selector_ended: bool,
+ }
+ 
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+```
+
+**File**: `src/session/instance/session_id.rs` (modified, +29/-6)
+```diff
+@@ -850,16 +850,16 @@ impl Instance {
+             .then(|| self.existing_session_selector(&parsed_command.words, agent))
+             .flatten()
+         {
+-            let aoe_has_state = self.agent_session_id.is_some()
+-                || matches!(
+-                    self.resume_intent,
+-                    ResumeIntent::Use(_) | ResumeIntent::Fork { .. }
+-                );
+-            if aoe_has_state {
++            if self.conversation_state().resumes() {
+                 anyhow::bail!(
+                     "{context} command already contains native session selector {selector}; remove it or clear the AoE-managed resume state before launching"
+                 );
+             }
++            // The early return skips acquisition, which applies a clear.
++            if matches!(self.resume_intent, ResumeIntent::Cleared) {
++                self.set_agent_conversation(None, None, None);
++                self.resume_probe_failed_sid = None;
++            }
+             tracing::info!(target: "session.store", %context, %selector,
+                 "command supplies its own native session selector; skipping AoE session injection");
+             return Ok(false);
+@@ -2313,6 +2313,29 @@ work-opencode = "opencode"
+                 );
+                 assert!(error.contains("clear the AoE-managed resume state"));
+             }
++            // A cleared id isn't AoE's conversation: the command runs as written and the clear
++            // still applies, since the selector skips acquisition.
++            let mut cleared = tool_instance("claude", "/tmp/x");
++            cleared.agent_session_id = Some(sid.to_string());
++            cleared.resume_intent = ResumeIntent::Cleared;
++            let mut actual = command.to_string();
++            assert!(!cleared
++                .apply_session_flags(
++                    &mut actual,
++                    None,
++                    None,
++                    &super::execution::AgentLaunchContext::host(
++                        cleared.default_selector_agent(),
++                        cleared
++                            .default_selector_agent()
++                            .and_then(|agent| cleared.host_agent_command(agent, None))
++                            .as_ref()
++                    ),
++                    &mut cleared.conversation_state()
++                )
++                .unwrap());
++            assert_eq!(actual, command);
++            assert!(cleared.agent_session_id.is_none(), "{command}");
+         }
+     }
+ 
+```
+
+---
+
+### Incident Patch 3: `08946a21` (2026-11-21)
+**Commit Message**: fix(tui): attach live send to an alive pane whose status is unknown (#5915)
+
+An agent pane that is alive but whose screen the detector cannot classify
+reports Unknown. Live send treated that as a stale target: the receipt was
+discarded and the modal claimed the snapshot had changed, which both blocked
+the send and misdirected the reader.
+
+Gate attachment on the receipt identity and the pane observation instead,
+keeping Stopped, Error, Deleting, and Creating refused. Both arms share one
+allowlist so they cannot drift, and Unknown counts as warm so the revive
+toast no longer claims a frame for a pane that needs no work.
+
+Fixes #5913
+
+Co-authored-by: deepseek/deepseek-v4.1-flash-1017 <[REDACTED_EMAIL]>
+
+**File**: `src/tui/home/live_send_prep.rs` (modified, +6/-0)
+```diff
+@@ -8,6 +8,11 @@ impl HomeView {
+     /// revive cascade (`ensure_pane_ready` / `prepare_live_send`) is expected
+     /// to be a fast no-op.
+     ///
++    /// `Unknown` counts: it is what an agent-pane adapter that has not
++    /// classified the screen yet reports, and those panes are exactly the ones
++    /// live send now attaches. Liveness still comes from `exists()`, so a
++    /// stale cache can only cost the toast.
++    ///
+     /// The `EnterLiveSend` / `SendMessage` handlers use this to skip the
+     /// "Reviving session..." toast frame for warm sessions: the toast claims a
+     /// bottom bar row, and for the frame(s) it is on screen the bottom-anchored
+@@ -31,6 +36,7 @@ impl HomeView {
+             crate::session::Status::Running
+                 | crate::session::Status::Waiting
+                 | crate::session::Status::Idle
++                | crate::session::Status::Unknown
+         ) {
+             return false;
+         }
+```
+
+**File**: `src/tui/home/tests/live_send_mode.rs` (modified, +20/-1)
+```diff
+@@ -737,11 +737,14 @@ fn warm_predicates_stay_cold_without_a_live_pane() {
+     assert!(!env.view.agent_pane_is_warm(&id));
+ 
+     // Non-live statuses are cold regardless of pane state.
++    let cache = crate::tmux::SessionCacheGuard::capture();
++    let inst = env.view.get_instance(&id).unwrap().clone();
++    let tmux_name = crate::tmux::Session::generate_name(&inst.id, &inst.title);
++    cache.force_present(&[tmux_name.as_str()]);
+     for status in [
+         crate::session::Status::Stopped,
+         crate::session::Status::Starting,
+         crate::session::Status::Error,
+-        crate::session::Status::Unknown,
+     ] {
+         env.view.set_instance_status(&id, status);
+         assert!(
+@@ -750,6 +753,22 @@ fn warm_predicates_stay_cold_without_a_live_pane() {
+         );
+     }
+ 
++    // An unclassified status with the pane actually up is warm: that is the
++    // steady state of an agent whose status adapter has not classified its
++    // screen, and live send attaches those rows.
++    for status in [
++        crate::session::Status::Unknown,
++        crate::session::Status::Idle,
++        crate::session::Status::Waiting,
++        crate::session::Status::Running,
++    ] {
++        env.view.set_instance_status(&id, status);
++        assert!(
++            env.view.agent_pane_is_warm(&id),
++            "status {status:?} with a live pane must count as warm"
++        );
++    }
++
+     use crate::session::{AuxiliaryObservation, AuxiliaryTarget, PanePresence};
+     env.view
+         .set_instance_status(&id, crate::session::Status::Stopped);
+```
+
+**File**: `src/tui/home/tests/session_feed_tests.rs` (modified, +90/-0)
+```diff
+@@ -1443,6 +1443,14 @@ fn restart_attachment_waits_for_its_receipt_and_lifecycle_generation() {
+             "test",
+             true,
+         ),
++        (
++            "Unknown",
++            PanePresence::Alive,
++            5,
++            Some("restarted-agent"),
++            "test",
++            true,
++        ),
+         (
+             "Starting",
+             PanePresence::Alive,
+@@ -1589,6 +1597,88 @@ fn restart_attachment_waits_for_its_receipt_and_lifecycle_generation() {
+     }
+ }
+ 
++/// Live send into an agent whose status adapter has not classified its screen
++/// yet must attach: the daemon confirms the pane by identity, and the snapshot
++/// reports that same pane alive. A status the row is not in (stopped) still
++/// refuses the attachment.
++#[test]
++#[serial]
++fn live_send_attaches_an_agent_pane_whose_status_is_unclassified() {
++    use crate::daemon::{RuntimeCursor, TerminalTarget, TerminalTargetStatus};
++    use crate::session::{PaneObservation, PanePresence};
++    use crate::tui::home::live_send::LiveSendTarget;
++    use crate::tui::home::panes::PaneIntent;
++
++    for (reflected_status, attach) in [("Unknown", true), ("Stopped", false)] {
++        let mut env = create_test_env_with_sessions(1);
++        let id = env.view.instance_at(0).id.clone();
++        env.view.select_session_by_id(&id);
++        let mut row = daemon_row(env.view.get_instance(&id).unwrap(), "Unknown");
++        row.view = crate::session::View::Terminal;
++        row.lifecycle_generation = 4;
++        row.agent_pane = PaneObservation {
++            state: PanePresence::Alive,
++            tmux_session: Some("agent-4".into()),
++            legacy_tool: None,
++        };
++        let SessionFeedResult::Snapshot(mut snapshot) = snapshot_of(vec![row]) else {
++            unreachable!()
++        };
++        env.view
++            .session_feed
++            .publish_for_test(SessionFeedResult::Snapshot(snapshot.clone()));
++        env.view.apply_session_feed();
++        let mut respond = env.view.session_feed.engagement_native_driver_for_test();
++        env.view
++            .prepare_live_send_target(&id, LiveSendTarget::Agent, None)
++            .unwrap();
++        assert!(matches!(
++            respond(
++                Ok(RuntimeCursor {
++                    epoch: "test".into(),
++                    revision: 2,
++                }),
++                Some(TerminalTarget {
++                    tmux_session: "agent-4".into(),
++                    status: TerminalTargetStatus::Alive,
++                    lifecycle_generation: 4,
++                    profile: "test".into(),
++                }),
++            ),
++            Some(crate::tui::session_feed::SessionRequest::EnsureAgent { .. })
++        ));
++        env.view.apply_session_feed();
++        assert!(
++            env.view.take_native_attachment().is_none(),
++            "{reflected_status}: the receipt alone is not canonical application"
++        );
++
++        let committed = std::sync::Arc::make_mut(&mut snapshot);
++        committed.cursor.revision = 2;
++        committed.contents.sessions[0].status = reflected_status.into();
++        env.view
++            .session_feed
++            .publish_for_test(SessionFeedResult::Snapshot(snapshot));
++        env.view.apply_session_feed();
++        let attachment = env.view.take_native_attachment();
++        if attach {
++            let attachment = attachment.expect("an unclassified but live pane must go live");
++            assert_eq!(attachment.id, id);
++            assert_eq!(attachment.tmux_name, "agent-4");
++            assert!(matches!(
++                attachment.intent,
++                PaneIntent::LiveSend(LiveSendTarget::Agent)
++            ));
++        } else {
++            assert!(
++                attachment.is_none(),
++                "{reflected_status}: a stopped row must not attach"
++            );
++        }
++        assert!(env.view.take_native_attachment().is_none());
++    }
++}
++
+ /// A complete runtime row, with deliberate canonical changes for the scenario.
+ fn canonical_row(
+     instance: &Instance,
+```
+
+**File**: `src/tui/session_feed.rs` (modified, +95/-5)
+```diff
+@@ -382,6 +382,22 @@ struct PendingCreation {
+     receipt: Option<Box<MutationReceipt<crate::daemon::SessionResponse>>>,
+ }
+ 
++/// Whether a snapshot status may accompany a confirmed agent-pane receipt.
++///
++/// Readiness comes from the receipt's identity (generation, profile, tmux
++/// name) and the snapshot's pane observation, so status only has to rule out a
++/// row that is stopped, failed, or mid-teardown. `Unknown` is the live state of
++/// a pane that is alive but whose screen the detector cannot classify (see
++/// `crate::session::instance::pane_status`), which is exactly what an agent
++/// whose status adapter has not reported yet looks like; it is not evidence the
++/// pane is gone.
++fn status_allows_attachment(status: &str) -> bool {
++    matches!(
++        status,
++        "Running" | "Waiting" | "Idle" | "Starting" | "Unknown"
++    )
++}
++
+ fn set_grant(grant: &AtomicU64, allowed: bool) {
+     // Renamed to try_update in the standard library; the MSRV this builds against
+     // does not have it yet. Upstream carries the same allowance.
+@@ -1853,15 +1869,13 @@ impl SessionFeed {
+                                             && row.agent_pane.state == crate::session::PanePresence::Alive
+                                             && receipt.outcome.target.as_ref().is_some_and(|target|
+                                                 row.agent_pane.tmux_session.as_deref() == Some(target.tmux_session.as_str()))
+-                                            && matches!(row.status.as_str(), "Running" | "Waiting" | "Idle" | "Starting"),
++                                            && status_allows_attachment(row.status.as_str()),
+                                         CommandReply::Terminal(receipt) => {
+                                             let identity_matches = row.lifecycle_generation
+                                                 == receipt.outcome.lifecycle_generation
+                                                 && row.profile == receipt.outcome.profile;
+-                                            let status_ok = matches!(
+-                                                row.status.as_str(),
+-                                                "Running" | "Waiting" | "Idle" | "Starting"
+-                                            );
++                                            let status_ok =
++                                                status_allows_attachment(row.status.as_str());
+                                             let pane_ok = match row.agent_pane.state {
+                                                 crate::session::PanePresence::Alive => {
+                                                     row.agent_pane.tmux_session.as_deref()
+@@ -4502,6 +4516,82 @@ mod tests {
+         assert!(feed.drain_command_errors().is_empty());
+         assert!(prepared.result.try_recv().unwrap().is_ok());
+     }
++
++    /// An agent whose screen the detector cannot classify keeps its pane alive
++    /// and alive-pane identity is what the receipt confirms, so the row must
++    /// attach instead of failing as a stale target. A stopped or failed row is
++    /// still refused.
++    #[test]
++    fn ensure_agent_accepts_an_unclassified_status_only_with_the_same_live_pane() {
++        use crate::session::PanePresence;
++        for (status, pane, tmux_session, generation, attach) in [
++            ("Unknown", PanePresence::Alive, Some("agent-4"), 4, true),
++            ("Idle", PanePresence::Alive, Some("agent-4"), 4, true),
++            ("Stopped", PanePresence::Alive, Some("agent-4"), 4, false),
++            ("Error", PanePresence::Alive, Some("agent-4"), 4, false),
++            ("Deleting", PanePresence::Alive, Some("agent-4"), 4, false),
++            (
++                "Unknown",
++                PanePresence::Alive,
++                Some("another-agent"),
++                4,
++                false,
++            ),
++            ("Unknown", PanePresence::Alive, Some("agent-4"), 5, false),
++            ("Unknown", PanePresence::Dead, Some("agent-4"), 4, false),
++            ("Unknown", PanePresence::Absent, Some("agent-4"), 4, false),
++        ] {
++            let mut row: crate::daemon::SessionResponse =
++                serde_json::from_value(serde_json::json!({
++                    "id": "session",
++                    "profile": "test",
++                    "lifecycle_generation": 4,
++                    "status": status,
++                    "agent_pane": {"state": "alive", "tmux_session": "agent-4"},
++                }))
++                .unwrap();
++            row.agent_pane.state = pane;
++            row.agent_pane.tmux_session = tmux_session.map(str::to_owned);
++            let mut initial = snapshot("test", 1);
++            Arc::make_mut(&mut initial).contents.sessions.push(row);
++            let mut feed =
++                SessionFeed::seeded_for_test(SessionFeedResult::Snapshot(initial.clone()));
++            feed.mark_snapshot_applied(initial.clone());
++            let (comm
+```
+
+**File**: `tests/e2e/live_send_paste_e2e.rs` (modified, +1/-1)
+```diff
+@@ -43,7 +43,7 @@ default_attach_mode = "live_send"
+     std::fs::write(config_dir.join("config.toml"), config_content).expect("write live-send config");
+ }
+ 
+-fn agent_session_on(socket: &std::path::Path) -> String {
++pub(crate) fn agent_session_on(socket: &std::path::Path) -> String {
+     let output = Command::new("tmux")
+         .arg("-S")
+         .arg(socket)
+```
+
+**File**: `tests/e2e/live_send_unknown_status_e2e.rs` (added, +142/-0)
+```diff
+@@ -0,0 +1,142 @@
++//! e2e coverage for live send attaching a pane whose status is unclassified.
++//!
++//! An agent pane can be alive while its screen is unreadable to the status
++//! detector: a custom command runs through a wrapper script, so the pane never
++//! matches an agent manifest, and until the program paints enough content the
++//! legacy detector lands on `Status::Unknown`. That is a live pane, but the
++//! receipt gate used to accept only `Running | Waiting | Idle | Starting`, so
++//! the TUI refused the attachment it had just prepared with
++//! "Prepared target no longer matches the applied snapshot".
++//!
++//! Unit tests pin the allowlist; only an e2e proves the whole keystroke path --
++//! real binary, real tmux, a real daemon polling a real pane -- reaches the
++//! agent. The pane must be pre-launched so its status is genuinely `Unknown` at
++//! Enter: a cold start reports `Starting`, which was already allowed, and would
++//! make this test pass on the broken build.
++
++use serial_test::parallel;
++use std::time::Duration;
++
++use crate::harness::{app_dir_in, require_tmux, wait_until, TuiTestHarness};
++
++/// Route activation into live-send and make `quiet` the only launchable agent,
++/// so the created session takes the unclassified-status path.
++fn write_unclassified_config(h: &TuiTestHarness, agent: &std::path::Path) {
++    let config_dir = app_dir_in(h.home_path());
++    let config_content = format!(
++        r#"[updates]
++update_check_mode = "off"
++
++[app_state]
++has_seen_welcome = true
++has_responded_to_telemetry = true
++last_seen_version = "{version}"
++has_acknowledged_agent_hooks = true
++
++[session]
++default_attach_mode = "live_send"
++default_tool = "quiet"
++custom_agents = {{ quiet = {agent:?} }}
++
++{systemd_off}"#,
++        version = env!("CARGO_PKG_VERSION"),
++        agent = agent.to_str().expect("agent stub path"),
++        systemd_off = crate::harness::SYSTEMD_OFF,
++    );
++    std::fs::write(config_dir.join("config.toml"), config_content).expect("write config");
++}
++
++/// An unclassified pane must still take live input, and must take it exactly
++/// once: a retry that duplicated the keystrokes would show up as a doubled
++/// marker in the pane, which is the failure mode that makes a "works on my
++/// machine" fix dangerous.
++#[test]
++#[parallel]
++fn live_send_attaches_a_pane_whose_status_is_unclassified() {
++    require_tmux!();
++
++    // `new_in_tmp` keeps the home under `/tmp`: this test lets the CLI autostart
++    // a daemon, and its unix socket path overflows Darwin's 104-byte `sun_path`
++    // when the home sits under `/var/folders/.../TmpDir`.
++    let mut h = TuiTestHarness::new_in_tmp("live_send_unknown_status");
++
++    // Stand in for an agent whose TUI the detector cannot read yet: it echoes
++    // what it receives and never enables bracketed paste, so the marker text
++    // lands verbatim and can be counted. The file name shares no word with the
++    // tool name, so echoing the marker cannot make the pane look like the agent
++    // and flip the status away from `Unknown`.
++    let agent = h.home_path().join("agent-stub.sh");
++    crate::harness::write_executable(
++        &agent,
++        "#!/bin/sh\nstty -echo -icanon min 1 time 0 2>/dev/null\nexec cat -v\n",
++    );
++    write_unclassified_config(&h, &agent);
++
++    let project = h.project_path();
++    let add = h.run_cli(&[
++        "add",
++        project.to_str().unwrap(),
++        "-t",
++        "Unclassified",
++        "--tool",
++        "quiet",
++        "--launch",
++    ]);
++    assert!(
++        add.status.success(),
++        "aoe add failed.\nstdout: {}\nstderr: {}",
++        String::from_utf8_lossy(&add.stdout),
++        String::from_utf8_lossy(&add.stderr),
++    );
++
++    // The premise of the test: the pane is up and its status is unclassified.
++    // A detour into `idle` (pane content the detector can read) or `stopped`
++    // (the stub exited) would exercise a different branch, so fail loudly here
++    // instead of asserting something weaker further down.
++    wait_until(Duration::from_secs(30), Duration::from_millis(100), || {
++        let sessions = h.try_read_sessions();
++        let status = sessions
++            .as_array()
++            .and_then(|rows| {
++                rows.iter()
++                    .find(|row| row["title"].as_str() == Some("Unclassified"))
++            })
++            .and_then(|row| row["status"].as_str())
++            .map(str::to_owned);
++        match status.as_deref() {
++            Some("unknown") => Ok(()),
++            other => Err(format!("status is {other:?}, not an unclassified pane")),
++        }
++    });
++
++    h.spawn_tui();
++    h.wait_for_runtime_ready();
++    h.wait_for("Unclassified");
++    h.send_keys("Enter");
++
++    // Entry only completes once the receipt's snapshot satisfies the gate; a
++    // refusal paints "Live send failed" over the home view instead.
++    h.wait_for_timeout("LIVE", Duration::from_secs(10));
++    h.assert_screen_not_contain
+```
+
+**File**: `tests/e2e/main.rs` (modified, +1/-0)
+```diff
+@@ -42,6 +42,7 @@ mod hide_stopped;
+ mod intro;
+ mod kiro_launch;
+ mod live_send_paste_e2e;
++mod live_send_unknown_status_e2e;
+ mod live_takeover;
+ mod live_terminal_swap_e2e;
+ mod logs;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5873** (2026-11-19): test: de-flake two macOS timing tests (transport deadlines, late group child) (@Seluj78)
-- **PR #5872** (2026-11-19): fix(mcp): keep wait_for waiting when the turn-end query fails (@Seluj78)
-- **PR #5871** (2026-11-19): docs: drop the nightly not-published note (@Seluj78)
-- **PR #5864** (2026-11-19): fix(acp): keep the connection when the agent rejects a prompt (@njbrake)
-- **PR #5852** (2026-11-19): fix(tmux): read tmux queries with the UTF-8 flag (@klubrake)
-- **PR #5847** (2026-11-19): test(serve): fix the Funnel fixture backend port (@jerome-benoit)
+- **PR #5915** (2026-11-21): fix(tui): attach live send to an alive pane whose status is unknown (@athal7)
+- **PR #5890** (2026-11-20): fix(process): read a group scan's process stats as bytes (@klubrake)
+- **PR #5888** (2026-11-20): test(acp): stub the launcher in the agent-switch stop test (@njbrake)
+- **PR #5886** (2026-11-20): fix(server): queue sandbox login notices so a burst cannot drop one (@cwrau)
+- **PR #5881** (2026-11-19): chore(plugins): pin agent-of-empires.github 2.5.0 (@athal7)
+- **PR #5876** (2026-11-20): fix(migrations): skip mounted children when sweeping the legacy hook dir (@cwrau)
 
 ---
 
@@ -3287,31 +3248,33 @@ as underscores, so omp's working rule never match
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. containers): share one sandbox image pull per runtime and image
+## X. tui): pressing R again in Connections opens the Web dashboard
 
 **RULE**:
-When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guides/web-dashboard.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `03e54bee`: containers): share one sandbox image pull per runtime and image. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1e4c41e5`: tui): pressing R again in Connections opens the Web dashboard. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guides/web-dashboard.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                ./tests/fixtures/pull-stderr
+From the TUI, press `R` (`Ctrl+R` with strict hotkeys), shown as `R Web` in the shortcut bar, to open Connections. Press the same key again after a short pause, or Enter on **Web dashboard**, to open the dashboard controls, where you can start a background server on your network or over a tunnel. While it runs, the entry reads `R ● Web` in green. When the Daemon needs attention, the entry shows that instead, in red for a problem (`R ● Runtime outcome unknown`) or dim for a limit (`R ● Unavailable`), and Connections lists the Daemon with what it means. If the Daemon goes offline, Connections replaces the home screen, with `r` to reconnect.
+To restart, press `R`; `G` gives a new passphrase. It asks once it has checked what a restart would change. Press Enter once it asks. An Enter pressed while it checks does nothing, and the check then shows what a restart would change without asking: press `R` (or `G`) to check again. Any other key cancels, and so does waiting 3 seconds after it asks. Pressing `R` again only asks again, so a held key never restarts, and the `R` that opened the dashboard controls from Connections does nothing there until you press another key. Enter checks the curre
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+From the TUI, press `R` (`Ctrl+R` with strict hotkeys), shown as `R Web` in the shortcut bar, to open Connections, then Enter on **Web dashboard** to start a background server on your network or over a tunnel. While it runs, the entry reads `R ● Web` in green. When the Daemon needs attention, the entry shows that instead, in red for a problem (`R ● Runtime outcome unknown`) or dim for a limit (`R ● Unavailable`), and Connections lists the Daemon with what it means. If the Daemon goes offline, Connections replaces the home screen, with `r` to reconnect.
+To restart, press `R`, wait for the assessment and confirmation, then press `R` again. The confirmation window applies to the second keypress, not the background assessment's duration. The second confirmation checks current effects again and asks again if they changed. Both `R` and `G` remain bound to the observed Daemon. If another Client replaces it before admission, the TUI refuses before changing the replacement or saved defaults. Recovery controls retain that identity after failure, including when the failed launch is first shown after reopening; close and reopen Remote Access again to observe the replacement before retrying.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `03e54bee` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1e4c41e5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

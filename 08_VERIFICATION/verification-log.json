@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-N9Z5",
-    "timestamp": "2026-11-18T21:50:17.921Z",
-    "repository": "pulumi/pulumi",
-    "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "0c38759b968b7bf74ea28c50e40ee5086797cf4febc408e07aceb1675aa31fa1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-43QN",
-    "timestamp": "2026-11-18T22:03:22.991Z",
-    "repository": "embassy-rs/embassy",
-    "learningId": "learn-github-embassy-rs-embassy",
-    "contentHash": "68e97b1124d2f928be2302ecfdbc31034695ef94b6476a5c96ce40b7b81df021",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-4DGW",
-    "timestamp": "2026-11-18T22:03:35.600Z",
-    "repository": "gluesql/gluesql",
-    "learningId": "learn-github-gluesql-gluesql",
-    "contentHash": "ae05025b8b9bebb1c1fea6c6014caa1aebb5e6caed17d4c0d2bc41487e0caae1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-8MCA",
-    "timestamp": "2026-11-18T22:06:53.722Z",
-    "repository": "meta-llama/Llama-2-7b-chat-hf",
-    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-    "contentHash": "4874b36c48dd43898245af8a4002df86cbf807098fd62070db7033af720eca5a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-IDBH",
     "timestamp": "2026-11-18T22:14:28.589Z",
     "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -7490,6 +7430,66 @@
     "repository": "neuron-core/neuron-ai",
     "learningId": "learn-github-neuron-core-neuron-ai",
     "contentHash": "0ae4e690f4228f10a2f42a45edd00d2f2f5808b3b6fbc46429276cc7bdf15775",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-0K5W",
+    "timestamp": "2026-11-21T00:51:55.796Z",
+    "repository": "agent-of-empires/agent-of-empires",
+    "learningId": "learn-github-agent-of-empires-agent-of-empires",
+    "contentHash": "7940db42cb9e68e2ed864bf33c2702ff069232d7fb87562f8f67bf81c4043ae4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-0LY4",
+    "timestamp": "2026-11-21T00:51:58.108Z",
+    "repository": "QwikDev/qwik",
+    "learningId": "learn-github-qwikdev-qwik",
+    "contentHash": "25fe586776364bc2820e759a63cf06ec3798056175fc33366f225c7cc149e179",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-0RTD",
+    "timestamp": "2026-11-21T00:52:05.713Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "31728eab23f80bad0cdbab99d7985c16cfb3b709151b09c265c516ffbab13458",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-0UA9",
+    "timestamp": "2026-11-21T00:52:08.913Z",
+    "repository": "matrixorigin/matrixone",
+    "learningId": "learn-github-matrixorigin-matrixone",
+    "contentHash": "17293a15106faaf6e0b90d98da003edd26f161b1851fa889fe7edb1d68c50852",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

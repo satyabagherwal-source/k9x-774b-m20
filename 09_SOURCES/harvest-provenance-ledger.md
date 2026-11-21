@@ -11712,3 +11712,7 @@ Every entry in this ledger must capture:
 | `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `39d353a8` | Multi-dimensional audit evidence | 2026-11-21T00:43:46.315Z |
 | `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `5162fe87` | Multi-dimensional audit evidence | 2026-11-21T00:43:48.772Z |
 | `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `f6ba920a` | Multi-dimensional audit evidence | 2026-11-21T00:43:55.538Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `08946a21` | Multi-dimensional audit evidence | 2026-11-21T00:51:55.800Z |
+| `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `fa8e12f1` | Multi-dimensional audit evidence | 2026-11-21T00:51:58.112Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `36780d60` | Multi-dimensional audit evidence | 2026-11-21T00:52:05.717Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `a5140aa8` | Multi-dimensional audit evidence | 2026-11-21T00:52:08.917Z |

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T00:44:01.964Z",
+  "last_updated": "2026-11-21T00:52:14.497Z",
   "total_verified_learnings": 9054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22795,
+  "total_items": 22804,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112413,10 +112413,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "262640ff",
-      "content_hash": "86957d966f53edbb4c00bd53792eb74aa54a62e5243a2ea3a4f6752ad5cb85cd",
+      "source_version": "36780d60",
+      "content_hash": "63b2f24b914884c2384d482e4e69189bbb76a2f602627702f5cf646aa74e659d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T20:15:01.834Z"
+      "persisted_at": "2026-11-21T00:52:06.105Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -112425,10 +112425,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "262640ff",
-      "content_hash": "bd5c68ebe1c975d72c00623c728a65258746a209b0756634f0c2d0ab1e577e0c",
+      "source_version": "36780d60",
+      "content_hash": "6aa4e1c6bb1496e7d16f31b97f5900008a4427b186e65a6206762628653405a0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T20:15:01.977Z"
+      "persisted_at": "2026-11-21T00:52:06.272Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -222590,8 +222590,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "3cd5f717",
-      "content_hash": "f0a0f1975c65ab6cb4d8779a21d0fd8df6801b869515010ab4dacdcc65b18d3b",
+      "source_version": "a5140aa8",
+      "content_hash": "17293a15106faaf6e0b90d98da003edd26f161b1851fa889fe7edb1d68c50852",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -222619,6 +222619,11 @@
           "number": 9463,
           "title": "reject undefined real-domain POW arguments",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9686,
+          "title": "preserve TAE snapshot row IDs and stabilize main CI",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222626,7 +222631,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T22:36:17.784Z",
+      "verified_at": "2026-11-21T00:52:08.717Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222680,10 +222685,10 @@
       "relative_path": "08_VERIFICATION/matrixorigin-matrixone-verification-protocol-empirical-defect-shield-for-matrixo.md",
       "title": "Verification Protocol: Empirical Defect Shield for matrixorigin/matrixone",
       "repository": "matrixorigin/matrixone",
-      "source_version": "3cd5f717",
-      "content_hash": "0e0a70c79c31ff38d50e55a704c64af69ecca643f0036314062283bfc057ccae",
+      "source_version": "a5140aa8",
+      "content_hash": "c77255270f80dbd99b57836c9100500e2b62922f9b9b84216ec891b47888fb30",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T22:36:18.500Z"
+      "persisted_at": "2026-11-21T00:52:09.483Z"
     },
     "learn-huggingface-openai-gpt-oss-20b": {
       "learning_id": "learn-huggingface-openai-gpt-oss-20b",
@@ -223076,8 +223081,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "262640ff",
-      "content_hash": "4e8e8566ac3e788b608b55b0751ee278b79fc3631b8375e1a35413c9fd82ead9",
+      "source_version": "36780d60",
+      "content_hash": "31728eab23f80bad0cdbab99d7985c16cfb3b709151b09c265c516ffbab13458",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -223160,6 +223165,11 @@
           "number": 9634,
           "title": "util/syspolicy/source: notify sessions when a forced read finds a change",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9685,
+          "title": "feature/conn25: name lock-requiring methods Locked",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223167,7 +223177,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T20:15:01.302Z",
+      "verified_at": "2026-11-21T00:52:05.513Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223258,9 +223268,9 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "d3721807ec1c58b2676c9fa95b29f1edc625d4843940987c14a198f81f42ac74",
+      "content_hash": "2891a42415e833293f3c79df6ad3be06859c2e2fab27ef0c0baedc33ceb1e856",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T20:15:05.141Z"
+      "persisted_at": "2026-11-21T00:52:14.341Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings",
@@ -223270,9 +223280,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tailscale-tailscale-learnings",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "de736f7b2b893a10854d7b8eadf5b1f0e952c6265536a157739fbbfc82d7694b",
+      "content_hash": "3ad58e0ec484a4821e1f1e52a5395bcc29418df2f85229cc8d1140dd66f15bba",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T20:15:05.313Z"
+      "persisted_at": "2026-11-21T00:52:14.497Z"
     },
     "learn-huggingface-stabilityai-stable-diffusion-3-medium": {
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
@@ -230022,8 +230032,8 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "593655e0",
-      "content_hash": "a89336514ddc90b72394cc0edb4a35ad97420cc0d59b05966d26b1a1ec64f88a",
+      "source_version": "08946a21",
+      "content_hash": "7940db42cb9e68e2ed864bf33c2702ff069232d7fb87562f8f67bf81c4043ae4",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
@@ -230046,6 +230056,11 @@
           "number": 9384,
           "title": "share one sandbox image pull per runtime and image",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9683,
+          "title": "pressing R again in Connections opens the Web dashboard",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230053,7 +230068,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T14:20:19.579Z",
+      "verified_at": "2026-11-21T00:51:55.551Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230095,10 +230110,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-of-empires-agent-of-empires-architecture-intelligence-agent-of-empires-age.md",
       "title": "Architecture Intelligence: agent-of-empires/agent-of-empires Core Invariants",
       "repository": "agent-of-empires/agent-of-empires",
-      "source_version": "87abaabc",
-      "content_hash": "53920f51f7095f7113919a47963e3727a708492b0c05d2261f210bdc6587a783",
+      "source_version": "08946a21",
+      "content_hash": "05281376ba7148883e0673c2d4991403924f89b818783a2be702622d7eb4e8cc",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T05:28:57.475Z"
+      "persisted_at": "2026-11-21T00:51:56.253Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-agent-of-empires-agent-of-empi": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-agent-of-empires-agent-of-empi",
@@ -230108,9 +230123,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for agent-of-empires-agent-of-empires-learnings",
       "repository": "agent-of-empires-agent-of-empires-learnings",
       "source_version": "HEAD",
-      "content_hash": "e62d403658b1ba84aae65ad0e4dfebeef4bddb1c4c19bb5f35cf09289898278a",
+      "content_hash": "dccaf7f3817845839c2bd4e718fd6eba61959e76df3ac961722676ac8483d20b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T14:20:29.271Z"
+      "persisted_at": "2026-11-21T00:52:12.950Z"
     },
     "learn-github-koderover-zadig": {
       "learning_id": "learn-github-koderover-zadig",
@@ -230400,9 +230415,9 @@
       "title": "Architecture Intelligence: agent-of-empires-agent-of-empires-learnings Core Invariants",
       "repository": "agent-of-empires-agent-of-empires-learnings",
       "source_version": "HEAD",
-      "content_hash": "f8ef369bd3d64a43ec49627f1c86c858ebbf4144958c9776dec4b201e87cbb49",
+      "content_hash": "8cd0163242beae2e409977af894dc61c80f413bc0d77495baa11e35b07d11b2b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T05:29:12.236Z"
+      "persisted_at": "2026-11-21T00:52:12.774Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-intfloat-multilingual-e5-small-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-intfloat-multilingual-e5-small-learnings-core",
@@ -248485,10 +248500,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-matrixorigin-matrixone-quality-verification-intelligence-matrixorigin-matrixone-.md",
       "title": "Quality & Verification Intelligence: matrixorigin/matrixone Core Invariants",
       "repository": "matrixorigin/matrixone",
-      "source_version": "3cd5f717",
-      "content_hash": "82b4903028a9bc96dd19c17a77af52d9911e9ff05e0844500a8021a9d7fe7d26",
+      "source_version": "a5140aa8",
+      "content_hash": "6d234a6b0a9a8cdc736b0e27b4732cc6895de89e29ffb011e9b4da06db12b966",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T22:36:18.350Z"
+      "persisted_at": "2026-11-21T00:52:09.324Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-matrixorigin-matrixone": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-matrixorigin-matrixone",
@@ -268046,8 +268061,8 @@
       "slug": "qwikdev-qwik",
       "platform": "github",
       "source_url": "https://github.com/QwikDev/qwik",
-      "source_version": "cfa0e890",
-      "content_hash": "211ec8bcdb46c772ad13eeab066d8709adc3027fe14e02a2c29a21eb7184802c",
+      "source_version": "fa8e12f1",
+      "content_hash": "25fe586776364bc2820e759a63cf06ec3798056175fc33366f225c7cc149e179",
       "dossier_path": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "promoted_rules": [
@@ -268065,6 +268080,11 @@
           "number": 8884,
           "title": "Strict Boundary Isolation for Minified Class Expressions and Bare Specifiers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9684,
+          "title": "Empirical Invariant Guard in calm-dev-server-ssr-error.md",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -268072,7 +268092,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T06:10:58.487Z",
+      "verified_at": "2026-11-21T00:51:57.906Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -268166,10 +268186,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-qwikdev-qwik-technical-construction-intelligence-qwikdev-qwik-core-invariants.md",
       "title": "Technical Construction Intelligence: QwikDev/qwik Core Invariants",
       "repository": "QwikDev/qwik",
-      "source_version": "cfa0e890",
-      "content_hash": "2a114abcef934f8867d9be62b4c9a61460f9e60b0d8c115b073713ca0fe31a2c",
+      "source_version": "fa8e12f1",
+      "content_hash": "4efdfd3bdddddc790d7731173fdb18bec8f566a63a6b5c0a24fc2f4114f216db",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T06:10:59.178Z"
+      "persisted_at": "2026-11-21T00:51:58.503Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-qwikdev-qwik": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-qwikdev-qwik",
@@ -268178,10 +268198,10 @@
       "relative_path": "08_VERIFICATION/qwikdev-qwik-verification-protocol-empirical-defect-shield-for-qwikdev-qwik.md",
       "title": "Verification Protocol: Empirical Defect Shield for QwikDev/qwik",
       "repository": "QwikDev/qwik",
-      "source_version": "cfa0e890",
-      "content_hash": "9b08bef5da27f4df053b4ed592987790cebdcc447e52bc3c0817e3e3b69f10cf",
+      "source_version": "fa8e12f1",
+      "content_hash": "41de0c4de50c865aecbf19d9964c45925d9e76c09ff4d77613fe31305e169e59",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:10:59.296Z"
+      "persisted_at": "2026-11-21T00:51:58.663Z"
     },
     "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-learnings-core-invariants",
@@ -268191,9 +268211,9 @@
       "title": "Technical Construction Intelligence: qwikdev-qwik-learnings Core Invariants",
       "repository": "qwikdev-qwik-learnings",
       "source_version": "HEAD",
-      "content_hash": "5075c45fa158395c5c36f92649f6b72e8682ed5fe458777e6268040ea47acb4a",
+      "content_hash": "6104c18d9814c9668c588158345e82a055fd71dd335bacc22d46c1322e08a31d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T06:11:30.523Z"
+      "persisted_at": "2026-11-21T00:52:13.566Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-qwikdev-qwik-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-qwikdev-qwik-learnings",
@@ -268203,9 +268223,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for qwikdev-qwik-learnings",
       "repository": "qwikdev-qwik-learnings",
       "source_version": "HEAD",
-      "content_hash": "b43461099b574922de4ced3ea0354ba57f4c00f2c9a1164e58b273d2eb939262",
+      "content_hash": "4ce204cfd9076427a7141231d3655c938c7bff97f22e1dbe5722a57d4d4316a1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:11:30.660Z"
+      "persisted_at": "2026-11-21T00:52:13.743Z"
     },
     "candidate_directive-github-notify-only-when-reconciled-pr-associations-change": {
       "item_id": "candidate_directive-github-notify-only-when-reconciled-pr-associations-change",
@@ -309351,6 +309371,122 @@
       "content_hash": "5d355af3a82830e5ea2861d5bad4b9ef898658408022c44f8ac34afd01ba6ea4",
       "domain_letter": "G",
       "persisted_at": "2026-11-21T00:44:00.818Z"
+    },
+    "rule-9683": {
+      "learning_id": "rule-9683",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9683,
+      "title": "pressing R again in Connections opens the Web dashboard",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "08946a21",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T00:51:55.551Z"
+    },
+    "candidate_directive-pressing-r-again-in-connections-opens-the-web-dashboard": {
+      "item_id": "candidate_directive-pressing-r-again-in-connections-opens-the-web-dashboard",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0KCA-pressing-r-again-in-connections-opens-the-web-dashboard.md",
+      "title": "pressing R again in Connections opens the Web dashboard",
+      "repository": "agent-of-empires/agent-of-empires",
+      "source_version": "08946a21",
+      "content_hash": "6f505ee411923e6469f60e61d1955e284f8e4a0deca25ae9cf751f05d82e9ad2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T00:51:56.032Z"
+    },
+    "rule-9684": {
+      "learning_id": "rule-9684",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9684,
+      "title": "Empirical Invariant Guard in calm-dev-server-ssr-error.md",
+      "source_url": "https://github.com/QwikDev/qwik",
+      "source_version": "fa8e12f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T00:51:57.906Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-calm-dev-server-ssr-error-md": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-calm-dev-server-ssr-error-md",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0XR0-empirical-invariant-guard-in-calm-dev-server-ssr-error-md.md",
+      "title": "Empirical Invariant Guard in calm-dev-server-ssr-error.md",
+      "repository": "qwikdev-qwik-learnings",
+      "source_version": "HEAD",
+      "content_hash": "84ca378a7261a12f98a7c3e152f81b1438f2816424b7c6e1b7f027b4ecd6457d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T00:52:13.404Z"
+    },
+    "rule-9685": {
+      "learning_id": "rule-9685",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9685,
+      "title": "feature/conn25: name lock-requiring methods Locked",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "36780d60",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T00:52:05.513Z"
+    },
+    "candidate_directive-feature-conn25-name-lock-requiring-methods-locked": {
+      "item_id": "candidate_directive-feature-conn25-name-lock-requiring-methods-locked",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0YCG-feature-conn25-name-lock-requiring-methods-locked.md",
+      "title": "feature/conn25: name lock-requiring methods Locked",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cdb1f188dd3be719c40c78fa6269baffced009edb5a6213e1ed621334c469a7e",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-21T00:52:14.177Z"
+    },
+    "rule-9686": {
+      "learning_id": "rule-9686",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9686,
+      "title": "preserve TAE snapshot row IDs and stabilize main CI",
+      "source_url": "https://github.com/matrixorigin/matrixone",
+      "source_version": "a5140aa8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T00:52:08.717Z"
+    },
+    "candidate_directive-preserve-tae-snapshot-row-ids-and-stabilize-main-ci": {
+      "item_id": "candidate_directive-preserve-tae-snapshot-row-ids-and-stabilize-main-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0UGX-preserve-tae-snapshot-row-ids-and-stabilize-main-ci.md",
+      "title": "preserve TAE snapshot row IDs and stabilize main CI",
+      "repository": "matrixorigin/matrixone",
+      "source_version": "a5140aa8",
+      "content_hash": "fb229674a8f6d78e22202b15bc0789958b786c13e36c8ea2fe047f48580863e4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T00:52:09.160Z"
+    },
+    "candidate_directive-tui-pressing-r-again-in-connections-opens-the-web-dashboard": {
+      "item_id": "candidate_directive-tui-pressing-r-again-in-connections-opens-the-web-dashboard",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0X3S-tui-pressing-r-again-in-connections-opens-the-web-dashboard.md",
+      "title": "tui): pressing R again in Connections opens the Web dashboard",
+      "repository": "agent-of-empires-agent-of-empires-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0db6d342a452fbd638ed8a8d75eb83f46de050df22ad1b8d8ccde3aedf155213",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T00:52:12.574Z"
     }
   },
   "ai-builder-brain": {

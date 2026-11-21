@@ -4,22 +4,22 @@
 {
   "source_repository": "matrixorigin/matrixone",
   "source_url": "https://github.com/matrixorigin/matrixone",
-  "source_version": "3cd5f717",
+  "source_version": "a5140aa8",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T22:36:18.199Z",
+  "timestamp": "2026-11-21T00:52:09.159Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-matrixorigin-matrixone",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [matrixorigin/matrixone](https://github.com/matrixorigin/matrixone) (Revision: `3cd5f717`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T22:36:18.199Z`  
+> **Provenance**: Harvested from [matrixorigin/matrixone](https://github.com/matrixorigin/matrixone) (Revision: `a5140aa8`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T00:52:09.159Z`  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `matrixorigin/matrixone` (Commit: `3cd5f717`)
+- **Target Repository**: `matrixorigin/matrixone` (Commit: `a5140aa8`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T22:36:16.948Z  
+> **Harvest Timestamp**: 2026-11-21T00:52:07.902Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2360,11 +2360,11 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #32945** (2026-11-19): **[4.2-dev] Preserve COS GET cancellation identity**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #32389.  ## What this PR does / why we need it:  A COS GET canceled while waiting for response headers can return a singleton SDK RetryError even with SDK retries disabled. It renders as `context canceled`, but standard Go error traversal cannot identify the wrapped cancellation. A normal early stop after IVF sampling reaches its LIMIT can then surface as SQL error 1105.  Restore the request's context error at the COS GET boundary only when the SDK wrapper contains that exact error as its sole child. Independent storage errors and mixed errors retain their identity. The success path incurs no additional checks or allocations.  A local three-CN reproduction on the nightly revision used 250,000 persisted rows and controlled only the response timing of a GET. The same CREATE INDEX failed before normalization and succeeded with it. With disk caching enabled, delaying a bounded-range GET also reproduced the failure. The archived nightly logs contain the same reader and SQL symptoms, but do not record the original Go error type.  The new public Read regression uses a real HTTP request and cancels after the server receives it. It fails with the expected RetryError when normalization is removed. Focused counterexamples cover deadlines, active requests, independent errors and mixed errors. The
+- **Issue #33031** (2026-11-20): **[4.2-dev] fix(mpool): stabilize physical realloc failure test**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Refs #32744  ## What this PR does / why we need it:  The Linux physical-reallocation failure test can abort the Go runtime under its process-local address-space limit. The 1 GiB target crosses the mpool high-watermark logging threshold before the allocator runs, and logging or GC can exhaust the 64 MiB headroom.  Backport the 512 MiB target from #28467 and use the 256 MiB headroom already used on main. The target remains larger than the available address space and the existing assertions still require a physical allocator rejection and verify ownership, accounting, profiling and contents for both source sizes and allocation paths.  If the allocator unexpectedly succeeds, retain the returned allocation for cleanup so the original assertion remains visible.  Validation: - Linux/arm64, Go 1.26.4: focused test passed 20 times with coverage and 5 times with coverage across MatrixOne packages. - Full mpool package passed with coverage and with the race detector. Incremental go vet, gofmt, and git diff --check passed. - An emulated amd64 container did not enforce the guest mapping limit, so native Linux/x86 CI is needed to validate the target runner. The emulator run did verify the unexpected-success cleanup path. - The larger process address-space headroom reduces runtime allocation pressure and remai
 
-- **Issue #32938** (2026-11-19): **perf(cdc): avoid formatting disabled watermark debug logs**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [x] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #32278 (C28).  ## What this PR does / why we need it:  Buffering a CDC watermark formatted the table key twice and rendered both timestamps before Debug could reject the log event. Reuse the existing metric label and build the structured log fields only when Debug is enabled.  In a local Go 1.27.1 benchmark of repeated accepted updates with Debug disabled, allocation fell from 666 to 72 B/op and from 11 to 4 allocs/op. Median time across three samples fell from 591 to 231 ns/op for that fixture.  Validation: the CDC package under the race detector and incremental SCA. With Debug enabled, the before/after structured records match apart from the wall-clock timestamp. Info emits no buffer-update event. Both levels buffer the same watermark and increment the same commit counter.  A committed CDC regression test verifies Info and Debug behavior, including first and replacement watermark fields, cached values, and the commit counter. In a local coverage run using the CI test tag, both changed coverage blocks are exercised. 
+- **Issue #33029** (2026-11-20): **fix(cdc): preserve numeric-label ENUM members**
+  *Symptoms*: ## What type of PR is this?  - [x] BUG  ## Which issue(s) this PR fixes  Fixes #32976  ## What this PR does / why we need it  CDC serialized MatrixOne ENUM ordinals as quoted SQL strings. In MySQL, a quoted numeric value can match a numeric ENUM label instead of selecting the member by ordinal, silently changing member identity for definitions such as `ENUM('0','1','2')`.  Serialize ENUM ordinals as integer literals so MySQL applies its documented ordinal assignment semantics. NULL handling remains unchanged.  ## Testing  - Regression-first: with only the expected output changed, `Test_convertColIntoSql` failed because actual output was `'1'` instead of `1`. - `go test ./pkg/cdc -run '^Test_convertColIntoSql$/enum_ordinal_is_not_quoted$' -count=1` - `go test ./pkg/cdc -count=1` - `git diff --check`  Independent review: APPROVE, no substantive findings.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2381,1171 +2381,8 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `793b62b5` (2026-11-19)
-**Commit Message**: fix(function): reject undefined real-domain POW arguments (#32863)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [x] BUG
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [ ] Test and CI
-- [ ] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-issue #31155
-
-Fixes #31155
-
-## What this PR does / why we need it:
-
-POW/POWER with a finite negative base and a finite non-integer exponent
-is mathematically undefined in the real domain, but MatrixOne silently
-returned a row-local NULL. This PR makes the Power operator reject such
-arguments with the typed DOUBLE out-of-range error (MySQL 1690, SQLSTATE
-22003, `data out of range: data type float64, DOUBLE value is out of
-range in 'pow(-2,0.5)'`), keeping the #28375 row-local NULL semantics
-untouched for overflow/NaN-input (EXP/COT) cases.
-
-It also carries a CI fix found by this PR's own required `-race` UT job:
-`gc/v3.buildTableExistenceMap` read each table catalog entry's MVCC
-chain delete timestamp via `GetDeleteAtLocked` without the entry lock,
-racing `DBEntry.DropTableEntryByID` (entry write lock ->
-`DropEntryLocked` -> `DeleteLocked` -> `InsertLocked`), reported three
-times in
-`TestDataBranchDiffAcrossCheckpointGCAndRestart/gc_ch
-
-**File**: `pkg/embed/cdc_control_status_test.go` (modified, +111/-1)
-```diff
-@@ -16,12 +16,14 @@ package embed
- import (
- 	"bytes"
- 	"context"
-+	"errors"
- 	"fmt"
- 	"sync"
- 	"testing"
- 	"time"
- 
- 	"github.com/google/uuid"
-+	dragonboat "github.com/lni/dragonboat/v4"
- 	"github.com/matrixorigin/matrixone/pkg/catalog"
- 	"github.com/matrixorigin/matrixone/pkg/cnservice"
- 	"github.com/matrixorigin/matrixone/pkg/common/runtime"
-@@ -41,6 +43,108 @@ type cdcControlResult struct {
- 	err error
- }
- 
-+// cdcClusterStateWithReadiness bounds the initial, idempotent, read-only
-+// GetClusterState readiness probe of the CDC claims subtest: its result only
-+// feeds state.TaskTableUser below. The current5711 CI UT (job 135195296776,
-+// 2026-11-18 23:30:59) observed exactly one raw dragonboat request timeout on
-+// this first probe while the log service reported the same checker-state read
-+// timing out on its side in the same window; root36 kept the stall's own
-+// origin qualified UNKNOWN. This helper absorbs no more than that observed
-+// failure class, deterministically: at most three attempts on the caller's
-+// unchanged context, retrying only errors.Is(dragonboat.ErrTimeout) chains,
-+// stopping at the first success, never issuing another request once the
-+// context is done, and returning any other error after the first failed
-+// attempt. The caller's require.NoError still owns the final failure; no
-+// deadline is raised anywhere and no claims/heartbeat/write path is retried.
-+func cdcClusterStateWithReadiness(
-+	t *testing.T,
-+	ctx context.Context,
-+	getState func(context.Context) (logservicepb.CheckerState, error),
-+) (logservicepb.CheckerState, error) {
-+	t.Helper()
-+	if ctxErr := ctx.Err(); ctxErr != nil {
-+		return logservicepb.CheckerState{}, ctxErr
-+	}
-+	const attempts = 3
-+	state, lastErr := getState(ctx)
-+	for i := 2; lastErr != nil && i <= attempts; i++ {
-+		if ctxErr := ctx.Err(); ctxErr != nil {
-+			return logservicepb.CheckerState{}, lastErr
-+		}
-+		if !errors.Is(lastErr, dragonboat.ErrTimeout) {
-+			return logservicepb.CheckerState{}, lastErr
-+		}
-+		t.Logf("initial CDC cluster-state readiness %d/%d: %v", i-1, attempts, lastErr)
-+		state, lastErr = getState(ctx)
-+	}
-+	if lastErr != nil {
-+		t.Logf("initial CDC cluster-state readiness failed after at most %d attempts: %v", attempts, lastErr)
-+	}
-+	return state, lastErr
-+}
-+
-+// TestCDCInitialClusterStateReadinessBounds covers every branch of the
-+// readiness helper with deterministic pure consumers: scripted results,
-+// recorded request contexts, exact error identities and finite call counts.
-+// No cluster, no timing assumptions, no retry framework.
-+func TestCDCInitialClusterStateReadinessBounds(t *testing.T) {
-+	okState := logservicepb.CheckerState{Tick: 42}
-+	nonTimeout := errors.New("cdc readiness probe: not a timeout")
-+	for _, s := range []struct {
-+		name        string
-+		preCanceled bool
-+		cancelAfter int // 1-based call index whose side effect cancels ctx; 0 = never
-+		succeedAt   int // 1-based call index returning success; 0 = never
-+		err         error
-+		wantCalls   int
-+		wantOK      bool
-+		wantErrIs   error
-+	}{
-+		{name: "immediate success", succeedAt: 1, err: nonTimeout, wantCalls: 1, wantOK: true},
-+		{name: "timeout then success", succeedAt: 2, err: dragonboat.ErrTimeout, wantCalls: 2, wantOK: true},
-+		{name: "wrapped timeout is recognized then succeeds", succeedAt: 2, err: fmt.Errorf("probe: %w", dragonboat.ErrTimeout), wantCalls: 2, wantOK: true},
-+		{name: "persistent timeout stays an error after three requests", err: dragonboat.ErrTimeout, wantCalls: 3, wantErrIs: dragonboat.ErrTimeout},
-+		{name: "non timeout is returned after one request", err: nonTimeout, wantCalls: 1, wantErrIs: nonTimeout},
-+		{name: "pre canceled context issues no request", preCanceled: true, err: nonTimeout, wantCalls: 0, wantErrIs: context.Canceled},
-+		{name: "cancellation between attempts stops the probe", cancelAfter: 1, err: dragonboat.ErrTimeout, wantCalls: 1, wantErrIs: dragonboat.ErrTimeout},
-+	} {
-+		t.Run(s.name, func(t *testing.T) {
-+			ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
-+			if s.preCanceled {
-+				cancel()
-+			}
-+			defer cancel()
-+			var seen []context.Context
-+			calls := 0
-+			get := func(c context.Context) (logservicepb.CheckerState, error) {
-+				calls++
-+				seen = append(seen, c)
-+				if calls == s.cancelAfter {
-+					cancel()
-+				}
-+				if s.succeedAt != 0 && calls >= s.succeedAt {
-+					return okState, nil
-+				}
-+				return logservicepb.CheckerState{}, s.err
-+			}
-+			state, err := cdcClusterStateWithReadiness(t, ctx, get)
-+			require.Equal(t, s.wantCalls, calls, "the probe is bounded")
-+			for _, c := range seen {
-+				require.Same(t, ctx, c, "every request uses the caller's context unchanged")
-+			}
-+			if s.wantOK {
-+				require.NoError(t, err)
-+				require.Equal(t, okState, state)
-+				return
-+			}
-+			require.Error(t, err)
-+			if s.wantErrIs != nil {
-+				require.ErrorIs(t, err, s.wantErrIs)
-+			}
-+		})
-+	}
-+}
-+
- func testCDCControlConcurrentClaims(t *testing.T,
-```
-
-**File**: `pkg/objectio/arena_pool_test.go` (modified, +126/-25)
-```diff
-@@ -16,6 +16,7 @@ package objectio
- 
- import (
- 	"testing"
-+	"testing/synctest"
- 	"time"
- 
- 	metric "github.com/matrixorigin/matrixone/pkg/util/metric/v2"
-@@ -102,36 +103,136 @@ func TestArenaFreedAfterIdleTTL(t *testing.T) {
- // After a burst, a workload that keeps reusing one arena keeps exactly that
- // one warm; the rest of the burst ages out although the pool stays busy.
- // The global idle timer this replaces never fired while anything was active.
-+//
-+// Every assertion and the reaper schedule run under testing/synctest's
-+// controlled clock: bubble time only advances after every bubble goroutine
-+// is durably blocked, so the workload cannot be preempted while it holds
-+// the working arena and both schedules below are deterministic in virtual
-+// time. One case lets the initial reaper fire normally; the other holds the
-+// first fire until well after the old fixed warmup plus the TTL while the
-+// workload stays busy. The previous real-time form could not prove either
-+// guarantee, because time.Sleep bounds the minimum, not the maximum, pause.
- func TestArenaBurstReleasedWhileStillActive(t *testing.T) {
--	ttl := 150 * time.Millisecond
--	withArenaIdleTTL(t, ttl)
--	base := arenaMPool.CurrNB()
-+	// Go 1.27 forbids t.Run inside a synctest bubble, so each schedule
-+	// subtest owns its own bubble below.
-+	for _, schedule := range []string{"normal first fire", "delayed first fire"} {
-+		t.Run(schedule, func(t *testing.T) {
-+			synctest.Test(t, func(t *testing.T) {
-+				// Drain the reaper on every exit path, including failed
-+				// assertions: this defer runs during Goexit while still
-+				// inside the bubble, so the bubble-owned reaper timer is
-+				// always stopped in-bubble and the outer cleanup, which
-+				// runs outside the bubble, only ever sees reaper == nil.
-+				defer drainArenaReaper(ArenaLarge)
-+				const ttl = 150 * time.Millisecond
-+				withArenaIdleTTL(t, ttl)
-+				base := arenaMPool.CurrNB()
-+
-+				// Within capacity, so perArena below divides by what is actually parked.
-+				burst := make([]*WriteArena, min(8, arenaPools[ArenaLarge].maxCount))
-+				for i := range burst {
-+					burst[i] = GetArena(ArenaLarge)
-+				}
-+				for _, a := range burst {
-+					PutArena(a)
-+				}
-+				perArena := (arenaMPool.CurrNB() - base) / int64(len(burst))
-+
-+				pool := &arenaPools[ArenaLarge]
-+				holdFirstReaper := schedule != "normal first fire"
-+				if holdFirstReaper {
-+					// Stop the initial timer but keep its non-nil handle, so
-+					// the workload's PutArena (which arms only when the
-+					// reaper is nil) cannot re-arm it while the delayed
-+					// first fire is held back.
-+					pool.mu.Lock()
-+					pool.reaper.Stop()
-+					pool.mu.Unlock()
-+				}
-+
-+				// borrowed tracks the arena the workload holds out of the
-+				// pool. Pool-owned arenas are released by withArenaIdleTTL's
-+				// cleanup; releasing the borrowed one here covers a failed
-+				// assertion mid-borrow without leaking or double-freeing
-+				// off-heap buffers.
-+				var borrowed *WriteArena
-+				t.Cleanup(func() {
-+					if borrowed != nil {
-+						borrowed.FreeBuffers()
-+					}
-+				})
-+
-+				var steady *WriteArena
-+				start := time.Now()
-+				deadline := start.Add(5 * time.Second)
-+				for time.Now().Before(deadline) {
-+					n, _ := parkedLargeSnapshot()
-+					if n == 1 {
-+						break
-+					}
-+					if holdFirstReaper && time.Since(start) >= 6*ttl {
-+						// Re-arm the held reaper after the old fixed warmup
-+						// (4*ttl) plus the TTL has elapsed in bubble time,
-+						// with the workload still busy.
-+						pool.mu.Lock()
-+						pool.reaper = time.AfterFunc(arenaIdleTTL, pool.reap)
-+						pool.mu.Unlock()
-+						holdFirstReaper = false
-+					}
-+					borrowed = GetArena(ArenaLarge)
-+					if steady == nil {
-+						steady = borrowed
-+					}
-+					require.Same(t, steady, borrowed, "the working arena stays on top of the stack")
-+					PutArena(borrowed)
-+					borrowed = nil
-+					time.Sleep(5 * time.Millisecond)
-+				}
-+
-+				// Join any in-flight reaper callback before observing its
-+				// effects: the reap frees the aged arenas' buffers after it
-+				// releases the pool lock, so the parked count may already read
-+				// one while those frees are still running. synctest.Wait
-+				// returns only after every other bubble goroutine is
-+				// durably blocked or has exited, which makes this barrier
-+				// deterministic for the callback's ownership.
-+				synctest.Wait()
- 
--	// Within capacity, so perArena below divides by what is actually parked.
--	burst := make([]*WriteArena, min(8, arenaPools[ArenaLarge].maxCount))
--	for i := range burst {
--		burst[i] = GetArena(ArenaLarge)
-+				n, survivor := parkedLargeSnapshot()
-+				require.Equal(t, 1, n, "the cold burst arenas age out while the pool stays busy")
-+				require.Same(t, steady, survivor, "the surviving parked arena is the one the workload kept reusing")
-+				require.Equal(t, base+perArena, arenaMPool.CurrNB(), "only the working arena's memory is kept")
-+			})
-+		})
- 	}
-
-```
-
-**File**: `pkg/sql/compile/tp_allocation_reuse_test.go` (modified, +63/-0)
-```diff
-@@ -20,6 +20,7 @@ import (
- 	"fmt"
- 	"testing"
- 
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
- 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
- 	"github.com/matrixorigin/matrixone/pkg/container/batch"
- 	"github.com/matrixorigin/matrixone/pkg/container/types"
-@@ -319,6 +320,68 @@ func TestTPReusablePipelineQueries(t *testing.T) {
- 	}
- }
- 
-+// TestTPReusePowerProjectionDomainErrorRecovery binds a real Power projection
-+// consumer (power(v-2, 0.5)) onto the reused prepared-TP pipeline: the same
-+// compiled f.c/f.root must serve repeated executions, surface the typed
-+// out-of-range rejection for domain rows WITHOUT publishing the failed batch
-+// to the consumer, and recover valid results on the next execution.
-+func TestTPReusePowerProjectionDomainErrorRecovery(t *testing.T) {
-+	f := newTPReusePipeline(t, plan2.ExecTypeTP, false)
-+	keyType := types.T_varchar.ToType()
-+	valueType := types.T_int32.ToType()
-+	bind := func(name string, args ...*plan.Expr) *plan.Expr {
-+		expr, err := plan2.BindFuncExprImplByPlanExpr(f.proc.Ctx, name, args)
-+		require.NoError(t, err)
-+		return expr
-+	}
-+	col := func(pos int32, typ types.Type) *plan.Expr {
-+		return &plan.Expr{Typ: typ.PlanType(), Expr: &plan.Expr_Col{Col: &plan.ColRef{ColPos: pos}}}
-+	}
-+	project := f.root.(*projection.Projection)
-+	// One-shot real consumer binding: keep the key column and project
-+	// power(v-2, 0.5). The reader rows are k=A/B/B with v=1/2/3, so the bases
-+	// are -1/0/1 and only the v=1 row is inside the rejected real domain.
-+	two := &plan.Expr{Typ: valueType.PlanType(), Expr: &plan.Expr_Lit{Lit: &plan.Literal{Value: &plan.Literal_I32Val{I32Val: 2}}}}
-+	half := &plan.Expr{Typ: types.T_float64.ToType().PlanType(), Expr: &plan.Expr_Lit{Lit: &plan.Literal{Value: &plan.Literal_Dval{Dval: 0.5}}}}
-+	project.ProjectList = []*plan.Expr{col(0, keyType), bind("power", bind("-", col(1, valueType), two), half)}
-+
-+	runSelected := func() ([]string, error) {
-+		var got []string
-+		err := f.execute("A", false, nil, func(b *batch.Batch) {
-+			require.False(t, b.HasDictionary(), "root must publish flat results")
-+			for row := range b.RowCount() {
-+				got = append(got, fmt.Sprintf("%s:%v", b.Vecs[0].GetStringAt(row), vector.GetFixedAtNoTypeCheck[float64](b.Vecs[1], row)))
-+			}
-+		})
-+		return got, err
-+	}
-+	var warmBytes int64
-+	for cycle := range 2 {
-+		got, err := runSelected()
-+		require.NoError(t, err)
-+		require.Equal(t, []string{"B:0", "B:1"}, got)
-+		var failedBatchRows []string
-+		err = f.execute("", false, nil, func(b *batch.Batch) {
-+			for row := range b.RowCount() {
-+				failedBatchRows = append(failedBatchRows, b.Vecs[0].GetStringAt(row))
-+			}
-+		})
-+		var moErr *moerr.Error
-+		require.True(t, errors.As(err, &moErr) && moerr.IsMoErrCode(moErr, moerr.ErrOutOfRange),
-+			"empty-param selection must surface the typed domain rejection, got %v", err)
-+		require.Empty(t, failedBatchRows, "the failed batch must not be published to the consumer")
-+		got, err = runSelected()
-+		require.NoError(t, err)
-+		require.Equal(t, []string{"B:0", "B:1"}, got)
-+		if cycle == 0 {
-+			warmBytes = f.proc.Mp().CurrNB()
-+		} else {
-+			require.Equal(t, warmBytes, f.proc.Mp().CurrNB(),
-+				"prepared TP executor reuse must not retain capacity")
-+		}
-+	}
-+}
-+
- func BenchmarkTPReusablePipelineQueries(b *testing.B) {
- 	for _, execType := range []plan2.ExecType{plan2.ExecTypeTP, plan2.ExecTypeAP_ONECN} {
- 		b.Run(fmt.Sprint(execType), func(b *testing.B) {
-```
-
-**File**: `pkg/sql/plan/function/func_binary.go` (modified, +23/-2)
-```diff
-@@ -8954,15 +8954,36 @@ func evalRight(str string, length int64) string {
- }
- 
- func Power(ivecs []*vector.Vector, result vector.FunctionResultWrapper, proc *process.Process, length int, selectList *FunctionSelectList) error {
--	// MatrixOne treats numeric domain/overflow failures as row-local NULLs.
--	return opBinaryFixedFixedToFixedWithNullOnError[float64, float64, float64](ivecs, result, proc, length, func(v1, v2 float64) (float64, error) {
-+	// Overflow/underflow and NaN/Inf-input results stay row-local NULLs (#28375).
-+	// A finite negative base with a finite non-integer exponent has no real
-+	// value, so an evaluated row rejects with the DOUBLE out-of-range error
-+	// (MySQL 1690, SQLSTATE 22003) instead of a silent NULL: the #28375
-+	// contract's domain-shaped exception for the #31155 Expected. NULL
-+	// inputs, skipped rows and all other results keep the #28375 contract.
-+	// A zero-length batch evaluates no rows: the constant/constant template
-+	// shape still invokes the callback once, so the domain check stays off
-+	// for length 0 (colexec passes empty-batch row counts).
-+	var domainErr error
-+	err := opBinaryFixedFixedToFixedWithNullOnError[float64, float64, float64](ivecs, result, proc, length, func(v1, v2 float64) (float64, error) {
-+		if length > 0 && v1 < 0 && !math.IsInf(v1, 0) &&
-+			!math.IsNaN(v2) && !math.IsInf(v2, 0) && v2 != math.Trunc(v2) {
-+			if domainErr == nil {
-+				domainErr = moerr.NewOutOfRangeNoCtxf(
-+					"float64", "DOUBLE value is out of range in 'pow(%v,%v)'", v1, v2)
-+			}
-+			return 0, nil
-+		}
- 		res := math.Pow(v1, v2)
- 		if math.IsNaN(res) || math.IsInf(res, 0) {
- 			return 0, moerr.NewOutOfRangeNoCtxf(
- 				"float64", "DOUBLE value is out of range in 'pow(%v,%v)'", v1, v2)
- 		}
- 		return res, nil
- 	}, selectList)
-+	if domainErr != nil {
-+		return domainErr
-+	}
-+	return err
- }
- 
- func TimeDiff[T types.Time | types.Datetime](ivecs []*vector.Vector, result vector.FunctionResultWrapper, proc *process.Process, length int, selectList *FunctionSelectList) error {
-```
-
-**File**: `pkg/sql/plan/function/func_binary_test.go` (modified, +141/-35)
-```diff
-@@ -5567,7 +5567,12 @@ func TestPower(t *testing.T) {
- 	}
- }
- 
--func TestPowerInvalidResultReturnsNull(t *testing.T) {
-+// TestPowerNonDomainFailuresReturnNull pins the #28375 row-local NULL
-+// contract for everything outside the negative-fractional POW domain:
-+// overflow and NaN/Inf input results stay NULL, finite underflow stays a
-+// value-0 and input NULLs propagate. The finite negative base / finite
-+// non-integer exponent domain is covered separately below.
-+func TestPowerNonDomainFailuresReturnNull(t *testing.T) {
- 	proc := testutil.NewProcess(t)
- 	testCases := []struct {
- 		name      string
-@@ -5577,40 +5582,33 @@ func TestPowerInvalidResultReturnsNull(t *testing.T) {
- 		nulls     []bool
- 	}{
- 		{
--			name:      "vector continues after invalid row",
--			bases:     NewFunctionTestInput(types.T_float64.ToType(), []float64{2, -2, 4}, nil),
--			exponents: NewFunctionTestInput(types.T_float64.ToType(), []float64{3, 0.5, 0.5}, nil),
--			values:    []float64{8, 0, 2},
-+			name:      "vector continues after overflow row",
-+			bases:     NewFunctionTestInput(types.T_float64.ToType(), []float64{2, 0, 2}, nil),
-+			exponents: NewFunctionTestInput(types.T_float64.ToType(), []float64{3, -1, 0.5}, nil),
-+			values:    []float64{8, 0, math.Sqrt2},
- 			nulls:     []bool{false, true, false},
- 		},
--		{
--			name:      "constant base with vector exponent",
--			bases:     NewFunctionTestConstInput(types.T_float64.ToType(), []float64{-2, -2}, nil),
--			exponents: NewFunctionTestInput(types.T_float64.ToType(), []float64{2, 0.5}, nil),
--			values:    []float64{4, 0},
--			nulls:     []bool{false, true},
--		},
- 		{
- 			name:      "vector base with constant exponent",
- 			bases:     NewFunctionTestInput(types.T_float64.ToType(), []float64{2, 0}, nil),
- 			exponents: NewFunctionTestConstInput(types.T_float64.ToType(), []float64{-1, -1}, nil),
- 			values:    []float64{0.5, 0},
- 			nulls:     []bool{false, true},
- 		},
--		{
--			name:      "constant invalid result",
--			bases:     NewFunctionTestConstInput(types.T_float64.ToType(), []float64{-2, -2}, nil),
--			exponents: NewFunctionTestConstInput(types.T_float64.ToType(), []float64{0.5, 0.5}, nil),
--			values:    []float64{0, 0},
--			nulls:     []bool{true, true},
--		},
- 		{
- 			name:      "overflow underflow and input null",
- 			bases:     NewFunctionTestInput(types.T_float64.ToType(), []float64{2, 2, 2, 0, 0}, []bool{false, false, false, true, false}),
- 			exponents: NewFunctionTestInput(types.T_float64.ToType(), []float64{1023, 1024, -1075, -1, 0}, nil),
- 			values:    []float64{math.Ldexp(1, 1023), 0, 0, 0, 1},
- 			nulls:     []bool{false, true, false, true, false},
- 		},
-+		{
-+			name:      "nan and inf inputs stay row-local null",
-+			bases:     NewFunctionTestInput(types.T_float64.ToType(), []float64{math.NaN(), -2, math.Inf(1), 0.5}, nil),
-+			exponents: NewFunctionTestInput(types.T_float64.ToType(), []float64{2, math.NaN(), 0.5, math.Inf(-1)}, nil),
-+			values:    []float64{0, 0, 0, 0},
-+			nulls:     []bool{true, true, true, true},
-+		},
- 	}
- 
- 	for _, tc := range testCases {
-@@ -5628,37 +5626,144 @@ func TestPowerInvalidResultReturnsNull(t *testing.T) {
- 	}
- }
- 
--func TestPowerRespectsSelectList(t *testing.T) {
-+// TestPowerNegativeFractionalExponentReturnsOutOfRange pins the #31155
-+// Expected: a finite negative base with a finite non-integer exponent
-+// rejects the statement with moerr.ErrOutOfRange (MySQL 1690, SQLSTATE
-+// 22003) across every input shape of the fixed/fixed binary template.
-+// This is a proposed compatibility change over merged #28375's row-local
-+// NULL decision, not yet an accepted product decision.
-+func TestPowerNegativeFractionalExponentReturnsOutOfRange(t *testing.T) {
- 	proc := testutil.NewProcess(t)
--	inputs := []FunctionTestInput{
--		NewFunctionTestInput(types.T_float64.ToType(), []float64{-2, 2}, nil),
--		NewFunctionTestInput(types.T_float64.ToType(), []float64{0.5, 3}, nil),
-+
-+	expectOutOfRange := func(t *testing.T, bases, exponents FunctionTestInput) {
-+		t.Helper()
-+		tcc := NewFunctionTestCase(
-+			proc,
-+			[]FunctionTestInput{bases, exponents},
-+			NewFunctionTestResult(types.T_float64.ToType(), false, nil, nil),
-+			Power,
-+		)
-+		defer tcc.Free()
-+		require.NoError(t, tcc.result.PreExtendAndReset(tcc.fnLength))
-+		err := Power(tcc.parameters, tcc.result, proc, tcc.fnLength, nil)
-+		require.Error(t, err)
-+		require.True(t, moerr.IsMoErrCode(err, moerr.ErrOutOfRange),
-+			"expected ErrOutOfRange, got %v", err)
- 	}
-+
-+	t.Run("constant base with constant exponent", func(t *testing.T) {
-+		expectOutOfRange(t,
-+			NewFunctionTestConstInput(types.T_float64.ToType(), []float64{-2, -2}, nil),
-+			NewFunctionTestConstInput(types.T_float64.ToType(), []float64{0.5, 0.5}, nil),
-+		)
-+	})
-+
-+	t.Run("historical pow witness pow(-8, 1/3)", func(t *testing.T) {
-+		expectOutOfRange(t,
-+			NewFunctionTestConstInput(types.T_float64.ToType(), []float64{-8, -8}, nil),
-+			NewFunctionTestConstInput(types.T_float64.ToType(), []float64{1.0 / 3.0, 
-```
-
-**File**: `pkg/tests/issues/issue_31401_scalar_test.go` (modified, +16/-0)
-```diff
-@@ -20,6 +20,7 @@ import (
- 	"database/sql/driver"
- 	"fmt"
- 	"os"
-+	"runtime"
- 	"strings"
- 	"sync"
- 	"testing"
-@@ -77,9 +78,24 @@ func TestIssue31401ScalarRefreshProgress(t *testing.T) {
- 				defer cancel()
- 				cleanupSQL := func(exec func(context.Context, string, ...any) (sql.Result, error), timeout time.Duration, statement string) error {
- 					t.Helper()
-+					started := time.Now()
- 					cleanup, stop := context.WithTimeout(context.Background(), timeout)
- 					defer stop()
- 					_, err := exec(cleanup, statement)
-+					if err != nil {
-+						// Test-only error-boundary diagnostic: retain this cleanup
-+						// phase's SQL start/end/cause and a bounded snapshot of
-+						// goroutine state before the assert, without touching the
-+						// budget, the result, the original error or the fixture.
-+						ended := time.Now()
-+						var waiters [16384]byte
-+						n := runtime.Stack(waiters[:], true)
-+						t.Logf("issue31401 cleanupSQL error boundary: statement=%q budget=%s start=%s end=%s elapsed=%s err=%v cleanupCtxErr=%v; goroutine snapshot (bounded %d bytes):\n%s",
-+							statement, timeout,
-+							started.UTC().Format(time.RFC3339Nano),
-+							ended.UTC().Format(time.RFC3339Nano),
-+							ended.Sub(started), err, cleanup.Err(), n, waiters[:n])
-+					}
- 					assert.NoErrorf(t, err, "cleanup SQL: %s", statement)
- 					return err
- 				}
-```
-
-**File**: `pkg/vm/engine/tae/db/gc/v3/exec_v1.go` (modified, +7/-0)
-```diff
-@@ -348,11 +348,18 @@ func buildTableExistenceMap(snapshotMeta *logtail.SnapshotMeta, checkpointCli ch
- 		itTable := db.MakeTableIt(true)
- 		for itTable.Valid() {
- 			table := itTable.Get().GetPayload()
-+			// The MVCC chain behind GetDeleteAtLocked is mutated by concurrent
-+			// catalog drops (DBEntry.DropTableEntryByID holds the entry write
-+			// lock around DropEntryLocked -> DeleteLocked -> InsertLocked), so
-+			// the GC reader must hold the same entry's read lock while taking
-+			// the delete-at snapshot for this table.
-+			table.RLock()
- 			drop := table.GetDeleteAtLocked()
- 			if drop.IsEmpty() {
- 				tableID := table.GetID()
- 				tableExistenceMap[tableID] = true
- 			}
-+			table.RUnlock()
- 			itTable.Next()
- 		}
- 	}
-```
-
-**File**: `pkg/vm/engine/tae/db/gc/v3/executor_test.go` (modified, +178/-0)
-```diff
-@@ -17,14 +17,20 @@ package gc
- import (
- 	"context"
- 	"errors"
-+	"sync"
- 	"testing"
- 
- 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
- 	"github.com/matrixorigin/matrixone/pkg/container/batch"
- 	"github.com/matrixorigin/matrixone/pkg/container/types"
- 	"github.com/matrixorigin/matrixone/pkg/container/vector"
- 	"github.com/matrixorigin/matrixone/pkg/pb/plan"
-+	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/catalog"
- 	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/containers"
-+	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/db/checkpoint"
-+	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/iface/txnif"
-+	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/logtail"
-+	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/txn/txnbase"
- 	"github.com/stretchr/testify/require"
- )
- 
-@@ -105,3 +111,175 @@ func TestBuildBloomfilter(t *testing.T) {
- 		})
- 	}
- }
-+
-+// gcTableExistenceRunner hands buildTableExistenceMap the real catalog while
-+// letting the rest of the checkpoint.Runner surface stay inert. The racing
-+// chain under test is entirely real: catalog entries, their MVCC chains, the
-+// published iterators and the drop writer path.
-+type gcTableExistenceRunner struct {
-+	checkpoint.Runner
-+	cat *catalog.Catalog
-+}
-+
-+func (r *gcTableExistenceRunner) GetCatalog() *catalog.Catalog { return r.cat }
-+
-+// TestBuildTableExistenceMapConcurrentCatalogDrop is the owner
-+// regression for the UT race on PR CI job 134540016566: buildTableExistenceMap
-+// read each table entry's MVCC chain head / payload / delete TS through
-+// GetDeleteAtLocked without the entry lock while DBEntry.DropTableEntryByID
-+// (handle DropRelationByID) inserts the delete node under the entry write
-+// lock. Live tables must stay present in every concurrent snapshot, committed
-+// drops must stop being published, and every transaction this test starts is
-+// driven to a real terminal commit or rollback via the mock factory's store
-+// registration before the txn manager stops - TxnManager.Stop only parks the
-+// manager, it does not finalize anyone's transactions. The bounded concurrent
-+// loop exercises the racing window; it is not a claim of a deterministic
-+// interleaving, and under -race the pre-fix unlocked read fires on the very
-+// chains this test mutates.
-+func TestBuildTableExistenceMapConcurrentCatalogDrop(t *testing.T) {
-+	cat := catalog.MockCatalog(nil)
-+	t.Cleanup(func() { require.NoError(t, cat.Close()) })
-+	txnMgr := txnbase.NewTxnManager(
-+		catalog.MockTxnStoreFactory(cat),
-+		catalog.MockTxnFactory(cat),
-+		types.NewMockHLCClock(1),
-+	)
-+	txnMgr.Start(context.Background())
-+	t.Cleanup(txnMgr.Stop)
-+
-+	var ownedMu sync.Mutex
-+	owned := make(map[string]txnif.AsyncTxn)
-+	track := func(txn txnif.AsyncTxn) {
-+		ownedMu.Lock()
-+		owned[txn.GetID()] = txn
-+		ownedMu.Unlock()
-+	}
-+	// Safety net before txnMgr.Stop (LIFO cleanup order): every still-active
-+	// owned transaction is rolled back so no error or FailNow path can leak
-+	// one into the manager.
-+	t.Cleanup(func() {
-+		ownedMu.Lock()
-+		defer ownedMu.Unlock()
-+		for _, txn := range owned {
-+			if txn.GetTxnState(false) == txnif.TxnStateActive {
-+				// Nonfatal reporting: keep the original cause visible while
-+				// still letting every remaining owned rollback, manager.Stop
-+				// and catalog.Close in the LIFO chain run.
-+				if err := txn.Rollback(context.Background()); err != nil {
-+					t.Errorf("safety-net rollback of owned txn %s failed: %v", txn.GetID(), err)
-+				}
-+			}
-+		}
-+	})
-+
-+	createTxn, err := txnMgr.StartTxn(nil)
-+	require.NoError(t, err)
-+	track(createTxn)
-+	dbEntry, err := cat.CreateDBEntry(t.Name(), "", "", createTxn)
-+	require.NoError(t, err)
-+	// Register the DB entry like mockTxn.CreateDatabase does, so Commit()
-+	// applies the DB create node too.
-+	createTxn.GetStore().AddTxnEntry(dbEntry)
-+
-+	liveIDs := []uint64{91001, 91002, 91003}
-+	victims := make([]uint64, 0, 12)
-+	for id := uint64(92001); id < 92001+12; id++ {
-+		victims = append(victims, id)
-+	}
-+	for _, id := range append(append([]uint64{}, liveIDs...), victims...) {
-+		tbl, err := dbEntry.CreateTableEntryWithTableId(catalog.MockSchema(2, 0), createTxn, nil, id)
-+		require.NoError(t, err)
-+		// Register the entry in the txn store exactly like the catalog mock
-+		// handles do, so Commit() applies the create nodes and later drop
-+		// txns see committed creators instead of a stale w-w conflict.
-+		createTxn.GetStore().AddTxnEntry(tbl)
-+	}
-+	require.NoError(t, createTxn.Commit(context.Background()))
-+
-+	runner := &gcTableExistenceRunner{cat: cat}
-+	build := func(t *testing.T) (map[uint64]bool, error) {
-+		return buildTableExistenceMap(logtail.NewSnapshotMeta(), runner)
-+	}
-+
-+	// Warm boundary: before any drop every live and victim table is present.
-+	warm, err := build(t)
-+	require.NoError(t, err)
-+	for _, id := range append(append([]uint64{}, liveIDs...), victims...) {
-+		require.True(t, warm[id], "table %d must be visible before the drop starts", id)
-+	}
-+
-+
-```
-
----
-
-### Incident Patch 2: `2e99e997` (2026-11-19)
-**Commit Message**: fix(function): admit integer division by DECIMAL256 (#32757)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [x] BUG
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [ ] Test and CI
-- [ ] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-Fixes #31637
-
-## What this PR does / why we need it:
-
-Integer columns divided by DECIMAL256 currently fail function binding. Add the missing signed/unsigned integer cast-table entries and the BOOL mirror. Preserve exact extreme values, quotient precision/scale, NULL and zero-divisor behavior. Cover the shared DIV consumer, including signed overflow, with focused unit tests and a distributed SQL case.
-
-Validation:
-
-- Rebased linearly onto main `98796a5456d93b26d6051c546f9a168c0085c0ad`. The five delivery files retain their previously reviewed contents and functional evidence.
-- Current local SCA: the unmodified repository selector (`go list -deps -test` inventory) selects 169 packages. Repository-pinned `molint check -mod=readonly <169 explicit packages>` and `golangci-lint run -v -c .golangci.yml <the same 169 packages>` both returned process RC 0. All 169 were checked at current inputs; no earlier SCA result was reused.
-- One matching loca
-
-**File**: `pkg/sql/plan/function/decimal_bool_operand_test.go` (modified, +26/-13)
-```diff
-@@ -51,9 +51,9 @@ func TestDecimalBoolBinaryOperatorSupportLikeInt64(t *testing.T) {
- 				_, intErr := GetFunctionByName(ctx, name, intArgs)
- 				_, boolErr := GetFunctionByName(ctx, name, boolArgs)
- 				if intErr != nil {
--					// Pre-existing parity hole (INT64 / DECIMAL256 and
--					// INT64 div DECIMAL256 are not bound on main): BOOL keeps
--					// the same contract instead of binding wider than an int.
-+					// Parity guard: BOOL never binds wider than an INT64
-+					// operand, so any pairing the int row set rejects keeps
-+					// rejecting the bool mirror too.
- 					require.Error(t, boolErr, "%s %s %s", boolArgs[0].Oid, name, boolArgs[1].Oid)
- 					continue
- 				}
-@@ -132,15 +132,6 @@ func TestDecimalBoolBinaryTargets(t *testing.T) {
- 			check(tc.name+" "+name+" bool side", resolved.targetTypes[1],
- 				rightPlain.Oid, rightPlain.Width, rightPlain.Scale)
- 
--			if (name == "/" || name == "div") && tc.dec.Oid == types.T_decimal256 {
--				// BOOL before a DECIMAL256 dividend does not bind for the
--				// division operators; an INT64 operand in the same position
--				// does not bind either, so BOOL carries no extra limitation.
--				_, err = GetFunctionByName(ctx, name,
--					[]types.Type{types.T_int64.ToType(), tc.dec})
--				require.Error(t, err, "int64 %s %s", name, tc.name)
--				continue
--			}
- 			resolved, err = GetFunctionByName(ctx, name, []types.Type{boolType, tc.dec})
- 			require.NoError(t, err, "bool %s %s", name, tc.name)
- 			require.True(t, resolved.needCast, "bool %s %s", name, tc.name)
-@@ -413,6 +404,9 @@ func TestDecimalBoolDivisionPrecisionDerivation(t *testing.T) {
- 		{"bool divisor increment 10", 10, []types.Type{d10s2, boolT}, types.New(types.T_decimal128, 20, 12)},
- 		{"wide quotient promotes", 4, []types.Type{types.New(types.T_decimal128, 38, 0), boolT}, types.New(types.T_decimal256, 42, 4)},
- 		{"wide divisor scale promotes", 4, []types.Type{boolT, types.New(types.T_decimal128, 38, 38)}, types.New(types.T_decimal256, 43, 4)},
-+		{"bool dividend over decimal256", 4, []types.Type{boolT, types.New(types.T_decimal256, 60, 4)}, types.New(types.T_decimal256, 9, 4)},
-+		{"bool dividend over wide decimal256", 4, []types.Type{boolT, types.New(types.T_decimal256, 65, 30)}, types.New(types.T_decimal256, 35, 4)},
-+		{"decimal256 dividend by bool", 4, []types.Type{types.New(types.T_decimal256, 60, 4), boolT}, types.New(types.T_decimal256, 64, 8)},
- 	} {
- 		t.Run(tc.name, func(t *testing.T) {
- 			resolved, err := GetFunctionByName(
-@@ -423,7 +417,8 @@ func TestDecimalBoolDivisionPrecisionDerivation(t *testing.T) {
- 	}
- 
- 	// A DECIMAL dividend divides by BOOL with the same result type as by INT64.
--	for _, side := range []types.Type{d10s2, types.New(types.T_decimal128, 38, 0)} {
-+	for _, side := range []types.Type{
-+		d10s2, types.New(types.T_decimal128, 38, 0), types.New(types.T_decimal256, 60, 4)} {
- 		boolDiv, err := GetFunctionByName(context.Background(), "/", []types.Type{side, boolT})
- 		require.NoError(t, err)
- 		intDiv, err := GetFunctionByName(context.Background(), "/", []types.Type{side, intT})
-@@ -441,6 +436,7 @@ func TestDecimalBoolModAndIntegerDivMetadata(t *testing.T) {
- 	intT := types.T_int64.ToType()
- 	d10s2 := types.New(types.T_decimal64, 10, 2)
- 	d30s4 := types.New(types.T_decimal128, 30, 4)
-+	d60s4 := types.New(types.T_decimal256, 60, 4)
- 
- 	// max(decimal width, exact bool width), decimal scale preserved.
- 	require.Equal(t,
-@@ -453,6 +449,14 @@ func TestDecimalBoolModAndIntegerDivMetadata(t *testing.T) {
- 	require.Equal(t,
- 		types.New(types.T_decimal128, 19, 2),
- 		DecimalModReturnType([]types.Type{d10s2, intT}, types.New(types.T_decimal128, 38, 2)))
-+	// The DECIMAL256 mirror repeats the same derivation: the decimal operand
-+	// keeps its own width and scale with the exact one-digit BOOL span beside it.
-+	require.Equal(t,
-+		types.New(types.T_decimal256, 60, 4),
-+		DecimalModReturnType([]types.Type{boolT, d60s4}, types.T_decimal256.ToType()))
-+	require.Equal(t,
-+		types.New(types.T_decimal256, 60, 4),
-+		DecimalModReturnType([]types.Type{d60s4, boolT}, types.T_decimal256.ToType()))
- 
- 	// Integer-division display derives from the dividend's precision and the
- 	// divisor's scale, so BOOL and INT64 divisors agree exactly.
-@@ -462,4 +466,13 @@ func TestDecimalBoolModAndIntegerDivMetadata(t *testing.T) {
- 	require.True(t, ok)
- 	require.Equal(t, intDiv, boolDiv)
- 	require.Equal(t, types.New(types.T_int64, 9, 0), boolDiv)
-+
-+	// A BOOL dividend keeps its exact 0/1 span against a DECIMAL256 divisor,
-+	// while a wide DECIMAL256 dividend clamps at the BIGINT display domain.
-+	boolDividend, ok := DecimalIntegerDivReturnType([]types.Type{boolT, d60s4})
-+	require.True(t, ok)
-+	require.Equal(t, types.New(types.T_int64, 6, 0), boolDividend)
-+	decimalDividend, ok := DecimalIntegerDivReturnType([]types.Type{d60s4, boolT})
-+	require.True(t, ok)
-+	require.Equal(t, types.New(types.T_int64, 20, 0), decimalDividend)
- }
-```
-
-**File**: `pkg/sql/plan/function/integer_decimal256_division_test.go` (added, +579/-0)
-```diff
-@@ -0,0 +1,579 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package function
-+
-+import (
-+	"context"
-+	"math"
-+	"math/big"
-+	"testing"
-+
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	"github.com/matrixorigin/matrixone/pkg/container/types"
-+	"github.com/matrixorigin/matrixone/pkg/container/vector"
-+	"github.com/matrixorigin/matrixone/pkg/testutil"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+// The "/" admission table (fixedBinaryCastRule2) binds DECIMAL256 dividends
-+// with integer divisors, but its integer-dividend mirror was missing: every
-+// integer LEFT x DECIMAL256 RIGHT pair errored with an invalid-argument
-+// operator message while d / u executed. These cases pin the admitted rows,
-+// the implicit-cast targets, MySQL division return typing derived from the
-+// ORIGINAL integer operand, real column producer/consumer values through the
-+// public binding, and the unchanged neighbor cells.
-+
-+func decimal256AtScaleTestHelper(t *testing.T, digits string, scale int32) types.Decimal256 {
-+	t.Helper()
-+	z, ok := new(big.Int).SetString(digits, 10)
-+	require.True(t, ok, "bad decimal literal %q", digits)
-+	if scale > 0 {
-+		z.Mul(z, new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(scale)), nil))
-+	}
-+	return decimal256FromBigWideTest(z)
-+}
-+
-+func decimal256FromUint64TestHelper(v uint64) types.Decimal256 {
-+	return decimal256FromBigWideTest(new(big.Int).SetUint64(v))
-+}
-+
-+func parseDecimal256LiteralTestHelper(t *testing.T, literal string) types.Decimal256 {
-+	t.Helper()
-+	value, _, err := types.Parse256(literal)
-+	require.NoError(t, err)
-+	return value
-+}
-+
-+// boundDecimal256SlashExecution binds "/" publicly and returns the overload
-+// execution fabric the colexec expression executor obtains for the same
-+// overload id, so the consumer path is the production one.
-+func boundDecimal256SlashExecution(
-+	t *testing.T, name string, args []types.Type,
-+) (types.Type, executeLogicOfOverload) {
-+	t.Helper()
-+	bound, err := GetFunctionByName(context.Background(), name, args)
-+	require.NoError(t, err)
-+	overload, err := GetFunctionById(context.Background(), bound.GetEncodedOverloadID())
-+	require.NoError(t, err)
-+	if overload.newOpWithFree != nil {
-+		exec, reset, free, retained := overload.newOpWithFree()
-+		t.Cleanup(func() { _ = free() })
-+		t.Cleanup(func() { _ = reset() })
-+		_ = retained
-+		return bound.GetReturnType(), exec
-+	}
-+	return bound.GetReturnType(), overload.newOp()
-+}
-+
-+func TestIntegerOverDecimal256DivisionBinding(t *testing.T) {
-+	divisor := types.New(types.T_decimal256, 65, 30)
-+	for _, tc := range []struct {
-+		name      string
-+		left      types.T
-+		precision int32
-+	}{
-+		{"int8", types.T_int8, 37},
-+		{"int16", types.T_int16, 39},
-+		{"int32", types.T_int32, 44},
-+		{"int64", types.T_int64, 53},
-+		{"uint8", types.T_uint8, 37},
-+		{"uint16", types.T_uint16, 39},
-+		{"uint32", types.T_uint32, 44},
-+		{"uint64", types.T_uint64, 54},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			bound, err := GetFunctionByName(
-+				context.Background(), "/", []types.Type{tc.left.ToType(), divisor})
-+			require.NoError(t, err)
-+			require.Equal(t,
-+				types.New(types.T_decimal256, tc.precision, 4), bound.GetReturnType())
-+			targets, cast := bound.ShouldDoImplicitTypeCast()
-+			require.True(t, cast)
-+			// The integer operand casts through the DECIMAL256 default physical
-+			// type at scale zero, mirroring the legacy reverse rows; the
-+			// DECIMAL256 divisor keeps its declared width and scale.
-+			require.Equal(t, types.T_decimal256.ToType(), targets[0])
-+			require.Equal(t, types.New(types.T_decimal256, 65, 30), targets[1])
-+		})
-+	}
-+}
-+
-+func TestIntegerOverDecimal256DivisionBindingControls(t *testing.T) {
-+	divisor := types.New(types.T_decimal256, 65, 30)
-+
-+	t.Run("decimal256 dividend over integers keeps the reverse contract", func(t *testing.T) {
-+		for _, right := range []types.Type{
-+			types.T_int64.ToType(), types.T_uint8.ToType(),
-+		} {
-+			bound, err := GetFunctionByName(
-+				context.Background(), "/", []types.Type{divisor, right})
-+			require.NoError(t, err)
-+			require.Equal(t, types.T_decimal256, bound.GetReturnType().Oid)
-+			targets, cast := bound.ShouldDoImplicitTypeCast()
-+			require.True(t, cast)
-+			require.Equal(t, types.T_decimal256, targets[0].Oid)
-+			require.Equal(t, types.T_decimal256, targets[1].Oid)
-+		}
-+	})
-+
-+	t.Run("integer over decimal128 stays on the decimal128 cast", func(t *testing.T) {
-+		bou
-```
-
-**File**: `pkg/sql/plan/function/type_check.go` (modified, +9/-0)
-```diff
-@@ -2329,6 +2329,7 @@ func initFixed2() {
- 		// same contract instead of binding wider than an integer.
- 		{types.T_bool, types.T_decimal64, types.T_decimal128, types.T_decimal128},
- 		{types.T_bool, types.T_decimal128, types.T_decimal128, types.T_decimal128},
-+		{types.T_bool, types.T_decimal256, types.T_decimal256, types.T_decimal256},
- 		{types.T_decimal64, types.T_bool, types.T_decimal128, types.T_decimal128},
- 		{types.T_decimal128, types.T_bool, types.T_decimal128, types.T_decimal128},
- 		{types.T_decimal256, types.T_bool, types.T_decimal256, types.T_decimal256},
-@@ -2346,6 +2347,7 @@ func initFixed2() {
- 		{types.T_int8, types.T_float64, types.T_float64, types.T_float64},
- 		{types.T_int8, types.T_decimal64, types.T_decimal128, types.T_decimal128},
- 		{types.T_int8, types.T_decimal128, types.T_decimal128, types.T_decimal128},
-+		{types.T_int8, types.T_decimal256, types.T_decimal256, types.T_decimal256},
- 		{types.T_int8, types.T_date, types.T_int64, types.T_int64},
- 		{types.T_int8, types.T_time, types.T_decimal64, types.T_decimal64},
- 		{types.T_int8, types.T_datetime, types.T_decimal128, types.T_decimal128},
-@@ -2370,6 +2372,7 @@ func initFixed2() {
- 		{types.T_int16, types.T_float64, types.T_float64, types.T_float64},
- 		{types.T_int16, types.T_decimal64, types.T_decimal128, types.T_decimal128},
- 		{types.T_int16, types.T_decimal128, types.T_decimal128, types.T_decimal128},
-+		{types.T_int16, types.T_decimal256, types.T_decimal256, types.T_decimal256},
- 		{types.T_int16, types.T_date, types.T_int64, types.T_int64},
- 		{types.T_int16, types.T_time, types.T_decimal64, types.T_decimal64},
- 		{types.T_int16, types.T_datetime, types.T_decimal128, types.T_decimal128},
-@@ -2394,6 +2397,7 @@ func initFixed2() {
- 		{types.T_int32, types.T_float64, types.T_float64, types.T_float64},
- 		{types.T_int32, types.T_decimal64, types.T_decimal128, types.T_decimal128},
- 		{types.T_int32, types.T_decimal128, types.T_decimal128, types.T_decimal128},
-+		{types.T_int32, types.T_decimal256, types.T_decimal256, types.T_decimal256},
- 		{types.T_int32, types.T_date, types.T_int64, types.T_int64},
- 		{types.T_int32, types.T_time, types.T_decimal64, types.T_decimal64},
- 		{types.T_int32, types.T_datetime, types.T_decimal128, types.T_decimal128},
-@@ -2418,6 +2422,7 @@ func initFixed2() {
- 		{types.T_int64, types.T_float64, types.T_float64, types.T_float64},
- 		{types.T_int64, types.T_decimal64, types.T_decimal128, types.T_decimal128},
- 		{types.T_int64, types.T_decimal128, types.T_decimal128, types.T_decimal128},
-+		{types.T_int64, types.T_decimal256, types.T_decimal256, types.T_decimal256},
- 		{types.T_int64, types.T_date, types.T_int64, types.T_int64},
- 		{types.T_int64, types.T_year, types.T_int64, types.T_int64},
- 		{types.T_int64, types.T_time, types.T_decimal64, types.T_decimal64},
-@@ -2443,6 +2448,7 @@ func initFixed2() {
- 		{types.T_uint8, types.T_float64, types.T_float64, types.T_float64},
- 		{types.T_uint8, types.T_decimal64, types.T_decimal128, types.T_decimal128},
- 		{types.T_uint8, types.T_decimal128, types.T_decimal128, types.T_decimal128},
-+		{types.T_uint8, types.T_decimal256, types.T_decimal256, types.T_decimal256},
- 		{types.T_uint8, types.T_date, types.T_int64, types.T_int64},
- 		{types.T_uint8, types.T_time, types.T_decimal64, types.T_decimal64},
- 		{types.T_uint8, types.T_datetime, types.T_decimal128, types.T_decimal128},
-@@ -2467,6 +2473,7 @@ func initFixed2() {
- 		{types.T_uint16, types.T_float64, types.T_float64, types.T_float64},
- 		{types.T_uint16, types.T_decimal64, types.T_decimal128, types.T_decimal128},
- 		{types.T_uint16, types.T_decimal128, types.T_decimal128, types.T_decimal128},
-+		{types.T_uint16, types.T_decimal256, types.T_decimal256, types.T_decimal256},
- 		{types.T_uint16, types.T_date, types.T_int64, types.T_int64},
- 		{types.T_uint16, types.T_time, types.T_decimal64, types.T_decimal64},
- 		{types.T_uint16, types.T_datetime, types.T_decimal128, types.T_decimal128},
-@@ -2491,6 +2498,7 @@ func initFixed2() {
- 		{types.T_uint32, types.T_float64, types.T_float64, types.T_float64},
- 		{types.T_uint32, types.T_decimal64, types.T_decimal128, types.T_decimal128},
- 		{types.T_uint32, types.T_decimal128, types.T_decimal128, types.T_decimal128},
-+		{types.T_uint32, types.T_decimal256, types.T_decimal256, types.T_decimal256},
- 		{types.T_uint32, types.T_date, types.T_int64, types.T_int64},
- 		{types.T_uint32, types.T_time, types.T_decimal64, types.T_decimal64},
- 		{types.T_uint32, types.T_datetime, types.T_decimal128, types.T_decimal128},
-@@ -2515,6 +2523,7 @@ func initFixed2() {
- 		{types.T_uint64, types.T_float64, types.T_float64, types.T_float64},
- 		{types.T_uint64, types.T_decimal64, types.T_decimal128, types.T_decimal128},
- 		{types.T_uint64, types.T_decimal128, types.T_decimal128, types.T_decimal128},
-+		{types.T_uint64, types.T_decimal256, types.T_decimal256, types.T_decimal256},
- 		{types.T_uint64, types.T_date, types.T_int64, types.T_int64},
- 		{types.T_uint64, types.T_time, types.T_decima
-```
-
-**File**: `test/distributed/cases/operator/integer_decimal256_division.result` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+drop database if exists int_d256_div;
-+create database int_d256_div;
-+use int_d256_div;
-+create table src(id int primary key, u bigint unsigned, s bigint, d decimal(65, 30));
-+insert into src values (1,10,10,2),(2,18446744073709551615,-9223372036854775808,1),(3,null,null,2),(4,1,1,null);
-+select id, u / d from src order by id;
-+➤ id[4,32,0]  ¦  u / d[3,54,4]  𝄀
-+1  ¦  5.0000  𝄀
-+2  ¦  18446744073709551615.0000  𝄀
-+3  ¦  null  𝄀
-+4  ¦  null
-+select id, s / d from src order by id;
-+➤ id[4,32,0]  ¦  s / d[3,53,4]  𝄀
-+1  ¦  5.0000  𝄀
-+2  ¦  -9223372036854775808.0000  𝄀
-+3  ¦  null  𝄀
-+4  ¦  null
-+create table iw(t8 tinyint, t16 smallint, t32 int, t64 bigint, u8 tinyint unsigned, u16 smallint unsigned, u32 int unsigned, u64 bigint unsigned, d decimal(65, 30));
-+insert into iw values (127,32767,2147483647,-9223372036854775808,255,65535,4294967295,18446744073709551615,2);
-+select t8 / d, t16 / d, t32 / d, t64 / d from iw;
-+➤ t8 / d[3,37,4]  ¦  t16 / d[3,39,4]  ¦  t32 / d[3,44,4]  ¦  t64 / d[3,53,4]  𝄀
-+63.5000  ¦  16383.5000  ¦  1073741823.5000  ¦  -4611686018427387904.0000
-+select u8 / d, u16 / d, u32 / d, u64 / d from iw;
-+➤ u8 / d[3,37,4]  ¦  u16 / d[3,39,4]  ¦  u32 / d[3,44,4]  ¦  u64 / d[3,54,4]  𝄀
-+127.5000  ¦  32767.5000  ¦  2147483647.5000  ¦  9223372036854775807.5000
-+select id, d / u from src where id = 1;
-+➤ id[4,32,0]  ¦  d / u[3,65,30]  𝄀
-+1  ¦  0.200000000000000000000000000000
-+select id, u / cast(d as decimal(38, 10)) as q from src where id <= 2 order by id;
-+➤ id[4,32,0]  ¦  q[3,34,4]  𝄀
-+1  ¦  5.0000  𝄀
-+2  ¦  18446744073709551615.0000
-+select id, cast(u as decimal(65, 0)) / d as q from src order by id;
-+➤ id[4,32,0]  ¦  q[3,65,4]  𝄀
-+1  ¦  5.0000  𝄀
-+2  ¦  18446744073709551615.0000  𝄀
-+3  ¦  null  𝄀
-+4  ¦  null
-+select id, u div d from src order by id;
-+➤ id[4,32,0]  ¦  u div d[-5,64,0]  𝄀
-+1  ¦  5  𝄀
-+2  ¦  18446744073709551615  𝄀
-+3  ¦  null  𝄀
-+4  ¦  null
-+insert into src values (5, 7, 7, 0);
-+select id, u / d from src where id = 5;
-+➤ id[4,32,0]  ¦  u / d[3,54,4]  𝄀
-+5  ¦  null
-+create table dst(id int primary key, v decimal(65, 30));
-+insert into dst values (99, 9);
-+insert into dst select id, u / d from src where id <= 2;
-+select id, v from dst order by id;
-+➤ id[4,32,0]  ¦  v[3,65,30]  𝄀
-+1  ¦  5.000000000000000000000000000000  𝄀
-+2  ¦  18446744073709551615.000000000000000000000000000000  𝄀
-+99  ¦  9.000000000000000000000000000000
-+drop database int_d256_div;
-```
-
-**File**: `test/distributed/cases/operator/integer_decimal256_division.sql` (added, +49/-0)
-```diff
-@@ -0,0 +1,49 @@
-+-- @suite
-+
-+-- @case
-+-- @desc: integer dividends with a DECIMAL256 divisor bind the division operator; reverse,
-+-- narrower decimal, typed-cast, DIV-by-DECIMAL256 and division-by-zero neighbors stay on their
-+-- existing contracts (issue 31637)
-+-- @label:bvt
-+
-+drop database if exists int_d256_div;
-+create database int_d256_div;
-+use int_d256_div;
-+
-+-- unsigned and signed extremes, NULL dividends and NULL divisors
-+create table src(id int primary key, u bigint unsigned, s bigint, d decimal(65, 30));
-+insert into src values (1,10,10,2),(2,18446744073709551615,-9223372036854775808,1),(3,null,null,2),(4,1,1,null);
-+
-+select id, u / d from src order by id;
-+select id, s / d from src order by id;
-+
-+-- every integer storage width binds, exact cast values through the scale-0 widening
-+create table iw(t8 tinyint, t16 smallint, t32 int, t64 bigint, u8 tinyint unsigned, u16 smallint unsigned, u32 int unsigned, u64 bigint unsigned, d decimal(65, 30));
-+insert into iw values (127,32767,2147483647,-9223372036854775808,255,65535,4294967295,18446744073709551615,2);
-+
-+select t8 / d, t16 / d, t32 / d, t64 / d from iw;
-+select u8 / d, u16 / d, u32 / d, u64 / d from iw;
-+
-+-- reverse rows keep the DECIMAL256 dividend side unchanged
-+select id, d / u from src where id = 1;
-+
-+-- a cast into narrow decimal keeps the DECIMAL128-domain typing
-+select id, u / cast(d as decimal(38, 10)) as q from src where id <= 2 order by id;
-+
-+-- explicitly typed same-physical-type operands stay on decimal256 division
-+select id, cast(u as decimal(65, 0)) / d as q from src order by id;
-+
-+-- unsigned DIV with a DECIMAL256 divisor keeps the unsigned-mixed quotient
-+select id, u div d from src order by id;
-+
-+-- a zero divisor stays NULL on the SELECT path
-+insert into src values (5, 7, 7, 0);
-+select id, u / d from src where id = 5;
-+
-+-- INSERT ... SELECT consumer widens the scale-4 quotient into the destination scale
-+create table dst(id int primary key, v decimal(65, 30));
-+insert into dst values (99, 9);
-+insert into dst select id, u / d from src where id <= 2;
-+select id, v from dst order by id;
-+
-+drop database int_d256_div;
-```
-
----
-
-### Incident Patch 3: `035af996` (2026-11-18)
-**Commit Message**: fix(frontend): handle missing subscriber accounts in SHOW PUBLICATIONS (#32901)
+### Incident Patch 1: `17df10b1` (2026-11-20)
+**Commit Message**: fix: preserve TAE snapshot row IDs and stabilize main CI (#32957)
 
 ## What type of PR is this?
 
@@ -3559,163 +2396,1580 @@ Validation:
 
 ## Which issue(s) this PR fixes:
 
-issue #32899
+Fixes #32951
+Fixes #32946
+Fixes #32893
+Fixes #32953
+Fixes #32956
+
+Related to #32952, #32954, #32955, #32745 and #32885. The first three
+issues stay open for Linux confirmation of tenant cleanup, a
+duration-neutral batch deadline fix, and diagnosis of the remaining
+embedded and multi-CN failures.
 
 ## What this PR does / why we need it:
 
-`SHOW PUBLICATIONS` dereferences the account-ID lookup for every subscribed
-account without checking that it exists. A persisted subscription referencing a
-deleted account makes the whole statement panic, including unrelated healthy
-publications owned by the same publisher. MOI's Sample Data startup can therefore
-fail with Error 20101.
+- Seed the virtual-clock arena test with small buffers tracked by the
+arena memory pool. This keeps it on the real arena list and reaper path
+without installing a timer in the process-wide mmap cache.
+- Preserve the caller's cancellation cause throughout WAL record reads,
+including client checkout and retry backoff. Keep transient retries and
+the closed-pool error.
+- Choose a session offset distinct from the process offset in the
+frontend temporal test without writing the global timezone.
+- Consolidate tenant cleanup into one DROP ACCOUNT, which also removes
+the tenant source database. Retain the two-min
 
-Keep each selected publication and its metadata, but omit subscriber IDs absent
-from the account lookup from `subscribed_accounts`. Keep the existing sorted
-names for live accounts and emit one diagnostic warning per affected publication.
-Do not fall back to the stored account name: a recreated same-name account has
-a different identity and must not inherit the old subscription.
-
-This is a read-side resilience fix only. It does not mutate `mo_subs`, change
-publication authorization, mask catalog query errors, or fix orphan creation
-trac
-
-**File**: `pkg/embed/show_publications_accounts_test.go` (added, +148/-0)
+**File**: `optools/run_ut.sh` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,148 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package embed
-+
-+import (
-+	"context"
-+	"database/sql"
-+	"fmt"
-+	"strings"
-+	"testing"
-+	"time"
-+
-+	_ "github.com/go-sql-driver/mysql"
-+	"github.com/matrixorigin/matrixone/pkg/cnservice"
-+	"github.com/matrixorigin/matrixone/pkg/util/executor"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+// Reuse the shared SQL fixture. Only the orphan catalog precondition is seeded
-+// internally: all SHOWs and healthy publication/subscription setup use MySQL.
-+// This does not attempt to reproduce the separate DROP ACCOUNT lifecycle bug.
-+func TestShowPublicationsMissingAccountsSQL(t *testing.T) {
-+	RunSingleCNBaseClusterTests(t, func(c Cluster) {
-+		cn, err := c.GetCNService(0)
-+		require.NoError(t, err)
-+		sys, err := sql.Open("mysql", fmt.Sprintf("dump:111@tcp(127.0.0.1:%d)/", cn.GetServiceConfig().CN.Frontend.Port))
-+		require.NoError(t, err)
-+		defer sys.Close()
-+		internal := cn.RawService().(cnservice.Service).GetSQLExecutor()
-+		internalSQL := func(ctx context.Context, statement string) error {
-+			result, err := internal.Exec(ctx, statement, executor.Options{}.WithAccountID(0).WithWaitCommittedLogApplied())
-+			if err == nil {
-+				result.Close()
-+			}
-+			return err
-+		}
-+		const account = "showpub_live"
-+		const database = "showpub_source"
-+		const orphanID = 2000000000
-+		const orphanPredicate = "sub_account_id=2000000000 and pub_account_id=0 and pub_name in ('showpub_mixed','showpub_orphan')"
-+		for pass := 0; pass < 2; pass++ {
-+			if !t.Run(fmt.Sprintf("pass_%d", pass), func(t *testing.T) {
-+				ctx, cancel := context.WithTimeout(t.Context(), 120*time.Second)
-+				defer cancel()
-+				exec := func(statement string) {
-+					t.Helper()
-+					_, err := sys.ExecContext(ctx, statement)
-+					require.NoError(t, err, statement)
-+				}
-+				count := func(ctx context.Context, statement string) int {
-+					t.Helper()
-+					var n int
-+					require.NoError(t, sys.QueryRowContext(ctx, statement).Scan(&n))
-+					return n
-+				}
-+				// Assert the prior pass's cleanup; entry DROP IF EXISTS would mask it.
-+				require.Zero(t, count(ctx, "select count(*) from mo_catalog.mo_account where account_name='showpub_live' or account_id=2000000000"))
-+				require.Zero(t, count(ctx, "select count(*) from mo_catalog.mo_pubs where account_id=0 and pub_name in ('showpub_mixed','showpub_orphan')"))
-+				require.Zero(t, count(ctx, "select count(*) from mo_catalog.mo_database where account_id=0 and datname='showpub_source'"))
-+				defer func() {
-+					cleanup, stop := context.WithTimeout(context.Background(), 90*time.Second)
-+					defer stop()
-+					if err := internalSQL(cleanup, "delete from mo_catalog.mo_subs where "+orphanPredicate); err != nil {
-+						t.Errorf("cleanup orphan subscriptions: %v", err)
-+					}
-+					for _, statement := range []string{
-+						"drop account if exists " + account,
-+						"drop publication if exists showpub_mixed",
-+						"drop publication if exists showpub_orphan",
-+						"drop database if exists " + database,
-+					} {
-+						_, err := sys.ExecContext(cleanup, statement)
-+						if err != nil {
-+							t.Errorf("cleanup %q: %v", statement, err)
-+						}
-+					}
-+					require.Zero(t, count(cleanup, "select count(*) from mo_catalog.mo_subs where pub_account_id=0 and pub_name in ('showpub_mixed','showpub_orphan')"))
-+					require.Zero(t, count(cleanup, "select count(*) from mo_catalog.mo_account where account_name='showpub_live'"))
-+					require.Zero(t, count(cleanup, "select count(*) from mo_catalog.mo_pubs where account_id=0 and pub_name in ('showpub_mixed','showpub_orphan')"))
-+					require.Zero(t, count(cleanup, "select count(*) from mo_catalog.mo_database where account_id=0 and datname='showpub_source'"))
-+				}()
-+				exec("create account " + account + " admin_name 'admin' identified by '111'")
-+				exec("create database " + database)
-+				exec("create table " + database + ".t (id int primary key)")
-+				exec("insert into " + database + ".t values (7)")
-+				for _, pub := range []string{"showpub_mixed", "showpub_orphan"} {
-+					exec("create publication " + pub + " database " + database + " account " + account)
-+				}
-+				subscriber, err := sql.Open("mysql", fmt.Sprintf("%s#admin#accountadmin:111@tcp(127.0.0.1:%d)/", account, cn.GetServiceConfig().CN.Frontend.Port))
-+				require.NoError(t, err)
-+				defer subscriber.Close()
-+				_, err = subscriber.ExecContext(ctx, "create database live_sub 
+@@ -2338,7 +2338,7 @@ function run_prebuilt_race_commands(){
+                 return 1
+             fi
+             checkpoint_ut_event start "${stage}" "${race_packages[index]}" "" \
+-                "package_index=${index} prebuilt=true parallel=${parallel}"
++                "package_index=${index} prebuilt=true parallel=${parallel} timeout_seconds=${remaining}"
+             set -m
+             (
+                 cd "${race_dirs[index]}" || exit 2
 ```
 
-**File**: `pkg/frontend/publication_subscription.go` (modified, +12/-1)
+**File**: `pkg/common/morpc/client_lock_contention_test.go` (modified, +11/-21)
 ```diff
-@@ -1987,8 +1987,19 @@ func doShowPublications(ctx context.Context, ses *Session, sp *tree.ShowPublicat
- 		if err != nil {
+@@ -152,37 +152,27 @@ func TestGetBackendConcurrentWithSlowConnection(t *testing.T) {
+ // TestGetBackendWithCircuitBreaker tests that circuit breaker prevents
+ // repeated attempts to bad backends
+ func TestGetBackendWithCircuitBreaker(t *testing.T) {
+-	factory := &testBackendFactoryWithDelay{
+-		delay:      10 * time.Millisecond,
+-		shouldFail: true,
+-	}
++	const remote = "bad-backend"
++	factory := &testBackendFactoryWithDelay{shouldFail: true}
+ 
+ 	rc, err := NewClient(
+ 		"test-client",
+ 		factory,
+ 		WithClientMaxBackendPerHost(2),
+ 		WithClientEnableAutoCreateBackend(),
++		WithClientCircuitBreaker(CircuitBreakerConfig{
++			Enabled: true, FailureThreshold: 1, ResetTimeout: time.Hour, HalfOpenMaxRequests: 1,
++		}),
+ 	)
+ 	require.NoError(t, err)
+-	defer rc.Close()
++	t.Cleanup(func() { require.NoError(t, rc.Close()) })
+ 
+ 	c := rc.(*client)
+-
+-	// Trigger circuit breaker by recording failures
+-	for i := 0; i < 10; i++ {
+-		c.circuitBreakers.RecordFailure("bad-backend")
+-	}
+-
+-	// getBackend should fail fast
+-	start := time.Now()
+-	b, err := c.getBackend("bad-backend", false)
+-	elapsed := time.Since(start)
+-
+-	assert.Error(t, err)
+-	assert.Nil(t, b)
+-	// Should fail fast (either circuit breaker or no backend available)
+-	assert.Less(t, elapsed, 20*time.Millisecond,
+-		"Should fail fast with circuit breaker or no backend")
++	c.circuitBreakers.RecordFailure(remote)
++	b, err := c.getBackend(remote, false)
++	require.ErrorIs(t, err, ErrCircuitOpen)
++	require.Nil(t, b)
++	require.Zero(t, factory.createCount.Load())
+ }
+ 
+ // TestGetBackendWithClientClosed tests that getBackend handles
+```
+
+**File**: `pkg/frontend/time_zone_and_saved_temporal_test.go` (modified, +8/-5)
+```diff
+@@ -50,13 +50,16 @@ func TestConvertRowsIntoBatchTemporalText(t *testing.T) {
+ 		"2024-01-01 00:00:00.123456", "2024-01-01 00:00:00.999"})
+ 	mrs.AddRow([]any{nil, nil, nil, nil, nil})
+ 
+-	session := time.FixedZone("session", 0)
++	// Keep the session and process offsets distinct at the fixture timestamp.
++	_, processOffset := time.Date(2024, 1, 1, 0, 0, 0, 0, time.Local).Zone()
++	sessionOffset := 0
++	if processOffset == 0 {
++		sessionOffset = 8 * 3600
++	}
++	session := time.FixedZone("session", sessionOffset)
+ 	pool, err := mpool.NewMPool("test", 0, mpool.NoFixed)
+ 	require.NoError(t, err)
+-	// Use a process-local zone that differs from the session zone.
+-	oldLocal := time.Local
+-	time.Local = time.FixedZone("process", 8*3600)
+-	defer func() { time.Local = oldLocal }()
++	t.Cleanup(func() { mpool.DeleteMPool(pool) })
+ 
+ 	data, colDefs, err := convertRowsIntoBatchInLocation(pool, mrs.Columns, mrs.Data, session)
+ 	require.NoError(t, err)
+```
+
+**File**: `pkg/objectio/arena_pool_test.go` (modified, +14/-11)
+```diff
+@@ -117,6 +117,7 @@ func TestArenaBurstReleasedWhileStillActive(t *testing.T) {
+ 	// subtest owns its own bubble below.
+ 	for _, schedule := range []string{"normal first fire", "delayed first fire"} {
+ 		t.Run(schedule, func(t *testing.T) {
++			emptyArenaPool(ArenaLarge)
+ 			synctest.Test(t, func(t *testing.T) {
+ 				// Drain the reaper on every exit path, including failed
+ 				// assertions: this defer runs during Goexit while still
+@@ -126,17 +127,18 @@ func TestArenaBurstReleasedWhileStillActive(t *testing.T) {
+ 				defer drainArenaReaper(ArenaLarge)
+ 				const ttl = 150 * time.Millisecond
+ 				withArenaIdleTTL(t, ttl)
+-				base := arenaMPool.CurrNB()
++				base := arenaMPool.OnHeapCurrNB()
+ 
+-				// Within capacity, so perArena below divides by what is actually parked.
+-				burst := make([]*WriteArena, min(8, arenaPools[ArenaLarge].maxCount))
+-				for i := range burst {
+-					burst[i] = GetArena(ArenaLarge)
++				// Track arena ownership through the same MPool without invoking
++				// the shared C allocator's timers under the virtual clock.
++				const seedSize = 1024
++				burst := min(8, arenaPools[ArenaLarge].maxCount)
++				for range burst {
++					data, err := arenaMPool.Alloc(seedSize, false)
++					require.NoError(t, err)
++					PutArena(&WriteArena{data: data, sizeLimit: arenaMaxSize})
+ 				}
+-				for _, a := range burst {
+-					PutArena(a)
+-				}
+-				perArena := (arenaMPool.CurrNB() - base) / int64(len(burst))
++				require.Equal(t, base+int64(burst*seedSize), arenaMPool.OnHeapCurrNB())
+ 
+ 				pool := &arenaPools[ArenaLarge]
+ 				holdFirstReaper := schedule != "normal first fire"
+@@ -154,7 +156,7 @@ func TestArenaBurstReleasedWhileStillActive(t *testing.T) {
+ 				// pool. Pool-owned arenas are released by withArenaIdleTTL's
+ 				// cleanup; releasing the borrowed one here covers a failed
+ 				// assertion mid-borrow without leaking or double-freeing
+-				// off-heap buffers.
++				// buffers.
+ 				var borrowed *WriteArena
+ 				t.Cleanup(func() {
+ 					if borrowed != nil {
+@@ -170,6 +172,7 @@ func TestArenaBurstReleasedWhileStillActive(t *testing.T) {
+ 					if n == 1 {
+ 						break
+ 					}
++					require.Positive(t, n, "the seeded pool must retain the working arena")
+ 					if holdFirstReaper && time.Since(start) >= 6*ttl {
+ 						// Re-arm the held reaper after the old fixed warmup
+ 						// (4*ttl) plus the TTL has elapsed in bubble time,
+@@ -201,7 +204,7 @@ func TestArenaBurstReleasedWhileStillActive(t *testing.T) {
+ 				n, survivor := parkedLargeSnapshot()
+ 				require.Equal(t, 1, n, "the cold burst arenas age out while the pool stays busy")
+ 				require.Same(t, steady, survivor, "the surviving parked arena is the one the workload kept reusing")
+-				require.Equal(t, base+perArena, arenaMPool.CurrNB(), "only the working arena's memory is kept")
++				require.Equal(t, base+seedSize, arenaMPool.OnHeapCurrNB(), "only the working arena's memory is kept")
+ 			})
+ 		})
+ 	}
+```
+
+**File**: `pkg/tests/issues/issue_29133_policy_refresh_test.go` (modified, +29/-17)
+```diff
+@@ -17,6 +17,7 @@ package issues
+ import (
+ 	"context"
+ 	"database/sql"
++	"errors"
+ 	"fmt"
+ 	"testing"
+ 	"time"
+@@ -36,7 +37,7 @@ func TestIssue29133RoleRulesTrackRemoteChanges(t *testing.T) {
+ 			ctx, cancel := context.WithTimeout(t.Context(), 120*time.Second)
+ 			defer cancel()
+ 			var tenantPools []*sql.DB
+-			open := func(index int, user string) *sql.Conn {
++			open := func(index int, user string) (*sql.DB, *sql.Conn) {
+ 				t.Helper()
+ 				cn, err := c.GetCNService(index)
+ 				require.NoError(t, err)
+@@ -48,29 +49,39 @@ func TestIssue29133RoleRulesTrackRemoteChanges(t *testing.T) {
+ 				}
+ 				conn, err := db.Conn(ctx)
+ 				require.NoError(t, err)
+-				t.Cleanup(func() { require.NoError(t, conn.Close()) })
+-				return conn
++				t.Cleanup(func() {
++					if err := conn.Close(); !errors.Is(err, sql.ErrConnDone) {
++						assert.NoError(t, err)
++					}
++				})
++				return db, conn
+ 			}
+-			admin := open(0, "dump")
++			adminPool, admin := open(0, "dump")
+ 			mustExec(t, ctx, admin, "create account rule_refresh admin_name 'admin' identified by '111'")
+ 			// Register before tenant resources so their LIFO cleanup completes before
+-			// DROP ACCOUNT kills sessions. The admin connection remains usable.
++			// DROP ACCOUNT kills sessions. Use the pool so an earlier SQL
++			// cancellation cannot leave cleanup pinned to a discarded session.
+ 			t.Cleanup(func() {
+ 				for _, db := range tenantPools {
+ 					assert.Zero(t, db.Stats().OpenConnections, "tenant pool still open before DROP ACCOUNT")
+ 				}
++				if t.Failed() {
++					// The fixture owner retires the failed cluster.
++					return
++				}
+ 				cleanup, stop := context.WithTimeout(context.Background(), 30*time.Second)
+-				_, err := admin.ExecContext(cleanup, "drop account rule_refresh")
+-				stop()
+-				assert.NoError(t, err)
+-				cleanup, stop = context.WithTimeout(context.Background(), 30*time.Second)
+ 				defer stop()
++				if _, err := adminPool.ExecContext(cleanup, "drop account rule_refresh"); !assert.NoError(t, err) {
++					return
++				}
++				check, stopCheck := context.WithTimeout(context.Background(), 30*time.Second)
++				defer stopCheck()
+ 				var remaining int
+-				err = admin.QueryRowContext(cleanup, "select count(*) from mo_catalog.mo_account where account_name='rule_refresh'").Scan(&remaining)
+-				assert.NoError(t, err)
+-				assert.Zero(t, remaining)
++				if assert.NoError(t, adminPool.QueryRowContext(check, "select count(*) from mo_catalog.mo_account where account_name='rule_refresh'").Scan(&remaining)) {
++					assert.Zero(t, remaining)
++				}
+ 			})
+-			owner := open(0, "rule_refresh#admin#accountadmin")
++			_, owner := open(0, "rule_refresh#admin#accountadmin")
+ 			for _, statement := range []string{
+ 				"create database app", "create table app.t(id int primary key, tenant int)",
+ 				"insert into app.t values (1,1),(2,2)", "create role reader",
+@@ -81,9 +92,9 @@ func TestIssue29133RoleRulesTrackRemoteChanges(t *testing.T) {
+ 				mustExec(t, ctx, owner, statement)
+ 			}
+ 			mustExec(t, ctx, admin, "select mo_ctl('cn','synccommit','')")
+-			reader := open(1, "rule_refresh#learner#reader")
+-			binaryReader := open(1, "rule_refresh#learner#reader")
+-			sqlReader := open(1, "rule_refresh#learner#reader")
++			_, reader := open(1, "rule_refresh#learner#reader")
++			_, binaryReader := open(1, "rule_refresh#learner#reader")
++			_, sqlReader := open(1, "rule_refresh#learner#reader")
+ 			const query = "select id from app.t order by id"
+ 			checkRows := func(query func() (*sql.Rows, error), expected []int) {
+ 				t.Helper()
+@@ -170,7 +181,8 @@ func TestIssue29133RoleRulesTrackRemoteChanges(t *testing.T) {
+ 				// relying on a preceding text command on that connection.
+ 				needReprepare(func() (*sql.Rows, error) { return binary.QueryContext(ctx) })
+ 				needReprepare(func() (*sql.Rows, error) { return sqlReader.QueryContext(ctx, "execute saved") })
+-				check(open(1, "rule_refresh#learner#reader"), transition.expected)
++				_, freshReader := open(1, "rule_refresh#learner#reader")
++				check(freshReader, transition.expected)
+ 				check(reader, transition.expected)
+ 				check(reader, transition.expected)
+ 				require.NoError(t, binary.Close())
+```
+
+**File**: `pkg/tests/issues/issue_30411_test.go` (modified, +57/-28)
+```diff
+@@ -42,6 +42,10 @@ func TestLoadRejectsDuplicatePrimaryKeys(t *testing.T) {
+ 		const database = "load_duplicate_primary_keys"
+ 		execSQLRequire(t, ctx, db, "create database "+database)
+ 		defer func() {
++			if t.Failed() {
++				// The shared fixture retires this generation on failure.
++				return
++			}
+ 			cleanup, stop := context.WithTimeout(context.Background(), 20*time.Second)
+ 			defer stop()
+ 			execSQLRequire(t, cleanup, db, "drop database "+database)
+@@ -81,7 +85,7 @@ func TestLoadRejectsDuplicatePrimaryKeys(t *testing.T) {
+ 			return fmt.Sprintf("load data infile '%s' into table %s fields terminated by ','", path, table)
+ 		}
+ 
+-		t.Run("session policy and cached statements", func(t *testing.T) {
++		if !t.Run("session policy and cached statements", func(t *testing.T) {
+ 			var enabled int
+ 			require.NoError(t, conn.QueryRowContext(ctx, "select @@session.mo_pk_check_by_cn").Scan(&enabled))
+ 			require.Zero(t, enabled)
+@@ -135,9 +139,10 @@ func TestLoadRejectsDuplicatePrimaryKeys(t *testing.T) {
+ 				require.Equal(t, uint16(1062), duplicate.Number)
+ 				require.Zero(t, count(t, "switch_load"), "prepared INSERT keeps validation and rollback across SETs")
+ 			}
+-		})
+-		t.Run("procedure session policy and rollback", func(t *testing.T) {
+-			defer func() { _, _ = conn.ExecContext(ctx, "set session mo_pk_check_by_cn=off") }()
++		}) {
++			return
++		}
++		if !t.Run("procedure session policy and rollback", func(t *testing.T) {
+ 			exec(t, "create table procedure_load(id bigint primary key,name varchar(20))")
+ 			// Reuse fixed procedure definitions across SETs. Only the owning
+ 			// connection's current policy may determine LOAD validation.
+@@ -152,7 +157,7 @@ func TestLoadRejectsDuplicatePrimaryKeys(t *testing.T) {
+ 			for round, on := range []bool{true, false, true} {
+ 				exec(t, fmt.Sprintf("set session mo_pk_check_by_cn=%t", on))
+ 				for i, query := range duplicate {
+-					t.Run(fmt.Sprintf("round=%d/on=%t/%s", round, on, modes[i]), func(t *testing.T) {
++					if !t.Run(fmt.Sprintf("round=%d/on=%t/%s", round, on, modes[i]), func(t *testing.T) {
+ 						exec(t, "truncate table procedure_load")
+ 						if on {
+ 							requireDuplicate(t, query)
+@@ -161,13 +166,15 @@ func TestLoadRejectsDuplicatePrimaryKeys(t *testing.T) {
+ 							exec(t, query)
+ 							require.Equal(t, 2, count(t, "procedure_load"), "OFF with TN OFF bypasses CN validation at every call depth")
+ 						}
+-					})
++					}) {
++						return
++					}
+ 				}
+ 			}
+ 			conflicts := procedure("load_target_conflict", "2,new\n1,conflict\n", "")
+ 			valid := procedure("load_valid", "2,new\n3,new\n", "")
+ 			for i, query := range conflicts {
+-				t.Run("target conflict and recovery/"+modes[i], func(t *testing.T) {
++				if !t.Run("target conflict and recovery/"+modes[i], func(t *testing.T) {
+ 					exec(t, "truncate table procedure_load")
+ 					exec(t, "insert into procedure_load values(1,'old')")
+ 					requireDuplicate(t, query)
+@@ -177,7 +184,9 @@ func TestLoadRejectsDuplicatePrimaryKeys(t *testing.T) {
+ 					require.Equal(t, "old", payload)
+ 					exec(t, valid[i])
+ 					require.Equal(t, 3, count(t, "procedure_load"), "same call depth remains usable after rejection")
+-				})
++				}) {
++					return
++				}
+ 			}
+ 			for i, declaration := range []string{
+ 				"declare mo_pk_check_by_cn int; ",
+@@ -188,7 +197,7 @@ func TestLoadRejectsDuplicatePrimaryKeys(t *testing.T) {
+ 				for _, on := range []bool{true, false} {
+ 					exec(t, fmt.Sprintf("set session mo_pk_check_by_cn=%t", on))
+ 					for depth, query := range queries[1:] {
+-						t.Run(fmt.Sprintf("local collision=%d/on=%t/%s", i, on, modes[depth+1]), func(t *testing.T) {
++						if !t.Run(fmt.Sprintf("local collision=%d/on=%t/%s", i, on, modes[depth+1]), func(t *testing.T) {
+ 							exec(t, "truncate table procedure_load")
+ 							if on {
+ 								requireDuplicate(t, query)
+@@ -197,22 +206,28 @@ func TestLoadRejectsDuplicatePrimaryKeys(t *testing.T) {
+ 								exec(t, query)
+ 								require.Equal(t, 2, count(t, "procedure_load"))
+ 							}
+-						})
++						}) {
++							return
++						}
+ 					}
+ 				}
+ 			}
+-		})
+-		// The existing correctness suite exercises the explicitly enabled policy.
++		}) {
++			return
++		}
++		// The remaining cases exercise the explicitly enabled policy.
+ 		exec(t, "set session mo_pk_check_by_cn=on")
+ 		exec(t, "create table t(id bigint primary key, name varchar(256))")
+-		t.Run("input duplicate and rollback", func(t *testing.T) {
++		if !t.Run("input duplicate and rollback", func(t *testing.T) {
+ 			path := writeInput(t, "duplicate.csv", "1,a\n1,b\n")
+ 			requireDuplicate(t, load(path, "t"))
+ 			require.Zero(t, count(t, "t"))
+ 			requireDuplicate(t, "insert into t values(1,'a'),(1,'b')")
+ 			require.Zero(t, count(t, "t"))
+-		})
+-		t.Run("existing row collision and rollback", func(t *testing.T) {
++		}) {
++			return
++		}
++		if !t.Run("existing row collision and rollback", func(t *testing.T) {
+ 			exec(t, "insert into t values(1,'old')")
+ 			path := writeInput(t, "existing.csv", "2,ne
+```
+
+**File**: `pkg/tests/issues/issue_31401_scalar_test.go` (modified, +4/-12)
+```diff
+@@ -117,19 +117,11 @@ func TestIssue31401ScalarRefreshProgress(t *testing.T) {
+ 					require.NoError(t, err)
+ 					defer db.Close()
+ 				}
+-				var tenantSourceOwned bool
+-				defer func() {
+-					if tenantSourceOwned {
+-						_ = cleanupSQL(db.ExecContext, 10*time.Second, "drop database if exists "+source)
+-					}
+-				}()
+-				// The next selected child already resets both databases. Keep
+-				// system resources until that reset, then clean the final pair once.
+-				// Tenant source cleanup still precedes its dependent DROP ACCOUNT.
++				// Each case resets both databases. Keep system resources until
++				// the next reset, then clean the final pair once. DROP ACCOUNT
++				// owns removal of the tenant's source database.
+ 				resetIssue277xxDatabase(t, ctx, db, source)
+-				if tenant {
+-					tenantSourceOwned = true
+-				} else {
++				if !tenant {
+ 					systemSourceOwned = true
+ 				}
+ 				resetIssue277xxDatabase(t, ctx, sys, peer)
+```
+
+**File**: `pkg/vm/engine/tae/db/test/db_test.go` (modified, +21/-3)
+```diff
+@@ -69,6 +69,7 @@ import (
+ 	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/options"
+ 	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/tables"
+ 	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/tables/jobs"
++	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/tables/updates"
+ 	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/tasks"
+ 	ops "github.com/matrixorigin/matrixone/pkg/vm/engine/tae/tasks/worker"
+ 	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/testutils"
+@@ -4267,14 +4268,25 @@ func TestV9FlushPreservesRowIDAcrossAbortHole(t *testing.T) {
+ 	require.NoError(t, abortTxn.PrePrepare(ctx))
+ 	require.NoError(t, abortTxn.PreApplyCommit())
+ 	require.NoError(t, abortTxn.Rollback(ctx))
++
++	// Insert a terminal reservation with no prepare timestamp. Unlike the
++	// rollback above, the range collector omits this slot entirely. The
++	// following ordinary append still uses the next physical offset.
++	gapTxn, gapRel := tae.GetRelation()
++	metas := testutil.GetAllAppendableMetas(gapRel, false)
++	require.Len(t, metas, 1)
++	gap := updates.NewAppendNode(nil, 2, 3, false, nil)
++	gap.Start, gap.End, gap.Aborted = abortTxn.GetStartTS(), abortTxn.GetCommitTS(), true
++	require.NoError(t, metas[0].GetObjectData().OnReplayAppend(gap))
++	require.NoError(t, gapTxn.Rollback(ctx))
+ 	tae.DoAppend(tail)
+ 
+ 	deleteTxn, deleteRel := tae.GetRelation()
+ 	sortKeyIdx := schema.GetSingleSortKeyIdx()
+ 	key := tail.Vecs[sortKeyIdx].Get(0)
+ 	id, offset, err := deleteRel.GetByFilter(ctx, handle.NewEQFilter(key))
+ 	require.NoError(t, err)
+-	require.Equal(t, uint32(2), offset, "rollback hole must retain its physical slot")
++	require.Equal(t, uint32(3), offset, "both holes must retain their physical slots")
+ 	oldBlockID := id.BlockID
+ 	require.NoError(t, deleteRel.RangeDelete(id, offset, offset, handle.DT_Normal))
+ 	require.NoError(t, deleteTxn.Commit(ctx))
+@@ -4297,8 +4309,14 @@ func TestV9FlushPreservesRowIDAcrossAbortHole(t *testing.T) {
+ 
+ 	// The historical snapshot is held open while the aobject location is
+ 	// replaced, so it cannot use tombstones transferred by the later flush.
+-	// Its tombstone still targets original offset 2; it must hide that row while
+-	// preserving the later live row at offset 3.
++	// Its tombstone targets physical offset 3 and the surviving value is still
++	// at offset 4 in both point-read paths.
++	for _, skipDeleteCheck := range []bool{false, true} {
++		value, isNull, err := snapshotRel.GetValue(id, 4, uint16(sortKeyIdx), skipDeleteCheck)
++		require.NoError(t, err)
++		require.False(t, isNull)
++		require.Equal(t, rows.Vecs[sortKeyIdx].Get(3), value)
++	}
+ 	var view *containers.Batch
+ 	err = tables.HybridScanByBlock(
+ 		ctx,
+```
+
+---
+
+### Incident Patch 2: `fa7b7d84` (2026-11-20)
+**Commit Message**: [Bug] Recover from invalid and failed exported log snapshots (#32853)
+
+## What type of PR is this?
+
+- [ ] API-change
+- [x] BUG
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [ ] Test and CI
+- [ ] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Fixes #32842
+Fixes #32836
+
+## What this PR does / why we need it:
+
+- Validate exported snapshots before import. Remove a definitively
+invalid candidate and try an older export while preserving the TN replay
+watermark check. Keep transient read and removal errors retryable
+without compacting the Raft log.
+- Upgrade to the merged Dragonboat fixes in
+[#21](https://github.com/matrixorigin/dragonboat/pull/21) and
+[#22](https://github.com/matrixorigin/dragonboat/pull/22). Export worker
+failures return an error instead of terminating LogService, and
+malformed exported metadata or image headers return an
+incomplete-snapshot result instead of panicking.
+- Retain an admitted export request across a caller timeout, then
+reconcile its final worker result before retrying. After a same-process
+replica restart, use Dragonboat's successful restart as confirmation
+that the previous worker stopped, clean its abandoned export, and
+release the old exp
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -300,7 +300,7 @@ replace github.com/hashicorp/memberlist => github.com/matrixorigin/memberlist v0
+ replace (
+ 	github.com/elastic/gosigar v0.14.2 => github.com/matrixorigin/gosigar v0.14.3-0.20241204071856-40aab500bfac
+ 	github.com/fagongzi/goetty/v2 v2.0.3-0.20230628075727-26c9a2fd5fb8 => github.com/matrixorigin/goetty/v2 v2.0.0-20260811155919-8edc32ac370a
+-	github.com/lni/dragonboat/v4 v4.0.0-20220815145555-6f622e8bcbef => github.com/matrixorigin/dragonboat/v4 v4.0.0-20261106075629-8ed6c83d529b
++	github.com/lni/dragonboat/v4 v4.0.0-20220815145555-6f622e8bcbef => github.com/matrixorigin/dragonboat/v4 v4.0.0-20261120034006-a361da8862a7
+ 	github.com/lni/goutils v1.3.1-0.20220604063047-388d67b4dbc4 => github.com/matrixorigin/goutils v1.3.1-0.20220604063047-388d67b4dbc4
+ 	github.com/lni/vfs v0.2.1-0.20220616104132-8852fd867376 => github.com/matrixorigin/vfs v0.2.1-0.20220616104132-8852fd867376
+ )
+```
+
+**File**: `go.sum` (modified, +4/-2)
+```diff
+@@ -524,8 +524,10 @@ github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0/go.mod h1:zJYVVT2
+ github.com/lufia/plan9stats v0.0.0-20260330125221-c963978e514e h1:Q6MvJtQK/iRcRtzAscm/zF23XxJlbECiGPyRicsX+Ak=
+ github.com/lufia/plan9stats v0.0.0-20260330125221-c963978e514e/go.mod h1:autxFIvghDt3jPTLoqZ9OZ7s9qTGNAWmYCjVFWPX/zg=
+ github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
+-github.com/matrixorigin/dragonboat/v4 v4.0.0-20261106075629-8ed6c83d529b h1:gflqGAAr3KsFDLWuLxZ9YpJNEgtfo2bxprirlnCJ6cU=
+-github.com/matrixorigin/dragonboat/v4 v4.0.0-20261106075629-8ed6c83d529b/go.mod h1:B1VfuDzGm7Uk0xoRkRJynA6n4i31m/1ZJIPfIyJfYQg=
++github.com/matrixorigin/dragonboat/v4 v4.0.0-20261117092219-03ee395d73dd h1:dtfdSrdd3GAppYxM5vW/GVJlZkPigKdTxB8UuBCto9Y=
++github.com/matrixorigin/dragonboat/v4 v4.0.0-20261117092219-03ee395d73dd/go.mod h1:B1VfuDzGm7Uk0xoRkRJynA6n4i31m/1ZJIPfIyJfYQg=
++github.com/matrixorigin/dragonboat/v4 v4.0.0-20261120034006-a361da8862a7 h1:z9Wv1Xkbx2lT5ZOzXzxqfSsfj4nkTdWGrVgErqV96FE=
++github.com/matrixorigin/dragonboat/v4 v4.0.0-20261120034006-a361da8862a7/go.mod h1:B1VfuDzGm7Uk0xoRkRJynA6n4i31m/1ZJIPfIyJfYQg=
+ github.com/matrixorigin/goetty/v2 v2.0.0-20260811155919-8edc32ac370a h1:D8kXjySDJHA8nyZzzi/4cx3KB6qrSPQeugUCLkgoEho=
+ github.com/matrixorigin/goetty/v2 v2.0.0-20260811155919-8edc32ac370a/go.mod h1:OwIBpVwRW1HjF/Jhc2Av3UvG2NygMg+bdqGxZaqwhU0=
+ github.com/matrixorigin/gosigar v0.14.3-0.20241204071856-40aab500bfac h1:KRPOwOcSZRfWT7w8mr7BmFLoFB75ljgqjkg47xkN/Pc=
+```
+
+**File**: `pkg/logservice/snapshot.go` (modified, +249/-39)
+```diff
+@@ -22,6 +22,7 @@ import (
+ 	"sort"
+ 	"sync"
+ 
++	"github.com/lni/dragonboat/v4"
+ 	"github.com/lni/vfs"
+ 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
+ )
+@@ -70,11 +71,6 @@ func (si *snapshotItem) Exists() bool {
+ 	return err == nil
+ }
+ 
+-// Remove implements the ISnapshotItem interface.
+-func (si *snapshotItem) Remove() error {
+-	return si.fs.RemoveAll(si.dir)
+-}
+-
+ // Valid implements the ISnapshotItem interface.
+ func (si *snapshotItem) Valid() (bool, error) {
+ 	names, err := si.fs.List(si.dir)
+@@ -113,6 +109,15 @@ type snapshotRecord struct {
+ 	// publish a final directory, even after StopReplica returns.
+ 	activeExports      int
+ 	lateExportPossible bool
++	// Keep the Dragonboat result after the caller's shorter context expires.
++	// The truncation worker owns and consumes this single pending result.
++	pendingExport *dragonboat.RequestState
++	// StartReplica has confirmed that the previous replica's snapshot worker
++	// has stopped. Wait for its caller to return before reconciling old files.
++	previousReplicaStopped bool
++	// A confirmed failed export left an abandoned directory that could not
++	// be removed. Retry cleanup before the next export at the same index.
++	failedExportCleanup bool
+ }
+ 
+ var errSnapshotExportPending = moerr.NewInternalErrorNoCtx("exported snapshot may still be written")
+@@ -173,18 +178,53 @@ func (ss *snapshotRecord) add(index snapshotIndex, dir string) error {
+ 	return nil
+ }
+ 
+-// removeFirst removes the first snapshot from snapshot item list.
+-func (ss *snapshotRecord) removeFirst() error {
+-	if first := ss.first(); first != nil {
+-		if err := first.Remove(); err != nil {
++// removeAt renames a completed export before deleting its contents. Once the
++// canonical name is gone, the item must leave the inventory even if cleanup
++// fails: the durable .removing name owns the retry across a process restart.
++func (ss *snapshotRecord) removeAt(i int) error {
++	item := ss.items[i]
++	parent := filepath.Dir(item.dir)
++	removing := ss.fs.PathJoin(parent,
++		fmt.Sprintf(snapshotPathPattern+"-%d.removing", item.index, ss.nodeID.replicaID))
++	renamed := true
++	if err := ss.fs.Rename(item.dir, removing); err != nil {
++		if !errors.Is(err, os.ErrNotExist) {
  			return err
  		}
-+		missingAccounts := 0
- 		for _, subInfo := range subscribedInfos {
--			subscribedAccountNames = append(subscribedAccountNames, accIdInfoMap[subInfo.SubAccountId].Name)
-+			accountInfo := accIdInfoMap[subInfo.SubAccountId]
-+			if accountInfo == nil {
-+				// A stale subscription must not hide this or other publications.
-+				// Do not fall back to the stored name: it may belong to a new ID.
-+				missingAccounts++
-+				continue
-+			}
-+			subscribedAccountNames = append(subscribedAccountNames, accountInfo.Name)
++		// A missing export cannot be renamed. Confirm the canonical path is
++		// gone before releasing its inventory slot; an ENOENT from Rename
++		// while the source still exists or a transient Stat error must retry.
++		if _, statErr := ss.fs.Stat(item.dir); !errors.Is(statErr, os.ErrNotExist) {
++			return errors.Join(err, statErr)
 +		}
-+		if missingAccounts > 0 {
-+			ses.Warnf(ctx, "SHOW PUBLICATIONS: publication %q has %d subscribed account IDs absent from the account lookup; omitted from subscribed_accounts", pubInfo.PubName, missingAccounts)
++		renamed = false
++	}
++	copy(ss.items[i:], ss.items[i+1:])
++	ss.items[len(ss.items)-1] = nil
++	ss.items = ss.items[:len(ss.items)-1]
++	putSnapshotItem(item)
++	if !renamed {
++		return nil
++	}
++	if err := syncExportDir(ss.fs, parent); err != nil {
++		ss.failedExportCleanup = true
++		return err
++	}
++	if err := ss.fs.RemoveAll(removing); err != nil {
++		ss.failedExportCleanup = true
++		return err
+ 	}
+-	putSnapshotItem(ss.items[0])
+-	ss.items = ss.items[1:]
+ 	return nil
+ }
+ 
++// removeFirst removes the first snapshot from snapshot item list.
++func (ss *snapshotRecord) removeFirst() error {
++	if len(ss.items) == 0 {
++		return nil
++	}
++	return ss.removeAt(0)
++}
++
+ // removeLast removes the last (newest) snapshot from the snapshot item
+ // list. Used by the truncation loop's timeout-path escape valve to
+ // prefer preserving older items, which are more likely to be importable
+@@ -194,29 +234,41 @@ func (ss *snapshotRecord) removeLast() error {
+ 	if l == 0 {
+ 		return nil
+ 	}
+-	last := ss.items[l-1]
+-	if err := last.Remove(); err != nil {
+-		return err
++	return ss.removeAt(l - 1)
++}
++
++// removeIndex removes a known unusable export without disturbing newer or
++// older candidates. The Raft log is compacted only after a successful import.
++func (ss *snapshotRecord) removeIndex(index snapshotIndex) (bool, error) {
++	for i, item := range ss.items {
++		if item.index != index {
++			continue
++		}
++		if err := ss.removeAt(i); err != nil {
++			return false, err
++		}
++		return true, nil
+ 	}
+-	putSnapshotItem(last)
+-	ss.items = ss.items[:l-1]
+-	return nil
++	return false, nil
+ }
+ 
+ // remove the snapshots whose index is LE than the index.
+ func (ss *snapshotRecord) remove(index snapshotIndex) error {
+-	items := make([]*snapshotItem, len(ss.items))
+-	copy(items, ss.items)
+-	for _, si := range items {
+-		if si.index <= index {
+-			if err := ss.removeFirst(); err != nil {
+-				return err
++	var cleanupErr error
++	for first := ss.first(); first != nil && first.index <= index; first = ss.first() {
++		count := len(ss.items)
++		if err := ss.removeFirst(); err != nil {
++			cleanupErr = errors.Join(cleanupErr, err)
++			if len(ss.items) == count {
++				// Rename failed, so the current item is still canonical and
++				// retained in the inventory for an explicit retry.
++				return cleanupErr
+ 			}
+-		} else {
+-			break
++			// A tombstone owns this item's retry. Finish removing the other
++			// images alrea
+```
+
+**File**: `pkg/logservice/snapshot_test.go` (modified, +332/-4)
+```diff
+@@ -17,6 +17,7 @@ package logservice
+ import (
+ 	"fmt"
+ 	"os"
++	"strings"
+ 	"testing"
+ 
+ 	"github.com/lni/vfs"
+@@ -197,6 +198,253 @@ type removeErrorFS struct{ vfs.FS }
+ 
+ func (fs removeErrorFS) RemoveAll(string) error { return os.ErrPermission }
+ 
++type partialSnapshotRemovalFS struct {
++	vfs.FS
++	failed bool
++}
++
++type retryParentSyncFS struct {
++	vfs.FS
++	syncCalls int
++}
++
++type retryParentSyncDir struct {
++	vfs.File
++	fs *retryParentSyncFS
++}
++
++func (dir *retryParentSyncDir) Sync() error {
++	dir.fs.syncCalls++
++	if dir.fs.syncCalls == 1 {
++		return os.ErrPermission
++	}
++	return dir.File.Sync()
++}
++
++func (fs *retryParentSyncFS) OpenDir(path string) (vfs.File, error) {
++	dir, err := fs.FS.OpenDir(path)
++	if err != nil {
++		return nil, err
++	}
++	return &retryParentSyncDir{File: dir, fs: fs}, nil
++}
++
++func (fs *retryParentSyncFS) RemoveAll(path string) error {
++	if strings.HasSuffix(path, ".removing") && fs.syncCalls < 2 {
++		return os.ErrInvalid
++	}
++	return fs.FS.RemoveAll(path)
++}
++
++func TestReconcileInterruptedExportSyncsTombstoneOnRetry(t *testing.T) {
++	fs := &retryParentSyncFS{FS: vfs.NewStrictMem()}
++	mgr := newSnapshotManager(&Config{FS: fs, SnapshotExportDir: "/tmp/exported"})
++	nid := nodeID{shardID: 1, replicaID: 2}
++	testPrepareSnapshot(t, mgr, nid, 100)
++	final := mgr.snapshotPath(nid, 100)
++	flag, err := fs.Create(fs.PathJoin(final, "dragonboat.snapshot.message"))
++	require.NoError(t, err)
++	require.NoError(t, flag.Close())
++
++	require.ErrorIs(t, mgr.ReconcileInterruptedExport(nid.shardID, nid.replicaID), os.ErrPermission)
++	_, err = fs.Stat(final + "-2.removing")
++	require.NoError(t, err)
++	require.NoError(t, mgr.ReconcileInterruptedExport(nid.shardID, nid.replicaID))
++	require.Equal(t, 2, fs.syncCalls)
++	_, err = fs.Stat(final + "-2.removing")
++	require.ErrorIs(t, err, os.ErrNotExist)
++}
++
++func (fs *partialSnapshotRemovalFS) RemoveAll(path string) error {
++	if strings.HasSuffix(path, ".removing") && !fs.failed {
++		fs.failed = true
++		if err := fs.FS.Remove(fs.FS.PathJoin(path, "dragonboat.snapshot.message")); err != nil {
++			return err
++		}
++		if err := fs.FS.Remove(fs.FS.PathJoin(path, "snapshot.metadata")); err != nil {
++			return err
++		}
++		return os.ErrPermission
++	}
++	return fs.FS.RemoveAll(path)
++}
++
++func TestReconcileInterruptedExportAfterPartialRemovalAndRestart(t *testing.T) {
++	fs := &partialSnapshotRemovalFS{FS: vfs.NewStrictMem()}
++	cfg := &Config{FS: fs, SnapshotExportDir: "/tmp/exported"}
++	mgr := newSnapshotManager(cfg)
++	nid := nodeID{shardID: 1, replicaID: 2}
++	testPrepareSnapshot(t, mgr, nid, 100)
++	testPrepareSnapshot(t, mgr, nid, 200)
++	final := mgr.snapshotPath(nid, 200)
++	flag, err := fs.Create(fs.PathJoin(final, "dragonboat.snapshot.message"))
++	require.NoError(t, err)
++	require.NoError(t, flag.Close())
++
++	require.ErrorIs(t, mgr.ReconcileInterruptedExport(nid.shardID, nid.replicaID), os.ErrPermission)
++	removing := final + "-2.removing"
++	_, err = fs.Stat(final)
++	require.ErrorIs(t, err, os.ErrNotExist)
++	_, err = fs.Stat(removing)
++	require.NoError(t, err)
++	_, err = fs.Stat(fs.PathJoin(removing, "snapshot.metadata"))
++	require.ErrorIs(t, err, os.ErrNotExist)
++
++	// A new manager has no in-memory cleanup marker. The directory name alone
++	// must make the remainder discoverable after a process restart.
++	restarted := newSnapshotManager(cfg)
++	require.NoError(t, restarted.ReconcileInterruptedExport(nid.shardID, nid.replicaID))
++	require.NoError(t, restarted.Init(nid.shardID, nid.replicaID))
++	require.Equal(t, 1, restarted.Count(nid.shardID, nid.replicaID))
++	_, err = fs.Stat(removing)
++	require.ErrorIs(t, err, os.ErrNotExist)
++	_, err = fs.Stat(mgr.snapshotPath(nid, 100))
++	require.NoError(t, err)
++}
++
++type selectiveRenameErrorFS struct {
++	vfs.FS
++	blockedPath string
++	blockedErr  error
++}
++
++func (fs *selectiveRenameErrorFS) Rename(oldname, newname string) error {
++	if oldname == fs.blockedPath {
++		if fs.blockedErr != nil {
++			return fs.blockedErr
++		}
++		return os.ErrPermission
++	}
++	return fs.FS.Rename(oldname, newname)
++}
++
++func TestDropInvalidRetainsCandidateUntilRemovalSucceeds(t *testing.T) {
++	fs := &selectiveRenameErrorFS{FS: vfs.NewStrictMem()}
++	mgr := newSnapshotManager(&Config{FS: fs, SnapshotExportDir: "/tmp/exported"})
++	nid := nodeID{shardID: 1, replicaID: 2}
++	for _, index := range []snapshotIndex{100, 200, 300} {
++		testPrepareSnapshot(t, mgr, nid, index)
++	}
++	require.NoError(t, mgr.Init(nid.shardID, nid.replicaID))
++	fs.blockedPath = mgr.snapshotPath(nid, 200)
++	removed, err := mgr.DropInvalid(nid.shardID, nid.replicaID, 200)
++	require.False(t, removed)
++	require.ErrorIs(t, err, os.ErrPermission)
++	require.Equal(t, 3, mgr.Count(nid.shardID, nid.replicaID))
++	_, err = fs.Stat(fs.blockedPath)
++	require.NoError(t, err)
++	fs.blockedErr = os.ErrNotExist
++	removed, err = mgr.DropInvalid(nid.shardID, nid.replicaID, 200)
++	require.False(t, removed)
++	require.ErrorIs(t, err, os.ErrNotExist)
++	require.Equal(t, 3, mgr.Count(nid.shardID, nid.r
+```
+
+**File**: `pkg/logservice/store.go` (modified, +4/-2)
+```diff
+@@ -693,11 +693,12 @@ func (l *store) startReplica(shardID uint64, replicaID uint64,
+ 	}
+ 	cfg := getRaftConfig(shardID, replicaID)
+ 	if err := l.snapshotMgr.Init(shardID, replicaID); err != nil {
+-		panic(err)
++		return err
+ 	}
+ 	if err := l.nh.StartReplica(initialReplicas, join, l.newStateMachine, cfg); err != nil {
+ 		return err
+ 	}
++	l.snapshotMgr.MarkPreviousReplicaStopped(shardID, replicaID)
+ 	l.addMetadata(shardID, replicaID, false)
+ 	if l.onReplicaChanged != nil {
+ 		l.onReplicaChanged(shardID, replicaID, AddReplica)
+@@ -716,11 +717,12 @@ func (l *store) startNonVotingReplica(shardID uint64, replicaID uint64,
+ 	cfg := getRaftConfig(shardID, replicaID)
+ 	cfg.IsNonVoting = true
+ 	if err := l.snapshotMgr.Init(shardID, replicaID); err != nil {
+-		panic(err)
++		return err
+ 	}
+ 	if err := l.nh.StartReplica(initialReplicas, join, l.newStateMachine, cfg); err != nil {
+ 		return err
+ 	}
++	l.snapshotMgr.MarkPreviousReplicaStopped(shardID, replicaID)
+ 	l.addMetadata(shardID, replicaID, true)
+ 	if l.onReplicaChanged != nil {
+ 		l.onReplicaChanged(shardID, replicaID, AddReplica)
+```
+
+**File**: `pkg/logservice/truncation.go` (modified, +281/-36)
+```diff
+@@ -15,11 +15,19 @@
+ package logservice
+ 
+ import (
++	"bytes"
+ 	"context"
++	"encoding/binary"
+ 	"errors"
++	"hash/crc32"
++	"io"
++	"math"
++	"os"
+ 	"time"
+ 
+ 	"github.com/lni/dragonboat/v4"
++	"github.com/lni/dragonboat/v4/tools"
++	"github.com/lni/vfs"
+ 	"go.uber.org/zap"
+ 
+ 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
+@@ -247,7 +255,9 @@ func (l *store) beginExport(shardID, replicaID uint64) error {
+ 	defer l.mu.Unlock()
+ 	for _, rec := range l.mu.metadata.Shards {
+ 		if rec.ShardID == shardID && rec.ReplicaID == replicaID && !rec.Retiring {
+-			l.snapshotMgr.BeginExport(shardID, replicaID)
++			if !l.snapshotMgr.BeginExport(shardID, replicaID) {
++				return errSnapshotExportPending
++			}
+ 			return nil
  		}
- 		slices.Sort(subscribedAccountNames)
+ 	}
+@@ -259,21 +269,64 @@ func (l *store) exportSnapshot(ctx context.Context, shardID uint64, replicaID ui
+ 	if err := l.beginExport(shardID, replicaID); err != nil {
+ 		return err
+ 	}
+-	var mayFinishLater bool
+-	defer func() { l.snapshotMgr.FinishExport(shardID, replicaID, mayFinishLater) }()
++	var mayFinishLater, transferred bool
++	defer func() {
++		if !transferred {
++			l.snapshotMgr.FinishExport(shardID, replicaID, mayFinishLater)
++		}
++	}()
+ 	opts := dragonboat.SnapshotOption{
+ 		// set to true means just export snapshot, do NOT truncate logs.
+ 		Exported:   true,
+ 		ExportPath: l.snapshotMgr.exportPath(shardID, replicaID),
+ 	}
+ 	// Just take a snapshot and export it. This snapshot is invisible to system.
+-	idx, err := l.nh.SyncRequestSnapshot(ctx, shardID, opts)
++	if _, ok := ctx.Deadline(); !ok {
++		return dragonboat.ErrInvalidDeadline
++	}
++	if err := ctx.Err(); err != nil {
++		if errors.Is(err, context.DeadlineExceeded) {
++			return dragonboat.ErrTimeout
++		}
++		return dragonboat.ErrCanceled
++	}
++	// The caller's short deadline must not expire Dragonboat's result channel.
++	// Retain the request until its worker reports completion, including after a
++	// caller timeout. One unresolved request per replica bounds this state.
++	rs, err := l.nh.RequestSnapshot(shardID, opts, time.Duration(math.MaxInt64))
++	if err != nil {
++		return err
++	}
++	var idx uint64
++	select {
++	case result := <-rs.AppliedC():
++		rs.Release()
++		idx, err = exportedSnapshotResult(result)
++	case <-ctx.Done():
++		l.snapshotMgr.RetainPendingExport(shardID, replicaID, rs)
++		transferred = true
++		if errors.Is(ctx.Err(), context.DeadlineExceeded) {
++			return dragonboat.ErrTimeout
++		}
++		return dragonboat.ErrCanceled
++	}
+ 	if err != nil {
++		var exportErr *dragonboat.SnapshotExportError
++		if errors.As(err, &exportErr) {
++			// The worker has finished. Remove its abandoned generating/flagged
++			// directory and reload a final export if commit finished before the
++			// filesystem reported an error. This permits a quiescent shard to
++			// retry at the same index on the next tick.
++			if cleanupErr := l.reconcileFailedExport(shardID, replicaID); cleanupErr != nil {
++				l.snapshotMgr.MarkFailedExportCleanup(shardID, replicaID)
++				return errors.Join(err, cleanupErr)
++			}
++		}
+ 		// These results can arrive after Dragonboat accepted the request;
+ 		// the export may still reach its final directory later.
+-		if errors.Is(err, dragonboat.ErrTimeout) ||
++		if exportErr == nil && (errors.Is(err, dragonboat.ErrTimeout) ||
+ 			errors.Is(err, dragonboat.ErrCanceled) ||
+-			errors.Is(err, dragonboat.ErrShardClosed) {
++			errors.Is(err, dragonboat.ErrShardClosed)) {
+ 			mayFinishLater = true
+ 		}
+ 		l.runtime.Logger().Error("request export snapshot failed", zap.Error(err))
+@@ -295,6 +348,38 @@ func (l *store) exportSnapshot(ctx context.Context, shardID uint64, replicaID ui
+ 	return nil
+ }
+ 
++func exportedSnapshotResult(result dragonboat.RequestResult) (uint64, error) {
++	if err := result.Error(); err != nil {
++		return 0, err
++	}
++	switch {
++	case result.Completed():
++		return result.SnapshotIndex(), nil
++	case result.Rejected(), result.Aborted():
++		return 0, dragonboat.ErrRejected
++	case result.Timeout():
++		return 0, dragonboat.ErrTimeout
++	case result.Terminated():
++		return 0, dragonboat.ErrShardClosed
++	case result.Dropped():
++		return 0, dragonboat.ErrShardNotReady
++	default:
++		return 0, moerr.NewInternalErrorNoCtx("unknown snapshot request result")
++	}
++}
++
++func (l *store) reconcileFailedExport(shardID, replicaID uint64) error {
++	if err := l.snapshotMgr.ReconcileInterruptedExport(shardID, replicaID); err != nil {
++		return err
++	}
++	if err := l.snapshotMgr.Init(shardID, replicaID); err != nil {
++		return err
++	}
++	l.shardSnapshotInfo.setSnapshotIndex(shardID,
++		l.snapshotMgr.NewestIndex(shardID, replicaID))
++	return nil
++}
++
+ func (l *store) importSnapshot(
+ 	ctx context.Context, shardID uint64, replicaID uint64, lsn uint64, dir string,
+ ) error {
+@@ -309,16 +394,122 @@ func (l *store) importSnapshot(
+ 		zap.Uint64("index", lsn),
+ 		zap.String("dir", dir),
+ 	)
++	// The import has already compacted Raft state. Cleanup may need a later
++	// retry, but it must not hold back the in-memory truncation watermark.
++	l.shardSnapsh
+```
+
+**File**: `pkg/logservice/truncation_test.go` (modified, +568/-0)
+```diff
+@@ -17,9 +17,12 @@ package logservice
+ import (
+ 	"context"
+ 	"fmt"
++	"io"
+ 	"os"
+ 	"strings"
+ 	"sync"
++	"sync/atomic"
++	"syscall"
+ 	"testing"
+ 	"time"
+ 
+@@ -43,6 +46,299 @@ type pausedExportRenameFS struct {
+ 	unblock sync.Once
+ }
+ 
++type failExportRenameOnceFS struct {
++	vfs.FS
++	failed atomic.Bool
++}
++
++type failImportedSnapshotRenameOnceFS struct {
++	vfs.FS
++	attempts atomic.Int32
++}
++
++func (fs *failImportedSnapshotRenameOnceFS) Rename(oldname, newname string) error {
++	if strings.HasSuffix(newname, ".removing") &&
++		strings.Contains(oldname, "/shard-1/replica-2/snapshot-") &&
++		fs.attempts.Add(1) == 1 {
++		return syscall.EIO
++	}
++	return fs.FS.Rename(oldname, newname)
++}
++
++type failExportFlagCleanupFS struct {
++	vfs.FS
++	failed       atomic.Bool
++	blockCleanup atomic.Bool
++}
++
++type pausedFailedFlagFS struct {
++	vfs.FS
++	entered chan struct{}
++	release chan struct{}
++	once    sync.Once
++	unblock sync.Once
++	failed  atomic.Bool
++}
++
++func (fs *pausedFailedFlagFS) Remove(path string) error {
++	if strings.HasSuffix(path, "dragonboat.snapshot.message") {
++		var reject bool
++		fs.once.Do(func() {
++			close(fs.entered)
++			<-fs.release
++			fs.failed.Store(true)
++			reject = true
++		})
++		if reject {
++			return os.ErrPermission
++		}
++	}
++	return fs.FS.Remove(path)
++}
++
++func (fs *pausedFailedFlagFS) resume() {
++	fs.unblock.Do(func() { close(fs.release) })
++}
++
++func (fs *failExportFlagCleanupFS) Remove(path string) error {
++	if strings.HasSuffix(path, "dragonboat.snapshot.message") &&
++		fs.failed.CompareAndSwap(false, true) {
++		return os.ErrPermission
++	}
++	return fs.FS.Remove(path)
++}
++
++func (fs *failExportFlagCleanupFS) RemoveAll(path string) error {
++	if fs.blockCleanup.Load() && strings.Contains(path, "/snapshot-") {
++		return os.ErrPermission
++	}
++	return fs.FS.RemoveAll(path)
++}
++
++type transientSnapshotReadFS struct {
++	vfs.FS
++	failList string
++	failOpen string
++}
++
++func (fs *transientSnapshotReadFS) List(path string) ([]string, error) {
++	if path == fs.failList {
++		return nil, os.ErrPermission
++	}
++	return fs.FS.List(path)
++}
++
++func (fs *transientSnapshotReadFS) Open(name string, opts ...vfs.OpenOption) (vfs.File, error) {
++	if name == fs.failOpen {
++		return nil, os.ErrPermission
++	}
++	return fs.FS.Open(name, opts...)
++}
++
++func TestImportCandidateRetainsExportOnTransientReadError(t *testing.T) {
++	cfg := getStoreTestConfig()
++	cfg.TruncateInterval.Duration = time.Hour
++	cfg.HAKeeperTruncateInterval.Duration = time.Hour
++	l, err := getTestStore(func() Config { return cfg }, true, nil)
++	require.NoError(t, err)
++	t.Cleanup(func() {
++		require.NoError(t, l.close())
++		vfs.ReportLeakedFD(cfg.FS, t)
++	})
++	require.NoError(t, l.startHAKeeperReplica(1,
++		map[uint64]dragonboat.Target{1: l.nh.ID()}, false))
++	const shardID, replicaID = uint64(1), uint64(2)
++	ctx, cancel := context.WithTimeout(context.Background(), testIOTimeout)
++	defer cancel()
++	require.NoError(t, l.getOrExtendTNLease(ctx, shardID, 100))
++	_, err = l.append(ctx, shardID, getTestUserEntry())
++	require.NoError(t, err)
++	require.NoError(t, l.exportSnapshot(ctx, shardID, replicaID))
++	index := l.snapshotMgr.NewestIndex(shardID, replicaID)
++	require.NotZero(t, index)
++	dir := l.snapshotMgr.snapshotPath(nodeID{shardID: shardID, replicaID: replicaID}, snapshotIndex(index))
++	fs := &transientSnapshotReadFS{FS: l.cfg.FS}
++	candidate := &store{cfg: Config{FS: fs}}
++
++	for _, tc := range []struct {
++		name string
++		list string
++		open string
++	}{
++		{name: "list image", list: dir},
++		{name: "read metadata", open: fs.PathJoin(dir, "snapshot.metadata")},
++		{name: "read image", open: fs.PathJoin(dir, fmt.Sprintf(snapshotPathPattern+".gbsnap", index))},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			fs.failList, fs.failOpen = tc.list, tc.open
++			valid, err := candidate.importCandidateValid(ctx, dir)
++			require.False(t, valid)
++			require.ErrorIs(t, err, os.ErrPermission)
++			require.Equal(t, 1, l.snapshotMgr.Count(shardID, replicaID))
++			_, err = fs.Stat(dir)
++			require.NoError(t, err)
++		})
++	}
++	fs.failList, fs.failOpen = "", ""
++	valid, err := candidate.importCandidateValid(ctx, dir)
++	require.NoError(t, err)
++	require.True(t, valid)
++	canceled, cancelValidation := context.WithCancel(ctx)
++	cancelValidation()
++	valid, err = candidate.importCandidateValid(canceled, dir)
++	require.False(t, valid)
++	require.ErrorIs(t, err, context.Canceled)
++	require.Equal(t, 1, l.snapshotMgr.Count(shardID, replicaID))
++}
++
++func (fs *failExportRenameOnceFS) Rename(oldname, newname string) error {
++	if strings.HasSuffix(oldname, ".generating") &&
++		strings.Contains(newname, "/shard-1/replica-2/snapshot-") &&
++		fs.failed.CompareAndSwap(false, true) {
++		return syscall.EIO
++	}
++	return fs.FS.Rename(oldname, newname)
++}
++
++func TestExportSnapshotRetriesFailedCommit(t *testing.T) {
++	cfg := getStoreTestConfig()
++	cfg.TruncateInterval.Duration = time.Hour
++	cfg.HAKeeperTruncateInterval.Duration = time.Hour
++	fs := &failExportRenameOnceFS{FS: cfg.FS}
++	c
+```
+
+---
+
+### Incident Patch 3: `c33ce3ff` (2026-11-20)
+**Commit Message**: fix(branch): prune historical catalog replay and prefer snapshot reads (#32707)
+
+## What type of PR is this?
+
+- [ ] API-change
+- [x] BUG
+- [x] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [x] Test and CI
+- [ ] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Fixes #32708.
+
+Related: #32704 (production FDB DATA BRANCH MERGE timeout, `v4.2.8-hotfix`) and #32705 (`4.2-dev` sibling). This brings the full fix, including the replacement-chain review correction, to `main`.
+
+## What this PR does / why we need it:
+
+The production incident merged a one-row update into a six-row table but spent 29.859 of 29.942 seconds resolving table-creation metadata. Checkpoint recovery dropped the exact-table PK predicate and delivered 1,861,139 historical catalog data/tombstone versions before cancellation.
+
+Preserve the existing predicate through checkpoint recovery and use it to prune object/block payloads. Require explicit confirmation that an object sort-key zonemap describes the requested user PK; unknown zonemaps, cluster-by keys and rowid-sorted tombstones stay eligible. Persisted appendable objects can use PK block pruning, while tombstone blocks use the tombstone PK sequence number. Commit-
+
+**File**: `pkg/frontend/data_branch.go` (modified, +156/-95)
+```diff
+@@ -47,6 +47,7 @@ import (
+ 	"github.com/matrixorigin/matrixone/pkg/util/executor"
+ 	"github.com/matrixorigin/matrixone/pkg/util/trace/impl/motrace/statistic"
+ 	"github.com/matrixorigin/matrixone/pkg/vm/engine"
++	"github.com/matrixorigin/matrixone/pkg/vm/engine/disttae/logtailreplay"
+ 	"github.com/matrixorigin/matrixone/pkg/vm/engine/readutil"
+ 	"github.com/panjf2000/ants/v2"
+ 	"go.uber.org/zap"
+@@ -996,6 +997,11 @@ func diffMergeAgency(
+ 
+ 	ctx, cancel := context.WithCancel(execCtx.reqCtx)
+ 	defer cancel()
++	ctx = logtailreplay.WithCheckpointObjectReuse(ctx)
++	ctx = context.WithValue(ctx, branchCatalogHistoryKey{}, &branchCatalogHistory{
++		dbLowerBounds: make(map[dbCreatedTimeLowerBoundKey]types.TS),
++		tableCTS:      make(map[tableCreationCommitTSKey]types.TS),
++	})
+ 
+ 	// DATA BRANCH write destinations are never subscription tables (design
+ 	// §4.3, I3): classify the destination before any write. DIFF ... OUTPUT
+@@ -1382,6 +1388,7 @@ func getTableStuff(
+ 		return
+ 	}
+ 	tblStuff.def.pkSeqnum = int(tarTblDef.Cols[tarTblDef.Name2ColIndex[tarTblDef.Pkey.PkeyColName]].Seqnum)
++	tblStuff.def.pkIsSortKey = tblStuff.def.pkKind != fakeKind && tarTblDef.ClusterBy == nil
+ 	if tblStuff.def.pkKind == fakeKind {
+ 		tblStuff.def.pkColIdxes = dataBranchFakePKColIdxes(tarTblDef)
+ 	}
+@@ -2690,28 +2697,35 @@ func decideCollectRange(
+ 	err error,
+ ) {
+ 
+-	var (
+-		tarCTS  types.TS
+-		baseCTS types.TS
+-
+-		tblCommitTS []types.TS
+-
+-		tarTableID  = tables.tarRel.GetTableID(ctx)
+-		baseTableID = tables.baseRel.GetTableID(ctx)
+-	)
+-
++	tarTableID := tables.tarRel.GetTableID(ctx)
++	baseTableID := tables.baseRel.GetTableID(ctx)
+ 	tarSp, baseSp := tables.resolvedSnapshots(ses)
+ 	tarIdent, baseIdent := tables.endpointIdentities(ctx, ses)
+ 
+-	if tblCommitTS, err = getTablesCreationCommitTS(
+-		ctx, ses, tarIdent, tables.tarRel, baseIdent, tables.baseRel,
+-		[]types.TS{tarSp, baseSp},
+-	); err != nil {
+-		return
++	lcaIdent := tables.resolvedLCAIdentity(ctx, ses)
++	resolveEndpoint := func(ident branchIdentity, rel engine.Relation, tableID uint64, snap types.TS) (types.TS, error) {
++		// At an endpoint snapshot a checkpoint may only retain an ALTER's
++		// rewritten catalog row. Reuse the bound already proven at the LCA
++		// for the same physical generation so earlier writes remain visible.
++		if tableID == dagInfo.lcaTableId && ident.account == lcaIdent.account &&
++			!tables.lcaCTS.IsEmpty() && tables.lcaCTS.LE(&snap) {
++			return tables.lcaCTS, nil
++		}
++		timestamps, err := getTablesCreationCommitTS(ctx, ses, ident, rel, ident, rel, []types.TS{snap, snap})
++		if err != nil {
++			return types.TS{}, err
++		}
++		return timestamps[0], nil
+ 	}
+ 
+-	tarCTS = tblCommitTS[0]
+-	baseCTS = tblCommitTS[1]
++	tarCTS, err := resolveEndpoint(tarIdent, tables.tarRel, tarTableID, tarSp)
++	if err != nil {
++		return
++	}
++	baseCTS, err := resolveEndpoint(baseIdent, tables.baseRel, baseTableID, baseSp)
++	if err != nil {
++		return
++	}
+ 
+ 	// ============================================================
+ 	// Running example used throughout the comments below.
+@@ -3065,9 +3079,12 @@ func buildSideCollectRange(
+ 		}
+ 
+ 		// Resolve creation commit TS so the window starts after the
+-		// clone-materialization commit. Reuse endpointCTS for the
+-		// endpoint to avoid a redundant lookup.
+-		if nodeID == endpointID {
++		// clone-materialization commit. Reuse the boundary already
++		// resolved for the LCA or the endpoint.
++		if i == 0 && !wholeHistory && segIdent.account == tables.resolvedLCAIdentity(ctx, ses).account &&
++			!tables.lcaCTS.IsEmpty() && tables.lcaCTS.LE(&windowEnd) {
++			nodeCTS = tables.lcaCTS
++		} else if nodeID == endpointID {
+ 			nodeCTS = endpointCTS
+ 		} else if !nodeCTSResolved {
+ 			ctsList, err2 := getTablesCreationCommitTS(
+@@ -3130,9 +3147,8 @@ func dataBranchCollectRelationSnapshot(endpointSP, windowEnd types.TS, endpoint
+ }
+ 
+ // getTablesCreationCommitTS resolves the creation commit timestamp for
+-// both tar and base tables.  It tries CollectChanges first (fast,
+-// preserves real commit_ts from partition state), falling back to the
+-// Reader-based snapshot scan when partition state is unavailable.
++// both tar and base tables, preferring the original catalog row at the
++// requested snapshot and replaying catalog changes when that row is unavailable.
+ func getTablesCreationCommitTS(
+ 	ctx context.Context,
+ 	ses *Session,
+@@ -3143,8 +3159,13 @@ func getTablesCreationCommitTS(
+ 	snapshot []types.TS,
+ ) ([]types.TS, error) {
+ 	txnSnap := types.TimestampToTS(ses.GetTxnHandler().GetTxn().SnapshotTS())
++	history, _ := ctx.Value(branchCatalogHistoryKey{}).(*branchCatalogHistory)
+ 	dbLowerBounds := make(map[dbCreatedTimeLowerBoundKey]types.TS)
+ 	tableCTS := make(map[tableCreationCommitTSKey]types.TS)
++	if history != nil {
++		dbLowerBounds = history.dbLowerBounds
++		tableCTS = history.tableCTS
++	}
+ 
+ 	snapFor := func(idx int) types.TS {
+ 		if idx < len(snapshot) && !snapshot[idx].IsEmpty() {
+@@ -3169,91 +3190,92 @@ func getTablesCreation
+```
+
+**File**: `pkg/frontend/data_branch_creation_ts_test.go` (modified, +1/-0)
+```diff
+@@ -68,6 +68,7 @@ func TestTryBuildCurrentMoTablesCPKeyFilter(t *testing.T) {
+ 	require.Empty(t, fallbackReason)
+ 	require.NotNil(t, pkFilter)
+ 	require.Equal(t, catalog.MO_TABLES_CPKEY_IDX, pkFilter.PrimarySeqnum)
++	require.True(t, pkFilter.ObjectZMIsPK)
+ 	require.Len(t, pkFilter.Segments, 1)
+ 
+ 	packer := types.NewPacker()
+```
+
+**File**: `pkg/frontend/data_branch_pick.go` (modified, +7/-0)
+```diff
+@@ -561,6 +561,9 @@ func materializeValuesUnified(
+ 	// Build ZoneMap segments from the sorted Vec.
+ 	if canBuildSegments {
+ 		pkFilter = buildPKFilterFromVec(vec, pkType, tblStuff.def.pkSeqnum)
++		if pkFilter != nil {
++			pkFilter.ObjectZMIsPK = tblStuff.def.pkIsSortKey
++		}
+ 	}
+ 	vec.Free(mp)
+ 	return pkFilter, nil
+@@ -642,6 +645,9 @@ func materializeCompositeValuesUnified(
+ 	// Build ZoneMap segments.
+ 	if canBuildSegments {
+ 		pkFilter = buildPKFilterFromVec(encodedVec, pkType, tblStuff.def.pkSeqnum)
++		if pkFilter != nil {
++			pkFilter.ObjectZMIsPK = tblStuff.def.pkIsSortKey
++		}
+ 	}
+ 	return pkFilter, nil
+ }
+@@ -974,6 +980,7 @@ func materializeSubqueryUnified(
+ 			pkFilter = &engine.PKFilter{
+ 				Segments:      segments,
+ 				PrimarySeqnum: tblStuff.def.pkSeqnum,
++				ObjectZMIsPK:  tblStuff.def.pkIsSortKey,
+ 			}
+ 		}
+ 	}
+```
+
+**File**: `pkg/frontend/data_branch_types.go` (modified, +1/-0)
+```diff
+@@ -264,6 +264,7 @@ type tableStuff struct {
+ 		writableIdxes []int
+ 		pkColIdx      int
+ 		pkSeqnum      int   // physical column seqnum for PK (for ZoneMap lookup)
++		pkIsSortKey   bool  // object-level sort-key ZoneMap has PK semantics
+ 		pkColIdxes    []int // expanded pk columns
+ 		pkKind        int
  
 ```
 
-**File**: `pkg/frontend/show_publications_accounts_test.go` (added, +110/-0)
+**File**: `pkg/objectio/funcs.go` (modified, +61/-17)
 ```diff
-@@ -0,0 +1,110 @@
+@@ -357,38 +357,82 @@ func ReadOneBlockAllColumns(
+ 		Entries:  make([]fileservice.IOEntry, 0),
+ 		Policy:   cachePolicy,
+ 	}
++	ioVec.Entries = appendBlockColumnEntries(ioVec.Entries, meta.GetBlockMeta(id), cols)
++	if err = fs.Read(ctx, ioVec); err != nil {
++		ioVec.ReleaseReadResultOnError()
++		return nil, err
++	}
++	defer ioVec.Release()
++	return decodeBlockColumns(ioVec.Entries)
++}
++
++// ReadBlocksAllColumns reads the requested blocks in one FileService request.
++// The caller groups only blocks whose physical read ranges overlap enough to
++// make a combined range useful. Batches are returned in blockIDs order.
++func ReadBlocksAllColumns(
++	ctx context.Context,
++	meta *ObjectDataMeta,
++	name string,
++	blockIDs []uint16,
++	cols []uint16,
++	cachePolicy fileservice.Policy,
++	fs fileservice.FileService,
++	mp *mpool.MPool,
++) ([]*batch.Batch, error) {
++	ioVec := &fileservice.IOVector{
++		FilePath: name,
++		Entries:  make([]fileservice.IOEntry, 0, len(blockIDs)*len(cols)),
++		Policy:   cachePolicy,
++	}
++	for _, id := range blockIDs {
++		ioVec.Entries = appendBlockColumnEntries(ioVec.Entries, meta.GetBlockMeta(uint32(id)), cols)
++	}
++	if err := fs.Read(ctx, ioVec); err != nil {
++		ioVec.ReleaseReadResultOnError()
++		return nil, err
++	}
++	defer ioVec.Release()
++
++	batches := make([]*batch.Batch, 0, len(blockIDs))
++	for start := 0; start < len(ioVec.Entries); start += len(cols) {
++		bat, err := decodeBlockColumns(ioVec.Entries[start : start+len(cols)])
++		if err != nil {
++			for _, b := range batches {
++				b.Clean(mp)
++			}
++			return nil, err
++		}
++		batches = append(batches, bat)
++	}
++	return batches, nil
++}
++
++func appendBlockColumnEntries(entries []fileservice.IOEntry, block BlockObject, cols []uint16) []fileservice.IOEntry {
+ 	for _, seqnum := range cols {
+-		blkmeta := meta.GetBlockMeta(id)
+-		col := blkmeta.ColumnMeta(seqnum)
+-		ext := col.Location()
+-		ioVec.Entries = append(ioVec.Entries, fileservice.IOEntry{
++		ext := block.ColumnMeta(seqnum).Location()
++		entries = append(entries, fileservice.IOEntry{
+ 			Offset:         int64(ext.Offset()),
+ 			Size:           int64(ext.Length()),
+ 			CachedDataSize: int64(ext.OriginSize()),
+ 			ToCacheData:    constructorFactory(int64(ext.OriginSize()), ext.Alg()),
+ 		})
+ 	}
++	return entries
++}
+ 
+-	err = fs.Read(ctx, ioVec)
+-	if err != nil {
+-		ioVec.ReleaseReadResultOnError()
+-		return nil, err
+-	}
+-	defer ioVec.Release()
+-
+-	bat = batch.NewWithSize(len(cols))
+-	var obj any
+-	for i := range cols {
++func decodeBlockColumns(entries []fileservice.IOEntry) (*batch.Batch, error) {
++	bat := batch.NewWithSize(len(entries))
++	for i, entry := range entries {
+ 		// always copy to avoid memory leak
+-		bs := slices.Clone(ioVec.Entries[i].CachedData.Bytes())
+-		obj, err = Decode(bs)
++		bs := slices.Clone(entry.CachedData.Bytes())
++		obj, err := Decode(bs)
+ 		if err != nil {
+ 			return nil, err
+ 		}
+ 		bat.Vecs[i] = obj.(*vector.Vector)
+ 		bat.SetRowCount(bat.Vecs[i].Length())
+ 	}
+-	return
++	return bat, nil
+ }
+ 
+ // ReadOneBlockAllColumnsWindow materializes only the requested rows and reads
+```
+
+**File**: `pkg/objectio/ioutil/loadfuncs.go` (modified, +29/-0)
+```diff
+@@ -865,3 +865,32 @@ func withColumnsDataInto(ctx context.Context, columns []uint16, typs []types.Typ
+ 	}
+ 	return hit, err
+ }
++
++// LoadBlocksWithSpecialLayouts loads the given blocks from one object with a single FileService
++// read. Block IDs must have been grouped using their physical column ranges.
++func LoadBlocksWithSpecialLayouts(
++	ctx context.Context,
++	fs fileservice.FileService,
++	key objectio.Location,
++	blockIDs []uint16,
++	mp *mpool.MPool,
++) ([]*batch.Batch, []objectio.SpecialColumnLayout, error) {
++	meta, err := objectio.FastLoadObjectMeta(ctx, &key, false, fs)
++	if err != nil {
++		return nil, nil, err
++	}
++	data := meta.MustGetMeta(objectio.SchemaData)
++	cols := make([]uint16, data.BlockHeader().ColumnCount())
++	for i := range cols {
++		cols[i] = uint16(i)
++	}
++	batches, err := objectio.ReadBlocksAllColumns(ctx, &data, key.Name().String(), blockIDs, cols, fileservice.SkipAllCache, fs, mp)
++	if err != nil {
++		return nil, nil, err
++	}
++	layouts := make([]objectio.SpecialColumnLayout, len(blockIDs))
++	for i, id := range blockIDs {
++		layouts[i] = objectio.ResolveSpecialColumnLayout(data.GetBlockMeta(uint32(id)))
++	}
++	return batches, layouts, nil
++}
+```
+
+**File**: `pkg/tests/dml/merge_catalog_history_test.go` (added, +96/-0)
+```diff
+@@ -0,0 +1,96 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -3730,111 +3984,211 @@ trac
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package frontend
++package dml
 +
 +import (
 +	"context"
-+	"errors"
 +	"fmt"
 +	"testing"
++	"time"
 +
-+	"github.com/golang/mock/gomock"
-+	"github.com/matrixorigin/matrixone/pkg/defines"
-+	mock_frontend "github.com/matrixorigin/matrixone/pkg/frontend/test"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
-+	"github.com/prashantv/gostub"
 +	"github.com/stretchr/testify/require"
++
++	"github.com/matrixorigin/matrixone/pkg/catalog"
++	"github.com/matrixorigin/matrixone/pkg/cnservice"
++	"github.com/matrixorigin/matrixone/pkg/container/types"
++	"github.com/matrixorigin/matrixone/pkg/defines"
++	"github.com/matrixorigin/matrixone/pkg/embed"
++	"github.com/matrixorigin/matrixone/pkg/tests/testutils"
++	"github.com/matrixorigin/matrixone/pkg/vm/engine/disttae"
 +)
 +
-+func TestShowPublicationsAccountResolution(t *testing.T) {
-+	queryErr := errors.New("catalog read failed")
-+	for _, tc := range []struct {
-+		name       string
-+		subs       []int64
-+		want       string
-+		failQuery  int
-+		queryError error
-+	}{
-+		{name: "healthy_sorted", subs: []int64{2, 1}, want: "alpha,zeta"},
-+		{name: "no_subscribers"},
-+		{name: "missing_only", subs: []int64{99}},
-+		{name: "mixed", subs: []int64{2, 99, 1}, want: "alpha,zeta"},
-+		{name: "publication_read_error", failQuery: 0, queryError: queryErr},
-+		{name: "account_read_error", failQuery: 1, queryError: queryErr},
-+		{name: "subscription_read_error", failQuery: 2, queryError: queryErr},
-+		{name: "subscription_canceled", failQuery: 2, queryError: context.Canceled},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			ctrl := gomock.NewController(t)
-+			ses := newSes(nil, ctrl)
-+			t.Cleanup(ses.Close)
-+			ctx := defines.AttachAccount(t.Context(), sysAccountID, rootID, moAdminRoleID)
-+			const timestamp = "2026-01-01 00:00:00"
-+			pubs := &MysqlResultSet{Columns: make([]Column, 12), Data: [][]interface{}{
-+				{int64(0), "sys", "affected", "db1", uint64(1), "*", "all", timestamp, nil, uint64(0), uint64(0), "keep comment"},
-+				{int64(0), "sys", "healthy", "db2", uint64(2), "t", "alpha", timestamp, timestamp, uint64(0), uint64(0), ""},
-+			}}
-+			accounts := &MysqlResultSet{Columns: make([]Column, 5), Data: [][]interface{}{
-+				{int64(1), "alpha", "open", uint64(1), nil},
-+				{int64(2), "zeta", "open", uint64(1), nil},
-+				// A recreated account must not inherit the missing ID's subscription.
-+				{int64(100), "reused_name", "open", uint64(1), nil},
-+			}}
-+			subs := &MysqlResultSet{Columns: make([]Column, 12)}
-+			for _, id := range tc.subs {
-+				subs.AddRow([]interface{}{id, "reused_name", "sub_db", timestamp, int64(0), "sys", "affected", "db1", "*", timestamp, "", int64(1)})
-+			}
-+			healthy := &MysqlResultSet{Columns: make([]Column, 12), Data: [][]interface{}{
-+				{int64(1), "alpha", "sub_other", timestamp, int64(0), "sys", "healthy", "db2", "t", timestamp, "", int64(0)},
-+			}}
-+			queries := []string{
-+				fmt.Sprintf(getPubInfoSql, sysAccountID) + " order by update_time desc, created_time desc",
-+				getAccountIdNamesSql,
-+				getSubsSql + " and pub_account_name = 'sys' and pub_name = 'affected' and sub_name is not null",
-+				getSubsSql + " and pub_account_name = 'sys' and pub_name = 'healthy' and sub_name is not null",
-+			}
-+			results := []*MysqlResultSet{pubs, accounts, subs, healthy}
-+			bh := mock_frontend.NewMockBackgroundExec(ctrl)
-+			stub := gostub.StubFunc(&NewBackgroundExec, bh)
-+			t.Cleanup(stub.Reset)
-+			bh.EXPECT().Close()
-+			var calls []*gomock.Call
-+			for i, query := range queries {
-+				calls = append(calls, bh.EXPECT().ClearExecResultSet())
-+				if tc.queryError != nil && i == tc.failQuery {
-+					calls = append(calls, bh.EXPECT().Exec(gomock.Any(), query).Return(tc.queryError))
-+					break
-+				}
-+				calls = append(calls,
-+					bh.EXPECT().Exec(gomock.Any(), query).Return(nil),
-+					bh.EXPECT().GetExecResultSet().Return([]interface{}{results[i]}),
-+				)
-+			}
-+			// Only these reads are allowed; unexpected cleanup writes fail the test.
-+			gomock.InOrder(calls...)
-+			err := doShowPublications(ctx, ses, &tree.ShowPublications{})
-+			if tc.queryError != nil {
-+				require.ErrorIs(t, err, tc.queryError)
-+				return
-+			}
-+			require.NoError(t, err)
-+			require.Len(t, ses.mrs.Columns, 8)
-+			require.Equal(t, [][]interface{}{
-+				{"affected", "db1", "*", "*", tc.want, timestamp, nil, "keep comment"},
-+				{"healthy", "db2", "t", "alpha", "alpha", timestamp, timestamp, ""},
-+			}, ses.mrs.Data)
-+		})
-+	}
++func TestDataBranchMergeWithCheckpointCatalog(t *testing.T) {
++	embed.RunBaseClusterTests(t, func(c embed.Cluster) {
++		ctx, cancel := context.WithTimeout(defines.AttachAccountId(context.Background(), catalog.System_Account), 3*time.Minute)
++		defer cancel()
++		db := openRetestSQLDB(t, c)
++		defer db.Close()
++		db.SetMaxOpenConns(1)
++		execSQLDB(t, ctx, db, "set role moadmin")
++
++		beforeCreate := types.BuildTS(time.Now().UnixNano(), 0)
++		dbName := testutils.GetDatabaseName(t)
++		execSQLDB(t, ctx, db, fmt.Sprintf("create database `%s`", dbName))
++		execSQLDB(t, ctx, db, fmt.Sprintf("use `%s`", dbName))
++		defer func() {
++			execSQLDB(t, ctx, db, "use mo_catalog")
++			execSQLDB(t, ctx, db, fmt.Sprintf("drop database if exists `%s`", dbName))
++		}()
++
++		execSQLDB(t, ctx, db, "create table customers (id int primary key, name varchar(32))")
++		execSQLDB(t, ctx, db, "insert into customers values (1,'汉德'),(2,'two'),(3,'three'),(4,'four'),(5,'five'),(6,'six')")
++		execSQLDB(t, ctx, db, "data branch create table preview from customers")
++		execSQLDB(t, ctx, db, "update preview set name='汉得' where id=1")
++		// Persist unrelated catalog insertions and deletions alongside the branch.
++		execSQLDB(t, ctx, db, "create table a_unrelated (id int primary key)")
++		execSQLDB(t, ctx, db, "create table z_unrelated (id int primary key)")
++		execSQLDB(t, ctx, db, "drop table a_unrelated")
++		gcTS := types.BuildTS(time.Now().UnixNano(), 0)
++		queryStringRows(t, ctx, db, "select mo_ctl('dn','checkpoint','')")
++
++		cn, err := c.GetCNService(0)
++		require.NoError(t, err)
++		service := cn.RawService().(cnservice.Service)
++		eng := service.GetEngine().(*disttae.Engine)
++		// Exercise the catalog's history boundary without truncating unrelated
++		// system tables or advancing beyond the completed checkpoint.
++		part := eng.GetOrCreateLatestPart(ctx, uint64(catalog.System_Account), catalog.MO_CATALOG_ID, catalog.MO_TABLES_ID)
++		require.NoError(t, part.Truncate(ctx, [2]uint64{catalog.MO_CATALOG_ID, catalog.MO_TABLES_ID}, gcTS, nil))
++		stateStart := part.Snapshot().GetStart()
++		require.True(t, stateStart.GT(&beforeCreate), "the catalog history must require snapshot recovery")
++
++		start := time.Now()
++		execSQLDB(t, ctx, db, "data branch merge preview into customers when conflict skip")
++		t.Logf("six-row customer rename with checkpoint catalog: %s", time.Since(start))
++		want := [][]string{{"1", "汉得"}, {"2", "two"}, {"3", "three"}, {"4", "four"}, {"5", "five"}, {"6", "six"}}
++		require.Equal(t, want, queryStringRows(t, ctx, db, "select id,name from customers order by id"))
++		// Repeating the merge must preserve every row and the applied data.
++		execSQLDB(t, ctx, db, "data branch merge preview into customers when conflict skip")
++		require.Equal(t, want, queryStringRows(t, ctx, db, "select id,name from customers order by id"))
++
++		// Catalog pruning must not change row-level conflict, insert or delete semantics.
++		execSQLDB(t, ctx, db, "data branch create table edits from customers")
++		execSQLDB(t, ctx, db, "update edits set name='branch' where id=2")
++		execSQLDB(t, ctx, db, "update customers set name='main' where id=2")
++		// An ALTER replaces the catalog row for the same table. The main
++		// change before that rewrite must remain in the conflict window.
++		execSQLDB(t, ctx, db, "alter table customers comment 'changed after the fork'")
++		execSQLDB(t, ctx, db, "delete from edits where id=3")
++		execSQLDB(t, ctx, db, "insert into edits values (7,'seven')")
++		execSQLDB(t, ctx, db, "data branch merge edits into customers when conflict skip")
++		require.Equal(t, [][]string{{"1", "汉得"}, {"2", "main"}, {"4", "four"}, {"5", "five"}, {"6", "six"}, {"7", "seven"}},
++			queryStringRows(t, ctx, db, "select id,name from customers order by id"))
++	})
 +}
 ```
 
+**File**: `pkg/tests/issues/issue_31401_test.go` (modified, +23/-10)
+```diff
+@@ -48,6 +48,7 @@ type issue31401CopyObserver struct {
+ 	retired  atomic.Int32
+ 	replicas sync.Map
+ 	// Optional barriers/failure injection operate at existing nested SQL calls.
++	hooksMu          sync.RWMutex
+ 	afterCopy        func(context.Context, int32) error
+ 	beforeRetire     func() error
+ 	beforeRecreate   func() error
+@@ -151,6 +152,7 @@ func TestIssue31401AlterCopyRebuildTransaction(t *testing.T) {
+ 						}
+ 						return true
+ 					})
++					observer.hooksMu.Lock()
+ 					observer.afterRetire = func(checkCtx context.Context) error {
+ 						var count int
+ 						err := db.QueryRowContext(checkCtx, "select count(*) from mo_catalog.mo_iscp_log where table_id=? and job_id=? and drop_at is null", sourceTableID, sourceJobID).Scan(&count)
+@@ -163,7 +165,9 @@ func TestIssue31401AlterCopyRebuildTransaction(t *testing.T) {
+ 						taskPreserved.Store(true)
+ 						return nil
+ 					}
++					observer.hooksMu.Unlock()
+ 				}
++				observer.hooksMu.Lock()
+ 				observer.afterCopy = func(callCtx context.Context, n int32) error {
+ 					if n == 1 {
+ 						close(prepared)
+@@ -193,6 +197,7 @@ func TestIssue31401AlterCopyRebuildTransaction(t *testing.T) {
+ 				if mode == "publish_retry" {
+ 					observer.beforeSourceDrop = func() error { return moerr.NewTxnNeedRetryNoCtx() }
+ 				}
++				observer.hooksMu.Unlock()
+ 				before := []string{"update " + name + ".t set v=11 where id=1", "delete from " + name + ".t where id=2", "insert into " + name + ".t(id,v) values(4,40)"}
+ 				alterSQL := "alter table " + name + ".t add column d int default 7"
+ 				if mode == "late_lineage_error" {
+@@ -330,9 +335,11 @@ func TestIssue31401AlterCopyRebuildTransaction(t *testing.T) {
+ 				if mode == "late_lineage_error" {
+ 					require.Zero(t, queryIssue277xxInt(t, ctx, db, "select count(*) from "+name+".guard"))
+ 				}
++				observer.hooksMu.Lock()
+ 				observer.beforeRetire = nil
+ 				observer.beforeRecreate = nil
+ 				observer.beforeSourceDrop = nil
++				observer.hooksMu.Unlock()
+ 				if mode == "plugin" {
+ 					require.True(t, taskPreserved.Load())
+ 					require.Equal(t, 0, queryIssue277xxInt(t, ctx, db, "select count(*) from mo_catalog.mo_iscp_log where table_id=? and job_id=? and drop_at is null", sourceTableID, sourceJobID))
+@@ -348,6 +355,12 @@ func TestIssue31401AlterCopyRebuildTransaction(t *testing.T) {
+ }
+ 
+ func (o *issue31401CopyObserver) Exec(ctx context.Context, q string, opts executor.Options) (executor.Result, error) {
++	// Background SQL shares this observer with the test's hook updates. Snapshot
++	// callbacks under the lock, then release it before callbacks issue nested SQL.
++	o.hooksMu.RLock()
++	afterCopy, afterRetire := o.afterCopy, o.afterRetire
++	beforeRetire, beforeRecreate, beforeSourceDrop := o.beforeRetire, o.beforeRecreate, o.beforeSourceDrop
++	o.hooksMu.RUnlock()
+ 	copyOpt := opts.StatementOption().AlterCopyDedupOpt()
+ 	copySQL := copyOpt != nil && strings.HasPrefix(strings.ToLower(q), "insert into")
+ 	if copySQL {
+@@ -362,40 +375,40 @@ func (o *issue31401CopyObserver) Exec(ctx context.Context, q string, opts execut
+ 	}
+ 	if retiring {
+ 		o.retired.Add(1)
+-		if o.beforeRetire != nil {
+-			if err := o.beforeRetire(); err != nil {
++		if beforeRetire != nil {
++			if err := beforeRetire(); err != nil {
+ 				return executor.Result{}, err
+ 			}
+ 		}
+ 	}
+-	if o.beforeRecreate != nil && o.retired.Load() == 1 && strings.HasPrefix(strings.ToLower(q), "create table ") {
++	if beforeRecreate != nil && o.retired.Load() == 1 && strings.HasPrefix(strings.ToLower(q), "create table ") {
+ 		matched := false
+ 		o.replicas.Range(func(name, _ any) bool {
+ 			matched = strings.Contains(q, name.(string))
+ 			return !matched
+ 		})
+ 		if matched {
+-			if err := o.beforeRecreate(); err != nil {
++			if err := beforeRecreate(); err != nil {
+ 				return executor.Result{}, err
+ 			}
+ 		}
+ 	}
+-	if o.beforeSourceDrop != nil && !retiring && strings.HasPrefix(q, "drop table ") && strings.HasSuffix(q, ".`t`") {
+-		if err := o.beforeSourceDrop(); err != nil {
++	if beforeSourceDrop != nil && !retiring && strings.HasPrefix(q, "drop table ") && strings.HasSuffix(q, ".`t`") {
++		if err := beforeSourceDrop(); err != nil {
+ 			return executor.Result{}, err
+ 		}
+ 	}
+ 	result, err := o.SQLExecutor.Exec(ctx, q, opts)
+-	if err == nil && retiring && o.afterRetire != nil {
+-		if err = o.afterRetire(ctx); err != nil {
++	if err == nil && retiring && afterRetire != nil {
++		if err = afterRetire(ctx); err != nil {
+ 			result.Close()
+ 			return executor.Result{}, err
+ 		}
+ 	}
+ 	if err == nil && copySQL {
+ 		n := o.copies.Add(1)
+-		if o.afterCopy != nil {
+-			if err = o.afterCopy(ctx, n); err != nil {
++		if afterCopy != nil {
++			if err = afterCopy(ctx, n); err != nil {
+ 				result.Close()
+ 				return executor.Result{}, err
+ 			}
+```
+
 #### Recent Merged Pull Requests:
-- **PR #32945** (2026-11-19): [4.2-dev] Preserve COS GET cancellation identity (@XuPeng-SH)
-- **PR #32938** (closed): perf(cdc): avoid formatting disabled watermark debug logs (@XuPeng-SH)
-- **PR #32937** (2026-11-19): [4.2-dev] fix(frontend): prevent publication grants from recreating dropped subscriber IDs (@LeftHandCold)
-- **PR #32931** (2026-11-19): [4.2-dev] docs: share one change map across Claude review checks (@XuPeng-SH)
-- **PR #32932** (2026-11-19): docs: share one change map across Claude review checks (@XuPeng-SH)
-- **PR #32929** (2026-11-19): [4.2-dev] docs: backport review skills with maintenance compatibility rules (@XuPeng-SH)
+- **PR #33031** (2026-11-20): [4.2-dev] fix(mpool): stabilize physical realloc failure test (@XuPeng-SH)
+- **PR #33029** (closed): fix(cdc): preserve numeric-label ENUM members (@MatrixAdventurer)
+- **PR #33026** (closed): fix(cdc): support YEAR columns (@MatrixAdventurer)
+- **PR #33017** (2026-11-20): refactor(vector): remove string-source provenance from Vector (#33004) (@fengttt)
+- **PR #33012** (2026-11-20): ci: add make static-check-changed for fast local SCA (@fengttt)
+- **PR #33011** (2026-11-20): refactor(vector): remove prepareParamKind from Vector; carry prepared parameters as typed values (#33007) (@fengttt)
 
 ---
 
@@ -3854,50 +4208,31 @@ trac
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. function): reject undefined real-domain POW arguments
+## X. preserve TAE snapshot row IDs and stabilize main CI
 
 **RULE**:
-When implementing operations in `pkg/embed/cdc_control_status_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `optools/run_ut.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `793b62b5`: function): reject undefined real-domain POW arguments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `17df10b1`: preserve TAE snapshot row IDs and stabilize main CI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/embed/cdc_control_status_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `optools/run_ut.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"errors"
-	dragonboat "github.com/lni/dragonboat/v4"
-// cdcClusterStateWithReadiness bounds the initial, idempotent, read-only
-// GetClusterState readiness probe of the CDC claims subtest: its result only
-// feeds state.TaskTableUser below. The current5711 CI UT (job 135195296776,
-// 2026-11-18 23:30:59) observed exactly one raw dragonboat request timeout on
-// this first probe while the log service reported the same checker-state read
-// timing out on its side in the same window; root36 kept the stall's own
-// origin qualified UNKNOWN. This helper absorbs no more than that observed
-// failure class, deterministically: at most three attempts on the caller's
-// unchanged context, retrying only errors.Is(dragonboat.ErrTimeout) chains,
-// stopping at the first success, never issuing another request once the
-// context is done, and returning any other error after the first failed
-// attempt. The caller's require.NoError still owns the final failure; no
-// deadline is raised anywhere and no claims/heartbeat/write path is retried.
-func cdcClusterStateWithReadiness(
-	t *testing.T,
-	ctx context.Context,
-	getState func(context.Context) (logservicepb.CheckerState, error),
-) (logservicepb.Che
+                "package_index=${index} prebuilt=true parallel=${parallel} timeout_seconds=${remaining}"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+                "package_index=${index} prebuilt=true parallel=${parallel}"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `793b62b5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `17df10b1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

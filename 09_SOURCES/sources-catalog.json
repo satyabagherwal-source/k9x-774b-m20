@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "3cd5f717",
+    "sourceVersion": "a5140aa8",
     "license": "Apache-2.0",
-    "contentHash": "f0a0f1975c65ab6cb4d8779a21d0fd8df6801b869515010ab4dacdcc65b18d3b",
-    "lastHarvestedAt": "2026-11-19T22:36:17.989Z",
+    "contentHash": "17293a15106faaf6e0b90d98da003edd26f161b1851fa889fe7edb1d68c50852",
+    "lastHarvestedAt": "2026-11-21T00:52:08.917Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "262640ff",
+    "sourceVersion": "36780d60",
     "license": "BSD-3-Clause",
-    "contentHash": "4e8e8566ac3e788b608b55b0751ee278b79fc3631b8375e1a35413c9fd82ead9",
-    "lastHarvestedAt": "2026-11-20T20:15:01.502Z",
+    "contentHash": "31728eab23f80bad0cdbab99d7985c16cfb3b709151b09c265c516ffbab13458",
+    "lastHarvestedAt": "2026-11-21T00:52:05.717Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "593655e0",
+    "sourceVersion": "08946a21",
     "license": "MIT",
-    "contentHash": "a89336514ddc90b72394cc0edb4a35ad97420cc0d59b05966d26b1a1ec64f88a",
-    "lastHarvestedAt": "2026-11-19T14:20:19.761Z",
+    "contentHash": "7940db42cb9e68e2ed864bf33c2702ff069232d7fb87562f8f67bf81c4043ae4",
+    "lastHarvestedAt": "2026-11-21T00:51:55.800Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {
@@ -10093,10 +10093,10 @@
     "repository": "QwikDev/qwik",
     "platform": "github",
     "sourceUrl": "https://github.com/QwikDev/qwik",
-    "sourceVersion": "cfa0e890",
+    "sourceVersion": "fa8e12f1",
     "license": "MIT",
-    "contentHash": "211ec8bcdb46c772ad13eeab066d8709adc3027fe14e02a2c29a21eb7184802c",
-    "lastHarvestedAt": "2026-11-17T06:10:58.648Z",
+    "contentHash": "25fe586776364bc2820e759a63cf06ec3798056175fc33366f225c7cc149e179",
+    "lastHarvestedAt": "2026-11-21T00:51:58.112Z",
     "learningId": "learn-github-qwikdev-qwik"
   },
   "typewhisper-typewhisper-mac": {

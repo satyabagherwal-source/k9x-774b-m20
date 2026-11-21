@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T00:44:00.590Z",
+  "updated_at": "2026-11-21T00:52:13.971Z",
   "stats": {
-    "total_discovered": 6828,
-    "approved_pending_harvest": 6444,
+    "total_discovered": 6830,
+    "approved_pending_harvest": 6446,
     "harvested_count": 0,
     "rejected_count": 384,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6419,
+      "COMMUNITY_AND_EXPERT": 6421,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -147551,6 +147551,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/preactjs-preact-learnings.md",
         "fileName": "preactjs-preact-learnings.md"
+      }
+    },
+    "SRC-5EE80241A0F2": {
+      "id": "SRC-5EE80241A0F2",
+      "url": "https://qwikdev-build-v2.qwik-8nx.pages.dev/docs/errors",
+      "title": "https://qwikdev-build-v2.qwik-8nx.pages.dev/docs/errors",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T00:52:13.184Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
+        "fileName": "qwikdev-qwik-learnings.md"
+      }
+    },
+    "SRC-0EB3E99E4396": {
+      "id": "SRC-0EB3E99E4396",
+      "url": "https://github.com/tailscale/corp/issues/38924",
+      "title": "https://github.com/tailscale/corp/issues/38924",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T00:52:13.970Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
+        "fileName": "tailscale-tailscale-learnings.md"
       }
     }
   }

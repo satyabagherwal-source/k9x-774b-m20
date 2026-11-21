@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T00:43:55.543Z",
-  "total_cycles_completed": 11119,
-  "total_learnings_persisted": 11119,
-  "total_rules_promoted": 10474,
+  "last_updated": "2026-11-21T00:52:08.923Z",
+  "total_cycles_completed": 11123,
+  "total_learnings_persisted": 11123,
+  "total_rules_promoted": 10478,
   "history": [
-    {
-      "timestamp": "2026-11-20T03:48:47.716Z",
-      "repository": "meshery/meshery",
-      "learningId": "learn-github-meshery-meshery",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T04:02:33.951Z",
-      "repository": "bridgecrewio/checkov",
-      "learningId": "learn-github-bridgecrewio-checkov",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T04:02:38.613Z",
-      "repository": "gluesql/gluesql",
-      "learningId": "learn-github-gluesql-gluesql",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T04:14:15.302Z",
-      "repository": "ClementTsang/bottom",
-      "learningId": "learn-github-clementtsang-bottom",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T04:29:24.034Z",
       "repository": "gocd/gocd",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-21T00:43:55.543Z",
       "repository": "neuron-core/neuron-ai",
       "learningId": "learn-github-neuron-core-neuron-ai",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T00:51:55.806Z",
+      "repository": "agent-of-empires/agent-of-empires",
+      "learningId": "learn-github-agent-of-empires-agent-of-empires",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T00:51:58.117Z",
+      "repository": "QwikDev/qwik",
+      "learningId": "learn-github-qwikdev-qwik",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T00:52:05.723Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T00:52:08.923Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

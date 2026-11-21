@@ -4,22 +4,22 @@
 {
   "source_repository": "tailscale/tailscale",
   "source_url": "https://github.com/tailscale/tailscale",
-  "source_version": "262640ff",
+  "source_version": "36780d60",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-20T20:15:01.684Z",
+  "timestamp": "2026-11-21T00:52:05.928Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tailscale-tailscale",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `262640ff`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-20T20:15:01.684Z`  
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `36780d60`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-21T00:52:05.928Z`  
 > **Learning ID**: `learn-github-tailscale-tailscale`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tailscale/tailscale` (Commit: `262640ff`)
+- **Target Repository**: `tailscale/tailscale` (Commit: `36780d60`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T20:15:00.371Z  
+> **Harvest Timestamp**: 2026-11-21T00:52:04.696Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39385 stars
+- **Stars / Engagement**: 39394 stars
 
 ---
 
@@ -834,189 +834,151 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `262640ff` (2026-11-20)
-**Commit Message**: util/syspolicy/source: notify sessions when a forced read finds a change
+### Incident Patch 1: `4f7439b4` (2026-11-20)
+**Commit Message**: feature/conn25: name lock-requiring methods Locked (#22532)
 
-A Reader is shared by all effective policies that include its source.
-A forced read through one of them updated the Reader's cached snapshot
-and marked it up to date, but didn't notify the other sessions, so
-their policies kept the old settings.
+Two methods read or write state guarded by their receiver's mutex without
+taking it, relying on every caller to hold it, but were not named to say
+so. enqueueAddressAssignment documented the requirement in prose only;
+lookupAddrBySrcIPAndTransitIP had no doc comment at all. Rename both with
+the Locked suffix the package already uses for drainAddrsLocked,
+transitIPRoutableLocked and removeFlowLocked, and give the connector
+lookup a doc comment stating the requirement.
 
-Since a89b32904, "tailscale syspolicy reload" reloads the caller's user
-policy rather than the device policy used by LocalBackend. On Windows,
-a registry change made without a Group Policy refresh was therefore
-reported as configured by the CLI but never applied by the backend.
+Fixes https://github.com/tailscale/corp/issues/38924
 
-Updates tailscale/corp#51820
+Change-Id: Ib8bcaf5809ae6f982a504ae554ad1304dbb53018
 
-Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
+Signed-off-by: Mazdak Nasab <[REDACTED_EMAIL]>
 
-**File**: `util/syspolicy/rsop/resultant_policy_test.go` (modified, +55/-0)
+**File**: `feature/conn25/client.go` (modified, +7/-7)
 ```diff
-@@ -10,6 +10,7 @@ import (
- 	"strconv"
- 	"sync"
- 	"testing"
-+	"testing/synctest"
- 	"time"
- 
- 	"github.com/google/go-cmp/cmp"
-@@ -701,6 +702,60 @@ drain:
+@@ -157,8 +157,8 @@ func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip
+ 	if existing, ok := c.assignments.lookupByDomainDst(domain, dst); ok {
+ 		// We have the domain/dst, but it's possible this came from another connector
+ 		// and the original connector is dead, in which case we currently don't
+-		// call enqueueAddressAssignment and register the TransitIP with the other
+-		// connector. And we don't install the new connector's node key in WireGuard.
++		// call enqueueAddressAssignmentLocked and register the TransitIP with the
++		// other connector. And we don't install the new connector's node key in WireGuard.
+ 		//
+ 		// The correct action would be to allocate a new TransitIP associated
+ 		// with that new connector, and then register the TransitIP address, and
+@@ -241,7 +241,7 @@ func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip
+ 		transitPool.returnAddr(tip)
+ 		return nil, err
  	}
- }
+-	if err := c.enqueueAddressAssignment(as); err != nil {
++	if err := c.enqueueAddressAssignmentLocked(as); err != nil {
+ 		c.assignments.remove(as)
+ 		magicPool.returnAddr(mip)
+ 		transitPool.returnAddr(tip)
+@@ -269,9 +269,9 @@ var errQueueFull = errors.New("queue full")
+ // no longer accepts address assignments.
+ var errClientShutdown = errors.New("conn25 client shut down")
  
-+// unobservableStore is a [source.Store] that doesn't report policy changes,
-+// like the Windows Registry when edited without a Group Policy refresh.
-+type unobservableStore struct{ source.Store }
-+
-+func TestForcedReloadUpdatesOtherPolicies(t *testing.T) {
-+	synctest.Test(t, func(t *testing.T) {
-+		settingA := setting.NewDefinition("TestSettingA", setting.DeviceSetting, setting.StringValue)
-+		if err := setting.SetDefinitionsForTest(t, settingA); err != nil {
-+			t.Fatalf("SetDefinitionsForTest failed: %v", err)
-+		}
-+
-+		store := source.NewTestStoreOf[string](t)
-+		if _, err := RegisterStoreForTest(t, "TestSource", setting.DeviceScope, unobservableStore{store}); err != nil {
-+			t.Fatalf("Failed to register policy store: %v", err)
-+		}
-+
-+		// Both the device and the user policies read from the same device store.
-+		devicePolicy, err := policyForTest(t, setting.DeviceScope)
-+		if err != nil {
-+			t.Fatalf("Failed to get device policy: %v", err)
-+		}
-+		userPolicy, err := policyForTest(t, setting.UserScopeOf("test-user"))
-+		if err != nil {
-+			t.Fatalf("Failed to get user policy: %v", err)
-+		}
-+
-+		policyChanged := make(chan policyclient.PolicyChange, 1)
-+		t.Cleanup(devicePolicy.RegisterChangeCallback(func(pc policyclient.PolicyChange) { policyChanged <- pc }))
-+
-+		// Forcibly reloading the user policy must also update the device policy.
-+		store.SetStrings(source.TestSettingOf(settingA.Key(), "A"))
-+		if _, err := userPolicy.Reload(); err != nil {
-+			t.Fatalf("Reload failed: %v", err)
-+		}
-+		if got, want := userPolicy.Get().Get(settingA.Key()), "A"; got != want {
-+			t.Errorf("User policy: setting %q: got %q; want %q", settingA.Key(), got, want)
-+		}
-+
-+		time.Sleep(policyReloadMaxDelay)
-+		synctest.Wait()
-+		select {
-+		case pc := <-policyChanged:
-+			if !pc.HasChanged(settingA.Key()) {
-+				t.Errorf("Policy setting %q has not changed", settingA.Key())
-+			}
-+		default:
-+			t.Fatal("Device policy change callback was not invoked")
-+		}
-+		if got, want := devicePolicy.Get().Get(settingA.Key()), "A"; got != want {
-+			t.Errorf("Device policy: setting %q: got %q; want %q", settingA.Key(), got, want)
-+		}
-+	})
-+}
-+
- func TestClosePolicySource(t *testing.T) {
- 	testSetting := setting.NewDefinition("TestSetting", setting.DeviceSetting, setting.StringValue)
- 	if err := setting.SetDefinitionsForTest(t, testSetting); err != nil {
-```
-
-**File**: `util/syspolicy/source/policy_reader.go` (modified, +14/-1)
-```diff
-@@ -130,7 +130,8 @@ func (r *Reader) reload(force bool) (*setting.Snapshot, error) {
- 		// Return the last known policy instead of reading from the store.
- 		return r.lastPolicy, nil
+-// enqueueAddressAssignment queues addrs to be registered with its connector by
+-// sendLoop. c.mu must be held.
+-func (c *client) enqueueAddressAssignment(addrs *addrs) error {
++// enqueueAddressAssignmentLocked queues addrs to be registered with its
++// connector by sendLoop. c.mu must be held.
++func (c *client) enqueueAddressAssignmentLocked(addrs *addrs) error {
+ 	if c.closed {
+ 		return errClientShutdown
  	}
--	if r.upToDate && !force {
-+	wasUpToDate := r.upToDate
-+	if wasUpToDate && !force {
- 		return r.lastPolicy, nil
+@@ -489,7 +489,7 @@ func (c *client) resendTransitIPMapping(transitIP netip.Addr) {
+ 		// We have no mappings for this transit IP, so nothing to resend.
+ 		return
  	}
- 
-@@ -179,6 +180,12 @@ func (r *Reader) reload(force bool) (*setting.Snapshot, error) {
- 	newPolicy := setting.NewSnapshot(m, setting.SummaryWith(r.origin))
- 	if r.lastPolicy == nil || !newPolicy.EqualItems(r.lastPolicy) {
- 		r.lastPolicy = newPolicy
-+		if wasUpToDate {
-+			// A forced read found a change the store never reported.
-+			// The sessions other than the caller's still hold the old
-+			// policy and won't re-read it unless notified.
-+			r.notifySessionsLocked()
-+		}
- 	}
- 	return r.lastPolicy, nil
- }
-@@ -241,6 +248,12 @@ func (r *Reader) onPolicyChange() {
- 	r.mu.Lock()
- 	defer r.mu.Unlock()
- 	r.upToDate = false
-+	r.notifySessionsLocked()
-+}
-+
-+// notifySessionsLocked notifies the active [ReadingSession]s of a policy change.
-+// r.mu must be held.
-+func (r *Reader) notifySessionsLocked() {
- 	for _, s := range r.sessions {
- 		select {
- 		case s.policyChangedCh <- struct{}{}:
-```
-
----
-
-### Incident Patch 2: `b8370089` (2026-11-20)
-**Commit Message**: clientupdate: don't exit tailscaled when starting the Windows installer
-
-When an update is requested via LocalAPI, updateWindows runs inside
-tailscaled, and its os.Exit(0) after launching the tailscale.exe copy
-made the service restart the tailscaled child process immediately.
-
-Exit only when running as tailscale.exe. In tailscaled.exe,
-wait for the installer instead, which stops the service as part
-of the upgrade. As a side effect, an install that fails before
-stopping the service is now reported as a failed update.
-
-Updates tailscale/corp#40430
-
-Change-Id: I8af60fa12740dafceb7c9ea4f50d87c1cad27fa4
-Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
-
-**File**: `clientupdate/clientupdate_windows.go` (modified, +8/-1)
-```diff
-@@ -159,7 +159,7 @@ you can run the command prompt as Administrator one of these ways:
- 
- 	up.Logf("making tailscale.exe copy to switch to...")
- 	up.cleanupOldDownloads(filepath.Join(os.TempDir(), updaterPrefix+"-*.exe"))
--	_, cmdTailscaleCopy, err := makeCmdTailscaleCopy()
-+	cmdTailscale, cmdTailscaleCopy, err := makeCmdTailscaleCopy()
+-	err := c.enqueueAddressAssignment(mapping)
++	err := c.enqueueAddressAssignmentLocked(mapping)
  	if err != nil {
- 		return err
+ 		c.logf("error enqueueing address assignment for resend: %v", err)
  	}
-@@ -174,6 +174,13 @@ you can run the command prompt as Administrator one of these ways:
- 	if err := cmd.Start(); err != nil {
- 		return err
- 	}
-+	if selfExe, err := os.Executable(); err == nil && selfExe != cmdTailscale {
-+		// We're tailscaled (the service's child process) rather
-+		// than tailscale (the CLI). If we exited now, the service
-+		// would restart us right away (see babysitProc in cmd/tailscaled),
-+		// so keep running until the installer stops the service.
-+		return cmd.Wait()
-+	}
- 	// Once it's started, exit ourselves, so the binary is free
- 	// to be replaced.
- 	os.Exit(0)
+```
+
+**File**: `feature/conn25/client_test.go` (modified, +3/-3)
+```diff
+@@ -411,8 +411,8 @@ func (c *client) currentGeneration() uint64 {
+ 	return c.generation
+ }
+ 
+-// enqueueAddressAssignmentForTest is [client.enqueueAddressAssignment] with the
+-// lock it expects callers to hold, plus the generation stamp that
++// enqueueAddressAssignmentForTest is [client.enqueueAddressAssignmentLocked]
++// with the lock it expects callers to hold, plus the generation stamp that
+ // [client.reserveAddresses] would have applied. The production callers all
+ // enqueue from inside a c.mu critical section; tests reach for it on its own,
+ // and build the [addrs] by hand rather than reserving one. Without the stamp
+@@ -422,7 +422,7 @@ func (c *client) enqueueAddressAssignmentForTest(as *addrs) error {
+ 	c.mu.Lock()
+ 	defer c.mu.Unlock()
+ 	as.generation = c.generation
+-	return c.enqueueAddressAssignment(as)
++	return c.enqueueAddressAssignmentLocked(as)
+ }
+ 
+ func TestTransitIPConnMapping(t *testing.T) {
+```
+
+**File**: `feature/conn25/conn25_test.go` (modified, +1/-1)
+```diff
+@@ -643,7 +643,7 @@ func TestHandleConnectorTransitIPRequest(t *testing.T) {
+ 								i, j, len(wantLookup))
+ 						}
+ 						pip, tip, wantDip := wantLookup[0], wantLookup[1], wantLookup[2]
+-						gotDip, _ := c.connector.lookupAddrBySrcIPAndTransitIP(pip, tip)
++						gotDip, _ := c.connector.lookupAddrBySrcIPAndTransitIPLocked(pip, tip)
+ 						if gotDip != wantDip {
+ 							t.Errorf("wrong result on lookup[%d][%d] ([%v], [%v]): got [%v] expected [%v]",
+ 								i, j, pip, tip, gotDip, wantDip)
+```
+
+**File**: `feature/conn25/connector.go` (modified, +5/-2)
+```diff
+@@ -116,7 +116,7 @@ type transitIPExpiryEntry struct {
+ func (c *connector) realIPForTransitIPConnection(srcIP netip.Addr, transitIP netip.Addr) (netip.Addr, bool) {
+ 	c.mu.Lock()
+ 	defer c.mu.Unlock()
+-	return c.lookupAddrBySrcIPAndTransitIP(srcIP, transitIP)
++	return c.lookupAddrBySrcIPAndTransitIPLocked(srcIP, transitIP)
+ }
+ 
+ // transitIPInPool reports whether tip is within the transit IP pool of its
+@@ -164,7 +164,10 @@ func (c *connector) packetFilterAllow(p packet.Parsed) (bool, string) {
+ 	return false, ""
+ }
+ 
+-func (c *connector) lookupAddrBySrcIPAndTransitIP(srcIP, transitIP netip.Addr) (netip.Addr, bool) {
++// lookupAddrBySrcIPAndTransitIPLocked returns the real destination IP that the
++// peer at srcIP registered for transitIP, or (zero, false) if it registered
++// none. c.mu must be held.
++func (c *connector) lookupAddrBySrcIPAndTransitIPLocked(srcIP, transitIP netip.Addr) (netip.Addr, bool) {
+ 	m, ok := c.transitIPs[srcIP]
+ 	if !ok || m == nil {
+ 		return netip.Addr{}, false
+```
+
+**File**: `feature/conn25/connector_test.go` (modified, +1/-1)
+```diff
+@@ -272,7 +272,7 @@ func TestConnectorDisallowedDestinations(t *testing.T) {
+ 			if tt.wantCode == OK {
+ 				wantDst = unmapped
+ 			}
+-			if got, _ := c.connector.lookupAddrBySrcIPAndTransitIP(peerIP, transitIP); got != wantDst {
++			if got, _ := c.connector.lookupAddrBySrcIPAndTransitIPLocked(peerIP, transitIP); got != wantDst {
+ 				t.Errorf("lookup(%v, %v) = %v, want %v", peerIP, transitIP, got, wantDst)
+ 			}
+ 		})
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22535** (2026-11-20): magicsock,tstun: add gauges for the number of open queues and sockets (@illotum)
+- **PR #22534** (2026-11-20): feature/conn25: do not lock mu in packetFilterAllow (@mazdakn)
+- **PR #22532** (2026-11-20): feature/conn25: name lock-requiring methods Locked (@mazdakn)
+- **PR #22531** (closed): ipn/ipnlocal: add failing test for serve TCP forward half-close (@bcreane)
 - **PR #22528** (2026-11-20): net/memnet: don't arm deadline timers on a closed Pipe (@bradfitz)
 - **PR #22527** (2026-11-20): util/syspolicy/source: notify sessions when a forced read finds a change (@nickkhyl)
-- **PR #22523** (2026-11-20): clientupdate: don't exit tailscaled when starting the Windows installer (@nickkhyl)
-- **PR #22518** (2026-11-19): go.mod: bump wg-go for hybrid pq log details (@jwhited)
-- **PR #22513** (2026-11-19): feature/conn25: guard against an unusable Transit IP (@mazdakn)
-- **PR #22508** (2026-11-19): wgengine/magicsock: update packetLooksLike docs (@jwhited)
 
 ---
 
@@ -1036,59 +998,43 @@ Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. util/syspolicy/source: notify sessions when a forced read finds a change
+## X. feature/conn25: name lock-requiring methods Locked
 
 **RULE**:
-When implementing operations in `util/syspolicy/rsop/resultant_policy_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `feature/conn25/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `262640ff`: util/syspolicy/source: notify sessions when a forced read finds a change. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4f7439b4`: feature/conn25: name lock-requiring methods Locked. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `util/syspolicy/rsop/resultant_policy_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `feature/conn25/client.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"testing/synctest"
-// unobservableStore is a [source.Store] that doesn't report policy changes,
-// like the Windows Registry when edited without a Group Policy refresh.
-type unobservableStore struct{ source.Store }
-
-func TestForcedReloadUpdatesOtherPolicies(t *testing.T) {
-	synctest.Test(t, func(t *testing.T) {
-		settingA := setting.NewDefinition("TestSettingA", setting.DeviceSetting, setting.StringValue)
-		if err := setting.SetDefinitionsForTest(t, settingA); err != nil {
-			t.Fatalf("SetDefinitionsForTest failed: %v", err)
-		}
-
-		store := source.NewTestStoreOf[string](t)
-		if _, err := RegisterStoreForTest(t, "TestSource", setting.DeviceScope, unobservableStore{store}); err != nil {
-			t.Fatalf("Failed to register policy store: %v", err)
-		}
-
-		// Both the device and the user policies read from the same device store.
-		devicePolicy, err := policyForTest(t, setting.DeviceScope)
-		if err != nil {
-			t.Fatalf("Failed to get device policy: %v", err)
-		}
-		userPolicy, err := policyForTest(t, setting.UserScopeOf("test-user"))
-		if err != nil {
-			t.Fatalf("Failed to get user policy: %v", err)
-		}
-
-		policyChanged := make(chan policyclient.PolicyChange, 1)
-		t.Cleanup(devicePolicy.Regi
+		// call enqueueAddressAssignmentLocked and register the TransitIP with the
+		// other connector. And we don't install the new connector's node key in WireGuard.
+	if err := c.enqueueAddressAssignmentLocked(as); err != nil {
+// enqueueAddressAssignmentLocked queues addrs to be registered with its
+// connector by sendLoop. c.mu must be held.
+func (c *client) enqueueAddressAssignmentLocked(addrs *addrs) error {
+	err := c.enqueueAddressAssignmentLocked(mapping)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		// call enqueueAddressAssignment and register the TransitIP with the other
+		// connector. And we don't install the new connector's node key in WireGuard.
+	if err := c.enqueueAddressAssignment(as); err != nil {
+// enqueueAddressAssignment queues addrs to be registered with its connector by
+// sendLoop. c.mu must be held.
+func (c *client) enqueueAddressAssignment(addrs *addrs) error {
+	err := c.enqueueAddressAssignment(mapping)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `262640ff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4f7439b4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -11679,3 +11679,7 @@
 | `CYCLE-20261121-Q2H3` | `2026-11-21T00:43:46.311Z` | `preactjs/preact` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9681` | Yes (`e09783bd...`) |
 | `CYCLE-20261121-Q4DC` | `2026-11-21T00:43:48.768Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9682` | Yes (`31609fdb...`) |
 | `CYCLE-20261121-Q9LA` | `2026-11-21T00:43:55.534Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2926` | Yes (`0ae4e690...`) |
+| `CYCLE-20261121-0K5W` | `2026-11-21T00:51:55.796Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9683` | Yes (`7940db42...`) |
+| `CYCLE-20261121-0LY4` | `2026-11-21T00:51:58.108Z` | `QwikDev/qwik` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9684` | Yes (`25fe5867...`) |
+| `CYCLE-20261121-0RTD` | `2026-11-21T00:52:05.713Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9685` | Yes (`31728eab...`) |
+| `CYCLE-20261121-0UA9` | `2026-11-21T00:52:08.913Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9686` | Yes (`17293a15...`) |

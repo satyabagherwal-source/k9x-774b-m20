@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T00:44:01.659Z",
+  "last_updated": "2026-11-21T00:52:14.341Z",
   "total_records": 2202,
   "domains": {
     "A": {
@@ -8089,8 +8089,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "86957d966f53edbb4c00bd53792eb74aa54a62e5243a2ea3a4f6752ad5cb85cd",
-      "created_at": "2026-11-20T20:15:01.834Z"
+      "content_hash": "63b2f24b914884c2384d482e4e69189bbb76a2f602627702f5cf646aa74e659d",
+      "created_at": "2026-11-21T00:52:06.105Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -13116,8 +13116,8 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "d3721807ec1c58b2676c9fa95b29f1edc625d4843940987c14a198f81f42ac74",
-      "created_at": "2026-11-20T20:15:05.141Z"
+      "content_hash": "2891a42415e833293f3c79df6ad3be06859c2e2fab27ef0c0baedc33ceb1e856",
+      "created_at": "2026-11-21T00:52:14.341Z"
     },
     "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
@@ -15533,8 +15533,8 @@
       "title": "Architecture Intelligence: agent-of-empires/agent-of-empires Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-of-empires-agent-of-empires-architecture-intelligence-agent-of-empires-age.md",
       "repository": "agent-of-empires/agent-of-empires",
-      "content_hash": "53920f51f7095f7113919a47963e3727a708492b0c05d2261f210bdc6587a783",
-      "created_at": "2026-11-16T05:28:57.475Z"
+      "content_hash": "05281376ba7148883e0673c2d4991403924f89b818783a2be702622d7eb4e8cc",
+      "created_at": "2026-11-21T00:51:56.253Z"
     },
     "domain_intelligence-architecture-intelligence-koderover-zadig-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-koderover-zadig-core-invariants",
@@ -15560,8 +15560,8 @@
       "title": "Architecture Intelligence: agent-of-empires-agent-of-empires-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-of-empires-agent-of-empires-learnings-architecture-intelligence-agent-of-e.md",
       "repository": "agent-of-empires-agent-of-empires-learnings",
-      "content_hash": "f8ef369bd3d64a43ec49627f1c86c858ebbf4144958c9776dec4b201e87cbb49",
-      "created_at": "2026-11-16T05:29:12.236Z"
+      "content_hash": "8cd0163242beae2e409977af894dc61c80f413bc0d77495baa11e35b07d11b2b",
+      "created_at": "2026-11-21T00:52:12.774Z"
     },
     "DOM-D-C580DAE3": {
       "record_id": "DOM-D-C580DAE3",
@@ -21772,8 +21772,8 @@
       "title": "Quality & Verification Intelligence: matrixorigin/matrixone Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-matrixorigin-matrixone-quality-verification-intelligence-matrixorigin-matrixone-.md",
       "repository": "matrixorigin/matrixone",
-      "content_hash": "82b4903028a9bc96dd19c17a77af52d9911e9ff05e0844500a8021a9d7fe7d26",
-      "created_at": "2026-11-19T22:36:18.350Z"
+      "content_hash": "6d234a6b0a9a8cdc736b0e27b4732cc6895de89e29ffb011e9b4da06db12b966",
+      "created_at": "2026-11-21T00:52:09.324Z"
     },
     "domain_intelligence-quality-verification-intelligence-matrixorigin-matrixone-learnings-core-invarian": {
       "record_id": "domain_intelligence-quality-verification-intelligence-matrixorigin-matrixone-learnings-core-invarian",
@@ -26094,8 +26094,8 @@
       "title": "Technical Construction Intelligence: QwikDev/qwik Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-qwikdev-qwik-technical-construction-intelligence-qwikdev-qwik-core-invariants.md",
       "repository": "QwikDev/qwik",
-      "content_hash": "2a114abcef934f8867d9be62b4c9a61460f9e60b0d8c115b073713ca0fe31a2c",
-      "created_at": "2026-11-17T06:10:59.178Z"
+      "content_hash": "4efdfd3bdddddc790d7731173fdb18bec8f566a63a6b5c0a24fc2f4114f216db",
+      "created_at": "2026-11-21T00:51:58.503Z"
     },
     "DOM-B-6AFC12DD": {
       "record_id": "DOM-B-6AFC12DD",
@@ -26137,8 +26137,8 @@
       "title": "Technical Construction Intelligence: qwikdev-qwik-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-qwikdev-qwik-learnings-technical-construction-intelligence-qwikdev-qwik-learning.md",
       "repository": "qwikdev-qwik-learnings",
-      "content_hash": "5075c45fa158395c5c36f92649f6b72e8682ed5fe458777e6268040ea47acb4a",
-      "created_at": "2026-11-17T06:11:30.523Z"
+      "content_hash": "6104c18d9814c9668c588158345e82a055fd71dd335bacc22d46c1322e08a31d",
+      "created_at": "2026-11-21T00:52:13.566Z"
     },
     "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-core-invariants",
