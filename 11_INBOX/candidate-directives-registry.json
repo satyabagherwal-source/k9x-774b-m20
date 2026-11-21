@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T11:38:52.095Z",
+  "last_updated": "2026-11-21T11:55:40.252Z",
   "directives": [
     {
       "id": "CD-001",
@@ -42168,6 +42168,79 @@
       "source_repo": "argoproj-argo-workflows",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-298F84-test-controller-move-fourth-slice-of-ope.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-PPLF",
+      "directive_title": "bound alternate nesting depth to prevent stack overflow",
+      "source_repo": "BurntSushi/ripgrep",
+      "source_commit": "4e588dd8",
+      "staged_file": "11_INBOX/candidate-directives/CD-PPLF-bound-alternate-nesting-depth-to-prevent-stack-overflow.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-Q4WS",
+      "directive_title": "[docs] Add Using LiveKit guide",
+      "source_repo": "expo-expo-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-Q4WS-docs-add-using-livekit-guide.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-PZYO",
+      "directive_title": "Retry Databricks tests on Glue client NullPointerException",
+      "source_repo": "trinodb/trino",
+      "source_commit": "6678854c",
+      "staged_file": "11_INBOX/candidate-directives/CD-PZYO-retry-databricks-tests-on-glue-client-nullpointerexception.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-Q15O",
+      "directive_title": "visualizer input field and disable reasoning",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "f0b8dbab",
+      "staged_file": "11_INBOX/candidate-directives/CD-Q15O-visualizer-input-field-and-disable-reasoning.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-Q3RH",
+      "directive_title": "globset: bound alternate nesting depth to prevent stack overflow",
+      "source_repo": "burntsushi-ripgrep-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-Q3RH-globset-bound-alternate-nesting-depth-to-prevent-stack-overflow.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-2A5085",
+      "directive_title": "Forensic Learning Record (Deep Inspection): dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2A5085-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-4E6357",
+      "directive_title": "[docs] Add Using LiveKit guide",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "expo-expo",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4E6357--docs-add-using-livekit-guide.md",
       "staged_date": "2026-11-21"
     }
   ]

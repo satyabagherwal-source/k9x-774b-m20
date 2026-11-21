@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T11:38:50.979Z",
+  "updated_at": "2026-11-21T11:55:40.067Z",
   "stats": {
-    "total_discovered": 7088,
-    "approved_pending_harvest": 6693,
+    "total_discovered": 7099,
+    "approved_pending_harvest": 6704,
     "harvested_count": 0,
     "rejected_count": 395,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6677,
-      "OFFICIAL_DOCUMENTATION": 234,
+      "COMMUNITY_AND_EXPERT": 6684,
+      "OFFICIAL_DOCUMENTATION": 238,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
       "SECURITY_ADVISORIES": 41,
@@ -153194,6 +153194,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
         "fileName": "laurent22-joplin-learnings.md"
+      }
+    },
+    "SRC-EBACCE10D428": {
+      "id": "SRC-EBACCE10D428",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/2552",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/2552",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T11:55:38.560Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-478DC14B14F8": {
+      "id": "SRC-478DC14B14F8",
+      "url": "https://github.com/expo/expo-livekit-template",
+      "title": "https://github.com/expo/expo-livekit-template",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T11:55:39.669Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
+      }
+    },
+    "SRC-800442B5AE3D": {
+      "id": "SRC-800442B5AE3D",
+      "url": "https://livekit.io/",
+      "title": "https://livekit.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T11:55:39.713Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
+      }
+    },
+    "SRC-C47EAD29FEF4": {
+      "id": "SRC-C47EAD29FEF4",
+      "url": "https://docs.livekit.io/agents",
+      "title": "https://docs.livekit.io/agents",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T11:55:39.760Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
+      }
+    },
+    "SRC-DFEF0C1F1711": {
+      "id": "SRC-DFEF0C1F1711",
+      "url": "https://cloud.livekit.io/",
+      "title": "https://cloud.livekit.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T11:55:39.802Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
+      }
+    },
+    "SRC-4C514D0E5D39": {
+      "id": "SRC-4C514D0E5D39",
+      "url": "https://docs.livekit.io/reference/developer-tools/livekit-cli",
+      "title": "https://docs.livekit.io/reference/developer-tools/livekit-cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T11:55:39.849Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
+      }
+    },
+    "SRC-1F9B843373D2": {
+      "id": "SRC-1F9B843373D2",
+      "url": "https://docs.livekit.io/agents/models/inference",
+      "title": "https://docs.livekit.io/agents/models/inference",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T11:55:39.891Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
+      }
+    },
+    "SRC-B00A63229A16": {
+      "id": "SRC-B00A63229A16",
+      "url": "https://github.com/expo/expo/blob/main/CONTRIBUTING.md",
+      "title": "https://github.com/expo/expo/blob/main/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T11:55:39.937Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
+      }
+    },
+    "SRC-9037CFBD5F5D": {
+      "id": "SRC-9037CFBD5F5D",
+      "url": "https://github.com/expo/expo/blob/main/guides/Expo%20Documentation%20Writing%20Style%20Guide.md",
+      "title": "https://github.com/expo/expo/blob/main/guides/Expo%20Documentation%20Writing%20Style%20Guide.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T11:55:39.979Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
+      }
+    },
+    "SRC-40F75ABC872D": {
+      "id": "SRC-40F75ABC872D",
+      "url": "https://expo.dev/accounts/[account",
+      "title": "https://expo.dev/accounts/[account",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T11:55:40.025Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
+      }
+    },
+    "SRC-1B63C6B070E4": {
+      "id": "SRC-1B63C6B070E4",
+      "url": "https://docs.expo.dev/accounts/programmatic-access",
+      "title": "https://docs.expo.dev/accounts/programmatic-access",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T11:55:40.067Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
       }
     }
   }

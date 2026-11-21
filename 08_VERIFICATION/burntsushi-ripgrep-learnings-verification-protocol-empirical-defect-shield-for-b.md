@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T23:02:10.323Z",
+  "timestamp": "2026-11-21T11:55:38.654Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-burntsushi-ripgrep-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [burntsushi-ripgrep-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T23:02:10.323Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T11:55:38.654Z`  
 > **Learning ID**: `LEARN-EVO-burntsushi-ripgrep-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md`  
 > **Source**: github ([https://github.com/BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep))  
-> **Source Version**: `6670aede`  
+> **Source Version**: `4e588dd8`  
 > **License**: Unlicense  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T22:56:57.150Z  
+> **Timestamp**: 2026-11-21T11:55:19.179Z  
 > **Learning ID**: `learn-github-burntsushi-ripgrep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T22:51:52.378Z  
+> **Harvest Timestamp**: 2026-11-21T11:55:19.174Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: ripgrep recursively searches directories for a regex pattern while respecting your gitignore
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 70076 stars
+- **Stars / Engagement**: 70117 stars
 
 ---
 
@@ -1371,11 +1371,11 @@ fn render_custom_markup(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3589** (2026-11-20): **globset: deeply nested `{…}` alternates recurse without a depth limit and overflow the stack (aborts ripgrep)**
+  *Symptoms*: ### Please tick this box to confirm you have reviewed the above.  - [x] I have a different issue.  ### What version of ripgrep are you using?  ripgrep 15.2.0  ### How did you install ripgrep?  cargo install ripgrep --locked --version 15.2.0  ### What operating system are you using ripgrep on?  Ubuntu 24.04, x86-64.  ### Describe your bug.  `globset` compiles a glob to a regex with a recursive walk (`Tokens::tokens_to_regex` in `crates/globset/src/glob.rs`) that has no depth limit. A glob with deeply nested alternation groups — `{{{{…a…}}}}` — produces a token tree whose depth equals the nesting depth, and the tree→regex conversion recurses once per level and overflows the stack, so the process aborts (`fatal runtime error: stack overflow, aborting`).  Because `ignore` parses every `.gitignore` line through `globset` (`crates/ignore/src/gitignore.rs`), a directory whose `.gitignore` contains such a line makes `rg` itself abort when it walks that directory.  This is a change in behavior: up to `globset 0.4.16` the parser rejected nested alternates with `Err(... nested alternate groups are not allowed)`. Commit 5f5da48307 ("globset: support nested alternates", first released in globset 0.4.17) removed that rejection, so the recursion — which already existed for single-level alternates — became reachable at arbitrary depth, with no depth limit. `ErrorKind::NestedAlternates` is still declared (now deprecated) but no longer constructed. Affected: globset >= 0.4.17; ripgrep >= 15.0.
+
 - **Issue #3419** (2026-06-05): **Nondeterminism in ignore::WalkBuilder parallel multi-root walk**
   *Symptoms*: ### Please tick this box to confirm you have reviewed the above.  - [x] I have a different issue.  ### What version of ripgrep are you using?  14.1.1  ### How did you install ripgrep?  Cargo  ### What operating system are you using ripgrep on?  macOS 26.5  ### Describe your bug.  `ignore::WalkBuilder` appears to produce nondeterministic results for a parallel multi-root walk when one root has a scoped ignore rule that should not apply to another root.    ### What are the steps to reproduce the behavior?  Minimal layout:  ```text .git/ .gitignore noxfile.py src/scikit_build_core/build/metadata.py tests/test_metadata.py ```  `.gitignore`:  ```gitignore tests/**/build/ ```  The source build file should always be included: the ignore rule only matches `build/` directories below `tests/`.  Minimal Rust repro with `ignore = "0.4.25"`:  ```rust use std::path::Path; use std::sync::atomic::{AtomicBool, Ordering};  fn source_build_file_was_seen(root: &Path) -> bool {     let source_build_file = root.join("src/scikit_build_core/build/metadata.py");     let seen = AtomicBool::new(false);      let mut builder = ignore::WalkBuilder::new(root.join("src"));     builder.current_dir(root);     builder.standard_filters(true);     builder.add(root.join("tests"));     builder.add(root.join("noxfile.py"));     builder.threads(12);      builder.build_parallel().run(|| {         Box::new(|entry| {             if let Ok(entry) = entry {                 if entry.path() == source_build_file {          
-
-- **Issue #3194** (2025-10-19): **Line buffering appears broken in 15.0.0**
-  *Symptoms*: ### Please tick this box to confirm you have reviewed the above.  - [x] I have a different issue.  ### What version of ripgrep are you using?  ``` ripgrep 15.0.0  features:+pcre2 simd(compile):+SSE2,+SSSE3,+AVX2 simd(runtime):+SSE2,+SSSE3,+AVX2  PCRE2 10.45 is available (JIT is available) ```  ### How did you install ripgrep?  Bug appears when built locally with Cargo as well as the binaries provided on the release page  ### What operating system are you using ripgrep on?  Arch Linux -- kernel `6.17.3`  ### Describe your bug.  I've been using ripgrep to filter `journalctl` output in follow mode for years and thus need the `--line-buffered` option otherwise nothing is output since `stdin` doesn't close.  With the latest release that switch doesn't appear to be having any affect.  ### What are the steps to reproduce the behavior?  No output:      journalctl -n5 -f | ./rg --no-config --line-buffered  'Oct'  Does produce some output -- I assume this is because the "block buffer" is getting full?      journalctl -n5000 -f | ./rg --no-config --line-buffered  'Oct'  When run with < `15.0.0` each line that is matched is output as soon as it's printed by `journalctl`.  Obviously you'll have to adjust the search to match whatever's in your logs.  ### What is the actual behavior?  Same as "steps to reproduce"  ### What is the expected behavior?  Match lines (or inverse matches with `-v`) should be output as soon as they're output by the pipe
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1392,168 +1392,307 @@ fn render_custom_markup(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6670aede` (2026-11-19)
-**Commit Message**: fix: statically link binary on Windows ARM64/MSVC (#3607) (#3614)
+### Incident Patch 1: `48242a71` (2026-11-20)
+**Commit Message**: globset: bound alternate nesting depth to prevent stack overflow (#3590)
 
-Statically link the C runtime on aarch64-pc-windows-msvc so that the
-resulting binary does not depend on vcruntime140.dll on Windows ARM64 systems.
+Cap nested `{...}` alternation groups at 100 levels in `Parser::push_alternate`
+and return `ErrorKind::TooManyNestedAlternates` when exceeded. This prevents
+recursive `Tokens::tokens_to_regex` compilation and recursive `Tokens` drop
+from overflowing the stack on deeply nested patterns while remaining well
+below `regex-syntax`'s default group nesting limit (250).
 
-This mirrors the existing configuration for x86_64-pc-windows-msvc and
-i686-pc-windows-msvc.
+Fixes #3589
 
-Fixes #3607
-
-Signed-off-by: Sami Chergui <[REDACTED_EMAIL]>
-
-**File**: `.cargo/config.toml` (modified, +2/-0)
+**File**: `crates/globset/src/glob.rs` (modified, +23/-0)
 ```diff
-@@ -6,6 +6,8 @@
- rustflags = ["-C", "target-feature=+crt-static"]
- [target.i686-pc-windows-msvc]
- rustflags = ["-C", "target-feature=+crt-static"]
-+[target.aarch64-pc-windows-msvc]
-+rustflags = ["-C", "target-feature=+crt-static"]
+@@ -857,6 +857,13 @@ impl<'a> Parser<'a> {
+     }
  
- # Do the same for MUSL targets. At the time of writing (2023-10-23), this is
- # the default. But the plan is for the default to change to dynamic linking.
+     fn push_alternate(&mut self) -> Result<(), Error> {
++        // Bound alternate nesting so recursive token-to-regex compilation and
++        // token tree drop cannot overflow the stack, while staying well within
++        // regex-syntax's default group nesting limit (250).
++        const MAX_ALTERNATES_DEPTH: usize = 100;
++        if self.alternates_stack.len() >= MAX_ALTERNATES_DEPTH {
++            return Err(self.error(ErrorKind::TooManyNestedAlternates));
++        }
+         self.alternates_stack.push(self.branches.len());
+         self.branches.push(Tokens::default());
+         Ok(())
+@@ -1299,6 +1306,22 @@ mod tests {
+     syntaxerr!(err_alt3, "a,b}", ErrorKind::UnopenedAlternates);
+     syntaxerr!(err_alt4, "{a,b}}", ErrorKind::UnopenedAlternates);
+ 
++    #[test]
++    fn nested_alternates_depth_limit() {
++        let ok_pat = "{".repeat(100) + "a" + &"}".repeat(100);
++        let matcher = Glob::new(&ok_pat).unwrap().compile_matcher();
++        assert!(matcher.is_match("a"));
++        assert!(!matcher.is_match("b"));
++
++        let over_pat = "{".repeat(101) + "a" + &"}".repeat(101);
++        let err = Glob::new(&over_pat).unwrap_err();
++        assert_eq!(&ErrorKind::TooManyNestedAlternates, err.kind());
++
++        let deep_pat = "{".repeat(14_000) + "a" + &"}".repeat(14_000);
++        let err = Glob::new(&deep_pat).unwrap_err();
++        assert_eq!(&ErrorKind::TooManyNestedAlternates, err.kind());
++    }
++
+     const CASEI: Options = Options {
+         casei: Some(true),
+         litsep: None,
+```
+
+**File**: `crates/globset/src/lib.rs` (modified, +6/-0)
+```diff
+@@ -189,6 +189,8 @@ pub enum ErrorKind {
+     /// another alternating group, e.g., `{{a,b},{c,d}}`. However, this is now
+     /// supported and as such this error cannot occur.
+     NestedAlternates,
++    /// Occurs when alternating groups are nested too deeply.
++    TooManyNestedAlternates,
+     /// Occurs when an unescaped '\' is found at the end of a glob.
+     DanglingEscape,
+     /// An error associated with parsing or compiling a regex.
+@@ -234,6 +236,9 @@ impl ErrorKind {
+             ErrorKind::NestedAlternates => {
+                 "nested alternate groups are not allowed"
+             }
++            ErrorKind::TooManyNestedAlternates => {
++                "alternate groups nested too deeply"
++            }
+             ErrorKind::DanglingEscape => "dangling '\\'",
+             ErrorKind::Regex(ref err) => err,
+         }
+@@ -259,6 +264,7 @@ impl std::fmt::Display for ErrorKind {
+             | ErrorKind::UnopenedAlternates
+             | ErrorKind::UnclosedAlternates
+             | ErrorKind::NestedAlternates
++            | ErrorKind::TooManyNestedAlternates
+             | ErrorKind::DanglingEscape
+             | ErrorKind::Regex(_) => write!(f, "{}", self.description()),
+             ErrorKind::InvalidRange(s, e) => {
 ```
 
 ---
 
-### Incident Patch 2: `fdf7d954` (2026-11-18)
-**Commit Message**: fix: continue reading ignore files after invalid UTF-8 lines (#3605)
+### Incident Patch 2: `9ca85a37` (2026-11-20)
+**Commit Message**: fix: don't report ignored broken symlinks when following links (#2552)
 
-Fixes #3604
+When symlinks are followed, a symlink whose target doesn't exist can't
+be resolved, and the resulting error was reported even if the link
+itself is ignored by a gitignore rule, a hidden file rule or any other
+filter. The parallel walker now checks the unresolved link against
+`should_skip_entry`, and the single threaded walker does the same by
+building an entry for the link with `symlink_metadata`. Errors for
+links that aren't ignored are still reported, as are symlink loops.
 
-**File**: `crates/ignore/src/gitignore.rs` (modified, +27/-2)
+Fixes #2552
+
+**File**: `crates/ignore/src/walk.rs` (modified, +127/-0)
 ```diff
-@@ -9,7 +9,7 @@ the `git` command line tool.
+@@ -421,6 +421,28 @@ impl DirEntryRaw {
+         })
+     }
  
- use std::{
-     fs::File,
--    io::{BufRead, BufReader, Read},
-+    io::{BufRead, BufReader, ErrorKind, Read},
-     path::{Path, PathBuf},
-     sync::Arc,
- };
-@@ -419,7 +419,11 @@ impl GitignoreBuilder {
-             let line = match line {
-                 Ok(line) => line,
++    /// Builds an entry for `path` without following it if it is a symlink.
++    ///
++    /// Unlike `from_path`, this succeeds for a symlink whose target doesn't
++    /// exist.
++    fn from_symlink(depth: usize, path: &Path) -> Result<DirEntryRaw, Error> {
++        #[cfg(unix)]
++        use std::os::unix::fs::MetadataExt;
++
++        let md = fs::symlink_metadata(path)
++            .map_err(|err| Error::Io(err).with_depth(depth).with_path(path))?;
++        Ok(DirEntryRaw {
++            path: path.to_path_buf(),
++            ty: md.file_type(),
++            follow_link: false,
++            depth,
++            #[cfg(unix)]
++            ino: md.ino(),
++            #[cfg(windows)]
++            metadata: md,
++        })
++    }
++
+     // Placeholder implementation to allow compiling on non-standard platforms
+     // (e.g. wasm32).
+     #[cfg(not(any(windows, unix)))]
+@@ -1217,6 +1239,22 @@ impl Iterator for Walk {
+             };
+             match ev {
                  Err(err) => {
-+                    let kind = err.kind();
-                     errs.push(Error::Io(err).tagged(path, lineno));
-+                    if kind == ErrorKind::InvalidData {
-+                        continue;
++                    // Like the parallel walker, don't report a symlink that
++                    // can't be followed if the ignore rules skip it. Root
++                    // paths are never skipped.
++                    if err.depth() > 0 && err.loop_ancestor().is_none() {
++                        let link = err.path().and_then(|path| {
++                            DirEntryRaw::from_symlink(err.depth(), path).ok()
++                        });
++                        if let Some(link) = link {
++                            let link = DirEntry::new_raw(link, None);
++                            if link.path_is_symlink()
++                                && should_skip_entry(&self.ig, &link)
++                            {
++                                continue;
++                            }
++                        }
 +                    }
-                     break;
+                     return Some(Err(Error::from_walkdir(err)));
+                 }
+                 Ok(WalkEvent::Exit) => {
+@@ -1892,6 +1930,11 @@ impl<'s> Worker<'s> {
+             dent = match DirEntryRaw::from_path(depth, path, true) {
+                 Ok(dent) => DirEntry::new_raw(dent, None),
+                 Err(err) => {
++                    // The link can't be followed, but if the ignore rules
++                    // match the link itself, it must not be reported.
++                    if should_skip_entry(ig, &dent) {
++                        return WalkState::Continue;
++                    }
+                     return self.visitor.visit(Err(err));
                  }
              };
-@@ -708,16 +712,37 @@ fn home_dir() -> Option<PathBuf> {
- 
- #[cfg(test)]
- mod tests {
--    use std::path::Path;
-+    use std::{io::ErrorKind, path::Path};
- 
-     use super::{Gitignore, GitignoreBuilder};
-+    use crate::tests::TempDir;
- 
-     fn gi_from_str<P: AsRef<Path>>(root: P, s: &str) -> Gitignore {
-         let mut builder = GitignoreBuilder::new(root);
-         builder.add_str(None, s).unwrap();
-         builder.build().unwrap()
+@@ -2807,4 +2850,88 @@ mod tests {
+             Box::new(|_| WalkState::Continue)
+         });
      }
- 
-+    #[test]
-+    fn invalid_utf8_preserves_later_patterns() {
-+        let td = TempDir::new().unwrap();
-+        let path = td.path().join(".gitignore");
-+        std::fs::write(
-+            &path,
-+            b"\xef\xbb\xbfbefore\r\n\xff\xfe\r\nafter\r\nspace\\ \r\nlast",
-+        )
-+        .unwrap();
-+        let mut builder = GitignoreBuilder::new(td.path());
-+        let err = builder.add(&path).unwrap();
-+        assert!(err.to_string().contains("line 2"));
-+        assert_eq!(err.io_error().unwrap().kind(), ErrorKind::InvalidData);
-+        let gi = builder.build().unwrap();
-+        assert!(gi.matched("before", false).is_ignore());
-+        assert!(gi.matched("after", false).is_ignore());
-+        assert!(gi.matched("space ", false).is_ignore());
-+        assert!(gi.matched("last", false).is_ignore());
++
++    /// Returns the number of errors yielded by the single threaded walker.
++    fn walk_error_count(builder: &WalkBuilder) -> usize {
++        builder.build().filter(|result| result.is_err()).count()
 +    }
 +
-     macro_rules! ignored {
-         ($name:ident, $root:expr, $gi:expr, $path:expr) => {
-             ignored!($name, $root, $gi, $path, false);
++    /// Returns the number of errors yielded by the parallel walker.
++    fn walk_error_count_parallel(builder: &WalkBuilder) -> usize {
++        let errors = Arc::new(Mutex::new(0));
++        builder.build_parallel().run(|| {
++            let errors = errors.clone();
++            Box::new(move |result| {
++                if result.is_err() {
++                    *errors.lock().unwrap() += 1;
++                }
++                WalkState::Continue
++            })
++        });
++        *errors.lock().unwrap()
++    }
++
++    #[cfg(unix)] // because symlinks on windows are weird
++    #[test]
++    fn ignored_broken_symlink_follow_links_no_error() {
++        let td = tmpdir();
++        wfile(td.path().join(".ignore"), "broken\n");
++        symlink(td.path().join("nowhere"), td.path().join("broken"));
++
++        let mut builder = WalkBuilder::new(td.path());
++        builder.follow_links(true);
++        assert_eq!(0, walk_error_count(&builder), "single threaded");
++        assert_eq!(0, walk_error_count_parallel(&builder), "parallel");
++        assert_paths(td.path(), &builder, &[]);
++    }
++
++    #[cfg(unix)] // because symlinks on windows are weird
++    #[test]
++    fn broken_symlink_follow_links_error() {
++        let td = tmpdir();
++        symlink(td.path().join("nowhere"), td.path().join("broken"));
++
++        let mut builder = WalkBuilder::new(td.path());
++        builder.follow_links(true);
++        assert_eq!(1, walk_error_count(&builder), "single threaded");
++        assert_eq!(1, walk_error_count_parallel(&builder), "parallel");
++    }
++
++    #[cfg(unix)] // because symlinks on windows are weird
++    #[test]
++    fn hidden_broken_symlink_follow_links_no_error() {
++        let td = tmpdir();
++        symlink(td.path().join("nowhere"), td.path().join(".hbroken"));
++
++        let mut builder = WalkBuilder::new(td.path());
++        builder.follow_links(true).hidden(true);
++        assert_eq!(0, walk_error_count(&builder), "single threaded");
++        assert_eq!(0, walk_error_count_parallel(&builder), "parallel");
++    }
++
++    #[cfg(
+```
+
+**File**: `tests/regression.rs` (modified, +38/-0)
+```diff
+@@ -1800,3 +1800,41 @@ rgtest!(r3593, |dir: Dir, mut cmd: TestCommand| {
+             .stdout()
+     );
+ });
++
++// See: https://github.com/BurntSushi/ripgrep/issues/2552
++#[cfg(unix)] // because symlinks on windows are weird
++rgtest!(
++    r2552_ignored_broken_symlink_follow,
++    |dir: Dir, mut cmd: TestCommand| {
++        dir.create(".ignore", "broken\n");
++        dir.create("file", "");
++        dir.link_file("nowhere", "broken");
++
++        cmd.arg("-L").arg("--files");
++        cmd.assert_exit_code(0);
++        eqnice!("file\n", cmd.stdout());
++
++        let mut cmd = dir.command();
++        cmd.arg("-L").arg("--files").arg("-j1");
++        cmd.assert_exit_code(0);
++        eqnice!("file\n", cmd.stdout());
++    }
++);
++
++// See: https://github.com/BurntSushi/ripgrep/issues/2552
++#[cfg(unix)] // because symlinks on windows are weird
++rgtest!(r2552_broken_symlink_root_follow, |dir: Dir, mut cmd: TestCommand| {
++    dir.link_file("nowhere", ".hid");
++    dir.link_file("nowhere", "live");
++
++    cmd.arg("-L").arg("--files").arg(".hid");
++    cmd.assert_exit_code(2);
++
++    let mut cmd = dir.command();
++    cmd.arg("-L").arg("--files").arg("-j1").arg(".hid");
++    cmd.assert_exit_code(2);
++
++    let mut cmd = dir.command();
++    cmd.arg("-L").arg("--files");
++    cmd.assert_exit_code(2);
++});
 ```
 
 ---
 
-### Incident Patch 3: `a95835b2` (2026-11-18)
-**Commit Message**: fix: reject partial path components when stripping Unix prefixes (#3609)
+### Incident Patch 3: `b01c1f46` (2026-11-21)
+**Commit Message**: chore: fix broken roff bold markup in `--null-data` docs (#3553)
 
-Fixes #3603
-
-**File**: `crates/ignore/src/pathutil.rs` (modified, +27/-5)
+**File**: `crates/core/flags/defs.rs` (modified, +1/-1)
 ```diff
-@@ -103,11 +103,14 @@ pub(crate) fn strip_prefix<'a, P: AsRef<Path> + ?Sized>(
- 
-         let prefix = prefix.as_os_str().as_bytes();
-         let path = path.as_os_str().as_bytes();
--        if prefix.len() > path.len() || prefix != &path[0..prefix.len()] {
--            None
--        } else {
--            Some(&Path::new(OsStr::from_bytes(&path[prefix.len()..])))
-+        let rest = path.strip_prefix(prefix)?;
-+        // Don't strip a partial component, e.g., "/foo" from "/foobar".
-+        if prefix.last().is_some_and(|&b| b != b'/')
-+            && rest.first().is_some_and(|&b| b != b'/')
-+        {
-+            return None;
-         }
-+        Some(Path::new(OsStr::from_bytes(rest)))
-     }
- 
-     #[cfg(not(unix))]
-@@ -175,7 +178,26 @@ mod tests {
-     use std::ffi::OsStr;
-     use std::path::Path;
- 
--    use super::{file_name, is_hidden_path};
-+    use super::{file_name, is_hidden_path, strip_prefix};
-+
-+    #[cfg(unix)]
-+    #[test]
-+    fn strip_prefix_component_boundary() {
-+        for (prefix, path, expected) in [
-+            ("/home/foo", "/home/foobar", None),
-+            ("/home/foo", "/home/foo/bar", Some("/bar")),
-+            ("/home/foo", "/home/foo", Some("")),
-+            ("/", "/home/foo", Some("home/foo")),
-+            ("/home/foo/", "/home/foo/bar", Some("bar")),
-+            ("", "foo/bar", Some("foo/bar")),
-+        ] {
-+            assert_eq!(
-+                strip_prefix(prefix, Path::new(path)),
-+                expected.map(Path::new),
-+                "prefix={prefix:?}, path={path:?}",
-+            );
-+        }
-+    }
- 
-     #[test]
-     fn file_name_basic() {
+@@ -5029,7 +5029,7 @@ impl Flag for NullData {
+     fn doc_long(&self) -> &'static str {
+         r"
+ Enabling this flag causes ripgrep to use \fBNUL\fP as a line terminator instead
+-of the default of \fP\\n\fP.
++of the default of \fB\\n\fP.
+ .sp
+ This is useful when searching large binary files that would otherwise have
+ very long lines if \fB\\n\fP were used as the line terminator. In particular,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3618** (2026-11-20): ignore: don't report ignored broken symlinks when following links (@cemaliplt)
+- **PR #3616** (2026-11-20): fix: `-g !DIRNAME/` couldn't match when the CWD is `DIRNAME` (@BurntSushi)
+- **PR #3615** (2026-11-20): windows: stop treating linker warnings as errors (@konsti-openai)
 - **PR #3614** (2026-11-19): cargo: statically link binary on Windows ARM64/MSVC (#3607) (@Yshuro)
+- **PR #3613** (2026-11-20): globset: fix matches_all across required extensions (@Marsman1996)
 - **PR #3611** (2026-11-18): chore: add trusted publishing (@BurntSushi)
-- **PR #3610** (closed): ci: cancel superseded runs on the same ref (@Bnjoroge1)
-- **PR #3609** (2026-11-18): ignore: reject partial path components when stripping Unix prefixes (@Marsman1996)
-- **PR #3608** (closed): ignore: only strip whole path components on Unix (@luised00)
-- **PR #3606** (closed): Fix/gitignore invalid utf8 continue (@Manthan-Moudgalya)
 
 ---
 
@@ -1573,22 +1712,43 @@ Fixes #3603
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. statically link binary on Windows ARM64/MSVC
+## X. globset: bound alternate nesting depth to prevent stack overflow
 
 **RULE**:
-When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BurntSushi/ripgrep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/globset/src/glob.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BurntSushi/ripgrep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6670aede`: statically link binary on Windows ARM64/MSVC. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `48242a71`: globset: bound alternate nesting depth to prevent stack overflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/globset/src/glob.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-[target.aarch64-pc-windows-msvc]
-rustflags = ["-C", "target-feature=+crt-static"]
+        // Bound alternate nesting so recursive token-to-regex compilation and
+        // token tree drop cannot overflow the stack, while staying well within
+        // regex-syntax's default group nesting limit (250).
+        const MAX_ALTERNATES_DEPTH: usize = 100;
+        if self.alternates_stack.len() >= MAX_ALTERNATES_DEPTH {
+            return Err(self.error(ErrorKind::TooManyNestedAlternates));
+        }
+    #[test]
+    fn nested_alternates_depth_limit() {
+        let ok_pat = "{".repeat(100) + "a" + &"}".repeat(100);
+        let matcher = Glob::new(&ok_pat).unwrap().compile_matcher();
+        assert!(matcher.is_match("a"));
+        assert!(!matcher.is_match("b"));
+
+        let over_pat = "{".repeat(101) + "a" + &"}".repeat(101);
+        let err = Glob::new(&over_pat).unwrap_err();
+        assert_eq!(&ErrorKind::TooManyNestedAlternates, err.kind());
+
+        let deep_pat = "{".repeat(14_000) + "a" + &"}".repeat(14_000);
+        let err = Glob::new(&deep_pat).unwrap_err();
+        assert_eq!(&ErrorKind::TooManyNestedAlternates, err.kind());
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1598,7 +1758,7 @@ rustflags = ["-C", "target-feature=+crt-static"]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6670aede` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `48242a71` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

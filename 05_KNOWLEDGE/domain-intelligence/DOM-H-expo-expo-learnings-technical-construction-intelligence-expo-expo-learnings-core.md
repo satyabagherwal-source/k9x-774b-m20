@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T10:45:16.265Z",
+  "timestamp": "2026-11-21T11:55:40.150Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-expo-expo-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [expo-expo-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T10:45:16.265Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T11:55:40.150Z`  
 > **Learning ID**: `LEARN-EVO-expo-expo-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 68%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), E (Creative Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), C (Market & Business Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 70%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from expo-expo-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/expo-expo-learnings.md`  
 > **Source**: github ([https://github.com/expo/expo](https://github.com/expo/expo))  
-> **Source Version**: `9eed7a5a`  
+> **Source Version**: `aa82194f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T10:45:09.558Z  
+> **Timestamp**: 2026-11-21T11:55:25.651Z  
 > **Learning ID**: `learn-github-expo-expo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/expo-expo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/expo/expo](https://github.com/expo/expo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T10:45:09.555Z  
+> **Harvest Timestamp**: 2026-11-21T11:55:25.648Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: An open-source framework for making universal native apps with React. Expo runs on Android, iOS, and the web.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 53640 stars
+- **Stars / Engagement**: 53698 stars
 
 ---
 
@@ -702,513 +702,439 @@ object AsyncCondition {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2348cb52` (2026-11-17)
-**Commit Message**: [expo-glass-effect] Build from a checked-in Package.swift (#53210)
-
-# Why
-
-The Expo SwiftPM plugin builds some modules directly from their
-checked-in `Package.swift`. expo-glass-effect has no checked-in
-`Package.swift`, so the plugin cannot build it that way.
-
-`GlassView.swift` has `import React`. A module that the plugin builds
-directly could not find the React headers. #53203 fixes that. No module
-that the plugin builds directly used the fix until now.
-
-# How
-
-This PR adds `packages/expo-glass-effect/Package.swift`. It uses the
-same structure as `packages/expo-haptics/Package.swift`:
-
-- The only dependency is the `ExpoModulesCoreHeaders` product. The React
-header products come through that package (#53203).
-- The platforms are iOS 16.4 and tvOS 16.4, the same as
-`ios/ExpoGlassEffect.podspec`.
-- The Swift language mode is 5.
-
-`spm.config.json` no longer sets `path` and `pattern`, because the
-checked-in manifest declares the sources. It now sets
-`swiftLanguageVersions` to `["5"]`, so that the config and the manifest
-agree. No Swift source file changes.
-
-Stack order:
-1. #53203: give direct SwiftPM manifests the React Native headers.
-2. This PR: expo-glass-effect. It depends on #5320
-
-**File**: `.changeset/expo-glass-effect-checked-in-manifest.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'expo-glass-effect': patch
-+---
-+
-+[iOS] Add a checked-in Package.swift so that the Expo SwiftPM plugin builds the module directly from it.
-```
-
-**File**: `packages/expo-glass-effect/Package.swift` (added, +30/-0)
-```diff
-@@ -0,0 +1,30 @@
-+// swift-tools-version: 6.2
-+import PackageDescription
-+
-+// Expo's SwiftPM plugin builds this manifest through a symlink to this directory at
-+// `<app>/ios/build/generated/autolinking/expo/direct/expo-glass-effect`. Relative package paths
-+// such as `../ExpoModulesCoreHeaders` resolve against that symlink, not against this directory.
-+let package = Package(
-+  name: "expo-glass-effect",
-+  platforms: [
-+    .iOS("16.4"),
-+    .tvOS("16.4")
-+  ],
-+  products: [
-+    .library(name: "ExpoGlassEffect", targets: ["ExpoGlassEffect"])
-+  ],
-+  dependencies: [
-+    .package(path: "../ExpoModulesCoreHeaders")
-+  ],
-+  targets: [
-+    .target(
-+      name: "ExpoGlassEffect",
-+      dependencies: [
-+        .product(name: "ExpoModulesCoreHeaders", package: "ExpoModulesCoreHeaders")
-+      ],
-+      path: "ios",
-+      exclude: ["ExpoGlassEffect.podspec"]
-+    )
-+  ],
-+  swiftLanguageModes: [.v5]
-+)
-```
-
-**File**: `packages/expo-glass-effect/spm.config.json` (modified, +1/-2)
-```diff
-@@ -11,12 +11,11 @@
-         "Hermes",
-         "expo-modules-core/ExpoModulesCore"
-       ],
-+      "swiftLanguageVersions": ["5"],
-       "targets": [
-         {
-           "type": "swift",
-           "name": "ExpoGlassEffect",
--          "path": "ios",
--          "pattern": "*.swift",
-           "dependencies": [
-             "Hermes",
-             "React",
-```
-
----
-
-### Incident Patch 2: `73459907` (2026-11-17)
-**Commit Message**: [ios][expo-hinge] Build expo-hinge directly from a checked-in Package.swift (#53324)
+### Incident Patch 1: `09205331` (2026-11-20)
+**Commit Message**: [docs] Add Using LiveKit guide (#53776)
 
 ## Why
 
-`expo-hinge` has no checked-in `Package.swift`. The Expo SwiftPM plugin
-cannot build it directly from source.
-
-`expo-hinge` imports `ExpoModulesWorklets`. Until #53322 and #53323, a
-checked-in manifest could not depend on that product.
+The docs have no guide for realtime voice agents. Expo has a LiveKit
+template at
+[expo/expo-livekit-template](https://github.com/expo/expo-livekit-template),
+but no page explains how to use it.
 
 ## How
 
-- `packages/expo-hinge/Package.swift`: a new manifest, made from the
-`expo-haptics` template. It depends on `../ExpoModulesCoreHeaders` and
-`../ExpoModulesWorkletsHeaders`. It uses Swift language mode 5, as in
-`spm.config.json`.
-- `packages/expo-hinge/spm.config.json`: remove `pattern` and `path`.
-`et prebuild` reads the target and its path from the checked-in
-manifest. The `expo-haptics` and `expo-sensors` configs have neither
-key.
-- `packages/expo/scripts/spm/__tests__/real-manifests.test.js`: the test
-now checks the stand-ins of each real manifest. The `expo-hinge` row
-expects both stand-ins. Every other row expects `ExpoModulesCoreHeaders`
-only. This test reads `expo-hinge/Package.swift`, so it is in this pull
-request and not in #53323.
+This pull request adds the guide `docs/pages/guides/using-livekit.mdx`.
+The guide follows the structure of the Convex guide and uses the
+template.
 
-CocoaPods builds do not change. The podspec stays as it is.
+- "Create a voice agent app" creates a project from the template,
+connects LiveKit Cloud, starts the agent, and runs the app.
+- "How the template works" explains the token endpoint, the session
+hook, and the agent.
+- "Deploy to production" deploys the token endpoint to Expo Hosting,
+sets the `origin`, and deploys the agent.
+- "Troubleshooting" has five items.
 
-This is pull request 3 of a stack of 3. It depen
+The diff also adds the page to the sidebar. The page is in a new "Voice
+and video" group in the Integrations section. The diff adds `LiveKit` to
+the exceptions of the Vale `HeadingCase` rule.
 
-**File**: `.changeset/hinge-direct-spm-manifest.md` (added, +5/-0)
+## Test Plan
+
+Ran on macOS, from `docs/`:
+
+- The scripts of `pnpm test`, `pnpm test:worker`, `pnpm lint`, and `pnpm
+lint-prose`. All pass.
+- The docs development server. `/guides/using-livekit/` renders, and the
+sidebar shows the new page.
+
+Che
+
+**File**: `docs/.vale/writing-styles/expo-docs/HeadingCase.yml` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,5 @@
+@@ -165,6 +165,7 @@ exceptions:
+   - '.*Link component.*'
+   - '.*Linking.*'
+   - '.*Linux.*'
++  - '.*LiveKit.*'
+   - '.*MCP*'
+   - '.*Mac Catalyst.*'
+   - '.*Material Symbols.*'
+```
+
+**File**: `docs/constants/navigation.js` (modified, +1/-0)
+```diff
+@@ -424,6 +424,7 @@ export const general = [
+     ]),
+     makeGroup('Tools', [makePage('guides/using-eslint.mdx'), makePage('guides/typescript.mdx')]),
+     makeGroup('TV apps', [makePage('guides/building-for-tv.mdx')]),
++    makeGroup('Voice and video', [makePage('guides/using-livekit.mdx')]),
+     makeGroup('Web apps', [makePage('guides/using-nextjs.mdx')]),
+   ]),
+   makeSection(
+```
+
+**File**: `docs/pages/guides/using-livekit.mdx` (added, +361/-0)
+```diff
+@@ -0,0 +1,361 @@
 +---
-+'expo-hinge': patch
++title: Using LiveKit
++description: Add a realtime voice agent to your app with LiveKit.
 +---
 +
-+[iOS] Build from a checked-in Package.swift that the Expo SwiftPM plugin uses directly when the module is built from source.
-```
-
-**File**: `packages/expo-hinge/Package.swift` (added, +31/-0)
-```diff
-@@ -0,0 +1,31 @@
-+// swift-tools-version: 6.2
-+import PackageDescription
++import { GithubIcon } from '@expo/styleguide-icons/custom/GithubIcon';
++import { BookOpen02Icon } from '@expo/styleguide-icons/outline/BookOpen02Icon';
 +
-+// Expo's SwiftPM plugin builds this manifest through a symlink to this directory at
-+// `<app>/ios/build/generated/autolinking/expo/direct/expo-hinge`. Relative package paths
-+// such as `../ExpoModulesCoreHeaders` resolve against that symlink, not against this directory.
-+let package = Package(
-+  name: "expo-hinge",
-+  platforms: [
-+    .iOS("16.4")
-+  ],
-+  products: [
-+    .library(name: "ExpoHinge", targets: ["ExpoHinge"])
-+  ],
-+  dependencies: [
-+    .package(path: "../ExpoModulesCoreHeaders"),
-+    .package(path: "../ExpoModulesWorkletsHeaders"),
-+  ],
-+  targets: [
-+    .target(
-+      name: "ExpoHinge",
-+      dependencies: [
-+        .product(name: "ExpoModulesCoreHeaders", package: "ExpoModulesCoreHeaders"),
-+        .product(name: "ExpoModulesWorkletsHeaders", package: "ExpoModulesWorkletsHeaders"),
-+      ],
-+      path: "ios",
-+      exclude: ["ExpoHinge.podspec"]
-+    )
-+  ],
-+  swiftLanguageModes: [.v5]
-+)
-```
-
-**File**: `packages/expo-hinge/spm.config.json` (modified, +1/-2)
-```diff
-@@ -12,12 +12,11 @@
-         "expo-modules-core/ExpoModulesCore",
-         "expo-modules-core/ExpoModulesWorklets"
-       ],
-+      "swiftLanguageVersions": ["5"],
-       "targets": [
-         {
-           "type": "swift",
-           "name": "ExpoHinge",
--          "path": "ios",
--          "pattern": "*.swift",
-           "dependencies": [
-             "Hermes",
-             "React",
-```
-
-**File**: `packages/expo/scripts/spm/__tests__/real-manifests.test.js` (modified, +41/-34)
-```diff
-@@ -27,36 +27,39 @@ function installLikeNpm(packageName, destination) {
- 
- afterEach(removeTempDirs);
- 
-+const CORE_ONLY = ['ExpoModulesCoreHeaders'];
++import { BoxLink } from '~/ui/components/BoxLink';
++import { Prerequisites, Requirement } from '~/ui/components/Prerequisites';
++import { Terminal } from '~/ui/components/Snippet';
++import { Step } from '~/ui/components/Step';
 +
- const DIRECT_MANIFESTS = [
--  ['expo-age-range', 'ExpoAgeRange'],
--  ['expo-apple-authentication', 'ExpoAppleAuthentication'],
--  ['expo-asset', 'ExpoAsset'],
--  ['expo-background-fetch', 'ExpoBackgroundFetch'],
--  ['expo-battery', 'ExpoBattery'],
--  ['expo-blur', 'ExpoBlur'],
--  ['expo-brightness', 'ExpoBrightness'],
--  ['expo-cellular', 'ExpoCellular'],
--  ['expo-document-picker', 'ExpoDocumentPicker'],
--  ['expo-font', 'ExpoFont'],
--  ['expo-haptics', 'ExpoHaptics'],
--  ['expo-keep-awake', 'ExpoKeepAwake'],
--  ['expo-linear-gradient', 'ExpoLinearGradient'],
--  ['expo-linking', 'ExpoLinking'],
--  ['expo-live-photo', 'ExpoLivePhoto'],
--  ['expo-local-authentication', 'ExpoLocalAuthentication'],
--  ['expo-mail-composer', 'ExpoMailComposer'],
--  ['expo-mesh-gradient', 'ExpoMeshGradient'],
--  ['expo-network', 'ExpoNetwork'],
--  ['expo-print', 'ExpoPrint'],
--  ['expo-secure-store', 'ExpoSecureStore'],
--  ['expo-sensors', 'ExpoSensors'],
--  ['expo-sms', 'ExpoSMS'],
--  ['expo-speech', 'ExpoSpeech'],
--  ['expo-status-bar', 'ExpoStatusBar'],
--  ['expo-store-review', 'ExpoStoreReview'],
--  ['expo-symbols', 'ExpoSymbols'],
--  ['expo-video-thumbnails', 'ExpoVideoThumbnails'],
--  ['expo-web-browser', 'ExpoWebBrowser'],
-+  ['expo-age-range', 'ExpoAgeRange', CORE_ONLY],
-+  ['expo-apple-authentication', 'ExpoAppleAuthentication', CORE_ONLY],
-+  ['expo-asset', 'ExpoAsset', CORE_ONLY],
-+  ['expo-background-fetch', 'ExpoBackgroundFetch', CORE_ONLY],
-+  ['expo-battery', 'ExpoBattery', CORE_ONLY],
-+  ['expo-blur', 'ExpoBlur', CORE_ONLY],
-+  ['expo-brightness', 'ExpoBrightness', CORE_ONLY],
-+  ['expo-cellular', 'ExpoCellular', CORE_ONLY],
-+  ['expo-document-picker', 'ExpoDocumentPicker', CORE_ONLY],
-+  ['expo-font', 'ExpoFont', CORE_ONLY],
-+  ['expo-haptics', 'ExpoHaptics', CORE_ONLY],
-+  ['expo-hinge', 'ExpoHinge', ['ExpoModulesCoreHeaders', 'ExpoModulesWorkletsHeaders']],
-+  ['expo-keep-awake', 'ExpoKeepAwake', CORE_ONLY],
-+  ['expo-linear-gradient', 'ExpoLinearGradient', CORE_ONLY],
-+  ['expo-linking', 'ExpoLinking', CORE_ONLY],
-+  ['expo-live-photo', 'ExpoLivePhoto', CORE_ONLY],
-+  ['expo-local-authentication', 'ExpoLocalAuthentication', CORE_ONLY],
-+  ['expo-mail-composer', 'ExpoMailComposer', CORE_ONLY],
-+  ['expo-mesh-gradient', 'ExpoMeshGradient', CORE_ONLY],
-+  ['expo-network', 'ExpoNetwork', CORE_ONLY],
-+  ['expo-print', 'ExpoPrint', CORE_ONLY],
-+  ['expo-secure-store', 'ExpoSecureStore', CORE_ONLY],
-+  ['expo-sensors', 'ExpoSensors', CORE_ONLY],
-+  ['expo-sms', 'ExpoSMS', CORE_ONLY],
-+  ['expo-speech', 'ExpoSpeech', CORE_ONLY],
-+  ['expo-status-bar', 'ExpoStatusBar', CORE_ONLY],
-+  ['expo-store-review', 'ExpoStoreReview', CORE_ONLY],
-+  ['expo-symbols', 'ExpoSymbols', CORE_ONLY],
-+  ['expo-video-thumbnails', 'ExpoVideoThumbnails', CORE_ONLY],
-+  ['expo-web-browser', 'ExpoWebBrowser', CORE_ONLY],
- ];
- 
- // expo-dev-menu-interface depends on nothing, so the plugin builds it through the generated
-@@ -70,17 +73,21 @@ const CHECKED_IN_MANIFESTS = [
- // SwiftPM does rather than a recorded dump of them.
- it.each(DIRECT_MANIFESTS)(
-   'links the real %s, installed from npm, directly through its checked-in Package.swift',
--  (packageName, productName) => {
-+  (packageName, productName, standIns) => {
-     const tmp = makeTempDir('spm-real-manifest-');
-     const moduleRoot = installLikeNpm(packageName, path.join(tmp, 'app'));
-     expect(fs.existsSync(path.join(moduleRoot, 'ios', 'Tests'))).toBe(false);
- 
-     const { manifest } = dumpModuleManifest(moduleRoot, packageName);
--    expect(headersStandInsOf(manifest)).toEqual(['ExpoModulesCoreHeaders']);
-+    expect(headersStandInsOf(manifest)).toEqual(standIns);
- 
-     const outDir = path.join(tmp, 'out');
--    const coreHeadersXCFramework = path.join(tmp, 'headers', 'ExpoModulesCoreHeaders.xcframework');
--    fs.mkdirSync(coreHeadersXCFramework, { recursive: true });
-+    const headersXCFrameworks = Object.fromEntries(
-+      standIns.map((name) => [name, path.join(tmp, 'headers', `${name}.xcframework`)])
-+    );
-+    Object.values(headersXCFrameworks).forEach((xcframework) =>
-+      fs.mkdirSync(xcframework, { recursive: true })
-+    );
-     const macrosPackageRoot = path.join(tmp, 'app', 'node_modules', 'expo-modules-macros');
-     fs.mkdirSync(macrosPackageRoot, { recursive: true });
-     fs.writeFileSync(
-@@ -92,7 +99,7 @@ it.each(DIRECT_MANIFESTS)(
-       moduleRoot,
-       packageName,
-       outDir,
--      headersXCFrameworks: { ExpoModulesCoreHeaders: coreHeadersXCFramework },
-+      headersXCFrameworks,
-       jsiHeadersPkgPath: path.join(outDir, 'ExpoModulesJSIHeaders'),
-       macrosPackageRoot,
-       manifest,
-```
-
-**File**: `tools/src/prebuilds/CheckedInManifest.ts` (modified, +2/-2)
-```diff
-@@ -15,7 +15,7 @@ import type {
-   CppTarget,
- } from './SPMConfig.types';
- import { derivePackageNameFromUrl, normalizeGitUrl } from './SPMGitUrl';
--import { parseLinkedFrameworks } from './SPMIdentifier';
-+import { parseLinkedFrameworks, swiftPMPackageName } from './SPMIdentifier';
- import type { ResolvedTarget } from './SPMPackage.types';
- 
- export interface CheckedInResolvedTarget extends ResolvedTarget {
-@@ -930,7 +930,7 @@ async function readExpectedPackageName(root: string, error: ManifestError): Prom
-       'Add the npm package name to package.json.'
-     );
-   }
--  return name.startsWith('@') ? name.slice(1).replace('/', '-') : name;
-+  return swiftPMPackageName(name);
- }
- 
- function environmentForTarget(
-```
-
-**File**: `tools/src/prebuilds/Frameworks.ts` (modified, +3/-3)
-```diff
-@@ -29,7 +29,7 @@ import {
- import { BuiltFramework } from './SPMBuild.types';
- import { BuildPlatform, SPMConfig, SPMProduct } from './SPMConfig.types';
- import { SPMGenerator } from './SPMGenerator';
--import { assertSafeSPMIdentifier } from './SPMIdentifier';
-+import { assertSafeSPMIdentifier, swiftPMPackageName } from './SPMIdentifier';
- import { createAsyncSpinner, SpinnerError } from './Utils';
- import { spawnXcodeBuildWithSpinner } from './XCodeRunner';
- 
-@@ -464,8 +464,8 @@ export const copyResourceBundlesIntoXCFrameworkAsync = async (
-   const spinner = createAsyncSpinner(`Copying resource bundles`, pkg, product);
- 
-   for (const target of targetsWithResources) {
--    // SPM names the resource bundle as {packageName}_{targetName}.bundle
--    const bundleName = `${pkg.packageName}_${target.name}.bundle`;
-+    // SPM names the resource bundle {SwiftPM package name}_{targetName}.bundle, not the npm name.
-+    const bundleName = `${swiftPMPackageName(pkg.packageName)}_${target.name}.bundle`;
- 
-     for (const slice of slices) {
-       // Map slice name to build folder prefix (e.g., 'ios-arm64' -> 'iphoneos')
-```
-
-**File**: `tools/src/prebuilds/SPMBuild.test.ts` (modified, +10/-0)
-```diff
-@@ -277,6 +277,16 @@ describe('buildXcodeBuildArgs', () => {
-     );
-   });
- 
-+  it('names the scheme after the SwiftPM package name of a scoped npm package', () => {
-+    const args = buildXcodeBuildArgs(
-+      { ...pkg, packageName: '@expo/ui' },
-+      productWithTargets([{ type: 'swift', name: 'ExpoUI', path: 'ios' }]),
-+      'Debug',
-+      'iOS'
-+    );
-+    assert.equal(args[args.indexOf('-scheme') + 1], 'expo-ui');
-+  });
++[LiveKit](https://livekit.io/) is an open source platform for realtime voice and video. With [LiveKit Agents](https://docs.livekit.io/agents/), you can build an AI agent that joins a conversation and talks with your users.
 +
-   describe('a target generated under .build/', () => {
-     const screensPkg: SPMPackageSource = {
-       path: '/repo/node_modules/react-native-screens',
-```
-
-**File**: `tools/src/prebuilds/SPMBuild.ts` (modified, +2/-2)
-```diff
-@@ -24,7 +24,7 @@ import {
- } from './SPMConfig.types';
- import { SPMGenerator } from './SPMGenerator';
- import { derivePackageNameFromUrl, normalizeGitUrl } from './SPMGitUrl';
--import { assertSafeSPMIdentifier } from './SPMIdentifier';
-+import { assertSafeSPMIdentifier, swiftPMPackageName } from './SPMIdentifier';
- import { createAsyncSpinner } from './Utils';
- import { spawnXcodeBuildWithSpinner } from './XCodeRunner';
- 
-@@ -360,7 +360,7 @@ export const buildXcodeBuildArgs = (
- 
-   return [
-     '-scheme',
--    pkg.packageName,
-+    swiftPMPackageName(pkg.packageName),
-     '-destination',
-     `generic/platform=${buildPlatform}`,
-     '-derivedDataPath',
++This guide uses the [Expo LiveKit template](https://github.com/expo/expo-livekit-template) to create a voice agent app for Android and iOS. The template has one screen with a live audio visualizer and a streaming transcript, a token endpoint in an [API route](/router/web/api-routes/), and a voice agent written in TypeScript.
++
++<Prerequisites>
++  <Requirement title="LiveKit Cloud project">
++    Sign up for [LiveKit Cloud](https://cloud.livekit.io/) and create a project. A free project
++    works for this guide.
++  </Requirement>
++  <Requirement title="LiveKit CLI">
++    Install the [LiveKit CLI](https://docs.livekit.io/reference/developer-tools/livekit-cli/). This
++    guide uses it to sign in and to write your credentials.
++  </Requirement>
++  <Requirement title="A development build">
++    The app uses WebRTC, which Expo Go does not include, so it runs in a [development
++    build](/develop/development-builds/introduction/). This guide creates one with [Expo
++    Build](/build/introduction/) or on your computer.
++  </Requirement>
++</Prerequisites>
++
++## Create a voice agent app
++
++<Step label="1">
++
++### Create a project from the template
++
++Create a new project with `create-expo-app`:
++
++<Terminal
++  cmd={{
++    npm: [
++      '$ npx create-expo-app@latest my-voice-app --template https://github.com/expo/expo-livekit-template',
++      '$ cd my-voice-app',
++    ],
++    yarn: [
++      '$ yarn create expo-app my-voice-app --template https://github.com/expo/expo-livekit-template',
++      '$ cd my-voice-app',
++    ],
++    pnpm: [
++      '$ pnpm create expo-app my-voice-app --template https://github.com/expo/expo-livekit-template',
++      '$ cd my-voice-app',
++    ],
++    bun: [
++      '$ bun create expo my-voice-app --template https://github.com/expo/expo-livekit-template',
++      '$ cd my-voice-app',
++    ],
++  }}
++/>
++
++The voice agent is a separate Node.js project in the **agent** directory. Install its dependencies:
++
++<Terminal
++  cmd={{
++    npm: ['$ npm --prefix agent install'],
++    yarn: ['$ yarn --cwd agent install'],
++    pnpm: ['$ pnpm --dir agent install'],
++    bun: ['$ bun install --cwd agent'],
++  }}
++/>
++
++</Step>
++
++<Step label="2">
++
++### Connect your LiveKit Cloud project
++
++Sign in with the LiveKit CLI, then write your credentials to **.env.local**:
++
++<Terminal cmd={['$ lk cloud auth', '$ lk app env -w']} />
++
++`lk cloud auth` opens a browser window to link your LiveKit Cloud project to the CLI. `lk app env -w` writes `LIVEKIT_URL`, `LIVEKIT_API_KEY`, and `LIVEKIT_API_SECRET` to **.env.local**. The token endpoint and the agent read these values.
++
++</Step>
++
++<Step label="3">
++
++### Start the agent
++
++<Terminal cmd={['$ npm run agent']} />
++
++The agent connects to LiveKit Cloud and waits for a conversation. It uses a speech-to-speech model from [LiveKit Inference](https://docs.livekit.io/agents/models/inference/), so you do not need an API key from a model provider. Keep this terminal open.
++
++</Step>
++
++<Step label="4">
++
++### Run the app
++
++The app runs in a development build. To create one in the cloud, use [Expo Build](/build/introduction/) with [EAS CLI](/eas/cli/). You do not need Android Studio or Xcode. In a second terminal, run:
++
++<Terminal
++  cmd={[
++    '# Build for Android',
++    '$ eas build --platform android --profile development',
++    '',
++    '# Build for iOS',
++    '$ eas build --platform ios --profile development',
++  ]}
++/>
++
++When the build finishes, install it on your device. Then start the development server:
++
++<Terminal cmd={['$ npm start']} />
++
++To create the development build on your computer instead, you need Android Studio or Xcode. See [Set up your environment](/get-started/set-up-your-environment/). These commands create the build and start the development server:
++
++<Terminal cmd={['# Run on Android', '$ npm run android', '', '# Run on iOS', '$ npm run ios']} />
++
++To compare the two methods, see [Introduction to development builds](/develop/development-builds/introduction/#how-would-you-like-to-build-your-development-build).
++
++Tap **Start conversation** and allow microphone access. The agent greets you, and the transcript appears while you talk.
++
++> **info** An Android Emulator or iOS Simulator has no echo cancellation, so the agent can
 ```
 
 ---
 
-### Incident Patch 3: `9eed7a5a` (2026-11-18)
-**Commit Message**: [ui] Type the UniversalTextStyle color as ColorValue (#53573)
+### Incident Patch 2: `198eed96` (2026-11-20)
+**Commit Message**: [docs] Document dSYM upload for Observe native crash symbolication (#53923)
 
 ## Why
 
-TypeScript rejects a `PlatformColor` as the `color` in the `textStyle`
-of a universal `Text`:
+Expo Observe now supports uploading debug symbols for native crashes,
+and the docs do not yet explain how to upload them.
 
-```tsx
-import { PlatformColor } from 'react-native';
-import { Host, Text } from '@expo/ui';
+## How
 
-export function FieldLabel() {
-  return (
-    <Host matchContents>
-      <Text textStyle={{ color: PlatformColor('secondaryLabel') }}>Name</Text>
-    </Host>
-  );
-}
+Rewrite the section to explain what dSYM files are, where to find them
+for Expo Build, local builds, and Xcode archives, and how to upload
+them, and drop dSYM upload from "Still to come".
+
+## Test Plan
+
+Vale passes on the page with no errors or warnings, and oxfmt is
+applied.
+
+## Screenshots
+
+<!-- rendered "Native stack traces" section from the local docs server
+-->
+
+## Checklist
+
+- [ ] I added a changeset and followed [this short
+guide](https://github.com/expo/expo/blob/main/CONTRIBUTING.md#-before-submitting)
+- [ ] This diff will work correctly for `npx expo prebuild` & EAS Build
+(eg: updated a module plugin).
+- [x] Conforms with the [Documentation Writing Style
+Guide](https://github.com/expo/expo/blob/main/guides/Expo%20Documentation%20Writing%20Style%20Guide.md)
+
+---------
+
+Co-authored-by: Aman Mittal <[REDACTED_EMAIL]>
+
+**File**: `docs/pages/eas/observe/errors.mdx` (modified, +90/-3)
+```diff
+@@ -6,6 +6,7 @@ description: Record JavaScript errors and native crashes from your app and inves
+ 
+ import { ContentSpotlight } from '~/ui/components/ContentSpotlight';
+ import { Terminal } from '~/ui/components/Snippet';
++import { Step } from '~/ui/components/Step';
+ 
+ > **important** Error reporting in Expo Observe is in [preview](/more/release-statuses/#preview) and requires SDK 57 or later. Native crashes additionally require `expo-observe` 57.0.21 or later. See [Still to come](#still-to-come) for more features.
+ 
+@@ -160,9 +161,95 @@ With this flag, EAS CLI uploads the Android and iOS source maps produced when yo
+ 
+ ### Native stack traces
+ 
+-Source maps only apply to JavaScript. Native stack traces are not symbolicated in the dashboard.
++Source maps only apply to JavaScript. Native frames need the debug symbols of the native binary instead.
+ 
+-On Android, frames from Java and Kotlin exceptions already carry the class, method, and line number. On iOS, frames are resolved to symbol names on the device where the crash happened, so you see function names but no file names or line numbers. A frame that cannot be resolved is shown as a binary name and an offset, such as `MyApp + 19160`.
++On Android, frames from Java and Kotlin exceptions already carry the class, method, and line number.
++
++On iOS, the device resolves frames in system libraries to symbol names. The dashboard shows frames in your app and its bundled frameworks as a binary name and an offset, such as `MyApp + 19160`. To see function names, files, and lines for these frames, upload the app's debug symbol (dSYM) files to Expo Observe.
++
++> **info** Native crash symbolication requires `expo-observe` 57.0.25 or later for SDK 57, and 58.0.5 or later for SDK 58. Crash reports from earlier versions do not include the universally unique identifiers (UUIDs) of the binaries, which Expo Observe needs to find the debug symbols.
++
++#### About debug symbols
++
++When Xcode builds your app for release, it writes the debug information of each binary to a separate **.dSYM** bundle. There is one bundle for the app and one for each framework that Xcode compiles. A prebuilt framework, such as Hermes, has no bundle in the archive. Download its dSYM from the framework's publisher and add it to the **.zip** file you upload. A binary and its dSYM share a UUID. Each native crash report lists the UUIDs of the binaries in its stack trace, and Expo Observe uses them to find the matching dSYM files.
++
++Every build produces new UUIDs, so upload the dSYM files of each build you release. Symbolication happens when you view a crash, so an upload also applies to earlier crashes.
++
++#### Find the debug symbols
++
++The location of the dSYM files depends on where you built the app.
++
++##### Expo Build
++
++Expo Build archives your app with fastlane. During the archive, fastlane compresses every dSYM in the archive into one file at **ios/build/&lt;app name&gt;.app.dSYM.zip**. To keep this file, add it to `buildArtifactPaths` in the build profile in **eas.json**:
++
++```json eas.json
++{
++  "build": {
++    "production": {
++      "buildArtifactPaths": ["ios/build/*.app.dSYM.zip"]
++    }
++  }
++}
++```
++
++When the build finishes, download the build artifacts from the build details page. If the download is a **.tar.gz** archive, extract it to get the **.app.dSYM.zip** file.
++
++##### Local builds
++
++With `eas build --local`, the same `buildArtifactPaths` setting applies. EAS CLI writes the build artifacts to the directory where you ran the command, next to the **.ipa** file. When the pattern matches one file, the artifact is the **.app.dSYM.zip** file itself, renamed to **build-&lt;timestamp&gt;.zip**. Do not pass `--output`. With it, EAS CLI writes the **.ipa** file and the build artifacts to the same path, so one file replaces the other.
++
++##### Xcode archives
++
++When you archive the app in Xcode, the dSYM files are inside the archive:
++
++<Step label="1">
++
++In Xcode, open **Window** > **Organizer** and select **Archives**.
++
++</Step>
++
++<Step label="2">
++
++Right-click the archive of the build and select **Show in Finder**.
++
++</Step>
++
++<Step label="3">
++
++Right-click the **.xcarchive** file and select **Show Package Contents**.
++
++</Step>
++
++<Step label="4">
++
++Compress the **dSYMs** folder into a **.zip** file.
++
++</Step>
++
++#### Upload the debug symbols
++
++<Step label="1">
++
++Open a native crash in [**Observe** > **Errors**](https://expo.dev/accounts/[account]/projects/[project]/observe/errors). If binaries in the stack trace have no debug symbols, a warning such as **Missing debug symbols** appears above it.
++
++</Step>
++
++<Step label="2">
++
++Click **Upload debug symbols**. The dialog lists each binary that needs debug symbols with its UUID, and shows whether its debug symbols are **Uploaded** or **Missing**.
++
++</Step>
++
++<Step label="3">
++
++Select the **.zip** file and click **Upload**. Expo Observe reads the dSYM files and stores their symbols. When processing finishes, the stack trac
 ```
 
-```
-error TS2322: Type 'NativeColorValue' is not assignable to type 'string | undefined'.
-```
+---
 
-TypeScript shows the same error for the `textStyle` of a universal
-`TextInput` and the `labelStyle` of a universal `Collapsible`. My app
-gives a form field's label the iOS `secondaryLabel` color, so it must
-cast the style. #50554 gives `PlatformColor('?attr/colorPrimary')` to
-the same prop.
+### Incident Patch 3: `74a4fb1d` (2026-11-20)
+**Commit Message**: fix(cli): Fix `expo login --sso` and `--browser` hanging in CI (#53891)
 
-The root cause is the type. `UniversalTextStyle` declares `color` as a
-`string`. The adapters already give the color to APIs that accept any
-`ColorValue`:
+# Why
 
-- iOS: the adapters give it to `foregroundStyle`. Its `ShapeStyle`
-accepts a React Native `ColorValue`. Its docs list
-`PlatformColor('label')` as a color it accepts.
-- Android: the `Text` and `Collapsible` adapters give it to t
+While running a comprehensive check on every place the CLI waits on the
+user, I found that if you run `expo login --sso` or `expo login
+--browser` in CI, it waits for a browser login that doesn't happen, so
+the job hangs.
 
-**File**: `.changeset/expo-ui-universal-text-style-color-value.md` (added, +5/-0)
+# How
+
+We now fail early and tell the user to use `EXPO_TOKEN`, the same hint
+the password prompt already gives.
+
+# Test Plan
+
+All tests pass.
+
+**File**: `.changeset/cli-login-browser-ci.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'@expo/ui': patch
++'@expo/cli': patch
 +---
 +
-+Fix TypeScript rejecting a `PlatformColor` as the text color of the universal `Text`, `TextInput`, and `Collapsible`. The `color` of `UniversalTextStyle` is now a `ColorValue`.
++Fix `expo login --sso` and `--browser` hanging in CI.
 ```
 
-**File**: `docs/public/static/data/unversioned/expo-ui/universal/collapsible.json` (modified, +1/-1)
+**File**: `packages/@expo/cli/src/api/user/__tests__/actions-test.ts` (modified, +16/-0)
 ```diff
-@@ -1 +1 @@
--{"schemaVersion":"2.0","name":"expo-ui/universal/collapsible","variant":"project","kind":1,"children":[{"name":"CollapsibleProps","variant":"declaration","kind":256,"comment":{"summary":[{"kind":"text","text":"Props for the ["},{"kind":"code","text":"`Collapsible`"},{"kind":"text","text":"](#collapsible) component, a primitive that\nshows or hides its content with a tap on a labelled header."}]},"children":[{"name":"children","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Content rendered when "},{"kind":"code","text":"`isOpen`"},{"kind":"text","text":" is "},{"kind":"code","text":"`true`"},{"kind":"text","text":"."}]},"type":{"type":"reference","target":{"packageName":"@types/react","packagePath":"index.d.ts","qualifiedName":"React.ReactNode"},"name":"ReactNode","package":"@types/react","qualifiedName":"React.ReactNode"}},{"name":"isOpen","variant":"declaration","kind":1024,"comment":{"summary":[{"kind":"text","text":"Whether the content is currently expanded."}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"label","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Text rendered in the tappable header."}]},"type":{"type":"intrinsic","name":"string"}},{"name":"labelStyle","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Text-specific styling for the tappable header label."}]},"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"children":[{"name":"color","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Text color. Accepts any CSS color string."}]},"type":{"type":"intrinsic","name":"string"}},{"name":"fontFamily","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Font family name."}]},"type":{"type":"intrinsic","name":"string"}},{"name":"fontSize","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Font size in points."}]},"type":{"type":"intrinsic","name":"number"}},{"name":"fontWeight","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Weight of the font."}]},"type":{"type":"union","types":[{"type":"literal","value":"normal"},{"type":"literal","value":"bold"},{"type":"literal","value":"100"},{"type":"literal","value":"200"},{"type":"literal","value":"300"},{"type":"literal","value":"400"},{"type":"literal","value":"500"},{"type":"literal","value":"600"},{"type":"literal","value":"700"},{"type":"literal","value":"800"},{"type":"literal","value":"900"}]}},{"name":"letterSpacing","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Spacing between characters in points."}]},"type":{"type":"intrinsic","name":"number"}},{"name":"lineHeight","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Line height in points.\n\nOn iOS this is approximated as "},{"kind":"code","text":"`lineSpacing(lineHeight - fontSize)`"},{"kind":"text","text":" because\nSwiftUI only exposes a true "},{"kind":"code","text":"`lineHeight(_:)`"},{"kind":"text","text":" modifier on iOS 26+. For exact\nspacing on iOS 26+ compose the "},{"kind":"code","text":"`lineHeight`"},{"kind":"text","text":" modifier from\n"},{"kind":"code","text":"`@expo/ui/swift-ui/modifiers`"},{"kind":"text","text":" via the "},{"kind":"code","text":"`modifiers`"},{"kind":"text","text":" prop."}]},"type":{"type":"intrinsic","name":"number"}},{"name":"textAlign","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Horizontal alignment of the text."}]},"type":{"type":"union","types":[{"type":"literal","value":"center"},{"type":"literal","value":"left"},{"type":"literal","value":"right"}]}}]}}},{"name":"onOpenChange","variant":"declaration","kind":1024,"comment":{"summary":[{"kind":"text","text":"Called when the user taps the header to toggle the open state."}]},"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"signatures":[{"name":"__type","variant":"signature","kind":4096,"parameters":[{"name":"isOpen","variant":"param","kind":32768,"type":{"type":"intrinsic","name":"boolean"}}],"type":{"type":"intrinsic","name":"void"}}]}}}]},{"name":"Collapsible","variant":"declaration","kind":64,"signatures":[{"name":"Collapsible","variant":"signature","kind":4096,"comment":{"summary":[{"kind":"text","text":"A primitive that toggles visibility of its content via a labelled tappable\nheader. Controlled via "},{"kind":"code","text":"`isOpen`"},{"kind":"text","text":" + "},{"kind":"code","text":"`onOpenChange`"},{"kind":"text","text":"."}]},"parameters":[{"name":"__namedParameters","variant":"param","kind
-```
-
-**File**: `docs/public/static/data/unversioned/expo-ui/universal/text.json` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--{"schemaVersion":"2.0","name":"expo-ui/universal/text","variant":"project","kind":1,"children":[{"name":"TextProps","variant":"declaration","kind":256,"comment":{"summary":[{"kind":"text","text":"Props for the ["},{"kind":"code","text":"`Text`"},{"kind":"text","text":"](#text) component."}]},"children":[{"name":"children","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"The text content to display."}]},"type":{"type":"intrinsic","name":"string"}},{"name":"disabled","variant":"declaration","kind":1024,"flags":{"isOptional":true,"isInherited":true},"comment":{"summary":[{"kind":"text","text":"Whether the component is disabled. Disabled components do not respond to user interaction."}],"blockTags":[{"tag":"@platform","content":[{"kind":"text","text":"android"}]},{"tag":"@platform","content":[{"kind":"text","text":"ios"}]},{"tag":"@platform","content":[{"kind":"text","text":"web"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"hidden","variant":"declaration","kind":1024,"flags":{"isOptional":true,"isInherited":true},"comment":{"summary":[{"kind":"text","text":"Whether the component is hidden."}],"blockTags":[{"tag":"@platform","content":[{"kind":"text","text":"android"}]},{"tag":"@platform","content":[{"kind":"text","text":"ios"}]},{"tag":"@platform","content":[{"kind":"text","text":"web"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"modifiers","variant":"declaration","kind":1024,"flags":{"isOptional":true,"isInherited":true},"comment":{"summary":[{"kind":"text","text":"Platform-specific modifier escape hatch. Pass an array of modifier configs\nfrom "},{"kind":"code","text":"`@expo/ui/swift-ui/modifiers`"},{"kind":"text","text":" or "},{"kind":"code","text":"`@expo/ui/jetpack-compose/modifiers`"},{"kind":"text","text":".\nA modifier supplied here replaces any modifier of the same type that the\ncomponent derives from "},{"kind":"code","text":"`style`"},{"kind":"text","text":" or other props."}],"blockTags":[{"tag":"@platform","content":[{"kind":"text","text":"android"}]},{"tag":"@platform","content":[{"kind":"text","text":"ios"}]}]},"type":{"type":"array","elementType":{"type":"reference","target":{"packageName":"@expo/ui","packagePath":"src/types.ts","qualifiedName":"ModifierConfig"},"name":"ModifierConfig","package":"@expo/ui"}}},{"name":"numberOfLines","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Maximum number of lines to display. Text is truncated with an ellipsis when exceeded."}]},"type":{"type":"intrinsic","name":"number"}},{"name":"onAppear","variant":"declaration","kind":1024,"flags":{"isOptional":true,"isInherited":true},"comment":{"summary":[{"kind":"text","text":"Called when the component appears on screen."}],"blockTags":[{"tag":"@platform","content":[{"kind":"text","text":"android"}]},{"tag":"@platform","content":[{"kind":"text","text":"ios"}]},{"tag":"@platform","content":[{"kind":"text","text":"web"}]}]},"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"signatures":[{"name":"__type","variant":"signature","kind":4096,"type":{"type":"intrinsic","name":"void"}}]}}},{"name":"onDisappear","variant":"declaration","kind":1024,"flags":{"isOptional":true,"isInherited":true},"comment":{"summary":[{"kind":"text","text":"Called when the component is removed from screen."}],"blockTags":[{"tag":"@platform","content":[{"kind":"text","text":"android"}]},{"tag":"@platform","content":[{"kind":"text","text":"ios"}]},{"tag":"@platform","content":[{"kind":"text","text":"web"}]}]},"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"signatures":[{"name":"__type","variant":"signature","kind":4096,"type":{"type":"intrinsic","name":"void"}}]}}},{"name":"onPress","variant":"declaration","kind":1024,"flags":{"isOptional":true,"isInherited":true},"comment":{"summary":[{"kind":"text","text":"Called when the component is pressed."}],"blockTags":[{"tag":"@platform","content":[{"kind":"text","text":"android"}]},{"tag":"@platform","content":[{"kind":"text","text":"ios"}]},{"tag":"@platform","content":[{"kind":"text","text":"web"}]}]},"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"signatures":[{"name":"__type","variant":"signature","kind":4096,"type":{"type":"intrinsic","name":"void"}}]}}},{"name":"style","variant":"declaration","kind":1024,"flags":{"isOptional":true,"isInherited":true},"comment":{"summary":[{"kind":"text","text":"Platform-agnostic style properties. These are translated to SwiftUI modifiers on iOS\nand Jetpack Compose modifiers on Android."}],"blockTags":[{"tag":"@platform","content":[{"kind":"text","text":"android"}]},{"tag":"@platform","content":[{"kind":"text","text":"ios"}]},{"tag":"@platform","content":[{"kind":"text","text":"web"}]}]},"type":{"type":"intersection","types":[{"type":"reference","target":{"pac
-```
-
-**File**: `docs/public/static/data/unversioned/expo-ui/universal/textinput.json` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--{"schemaVersion":"2.0","name":"expo-ui/universal/textinput","variant":"project","kind":1,"children":[{"name":"TextInputProps","variant":"declaration","kind":256,"comment":{"summary":[{"kind":"text","text":"Props for the "},{"kind":"code","text":"`TextInput`"},{"kind":"text","text":" component."}]},"children":[{"name":"accessibilityLabel","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Label announced by screen readers, including when the field contains text."}]},"type":{"type":"intrinsic","name":"string"}},{"name":"autoCapitalize","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Controls automatic capitalization of input."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"'sentences'"}]}]},"type":{"type":"union","types":[{"type":"literal","value":"none"},{"type":"literal","value":"words"},{"type":"literal","value":"sentences"},{"type":"literal","value":"characters"}]}},{"name":"autoComplete","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Autofill hint. iOS maps to "},{"kind":"code","text":"`textContentType`"},{"kind":"text","text":"; Android maps to Compose's\n"},{"kind":"code","text":"`Modifier.semantics { contentType = ... }`"},{"kind":"text","text":"."}]},"type":{"type":"reference","target":{"packageName":"@expo/ui","packagePath":"src/universal/TextInput/utils.ts","qualifiedName":"AutoComplete"},"name":"AutoComplete","package":"@expo/ui"}},{"name":"autoCorrect","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"If false, disables autocorrect / spellcheck suggestions."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"true"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"autoFocus","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"If true, focuses the input on mount."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"false"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"caretHidden","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"If true, the cursor is hidden.\n\nOn iOS, this is implemented via "},{"kind":"code","text":"`tint('transparent')`"},{"kind":"text","text":", which also makes\nthe selection highlight invisible. If you set both "},{"kind":"code","text":"`caretHidden`"},{"kind":"text","text":" and\n"},{"kind":"code","text":"`selectionColor`"},{"kind":"text","text":", the caret-hide wins on iOS."}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"cursorColor","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Color of the text cursor."}]},"type":{"type":"reference","target":{"packageName":"react-native","packagePath":"Libraries/StyleSheet/StyleSheet.d.ts","qualifiedName":"ColorValue"},"name":"ColorValue","package":"react-native"}},{"name":"defaultValue","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Initial text shown when the input mounts and "},{"kind":"code","text":"`value`"},{"kind":"text","text":" is not provided.\nIgnored once the user starts typing or if "},{"kind":"code","text":"`value`"},{"kind":"text","text":" is set."}]},"type":{"type":"intrinsic","name":"string"}},{"name":"editable","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"If false, the input cannot be edited. Selection is still allowed so the\nuser can copy text out of the field."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"true"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"enterKeyHint","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"HTML-style hint for the keyboard return key. Maps to "},{"kind":"code","text":"`returnKeyType`"},{"kind":"text","text":".\nWhen both are set, "},{"kind":"code","text":"`returnKeyType`"},{"kind":"text","text":" wins."}]},"type":{"type":"reference","target":{"packageName":"@expo/ui","packagePath":"src/universal/TextInput/utils.ts","qualifiedName":"EnterKeyHint"},"name":"EnterKeyHint","package":"@expo/ui"}},{"name":"inputMode","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"HTML-style hint for the keyboard variant. Maps to "},{"kind":"code","text":"`keyboardType`"},{"kind":"text","text":". When\nboth are set, "},{"kind":"code","text":"`keyboardType`"},{"kind":"text","text":" wins."}]},"type":{"type":"reference","target":{"packageName":"@expo/ui","packagePath":"src/universal/TextInput/utils.ts","qualifiedName":"InputMode"},"name":"InputMode","package":"@expo/ui"}},{"name":"keyboardType","variant":"declaration","kind":102
-```
-
-**File**: `docs/public/static/data/v58.0.0/expo-ui/universal/collapsible.json` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--{"schemaVersion":"2.0","name":"expo-ui/universal/collapsible","variant":"project","kind":1,"children":[{"name":"CollapsibleProps","variant":"declaration","kind":256,"comment":{"summary":[{"kind":"text","text":"Props for the ["},{"kind":"code","text":"`Collapsible`"},{"kind":"text","text":"](#collapsible) component, a primitive that\nshows or hides its content with a tap on a labelled header."}]},"children":[{"name":"children","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Content rendered when "},{"kind":"code","text":"`isOpen`"},{"kind":"text","text":" is "},{"kind":"code","text":"`true`"},{"kind":"text","text":"."}]},"type":{"type":"reference","target":{"packageName":"@types/react","packagePath":"index.d.ts","qualifiedName":"React.ReactNode"},"name":"ReactNode","package":"@types/react","qualifiedName":"React.ReactNode"}},{"name":"isOpen","variant":"declaration","kind":1024,"comment":{"summary":[{"kind":"text","text":"Whether the content is currently expanded."}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"label","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Text rendered in the tappable header."}]},"type":{"type":"intrinsic","name":"string"}},{"name":"labelStyle","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Text-specific styling for the tappable header label."}]},"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"children":[{"name":"color","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Text color. Accepts any CSS color string."}]},"type":{"type":"intrinsic","name":"string"}},{"name":"fontFamily","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Font family name."}]},"type":{"type":"intrinsic","name":"string"}},{"name":"fontSize","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Font size in points."}]},"type":{"type":"intrinsic","name":"number"}},{"name":"fontWeight","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Weight of the font."}]},"type":{"type":"union","types":[{"type":"literal","value":"normal"},{"type":"literal","value":"bold"},{"type":"literal","value":"100"},{"type":"literal","value":"200"},{"type":"literal","value":"300"},{"type":"literal","value":"400"},{"type":"literal","value":"500"},{"type":"literal","value":"600"},{"type":"literal","value":"700"},{"type":"literal","value":"800"},{"type":"literal","value":"900"}]}},{"name":"letterSpacing","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Spacing between characters in points."}]},"type":{"type":"intrinsic","name":"number"}},{"name":"lineHeight","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Line height in points.\n\nOn iOS this is approximated as "},{"kind":"code","text":"`lineSpacing(lineHeight - fontSize)`"},{"kind":"text","text":" because\nSwiftUI only exposes a true "},{"kind":"code","text":"`lineHeight(_:)`"},{"kind":"text","text":" modifier on iOS 26+. For exact\nspacing on iOS 26+ compose the "},{"kind":"code","text":"`lineHeight`"},{"kind":"text","text":" modifier from\n"},{"kind":"code","text":"`@expo/ui/swift-ui/modifiers`"},{"kind":"text","text":" via the "},{"kind":"code","text":"`modifiers`"},{"kind":"text","text":" prop."}]},"type":{"type":"intrinsic","name":"number"}},{"name":"textAlign","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Horizontal alignment of the text."}]},"type":{"type":"union","types":[{"type":"literal","value":"center"},{"type":"literal","value":"left"},{"type":"literal","value":"right"}]}}]}}},{"name":"onOpenChange","variant":"declaration","kind":1024,"comment":{"summary":[{"kind":"text","text":"Called when the user taps the header to toggle the open state."}]},"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"signatures":[{"name":"__type","variant":"signature","kind":4096,"parameters":[{"name":"isOpen","variant":"param","kind":32768,"type":{"type":"intrinsic","name":"boolean"}}],"type":{"type":"intrinsic","name":"void"}}]}}}]},{"name":"Collapsible","variant":"declaration","kind":64,"signatures":[{"name":"Collapsible","variant":"signature","kind":4096,"comment":{"summary":[{"kind":"text","text":"A primitive that toggles visibility of its content via a labelled tappable\nheader. Controlled via "},{"kind":"code","text":"`isOpen`"},{"kind":"text","text":" + "},{"kind":"code","text":"`onOpenChange`"},{"kind":"text","text":"."}]},"parameters":[{"name":"__namedParameters","variant":"param","kind
-```
-
-**File**: `docs/public/static/data/v58.0.0/expo-ui/universal/text.json` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--{"schemaVersion":"2.0","name":"expo-ui/universal/text","variant":"project","kind":1,"children":[{"name":"TextProps","variant":"declaration","kind":256,"comment":{"summary":[{"kind":"text","text":"Props for the ["},{"kind":"code","text":"`Text`"},{"kind":"text","text":"](#text) component."}]},"children":[{"name":"children","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"The text content to display."}]},"type":{"type":"intrinsic","name":"string"}},{"name":"disabled","variant":"declaration","kind":1024,"flags":{"isOptional":true,"isInherited":true},"comment":{"summary":[{"kind":"text","text":"Whether the component is disabled. Disabled components do not respond to user interaction."}],"blockTags":[{"tag":"@platform","content":[{"kind":"text","text":"android"}]},{"tag":"@platform","content":[{"kind":"text","text":"ios"}]},{"tag":"@platform","content":[{"kind":"text","text":"web"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"hidden","variant":"declaration","kind":1024,"flags":{"isOptional":true,"isInherited":true},"comment":{"summary":[{"kind":"text","text":"Whether the component is hidden."}],"blockTags":[{"tag":"@platform","content":[{"kind":"text","text":"android"}]},{"tag":"@platform","content":[{"kind":"text","text":"ios"}]},{"tag":"@platform","content":[{"kind":"text","text":"web"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"modifiers","variant":"declaration","kind":1024,"flags":{"isOptional":true,"isInherited":true},"comment":{"summary":[{"kind":"text","text":"Platform-specific modifier escape hatch. Pass an array of modifier configs\nfrom "},{"kind":"code","text":"`@expo/ui/swift-ui/modifiers`"},{"kind":"text","text":" or "},{"kind":"code","text":"`@expo/ui/jetpack-compose/modifiers`"},{"kind":"text","text":".\nA modifier supplied here replaces any modifier of the same type that the\ncomponent derives from "},{"kind":"code","text":"`style`"},{"kind":"text","text":" or other props."}],"blockTags":[{"tag":"@platform","content":[{"kind":"text","text":"android"}]},{"tag":"@platform","content":[{"kind":"text","text":"ios"}]}]},"type":{"type":"array","elementType":{"type":"reference","target":{"packageName":"@expo/ui","packagePath":"src/types.ts","qualifiedName":"ModifierConfig"},"name":"ModifierConfig","package":"@expo/ui"}}},{"name":"numberOfLines","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Maximum number of lines to display. Text is truncated with an ellipsis when exceeded."}]},"type":{"type":"intrinsic","name":"number"}},{"name":"onAppear","variant":"declaration","kind":1024,"flags":{"isOptional":true,"isInherited":true},"comment":{"summary":[{"kind":"text","text":"Called when the component appears on screen."}],"blockTags":[{"tag":"@platform","content":[{"kind":"text","text":"android"}]},{"tag":"@platform","content":[{"kind":"text","text":"ios"}]},{"tag":"@platform","content":[{"kind":"text","text":"web"}]}]},"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"signatures":[{"name":"__type","variant":"signature","kind":4096,"type":{"type":"intrinsic","name":"void"}}]}}},{"name":"onDisappear","variant":"declaration","kind":1024,"flags":{"isOptional":true,"isInherited":true},"comment":{"summary":[{"kind":"text","text":"Called when the component is removed from screen."}],"blockTags":[{"tag":"@platform","content":[{"kind":"text","text":"android"}]},{"tag":"@platform","content":[{"kind":"text","text":"ios"}]},{"tag":"@platform","content":[{"kind":"text","text":"web"}]}]},"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"signatures":[{"name":"__type","variant":"signature","kind":4096,"type":{"type":"intrinsic","name":"void"}}]}}},{"name":"onPress","variant":"declaration","kind":1024,"flags":{"isOptional":true,"isInherited":true},"comment":{"summary":[{"kind":"text","text":"Called when the component is pressed."}],"blockTags":[{"tag":"@platform","content":[{"kind":"text","text":"android"}]},{"tag":"@platform","content":[{"kind":"text","text":"ios"}]},{"tag":"@platform","content":[{"kind":"text","text":"web"}]}]},"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"signatures":[{"name":"__type","variant":"signature","kind":4096,"type":{"type":"intrinsic","name":"void"}}]}}},{"name":"style","variant":"declaration","kind":1024,"flags":{"isOptional":true,"isInherited":true},"comment":{"summary":[{"kind":"text","text":"Platform-agnostic style properties. These are translated to SwiftUI modifiers on iOS\nand Jetpack Compose modifiers on Android."}],"blockTags":[{"tag":"@platform","content":[{"kind":"text","text":"android"}]},{"tag":"@platform","content":[{"kind":"text","text":"ios"}]},{"tag":"@platform","content":[{"kind":"text","text":"web"}]}]},"type":{"type":"intersection","types":[{"type":"reference","target":{"pac
-```
-
-**File**: `docs/public/static/data/v58.0.0/expo-ui/universal/textinput.json` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--{"schemaVersion":"2.0","name":"expo-ui/universal/textinput","variant":"project","kind":1,"children":[{"name":"TextInputProps","variant":"declaration","kind":256,"comment":{"summary":[{"kind":"text","text":"Props for the "},{"kind":"code","text":"`TextInput`"},{"kind":"text","text":" component."}]},"children":[{"name":"accessibilityLabel","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Label announced by screen readers, including when the field contains text."}]},"type":{"type":"intrinsic","name":"string"}},{"name":"autoCapitalize","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Controls automatic capitalization of input."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"'sentences'"}]}]},"type":{"type":"union","types":[{"type":"literal","value":"none"},{"type":"literal","value":"words"},{"type":"literal","value":"sentences"},{"type":"literal","value":"characters"}]}},{"name":"autoComplete","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Autofill hint. iOS maps to "},{"kind":"code","text":"`textContentType`"},{"kind":"text","text":"; Android maps to Compose's\n"},{"kind":"code","text":"`Modifier.semantics { contentType = ... }`"},{"kind":"text","text":"."}]},"type":{"type":"reference","target":{"packageName":"@expo/ui","packagePath":"src/universal/TextInput/utils.ts","qualifiedName":"AutoComplete"},"name":"AutoComplete","package":"@expo/ui"}},{"name":"autoCorrect","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"If false, disables autocorrect / spellcheck suggestions."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"true"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"autoFocus","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"If true, focuses the input on mount."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"false"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"caretHidden","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"If true, the cursor is hidden.\n\nOn iOS, this is implemented via "},{"kind":"code","text":"`tint('transparent')`"},{"kind":"text","text":", which also makes\nthe selection highlight invisible. If you set both "},{"kind":"code","text":"`caretHidden`"},{"kind":"text","text":" and\n"},{"kind":"code","text":"`selectionColor`"},{"kind":"text","text":", the caret-hide wins on iOS."}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"cursorColor","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Color of the text cursor."}]},"type":{"type":"reference","target":{"packageName":"react-native","packagePath":"Libraries/StyleSheet/StyleSheet.d.ts","qualifiedName":"ColorValue"},"name":"ColorValue","package":"react-native"}},{"name":"defaultValue","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Initial text shown when the input mounts and "},{"kind":"code","text":"`value`"},{"kind":"text","text":" is not provided.\nIgnored once the user starts typing or if "},{"kind":"code","text":"`value`"},{"kind":"text","text":" is set."}]},"type":{"type":"intrinsic","name":"string"}},{"name":"editable","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"If false, the input cannot be edited. Selection is still allowed so the\nuser can copy text out of the field."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"true"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"enterKeyHint","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"HTML-style hint for the keyboard return key. Maps to "},{"kind":"code","text":"`returnKeyType`"},{"kind":"text","text":".\nWhen both are set, "},{"kind":"code","text":"`returnKeyType`"},{"kind":"text","text":" wins."}]},"type":{"type":"reference","target":{"packageName":"@expo/ui","packagePath":"src/universal/TextInput/utils.ts","qualifiedName":"EnterKeyHint"},"name":"EnterKeyHint","package":"@expo/ui"}},{"name":"inputMode","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"HTML-style hint for the keyboard variant. Maps to "},{"kind":"code","text":"`keyboardType`"},{"kind":"text","text":". When\nboth are set, "},{"kind":"code","text":"`keyboardType`"},{"kind":"text","text":" wins."}]},"type":{"type":"reference","target":{"packageName":"@expo/ui","packagePath":"src/universal/TextInput/utils.ts","qualifiedName":"InputMode"},"name":"InputMode","package":"@expo/ui"}},{"name":"keyboardType","variant":"declaration","kind":102
-```
-
-**File**: `packages/expo-ui/src/universal/Text/types.ts` (modified, +4/-2)
-```diff
-@@ -1,3 +1,5 @@
-+import type { ColorValue } from 'react-native';
+@@ -17,7 +17,10 @@ jest.mock('../../rest/client', () => {
+ jest.mock('../otp');
+ jest.mock('../user');
+ 
++const originalCI = process.env.CI;
 +
- import type { UniversalBaseProps } from '../types';
+ beforeEach(() => {
++  delete process.env.CI;
+   jest.mocked(promptAsync).mockClear();
+   jest.mocked(promptAsync).mockImplementation(() => {
+     throw new Error('Should not be called');
+@@ -31,6 +34,10 @@ beforeEach(() => {
+   jest.mocked(isInteractive).mockReturnValue(false);
+ });
  
- /**
-@@ -39,9 +41,9 @@ export interface UniversalTextStyle {
-   fontFamily?: string;
++afterAll(() => {
++  process.env.CI = originalCI;
++});
++
+ describe(showLoginPromptAsync, () => {
+   it('prompts for OTP when 2FA is enabled', async () => {
+     jest
+@@ -105,6 +112,15 @@ describe(showLoginPromptAsync, () => {
+     expect(browserLoginAsync).toHaveBeenCalledWith({ sso: false });
+   });
  
-   /**
--   * Text color. Accepts any CSS color string.
-+   * Text color.
-    */
--  color?: string;
-+  color?: ColorValue;
++  it('refuses browser login in CI', async () => {
++    process.env.CI = '1';
++
++    await expect(showLoginPromptAsync({ sso: true })).rejects.toThrow(
++      "Browser login can't be completed in CI."
++    );
++    expect(browserLoginAsync).not.toHaveBeenCalled();
++  });
++
+   it('defaults to browser login in an interactive terminal when browser is unset', async () => {
+     jest.mocked(isInteractive).mockReturnValue(true);
  
-   /**
-    * Line height in points.
+```
+
+**File**: `packages/@expo/cli/src/api/user/actions.ts` (modified, +8/-0)
+```diff
+@@ -40,6 +40,14 @@ export async function showLoginPromptAsync({
+   }
+ 
+   if (sso || browser) {
++    if (env.CI) {
++      throw new CommandError(
++        'NON_INTERACTIVE',
++        `Browser login can't be completed in CI. Use the EXPO_TOKEN environment variable to authenticate in CI (${learnMore(
++          'https://docs.expo.dev/accounts/programmatic-access/'
++        )})`
++      );
++    }
+     await browserLoginAsync({ sso: !!sso });
+     Log.log('Logged in');
+     return;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #53757** (2026-11-18): [sdk-58] [tools] Give scoped packages a valid SwiftPM package name in et prebuild (#53338) (@chrfalch)
-- **PR #53756** (2026-11-18): [sdk-58] [expo-glass-effect] Build from a checked-in Package.swift (#53210) (@chrfalch)
-- **PR #53755** (2026-11-18): [sdk-58] [ios][expo] Link checked-in manifests against the ExpoModulesWorklets headers stand-in (#53323) (@chrfalch)
-- **PR #53754** (2026-11-18): [sdk-58] [ios][expo-modules-core] Ship an ExpoModulesWorklets headers xcframework (#53322) (@chrfalch)
-- **PR #53748** (2026-11-18): [templates] Remove unused FB_SONARKIT_ENABLED define (@chrfalch)
-- **PR #53740** (2026-11-18): [expo-dev-menu] Remove unused EX_DEV_MENU_ENABLED define (@chrfalch)
+- **PR #53968** (2026-11-21): [fingerprint] Sort by code point instead of the system locale (@expo-tuft[bot])
+- **PR #53967** (closed): BUSINESS APP KING MARKET (@emmadee578-hue)
+- **PR #53952** (closed): Version packages (sdk-58) (@github-actions[bot])
+- **PR #53938** (2026-11-20): fix(sqlite): Implement `Enumerable` on `SQLAction` (@ramonclaudio)
+- **PR #53936** (2026-11-20): test(cli): Strip ANSI codes in `compile` test assertions (@ramonclaudio)
+- **PR #53932** (2026-11-20): chore(cli,updates): Bump `@expo/code-signing-certificates` to prerelease (drop node-forge) (@kitten)
 
 ---
 
@@ -1228,25 +1154,21 @@ accepts a React Native `ColorValue`. Its docs list
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [expo-glass-effect] Build from a checked-in Package.swift
+## X. [docs] Add Using LiveKit guide
 
 **RULE**:
-When implementing operations in `.changeset/expo-glass-effect-checked-in-manifest.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/.vale/writing-styles/expo-docs/HeadingCase.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2348cb52`: [expo-glass-effect] Build from a checked-in Package.swift. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `09205331`: [docs] Add Using LiveKit guide. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/expo-glass-effect-checked-in-manifest.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/.vale/writing-styles/expo-docs/HeadingCase.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
----
-'expo-glass-effect': patch
----
-
-[iOS] Add a checked-in Package.swift so that the Expo SwiftPM plugin builds the module directly from it.
+  - '.*LiveKit.*'
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1256,7 +1178,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2348cb52` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `09205331` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

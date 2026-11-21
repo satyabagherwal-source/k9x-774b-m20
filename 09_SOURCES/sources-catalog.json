@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "345fe568",
+    "sourceVersion": "f0b8dbab",
     "license": "Apache-2.0",
-    "contentHash": "3c190e213a34da31c6225a0f6ceb8917e3d51f2ca31c55e1a1e5feb35609bdd0",
-    "lastHarvestedAt": "2026-11-21T09:47:30.672Z",
+    "contentHash": "b8ec76bf10181508f5a209e8748512e5628ceb57c745df033e4bb7d6919b6134",
+    "lastHarvestedAt": "2026-11-21T11:55:35.192Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2463,10 +2463,10 @@
     "repository": "BurntSushi/ripgrep",
     "platform": "github",
     "sourceUrl": "https://github.com/BurntSushi/ripgrep",
-    "sourceVersion": "6670aede",
+    "sourceVersion": "4e588dd8",
     "license": "Unlicense",
-    "contentHash": "5c2a5c0bf38727478972298812fc346736dd1d4f75a49d1bc654927f2372ba32",
-    "lastHarvestedAt": "2026-11-19T22:56:58.341Z",
+    "contentHash": "f75b07675977a1b88583fc9ccd2acd3670df1e1c8ee5d2e7acd35926aa18ffc4",
+    "lastHarvestedAt": "2026-11-21T11:55:20.196Z",
     "learningId": "learn-github-burntsushi-ripgrep"
   },
   "cosscom-coss": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "b2252f9e",
+    "sourceVersion": "6678854c",
     "license": "Apache-2.0",
-    "contentHash": "bd37d4cff10915e8dfafe419d61f1e079436cd7a1bc6ae7ed3500f4f469dfc45",
-    "lastHarvestedAt": "2026-11-20T05:51:43.542Z",
+    "contentHash": "e846110a239c6649c64dfe86400aa08990c50126c174d90a21cd4143d93ee3c5",
+    "lastHarvestedAt": "2026-11-21T11:55:33.639Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -10333,10 +10333,10 @@
     "repository": "expo/expo",
     "platform": "github",
     "sourceUrl": "https://github.com/expo/expo",
-    "sourceVersion": "9eed7a5a",
+    "sourceVersion": "aa82194f",
     "license": "MIT",
-    "contentHash": "25e42ed8bc9714a448da4963d7dba05691bf633fadb63202cd5c66311b1c8c68",
-    "lastHarvestedAt": "2026-11-18T10:45:10.555Z",
+    "contentHash": "e1b3aae315bfaa0d81c6a7c4669797fd32bea692a1026938e6684a400a35fc87",
+    "lastHarvestedAt": "2026-11-21T11:55:26.644Z",
     "learningId": "learn-github-expo-expo"
   },
   "vercel-swr": {
@@ -10375,8 +10375,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "aade05491f2f5ec8eddb84e28ef3df4abb2308eeb3481972bdd13376846052de",
-    "lastHarvestedAt": "2026-11-17T15:59:40.445Z",
+    "contentHash": "874c405aaa5447bc192047de84ea865216cd2f634382156ec5ba172e6d2654e8",
+    "lastHarvestedAt": "2026-11-21T11:55:18.493Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8"
   },
   "hf-lodestones-moss-image-sft-8-steps-dmd": {

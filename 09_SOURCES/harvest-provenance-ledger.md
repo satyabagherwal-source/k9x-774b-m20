@@ -11812,3 +11812,8 @@ Every entry in this ledger must capture:
 | `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `268fd6f1` | Multi-dimensional audit evidence | 2026-11-21T11:38:38.954Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `e651c727` | Multi-dimensional audit evidence | 2026-11-21T11:38:41.864Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `6276e6f3` | Multi-dimensional audit evidence | 2026-11-21T11:38:46.716Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-21T11:55:18.493Z |
+| `learn-github-burntsushi-ripgrep` | `https://github.com/BurntSushi/ripgrep` | `4e588dd8` | Multi-dimensional audit evidence | 2026-11-21T11:55:20.196Z |
+| `learn-github-expo-expo` | `https://github.com/expo/expo` | `aa82194f` | Multi-dimensional audit evidence | 2026-11-21T11:55:26.644Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `6678854c` | Multi-dimensional audit evidence | 2026-11-21T11:55:33.639Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `f0b8dbab` | Multi-dimensional audit evidence | 2026-11-21T11:55:35.192Z |

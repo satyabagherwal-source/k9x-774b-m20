@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T11:38:46.722Z",
-  "total_cycles_completed": 11212,
-  "total_learnings_persisted": 11212,
-  "total_rules_promoted": 10571,
+  "last_updated": "2026-11-21T11:55:35.197Z",
+  "total_cycles_completed": 11217,
+  "total_learnings_persisted": 11217,
+  "total_rules_promoted": 10575,
   "history": [
-    {
-      "timestamp": "2026-11-20T15:15:16.497Z",
-      "repository": "duongductrong/Snapzy",
-      "learningId": "learn-github-duongductrong-snapzy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T15:15:23.118Z",
-      "repository": "apache/pinot",
-      "learningId": "learn-github-apache-pinot",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T15:35:16.367Z",
-      "repository": "Kong/kubernetes-ingress-controller",
-      "learningId": "learn-github-kong-kubernetes-ingress-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T15:35:19.907Z",
-      "repository": "nolabs-ai/nono",
-      "learningId": "learn-github-nolabs-ai-nono",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T15:35:21.618Z",
-      "repository": "Mintplex-Labs/anything-llm",
-      "learningId": "learn-github-mintplex-labs-anything-llm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T15:43:55.657Z",
       "repository": "ArchiveBox/ArchiveBox",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-21T11:38:46.722Z",
       "repository": "arangodb/arangodb",
       "learningId": "learn-github-arangodb-arangodb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T11:55:18.498Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T11:55:20.202Z",
+      "repository": "BurntSushi/ripgrep",
+      "learningId": "learn-github-burntsushi-ripgrep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T11:55:26.649Z",
+      "repository": "expo/expo",
+      "learningId": "learn-github-expo-expo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T11:55:33.644Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T11:55:35.197Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

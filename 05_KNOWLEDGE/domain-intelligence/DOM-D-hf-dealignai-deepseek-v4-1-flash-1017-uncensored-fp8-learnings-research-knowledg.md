@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T16:00:01.289Z",
+  "timestamp": "2026-11-21T11:55:39.298Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T16:00:01.289Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T11:55:39.298Z`  
 > **Learning ID**: `LEARN-EVO-hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-dealignai`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T15:59:39.922Z  
+> **Timestamp**: 2026-11-21T11:55:18.041Z  
 > **Learning ID**: `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8](https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T15:59:39.811Z  
+> **Harvest Timestamp**: 2026-11-21T11:55:17.883Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 17305 downloads | 635 likes
+- **Stars / Engagement**: 15375 downloads | 645 likes
 
 ---
 

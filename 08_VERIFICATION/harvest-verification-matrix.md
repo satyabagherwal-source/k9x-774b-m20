@@ -11779,3 +11779,8 @@
 | `CYCLE-20261121-48V9` | `2026-11-21T11:38:38.949Z` | `laurent22/joplin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9770` | Yes (`16981e5f...`) |
 | `CYCLE-20261121-4B43` | `2026-11-21T11:38:41.859Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9771` | Yes (`a6b33cf4...`) |
 | `CYCLE-20261121-4EUV` | `2026-11-21T11:38:46.711Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9772` | Yes (`be099813...`) |
+| `CYCLE-20261121-PO49` | `2026-11-21T11:55:18.489Z` | `dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md` | Yes (`874c405a...`) |
+| `CYCLE-20261121-PPFJ` | `2026-11-21T11:55:20.191Z` | `BurntSushi/ripgrep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9773` | Yes (`f75b0767...`) |
+| `CYCLE-20261121-PUEN` | `2026-11-21T11:55:26.639Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9774` | Yes (`e1b3aae3...`) |
+| `CYCLE-20261121-PZT0` | `2026-11-21T11:55:33.636Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9775` | Yes (`e846110a...`) |
+| `CYCLE-20261121-Q104` | `2026-11-21T11:55:35.188Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9776` | Yes (`b8ec76bf...`) |

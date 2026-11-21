@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T11:38:52.288Z",
+  "last_updated": "2026-11-21T11:55:40.405Z",
   "total_records": 2244,
   "domains": {
     "A": {
@@ -9715,8 +9715,8 @@
       "title": "Technical Construction Intelligence: expo/expo Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-expo-expo-technical-construction-intelligence-expo-expo-core-invariants.md",
       "repository": "expo/expo",
-      "content_hash": "7951931963b61f2f0f8e5ea766fe42ebb0b501df09bf3e95a029d2fa4bc1da81",
-      "created_at": "2026-11-18T10:45:10.925Z"
+      "content_hash": "4fd4c8cd59ea2a0b06fcec26b9f50424d12e0e20e8c1f481ec1e7fc654be6a54",
+      "created_at": "2026-11-21T11:55:26.988Z"
     },
     "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants",
@@ -9742,8 +9742,8 @@
       "title": "Technical Construction Intelligence: expo-expo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-expo-expo-learnings-technical-construction-intelligence-expo-expo-learnings-core.md",
       "repository": "expo-expo-learnings",
-      "content_hash": "79e59a406773cd80f1049832423d2c76d17957abc50c25ded5fe1a2dd07d082e",
-      "created_at": "2026-11-18T10:45:16.529Z"
+      "content_hash": "3b22094f12e0eb7aafcc1959651abd6b8a805c156727c5fe176b0dc58da397b7",
+      "created_at": "2026-11-21T11:55:40.405Z"
     },
     "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants",
@@ -15323,8 +15323,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "b9a6f3b80334f0391a2590eb7ef5a8f2c6211f92087c405b4c236d815f475ee4",
-      "created_at": "2026-11-21T09:47:31.009Z"
+      "content_hash": "9dbcf70604eebe6d88ab77b8625f3e70822e8a2d196c79992306bec578e5e9e3",
+      "created_at": "2026-11-21T11:55:35.545Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -16502,8 +16502,8 @@
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "repository": "trinodb/trino",
-      "content_hash": "365b833bbc633994c76a2ca4eed8169e2a45aa06eaf43960c2eadfdd4047edad",
-      "created_at": "2026-11-20T05:51:43.982Z"
+      "content_hash": "3649940620123fc3e3cf27fd5f95dfa3c27b68649a96aac52f97e145f38c7aba",
+      "created_at": "2026-11-21T11:55:33.990Z"
     },
     "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -28116,8 +28116,8 @@
       "title": "Research & Knowledge Intelligence: dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8-research-knowledge-intellig.md",
       "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
-      "content_hash": "293c1266eaf3bc567a5c5878753f6b62ee865799d2d6302a3b6ef7cd61848cee",
-      "created_at": "2026-11-17T15:59:40.696Z"
+      "content_hash": "103c8bec57a8c6c81dbdfb606cf23da6b72d5709773ae1af9ed88b93df3dd7ea",
+      "created_at": "2026-11-21T11:55:18.686Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-1017-uncensored": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-1017-uncensored",
@@ -28125,8 +28125,8 @@
       "title": "Research & Knowledge Intelligence: hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8-learnings-research-knowledg.md",
       "repository": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings",
-      "content_hash": "6cb5efdad95a5a42c1a00a22e234a0eabb64a1de9a3e545be0369cdfbd231a6b",
-      "created_at": "2026-11-17T16:00:01.405Z"
+      "content_hash": "6fd3a02eae65e68a5f7b488ef10d9d0d98d734a73b7dfef976c1068a7d80493f",
+      "created_at": "2026-11-21T11:55:39.394Z"
     },
     "domain_intelligence-architecture-intelligence-bitterbot-ai-bitterbot-desktop-learnings-core-invarian": {
       "record_id": "domain_intelligence-architecture-intelligence-bitterbot-ai-bitterbot-desktop-learnings-core-invarian",
@@ -34376,8 +34376,8 @@
       "title": "Architecture Intelligence: BurntSushi/ripgrep Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-burntsushi-ripgrep-architecture-intelligence-burntsushi-ripgrep-core-invariants.md",
       "repository": "BurntSushi/ripgrep",
-      "content_hash": "e210bd20a24182f89dfc8f770f19b08af99cbef1d4da16fdd1fa19fb21cc9859",
-      "created_at": "2026-11-19T22:56:58.776Z"
+      "content_hash": "69fc3587371b74d7ff82d8c06df8e5c54df7dc60ff83225c8a7ae9ddd3d49438",
+      "created_at": "2026-11-21T11:55:20.557Z"
     },
     "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-learnings-core-invariants",
@@ -34385,8 +34385,8 @@
       "title": "Architecture Intelligence: burntsushi-ripgrep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-burntsushi-ripgrep-learnings-architecture-intelligence-burntsushi-ripgrep-learni.md",
       "repository": "burntsushi-ripgrep-learnings",
-      "content_hash": "abb66cc2ca087b117e3153f4d9adc2dae5b952e44f2decf60c79057bc51f0d87",
-      "created_at": "2026-11-19T23:02:10.636Z"
+      "content_hash": "6bd04528880753c6a41b2e3483a510eb731820f320d5b4a1d63636a9c2ba7b4b",
+      "created_at": "2026-11-21T11:55:38.914Z"
     },
     "DOM-D-34CA9B71": {
       "record_id": "DOM-D-34CA9B71",
