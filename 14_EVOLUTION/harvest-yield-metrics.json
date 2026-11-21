@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T05:27:56.174Z",
-  "total_cycles_completed": 11173,
-  "total_learnings_persisted": 11173,
-  "total_rules_promoted": 10529,
+  "last_updated": "2026-11-21T06:01:27.199Z",
+  "total_cycles_completed": 11174,
+  "total_learnings_persisted": 11174,
+  "total_rules_promoted": 10530,
   "history": [
-    {
-      "timestamp": "2026-11-20T10:34:23.735Z",
-      "repository": "k3s-io/k3s",
-      "learningId": "learn-github-k3s-io-k3s",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T10:44:16.831Z",
       "repository": "kucherenko/jscpd",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-21T05:27:56.174Z",
       "repository": "gocd/gocd",
       "learningId": "learn-github-gocd-gocd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T06:01:27.199Z",
+      "repository": "ShiftHackZ/SDAI-KMP",
+      "learningId": "learn-github-shifthackz-sdai-kmp",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

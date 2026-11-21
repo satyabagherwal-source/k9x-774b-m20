@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-L6SW",
-    "timestamp": "2026-11-19T01:32:37.424Z",
-    "repository": "kubearmor/KubeArmor",
-    "learningId": "learn-github-kubearmor-kubearmor",
-    "contentHash": "a48b0b5e418b339297b83acda04bd996fd161a012c1a1dec82900bbb414f3798",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-LA3T",
     "timestamp": "2026-11-19T01:32:41.705Z",
     "repository": "open-ani/animeko",
@@ -7490,6 +7475,21 @@
     "repository": "gocd/gocd",
     "learningId": "learn-github-gocd-gocd",
     "contentHash": "1ada0fcdf4bc5d0903ecd9dafdbd90c9746a44ee696667907081124ce9a29829",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-2LXX",
+    "timestamp": "2026-11-21T06:01:27.189Z",
+    "repository": "ShiftHackZ/SDAI-KMP",
+    "learningId": "learn-github-shifthackz-sdai-kmp",
+    "contentHash": "920b683d00799a4630e8c22d079a6a51c8f99d1e595f706c24cad9177d3141f6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

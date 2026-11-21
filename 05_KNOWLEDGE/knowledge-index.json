@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T05:28:03.156Z",
+  "last_updated": "2026-11-21T06:01:35.455Z",
   "total_verified_learnings": 9058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1cf678fc706663b2049cf59ad3571e834a70b372ca4b3f8ad6c4b8509f91bc8d",
+      "content_hash": "8cc1d1c0f166b8a9e596bb49c5b01a43b2c03c7931a2a56e62475a7c8ee23464",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T04:48:38.176Z"
+      "persisted_at": "2026-11-21T06:01:35.200Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "180ea582ba9f94e4c9052be4ece2ec41c132afb26bb157d0f4a3354bd01b938f",
+      "content_hash": "89c0c6234f486da9fbedd893434b644e512f0390394e419412924efd76b8e500",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T04:48:38.338Z"
+      "persisted_at": "2026-11-21T06:01:35.339Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9a90abea818934a532622bd2485dbd757728e4330e98e19a68ccabf45ab01d36",
+      "content_hash": "f3e8050aca1d88762e8ba86743cf9854c81810f2b0564ba91a46327b874420db",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T04:48:38.464Z"
+      "persisted_at": "2026-11-21T06:01:35.455Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -239789,13 +239789,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "ShiftHackZ/SDAI-KMP",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "slug": "shifthackz-stable-diffusion-kmp",
+      "slug": "shifthackz-sdai-kmp",
       "platform": "github",
-      "source_url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+      "source_url": "https://github.com/ShiftHackZ/SDAI-KMP",
       "source_version": "82ebd42d",
-      "content_hash": "aed8459abce934d5e4d70cab0c0befa6d0abeea4e262becec984e9e9d0f30ef9",
-      "dossier_path": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
+      "content_hash": "920b683d00799a4630e8c22d079a6a51c8f99d1e595f706c24cad9177d3141f6",
+      "dossier_path": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
       "promoted_rules": [
         {
           "number": 8552,
@@ -239810,7 +239810,7 @@
         {
           "number": 9525,
           "title": "Announce nightly builds and attach APKs in Telegram comments",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239818,7 +239818,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T06:10:55.882Z",
+      "verified_at": "2026-11-21T06:01:27.006Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239857,25 +239857,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-stable-diffusion-kmp-architecture-intelligence-shifthackz-sdai-kmp-co.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-sdai-kmp-architecture-intelligence-shifthackz-sdai-kmp-core-invariant.md",
       "title": "Architecture Intelligence: ShiftHackZ/SDAI-KMP Core Invariants",
       "repository": "ShiftHackZ/SDAI-KMP",
       "source_version": "82ebd42d",
-      "content_hash": "d25af336062db81210419d54608f5caf3518b836f3cf9432acf6a3015d186372",
+      "content_hash": "fd61f7b9136dbb26a056b1f8c7af72e6cc38b9b398b9bd982025286b3797a32d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T06:10:56.456Z"
+      "persisted_at": "2026-11-21T06:01:27.534Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-shifthackz-sdai-kmp": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-shifthackz-sdai-kmp",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/shifthackz-stable-diffusion-kmp-verification-protocol-empirical-defect-shield-fo.md",
+      "relative_path": "08_VERIFICATION/shifthackz-sdai-kmp-verification-protocol-empirical-defect-shield-for-shifthackz.md",
       "title": "Verification Protocol: Empirical Defect Shield for ShiftHackZ/SDAI-KMP",
       "repository": "ShiftHackZ/SDAI-KMP",
       "source_version": "82ebd42d",
-      "content_hash": "53e28abf090bb57f5bf62bef9b5a934e59f428019a33954ca9141a9a35b14fdd",
+      "content_hash": "e238ca7bde4b4d5d9caceee796b02418584cab00c7c3773d33ed49f9fd78a130",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T06:10:56.611Z"
+      "persisted_at": "2026-11-21T06:01:27.679Z"
     },
     "learn-github-nolabs-ai-nono": {
       "learning_id": "learn-github-nolabs-ai-nono",
@@ -240030,9 +240030,9 @@
       "title": "Architecture Intelligence: shifthackz-sdai-kmp-learnings Core Invariants",
       "repository": "shifthackz-sdai-kmp-learnings",
       "source_version": "HEAD",
-      "content_hash": "4dbcbf9ca9ca079bcdbda93b040dc297f440119fa547fa26806a659ce880e79c",
+      "content_hash": "8afc57eb8b7c70293d0680ca358666f0aa3506f493a06a6addb8e3ea19e3cd06",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T00:38:24.973Z"
+      "persisted_at": "2026-11-21T06:01:33.853Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-shifthackz-sdai-kmp-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-shifthackz-sdai-kmp-learnings",
@@ -240042,9 +240042,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for shifthackz-sdai-kmp-learnings",
       "repository": "shifthackz-sdai-kmp-learnings",
       "source_version": "HEAD",
-      "content_hash": "0b0ee62bf99bd9edeb97eb509aa3756221ede57c6102b5e6a4bf60f094bcb871",
+      "content_hash": "2fecd5774e4d6a277d2c14437d87b017d7dbcebefa53ecfa387c5b5504ea1a2e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:07:49.899Z"
+      "persisted_at": "2026-11-21T06:01:34.000Z"
     },
     "candidate_directive-nix-update-prebuilt-hashes-for-v0-82-0": {
       "item_id": "candidate_directive-nix-update-prebuilt-hashes-for-v0-82-0",
@@ -288728,9 +288728,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "ef14005fc2689bf363a784d1645ad9f3ffd19750b613c2c12b7f84e77afcad04",
+      "content_hash": "fdb504380dc2c8c25d76b2e9615f39115f4d833a4d399922873333d38623a262",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T05:01:31.314Z"
+      "persisted_at": "2026-11-21T06:01:34.442Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -302013,26 +302013,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 9525,
       "title": "Announce nightly builds and attach APKs in Telegram comments",
-      "source_url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+      "source_url": "https://github.com/ShiftHackZ/SDAI-KMP",
       "source_version": "82ebd42d",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-20T06:10:55.882Z"
+      "verified_at": "2026-11-21T06:01:27.006Z"
     },
     "candidate_directive-announce-nightly-builds-and-attach-apks-in-telegram-comments": {
       "item_id": "candidate_directive-announce-nightly-builds-and-attach-apks-in-telegram-comments",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZPE8-announce-nightly-builds-and-attach-apks-in-telegram-comments.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-2QYS-announce-nightly-builds-and-attach-apks-in-telegram-comments.md",
       "title": "Announce nightly builds and attach APKs in Telegram comments",
-      "repository": "shifthackz-stable-diffusion-kmp-learnings",
+      "repository": "shifthackz-sdai-kmp-learnings",
       "source_version": "HEAD",
-      "content_hash": "c0ff67e0c548ffc07521ceaebe9e5b242a7fa2f8444670c0edb8a607f79561e8",
+      "content_hash": "f369c9ddea163222d1dd9ab8926789daf006a35955e39a93bb690470b63bbaa9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T06:11:31.280Z"
+      "persisted_at": "2026-11-21T06:01:33.701Z"
     },
     "domain_intelligence-architecture-intelligence-shifthackz-stable-diffusion-kmp-learnings-core-invaria": {
       "item_id": "domain_intelligence-architecture-intelligence-shifthackz-stable-diffusion-kmp-learnings-core-invaria",
@@ -308624,13 +308624,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-GYO9-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-2S0F-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a7c1af23656a8ae0cacd63ee5b7e6d90b74c123652eb42a48d733bc38c988a6e",
+      "content_hash": "dd39e55b8aa30807ab92c91e2814c90a5d258ed4cc07c5f4863ceaac60f7266e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T04:48:38.028Z"
+      "persisted_at": "2026-11-21T06:01:35.058Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",

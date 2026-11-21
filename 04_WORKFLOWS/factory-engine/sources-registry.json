@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T05:27:59.400Z",
-    "lastVerified": "2026-11-21T05:27:59.400Z",
+    "lastChecked": "2026-11-21T06:01:33.278Z",
+    "lastVerified": "2026-11-21T06:01:33.278Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -170,12 +170,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T04:39:14.333Z",
-    "lastVerified": "2026-11-21T04:39:14.333Z",
+    "lastChecked": "2026-11-21T06:01:33.271Z",
+    "lastVerified": "2026-11-21T06:01:33.271Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -184,7 +184,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ea8e9cca"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1663,8 +1664,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T23:56:18.161Z",
-    "lastVerified": "2026-11-20T23:56:18.161Z",
+    "lastChecked": "2026-11-21T06:01:28.338Z",
+    "lastVerified": "2026-11-21T06:01:28.338Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -4656,9 +4657,9 @@
   "amrdeveloper-gql": {
     "name": "GQL",
     "officialUrl": "https://github.com/AmrDeveloper/GQL",
-    "lastChecked": "2026-11-20T03:21:51.934Z",
+    "lastChecked": "2026-11-21T06:01:30.712Z",
     "revisionIdentifier": "3a76cfee",
-    "lastVerified": "2026-11-20T03:21:51.934Z"
+    "lastVerified": "2026-11-21T06:01:30.712Z"
   },
   "transact-rs-sqlx": {
     "name": "transact-rs/sqlx",
@@ -5391,9 +5392,9 @@
   "aquasecurity-tfsec": {
     "name": "tfsec",
     "officialUrl": "https://github.com/aquasecurity/tfsec",
-    "lastChecked": "2026-11-20T04:37:50.974Z",
+    "lastChecked": "2026-11-21T06:01:25.737Z",
     "revisionIdentifier": "b692c20b",
-    "lastVerified": "2026-11-20T04:37:50.974Z"
+    "lastVerified": "2026-11-21T06:01:25.737Z"
   },
   "apple-foundationdb": {
     "name": "apple/foundationdb",
@@ -8677,12 +8678,12 @@
     "lastVerified": "2026-11-19T19:11:55.150Z"
   },
   "matthart1983-netwatch": {
-    "name": "matthart1983/netwatch",
+    "name": "netwatch",
     "officialUrl": "https://github.com/matthart1983/netwatch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T19:23:16.923Z",
-    "lastVerified": "2026-11-19T19:23:16.923Z",
+    "lastChecked": "2026-11-21T06:01:18.229Z",
+    "lastVerified": "2026-11-21T06:01:18.229Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-matthart1983-netwatch",
@@ -8691,7 +8692,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "78f85143"
   },
   "hf-tencent-hy-memory-30b-a3b": {
     "name": "tencent/Hy-Memory-30B-A3B",
@@ -11831,6 +11833,30 @@
     "contentHash": "67459ac5f72b68fafcef639eb95376e2ac42f08ff61548a25ca185bd81078d60",
     "promotedRulesCount": 1,
     "recentFixesCount": 15,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "expressjs-express": {
+    "name": "express",
+    "officialUrl": "https://github.com/expressjs/express",
+    "lastChecked": "2026-11-21T06:01:20.728Z",
+    "revisionIdentifier": "43fca52d",
+    "lastVerified": "2026-11-21T06:01:20.728Z"
+  },
+  "shifthackz-sdai-kmp": {
+    "name": "ShiftHackZ/SDAI-KMP",
+    "officialUrl": "https://github.com/ShiftHackZ/SDAI-KMP",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-21T06:01:26.419Z",
+    "lastVerified": "2026-11-21T06:01:26.419Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-shifthackz-sdai-kmp",
+    "contentHash": "920b683d00799a4630e8c22d079a6a51c8f99d1e595f706c24cad9177d3141f6",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

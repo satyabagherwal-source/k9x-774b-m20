@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md`  
 > **Source**: github ([https://github.com/ShiftHackZ/SDAI-KMP](https://github.com/ShiftHackZ/SDAI-KMP))  
-> **Source Version**: `440ea2b0`  
+> **Source Version**: `82ebd42d`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T06:07:43.389Z  
+> **Timestamp**: 2026-11-21T06:01:26.533Z  
 > **Learning ID**: `learn-github-shifthackz-sdai-kmp`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ShiftHackZ/SDAI-KMP](https://github.com/ShiftHackZ/SDAI-KMP))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T06:07:43.384Z  
+> **Harvest Timestamp**: 2026-11-21T06:01:26.419Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stable Diffusion AI client app for Android and iOS
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1294 stars
+- **Stars / Engagement**: 1296 stars
 
 ---
 
@@ -853,653 +853,279 @@ Please make the ONNX sampling steps and CFG scale values persistent.**
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `91d55b97` (2026-11-14)
-**Commit Message**: Fix large LoRA connections, setup timeouts, and traffic accounting (#740)
+### Incident Patch 1: `82ebd42d` (2026-11-19)
+**Commit Message**: Announce nightly builds and attach APKs in Telegram comments (#777)
 
-**File**: `core/localization/src/androidMain/res/values-de/strings.xml` (modified, +2/-2)
-```diff
-@@ -648,8 +648,8 @@
-     <string name="settings_generation_timeout_minutes">%1$s Min.</string>
-     <string name="settings_generation_timeout_unlimited">Unbegrenzt</string>
-     <string name="settings_connection_timeout">Verbindungszeitlimit</string>
--    <string name="settings_connection_timeout_description">Zeit zum Verbindungsaufbau mit einem KI-Anbieter. Gilt für neue Anfragen.</string>
--    <string name="settings_connection_timeout_ios_description">iOS verwaltet die Verbindungsdauer automatisch. Dieser Wert wird gespeichert, kann unter iOS aber nicht erzwungen werden.</string>
-+    <string name="settings_connection_timeout_description">Zeitlimit für die Einrichtung einer Anbieterverbindung und Metadatenanfragen. Gilt für neue Anfragen.</string>
-+    <string name="settings_connection_timeout_ios_description">Begrenzt die Verbindungseinrichtung und Metadatenanfragen. iOS verwaltet die Verbindungsdauer auf Netzwerkebene automatisch.</string>
-     <string name="srv_type_open_ai_compatible">OpenAI-kompatibel</string>
-     <string name="open_ai_compatible_help">Verbinde einen Bildserver oder Proxy über die OpenAI-Bild-API. Gib das vollständige API-Präfix ein, z. B. https://host/prefix/v1. Der API-Schlüssel ist optional. Der Server bestimmt die unterstützten Modelle und Größen.</string>
-     <string name="open_ai_compatible_url">API-Basis-URL (einschließlich /v1)</string>
-```
+* Announce nightly builds in Telegram post comments
 
-**File**: `core/localization/src/androidMain/res/values-ru/strings.xml` (modified, +2/-2)
-```diff
-@@ -611,8 +611,8 @@
-     <string name="settings_generation_timeout_minutes">%1$s мин</string>
-     <string name="settings_generation_timeout_unlimited">Без ограничения</string>
-     <string name="settings_connection_timeout">Тайм-аут подключения</string>
--    <string name="settings_connection_timeout_description">Время на подключение к ИИ-провайдеру. Применяется к новым запросам.</string>
--    <string name="settings_connection_timeout_ios_description">iOS автоматически управляет временем подключения. Значение сохраняется, но не может применяться в iOS.</string>
-+    <string name="settings_connection_timeout_description">Время на настройку подключения к провайдеру и запросы метаданных. Применяется к новым запросам.</string>
-+    <string name="settings_connection_timeout_ios_description">Ограничивает настройку подключения и запросы метаданных. iOS автоматически управляет временем низкоуровневого подключения.</string>
-     <string name="srv_type_open_ai_compatible">OpenAI-совместимый</string>
-     <string name="open_ai_compatible_help">Подключите сервер изображений или прокси через OpenAI Image API. Введите полный префикс API, например https://host/prefix/v1. Ключ API необязателен. Доступные модели и размеры определяет сервер.</string>
-     <string name="open_ai_compatible_url">Базовый URL API (включая /v1)</string>
-```
+* Keep Telegram behavior in existing nightly documentation
 
-**File**: `core/localization/src/androidMain/res/values-tr/strings.xml` (modified, +2/-2)
-```diff
-@@ -611,8 +611,8 @@
-     <string name="settings_generation_timeout_minutes">%1$s dk</string>
-     <string name="settings_generation_timeout_unlimited">Sınırsız</string>
-     <string name="settings_connection_timeout">Bağlantı zaman aşımı</string>
--    <string name="settings_connection_timeout_description">Yapay zekâ sağlayıcısına bağlanmak için izin verilen süre. Yeni istekler için geçerlidir.</string>
--    <string name="settings_connection_timeout_ios_description">iOS bağlantı süresini otomatik olarak yönetir. Bu değer kaydedilir ancak iOS üzerinde uygulanamaz.</string>
-+    <string name="settings_connection_timeout_description">Sağlayıcı bağlantı kurulumu ve meta veri istekleri için izin verilen süre. Yeni istekler için geçerlidir.</string>
-+    <string name="settings_connection_timeout_ios_description">Sağlayıcı bağlantı kurulumunu ve meta veri isteklerini sınırlar. iOS düşük seviyeli bağlantı süresini otomatik yönetir.</string>
-     <string name="srv_type_open_ai_compatible">OpenAI uyumlu</string>
-     <string name="open_ai_compatible_help">OpenAI görüntü API’sini kullanan bir görüntü sunucusuna veya proxy’ye bağlanın. Tam API önekini girin, örneğin https://host/prefix/v1. API anahtarı isteğe bağlıdır. Desteklenen modelleri ve boyutları sunucu belirler.</string>
-     <string name="open_ai_compatible_url">API temel URL’si (/v1 dahil)</string>
-```
+* Attach signed nightly APKs to Telegram announcements
 
-**File**: `core/localization/src/androidMain/res/values-uk/strings.xml` (modified, +2/-2)
+**File**: `.github/workflows/nightly_android.yml` (modified, +80/-17)
 ```diff
-@@ -611,8 +611,8 @@
-     <string name="settings_generation_timeout_minutes">%1$s хв</string>
-     <string name="settings_generation_timeout_unlimited">Без обмеження</string>
-     <string name="settings_connection_timeout">Тайм-аут підключення</string>
--    <string name="settings_connection_timeout_description">Час на підключення до ШІ-провайдера. Застосовується до нових запитів.</string>
--    <string name="settings_connection_timeout_ios_description">iOS автоматично керує часом підключення. Значення зберігається, але не може застосовуватися в iOS.</string>
-+    <string name="settings_connection_timeout_description">Час на налаштування підключення до провайдера та запити метаданих. Застосовується до нових запитів.</string>
-+    <string name="settings_connection_timeout_ios_description">Обмежує налаштування підключення та запити метаданих. iOS автоматично керує часом низькорівневого підключення.</string>
-     <string name="srv_type_open_ai_compatible">OpenAI-сумісний</string>
-     <string name="open_ai_compatible_help">Підключіть сервер зображень або проксі через OpenAI Image API. Введіть повний префікс API, наприклад https://host/prefix/v1. Ключ API необов’язковий. Доступні моделі та розміри визначає сервер.</string>
-     <string name="open_ai_compatible_url">Базовий URL API (включно з /v1)</string>
-```
-
-**File**: `core/localization/src/androidMain/res/values-zh/strings.xml` (modified, +2/-2)
-```diff
-@@ -663,8 +663,8 @@
-     <string name="settings_generation_timeout_minutes">%1$s 分钟</string>
-     <string name="settings_generation_timeout_unlimited">无限制</string>
-     <string name="settings_connection_timeout">连接超时</string>
--    <string name="settings_connection_timeout_description">连接到 AI 服务提供商所允许的时间。适用于新请求。</string>
--    <string name="settings_connection_timeout_ios_description">iOS 自动管理连接时长。此值会被保存，但无法在 iOS 上强制执行。</string>
-+    <string name="settings_connection_timeout_description">提供商连接设置和元数据请求的时间限制。适用于新请求。</string>
-+    <string name="settings_connection_timeout_ios_description">限制提供商连接设置和元数据请求的时间。iOS 自动管理底层连接时长。</string>
-     <string name="srv_type_open_ai_compatible">OpenAI 兼容服务</string>
-     <string name="open_ai_compatible_help">通过 OpenAI 图像 API 连接图像服务器或代理。请输入完整的 API 前缀，例如 https://host/prefix/v1。API 密钥可选。支持的模型和尺寸由服务器决定。</string>
-     <string name="open_ai_compatible_url">API 基础 URL（包含 /v1）</string>
-```
-
-**File**: `core/localization/src/androidMain/res/values/strings.xml` (modified, +2/-2)
-```diff
-@@ -648,8 +648,8 @@
-     <string name="settings_generation_timeout_minutes">%1$s min</string>
-     <string name="settings_generation_timeout_unlimited">No limit</string>
-     <string name="settings_connection_timeout">Connection timeout</string>
--    <string name="settings_connection_timeout_description">Time allowed to connect to an AI provider. Applies to new requests.</string>
--    <string name="settings_connection_timeout_ios_description">iOS manages connection timing automatically. This value is saved but cannot be enforced on iOS.</string>
-+    <string name="settings_connection_timeout_description">Time allowed for provider setup and metadata requests. Applies to new requests.</string>
-+    <string name="settings_connection_timeout_ios_description">Limits provider setup and metadata requests. iOS manages low-level connection timing automatically.</string>
-     <string name="srv_type_open_ai_compatible">OpenAI-compatible</string>
-     <string name="open_ai_compatible_help">Connect to an image server or proxy using the OpenAI image API. Enter the complete API prefix, for example https://host/prefix/v1. The API key is optional. The server determines which models and sizes are supported.</string>
-     <string name="open_ai_compatible_url">API base URL (including /v1)</string>
-```
-
-**File**: `data/src/androidUnitTest/kotlin/com/shifthackz/aisdv1/data/di/TrafficRecorderStartupTest.kt` (added, +30/-0)
-```diff
-@@ -0,0 +1,30 @@
-+package com.shifthackz.aisdv1.data.di
-+
-+import com.shifthackz.aisdv1.network.client.NetworkUsageCounter
-+import com.shifthackz.aisdv1.storage.db.persistent.dao.NetworkUsageDao
-+import io.mockk.mockk
-+import org.junit.Assert.assertNotNull
-+import org.junit.Test
-+import org.koin.core.context.startKoin
-+import org.koin.core.context.stopKoin
-+import org.koin.dsl.module
-+
-+/** Checks recorder installation through application DI startup before any Settings dependency is read.
-+ * @author Dmitriy Moroz */
-+class TrafficRecorderStartupTest {
-+    @Test
-+    fun `traffic recorder is ready before the first provider request`() {
-+        NetworkUsageCounter.recorder = null
-+        try {
-+            startKoin {
-+                modules(coreDataModule, module {
-+                    single<NetworkUsageDao> { mockk(relaxed = true) }
-+                })
-+            }
-+            assertNotNull(NetworkUsageCounter.recorder)
-+        } finally {
-+            stopKoin()
-+            NetworkUsageCounter.recorder = null
-+        }
-+    }
-+}
-```
-
-**File**: `data/src/androidUnitTest/kotlin/com/shifthackz/aisdv1/data/remote/StableDiffusionLorasRemoteDataSourceTest.kt` (modified, +18/-0)
-```diff
-@@ -3,6 +3,7 @@ package com.shifthackz.aisdv1.data.remote
- import com.shifthackz.aisdv1.data.mocks.mockKtorStableDiffusionLoraRaw
- import com.shifthackz.aisdv1.domain.feature.auth.AuthorizationCredentials
- import com.shifthackz.aisdv1.network.api.automatic1111.Automatic1111MetadataApi
-+import com.shifthackz.aisdv1.network.model.StableDiffusionLoraRaw
- import io.mockk.coEvery
- import io.mockk.mockk
- import kotlinx.coroutines.test.runTest
-@@ -16,6 +17,23 @@ class KtorStableDiffusionLorasRemoteDataSourceTest {
+@@ -31,6 +31,7 @@ env:
+   APK_NAME: sdai-full-nightly.apk
+   NIGHTLY_TAG: nightly
+   NIGHTLY_RELEASE_NAME: Android Full Nightly
++  TELEGRAM_BOT_API_REVISION: 7232881b39dfcd048a0d569f1983c5184249ee05
  
-     private val remoteDataSource = KtorStableDiffusionLorasRemoteDataSource(stubApi)
- 
-+    @Test
-+    fun `2500 loras retain every name alias and path in domain models`() = runTest {
-+        val response = List(2_500) { index ->
-+            StableDiffusionLoraRaw("lora_$index", "alias_$index", "models/Lora/$index.safetensors")
-+        }
-+        coEvery { stubApi.fetchLoras(BASE_URL, null) } returns response
-+
-+        val actual = remoteDataSource.fetchLoras(BASE_URL, AuthorizationCredentials.None)
-+
-+        Assert.assertEquals(2_500, actual.size)
-+        actual.forEachIndexed { index, lora ->
-+            Assert.assertEquals(response[index].name, lora.name)
-+            Assert.assertEquals(response[index].alias, lora.alias)
-+            Assert.assertEquals(response[index].path, lora.path)
-+        }
-+    }
-+
-     @Test
-     fun `given attempt to fetch loras, api returns success response, expected valid loras list value`() = runTest {
-         coEvery {
-```
-
----
-
-### Incident Patch 2: `b805a1be` (2026-11-14)
-**Commit Message**: Fix sampler list recovery after app process recreation (#738)
-
-* Fix sampler list recovery after app process recreation
-
-* Add sampler recovery regression tests and clarify boolean names
-
-**File**: `core/localization/src/androidMain/res/values-de/strings.xml` (modified, +1/-0)
-```diff
-@@ -681,4 +681,5 @@
-     <string name="open_ai_oauth_storage_error">Geschützter Kontospeicher ist nicht verfügbar. Entsperre das Gerät und versuche es erneut.</string>
-     <string name="open_ai_oauth_error">Die ChatGPT-Anfrage ist fehlgeschlagen. Prüfe Verbindung, Kontozugriff und Bildgröße und versuche es erneut.</string>
-     <string name="open_ai_oauth_reset">Lokale Sitzung zurücksetzen</string>
-+    <string name="error_samplers_unavailable">Die Sampling-Methoden konnten nicht geladen werden. Prüfe die Serververbindung und versuche es erneut.</string>
- </resources>
-```
-
-**File**: `core/localization/src/androidMain/res/values-ru/strings.xml` (modified, +1/-0)
-```diff
-@@ -644,4 +644,5 @@
-     <string name="open_ai_oauth_storage_error">Защищённое хранилище аккаунта недоступно. Разблокируйте устройство и повторите попытку.</string>
-     <string name="open_ai_oauth_error">Запрос к ChatGPT завершился ошибкой. Проверьте подключение, доступ аккаунта и размер изображения, затем повторите попытку.</string>
-     <string name="open_ai_oauth_reset">Сбросить локальную сессию</string>
-+    <string name="error_samplers_unavailable">Не удалось загрузить методы сэмплирования. Проверьте соединение с сервером и повторите попытку.</string>
- </resources>
-```
-
-**File**: `core/localization/src/androidMain/res/values-tr/strings.xml` (modified, +1/-0)
-```diff
-@@ -644,4 +644,5 @@
-     <string name="open_ai_oauth_storage_error">Korumalı hesap depolaması kullanılamıyor. Cihazın kilidini açıp yeniden deneyin.</string>
-     <string name="open_ai_oauth_error">ChatGPT isteği başarısız oldu. Bağlantınızı, hesap erişimini ve görsel boyutlarını kontrol edip yeniden deneyin.</string>
-     <string name="open_ai_oauth_reset">Yerel oturumu sıfırla</string>
-+    <string name="error_samplers_unavailable">Örnekleme yöntemleri yüklenemedi. Sunucu bağlantısını kontrol edip yeniden deneyin.</string>
- </resources>
-```
-
-**File**: `core/localization/src/androidMain/res/values-uk/strings.xml` (modified, +1/-0)
-```diff
-@@ -644,4 +644,5 @@
-     <string name="open_ai_oauth_storage_error">Захищене сховище облікового запису недоступне. Розблокуйте пристрій і повторіть спробу.</string>
-     <string name="open_ai_oauth_error">Запит до ChatGPT завершився помилкою. Перевірте з’єднання, доступ облікового запису й розмір зображення, потім повторіть спробу.</string>
-     <string name="open_ai_oauth_reset">Скинути локальну сесію</string>
-+    <string name="error_samplers_unavailable">Не вдалося завантажити методи семплювання. Перевірте з’єднання із сервером і повторіть спробу.</string>
- </resources>
-```
-
-**File**: `core/localization/src/androidMain/res/values-zh/strings.xml` (modified, +1/-0)
-```diff
-@@ -696,4 +696,5 @@
-     <string name="open_ai_oauth_storage_error">受保护的账户存储不可用。请解锁设备后重试。</string>
-     <string name="open_ai_oauth_error">ChatGPT 请求失败。请检查网络、账户访问权限和图像尺寸，然后重试。</string>
-     <string name="open_ai_oauth_reset">重置本地会话</string>
-+    <string name="error_samplers_unavailable">无法加载采样方法。请检查服务器连接后重试。</string>
- </resources>
-```
-
-**File**: `core/localization/src/androidMain/res/values/strings.xml` (modified, +1/-0)
-```diff
-@@ -681,4 +681,5 @@
-     <string name="open_ai_oauth_storage_error">Protected account storage is unavailable. Unlock the device and try again.</string>
-     <string name="open_ai_oauth_error">The ChatGPT request failed. Check your connection, account access and selected dimensions, then try again.</string>
-     <string name="open_ai_oauth_reset">Reset local session</string>
-+    <string name="error_samplers_unavailable">Could not load sampling methods. Check the server connection and retry.</string>
- </resources>
-```
-
-**File**: `data/src/androidUnitTest/kotlin/com/shifthackz/aisdv1/data/repository/StableDiffusionSamplersRecoveryTest.kt` (added, +186/-0)
-```diff
-@@ -0,0 +1,186 @@
-+package com.shifthackz.aisdv1.data.repository
-+
-+import com.shifthackz.aisdv1.data.mocks.mockStableDiffusionSamplers
-+import com.shifthackz.aisdv1.domain.datasource.StableDiffusionSamplersDataSource
-+import com.shifthackz.aisdv1.domain.entity.StableDiffusionSampler
-+import com.shifthackz.aisdv1.domain.feature.auth.AuthorizationCredentials
-+import com.shifthackz.aisdv1.domain.feature.auth.AuthorizationStore
-+import com.shifthackz.aisdv1.domain.preference.PreferenceManager
-+import io.mockk.coEvery
-+import io.mockk.coVerify
-+import io.mockk.every
-+import io.mockk.mockk
-+import kotlinx.coroutines.CompletableDeferred
-+import kotlinx.coroutines.CoroutineStart
-+import kotlinx.coroutines.ExperimentalCoroutinesApi
-+import kotlinx.coroutines.async
-+import kotlinx.coroutines.cancelAndJoin
-+import kotlinx.coroutines.test.runCurrent
-+import kotlinx.coroutines.test.runTest
-+import org.junit.Assert.assertEquals
-+import org.junit.Assert.assertFalse
-+import org.junit.Assert.assertTrue
-+import org.junit.Before
-+import org.junit.Test
-+
-+/**
-+ * Verifies sampler cache ownership and complete snapshots during concurrent refresh and recovery.
-+ *
-+ * @author Dmitriy Moroz
-+ */
-+@OptIn(ExperimentalCoroutinesApi::class)
-+class StableDiffusionSamplersRecoveryTest {
-+
-+    private val remote = mockk<StableDiffusionSamplersDataSource.Remote>()
-+    private val local = mockk<StableDiffusionSamplersDataSource.Local>()
-+    private val preferences = mockk<PreferenceManager>()
-+    private val authorization = mockk<AuthorizationStore>()
-+    private var serverUrl = "http://server-a:7860"
-+    private var credentials: AuthorizationCredentials = AuthorizationCredentials.None
-+    private var cachedSamplers = emptyList<StableDiffusionSampler>()
-+    private val repository = createRepository()
-+
-+    @Before
-+    fun initialize() {
-+        every { preferences.automatic1111ServerUrl } answers { serverUrl }
-+        every { authorization.getAuthorizationCredentials() } answers { credentials }
-+        coEvery { remote.fetchSamplers(any(), any()) } returns mockStableDiffusionSamplers
-+        coEvery { local.getSamplers() } answers { cachedSamplers }
-+        coEvery { local.insertSamplers(any()) } coAnswers { cachedSamplers = firstArg() }
-+    }
-+
-+    @Test
-+    fun `an unowned cache is not accepted by a recreated repository`() = runTest {
-+        repository.fetchSamplers()
-+        assertEquals(mockStableDiffusionSamplers, repository.getSamplers())
-+
-+        assertTrue(createRepository().getSamplers().isEmpty())
-+    }
-+
-+    @Test
-+    fun `failed refresh retains cache only for the same server`() = runTest {
-+        repository.fetchSamplers()
-+        coEvery { remote.fetchSamplers(any(), any()) } throws IllegalStateException("HTTP 503")
-+
-+        assertTrue(runCatching { repository.fetchSamplers() }.isFailure)
-+        assertEquals(mockStableDiffusionSamplers, repository.getSamplers())
-+
-+        serverUrl = "http://server-b:7860"
-+        assertTrue(runCatching { repository.fetchSamplers() }.isFailure)
-+        assertTrue(repository.getSamplers().isEmpty())
-+    }
-+
-+    @Test
-+    fun `changed credentials cannot reuse the previous account cache`() = runTest {
-+        repository.fetchSamplers()
-+        credentials = AuthorizationCredentials.HttpBasic("another-account", "fixture-only")
-+        coEvery { remote.fetchSamplers(any(), any()) } throws IllegalStateException("HTTP 401")
-+
-+        assertTrue(runCatching { repository.fetchSamplers() }.isFailure)
-+        assertTrue(repository.getSamplers().isEmpty())
-+    }
-+
-+    @Test
-+    fun `a response from a replaced server is discarded`() = runTest {
-+        val response = CompletableDeferred<List<StableDiffusionSampler>>()
-+        coEvery { remote.fetchSamplers(any(), any()) } coAnswers { response.await() }
-+        val request = async { repository.fetchSamplers() }
-+        runCurrent()
-+        coVerify(exactly = 1) { remote.fetchSamplers("http://server-a:7860", AuthorizationCredentials.None) }
-+
-+        serverUrl = "http://server-b:7860"
-+        response.complete(mockStableDiffusionSamplers)
-+        request.await()
-+
-+        assertTrue(repository.getSamplers().isEmpty())
-+        coVerify(exactly = 0) { local.insertSamplers(any()) }
-+    }
-+
-+    @Test
-+    fun `a response from replaced credentials is discarded`() = runTest {
-+        val response = CompletableDeferred<List<StableDiffusionSampler>>()
-+        coEvery { remote.fetchSamplers(any(), any()) } coAnswers { response.await() }
-+        val request = async { repository.fetchSamplers() }
-+        runCurrent()
-+
-+        credentials = AuthorizationCredentials.HttpBasic("another-account", "fixture-only")
-+        response.complete(mockStableDiffusionSamplers)
-+        request.await()
-+
-+        assertTrue(repository.getSamplers().isEmpty())
-+        coVerify(exactly = 0) { local.insertSamplers(any()) }
-+    }
-+
-+    @Test
-+    fun `readers wait until cache replacement is complete`() = runTest {
-+    
-```
-
-**File**: `data/src/androidUnitTest/kotlin/com/shifthackz/aisdv1/data/repository/StableDiffusionSamplersRepositoryImplTest.kt` (modified, +18/-0)
-```diff
-@@ -80,6 +80,7 @@ class StableDiffusionSamplersRepositoryImplTest {
- 
-     @Test
-     fun `given attempt to get samplers, local data source returns list, expected valid domain models list value`() = runTest {
-+        populateCache()
-         coEvery {
-             stubLocalDataSource.getSamplers()
-         } returns mockStableDiffusionSamplers
-@@ -89,6 +90,7 @@ class StableDiffusionSamplersRepositoryImplTest {
- 
-     @Test
-     fun `given attempt to get samplers, local data source returns empty list, expected empty domain models list value`() = runTest {
-+        populateCache()
-         coEvery {
-             stubLocalDataSource.getSamplers()
-         } returns emptyList()
-@@ -98,6 +100,7 @@ class StableDiffusionSamplersRepositoryImplTest {
- 
-     @Test
-     fun `given attempt to get samplers, local data source throws exception, expected error value`() = runTest {
-+        populateCache()
-         coEvery {
-             stubLocalDataSource.getSamplers()
-         } throws stubException
-@@ -106,4 +109,19 @@ class StableDiffusionSamplersRepositoryImplTest {
- 
-         assertTrue(actual === stubException)
-     }
-+
-+    /**
-+     * Associates the local cache fixture with the configured connection before reading it.
-+     *
-+     * @author Dmitriy Moroz
-+     */
-+    private suspend fun populateCache() {
-+        coEvery {
-+            stubRemoteDataSource.fetchSamplers(stubBaseUrl, stubCredentials)
-+        } returns mockStableDiffusionSamplers
-+        coEvery {
-+            stubLocalDataSource.insertSamplers(mockStableDiffusionSamplers)
-+        } returns Unit
-+        repository.fetchSamplers()
-+    }
- }
-```
-
----
-
-### Incident Patch 3: `bd27ab1c` (2026-11-17)
-**Commit Message**: Integrate Codecov coverage and modernize build conventions (#763)
-
-**File**: `.github/workflows/project_tests.yml` (modified, +36/-3)
-```diff
-@@ -2,19 +2,25 @@ name: Project Tests
- 
- on:
-   pull_request:
--    branches: [develop]
-+    branches: [master, develop]
-   push:
-     branches: [master, develop]
-     paths-ignore:
-       - "docs/docs/**"
- 
-+permissions:
-+  contents: read
-+
  jobs:
-   test-feature:
-     runs-on: ubuntu-24.04
+   nightly:
+@@ -86,7 +87,7 @@ jobs:
  
-     steps:
-       - name: Checkout code
-         uses: actions/checkout@v4.1.0
-+        with:
-+          fetch-depth: 0
-+          persist-credentials: false
+           git diff --name-only "${NIGHTLY_TAG}..HEAD" > "${RUNNER_TEMP}/nightly-changed-files.txt"
  
-       - name: Test OpenAI-compatible API contract
-         run: python3 scripts/test_openai_compatible_contract.py
-@@ -45,5 +51,32 @@ jobs:
-           path: build/reports/kotlinLint/
-           if-no-files-found: ignore
+-          functional_pattern='^(app/|core/|data/|demo/|domain/|feature/|network/|presentation/|storage/|build-logic/|gradle/|build\.gradle\.kts$|settings\.gradle\.kts$|gradle\.properties$|gradlew$|gradlew\.bat$|\.github/workflows/nightly_android\.yml$)'
++          functional_pattern='^(app/|core/|data/|demo/|domain/|feature/|network/|presentation/|storage/|build-logic/|gradle/|scripts/nightly/|build\.gradle\.kts$|settings\.gradle\.kts$|gradle\.properties$|gradlew$|gradlew\.bat$|\.github/workflows/nightly_android\.yml$)'
+           if grep -Eq "${functional_pattern}" "${RUNNER_TEMP}/nightly-changed-files.txt"; then
+             echo "should_build=true" >> "${GITHUB_OUTPUT}"
+             echo "reason=Functional files changed since the previous nightly." >> "${GITHUB_OUTPUT}"
+@@ -333,22 +334,17 @@ jobs:
+               --verify-tag
+           fi
  
--      - name: Run Tests with Gradle
--        run: ./gradlew clean testDebugUnitTest :app:testFullDebugUnitTest
-+      - name: Run unit tests and generate coverage
-+        run: ./gradlew clean ciCoverage --no-daemon
+-      - name: Announce nightly on Discord
++      - name: Prepare nightly announcements
++        id: announcement
+         if: steps.plan.outputs.should_build == 'true' && env.PUBLISH_NIGHTLY == 'true'
+         shell: bash
+         env:
+-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_NIGHTLY_WEBHOOK_URL }}
+           NIGHTLY_VERSION_NAME: ${{ steps.version.outputs.version_name }}
+           NIGHTLY_BUILD_DATE: ${{ steps.version.outputs.build_date }}
+           NIGHTLY_COMMIT: ${{ steps.plan.outputs.target_sha }}
+         run: |
+           set -euo pipefail
+ 
+-          if [[ -z "${DISCORD_WEBHOOK_URL}" ]]; then
+-            echo "::notice::Discord notification skipped: DISCORD_NIGHTLY_WEBHOOK_URL is not configured."
+-            exit 0
+-          fi
+-
+           output_dir="${RUNNER_TEMP}/nightly-output"
+           release_url="https://github.com/${GITHUB_REPOSITORY}/releases/tag/${NIGHTLY_TAG}"
+           download_url="https://github.com/${GITHUB_REPOSITORY}/releases/download/${NIGHTLY_TAG}/${APK_NAME}"
+@@ -362,16 +358,49 @@ jobs:
+             --arg run_url "https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
+             --arg feedback_url "https://github.com/${GITHUB_REPOSITORY}/issues" \
+             --rawfile changes "${output_dir}/changes.txt" \
+-            '{allowed_mentions: {parse: []}, embeds: [{
++            '{
+               title: ("SDAI Dev · Nightly · " + $date),
+-              url: $release_url,
+-              color: 7684269,
+-              description: ("**" + $version + "**\nInstalls alongside stable SDAI with separate app data.\n\n" +
+-                $changes[:1000] + "\n[Download latest APK](" + $download_url + ") · [Release details](" + $release_url +
+-                ")\n[Commit " + $commit[:8] + "](" + $commit_url + ") · [Build](" + $run_url +
+-                ") · [Report an issue](" + $feedback_url + ")"),
+-              footer: {text: "Preview build for testing. The download link always serves the latest nightly."}
+-            }]}' > "${output_dir}/discord.json"
++              version: $version,
++              installation_note: "Installs alongside stable SDAI with separate app data.",
++              changes: $changes[:1000],
++              links: [
++                [{text: "Download latest APK", url: $download_url}, {text: "Release details", url: $release_url}],
++                [{text: ("Commit " + $commit[:8]), url: $commit_url}, {text: "Build", url: $run_url},
++                 {text: "Report an issue", url: $feedback_url}]
++              ],
++              footer: "Preview build for testing. The download link always serves the latest nightly."
++            }' > "${output_dir}/announcement.json"
 +
-+      - name: Upload unit-test and coverage reports
-+        if: always()
-+        uses: actions/upload-artifact@v4
-+        with:
-+          name: android-jvm-test-coverage
-+          path: |
-+            build/reports/jacoco/ciCoverage/
-+            **/build/reports/tests/test*UnitTest/
-+            **/build/test-results/test*UnitTest/*.xml
-+          if-no-files-found: warn
++          jq '{allowed_mentions: {parse: []}, embeds: [{
++            title: .title,
++            url: .links[0][1].url,
++            color: 7684269,
++            description: ("**" + .version + "**\n" + .installation_note + "\n\n" + .changes + "\n" +
++              (.links | map(map("[" + .text + "](" + .url + ")") | join(" · ")) | join("\n"))),
++            footer: {text: .footer}
++          }]}' "${output_dir}/announcement.json" > "${output_dir}/discord.json"
 +
-+      - name: Verify coverage report
-+        run: test -s build/reports/jacoco/ciCoverage/ciCoverage.xml
++          # Escape all dynamic content for Telegram HTML, including commit subjects.
++          jq -r '"<b>" + (.title | @html) + "</b>\n\n<b>" + (.version | @html) + "</b>\n" +
++            (.installation_note | @html) + "\n\n" + (.changes | @html) + "\n" +
++            (.links | map(map("<a href=\"" + (.url | @html) + "\">" + (.text | @html) + "</a>") |
++              join(" · ")) | join("\n")) + "\n\n" + (.footer | @html)' \
++            "${output_dir}/announcement.json" > "${output_dir}/telegram.html"
 +
-+      # Public fork and Dependabot PRs use Codecov's tokenless public-PR uploads.
-+      # Keep this on pull_request; untrusted PR code must never receive base-repo secrets.
-+      - name: Upload coverage to Codecov
-+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
-+        with:
-+          token: ${{ secrets.CODECOV_TOKEN }}
-+          override_branch: ${{ github.actor == 'dependabot[bot]' && github.event_name == 'pull_request' && format('pr{0}:{1}', github.event.pull_request.number, github.head_ref) || '' }}
-+          files: build/reports/jacoco/ciCoverage/ciCoverage.xml
-+          disable_search: true
-+          fail_ci_if_error: true
-+          flags: android-unit
-+          name: android-jvm-unit-tests
++      - name: Announce nightly on Discord
++        if: steps.plan.outputs.should_build == 'true' && env.PUBL
 ```
 
-**File**: `README.md` (modified, +2/-0)
+**File**: `NIGHTLY_BUILDS.md` (modified, +8/-0)
 ```diff
-@@ -3,6 +3,7 @@
- <img src="artwork/icon/sdai.png" alt="SDAI Logo" height="148" width="148">
+@@ -59,6 +59,14 @@ Give ordinary members View Channel and Read Message History, deny Send Messages,
  
- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21442838.svg)](https://doi.org/10.5281/zenodo.21442838)
-+[![Android/JVM coverage](https://codecov.io/gh/ShiftHackZ/SDAI-KMP/branch/master/graph/badge.svg)](https://app.codecov.io/gh/ShiftHackZ/SDAI-KMP)
+ The APK is hosted on GitHub rather than attached to Discord because Full APKs exceed Discord's default upload limit. The fixed download URL always serves the latest nightly, including when opened from an older announcement. Mention parsing is disabled so commit subjects cannot notify roles or everyone.
  
- ![Google Play](https://img.shields.io/endpoint?color=blue&logo=google-play&logoColor=white&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.shifthackz.aisdv1.app%26l%3DGoogle%2520Play%26m%3D%24version)
- ![F-Droid](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Ff-droid.org%2Fapi%2Fv1%2Fpackages%2Fcom.shifthackz.aisdv1.app.foss&query=%24.packages%5B0%5D.versionName&label=F-Droid&logo=fdroid&link=https%3A%2F%2Ff-droid.org%2Fpackages%2Fcom.shifthackz.aisdv1.app.foss%2F)
-@@ -31,6 +32,7 @@ Root-level Markdown documents:
- - [Nightly Android builds](NIGHTLY_BUILDS.md)
- - [Git workflow](GIT_WORKFLOW.md)
- - [Kotlin lint](KOTLIN_LINT.md)
-+- [Unit tests and coverage](TESTING.md)
- - [Code of conduct](CODE_OF_CONDUCT.md)
++## Telegram Notifications
++
++After successfully publishing a nightly, the workflow posts a comment under the configured Telegram announcement in the channel's linked discussion group. It uses the same title, version, recent changes, links and disclaimer as Discord, rendered as HTML text with link previews disabled. The exact signed APK published to GitHub is sent as a file in a reply to that comment, with its version as the caption. The full announcement stays in a separate text message to avoid Telegram's shorter document caption limit.
++
++Uploads use a temporary local Bot API server on the runner, supporting files up to 2 GB. Its executable is built from pinned Telegram source and cached separately from bot session data. The server listens only on loopback, logs out the bot before discarding its session and stops when delivery finishes or the step is cancelled. Notification tools come from the workflow's commit, independently of the APK's build target.
++
++Skipped builds and runs with `publish=false` do not post. A missing reply target fails delivery instead of posting an unrelated group message. Telegram delivery is attempted even if Discord delivery fails. Neither destination retries automatically, since a lost response could duplicate an announcement.
++
+ ## Manual Run
  
- ## Why SDAI
+ GitHub only exposes `workflow_dispatch` for workflow files that exist on the repository default branch. Keep `.github/workflows/nightly_android.yml` on `master`; the workflow still builds `develop` through the `target_ref` input.
 ```
 
-**File**: `TESTING.md` (added, +59/-0)
+**File**: `scripts/nightly/build_telegram_bot_api.sh` (added, +23/-0)
 ```diff
-@@ -0,0 +1,59 @@
-+# Unit tests and coverage
+@@ -0,0 +1,23 @@
++#!/usr/bin/env bash
++# Build only the pinned upstream executable; bot sessions never enter this directory.
++set -euo pipefail
 +
-+Run the Android/JVM unit tests and generate JaCoCo XML and HTML reports:
++: "${RUNNER_TEMP:?Missing runner temporary directory.}"
++: "${TELEGRAM_BOT_API_REVISION:?Missing Telegram Bot API source revision.}"
++if [[ ! "${TELEGRAM_BOT_API_REVISION}" =~ ^[0-9a-f]{40}$ ]]; then
++  echo "Telegram Bot API revision must be a full commit SHA." >&2
++  exit 1
++fi
 +
-+```sh
-+./gradlew clean ciCoverage --no-daemon
-+```
-+
-+Use JDK 17 and the Android SDK configured for the project. The root task discovers
-+modules using the JaCoCo convention automatically. It selects `debug` for plain
-+modules and `fullDebug` for flavored modules, including the app. Each selected
-+test task runs once. An enabled module without a supported CI variant fails
-+configuration instead of silently disappearing from coverage.
-+
-+The combined report is available at:
-+
-+- XML: `build/reports/jacoco/ciCoverage/ciCoverage.xml`
-+- HTML: `build/reports/jacoco/ciCoverage/html/index.html`
-+
-+For a single module, run its variant report task, for example:
-+
-+```sh
-+./gradlew :domain:jacocoDebugReport
-+./gradlew :app:jacocoFullDebugReport
-+```
-+
-+Module reports are under `<module>/build/reports/jacoco/<report-task>/`.
-+
-+## Coverage scope
-+
-+Coverage measures Android/JVM production classes, including shared Kotlin
-+compiled for Android. It does not measure Kotlin Native/iOS, Swift, C++, device
-+instrumentation tests, or other Android flavors. Unit coverage does not replace
-+testing normal application flows on Android and iOS.
-+
-+Reports include production classes without tests. Generated Android resource and
-+configuration classes, Compose resource accessors and Room implementations are
-+excluded. Class artifacts and execution data belong to the selected variant;
-+unrelated build variants and dependency classes are not included.
-+
-+## CI and Codecov
-+
-+Project Tests runs coverage for pushes to `master` and `develop`, and pull requests
-+targeting either branch. Pushes containing only generated `docs/docs/**` changes
-+are skipped. CI retains test results and HTML/XML reports as workflow artifacts
-+and uploads the combined XML to [Codecov](https://app.codecov.io/gh/ShiftHackZ/SDAI-KMP)
-+with the `android-unit` flag.
-+
-+The repository Actions secret `CODECOV_TOKEN` authenticates trusted uploads.
-+Public fork and Dependabot pull requests use Codecov's tokenless public-PR support;
-+no `pull_request_target` workflow or secret forwarding is used. Codecov must have
-+access to the repository through its GitHub integration to publish checks and
-+update PR comments.
-+
-+`codecov.yml` defines components by module paths and informational project/patch
-+checks. Coverage changes do not block merging initially; upload failures still
-+fail CI. Establish branch baselines before choosing enforced coverage targets.
-+The README badge follows `master`; comparisons need coverage for both the PR head
-+and its base commit.
++source_dir="${RUNNER_TEMP}/telegram-bot-api/source"
++binary_dir="${RUNNER_TEMP}/telegram-bot-api/bin"
++sudo apt-get update
++sudo apt-get install --yes --no-install-recommends cmake g++ make gperf libssl-dev zlib1g-dev
++git init "${source_dir}"
++git -C "${source_dir}" fetch --depth 1 https://github.com/tdlib/telegram-bot-api.git "${TELEGRAM_BOT_API_REVISION}"
++git -C "${source_dir}" checkout --detach FETCH_HEAD
++git -C "${source_dir}" submodule update --init --recursive --depth 1
++cmake -S "${source_dir}" -B "${source_dir}/build" -DCMAKE_BUILD_TYPE=Release
++cmake --build "${source_dir}/build" --target telegram-bot-api --parallel 2
++install -d "${binary_dir}"
++install -m 755 "${source_dir}/build/telegram-bot-api" "${binary_dir}/telegram-bot-api"
 ```
 
-**File**: `build-logic/convention/build.gradle.kts` (modified, +6/-3)
+**File**: `scripts/nightly/telegram_announce.py` (added, +161/-0)
 ```diff
-@@ -1,3 +1,6 @@
-+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+@@ -0,0 +1,161 @@
++#!/usr/bin/env python3
++"""Publish the nightly announcement and its signed APK through a temporary local Bot API."""
 +
- plugins {
-     `kotlin-dsl`
- }
-@@ -7,9 +10,9 @@ java {
-     targetCompatibility = JavaVersion.VERSION_17
- }
- 
--tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
--    kotlinOptions {
--        jvmTarget = JavaVersion.VERSION_17.toString()
-+tasks.withType<KotlinCompile>().configureEach {
-+    compilerOptions {
-+        jvmTarget.set(JvmTarget.JVM_17)
-     }
- }
- 
-```
-
-**File**: `build-logic/convention/src/main/kotlin/ApplicationConventionPlugin.kt` (modified, +1/-0)
-```diff
-@@ -8,6 +8,7 @@ import org.gradle.api.Plugin
- import org.gradle.api.Project
- import org.gradle.kotlin.dsl.configure
- 
-+@Suppress("unused")
- class ApplicationConventionPlugin : Plugin<Project> {
- 
-     override fun apply(target: Project) {
-```
-
-**File**: `build-logic/convention/src/main/kotlin/BaselineProFmConventionPlugin.kt` (modified, +1/-0)
-```diff
-@@ -16,6 +16,7 @@ import java.util.Collections
-  * Fix snippet   : https://gist.github.com/obfusk/61046e09cee352ae6dd109911534b12e
-  * Issue tracker : https://issuetracker.google.com/issues/231837768
-  */
-+@Suppress("unused")
- class BaselineProFmConventionPlugin : Plugin<Project> {
- 
-     override fun apply(target: Project) {
-```
-
-**File**: `build-logic/convention/src/main/kotlin/ComposeConventionPlugin.kt` (modified, +3/-1)
-```diff
-@@ -6,7 +6,9 @@ import org.gradle.api.Plugin
- import org.gradle.api.Project
- import org.gradle.kotlin.dsl.configure
- import org.gradle.kotlin.dsl.getByType
-+import com.android.build.gradle.LibraryExtension as LegacyLibraryExtension
- 
-+@Suppress("unused")
- class ComposeConventionPlugin : Plugin<Project> {
- 
-     override fun apply(target: Project) {
-@@ -21,7 +23,7 @@ class ComposeConventionPlugin : Plugin<Project> {
-             val extension = extensions.getByType<LibraryExtension>()
-             configureCompose(extension)
- 
--            extensions.configure<com.android.build.gradle.LibraryExtension> {
-+            extensions.configure<LegacyLibraryExtension> {
-                 configureKotlinAndroid(this)
-                 defaultConfig.targetSdk = libs.findVersion("targetSdk").get().toString().toInt()
-             }
-```
-
-**File**: `build-logic/convention/src/main/kotlin/FlavorsConventionPlugin.kt` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@ import org.gradle.api.Plugin
- import org.gradle.api.Project
- import org.gradle.kotlin.dsl.configure
- 
-+@Suppress("unused")
- class FlavorsConventionPlugin : Plugin<Project> {
- 
-     override fun apply(target: Project) {
++import json
++import os
++from pathlib import Path
++import re
++import signal
++import socket
++import subprocess
++import sys
++import tempfile
++import time
++import urllib.error
++import urllib.request
++
++
++def request(base_url, token, method, payload=None, timeout=30):
++    """Call Telegram without retries or exceptions that disclose credential-bearing URLs."""
++    data = None if payload is None else json.dumps(payload).encode()
++    query = urllib.request.Request(
++        f"{base_url}/bot{token}/{method}",
++        data=data,
++        headers={"Content-Type": "application/json"},
++    )
++    try:
++        with urllib.request.urlopen(query, timeout=timeout) as response:
++            result = json.load(response)
++    except urllib.error.HTTPError as error:
++        raise RuntimeError(f"Telegram {method} failed (HTTP {error.code}).") from None
++    except (OSError, ValueError, urllib.error.URLError):
++        raise RuntimeError(f"Telegram {method} failed; delivery may be unconfirmed.") from None
++    if result.get("ok") is not True:
++        raise RuntimeError(f"Telegram {method} was not confirmed.")
++    return result["result"]
++
++
++def cancel(signum, _frame):
++    """Unwind the owned server and session when the runner cancels this step."""
++    raise SystemExit(128 + signum)
++
++
++def main():
++    """Validate configuration before building, then send both comments and clean up the session."""
++    names = (
++        "TELEGRAM_BOT_TOKEN",
++        "TELEGRAM_CHAT_ID",
++        "TELEGRAM_REPLY_TO_MESSAGE_ID",
++        "TELEGRAM_API_ID",
++        "TELEGRAM_API_HASH",
++    )
++    settings = {name: os.environ.get(name, "") for name in names}
++    if not any(settings.values()):
++        print("::notice::Telegram notification skipped: nightly Telegram settings are not configured.")
++        return
++    if not all(settings.values()):
++        raise RuntimeError("Telegram requires the bot token, chat ID, reply ID, API ID and API hash.")
++    patterns = {
++        "TELEGRAM_CHAT_ID": r"-[0-9]+",
++        "TELEGRAM_REPLY_TO_MESSAGE_ID": r"[1-9][0-9]*",
++        "TELEGRAM_API_ID": r"[1-9][0-9]*",
++        "TELEGRAM_API_HASH": r"[0-9a-fA-F]{32}",
++    }
++    if any(not re.fullmatch(pattern, settings[name]) for name, pattern in patterns.items()):
++        raise RuntimeError("Telegram IDs or API hash have an invalid format.")
++
++    apk = Path(os.environ["NIGHTLY_SIGNED_APK"]).resolve(strict=True)
++    apk_size = apk.stat().st_size
++    if not apk.is_file() or not 0 < apk_size <= 2_000_000_000:
++        raise RuntimeError("The signed nightly APK must be a nonempty file within Telegram's 2 GB limit.")
++    runner_temp = Path(os.environ["RUNNER_TEMP"])
++    output_dir = runner_temp / "nightly-output"
++    text = (output_dir / "telegram.html").read_text()
++    announcement = json.loads((output_dir / "announcement.json").read_text())
++    binary = runner_temp / "telegram-bot-api/bin/telegram-bot-api"
++    if not binary.is_file():
++        build_env = {key: value for key, value in os.environ.items() if key not in names}
++        subprocess.run(
++            ["bash", str(Path(__file__).with_name("build_telegram_bot_api.sh"))],
++            env=build_env,
++            check=True,
++        )
++
++    token = settings["TELEGRAM_BOT_TOKEN"]
++    chat_id = int(settings["TELEGRAM_CHAT_ID"])
++    reply_id = int(settings["TELEGRAM_REPLY_TO_MESSAGE_ID"])
++    # Choose an available loopback port for this owned server.
++    with socket.socket() as reservation:
++        reservation.bind(("127.0.0.1", 0))
++        port = reservation.getsockname()[1]
++    base_url = f"http://127.0.0.1:{port}"
++    signal.signal(signal.SIGTERM, cancel)
++    signal.signal(signal.SIGINT, cancel)
++    request("https://api.telegram.org", token, "logOut", {})
++    with tempfile.TemporaryDirectory(prefix="sdai-telegram-session-", dir=runner_temp) as session_dir:
++        server = subprocess.Popen(
++            [str(binary), "--local", "--http-ip-address=127.0.0.1", f"--http-port={port}",
++             f"--dir={session_dir}", f"--temp-dir={session_dir}", "--verbosity=0"],
++            stdout=subprocess.DEVNULL,
++            stderr=subprocess.DEVNULL,
++        )
++        try:
++            deadline = time.monotonic() + 120
++            while True:
++                if server.poll() is not None:
++                    raise RuntimeError("The local Telegram Bot API server exited before becoming ready.")
++                try:
++                    request(base_url, token, "getMe", timeout=5)
++                    break
++                except RuntimeError:
++                    if time.monotonic() >= deadline:
++                        raise RuntimeError("The local Telegram Bot API server did not become ready.") from None
++                    time.sleep(2)
++
++            # Preserve the full text rather than truncate it to Telegram's document caption 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #767** (2026-11-17): Add SDAI LinkedIn links and cover artwork (@ShiftHackZ)
-- **PR #766** (closed): Bump org.jetbrains.kotlinx:kotlinx-serialization-json from 1.11.0 to 1.13.0 (@dependabot[bot])
-- **PR #765** (closed): Bump com.google.devtools.ksp from 2.3.9 to 2.3.14 (@dependabot[bot])
-- **PR #764** (closed): Bump org.robolectric:robolectric from 4.16.1 to 4.18 (@dependabot[bot])
-- **PR #763** (2026-11-17): Integrate Codecov coverage and modernize build conventions (@ShiftHackZ)
-- **PR #762** (2026-11-17): Restore Kotlin Native serialization compatibility (@ShiftHackZ)
+- **PR #777** (2026-11-19): Announce nightly builds and attach APKs in Telegram comments (@ShiftHackZ)
+- **PR #776** (2026-11-19): Add live CPU and RAM monitoring during generation (@ShiftHackZ)
+- **PR #775** (2026-11-19): Fix immediate language refresh and share the language picker (@ShiftHackZ)
+- **PR #774** (2026-11-19): Add foreground generation screen dimming (@ShiftHackZ)
+- **PR #773** (2026-11-19): Align backup card styling and separate header actions (@ShiftHackZ)
+- **PR #772** (2026-11-19): Add selective backup and restore (@ShiftHackZ)
 
 ---
 
@@ -1519,30 +1145,63 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. large LoRA connections, setup timeouts, and traffic accounting
+## X. Announce nightly builds and attach APKs in Telegram comments
 
 **RULE**:
-When implementing operations in `core/localization/src/androidMain/res/values-de/strings.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ShiftHackZ/SDAI-KMP. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/nightly_android.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ShiftHackZ/SDAI-KMP. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `91d55b97`: large LoRA connections, setup timeouts, and traffic accounting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `82ebd42d`: Announce nightly builds and attach APKs in Telegram comments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/localization/src/androidMain/res/values-de/strings.xml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/nightly_android.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    <string name="settings_connection_timeout_description">Zeitlimit für die Einrichtung einer Anbieterverbindung und Metadatenanfragen. Gilt für neue Anfragen.</string>
-    <string name="settings_connection_timeout_ios_description">Begrenzt die Verbindungseinrichtung und Metadatenanfragen. iOS verwaltet die Verbindungsdauer auf Netzwerkebene automatisch.</string>
+  TELEGRAM_BOT_API_REVISION: 7232881b39dfcd048a0d569f1983c5184249ee05
+          functional_pattern='^(app/|core/|data/|demo/|domain/|feature/|network/|presentation/|storage/|build-logic/|gradle/|scripts/nightly/|build\.gradle\.kts$|settings\.gradle\.kts$|gradle\.properties$|gradlew$|gradlew\.bat$|\.github/workflows/nightly_android\.yml$)'
+      - name: Prepare nightly announcements
+        id: announcement
+            '{
+              version: $version,
+              installation_note: "Installs alongside stable SDAI with separate app data.",
+              changes: $changes[:1000],
+              links: [
+                [{text: "Download latest APK", url: $download_url}, {text: "Release details", url: $release_url}],
+                [{text: ("Commit " + $commit[:8]), url: $commit_url}, {text: "Build", url: $run_url},
+                 {text: "Report an issue", url: $feedback_url}]
+              ],
+              footer: "Preview build for testing. The download link always serves the latest nightly."
+            }' > "${output_dir}/announcement.json"
+
+          jq '{allowed_mentions: {parse: []}, embeds: [{
+            title: .title,
+            url: .links[0][1].url,
+            colo
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-    <string name="settings_connection_timeout_description">Zeit zum Verbindungsaufbau mit einem KI-Anbieter. Gilt für neue Anfragen.</string>
-    <string name="settings_connection_timeout_ios_description">iOS verwaltet die Verbindungsdauer automatisch. Dieser Wert wird gespeichert, kann unter iOS aber nicht erzwungen werden.</string>
+          functional_pattern='^(app/|core/|data/|demo/|domain/|feature/|network/|presentation/|storage/|build-logic/|gradle/|build\.gradle\.kts$|settings\.gradle\.kts$|gradle\.properties$|gradlew$|gradlew\.bat$|\.github/workflows/nightly_android\.yml$)'
+      - name: Announce nightly on Discord
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_NIGHTLY_WEBHOOK_URL }}
+          if [[ -z "${DISCORD_WEBHOOK_URL}" ]]; then
+            echo "::notice::Discord notification skipped: DISCORD_NIGHTLY_WEBHOOK_URL is not configured."
+            exit 0
+          fi
+
+            '{allowed_mentions: {parse: []}, embeds: [{
+              url: $release_url,
+              color: 7684269,
+              description: ("**" + $version + "**\nInstalls alongside stable SDAI with separate app data.\n\n" +
+                $changes[:1000] + "\n[Download latest APK](" + $download_url + ") · [Release details](" + $release_url +
+                ")\n[Commit " + $commit[:8] + "](" + $commit_url + ") · [Build](" + $run_url +
+                ") · [Report an issue](" + $feedback_url + ")"),
+              footer: {text: "Preview build for testing. The download link always serves the latest nightly."}
+            }]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `91d55b97` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `82ebd42d` are properly handled with clean fallback behavior.

@@ -11770,3 +11770,4 @@ Every entry in this ledger must capture:
 | `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `825d7722` | Multi-dimensional audit evidence | 2026-11-21T05:27:50.163Z |
 | `learn-github-a2ui-project-a2ui` | `https://github.com/a2ui-project/a2ui` | `5ff1b05f` | Multi-dimensional audit evidence | 2026-11-21T05:27:53.619Z |
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `2addd4f0` | Multi-dimensional audit evidence | 2026-11-21T05:27:56.168Z |
+| `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/SDAI-KMP` | `82ebd42d` | Multi-dimensional audit evidence | 2026-11-21T06:01:27.193Z |
