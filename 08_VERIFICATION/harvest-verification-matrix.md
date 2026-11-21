@@ -11732,3 +11732,5 @@
 | `CYCLE-20261121-4PRU` | `2026-11-21T04:39:06.618Z` | `kirillzyusko/react-native-keyboard-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9728` | Yes (`d9d9f8b4...`) |
 | `CYCLE-20261121-4RGB` | `2026-11-21T04:39:08.795Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9157` | Yes (`4f7926ad...`) |
 | `CYCLE-20261121-4WKI` | `2026-11-21T04:39:15.426Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9729` | Yes (`a0a6618b...`) |
+| `CYCLE-20261121-GPJI` | `2026-11-21T04:48:26.190Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9730` | Yes (`00dbe6c0...`) |
+| `CYCLE-20261121-GSIQ` | `2026-11-21T04:48:30.050Z` | `fastapi/fastapi` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md` | Yes (`67e9437d...`) |

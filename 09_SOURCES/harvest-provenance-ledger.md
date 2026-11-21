@@ -11765,3 +11765,5 @@ Every entry in this ledger must capture:
 | `learn-github-kirillzyusko-react-native-keyboard-controller` | `https://github.com/kirillzyusko/react-native-keyboard-controller` | `67112625` | Multi-dimensional audit evidence | 2026-11-21T04:39:06.622Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `5f96e08e` | Multi-dimensional audit evidence | 2026-11-21T04:39:08.799Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `ea8e9cca` | Multi-dimensional audit evidence | 2026-11-21T04:39:15.430Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `002c958a` | Multi-dimensional audit evidence | 2026-11-21T04:48:26.194Z |
+| `learn-github-fastapi-fastapi` | `https://github.com/tiangolo/fastapi` | `05e6df7e` | Multi-dimensional audit evidence | 2026-11-21T04:48:30.054Z |

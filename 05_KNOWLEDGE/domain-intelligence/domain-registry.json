@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T04:39:22.597Z",
+  "last_updated": "2026-11-21T04:48:38.176Z",
   "total_records": 2226,
   "domains": {
     "A": {
@@ -7996,8 +7996,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "e503a3a43a94af0ccfcaeea13832a5094b3c23869d15513152a9a72e49045637",
-      "created_at": "2026-11-21T04:20:41.158Z"
+      "content_hash": "1cf678fc706663b2049cf59ad3571e834a70b372ca4b3f8ad6c4b8509f91bc8d",
+      "created_at": "2026-11-21T04:48:38.176Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -17579,8 +17579,8 @@
       "title": "Technical Construction Intelligence: tw93/Pake Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-technical-construction-intelligence-tw93-pake-core-invariants.md",
       "repository": "tw93/Pake",
-      "content_hash": "ebd7e9196c88cbd40304b46133ff900de300fea67970d7cd55b7ed2d10bffb42",
-      "created_at": "2026-11-19T18:32:59.746Z"
+      "content_hash": "6b3d744ab0ec8f95879734afea6e58a3d0b6d5a146f0681889c7287e283fc33b",
+      "created_at": "2026-11-21T04:48:26.547Z"
     },
     "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants",
@@ -17597,8 +17597,8 @@
       "title": "Technical Construction Intelligence: tw93-pake-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-learnings-technical-construction-intelligence-tw93-pake-learnings-core.md",
       "repository": "tw93-pake-learnings",
-      "content_hash": "4872c01b6f6faaded1412c608268cf3ffbe96ae7350f7e853fe5c88a115cf998",
-      "created_at": "2026-11-19T18:33:08.099Z"
+      "content_hash": "16248a1549ad60c1dda07f05fb2ee0bd0b6cc9e6909b28d598686b7d3b339b81",
+      "created_at": "2026-11-21T04:48:36.433Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -27411,8 +27411,8 @@
       "title": "Technical Construction Intelligence: fastapi/fastapi Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tiangolo-fastapi-technical-construction-intelligence-fastapi-fastapi-core-invari.md",
       "repository": "fastapi/fastapi",
-      "content_hash": "6c3bba83ef06cb2614c0e7cca97846c7dc675d82f727cc04eab000372a779a08",
-      "created_at": "2026-11-17T11:40:37.829Z"
+      "content_hash": "a4619b96ad38b7d6b520485d4b0416ec631091756ee4ef6246c2de418b319f52",
+      "created_at": "2026-11-21T04:48:30.451Z"
     },
     "domain_intelligence-technical-construction-intelligence-react-navigation-react-navigation-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-react-navigation-react-navigation-core-invar",
@@ -27429,8 +27429,8 @@
       "title": "Technical Construction Intelligence: tiangolo-fastapi-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tiangolo-fastapi-learnings-technical-construction-intelligence-tiangolo-fastapi-.md",
       "repository": "tiangolo-fastapi-learnings",
-      "content_hash": "a7fd8ceee6049ca5bd91739ecddd0bf6f0ec9ab4f30395bbfc5ad7375d955a54",
-      "created_at": "2026-11-17T11:40:47.454Z"
+      "content_hash": "180d7cda87ee5d4c96478926c47e220a6b24bf76ca077194a27befe6d2e265bc",
+      "created_at": "2026-11-21T04:48:37.313Z"
     },
     "DOM-H-F963174B": {
       "record_id": "DOM-H-F963174B",

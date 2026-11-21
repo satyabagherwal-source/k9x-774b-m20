@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-N0DV",
-    "timestamp": "2026-11-19T01:06:02.803Z",
-    "repository": "nezhahq/nezha",
-    "learningId": "learn-github-nezhahq-nezha",
-    "contentHash": "c3c62b0885ed92beab3d1adc404fb934156a76623ba412d4bb12dc65174b4a90",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-39KN",
-    "timestamp": "2026-11-19T01:18:41.207Z",
-    "repository": "openai-community/gpt2",
-    "learningId": "learn-huggingface-openai-community-gpt2",
-    "contentHash": "c24de977eb8d4c67db9c660691b73612f45c961b4f6486c8db8c0092567b91e1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-3AS1",
     "timestamp": "2026-11-19T01:18:42.769Z",
     "repository": "u-root/u-root",
@@ -7492,6 +7462,36 @@
     "contentHash": "a0a6618ba359cc594498a45f4e7156bd20e590e4c7f05c6bcb1288588b82c51d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-GPJI",
+    "timestamp": "2026-11-21T04:48:26.190Z",
+    "repository": "tw93/Pake",
+    "learningId": "learn-github-tw93-pake",
+    "contentHash": "00dbe6c0e3355d2ee15d146b0e541250f6e68e272720b5c76325cff16e95a102",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-GSIQ",
+    "timestamp": "2026-11-21T04:48:30.050Z",
+    "repository": "fastapi/fastapi",
+    "learningId": "learn-github-fastapi-fastapi",
+    "contentHash": "67e9437dc988d3aabac5118980656436314475e53efacb6e081d19207b1d3748",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

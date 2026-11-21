@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T04:39:22.775Z",
+  "last_updated": "2026-11-21T04:48:38.464Z",
   "total_verified_learnings": 9058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22943,
+  "total_items": 22946,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e503a3a43a94af0ccfcaeea13832a5094b3c23869d15513152a9a72e49045637",
+      "content_hash": "1cf678fc706663b2049cf59ad3571e834a70b372ca4b3f8ad6c4b8509f91bc8d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T04:20:41.158Z"
+      "persisted_at": "2026-11-21T04:48:38.176Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "391ab185504603a888b280c4646a07bd7937bf40f4ad78ac9266e06ba1cf2d4f",
+      "content_hash": "180ea582ba9f94e4c9052be4ece2ec41c132afb26bb157d0f4a3354bd01b938f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T04:20:41.311Z"
+      "persisted_at": "2026-11-21T04:48:38.338Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "94eea2ab534bdd158b18c0395cf271451323adb4aa8ce7139ef60788d1fd2e7d",
+      "content_hash": "9a90abea818934a532622bd2485dbd757728e4330e98e19a68ccabf45ab01d36",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T04:20:41.444Z"
+      "persisted_at": "2026-11-21T04:48:38.464Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -235848,8 +235848,8 @@
       "slug": "tw93-pake",
       "platform": "github",
       "source_url": "https://github.com/tw93/Pake",
-      "source_version": "1382507e",
-      "content_hash": "c44571c60aac70116639b0fa812f1bcb677e3f1fab3a110158dbf650780f7607",
+      "source_version": "002c958a",
+      "content_hash": "00dbe6c0e3355d2ee15d146b0e541250f6e68e272720b5c76325cff16e95a102",
       "dossier_path": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "promoted_rules": [
@@ -235872,6 +235872,11 @@
           "number": 9427,
           "title": "stop showing sites Tauri's global API, which DeepSeek reads as an unofficial cli",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9730,
+          "title": "apply hiding exceptions to their own rules instead of hiding the selector everyw",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235879,7 +235884,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T18:32:59.024Z",
+      "verified_at": "2026-11-21T04:48:25.993Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235921,10 +235926,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-technical-construction-intelligence-tw93-pake-core-invariants.md",
       "title": "Technical Construction Intelligence: tw93/Pake Core Invariants",
       "repository": "tw93/Pake",
-      "source_version": "1382507e",
-      "content_hash": "ebd7e9196c88cbd40304b46133ff900de300fea67970d7cd55b7ed2d10bffb42",
+      "source_version": "002c958a",
+      "content_hash": "6b3d744ab0ec8f95879734afea6e58a3d0b6d5a146f0681889c7287e283fc33b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T18:32:59.746Z"
+      "persisted_at": "2026-11-21T04:48:26.547Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake",
@@ -235933,10 +235938,10 @@
       "relative_path": "08_VERIFICATION/tw93-pake-verification-protocol-empirical-defect-shield-for-tw93-pake.md",
       "title": "Verification Protocol: Empirical Defect Shield for tw93/Pake",
       "repository": "tw93/Pake",
-      "source_version": "1382507e",
-      "content_hash": "c421080d4da3dd902be4530bcdead6bfafe73fa583b2bd7581c4b39483571b52",
+      "source_version": "002c958a",
+      "content_hash": "7e76ee7d9cf8af22886b93d9f4741cf15260ded02460b2e93412b94f1c7a08ee",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T18:32:59.932Z"
+      "persisted_at": "2026-11-21T04:48:26.702Z"
     },
     "learn-github-aquasecurity-trivy": {
       "learning_id": "learn-github-aquasecurity-trivy",
@@ -236097,9 +236102,9 @@
       "title": "Technical Construction Intelligence: tw93-pake-learnings Core Invariants",
       "repository": "tw93-pake-learnings",
       "source_version": "HEAD",
-      "content_hash": "4872c01b6f6faaded1412c608268cf3ffbe96ae7350f7e853fe5c88a115cf998",
+      "content_hash": "16248a1549ad60c1dda07f05fb2ee0bd0b6cc9e6909b28d598686b7d3b339b81",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T18:33:08.099Z"
+      "persisted_at": "2026-11-21T04:48:36.433Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake-learnings",
@@ -236109,9 +236114,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tw93-pake-learnings",
       "repository": "tw93-pake-learnings",
       "source_version": "HEAD",
-      "content_hash": "1b188405c1114455666d875c09dedd21ffcb983d0e9763216d9539fe95dd8e12",
+      "content_hash": "5a9fe40738099497bd2deb9121d9a7c87abab8cabc4d38b8e4913e545deab642",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T18:33:08.301Z"
+      "persisted_at": "2026-11-21T04:48:36.598Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -272853,8 +272858,8 @@
       "slug": "tiangolo-fastapi",
       "platform": "github",
       "source_url": "https://github.com/tiangolo/fastapi",
-      "source_version": "a1b3be01",
-      "content_hash": "f735661edf851f08369be72bc68693cf64cfbe7b254c55605169a82bb2a56f9f",
+      "source_version": "05e6df7e",
+      "content_hash": "67e9437dc988d3aabac5118980656436314475e53efacb6e081d19207b1d3748",
       "dossier_path": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
       "promoted_rules": [
@@ -272869,7 +272874,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T11:40:37.321Z",
+      "verified_at": "2026-11-21T04:48:29.862Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -272897,10 +272902,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tiangolo-fastapi-technical-construction-intelligence-fastapi-fastapi-core-invari.md",
       "title": "Technical Construction Intelligence: fastapi/fastapi Core Invariants",
       "repository": "fastapi/fastapi",
-      "source_version": "a1b3be01",
-      "content_hash": "6c3bba83ef06cb2614c0e7cca97846c7dc675d82f727cc04eab000372a779a08",
+      "source_version": "05e6df7e",
+      "content_hash": "a4619b96ad38b7d6b520485d4b0416ec631091756ee4ef6246c2de418b319f52",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T11:40:37.829Z"
+      "persisted_at": "2026-11-21T04:48:30.451Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fastapi-fastapi": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fastapi-fastapi",
@@ -272909,10 +272914,10 @@
       "relative_path": "08_VERIFICATION/tiangolo-fastapi-verification-protocol-empirical-defect-shield-for-fastapi-fasta.md",
       "title": "Verification Protocol: Empirical Defect Shield for fastapi/fastapi",
       "repository": "fastapi/fastapi",
-      "source_version": "a1b3be01",
-      "content_hash": "ccd82a879238c8e1e4d11cf4fdde3771a547d392ab0420b6374c814f02467133",
+      "source_version": "05e6df7e",
+      "content_hash": "018ebfa61ded5936a4a4ca6754a8733ea4d09ffc4acab3fdd8cc9f3f809a8d60",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T11:40:37.965Z"
+      "persisted_at": "2026-11-21T04:48:30.609Z"
     },
     "rule-8960": {
       "learning_id": "rule-8960",
@@ -272972,9 +272977,9 @@
       "title": "Technical Construction Intelligence: tiangolo-fastapi-learnings Core Invariants",
       "repository": "tiangolo-fastapi-learnings",
       "source_version": "HEAD",
-      "content_hash": "a7fd8ceee6049ca5bd91739ecddd0bf6f0ec9ab4f30395bbfc5ad7375d955a54",
+      "content_hash": "180d7cda87ee5d4c96478926c47e220a6b24bf76ca077194a27befe6d2e265bc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T11:40:47.454Z"
+      "persisted_at": "2026-11-21T04:48:37.313Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tiangolo-fastapi-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tiangolo-fastapi-learnings",
@@ -272984,9 +272989,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tiangolo-fastapi-learnings",
       "repository": "tiangolo-fastapi-learnings",
       "source_version": "HEAD",
-      "content_hash": "2bb146c84f7b9983abdba265f4642173654e0b6b49d842362caacfa0bcf1e88c",
+      "content_hash": "9f714d07ed98540d2173fe6116bfea9a5c2e88da04ddc12f93faad1c5613d9f8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T11:40:47.576Z"
+      "persisted_at": "2026-11-21T04:48:37.458Z"
     },
     "domain_intelligence-technical-construction-intelligence-react-navigation-react-navigation-learnings-": {
       "item_id": "domain_intelligence-technical-construction-intelligence-react-navigation-react-navigation-learnings-",
@@ -308609,13 +308614,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-H0O7-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-GYO9-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "cb8896ba7c26fa298cd0d62d5aaed52d077b087bf3b1f5e4f997cf0fbd22da03",
+      "content_hash": "a7c1af23656a8ae0cacd63ee5b7e6d90b74c123652eb42a48d733bc38c988a6e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T04:20:41.003Z"
+      "persisted_at": "2026-11-21T04:48:38.028Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -311526,6 +311531,44 @@
       "content_hash": "6a62ad90fcd311e1fa257b7dc140dae0512c836dee9c6a2182ded10ae66bdcce",
       "domain_letter": "G",
       "persisted_at": "2026-11-21T04:39:22.431Z"
+    },
+    "rule-9730": {
+      "learning_id": "rule-9730",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9730,
+      "title": "apply hiding exceptions to their own rules instead of hiding the selector everyw",
+      "source_url": "https://github.com/tw93/Pake",
+      "source_version": "002c958a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T04:48:25.993Z"
+    },
+    "candidate_directive-apply-hiding-exceptions-to-their-own-rules-instead-of-hiding-the-selector-everyw": {
+      "item_id": "candidate_directive-apply-hiding-exceptions-to-their-own-rules-instead-of-hiding-the-selector-everyw",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GXBV-apply-hiding-exceptions-to-their-own-rules-instead-of-hiding-the-selector-everyw.md",
+      "title": "apply hiding exceptions to their own rules instead of hiding the selector everyw",
+      "repository": "tw93-pake-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f477246e580b16feadb5dad86fbfd3e6e4f17c561d3e07d373242dd4b927ec9e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T04:48:36.286Z"
+    },
+    "candidate_directive-release-version-0-165-0": {
+      "item_id": "candidate_directive-release-version-0-165-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GY0E-release-version-0-165-0.md",
+      "title": "🔖 Release version 0.165.0",
+      "repository": "tiangolo-fastapi-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a45aa19095ce3101c56442adb7ce0fd97f116aeace2702c97a91f9d0c8d98503",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T04:48:37.169Z"
     }
   },
   "ai-builder-brain": {

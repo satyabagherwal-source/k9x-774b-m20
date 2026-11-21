@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T04:39:22.138Z",
+  "updated_at": "2026-11-21T04:48:36.985Z",
   "stats": {
-    "total_discovered": 7024,
-    "approved_pending_harvest": 6634,
+    "total_discovered": 7026,
+    "approved_pending_harvest": 6636,
     "harvested_count": 0,
     "rejected_count": 390,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6613,
+      "COMMUNITY_AND_EXPERT": 6615,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -151821,6 +151821,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-980DC82F1587": {
+      "id": "SRC-980DC82F1587",
+      "url": "https://github.com/fastapi/fastapi/pull/16784",
+      "title": "https://github.com/fastapi/fastapi/pull/16784",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:48:36.936Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+        "fileName": "tiangolo-fastapi-learnings.md"
+      }
+    },
+    "SRC-01D870051DE2": {
+      "id": "SRC-01D870051DE2",
+      "url": "https://github.com/tiangolo",
+      "title": "https://github.com/tiangolo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:48:36.985Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+        "fileName": "tiangolo-fastapi-learnings.md"
       }
     }
   }

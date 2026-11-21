@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T04:39:22.916Z",
+  "last_updated": "2026-11-21T04:48:38.590Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T03:52:39.820Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-21T04:20:40.548Z",
+      "processed_at": "2026-11-21T04:48:37.594Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -183,7 +183,7 @@
       "staged_for_review": 1
     },
     "tw93-pake-learnings.md": {
-      "processed_at": "2026-11-19T18:33:07.538Z",
+      "processed_at": "2026-11-21T04:48:35.916Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1338,7 +1338,7 @@
       "staged_for_review": 1
     },
     "tiangolo-fastapi-learnings.md": {
-      "processed_at": "2026-11-17T11:40:46.874Z",
+      "processed_at": "2026-11-21T04:48:36.740Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3658,7 +3658,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2736,
+  "total_dossiers_evaluated": 2739,
   "total_canonical_promoted": 442,
-  "total_staged_for_review": 2108
+  "total_staged_for_review": 2111
 }

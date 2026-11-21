@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T04:39:15.440Z",
+  "last_updated": "2026-11-21T04:48:30.088Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2691,14 +2691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-pake",
-      "content_hash": "c44571c60aac70116639b0fa812f1bcb677e3f1fab3a110158dbf650780f7607",
-      "verified_at": "2026-11-19T18:32:59.284Z",
+      "content_hash": "00dbe6c0e3355d2ee15d146b0e541250f6e68e272720b5c76325cff16e95a102",
+      "verified_at": "2026-11-21T04:48:26.202Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T18:32:59.284Z"
+      "last_updated": "2026-11-21T04:48:26.202Z"
     },
     "datalab-to/indra-ocr": {
       "repository": "datalab-to/indra-ocr",
@@ -3111,14 +3111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastapi-fastapi",
-      "content_hash": "f735661edf851f08369be72bc68693cf64cfbe7b254c55605169a82bb2a56f9f",
-      "verified_at": "2026-11-17T11:40:37.513Z",
+      "content_hash": "67e9437dc988d3aabac5118980656436314475e53efacb6e081d19207b1d3748",
+      "verified_at": "2026-11-21T04:48:30.088Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T11:40:37.513Z"
+      "last_updated": "2026-11-21T04:48:30.088Z"
     },
     "pallets/flask": {
       "repository": "pallets/flask",

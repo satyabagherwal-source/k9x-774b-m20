@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T04:39:18.715Z",
-    "lastVerified": "2026-11-21T04:39:18.715Z",
+    "lastChecked": "2026-11-21T04:48:35.801Z",
+    "lastVerified": "2026-11-21T04:48:35.801Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -252,9 +252,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-21T03:44:42.735Z",
+    "lastChecked": "2026-11-21T04:48:35.793Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-21T03:44:42.735Z"
+    "lastVerified": "2026-11-21T04:48:35.793Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1464,9 +1464,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-20T23:29:55.215Z",
+    "lastChecked": "2026-11-21T04:48:31.149Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-20T23:29:55.215Z"
+    "lastVerified": "2026-11-21T04:48:31.149Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -4490,9 +4490,9 @@
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
     "officialUrl": "https://github.com/skyzh/mini-lsm",
-    "lastChecked": "2026-11-20T02:38:57.772Z",
+    "lastChecked": "2026-11-21T04:48:33.367Z",
     "revisionIdentifier": "df2120d7",
-    "lastVerified": "2026-11-20T02:38:57.772Z"
+    "lastVerified": "2026-11-21T04:48:33.367Z"
   },
   "kucherenko-jscpd": {
     "name": "kucherenko/jscpd",
@@ -5203,12 +5203,12 @@
     "lastVerified": "2026-11-18T23:18:11.545Z"
   },
   "bridgecrewio-checkov": {
-    "name": "bridgecrewio/checkov",
+    "name": "checkov",
     "officialUrl": "https://github.com/bridgecrewio/checkov",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-20T04:02:32.595Z",
-    "lastVerified": "2026-11-20T04:02:32.595Z",
+    "lastChecked": "2026-11-21T04:48:28.544Z",
+    "lastVerified": "2026-11-21T04:48:28.544Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bridgecrewio-checkov",
@@ -5217,7 +5217,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "28694608"
   },
   "cockroachdb-cockroach": {
     "name": "cockroach",
@@ -8566,14 +8567,14 @@
     "officialUrl": "https://github.com/tw93/Pake",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T18:32:58.034Z",
-    "lastVerified": "2026-11-19T18:32:58.034Z",
+    "lastChecked": "2026-11-21T04:48:24.995Z",
+    "lastVerified": "2026-11-21T04:48:24.995Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tw93-pake",
-    "contentHash": "c44571c60aac70116639b0fa812f1bcb677e3f1fab3a110158dbf650780f7607",
+    "contentHash": "00dbe6c0e3355d2ee15d146b0e541250f6e68e272720b5c76325cff16e95a102",
     "promotedRulesCount": 1,
-    "recentFixesCount": 13,
+    "recentFixesCount": 11,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11760,5 +11761,29 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tiangolo-fastapi": {
+    "name": "fastapi/fastapi",
+    "officialUrl": "https://github.com/tiangolo/fastapi",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-21T04:48:29.606Z",
+    "lastVerified": "2026-11-21T04:48:29.606Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-fastapi-fastapi",
+    "contentHash": "67e9437dc988d3aabac5118980656436314475e53efacb6e081d19207b1d3748",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "krishhgg-insomnia": {
+    "name": "Insomnia",
+    "officialUrl": "https://github.com/krishhgg/Insomnia",
+    "lastChecked": "2026-11-21T04:48:25.813Z",
+    "revisionIdentifier": "3f474ff2",
+    "lastVerified": "2026-11-21T04:48:25.813Z"
   }
 }
