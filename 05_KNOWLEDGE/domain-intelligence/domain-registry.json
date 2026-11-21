@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T10:37:45.952Z",
-  "total_records": 2242,
+  "last_updated": "2026-11-21T11:16:52.407Z",
+  "total_records": 2244,
   "domains": {
     "A": {
       "total": 17,
@@ -2279,7 +2279,7 @@
       ]
     },
     "L": {
-      "total": 22,
+      "total": 24,
       "record_ids": [
         "DOM-L-1B851132",
         "DOM-L-80D1F65C",
@@ -2302,7 +2302,9 @@
         "DOM-L-453B4D1D",
         "domain_intelligence-deployment-operations-intelligence-vanniktech-gradle-maven-publish-plugin-core-i",
         "domain_intelligence-deployment-operations-intelligence-vanniktech-gradle-maven-publish-plugin-learni",
-        "domain_intelligence-deployment-operations-intelligence-yugabyte-yugabyte-db-core-invariants"
+        "domain_intelligence-deployment-operations-intelligence-yugabyte-yugabyte-db-core-invariants",
+        "domain_intelligence-deployment-operations-intelligence-appwrite-appwrite-core-invariants",
+        "domain_intelligence-deployment-operations-intelligence-appwrite-appwrite-learnings-core-invariants"
       ]
     },
     "M": {
@@ -16266,8 +16268,8 @@
       "title": "Quality & Verification Intelligence: apple/foundationdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-apple-foundationdb-quality-verification-intelligence-apple-foundationdb-core-inv.md",
       "repository": "apple/foundationdb",
-      "content_hash": "eb4d6ce2c7eab3d40a27390972db6a61449abe3a2d203b69092b2fe90472252e",
-      "created_at": "2026-11-20T05:29:03.677Z"
+      "content_hash": "9a340e3af947b325cbd6d6949707aef2ef0e4b2f4bac28b4c38a94f14ff36841",
+      "created_at": "2026-11-21T11:11:43.490Z"
     },
     "DOM-F-0C4992D6": {
       "record_id": "DOM-F-0C4992D6",
@@ -18199,8 +18201,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
       "repository": "max-sixty/worktrunk",
-      "content_hash": "9170b4bc7c79e7f40d20305cb005805a80bb836a934a9d6635fb093e4643c188",
-      "created_at": "2026-11-19T22:27:35.945Z"
+      "content_hash": "601c350356f5357183392b56a6c076ca36b88b150cb1bc87d45c2bb46dd604b7",
+      "created_at": "2026-11-21T11:16:31.994Z"
     },
     "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants",
@@ -18208,8 +18210,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-learnings-research-knowledge-intelligence-max-sixty-worktrun.md",
       "repository": "max-sixty-worktrunk-learnings",
-      "content_hash": "5493c7227574510463d3a8184dac7075805bade850d1e61554ad68fb2646dec0",
-      "created_at": "2026-11-19T22:27:49.379Z"
+      "content_hash": "f522155eba8957338190ea3a7445c8e419dff41df861944177d4c3c8b2c9e4ca",
+      "created_at": "2026-11-21T11:16:51.203Z"
     },
     "DOM-D-88E5B240": {
       "record_id": "DOM-D-88E5B240",
@@ -28042,8 +28044,8 @@
       "title": "Research & Knowledge Intelligence: reflection/Beam-1.0-501B-A23B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-reflection-beam-1-0-501b-a23b-research-knowledge-intelligence-reflection-beam.md",
       "repository": "reflection/Beam-1.0-501B-A23B",
-      "content_hash": "dea73d914ed286181430628169b7b469f294bbc2bfbf461d2f7545ba018ba9f6",
-      "created_at": "2026-11-17T15:43:34.984Z"
+      "content_hash": "0fb4d60ff2b8c461168f2c8e6bc05b4ca39c2c17d3aef8becbfca4390ed98f04",
+      "created_at": "2026-11-21T11:16:47.872Z"
     },
     "domain_intelligence-architecture-intelligence-dalance-procs-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dalance-procs-core-invariants",
@@ -28078,8 +28080,8 @@
       "title": "Research & Knowledge Intelligence: hf-reflection-beam-1.0-501b-a23b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-reflection-beam-1-0-501b-a23b-learnings-research-knowledge-intelligence-hf-re.md",
       "repository": "hf-reflection-beam-1.0-501b-a23b-learnings",
-      "content_hash": "6ead00606e161e349862d86c9f987251e4ff51dd8181e02129271c300da42426",
-      "created_at": "2026-11-17T15:43:54.062Z"
+      "content_hash": "fadf80cb5f0f10f035c7c7e99cb8174dbb1cb06929555efa245f1d1bad983bbd",
+      "created_at": "2026-11-21T11:16:51.740Z"
     },
     "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-lea": {
       "record_id": "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-lea",
@@ -37620,6 +37622,24 @@
       "repository": "etcd-io-etcd-learnings",
       "content_hash": "4fd52202d29d654285ea7a597b20604e473cc8325f24528e5da9d4d9063fa6e1",
       "created_at": "2026-11-21T08:54:44.362Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-appwrite-appwrite-core-invariants": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-appwrite-appwrite-core-invariants",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: appwrite/appwrite Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-appwrite-appwrite-deployment-operations-intelligence-appwrite-appwrite-core-inva.md",
+      "repository": "appwrite/appwrite",
+      "content_hash": "119edb58d41da8cab5bd55984e42875206372004560b2c268a3da6fff0bfed54",
+      "created_at": "2026-11-21T11:11:36.723Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-appwrite-appwrite-learnings-core-invariants": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-appwrite-appwrite-learnings-core-invariants",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: appwrite-appwrite-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-appwrite-appwrite-learnings-deployment-operations-intelligence-appwrite-appwrite.md",
+      "repository": "appwrite-appwrite-learnings",
+      "content_hash": "5948b3bb8c5cd999a697544a91b923e8146e18d7268afa9fdf6874abddfe6eee",
+      "created_at": "2026-11-21T11:16:52.407Z"
     }
   }
 }

@@ -11804,3 +11804,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-mistralai-timestral-209m` | `https://huggingface.co/mistralai/Timestral-209M` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-21T09:52:45.610Z |
 | `learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-11-21T10:37:32.589Z |
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `9ddf6b5b` | Multi-dimensional audit evidence | 2026-11-21T10:37:34.754Z |
+| `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `a6d643a9` | Multi-dimensional audit evidence | 2026-11-21T11:11:36.362Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `3f58d752` | Multi-dimensional audit evidence | 2026-11-21T11:11:43.141Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `ad139302` | Multi-dimensional audit evidence | 2026-11-21T11:16:31.622Z |
+| `learn-huggingface-reflection-beam-1-0-501b-a23b` | `https://huggingface.co/reflection/Beam-1.0-501B-A23B` | `hf-reflect` | Multi-dimensional audit evidence | 2026-11-21T11:16:47.671Z |

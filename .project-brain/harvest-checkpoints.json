@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T10:37:34.763Z",
+  "last_updated": "2026-11-21T11:16:47.679Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3621,14 +3621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-max-sixty-worktrunk",
-      "content_hash": "598a9b3014d9acdae6a942b399f884408f3df2932cf55f9f62d1a2f141bba76a",
-      "verified_at": "2026-11-19T22:27:35.647Z",
+      "content_hash": "bb2fe2c44e137dfc6918b19a1efa32fd74b7784fd7cc69677c2548765dbdd632",
+      "verified_at": "2026-11-21T11:16:31.630Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T22:27:35.647Z"
+      "last_updated": "2026-11-21T11:16:31.630Z"
     },
     "mattermost/mattermost": {
       "repository": "mattermost/mattermost",
@@ -7581,14 +7581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apple-foundationdb",
-      "content_hash": "dbb84cb214426b9a6bdffdfa0a5165f180f864b5e63f399972190ff1c48dd650",
-      "verified_at": "2026-11-20T05:29:03.342Z",
+      "content_hash": "fe2805634b582407b8279afc83ab4156a833f61a22e8f02783df6cc3c66254b0",
+      "verified_at": "2026-11-21T11:11:43.149Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T05:29:03.342Z"
+      "last_updated": "2026-11-21T11:11:43.149Z"
     },
     "kucherenko/jscpd": {
       "repository": "kucherenko/jscpd",
@@ -13881,14 +13881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-reflection-beam-1-0-501b-a23b",
-      "content_hash": "01a56bef17d409c0393aaeaa3e5a344c01645ad8cf82be871355f9b14e1496b5",
-      "verified_at": "2026-11-17T15:43:34.754Z",
+      "content_hash": "b58d79bf7cab66b92cdd4e282cbd81f6fd45ae2ef4e2e02fbae5c950a3b0f2f0",
+      "verified_at": "2026-11-21T11:16:47.678Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T15:43:34.754Z"
+      "last_updated": "2026-11-21T11:16:47.678Z"
     },
     "webrecorder/pywb": {
       "repository": "webrecorder/pywb",
@@ -15501,14 +15501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-appwrite-appwrite",
-      "content_hash": "fabb8d06ede87ac7d3ec29c42f11a81ce940fc61d1a645c7a672225f7c64f961",
-      "verified_at": "2026-11-18T10:18:49.167Z",
+      "content_hash": "7bb30a1b451adaa34bce05a62edaca6c7a70818a9fdb1db55fd6ee28c0f544da",
+      "verified_at": "2026-11-21T11:11:36.370Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T10:18:49.167Z"
+      "last_updated": "2026-11-21T11:11:36.370Z"
     },
     "expo/expo": {
       "repository": "expo/expo",

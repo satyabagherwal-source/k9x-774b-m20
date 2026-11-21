@@ -11771,3 +11771,7 @@
 | `CYCLE-20261121-C2LJ` | `2026-11-21T09:52:45.607Z` | `mistralai/Timestral-209M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md` | Yes (`215ab52a...`) |
 | `CYCLE-20261121-XNVS` | `2026-11-21T10:37:32.584Z` | `meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md` | Yes (`eeec5fe5...`) |
 | `CYCLE-20261121-XPJY` | `2026-11-21T10:37:34.750Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9766` | Yes (`60b56916...`) |
+| `CYCLE-20261121-5GVA` | `2026-11-21T11:11:36.358Z` | `appwrite/appwrite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9767` | Yes (`7bb30a1b...`) |
+| `CYCLE-20261121-5M3L` | `2026-11-21T11:11:43.137Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9768` | Yes (`fe280563...`) |
+| `CYCLE-20261121-BSOX` | `2026-11-21T11:16:31.617Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9769` | Yes (`bb2fe2c4...`) |
+| `CYCLE-20261121-C52Q` | `2026-11-21T11:16:47.666Z` | `reflection/Beam-1.0-501B-A23B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md` | Yes (`b58d79bf...`) |

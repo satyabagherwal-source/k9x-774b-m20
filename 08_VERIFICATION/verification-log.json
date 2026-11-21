@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-80GN",
-    "timestamp": "2026-11-19T05:06:19.607Z",
-    "repository": "genkit-ai/genkit",
-    "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "10280fb4bc3401a8aa63cdb28243e02fda8c7aab1cb1dc5c1164547875ea9253",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-V6LL",
-    "timestamp": "2026-11-19T05:24:20.649Z",
-    "repository": "zai-org/GLM-5.3",
-    "learningId": "learn-huggingface-zai-org-glm-5-3",
-    "contentHash": "f549d825b8af51fb809c5482f8af7d01b75435be10c8936e6a5226b3fa80a815",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-VDBY",
-    "timestamp": "2026-11-19T05:24:29.374Z",
-    "repository": "onejs/one",
-    "learningId": "learn-github-onejs-one",
-    "contentHash": "d5a25b83b790b4f4b1811ecacd5ec192ae62ec848d59512f7b781bee0f382be2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-VF12",
-    "timestamp": "2026-11-19T05:24:31.574Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "582516a752c1de334ea698589ecb70c4edad1fc7a89be0c3f204481664799b94",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-VHUF",
     "timestamp": "2026-11-19T05:24:35.223Z",
     "repository": "RediSearch/RediSearch",
@@ -7492,6 +7432,66 @@
     "contentHash": "60b569167d5e460b9da2e927159b3af827b55b73d2c67f4b0d5f78994252c36e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-5GVA",
+    "timestamp": "2026-11-21T11:11:36.358Z",
+    "repository": "appwrite/appwrite",
+    "learningId": "learn-github-appwrite-appwrite",
+    "contentHash": "7bb30a1b451adaa34bce05a62edaca6c7a70818a9fdb1db55fd6ee28c0f544da",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-5M3L",
+    "timestamp": "2026-11-21T11:11:43.137Z",
+    "repository": "apple/foundationdb",
+    "learningId": "learn-github-apple-foundationdb",
+    "contentHash": "fe2805634b582407b8279afc83ab4156a833f61a22e8f02783df6cc3c66254b0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-BSOX",
+    "timestamp": "2026-11-21T11:16:31.617Z",
+    "repository": "max-sixty/worktrunk",
+    "learningId": "learn-github-max-sixty-worktrunk",
+    "contentHash": "bb2fe2c44e137dfc6918b19a1efa32fd74b7784fd7cc69677c2548765dbdd632",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-C52Q",
+    "timestamp": "2026-11-21T11:16:47.666Z",
+    "repository": "reflection/Beam-1.0-501B-A23B",
+    "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
+    "contentHash": "b58d79bf7cab66b92cdd4e282cbd81f6fd45ae2ef4e2e02fbae5c950a3b0f2f0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

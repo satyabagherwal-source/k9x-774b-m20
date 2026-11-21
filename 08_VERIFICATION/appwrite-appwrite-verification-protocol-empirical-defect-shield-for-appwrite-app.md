@@ -4,22 +4,22 @@
 {
   "source_repository": "appwrite/appwrite",
   "source_url": "https://github.com/appwrite/appwrite",
-  "source_version": "23fd2350",
+  "source_version": "a6d643a9",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-18T10:18:49.336Z",
+  "timestamp": "2026-11-21T11:11:36.568Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-appwrite-appwrite",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [appwrite/appwrite](https://github.com/appwrite/appwrite) (Revision: `23fd2350`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-18T10:18:49.336Z`  
+> **Provenance**: Harvested from [appwrite/appwrite](https://github.com/appwrite/appwrite) (Revision: `a6d643a9`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-21T11:11:36.568Z`  
 > **Learning ID**: `learn-github-appwrite-appwrite`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `appwrite/appwrite` (Commit: `23fd2350`)
+- **Target Repository**: `appwrite/appwrite` (Commit: `a6d643a9`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T10:18:47.890Z  
+> **Harvest Timestamp**: 2026-11-21T11:11:35.243Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The open-source cloud for agents & devs. Including Auth, Databases, Storage, Functions, Messaging, Hosting, Realtime, WAF and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 58107 stars
+- **Stars / Engagement**: 58466 stars
 
 ---
 
@@ -1375,21 +1375,27 @@ export function DomainsDefaultState({
 ```
 import {
   Box3,
+  type Color,
   DirectionalLight,
   Fog,
   HemisphereLight,
+  type InstancedMesh,
   LinearMipmapLinearFilter,
+  type Material,
   MathUtils,
   Mesh,
+  MeshDepthMaterial,
   MeshStandardMaterial,
   type Object3D,
   NeutralToneMapping,
   PCFShadowMap,
   PerspectiveCamera,
   PlaneGeometry,
+  type Points,
   Raycaster,
   SRGBColorSpace,
   Scene,
+  type ShaderMaterial,
   ShadowMaterial,
   Vector2,
   Vector3,
@@ -1397,21 +1403,30 @@ import {
   WebGLRenderer,
   type Texture,
 } from 'three'
+import { ASSEMBLED, POWER_ON, SETTLED } from './assembly'
 import { GlowLayer, ShadowLayer } from './effects'
 import { createFrameworkAtlas, loadFrameworkIcons } from './frameworks'
-import type { DisplayFit, FrameState } from './frame'
-import { applyKitPalette, createKit, disposeKit, type FactoryKit } from './kit'
+import { releaseShapes } from './geometry'
+import type { FrameState } from './frame'
+import {
+  applyKitPalette,
+  createKit,
+  createArrivingDepthMaterial,
+  disposeKit,
+  type FactoryKit,
+} from './kit'
 import {
   BED_BACK,
   BED_FRONT,
   CYCLE,
-  EXTENSION,
+  HOLOGRAM,
   MOVE,
   STATION_COUNT,
   TOWER_TOP,
   easeInOutCubic,
   easeOutCubic,
   getLineState,
+  hologramBottom,
   range,
   stationX,
 } from './layout'
@@ -1421,6 +1436,8 @@ import {
   type FactoryPalette,
 } from './palette'
 import { ProductLine } from './products'
+import { DroneFleet } from './drones'
+import { ExtensionLine } from './extensions'
 import { StationLine } from './stations'
 import { createStudioEnvironment } from './studio'
 import {
@@ -1431,7 +1448,7 @@ import {
   createShadowTexture,
   createTrackTexture,
 } from './textures'
-import { FactoryWorld, getStaticShadowShapes } from './world'
+import { FactoryWorld, HOLOGRAM_LAYER, getStaticShadowShapes } from './world'
 
 export type FactoryEngineOptions = {
   canvas: HTMLCanvasElement
@@ -1439,16 +1456,17 @@ export type FactoryEngineOptions = {
   icons: string[]
   /** Translated product names, printed on each column, then the gate's sign. */
   names: string[]
-  /** Translated product taglines, shown when a station unfolds. */
+  /** Translated product taglines, shown in a station's hologram. */
   descriptions: string[]
   /** Translated label of the shipped counter. */
   counterLabel: string
+  /** Translated label on the cards the drones carry. */
+  promptLabel: string
   /** Right-to-left page: nameplates put the icon on the right. */
   rtl: boolean
   dark: boolean
   reducedMotion: boolean
   onReady?: () => void
-  onHover?: (station: number) => void
   /** WebGL failed or the context was lost for good. */
   onError?: () => void
 }
@@ -1516,14 +1534,43 @@ const FRAMINGS: Record<'overlay' | 'band' | 'narrow', Framing> = {
   },
 }
 
-/** Factory clock when the scene boots: a line already full of products. */
+/** Factory clock when the line starts: full of products. */
 const START_TIME = 30 * CYCLE + MOVE + 0.02
 /** Still frame for reduced motion: several machines mid-action. */
 const STILL_TIME = 30 * CYCLE + MOVE + 0.5
-/** Seconds the line takes to power up before it starts moving. */
+/** The line's power-up once it has assembled, in its own seconds: lights come on, then it starts moving. */
 const INTRO_END = 2.4
+/** The power-up plays this many times faster than it is written, so the line is up and moving within a second. */
+const INTRO_SPEED = 3
 const FOV = 30
 const FRAME_INTERVAL = 1000 / 60
+/** The lowest resolution scale the adaptive quality drops to. */
+const MIN_QUALITY = 0.5
+
+/** A material's stand-in for the reflection pass (see `setupTwins`). */
+type Twin = { material: Material; version: number }
+
+/** Makes `twin` match `source`, sharing what changes in place (colors, textures, uniforms). */
+function share(twin: Material, source: Material) {
+  twin.copy(source)
+  const fields = twin as unknown as Record<string, unknown>
+  for (const [key, value] of Object.entries(source)) {
+    if (
+      (value as Color | null)?.isColor ||
+      (value as Texture | null)?.isTexture
+    )
+      fields[key] = value
+  }
+  if ((source as ShaderMaterial).isShaderMaterial)
+    (twin as ShaderMaterial).uniforms = (source as ShaderMaterial).uniforms
+  twin.onBeforeCompile = source.onBeforeCompile
+  twin.customProgramCacheKey = source.customProgramCacheKey
+  twin.userData = source.userData
+  twin.needsUpdate = true
+}
+
+/** Work (ms) building may do before it yields a frame to the page (see `step`). */
+const STEP_BUDGET = 24
 
 const nextFrame = () =>
   new Promise<void>((resolve) => {
@@ -1551,7 +1598,9 @@ export class FactoryEngine {
   private kit: FactoryKit | null = null
   private world: FactoryWorld | null = null
   private stations: StationLine | null = null
+  private extensions: ExtensionLine | null = null
   private products: ProductLine | null = null
+  private drones: DroneFleet | null = null
   private glows: GlowLayer | null = null
   private shadows: ShadowLayer | null = null
   private textures: Texture[] = []
@@ -1561,14 +1610,35 @@ export class FactoryEngine {
   private frameworkAtlas: Texture | null = null
   /** Objects the floor should not mirror (things lying on it). */
   private readonly unreflected: Object3D[] = []
+  /** Shadow casters' depth materials, one per kind of caster (see `setupShadows`). */
+  private readonly depthMaterials: MeshDepthMaterial[] = []
+  /** Per material drawn in the reflection, its twin there. */
+  private readonly twins = new Map<Material, Twin>()
+  /** Everything the reflection draws with a twin. */
+  private readonly mirrored: {
+    object: Mesh | Points
+    source: Material
+    twin: Twin
+  }[] = []
   private readonly environments = new Map<boolean, Texture>()
   private frameState: FrameState | null = null
-  private copyArea: CopyArea | null = null
-  private readonly fits: DisplayFit[] = Array.from(
-    { length: STATION_COUNT },
-    () => ({ lift: 1, covers: false }),
-  )
+  /** Lines of page copy laid over the stage (see `setCopyLines`). */
+  private copyLines: CopyArea[] = []
+  /** How high every hologram's screen floats, 0 → 1 (see `fitDisplays`). */
+  private lift = 1
   private reflection: WebGLRenderTarget | null = null
+  /** Whether the floor still mirrors the machine; off for good once frames run slow. */
+  private reflectionOn = true
+  /**
+   * 1 while the floor mirrors the machine. It starts at 0 and fades in once
+   * the reflection has been warmed up after the first frame, and eases back
+   * to 0 when the reflection is dropped.
+   */
+  private reflectionFade = 0
+  /** The reflection pass has run once, off the first frame's path. */
+  private reflectionWarm = false
+  /** When building last yielded a frame (see `step`). */
+  private lastYield = 0
   private floor: Mesh | null = null
   private shadowCatcher: Mesh | null = null
 
@@ -1585,109 +1655,32 @@ export class FactoryEngine {
   private lastNow = 0
   private lastRender = 0
   private time = START_TIME
+  /** Real seconds of the factory assembling itself (see `assembly.ts`). */
+  private assembly = 0
   private introTime = 0
   private slowWindows = 0
   private fastWindows = 0
   private sampleCount = 0
-  private readonly samples = new Float32Array(60)
+  private readonly samples = new Float32Array(30)
+  private readonly sorted = new Float32Array(30)
   private pointer = new Vector2(0, 0)
   private pointerTarget = new Vector2(0, 0)
   private readonly hoverPointer = new Vector2()
   private pointerInside = false
+  /** Whether the pointer may turn a hologram on, or (over the page copy) only keep one on. */
+  private pointerOpens = true
   private hovered = -1
+  /** The layer over the page copy that holograms are drawn on (see `setFront`). */
+  private front: CanvasRenderingContext2D | null = null
+  /** The front layer shows a hologram, so it needs clearing once none is on. */
+  private frontShown = false
   private needsHoverTest = false
   private mobile = false
   private composition: FactoryComposition = 'band'
   private framing: Framing = FRAMINGS.band
   /** Shadow maps and the mirrored floor: only where there is GPU to spare. */
   private readonly studio: boolean
-  private readonly anisotropy: number
-  private readonly pixelBudget: number
-
-  constructor(private readonly options: FactoryEngineOptions) {
-    this.renderer = new WebGLRenderer({
-      canvas: options.canvas,
-      antialias: true,
-      alpha: true,
-      stencil: false,
-      powerPreference: 'default',
-    })
-    this.renderer.setClearColor(0x000000, 0)
-    this.renderer.outputColorSpace = SRGBColorSpace
-    this.renderer.toneMapping = NeutralToneMapping
-    this.renderer.toneMappingExposure = 1
-    // Desktop-class GPUs (fine pointer, 4+ cores) get cast shadows and a polished floor.
-    this.studio =
-      typeof window !== 'undefined' &&
-      window.matchMedia('(pointer: fine)').matches &&
-      (navigator.hardwareConcurrency ?? 4) >= 4
-    this.renderer.shadowMap.enabled = this.studio
-    this.renderer.shadowMap.type = PCFShadowMap
-    // Native 2x on desktop-class GPUs; phones and low-core devices get a tighter budget.
-    this.pixelBudget = this.studio ? 7.4e6 : 2.2e6
-    // Screens and print sit at a steep angle; anisotropic filtering keeps them crisp.
-    this.anisotropy = Math.min(8, this.renderer.capabilities.getMaxAnisotropy())
-    this.palette = createFactoryPalette(
-      options.dark,
-      readPageBackground(options.dark),
-    )
-    options.canvas.addEventListener('webglcontextlost', this.handleContextLost)
-    if (options.reducedMotion) {
-      this.introTime = INTRO_END + 2
-      this.time = STILL_TIME
-    }
-  }
-
-  private handleContextLost = (event: Event) => {
-    event.preventDefault()
-    this.stop()
-    this.options.onError?.()
-  }
-
-  /** Builds the scene in small steps so no single task blocks input. */
-  async init() {
-    const palette = this.palette
-    const shadow = createShadowTexture(getStaticShadowShapes())
-    const blob = createBlobTexture()
-    const track = this.crisp(createTrackTexture(palette))
-    this.textures.push(shadow, blob)
-    await nextFrame()
-    if (this.disposed) return
-
-    const kit = createKit(palette, { shadow, blob, track })
-    this.kit = kit
-    const plates = this.createNameplates()
-    this.nameplateAtlas = this.crisp(plates.texture)
-    const descriptions = this.createDescriptions()
-    this.descriptionAtlas = this.crisp(descriptions.texture)
-    this.world = new FactoryWorld(
-      kit,
-      plates.texture,
-      descriptions.texture,
-      this.options.counterLabel,
-    )
-    this.floor = this.world.group.getObjectByName('floor') as Mesh
-    this.scene.add(this.world.group)
-    await nextFrame()
-    if (this.disposed) return
-
-    this.stations = new StationLine(kit)
-    this.scene.add(this.stations.group)
-    await nextFrame()
-    if (this.disposed) return
-
-    this.products = new ProductLine(kit)
-    const atlas = createScreenAtlas(this.atlasScale)
-    this.screenAtlas = this.crisp(atlas.texture)
-    this.products.setScreenAtlas(atlas.texture, atlas.cells)
-    this.scene.add(this.products.group)
-    this.glows = new GlowLayer(kit.glow)
-    this.shadows = new ShadowLayer(kit.blob)
-    this.scene.add(this.glows.points, this.shadows.mesh)
-    void loadFrameworkIcons().then((icons) => {
-      if (this.disposed || !this.world || !this.products) return
-      this.world.setFrameworkIcons(icons)
-      this.frameworkAtlas 
+  private readonly anisotropy: 
 ```
 
 ### Core Architecture Module: `apps/console/src/components/pages/organizations/$orgId/apps/_components/AppsEmptyState.tsx`
@@ -2104,473 +2097,306 @@ export function isSubscriptionFailedInvoiceWithError(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `40012595` (2026-11-18)
-**Commit Message**: test(security): add the Railway endpoint to the baseline
+### Incident Patch 1: `7a091eb4` (2026-11-20)
+**Commit Message**: fix(jobs): append a deployment's pending log callbacks in one write
 
-**File**: `tests/e2e/Security/baseline.json` (modified, +1/-0)
+Every log callback took the per-deployment lock on its own and rewrote the
+whole buildLogs attribute, so a build streaming output queued callbacks on
+the lock faster than it drained. Those left waiting past LOCK_TIMEOUT threw
+Contention and went back to the queue, landing their lines out of order.
+
+Log callbacks now leave their lines in a per-process buffer and queue on a
+per-deployment gate, so one coroutine per process contends for the lock and
+appends every pending callback's lines in a single write. The others pass
+the gate and return without touching the lock once their lines are in.
+Dedupe markers for every event in the batch are saved in the same
+transaction, so a redelivery of an applied callback is still skipped.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01F3M7ttqmi3HYfSr5f9kLt8
+Co-authored-by: Torsten Dittmann <[REDACTED_EMAIL]>
+
+**File**: `src/Appwrite/Platform/Modules/Functions/Workers/Jobs.php` (modified, +153/-18)
 ```diff
-@@ -457,6 +457,7 @@
-         "PATCH /v1/project/oauth2/paypal",
-         "PATCH /v1/project/oauth2/paypalSandbox",
-         "PATCH /v1/project/oauth2/podio",
-+        "PATCH /v1/project/oauth2/railway",
-         "PATCH /v1/project/oauth2/reddit",
-         "PATCH /v1/project/oauth2/resend",
-         "PATCH /v1/project/oauth2/roblox",
-```
-
----
-
-### Incident Patch 2: `e59f7ca0` (2026-11-18)
-**Commit Message**: Merge pull request #15274 from appwrite/fix/nats-objectstore-chunk-leak
-
-fix(nats): purge object-store chunks when a put fails mid-write (CLOUD-3RDX)
-
-**File**: `packages/nats/src/ObjectStore/ObjectStore.php` (modified, +32/-8)
-```diff
-@@ -9,6 +9,7 @@
- use Utopia\NATS\Exception\ObjectStoreException;
- use Utopia\NATS\Headers;
- use Utopia\NATS\JetStream\AckPolicy;
-+use Utopia\NATS\JetStream\ApiError;
- use Utopia\NATS\JetStream\ConsumerConfig;
- use Utopia\NATS\JetStream\DeliverPolicy;
- use Utopia\NATS\JetStream\JetStream;
-@@ -59,9 +60,23 @@ private function writeVersion(string $name, string $data, ?ObjectMeta $previous,
+@@ -25,12 +25,14 @@
+ use OpenRuntimes\Orchestrator\Callback\JobLog;
+ use OpenRuntimes\Orchestrator\Enum\CallbackEvent;
+ use OpenRuntimes\Orchestrator\Enum\ErrorCode;
++use Swoole\Coroutine\Channel;
+ use Utopia\Bus\Bus;
+ use Utopia\Cache\Cache;
+ use Utopia\Database\Database;
+ use Utopia\Database\DateTime;
+ use Utopia\Database\Document;
+ use Utopia\Database\Query;
++use Utopia\Lock\Exception\Contention;
+ use Utopia\Platform\Action;
+ use Utopia\Psr7\Stream;
+ use Utopia\Queue\Message;
+@@ -48,7 +50,10 @@
+  * Callbacks arrive concurrently and out of order (one log line each), so
+  * processing for a deployment is serialized under a per-deployment lock — that
+  * keeps its buildLogs a clean, monotonic append while letting different
+- * deployments build in parallel. Callbacks are at-least-once, so events are
++ * deployments build in parallel. Log callbacks waiting in one process for the
++ * same deployment are appended together by whichever of them takes the lock,
++ * so a burst of build output costs one write per process rather than one per
++ * line batch. Callbacks are at-least-once, so events are
+  * de-duplicated inside the lock. Logs and their dedupe marker are written before
+  * the log transaction commits; state callbacks are marked after application.
+  *
+@@ -88,6 +93,25 @@ class Jobs extends Action
+         'Download failed with status 404' => 'The repository, branch or commit could not be found. Check that it still exists.',
+     ];
  
-         $chunks = 0;
-         $length = \strlen($data);
--        for ($offset = 0; $offset < $length; $offset += self::CHUNK_SIZE) {
--            $this->js->publish($chunkSubject, substr($data, $offset, self::CHUNK_SIZE));
--            $chunks++;
-+        try {
-+            for ($offset = 0; $offset < $length; $offset += self::CHUNK_SIZE) {
-+                $this->js->publish($chunkSubject, substr($data, $offset, self::CHUNK_SIZE));
-+                $chunks++;
-+            }
-+        } catch (\Throwable $e) {
-+            // A chunk write that fails part way through leaves the chunks before it
-+            // in the stream under a NUID no meta record will ever name, so neither
-+            // delete() nor a later put() of this object can reclaim them. On a
-+            // bucket limited by max_bytes (discard=New) those orphans hold the byte
-+            // budget forever and every later put is rejected the same way, so the
-+            // failure has to be compensated here. No meta record names this NUID yet,
-+            // so purging is safe even when the failure is an ambiguous one -- unlike
-+            // at the meta publish below, where an ambiguous failure may have committed
-+            // a record that now names these chunks.
-+            $this->purgeChunks($nuid);
-+            throw $e;
++    /**
++     * Log callbacks of this process not yet appended, keyed by deployment lock,
++     * in arrival order. The action instance is shared by every coroutine of the
++     * worker, so the one holding the lock appends the others' lines with its own.
++     *
++     * @var array<string, array<int, array{id: string, chunk: string}>>
++     */
++    private array $logs = [];
++
++    private int $entries = 0;
++
++    /**
++     * One coroutine per deployment per process contends for the lock; the rest
++     * wait here, usually to find their lines already appended.
++     *
++     * @var array<string, Channel>
++     */
++    private array $gates = [];
++
+     private static function userMessage(Document $deployment, JobArtifact $artifact): ?string
+     {
+         $code = $artifact->error?->code;
+@@ -161,6 +185,11 @@ public function action(
          }
  
-         $meta = new ObjectMeta(
-@@ -90,15 +105,24 @@ private function writeVersion(string $name, string $data, ?ObjectMeta $previous,
-                 expectedLastSubjectSeq: $expectedSeq,
-             );
-         } catch (JetStreamException $e) {
--            // Purge only when the server actually rejected the CAS publish. On a
--            // transport failure the meta publish is ambiguous -- it may well have
--            // landed -- and purging here would delete the chunks this put just
--            // wrote successfully.
--            if ($e->apiError?->errCode !== JetStream::ERR_WRONG_LAST_SEQUENCE) {
-+            // An exception carrying an ApiError is the server's decoded answer: it
-+            // evaluated the publish and refused to store it, so the meta record
-+            // definitely does not exist and this put's chunks are already orphaned.
-+            // Reclaim them whatever the reason for the refusal -- a CAS conflict, or
-+            // a bucket at max_bytes, which would otherwise keep the bytes of every
-+            // failed put forever and reject every later one for the same reason.
-+            // Without an ApiError the publish is ambiguous (it may well have landed),
-+            // and purging would delete the chunks of a meta record that now names them.
-+            if (!$e->apiError instanceof ApiError) {
-                 throw $e;
+         $callback = CallbackEvent::tryFrom($event->event);
++        if ($callback === CallbackEvent::Log) {
++            $this->log($event, $project, $dbForProject, $dbForPlatform, $queueForRealtime, $vcsFactory, $cache, $locks, $platform, $deploymentId);
++            return;
++        }
++
+         $outputAvailable = null;
+         if ($callback === CallbackEvent::Complete && $deviceForBuilds->getType() !== DeviceType::Local) {
+             $deployment = $dbForProject->getDocument('deployments', $deploymentId);
+@@ -197,7 +226,6 @@ public function action(
              }
  
-             $this->purgeChunks($nuid);
-+
-+            if ($e->apiError->errCode !== JetStream::ERR_WRONG_LAST_SEQUENCE) {
-+                throw $e;
-+            }
-+
-             throw new ObjectStoreException("conflicting concurrent write for object: {$name}", $e->getCode(), previous: $e);
-         }
+             $deployment = match ($callback) {
+-                CallbackEvent::Log => $this->onLog($dbForProject, $dbForPlatform, $project, $deployment, JobLog::fromArray($event->data), $vcsFactory, $platform, $cache, $event->id),
+                 CallbackEvent::Artifact => $this->onArtifact($dbForProject, $dbForPlatform, $project, $deployment, $artifact, $usage, $publisherForUsage, $publisherForScreenshots, $deviceForBuilds, $deviceForFunctions, $deviceForSites, $vcsFactory, $cache, $platform, $plan, $bus),
+                 CallbackEvent::Exit => $this->onExit($dbForProject, $dbForPlatform, $project, $deployment, JobExit::fromArray($event->data), $usage, $publisherForUsage, $publisherForScreenshots, $deviceForBuilds, $vcsFactory, $cache, $platform, $plan, $bus),
+                 CallbackEvent::Complete => $this->onComplete($dbForProject, $dbForPlatform, $project, $deployment, $usage, $publisherForUsage, $publisherForScreenshots, $deviceForBuilds, $deviceForFunctions, $deviceForSites, $vcsFactory, $cache, $platform, $plan, $bus),
+@@ -222,14 +250,7 @@ public function action(
+             }
  
-```
-
-**File**: `packages/nats/tests/E2E/ObjectStoreExtraTest.php` (modified, +38/-0)
-```diff
-@@ -6,6 +6,7 @@
+             // Console realtime on every callback (log stream + status).
+-            $queueForRealtime
+-                ->setSubscribers(['console'])
+-                ->setProject($project)
+-                ->setEvent(self::event($deployment))
+-                ->setParam(self::resourceParam($deployment), $deployment->getAttribute('resourceId'))
+-                ->setParam('deploymentId', $deploymentId)
+-                ->setPayload($deployment->getArrayCopy())
+-                ->trigger();
++            $this->broadcast($queueForRealtime, $project, $deployment, $deploymentId);
  
- use PHPUnit\Framework\TestCase;
- use Utopia\NATS\Connection;
-+use Utopia\NATS\Exception\JetStreamException;
- use Utopia\NATS\Exception\ObjectStoreException;
- use Utopia\NATS\JetStream\JetStream;
- use Utopia\NATS\ObjectStore\ObjectMeta;
-@@ -40,6 +41,43 @@ protected function tearDown(): void
-         $this->conn->close();
-     }
+             // On a real terminal outcome (not a concurrently-canceled build),
+             // notify webhooks + event-triggered functions of the deployment
+@@ -252,7 +273,7 @@ public function action(
+                 $failure = new PermanentFailure("Build artifact '{$artifact->artifactId}' failed: " . ($artifact->error->message ?? 'no error reported'), 500);
+             }
  
-+    public function testPutRejectedByTheBucketLimitStrandsNoChunks(): void
-+    {
-+        $bucket = 'objlimit_' . uniqid();
-+        $store = ObjectStore::createOrUpdate($this->conn, $this->js, new ObjectStoreConfig(
-+            bucket: $bucket,
-+            maxBytes: 200 * 1024,
-+        ));
-+
-+        try {
-+            // Objects are written in 128 KiB chunks: the first fits, the second
-+            // would push the bucket past max_bytes and an object-store stream
-+            // discards New, so the server rejects that publish instead of
-+            // evicting anything.
-+            try {
-+                $store->put('big.bin', str_repeat('a', 384 * 1024));
-+                $this->fail('Expected the bucket limit to reject the put');
-+            } catch (JetStreamException $e) {
-+                $this->assertStringContainsString('maximum bytes exceeded', $e->getMessage());
-+            }
-+
-+            // The chunk that did land carries a NUID no meta record names, so if
-+            // the failed put leaves it behind nothing can ever reclaim it: the
-+            // bucket stays full and every later put fails the same way.
-+            $this->assertSame(0, $this->js->getStreamInfo("OBJ_{$bucket}")->state->messages);
-+
-+            $data = str_repeat('b', 128 * 1024);
-+            $store->put('small.bin', $data);
-+            $this->assertSame($data, $store->get('small.bin'));
-+        } finally {
-+            try {
-+                $this->js->deleteStream("OBJ_{$bucket}");
-+            } catch (\Throwable) {
-+                // ignore
-+            }
-+        }
-+    }
-+
-     public function testWatchFiresOnPutAndDelete(): void
-     {
-         /** @var list<ObjectMeta> $events */
-```
-
-**File**: `packages/nats/tests/WriteFailureSemanticsTest.php` (modified, +209/-6)
-```diff
-@@ -7,6 +7,7 @@
- use PHPUnit\Framework\TestCase;
- use Utopia\NATS\Connection;
- use Utopia\NATS\ConnectionOptions;
-+use Utopia\NATS\Exception\JetStreamException;
- use Utopia\NATS\Exception\KeyValueException;
- use Utopia\NATS\Exception\ObjectStoreException;
- use Utopia\NATS\Exception\TimeoutException;
-@@ -23,20 +24,31 @@
-  */
- final class WriteFailureSemanticsTest extends TestCase
- {
--    /**
--     * A connection whose requests are never answered: js->publish() waits for a
--     * PubAck that never arrives and raises TimeoutException.
--     */
--    private function unresponsiveConnection(FakeTransport $fake): Connection
-+    /** A stored message, as the server acknowledges one. */
-+    private const PUB_ACK = '{"stream":"OBJ_BUCKET","seq":1}';
-+
-+    /** The server refusing to store a message because the stream is at max_bytes. */
-+    private const MAX_BYTES = '{"error":{"code":400,"err_code":10077,"description":"maximum bytes exceeded"}}';
-+
-+    private function connection(FakeTransport $fake, float $requestTimeout = 1.0): Connection
-     {
-         return Connection::connect(new ConnectionOptions(
-             servers: 'nats://127.0.0.1:4222',
-             allowReconnect: false,
--            requestTimeout: 0.02,
-+            requestTimeout: $requestTimeout,
-             transportFactory: fn (string $scheme): FakeTransport => $fake,
-         ));
-     }
- 
-+    /**
-+     * A connection whose requests are never answered: js->publish() waits for a
-+     * PubAck that never arrives and raises TimeoutException.
-+     */
-+    private function unresponsiveConnection(FakeTransport $fake): Connection
-+    {
-+        return $this->connection($fake, 0.02);
-+    }
-+
-     public function testKeyValueCreatePropagatesATransportFailure(): void
-     {
-         $conn = $this->unresponsiveConnection(new FakeTransport());
-@@ -89,4 +101,195 @@ public function testObjectStorePutPropagatesATransportFailure(): void
-             $this->assertStringContainsString('Request timed out', $e->getMessage());
-         }
-     }
-+
-+    /**
-+     * A bucket that has hit max_bytes rejects a publish with "maximum bytes
-+     * exceeded" instead of evicting, because the object-store stream is created
-+     * with discard=New. When that rejection lands on chunk N of a multi-chunk
-+     * put, chunks 1..N-1 are already durably stored under a NUID no meta record
-+     * will ever reference: nothing in the library can reclaim them, so their
-+     * bytes occupy the bucket's limit forever and every later put fails the same
-+     * way. The partially written version has to be purged before the failure is
-+     * handed back to the caller.
-+     */
-+    public function testObjectStorePutPurgesItsChunksWhenTheBucketIsFull(): void
-+    {
-+        $chunks = [];
-+        $metas = [];
-+        $purges = [];
-+        // The bucket's byte budget runs out on the second chunk.
-+        $fake = $this->scriptedBucket(
-+            static fn (int $chunk): string => $chunk === 1 ? self::PUB_ACK : self::MAX_BYTES,
-+            static fn (): string => self::PUB_ACK,
-+            $chunks,
-+            $metas,
-+            $purges,
-+        );
-+        $conn = $this->connection($fake);
-+        $store = new ObjectStore($conn, $conn->jetStream(), 'BUCKET');
-+
-+        try {
-+            // Two chunks: 128 KiB is the chunk size, so this spills over.
-+            $store->put('object', str_repeat('a', 128 * 1024 + 1));
-+            $this->fail('Expected the full bucket to reject the chunk publish');
-+        } catch (JetStreamException $e) {
-+            $this->assertSame('maximum bytes exceeded', $e->getMessage());
-+        } finally {
-+            $conn->close();
-+        }
-+
-+        $this->assertCount(2, $chunks, 'Both chunks have to be attempted');
-+        $this->assertSame([], $metas, 'A failed chunk write must not be committed');
-+        $this->assertCount(1, $purges, 'The chunks this put wrote have to be reclaimed');
-+        $this->assertSame(['filter' => $chunks[0]], json_decode($purges[0], true));
-+    }
-+
-+    /**
-+     * The same rejection can land on the meta publish instead: the chunks fit, the
-+     * record naming them does not. The server decoded and refused that publish, so
-+     * no meta record exists and the chunks are orphaned exactly as above -- only a
-+     * CAS conflict used to be compensated, which left a full bucket leaking the
-+     * whole of every failed put.
-+     */
-+    public function testObjectStorePutPurgesItsChunksWhenTheBucketRefusesTheMetaRecord(): void
-+    {
-+        $chunks = [];
-+        $metas = [];
-+        $purges = [];
-+        $fake = $this->scriptedBucket(
-+            static fn (int $chunk): string => self::PUB_ACK,
-+            static fn (): string => self::MAX_BYTES,
-+            $chunks,
-+            $metas,
-+            $purges,
-+        );
-+        $conn = $this->connection($fake);
-+        $store = new ObjectStore($conn, $conn->jetStream(), 'BUCKET');
-+
-+        try {
-+            $store->put('object', 'payload')
+-            if ($event->id !==
 ```
 
 ---
 
-### Incident Patch 3: `4c608520` (2026-11-18)
-**Commit Message**: Merge pull request #15509 from appwrite/fix/console-project-default-platform
+### Incident Patch 2: `4782543e` (2026-11-20)
+**Commit Message**: fix(query): parse nested query children sent as strings
 
-fix(console): seed new projects with a localhost web app, not a wildcard (appwrite:appwrite:alert#4782)
+A nested (and/or/...) query's children reached the recursive parseQuery()
+as-is, so a child sent as a query string raised a TypeError rather than
+a query exception. utopia-php/database's Query decodes such children
+before calling the parent, so its validators accept them; subclasses
+that use the base parser directly (Utopia\Audit\Query, UsageQuery) then
+crash on the same input. Cloud's Activities events list is one: its
+param validator accepts the query, and the action's audit parse throws
+a TypeError, which returns a 500.
 
-**File**: `apps/console/e2e/console.mocked.wildcard-platform.spec.ts` (modified, +13/-11)
+The base now parses a string child through parse(), like database, and
+refuses any other non-array child with a query exception.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `packages/query/src/Query.php` (modified, +13/-0)
 ```diff
-@@ -3,9 +3,11 @@ import type { Models } from '@appwrite.io/console'
- import { expect, test } from './fixtures'
+@@ -281,6 +281,19 @@ public static function parseQuery(array $query, bool $allowRaw = false): static
  
- /**
-- * New projects start with a web app for any hostname (`*`), and the app lists
-- * flag it with the recommended next step. The Appwrite API is mocked at the
-- * network layer and the real console pages are asserted.
-+ * New projects start with a web app for `localhost` only -- never for any
-+ * hostname (`*`), which would make the project's client API reachable with
-+ * credentials from every website. A `*` app added by hand is still flagged in
-+ * the app lists with the recommended next step. The Appwrite API is mocked at
-+ * the network layer and the real console pages are asserted.
-  */
- 
- const NOW = '2026-11-11T09:30:00.000+00:00'
-@@ -227,7 +229,7 @@ async function useSelfHosted(page: Page) {
- }
- 
- test.describe('wildcard web platform (mocked API)', () => {
--  test('a new project starts with a web app for any hostname', async ({
-+  test('a new project starts with a web app for localhost only', async ({
-     page,
-   }) => {
-     await useSelfHosted(page)
-@@ -246,18 +248,18 @@ test.describe('wildcard web platform (mocked API)', () => {
-     const platform = calls.platformCreates[0]
-     expect(platform.headers()['x-appwrite-project']).toBe(created.projectId)
-     expect(platform.postDataJSON()).toMatchObject({
--      name: 'Web app',
--      hostname: '*',
-+      name: 'Local development',
-+      hostname: 'localhost',
-     })
- 
--    // The new project's overview lists it with the warning.
-+    // The new project's overview lists it, with nothing to warn about.
-     await expect(page).toHaveURL(new RegExp(`/projects/${created.projectId}`), {
-       timeout: 60_000,
-     })
--    const warning = page.getByTestId('wildcard-platform-warning')
--    await expect(warning).toHaveCount(1, { timeout: 60_000 })
--    await warning.hover()
--    await expect(page.getByRole('tooltip')).toContainText(WARNING)
-+    await expect(page.getByText('Local development').first()).toBeVisible({
-+      timeout: 60_000,
-+    })
-+    await expect(page.getByTestId('wildcard-platform-warning')).toHaveCount(0)
-   })
- 
-   test('the apps list flags only the wildcard app', async ({ page }) => {
+         if ($methodEnum->isNested()) {
+             foreach ($values as $index => $value) {
++                // A hand-built client may send a child as a query string instead of an
++                // object; utopia-php/database's Query already accepts that, so parse it
++                // the same way. Anything else is a client error, not a TypeError.
++                if (\is_string($value)) {
++                    $values[$index] = static::parse($value, $allowRaw);
++
++                    continue;
++                }
++
++                if (! \is_array($value)) {
++                    throw new QueryException('Invalid nested query. Must be an array or string, got '.\gettype($value));
++                }
++
+                 /** @var array<string, mixed> $value */
+                 $values[$index] = static::parseQuery($value, $allowRaw);
+             }
 ```
 
-**File**: `apps/console/src/lib/appwrite/console-projects.ts` (modified, +6/-5)
+**File**: `packages/query/tests/API/ParseTest.php` (modified, +54/-0)
 ```diff
-@@ -2,7 +2,7 @@ import { ID } from '@appwrite.io/console'
- import type { Models } from '@appwrite.io/console'
- import type { Region } from '@appwrite.io/console'
- import { sdk } from '@/lib/appwrite/sdk'
--import { WILDCARD_HOSTNAME } from '@/lib/utils/platform'
-+import { LOOPBACK_HOSTNAME } from '@/lib/utils/platform'
+@@ -91,6 +91,60 @@ public function testParseNestedLogicalQuery(): void
+         $this->assertSame('John', $query->getValues()[0]->getValue());
+     }
  
- type ListConsoleProjectsParams = {
-   /** Organization / team id. Required for `/organization/projects`. */
-@@ -78,8 +78,9 @@ export function listConsoleProjects(
-  * Create a project via the org-scoped console Organization SDK
-  * (`POST /organization/projects` with `X-Appwrite-Organization`).
-  * The org header assigns the project to `teamId`; no separate team update.
-- * The project starts with a web platform for any hostname, so a first web app
-- * connects without a CORS error; the apps list flags it until it is narrowed.
-+ * The project starts with a web platform for LOOPBACK_HOSTNAME, so a first web
-+ * app connects from local development without a CORS error; every other origin
-+ * stays rejected until the developer adds its hostname on the apps page.
-  */
- export async function createConsoleProject(params: {
-   projectId: string
-@@ -100,8 +101,8 @@ export async function createConsoleProject(params: {
-       .forProject(project.$id, project.region)
-       .project.createWebPlatform({
-         platformId: ID.unique(),
--        name: 'Web app',
--        hostname: WILDCARD_HOSTNAME,
-+        name: 'Local development',
-+        hostname: LOOPBACK_HOSTNAME,
-       })
-   } catch (error) {
-     // The project exists either way; its apps page still offers to add one.
++    public function testParseNestedLogicalQueryWithStringChildren(): void
++    {
++        $json = (string) json_encode([
++            'method' => 'and',
++            'values' => [
++                (string) json_encode(['method' => 'equal', 'attribute' => 'name', 'values' => ['John']]),
++                ['method' => 'greaterThan', 'attribute' => 'age', 'values' => [18]],
++                (string) json_encode(['method' => 'or', 'values' => [
++                    (string) json_encode(['method' => 'equal', 'attribute' => 'city', 'values' => ['Paris']]),
++                ]]),
++            ],
++        ]);
++
++        $query = Query::parse($json);
++        $children = $query->getValues();
++
++        $this->assertSame(Method::And, $query->getMethod());
++        $this->assertCount(3, $children);
++        $this->assertInstanceOf(Query::class, $children[0]);
++        $this->assertSame('John', $children[0]->getValue());
++        $this->assertInstanceOf(Query::class, $children[1]);
++        $this->assertSame(Method::GreaterThan, $children[1]->getMethod());
++        $this->assertInstanceOf(Query::class, $children[2]);
++        $this->assertSame(Method::Or, $children[2]->getMethod());
++        $grandchild = $children[2]->getValues()[0];
++        $this->assertInstanceOf(Query::class, $grandchild);
++        $this->assertSame('Paris', $grandchild->getValue());
++    }
++
++    public function testParseNestedStringChildThatIsNotJson(): void
++    {
++        $this->expectException(Exception::class);
++        $this->expectExceptionMessageMatches('/^Invalid query: /');
++
++        Query::parse((string) json_encode(['method' => 'or', 'values' => ['not json']]));
++    }
++
++    public function testParseNestedChildOfWrongType(): void
++    {
++        $this->expectException(Exception::class);
++        $this->expectExceptionMessage('Invalid nested query. Must be an array or string, got integer');
++
++        Query::parse((string) json_encode(['method' => 'or', 'values' => [42]]));
++    }
++
++    public function testParseNestedStringChildStillRefusesRaw(): void
++    {
++        $this->expectException(ValidationException::class);
++
++        Query::parse((string) json_encode(['method' => 'or', 'values' => [
++            (string) json_encode(['method' => 'raw', 'attribute' => '1 = 1', 'values' => []]),
++        ]]));
++    }
++
+     public function testParseQueries(): void
+     {
+         $queries = Query::parseQueries([
 ```
 
-**File**: `apps/console/src/lib/utils/platform.ts` (modified, +12/-0)
-```diff
-@@ -22,6 +22,18 @@ export function getPlatformIdentifier(
- /** Web platform hostname that accepts requests from every website. */
- export const WILDCARD_HOSTNAME = '*'
- 
-+/**
-+ * Hostname seeded on a new project's first web app.
-+ *
-+ * Platform hostnames are the API's origin boundary: it folds them into the
-+ * allowed-hostname list behind CORS with credentials and the origin check, and
-+ * a `*` entry matches every host. Session cookies are SameSite=None, so a
-+ * seeded WILDCARD_HOSTNAME would let any website a signed-in user visits call
-+ * the project's client API with their session. Loopback keeps local
-+ * development working without handing that out.
-+ */
-+export const LOOPBACK_HOSTNAME = 'localhost'
-+
- export function isWildcardHostname(hostname: string): boolean {
-   return hostname.trim() === WILDCARD_HOSTNAME
- }
-```
+---
 
-**File**: `apps/console/tests/unit/console-project-default-platform.test.ts` (added, +67/-0)
+### Incident Patch 3: `0c935843` (2026-11-20)
+**Commit Message**: fix(jobs): take back a log batch's dedupe markers when its write fails
+
+The markers live in Redis, outside the database transaction. When a later
+marker save or the commit failed, the append rolled back but the markers
+already written stayed, so those callbacks were skipped on redelivery and
+their lines lost. Purge the markers the batch wrote before rethrowing.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01F3M7ttqmi3HYfSr5f9kLt8
+Co-authored-by: Torsten Dittmann <[REDACTED_EMAIL]>
+
+**File**: `src/Appwrite/Platform/Modules/Functions/Workers/Jobs.php` (modified, +27/-14)
 ```diff
-@@ -0,0 +1,67 @@
-+import { afterAll, describe, expect, mock, test } from 'bun:test'
-+import * as actualSdk from '@/lib/appwrite/sdk'
-+import { createConsoleProject } from '@/lib/appwrite/console-projects'
-+import { isWildcardHostname } from '@/lib/utils/platform'
-+
-+/**
-+ * The seeded web app is the project's origin boundary: the API folds platform
-+ * hostnames into the allowed-hostname list it uses for CORS with credentials
-+ * and for the origin check. A seeded `*` would let any website call the new
-+ * project's client API with a signed-in user's session cookie.
-+ */
-+describe('createConsoleProject', () => {
-+  // Copy the real module now: the namespace import is live and points at the mock once it is set.
-+  const realSdk = { ...actualSdk }
-+
-+  afterAll(() => {
-+    mock.module('@/lib/appwrite/sdk', () => realSdk)
-+  })
-+
-+  function mockSdk() {
-+    const webPlatforms: Array<{ name: string; hostname: string }> = []
-+
-+    mock.module('@/lib/appwrite/sdk', () => ({
-+      ...actualSdk,
-+      sdk: {
-+        forConsole: {
-+          organization: () => ({
-+            createProject: async ({
-+              projectId,
-+              name,
-+            }: {
-+              projectId: string
-+              name: string
-+            }) => ({ $id: projectId, name, region: 'default' }),
-+          }),
-+        },
-+        forProject: () => ({
-+          project: {
-+            createWebPlatform: async (platform: {
-+              name: string
-+              hostname: string
-+            }) => {
-+              webPlatforms.push(platform)
-+              return platform
-+            },
-+          },
-+        }),
-+      },
-+    }))
-+
-+    return webPlatforms
-+  }
-+
-+  test('seeds a web app for local development, never for any hostname', async () => {
-+    const webPlatforms = mockSdk()
-+
-+    await createConsoleProject({
-+      projectId: 'proj0000000000000000001',
-+      name: 'Launch',
-+      teamId: 'org00000000000000000001',
-+    })
-+
-+    expect(webPlatforms).toHaveLength(1)
-+    expect(isWildcardHostname(webPlatforms[0].hostname)).toBe(false)
-+    expect(webPlatforms[0].hostname).toBe('localhost')
-+  })
-+})
+@@ -417,22 +417,35 @@ protected function onLog(Database $dbForProject, Database $dbForPlatform, Docume
+             }
+         }
+ 
+-        $deployment = $dbForProject->withTransaction(function () use ($dbForProject, $project, $deployment, $update, $cache, $events): Document {
+-            if ($update !== []) {
+-                $dbForProject->updateDocuments('deployments', new Document($update), [
+-                    Query::equal('$id', [$deployment->getId()]),
+-                    Query::notEqual('status', 'canceled'),
+-                ]);
+-                $deployment = $dbForProject->getDocument('deployments', $deployment->getId());
+-            }
+-            // A refused marker rolls back the append. Realtime runs after commit.
+-            foreach ($events as $id) {
+-                if ($cache->save('jobs-event-' . $project->getSequence() . '-' . $id, true) === false) {
+-                    throw new \RuntimeException('Failed to record build log callback.');
++        $marked = [];
++        try {
++            $deployment = $dbForProject->withTransaction(function () use ($dbForProject, $project, $deployment, $update, $cache, $events, &$marked): Document {
++                $marked = [];
++                if ($update !== []) {
++                    $dbForProject->updateDocuments('deployments', new Document($update), [
++                        Query::equal('$id', [$deployment->getId()]),
++                        Query::notEqual('status', 'canceled'),
++                    ]);
++                    $deployment = $dbForProject->getDocument('deployments', $deployment->getId());
+                 }
++                // A refused marker rolls back the append. Realtime runs after commit.
++                foreach ($events as $id) {
++                    $marker = 'jobs-event-' . $project->getSequence() . '-' . $id;
++                    if ($cache->save($marker, true) === false) {
++                        throw new \RuntimeException('Failed to record build log callback.');
++                    }
++                    $marked[] = $marker;
++                }
++                return $deployment;
++            });
++        } catch (\Throwable $error) {
++            // The markers are outside the transaction. Take back the ones this
++            // batch wrote, or the rolled-back lines would be skipped on redelivery.
++            foreach ($marked as $marker) {
++                $cache->purge($marker);
+             }
+-            return $deployment;
+-        });
++            throw $error;
++        }
+ 
+         if (($update['status'] ?? '') === 'building' && $deployment->getAttribute('status') === 'building') {
+             GitAction::report('processing', $deployment, $project, $dbForProject, $dbForPlatform, $vcsFactory, $platform);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15771** (2026-11-18): feat(reviews): name the host of the status images in review jobs (@TorstenDittmann)
-- **PR #15767** (2026-11-18): feat(console): add the Railway OAuth2 provider (@HarshMN2345)
-- **PR #15766** (2026-11-18): chore(console): update Harsh Mahajan's author role (@HarshMN2345)
-- **PR #15765** (2026-11-18): feat(auth): add Railway OAuth2 provider (@HarshMN2345)
-- **PR #15763** (2026-11-18): fix(videos): persist rendition path before chunk upload (@shimonewman)
-- **PR #15761** (2026-11-18): fix(realtime): return a query error for a select other than select("*") (@ArnabChatterjee20k)
+- **PR #15891** (2026-11-21): fix(certificates): hide CDN provider errors from domain logs (@HarshMN2345)
+- **PR #15890** (2026-11-21): fix(console): redirect to the console temporarily, so browsers do not cache it (@HarshMN2345)
+- **PR #15886** (2026-11-20): fix(query): parse nested query children sent as strings (@ChiragAgg5k)
+- **PR #15884** (closed): fix(compression): accept whitespace around an Accept-Encoding weight (@dajiaohuang)
+- **PR #15881** (2026-11-20): fix(jobs): append a deployment's pending log callbacks in one write (@TorstenDittmann)
+- **PR #15880** (2026-11-20): feat(console): make the Origin Git provider generally available (@Meldiron)
 
 ---
 
@@ -2590,31 +2416,68 @@ fix(console): seed new projects with a localhost web app, not a wildcard (appwri
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(security): add the Railway endpoint to the baseline
+## X. jobs): append a deployment's pending log callbacks in one write
 
 **RULE**:
-When implementing operations in `tests/e2e/Security/baseline.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Appwrite/Platform/Modules/Functions/Workers/Jobs.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `40012595`: test(security): add the Railway endpoint to the baseline. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a091eb4`: jobs): append a deployment's pending log callbacks in one write. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/e2e/Security/baseline.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Appwrite/Platform/Modules/Functions/Workers/Jobs.php`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        "PATCH /v1/project/oauth2/railway",
+use Swoole\Coroutine\Channel;
+use Utopia\Lock\Exception\Contention;
+ * deployments build in parallel. Log callbacks waiting in one process for the
+ * same deployment are appended together by whichever of them takes the lock,
+ * so a burst of build output costs one write per process rather than one per
+ * line batch. Callbacks are at-least-once, so events are
+    /**
+     * Log callbacks of this process not yet appended, keyed by deployment lock,
+     * in arrival order. The action instance is shared by every coroutine of the
+     * worker, so the one holding the lock appends the others' lines with its own.
+     *
+     * @var array<string, array<int, array{id: string, chunk: string}>>
+     */
+    private array $logs = [];
+
+    private int $entries = 0;
+
+    /**
+     * One coroutine per deployment per process contends for the lock; the rest
+     * wait here, usually to find their lines already appended.
+     *
+     * @var array<string, Channel>
+     */
+    private array $gates = [];
+
+        if ($callback === CallbackEvent::Log) {
+            $this->log($event, $project, $dbForProject, $dbForPlatform, $queueForRealtime, $vcsFactory, $cache, $locks, $platform, $deploymentId);
+        
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+ * deployments build in parallel. Callbacks are at-least-once, so events are
+                CallbackEvent::Log => $this->onLog($dbForProject, $dbForPlatform, $project, $deployment, JobLog::fromArray($event->data), $vcsFactory, $platform, $cache, $event->id),
+            $queueForRealtime
+                ->setSubscribers(['console'])
+                ->setProject($project)
+                ->setEvent(self::event($deployment))
+                ->setParam(self::resourceParam($deployment), $deployment->getAttribute('resourceId'))
+                ->setParam('deploymentId', $deploymentId)
+                ->setPayload($deployment->getArrayCopy())
+                ->trigger();
+            if ($event->id !==
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `40012595` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a091eb4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

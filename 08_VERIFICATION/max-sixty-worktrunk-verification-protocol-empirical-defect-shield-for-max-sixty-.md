@@ -4,22 +4,22 @@
 {
   "source_repository": "max-sixty/worktrunk",
   "source_url": "https://github.com/max-sixty/worktrunk",
-  "source_version": "5b7d969e",
+  "source_version": "ad139302",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T22:27:35.815Z",
+  "timestamp": "2026-11-21T11:16:31.835Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-max-sixty-worktrunk",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [max-sixty/worktrunk](https://github.com/max-sixty/worktrunk) (Revision: `5b7d969e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T22:27:35.815Z`  
+> **Provenance**: Harvested from [max-sixty/worktrunk](https://github.com/max-sixty/worktrunk) (Revision: `ad139302`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T11:16:31.835Z`  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `max-sixty/worktrunk` (Commit: `5b7d969e`)
+- **Target Repository**: `max-sixty/worktrunk` (Commit: `ad139302`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T22:27:34.556Z  
+> **Harvest Timestamp**: 2026-11-21T11:11:29.776Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12640 stars
+- **Stars / Engagement**: 12677 stars
 
 ---
 
@@ -538,7 +538,7 @@ export const register: Register = on => {
 //! | Source discrimination | `user:` / `project:` / `user:name` / `project:name` filter syntax | Aliases run user first, then project; no filter syntax |
 //! | Force-bind escape | `--var KEY=VALUE` (deprecated; emits warning; still binds unconditionally) | No equivalent — smart routing is the only path |
 //! | Name validation | [`parse_hook_type`] validates the hook type with a did-you-mean hint | No validation — unknown alias falls through to `wt-<name>` PATH binary lookup |
-//! | `--help` | Clap-rendered via injected stubs (both `wt hook --help` and `wt hook <type> --help`) | `wt <alias> --help` redirects to `wt config alias show` / `dry-run` |
+//! | `--help` | Clap-rendered via injected stubs (both `wt hook --help` and `wt hook <type> --help`) | Aliases that reference `args` or `help` parse help flags like other arguments. Other aliases show inspection guidance. |
 //! | Inspection | `wt hook show [type] [--expanded]` | `wt config alias show <name>` / `dry-run <name>` |
 //! | Trust / approval | User hooks trusted; project hooks require approval per-hook-type | User aliases trusted; project aliases require approval per-alias |
 //! | Hook-specific flags | `--dry-run`, `--foreground`, `--var` parsed by [`HookOptions::parse`] | None — aliases have no CLI-level knobs beyond smart routing |
@@ -707,9 +707,7 @@ impl HookOptions {
     ///   `forwarded_args`.
     /// - Anything else — positional filter name.
     pub fn parse(args: &[OsString]) -> anyhow::Result<Self> {
-        let first = args
-            .first()
-            .and_then(|s| 
+        let first = a
 ```
 
 ### Core Architecture Module: `src/commands/config/state.rs`
@@ -1588,11 +1586,15 @@ pub(crate) fn selected_hook_configs(
 //! config→commands step for the covered hooks — is the only place
 //! `load_project_config()`'s result is selected from.
 
+use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 
 use anyhow::Context as _;
 use worktrunk::HookType;
-use worktrunk::config::{Approvals, Command, CommandConfig, ProjectConfig, ProjectId, UserConfig};
+use worktrunk::config::{
+    Approvals, Command, CommandConfig, ProjectConfig, ProjectId, UserConfig,
+    referenced_vars_for_templates,
+};
 use worktrunk::git::add_hook_skip_hint;
 
 use super::command_approval::approve_command_batch;
@@ -1772,8 +1774,7 @@ impl HookPlan {
     /// commands are already approved survive, the rest are dropped (user
     /// pipelines always survive). Strictly the AGENTS.md "consult the
     /// approval state read-only and run only the already-approved commands,
-    /// skipping the rest" rule. An absent `project_id` (unresolvable
-    /// identifier) drops every project p
+    /// skipping the rest" rule. An a
 ```
 
 ### Core Architecture Module: `src/commands/hooks.rs`
@@ -2026,236 +2027,733 @@ fn no_matching_commands_error(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5e2106c7` (2026-11-19)
-**Commit Message**: fix: set OpenCode activity markers from session.execution events (#4850)
+### Incident Patch 1: `76f6952f` (2026-11-21)
+**Commit Message**: fix: refuse removing a worktree that contains another, and finish picker removals before exit (#4861)
 
-OpenCode 2.3 stopped emitting `session.status` and `session.idle`, the
-two events the plugin's OpenCode 2 watcher sets markers from, so `wt
-list` never shows 🤖 or 💬 there. The watcher now also handles
-`session.execution.started` (🤖) and `succeeded` / `failed` /
-`interrupted` (💬). Those events carry only a `sessionID`, so the plugin
-looks the session up with `context.session.get` and marks only when the
-session's `location.directory` is this instance's worktree and the
-session has no `parentID`. Without the `parentID` check, a subagent
-finishing would flip a still-working parent to 💬. The old
-`session.status` / `session.idle` cases stay for earlier OpenCode 2
-hosts, and the OpenCode 1 `server` path is unchanged.
+Three removal-safety fixes. Together they replace #4458 and #4463,
+fixing the same failures in far less code.
 
-The event names and shapes come from OpenCode v2.3.2's source:
-`packages/schema/src/session-event.ts` defines the four execution events
-with only `sessionID`, its e2e helper maps `busy`/`idle` onto
-`execution.started`/`succeeded`, and `Session.Info` carries `location`
-and `parentID`. I drove `setup()` under Node with a fake context and a
-fake `wt` that logs its calls. Before this change the event
+**`wt remove` and `wt step prune` deleted a checkout nested inside the
+target.** `wt remove`, `wt remove --force` and `wt step prune` moved the
+target into trash along with any checkout nested inside it, deleting
+that checkout's uncommitted files at exit 0. An ignored nested checkout
+is invisible to the dirty gate, and `--force` waives only the target's
+own changes. Only `wt merge` refused this (#4360). Planning now refuses
+such a target on every removal path:
 
-**File**: `dev/opencode-plugin.ts` (modified, +38/-1)
+- `wt remove` fails with a hint to remove the nested worktree first.
+- `wt step prune` prints `Skipped <branch> (contains worktree @ <path>)`
+and removes the rest.
+
+The guard is `Repository::worktree_nested_in`. It canonicalizes each
+registered checkout once per inventory read and answers each target with
+one range lookup, so prune adds no per-target path resolution (#3954). A
+checkout nested during `wt remove`'s approval prompt or `pre-remove`
+hook still isn't caught; only merge rechecks after them.
+
+**Leaving the
+
+**File**: `src/commands/picker/mod.rs` (modified, +26/-8)
 ```diff
-@@ -81,7 +81,7 @@ async function marker(directory: string, args: string[]): Promise<void> {
- type SessionEvent = {
-   type: string;
-   location?: { directory: string };
--  data?: { status?: { type?: string } };
-+  data?: { sessionID?: string; status?: { type?: string } };
- };
+@@ -124,7 +124,9 @@ use worktrunk::HookType;
+ use worktrunk::config::{Approvals, CommitGenerationConfig};
+ use worktrunk::git::{ErrorExt, Repository, current_or_recover};
+ use worktrunk::path::format_path_for_display;
+-use worktrunk::styling::{eprintln, error_message, hint_message, info_message, warning_message};
++use worktrunk::styling::{
++    eprintln, error_message, hint_message, info_message, progress_message, warning_message,
++};
  
- type Signal = { signal: AbortSignal };
-@@ -101,6 +101,9 @@ type WorktreeDefinition = {
+ use crate::output::print_json;
  
- type SetupContext = {
-   location?: { directory: string };
-+  session?: {
-+    get(input: { sessionID: string }): Promise<{ parentID?: string; location?: { directory?: string } }>;
-+  };
-   event?: { subscribe(options?: { signal?: AbortSignal }): AsyncIterable<SessionEvent> };
-   worktree?: {
-     transform(callback: (editor: { add(definition: WorktreeDefinition): void }) => void): Promise<unknown>;
-@@ -189,6 +192,34 @@ const strategy: WorktreeDefinition = {
-   },
- };
+@@ -2175,6 +2177,7 @@ pub fn handle_picker(
+     // in flight, and process exit terminates the thread (its `gh`/`glab`
+     // subprocess is read-only).
+     drop(prs_handle);
++    join_removals();
  
-+// The marker each `session.execution.*` event sets. OpenCode 2.3 replaced
-+// `session.status` and `session.idle` with these.
-+const EXECUTION_MARKERS = new Map([
-+  ["session.execution.started", WORKING],
-+  ["session.execution.succeeded", WAITING],
-+  ["session.execution.failed", WAITING],
-+  ["session.execution.interrupted", WAITING],
-+]);
-+
-+/**
-+ * Whether an execution event belongs to a top-level session in `directory`.
-+ *
-+ * Execution events carry only a session ID, so the session record supplies the
-+ * worktree. A subagent's session runs its own executions, and its finishing
-+ * must not mark the worktree as waiting while the parent still works.
-+ */
-+async function ownsExecution(context: SetupContext, event: SessionEvent, directory: string): Promise<boolean> {
-+  const sessionID = event.data?.sessionID;
-+  if (!sessionID || !context.session) return false;
-+  try {
-+    const session = await context.session.get({ sessionID });
-+    return !session.parentID && session.location?.directory === directory;
-+  } catch {
-+    // A session deleted in the meantime has nothing left to mark.
-+    return false;
-+  }
+     // Skim has released the terminal — emit any warnings that collect's bg
+     // thread stashed during the run. Late warnings (e.g. drain timeouts)
+@@ -2192,11 +2195,8 @@ pub fn handle_picker(
+     // fails like any other, and stashes that failure as a warning. Cancelling
+     // first would drain a spurious "couldn't fetch PRs" onto the user.
+     //
+-    // Not everything running here is discardable — an `alt-x` removal is
+-    // dispatched to its own thread and can still be mid-`git worktree remove`
+-    // if the user pressed Enter straight after. Removal threads are spawned
+-    // through `spawn_removal`, which marks them `uninterruptible` and lets
+-    // them run to completion; this reaches only speculative work.
++    // `join_removals` has already finished every `alt-x` removal, so this
++    // reaches only speculative work.
+     worktrunk::shell_exec::cancel_background_commands();
+ 
+     // `run_skim` returns Err only on a genuine TUI init / event-loop failure;
+@@ -2461,9 +2461,27 @@ fn spawn_removal<F>(name: String, work: F)
+ where
+     F: FnOnce() + Send + 'static,
+ {
+-    let _ = std::thread::Builder::new()
++    if let Ok(handle) = std::thread::Builder::new()
+         .name(name)
+-        .spawn(move || worktrunk::shell_exec::uninterruptible(work));
++        .spawn(move || worktrunk::shell_exec::uninterruptible(work))
++    {
++        REMOVALS.lock().unwrap().push(handle);
++    }
 +}
 +
- async function setup(context: SetupContext) {
-   // A host without worktree strategies passes no `worktree`, including the
-   // OpenCode 1.18 loader noted below; activity tracking doesn't depend on it.
-@@ -205,11 +236,17 @@ async function setup(context: SetupContext) {
++/// Requested removals not yet joined. Returning from `main` would end them
++/// midway, with the row already gone and nothing to say the worktree survived.
++static REMOVALS: Mutex<Vec<std::thread::JoinHandle<()>>> = Mutex::new(Vec::new());
++
++/// Wait for every requested removal, once skim has released the terminal.
++fn join_removals() {
++    let removals = std::mem::take(&mut *REMOVALS.lock().unwrap());
++    if removals.iter().any(|removal| !removal.is_finished()) {
++        eprintln!("{}", progress_message("Finishing worktree removal..."));
++    }
++    for removal in removals {
++        let _ = removal.join();
++    }
+ }
  
-   const watcher = (async () => {
-     for await (const event of events.subscribe({ signal: controller.signal })) {
-+      const execution = EXECUTION_MARKERS.get(event.type);
-+      if (execution) {
-+        if (await ownsExecution(context, event, directory)) await marker(directory, ["set", execution]);
-+        continue;
-+      }
-       // The event envelope makes `location` optional; the session events below
-       // carry one, and skipping the rest keeps each instance to its own worktree.
-       if (event.location?.directory !== directory) continue;
+ /// Run a row shortcut's OS action on a named background thread, logging any
+```
+
+**File**: `src/commands/repository_ext.rs` (modified, +19/-1)
+```diff
+@@ -6,7 +6,7 @@ use color_print::cformat;
+ use worktrunk::config::StageMode;
+ use worktrunk::git::{
+     BranchDeletionMode, GitError, IntegrationReason, RefSnapshot, Repository, WorkingTree,
+-    WorktreeInfo, parse_porcelain_z, parse_untracked_files,
++    WorktreeInfo, parse_porcelain_z, parse_untracked_files, path_dir_name,
+ };
+ use worktrunk::path::format_path_for_display;
+ use worktrunk::styling::{eprintln, format_with_gutter, hint_message, warning_message};
+@@ -280,6 +280,24 @@ impl RepositoryCliExt for Repository {
+             return Err(GitError::CannotRemoveMainWorktree.into());
+         }
  
-       switch (event.type) {
-+        // Earlier OpenCode 2 releases emit these instead of `session.execution.*`.
-         case "session.status":
-           // Status is `idle | busy | retry`. OpenCode 2 marks `session.idle`
-           // deprecated in favor of this, so read the status, not the event name.
++        // `--force` waives this worktree's changes, never another checkout's,
++        // and an ignored nested checkout is invisible to the dirty gate.
++        if let Resolved::Worktree {
++            ref path,
++            ref branch,
++            ..
++        } = resolved
++            && let Some(nested) = self.worktree_nested_in(path)?
++        {
++            return Err(GitError::WorktreeContainsWorktree {
++                name: branch
++                    .clone()
++                    .unwrap_or_else(|| path_dir_name(path).to_string()),
++                nested,
++            }
++            .into());
++        }
++
+         // Phase 3: Branch-level validation (applies to ALL paths).
+         let branch_name = match &resolved {
+             Resolved::Worktree { branch, .. } => branch.as_deref(),
+```
+
+**File**: `src/commands/step/promote.rs` (modified, +14/-5)
+```diff
+@@ -228,7 +228,8 @@ fn check_leftover_staging(staging_path: &Path) -> anyhow::Result<()> {
+     let display = format_path_for_display(staging_path);
+     Err(anyhow::anyhow!(
+         "Files may need manual recovery from: {display}\n\
+-         Remove it to retry: rm -rf {display}"
++         a/ holds the main worktree's ignored files; b/ holds the other worktree's\n\
++         Once recovered, to retry, run: rm -rf {display}"
+     )
+     .context("Found leftover staging directory from an interrupted promote"))
+ }
+@@ -415,15 +416,23 @@ pub fn handle_promote(branch: Option<&str>) -> anyhow::Result<PromoteResult> {
+         None
+     };
+ 
+-    // Exchange branches (detach both, then switch to swapped branches).
+-    // Failure is near-impossible (both worktrees verified clean, branches exist).
+-    // If it somehow fails, stale staging detection recovers on next run.
++    // Exchange branches (detach both, then switch to swapped branches). Both
++    // worktrees are clean and both branches exist, but a failing `post-checkout`
++    // hook still fails `git switch`. That leaves the ignored files staged, so the
++    // error names where they are.
+     exchange_branches(
+         &main_working_tree,
+         &main_branch,
+         &target_working_tree,
+         &target_branch,
+-    )?;
++    )
++    .map_err(|error| match &staged {
++        Some((staging_dir, _)) => error.context(format!(
++            "Failed to exchange branches. Staged files may be recoverable from: {}",
++            format_path_for_display(staging_dir)
++        )),
++        None => error,
++    })?;
+ 
+     // Distribute staged files to their new worktrees (after branch exchange)
+     let swapped = if let Some((ref staging_dir, _)) = staged {
+```
+
+**File**: `src/commands/step/prune.rs` (modified, +62/-20)
+```diff
+@@ -37,7 +37,7 @@ use rayon::prelude::*;
+ use worktrunk::HookType;
+ use worktrunk::config::{Approvals, ProjectConfig, ProjectId, UserConfig};
+ use worktrunk::git::{
+-    BranchDeletionMode, IntegrationReason, RefSnapshot, Repository, WorktreeInfo,
++    BranchDeletionMode, GitError, IntegrationReason, RefSnapshot, Repository, WorktreeInfo,
+ };
+ use worktrunk::path::format_path_for_display;
+ use worktrunk::styling::{
+@@ -421,6 +421,9 @@ struct CheckOutcome {
+     plan: Option<RemovalPlan>,
+     /// Whether the item passed the removability gate (see `plan`).
+     removable: bool,
++    /// The checkout that made planning refuse this item. Unlike dirty or
++    /// locked, `wt list` doesn't show it, so the scan reports the skip.
++    contains_worktree: Option<PathBuf>,
+     /// What the removal takes, carried onto [`Candidate::deletes_branch`].
+     deletes_branch: bool,
+     /// `Some(_)` if `min_age` is set and the age could be resolved; the
+@@ -450,6 +453,7 @@ fn check_one(
+             reason,
+             plan: None,
+             removable: false,
++            contains_worktree: None,
+             deletes_branch: false,
+             age: None,
+         });
+@@ -465,20 +469,18 @@ fn check_one(
+         }
+         _ => None,
+     };
+-    let plan = if stale_detached.is_some() {
++    let planned = if stale_detached.is_some() {
+         None
+     } else {
+-        match &item.source {
+-            CheckSource::Orphan => repo
+-                .prepare_worktree_removal(
+-                    RemoveTarget::BranchOnly(item.integration_ref.clone()),
+-                    BranchDeletionMode::SafeDelete,
+-                    false,
+-                    current_path,
+-                    Some(worktrees),
+-                    Some(snapshot),
+-                )
+-                .ok(),
++        Some(match &item.source {
++            CheckSource::Orphan => repo.prepare_worktree_removal(
++                RemoveTarget::BranchOnly(item.integration_ref.clone()),
++                BranchDeletionMode::SafeDelete,
++                false,
++                current_path,
++                Some(worktrees),
++                Some(snapshot),
++            ),
+             CheckSource::Linked { wt_idx } | CheckSource::Prunable { wt_idx } => {
+                 let wt = &worktrees[*wt_idx];
+                 repo.prepare_worktree_removal(
+@@ -496,10 +498,17 @@ fn check_one(
+                     Some(worktrees),
+                     Some(snapshot),
+                 )
+-                .ok()
+             }
+-        }
++        })
+     };
++    let contains_worktree = planned
++        .as_ref()
++        .and_then(|planned| planned.as_ref().err())
++        .and_then(|error| match error.downcast_ref::<GitError>() {
++            Some(GitError::WorktreeContainsWorktree { nested, .. }) => Some(nested.clone()),
++            _ => None,
++        });
++    let plan = planned.and_then(Result::ok);
+     let removable = match stale_detached {
+         Some(wt) => matches!(repo.stale_worktree_work(&wt.path), Ok(None)),
+         None => plan.is_some(),
+@@ -524,6 +533,7 @@ fn check_one(
+         reason,
+         plan,
+         removable,
++        contains_worktree,
+         deletes_branch,
+         age,
+     })
+@@ -840,11 +850,21 @@ fn mtime_epoch(path: &Path) -> anyhow::Result<Option<u64>> {
+     }
+ }
+ 
++/// The `Skipped` line for an item whose checkout holds another worktree.
++fn nesting_skip(label: &str, nested: &Path) -> String {
++    info_message(cformat!(
++        "Skipped <bold>{label}</> (contains worktree @ {})",
++        format_path_for_display(nested)
++    ))
++    .to_string()
++}
++
+ /// Render dry-run output (text or JSON) and the `Skipped (younger than ...)`
+ /// trailer. Returns once printing is complete; the caller exits early.
+ fn render_dry_run(
+     mut dry_run_info: Vec<(Candidate, DryRunInfo)>,
+     mut skipped_young: Vec<String>,
++    mut skipped_nesting: Vec<String>,
+     min_age: &str,
+     format: crate::cli::SwitchFormat,
+ ) -> anyhow::Result<()> {
+@@ -902,9 +922,13 @@ fn render_dry_run(
+             info_message(format!("Skipped {names} (younger than {min_age})"))
+         );
+     }
++    skipped_nesting.sort();
++    for line in &skipped_nesting {
++        eprintln!("{line}");
++    }
+ 
+     if dry_candidates.is_empty() {
+-        if skipped_young.is_empty() {
++        if skipped_young.is_empty() && skipped_nesting.is_empty() {
+             eprintln!("{}", info_message("No merged worktrees to remove"));
+         }
+         return Ok(());
+@@ -1034,6 +1058,7 @@ pub fn step_prune(
+         RefWriteTimes::capture(&repo, &check_items).context("reading ref write times")?;
+ 
+     let mut skipped_young: Vec<String> = Vec::new();
++    let mut skipped_nesting: Vec<String> = Vec::new();
+ 
+     // Streaming dry-run path: scans run in parallel, results are collected and
+     // sorted for deterministic output. No removals, no approval — just print.
+@@ -1077,10 +1102,14 @@ pub fn step_prune(
+                 let Some(reason) = outcome.reason else {
+            
+```
+
+**File**: `src/git/error.rs` (modified, +23/-0)
+```diff
+@@ -591,6 +591,11 @@ pub enum GitError {
+         path: PathBuf,
+         reason: Option<String>,
+     },
++    WorktreeContainsWorktree {
++        /// The target's branch, or its directory name when detached.
++        name: String,
++        nested: PathBuf,
++    },
+ 
+     // Merge/push errors
+     ConflictingChanges {
+@@ -966,6 +971,11 @@ impl GitError {
+                 cformat!("Cannot remove <bold>{branch}</>, worktree is locked{reason_text}")
+             }
+ 
++            GitError::WorktreeContainsWorktree { name, nested } => {
++                let nested = format_path_for_display(nested);
++                cformat!("Cannot remove <bold>{name}</>; contains worktree @ <bold>{nested}</>")
++            }
++
+             GitError::ConflictingChanges { target_branch, .. } => cformat!(
+                 "Can't push to local <bold>{target_branch}</> branch: conflicting uncommitted changes"
+             ),
+@@ -1468,6 +1478,19 @@ impl GitError {
+                 )
+             }
+ 
++            GitError::WorktreeContainsWorktree { nested, .. } => {
++                let title = self.title();
++                let nested = format_path_for_display(nested);
++                write!(
++                    f,
++                    "{}\n{}",
++                    error_message(&title),
++                    hint_message(cformat!(
++                        "To remove the nested worktree first, run <underline>wt remove {nested}</>"
++                    ))
++                )
++            }
++
+             GitError::ConflictingChanges {
+                 files,
+                 worktree_path,
+```
+
+**File**: `src/git/remove.rs` (modified, +6/-30)
+```diff
+@@ -547,38 +547,14 @@ pub fn stage_worktree_removal(
+     Ok(rename_into_trash(repo, worktree_path, &git_dir))
+ }
+ 
+-/// Find a registered worktree contained in `worktree_path`, using a fresh
+-/// registry read. Ignored nested worktrees are invisible to `ensure_clean`,
+-/// but renaming or removing their parent would destroy their independent work.
+-/// Canonical paths catch registrations made through symlinks; a missing entry
+-/// has no directory to protect, while other resolution errors fail closed.
++/// [`Repository::worktree_nested_in`] against a fresh registry read.
+ ///
+-/// Called only by merge cleanup: once while deciding whether to remove, then
+-/// again after approved pre-remove hooks and before the final removal gates.
+-/// Keep this live registry read out of `stage_worktree_removal`: batch prune
+-/// staging must not wait for another removal's registry teardown (#3954).
++/// Planning asks its own inventory. Merge cleanup also asks after approved
++/// pre-remove hooks, before the final removal gates, which is why this reads
++/// afresh. Keep this live registry read out of `stage_worktree_removal`: batch
++/// prune staging must not wait for another removal's registry teardown (#3954).
+ pub fn nested_worktree(repo: &Repository, worktree_path: &Path) -> anyhow::Result<Option<PathBuf>> {
+-    let root =
+-        dunce::canonicalize(worktree_path).context("Failed to resolve worktree for removal")?;
+-    let fresh_repo = Repository::at(repo.discovery_path())?;
+-    for worktree in fresh_repo.list_worktrees()? {
+-        let path = match dunce::canonicalize(&worktree.path) {
+-            Ok(path) => path,
+-            Err(error) if error.kind() == std::io::ErrorKind::NotFound => continue,
+-            Err(error) => {
+-                return Err(error).with_context(|| {
+-                    format!(
+-                        "Failed to resolve worktree @ {}",
+-                        format_path_for_display(&worktree.path)
+-                    )
+-                });
+-            }
+-        };
+-        if path != root && path.starts_with(&root) {
+-            return Ok(Some(path));
+-        }
+-    }
+-    Ok(None)
++    Repository::at(repo.discovery_path())?.worktree_nested_in(worktree_path)
+ }
+ 
+ /// Rename a worktree into `<git-common-dir>/wt/trash/` and prune git metadata.
+```
+
+**File**: `src/git/repository/mod.rs` (modified, +4/-0)
+```diff
+@@ -340,6 +340,10 @@ pub(super) struct RepoCache {
+     /// `collect::collect` pass hits memory instead of respawning the
+     /// subprocess on the critical path to skeleton.
+     pub(super) worktrees: OnceCell<Vec<WorktreeInfo>>,
++    /// Canonical paths of the checkouts in [`Self::worktrees`] still on disk,
++    /// resolved once per inventory. Populated lazily via
++    /// [`Repository::worktree_nested_in`].
++    pub(super) checkout_paths: OnceCell<std::collections::BTreeSet<PathBuf>>,
+     /// In-memory branch diff stats cache: (base_sha, head_sha) -> LineDiff.
+     /// Sits in front of the persistent `sha_cache` to prevent parallel tasks
+     /// from racing through the file-based cache for the same SHA pair.
+```
+
+**File**: `src/git/repository/worktrees.rs` (modified, +42/-0)
+```diff
+@@ -101,6 +101,48 @@ impl Repository {
+             .map(Vec::as_slice)
+     }
+ 
++    /// A registered checkout inside `path`, from this repository's inventory
++    /// ([`Self::list_worktrees`]). Ignored nested checkouts are invisible to the
++    /// dirty gate, but renaming or removing their parent destroys their work.
++    /// Canonical paths catch registrations made through symlinks; a checkout
++    /// whose directory is gone has nothing to protect, while any other
++    /// resolution error fails closed.
++    ///
++    /// Each checkout is resolved once per inventory, so a batch of removals
++    /// planned against one inventory resolves N paths, not N per target.
++    pub fn worktree_nested_in(&self, path: &Path) -> anyhow::Result<Option<PathBuf>> {
++        use std::ops::Bound::{Excluded, Unbounded};
++
++        let root = canonicalize(path).context("Failed to resolve worktree for removal")?;
++        let checkouts = self.cache.checkout_paths.get_or_try_init(|| {
++            let mut checkouts = std::collections::BTreeSet::new();
++            for worktree in self.list_worktrees()? {
++                match canonicalize(&worktree.path) {
++                    Ok(path) => {
++                        checkouts.insert(path);
++                    }
++                    Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
++                    Err(error) => {
++                        return Err(error).with_context(|| {
++                            format!(
++                                "Failed to resolve worktree @ {}",
++                                format_path_for_display(&worktree.path)
++                            )
++                        });
++                    }
++                }
++            }
++            anyhow::Ok(checkouts)
++        })?;
++        // `Path` orders by component, so the paths inside `root` sort directly
++        // after it: the next one either lies inside or nothing does.
++        Ok(checkouts
++            .range::<Path, _>((Excluded(root.as_path()), Unbounded))
++            .next()
++            .filter(|next| next.starts_with(&root))
++            .cloned())
++    }
++
+     /// Find the worktree path for a given branch, if one exists.
+     ///
+     /// A branch normally maps to at most one worktree, but `git worktree add
 ```
 
 ---
 
-### Incident Patch 2: `bac28450` (2026-11-19)
-**Commit Message**: fix(config): reject vars keys git would lowercase or refuse (#4830)
+### Incident Patch 2: `319b80d8` (2026-11-20)
+**Commit Message**: fix: skip unchanged switch-history writes to the shared git config (#4866)
 
-**File**: `docs/src/content/docs/config.md` (modified, +1/-1)
-```diff
-@@ -1541,7 +1541,7 @@ dev = "npm start -- --port {{ vars.config.port }}"
- 
- ### Storage format
- 
--Stored in git config as `worktrunk.state.<branch>.vars.<key>`. Keys may contain only letters, digits, and hyphens.
-+Stored in git config as `worktrunk.state.<branch>.vars.<key>`. Keys start with a lowercase letter and contain only lowercase letters, digits, and hyphens.
- 
- ### Command reference
- 
-```
+`record_switch_source` wrote `worktrunk.history` and
+`worktrunk.history-path` on every worktree-changing `wt switch`, even
+when they already held the same values — for example, repeated `wt
+switch -c` from the primary worktree. Each write takes the shared
+`.git/config.lock`, so a concurrent config writer in another worktree
+could fail on the lock. Each key is now compared against a fresh read of
+the shared config (one `git config --null --get-regexp` for both keys)
+and written, or unset for a detached source, only when it changes. When
+the write is skipped, the fresh value is still copied into this
+`Repository`'s config snapshot, so `switch_previous()` on the same
+instance agrees with what's on disk.
 
-**File**: `plugins/worktrunk/skills/worktrunk/reference/config.md` (modified, +1/-1)
-```diff
-@@ -1533,7 +1533,7 @@ dev = "npm start -- --port {{ vars.config.port }}"
- 
- ### Storage format
- 
--Stored in git config as `worktrunk.state.<branch>.vars.<key>`. Keys may contain only letters, digits, and hyphens.
-+Stored in git config as `worktrunk.state.<branch>.vars.<key>`. Keys start with a lowercase letter and contain only lowercase letters, digits, and hyphens.
- 
- ### Command reference
- 
-```
+The fresh read matters because the process-lifetime snapshot can be out
+of date: another `wt` may have recorded a different source since this
+process loaded its config, and comparing against the snapshot would skip
+a restore that's needed.
 
-**File**: `skills/worktrunk/reference/config.md` (modified, +1/-1)
-```diff
-@@ -1533,7 +1533,7 @@ dev = "npm start -- --port {{ vars.config.port }}"
- 
- ### Storage format
- 
--Stored in git config as `worktrunk.state.<branch>.vars.<key>`. Keys may contain only letters, digits, and hyphens.
-+Stored in git config as `worktrunk.state.<branch>.vars.<key>`. Keys start with a lowercase letter and contain only lowercase letters, digits, and hyphens.
- 
- ### Command reference
- 
-```
+Three unit tests cover this:
 
-**File**: `src/cli/config.rs` (modified, +1/-1)
-```diff
-@@ -1308,7 +1308,7 @@ dev = "npm start -- --port {{ vars.config.port }}"
- 
- ## Storage format
- 
--Stored in git config as `worktrunk.state.<branch>.vars.<key>`. Keys may contain only letters, digits, and hyphens."#
-+Stored in git config as `worktrunk.state.<branch>.vars.<key>`. Keys start with a lowercase letter and contain only lowercase letters, digits, and hyphens."#
-     )]
-     Vars {
-         #[command(subcommand)]
-```
+- `test_record_switch_source_skips_unchanged_values` holds `config.lock`
+and re-records the same source. Before the change it fails with `git
 
-**File**: `src/commands/config/state.rs` (modified, +16/-3)
+
+**File**: `src/git/repository/config.rs` (modified, +140/-16)
 ```diff
-@@ -1653,13 +1653,26 @@ fn summaries_json(repo: &Repository) -> Vec<serde_json::Value> {
- 
- // ==================== Vars Operations ====================
- 
--/// Validate a vars key name: letters, digits, and hyphens only.
-+/// Validate a vars key name: a lowercase letter, then lowercase letters,
-+/// digits, and hyphens.
-+///
-+/// The key is a git config variable name, which git requires to start with a
-+/// letter and stores lowercased. An uppercase key would read back from
-+/// `vars_entries` under a different name than the user set, so
-+/// `{{ vars.Ticket }}` would render empty.
- fn validate_vars_key(key: &str) -> anyhow::Result<()> {
-     if key.is_empty() {
-         anyhow::bail!("Key cannot be empty");
+@@ -94,15 +94,31 @@ impl Repository {
+     /// behind a stale duplicate under the literal form.
+     pub(super) fn set_config_value(&self, key: &str, value: &str) -> anyhow::Result<()> {
+         self.run_command(&["config", key, value])?;
+-        if let Some(lock) = self.cache.all_config.get() {
+-            let canonical = super::canonical_config_key(key);
+-            lock.write()
+-                .unwrap()
+-                .insert(canonical, vec![value.to_string()]);
+-        }
++        self.cache_config_value(key, Some(value));
+         Ok(())
      }
--    if !key.chars().all(|c| c.is_ascii_alphanumeric() || c == '-') {
--        anyhow::bail!("Invalid key {key:?}: keys must contain only letters, digits, and hyphens");
-+    let starts_with_letter = key.starts_with(|c: char| c.is_ascii_lowercase());
-+    if !starts_with_letter
-+        || !key
-+            .chars()
-+            .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-')
-+    {
-+        anyhow::bail!(
-+            "Invalid key {key:?}: keys must start with a lowercase letter and contain only lowercase letters, digits, and hyphens"
+ 
++    /// Mirror a known on-disk value for `key` into the bulk config map, if
++    /// populated: `Some` replaces its values, `None` removes the key.
++    fn cache_config_value(&self, key: &str, value: Option<&str>) {
++        let Some(lock) = self.cache.all_config.get() else {
++            return;
++        };
++        let canonical = super::canonical_config_key(key);
++        let mut map = lock.write().unwrap();
++        match value {
++            Some(value) => {
++                map.insert(canonical, vec![value.to_string()]);
++            }
++            // `shift_remove` preserves remaining order (swap_remove would
++            // reorder); order matters for `primary_remote` which picks the
++            // first remote with a configured URL.
++            None => {
++                map.shift_remove(&canonical);
++            }
++        }
++    }
++
+     /// Unset every value for a config key and keep the bulk config map coherent.
+     ///
+     /// Returns `true` if the key was cleared, `false` if it didn't exist.
+@@ -123,13 +139,7 @@ impl Repository {
+         } else {
+             return Err(CommandError::from_failed_output("git", &args, &output).into());
+         };
+-        if let Some(lock) = self.cache.all_config.get() {
+-            // `shift_remove` preserves remaining order (swap_remove would
+-            // reorder); order matters for `primary_remote` which picks the
+-            // first remote with a configured URL.
+-            let canonical = super::canonical_config_key(key);
+-            lock.write().unwrap().shift_remove(&canonical);
+-        }
++        self.cache_config_value(key, None);
+         Ok(existed)
+     }
+ 
+@@ -317,14 +327,40 @@ impl Repository {
+     /// path can. A detached worktree clears the branch, so the two keys always
+     /// describe the same worktree, which is what
+     /// [`switch_previous_worktree`](Self::switch_previous_worktree) checks.
++    ///
++    /// Each key is written only when its value changes: the keys live in the
++    /// repository's shared config, and a redundant write still takes
++    /// `config.lock`, failing a concurrent config writer in another worktree.
++    /// The comparison reads the shared config fresh rather than the
++    /// process-lifetime snapshot, which another `wt` may have outdated by
++    /// recording a different source since this process loaded it. A skipped
++    /// write still refreshes this instance's snapshot with the fresh value.
+     pub fn record_switch_source(&self, path: &Path, branch: Option<&str>) -> anyhow::Result<()> {
++        let recorded = self.config_regexp_entries(r"^worktrunk\.history(-path)?$")?;
++        let recorded_value = |key: &str| {
++            recorded
++                .iter()
++                .rev()
++                .find(|(k, _)| k == key)
++                .map(|(_, v)| v.as_str())
++        };
++        let recorded_branch = recorded_value("worktrunk.history");
+         match branch {
+-            Some(branch) => self.set_config_value("worktrunk.history", branch)?,
+-            None => {
++            Some(branch) if recorded_branch != Some(branch) => {
++                self.set_config_value("worktrunk.history", branch)?
++            }
++            None if recorded_branch.is_some() => {
+                 self.unset_config("worktrunk.history")?;
+             }
++            _ => self.cache_config_value("worktrunk.history", branch),
++        }
++        let path = path.to_string_lossy();
++        if recorded_value("worktrunk.history-path") != Some(&*path) {
++            self.set_config_value("worktrunk.history-path", &path)?;
++        } else {
++            self.cache_config_value("worktrunk.history-path", Some(&path));
+         }
+-        self.set_config_value("worktrunk.history-path", &path.to_string_lossy())
++        Ok(())
+     }
+ 
+     /// Set the previous branch outright (`wt config state previous-branch
+@@ -1127,6 +1163,94 @@ mod tests {
+     use super::*;
+     use crate::testing::TestRepo;
+ 
++    #[test]
++    fn test_record_switch_source_skips_unchanged_values() {
++        // A repeated switch from the same worktree must not rewrite the shared
++        // config: parallel worktrees contend for `config.lock`. A held lock
++        // makes any write fail, so success proves no write was attempted.
++        let test = TestRepo::with_initial_commit();
++        let repo = Repository::at(test.root_path()).unwrap();
++        let path = test.root_path().to_pat
+```
+
+---
+
+### Incident Patch 3: `593360b0` (2026-11-20)
+**Commit Message**: fix(shell): read nushell wrapper temp files past a user open alias (#4865)
+
+A `config.nu` alias or custom command named `open` is in scope when
+Nushell parses the wrapper from vendor autoload, so the wrapper's `open
+$cd_file --raw` and `open $stdout_file --raw` ran the user's command
+instead of reading the files. With `alias open = ^open` (common on
+macOS), `wt switch` printed "Switched" and the shell stayed put. The
+wrapper now runs `hide open` at the top of its body. That restores the
+builtin for the wrapper only: the user's alias still applies outside it,
+and with no alias defined `hide open` is a no-op (checked on nu 0.117).
+
+`test_nu_wrapper_reads_survive_open_alias` defines `alias open = ^echo
+ALIASED` before the wrapper, then runs `wt switch --create` and `wt
+config show`. Before the change it failed with `Directory not found …
+'ALIASED /tmp/tmp.… --raw' does not exist`. It now passes, along with
+the other `nu_wrapper` tests and the `init_nu` snapshot, which picks up
+the new lines.
+
+The `rm` cleanup got the same protection in #3730. The wrapper's other
+bare builtins (`cd`, `mktemp`, `print`) are unchanged.
+
+Closes #4862 — automated triage
+
+Co-authored-by: worktrunk-bot <[RED
+
+**File**: `src/shell/snapshots/worktrunk__shell__tests__init_nu.snap` (modified, +4/-0)
+```diff
+@@ -72,6 +72,10 @@ export def "nu-complete wt" [place] {
+ # arrives quoted. See nushell/nushell#18128 for upstream tracking.
+ @complete "nu-complete wt"
+ export def --env --wrapped wt [...args] {
++    # A user's `alias open = ^open` (or custom `open`) from config.nu is in
++    # scope here; hiding it restores the builtin for this body only.
++    hide open
++
+     let worktrunk_bin = if ($env.WORKTRUNK_BIN? | is-not-empty) {
+         $env.WORKTRUNK_BIN
+     } else {
+```
+
+**File**: `templates/nushell.nu` (modified, +4/-0)
+```diff
+@@ -68,6 +68,10 @@ export def "nu-complete {{ cmd }}" [place] {
+ # arrives quoted. See nushell/nushell#18128 for upstream tracking.
+ @complete "nu-complete {{ cmd }}"
+ export def --env --wrapped {{ cmd }} [...args] {
++    # A user's `alias open = ^open` (or custom `open`) from config.nu is in
++    # scope here; hiding it restores the builtin for this body only.
++    hide open
++
+     let worktrunk_bin = if ($env.WORKTRUNK_BIN? | is-not-empty) {
+         $env.WORKTRUNK_BIN
+     } else {
+```
+
+**File**: `tests/integration_tests/shell_wrapper.rs` (modified, +34/-0)
+```diff
+@@ -1082,6 +1082,40 @@ mod unix_tests {
+         );
+     }
+ 
++    /// A user's `alias open = ^open` (macOS users add it to reach the system
++    /// `open`) must not intercept the nushell wrapper's temp-file reads.
++    ///
++    /// Same parse-time scoping as the `rm` alias above. Before the fix the
++    /// wrapper ran the aliased command on the cd file instead of reading it,
++    /// so `switch` reported success and the shell stayed where it was.
++    #[rstest]
++    fn test_nu_wrapper_reads_survive_open_alias(repo: TestRepo) {
++        let mut script = String::new();
++        // Must precede the wrapper's `def`: alias resolution is parse-time.
++        script.push_str("alias open = ^echo ALIASED\n");
++        append_wrapper_setup(&mut script, "nu", &repo);
++        script.push_str("wt switch --create open-alias-target\n");
++        script.push_str("print $\"PWD_AFTER:($env.PWD | path basename)\"\n");
++        script.push_str("let out = (wt config show)\n");
++        script.push_str("print $\"WRAPPER_STDOUT_ALIASED:($out | str contains ALIASED)\"\n");
++
++        let config_path = repo.test_config_path().to_string_lossy().to_string();
++        let approvals_path = repo.test_approvals_path().to_string_lossy().to_string();
++        let env_vars = build_test_env_vars(&config_path, &approvals_path);
++        let (combined, exit_code) =
++            exec_in_pty_interactive("nu", &script, repo.root_path(), &env_vars, &[]);
++
++        assert_eq!(exit_code, 0, "Output:\n{combined}");
++        assert!(
++            combined.contains("PWD_AFTER:repo.open-alias-target"),
++            "wrapper did not cd into the new worktree.\nOutput:\n{combined}"
 +        );
-     }
-     Ok(())
- }
-```
-
-**File**: `tests/integration_tests/config_state.rs` (modified, +22/-1)
-```diff
-@@ -2796,7 +2796,28 @@ fn test_vars_invalid_key(repo: TestRepo) {
-         .output()
-         .unwrap();
-     assert!(!output.status.success());
--    assert_snapshot!(String::from_utf8_lossy(&output.stderr), @r#"[31m✗[39m [31mInvalid key "foo.bar": keys must contain only letters, digits, and hyphens[39m"#);
-+    assert_snapshot!(String::from_utf8_lossy(&output.stderr), @r#"[31m✗[39m [31mInvalid key "foo.bar": keys must start with a lowercase letter and contain only lowercase letters, digits, and hyphens[39m"#);
-+}
++        assert!(
++            combined.contains("WRAPPER_STDOUT_ALIASED:false"),
++            "wrapper stdout came from the alias, not the captured file.\nOutput:\n{combined}"
++        );
++    }
 +
-+/// Git lowercases config variable names, so a mixed-case key would read back
-+/// under a name templates don't reference (`{{ vars.Ticket }}` renders empty),
-+/// and a leading digit is not a valid git config name at all.
-+#[rstest]
-+#[case::uppercase("Ticket=ABC")]
-+#[case::leading_digit("1st=ABC")]
-+fn test_vars_set_rejects_keys_git_cannot_store_verbatim(repo: TestRepo, #[case] arg: &str) {
-+    let output = wt_state_cmd(&repo, "vars", "set", &[arg]).output().unwrap();
-+    assert!(!output.status.success());
-+    let stderr = String::from_utf8_lossy(&output.stderr);
-+    assert!(
-+        stderr.contains("keys must start with a lowercase letter"),
-+        "unexpected stderr: {stderr}"
-+    );
-+
-+    let output = wt_state_cmd(&repo, "vars", "list", &["--format=json"])
-+        .output()
-+        .unwrap();
-+    assert_eq!(String::from_utf8_lossy(&output.stdout).trim(), "{}");
- }
- 
- #[rstest]
+     #[rstest]
+     fn test_nu_wrapper_ignores_execute_flags_after_argument_boundary(repo: TestRepo) {
+         let mut script = String::new();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4850** (2026-11-19): fix: set OpenCode activity markers from session.execution events (@worktrunk-bot)
-- **PR #4848** (2026-11-19): skills(release): drop the citation of a personal skill from the ordering rule (@max-sixty)
-- **PR #4847** (2026-11-19): chore: correct two FAQ inventory gaps and stale comments in wt list and config show (@worktrunk-bot)
-- **PR #4846** (2026-11-19): test: make relocate and remove assertions able to fail (@worktrunk-bot)
-- **PR #4845** (2026-11-19): chore: bump taiki-e/install-action from 2.90.4 to 2.90.5 (@dependabot[bot])
-- **PR #4844** (2026-11-19): Have the weekly survey flag agent CLI additions Worktrunk could use (@max-sixty)
+- **PR #4872** (closed): ci: package LICENSE-MIT and LICENSE-APACHE into PyPI wheels (@worktrunk-bot)
+- **PR #4871** (2026-11-21): chore: update tend workflows (0.3.27 → 0.3.28) (@worktrunk-bot)
+- **PR #4870** (2026-11-21): ci(release): remove the dispatch recovery path (@max-sixty)
+- **PR #4869** (2026-11-21): skills(running-tend): drop the proportionality rule Tend's review now owns (@max-sixty)
+- **PR #4868** (2026-11-20): skills(running-tend): open each feedback digest as its own issue and file its confirmed bugs for triage (@worktrunk-bot)
+- **PR #4867** (2026-11-20): fix(picker): keep the preview at half the width when the terminal is resized (@worktrunk-bot)
 
 ---
 
@@ -2275,57 +2773,63 @@ fake `wt` that logs its calls. Before this change the event
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. set OpenCode activity markers from session.execution events
+## X. refuse removing a worktree that contains another, and finish picker removals bef
 
 **RULE**:
-When implementing operations in `dev/opencode-plugin.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/commands/picker/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5e2106c7`: set OpenCode activity markers from session.execution events. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `76f6952f`: refuse removing a worktree that contains another, and finish picker removals before exit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `dev/opencode-plugin.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/picker/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  data?: { sessionID?: string; status?: { type?: string } };
-  session?: {
-    get(input: { sessionID: string }): Promise<{ parentID?: string; location?: { directory?: string } }>;
-  };
-// The marker each `session.execution.*` event sets. OpenCode 2.3 replaced
-// `session.status` and `session.idle` with these.
-const EXECUTION_MARKERS = new Map([
-  ["session.execution.started", WORKING],
-  ["session.execution.succeeded", WAITING],
-  ["session.execution.failed", WAITING],
-  ["session.execution.interrupted", WAITING],
-]);
+use worktrunk::styling::{
+    eprintln, error_message, hint_message, info_message, progress_message, warning_message,
+};
+    join_removals();
+    // `join_removals` has already finished every `alt-x` removal, so this
+    // reaches only speculative work.
+    if let Ok(handle) = std::thread::Builder::new()
+        .spawn(move || worktrunk::shell_exec::uninterruptible(work))
+    {
+        REMOVALS.lock().unwrap().push(handle);
+    }
+}
 
-/**
- * Whether an execution event belongs to a top-level session in `directory`.
- *
- * Execution events carry only a session ID, so the session record supplies the
- * worktree. A subagent's session runs its own executions, and its finishing
- * must not mark the worktree as waiting while the parent still works.
- */
-async function ownsExecution(context: SetupContext, event: SessionEvent, directory: string): Promise<boolean> {
-  const sessionID = event.data?.sessionID;
-  if (!sessionID || !context.session) return false;
-  try {
-    const session = await context.session.get({ sessionID });
-    return !session.parentID && session.location?.directory === directory;
-  } ca
+/// Requested removals not yet joined. Returning from `main` would end them
+/// midway, with the row already gone and nothing to say the worktree survived.
+static REMOVALS: Mutex<Vec<std::thread::JoinHandle<()>>> = Mutex::new(Vec::new());
+
+/// Wait for every requested removal, once skim has released the terminal.
+fn join_removals() {
+    let removals = std::mem::take(&mut *REMOVALS.lock().unwrap());
+    if removals.iter().any(|removal| !removal.is_finished()) {
+        eprintln!("{}", progress_message("Finishing worktree removal..."));
+    }
+    for removal in removals {
+        let _ = removal.join();
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  data?: { status?: { type?: string } };
+use worktrunk::styling::{eprintln, error_message, hint_message, info_message, warning_message};
+    // Not everything running here is discardable — an `alt-x` removal is
+    // dispatched to its own thread and can still be mid-`git worktree remove`
+    // if the user pressed Enter straight after. Removal threads are spawned
+    // through `spawn_removal`, which marks them `uninterruptible` and lets
+    // them run to completion; this reaches only speculative work.
+    let _ = std::thread::Builder::new()
+        .spawn(move || worktrunk::shell_exec::uninterruptible(work));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5e2106c7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `76f6952f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

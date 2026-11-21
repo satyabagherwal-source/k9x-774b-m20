@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T10:37:34.759Z",
-  "total_cycles_completed": 11204,
-  "total_learnings_persisted": 11204,
-  "total_rules_promoted": 10565,
+  "last_updated": "2026-11-21T11:16:47.676Z",
+  "total_cycles_completed": 11208,
+  "total_learnings_persisted": 11208,
+  "total_rules_promoted": 10568,
   "history": [
-    {
-      "timestamp": "2026-11-20T13:48:19.150Z",
-      "repository": "open-policy-agent/gatekeeper",
-      "learningId": "learn-github-open-policy-agent-gatekeeper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T13:48:26.878Z",
-      "repository": "Open-Source-Legal/OpenContracts",
-      "learningId": "learn-github-open-source-legal-opencontracts",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T14:04:11.890Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T14:07:29.643Z",
-      "repository": "Sentinel7/h3",
-      "learningId": "learn-huggingface-sentinel7-h3",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T14:52:45.735Z",
       "repository": "gardener/gardener",
@@ -1403,6 +1375,34 @@
       "repository": "Automattic/harper",
       "learningId": "learn-github-automattic-harper",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T11:11:36.367Z",
+      "repository": "appwrite/appwrite",
+      "learningId": "learn-github-appwrite-appwrite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T11:11:43.146Z",
+      "repository": "apple/foundationdb",
+      "learningId": "learn-github-apple-foundationdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T11:16:31.627Z",
+      "repository": "max-sixty/worktrunk",
+      "learningId": "learn-github-max-sixty-worktrunk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T11:16:47.676Z",
+      "repository": "reflection/Beam-1.0-501B-A23B",
+      "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

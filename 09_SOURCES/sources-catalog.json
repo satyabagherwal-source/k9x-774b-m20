@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "5b7d969e",
+    "sourceVersion": "ad139302",
     "license": "Apache-2.0",
-    "contentHash": "598a9b3014d9acdae6a942b399f884408f3df2932cf55f9f62d1a2f141bba76a",
-    "lastHarvestedAt": "2026-11-19T22:27:35.639Z",
+    "contentHash": "bb2fe2c44e137dfc6918b19a1efa32fd74b7784fd7cc69677c2548765dbdd632",
+    "lastHarvestedAt": "2026-11-21T11:16:31.622Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "fecaa68f",
+    "sourceVersion": "3f58d752",
     "license": "Apache-2.0",
-    "contentHash": "dbb84cb214426b9a6bdffdfa0a5165f180f864b5e63f399972190ff1c48dd650",
-    "lastHarvestedAt": "2026-11-20T05:29:03.335Z",
+    "contentHash": "fe2805634b582407b8279afc83ab4156a833f61a22e8f02783df6cc3c66254b0",
+    "lastHarvestedAt": "2026-11-21T11:11:43.141Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {
@@ -9225,8 +9225,8 @@
     "sourceUrl": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
     "sourceVersion": "hf-reflection-beam-1.0-501b-a23b",
     "license": "Open-Source",
-    "contentHash": "01a56bef17d409c0393aaeaa3e5a344c01645ad8cf82be871355f9b14e1496b5",
-    "lastHarvestedAt": "2026-11-17T15:43:34.717Z",
+    "contentHash": "b58d79bf7cab66b92cdd4e282cbd81f6fd45ae2ef4e2e02fbae5c950a3b0f2f0",
+    "lastHarvestedAt": "2026-11-21T11:16:47.671Z",
     "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b"
   },
   "webrecorder-pywb": {
@@ -10323,10 +10323,10 @@
     "repository": "appwrite/appwrite",
     "platform": "github",
     "sourceUrl": "https://github.com/appwrite/appwrite",
-    "sourceVersion": "23fd2350",
+    "sourceVersion": "a6d643a9",
     "license": "BSD-3-Clause",
-    "contentHash": "fabb8d06ede87ac7d3ec29c42f11a81ce940fc61d1a645c7a672225f7c64f961",
-    "lastHarvestedAt": "2026-11-18T10:18:49.159Z",
+    "contentHash": "7bb30a1b451adaa34bce05a62edaca6c7a70818a9fdb1db55fd6ee28c0f544da",
+    "lastHarvestedAt": "2026-11-21T11:11:36.362Z",
     "learningId": "learn-github-appwrite-appwrite"
   },
   "expo-expo": {
