@@ -11847,3 +11847,6 @@ Every entry in this ledger must capture:
 | `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `337161a5` | Multi-dimensional audit evidence | 2026-11-21T13:53:36.588Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `32ef011f` | Multi-dimensional audit evidence | 2026-11-21T13:53:39.584Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `88defe33` | Multi-dimensional audit evidence | 2026-11-21T13:53:45.472Z |
+| `learn-huggingface-comfy-org-z-image-turbo` | `https://huggingface.co/Comfy-Org/Z-Image-Turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-21T14:27:40.935Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `a50230f0` | Multi-dimensional audit evidence | 2026-11-21T14:27:48.346Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `d2feb4ac` | Multi-dimensional audit evidence | 2026-11-21T14:27:55.216Z |

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-comfy-org`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T17:02:24.043Z  
+> **Timestamp**: 2026-11-21T14:27:40.341Z  
 > **Learning ID**: `learn-huggingface-comfy-org-z-image-turbo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Comfy-Org/Z-Image-Turbo](https://huggingface.co/Comfy-Org/Z-Image-Turbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T17:02:23.830Z  
+> **Harvest Timestamp**: 2026-11-21T14:27:37.969Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 9716886 downloads | 1042 likes
+- **Stars / Engagement**: 10304640 downloads | 1048 likes
 
 ---
 

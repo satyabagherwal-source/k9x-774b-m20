@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T13:53:48.653Z",
-    "lastVerified": "2026-11-21T13:53:48.653Z",
+    "lastChecked": "2026-11-21T14:27:58.623Z",
+    "lastVerified": "2026-11-21T14:27:58.623Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -350,22 +350,21 @@
     "lastVerified": "2026-11-20T16:42:20.195Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T12:48:52.717Z",
-    "lastVerified": "2026-11-21T12:48:52.717Z",
+    "lastChecked": "2026-11-21T14:27:53.997Z",
+    "lastVerified": "2026-11-21T14:27:53.997Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "b8ec76bf10181508f5a209e8748512e5628ceb57c745df033e4bb7d6919b6134",
+    "contentHash": "d45ac296e6d790f70018e1cff3169af66de581ba569910d105cc747767ed1683",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f0b8dbab"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1308,9 +1307,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-21T04:15:40.499Z",
+    "lastChecked": "2026-11-21T14:27:45.353Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-21T04:15:40.499Z"
+    "lastVerified": "2026-11-21T14:27:45.353Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -1356,9 +1355,9 @@
   "maotoumao-musicfree": {
     "name": "MusicFree",
     "officialUrl": "https://github.com/maotoumao/MusicFree",
-    "lastChecked": "2026-11-18T12:15:59.699Z",
+    "lastChecked": "2026-11-21T14:27:40.351Z",
     "revisionIdentifier": "d118b18b",
-    "lastVerified": "2026-11-18T12:15:59.699Z"
+    "lastVerified": "2026-11-21T14:27:40.351Z"
   },
   "zeromicro-go-zero": {
     "name": "go-zero",
@@ -1892,12 +1891,12 @@
     "lastVerified": "2026-11-20T20:57:52.274Z"
   },
   "falkordb-falkordb": {
-    "name": "FalkorDB/FalkorDB",
+    "name": "FalkorDB",
     "officialUrl": "https://github.com/FalkorDB/FalkorDB",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T00:33:13.542Z",
-    "lastVerified": "2026-11-20T00:33:13.542Z",
+    "lastChecked": "2026-11-21T14:27:35.365Z",
+    "lastVerified": "2026-11-21T14:27:35.365Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-falkordb-falkordb",
@@ -1906,7 +1905,8 @@
     "recentFixesCount": 22,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b65fcac0"
   },
   "hf-apple-lensvlm-9b": {
     "name": "apple/LensVLM-9B",
@@ -6123,9 +6123,9 @@
   "netflix-dynomite": {
     "name": "dynomite",
     "officialUrl": "https://github.com/Netflix/dynomite",
-    "lastChecked": "2026-11-20T07:23:38.915Z",
+    "lastChecked": "2026-11-21T14:27:47.859Z",
     "revisionIdentifier": "2046b05e",
-    "lastVerified": "2026-11-20T07:23:38.915Z"
+    "lastVerified": "2026-11-21T14:27:47.859Z"
   },
   "golutra-golutra": {
     "name": "golutra/golutra",
@@ -6840,14 +6840,14 @@
     "officialUrl": "https://github.com/envoyproxy/envoy",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-20T09:59:09.362Z",
-    "lastVerified": "2026-11-20T09:59:09.362Z",
+    "lastChecked": "2026-11-21T14:27:47.138Z",
+    "lastVerified": "2026-11-21T14:27:47.138Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "449e090d0167cf85ce9e9101f3d90347646744a04ed0713f0df03dc24db09f94",
+    "contentHash": "8835edd0012966868e3013839da3a218cdb00de9107a2a15cda6e180af8c1507",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12367,6 +12367,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen3-14b",
     "contentHash": "3ca3ef8dcebaafe22449a1f5c2a6ca3a7025dd889fbcbcdd818eefeabf6dfe28",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-comfy-org-z-image-turbo": {
+    "name": "Comfy-Org/Z-Image-Turbo",
+    "officialUrl": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T14:27:37.969Z",
+    "lastVerified": "2026-11-21T14:27:37.969Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-comfy-org-z-image-turbo",
+    "contentHash": "141c759a5eb78bf21cf49890220c9c4aba09e8fa9481e5e87e7393aa9587fd5f",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

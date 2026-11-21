@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T13:53:50.576Z",
+  "last_updated": "2026-11-21T14:28:01.289Z",
   "total_verified_learnings": 9060,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23120,
+  "total_items": 23125,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -215732,8 +215732,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "205e84d0",
-      "content_hash": "449e090d0167cf85ce9e9101f3d90347646744a04ed0713f0df03dc24db09f94",
+      "source_version": "a50230f0",
+      "content_hash": "8835edd0012966868e3013839da3a218cdb00de9107a2a15cda6e180af8c1507",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -215761,6 +215761,11 @@
           "number": 9551,
           "title": "fix the description of --reject-unknown-dynamic-fields",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9792,
+          "title": "yield to the event loop between response chunks",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215768,7 +215773,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T09:59:10.353Z",
+      "verified_at": "2026-11-21T14:27:48.100Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215810,10 +215815,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "repository": "envoyproxy/envoy",
-      "source_version": "205e84d0",
-      "content_hash": "c7771ba83c754e2224caec3106041df6177dacb5c5870969332a32ea7ed3517e",
+      "source_version": "a50230f0",
+      "content_hash": "1c00bf56faa04f73a3d4274fe74a5c4883f893a6945cd8f47da9ee8426cd5a54",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T09:59:11.035Z"
+      "persisted_at": "2026-11-21T14:27:48.809Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy",
@@ -215822,10 +215827,10 @@
       "relative_path": "08_VERIFICATION/envoyproxy-envoy-verification-protocol-empirical-defect-shield-for-envoyproxy-en.md",
       "title": "Verification Protocol: Empirical Defect Shield for envoyproxy/envoy",
       "repository": "envoyproxy/envoy",
-      "source_version": "205e84d0",
-      "content_hash": "75cc49dc85d0028bc353430a43739361d163b9b5050f6dafc34f2115ebafaea8",
+      "source_version": "a50230f0",
+      "content_hash": "1c523d88a08955c969329b37a37dd79797749df95de415b241fde38f4e4fd7aa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T09:59:11.227Z"
+      "persisted_at": "2026-11-21T14:27:49.012Z"
     },
     "learn-github-aleo-labs-protocol-snarkos": {
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
@@ -216111,9 +216116,9 @@
       "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
       "repository": "envoyproxy-envoy-learnings",
       "source_version": "HEAD",
-      "content_hash": "c559be1bcb506a40b992fff2247e054f4284202c26d101cc2dc08cf4b2e9fcc4",
+      "content_hash": "53e563ac3731ee9d3a1edc0f88eb1e5e66941d5f38c846a96fb45a780a277766",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T05:47:17.835Z"
+      "persisted_at": "2026-11-21T14:27:59.877Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy-learnings",
@@ -216123,9 +216128,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for envoyproxy-envoy-learnings",
       "repository": "envoyproxy-envoy-learnings",
       "source_version": "HEAD",
-      "content_hash": "ce4bcab0d8ecde4eff77beb90c3ca986caa27d886a79c1c0d0dec24943993f51",
+      "content_hash": "e6c66d58f7746e9a8ea23768c3e7811aced1280c6f22a0acb42d20db1a6e2d77",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T05:47:18.119Z"
+      "persisted_at": "2026-11-21T14:28:00.085Z"
     },
     "learn-huggingface-google-bert-bert-base-uncased": {
       "learning_id": "learn-huggingface-google-bert-bert-base-uncased",
@@ -229356,8 +229361,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "f0b8dbab",
-      "content_hash": "b8ec76bf10181508f5a209e8748512e5628ceb57c745df033e4bb7d6919b6134",
+      "source_version": "d2feb4ac",
+      "content_hash": "d45ac296e6d790f70018e1cff3169af66de581ba569910d105cc747767ed1683",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -229550,6 +229555,11 @@
           "number": 9776,
           "title": "visualizer input field and disable reasoning",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9793,
+          "title": "Draft NUC 126 Exit-Controlled Repeat-Until Loops",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229557,7 +229567,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T11:55:35.000Z",
+      "verified_at": "2026-11-21T14:27:54.970Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229599,10 +229609,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "f0b8dbab",
-      "content_hash": "9dbcf70604eebe6d88ab77b8625f3e70822e8a2d196c79992306bec578e5e9e3",
+      "source_version": "d2feb4ac",
+      "content_hash": "24ccd7371041618acdd008d9d1e7c6f747c768c5b21591a885b55b9ce28c9d5b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T11:55:35.545Z"
+      "persisted_at": "2026-11-21T14:27:55.687Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -229611,10 +229621,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "f0b8dbab",
-      "content_hash": "34977bc077b7a8b87588f61fb43ed22b9ceef537ea2fcd8ad65b7e5eed86853a",
+      "source_version": "d2feb4ac",
+      "content_hash": "5f24b3b610e62708acca389ee3755f9e9a1649a487510f5807242fba517490a6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T11:55:35.702Z"
+      "persisted_at": "2026-11-21T14:27:55.890Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -230692,9 +230702,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "bfcd772c11e12c796341a02c9f694e4b67c854739daaef40e4d69eaa44cb0ba9",
+      "content_hash": "9fb691dc5eb22db2f700e55e9b0d52832a1dea5793cf53f02bf4fdb585eabcba",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T06:28:11.345Z"
+      "persisted_at": "2026-11-21T14:28:01.072Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -230704,9 +230714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "e4f985f3f1332ed1b72d7c871ffa3c122acefae5549a058e8c65615b93fb4760",
+      "content_hash": "0ae9b3906ceb978c181f4c6aa08b1abf768dc8cff2bc1a10fd1aa9ff8b1d3f02",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T06:28:11.484Z"
+      "persisted_at": "2026-11-21T14:28:01.289Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -274628,13 +274638,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-z-image-turbo-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z_image_turbo-research-knowledge-intelligence-comfy-org-z-image-tur.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z-image-turbo-research-knowledge-intelligence-comfy-org-z-image-tur.md",
       "title": "Research & Knowledge Intelligence: Comfy-Org/Z-Image-Turbo Core Invariants",
       "repository": "Comfy-Org/Z-Image-Turbo",
-      "source_version": "hf-comfy-org-z_image_turbo",
-      "content_hash": "e00f57206aa14b4d73e010e66fec55511b929053690fd962ccb462b5f3c3af0f",
+      "source_version": "hf-comfy-org-z-image-turbo",
+      "content_hash": "65c9458462c1a5d12426f3e4f5af340814fbfd9f97ca3235b2bd2ddd7cb06801",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T08:54:39.197Z"
+      "persisted_at": "2026-11-21T14:27:41.195Z"
     },
     "rule-8978": {
       "learning_id": "rule-8978",
@@ -274696,9 +274706,9 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-z-image-turbo-learnings Core Invariants",
       "repository": "hf-comfy-org-z-image-turbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "22d6d2041bd13f42804b88f1f3b5bdd6c9ce9899a8c2ec9ffba00960c0b9b1db",
+      "content_hash": "2aece823c335e6a7f09a5a4bb5e2e38abc4cd1e52cb3cc519f0ad5bd21131086",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T08:54:42.399Z"
+      "persisted_at": "2026-11-21T14:27:59.082Z"
     },
     "candidate_directive-test-fix-flaky-tests-in-socket-auth-capture-and-fd-churn": {
       "item_id": "candidate_directive-test-fix-flaky-tests-in-socket-auth-capture-and-fd-churn",
@@ -277090,7 +277100,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
       "source_version": "hf-comfy-org-z-image-turbo",
-      "content_hash": "240ee92228278b5df32c0057675371894fd7ac409e8ec99166de907d6ed82e1d",
+      "content_hash": "141c759a5eb78bf21cf49890220c9c4aba09e8fa9481e5e87e7393aa9587fd5f",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md",
       "promoted_rules": [],
@@ -277099,7 +277109,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T17:02:24.250Z",
+      "verified_at": "2026-11-21T14:27:40.699Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -314125,6 +314135,70 @@
       "content_hash": "41b3e2b3e2f884118a1e1cbb0c4d876960d51230ae1e4c7bce8557f7961c8238",
       "domain_letter": "H",
       "persisted_at": "2026-11-21T13:53:50.262Z"
+    },
+    "rule-9792": {
+      "learning_id": "rule-9792",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9792,
+      "title": "yield to the event loop between response chunks",
+      "source_url": "https://github.com/envoyproxy/envoy",
+      "source_version": "a50230f0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T14:27:48.100Z"
+    },
+    "candidate_directive-yield-to-the-event-loop-between-response-chunks": {
+      "item_id": "candidate_directive-yield-to-the-event-loop-between-response-chunks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5SE6-yield-to-the-event-loop-between-response-chunks.md",
+      "title": "yield to the event loop between response chunks",
+      "repository": "envoyproxy/envoy",
+      "source_version": "a50230f0",
+      "content_hash": "f89a9d042ce12b23c5eb095c1e860633b53fa5241a31742607eb237bf1092904",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T14:27:48.607Z"
+    },
+    "rule-9793": {
+      "learning_id": "rule-9793",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9793,
+      "title": "Draft NUC 126 Exit-Controlled Repeat-Until Loops",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "d2feb4ac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T14:27:54.970Z"
+    },
+    "candidate_directive-draft-nuc-126-exit-controlled-repeat-until-loops": {
+      "item_id": "candidate_directive-draft-nuc-126-exit-controlled-repeat-until-loops",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-61US-draft-nuc-126-exit-controlled-repeat-until-loops.md",
+      "title": "Draft NUC 126 Exit-Controlled Repeat-Until Loops",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e72519241a54f92aab524f27c11ab53cfd8a575099c3375c0be732f2dcf5dcb9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T14:28:00.869Z"
+    },
+    "candidate_directive-admin-yield-to-the-event-loop-between-response-chunks": {
+      "item_id": "candidate_directive-admin-yield-to-the-event-loop-between-response-chunks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-60X6-admin-yield-to-the-event-loop-between-response-chunks.md",
+      "title": "admin: yield to the event loop between response chunks",
+      "repository": "envoyproxy-envoy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b3425c99476a554d0ddc0bb2c117e6b6a76a65cb7f9568218c69a4e28b6618c3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T14:27:59.658Z"
     }
   },
   "ai-builder-brain": {

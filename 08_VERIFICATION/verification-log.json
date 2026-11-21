@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-9RJT",
-    "timestamp": "2026-11-19T10:15:37.145Z",
-    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-    "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-    "contentHash": "bd1bc6dc367e4b5d5454ac1f9ab428abccb561cb4c67a8f760b42d6a6163b618",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-9XFD",
-    "timestamp": "2026-11-19T10:15:44.761Z",
-    "repository": "tw93/Mole",
-    "learningId": "learn-github-tw93-mole",
-    "contentHash": "584aaebc80d5385f671dda8006c333364a50f2362833c2d88f88144199b51996",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-A7TA",
-    "timestamp": "2026-11-19T10:15:58.222Z",
-    "repository": "RadixArk/DaisyRose-27B",
-    "learningId": "learn-huggingface-radixark-daisyrose-27b",
-    "contentHash": "40573d65738333d21d2aa74d53d2d6bc87b0ec8a436cdce7b21ced895863c79f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-EBPC",
     "timestamp": "2026-11-19T10:47:09.504Z",
     "repository": "Qwen/Qwen3-4B",
@@ -7490,6 +7445,51 @@
     "repository": "ydb-platform/ydb",
     "learningId": "learn-github-ydb-platform-ydb",
     "contentHash": "ae476937641039d2295bbcf52484dbd0345eb0a7133e631a30aea0103212a146",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-5MGY",
+    "timestamp": "2026-11-21T14:27:40.930Z",
+    "repository": "Comfy-Org/Z-Image-Turbo",
+    "learningId": "learn-huggingface-comfy-org-z-image-turbo",
+    "contentHash": "141c759a5eb78bf21cf49890220c9c4aba09e8fa9481e5e87e7393aa9587fd5f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-5S6U",
+    "timestamp": "2026-11-21T14:27:48.342Z",
+    "repository": "envoyproxy/envoy",
+    "learningId": "learn-github-envoyproxy-envoy",
+    "contentHash": "8835edd0012966868e3013839da3a218cdb00de9107a2a15cda6e180af8c1507",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-5XHN",
+    "timestamp": "2026-11-21T14:27:55.211Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "d45ac296e6d790f70018e1cff3169af66de581ba569910d105cc747767ed1683",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

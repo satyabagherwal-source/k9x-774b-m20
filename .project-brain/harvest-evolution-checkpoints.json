@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T13:53:50.731Z",
+  "last_updated": "2026-11-21T14:28:01.461Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T07:42:07.590Z",
@@ -228,9 +228,9 @@
       "staged_for_review": 0
     },
     "envoyproxy-envoy-learnings.md": {
-      "processed_at": "2026-11-19T05:47:17.180Z",
+      "processed_at": "2026-11-21T14:27:59.325Z",
       "promoted_canonical": 0,
-      "staged_for_review": 2
+      "staged_for_review": 1
     },
     "sxyazi-yazi-learnings.md": {
       "processed_at": "2026-11-13T05:23:46.615Z",
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-21T06:28:10.838Z",
+      "processed_at": "2026-11-21T14:28:00.297Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1428,7 +1428,7 @@
       "staged_for_review": 1
     },
     "hf-comfy-org-z-image-turbo-learnings.md": {
-      "processed_at": "2026-11-21T08:54:42.129Z",
+      "processed_at": "2026-11-21T14:27:58.807Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3668,7 +3668,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2811,
+  "total_dossiers_evaluated": 2814,
   "total_canonical_promoted": 447,
-  "total_staged_for_review": 2164
+  "total_staged_for_review": 2166
 }

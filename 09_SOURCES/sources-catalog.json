@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "f0b8dbab",
+    "sourceVersion": "d2feb4ac",
     "license": "Apache-2.0",
-    "contentHash": "b8ec76bf10181508f5a209e8748512e5628ceb57c745df033e4bb7d6919b6134",
-    "lastHarvestedAt": "2026-11-21T11:55:35.192Z",
+    "contentHash": "d45ac296e6d790f70018e1cff3169af66de581ba569910d105cc747767ed1683",
+    "lastHarvestedAt": "2026-11-21T14:27:55.216Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "205e84d0",
+    "sourceVersion": "a50230f0",
     "license": "Apache-2.0",
-    "contentHash": "449e090d0167cf85ce9e9101f3d90347646744a04ed0713f0df03dc24db09f94",
-    "lastHarvestedAt": "2026-11-20T09:59:10.586Z",
+    "contentHash": "8835edd0012966868e3013839da3a218cdb00de9107a2a15cda6e180af8c1507",
+    "lastHarvestedAt": "2026-11-21T14:27:48.346Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {
@@ -10545,8 +10545,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
     "sourceVersion": "hf-comfy-org-z-image-turbo",
     "license": "Open-Source",
-    "contentHash": "240ee92228278b5df32c0057675371894fd7ac409e8ec99166de907d6ed82e1d",
-    "lastHarvestedAt": "2026-11-17T17:02:24.427Z",
+    "contentHash": "141c759a5eb78bf21cf49890220c9c4aba09e8fa9481e5e87e7393aa9587fd5f",
+    "lastHarvestedAt": "2026-11-21T14:27:40.935Z",
     "learningId": "learn-huggingface-comfy-org-z-image-turbo"
   },
   "hf-unsloth-flint-gguf": {

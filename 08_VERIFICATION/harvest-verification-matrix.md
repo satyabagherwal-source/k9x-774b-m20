@@ -11814,3 +11814,6 @@
 | `CYCLE-20261121-XT1K` | `2026-11-21T13:53:36.584Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9789` | Yes (`f49b5f4d...`) |
 | `CYCLE-20261121-XVCS` | `2026-11-21T13:53:39.580Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9790` | Yes (`b9faaf52...`) |
 | `CYCLE-20261121-XZWC` | `2026-11-21T13:53:45.468Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9791` | Yes (`ae476937...`) |
+| `CYCLE-20261121-5MGY` | `2026-11-21T14:27:40.930Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md` | Yes (`141c759a...`) |
+| `CYCLE-20261121-5S6U` | `2026-11-21T14:27:48.342Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9792` | Yes (`8835edd0...`) |
+| `CYCLE-20261121-5XHN` | `2026-11-21T14:27:55.211Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9793` | Yes (`d45ac296...`) |

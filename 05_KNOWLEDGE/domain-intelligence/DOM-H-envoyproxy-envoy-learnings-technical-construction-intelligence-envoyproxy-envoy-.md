@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T05:47:17.575Z",
+  "timestamp": "2026-11-21T14:27:59.522Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-envoyproxy-envoy-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [envoyproxy-envoy-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T05:47:17.575Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T14:27:59.522Z`  
 > **Learning ID**: `LEARN-EVO-envoyproxy-envoy-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 75%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), B (Product Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 73%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from envoyproxy-envoy-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `6d870913`  
+> **Source Version**: `a50230f0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T05:42:21.805Z  
+> **Timestamp**: 2026-11-21T14:27:47.144Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T05:42:21.661Z  
+> **Harvest Timestamp**: 2026-11-21T14:27:47.138Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29260 stars
+- **Stars / Engagement**: 29275 stars
 
 ---
 
@@ -1075,419 +1075,430 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `85f81a08` (2026-11-18)
-**Commit Message**: deps/ci: Fix release dates when a module is updated (#49408)
+### Incident Patch 1: `8969fd53` (2026-11-21)
+**Commit Message**: admin: yield to the event loop between response chunks (#49420)
 
-The dependency bot (`ci/dependency/update.sh`) bumps a `bazel_dep` and
-leaves the `release_date` of the dependency in `deps.yaml` as it was.
-The hook that updated it for the WORKSPACE updater went with WORKSPACE
-(#47217), so every bump since has had a stale date (#49388 needed six
-fixed by hand), and now that the release dates check is back (#48705)
-the `deps` precheck of a bump fails on it.
+Commit Message: admin: yield to the event loop between response chunks
 
-This adds `//tools/dependency:release_dates` (`release_date_updater`,
-envoyproxy/toolshed#5626 and envoyproxy/toolshed#5630), which fixes the
-dates in `bazel/deps.yaml` and `api/bazel/deps.yaml` with the ones that
-the checker (`//tools/dependency:check`) looks up:
+Additional Description:
+The admin server runs on the main thread. `AdminFilter::onComplete()`
+called `nextChunk()` in a loop and encoded every chunk without returning
+to the event loop, so a large chunked response such as `/stats` (which
+`StatsRequest` already splits into ~2MB chunks) blocked other main
+thread work, like health checks and xDS updates, until the whole
+response was produced.
 
-```console
-$ bazel run //tools/dependency:release_dates -- gperftools
-Checking the release dates of: gperftools
-bazel/deps.yaml: gperftools 2026-03-06 -> 2026-10-21
+With this change `AdminFilter` encodes one chunk and schedules the next
+one with a `SchedulableCallback` on the next event loop iteration. If
+the stream is reset or destroyed in between, the remaining chunks are
+dropped. Handlers that produce their response in a single chunk behave
+as before.
+
+This is split out of #49351, which builds on it to render
+`/stats/prometheus` in chunks as well (Prometheus output is still a
+single chunk on main, so it does not benefit from this change alone).
+Flow control with watermarks (#31087) is not part of this change.
+
+Risk Level: Low
+Testing: unit tests in `admin_filter_test`
+Docs Changes: N/A
+Release Notes: added
+Runtime guard
+
+**File**: `changelogs/current/new_features/admin__yield-between-response-chunks.rst` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++Added the runtime guard ``envoy.reloadable_features.admin_filter_yield_between_chunks``, default
++``false``. When set to ``true``, the admin server returns to the event loop between the chunks of a
++large response, such as ``/stats``, so a big response no longer blocks other work on the main
++thread, like health checks.
 ```
 
-`deps.update` (the bot's `bazel` task) and `registry` with named modules
-(its `registry` task) now run it for the modules they update. Only those
-are looked up, as each is a request to GitHub, a module can be named as
-the module (`msgpack-c`) where its metadata key differs (`msgpack-cxx`),
-and a module wi
-
-**File**: `ci/README.md` (modified, +1/-1)
+**File**: `source/common/runtime/runtime_features.cc` (modified, +3/-0)
 ```diff
-@@ -223,7 +223,7 @@ The `./ci/run_envoy_docker.sh './ci/do_ci.sh <TARGET>'` targets are:
- * `modules.version` &mdash; set the `module()` version, and the `bazel_dep` versions of in-repo modules (`envoy`, `envoy_api`, `envoy-docs`, `envoy_mobile`, `envoy_build_config`), in all `MODULE.bazel` files to match `VERSION.txt`, then regenerate the lockfiles as `lockfiles` does.
- * `deps` &mdash; validate dependency metadata ordering, reachability, graph structure, the pinned bazel-registry commit, lockfile sync, release dates/releases (requires `GITHUB_TOKEN`), and dependabot configuration.
- * `deps.report` &mdash; run the per-workspace bzlmod dependency report targets and print the current/latest version status for each workspace.
--* `deps.update <name[=version]>` &mdash; run the per-workspace bzlmod dependency updater for the requested module, skipping workspaces where that dependency is not declared, then regenerate the lockfiles as `lockfiles` does.
-+* `deps.update <name[=version]>` &mdash; run the per-workspace bzlmod dependency updater for the requested module, skipping workspaces where that dependency is not declared, then regenerate the lockfiles as `lockfiles` does, and fix the release date of the module in the dependency metadata (requires `GITHUB_TOKEN`).
- * `registry` &mdash; run the per-workspace Bazel registry updater targets for `.bazelrc`, `api/.bazelrc`, and `bazel/tests/external/.bazelrc`, then regenerate the lockfiles as `lockfiles` does. Set `ENVOY_REGISTRY_HASH` to request a specific hash, and set `ENVOY_REGISTRY_ALLOW_UNSAFE` to allow non-ancestor pins for testing.
- * `registry.check` &mdash; run the per-workspace Bazel registry status targets, verify they all report the same pinned hash, and require a tagged registry pin for non-`-dev` releases.
- * `docs`&mdash; build documentation tree in `generated/docs`.
-```
-
-**File**: `ci/bazel_fun.sh` (modified, +14/-0)
-```diff
-@@ -331,6 +331,16 @@ deps_update() {
-         run_in_nested_mods _deps_update_mod "$dep"
-     done
-     lockfiles_generate
-+    deps_release_dates "$@"
-+}
-+
-+# Fix the release dates in the dependency metadata (`deps.yaml`) of the given `name[=version]`
-+# modules, which the module updater does not touch. Only these are looked up (it is a request to
-+# GitHub for each), and a module with no metadata is skipped.
-+deps_release_dates() {
-+    echo "Update release dates ..."
-+    bazel run "${BAZEL_BUILD_OPTIONS[@]}" //tools/dependency:release_dates \
-+          -- --skip-unknown "${@%%=*}"
- }
+@@ -323,6 +323,9 @@ FALSE_RUNTIME_GUARD(envoy_reloadable_features_async_client_downstream_flow_contr
+ FALSE_RUNTIME_GUARD(envoy_reloadable_features_disable_quic_rx_queue_overflow_socket_options);
+ // TODO(abeyad): Flip to true after prod testing.
+ FALSE_RUNTIME_GUARD(envoy_reloadable_features_disable_quic_ip_packet_info_socket_options);
++// When enabled, the admin filter returns to the event loop between the chunks of a response.
++// TODO(wbpcode): flip to true after prod testing.
++FALSE_RUNTIME_GUARD(envoy_reloadable_features_admin_filter_yield_between_chunks);
  
- _deps_update_mod() {
-@@ -388,6 +398,10 @@ registry_update() {
-         registry_modules_update "${updates[@]}"
-     fi
-     lockfiles_generate
-+    # With `all` the updated modules are not known here: their dates are left to the `deps` check.
-+    if (( ${#updates[@]} )) && [[ "${updates[0]}" != "all" && "${updates[0]}" != "*" ]]; then
-+        deps_release_dates "${updates[@]}"
-+    fi
- }
- 
- registry_modules_update() {
+ // A flag to set the maximum TLS version for google_grpc client to TLS1.2, when needed for
+ // compliance restrictions.
 ```
 
-**File**: `tools/dependency/BUILD` (modified, +14/-0)
+**File**: `source/server/admin/BUILD` (modified, +2/-0)
 ```diff
-@@ -2,6 +2,7 @@ load("@base_pip3//:requirements.bzl", "requirement")
- load("@bazel_skylib//rules:build_test.bzl", "build_test")
- load("@envoy_repo//:path.bzl", "PATH")
- load("@envoy_toolshed//:utils.bzl", "json_merge")
-+load("@envoy_toolshed//dependency:macros.bzl", "release_date_updater")
- load("@envoy_toolshed//dependency:reachability.bzl", "dependency_reachability")
- load("@envoy_toolshed//dependency/cve:macros.bzl", "cve_scan")
- load("@rules_python//python:defs.bzl", "py_test")
-@@ -98,6 +99,19 @@ py_console_script_binary(
-     deps = [requirement("orjson")],
+@@ -123,12 +123,14 @@ envoy_cc_library(
+     hdrs = ["admin_filter.h"],
+     deps = [
+         ":utils_lib",
++        "//envoy/event:schedulable_cb_interface",
+         "//envoy/http:filter_interface",
+         "//envoy/server:admin_interface",
+         "//source/common/buffer:buffer_lib",
+         "//source/common/common:minimal_logger_lib",
+         "//source/common/http:codes_lib",
+         "//source/common/http:header_map_lib",
++        "//source/common/runtime:runtime_features_lib",
+         "//source/extensions/filters/http/common:pass_through_filter_lib",
+     ],
  )
- 
-+# Fix the release dates of dependencies in the metadata (`bazel/deps.yaml`, `api/bazel/deps.yaml`),
-+# with the dates that `:check` looks up for them. Requires `GITHUB_TOKEN`.
-+#   bazel run //tools/dependency:release_dates -- <name>...
-+release_date_updater(
-+    name = "release_dates",
-+    check = ":check",
-+    dependencies = ":check-dependencies",
-+    metadata = [
-+        "//bazel:deps.yaml",
-+        "@envoy_api//bazel:deps.yaml",
-+    ],
-+)
-+
- py_console_script_binary(
-     name = "dependatool",
-     args = ["--path=%s" % PATH],
 ```
 
----
-
-### Incident Patch 2: `0403b537` (2026-11-19)
-**Commit Message**: windows: fix compile failure in stderr_writer (#49340)
-
-#49207 introduced a unix write to stderr_writer. This adds a win32
-branch to fix compilation on it
-
-Example failure:
-https://github.com/curioswitch/py-envoy-server/actions/runs/43867024431/job/133298099621
-
-@yanavlasov BTW will you add daily sync / builds to envoy-windows repo?
-
-Risk Level: low
-Testing: none
-Docs Changes: 
-Release Notes:
-Platform Specific Features:
-[Optional Runtime guard:]
-[Optional Fixes #Issue]
-[Optional Fixes commit #PR or SHA]
-[Optional Deprecated:]
-[Optional [API
-Considerations](https://github.com/envoyproxy/envoy/blob/main/api/review_checklist.md):]
-
-Signed-off-by: Anuraag Agrawal <[REDACTED_EMAIL]>
-
-**File**: `source/common/common/stderr_writer.h` (modified, +19/-1)
+**File**: `source/server/admin/admin_filter.cc` (modified, +52/-11)
 ```diff
-@@ -1,6 +1,10 @@
- #pragma once
+@@ -1,11 +1,14 @@
+ #include "source/server/admin/admin_filter.h"
  
-+#ifdef WIN32
-+#include <io.h>
-+#else
- #include <unistd.h>
-+#endif
- 
- #include <algorithm>
- #include <cerrno>
-@@ -10,6 +14,20 @@
++#include "source/common/runtime/runtime_features.h"
+ #include "source/server/admin/utils.h"
  
  namespace Envoy {
+ namespace Server {
  
-+namespace StderrWriterInternal {
-+
-+// Raw write to the stderr file descriptor, bypassing stdio buffering.
-+inline ptrdiff_t writeRaw(const char* data, size_t size) {
-+#ifdef WIN32
-+  // `size` never exceeds the stack buffer in `writeStderr()`, so it fits in an unsigned int.
-+  return ::_write(2, data, static_cast<unsigned int>(size));
-+#else
-+  return ::write(STDERR_FILENO, data, size);
-+#endif
+-AdminFilter::AdminFilter(const Admin& admin) : admin_(admin) {}
++AdminFilter::AdminFilter(const Admin& admin)
++    : admin_(admin), yield_between_chunks_(Runtime::runtimeFeatureEnabled(
++                         "envoy.reloadable_features.admin_filter_yield_between_chunks")) {}
+ 
+ Http::FilterHeadersStatus AdminFilter::decodeHeaders(Http::RequestHeaderMap& headers,
+                                                      bool end_stream) {
+@@ -37,9 +40,12 @@ Http::FilterTrailersStatus AdminFilter::decodeTrailers(Http::RequestTrailerMap&)
+ }
+ 
+ void AdminFilter::onDestroy() {
++  destroyed_ = true;
++  next_chunk_cb_.reset();
+   for (const auto& callback : on_destroy_callbacks_) {
+     callback();
+   }
++  request_.reset();
+ }
+ 
+ void AdminFilter::addOnDestroyCallback(std::function<void()> cb) {
+@@ -93,17 +99,52 @@ void AdminFilter::onComplete() {
+                                     StreamInfo::ResponseCodeDetails::get().AdminFilterResponse);
+ 
+   // TODO(#31087): use high/lower watermarks to apply flow-control to the admin http port.
+-  bool more_data;
+-  do {
+-    Buffer::OwnedImpl response;
+-    more_data = handler->nextChunk(response);
+-    bool end_stream = end_stream_on_complete_ && !more_data;
+-    ENVOY_LOG_MISC(debug, "nextChunk: response.length={} more_data={} end_stream={}",
+-                   response.length(), more_data, end_stream);
+-    if (response.length() > 0 || end_stream) {
+-      decoder_callbacks_->encodeData(response, end_stream);
++  if (destroyed_) {
++    return;
++  }
++  request_ = std::move(handler);
++  if (!yield_between_chunks_) {
++    while (encodeNextChunk()) {
+     }
+-  } while (more_data);
++    return;
++  }
++  if (encodeNextChunk()) {
++    scheduleNextChunk();
++  }
 +}
 +
-+} // namespace StderrWriterInternal
++bool AdminFilter::encodeNextChunk() {
++  ASSERT(request_ != nullptr);
++  Buffer::OwnedImpl response;
++  const bool more_data = request_->nextChunk(response);
++  const bool end_stream = end_stream_on_complete_ && !more_data;
++  ENVOY_LOG_MISC(debug, "nextChunk: response.length={} more_data={} end_stream={}",
++                 response.length(), more_data, end_stream);
++  if (response.length() > 0 || end_stream) {
++    // This may complete or reset the stream, which calls onDestroy().
++    decoder_callbacks_->encodeData(response, end_stream);
++  }
++  if (destroyed_) {
++    return false;
++  }
++  if (!more_data) {
++    request_.reset();
++    return false;
++  }
++  return true;
++}
 +
- /**
-  * Format into a buffer on the stack and write it to stderr with write(2), for use where
-  * neither the logger nor C++ streams can be relied on, in particular in a fatal signal handler.
-@@ -24,7 +42,7 @@ void writeStderr(const absl::FormatSpec<Args...>& format, const Args&... args) {
-   size_t remaining = size > 0 ? std::min<size_t>(size, sizeof(buffer) - 1) : 0;
-   // Short and interrupted writes are continued. There is nowhere to report any other failure.
-   while (remaining > 0) {
--    const ssize_t rc = ::write(STDERR_FILENO, data, remaining);
-+    const ptrdiff_t rc = StderrWriterInternal::writeRaw(data, remaining);
-     if (rc > 0) {
-       data += rc;
-       remaining -= static_cast<size_t>(rc);
++void AdminFilter::scheduleNextChunk() {
++  if (next_chunk_cb_ == nullptr) {
++    next_chunk_cb_ = decoder_callbacks_->dispatcher().createSchedulableCallback([this]() {
++      if (encodeNextChunk()) {
++        scheduleNextChunk();
++      }
++    });
++  }
++  // Yield to the event loop before the next chunk, so other main thread work like health checks
++  // and xDS updates can run in between.
++  next_chunk_cb_->scheduleCallbackNextIteration();
+ }
+ 
+ } // namespace Server
+```
+
+**File**: `source/server/admin/admin_filter.h` (modified, +21/-0)
+```diff
+@@ -3,6 +3,7 @@
+ #include <functional>
+ #include <list>
+ 
++#include "envoy/event/schedulable_cb.h"
+ #include "envoy/http/filter.h"
+ #include "envoy/server/admin.h"
+ 
+@@ -64,10 +65,30 @@ class AdminFilter : public Http::PassThroughFilter,
+    * Called when an admin request has been completely received.
+    */
+   void onComplete();
++
++  /**
++   * Encodes the next chunk of request_.
++   * @return true if there are more chunks to encode and the stream is still alive.
++   */
++  bool encodeNextChunk();
++
++  /**
++   * Schedules encodeNextChunk() on the next event loop iteration, so a large response does not
++   * block the main thread.
++   */
++  void scheduleNextChunk();
++
+   const Admin& admin_;
++  // Latched at construction so the runtime guard is not re-read for every request chunk.
++  const bool yield_between_chunks_;
+   Http::RequestHeaderMap* request_headers_{};
+   std::list<std::function<void()>> on_destroy_callbacks_;
+   bool end_stream_on_complete_ = true;
++
++  // The request whose response is still being streamed, if any.
++  Admin::RequestPtr request_;
++  Event::SchedulableCallbackPtr next_chunk_cb_;
++  bool destroyed_{false};
+ };
+ 
+ } // namespace Server
+```
+
+**File**: `test/server/admin/BUILD` (modified, +2/-0)
+```diff
+@@ -100,9 +100,11 @@ envoy_cc_test(
+     deps = [
+         "//source/common/buffer:buffer_lib",
+         "//source/server/admin:admin_lib",
++        "//test/mocks/event:event_mocks",
+         "//test/mocks/http:http_mocks",
+         "//test/mocks/server:admin_mocks",
+         "//test/test_common:environment_lib",
++        "//test/test_common:test_runtime_lib",
+         "//test/test_common:utility_lib",
+     ],
+ )
+```
+
+**File**: `test/server/admin/admin_filter_test.cc` (modified, +126/-2)
+```diff
+@@ -2,16 +2,17 @@
+ #include "source/server/admin/admin.h"
+ #include "source/server/admin/admin_filter.h"
+ 
++#include "test/mocks/event/mocks.h"
+ #include "test/mocks/http/mocks.h"
+ #include "test/mocks/server/admin.h"
+ #include "test/test_common/environment.h"
++#include "test/test_common/test_runtime.h"
+ #include "test/test_common/utility.h"
+ 
+ #include "gmock/gmock.h"
+ #include "gtest/gtest.h"
+ 
+ using testing::_;
+-using testing::ByMove;
+ using testing::InSequence;
+ using testing::NiceMock;
+ using testing::Return;
+@@ -22,7 +23,9 @@ namespace Server {
+ class AdminFilterTest : public testing::TestWithParam<Network::Address::IpVersion> {
+ public:
+   AdminFilterTest() : filter_(admin_), request_headers_{{":path", "/"}} {
+-    EXPECT_CALL(admin_, makeRequest(_)).WillOnce(Return(ByMove(adminHandlerCallback())));
++    ON_CALL(admin_, makeRequest(_)).WillByDefault([](AdminStream&) {
++      return adminHandlerCallback();
++    });
+     filter_.setDecoderFilterCallbacks(callbacks_);
+   }
+ 
+@@ -76,5 +79,126 @@ TEST_P(AdminFilterTest, Trailers) {
+   EXPECT_EQ(Http::FilterTrailersStatus::StopIteration, filter_.decodeTrailers(request_trailers));
+ }
+ 
++// Emits chunks "0", "1", ... up to num_chunks.
++class CountingRequest : public Admin::Request {
++public:
++  CountingRequest(uint32_t num_chunks, bool& destroyed)
++      : num_chunks_(num_chunks), destroyed_(destroyed) {}
++  ~CountingRequest() override { destroyed_ = true; }
++
++  Http::Code start(Http::ResponseHeaderMap&) override { return Http::Code::OK; }
++  bool nextChunk(Buffer::Instance& response) override {
++    response.add(absl::StrCat(next_));
++    return ++next_ < num_chunks_;
++  }
++
++private:
++  const uint32_t num_chunks_;
++  bool& destroyed_;
++  uint32_t next_{0};
++};
++
++class AdminFilterChunkedTest : public AdminFilterTest {
++public:
++  void expectCountingRequest(uint32_t num_chunks) {
++    EXPECT_CALL(admin_, makeRequest(_))
++        .WillOnce([this, num_chunks](AdminStream&) -> Admin::RequestPtr {
++          return std::make_unique<CountingRequest>(num_chunks, request_destroyed_);
++        });
++  }
++
++  void expectData(absl::string_view data, bool end_stream) {
++    EXPECT_CALL(callbacks_, encodeData(BufferString(std::string(data)), end_stream));
++  }
++
++  // The guard is latched when the filter is created.
++  AdminFilter& createYieldingFilter() {
++    scoped_runtime_.mergeValues(
++        {{"envoy.reloadable_features.admin_filter_yield_between_chunks", "true"}});
++    yielding_filter_ = std::make_unique<AdminFilter>(admin_);
++    yielding_filter_->setDecoderFilterCallbacks(callbacks_);
++    return *yielding_filter_;
++  }
++
++  TestScopedRuntime scoped_runtime_;
++  std::unique_ptr<AdminFilter> yielding_filter_;
++  bool request_destroyed_{false};
++};
++
++INSTANTIATE_TEST_SUITE_P(IpVersions, AdminFilterChunkedTest,
++                         testing::ValuesIn(TestEnvironment::getIpVersionsForTest()),
++                         TestUtility::ipTestParamsToString);
++
++TEST_P(AdminFilterChunkedTest, YieldsToEventLoopBetweenChunks) {
++  AdminFilter& filter = createYieldingFilter();
++  expectCountingRequest(3);
++  auto* next_chunk_cb = new NiceMock<Event::MockSchedulableCallback>(&callbacks_.dispatcher_);
++
++  EXPECT_CALL(callbacks_, encodeHeaders_(_, false));
++  expectData("0", false);
++  filter.decodeHeaders(request_headers_, true);
++  EXPECT_TRUE(next_chunk_cb->enabled_);
++
++  expectData("1", false);
++  next_chunk_cb->invokeCallback();
++  EXPECT_TRUE(next_chunk_cb->enabled_);
++
++  expectData("2", true);
++  next_chunk_cb->invokeCallback();
++  EXPECT_FALSE(next_chunk_cb->enabled_);
++  EXPECT_TRUE(request_destroyed_);
++  filter.onDestroy();
++}
++
++TEST_P(AdminFilterChunkedTest, DestroyCancelsRemainingChunks) {
++  AdminFilter& filter = createYieldingFilter();
++  expectCountingRequest(3);
++  testing::MockFunction<void()> cb_destroyed;
++  new NiceMock<Event::MockSchedulableCallback>(&callbacks_.dispatcher_, &cb_destroyed);
++
++  expectData("0", false);
++  filter.decodeHeaders(request_headers_, true);
++  EXPECT_FALSE(request_destroyed_);
++
++  EXPECT_CALL(cb_destroyed, Call());
++  filter.onDestroy();
++  EXPECT_TRUE(request_destroyed_);
++}
++
++TEST_P(AdminFilterChunkedTest, ResetWhileEncodingStopsChunks) {
++  AdminFilter& filter = createYieldingFilter();
++  expectCountingRequest(3);
++  EXPECT_CALL(callbacks_.dispatcher_, createSchedulableCallback_(_)).Times(0);
++  // The stream is reset from under encodeData().
++  EXPECT_CALL(callbacks_, encodeData(_, false)).WillOnce([&filter](Buffer::Instance&, bool) {
++    filter.onDestroy();
++  });
++  filter.decodeHeaders(request_headers_, true);
++  EXPECT_TRUE(request_destroyed_);
++}
++
++TEST_P(AdminFilterChunkedTest, AllChunksAtOnceByDefault) {
++  expectCountingRequest(3);
++  EXPECT_CALL(callbacks_.dispatcher_, createSchedulableCallback_(_)).Times(0);
++
++  InSequence s;
++  expectData("0", false);
++  expectData("1", false);
++  expectData("2", true);
++  filter_.decodeHeaders(request_headers_, true);
++  EXPECT_TRUE(request_destroyed_);
++  filte
 ```
 
 ---
 
-### Incident Patch 3: `1375fe7a` (2026-11-18)
-**Commit Message**: release/ci: Remove the Docker and signing builds the release build replaced (#49356)
+### Incident Patch 2: `f7b8ce9a` (2026-11-21)
+**Commit Message**: docs: fix propogated typo in headers and flow control docs (#49505)
 
-The release container images and packages are built with Bazel, and the
-release is signed, in the release build
-(`release.publish`/`release.multiarch`, #49259, #49331). The builds that
-did those before only run for the release branches without
-`release-publish`, with those branches' own `ci/do_ci.sh`, so the
-workflows are unchanged.
+Commit Message: docs: fix propogated typo in headers and flow control
+docs
+Additional Description: Correct misspelled 'propogated' to 'propagated'
+across HTTP connection manager headers and flow control documentation.
+Risk Level: Low (documentation typo fix)
+Testing: N/A
+Docs Changes: Updated headers.rst and flow_control.rst
+Release Notes: N/A
+Fixes N/A
 
-Removed:
+Signed-off-by: sundeep8967 <[REDACTED_EMAIL]>
 
-- `distribution/docker/Dockerfile-envoy` and
-`distribution/docker/build.sh`, and the `docker` and `distribution`
-targets of `ci/do_ci.sh` (the Docker OCI and Packages jobs)
-- `ENVOY_OCI_DIR`, `ENVOY_DOCKER_SAVE_IMAGE` and `ENVOY_TARBALL_DIR`
-from the environment `ci/docker-compose.yml` passes through, which only
-those targets read
-- the `release.signed` target (the Sign packages job), and the signing
-of the packages tarballs it did: the `x64-packages`/`arm64-packages` and
-`signing-inputs` flags of `//distribution`, `multi_arch_debs_tarballs`,
-the extraction of the `.changes` from the tarballs
-(`distribution/changes.bzl`), and the `distribution/custom` files the
-job staged. `release.multiarch` signs the `.deb`s and `.changes` built
-in the same invocation, whi
-
-**File**: `.agents/threat_model/THREAT_MODEL.md` (modified, +2/-2)
+**File**: `docs/root/configuration/http/http_conn_man/headers.rst` (modified, +1/-1)
 ```diff
-@@ -56,7 +56,7 @@ The codebase is ~3k C++ source files plus ~113 vendored dependencies (BoringSSL,
- | Envoy Mobile upstream ingest | Envoy Mobile (iOS/Android client library) parses responses from arbitrary servers; trust model inverted — server is the attacker (`mobile/library/common/`) | malicious origin server → mobile app process | Mobile app process & on-device user data, Proxied request/response data |
- | Bazel dependency fetch | ~113 deps resolved via the Envoy Bazel registry, integrity-pinned in `MODULE.bazel.lock` (registry pinned at `.bazelrc`) | upstream maintainer / mirror → compiled binary | Release artifact integrity, Process & host integrity |
- | GitHub Actions CI pipeline | `pull_request_target` → `workflow_run` chain executes PR code; `trusted` flag computed in `_load.yml` gates secrets (`.github/workflows/_run.yml`) | external contributor → CI runner with org secrets | CI/release secrets, Release artifact integrity |
--| Release artifact publish | Docker push (no cosign, `--provenance=false`), GPG-signed tarballs, Sonatype/PyPI upload; PyPI action branch-pinned (`distribution/docker/build.sh`, `.github/workflows/mobile-release.yml`) | CI runner → public registries | Release artifact integrity |
-+| Release artifact publish | OCI images built with rules_oci (`//distribution/docker:images`) and pushed from CI; release and `.changes` GPG-signed in the release build (`ci/do_ci.sh release.multiarch`, `//distribution:signed`); Sonatype/PyPI upload; PyPI action branch-pinned (`.github/workflows/mobile-release.yml`) | CI runner → public registries | Release artifact integrity |
+@@ -16,7 +16,7 @@ is being received) as well as during encoding (when the response is being sent).
  
- ## 4. Threats
+ Envoy will always set the ``:scheme`` header while processing a request. It should always be available to filters, and should be forwarded upstream for HTTP/2 and HTTP/3, where :ref:`config_http_conn_man_headers_x-forwarded-proto` will be sent for HTTP/1.1.
  
-@@ -81,7 +81,7 @@ The codebase is ~3k C++ source files plus ~113 vendored dependencies (BoringSSL,
- | T18 | Request/response tampering and auth-verdict forgery via untrusted ext_proc / ext_authz side-call | adjacent_network | ext_proc / ext_authz responses | Proxied request/response data, AuthN/AuthZ verdicts, Internal trust headers | high | likely | partially_mitigated | `mutation_rules` allowlist (opt-in); `allowed_headers`/`disallowed_headers` on ext_authz (opt-in) | |
- | T27 | Resource exhaustion via unbounded ext_proc body mutation, header-set size, or stream hold-open | adjacent_network | ext_proc / ext_authz responses | Service availability | high | likely | partially_mitigated | `message_timeout`; per-message size limits (partial) | |
- | T16 | Fleet-wide crash or resource exhaustion via malformed / pathological xDS configuration | insider | xDS control-plane ingestion, Route matching & regex | Service availability, xDS configuration integrity | high | likely | partially_mitigated | PGV proto validation; config-rejection stats; RE2 (linear-time) for regex | a20c0ab8dd, 2bcebccc0d, CVE-2019-15225, CVE-2019-15226 |
--| T17 | Downstream consumer compromise via tampered OCI image (no signature / no SLSA provenance) | supply_chain | Release artifact publish | Release artifact integrity | high | possible | unmitigated | GPG on tarballs only; `--sbom=false --provenance=false` set; no cosign | |
-+| T17 | Downstream consumer compromise via tampered OCI image (no signature / no SLSA provenance) | supply_chain | Release artifact publish | Release artifact integrity | high | possible | unmitigated | GPG on tarballs only; images pushed with no signature or provenance attestation (no cosign) | |
- | T19 | Traffic redirection or filter-chain injection via compromised xDS management server | insider | xDS control-plane ingestion | xDS configuration integrity, Proxied request/response data, Internal upstream services | high | possible | risk_accepted | upstream threat model declares xDS transport trusted; mTLS to control plane | |
- | T20 | Build-time code injection via compromised upstream dependency tarball | supply_chain | Bazel dependency fetch | Release artifact integrity, Process & host integrity | high | rare | mitigated | all 113 deps SHA256-pinned; `tools/dependency/` validators; CPE tracking | |
- | T21 | Log injection / SIEM poisoning via unescaped attacker-controlled fields in access-log output | remote_unauth | Access-log formatter | Access logs & telemetry | medium | likely | partially_mitigated | `json_format` escaping; `JsonEscaper` (itself patched for OOB) | CVE-2024-45808, CVE-2026-26309 |
+-For HTTP/2, and HTTP/3, incoming ``:scheme`` headers are trusted and propogated through upstream.
++For HTTP/2, and HTTP/3, incoming ``:scheme`` headers are trusted and propagated through upstream.
+ For HTTP/1, the ``:scheme`` header will be set
+ 1) From the absolute URL if present and valid. An invalid (not "http" or "https") scheme, or an https scheme over an unencrypted connection will result in Envoy rejecting the request. This is the only scheme validation Envoy performs as it avoids a HTTP/1.1-specific privilege escalation attack for edge Envoys [1]_ which doesn't have a comparable vector for HTTP/2 and above [2]_.
+ 2) From the value of the :ref:`config_http_conn_man_headers_x-forwarded-proto` header after sanitization (to valid ``x-forwarded-proto`` from trusted downstreams, otherwise based on downstream encryption level).
 ```
 
-**File**: `.github/dependabot.yml` (modified, +0/-7)
+**File**: `docs/root/faq/configuration/flow_control.rst` (modified, +1/-1)
 ```diff
-@@ -47,13 +47,6 @@ updates:
-     interval: daily
-     time: "06:00"
+@@ -20,7 +20,7 @@ The listener limits apply to how much raw data will be read per read() call from
+ downstream, as well as how much data may be buffered in userspace between Envoy
+ and downstream.
  
--- package-ecosystem: "docker"
--  directory: "/distribution/docker"
--  assignees: ["phlax"]
--  schedule:
--    interval: daily
--    time: "06:00"
--
- - package-ecosystem: "github-actions"
-   directory: "/"
-   assignees: ["phlax"]
-```
-
-**File**: `.gitignore` (modified, +0/-1)
-```diff
-@@ -113,7 +113,6 @@ yarn-error.log*
- /devcontainer/devcontainer.env
- /docs/landing_source/.bundle
- /linux
--distribution/custom
- examples/single-page-app/xds/lds.yml
- examples/websocket/certs
- tools/dev/src
-```
-
-**File**: `MODULE.bazel` (modified, +4/-1)
-```diff
-@@ -638,10 +638,12 @@ use_repo(envoy_build_config_ext, "envoy_build_config")
- envoy_module_graph_ext = use_extension("//bazel:extensions.bzl", "envoy_module_graph_extension")
- use_repo(envoy_module_graph_ext, "envoy_mod_graph")
- 
--# Base images for the container images (`//distribution/docker`).
-+# Base images for the container images (`//distribution/docker`). Each digest is that of the tag in
-+# its `# tag:` comment, and is updated from it by `ci/dependency/release_images.sh`.
- oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
- oci.pull(
-     name = "distroless_base_nossl",
-+    # tag: nonroot
-     digest = "sha256:e6b0f82595aa1edde72c8054de7a9dca30f0f8f54820c37a167c0ddfc21c5c67",
-     image = "gcr.io/distroless/base-nossl-debian13",
-     platforms = [
-@@ -651,6 +653,7 @@ oci.pull(
- )
- oci.pull(
-     name = "ubuntu_base",
-+    # tag: 22.04
-     digest = "sha256:076e7bf82319619f28dd0aa9c02ab34b055ad37100395b4f49a2ffba04fb5e11",
-     image = "mirror.gcr.io/library/ubuntu",
-     platforms = [
-```
-
-**File**: `MODULE.bazel.lock` (modified, +3/-3)
-```diff
-@@ -931,7 +931,7 @@
-   "moduleExtensions": {
-     "//bazel:extensions.bzl%envoy_build_config_ext": {
-       "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-         "usagesDigest": "eA9F7Sp3VWzMPr64I4OqdYTS7aJ/vD1NCUzz0/uIPRU=",
-         "recordedInputs": [
-           "REPO_MAPPING:,bazel_skylib bazel_skylib+",
-@@ -951,7 +951,7 @@
-     },
-     "//bazel:extensions.bzl%envoy_module_graph_extension": {
-       "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-         "usagesDigest": "a20U+l72r//DsxddmI97juCc5OVovDKHTOodwyV6/14=",
-         "recordedInputs": [
-           "REPO_MAPPING:,bazel_skylib bazel_skylib+",
-@@ -973,7 +973,7 @@
-     },
-     "//bazel:extensions.bzl%envoy_repo_extension": {
-       "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-         "usagesDigest": "qNXh2UFb6L5FDqCDmXlJCEwkQwnTEu3pouMvLd9F+7c=",
-         "recordedInputs": [
-           "REPO_MAPPING:,bazel_skylib bazel_skylib+",
-```
-
-**File**: `bazel/repo.bzl` (modified, +0/-11)
-```diff
-@@ -265,17 +265,6 @@ py_console_script_binary(
-     data = [":envoy_repo.py"],
- )
- 
--py_console_script_binary(
--    name = "trigger",
--    args = [
--        "trigger",
--        PATH,
--    ],
--    pkg = "@base_pip3//envoy_base_utils",
--    script = "envoy.project",
--    data = [":envoy_repo.py"],
--)
--
- ''' % local_sysroot)
- 
- _envoy_repo = repository_rule(
-```
-
-**File**: `bazel/tests/codeql/MODULE.bazel.lock` (modified, +3/-3)
-```diff
-@@ -1268,7 +1268,7 @@
-     },
-     "@@envoy+//bazel:extensions.bzl%envoy_build_config_ext": {
-       "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-         "usagesDigest": "Er3syu+vTabKf6QNCuq+iOq29PoF5QEwbaOozyFkqt8=",
-         "recordedInputs": [
-           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
-@@ -1288,7 +1288,7 @@
-     },
-     "@@envoy+//bazel:extensions.bzl%envoy_module_graph_extension": {
-       "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-         "usagesDigest": "ymD/bnZhvue8QBxkA+Ac/m/a7viCmw83gRqefjG+JBc=",
-         "recordedInputs": [
-           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
-@@ -1310,7 +1310,7 @@
-     },
-     "@@envoy+//bazel:extensions.bzl%envoy_repo_extension": {
-       "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-         "usagesDigest": "FAw8Y3mQshR9sd1RHlAiDwpIEJGM2+PMZQFujBl5IUQ=",
-         "recordedInputs": [
-           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
-```
-
-**File**: `bazel/tests/external/MODULE.bazel.lock` (modified, +4/-4)
-```diff
-@@ -1281,7 +1281,7 @@
-     },
-     "@@envoy+//bazel:extensions.bzl%envoy_build_config_ext": {
-       "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-         "usagesDigest": "iA1seCCxL1JoTeQEGHUPSEc93vO3JA4pM8sK4sMMan4=",
-         "recordedInputs": [
-           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
-@@ -1301,7 +1301,7 @@
-     },
-     "@@envoy+//bazel:extensions.bzl%envoy_module_graph_extension": {
-       "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-         "usagesDigest": "ymD/bnZhvue8QBxkA+Ac/m/a7viCmw83gRqefjG+JBc=",
-         "recordedInputs": [
-           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
-@@ -1323,7 +1323,7 @@
-     },
-     "@@envoy+//bazel:extensions.bzl%envoy_repo_extension": {
-       "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-         "usagesDigest": "FAw8Y3mQshR9sd1RHlAiDwpIEJGM2+PMZQFujBl5IUQ=",
-         "recordedInputs": [
-           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
-@@ -1343,7 +1343,7 @@
-     },
-     "@@envoy+//bazel:extensions.bzl%envoy_toolchains_extension": {
-       "general": {
--        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
-+        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-         "usagesDigest": "PAKPVvO8cX+q6rOc94CBj2PuUR0CHcNuCfqfSSrj7Vs=",
-         "recordedInputs": [
-           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
+-The listener limits are also propogated to the HttpConnectionManager, and applied on a per-stream
++The listener limits are also propagated to the HttpConnectionManager, and applied on a per-stream
+ basis to HTTP/1.1 L7 buffers described below. As such they limit the size of HTTP/1 requests and
+ response bodies that can be buffered. For HTTP/2 and HTTP/3, as many streams can be multiplexed over one
+ connection, the L7 and L4 buffer limits can be tuned separately, and the configuration option
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49411** (2026-11-18): deps: Bump `bazel-registry` -> d7b2089 (+envoy_toolshed) (@dependency-envoy[bot])
-- **PR #49408** (2026-11-18): deps/ci: Fix release dates when a module is updated (@phlax)
-- **PR #49407** (closed): deps: Bump `bazel-registry` -> 2d6df3f (+envoy_toolshed) (@dependency-envoy[bot])
-- **PR #49406** (2026-11-18): [bp/v1.39] Adding adding injectHeadersToFilterChain() API to send headers (#47475) (@jwendell)
-- **PR #49405** (2026-11-18): [bp/v1.38] Adding adding injectHeadersToFilterChain() API to send headers (#47475) (@jwendell)
-- **PR #49404** (2026-11-18): [bp/v1.37] Adding adding injectHeadersToFilterChain() API to send headers (#47475) (@jwendell)
+- **PR #49508** (2026-11-20): [bp/1.37] test/ext_proc: Fix spinning loop (and hang) in serverReceiveBodyDuplexStreamed (#44583) (@phlax)
+- **PR #49507** (2026-11-20): deps: Bump `bazel-registry` -> d72a252 (+envoy-examples) (@dependency-envoy[bot])
+- **PR #49505** (2026-11-21): docs: fix propogated typo in headers and flow control docs (@sundeep8967)
+- **PR #49494** (2026-11-20): ai_protocol_manager: move watermark echo suppression to FilterChainBridge (@paul-r-gall)
+- **PR #49493** (2026-11-20): ci: Remove the docker-ci workflow input (@phlax)
+- **PR #49490** (2026-11-20): api: Scope the Copilot API review instructions to api/ (@phlax)
 
 ---
 
@@ -1507,31 +1518,34 @@ in the same invocation, whi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps/ci: Fix release dates when a module is updated
+## X. admin: yield to the event loop between response chunks
 
 **RULE**:
-When implementing operations in `ci/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelogs/current/new_features/admin__yield-between-response-chunks.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `85f81a08`: deps/ci: Fix release dates when a module is updated. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8969fd53`: admin: yield to the event loop between response chunks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/README.md`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/new_features/admin__yield-between-response-chunks.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-* `deps.update <name[=version]>` &mdash; run the per-workspace bzlmod dependency updater for the requested module, skipping workspaces where that dependency is not declared, then regenerate the lockfiles as `lockfiles` does, and fix the release date of the module in the dependency metadata (requires `GITHUB_TOKEN`).
+Added the runtime guard ``envoy.reloadable_features.admin_filter_yield_between_chunks``, default
+``false``. When set to ``true``, the admin server returns to the event loop between the chunks of a
+large response, such as ``/stats``, so a big response no longer blocks other work on the main
+thread, like health checks.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-* `deps.update <name[=version]>` &mdash; run the per-workspace bzlmod dependency updater for the requested module, skipping workspaces where that dependency is not declared, then regenerate the lockfiles as `lockfiles` does.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `85f81a08` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8969fd53` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

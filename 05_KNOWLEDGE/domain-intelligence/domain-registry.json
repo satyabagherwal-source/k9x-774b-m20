@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T13:53:50.417Z",
+  "last_updated": "2026-11-21T14:28:01.072Z",
   "total_records": 2252,
   "domains": {
     "A": {
@@ -10704,8 +10704,8 @@
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "repository": "envoyproxy/envoy",
-      "content_hash": "c7771ba83c754e2224caec3106041df6177dacb5c5870969332a32ea7ed3517e",
-      "created_at": "2026-11-20T09:59:11.035Z"
+      "content_hash": "1c00bf56faa04f73a3d4274fe74a5c4883f893a6945cd8f47da9ee8426cd5a54",
+      "created_at": "2026-11-21T14:27:48.809Z"
     },
     "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants",
@@ -10824,8 +10824,8 @@
       "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-learnings-technical-construction-intelligence-envoyproxy-envoy-.md",
       "repository": "envoyproxy-envoy-learnings",
-      "content_hash": "c559be1bcb506a40b992fff2247e054f4284202c26d101cc2dc08cf4b2e9fcc4",
-      "created_at": "2026-11-19T05:47:17.835Z"
+      "content_hash": "53e563ac3731ee9d3a1edc0f88eb1e5e66941d5f38c846a96fb45a780a277766",
+      "created_at": "2026-11-21T14:27:59.877Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants",
@@ -15331,8 +15331,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "9dbcf70604eebe6d88ab77b8625f3e70822e8a2d196c79992306bec578e5e9e3",
-      "created_at": "2026-11-21T11:55:35.545Z"
+      "content_hash": "24ccd7371041618acdd008d9d1e7c6f747c768c5b21591a885b55b9ce28c9d5b",
+      "created_at": "2026-11-21T14:27:55.687Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15781,8 +15781,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "bfcd772c11e12c796341a02c9f694e4b67c854739daaef40e4d69eaa44cb0ba9",
-      "created_at": "2026-11-21T06:28:11.345Z"
+      "content_hash": "9fb691dc5eb22db2f700e55e9b0d52832a1dea5793cf53f02bf4fdb585eabcba",
+      "created_at": "2026-11-21T14:28:01.072Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -27864,10 +27864,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-z-image-turbo-core-invariants",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: Comfy-Org/Z-Image-Turbo Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z_image_turbo-research-knowledge-intelligence-comfy-org-z-image-tur.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z-image-turbo-research-knowledge-intelligence-comfy-org-z-image-tur.md",
       "repository": "Comfy-Org/Z-Image-Turbo",
-      "content_hash": "e00f57206aa14b4d73e010e66fec55511b929053690fd962ccb462b5f3c3af0f",
-      "created_at": "2026-11-21T08:54:39.197Z"
+      "content_hash": "65c9458462c1a5d12426f3e4f5af340814fbfd9f97ca3235b2bd2ddd7cb06801",
+      "created_at": "2026-11-21T14:27:41.195Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z-image-turbo-learnings-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z-image-turbo-learnings-core-invari",
@@ -27875,8 +27875,8 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-z-image-turbo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z-image-turbo-learnings-research-knowledge-intelligence-hf-comfy-or.md",
       "repository": "hf-comfy-org-z-image-turbo-learnings",
-      "content_hash": "22d6d2041bd13f42804b88f1f3b5bdd6c9ce9899a8c2ec9ffba00960c0b9b1db",
-      "created_at": "2026-11-21T08:54:42.399Z"
+      "content_hash": "2aece823c335e6a7f09a5a4bb5e2e38abc4cd1e52cb3cc519f0ad5bd21131086",
+      "created_at": "2026-11-21T14:27:59.082Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nv",

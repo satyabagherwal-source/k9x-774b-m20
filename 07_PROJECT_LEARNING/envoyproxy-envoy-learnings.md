@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `205e84d0`  
+> **Source Version**: `a50230f0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T09:59:09.368Z  
+> **Timestamp**: 2026-11-21T14:27:47.144Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T09:59:09.362Z  
+> **Harvest Timestamp**: 2026-11-21T14:27:47.138Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29271 stars
+- **Stars / Engagement**: 29275 stars
 
 ---
 
@@ -1047,616 +1047,430 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `86f73b92` (2026-11-20)
-**Commit Message**: docs: fix the description of --reject-unknown-dynamic-fields (#49484)
+### Incident Patch 1: `8969fd53` (2026-11-21)
+**Commit Message**: admin: yield to the event loop between response chunks (#49420)
 
-<!--
-!!!ATTENTION!!!
+Commit Message: admin: yield to the event loop between response chunks
 
-If you are fixing **any** crash or **any** potential security issue,
-**do not
-open a pull request**.
+Additional Description:
+The admin server runs on the main thread. `AdminFilter::onComplete()`
+called `nextChunk()` in a loop and encoded every chunk without returning
+to the event loop, so a large chunked response such as `/stats` (which
+`StatsRequest` already splits into ~2MB chunks) blocked other main
+thread work, like health checks and xDS updates, until the whole
+response was produced.
 
-Instead, please
-[open a GitHub Security
-Advisory](https://github.com/envoyproxy/envoy/security/advisories/new)
-(preferred). Alternatively, you may email
-[REDACTED_EMAIL].
+With this change `AdminFilter` encodes one chunk and schedules the next
+one with a `SchedulableCallback` on the next event loop iteration. If
+the stream is reset or destroyed in between, the remaining chunks are
+dropped. Handlers that produce their response in a single chunk behave
+as before.
 
-Thank you in advance for helping to keep Envoy secure.
+This is split out of #49351, which builds on it to render
+`/stats/prometheus` in chunks as well (Prometheus output is still a
+single chunk on main, so it does not benefit from this change alone).
+Flow control with watermarks (#31087) is not part of this change.
 
-!!!ATTENTION!!!
+Risk Level: Low
+Testing: unit tests in `admin_filter_test`
+Docs Changes: N/A
+Release Notes: added
+Runtime guard
 
-For an explanation of how to fill out the fields, please see the
-relevant section
-in
-[PULL_REQUESTS.md](https://github.com/envoyproxy/envoy/blob/main/PULL_REQUESTS.md)
-
-!!!ATTENTION!!!
-
-Please check the [use of generative AI
-policy](https://github.com/envoyproxy/envoy/blob/main/CONTRIBUTING.md?plain=1#L41).
-
-You may use generative AI only if you fully understand the code. You
-need to disclose
-this usage in the PR description to ensure transparency.
--->
-
-Commit Message: docs: fix the description of
---reject-unknown-dynamic-fields
-Additional Description: The first sentence of the
-`--reject-unknown-dynamic-fields` entry in
-`docs/root/operations/cli.rst` said the flag disables validation of
-unknown fields in dynamic configuration. It enables it: `server.
-
-**File**: `docs/root/operations/cli.rst` (modified, +1/-1)
+**File**: `changelogs/current/new_features/admin__yield-between-response-chunks.rst` (added, +4/-0)
 ```diff
-@@ -345,7 +345,7 @@ following are the command line options that Envoy supports.
- 
- .. option:: --reject-unknown-dynamic-fields
- 
--  *(optional)* This flag disables validation of protobuf configuration for unknown fields in
-+  *(optional)* This flag enables validation of protobuf configuration for unknown fields in
-   dynamic configuration. By default, this flag is set false, disabling validation for fields beyond
-   bootstrap. This allows newer xDS configurations to be delivered to older Envoys. This can be set
-   true for strict dynamic checking when this behavior is not wanted but the default should be
+@@ -0,0 +1,4 @@
++Added the runtime guard ``envoy.reloadable_features.admin_filter_yield_between_chunks``, default
++``false``. When set to ``true``, the admin server returns to the event loop between the chunks of a
++large response, such as ``/stats``, so a big response no longer blocks other work on the main
++thread, like health checks.
 ```
 
----
-
-### Incident Patch 2: `ca615748` (2026-11-19)
-**Commit Message**: opentelemetry: Add traceparent parse/serialize methods to SpanContextExtractor (#48449)
-
-<!--
-!!!ATTENTION!!!
-
-If you are fixing **any** crash or **any** potential security issue,
-**do not
-open a pull request**.
-
-Instead, please
-[open a GitHub Security
-Advisory](https://github.com/envoyproxy/envoy/security/advisories/new)
-(preferred). Alternatively, you may email
-[REDACTED_EMAIL].
-
-Thank you in advance for helping to keep Envoy secure.
-
-!!!ATTENTION!!!
-
-For an explanation of how to fill out the fields, please see the
-relevant section
-in
-[PULL_REQUESTS.md](https://github.com/envoyproxy/envoy/blob/main/PULL_REQUESTS.md)
-
-!!!ATTENTION!!!
-
-Please check the [use of generative AI
-policy](https://github.com/envoyproxy/envoy/blob/main/CONTRIBUTING.md?plain=1#L41).
-
-You may use generative AI only if you fully understand the code. You
-need to disclose
-this usage in the PR description to ensure transparency.
--->
-
-Commit Message: opentelemetry: Add traceparent parse/serialize methods
-to SpanContextExtractor
-
-This new override will be used by McpFilter in PR #48038.
-
-Additional Description: This PR was created with help from generative AI
-(Gemini). I fully understand the code.
-
-For reference, h
-
-**File**: `source/extensions/tracers/opentelemetry/span_context.h` (modified, +6/-0)
+**File**: `source/common/runtime/runtime_features.cc` (modified, +3/-0)
 ```diff
-@@ -60,6 +60,12 @@ class SpanContext {
-    */
-   bool isRemote() const { return is_remote_; }
+@@ -323,6 +323,9 @@ FALSE_RUNTIME_GUARD(envoy_reloadable_features_async_client_downstream_flow_contr
+ FALSE_RUNTIME_GUARD(envoy_reloadable_features_disable_quic_rx_queue_overflow_socket_options);
+ // TODO(abeyad): Flip to true after prod testing.
+ FALSE_RUNTIME_GUARD(envoy_reloadable_features_disable_quic_ip_packet_info_socket_options);
++// When enabled, the admin filter returns to the event loop between the chunks of a response.
++// TODO(wbpcode): flip to true after prod testing.
++FALSE_RUNTIME_GUARD(envoy_reloadable_features_admin_filter_yield_between_chunks);
  
-+  /**
-+   * Sets the span ID.
-+   * @param span_id a hex-encoded span ID.
-+   */
-+  void setSpanId(std::string span_id) { span_id_ = std::move(span_id); }
-+
- private:
-   std::string version_;
-   std::string trace_id_;
+ // A flag to set the maximum TLS version for google_grpc client to TLS1.2, when needed for
+ // compliance restrictions.
 ```
 
-**File**: `source/extensions/tracers/opentelemetry/span_context_extractor.cc` (modified, +43/-13)
+**File**: `source/server/admin/BUILD` (modified, +2/-0)
 ```diff
-@@ -1,12 +1,21 @@
- #include "source/extensions/tracers/opentelemetry/span_context_extractor.h"
- 
-+#include <cstdint>
-+#include <string>
-+#include <utility>
-+
- #include "envoy/tracing/tracer.h"
- 
- #include "source/common/http/header_map_impl.h"
- #include "source/common/tracing/trace_context_impl.h"
- #include "source/extensions/tracers/opentelemetry/span_context.h"
- 
-+#include "absl/status/status.h"
- #include "absl/strings/escaping.h"
-+#include "absl/strings/str_format.h"
-+#include "absl/strings/str_join.h"
-+#include "absl/strings/str_split.h"
-+#include "absl/strings/string_view.h"
- 
- namespace Envoy {
- namespace Extensions {
-@@ -21,6 +30,8 @@ constexpr int kTraceIdHexSize = 32;
- constexpr int kParentIdHexSize = 16;
- constexpr int kTraceFlagsHexSize = 2;
- 
-+constexpr int kFlagMaskSampled = 1;
-+
- bool isValidHex(const absl::string_view& input) {
-   return std::all_of(input.begin(), input.end(),
-                      [](const char& c) { return absl::ascii_isxdigit(c); });
-@@ -35,6 +46,9 @@ bool isAllZeros(const absl::string_view& input) {
- SpanContextExtractor::SpanContextExtractor(Tracing::TraceContext& trace_context)
-     : trace_context_(trace_context) {}
- 
-+SpanContextExtractor::SpanContextExtractor(const Tracing::TraceContext& trace_context)
-+    : trace_context_(trace_context) {}
-+
- SpanContextExtractor::~SpanContextExtractor() = default;
- 
- bool SpanContextExtractor::propagationHeaderPresent() {
-@@ -50,12 +64,24 @@ absl::StatusOr<SpanContext> SpanContextExtractor::extractSpanContext() {
-   }
-   auto header_value_string = propagation_header.value();
- 
--  if (header_value_string.size() != kTraceparentHeaderSize) {
-+  // If a tracestate header is received without an accompanying traceparent
-+  // header, it is invalid and MUST be discarded. Because we're already checking
-+  // for the traceparent header above, we don't need to check here. See
-+  // https://www.w3.org/TR/trace-context/#processing-model-for-working-with-trace-context
-+  const auto tracestate_values = OpenTelemetryConstants::get().TRACE_STATE.getAll(trace_context_);
-+
-+  return parseTraceparent(header_value_string, /*tracestate=*/
-+                          absl::StrJoin(tracestate_values, ","));
-+}
-+
-+absl::StatusOr<SpanContext> SpanContextExtractor::parseTraceparent(absl::string_view traceparent,
-+                                                                   std::string tracestate) {
-+  if (traceparent.size() != kTraceparentHeaderSize) {
-     return absl::InvalidArgumentError("Invalid traceparent header length");
-   }
-   // Try to split it into its component parts:
-   std::vector<absl::string_view> propagation_header_components =
--      absl::StrSplit(header_value_string, '-', absl::SkipEmpty());
-+      absl::StrSplit(traceparent, '-', absl::SkipEmpty());
-   if (propagation_header_components.size() != 4) {
-     return absl::InvalidArgumentError("Invalid traceparent hyphenation");
-   }
-@@ -71,8 +97,8 @@ absl::StatusOr<SpanContext> SpanContextExtractor::extractSpanContext() {
-       !isValidHex(trace_flags)) {
-     return absl::InvalidArgumentError("Invalid header hex");
-   }
--  // As per the traceparent header definition, if the trace-id or parent-id are all zeros, they are
--  // invalid and must be ignored.
-+  // As per the traceparent header definition, if the trace-id or parent-id are
-+  // all zeros, they are invalid and must be ignored.
-   if (isAllZeros(trace_id)) {
-     return absl::InvalidArgumentError("Invalid trace id");
-   }
-@@ -83,19 +109,23 @@ absl::StatusOr<SpanContext> SpanContextExtractor::extractSpanContext() {
-   // Set whether or not the span is sampled from the trace flags.
-   // See https://w3c.github.io/trace-context/#trace-flags.
-   char decoded_trace_flags = absl::HexStringToBytes(trace_flags).front();
--  bool sampled = (decoded_trace_flags & 1);
--
--  // If a tracestate header is received without an accompanying traceparent header,
--  // it is invalid and MUST be discarded. Because we're already checking for the
--  // traceparent header above, we don't need to check here.
--  // See https://www.w3.org/TR/trace-context/#processing-model-for-working-with-trace-context
--  const auto tracestate_values = OpenTelemetryConstants::get().TRACE_STATE.getAll(trace_context_);
-+  bool sampled = (decoded_trace_flags & kFlagMaskSampled);
- 
--  SpanContext parent_context(version, trace_id, span_id, sampled,
--                             absl::StrJoin(tracestate_values, ","), /*is_remote=*/true);
-+  SpanContext parent_context(version, trace_id, span_id, sampled, std::move(tracestate),
-+                             /*is_remote=*/true);
-   return parent_context;
- }
- 
-+std::string SpanContextExtractor::serializeTraceparent(const SpanContext& span_context) {
-+  uint16_t flags = 0;
-+  if (span_context.sampled()) {
-+    flags |= kFlagMaskSampled;
-+  }
-+  return absl::StrJoin({span_context.version(), span_context.traceId(), span_context.spanId(),
-+                        absl::StrFormat("%02x", flags)},
-+                       "-");
-+}
-+
- 
-```
-
-**File**: `source/extensions/tracers/opentelemetry/span_context_extractor.h` (modified, +17/-2)
-```diff
-@@ -1,5 +1,7 @@
- #pragma once
- 
-+#include <string>
-+
- #include "envoy/common/exception.h"
- #include "envoy/tracing/tracer.h"
- 
-@@ -8,6 +10,9 @@
- #include "source/common/tracing/trace_context_impl.h"
- #include "source/extensions/tracers/opentelemetry/span_context.h"
- 
-+#include "absl/status/statusor.h"
-+#include "absl/strings/string_view.h"
-+
- namespace Envoy {
- namespace Extensions {
- namespace Tracers {
-@@ -22,16 +27,26 @@ class OpenTelemetryConstantValues {
- using OpenTelemetryConstants = ConstSingleton<OpenTelemetryConstantValues>;
- 
- /**
-- * This class is used to SpanContext extracted from the HTTP traceparent header
-- * See https://www.w3.org/TR/trace-context/#traceparent-header.
-+ * This class is used to extract a SpanContext from the HTTP traceparent header
-+ * or MCP body. See https://www.w3.org/TR/trace-context/#traceparent-header.
-  */
- class SpanContextExtractor {
- public:
-   SpanContextExtractor(Tracing::TraceContext& trace_context);
-+  SpanContextExtractor(const Tracing::TraceContext& trace_context);
-   ~SpanContextExtractor();
-   absl::StatusOr<SpanContext> extractSpanContext();
-   bool propagationHeaderPresent();
- 
-+  // Parse the given `traceparent` to `SpanContext`, forwarding the given
-+  // `tracestate` to its constructor.
-+  static absl::StatusOr<SpanContext> parseTraceparent(absl::string_view traceparent,
-+                                                      std::string tracestate);
-+  // Serialize the given `span_context` to a traceparent string. This omits any
-+  // tracestate that may be present on the `span_context. Performs no
-+  // validation `span_context`.
-+  static std::string serializeTraceparent(const SpanContext& span_context);
-+
- private:
-   const Tracing::TraceContext& trace_context_;
- };
-```
-
-**File**: `test/extensions/tracers/opentelemetry/BUILD` (modified, +2/-0)
-```diff
-@@ -98,6 +98,8 @@ envoy_extension_cc_test(
-         "//source/extensions/tracers/opentelemetry:opentelemetry_tracer_lib",
-         "//test/test_common:status_utility_lib",
-         "//test/test_common:utility_lib",
-+        "@abseil-cpp//absl/status:statusor",
-+        "@abseil-cpp//absl/strings:string_view",
+@@ -123,12 +123,14 @@ envoy_cc_library(
+     hdrs = ["admin_filter.h"],
+     deps = [
+         ":utils_lib",
++        "//envoy/event:schedulable_cb_interface",
+         "//envoy/http:filter_interface",
+         "//envoy/server:admin_interface",
+         "//source/common/buffer:buffer_lib",
+         "//source/common/common:minimal_logger_lib",
+         "//source/common/http:codes_lib",
+         "//source/common/http:header_map_lib",
++        "//source/common/runtime:runtime_features_lib",
+         "//source/extensions/filters/http/common:pass_through_filter_lib",
      ],
  )
- 
 ```
 
-**File**: `test/extensions/tracers/opentelemetry/span_context_extractor_test.cc` (modified, +30/-0)
+**File**: `source/server/admin/admin_filter.cc` (modified, +52/-11)
 ```diff
-@@ -1,9 +1,14 @@
-+#include <string>
-+
- #include "source/common/tracing/http_tracer_impl.h"
-+#include "source/extensions/tracers/opentelemetry/span_context.h"
- #include "source/extensions/tracers/opentelemetry/span_context_extractor.h"
+@@ -1,11 +1,14 @@
+ #include "source/server/admin/admin_filter.h"
  
- #include "test/test_common/status_utility.h"
++#include "source/common/runtime/runtime_features.h"
+ #include "source/server/admin/utils.h"
+ 
+ namespace Envoy {
+ namespace Server {
+ 
+-AdminFilter::AdminFilter(const Admin& admin) : admin_(admin) {}
++AdminFilter::AdminFilter(const Admin& admin)
++    : admin_(admin), yield_between_chunks_(Runtime::runtimeFeatureEnabled(
++                         "envoy.reloadable_features.admin_filter_yield_between_chunks")) {}
+ 
+ Http::FilterHeadersStatus AdminFilter::decodeHeaders(Http::RequestHeaderMap& headers,
+                                                      bool end_stream) {
+@@ -37,9 +40,12 @@ Http::FilterTrailersStatus AdminFilter::decodeTrailers(Http::RequestTrailerMap&)
+ }
+ 
+ void AdminFilter::onDestroy() {
++  destroyed_ = true;
++  next_chunk_cb_.reset();
+   for (const auto& callback : on_destroy_callbacks_) {
+     callback();
+   }
++  request_.reset();
+ }
+ 
+ void AdminFilter::addOnDestroyCallback(std::function<void()> cb) {
+@@ -93,17 +99,52 @@ void AdminFilter::onComplete() {
+                                     StreamInfo::ResponseCodeDetails::get().AdminFilterResponse);
+ 
+   // TODO(#31087): use high/lower watermarks to apply flow-control to the admin http port.
+-  bool more_data;
+-  do {
+-    Buffer::OwnedImpl response;
+-    more_data = handler->nextChunk(response);
+-    bool end_stream = end_stream_on_complete_ && !more_data;
+-    ENVOY_LOG_MISC(debug, "nextChunk: response.length={} more_data={} end_stream={}",
+-                   response.length(), more_data, end_stream);
+-    if (response.length() > 0 || end_stream) {
+-      decoder_callbacks_->encodeData(response, end_stream);
++  if (destroyed_) {
++    return;
++  }
++  request_ = std::move(handler);
++  if (!yield_between_chunks_) {
++    while (encodeNextChunk()) {
+     }
+-  } while (more_data);
++    return;
++  }
++  if (encodeNextChunk()) {
++    scheduleNextChunk();
++  }
++}
++
++bool AdminFilter::encodeNextChunk() {
++  ASSERT(request_ != nullptr);
++  Buffer::OwnedImpl response;
++  const bool more_data = request_->nextChunk(response);
++  const bool end_stream = end_stream_on_complete_ && !more_data;
++  ENVOY_LOG_MISC(debug, "nextChunk: response.length={} more_data={} end_stream={}",
++                 response.length(), more_data, end_stream);
++  if (response.length() > 0 || end_stream) {
++    // This may complete or reset the stream, which calls onDestroy().
++    decoder_callbacks_->encodeData(response, end_stream);
++  }
++  if (destroyed_) {
++    return false;
++  }
++  if (!more_data) {
++    request_.reset();
++    return false;
++  }
++  return true;
++}
++
++void AdminFilter::scheduleNextChunk() {
++  if (next_chunk_cb_ == nullptr) {
++    next_chunk_cb_ = decoder_callbacks_->dispatcher().createSchedulableCallback([this]() {
++      if (encodeNextChunk()) {
++        scheduleNextChunk();
++      }
++    });
++  }
++  // Yield to the event loop before the next chunk, so other main thread work like health checks
++  // and xDS updates can run in between.
++  next_chunk_cb_->scheduleCallbackNextIteration();
+ }
+ 
+ } // namespace Server
+```
+
+**File**: `source/server/admin/admin_filter.h` (modified, +21/-0)
+```diff
+@@ -3,6 +3,7 @@
+ #include <functional>
+ #include <list>
+ 
++#include "envoy/event/schedulable_cb.h"
+ #include "envoy/http/filter.h"
+ #include "envoy/server/admin.h"
+ 
+@@ -64,10 +65,30 @@ class AdminFilter : public Http::PassThroughFilter,
+    * Called when an admin request has been completely received.
+    */
+   void onComplete();
++
++  /**
++   * Encodes the next chunk of request_.
++   * @return true if there are more chunks to encode and the stream is still alive.
++   */
++  bool encodeNextChunk();
++
++  /**
++   * Schedules encodeNextChunk() on the next event loop iteration, so a large response does not
++   * block the main thread.
++   */
++  void scheduleNextChunk();
++
+   const Admin& admin_;
++  // Latched at construction so the runtime guard is not re-read for every request chunk.
++  const bool yield_between_chunks_;
+   Http::RequestHeaderMap* request_headers_{};
+   std::list<std::function<void()>> on_destroy_callbacks_;
+   bool end_stream_on_complete_ = true;
++
++  // The request whose response is still being streamed, if any.
++  Admin::RequestPtr request_;
++  Event::SchedulableCallbackPtr next_chunk_cb_;
++  bool destroyed_{false};
+ };
+ 
+ } // namespace Server
+```
+
+**File**: `test/server/admin/BUILD` (modified, +2/-0)
+```diff
+@@ -100,9 +100,11 @@ envoy_cc_test(
+     deps = [
+         "//source/common/buffer:buffer_lib",
+         "//source/server/admin:admin_lib",
++        "//test/mocks/event:event_mocks",
+         "//test/mocks/http:http_mocks",
+         "//test/mocks/server:admin_mocks",
+         "//test/test_common:environment_lib",
++        "//test/test_common:test_runtime_lib",
+         "//test/test_common:utility_lib",
+     ],
+ )
+```
+
+**File**: `test/server/admin/admin_filter_test.cc` (modified, +126/-2)
+```diff
+@@ -2,16 +2,17 @@
+ #include "source/server/admin/admin.h"
+ #include "source/server/admin/admin_filter.h"
+ 
++#include "test/mocks/event/mocks.h"
+ #include "test/mocks/http/mocks.h"
+ #include "test/mocks/server/admin.h"
+ #include "test/test_common/environment.h"
++#include "test/test_common/test_runtime.h"
  #include "test/test_common/utility.h"
  
-+#include "absl/status/statusor.h"
-+#include "absl/strings/string_view.h"
  #include "gmock/gmock.h"
  #include "gtest/gtest.h"
  
-@@ -191,6 +196,31 @@ TEST(SpanContextExtractorTest, ExtractSpanContextWithMultipleTracestateEntries)
-   EXPECT_EQ(span_context->tracestate(), "sample-tracestate,sample-tracestate-2");
+ using testing::_;
+-using testing::ByMove;
+ using testing::InSequence;
+ using testing::NiceMock;
+ using testing::Return;
+@@ -22,7 +23,9 @@ namespace Server {
+ class AdminFilterTest : public testing::TestWithParam<Network::Address::IpVersion> {
+ public:
+   AdminFilterTest() : filter_(admin_), request_headers_{{":path", "/"}} {
+-    EXPECT_CALL(admin_, makeRequest(_)).WillOnce(Return(ByMove(adminHandlerCallback())));
++    ON_CALL(admin_, makeRequest(_)).WillByDefault([](AdminStream&) {
++      return adminHandlerCallback();
++    });
+     filter_.setDecoderFilterCallbacks(callbacks_);
+   }
+ 
+@@ -76,5 +79,126 @@ TEST_P(AdminFilterTest, Trailers) {
+   EXPECT_EQ(Http::FilterTrailersStatus::StopIteration, filter_.decodeTrailers(request_trailers));
  }
  
-+TEST(SpanContextExtractorTest, SerializeTraceparent) {
-+  static constexpr absl::string_view kOtherParentId = "feedf00dfeedf00d";
-+  static constexpr absl::string_view kOtherTraceId = "facefacefacefacefacefacefaceface";
++// Emits chunks "0", "1", ... up to num_chunks.
++class CountingRequest : public Admin::Request {
++public:
++  CountingRequest(uint32_t num_chunks, bool& destroyed)
++      : num_chunks_(num_chunks), destroyed_(destroyed) {}
++  ~CountingRequest() override { destroyed_ = true; }
 +
-+  static_assert(kOtherParentId.size() == parent_id.size());
-+  static_assert(kOtherTraceId.size() == trace_id.size());
-+
-+  for (bool sampled : {false, true}) {
-+    SCOPED_TRACE(testing::Message() << "sampled: " << sampled);
-+
-+    absl::string_view want_flags = sampled ? "01" : "00";
-+
-+    SpanContext span_context{version, trace_id, parent_id, sampled,
-+                             /*tracestate=*/""};
-+    std::string serialized_traceparent = SpanContextExtractor::serializeTraceparent(span_context);
-+    EXPECT_EQ(serialized_traceparent,
-+              fmt::format("{}-{}-{}-{}", version, trace_id, parent_id, want_flags));
-+
-+    span_context.setSpanId(std::string(kOtherParentId));
-+    serialized_traceparent = SpanContextExtractor::serializeTraceparent(span_context);
-+    EXPECT_EQ(serialized_traceparent,
-+              fmt::format("{}-{}-{}-{}", version, trace_id, kOtherParentId, want_flags));
++  Http::Code start(Http::ResponseHeaderMap&) override { return Http::Code::OK; }
++  bool nextChunk(Buffer::Instance& response) override {
++    response.add(absl::StrCat(next_));
++    return ++next_ < num_chunks_;
 +  }
++
++private:
++  const uint32_t num_chunks_;
++  bool& destroyed_;
++  uint32_t next_{0};
++};
++
++class AdminFilterChunkedTest : public AdminFilterTest {
++public:
++  void expectCountingRequest(uint32_t num_chunks) {
++    EXPECT_CALL(admin_, makeRequest(_))
++        .WillOnce([this, num_chunks](AdminStream&) -> Admin::RequestPtr {
++          return std::make_unique<CountingRequest>(num_chunks, request_destroyed_);
++        });
++  }
++
++  void expectData(absl::string_view data, bool end_stream) {
++    EXPECT_CALL(callbacks_, encodeData(BufferString(std::string(data)), end_stream));
++  }
++
++  // The guard is latched when the filter is created.
++  AdminFilter& createYieldingFilter() {
++    scoped_runtime_.mergeValues(
++        {{"envoy.reloadable_features.admin_filter_yield_between_chunks", "true"}});
++    yielding_filter_ = std::make_unique<AdminFilter>(admin_);
++    yielding_filter_->setDecoderFilterCallbacks(callbacks_);
++    return *yielding_filter_;
++  }
++
++  TestScopedRuntime scoped_runtime_;
++  std::unique_ptr<AdminFilter> yielding_filter_;
++  bool request_destroyed_{false};
++};
++
++INSTANTIATE_TEST_SUITE_P(IpVersions, AdminFilterChunkedTest,
++                         testing::ValuesIn(TestEnvironment::getIpVersionsForTest()),
++                         TestUtility::ipTestParamsToString);
++
++TEST_P(AdminFilterChunkedTest, YieldsToEventLoopBetweenChunks) {
++  AdminFilter& filter = createYieldingFilter();
++  expectCountingRequest(3);
++  auto* next_chunk_cb = new NiceMock<Event::MockSchedulableCallback>(&callbacks_.dispatcher_);
++
++  EXPECT_CALL(callbacks_, encodeHeaders_(_, false));
++  expectData("0", false);
++  filter.decodeHeaders(request_headers_, true);
++  EXPECT_TRUE(next_chunk_cb->enabled_);
++
++  expectData("1", false);
++  next_chunk_cb->invokeCallback();
++  EXPECT_TRUE(next_chunk_cb->enabled_);
++
++  expectData("2", true);
++  next_chunk_cb->invokeCallback();
++  EXPECT_FALSE(next_chunk_cb->enabled_);
++  EXPECT_TRUE(request_destroyed_);
++  filter.onDestroy();
 +}
 +
- } // namespace
- } // namespace OpenTelemetry
- } // namespace Tracers
++TEST_P(AdminFilterChunkedTest, DestroyCancelsRemainingChunks) {
++  AdminFilter& filter = createYieldingFilter();
++  expectCountingRequest(3);
++  testing::MockFunction<void()> cb_destroyed;
++  new NiceMock<Event::MockSchedulableCallback>(&callbacks_.dispatcher_, &cb_destroyed);
++
++  expectData("0", false);
++  filter.decodeHeaders(request_headers_, true);
++  EXPECT_FALSE(request_destroyed_);
++
++  EXPECT_CALL(cb_destroyed, Call());
++  filter.onDestroy();
++  EXPECT_TRUE(request_destroyed_);
++}
++
++TEST_P(AdminFilterChunkedTest, ResetWhileEncodingStopsChunks) {
++  AdminFilter& filter = createYieldingFilter();
++  expectCountingRequest(3);
++  EXPECT_CALL(callbacks_.dispatcher_, createSchedulableCallback_(_)).Times(0);
++  // The stream is reset from under encodeData().
++  EXPECT_CALL(callbacks_, encodeData(_, false)).WillOnce([&filter](Buffer::Instance&, bool) {
++    filter.onDestroy();
++  });
++  filter.decodeHeaders(request_headers_, true);
++  EXPECT_TRUE(request_destroyed_);
++}
++
++TEST_P(AdminFilterChunkedTest, AllChunksAtOnceByDefault) {
++  expectCountingRequest(3);
++  EXPECT_CALL(callbacks_.dispatcher_, createSchedulableCallback_(_)).Times(0);
++
++  InSequence s;
++  expectData("0", false);
++  expectData("1", false);
++  expectData("2", true);
++  filter_.decodeHeaders(request_headers_, true);
++  EXPECT_TRUE(request_destroyed_);
++  filte
 ```
 
 ---
 
-### Incident Patch 3: `dd8be587` (2026-11-19)
-**Commit Message**: mobile/ci: Stop using, and remove, the mobile build image (#49462)
+### Incident Patch 2: `f7b8ce9a` (2026-11-21)
+**Commit Message**: docs: fix propogated typo in headers and flow control docs (#49505)
 
-Stops using the mobile build image, and removes it from the repo's
-configuration.
+Commit Message: docs: fix propogated typo in headers and flow control
+docs
+Additional Description: Correct misspelled 'propogated' to 'propagated'
+across HTTP connection manager headers and flow control documentation.
+Risk Level: Low (documentation typo fix)
+Testing: N/A
+Docs Changes: Updated headers.rst and flow_control.rst
+Release Notes: N/A
+Fixes N/A
 
-**Run the remote actions in the worker image**
+Signed-off-by: sundeep8967 <[REDACTED_EMAIL]>
 
-The mobile RBE platforms (`//bazel/platforms/rbe:linux_x64` and
-`linux_arm64` in `mobile/`) still named the mobile build image as their
-remote execution container. Its extras over the default image (JDK,
-Android cmdline tools, NDK, platform and build-tools) are not used by
-the build: the Android SDK and NDK come from the
-hermetic-android-toolchains module, the Android tools from the remote
-`android_tools` extension, and the Java toolchains are hermetic. The
-jobs' local container already moved to the default build image in
-#49134; this does the same for where the remote actions run.
-
-Mobile CI passes with it (Mobile/CC needed one retest, for an unrelated
-test flake: #49464).
-
-**Remove the mobile build image**
-
-Nothing else uses the image, so this removes `image_mobile()`, the
-`mobile` variant of `ci/envoy_build_sha.sh`, `sha-mobile` and
-`mobile-sha`, their update in the build image workflow, and the unused
-`build-image-mobile` outputs of `_load.yml` and `_load_env.yml`.
-Lockfiles are reg
-
-**File**: `.github/config.yml` (modified, +0/-3)
+**File**: `docs/root/configuration/http/http_conn_man/headers.rst` (modified, +1/-1)
 ```diff
-@@ -8,10 +8,7 @@ build-image:
-   sha-ci: 8fdf16ea0d40cb0e4726b13f97df8b73e80e331b206b62b224ceb2498149a1d5
-   sha-devtools: 5914ff8694b377cbd137317acb4a0f91c9496e08a17e867743f942e15f4deb83
-   sha-docker: 75bc814bc49ea2c4fe8807bd487fdb513b4b1ce9b6cce19bb1781ae9d28f80cf
--  sha-mobile: b4351554fbf60ecf5b69ae17434a1503802473118388361543a3c695040f8859
-   sha-worker: 58abaea3f29aae5340f32dc99fc66c97a6c2fec0902345d03cf6d47684606a1d
--  # TODO: remove this dupe (currently used by ci request handler)
--  mobile-sha: b4351554fbf60ecf5b69ae17434a1503802473118388361543a3c695040f8859
-   tag: v0.2.5
+@@ -16,7 +16,7 @@ is being received) as well as during encoding (when the response is being sent).
  
- config:
-```
-
-**File**: `.github/workflows/_load.yml` (modified, +0/-3)
-```diff
-@@ -47,8 +47,6 @@ on:
-     outputs:
-       build-image:
-         value: ${{ jobs.request.outputs.build-image }}
--      build-image-mobile:
--        value: ${{ jobs.request.outputs.build-image-mobile }}
-       check-id:
-         value: ${{ jobs.request.outputs.check-id }}
-       check-name:
-@@ -82,7 +80,6 @@ jobs:
-       pull-requests: read
-     outputs:
-       build-image: ${{ toJSON(fromJSON(steps.request-output.outputs.value).request.build-image) }}
--      build-image-mobile: ${{ fromJSON(steps.request-output.outputs.value).request.build-image-mobile }}
-       check-id: ${{ fromJSON(steps.request-output.outputs.value).check.check-id }}
-       request: ${{ steps.request-output.outputs.value }}
-       trusted: ${{ fromJSON(steps.request-output.outputs.value).request.trusted }}
-```
-
-**File**: `.github/workflows/_load_env.yml` (modified, +0/-3)
-```diff
-@@ -31,8 +31,6 @@ on:
-     outputs:
-       build-image:
-         value: ${{ jobs.request.outputs.build-image }}
--      build-image-mobile:
--        value: ${{ jobs.request.outputs.build-image-mobile }}
-       request:
-         value: ${{ jobs.request.outputs.request }}
-       trusted:
-@@ -55,7 +53,6 @@ jobs:
-     runs-on: ubuntu-24.04
-     outputs:
-       build-image: ${{ toJSON(fromJSON(steps.env.outputs.data).request.build-image) }}
--      build-image-mobile: ${{ fromJSON(steps.env.outputs.data).request.build-image-mobile }}
-       request: ${{ steps.env.outputs.data }}
-       trusted: true
-     steps:
-```
-
-**File**: `.github/workflows/envoy-dependency.yml` (modified, +0/-5)
-```diff
-@@ -250,9 +250,7 @@ jobs:
-             sha-ci
-             sha-devtools
-             sha-docker
--            sha-mobile
-             sha-worker
--            mobile-sha
-             tag)
-         for sha in "${shas[@]}"; do
-             current_sha=$(bazel run --config=ci //tools/dependency:build-image-sha "$sha")
-@@ -298,7 +296,6 @@ jobs:
-            sha-ci: docker.io/envoyproxy/envoy-build:ci-${{ steps.build-tools.outputs.tag }}
-            sha-devtools: docker.io/envoyproxy/envoy-build:devtools-${{ steps.build-tools.outputs.tag }}
-            sha-docker: docker.io/envoyproxy/envoy-build:docker-${{ steps.build-tools.outputs.tag }}
--           sha-mobile: docker.io/envoyproxy/envoy-build:mobile-${{ steps.build-tools.outputs.tag }}
-            sha-worker: docker.io/envoyproxy/envoy-build:worker-${{ steps.build-tools.outputs.tag }}
+ Envoy will always set the ``:scheme`` header while processing a request. It should always be available to filters, and should be forwarded upstream for HTTP/2 and HTTP/3, where :ref:`config_http_conn_man_headers_x-forwarded-proto` will be sent for HTTP/1.1.
  
-     - run: |
-@@ -307,7 +304,6 @@ jobs:
-             "$CURRENT_ENVOY_SHA_CI:${{ fromJSON(steps.build-images.outputs.shas).sha-ci }}"
-             "$CURRENT_ENVOY_SHA_DEVTOOLS:${{ fromJSON(steps.build-images.outputs.shas).sha-devtools }}"
-             "$CURRENT_ENVOY_SHA_DOCKER:${{ fromJSON(steps.build-images.outputs.shas).sha-docker }}"
--            "$CURRENT_ENVOY_SHA_MOBILE:${{ fromJSON(steps.build-images.outputs.shas).sha-mobile }}"
-             "$CURRENT_ENVOY_SHA_WORKER:${{ fromJSON(steps.build-images.outputs.shas).sha-worker }}")
-         echo "replace=${SHA_REPLACE[*]}" >> "$GITHUB_OUTPUT"
-       name: Find SHAs to replace
-@@ -318,7 +314,6 @@ jobs:
-         CURRENT_ENVOY_SHA_CI: ${{ steps.current.outputs.sha-ci }}
-         CURRENT_ENVOY_SHA_DEVTOOLS: ${{ steps.current.outputs.sha-devtools }}
-         CURRENT_ENVOY_SHA_DOCKER: ${{ steps.current.outputs.sha-docker }}
--        CURRENT_ENVOY_SHA_MOBILE: ${{ steps.current.outputs.sha-mobile }}
-         CURRENT_ENVOY_SHA_WORKER: ${{ steps.current.outputs.sha-worker }}
-     - run: |
-         echo "${SHA_REPLACE}" | xargs bazel run --config=ci @envoy_toolshed//sha:replace "${PWD}"
+-For HTTP/2, and HTTP/3, incoming ``:scheme`` headers are trusted and propogated through upstream.
++For HTTP/2, and HTTP/3, incoming ``:scheme`` headers are trusted and propagated through upstream.
+ For HTTP/1, the ``:scheme`` header will be set
+ 1) From the absolute URL if present and valid. An invalid (not "http" or "https") scheme, or an https scheme over an unencrypted connection will result in Envoy rejecting the request. This is the only scheme validation Envoy performs as it avoids a HTTP/1.1-specific privilege escalation attack for edge Envoys [1]_ which doesn't have a comparable vector for HTTP/2 and above [2]_.
+ 2) From the value of the :ref:`config_http_conn_man_headers_x-forwarded-proto` header after sanitization (to valid ``x-forwarded-proto`` from trusted downstreams, otherwise based on downstream encryption level).
 ```
 
-**File**: `MODULE.bazel.lock` (modified, +3/-3)
+**File**: `docs/root/faq/configuration/flow_control.rst` (modified, +1/-1)
 ```diff
-@@ -932,7 +932,7 @@
-   "moduleExtensions": {
-     "//bazel:extensions.bzl%envoy_build_config_ext": {
-       "general": {
--        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-+        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
-         "usagesDigest": "eA9F7Sp3VWzMPr64I4OqdYTS7aJ/vD1NCUzz0/uIPRU=",
-         "recordedInputs": [
-           "REPO_MAPPING:,bazel_skylib bazel_skylib+",
-@@ -952,7 +952,7 @@
-     },
-     "//bazel:extensions.bzl%envoy_module_graph_extension": {
-       "general": {
--        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-+        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
-         "usagesDigest": "a20U+l72r//DsxddmI97juCc5OVovDKHTOodwyV6/14=",
-         "recordedInputs": [
-           "REPO_MAPPING:,bazel_skylib bazel_skylib+",
-@@ -974,7 +974,7 @@
-     },
-     "//bazel:extensions.bzl%envoy_repo_extension": {
-       "general": {
--        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-+        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
-         "usagesDigest": "qNXh2UFb6L5FDqCDmXlJCEwkQwnTEu3pouMvLd9F+7c=",
-         "recordedInputs": [
-           "REPO_MAPPING:,bazel_skylib bazel_skylib+",
-```
-
-**File**: `bazel/repo.bzl` (modified, +0/-6)
-```diff
-@@ -5,14 +5,9 @@ CONTAINERS = """
- REPO = "{repo}"
- REPO_GCR = "{repo_gcr}"
- SHA = "{sha}"
--SHA_MOBILE = "{sha_mobile}"
- SHA_WORKER = "{sha_worker}"
- TAG = "{tag}"
+@@ -20,7 +20,7 @@ The listener limits apply to how much raw data will be read per read() call from
+ downstream, as well as how much data may be buffered in userspace between Envoy
+ and downstream.
  
--def image_mobile():
--    return "%s@sha256:%s" % (
--        REPO, SHA_MOBILE)
--
- def image_worker():
-     return "%s@sha256:%s" % (
-         REPO_GCR, SHA_WORKER)
-@@ -80,7 +75,6 @@ def _envoy_repo_impl(repository_ctx):
-         repo = build_image["repo"],
-         repo_gcr = build_image["repo-gcr"],
-         sha = build_image["sha"],
--        sha_mobile = build_image["sha-mobile"],
-         sha_worker = build_image["sha-worker"],
-         tag = build_image["tag"],
-     ))
-```
-
-**File**: `bazel/tests/codeql/MODULE.bazel.lock` (modified, +3/-3)
-```diff
-@@ -1269,7 +1269,7 @@
-     },
-     "@@envoy+//bazel:extensions.bzl%envoy_build_config_ext": {
-       "general": {
--        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-+        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
-         "usagesDigest": "Er3syu+vTabKf6QNCuq+iOq29PoF5QEwbaOozyFkqt8=",
-         "recordedInputs": [
-           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
-@@ -1289,7 +1289,7 @@
-     },
-     "@@envoy+//bazel:extensions.bzl%envoy_module_graph_extension": {
-       "general": {
--        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-+        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
-         "usagesDigest": "ymD/bnZhvue8QBxkA+Ac/m/a7viCmw83gRqefjG+JBc=",
-         "recordedInputs": [
-           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
-@@ -1311,7 +1311,7 @@
-     },
-     "@@envoy+//bazel:extensions.bzl%envoy_repo_extension": {
-       "general": {
--        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-+        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
-         "usagesDigest": "FAw8Y3mQshR9sd1RHlAiDwpIEJGM2+PMZQFujBl5IUQ=",
-         "recordedInputs": [
-           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
-```
-
-**File**: `bazel/tests/external/MODULE.bazel.lock` (modified, +4/-4)
-```diff
-@@ -1282,7 +1282,7 @@
-     },
-     "@@envoy+//bazel:extensions.bzl%envoy_build_config_ext": {
-       "general": {
--        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-+        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
-         "usagesDigest": "iA1seCCxL1JoTeQEGHUPSEc93vO3JA4pM8sK4sMMan4=",
-         "recordedInputs": [
-           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
-@@ -1302,7 +1302,7 @@
-     },
-     "@@envoy+//bazel:extensions.bzl%envoy_module_graph_extension": {
-       "general": {
--        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-+        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
-         "usagesDigest": "ymD/bnZhvue8QBxkA+Ac/m/a7viCmw83gRqefjG+JBc=",
-         "recordedInputs": [
-           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
-@@ -1324,7 +1324,7 @@
-     },
-     "@@envoy+//bazel:extensions.bzl%envoy_repo_extension": {
-       "general": {
--        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-+        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
-         "usagesDigest": "FAw8Y3mQshR9sd1RHlAiDwpIEJGM2+PMZQFujBl5IUQ=",
-         "recordedInputs": [
-           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
-@@ -1344,7 +1344,7 @@
-     },
-     "@@envoy+//bazel:extensions.bzl%envoy_toolchains_extension": {
-       "general": {
--        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
-+        "bzlTransitiveDigest": "qV3siak+3SMP2h9/K7dgSQiRjwaw4vKcJNOsl/jUSb8=",
-         "usagesDigest": "PAKPVvO8cX+q6rOc94CBj2PuUR0CHcNuCfqfSSrj7Vs=",
-         "recordedInputs": [
-           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
+-The listener limits are also propogated to the HttpConnectionManager, and applied on a per-stream
++The listener limits are also propagated to the HttpConnectionManager, and applied on a per-stream
+ basis to HTTP/1.1 L7 buffers described below. As such they limit the size of HTTP/1 requests and
+ response bodies that can be buffered. For HTTP/2 and HTTP/3, as many streams can be multiplexed over one
+ connection, the L7 and L4 buffer limits can be tuned separately, and the configuration option
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49485** (2026-11-20): http: record the stop-all filter data parks at as the latest data filter (@wbpcode)
-- **PR #49484** (2026-11-20): docs: fix the description of --reject-unknown-dynamic-fields (@rawsun007)
-- **PR #49482** (2026-11-20): Removes slop doc from dynamic_modules.rst (@mathetake)
-- **PR #49469** (2026-11-19): deps: Bump toolshed actions -> actions-v0.4.33 (@dependency-envoy[bot])
-- **PR #49462** (2026-11-19): mobile/ci: Stop using, and remove, the mobile build image (@phlax)
-- **PR #49411** (2026-11-18): deps: Bump `bazel-registry` -> d7b2089 (+envoy_toolshed) (@dependency-envoy[bot])
+- **PR #49508** (2026-11-20): [bp/1.37] test/ext_proc: Fix spinning loop (and hang) in serverReceiveBodyDuplexStreamed (#44583) (@phlax)
+- **PR #49507** (2026-11-20): deps: Bump `bazel-registry` -> d72a252 (+envoy-examples) (@dependency-envoy[bot])
+- **PR #49505** (2026-11-21): docs: fix propogated typo in headers and flow control docs (@sundeep8967)
+- **PR #49494** (2026-11-20): ai_protocol_manager: move watermark echo suppression to FilterChainBridge (@paul-r-gall)
+- **PR #49493** (2026-11-20): ci: Remove the docker-ci workflow input (@phlax)
+- **PR #49490** (2026-11-20): api: Scope the Copilot API review instructions to api/ (@phlax)
 
 ---
 
@@ -1676,28 +1490,31 @@ Lockfiles are reg
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: fix the description of --reject-unknown-dynamic-fields
+## X. admin: yield to the event loop between response chunks
 
 **RULE**:
-When implementing operations in `docs/root/operations/cli.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelogs/current/new_features/admin__yield-between-response-chunks.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `86f73b92`: docs: fix the description of --reject-unknown-dynamic-fields. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8969fd53`: admin: yield to the event loop between response chunks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/root/operations/cli.rst`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/new_features/admin__yield-between-response-chunks.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  *(optional)* This flag enables validation of protobuf configuration for unknown fields in
+Added the runtime guard ``envoy.reloadable_features.admin_filter_yield_between_chunks``, default
+``false``. When set to ``true``, the admin server returns to the event loop between the chunks of a
+large response, such as ``/stats``, so a big response no longer blocks other work on the main
+thread, like health checks.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-  *(optional)* This flag disables validation of protobuf configuration for unknown fields in
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `86f73b92` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8969fd53` are properly handled with clean fallback behavior.

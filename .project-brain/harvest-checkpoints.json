@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T13:53:45.481Z",
+  "last_updated": "2026-11-21T14:27:55.227Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "b8ec76bf10181508f5a209e8748512e5628ceb57c745df033e4bb7d6919b6134",
-      "verified_at": "2026-11-21T11:55:35.200Z",
+      "content_hash": "d45ac296e6d790f70018e1cff3169af66de581ba569910d105cc747767ed1683",
+      "verified_at": "2026-11-21T14:27:55.227Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T11:55:35.200Z"
+      "last_updated": "2026-11-21T14:27:55.227Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "449e090d0167cf85ce9e9101f3d90347646744a04ed0713f0df03dc24db09f94",
-      "verified_at": "2026-11-20T09:59:10.596Z",
+      "content_hash": "8835edd0012966868e3013839da3a218cdb00de9107a2a15cda6e180af8c1507",
+      "verified_at": "2026-11-21T14:27:48.356Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T09:59:10.596Z"
+      "last_updated": "2026-11-21T14:27:48.356Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",
@@ -15845,15 +15845,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-comfy-org-z_image_turbo",
-      "content_hash": "d7187627183cdf41de8eda6ad72f68bf427be934a8dd2473fadecc2c7da0aa56",
-      "verified_at": "2026-11-21T08:54:38.948Z",
+      "learning_id": "learn-huggingface-comfy-org-z-image-turbo",
+      "content_hash": "141c759a5eb78bf21cf49890220c9c4aba09e8fa9481e5e87e7393aa9587fd5f",
+      "verified_at": "2026-11-21T14:27:40.945Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T08:54:38.948Z"
+      "last_updated": "2026-11-21T14:27:40.945Z"
     },
     "unsloth/flint-GGUF": {
       "repository": "unsloth/flint-GGUF",

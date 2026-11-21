@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T13:53:45.477Z",
-  "total_cycles_completed": 11245,
-  "total_learnings_persisted": 11245,
-  "total_rules_promoted": 10593,
+  "last_updated": "2026-11-21T14:27:55.223Z",
+  "total_cycles_completed": 11248,
+  "total_learnings_persisted": 11248,
+  "total_rules_promoted": 10595,
   "history": [
-    {
-      "timestamp": "2026-11-20T17:45:24.741Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T17:45:32.104Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T17:53:52.632Z",
-      "repository": "moby/buildkit",
-      "learningId": "learn-github-moby-buildkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T17:53:57.537Z",
       "repository": "weaviate/weaviate",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-21T13:53:45.477Z",
       "repository": "ydb-platform/ydb",
       "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T14:27:40.941Z",
+      "repository": "Comfy-Org/Z-Image-Turbo",
+      "learningId": "learn-huggingface-comfy-org-z-image-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T14:27:48.352Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T14:27:55.223Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
