@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T01:25:07.986Z",
-  "total_records": 2206,
+  "last_updated": "2026-11-21T01:35:35.532Z",
+  "total_records": 2209,
   "domains": {
     "A": {
       "total": 17,
@@ -1034,7 +1034,7 @@
       ]
     },
     "G": {
-      "total": 374,
+      "total": 376,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1409,11 +1409,13 @@
         "domain_intelligence-architecture-intelligence-syntax-tree-hast-util-to-html-core-invariants",
         "domain_intelligence-architecture-intelligence-syntax-tree-hast-util-to-html-learnings-core-invariant",
         "domain_intelligence-architecture-intelligence-lancedb-lancedb-core-invariants",
-        "domain_intelligence-architecture-intelligence-lancedb-lancedb-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-lancedb-lancedb-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-mswjs-msw-core-invariants",
+        "domain_intelligence-architecture-intelligence-mswjs-msw-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 518,
+      "total": 519,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1932,7 +1934,8 @@
         "domain_intelligence-technical-construction-intelligence-parcel-bundler-parcel-core-invariants",
         "domain_intelligence-technical-construction-intelligence-parcel-bundler-parcel-learnings-core-invaria",
         "domain_intelligence-technical-construction-intelligence-dosco-deeporg-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-dosco-deeporg-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-dosco-deeporg-learnings-core-invariants",
+        "DOM-H-0664FD36"
       ]
     },
     "I": {
@@ -11597,8 +11600,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "e1209d77e385056a8914d5874b2c0f9c13d88942333c81b90efa190bbc630bfe",
-      "created_at": "2026-11-21T01:25:07.986Z"
+      "content_hash": "e9ffc308222ac8283146abbec34b9c82cb58e64e74eeec63752fc7405f4e6d8e",
+      "created_at": "2026-11-21T01:35:35.532Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -14122,10 +14125,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: wcandillon/react-native-skia Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-technical-construction-intelligence-wcandillon-react-n.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-technical-construction-intelligence-wcandillon-reac.md",
       "repository": "wcandillon/react-native-skia",
-      "content_hash": "5a5f2b1d14eccfe45b46761a613d67af71351174c6166942002341c7c73eafee",
-      "created_at": "2026-11-18T18:09:57.387Z"
+      "content_hash": "f413eb1b76388a5d2731422136ec45bf972ae6d9b0c5fa74a2033cfdeac2d1db",
+      "created_at": "2026-11-21T01:33:44.348Z"
     },
     "DOM-D-AF708B11": {
       "record_id": "DOM-D-AF708B11",
@@ -25759,8 +25762,8 @@
       "title": "Technical Construction Intelligence: wcandillon-react-native-skia-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-learnings-technical-construction-intelligence-wcand.md",
       "repository": "wcandillon-react-native-skia-learnings",
-      "content_hash": "f2f1216b581f7451a23be41af67677593f8e3a3a3e66f4d8c7492a7826cc62f4",
-      "created_at": "2026-11-17T03:42:29.872Z"
+      "content_hash": "0c47165a1347716e6f23ea264ab0cc76454e0e16a5811365c3a0700d47d32e0d",
+      "created_at": "2026-11-21T01:35:34.574Z"
     },
     "domain_intelligence-market-business-intelligence-mfontanini-presenterm-core-invariants": {
       "record_id": "domain_intelligence-market-business-intelligence-mfontanini-presenterm-core-invariants",
@@ -37077,6 +37080,58 @@
       "repository": "webdriverio-webdriverio-learnings",
       "content_hash": "f70c31c6f299c70a4f32f3a5a4618baa73e60c2156e53ad7329234877d19e8ff",
       "created_at": "2026-11-21T01:16:31.026Z"
+    },
+    "domain_intelligence-architecture-intelligence-mswjs-msw-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mswjs-msw-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mswjs/msw Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mswjs-msw-architecture-intelligence-mswjs-msw-core-invariants.md",
+      "repository": "mswjs/msw",
+      "content_hash": "c30f2a54ec395cb3789037727aa2c0015d21a41cca0630f60718e8c652ac6303",
+      "created_at": "2026-11-21T01:34:55.706Z"
+    },
+    "DOM-H-0664FD36": {
+      "record_id": "DOM-H-0664FD36",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Undici Header Delimiter Injection Failure in Passthrough Requests (BUG-UNDICI-01)",
+      "content": "HTTP header fields are key-value structures where only the *first* colon is the structural separator. Tokenizing via split patterns on structural characters without depth/count bounding creates parsing vulnerabilities.",
+      "content_hash": "938807c1388d59d26f23d1b1ec638f313b23e1ece1a12ffb5c06a85f3693568e",
+      "summary": "The raw header parser split string rows on `/:/g` without limiting the split count to 1, or failed to identify the first colon index (`index -> HTTP header fields are key-value structures where only the *first* colon is the structural separator. Tokenizing via split patterns on struc",
+      "provenance": {
+        "source_uri": "project://mswjs-msw/mswjs-msw-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T01:34:58.961Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (mswjs-msw)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "GitHub Issue `#2826`; fixed across `@mswjs/interceptors@0.45.11` and referenced in MSW release pipeline dependencies."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T01:35:32.184Z"
+    },
+    "domain_intelligence-architecture-intelligence-mswjs-msw-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mswjs-msw-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mswjs-msw-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mswjs-msw-learnings-architecture-intelligence-mswjs-msw-learnings-core-invariant.md",
+      "repository": "mswjs-msw-learnings",
+      "content_hash": "b729a9f0792b357c4ac63a26b20f9d0b92e70784b8aae1a59a0b4b7b620fcd63",
+      "created_at": "2026-11-21T01:35:33.169Z"
     }
   }
 }

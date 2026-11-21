@@ -10153,10 +10153,10 @@
     "repository": "mswjs/msw",
     "platform": "github",
     "sourceUrl": "https://github.com/mswjs/msw",
-    "sourceVersion": "13fe000c",
+    "sourceVersion": "b3df8504",
     "license": "MIT",
-    "contentHash": "1435df35fb20090260a500a399e34a186cb66d63b804aa8eeebe23869d2c6cd1",
-    "lastHarvestedAt": "2026-11-17T07:06:17.891Z",
+    "contentHash": "a3e1abc79d03cf5382cd961f832c7422083cdaceb687df0ea85eee8a04ded881",
+    "lastHarvestedAt": "2026-11-21T01:34:54.867Z",
     "learningId": "learn-github-mswjs-msw"
   },
   "signerlabs-klee": {
@@ -10193,10 +10193,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/wcandillon/react-native-skia",
-    "sourceVersion": "6da7ac20",
+    "sourceVersion": "7b38b7d5",
     "license": "MIT",
-    "contentHash": "3c210580124ce7a8b1c7aabff018ffac1c02553bdcb15ee23159eaf50983f10d",
-    "lastHarvestedAt": "2026-11-17T03:41:58.996Z",
+    "contentHash": "aa10ec227e0280275741e1f12de5a695a9f88bc02ebd973a1b7fbaf079ed361d",
+    "lastHarvestedAt": "2026-11-21T01:33:43.877Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "testing-library-dom-testing-library": {

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-21T00:13:22.634Z",
+  "updated_at": "2026-11-21T01:35:32.216Z",
   "statistics": {
-    "total_nodes": 436,
+    "total_nodes": 437,
     "total_edges": 191,
     "domain_distribution": {
       "D": 278,
       "M": 1,
-      "H": 65,
+      "H": 66,
       "J": 22,
       "K": 27,
       "L": 8,
@@ -9745,6 +9745,28 @@
       ],
       "created_at": "2026-11-21T00:13:22.634Z",
       "updated_at": "2026-11-21T00:13:22.634Z"
+    },
+    "DOM-H-0664FD36": {
+      "id": "DOM-H-0664FD36",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Undici Header Delimiter Injection Failure in Passthrough Requests (BUG-UNDICI-01)",
+      "summary": "The raw header parser split string rows on `/:/g` without limiting the split count to 1, or failed to identify the first colon index (`index -> HTTP header fields are key-value structures where only the *first* colon is the structural separator. Tokenizing via split patterns on struc",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://mswjs-msw/mswjs-msw-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T01:34:58.961Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (mswjs-msw)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-21T01:35:32.216Z",
+      "updated_at": "2026-11-21T01:35:32.216Z"
     }
   },
   "edges": [

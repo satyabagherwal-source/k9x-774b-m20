@@ -719334,3 +719334,359 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `ef9166a8` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9690. Multi-State Service Worker Resolution with Hard-Reload Detection (Harvested from mswjs/msw)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-State Service Worker Resolution with Hard-Reload Detection",
+  "source": "mswjs/msw",
+  "source_url": "https://github.com/mswjs/msw",
+  "source_version": "b3df8504",
+  "license": "MIT",
+  "extracted_at": "2026-11-21T01:34:53.033Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mswjs-msw",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mswjs/msw](https://github.com/mswjs/msw) (Revision: `b3df8504`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When coordinating with browser Service Workers for network interception, the host application MUST inspect all three worker lifecycle states (`active`, `installing`, and `waiting`) and MUST trigger a targeted programmatic page reload (`location.reload()`) if registrations exist but `navigator.serviceWorker.controller` evaluates to `null`.
+
+**WHY**:
+Browsers bypass the Service Worker controller during "Force Reload" / "Hard Reload" (`Ctrl+F5` / `Shift+Reload`). If an application proceeds under the assumption that an existing registration controls network traffic, initial requests immediately bypass the interception proxy and hit the live backend, causing erratic race conditions, leakages of mock state, and intermittent E2E test failures.
+
+**WHEN TO APPLY**:
+Any browser-based interception framework, offline PWA coordinator, or local test harness managing Service Worker registrations where control over initial network calls is mandatory.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import { until } from 'until-async'
+
+export interface FindWorkerPredicate {
+  (scriptURL: string, absoluteWorkerUrl: string): boolean
+}
+
+export async function resolveOrRegisterWorker(
+  workerUrl: string,
+  options: RegistrationOptions = {},
+  findWorker: FindWorkerPredicate = (url, target) => url === target,
+): Promise<[ServiceWorker, ServiceWorkerRegistration]> {
+  const absoluteWorkerUrl = new URL(workerUrl, location.href).href
+
+  const registrations = await navigator.serviceWorker.getRegistrations()
+  const matchingRegistrations = registrations.filter((reg) => {
+    const states = [reg.active, reg.installing, reg.waiting].filter(
+      (w): w is ServiceWorker => w !== null,
+    )
+    return states.some((w) => findWorker(w.scriptURL, absoluteWorkerUrl))
+  })
+
+  // Hard-reload invariant: registrations present but page un-controlled
+  if (!navigator.serviceWorker.controller && matchingRegistrations.length > 0) {
+    location.reload()
+    // Halt execution flow while browser reloads context
+    return new Promise(() => {})
+  }
+
+  const [existing] = matchingRegistrations
+  if (existing) {
+    // Non-blocking background update to verify integrity
+    existing.update()
+    const worker = [existing.active, existing.installing, existing.waiting]
+      .filter((w): w is ServiceWorker => w !== null)
+      .find((w) => findWorker(w.scriptURL, absoluteWorkerUrl))
+
+    if (!worker) {
+      throw new Error(`Worker missing in registered scope: ${existing.scope}`)
+    }
+    return [worker, existing]
+  }
+
+  const [regError, registration] = await until(() =>
+    navigator.serviceWorker.register(workerUrl, options),
+  )
+
+  if (regError) {
+    throw new Error(`Service Worker registration failed: ${regError.message}`)
+  }
+
+  const registeredWorker = [
+    registration.active,
+    registration.installing,
+    registration.waiting,
+  ]
+    .filter((w): w is ServiceWorker => w !== null)
+    .find((w) => findWorker(w.scriptURL, absoluteWorkerUrl))
+
+  if (!registeredWorker) {
+    throw new Error('Service Worker failed to enter a usable lifecycle state.')
+  }
+
+  return [registeredWorker, registration]
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Blindly reading controller or active worker
+async function badWorkerResolution(workerUrl: string) {
+  // FAILS on hard reload: controller is null even if worker is registered
+  if (!navigator.serviceWorker.controller) {
+    await navigator.serviceWorker.register(workerUrl)
+  }
+  // FAILS: registration.active is null while worker is still in 'installing' or 'waiting'
+  const reg = await navigator.serviceWorker.ready
+  return reg.active // Type error or null runtime dereference
+}
+```
+
+**VERIFICATION METHOD**:
+Automated integration test using Playwright/Puppeteer:
+1. Navigate to target URL with MSW enabled.
+2. Dispatch DevTools protocol command `Page.reload({ ignoreCache: true })`.
+3. Assert that `navigator.serviceWorker.controller` is re-established prior to any subsequent `fetch()` dispatches.
+
+---
+
+
+---
+
+## 9691. AST-Neutral Bundled Artifact Checksum Invalidation (Harvested from mswjs/msw)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "AST-Neutral Bundled Artifact Checksum Invalidation",
+  "source": "mswjs/msw",
+  "source_url": "https://github.com/mswjs/msw",
+  "source_version": "b3df8504",
+  "license": "MIT",
+  "extracted_at": "2026-11-21T01:34:53.646Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mswjs-msw",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mswjs/msw](https://github.com/mswjs/msw) (Revision: `b3df8504`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When validating the integrity of distributed runtime scripts (such as Service Workers or injected bootstrap bridges) across environments, the build system MUST compute the cryptographic checksum over an intermediate, whitespace-normalized, comment-stripped IIFE AST bundle with compression and variable mangling disabled.
+
+**WHY**:
+Raw file hashing (`crypto.createHash('sha256').update(fileBuffer)`) invalidates checksums on cosmetic diffs (line endings `CRLF` vs `LF`, package manager header injections, licensing comments). Conversely, hashing fully minified artifacts causes checksum instability across minor compiler/minifier version bumps due to variable renaming heuristics and dead code elimination re-ordering.
+
+**WHEN TO APPLY**:
+Static scripts deployed to user directories (e.g., `public/mockServiceWorker.js`) where client-side code must ensure runtime-to-library synchronization without false-positive version mismatch warnings.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import crypto from 'node:crypto'
+import { Rolldown } from 'tsdown'
+import { invariant } from 'outvariant'
+
+export async function computeStableScriptChecksum(entryPath: string): Promise<string> {
+  const bundle = await Rolldown.rolldown({
+    input: entryPath,
+    platform: 'browser',
+    treeshake: false,
+    logLevel: 'silent',
+  })
+
+  // Normalize formatting: remove comments and redundant whitespace,
+  // but freeze variable names and syntax trees by disabling compression/mangling.
+  const { output } = await bundle.generate({
+    format: 'iife',
+    comments: false,
+    minify: {
+      compress: false,
+      mangle: false,
+      codegen: {
+        removeWhitespace: true,
+      },
+    },
+  })
+  await bundle.close()
+
+  const [chunk] = output
+  invariant(chunk && chunk.code, 'Failed to normalize script: empty bundle output')
+
+  return crypto
+    .createHash('md5')
+    .update(chunk.code, 'utf8')
+    .digest('hex')
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Hashing raw disk buffers or fully mangled output
+import fs from 'node:fs'
+import crypto from 'node:crypto'
+
+export function computeUnstableChecksum(filePath: string): string {
+  // FAILS: Git checkout line endings (LF vs CRLF) change the hash!
+  const content = fs.readFileSync(filePath, 'utf8')
+  return crypto.createHash('md5').update(content).digest('hex')
+}
+```
+
+**VERIFICATION METHOD**:
+Unit test validating that checking out the repository on Windows (`core.autocrlf=true`) vs Linux (`core.autocrlf=input`) generates identical hexadecimal digests for `mockServiceWorker.js`.
+
+---
+
+
+---
+
+## 9692. Graceful Inter-Process Drain Phase During Network Teardown (Harvested from mswjs/msw)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Graceful Inter-Process Drain Phase During Network Teardown",
+  "source": "mswjs/msw",
+  "source_url": "https://github.com/mswjs/msw",
+  "source_version": "b3df8504",
+  "license": "MIT",
+  "extracted_at": "2026-11-21T01:34:54.292Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mswjs-msw",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mswjs/msw](https://github.com/mswjs/msw) (Revision: `b3df8504`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When disabling an asynchronous IPC network interception provider, the system MUST NOT purge message listeners, terminate communication channels, or unregister the proxy worker until an explicit acknowledgment handshake (`CLIENT_CLOSE` -> `CLIENT_CLOSED`) has resolved, and the channel MUST keep resolving in-flight requests with a `PASSTHROUGH` signal until worker drainage finishes.
+
+**WHY**:
+Calling `super.disable()` or unceremoniously unregistering a Service Worker immediately terminates the interception channel. Any HTTP request dispatched immediately before `worker.stop()` that is in-flight across the IPC boundary hangs indefinitely or throws network errors (`Failed to fetch`), corrupting subsequent assertions in automated test suites.
+
+**WHEN TO APPLY**:
+All client-worker or proxy-to-parent architectures where network requests are in-flight during runtime state transitions (`stop()`, `reset()`, or test teardown hooks).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import { PromiseWithResolvers } from 'rettime'
+
+export class ResilientWorkerSource {
+  #channel: WorkerChannel
+  #listenerController?: AbortController
+
+  public async disable(): Promise<void> {
+    // 1. Abort only non-essential host listeners (e.g. window events)
+    this.#listenerController?.abort()
+    this.#listenerController = undefined
+
+    // 2. Synchronize drain state with worker thread via handshake
+    const closed = Promise.withResolvers<void>()
+    this.#channel.once('CLIENT_CLOSED', () => closed.resolve())
+    this.#channel.postMessage('CLIENT_CLOSE')
+
+    // 3. Await explicit worker acknowledgement
+    await closed.promise
+
+    // 4. Invariant: Do NOT nullify worker resolution promise here.
+    // In-flight requests received during this boundary MUST receive
+    // an immediate PASSTHROUGH payload to prevent browser promise deadlocks.
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Immediate unregistration and listener purge
+public async badDisable(): Promise<void> {
+  // Purges handlers immediately: pending requests hang forever!
+  this.#channel.removeAllListeners()
+  const [, registration] = await this.workerPromise
+  await registration.unregister() // Destroys context while fetch is in-flight
+}
+```
+
+**VERIFICATION METHOD**:
+Concurrency test: Trigger 50 parallel `fetch('/api/delay')` calls, invoke `worker.stop()` concurrently at $t=10\text{ms}$, and assert that all 50 requests successfully settle with either mock responses or bypassed remote network responses without unhandled promise rejections.
+
+---

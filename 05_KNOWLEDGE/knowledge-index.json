@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T01:25:08.218Z",
+  "last_updated": "2026-11-21T01:35:35.738Z",
   "total_verified_learnings": 9055,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22819,
+  "total_items": 22829,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218779,13 +218779,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-796Z-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-KPE9-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "343e0ef499608e157a170c96edfc098598d1084d50460fa3e3503621da88a478",
+      "content_hash": "9d8fbc8204d00741970f00f5541de88459fe48e4099f9119e15b710801646898",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T01:25:07.788Z"
+      "persisted_at": "2026-11-21T01:35:35.314Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218795,9 +218795,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "e1209d77e385056a8914d5874b2c0f9c13d88942333c81b90efa190bbc630bfe",
+      "content_hash": "e9ffc308222ac8283146abbec34b9c82cb58e64e74eeec63752fc7405f4e6d8e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T01:25:07.986Z"
+      "persisted_at": "2026-11-21T01:35:35.532Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218807,9 +218807,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "51b2a0e8d17d19d202f34e807743f8f153f6895d9dc79121dc23d27df4eca37b",
+      "content_hash": "555454387ab159f9242bfafacef845d228aff7d9386ae650d8ab5154756e782b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T01:25:08.218Z"
+      "persisted_at": "2026-11-21T01:35:35.738Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -226279,13 +226279,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "slug": "shopify-react-native-skia",
+      "slug": "wcandillon-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/Shopify/react-native-skia",
-      "source_version": "72ed90d0",
-      "content_hash": "f78b8de1dafdd6c98dcea5a097d61c951b686b64dd133cdf899200d05decd219",
-      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "7b38b7d5",
+      "content_hash": "aa10ec227e0280275741e1f12de5a695a9f88bc02ebd973a1b7fbaf079ed361d",
+      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
       "promoted_rules": [
         {
           "number": 8346,
@@ -226300,7 +226300,7 @@
         {
           "number": 9269,
           "title": "🍏): present at full rate on macOS 14+ ProMotion devices",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -226308,7 +226308,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T18:09:56.692Z",
+      "verified_at": "2026-11-21T01:33:43.623Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226347,25 +226347,25 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-technical-construction-intelligence-wcandillon-react-n.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-technical-construction-intelligence-wcandillon-reac.md",
       "title": "Technical Construction Intelligence: wcandillon/react-native-skia Core Invariants",
       "repository": "wcandillon/react-native-skia",
-      "source_version": "72ed90d0",
-      "content_hash": "5a5f2b1d14eccfe45b46761a613d67af71351174c6166942002341c7c73eafee",
+      "source_version": "7b38b7d5",
+      "content_hash": "f413eb1b76388a5d2731422136ec45bf972ae6d9b0c5fa74a2033cfdeac2d1db",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T18:09:57.387Z"
+      "persisted_at": "2026-11-21T01:33:44.348Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/shopify-react-native-skia-verification-protocol-empirical-defect-shield-for-wcan.md",
+      "relative_path": "08_VERIFICATION/wcandillon-react-native-skia-verification-protocol-empirical-defect-shield-for-w.md",
       "title": "Verification Protocol: Empirical Defect Shield for wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "source_version": "72ed90d0",
-      "content_hash": "cbb8eba1c444c894254df473ea9c6f7e4ec945356c9e6497c3daad4062a016b1",
+      "source_version": "7b38b7d5",
+      "content_hash": "ec4b0b14e89b89cb7ec7fc96b8467c14746df2eaff37698e10a27fc3ec531ee2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T18:09:57.576Z"
+      "persisted_at": "2026-11-21T01:33:44.541Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-edge0-edge0-145b-nvfp4-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-edge0-edge0-145b-nvfp4-learnings-core-invaria",
@@ -266072,9 +266072,9 @@
       "title": "Technical Construction Intelligence: wcandillon-react-native-skia-learnings Core Invariants",
       "repository": "wcandillon-react-native-skia-learnings",
       "source_version": "HEAD",
-      "content_hash": "f2f1216b581f7451a23be41af67677593f8e3a3a3e66f4d8c7492a7826cc62f4",
+      "content_hash": "0c47165a1347716e6f23ea264ab0cc76454e0e16a5811365c3a0700d47d32e0d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T03:42:29.872Z"
+      "persisted_at": "2026-11-21T01:35:34.574Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia-l": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia-l",
@@ -266084,9 +266084,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for wcandillon-react-native-skia-learnings",
       "repository": "wcandillon-react-native-skia-learnings",
       "source_version": "HEAD",
-      "content_hash": "f43a945fbc07ae2b8c6650dd298e1f4ba25f0d57fe44bc73d65985f75658ec39",
+      "content_hash": "864d85c2866235262b14357a3c8a1c93446e12561d30d7234a129e9372c5f8c4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:42:29.988Z"
+      "persisted_at": "2026-11-21T01:35:34.779Z"
     },
     "learn-github-mfontanini-presenterm": {
       "learning_id": "learn-github-mfontanini-presenterm",
@@ -269238,14 +269238,29 @@
       "slug": "mswjs-msw",
       "platform": "github",
       "source_url": "https://github.com/mswjs/msw",
-      "source_version": "13fe000c",
-      "content_hash": "1435df35fb20090260a500a399e34a186cb66d63b804aa8eeebe23869d2c6cd1",
+      "source_version": "b3df8504",
+      "content_hash": "a3e1abc79d03cf5382cd961f832c7422083cdaceb687df0ea85eee8a04ded881",
       "dossier_path": "07_PROJECT_LEARNING/mswjs-msw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mswjs-msw-learnings.md",
       "promoted_rules": [
         {
           "number": 8897,
           "title": "preserve optional path parameters and pipes in handler paths",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9690,
+          "title": "Multi-State Service Worker Resolution with Hard-Reload Detection",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9691,
+          "title": "AST-Neutral Bundled Artifact Checksum Invalidation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9692,
+          "title": "Graceful Inter-Process Drain Phase During Network Teardown",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -269254,7 +269269,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T07:06:17.702Z",
+      "verified_at": "2026-11-21T01:34:54.627Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -269308,10 +269323,10 @@
       "relative_path": "08_VERIFICATION/mswjs-msw-verification-protocol-empirical-defect-shield-for-mswjs-msw.md",
       "title": "Verification Protocol: Empirical Defect Shield for mswjs/msw",
       "repository": "mswjs/msw",
-      "source_version": "13fe000c",
-      "content_hash": "444ec08058c476d29ab94be6023504c92e103801f1239abb648b378efdedf4c7",
+      "source_version": "b3df8504",
+      "content_hash": "bf03f143d2e8006a0472306b6c174e32e928c17df816e07ca2b455a1ced77994",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T07:06:18.343Z"
+      "persisted_at": "2026-11-21T01:34:56.063Z"
     },
     "learn-github-zarf-dev-zarf": {
       "learning_id": "learn-github-zarf-dev-zarf",
@@ -269476,9 +269491,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mswjs-msw-learnings",
       "repository": "mswjs-msw-learnings",
       "source_version": "HEAD",
-      "content_hash": "ca49d146522dad54dbfd3dd4d19075d8b959d9aca93e5a35879c9de93f71af85",
+      "content_hash": "c98ab49713d0b17a0a630ec010209a841b51220c39d0f8c9c165412882c69066",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T07:06:59.569Z"
+      "persisted_at": "2026-11-21T01:35:33.555Z"
     },
     "domain_intelligence-architecture-intelligence-zarf-dev-zarf-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zarf-dev-zarf-learnings-core-invariants",
@@ -290876,26 +290891,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 9269,
       "title": "🍏): present at full rate on macOS 14+ ProMotion devices",
-      "source_url": "https://github.com/Shopify/react-native-skia",
-      "source_version": "72ed90d0",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "7b38b7d5",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-18T18:09:56.692Z"
+      "verified_at": "2026-11-21T01:33:43.623Z"
     },
     "candidate_directive-present-at-full-rate-on-macos-14-promotion-devices": {
       "item_id": "candidate_directive-present-at-full-rate-on-macos-14-promotion-devices",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Y8TG-present-at-full-rate-on-macos-14-promotion-devices.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-KONP-present-at-full-rate-on-macos-14-promotion-devices.md",
       "title": "🍏): present at full rate on macOS 14+ ProMotion devices",
-      "repository": "shopify-react-native-skia-learnings",
+      "repository": "wcandillon-react-native-skia-learnings",
       "source_version": "HEAD",
-      "content_hash": "9417a7735e31d5d90fa686fce8f79a5d38598ddae7607718396eb8d50d262aaf",
+      "content_hash": "41b0294af735071c363c799e4e93c3d75f4d1705899d9fe7d4d418068f9417d2",
       "domain_letter": "M",
-      "persisted_at": "2026-11-18T18:14:52.714Z"
+      "persisted_at": "2026-11-21T01:35:34.369Z"
     },
     "rule-9270": {
       "learning_id": "rule-9270",
@@ -309709,6 +309724,132 @@
       "content_hash": "f70c31c6f299c70a4f32f3a5a4618baa73e60c2156e53ad7329234877d19e8ff",
       "domain_letter": "K",
       "persisted_at": "2026-11-21T01:16:31.026Z"
+    },
+    "rule-9690": {
+      "learning_id": "rule-9690",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9690,
+      "title": "Multi-State Service Worker Resolution with Hard-Reload Detection",
+      "source_url": "https://github.com/mswjs/msw",
+      "source_version": "b3df8504",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T01:34:54.627Z"
+    },
+    "rule-9691": {
+      "learning_id": "rule-9691",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9691,
+      "title": "AST-Neutral Bundled Artifact Checksum Invalidation",
+      "source_url": "https://github.com/mswjs/msw",
+      "source_version": "b3df8504",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T01:34:54.627Z"
+    },
+    "rule-9692": {
+      "learning_id": "rule-9692",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9692,
+      "title": "Graceful Inter-Process Drain Phase During Network Teardown",
+      "source_url": "https://github.com/mswjs/msw",
+      "source_version": "b3df8504",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T01:34:54.627Z"
+    },
+    "candidate_directive-multi-state-service-worker-resolution-with-hard-reload-detection": {
+      "item_id": "candidate_directive-multi-state-service-worker-resolution-with-hard-reload-detection",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KN8U-multi-state-service-worker-resolution-with-hard-reload-detection.md",
+      "title": "Multi-State Service Worker Resolution with Hard-Reload Detection",
+      "repository": "mswjs-msw-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0709eb9625765f3a0a587a30774135318aee76d9889be26b34995c558ea15c0e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T01:35:32.529Z"
+    },
+    "candidate_directive-ast-neutral-bundled-artifact-checksum-invalidation": {
+      "item_id": "candidate_directive-ast-neutral-bundled-artifact-checksum-invalidation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KN8V-ast-neutral-bundled-artifact-checksum-invalidation.md",
+      "title": "AST-Neutral Bundled Artifact Checksum Invalidation",
+      "repository": "mswjs-msw-learnings",
+      "source_version": "HEAD",
+      "content_hash": "55b26a1f315a11b8370725d6cb32cbb54528994ad24bd4538258eb3ea7281b47",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T01:35:32.748Z"
+    },
+    "candidate_directive-graceful-inter-process-drain-phase-during-network-teardown": {
+      "item_id": "candidate_directive-graceful-inter-process-drain-phase-during-network-teardown",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KN8W-graceful-inter-process-drain-phase-during-network-teardown.md",
+      "title": "Graceful Inter-Process Drain Phase During Network Teardown",
+      "repository": "mswjs-msw-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d52c436af9c2934527cfa6e7caa1fc2c10661888f84886e97e5156a28567df8d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T01:35:32.953Z"
+    },
+    "domain_intelligence-architecture-intelligence-mswjs-msw-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-mswjs-msw-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mswjs-msw-architecture-intelligence-mswjs-msw-core-invariants.md",
+      "title": "Architecture Intelligence: mswjs/msw Core Invariants",
+      "repository": "mswjs/msw",
+      "source_version": "b3df8504",
+      "content_hash": "c30f2a54ec395cb3789037727aa2c0015d21a41cca0630f60718e8c652ac6303",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T01:34:55.706Z"
+    },
+    "agent_contract-agent-contract-mswjs-msw-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-mswjs-msw-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/mswjs-msw-agent-contract-mswjs-msw-autonomous-specialist-persona.md",
+      "title": "Agent Contract: mswjs/msw Autonomous Specialist Persona",
+      "repository": "mswjs/msw",
+      "source_version": "b3df8504",
+      "content_hash": "b25cea49e7619414b707064484ae23429108b9e8d729886fadf5c403eb523a44",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T01:34:55.896Z"
+    },
+    "domain_intelligence-architecture-intelligence-mswjs-msw-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-mswjs-msw-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mswjs-msw-learnings-architecture-intelligence-mswjs-msw-learnings-core-invariant.md",
+      "title": "Architecture Intelligence: mswjs-msw-learnings Core Invariants",
+      "repository": "mswjs-msw-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b729a9f0792b357c4ac63a26b20f9d0b92e70784b8aae1a59a0b4b7b620fcd63",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T01:35:33.169Z"
+    },
+    "agent_contract-agent-contract-mswjs-msw-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-mswjs-msw-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/mswjs-msw-learnings-agent-contract-mswjs-msw-learnings-autonomous-specialist-per.md",
+      "title": "Agent Contract: mswjs-msw-learnings Autonomous Specialist Persona",
+      "repository": "mswjs-msw-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bdde56c0aff47070d1158084e842ec6be76b2e76a34bca3104bd7f9962385e61",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T01:35:33.373Z"
     }
   },
   "ai-builder-brain": {

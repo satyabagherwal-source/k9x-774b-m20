@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T01:00:37.683Z",
-    "lastVerified": "2026-11-21T01:00:37.683Z",
+    "lastChecked": "2026-11-21T01:33:46.752Z",
+    "lastVerified": "2026-11-21T01:33:46.752Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T01:25:04.789Z",
-    "lastVerified": "2026-11-21T01:25:04.789Z",
+    "lastChecked": "2026-11-21T01:34:58.804Z",
+    "lastVerified": "2026-11-21T01:34:58.804Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -230,8 +230,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-20T21:06:18.422Z",
-    "lastVerified": "2026-11-20T21:06:18.422Z",
+    "lastChecked": "2026-11-21T01:33:41.684Z",
+    "lastVerified": "2026-11-21T01:33:41.684Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -3660,9 +3660,9 @@
   "parthsarthi03-raptor": {
     "name": "raptor",
     "officialUrl": "https://github.com/parthsarthi03/raptor",
-    "lastChecked": "2026-11-19T23:54:20.906Z",
+    "lastChecked": "2026-11-21T01:33:44.127Z",
     "revisionIdentifier": "7da1d48a",
-    "lastVerified": "2026-11-19T23:54:20.906Z"
+    "lastVerified": "2026-11-21T01:33:44.127Z"
   },
   "mfontanini-presenterm": {
     "name": "presenterm",
@@ -4423,12 +4423,12 @@
     "lastVerified": "2026-11-18T20:45:39.905Z"
   },
   "clastix-kamaji": {
-    "name": "clastix/kamaji",
+    "name": "kamaji",
     "officialUrl": "https://github.com/clastix/kamaji",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T01:12:43.734Z",
-    "lastVerified": "2026-11-20T01:12:43.734Z",
+    "lastChecked": "2026-11-21T01:33:39.143Z",
+    "lastVerified": "2026-11-21T01:33:39.143Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clastix-kamaji",
@@ -4437,7 +4437,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "92416031"
   },
   "qovery-replibyte": {
     "name": "Replibyte",
@@ -7936,9 +7937,9 @@
   "veirt-weathr": {
     "name": "weathr",
     "officialUrl": "https://github.com/Veirt/weathr",
-    "lastChecked": "2026-11-19T15:16:24.584Z",
+    "lastChecked": "2026-11-21T01:33:31.628Z",
     "revisionIdentifier": "7d403a0c",
-    "lastVerified": "2026-11-19T15:16:24.584Z"
+    "lastVerified": "2026-11-21T01:33:31.628Z"
   },
   "hf-openbmb-minicpm-v-4.7-1b": {
     "name": "openbmb/MiniCPM-V-4.7-1B",
@@ -11420,5 +11421,39 @@
     "lastChecked": "2026-11-21T01:24:54.776Z",
     "revisionIdentifier": "4b5b7817",
     "lastVerified": "2026-11-21T01:24:54.776Z"
+  },
+  "mswjs-msw": {
+    "name": "mswjs/msw",
+    "officialUrl": "https://github.com/mswjs/msw",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-21T01:33:38.984Z",
+    "lastVerified": "2026-11-21T01:33:38.984Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-mswjs-msw",
+    "contentHash": "a3e1abc79d03cf5382cd961f832c7422083cdaceb687df0ea85eee8a04ded881",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "wcandillon-react-native-skia": {
+    "name": "wcandillon/react-native-skia",
+    "officialUrl": "https://github.com/wcandillon/react-native-skia",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-21T01:33:41.306Z",
+    "lastVerified": "2026-11-21T01:33:41.306Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-wcandillon-react-native-skia",
+    "contentHash": "aa10ec227e0280275741e1f12de5a695a9f88bc02ebd973a1b7fbaf079ed361d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

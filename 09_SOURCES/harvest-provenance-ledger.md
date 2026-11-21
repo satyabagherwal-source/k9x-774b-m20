@@ -11722,3 +11722,6 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `6a6a6a66` | Multi-dimensional audit evidence | 2026-11-21T01:08:29.099Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `d22f074d` | Multi-dimensional audit evidence | 2026-11-21T01:08:32.036Z |
 | `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `68055ce4` | Multi-dimensional audit evidence | 2026-11-21T01:16:23.660Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `7b38b7d5` | Multi-dimensional audit evidence | 2026-11-21T01:33:43.877Z |
+| `learn-github-mswjs-msw` | `https://github.com/mswjs/msw` | `b3df8504` | Multi-dimensional audit evidence | 2026-11-21T01:34:54.867Z |
+| `learn-dom-h-0664fd36` | `project://mswjs-msw` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mswjs-msw-learnings.md` | 2026-11-21T01:35:32.220Z |

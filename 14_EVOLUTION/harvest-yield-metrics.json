@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T01:16:23.683Z",
-  "total_cycles_completed": 11129,
-  "total_learnings_persisted": 11129,
-  "total_rules_promoted": 10483,
+  "last_updated": "2026-11-21T01:34:54.874Z",
+  "total_cycles_completed": 11131,
+  "total_learnings_persisted": 11131,
+  "total_rules_promoted": 10487,
   "history": [
-    {
-      "timestamp": "2026-11-20T04:58:10.361Z",
-      "repository": "etcd-io/etcd",
-      "learningId": "learn-github-etcd-io-etcd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T05:07:43.744Z",
-      "repository": "CrawlCove/hreflang-checker",
-      "learningId": "learn-github-crawlcove-hreflang-checker",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T05:16:20.221Z",
       "repository": "octodns/octodns",
@@ -1403,6 +1389,20 @@
       "repository": "webdriverio/webdriverio",
       "learningId": "learn-github-webdriverio-webdriverio",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T01:33:43.883Z",
+      "repository": "wcandillon/react-native-skia",
+      "learningId": "learn-github-wcandillon-react-native-skia",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T01:34:54.874Z",
+      "repository": "mswjs/msw",
+      "learningId": "learn-github-mswjs-msw",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

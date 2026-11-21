@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T01:25:07.788Z",
+  "last_updated": "2026-11-21T01:35:35.314Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5336,11 +5336,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-796Z",
+      "id": "CD-KPE9",
       "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-796Z-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-KPE9-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-21",
@@ -30491,14 +30491,14 @@
       "staged_date": "2026-11-18"
     },
     {
-      "id": "CD-Y8TG",
+      "id": "CD-KONP",
       "directive_title": "🍏): present at full rate on macOS 14+ ProMotion devices",
-      "source_repo": "shopify-react-native-skia-learnings",
+      "source_repo": "wcandillon-react-native-skia-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-Y8TG-present-at-full-rate-on-macos-14-promotion-devices.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-KONP-present-at-full-rate-on-macos-14-promotion-devices.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-18",
+      "date_staged": "2026-11-21",
       "domain_letter": "M"
     },
     {
@@ -40482,6 +40482,66 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-813522-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-KN8U",
+      "directive_title": "Multi-State Service Worker Resolution with Hard-Reload Detection",
+      "source_repo": "mswjs-msw-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-KN8U-multi-state-service-worker-resolution-with-hard-reload-detection.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-KN8V",
+      "directive_title": "AST-Neutral Bundled Artifact Checksum Invalidation",
+      "source_repo": "mswjs-msw-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-KN8V-ast-neutral-bundled-artifact-checksum-invalidation.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-KN8W",
+      "directive_title": "Graceful Inter-Process Drain Phase During Network Teardown",
+      "source_repo": "mswjs-msw-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-KN8W-graceful-inter-process-drain-phase-during-network-teardown.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-C4B80E",
+      "directive_title": "Vitest Browser Mode Mock Annihilation via Service Worker Caching (BUG-BROWSER-02)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mswjs-msw",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C4B80E-vitest-browser-mode-mock-annihilation-vi.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-8175A5",
+      "directive_title": "🍏): present at full rate on macOS 14+ ProMotion devices",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "wcandillon-react-native-skia",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8175A5--present-at-full-rate-on-macos-14-promot.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-DB5EDA",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DB5EDA-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-21"
     }
   ]

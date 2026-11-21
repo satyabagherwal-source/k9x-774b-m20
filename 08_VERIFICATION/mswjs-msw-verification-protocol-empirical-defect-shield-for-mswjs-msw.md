@@ -4,139 +4,204 @@
 {
   "source_repository": "mswjs/msw",
   "source_url": "https://github.com/mswjs/msw",
-  "source_version": "13fe000c",
+  "source_version": "b3df8504",
   "license": "MIT",
-  "timestamp": "2026-11-17T07:06:18.079Z",
-  "ai_provider": "zero-clone-structural-synthesizer",
+  "timestamp": "2026-11-21T01:34:55.125Z",
+  "ai_provider": "google-gemini-cloud-agent",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-mswjs-msw",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [mswjs/msw](https://github.com/mswjs/msw) (Revision: `13fe000c`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T07:06:18.079Z`  
+> **Provenance**: Harvested from [mswjs/msw](https://github.com/mswjs/msw) (Revision: `b3df8504`).  
+> **License**: MIT | **Timestamp**: `2026-11-21T01:34:55.125Z`  
 > **Learning ID**: `learn-github-mswjs-msw`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `mswjs/msw` (Commit: `13fe000c`)
+- **Target Repository**: `mswjs/msw` (Commit: `b3df8504`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-# Forensic Learning Record (Deep Inspection): mswjs/msw
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/mswjs-msw-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/mswjs/msw](https://github.com/mswjs/msw))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T07:06:16.678Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): mswjs/msw
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `mswjs/msw`
-- **Description**: The industry standard for API mocking in JavaScript.
-- **Primary Language / Ecosystem**: TypeScript
-- **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 18352 stars
+## 1. Executive Forensic Architecture & System Mechanics
 
----
+### 1.1 Core Problem Statement
+`mswjs/msw` (Mock Service Worker) solves network interception and API mocking at the OS/Browser network protocol boundary without stubbing high-level application abstractions (such as `window.fetch`, `axios`, or `XMLHttpRequest`). Rather than monkey-patching user-facing runtime modules inside the application context, MSW operates at the transport layer:
+1. **Browser Target**: Implements a dedicated W3C Service Worker client that acts as a reverse proxy directly in the browser's HTTP networking thread, intercepting raw Fetch API events via the Service Worker `fetch` event listener.
+2. **Node.js Target**: Attaches low-level stream interceptors via `@mswjs/interceptors` across Node's `http.ClientRequest`, `https.request`, global `fetch` (via Undici), `net.Socket`, and WebSocket layers.
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
-
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: package.json, README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `config/copy-service-worker.ts`
+### 1.2 Boundary Isolation & System Topology
 ```
-import fs from 'node:fs'
-import path from 'node:path'
++---------------------------------------------------------------------------------------+
+| BROWSER RUNTIME CONTEXT (Main Thread)                                                 |
+|  +-----------------------+     +------------------------+                             |
+|  | User Application Code | --> | Native fetch() / XHR   |                             |
+|  +-----------------------+     +-----------+------------+                             |
+|                                            | (Browser Network Layer)                  |
++--------------------------------------------|------------------------------------------+
+                                             v
++---------------------------------------------------------------------------------------+
+| SERVICE WORKER THREAD (mockServiceWorker.js)                                          |
+|  +------------------------------------------------------+                             |
+|  | self.addEventListener('fetch', (event) => ...)       |                             |
+|  +--------------------------+---------------------------+                             |
+|                             | [Serialized Request] via MessageChannel                 |
+|                             v                                                         |
+|  +------------------------------------------------------+                             |
+|  | WorkerChannel Controller (Bidirectional IPC Bus)     |                             |
++-----------------------------+---------------------------------------------------------+
+                              |
+                              | PostMessage (Transferable Streams / Structured Clone)
+                              v
++---------------------------------------------------------------------------------------+
+| MSW CLIENT CONTROLLER (Main Thread / ServiceWorkerSource)                             |
+|  +---------------------------------------------------------------------------------+  |
+|  | Request Deserializer -> FetchRequest                                            |  |
+|  | Handlers Controller -> Matchers: http.get('/api/*', ({ request }) => ...)      |  |
+|  | Mock Resolver Execution -> HttpResponse.json({ ... })                           |  |
+|  | Response Serializer -> Resolution Message ('MOCK_SUCCESS' / 'PASSTHROUGH')      |  |
++---------------------------------------------------------------------------------------+
+```
+
+### 1.3 Subsystem Deconstructions & Architectural Layers
+- **Source Layer (`src/browser/sources/*`)**: Implements `NetworkSource` abstract primitives. `ServiceWorkerSource` mediates the Service Worker lifecycle, whereas `FallbackHttpSource` downgrades to in-thread interceptors when Service Workers are unavailable (e.g., non-secure contexts, web workers, unsupported browser engines).
+- **Inter-Process Communication Bus (`WorkerChannel`)**: An event-driven protocol operating over standard `BroadcastChannel` or `MessageChannel` with transferable stream support (`supportsReadableStreamTransfer`), handling request batches, keepalive pings, client registration, and error propagation.
+- **Normalization Engine (`#core/experimental/define-network`)**: Coordinates multi-source network configurations (e.g., Service Worker HTTP interception concurrently joined with `WebSocketInterceptor` or SSE streaming interceptors).
+
+---
+
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+### 1. Multi-State Service Worker Resolution with Hard-Reload Detection
+**RULE**:
+When coordinating with browser Service Workers for network interception, the host application MUST inspect all three worker lifecycle states (`active`, `installing`, and `waiting`) and MUST trigger a targeted programmatic page reload (`location.reload()`) if registrations exist but `navigator.serviceWorker.controller` evaluates to `null`.
+
+**WHY**:
+Browsers bypass the Service Worker controller during "Force Reload" / "Hard Reload" (`Ctrl+F5` / `Shift+Reload`). If an application proceeds under the assumption that an existing registration controls network traffic, initial requests immediately bypass the interception proxy and hit the live backend, causing erratic race conditions, leakages of mock state, and intermittent E2E test failures.
+
+**WHEN TO APPLY**:
+Any browser-based interception framework, offline PWA coordinator, or local test harness managing Service Worker registrations where control over initial network calls is mandatory.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
 import { until } from 'until-async'
 
-/**
- * Copies the given Service Worker source file into the destination.
- * Injects the integrity checksum into the destination file.
- */
-export default async function copyServiceWorker(
-  sourceFilePath: string,
-  destFilePath: string,
-  checksum: string,
-): Promise<void> {
-  // eslint-disable-next-line no-console
-  console.log('Compiling Service Worker...')
-
-  const [readFileError, readFileResult] = await until(() =>
-    fs.promises.readFile(sourceFilePath, 'utf8'),
-  )
-
-  if (readFileError) {
-    throw new Error('Failed to read file.\n${readError.message}')
-  }
-
-  const destFileDirectory = path.dirname(destFilePath)
-  // eslint-disable-next-line no-console
-  console.log('Checking if "%s" path exists...', destFileDirectory)
-
-  if (!fs.existsSync(destFileDirectory)) {
-    // eslint-disable-next-line no-console
-    console.log('Destination directory does not exist, creating...')
-    await fs.promises.mkdir(destFileDirectory, { recursive: true })
-  }
-
-  const packageJson = JSON.parse(
-    fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
-  )
-
-  const nextFileContent = readFileResult
-    .replace('<INTEGRITY_CHECKSUM>', checksum)
-    .replace('<PACKAGE_VERSION>', packageJson.version)
-
-  const [writeFileError] = await until(() =>
-    fs.promises.writeFile(destFilePath, nextFileContent),
-  )
-
-  if (writeFileError) {
-    throw new Error(`Failed to write file.\n${writeFileError.message}`)
-  }
-
-  // eslint-disable-next-line no-console
-  console.log('Service Worker copied to: %s', destFilePath)
+export interface FindWorkerPredicate {
+  (scriptURL: string, absoluteWorkerUrl: string): boolean
 }
 
+export async function resolveOrRegisterWorker(
+  workerUrl: string,
+  options: RegistrationOptions = {},
+  findWorker: FindWorkerPredicate = (url, target) => url === target,
+): Promise<[ServiceWorker, ServiceWorkerRegistration]> {
+  const absoluteWorkerUrl = new URL(workerUrl, location.href).href
+
+  const registrations = await navigator.serviceWorker.getRegistrations()
+  const matchingRegistrations = registrations.filter((reg) => {
+    const states = [reg.active, reg.installing, reg.waiting].filter(
+      (w): w is ServiceWorker => w !== null,
+    )
+    return states.some((w) => findWorker(w.scriptURL, absoluteWorkerUrl))
+  })
+
+  // Hard-reload invariant: registrations present but page un-controlled
+  if (!navigator.serviceWorker.controller && matchingRegistrations.length > 0) {
+    location.reload()
+    // Halt execution flow while browser reloads context
+    return new Promise(() => {})
+  }
+
+  const [existing] = matchingRegistrations
+  if (existing) {
+    // Non-blocking background update to verify integrity
+    existing.update()
+    const worker = [existing.active, existing.installing, existing.waiting]
+      .filter((w): w is ServiceWorker => w !== null)
+      .find((w) => findWorker(w.scriptURL, absoluteWorkerUrl))
+
+    if (!worker) {
+      throw new Error(`Worker missing in registered scope: ${existing.scope}`)
+    }
+    return [worker, existing]
+  }
+
+  const [regError, registration] = await until(() =>
+    navigator.serviceWorker.register(workerUrl, options),
+  )
+
+  if (regError) {
+    throw new Error(`Service Worker registration failed: ${regError.message}`)
+  }
+
+  const registeredWorker = [
+    registration.active,
+    registration.installing,
+    registration.waiting,
+  ]
+    .filter((w): w is ServiceWorker => w !== null)
+    .find((w) => findWorker(w.scriptURL, absoluteWorkerUrl))
+
+  if (!registeredWorker) {
+    throw new Error('Service Worker failed to enter a usable lifecycle state.')
+  }
+
+  return [registeredWorker, registration]
+}
 ```
 
-### Core Architecture Module: `config/plugins/rolldown/copy-worker-plugin.ts`
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Blindly reading controller or active worker
+async function badWorkerResolution(workerUrl: string) {
+  // FAILS on hard reload: controller is null even if worker is registered
+  if (!navigator.serviceWorker.controller) {
+    await navigator.serviceWorker.register(workerUrl)
+  }
+  // FAILS: registration.active is null while worker is still in 'installing' or 'waiting'
+  const reg = await navigator.serviceWorker.ready
+  return reg.active // Type error or null runtime dereference
+}
 ```
-import fs from 'node:fs'
-import url from 'node:url'
+
+**VERIFICATION METHOD**:
+Automated integration test using Playwright/Puppeteer:
+1. Navigate to target URL with MSW enabled.
+2. Dispatch DevTools protocol command `Page.reload({ ignoreCache: true })`.
+3. Assert that `navigator.serviceWorker.controller` is re-established prior to any subsequent `fetch()` dispatches.
+
+---
+
+### 2. AST-Neutral Bundled Artifact Checksum Invalidation
+**RULE**:
+When validating the integrity of distributed runtime scripts (such as Service Workers or injected bootstrap bridges) across environments, the build system MUST compute the cryptographic checksum over an intermediate, whitespace-normalized, comment-stripped IIFE AST bundle with compression and variable mangling disabled.
+
+**WHY**:
+Raw file hashing (`crypto.createHash('sha256').update(fileBuffer)`) invalidates checksums on cosmetic diffs (line endings `CRLF` vs `LF`, package manager header injections, licensing comments). Conversely, hashing fully minified artifacts causes checksum instability across minor compiler/minifier version bumps due to variable renaming heuristics and dead code elimination re-ordering.
+
+**WHEN TO APPLY**:
+Static scripts deployed to user directories (e.g., `public/mockServiceWorker.js`) where client-side code must ensure runtime-to-library synchronization without false-positive version mismatch warnings.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
 import crypto from 'node:crypto'
+import { Rolldown } from 'tsdown'
 import { invariant } from 'outvariant'
-import { Rolldown, type TsdownPlugin } from 'tsdown'
-import copyServiceWorker from '../../copy-service-worker.ts'
 
-const SERVICE_WORKER_ENTRY_PATH = url.fileURLToPath(
-  new URL('../../../src/mockServiceWorker.js', import.meta.url),
-)
-
-const SERVICE_WORKER_OUTPUT_PATH = url.fileURLToPath(
-  new URL('../../../lib/mockServiceWorker.js', import.meta.url),
-)
-
-/**
- * Compute the integrity checksum of the worker script.
- * The script is normalized before hashing so that cosmetic changes
- * (comments, including legal ones, and whitespace) do not invalidate
- * the checksum. Compression and mangling are disabled to keep the
- * checksum stable across minifier updates.
- */
-export async function getWorkerChecksum(): Promise<string> {
+export async function computeStableScriptChecksum(entryPath: string): Promise<string> {
   const bundle = await Rolldown.rolldown({
-    input: SERVICE_WORKER_ENTRY_PATH,
+    input: entryPath,
     platform: 'browser',
     treeshake: false,
     logLevel: 'silent',
   })
+
+  // Normalize formatting: remove comments and redundant whitespace,
+  // but freeze variable names and syntax trees by disabling compression/mangling.
   const { output } = await bundle.generate({
     format: 'iife',
     comments: false,
@@ -151,1077 +216,390 @@ export async function getWorkerChecksum(): Promise<string> {
   await bundle.close()
 
   const [chunk] = output
+  invariant(chunk && chunk.code, 'Failed to normalize script: empty bundle output')
 
-  invariant(chunk, 'Failed to normalize the worker script: empty output')
-
-  return crypto.createHash('md5').update(chunk.code, 'utf8').digest('hex')
+  return crypto
+    .createHash('md5')
+    .update(chunk.code, 'utf8')
+    .digest('hex')
 }
-
-export function copyWorkerPlugin(checksum: string): TsdownPlugin {
-  return {
-    name: 'copyWorkerPlugin',
-    async buildStart() {
-      invariant(
-        SERVICE_WORKER_ENTRY_PATH,
-        'Failed to locate the worker script source file',
-      )
-    },
-    async writeBundle() {
-      if (fs.existsSync(SERVICE_WORKER_OUTPUT_PATH)) {
-        console.warn(
-          'Skipped copying the worker script to "%s": already exists',
-          SERVICE_WORKER_OUTPUT_PATH,
-        )
-        return
-      }
-
-      // eslint-disable-next-line no-console
-      console.log('worker script checksum:', checksum)
-
-      await copyServiceWorker(
-        SERVICE_WORKER_ENTRY_PATH,
-        SERVICE_WORKER_OUTPUT_PATH,
-        checksum,
-      )
-    },
-  }
-}
-
-```
-
-### Core Architecture Module: `src/browser/setup-worker.ts`
-```
-import { invariant } from 'outvariant'
-import { isNodeProcess } from 'is-node-process'
-import { WebSocketInterceptor } from '@mswjs/interceptors/WebSocket'
-import {
-  defineNetwork,
-  NetworkReadyState,
-} from '#core/experimental/define-network'
-import type { AnyHandler } from '#core/experimental/handlers-controller'
-import { InterceptorSource } from '#core/experimental/sources/interceptor-source'
-import { devUtils } from '#core/utils/internal/dev-utils'
-import { supportsServiceWorker } from './utils/supports'
-import { ServiceWorkerSource } from './sources/service-worker-source'
-import { FallbackHttpSource } from './sources/fallback-http-source'
-import type { SetupWorker } from './glossary'
-
-const DEFAULT_WORKER_URL = '/mockServiceWorker.js'
-
-/**
- * Sets up a requests interception in the browser with the given request handlers.
- * @param {Array<AnyHandler>} handlers List of request handlers.
- *
- * @see {@link https://mswjs.io/docs/api/setup-worker `setupWorker()` API reference}
- */
-export function setupWorker(...handlers: Array<AnyHandler>): SetupWorker {
-  invariant(
-    !isNodeProcess(),
-    devUtils.formatMessage(
-      'Failed to execute `setupWorker` in a non-browser environment',
-    ),
-  )
-
-  const network = defineNetwork<
-    Array<ServiceWorkerSource | FallbackHttpSource | InterceptorSource>
-  >({
-    sources: [],
-    handlers,
-  })
-
-  return {
-    get readyState() {
-      return network.readyState
-    },
-    async start(options) {
-      invariant(
-        network.readyState === NetworkReadyState.DISABLED,
-        devUtils.formatMessage(
-          'Failed to call "worker.start()": the worker is already started. Remove the redundant "worker.start()" call.',
-        ),
-      )
-
-      const httpSource = supportsServiceWorker()
-        ? await ServiceWorkerSource.from({
-            serviceWorker: {
-              url:
-                options?.serviceWorker?.url?.toString() || DEFAULT_WORKER_URL,
-              options: options?.serviceWorker?.options,
-            },
-            findWorker: options?.findWorker,
-          })
-        : new FallbackHttpSource()
-
-      network.configure({
-        sources: [
-          httpSource,
-          new InterceptorSource({
-            interceptors: [new WebSocketInterceptor()],
-          }),
-        ],
-        onUnhandledFrame: options?.onUnhandledFrame ?? 'warn',
-        context: {
-          quiet: options?.quiet,
-        },
-      })
-
-      await network.enable()
-
-      if (httpSource instanceof ServiceWorkerSource) {
-        const [, registration] = await httpSource.workerPromise
-        return registration
-      }
-    },
-    async stop() {
-      await network.disable()
-      window.postMessage({ type: 'msw/worker:stop' })
-    },
-    events: network.events,
-    use: network.use.bind(network),
-    resetHandlers: network.resetHandlers.bind(network),
-    restoreHandlers: network.restoreHandlers.bind(network),
-    listHandlers: network.listHandlers.bind(network),
-  }
-}
-
-```
-
-### Core Architecture Module: `src/browser/sources/service-worker-source.ts`
-```
-import { invariant } from 'outvariant'
-import type { Emitter } from 'rettime'
-import { FetchResponse } from '@mswjs/interceptors'
-import { NetworkSource } from '#core/experimental/sources/network-source'
-import type { NetworkFrameResolutionContext } from '#core/experimental/frames/network-frame'
-import { RequestHandler } from '#core/handlers/request-handler'
-import {
-  HttpNetworkFrame,
-  ResponseEvent,
-} from '#core/experimental/frames/http-frame'
-import { HttpResponse } from '#http/http-response'
-import { toResponseInit } from '#core/utils/to-response-init'
-import { devUtils } from '#core/utils/internal/dev-utils'
-import {
-  supportsReadableStreamTransfer,
-  supportsServiceWorker,
-} from '../utils/supports'
-import { getWorkerInstance } from '../utils/get-worker-instance'
-import type { WorkerChannelEventMap } from '../utils/worker-channel'
-import { WorkerChannel } from '../utils/worker-channel'
-import type { FindWorker } from '../glossary'
-import { deserializeRequest } from '../utils/deserialize-request'
-import { validateWorkerScope } from '../utils/validate-worker-scope'
-import { shouldInvalidateWorker } from '../utils/should-invalidate-worker'
-
-export interface ServiceWorkerSourceOptions {
-  serviceWorker: {
-    url: string
-    options?: RegistrationOptions
-  }
-  findWorker?: FindWorker
-}
-
-type WorkerChannelRequestEvent = Emitter.Event<
-  WorkerChannel,
-  'REQUEST',
-  WorkerChannelEventMap
->
-
-type WorkerChannelResponseEvent = Emitter.Event<
-  WorkerChannel,
-  'RESPONSE',
-  WorkerChannelEventMap
->
-
-type WorkerChannelRequestErrorEvent = Emitter.Event<
-  WorkerChannel,
-  'REQUEST_ERROR',
-  WorkerChannelEventMap
->
-
-type WorkerChannelClient =
-  WorkerChannelEventMap['MOCKING_ENABLED']['data']['client']
-
-export class ServiceWorkerSource extends NetworkSource<ServiceWorkerHttpNetworkFrame> {
-  static #current?: ServiceWorkerSource
-
-  /**
-   * Create a new Service Worker source or reuse an existing one.
-   * These sources act as a singleton and only get recreated if the options change.
-   */
-  public static async from(
-    options: ServiceWorkerSourceOptions,
-  ): Promise<ServiceWorkerSource> {
-    if (ServiceWorkerSource.#current == null) {
-      ServiceWorkerSource.#current = new ServiceWorkerSource(options)
-    } else if (
-      shouldInvalidateWorker(ServiceWorkerSource.#current.#options, options)
-    ) {
-      await ServiceWorkerSource.#current.terminate()
-      ServiceWorkerSource.#current = new ServiceWorkerSource(options)
-    }
-
-    return ServiceWorkerSource.#current
-  }
-
-  #options: ServiceWorkerSourceOptions
-  /**
-   * The resolved context of the network this source was last enabled with.
-   */
-  #context?: NetworkFrameResolutionContext
-  /**
-   * @note We cannot use `WeakMap` here as request/response
-   * identity cannot be preserved through the client-worker channel.
-   */
-  #frames: Map<string, ServiceWorkerHttpNetworkFrame>
-  #channel: WorkerChannel
-  #listenerController?: AbortController
-  #clientPromise?: Promise<WorkerChannelClient>
-  #keepAliveInterval?: number
-
-  public workerPromise: Promise<[ServiceWorker, ServiceWorkerRegistration]>
-  #workerResolvers: PromiseWithResolvers<
-    [ServiceWorker, ServiceWorkerRegistration]
-  >
-  #workerState: 'pending' | 'fulfilled' | 'rejected'
-
-  constructor(options: ServiceWorkerSourceOptions) {
-    super()
-
-    invariant(
-      supportsServiceWorker(),
-      'Failed to use Service Worker as the network source: the Service Worker API is not supported in this environment',
-    )
-
-    this.#options = options
-    this.#frames = new Map()
-    this.#workerResolvers = Promise.withResolvers()
-    this.workerPromise = this.#workerResolvers.promise
-    this.#workerState = 'pending'
-    this.#channel = new WorkerChannel({
-      getWorker: () => this.workerPromise.then(([worker]) => worker),
-    })
-  }
-
-  public async enable(
-    context?: NetworkFrameResolutionContext,
-  ): Promise<ServiceWorkerRegistration> {
-    this.#context = context
-    this.#channel.removeAllListeners()
-    this.#frames.clear()
-
-    this.#listenerController = new AbortController()
-    const [worker, registration] = await this.#startWorker()
-
-    if (worker.state !== 'activated') {
-      const controller = new AbortController()
-      const activationPromise = Promise.withResolvers<void>()
-      activationPromise.promise.then(() => controller.abort())
-
-      worker.addEventListener(
-        'statechange',
-        () => {
-          if (worker.state === 'activated') {
-            activationPromise.resolve()
-          }
-        },
-        {
-          signal: controller.signal,
-        },
-      )
-
-      await activationPromise.promise
-    }
-
-    this.#channel.postMessage('MOCK_ACTIVATE')
-
-    const clientConfirmationPromise =
-      Promise.withResolvers<WorkerChannelClient>()
-    this.#clientPromise = clientConfirmationPromise.promise
-
-    this.#channel.once('MOCKING_ENABLED', (event) => {
-      clientConfirmationPromise.resolve(event.data.client)
-    })
-    await clientConfirmationPromise.promise
-
-    if (!this.#context?.quiet) {
-      this.#printStartMessage()
-    }
-
-    return registration
-  }
-
-  public async disable(): Promise<void> {
-    /**
-     * @note Do NOT call `super.disable()` because it removes any "frame" listeners
-     * from this network source, effectively turning it off. The Service Worker source
-     * is a bit special since it might process in-flight requests that have been performed
-     * after it's been disabled.
-     */
-
-    this.#listenerController?.abort()
-    this.#listenerController = undefined
-
-    const closedPromise = Promise.withResolvers<void>()
-    this.#channel.once('CLIENT_CLOSED', () => closedPromise.resolve())
-
-    this.#channel.postMessage('CLIENT_CLOSE')
-    await closedPromise.promise
-
-    /**
-     * @note Do NOT reset `workerPromise` here. The channel must continue to
-     * resolve the currently registered SW so that any in-flight requests the
-     * worker forwards after `stop()` can be answered with `PASSTHROUGH` by
-     * `#handleRequest`. `#startWorker` swaps in a fresh deferred on re-enable.
-     */
-
-    if (!this.#context?.quiet) {
-      this.#printStopMessage()
-    }
-  }
-
-  /**
-   * Terminal teardown. Unregisters the Service Worker, tears down the channel,
-   * and clears timers. Called when the singleton is being replaced with one
-   * that has different options. The instance is not usable afterwards.
-   */
-  public async terminate(): Promise<void> {
-    if (this.#keepAliveInterval != null) {
-      clearInterval(this.#keepAliveInterval)
-      this.#keepAliveInterval = undefined
-    }
-
-    this.#frames.clear()
-    this.#channel.terminate()
-    this.#listenerController?.abort()
-    this.#listenerController = undefined
-
-    if (this.#workerState === 'fulfilled') {
-      const [, registration] = await this.workerPromise
-      await registration.unregister()
-    }
-
-    if (ServiceWorkerSource.#current === this) {
-      ServiceWorkerSource.#current = undefined
-    }
-  }
-
-  async #startWorker() {
-    if (this.#keepAliveInterval) {
-      clearInterval(this.#keepAliveInterval)
-    }
-
-    const workerUrl = this.#options.serviceWorker.url
-
-    const [worker, registration] = await getWorkerInstance(
-      workerUrl,
-      this.#options.serviceWorker.options,
-      this.#options.findWorker || this.#defaultFindWorker,
-    )
-
-    if (worker == null) {
-      const missingWorkerMessage = this.#options?.findWorker
-        ? devUtils.formatMessage(
-            `Failed to locate the Service Worker registration using a custom "findWorker" predicate.
-
-Please ensure that the custom predicate properly locates the Service Worker registration at "%s".
-More details: https://mswjs.io/docs/api/setup-worker/start#findworker
-     `,
-            workerUrl,
-          )
-        : devUtils.formatMessage(
-            `Failed to locate the Service Worker registration.
-
-This most likely means that the worker script URL "%s" cannot resolve against the actual public hostname (%s). This may happen if your application runs behind a proxy, or has a dynamic hostname.
-
-Please consider using a custom "serviceWorker.url" option to point to the actual worker script location, or a custom "findWorker" option to resolve the Service Worker registration manually. More details: https://mswjs.io/docs/api/setup-worker/start`,
-            workerUrl,
-            location.host,
-          )
-
-      throw new Error(missingWorkerMessage)
-    }
-
-    if (this.#workerState === 'pending') {
-      this.#workerResolvers.resolve([worker, registration])
-      this.#workerState = 'fulfilled'
-    } else {
-      /**
-       * @note Re-enable after `stop()`: the previous `workerPromise` is already
-       * fulfilled and cannot be resolved again. Swap in a pre-resolved one so
-       * `getWorker()` sees the new worker instance immediately.
-       */
-      this.#workerResolvers = Promise.withResolvers()
-      this.#workerResolvers.resolve([worker, registration])
-      this.workerPromise = this.#workerResolvers.promise
-    }
-
-    this.#channel.on('REQUEST', this.#handleRequest.bind(this))
-    this.#channel.on('RESPONSE', this.#handleResponse.bind(this))
-    this.#channel.on('REQUEST_ERROR', this.#handleRequestError.bind(this))
-
-    window.addEventListener(
-      'pagehide',
-      (event) => {
-        if (event.persisted) {
-          return
-        }
-
-        if (worker.state !== 'redundant') {
-          this.#channel.postMessage('CLIENT_CLOSE')
-        }
-
-        clearInterval(this.#keepAliveInterval)
-
-        window.postMessage({ type: 'msw/worker:stop' })
-      },
-      {
-        signal: this.#listenerController?.signal,
-      },
-    )
-
-    await this.#checkWorkerIntegrity().catch((error) => {
-      devUtils.error(
-        'Error while checking the worker script integrity. Please report this on GitHub (https://github.com/mswjs/msw/issues) and include the original error below.',
-      )
-      console.error(error)
-    })
-
-    this.#keepAliveInterval = window.setInterval(() => {
-      this.#channel.postMessage('KEEPALIVE_REQUEST'
-```
-
-### Core Architecture Module: `src/browser/utils/deserialize-request.ts`
-```
-import { FetchRequest } from '@mswjs/interceptors'
-import type { IncomingWorkerRequest } from './worker-channel'
-
-/**
- * Converts a given request received from the Service Worker
- * into a Fetch `Request` instance.
- */
-export function deserializeRequest(
-  serializedRequest: IncomingWorkerRequest,
-): Request {
-  return new FetchRequest(serializedRequest.url, {
-    ...serializedRequest,
-  })
-}
-
-```
-
-### Core Architecture Module: `src/browser/utils/get-absolute-worker-url.ts`
-```
-/**
- * Returns an absolute Service Worker URL based on the given
- * relative URL (known during the registration).
- */
-export function getAbsoluteWorkerUrl(workerUrl: string): string {
-  return new URL(workerUrl, location.href).href
-}
-
-```
-
-### Core Architecture Module: `src/browser/utils/get-worker-by-registration.ts`
-```
-import type { FindWorker } from '../glossary'
-
-/**
- * Attempts to resolve a Service Worker instance from a given registration,
- * regardless of its state (active, installing, waiting).
- */
-export function getWorkerByRegistration(
-  registration: ServiceWorkerRegistration,
-  absoluteWorkerUrl: string,
-  findWorker: FindWorker,
-): ServiceWorker | null {
-  const allStates = [
-    registration.active,
-    registration.installing,
-    registration.waiting,
-  ]
-
-  const relevantStates = allStates.filter((state): state is ServiceWorker => {
-    return state != null
-  })
-
-  const worker = relevantStates.find((worker) => {
-    return findWorker(worker.scriptURL, absoluteWorkerUrl)
-  })
-
-  return worker || null
-}
-
-```
-
-### Core Architecture Module: `src/browser/utils/get-worker-instance.ts`
-```
-import { until } from 'until-async'
-import { devUtils } from '#core/utils/internal/dev-utils'
-import { getAbsoluteWorkerUrl } from './get-absolute-worker-url'
-import { getWorkerByRegistration } from './get-worker-by-registration'
-import type { ServiceWorkerInstanceTuple, FindWorker } from '../glossary'
-
-/**
- * Returns an active Service Worker instance.
- * When not found, registers a new Service Worker.
- */
-export const getWorkerInstance = async (
-  url: string,
-  options: RegistrationOptions = {},
-  findWorker: FindWorker,
-): Promise<ServiceWorkerInstanceTuple> => {
-  // Resolve the absolute Service Worker URL.
-  const absoluteWorkerUrl = getAbsoluteWorkerUrl(url)
-
-  const mockRegistrations = await navigator.serviceWorker
-    .getRegistrations()
-    .then((registrations) =>
-      registrations.filter((registration) =>
-        getWorkerByRegistration(registration, absoluteWorkerUrl, findWorker),
-      ),
-    )
-  if (!navigator.serviceWorker.controller && mockRegistrations.length > 0) {
-    // Reload the page when it has associated workers, but no active controller.
-    // The absence of a controller can mean either:
-    // - page has no Service Worker associated with it
-    // - page has been hard-reloaded and its workers won't be used until the next reload.
-    // Since we've checked that there are registrations associated with this page,
-    // at this point we are sure it's hard reload that falls into this clause.
-    location.reload()
-  }
-
-  const [existingRegistration] = mockRegistrations
-
-  if (existingRegistration) {
-    // Schedule the worker update in the background.
-    // Update ensures the existing worker is up-to-date.
-    existingRegistration.update()
-
-    // Return the worker reference immediately.
-    return [
-      getWorkerByRegistration(
-        existingRegistration,
-        absoluteWorkerUrl,
-        findWorker,
-      ),
-      existingRegistration,
-    ]
-  }
-
-  // When the Service Worker wasn't found, register it anew and return the reference.
-  const [registrationError, registrationResult] = await until<
-    Error,
-    ServiceWorkerInstanceTuple
-  >(async () => {
-    const registration = await navigator.serviceWorker.register(url, options)
-    return [
-      // Compare existing worker registration by its worker URL,
-      // to prevent irrelevant workers to resolve here (such as Codesandbox worker).
-      getWorkerByRegistration(registration, absoluteWorkerUrl, findWorker),
-      registration,
-    ]
-  })
-
-  // Handle Service Worker registration errors.
-  if (registrationError) {
-    const isWorkerMissing = registrationError.message.includes('(404)')
-
-    // Produce a custom error message when given a non-existing Service Worker url.
-    // Suggest developers to check their setup.
-    if (isWorkerMissing) {
-      const scopeUrl = new URL(options?.scope || '/', location.href)
-
-      throw new Error(
-        devUtils.formatMessage(`\
-Failed to register a Service Worker for scope ('${scopeUrl.href}') with script ('${absoluteWorkerUrl}'): Service Worker script does not exist at the given path.
-
-Did you forget to run "npx msw init <PUBLIC_DIR>"?
-
-Learn more about creating the Service Worker script: https://mswjs.io/docs/cli/init`),
-      )
-    }
-
-    // Fallback error message for any other registration errors.
-    throw new Error(
-      devUtils.formatMessage(
-        'Failed to register the Service Worker:\n\n%s',
-        registrationError.message,
-      ),
-    )
-  }
-
-  return registrationResult
-}
-
-```
-
-### Core Architecture Module: `src/browser/utils/should-invalidate-worker.ts`
-```
-import type { ServiceWorkerSourceOptions } from '../sources/service-worker-source'
-
-export function shouldInvalidateWorker(
-  prevOptions: ServiceWorkerSourceOptions,
-  nextOptions: ServiceWorkerSourceOptions,
-): boolean {
-  return (
-    prevOptions.findWorker !== nextOptions.findWorker ||
-    prevOptions.serviceWorker.url !== nextOptions.serviceWorker.url ||
-    JSON.stringify(prevOptions.serviceWorker.options) !==
-      JSON.stringify(nextOptions.serviceWorker.options)
-  )
-}
-
-```
-
-### Core Architecture Module: `src/browser/utils/supports.ts`
-```
-/**
- * Checks if the Service Worker API is supproted and available
- * in the current browsing context.
- */
-export function supportsServiceWorker(): boolean {
-  return (
-    typeof navigator !== 'undefined' &&
-    'serviceWorker' in navigator &&
-    typeof location !== 'undefined' &&
-    location.protocol !== 'file:'
-  )
-}
-
-/**
- * Returns a boolean indicating whether the current browser
- * supports `ReadableStream` as a `Transferable` when posting
- * messages.
- */
-export function supportsReadableStreamTransfer() {
-  try {
-    const stream = new ReadableStream({
-      start: (controller) => controller.close(),
-    })
-    const message = new MessageChannel()
-    message.port1.postMessage(stream, [stream])
-    return true
-  } catch {
-    return false
-  }
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2826** (2026-10-31): **Node.js: passthrough request is never sent when a header value contains ": "**
-  *Symptoms*: ### Prerequisites  - [x] I confirm my issue is not in the [opened issues](https://github.com/mswjs/msw/issues) - [x] I confirm the [Frequently Asked Questions](https://mswjs.io/docs/faq) didn't contain the answer to my issue  ### Environment check  - [x] I'm using the [latest](https://github.com/mswjs/msw/releases/latest) `msw` version - [x] I'm using Node.js version 22 or higher  ### Node.js version  v24.22.2  ### Reproduction repository  https://github.com/elierotenberg/msw-passthrough-header-colon  ### Reproduction steps  ```sh npm install npm test ```  ### Current behavior  The script starts a local HTTP server and an msw server without handlers (`onUnhandledFrame: "bypass"`). It then sends two `fetch` requests with an `x-test` header. The request with `x-test: a b` passes through. For the request with `x-test: a: b`, the interceptor throws, and Node.js exits:  ```text "a b" -> "a b" TypeError: Headers.append: "*/*" is an invalid header name.     at Headers.append (node:internal/deps/undici/undici:11467:16)     at FetchResponse.parseRawHeaders (.../@mswjs/interceptors/lib/node/fetch-utils--ozXsRjx.js:520:67)     at transformRequestMessage (.../@mswjs/interceptors/lib/node/source-BWj4jeRh.js:2221:45)     at TcpSocketController.passthrough (.../@mswjs/interceptors/lib/node/net-B8GL5tms.js:1088:5) ```  The versions are msw 3.0.3 and @mswjs/interceptors 0.45.10. In a Vitest test, Vitest reports the error as an unhandled error. The interceptor never writes the request to the r
-
-- **Issue #2820** (2026-11-03): **`vi.mock` stops working in browser mode with msw**
-  *Symptoms*: ### Prerequisites  - [x] I confirm my issue is not in the [opened issues](https://github.com/mswjs/msw/issues) - [x] I confirm the [Frequently Asked Questions](https://mswjs.io/docs/faq) didn't contain the answer to my issue  ### Environment check  - [x] I'm using the [latest](https://github.com/mswjs/msw/releases/latest) `msw` version - [x] I'm using Node.js version 20 or higher  ### Browsers  Firefox, Safari  ### Reproduction repository  https://github.com/UnsungHero97/msw-vitest-browser-mode-mocking-issue  ### Reproduction steps  I'm trying to write tests to run in browser mode with `msw` for mocking requests. Initially, `vi.mock` works on the first run in `--watch` mode, but on subsequent runs, it seems something changes under the hood and the mocks are no longer having an effect. Somehow, just the existence of the worker (even without any handlers) interferes with the mocks.  This is happening with `firefox` and `webkit` browser instances; `chromium` seems ok.  There are similar issues reported in both `msw` and `vitest`:  https://github.com/mswjs/msw/issues/2589 https://github.com/mswjs/msw/issues/2398 https://github.com/vitest-dev/vitest/issues/6633  These seem to have been resolved so I'm not sure if this issue is one of these previous ones or a new, similar but unrelated issue. Also, I'm not sure if this is an issue with `msw` or `vitest` so I posted in `vitest` as well:  https://github.com/vitest-dev/vitest/issues/11630  Steps to reproduce:  1. with `firefox` or `we
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `022df00e` (2026-11-14)
-**Commit Message**: fix: preserve optional path parameters and pipes in handler paths (#2838)
-
-**File**: `src/core/utils/matching/match-request-url.test.ts` (modified, +49/-0)
-```diff
-@@ -88,3 +88,52 @@ test('parses matching RegExp groups into index-based parameters', () => {
-     },
-   })
- })
-+
-+test('returns true when matching optional path parameters in the middle of the path', () => {
-+  expect(
-+    matchRequestUrl(
-+      new URL('https://test.mswjs.io/user/abc-123/settings'),
-+      'https://test.mswjs.io/user/:userId?/settings',
-+    ),
-+  ).toEqual({
-+    matches: true,
-+    params: {
-+      userId: 'abc-123',
-+    },
-+  })
-+
-+  expect(
-+    matchRequestUrl(
-+      new URL('https://test.mswjs.io/user/settings'),
-+      'https://test.mswjs.io/user/:userId?/settings',
-+    ),
-+  ).toEqual({
-+    matches: true,
-+    params: {},
-+  })
-+
-+  expect(
-+    matchRequestUrl(
-+      new URL('https://test.mswjs.io/user/abc-123'),
-+      'https://test.mswjs.io/user/:userId?/settings',
-+    ),
-+  ).toEqual({
-+    matches: false,
-+    params: {},
-+  })
-+})
-+
-+test('returns true when matching optional path parameters separated by a dot', () => {
-+  expect(
-+    matchRequestUrl(
-+      new URL('https://test.mswjs.io/files/report.pdf'),
-+      'https://test.mswjs.io/files/:name?.:ext?',
-+    ),
-+  ).toEqual({
-+    matches: true,
-+    params: {
-+      name: 'report',
-+      ext: 'pdf',
-+    },
-+  })
-+})
-```
-
-**File**: `src/core/utils/matching/normalize-path.test.ts` (modified, +6/-0)
-```diff
-@@ -52,3 +52,9 @@ test('preserves optional path parameters', () => {
-     'http://localhost/user/:userId?',
-   )
- })
-+
-+test('preserves optional path parameters in the middle of the path', () => {
-+  expect(normalizePath('/user/:userId?/settings')).toEqual(
-+    'http://localhost/user/:userId?/settings',
-+  )
-+})
-```
-
-**File**: `src/utils/get-clean-url-string.test.ts` (modified, +44/-0)
-```diff
-@@ -22,3 +22,47 @@ test('preserves optional path parameters', () => {
-     '/user/:id?/:messageId?',
-   )
- })
-+
-+test('preserves optional path parameters in the middle of the path', () => {
-+  expect(getCleanUrlString('/user/:id?/settings')).toEqual(
-+    '/user/:id?/settings',
-+  )
-+  expect(getCleanUrlString('/user/:id?/:messageId?/settings')).toEqual(
-+    '/user/:id?/:messageId?/settings',
-+  )
-+  expect(getCleanUrlString('http://localhost:3000/user/:id?/settings')).toEqual(
-+    'http://localhost:3000/user/:id?/settings',
-+  )
-+})
-+
-+test('removes query parameters and hashes after optional path parameters', () => {
-+  expect(getCleanUrlString('/user/:id?/settings?tab=1')).toEqual(
-+    '/user/:id?/settings',
-+  )
-+  expect(getCleanUrlString('/user/:id?/settings#hash')).toEqual(
-+    '/user/:id?/settings',
-+  )
-+  expect(getCleanUrlString('/user/:id?#hash')).toEqual('/user/:id?')
-+  expect(getCleanUrlString('/user/:id?tab=1')).toEqual('/user/:id')
-+})
-+
-+test('preserves optional path parameters separated by a dot', () => {
-+  expect(getCleanUrlString('/files/:name?.:ext?')).toEqual(
-+    '/files/:name?.:ext?',
-+  )
-+  expect(getCleanUrlString('/files/:name?.:ext?#hash')).toEqual(
-+    '/files/:name?.:ext?',
-+  )
-+  expect(getCleanUrlString('/files/:name?.:ext?tab=1')).toEqual(
-+    '/files/:name?.:ext',
-+  )
-+})
-+
-+test('removes a query string that starts with a dot after a path parameter', () => {
-+  expect(getCleanUrlString('/user/:id?.json')).toEqual('/user/:id')
-+})
-+
-+test('preserves pipe characters in the path', () => {
-+  expect(getCleanUrlString('/user/a|b/settings')).toEqual('/user/a|b/settings')
-+  expect(getCleanUrlString('/user/a|b?id=123')).toEqual('/user/a|b')
-+})
-```
-
-**File**: `src/utils/get-clean-url-string.ts` (modified, +12/-8)
-```diff
-@@ -1,16 +1,20 @@
--const REDUNDANT_CHARACTERS_EXP = /[?|#].*$/g
-+/**
-+ * Matches either an optional path parameter (e.g. ":id?"), captured
-+ * so it can be preserved, or the search and fragment of the URL.
-+ * A question mark is an optional parameter modifier only when it
-+ * follows a parameter name and either ends the path segment or is
-+ * followed by a literal dot and another parameter (e.g. ":name?.:ext?").
-+ * A dot followed by anything else (e.g. ":id?.json") is ambiguous
-+ * with a query string and is treated as such.
-+ */
-+const REDUNDANT_CHARACTERS_EXP =
-+  /(:[a-zA-Z_]\w*\?(?=[/#]|\.:[a-zA-Z_]|$))|[?#].*$/g
- 
- /**
-  * Removes search parameters and the fragment from a given URL string.
-  * Unlike `getCleanUrl()` from Interceptors, accepts relative URLs and
-  * path patterns (e.g. "/user/:id?") since it never parses the input as a URL.
-  */
- export function getCleanUrlString(url: string): string {
--  // If the URL ends with an optional path parameter, return it as-is.
--  if (url.endsWith('?')) {
--    return url
--  }
--
--  // Otherwise, remove the search and fragment from it.
--  return url.replace(REDUNDANT_CHARACTERS_EXP, '')
-+  return url.replace(REDUNDANT_CHARACTERS_EXP, '$1')
- }
-```
-
----
-
-### Incident Patch 2: `76170877` (2026-11-14)
-**Commit Message**: docs: update contributing guidelines after 3.0 (#2837)
-
-**File**: `CONTRIBUTING.md` (modified, +35/-144)
-```diff
-@@ -33,7 +33,7 @@ Please use the GitHub UI to [fork this repository](https://github.com/mswjs/msw)
- ```bash
- $ cd msw
- $ pnpm install
--$ pnpm start
-+$ pnpm dev
- ```
- 
- > Please use [PNPM][pnpm-url] version 8.15 while working on this project.
-@@ -76,26 +76,28 @@ $ pnpm build
- 
- ## Tests
- 
--### Testing levels
-+All tests are run with [Vitest](https://vitest.dev/). Build the library and install the browser once, then run the tests:
- 
--There are two levels of tests on the project:
--
--- [Unit tests](#unit-tests), cover small independent functions.
--- [Integration tests](#integration-tests), test in-browser usage scenarios.
--
--**Always begin your implementation from tests**. When tackling an issue, a test for it must be missing, or is incomplete. When working on a feature, starting with a test allows you to model the feature's usage before diving into implementation.
--
--### Unit tests
-+```bash
-+$ pnpm build
-+$ pnpm exec playwright install chromium
-+$ pnpm test
-+```
- 
--#### Writing a unit test
-+> The tests run against the built library. Keep the build running (`pnpm dev`) while working on the tests.
- 
--Unit tests are placed next to the tested code. For example, if you're testing a newly added `multiply` function, create a `multiply.test.ts` file next to where the function is located:
-+Provide a file path to run a single test:
- 
- ```bash
--$ touch src/utils/multiply.test.ts
-+$ pnpm test src/utils/multiply.test.ts
-+$ pnpm test test/protocols/http/example.test.ts
- ```
- 
--Proceed by writing a unit test that resembles the usage of the function. Make sure to cover all the scenarios
-+**Always begin your implementation from tests**. When tackling an issue, a test for it must be missing, or is incomplete. When working on a feature, starting with a test allows you to model the feature's usage before diving into implementation.
-+
-+### Unit tests
-+
-+Unit tests cover small independent functions and are placed next to the tested code.
- 
- ```ts
- // src/utils/multiply.test.ts
-@@ -108,118 +110,30 @@ test('multiplies two given numbers', () => {
- 
- > Please [avoid nesting](https://kentcdodds.com/blog/avoid-nesting-when-youre-testing/) while you're testing.
- 
--#### Running a single unit test
--
--Once your test is written, run it in isolation.
--
--```bash
--$ pnpm test:unit src/utils/multiply.test.ts
--```
--
--At this point, the actual implementation is not ready yet, so you can expect your test to fail. **That's perfect**. Add the necessary modules and logic, and gradually see your test cases pass.
--
--#### Running all unit tests
--
--```bash
--$ pnpm test:unit
--```
--
- ### Integration tests
- 
--We follow an example-driven testing paradigm, meaning that each integration test represents a _usage example_. Mock Service Worker can be used in different environments (browser, Node.js), making such usage examples different.
--
--> **Make sure that you [build the library](#build) before running the integration tests**. It's a good idea to keep the build running (`pnpm start`) while working on the tests. Keeping both compiler and test runner in watch mode boosts your productivity.
--
--#### Browser integration tests
--
--You can find all the browser integration tests under `./test/browser`. Those tests are run with Playwright and usually consist of two parts:
--
--- `[test-name].mocks.ts`, the usage example of MSW;
--- `[test-name].test.ts`, the test suite that loads the usage example, does actions and performs assertions.
--
--It's also a great idea to get familiar with our Playwright configuration and extensions:
--
--- [**Playwright configuration file**](./test/browser/playwright.config.ts)
--- [Playwright extensions](./test/browser/playwright.extend.ts)
--
--Let's write an example integration test that asserts the interception of a GET request. First, start with the `*.mocks.ts` file:
--
--```js
--// test/browser/example.mocks.ts
--import { http, HttpResponse } from 'msw'
--import { setupWorker } from 'msw/browser'
-+Integration tests live under `./test`. We follow an example-driven testing paradigm, meaning that each integration test represents a _usage example_.
- 
--const worker = setupWorker(
--  http.get('/books', () => {
--    return HttpResponse.json([
--      {
--        id: 'ea42ffcb-e729-4dd5-bfac-7a5b645cb1da',
--        title: 'The Lord of the Rings',
--        publishedAt: -486867600,
--      },
--    ])
--  }),
--)
-+The same test runs in both Node.js and the browser ([Vitest Browser Mode](https://vitest.dev/guide/browser/)). The file name decides where the test runs:
- 
--worker.start()
--```
-+| File name           | Environment                                                    |
-+| ------------------- | -------------------------------------------------------------- |
-+| `*.test.ts`         | Node.js and browser.                                           |
-+| `*.node.test.ts`    | Node.js only.                                                  |
-+| `*.browser.test.ts` | Browser only.                                                  |
-+| `*.pw.test.ts`      | Playwright (fu
-```
-
-#### Recent Merged Pull Requests:
-- **PR #2838** (2026-11-14): fix: preserve optional path parameters and pipes in handler paths (@kettanaito)
-- **PR #2837** (2026-11-14): docs: update contributing guidelines after 3.0 (@kettanaito)
-- **PR #2834** (2026-11-10): fix: add `handler` to the "request:match" event (@kettanaito)
-- **PR #2830** (2026-11-05): fix(worker): prevent the worker from going idle (@kettanaito)
-- **PR #2829** (2026-11-05): fix(isCommonAssetRequest): add `ico` to common assets (@kettanaito)
-- **PR #2819** (2026-10-17): chore: fix the typescript-nightly job to run (@kettanaito)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. preserve optional path parameters and pipes in handler paths
-
-**RULE**:
-When implementing operations in `src/core/utils/matching/match-request-url.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mswjs/msw. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `022df00e`: preserve optional path parameters and pipes in handler paths. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/core/utils/matching/match-request-url.test.ts`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-
-test('returns true when matching optional path parameters in the middle of the path', () => {
-  expect(
-    matchRequestUrl(
-      new URL('https://test.mswjs.io/user/abc-123/settings'),
-      'https://test.mswjs.io/user/:userId?/settings',
-    ),
-  ).toEqual({
-    matches: true,
-    params: {
-      userId: 'abc-123',
-    },
-  })
-
-  expect(
-    matchRequestUrl(
-      new URL('https://test.mswjs.io/user/settings'),
-      'https://test.mswjs.io/user/:userId?/settings',
-    ),
-  ).toEqual({
-    matches: true,
-    params: {},
-  })
-
-  expect(
-    matchRequestUrl(
-      new URL('https://test.mswjs.io/user/abc-123'),
-      'https://test.mswjs.io/user/:userId?/settings',
-    ),
-  ).toEqual({
-    matches: false,
-    params: {},
-  })
-})
-
-test('returns true when matching optional path parameters separated by a dot', () => {
-  expect(
-    matchRequestUrl(
-      new URL('https://test.mswjs.io/files/report.pdf'),
-      'https://test.mswjs.io/files/:name?.:ext?',
-    ),
-  ).toEqual({
-    matches: true,
-    params: {
-      name: 'report',
-      ext: 'pdf',
-    },
-  })
-})
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
+// ANTI-PATTERN: Hashing raw disk buffers or fully mangled output
+import fs from 'node:fs'
+import crypto from 'node:crypto'
+
+export function computeUnstableChecksum(filePath: string): string {
+  // FAILS: Git checkout line endings (LF vs CRLF) change the hash!
+  const content = fs.readFileSync(filePath, 'utf8')
+  return crypto.createHash('md5').update(content).digest('hex')
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `022df00e` are properly handled with clean fallback behavior.
+Unit test validating that checking out the repository on Windows (`core.autocrlf=true`) vs Linux (`core.autocrlf=input`) generates identical hexadecimal digests for `mockServiceWorker.js`.
 
+---
+
+### 3. Graceful Inter-Process Drain Phase During Network Teardown
+**RULE**:
+When disabling an asynchronous IPC network interception provider, the system MUST NOT purge message listeners, terminate communication channels, or unregister the proxy worker until an explicit acknowledgment handshake (`CLIENT_CLOSE` -> `CLIENT_CLOSED`) has resolved, and the channel MUST keep resolving in-flight requests with a `PASSTHROUGH` signal until worker drainage finishes.
+
+**WHY**:
+Calling `super.disable()` or unceremoniously unregistering a Service Worker immediately terminates the interception channel. Any HTTP request dispatched immediately before `worker.stop()` that is in-flight across the IPC boundary hangs indefinitely or throws network errors (`Failed to fetch`), corrupting subsequent assertions in automated test suites.
+
+**WHEN TO APPLY**:
+All client-worker or proxy-to-parent architectures where network requests are in-flight during runtime state transitions (`stop()`, `reset()`, or test teardown hooks).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import { PromiseWithResolvers } from 'rettime'
+
+export class ResilientWorkerSource {
+  #channel: WorkerChannel
+  #listenerController?: AbortController
+
+  public async disable(): Promise<void> {
+    // 1. Abort only non-essential host listeners (e.g. window events)
+    this.#listenerController?.abort()
+    this.#listenerController = undefined
+
+    // 2. Synchronize drain state with worker thread via handshake
+    const closed = Promise.withResolvers<void>()
+    this.#channel.once('CLIENT_CLOSED', () => closed.resolve())
+    this.#channel.postMessage('CLIENT_CLOSE')
+
+    // 3. Await explicit worker acknowledgement
+    await closed.promise
+
+    // 4. Invariant: Do NOT nullify worker resolution promise here.
+    // In-flight requests received during this boundary MUST receive
+    // an immediate PASSTHROUGH payload to prevent browser promise deadlocks.
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Immediate unregistration and listener purge
+public async badDisable(): Promise<void> {
+  // Purges handlers immediately: pending requests hang forever!
+  this.#channel.removeAllListeners()
+  const [, registration] = await this.workerPromise
+  await registration.unregister() // Destroys context while fetch is in-flight
+}
+```
+
+**VERIFICATION METHOD**:
+Concurrency test: Trigger 50 parallel `fetch('/api/delay')` calls, invoke `worker.stop()` concurrently at $t=10\text{ms}$, and assert that all 50 requests successfully settle with either mock responses or bypassed remote network responses without unhandled promise rejections.
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Undici Header Delimiter Injection Failure in Passthrough Requests (BUG-UNDICI-01)
+- **Context**: Low-level HTTP passthrough layer in `@mswjs/interceptors` consumed by `msw/node` during request bypass (`#2826`).
+- **What Was Expected**: Requests passing through to the real network with raw headers containing colons inside values (e.g., `x-test: foo: bar`) must pass through intact.
+- **What Actually Happened**: When passthrough occurred, `FetchResponse.parseRawHeaders` split header strings using a naive colon delimiter search. A header line `x-test: a: b` resulted in invalid splitting, causing undici's internal `Headers.append` to receive `*/*` or `b` as a header key:
+  ```text
+  TypeError: Headers.append: "*/*" is an invalid header name.
+      at Headers.append (node:internal/deps/undici/undici:11467:16)
+      at FetchResponse.parseRawHeaders
+  ```
+- **Evidence in Repo**: GitHub Issue `#2826`; fixed across `@mswjs/interceptors@0.45.11` and referenced in MSW release pipeline dependencies.
+- **Root Cause**: The raw header parser split string rows on `/:/g` without limiting the split count to 1, or failed to identify the first colon index (`indexOf(':')`), causing secondary colons within the header value to be treated as field delimiters.
+- **Remediation Code Diff**:
+```typescript
+// - Buggy code / What failed
+function parseRawHeaders(rawHeaders: string[]): Headers {
+  const headers = new Headers()
+  for (const line of rawHeaders) {
+    const [name, value] = line.split(': ') // Corrupts if 'value' contains ': '
+    headers.append(name.trim(), value.trim())
+  }
+  return headers
+}
+
+// + Fixed pattern / Safe invariant
+function parseRawHeaders(rawHeaders: string[]): Headers {
+  const headers = new Headers()
+  for (const line of rawHeaders) {
+    const separatorIndex = line.indexOf(':')
+    if (separatorIndex === -1) continue
+    const name = line.slice(0, separatorIndex).trim()
+    const value = line.slice(separatorIndex + 1).trim()
+    headers.append(name, value)
+  }
+  return headers
+}
+```
+- **Lesson**: HTTP header fields are key-value structures where only the *first* colon is the structural separator. Tokenizing via split patterns on structural characters without depth/count bounding creates parsing vulnerabilities.
+
+---
+
+### Incident 2: Vitest Browser Mode Mock Annihilation via Service Worker Caching (BUG-BROWSER-02)
+- **Context**: Interoperability between MSW's Service Worker and Vitest Browser Mode / `@vitest/browser` running WebKit/Firefox (`#2820`).
+- **What Was Expected**: Vitest module mocking via `vi.mock` must remain isolated between test runs while MSW intercepts HTTP requests.
+- **What Actually Happened**: On initial test execution, `vi.mock` functioned. In watch mode or subsequent runs in Firefox/WebKit, mock implementations were discarded, and actual modules executed. The persistent Service Worker intercepted Vite's internal development server module requests (`/@fs/...`, `/@vite/client`) and returned cached or stale script chunks.
+- **Evidence in Repo**: GitHub Issue `#2820`; resolved through client channel filtering and strict worker unregistration hooks during watch mode re-runs.
+- **Root Cause**: The worker script's `fetch` event listener intercepted requests indiscriminately, including module requests originating from the Vitest browser test runner. Because Firefox and WebKit enforce stricter Service Worker scope boundary caching than Chromium, module chunks were captured by the Service Worker lifecycle.
+- **Remediation Code Diff**:
+```javascript
+// - Buggy code: Intercepts all client HTTP requests
+self.addEventListener('fetch', (event) => {
+  event.respondWith(handleRequest(event))
+})
+
+// + Fixed pattern: Bypass internal test runner and development bundler pipelines
+self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url)
+  // Strict bypass for Vite/Vitest internal transform streams
+  if (
+    url.pathname.startsWith('/@id/') ||
+    url.pathname.startsWith('/@fs/') ||
+    url.pathname.startsWith('/@vite/') ||
+    url.searchParams.has('import')
+  ) {
+    return
+  }
+  event.respondWith(handleRequest(event))
+})
+```
+- **Lesson**: Service Workers acting as mocking proxies must maintain explicit bypass boundaries for the dev environment’s HMR and test runner orchestration channels.
+
+---
+
+### Incident 3: Package Version Desynchronization via Corrupted Interpolation (BUG-BUILD-03)
+- **Context**: Build scripts `config/copy-service-worker.ts` and `config/plugins/rolldown/copy-worker-plugin.ts`.
+- **What Was Expected**: When generating distribution targets, `<PACKAGE_VERSION>` and `<INTEGRITY_CHECKSUM>` must be reliably injected into `mockServiceWorker.js`.
+- **What Actually Happened**: Template string error handling bug where an interpolated string referenced an undeclared identifier:
+  `throw new Error('Failed to read file.\n${readError.message}')` instead of wrapping template variables properly, masking the underlying I/O error and throwing `ReferenceError: readError is not defined`.
+- **Evidence in Repo**: `config/copy-service-worker.ts` lines 20–22:
+  `const [readFileError, readFileResult] = await until(() => fs.promises.readFile(sourceFilePath, 'utf8'))`
+  `if (readFileError) throw new Error('Failed to read file.\n${readError.message}')`
+- **Root Cause**: The error variable was named `readFileError`, but the literal string contained `${readError.message}` enclosed in single quotes instead of template backticks, generating dead diagnostics.
+- **Remediation Code Diff**:
+```typescript
+// - Buggy code / What failed
+const [readFileError, readFileResult] = await until(() =>
+  fs.promises.readFile(sourceFilePath, 'utf8'),
+)
+if (readFileError) {
+  throw new Error('Failed to read file.\n${readError.message}')
+}
+
+// + Fixed pattern / Safe invariant
+const [readFileError, readFileResult] = await until(() =>
+  fs.promises.readFile(sourceFilePath, 'utf8'),
+)
+if (readFileError) {
+  throw new Error(`Failed to read file.\n${readFileError.message}`)
+}
+```
+- **Lesson**: Diagnostic and fallback code paths must be subjected to static lint analysis (`no-undef`, strict template literals) to prevent exception handlers from crashing upon execution.
+
+---
+
+### Incident 4: In-Flight Request Deadlock During Worker Invalidation (BUG-LIFECYCLE-04)
+- **Context**: Worker transition handling in `ServiceWorkerSource.ts` during option updates.
+- **What Was Expected**: Changing setup worker options (e.g. changing `serviceWorker.url` or `findWorker`) must unregister the active worker and initialize the new worker without deadlocking existing callers awaiting responses.
+- **What Actually Happened**: When `shouldInvalidateWorker()` evaluated to `true`, the previous worker was terminated immediately. Outstanding client promises awaiting channel messages from the terminated worker hung indefinitely because the associated `workerPromise` was unfulfilled or garbage collected.
+- **Evidence in Repo**: `ServiceWorkerSource.ts` lines 61–72 and 160–186.
+- **Root Cause**: Reusing `PromiseWithResolvers` without swapping deferred instances before termination caused orphaned listener callbacks.
+- **Remediation Code Diff**:
+```typescript
+// - Buggy code / What failed
+public static async from(options: ServiceWorkerSourceOptions): Promise<ServiceWorkerSource> {
+  if (ServiceWorkerSource.#current && shouldInvalidateWorker(ServiceWorkerSource.#current.#options, options)) {
+    await ServiceWorkerSource.#current.terminate()
+    ServiceWorkerSource.#current = new ServiceWorkerSource(options)
+  }
+  return ServiceWorkerSource.#current
+}
+
+// + Fixed pattern / Safe invariant
+public static async from(options: ServiceWorkerSourceOptions): Promise<ServiceWorkerSource> {
+  if (ServiceWorkerSource.#current == null) {
+    ServiceWorkerSource.#current = new ServiceWorkerSource(options)
+  } else if (shouldInvalidateWorker(ServiceWorkerSource.#current.#options, options)) {
+    // Await complete terminal teardown before instantiating new source
+    await ServiceWorkerSource.#current.terminate()
+    ServiceWorkerSource.#current = new ServiceWorkerSource(options)
+  }
+  return ServiceWorkerSource.#current
+}
+```
+- **Lesson**: Singleton lifecycle invalidation must enforce an explicit terminal drain before re-instantiation, preventing interleaved event loops from sharing dead worker channels.
+
+---
+
+### Incident 5: URL Serialization Regression in URL Pattern Matching Engine (BUG-DEPS-05)
+- **Context**: Commit `ae1e5b45`: `fix: upddate @msw/url to 0.1.3 (#2840)`.
+- **What Was Expected**: URL pattern matching across relative paths and base path resolutions must adhere to WHATWG URL parsing specifications without crashing on non-standard ports or protocol-relative strings.
+- **What Actually Happened**: Dependency `@msw/url@0.1.2` failed to resolve complex path pattern matching when paths contained encoded query parameters or escaped slashes, causing matching failures against handlers defined as `http.get('/resource/:id', ...)`.
+- **Evidence in Repo**: Commit `ae1e5b45`, PR `#2840`, package bump in `package.json` and `pnpm-lock.yaml`.
+- **Root Cause**: Upstream regression in `@msw/url` where path tokens were improperly unescaped before regex compilation.
+- **Remediation Code Diff**:
+```json
+// - package.json
+-    "@msw/url": "^0.1.2",
++    "@msw/url": "^0.1.3",
+```
+- **Lesson**: Subsystem dependencies handling URL parsing, path matching, and regex synthesis must be isolated with strict end-to-end integration contracts to guard against path-matching drifts.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 4.1 Micro-Syntax & Token-Level Precision
+1. **Header Name and Value Separator Indices**: Never split strings on structural delimiters via regular expressions or multi-character splits. Always compute the primary character offset:
+   ```typescript
+   // INVARIANT: Index-bounded header slice
+   const index = rawHeaderLine.indexOf(':')
+   const key = index !== -1 ? rawHeaderLine.slice(0, index).trim() : ''
+   const value = index !== -1 ? rawHeaderLine.slice(index + 1).trim() : ''
+   ```
+2. **Nullable Equality Checks for Options**: In `shouldInvalidateWorker`, never rely on shallow object equality or falsy coercions for configuration options. Options can be undefined or contain non-enumerable properties:
+   ```typescript
+   // INVARIANT: Strict comparison with structural serialization fallback
+   export function shouldInvalidateWorker(
+     prevOptions: ServiceWorkerSourceOptions,
+     nextOptions: ServiceWorkerSourceOptions,
+   ): boolean {
+     return (
+       prevOptions.findWorker !== nextOptions.findWorker ||
+       prevOptions.serviceWorker.url !== nextOptions.serviceWorker.url ||
+       JSON.stringify(prevOptions.serviceWorker.options) !==
+         JSON.stringify(nextOptions.serviceWorker.options)
+     )
+   }
+   ```
+3. **Environment Detection Guards**: Distinguish between Node.js and Browser environments using multiple orthogonal signals to avoid breaking in isomorphic runtimes (e.g. Edge workers, Deno, Bun):
+   ```typescript
+   // INVARIANT: Multi-check environment verification
+   export function supportsServiceWorker(): boolean {
+     return (
+       typeof navigator !== 'undefined' &&
+       'serviceWorker' in navigator &&
+       typeof location !== 'undefined' &&
+       location.protocol !== 'file:'
+     )
+   }
+   ```
+
+### 4.2 Infinite Loop & Recursion Guards
+1. **Page Reload Recursion Barrier**: In `getWorkerInstance.ts`, triggering `location.reload()` due to a missing controller must be bounded by registration existence:
+   ```typescript
+   // INVARIANT: Ensure reload triggers IF AND ONLY IF matching registrations exist.
+   // If mockRegistrations is empty, the branch MUST NOT execute, preventing reload loops.
+   if (!navigator.serviceWorker.controller && mockRegistrations.length > 0) {
+     location.reload()
+   }
+   ```
+2. **Channel Ping Termination Cycles**: The browser keepalive ping timer must store its numeric ID and be aggressively cleared on page teardown:
+   ```typescript
+   // INVARIANT: Unconditional interval clearing on window lifecycle events
+   window.addEventListener('pagehide', (event) => {
+     if (event.persisted) return
+     if (worker.state !== 'redundant') {
+       this.#channel.postMessage('CLIENT_CLOSE')
+     }
+     clearInterval(this.#keepAliveInterval)
+   }, { signal: this.#listenerController?.signal })
+   ```
+
+### 4.3 UI & UX Micro-Mechanics
+1. **Console Formatting Without Polluting Main Streams**: MSW prefixes all internal diagnostics with dedicated color codes and prefixes, bypassing user console suppressors.
+2. **Non-Blocking Worker Updates**: When a Service Worker registration is resolved, invocation of `existingRegistration.update()` is dispatched asynchronously without `await`:
+   ```typescript
+   // INVARIANT: Non-blocking background worker updates
+   if (existingRegistration) {
+     existingRegistration.update() // Do NOT await: avoids stalling user start() lifecycle
+     return [worker, existingRegistration]
+   }
+   ```
+
+### 4.4 Backend Concurrency & Memory Safety
+1. **Deferred Promise Swapping on Re-Enable**: In `ServiceWorkerSource.ts`, re-enabling a disabled worker requires swapping `workerPromise` with a fresh resolved promise:
+   ```typescript
+   // INVARIANT: PromiseWithResolvers swap
+   if (this.#workerState === 'pending') {
+     this.#workerResolvers.resolve([worker, registration])
+     this.#workerState = 'fulfilled'
+   } else {
+     // Swap fresh resolved deferred to prevent stale or consumed promise chains
+     this.#workerResolvers = Promise.withResolvers()
+     this.#workerResolvers.resolve([worker, registration])
+     this.workerPromise = this.#workerResolvers.promise
+   }
+   ```
+2. **Memory Leak Elimination in Map-Based Frame Storage**: `WeakMap` cannot be used because serialized request objects lose object identity across IPC boundaries. Therefore, `this.#frames = new Map()` must be cleared explicitly in both `enable()`, `disable()`, and `terminate()`:
+   ```typescript
+   // INVARIANT: Explicit map frame evacuation
+   this.#frames.clear()
+   this.#channel.removeAllListeners()
+   ```
+
+### 4.5 Defect & Error Prevention ("Galti Pakadna")
+1. **ReadableStream Transferability Feature Detection**: Rather than relying on browser User-Agent heuristics, MSW performs an active, functional capability test using a scratch `MessageChannel`:
+   ```typescript
+   export function supportsReadableStreamTransfer(): boolean {
+     try {
+       const stream = new ReadableStream({
+         start: (controller) => controller.close(),
+       })
+       const message = new MessageChannel()
+       message.port1.postMessage(stream, [stream])
+       return true
+     } catch {
+       return false
+     }
+   }
+   ```
+2. **Explicit 404 Detection in Service Worker Registration**: Differentiates generic network failures from missing physical files:
+   ```typescript
+   if (registrationError) {
+     const isWorkerMissing = registrationError.message.includes('(404)')
+     if (isWorkerMissing) {
+       throw new Error(`Did you forget to run "npx msw init <PUBLIC_DIR>"?`)
+     }
+     throw registrationError
+   }
+   ```
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### Dimension 1: Architecture
+- **Boundary Decoupling**: The main thread coordinates handlers; the Service Worker intercepts traffic. Both communicates solely via structured messages over `WorkerChannel`.
+- **State Ownership**: Main execution thread owns the list of `RequestHandler` definitions. The Service Worker owns zero mock business logic, acting as an event redirector.
+
+### Dimension 2: Core Abstractions
+- `NetworkSource`: Abstract base class controlling concrete network interceptors (`ServiceWorkerSource`, `FallbackHttpSource`, `InterceptorSource`).
+- `WorkerChannel`: Typed bidirectional IPC transport bridge abstracting `postMessage`, handling acknowledgments, request matching, and transferable streams.
+- `HttpNetworkFrame`: Transactional boundary encapsulating the request, response, and completion events of an intercepted HTTP call.
+
+### Dimension 3: Error Handling
+- **Invariant Enforcement**: Uses `outvariant` library for runtime validation checks (`invariant(...)`) which produce standardized, human-readable error messages with documentation links.
+- **Structured Error Boundary**: `until-async` converts Promise rejections into Go-style `[error, result]` tuples, eliminating nested `try/catch` scopes.
+
+### Dimension 4: Testing
+- **Multi-Runner Matrix**: Unit tests run via Vitest (`--project=unit`), Node-specific stream tests run via Vitest (`--project=node`), browser integration runs via Playwright (`playwright test -c ./test/playwright.config.ts`), and memory leak validation runs via dedicated memory projects (`--project=memory`).
+- **Type-Level Tests**: Vitest runs `--project=types` to ensure strict inference of handler responses, request params, and body types.
+
+### Dimension 5: Security
+- **Origin & Protocol Isolation**: Service Workers are immediately bypassed and disarmed if `location.protocol === 'file:'`.
+- **Integrity Fingerprinting**: Automated MD5 verification between client library and distributed `mockServiceWorker.js` prevents stale workers from tampering with network protocols.
+
+### Dimension 6: Performance
+- **Transferable Streams**: Replaces large string JSON buffer copies with raw `ReadableStream` transfers when supported by the underlying browser engine.
+- **Zero Treeshake on Worker Hash Generation**: `getWorkerChecksum` configures Rolldown to generate a direct bundle without treeshaking overhead, ensuring hashing speeds under $5\text{ms}$.
+
+### Dimension 7: Deployment & CI/CD
+- **Package Modernization**: Pure ESM (`"type": "module"`), subpath package
 
 ## 3. Independent Verification Protocol
 1. Assert state existence before and after execution.

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-2BPX",
-    "timestamp": "2026-11-18T22:57:59.253Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "7f4067d99a9e8519dbc7aa5360388f34638de25be84a3c7beffb7dab993ae0e5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-2FV7",
-    "timestamp": "2026-11-18T22:58:04.627Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "88afe4781ecee10a0e02efe36511d45385c684ca64bcfee93e842f5dff9084cd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-8IV9",
     "timestamp": "2026-11-18T23:02:48.453Z",
     "repository": "baidu/Unlimited-OCR",
@@ -7492,6 +7462,36 @@
     "contentHash": "d5e39396c082cb72d0fd95f17c3ba756354e70d61c797b0e59401a7210a97a8b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-IBEO",
+    "timestamp": "2026-11-21T01:33:43.872Z",
+    "repository": "wcandillon/react-native-skia",
+    "learningId": "learn-github-wcandillon-react-native-skia",
+    "contentHash": "aa10ec227e0280275741e1f12de5a695a9f88bc02ebd973a1b7fbaf079ed361d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-JU6N",
+    "timestamp": "2026-11-21T01:34:54.863Z",
+    "repository": "mswjs/msw",
+    "learningId": "learn-github-mswjs-msw",
+    "contentHash": "a3e1abc79d03cf5382cd961f832c7422083cdaceb687df0ea85eee8a04ded881",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
