@@ -11730,3 +11730,9 @@ Every entry in this ledger must capture:
 | `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `83408f21` | Multi-dimensional audit evidence | 2026-11-21T01:51:36.127Z |
 | `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `209f078b` | Multi-dimensional audit evidence | 2026-11-21T02:00:32.837Z |
 | `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `bf10f005` | Multi-dimensional audit evidence | 2026-11-21T02:00:36.960Z |
+| `learn-github-electron-electron` | `https://github.com/electron/electron` | `c7ba9db4` | Multi-dimensional audit evidence | 2026-11-21T02:08:36.582Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `e66ed540` | Multi-dimensional audit evidence | 2026-11-21T02:08:44.142Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `2f808b3c` | Multi-dimensional audit evidence | 2026-11-21T02:11:54.205Z |
+| `learn-dom-h-09c0b40c` | `project://zed-industries-zed` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md` | 2026-11-21T02:12:23.426Z |
+| `learn-dom-b-2c8cfab3` | `project://zed-industries-zed` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md` | 2026-11-21T02:12:57.768Z |
+| `learn-dom-d-9397456a` | `project://electron-electron` | `c7ba9db4` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md` | 2026-11-21T02:13:39.563Z |

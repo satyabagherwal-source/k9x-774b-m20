@@ -11697,3 +11697,9 @@
 | `CYCLE-20261121-5ARF` | `2026-11-21T01:51:36.123Z` | `software-mansion/react-native-screens` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9695` | Yes (`2742b56a...`) |
 | `CYCLE-20261121-GSW0` | `2026-11-21T02:00:32.832Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9696` | Yes (`146a2101...`) |
 | `CYCLE-20261121-GW2J` | `2026-11-21T02:00:36.955Z` | `tauri-apps/tauri` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9697` | Yes (`81d01590...`) |
+| `CYCLE-20261121-R65F` | `2026-11-21T02:08:36.579Z` | `electron/electron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9698` | Yes (`00ca3e9d...`) |
+| `CYCLE-20261121-RBZF` | `2026-11-21T02:08:44.139Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9699` | Yes (`d2e2cbd8...`) |
+| `CYCLE-20261121-VEMY` | `2026-11-21T02:11:54.202Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9700, Rule 9701, Rule 9702` | Yes (`87d78162...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T02:12:23.426Z` | `zed-industries-zed` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-09C0B40C` [Domain H] | Yes (`9a8463dd...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T02:12:57.768Z` | `zed-industries-zed` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-B-2C8CFAB3` [Domain B] | Yes (`3b1bfd2e...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T02:13:39.563Z` | `electron-electron` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9397456A` [Domain D] | Yes (`7ebbbb9d...`) |

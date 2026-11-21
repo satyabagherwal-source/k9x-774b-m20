@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T02:00:45.309Z",
+  "updated_at": "2026-11-21T02:13:40.954Z",
   "stats": {
-    "total_discovered": 6914,
-    "approved_pending_harvest": 6525,
+    "total_discovered": 6927,
+    "approved_pending_harvest": 6538,
     "harvested_count": 0,
     "rejected_count": 389,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6505,
+      "COMMUNITY_AND_EXPERT": 6518,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -149408,6 +149408,292 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
         "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-3756C7EC8549": {
+      "id": "SRC-3756C7EC8549",
+      "url": "https://github.com/electron/electron/blob/main/CONTRIBUTING.md",
+      "title": "https://github.com/electron/electron/blob/main/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:13:39.619Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-E27ACB3C1401": {
+      "id": "SRC-E27ACB3C1401",
+      "url": "https://github.com/electron/electron/blob/main/CODE_OF_CONDUCT.md",
+      "title": "https://github.com/electron/electron/blob/main/CODE_OF_CONDUCT.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:13:39.664Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-3DD0BCB81F6D": {
+      "id": "SRC-3DD0BCB81F6D",
+      "url": "https://www.github.com/electron/electron/issues",
+      "title": "https://www.github.com/electron/electron/issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:13:39.730Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-9383E4556542": {
+      "id": "SRC-9383E4556542",
+      "url": "https://claude.ai/code/session_01Vf2yMv3H6HNt1XyAwo35Sm",
+      "title": "https://claude.ai/code/session_01Vf2yMv3H6HNt1XyAwo35Sm",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:13:39.774Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-58148CAA8A73": {
+      "id": "SRC-58148CAA8A73",
+      "url": "https://claude.ai/code/session_01Mamv74GiUZ1caHCPKp6tcR",
+      "title": "https://claude.ai/code/session_01Mamv74GiUZ1caHCPKp6tcR",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:13:39.848Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-97C5FA6FFCD5": {
+      "id": "SRC-97C5FA6FFCD5",
+      "url": "https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/chrome_content_browser_client.cc;l=4056-4067;drc=e70e5ce76d4eafd833b4468a6d15bcd9ea0f6cea",
+      "title": "https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/chrome_content_browser_client.cc;l=4056-4067;drc=e70e5ce76d4eafd833b4468a6d15bcd9ea0f6cea",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:13:39.905Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-54F80AEDABEC": {
+      "id": "SRC-54F80AEDABEC",
+      "url": "https://claude.ai/code/session_01KX1hkKh58Khvku8FCchbHQ",
+      "title": "https://claude.ai/code/session_01KX1hkKh58Khvku8FCchbHQ",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:13:39.940Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
+        "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-E565C24DCD61": {
+      "id": "SRC-E565C24DCD61",
+      "url": "https://github.com/pixeltable/pixeltable/actions/runs/44653753220",
+      "title": "https://github.com/pixeltable/pixeltable/actions/runs/44653753220",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:13:40.713Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
+        "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-24902F467525": {
+      "id": "SRC-24902F467525",
+      "url": "https://app.reviewnb.com/pixeltable/pixeltable/pull/2035",
+      "title": "https://app.reviewnb.com/pixeltable/pixeltable/pull/2035",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:13:40.768Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
+        "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-460F815C9CB5": {
+      "id": "SRC-460F815C9CB5",
+      "url": "https://raw.githubusercontent.com/ReviewNB/support/master/images/button_review_notebooks.png",
+      "title": "https://raw.githubusercontent.com/ReviewNB/support/master/images/button_review_notebooks.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:13:40.806Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
+        "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-238C70FDEF3D": {
+      "id": "SRC-238C70FDEF3D",
+      "url": "https://raw.githubusercontent.com/ReviewNB/support/master/images/diff-pmn.svg",
+      "title": "https://raw.githubusercontent.com/ReviewNB/support/master/images/diff-pmn.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:13:40.862Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
+        "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-2C36242A1415": {
+      "id": "SRC-2C36242A1415",
+      "url": "https://app.reviewnb.com/pixeltable/pixeltable/pull/2035/files/?expand=docs%2Frelease%2Fhowto%2Fproviders%2Fworking-with-fal.ipynb",
+      "title": "https://app.reviewnb.com/pixeltable/pixeltable/pull/2035/files/?expand=docs%2Frelease%2Fhowto%2Fproviders%2Fworking-with-fal.ipynb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:13:40.899Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
+        "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-4278F3E09B5E": {
+      "id": "SRC-4278F3E09B5E",
+      "url": "https://www.reviewnb.com/",
+      "title": "https://www.reviewnb.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:13:40.954Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
+        "fileName": "pixeltable-pixeltable-learnings.md"
       }
     }
   }

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-SKFG",
-    "timestamp": "2026-11-18T23:18:23.596Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "33d6eb46953cea14aabe9c25a44246f6c9b63aff39932f592034697081d2a83a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-SNCQ",
-    "timestamp": "2026-11-18T23:18:27.386Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "4696a2526d71de6f363c0e5729dbef93a5d60872adb6e8aeeaa1d94a63b6a51a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-2ES6",
-    "timestamp": "2026-11-18T23:26:02.838Z",
-    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-    "contentHash": "e08b6ee961bace31491ddafdafe22dfe4e4c9c060920a4c7a587888f4dfa778b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-2O2G",
     "timestamp": "2026-11-18T23:26:14.872Z",
     "repository": "projectdiscovery/nuclei",
@@ -7492,6 +7447,51 @@
     "contentHash": "81d0159082313a8d1fbc04f6f5f1f1ebbbdcb19fa897e20096b5ab32bbe00122",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-R65F",
+    "timestamp": "2026-11-21T02:08:36.579Z",
+    "repository": "electron/electron",
+    "learningId": "learn-github-electron-electron",
+    "contentHash": "00ca3e9da8e0893973c2c107c327b4cec28ae32fa1cd26c2c0b25c4f37858dd9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-RBZF",
+    "timestamp": "2026-11-21T02:08:44.139Z",
+    "repository": "pixeltable/pixeltable",
+    "learningId": "learn-github-pixeltable-pixeltable",
+    "contentHash": "d2e2cbd8797d672e56baddc81282b09461467cff376455a35e553d64f0445c7a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-VEMY",
+    "timestamp": "2026-11-21T02:11:54.202Z",
+    "repository": "zed-industries/zed",
+    "learningId": "learn-github-zed-industries-zed",
+    "contentHash": "87d781620d2b9fea54f02dd7431e038ebb12803640c2054eeb1f7412985623bf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

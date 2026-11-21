@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T02:00:36.972Z",
+  "last_updated": "2026-11-21T02:11:54.212Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "6158a6d4037d4caf5ab403043b970d7203679d58f7c15051e45396b35b8b6f28",
-      "verified_at": "2026-11-20T00:33:27.415Z",
+      "content_hash": "d2e2cbd8797d672e56baddc81282b09461467cff376455a35e553d64f0445c7a",
+      "verified_at": "2026-11-21T02:08:44.149Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T00:33:27.415Z"
+      "last_updated": "2026-11-21T02:08:44.149Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "808a4b95966b7850ecb85df71a2adcd53a5ed57c9995ddcc4f5ecef88381c583",
-      "verified_at": "2026-11-19T16:07:13.476Z",
+      "content_hash": "87d781620d2b9fea54f02dd7431e038ebb12803640c2054eeb1f7412985623bf",
+      "verified_at": "2026-11-21T02:11:54.212Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T16:07:13.476Z"
+      "last_updated": "2026-11-21T02:11:54.212Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",
@@ -12711,14 +12711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-electron-electron",
-      "content_hash": "f1d9f1fd930105489bfea33e157a716c8dab03ca5227a659e13b4ba79a52c0bc",
-      "verified_at": "2026-11-17T04:13:25.534Z",
+      "content_hash": "00ca3e9da8e0893973c2c107c327b4cec28ae32fa1cd26c2c0b25c4f37858dd9",
+      "verified_at": "2026-11-21T02:08:36.590Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T04:13:25.534Z"
+      "last_updated": "2026-11-21T02:08:36.590Z"
     },
     "mistralai/Timestral-209M": {
       "repository": "mistralai/Timestral-209M",

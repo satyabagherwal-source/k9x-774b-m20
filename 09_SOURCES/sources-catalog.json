@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "bf3ef159",
+    "sourceVersion": "e66ed540",
     "license": "Apache-2.0",
-    "contentHash": "6158a6d4037d4caf5ab403043b970d7203679d58f7c15051e45396b35b8b6f28",
-    "lastHarvestedAt": "2026-11-20T00:33:27.407Z",
+    "contentHash": "d2e2cbd8797d672e56baddc81282b09461467cff376455a35e553d64f0445c7a",
+    "lastHarvestedAt": "2026-11-21T02:08:44.142Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "6ae76a6a",
+    "sourceVersion": "2f808b3c",
     "license": "NOASSERTION",
-    "contentHash": "808a4b95966b7850ecb85df71a2adcd53a5ed57c9995ddcc4f5ecef88381c583",
-    "lastHarvestedAt": "2026-11-19T16:07:13.468Z",
+    "contentHash": "87d781620d2b9fea54f02dd7431e038ebb12803640c2054eeb1f7412985623bf",
+    "lastHarvestedAt": "2026-11-21T02:11:54.205Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {
@@ -8443,10 +8443,10 @@
     "repository": "electron/electron",
     "platform": "github",
     "sourceUrl": "https://github.com/electron/electron",
-    "sourceVersion": "8c1db351",
+    "sourceVersion": "c7ba9db4",
     "license": "MIT",
-    "contentHash": "f1d9f1fd930105489bfea33e157a716c8dab03ca5227a659e13b4ba79a52c0bc",
-    "lastHarvestedAt": "2026-11-17T04:13:25.526Z",
+    "contentHash": "00ca3e9da8e0893973c2c107c327b4cec28ae32fa1cd26c2c0b25c4f37858dd9",
+    "lastHarvestedAt": "2026-11-21T02:08:36.582Z",
     "learningId": "learn-github-electron-electron"
   },
   "hf-mistralai-timestral-209m": {

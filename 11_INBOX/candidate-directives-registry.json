@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T02:00:46.881Z",
+  "last_updated": "2026-11-21T02:13:41.208Z",
   "directives": [
     {
       "id": "CD-001",
@@ -40684,6 +40684,81 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-B6F128-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-R6AF",
+      "directive_title": "replace the loading benchmark page and keep partial benchmark results",
+      "source_repo": "electron/electron",
+      "source_commit": "c7ba9db4",
+      "staged_file": "11_INBOX/candidate-directives/CD-R6AF-replace-the-loading-benchmark-page-and-keep-partial-benchmark-results.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-XP6R",
+      "directive_title": "Keep component view local values when the base changes view membership",
+      "source_repo": "pixeltable-pixeltable-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XP6R-keep-component-view-local-values-when-the-base-changes-view-membership.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-WRV5",
+      "directive_title": "Cooperative Async File Locking Under Thread Pool Starvation Constraints",
+      "source_repo": "zed-industries-zed-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-WRV5-cooperative-async-file-locking-under-thread-pool-starvation-constraints.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-WRV7",
+      "directive_title": "Tree-Sitter Highlighting Specificity & Grammar Disambiguation Order",
+      "source_repo": "zed-industries-zed-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-WRV7-tree-sitter-highlighting-specificity-grammar-disambiguation-order.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-WRV6",
+      "directive_title": "State Machine Cancellation Event Absorption Invariant",
+      "source_repo": "zed-industries-zed-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-WRV6-state-machine-cancellation-event-absorption-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-XOEI",
+      "directive_title": "build: replace the loading benchmark page and keep partial benchmark results",
+      "source_repo": "electron-electron-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XOEI-build-replace-the-loading-benchmark-page-and-keep-partial-benchmark-results.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-581EF0",
+      "directive_title": "Keep component view local values when the base changes view membership",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pixeltable-pixeltable",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-581EF0-keep-component-view-local-values-when-th.md",
       "staged_date": "2026-11-21"
     }
   ]

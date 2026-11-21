@@ -4,22 +4,22 @@
 {
   "source_repository": "electron/electron",
   "source_url": "https://github.com/electron/electron",
-  "source_version": "8c1db351",
+  "source_version": "c7ba9db4",
   "license": "MIT",
-  "timestamp": "2026-11-17T04:13:25.701Z",
+  "timestamp": "2026-11-21T02:08:36.760Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-electron-electron",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [electron/electron](https://github.com/electron/electron) (Revision: `8c1db351`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T04:13:25.701Z`  
+> **Provenance**: Harvested from [electron/electron](https://github.com/electron/electron) (Revision: `c7ba9db4`).  
+> **License**: MIT | **Timestamp**: `2026-11-21T02:08:36.760Z`  
 > **Learning ID**: `learn-github-electron-electron`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `electron/electron` (Commit: `8c1db351`)
+- **Target Repository**: `electron/electron` (Commit: `c7ba9db4`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/electron-electron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/electron/electron](https://github.com/electron/electron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T04:13:24.540Z  
+> **Harvest Timestamp**: 2026-11-21T02:08:35.574Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: :electron: Build cross-platform desktop apps with JavaScript, HTML, and CSS
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 123940 stars
+- **Stars / Engagement**: 124027 stars
 
 ---
 
@@ -338,14 +338,13 @@ export default sharedTexture;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55859** (2026-11-17): **build: make natives code cache generation deterministic**
-  *Symptoms*: <!-- claude-slack-attribution --> _Requested via [Slack thread](https://electronhq.slack.com/archives/C0CJ40E3NGL/p1794876348204039)_  #### Description of Change  The tools that build Electron's V8 code caches and Node's embedded startup snapshot produced different bytes from build to build, so the generated `electron_natives_code_cache_*.cc` files and `node_snapshot.cc` never matched between builds and their compiles re-ran instead of hitting the remote cache. There were two causes. The code cache tool runs most flavors with `--rehash-snapshot`, which draws a fresh string hash seed from a random number generator seeded from OS entropy, so this seeds that tool's V8 with the same fixed value mksnapshot uses (V8 leaves the seed out of the flag hash that keys code caches, so the caches are still accepted and shipped processes keep a random seed). Separately, `node_mksnapshot` already runs in V8's predictable mode, but that mode does not cover V8's background-scheduled early young-generation GC; on a busy machine that GC ran at a different point, the heap ended up laid out differently, and the read-only part of Node's snapshot (whose checksum every code cache entry records) came out in a different order. The build action that runs `node_mksnapshot` now passes V8 flags that give the snapshot-building process a young generation large enough that it never needs that GC. Young generation sizes are also excluded from V8's flag hash, so runtime flags and cache compatibility are unchang
+- **Issue #55988** (2026-11-20): **Use-after-free crash at quit when a `protocol.handle` response is still streaming (NodeStreamLoader, `STRING_STAYS_VALID_UNTIL_COMPLETION`)**
+  *Symptoms*: ### Preflight Checklist  - [x] I have read the [Contributing Guidelines](https://github.com/electron/electron/blob/main/CONTRIBUTING.md) for this project. - [x] I agree to follow the [Code of Conduct](https://github.com/electron/electron/blob/main/CODE_OF_CONDUCT.md) that this project adheres to. - [x] I have searched the [issue tracker](https://www.github.com/electron/electron/issues) for a bug report that matches the one I want to file, without success.  ### Electron version  45.3.4. The code is unchanged on `main` as of 2026-11-20.  ### What operating system(s) are you using?  Windows  ### Operating system version  Windows Server 2025 (GitHub Actions `windows-2025` runner), x64  ### What arch are you using?  x64  ### Last known working version  Unknown  ### Does the issue also appear in Chromium / Google Chrome?  No. The faulty code is Electron's `NodeStreamLoader`, which Chromium doesn't have.  ### Expected behavior  Quitting the app while a page is still loading a response from a `protocol.handle` handler ends the process with exit code 0.  ### Actual behavior  Sometimes the main process crashes during shutdown with an access violation (`0xC0000005`) on a thread-pool worker. Everything in JavaScript has already finished normally: `before-quit`, `will-quit`, `process.on('exit')` with code 0, and `quit` with `exitCode` 0. The crash happens afterwards, and Windows Error Reporting records nothing: there is no Application Error event and no LocalDumps dump. The only symptom i
 
-- **Issue #55854** (2026-11-17): **chore: bump chromium to 160.0.8165.0 (46-x-y)**
-  *Symptoms*: <!-- claude-slack-attribution --> _Requested by **John Kleinschmidt** · [Slack thread](https://electronhq.slack.com/archives/C0BD6RL469K/p1794871899435029)_  #### Description of Change  Manually backport #55789. See that PR for details.  CC @electron-roller[bot]  Conflicts were limited to `patches/chromium`: `feat_let_the_macos_native_picker_offer_windows_apps_and_screens.patch` (absent on 46-x-y) was dropped, and the only roll changes to `feat_filter_out_non-shareable_windows_in_the_current_application_in.patch` and `refactor_expose_file_system_access_blocklist.patch` touched hunks that the 46-x-y versions of those patches do not have, so both were kept as they are on 46-x-y. This also bumps build-tools to f3e78a8 (as #55285 did on main), since 160.0.8165.0 runs mojo tools as .pyz zipapps that 46-x-y's older build-tools couldn't execute remotely.  #### Checklist <!-- Remove items that do not apply. For completed items, change [ ] to [x]. -->  - [x] I have built and tested this change - [x] I have filled out the PR description - [x] [I have reviewed and verified the changes](https://github.com/electron/governance/blob/main/policy/ai.md) - [x] `npm test` passes - [ ] tests are [changed or added](https://github.com/electron/electron/blob/main/docs/development/testing.md) - [ ] relevant API documentation, tutorials, and examples are updated and follow the [documentation style guide](https://github.com/electron/electron/blob/main/docs/development/style-guide.md) - [x] [PR release
+- **Issue #55987** (2026-11-20): **fix: reflect system contrast preference in prefers-contrast media query**
+  *Symptoms*: Backport of #55970  See that PR for details.   Notes: Fixed `prefers-contrast` media query ignoring the system's contrast setting. 
   **Post-Mortem & Fix Analysis**:
-  > `linux-x64-asan / test (linux, 2)` failed on `extensions.spec.ts:2235` ("loads DevTools panels on custom protocols with allowExtensions privileges") with a 180s timeout.  The same spec timed out the same way on main's post-merge run of this roll ([job](https://github.com/electron/electron/actions/runs/43951416588/job/133604532874)), which passed on rerun. The spec and fixture are identical between this branch and main, so this comes from the 8165 roll itself rather than the backport changes, and it needs a root-cause fix on main.  --- _Generated by [Claude Code](https://claude.ai/code)_ 
-  > **Release Notes Persisted**  > Updated Chromium to 160.0.8165.0.
+  > **Release Notes Persisted**  > Fixed `prefers-contrast` media query ignoring the system's contrast setting.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -362,1020 +361,933 @@ export default sharedTexture;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8c1db351` (2026-11-17)
-**Commit Message**: build: make natives code cache generation deterministic (#55859)
+### Incident Patch 1: `7ccb4856` (2026-11-19)
+**Commit Message**: build: replace the loading benchmark page and keep partial benchmark results (#55941)
 
-* build: make natives code cache generation deterministic
+* build: add an app-like page to the loading and trace benchmarks
 
-The electron_natives_codecache tool runs every flavor except sandbox with
---rehash-snapshot, so the isolate it builds the cache in picks a fresh
-string hash seed from V8's RNG. That RNG is seeded from OS entropy unless
---random-seed is set, so hash table layouts, and with them the serialized
-code cache, changed on every run. The generated
-electron_natives_code_cache_*.cc files therefore never matched between
-builds and their compiles always missed the remote cache.
+The loading suite's only page runs a 3,000,000-iteration Math.sqrt loop
+before its first paint, so its FCP and loadEventEnd mostly time renderer
+setup plus that loop. Add an "app shell" page shaped like a typical
+Electron app's first window: generated at run time from a fixed seed
+(about 420 KiB of scripts with a small virtual DOM, store and feature
+modules, 90 KiB of CSS, a 270 KiB JSON file of 1,200 items), loaded from
+file://, rendering the window chrome, then, once that has painted, a
+summary and a 1,200-row list. It marks app-ready once the full view is
+in the DOM and records its LCP as a mark.
 
-Seed V8's RNG with the same fixed value mksnapshot uses. V8 leaves
---random-seed out of FlagList::Hash, so the cache's flag hash still
-matches the runtime processes, and code cache deserialization always
-rehashes with the runtime seed.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01NayLZi5G1x8UK9hQjhmtNz
-
-* build: make node snapshot generation deterministic
-
-node_mksnapshot already runs V8 with --predictable, but that does not
-cover V8's minor GC task: when the young generation is 80% full V8
-posts a foreground task that scavenges early, and wh
-
-**File**: `patches/node/electron_enable_node_startup_snapshot_generation_in_chromium_s_v8.patch` (modified, +11/-2)
-```diff
-@@ -291,7 +291,7 @@ index 0842cba257d0ca36e07c97736e5b24cc77f2a053..0ee1bd02a03b6d303861cd0f8353db6c
-        node::InitializeOncePerProcess(
-            std::vector<std::string>(argv, argv + argc),
- diff --git a/unofficial.gni b/unofficial.gni
--index 1fad56169f5c813dd6f6216b6a1278e5415a5972..619253a1ee26e289215022c6152229500952cfdc 100644
-+index 1fad56169f5c813dd6f6216b6a1278e5415a5972..0a8455bdd06a6d4d53d19bf49687772a87cc5340 100644
- --- a/unofficial.gni
- +++ b/unofficial.gni
- @@ -42,7 +42,22 @@ template("node_gn_build") {
-@@ -397,7 +397,7 @@ index 1fad56169f5c813dd6f6216b6a1278e5415a5972..619253a1ee26e289215022c615222950
-        }
-  
-        # This config disables a link time optimization "ICF", which may merge
--@@ -335,26 +369,135 @@ template("node_gn_build") {
-+@@ -335,26 +369,144 @@ template("node_gn_build") {
-            ldflags = [ "/OPT:NOICF" ]  # link.exe, but also lld-link.exe.
-          } else if (is_apple && !use_lld) {
-            ldflags = [ "-Wl,-no_deduplicate" ]  # ld64.
-@@ -444,6 +444,15 @@ index 1fad56169f5c813dd6f6216b6a1278e5415a5972..619253a1ee26e289215022c615222950
- +          # rejected on its flags hash (see NodeBindings::ParseNodeCliFlags).
- +          # Node options go before the positional output path.
- +          "--no-js-source-phase-imports",
-++
-++          # --predictable (set by node for snapshot builds) does not cover
-++          # V8's minor GC task, which scavenges at a timing-dependent point
-++          # and so changes the order objects are promoted to read-only space,
-++          # making the snapshot differ between runs on a busy machine. A young
-++          # generation big enough that building the snapshot never scavenges
-++          # avoids that. Semi-space sizes are left out of V8's flags hash.
-++          "--min-semi-space-size=32",
-++          "--max-semi-space-size=32",
- +          rebase_path("$target_gen_dir/node_snapshot.cc", root_build_dir),
- +
- +          # Electron's V8 has external startup data, so node_mksnapshot must
-```
-
-**File**: `patches/node/fix_use_a_dedicated_cppheappointertag_for_cppgc_wrappables.patch` (modified, +1/-1)
-```diff
-@@ -77,7 +77,7 @@ index 7dfdb406b409bdd8dfa6f88d61c9d2adc32e1474..38ba2c5a9b46e5429f0a3377685eb64d
-  
-  void IsolateData::MemoryInfo(MemoryTracker* tracker) const {
- diff --git a/unofficial.gni b/unofficial.gni
--index 619253a1ee26e289215022c6152229500952cfdc..f88cf1a1c3d28eb81721dfbb136d1655d0616510 100644
-+index 0a8455bdd06a6d4d53d19bf49687772a87cc5340..783d5261f3b34bf41bc9d22ca189465028414b1a 100644
- --- a/unofficial.gni
- +++ b/unofficial.gni
- @@ -83,6 +83,12 @@ template("node_gn_build") {
-```
-
-**File**: `patches/node/fix_use_embedder_perfetto_client_when_available.patch` (modified, +1/-1)
-```diff
-@@ -509,7 +509,7 @@ index 60add492d36ae0e99959209aff6a307b505d44c5..17b990455e7d6a791998ab304418c256
-  
-  #endif  // SRC_TRACING_TRACE_EVENT_PERFETTO_H_
- diff --git a/unofficial.gni b/unofficial.gni
--index f88cf1a1c3d28eb81721dfbb136d1655d0616510..32965c9dd45da8f96aaf5e233a103f570e8bf11a 100644
-+index 783d5261f3b34bf41bc9d22ca189465028414b1a..0f18b0ea64df3a353c9187595bbe2ef4d3bba5d1 100644
- --- a/unofficial.gni
- +++ b/unofficial.gni
- @@ -62,6 +62,11 @@ template("node_gn_build") {
-```
-
-**File**: `shell/common/electron_natives_codecache_main.cc` (modified, +10/-0)
-```diff
-@@ -147,6 +147,16 @@ int main(int argc, char* argv[]) {
-   v8::V8::InitializeICUDefaultLocation(argv[0]);
-   v8::V8::InitializeExternalStartupDataFromFile(snapshot_blob_path.c_str());
- 
-+  // Make the output reproducible. With --rehash-snapshot the isolate draws a
-+  // fresh string hash seed from V8's RNG, which is seeded from OS entropy by
-+  // default, so hash table layouts (and with them the serialized cache) vary
-+  // from run to run. Seed the RNG like mksnapshot does; --random-seed is left
-+  // out of FlagList::Hash, so the cache's flag hash still matches the runtime
-+  // processes, and the runtime rehashes with its own seed on deserialization.
-+  constexpr std::string_view kDeterministicFlags = "--random-seed=314159265";
-+  v8::V8::SetFlagsFromString(kDeterministicFlags.data(),
-+                             kDeterministicFlags.size());
-+
-   // Match the consuming process's non-default flag set (FlagList::Hash is
-   // part of V8's code-cache key). Passed in from GN per flavor.
-   if (!v8_flags.empty())
-```
-
----
-
-### Incident Patch 2: `a664d1bf` (2026-11-16)
-**Commit Message**: build: add benchmark regression gauges and a version-history workflow (#55728)
-
-* build: add benchmark regression gauges and a version-history workflow
-
-compare.mts now also sends electron.perf.regression and
-electron.perf.improvement, a 0/1 gauge per metric and comparison that
-follows the comparator's verdict, for a Datadog monitor to alert on.
-
-The new Benchmarks History workflow runs the latest stable release of
-each requested Electron major against a fixed anchor version (default:
-the latest stable), one job per major, and sends each metric's ratio to
-the anchor (electron.perf.history.ratio.<metric>) and the raw median
-(electron.perf.history.<metric>). Runners change hosts between jobs, so
-only the anchor-relative ratio is comparable across majors.
-
-For old versions, run.mts --best-effort stops running a suite the
-candidate failed in the first two rounds and only fails when nothing
-was measured, the harness probes protocol capabilities after the ready
-event (before Electron 25 the protocol module has no methods until
-then), and run.mts cuts runaway chromedriver logs down to size.
+New stories loading.app_shell_first_load (FCP, LCP, loadEventEnd,
+app_ready, PSS), loading.app_shell_reload (FCP, LCP, loadEventEnd,
+app_ready) and trace.app_shell_first_load (FCP, LCP). The existing page
+and stories are unchanged so the nightly and history series stay
+continuous.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_
+Claude-Session: https://claude.ai/code/session_01Vf2yMv3H6HNt1XyAwo35Sm
 
-**File**: `.github/workflows/benchmarks-history.yml` (added, +194/-0)
-```diff
-@@ -0,0 +1,194 @@
-+name: Benchmarks History
-+
-+# Measures Electron's performance across major versions with the benchmarks in
-+# script/benchmarks/ (see its README). One job per major runs that major's
-+# latest stable release against a fixed anchor version (default: 45.3.0, pinned
-+# so that runs made at different times share an anchor), interleaved on one
-+# runner like the nightly Benchmarks workflow does.
-+#
-+# Dispatch it by hand, once to backfill the past majors and then with just the
-+# new major (e.g. majors=46) when one goes stable. Keep the default anchor so
-+# every run's ratios stay comparable.
-+#
-+# Runners are shared cloud VMs that change hosts between jobs, so raw values
-+# from different jobs are not comparable. Each job sends its candidate's ratio
-+# to the anchor (electron.perf.history.ratio.<metric>), which is; the raw
-+# medians (electron.perf.history.<metric>) are only for context. Every point
-+# is tagged with history_run_id, so one run's ladder can be told apart from
-+# the next.
-+#
-+# Unlike the nightly workflow, upload-to-datadog defaults to true: the data is
-+# the point of a run. With it, each job's summary files are also kept in the
-+# benchmarks blob container (https://dev-cdn.electronjs.org/benchmarks/history/),
-+# the permanent record of the run. Suites an old version can't run are skipped, and a job
-+# only fails when it measured nothing.
-+
-+on:
-+  workflow_dispatch:
-+    inputs:
-+      majors:
-+        type: string
-+        description: 'Electron majors, e.g. 30-45 or 22,28,33-latest ("latest" is the newest stable major). Each runs its latest stable release.'
-+        default: '15-latest'
-+        required: false
-+      anchor:
-+        type: string
-+        description: 'Version every major is compared against: a version or latest-stable. Keep the default so ratios stay comparable across runs.'
-+        default: '45.3.0'
-+        required: false
-+      rounds:
-+        type: string
-+        description: 'Interleaved rounds per job'
-+        default: '5'
-+        required: false
-+      suites:
-+        type: string
-+        description: 'Comma-separated suites: loading, trace, file_loading, speedometer, jetstream'
-+        default: 'loading,trace,file_loading,speedometer,jetstream'
-+        required: false
-+      upload-to-datadog:
-+        type: boolean
-+        description: 'Send the history series to Datadog and keep the summaries in blob storage'
-+        default: true
-+        required: false
-+
-+permissions: {}
-+
-+jobs:
-+  setup:
-+    if: github.repository == 'electron/electron'
-+    runs-on: ubuntu-latest
-+    permissions:
-+      contents: read
-+    outputs:
-+      build-image-sha: ${{ steps.build-image-sha.outputs.build-image-sha }}
-+      anchor: ${{ steps.resolve.outputs.anchor }}
-+      matrix: ${{ steps.resolve.outputs.matrix }}
-+    steps:
-+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-+      with:
-+        persist-credentials: false
-+    - name: Setup Node.js
-+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-+      with:
-+        node-version: 22.23.4
-+    - name: Get Build Image SHA
-+      id: build-image-sha
-+      uses: ./.github/actions/build-image-sha
-+    # Only @electron/fiddle-core is needed; no native modules.
-+    - name: Install Dependencies
-+      run: node script/yarn.js install --immutable --mode=skip-build
-+    # Resolved once here, so every job uses the same anchor and versions even
-+    # if a release ships while the run is in progress.
-+    - name: Resolve Versions
-+      id: resolve
-+      env:
-+        MAJORS: ${{ inputs.majors }}
-+        ANCHOR: ${{ inputs.anchor }}
-+      run: node script/benchmarks/resolve-history.mts --majors "$MAJORS" --anchor "$ANCHOR"
-+
-+  benchmark-linux-x64:
-+    name: benchmark-linux-x64 (${{ matrix.major }})
-+    needs: setup
-+    permissions:
-+      contents: read
-+    strategy:
-+      fail-fast: false
-+      # Each job holds a 32-core runner for about an hour (five rounds of
-+      # every suite; the nightly run takes about ten minutes a round).
-+      max-parallel: 6
-+      matrix:
-+        include: ${{ fromJSON(needs.setup.outputs.matrix) }}
-+    uses: ./.github/workflows/pipeline-segment-benchmarks.yml
-+    with:
-+      target-platform: linux
-+      target-arch: x64
-+      runs-on: electron-arc-centralus-linux-amd64-32core
-+      container: '{"image":"ghcr.io/electron/build:${{ needs.setup.outputs.build-image-sha }}","options":"--user root --privileged --init"}'
-+      candidate: ${{ matrix.version }}
-+      baseline: ${{ needs.setup.outputs.anchor }}
-+      rounds: ${{ inputs.rounds }}
-+      suites: ${{ inputs.suites }}
-+      upload-to-datadog: ${{ inputs.upload-to-datadog }}
-+      history: true
-+      artifact-name: benchmark-history-linux-x64-${{ matrix.major }}
-+      timeout-minutes: 120
-+      run-timeout-minutes: 105
-+    secrets:
-+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
-+
-+  # Keeps the summary files of every job in the benchmarks blob con
-```
+* build: run the app shell benc
 
-**File**: `.github/workflows/benchmarks.yml` (modified, +87/-2)
+**File**: `script/benchmarks/README.md` (modified, +83/-22)
 ```diff
-@@ -3,7 +3,9 @@ name: Benchmarks
- # Runs the crossbench-based benchmarks in script/benchmarks/ (see its README):
- # the latest nightly against the previous nightly, interleaved on one runner,
- # with the results sent to Datadog. Only paired results are meaningful; runners change
--# hosts between jobs, so don't compare raw values across runs.
-+# hosts between jobs, so don't compare raw values across runs. Runs that send
-+# to Datadog also keep their summary files in the benchmarks blob container
-+# (https://dev-cdn.electronjs.org/benchmarks/nightly/).
- #
- # Dispatch with explicit versions to compare any two builds, for example to
- # bisect a flagged change through nightlies.
-@@ -33,7 +35,7 @@ on:
-         required: false
-       upload-to-datadog:
-         type: boolean
--        description: 'Send the results to Datadog'
-+        description: 'Send the results to Datadog and keep their summaries in blob storage'
-         default: false
-         required: false
-   schedule:
-@@ -54,7 +56,13 @@ jobs:
-       contents: read
-     outputs:
-       build-image-sha: ${{ steps.set-output.outputs.build-image-sha }}
-+      run-date: ${{ steps.run-date.outputs.run-date }}
-     steps:
-+    # Names the run's folder in blob storage, so a run that ends after
-+    # midnight UTC is still filed under the day it started.
-+    - name: Get Run Date
-+      id: run-date
-+      run: echo "run-date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
-     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-       with:
-         persist-credentials: false
-@@ -82,3 +90,80 @@ jobs:
-       skip-stale-nightly: ${{ github.event_name == 'schedule' }}
-     secrets:
-       DD_API_KEY: ${{ secrets.DD_API_KEY }}
-+
-+  # Keeps the summary files of every benchmark job in the benchmarks blob
-+  # container, the permanent record of the results (Datadog is the live view),
-+  # at nightly/<run date>/<run id>-<attempt>/<platform>-<arch>/. Only this job
-+  # gets the Azure credentials, never the jobs that run Electron builds, and its
-+  # failure leaves their results alone.
-+  upload-results:
-+    needs: [setup, benchmark-linux-x64]
-+    if: ${{ always() && github.repository == 'electron/electron' && needs.setup.result == 'success' && (github.event_name == 'schedule' || inputs.upload-to-datadog == true) }}
-+    runs-on: ubuntu-latest
-+    # Holds the Azure OIDC credentials for the benchmarks container.
-+    environment: benchmarks-upload
-+    permissions:
-+      contents: read
-+      # For the Azure OIDC login.
-+      id-token: write
-+    steps:
-+    # Each summary artifact holds one folder named after its results artifact,
-+    # so merging keeps them apart.
-+    - name: Download Result Summaries
-+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
-+      with:
-+        pattern: benchmark-results-*-summary
-+        path: summaries
-+        merge-multiple: true
-+    - name: Stage Uploads
-+      id: stage
-+      env:
-+        RUN_DATE: ${{ needs.setup.outputs.run-date }}
-+      run: |
-+        if ! [[ "$RUN_DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
-+          echo "::error::Unexpected run date '$RUN_DATE'"
-+          exit 1
-+        fi
-+        prefix="nightly/$RUN_DATE/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-+        count=0
-+        shopt -s nullglob
-+        for dir in summaries/benchmark-results-*/; do
-+          target=$(basename "$dir")
-+          target=${target#benchmark-results-}
-+          if ! [[ "$target" =~ ^[a-z]+-[a-z0-9]+$ ]]; then
-+            echo "::warning::Skipping unexpected summary folder $dir"
-+            continue
-+          fi
-+          for f in metadata.json comparison.json summary.md; do
-+            if [ -f "$dir/$f" ]; then
-+              mkdir -p "upload/$prefix/$target"
-+              cp "$dir/$f" "upload/$prefix/$target/"
-+              count=$((count + 1))
-+            fi
-+          done
-+        done
-+        echo "count=$count" >> "$GITHUB_OUTPUT"
-+        # A scheduled run skips a stale nightly and measures nothing.
-+        if [ "$count" = 0 ]; then echo "::notice::No benchmark results to upload"; fi
-+    - name: Azure Login
-+      if: ${{ steps.stage.outputs.count != '0' }}
-+      uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906
-+      with:
-+        client-id: ${{ secrets.AZURE_OIDC_CLIENT_ID }}
-+        tenant-id: ${{ secrets.AZURE_OIDC_TENANT_ID }}
-+        subscription-id: ${{ secrets.AZURE_OIDC_SUBSCRIPTION_ID }}
-+    - name: Upload Results to Azure
-+      if: ${{ steps.stage.outputs.count != '0' }}
-+      env:
-+        AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_BENCHMARKS_STORAGE_ACCOUNT_NAME }}
-+      run: |
-+        az storage blob upload-batch \
-+          --account-name "$AZURE_STORAGE_ACCOUNT" \
-+          --destination benchmarks \
-+          --source upload \
-+          --overwrite false \
-+          --auth-mode login
-+        echo "## Uploaded Benchmark Results" >> "$GITHUB_STEP_SUMMARY"
-+        (cd upload && find . -type f | sort) | while read -r f; do
-+          echo 
-```
-
-**File**: `.github/workflows/pipeline-segment-benchmarks.yml` (modified, +57/-4)
-```diff
-@@ -50,6 +50,26 @@ on:
-         description: 'Skip the run when the latest nightly was published more than 25 hours ago'
-         required: false
-         default: false
-+      history:
-+        type: boolean
-+        description: 'One job of a version-ladder run (benchmarks-history.yml): the baseline is the anchor, suites the candidate fails in the first two rounds are skipped, and only the history series are sent'
-+        required: false
-+        default: false
-+      artifact-name:
-+        type: string
-+        description: 'Name of the results artifact (default: benchmark-results-<platform>-<arch>)'
-+        required: false
-+        default: ''
-+      timeout-minutes:
-+        type: number
-+        description: 'Timeout of the whole job'
-+        required: false
-+        default: 300
-+      run-timeout-minutes:
-+        type: number
-+        description: 'Timeout of the benchmark step, which must leave time for the other steps'
-+        required: false
-+        default: 270
-     secrets:
-       DD_API_KEY:
-         required: false
-@@ -60,7 +80,7 @@ jobs:
-   benchmark:
-     runs-on: ${{ inputs.runs-on }}
-     container: ${{ fromJSON(inputs.container) }} # zizmor: ignore[unpinned-images] the caller passes ghcr.io/electron/build tagged by the content hash from build-image-sha; there is no static digest to pin
--    timeout-minutes: 300
-+    timeout-minutes: ${{ inputs.timeout-minutes }}
-     permissions:
-       contents: read
-     # Callers' defaults do not propagate into reusable workflows.
-@@ -111,18 +131,24 @@ jobs:
-         node script/benchmarks/fetch-targets.mts "${args[@]}"
-     - name: Run Benchmarks (linux)
-       if: ${{ inputs.target-platform == 'linux' && steps.fetch.outputs.skip != 'true' }}
--      timeout-minutes: 270
-+      timeout-minutes: ${{ inputs.run-timeout-minutes }}
-       env:
-         ROUNDS: ${{ inputs.rounds }}
-         SUITES: ${{ inputs.suites }}
-+        HISTORY: ${{ inputs.history }}
-       run: |
-+        args=()
-+        # Old versions can hang where they can't run a suite; no invocation
-+        # of a healthy run takes more than a few minutes.
-+        if [ "$HISTORY" = "true" ]; then args+=(--best-effort --timeout-minutes 15); fi
-         xvfb-run -a -s "-screen 0 1920x1200x24" \
-           node script/benchmarks/run.mts \
-             --targets "$RUNNER_TEMP/benchmark-targets/targets.json" \
-             --out "$RUNNER_TEMP/benchmark-results" \
-             --rounds "$ROUNDS" \
-             --suites "$SUITES" \
--            --python python
-+            --python python \
-+            "${args[@]}"
-     # Compare and upload even when the run step failed: run.mts exits
-     # non-zero on any failed crossbench invocation (so the job still ends red),
-     # and the comparison and raw results are the diagnostics.
-@@ -131,15 +157,42 @@ jobs:
-       env:
-         DD_API_KEY: ${{ secrets.DD_API_KEY }}
-         UPLOAD_TO_DATADOG: ${{ inputs.upload-to-datadog }}
-+        HISTORY: ${{ inputs.history }}
-       run: |
-         args=(--results "$RUNNER_TEMP/benchmark-results")
-         if [ "$UPLOAD_TO_DATADOG" != "true" ]; then args+=(--dry-run); fi
-+        # Tags the history series with this workflow run's id (GITHUB_RUN_ID).
-+        if [ "$HISTORY" = "true" ]; then args+=(--history); fi
-         node script/benchmarks/compare.mts "${args[@]}"
-+    # The summary files on their own, in a folder named after the results
-+    # artifact, for the calling workflow's upload-results job to keep in blob
-+    # storage. That job never needs the raw rounds and traces. These run before
-+    # the large raw upload so a job timeout during that upload can't lose them.
-+    - name: Stage Result Summary
-+      if: ${{ !cancelled() && steps.fetch.outputs.skip != 'true' }}
-+      env:
-+        SUMMARY_NAME: ${{ inputs.artifact-name || format('benchmark-results-{0}-{1}', inputs.target-platform, inputs.target-arch) }}
-+      run: |
-+        dest="$RUNNER_TEMP/benchmark-summary/$SUMMARY_NAME"
-+        mkdir -p "$dest"
-+        for f in metadata.json comparison.json summary.md; do
-+          if [ -f "$RUNNER_TEMP/benchmark-results/$f" ]; then
-+            cp "$RUNNER_TEMP/benchmark-results/$f" "$dest/"
-+          fi
-+        done
-+    - name: Upload Result Summary
-+      if: ${{ !cancelled() && steps.fetch.outputs.skip != 'true' }}
-+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
-+      with:
-+        name: ${{ inputs.artifact-name || format('benchmark-results-{0}-{1}', inputs.target-platform, inputs.target-arch) }}-summary
-+        path: ${{ runner.temp }}/benchmark-summary
-+        if-no-files-found: ignore
-+        retention-days: 30
-     - name: Upload Results
-       if: ${{ !cancelled() && steps.fetch.outputs.skip != 'true' }}
-       uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
-       with:
--        name: benchmark-results-${{ inputs.target-platform }}-${{ inputs.target-arch }}
-+        name: ${{ inputs.artifact-name || format('benchmark-result
-```
-
-**File**: `script/benchmarks/README.md` (modified, +102/-6)
-```diff
-@@ -92,14 +92,23 @@ the CPU governor, which the CI VMs don't expose.
-   p < 0.05 **and** the medians differ by at least 10%. It writes
-   `comparison.json` and a Markdown summary, and sends the medians
-   (`electron.perf.<metric>`) and relative changes in percent
--  (`electron.perf.delta.<metric>`) to Datadog. Only invocations that exited
--  with 0 and reported every repetition are used. It exits non-zero when there
--  are no usable results, or when candidate vs baseline has no comparable
--  metric.
-+  (`electron.perf.delta.<metric>`) to Datadog. For alerting it also sends two
-+  0/1 gauges per metric and comparison, `electron.perf.regression` and
-+  `electron.perf.improvement`, which are 1 when that comparison flags the
-+  metric that way. Every compared metric reports, flagged or not, so a flag
-+  clears on the next run. They are tagged `metric`, `benchmark`, `comparison`,
-+  `platform`, `arch`, `electron_version` and `baseline_version`, and nothing
-+  else, so a monitor can group them by `metric` and `comparison`. Only
-+  invocations that exited with 0 and reported every repetition are used. It
-+  exits non-zero when there are no usable results, or when candidate vs
-+  baseline has no comparable metric.
- * [`harness-app/`](harness-app) is the Electron app crossbench launches. It
-   registers one custom scheme per file-loading strategy and exposes
-   `cbHarness.setSize()` to the page. Features an older Electron version lacks
--  are reported by `--cb-capabilities` and their stories are skipped.
-+  (for example `protocol.handle` before Electron 25) are reported by
-+  `--cb-capabilities` and their stories are skipped. The capabilities are
-+  probed after the app is ready, because before Electron 25 the `protocol`
-+  module has no methods until then.
+@@ -21,18 +21,20 @@ dispatched by hand. This catches regressions between Electron versions.
  
- crossbench has no Electron browser type yet, so the browser configs use a
- workaround: `type: "chromium"`, an explicit Chromium `version`, Electron's own
-@@ -109,6 +118,90 @@ use `--headless`, because crossbench's window setup calls
- are navigated with JavaScript from `about:blank`, because crossbench's `get`
- action only accepts well-known schemes.
+ | Suite | Stories | Metrics |
+ | --- | --- | --- |
+-| `loading` | `first_load`, `reload` (warm process, same page) | FCP and `loadEventEnd` in ms; PSS in MiB after `first_load` (total, browser, renderer and GPU processes) |
+-| `trace` | `first_load`, `resize`, traced | FCP and LCP in ms; resize latency median and p90 in ms |
++| `loading` | `first_load`, `reload` (warm process, same page) of the app shell (see [The app shell page](#the-app-shell-page)) | FCP, `loadEventEnd`, `app_ready` and LCP in ms; PSS in MiB after `first_load` (total, browser, renderer and GPU processes) |
++| `trace` | `first_load` and `resize` of the app shell, traced | FCP and LCP in ms; resize latency median and p90 in ms |
+ | `file_loading` | 1,500 small classic scripts and ES modules, loaded through `file://`, `protocol.registerFileProtocol`, `protocol.handle` + `fs`, and `protocol.handle` + `net.fetch` | Navigation start to "all files evaluated" in ms, and the ratio of each custom protocol to `file://` |
+ | `speedometer` | Speedometer 3.1 | Score |
+ | `jetstream` | JetStream 2.2 | Score |
  
-+## Stored results
+ Every measure comes from one of crossbench's probes:
+ 
+ * `performance.entries` reads paint timing (FCP), navigation timing and
+-  `performance.mark()` entries from the page after each story. The
+-  file-loading pages mark `files-loaded` themselves once every file has run,
+-  because only the page knows when that is.
++  `performance.mark()` entries from the page after each story. The app shell
++  marks `app-ready` and keeps its LCP as the `app-lcp` mark, since the probe
++  reads no LCP entries. The file-loading pages mark `files-loaded`
++  themselves once every file has run, because only the page knows when that
++  is.
+ * `meminfo` reads `/proc/<pid>/smaps_rollup` for every browser process, through
+   a `meminfo` action at the end of `first_load`, after the timing.
+ * `tracing` records a Chrome-style startup trace (`--trace-startup`) with only
+@@ -43,17 +45,65 @@ Every measure comes from one of crossbench's probes:
+   `traced`, including FCP.
+   * FCP and LCP: from the main frame's `navigationStart` to
+     `firstContentfulPaint` and to the last `largestContentfulPaint::Candidate`.
+-  * Resize: `BrowserWindow.setSize()` from the browser's
++  * Resize: once the app shell has loaded, a script the story injects steps
++    the window between 1280x800 and 900x600 (below the app's 960px layout
++    breakpoint) with `BrowserWindow.setSize()`, through the harness preload,
++    20 times. Each is timed from the browser's
+     `Widget::OnNativeWidgetSizeChanged` to the presentation (the end of the
+     `PipelineReporter`) of the first renderer frame whose main frame committed
+-    after the page's `resize` event, 20 times per run. Frames are matched by
+-    their commit because a `PipelineReporter` starts at its BeginFrame
+-    timestamp, which can be earlier than the resize the frame shows.
++    after the page's `resize` event. Frames are matched by their commit
++    because a `PipelineReporter` starts at its BeginFrame timestamp, which can
++    be earlier than the resize the frame shows.
+ 
+ Tracing slows the browser down, so the traced stories run in their own `trace`
+ invocation and the `loading` and `file_loading` numbers are never traced. The
+-`trace` suite's FCP is a cross-check of the untraced one and the only source of
+-LCP, which `performance.entries` does not read.
++`trace` suite's FCP and LCP are a cross-check of the untraced ones. From
++Electron 35 on, Chromium coarsens paint timing exposed to pages to 4 ms, so
++the `loading` suite's FCP and LCP move in 4 ms steps there (marks such as
++`app-ready` don't); the traced values are not coarsened.
 +
-+Datadog is the live view of the results; the `benchmarks` blob container is
-+the permanent record. Every run that sends to Datadog also uploads each job's
-+`metadata.json`, `comparison.json` and `summary.md` (not the raw rounds and
-+traces, which stay in the run's artifacts for 30 days) to
-+`https://dev-cdn.electronjs.org/benchmarks/`, at
-+`nightly/<YYYY-MM-DD>/<run id>-<attempt>/<platform>-<arch>/` for the nightly
-+workflow (the date is the day the run started, in UTC) and
-+`history/<anchor>/<major>/<run id>-<attempt>/<platform>-<arch>/` for the
-+history workflow. The upload is a separate `upload-results` job in the
-+`benchmarks-upload` environment, so the jobs that run Electron builds never
-+get its credentials. Existing files are never overwritten.
++### The app shell page
 +
-+## History across major versions
++The `loading` and `trace` suites load an app shell shaped like a typical
++Electron app's first window, from `file://` like a packaged app.
++[`lib/app-shell.mts`](lib/app-shell.mts) generates it into the work directory
++at the start of each run from a fixed seed, so every run loads the same bytes,
++and nothing comes from the network or third parties. It has an HTML shell
++with an empty root, three stylesheets (about 90 KiB, 1,100 rules), three
++deferred classic scripts (about 420 KiB: a small module loader, virtual DOM
++with a keyed diff, store and event delegation, then about 200 generated
++helper, schema, reducer, service and component modules and a message
++catalog) and a 270 KiB JSON file of 1,200 work items. It starts fetching the
++JSON, evaluates its modules (most at startup, some never, like code a first
++window doesn't need), renders the window chrome (title bar, sidebar with
++inline SVG icons, toolbar), waits for it to paint, then renders a summary,
++four feature panels and a 1,200-row list (about 25,000 elements) through the
++diff. It avoids anything newer than Chromium 94 (Electron 15).
 +
-+The [Benchmarks History workflow](../../.github/workflows/benchmarks-history.yml)
-+measures how performance changed across Electron majors. It is dispatched by
-+hand and is meant as a one-time backfill, not an ongoing comparison. Every run
-+must use the same anchor, 45.3.0 (the default), so that ratios stay comparable
-+across runs. When a new major goes stable, dispatch the workflow with just that
-+major (e.g. `majors=46`) to add it to the series. [`resolve-history.mts`](resolve-history.mts) resolves every requested
-+major to its latest stable release with fiddle-core, and the workflow runs one
-+job per major (six at a time) on the same runner type and container as the
-+nightly run. In each job the candidate is that major's release and the
-+baseline is a fixed **anchor** version, run interleaved as usual.
++What the measures cover, all from navigation start:
 +
-+The jobs run on different hosts, so their raw values can't be compared with
-+each other. Their ratios to the anchor can: each one is measured on a single
-+host, and the anchor is the same in every job. Each job sends:
-+
-+* `electron.perf.history.ratio.<metric>`: the candidate's median divided by
-+  the anchor's. This is the number to chart across majors. Below 1 is faster
-+  (or smaller) than the anchor for times and memory, and worse for the
-+  Speedometer and JetStream scores.
-+* `electron.perf.history.<metric>`: the candidate's raw median, for context
-+  only.
-+
-+Both are tagged `electron_major`, `electron_version`, `chromium_version`,
-+`anchor_version`, `history_run_id` (the workflow run's id), `benchmark`,
-+`platform`, `arch` and `cpu_model`. Filter a dashboard on
-+`anchor_version:45.3.0` so ratios from runs with different anchors are not
-+mixed.
-+No regression gauges or nightly series are sent, so history runs never
-+trigger the nightly monitors.
-+
-+| Input | Default | |
-+| --- | --- | --- |
-+| `majors` | `15-latest` | Ranges and lists, e.g. `30-45` or `22,28,33-latest`. `latest` is the newest major with a stable release; majors without one are left out. |
-+| `anchor` | `45.3.0` | Any released ve
++| Measure | Covers |
++| --- | -
 ```
 
-**File**: `script/benchmarks/compare.mts` (modified, +127/-5)
+**File**: `script/benchmarks/compare.mts` (modified, +110/-24)
 ```diff
-@@ -10,10 +10,20 @@
- // set and --dry-run is not passed:
- //   electron.perf.<metric>        median per target
- //   electron.perf.delta.<metric>  relative change in percent per comparison
-+//   electron.perf.regression      1 when a metric is flagged as a regression
-+//                                 in a comparison, else 0
-+//   electron.perf.improvement     1 when it is flagged as an improvement
-+//
-+// With --history (one job of the Benchmarks History workflow, where the
-+// candidate is one Electron major's latest release and the baseline the
-+// anchor version), it sends only:
-+//   electron.perf.history.<metric>        the candidate's median
-+//   electron.perf.history.ratio.<metric>  candidate median / anchor median
- //
- // Usage:
- //   node script/benchmarks/compare.mts --results <dir> [--min-change 0.1]
- //     [--alpha 0.05] [--dry-run] [--fail-on-regression]
-+//     [--history [--history-run-id <id>]]
- import * as fs from 'node:fs';
- import * as path from 'node:path';
- import { fileURLToPath } from 'node:url';
-@@ -346,17 +356,40 @@ interface SummaryOptions {
-   problems?: string[];
-   alpha: number;
-   minChange: number;
-+  history?: boolean;
+@@ -57,16 +57,25 @@ export interface MetricComparison extends SampleComparison {
+ 
+ export interface Comparison extends ComparisonDefinition {
+   metrics: MetricComparison[];
++  // Metrics only one of the two targets has results for, and which one.
++  unmatched?: { metric: string; target: string }[];
  }
  
--export function markdownSummary({ metadata, comparisons, rejected, problems = [], alpha, minChange }: SummaryOptions) {
-+export function markdownSummary({
-+  metadata,
-+  comparisons,
-+  rejected,
-+  problems = [],
-+  alpha,
-+  minChange,
-+  history = false
-+}: SummaryOptions) {
-   const targets = Object.fromEntries(metadata.targets.map((target) => [target.id, target]));
-   const lines = [
--    '## Electron benchmarks',
-+    history
-+      ? `## Electron benchmarks history: Electron ${majorOf(targets.candidate?.electronVersion ?? '?')}`
-+      : '## Electron benchmarks',
-     '',
-     `${metadata.rounds} interleaved rounds on ${metadata.cpuModel} (${metadata.cpuCount} CPUs, ${metadata.runnerName}${metadata.vmSize ? `, ${metadata.vmSize}` : ''}), crossbench ${metadata.crossbenchRevision.slice(0, 12)}.`,
-     `Flagged when Welch's t-test and Mann-Whitney U both give p < ${alpha} and the medians differ by at least ${(minChange * 100).toFixed(0)}%. Thresholds are not calibrated yet.`,
-     ''
-   ];
-+  if (history) {
-+    lines.push(
-+      'History run: the reference is the anchor version. Compare majors by their ratio to the anchor, not by raw values, which come from different hosts.',
-+      ''
-+    );
-+  }
-+  if (metadata.skippedSuites?.length) {
-+    lines.push(
-+      `:warning: Skipped after the candidate failed them in the first two rounds: ${metadata.skippedSuites.join(', ')}`,
-+      ''
-+    );
-+  }
-   for (const problem of problems) lines.push(`:x: ${problem}`, '');
-   if (rejected.length) {
-     lines.push(
-@@ -451,6 +484,83 @@ export function datadogSeries(
-       });
-     }
-   }
-+
-+  // One 0/1 gauge per metric and comparison for each verdict, so a monitor
-+  // can alert on `max:electron.perf.regression{*} by {metric,comparison}`.
-+  // Every evaluated metric reports, flagged or not, so the monitor sees the
-+  // flag clear on the next run. The tags are kept to low-cardinality values.
-+  for (const comparison of comparisons) {
-+    const candidate = targets[comparison.candidate];
-+    const reference = targets[comparison.reference];
-+    for (const m of comparison.metrics) {
-+      for (const verdict of ['regression', 'improvement'] as const) {
-+        series.push({
-+          metric: `electron.perf.${verdict}`,
-+          type: 3, // GAUGE
-+          points: [{ timestamp, value: m.verdict === verdict ? 1 : 0 }],
-+          tags: [
-+            tag('platform', metadata.platform),
-+            tag('arch', metadata.arch),
-+            tag('metric', m.metric),
-+            tag('benchmark', m.metric.split('.')[0]),
-+            tag('comparison', comparison.name),
-+            tag('electron_version', candidate.electronVersion),
-+            tag('baseline_version', reference.electronVersion)
-+          ]
-+        });
-+      }
-+    }
-+  }
-+  return series;
-+}
-+
-+const majorOf = (version: string) => version.split('.')[0];
-+
-+// Series for one job of a version-ladder (history) run: the candidate is the
-+// latest release of one Electron major and the baseline is the anchor, run
-+// interleaved on the same runner. Raw values from different jobs ran on
-+// different hosts and are not comparable; the ratio to the anchor, measured
-+// in the same job, is. Values that are not positive (for example a PSS that
-+// could not be attributed to a process type) are left out, since their ratio
-+// means nothing.
-+export function historySeries(
-+  { metadata, comparisons, historyRunId }: { metadata: RunMetadata; comparisons: Comparison[]; historyRunId: string },
-+  now = Date.now()
-+): Series[] {
-+  const timestamp = Math.round(now / 1000);
-+  const targets = Object.fromEntries(metadata.targets.map((target) => [target.id, target]));
-+  const series: Series[] = [];
-+  for (const comparison of comparisons) {
-+    const candidate = targets[comparison.candidate];
-+ 
-```
-
-**File**: `script/benchmarks/harness-app/main.js` (modified, +23/-13)
-```diff
-@@ -42,14 +42,20 @@ const MIME_TYPES = {
-   '.json': 'application/json'
+ // Suites run through crossbench's `loading` benchmark with generated page
+ // configs (see lib/configs.mts); each reports one value per repetition.
+ const PAGE_SUITES = ['loading', 'trace', 'file_loading'];
+ 
+ // Measures read from crossbench's performance.entries probe, which merges
+-// every repetition of a story into <story>/performance.entries.json.
++// every repetition of a story into <story>/performance.entries.json. The app
++// shell page (lib/app-shell.mts) marks app-ready once its full first view is
++// in the DOM, and keeps its LCP as the app-lcp mark.
+ const PERFORMANCE_ENTRIES: Record<string, Record<string, string>> = {
+-  loading: { fcp: 'paint/first-contentful-paint/startTime', load_event_end: 'navigation/loadEventEnd' },
++  loading: {
++    fcp: 'paint/first-contentful-paint/startTime',
++    load_event_end: 'navigation/loadEventEnd',
++    app_ready: 'mark/app-ready/startTime',
++    lcp: 'mark/app-lcp/startTime'
++  },
+   file_loading: { files_loaded_ms: 'mark/files-loaded/startTime' }
  };
  
--const capabilities = {
--  electron: process.versions.electron,
--  chrome: process.versions.chrome,
--  registerFileProtocol: typeof protocol.registerFileProtocol === 'function',
--  handleFs: typeof protocol.handle === 'function' && typeof globalThis.Response === 'function',
--  handleNetFetch: typeof protocol.handle === 'function' && !!net && typeof net.fetch === 'function',
--  setSize: typeof ipcMain.handle === 'function'
--};
-+// Before Electron 25 the protocol module only gets its methods once the app
-+// is ready, so the protocol capabilities are probed after the ready event.
-+function probeCapabilities() {
-+  return {
-+    electron: process.versions.electron,
-+    chrome: process.versions.chrome,
-+    registerFileProtocol: typeof protocol.registerFileProtocol === 'function',
-+    handleFs: typeof protocol.handle === 'function' && typeof globalThis.Response === 'function',
-+    handleNetFetch: typeof protocol.handle === 'function' && !!net && typeof net.fetch === 'function',
-+    setSize: typeof ipcMain.handle === 'function'
+@@ -84,17 +93,42 @@ const readJson = (file: string): any => JSON.parse(fs.readFileSync(file, 'utf8')
+ // Values of `data[key].values`, as written by crossbench's metrics merger.
+ const valuesOf = (entry: any): number[] => (Array.isArray(entry?.values) ? entry.values.filter(Number.isFinite) : []);
+ 
++// Reads a JSON result file, or undefined when there is none. crossbench may
++// have been killed while writing one in a run that failed, so when `failed`
++// is set a file that doesn't parse also reads as undefined (and is listed in
++// `unreadable`): its story ends up with no values instead of the whole
++// comparison aborting. A successful run's files must parse.
++function resultReader(failed: boolean, unreadable: string[]) {
++  return (file: string): any => {
++    if (!fs.existsSync(file)) return undefined;
++    try {
++      return readJson(file);
++    } catch (error) {
++      if (!failed) throw error;
++      unreadable.push(file);
++      return undefined;
++    }
 +  };
 +}
 +
-+let capabilities = {};
+ // Returns { metrics: { metric: number }, incomplete: [description] } for one
+ // crossbench invocation. A measure with fewer (or more) values than the
+ // expected repetitions is dropped, so a run where some repetitions failed or
+ // timed out can't bias the round's median.
+ function collectInvocation(
+   resultDir: string,
+   suite: string,
+-  expectedCount: number | undefined
++  expectedCount: number | undefined,
++  failed = false
+ ): { metrics: Record<string, number>; incomplete: string[] } {
+   const metrics: Record<string, number> = {};
+   const incomplete: string[] = [];
++  const unreadable: string[] = [];
++  const read = resultReader(failed, unreadable);
++  const result = () => {
++    for (const file of unreadable) incomplete.push(`${path.relative(resultDir, file)} (unreadable)`);
++    return { metrics, incomplete };
++  };
+   const complete = (name: string, values: number[]) => {
+     if (values.length === 0) return false;
+     if (expectedCount === undefined || values.length === expectedCount) return true;
+@@ -104,14 +138,12 @@ function collectInvocation(
+   if (!fs.existsSync(resultDir)) return { metrics, incomplete };
  
- // Standard schemes need a host, so URLs look like cbnet://local/<abs path>.
- const toFilePath = (requestUrl) => decodeURIComponent(new URL(requestUrl).pathname);
-@@ -73,17 +79,19 @@ function registerSchemes() {
- }
- 
- function startHarness() {
--  // Must happen before the ready event.
--  const supportedSchemes = Object.keys(SCHEMES).filter((scheme) => capabilities[SCHEMES[scheme]]);
-+  // Must happen before the ready event, when it is not yet known which
-+  // handlers this version supports. A privileged scheme without a handler
-+  // is harmless: its stories are skipped.
-   if (typeof protocol.registerSchemesAsPrivileged === 'function') {
-     protocol.registerSchemesAsPrivileged(
--      supportedSchemes.map((scheme) => ({
-+      Object.keys(SCHEMES).map((scheme) => ({
-         scheme,
-         privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true, codeCache: true }
-       }))
-     );
+   if (PRESS_RESULTS[suite]) {
+-    const file = path.join(resultDir, PRESS_RESULTS[suite].file);
+-    if (!fs.existsSync(file)) return { metrics, incomplete };
+-    for (const browser of Object.values<any>(readJson(file))) {
++    for (const browser of Object.values<any>(read(path.join(resultDir, PRESS_RESULTS[suite].file)) ?? {})) {
+       const key = PRESS_RESULTS[suite].keys.find((k) => valuesOf(browser.data?.[k]).length > 0);
+       const values = key ? valuesOf(browser.data[key]) : [];
+       if (complete(`${suite}.score`, values)) metrics[`${suite}.score`] = median(values);
+     }
+-    return { metrics, incomplete };
++    return result();
    }
-   app.whenReady().then(() => {
-+    capabilities = probeCapabilities();
-     registerSchemes();
-     createWindow();
-   });
-@@ -118,8 +126,10 @@ function createWindow() {
  
- const capabilitiesArg = process.argv.find((arg) => arg.startsWith('--cb-capabilities='));
- if (capabilitiesArg) {
--  fs.writeFileSync(capabilitiesArg.slice('--cb-capabilities='.length), JSON.stringify(capabilities, null, 2));
--  app.exit(0);
-+  app.whenReady().then(() => {
-+    fs.writeFileSync(capabilitiesArg.slice('--cb-capabilities='.length), JSON.stringify(probeCapabilities(), null, 2));
-+    app.exit(0);
-+  });
- } else {
-   startHarness();
- }
+   // Each invocation runs one browser, so there is one <browser>/stories dir.
+@@ -121,7 +153,16 @@ function collectInvocation(
+     for (const story of fs.readdirSync(storiesDir)) {
+       const storyDir = path.join(storiesDir, story);
+       if (!fs.statSync(storyDir).isDirectory()) continue;
+-      for (const [measure, values] of Object.entries(storyMeasures(suite, story, storyDir))) {
++      // A story crossbench reported errors for is left out even when every
++      // repetition has a value: the values may not mean what they should. An
++      // unreadable errors file counts as errors.
++      const errorsFile = path.join(storyDir, 'cb.errors.json');
++      const errors = read(errorsFile);
++      if ((Array.isArray(errors) && errors.length > 0) || (errors === undefined && fs.existsSync(errorsFile))) {
++        incomplete.push(`${suite}.${story} (crossbench 
 ```
 
-**File**: `script/benchmarks/lib/types.mts` (modified, +3/-0)
+**File**: `script/benchmarks/lib/app-shell.mts` (added, +1741/-0)
 ```diff
-@@ -59,6 +59,9 @@ export interface RunMetadata {
+@@ -0,0 +1,1741 @@
++// Generates the "app shell" page the loading and trace suites load: a
++// self-contained, deterministic stand-in for a typical Electron app's first
++// window, loaded through file:// like a packaged app.
++//
++//   index.html             an empty #app root, three stylesheets, three
++//                          deferred scripts and an inline LCP recorder
++//   styles/*.css           about 1,100 rules: tokens, resets and utilities,
++//                          the layout, and one block per component
++//   scripts/vendor.js      a small module loader, virtual DOM (keyed diff),
++//                          store and event delegation, plus generated helper
++//                          and schema modules
++//   scripts/locale.js      a message catalog with interpolation and plurals
++//   scripts/app.js         generated feature modules (components, reducers,
++//                          services) and the app's views and bootstrap
++//   data/items.json        projects, people, labels and `rows` work items
++//
++// On load the app fetches data/items.json, evaluates its modules, renders the
++// window chrome (title bar, sidebar with inline SVG icons, toolbar), waits
++// for that to be painted (its FCP), then renders the summary (the largest
++// element, and so the LCP), four feature panels and a row for every item
++// into the same tree with the diff, and marks `app-ready`. The page marks:
++//   app-shell-rendered  the chrome is in the DOM (not yet painted)
++//   app-ready           the full first view is in the DOM
++//   app-lcp             the latest largest-contentful-paint candidate's time,
++//                       recorded by a PerformanceObserver because crossbench's
++//                       performance.entries probe only reads paint, mark and
++//                       navigation entries
++//
++// Everything comes from a seeded PRNG, so every run gets the same bytes. No
++// network, fonts or third-party code are involved. The code must run on
++// Electron 15 (Chromium 94), so it avoids newer syntax and APIs (no class
++// static blocks, Array.prototype.at, structuredClone, CSS nesting, :has(),
++// @layer or container queries).
++import * as fs from 'node:fs';
++import * as path from 'node:path';
++
++export interface AppShellOptions {
++  rows?: number;
++  seed?: number;
++}
++
++// Mulberry32: small, fast and the same everywhere.
++function createRandom(seed: number) {
++  let state = seed >>> 0;
++  const next = () => {
++    state = (state + 0x6d2b79f5) >>> 0;
++    let t = state;
++    t = Math.imul(t ^ (t >>> 15), t | 1);
++    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
++    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
++  };
++  const int = (min: number, max: number) => min + Math.floor(next() * (max - min + 1));
++  function pick<T>(list: readonly T[]): T {
++    return list[Math.floor(next() * list.length)];
++  }
++  return { next, int, pick, bool: (p = 0.5) => next() < p };
++}
++type Random = ReturnType<typeof createRandom>;
++
++const NOUNS = (
++  'account action activity adapter agent alert archive asset audit backup badge balance batch billing board ' +
++  'bookmark branch bridge budget buffer build bundle cache calendar campaign canvas catalog channel chart ' +
++  'checkout client cluster comment config contract cursor customer dashboard dataset deploy design device ' +
++  'digest draft editor engine entry event export feature feedback filter folder form gateway graph guide ' +
++  'handler history import inbox index invoice issue job journal kernel label layer layout ledger library ' +
++  'license link listener locale manifest market media member message metric migration mirror model module ' +
++  'monitor network note notice offer order outline package panel parser partner payment pipeline plan player ' +
++  'policy portal preset preview profile project prompt queue quota record release report request review route ' +
++  'runtime sample schedule schema screen script search section segment session setting shard sheet signal ' +
++  'snapshot source space sprint stack storage stream summary survey table target task team template theme ' +
++  'thread ticket timeline token topic tracker update upload usage vault vendor version widget window workflow'
++).split(' ');
++const VERBS = (
++  'add adjust align archive audit build check clean close compare configure convert create debug define deploy ' +
++  'document draft enable export fix handle improve index investigate load merge migrate monitor move optimize ' +
++  'prepare publish refactor remove rename render report request resolve restore review rewrite run schedule ' +
++  'ship simplify split sync test track update upgrade validate verify'
++).split(' ');
++const ADJECTIVES = (
++  'active async basic cached central custom daily default dynamic early external final flaky global hidden ' +
++  'initial internal large legacy local main manual minor native nested new nightly offline old partial pending ' +
++  'primary private public quick remote shared silent slo
+```
+
+**File**: `script/benchmarks/lib/configs.mts` (modified, +65/-17)
+```diff
+@@ -176,38 +176,87 @@ export function writeFileLoadingSite(root: string, count: number) {
+   );
+ }
+ 
+-// Page configs for one target. `capabilities` comes from the harness app's --cb-capabilities output.
+-const hasPainted = "return performance.getEntriesByName('first-contentful-paint').length > 0";
+-
+ // One crossbench page action, e.g. { action: 'get', url, ready_state }.
+ type Action = Record<string, string>;
+ type Pages = Record<string, Action[]>;
+ 
+ interface PageConfigOptions {
++  // From the harness app's --cb-capabilities output.
+   capabilities?: Capabilities;
+-  baseUrl: string;
+   fileRoot: string;
++  // Where writeAppShellSite (lib/app-shell.mts) wrote the app shell page.
++  appRoot: string;
+   resizeCount?: number;
+ }
+ 
+-export function pageConfigs({ capabilities = {}, baseUrl, fileRoot, resizeCount = 20 }: PageConfigOptions) {
++// The app shell marks app-ready once its full first view is in the DOM, and
++// keeps its latest LCP candidate as the app-lcp mark. The content's LCP always
++// comes after app-ready (the window chrome before it is smaller), so waiting
++// for both means the mark holds the final LCP, however slowly the version
++// under test paints.
++const appShellDone = `
++if (location.protocol !== 'file:' || document.readyState !== 'complete') return false;
++const ready = performance.getEntriesByName('app-ready')[0];
++const lcp = performance.getEntriesByName('app-lcp')[0];
++return !!ready && !!lcp && lcp.startTime > ready.startTime;`;
++
++// Injected into the app shell by the resize story. It steps the window
++// between two sizes with BrowserWindow.setSize() through the harness preload
++// (window.cbHarness). The latency itself is measured from the trace (see
++// TRACE_QUERIES): from the browser's Widget::OnNativeWidgetSizeChanged to the
++// presentation of the first renderer frame that commits after the page sees
++// the new size, which the cb-resized mark records. The cb-resize-start and
++// cb-resize-end marks bracket the resizes so the window's initial sizing is
++// left out. Each step waits for the resize event, two frames and a short idle
++// period, so the next resize never overlaps the previous one's frame. The
++// smaller size is below the app's 960px breakpoint, so every step also
++// changes its layout.
++function resizeScript(count: number) {
++  return `(async () => {
++  if (!window.cbHarness) {
++    window.__cbResizeDone = true;
++    return;
++  }
++  const nextFrame = () => new Promise((resolve) => requestAnimationFrame(() => resolve()));
++  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
++  performance.mark('cb-resize-start');
++  for (let i = 0; i < ${count}; i++) {
++    const [width, height] = i % 2 ? [1280, 800] : [900, 600];
++    const resized = new Promise((resolve) =>
++      addEventListener('resize', () => {
++        performance.mark('cb-resized');
++        resolve();
++      }, { once: true })
++    );
++    await window.cbHarness.setSize(width, height);
++    await resized;
++    await nextFrame();
++    await nextFrame();
++    await sleep(100);
++  }
++  performance.mark('cb-resize-end');
++  window.__cbResizeDone = true;
++})();`;
++}
++
++// Page configs for one target. The loading and trace suites load the app
++// shell (lib/app-shell.mts) from file://, like a packaged app.
++export function pageConfigs({ capabilities = {}, fileRoot, appRoot, resizeCount = 20 }: PageConfigOptions) {
+   const firstLoad: Action[] = [
+-    { action: 'get', url: `${baseUrl}/pages/index.html`, ready_state: 'complete' },
+-    { action: 'wait_for_condition', timeout: '20s', condition: hasPainted },
+-    { action: 'wait', duration: '1s' }
++    { action: 'get', url: `file://${appRoot}/index.html`, ready_state: 'any' },
++    { action: 'wait_for_condition', timeout: '30s', condition: appShellDone.trim() },
++    { action: 'wait', duration: '500ms' }
+   ];
+   const loading: Pages = {
+     // Memory is sampled once the page has painted and settled.
+     first_load: [...firstLoad, { action: 'meminfo', title: 'loaded' }],
+     reload: [
+-      { action: 'get', url: `${baseUrl}/pages/index.html`, ready_state: 'complete' },
+-      { action: 'wait', duration: '1s' },
++      ...firstLoad,
+       { action: 'js', script: 'location.reload();' },
+       {
+         action: 'wait_for_condition',
+-        timeout: '20s',
+-        condition:
+-          "return performance.getEntriesByType('navigation')[0].type === 'reload' && document.readyState === 'complete' && performance.getEntriesByName('first-contentful-paint').length > 0"
++        timeout: '30s',
++        condition: `if (performance.getEntriesByType('navigation')[0].type !== 'reload') return false;${appShellDone}`
+       },
+       { action: 'wait', duration: '500ms' }
+     ]
+@@ -217,10 +266,9 @@ export function pageConfigs({ capabilities = {}, baseUrl, fileRoot, resizeCount
+   const trace: Pages = { first_load: firstLoad };
+   if (capabilities.setSize) {
+     trace.resize = [
+-      { action: 'get', url: `${baseUrl}/pages/resize.html`, r
+```
+
+**File**: `script/benchmarks/lib/types.mts` (modified, +6/-0)
+```diff
+@@ -59,9 +59,15 @@ export interface RunMetadata {
    repeat: number;
    suites?: string[];
    fileCount?: number;
-+  // Suites run.mts --best-effort stopped running after the candidate failed
-+  // them in the first two rounds.
-+  skippedSuites?: string[];
++  // run.mts --best-effort: compare.mts keeps the complete stories of a
++  // failed invocation.
++  bestEffort?: boolean;
+   // Suites run.mts --best-effort stopped running after the candidate failed
+   // them in the first two rounds.
+   skippedSuites?: string[];
++  // Stories (<suite>/<story>) it stopped running because the candidate
++  // produced no complete results for them in the first two rounds.
++  skippedStories?: string[];
    targets: TargetInfo[];
    invocations: Invocation[];
  }
 ```
 
-**File**: `script/benchmarks/resolve-history.mts` (added, +126/-0)
+**File**: `script/benchmarks/pages/index.html` (removed, +0/-22)
 ```diff
-@@ -0,0 +1,126 @@
-+// Resolves the versions of a version-ladder (history) run: the latest stable
-+// release of every requested Electron major, and the anchor version every
-+// major is compared against (see README.md). Used by the Benchmarks History
-+// workflow to build its job matrix.
-+//
-+// Writes `matrix` (a JSON list of { major, version }) and `anchor` to
-+// $GITHUB_OUTPUT when set, and prints them.
-+//
-+// Usage:
-+//   node script/benchmarks/resolve-history.mts --majors 22-latest
-+//     [--anchor <version>|latest-stable]
-+//
-+// --anchor defaults to DEFAULT_ANCHOR, pinned so that history runs made at
-+// different times are compared against the same version.
-+//
-+// --majors is a comma-separated list of majors and ranges, e.g. "30-45",
-+// "22,28,33-latest". "latest" is the newest major with a stable release.
-+// Majors without a stable release are left out with a warning.
-+import { ElectronVersions, type Versions } from '@electron/fiddle-core';
-+
-+import * as fs from 'node:fs';
-+import * as os from 'node:os';
-+import * as path from 'node:path';
-+import { fileURLToPath } from 'node:url';
-+import { parseArgs } from 'node:util';
-+
-+export interface HistoryJob {
-+  major: number;
-+  version: string;
-+}
-+
-+// The newest stable release (no prerelease tag) of one major, if any.
-+export function latestStableInMajor(versions: Versions, major: number): string | undefined {
-+  return versions
-+    .inMajor(major)
-+    .filter((ver) => ver.prerelease.length === 0)
-+    .at(-1)?.version;
-+}
-+
-+export function latestStableMajor(versions: Versions): number {
-+  const latest = versions.latestStable;
-+  if (!latest) throw new Error('No stable release found in releases.json');
-+  return latest.major;
-+}
-+
-+// Expands "22-25,30,33-latest" into a sorted list of unique majors.
-+export function parseMajors(spec: string, latestMajor: number): number[] {
-+  const majors = new Set<number>();
-+  const parse = (value: string) => {
-+    const trimmed = value.trim();
-+    if (trimmed === 'latest') return latestMajor;
-+    if (!/^\d+$/.test(trimmed)) throw new Error(`Invalid major ${JSON.stringify(value)} in ${JSON.stringify(spec)}`);
-+    return Number(trimmed);
-+  };
-+  for (const part of spec.split(',')) {
-+    if (!part.trim()) continue;
-+    const [from, to, ...rest] = part.split('-');
-+    if (rest.length) throw new Error(`Invalid range ${JSON.stringify(part)}`);
-+    const start = parse(from);
-+    const end = to === undefined ? start : parse(to);
-+    if (end < start) throw new Error(`Invalid range ${JSON.stringify(part)}: ${end} is before ${start}`);
-+    for (let major = start; major <= end; major++) majors.add(major);
-+  }
-+  if (majors.size === 0) throw new Error(`No majors in ${JSON.stringify(spec)}`);
-+  return [...majors].sort((a, b) => a - b);
-+}
-+
-+// The anchor every history run uses unless told otherwise. Don't change it:
-+// ratios are only comparable between runs with the same anchor.
-+export const DEFAULT_ANCHOR = '45.3.0';
-+
-+export function resolveHistory(
-+  versions: Versions,
-+  { majors: spec, anchor = DEFAULT_ANCHOR }: { majors: string; anchor?: string }
-+): { anchor: string; jobs: HistoryJob[]; missing: number[] } {
-+  const latestMajor = latestStableMajor(versions);
-+  // An empty anchor (a blanked workflow input) means the default.
-+  let anchorVersion = anchor || DEFAULT_ANCHOR;
-+  if (anchorVersion === 'latest-stable') {
-+    anchorVersion = versions.latestStable!.version;
-+  } else if (!versions.isVersion(anchorVersion)) {
-+    throw new Error(`Unknown anchor version ${anchorVersion}`);
-+  }
-+  const jobs: HistoryJob[] = [];
-+  const missing: number[] = [];
-+  for (const major of parseMajors(spec, latestMajor)) {
-+    const version = latestStableInMajor(versions, major);
-+    if (version) jobs.push({ major, version });
-+    else missing.push(major);
-+  }
-+  if (jobs.length === 0) throw new Error(`None of the majors in ${JSON.stringify(spec)} has a stable release`);
-+  return { anchor: anchorVersion, jobs, missing };
-+}
-+
-+async function main() {
-+  const { values: args } = parseArgs({
-+    options: {
-+      majors: { type: 'string' },
-+      anchor: { type: 'string', default: DEFAULT_ANCHOR }
-+    }
-+  });
-+  if (!args.majors) throw new Error('--majors is required');
-+  if (!/^[\w.-]*$/.test(args.anchor)) throw new Error(`Invalid anchor: ${JSON.stringify(args.anchor)}`);
-+  const cacheDir = fs.mkdtempSync(path.join(os.tmpdir(), 'benchmarks-history-'));
-+  const versions = await ElectronVersions.create({
-+    paths: { versionsCache: path.join(cacheDir, 'releases.json') },
-+    ignoreCache: true
-+  });
-+  const { anchor, jobs, missing } = resolveHistory(versions, { majors: args.majors, anchor: args.anchor });
-+  if (missing.length) {
-+    const prefix = process.env.GITHUB_ACTIONS ? '::warning title=Benchmarks history::' : 'WARNING: ';
-+    console.log(`${prefix}no stable release for Electron ${missing.join(', ')}; leaving them out`);
-+  }
-+  console.log(`[resolve-history] anchor: ${anchor}`);
+@@ -1,22 +0,0 @@
+-<!doctype html>
+-<html>
+-<head>
+-<meta charset="utf-8">
+-<title>Electron benchmark: first paint</title>
+-<style>
+-  body { font: 16px sans-serif; }
+-  .hero { width: 640px; height: 240px; background: linear-gradient(90deg, #47848f, #2b2e3b); }
+-</style>
+-</head>
+-<body>
+-<h1>First paint and reload</h1>
+-<div class="hero"></div>
+-<p id="status">Loading...</p>
+-<script>
+-  // A little synchronous work so paint timing has something to wait for.
+-  let sum = 0;
+-  for (let i = 0; i < 3e6; i++) sum += Math.sqrt(i);
+-  document.getElementById('status').textContent = 'done ' + Math.round(sum);
+-</script>
+-</body>
+-</html>
+```
 
+**File**: `script/benchmarks/pages/resize.html` (removed, +0/-62)
+```diff
+@@ -1,62 +0,0 @@
+-<!doctype html>
+-<html>
+-<head>
+-<meta charset="utf-8">
+-<title>Electron benchmark: resize</title>
+-<style>
+-  body { margin: 0; font: 14px sans-serif; }
+-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 4px; }
+-  .grid div { height: 40px; background: #9feaf9; border-radius: 4px; }
+-</style>
+-</head>
+-<body>
+-<div class="grid" id="grid"></div>
+-<script>
+-  // Layout-heavy content so each resize does real relayout and paint work.
+-  const grid = document.getElementById('grid');
+-  for (let i = 0; i < 3000; i++) {
+-    const cell = document.createElement('div');
+-    cell.textContent = i;
+-    grid.appendChild(cell);
+-  }
+-  const nextFrame = () => new Promise((resolve) => requestAnimationFrame(() => resolve()));
+-  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+-
+-  // Steps the window between two sizes with BrowserWindow.setSize(). The
+-  // latency itself is measured from the trace (see TRACE_QUERIES in
+-  // lib/configs.mts): from the browser's Widget::OnNativeWidgetSizeChanged to
+-  // the presentation of the first renderer frame that commits after the page
+-  // sees the new size, which the cb-resized mark records. The cb-resize-start
+-  // and cb-resize-end marks bracket the resizes so the window's initial sizing
+-  // is left out. Each step waits for the resize event, two frames and a short
+-  // idle period, so the next resize never overlaps the previous one's frame.
+-  window.cbRunResize = async (count) => {
+-    if (!window.cbHarness) {
+-      window.__cbResizeDone = true;
+-      return;
+-    }
+-    performance.mark('cb-resize-start');
+-    for (let i = 0; i < count; i++) {
+-      const [width, height] = i % 2 ? [1280, 800] : [900, 600];
+-      const resized = new Promise((resolve) =>
+-        addEventListener(
+-          'resize',
+-          () => {
+-            performance.mark('cb-resized');
+-            resolve();
+-          },
+-          { once: true }
+-        )
+-      );
+-      await window.cbHarness.setSize(width, height);
+-      await resized;
+-      await nextFrame();
+-      await nextFrame();
+-      await sleep(100);
+-    }
+-    performance.mark('cb-resize-end');
+-    window.__cbResizeDone = true;
+-  };
+-</script>
+-</body>
+-</html>
+```
+
+**File**: `script/benchmarks/run.mts` (modified, +62/-18)
+```diff
+@@ -5,10 +5,13 @@
+ // <out>/metadata.json; compare.mts turns them into a comparison.
+ //
+ // --best-effort is for runs against old Electron versions (the Benchmarks
+-// History workflow): a suite that fails for the candidate in the first two
+-// rounds is not run again, since an old version that can't run it would fail
+-// (or time out) every round, and the run only fails when no invocation
+-// succeeded. Without it, any failed invocation fails the run.
++// History workflow): when the candidate fails a suite in the first two
++// rounds, the stories that produced no complete results in either round are
++// not run again (the whole suite when no story did), since an old version
++// that can't run a story would fail (or time out) on it every round.
++// compare.mts keeps the complete stories of a failed invocation, and the run
++// only fails when no invocation succeeded. Without it, any failed invocation
++// fails the run.
+ //
+ // Usage (under Xvfb on Linux):
+ //   node script/benchmarks/run.mts --targets <dir>/targets.json --out <dir>
+@@ -21,6 +24,8 @@ import * as path from 'node:path';
+ import { fileURLToPath } from 'node:url';
+ import { parseArgs } from 'node:util';
+ 
++import { storiesWithResults } from './compare.mts';
++import { writeAppShellSite } from './lib/app-shell.mts';
+ import { pageConfigs, probeConfigs, writeFileLoadingSite } from './lib/configs.mts';
+ 
+ import type { Capabilities, Invocation, RunMetadata, Target, TargetsFile } from './lib/types.mts';
+@@ -82,7 +87,7 @@ async function startServer(wwwDir: string, port: number): Promise<ChildProcess>
+   while (Date.now() < deadline) {
+     if (server.exitCode !== null) throw new Error(`serve-benchmarks.js exited with ${server.exitCode}`);
+     try {
+-      const response = await fetch(`http://127.0.0.1:${port}/pages/index.html`);
++      const response = await fetch(`http://127.0.0.1:${port}/__pgo/data?bytes=1`);
+       if (response.ok) return server;
+     } catch {
+       // Not listening yet.
+@@ -312,6 +317,28 @@ export function capLogs(dir: string, { maxBytes = 32 * 2 ** 20, keepBytes = 2 **
+   }
+ }
+ 
++// For --best-effort: the stories of `suite` (as configured for the
++// candidate) that the candidate produced no complete results for in either
++// of the first two rounds, or undefined unless its crossbench run failed in
++// both. A story missing from a failed run's results is taken as failed.
++export function failedStories(
++  outDir: string,
++  suite: string,
++  stories: string[],
++  invocations: Invocation[]
++): string[] | undefined {
++  const runs = [0, 1].map((round) =>
++    invocations.find((i) => i.round === round && i.suite === suite && i.target === 'candidate')
++  );
++  if (!runs.every((run) => run !== undefined && run.exitCode !== 0)) return undefined;
++  const passed = new Set(
++    runs.flatMap((run) => [...storiesWithResults(path.join(outDir, run!.dir), suite, run!.repetitions)])
++  );
++  return stories.filter((story) => !passed.has(story));
++}
++
++type PageSuiteConfigs = Record<string, { pages: Record<string, unknown[]> }>;
++
+ async function main() {
+   killActiveChildrenOnSignals();
+   const { values: args } = parseArgs({
+@@ -352,9 +379,11 @@ async function main() {
+   const cb = ensureCrossbench(workDir, args.python);
+ 
+   const wwwDir = path.join(workDir, 'www');
+-  fs.cpSync(path.join(import.meta.dirname, 'pages'), path.join(wwwDir, 'pages'), { recursive: true });
+   const fileRoot = path.join(workDir, 'file-loading');
+   writeFileLoadingSite(fileRoot, fileCount);
++  const appRoot = path.join(workDir, 'app-shell');
++  const appBytes = Object.values(writeAppShellSite(appRoot)).reduce((sum, size) => sum + size, 0);
++  console.log(`[run] app shell: ${Math.round(appBytes / 1024)} KiB`);
+   const server = await startServer(wwwDir, port);
+   const baseUrl = `http://127.0.0.1:${port}`;
+ 
+@@ -367,10 +396,12 @@ async function main() {
+   }
+   const capabilities = new Map<string, Capabilities>();
+   const pageConfigPaths = new Map<string, Record<string, string>>();
++  const pageConfigsByTarget = new Map<string, PageSuiteConfigs>();
+   for (const target of targets) {
+     const targetCapabilities = probeCapabilities(target, harnessApp, workDir);
+     capabilities.set(target.id, targetCapabilities);
+-    const configs = pageConfigs({ capabilities: targetCapabilities, baseUrl, fileRoot });
++    const configs: PageSuiteConfigs = pageConfigs({ capabilities: targetCapabilities, fileRoot, appRoot });
++    pageConfigsByTarget.set(target.id, configs);
+     const paths: Record<string, string> = {};
+     for (const [suite, config] of Object.entries(configs)) {
+       if (Object.keys(config.pages).length === 0) continue;
+@@ -388,6 +419,7 @@ async function main() {
+     repeat,
+     suites,
+     fileCount,
++    bestEffort: args['best-effort'],
+     targets: targets.map(({ id, electronVersion, chromiumVersion }) => ({
+       id,
+       electronVersion,
+@@ -407,6 +439,7 @@ async function main() {
+   );
+ 
+   const skippedSuites = new Set<string>();
++  const 
 ```
 
 ---
 
-### Incident Patch 3: `37daf07a` (2026-11-16)
-**Commit Message**: test: scale utilityProcess heap snapshot timeout and disable retries (#55727)
+### Incident Patch 2: `93d48124` (2026-11-20)
+**Commit Message**: fix: reflect system contrast preference in prefers-contrast media query (#55970)
 
-* test: scale utilityProcess heap snapshot timeout and disable retries
+fix: set preferred_contrast from NativeTheme in web preferences
 
-The setHeapSnapshotNearHeapLimit test used a fixed 60s timeout, while
-other tests on sanitizer lanes get 180s through ELECTRON_SPEC_TIMEOUT.
-On saturated ASan hosts it ran past 60s and only passed on retry. Use
-the larger of 60s and ELECTRON_SPEC_TIMEOUT.
+ElectronBrowserClient::OverrideWebPreferences mirrored Chrome's
+forced-colors and color-scheme handling but never set
+WebPreferences::preferred_contrast, so `prefers-contrast` always
+evaluated to `no-preference` in web content even when
+nativeTheme.shouldUseHighContrastColors was true. Set it from the native
+theme as ChromeContentBrowserClient does, and compare it in
+WebPreferencesNeedUpdateForColorRelatedStateChanges so a runtime
+contrast change refreshes the renderer.
 
-Disable vitest retries for the whole utilityProcess suite so future
-flakes surface instead of being masked.
+Fixes #55917
 
-Refs #55393
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01Mamv74GiUZ1caHCPKp6tcR
 
-* test: use free ports for utilityProcess inspector specs
+Co-authored-by: Claude <[REDACTED_EMAIL]>
 
-With retries off for the whole suite, the --inspect-brk and --inspect
-tests could time out when node.spec.ts, running in another worker, holds
-the default inspector port or 17364. Pick a free port for each instead.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `spec/api-utility-process.spec.ts` (modified, +23/-5)
+**File**: `shell/browser/electron_browser_client.cc` (modified, +19/-1)
 ```diff
-@@ -8,6 +8,7 @@ import { once } from 'node:events';
- import * as fs from 'node:fs/promises';
- import * as http from 'node:http';
- import { createRequire } from 'node:module';
-+import * as net from 'node:net';
- import * as os from 'node:os';
- import * as path from 'node:path';
- import { setImmediate } from 'node:timers/promises';
-@@ -29,7 +30,7 @@ const require = createRequire(import.meta.url);
- const fixturesPath = path.resolve(import.meta.dirname, 'fixtures', 'api', 'utility-process');
- const isWindowsOnArm = process.platform === 'win32' && process.arch === 'arm64';
+@@ -15,6 +15,7 @@
+ #include "base/auto_reset.h"
+ #include "base/base_switches.h"
+ #include "base/command_line.h"
++#include "base/containers/fixed_flat_map.h"
+ #include "base/debug/crash_logging.h"
+ #include "base/environment.h"
+ #include "base/files/file_path.h"
+@@ -416,6 +417,21 @@ void MaybeAppendSecureOriginsAllowlistSwitch(base::CommandLine* cmdline) {
+   }
+ }
  
--describe('utilityProcess module', () => {
-+describe('utilityProcess module', { retry: 0 }, () => {
-   describe('UtilityProcess constructor', () => {
-     it('throws when empty script path is provided', async () => {
-       expect(() => {
-@@ -641,10 +642,22 @@ describe('utilityProcess module', () => {
-       return output;
-     };
- 
-+    // Other spec files run at the same time, and node.spec.ts starts inspectors
-+    // on the default port and on fixed ports. Pick a port nothing is using so
-+    // a clash can't stop the inspector from starting.
-+    const getFreePort = async () => {
-+      const server = net.createServer();
-+      await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
-+      const { port } = server.address() as net.AddressInfo;
-+      await new Promise<void>((resolve) => server.close(() => resolve()));
-+      return port;
-+    };
++// Refs
++// https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/chrome_content_browser_client.cc;l=4056-4067;drc=e70e5ce76d4eafd833b4468a6d15bcd9ea0f6cea
++blink::mojom::PreferredContrast GetPreferredContrast(
++    const ui::NativeTheme& native_theme) {
++  using NC = ui::NativeTheme::PreferredContrast;
++  using BC = blink::mojom::PreferredContrast;
++  static constexpr auto kContrastMap =
++      base::MakeFixedFlatMap<NC, BC>({{NC::kNoPreference, BC::kNoPreference},
++                                      {NC::kMore, BC::kMore},
++                                      {NC::kLess, BC::kLess},
++                                      {NC::kCustom, BC::kCustom}});
++  const NC preferred_contrast = native_theme.preferred_contrast();
++  return kContrastMap.at(preferred_contrast);
++}
 +
-     it('supports starting the v8 inspector with --inspect-brk', async () => {
-+      const port = await getFreePort();
-       const child = utilityProcess.fork(path.join(fixturesPath, 'log.js'), [], {
-         stdio: 'pipe',
--        execArgv: ['--inspect-brk']
-+        execArgv: [`--inspect-brk=${port}`]
-       });
-       // If the expected output never arrives the test fails on mocha's timeout
-       // without reaching kill(); let the global afterEach reap the child then.
-@@ -653,13 +666,14 @@ describe('utilityProcess module', () => {
-     });
+ }  // namespace
  
-     it('supports starting the v8 inspector with --inspect and a provided port', async () => {
-+      const port = await getFreePort();
-       const child = utilityProcess.fork(path.join(fixturesPath, 'log.js'), [], {
-         stdio: 'pipe',
--        execArgv: ['--inspect=17364']
-+        execArgv: [`--inspect=${port}`]
-       });
-       deferKillUtilityProcess(child);
-       const output = await outputUntil(child, /Debugger listening on ws:/m);
--      expect(output, 'should be listening on port 17364').toContain(':17364');
-+      expect(output, `should be listening on port ${port}`).toContain(`:${port}/`);
-     });
+ // static
+@@ -517,6 +533,7 @@ void ElectronBrowserClient::OverrideWebPreferences(
+   renderer_prefs->can_accept_load_drops = false;
  
-     it('supports changing dns verbatim with --dns-result-order', async () => {
-@@ -1032,7 +1046,11 @@ describe('utilityProcess module', () => {
-       expect(loginAuthInfo!.scheme).toBe('basic');
-     });
+   ui::NativeTheme* native_theme = ui::NativeTheme::GetInstanceForNativeUi();
++  prefs->preferred_contrast = GetPreferredContrast(*native_theme);
+   prefs->in_forced_colors = native_theme->forced_colors() !=
+                             ui::ColorProviderKey::ForcedColors::kNone;
+   prefs->preferred_color_scheme =
+@@ -545,7 +562,8 @@ bool ElectronBrowserClient::WebPreferencesNeedUpdateForColorRelatedStateChanges(
+               ui::NativeTheme::PreferredColorScheme::kDark
+           ? blink::mojom::PreferredColorScheme::kDark
+           : blink::mojom::PreferredColorScheme::kLight;
+-  return prefs.in_forced_colors != in_forced_colors ||
++  return prefs.preferred_contrast != GetPreferredContrast(*native_theme) ||
++         prefs.in_forced_colors != in_forced_colors ||
+          prefs.preferred_color_scheme != preferred_color_scheme;
+ }
  
--    it('supports generating snapshots via v8.setHeapSnapshotNearHeapLimit', { timeout: 60_000 }, async () => {
-+    // Growing the heap to the limit and writing the snapshot is slow, so give
-+    // this test at least 60s. Sanitizer builds raise every test's timeout
-+    // (ELECTRON_SPEC_TIMEOUT, 180s) and are slower still, so never go below that.
-+    const heapTimeout = Math.max(60_000, Number(process.env.ELECTRON_SPEC_TIMEOUT) || 0);
-+    it('supports generating snapshots via v8.setHeapSnapshotNearHeapLimit', { timeout: heapTimeout }, async () => {
+```
+
+**File**: `spec/api-native-theme.spec.ts` (modified, +20/-1)
+```diff
+@@ -7,7 +7,7 @@ import { once } from 'node:events';
+ import * as path from 'node:path';
+ import { setTimeout } from 'node:timers/promises';
+ 
+-import { ifdescribe } from './lib/spec-helpers.ts';
++import { ifdescribe, startRemoteControlApp } from './lib/spec-helpers.ts';
+ import { closeAllWindows } from './lib/window-helpers.ts';
+ 
+ describe('nativeTheme module', () => {
+@@ -117,6 +117,25 @@ describe('nativeTheme module', () => {
+     it('returns a boolean', () => {
+       expect(nativeTheme.shouldUseHighContrastColors).toBeTypeOf('boolean');
+     });
++
++    it('is reflected in the prefers-contrast CSS media query', async () => {
++      // --force-high-contrast makes the native theme report a preference for
++      // more contrast on every platform, regardless of the OS setting.
++      const rc = await startRemoteControlApp(['--force-high-contrast']);
++      const result = await rc.remotely(async () => {
++        const { BrowserWindow, nativeTheme } = require('electron/main');
++        const w = new BrowserWindow({ show: false });
++        await w.loadURL('about:blank');
++        const prefersMoreContrast = await w.webContents.executeJavaScript(
++          'matchMedia("(prefers-contrast: more)").matches'
++        );
++        return {
++          shouldUseHighContrastColors: nativeTheme.shouldUseHighContrastColors,
++          prefersMoreContrast
++        };
++      });
++      expect(result).toEqual({ shouldUseHighContrastColors: true, prefersMoreContrast: true });
++    });
+   });
+ 
+   describe('nativeTheme.shouldUseDarkColorsForSystemIntegratedUI', () => {
+```
+
+---
+
+### Incident Patch 3: `bb5b1dd2` (2026-11-20)
+**Commit Message**: test: derive spec timeouts from the vitest config (#55971)
+
+Add getSpecTimeout() to spec/lib/spec-helpers.ts. It returns the running
+test's timeout, or outside a test the testTimeout from the worker's vitest
+config, which spec/vitest/runner.ts hands over. Use it where specs read
+ELECTRON_SPEC_TIMEOUT themselves and repeated its 30s default, so
+spec/vitest.config.ts is the one place that reads the variable.
+
+startRemoteControlApp now passes the running test's own timeout to the
+fixture app, so tests with a longer timeout (cpp-heap's 60s and 90s ones)
+no longer have the app quit after 30s.
+
+
+Claude-Session: https://claude.ai/code/session_01KX1hkKh58Khvku8FCchbHQ
+
+Co-authored-by: Claude <[REDACTED_EMAIL]>
+
+**File**: `spec/api-app.spec.ts` (modified, +11/-2)
+```diff
+@@ -16,7 +16,16 @@ import { setTimeout } from 'node:timers/promises';
+ import { promisify } from 'node:util';
+ 
+ import { collectStreamBody, getResponse } from './lib/net-helpers.ts';
+-import { defer, ifdescribe, ifit, isWayland, listen, spawnAndWait, waitUntil } from './lib/spec-helpers.ts';
++import {
++  defer,
++  getSpecTimeout,
++  ifdescribe,
++  ifit,
++  isWayland,
++  listen,
++  spawnAndWait,
++  waitUntil
++} from './lib/spec-helpers.ts';
+ import { runInUtilityProcess } from './lib/utility-process-helpers.ts';
+ import { closeWindow, closeAllWindows } from './lib/window-helpers.ts';
+ import {
+@@ -2199,7 +2208,7 @@ describe('app module', () => {
+     const run = async (env: NodeJS.ProcessEnv) => {
+       // Starting Electron is slow on sanitizer builds, so stay within the
+       // per-test timeout (raised there) rather than a fixed short poll.
+-      const timeout = (Number(process.env.ELECTRON_SPEC_TIMEOUT) || 30_000) - 5_000;
++      const timeout = getSpecTimeout() - 5_000;
+       const { code, signal, stdout, stderr } = await spawnAndWait(process.execPath, [fixture], { env, timeout });
+       const match = /GDK_BACKEND in child: (.*)/.exec(stdout);
+       expect(match, `exited with ${code}/${signal}\nstdout:\n${stdout}\nstderr:\n${stderr}`).not.toBeNull();
+```
+
+**File**: `spec/api-utility-process.spec.ts` (modified, +2/-1)
+```diff
+@@ -18,6 +18,7 @@ import { respondOnce, randomString, kOneKiloByte } from './lib/net-helpers.ts';
+ import {
+   defer,
+   deferKillUtilityProcess,
++  getSpecTimeout,
+   ifit,
+   isTestingBindingAvailable,
+   listen,
+@@ -1049,7 +1050,7 @@ describe('utilityProcess module', { retry: 0 }, () => {
+     // Growing the heap to the limit and writing the snapshot is slow, so give
+     // this test at least 60s. Sanitizer builds raise every test's timeout
+     // (ELECTRON_SPEC_TIMEOUT, 180s) and are slower still, so never go below that.
+-    const heapTimeout = Math.max(60_000, Number(process.env.ELECTRON_SPEC_TIMEOUT) || 0);
++    const heapTimeout = Math.max(60_000, getSpecTimeout());
+     it('supports generating snapshots via v8.setHeapSnapshotNearHeapLimit', { timeout: heapTimeout }, async () => {
        const tmpDir = await fs.mkdtemp(path.resolve(os.tmpdir(), 'electron-spec-utility-oom-'));
        defer(() => fs.rm(tmpDir, { recursive: true, force: true }));
-       const child = utilityProcess.fork(path.join(fixturesPath, 'oom-grow.js'), [], {
+```
+
+**File**: `spec/lib/spec-helpers.ts` (modified, +23/-8)
+```diff
+@@ -1,6 +1,6 @@
+ import type { BrowserWindow } from 'electron/main';
+ 
+-import { afterAll, assert, beforeAll, describe, it } from 'vitest';
++import { afterAll, assert, beforeAll, describe, it, TestRunner } from 'vitest';
+ 
+ import * as childProcess from 'node:child_process';
+ import { once } from 'node:events';
+@@ -31,6 +31,22 @@ export const isWayland =
+ export const ciGpuArgs: string[] =
+   process.env.CI && process.platform === 'darwin' && process.arch === 'x64' ? ['--disable-gpu'] : [];
+ 
++// The worker's vitest config, handed over by spec/vitest/runner.ts. It is the
++// object vi.setConfig() changes.
++let specConfig: { testTimeout: number } | undefined;
++export function setSpecConfig(config: { testTimeout: number }) {
++  specConfig = config;
++}
++
++// How long the running test may take: its own timeout if it sets one, else
++// testTimeout from spec/vitest.config.ts (ELECTRON_SPEC_TIMEOUT). Outside a
++// test, e.g. while a spec file is being collected, the configured testTimeout.
++export function getSpecTimeout(): number {
++  const timeout = TestRunner.getCurrentTest()?.timeout ?? specConfig?.testTimeout;
++  if (timeout === undefined) throw new Error('getSpecTimeout() needs the runner from spec/vitest/runner.ts');
++  return timeout;
++}
++
+ type CleanupFunction = (() => void) | (() => Promise<void>);
+ // Each cleanup comes with the error it fails with if it times out,
+ // created in defer() so that its stack points at the caller.
+@@ -117,15 +133,14 @@ class RemoteControlApp {
+ export async function startRemoteControlApp(extraArgs: string[] = [], options?: childProcess.SpawnOptionsWithoutStdio) {
+   const appPath = path.join(import.meta.dirname, '..', 'fixtures', 'apps', 'remote-control');
+   // The app quits by itself after --remote-app-timeout (30s unless given) in
+-  // case nothing stops it. Sanitizer builds give each test 180s
+-  // (ELECTRON_SPEC_TIMEOUT) and are slow enough that a test can still be
+-  // talking to the app after 30s, which then fails with "socket hang up" or
+-  // hangs. Keep the app alive at least as long as the test may run; defer()
+-  // below stops it when the test is done.
+-  const specTimeout = Number(process.env.ELECTRON_SPEC_TIMEOUT) || 30_000;
++  // case nothing stops it. A test can run for longer than that (sanitizer
++  // builds give each test 180s, and some tests set a longer timeout of their
++  // own), and one still talking to the app after it quit fails with "socket
++  // hang up" or hangs. Keep the app alive as long as the test may run;
++  // defer() below stops it when the test is done.
+   const timeoutArgs = extraArgs.some((arg) => arg.startsWith('--remote-app-timeout='))
+     ? []
+-    : [`--remote-app-timeout=${specTimeout}`];
++    : [`--remote-app-timeout=${getSpecTimeout()}`];
+   const appProcess = childProcess.spawn(
+     process.execPath,
+     [appPath, ...ciGpuArgs, ...timeoutArgs, ...extraArgs],
+```
+
+**File**: `spec/vitest/runner.ts` (modified, +19/-2)
+```diff
+@@ -20,16 +20,26 @@
+ //    so the test still fails with all of them.
+ //  - spec/disabled-tests.json switches a test off by its full title without
+ //    touching the spec file (used to unblock a roll while a fix is pending).
++//  - The worker's config is handed to spec/lib/spec-helpers.ts, so that
++//    getSpecTimeout() reads the configured testTimeout instead of repeating it.
+ 
+ import { TestRunner } from 'vitest';
+ 
+ import * as fs from 'node:fs';
+ import * as path from 'node:path';
+ import { setImmediate } from 'node:timers/promises';
+ 
+-import { runCleanupFunctions } from '../lib/spec-helpers.ts';
++import { runCleanupFunctions, setSpecConfig } from '../lib/spec-helpers.ts';
+ 
+-import type { RunnerTask, RunnerTestCase, RunnerTestFile, RunnerTestSuite, TestContext, TestTryOptions } from 'vitest';
++import type {
++  RunnerTask,
++  RunnerTestCase,
++  RunnerTestFile,
++  RunnerTestSuite,
++  SerializedConfig,
++  TestContext,
++  TestTryOptions
++} from 'vitest';
+ 
+ const disabledTests = new Set<string>(
+   JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '..', 'disabled-tests.json'), 'utf8'))
+@@ -68,6 +78,13 @@ function collectingErrors(hook: (context: TestContext, suite: Readonly<RunnerTes
+ }
+ 
+ export default class ElectronSpecRunner extends TestRunner {
++  constructor(config: SerializedConfig) {
++    super(config);
++    // For getSpecTimeout(), which the specs and their helpers use to pass
++    // the timeout on to the apps they start.
++    setSpecConfig(this.config);
++  }
++
+   async onBeforeRunSuite(suite: RunnerTestSuite) {
+     if (!prepared.has(suite)) {
+       prepared.add(suite);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55859** (2026-11-17): build: make natives code cache generation deterministic (@claude[bot])
-- **PR #55854** (2026-11-17): chore: bump chromium to 160.0.8165.0 (46-x-y) (@claude[bot])
-- **PR #55848** (2026-11-17): build: update PGO profiles (@electron-pgo-updater[bot])
-- **PR #55846** (2026-11-16): test: deflake desktopCapturer moveAbove spec and disable retries (@trop[bot])
-- **PR #55844** (2026-11-16): test: scale utilityProcess heap snapshot timeout and disable retries (@trop[bot])
-- **PR #55843** (2026-11-16): test: scale utilityProcess heap snapshot timeout and disable retries (@trop[bot])
+- **PR #55987** (2026-11-20): fix: reflect system contrast preference in prefers-contrast media query (@trop[bot])
+- **PR #55986** (2026-11-20): fix: reflect system contrast preference in prefers-contrast media query (@trop[bot])
+- **PR #55985** (2026-11-20): fix: reflect system contrast preference in prefers-contrast media query (@trop[bot])
+- **PR #55984** (2026-11-20): test: derive spec timeouts from the vitest config (@trop[bot])
+- **PR #55981** (2026-11-20): test: wait for the OSR image before capturing a shared texture frame (@trop[bot])
+- **PR #55980** (2026-11-20): test: wait for the OSR image before capturing a shared texture frame (@trop[bot])
 
 ---
 
@@ -1395,42 +1307,55 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: make natives code cache generation deterministic
+## X. build: replace the loading benchmark page and keep partial benchmark results
 
 **RULE**:
-When implementing operations in `patches/node/electron_enable_node_startup_snapshot_generation_in_chromium_s_v8.patch`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in electron/electron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `script/benchmarks/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in electron/electron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8c1db351`: build: make natives code cache generation deterministic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7ccb4856`: build: replace the loading benchmark page and keep partial benchmark results. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `patches/node/electron_enable_node_startup_snapshot_generation_in_chromium_s_v8.patch`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `script/benchmarks/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-index 1fad56169f5c813dd6f6216b6a1278e5415a5972..0a8455bdd06a6d4d53d19bf49687772a87cc5340 100644
-@@ -335,26 +369,144 @@ template("node_gn_build") {
-+
-+          # --predictable (set by node for snapshot builds) does not cover
-+          # V8's minor GC task, which scavenges at a timing-dependent point
-+          # and so changes the order objects are promoted to read-only space,
-+          # making the snapshot differ between runs on a busy machine. A young
-+          # generation big enough that building the snapshot never scavenges
-+          # avoids that. Semi-space sizes are left out of V8's flags hash.
-+          "--min-semi-space-size=32",
-+          "--max-semi-space-size=32",
+| `loading` | `first_load`, `reload` (warm process, same page) of the app shell (see [The app shell page](#the-app-shell-page)) | FCP, `loadEventEnd`, `app_ready` and LCP in ms; PSS in MiB after `first_load` (total, browser, renderer and GPU processes) |
+| `trace` | `first_load` and `resize` of the app shell, traced | FCP and LCP in ms; resize latency median and p90 in ms |
+  `performance.mark()` entries from the page after each story. The app shell
+  marks `app-ready` and keeps its LCP as the `app-lcp` mark, since the probe
+  reads no LCP entries. The file-loading pages mark `files-loaded`
+  themselves once every file has run, because only the page knows when that
+  is.
+  * Resize: once the app shell has loaded, a script the story injects steps
+    the window between 1280x800 and 900x600 (below the app's 960px layout
+    breakpoint) with `BrowserWindow.setSize()`, through the harness preload,
+    20 times. Each is timed from the browser's
+    after the page's `resize` event. Frames are matched by their commit
+    because a `PipelineReporter` starts at its BeginFrame timestamp, which can
+    be earlier than the resize the frame shows.
+`trace` suite's FCP and LCP are a cross-check o
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-index 1fad56169f5c813dd6f6216b6a1278e5415a5972..619253a1ee26e289215022c6152229500952cfdc 100644
-@@ -335,26 +369,135 @@ template("node_gn_build") {
+| `loading` | `first_load`, `reload` (warm process, same page) | FCP and `loadEventEnd` in ms; PSS in MiB after `first_load` (total, browser, renderer and GPU processes) |
+| `trace` | `first_load`, `resize`, traced | FCP and LCP in ms; resize latency median and p90 in ms |
+  `performance.mark()` entries from the page after each story. The
+  file-loading pages mark `files-loaded` themselves once every file has run,
+  because only the page knows when that is.
+  * Resize: `BrowserWindow.setSize()` from the browser's
+    after the page's `resize` event, 20 times per run. Frames are matched by
+    their commit because a `PipelineReporter` starts at its BeginFrame
+    timestamp, which can be earlier than the resize the frame shows.
+`trace` suite's FCP is a cross-check of the untraced one and the only source of
+LCP, which `performance.entries` does not read.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8c1db351` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7ccb4856` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

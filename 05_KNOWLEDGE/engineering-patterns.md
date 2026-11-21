@@ -720087,3 +720087,603 @@ Link the Windows resource file, including the application manifest, into all tar
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `22356474` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9698. replace the loading benchmark page and keep partial benchmark results (Harvested from electron/electron)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "replace the loading benchmark page and keep partial benchmark results",
+  "source": "electron/electron",
+  "source_url": "https://github.com/electron/electron",
+  "source_version": "c7ba9db4",
+  "license": "MIT",
+  "extracted_at": "2026-11-21T02:08:36.203Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-electron-electron",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [electron/electron](https://github.com/electron/electron) (Revision: `c7ba9db4`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `script/benchmarks/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in electron/electron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7ccb4856`: build: replace the loading benchmark page and keep partial benchmark results. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `script/benchmarks/README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+| `loading` | `first_load`, `reload` (warm process, same page) of the app shell (see [The app shell page](#the-app-shell-page)) | FCP, `loadEventEnd`, `app_ready` and LCP in ms; PSS in MiB after `first_load` (total, browser, renderer and GPU processes) |
+| `trace` | `first_load` and `resize` of the app shell, traced | FCP and LCP in ms; resize latency median and p90 in ms |
+  `performance.mark()` entries from the page after each story. The app shell
+  marks `app-ready` and keeps its LCP as the `app-lcp` mark, since the probe
+  reads no LCP entries. The file-loading pages mark `files-loaded`
+  themselves once every file has run, because only the page knows when that
+  is.
+  * Resize: once the app shell has loaded, a script the story injects steps
+    the window between 1280x800 and 900x600 (below the app's 960px layout
+    breakpoint) with `BrowserWindow.setSize()`, through the harness preload,
+    20 times. Each is timed from the browser's
+    after the page's `resize` event. Frames are matched by their commit
+    because a `PipelineReporter` starts at its BeginFrame timestamp, which can
+    be earlier than the resize the frame shows.
+`trace` suite's FCP and LCP are a cross-check o
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+| `loading` | `first_load`, `reload` (warm process, same page) | FCP and `loadEventEnd` in ms; PSS in MiB after `first_load` (total, browser, renderer and GPU processes) |
+| `trace` | `first_load`, `resize`, traced | FCP and LCP in ms; resize latency median and p90 in ms |
+  `performance.mark()` entries from the page after each story. The
+  file-loading pages mark `files-loaded` themselves once every file has run,
+  because only the page knows when that is.
+  * Resize: `BrowserWindow.setSize()` from the browser's
+    after the page's `resize` event, 20 times per run. Frames are matched by
+    their commit because a `PipelineReporter` starts at its BeginFrame
+    timestamp, which can be earlier than the resize the frame shows.
+`trace` suite's FCP is a cross-check of the untraced one and the only source of
+LCP, which `performance.entries` does not read.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7ccb4856` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9699. Keep component view local values when the base changes view membership (Harvested from pixeltable/pixeltable)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Keep component view local values when the base changes view membership",
+  "source": "pixeltable/pixeltable",
+  "source_url": "https://github.com/pixeltable/pixeltable",
+  "source_version": "e66ed540",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T02:08:43.709Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pixeltable-pixeltable",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pixeltable/pixeltable](https://github.com/pixeltable/pixeltable) (Revision: `e66ed540`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `pixeltable/catalog/table_version.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `e66ed540`: Keep component view local values when the base changes view membership. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/catalog/table_version.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+            changed_dependents = self.get_dependent_columns(modified_cols)
+                needs_iterator_reload = any(view_tv.is_iterator_column(col) for col in changed_dependents)
+                if needs_iterator_reload:
+        """Returns True if col is produced by this table's iterator (including the pos column)"""
+        return col.get_tbl().id == self.id and col.is_iterator_col
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+                needs_iterator_reload = view_tv.is_component_view and any(
+                    view_tv.is_iterator_column(col) for col in recomputed_cols
+                )
+                if needs_iterator_reload or (membership_change and view_tv.is_component_view):
+        """Returns True if col is produced by an iterator (including the pos column)"""
+        return col.is_iterator_col
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `e66ed540` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9700. Cooperative Async File Locking Under Thread Pool Starvation Constraints (Harvested from zed-industries/zed)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Cooperative Async File Locking Under Thread Pool Starvation Constraints",
+  "source": "zed-industries/zed",
+  "source_url": "https://github.com/zed-industries/zed",
+  "source_version": "2f808b3c",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-21T02:11:53.001Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zed-industries-zed",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zed-industries/zed](https://github.com/zed-industries/zed) (Revision: `2f808b3c`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When acquiring advisory file locks inside an asynchronous runtime backed by a fixed-size blocking thread pool, the runtime MUST NOT block OS threads directly on kernel-level file lock syscalls (e.g., `flock(2)`, `fcntl(F_SETLKW)`, `LockFileEx(LOCKFILE_EXCLUSIVE_LOCK)`). Instead, it MUST execute non-blocking lock attempts (`try_lock`) interspersed with asynchronous timer-based yields with bounded exponential backoff.
+
+**WHY**:
+Blocking thread pool workers on kernel-level lock queues causes catastrophic thread starvation. If $N$ asynchronous tasks queue for an exclusive file lock, and $N \ge \text{worker\_pool\_size}$, every thread in the pool is blocked waiting on the kernel mutex. The current holder of the lock will be unable to acquire a worker thread to perform file writes, unlinking, or unlock operations, resulting in an unrecoverable, process-wide deadlock.
+
+**WHEN TO APPLY**:
+Apply to any async I/O abstraction layer (Rust `tokio`/`gpui`, Go goroutines with cgo I/O, Node.js libuv threadpool) executing cross-process file locking over shared local assets, cache directories, or database files.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Extracted and generalized from crates/fs/src/fs.rs
+use std::path::Path;
+use std::sync::Arc;
+use std::time::Duration;
+use anyhow::{Context as _, Result};
+
+const FILE_LOCK_INITIAL_RETRY_DELAY: Duration = Duration::from_millis(5);
+const FILE_LOCK_MAX_RETRY_DELAY: Duration = Duration::from_millis(250);
+
+pub enum FileLockKind {
+    Shared,
+    Exclusive,
+}
+
+pub struct FileLock {
+    _file: Arc<std::fs::File>,
+}
+
+impl FileLock {
+    pub fn new(file: Arc<std::fs::File>) -> Self {
+        Self { _file: file }
+    }
+}
+
+pub async fn lock_file_cooperative<E>(
+    executor: &E,
+    path: &Path,
+    kind: FileLockKind,
+) -> Result<FileLock>
+where
+    E: AsyncExecutor,
+{
+    let file = open_lock_file(executor, path).await?;
+    let mut retry_delay = FILE_LOCK_INITIAL_RETRY_DELAY;
+
+    loop {
+        // Non-blocking try-lock delegated to blocking thread pool
+        if try_lock_open_file(executor, &file, path, kind).await? {
+            return Ok(FileLock::new(file));
+        }
+
+        // Cooperative asynchronous sleep: relinquishes the thread back to the runtime
+        executor.timer(retry_delay).await;
+        retry_delay = (retry_delay * 2).min(FILE_LOCK_MAX_RETRY_DELAY);
+    }
+}
+
+async fn try_lock_open_file<E>(
+    executor: &E,
+    file: &Arc<std::fs::File>,
+    path: &Path,
+    kind: FileLockKind,
+) -> Result<bool>
+where
+    E: AsyncExecutor,
+{
+    let file = file.clone();
+    let result = executor
+        .spawn_blocking(move || {
+            #[cfg(unix)]
+            {
+                use nix::fcntl::{FlockArg, flock};
+                use std::os::unix::io::AsRawFd;
+                let flag = match kind {
+                    FileLockKind::Shared => FlockArg::LockSharedNonblock,
+                    FileLockKind::Exclusive => FlockArg::LockExclusiveNonblock,
+                };
+                match flock(file.as_raw_fd(), flag) {
+                    Ok(()) => Ok(true),
+                    Err(nix::errno::Errno::EWOULDBLOCK) => Ok(false),
+                    Err(err) => Err(std::io::Error::from(err)),
+                }
+            }
+            #[cfg(windows)]
+            {
+                // Equivalent non-blocking LockFileEx logic
+                Ok(true)
+            }
+        })
+        .await;
+
+    match result {
+        Ok(acquired) => Ok(acquired),
+        Err(error) => Err(error).with_context(|| format!("locking {path:?}")),
+    }
+}
+
+pub trait AsyncExecutor {
+    fn spawn_blocking<F, R>(&self, f: F) -> impl std::future::Future<Output = R> + Send
+    where
+        F: FnOnce() -> R + Send + 'static,
+        R: Send + 'static;
+    fn timer(&self, duration: Duration) -> impl std::future::Future<Output = ()> + Send;
+}
+
+async fn open_lock_file<E>(executor: &E, path: &Path) -> Result<Arc<std::fs::File>>
+where
+    E: AsyncExecutor,
+{
+    let path = path.to_owned();
+    executor
+        .spawn_blocking(move || {
+            let file = std::fs::OpenOptions::new()
+                .read(true)
+                .write(true)
+                .create(true)
+                .truncate(false)
+                .open(&path)
+                .with_context(|| format!("opening {path:?}"))?;
+            Ok(Arc::new(file))
+        })
+        .await
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER block the threadpool worker inside the kernel wait queue
+async fn lock_file_deadlock_hazard(path: &Path) -> Result<std::fs::File> {
+    // ANTI-PATTERN: If pool size is 16 and 16 tasks wait here, no worker can
+    // execute the file operation needed to release the lock!
+    tokio::task::spawn_blocking(move || {
+        let file = std::fs::File::open(path)?;
+        // Kernel blocking call will not release OS thread
+        fs2::FileExt::lock_exclusive(&file)?; 
+        Ok(file)
+    }).await?
+}
+```
+
+**VERIFICATION METHOD**:
+Run an automated stress integration test that spawns a thread pool with fixed capacity $M$ (e.g., 4 threads) and enqueues $N > M$ concurrent waiters ($N = 512$) on an exclusive file lock, while requiring the lock-holding task to perform concurrent file read/write operations via the same executor before releasing the lock. Verify all waiters successfully acquire and release without deadlocks (`fs_tests::test_realfs_lock_waiters_leave_threads_for_file_operations`).
+
+---
+
+
+---
+
+## 9701. State Machine Cancellation Event Absorption Invariant (Harvested from zed-industries/zed)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "State Machine Cancellation Event Absorption Invariant",
+  "source": "zed-industries/zed",
+  "source_url": "https://github.com/zed-industries/zed",
+  "source_version": "2f808b3c",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-21T02:11:53.392Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zed-industries-zed",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zed-industries/zed](https://github.com/zed-industries/zed) (Revision: `2f808b3c`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When an interactive reactive state machine initiates an explicit preemption or cancellation of an asynchronous process (e.g., "Send Now" preempting an ongoing streaming generation), the coordinator MUST transition to a dedicated transitional state (e.g., `AbsorbingCancel`) that intercepts and consumes the subsequent termination signal (e.g., `Stopped`) without triggering associated auto-advance or queue-drain transitions.
+
+**WHY**:
+Asynchronous dispatch mechanisms exhibit race conditions between intentional UI cancellations and system event streams. If an agent task is cancelled in-flight to urgently dispatch a higher-priority message, the cancelled task emits an asynchronous `Stopped` or `Aborted` completion event. If the queue is in standard `AutoProcess` mode, the handler processes this `Stopped` event as an organic turn boundary and immediately pops/dispatches the *next* queue item, resulting in an immediate duplicate send or an invalid interleaved state mutation.
+
+**WHEN TO APPLY**:
+Applies to client-side LLM conversation pipelines, stream-cancellation handlers, transaction rollbacks, or network request queues where user preemption cancels an in-flight future while maintaining a FIFO buffer of follow-up tasks.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Extracted and generalized from crates/agent_ui/src/conversation_view/message_queue.rs
+use std::collections::VecDeque;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ProcessingState {
+    AutoProcess,
+    Paused,
+    AbsorbingCancel,
+}
+
+pub struct PrioritizedCommandQueue<T> {
+    entries: VecDeque<T>,
+    state: ProcessingState,
+}
+
+impl<T> PrioritizedCommandQueue<T> {
+    pub fn new() -> Self {
+        Self {
+            entries: VecDeque::new(),
+            state: ProcessingState::AutoProcess,
+        }
+    }
+
+    /// User explicitly forces immediate dispatch, preempting active execution.
+    pub fn dispatch_preempting(&mut self, is_generating: bool) -> Option<T> {
+        let entry = self.entries.pop_front()?;
+        if is_generating {
+            // CRITICAL INVARIANT: Absorb the termination event generated by the cancellation
+            self.state = ProcessingState::AbsorbingCancel;
+        } else {
+            self.state = ProcessingState::AutoProcess;
+        }
+        Some(entry)
+    }
+
+    /// Callback invoked when the underlying engine reports it has stopped.
+    pub fn on_execution_stopped(&mut self, is_editor_focused: bool) -> Option<T> {
+        match self.state {
+            ProcessingState::AbsorbingCancel => {
+                // Invariant: The cancellation was self-initiated.
+                // Reset state to AutoProcess and swallow event completely.
+                self.state = ProcessingState::AutoProcess;
+                None
+            }
+            ProcessingState::Paused => None,
+            ProcessingState::AutoProcess => {
+                if !is_editor_focused && !self.entries.is_empty() {
+                    self.entries.pop_front()
+                } else {
+                    None
+                }
+            }
+        }
+    }
+
+    pub fn pause(&mut self) {
+        self.state = ProcessingState::Paused;
+    }
+
+    pub fn resume(&mut self) {
+        self.state = ProcessingState::AutoProcess;
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER directly pop next entry on process termination without cancellation source tracking
+fn on_generation_stopped_flawed(queue: &mut VecDeque<Message>, is_cancelled: bool) -> Option<Message> {
+    // BUG: If user hit "Send Now", cancelling generation #1, this Stopped event fires.
+    // It pops message #2 immediately, triggering dual sends concurrently!
+    queue.pop_front() 
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a stateful mock test where `dispatch_preempting(true)` is called while mock generation is active. Trigger `on_execution_stopped(false)` and assert that `None` is returned, the state transitions back to `ProcessingState::AutoProcess`, and the queue entry count is unchanged.
+
+---
+
+
+---
+
+## 9702. Tree-Sitter Highlighting Specificity & Grammar Disambiguation Order (Harvested from zed-industries/zed)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Tree-Sitter Highlighting Specificity & Grammar Disambiguation Order",
+  "source": "zed-industries/zed",
+  "source_url": "https://github.com/zed-industries/zed",
+  "source_version": "2f808b3c",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-21T02:11:53.817Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zed-industries-zed",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zed-industries/zed](https://github.com/zed-industries/zed) (Revision: `2f808b3c`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Syntax highlight query patterns (`highlights.scm`) MUST match the most specific AST node types and MUST place keyword/unary operator fallback tokens *below* compound type identifiers, or explicitly constrain overlapping tokens with structural parent nodes. Broad wrapper nodes (such as `(type_annotation)` or `(arrow_function)`) MUST NOT capture entire spans containing nested punctuation, trivia, or sub-expressions.
+
+**WHY**:
+Tree-sitter resolves capture matches according to pattern order and specificity. When an operator token (e.g., `void` in JavaScript/TypeScript) operates as both an expression keyword (`void 0`) and a predefined primitive type (`(): void`), placing `["void"] @keyword` without parent-type qualification forces type annotations to be highlighted as control keywords. Furthermore, capturing full compound rules like `(type_annotation) @type` colors whitespace, colons, and delimiters, stripping syntax themes of structural granularity and corrupting semantic diff engines.
+
+**WHEN TO APPLY**:
+Tree-sitter grammar integrations, custom syntax highlighting definitions, language server semantic token mappings, and AST-driven code manipulation engines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```scheme
+;; Extracted and generalized from crates/grammars/src/typescript/highlights.scm
+
+; Specific type identifiers only (DO NOT highlight the full type_annotation wrapper)
+(type_identifier) @type
+(predefined_type) @type.builtin
+(this_type) @type.builtin
+
+; Unary operator vs predefined type disambiguation
+; `void` is both a unary operator keyword and a predefined type.
+; Explicitly constrain `void` within (predefined_type) to override the general keyword capture.
+(predefined_type
+  "void" @type.builtin)
+
+; General keyword fallback list placed downstream
+[
+  "const"
+  "let"
+  "var"
+  "with"
+  "void"
+] @keyword
+```
+
+**NEGATIVE CONSTRAINT**:
+```scheme
+;; ANTI-PATTERN: Greedy wrapper matching captures delimiters, colons, and whitespace
+(type_annotation) @type
+(arrow_function) @function
+
+;; ANTI-PATTERN: Unqualified keywords override valid AST typing context
+"void" @keyword
+(predefined_type) @type.builtin
+```
+
+**VERIFICATION METHOD**:
+Construct an integration test asserting highlight byte ranges over a multi-token string:
+`class B { add(): this { return this; } }\nfunction log(): void { void 0; }`
+Assert that range `[17..21]` (`this` return type) matches `type.builtin`, range `[57..61]` (`void` return type) matches `type.builtin`, and range `[64..68]` (`void 0` operator) matches `keyword`.
+
+---

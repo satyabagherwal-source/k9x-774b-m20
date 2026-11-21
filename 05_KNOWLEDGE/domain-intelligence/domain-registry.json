@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T02:00:47.097Z",
-  "total_records": 2213,
+  "last_updated": "2026-11-21T02:13:41.363Z",
+  "total_records": 2218,
   "domains": {
     "A": {
       "total": 17,
@@ -27,7 +27,7 @@
       ]
     },
     "B": {
-      "total": 18,
+      "total": 19,
       "record_ids": [
         "DOM-B-44DC921B",
         "DOM-B-1CC83E41",
@@ -46,7 +46,8 @@
         "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
         "domain_intelligence-product-intelligence-transact-rs-sqlx-core-invariants",
         "domain_intelligence-product-intelligence-transact-rs-sqlx-learnings-core-invariants",
-        "domain_intelligence-product-intelligence-kcl-lang-kcl-learnings-core-invariants"
+        "domain_intelligence-product-intelligence-kcl-lang-kcl-learnings-core-invariants",
+        "DOM-B-2C8CFAB3"
       ]
     },
     "C": {
@@ -58,7 +59,7 @@
       ]
     },
     "D": {
-      "total": 886,
+      "total": 887,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -945,7 +946,8 @@
         "DOM-D-6E87E9F5",
         "domain_intelligence-research-knowledge-intelligence-skyhook-io-radar-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-biomejs-biome-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-biomejs-biome-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-biomejs-biome-learnings-core-invariants",
+        "DOM-D-9397456A"
       ]
     },
     "E": {
@@ -1417,7 +1419,7 @@
       ]
     },
     "H": {
-      "total": 519,
+      "total": 522,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1937,7 +1939,10 @@
         "domain_intelligence-technical-construction-intelligence-parcel-bundler-parcel-learnings-core-invaria",
         "domain_intelligence-technical-construction-intelligence-dosco-deeporg-core-invariants",
         "domain_intelligence-technical-construction-intelligence-dosco-deeporg-learnings-core-invariants",
-        "DOM-H-0664FD36"
+        "DOM-H-0664FD36",
+        "domain_intelligence-technical-construction-intelligence-zed-industries-zed-core-invariants",
+        "DOM-H-09C0B40C",
+        "domain_intelligence-technical-construction-intelligence-zed-industries-zed-learnings-core-invariants"
       ]
     },
     "I": {
@@ -22122,8 +22127,8 @@
       "title": "Content & Information Intelligence: pixeltable/pixeltable Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pixeltable-pixeltable-content-information-intelligence-pixeltable-pixeltable-cor.md",
       "repository": "pixeltable/pixeltable",
-      "content_hash": "b843a4da7058c898507248ab0a7b2bac00adbadb8cafd5165f0d9403c258e08f",
-      "created_at": "2026-11-20T00:33:27.746Z"
+      "content_hash": "25a868b6e40926256c3b447167d5441326578a6ee6cfe1188babdffcd224daca",
+      "created_at": "2026-11-21T02:08:44.448Z"
     },
     "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants",
@@ -22131,8 +22136,8 @@
       "title": "Content & Information Intelligence: pixeltable-pixeltable-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pixeltable-pixeltable-learnings-content-information-intelligence-pixeltable-pixe.md",
       "repository": "pixeltable-pixeltable-learnings",
-      "content_hash": "d634c5dcfed79f5c601a131c1e00d866df0adce6de9ff7f986ed07fd97d7c9b3",
-      "created_at": "2026-11-20T00:33:32.053Z"
+      "content_hash": "e016c4906c703a4b6f0f758e2d35a8133b7c7f2c187462ebcbd98b20e2007731",
+      "created_at": "2026-11-21T02:13:41.363Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-deepseek-v4-1-flash-1017-uncensored-g": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-deepseek-v4-1-flash-1017-uncensored-g",
@@ -25946,8 +25951,8 @@
       "title": "Technical Construction Intelligence: electron/electron Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-electron-electron-technical-construction-intelligence-electron-electron-core-inv.md",
       "repository": "electron/electron",
-      "content_hash": "b495ed5e9964ff0e90e760f3d9a677707619a430a6baaba0985faea30d3705e8",
-      "created_at": "2026-11-17T04:13:25.822Z"
+      "content_hash": "2f872f2b564be163bb10efc42ba8824d6646b81dfae1f092aeb9c9f8e50c9e21",
+      "created_at": "2026-11-21T02:08:36.893Z"
     },
     "DOM-D-2B088993": {
       "record_id": "DOM-D-2B088993",
@@ -26006,8 +26011,8 @@
       "title": "Technical Construction Intelligence: electron-electron-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-electron-electron-learnings-technical-construction-intelligence-electron-electro.md",
       "repository": "electron-electron-learnings",
-      "content_hash": "796dc78d54e045b23eecab38ebeeb9af8a240217a379e11d159ae35443a4f4ae",
-      "created_at": "2026-11-17T04:14:01.534Z"
+      "content_hash": "b6adea46555fa38e534fa9990e4451b589e3cc9ad8cced532cfab279ae20d2a6",
+      "created_at": "2026-11-21T02:13:40.353Z"
     },
     "domain_intelligence-technical-construction-intelligence-rollup-rollup-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rollup-rollup-core-invariants",
@@ -37172,6 +37177,134 @@
       "repository": "software-mansion-react-native-screens-learnings",
       "content_hash": "498080c61ac3654cc7b52811d09f10f47e5be074ef3fd21d0d016ee059fdd5ec",
       "created_at": "2026-11-21T01:51:41.229Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zed-industries-zed-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-zed-industries-zed-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: zed-industries/zed Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zed-industries-zed-technical-construction-intelligence-zed-industries-zed-core-i.md",
+      "repository": "zed-industries/zed",
+      "content_hash": "8472b289c6fb1e57a0bfa28fb6bd35c57bcbc0a2c47ebcbf474422deed2549db",
+      "created_at": "2026-11-21T02:11:54.765Z"
+    },
+    "DOM-H-09C0B40C": {
+      "record_id": "DOM-H-09C0B40C",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Premature Deletion of Active Agent Binaries via Registry Cache Scavenging (BUG-ACP-01)",
+      "content": "Resource leases for on-disk executable directories must be bound directly to the operating system's process exit signal via shared advisory file locks on auxiliary lease files, surviving client crashes and decoupling cleanup from runtime connection lifetimes.",
+      "content_hash": "9a8463ddac1e8cb6686fc42d3f4c2829b1b59491aa4701c3cafae712f1cbc74e",
+      "summary": "Directory deletion checks had no cross-process reference counting or lease locks. Furthermore, connection handles (`AcpConnection`) were dro -> Resource leases for on-disk executable directories must be bound directly to the operating system's process exit signal via shared advisory ",
+      "provenance": {
+        "source_uri": "project://zed-industries-zed/zed-industries-zed-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T02:11:57.772Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (zed-industries-zed)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `07278edd`, PR #66971, Issue `agentclientprotocol/claude-agent-acp#1596`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T02:12:23.395Z"
+    },
+    "DOM-B-2C8CFAB3": {
+      "record_id": "DOM-B-2C8CFAB3",
+      "domain_letter": "B",
+      "domain_id": "product",
+      "domain_name": "Product Intelligence",
+      "secondary_domains": [],
+      "title": "Tree-Sitter Semantic Capture Collision in TypeScript/TSX Grammars (BUG-TS-02)",
+      "content": "Never apply tree-sitter captures to compound AST nodes containing trailing trivia or sub-expressions; scope captures strictly to leaf identifier nodes and explicitly constrain polymorphic language tokens with their parent node context.",
+      "content_hash": "3b1bfd2eb103bff31826b1fe114fef00c5ae04a85c89dd5f2cc6b5284a5b4078",
+      "summary": "Excessive capture scope in Tree-Sitter queries and unconstrained token matching where operator keywords took precedence over context-specifi -> Never apply tree-sitter captures to compound AST nodes containing trailing trivia or sub-expressions; scope captures strictly to leaf identi",
+      "provenance": {
+        "source_uri": "project://zed-industries-zed/zed-industries-zed-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T02:11:57.772Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (zed-industries-zed)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `a246423a`, PR #64462, Issue #47049."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T02:12:57.747Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zed-industries-zed-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-zed-industries-zed-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: zed-industries-zed-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zed-industries-zed-learnings-technical-construction-intelligence-zed-industries-.md",
+      "repository": "zed-industries-zed-learnings",
+      "content_hash": "26ba9c858401c8c511b2b4fecac4bb43980b08e9f3d3de2dd8935ed9061e8548",
+      "created_at": "2026-11-21T02:12:58.509Z"
+    },
+    "DOM-D-9397456A": {
+      "record_id": "DOM-D-9397456A",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "build: replace the loading benchmark page and keep partial benchmark results",
+      "content": "When implementing operations in `script/benchmarks/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in electron/electron. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "7ebbbb9df7f86bed996ca0d752d404cf838f9b3ae681fa594c1e366f21ba8172",
+      "summary": "Prevents defects observed in production commit `7ccb4856`: build: replace the loading benchmark page and keep partial benchmark results. Unv -> When implementing operations in `script/benchmarks/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, ",
+      "provenance": {
+        "source_uri": "project://electron-electron/electron-electron-learnings.md",
+        "source_version": "c7ba9db4",
+        "observed_at": "2026-11-21T02:08:35.786Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (electron-electron)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of electron-electron"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T02:13:39.543Z"
     }
   }
 }

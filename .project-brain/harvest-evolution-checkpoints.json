@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T02:00:47.538Z",
+  "last_updated": "2026-11-21T02:13:41.792Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T01:16:32.184Z",
@@ -63,8 +63,8 @@
       "staged_for_review": 1
     },
     "zed-industries-zed-learnings.md": {
-      "processed_at": "2026-11-19T16:07:56.510Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-21T02:12:57.768Z",
+      "promoted_canonical": 2,
       "staged_for_review": 0
     },
     "gkd-kit-gkd-learnings.md": {
@@ -1523,7 +1523,7 @@
       "staged_for_review": 0
     },
     "pixeltable-pixeltable-learnings.md": {
-      "processed_at": "2026-11-20T00:33:31.602Z",
+      "processed_at": "2026-11-21T02:13:40.675Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1913,9 +1913,9 @@
       "staged_for_review": 0
     },
     "electron-electron-learnings.md": {
-      "processed_at": "2026-11-17T04:14:00.829Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-21T02:13:39.563Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "hf-apple-lensvlm-9b-learnings.md": {
       "processed_at": "2026-11-18T13:17:36.795Z",
@@ -3653,7 +3653,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2706,
-  "total_canonical_promoted": 439,
-  "total_staged_for_review": 2080
+  "total_dossiers_evaluated": 2709,
+  "total_canonical_promoted": 442,
+  "total_staged_for_review": 2081
 }

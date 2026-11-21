@@ -2,25 +2,25 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-21T01:35:32.216Z",
+  "updated_at": "2026-11-21T02:13:39.561Z",
   "statistics": {
-    "total_nodes": 437,
-    "total_edges": 191,
+    "total_nodes": 440,
+    "total_edges": 192,
     "domain_distribution": {
-      "D": 278,
+      "D": 279,
       "M": 1,
-      "H": 66,
+      "H": 67,
       "J": 22,
       "K": 27,
       "L": 8,
       "G": 1,
       "F": 22,
-      "B": 2,
+      "B": 3,
       "E": 2,
       "I": 8
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 189,
+      "CONSTRAINED_BY_ARCHITECTURE": 190,
       "VERIFIED_BY_TEST": 1,
       "STYLED_BY_DESIGN": 1
     }
@@ -9767,6 +9767,73 @@
       ],
       "created_at": "2026-11-21T01:35:32.216Z",
       "updated_at": "2026-11-21T01:35:32.216Z"
+    },
+    "DOM-H-09C0B40C": {
+      "id": "DOM-H-09C0B40C",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Premature Deletion of Active Agent Binaries via Registry Cache Scavenging (BUG-ACP-01)",
+      "summary": "Directory deletion checks had no cross-process reference counting or lease locks. Furthermore, connection handles (`AcpConnection`) were dro -> Resource leases for on-disk executable directories must be bound directly to the operating system's process exit signal via shared advisory ",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://zed-industries-zed/zed-industries-zed-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T02:11:57.772Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (zed-industries-zed)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-21T02:12:23.424Z",
+      "updated_at": "2026-11-21T02:12:23.424Z"
+    },
+    "DOM-B-2C8CFAB3": {
+      "id": "DOM-B-2C8CFAB3",
+      "domain": "B",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Tree-Sitter Semantic Capture Collision in TypeScript/TSX Grammars (BUG-TS-02)",
+      "summary": "Excessive capture scope in Tree-Sitter queries and unconstrained token matching where operator keywords took precedence over context-specifi -> Never apply tree-sitter captures to compound AST nodes containing trailing trivia or sub-expressions; scope captures strictly to leaf identi",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://zed-industries-zed/zed-industries-zed-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T02:11:57.772Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (zed-industries-zed)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "B",
+        "Product Intelligence"
+      ],
+      "created_at": "2026-11-21T02:12:57.766Z",
+      "updated_at": "2026-11-21T02:12:57.766Z"
+    },
+    "DOM-D-9397456A": {
+      "id": "DOM-D-9397456A",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "build: replace the loading benchmark page and keep partial benchmark results",
+      "summary": "Prevents defects observed in production commit `7ccb4856`: build: replace the loading benchmark page and keep partial benchmark results. Unv -> When implementing operations in `script/benchmarks/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, ",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://electron-electron/electron-electron-learnings.md",
+        "source_version": "c7ba9db4",
+        "observed_at": "2026-11-21T02:08:35.786Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (electron-electron)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-21T02:13:39.561Z",
+      "updated_at": "2026-11-21T02:13:39.561Z"
     }
   },
   "edges": [
@@ -11679,6 +11746,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-K-B3BE81E5 [K] with Domain H",
       "created_at": "2026-11-20T23:22:00.040Z"
+    },
+    {
+      "id": "EDGE-401C6E76A04B",
+      "sourceId": "DOM-D-9397456A",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-9397456A [D] with Domain G",
+      "created_at": "2026-11-21T02:13:39.561Z"
     }
   ]
 }
