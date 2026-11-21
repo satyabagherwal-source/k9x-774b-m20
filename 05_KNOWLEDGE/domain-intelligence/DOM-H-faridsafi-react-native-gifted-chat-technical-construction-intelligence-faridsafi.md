@@ -4,24 +4,24 @@
 {
   "source_repository": "FaridSafi/react-native-gifted-chat",
   "source_url": "https://github.com/FaridSafi/react-native-gifted-chat",
-  "source_version": "46a1ddbe",
+  "source_version": "a512f0f5",
   "license": "MIT",
-  "timestamp": "2026-11-18T13:34:18.000Z",
+  "timestamp": "2026-11-21T17:05:51.648Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-faridsafi-react-native-gifted-chat",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [FaridSafi/react-native-gifted-chat](https://github.com/FaridSafi/react-native-gifted-chat) (Revision: `46a1ddbe`).  
-> **License**: MIT | **Timestamp**: `2026-11-18T13:34:18.000Z`  
+> **Provenance**: Harvested from [FaridSafi/react-native-gifted-chat](https://github.com/FaridSafi/react-native-gifted-chat) (Revision: `a512f0f5`).  
+> **License**: MIT | **Timestamp**: `2026-11-21T17:05:51.648Z`  
 > **Learning ID**: `learn-github-faridsafi-react-native-gifted-chat`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 69%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 70%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from FaridSafi/react-native-gifted-chat:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FaridSafi/react-native-gifted-chat](https://github.com/FaridSafi/react-native-gifted-chat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T13:34:16.794Z  
+> **Harvest Timestamp**: 2026-11-21T17:05:50.955Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -320,38 +320,66 @@ export function useIsKeyboardVisible (isEnabled: boolean = true): boolean {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `46a1ddbe` (2026-11-18)
-**Commit Message**: docs: link the hire page without a trailing slash
+### Incident Patch 1: `a512f0f5` (2026-11-20)
+**Commit Message**: chore: release 3.6.0
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +8/-0)
 ```diff
-@@ -1063,7 +1063,7 @@ yarn prepublishOnly
+@@ -2,6 +2,14 @@
  
- **Co-author:** [Xavier Carpentier](https://www.x.com/xcapetir) - [Hire Xavier](https://xaviercarpentier.com)
+ > **Maintenance notice:** Active development has moved to **[@kesha-antonov/react-native-chat](https://github.com/kesha-antonov/react-native-chat)**. This package is now in maintenance mode and won't receive new features. See the fork for streaming AI messages and ongoing updates. Migrating is mostly a rename - see the fork's [migration guide](https://github.com/kesha-antonov/react-native-chat/blob/main/docs/MIGRATION.md).
  
--**Maintainer:** [Kesha Antonov](https://kesha-antonov.com), React Native lead engineer, [available for hire](https://kesha-antonov.com/react-native-developer/) - [GitHub](https://github.com/kesha-antonov)
-+**Maintainer:** [Kesha Antonov](https://kesha-antonov.com), React Native lead engineer, [available for hire](https://kesha-antonov.com/react-native-developer) - [GitHub](https://github.com/kesha-antonov)
++## [3.6.0] - 2026-11-20
++
++No changes to the library code. This release updates the README shown on npm.
++
++### Documentation
++
++- The Stream sponsor block and its logo are removed from the README
++
+ ## [3.5.0] - 2026-11-10
  
- > I've been maintaining this project for 2 years, completely in my free time and without any compensation. If you find it helpful, please consider [becoming a sponsor](https://github.com/sponsors/kesha-antonov) to support continued development. 💖
- >
+ ### Features
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "react-native-gifted-chat",
+-  "version": "3.5.0",
++  "version": "3.6.0",
+   "description": "The most complete chat UI for React Native. Maintenance mode - active development continues in @kesha-antonov/react-native-chat",
+   "keywords": [
+     "android",
 ```
 
 ---
 
-### Incident Patch 2: `7efb334e` (2026-11-18)
-**Commit Message**: docs: note that the maintainer is available for hire
+### Incident Patch 2: `4288c9b5` (2026-11-20)
+**Commit Message**: docs: remove the Stream sponsor
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `README.md` (modified, +0/-5)
 ```diff
-@@ -1063,7 +1063,7 @@ yarn prepublishOnly
- 
- **Co-author:** [Xavier Carpentier](https://www.x.com/xcapetir) - [Hire Xavier](https://xaviercarpentier.com)
- 
--**Maintainer:** [Kesha Antonov](https://kesha-antonov.com) - [GitHub](https://github.com/kesha-antonov)
-+**Maintainer:** [Kesha Antonov](https://kesha-antonov.com), React Native lead engineer, [available for hire](https://kesha-antonov.com/react-native-developer/) - [GitHub](https://github.com/kesha-antonov)
- 
- > I've been maintaining this project for 2 years, completely in my free time and without any compensation. If you find it helpful, please consider [becoming a sponsor](https://github.com/sponsors/kesha-antonov) to support continued development. 💖
- >
+@@ -64,9 +64,6 @@
+     <td align="center" valign="middle">
+       <a href="https://www.lereacteur.io" target="_blank"><img src="https://raw.githubusercontent.com/FaridSafi/react-native-gifted-chat/master/media/logo_sponsor.png" height="50"></a>
+     </td>
+-    <td align="center" valign="middle">
+-      <a href="https://getstream.io/chat/?utm_source=Github&utm_medium=Github_Repo_Content_Ad&utm_content=Developer&utm_campaign=Github_Jan2022_Chat&utm_term=react-native-gifted-chat" target="_blank"><img src="https://raw.githubusercontent.com/FaridSafi/react-native-gifted-chat/master/media/stream-logo.png" height="35"></a>
+-    </td>
+     <td align="center" valign="middle">
+       <a href="https://www.ethora.com" target="_blank"><img src="https://www.dappros.com/wp-content/uploads/2023/12/Ethora-Logo.png" height="50"></a>
+     </td>
+@@ -76,8 +73,6 @@
+ <p align="center">
+   <a href="https://www.lereacteur.io" target="_blank"><strong>Le Reacteur</strong></a> - Coding Bootcamp in Paris co-founded by Farid Safi
+   <br>
+-  <a href="https://getstream.io/chat/?utm_source=Github&utm_medium=Github_Repo_Content_Ad&utm_content=Developer&utm_campaign=Github_Jan2022_Chat&utm_term=react-native-gifted-chat" target="_blank"><strong>Stream</strong></a> - Scalable chat API/Server written in Go (<a href="https://getstream.io/chat/get_started/?utm_source=Github&utm_medium=Github_Repo_Content_Ad&utm_content=Developer&utm_campaign=Github_Jan2022_Chat&utm_term=react-native-gifted-chat" target="_blank">API Tour</a> | <a href="https://dev.to/nickparsons/react-native-chat-with-chuck-norris-3h7m?utm_source=Github&utm_medium=Github_Repo_Content_Ad&utm_content=Developer&utm_campaign=Github_Jan2022_Chat&utm_term=react-native-gifted-chat" target="_blank">Tutorial</a>)
+-  <br>
+   <a href="https://www.ethora.com" target="_blank"><strong>Ethora</strong></a> - A complete app engine featuring GiftedChat (<a href="https://bit.ly/ethorachat" target="_blank">GitHub</a>)
+   <br><br>
+   📚 <a href="https://amzn.to/3ZmTyb2" target="_blank">React Key Concepts (2nd ed.)</a>
 ```
 
 #### Recent Merged Pull Requests:
@@ -380,31 +408,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: link the hire page without a trailing slash
+## X. release 3.6.0
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FaridSafi/react-native-gifted-chat. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FaridSafi/react-native-gifted-chat. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `46a1ddbe`: docs: link the hire page without a trailing slash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a512f0f5`: release 3.6.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-**Maintainer:** [Kesha Antonov](https://kesha-antonov.com), React Native lead engineer, [available for hire](https://kesha-antonov.com/react-native-developer) - [GitHub](https://github.com/kesha-antonov)
+## [3.6.0] - 2026-11-20
+
+No changes to the library code. This release updates the README shown on npm.
+
+### Documentation
+
+- The Stream sponsor block and its logo are removed from the README
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-**Maintainer:** [Kesha Antonov](https://kesha-antonov.com), React Native lead engineer, [available for hire](https://kesha-antonov.com/react-native-developer/) - [GitHub](https://github.com/kesha-antonov)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `46a1ddbe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a512f0f5` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

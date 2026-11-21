@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T16:40:23.167Z",
-  "total_records": 2260,
+  "last_updated": "2026-11-21T17:06:07.480Z",
+  "total_records": 2262,
   "domains": {
     "A": {
       "total": 17,
@@ -59,7 +59,7 @@
       ]
     },
     "D": {
-      "total": 890,
+      "total": 892,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -950,7 +950,9 @@
         "DOM-D-9397456A",
         "domain_intelligence-research-knowledge-intelligence-sfu-db-connector-x-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-kuddev-pebrel-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-kuddev-pebrel-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-kuddev-pebrel-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-nanbeige-nanbeige4-3-33b-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-nanbeige-nanbeige4-3-33b-learnings-core-invar"
       ]
     },
     "E": {
@@ -11345,8 +11347,8 @@
       "title": "Technical Construction Intelligence: FaridSafi/react-native-gifted-chat Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-faridsafi-react-native-gifted-chat-technical-construction-intelligence-faridsafi.md",
       "repository": "FaridSafi/react-native-gifted-chat",
-      "content_hash": "3b6f107891e42c92b8b5848448e8e0ac1ac3d0e9cd1c3d3eb6722325755d2ddd",
-      "created_at": "2026-11-18T13:34:18.142Z"
+      "content_hash": "e71adadcd630db8e21a95543e05069fe970c72d0b3791a5ccadcc5233455103c",
+      "created_at": "2026-11-21T17:05:51.802Z"
     },
     "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-core-invariants",
@@ -11432,8 +11434,8 @@
       "title": "Technical Construction Intelligence: faridsafi-react-native-gifted-chat-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-faridsafi-react-native-gifted-chat-learnings-technical-construction-intelligence.md",
       "repository": "faridsafi-react-native-gifted-chat-learnings",
-      "content_hash": "360791069e10061cd1ab36fb0801fd684efe2fee303b277a77145b16f743e988",
-      "created_at": "2026-11-18T13:34:27.322Z"
+      "content_hash": "3b121d3237f60d58c958e3cd045b0de808d48a2cc04c41b6d88e8ba0d4176171",
+      "created_at": "2026-11-21T17:06:07.480Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-minimax-h3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-minimax-h3-core-invariants",
@@ -24509,8 +24511,8 @@
       "title": "Architecture Intelligence: nginx/kubernetes-ingress Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-architecture-intelligence-nginx-kubernetes-ingress-core.md",
       "repository": "nginx/kubernetes-ingress",
-      "content_hash": "3d2cddad0cfc0305dde06bf3df743645b7ec88910e5523532c6ccdedf0bcb588",
-      "created_at": "2026-11-20T13:26:41.987Z"
+      "content_hash": "ab24e97cb45202f111994628178dae092bd1fa2c306cbf1fb8c104701e850291",
+      "created_at": "2026-11-21T17:05:54.661Z"
     },
     "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants",
@@ -25163,8 +25165,8 @@
       "title": "Technical Construction Intelligence: zeronsh/zeron Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zeronsh-zeron-technical-construction-intelligence-zeronsh-zeron-core-invariants.md",
       "repository": "zeronsh/zeron",
-      "content_hash": "4fb69f3bd0a62e327ab927e0b7137d7829e9ee40f0b9b5749c11d3667d8749c9",
-      "created_at": "2026-11-20T02:27:42.187Z"
+      "content_hash": "03a1dbac813b25cc7c87ed26116b24c3e37c76fbc38f9bf5fd02c591f42cba90",
+      "created_at": "2026-11-21T17:05:47.235Z"
     },
     "domain_intelligence-technical-construction-intelligence-authzed-spicedb-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-authzed-spicedb-core-invariants",
@@ -25190,8 +25192,8 @@
       "title": "Technical Construction Intelligence: zeronsh-zeron-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zeronsh-zeron-learnings-technical-construction-intelligence-zeronsh-zeron-learni.md",
       "repository": "zeronsh-zeron-learnings",
-      "content_hash": "71f6a996e2f5c4e6c6acfa140981f439c9635855837e8a250ace7c72452a512a",
-      "created_at": "2026-11-20T02:27:54.003Z"
+      "content_hash": "bd96b6fd5c11d71df9e14fc5d9f650fc18bd71841f94f9d0383787d6e99b4a30",
+      "created_at": "2026-11-21T17:06:05.895Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor",
@@ -37932,6 +37934,24 @@
       "repository": "kuddev-pebrel-learnings",
       "content_hash": "d3d3f52767aed83c27b68c05fe17a240fc73e8a654e34411325996f79b5a9ba2",
       "created_at": "2026-11-21T16:40:21.608Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-nanbeige-nanbeige4-3-33b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-nanbeige-nanbeige4-3-33b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Nanbeige/Nanbeige4.3-33B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nanbeige-nanbeige4-3-33b-research-knowledge-intelligence-nanbeige-nanbeige4-3.md",
+      "repository": "Nanbeige/Nanbeige4.3-33B",
+      "content_hash": "e7d2fc692e71d9b8523627c122e994a930ea9cc06945943ddba354188c7c4cce",
+      "created_at": "2026-11-21T17:06:02.666Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nanbeige-nanbeige4-3-33b-learnings-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nanbeige-nanbeige4-3-33b-learnings-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-nanbeige-nanbeige4.3-33b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nanbeige-nanbeige4-3-33b-learnings-research-knowledge-intelligence-hf-nanbeig.md",
+      "repository": "hf-nanbeige-nanbeige4.3-33b-learnings",
+      "content_hash": "02a83bea7458b6d983152b714b58869b7497fdbf571dc540d52d133f04627842",
+      "created_at": "2026-11-21T17:06:06.384Z"
     }
   }
 }

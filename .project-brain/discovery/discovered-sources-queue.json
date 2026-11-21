@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T16:40:22.669Z",
+  "updated_at": "2026-11-21T17:06:07.132Z",
   "stats": {
-    "total_discovered": 7252,
-    "approved_pending_harvest": 6854,
+    "total_discovered": 7262,
+    "approved_pending_harvest": 6864,
     "harvested_count": 0,
     "rejected_count": 398,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6835,
+      "COMMUNITY_AND_EXPERT": 6845,
       "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -156781,6 +156781,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
         "fileName": "callstack-react-native-paper-learnings.md"
+      }
+    },
+    "SRC-5BB6D91E0F81": {
+      "id": "SRC-5BB6D91E0F81",
+      "url": "https://www.lereacteur.io/",
+      "title": "https://www.lereacteur.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T17:06:06.714Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-69BB7D2AAA22": {
+      "id": "SRC-69BB7D2AAA22",
+      "url": "https://raw.githubusercontent.com/FaridSafi/react-native-gifted-chat/master/media/logo_sponsor.png",
+      "title": "https://raw.githubusercontent.com/FaridSafi/react-native-gifted-chat/master/media/logo_sponsor.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T17:06:06.759Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-A3DD2EE84AD0": {
+      "id": "SRC-A3DD2EE84AD0",
+      "url": "https://getstream.io/chat",
+      "title": "https://getstream.io/chat",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T17:06:06.804Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-33F945DE00E2": {
+      "id": "SRC-33F945DE00E2",
+      "url": "https://raw.githubusercontent.com/FaridSafi/react-native-gifted-chat/master/media/stream-logo.png",
+      "title": "https://raw.githubusercontent.com/FaridSafi/react-native-gifted-chat/master/media/stream-logo.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T17:06:06.846Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-8B3EF77E834B": {
+      "id": "SRC-8B3EF77E834B",
+      "url": "https://www.ethora.com/",
+      "title": "https://www.ethora.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T17:06:06.894Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-CCD6C98E112B": {
+      "id": "SRC-CCD6C98E112B",
+      "url": "https://www.dappros.com/wp-content/uploads/2023/12/Ethora-Logo.png",
+      "title": "https://www.dappros.com/wp-content/uploads/2023/12/Ethora-Logo.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T17:06:06.935Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-3A2EDE0F0D32": {
+      "id": "SRC-3A2EDE0F0D32",
+      "url": "https://getstream.io/chat/get_started",
+      "title": "https://getstream.io/chat/get_started",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T17:06:06.990Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-1FF005C4BF28": {
+      "id": "SRC-1FF005C4BF28",
+      "url": "https://dev.to/nickparsons/react-native-chat-with-chuck-norris-3h7m",
+      "title": "https://dev.to/nickparsons/react-native-chat-with-chuck-norris-3h7m",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T17:06:07.043Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-DBBB904D8CE2": {
+      "id": "SRC-DBBB904D8CE2",
+      "url": "https://bit.ly/ethorachat",
+      "title": "https://bit.ly/ethorachat",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T17:06:07.087Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-8E4A6FD6A480": {
+      "id": "SRC-8E4A6FD6A480",
+      "url": "https://amzn.to/3ZmTyb2",
+      "title": "https://amzn.to/3ZmTyb2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T17:06:07.132Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
+        "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
       }
     }
   }

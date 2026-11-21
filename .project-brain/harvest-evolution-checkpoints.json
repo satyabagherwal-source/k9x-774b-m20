@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T16:40:23.579Z",
+  "last_updated": "2026-11-21T17:06:07.777Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T15:59:55.405Z",
@@ -503,7 +503,7 @@
       "staged_for_review": 1
     },
     "zeronsh-zeron-learnings.md": {
-      "processed_at": "2026-11-20T02:27:53.523Z",
+      "processed_at": "2026-11-21T17:06:05.488Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1628,8 +1628,8 @@
       "staged_for_review": 0
     },
     "hf-nanbeige-nanbeige4.3-33b-learnings.md": {
-      "processed_at": "2026-11-17T18:44:44.099Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-21T17:06:06.198Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "gluesql-gluesql-learnings.md": {
@@ -2218,7 +2218,7 @@
       "staged_for_review": 0
     },
     "faridsafi-react-native-gifted-chat-learnings.md": {
-      "processed_at": "2026-11-18T13:34:26.720Z",
+      "processed_at": "2026-11-21T17:06:06.566Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3668,7 +3668,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2838,
+  "total_dossiers_evaluated": 2841,
   "total_canonical_promoted": 449,
-  "total_staged_for_review": 2182
+  "total_staged_for_review": 2184
 }

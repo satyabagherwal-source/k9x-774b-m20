@@ -3083,10 +3083,10 @@
     "repository": "FaridSafi/react-native-gifted-chat",
     "platform": "github",
     "sourceUrl": "https://github.com/FaridSafi/react-native-gifted-chat",
-    "sourceVersion": "46a1ddbe",
+    "sourceVersion": "a512f0f5",
     "license": "MIT",
-    "contentHash": "71d64e358599001b7af0f4d02bda8431ca63c174b6036f382a7db324d903d5ee",
-    "lastHarvestedAt": "2026-11-18T13:34:17.810Z",
+    "contentHash": "5e8afa67af804182ca16058d99736352d171b9e909ddbd6c0377387bba948cb1",
+    "lastHarvestedAt": "2026-11-21T17:05:51.421Z",
     "learningId": "learn-github-faridsafi-react-native-gifted-chat"
   },
   "taubyte-tau": {
@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "33d981bd",
+    "sourceVersion": "46f18fe4",
     "license": "MIT",
-    "contentHash": "1f6db0bd43c635b69c9d727cf77145c04b0963930efbc47c84152d43f7ec65df",
-    "lastHarvestedAt": "2026-11-20T02:27:41.821Z",
+    "contentHash": "828d2cdb2d2ef04a771ea19b2a2707d51edcec11dc62ca100d36827234e1172b",
+    "lastHarvestedAt": "2026-11-21T17:05:46.877Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "7e3deaf6",
+    "sourceVersion": "7ba55784",
     "license": "Apache-2.0",
-    "contentHash": "f90b37eb9dc9fab6f46d7052f786c25f86d0b997e63336d63dfb876bec994bda",
-    "lastHarvestedAt": "2026-11-20T13:26:41.622Z",
+    "contentHash": "79074d3e1188c8676fa39befb66a7a86df7395663e1cab6cea46a961cbb6762f",
+    "lastHarvestedAt": "2026-11-21T17:05:54.309Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {
@@ -10705,8 +10705,8 @@
     "sourceUrl": "https://huggingface.co/Nanbeige/Nanbeige4.3-33B",
     "sourceVersion": "hf-nanbeige-nanbeige4.3-33b",
     "license": "Open-Source",
-    "contentHash": "0bca3a96d522ce417610274f279f242c895253f26c214c3e3b88b5189858d038",
-    "lastHarvestedAt": "2026-11-17T18:44:17.199Z",
+    "contentHash": "9a37fdb9bead07da7aabc5e3d81c65c006878bdba17e4f7cda5e5b414ca83382",
+    "lastHarvestedAt": "2026-11-21T17:06:02.480Z",
     "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b"
   },
   "kajisho5-ffmpeg-skill": {

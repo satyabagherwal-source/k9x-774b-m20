@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T16:40:23.388Z",
+  "last_updated": "2026-11-21T17:06:07.628Z",
   "total_verified_learnings": 9060,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23160,
+  "total_items": 23168,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217800,8 +217800,8 @@
       "slug": "faridsafi-react-native-gifted-chat",
       "platform": "github",
       "source_url": "https://github.com/FaridSafi/react-native-gifted-chat",
-      "source_version": "46a1ddbe",
-      "content_hash": "71d64e358599001b7af0f4d02bda8431ca63c174b6036f382a7db324d903d5ee",
+      "source_version": "a512f0f5",
+      "content_hash": "5e8afa67af804182ca16058d99736352d171b9e909ddbd6c0377387bba948cb1",
       "dossier_path": "07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
       "promoted_rules": [
@@ -217816,7 +217816,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T13:34:17.619Z",
+      "verified_at": "2026-11-21T17:05:51.238Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217844,10 +217844,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-faridsafi-react-native-gifted-chat-technical-construction-intelligence-faridsafi.md",
       "title": "Technical Construction Intelligence: FaridSafi/react-native-gifted-chat Core Invariants",
       "repository": "FaridSafi/react-native-gifted-chat",
-      "source_version": "46a1ddbe",
-      "content_hash": "3b6f107891e42c92b8b5848448e8e0ac1ac3d0e9cd1c3d3eb6722325755d2ddd",
+      "source_version": "a512f0f5",
+      "content_hash": "e71adadcd630db8e21a95543e05069fe970c72d0b3791a5ccadcc5233455103c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T13:34:18.142Z"
+      "persisted_at": "2026-11-21T17:05:51.802Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-faridsafi-react-native-gifted-": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-faridsafi-react-native-gifted-",
@@ -217857,9 +217857,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for faridsafi-react-native-gifted-chat-learnings",
       "repository": "faridsafi-react-native-gifted-chat-learnings",
       "source_version": "HEAD",
-      "content_hash": "0bfc5445f1fe27b4a96cda74bb60d069a5ddcb71bf929a7c9a21f7c64b5784f8",
+      "content_hash": "5a30b3aa8047aa5ed43ac49cc188163aa708d7efae3e10f029efc2f01e8dc4ed",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T13:34:27.465Z"
+      "persisted_at": "2026-11-21T17:06:07.628Z"
     },
     "learn-github-paradedb-paradedb": {
       "learning_id": "learn-github-paradedb-paradedb",
@@ -218052,9 +218052,9 @@
       "title": "Technical Construction Intelligence: faridsafi-react-native-gifted-chat-learnings Core Invariants",
       "repository": "faridsafi-react-native-gifted-chat-learnings",
       "source_version": "HEAD",
-      "content_hash": "360791069e10061cd1ab36fb0801fd684efe2fee303b277a77145b16f743e988",
+      "content_hash": "3b121d3237f60d58c958e3cd045b0de808d48a2cc04c41b6d88e8ba0d4176171",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T13:34:27.322Z"
+      "persisted_at": "2026-11-21T17:06:07.480Z"
     },
     "learn-huggingface-comfy-org-minimax-h3": {
       "learning_id": "learn-huggingface-comfy-org-minimax-h3",
@@ -218206,8 +218206,8 @@
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "7e3deaf6",
-      "content_hash": "f90b37eb9dc9fab6f46d7052f786c25f86d0b997e63336d63dfb876bec994bda",
+      "source_version": "7ba55784",
+      "content_hash": "79074d3e1188c8676fa39befb66a7a86df7395663e1cab6cea46a961cbb6762f",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "promoted_rules": [
@@ -218240,6 +218240,11 @@
           "number": 9575,
           "title": "[ci] Phase 3 Unify build workflows",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9807,
+          "title": "Update module github.com/dlclark/regexp2/v2 to v2.13.1 (main)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218247,7 +218252,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T13:26:41.428Z",
+      "verified_at": "2026-11-21T17:05:54.118Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218301,10 +218306,10 @@
       "relative_path": "08_VERIFICATION/nginx-kubernetes-ingress-verification-protocol-empirical-defect-shield-for-nginx.md",
       "title": "Verification Protocol: Empirical Defect Shield for nginx/kubernetes-ingress",
       "repository": "nginx/kubernetes-ingress",
-      "source_version": "7e3deaf6",
-      "content_hash": "1ca6d0fcd7219d2c8d2ecd0826d5e7adc69fa953a17636c863a5d723cee1238a",
+      "source_version": "7ba55784",
+      "content_hash": "247478aeba5295faa9e039c60dc82c5d5ee335856e48d4fcbadbb7d9219fe408",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T13:26:42.141Z"
+      "persisted_at": "2026-11-21T17:05:54.820Z"
     },
     "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-learnings-core-invaria",
@@ -243026,8 +243031,8 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "33d981bd",
-      "content_hash": "1f6db0bd43c635b69c9d727cf77145c04b0963930efbc47c84152d43f7ec65df",
+      "source_version": "46f18fe4",
+      "content_hash": "828d2cdb2d2ef04a771ea19b2a2707d51edcec11dc62ca100d36827234e1172b",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
@@ -243055,6 +243060,11 @@
           "number": 9496,
           "title": "every built-in agent, with every login it has locally",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9806,
+          "title": "prevent streaming veil from replaying finished and previous blocks",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -243062,7 +243072,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T02:27:41.623Z",
+      "verified_at": "2026-11-21T17:05:46.678Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243116,10 +243126,10 @@
       "relative_path": "08_VERIFICATION/zeronsh-zeron-verification-protocol-empirical-defect-shield-for-zeronsh-zeron.md",
       "title": "Verification Protocol: Empirical Defect Shield for zeronsh/zeron",
       "repository": "zeronsh/zeron",
-      "source_version": "33d981bd",
-      "content_hash": "dd1a7129dac389113554611962648a55c018fe8c99310be2c9b0afad5228b689",
+      "source_version": "46f18fe4",
+      "content_hash": "aad5efbe513987086e00824f4f2b22be9679635c5311db90c243da31e9cadeaf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T02:27:42.472Z"
+      "persisted_at": "2026-11-21T17:05:47.391Z"
     },
     "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf": {
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
@@ -243267,9 +243277,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zeronsh-zeron-learnings",
       "repository": "zeronsh-zeron-learnings",
       "source_version": "HEAD",
-      "content_hash": "1f7acb5d1262db04a2ac6c2ecc25e3f298d1121064d3302c334fe7049a6012a6",
+      "content_hash": "3abf2efd52f942867a72b7abfc226d252234158356c21aca355d9cdd01f7d9a0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T02:27:54.300Z"
+      "persisted_at": "2026-11-21T17:06:06.050Z"
     },
     "candidate_directive-chat-template-mutation-via-gguf-metadata-partitioning": {
       "item_id": "candidate_directive-chat-template-mutation-via-gguf-metadata-partitioning",
@@ -259743,10 +259753,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-architecture-intelligence-nginx-kubernetes-ingress-core.md",
       "title": "Architecture Intelligence: nginx/kubernetes-ingress Core Invariants",
       "repository": "nginx/kubernetes-ingress",
-      "source_version": "7e3deaf6",
-      "content_hash": "3d2cddad0cfc0305dde06bf3df743645b7ec88910e5523532c6ccdedf0bcb588",
+      "source_version": "7ba55784",
+      "content_hash": "ab24e97cb45202f111994628178dae092bd1fa2c306cbf1fb8c104701e850291",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T13:26:41.987Z"
+      "persisted_at": "2026-11-21T17:05:54.661Z"
     },
     "learn-github-rustls-rustls": {
       "learning_id": "learn-github-rustls-rustls",
@@ -263871,10 +263881,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zeronsh-zeron-technical-construction-intelligence-zeronsh-zeron-core-invariants.md",
       "title": "Technical Construction Intelligence: zeronsh/zeron Core Invariants",
       "repository": "zeronsh/zeron",
-      "source_version": "33d981bd",
-      "content_hash": "4fb69f3bd0a62e327ab927e0b7137d7829e9ee40f0b9b5749c11d3667d8749c9",
+      "source_version": "46f18fe4",
+      "content_hash": "03a1dbac813b25cc7c87ed26116b24c3e37c76fbc38f9bf5fd02c591f42cba90",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T02:27:42.187Z"
+      "persisted_at": "2026-11-21T17:05:47.235Z"
     },
     "rule-8821": {
       "learning_id": "rule-8821",
@@ -263987,9 +263997,9 @@
       "title": "Technical Construction Intelligence: zeronsh-zeron-learnings Core Invariants",
       "repository": "zeronsh-zeron-learnings",
       "source_version": "HEAD",
-      "content_hash": "71f6a996e2f5c4e6c6acfa140981f439c9635855837e8a250ace7c72452a512a",
+      "content_hash": "bd96b6fd5c11d71df9e14fc5d9f650fc18bd71841f94f9d0383787d6e99b4a30",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T02:27:54.003Z"
+      "persisted_at": "2026-11-21T17:06:05.895Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor",
@@ -278553,7 +278563,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Nanbeige/Nanbeige4.3-33B",
       "source_version": "hf-nanbeige-nanbeige4.3-33b",
-      "content_hash": "0bca3a96d522ce417610274f279f242c895253f26c214c3e3b88b5189858d038",
+      "content_hash": "9a37fdb9bead07da7aabc5e3d81c65c006878bdba17e4f7cda5e5b414ca83382",
       "dossier_path": "07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md",
       "promoted_rules": [
@@ -278578,7 +278588,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T18:44:17.026Z",
+      "verified_at": "2026-11-21T17:06:02.288Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -314701,6 +314711,106 @@
       "content_hash": "76392d8f56284fae1327be50e17647726715535a6d0401c0bbb1f4ea3d174ba9",
       "domain_letter": "F",
       "persisted_at": "2026-11-21T16:40:22.941Z"
+    },
+    "rule-9806": {
+      "learning_id": "rule-9806",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9806,
+      "title": "prevent streaming veil from replaying finished and previous blocks",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "46f18fe4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T17:05:46.678Z"
+    },
+    "candidate_directive-prevent-streaming-veil-from-replaying-finished-and-previous-blocks": {
+      "item_id": "candidate_directive-prevent-streaming-veil-from-replaying-finished-and-previous-blocks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SY13-prevent-streaming-veil-from-replaying-finished-and-previous-blocks.md",
+      "title": "prevent streaming veil from replaying finished and previous blocks",
+      "repository": "zeronsh/zeron",
+      "source_version": "46f18fe4",
+      "content_hash": "01b8456fc1d157001d4f3d9bc89357eff03abec88e5ca842ce62db00a23e339e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T17:05:47.083Z"
+    },
+    "candidate_directive-release-3-6-0": {
+      "item_id": "candidate_directive-release-3-6-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TDNP-release-3-6-0.md",
+      "title": "release 3.6.0",
+      "repository": "faridsafi-react-native-gifted-chat-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1f409ee6117623bdf413b83104e714cea6bfcbdcf1fb3620ac9d7ca33cb0b407",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T17:06:07.333Z"
+    },
+    "rule-9807": {
+      "learning_id": "rule-9807",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9807,
+      "title": "Update module github.com/dlclark/regexp2/v2 to v2.13.1 (main)",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "7ba55784",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T17:05:54.118Z"
+    },
+    "candidate_directive-update-module-github-com-dlclark-regexp2-v2-to-v2-13-1-main": {
+      "item_id": "candidate_directive-update-module-github-com-dlclark-regexp2-v2-to-v2-13-1-main",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-T3RD-update-module-github-com-dlclark-regexp2-v2-to-v2-13-1-main.md",
+      "title": "Update module github.com/dlclark/regexp2/v2 to v2.13.1 (main)",
+      "repository": "nginx/kubernetes-ingress",
+      "source_version": "7ba55784",
+      "content_hash": "7cf67828bf50f2bedde5eff9e12a5864149c4a12734c52400e3b6f9ea9efc56f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T17:05:54.506Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-nanbeige-nanbeige4-3-33b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-nanbeige-nanbeige4-3-33b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nanbeige-nanbeige4-3-33b-research-knowledge-intelligence-nanbeige-nanbeige4-3.md",
+      "title": "Research & Knowledge Intelligence: Nanbeige/Nanbeige4.3-33B Core Invariants",
+      "repository": "Nanbeige/Nanbeige4.3-33B",
+      "source_version": "hf-nanbeige-nanbeige4.3-33b",
+      "content_hash": "e7d2fc692e71d9b8523627c122e994a930ea9cc06945943ddba354188c7c4cce",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T17:06:02.666Z"
+    },
+    "candidate_directive-zgx-prevent-streaming-veil-from-replaying-finished-and-previous-blocks": {
+      "item_id": "candidate_directive-zgx-prevent-streaming-veil-from-replaying-finished-and-previous-blocks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TCF7-zgx-prevent-streaming-veil-from-replaying-finished-and-previous-blocks.md",
+      "title": "zgx): prevent streaming veil from replaying finished and previous blocks",
+      "repository": "zeronsh-zeron-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f947975e441e3c0c1a7adb818b27a5aa0b11e631c9836bc570e05359f74db770",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T17:06:05.735Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nanbeige-nanbeige4-3-33b-learnings-core-invar": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-nanbeige-nanbeige4-3-33b-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nanbeige-nanbeige4-3-33b-learnings-research-knowledge-intelligence-hf-nanbeig.md",
+      "title": "Research & Knowledge Intelligence: hf-nanbeige-nanbeige4.3-33b-learnings Core Invariants",
+      "repository": "hf-nanbeige-nanbeige4.3-33b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "02a83bea7458b6d983152b714b58869b7497fdbf571dc540d52d133f04627842",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T17:06:06.384Z"
     }
   },
   "ai-builder-brain": {

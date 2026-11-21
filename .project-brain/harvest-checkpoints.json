@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T16:40:17.270Z",
+  "last_updated": "2026-11-21T17:06:02.488Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4746,14 +4746,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-faridsafi-react-native-gifted-chat",
-      "content_hash": "71d64e358599001b7af0f4d02bda8431ca63c174b6036f382a7db324d903d5ee",
-      "verified_at": "2026-11-18T13:34:17.817Z",
+      "content_hash": "5e8afa67af804182ca16058d99736352d171b9e909ddbd6c0377387bba948cb1",
+      "verified_at": "2026-11-21T17:05:51.454Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T13:34:17.817Z"
+      "last_updated": "2026-11-21T17:05:51.454Z"
     },
     "taubyte/tau": {
       "repository": "taubyte/tau",
@@ -5271,14 +5271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeronsh-zeron",
-      "content_hash": "1f6db0bd43c635b69c9d727cf77145c04b0963930efbc47c84152d43f7ec65df",
-      "verified_at": "2026-11-20T02:27:41.829Z",
+      "content_hash": "828d2cdb2d2ef04a771ea19b2a2707d51edcec11dc62ca100d36827234e1172b",
+      "verified_at": "2026-11-21T17:05:46.885Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T02:27:41.829Z"
+      "last_updated": "2026-11-21T17:05:46.885Z"
     },
     "welldone-software/why-did-you-render": {
       "repository": "welldone-software/why-did-you-render",
@@ -10056,14 +10056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nginx-kubernetes-ingress",
-      "content_hash": "f90b37eb9dc9fab6f46d7052f786c25f86d0b997e63336d63dfb876bec994bda",
-      "verified_at": "2026-11-20T13:26:41.630Z",
+      "content_hash": "79074d3e1188c8676fa39befb66a7a86df7395663e1cab6cea46a961cbb6762f",
+      "verified_at": "2026-11-21T17:05:54.316Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T13:26:41.630Z"
+      "last_updated": "2026-11-21T17:05:54.316Z"
     },
     "milvus-io/milvus": {
       "repository": "milvus-io/milvus",
@@ -16086,14 +16086,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nanbeige-nanbeige4-3-33b",
-      "content_hash": "0bca3a96d522ce417610274f279f242c895253f26c214c3e3b88b5189858d038",
-      "verified_at": "2026-11-17T18:44:17.229Z",
+      "content_hash": "9a37fdb9bead07da7aabc5e3d81c65c006878bdba17e4f7cda5e5b414ca83382",
+      "verified_at": "2026-11-21T17:06:02.488Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T18:44:17.229Z"
+      "last_updated": "2026-11-21T17:06:02.488Z"
     },
     "kajisho5/ffmpeg-skill": {
       "repository": "kajisho5/ffmpeg-skill",

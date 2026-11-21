@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T16:40:17.265Z",
-  "total_cycles_completed": 11272,
-  "total_learnings_persisted": 11272,
-  "total_rules_promoted": 10609,
+  "last_updated": "2026-11-21T17:06:02.485Z",
+  "total_cycles_completed": 11276,
+  "total_learnings_persisted": 11276,
+  "total_rules_promoted": 10611,
   "history": [
-    {
-      "timestamp": "2026-11-20T20:49:46.121Z",
-      "repository": "langchain4j/langchain4j",
-      "learningId": "learn-github-langchain4j-langchain4j",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T20:57:40.775Z",
-      "repository": "thinkingmachines/Inkling-2-Mini",
-      "learningId": "learn-huggingface-thinkingmachines-inkling-2-mini",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T20:57:53.437Z",
-      "repository": "kgateway-dev/kgateway",
-      "learningId": "learn-github-kgateway-dev-kgateway",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T21:06:26.870Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T21:25:44.301Z",
       "repository": "iPlug2/iPlug2",
@@ -1403,6 +1375,34 @@
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T17:05:46.882Z",
+      "repository": "zeronsh/zeron",
+      "learningId": "learn-github-zeronsh-zeron",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T17:05:51.451Z",
+      "repository": "FaridSafi/react-native-gifted-chat",
+      "learningId": "learn-github-faridsafi-react-native-gifted-chat",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T17:05:54.314Z",
+      "repository": "nginx/kubernetes-ingress",
+      "learningId": "learn-github-nginx-kubernetes-ingress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T17:06:02.485Z",
+      "repository": "Nanbeige/Nanbeige4.3-33B",
+      "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

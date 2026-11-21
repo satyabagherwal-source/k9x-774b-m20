@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-EUCU",
-    "timestamp": "2026-11-19T14:03:30.990Z",
-    "repository": "bahdotsh/wrkflw",
-    "learningId": "learn-github-bahdotsh-wrkflw",
-    "contentHash": "cc34c8899f0465ef79642028d4fbea36006a45f9acc6af88b14f0cdd7dd1835e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-EWJO",
-    "timestamp": "2026-11-19T14:03:33.828Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "dd8b44420f8c6c58a668b36f9b5f0a9279d8324af5fccc5d5137f40cef57c171",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-0EMW",
-    "timestamp": "2026-11-19T14:20:17.048Z",
-    "repository": "speridlabs/iris-3b",
-    "learningId": "learn-huggingface-speridlabs-iris-3b",
-    "contentHash": "1551b10ad9c9e32455c6cf700007e307be8427224c0d3fa89cd5ec44079925d1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-0GQ5",
-    "timestamp": "2026-11-19T14:20:19.757Z",
-    "repository": "agent-of-empires/agent-of-empires",
-    "learningId": "learn-github-agent-of-empires-agent-of-empires",
-    "contentHash": "a89336514ddc90b72394cc0edb4a35ad97420cc0d59b05966d26b1a1ec64f88a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-ARD6",
     "timestamp": "2026-11-19T14:28:20.106Z",
     "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
@@ -7492,6 +7432,66 @@
     "contentHash": "377404da9935bd1b4a5682e0adcb5714fffc289adca2ebbb5e7fd8762825ae9a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-SXVD",
+    "timestamp": "2026-11-21T17:05:46.873Z",
+    "repository": "zeronsh/zeron",
+    "learningId": "learn-github-zeronsh-zeron",
+    "contentHash": "828d2cdb2d2ef04a771ea19b2a2707d51edcec11dc62ca100d36827234e1172b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-T1DK",
+    "timestamp": "2026-11-21T17:05:51.416Z",
+    "repository": "FaridSafi/react-native-gifted-chat",
+    "learningId": "learn-github-faridsafi-react-native-gifted-chat",
+    "contentHash": "5e8afa67af804182ca16058d99736352d171b9e909ddbd6c0377387bba948cb1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-T3LT",
+    "timestamp": "2026-11-21T17:05:54.305Z",
+    "repository": "nginx/kubernetes-ingress",
+    "learningId": "learn-github-nginx-kubernetes-ingress",
+    "contentHash": "79074d3e1188c8676fa39befb66a7a86df7395663e1cab6cea46a961cbb6762f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-T9WR",
+    "timestamp": "2026-11-21T17:06:02.475Z",
+    "repository": "Nanbeige/Nanbeige4.3-33B",
+    "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
+    "contentHash": "9a37fdb9bead07da7aabc5e3d81c65c006878bdba17e4f7cda5e5b414ca83382",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

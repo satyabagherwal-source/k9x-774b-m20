@@ -11876,3 +11876,7 @@ Every entry in this ledger must capture:
 | `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `76f74be1` | Multi-dimensional audit evidence | 2026-11-21T16:40:03.952Z |
 | `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `7ab2640c` | Multi-dimensional audit evidence | 2026-11-21T16:40:10.537Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `f099e88f` | Multi-dimensional audit evidence | 2026-11-21T16:40:17.259Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `46f18fe4` | Multi-dimensional audit evidence | 2026-11-21T17:05:46.877Z |
+| `learn-github-faridsafi-react-native-gifted-chat` | `https://github.com/FaridSafi/react-native-gifted-chat` | `a512f0f5` | Multi-dimensional audit evidence | 2026-11-21T17:05:51.421Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `7ba55784` | Multi-dimensional audit evidence | 2026-11-21T17:05:54.309Z |
+| `learn-huggingface-nanbeige-nanbeige4-3-33b` | `https://huggingface.co/Nanbeige/Nanbeige4.3-33B` | `hf-nanbeig` | Multi-dimensional audit evidence | 2026-11-21T17:06:02.480Z |
