@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T07:10:37.673Z",
+  "last_updated": "2026-11-21T07:42:07.937Z",
   "total_records": 2232,
   "domains": {
     "A": {
@@ -8965,8 +8965,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "afd2f33afbd4c1bb83889888cacff0bb54f463e5f1515b491e937c6800423d25",
-      "created_at": "2026-11-21T07:10:37.673Z"
+      "content_hash": "42b3123332f9bb294d513ea9f0b45c41794022fd2e48ae1bd7dd23e9672925d1",
+      "created_at": "2026-11-21T07:42:07.264Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -27756,8 +27756,8 @@
       "title": "Technical Construction Intelligence: meta/docusaurus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-facebook-docusaurus-technical-construction-intelligence-meta-docusaurus-core-inv.md",
       "repository": "meta/docusaurus",
-      "content_hash": "9f338071e8c56ec6f6ab55447d3d0e93e96b9b05e1c2809159b98ff45bbe284d",
-      "created_at": "2026-11-17T14:22:52.290Z"
+      "content_hash": "1c65e30d01a02a70c28bccaa9d234a851edc1abe3f044f8c218f7bdc24dc2dbe",
+      "created_at": "2026-11-21T07:42:01.278Z"
     },
     "domain_intelligence-technical-construction-intelligence-facebook-docusaurus-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-facebook-docusaurus-learnings-core-invariant",
@@ -27765,8 +27765,8 @@
       "title": "Technical Construction Intelligence: facebook-docusaurus-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-facebook-docusaurus-learnings-technical-construction-intelligence-facebook-docus.md",
       "repository": "facebook-docusaurus-learnings",
-      "content_hash": "af5ebcf1abf8c701efe13aa464ba5a682d4d1ef835ebdb67b18da441e6133091",
-      "created_at": "2026-11-17T14:22:56.512Z"
+      "content_hash": "a2133baf41791d74115fcd02d1938497937143852bb0ede3077372bca197a4f8",
+      "created_at": "2026-11-21T07:42:06.219Z"
     },
     "domain_intelligence-product-intelligence-kcl-lang-kcl-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-kcl-lang-kcl-core-invariants",
@@ -31328,8 +31328,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "fdb504380dc2c8c25d76b2e9615f39115f4d833a4d399922873333d38623a262",
-      "created_at": "2026-11-21T06:01:34.442Z"
+      "content_hash": "aa1f98333cb78f63e007d6af201cb4864bfca84367f59de840ec6331c3a52943",
+      "created_at": "2026-11-21T07:42:07.937Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T07:10:36.365Z",
+  "updated_at": "2026-11-21T07:42:05.720Z",
   "stats": {
-    "total_discovered": 7071,
-    "approved_pending_harvest": 6680,
+    "total_discovered": 7075,
+    "approved_pending_harvest": 6684,
     "harvested_count": 0,
     "rejected_count": 391,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6660,
+      "COMMUNITY_AND_EXPERT": 6664,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -152848,6 +152848,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
         "fileName": "jithin-sabu-purge-app-learnings.md"
+      }
+    },
+    "SRC-544A55F887C3": {
+      "id": "SRC-544A55F887C3",
+      "url": "https://github.com/terkelg/prompts/issues/316",
+      "title": "https://github.com/terkelg/prompts/issues/316",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T07:42:05.556Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-4A67AAE2E9D5": {
+      "id": "SRC-4A67AAE2E9D5",
+      "url": "https://docusaurus.io/infima",
+      "title": "https://docusaurus.io/infima",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T07:42:05.610Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-2208BDC653FE": {
+      "id": "SRC-2208BDC653FE",
+      "url": "https://github.com/facebookincubator/infima/tree/87bc1dbfde5dfb2a70b5ff105b5f2f5ee130c2ab",
+      "title": "https://github.com/facebookincubator/infima/tree/87bc1dbfde5dfb2a70b5ff105b5f2f5ee130c2ab",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T07:42:05.666Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-389570FA5ACC": {
+      "id": "SRC-389570FA5ACC",
+      "url": "https://github.com/facebookincubator/infima/blob/87bc1dbfde5dfb2a70b5ff105b5f2f5ee130c2ab/packages/postcss-preset-infima/index.js",
+      "title": "https://github.com/facebookincubator/infima/blob/87bc1dbfde5dfb2a70b5ff105b5f2f5ee130c2ab/packages/postcss-preset-infima/index.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T07:42:05.720Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
       }
     }
   }

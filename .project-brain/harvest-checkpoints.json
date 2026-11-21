@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T07:10:31.569Z",
+  "last_updated": "2026-11-21T07:42:00.885Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17466,14 +17466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meta-docusaurus",
-      "content_hash": "1e36d9347c3662f34311ea91e3aea9287e6110a2cd8ba5cf4a8be2fa86ce9db9",
-      "verified_at": "2026-11-17T14:22:51.990Z",
+      "content_hash": "328a400165e6a198bd65dbb5a9af49fd61533b777651354c477a7f831cd4361f",
+      "verified_at": "2026-11-21T07:42:00.884Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T14:22:51.990Z"
+      "last_updated": "2026-11-21T07:42:00.884Z"
     },
     "krishhgg/Insomnia": {
       "repository": "krishhgg/Insomnia",

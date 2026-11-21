@@ -11750,3 +11750,4 @@
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T06:46:53.155Z` | `lingyired-status-trio` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-9744E937` [Domain F] | Yes (`92e27fca...`) |
 | `CYCLE-20261121-CM2G` | `2026-11-21T07:05:13.144Z` | `jithin-sabu/purge-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9743` | Yes (`1bf8fa2b...`) |
 | `CYCLE-20261121-JFR8` | `2026-11-21T07:10:31.556Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9744` | Yes (`0afe1831...`) |
+| `CYCLE-20261121-NXK6` | `2026-11-21T07:42:00.870Z` | `meta/docusaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9745` | Yes (`328a4001...`) |

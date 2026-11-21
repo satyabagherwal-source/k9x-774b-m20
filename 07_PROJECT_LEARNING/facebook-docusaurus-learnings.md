@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-docusaurus-learnings.md`  
 > **Source**: github ([https://github.com/facebook/docusaurus](https://github.com/facebook/docusaurus))  
-> **Source Version**: `4c4ec4aa`  
+> **Source Version**: `809ffffd`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T14:22:51.050Z  
+> **Timestamp**: 2026-11-21T07:41:59.815Z  
 > **Learning ID**: `learn-github-meta-docusaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-docusaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/docusaurus](https://github.com/facebook/docusaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T14:22:50.702Z  
+> **Harvest Timestamp**: 2026-11-21T07:41:57.898Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Easy to maintain open source documentation websites.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 66749 stars
+- **Stars / Engagement**: 66775 stars
 
 ---
 
@@ -1028,30 +1028,21 @@ export function formatNodePositionExtraMessage(node: Node): string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5b2eeddc` (2026-11-13)
-**Commit Message**: fix(pwa): only use our own precache manifest injection when MD5 is not available (#13043)
+### Incident Patch 1: `b8ff2b6f` (2026-11-19)
+**Commit Message**: fix(create-docusaurus): fail instead of exiting with code 0 when stdin is closed during a prompt (#13011)
 
-* fix(pwa): only use our own precache manifest injection when MD5 is not available
+* fix(create-docusaurus): fail instead of exiting with code 0 when stdin is closed during a prompt
 
-Keeps the official Workbox injectManifest() code path for most sites, and
-only falls back to injectManifestFIPS() in FIPS mode, until Workbox
-supports it (GoogleChrome/workbox#3366).
+When stdin is closed (like in CI), a prompt never settles and the event loop
+drains, so the CLI exited with code 0 without creating the site. Prompts now
+throw an error naming the CLI argument or option that answers them.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(pwa): don't hardcode MD5 in the expected precache revisions
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(pwa): test injectManifestFIPS() without MD5, like in FIPS mode
+Cancelling the language prompt now also exits with code 1, like the other
+required prompts.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* refactor(pwa): rename precacheManifest.ts to injectManifestFIPS.ts
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(pwa): assert the revisions differ from Workbox, and the service worker isn't precached
+* Link the upstream prompts issue
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
@@ -1059,620 +1050,839 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `packages/docusaurus-plugin-pwa/src/__tests__/injectManifestFIPS.test.ts` (renamed, +46/-13)
+**File**: `packages/create-docusaurus/src/__tests__/prompts.test.ts` (added, +86/-0)
 ```diff
-@@ -5,13 +5,19 @@
-  * LICENSE file in the root directory of this source tree.
-  */
- 
--import {describe, expect, it} from 'vitest';
+@@ -0,0 +1,86 @@
++/**
++ * Copyright (c) Facebook, Inc. and its affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ */
++
 +import {describe, expect, it, vi} from 'vitest';
- import crypto from 'node:crypto';
- import fs from 'node:fs/promises';
- import {tmpdir} from 'node:os';
- import path from 'node:path';
- import {injectManifest, type ManifestEntry} from 'workbox-build';
--import {injectPrecacheManifest} from '../precacheManifest';
-+import {injectManifestFIPS} from '../injectManifestFIPS';
++import {PassThrough} from 'node:stream';
++import prompts from 'prompts';
++import {askPreferredLanguage, prompt} from '../prompts';
 +
-+// injectManifestFIPS() only runs when MD5 is not available
-+vi.mock('node:crypto', async (importOriginal) => ({
-+  ...(await importOriginal<typeof import('node:crypto')>()),
-+  getHashes: () => ['sha256'],
-+}));
- 
- const SwSource = 'const manifest = self.__WB_MANIFEST;';
- 
-@@ -49,36 +55,63 @@ function getOptions(outDir: string) {
-   };
- }
- 
--describe('injectPrecacheManifest', () => {
--  it('injects the same manifest as Workbox', async () => {
-+describe('injectManifestFIPS', () => {
-+  it('injects the same files as Workbox', async () => {
-     await using workboxOutDir = await createOutDir();
-     await using outDir = await createOutDir();
- 
-     await injectManifest(getOptions(workboxOutDir.path));
--    await injectPrecacheManifest(getOptions(outDir.path));
-+    await injectManifestFIPS(getOptions(outDir.path));
- 
-     const workboxManifest = await readSwManifest(workboxOutDir.path);
-     const manifest = await readSwManifest(outDir.path);
--    expect(manifest).toEqual(workboxManifest);
-+    expect(manifest.map((entry) => entry.url)).toEqual(
-+      workboxManifest.map((entry) => entry.url),
-+    );
-+    // Workbox hashes with MD5 anyway
-+    manifest.forEach((entry, index) => {
-+      expect(entry.revision).not.toBe(workboxManifest[index]!.revision);
-+    });
-   });
- 
--  it('injects files hashed with MD5, except the service worker', async () => {
-+  it('injects files hashed with SHA-256', async () => {
-     await using outDir = await createOutDir();
- 
--    await injectPrecacheManifest(getOptions(outDir.path));
-+    await injectManifestFIPS(getOptions(outDir.path));
- 
-     const manifest = await readSwManifest(outDir.path);
-     expect(manifest).toEqual([
--      {url: 'assets/main.css', revision: 'aa676972bbd2b68e94ef8e91e81d20be'},
--      {url: 'assets/main.js', revision: '238e96d5b62a1aec3739730469f27192'},
--      {url: 'index.html', revision: 'fe919dfbe925337c176e602ebbf0d15c'},
-+      {
-+        url: 'assets/main.css',
-+        revision:
-+          '7c98040a541657584690ae2a1cc3b42a8b53b159cc60c5d3abbfecbaeac6c94a',
-+      },
-+      {
-+        url: 'assets/main.js',
-+        revision:
-+          '6e11c72f7cf6bc383152dd16ddd5903aba6bb1c99d6b6639a4bb0b838185fa92',
-+      },
-+      {
-+        url: 'index.html',
-+        revision:
-+          '1a7133067a4ac7fe06565943dd44870f232041b1d28b4340e2b678244a3b79f6',
-+      },
-     ]);
-   });
- 
-+  it("doesn't precache the service worker", async () => {
-+    await using outDir = await createOutDir();
-+
-+    await injectManifestFIPS(getOptions(outDir.path));
-+
-+    const manifest = await readSwManifest(outDir.path);
-+    expect(manifest.map((entry) => entry.url)).not.toContain('sw.js');
-+  });
-+
-   it('delegates templatedURLs to Workbox', async () => {
-     await using outDir = await createOutDir();
- 
--    await injectPrecacheManifest({
-+    await injectManifestFIPS({
-       ...getOptions(outDir.path),
-       templatedURLs: {'/app-shell': 'shell'},
-     });
-@@ -93,7 +126,7 @@ describe('injectPrecacheManifest', () => {
-   it('applies the Workbox manifest options', async () => {
-     await using outDir = await createOutDir();
- 
--    await injectPrecacheManifest({
-+    await injectManifestFIPS({
-       ...getOptions(outDir.path),
-       globIgnores: ['**/*.css'],
-       maximumFileSizeToCacheInBytes: 10,
-```
-
-**File**: `packages/docusaurus-plugin-pwa/src/index.ts` (modified, +5/-2)
-```diff
-@@ -13,11 +13,12 @@ import {
-   getProgressBarPlugin,
-   getMinimizers,
- } from '@docusaurus/bundler';
-+import {injectManifest} from 'workbox-build';
- import {normalizeUrl} from '@docusaurus/utils';
- import logger from '@docusaurus/logger';
- import {readDefaultCodeTranslationMessages} from '@docusaurus/theme-translations';
- import {getGlobPatterns} from './globPatterns';
--import {injectPrecacheManifest} from './precacheManifest';
-+import {injectManifestFIPS, isMD5Available} from './injectManifestFIPS';
- import type {HtmlTags, LoadContext, Plugin} from '@docusaurus/types';
- import type {PluginOptions} from '@docusaurus/plugin-pwa';
- 
-@@ -175,7 +176,9 @@ export default function pluginPWA(
- 
-       const swDest = path.resolve(props.outDir, 'sw.js');
- 
--      await injectPrecacheManifest({
-+      const inject = isMD5Available() ? injectManifest : injectManifestFIPS;
-+
-+      await inject({
-         ...injectManifestConfig,
-         globPatterns: getGlobPatterns(injectManifestConfig),
-         // Those attributes are not overrideable
-```
-
-**File**: `packages/docusaurus-plugin-pwa/src/injectManifestFIPS.ts` (renamed, +12/-2)
-```diff
-@@ -5,6 +5,7 @@
-  * LICENSE file in the root directory of this source tree.
-  */
- 
-+import {getHashes} from 'node:crypto';
- import path from 'node:path';
- import {injectManifest} from 'workbox-build';
- // Internal Workbox APIs, to apply the user options the same way Workbox does
-@@ -16,12 +17,21 @@ import logger from '@docusaurus/logger';
- import {hashString, posixPath} from '@docusaurus/utils';
- import type {FileDetails, InjectManifestOptions} from 'workbox-build';
- 
-+/** FIPS mode rejects MD5 */
-+export function isMD5Available(): boolean {
-+  return getHashes().includes('md5');
++function createQuestion() {
++  return {
++    type: 'text',
++    name: 'siteName',
++    message: 'What should we name this site?',
++    stdin: new PassThrough(),
++    stdout: new PassThrough(),
++  } as const;
 +}
 +
- /**
-  * Same as Workbox `injectManifest()`, but falls back to SHA-256 to hash the
-  * files when MD5 is not available. Workbox hardcodes MD5, which FIPS mode
-- * rejects. See https://github.com/GoogleChrome/workbox/issues/3366
-+ * rejects. Only use it when MD5 is not available, to keep the Workbox code
-+ * path everywhere else.
-+ *
-+ * TODO temporary workaround: remove once Workbox supports FIPS mode
-+ *  See https://github.com/GoogleChrome/workbox/issues/3366
++const answerHint = 'the [siteName] argument';
++
++describe('prompt', () => {
++  it('returns the answers', async () => {
++    prompts.inject(['my-site']);
++    const onCancel = vi.fn();
++
++    await expect(
++      prompt(createQuestion(), {onCancel, answerHint}),
++    ).resolves.toEqual({siteName: 'my-site'});
++    expect(onCancel).not.toHaveBeenCalled();
++  });
++
++  it('calls onCancel when the prompt is cancelled', async () => {
++    prompts.inject([new Error('cancelled')]);
++    const onCancel = vi.fn();
++
++    await expect(
++      prompt(createQuestion(), {onCancel, answerHint}),
++    ).resolves.toEqual({});
++    expect(onCancel).toHaveBeenCalledOnce();
++  });
++
++  it('throws when stdin is closed before an answer', async () => {
++    const question = createQuestion();
++    const onCancel = vi.fn();
++
++    const answers = prompt(question, {onCancel, answerHint});
++    question.stdin.end();
++    process.emit('beforeExit', 0);
++
++    await expect(answers).rejects.toThrowErrorMatchingInlineSnapshot(
++      `[Error: Can't answer the prompt "What should we name this site?": stdin is closed. Answer it with the [siteName] argument.]`,
++    );
++    expect(onCancel).not.toHaveBeenCalled();
++  });
++});
++
++describe('askPreferredLanguage', () => {
++  it('returns the answer', async () => {
++    prompts.inject(['typescript']);
++
++    await expect(askPreferredLanguage()).resolves.toBe('typescript');
++  });
++
++  it('exits with code 1 when the prompt is cancelled', async () => {
++    prompts.inject([new Error('cancelled')]);
++    using exit = vi
++      .spyOn(process, 'exit')
++      .mockImplementation((() => {}) as () => never);
++    using error = vi.spyOn(console, 'error').mockImplementation(() => {});
++
++    await askPreferredLanguage();
++
++    expect(exit).toHaveBeenCalledExactlyOnceWith(1);
++    expect(error.mock.calls).toMatchInlineSnapshot(`
++      [
++        [
++          "[ERROR] A language is required.",
++        ],
++      ]
++    `);
++  });
++});
+```
+
+**File**: `packages/create-docusaurus/src/index.ts` (modified, +14/-8)
+```diff
+@@ -13,7 +13,7 @@ import path from 'node:path';
+ 
+ // TODO try to remove these third-party dependencies if possible
+ import {logger} from '@docusaurus/logger';
+-import prompts, {type Choice} from 'prompts';
++import {type Choice} from 'prompts';
+ import {fs, pathExists} from '@docusaurus/fs';
+ import {
+   LockfileNames,
+@@ -35,7 +35,7 @@ import {
+   updatePkg,
+   printPackageManagerHelp,
+ } from './utils.js';
+-import {askPreferredLanguage} from './prompts.js';
++import {askPreferredLanguage, prompt} from './prompts.js';
+ 
+ type LanguagesOptions = {
+   javascript?: boolean;
+@@ -90,7 +90,7 @@ async function askForPackageManagerChoice(): Promise<PackageManager> {
+   const choices = packageManagers.map((p) => ({title: p, value: p}));
+   return (
+     (
+-      (await prompts(
++      (await prompt(
+         {
+           type: 'select',
+           name: 'packageManager',
+@@ -101,6 +101,7 @@ async function askForPackageManagerChoice(): Promise<PackageManager> {
+           onCancel() {
+             logger.info`Falling back to name=${DefaultPackageManager}`;
+           },
++          answerHint: 'the --package-manager option',
+         },
+       )) as {packageManager?: PackageManager}
+     ).packageManager ?? DefaultPackageManager
+@@ -222,7 +223,7 @@ async function askTemplateChoice({
+   return cliOptions.gitStrategy
+     ? 'Git repository'
+     : (
+-        (await prompts(
++        (await prompt(
+           {
+             type: 'select',
+             name: 'template',
+@@ -234,6 +235,7 @@ async function askTemplateChoice({
+               logger.error('A choice is required.');
+               process.exit(1);
+             },
++            answerHint: 'the [template] argument',
+           },
+         )) as {template: Template | 'Git repository' | 'Local template'}
+       ).template;
+@@ -267,7 +269,7 @@ async function getSiteName(
+     }
+     return reqName;
+   }
+-  const {siteName} = (await prompts(
++  const {siteName} = (await prompt(
+     {
+       type: 'text',
+       name: 'siteName',
+@@ -280,6 +282,7 @@ async function getSiteName(
+         logger.error('A website name is required.');
+         process.exit(1);
+       },
++      answerHint: 'the [siteName] argument',
+     },
+   )) as {siteName: string};
+   return siteName;
+@@ -365,7 +368,7 @@ async function askGitRepositorySource({
+ }: {
+   cliOptions: CLIOptions;
+ }): Promise<Source> {
+-  const {gitRepoUrl} = (await prompts(
++  const {gitRepoUrl} = (await prompt(
+     {
+       type: 'text',
+       name: 'gitRepoUrl',
+@@ -383,11 +386,12 @@ async function askGitRepositorySource({
+         logger.error('A git repo URL is required.');
+         process.exit(1);
+       },
++      answerHint: 'the [template] argument',
+     },
+   )) as {gitRepoUrl: string};
+   let strategy = cliOptions.gitStrategy;
+   if (!strategy) {
+-    ({strategy} = (await prompts(
++    ({strategy} = (await prompt(
+       {
+         type: 'select',
+         name: 'strategy',
+@@ -409,6 +413,7 @@ async function askGitRepositorySource({
+         onCancel() {
+           logger.info`Falling back to name=${'deep'}`;
+         },
++        answerHint: 'the --git-strategy option',
+       },
+     )) as {strategy?: GitCloneStrategy});
+   }
+@@ -420,7 +425,7 @@ async function askGitRepositorySource({
+ }
+ 
+ async function askLocalSource(): Promise<Source> {
+-  const {templateDir} = (await prompts(
++  const {templateDir} = (await prompt(
+     {
+       type: 'text',
+       name: 'templateDir',
+@@ -444,6 +449,7 @@ async function askLocalSource(): Promise<Source> {
+         logger.error('A file path is required.');
+         process.exit(1);
+       },
++      answerHint: 'the [template] argument',
+     },
+   )) as {templateDir: string};
+   return {
+```
+
+**File**: `packages/create-docusaurus/src/prompts.ts` (modified, +50/-14)
+```diff
+@@ -5,29 +5,64 @@
+  * LICENSE file in the root directory of this source tree.
   */
--export async function injectPrecacheManifest(
-+export async function injectManifestFIPS(
-   config: InjectManifestOptions,
- ): Promise<void> {
-   const options = validateInjectManifestOptions(config);
+ 
+-import prompts from 'prompts';
++import prompts, {type Answers, type PromptObject} from 'prompts';
+ import {logger} from '@docusaurus/logger';
+ 
++/**
++ * Same as `prompts()`, but throws when no answer can come, like when stdin is
++ * closed in CI. Otherwise, the CLI exits with code 0 without creating the site.
++ */
++export async function prompt<T extends string>(
++  question: PromptObject<T> & {message: string},
++  {onCancel, answerHint}: {onCancel: () => void; answerHint: string},
++): Promise<Answers<T>> {
++  const noAnswer = Promise.withResolvers<never>();
++  // The event loop drains when stdin is closed before the prompt is answered
++  // See https://github.com/terkelg/prompts/issues/316
++  const onBeforeExit = () =>
++    noAnswer.reject(
++      new Error(
++        `Can't answer the prompt "${question.message}": stdin is closed. Answer it with ${answerHint}.`,
++      ),
++    );
++
++  process.once('beforeExit', onBeforeExit);
++  try {
++    return await Promise.race([
++      prompts(question, {onCancel}),
++      noAnswer.promise,
++    ]);
++  } finally {
++    process.off('beforeExit', onBeforeExit);
++  }
++}
++
+ export async function askPreferredLanguage(): Promise<
+   'javascript' | 'typescript'
+ > {
+-  const {language} = await prompts({
+-    type: 'select',
+-    name: 'language',
+-    message: 'Which language do you want to use?',
+-    choices: [
+-      {title: logger.bold('JavaScript'), value: 'javascript'},
+-      {title: logger.bold('TypeScript'), value: 'typescript'},
+-    ],
+-  });
+-  if (!language) {
+-    process.exit(0);
+-  }
++  const {language} = await prompt(
++    {
++      type: 'select',
++      name: 'language',
++      message: 'Which language do you want to use?',
++      choices: [
++        {title: logger.bold('JavaScript'), value: 'javascript'},
++        {title: logger.bold('TypeScript'), value: 'typescript'},
++      ],
++    },
++    {
++      onCancel() {
++        logger.error('A language is required.');
++        process.exit(1);
++      },
++      answerHint: 'the --javascript or --typescript option',
++    },
++  );
+   return language;
+ }
+ 
+ export async function askForCustomGitCloneCommand(): Promise<string> {
+-  const {command} = (await prompts(
++  const {command} = (await prompt(
+     {
+       type: 'text',
+       name: 'command',
+@@ -38,6 +73,7 @@ export async function askForCustomGitCloneCommand(): Promise<string> {
+       onCancel() {
+         logger.info`Falling back to code=${'git clone'}`;
+       },
++      answerHint: 'a --git-strategy option other than custom',
+     },
+   )) as {command?: string};
+   return command ?? 'git clone';
 ```
 
 ---
 
-### Incident Patch 2: `05200e2c` (2026-11-13)
-**Commit Message**: fix(glob): only expand the glob patterns of existing directories, like globby (#13045)
+### Incident Patch 2: `809ffffd` (2026-11-19)
+**Commit Message**: refactor(infima): convert the Infima sources to plain CSS, build them without dependencies (#13086)
 
-Tinyglobby appends `/**` to all the patterns by default: `**/*.{md,mdx}`
-matched `folder.md/notes.txt`, which the docs, blog and pages plugins
-loaded as content. `glob()` now only expands the patterns that are the
-path of an existing directory, like globby did in v3, and escapes that
-path so that directory names with glob characters work.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `packages/docusaurus-glob/package.json` (modified, +1/-0)
+**File**: `.oxfmtrc.json` (modified, +0/-1)
 ```diff
-@@ -18,6 +18,7 @@
+@@ -25,7 +25,6 @@
+     "!packages/docusaurus-*/lib/theme/",
+ 
+     "packages/create-docusaurus/templates/*/docusaurus.config.js",
+-    "packages/docusaurus-infima/styles",
+     "packages/eslint-plugin/lib/",
+     "packages/stylelint-copyright/lib/",
+     "__fixtures__",
+```
+
+**File**: `.stylelintrc.js` (modified, +16/-0)
+```diff
+@@ -33,4 +33,20 @@ module.exports = {
+     'comment-empty-line-before': null,
+     'value-keyword-case': ['lower', {camelCaseSvgKeywords: true}],
+   },
++  overrides: [
++    {
++      files: ['packages/docusaurus-infima/styles/**/*.css'],
++      // Fixing these would change the Infima output, or its cascade order
++      rules: {
++        'comment-whitespace-inside': null, // Breaks the /*rtl:raw: directive
++        'declaration-block-no-redundant-longhand-properties': null,
++        'declaration-property-value-keyword-no-deprecated': null,
++        'media-feature-range-notation': null,
++        'no-descending-specificity': null,
++        'property-no-deprecated': null,
++        'selector-not-notation': null,
++        'value-keyword-case': null, // Font family names
++      },
++    },
++  ],
+ };
+```
+
+**File**: `packages/docusaurus-infima/README.md` (modified, +7/-1)
+```diff
+@@ -4,6 +4,12 @@ The Infima CSS framework, an internal package of `@docusaurus/theme-classic`.
+ 
+ Don't depend on it directly: it has no stability guarantee, except for the `--ifm-*` CSS variables and the documented class names. The Infima documentation moves to [docusaurus.io/infima](https://docusaurus.io/infima).
+ 
++## Sources
++
++The `styles` folder contains plain CSS. `scripts/build.mjs` only inlines the `@import` rules of `styles/infima.css` into `dist/infima.css`, and flips it with rtlcss into `dist/infima-rtl.css`. The site bundler does the rest: vendor prefixes and fallbacks for the site's target browsers, and minification.
++
++The rule order is the cascade order: moving a rule can change which one wins.
++
+ ## Origin
+ 
+-The `styles` sources come from the former upstream repository at commit [`87bc1dbf`](https://github.com/facebookincubator/infima/tree/87bc1dbfde5dfb2a70b5ff105b5f2f5ee130c2ab): they are the same as the published `infima@0.2.0-alpha.45` package. `scripts/build.mjs` inlines its [PostCSS preset](https://github.com/facebookincubator/infima/blob/87bc1dbfde5dfb2a70b5ff105b5f2f5ee130c2ab/packages/postcss-preset-infima/index.js).
++The `styles` sources come from the former upstream repository at commit [`87bc1dbf`](https://github.com/facebookincubator/infima/tree/87bc1dbfde5dfb2a70b5ff105b5f2f5ee130c2ab), the same as the published `infima@0.2.0-alpha.45` package. They were converted from PostCSS to plain CSS: loops, mixins and nesting expanded, and `color-mod()` colors precomputed.
+```
+
+**File**: `packages/docusaurus-infima/package.json` (modified, +0/-11)
+```diff
+@@ -26,17 +26,6 @@
    },
    "license": "MIT",
-   "dependencies": {
-+    "@docusaurus/fs": "workspace:*",
-     "chokidar": "catalog:",
-     "picomatch": "catalog:",
-     "tinyglobby": "catalog:",
+   "devDependencies": {
+-    "postcss": "catalog:",
+-    "postcss-color-mod-function": "catalog:dev",
+-    "postcss-combine-duplicated-selectors": "catalog:dev",
+-    "postcss-each": "catalog:dev",
+-    "postcss-for": "catalog:dev",
+-    "postcss-import": "catalog:dev",
+-    "postcss-mixins": "catalog:dev",
+-    "postcss-nested": "catalog:dev",
+-    "postcss-nested-ancestors": "catalog:dev",
+-    "postcss-preset-env-v7": "catalog:dev",
+-    "postcss-sort-media-queries": "catalog:dev",
+     "rtlcss": "catalog:"
+   },
+   "engines": {
 ```
 
-**File**: `packages/docusaurus-glob/src/__tests__/__fixtures__/folder-named-like-file/doc.md` (added, +1/-0)
+**File**: `packages/docusaurus-infima/scripts/build.mjs` (modified, +24/-60)
 ```diff
-@@ -0,0 +1 @@
-+# Doc
-```
-
-**File**: `packages/docusaurus-glob/src/__tests__/__fixtures__/folder-named-like-file/folder.md/doc.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+# Doc
-```
-
-**File**: `packages/docusaurus-glob/src/__tests__/__fixtures__/folder-named-like-file/folder.md/notes.txt` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Not a doc
-```
-
-**File**: `packages/docusaurus-glob/src/__tests__/__fixtures__/glob-characters/folder (copy) [old]/doc.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+# Doc
-```
-
-**File**: `packages/docusaurus-glob/src/__tests__/globUtils.test.ts` (modified, +57/-1)
-```diff
-@@ -10,10 +10,11 @@ import os from 'node:os';
- import path from 'node:path';
+@@ -5,83 +5,47 @@
+  * LICENSE file in the root directory of this source tree.
+  */
+ 
+-// Inlines the upstream postcss-preset-infima and the gulp styles and rtl tasks
+-// See https://github.com/facebookincubator/infima/blob/87bc1dbfde5dfb2a70b5ff105b5f2f5ee130c2ab/packages/postcss-preset-infima/index.js
+-
  import fs from 'node:fs/promises';
- import {
-+  glob,
-+  safeGlob,
-   GlobExcludeDefault,
-   createMatcher,
-   createAbsoluteFilePathMatcher,
--  glob,
- } from '../globUtils';
- 
- describe('glob', () => {
-@@ -45,6 +46,45 @@ describe('glob', () => {
-       path.join('b', 'a.md'),
-     ]);
-   });
-+
-+  describe('with a folder named like a file', () => {
-+    const cwd = path.join(__dirname, '__fixtures__', 'folder-named-like-file');
-+
-+    it('does not match the files of a folder named like the pattern', async () => {
-+      await expect(glob(['**/*.md'], {cwd})).resolves.toEqual([
-+        'doc.md',
-+        'folder.md/doc.md',
-+      ]);
-+    });
-+
-+    it('matches all the files of a directory pattern', async () => {
-+      await expect(glob(['folder.md'], {cwd})).resolves.toEqual([
-+        'folder.md/doc.md',
-+        'folder.md/notes.txt',
-+      ]);
-+    });
-+
-+    it('matches all the files of a directory pattern with a trailing slash', async () => {
-+      await expect(glob(['folder.md/'], {cwd})).resolves.toEqual([
-+        'folder.md/doc.md',
-+        'folder.md/notes.txt',
-+      ]);
-+    });
-+
-+    it('ignores all the files of a directory', async () => {
-+      await expect(
-+        glob(['**/*'], {cwd, ignore: ['folder.md']}),
-+      ).resolves.toEqual(['doc.md']);
-+    });
-+  });
-+
-+  it('matches all the files of a directory named with glob characters', async () => {
-+    await expect(
-+      glob(['folder (copy) [old]'], {
-+        cwd: path.join(__dirname, '__fixtures__', 'glob-characters'),
-+      }),
-+    ).resolves.toEqual(['folder (copy) [old]/doc.md']);
-+  });
- });
- 
- describe('createMatcher', () => {
-@@ -169,3 +209,19 @@ describe('createAbsoluteFilePathMatcher', () => {
-     ).toBe(false);
-   });
- });
-+
-+describe('safeGlob', () => {
-+  it('matches all the files of an absolute directory path', async () => {
-+    const dirPath = path.join(
-+      __dirname,
-+      '__fixtures__',
-+      'folder-named-like-file',
-+      'folder.md',
-+    );
-+    const files = await safeGlob([dirPath], {absolute: true});
-+    expect(files.map((file) => path.relative(dirPath, file))).toEqual([
-+      'doc.md',
-+      'notes.txt',
-+    ]);
-+  });
-+});
-```
-
-**File**: `packages/docusaurus-glob/src/globUtils.ts` (modified, +42/-3)
-```diff
-@@ -8,6 +8,8 @@
- // Tinyglobby/Picomatch are the 2 libs we use in Docusaurus consistently
- 
  import path from 'node:path';
-+import {fileURLToPath} from 'node:url';
-+import {fs} from '@docusaurus/fs';
- import Picomatch from 'picomatch';
- import * as Tinyglobby from 'tinyglobby';
+-import postcss from 'postcss';
+-import postcssColorModFunction from 'postcss-color-mod-function';
+-import postcssCombineDuplicatedSelectors from 'postcss-combine-duplicated-selectors';
+-import postcssEach from 'postcss-each';
+-import postcssFor from 'postcss-for';
+-import postcssImport from 'postcss-import';
+-import postcssMixins from 'postcss-mixins';
+-import postcssNested from 'postcss-nested';
+-import postcssNestedAncestors from 'postcss-nested-ancestors';
+-import postcssPresetEnv from 'postcss-preset-env-v7';
+-import postcssSortMediaQueries from 'postcss-sort-media-queries';
+ import rtlcss from 'rtlcss';
  
-@@ -20,18 +22,55 @@ export type GlobOptions = Pick<
-   'cwd' | 'ignore' | 'absolute' | 'expandDirectories'
- >;
+ const packageDir = path.dirname(import.meta.dirname);
+-const entryFile = path.join(packageDir, 'styles/themes/default/default.pcss');
++const entryFile = path.join(packageDir, 'styles/infima.css');
+ const outputFile = path.join(packageDir, 'dist/infima.css');
+ const rtlOutputFile = path.join(packageDir, 'dist/infima-rtl.css');
  
--/** Finds the files matching the given glob patterns, in a stable order. */
-+/**
-+ * Finds the files matching the given glob patterns, in a stable order. A
-+ * pattern that is the path of an existing directory matches all the files of
-+ * that directory.
-+ */
- export async function glob(
-   patterns: string | string[],
-   options?: GlobOptions,
- ): Promise<string[]> {
--  // Other lib options are still forwarded at runtime for retro-compatibility
--  const files = await Tinyglobby.glob(patterns, {...options});
-+  const cwd = options?.cwd ?? process.cwd();
-+  const cwdPath = cwd instanceof URL ? fileURLToPath(cwd) : cwd;
-+  const expandedPatterns = await Promise.all(
-+    [patterns]
-+      .flat()
-+      .map((pattern) => expandDirectoryPattern(pattern, cwdPath)),
-+  );
-+  const files = await Tinyglobby.glob(expandedPatterns, {
-+    // Tinyglobby appends `/**` to all patterns, even `**/*.md`, unlike globby
-+    // See https://github.com/meta/docusaurus/pull/13037
-+    expandDirectories: false,
-+    // Other lib options are still forwarded at runtime for retro-compatibility
-+    ...options,
-+  });
-   // Tinyglobby reads folders concurrently: their files come in a random order
-   // See https://github.com/meta/docusaurus/pull/13031
-   return files.sort();
++// Matches the imports of the entry file, like @import url('common/base.css');
++const ImportRegExp = /^@import url\('(?<importPath>.+)'\);$/gm;
++
++// Only bundles the sources: the site bundler adds the vendor prefixes and the
++// fallbacks for its target browsers, and minifies
+ async function main() {
+-  const source = await fs.readFile(entryFile, 'utf8');
+-  const css = await compileInfima(source, entryFile);
++  const css = await inlineImports(entryFile);
+   await fs.mkdir(path.dirname(outputFile), {recursive: true});
+   await fs.writeFile(outputFile, css);
+   await fs.writeFile(rtlOutputFile, rtlcss.process(css));
  }
  
-+// Like globby, only expand the patterns of existing directories
-+// See https://github.com/sindresorhus/globby/blob/v16.2.4/index.js#L91-L111
-+// Doing it ourselves eases a later migration to Node.js `fs.glob`, which never
-+// expands directories
-+async function expandDirectoryPattern(
-+  pattern: string,
-+  cwd: string,
-+): Promise<string> {
-+  if (pattern.startsWith('!')) {
-+    return pattern;
-+  }
-+  const isDirectory = await fs.stat(path.resolve(cwd, pattern)).then(
-+    (stats) => stats.isDirectory(),
-+    () => false,
+-async function compileInfima(source, from) {
+-  const result = await postcss(getPlugins()).process(source, {from});
+-  return result.css;
++async function inlineImports(file) {
++  const css = await fs.readFile(file, 'utf8');
++  const importedFiles = await readImportedFiles(file, css);
++  return css.replace(ImportRegExp, (_match, importPath) =>
++    importedFiles.get(importPath),
 +  );
-+  // The directory path is literal: `[old]` or `(copy)` are not glob syntax
-+  return isDirectory
-+    ? path.posix.join(Tinyglobby.escapePath(pattern), '**')
-+    : pattern;
-+}
-+
- /**
-  * The default glob patterns we ignore when sourcing content.
-  * - Ignore files and folders starting with `_` recursively
+ }
+ 
+-// The plugin order matters
+-function getPlugins() {
+-  return [
+-    postcssImport,
+-    // TODO postcss-each v1 doesn't seem to be compatible due to color-mod.
+-    // Need to upgrade later
+-    postcssEach,
+-    postcssFor,
+-    postcssMixins({mixins: {transition: transitionMixin}}),
+-    postcssNestedAncestors,
+-    postcssNested,
+-    // color-mod has been removed from the spec, so it's not included in
+-    // preset-env. Using a separate plugin instead. We probably would eventually
+-    // get rid of color-mod
+-    postcssColorModFunction({unresolved: 'ignore'}),
+-    postcssPresetEnv({
+-      stage: 1,
+-      features: {
+-        'custom-properties': false,
+-      },
++async function readImportedFiles(file, css) {
++  const importPaths = Array.from(
++    css.matchAll(ImportRegExp),
++    (match) => match.groups.importPath,
++  );
++  const entries = await Promise.all(
++    importPaths.map(async (importPath) => {
++      const importedFile = path.resolve(path.dirname(file), importPath);
++      return [importPath, await fs.readFile(importedFile, 'utf8')];
+     }),
+-    postcssSortMediaQueries,
+-    postcssCombineDuplicatedSelectors,
+-  ];
+-}
+-
+-// @mixin transition opacity visibility, var(--ifm-transition-fast), linear;
+-function transitionMixin(
+-  _mixin,
+-  properties,
+-  duration = 'var(--ifm-transition-fast)',
+-  timing = 'var(--ifm-transition-timing-default)',
+-) {
+-  if (properties.includes(' ')) {
+-    return {
+-      'transition-property': properties.replace(/\s/g, ', '),
+-      'transition-duration': duration,
+-      'transition-timing-function': timing,
+-    };
+-  }
+-  return {transition: [properties, duration, timing].join(' ')};
++  );
++  return new Map(entries);
+ }
+ 
+ await main();
 ```
 
-**File**: `packages/docusaurus-plugin-content-blog/src/__tests__/index.test.ts` (modified, +0/-1)
+**File**: `packages/docusaurus-infima/styles/common/dark-mode.css` (renamed, +18/-15)
 ```diff
-@@ -464,7 +464,6 @@ describe('blog plugin', () => {
-     const blogPosts = await getBlogPosts(siteDir);
+@@ -23,32 +23,35 @@ html[data-theme='dark'] {
+   --ifm-background-color: #1b1b1d;
+   --ifm-background-surface-color: #242526;
  
-     expect(blogPosts.map((post) => post.metadata.source).sort()).toEqual([
--      '@site/blog/folder.md/notes.txt',
-       '@site/blog/folder.md/post.md',
-     ]);
-   });
+-  --ifm-hover-overlay: rgba(255, 255, 255, 0.05);
++  --ifm-hover-overlay: rgb(255 255 255 / 5%);
+ 
+   --ifm-color-content: #e3e3e3;
+-  --ifm-color-content-secondary: rgba(255, 255, 255, 1);
++  --ifm-color-content-secondary: rgb(255 255 255 / 100%);
+ 
+   --ifm-breadcrumb-separator-filter: invert(64%) sepia(11%) saturate(0%)
+     hue-rotate(149deg) brightness(99%) contrast(95%);
+ 
+-  --ifm-code-background: rgba(255, 255, 255, 0.1);
++  --ifm-code-background: rgb(255 255 255 / 10%);
+ 
+-  --ifm-scrollbar-track-background-color: #444444;
++  --ifm-scrollbar-track-background-color: #444;
+   --ifm-scrollbar-thumb-background-color: #686868;
+   --ifm-scrollbar-thumb-hover-background-color: #7a7a7a;
+ 
+-  --ifm-table-stripe-background: rgba(255, 255, 255, 0.07);
++  --ifm-table-stripe-background: rgb(255 255 255 / 7%);
+ 
+   --ifm-toc-border-color: var(--ifm-color-emphasis-200);
+ 
+-  @each $color in (primary, secondary, success, info, warning, danger) {
+-    --ifm-color-$(color)-contrast-background: color-mod(
+-      var(--ifm-color-$(color)),
+-      shade(var(--ifm-contrast-background-dark-value))
+-    );
+-    --ifm-color-$(color)-contrast-foreground: color-mod(
+-      var(--ifm-color-$(color)),
+-      tint(var(--ifm-contrast-foreground-dark-value))
+-    );
+-  }
++  /* Precomputed with the dark mode values of common/variables.css */
++  --ifm-color-primary-contrast-background: rgb(16 36 69);
++  --ifm-color-primary-contrast-foreground: rgb(235 242 252);
++  --ifm-color-secondary-contrast-background: rgb(71 71 72);
++  --ifm-color-secondary-contrast-foreground: rgb(253 253 254);
++  --ifm-color-success-contrast-background: rgb(0 49 0);
++  --ifm-color-success-contrast-foreground: rgb(230 246 230);
++  --ifm-color-info-contrast-background: rgb(25 60 71);
++  --ifm-color-info-contrast-foreground: rgb(238 249 253);
++  --ifm-color-warning-contrast-background: rgb(77 56 0);
++  --ifm-color-warning-contrast-foreground: rgb(255 248 230);
++  --ifm-color-danger-contrast-background: rgb(75 17 19);
++  --ifm-color-danger-contrast-foreground: rgb(255 235 236);
+ }
+```
+
+**File**: `packages/docusaurus-infima/styles/common/variables.css` (renamed, +74/-45)
+```diff
+@@ -35,39 +35,66 @@
+   --ifm-color-warning: #ffba00;
+   --ifm-color-danger: #fa383e;
+ 
+-  @each $color in (primary, secondary, success, info, warning, danger) {
+-    --ifm-color-$(color)-dark: color-mod(
+-      var(--ifm-color-$(color)) shade(var(--ifm-dark-value))
+-    );
+-    --ifm-color-$(color)-darker: color-mod(
+-      var(--ifm-color-$(color)),
+-      shade(var(--ifm-darker-value))
+-    );
+-    --ifm-color-$(color)-darkest: color-mod(
+-      var(--ifm-color-$(color)),
+-      shade(var(--ifm-darkest-value))
+-    );
+-    --ifm-color-$(color)-light: color-mod(
+-      var(--ifm-color-$(color)),
+-      tint(var(--ifm-light-value))
+-    );
+-    --ifm-color-$(color)-lighter: color-mod(
+-      var(--ifm-color-$(color)),
+-      tint(var(--ifm-lighter-value))
+-    );
+-    --ifm-color-$(color)-lightest: color-mod(
+-      var(--ifm-color-$(color)),
+-      tint(var(--ifm-lightest-value))
+-    );
+-    --ifm-color-$(color)-contrast-background: color-mod(
+-      var(--ifm-color-$(color)),
+-      tint(var(--ifm-contrast-background-value))
+-    );
+-    --ifm-color-$(color)-contrast-foreground: color-mod(
+-      var(--ifm-color-$(color)),
+-      shade(var(--ifm-contrast-foreground-value))
+-    );
+-  }
++  /*
++  Shades and tints of the colors above, precomputed with the values above
++  For example, --ifm-color-primary-dark is
++  color-mix(in srgb, var(--ifm-color-primary), black var(--ifm-dark-value))
++  and --ifm-color-primary-light is
++  color-mix(in srgb, var(--ifm-color-primary), white var(--ifm-light-value))
++  */
++  --ifm-color-primary-dark: rgb(48 108 206);
++  --ifm-color-primary-darker: rgb(45 102 195);
++  --ifm-color-primary-darkest: rgb(37 84 160);
++  --ifm-color-primary-light: rgb(83 140 233);
++  --ifm-color-primary-lighter: rgb(114 161 237);
++  --ifm-color-primary-lightest: rgb(154 188 242);
++  --ifm-color-primary-contrast-background: rgb(235 242 252);
++  --ifm-color-primary-contrast-foreground: rgb(16 36 69);
++
++  --ifm-color-secondary-dark: rgb(212 213 216);
++  --ifm-color-secondary-darker: rgb(200 201 204);
++  --ifm-color-secondary-darkest: rgb(164 166 168);
++  --ifm-color-secondary-light: rgb(238 240 242);
++  --ifm-color-secondary-lighter: rgb(241 242 245);
++  --ifm-color-secondary-lightest: rgb(245 246 248);
++  --ifm-color-secondary-contrast-background: rgb(253 253 254);
++  --ifm-color-secondary-contrast-foreground: rgb(71 71 72);
++
++  --ifm-color-success-dark: rgb(0 148 0);
++  --ifm-color-success-darker: rgb(0 139 0);
++  --ifm-color-success-darkest: rgb(0 115 0);
++  --ifm-color-success-light: rgb(38 178 38);
++  --ifm-color-success-lighter: rgb(77 191 77);
++  --ifm-color-success-lightest: rgb(128 210 128);
++  --ifm-color-success-contrast-background: rgb(230 246 230);
++  --ifm-color-success-contrast-foreground: rgb(0 49 0);
++
++  --ifm-color-info-dark: rgb(76 179 212);
++  --ifm-color-info-darker: rgb(71 169 201);
++  --ifm-color-info-darkest: rgb(59 139 165);
++  --ifm-color-info-light: rgb(110 207 239);
++  --ifm-color-info-lighter: rgb(135 216 242);
++  --ifm-color-info-lightest: rgb(170 227 246);
++  --ifm-color-info-contrast-background: rgb(238 249 253);
++  --ifm-color-info-contrast-foreground: rgb(25 60 71);
++
++  --ifm-color-warning-dark: rgb(230 167 0);
++  --ifm-color-warning-darker: rgb(217 158 0);
++  --ifm-color-warning-darkest: rgb(179 130 0);
++  --ifm-color-warning-light: rgb(255 196 38);
++  --ifm-color-warning-lighter: rgb(255 207 77);
++  --ifm-color-warning-lightest: rgb(255 221 128);
++  --ifm-color-warning-contrast-background: rgb(255 248 230);
++  --ifm-color-warning-contrast-foreground: rgb(77 56 0);
++
++  --ifm-color-danger-dark: rgb(225 50 56);
++  --ifm-color-danger-darker: rgb(213 48 53);
++  --ifm-color-danger-darkest: rgb(175 39 43);
++  --ifm-color-danger-light: rgb(251 86 91);
++  --ifm-color-danger-lighter: rgb(251 116 120);
++  --ifm-color-danger-lightest: rgb(253 156 159);
++  --ifm-color-danger-contrast-background: rgb(255 235 236);
++  --ifm-color-danger-contrast-foreground: rgb(75 17 19);
+ 
+   --ifm-color-white: #fff;
+   --ifm-color-black: #000;
+@@ -106,17 +133,21 @@
+   --ifm-global-border-width: 1px;
+   --ifm-global-radius: 0.4rem;
+ 
+-  --ifm-hover-overlay: rgba(0, 0, 0, 0.05);
++  --ifm-hover-overlay: rgb(0 0 0 / 5%);
+ 
+   /* Typography. */
+   --ifm-font-color-base: var(--ifm-color-content);
+   --ifm-font-color-base-inverse: var(--ifm-color-content-inverse);
+   --ifm-font-color-secondary: var(--ifm-color-content-secondary);
+-  --ifm-font-family-base: system-ui, -apple-system, BlinkMacSystemFont,
+-    'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
+-    'Segoe UI Emoji', 'Segoe UI Symbol';
+-  --ifm-font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas,
+-    'Liberation Mono', 'Courier New', monospace;
++  /* The fonts after system-ui were added by postcss-preset-env v7 */
++  /* Removing them could change the per-glyph font fallback */
++  --ifm-font-family-base:
++    system-ui, -apple-system, 'Segoe UI', Roboto, Ubuntu, Cantarell,
++    'Noto Sans', sans-serif, BlinkMacSy
+```
+
+**File**: `packages/docusaurus-infima/styles/components/alert.css` (added, +119/-0)
+```diff
+@@ -0,0 +1,119 @@
++/**
++ * Copyright (c) Facebook, Inc. and its affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ */
++
++:root {
++  --ifm-alert-background-color: inherit; /* Set a default which will be overridden later. */
++  --ifm-alert-border-color: inherit; /* Set a default which will be overridden later. */
++  --ifm-alert-border-radius: var(--ifm-global-radius);
++  --ifm-alert-border-width: 0px; /* For users that want to easily add a border */
++  --ifm-alert-border-left-width: 5px;
++  --ifm-alert-color: var(--ifm-font-color-base);
++  --ifm-alert-padding-horizontal: var(--ifm-spacing-horizontal);
++  --ifm-alert-padding-vertical: var(--ifm-spacing-vertical);
++  --ifm-alert-shadow: var(--ifm-global-shadow-lw);
++}
++
++.alert--primary {
++  --ifm-alert-background-color: var(--ifm-color-primary-contrast-background);
++  --ifm-alert-background-color-highlight: rgb(53 120 229 / 15%);
++  --ifm-alert-foreground-color: var(--ifm-color-primary-contrast-foreground);
++  --ifm-alert-border-color: var(--ifm-color-primary-dark);
++}
++
++.alert--secondary {
++  --ifm-alert-background-color: var(--ifm-color-secondary-contrast-background);
++  --ifm-alert-background-color-highlight: rgb(235 237 240 / 15%);
++  --ifm-alert-foreground-color: var(--ifm-color-secondary-contrast-foreground);
++  --ifm-alert-border-color: var(--ifm-color-secondary-dark);
++}
++
++.alert--success {
++  --ifm-alert-background-color: var(--ifm-color-success-contrast-background);
++  --ifm-alert-background-color-highlight: rgb(0 164 0 / 15%);
++  --ifm-alert-foreground-color: var(--ifm-color-success-contrast-foreground);
++  --ifm-alert-border-color: var(--ifm-color-success-dark);
++}
++
++.alert--info {
++  --ifm-alert-background-color: var(--ifm-color-info-contrast-background);
++  --ifm-alert-background-color-highlight: rgb(84 199 236 / 15%);
++  --ifm-alert-foreground-color: var(--ifm-color-info-contrast-foreground);
++  --ifm-alert-border-color: var(--ifm-color-info-dark);
++}
++
++.alert--warning {
++  --ifm-alert-background-color: var(--ifm-color-warning-contrast-background);
++  --ifm-alert-background-color-highlight: rgb(255 186 0 / 15%);
++  --ifm-alert-foreground-color: var(--ifm-color-warning-contrast-foreground);
++  --ifm-alert-border-color: var(--ifm-color-warning-dark);
++}
++
++.alert--danger {
++  --ifm-alert-background-color: var(--ifm-color-danger-contrast-background);
++  --ifm-alert-background-color-highlight: rgb(250 56 62 / 15%);
++  --ifm-alert-foreground-color: var(--ifm-color-danger-contrast-foreground);
++  --ifm-alert-border-color: var(--ifm-color-danger-dark);
++}
++
++.alert {
++  --ifm-code-background: var(--ifm-alert-background-color-highlight);
++  --ifm-link-color: var(--ifm-alert-foreground-color);
++  --ifm-link-hover-color: var(--ifm-alert-foreground-color);
++  --ifm-link-decoration: underline;
++  --ifm-tabs-color: var(--ifm-alert-foreground-color);
++  --ifm-tabs-color-active: var(--ifm-alert-foreground-color);
++  --ifm-tabs-color-active-border: var(--ifm-alert-border-color);
++
++  background-color: var(--ifm-alert-background-color);
++  border: var(--ifm-alert-border-width) solid var(--ifm-alert-border-color);
++  border-left-width: var(--ifm-alert-border-left-width);
++  border-radius: var(--ifm-alert-border-radius);
++  box-shadow: var(--ifm-alert-shadow);
++  color: var(--ifm-alert-foreground-color);
++  padding: var(--ifm-alert-padding-vertical) var(--ifm-alert-padding-horizontal);
++}
++
++.alert__heading {
++  align-items: center;
++  display: flex;
++  font: bold var(--ifm-h5-font-size) / var(--ifm-heading-line-height)
++    var(--ifm-heading-font-family);
++  margin-bottom: 0.5rem;
++  text-transform: uppercase;
++}
++
++.alert__icon {
++  display: inline-flex;
++  margin-right: 0.4em;
++}
++
++.alert__icon svg {
++  fill: var(--ifm-alert-foreground-color);
++  stroke: var(--ifm-alert-foreground-color);
++  stroke-width: 0;
++}
++
++.alert .close {
++  color: var(--ifm-alert-foreground-color);
++  margin: calc(var(--ifm-alert-padding-vertical) * -1)
++    calc(var(--ifm-alert-padding-horizontal) * -1) 0 0;
++
++  opacity: 0.75;
++}
++
++.alert .close:hover,
++.alert .close:focus {
++  opacity: 1;
++}
++
++.alert a {
++  text-decoration-color: var(--ifm-alert-border-color);
++}
++
++.alert a:hover {
++  text-decoration-thickness: 2px;
++}
 ```
 
 ---
 
-### Incident Patch 3: `42e00a97` (2026-11-13)
-**Commit Message**: fix(glob): sort glob results, files of different folders came in a random order (#13031)
-
-* fix(glob): return files in a stable order, whatever the file system and runtime
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* link this PR in the comment
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* sort with a plain sort(), test the concurrent folder reads that cause the random order
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
+### Incident Patch 3: `cb968366` (2026-11-19)
+**Commit Message**: fix(theme-classic): don't render an empty class attribute on MDX links (#13087)
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `packages/docusaurus-glob/src/__tests__/globUtils.test.ts` (modified, +36/-1)
+**File**: `packages/docusaurus-theme-classic/src/theme/MDXComponents/A/index.tsx` (modified, +4/-3)
 ```diff
-@@ -5,13 +5,48 @@
-  * LICENSE file in the root directory of this source tree.
-  */
+@@ -15,7 +15,8 @@ export default function MDXA(props: Props): ReactNode {
+   // MDX Footnotes have ids such as <a id="user-content-fn-1-953011" ...>
+   const anchorTargetClassName = useAnchorTargetClassName(props.id);
  
--import {describe, expect, it} from 'vitest';
-+import {describe, expect, it, onTestFinished} from 'vitest';
-+import os from 'node:os';
-+import path from 'node:path';
-+import fs from 'node:fs/promises';
- import {
-   GlobExcludeDefault,
-   createMatcher,
-   createAbsoluteFilePathMatcher,
-+  glob,
- } from '../globUtils';
- 
-+describe('glob', () => {
-+  async function createFiles(files: string[]): Promise<string> {
-+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'glob-test-'));
-+    onTestFinished(() => fs.rm(dir, {recursive: true, force: true}));
-+    for (const file of files) {
-+      await fs.mkdir(path.dirname(path.join(dir, file)), {recursive: true});
-+      await fs.writeFile(path.join(dir, file), '');
-+    }
-+    return dir;
-+  }
+-  return (
+-    <Link {...props} className={clsx(anchorTargetClassName, props.className)} />
+-  );
++  // Avoid rendering an empty class="" attribute
++  const className = clsx(anchorTargetClassName, props.className) || undefined;
 +
-+  it('sorts the files of folders read concurrently', async () => {
-+    const sortedFiles = Array.from(
-+      {length: 30},
-+      (_, i) => `post-${String(i).padStart(2, '0')}/index.md`,
-+    );
-+    const dir = await createFiles(sortedFiles);
-+    await expect(glob('**/*.md', {cwd: dir})).resolves.toEqual(sortedFiles);
-+  });
-+
-+  it('sorts absolute file paths', async () => {
-+    const dir = await createFiles(['b/a.md', 'b.md', 'a.md']);
-+    const files = await glob('**/*.md', {cwd: dir, absolute: true});
-+    expect(files.map((file) => path.relative(dir, file))).toEqual([
-+      'a.md',
-+      'b.md',
-+      path.join('b', 'a.md'),
-+    ]);
-+  });
-+});
-+
- describe('createMatcher', () => {
-   it('match default exclude MD/MDX partials correctly', () => {
-     const matcher = createMatcher(GlobExcludeDefault);
-```
-
-**File**: `packages/docusaurus-glob/src/globUtils.ts` (modified, +5/-2)
-```diff
-@@ -20,13 +20,16 @@ export type GlobOptions = Pick<
-   'cwd' | 'ignore' | 'absolute' | 'expandDirectories'
- >;
- 
--/** Finds the files matching the given glob patterns. */
-+/** Finds the files matching the given glob patterns, in a stable order. */
- export async function glob(
-   patterns: string | string[],
-   options?: GlobOptions,
- ): Promise<string[]> {
-   // Other lib options are still forwarded at runtime for retro-compatibility
--  return Tinyglobby.glob(patterns, {...options});
-+  const files = await Tinyglobby.glob(patterns, {...options});
-+  // Tinyglobby reads folders concurrently: their files come in a random order
-+  // See https://github.com/meta/docusaurus/pull/13031
-+  return files.sort();
++  return <Link {...props} className={className} />;
  }
- 
- /**
-```
-
-**File**: `packages/docusaurus-plugin-content-pages/src/__tests__/__snapshots__/index.test.ts.snap` (modified, +29/-29)
-```diff
-@@ -2,16 +2,6 @@
- 
- exports[`docusaurus-plugin-content-pages > loads simple pages 1`] = `
- [
--  {
--    "permalink": "/",
--    "source": "@site/src/pages/index.js",
--    "type": "jsx",
--  },
--  {
--    "permalink": "/typescript",
--    "source": "@site/src/pages/typescript.tsx",
--    "type": "jsx",
--  },
-   {
-     "description": "Markdown index page",
-     "editUrl": undefined,
-@@ -67,21 +57,21 @@ exports[`docusaurus-plugin-content-pages > loads simple pages 1`] = `
-     "source": "@site/src/pages/hello/world.js",
-     "type": "jsx",
-   },
--]
--`;
--
--exports[`docusaurus-plugin-content-pages > loads simple pages with french translations (translate: false) 1`] = `
--[
-   {
--    "permalink": "/fr/",
-+    "permalink": "/",
-     "source": "@site/src/pages/index.js",
-     "type": "jsx",
-   },
-   {
--    "permalink": "/fr/typescript",
-+    "permalink": "/typescript",
-     "source": "@site/src/pages/typescript.tsx",
-     "type": "jsx",
-   },
-+]
-+`;
-+
-+exports[`docusaurus-plugin-content-pages > loads simple pages with french translations (translate: false) 1`] = `
-+[
-   {
-     "description": "Markdown index page",
-     "editUrl": undefined,
-@@ -137,11 +127,6 @@ exports[`docusaurus-plugin-content-pages > loads simple pages with french transl
-     "source": "@site/src/pages/hello/world.js",
-     "type": "jsx",
-   },
--]
--`;
--
--exports[`docusaurus-plugin-content-pages > loads simple pages with french translations 1`] = `
--[
-   {
-     "permalink": "/fr/",
-     "source": "@site/src/pages/index.js",
-@@ -152,6 +137,11 @@ exports[`docusaurus-plugin-content-pages > loads simple pages with french transl
-     "source": "@site/src/pages/typescript.tsx",
-     "type": "jsx",
-   },
-+]
-+`;
-+
-+exports[`docusaurus-plugin-content-pages > loads simple pages with french translations 1`] = `
-+[
-   {
-     "description": "Markdown index page",
-     "editUrl": undefined,
-@@ -207,21 +197,21 @@ exports[`docusaurus-plugin-content-pages > loads simple pages with french transl
-     "source": "@site/src/pages/hello/world.js",
-     "type": "jsx",
-   },
--]
--`;
--
--exports[`docusaurus-plugin-content-pages > loads simple pages with last update 1`] = `
--[
-   {
--    "permalink": "/",
-+    "permalink": "/fr/",
-     "source": "@site/src/pages/index.js",
-     "type": "jsx",
-   },
-   {
--    "permalink": "/typescript",
-+    "permalink": "/fr/typescript",
-     "source": "@site/src/pages/typescript.tsx",
-     "type": "jsx",
-   },
-+]
-+`;
-+
-+exports[`docusaurus-plugin-content-pages > loads simple pages with last update 1`] = `
-+[
-   {
-     "description": "Markdown index page",
-     "editUrl": "url placeholder",
-@@ -277,5 +267,15 @@ exports[`docusaurus-plugin-content-pages > loads simple pages with last update 1
-     "source": "@site/src/pages/hello/world.js",
-     "type": "jsx",
-   },
-+  {
-+    "permalink": "/",
-+    "source": "@site/src/pages/index.js",
-+    "type": "jsx",
-+  },
-+  {
-+    "permalink": "/typescript",
-+    "source": "@site/src/pages/typescript.tsx",
-+    "type": "jsx",
-+  },
- ]
- `;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13048** (2026-11-13): feat(core): check the Bun version at startup (@slorber)
-- **PR #13047** (2026-11-13): chore(ci): remove the encodeurl@2.0.2 exclude from the site template trust policy (@slorber)
-- **PR #13045** (2026-11-13): fix(glob): only expand the glob patterns of existing directories, like globby (@slorber)
-- **PR #13044** (2026-11-13): feat: support the Bun runtime, starting with Bun 1.4.3 (@slorber)
-- **PR #13043** (2026-11-13): fix(pwa): only use our own precache manifest injection when MD5 is not available (@slorber)
-- **PR #13041** (2026-11-13): test: remove the sorts that compensated for the random glob order (@slorber)
+- **PR #13087** (2026-11-19): fix(theme-classic): don't render an empty class attribute on MDX links (@slorber)
+- **PR #13086** (2026-11-19): refactor(infima): convert the Infima sources to plain CSS, build them without dependencies (@slorber)
+- **PR #13085** (2026-11-19): refactor(theme-classic): use the @docusaurus/infima package instead of the npm infima package (@slorber)
+- **PR #13084** (2026-11-19): docs(agents): write new code in TypeScript, add agent rules in a separate PR (@slorber)
+- **PR #13082** (2026-11-19): chore(infima): add the @docusaurus/infima package, compiled from the Infima sources (@slorber)
+- **PR #13081** (2026-11-19): docs(website): add hidden Infima docs, as an Argos baseline (@slorber)
 
 ---
 
@@ -1692,73 +1902,70 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. pwa): only use our own precache manifest injection when MD5 is not available
+## X. create-docusaurus): fail instead of exiting with code 0 when stdin is closed dur
 
 **RULE**:
-When implementing operations in `packages/docusaurus-plugin-pwa/src/__tests__/injectManifestFIPS.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/docusaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/create-docusaurus/src/__tests__/prompts.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/docusaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5b2eeddc`: pwa): only use our own precache manifest injection when MD5 is not available. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b8ff2b6f`: create-docusaurus): fail instead of exiting with code 0 when stdin is closed during a prompt. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/docusaurus-plugin-pwa/src/__tests__/injectManifestFIPS.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/create-docusaurus/src/__tests__/prompts.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import {describe, expect, it, vi} from 'vitest';
-import {injectManifestFIPS} from '../injectManifestFIPS';
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 
-// injectManifestFIPS() only runs when MD5 is not available
-vi.mock('node:crypto', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('node:crypto')>()),
-  getHashes: () => ['sha256'],
-}));
-describe('injectManifestFIPS', () => {
-  it('injects the same files as Workbox', async () => {
-    await injectManifestFIPS(getOptions(outDir.path));
-    expect(manifest.map((entry) => entry.url)).toEqual(
-      workboxManifest.map((entry) => entry.url),
-    );
-    // Workbox hashes with MD5 anyway
-    manifest.forEach((entry, index) => {
-      expect(entry.revision).not.toBe(workboxManifest[index]!.revision);
-    });
-  it('injects files hashed with SHA-256', async () => {
-    await injectManifestFIPS(getOptions(outDir.path));
-      {
-        url: 'assets/main.css',
-        revision:
-          '7c98040a541657584690ae2a1cc3b42a8b53b159cc60c5d3abbfecbaeac6c94a',
-      },
-      {
-        url: 'assets/main.js',
-        revision:
-          '6e11c72f7cf6bc383152dd16ddd5903aba6bb1c99d6b6639a4bb0b838185fa92',
-      },
-      {
-        url: 'index.html',
-        revision:
-        
+import {describe, expect, it, vi} from 'vitest';
+import {PassThrough} from 'node:stream';
+import prompts from 'prompts';
+import {askPreferredLanguage, prompt} from '../prompts';
+
+function createQuestion() {
+  return {
+    type: 'text',
+    name: 'siteName',
+    message: 'What should we name this site?',
+    stdin: new PassThrough(),
+    stdout: new PassThrough(),
+  } as const;
+}
+
+const answerHint = 'the [siteName] argument';
+
+describe('prompt', () => {
+  it('returns the answers', async () => {
+    prompts.inject(['my-site']);
+    const onCancel = vi.fn();
+
+    await expect(
+      prompt(createQuestion(), {onCancel, answerHint}),
+    ).resolves.toEqual({siteName: 'my-site'});
+    expect(onCancel).not.toHaveBeenCalled();
+  });
+
+  it('calls onCancel when the prompt is cancelled', async () => {
+    prompts.inject([new Error('cancelled')]);
+    const onCancel = vi.fn();
+
+    await expect(
+      prompt(createQuestion(), {onCancel, answerHint}),
+    ).resolves.toEqual({});
+    expect(onCancel).toHaveBe
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-import {describe, expect, it} from 'vitest';
-import {injectPrecacheManifest} from '../precacheManifest';
-describe('injectPrecacheManifest', () => {
-  it('injects the same manifest as Workbox', async () => {
-    await injectPrecacheManifest(getOptions(outDir.path));
-    expect(manifest).toEqual(workboxManifest);
-  it('injects files hashed with MD5, except the service worker', async () => {
-    await injectPrecacheManifest(getOptions(outDir.path));
-      {url: 'assets/main.css', revision: 'aa676972bbd2b68e94ef8e91e81d20be'},
-      {url: 'assets/main.js', revision: '238e96d5b62a1aec3739730469f27192'},
-      {url: 'index.html', revision: 'fe919dfbe925337c176e602ebbf0d15c'},
-    await injectPrecacheManifest({
-    await injectPrecacheManifest({
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5b2eeddc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b8ff2b6f` are properly handled with clean fallback behavior.

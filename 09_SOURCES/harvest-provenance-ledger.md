@@ -11783,3 +11783,4 @@ Every entry in this ledger must capture:
 | `learn-dom-f-9744e937` | `project://lingyired-status-trio` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lingyired-status-trio-learnings.md` | 2026-11-21T06:46:53.155Z |
 | `learn-github-jithin-sabu-purge-app` | `https://github.com/jithin-sabu/purge-app` | `384b5b6c` | Multi-dimensional audit evidence | 2026-11-21T07:05:13.148Z |
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `ef0b734b` | Multi-dimensional audit evidence | 2026-11-21T07:10:31.560Z |
+| `learn-github-meta-docusaurus` | `https://github.com/facebook/docusaurus` | `809ffffd` | Multi-dimensional audit evidence | 2026-11-21T07:42:00.875Z |

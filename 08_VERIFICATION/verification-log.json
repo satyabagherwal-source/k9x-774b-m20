@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-KNIR",
-    "timestamp": "2026-11-19T02:56:11.283Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "1494f499a0265de243e1f75e3474e3ffef2426f0a7a070c1c45fd743882bb42d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-LHRY",
     "timestamp": "2026-11-19T02:56:50.494Z",
     "repository": "argoproj/argo-workflows",
@@ -7490,6 +7475,21 @@
     "repository": "rtk-ai/rtk",
     "learningId": "learn-github-rtk-ai-rtk",
     "contentHash": "0afe18311557c238e35f0e916671700c6f23842c179689df060754f8da9076c7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-NXK6",
+    "timestamp": "2026-11-21T07:42:00.870Z",
+    "repository": "meta/docusaurus",
+    "learningId": "learn-github-meta-docusaurus",
+    "contentHash": "328a400165e6a198bd65dbb5a9af49fd61533b777651354c477a7f831cd4361f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

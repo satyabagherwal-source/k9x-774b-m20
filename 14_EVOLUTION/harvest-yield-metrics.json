@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T07:10:31.566Z",
-  "total_cycles_completed": 11184,
-  "total_learnings_persisted": 11184,
-  "total_rules_promoted": 10542,
+  "last_updated": "2026-11-21T07:42:00.881Z",
+  "total_cycles_completed": 11185,
+  "total_learnings_persisted": 11185,
+  "total_rules_promoted": 10543,
   "history": [
-    {
-      "timestamp": "2026-11-20T11:41:01.060Z",
-      "repository": "genkit-ai/genkit",
-      "learningId": "learn-github-genkit-ai-genkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T12:07:20.459Z",
       "repository": "DNSControl/dnscontrol",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-21T07:10:31.566Z",
       "repository": "rtk-ai/rtk",
       "learningId": "learn-github-rtk-ai-rtk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T07:42:00.881Z",
+      "repository": "meta/docusaurus",
+      "learningId": "learn-github-meta-docusaurus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
