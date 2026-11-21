@@ -4753,10 +4753,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/Shopify/react-native-skia",
-    "sourceVersion": "72ed90d0",
+    "sourceVersion": "badcc586",
     "license": "MIT",
-    "contentHash": "f78b8de1dafdd6c98dcea5a097d61c951b686b64dd133cdf899200d05decd219",
-    "lastHarvestedAt": "2026-11-18T18:09:56.927Z",
+    "contentHash": "827ea4e42dca02da78833df24905cc109f2c7e5b6a8d123a2127145917774d18",
+    "lastHarvestedAt": "2026-11-21T23:39:44.383Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "saltstack-salt": {
@@ -11695,8 +11695,8 @@
     "sourceUrl": "https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
     "sourceVersion": "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated",
     "license": "Open-Source",
-    "contentHash": "401365fa57ac10107acc302aecbc17b274002e337e4fe427ab77f8c64544ab89",
-    "lastHarvestedAt": "2026-11-15T08:09:07.209Z",
+    "contentHash": "0b89a22d536d0b7f5c342d998d504e9f83819c1ec0c786f93123034a5c17e18a",
+    "lastHarvestedAt": "2026-11-21T23:39:37.314Z",
     "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated"
   },
   "hf-burner22-numbat": {

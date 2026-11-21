@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T18:14:52.586Z",
+  "timestamp": "2026-11-21T23:39:50.095Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-shopify-react-native-skia-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [shopify-react-native-skia-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T18:14:52.586Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T23:39:50.095Z`  
 > **Learning ID**: `LEARN-EVO-shopify-react-native-skia-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md`  
 > **Source**: github ([https://github.com/Shopify/react-native-skia](https://github.com/Shopify/react-native-skia))  
-> **Source Version**: `72ed90d0`  
+> **Source Version**: `badcc586`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T18:09:55.733Z  
+> **Timestamp**: 2026-11-21T23:39:43.321Z  
 > **Learning ID**: `learn-github-wcandillon-react-native-skia`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Shopify/react-native-skia](https://github.com/Shopify/react-native-skia))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T18:09:55.520Z  
+> **Harvest Timestamp**: 2026-11-21T23:39:43.315Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: High-performance React Native Graphics using Skia
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8785 stars
+- **Stars / Engagement**: 8787 stars
 
 ---
 
@@ -1715,152 +1715,109 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `72ed90d0` (2026-11-18)
-**Commit Message**: fix(🍏): present at full rate on macOS 14+ ProMotion devices (#4481)
-
-* fix(🍏): present at the display's full rate on macOS ProMotion devices
-
-* fix(🍏): remove obsolete macOS display-link fallback
-
-* fix(🍏): create the display link lazily outside macOS
-
-Make the display link lazily again outside macOS: a canvas that never animates has no link, and a mounted view is not held by one. macOS keeps making its view-bound link at the enter, since AppKit makes it on the main thread only.
-
-Install the macOS link in the task that lets frame requests through, which drops an extra present-thread post and a nil check that could never fail, and update the comments on the link's lifecycle.
+### Incident Patch 1: `badcc586` (2026-11-21)
+**Commit Message**: fix(🗺️): draw an atlas under a perspective matrix with drawAtlas (#4500)
 
 ---------
 
 Co-authored-by: William Candillon <[REDACTED_EMAIL]>
 
-**File**: `packages/skia/apple/SkiaView.mm` (modified, +90/-116)
+**File**: `packages/skia/cpp/rnskia/RNSkAtlas.h` (modified, +11/-1)
 ```diff
-@@ -14,7 +14,6 @@
- 
- #import <QuartzCore/CAMetalLayer.h>
- 
--#include <algorithm>
- #include <atomic>
- #include <cmath>
- #include <memory>
-@@ -138,24 +137,19 @@ @implementation SkiaView {
-   // set and cleared there, by tasks posted in order with those that present
-   // (see enterPresentThread and leavePresentThread).
-   std::shared_ptr<RNSkia::RNSkView> _presentView;
--#if !TARGET_OS_OSX
--  // Present thread.
-+  // Present thread. Created as the view enters a superview on macOS, where
-+  // the link is bound to the view and follows its display, and on the first
-+  // animation frame elsewhere, so that a canvas that never animates has none.
-   CADisplayLink *_displayLink;
--  // Whether the display link asked for the display's full rate yet (see
--  // requestFullFrameRate). Present thread.
--  bool _fullFrameRateRequested;
-+
-+  // The screen maximum used for the last frame-rate request. Present thread.
-+  // This belongs to the current link: a recycled view's new link must ask
-+  // again. Comparing rates also picks up a new display rate (see
-+  // updateMaximumFramesPerSecond).
-+  float _requestedFramesPerSecond;
-   // The display's rate, read on the main thread as the view enters a window
--  // (UIKit), 0 until then.
-+  // or changes screens, 0 until then.
-   std::atomic<float> _maximumFramesPerSecond;
--#else
--  // Whether a tick is scheduled, when the last one ran (see
--  // presentAgainLater), and which ticks are still wanted: the leave moves
--  // the count on, and a tick scheduled before it does nothing. Present
--  // thread.
--  bool _presentAgainScheduled;
--  CFTimeInterval _lastTick;
--  uint64_t _tickGeneration;
--#endif
- }
- 
- - (instancetype)initWithFrame:(CGRect)frame {
-@@ -168,14 +162,8 @@ - (instancetype)initWithFrame:(CGRect)frame {
-     _windowAttached = false;
-     _attachedWidth = 0;
-     _attachedHeight = 0;
--#if TARGET_OS_OSX
--    _presentAgainScheduled = false;
--    _lastTick = 0;
--    _tickGeneration = 0;
--#else
--    _fullFrameRateRequested = false;
-+    _requestedFramesPerSecond = 0;
-     _maximumFramesPerSecond = 0;
--#endif
-     static const auto defaultProps = std::make_shared<const SkiaViewProps>();
-     _props = defaultProps;
-     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-@@ -197,7 +185,7 @@ - (instancetype)initWithFrame:(CGRect)frame {
-                selector:@selector(appWillEnterForeground:)
-                    name:NSApplicationDidUnhideNotification
-                  object:nil];
--#endif
-+#endif // !TARGET_OS_OSX
+@@ -82,7 +82,7 @@ inline void writeAtlasTriangles(SkSpan<const SkRSXform> xform,
+ // effect or mask filter, and its shader is replaced by the atlas sampled with
+ // `sampling`. When `colors` is not empty, `mode` blends each sprite's color
+ // with the atlas. Nothing is drawn when the spans are empty or their sizes do
+-// not match.
++// not match. Under a perspective matrix, SkCanvas::drawAtlas draws instead.
+ inline void drawAtlasAsVertices(SkCanvas *canvas, const SkImage *atlas,
+                                 SkSpan<const SkRSXform> xform,
+                                 SkSpan<const SkRect> tex,
+@@ -94,6 +94,16 @@ inline void drawAtlasAsVertices(SkCanvas *canvas, const SkImage *atlas,
+       (!colors.empty() && colors.size() != xform.size())) {
+     return;
    }
-   return self;
- }
-@@ -327,11 +315,27 @@ - (void)enterPresentThread {
-   __weak SkiaView *weakSelf = self;
-   auto view = _view;
-   auto presenting = _presenting;
-+
-+#if TARGET_OS_OSX
-+  // AppKit binds the link to the view, which follows it between displays,
-+  // and makes it on the main thread only: it is made paused here and joins
-+  // the present thread's run loop in the same task that lets frame requests
-+  // through. The link holds the view as its target until the leave task
-+  // invalidates it, so the task finds the view.
-+  CADisplayLink *displayLink = [self displayLinkWithTarget:self
-+                                                  selector:@selector(onFrame:)];
-+  displayLink.paused = YES;
-+#endif // TARGET_OS_OSX
-   RNSkia::presentThread().post([=]() {
-     *presenting = true;
-     SkiaView *strongSelf = weakSelf;
-     if (strongSelf != nil) {
-       strongSelf->_presentView = view;
-+#if TARGET_OS_OSX
-+      strongSelf->_displayLink = displayLink;
-+      [displayLink addToRunLoop:[NSRunLoop currentRunLoop]
-+                        forMode:NSRunLoopCommonModes];
-+#endif // TARGET_OS_OSX
-     }
-   });
- }
-@@ -342,9 +346,10 @@ - (void)enterPresentThread {
- // Only this layer's window: the view may be back with a new one by then. The
- // task holds the layer, which so outlives the Dawn surface over it, and whose
- // address cannot come back as the new layer's meanwhile. The display link
--// goes in the same task: an animation frame asked for between two would make a
--// new one that outlives the leave (see requestAnimationFrame). The view goes on
--// the main thread, where UIKit expects it to, as this task owns the last
-+// goes in the same task: on iOS, an animation frame asked for between two
-+// would make a new one that outlives the leave (see requestAnimationFrame);
-+// on macOS, the link made at the enter holds the view until then. The view goes
-+// on the main thread, where UIKit expects it to, as this task owns the last
- // reference to it once Fabric let go of it (see invalidate). A strong capture
- // cannot promise that: the block would let go on the present thread, racing the
- // main thread for the last release. So the reference is taken here, by hand,
-@@ -368,17 +373,10 @@ - (void)leavePresentThread {
-       if (view->_presentView != nullptr) {
-         view->_presentView->cancelFrames();
++  // Graphite's vertices render step writes the draw's depth without scaling
++  // it by w (src/gpu/graphite/render/VerticesRenderStep.cpp), so under a
++  // perspective matrix the depth test drops parts of the triangles and the
++  // sprites come out cut or missing. Its drawAtlas draws each sprite with a
++  // render step that handles perspective, so a projected atlas uses it.
++  if (canvas->getTotalMatrix().hasPerspective()) {
++    canvas->drawAtlas(atlas, xform, tex, colors, mode, sampling, nullptr,
++                      paint);
++    return;
++  }
+   const bool hasColors = !colors.empty();
+   uint32_t flags = SkVertices::kHasTexCoords_BuilderFlag;
+   if (hasColors) {
+```
+
+**File**: `packages/skia/src/renderer/__tests__/e2e/Atlas.spec.tsx` (modified, +48/-0)
+```diff
+@@ -427,6 +427,54 @@ describe("Atlas", () => {
        }
--#if !TARGET_OS_OSX
-       [view->_displayLink invalidate];
-       view->_displayLink = nil;
--      // The request belonge
+     );
+   });
++  it("should draw the atlas under a perspective matrix", async () => {
++    // Graphite's vertices render step mishandles depth under perspective, so
++    // an atlas drawn as vertices came out with cut or missing sprites.
++    const { Skia, rect, drawAsImage } = importSkia();
++    const { width, height } = surface;
++    const size = 64;
++    const texture = await drawAsImage(
++      <Group>
++        <Rect rect={rect(0, 0, size / 2, size / 2)} color="red" />
++        <Rect rect={rect(size / 2, 0, size / 2, size / 2)} color="green" />
++        <Rect rect={rect(0, size / 2, size / 2, size / 2)} color="blue" />
++        <Rect
++          rect={rect(size / 2, size / 2, size / 2, size / 2)}
++          color="yellow"
++        />
++      </Group>,
++      { width: size, height: size }
++    );
++    const cols = 3;
++    const rows = 3;
++    const pad = Math.min(width, height) * 0.2;
++    const cell = (Math.min(width, height) - pad * 2) / cols;
++    const scale = (cell * 0.9) / size;
++    const sprites = new Array(cols * rows)
++      .fill(0)
++      .map(() => rect(0, 0, size, size));
++    const transforms = sprites.map((_, i) => {
++      const x = pad + (i % cols) * cell + cell * 0.05;
++      const y = pad + Math.floor(i / cols) * cell + cell * 0.05;
++      return Skia.RSXform(scale, 0, x, y);
++    });
++    const img = await surface.draw(
++      <Group
++        transform={[
++          { translate: [width / 2, height / 2] },
++          { perspective: 300 },
++          { rotateX: 0.7 },
++          { rotateY: 0.3 },
++          { translate: [-width / 2, -height / 2] },
++        ]}
++      >
++        <Atlas image={texture} sprites={sprites} transforms={transforms} />
++      </Group>
++    );
++    await checkImage(img, "snapshots/atlas/perspective.png", {
++      maxPixelDiff: 500,
++    });
++  });
+   it("should accept null as a texture", async () => {
+     const { Skia, rect } = importSkia();
+     const size = { width: 25, height: 25 * 0.45 };
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4500** (2026-11-21): fix(🗺️): draw an atlas under a perspective matrix with drawAtlas (@enzomanuelmangano)
+- **PR #4496** (2026-11-20): chore(🐙): unify Skia and Dawn patch handling (#4489) (@wcandillon)
+- **PR #4492** (2026-11-18): chore(🐙): update Readme (@wcandillon)
+- **PR #4489** (2026-11-20): chore(🐙): unify Skia and Dawn patch handling (@theeket)
 - **PR #4487** (2026-11-18): chore(🍏): raise minimum supported macOS to 14.0 (@theeket)
 - **PR #4486** (2026-11-16): chore(🐙): refactor Android CI build (@wcandillon)
-- **PR #4485** (2026-11-16): chore(deps): bump anthropics/claude-code-action from 1.0.269 to 1.0.275 (@dependabot[bot])
-- **PR #4484** (2026-11-17): feat(🤖): download the Android binaries from GitHub releases (@wcandillon)
-- **PR #4483** (2026-11-16): chore(🍏) fix macOS example, move `react-native-macos` to 0.83 (@theeket)
-- **PR #4481** (2026-11-18): fix(🍏): present at full rate on macOS 14+ ProMotion devices (@theeket)
 
 ---
 
@@ -1880,82 +1837,41 @@ Co-authored-by: William Candillon <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🍏): present at full rate on macOS 14+ ProMotion devices
+## X. 🗺️): draw an atlas under a perspective matrix with drawAtlas
 
 **RULE**:
-When implementing operations in `packages/skia/apple/SkiaView.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/skia/cpp/rnskia/RNSkAtlas.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `72ed90d0`: 🍏): present at full rate on macOS 14+ ProMotion devices. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `badcc586`: 🗺️): draw an atlas under a perspective matrix with drawAtlas. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/skia/apple/SkiaView.mm`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/skia/cpp/rnskia/RNSkAtlas.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  // Present thread. Created as the view enters a superview on macOS, where
-  // the link is bound to the view and follows its display, and on the first
-  // animation frame elsewhere, so that a canvas that never animates has none.
-
-  // The screen maximum used for the last frame-rate request. Present thread.
-  // This belongs to the current link: a recycled view's new link must ask
-  // again. Comparing rates also picks up a new display rate (see
-  // updateMaximumFramesPerSecond).
-  float _requestedFramesPerSecond;
-  // or changes screens, 0 until then.
-    _requestedFramesPerSecond = 0;
-#endif // !TARGET_OS_OSX
-
-#if TARGET_OS_OSX
-  // AppKit binds the link to the view, which follows it between displays,
-  // and makes it on the main thread only: it is made paused here and joins
-  // the present thread's run loop in the same task that lets frame requests
-  // through. The link holds the view as its target until the leave task
-  // invalidates it, so the task finds the view.
-  CADisplayLink *displayLink = [self displayLinkWithTarget:self
-                                                  selector:@selector(onFrame:)];
-  displayLink.paused = YES;
-#endif // TARGET_OS_OSX
-#if TARGET_O
+// not match. Under a perspective matrix, SkCanvas::drawAtlas draws instead.
+  // Graphite's vertices render step writes the draw's depth without scaling
+  // it by w (src/gpu/graphite/render/VerticesRenderStep.cpp), so under a
+  // perspective matrix the depth test drops parts of the triangles and the
+  // sprites come out cut or missing. Its drawAtlas draws each sprite with a
+  // render step that handles perspective, so a projected atlas uses it.
+  if (canvas->getTotalMatrix().hasPerspective()) {
+    canvas->drawAtlas(atlas, xform, tex, colors, mode, sampling, nullptr,
+                      paint);
+    return;
+  }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-#include <algorithm>
-#if !TARGET_OS_OSX
-  // Present thread.
-  // Whether the display link asked for the display's full rate yet (see
-  // requestFullFrameRate). Present thread.
-  bool _fullFrameRateRequested;
-  // (UIKit), 0 until then.
-#else
-  // Whether a tick is scheduled, when the last one ran (see
-  // presentAgainLater), and which ticks are still wanted: the leave moves
-  // the count on, and a tick scheduled before it does nothing. Present
-  // thread.
-  bool _presentAgainScheduled;
-  CFTimeInterval _lastTick;
-  uint64_t _tickGeneration;
-#endif
-#if TARGET_OS_OSX
-    _presentAgainScheduled = false;
-    _lastTick = 0;
-    _tickGeneration = 0;
-#else
-    _fullFrameRateRequested = false;
-#endif
-#endif
-// goes in the same task: an animation frame asked for between two would make a
-// new one that outlives the leave (see requestAnimationFrame). The view goes on
-// the main thread, where UIKit expects it to, as this task owns the last
-#if !TARGET_OS_OSX
-      // The request belonge
+// not match.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `72ed90d0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `badcc586` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

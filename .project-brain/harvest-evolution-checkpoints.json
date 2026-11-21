@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T23:30:19.886Z",
+  "last_updated": "2026-11-21T23:39:51.882Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T21:58:03.324Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-21T23:06:19.037Z",
+      "processed_at": "2026-11-21T23:39:50.739Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2458,7 +2458,7 @@
       "staged_for_review": 0
     },
     "shopify-react-native-skia-learnings.md": {
-      "processed_at": "2026-11-18T18:14:52.224Z",
+      "processed_at": "2026-11-21T23:39:49.755Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2923,9 +2923,9 @@
       "staged_for_review": 0
     },
     "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md": {
-      "processed_at": "2026-11-15T08:09:30.602Z",
+      "processed_at": "2026-11-21T23:39:49.339Z",
       "promoted_canonical": 0,
-      "staged_for_review": 0
+      "staged_for_review": 1
     },
     "melnixdev-seo-crawl-audit-learnings.md": {
       "processed_at": "2026-11-19T19:39:10.615Z",
@@ -3688,7 +3688,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2925,
+  "total_dossiers_evaluated": 2928,
   "total_canonical_promoted": 463,
-  "total_staged_for_review": 2239
+  "total_staged_for_review": 2242
 }

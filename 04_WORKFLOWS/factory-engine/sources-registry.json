@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T23:27:22.371Z",
-    "lastVerified": "2026-11-21T23:27:22.371Z",
+    "lastChecked": "2026-11-21T23:39:49.199Z",
+    "lastVerified": "2026-11-21T23:39:49.199Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -172,12 +172,12 @@
     "revisionIdentifier": "9a44a8e8"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T22:48:37.254Z",
-    "lastVerified": "2026-11-21T22:48:37.254Z",
+    "lastChecked": "2026-11-21T23:39:49.191Z",
+    "lastVerified": "2026-11-21T23:39:49.191Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -186,7 +186,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "778227f6"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1330,9 +1331,9 @@
   "neondatabase-neon": {
     "name": "neon",
     "officialUrl": "https://github.com/neondatabase/neon",
-    "lastChecked": "2026-11-20T19:25:08.680Z",
+    "lastChecked": "2026-11-21T23:39:46.754Z",
     "revisionIdentifier": "fa504217",
-    "lastVerified": "2026-11-20T19:25:08.680Z"
+    "lastVerified": "2026-11-21T23:39:46.754Z"
   },
   "sharkdp-fd": {
     "name": "sharkdp/fd",
@@ -2239,8 +2240,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-21T17:28:14.922Z",
-    "lastVerified": "2026-11-21T17:28:14.922Z",
+    "lastChecked": "2026-11-21T23:39:44.183Z",
+    "lastVerified": "2026-11-21T23:39:44.183Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -2782,8 +2783,8 @@
     "officialUrl": "https://github.com/karmada-io/karmada",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T20:49:35.366Z",
-    "lastVerified": "2026-11-20T20:49:35.366Z",
+    "lastChecked": "2026-11-21T23:39:41.727Z",
+    "lastVerified": "2026-11-21T23:39:41.727Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-karmada-io-karmada",
@@ -3991,12 +3992,12 @@
     "officialUrl": "https://github.com/Shopify/react-native-skia",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-18T18:09:55.520Z",
-    "lastVerified": "2026-11-18T18:09:55.520Z",
+    "lastChecked": "2026-11-21T23:39:43.315Z",
+    "lastVerified": "2026-11-21T23:39:43.315Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-wcandillon-react-native-skia",
-    "contentHash": "f78b8de1dafdd6c98dcea5a097d61c951b686b64dd133cdf899200d05decd219",
+    "contentHash": "827ea4e42dca02da78833df24905cc109f2c7e5b6a8d123a2127145917774d18",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -4382,9 +4383,9 @@
   "wasm-bindgen-wasm-pack": {
     "name": "wasm-pack",
     "officialUrl": "https://github.com/wasm-bindgen/wasm-pack",
-    "lastChecked": "2026-11-20T08:02:45.152Z",
+    "lastChecked": "2026-11-21T23:39:34.199Z",
     "revisionIdentifier": "c262c330",
-    "lastVerified": "2026-11-20T08:02:45.152Z"
+    "lastVerified": "2026-11-21T23:39:34.199Z"
   },
   "hf-qwen-qwen3.8-flash-next": {
     "name": "Qwen/Qwen3.8-Flash-Next",
@@ -13116,6 +13117,23 @@
     "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air",
     "contentHash": "0fc8d3f4bf16a4e19329741b53c13d31bf753b3d23e4cfc96f39187028582cec",
     "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated": {
+    "name": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+    "officialUrl": "https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T23:39:36.701Z",
+    "lastVerified": "2026-11-21T23:39:36.701Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
+    "contentHash": "0b89a22d536d0b7f5c342d998d504e9f83819c1ec0c786f93123034a5c17e18a",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

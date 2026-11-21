@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-0LBG",
-    "timestamp": "2026-11-19T20:24:20.716Z",
-    "repository": "TableProApp/TablePro",
-    "learningId": "learn-github-tableproapp-tablepro",
-    "contentHash": "792d8525e75b9f28bd89bdccbdb9c429528986a5ac57495178f8dc3f8772f963",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-0PST",
-    "timestamp": "2026-11-19T20:24:26.525Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "9caa662250bd70b1eacb6d24713393a12056f0e8266de229bc387cddf67bd1a3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-CXRF",
     "timestamp": "2026-11-19T20:33:56.716Z",
     "repository": "rtk-ai/rtk",
@@ -7492,6 +7462,36 @@
     "contentHash": "93cc46b6c26254e730184e7dd434ff51566cec28cfcf1ce2c9be1ebbcf469f8b",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-VF8E",
+    "timestamp": "2026-11-21T23:39:37.310Z",
+    "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+    "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
+    "contentHash": "0b89a22d536d0b7f5c342d998d504e9f83819c1ec0c786f93123034a5c17e18a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-VKOQ",
+    "timestamp": "2026-11-21T23:39:44.378Z",
+    "repository": "wcandillon/react-native-skia",
+    "learningId": "learn-github-wcandillon-react-native-skia",
+    "contentHash": "827ea4e42dca02da78833df24905cc109f2c7e5b6a8d123a2127145917774d18",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -11975,3 +11975,5 @@ Every entry in this ledger must capture:
 | `learn-dom-i-dbbc4693` | `project://pimalaya-himalaya` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md` | 2026-11-21T23:28:26.723Z |
 | `learn-dom-h-149b3a5c` | `project://hf-edge0-audio8-tts-realistic-air` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md` | 2026-11-21T23:29:11.135Z |
 | `learn-dom-b-1a9a8a88` | `project://tailscale-tailscale` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md` | 2026-11-21T23:30:18.496Z |
+| `learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated` | `https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | `hf-obliter` | Multi-dimensional audit evidence | 2026-11-21T23:39:37.314Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `badcc586` | Multi-dimensional audit evidence | 2026-11-21T23:39:44.383Z |

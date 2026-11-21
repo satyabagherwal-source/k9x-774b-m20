@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T23:27:18.744Z",
-  "total_cycles_completed": 11357,
-  "total_learnings_persisted": 11357,
-  "total_rules_promoted": 10677,
+  "last_updated": "2026-11-21T23:39:44.388Z",
+  "total_cycles_completed": 11359,
+  "total_learnings_persisted": 11359,
+  "total_rules_promoted": 10678,
   "history": [
-    {
-      "timestamp": "2026-11-21T03:44:34.412Z",
-      "repository": "apache/arrow",
-      "learningId": "learn-github-apache-arrow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T03:44:38.919Z",
-      "repository": "makecindy/cindy",
-      "learningId": "learn-github-makecindy-cindy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T03:44:42.765Z",
       "repository": "infracost/infracost",
@@ -1403,6 +1389,20 @@
       "repository": "pimalaya/himalaya",
       "learningId": "learn-github-pimalaya-himalaya",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T23:39:37.320Z",
+      "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+      "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T23:39:44.388Z",
+      "repository": "wcandillon/react-native-skia",
+      "learningId": "learn-github-wcandillon-react-native-skia",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

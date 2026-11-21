@@ -11942,3 +11942,5 @@
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T23:28:26.723Z` | `pimalaya-himalaya` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-DBBC4693` [Domain I] | Yes (`02986d32...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T23:29:11.135Z` | `hf-edge0-audio8-tts-realistic-air` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-149B3A5C` [Domain H] | Yes (`e678eea6...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T23:30:18.496Z` | `tailscale-tailscale` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-B-1A9A8A88` [Domain B] | Yes (`3fa665c7...`) |
+| `CYCLE-20261121-VF8E` | `2026-11-21T23:39:37.310Z` | `OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md` | Yes (`0b89a22d...`) |
+| `CYCLE-20261121-VKOQ` | `2026-11-21T23:39:44.378Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9869` | Yes (`827ea4e4...`) |

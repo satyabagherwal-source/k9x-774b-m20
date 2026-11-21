@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T23:30:19.517Z",
-  "total_records": 2301,
+  "last_updated": "2026-11-21T23:39:51.410Z",
+  "total_records": 2303,
   "domains": {
     "A": {
       "total": 17,
@@ -60,7 +60,7 @@
       ]
     },
     "D": {
-      "total": 904,
+      "total": 906,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -965,7 +965,9 @@
         "DOM-D-3CF395C7",
         "domain_intelligence-research-knowledge-intelligence-hf-sulphurai-sulphur-3-learnings-core-invariants",
         "DOM-D-8372CBCD",
-        "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-tts-realistic-0-6b-learnings-cor"
+        "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-tts-realistic-0-6b-learnings-cor",
+        "domain_intelligence-research-knowledge-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterated",
+        "domain_intelligence-research-knowledge-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblitera"
       ]
     },
     "E": {
@@ -8071,8 +8073,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "ab7f39322f9b9b043d184499bb69353c21c37df9970df5b8ec602b6775f4bbdf",
-      "created_at": "2026-11-21T23:06:19.671Z"
+      "content_hash": "83796419649e13ec98460d1007b58c80cf1efb4c40bea2392eb29a24775934b5",
+      "created_at": "2026-11-21T23:39:51.410Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -14217,10 +14219,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: wcandillon/react-native-skia Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-technical-construction-intelligence-wcandillon-reac.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-technical-construction-intelligence-wcandillon-react-n.md",
       "repository": "wcandillon/react-native-skia",
-      "content_hash": "f413eb1b76388a5d2731422136ec45bf972ae6d9b0c5fa74a2033cfdeac2d1db",
-      "created_at": "2026-11-21T01:33:44.348Z"
+      "content_hash": "33286a83a73f073f3fb6547168dfc270431007696c910d01b60f9b3e908cdf32",
+      "created_at": "2026-11-21T23:39:44.781Z"
     },
     "DOM-D-AF708B11": {
       "record_id": "DOM-D-AF708B11",
@@ -14330,8 +14332,8 @@
       "title": "Technical Construction Intelligence: shopify-react-native-skia-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-learnings-technical-construction-intelligence-shopify-.md",
       "repository": "shopify-react-native-skia-learnings",
-      "content_hash": "3eec7bcc4539845cca21f02ac00d2b10e7c1d7981611d62fb2d78140dd50563a",
-      "created_at": "2026-11-18T18:14:52.893Z"
+      "content_hash": "ef9ea8b82ff4c48b2d3ddbb90f057e9af8ea260cbad801cd0c36c6d9d1e7126d",
+      "created_at": "2026-11-21T23:39:50.394Z"
     },
     "domain_intelligence-research-knowledge-intelligence-pablodawson-minimax-h3-360-orbit-lora-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-pablodawson-minimax-h3-360-orbit-lora-core-invar",
@@ -38776,6 +38778,24 @@
       "repository": "tailscale-tailscale-learnings",
       "content_hash": "da2e3f330e1f7742731232adec5b6f6f9e618dadd88b3aa5568f0490cec4b5ff",
       "created_at": "2026-11-21T23:30:19.517Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterated": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterated",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-obliteratus-deepseek-v4-1-flash-1017-obliterated-research-knowledge-intellige.md",
+      "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+      "content_hash": "8f552326d1dc407373d1981e1220a593ee7bf5cdfb3e8b9910fbccca36a7ba75",
+      "created_at": "2026-11-21T23:39:37.518Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblitera": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblitera",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-obliteratus-deepseek-v4-1-flash-1017-obliterated-learnings-research-knowledge.md",
+      "repository": "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings",
+      "content_hash": "058a391ac3a61b63c76df222f321e98a237df5b4def4336b34f15c2ae0e24af6",
+      "created_at": "2026-11-21T23:39:49.556Z"
     }
   }
 }
