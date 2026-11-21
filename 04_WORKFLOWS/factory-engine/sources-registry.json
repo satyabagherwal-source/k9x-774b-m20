@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T18:23:09.153Z",
-    "lastVerified": "2026-11-21T18:23:09.153Z",
+    "lastChecked": "2026-11-21T18:44:29.030Z",
+    "lastVerified": "2026-11-21T18:44:29.030Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -230,8 +230,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-21T09:47:20.545Z",
-    "lastVerified": "2026-11-21T09:47:20.545Z",
+    "lastChecked": "2026-11-21T18:44:23.990Z",
+    "lastVerified": "2026-11-21T18:44:23.990Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-21T17:28:20.042Z",
+    "lastChecked": "2026-11-21T18:44:29.019Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-21T17:28:20.042Z"
+    "lastVerified": "2026-11-21T18:44:29.019Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -941,9 +941,9 @@
   "devspace-sh-devspace": {
     "name": "devspace",
     "officialUrl": "https://github.com/devspace-sh/devspace",
-    "lastChecked": "2026-11-20T15:15:13.267Z",
+    "lastChecked": "2026-11-21T18:44:21.642Z",
     "revisionIdentifier": "8ff62607",
-    "lastVerified": "2026-11-20T15:15:13.267Z"
+    "lastVerified": "2026-11-21T18:44:21.642Z"
   },
   "rustls-rustls": {
     "name": "rustls/rustls",
@@ -2582,9 +2582,9 @@
   "welldone-software-why-did-you-render": {
     "name": "why-did-you-render",
     "officialUrl": "https://github.com/welldone-software/why-did-you-render",
-    "lastChecked": "2026-11-18T14:32:02.118Z",
+    "lastChecked": "2026-11-21T18:44:19.373Z",
     "revisionIdentifier": "3ec3512d",
-    "lastVerified": "2026-11-18T14:32:02.118Z"
+    "lastVerified": "2026-11-21T18:44:19.373Z"
   },
   "goodrain-rainbond": {
     "name": "rainbond",
@@ -2913,12 +2913,12 @@
     "officialUrl": "https://github.com/Orange-OpenSource/hurl",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T03:32:25.162Z",
-    "lastVerified": "2026-11-20T03:32:25.162Z",
+    "lastChecked": "2026-11-21T18:44:17.409Z",
+    "lastVerified": "2026-11-21T18:44:17.409Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "e285aa2128a4e61b1a83addcab11b40e1f26cd3fa30d06d3d0553a746213b52a",
+    "contentHash": "7174f376cf202eac6c4c7de804a96fb65f691c031a1b4d0d147462ac7f19e8a1",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -7103,9 +7103,9 @@
   "libsql-libsql": {
     "name": "libsql",
     "officialUrl": "https://github.com/libsql/libsql",
-    "lastChecked": "2026-11-20T13:26:42.202Z",
+    "lastChecked": "2026-11-21T18:44:26.526Z",
     "revisionIdentifier": "a1d031cb",
-    "lastVerified": "2026-11-20T13:26:42.202Z"
+    "lastVerified": "2026-11-21T18:44:26.526Z"
   },
   "domcyrus-rustnet": {
     "name": "domcyrus/rustnet",
@@ -12672,6 +12672,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
     "contentHash": "e46a489a53681d249b11be78ad8cd73f5ac609c4559dcdc5b823c650525dbd2e",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-ccore-qwen3.5-4b-3d-coder": {
+    "name": "ccore/Qwen3.5-4B-3D-Coder",
+    "officialUrl": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T18:44:16.666Z",
+    "lastVerified": "2026-11-21T18:44:16.666Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+    "contentHash": "1b8e7b0e162e5aba76f13ff8a2f6819dd0c05ce2a561bb94de7a0991c63c5f46",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

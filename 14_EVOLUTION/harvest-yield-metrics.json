@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T18:23:05.844Z",
-  "total_cycles_completed": 11295,
-  "total_learnings_persisted": 11295,
-  "total_rules_promoted": 10624,
+  "last_updated": "2026-11-21T18:44:18.299Z",
+  "total_cycles_completed": 11297,
+  "total_learnings_persisted": 11297,
+  "total_rules_promoted": 10625,
   "history": [
-    {
-      "timestamp": "2026-11-20T23:05:32.580Z",
-      "repository": "PeerDB-io/peerdb",
-      "learningId": "learn-github-peerdb-io-peerdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T23:05:35.744Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T23:13:30.177Z",
       "repository": "sveltejs/svelte",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-21T18:23:05.844Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T18:44:17.392Z",
+      "repository": "ccore/Qwen3.5-4B-3D-Coder",
+      "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T18:44:18.299Z",
+      "repository": "Orange-OpenSource/hurl",
+      "learningId": "learn-github-orange-opensource-hurl",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

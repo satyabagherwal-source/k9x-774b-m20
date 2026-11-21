@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T18:23:11.895Z",
+  "last_updated": "2026-11-21T18:44:31.830Z",
   "total_records": 2267,
   "domains": {
     "A": {
@@ -9000,8 +9000,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "942c657a12150de0872d474ec236212e8855256644bcff56d2cafe3544df0de8",
-      "created_at": "2026-11-21T14:49:45.238Z"
+      "content_hash": "d8a0c6cd49603b4d49a87dbe414fe1defc09d9af47112eda698575a8a6478885",
+      "created_at": "2026-11-21T18:44:31.830Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -28854,8 +28854,8 @@
       "title": "Research & Knowledge Intelligence: ccore/Qwen3.5-4B-3D-Coder Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ccore-qwen3-5-4b-3d-coder-research-knowledge-intelligence-ccore-qwen3-5-4b-3d.md",
       "repository": "ccore/Qwen3.5-4B-3D-Coder",
-      "content_hash": "045af4f24e1a4d3efb9df9cdc42f7b3dcb7dce97b667e5ba057998a24b4f1393",
-      "created_at": "2026-11-17T19:37:04.783Z"
+      "content_hash": "896c1967ce06b8b5a3046a422f9dfc277cfc0512a359223ae97a896baa979bf8",
+      "created_at": "2026-11-21T18:44:17.660Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-3d-coder-learnings-core-inva": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-3d-coder-learnings-core-inva",
@@ -28863,8 +28863,8 @@
       "title": "Research & Knowledge Intelligence: hf-ccore-qwen3.5-4b-3d-coder-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ccore-qwen3-5-4b-3d-coder-learnings-research-knowledge-intelligence-hf-ccore-.md",
       "repository": "hf-ccore-qwen3.5-4b-3d-coder-learnings",
-      "content_hash": "59a4b1e9d1f5743c9e46ab2f58d64a15c55ebaa8ca1b09352ec2c3174814b2df",
-      "created_at": "2026-11-17T19:37:07.728Z"
+      "content_hash": "9e98f35ba17041cf96fad5283d36a05994635af71b2b223a3902c171c4bc6249",
+      "created_at": "2026-11-21T18:44:30.785Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-1-7b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-1-7b-core-invariants",
@@ -30226,8 +30226,8 @@
       "title": "Architecture Intelligence: Orange-OpenSource/hurl Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-orange-opensource-hurl-architecture-intelligence-orange-opensource-hurl-core-inv.md",
       "repository": "Orange-OpenSource/hurl",
-      "content_hash": "1a3f9cd1dd9ddbbfb583233cea8bf8a54c1be7b56ac9217522a547a34b7c781a",
-      "created_at": "2026-11-20T03:32:26.722Z"
+      "content_hash": "a763a74748a6eff38461a98b9687ee917ded0abe0d6e9d2a15bea5911f246af9",
+      "created_at": "2026-11-21T18:44:18.765Z"
     },
     "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-core-invariants",
@@ -30244,8 +30244,8 @@
       "title": "Architecture Intelligence: orange-opensource-hurl-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-orange-opensource-hurl-learnings-architecture-intelligence-orange-opensource-hur.md",
       "repository": "orange-opensource-hurl-learnings",
-      "content_hash": "26e78a2eab161089884fa4d594a026b3694d3765f83b42f3a4216fedf3c8c764",
-      "created_at": "2026-11-20T03:32:41.322Z"
+      "content_hash": "89c9a9614cfd02e18a0e24c418d28995a0282d59ecf6497693617896d45d6243",
+      "created_at": "2026-11-21T18:44:30.134Z"
     },
     "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants",

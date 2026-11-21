@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T19:37:07.635Z",
+  "timestamp": "2026-11-21T18:44:30.676Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-ccore-qwen3.5-4b-3d-coder-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-ccore-qwen3.5-4b-3d-coder-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T19:37:07.635Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T18:44:30.676Z`  
 > **Learning ID**: `LEARN-EVO-hf-ccore-qwen3.5-4b-3d-coder-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-ccore-qwe`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T19:37:04.198Z  
+> **Timestamp**: 2026-11-21T18:44:16.789Z  
 > **Learning ID**: `learn-huggingface-ccore-qwen3-5-4b-3d-coder`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder](https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T19:35:24.237Z  
+> **Harvest Timestamp**: 2026-11-21T18:44:16.666Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 473410 downloads | 1204 likes
+- **Stars / Engagement**: 557359 downloads | 1184 likes
 
 ---
 

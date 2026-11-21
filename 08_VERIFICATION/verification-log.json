@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-8V6L",
-    "timestamp": "2026-11-19T15:50:50.589Z",
-    "repository": "biomejs/biome",
-    "learningId": "learn-github-biomejs-biome",
-    "contentHash": "497c16ae1e702f9144ed77803c0530a7cfe498028b42da6164542cc3ba18f726",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-J094",
-    "timestamp": "2026-11-19T15:58:43.720Z",
-    "repository": "fishaudio/drama-3",
-    "learningId": "learn-huggingface-fishaudio-drama-3",
-    "contentHash": "14a6db04ea8eaa363783add77f3901a240f6b53c735ce964258e3002354d12d3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-J3HI",
     "timestamp": "2026-11-19T15:58:47.910Z",
     "repository": "oxc-project/oxc",
@@ -7490,6 +7460,36 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "d69d276017e6bc2343b921801bb9d3314894c935687d4781d8395f72f54afa97",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-BMG4",
+    "timestamp": "2026-11-21T18:44:17.380Z",
+    "repository": "ccore/Qwen3.5-4B-3D-Coder",
+    "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+    "contentHash": "1b8e7b0e162e5aba76f13ff8a2f6819dd0c05ce2a561bb94de7a0991c63c5f46",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-BN5C",
+    "timestamp": "2026-11-21T18:44:18.288Z",
+    "repository": "Orange-OpenSource/hurl",
+    "learningId": "learn-github-orange-opensource-hurl",
+    "contentHash": "7174f376cf202eac6c4c7de804a96fb65f691c031a1b4d0d147462ac7f19e8a1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

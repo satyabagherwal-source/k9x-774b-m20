@@ -11868,3 +11868,5 @@
 | `CYCLE-20261121-K8OK` | `2026-11-21T18:22:59.828Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9817` | Yes (`11050f99...`) |
 | `CYCLE-20261121-KD3J` | `2026-11-21T18:23:05.551Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9818` | Yes (`2c8a5b5e...`) |
 | `CYCLE-20261121-KDBE` | `2026-11-21T18:23:05.834Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9819` | Yes (`d69d2760...`) |
+| `CYCLE-20261121-BMG4` | `2026-11-21T18:44:17.380Z` | `ccore/Qwen3.5-4B-3D-Coder` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md` | Yes (`1b8e7b0e...`) |
+| `CYCLE-20261121-BN5C` | `2026-11-21T18:44:18.288Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7098` | Yes (`7174f376...`) |

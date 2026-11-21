@@ -11901,3 +11901,5 @@ Every entry in this ledger must capture:
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `53eeaa41` | Multi-dimensional audit evidence | 2026-11-21T18:22:59.832Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `a2126dbc` | Multi-dimensional audit evidence | 2026-11-21T18:23:05.555Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `b17474d2` | Multi-dimensional audit evidence | 2026-11-21T18:23:05.838Z |
+| `learn-huggingface-ccore-qwen3-5-4b-3d-coder` | `https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder` | `hf-ccore-q` | Multi-dimensional audit evidence | 2026-11-21T18:44:17.385Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `6d29cb9f` | Multi-dimensional audit evidence | 2026-11-21T18:44:18.293Z |

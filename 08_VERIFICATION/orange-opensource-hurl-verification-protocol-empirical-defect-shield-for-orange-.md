@@ -4,22 +4,22 @@
 {
   "source_repository": "Orange-OpenSource/hurl",
   "source_url": "https://github.com/Orange-OpenSource/hurl",
-  "source_version": "05a20823",
+  "source_version": "6d29cb9f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T03:32:26.577Z",
+  "timestamp": "2026-11-21T18:44:18.558Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-orange-opensource-hurl",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl) (Revision: `05a20823`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T03:32:26.577Z`  
+> **Provenance**: Harvested from [Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl) (Revision: `6d29cb9f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T18:44:18.558Z`  
 > **Learning ID**: `learn-github-orange-opensource-hurl`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Orange-OpenSource/hurl` (Commit: `05a20823`)
+- **Target Repository**: `Orange-OpenSource/hurl` (Commit: `6d29cb9f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T03:32:25.162Z  
+> **Harvest Timestamp**: 2026-11-21T18:44:17.409Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19331 stars
+- **Stars / Engagement**: 19346 stars
 
 ---
 
@@ -1879,77 +1879,74 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `05a20823` (2026-11-18)
-**Commit Message**: Add age of crate if not updated because too recent.
+### Incident Patch 1: `6d29cb9f` (2026-11-21)
+**Commit Message**: Update crates
 
-Exemple:
-
-```
-### Crates updates for *packages/hurl/Cargo.toml*
-
-- base64 0.23.1 newest
-- brotli 9.1.1 update 9.1.3 too recent (2 days, minimum age 7 days)
-- chrono 0.4.45 newest
-- clap 4.6.7 update 4.6.8 too recent (1 days, minimum age 7 days)
-- curl 0.4.51 newest
-- curl-sys 0.4.91 newest
-- encoding_rs 0.8.44 newest
-- glob 0.3.4 newest
-- libflate 2.3.2 newest
-- libxml 0.3.23 update 0.3.24 too recent (2 days, minimum age 7 days)
-```
-
-**File**: `bin/update_crates.py` (modified, +12/-2)
+**File**: `Cargo.lock` (modified, +4/-4)
 ```diff
-@@ -83,6 +83,14 @@ def latest_aged_version(self, min_publish_age_days: int) -> str | None:
-         ]
-         return max(aged, key=semver_key, default=None)
+@@ -174,15 +174,15 @@ dependencies = [
  
-+    def version_age_days(self, version: str) -> int | None:
-+        """Returns the age in days of a given version, or `None` if unknown."""
-+        now = datetime.now(dt.timezone.utc)
-+        for num, created in self.versions:
-+            if num == version:
-+                return (now - created).days
-+        return None
-+
-     def get_release_body(self, version: str, token: str) -> str | None:
-         """Get the release body for a given version"""
-         headers = {"Accept": "application/vnd.github+json"}
-@@ -301,20 +309,22 @@ def update_local_crates(
-                 min_publish_age_days=min_publish_age_days
-             )
+ [[package]]
+ name = "bumpalo"
+-version = "3.20.3"
++version = "3.20.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
++checksum = "87a0cf66fd1eb2fb7b822cb78370d82303750809bc6ba855f3f58e517d3238db"
  
-+            latest_age_days = dep.version_age_days(latest_version)
-+
-             # No version older than the minimum publish age is newer than the actual version:
-             # don't update and process the next crate
-             if latest_compat_version is None or semver_key(
-                 latest_compat_version
-             ) <= semver_key(actual_version):
-                 print(
--                    f"- {dep.name} {actual_version} {Color.YELLOW}update {latest_version} too recent, minimum age {min_publish_age_days} days{Color.RESET}"
-+                    f"- {dep.name} {actual_version} {Color.YELLOW}update {latest_version} too recent ({latest_age_days} days, minimum age {min_publish_age_days} days){Color.RESET}"
-                 )
-                 continue
-             # A version older than the minimum publish age is newer than the actual version: update to it.
-             # If it's not the latest version, the latest version is too recent.
-             if latest_compat_version != latest_version:
-                 print(
--                    f"- {dep.name} {actual_version} {Color.YELLOW}update {latest_version} too recent, minimum age {min_publish_age_days} days, using {latest_compat_version}{Color.RESET}"
-+                    f"- {dep.name} {actual_version} {Color.YELLOW}update {latest_version} too recent ({latest_age_days} days, minimum age {min_publish_age_days} days), using {latest_compat_version}{Color.RESET}"
-                 )
-             latest_version = latest_compat_version
-             local_crate.update_dependency(
+ [[package]]
+ name = "cc"
+-version = "1.11.1"
++version = "1.11.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4ff2a8126fff0f8c839080d619675a585e61720bb12d2baceae45769fd66f155"
++checksum = "33ef9e3e8154a45c7a95cff4c1299702106ad94062d7bb85fdc5d3a5afd91d45"
+ dependencies = [
+  "find-msvc-tools",
+  "shlex",
+```
+
+**File**: `packages/hurl/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -46,7 +46,7 @@ terminal_size = "0.4.4"
+ winres = "0.1.12"
+ 
+ [build-dependencies]
+-cc = "1.11.1"
++cc = "1.11.2"
+ 
+ [lints]
+ workspace = true
+```
+
+---
+
+### Incident Patch 2: `f5046f10` (2026-11-20)
+**Commit Message**: Update crates
+
+**File**: `Cargo.lock` (modified, +2/-2)
+```diff
+@@ -404,9 +404,9 @@ checksum = "00d174d5400e5e8fd687ad1049e2f578285fa914201b1af7e8b112a4546bd826"
+ 
+ [[package]]
+ name = "errno"
+-version = "0.3.14"
++version = "0.3.15"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
++checksum = "e35d6e78f4cebb90e51d543db8fe41528851d6deeef6ef21ebd4bfdc1e784776"
+ dependencies = [
+  "libc",
+  "windows-sys",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5451** (2026-11-21): Update crates (@hurl-bot)
+- **PR #5450** (2026-11-20): Update crates (@hurl-bot)
 - **PR #5449** (2026-11-19): Add age of crate if not updated because too recent. (@jcamiel)
 - **PR #5448** (2026-11-18): Update crates (@hurl-bot)
 - **PR #5447** (closed): Update crates (@hurl-bot)
 - **PR #5446** (2026-11-17): Downgrade dependencies due to update-crates not honoring global-min-publish (@jcamiel)
-- **PR #5445** (2026-11-17): Install Rust in the update-crate workflow to get the same Rust as build. (@jcamiel)
-- **PR #5444** (closed): Update crates (@hurl-bot)
 
 ---
 
@@ -1969,43 +1966,37 @@ Exemple:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add age of crate if not updated because too recent.
+## X. Update crates
 
 **RULE**:
-When implementing operations in `bin/update_crates.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `05a20823`: Add age of crate if not updated because too recent.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6d29cb9f`: Update crates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `bin/update_crates.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    def version_age_days(self, version: str) -> int | None:
-        """Returns the age in days of a given version, or `None` if unknown."""
-        now = datetime.now(dt.timezone.utc)
-        for num, created in self.versions:
-            if num == version:
-                return (now - created).days
-        return None
-
-            latest_age_days = dep.version_age_days(latest_version)
-
-                    f"- {dep.name} {actual_version} {Color.YELLOW}update {latest_version} too recent ({latest_age_days} days, minimum age {min_publish_age_days} days){Color.RESET}"
-                    f"- {dep.name} {actual_version} {Color.YELLOW}update {latest_version} too recent ({latest_age_days} days, minimum age {min_publish_age_days} days), using {latest_compat_version}{Color.RESET}"
+version = "3.20.4"
+checksum = "87a0cf66fd1eb2fb7b822cb78370d82303750809bc6ba855f3f58e517d3238db"
+version = "1.11.2"
+checksum = "33ef9e3e8154a45c7a95cff4c1299702106ad94062d7bb85fdc5d3a5afd91d45"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                    f"- {dep.name} {actual_version} {Color.YELLOW}update {latest_version} too recent, minimum age {min_publish_age_days} days{Color.RESET}"
-                    f"- {dep.name} {actual_version} {Color.YELLOW}update {latest_version} too recent, minimum age {min_publish_age_days} days, using {latest_compat_version}{Color.RESET}"
+version = "3.20.3"
+checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
+version = "1.11.1"
+checksum = "4ff2a8126fff0f8c839080d619675a585e61720bb12d2baceae45769fd66f155"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `05a20823` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6d29cb9f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

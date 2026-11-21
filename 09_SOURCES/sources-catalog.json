@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "05a20823",
+    "sourceVersion": "6d29cb9f",
     "license": "Apache-2.0",
-    "contentHash": "e285aa2128a4e61b1a83addcab11b40e1f26cd3fa30d06d3d0553a746213b52a",
-    "lastHarvestedAt": "2026-11-20T03:32:26.358Z",
+    "contentHash": "7174f376cf202eac6c4c7de804a96fb65f691c031a1b4d0d147462ac7f19e8a1",
+    "lastHarvestedAt": "2026-11-21T18:44:18.293Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {
@@ -11295,8 +11295,8 @@
     "sourceUrl": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
     "sourceVersion": "hf-ccore-qwen3.5-4b-3d-coder",
     "license": "Open-Source",
-    "contentHash": "4d92418a6659616a684ea1bc01873f4960e3f0863382c7b28b81baaac2d36f5b",
-    "lastHarvestedAt": "2026-11-17T19:37:04.595Z",
+    "contentHash": "1b8e7b0e162e5aba76f13ff8a2f6819dd0c05ce2a561bb94de7a0991c63c5f46",
+    "lastHarvestedAt": "2026-11-21T18:44:17.385Z",
     "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder"
   },
   "agilerl-agilerl": {

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T18:23:12.075Z",
+  "last_updated": "2026-11-21T18:44:32.049Z",
   "total_verified_learnings": 9062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23201,
+  "total_items": 23202,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -109504,13 +109504,13 @@
       "rule_number": 7098,
       "title": "Update crates",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "c0010d32",
+      "source_version": "6d29cb9f",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-09T05:13:57.920Z"
+      "verified_at": "2026-11-21T18:44:18.053Z"
     },
     "rule-7099": {
       "learning_id": "rule-7099",
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Y05E-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-BXFW-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2ad92a06c2b95b651c8c07d55229285a25a693630ae7e18cb0df4777739a562f",
+      "content_hash": "f53ec34e086518f9b01528d095211675537a96777e5963fcef73ab9c70b9b25d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T14:49:45.032Z"
+      "persisted_at": "2026-11-21T18:44:31.634Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "942c657a12150de0872d474ec236212e8855256644bcff56d2cafe3544df0de8",
+      "content_hash": "d8a0c6cd49603b4d49a87dbe414fe1defc09d9af47112eda698575a8a6478885",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T14:49:45.238Z"
+      "persisted_at": "2026-11-21T18:44:31.830Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "0cc49c0a3115c433a71fc57063915aeff1ce9587bb39fb5091c28f777540e822",
+      "content_hash": "7922b2d24ad6f95607162b0539c7475d0187ccc5b58d14352715aa8e040188f5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T14:49:45.452Z"
+      "persisted_at": "2026-11-21T18:44:32.049Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -244177,11 +244177,16 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "05a20823",
-      "content_hash": "e285aa2128a4e61b1a83addcab11b40e1f26cd3fa30d06d3d0553a746213b52a",
+      "source_version": "6d29cb9f",
+      "content_hash": "7174f376cf202eac6c4c7de804a96fb65f691c031a1b4d0d147462ac7f19e8a1",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
+        {
+          "number": 7098,
+          "title": "Update crates",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8582,
           "title": "invertion content for cacert_file.option and clien_cert_file.option.",
@@ -244208,7 +244213,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T03:32:26.170Z",
+      "verified_at": "2026-11-21T18:44:18.053Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244262,10 +244267,10 @@
       "relative_path": "08_VERIFICATION/orange-opensource-hurl-verification-protocol-empirical-defect-shield-for-orange-.md",
       "title": "Verification Protocol: Empirical Defect Shield for Orange-OpenSource/hurl",
       "repository": "Orange-OpenSource/hurl",
-      "source_version": "05a20823",
-      "content_hash": "02ff39e42abe0e39dd26e6e47662172e2c43346651ed7a40a740f894dbe6610a",
+      "source_version": "6d29cb9f",
+      "content_hash": "a088da219c9cf1211ffbd59dea27e5345a2c97b29f4ba22e75dd37b0a76be55e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T03:32:26.864Z"
+      "persisted_at": "2026-11-21T18:44:18.983Z"
     },
     "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari",
@@ -244287,9 +244292,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for orange-opensource-hurl-learnings",
       "repository": "orange-opensource-hurl-learnings",
       "source_version": "HEAD",
-      "content_hash": "7ad8af645ee4a2a3de1bfd530c1a39ce90c2af23706ef8ddf9718ff904ab1497",
+      "content_hash": "c8a9da2da875dfd94af5646397eebaad0fd4f2a0e241fd2f136a4488e7f060d9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T03:32:41.478Z"
+      "persisted_at": "2026-11-21T18:44:30.344Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian",
@@ -279287,7 +279292,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
       "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
-      "content_hash": "4d92418a6659616a684ea1bc01873f4960e3f0863382c7b28b81baaac2d36f5b",
+      "content_hash": "1b8e7b0e162e5aba76f13ff8a2f6819dd0c05ce2a561bb94de7a0991c63c5f46",
       "dossier_path": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
       "promoted_rules": [],
@@ -279296,7 +279301,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T19:37:04.428Z",
+      "verified_at": "2026-11-21T18:44:17.117Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -279313,9 +279318,9 @@
       "title": "Research & Knowledge Intelligence: ccore/Qwen3.5-4B-3D-Coder Core Invariants",
       "repository": "ccore/Qwen3.5-4B-3D-Coder",
       "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
-      "content_hash": "045af4f24e1a4d3efb9df9cdc42f7b3dcb7dce97b667e5ba057998a24b4f1393",
+      "content_hash": "896c1967ce06b8b5a3046a422f9dfc277cfc0512a359223ae97a896baa979bf8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T19:37:04.783Z"
+      "persisted_at": "2026-11-21T18:44:17.660Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-3d-coder-learnings-core-inva": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-3d-coder-learnings-core-inva",
@@ -279325,9 +279330,9 @@
       "title": "Research & Knowledge Intelligence: hf-ccore-qwen3.5-4b-3d-coder-learnings Core Invariants",
       "repository": "hf-ccore-qwen3.5-4b-3d-coder-learnings",
       "source_version": "HEAD",
-      "content_hash": "59a4b1e9d1f5743c9e46ab2f58d64a15c55ebaa8ca1b09352ec2c3174814b2df",
+      "content_hash": "9e98f35ba17041cf96fad5283d36a05994635af71b2b223a3902c171c4bc6249",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T19:37:07.728Z"
+      "persisted_at": "2026-11-21T18:44:30.785Z"
     },
     "learn-huggingface-liquidai-lfm3-1-7b": {
       "learning_id": "learn-huggingface-liquidai-lfm3-1-7b",
@@ -285835,10 +285840,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-orange-opensource-hurl-architecture-intelligence-orange-opensource-hurl-core-inv.md",
       "title": "Architecture Intelligence: Orange-OpenSource/hurl Core Invariants",
       "repository": "Orange-OpenSource/hurl",
-      "source_version": "05a20823",
-      "content_hash": "1a3f9cd1dd9ddbbfb583233cea8bf8a54c1be7b56ac9217522a547a34b7c781a",
+      "source_version": "6d29cb9f",
+      "content_hash": "a763a74748a6eff38461a98b9687ee917ded0abe0d6e9d2a15bea5911f246af9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T03:32:26.722Z"
+      "persisted_at": "2026-11-21T18:44:18.765Z"
     },
     "rule-9147": {
       "learning_id": "rule-9147",
@@ -285886,9 +285891,9 @@
       "title": "Architecture Intelligence: orange-opensource-hurl-learnings Core Invariants",
       "repository": "orange-opensource-hurl-learnings",
       "source_version": "HEAD",
-      "content_hash": "26e78a2eab161089884fa4d594a026b3694d3765f83b42f3a4216fedf3c8c764",
+      "content_hash": "89c9a9614cfd02e18a0e24c418d28995a0282d59ecf6497693617896d45d6243",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T03:32:41.322Z"
+      "persisted_at": "2026-11-21T18:44:30.134Z"
     },
     "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants",
@@ -315322,6 +315327,18 @@
       "content_hash": "bfa82dff1e6f2e74df227bed4b8962d5e5ec7390097af60232dbfbb37770be0a",
       "domain_letter": "G",
       "persisted_at": "2026-11-21T18:23:06.087Z"
+    },
+    "candidate_directive-update-crates": {
+      "item_id": "candidate_directive-update-crates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BW4Q-update-crates.md",
+      "title": "Update crates",
+      "repository": "orange-opensource-hurl-learnings",
+      "source_version": "HEAD",
+      "content_hash": "586869578f2d5d5d5339dfa96de0deb528219422044c5290ef17b4ae5956a797",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T18:44:29.936Z"
     }
   },
   "ai-builder-brain": {

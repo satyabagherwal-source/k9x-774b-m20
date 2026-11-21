@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
   "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T19:37:04.782Z",
+  "timestamp": "2026-11-21T18:44:17.659Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ccore/Qwen3.5-4B-3D-Coder](https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder) (Revision: `hf-ccore-q`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T19:37:04.782Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T18:44:17.659Z`  
 > **Learning ID**: `learn-huggingface-ccore-qwen3-5-4b-3d-coder`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder](https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T19:35:24.237Z  
+> **Harvest Timestamp**: 2026-11-21T18:44:16.666Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 473410 downloads | 1204 likes
+- **Stars / Engagement**: 557359 downloads | 1184 likes
 
 ---
 

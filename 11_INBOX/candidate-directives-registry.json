@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T18:23:11.654Z",
+  "last_updated": "2026-11-21T18:44:31.634Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-Y05E",
+      "id": "CD-BXFW",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-Y05E-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-BXFW-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-21",
@@ -43201,6 +43201,35 @@
       "source_repo": "clickhouse-clickhouse",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-73AD02-flaky-test-iotestawss3client-assumeroler.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-BW4Q",
+      "directive_title": "Update crates",
+      "source_repo": "orange-opensource-hurl-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BW4Q-update-crates.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-1397C3",
+      "directive_title": "Update crates",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "orange-opensource-hurl",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1397C3-update-crates.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-57C620",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-57C620-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-21"
     }
   ]
