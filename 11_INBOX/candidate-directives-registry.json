@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T21:23:03.769Z",
+  "last_updated": "2026-11-21T21:32:22.560Z",
   "directives": [
     {
       "id": "CD-001",
@@ -43770,6 +43770,39 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-B5C01F-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-BRA7",
+      "directive_title": "split workload memory by percentage and reserve host memory",
+      "source_repo": "siderolabs-talos-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BRA7-split-workload-memory-by-percentage-and-reserve-host-memory.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-B22R",
+      "directive_title": "don't report an error for commands that write only their own files",
+      "source_repo": "dathere/qsv",
+      "source_commit": "6f4d08b6",
+      "staged_file": "11_INBOX/candidate-directives/CD-B22R-don-t-report-an-error-for-commands-that-write-only-their-own-files.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-BS7P",
+      "directive_title": "mcp): don't report an error for commands that write only their own files",
+      "source_repo": "dathere-qsv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BS7P-mcp-don-t-report-an-error-for-commands-that-write-only-their-own-files.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
     }
   ]
 }

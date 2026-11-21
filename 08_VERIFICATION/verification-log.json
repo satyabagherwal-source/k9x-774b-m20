@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-JRYY",
-    "timestamp": "2026-11-19T17:23:18.490Z",
-    "repository": "apache/arrow",
-    "learningId": "learn-github-apache-arrow",
-    "contentHash": "5970ec9b8416c322b62dd9f0f07e9133a9901293ff5d7d83012675c843616a8f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-K1JH",
-    "timestamp": "2026-11-19T17:23:30.893Z",
-    "repository": "databendlabs/databend",
-    "learningId": "learn-github-databendlabs-databend",
-    "contentHash": "06b460af33ffe84487f705da73d847fa0cea81ac7088f7dcd43ada47da9dd2bc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-2KKK",
-    "timestamp": "2026-11-19T17:37:55.364Z",
-    "repository": "meta/folly",
-    "learningId": "learn-github-meta-folly",
-    "contentHash": "041697beb775b508d0b820041df4d6edb3b8973d7076a578807bc2f59dbfbf77",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-2RX4",
     "timestamp": "2026-11-19T17:38:04.888Z",
     "repository": "paradedb/paradedb",
@@ -7492,6 +7447,51 @@
     "contentHash": "00889c50410ab03f898ac9c6f99622cf1374aeb94cc6521007abd032ff83d9cb",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-APSI",
+    "timestamp": "2026-11-21T21:31:32.754Z",
+    "repository": "LiconStudio/Minimax-H3-VBVR",
+    "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
+    "contentHash": "2af7f9ce90cf2dc3e815efbf724b48128651028ed002d644a09afe55aff26f0f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-AXJ7",
+    "timestamp": "2026-11-21T21:31:42.787Z",
+    "repository": "siderolabs/talos",
+    "learningId": "learn-github-siderolabs-talos",
+    "contentHash": "5fb9a46bd883b9c4cc95a878b7523c2401461349914e6ecae75430117dda7b12",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-B1W5",
+    "timestamp": "2026-11-21T21:31:48.437Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "09c63f84cc4682f8ab7139f81793ad0e143eca4659fc0998557d5ba8b448f0ea",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

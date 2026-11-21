@@ -11934,3 +11934,7 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `d0e53bdc` | Multi-dimensional audit evidence | 2026-11-21T21:04:45.674Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `3862fd16` | Multi-dimensional audit evidence | 2026-11-21T21:19:46.039Z |
 | `learn-huggingface-diffuspace-clover-35b-a3b-preview` | `https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview` | `hf-diffusp` | Multi-dimensional audit evidence | 2026-11-21T21:22:57.686Z |
+| `learn-huggingface-liconstudio-minimax-h3-vbvr` | `https://huggingface.co/LiconStudio/Minimax-H3-VBVR` | `hf-liconst` | Multi-dimensional audit evidence | 2026-11-21T21:31:32.758Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `5da8dc88` | Multi-dimensional audit evidence | 2026-11-21T21:31:42.792Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `6f4d08b6` | Multi-dimensional audit evidence | 2026-11-21T21:31:48.441Z |
+| `learn-dom-h-713adb2e` | `project://siderolabs-talos` | `5da8dc88` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md` | 2026-11-21T21:32:20.977Z |

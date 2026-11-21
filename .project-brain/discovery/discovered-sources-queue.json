@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T20:52:09.291Z",
+  "updated_at": "2026-11-21T21:32:22.308Z",
   "stats": {
-    "total_discovered": 7355,
-    "approved_pending_harvest": 6957,
+    "total_discovered": 7357,
+    "approved_pending_harvest": 6959,
     "harvested_count": 0,
     "rejected_count": 398,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6937,
+      "COMMUNITY_AND_EXPERT": 6939,
       "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -159047,6 +159047,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vcaesar-riot-learnings.md",
         "fileName": "vcaesar-riot-learnings.md"
+      }
+    },
+    "SRC-4001471D42BA": {
+      "id": "SRC-4001471D42BA",
+      "url": "https://github.com/flannel-io/flannel/releases/tag/v0.28.11",
+      "title": "https://github.com/flannel-io/flannel/releases/tag/v0.28.11",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T21:32:21.061Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
+        "fileName": "siderolabs-talos-learnings.md"
+      }
+    },
+    "SRC-29B43149BA99": {
+      "id": "SRC-29B43149BA99",
+      "url": "https://github.com/dathere/qsv/security/advisories/GHSA-vm54-v922-fpq5",
+      "title": "https://github.com/dathere/qsv/security/advisories/GHSA-vm54-v922-fpq5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T21:32:22.308Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
       }
     }
   }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T21:23:04.235Z",
+  "last_updated": "2026-11-21T21:32:23.233Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T15:59:55.405Z",
@@ -128,8 +128,8 @@
       "staged_for_review": 1
     },
     "hf-liconstudio-minimax-h3-vbvr-learnings.md": {
-      "processed_at": "2026-11-16T00:28:36.242Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-21T21:31:51.918Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "rook-rook-learnings.md": {
@@ -483,9 +483,9 @@
       "staged_for_review": 0
     },
     "siderolabs-talos-learnings.md": {
-      "processed_at": "2026-11-20T17:45:35.394Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-21T21:32:20.977Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "kuddev-pebrel-learnings.md": {
       "processed_at": "2026-11-21T16:40:21.111Z",
@@ -748,7 +748,7 @@
       "staged_for_review": 1
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-21T20:36:49.248Z",
+      "processed_at": "2026-11-21T21:32:21.891Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3673,7 +3673,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2889,
-  "total_canonical_promoted": 454,
-  "total_staged_for_review": 2219
+  "total_dossiers_evaluated": 2892,
+  "total_canonical_promoted": 455,
+  "total_staged_for_review": 2220
 }

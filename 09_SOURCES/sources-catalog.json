@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "1d985194",
+    "sourceVersion": "6f4d08b6",
     "license": "NOASSERTION",
-    "contentHash": "872d5a84a4d2fd796497f9720236abac9f47e658203d5e6b6eaee56f0e07fade",
-    "lastHarvestedAt": "2026-11-21T20:36:43.835Z",
+    "contentHash": "09c63f84cc4682f8ab7139f81793ad0e143eca4659fc0998557d5ba8b448f0ea",
+    "lastHarvestedAt": "2026-11-21T21:31:48.441Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "f180b83d",
+    "sourceVersion": "5da8dc88",
     "license": "MPL-2.0",
-    "contentHash": "d2a15c5645fcaf40722d08d986d9a6129e797f5b277ca4930b45ee883885e010",
-    "lastHarvestedAt": "2026-11-20T17:45:24.735Z",
+    "contentHash": "5fb9a46bd883b9c4cc95a878b7523c2401461349914e6ecae75430117dda7b12",
+    "lastHarvestedAt": "2026-11-21T21:31:42.792Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {
@@ -11525,8 +11525,8 @@
     "sourceUrl": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
     "sourceVersion": "hf-liconstudio-minimax-h3-vbvr",
     "license": "Open-Source",
-    "contentHash": "f8306002dc3903c896c6dfacd36d6d0bfc5608e66795207f52eb31680ce97be8",
-    "lastHarvestedAt": "2026-11-16T00:27:47.150Z",
+    "contentHash": "2af7f9ce90cf2dc3e815efbf724b48128651028ed002d644a09afe55aff26f0f",
+    "lastHarvestedAt": "2026-11-21T21:31:32.758Z",
     "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr"
   },
   "yuezhiai-jonex": {

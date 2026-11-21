@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T21:23:03.926Z",
-  "total_records": 2280,
+  "last_updated": "2026-11-21T21:32:22.737Z",
+  "total_records": 2281,
   "domains": {
     "A": {
       "total": 17,
@@ -1450,7 +1450,7 @@
       ]
     },
     "H": {
-      "total": 541,
+      "total": 542,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1992,7 +1992,8 @@
         "DOM-H-D7B01097",
         "domain_intelligence-technical-construction-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-co",
         "DOM-H-6F3CCE20",
-        "domain_intelligence-technical-construction-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf"
+        "domain_intelligence-technical-construction-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+        "DOM-H-713ADB2E"
       ]
     },
     "I": {
@@ -12985,8 +12986,8 @@
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "repository": "siderolabs/talos",
-      "content_hash": "357669db9998825d5e6fafbd2f18907b43156ff55ba50b647e4dc89dd1fa5214",
-      "created_at": "2026-11-20T17:45:25.097Z"
+      "content_hash": "99fdddbd361cb846ae35044e78bab15835d632380dd8342e63ff17daa5c80d2c",
+      "created_at": "2026-11-21T21:31:43.177Z"
     },
     "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants",
@@ -13107,8 +13108,8 @@
       "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-learnings-technical-construction-intelligence-siderolabs-talos-.md",
       "repository": "siderolabs-talos-learnings",
-      "content_hash": "0ab05f00af348ac1155ef01cc782ea3c5cfe686470642c531cc6bda3bddf8324",
-      "created_at": "2026-11-20T17:45:35.935Z"
+      "content_hash": "416477a2fcb38a88920d2f8d16d6f2624a38b52e93955220152e3a29d1c19679",
+      "created_at": "2026-11-21T21:32:21.522Z"
     },
     "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants",
@@ -18315,8 +18316,8 @@
       "title": "Technical Construction Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dathere-qsv-technical-construction-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "16f5882b3420a79d57cb6d8083f1f1667418a361543166e31902d324c65774ee",
-      "created_at": "2026-11-21T13:30:43.435Z"
+      "content_hash": "8a6b1a28548ba53a0d0072e25746272855ae02235c871da09bbc9c896a5470df",
+      "created_at": "2026-11-21T21:31:48.833Z"
     },
     "DOM-D-11540386": {
       "record_id": "DOM-D-11540386",
@@ -22225,8 +22226,8 @@
       "title": "Technical Construction Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dathere-qsv-learnings-technical-construction-intelligence-dathere-qsv-learnings-.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "ec0091da7470d29813695100cd11ad010e90ae550ba11b16a303f613e7c13bfc",
-      "created_at": "2026-11-20T00:46:48.652Z"
+      "content_hash": "e96a5a64f31ca6bfefef453b6dde0677ae145ef068b0ac5b6ceb5a5f1675f3c6",
+      "created_at": "2026-11-21T21:32:22.737Z"
     },
     "domain_intelligence-research-knowledge-intelligence-videorebirthai-hyperflow-h3-flash-core-invariant": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-videorebirthai-hyperflow-h3-flash-core-invariant",
@@ -23079,8 +23080,8 @@
       "title": "Research & Knowledge Intelligence: LiconStudio/Minimax-H3-VBVR Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liconstudio-minimax-h3-vbvr-research-knowledge-intelligence-liconstudio-minim.md",
       "repository": "LiconStudio/Minimax-H3-VBVR",
-      "content_hash": "5fadc86815b6af1996565ac73b3c3254fc949330a6c8690d874bf85463f261e9",
-      "created_at": "2026-11-16T00:27:47.327Z"
+      "content_hash": "c141d74471a7a8edf0639f36d70fd4df12d68a0e66c9794dfe470ef19b97d9f6",
+      "created_at": "2026-11-21T21:31:32.969Z"
     },
     "domain_intelligence-technical-construction-intelligence-alexpasmantier-television-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-alexpasmantier-television-core-invariants",
@@ -23148,8 +23149,8 @@
       "title": "Research & Knowledge Intelligence: hf-liconstudio-minimax-h3-vbvr-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liconstudio-minimax-h3-vbvr-learnings-research-knowledge-intelligence-hf-lico.md",
       "repository": "hf-liconstudio-minimax-h3-vbvr-learnings",
-      "content_hash": "5bed12a41f19ba5ab353ff4258a517aeb73ba6d18f0a22b50422f31cddd655ed",
-      "created_at": "2026-11-16T00:28:36.448Z"
+      "content_hash": "76c019cdacb7bbf0f06d9c3c7541e2daa1d8d48a645ebff7e293d57df08e129e",
+      "created_at": "2026-11-21T21:31:52.123Z"
     },
     "domain_intelligence-architecture-intelligence-rqlite-rqlite-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-rqlite-rqlite-learnings-core-invariants",
@@ -38279,6 +38280,48 @@
       "repository": "hf-diffuspace-clover-35b-a3b-preview-learnings",
       "content_hash": "9fad3f69d46992c8a69db48e36755f8759612434f03a2a245e1ee69326eb71f5",
       "created_at": "2026-11-21T21:23:02.187Z"
+    },
+    "DOM-H-713ADB2E": {
+      "record_id": "DOM-H-713ADB2E",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "split workload memory by percentage and reserve host memory",
+      "content": "When implementing operations in `.github/workflows/ci.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "b3c09b24521e7a554d3af6d063f898cdc21a6150e52b7cb6c91e103d8dc1b29e",
+      "summary": "Prevents defects observed in production commit `a0d3b866`: split workload memory by percentage and reserve host memory. Unvalidated executio -> When implementing operations in `.github/workflows/ci.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, an",
+      "provenance": {
+        "source_uri": "project://siderolabs-talos/siderolabs-talos-learnings.md",
+        "source_version": "5da8dc88",
+        "observed_at": "2026-11-21T21:31:41.756Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (siderolabs-talos)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of siderolabs-talos"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.86,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T21:32:20.943Z"
     }
   }
 }

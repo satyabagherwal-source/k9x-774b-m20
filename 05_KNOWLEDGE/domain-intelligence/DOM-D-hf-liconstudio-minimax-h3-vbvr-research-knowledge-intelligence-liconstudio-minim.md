@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
   "source_version": "hf-liconstudio-minimax-h3-vbvr",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T00:27:47.326Z",
+  "timestamp": "2026-11-21T21:31:32.968Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-liconstudio-minimax-h3-vbvr",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [LiconStudio/Minimax-H3-VBVR](https://huggingface.co/LiconStudio/Minimax-H3-VBVR) (Revision: `hf-liconst`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T00:27:47.326Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T21:31:32.968Z`  
 > **Learning ID**: `learn-huggingface-liconstudio-minimax-h3-vbvr`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/LiconStudio/Minimax-H3-VBVR](https://huggingface.co/LiconStudio/Minimax-H3-VBVR))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T00:27:46.533Z  
+> **Harvest Timestamp**: 2026-11-21T21:31:32.064Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 15316 downloads | 174 likes
+- **Stars / Engagement**: 18719 downloads | 185 likes
 
 ---
 

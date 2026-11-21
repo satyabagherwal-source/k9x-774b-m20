@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T21:23:04.099Z",
+  "last_updated": "2026-11-21T21:32:23.082Z",
   "total_verified_learnings": 9062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23286,
+  "total_items": 23291,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "1d985194",
-      "content_hash": "3b6e5142f36d9d9d922f9455c279ff09580f646de22c55f1fb9bcc6bee5574c7",
+      "source_version": "6f4d08b6",
+      "content_hash": "246980d81bc6f2952ddc835924756fde395d13dd8981bb8808ebffaccbdbd847",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T20:36:44.587Z"
+      "persisted_at": "2026-11-21T21:31:49.130Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112174,9 +112174,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "817db1028ad23d57a1fdad0c676afcc660e565bc6c5b868948585435d7b97a59",
+      "content_hash": "f3e397fa6a1e00cb87d42f919d76eb3792ef45555a5a3496b396928808f42662",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T20:36:50.840Z"
+      "persisted_at": "2026-11-21T21:32:23.082Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -219847,8 +219847,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "1d985194",
-      "content_hash": "872d5a84a4d2fd796497f9720236abac9f47e658203d5e6b6eaee56f0e07fade",
+      "source_version": "6f4d08b6",
+      "content_hash": "09c63f84cc4682f8ab7139f81793ad0e143eca4659fc0998557d5ba8b448f0ea",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -220013,7 +220013,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T20:36:43.564Z",
+      "verified_at": "2026-11-21T21:31:48.233Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222519,8 +222519,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "f180b83d",
-      "content_hash": "d2a15c5645fcaf40722d08d986d9a6129e797f5b277ca4930b45ee883885e010",
+      "source_version": "5da8dc88",
+      "content_hash": "5fb9a46bd883b9c4cc95a878b7523c2401461349914e6ecae75430117dda7b12",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -222553,6 +222553,11 @@
           "number": 9611,
           "title": "make read-only volumes read-only for pods",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9847,
+          "title": "split workload memory by percentage and reserve host memory",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222560,7 +222565,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T17:45:24.528Z",
+      "verified_at": "2026-11-21T21:31:42.573Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222602,10 +222607,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "repository": "siderolabs/talos",
-      "source_version": "f180b83d",
-      "content_hash": "357669db9998825d5e6fafbd2f18907b43156ff55ba50b647e4dc89dd1fa5214",
+      "source_version": "5da8dc88",
+      "content_hash": "99fdddbd361cb846ae35044e78bab15835d632380dd8342e63ff17daa5c80d2c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T17:45:25.097Z"
+      "persisted_at": "2026-11-21T21:31:43.177Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos",
@@ -222614,10 +222619,10 @@
       "relative_path": "08_VERIFICATION/siderolabs-talos-verification-protocol-empirical-defect-shield-for-siderolabs-ta.md",
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs/talos",
       "repository": "siderolabs/talos",
-      "source_version": "f180b83d",
-      "content_hash": "f3d0bf6cf83d803603278d7bc54e46dafb62dd13f817370119d2990510b621e8",
+      "source_version": "5da8dc88",
+      "content_hash": "8d6198570df40846922abb6b6d067c073dba68a23d6e88406a653cd9e89dd045",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:45:25.251Z"
+      "persisted_at": "2026-11-21T21:31:43.341Z"
     },
     "learn-github-trufflesecurity-trufflehog": {
       "learning_id": "learn-github-trufflesecurity-trufflehog",
@@ -223060,9 +223065,9 @@
       "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
       "repository": "siderolabs-talos-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ab05f00af348ac1155ef01cc782ea3c5cfe686470642c531cc6bda3bddf8324",
+      "content_hash": "416477a2fcb38a88920d2f8d16d6f2624a38b52e93955220152e3a29d1c19679",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T17:45:35.935Z"
+      "persisted_at": "2026-11-21T21:32:21.522Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos-learnings",
@@ -223072,9 +223077,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs-talos-learnings",
       "repository": "siderolabs-talos-learnings",
       "source_version": "HEAD",
-      "content_hash": "17be43f35a1b0adedcd5a91d5d65de80098d6dc16bbd60ec0312d8fc88864265",
+      "content_hash": "83c8d2e2881746c697b1451ae8d6e2adc7ff8357229dd880ea2e68b94464ca52",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:45:36.086Z"
+      "persisted_at": "2026-11-21T21:32:21.726Z"
     },
     "learn-huggingface-bigscience-bloom": {
       "learning_id": "learn-huggingface-bigscience-bloom",
@@ -238728,10 +238733,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dathere-qsv-technical-construction-intelligence-dathere-qsv-core-invariants.md",
       "title": "Technical Construction Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "3996998d",
-      "content_hash": "16f5882b3420a79d57cb6d8083f1f1667418a361543166e31902d324c65774ee",
+      "source_version": "6f4d08b6",
+      "content_hash": "8a6b1a28548ba53a0d0072e25746272855ae02235c871da09bbc9c896a5470df",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T13:30:43.435Z"
+      "persisted_at": "2026-11-21T21:31:48.833Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants",
@@ -250117,9 +250122,9 @@
       "title": "Technical Construction Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "ec0091da7470d29813695100cd11ad010e90ae550ba11b16a303f613e7c13bfc",
+      "content_hash": "e96a5a64f31ca6bfefef453b6dde0677ae145ef068b0ac5b6ceb5a5f1675f3c6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T00:46:48.652Z"
+      "persisted_at": "2026-11-21T21:32:22.737Z"
     },
     "learn-huggingface-videorebirthai-hyperflow-h3-flash": {
       "learning_id": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
@@ -252797,7 +252802,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
       "source_version": "hf-liconstudio-minimax-h3-vbvr",
-      "content_hash": "f8306002dc3903c896c6dfacd36d6d0bfc5608e66795207f52eb31680ce97be8",
+      "content_hash": "2af7f9ce90cf2dc3e815efbf724b48128651028ed002d644a09afe55aff26f0f",
       "dossier_path": "07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md",
       "promoted_rules": [],
@@ -252806,7 +252811,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T00:27:46.968Z",
+      "verified_at": "2026-11-21T21:31:32.545Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252823,9 +252828,9 @@
       "title": "Research & Knowledge Intelligence: LiconStudio/Minimax-H3-VBVR Core Invariants",
       "repository": "LiconStudio/Minimax-H3-VBVR",
       "source_version": "hf-liconstudio-minimax-h3-vbvr",
-      "content_hash": "5fadc86815b6af1996565ac73b3c3254fc949330a6c8690d874bf85463f261e9",
+      "content_hash": "c141d74471a7a8edf0639f36d70fd4df12d68a0e66c9794dfe470ef19b97d9f6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T00:27:47.327Z"
+      "persisted_at": "2026-11-21T21:31:32.969Z"
     },
     "learn-github-alexpasmantier-television": {
       "learning_id": "learn-github-alexpasmantier-television",
@@ -252980,9 +252985,9 @@
       "title": "Research & Knowledge Intelligence: hf-liconstudio-minimax-h3-vbvr-learnings Core Invariants",
       "repository": "hf-liconstudio-minimax-h3-vbvr-learnings",
       "source_version": "HEAD",
-      "content_hash": "5bed12a41f19ba5ab353ff4258a517aeb73ba6d18f0a22b50422f31cddd655ed",
+      "content_hash": "76c019cdacb7bbf0f06d9c3c7541e2daa1d8d48a645ebff7e293d57df08e129e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T00:28:36.448Z"
+      "persisted_at": "2026-11-21T21:31:52.123Z"
     },
     "domain_intelligence-architecture-intelligence-rqlite-rqlite-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-rqlite-rqlite-learnings-core-invariants",
@@ -314183,10 +314188,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/dathere-qsv-agent-contract-dathere-qsv-autonomous-specialist-persona.md",
       "title": "Agent Contract: dathere/qsv Autonomous Specialist Persona",
       "repository": "dathere/qsv",
-      "source_version": "6d77feaf",
-      "content_hash": "720d6c54699af2c54c581c8cebf9fa6c1a4891aa5d785208bac35db266a7a0b2",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-21T15:17:53.829Z"
+      "source_version": "6f4d08b6",
+      "content_hash": "d5850121c789aa599d354ed85d806789c496fc14f9e03c6890551323d25afe78",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T21:31:48.995Z"
     },
     "candidate_directive-groovy-adding-npm-groovy-lint-and-fixing-npm-build-error": {
       "item_id": "candidate_directive-groovy-adding-npm-groovy-lint-and-fixing-npm-build-error",
@@ -316546,6 +316551,68 @@
       "content_hash": "2b58c5fc2213143a5500c1b967d046a19e6c3121a981a75fc7096e8f5aa1232c",
       "domain_letter": "K",
       "persisted_at": "2026-11-21T21:23:02.353Z"
+    },
+    "rule-9847": {
+      "learning_id": "rule-9847",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9847,
+      "title": "split workload memory by percentage and reserve host memory",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "5da8dc88",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T21:31:42.573Z"
+    },
+    "candidate_directive-split-workload-memory-by-percentage-and-reserve-host-memory": {
+      "item_id": "candidate_directive-split-workload-memory-by-percentage-and-reserve-host-memory",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BRA7-split-workload-memory-by-percentage-and-reserve-host-memory.md",
+      "title": "split workload memory by percentage and reserve host memory",
+      "repository": "siderolabs-talos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "83c96417d222fbd8b9ab95d16a103c93a04c45ab5c8965fe06620661c89b8c18",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T21:32:21.353Z"
+    },
+    "candidate_directive-don-t-report-an-error-for-commands-that-write-only-their-own-files": {
+      "item_id": "candidate_directive-don-t-report-an-error-for-commands-that-write-only-their-own-files",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-B22R-don-t-report-an-error-for-commands-that-write-only-their-own-files.md",
+      "title": "don't report an error for commands that write only their own files",
+      "repository": "dathere/qsv",
+      "source_version": "6f4d08b6",
+      "content_hash": "821b96014893410ffc6f05f5d6896d1c0756bd06fe05175e85576524d6571ba7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T21:31:48.679Z"
+    },
+    "candidate_directive-mcp-don-t-report-an-error-for-commands-that-write-only-their-own-files": {
+      "item_id": "candidate_directive-mcp-don-t-report-an-error-for-commands-that-write-only-their-own-files",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BS7P-mcp-don-t-report-an-error-for-commands-that-write-only-their-own-files.md",
+      "title": "mcp): don't report an error for commands that write only their own files",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ac00ebccefb6600c0dd241cc9e6d9b72fdeada4d080ff231dd3dab8b6a39741c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T21:32:22.560Z"
+    },
+    "agent_contract-agent-contract-dathere-qsv-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-dathere-qsv-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/dathere-qsv-learnings-agent-contract-dathere-qsv-learnings-autonomous-specialist.md",
+      "title": "Agent Contract: dathere-qsv-learnings Autonomous Specialist Persona",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9b5406713babd7a30385826cdf98279a099562d7c1660f93d2b002da93aec475",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T21:32:22.929Z"
     }
   },
   "ai-builder-brain": {

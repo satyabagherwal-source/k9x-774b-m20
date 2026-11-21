@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T17:45:35.665Z",
+  "timestamp": "2026-11-21T21:32:21.217Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-siderolabs-talos-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [siderolabs-talos-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T17:45:35.665Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T21:32:21.217Z`  
 > **Learning ID**: `LEARN-EVO-siderolabs-talos-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `f180b83d`  
+> **Source Version**: `5da8dc88`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T17:45:23.711Z  
+> **Timestamp**: 2026-11-21T21:31:41.756Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T17:45:23.501Z  
+> **Harvest Timestamp**: 2026-11-21T21:31:41.751Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11569 stars
+- **Stars / Engagement**: 11573 stars
 
 ---
 
@@ -2136,11 +2136,11 @@ func a
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #15031** (2026-11-20): **feat: update Flannel to 0.28.11**
+  *Symptoms*: See https://github.com/flannel-io/flannel/releases/tag/v0.28.11 
+
 - **Issue #15030** (2026-11-20): **feat: update etcd to 3.7.4**
   *Symptoms*: See https://github.com/etcd-io/etcd/blob/main/CHANGELOG/CHANGELOG-3.7.md 
-
-- **Issue #15029** (2026-11-20): **test: avoid racing CPU scaling governor write**
-  *Symptoms*: `TestDroppedFieldRestored` read `scaling_governor` straight from the fake sysfs once, with no retry. The spec still requests the governor, so every reconcile rewrites it. In a plain tempdir, `os.WriteFile` truncates the file before writing it, which leaves a short window where it is empty.  Assert on the `CPUScalingStatus` instead. The controller fills it by reading sysfs after applying changes, so it cannot race the write.  Same approach as in https://github.com/siderolabs/talos/pull/14489 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2157,333 +2157,859 @@ func a
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aee818eb` (2026-11-19)
-**Commit Message**: fix: make read-only volumes read-only for pods
+### Incident Patch 1: `a0d3b866` (2026-11-11)
+**Commit Message**: feat: split workload memory by percentage and reserve host memory
 
-A volume mounted with readOnly: true was read-only only through the
-mount attribute of its host mount. A pod hostPath bind of it got
-remounted read-write by the container runtime, and the copy in the
-sandbox namespace never got the attribute when the volume was mounted
-or remounted after the namespace was created. Pods could write to the
-volume either way.
+WorkloadResourceConfig limits were byte sizes, which fit one host
+size only and ignore the memory the host needs itself. An omitted
+root was unlimited, so by default only kubepods was bounded.
 
-Mount read-only volumes with a read-only superblock, and reconfigure
-the superblock when readOnly changes, so writes fail through every
-mount of the filesystem. Detached mounts are left alone: they are
-written through, and the volume is remounted read-write later.
+A limit is now a whole percentage of the host memory minus
+reserved.memory, or an absolute size as before. Percentages add up
+to at most 100%. reserved.memory defaults to the kubelet's default
+systemReserved.memory for the machine type, and every omitted root,
+kubepods included, is capped at the memory beyond it. Percentages
+are resolved against the NUMA topology memory total, or MemTotal
+while the topology can't be read, and follow memory hotplug once a
+burst settles for 5 seconds. Generated configurations include the
+document with only the default reservation; upgraded machines get
+the same default without it.
 
-Fixes: #14960
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+The kubelet gets reserved.memory as systemReserved.memory. A kubepods
+limit derives systemReserved.memory as the host memory minus the
+limit instead. KubeletConfigController resolves both from the machine
+configuration, so a change restarts the kubelet once; with a kubepods
+limit, every hotplug restarts it once too. 
 
-**File**: `internal/app/machined/pkg/controllers/block/mount.go` (modified, +6/-0)
+**File**: `.github/workflows/ci.yaml` (modified, +2/-2)
 ```diff
-@@ -804,6 +804,12 @@ func (ctrl *MountController) handleDiskMountOperation(
- 
- 		if mountReadOnlyOnMount(mountRequest, volumeStatus) {
- 			opts = append(opts, mount.WithReadOnly())
-+
-+			// The container runtime remounts the bind of a pod hostPath volume read-write, which clears the
-+			// read-only attribute of that mount: only a read-only superblock refuses writes through every mount.
-+			if !mountRequest.TypedSpec().Detached {
-+				fsOpts = append(fsOpts, fsopen.WithBoolParameter("ro"))
-+			}
- 		}
- 
- 		if mountRequest.TypedSpec().Detached {
+@@ -306,7 +306,7 @@ jobs:
+           QEMU_WORKERS: "0"
+           SHORT_INTEGRATION_TEST: "yes"
+           TEST_MODE: skip-etcd-k8s
+-          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml'
++          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml:@hack/test/patches/workload-resources.yaml'
+           WITH_SKIP_ETCD_K8S: "true"
+         run: |
+           sudo -E make e2e-qemu
+@@ -2909,7 +2909,7 @@ jobs:
+           QEMU_NUMA_NODES: "2"
+           QEMU_WORKERS: "0"
+           TEST_MODE: skip-etcd-k8s
+-          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml'
++          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml:@hack/test/patches/workload-resources.yaml'
+           WITH_SKIP_ETCD_K8S: "true"
+         run: |
+           sudo -E make e2e-qemu
 ```
 
-**File**: `internal/pkg/mount/v3/point.go` (modified, +43/-2)
+**File**: `.github/workflows/integration-hypervisor-triggered.yaml` (modified, +1/-1)
 ```diff
-@@ -14,6 +14,7 @@ import (
- 	"strings"
- 	"syscall"
- 	"time"
-+	"unsafe"
- 
- 	"github.com/siderolabs/go-retry/retry"
- 	"golang.org/x/sys/unix"
-@@ -325,28 +326,68 @@ func (p *Point) Root() xfs.Root {
- 	return p.root
- }
- 
--// RemountReadOnly remounts the mount point as read-only.
-+// RemountReadOnly remounts the filesystem and the mount point as read-only.
-+//
-+// The read-only attribute of a mount does not propagate to its copies in other mount namespaces,
-+// and a bind of it can be remounted read-write. A read-only superblock refuses writes through all of them.
- func (p *Point) RemountReadOnly() error {
- 	if p.detached {
- 		return nil
- 	}
- 
-+	if err := p.reconfigure("ro"); err != nil {
-+		return err
-+	}
-+
- 	return p.setattr(&unix.MountAttr{
- 		Attr_set: unix.MOUNT_ATTR_RDONLY,
- 	}, 0)
- }
- 
--// RemountReadWrite remounts the mount point as read-write.
-+// RemountReadWrite remounts the filesystem and the mount point as read-write.
- func (p *Point) RemountReadWrite() error {
- 	if p.detached {
- 		return nil
- 	}
- 
-+	if err := p.reconfigure("rw"); err != nil {
-+		return err
-+	}
-+
- 	return p.setattr(&unix.MountAttr{
- 		Attr_clr: unix.MOUNT_ATTR_RDONLY,
- 	}, 0)
- }
- 
-+// reconfigure sets a flag on the superblock of the mount point, keeping the other parameters of the filesystem.
-+func (p *Point) reconfigure(flag string) error {
-+	target, err := unix.BytePtrFromString(p.target)
-+	if err != nil {
-+		return err
-+	}
-+
-+	dirfd := unix.AT_FDCWD
-+
-+	r, _, errno := unix.Syscall(unix.SYS_FSPICK, uintptr(dirfd), uintptr(unsafe.Pointer(target)), unix.FSPICK_CLOEXEC)
-+	if errno != 0 {
-+		return fmt.Errorf("fspick %q: %w", p.target, errno)
-+	}
-+
-+	fd := int(r)
-+
-+	defer unix.Close(fd) //nolint:errcheck
-+
-+	if err = unix.FsconfigSetFlag(fd, flag); err != nil {
-+		return fmt.Errorf("set %q on %q: %w", flag, p.target, err)
-+	}
-+
-+	if err = unix.FsconfigReconfigure(fd); err != nil {
-+		return fmt.Errorf("reconfigure %q with %q: %w", p.target, flag, err)
-+	}
-+
-+	return nil
-+}
-+
- // SetDisableAccessTime sets or clears the noatime mount attribute.
- func (p *Point) SetDisableAccessTime(disable bool) error {
- 	if p.detached {
+@@ -111,7 +111,7 @@ jobs:
+           QEMU_NUMA_NODES: "2"
+           QEMU_WORKERS: "0"
+           TEST_MODE: skip-etcd-k8s
+-          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml'
++          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml:@hack/test/patches/workload-resources.yaml'
+           WITH_SKIP_ETCD_K8S: "true"
+         run: |
+           sudo -E make e2e-qemu
 ```
 
-**File**: `internal/pkg/mount/v3/point_test.go` (modified, +33/-0)
+**File**: `.kres.yaml` (modified, +2/-2)
 ```diff
-@@ -8,6 +8,7 @@ package mount_test
- 
- import (
- 	"os"
-+	"path/filepath"
- 	"testing"
- 
- 	"github.com/stretchr/testify/assert"
-@@ -53,3 +54,35 @@ func TestDetachedMountHardened(t *testing.T) {
- 	_, err = xfs.OpenFile(point.Root(), "null", os.O_RDONLY, 0)
- 	require.ErrorIs(t, err, unix.EACCES)
+@@ -470,7 +470,7 @@ spec:
+             WITH_SKIP_ETCD_K8S: true
+             EXTRA_TEST_ARGS: -talos.extensions.libvirt -talos.hypervisor.disk-image=$(OPENWRT_DISK)
+             TEST_MODE: skip-etcd-k8s
+-            WITH_CONFIG_PATCH: "@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml"
++            WITH_CONFIG_PATCH: "@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml:@hack/test/patches/workload-resources.yaml"
+             IMAGE_REGISTRY: registry.dev.siderolabs.io
+         - name: save-talos-logs
+           conditions:
+@@ -1631,7 +1631,7 @@ spec:
+             WITH_SKIP_ETCD_K8S: true
+             EXTRA_TEST_ARGS: -talos.extensions.libvirt -talos.hypervisor.talos-iso=_out/metal-amd64.iso -talos.hypervisor.alpine-iso=$(ALPINE_ISO) -talos.hypervisor.disk-image=$(OPENWRT_DISK)
+             TEST_MODE: skip-etcd-k8s
+-            WITH_CONFIG_PATCH: "@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml"
++            WITH_CONFIG_PATCH: "@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml:@hack/test/patches/workload-resources.yaml"
+             IMAGE_REGISTRY: registry.dev.siderolabs.io
+         - name: save-talos-logs
+           conditions:
+```
+
+**File**: `api/resource/definitions/k8s/k8s.proto` (modified, +5/-1)
+```diff
+@@ -213,10 +213,14 @@ message KubeletConfigSpec {
+   google.protobuf.Struct credential_provider_config = 13;
+   map<string, ArgValues> extra_args = 15;
+   map<string, string> register_with_taints = 16;
+-  // KubepodsMemoryLimit is the desired kubepods memory.max in bytes; zero means unset.
++  // KubepodsMemoryLimit is the WorkloadResourceConfig kubepods limit as an absolute size in bytes.
+   uint64 kubepods_memory_limit = 17;
+   // CredentialProviderFiles maps file names to the contents of the credential provider plugin configuration files.
+   map<string, string> credential_provider_files = 18;
++  // MemoryReserved is WorkloadResourceConfig reserved.memory, or the default for the machine type, in bytes.
++  uint64 memory_reserved = 19;
++  // KubepodsMemoryPercent is the WorkloadResourceConfig kubepods limit in percent of the memory beyond MemoryReserved.
++  uint64 kubepods_memory_percent = 20;
  }
+ 
+ // KubeletKubeconfigSpec describes the current kubelet client credentials.
+```
+
+**File**: `api/resource/definitions/runtime/runtime.proto` (modified, +8/-2)
+```diff
+@@ -294,11 +294,17 @@ message WatchdogTimerStatusSpec {
+   google.protobuf.Duration feed_interval = 3;
+ }
+ 
+-// WorkloadMemorySpecSpec describes the desired memory.max for each Talos-owned workload root, in bytes.
++// WorkloadMemorySpecSpec describes the desired memory.max for each workload root, in bytes.
+ //
+-// Zero means no limit is configured for that root; roots are independent.
++// Zero means the root is not limited; roots are independent. Omitted Talos-owned roots are capped at
++// MemoryCapacity minus MemoryReserved.
+ message WorkloadMemorySpecSpec {
+   uint64 talos_containers_limit = 1;
+   uint64 virtual_machines_limit = 2;
++  // MemoryCapacity is the host memory the limits were resolved against; the kubelet resolves a kubepods limit
++  // against it as well.
++  uint64 memory_capacity = 4;
++  // MemoryReserved is the host memory left out of the limits.
++  uint64 memory_reserved = 5;
+ }
+ 
+```
+
+**File**: `hack/release.toml` (modified, +60/-16)
+```diff
+@@ -143,34 +143,78 @@ configFiles:
+     [notes.workload_memory_limits]
+         title = "Workload Memory Limits"
+         description = """\
+-The new `WorkloadResourceConfig` document sets independent aggregate memory limits for Kubernetes pods, Talos containers and virtual machines:
++The new `WorkloadResourceConfig` document splits host memory
++between Kubernetes pods, Talos containers and virtual machines.
++`reserved.memory` stays with the host,
++and each limit is a whole percentage of the remaining memory
++or an absolute size such as `16GiB`.
++The reservation defaults to the kubelet's default `systemReserved.memory`,
++which is 512Mi on control plane nodes and 384Mi on workers.
+ 
+ ```yaml
+ apiVersion: v1alpha1
+ kind: WorkloadResourceConfig
++reserved:
++  memory: 2GiB
+ kubepods:
+   memory:
+-    limit: 16GiB
++    limit: 50%
+ taloscontainers:
+   memory:
+-    limit: 4GiB
++    limit: 10%
+ virtualMachines:
+   memory:
+-    limit: 32GiB
++    limit: 40%
+ ```
+ 
+-Each root is optional. Limits are ceilings, not reservations, and do not cover swap or HugeTLB memory.
+-For `kubepods`, Talos derives `systemReserved.memory` so kubelet enforces the cap and adjusts Node Allocatable;
+-an explicit `systemReserved.memory`, conflicting kubelet flags or the Static memory manager cannot be combined with this limit.
+-Changing the Kubernetes cap restarts kubelet. Without Kubernetes, only the container and virtual machine limits apply.
+-
+-Lowering a limit can OOM-kill workloads in that group, including QEMU guests or Kubernetes control-plane pods.
+-Talos exclusively owns `memory.max` on `/taloscontainers` and `/virtualmachines.partition`, even without this document.
+-Omitting their limits means unlimited aggregate memory; individual child limits still apply.
+-Kubelet system-reserved or kube-reserved memory enforcement on these roots is rejected regardless of this document;
+-CPU-only or compressible enforcement and reservations on unrelated roots remain supported.
+-Kubelet drop-in directories are rejected while any cap is active; without caps, their contents remain the operator's responsibility.
+-Removing the Kubernetes cap restores the original kubelet configuration. The document has no effect in container mode.
++Percentages are resolved against the host memory at runtime and follow memory hotplug.
++They must not add up to more than 100%.
++Each root is optional.
++A root without a limit is capped at the host memory minus `reserved.memory`,
++so all three roots are bounded even without the document,
++the way `kubepods` always was.
++Limits are ceilings, not reservations,
++and they don't cover swap or HugeTLB memory.
 +
-+func TestRemountReadOnlyBind(t *testing.T) {
-+	if os.Geteuid() != 0 {
-+		t.Skip("requires root for mount operations")
-+	}
++Newly generated configurations include the document with only `reserved.memory`,
++set to the default for the machine type.
++Machines upgraded without it get the same default.
 +
-+	target := filepath.Join(t.TempDir(), "volume")
-+	bind := filepath.Join(t.TempDir(), "bind")
++Kubelet receives `reserved.memory` as `systemReserved.memory`.
++With a `kubepods` limit,
++Talos derives `systemReserved.memory` from the limit instead,
++so kubelet applies the cap and adjusts Node Allocatable.
++Changing the reservation or the `kubepods` limit restarts kubelet once.
++A `kubepods` limit also restarts kubelet once per memory hotplug,
++after the change settles.
++Without a `kubepods` limit, hotplug leaves kubelet alone,
++and `kubepods` and Node Allocatable keep the memory size kubelet started with
++until its next restart.
++A kubelet `systemReserved` that sets other resources but no memory
++now gets the reservation added.
++Without a `kubepods` limit, an explicit `systemReserved.memory`,
++the `--system-reserved` flag or a kubelet drop-in file
++overrides `reserved.memory` for kubelet,
++and keeping them consistent is the operator's responsibility.
++A `kubepods` limit rejects them, along with `kubeReserved.memory`,
++conflicting kubelet flags and the Static memory manager.
++Without Kubernetes, only the container and virtual machine limits apply.
 +
-+	mgr := mount.NewManager(mount.WithTarget(target), mount.WithFsopen("tmpfs"))
++Lowering a limit can OOM-kill workloads in that root,
++including QEMU guests and Kubernetes control plane pods.
++Talos owns `memory.max` on `/taloscontainers` and `/virtualmachines.partition`,
++even without this document.
++Limits on individual containers and guests still apply.
++With the document, kubelet `system-reserved` and `kube-reserved` enforcement
++on these roots is rejected, compressible variants included.
++The same applies to `/system/extensions`, because Talos owns its `pids.max`.
++Without the document, only enforcing a memory reservation on these roots is rejected.
++Reservations enforced on other cgroups still work.
++Kubelet drop-in directories are rejected while the document sets any limit.
++Otherwise their contents are the operator's responsibility.
++Removing the `kubepods` limit restores the original kubelet configuration.
++In container mode the limits aren't applied,
++but `reserved.memory` still sets the kubelet `systemReserved.memory`.
+ """
+ 
+     [notes.memory_protection_small_ram]
+```
+
+**File**: `hack/test/patches/workload-resources.yaml` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++# Reserves host memory for the hypervisor runs, which the Talos-owned workload roots are capped against.
++# Tests that need a root limit patch their own percentage.
++apiVersion: v1alpha1
++kind: WorkloadResourceConfig
++reserved:
++  memory: 1GiB
+```
+
+**File**: `internal/app/machined/pkg/controllers/k8s/kubelet_config.go` (modified, +9/-3)
+```diff
+@@ -17,6 +17,7 @@ import (
+ 	"github.com/siderolabs/gen/xslices"
+ 	"go.uber.org/zap"
+ 
++	configcfg "github.com/siderolabs/talos/pkg/machinery/config/config"
+ 	"github.com/siderolabs/talos/pkg/machinery/resources/config"
+ 	"github.com/siderolabs/talos/pkg/machinery/resources/k8s"
+ )
+@@ -94,10 +95,15 @@ func NewKubeletConfigController() *KubeletConfigController {
+ 				kubeletConfig.EnableFSQuotaMonitoring = cfgProvider.Machine().Features().DiskQuotaSupportEnabled()
+ 				kubeletConfig.RegisterWithTaints = cfgProvider.K8sNodeConfig().Taints()
+ 
++				// Resolved here, so one machine configuration change reaches the kubelet in one update.
++				kubeletConfig.MemoryReserved = configcfg.ResolveMemoryReserved(cfgProvider)
++				kubeletConfig.KubepodsMemoryPercent = 0
++				kubeletConfig.KubepodsMemoryLimit = 0
 +
-+	point, err := mgr.Mount()
-+	require.NoError(t, err)
-+
-+	t.Cleanup(func() { mgr.Unmount() }) //nolint:errcheck
-+
-+	require.NoError(t, os.Mkdir(bind, 0o755))
-+	require.NoError(t, unix.Mount(target, bind, "", unix.MS_BIND, ""))
-+
-+	t.Cleanup(func() { unix.Unmount(bind, 0) }) //nolint:errcheck
-+
-+	require.NoError(t, point.RemountReadOnly())
-+
-+	// as the container runtime does for a read-write hostPath volume
-+	require.NoError(t, unix.Mount("", bind, "", unix.MS_REMOUNT|unix.MS_BIND, ""))
-+
-+	require.ErrorIs(t, os.WriteFile(filepath.Join(bind, "file"), nil, 0o600), unix.EROFS)
-+
-+	require.NoError(t, point.RemountReadWrite())
-+
-+	require.NoError(t, os.WriteFile(filepath.Join(bind, "file"), nil, 0o600))
-+}
+ 				if workloadResources := cfgProvider.WorkloadResourceConfig(); workloadResources != nil {
+-					kubeletConfig.KubepodsMemoryLimit = workloadResources.KubepodsMemoryLimit()
+-				} else {
+-					kubeletConfig.KubepodsMemoryLimit = 0
++					kubepods := workloadResources.KubepodsMemoryLimit()
++					kubeletConfig.KubepodsMemoryPercent = kubepods.Percent
++					kubeletConfig.KubepodsMemoryLimit = kubepods.Bytes
+ 				}
+ 
+ 				if k8sCredentialProviderConfig := cfgProvider.K8sCredentialProviderConfig(); k8sCredentialProviderConfig != nil {
 ```
 
 ---
 
-### Incident Patch 2: `f8164f62` (2026-11-19)
-**Commit Message**: chore: split hypervisor libvirt tests into per-file suites
+### Incident Patch 2: `5da8dc88` (2026-11-16)
+**Commit Message**: fix: keep unnumbered BGP peers when the neighbor table read fails
 
-Go/OCI names (amd64, arm64) and kernel/QEMU names (x86_64, aarch64)
-were repeated as literals across imager, bootloader, providers and
-tests. Package-local copies now alias the shared constants.
+The BGP controller resolves unnumbered peers from the kernel
+neighbor table. When dialing rtnetlink or listing neighbors failed,
+the read returned an empty table, which looks the same as a link
+without a router: the controller removed every unnumbered peer
+until the next successful read.
 
-One LibvirtSuite ran 27 tests under a single -talos.failfast unit, so
-a broken area kept every later test waiting out its 20 minute deadline.
+Return the read error, keep the link-local address of each running
+unnumbered peer when it happens, and still reconcile the rest of the
+instance. The instance is marked failed, so the controller retries
+with backoff instead of waiting for the next neighbor event, which
+the same buffer overflow may have dropped.
 
-- make each test file its own suite over a shared LibvirtSuite base
-- move cross-suite helpers into suite, alpine guest, blank disk and
-  storage helper files
-- drop helper unit tests only built with integration tags
+Fixes: #14975
 
-Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
+Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
 
-**File**: `cmd/installer/pkg/install/install.go` (modified, +1/-1)
+**File**: `internal/app/machined/pkg/controllers/network/bgp.go` (modified, +7/-2)
 ```diff
-@@ -809,7 +809,7 @@ func (i *Installer) handlePartitionDataPopulation(ctx context.Context, idx int,
- 
- //nolint:gocyclo,cyclop
- func (i *Installer) handleGrubBlocklist(gptdev gpt.Device, pt *gpt.Table) error {
--	if i.options.Arch != "amd64" {
-+	if i.options.Arch != constants.ArchAmd64 {
- 		return nil
+@@ -190,7 +190,7 @@ func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime,
  	}
  
+ 	runtimeState := internalbgp.NewRuntimeStateFromResources(linkStatuses.All(), addressStatuses.All())
+-	neighborResolver := internalbgp.NewNeighborResolver()
++	neighborResolver := internalbgp.NewNeighborResolver(internalbgp.ReadNeighbors)
+ 
+ 	desired := map[resource.ID]struct{}{}
+ 
+@@ -222,7 +222,12 @@ func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime,
+ 			continue
+ 		}
+ 
+-		peers, peerIfaces := neighborResolver.ResolvePeers(resolved.Spec, runtimeState, instanceLogger)
++		peers, peerIfaces, err := neighborResolver.ResolvePeers(resolved.Spec, runtimeState, instance.UnnumberedPeers(), instanceLogger)
++		if err != nil {
++			instanceLogger.Debug("error reading the neighbor table, keeping the current unnumbered BGP peers", zap.Error(err))
++
++			failed = true
++		}
+ 
+ 		if err = instance.EnsureServer(
+ 			ctx,
 ```
 
-**File**: `cmd/talosctl/cmd/mgmt/cluster/create/clusterops/configmaker/internal/makers/qemu.go` (modified, +1/-1)
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/export_test.go` (modified, +0/-6)
 ```diff
-@@ -203,7 +203,7 @@ func (m *Qemu) AddExtraGenOps() error {
+@@ -8,7 +8,6 @@ import (
+ 	"maps"
+ 	"net/netip"
  
- 	// disable kexec, if bootloader is disabled, and
- 	// also disable kexec on arm64 due to https://github.com/siderolabs/talos/issues/12393
--	if !m.EOps.BootloaderEnabled || m.EOps.TargetArch == "arm64" {
-+	if !m.EOps.BootloaderEnabled || m.EOps.TargetArch == constants.ArchArm64 {
- 		m.GenOps = slices.Concat(m.GenOps, []generate.Option{
- 			generate.WithSysctls(map[string]string{
- 				"kernel.kexec_load_disabled": "1",
+-	"github.com/jsimonetti/rtnetlink/v2"
+ 	"github.com/osrg/gobgp/v4/pkg/apiutil"
+ 	bgppacket "github.com/osrg/gobgp/v4/pkg/packet/bgp"
+ 	gobgpsrv "github.com/osrg/gobgp/v4/pkg/server"
+@@ -67,8 +66,3 @@ func ListImportCandidatesForTest(instance *Instance, selectors []netip.Prefix) (
+ func SetInstancePeerIfacesForTest(instance *Instance, peerIfaces map[netip.Addr]string) {
+ 	instance.peerIfaces = peerIfaces
+ }
+-
+-// NewNeighborResolverForTest creates a neighbor resolver backed by a static neighbor snapshot.
+-func NewNeighborResolverForTest(neighbors []rtnetlink.NeighMessage) *NeighborResolver {
+-	return &NeighborResolver{load: func() []rtnetlink.NeighMessage { return neighbors }}
+-}
 ```
 
-**File**: `cmd/talosctl/cmd/mgmt/cluster/create/clusterops/configmaker/internal/makers/qemu_test.go` (modified, +1/-1)
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/instance.go` (modified, +15/-0)
 ```diff
-@@ -29,7 +29,7 @@ import (
- )
+@@ -40,6 +40,7 @@ type Instance struct {
+ 	installRoutes bool
+ 	peers         map[string]string
+ 	peerIfaces    map[netip.Addr]string
++	unnumbered    map[string]netip.Addr
+ }
  
- func qemuDefaultGenOps() []generate.Option {
--	if runtime.GOARCH != "arm64" {
-+	if runtime.GOARCH != constants.ArchArm64 {
- 		return nil
+ // NewInstance creates an initialized, stopped BGP instance.
+@@ -49,6 +50,7 @@ func NewInstance() *Instance {
+ 		imported:   map[netip.Prefix]importedPath{},
+ 		peers:      map[string]string{},
+ 		peerIfaces: map[netip.Addr]string{},
++		unnumbered: map[string]netip.Addr{},
+ 	}
+ }
+ 
+@@ -57,6 +59,11 @@ func (instance *Instance) Running() bool {
+ 	return instance.server != nil
+ }
+ 
++// UnnumberedPeers returns the link-local address of each running unnumbered peer, by its link.
++func (instance *Instance) UnnumberedPeers() map[string]netip.Addr {
++	return instance.unnumbered
++}
++
+ // Stop tears down the GoBGP server and resets all reconciled state.
+ func (instance *Instance) Stop() {
+ 	if instance.watchCancel != nil {
+@@ -85,6 +92,7 @@ func (instance *Instance) clearState() {
+ 	instance.installRoutes = false
+ 	instance.peers = map[string]string{}
+ 	instance.peerIfaces = map[netip.Addr]string{}
++	instance.unnumbered = map[string]netip.Addr{}
+ }
+ 
+ // EnsureServer (re)creates the GoBGP server when server-level configuration changes, then
+@@ -155,6 +163,13 @@ func (instance *Instance) EnsureServer(
  	}
  
+ 	instance.peerIfaces = peerIfaces
++	instance.unnumbered = map[string]netip.Addr{}
++
++	for _, peer := range resolvedPeers {
++		if peer.LinkLocal.IsValid() {
++			instance.unnumbered[peer.Link] = peer.LinkLocal
++		}
++	}
+ 
+ 	return instance.reconcilePeers(ctx, config, resolvedPeers)
+ }
 ```
 
-**File**: `cmd/talosctl/cmd/mgmt/cluster/create/clusterops/configmaker/preset/preset_test.go` (modified, +3/-2)
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/neighbor.go` (modified, +40/-17)
 ```diff
-@@ -13,6 +13,7 @@ import (
- 	"github.com/siderolabs/talos/cmd/talosctl/cmd/constants"
- 	"github.com/siderolabs/talos/cmd/talosctl/cmd/mgmt/cluster/create/clusterops"
- 	"github.com/siderolabs/talos/cmd/talosctl/cmd/mgmt/cluster/create/clusterops/configmaker/preset"
-+	machineryconstants "github.com/siderolabs/talos/pkg/machinery/constants"
- )
+@@ -5,6 +5,7 @@
+ package bgp
  
- func TestValidatePresets(t *testing.T) {
-@@ -83,7 +84,7 @@ func applyPreset(t *testing.T, presets ...string) (clusterops.Common, clusterops
+ import (
++	"fmt"
+ 	"net/netip"
+ 	"sync"
  
- 	cOps := clusterops.GetCommon()
- 	qOps := clusterops.GetQemu()
--	qOps.TargetArch = "arm64"
-+	qOps.TargetArch = machineryconstants.ArchArm64
- 	cOps.TalosVersion = "v9.9.9"
+@@ -19,26 +20,32 @@ import (
+ // NeighborResolver resolves configured BGP peers against one lazily loaded rtnetlink snapshot.
+ type NeighborResolver struct {
+ 	once      sync.Once
+-	load      func() []rtnetlink.NeighMessage
++	load      func() ([]rtnetlink.NeighMessage, error)
+ 	neighbors []rtnetlink.NeighMessage
++	loadErr   error
+ }
  
- 	err = preset.Apply(preset.Options{
-@@ -135,7 +136,7 @@ func TestInstallerImageWithPort(t *testing.T) {
+-// NewNeighborResolver creates a neighbor resolver.
+-func NewNeighborResolver() *NeighborResolver {
+-	return &NeighborResolver{load: readNeighbors}
++// NewNeighborResolver creates a neighbor resolver which loads the neighbor table with load on first use.
++func NewNeighborResolver(load func() ([]rtnetlink.NeighMessage, error)) *NeighborResolver {
++	return &NeighborResolver{load: load}
+ }
  
- 	cOps := clusterops.GetCommon()
- 	qOps := clusterops.GetQemu()
--	qOps.TargetArch = "arm64"
-+	qOps.TargetArch = machineryconstants.ArchArm64
- 	cOps.TalosVersion = "v9.9.9"
+ // ResolvePeers resolves all currently discoverable peers and their link-local interface mapping.
++//
++// If the neighbor table can't be read, unnumbered peers keep their link-local address from current (the
++// running unnumbered peers by link), as an empty table would remove them, and the read error is returned
++// together with the resolved peers.
+ func (resolver *NeighborResolver) ResolvePeers(
+ 	config network.BGPInstanceConfigSpec,
+ 	runtimeState *RuntimeState,
++	current map[string]netip.Addr,
+ 	logger *zap.Logger,
+-) ([]Peer, map[netip.Addr]string) {
++) ([]Peer, map[netip.Addr]string, error) {
+ 	peerIfaces := map[netip.Addr]string{}
+ 	resolved := make([]Peer, 0, len(config.Neighbors))
  
- 	err = preset.Apply(preset.Options{
+ 	for _, neighbor := range config.Neighbors {
+-		peer, ok := resolver.resolvePeer(neighbor, runtimeState, logger)
++		peer, ok := resolver.resolvePeer(neighbor, runtimeState, current, logger)
+ 		if !ok {
+ 			logger.Debug("unnumbered BGP peer not yet discovered, will retry", zap.String("link", neighbor.Link))
+ 
+@@ -60,7 +67,7 @@ func (resolver *NeighborResolver) ResolvePeers(
+ 		resolved = append(resolved, peer)
+ 	}
+ 
+-	return resolved, peerIfaces
++	return resolved, peerIfaces, resolver.loadErr
+ }
+ 
+ // warnAuthPasswordConflict reports an unnumbered peer whose link-local address is shared with an already
+@@ -92,6 +99,7 @@ func warnAuthPasswordConflict(resolved []Peer, peer Peer, logger *zap.Logger) {
+ func (resolver *NeighborResolver) resolvePeer(
+ 	neighbor network.BGPNeighborConfigSpec,
+ 	runtimeState *RuntimeState,
++	current map[string]netip.Addr,
+ 	logger *zap.Logger,
+ ) (Peer, bool) {
+ 	if addr := neighbor.Address; addr.IsValid() {
+@@ -107,10 +115,19 @@ func (resolver *NeighborResolver) resolvePeer(
+ 	}
+ 
+ 	resolver.once.Do(func() {
+-		resolver.neighbors = resolver.load()
++		resolver.neighbors, resolver.loadErr = resolver.load()
+ 	})
+ 
+-	return ResolvePeer(neighbor, runtimeState, resolver.neighbors, logger)
++	if resolver.loadErr == nil {
++		return ResolvePeer(neighbor, runtimeState, resolver.neighbors, logger)
++	}
++
++	lla, ok := current[neighbor.Link]
++	if !ok {
++		return Peer{}, false
++	}
++
++	return unnumberedPeer(neighbor, lla), true
+ }
+ 
+ // ResolvePeer resolves one configured peer against a neighbor snapshot.
+@@ -148,27 +165,33 @@ func ResolvePeer(
+ 		return Peer{}, false
+ 	}
+ 
+-	peer.Address = lla.String() + "%" + neighbor.Link
+-	peer.LinkLocal = lla
+-	peer.Link = neighbor.Link
++	return unnumberedPeer(neighbor, lla), true
++}
+ 
+-	return peer, true
++func unnumberedPeer(neighbor network.BGPNeighborConfigSpec, lla netip.Addr) Peer {
++	return Peer{
++		Config:    neighbor,
++		Address:   lla.String() + "%" + neighbor.Link,
++		LinkLocal: lla,
++		Link:      neighbor.Link,
++	}
+ }
+ 
+-func readNeighbors() []rtnetlink.NeighMessage {
++// ReadNeighbors lists the kernel neighbor table.
++func ReadNeighbors() ([]rtnetlink.NeighMessage, error) {
+ 	conn, err := rtnetlink.Dial(nil)
+ 	if err != nil {
+-		return nil
++		return nil, fmt.Errorf("error dialing rtnetlink socket: %w", err)
+ 	}
+ 
+ 	defer conn.Close() //nolint:errcheck
+ 
+ 	neighbors, err := conn.Neigh.List()
+ 	if err != nil {
+-		return nil
++		return nil, fmt.Errorf("error listing neighbors: %w", err)
+ 	}
+ 
+-	return neighbors
++	return neighbors, nil
+ }
+ 
+ // SelectLinkLocalNeighbor returns the single IPv6 link-local router neighbor on the interface.
 ```
 
-**File**: `cmd/talosctl/cmd/mgmt/cluster/create/cmd_dev.go` (modified, +1/-1)
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/neighbor_test.go` (modified, +45/-7)
 ```diff
-@@ -306,7 +306,7 @@ func getCreateCmd(cmdName string, hidden bool) *cobra.Command {
- 				serial := ""
+@@ -5,6 +5,7 @@
+ package bgp_test
  
- 				// ide driver is not supported on arm64
--				if qOps.TargetArch == "arm64" {
-+				if qOps.TargetArch == constants.ArchArm64 {
- 					driver = "virtio"
+ import (
++	"errors"
+ 	"net/netip"
+ 	"testing"
+ 
+@@ -78,12 +79,13 @@ func TestNeighborResolver(t *testing.T) {
+ 	assert.Equal(t, netip.MustParseAddr("fe80::2"), peer.LinkLocal)
+ 	assert.Equal(t, "eth0", peer.Link)
+ 
+-	peers, _ := internalbgp.NewNeighborResolver().ResolvePeers(network.BGPInstanceConfigSpec{
++	peers, _, err := internalbgp.NewNeighborResolver(internalbgp.ReadNeighbors).ResolvePeers(network.BGPInstanceConfigSpec{
+ 		VRF: "vrf-blue",
+ 		Neighbors: []network.BGPNeighborConfigSpec{
+ 			{Address: netip.MustParseAddr("192.0.2.2"), PeerASN: 65002},
+ 		},
+-	}, runtimeState, zap.NewNop())
++	}, runtimeState, nil, zap.NewNop())
++	require.NoError(t, err)
+ 	require.Len(t, peers, 1)
+ 	assert.Equal(t, "vrf-blue", peers[0].BindInterface)
+ }
+@@ -132,13 +134,16 @@ func TestNeighborResolverAuthPasswordConflict(t *testing.T) {
+ 
+ 			core, logs := observer.New(zapcore.WarnLevel)
+ 
+-			peers, peerIfaces := internalbgp.NewNeighborResolverForTest(neighbors).ResolvePeers(network.BGPInstanceConfigSpec{
++			resolver := internalbgp.NewNeighborResolver(func() ([]rtnetlink.NeighMessage, error) { return neighbors, nil })
++
++			peers, peerIfaces, err := resolver.ResolvePeers(network.BGPInstanceConfigSpec{
+ 				Neighbors: []network.BGPNeighborConfigSpec{
+ 					{Link: "eth0", PeerASN: 65002, AuthPassword: test.passwords[0]},
+ 					{Link: "eth1", PeerASN: 65002, AuthPassword: test.passwords[1]},
+ 					{Link: "eth2", PeerASN: 65002, AuthPassword: test.passwords[2]},
+ 				},
+-			}, runtimeState, zap.New(core))
++			}, runtimeState, nil, zap.New(core))
++			require.NoError(t, err)
+ 
+ 			require.Len(t, peers, 3)
+ 			assert.Equal(t, map[netip.Addr]string{netip.MustParseAddr("fe80::1"): "eth2"}, peerIfaces)
+@@ -157,21 +162,54 @@ func TestNeighborResolverAuthPasswordConflict(t *testing.T) {
+ func TestNeighborResolverNumberedPeerSkipsRtnetlink(t *testing.T) {
+ 	t.Parallel()
+ 
+-	resolver := internalbgp.NewNeighborResolver()
++	resolver := internalbgp.NewNeighborResolver(func() ([]rtnetlink.NeighMessage, error) {
++		return nil, errors.New("numbered peers must not read the neighbor table")
++	})
+ 
+-	peers, _ := resolver.ResolvePeers(network.BGPInstanceConfigSpec{
++	peers, _, err := resolver.ResolvePeers(network.BGPInstanceConfigSpec{
+ 		Neighbors: []network.BGPNeighborConfigSpec{
+ 			{Address: netip.MustParseAddr("192.0.2.2"), PeerASN: 65002},
+ 		},
+-	}, internalbgp.NewRuntimeState(nil, nil), zap.NewNop())
++	}, internalbgp.NewRuntimeState(nil, nil), nil, zap.NewNop())
+ 
++	require.NoError(t, err)
+ 	require.Len(t, peers, 1)
+ 	assert.Equal(t, "192.0.2.2", peers[0].Address)
+ 
+ 	_, ok := internalbgp.ResolvePeer(network.BGPNeighborConfigSpec{}, internalbgp.NewRuntimeState(nil, nil), nil, zap.NewNop())
+ 	assert.False(t, ok)
+ }
+ 
++func TestNeighborResolverReadError(t *testing.T) {
++	t.Parallel()
++
++	readErr := errors.New("netlink receive: no buffer space available")
++
++	resolver := internalbgp.NewNeighborResolver(func() ([]rtnetlink.NeighMessage, error) {
++		return nil, readErr
++	})
++
++	peers, peerIfaces, err := resolver.ResolvePeers(network.BGPInstanceConfigSpec{
++		Neighbors: []network.BGPNeighborConfigSpec{
++			{Address: netip.MustParseAddr("192.0.2.2"), PeerASN: 65002},
++			{Link: "eth0", PeerASN: 65002},
++			{Link: "eth1", PeerASN: 65002},
++			{Link: "eth2", PeerASN: 65002},
++		},
++	}, internalbgp.NewRuntimeState(map[string]network.LinkStatusSpec{"eth0": {Index: 10}, "eth1": {Index: 11}, "eth2": {Index: 12}}, nil),
++		map[string]netip.Addr{
++			"eth0": netip.MustParseAddr("fe80::1"),
++			"eth1": netip.MustParseAddr("fe80::1"),
++		},
++		zap.NewNop(),
++	)
++
++	assert.ErrorIs(t, err, readErr, "a failed neighbor table read must be reported")
++	assert.Equal(t, []string{"192.0.2.2", "fe80::1%eth0", "fe80::1%eth1"}, xslices.Map(peers, func(peer internalbgp.Peer) string { return peer.Address }),
++		"the running unnumbered peers must be kept, also when they share a link-local address, and a link without one must stay unresolved")
++	assert.Equal(t, map[netip.Addr]string{netip.MustParseAddr("fe80::1"): "eth1"}, peerIfaces)
++}
++
+ func neighborMessage(index uint32, state uint16, flags uint8, address string) rtnetlink.NeighMessage {
+ 	return rtnetlink.NeighMessage{
+ 		Index: index,
+```
+
+---
+
+### Incident Patch 3: `2a16b429` (2026-11-19)
+**Commit Message**: fix: honor list depth when filtering file types
+
+Keep the traversal limit when directories are filtered out.
+
+Signed-off-by: immanuwell <[REDACTED_EMAIL]>
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+
+**File**: `pkg/archiver/walker.go` (modified, +26/-15)
+```diff
+@@ -112,11 +112,22 @@ func Walker(ctx context.Context, rootPath string, options ...WalkerOption) (<-ch
+ 				FileInfo: fileInfo,
+ 				Error:    walkErr,
+ 			}
+-			if path == rootPath && !fileInfo.IsDir() {
+-				// only one file
+-				item.RelPath = filepath.Base(path)
+-			} else if item.Error == nil {
+-				item.RelPath, item.Error = filepath.Rel(rootPath, path)
++			// fileInfo is nil when walkErr is set for a path which can't be stat'ed
++			// (e.g. the root path got removed after the initial Lstat)
++			if item.Error == nil {
++				if path == rootPath && !fileInfo.IsDir() {
++					// only one file
++					item.RelPath = filepath.Base(path)
++				} else {
++					item.RelPath, item.Error = filepath.Rel(rootPath, path)
++				}
++			}
++
++			// Enforce the depth limit even if a filter omits this directory.
++			var walkResult error
++
++			if item.Error == nil && fileInfo.IsDir() && atMaxDepth(opts.maxRecurseDepth, item.RelPath) {
++				walkResult = filepath.SkipDir
+ 			}
+ 
+ 			// TODO: refactor all those `if item.Error == nil &&` conditions
+@@ -140,7 +151,7 @@ func Walker(ctx context.Context, rootPath string, options ...WalkerOption) (<-ch
  				}
  
+ 				if !matches {
+-					return nil
++					return walkResult
+ 				}
+ 			}
+ 
+@@ -163,7 +174,7 @@ func Walker(ctx context.Context, rootPath string, options ...WalkerOption) (<-ch
+ 				}
+ 
+ 				if !matches {
+-					return nil
++					return walkResult
+ 				}
+ 			}
+ 
+@@ -173,11 +184,7 @@ func Walker(ctx context.Context, rootPath string, options ...WalkerOption) (<-ch
+ 			case ch <- item:
+ 			}
+ 
+-			if item.Error == nil && fileInfo.IsDir() && atMaxDepth(opts.maxRecurseDepth, rootPath, path) {
+-				return filepath.SkipDir
+-			}
+-
+-			return nil
++			return walkResult
+ 		})
+ 		if err != nil {
+ 			select {
+@@ -193,15 +200,19 @@ func Walker(ctx context.Context, rootPath string, options ...WalkerOption) (<-ch
+ // OSPathSeparator is the string version of the os.PathSeparator.
+ const OSPathSeparator = string(os.PathSeparator)
+ 
+-func atMaxDepth(maximum int, root, cur string) bool {
++// atMaxDepth reports whether the directory at relPath (relative to the walk root) should not be descended into.
++//
++// The depth is derived from the relative path, so that it doesn't depend on the way the root path is spelled
++// (e.g. root "/" already contains a path separator).
++func atMaxDepth(maximum int, relPath string) bool {
+ 	if maximum < 0 {
+ 		return false
+ 	}
+ 
+-	if root == cur {
++	if relPath == "." {
+ 		// always recurse the root directory
+ 		return false
+ 	}
+ 
+-	return (strings.Count(cur, OSPathSeparator) - strings.Count(root, OSPathSeparator)) >= maximum
++	return strings.Count(relPath, OSPathSeparator)+1 >= maximum
+ }
 ```
 
-**File**: `cmd/talosctl/pkg/talos/artifacts/arch.go` (removed, +0/-14)
+**File**: `pkg/archiver/walker_test.go` (modified, +91/-15)
 ```diff
-@@ -1,14 +0,0 @@
--// This Source Code Form is subject to the terms of the Mozilla Public
--// License, v. 2.0. If a copy of the MPL was not distributed with this
--// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+@@ -97,21 +97,28 @@ func (suite *WalkerSuite) TestIterationMaxRecurseDepth() {
+ 			result:   []string{".", "dev", "dev/random", "etc", "etc/certs", "etc/certs/ca.crt", "etc/hostname", "lib", "lib/dynalib.so", "usr", "usr/bin", "usr/bin/cp", "usr/bin/mv"},
+ 		},
+ 	} {
+-		suite.Run(strconv.Itoa(test.maxDepth), func() {
+-			suite.T().Parallel()
 -
--package artifacts
+-			ch, err := archiver.Walker(context.Background(), suite.tmpDir, archiver.WithMaxRecurseDepth(test.maxDepth))
+-			suite.Require().NoError(err)
 -
--// Arch is the artifacts architecture.
--type Arch string
+-			var result []string //nolint:prealloc // this is a test
 -
--// Supported architectures.
--const (
--	ArchAmd64 Arch = "amd64"
--	ArchArm64 Arch = "arm64"
--)
-```
-
-**File**: `cmd/talosctl/pkg/talos/artifacts/fetch.go` (modified, +2/-1)
-```diff
-@@ -18,6 +18,7 @@ import (
- 	"golang.org/x/sync/errgroup"
+-			for fi := range ch {
+-				suite.Require().NoError(fi.Error)
+-				result = append(result, fi.RelPath)
+-			}
+-
+-			suite.Equal(test.result, result)
+-		})
++		for _, root := range []struct {
++			name string
++			path string
++		}{
++			{name: "clean", path: suite.tmpDir},
++			// the depth should not depend on the way root path is spelled (e.g. "/" contains a separator)
++			{name: "trailing-separator", path: suite.tmpDir + archiver.OSPathSeparator},
++		} {
++			suite.Run(strconv.Itoa(test.maxDepth)+"/"+root.name, func() {
++				ch, err := archiver.Walker(context.Background(), root.path, archiver.WithMaxRecurseDepth(test.maxDepth))
++				suite.Require().NoError(err)
++
++				var result []string //nolint:prealloc // this is a test
++
++				for fi := range ch {
++					suite.Require().NoError(fi.Error)
++					result = append(result, fi.RelPath)
++				}
++
++				suite.Equal(test.result, result)
++			})
++		}
+ 	}
+ }
  
- 	"github.com/siderolabs/talos/pkg/images"
-+	"github.com/siderolabs/talos/pkg/machinery/constants"
- )
+@@ -188,6 +195,75 @@ func (suite *WalkerSuite) TestIterationTypes() {
+ 		relPaths)
+ }
  
- type imageHandler func(ctx context.Context, img v1.Image) error
-@@ -38,7 +39,7 @@ func newManager() (*fetchManager, error) {
- 
- 	puller, err := remote.NewPuller(
- 		remote.WithPlatform(v1.Platform{
--			Architecture: string(ArchAmd64),
-+			Architecture: constants.ArchAmd64,
- 			OS:           "linux",
- 		}),
- 	)
-```
-
-**File**: `internal/app/init/main.go` (modified, +1/-1)
-```diff
-@@ -241,7 +241,7 @@ func bindMountExtra() error {
- func cpuInfo() {
- 	log.Printf("CPU: %s, %d core(s), %d thread(s) per core", cpuid.CPU.BrandName, cpuid.CPU.PhysicalCores, cpuid.CPU.ThreadsPerCore)
- 
--	if runtime.GOARCH == "amd64" {
-+	if runtime.GOARCH == constants.ArchAmd64 {
- 		log.Printf("x86_64 microarchitecture level: %d", cpuid.CPU.X64Level())
- 
- 		if cpuid.CPU.X64Level() < constants.MinimumGOAMD64Level {
++func (suite *WalkerSuite) TestIterationTypesMaxRecurseDepth() {
++	// add a regular file at the top level, so that shallow depths have something to return
++	topFile := filepath.Join(suite.tmpDir, "top.txt")
++	suite.Require().NoError(os.WriteFile(topFile, nil, 0o644))
++
++	defer func() {
++		suite.Require().NoError(os.Remove(topFile))
++	}()
++
++	for _, test := range []struct {
++		maxDepth int
++		result   []string
++	}{
++		{
++			maxDepth: 0,
++			result:   []string{"top.txt"},
++		},
++		{
++			maxDepth: 1,
++			result:   []string{"top.txt"},
++		},
++		{
++			maxDepth: 2,
++			result:   []string{"dev/random", "etc/hostname", "lib/dynalib.so", "top.txt"},
++		},
++		{
++			maxDepth: -1,
++			result:   []string{"dev/random", "etc/certs/ca.crt", "etc/hostname", "lib/dynalib.so", "top.txt", "usr/bin/cp"},
++		},
++	} {
++		suite.Run(strconv.Itoa(test.maxDepth), func() {
++			ch, err := archiver.Walker(context.Background(), suite.tmpDir,
++				archiver.WithMaxRecurseDepth(test.maxDepth),
++				archiver.WithFileTypes(archiver.RegularFileType),
++			)
++			suite.Require().NoError(err)
++
++			var result []string //nolint:prealloc // this is a test
++
++			for fi := range ch {
++				suite.Require().NoError(fi.Error)
++				result = append(result, fi.RelPath)
++			}
++
++			suite.Equal(test.result, result)
++		})
++	}
++}
++
++func (suite *WalkerSuite) TestIterationRootRemoved() {
++	// the root path might disappear between the initial Lstat and the walk,
++	// in that case the walker should report an error instead of panicking
++	for range 1000 {
++		root := filepath.Join(suite.T().TempDir(), "root")
++		suite.Require().NoError(os.Mkdir(root, 0o755))
++
++		ch, err := archiver.Walker(context.Background(), root)
++		suite.Require().NoError(err)
++
++		suite.Require().NoError(os.Remove(root))
++
++		for fi := range ch {
++			if fi.Error != nil {
++				suite.Require().ErrorIs(fi.Error, os.ErrNotExist)
++			}
++		}
++	}
++}
++
+ func TestWalkerSuite(t *testing.T) {
+ 	suite.Run(t, new(WalkerSuite))
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15031** (2026-11-20): feat: update Flannel to 0.28.11 (@smira)
 - **PR #15030** (2026-11-20): feat: update etcd to 3.7.4 (@smira)
 - **PR #15029** (2026-11-20): test: avoid racing CPU scaling governor write (@majabojarska)
 - **PR #15027** (2026-11-20): chore: split hypervisor libvirt tests into per-file suites (@shanduur)
 - **PR #15026** (2026-11-20): test: optimize VM log rotation testing (@majabojarska)
-- **PR #15023** (2026-11-19): fix: make read-only volumes read-only for pods (@frezbo)
-- **PR #15020** (2026-11-19): test: lease spare DHCP reservations to one test at a time (@majabojarska)
+- **PR #15025** (2026-11-21): fix: honor list depth when filtering file types (@immanuwell)
 
 ---
 
@@ -2503,36 +3029,33 @@ Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. make read-only volumes read-only for pods
+## X. split workload memory by percentage and reserve host memory
 
 **RULE**:
-When implementing operations in `internal/app/machined/pkg/controllers/block/mount.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aee818eb`: make read-only volumes read-only for pods. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a0d3b866`: split workload memory by percentage and reserve host memory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/block/mount.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-			// The container runtime remounts the bind of a pod hostPath volume read-write, which clears the
-			// read-only attribute of that mount: only a read-only superblock refuses writes through every mount.
-			if !mountRequest.TypedSpec().Detached {
-				fsOpts = append(fsOpts, fsopen.WithBoolParameter("ro"))
-			}
+          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml:@hack/test/patches/workload-resources.yaml'
+          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml:@hack/test/patches/workload-resources.yaml'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml'
+          WITH_CONFIG_PATCH: '@_out/installer-extensions-patch.yaml:@hack/test/patches/extensions-libvirt.yaml:@hack/test/patches/content-library.yaml'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aee818eb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a0d3b866` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

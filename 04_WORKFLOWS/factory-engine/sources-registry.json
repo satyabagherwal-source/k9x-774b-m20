@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T21:23:01.293Z",
-    "lastVerified": "2026-11-21T21:23:01.293Z",
+    "lastChecked": "2026-11-21T21:31:51.785Z",
+    "lastVerified": "2026-11-21T21:31:51.785Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -176,14 +176,14 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T20:36:42.503Z",
-    "lastVerified": "2026-11-21T20:36:42.503Z",
+    "lastChecked": "2026-11-21T21:31:47.960Z",
+    "lastVerified": "2026-11-21T21:31:47.960Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "872d5a84a4d2fd796497f9720236abac9f47e658203d5e6b6eaee56f0e07fade",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "09c63f84cc4682f8ab7139f81793ad0e143eca4659fc0998557d5ba8b448f0ea",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -348,9 +348,9 @@
   "run-llama-llama_index": {
     "name": "llama_index",
     "officialUrl": "https://github.com/run-llama/llama_index",
-    "lastChecked": "2026-11-20T16:42:20.195Z",
+    "lastChecked": "2026-11-21T21:31:41.682Z",
     "revisionIdentifier": "99d7433f",
-    "lastVerified": "2026-11-20T16:42:20.195Z"
+    "lastVerified": "2026-11-21T21:31:41.682Z"
   },
   "nucleoidai-nucleoid": {
     "name": "NucleoidAI/Nucleoid",
@@ -1219,8 +1219,8 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T13:53:37.396Z",
-    "lastVerified": "2026-11-21T13:53:37.396Z",
+    "lastChecked": "2026-11-21T21:31:39.126Z",
+    "lastVerified": "2026-11-21T21:31:39.126Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
@@ -1877,14 +1877,14 @@
     "officialUrl": "https://github.com/siderolabs/talos",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T17:45:23.501Z",
-    "lastVerified": "2026-11-20T17:45:23.501Z",
+    "lastChecked": "2026-11-21T21:31:41.751Z",
+    "lastVerified": "2026-11-21T21:31:41.751Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "d2a15c5645fcaf40722d08d986d9a6129e797f5b277ca4930b45ee883885e010",
+    "contentHash": "5fb9a46bd883b9c4cc95a878b7523c2401461349914e6ecae75430117dda7b12",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3243,9 +3243,9 @@
   "devhubapp-devhub": {
     "name": "devhub",
     "officialUrl": "https://github.com/devhubapp/devhub",
-    "lastChecked": "2026-11-18T16:14:15.818Z",
+    "lastChecked": "2026-11-21T21:31:34.259Z",
     "revisionIdentifier": "1d0d66a3",
-    "lastVerified": "2026-11-18T16:14:15.818Z"
+    "lastVerified": "2026-11-21T21:31:34.259Z"
   },
   "aliyuncontainerservice-pouch": {
     "name": "pouch",
@@ -3710,9 +3710,9 @@
   "nasiko-labs-nasiko": {
     "name": "nasiko",
     "officialUrl": "https://github.com/Nasiko-Labs/nasiko",
-    "lastChecked": "2026-11-20T05:28:45.328Z",
+    "lastChecked": "2026-11-21T21:31:29.088Z",
     "revisionIdentifier": "0ed4b3d9",
-    "lastVerified": "2026-11-20T05:28:45.328Z"
+    "lastVerified": "2026-11-21T21:31:29.088Z"
   },
   "hf-baai-bge-m3": {
     "name": "BAAI/bge-m3",
@@ -12862,6 +12862,23 @@
     "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
     "contentHash": "00889c50410ab03f898ac9c6f99622cf1374aeb94cc6521007abd032ff83d9cb",
     "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-liconstudio-minimax-h3-vbvr": {
+    "name": "LiconStudio/Minimax-H3-VBVR",
+    "officialUrl": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T21:31:32.064Z",
+    "lastVerified": "2026-11-21T21:31:32.064Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
+    "contentHash": "2af7f9ce90cf2dc3e815efbf724b48128651028ed002d644a09afe55aff26f0f",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

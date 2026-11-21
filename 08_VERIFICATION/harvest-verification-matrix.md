@@ -11901,3 +11901,7 @@
 | `CYCLE-20261121-C9RA` | `2026-11-21T21:04:45.670Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`b720d3de...`) |
 | `CYCLE-20261121-VKHF` | `2026-11-21T21:19:46.035Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9843` | Yes (`3919bff8...`) |
 | `CYCLE-20261121-ZOCY` | `2026-11-21T21:22:57.682Z` | `Diffuspace/Clover-35B-A3B-Preview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9844, Rule 9845, Rule 9846` | Yes (`00889c50...`) |
+| `CYCLE-20261121-APSI` | `2026-11-21T21:31:32.754Z` | `LiconStudio/Minimax-H3-VBVR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md` | Yes (`2af7f9ce...`) |
+| `CYCLE-20261121-AXJ7` | `2026-11-21T21:31:42.787Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9847` | Yes (`5fb9a46b...`) |
+| `CYCLE-20261121-B1W5` | `2026-11-21T21:31:48.437Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`09c63f84...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T21:32:20.977Z` | `siderolabs-talos` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-713ADB2E` [Domain H] | Yes (`b3c09b24...`) |

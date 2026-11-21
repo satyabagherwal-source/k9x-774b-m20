@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-21T20:52:05.494Z",
+  "updated_at": "2026-11-21T21:32:20.974Z",
   "statistics": {
-    "total_nodes": 452,
-    "total_edges": 193,
+    "total_nodes": 453,
+    "total_edges": 194,
     "domain_distribution": {
       "D": 280,
       "M": 1,
-      "H": 74,
+      "H": 75,
       "J": 22,
       "K": 28,
       "L": 8,
@@ -20,7 +20,7 @@
       "I": 8
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 190,
+      "CONSTRAINED_BY_ARCHITECTURE": 191,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 1
     }
@@ -10099,6 +10099,29 @@
       ],
       "created_at": "2026-11-21T20:52:05.494Z",
       "updated_at": "2026-11-21T20:52:05.494Z"
+    },
+    "DOM-H-713ADB2E": {
+      "id": "DOM-H-713ADB2E",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "split workload memory by percentage and reserve host memory",
+      "summary": "Prevents defects observed in production commit `a0d3b866`: split workload memory by percentage and reserve host memory. Unvalidated executio -> When implementing operations in `.github/workflows/ci.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, an",
+      "confidence": 0.86,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://siderolabs-talos/siderolabs-talos-learnings.md",
+        "source_version": "5da8dc88",
+        "observed_at": "2026-11-21T21:31:41.756Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (siderolabs-talos)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-21T21:32:20.974Z",
+      "updated_at": "2026-11-21T21:32:20.974Z"
     }
   },
   "edges": [
@@ -12031,6 +12054,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-H-D7B01097 [H] with Domain K",
       "created_at": "2026-11-21T17:16:19.015Z"
+    },
+    {
+      "id": "EDGE-AD1174BDAC4D",
+      "sourceId": "DOM-H-713ADB2E",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-713ADB2E [H] with Domain G",
+      "created_at": "2026-11-21T21:32:20.974Z"
     }
   ]
 }

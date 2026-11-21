@@ -4,24 +4,24 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "3996998d",
+  "source_version": "6f4d08b6",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-21T13:30:43.277Z",
+  "timestamp": "2026-11-21T21:31:48.675Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `3996998d`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-21T13:30:43.277Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `6f4d08b6`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-21T21:31:48.675Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
 - **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 53%
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere/qsv:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T13:30:42.521Z  
+> **Harvest Timestamp**: 2026-11-21T21:31:47.960Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3836 stars
+- **Stars / Engagement**: 3838 stars
 
 ---
 
@@ -464,6 +464,29 @@ export function spawnWithTimeout(options: SpawnWithTimeoutOptions): Promise<Spaw
 /**
  * Shared utility functions for QSV MCP Server
  */
+
+import { homedir } from "node:os";
+import { join } from "node:path";
+
+/**
+ * Expand tilde (~) in paths to the user's home directory
+ * Handles: ~ (home dir), ~/path or ~\path (relative to home)
+ */
+export function expandTilde(path: string): string {
+  if (!path) return path;
+
+  // Handle ~/ or ~\ (Windows users might use backslash)
+  if (path.startsWith("~/") || path.startsWith("~\\")) {
+    return join(homedir(), path.slice(2));
+  }
+
+  // Handle ~ alone (just home directory)
+  if (path === "~") {
+    return homedir();
+  }
+
+  return path;
+}
 
 /**
  * Extract a human-readable message from an unknown error.
@@ -2215,661 +2238,325 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3996998d` (2026-11-21)
-**Commit Message**: fix(mcp): sandbox DuckDB in plugin mode; harden the duckdb CLI invocation (#5083)
+### Incident Patch 1: `6f4d08b6` (2026-11-21)
+**Commit Message**: fix(mcp): don't report an error for commands that write only their own files (#5089)
 
-* fix(mcp): sandbox DuckDB in plugin mode; harden the duckdb CLI invocation
+* fix(mcp): don't report an error for commands that write only their own files
 
-Closes #5082.
-
-With SQL file writes off (plugin mode), qsv_sqlp's DuckDB route now runs
-DuckDB with allowed_directories (the MCP allowed directories and working
-directory) and allowed_paths (the input and output files), external access
-off and the configuration locked. ATTACH, EXPORT DATABASE, COPY ... TO and
-INSTALL can't touch files outside those directories, whatever the SQL
-text. ATTACH joins the keyword check that sends such SQL to sqlp. Plugin
-mode needs DuckDB 1.2.0+ for this; older versions run the SQL on sqlp.
-
-The script passed to duckdb -c now always starts with a server statement,
-and SQL that isn't a query goes to sqlp.
+split, partition, to, validate and index have no --output. In TSV output
+mode (the default) or on large inputs the server still gave them a temp
+output file, then failed reading it back (ENOENT) although the command
+succeeded. Use a temp file only for skills with --output or a positional
+output, and report completion plus qsv's stderr summary when a successful
+command prints nothing.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs: cite #5083 in MCP CHANGELOG [skip ci]
+* fix(mcp): refuse output_file without an output option; fall back when no temp file
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Addresses roborev job 6694:
+- output_file is refused for skills with no --output or positional output
+  (split used to report writing a file qsv never wrote)
+- an auto temp file the command never wrote (extdedup --no-output,
+  schema --stdout) falls back to stdout / the completion summary
+- the stderr summary is cut to 4,000 characters
+- a spawn error (binary missing or not executable) is exit 127, not 0
+- CHANGELOG: index was never affected; it's out of the list
 
-* fix(mcp): keep POSIX backslashes in DuckDB paths; gate the live sandbox test
-
-roborev 6663:
-- On macOS/Linux a backslash is a filename character, but DuckDB SQL paths
-  converted it to '/', so an approved name like x\..\..\etc became a
-  '..' pa
+Co-Authored-By: Claude Opus 5.5 <[REDAC
 
 **File**: `.claude/skills/CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -23,6 +23,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **`qsv-synthesize --seed` is the same at any `--jobs`**: rows are now generated in parallel, in fixed 8,192-row blocks, so a seed gives the same rows whatever `--jobs` is (unless `stats` uses approximate estimators, whether requested via `--stats-options` or switched on automatically when the input won't fit in memory), though different rows than qsv 29.0.0. Skill regenerated from the USAGE text. ([#5069](https://github.com/dathere/qsv/pull/5069))
+ - **`qsv-synthesize` warns that its output is not anonymized** ([#5064](https://github.com/dathere/qsv/pull/5064)): synthetic output can contain real source values. The skill description was regenerated from the README command table.
  
- ## [Unreleased]
- 
-+### Security
-+- **DuckDB runs sandboxed in plugin mode (#5082).** With SQL file writes off (plugin mode: Cowork, Claude Code plugin), `qsv_sqlp`'s DuckDB route now has DuckDB confine itself to the MCP allowed directories plus the input file. Parquet output (`format=parquet`) is written by `sqlp` in this mode, so DuckDB writes no query results (it still writes the server's own Parquet cache of the input file): the server's `COPY (<sql>) TO '<output>'` wrapper could otherwise be closed early by the SQL to redirect the write to another allowed file. It sets `allowed_directories` / `allowed_paths`, turns off `enable_external_access` and locks the configuration, so no SQL can lift it. `ATTACH 'new.db'` (which creates the file), `EXPORT DATABASE`, `COPY ... TO` and `INSTALL` can no longer reach files outside those directories, whatever the SQL text looks like. `ATTACH` is also added to the keyword check that sends such SQL to Polars `sqlp`. Needs DuckDB 1.2.0+; with an older DuckDB, plugin-mode SQL runs on `sqlp`. The sandbox covers DuckDB only: SQL that names files itself can still read them on the `sqlp` route. ([#5083](https://github.com/dathere/qsv/pull/5083))
-+- **Stricter path handling.** Every path-taking option and positional argument (including short flags, comma-separated path lists, and directory arguments such as `outdir`) is now resolved against the allowed directories, and a call is rejected when one is refused. A raw `--output`/`-o` option is handled like `output_file`. Options that name part of an output filename (`--filename`, `--valid`, `--invalid`, `--outfilename`, `--table`) can't contain a path separator or `..`. `qsv_sqlp` parquet/arrow/avro output now needs `output_file`, and `SKIP_INPUT` is passed to `sqlp` as is (it was resolved as a file path, which broke such queries off the DuckDB route). A test now fails if a skill gains a path-like option that isn't classified. ([#5083](https://github.com/dathere/qsv/pull/5083))
-+- **Hardened the DuckDB CLI invocation**: the script passed to `duckdb -c` now always starts with a server statement, and SQL starting with `.` is left to `sqlp`. On macOS and Linux, paths keep their backslashes when written into DuckDB SQL. A backslash is an ordinary filename character there, and turning it into `/` could make DuckDB open a different file than the one the server approved; only Windows separators are converted now. ([#5083](https://github.com/dathere/qsv/pull/5083))
++### Fixed
++- **Commands that write only their own files no longer report an error.** The `split`, `partition`, `to` and `validate` skills have no `--output`, but in TSV output mode (the default) or on large inputs the server still gave them a temp output file, then failed reading it back (`Error processing output from temp file: ENOENT`) although the command had succeeded. `extdedup --no-output` and `schema --stdout` failed the same way. The server now uses a temp file only for skills with `--output` or a positional output, and returns stdout when a command didn't write its temp file. A successful command with no stdout reports that it completed, with qsv's own summary (for example `Wrote 2 chunk/s to …`, cut to 4,000 characters) (#5089).
++- **`output_file` is refused for commands that can't write one.** Passing it to `split`, `partition` or another skill without an output option used to report "Successfully wrote output to" a file qsv never wrote (#5089).
++- **A qsv binary that fails to start is reported as an error.** If the configured binary was removed or lost its execute permission after the server started, the spawn error was treated as exit code 0 (#5089).
 +
- ### Added
- - **`qsv-synthesize --target <col>`**: conditional generation. Each row draws a class of `<col>` (at most 50 distinct values, or a numeric column's quantile buckets) in proportion to its source rows, after dropping classes seen in fewer than `--min-count` rows, then fills the other columns from that class's own profile; `stats` and `frequency` run once more per class. Skill regenerated from the USAGE text. ([#5084](https://github.com/dathere/qsv/pull/5084))
- - **SQL file writes are off in plugin mode (Cowork, Claude Code plugin).** Polars SQL now has `COPY (<query>) TO '<file>'`, where the query rather than `output_file` picks the target. In plugin mode the server sets `QSV_SQL_DISABLE_FILE_WRITES=1` for qsv, and `qsv_sqlp` never sends SQL that may contain `COPY ... TO` or `EXPORT DATABASE` to DuckDB: it runs on Polars `sqlp`, which refuses a real `COPY ... TO`. A `.env` file can't lift the switch, for qsv or the qsv subprocesses it spawns. Other MCP clients and the Desktop extension keep them. New `QSV_MCP_SQL_FILE_WRITES` overrides the default either way. `qsv-sqlp` skill regenerated from the USAGE text. ([#5081](https://github.com/dathere/qsv/pull/5081))
+ ## [29.0.1] - 2026-11-21
+ Patch release of the MCP server and the Claude Cowork / Claude Code plugin, for use with qsv 29.0.0 (`minimum_qsv_version` stays 29.0.0). It carries the security fixes below, published as advisory [GHSA-vm54-v922-fpq5](https://github.com/dathere/qsv/security/advisories/GHSA-vm54-v922-fpq5); update now. The bundled skill files also describe `qsv-synthesize` options from the next qsv release (listed under [Unreleased]); with qsv 29.0.0 those options are rejected as unknown flags.
+ 
 ```
 
-**File**: `.claude/skills/README-MCP.md` (modified, +1/-1)
+**File**: `.claude/skills/src/executor.ts` (modified, +2/-1)
 ```diff
-@@ -176,7 +176,7 @@ This script will:
- | `QSV_MCP_MAX_OUTPUT_SIZE` | `52428800` | Maximum output size in bytes (50MB) |
- | `QSV_MCP_MAX_EXAMPLES` | `5` | Maximum examples in tool descriptions (0-20) |
- | `QSV_MCP_PLUGIN_MODE` | unset | Force plugin mode (for Gemini CLI etc.) |
--| `QSV_MCP_SQL_FILE_WRITES` | `false` in plugin mode, else `true` | Allow SQL that writes files itself (`COPY ... TO '<file>'`, DuckDB `EXPORT DATABASE`). When `false`, qsv gets `QSV_SQL_DISABLE_FILE_WRITES=1` and SQL that may contain them runs on Polars `sqlp` (which refuses them) instead of DuckDB; use `output_file` instead. |
-+| `QSV_MCP_SQL_FILE_WRITES` | `false` in plugin mode, else `true` | Allow SQL that writes files itself (`COPY ... TO '<file>'`, DuckDB `EXPORT DATABASE`). When `false`, qsv gets `QSV_SQL_DISABLE_FILE_WRITES=1` and SQL that may contain them (or `ATTACH`) runs on Polars `sqlp` (which refuses them) instead of DuckDB; use `output_file` instead. DuckDB itself then runs sandboxed to the allowed directories plus the input file, and parquet output (`format=parquet`) is written by `sqlp`, so DuckDB writes no query results, only the server's own Parquet cache of the input (DuckDB 1.2.0+; older versions route everything to `sqlp`). The sandbox covers DuckDB only: SQL that names files itself can still read them on the `sqlp` route. |
- | `QSV_MCP_ENABLE_APPS` | `true` | Enable MCP Apps UI tools. When `true` and the client supports MCP Apps, exposes the app-only `qsv_browse_directory` interactive directory browser. Set to `false` to disable. |
- | `QSV_MCP_EXPOSE_ALL_TOOLS` | unset | Controls tool exposure mode. `true`: expose all 57 tools immediately (no deferred loading). `false`: use only 10 core utility tools (+1 app-only tool when Apps enabled; no deferred additions). Unset (default): deferred loading — 23 tools at startup (10 core + 13 commonly-used commands), +1 app-only when Apps enabled, plus tools discovered via search |
- | `QSV_MCP_SANITIZE_ERRORS` | `true` | Strip absolute paths from qsv error messages (and the command line echoed alongside them) before they reach the MCP client. Protects usernames and directory layout in hosted/shared deployments. Set to `false` to keep full paths for local debugging. |
+@@ -439,7 +439,8 @@ export class SkillExecutor {
+     }
+ 
+     return {
+-      exitCode: result.exitCode ?? 0,
++      // null with no signal: the process never started (spawn error)
++      exitCode: result.exitCode ?? 127,
+       stdout: result.stdout,
+       stderr: result.stderr,
+     };
 ```
 
-**File**: `.claude/skills/src/duckdb.ts` (modified, +74/-7)
+**File**: `.claude/skills/src/file-operations.ts` (modified, +35/-0)
 ```diff
-@@ -54,12 +54,71 @@ export interface DuckDbExecutionOptions {
-   compression?: string;
-   /** Timeout in milliseconds */
-   timeoutMs?: number;
-+  /** Restrict DuckDB's file access to these directories and files (see buildSandboxPrelude) */
-+  sandbox?: DuckDbSandbox;
-   /** Callback when process spawns (for shutdown tracking) */
-   onSpawn?: (proc: ChildProcess) => void;
-   /** Callback when process exits */
-   onExit?: (proc: ChildProcess) => void;
- }
- 
+@@ -226,6 +226,20 @@ export async function autoIndexIfNeeded(
+  * @param inputFile - Path to the input file
+  * @returns Promise<boolean> - true if temp file should be used
+  */
 +/**
-+ * The only directories and files DuckDB may read or write. DuckDB's allowlist grants both,
-+ * so a write is still possible inside these; outside them every file access fails.
++ * Whether a skill can write its output to a file the server names (`--output` or a
++ * positional `output` arg). Commands like `split` and `to` write their own files, so a
++ * temp output file would never be created.
 + */
-+export interface DuckDbSandbox {
-+  allowedDirectories: readonly string[];
-+  allowedPaths: readonly string[];
-+}
++const MAX_STDERR_SUMMARY_CHARS = 4000;
 +
-+/** First DuckDB release with the allowed_directories / allowed_paths settings. */
-+/**
-+ * A path as DuckDB SQL should name it. Windows separators become '/', but only on Windows:
-+ * elsewhere a backslash is an ordinary filename character, and rewriting it would point
-+ * DuckDB at a different file than the one the server approved (`a\..\b` → `a/../b`).
-+ */
-+export function duckDbPath(p: string, platform: NodeJS.Platform = process.platform): string {
-+  return platform === "win32" ? p.replace(/\\/g, "/") : p;
-+}
-+
-+export const MIN_SANDBOX_DUCKDB_VERSION = "1.2.0";
-+
-+/** Whether a DuckDB version (x.y.z) supports the sandbox settings. */
-+export function supportsSandbox(version: string): boolean {
-+  const have = version.split(".").map((n) => parseInt(n, 10));
-+  const need = MIN_SANDBOX_DUCKDB_VERSION.split(".").map((n) => parseInt(n, 10));
-+  for (let i = 0; i < 3; i++) {
-+    const h = have[i] ?? 0;
-+    if (Number.isNaN(h)) return false;
-+    if (h !== need[i]) return h > need[i];
-+  }
-+  return true;
-+}
-+
-+/**
-+ * SET statements that confine DuckDB to the sandbox, then lock its configuration so the
-+ * query can't change them back (or point temp_directory and the like elsewhere).
-+ */
-+export function buildSandboxPrelude(
-+  sandbox: DuckDbSandbox,
-+  platform: NodeJS.Platform = process.platform,
-+): string {
-+  const quote = (p: string) => `'${p.replace(/'/g, "''")}'`;
-+  const dirs = sandbox.allowedDirectories
-+    .filter((d) => d.length > 0)
-+    .map((d) => duckDbPath(d, platform))
-+    .map((d) => quote(d.endsWith("/") ? d : `${d}/`));
-+  const paths = sandbox.allowedPaths
-+    .filter((p) => p.length > 0)
-+    .map((p) => quote(duckDbPath(p, platform)));
++export function skillTakesOutputFile(skill: QsvSkill): boolean {
 +  return (
-+    `SET allowed_directories = [${dirs.join(", ")}];\n` +
-+    `SET allowed_paths = [${paths.join(", ")}];\n` +
-+    "SET enable_external_access = false;\n" +
-+    "SET lock_configuration = true;\n"
++    skill.command.options.some((o) => o.flag === "--output") ||
++    skill.command.args.some((a) => a.name === "output")
 +  );
 +}
 +
- /**
-  * Result from DuckDB query execution
-  */
-@@ -256,7 +315,7 @@ export function translateSql(
-   options?: TranslateSqlOptions,
- ): string {
-   // Normalize path separators for SQL (Windows backslashes → forward slashes)
--  const normalizedPath = inputFile.replace(/\\/g, "/");
-+  const normalizedPath = duckDbPath(inputFile);
-   // Escape single quotes in path
-   const escapedPath = normalizedPath.replace(/'/g, "''");
+ export async function shouldUseTempFile(
+   command: string,
+   inputFile: string,
+@@ -813,6 +827,18 @@ export async function formatToolResult(
+   // (or undefined if the temp file was small enough to return inline and deleted).
+   let finalOutputFile: string | undefined = outputFile;
  
-@@ -395,10 +454,12 @@ export function findFileWritingStatement(sql: string): string | null {
-   // Deliberately scans the raw text, strings and comments included. Blanking them first
-   // needs DuckDB's own lexer (nested block comments, $tag$ strings, E'' escapes), and any
-   // mismatch would hide a real statement. These keywords can't be spelled any other way,
--  // so a raw match can only err toward refusing; a refused query can drop the word from
--  // its literals or comments, or the server can be run with QSV_MCP_SQL_FILE_WRITES=true.
-+  // so a raw match can only err toward refusing; a flagged query runs on Polars sqlp
-+  // instead. This is the first layer; the DuckDB sandbox (buildSandboxPrelude) enforces.
-   if (/\bEXPORT\b/i.test(sql)) return "EXPORT DATABASE";
-   if (/\bCOPY\b/i.test(sql) && /\bTO\b/i.test(sql)) return "COPY ... TO";
-+  // ATTACH creates the database file if it doesn't exist (#5082)
-+  if (/\bATTACH\b/i.test(sql)) return "ATTACH";
-   return null;
- }
- 
-@@ -432,21 +493,27 @@ export async function executeDuckDbQuery(
-   const timeoutMs = options?.timeoutMs ?? config.operationTimeoutMs;
-   const maxOutputSize = config.maxOutputSize;
- 
--  // Build the SQL to execute
--  let fullSql = "";
-+  // Build the SQL to execute. The duckdb CLI reads a -c script that begins with '.' as a
-+  // CLI meta-command rather than SQL, so the script always begins with this server
-+  // statement and the caller's SQL is never first.
-+  let fullSql = "SET enable_progress_bar = false;\n";
- 
--  // Decimal comma setting
-+  // Decimal comma setting (before the sandbox locks the configuration)
-   if (options?.decimalComma) {
-     fullSql += "SET decimal_separator = ',';\n";
-   }
- 
-+  if (options?.sandbox) {
-+    fullSql += buildSandboxPrelude(options.sandbox);
++  // Some modes never write the temp file (extdedup --no-output, schema --stdout):
++  // their result is on stdout/stderr instead
++  if (outputFile && autoCreatedTempFile) {
++    try {
++      await stat(outputFile);
++    } catch (err: unknown) {
++      if (!(isNodeError(err) && err.code === "ENOENT")) throw err;
++      outputFile = undefined;
++      finalOutputFile = undefined;
++    }
 +  }
 +
-   if (format === "parquet") {
-     // For parquet output, use COPY TO
-     const outputFi
-```
-
-**File**: `.claude/skills/src/file-operations.ts` (modified, +182/-36)
-```diff
-@@ -5,7 +5,7 @@
- import { randomUUID } from "node:crypto";
- import { stat, access, readFile, unlink, rename, copyFile, readdir, mkdir } from "node:fs/promises";
- import { constants } from "node:fs";
--import { basename, dirname, isAbsolute, join } from "node:path";
-+import { basename, dirname, isAbsolute, join, resolve } from "node:path";
- import { ConvertedFileManager } from "./converted-file-manager.js";
- import type {
-   QsvSkill,
-@@ -20,6 +20,15 @@ import {
-   AUTO_INDEX_SIZE_MB,
-   FILE_PATH_INPUT_OPTIONS,
-   FILE_PATH_OUTPUT_OPTIONS,
-+  OTHER_PATH_OPTIONS,
-+  PATH_LIST_OPTIONS,
-+  FILE_PREFIX_OPTIONS,
-+  PATH_OR_REMOTE,
-+  SELECTOR_OPTIONS,
-+  COMMAND_PATH_OPTIONS,
-+  FILENAME_PART_OPTIONS,
-+  SHORT_PATH_FLAGS,
-+  DIRECTORY_PATH_ARGS,
-   FINAL_OUTPUT_FILE,
-   isBinaryOutputFormat,
- } from "./tool-constants.js";
-@@ -458,6 +467,18 @@ export function paramKeyToFlag(key: string): string {
-   return key.startsWith("-") ? key : `--${key.replace(/_/g, "-")}`;
- }
- 
-+/**
-+ * Like paramKeyToFlag, but maps a command's short flag for a path option
-+ * (e.g. dedup's "-D") to its long form, so path checks can't be skipped.
-+ */
-+export function canonicalFlag(key: string, command: string): string {
-+  let flag = paramKeyToFlag(key);
-+  // describegpt reads "--stats_options" as --stats-options, so check it as that
-+  if (flag.startsWith("--")) flag = flag.replace(/_/g, "-");
-+  if (flag === "-o") return "--output";
-+  return SHORT_PATH_FLAGS[command]?.[flag] ?? flag;
-+}
-+
- /**
-  * Check whether a value looks like a file path (as opposed to inline script text).
-  * Used for ambiguous options like luau --begin/--end that accept both scripts and file paths.
-@@ -508,46 +529,159 @@ export async function resolveFilePathParams(
-   skill: QsvSkill,
-   filesystemProvider: FilesystemProviderExtended,
- ): Promise<void> {
--  // 1. Resolve positional args with type "file" (excluding "input", already handled)
--  for (const arg of skill.command.args) {
--    if (arg.type === "file" && arg.name !== "input" && params[arg.name]) {
--      const rawValue = String(params[arg.name]);
-+  const command = skill.command.subcommand;
-+  const invalid = (label: string, error: unknown) =>
-+    new Error(`Invalid path for ${label}: ${getErrorMessage(error)}`);
-+  // Fail closed: a path the provider refuses must never reach qsv unresolved
-+  const resolveOrThrow = async (label: string, value: string, stdio = true): Promise<string> => {
-+    // "-" is stdin/stdout, not a file
-+    if (stdio && value === "-") return value;
-+    try {
-+      const resolved = await filesystemProvider.resolvePath(value);
-+      if (resolved !== value) {
-+        console.error(`[MCP Tools] Resolved ${label}: ${value} -> ${resolved}`);
-+      }
-+      return resolved;
-+    } catch (error: unknown) {
-+      throw invalid(label, error);
-+    }
-+  };
-+  // A directory the command creates: only its nearest existing ancestor must exist
-+  const resolveDir = async (label: string, value: string): Promise<string> => {
-+    try {
-+      return await filesystemProvider.resolvePath(value);
-+    } catch (error: unknown) {
-+      if (!/does not exist/i.test(getErrorMessage(error)) || value.startsWith("~")) {
-+        throw invalid(label, error);
-+      }
-+    }
-+    let ancestor = resolve(filesystemProvider.getWorkingDirectory(), value);
-+    const missing: string[] = [];
-+    while (dirname(ancestor) !== ancestor) {
-+      missing.unshift(basename(ancestor));
-+      ancestor = dirname(ancestor);
+   if (outputFile) {
+     if (autoCreatedTempFile) {
        try {
--        const resolved = await filesystemProvider.resolvePath(rawValue);
--        if (resolved !== rawValue) {
--          console.error(`[MCP Tools] Resolved arg '${arg.name}': ${rawValue} -> ${resolved}`);
--          params[arg.name] = resolved;
--        }
-+        return join(await filesystemProvider.resolvePath(ancestor), ...missing);
-       } catch (error: unknown) {
--        console.error(`[MCP Tools] Warning: failed to resolve arg '${arg.name}' path '${rawValue}':`, getErrorMessage(error));
-+        if (!/does not exist/i.test(getErrorMessage(error))) throw invalid(label, error);
+@@ -905,6 +931,15 @@ export async function formatToolResult(
+         responseText += `- Rows processed: ${result.metadata.rowsProcessed}\n`;
        }
      }
--  }
--
--  // 2. Resolve option values that are file paths
--  for (const [key, value] of Object.entries(params)) {
--    if (!value || typeof value !== "string") continue;
--
--    // Convert param key to flag format (e.g. "dupes_output" -> "--dupes-output")
--    const flag = paramKeyToFlag(key);
--
--    const isFilePathOption = FILE_PATH_INPUT_OPTIONS.has(flag) || FILE_PATH_OUTPUT_OPTIONS.has(flag);
-+    throw invalid(label, new Error("no existing parent directory"));
-+  };
-+  // The executor stringifies whatever it gets (["/x"] becomes "/x"), so an
-+  // array or object can't stand in for a path; booleans are flags, not paths
-+  const asString = (label: string, value: unknown): string | undefined => {
-+    if (typeof value === "object" && value !== null) {
-+      throw new Error(`Invalid value for ${label}: a path must be a string`);
++  } else if (result.output.trim() === "") {
++    // e.g. split or `to` write their own files and print only a summary on stderr
++    const summary = result.stderr.trim();
++    responseText = `✅ qsv ${commandName} completed; it printed no output.`;
++    if (summary.length > MAX_STDERR_SUMMARY_CHARS) {
++      responseText += `\n\n${summary.slice(0, MAX_STDERR_SUMMARY_CHARS)}\n[stderr truncated]`;
++    } else if (summary) {
++      responseText += `\n\n${summary}`;
 +    }
-+    if (typeof value === "number") return Str
-```
-
-**File**: `.claude/skills/src/mcp-filesystem.ts` (modified, +5/-1)
-```diff
-@@ -5,7 +5,7 @@
-  * Claude Desktop to work with local files without uploading them.
-  */
- 
--import { readdir, stat, realpath, access } from "node:fs/promises";
-+import { readdir, stat, lstat, realpath, access } from "node:fs/promises";
- import { realpathSync } from "node:fs";
- import { join, resolve, relative, basename, dirname, extname, isAbsolute } from "node:path";
- import { homedir } from "node:os";
-@@ -344,6 +344,10 @@ export class FilesystemResourceProvider {
-     try {
-       canonical = await realpath(resolved);
-     } catch {
-+      // A broken symlink would be followed on write, creating its target anywhere
-+      if (await lstat(resolved).then((s) => s.isSymbolicLink(), () => false)) {
-+        throw new Error(`Access denied: ${path} is a broken symbolic link`);
-+      }
-       // If file doesn't exist yet (e.g., output file), use resolved path
-       // but still validate the parent directory exists and is allowed
-       const parentDir = join(resolved, "..");
-```
-
-**File**: `.claude/skills/src/parquet-bridge.ts` (modified, +35/-4)
-```diff
-@@ -12,7 +12,11 @@ import {
-   translateSql,
-   findFileWritingStatement,
-   executeDuckDbQuery,
-+  supportsSandbox,
-+  duckDbPath,
-+  MIN_SANDBOX_DUCKDB_VERSION,
-   CSV_LIKE_EXTENSIONS,
-+  type DuckDbSandbox,
- } from "./duckdb.js";
- import { config } from "./config.js";
- import { getErrorMessage, errorResult, successResult } from "./utils.js";
-@@ -163,8 +167,8 @@ async function buildDuckDbParquetSql(
- 
-   // Normalize paths for SQL: backslash to forward slash (Windows compat),
-   // then single-quote escaping for SQL string literals.
--  const normInput = inputFile.replace(/\\/g, "/").replace(/'/g, "''");
--  const normOutput = outputFile.replace(/\\/g, "/").replace(/'/g, "''");
-+  const normInput = duckDbPath(inputFile).replace(/'/g, "''");
-+  const normOutput = duckDbPath(outputFile).replace(/'/g, "''");
- 
-   const selectClause = selectParts.length > 0 ? selectParts.join(", ") : "*";
- 
-@@ -810,17 +814,34 @@ export async function tryDuckDbExecution(
-   parquetFile: string,
-   params: Record<string, unknown>,
-   outputFile: string | undefined,
-+  allowedDirectories?: readonly string[],
- ): Promise<{ content: Array<{ type: string; text: string }>; isError?: boolean } | null> {
-   // Detect DuckDB (lazy, first-call-only)
-   const state = detectDuckDb();
-   if (state.status !== "available") {
-     return null; // Fall through to sqlp
+   } else {
+     responseText = result.output;
    }
- 
-+  // Not SQL: the duckdb CLI would read it as a meta-command. Let sqlp reject it.
-+  if (sql.trimStart().startsWith(".")) {
-+    return null;
-+  }
-+
-   // With SQL file writes off (plugin mode), SQL that may write files never reaches DuckDB.
-   // The check over-matches (a column named "export" trips it), so fall back to sqlp rather
-   // than fail: Polars runs under QSV_SQL_DISABLE_FILE_WRITES=1 and refuses a real COPY TO.
-+  // DuckDB itself then runs sandboxed to the MCP allowed directories plus the input file
-+  // (#5082), which also confines what the keyword check can't see.
-+  const format = String(params.format ?? "csv").toLowerCase();
-+  let sandbox: DuckDbSandbox | undefined;
-   if (!config.sqlFileWrites) {
-+    // Parquet output wraps the caller's SQL in the server's own COPY ... TO, which the SQL
-+    // could close early to redirect the write. sqlp writes parquet output instead, so
-+    // DuckDB never writes a file in this mode.
-+    if (format === "parquet") {
-+      console.error("[MCP Tools] DuckDB: SQL file writes are disabled; parquet output runs with sqlp");
-+      return null;
-+    }
-     const kind = findFileWritingStatement(sql);
-     if (kind) {
-       console.error(
-@@ -829,10 +850,19 @@ export async function tryDuckDbExecution(
-       );
-       return null;
-     }
-+    if (!allowedDirectories || !supportsSandbox(state.version)) {
-+      console.error(
-+        `[MCP Tools] DuckDB: SQL file writes are disabled and DuckDB v${state.version} can't be ` +
-+        `sandboxed (needs v${MIN_SANDBOX_DUCKDB_VERSION}+ and the allowed directories); running with sqlp`,
-+      );
-+      return null;
-+    }
-+    sandbox = {
-+      allowedDirectories,
-+      allowedPaths: parquetFile === "SKIP_INPUT" ? [] : [parquetFile],
-+    };
-   }
- 
--  const format = String(params.format ?? "csv").toLowerCase();
--
-   // Unsupported formats fall back to sqlp
-   if (format === "arrow" || format === "avro") {
-     console.error(`[MCP Tools] DuckDB: format '${format}' not supported, falling back to sqlp`);
-@@ -854,6 +884,7 @@ export async function tryDuckDbExecution(
-       decimalComma: params["decimal-comma"] === true,
-       compression: params.compression as string | undefined,
-       timeoutMs: config.operationTimeoutMs,
-+      sandbox,
-       onSpawn: (proc) => activeProcesses.add(proc),
-       onExit: (proc) => activeProcesses.delete(proc),
-     });
 ```
 
-**File**: `.claude/skills/src/tool-constants.ts` (modified, +82/-4)
+**File**: `.claude/skills/src/tool-handlers.ts` (modified, +10/-0)
 ```diff
-@@ -96,10 +96,13 @@ export const BINARY_OUTPUT_FORMATS = new Set(["parquet", "arrow", "avro"]);
-  * Values are resolved to absolute paths via filesystemProvider.resolvePath().
-  */
- export const FILE_PATH_INPUT_OPTIONS = new Set([
-+  "--context-file",
-+  "--dictionary-context",
-+  "--globals-json",
-+  "--markdown-template",
-   "--prompt-file",
--  "--tag-vocab",
-+  "--sas7bcat",
-   "--template-file",
--  "--globals-json",
- ]);
- 
- /**
-@@ -109,12 +112,87 @@ export const FILE_PATH_INPUT_OPTIONS = new Set([
-  */
- export const FILE_PATH_OUTPUT_OPTIONS = new Set([
-   "--dupes-output",
-+  "--export-prompt",
-   "--keys-output",
--  "--unmatched-output",
-+  "--report",
-+  "--sarif",
-+  "--save-model",
-+  "--save-urlsample",
-+  "--sketch-out",
-   "--sql-results",
--  "--export-prompt",
-+  "--stats-csv",
-+  "--unmatched-output",
-+  "--valid-output",
- ]);
- 
-+/**
-+ * Options naming a directory, which the command creates if needed (so only the
-+ * nearest existing ancestor has to exist). Resolved like the two sets above.
-+ */
-+export const OTHER_PATH_OPTIONS = new Set([
-+  "--cache-dir",
-+  "--disk-cache-dir",
-+  "--temp-dir",
-+  "--tmp-dir",
-+]);
-+
-+/** Options holding a comma-separated list of local file paths. */
-+export const PATH_LIST_OPTIONS = new Set(["--join-inputs", "--sketch-in"]);
-+
-+/** Options whose value is an ordinary string, or a local file path after a `file:` prefix. */
-+export const FILE_PREFIX_OPTIONS = new Set(["--freq-options", "--stats-options"]);
-+
-+/**
-+ * Options and positional args that take a local path or one of the remote or
-+ * remote forms the command documents (left as is). Any other value is
-+ * resolved as a local path.
-+ */
-+export const PATH_OR_REMOTE: Readonly<Record<string, RegExp>> = {
-+  "--dictionary": /^$/,
-+  "--geojson": /^https?:\/\//i,
-+  "--tag-vocab": /^(https?|ckan|dathere):\/\//i,
-+  "destination": /^(postgres(ql)?:\/\/|env=)/i,
-+  "json-schema": /^https?:\/\//i,
-+};
-+
-+/**
-+ * PATH_OR_REMOTE options that also take a bare-word selector, such as viz's
-+ * `auto`, `infer`, `census:county@2021` or a shortcut name. A bare word (no
-+ * `.`, `/` or `\`, and not a Windows drive) stays a selector unless a file by
-+ * that name exists, since qsv opens the file first.
-+ */
-+export const SELECTOR_OPTIONS = new Set(["--dictionary", "--geojson"]);
-+
-+/** Path options that only one command has; the same flag means something else elsewhere. */
-+export const COMMAND_PATH_OPTIONS: Readonly<Record<string, ReadonlySet<string>>> = {
-+  synthesize: new Set(["--model"]),
-+};
-+
-+/**
-+ * Options whose value becomes part of an output filename inside a directory
-+ * the server has resolved, so it must not contain a path separator or `..`.
-+ */
-+export const FILENAME_PART_OPTIONS = new Set([
-+  "--filename",
-+  "--invalid",
-+  "--outfilename",
-+  "--table",
-+  "--valid",
-+]);
-+
-+/** Short flags of path options, per command (`-o` is `--output` everywhere). */
-+export const SHORT_PATH_FLAGS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
-+  dedup: { "-D": "--dupes-output" },
-+  extdedup: { "-D": "--dupes-output" },
-+  luau: { "-B": "--begin", "-E": "--end" },
-+  moarstats: { "-J": "--join-inputs" },
-+  template: { "-J": "--globals-json", "-t": "--template-file" },
-+  to: { "-c": "--stats-csv" },
-+};
-+
-+/** Positional args (not typed "file" in the skill JSONs) that name a directory the command creates. */
-+export const DIRECTORY_PATH_ARGS = new Set(["outdir"]);
-+
- /**
-  * Check if the command+params produce binary output (not tabular text).
-  * Used to skip auto temp file creation and prevent .tsv extensions for
-```
-
-**File**: `.claude/skills/src/tool-handlers.ts` (modified, +48/-9)
-```diff
-@@ -44,7 +44,7 @@ import {
+@@ -45,6 +45,7 @@ import {
    formatToolResult,
    resolveParamAliases,
    shouldUseTempFile,
--  paramKeyToFlag,
-+  canonicalFlag,
++  skillTakesOutputFile,
+   canonicalFlag,
+   isSqlScriptArg,
  } from "./file-operations.js";
- import {
-   ensureParquet,
-@@ -404,6 +404,7 @@ async function runSqlpParquetInterception(
-   params: Record<string, unknown>,
-   inputFile: string,
-   outputFile: string | undefined,
-+  filesystemProvider?: FilesystemProviderExtended,
- ): Promise<SqlpInterceptionResult> {
-   const rawSql = params.sql as string | undefined;
-   if (!rawSql) {
-@@ -432,7 +433,20 @@ async function runSqlpParquetInterception(
- 
-     // Try DuckDB execution (single-table path)
-     const duckDbStart = Date.now();
--    const duckDbResult = await tryDuckDbExecution(sql, parquetFile, params, outputFile);
-+    // The DuckDB sandbox (used when SQL file writes are off) allows these directories
-+    const allowedDirectories = filesystemProvider?.getAllowedDirectories
-+      ? [
-+        ...filesystemProvider.getAllowedDirectories(),
-+        filesystemProvider.getWorkingDirectory(),
-+      ]
-+      : undefined;
-+    const duckDbResult = await tryDuckDbExecution(
-+      sql,
-+      parquetFile,
-+      params,
-+      outputFile,
-+      allowedDirectories,
-+    );
-     if (duckDbResult !== null) {
-       // Attach pipeline metadata for parity with the sqlp path
-       const duckDbSuccess = !("isError" in duckDbResult && duckDbResult.isError === true);
-@@ -734,6 +748,12 @@ export async function handleToolCall(
-     const { inputFile: rawInputFile, outputFile: rawOutputFile } = resolveParamAliases(params);
-     let inputFile = rawInputFile;
-     let outputFile = rawOutputFile;
-+    // A raw "--format" is the same option as format; normalize it so the binary-output
-+    // check and engine routing see it
-+    if (params["--format"] !== undefined && params.format === undefined) {
-+      params.format = params["--format"];
-+      delete params["--format"];
-+    }
-     const isHelpRequest = params.help === true || params["--help"] === true;
- 
-     // Normalize help flags: once we've interpreted "--help", remove it so it
-@@ -749,11 +769,14 @@ export async function handleToolCall(
-     // Resolve file paths using filesystem provider if available (skip for help requests)
-     if (filesystemProvider && inputFile) {
-       try {
--        inputFile = await resolveAndConvertInputFile(inputFile, filesystemProvider);
-+        // sqlp's SKIP_INPUT is a sentinel (the SQL names its own files), not a path
-+        if (!(commandName === "sqlp" && inputFile === "SKIP_INPUT")) {
-+          inputFile = await resolveAndConvertInputFile(inputFile, filesystemProvider);
- 
--        // Auto-index native CSV files (skip for help requests)
--        if (!isHelpRequest) {
--          await autoIndexIfNeeded(inputFile);
-+          // Auto-index native CSV files (skip for help requests)
-+          if (!isHelpRequest) {
-+            await autoIndexIfNeeded(inputFile);
-+          }
-         }
- 
-         if (outputFile) {
-@@ -776,7 +799,11 @@ export async function handleToolCall(
- 
-     // Resolve additional file-path parameters (positional args and options beyond input/output)
-     if (filesystemProvider && !isHelpRequest) {
--      await resolveFilePathParams(params, skill, filesystemProvider);
-+      try {
-+        await resolveFilePathParams(params, skill, filesystemProvider);
-+      } catch (error: unknown) {
-+        return errorResult(`Error: ${maybeSanitize(getErrorMessage(error))}`);
-+      }
+@@ -865,6 +866,14 @@ export async function handleToolCall(
+       return errorResult(`Error: output_file can't be the input file for ${commandName}; it would be emptied.`);
      }
  
-     // viz is HTML-only over MCP. viz infers its output format from the -o
-@@ -813,19 +840,31 @@ export async function handleToolCall(
-     }
-     for (const [key, value] of Object.entries(params)) {
-       if (!value || typeof value !== "string") continue;
--      const flag = paramKeyToFlag(key);
-+      const flag = canonicalFlag(key, commandName);
-       if (FILE_PATH_OUTPUT_OPTIONS.has(flag) && isReservedCachePath(value)) {
-         return errorResult(reservedCachePathError(value));
-       }
-     }
- 
-+    // Binary results can't come back as text, so they need a validated destination
-+    if (commandName === "sqlp" && !isHelpRequest && !outputFile && isBinaryOutputFormat(commandName, params)) {
++    // qsv would never write it, yet the result would claim it was written
++    if (outputFile && !isHelpRequest && !skillTakesOutputFile(skill)) {
 +      return errorResult(
-+        "Error: output_file is required for parquet, arrow and avro output (binary results can't be returned as text).",
++        `Error: qsv ${commandName} has no output file option, so output_file can't be used. ` +
++          `It writes its own files; set its destination parameter instead (see help=true).`,
 +      );
 +    }
 +
      // DuckDB/Parquet-first interception for sqlp queries. The orchestration
      // (multi-table detection, Parquet conversion, DuckDB attempt, fallback
      // SQL rewrite, warning capture) lives in runSqlpParquetInterception so
-     // this function stays free of command-specific logic.
-     let parquetConversionWarning = "";
-     if (commandName === "sqlp" && !isHelpRequest && inputFile) {
--      const interception = await runSqlpParquetInterception(params, inputFile, outputFile);
-+      const interception = await runSqlpParquetInterception(
-+        params,
-+        inputFile,
-+        outputFile,
-+        filesystemProvider,
-+      );
-       if (i
+@@ -894,6 +903,7 @@ export async function handleToolCall(
+       inputFile &&
+       commandName !== "describegpt" &&
+       !isBinaryOutputFormat(commandName, params) &&
++      skillTakesOutputFile(skill) &&
+       (await shouldUseTempFile(commandName, inputFile))
+     ) {
+       // viz emits a self-contained interactive HTML artifact; its output format is
+```
+
+**File**: `.claude/skills/tests/executor.test.ts` (modified, +7/-0)
+```diff
+@@ -555,3 +555,10 @@ test('buildCommand does not add --frequency-jsonl when option definition is miss
+     config.qsvValidation.version = originalVersion;
+   }
+ });
++
++test('a qsv binary that fails to start is a failure, not a success', async () => {
++  const executor = new SkillExecutor('/nonexistent/qsv-binary-for-test');
++  const result = await executor.execute(countSkill, { args: { input: 'x.csv' } } as SkillParams);
++  assert.strictEqual(result.success, false);
++  assert.match(result.stderr, /SPAWN ERROR/);
++});
+```
+
+**File**: `.claude/skills/tests/file-operations.test.ts` (modified, +60/-0)
+```diff
+@@ -23,6 +23,8 @@ import {
+   collectAdditionalInputFiles,
+   resolveFilePathParams,
+   canonicalFlag,
++  skillTakesOutputFile,
++  formatToolResult,
+ } from "../src/file-operations.js";
+ import {
+   FILE_PATH_INPUT_OPTIONS,
+@@ -759,3 +761,61 @@ describe("path confinement", () => {
+     assert.deepStrictEqual(missing, [], "classify these in tool-constants.ts (path kind) or NOT_A_PATH here");
+   });
+ });
++
++describe("commands that write their own files", () => {
++  test("only a skill with --output or a positional output gets a temp output file", async () => {
++    const loader = new SkillLoader();
++    await loader.loadAll();
++    for (const name of ["split", "partition", "to", "validate", "index"]) {
++      const s = await loader.load(`qsv-${name}`);
++      assert.ok(s, name);
++      assert.strictEqual(skillTakesOutputFile(s), false, name);
++    }
++    for (const name of ["select", "sort", "extsort"]) {
++      const s = await loader.load(`qsv-${name}`);
++      assert.ok(s, name);
++      assert.strictEqual(skillTakesOutputFile(s), true, name);
++    }
++  });
++
++  test("a successful command with no stdout reports completion and its stderr summary", async () => {
++    const result = {
++      success: true,
++      output: "",
++      stderr: "Wrote 'in.parquet' (1 rows)\n",
++      metadata: { command: "qsv to parquet out in.csv", duration: 5, exitCode: 0 },
++    };
++    const formatted = await formatToolResult(result, "to", "/in.csv", undefined, false, {});
++    assert.ok(!formatted.isError);
++    const text = formatted.content[0].text ?? "";
++    assert.match(text, /qsv to completed; it printed no output/);
++    assert.match(text, /Wrote 'in\.parquet' \(1 rows\)/);
++  });
++
++  test("an auto temp file the command never wrote falls back to its stdout", async () => {
++    const base = {
++      success: true,
++      stderr: "2 duplicates\n",
++      metadata: { command: "qsv x", duration: 5, exitCode: 0 },
++    };
++    const missing = join(homedir(), `qsv-never-written-${Date.now()}.tsv`);
++    const json = await formatToolResult({ ...base, output: '{"a":1}' }, "schema", "/in.csv", missing, true, {});
++    assert.ok(!json.isError, json.content[0].text);
++    assert.strictEqual(json.content[0].text, '{"a":1}');
++    const empty = await formatToolResult({ ...base, output: "" }, "extdedup", "/in.csv", missing, true, {});
++    assert.ok(!empty.isError, empty.content[0].text);
++    assert.match(empty.content[0].text ?? "", /qsv extdedup completed[^]*2 duplicates/);
++  });
++
++  test("a long stderr summary is truncated", async () => {
++    const result = {
++      success: true,
++      output: "",
++      stderr: "x".repeat(100_000),
++      metadata: { command: "qsv split", duration: 5, exitCode: 0 },
++    };
++    const text = (await formatToolResult(result, "split", "/in.csv", undefined, false, {})).content[0].text ?? "";
++    assert.ok(text.length < 5000, String(text.length));
++    assert.match(text, /\[stderr truncated\]$/);
++  });
++});
+```
+
+**File**: `.claude/skills/tests/qsv-integration.test.ts` (modified, +54/-1)
+```diff
+@@ -5,7 +5,7 @@
+ 
+ import { test } from 'node:test';
+ import assert from 'node:assert';
+-import { readFile, stat, access, chmod, mkdir } from 'node:fs/promises';
++import { readFile, readdir, stat, access, chmod, mkdir } from 'node:fs/promises';
+ import { join } from 'node:path';
+ import { handleToolCall, handleToParquetCall } from '../src/mcp-tools.js';
+ import { config } from '../src/config.js';
+@@ -1102,3 +1102,56 @@ test('qsv_sqlp runs a .sql script file, also when DuckDB is available', { skip:
+     await cleanupTestDir(testDir);
+   }
+ });
++
++test('qsv split succeeds although it writes only its own files', { skip: !QSV_AVAILABLE }, async () => {
++  const testDir = await createTestDir();
++  const loader = new SkillLoader();
++  const executor = new SkillExecutor();
++
++  try {
++    await loader.loadAll();
++    const csvPath = await createTestCSV(testDir, 'test.csv', 'id,name\n1,a\n2,b\n3,c\n');
++    const provider = new FilesystemResourceProvider({ workingDirectory: testDir, allowedDirectories: [testDir] });
++    const outdir = join(testDir, 'parts');
++
++    const result = await handleToolCall(
++      'qsv_split',
++      { input_file: csvPath, outdir, size: 1 },
++      executor,
++      loader,
++      provider,
++    );
++
++    assert.ok(!result.isError, result.content[0].text);
++    assert.match(result.content[0].text ?? '', /qsv split completed; it printed no output/);
++    assert.strictEqual((await readdir(outdir)).length, 3);
++  } finally {
++    await cleanupTestDir(testDir);
++  }
++});
++
++test('output_file is refused for a command that has no output file option', { skip: !QSV_AVAILABLE }, async () => {
++  const testDir = await createTestDir();
++  const loader = new SkillLoader();
++  const executor = new SkillExecutor();
++
++  try {
++    await loader.loadAll();
++    const csvPath = await createTestCSV(testDir, 'test.csv', 'id,name\n1,a\n2,b\n');
++    const provider = new FilesystemResourceProvider({ workingDirectory: testDir, allowedDirectories: [testDir] });
++
++    const result = await handleToolCall(
++      'qsv_split',
++      { input_file: csvPath, outdir: join(testDir, 'parts'), size: 1, output_file: join(testDir, 'out.csv') },
++      executor,
++      loader,
++      provider,
++    );
++
++    assert.ok(result.isError);
++    assert.match(result.content[0].text ?? '', /has no output file option/);
++    await assert.rejects(stat(join(testDir, 'parts')));
++  } finally {
++    await cleanupTestDir(testDir);
++  }
++});
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5084** (2026-11-21): feat(synthesize): --target <col> for conditional generation; read non-UTF8 input (@jqnatividad)
-- **PR #5083** (2026-11-21): fix(mcp): sandbox DuckDB in plugin mode; harden the duckdb CLI invocation (@jqnatividad)
-- **PR #5081** (2026-11-20): deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes (@jqnatividad)
-- **PR #5080** (2026-11-20): feat(synthesize): Float columns keep their source decimal places (@jqnatividad)
-- **PR #5078** (2026-11-20): feat(synthesize): --quantiles <n> for finer numeric/date marginals (@jqnatividad)
-- **PR #5077** (2026-11-20): feat(synthesize): --rows-per-file <n> splits the output into files (@jqnatividad)
+- **PR #5090** (2026-11-21): feat(synthesize): ordered relationship members keep their own blanks (@jqnatividad)
+- **PR #5089** (2026-11-21): fix(mcp): don't report an error for commands that write only their own files (@jqnatividad)
+- **PR #5088** (2026-11-21): docs(synthesize): name both blank limits for discovered ordered pairs (@jqnatividad)
+- **PR #5087** (2026-11-21): fix(mcp): run .sql scripts on sqlp; allow nested ~/ and to parquet dirs (@jqnatividad)
+- **PR #5086** (2026-11-21): fix(mcp): don't let extsort/extdedup empty a file through output_file (@jqnatividad)
+- **PR #5085** (2026-11-21): feat(synthesize): --discover-relationships <file> finds joint, correlated and ordered groups (@jqnatividad)
 
 ---
 
@@ -2889,13 +2576,13 @@ roborev 6663:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp): sandbox DuckDB in plugin mode; harden the duckdb CLI invocation
+## X. mcp): don't report an error for commands that write only their own files
 
 **RULE**:
 When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3996998d`: mcp): sandbox DuckDB in plugin mode; harden the duckdb CLI invocation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6f4d08b6`: mcp): don't report an error for commands that write only their own files. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
@@ -2903,9 +2590,11 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Security
-- **DuckDB runs sandboxed in plugin mode (#5082).** With SQL file writes off (plugin mode: Cowork, Claude Code plugin), `qsv_sqlp`'s DuckDB route now has DuckDB confine itself to the MCP allowed directories plus the input file. Parquet output (`format=parquet`) is written by `sqlp` in this mode, so DuckDB writes no query results (it still writes the server's own Parquet cache of the input file): the server's `COPY (<sql>) TO '<output>'` wrapper could otherwise be closed early by the SQL to redirect the write to another allowed file. It sets `allowed_directories` / `allowed_paths`, turns off `enable_external_access` and locks the configuration, so no SQL can lift it. `ATTACH 'new.db'` (which creates the file), `EXPORT DATABASE`, `COPY ... TO` and `INSTALL` can no longer reach files outside those directories, whatever the SQL text looks like. `ATTACH` is also added to the keyword check that sends such SQL to Polars `sqlp`. Needs DuckDB 1.2.0+; with an older DuckDB, plugin-mode SQL runs on `sqlp`. The sandbox covers DuckDB only: SQL that names files itself can still read them on the `sqlp` route. ([#5083](https://github.com/dathere/qsv/pull/5083))
-- **Stricter path handli
+### Fixed
+- **Commands that write only their own files no longer report an error.** The `split`, `partition`, `to` and `validate` skills have no `--output`, but in TSV output mode (the default) or on large inputs the server still gave them a temp output file, then failed reading it back (`Error processing output from temp file: ENOENT`) although the command had succeeded. `extdedup --no-output` and `schema --stdout` failed the same way. The server now uses a temp file only for skills with `--output` or a positional output, and returns stdout when a command didn't write its temp file. A successful command with no stdout reports that it completed, with qsv's own summary (for example `Wrote 2 chunk/s to …`, cut to 4,000 characters) (#5089).
+- **`output_file` is refused for commands that can't write one.** Passing it to `split`, `partition` or another skill without an output option used to report "Successfully wrote output to" a file qsv never wrote (#5089).
+- **A qsv binary that fails to start is reported as an error.** If the configured binary was removed or lost its execute permission after the server started, the spawn error was treated as exit code 0 (#5089).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2915,7 +2604,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3996998d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6f4d08b6` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
