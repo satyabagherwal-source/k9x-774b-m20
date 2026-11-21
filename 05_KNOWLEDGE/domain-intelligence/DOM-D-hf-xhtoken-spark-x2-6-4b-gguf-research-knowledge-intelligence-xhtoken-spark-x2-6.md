@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
   "source_version": "hf-xhtoken-spark-x2.6-4b-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T19:04:49.512Z",
+  "timestamp": "2026-11-21T17:28:08.498Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [XHToken/Spark-X2.6-4B-GGUF](https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF) (Revision: `hf-xhtoken`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T19:04:49.512Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T17:28:08.498Z`  
 > **Learning ID**: `learn-huggingface-xhtoken-spark-x2-6-4b-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF](https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T19:04:48.472Z  
+> **Harvest Timestamp**: 2026-11-21T17:28:07.659Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 821869 downloads | 320 likes
+- **Stars / Engagement**: 948632 downloads | 330 likes
 
 ---
 

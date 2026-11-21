@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T17:15:36.926Z",
+  "last_updated": "2026-11-21T17:28:16.867Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10191,14 +10191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-gatekeeper",
-      "content_hash": "18b8ccaf98cb9820a1ee9b448c7b842aa6de897d1593a60a6de8074c1d210683",
-      "verified_at": "2026-11-20T13:48:19.153Z",
+      "content_hash": "fec6135dd28c14145c82ea3cc2329b0365108fd6a32774741fc3bc7f179785ba",
+      "verified_at": "2026-11-21T17:28:16.867Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T13:48:19.153Z"
+      "last_updated": "2026-11-21T17:28:16.867Z"
     },
     "chakra-ui/chakra-ui": {
       "repository": "chakra-ui/chakra-ui",
@@ -16251,14 +16251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
-      "content_hash": "cd57dcd4b47e43c6657f7b1d009b4da6b85c86f1ce204e43c8f304084389e749",
-      "verified_at": "2026-11-17T19:04:49.283Z",
+      "content_hash": "db6489295b3291e3dac8dfce6005e65fff55a6666d1b96cf184e609baea1e45c",
+      "verified_at": "2026-11-21T17:28:08.253Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T19:04:49.283Z"
+      "last_updated": "2026-11-21T17:28:08.253Z"
     },
     "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB": {
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
@@ -19799,6 +19799,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-21T08:24:26.539Z"
+    },
+    "AtomicChat/Inkling-2-Mini-Uncensored-GGUF": {
+      "repository": "AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-atomicchat-inkling-2-mini-uncensored-gguf",
+      "content_hash": "5f1b7e0e933f655ee99869c84972e8c6bc77e262b1a59a903725af5ca9bdc9f6",
+      "verified_at": "2026-11-21T17:28:05.658Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-21T17:28:05.658Z"
     }
   },
   "repos": {

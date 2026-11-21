@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T17:16:19.795Z",
+  "last_updated": "2026-11-21T17:28:54.517Z",
   "directives": [
     {
       "id": "CD-001",
@@ -43025,6 +43025,26 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-21",
       "domain_letter": "K"
+    },
+    {
+      "id": "CD-MOL0",
+      "directive_title": "bump golang.org/x/net to v0.63.0, golang.org/x/crypto to v0.59.0 and golang to 1",
+      "source_repo": "open-policy-agent-gatekeeper-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MOL0-bump-golang-org-x-net-to-v0-63-0-golang-org-x-crypto-to-v0-59-0-and-golang-to-1.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-EA4581",
+      "directive_title": "bump golang.org/x/net to v0.63.0, golang.org/x/crypto to v0.59.0 and golang to 1",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "open-policy-agent-gatekeeper",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EA4581-bump-golang-org-x-net-to-v0-63-0-golang-.md",
+      "staged_date": "2026-11-21"
     }
   ]
 }

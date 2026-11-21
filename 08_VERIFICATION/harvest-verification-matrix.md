@@ -11851,3 +11851,7 @@
 | `CYCLE-20261121-5HIA` | `2026-11-21T17:15:32.194Z` | `kubernetes-sigs/aws-load-balancer-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9808` | Yes (`0c090dcd...`) |
 | `CYCLE-20261121-5L59` | `2026-11-21T17:15:36.909Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9809` | Yes (`a4d68f17...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T17:16:19.019Z` | `genkit-ai-genkit` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-D7B01097` [Domain H] | Yes (`a35c066c...`) |
+| `CYCLE-20261121-LMVF` | `2026-11-21T17:28:05.643Z` | `AtomicChat/Inkling-2-Mini-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings.md` | Yes (`5f1b7e0e...`) |
+| `CYCLE-20261121-LOVI` | `2026-11-21T17:28:08.238Z` | `XHToken/Spark-X2.6-4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md` | Yes (`db648929...`) |
+| `CYCLE-20261121-LVIS` | `2026-11-21T17:28:16.852Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9810` | Yes (`fec6135d...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T17:28:53.108Z` | `hf-atomicchat-inkling-2-mini-uncensored-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2BE66F2B` [Domain D] | Yes (`64ca3880...`) |

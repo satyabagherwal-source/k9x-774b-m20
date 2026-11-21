@@ -3,7 +3,7 @@
 > **Source Version**: `hf-xhtoken-s`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T19:04:48.725Z  
+> **Timestamp**: 2026-11-21T17:28:07.664Z  
 > **Learning ID**: `learn-huggingface-xhtoken-spark-x2-6-4b-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF](https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T19:04:48.472Z  
+> **Harvest Timestamp**: 2026-11-21T17:28:07.659Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 821869 downloads | 320 likes
+- **Stars / Engagement**: 948632 downloads | 330 likes
 
 ---
 

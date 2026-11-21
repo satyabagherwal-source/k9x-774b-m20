@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T17:15:36.921Z",
-  "total_cycles_completed": 11279,
-  "total_learnings_persisted": 11279,
-  "total_rules_promoted": 10613,
+  "last_updated": "2026-11-21T17:28:16.863Z",
+  "total_cycles_completed": 11282,
+  "total_learnings_persisted": 11282,
+  "total_rules_promoted": 10614,
   "history": [
-    {
-      "timestamp": "2026-11-20T21:38:58.036Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T21:47:12.132Z",
-      "repository": "databendlabs/databend",
-      "learningId": "learn-github-databendlabs-databend",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T21:55:06.590Z",
-      "repository": "digitalbazaar/pyld",
-      "learningId": "learn-github-digitalbazaar-pyld",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T21:55:15.553Z",
       "repository": "paradedb/paradedb",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-21T17:15:36.921Z",
       "repository": "genkit-ai/genkit",
       "learningId": "learn-github-genkit-ai-genkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T17:28:05.654Z",
+      "repository": "AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+      "learningId": "learn-huggingface-atomicchat-inkling-2-mini-uncensored-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T17:28:08.249Z",
+      "repository": "XHToken/Spark-X2.6-4B-GGUF",
+      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T17:28:16.863Z",
+      "repository": "open-policy-agent/gatekeeper",
+      "learningId": "learn-github-open-policy-agent-gatekeeper",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

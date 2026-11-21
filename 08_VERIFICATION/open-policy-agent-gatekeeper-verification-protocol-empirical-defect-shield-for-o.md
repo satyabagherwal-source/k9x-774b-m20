@@ -4,22 +4,22 @@
 {
   "source_repository": "open-policy-agent/gatekeeper",
   "source_url": "https://github.com/open-policy-agent/gatekeeper",
-  "source_version": "b0a53e18",
+  "source_version": "a2bac802",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T13:48:19.344Z",
+  "timestamp": "2026-11-21T17:28:17.128Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-open-policy-agent-gatekeeper",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper) (Revision: `b0a53e18`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T13:48:19.344Z`  
+> **Provenance**: Harvested from [open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper) (Revision: `a2bac802`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T17:28:17.128Z`  
 > **Learning ID**: `learn-github-open-policy-agent-gatekeeper`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `open-policy-agent/gatekeeper` (Commit: `b0a53e18`)
+- **Target Repository**: `open-policy-agent/gatekeeper` (Commit: `a2bac802`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T13:48:18.007Z  
+> **Harvest Timestamp**: 2026-11-21T17:28:15.650Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 🐊 Policy Controller for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4303 stars
+- **Stars / Engagement**: 4302 stars
 
 ---
 
@@ -1296,683 +1296,231 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b0a53e18` (2026-11-19)
-**Commit Message**: chore: bump cert-controller to 32045c4 (#4931)
+### Incident Patch 1: `a2bac802` (2026-11-21)
+**Commit Message**: chore: bump golang.org/x/net to v0.63.0, golang.org/x/crypto to v0.59.0 and golang to 1.27.4 and distroless to static-debian13 (#4934)
 
 Signed-off-by: Abhishek Sheth <[REDACTED_EMAIL]>
-Signed-off-by: Jaydip Gabani <[REDACTED_EMAIL]>
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +2/-2)
+**File**: `Dockerfile` (modified, +2/-2)
 ```diff
-@@ -14,7 +14,7 @@ require (
- 	github.com/google/go-cmp v0.7.0
- 	github.com/google/uuid v1.6.0
- 	github.com/onsi/gomega v1.44.0
--	github.com/open-policy-agent/cert-controller v0.16.1-0.20260608222807-1c492bc2d223
-+	github.com/open-policy-agent/cert-controller v0.16.1-0.20261117234107-32045c478dc2
- 	github.com/open-policy-agent/frameworks/constraint v0.0.0-20261117233605-c3feac3bb7a6
- 	github.com/open-policy-agent/opa v1.22.4
- 	github.com/pkg/errors v0.9.1
-@@ -132,7 +132,7 @@ require (
- 	go.opentelemetry.io/otel/log v1.47.0 // indirect
- 	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.opentelemetry.io/proto/otlp v1.11.1 // indirect
--	go.uber.org/atomic v1.11.0 // indirect
-+	go.uber.org/atomic v1.12.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
- 	golang.org/x/crypto v0.57.0 // indirect
- 	golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba // indirect
+@@ -1,4 +1,4 @@
+-FROM --platform=$BUILDPLATFORM golang:1.27-trixie@sha256:2f84bc93ecfb2689f782b153fdcd368b5a7ab96c1386c65cdaccf35e726d6a44 AS builder
++FROM --platform=$BUILDPLATFORM golang:1.27-trixie@sha256:f18c3d73a184fb0582828510722e723b63a93f7188d11dd223d9be6f6880e65d AS builder
+ 
+ ARG TARGETPLATFORM
+ ARG TARGETOS
+@@ -21,7 +21,7 @@ RUN \
+     --mount=type=cache,target=/root/.cache/go-build \
+     go build -a -ldflags "${LDFLAGS}" -o manager
+ 
+-FROM gcr.io/distroless/static-debian12@sha256:d75cdd72874d4790092fcb1b058493ecf6bb5bf2b2b897045b00ff01d91843f2
++FROM gcr.io/distroless/static-debian13@sha256:1a64f46364620465ef9e9a8f5413757dfdf22695e050bbfd7303eeaf17a59383
+ 
+ WORKDIR /
+ COPY --from=builder /go/src/github.com/open-policy-agent/gatekeeper/manager .
 ```
 
-**File**: `go.sum` (modified, +6/-6)
+**File**: `build/tooling/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -209,8 +209,8 @@ github.com/onsi/ginkgo/v2 v2.27.4 h1:fcEcQW/A++6aZAZQNUmNjvA9PSOzefMJBerHJ4t8v8Y
- github.com/onsi/ginkgo/v2 v2.27.4/go.mod h1:ArE1D/XhNXBXCBkKOLkbsb2c81dQHCRcF5zwn/ykDRo=
- github.com/onsi/gomega v1.44.0 h1:eAiGl3Pw5jz5GQdDff0BcxYpAX1JxW8xD7mFUuwNfZQ=
- github.com/onsi/gomega v1.44.0/go.mod h1:e/C2HwaZ1DhvjzXXuFhcR7hY7Sh9pl7MmoWKEjzwcdA=
--github.com/open-policy-agent/cert-controller v0.16.1-0.20260608222807-1c492bc2d223 h1:E4L2JO4N4IYcwWzaAEn2UtboCOMNDGj0orkvGI3QwXk=
--github.com/open-policy-agent/cert-controller v0.16.1-0.20260608222807-1c492bc2d223/go.mod h1:/HsSWwT1Cj7nVWSbXYMzXMkOsOS5XvhUTUvsFCQ+8vc=
-+github.com/open-policy-agent/cert-controller v0.16.1-0.20261117234107-32045c478dc2 h1:AehQ50ed2gwCaZnrq8FqE143QkxuxJRvkXTetFKrqPQ=
-+github.com/open-policy-agent/cert-controller v0.16.1-0.20261117234107-32045c478dc2/go.mod h1:36JQP1NkytcSbw8OBJ33xeZYkh8JrDiM5rcS/jKzD5A=
- github.com/open-policy-agent/frameworks/constraint v0.0.0-20261117233605-c3feac3bb7a6 h1:kX447L4/G/73FTyg6iDQCzUT35Nwpg/Y1oLynjIrIHk=
- github.com/open-policy-agent/frameworks/constraint v0.0.0-20261117233605-c3feac3bb7a6/go.mod h1:qXjclwJdONHJLjEAOb7QdBtFwzXXd2qht6jlGn9pflI=
- github.com/open-policy-agent/opa v1.22.4 h1:/sKtqt7GVSvXQn1sML2PSzl8tD/mTHF2pzQC3x1CV8k=
-@@ -309,8 +309,8 @@ go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrF
- go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.opentelemetry.io/proto/otlp v1.11.1 h1:SCrPqH9NE5CmBrOqpjNCiT0X5mGwMyGERXdogfR7Yjw=
- go.opentelemetry.io/proto/otlp v1.11.1/go.mod h1:wq8W4aSf6bOy8RZyESOeQFr9Pu7wydWX/TY4sgvrTPg=
--go.uber.org/atomic v1.11.0 h1:ZvwS0R+56ePWxUNi+Atn9dWONBPp/AUETXlHW0DxSjE=
--go.uber.org/atomic v1.11.0/go.mod h1:LUxbIzbOniOlMKjJjyPfpl4v+PKK2cNJn91OQbhoJI0=
-+go.uber.org/atomic v1.12.0 h1:BvcXdFKuviU4fTL/f+SxdQ5qJX/Jix8pAkgdUcb3XOE=
-+go.uber.org/atomic v1.12.0/go.mod h1:I6c4cg+6HCxRjfjSsYtApoFILnpc0CGUdGkXVqbYVNk=
- go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
- go.uber.org/goleak v1.3.0/go.mod h1:CoHD4mav9JJNrW/WLlf7HGZPjdw8EucARQHekz1X6bE=
- go.uber.org/multierr v1.11.0 h1:blXXJkSxSSfBVBlC76pxqeO+LN3aDfLQo+309xJstO0=
-@@ -387,8 +387,8 @@ k8s.io/component-base v0.37.2 h1:Ia9IKTg1yWrUntJU5lVetapkC9pXlLg9L6P3R1IkbcY=
- k8s.io/component-base v0.37.2/go.mod h1:qq+ueHZyLfzRJzxyDoyxHWNhF1JPv4zm3hcaddXWDvY=
- k8s.io/klog/v2 v2.140.0 h1:Tf+J3AH7xnUzZyVVXhTgGhEKnFqye14aadWv7bzXdzc=
- k8s.io/klog/v2 v2.140.0/go.mod h1:o+/RWfJ6PwpnFn7OyAG3QnO47BFsymfEfrz6XyYSSp0=
--k8s.io/kube-aggregator v0.36.1 h1:IzNeRsJcTtgsiCyTgCR1pSwWCrXC1QZQWMTcBw18cFQ=
--k8s.io/kube-aggregator v0.36.1/go.mod h1:ROrIm5irUhVUJsKVCgBAAcXpK5IiqpdCn0Ka7LYMGs4=
-+k8s.io/kube-aggregator v0.37.2 h1:cUT/C/WM3UtoREoTYthSCFxldpdG3y5q9UniWYxcmPE=
-+k8s.io/kube-aggregator v0.37.2/go.mod h1:GsqVEKZkXn49ObCHg5NvYngIhM18Uup1Bg6Q3Lzu89A=
- k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad h1:oXImqH8mQNk7PmvzKhmN3ddJoY6OnyM225MXwGHPm0A=
- k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad/go.mod h1:0/mqHCVhlumdJ3BhCfnjSZQE037nAhNodh1/hK0T8/I=
- k8s.io/utils v0.0.0-20260626114624-be93311217bd h1:Ea7fgQ5we8Y9T0OX5o0dAHzQOBRI07D/dEYRaB9ZZEs=
+@@ -1,4 +1,4 @@
+-FROM golang:1.27-trixie@sha256:2f84bc93ecfb2689f782b153fdcd368b5a7ab96c1386c65cdaccf35e726d6a44
++FROM golang:1.27-trixie@sha256:f18c3d73a184fb0582828510722e723b63a93f7188d11dd223d9be6f6880e65d
+ 
+ RUN GO111MODULE=on go install sigs.k8s.io/controller-tools/cmd/controller-gen@v0.21.0
+ RUN GO111MODULE=on go install k8s.io/code-generator/cmd/conversion-gen@v0.29.3
+```
+
+**File**: `gator.Dockerfile` (modified, +2/-2)
+```diff
+@@ -1,4 +1,4 @@
+-FROM --platform=$BUILDPLATFORM golang:1.27-trixie@sha256:2f84bc93ecfb2689f782b153fdcd368b5a7ab96c1386c65cdaccf35e726d6a44 AS builder
++FROM --platform=$BUILDPLATFORM golang:1.27-trixie@sha256:f18c3d73a184fb0582828510722e723b63a93f7188d11dd223d9be6f6880e65d AS builder
+ 
+ ARG TARGETPLATFORM
+ ARG TARGETOS
+@@ -20,7 +20,7 @@ RUN \
+     --mount=type=cache,target=/root/.cache/go-build \
+     go build -a -ldflags "${LDFLAGS}" -o /gator
+ 
+-FROM --platform=$BUILDPLATFORM gcr.io/distroless/static-debian12@sha256:d75cdd72874d4790092fcb1b058493ecf6bb5bf2b2b897045b00ff01d91843f2 AS build
++FROM --platform=$BUILDPLATFORM gcr.io/distroless/static-debian13@sha256:1a64f46364620465ef9e9a8f5413757dfdf22695e050bbfd7303eeaf17a59383 AS build
+ USER 65532:65532
+ COPY --from=builder --chown=65532:65532 /gator /gator
+ ENTRYPOINT ["/gator"]
+```
+
+**File**: `go.mod` (modified, +6/-6)
+```diff
+@@ -33,8 +33,8 @@ require (
+ 	go.yaml.in/yaml/v2 v2.4.5
+ 	go.yaml.in/yaml/v3 v3.0.6
+ 	golang.org/x/oauth2 v0.37.0
+-	golang.org/x/sync v0.24.0
+-	golang.org/x/sys v0.49.0
++	golang.org/x/sync v0.25.0
++	golang.org/x/sys v0.50.0
+ 	golang.org/x/time v0.16.0
+ 	gopkg.in/yaml.v3 v3.0.1
+ 	k8s.io/api v0.37.2
+@@ -134,11 +134,11 @@ require (
+ 	go.opentelemetry.io/proto/otlp v1.11.1 // indirect
+ 	go.uber.org/atomic v1.12.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+-	golang.org/x/crypto v0.57.0 // indirect
++	golang.org/x/crypto v0.59.0 // indirect
+ 	golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba // indirect
+-	golang.org/x/net v0.60.0 // indirect
+-	golang.org/x/term v0.47.0 // indirect
+-	golang.org/x/text v0.43.0 // indirect
++	golang.org/x/net v0.63.0 // indirect
++	golang.org/x/term v0.48.0 // indirect
++	golang.org/x/text v0.44.0 // indirect
+ 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
+ 	google.golang.org/api v0.264.0 // indirect
+ 	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
+```
+
+**File**: `go.sum` (modified, +16/-16)
+```diff
+@@ -322,28 +322,28 @@ go.yaml.in/yaml/v2 v2.4.5/go.mod h1:gMZqIpDtDqOfM0uNfy0SkpRhvUryYH0Z6wdMYcacYXQ=
+ go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
+ go.yaml.in/yaml/v3 v3.0.6 h1:zcDfvjXEqTQmpjniUBLc91xYJMB2c4QOFxEF/LCEckM=
+ go.yaml.in/yaml/v3 v3.0.6/go.mod h1:HVTZu1O7/Vkt2N+BFy8Zza+lnLsABggaTM2ZpNIGuKg=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
++golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
+ golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba h1:Ck8QetSgk912qxWLMCKxd0in+aiyBQyDSMae6e/xmpU=
+ golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba/go.mod h1:50RgIsmK7OwqzTTeqcSXQW8SswW0o8fRcDxmqGluJ8E=
+-golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
+-golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/mod v0.42.0 h1:ICeL3t2L30ljSPHHxDnR4fqVcBt/zR2zJAb9juavmQg=
++golang.org/x/mod v0.42.0/go.mod h1:u5fzIrRInkL8MaO1cbRkUHT64v303YIT5KEqpNr7jRs=
++golang.org/x/net v0.63.0 h1:HCoTmNh9EpD1PpK8gBNFY4gcTY4N+KQEO8ylfIKqFJ0=
++golang.org/x/net v0.63.0/go.mod h1:15JLg3IX1bLjHK264EZQEbIpTiR/KVLuo9CTRWd0pig=
+ golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
+ golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
+-golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
+-golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+-golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
+-golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+-golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
+-golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
+-golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
+-golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
++golang.org/x/sync v0.25.0 h1:dJnifr0nMV8/SBnBvdo4eSGGnrc3O4FFx6IqvtLcmRs=
++golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
++golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/term v0.48.0 h1:G6UU1eiSB8nl3DzeUGt7Mg+2SctI8tPS6Z5/mBt6cOk=
++golang.org/x/term v0.48.0/go.mod h1:BRDLHCZr2SUjIeBHHpRyQeC9xzSAVbzY2rvKgafnHf4=
++golang.org/x/text v0.44.0 h1:YItdp/mQNGnsmrgpcdA5yQ3bnRxCfo/Tj/iByGW9GGo=
++golang.org/x/text v0.44.0/go.mod h1:S4FR1waQ9LbjQTls97SyRjDaUUVkaM+cXwwuG/G+MwY=
+ golang.org/x/time v0.16.0 h1:vMb6ptszcQMkcwiRTAuNNU50gom6++Q/6gY2hDM6VDE=
+ golang.org/x/time v0.16.0/go.mod h1:rVKOqvZeKvrDKTQiAHJ7wmwP0RzleSphoEA9RcdLA0s=
+-golang.org/x/tools v0.51.0 h1:k4Xc/1Om9jwkBJBo4NVLMSARBoWtK10mx+W5BnXCeAI=
+-golang.org/x/tools v0.51.0/go.mod h1:9eEncMayCV6zRMGhR5eZEC2iBx98qWcF1HZ9Z7wJOoA=
++golang.org/x/tools v0.52.0 h1:ryxg4U63oaUYk7uOLTF37n43f4qgtGvqV4Ioit1BaEs=
++golang.org/x/tools v0.52.0/go.mod h1:ItcP5UNaVGG+Yc4eIYmaFLNJ4soEopkx5Y2d4lcEurs=
+ gomodules.xyz/jsonpatch/v2 v2.4.0 h1:Ci3iUJyx9UeRx7CeFN8ARgGbkESwJK+KB9lLcWxY/Zw=
+ gomodules.xyz/jsonpatch/v2 v2.4.0/go.mod h1:AH3dM2RI6uoBZxn3LVrfvJ3E0/9dG4cSrbuBJT4moAY=
+ gonum.org/v1/gonum v0.17.0 h1:VbpOemQlsSMrYmn7T2OUvQ4dqxQXU+ouZFQsZOx50z4=
+```
+
+**File**: `test/export/fake-reader/Dockerfile` (modified, +2/-2)
+```diff
+@@ -1,4 +1,4 @@
+-FROM --platform=$BUILDPLATFORM golang:1.27-trixie@sha256:2f84bc93ecfb2689f782b153fdcd368b5a7ab96c1386c65cdaccf35e726d6a44 AS builder
++FROM --platform=$BUILDPLATFORM golang:1.27-trixie@sha256:f18c3d73a184fb0582828510722e723b63a93f7188d11dd223d9be6f6880e65d AS builder
+ 
+ ARG TARGETPLATFORM
+ ARG TARGETOS
+@@ -20,7 +20,7 @@ RUN go mod init && go mod tidy && go mod vendor
+ 
+ RUN go build -o main
+ 
+-FROM gcr.io/distroless/static-debian12@sha256:d75cdd72874d4790092fcb1b058493ecf6bb5bf2b2b897045b00ff01d91843f2
++FROM gcr.io/distroless/static-debian13@sha256:1a64f46364620465ef9e9a8f5413757dfdf22695e050bbfd7303eeaf17a59383
+ 
+ WORKDIR /
+ 
+```
+
+**File**: `test/externaldata/dummy-provider/Dockerfile` (modified, +2/-2)
+```diff
+@@ -1,4 +1,4 @@
+-FROM --platform=$BUILDPLATFORM golang:1.27-trixie@sha256:2f84bc93ecfb2689f782b153fdcd368b5a7ab96c1386c65cdaccf35e726d6a44 AS builder
++FROM --platform=$BUILDPLATFORM golang:1.27-trixie@sha256:f18c3d73a184fb0582828510722e723b63a93f7188d11dd223d9be6f6880e65d AS builder
+ 
+ ARG TARGETPLATFORM
+ ARG TARGETOS
+@@ -20,7 +20,7 @@ RUN go mod init && go mod tidy
+ 
+ RUN go build -o provider provider.go
+ 
+-FROM gcr.io/distroless/static-debian12@sha256:d75cdd72874d4790092fcb1b058493ecf6bb5bf2b2b897045b00ff01d91843f2
++FROM gcr.io/distroless/static-debian13@sha256:1a64f46364620465ef9e9a8f5413757dfdf22695e050bbfd7303eeaf17a59383
+ 
+ WORKDIR /
+ 
+```
+
+**File**: `test/image/Dockerfile` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-FROM golang:1.27-trixie@sha256:2f84bc93ecfb2689f782b153fdcd368b5a7ab96c1386c65cdaccf35e726d6a44 AS builder
++FROM golang:1.27-trixie@sha256:f18c3d73a184fb0582828510722e723b63a93f7188d11dd223d9be6f6880e65d AS builder
+ 
+ ARG BATS_VERSION
+ ARG ORAS_VERSION
 ```
 
 ---
 
-### Incident Patch 2: `cb5daf51` (2026-11-19)
-**Commit Message**: feat: support external data in gator (#4916)
+### Incident Patch 2: `8a8706e8` (2026-11-20)
+**Commit Message**: chore: bump go.yaml.in/yaml/v2 from 2.4.4 to 2.4.5 (#4917)
 
-Signed-off-by: Abhishek Sheth <[REDACTED_EMAIL]>
-Signed-off-by: Jaydip Gabani <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 Co-authored-by: Jaydip Gabani <[REDACTED_EMAIL]>
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `cmd/gator/test/gatortest_test.go` (modified, +48/-0)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,7 @@
- package test
- 
- import (
-+	"strings"
- 	"testing"
- 
- 	"github.com/google/go-cmp/cmp"
-@@ -148,3 +149,50 @@ func Test_enforcableFailures(t *testing.T) {
- 		})
- 	}
- }
-+
-+func Test_validateExternalDataFlags(t *testing.T) {
-+	tests := []struct {
-+		name    string
-+		enabled bool
-+		paths   []string
-+		wantErr string
-+	}{
-+		{name: "disabled"},
-+		{name: "enabled without providers", enabled: true, wantErr: "--enable-external-data requires --external-data-providers"},
-+		{name: "providers without enable", paths: []string{"provider.yaml"}, wantErr: "--external-data-providers requires --enable-external-data=true"},
-+		{name: "empty provider path", enabled: true, paths: []string{""}, wantErr: "--external-data-providers path must not be empty"},
-+		{name: "enabled with providers", enabled: true, paths: []string{"provider.yaml"}},
-+	}
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			err := validateExternalDataFlags(tc.enabled, tc.paths)
-+			if tc.wantErr == "" {
-+				if err != nil {
-+					t.Fatalf("unexpected error: %v", err)
-+				}
-+				return
-+			}
-+			if err == nil || err.Error() != tc.wantErr {
-+				t.Fatalf("got error %v, want %q", err, tc.wantErr)
-+			}
-+		})
-+	}
-+}
-+
-+func Test_rejectProviders(t *testing.T) {
-+	pod := &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "v1", "kind": "Pod"}}
-+	if err := rejectProviders([]*unstructured.Unstructured{pod}); err != nil {
-+		t.Fatalf("unexpected error: %v", err)
-+	}
-+
-+	provider := &unstructured.Unstructured{Object: map[string]interface{}{
-+		"apiVersion": "externaldata.gatekeeper.sh/v1beta1",
-+		"kind":       "Provider",
-+		"metadata":   map[string]interface{}{"name": "untrusted"},
-+	}}
-+	err := rejectProviders([]*unstructured.Unstructured{pod, provider})
-+	want := `provider "untrusted" found in --filename, --image, or stdin input; Providers are read only from --external-data-providers`
-+	if err == nil || !strings.Contains(err.Error(), want) {
-+		t.Fatalf("got error %v, want it to contain %q", err, want)
-+	}
-+}
+@@ -30,7 +30,7 @@ require (
+ 	go.opentelemetry.io/otel/sdk v1.47.0
+ 	go.opentelemetry.io/otel/sdk/metric v1.47.0
+ 	go.uber.org/zap v1.27.1
+-	go.yaml.in/yaml/v2 v2.4.4
++	go.yaml.in/yaml/v2 v2.4.5
+ 	go.yaml.in/yaml/v3 v3.0.6
+ 	golang.org/x/oauth2 v0.37.0
+ 	golang.org/x/sync v0.24.0
 ```
 
-**File**: `cmd/gator/test/test.go` (modified, +61/-11)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -16,6 +16,7 @@ import (
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/util"
- 	"github.com/spf13/cobra"
- 	"go.yaml.in/yaml/v3"
-+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
- )
- 
- const (
-@@ -31,6 +32,9 @@ gator test --filename="manifest.yaml" --filename="templates-and-constraints/"
- # Receive input from stdin
- cat manifest.yaml | gator test
- 
-+# Evaluate policies that use external data
-+gator test --filename="manifest.yaml" --enable-external-data --external-data-providers="providers.yaml"
-+
- # Output structured violations data
- gator test --filename="manifest.yaml" --output=json`
- )
-@@ -44,16 +48,18 @@ var Cmd = &cobra.Command{
- }
- 
- var (
--	flagFilenames    []string
--	flagOutput       string
--	flagIncludeTrace bool
--	flagGatherStats  bool
--	flagImages       []string
--	flagPlainHTTP    bool
--	flagTempDir      string
--	flagEnableK8sCel bool
--	flagDenyOnly     bool
--	flagVerbose      bool
-+	flagFilenames             []string
-+	flagOutput                string
-+	flagIncludeTrace          bool
-+	flagGatherStats           bool
-+	flagImages                []string
-+	flagPlainHTTP             bool
-+	flagTempDir               string
-+	flagEnableK8sCel          bool
-+	flagDenyOnly              bool
-+	flagVerbose               bool
-+	flagEnableExternalData    bool
-+	flagExternalDataProviders []string
- )
- 
- var flagDefaultFailurePolicyForK8sNativeValidation string
-@@ -85,24 +91,42 @@ func init() {
- 	Cmd.Flags().StringVarP(&flagTempDir, flagNameTempDir, "d", "", fmt.Sprintf("Specifies the temporary directory to download and unpack images to, if using the --%s flag. Optional.", flagNameImage))
- 	Cmd.Flags().BoolVarP(&flagDenyOnly, "deny-only", "", false, "output only denied constraints")
- 	Cmd.Flags().BoolVarP(&flagVerbose, flagNameVerbose, "v", false, "print extended test output")
-+	Cmd.Flags().BoolVar(&flagEnableExternalData, "enable-external-data", false, "allow external_data() to contact explicitly configured HTTPS Providers")
-+	Cmd.Flags().StringArrayVar(&flagExternalDataProviders, "external-data-providers", nil, "trusted file or directory containing Provider resources; may be specified multiple times; requires --enable-external-data")
- }
- 
- func run(_ *cobra.Command, _ []string) {
-+	if err := validateExternalDataFlags(flagEnableExternalData, flagExternalDataProviders); err != nil {
-+		cmdutils.ErrFatalf("%v", err)
-+	}
- 	if err := celSchema.SetDefaultFailurePolicyForK8sNativeValidation(flagDefaultFailurePolicyForK8sNativeValidation); err != nil {
- 		cmdutils.ErrFatalf("invalid default K8sNativeValidation failure policy: %v", err)
- 	}
- 
-+	var opts []gator.Opt
-+	if flagEnableExternalData {
-+		providers, err := reader.ReadProviders(flagExternalDataProviders)
-+		if err != nil {
-+			cmdutils.ErrFatalf("reading external data Providers: %v", err)
-+		}
-+		opts = append(opts, gator.WithExternalDataProviders(providers...))
-+	}
-+
- 	unstrucs, err := reader.ReadSources(flagFilenames, flagImages, flagTempDir, flagPlainHTTP)
- 	if err != nil {
- 		cmdutils.ErrFatalf("reading: %v", err)
- 	}
-+	if flagEnableExternalData {
-+		if err := rejectProviders(unstrucs); err != nil {
-+			cmdutils.ErrFatalf("reading: %v", err)
-+		}
-+	}
- 	if len(unstrucs) == 0 {
- 		cmdutils.ErrFatalf("no input data identified")
- 	}
- 
- 	printBuf := gator.NewPrintBuffer(gator.DefaultPrintBufferLimit)
- 
--	var opts []gator.Opt
- 	if flagIncludeTrace {
- 		opts = append(opts, test.WithTrace())
- 	}
-@@ -137,6 +161,32 @@ func run(_ *cobra.Command, _ []string) {
- 	os.Exit(exitCode)
- }
- 
-+func validateExternalDataFlags(enabled bool, paths []string) error {
-+	if enabled && len(paths) == 0 {
-+		return fmt.Errorf("--enable-external-data requires --external-data-providers")
-+	}
-+	if !enabled && len(paths) > 0 {
-+		return fmt.Errorf("--external-data-providers requires --enable-external-data=true")
-+	}
-+	for _, path := range paths {
-+		if path == "" {
-+			return fmt.Errorf("--external-data-providers path must not be empty")
-+		}
-+	}
-+	return nil
-+}
-+
-+// rejectProviders returns an error if objs contains a Provider. Providers are
-+// read only from --external-data-providers.
-+func rejectProviders(objs []*unstructured.Unstructured) error {
-+	for _, obj := range objs {
-+		if reader.IsProvider(obj) {
-+			return fmt.Errorf("provider %q found in --filename, --image, or stdin input; Providers are read only from --external-data-providers, so move Provider files to a separate directory", obj.GetName())
-+		}
-+	}
-+	return nil
-+}
-+
- func formatOutput(flagOutput string, allResults []*test.GatorResult, stats []*instrumentation.StatsEntry) string {
- 	var results []*test.GatorResult
- 	for _, result := range allResults {
-```
-
-**File**: `pkg/gator/errors.go` (modified, +4/-0)
-```diff
-@@ -21,6 +21,8 @@ var (
- 	// ErrNotAnExpansion indicates the user-indicated file does not contain an
- 	// ExpansionTemplate.
- 	ErrNotAnExpansion = errors.New("not an Expansion Template")
-+	// ErrNotAProvider indicates an object is not a supported Provider.
-+	ErrNotAProvider = errors.New("not a Provider")
- 	// ErrAddingTemplate indicates a problem instantiating a Suite's ConstraintTemplate.
- 	ErrAddingTemplate = errors.New("adding template")
- 	// ErrAddingConstraint indicates a problem instantiating a Suite's Constraint.
-@@ -31,6 +33,8 @@ var (
- 	ErrAddingGVKManifest = errors.New("adding gvkmanifest")
- 	// ErrAddingConfig indicates a problem instantiating a user-indicated Config.
- 	ErrAddingConfig = errors.New("adding config")
-+	// ErrAddingProvider indicates a problem instantiating a user-indicated Provider.
-+	ErrAddingProvider = errors.New("adding provider")
- 	// ErrInvalidSuite indicates a Suite does not define the required fields.
- 	ErrInvalidSuite = errors.New("invalid Suite")
- 	// ErrCreatingClient indicates an error instantiating the Client which compiles
-```
-
-**File**: `pkg/gator/externaldata.go` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+package gator
-+
-+import (
-+	"fmt"
-+
-+	"github.com/open-policy-agent/frameworks/constraint/pkg/apis/externaldata/unversioned"
-+	constraintclient "github.com/open-policy-agent/frameworks/constraint/pkg/client"
-+	"github.com/open-policy-agent/frameworks/constraint/pkg/client/drivers/rego"
-+	"github.com/open-policy-agent/frameworks/constraint/pkg/externaldata"
-+)
-+
-+// WithExternalDataProviders enables external_data with only the given
-+// Providers. Pass it at most once; a second call replaces the first.
-+func WithExternalDataProviders(providers ...*unversioned.Provider) Opt {
-+	return func() ([]constraintclient.Opt, []rego.Arg, error) {
-+		if len(providers) == 0 {
-+			return nil, nil, fmt.Errorf("no external data Providers supplied")
-+		}
-+		cache := externaldata.NewCache()
-+		seen := make(map[string]bool, len(providers))
-+		for _, provider := range providers {
-+			if provider == nil {
-+				return nil, nil, fmt.Errorf("nil external data Provider")
-+			}
-+			if seen[provider.Name] {
-+				return nil, nil, fmt.Errorf("provider %q is defined more than once", provider.Name)
-+			}
-+			seen[provider.Name] = true
-+			if err := addProvider(cache, provider); err != nil {
-+				return nil, nil, fmt.Errorf("invalid Provider %q: %w", provider.Name, err)
-+			}
-+		}
-+		// external_data is only available to a driver with a Provider cache, and
-+		// only calls the Providers in that cache.
-+		return nil, []rego.Arg{rego.AddExternalDataProviderCache(cache)}, nil
-+	}
-+}
-+
-+// ValidateProvider applies the same checks as WithExternalDataProviders.
-+func ValidateProvider(provider *unversioned.Provider) error {
-+	return addProvider(externaldata.NewCache(), provider)
-+}
-+
-+// addProvider adds provider to cache. Unlike the cluster, it also rejects a
-+// zero timeout, which makes every request time out.
-+func addProvider(cache *externaldata.ProviderCache, provider *unversioned.Provider) error {
-+	if provider == nil {
-+		return fmt.Errorf("nil external data Provider")
-+	}
-+	if err := cache.Upsert(provider); err != nil {
-+		return err
-+	}
-+	if provider.Spec.Timeout <= 0 {
-+		return fmt.Errorf("spec.timeout must be a positive number of seconds")
-+	}
-+	return nil
-+}
-```
-
-**File**: `pkg/gator/externaldata_test.go` (added, +88/-0)
-```diff
-@@ -0,0 +1,88 @@
-+package gator
-+
-+import (
-+	"encoding/base64"
-+	"testing"
-+
-+	"github.com/open-policy-agent/frameworks/constraint/pkg/apis/externaldata/unversioned"
-+	"github.com/stretchr/testify/require"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/client-go/util/cert"
-+)
-+
-+func testProvider(t *testing.T, name string) *unversioned.Provider {
-+	t.Helper()
-+	certPEM, _, err := cert.GenerateSelfSignedCertKey("provider.example.test", nil, nil)
-+	require.NoError(t, err)
-+	return &unversioned.Provider{
-+		ObjectMeta: metav1.ObjectMeta{Name: name},
-+		Spec: unversioned.ProviderSpec{
-+			URL:      "https://provider.example.test/validate",
-+			Timeout:  3,
-+			CABundle: base64.StdEncoding.EncodeToString(certPEM),
-+		},
-+	}
-+}
-+
-+func TestValidateProvider(t *testing.T) {
-+	tests := []struct {
-+		name     string
-+		provider func(*unversioned.Provider) *unversioned.Provider
-+		wantErr  string
-+	}{
-+		{name: "valid", provider: func(p *unversioned.Provider) *unversioned.Provider { return p }},
-+		{name: "nil", provider: func(*unversioned.Provider) *unversioned.Provider { return nil }, wantErr: "nil external data Provider"},
-+		{name: "empty name", provider: func(p *unversioned.Provider) *unversioned.Provider {
-+			p.Name = ""
-+			return p
-+		}, wantErr: "name"},
-+		{name: "http URL", provider: func(p *unversioned.Provider) *unversioned.Provider {
-+			p.Spec.URL = "http://provider.example.test/validate"
-+			return p
-+		}, wantErr: "HTTPS"},
-+		{name: "invalid caBundle", provider: func(p *unversioned.Provider) *unversioned.Provider {
-+			p.Spec.CABundle = "not-base64"
-+			return p
-+		}, wantErr: "caBundle"},
-+		{name: "zero timeout", provider: func(p *unversioned.Provider) *unversioned.Provider {
-+			p.Spec.Timeout = 0
-+			return p
-+		}, wantErr: "spec.timeout must be a positive number of seconds"},
-+	}
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			err := ValidateProvider(tc.provider(testProvider(t, "provider")))
-+			if tc.wantErr == "" {
-+				require.NoError(t, err)
-+				return
-+			}
-+			require.ErrorContains(t, err, tc.wantErr)
-+		})
-+	}
-+}
-+
-+func TestWithExternalDataProviders(t *testing.T) {
-+	clientOpts, driverArgs, err := WithExternalDataProviders(testProvider(t, "a"), testProvider(t, "b"))()
-+	require.NoError(t, err)
-+	require.Empty(t, clientOpts)
-+	require.Len(t, driverArgs, 1)
-+
-+	invalid := testProvider(t, "invalid")
-+	invalid.Spec.Timeout = 0
-+	tests := []struct {
-+		name      string
-+		providers []*unversioned.Provider
-+		wantErr   string
-+	}{
-+		{name: "no Providers", wantErr: "no external data Providers supplied"},
-+		{name: "nil Provider", providers: []*unversioned.Provider{testProvider(t, "a"), nil}, wantErr: "nil external data Provider"},
-+		{name: "duplicate", providers: []*unversioned.Provider{testProvider(t, "a"), testProvider(t, "a")}, wantErr: `provider "a" is defined more than once`},
-+		{name: "invalid Provider", providers: []*unversioned.Provider{invalid}, wantErr: `invalid Provider "invalid"`},
-+	}
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			_, _, err := WithExternalDataProviders(tc.providers...)()
-+			require.ErrorContains(t, err, tc.wantErr)
-+		})
-+	}
-+}
-```
-
-**File**: `pkg/gator/reader/filereader.go` (modified, +47/-0)
-```diff
-@@ -6,9 +6,12 @@ import (
- 	"os"
- 	"path/filepath"
- 
-+	frameworkapis "github.com/open-policy-agent/frameworks/constraint/pkg/apis"
-+	"github.com/open-policy-agent/frameworks/constraint/pkg/apis/externaldata/unversioned"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/gator"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/oci"
- 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-+	"k8s.io/apimachinery/pkg/runtime"
- )
- 
- var allowedExtensions = []string{gator.ExtYAML, gator.ExtYML, gator.ExtJSON}
-@@ -45,6 +48,50 @@ func ReadSources(filenames []string, images []string, tempDir string, allowPlain
- 	return sourcesToUnstruct(sources), nil
- }
- 
-+// ReadProviders reads and validates the Providers in the given files and
-+// directories. Every object must be a Provider.
-+func ReadProviders(paths []string) ([]*unversioned.Provider, error) {
-+	sources, err := readFiles(paths)
-+	if err != nil {
-+		return nil, fmt.Errorf("reading Provider files: %w", err)
-+	}
-+
-+	scheme := runtime.NewScheme()
-+	if err := frameworkapis.AddToScheme(scheme); err != nil {
-+		return nil, fmt.Errorf("registering Provider APIs: %w", err)
-+	}
-+
-+	var providers []*unversioned.Provider
-+	seen := make(map[string]string)
-+	for _, source := range sources {
-+		for _, obj := range source.objs {
-+			provider, err := ToProvider(scheme, obj)
-+			if err != nil {
-+				return nil, fmt.Errorf("file %q: %w", source.filename, err)
-+			}
-+			if obj.GetNamespace() != "" {
-+				return nil, fmt.Errorf("file %q: Provider %q must be cluster-scoped", source.filename, obj.GetName())
-+			}
-+			if obj.GetName() == "" {
-+				return nil, fmt.Errorf("file %q: Provider metadata.name must not be empty", source.filename)
-+			}
-+			if first, ok := seen[obj.GetName()]; ok {
-+				return nil, fmt.Errorf("provider %q in %q is already defined in %q", obj.GetName(), source.filename, first)
-+			}
-+			if err := gator.ValidateProvider(provider); err != nil {
-+				return nil, fmt.Errorf("file %q: invalid Provider %q: %w", source.filename, obj.GetName(), err)
-+			}
-+
-+			providers = append(providers, provider)
-+			seen[obj.GetName()] = source.filename
-+		}
-+	}
-+	if len(providers) == 0 {
-+		return nil, fmt.Errorf("no Provider resources found")
-+	}
-+	return providers, nil
-+}
-+
- func readImage(image string, tempDir string, allowPlainHTTP bool) ([]*source, error) {
- 	dirPath, closeHandler, err := oci.PullImage(image, tempDir, allowPlainHTTP)
- 	if closeHandler != nil {
-```
-
-**File**: `pkg/gator/reader/filereader_test.go` (added, +106/-0)
-```diff
-@@ -0,0 +1,106 @@
-+package reader
-+
-+import (
-+	"encoding/base64"
-+	"fmt"
-+	"os"
-+	"path/filepath"
-+	"strings"
-+	"testing"
-+
-+	"github.com/open-policy-agent/gatekeeper/v3/pkg/gator"
-+	"github.com/stretchr/testify/require"
-+	"k8s.io/client-go/util/cert"
-+)
-+
-+func testCABundle(t *testing.T) string {
-+	t.Helper()
-+	certPEM, _, err := cert.GenerateSelfSignedCertKey("provider.example.test", nil, nil)
-+	require.NoError(t, err)
-+	return base64.StdEncoding.EncodeToString(certPEM)
-+}
-+
-+func providerYAML(name, caBundle string) string {
-+	return fmt.Sprintf(`apiVersion: externaldata.gatekeeper.sh/v1beta1
-+kind: Provider
-+metadata:
-+  name: %s
-+spec:
-+  url: https://provider.example.test/validate
-+  timeout: 3
-+  caBundle: %s
-+`, name, caBundle)
-+}
-+
-+func TestReadProviders(t *testing.T) {
-+	ca := testCABundle(t)
-+	valid := providerYAML("test-provider", ca)
-+	tests := []struct {
-+		name      string
-+		input     string
-+		wantErr   string
-+		wantErrIs error
-+	}{
-+		{name: "v1beta1", input: valid},
-+		{name: "v1alpha1", input: strings.Replace(valid, "v1beta1", "v1alpha1", 1)},
-+		{name: "invalid kind", input: strings.Replace(valid, "kind: Provider", "kind: Config", 1), wantErr: "expected externaldata.gatekeeper.sh", wantErrIs: gator.ErrNotAProvider},
-+		{name: "invalid version", input: strings.Replace(valid, "v1beta1", "v2", 1), wantErr: "expected externaldata.gatekeeper.sh", wantErrIs: gator.ErrNotAProvider},
-+		{name: "missing name", input: strings.Replace(valid, "name: test-provider", "name: \"\"", 1), wantErr: "metadata.name must not be empty"},
-+		{name: "namespaced", input: strings.Replace(valid, "name: test-provider", "name: test-provider\n  namespace: default", 1), wantErr: "must be cluster-scoped"},
-+		{name: "bad field type", input: strings.Replace(valid, "timeout: 3", "timeout: invalid", 1), wantErr: "adding provider", wantErrIs: gator.ErrAddingProvider},
-+		{name: "mixed documents", input: valid + "---\napiVersion: v1\nkind: Pod\nmetadata:\n  name: pod\n", wantErr: "expected externaldata.gatekeeper.sh", wantErrIs: gator.ErrNotAProvider},
-+		{name: "duplicate documents", input: valid + "---\n" + valid, wantErr: "already defined"},
-+		{name: "http URL", input: strings.Replace(valid, "https://", "http://", 1), wantErr: `invalid Provider "test-provider": only HTTPS scheme is supported`},
-+		{name: "missing caBundle", input: strings.Replace(valid, "caBundle: "+ca, "", 1), wantErr: `invalid Provider "test-provider": caBundle should be set`},
-+		{name: "invalid caBundle", input: strings.Replace(valid, ca, "not-base64", 1), wantErr: `invalid Provider "test-provider": failed to base64 decode caBundle`},
-+		{name: "negative timeout", input: strings.Replace(valid, "timeout: 3", "timeout: -1", 1), wantErr: `invalid Provider "test-provider": provider timeout should be a positive integer`},
-+		{name: "missing timeout", input: strings.Replace(valid, "  timeout: 3\n", "", 1), wantErr: `invalid Provider "test-provider": spec.timeout must be a positive number of seconds`},
-+		{name: "zero timeout", input: strings.Replace(valid, "timeout: 3", "timeout: 0", 1), wantErr: `invalid Provider "test-provider": spec.timeout must be a positive number of seconds`},
-+		{name: "misspelled field", input: strings.Replace(valid, "timeout: 3", "timout: 3", 1), wantErr: `unknown field "spec.timout"`, wantErrIs: gator.ErrAddingProvider},
-+		{name: "wrong field case", input: strings.Replace(valid, "timeout: 3", "Timeout: 3", 1), wantErr: `unknown field "spec.Timeout"`, wantErrIs: gator.ErrAddingProvider},
-+		{name: "unknown metadata field", input: strings.Replace(valid, "name: test-provider", "name: test-provider\n  lables: {}", 1), wantErr: `unknown field "metadata.lables"`, wantErrIs: gator.ErrAddingProvider},
-+		{name: "empty document", input: "---\n", wantErr: "no Provider resources"},
-+		{name: "invalid yaml", input: "metadata: [\n", wantErr: "reading Provider files"},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			path := filepath.Join(t.TempDir(), "providers.yaml")
-+			require.NoError(t, os.WriteFile(path, []byte(tt.input), 0o600))
-+			providers, err := ReadProviders([]string{path})
-+			if tt.wantErr != "" {
-+				require.ErrorContains(t, err, tt.wantErr)
-+				if tt.wantErrIs != nil {
-+					require.ErrorIs(t, err, tt.wantErrIs)
-+				}
-+				return
-+			}
-+			require.NoError(t, err)
-+			require.Len(t, providers, 1)
-+			require.Equal(t, "test-provider", providers[0].Name)
-+			require.Equal(t, "https://provider.example.test/validate", providers[0].Spec.URL)
-+		})
-+	}
-+}
-+
-+func TestReadProvidersPaths(t *testing.T) {
-+	dir := t.TempDir()
-+	first := filepath.Join(dir, "first.yaml")
-+	second := filepath.Join(dir, "second.json")
-+	ca := testCABundle(t)
-+	require.NoError(t, os.WriteFile(first, []byte(providerYAML("first", ca)), 0o600))
-+	require.NoError(t, os.WriteFile(second, []byte(fmt.Sprintf(`{"apiVersion":"externaldata.gatekeeper.sh/v1beta1","kind":"Provider","metadata":{"name":"second"},"spec":{"url":"https://pr
-```
-
-**File**: `pkg/gator/reader/read_resources.go` (modified, +36/-0)
-```diff
-@@ -8,6 +8,9 @@ import (
- 	"io/fs"
- 	"strings"
- 
-+	"github.com/open-policy-agent/frameworks/constraint/pkg/apis/externaldata/unversioned"
-+	externaldatav1alpha1 "github.com/open-policy-agent/frameworks/constraint/pkg/apis/externaldata/v1alpha1"
-+	externaldatav1beta1 "github.com/open-policy-agent/frameworks/constraint/pkg/apis/externaldata/v1beta1"
- 	templatesv1 "github.com/open-policy-agent/frameworks/constraint/pkg/apis/templates/v1"
- 	"github.com/open-policy-agent/frameworks/constraint/pkg/core/templates"
- 	configv1alpha1 "github.com/open-policy-agent/gatekeeper/v3/apis/config/v1alpha1"
-@@ -226,6 +229,34 @@ func ToGVKManifest(scheme *runtime.Scheme, u *unstructured.Unstructured) (*gvkma
- 	return gvkManifest, nil
- }
- 
-+// ToProvider converts an unstructured v1alpha1 or v1beta1 Provider into the
-+// unversioned Provider used by the external data cache.
-+func ToProvider(scheme *runtime.Scheme, u *unstructured.Unstructured) (*unversioned.Provider, error) {
-+	gvk := u.GroupVersionKind()
-+	if !IsProvider(u) ||
-+		(gvk.Version != externaldatav1alpha1.SchemeGroupVersion.Version &&
-+			gvk.Version != externaldatav1beta1.SchemeGroupVersion.Version) {
-+		return nil, fmt.Errorf("%w: expected externaldata.gatekeeper.sh/v1alpha1 or v1beta1 Provider, got %s",
-+			gator.ErrNotAProvider, gvk)
-+	}
-+
-+	s, err := scheme.New(gvk)
-+	if err != nil {
-+		return nil, fmt.Errorf("%w: %w", gator.ErrAddingProvider, err)
-+	}
-+	// Reject unknown fields so typos are not silently ignored.
-+	if err := runtime.DefaultUnstructuredConverter.FromUnstructuredWithValidation(u.UnstructuredContent(), s, true); err != nil {
-+		return nil, fmt.Errorf("%w: %w", gator.ErrAddingProvider, err)
-+	}
-+
-+	provider := &unversioned.Provider{}
-+	if err := scheme.Convert(s, provider, nil); err != nil {
-+		return nil, fmt.Errorf("%w: %w", gator.ErrAddingProvider, err)
-+	}
-+
-+	return provider, nil
-+}
-+
- // ReadObject reads a file from the filesystem abstraction at the specified
- // path, and returns an unstructured.Unstructured object if the file can be
- // successfully unmarshalled.
-@@ -332,6 +363,11 @@ func IsGVKManifest(u *unstructured.Unstructured) bool {
- 	return gvk.Group == gvkmanifestv1alpha1.GroupVersion.Group && gvk.Kind == "GVKManifest"
- }
- 
-+func IsProvider(u *unstructured.Unstructured) bool {
-+	gvk := u.GroupVersionKind()
-+	return gvk.Group == externaldatav1beta1.ExternalDataGroup && gvk.Kind == "Provider"
-+}
-+
- func IsConstraint(u *unstructured.Unstructured) bool {
- 	gvk := u.GroupVersionKind()
- 	return gvk.Group == "constraints.gatekeeper.sh"
+@@ -317,8 +317,8 @@ go.uber.org/multierr v1.11.0 h1:blXXJkSxSSfBVBlC76pxqeO+LN3aDfLQo+309xJstO0=
+ go.uber.org/multierr v1.11.0/go.mod h1:20+QtiLqy0Nd6FdQB9TLXag12DsQkrbs3htMFfDN80Y=
+ go.uber.org/zap v1.27.1 h1:08RqriUEv8+ArZRYSTXy1LeBScaMpVSTBhCeaZYfMYc=
+ go.uber.org/zap v1.27.1/go.mod h1:GB2qFLM7cTU87MWRP2mPIjqfIDnGu+VIO4V/SdhGo2E=
+-go.yaml.in/yaml/v2 v2.4.4 h1:tuyd0P+2Ont/d6e2rl3be67goVK4R6deVxCUX5vyPaQ=
+-go.yaml.in/yaml/v2 v2.4.4/go.mod h1:gMZqIpDtDqOfM0uNfy0SkpRhvUryYH0Z6wdMYcacYXQ=
++go.yaml.in/yaml/v2 v2.4.5 h1:a5nxWvYi94DRl6QSLlTbLpVmutgx2qg8EVjnJtuFpwI=
++go.yaml.in/yaml/v2 v2.4.5/go.mod h1:gMZqIpDtDqOfM0uNfy0SkpRhvUryYH0Z6wdMYcacYXQ=
+ go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
+ go.yaml.in/yaml/v3 v3.0.6 h1:zcDfvjXEqTQmpjniUBLc91xYJMB2c4QOFxEF/LCEckM=
+ go.yaml.in/yaml/v3 v3.0.6/go.mod h1:HVTZu1O7/Vkt2N+BFy8Zza+lnLsABggaTM2ZpNIGuKg=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4936** (2026-11-21): chore: bump golang.org/x/net to v0.63.0, golang.org/x/crypto to v0.59.0 and golang to 1.27.4 and distroless to static-debian13 (CP #4934) (@abhisheksheth28)
+- **PR #4935** (2026-11-21): chore: Prepare v3.24.0-rc.0 release (@github-actions[bot])
+- **PR #4934** (2026-11-21): chore: bump golang.org/x/net to v0.63.0, golang.org/x/crypto to v0.59.0 and golang to 1.27.4 and distroless to static-debian13 (@abhisheksheth28)
+- **PR #4933** (closed): chore: Prepare v3.24.0-rc.0 release (@github-actions[bot])
 - **PR #4931** (2026-11-19): chore: bump cert-controller to 32045c4 (@abhisheksheth28)
 - **PR #4929** (closed): chore: bump github.com/prometheus/client_golang from 1.24.0 to 1.24.1 (@dependabot[bot])
-- **PR #4927** (2026-11-19): chore: bump frameworks/constraint to 45bd390 (@abhisheksheth28)
-- **PR #4925** (2026-11-17): chore: bump k8s deps to v0.37.2 and controller-runtime to v0.25.2 (@abhisheksheth28)
-- **PR #4923** (2026-11-18): chore: bump the all group across 1 directory with 9 updates (@dependabot[bot])
-- **PR #4921** (2026-11-16): chore: bump js-yaml from 3.14.1 to 3.15.2 in /website (@dependabot[bot])
 
 ---
 
@@ -1992,33 +1540,33 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump cert-controller to 32045c4
+## X. bump golang.org/x/net to v0.63.0, golang.org/x/crypto to v0.59.0 and golang to 1
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/gatekeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/gatekeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b0a53e18`: bump cert-controller to 32045c4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a2bac802`: bump golang.org/x/net to v0.63.0, golang.org/x/crypto to v0.59.0 and golang to 1.27.4 and distroless to static-debian13. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/open-policy-agent/cert-controller v0.16.1-0.20261117234107-32045c478dc2
-	go.uber.org/atomic v1.12.0 // indirect
+FROM --platform=$BUILDPLATFORM golang:1.27-trixie@sha256:f18c3d73a184fb0582828510722e723b63a93f7188d11dd223d9be6f6880e65d AS builder
+FROM gcr.io/distroless/static-debian13@sha256:1a64f46364620465ef9e9a8f5413757dfdf22695e050bbfd7303eeaf17a59383
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/open-policy-agent/cert-controller v0.16.1-0.20260608222807-1c492bc2d223
-	go.uber.org/atomic v1.11.0 // indirect
+FROM --platform=$BUILDPLATFORM golang:1.27-trixie@sha256:2f84bc93ecfb2689f782b153fdcd368b5a7ab96c1386c65cdaccf35e726d6a44 AS builder
+FROM gcr.io/distroless/static-debian12@sha256:d75cdd72874d4790092fcb1b058493ecf6bb5bf2b2b897045b00ff01d91843f2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b0a53e18` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a2bac802` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T17:16:20.311Z",
-  "total_verified_learnings": 9060,
+  "last_updated": "2026-11-21T17:28:54.969Z",
+  "total_verified_learnings": 9061,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23173,
+  "total_items": 23178,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -246170,8 +246170,8 @@
       "slug": "open-policy-agent-gatekeeper",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/gatekeeper",
-      "source_version": "b0a53e18",
-      "content_hash": "18b8ccaf98cb9820a1ee9b448c7b842aa6de897d1593a60a6de8074c1d210683",
+      "source_version": "a2bac802",
+      "content_hash": "fec6135dd28c14145c82ea3cc2329b0365108fd6a32774741fc3bc7f179785ba",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
       "promoted_rules": [
@@ -246204,6 +246204,11 @@
           "number": 9579,
           "title": "bump cert-controller to 32045c4",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9810,
+          "title": "bump golang.org/x/net to v0.63.0, golang.org/x/crypto to v0.59.0 and golang to 1",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -246211,7 +246216,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T13:48:18.953Z",
+      "verified_at": "2026-11-21T17:28:16.614Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246253,10 +246258,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-open-policy-agent-gatekeeper-quality-verification-intelligence-open-policy-agent.md",
       "title": "Quality & Verification Intelligence: open-policy-agent/gatekeeper Core Invariants",
       "repository": "open-policy-agent/gatekeeper",
-      "source_version": "b0a53e18",
-      "content_hash": "d4bfa971ebd4eef5747566657a281304c4e919a7798deae94d1842a38bb24e93",
+      "source_version": "a2bac802",
+      "content_hash": "ce120dd0f2402ba10a0dadad7d944c2edf3eece6c2a4bfeae037f4b94343d00e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T13:48:19.493Z"
+      "persisted_at": "2026-11-21T17:28:17.339Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-gatekeeper": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-gatekeeper",
@@ -246265,10 +246270,10 @@
       "relative_path": "08_VERIFICATION/open-policy-agent-gatekeeper-verification-protocol-empirical-defect-shield-for-o.md",
       "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent/gatekeeper",
       "repository": "open-policy-agent/gatekeeper",
-      "source_version": "b0a53e18",
-      "content_hash": "8e3ee7b88be5fc688b6e85767ad6d9faa0c3a95a97c4dafdf8894c561fe5fa5f",
+      "source_version": "a2bac802",
+      "content_hash": "559054908d9f043c1fef0fd339921bb60bccdb283df32b78a0edfacb0dcbfef6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T13:48:19.639Z"
+      "persisted_at": "2026-11-21T17:28:17.546Z"
     },
     "learn-huggingface-liquidai-d1-2b": {
       "learning_id": "learn-huggingface-liquidai-d1-2b",
@@ -246365,9 +246370,9 @@
       "title": "Quality & Verification Intelligence: open-policy-agent-gatekeeper-learnings Core Invariants",
       "repository": "open-policy-agent-gatekeeper-learnings",
       "source_version": "HEAD",
-      "content_hash": "47ed80fd7c2625dbc8af1a310e2a6fb5da227448d223551390fef2c16faffb1e",
+      "content_hash": "65df2192abf5c7a0e5bbdfa90323d414ac196e5111c0aaa0b9503db30539b6a3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T13:48:30.639Z"
+      "persisted_at": "2026-11-21T17:28:54.739Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-gatekeeper-l": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-gatekeeper-l",
@@ -246377,9 +246382,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent-gatekeeper-learnings",
       "repository": "open-policy-agent-gatekeeper-learnings",
       "source_version": "HEAD",
-      "content_hash": "5578190b29947d0e5acc83ca2f6b5cddb30f927d90cb34dda90ad8b69dc31fa0",
+      "content_hash": "46b6c7e154241679320f15b678e275493e5d1fcb6ceb1ed7dd31da4d57c9dedc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T13:48:30.798Z"
+      "persisted_at": "2026-11-21T17:28:54.969Z"
     },
     "learn-huggingface-tencent-qwen3-8-27b-dspine-b16": {
       "learning_id": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
@@ -278836,7 +278841,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
       "source_version": "hf-xhtoken-spark-x2.6-4b-gguf",
-      "content_hash": "cd57dcd4b47e43c6657f7b1d009b4da6b85c86f1ce204e43c8f304084389e749",
+      "content_hash": "db6489295b3291e3dac8dfce6005e65fff55a6666d1b96cf184e609baea1e45c",
       "dossier_path": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md",
       "promoted_rules": [],
@@ -278845,7 +278850,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T19:04:49.027Z",
+      "verified_at": "2026-11-21T17:28:07.985Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -278862,9 +278867,9 @@
       "title": "Research & Knowledge Intelligence: XHToken/Spark-X2.6-4B-GGUF Core Invariants",
       "repository": "XHToken/Spark-X2.6-4B-GGUF",
       "source_version": "hf-xhtoken-spark-x2.6-4b-gguf",
-      "content_hash": "51e9082ad39abcc483a21baeccc9d853c87ff0c1f8d78c06b1afb90aecc1bc04",
+      "content_hash": "45c45032ad584c260c4014b584b366a093136e27a1bb47d2d09a4976fd37e6d9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T19:04:49.513Z"
+      "persisted_at": "2026-11-21T17:28:08.499Z"
     },
     "rule-9035": {
       "learning_id": "rule-9035",
@@ -278936,9 +278941,9 @@
       "title": "Research & Knowledge Intelligence: hf-xhtoken-spark-x2.6-4b-gguf-learnings Core Invariants",
       "repository": "hf-xhtoken-spark-x2.6-4b-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "aa33b8e062f287a48924398e0a94066a127c9e325055598299c6712b36183f5a",
+      "content_hash": "0e371a4d73b18327f74a0bf880ba97b16ac74b5c400b7fcef8d6eb908a3b10cb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T19:05:01.990Z"
+      "persisted_at": "2026-11-21T17:28:53.955Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
@@ -314885,6 +314890,83 @@
       "content_hash": "632ba04351b909d43aeff9d483c782390418c3d6e1ba4d4d070edf40ffa85150",
       "domain_letter": "K",
       "persisted_at": "2026-11-21T17:16:19.795Z"
+    },
+    "learn-huggingface-atomicchat-inkling-2-mini-uncensored-gguf": {
+      "learning_id": "learn-huggingface-atomicchat-inkling-2-mini-uncensored-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+      "repository": "AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+      "slug": "hf-atomicchat-inkling-2-mini-uncensored-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+      "source_version": "hf-atomicchat-inkling-2-mini-uncensored-gguf",
+      "content_hash": "5f1b7e0e933f655ee99869c84972e8c6bc77e262b1a59a903725af5ca9bdc9f6",
+      "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-21T17:28:05.388Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-atomicchat-inkling-2-mini-uncensored-gguf-core-i": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-inkling-2-mini-uncensored-gguf-core-i",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-inkling-2-mini-uncensored-gguf-research-knowledge-intelligence-ato.md",
+      "title": "Research & Knowledge Intelligence: AtomicChat/Inkling-2-Mini-Uncensored-GGUF Core Invariants",
+      "repository": "AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+      "source_version": "hf-atomicchat-inkling-2-mini-uncensored-gguf",
+      "content_hash": "09cf063213e915b600daccfda55d34d2ea48a8d9164a4a4a5427e005154399a8",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T17:28:05.905Z"
+    },
+    "rule-9810": {
+      "learning_id": "rule-9810",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9810,
+      "title": "bump golang.org/x/net to v0.63.0, golang.org/x/crypto to v0.59.0 and golang to 1",
+      "source_url": "https://github.com/open-policy-agent/gatekeeper",
+      "source_version": "a2bac802",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T17:28:16.614Z"
+    },
+    "candidate_directive-bump-golang-org-x-net-to-v0-63-0-golang-org-x-crypto-to-v0-59-0-and-golang-to-1": {
+      "item_id": "candidate_directive-bump-golang-org-x-net-to-v0-63-0-golang-org-x-crypto-to-v0-59-0-and-golang-to-1",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MOL0-bump-golang-org-x-net-to-v0-63-0-golang-org-x-crypto-to-v0-59-0-and-golang-to-1.md",
+      "title": "bump golang.org/x/net to v0.63.0, golang.org/x/crypto to v0.59.0 and golang to 1",
+      "repository": "open-policy-agent-gatekeeper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d80448c15cd5640f0d0dd4791b0a64a092bdee651aedf428cfa29247c61f99d0",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T17:28:54.517Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-inkling-2-mini-uncensored-gguf-lea": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-inkling-2-mini-uncensored-gguf-lea",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings-research-knowledge-intell.md",
+      "title": "Research & Knowledge Intelligence: hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings Core Invariants",
+      "repository": "hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9da9c2d94a7d4cad36271af7ca31f2df896a7bf1647c4fb1880d51458fcc48f1",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T17:28:53.436Z"
     }
   },
   "ai-builder-brain": {

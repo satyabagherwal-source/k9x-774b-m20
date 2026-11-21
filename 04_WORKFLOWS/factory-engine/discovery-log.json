@@ -21865,5 +21865,17 @@
     "downloads": 8556453,
     "qualityScore": 23470,
     "discoveredAt": "2026-11-21T08:18:13.423Z"
+  },
+  {
+    "name": "AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+    "fullName": "AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+    "url": "https://huggingface.co/AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: AtomicChat/Inkling-2-Mini-Uncensored-GGUF (127 likes, 9540 downloads)",
+    "likes": 127,
+    "downloads": 9540,
+    "qualityScore": 3270,
+    "discoveredAt": "2026-11-21T17:25:51.351Z"
   }
 ]

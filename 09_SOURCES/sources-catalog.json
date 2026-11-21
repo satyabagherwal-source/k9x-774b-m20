@@ -6753,10 +6753,10 @@
     "repository": "open-policy-agent/gatekeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/gatekeeper",
-    "sourceVersion": "b0a53e18",
+    "sourceVersion": "a2bac802",
     "license": "Apache-2.0",
-    "contentHash": "18b8ccaf98cb9820a1ee9b448c7b842aa6de897d1593a60a6de8074c1d210683",
-    "lastHarvestedAt": "2026-11-20T13:48:19.145Z",
+    "contentHash": "fec6135dd28c14145c82ea3cc2329b0365108fd6a32774741fc3bc7f179785ba",
+    "lastHarvestedAt": "2026-11-21T17:28:16.857Z",
     "learningId": "learn-github-open-policy-agent-gatekeeper"
   },
   "chakra-ui-chakra-ui": {
@@ -10815,8 +10815,8 @@
     "sourceUrl": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
     "sourceVersion": "hf-xhtoken-spark-x2.6-4b-gguf",
     "license": "Open-Source",
-    "contentHash": "cd57dcd4b47e43c6657f7b1d009b4da6b85c86f1ce204e43c8f304084389e749",
-    "lastHarvestedAt": "2026-11-17T19:04:49.273Z",
+    "contentHash": "db6489295b3291e3dac8dfce6005e65fff55a6666d1b96cf184e609baea1e45c",
+    "lastHarvestedAt": "2026-11-21T17:28:08.243Z",
     "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf"
   },
   "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb": {
@@ -13138,5 +13138,15 @@
     "contentHash": "e0b2004c5167f5656e3508cbd18535e183eff7bb1dffda1efa41955885209764",
     "lastHarvestedAt": "2026-11-21T08:24:26.530Z",
     "learningId": "learn-huggingface-openai-clip-vit-large-patch14"
+  },
+  "hf-atomicchat-inkling-2-mini-uncensored-gguf": {
+    "repository": "AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+    "sourceVersion": "hf-atomicchat-inkling-2-mini-uncensored-gguf",
+    "license": "Open-Source",
+    "contentHash": "5f1b7e0e933f655ee99869c84972e8c6bc77e262b1a59a903725af5ca9bdc9f6",
+    "lastHarvestedAt": "2026-11-21T17:28:05.647Z",
+    "learningId": "learn-huggingface-atomicchat-inkling-2-mini-uncensored-gguf"
   }
 }

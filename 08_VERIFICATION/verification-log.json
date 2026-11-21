@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-B4WK",
-    "timestamp": "2026-11-19T14:28:37.652Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "4403bc7e30db6fbb6d34199f4dbeeaba83b2bebcca1a88b08e1c432f0ed65679",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-60OL",
-    "timestamp": "2026-11-19T14:52:38.517Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "9e43376c6eb655809b20a3560d01d46afe050deb82a30bcc8d1b52146c962123",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-9ULT",
-    "timestamp": "2026-11-19T14:55:37.265Z",
-    "repository": "autotrust/AutoTrust-Decider-Pro-35B",
-    "learningId": "learn-huggingface-autotrust-jev-35b",
-    "contentHash": "ee075ea2a47b1a50227fdf520e635ff647b751be6c1273db91ed34ece4c87858",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-JSOE",
     "timestamp": "2026-11-19T15:03:21.327Z",
     "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -7490,6 +7445,51 @@
     "repository": "genkit-ai/genkit",
     "learningId": "learn-github-genkit-ai-genkit",
     "contentHash": "a4d68f17aee9c5245effc289ef795ed27022a128dc2de3b7b8bd7b2a62cc434b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-LMVF",
+    "timestamp": "2026-11-21T17:28:05.643Z",
+    "repository": "AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
+    "learningId": "learn-huggingface-atomicchat-inkling-2-mini-uncensored-gguf",
+    "contentHash": "5f1b7e0e933f655ee99869c84972e8c6bc77e262b1a59a903725af5ca9bdc9f6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-LOVI",
+    "timestamp": "2026-11-21T17:28:08.238Z",
+    "repository": "XHToken/Spark-X2.6-4B-GGUF",
+    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
+    "contentHash": "db6489295b3291e3dac8dfce6005e65fff55a6666d1b96cf184e609baea1e45c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-LVIS",
+    "timestamp": "2026-11-21T17:28:16.852Z",
+    "repository": "open-policy-agent/gatekeeper",
+    "learningId": "learn-github-open-policy-agent-gatekeeper",
+    "contentHash": "fec6135dd28c14145c82ea3cc2329b0365108fd6a32774741fc3bc7f179785ba",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
