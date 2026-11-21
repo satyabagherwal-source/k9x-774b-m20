@@ -3,7 +3,7 @@
 > **Source Version**: `hf-nvidia-nv`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T19:12:16.640Z  
+> **Timestamp**: 2026-11-21T17:41:45.659Z  
 > **Learning ID**: `learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T19:12:16.443Z  
+> **Harvest Timestamp**: 2026-11-21T17:41:45.430Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 157536 downloads | 478 likes
+- **Stars / Engagement**: 195916 downloads | 668 likes
 
 ---
 

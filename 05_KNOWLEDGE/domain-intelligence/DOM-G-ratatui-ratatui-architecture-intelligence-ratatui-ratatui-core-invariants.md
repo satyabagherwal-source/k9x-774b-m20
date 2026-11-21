@@ -4,24 +4,24 @@
 {
   "source_repository": "ratatui/ratatui",
   "source_url": "https://github.com/ratatui/ratatui",
-  "source_version": "5c1a8cd5",
+  "source_version": "29196825",
   "license": "MIT",
-  "timestamp": "2026-11-18T06:32:30.947Z",
+  "timestamp": "2026-11-21T17:41:49.904Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ratatui-ratatui",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ratatui/ratatui](https://github.com/ratatui/ratatui) (Revision: `5c1a8cd5`).  
-> **License**: MIT | **Timestamp**: `2026-11-18T06:32:30.947Z`  
+> **Provenance**: Harvested from [ratatui/ratatui](https://github.com/ratatui/ratatui) (Revision: `29196825`).  
+> **License**: MIT | **Timestamp**: `2026-11-21T17:41:49.904Z`  
 > **Learning ID**: `learn-github-ratatui-ratatui`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 82%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), F (Design Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from ratatui/ratatui:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T06:32:30.090Z  
+> **Harvest Timestamp**: 2026-11-21T17:41:48.598Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A Rust crate for cooking up terminal user interfaces (TUIs) 👨‍🍳🐀 https://ratatui.rs
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 23345 stars
+- **Stars / Engagement**: 23380 stars
 
 ---
 
@@ -954,11 +954,13 @@ impl StatefulWidget for CounterWidget {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2930** (2026-11-18): **docs: fix broken and mismatched documentation links**
-  *Symptoms*: Fixes links in docs and comments that were broken or pointed at the wrong place.  - `BREAKING-CHANGES.md`: three entries linked to unrelated PRs. `HorizontalAlignment` rename now links #1735 (was #1691, a termion bump), List index clamping links #1159 (label/URL mismatched #1159/#1149), and `LineGauge::gauge_style` links #565 (was #1148). - `ratatui/src/lib.rs`: `ratatui.rs/tutorials/hello-world/` 404s; now `/tutorials/hello-ratatui/`. - `ratatui/tests/widgets_gauge.rs`: issue #2547 no longer exists; point at #2579, the fix PR. - `cliff.toml`: the Tera docs page 404s; link git-cliff's template syntax docs instead.  Known non-issues left as-is: `ratatui-calendar` docs.rs links (crate not yet published) and the README's `#using-ratatui-without-std` anchor (section not yet on docs.rs latest). 
+- **Issue #2940** (2026-11-21): **refactor(widget): move string widget impls into their own modules**
+  *Symptoms*: Prep for #2883. Moves the `Widget` impls for `&str`, `String`, `&String`, and `Cow<str>` into `ratatui-core/src/widgets/widget_string.rs`, and the matching `WidgetRef` impls into `ratatui/src/widgets/widget_ref_string.rs`, along with their tests. The trait modules keep the traits, the blanket impls, and the `Option` impls.  This is a move only, with no change in behavior. The only new lines are the module declarations, imports, and the `buf` test fixture in each new test module. #2883 then adds sibling `widget_wrapper.rs` and `widget_ref_wrapper.rs` modules for the generic `Cow`, `Box`, `Rc`, and `Arc` impls. 
 
-- **Issue #2929** (2026-11-18): **docs(text): explain why ANSI escape sequences are not interpreted**
-  *Symptoms*: Strings with ANSI escape sequences (e.g. output from `ls --color` or `git diff`) render as literal `[31mred[0m` text, and nothing in the text docs says why. `Span::styled_graphemes` drops control characters, so the escape byte disappears and the rest of the sequence is shown as plain text.  This adds an "ANSI escape sequences" section to the `text` module docs explaining that, pointing to [`ansi-to-tui`](https://crates.io/crates/ansi-to-tui) for converting into `Text` (or stripping the sequences), and linking the FAQ entry added in ratatui/ratatui-website#1284. The `Text` docs get a short pointer to the same section.  `Span` (where control characters are filtered), `Line` (often built straight from a string), and `Paragraph` (where command output usually ends up) also get a one-line pointer to the section. 
+- **Issue #2939** (2026-11-21): **fix(scrollbar): reach the end of the track when content is fully scrolled**
+  *Symptoms*: Make the scrollbar thumb reach the end when the last page is fully visible. With 100 items, 22 visible, and scroll position 78:  ```text Before: <--------------####----> After:  <------------------####> ```  `ScrollbarState::next()`, `last()`, and `is_at_end()` now use the same boundary when a viewport length is set. An unset viewport keeps the previous helper behavior.  Closes #1681 Closes #2791 (can't push to the PR - so opening a new one) 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/ratatui/ratatui/pull/2939?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 93.4%. Comparing base ([`63e3c75`](https://app.codecov.io/gh/ratatui/ratatui/commit/63e3c75a8a6286fda679925a8f953cc31a782fa6?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)) to head ([`d78b5b9`](https://app.codecov.io/gh/ratatui/ratatui/commit/d78b5b92392dacac625bad5c0a727cbc58e11b8c?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)). :warning: Report is 2 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@          Coverage Diff           @@ ##            main   #
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -975,456 +977,647 @@ impl StatefulWidget for CounterWidget {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec3336d2` (2026-11-17)
-**Commit Message**: feat(calendar)!: move the calendar widget to ratatui-calendar (#2923)
+### Incident Patch 1: `6d208e68` (2026-11-21)
+**Commit Message**: fix(barchart): split horizontal value text by display width (#2629)
 
-The calendar is the only built-in widget that exposes a third-party type
-(`time::Date`) in its public API. Moving it to its own crate lets that
-dependency change, starting with a planned switch to jiff, without a
-breaking release of ratatui-widgets.
+Fix gaps, missing text, and panics in horizontal `BarChart` Unicode labels.
 
-`ratatui::widgets::calendar` now re-exports `ratatui-calendar`, so code
-using that path is unaffected.
+For `🍎🍎🍎`, each apple takes two cells:
 
-`Block::horizontal_space` and `Block::vertical_space` are now public, so
-widgets outside ratatui-widgets (starting with the calendar) can size
-themselves around a block.
+```text
+1. Draw bar    2. First apple
+┌──────┐       ┌──────┐
+│██    │       │🍎    │
+└──────┘       └──────┘
 
-BREAKING CHANGE: ratatui-widgets no longer has the `calendar` module,
-the `calendar` and `all-widgets` features, or the `time` dependency, and
-its default features are now empty. Depend on `ratatui-calendar` and
-import from `ratatui_calendar` instead of `ratatui_widgets::calendar`.
-
-**File**: `ARCHITECTURE.md` (modified, +12/-0)
-```diff
-@@ -51,6 +51,15 @@ The Ratatui project is now organized as a Cargo workspace containing the followi
-   - Optimized implementations
-   - Comprehensive documentation and examples
- 
-+#### `ratatui-calendar`
-+
-+- **Purpose**: Calendar widget implementation
-+- **Contents**: The `Monthly` calendar widget and the `DateStyler` trait for styling dates
-+- **Target Users**: Applications showing calendars, widget library authors
-+- **Key Features**:
-+  - Kept separate because its public API uses a third-party date type, so that dependency can
-+    change without a breaking release of `ratatui-widgets`
-+
- ### Backend Crates
- 
- #### `ratatui-crossterm`
-@@ -92,6 +101,7 @@ The Ratatui project is now organized as a Cargo workspace containing the followi
- ratatui
- ├── ratatui-core
- ├── ratatui-widgets → ratatui-core
-+├── ratatui-calendar → ratatui-core, ratatui-widgets
- ├── ratatui-crossterm → ratatui-core
- ├── ratatui-termion → ratatui-core
- ├── ratatui-termina → ratatui-core
-@@ -103,6 +113,8 @@ ratatui
- 
- - **ratatui-core**: Foundation for all other crates
- - **ratatui-widgets**: Depends on `ratatui-core` for widget traits and types
-+- **ratatui-calendar**: Depends on `ratatui-core` for widget traits and on `ratatui-widgets` for
-+  `Block`
- - **Backend crates**: Each depends on `ratatui-core` for backend traits and types
- - **ratatui**: Depends on all other crates and re-exports their public APIs
- 
+3. Before     4. After
+┌──────┐       ┌──────┐
+│🍎  🍎│       │🍎🍎🍎│
+└──────┘       └──────┘
 ```
 
-**File**: `BREAKING-CHANGES.md` (modified, +21/-0)
+Overflow now starts at the correct cell and style changes keep joined
+emoji such as 👨‍👩‍👧‍👦 intact.
+
+---------
+
+Signed-off-by: Sebastien Tardif <[REDACTED_EMAIL]>
+Co-authored-by: Orhun Parmaksız <[REDACTED_EMAIL]>
+Co-authored-by: Orhun Parmaksız <[REDACTED_EMAIL]>
+
+**File**: `ratatui-widgets/src/barchart.rs` (modified, +146/-0)
 ```diff
-@@ -13,6 +13,7 @@ This is a quick summary of the sections below:
- - [v0.31.0](#v0310)
-   - `Flex::SpaceBetween` with a single item now preserves fixed-size constraints
-   - `Backend` adds cursor save and restore methods
-+  - The calendar widget moved from `ratatui-widgets` to the new `ratatui-calendar` crate
- - [v0.30.1](#v0301)
-   - Adding `AsRef` impls for widgets may affect type inference in rare cases
-   - MSRV is now 1.88.0
-@@ -124,6 +125,26 @@ Backends that can save the cursor without querying terminal input should overrid
- return `Ok(true)` from `save_cursor_position`. Other backends can use the default implementations,
- which select the cursor get-and-set fallback.
+@@ -737,6 +737,8 @@ impl Styled for BarChart<'_> {
  
-+### The calendar widget moved from `ratatui-widgets` to the new `ratatui-calendar` crate
+ #[cfg(test)]
+ mod tests {
++    use alloc::format;
 +
-+The `calendar` module of `ratatui-widgets` (`Monthly`, `DateStyler` and `CalendarEventStore`) has
-+moved to the new `ratatui-calendar` crate. `ratatui-widgets` no longer has the `calendar` and
-+`all-widgets` features, its default features are now empty, and it no longer depends on `time`.
+     use itertools::iproduct;
+     use ratatui_core::layout::Alignment;
+     use ratatui_core::style::{Color, Modifier, Stylize};
+@@ -1578,6 +1580,150 @@ mod tests {
+         widget.render(buffer.area, &mut buffer);
+         assert_eq!(buffer, Buffer::with_lines(["████████", "██中文██"]));
+     }
 +
-+If you use the calendar through `ratatui::widgets::calendar`, nothing changes: the
-+`widget-calendar` feature (enabled by default through `all-widgets`) now pulls in
-+`ratatui-calendar` and re-exports it at the same path.
++    /// Empty `text_value` skips value painting and leaves only the bar fill.
++    #[test]
++    fn horizontal_empty_text_value_skips_value_paint() {
++        let chart = BarChart::default()
++            .direction(Direction::Horizontal)
++            .bar_gap(0)
++            .data(BarGroup::default().bars(&[Bar::default().value(5).text_value("")]));
++        let mut buffer = Buffer::empty(Rect::new(0, 0, 5, 1));
++        chart.render(buffer.area, &mut buffer);
++        assert_eq!(buffer, Buffer::with_lines(["█████"]));
++    }
 +
-+If you depend on `ratatui-widgets` directly and use its calendar, add `ratatui-calendar` and update
-+the imports:
++    /// Multi-byte single-width characters must be split by display width on
++    /// horizontal bars, not by UTF-8 byte length.
++    ///
++    /// `"α"` is two bytes and one cell. With `bar_length == 3` the value
++    /// `"ααααα"` must paint all five cells; the first three use `value_style`
++    /// and the rest use the bar style. Splitting on byte indices leaves a
++    /// filled-block cell in the middle and styles the overflow incorrectly.
++    #[test]
++    fn horizontal_multibyte_text_value_split_by_display_width() {
++        let bar = Bar::default()
++            .value(3)
++            .text_value("ααααα")
++            .value_style(Style::default().red());
++        let chart = BarChart::default()
++            .data(BarGroup::default().bars(&[bar, Bar::default().value(5)]))
++            .direction(Direction::Horizontal)
++            .bar_style(Style::default().yellow())
++            .value_style(Style::default().italic())
++            .bar_gap(0);
 +
-+```diff
-+- use ratatui_widgets::calendar::{CalendarEventStore, Monthly};
-++ use ratatui_calendar::{CalendarEventStore, Monthly};
-+```
++        let mut buffer = Buffer::empty(Rect::new(0, 0, 5, 2));
++        chart.render(buffer.area, &mut buffer);
 +
-+Remove `calendar` and `all-widgets` from any `features` list for `ratatui-widgets`.
++        let mut expected = Buffer::with_lines(["ααααα", "5████"]);
++        for x in 0..3 {
++            let cell = &mut expected[(x, 0)];
++            cell.set_fg(Color::Red);
++            cell.modifier.insert(Modifier::ITALIC);
++        }
++        for x in 3..5 {
++            expected[(x, 0)].set_fg(Color::Yellow);
++        }
++        expected[(0, 1)].modifier.insert(Modifier::ITALIC);
++        for x in 0..5 {
++            expected[(x, 1)].set_fg(Color::Yellow);
++        }
++        assert_eq!(buffer, expected);
++    }
 +
- ## [v0.30.1](https://github.com/ratatui/ratatui/releases/tag/ratatui-v0.30.1)
++    #[rstest]
++    #[case::joined_emoji("👨‍👩‍👧‍👦", 2)]
++    #[case::flag("🇹🇷", 2)]
++    #[case::emoji_presentation("❤️", 2)]
++    #[case::combining_mark("e\u{301}", 1)]
++    #[case::halfwidth_kana("ｶﾞ", 2)]
++    #[case::halfwidth_sound_mark("ﾞ", 1)]
++    fn horizontal_text_value_preserves_graphemes(#[case] grapheme: &str, #[case] width: u16) {
++        let bar = Bar::new(u64::from(width))
++            .text_value(format!("{grapheme}x"))
++            .value_style(Style::new().red());
++        let chart = BarChart::new([bar])
++            .max(u64::from(width + 1))
++            .direction(Direction::Horizontal)
++            .bar_style(Style::new().yellow());
++        let mut buffer = Buffer::empty(Rect::new(0, 0, width + 1, 1));
++
++        chart.render(buffer.area, &mut buffer);
++
++        assert_eq!(buffer[(0, 0)].symbol(), grapheme);
++        assert_eq!(buffer[(0, 0)].fg, Color::Red);
++        assert_eq!(buffer[(width, 0)].symbol(), "x");
++        assert_eq!(buffer[(width, 0)].fg, Color::Yellow);
++    }
++
++    #[rstest]
++    #[case::empty_bar(0, Color::Yellow, Color::Yellow)]
++    #[case::inside_wide_grapheme(1, Color::Yellow, Color::Yellow)]
++    #[case::after_wide_grapheme(2, Color::Red, Color::Yellow)]
++    #[case::full_bar(3, Color::Red, Color::Red)]
++    fn horizontal_joined_emoji_at_style_boundary(
++        #[case] value: u64,
++        #[case] emoji_color: Color,
++        #[case] suffix_color: Color,
++    ) {
++        let bar = Bar::new(value)
++            .text_value("👨‍👩‍👧‍👦x")
++            .value_style(Style::new().red());
++        let chart = BarChart::new([bar])
++            .max(3)
++            .direction(Direction::Horizontal)
++            .bar_style(Style::new().yellow());
++        let mut buffer = Buffer::empty(Rect::new(2, 1, 3, 1));
++
++        chart.render(buffer.area, &mut buffer);
++
++        let mut expected = Buffer::with_lines(["👨‍👩‍👧‍👦x"]);
++        expected[(0, 0)].set_fg(emoji_color);
++        expected[(2, 0)].set_fg(suffix_color);
++        expected.area = buffer.area;
++        assert_eq!(buffer, expected);
++    }
++
++    #[rstest]
++    #[case::control("a\nb")]
++    #[case::carriage_return_line_feed("a\r\nb")]
++    #[case::zero_width("\u{200b}ab")]
++    fn horizontal_text_value_skips_nonprinting_graphemes(#[case] text: &str) {
++        let bar = Bar::new(1).text_value(text).value_style(Style::new().red());
++        let chart = BarChart::new([bar])
++            .max(2)
++
+```
+
+**File**: `ratatui-widgets/src/barchart/bar.rs` (modified, +37/-23)
+```diff
+@@ -1,10 +1,11 @@
+ use alloc::string::{String, ToString};
  
- ### MSRV is now 1.88.0
-```
-
-**File**: `Cargo.lock` (modified, +16/-2)
-```diff
-@@ -2749,6 +2749,7 @@ dependencies = [
-  "palette",
-  "pretty_assertions",
-  "rand 0.10.3",
-+ "ratatui-calendar",
-  "ratatui-core",
-  "ratatui-crossterm",
-  "ratatui-macros",
-@@ -2762,6 +2763,21 @@ dependencies = [
-  "time",
- ]
+-use ratatui_core::buffer::Buffer;
++use ratatui_core::buffer::{Buffer, CellWidth};
+ use ratatui_core::layout::Rect;
+ use ratatui_core::style::{Style, Styled};
+ use ratatui_core::text::Line;
+ use ratatui_core::widgets::Widget;
++use unicode_segmentation::UnicodeSegmentation;
+ use unicode_width::UnicodeWidthStr;
  
-+[[package]]
-+name = "ratatui-calendar"
-+version = "0.1.0"
-+dependencies = [
-+ "color-eyre",
-+ "crossterm 0.29.0",
-+ "document-features",
-+ "hashbrown 0.17.1",
-+ "ratatui",
-+ "ratatui-core",
-+ "ratatui-widgets",
-+ "rstest",
-+ "time",
-+]
+ /// A bar to be shown by the [`BarChart`](super::BarChart) widget.
+@@ -209,32 +210,45 @@ impl<'a> Bar<'a> {
+         let value = self.value.to_string();
+         let text = self.text_value.as_ref().unwrap_or(&value);
+ 
+-        if !text.is_empty() {
+-            let style = default_value_style.patch(self.value_style);
+-            // Since the value may be longer than the bar itself, we need to use 2 different styles
+-            // while rendering. Render the first part with the default value style
+-            buf.set_stringn(area.x, area.y, text, bar_length, style);
+-            // render the second part with the bar_style
+-            if text.len() > bar_length {
+-                // Find the last character boundary at or before bar_length
+-                let bar_length = text
+-                    .char_indices()
+-                    .take_while(|(i, _)| *i < bar_length)
+-                    .last()
+-                    .map_or(0, |(i, c)| i + c.len_utf8());
++        if text.is_empty() {
++            return;
++        }
+ 
+-                let (first, second) = text.split_at(bar_length);
++        let style = default_value_style.patch(self.value_style);
++        // Since the value may be longer than the bar itself, we need to use 2 different styles
++        // while rendering. Render the first part with the default value style
++        buf.set_stringn(area.x, area.y, text, bar_length, style);
+ 
+-                let style = bar_style.patch(self.style);
+-                buf.set_stringn(
+-                    area.x + first.len() as u16,
+-                    area.y,
+-                    second,
+-                    area.width as usize - first.len(),
+-                    style,
+-                );
++        // Match `Buffer::set_stringn`: measure whole graphemes in terminal cells and skip controls.
++        let mut used_width = 0usize;
++        let mut split_byte = text.len();
++        for (i, grapheme) in text
++            .grapheme_indices(true)
++            .filter(|(_, grapheme)| !grapheme.contains(char::is_control))
++        {
++            let width = usize::from(grapheme.cell_width());
++            if used_width.saturating_add(width) > bar_length {
++                split_byte = i;
++                break;
+             }
++            used_width = used_width.saturating_add(width);
++        }
++        if split_byte == text.len() {
++            return;
+         }
 +
- [[package]]
- name = "ratatui-core"
- version = "0.1.2"
-@@ -2859,7 +2875,6 @@ dependencies = [
-  "color-eyre",
-  "crossterm 0.29.0",
-  "document-features",
-- "hashbrown 0.17.1",
-  "indoc",
-  "instability",
-  "itertools 0.15.0",
-@@ -2871,7 +2886,6 @@ dependencies = [
-  "rstest",
-  "serde",
-  "strum",
-- "time",
-  "unicode-segmentation",
-  "unicode-width",
- ]
++        let style = bar_style.patch(self.style);
++        let remaining = (area.width as usize).saturating_sub(used_width);
++        // `split_byte` comes from `grapheme_indices`, so it is always a grapheme boundary.
++        #[allow(clippy::string_slice)]
++        let second = &text[split_byte..];
++        buf.set_stringn(
++            area.x.saturating_add(used_width as u16),
++            area.y,
++            second,
++            remaining,
++            style,
++        );
+     }
+ 
+     pub(super) fn render_value(
 ```
 
-**File**: `Cargo.toml` (modified, +2/-0)
+---
+
+### Incident Patch 2: `83e452a7` (2026-11-20)
+**Commit Message**: fix(paragraph): keep wrapped lines within bounds (#2680)
+
+Fixes #2679.
+
+Word wrapping could emit lines wider than the paragraph when a wide
+grapheme did not fit the remaining cells. A leading zero-width grapheme
+could also make a widthless pending line appear non-empty and delay
+wrapping.
+
+Use measured cell width when checking pending content and include the
+current grapheme in the overflow calculation. Regression tests cover
+mixed-width words and leading combining marks with trimmed and untrimmed
+wrapping.
+
+---------
+
+Co-authored-by: Orhun Parmaksız <[REDACTED_EMAIL]>
+
+**File**: `ratatui-widgets/src/paragraph.rs` (modified, +48/-0)
 ```diff
-@@ -5,6 +5,7 @@ default-members = [
-   "examples/apps/*",
-   "examples/concepts/*",
-   "ratatui",
-+  "ratatui-calendar",
-   "ratatui-core",
-   "ratatui-crossterm",
-   "ratatui-macros",
-@@ -52,6 +53,7 @@ pretty_assertions = "1"
- rand = "0.10"
- rand_chacha = "0.10"
- ratatui = { path = "ratatui", version = "0.30.2" }
-+ratatui-calendar = { path = "ratatui-calendar", version = "0.1.0", default-features = false }
- ratatui-core = { path = "ratatui-core", version = "0.1.2" }
- ratatui-crossterm = { path = "ratatui-crossterm", version = "0.1.2" }
- ratatui-macros = { path = "ratatui-macros", version = "0.7.2" }
+@@ -759,6 +759,54 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn wrapped_cjk_glyphs_do_not_leave_stale_cells_outside_the_area() {
++        use ratatui::Terminal;
++        use ratatui::backend::TestBackend;
++
++        let text = concat!(
++            "\u{2502} \u{6784}\u{5efa} \u{2502} \u{7f16}\u{8bd1}\u{6574}\u{4e2a}\u{5de5}",
++            "\u{4f5c}\u{533a}\u{5e76}\u{8fd0}\u{884c}\u{5168}\u{90e8}\u{6d4b}\u{8bd5}",
++            "\u{7528}\u{4f8b} \u{2502} \u{30d3}\u{30eb}\u{30c9} \u{2502} ",
++            "\u{30ef}\u{30fc}\u{30af}\u{30b9}\u{30da}\u{30fc}\u{30b9}\u{5168}",
++            "\u{4f53}\u{3092}\u{30c6}\u{30b9}\u{30c8}\u{3059}\u{308b} \u{2502} ",
++            "\u{be4c}\u{b4dc} \u{2502} \u{c791}\u{c5c5} \u{acf5}\u{ac04} ",
++            "\u{c804}\u{ccb4}\u{b97c} \u{d14c}\u{c2a4}\u{d2b8}\u{d569}\u{b2c8}\u{b2e4}"
++        );
++        let height = 40;
++
++        for width in 8..=56 {
++            let mut terminal = Terminal::new(TestBackend::new(width + 4, height)).unwrap();
++
++            // Seed the cells just outside the paragraph so a wide glyph that spills out
++            // can cause the buffer diff to skip clearing them on the next frame.
++            terminal
++                .draw(|frame| {
++                    for y in 0..height {
++                        frame.render_widget(Paragraph::new("X"), Rect::new(width, y, 1, 1));
++                    }
++                })
++                .unwrap();
++
++            terminal
++                .draw(|frame| {
++                    frame.render_widget(
++                        Paragraph::new(text).wrap(Wrap { trim: false }),
++                        Rect::new(0, 0, width, height),
++                    );
++                })
++                .unwrap();
++
++            for y in 0..height {
++                assert_eq!(
++                    terminal.backend().buffer()[(width, y)].symbol(),
++                    " ",
++                    "stale cell outside paragraph at ({width}, {y})"
++                );
++            }
++        }
++    }
++
+     #[test]
+     fn test_render_wrapped_paragraph_with_whitespace_only_line() {
+         let text: Text = ["A", "  ", "B", "  a", "C"]
 ```
 
-**File**: `ratatui-calendar/Cargo.toml` (added, +40/-0)
+**File**: `ratatui-widgets/src/reflow.rs` (modified, +84/-12)
 ```diff
-@@ -0,0 +1,40 @@
-+[package]
-+name = "ratatui-calendar"
-+version = "0.1.0"
-+description = "A calendar widget for Ratatui terminal user interfaces."
-+documentation = "https://docs.rs/ratatui-calendar"
-+readme = "README.md"
-+repository.workspace = true
-+homepage.workspace = true
-+keywords.workspace = true
-+categories.workspace = true
-+license.workspace = true
-+exclude.workspace = true
-+edition.workspace = true
-+rust-version.workspace = true
+@@ -51,6 +51,17 @@ where
+     pending_line_pool: Vec<Vec<StyledGrapheme<'a>>>,
+ }
+ 
++fn width_overflow(max_width: u16, widths: &[u16]) -> bool {
++    let mut remaining_width = max_width;
++    for &width in widths {
++        if width > remaining_width {
++            return true;
++        }
++        remaining_width = remaining_width.saturating_sub(width);
++    }
++    false
++}
 +
-+[package.metadata.docs.rs]
-+all-features = true
-+rustdoc-args = ["--cfg", "docsrs"]
+ impl<'a, O, I> WordWrapper<'a, O, I>
+ where
+     O: Iterator<Item = (I, Alignment)>,
+@@ -95,22 +106,26 @@ where
+             }
+ 
+             let word_found = non_whitespace_previous && is_whitespace;
++            let line_has_no_width = line_width == 0;
+             // current word would overflow after removing whitespace
+-            let trimmed_overflow = pending_line.is_empty()
++            let trimmed_overflow = line_has_no_width
+                 && self.trim
+-                && word_width + symbol_width > self.max_line_width;
++                && width_overflow(self.max_line_width, &[word_width, symbol_width]);
+             // separated whitespace would overflow on its own
+-            let whitespace_overflow = pending_line.is_empty()
++            let whitespace_overflow = line_has_no_width
+                 && self.trim
+-                && whitespace_width + symbol_width > self.max_line_width;
++                && width_overflow(self.max_line_width, &[whitespace_width, symbol_width]);
+             // current full word (including whitespace) would overflow
+-            let untrimmed_overflow = pending_line.is_empty()
++            let untrimmed_overflow = line_has_no_width
+                 && !self.trim
+-                && word_width + whitespace_width + symbol_width > self.max_line_width;
++                && width_overflow(
++                    self.max_line_width,
++                    &[word_width, whitespace_width, symbol_width],
++                );
+ 
+             // append finished segment to current line
+             if word_found || trimmed_overflow || whitespace_overflow || untrimmed_overflow {
+-                if !pending_line.is_empty() || !self.trim {
++                if !line_has_no_width || !self.trim {
+                     pending_line.extend(self.pending_whitespace.drain(..));
+                     line_width += whitespace_width;
+                 }
+@@ -125,12 +140,15 @@ where
+ 
+             // pending line fills up limit
+             let line_full = line_width >= self.max_line_width;
+-            // pending word would overflow line limit
+-            let pending_word_overflow = symbol_width > 0
+-                && line_width + whitespace_width + word_width >= self.max_line_width;
++            // pending content and current symbol would overflow line limit
++            let pending_content_overflow = symbol_width > 0
++                && width_overflow(
++                    self.max_line_width,
++                    &[line_width, whitespace_width, word_width, symbol_width],
++                );
+ 
+             // add finished wrapped line to remaining lines
+-            if line_full || pending_word_overflow {
++            if line_full || pending_content_overflow {
+                 let mut remaining_width = u16::saturating_sub(self.max_line_width, line_width);
+ 
+                 self.wrapped_lines.push_back(mem::take(&mut pending_line));
+@@ -298,7 +316,8 @@ where
+                     continue;
+                 }
+ 
+-                if current_line_width + symbol.cell_width() > self.max_line_width {
++                let symbol_width = symbol.cell_width();
++                if width_overflow(self.max_line_width, &[current_line_width, symbol_width]) {
+                     // Truncate line
+                     break;
+                 }
+@@ -561,6 +580,59 @@ mod tests {
+         assert_eq!(word_wrapper_width, [width, width, width, width, 4]);
+     }
+ 
++    #[test]
++    fn line_composer_mixed_width_word() {
++        for trim in [false, true] {
++            let (word_wrapper, word_wrapper_width, _) =
++                run_composer(Composer::WordWrapper { trim }, "a🌞b", 2);
++            assert_eq!(word_wrapper, ["a", "🌞", "b"]);
++            assert_eq!(word_wrapper_width, [1, 2, 1]);
++        }
++    }
 +
-+[features]
-+default = []
++    #[test]
++    fn line_composer_leading_combining_mark() {
++        let text = "\u{0301} 🌞日日日🌞🌞a";
++        let (untrimmed, untrimmed_widths, _) =
++            run_composer(Composer::WordWrapper { trim: false }, text, 8);
++        assert_eq!(untrimmed, ["\u{0301} 🌞日日", "日🌞🌞a"]);
++        assert_eq!(untrimmed_widths, [7, 7]);
 +
-+## enables std, which is needed for [`CalendarEventStore::today`].
-+std = ["time/local-offset"]
++        let (trimmed, trimmed_widths, _) =
++            run_composer(Composer::WordWrapper { trim: true }, text, 8);
++        assert_eq!(trimmed, ["\u{0301}", "🌞日日日", "🌞🌞a"]);
++        assert_eq!(trimmed_widths, [0, 8, 5]);
++    }
 +
-+[dependencies]
-+document-features = { workspace = true, optional = true }
-+hashbrown.workspace = true
-+ratatui-core.workspace = true
-+ratatui-widgets.workspace = true
-+time.workspace = true
++    #[test]
++    fn line_composer_max_width_untrimmed_does_not_overflow() {
++        let width = u16::MAX;
++        let mut text = "a".repeat(usize::from(width) - 1);
++        text.push_str(" b");
 +
-+[dev-dependencies]
-+color-eyre.workspace = true
-+crossterm.workspace = true
-+ratatui = { path = "../ratatui" }
-+rstest.workspace = true
-+
-+[lints]
-+workspace = true
++        let (_, widths, _) = run_composer(Composer::WordWrapper { trim: f
 ```
 
-**File**: `ratatui-calendar/LICENSE` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+../LICENSE
-\ No newline at end of file
-```
+---
 
-**File**: `ratatui-calendar/README.md` (added, +114/-0)
+### Incident Patch 3: `7b2665e0` (2026-11-21)
+**Commit Message**: perf(ratatui-core): add `buffer::diff` benchmarks to get a performance baseline (#2276)
+
+I've been taking a look at the buffer diff implementation while
+investigating potential performance improvements for
+[tv](https://github.com/alexpasmantier/television).
+
+The `buffer::diff` function is used by ratatui to compute the minimal
+amount of cells it needs to update to render the new frame which aims to
+minimizes terminal IO while flushing the buffer.
+
+This PR adds benchmarks for that method for various typical cases:
+- no changes between current and new buffer
+- full change (every cell changed)
+- partial change (10%, which I figured is an ok estimate of real world
+behavior)
+- special cases (multi-width characters, emojis, which exercise specific
+paths of the code)
+
+I'll be opening other PR(s) on the subject if this one makes it through.
+
+<details>
+<summary>benchmark baseline</summary>
+
+```
+buffer/diff_no_change/16
+                        time:   [2.3110 µs 2.3139 µs 2.3170 µs]
+Found 3 outliers among 100 measurements (3.00%)
+  1 (1.00%) low mild
+  2 (2.00%) high mild
+buffer/diff_no_change/64
+                        time:   [36.982 µs 37.062 µs 37.158 µs]
+Found 2 outliers among 100 measu
+
+**File**: `ratatui/benches/main/buffer.rs` (modified, +145/-10)
 ```diff
-@@ -0,0 +1,114 @@
-+# Ratatui Calendar
-+
-+[![Crates.io](https://img.shields.io/crates/v/ratatui-calendar)](https://crates.io/crates/ratatui-calendar)
-+[![Documentation](https://docs.rs/ratatui-calendar/badge.svg)](https://docs.rs/ratatui-calendar)
-+[![License](https://img.shields.io/crates/l/ratatui-calendar)](../LICENSE)
-+
-+<!-- ⚠️ DO NOT EDIT THIS FILE DIRECTLY, EDIT lib.rs AND THEN RUN `cargo rdme` to update this file. -->
-+<!-- cargo-rdme inlines intra-doc links as long URLs, so skip line-length checks in this section -->
-+<!-- markdownlint-disable line-length -->
-+<!-- cargo-rdme start -->
-+
-+**ratatui-calendar** provides a monthly calendar widget for [Ratatui] terminal user
-+interfaces.
-+
-+[Ratatui]: https://crates.io/crates/ratatui
-+
-+Most applications use this crate through `ratatui::widgets::calendar` by enabling the
-+`widget-calendar` feature of the `ratatui` crate (on by default via `all-widgets`). Depend on
-+`ratatui-calendar` directly if you are building a widget library, or if you want finer-grained
-+dependencies than the `ratatui` crate gives you.
-+
-+The calendar previously lived in the `calendar` module of `ratatui-widgets`. It moved to its
-+own crate because it is the only built-in widget whose public API uses a third-party type (the
-+date type), and a separate crate lets that dependency change without a breaking release of
-+`ratatui-widgets`.
-+
-+## Installation
-+
-+Run the following command to add this crate to your project:
-+
-+```sh
-+cargo add ratatui-calendar
-+```
-+
-+## Usage
-+
-+[`Monthly`](https://docs.rs/ratatui-calendar/latest/ratatui_calendar/struct.Monthly.html) renders the month that contains its `display_date`, one row per week starting on
-+Sunday. Each day uses the default style unless the [`DateStyler`](https://docs.rs/ratatui-calendar/latest/ratatui_calendar/trait.DateStyler.html) returns a style for it, and
-+days outside the month are only drawn when [`Monthly::show_surrounding`](https://docs.rs/ratatui-calendar/latest/ratatui_calendar/struct.Monthly.html#method.show_surrounding) is set. Optional
-+headers show the month name and the weekdays, and a [`Block`] can wrap the calendar.
-+
-+[`CalendarEventStore`](https://docs.rs/ratatui-calendar/latest/ratatui_calendar/struct.CalendarEventStore.html) is a ready-made [`DateStyler`](https://docs.rs/ratatui-calendar/latest/ratatui_calendar/trait.DateStyler.html) that maps dates to styles. Implement
-+[`DateStyler`](https://docs.rs/ratatui-calendar/latest/ratatui_calendar/trait.DateStyler.html) yourself to compute styles on the fly, for example from an events database.
-+
-+[`Monthly::width`](https://docs.rs/ratatui-calendar/latest/ratatui_calendar/struct.Monthly.html#method.width) and [`Monthly::height`](https://docs.rs/ratatui-calendar/latest/ratatui_calendar/struct.Monthly.html#method.height) report the size the calendar needs, which is useful
-+for laying it out with a fixed-size constraint.
-+
-+```rust
-+use ratatui_calendar::{CalendarEventStore, Monthly};
-+use ratatui_core::buffer::Buffer;
-+use ratatui_core::layout::Rect;
-+use ratatui_core::style::{Color, Modifier, Style};
-+use ratatui_core::widgets::Widget;
-+use ratatui_widgets::block::Block;
-+use time::{Date, Month};
-+
-+let date = Date::from_calendar_date(2026, Month::November, 1).unwrap();
-+
-+let mut events = CalendarEventStore::default();
-+events.add(
-+    Date::from_calendar_date(2026, Month::November, 26).unwrap(),
-+    Style::new().fg(Color::Red).add_modifier(Modifier::BOLD),
+@@ -2,19 +2,29 @@ use std::hint::black_box;
+ 
+ use criterion::{BenchmarkId, Criterion};
+ use ratatui::buffer::{Buffer, Cell};
+-use ratatui::layout::Rect;
++use ratatui::layout::Size;
++use ratatui::style::Style;
+ use ratatui::text::Line;
+ 
+-criterion::criterion_group!(benches, empty, filled, with_lines);
++criterion::criterion_group!(
++    benches,
++    empty,
++    filled,
++    with_lines,
++    diff_no_change,
++    diff_full_change,
++    diff_partial_change,
++    diff_multi_width,
++    diff_emoji
 +);
-+
-+let calendar = Monthly::new(date, events)
-+    .show_month_header(Style::new().add_modifier(Modifier::BOLD))
-+    .show_weekdays_header(Style::new().fg(Color::Cyan))
-+    .show_surrounding(Style::new().fg(Color::DarkGray))
-+    .block(Block::bordered().title("Calendar"));
-+
-+let area = Rect::new(0, 0, calendar.width(), calendar.height());
-+let mut buf = Buffer::empty(area);
-+calendar.render(area, &mut buf);
-+```
-+
-+See the [calendar example] and the [calendar explorer] for more.
-+
-+[`Block`]: https://docs.rs/ratatui_widgets/latest/ratatui_widgets/block/struct.Block.html
-+[calendar example]: https://github.com/ratatui/ratatui/blob/main/ratatui-calendar/examples/calendar.rs
-+[calendar explorer]: https://github.com/ratatui/ratatui/tree/main/examples/apps/calendar-explorer
-+
-+## Crate Organization
-+
-+`ratatui-calendar` is part of the Ratatui workspace. It builds on [`ratatui-core`] for the
-+widget traits and on [`ratatui-widgets`] for [`Block`], and the main [`ratatui`] crate
-+re-exports it as `ratatui::widgets::calendar`.
-+
-+**When to use `ratatui-calendar`:**
-+
-+- Building widget libraries that embed or wrap the calendar
-+- You want finer-grained dependencies than the `ratatui` crate
-+
-+**When to use the main [`ratatui`] crate:**
-+
-+- Building applications (recommended - includes everything you need)
-+
-+For detailed information about the workspace organization, see [ARCHITECTURE.md].
-+
-+[`ratatui`]: https://crates.io/crates/ratatui
-+[`ratatui-core`]: https://crates.io/crates/ratatui-core
-+[`ratatui-widgets
-```
-
-**File**: `ratatui-calendar/examples/calendar.rs` (renamed, +1/-1)
-```diff
-@@ -11,7 +11,7 @@
- //! library you are using.
- //!
- //! [Ratatui]: https://github.com/ratatui/ratatui
--//! [widget examples]: https://github.com/ratatui/ratatui/blob/main/ratatui-widgets/examples
-+//! [widget examples]: https://github.com/ratatui/ratatui/blob/main/ratatui-calendar/examples
- //! [examples readme]: https://github.com/ratatui/ratatui/blob/main/examples/README.md
  
- use color_eyre::Result;
-```
-
----
-
-### Incident Patch 2: `05ed356f` (2026-11-18)
-**Commit Message**: docs: fix broken and mismatched documentation links (#2930)
-
-Several hand-written links in docs and comments were dead or pointed
-at the wrong page.
-
-- BREAKING-CHANGES.md: link the HorizontalAlignment rename to #1735,
-  List index clamping to #1159, and LineGauge::gauge_style to #565;
-  each previously pointed at an unrelated PR.
-- ratatui/src/lib.rs: the Hello World tutorial moved to
-  ratatui.rs/tutorials/hello-ratatui/.
-- ratatui/tests/widgets_gauge.rs: reference the gauge fix PR #2579
-  instead of the deleted issue #2547.
-- cliff.toml: replace the dead Tera docs link with git-cliff's
-  template syntax docs.
-
-**File**: `BREAKING-CHANGES.md` (modified, +3/-3)
-```diff
-@@ -331,7 +331,7 @@ The minimum supported Rust version (MSRV) is now 1.86.0.
+-const fn rect(size: u16) -> Rect {
+-    Rect::new(0, 0, size, size)
+-}
++/// A reasonable terminal size, and a size that's probably too big to be useful
++const SIZES: [Size; 2] = [Size::new(200, 50), Size::new(1000, 250)];
  
- ### `layout::Alignment` is renamed to `layout::HorizontalAlignment` ([#1735])
+ fn empty(c: &mut Criterion) {
+     let mut group = c.benchmark_group("buffer/empty");
+-    for size in [16, 64, 255] {
+-        let area = rect(size);
++    for size in SIZES {
++        let area = size.into();
+         group.bench_with_input(BenchmarkId::from_parameter(size), &area, |b, &area| {
+             b.iter(|| {
+                 let _buffer = Buffer::empty(black_box(area));
+@@ -28,8 +38,8 @@ fn empty(c: &mut Criterion) {
+ /// and to catch any potential performance regressions.
+ fn filled(c: &mut Criterion) {
+     let mut group = c.benchmark_group("buffer/filled");
+-    for size in [16, 64, 255] {
+-        let area = rect(size);
++    for size in SIZES {
++        let area = size.into();
+         let cell = Cell::new("AAAA"); // simulate a multi-byte character
+         group.bench_with_input(
+             BenchmarkId::from_parameter(size),
+@@ -46,7 +56,7 @@ fn filled(c: &mut Criterion) {
  
--[#1735]: https://github.com/ratatui/ratatui/pull/1691
-+[#1735]: https://github.com/ratatui/ratatui/pull/1735
- 
- The `Alignment` enum has been renamed to `HorizontalAlignment` to better reflect its purpose. A type
- alias has been added to maintain backwards compatibility, however there are some cases where type
-@@ -657,7 +657,7 @@ This change simplifies the trait and makes it easier to implement.
- 
- ### List no clamps the selected index to list ([#1159])
- 
--[#1149]: https://github.com/ratatui/ratatui/pull/1149
-+[#1159]: https://github.com/ratatui/ratatui/pull/1159
- 
- The `List` widget now clamps the selected index to the bounds of the list when navigating with
- `first`, `last`, `previous`, and `next`, as well as when setting the index directly with `select`.
-@@ -777,7 +777,7 @@ flexible types from calling scopes, though it can break some type inference in t
- 
- ### `LineGauge::gauge_style` is deprecated ([#565])
- 
--[#565]: https://github.com/ratatui/ratatui/pull/1148
-+[#565]: https://github.com/ratatui/ratatui/pull/565
- 
- `LineGauge::gauge_style` is deprecated and replaced with `LineGauge::filled_style` and `LineGauge::unfilled_style`:
- 
-```
-
-**File**: `cliff.toml` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ All notable changes to this project will be documented in this file.
- <!-- markdownlint-disable line-length no-bare-urls ul-style emphasis-style -->
- """
- # template for the changelog body
--# https://keats.github.io/tera/docs/#introduction
-+# https://git-cliff.org/docs/templating/syntax
- # note that the - before / after the % controls whether whitespace is rendered between each line.
- # Getting this right so that the markdown renders with the correct number of lines between headings
- # code fences and list items is pretty finicky. Note also that the 4 backticks in the commit macro
-```
-
-**File**: `ratatui/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -431,7 +431,7 @@
- //! [Showcase]: https://ratatui.rs/showcase/
- //! [Rendering]: https://ratatui.rs/concepts/rendering/
- //! [Application Patterns]: https://ratatui.rs/concepts/application-patterns/
--//! [Hello World tutorial]: https://ratatui.rs/tutorials/hello-world/
-+//! [Hello World tutorial]: https://ratatui.rs/tutorials/hello-ratatui/
- //! [Backends]: https://ratatui.rs/concepts/backends/
- //! [Backend Comparison]: https://ratatui.rs/concepts/backends/comparison/
- //! [Widgets]: https://ratatui.rs/recipes/widgets/
-```
-
-**File**: `ratatui/tests/widgets_gauge.rs` (modified, +1/-1)
-```diff
-@@ -158,7 +158,7 @@ fn widgets_gauge_applies_styles() {
- fn widgets_gauge_fills_cell_immediately_after_label() {
-     // Regression: the filled-area condition treated the cell at `label_col +
-     // label_width` as part of the label background, leaving a stray empty cell
--    // inside the filled area. See https://github.com/ratatui/ratatui/issues/2547.
-+    // inside the filled area. See https://github.com/ratatui/ratatui/pull/2579.
-     let backend = TestBackend::new(10, 1);
-     let mut terminal = Terminal::new(backend).unwrap();
- 
-```
-
----
-
-### Incident Patch 3: `60feb0eb` (2026-11-17)
-**Commit Message**: docs(core): fix the Block::merge_borders link in MergeStrategy docs (#2928)
-
-**File**: `ratatui-core/src/symbols/merge.rs` (modified, +1/-1)
-```diff
-@@ -56,7 +56,7 @@ use core::str::FromStr;
- /// [Box Drawing Unicode block]: https://en.wikipedia.org/wiki/Box_Drawing
- /// [collapsing borders]: https://ratatui.rs/recipes/layout/collapse-borders
- /// [`Block::merge_borders`]:
--///     https://docs.rs/ratatui/latest/ratatui/widgets/block/struct.Block.html#method.merge_borders
-+///     https://docs.rs/ratatui/latest/ratatui/widgets/struct.Block.html#method.merge_borders
- /// [`Cell::merge_symbol`]: crate::buffer::Cell::merge_symbol
- #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash, Default)]
- pub enum MergeStrategy {
+ fn with_lines(c: &mut Criterion) {
+     let mut group = c.benchmark_group("buffer/with_lines");
+-    for size in [16, 64, 255] {
++    for size in SIZES {
+         let word_count = 50;
+         let lines = fakeit::words::sentence(word_count);
+         let lines = lines.lines().map(Line::from);
+@@ -58,3 +68,128 @@ fn with_lines(c: &mut Criterion) {
+     }
+     group.finish();
+ }
++
++fn diff_no_change(c: &mut Criterion) {
++    let mut group = c.benchmark_group("buffer/diff_no_change");
++    for size in SIZES {
++        let buffer = Buffer::filled(size.into(), Cell::new("x"));
++        group.bench_with_input(BenchmarkId::from_parameter(size), &buffer, |b, buffer| {
++            b.iter(|| {
++                let diff = black_box(buffer).diff(black_box(buffer));
++                black_box(diff);
++            });
++        });
++    }
++    group.finish();
++}
++
++/// This tests maximum update cost with every cell needing an update
++fn diff_full_change(c: &mut Criterion) {
++    let mut group = c.benchmark_group("buffer/diff_full_change");
++    for size in SIZES {
++        let area = size.into();
++        let prev = Buffer::filled(area, Cell::new("a"));
++        let next = Buffer::filled(area, Cell::new("b"));
++        group.bench_with_input(
++            BenchmarkId::from_parameter(size),
++            &(prev, next),
++            |b, (prev, next)| {
++                b.iter(|| {
++                    let diff = black_box(prev).diff(black_box(next));
++                    black_box(diff);
++                });
++            },
++        );
++    }
++    group.finish();
++}
++
++/// This simulates typical incremental updates in a TUI
++fn diff_partial_change(c: &mut Criterion) {
++    let mut group = c.benchmark_group("buffer/diff_partial_change");
++    for size in SIZES {
++        let area = size.into();
++        let prev = Buffer::filled(area, Cell::new("a"));
++        let mut next = Buffer::filled(area, Cell::new("a"));
++
++        let total_cells = (size.width as usize) * (size.height as usize);
++        for i in (0..total_cells).step_by(10) {
++            if i < next.content.len() {
++                next.content[i].set_symbol("b");
++            }
++        }
++
++        group.bench_with_input(
++            BenchmarkId::from_parameter(size),
++            &(prev, next),
++            |b, (prev, next)| {
++                b.iter(|| {
++                    let diff = black_box(prev).diff(black_box(next));
++                    black_box(diff);
++                });
++            },
++        );
++    }
++    group.finish();
++}
++
++fn diff_multi_width(c: &mut Criterion) {
++    let mut group = c.benchmark_group("buffer/diff_multi_width");
++    for size in SIZES {
++        let area = size.into();
++        let prev = Buffer::with_lines(vec!["a".repeat(size.width as usize); size.height as usize]);
++        let mut next = Buffer::filled(area, Cell::new(" "));
++
++        for y in 0..size.height {
++            next.set_string(
++                0,
++                y,
++                "日本語中文한국어".repeat(size.width as usize / 6),
++                Style::default(),
++            );
++        }
++
++        group.bench_with_input(
++            BenchmarkId::from_parameter(size),
++            &(prev, next),
++            |b, (prev, next)| {
++                b.iter(|| {
++                    let diff = black_box(prev).diff(black_box(next));
++                    bl
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2940** (2026-11-21): refactor(widget): move string widget impls into their own modules (@joshka)
+- **PR #2939** (2026-11-21): fix(scrollbar): reach the end of the track when content is fully scrolled (@orhun)
+- **PR #2937** (2026-11-20): style(docs): fix formatting (@orhun)
+- **PR #2935** (closed): fix(buffer): repaint the half of a wide glyph orphaned by a wide glyph (@lulu-berlin)
 - **PR #2930** (2026-11-18): docs: fix broken and mismatched documentation links (@joshka)
 - **PR #2929** (2026-11-18): docs(text): explain why ANSI escape sequences are not interpreted (@joshka)
-- **PR #2928** (2026-11-17): docs(core): fix the Block::merge_borders link in MergeStrategy docs (@farisbasha)
-- **PR #2923** (2026-11-17): feat(calendar)!: move the calendar widget to ratatui-calendar (@joshka)
-- **PR #2921** (2026-11-17): chore: bump copyright years to 2026 (@joshka)
-- **PR #2919** (2026-11-16): build(deps): bump taiki-e/install-action from 2.90.2 to 2.90.3 (@dependabot[bot])
 
 ---
 
@@ -1444,32 +1637,48 @@ at the wrong page.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. calendar)!: move the calendar widget to ratatui-calendar
+## X. barchart): split horizontal value text by display width
 
 **RULE**:
-When implementing operations in `ARCHITECTURE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ratatui-widgets/src/barchart.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ec3336d2`: calendar)!: move the calendar widget to ratatui-calendar. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6d208e68`: barchart): split horizontal value text by display width. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ARCHITECTURE.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ratatui-widgets/src/barchart.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#### `ratatui-calendar`
+    use alloc::format;
 
-- **Purpose**: Calendar widget implementation
-- **Contents**: The `Monthly` calendar widget and the `DateStyler` trait for styling dates
-- **Target Users**: Applications showing calendars, widget library authors
-- **Key Features**:
-  - Kept separate because its public API uses a third-party date type, so that dependency can
-    change without a breaking release of `ratatui-widgets`
 
-├── ratatui-calendar → ratatui-core, ratatui-widgets
-- **ratatui-calendar**: Depends on `ratatui-core` for widget traits and on `ratatui-widgets` for
-  `Block`
+    /// Empty `text_value` skips value painting and leaves only the bar fill.
+    #[test]
+    fn horizontal_empty_text_value_skips_value_paint() {
+        let chart = BarChart::default()
+            .direction(Direction::Horizontal)
+            .bar_gap(0)
+            .data(BarGroup::default().bars(&[Bar::default().value(5).text_value("")]));
+        let mut buffer = Buffer::empty(Rect::new(0, 0, 5, 1));
+        chart.render(buffer.area, &mut buffer);
+        assert_eq!(buffer, Buffer::with_lines(["█████"]));
+    }
+
+    /// Multi-byte single-width characters must be split by display width on
+    /// horizontal bars, not by UTF-8 byte length.
+    ///
+    /// `"α"` is two bytes and one cell. With `bar_length == 3` the value
+    /// `"ααααα"` must paint all five cells; the first three use `value_style`
+    /// and the rest use the bar style. Splitting on byte indices leaves a
+    /// filled-block cell in the middle and styles the overflow incorrectly.
+    #[test]
+    fn horizontal_multibyte_text_value_split_by_display_width() {
+        let bar = Bar::default()
+            .value(3)
+            .text_value("ααααα")
+            .value_style(Style::default().red(
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1479,7 +1688,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ec3336d2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6d208e68` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T17:28:54.517Z",
+  "last_updated": "2026-11-21T17:42:06.441Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3601,14 +3601,14 @@
       "learning_id": "learn-github-nucleoidai-nucleoid"
     },
     {
-      "id": "CD-724E",
+      "id": "CD-3NMT",
       "directive_title": "Empirical Invariant Guard in ci.yml",
       "source_repo": "aleo-labs-protocol-snarkos-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-724E-empirical-invariant-guard-in-ci-yml.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-3NMT-empirical-invariant-guard-in-ci-yml.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-20",
+      "date_staged": "2026-11-21",
       "domain_letter": "D"
     },
     {
@@ -43044,6 +43044,48 @@
       "source_repo": "open-policy-agent-gatekeeper",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EA4581-bump-golang-org-x-net-to-v0-63-0-golang-.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-3AVK",
+      "directive_title": "split horizontal value text by display width",
+      "source_repo": "ratatui/ratatui",
+      "source_commit": "29196825",
+      "staged_file": "11_INBOX/candidate-directives/CD-3AVK-split-horizontal-value-text-by-display-width.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-3JYV",
+      "directive_title": "correct connection replies and client tracking",
+      "source_repo": "dragonflydb/dragonfly",
+      "source_commit": "66de9e68",
+      "staged_file": "11_INBOX/candidate-directives/CD-3JYV-correct-connection-replies-and-client-tracking.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-3MQ3",
+      "directive_title": "barchart): split horizontal value text by display width",
+      "source_repo": "ratatui-ratatui-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3MQ3-barchart-split-horizontal-value-text-by-display-width.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-9117AC",
+      "directive_title": "Empirical Invariant Guard in ci.yml",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aleo-labs-protocol-snarkos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9117AC-empirical-invariant-guard-in-ci-yml.md",
       "staged_date": "2026-11-21"
     }
   ]

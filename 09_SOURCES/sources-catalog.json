@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "ffa93916",
+    "sourceVersion": "2875dee3",
     "license": "Apache-2.0",
-    "contentHash": "602d4deb6590f62a69c845b4cc96c9d316ff72c46e6c1ecdd770387db3a81596",
-    "lastHarvestedAt": "2026-11-21T08:24:30.006Z",
+    "contentHash": "c1ef264025a4a50ce160fd774557f35969be02e131fb8e3c5c34e52e15767de4",
+    "lastHarvestedAt": "2026-11-21T17:41:58.128Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -3553,10 +3553,10 @@
     "repository": "ratatui/ratatui",
     "platform": "github",
     "sourceUrl": "https://github.com/ratatui/ratatui",
-    "sourceVersion": "5c1a8cd5",
+    "sourceVersion": "29196825",
     "license": "MIT",
-    "contentHash": "a573b9326afc57b84dfb0b82f23b93e7b56ad8efbc7186418812c9d9f804250b",
-    "lastHarvestedAt": "2026-11-18T06:32:30.658Z",
+    "contentHash": "1beefc20d35f382c419fe9ee720dcf237c67cb20b2c3bcc777bd8fb5ad6a55ca",
+    "lastHarvestedAt": "2026-11-21T17:41:49.682Z",
     "learningId": "learn-github-ratatui-ratatui"
   },
   "invertase-react-native-firebase": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "db656d41",
+    "sourceVersion": "66de9e68",
     "license": "NOASSERTION",
-    "contentHash": "50ee7c925cf99740185f455805d9d095f2732f7a78f9ba9776d07bb111e21b6a",
-    "lastHarvestedAt": "2026-11-20T12:15:29.342Z",
+    "contentHash": "dc1d52a31c2c46c9ecd04c66890772bde3e43ed13a2f7598c6d3899d99b030ed",
+    "lastHarvestedAt": "2026-11-21T17:42:01.481Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -10825,8 +10825,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
     "license": "Open-Source",
-    "contentHash": "05b3a2c91c8f79c8d9cdb1c635b559d3135b82afe16c71e12e0dda04f4226576",
-    "lastHarvestedAt": "2026-11-17T19:12:16.971Z",
+    "contentHash": "6915a71c231d6e7e15ca4ea2fc22f8c7f91eb9a7124447630a1d92f8d68d69c0",
+    "lastHarvestedAt": "2026-11-21T17:41:46.151Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb"
   },
   "gaurav-gosain-tuios": {

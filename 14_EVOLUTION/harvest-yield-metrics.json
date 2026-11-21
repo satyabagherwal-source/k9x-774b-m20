@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T17:28:16.863Z",
-  "total_cycles_completed": 11282,
-  "total_learnings_persisted": 11282,
-  "total_rules_promoted": 10614,
+  "last_updated": "2026-11-21T17:42:01.486Z",
+  "total_cycles_completed": 11286,
+  "total_learnings_persisted": 11286,
+  "total_rules_promoted": 10617,
   "history": [
-    {
-      "timestamp": "2026-11-20T21:55:15.553Z",
-      "repository": "paradedb/paradedb",
-      "learningId": "learn-github-paradedb-paradedb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T22:07:11.369Z",
-      "repository": "unsloth/Inkling-2-Mini-GGUF",
-      "learningId": "learn-huggingface-unsloth-inkling-2-mini-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T22:22:57.543Z",
-      "repository": "domcyrus/rustnet",
-      "learningId": "learn-github-domcyrus-rustnet",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T22:30:58.764Z",
-      "repository": "kumahq/kuma",
-      "learningId": "learn-github-kumahq-kuma",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T22:39:46.230Z",
       "repository": "wzh4869/AppPorts",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-21T17:28:16.863Z",
       "repository": "open-policy-agent/gatekeeper",
       "learningId": "learn-github-open-policy-agent-gatekeeper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T17:41:46.157Z",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T17:41:49.688Z",
+      "repository": "ratatui/ratatui",
+      "learningId": "learn-github-ratatui-ratatui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T17:41:58.133Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T17:42:01.486Z",
+      "repository": "dragonflydb/dragonfly",
+      "learningId": "learn-github-dragonflydb-dragonfly",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -4,17 +4,17 @@
 {
   "source_repository": "aleo-labs-protocol/snarkOS",
   "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-  "source_version": "29eef2ff",
+  "source_version": "2875dee3",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T20:41:42.081Z",
+  "timestamp": "2026-11-21T17:41:58.346Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aleo-labs-protocol-snarkos",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `29eef2ff`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T20:41:42.081Z`  
+> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `2875dee3`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T17:41:58.346Z`  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T20:41:40.334Z  
+> **Harvest Timestamp**: 2026-11-21T17:41:57.372Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -177,6 +177,7 @@ use crate::{
     spawn_blocking,
 };
 use snarkos_node_bft_ledger_service::{LedgerService, deserialize_transaction_strict};
+use snarkos_utilities::locks::parking_lot::{Mutex, RwLock};
 use snarkvm::{
     console::prelude::*,
     ledger::{
@@ -188,10 +189,6 @@ use snarkvm::{
 
 use anyhow::Context;
 use indexmap::{IndexMap, IndexSet};
-#[cfg(feature = "locktick")]
-use locktick::parking_lot::{Mutex, RwLock};
-#[cfg(not(feature = "locktick"))]
-use parking_lot::{Mutex, RwLock};
 use rand::seq::IteratorRandom;
 
 use std::{future::Future, net::SocketAddr, sync::Arc};
@@ -403,7 +400,8 @@ impl<N: Network> Worker<N> {
     pub(crate) fn reinsert(&self, transmission_id: TransmissionID<N>, transmission: Transmission<N>) -> bool {
         // Check if the transmission ID exists.
         if !self.contains_transmission(transmission_id) {
-            // Insert the transmission
+            // Insert the transmission into the ready queue.
+            return self.ready.write().insert(transmission_
 ```
 
 ### Core Architecture Module: `node/consensus/src/transactions_queue.rs`
@@ -953,12 +951,8 @@ mod tests {
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use crate::locks::parking_lot::{RwLock, RwLockReadGuard};
 use anyhow::{Result, bail};
-#[cfg(feature = "locktick")]
-use locktick::{LockGuard, parking_lot::RwLock};
-#[cfg(not(feature = "locktick"))]
-use parking_lot::RwLock;
-use parking_lot::RwLockReadGuard;
 
 /// Helper struct to hold a reference to a callback struct.
 pub struct CallbackHandle<C: Clone + Send + Sync> {
@@ -993,15 +987,6 @@ impl<C: Send + Sync + Clone> CallbackHandle<C> {
 
     /// Get reference to the callback.
     /// Cannot be shared across await-boundaries.
-    #[cfg(feature = "locktick")]
-    #[inline]
-    pub fn get_ref(&self) -> LockGuard<RwLockReadGuard<'_, Option<C>>> {
-        self.callback.read()
-    }
-
-    /// Get reference to the callback.
-    /// Cannot be shared across await-boundaries.
-    #[cfg(not(feature = "locktick"))]
     #[inline]
     pub fn get_ref(&self) -> RwLockReadGuard<'_, Option<C>> {
         self.callback.read()
@@ -1108,6 +1093,8 @@ pub use signals::*;
 pub mod node_data;
 pub use node_data::*;
 
+pub mod locks;
+
 mod callback_handle;
 pub use callback_handle::CallbackHandle;
 
@@ -1122,6 +1109,116 @@ pub const DEVELOPMENT_MODE_RNG_SEED: u64 = 1234567890u64;
 pub struct DevHotswapConfig {
     /// Number of validators in the dev committee.
     pub dev_num_validators: u16,
+}
+
+```
+
+### Core Architecture Module: `utilities/src/locks.rs`
+```
+// Copyright (c) 2019-2026 Provable Inc.
+// This file is part of the snarkOS library.
+
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at:
+
+// http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+//! The lock types that snarkOS crates use.
+//!
+//! Building with `--cfg locktick` swaps every lock for its instrumented counterpart from the
+//! `locktick` crate, which records where each lock and guard is taken. `.cargo/config.toml`
+//! defines the cargo aliases that set the cfg.
+//!
+//! The submodules mirror the layout of `locktick`. A lock's methods return the guard alias of
+//! its submodule in both builds. Under `--cfg locktick` that guard is a `locktick::LockGuard`
+//! that dereferences to the plain guard. Code that passes a guard to an associated function of
+//! the plain guard type, such as `parking_lot::MutexGuard::map`, compiles only without the cfg.
+//!
+//! `clippy.toml` disallows the lock types of `parking_lot`, `tokio` and `locktick` everywhere
+//! else. Turning these type aliases into `pub use` re-exports would make that lint flag every
+//! user of them.
+
+#![allow(clippy::disallowed_types)]
+
+#[cfg(not(locktick))]
+type Guard<G> = G;
+#[cfg(locktick)]
+type Guard<G> = ::locktick::LockGuard<G>;
+
+/// Synchronous locks from `parking_lot`.
+pub mod parking_lot {
+    use super::Guard;
+
+    #[cfg(locktick)]
+    use ::locktick::parking_lot as backend;
+    #[cfg(not(locktick))]
+    use ::parking_lot as backend;
+
+    pub type Mutex<T> = backend::Mutex<T>;
+    pub type RwLock<T> = backend::RwLock<T>;
+    pub type MutexGuard<'a, T> = Guard<::parking_lot::MutexGuard<'a, T>>;
+    pub type RwLockReadGuard<'a, T> = Guard<::parking_lot::RwLockReadGuard<'a, T>>;
+    pub type RwLockWriteGuard<'a, T> = Guard<::parking_lot::RwLockWriteGuard<'a, T>>;
+}
+
+/// Asynchronous locks from `tokio::sync`.
+pub mod tokio {
+    use super::Guard;
+
+    #[cfg(locktick)]
+    use ::locktick::tokio as backend;
+    #[cfg(not(locktick))]
+    use ::tokio::sync as backend;
+
+    pub type Mutex<T> = backend::Mutex<T>;
+    pub type RwLock<T> = backend::RwLock<T>;
+    pub type MutexGuard<'a, T> = Guard<::tokio::sync::MutexGuard<'a, T>>;
+    pub type RwLockReadGuard<'a, T> = Guard<::tokio::sync::RwLockReadGuard<'a, T>>;
+    pub type RwLockWriteGuard<'a, T> = Guard<::tokio::sync::RwLockWriteGuard<'a, T>>;
+}
+
+/// Under `--cfg locktick`, spawns a thread that logs every lock guard that is held or waited
+/// for, every three seconds. Otherwise, does nothing.
+pub fn spawn_lock_reporter() {
+    #[cfg(locktick)]
+    std::thread::spawn(|| {
+        loop {
+            tracing::info!("[locktick] checking for active lock guards");
+            let ts = std::time::Instant::now();
+            let mut infos = ::locktick::lock_snapshots();
+            infos.sort_unstable_by(|l1, l2| l1.location.cmp(&l2.location));
+
+            for lock in infos {
+                let mut guards = lock.known_guards.values().filter(|g| g.is_in_use()).collect::<Vec<_>>();
+                guards.sort_unstable_by(|g1, g2| g1.location.cmp(&g2.location));
+
+                for guard in guards {
+                    let location = &guard.location;
+                    let kind = guard.kind;
+                    let num_uses = guard.num_uses;
+                    let active_users = guard.num_active_uses();
+                    let avg_duration = guard.avg_duration();
+                    let avg_wait_time = guard.avg_wait_time();
+                    let num_waiting = guard.num_waiting();
+                    tracing::info!(
+                        "[locktick] {location} ({:?}): {num_uses}; {active_users} active; {num_waiting} waiting; avg d: {:?}; avg w: {:?}",
+                        kind,
+                        avg_duration,
+                        avg_wait_time
+                    );
+                }
+            }
+            tracing::debug!("[locktick] finished the check in {:?}", ts.elapsed());
+            std::thread::sleep(std::time::Duration::from_secs(3));
+        }
+    });
 }
 
 ```
@@ -1362,10 +1459,7 @@ mod tests {
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#[cfg(feature = "locktick")]
-use locktick::parking_lot::{Mutex, RwLock};
-#[cfg(not(feature = "locktick"))]
-use parking_lot::{Mutex, RwLock};
+use crate::locks::parking_lot::{Mutex, RwLock};
 
 use std::sync::{
     Arc,
@@ -1765,218 +1859,6 @@ if __name__ == "__main__":
 
 ```
 
-### Core Architecture Module: `account/src/lib.rs`
-```
-// Copyright (c) 2019-2026 Provable Inc.
-// This file is part of the snarkOS library.
-
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at:
-
-// http://www.apache.org/licenses/LICENSE-2.0
-
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#![forbid(unsafe_code)]
-
-use snarkvm::{
-    console::{network::prelude::*, types::Field},
-    prelude::*,
-};
-
-use colored::*;
-use core::fmt;
-
-/// A helper struct for an Aleo account.
-#[derive(Clone, Debug)]
-pub struct Account<N: Network> {
-    /// The account private key.
-    private_key: PrivateKey<N>,
-    /// The account view key.
-    view_key: ViewKey<N>,
-    /// The account address.
-    address: Address<N>,
-}
-
-impl<N: Network> Account<N> {
-    /// Samples a new account.
-    pub fn new<R: Rng + CryptoRng>(rng: &mut R) -> Result<Self> {
-        Self::try_from(PrivateKey::new(rng)?)
-    }
-
-    /// Returns the account private key.
-    pub const fn private_key(&self) -> &PrivateKey<N> {
-        &self.private_key
-    }
-
-    /// Returns the account view key.
-    pub const fn view_key(&self) -> &ViewKey<N> {
-        &self.view_key
-    }
-
-    /// Returns the account address.
-    pub const fn address(&self) -> Address<N> {
-        self.address
-    }
-}
-
-impl<N: Network> Account<N> {
-    /// Returns a signature for the given message (as field elements), using the account private key.
-    pub fn sign<R: Rng + CryptoRng>(&self, message: &[Field<N>], rng: &mut R) -> Result<Signature<N>> {
-        Signature::sign(&self.private_key, message, rng)
-    }
-
-    /// Returns a signature for the given message (as bytes), using the account private key.
-    pub fn sign_bytes<R: Rng + CryptoRng>(&self, message: &[u8], rng: &mut R) -> Result<Signature<N>> {
-        Signature::sign_bytes(&self.private_key, message, rng)
-    }
-
-    /// Returns a signature for the given message (as bits), using the account private key.
-    pub fn sign_bits<R: Rng + CryptoRng>(&self, message: &[bool], rng: &mut R) -> Result<Signature<N>> {
-        Signature::sign_bits(&self.private_key, message, rng)
-    }
-
-    /// Verifies a signature for the given message (as fields), using the account address.
-    pub fn verify(&self, message: &[Field<N>], signature: &Signature<N>) -> bool {
-        signature.verify(&self.address, message)
-    }
-
-    /// Verifies a signature for the given message (as bytes), using the account address.
-    pub fn verify_bytes(&self, message: &[u8], signature: &Signature<N>) -> bool {
-        signature.verify_bytes(&self.address, message)
-    }
-
-    /// Verifies a signature for the given message (as bits), using the account address.
-    pub fn verify_bits(&self, message: &[bool], signature: &Signature<N>) -> bool {
-        signature.verify_bits(&self.address, message)
-    }
-}
-
-impl<N: Network> TryFrom<PrivateKey<N>> for Account<N> {
-    type Error = Error;
-
-    /// Initializes a new account from a private key.
-    fn try_from(private_key: PrivateKey<N>) -> Result<Self, Self::Error> {
-        Self::try_from(&private_key)
-    }
-}
-
-impl<N: Network> TryFrom<&PrivateKey<N>> for Account<N> {
-    type Error = Error;
-
-    /// Initializes a new account from a private key.
-    fn try_from(private_key: &PrivateKey<N>) -> Result<Self, Self::Error> {
-        let view_key = ViewKey::try_from(private_key)?;
-        let address = view_key.to_address();
-        Ok(Self { private_key: *private_key, view_key, address })
-    }
-}
-
-impl<N: Network> TryFrom<String> for Account<N> {
-    type Error = Error;
-
-    /// Initializes a new account from a private key string.
-    fn try_from(private_key: String) -> Result<Self, Self::Error> {
-        Self::try_from(&private_key)
-    }
-}
-
-impl<N: Network> TryFrom<&String> for Account<N> {
-    type Error = Error;
-
-    /// Initializes a new account from a private key string.
-    fn try_from(private_key: &String) -> Result<Self, Self::Error> {
-        Self::from_str(private_key.as_str())
-    }
-}
-
-impl<N: Network> TryFrom<&str> for Account<N> {
-    type Error = Error;
-
-    /// Initializes a new account from a private key string.
-    fn try_from(private_key: &str) -> Result<Self, Self::Error> {
-        Self::from_str(private_key)
-    }
-}
-
-impl<N: Network> FromStr for Account<N> {
-    type Err = Error;
-
-    /// Initializes a new account from a private key string.
-    fn from_str(private_key: &str) -> Result<Self, Self::Err> {
-        Self::try_from(PrivateKey::from_str(private_key)?)
-    }
-}
-
-impl<N: Network> Display for Account<N> {
-    /// Renders the account as a string.
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            " {:>12}  {}\n {:>12}  {}\n {:>12}  {}",
-            "Private Key".cyan().bold(),
-            self.private_key,
-            "View Key".cyan().bold(),
-            self.view_key,
-            "Address".cyan().bold(),
-            self.address
-        )
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use snarkvm::prelude::MainnetV0;
-
-    type CurrentNetwork = MainnetV0;
-
-    #[test]
-    fn test_sign() {
-        // Initialize the RNG.
-        let mut rng = TestRng::default();
-        // Prepare the account and message.
-        let account = Account::<CurrentNetwork>::new(&mut rng).unwrap();
-        let message = vec![Field::rand(&mut rng); 10];
-        // Sign and verify.
-        let signature = account.sign(&message, &mut rng).unwrap();
-        assert!(account.verify(&message, &signature));
-    }
-
-    #[test]
-    fn test_sign_bytes() {
-        // Initialize the RNG.
-        let mut rng = TestRng::default();
-        // Prepare the account and message.
-        let account = Account::<CurrentNetwork>::new(&mut rng).unwrap();
-
-        // TODO(kaimast): remove once we upgrade the rand crate
-        let message = (0..10).map(|_| rng.random::<u8>()).collect::<Vec<u8>>();
-        // Sign and verify.
-        let signature = account.sign_bytes(&message, &mut rng).unwrap();
-        assert!(account.verify_bytes(&message, &signature));
-    }
-
-    #[test]
-    fn test_sign_bits() {
-        // Initialize the RNG.
-        let mut rng = TestRng::default();
-        // Prepare the account and message.
-        let account = Account::<CurrentNetwork>::new(&mut rng).unwrap();
-        let message = (0..10).map(|_| rng.random::<bool>()).collect::<Vec<bool>>();
-        // Sign and verify.
-        let signature = account.sign_bits(&message, &mut rng).unwrap();
-        assert!(account.verify_bits(&message, &signature));
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2004,52 +1886,470 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `29eef2ff` (2026-11-20)
-**Commit Message**: Merge pull request #4738 from aleo-labs-protocol/gauntlet/sync-legs-parallel-comment
+### Incident Patch 1: `2875dee3` (2026-11-21)
+**Commit Message**: Merge pull request #4751 from aleo-labs-protocol/ci/remove-start-runner
 
-release-test: the sync legs run at once
+CI: remove the start-runner job and fork-pr-runners.yml
 
-**File**: `.github/workflows/release-test.yml` (modified, +1/-1)
+**File**: `.github/workflows/ci.yml` (modified, +7/-44)
 ```diff
-@@ -104,7 +104,7 @@ jobs:
-       network: testnet
-       params: ${{ format('stockpile={0},rate=50,duration=120,min_inclusion=1,deploy_rate=0.2', inputs.stockpile) }}
+@@ -24,35 +24,10 @@ env:
+   CARGO_TERM_COLOR: always
  
--  # A saved ledger is this release's, for the next release's sync test. The sync host runs one at a time.
-+  # A saved ledger is this release's, for the next release's sync test. The sync host runs both legs at once.
-   sync-testnet:
-     needs: resolve
-     permissions:
+ # GitHub holds an outside contributor's pull request run until a maintainer
+-# approves it. A fork's run gets no secrets, so start-cpu-runners is skipped and
+-# fork-pr-runners.yml starts the boxes. The fleet jobs therefore accept a
+-# skipped start-cpu-runners, and run only in this repository, which alone may
+-# use the fleet.
+-#
+-# The fleet jobs also wait for check-shared-refs, a hosted job. GitHub reports
+-# a run as `in_progress`, and fires the `workflow_run` event that starts the
+-# boxes, only once none of its ready jobs is waiting for a runner. With no
+-# hosted job ahead of them, a fork's fleet jobs would wait for boxes that only
+-# that event starts.
++# approves it. The org's fleet starter boots the boxes when GitHub queues a
++# fleet job, from any run, a fork's included, so no job here starts them. The
++# fleet jobs run only in this repository, which alone may use the fleet.
+ jobs:
+-  start-cpu-runners:
+-    # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
+-    uses: aleo-labs-protocol/gh-actions/.github/workflows/start-runner.yml@v2
+-    permissions: { id-token: write, contents: read, actions: read }
+-    secrets:
+-      runner_app_key: ${{ secrets.RUNNER_APP_KEY }}
+-    with:
+-      role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
+-      label: cpu
+-      # Below the default of 3: snarkOS's jobs run ten minutes or more, so a
+-      # box absorbs fewer of them within the critical path. fork-pr-runners.yml
+-      # repeats this.
+-      jobs-per-box: 2
+-      runner-app-id: ${{ vars.RUNNER_APP_ID }}
+-    if: >-
+-      github.event.pull_request == null ||
+-      github.event.pull_request.head.repo.full_name == github.repository
+-
+   check-shared-refs:
+     runs-on: ubuntu-latest
+     steps:
+@@ -121,12 +96,9 @@ jobs:
+       - run: .github/merge-fixup.test.sh
+ 
+   lint:
+-    needs: [check-shared-refs, start-cpu-runners]
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 90
+     if: &fleet-if >-
+-      !cancelled() && needs.check-shared-refs.result == 'success' &&
+-      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
+       github.repository == 'aleo-labs-protocol/snarkOS'
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+@@ -145,7 +117,6 @@ jobs:
+       - run: cargo check -p snarkos-node-bft-events --features test-helpers
+ 
+   lint-locktick:
+-    needs: [check-shared-refs, start-cpu-runners]
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 90
+     if: *fleet-if
+@@ -253,7 +224,6 @@ jobs:
+         with: *aleo-resources
+ 
+   test:
+-    needs: [check-shared-refs, start-cpu-runners]
+     permissions: { contents: read, actions: write }
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 90
+@@ -295,7 +265,6 @@ jobs:
+ 
+   # The node binary the devnet jobs run, built once per workflow run.
+   build-snarkos:
+-    needs: [check-shared-refs, start-cpu-runners]
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 60
+     if: *fleet-if
+@@ -324,12 +293,11 @@ jobs:
+   # loopback qdiscs outlive a job that is cancelled or whose box dies, so each
+   # entry clears them before it starts as well as after.
+   devnet:
+-    needs: [start-cpu-runners, build-snarkos]
++    needs: build-snarkos
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: ${{ matrix.timeout }}
+     if: >-
+       !cancelled() && needs.build-snarkos.result == 'success' &&
+-      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
+       github.repository == 'aleo-labs-protocol/snarkOS'
+     strategy:
+       fail-fast: false
+@@ -385,12 +353,11 @@ jobs:
+   # Slower devnets. On every push, on pull requests into a release branch, and
+   # on demand.
+   devnet-merge:
+-    needs: [start-cpu-runners, build-snarkos]
++    needs: build-snarkos
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: ${{ matrix.timeout }}
+     if: >-
+       !cancelled() && needs.build-snarkos.result == 'success' &&
+-      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
+       github.repository == 'aleo-labs-protocol/snarkOS' &&
+       (github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/'))
+     strategy:
+@@ -425,12 +392,11 @@ jobs:
+   # Devnets for releases only. On every push to a release branch, on pull
+   # requests into one, and on demand.
+   devnet-release:
+-    needs: [start-cpu-runners, build-snarkos]
++    needs: build-snarkos
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: ${{ matrix.timeout }}
+     if: >-
+       !cancelled() && needs.build-snarkos.result == 'success' &&
+-      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
+       github.repository == 'aleo-labs-protocol/snarkOS' &&
+       (github.event_name == 'workflow_dispatch' ||
+       startsWith(github.ref, 'refs/heads/release/') ||
+@@ -500,13 +46
+```
+
+**File**: `.github/workflows/fork-pr-runners.yml` (removed, +0/-40)
+```diff
+@@ -1,40 +0,0 @@
+-name: fork-pr-runners
+-
+-# Starts the self-hosted boxes for a pull request from a fork when its run
+-# starts. GitHub holds an outside contributor's run until a maintainer approves
+-# it.
+-#
+-# A fork's `pull_request` run gets no secrets, so its own start-runner job is
+-# skipped. GitHub runs this workflow from the default branch, with this
+-# repository's secrets. A fork's run fires `requested` before approval and
+-# `in_progress` after it.
+-#
+-# SECURITY: this workflow holds the runner role, which can change a box's user
+-# data. It must never check out or run the pull request's code. It must never
+-# put a `workflow_run` field into a `run:` script either: the fork controls its
+-# branch name, its commit messages and its workflow names.
+-on:
+-  workflow_run:
+-    workflows: [CI]
+-    types: [in_progress]
+-
+-permissions: {}
+-
+-jobs:
+-  start-runners:
+-    # A mirror receives this file by push; see ci.yml.
+-    if: >-
+-      github.repository == 'aleo-labs-protocol/snarkOS' &&
+-      github.event.workflow_run.event == 'pull_request' &&
+-      github.event.workflow_run.head_repository.full_name != github.repository
+-    # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
+-    uses: aleo-labs-protocol/gh-actions/.github/workflows/start-runner.yml@v2
+-    permissions: { id-token: write, contents: read, actions: read }
+-    secrets:
+-      runner_app_key: ${{ secrets.RUNNER_APP_KEY }}
+-    with:
+-      role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
+-      label: cpu
+-      # The same box share as ci.yml's start-cpu-runners.
+-      jobs-per-box: 2
+-      runner-app-id: ${{ vars.RUNNER_APP_ID }}
+```
+
+**File**: `CI.md` (modified, +7/-9)
+```diff
+@@ -12,9 +12,10 @@ Jobs run in one of two places:
+   cold. Their caches would take about half of the repository's 10 GB cache
+   limit and evict the test jobs' entries.
+ - **The self-hosted `cpu` fleet** for heavy jobs: clippy, the heavier
+-  crates' tests, the `snarkos` build and the devnets. `start-cpu-runners`
+-  starts the boxes the run needs; they stop themselves when idle. Each box
+-  keeps a persistent `target/` and sccache, so builds there are incremental.
++  crates' tests, the `snarkos` build and the devnets. The org's fleet starter
++  starts the boxes when GitHub queues their jobs; they stop themselves when
++  idle. Each box keeps a persistent `target/` and sccache, so builds there are
++  incremental.
+ 
+ ## Triggers
+ 
+@@ -31,7 +32,6 @@ a job marked "release" only on the third. The other jobs run on every event.
+ 
+ | Job | Runner | Trigger | Timeout (min) | What it runs |
+ |---|---|---|---|---|
+-| `start-cpu-runners` | hosted | all | | starts fleet boxes |
+ | `check-shared-refs` | hosted | all | | checks that each `aleo-labs-protocol/gh-actions` ref is a release tag, and that each matrix `name` axis lists the same names as its `include` |
+ | `fmt` | hosted | all | | `cargo fmt --check` on `FMT_TOOLCHAIN` |
+ | `deny` | hosted | all | | `cargo deny --workspace check bans licenses sources`, plus `advisories` everywhere but `staging`, whose advisories [`bump-advisories.yml`](.github/workflows/bump-advisories.yml) bumps nightly |
+@@ -63,8 +63,7 @@ A job with no timeout gets the GitHub default of six hours. Only hosted jobs
+ have none, and a hosted job holds no fleet box.
+ 
+ Protected branches require `ci-ok` alone. GitHub counts a skipped job as
+-passed for a required check, and a fleet job is skipped when
+-`start-cpu-runners` fails; `ci-ok` fails then.
++passed for a required check, so `ci-ok` checks each job's result itself.
+ 
+ A pull request that changes only Markdown files starts no run, so it gets no
+ `ci-ok` check. Where a branch rule requires `ci-ok`,
+@@ -120,9 +119,8 @@ To run the `.ci` scripts on macOS you may want to `brew install bash coreutils
+ ## Forks
+ 
+ A fork's pull request runs on the fleet once a team member approves its run.
+-The run gets no secrets, so `start-cpu-runners` is skipped;
+-`fork-pr-runners.yml` starts the boxes instead, and the fleet jobs accept the
+-skipped start.
++GitHub then queues its fleet jobs, and the fleet starter boots boxes for them
++as for any other run.
+ 
+ The fleet's `target/` and sccache persist between jobs, so an approved run can
+ affect later builds there. A pull request runs its own copy of `ci.yml`, so no
 ```
 
 ---
 
-### Incident Patch 2: `eb93cd9c` (2026-11-20)
-**Commit Message**: release-test: the sync legs run at once
+### Incident Patch 2: `2820b172` (2026-11-21)
+**Commit Message**: Remove the start-runner job and fork-pr-runners.yml
+
+The org's fleet starter now starts the self-hosted boxes when GitHub
+queues a fleet job, for any run, a fork's included
+(aleo-labs-protocol/aws-dev-infra#465). So ci.yml's start-cpu-runners
+goes, with the fork-pr-runners.yml companion that started boxes for
+approved fork runs.
+
+The fleet jobs no longer need check-shared-refs either. It was ahead of
+them only so a fork's run would reach in_progress and fire the
+companion's workflow_run event. The job still runs, and ci-ok still
+requires it. The fleet jobs keep their repository guard, so approved
+forks still run on the fleet, as before.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmNCVcscJqcHrimQFVE
+Claude-Session: https://claude.ai/code/session_01UYfmmMdw2sVR367ZdZ9CMB
 
-**File**: `.github/workflows/release-test.yml` (modified, +1/-1)
+**File**: `.github/workflows/ci.yml` (modified, +7/-44)
 ```diff
-@@ -104,7 +104,7 @@ jobs:
-       network: testnet
-       params: ${{ format('stockpile={0},rate=50,duration=120,min_inclusion=1,deploy_rate=0.2', inputs.stockpile) }}
+@@ -24,35 +24,10 @@ env:
+   CARGO_TERM_COLOR: always
  
--  # A saved ledger is this release's, for the next release's sync test. The sync host runs one at a time.
-+  # A saved ledger is this release's, for the next release's sync test. The sync host runs both legs at once.
-   sync-testnet:
-     needs: resolve
-     permissions:
+ # GitHub holds an outside contributor's pull request run until a maintainer
+-# approves it. A fork's run gets no secrets, so start-cpu-runners is skipped and
+-# fork-pr-runners.yml starts the boxes. The fleet jobs therefore accept a
+-# skipped start-cpu-runners, and run only in this repository, which alone may
+-# use the fleet.
+-#
+-# The fleet jobs also wait for check-shared-refs, a hosted job. GitHub reports
+-# a run as `in_progress`, and fires the `workflow_run` event that starts the
+-# boxes, only once none of its ready jobs is waiting for a runner. With no
+-# hosted job ahead of them, a fork's fleet jobs would wait for boxes that only
+-# that event starts.
++# approves it. The org's fleet starter boots the boxes when GitHub queues a
++# fleet job, from any run, a fork's included, so no job here starts them. The
++# fleet jobs run only in this repository, which alone may use the fleet.
+ jobs:
+-  start-cpu-runners:
+-    # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
+-    uses: aleo-labs-protocol/gh-actions/.github/workflows/start-runner.yml@v2
+-    permissions: { id-token: write, contents: read, actions: read }
+-    secrets:
+-      runner_app_key: ${{ secrets.RUNNER_APP_KEY }}
+-    with:
+-      role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
+-      label: cpu
+-      # Below the default of 3: snarkOS's jobs run ten minutes or more, so a
+-      # box absorbs fewer of them within the critical path. fork-pr-runners.yml
+-      # repeats this.
+-      jobs-per-box: 2
+-      runner-app-id: ${{ vars.RUNNER_APP_ID }}
+-    if: >-
+-      github.event.pull_request == null ||
+-      github.event.pull_request.head.repo.full_name == github.repository
+-
+   check-shared-refs:
+     runs-on: ubuntu-latest
+     steps:
+@@ -121,12 +96,9 @@ jobs:
+       - run: .github/merge-fixup.test.sh
+ 
+   lint:
+-    needs: [check-shared-refs, start-cpu-runners]
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 90
+     if: &fleet-if >-
+-      !cancelled() && needs.check-shared-refs.result == 'success' &&
+-      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
+       github.repository == 'aleo-labs-protocol/snarkOS'
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+@@ -145,7 +117,6 @@ jobs:
+       - run: cargo check -p snarkos-node-bft-events --features test-helpers
+ 
+   lint-locktick:
+-    needs: [check-shared-refs, start-cpu-runners]
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 90
+     if: *fleet-if
+@@ -253,7 +224,6 @@ jobs:
+         with: *aleo-resources
+ 
+   test:
+-    needs: [check-shared-refs, start-cpu-runners]
+     permissions: { contents: read, actions: write }
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 90
+@@ -295,7 +265,6 @@ jobs:
+ 
+   # The node binary the devnet jobs run, built once per workflow run.
+   build-snarkos:
+-    needs: [check-shared-refs, start-cpu-runners]
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 60
+     if: *fleet-if
+@@ -324,12 +293,11 @@ jobs:
+   # loopback qdiscs outlive a job that is cancelled or whose box dies, so each
+   # entry clears them before it starts as well as after.
+   devnet:
+-    needs: [start-cpu-runners, build-snarkos]
++    needs: build-snarkos
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: ${{ matrix.timeout }}
+     if: >-
+       !cancelled() && needs.build-snarkos.result == 'success' &&
+-      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
+       github.repository == 'aleo-labs-protocol/snarkOS'
+     strategy:
+       fail-fast: false
+@@ -385,12 +353,11 @@ jobs:
+   # Slower devnets. On every push, on pull requests into a release branch, and
+   # on demand.
+   devnet-merge:
+-    needs: [start-cpu-runners, build-snarkos]
++    needs: build-snarkos
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: ${{ matrix.timeout }}
+     if: >-
+       !cancelled() && needs.build-snarkos.result == 'success' &&
+-      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
+       github.repository == 'aleo-labs-protocol/snarkOS' &&
+       (github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/'))
+     strategy:
+@@ -425,12 +392,11 @@ jobs:
+   # Devnets for releases only. On every push to a release branch, on pull
+   # requests into one, and on demand.
+   devnet-release:
+-    needs: [start-cpu-runners, build-snarkos]
++    needs: build-snarkos
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: ${{ matrix.timeout }}
+     if: >-
+       !cancelled() && needs.build-snarkos.result == 'success' &&
+-      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
+       github.repository == 'aleo-labs-protocol/snarkOS' &&
+       (github.event_name == 'workflow_dispatch' ||
+       startsWith(github.ref, 'refs/heads/release/') ||
+@@ -500,13 +46
+```
+
+**File**: `.github/workflows/fork-pr-runners.yml` (removed, +0/-40)
+```diff
+@@ -1,40 +0,0 @@
+-name: fork-pr-runners
+-
+-# Starts the self-hosted boxes for a pull request from a fork when its run
+-# starts. GitHub holds an outside contributor's run until a maintainer approves
+-# it.
+-#
+-# A fork's `pull_request` run gets no secrets, so its own start-runner job is
+-# skipped. GitHub runs this workflow from the default branch, with this
+-# repository's secrets. A fork's run fires `requested` before approval and
+-# `in_progress` after it.
+-#
+-# SECURITY: this workflow holds the runner role, which can change a box's user
+-# data. It must never check out or run the pull request's code. It must never
+-# put a `workflow_run` field into a `run:` script either: the fork controls its
+-# branch name, its commit messages and its workflow names.
+-on:
+-  workflow_run:
+-    workflows: [CI]
+-    types: [in_progress]
+-
+-permissions: {}
+-
+-jobs:
+-  start-runners:
+-    # A mirror receives this file by push; see ci.yml.
+-    if: >-
+-      github.repository == 'aleo-labs-protocol/snarkOS' &&
+-      github.event.workflow_run.event == 'pull_request' &&
+-      github.event.workflow_run.head_repository.full_name != github.repository
+-    # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
+-    uses: aleo-labs-protocol/gh-actions/.github/workflows/start-runner.yml@v2
+-    permissions: { id-token: write, contents: read, actions: read }
+-    secrets:
+-      runner_app_key: ${{ secrets.RUNNER_APP_KEY }}
+-    with:
+-      role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
+-      label: cpu
+-      # The same box share as ci.yml's start-cpu-runners.
+-      jobs-per-box: 2
+-      runner-app-id: ${{ vars.RUNNER_APP_ID }}
+```
+
+**File**: `CI.md` (modified, +7/-9)
+```diff
+@@ -12,9 +12,10 @@ Jobs run in one of two places:
+   cold. Their caches would take about half of the repository's 10 GB cache
+   limit and evict the test jobs' entries.
+ - **The self-hosted `cpu` fleet** for heavy jobs: clippy, the heavier
+-  crates' tests, the `snarkos` build and the devnets. `start-cpu-runners`
+-  starts the boxes the run needs; they stop themselves when idle. Each box
+-  keeps a persistent `target/` and sccache, so builds there are incremental.
++  crates' tests, the `snarkos` build and the devnets. The org's fleet starter
++  starts the boxes when GitHub queues their jobs; they stop themselves when
++  idle. Each box keeps a persistent `target/` and sccache, so builds there are
++  incremental.
+ 
+ ## Triggers
+ 
+@@ -31,7 +32,6 @@ a job marked "release" only on the third. The other jobs run on every event.
+ 
+ | Job | Runner | Trigger | Timeout (min) | What it runs |
+ |---|---|---|---|---|
+-| `start-cpu-runners` | hosted | all | | starts fleet boxes |
+ | `check-shared-refs` | hosted | all | | checks that each `aleo-labs-protocol/gh-actions` ref is a release tag, and that each matrix `name` axis lists the same names as its `include` |
+ | `fmt` | hosted | all | | `cargo fmt --check` on `FMT_TOOLCHAIN` |
+ | `deny` | hosted | all | | `cargo deny --workspace check bans licenses sources`, plus `advisories` everywhere but `staging`, whose advisories [`bump-advisories.yml`](.github/workflows/bump-advisories.yml) bumps nightly |
+@@ -63,8 +63,7 @@ A job with no timeout gets the GitHub default of six hours. Only hosted jobs
+ have none, and a hosted job holds no fleet box.
+ 
+ Protected branches require `ci-ok` alone. GitHub counts a skipped job as
+-passed for a required check, and a fleet job is skipped when
+-`start-cpu-runners` fails; `ci-ok` fails then.
++passed for a required check, so `ci-ok` checks each job's result itself.
+ 
+ A pull request that changes only Markdown files starts no run, so it gets no
+ `ci-ok` check. Where a branch rule requires `ci-ok`,
+@@ -120,9 +119,8 @@ To run the `.ci` scripts on macOS you may want to `brew install bash coreutils
+ ## Forks
+ 
+ A fork's pull request runs on the fleet once a team member approves its run.
+-The run gets no secrets, so `start-cpu-runners` is skipped;
+-`fork-pr-runners.yml` starts the boxes instead, and the fleet jobs accept the
+-skipped start.
++GitHub then queues its fleet jobs, and the fleet starter boots boxes for them
++as for any other run.
+ 
+ The fleet's `target/` and sccache persist between jobs, so an approved run can
+ affect later builds there. A pull request runs its own copy of `ci.yml`, so no
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4739** (2026-11-20): Bump snarkVM to aleo-labs-protocol/snarkVM@7ba14e66b and remove the serial feature (@cbeck88)
-- **PR #4738** (2026-11-20): release-test: the sync legs run at once (@cbeck88)
-- **PR #4737** (2026-11-20): Give skipped devnet jobs a static name (@cbeck88)
-- **PR #4733** (2026-11-20): Restore the upgrade test's new-version check, and make the test faster (@cbeck88)
-- **PR #4732** (2026-11-20): Wait for the last scheduled consensus version, and trim the devnet test (@cbeck88)
-- **PR #4731** (2026-11-20): Run the fleet test entries 16 tests at a time (@cbeck88)
+- **PR #4751** (2026-11-21): CI: remove the start-runner job and fork-pr-runners.yml (@cbeck88)
+- **PR #4749** (closed): Deserialize snarkVM Data on the blocking pool in snarkOS (@cbeck88)
+- **PR #4748** (2026-11-21): Print the startup error chain without snarkvm::utilities::display_error (@cbeck88)
+- **PR #4746** (2026-11-21): Pass the expected errors to check_logs in the partial upgrade test (@cbeck88)
+- **PR #4742** (2026-11-20): Expect the errors of a consensus upgrade in the partial upgrade test (@cbeck88)
+- **PR #4740** (2026-11-20): Bump snarkVM to aleo-labs-protocol/snarkVM@7ba14e66b (@cbeck88)
 
 ---
 
@@ -2069,31 +2369,59 @@ Claude-Session: https://claude.ai/code/session_01UYfmmNCVcscJqcHrimQFVE
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in release-test.yml
+## X. Empirical Invariant Guard in ci.yml
 
 **RULE**:
-When implementing operations in `.github/workflows/release-test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `29eef2ff`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2875dee3`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-test.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  # A saved ledger is this release's, for the next release's sync test. The sync host runs both legs at once.
+# approves it. The org's fleet starter boots the boxes when GitHub queues a
+# fleet job, from any run, a fork's included, so no job here starts them. The
+# fleet jobs run only in this repository, which alone may use the fleet.
+    needs: build-snarkos
+    needs: build-snarkos
+    needs: build-snarkos
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  # A saved ledger is this release's, for the next release's sync test. The sync host runs one at a time.
+# approves it. A fork's run gets no secrets, so start-cpu-runners is skipped and
+# fork-pr-runners.yml starts the boxes. The fleet jobs therefore accept a
+# skipped start-cpu-runners, and run only in this repository, which alone may
+# use the fleet.
+#
+# The fleet jobs also wait for check-shared-refs, a hosted job. GitHub reports
+# a run as `in_progress`, and fires the `workflow_run` event that starts the
+# boxes, only once none of its ready jobs is waiting for a runner. With no
+# hosted job ahead of them, a fork's fleet jobs would wait for boxes that only
+# that event starts.
+  start-cpu-runners:
+    # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
+    uses: aleo-labs-protocol/gh-actions/.github/workflows/start-runner.yml@v2
+    permissions: { id-token: write, contents: read, actions: read }
+    secrets:
+      runner_app_key: ${{ secrets.RUNNER_APP_KEY }}
+    with:
+      role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
+      label: cpu
+      # Below the default of 3: snarkOS's jobs run ten minutes or more, so a
+      # box absorbs fewer of them within the critical path. fork-pr-runners.yml
+      # repeats this.
+      jobs-per-box: 2
+      runner-app-id: ${{ va
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `29eef2ff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2875dee3` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

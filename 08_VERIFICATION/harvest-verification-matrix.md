@@ -11855,3 +11855,7 @@
 | `CYCLE-20261121-LOVI` | `2026-11-21T17:28:08.238Z` | `XHToken/Spark-X2.6-4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md` | Yes (`db648929...`) |
 | `CYCLE-20261121-LVIS` | `2026-11-21T17:28:16.852Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9810` | Yes (`fec6135d...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T17:28:53.108Z` | `hf-atomicchat-inkling-2-mini-uncensored-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2BE66F2B` [Domain D] | Yes (`64ca3880...`) |
+| `CYCLE-20261121-37Z7` | `2026-11-21T17:41:46.147Z` | `nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md` | Yes (`6915a71c...`) |
+| `CYCLE-20261121-3APA` | `2026-11-21T17:41:49.678Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9811` | Yes (`1beefc20...`) |
+| `CYCLE-20261121-3H7V` | `2026-11-21T17:41:58.123Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8826` | Yes (`c1ef2640...`) |
+| `CYCLE-20261121-3JT1` | `2026-11-21T17:42:01.477Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9812` | Yes (`dc1d52a3...`) |

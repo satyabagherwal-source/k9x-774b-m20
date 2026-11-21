@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T01:08:38.492Z",
+  "timestamp": "2026-11-21T17:42:06.325Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-aleo-labs-protocol-snarkos-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [aleo-labs-protocol-snarkos-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T01:08:38.492Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T17:42:06.325Z`  
 > **Learning ID**: `LEARN-EVO-aleo-labs-protocol-snarkos-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 64%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 62%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from aleo-labs-protocol-snarkos-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `6a6a6a66`  
+> **Source Version**: `2875dee3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T01:08:28.364Z  
+> **Timestamp**: 2026-11-21T17:41:57.378Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T01:08:28.359Z  
+> **Harvest Timestamp**: 2026-11-21T17:41:57.372Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1902,52 +1902,470 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6a6a6a66` (2026-11-21)
-**Commit Message**: Merge pull request #4746 from aleo-labs-protocol/ci/partial-upgrade-check-logs-arg
+### Incident Patch 1: `2875dee3` (2026-11-21)
+**Commit Message**: Merge pull request #4751 from aleo-labs-protocol/ci/remove-start-runner
 
-**File**: `.ci/test_partial_upgrade.sh` (modified, +1/-1)
+CI: remove the start-runner job and fork-pr-runners.yml
+
+**File**: `.github/workflows/ci.yml` (modified, +7/-44)
 ```diff
-@@ -306,7 +306,7 @@ for ((node_index = penultimate_index; node_index < total_validators; node_index+
-   fi
- done
+@@ -24,35 +24,10 @@ env:
+   CARGO_TERM_COLOR: always
  
--if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "$expected_errors"; then
-+if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "" "$expected_errors"; then
-   exit 0
- else
-   exit 1
+ # GitHub holds an outside contributor's pull request run until a maintainer
+-# approves it. A fork's run gets no secrets, so start-cpu-runners is skipped and
+-# fork-pr-runners.yml starts the boxes. The fleet jobs therefore accept a
+-# skipped start-cpu-runners, and run only in this repository, which alone may
+-# use the fleet.
+-#
+-# The fleet jobs also wait for check-shared-refs, a hosted job. GitHub reports
+-# a run as `in_progress`, and fires the `workflow_run` event that starts the
+-# boxes, only once none of its ready jobs is waiting for a runner. With no
+-# hosted job ahead of them, a fork's fleet jobs would wait for boxes that only
+-# that event starts.
++# approves it. The org's fleet starter boots the boxes when GitHub queues a
++# fleet job, from any run, a fork's included, so no job here starts them. The
++# fleet jobs run only in this repository, which alone may use the fleet.
+ jobs:
+-  start-cpu-runners:
+-    # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
+-    uses: aleo-labs-protocol/gh-actions/.github/workflows/start-runner.yml@v2
+-    permissions: { id-token: write, contents: read, actions: read }
+-    secrets:
+-      runner_app_key: ${{ secrets.RUNNER_APP_KEY }}
+-    with:
+-      role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
+-      label: cpu
+-      # Below the default of 3: snarkOS's jobs run ten minutes or more, so a
+-      # box absorbs fewer of them within the critical path. fork-pr-runners.yml
+-      # repeats this.
+-      jobs-per-box: 2
+-      runner-app-id: ${{ vars.RUNNER_APP_ID }}
+-    if: >-
+-      github.event.pull_request == null ||
+-      github.event.pull_request.head.repo.full_name == github.repository
+-
+   check-shared-refs:
+     runs-on: ubuntu-latest
+     steps:
+@@ -121,12 +96,9 @@ jobs:
+       - run: .github/merge-fixup.test.sh
+ 
+   lint:
+-    needs: [check-shared-refs, start-cpu-runners]
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 90
+     if: &fleet-if >-
+-      !cancelled() && needs.check-shared-refs.result == 'success' &&
+-      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
+       github.repository == 'aleo-labs-protocol/snarkOS'
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+@@ -145,7 +117,6 @@ jobs:
+       - run: cargo check -p snarkos-node-bft-events --features test-helpers
+ 
+   lint-locktick:
+-    needs: [check-shared-refs, start-cpu-runners]
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 90
+     if: *fleet-if
+@@ -253,7 +224,6 @@ jobs:
+         with: *aleo-resources
+ 
+   test:
+-    needs: [check-shared-refs, start-cpu-runners]
+     permissions: { contents: read, actions: write }
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 90
+@@ -295,7 +265,6 @@ jobs:
+ 
+   # The node binary the devnet jobs run, built once per workflow run.
+   build-snarkos:
+-    needs: [check-shared-refs, start-cpu-runners]
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 60
+     if: *fleet-if
+@@ -324,12 +293,11 @@ jobs:
+   # loopback qdiscs outlive a job that is cancelled or whose box dies, so each
+   # entry clears them before it starts as well as after.
+   devnet:
+-    needs: [start-cpu-runners, build-snarkos]
++    needs: build-snarkos
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: ${{ matrix.timeout }}
+     if: >-
+       !cancelled() && needs.build-snarkos.result == 'success' &&
+-      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
+       github.repository == 'aleo-labs-protocol/snarkOS'
+     strategy:
+       fail-fast: false
+@@ -385,12 +353,11 @@ jobs:
+   # Slower devnets. On every push, on pull requests into a release branch, and
+   # on demand.
+   devnet-merge:
+-    needs: [start-cpu-runners, build-snarkos]
++    needs: build-snarkos
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: ${{ matrix.timeout }}
+     if: >-
+       !cancelled() && needs.build-snarkos.result == 'success' &&
+-      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
+       github.repository == 'aleo-labs-protocol/snarkOS' &&
+       (github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/'))
+     strategy:
+@@ -425,12 +392,11 @@ jobs:
+   # Devnets for releases only. On every push to a release branch, on pull
+   # requests into one, and on demand.
+   devnet-release:
+-    needs: [start-cpu-runners, build-snarkos]
++    needs: build-snarkos
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: ${{ matrix.timeout }}
+     if: >-
+       !cancelled() && needs.build-snarkos.result == 'success' &&
+-      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
+       github.repository == 'aleo-labs-protocol/snarkOS' &&
+       (github.event_name == 'workflow_dispatch' ||
+       startsWith(github.ref, 'refs/heads/release/') ||
+@@ -500,13 +46
+```
+
+**File**: `.github/workflows/fork-pr-runners.yml` (removed, +0/-40)
+```diff
+@@ -1,40 +0,0 @@
+-name: fork-pr-runners
+-
+-# Starts the self-hosted boxes for a pull request from a fork when its run
+-# starts. GitHub holds an outside contributor's run until a maintainer approves
+-# it.
+-#
+-# A fork's `pull_request` run gets no secrets, so its own start-runner job is
+-# skipped. GitHub runs this workflow from the default branch, with this
+-# repository's secrets. A fork's run fires `requested` before approval and
+-# `in_progress` after it.
+-#
+-# SECURITY: this workflow holds the runner role, which can change a box's user
+-# data. It must never check out or run the pull request's code. It must never
+-# put a `workflow_run` field into a `run:` script either: the fork controls its
+-# branch name, its commit messages and its workflow names.
+-on:
+-  workflow_run:
+-    workflows: [CI]
+-    types: [in_progress]
+-
+-permissions: {}
+-
+-jobs:
+-  start-runners:
+-    # A mirror receives this file by push; see ci.yml.
+-    if: >-
+-      github.repository == 'aleo-labs-protocol/snarkOS' &&
+-      github.event.workflow_run.event == 'pull_request' &&
+-      github.event.workflow_run.head_repository.full_name != github.repository
+-    # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
+-    uses: aleo-labs-protocol/gh-actions/.github/workflows/start-runner.yml@v2
+-    permissions: { id-token: write, contents: read, actions: read }
+-    secrets:
+-      runner_app_key: ${{ secrets.RUNNER_APP_KEY }}
+-    with:
+-      role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
+-      label: cpu
+-      # The same box share as ci.yml's start-cpu-runners.
+-      jobs-per-box: 2
+-      runner-app-id: ${{ vars.RUNNER_APP_ID }}
+```
+
+**File**: `CI.md` (modified, +7/-9)
+```diff
+@@ -12,9 +12,10 @@ Jobs run in one of two places:
+   cold. Their caches would take about half of the repository's 10 GB cache
+   limit and evict the test jobs' entries.
+ - **The self-hosted `cpu` fleet** for heavy jobs: clippy, the heavier
+-  crates' tests, the `snarkos` build and the devnets. `start-cpu-runners`
+-  starts the boxes the run needs; they stop themselves when idle. Each box
+-  keeps a persistent `target/` and sccache, so builds there are incremental.
++  crates' tests, the `snarkos` build and the devnets. The org's fleet starter
++  starts the boxes when GitHub queues their jobs; they stop themselves when
++  idle. Each box keeps a persistent `target/` and sccache, so builds there are
++  incremental.
+ 
+ ## Triggers
+ 
+@@ -31,7 +32,6 @@ a job marked "release" only on the third. The other jobs run on every event.
+ 
+ | Job | Runner | Trigger | Timeout (min) | What it runs |
+ |---|---|---|---|---|
+-| `start-cpu-runners` | hosted | all | | starts fleet boxes |
+ | `check-shared-refs` | hosted | all | | checks that each `aleo-labs-protocol/gh-actions` ref is a release tag, and that each matrix `name` axis lists the same names as its `include` |
+ | `fmt` | hosted | all | | `cargo fmt --check` on `FMT_TOOLCHAIN` |
+ | `deny` | hosted | all | | `cargo deny --workspace check bans licenses sources`, plus `advisories` everywhere but `staging`, whose advisories [`bump-advisories.yml`](.github/workflows/bump-advisories.yml) bumps nightly |
+@@ -63,8 +63,7 @@ A job with no timeout gets the GitHub default of six hours. Only hosted jobs
+ have none, and a hosted job holds no fleet box.
+ 
+ Protected branches require `ci-ok` alone. GitHub counts a skipped job as
+-passed for a required check, and a fleet job is skipped when
+-`start-cpu-runners` fails; `ci-ok` fails then.
++passed for a required check, so `ci-ok` checks each job's result itself.
+ 
+ A pull request that changes only Markdown files starts no run, so it gets no
+ `ci-ok` check. Where a branch rule requires `ci-ok`,
+@@ -120,9 +119,8 @@ To run the `.ci` scripts on macOS you may want to `brew install bash coreutils
+ ## Forks
+ 
+ A fork's pull request runs on the fleet once a team member approves its run.
+-The run gets no secrets, so `start-cpu-runners` is skipped;
+-`fork-pr-runners.yml` starts the boxes instead, and the fleet jobs accept the
+-skipped start.
++GitHub then queues its fleet jobs, and the fleet starter boots boxes for them
++as for any other run.
+ 
+ The fleet's `target/` and sccache persist between jobs, so an approved run can
+ affect later builds there. A pull request runs its own copy of `ci.yml`, so no
 ```
 
 ---
 
-### Incident Patch 2: `8e3690db` (2026-11-20)
-**Commit Message**: Pass the expected errors in the argument check_logs reads them from
+### Incident Patch 2: `2820b172` (2026-11-21)
+**Commit Message**: Remove the start-runner job and fork-pr-runners.yml
 
-The seventh argument holds the expected errors; the sixth is a start time.
+The org's fleet starter now starts the self-hosted boxes when GitHub
+queues a fleet job, for any run, a fork's included
+(aleo-labs-protocol/aws-dev-infra#465). So ci.yml's start-cpu-runners
+goes, with the fork-pr-runners.yml companion that started boxes for
+approved fork runs.
+
+The fleet jobs no longer need check-shared-refs either. It was ahead of
+them only so a fork's run would reach in_progress and fire the
+companion's workflow_run event. The job still runs, and ci-ok still
+requires it. The fleet jobs keep their repository guard, so approved
+forks still run on the fleet, as before.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmLGgpejAr8wqRMCv45
+Claude-Session: https://claude.ai/code/session_01UYfmmMdw2sVR367ZdZ9CMB
 
-**File**: `.ci/test_partial_upgrade.sh` (modified, +1/-1)
+**File**: `.github/workflows/ci.yml` (modified, +7/-44)
 ```diff
-@@ -306,7 +306,7 @@ for ((node_index = penultimate_index; node_index < total_validators; node_index+
-   fi
- done
+@@ -24,35 +24,10 @@ env:
+   CARGO_TERM_COLOR: always
  
--if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "$expected_errors"; then
-+if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "" "$expected_errors"; then
-   exit 0
- else
-   exit 1
+ # GitHub holds an outside contributor's pull request run until a maintainer
+-# approves it. A fork's run gets no secrets, so start-cpu-runners is skipped and
+-# fork-pr-runners.yml starts the boxes. The fleet jobs therefore accept a
+-# skipped start-cpu-runners, and run only in this repository, which alone may
+-# use the fleet.
+-#
+-# The fleet jobs also wait for check-shared-refs, a hosted job. GitHub reports
+-# a run as `in_progress`, and fires the `workflow_run` event that starts the
+-# boxes, only once none of its ready jobs is waiting for a runner. With no
+-# hosted job ahead of them, a fork's fleet jobs would wait for boxes that only
+-# that event starts.
++# approves it. The org's fleet starter boots the boxes when GitHub queues a
++# fleet job, from any run, a fork's included, so no job here starts them. The
++# fleet jobs run only in this repository, which alone may use the fleet.
+ jobs:
+-  start-cpu-runners:
+-    # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
+-    uses: aleo-labs-protocol/gh-actions/.github/workflows/start-runner.yml@v2
+-    permissions: { id-token: write, contents: read, actions: read }
+-    secrets:
+-      runner_app_key: ${{ secrets.RUNNER_APP_KEY }}
+-    with:
+-      role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
+-      label: cpu
+-      # Below the default of 3: snarkOS's jobs run ten minutes or more, so a
+-      # box absorbs fewer of them within the critical path. fork-pr-runners.yml
+-      # repeats this.
+-      jobs-per-box: 2
+-      runner-app-id: ${{ vars.RUNNER_APP_ID }}
+-    if: >-
+-      github.event.pull_request == null ||
+-      github.event.pull_request.head.repo.full_name == github.repository
+-
+   check-shared-refs:
+     runs-on: ubuntu-latest
+     steps:
+@@ -121,12 +96,9 @@ jobs:
+       - run: .github/merge-fixup.test.sh
+ 
+   lint:
+-    needs: [check-shared-refs, start-cpu-runners]
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 90
+     if: &fleet-if >-
+-      !cancelled() && needs.check-shared-refs.result == 'success' &&
+-      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
+       github.repository == 'aleo-labs-protocol/snarkOS'
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+@@ -145,7 +117,6 @@ jobs:
+       - run: cargo check -p snarkos-node-bft-events --features test-helpers
+ 
+   lint-locktick:
+-    needs: [check-shared-refs, start-cpu-runners]
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 90
+     if: *fleet-if
+@@ -253,7 +224,6 @@ jobs:
+         with: *aleo-resources
+ 
+   test:
+-    needs: [check-shared-refs, start-cpu-runners]
+     permissions: { contents: read, actions: write }
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 90
+@@ -295,7 +265,6 @@ jobs:
+ 
+   # The node binary the devnet jobs run, built once per workflow run.
+   build-snarkos:
+-    needs: [check-shared-refs, start-cpu-runners]
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 60
+     if: *fleet-if
+@@ -324,12 +293,11 @@ jobs:
+   # loopback qdiscs outlive a job that is cancelled or whose box dies, so each
+   # entry clears them before it starts as well as after.
+   devnet:
+-    needs: [start-cpu-runners, build-snarkos]
++    needs: build-snarkos
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: ${{ matrix.timeout }}
+     if: >-
+       !cancelled() && needs.build-snarkos.result == 'success' &&
+-      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
+       github.repository == 'aleo-labs-protocol/snarkOS'
+     strategy:
+       fail-fast: false
+@@ -385,12 +353,11 @@ jobs:
+   # Slower devnets. On every push, on pull requests into a release branch, and
+   # on demand.
+   devnet-merge:
+-    needs: [start-cpu-runners, build-snarkos]
++    needs: build-snarkos
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: ${{ matrix.timeout }}
+     if: >-
+       !cancelled() && needs.build-snarkos.result == 'success' &&
+-      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
+       github.repository == 'aleo-labs-protocol/snarkOS' &&
+       (github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/'))
+     strategy:
+@@ -425,12 +392,11 @@ jobs:
+   # Devnets for releases only. On every push to a release branch, on pull
+   # requests into one, and on demand.
+   devnet-release:
+-    needs: [start-cpu-runners, build-snarkos]
++    needs: build-snarkos
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: ${{ matrix.timeout }}
+     if: >-
+       !cancelled() && needs.build-snarkos.result == 'success' &&
+-      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
+       github.repository == 'aleo-labs-protocol/snarkOS' &&
+       (github.event_name == 'workflow_dispatch' ||
+       startsWith(github.ref, 'refs/heads/release/') ||
+@@ -500,13 +46
+```
+
+**File**: `.github/workflows/fork-pr-runners.yml` (removed, +0/-40)
+```diff
+@@ -1,40 +0,0 @@
+-name: fork-pr-runners
+-
+-# Starts the self-hosted boxes for a pull request from a fork when its run
+-# starts. GitHub holds an outside contributor's run until a maintainer approves
+-# it.
+-#
+-# A fork's `pull_request` run gets no secrets, so its own start-runner job is
+-# skipped. GitHub runs this workflow from the default branch, with this
+-# repository's secrets. A fork's run fires `requested` before approval and
+-# `in_progress` after it.
+-#
+-# SECURITY: this workflow holds the runner role, which can change a box's user
+-# data. It must never check out or run the pull request's code. It must never
+-# put a `workflow_run` field into a `run:` script either: the fork controls its
+-# branch name, its commit messages and its workflow names.
+-on:
+-  workflow_run:
+-    workflows: [CI]
+-    types: [in_progress]
+-
+-permissions: {}
+-
+-jobs:
+-  start-runners:
+-    # A mirror receives this file by push; see ci.yml.
+-    if: >-
+-      github.repository == 'aleo-labs-protocol/snarkOS' &&
+-      github.event.workflow_run.event == 'pull_request' &&
+-      github.event.workflow_run.head_repository.full_name != github.repository
+-    # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
+-    uses: aleo-labs-protocol/gh-actions/.github/workflows/start-runner.yml@v2
+-    permissions: { id-token: write, contents: read, actions: read }
+-    secrets:
+-      runner_app_key: ${{ secrets.RUNNER_APP_KEY }}
+-    with:
+-      role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
+-      label: cpu
+-      # The same box share as ci.yml's start-cpu-runners.
+-      jobs-per-box: 2
+-      runner-app-id: ${{ vars.RUNNER_APP_ID }}
+```
+
+**File**: `CI.md` (modified, +7/-9)
+```diff
+@@ -12,9 +12,10 @@ Jobs run in one of two places:
+   cold. Their caches would take about half of the repository's 10 GB cache
+   limit and evict the test jobs' entries.
+ - **The self-hosted `cpu` fleet** for heavy jobs: clippy, the heavier
+-  crates' tests, the `snarkos` build and the devnets. `start-cpu-runners`
+-  starts the boxes the run needs; they stop themselves when idle. Each box
+-  keeps a persistent `target/` and sccache, so builds there are incremental.
++  crates' tests, the `snarkos` build and the devnets. The org's fleet starter
++  starts the boxes when GitHub queues their jobs; they stop themselves when
++  idle. Each box keeps a persistent `target/` and sccache, so builds there are
++  incremental.
+ 
+ ## Triggers
+ 
+@@ -31,7 +32,6 @@ a job marked "release" only on the third. The other jobs run on every event.
+ 
+ | Job | Runner | Trigger | Timeout (min) | What it runs |
+ |---|---|---|---|---|
+-| `start-cpu-runners` | hosted | all | | starts fleet boxes |
+ | `check-shared-refs` | hosted | all | | checks that each `aleo-labs-protocol/gh-actions` ref is a release tag, and that each matrix `name` axis lists the same names as its `include` |
+ | `fmt` | hosted | all | | `cargo fmt --check` on `FMT_TOOLCHAIN` |
+ | `deny` | hosted | all | | `cargo deny --workspace check bans licenses sources`, plus `advisories` everywhere but `staging`, whose advisories [`bump-advisories.yml`](.github/workflows/bump-advisories.yml) bumps nightly |
+@@ -63,8 +63,7 @@ A job with no timeout gets the GitHub default of six hours. Only hosted jobs
+ have none, and a hosted job holds no fleet box.
+ 
+ Protected branches require `ci-ok` alone. GitHub counts a skipped job as
+-passed for a required check, and a fleet job is skipped when
+-`start-cpu-runners` fails; `ci-ok` fails then.
++passed for a required check, so `ci-ok` checks each job's result itself.
+ 
+ A pull request that changes only Markdown files starts no run, so it gets no
+ `ci-ok` check. Where a branch rule requires `ci-ok`,
+@@ -120,9 +119,8 @@ To run the `.ci` scripts on macOS you may want to `brew install bash coreutils
+ ## Forks
+ 
+ A fork's pull request runs on the fleet once a team member approves its run.
+-The run gets no secrets, so `start-cpu-runners` is skipped;
+-`fork-pr-runners.yml` starts the boxes instead, and the fleet jobs accept the
+-skipped start.
++GitHub then queues its fleet jobs, and the fleet starter boots boxes for them
++as for any other run.
+ 
+ The fleet's `target/` and sccache persist between jobs, so an approved run can
+ affect later builds there. A pull request runs its own copy of `ci.yml`, so no
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4751** (2026-11-21): CI: remove the start-runner job and fork-pr-runners.yml (@cbeck88)
+- **PR #4749** (closed): Deserialize snarkVM Data on the blocking pool in snarkOS (@cbeck88)
+- **PR #4748** (2026-11-21): Print the startup error chain without snarkvm::utilities::display_error (@cbeck88)
 - **PR #4746** (2026-11-21): Pass the expected errors to check_logs in the partial upgrade test (@cbeck88)
 - **PR #4742** (2026-11-20): Expect the errors of a consensus upgrade in the partial upgrade test (@cbeck88)
 - **PR #4740** (2026-11-20): Bump snarkVM to aleo-labs-protocol/snarkVM@7ba14e66b (@cbeck88)
-- **PR #4739** (2026-11-20): Bump snarkVM to aleo-labs-protocol/snarkVM@7ba14e66b and remove the serial feature (@cbeck88)
-- **PR #4738** (2026-11-20): release-test: the sync legs run at once (@cbeck88)
-- **PR #4737** (2026-11-20): Give skipped devnet jobs a static name (@cbeck88)
 
 ---
 
@@ -1967,31 +2385,59 @@ Claude-Session: https://claude.ai/code/session_01UYfmmLGgpejAr8wqRMCv45
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in test_partial_upgrade.sh
+## X. Empirical Invariant Guard in ci.yml
 
 **RULE**:
-When implementing operations in `.ci/test_partial_upgrade.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6a6a6a66`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2875dee3`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.ci/test_partial_upgrade.sh`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "" "$expected_errors"; then
+# approves it. The org's fleet starter boots the boxes when GitHub queues a
+# fleet job, from any run, a fork's included, so no job here starts them. The
+# fleet jobs run only in this repository, which alone may use the fleet.
+    needs: build-snarkos
+    needs: build-snarkos
+    needs: build-snarkos
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "$expected_errors"; then
+# approves it. A fork's run gets no secrets, so start-cpu-runners is skipped and
+# fork-pr-runners.yml starts the boxes. The fleet jobs therefore accept a
+# skipped start-cpu-runners, and run only in this repository, which alone may
+# use the fleet.
+#
+# The fleet jobs also wait for check-shared-refs, a hosted job. GitHub reports
+# a run as `in_progress`, and fires the `workflow_run` event that starts the
+# boxes, only once none of its ready jobs is waiting for a runner. With no
+# hosted job ahead of them, a fork's fleet jobs would wait for boxes that only
+# that event starts.
+  start-cpu-runners:
+    # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
+    uses: aleo-labs-protocol/gh-actions/.github/workflows/start-runner.yml@v2
+    permissions: { id-token: write, contents: read, actions: read }
+    secrets:
+      runner_app_key: ${{ secrets.RUNNER_APP_KEY }}
+    with:
+      role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
+      label: cpu
+      # Below the default of 3: snarkOS's jobs run ten minutes or more, so a
+      # box absorbs fewer of them within the critical path. fork-pr-runners.yml
+      # repeats this.
+      jobs-per-box: 2
+      runner-app-id: ${{ va
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6a6a6a66` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2875dee3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T17:28:54.969Z",
+  "last_updated": "2026-11-21T17:42:06.888Z",
   "total_verified_learnings": 9061,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23178,
+  "total_items": 23183,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112245,10 +112245,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-technical-construction-intelligence-dragonflydb-dragonfly-.md",
       "title": "Technical Construction Intelligence: dragonflydb/dragonfly Core Invariants",
       "repository": "dragonflydb/dragonfly",
-      "source_version": "db656d41",
-      "content_hash": "7307de6472366f107580d4bab513883c51c6072fd9657adeb50e678e5126e30b",
+      "source_version": "66de9e68",
+      "content_hash": "fc0aee7dcf5969d7da4e26071425a132cf763352d74f4489f7d76862e4d45fb1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T12:15:29.642Z"
+      "persisted_at": "2026-11-21T17:42:01.851Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly",
@@ -112257,10 +112257,10 @@
       "relative_path": "08_VERIFICATION/dragonflydb-dragonfly-verification-protocol-empirical-defect-shield-for-dragonfl.md",
       "title": "Verification Protocol: Empirical Defect Shield for dragonflydb/dragonfly",
       "repository": "dragonflydb/dragonfly",
-      "source_version": "db656d41",
-      "content_hash": "b329e974fc38c67362eca668e8bd2ca6061b1092f8cf296545f00e2ec4f7cc56",
+      "source_version": "66de9e68",
+      "content_hash": "7df86512a464a4e42a47a663a32a588ce8684efae7f18224c4e62a6e73979b21",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T12:15:29.760Z"
+      "persisted_at": "2026-11-21T17:42:02.012Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "ffa93916",
-      "content_hash": "885479f8f7ac4f69e77a17e71190ceb981970d99e1e78cdcba7d047aee4eeebf",
+      "source_version": "2875dee3",
+      "content_hash": "f7a78f08b646913d46183eef548062956ea2485c1ee60aaf1e945540691b5e14",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T13:30:40.047Z"
+      "persisted_at": "2026-11-21T17:41:58.507Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
+      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "ffa93916",
-      "content_hash": "cded181586abf6114a8337c4ad30b32cdf7bc1ceb7bcc3599e7a99550afc451e",
+      "source_version": "2875dee3",
+      "content_hash": "55f05e6ffe9455cfd1497375ba60e252f71008f430735009a78a82ff3bbbc038",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T13:30:40.317Z"
+      "persisted_at": "2026-11-21T17:41:58.811Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -215842,13 +215842,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "ffa93916",
-      "content_hash": "a1cdc9c07f8a58e82a58209d5fecbab942cd50584fda5b7124777eb7352a21db",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "2875dee3",
+      "content_hash": "c1ef264025a4a50ce160fd774557f35969be02e131fb8e3c5c34e52e15767de4",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215946,7 +215946,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T13:30:39.488Z",
+      "verified_at": "2026-11-21T17:41:57.915Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238554,8 +238554,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "db656d41",
-      "content_hash": "50ee7c925cf99740185f455805d9d095f2732f7a78f9ba9776d07bb111e21b6a",
+      "source_version": "66de9e68",
+      "content_hash": "dc1d52a31c2c46c9ecd04c66890772bde3e43ed13a2f7598c6d3899d99b030ed",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -238583,6 +238583,11 @@
           "number": 9567,
           "title": "reply with RESP3 maps and sets in search commands",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9812,
+          "title": "correct connection replies and client tracking",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238590,7 +238595,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T12:15:29.149Z",
+      "verified_at": "2026-11-21T17:42:01.270Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -255872,9 +255877,9 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "7d3a8e996265f2428b877f1bb9b1d3aeaeb4bd15f61e008afe3cef4e20fad812",
+      "content_hash": "7c4a6459c1a573e811e83af3de716b6e5b72f4d4c860910822dd3339111fc3a9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T01:08:38.761Z"
+      "persisted_at": "2026-11-21T17:42:06.599Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea",
@@ -255884,9 +255889,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol-snarkos-learnings",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "6597ac24f9d2bbbd356bdf3e3d77e2c302fcd625a1020c94b0ded9084569e97e",
+      "content_hash": "829fb4a3d00e0eadf41f23d68ed86e003a9b0ec810e73f44e4648ff9c2faa1ec",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T01:08:38.910Z"
+      "persisted_at": "2026-11-21T17:42:06.888Z"
     },
     "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and": {
       "item_id": "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and",
@@ -264183,14 +264188,19 @@
       "slug": "ratatui-ratatui",
       "platform": "github",
       "source_url": "https://github.com/ratatui/ratatui",
-      "source_version": "5c1a8cd5",
-      "content_hash": "a573b9326afc57b84dfb0b82f23b93e7b56ad8efbc7186418812c9d9f804250b",
+      "source_version": "29196825",
+      "content_hash": "1beefc20d35f382c419fe9ee720dcf237c67cb20b2c3bcc777bd8fb5ad6a55ca",
       "dossier_path": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "promoted_rules": [
         {
           "number": 8824,
           "title": "build(deps): bump crate-ci/typos from 1.52.0 to 1.52.2",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9811,
+          "title": "split horizontal value text by display width",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -264199,7 +264209,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T06:32:30.412Z",
+      "verified_at": "2026-11-21T17:41:49.458Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -264241,10 +264251,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ratatui-ratatui-architecture-intelligence-ratatui-ratatui-core-invariants.md",
       "title": "Architecture Intelligence: ratatui/ratatui Core Invariants",
       "repository": "ratatui/ratatui",
-      "source_version": "5c1a8cd5",
-      "content_hash": "c76a15ecc2d1056bb4890b12b0f39cb90294c776ceff3e572c676112b177101a",
+      "source_version": "29196825",
+      "content_hash": "6f599d9091f24633b6bdc7febf544a2df8352653c21305175ec97e5a1a78aca0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T06:32:31.140Z"
+      "persisted_at": "2026-11-21T17:41:50.071Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ratatui-ratatui": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ratatui-ratatui",
@@ -264253,10 +264263,10 @@
       "relative_path": "08_VERIFICATION/ratatui-ratatui-verification-protocol-empirical-defect-shield-for-ratatui-ratatu.md",
       "title": "Verification Protocol: Empirical Defect Shield for ratatui/ratatui",
       "repository": "ratatui/ratatui",
-      "source_version": "5c1a8cd5",
-      "content_hash": "d898f629fc3a04d3c4df68c33d555c280633771c86aca8aa1f867a4c966036c0",
+      "source_version": "29196825",
+      "content_hash": "9f21f9b95ed6cf49e00f8abd2512dc93b60b993a6c90fc588b50ba5e5aa2b455",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:32:31.332Z"
+      "persisted_at": "2026-11-21T17:41:50.245Z"
     },
     "rule-8825": {
       "learning_id": "rule-8825",
@@ -264290,37 +264300,37 @@
       "rule_number": 8826,
       "title": "Empirical Invariant Guard in ci.yml",
       "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "811fe8b4",
+      "source_version": "2875dee3",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-20T05:21:08.773Z"
+      "verified_at": "2026-11-21T17:41:57.915Z"
     },
     "candidate_directive-empirical-invariant-guard-in-ci-yml": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-ci-yml",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-724E-empirical-invariant-guard-in-ci-yml.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3NMT-empirical-invariant-guard-in-ci-yml.md",
       "title": "Empirical Invariant Guard in ci.yml",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "35e4becb8662bc4b476a94e6b574534454932db2d1c3f986e912acbb1a62f5b7",
+      "content_hash": "e53972e7f7e2bba61c257b9b7b0eb877c6757d57b1a9465d32f32463f9f88843",
       "domain_letter": "D",
-      "persisted_at": "2026-11-20T05:21:15.138Z"
+      "persisted_at": "2026-11-21T17:42:06.441Z"
     },
     "agent_contract-agent-contract-aleo-labs-protocol-snarkos-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-aleo-labs-protocol-snarkos-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/provablehq-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-speciali.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/aleo-labs-protocol-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-.md",
       "title": "Agent Contract: aleo-labs-protocol/snarkOS Autonomous Specialist Persona",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "ffa93916",
-      "content_hash": "dbce1c78c655899741d02f4a99afff7750c8bceeeab3ceedc995860cea774d4d",
+      "source_version": "2875dee3",
+      "content_hash": "cc8260058c399ec0f3319745bd1f427839c6933db31589b2d93652fd03370f2f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T13:30:40.193Z"
+      "persisted_at": "2026-11-21T17:41:58.673Z"
     },
     "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
@@ -264330,9 +264340,9 @@
       "title": "Architecture Intelligence: ratatui-ratatui-learnings Core Invariants",
       "repository": "ratatui-ratatui-learnings",
       "source_version": "HEAD",
-      "content_hash": "297eba7c7e0e408e6b35d1629fa37dc6b59a2563157125adac49f4fb577f2636",
+      "content_hash": "a636acca72b782663552c434db5e679062086a2eebeb2eafd9e37a22516338fa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T06:32:44.511Z"
+      "persisted_at": "2026-11-21T17:42:05.431Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ratatui-ratatui-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ratatui-ratatui-learnings",
@@ -264342,9 +264352,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ratatui-ratatui-learnings",
       "repository": "ratatui-ratatui-learnings",
       "source_version": "HEAD",
-      "content_hash": "950cc316cd4e3a9cb4e114ec1d8601d40b5627cdb928922d585e26821bbb0711",
+      "content_hash": "67ae8faf7c5d20c57a8f421cb255d1345350d20c85c5a4e76e1a7e3429fa7e9e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:32:44.720Z"
+      "persisted_at": "2026-11-21T17:42:05.597Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants",
@@ -269029,9 +269039,9 @@
       "title": "Agent Contract: aleo-labs-protocol-snarkos-learnings Autonomous Specialist Persona",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "b3d146af5b4463f2219eeec3e1072f1afdc0a0824a2d11e0f2c7dc5552dccc4d",
+      "content_hash": "c969ef5586d0c8d618af8644767622d195c4358c2f9e6dd44992c1d7d680bb0b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T20:41:48.663Z"
+      "persisted_at": "2026-11-21T17:42:06.754Z"
     },
     "learn-github-cypress-io-cypress": {
       "learning_id": "learn-github-cypress-io-cypress",
@@ -278954,7 +278964,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
       "source_version": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
-      "content_hash": "05b3a2c91c8f79c8d9cdb1c635b559d3135b82afe16c71e12e0dda04f4226576",
+      "content_hash": "6915a71c231d6e7e15ca4ea2fc22f8c7f91eb9a7124447630a1d92f8d68d69c0",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md",
       "promoted_rules": [],
@@ -278963,7 +278973,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T19:12:16.816Z",
+      "verified_at": "2026-11-21T17:41:45.912Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -278980,9 +278990,9 @@
       "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB Core Invariants",
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
       "source_version": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
-      "content_hash": "c38722dd1c10ad24946dc0ef95dd138dc5717b106657e4512fd6978175693c00",
+      "content_hash": "c0e7f6a1cbfee0ada99400459018f038306b3b44ae5517dfcd88cc5f13491866",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T19:12:17.117Z"
+      "persisted_at": "2026-11-21T17:41:46.348Z"
     },
     "rule-9036": {
       "learning_id": "rule-9036",
@@ -279018,9 +279028,9 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings Core Invariants",
       "repository": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings",
       "source_version": "HEAD",
-      "content_hash": "a8ee0cc8a95bd17670c516aad45896526c0bddd5ed1f3de9185593970c1d47fd",
+      "content_hash": "9a6112aa7c32108f7f48c89d4c10dc99acf7c520f27e24e3bc0cbfe74cd04fe2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T19:12:35.473Z"
+      "persisted_at": "2026-11-21T17:42:05.947Z"
     },
     "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-learnings-core-invar": {
       "item_id": "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-learnings-core-invar",
@@ -314967,6 +314977,70 @@
       "content_hash": "9da9c2d94a7d4cad36271af7ca31f2df896a7bf1647c4fb1880d51458fcc48f1",
       "domain_letter": "D",
       "persisted_at": "2026-11-21T17:28:53.436Z"
+    },
+    "rule-9811": {
+      "learning_id": "rule-9811",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9811,
+      "title": "split horizontal value text by display width",
+      "source_url": "https://github.com/ratatui/ratatui",
+      "source_version": "29196825",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T17:41:49.458Z"
+    },
+    "candidate_directive-split-horizontal-value-text-by-display-width": {
+      "item_id": "candidate_directive-split-horizontal-value-text-by-display-width",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3AVK-split-horizontal-value-text-by-display-width.md",
+      "title": "split horizontal value text by display width",
+      "repository": "ratatui/ratatui",
+      "source_version": "29196825",
+      "content_hash": "aa11b0fd9b9f13adfeba9b493208cd2251c019257962dd4881fa06abd33d2a25",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T17:41:49.905Z"
+    },
+    "rule-9812": {
+      "learning_id": "rule-9812",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9812,
+      "title": "correct connection replies and client tracking",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "66de9e68",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T17:42:01.270Z"
+    },
+    "candidate_directive-correct-connection-replies-and-client-tracking": {
+      "item_id": "candidate_directive-correct-connection-replies-and-client-tracking",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3JYV-correct-connection-replies-and-client-tracking.md",
+      "title": "correct connection replies and client tracking",
+      "repository": "dragonflydb/dragonfly",
+      "source_version": "66de9e68",
+      "content_hash": "e1a4db9d2f2b6895d2b25b29f1d8ba3f5945a3f4650f32eb24b79f1fc7d4ae2a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T17:42:01.691Z"
+    },
+    "candidate_directive-barchart-split-horizontal-value-text-by-display-width": {
+      "item_id": "candidate_directive-barchart-split-horizontal-value-text-by-display-width",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3MQ3-barchart-split-horizontal-value-text-by-display-width.md",
+      "title": "barchart): split horizontal value text by display width",
+      "repository": "ratatui-ratatui-learnings",
+      "source_version": "HEAD",
+      "content_hash": "acdc6c6405757a5ca5dd262830440449a0500e8781f1a236295daef41d145ffb",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T17:42:05.260Z"
     }
   },
   "ai-builder-brain": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T17:28:54.739Z",
+  "last_updated": "2026-11-21T17:42:06.599Z",
   "total_records": 2266,
   "domains": {
     "A": {
@@ -8099,8 +8099,8 @@
       "title": "Technical Construction Intelligence: dragonflydb/dragonfly Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-technical-construction-intelligence-dragonflydb-dragonfly-.md",
       "repository": "dragonflydb/dragonfly",
-      "content_hash": "7307de6472366f107580d4bab513883c51c6072fd9657adeb50e678e5126e30b",
-      "created_at": "2026-11-20T12:15:29.642Z"
+      "content_hash": "fc0aee7dcf5969d7da4e26071425a132cf763352d74f4489f7d76862e4d45fb1",
+      "created_at": "2026-11-21T17:42:01.851Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
@@ -8370,10 +8370,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "885479f8f7ac4f69e77a17e71190ceb981970d99e1e78cdcba7d047aee4eeebf",
-      "created_at": "2026-11-21T13:30:40.047Z"
+      "content_hash": "f7a78f08b646913d46183eef548062956ea2485c1ee60aaf1e945540691b5e14",
+      "created_at": "2026-11-21T17:41:58.507Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -23788,8 +23788,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "7d3a8e996265f2428b877f1bb9b1d3aeaeb4bd15f61e008afe3cef4e20fad812",
-      "created_at": "2026-11-21T01:08:38.761Z"
+      "content_hash": "7c4a6459c1a573e811e83af3de716b6e5b72f4d4c860910822dd3339111fc3a9",
+      "created_at": "2026-11-21T17:42:06.599Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",
@@ -25250,8 +25250,8 @@
       "title": "Architecture Intelligence: ratatui/ratatui Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ratatui-ratatui-architecture-intelligence-ratatui-ratatui-core-invariants.md",
       "repository": "ratatui/ratatui",
-      "content_hash": "c76a15ecc2d1056bb4890b12b0f39cb90294c776ceff3e572c676112b177101a",
-      "created_at": "2026-11-18T06:32:31.140Z"
+      "content_hash": "6f599d9091f24633b6bdc7febf544a2df8352653c21305175ec97e5a1a78aca0",
+      "created_at": "2026-11-21T17:41:50.071Z"
     },
     "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
@@ -25259,8 +25259,8 @@
       "title": "Architecture Intelligence: ratatui-ratatui-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ratatui-ratatui-learnings-architecture-intelligence-ratatui-ratatui-learnings-co.md",
       "repository": "ratatui-ratatui-learnings",
-      "content_hash": "297eba7c7e0e408e6b35d1629fa37dc6b59a2563157125adac49f4fb577f2636",
-      "created_at": "2026-11-18T06:32:44.511Z"
+      "content_hash": "a636acca72b782663552c434db5e679062086a2eebeb2eafd9e37a22516338fa",
+      "created_at": "2026-11-21T17:42:05.431Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants",
@@ -28790,8 +28790,8 @@
       "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-research-knowledge-intelligence-nvidi.md",
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
-      "content_hash": "c38722dd1c10ad24946dc0ef95dd138dc5717b106657e4512fd6978175693c00",
-      "created_at": "2026-11-17T19:12:17.117Z"
+      "content_hash": "c0e7f6a1cbfee0ada99400459018f038306b3b44ae5517dfcd88cc5f13491866",
+      "created_at": "2026-11-21T17:41:46.348Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-learn": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-learn",
@@ -28799,8 +28799,8 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-learnings-research-knowledge-intellig.md",
       "repository": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings",
-      "content_hash": "a8ee0cc8a95bd17670c516aad45896526c0bddd5ed1f3de9185593970c1d47fd",
-      "created_at": "2026-11-17T19:12:35.473Z"
+      "content_hash": "9a6112aa7c32108f7f48c89d4c10dc99acf7c520f27e24e3bc0cbfe74cd04fe2",
+      "created_at": "2026-11-21T17:42:05.947Z"
     },
     "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-learnings-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-learnings-core-invar",

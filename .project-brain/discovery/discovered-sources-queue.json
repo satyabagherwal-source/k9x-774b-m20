@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T17:28:53.140Z",
+  "updated_at": "2026-11-21T17:42:06.239Z",
   "stats": {
-    "total_discovered": 7263,
-    "approved_pending_harvest": 6865,
+    "total_discovered": 7267,
+    "approved_pending_harvest": 6869,
     "harvested_count": 0,
     "rejected_count": 398,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6846,
+      "COMMUNITY_AND_EXPERT": 6850,
       "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -157023,6 +157023,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings.md",
         "fileName": "hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings.md"
+      }
+    },
+    "SRC-2562AE3C1114": {
+      "id": "SRC-2562AE3C1114",
+      "url": "https://app.codecov.io/gh/ratatui/ratatui/pull/2939?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/ratatui/ratatui/pull/2939?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T17:42:04.919Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-B94832DBA0BF": {
+      "id": "SRC-B94832DBA0BF",
+      "url": "https://app.codecov.io/gh/ratatui/ratatui/commit/63e3c75a8a6286fda679925a8f953cc31a782fa6?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/ratatui/ratatui/commit/63e3c75a8a6286fda679925a8f953cc31a782fa6?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T17:42:04.969Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-868768F14788": {
+      "id": "SRC-868768F14788",
+      "url": "https://app.codecov.io/gh/ratatui/ratatui/commit/d78b5b92392dacac625bad5c0a727cbc58e11b8c?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/ratatui/ratatui/commit/d78b5b92392dacac625bad5c0a727cbc58e11b8c?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T17:42:05.016Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-7FBE8413CB7C": {
+      "id": "SRC-7FBE8413CB7C",
+      "url": "https://claude.ai/code/session_01UYfmmMdw2sVR367ZdZ9CMB",
+      "title": "https://claude.ai/code/session_01UYfmmMdw2sVR367ZdZ9CMB",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T17:42:06.239Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
       }
     }
   }

@@ -11888,3 +11888,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xhtoken-spark-x2-6-4b-gguf` | `https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-21T17:28:08.243Z |
 | `learn-github-open-policy-agent-gatekeeper` | `https://github.com/open-policy-agent/gatekeeper` | `a2bac802` | Multi-dimensional audit evidence | 2026-11-21T17:28:16.857Z |
 | `learn-dom-d-2be66f2b` | `project://hf-atomicchat-inkling-2-mini-uncensored-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings.md` | 2026-11-21T17:28:53.108Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-21T17:41:46.151Z |
+| `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `29196825` | Multi-dimensional audit evidence | 2026-11-21T17:41:49.682Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `2875dee3` | Multi-dimensional audit evidence | 2026-11-21T17:41:58.128Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `66de9e68` | Multi-dimensional audit evidence | 2026-11-21T17:42:01.481Z |
