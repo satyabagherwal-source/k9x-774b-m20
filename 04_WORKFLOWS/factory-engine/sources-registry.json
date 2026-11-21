@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T01:43:51.917Z",
-    "lastVerified": "2026-11-21T01:43:51.917Z",
+    "lastChecked": "2026-11-21T01:51:39.650Z",
+    "lastVerified": "2026-11-21T01:51:39.650Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-21T01:16:30.532Z",
+    "lastChecked": "2026-11-21T01:51:39.642Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-21T01:16:30.532Z"
+    "lastVerified": "2026-11-21T01:51:39.642Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -431,8 +431,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T21:38:52.763Z",
-    "lastVerified": "2026-11-20T21:38:52.763Z",
+    "lastChecked": "2026-11-21T01:51:34.807Z",
+    "lastVerified": "2026-11-21T01:51:34.807Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -3782,9 +3782,9 @@
   "dingodb-dingo": {
     "name": "dingo",
     "officialUrl": "https://github.com/dingodb/dingo",
-    "lastChecked": "2026-11-20T00:14:39.976Z",
+    "lastChecked": "2026-11-21T01:51:37.365Z",
     "revisionIdentifier": "bb96a741",
-    "lastVerified": "2026-11-20T00:14:39.976Z"
+    "lastVerified": "2026-11-21T01:51:37.365Z"
   },
   "pemistahl-grex": {
     "name": "grex",
@@ -4537,9 +4537,9 @@
   "vinceanalytics-vince": {
     "name": "vince",
     "officialUrl": "https://github.com/vinceanalytics/vince",
-    "lastChecked": "2026-11-20T01:31:21.923Z",
+    "lastChecked": "2026-11-21T01:51:32.213Z",
     "revisionIdentifier": "fc06f7a2",
-    "lastVerified": "2026-11-20T01:31:21.923Z"
+    "lastVerified": "2026-11-21T01:51:32.213Z"
   },
   "cozodb-cozo": {
     "name": "cozo",
@@ -8032,14 +8032,14 @@
     "officialUrl": "https://github.com/biomejs/biome",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T15:50:49.569Z",
-    "lastVerified": "2026-11-19T15:50:49.569Z",
+    "lastChecked": "2026-11-21T01:51:31.238Z",
+    "lastVerified": "2026-11-21T01:51:31.238Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-biomejs-biome",
-    "contentHash": "497c16ae1e702f9144ed77803c0530a7cfe498028b42da6164542cc3ba18f726",
+    "contentHash": "6690b2d603cd0d576a764bce671e6bb3d234d92b925399bfc6e45299bcb8c9cd",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11470,5 +11470,29 @@
     "lastChecked": "2026-11-21T01:43:41.975Z",
     "revisionIdentifier": "a73fd95b",
     "lastVerified": "2026-11-21T01:43:41.975Z"
+  },
+  "testing-library-dom-testing-library": {
+    "name": "dom-testing-library",
+    "officialUrl": "https://github.com/testing-library/dom-testing-library",
+    "lastChecked": "2026-11-21T01:51:27.179Z",
+    "revisionIdentifier": "6049cc0b",
+    "lastVerified": "2026-11-21T01:51:27.179Z"
+  },
+  "software-mansion-react-native-screens": {
+    "name": "software-mansion/react-native-screens",
+    "officialUrl": "https://github.com/software-mansion/react-native-screens",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-21T01:51:35.119Z",
+    "lastVerified": "2026-11-21T01:51:35.119Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-software-mansion-react-native-screens",
+    "contentHash": "2742b56ab1c7eeaf72d3cef89fc6bcef2a1ec4a557ed8d60cbc94356e9d56d74",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

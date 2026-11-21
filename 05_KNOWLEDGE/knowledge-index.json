@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T01:43:54.323Z",
+  "last_updated": "2026-11-21T01:51:42.365Z",
   "total_verified_learnings": 9055,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22832,
+  "total_items": 22840,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "f5be2b74a50a21217969cbcb04def1402c2affbb1d69c02117eda826868956af",
+      "content_hash": "b21630af399c407f1bc3c8a18eac150bdb28ccecfa30558d030442d7f3642854",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T01:25:05.765Z"
+      "persisted_at": "2026-11-21T01:51:42.092Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9bd44f30385d8b6db11021225432ce6d06e9038d5165a2679c63fc285b439b03",
+      "content_hash": "717be0c3f3c37a3aff1ac0331271ce5faf516c94751947d6d706b095d5cac34e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T01:25:05.978Z"
+      "persisted_at": "2026-11-21T01:51:42.239Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a4cc766011c898c2391e3ef24555afc9e05097df3684c7f8233c78653d262d67",
+      "content_hash": "09d71d054caf27e70412b5cc4ee4130a668a4c8db1faf276aa0148bd25a6fc94",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T01:25:06.147Z"
+      "persisted_at": "2026-11-21T01:51:42.365Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -221050,13 +221050,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-software-mansion-react-native-",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/software-mansion-react-native-reanimated-learnings-verification-protocol-empiric.md",
-      "title": "Verification Protocol: Empirical Defect Shield for software-mansion-react-native-reanimated-learnings",
-      "repository": "software-mansion-react-native-reanimated-learnings",
+      "relative_path": "08_VERIFICATION/software-mansion-react-native-screens-learnings-verification-protocol-empirical-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for software-mansion-react-native-screens-learnings",
+      "repository": "software-mansion-react-native-screens-learnings",
       "source_version": "HEAD",
-      "content_hash": "9f70e8288611c1ca16afed3ee7dce391e1e439f6b0e0c219b9d33b9f9bc352d6",
+      "content_hash": "8f46c45efd237d127b854ff54d633eccd9ea4fb1c8d14956e811b78fbb72be1e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T15:22:21.747Z"
+      "persisted_at": "2026-11-21T01:51:41.373Z"
     },
     "learn-github-zeromicro-go-zero": {
       "learning_id": "learn-github-zeromicro-go-zero",
@@ -231768,8 +231768,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "ea3b347b",
-      "content_hash": "497c16ae1e702f9144ed77803c0530a7cfe498028b42da6164542cc3ba18f726",
+      "source_version": "426c33de",
+      "content_hash": "6690b2d603cd0d576a764bce671e6bb3d234d92b925399bfc6e45299bcb8c9cd",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -231792,6 +231792,11 @@
           "number": 9397,
           "title": "don't pair emphasis across paragraphs in a blockquote",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9694,
+          "title": "format/html): keep touching siblings on the same line",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231799,7 +231804,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T15:50:50.404Z",
+      "verified_at": "2026-11-21T01:51:32.190Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231853,10 +231858,10 @@
       "relative_path": "08_VERIFICATION/biomejs-biome-verification-protocol-empirical-defect-shield-for-biomejs-biome.md",
       "title": "Verification Protocol: Empirical Defect Shield for biomejs/biome",
       "repository": "biomejs/biome",
-      "source_version": "ea3b347b",
-      "content_hash": "676ce5c330990873c510a23e841e4b03fc58b335e188a4cc6f63f1d22e4de9f5",
+      "source_version": "426c33de",
+      "content_hash": "9f09976e6c639c07d7ccbddb8b1425592125bdf08278669c2000f92bcc434ea3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T15:50:51.101Z"
+      "persisted_at": "2026-11-21T01:51:32.904Z"
     },
     "rule-8497": {
       "learning_id": "rule-8497",
@@ -232034,9 +232039,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for biomejs-biome-learnings",
       "repository": "biomejs-biome-learnings",
       "source_version": "HEAD",
-      "content_hash": "a6fb7ed24b418c3075d1d2968e409c5f058b090068983588708185f7f812580c",
+      "content_hash": "b1856f2ae064033a7807fcd10d4222963428826ed7de78325bbf5967dcf597bf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T15:50:58.712Z"
+      "persisted_at": "2026-11-21T01:51:40.557Z"
     },
     "candidate_directive-deps-bump-aiohttp": {
       "item_id": "candidate_directive-deps-bump-aiohttp",
@@ -266468,14 +266473,19 @@
       "slug": "software-mansion-react-native-screens",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-screens",
-      "source_version": "f3306074",
-      "content_hash": "73584fd25bed15d04832be4a60f710f4e52f5659b7d1fe1b4769a499c8116760",
+      "source_version": "83408f21",
+      "content_hash": "2742b56ab1c7eeaf72d3cef89fc6bcef2a1ec4a557ed8d60cbc94356e9d56d74",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "promoted_rules": [
         {
           "number": 8862,
           "title": "follow the gesture in interactive fade and fade_from_bottom pops",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9695,
+          "title": "Android, FormSheet): include grabber height in fitToContents sheet height",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -266484,7 +266494,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T03:57:53.827Z",
+      "verified_at": "2026-11-21T01:51:35.932Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -308443,13 +308453,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-77H8-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-5F8X-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "40969262fd8bc94c3f2e48a74c89b0b8eec7a46b0f704a8ec747778b67f9e4ee",
+      "content_hash": "bfe6291c0b906f476746fc9fa5dd381f181c6394ae553ce83c964df1746aadb2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T01:25:05.570Z"
+      "persisted_at": "2026-11-21T01:51:41.940Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -309893,6 +309903,106 @@
       "content_hash": "be87c12d72a340ddc89ac1849b151290dd03adfac9d23c9e2080359940348f4d",
       "domain_letter": "G",
       "persisted_at": "2026-11-21T01:43:52.271Z"
+    },
+    "rule-9694": {
+      "learning_id": "rule-9694",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9694,
+      "title": "format/html): keep touching siblings on the same line",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "426c33de",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T01:51:32.190Z"
+    },
+    "candidate_directive-format-html-keep-touching-siblings-on-the-same-line": {
+      "item_id": "candidate_directive-format-html-keep-touching-siblings-on-the-same-line",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5DXV-format-html-keep-touching-siblings-on-the-same-line.md",
+      "title": "format/html): keep touching siblings on the same line",
+      "repository": "biomejs-biome-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9a2dcffcf612685d839265fadefa5f62ed19ba680dcec0ae3f53db7ad7393569",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T01:51:40.247Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-biomejs-biome-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-biomejs-biome-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-biomejs-biome-research-knowledge-intelligence-biomejs-biome-core-invariants.md",
+      "title": "Research & Knowledge Intelligence: biomejs/biome Core Invariants",
+      "repository": "biomejs/biome",
+      "source_version": "426c33de",
+      "content_hash": "5fd8f6098f0ea633902ac62107e358e2e21703f5ce69c6ca365b371d3852bcb7",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T01:51:32.747Z"
+    },
+    "rule-9695": {
+      "learning_id": "rule-9695",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9695,
+      "title": "Android, FormSheet): include grabber height in fitToContents sheet height",
+      "source_url": "https://github.com/software-mansion/react-native-screens",
+      "source_version": "83408f21",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T01:51:35.932Z"
+    },
+    "candidate_directive-android-formsheet-include-grabber-height-in-fittocontents-sheet-height": {
+      "item_id": "candidate_directive-android-formsheet-include-grabber-height-in-fittocontents-sheet-height",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5EL2-android-formsheet-include-grabber-height-in-fittocontents-sheet-height.md",
+      "title": "Android, FormSheet): include grabber height in fitToContents sheet height",
+      "repository": "software-mansion-react-native-screens-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7593b28d70bc77426418df6491bec8fa676af4b2c4dc603975c1086af1199315",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T01:51:41.078Z"
+    },
+    "domain_intelligence-content-information-intelligence-software-mansion-react-native-screens-core-inva": {
+      "item_id": "domain_intelligence-content-information-intelligence-software-mansion-react-native-screens-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-software-mansion-react-native-screens-content-information-intelligence-software-.md",
+      "title": "Content & Information Intelligence: software-mansion/react-native-screens Core Invariants",
+      "repository": "software-mansion/react-native-screens",
+      "source_version": "83408f21",
+      "content_hash": "f551c51e80e39f057ad07cd768041dd3af56d4909627f281df9cbcd62bf66f15",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T01:51:36.480Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-biomejs-biome-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-biomejs-biome-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-biomejs-biome-learnings-research-knowledge-intelligence-biomejs-biome-learnings-.md",
+      "title": "Research & Knowledge Intelligence: biomejs-biome-learnings Core Invariants",
+      "repository": "biomejs-biome-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bdbb980937670b11b5830fdf380ee0c86bc10193f78ccb80c56206ca99486dab",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T01:51:40.404Z"
+    },
+    "domain_intelligence-content-information-intelligence-software-mansion-react-native-screens-learnings": {
+      "item_id": "domain_intelligence-content-information-intelligence-software-mansion-react-native-screens-learnings",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-software-mansion-react-native-screens-learnings-content-information-intelligence.md",
+      "title": "Content & Information Intelligence: software-mansion-react-native-screens-learnings Core Invariants",
+      "repository": "software-mansion-react-native-screens-learnings",
+      "source_version": "HEAD",
+      "content_hash": "498080c61ac3654cc7b52811d09f10f47e5be074ef3fd21d0d016ee059fdd5ec",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T01:51:41.229Z"
     }
   },
   "ai-builder-brain": {

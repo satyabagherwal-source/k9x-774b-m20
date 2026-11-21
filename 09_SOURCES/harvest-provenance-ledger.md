@@ -11726,3 +11726,5 @@ Every entry in this ledger must capture:
 | `learn-github-mswjs-msw` | `https://github.com/mswjs/msw` | `b3df8504` | Multi-dimensional audit evidence | 2026-11-21T01:34:54.867Z |
 | `learn-dom-h-0664fd36` | `project://mswjs-msw` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mswjs-msw-learnings.md` | 2026-11-21T01:35:32.220Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `7af7535b` | Multi-dimensional audit evidence | 2026-11-21T01:43:41.619Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `426c33de` | Multi-dimensional audit evidence | 2026-11-21T01:51:32.390Z |
+| `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `83408f21` | Multi-dimensional audit evidence | 2026-11-21T01:51:36.127Z |

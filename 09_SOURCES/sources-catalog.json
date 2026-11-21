@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "ea3b347b",
+    "sourceVersion": "426c33de",
     "license": "Apache-2.0",
-    "contentHash": "497c16ae1e702f9144ed77803c0530a7cfe498028b42da6164542cc3ba18f726",
-    "lastHarvestedAt": "2026-11-19T15:50:50.593Z",
+    "contentHash": "6690b2d603cd0d576a764bce671e6bb3d234d92b925399bfc6e45299bcb8c9cd",
+    "lastHarvestedAt": "2026-11-21T01:51:32.390Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {
@@ -8463,10 +8463,10 @@
     "repository": "software-mansion/react-native-screens",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-screens",
-    "sourceVersion": "f3306074",
+    "sourceVersion": "83408f21",
     "license": "MIT",
-    "contentHash": "73584fd25bed15d04832be4a60f710f4e52f5659b7d1fe1b4769a499c8116760",
-    "lastHarvestedAt": "2026-11-17T03:57:53.994Z",
+    "contentHash": "2742b56ab1c7eeaf72d3cef89fc6bcef2a1ec4a557ed8d60cbc94356e9d56d74",
+    "lastHarvestedAt": "2026-11-21T01:51:36.127Z",
     "learningId": "learn-github-software-mansion-react-native-screens"
   },
   "speedyapply-jobspy": {

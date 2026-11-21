@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T01:08:37.645Z",
+  "updated_at": "2026-11-21T01:51:40.869Z",
   "stats": {
-    "total_discovered": 6874,
-    "approved_pending_harvest": 6486,
+    "total_discovered": 6880,
+    "approved_pending_harvest": 6492,
     "harvested_count": 0,
     "rejected_count": 388,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6465,
+      "COMMUNITY_AND_EXPERT": 6471,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -148535,6 +148535,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
         "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-32AD088A1A5B": {
+      "id": "SRC-32AD088A1A5B",
+      "url": "https://github.com/biomejs/biome/new/dyc3/add-miri-to-ci-thr_q493p6vgde?filename=.changeset%2Fwicked-doors-win.md&value=---%0A%0A---%0A%0Aci%3A+add+miri%0A",
+      "title": "https://github.com/biomejs/biome/new/dyc3/add-miri-to-ci-thr_q493p6vgde?filename=.changeset%2Fwicked-doors-win.md&value=---%0A%0A---%0A%0Aci%3A+add+miri%0A",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T01:51:39.867Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-0C2F4446EA2D": {
+      "id": "SRC-0C2F4446EA2D",
+      "url": "https://github.com/Th3S4mur41/biome/new/chore/codespaces?filename=.changeset%2Fchatty-aliens-wish.md&value=---%0A%0A---%0A%0Achore%28devcontainer",
+      "title": "https://github.com/Th3S4mur41/biome/new/chore/codespaces?filename=.changeset%2Fchatty-aliens-wish.md&value=---%0A%0A---%0A%0Achore%28devcontainer",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T01:51:39.938Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-4347796D8B6F": {
+      "id": "SRC-4347796D8B6F",
+      "url": "https://github.com/biomejs/biome/issues/13299",
+      "title": "https://github.com/biomejs/biome/issues/13299",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T01:51:39.982Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-5E01918EB7F6": {
+      "id": "SRC-5E01918EB7F6",
+      "url": "https://biomejs.dev/linter/rules/no-floating-promises",
+      "title": "https://biomejs.dev/linter/rules/no-floating-promises",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T01:51:40.024Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-A5A62661B6D7": {
+      "id": "SRC-A5A62661B6D7",
+      "url": "https://app.coderabbit.ai/change-stack/software-mansion/react-native-screens/pull/5293?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "title": "https://app.coderabbit.ai/change-stack/software-mansion/react-native-screens/pull/5293?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T01:51:40.788Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-5CAB54679FD3": {
+      "id": "SRC-5CAB54679FD3",
+      "url": "https://github.com/software-mansion/react-native-screens-labs/issues/1089",
+      "title": "https://github.com/software-mansion/react-native-screens-labs/issues/1089",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T01:51:40.869Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
       }
     }
   }

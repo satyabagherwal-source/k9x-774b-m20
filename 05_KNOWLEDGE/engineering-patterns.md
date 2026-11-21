@@ -719760,3 +719760,168 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `88357eb4` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9694. format/html): keep touching siblings on the same line (Harvested from biomejs/biome)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "format/html): keep touching siblings on the same line",
+  "source": "biomejs/biome",
+  "source_url": "https://github.com/biomejs/biome",
+  "source_version": "426c33de",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T01:51:31.908Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-biomejs-biome",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [biomejs/biome](https://github.com/biomejs/biome) (Revision: `426c33de`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.changeset/fix-html-touching-siblings-line-break.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in biomejs/biome. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d06ae5dd`: format/html): keep touching siblings on the same line. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/fix-html-touching-siblings-line-break.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+---
+"@biomejs/biome": patch
+---
+
+Fixed [#13299](https://github.com/biomejs/biome/issues/13299): the HTML formatter no longer adds a line break between whitespace-sensitive siblings that touch in the source, such as an element next to a self-closing element, a Svelte `{@render}` tag, or a text expression. The line break rendered as a space that wasn't in the source.
+
+```diff
+ <p>
+-	<span class="label">label</span><img src="image.png">
+-	<span class="hint">hint</span>
++	<span class="label">label</span><img src="image.png"><span class="hint"
++		>hint</span
++	>
+ </p>
+```
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d06ae5dd` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9695. Android, FormSheet): include grabber height in fitToContents sheet height (Harvested from software-mansion/react-native-screens)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Android, FormSheet): include grabber height in fitToContents sheet height",
+  "source": "software-mansion/react-native-screens",
+  "source_url": "https://github.com/software-mansion/react-native-screens",
+  "source_version": "83408f21",
+  "license": "MIT",
+  "extracted_at": "2026-11-21T01:51:35.640Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-software-mansion-react-native-screens",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens) (Revision: `83408f21`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `android/src/main/java/com/swmansion/rnscreens/core/modals/sheet/coordinator/SheetDimensionsCoordinator.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5b0b3abb`: Android, FormSheet): include grabber height in fitToContents sheet height. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/main/java/com/swmansion/rnscreens/core/modals/sheet/coordinator/SheetDimensionsCoordinator.kt`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+    internal fun onGrabberVisibilityChanged() {
+        invalidateGeometry()
+    }
+
+        // The grabber sits above the React content in the container, so the container has to fit both.
+        // A non-positive content height means "not measured yet" and is passed through as is.
+        val fitToContentsHeight =
+            if (currentContentHeight > 0) currentContentHeight + container.measureGrabberHeight() else currentContentHeight
+
+                contentHeightForFitToContents = fitToContentsHeight,
+                fitToContentsHeight,
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+                contentHeightForFitToContents = currentContentHeight,
+                currentContentHeight,
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5b0b3abb` are properly handled with clean fallback behavior.

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-I5TS",
-    "timestamp": "2026-11-18T23:10:18.112Z",
-    "repository": "Aleph-Alpha/Kolibri-1",
-    "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
-    "contentHash": "4b821d4ee420437b6e219470c6ec2521f38f9d976b7a2830eb2007f4c9625c56",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-IDKY",
-    "timestamp": "2026-11-18T23:10:28.162Z",
-    "repository": "meshery/meshery",
-    "learningId": "learn-github-meshery-meshery",
-    "contentHash": "46504042afddbd1b9dac41f3b8630e3c2ee60312613c5691bd03b1de3a2a6496",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-IH7M",
     "timestamp": "2026-11-18T23:10:32.866Z",
     "repository": "etcd-io/etcd",
@@ -7490,6 +7460,36 @@
     "repository": "codewhale-hq/Codewhale",
     "learningId": "learn-github-codewhale-hq-codewhale",
     "contentHash": "e5474569b167416bb11d5e5269d4d6b9c6a7e62f289b38eeef9fa6863a5f5e8b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-57VM",
+    "timestamp": "2026-11-21T01:51:32.386Z",
+    "repository": "biomejs/biome",
+    "learningId": "learn-github-biomejs-biome",
+    "contentHash": "6690b2d603cd0d576a764bce671e6bb3d234d92b925399bfc6e45299bcb8c9cd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-5ARF",
+    "timestamp": "2026-11-21T01:51:36.123Z",
+    "repository": "software-mansion/react-native-screens",
+    "learningId": "learn-github-software-mansion-react-native-screens",
+    "contentHash": "2742b56ab1c7eeaf72d3cef89fc6bcef2a1ec4a557ed8d60cbc94356e9d56d74",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

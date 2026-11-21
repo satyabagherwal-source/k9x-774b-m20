@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T01:43:54.151Z",
-  "total_records": 2209,
+  "last_updated": "2026-11-21T01:51:42.092Z",
+  "total_records": 2213,
   "domains": {
     "A": {
       "total": 17,
@@ -58,7 +58,7 @@
       ]
     },
     "D": {
-      "total": 884,
+      "total": 886,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -943,7 +943,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-unsloth-inkling-2-mini-gguf-learnings-core-in",
         "domain_intelligence-research-knowledge-intelligence-skyhook-io-radar-core-invariants",
         "DOM-D-6E87E9F5",
-        "domain_intelligence-research-knowledge-intelligence-skyhook-io-radar-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-skyhook-io-radar-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-biomejs-biome-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-biomejs-biome-learnings-core-invariants"
       ]
     },
     "E": {
@@ -1939,7 +1941,7 @@
       ]
     },
     "I": {
-      "total": 115,
+      "total": 117,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2055,7 +2057,9 @@
         "domain_intelligence-content-information-intelligence-golutra-golutra-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-authzed-spicedb-core-invariants",
         "DOM-I-9FB3B7EB",
-        "domain_intelligence-content-information-intelligence-authzed-spicedb-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-authzed-spicedb-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-software-mansion-react-native-screens-core-inva",
+        "domain_intelligence-content-information-intelligence-software-mansion-react-native-screens-learnings"
       ]
     },
     "J": {
@@ -7979,8 +7983,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "f5be2b74a50a21217969cbcb04def1402c2affbb1d69c02117eda826868956af",
-      "created_at": "2026-11-21T01:25:05.765Z"
+      "content_hash": "b21630af399c407f1bc3c8a18eac150bdb28ccecfa30558d030442d7f3642854",
+      "created_at": "2026-11-21T01:51:42.092Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -37132,6 +37136,42 @@
       "repository": "mswjs-msw-learnings",
       "content_hash": "b729a9f0792b357c4ac63a26b20f9d0b92e70784b8aae1a59a0b4b7b620fcd63",
       "created_at": "2026-11-21T01:35:33.169Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-biomejs-biome-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-biomejs-biome-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: biomejs/biome Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-biomejs-biome-research-knowledge-intelligence-biomejs-biome-core-invariants.md",
+      "repository": "biomejs/biome",
+      "content_hash": "5fd8f6098f0ea633902ac62107e358e2e21703f5ce69c6ca365b371d3852bcb7",
+      "created_at": "2026-11-21T01:51:32.747Z"
+    },
+    "domain_intelligence-content-information-intelligence-software-mansion-react-native-screens-core-inva": {
+      "record_id": "domain_intelligence-content-information-intelligence-software-mansion-react-native-screens-core-inva",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: software-mansion/react-native-screens Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-software-mansion-react-native-screens-content-information-intelligence-software-.md",
+      "repository": "software-mansion/react-native-screens",
+      "content_hash": "f551c51e80e39f057ad07cd768041dd3af56d4909627f281df9cbcd62bf66f15",
+      "created_at": "2026-11-21T01:51:36.480Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-biomejs-biome-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-biomejs-biome-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: biomejs-biome-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-biomejs-biome-learnings-research-knowledge-intelligence-biomejs-biome-learnings-.md",
+      "repository": "biomejs-biome-learnings",
+      "content_hash": "bdbb980937670b11b5830fdf380ee0c86bc10193f78ccb80c56206ca99486dab",
+      "created_at": "2026-11-21T01:51:40.404Z"
+    },
+    "domain_intelligence-content-information-intelligence-software-mansion-react-native-screens-learnings": {
+      "record_id": "domain_intelligence-content-information-intelligence-software-mansion-react-native-screens-learnings",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: software-mansion-react-native-screens-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-software-mansion-react-native-screens-learnings-content-information-intelligence.md",
+      "repository": "software-mansion-react-native-screens-learnings",
+      "content_hash": "498080c61ac3654cc7b52811d09f10f47e5be074ef3fd21d0d016ee059fdd5ec",
+      "created_at": "2026-11-21T01:51:41.229Z"
     }
   }
 }

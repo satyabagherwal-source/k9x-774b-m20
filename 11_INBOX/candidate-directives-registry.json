@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T01:43:53.997Z",
+  "last_updated": "2026-11-21T01:51:41.940Z",
   "directives": [
     {
       "id": "CD-001",
@@ -39760,11 +39760,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-77H8",
+      "id": "CD-5F8X",
       "directive_title": "benchmarks): report Gold coverage across retrieval stages",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-77H8-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-5F8X-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-21",
@@ -40582,6 +40582,55 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EC2B37-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-5DXV",
+      "directive_title": "format/html): keep touching siblings on the same line",
+      "source_repo": "biomejs-biome-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5DXV-format-html-keep-touching-siblings-on-the-same-line.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-5EL2",
+      "directive_title": "Android, FormSheet): include grabber height in fitToContents sheet height",
+      "source_repo": "software-mansion-react-native-screens-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5EL2-android-formsheet-include-grabber-height-in-fittocontents-sheet-height.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-357FDF",
+      "directive_title": "format/html): keep touching siblings on the same line",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "biomejs-biome",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-357FDF-format-html-keep-touching-siblings-on-th.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-2339EF",
+      "directive_title": "Android, FormSheet): include grabber height in fitToContents sheet height",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "software-mansion-react-native-screens",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2339EF-android-formsheet-include-grabber-height.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-5C9C14",
+      "directive_title": "benchmarks): report Gold coverage across retrieval stages",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5C9C14-benchmarks-report-gold-coverage-across-r.md",
       "staged_date": "2026-11-21"
     }
   ]

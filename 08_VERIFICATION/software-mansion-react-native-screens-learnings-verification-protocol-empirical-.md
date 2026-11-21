@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T03:58:07.349Z",
+  "timestamp": "2026-11-21T01:51:40.970Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-software-mansion-react-native-screens-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [software-mansion-react-native-screens-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T03:58:07.349Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T01:51:40.970Z`  
 > **Learning ID**: `LEARN-EVO-software-mansion-react-native-screens-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens))  
-> **Source Version**: `f3306074`  
+> **Source Version**: `83408f21`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T03:57:53.066Z  
+> **Timestamp**: 2026-11-21T01:51:35.124Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-screens`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T03:57:53.061Z  
+> **Harvest Timestamp**: 2026-11-21T01:51:35.119Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Native navigation primitives for your React Native app.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3753 stars
+- **Stars / Engagement**: 3756 stars
 
 ---
 
@@ -390,11 +390,13 @@ interface SafeAreaProvider {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5217** (2026-11-15): **chore(deps): bump addressable from 2.9.0 to 2.9.1 in /FabricExample**
-  *Symptoms*: Bumps [addressable](https://github.com/sporkmonger/addressable) from 2.9.0 to 2.9.1. <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/sporkmonger/addressable/blob/main/CHANGELOG.md">addressable's changelog</a>.</em></p> <blockquote> <h2>Addressable 2.9.1 <!-- raw HTML omitted --></h2> <h3><code>Addressable::URI</code></h3> <ul> <li>fixes denial of service in <code>Addressable::URI.normalize_path</code>, which took quadratic time on paths with many dot segments; <code>URI#normalize</code>, <code>#join</code>, <code>#==</code> and <code>#===</code> were affected ([GHSA-qq38-m9mg-xjj5])</li> <li>fixes <code>Addressable::URI.normalize_path</code> keeping segments that a <code>..</code> should have removed after a <code>..</code> above the root, e.g. <code>/../../public/x/../../secret</code> normalized to <code>/public/x/secret</code> instead of <code>/secret</code> ([GHSA-8gmh-2hhj-2hv9])</li> <li>fixes <code>Addressable::URI.normalize_path</code> treating a raw line feed as a segment boundary, e.g. joining <code>..\n/secret</code> onto <code>/public/</code> gave <code>/\n/secret</code></li> <li>deprecates <code>Addressable::URI::RULE_2A</code>, <code>RULE_2B_2C</code>, <code>RULE_2D</code> and <code>RULE_PREFIXED_PARENT</code>, which are no longer used; they will be removed in 2.10.0</li> <li>fixes <code>Addressable::URI#route_from</code> and <code>#route_to</code> raising <code>InvalidURIError</code> when the route's first segment contains 
+- **Issue #5295** (2026-11-20): **docs(v5): unify @defaultValue tags**
+  *Symptoms*: ## Description  Part of the v5 docs consistency round (RFC-1947). The `@defaultValue` tag holds a single value in backticks or, when there is no single value, one full sentence. This PR fixes the tags that did not follow that rule and moves "when unset" sentences from `@remarks` into `@defaultValue`.  Documentation only, no runtime or type changes.  ## Changes  - Moved the behavior applied when a prop is not set from `@remarks` to   `@defaultValue`:   - Stack iOS: `tintColor`, `backButtonTitle`, `largeTitle`, `largeSubtitle`,     `scrollEdgeAppearance`,   - Stack Android: `statusBarScrimColor`,   - Split: `topColumnForCollapsing`,   - FormSheet and PageSheet: `detents` (the empty-array case stays in     `@remarks`). - Rewrote the value-plus-prose defaults of `scrollFlagScroll`,   `scrollFlagExitUntilCollapsed` and `scrollFlagSnap` as a full sentence, since   the default depends on the header type. - Removed the object-level default summaries from `scrollEdgeEffects` and   `specialEffects`; their fields already document the same defaults.  ## Test plan  - `yarn check-types` passes. - Comment-only change; no behavior to test.  ## Checklist  - [ ] Included code example that can be used to test this change. - [ ] For visual changes, included screenshots / GIFs / recordings documenting the change. - [x] For API changes, updated relevant public types. - [ ] Ensured that CI passes 
 
-- **Issue #5216** (2026-11-15): **chore(deps): bump addressable from 2.9.0 to 2.9.1 in /TVOSExample**
-  *Symptoms*: Bumps [addressable](https://github.com/sporkmonger/addressable) from 2.9.0 to 2.9.1. <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/sporkmonger/addressable/blob/main/CHANGELOG.md">addressable's changelog</a>.</em></p> <blockquote> <h2>Addressable 2.9.1 <!-- raw HTML omitted --></h2> <h3><code>Addressable::URI</code></h3> <ul> <li>fixes denial of service in <code>Addressable::URI.normalize_path</code>, which took quadratic time on paths with many dot segments; <code>URI#normalize</code>, <code>#join</code>, <code>#==</code> and <code>#===</code> were affected ([GHSA-qq38-m9mg-xjj5])</li> <li>fixes <code>Addressable::URI.normalize_path</code> keeping segments that a <code>..</code> should have removed after a <code>..</code> above the root, e.g. <code>/../../public/x/../../secret</code> normalized to <code>/public/x/secret</code> instead of <code>/secret</code> ([GHSA-8gmh-2hhj-2hv9])</li> <li>fixes <code>Addressable::URI.normalize_path</code> treating a raw line feed as a segment boundary, e.g. joining <code>..\n/secret</code> onto <code>/public/</code> gave <code>/\n/secret</code></li> <li>deprecates <code>Addressable::URI::RULE_2A</code>, <code>RULE_2B_2C</code>, <code>RULE_2D</code> and <code>RULE_PREFIXED_PARENT</code>, which are no longer used; they will be removed in 2.10.0</li> <li>fixes <code>Addressable::URI#route_from</code> and <code>#route_to</code> raising <code>InvalidURIError</code> when the route's first segment contains 
+- **Issue #5293** (2026-11-20): **test(iOS, Split): move the Split and Stack scenarios to the integration tests**
+  *Symptoms*: ## Description  Stacked on #5290.  A scenario that renders a Split whose columns are navigated by a stack tests two components together, so it belongs to the component integration tests. #5290 moves its own scenario there. This PR moves the remaining ones, which were added in #5215.  ## Changes  - `test-split-stack-header-navigation-ios`, `test-split-stack-lifecycle-events-ios`, `test-split-stack-content-swap-ios` and `test-split-stack-integration-disabled-ios` are moved from `single-feature-tests/split` to `component-integration-tests/split`. The files are not changed, and the scenarios keep their names and keys. - Both scenario groups are updated.  ## Test plan  Lint. Each of the four scenarios was started from its new location on an iPad with iOS 27.2.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  
+  **Post-Mortem & Fix Analysis**:
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/software-mansion/react-native-screens/pull/5293?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  <de
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -411,597 +413,986 @@ interface SafeAreaProvider {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `54c55f6c` (2026-11-16)
-**Commit Message**: fix(iOS): follow the gesture in interactive fade and fade_from_bottom pops (#5146)
+### Incident Patch 1: `5b0b3abb` (2026-11-18)
+**Commit Message**: fix(Android, FormSheet): include grabber height in fitToContents sheet height (#5258)
 
 ## Description
 
-On iOS, with `animationMatchesGesture: true`, the swipe-back pop for
-`animation: 'fade'` and `animation: 'fade_from_bottom'` does not follow
-the finger. The screen's progress jumps back and forth during the drag.
-A swipe released early, which should cancel, can still finish the pop.
-With `fade_from_bottom` the screen is gone about 0.25 s into the drag,
-and the header stays half-transitioned until the finger lifts.
+On Android, a `FormSheet` with `detents="fitToContents"` and
+`prefersGrabberVisible` was shorter than its content - the bottom of the
+content was hidden behind the navigation bar.
 
-The cause is in `RNSScreenStackAnimator`. The pop branches of
-`animateFadeWithTransitionContext:` and
-`animateFadeFromBottomWithTransitionContext:` call `startAnimation` even
-when the transition is interactive. The animator then runs on its own
-clock, while `RNSPercentDrivenInteractiveTransition` keeps setting
-`fractionComplete` from the gesture and finalizes with `pauseAnimation`
-/ `setReversed` / `continueAnimation…`, which expects a paused animator.
-`fade_from_bottom` also fades with a second animator that the gesture
-never drives.
+`FormSheetContainer` is a vertical `LinearLayout` holding the grabber
+(Material's drag handle) above the React content. In `fitToContents`
+mode the container height and Material's `maxHeight` were derived from
+the React content height alone, so a visible grabber took its height out
+of the content view, clipping the last ~48dp.
 
-The other custom pop animations (`simple_push`, `slide_from_left`,
-`slide_from_bottom`) already skip `startAnimation` for interactive pops
+Closes #5243.
 
+## Changes
 
-**File**: `ios/legacy/RNSScreenStackAnimator.mm` (modified, +68/-30)
+- `FormSheetDimensionsCoordinator` adds the grabber height to the
+content height when resolving `fitToContents` geometry (container height
+and `maxHeight`). It is resolved in the existing measure pass of
+`FormSheetAvailableHeightProvider` - no posting, no async dispatch.
+- `FormSheetContainer.measureGrabberHeight()` measures the drag handle
+on demand (0 when hidden), since the value is needed before the
+container itself is measured.
+- Toggling `prefersGrabberVisible` now invalidates the sheet geometry
+(`onGrabberVisibilityChanged`), so the sheet resizes
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/core/modals/sheet/coordinator/SheetDimensionsCoordinator.kt` (modified, +11/-2)
 ```diff
-@@ -315,17 +315,29 @@ - (void)animateFadeWithTransitionContext:(id<UIViewControllerContextTransitionin
-     [animator startAnimation];
-   } else if (_operation == UINavigationControllerOperationPop) {
-     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
--    auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
--                                                               curve:UIViewAnimationCurveEaseInOut
--                                                          animations:^{
--                                                            fromViewController.view.alpha = 0.0;
--                                                          }];
--    [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
-+
-+    void (^animationBlock)(void) = ^{
-+      fromViewController.view.alpha = 0.0;
-+    };
-+    void (^completionBlock)(UIViewAnimatingPosition) = ^(UIViewAnimatingPosition finalPosition) {
-       fromViewController.view.alpha = 1.0;
-       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
--    }];
--    _inFlightAnimator = animator;
--    [animator startAnimation];
-+    };
-+
-+    if (!transitionContext.isInteractive) {
-+      auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-+                                                                 curve:UIViewAnimationCurveEaseInOut
-+                                                            animations:animationBlock];
-+      [animator addCompletion:completionBlock];
-+      _inFlightAnimator = animator;
-+      [animator startAnimation];
-+    } else {
-+      auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-+                                                                 curve:UIViewAnimationCurveLinear
-+                                                            animations:animationBlock];
-+      [animator addCompletion:completionBlock];
-+      _inFlightAnimator = animator;
+@@ -68,6 +68,10 @@ internal class SheetDimensionsCoordinator(
+         invalidateGeometry()
+     }
+ 
++    internal fun onGrabberVisibilityChanged() {
++        invalidateGeometry()
 +    }
-   }
- }
- 
-@@ -428,33 +440,59 @@ - (void)animateFadeFromBottomWithTransitionContext:(id<UIViewControllerContextTr
-     toViewController.view.transform = CGAffineTransformIdentity;
-     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
- 
--    // Android Nougat exit animation
--    // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml
--    auto slideAnimator = [[UIViewPropertyAnimator alloc]
--        initWithDuration:baseTransitionDuration * RNSSlideCloseTransitionDurationProportion
--                   curve:UIViewAnimationCurveEaseIn
--              animations:^{
--                toViewController.view.transform = CGAffineTransformIdentity;
--                fromViewController.view.transform = topBottomTransform;
--              }];
--    [slideAnimator addCompletion:^(UIViewAnimatingPosition finalPosition) {
-+    void (^slideAnimationBlock)(void) = ^{
-+      toViewController.view.transform = CGAffineTransformIdentity;
-+      fromViewController.view.transform = topBottomTransform;
-+    };
-+    void (^fadeAnimationBlock)(void) = ^{
-+      fromViewController.view.alpha = 0.0;
-+    };
-+    void (^completionBlock)(UIViewAnimatingPosition) = ^(UIViewAnimatingPosition finalPosition) {
-       fromViewController.view.transform = CGAffineTransformIdentity;
-       toViewController.view.transform = CGAffineTransformIdentity;
-       fromViewController.view.alpha = 1.0;
-       toViewController.view.alpha = 1.0;
-       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
--    }];
--
--    auto fadeAnimator = [[UIViewPropertyAnimator alloc]
--        initWithDuration:baseTransitionDuration * RNSFadeCloseTransitionDurationProportion
--                   curve:UIViewAnimationCurveLinear
--              animations:^{
--                fromViewController.view.alpha = 0.0;
--              }];
-+    };
- 
--    _inFlightAnimator = slideAnimator;
--    [slideAnimator startAnimation];
--    [fadeAnimator startAnimationAfterDelay:baseTransitionDuration * RNSFadeCloseDelayTransitionDurationProportion];
-+    // Android Nougat exit animation
-+    // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml
-+    if (!transitionContext.isInteractive) {
-+      auto slideAnimator = [[UIViewPropertyAnimator alloc]
-+          initWithDuration:baseTransitionDuration * RNSSlideCloseTransitionDurationProportion
-+                     curve:UIViewAnimationCurveEaseIn
-+                animations:slideAnimationBlock];
-+      [slideAnimator addCompletion:completionBlock];
 +
-+      auto fadeAnimator = [[UIViewPropertyAnimator alloc]
-+          initWithDuration:baseTransitionDuration * RNSFadeCloseTransitionDurationProportion
-+                     curve:UIViewAnimationCurveLinear
+     // Schedules a measure pass; the metrics are resolved from there. The provider is a sibling of the sheet
+     // subtree, not an ancestor, so it has to be asked for a re-measure explicitly. No-op while the dialog
+     // is not shown - the first traversal after `show()` measures everything anyway.
+@@ -97,11 +101,16 @@ internal class SheetDimensionsCoordinator(
+      * our container are measured, so the values applied here are picked up by the very same traversal.
+      */
+     private fun resolveGeometry(sheetAvailableSpace: Int) {
++        // The grabber sits above the React content in the container, so the container has to fit both.
++        // A non-positive content height means "not measured yet" and is passed through as is.
++        val fitToContentsHeight =
++            if (currentContentHeight > 0) currentContentHeight + container.measureGrabberHeight() else currentContentHeight
++
+         currentDetents?.let { detents ->
+             behaviorController?.updateSheetBehavior(
+                 detents = detents,
+                 sheetAvailableSpace = sheetAvailableSpace,
+-                contentHeightForFitToContents = currentContentHeight,
++                contentHeightForFitToContents = fitToContentsHeight,
+                 nativeContainerPaddingBottom = lastBottomInset,
+                 keyboardLift = keyboardLift,
+                 initialDetentIndex = currentInitialDetentIndex,
+@@ -115,7 +124,7 @@ internal class SheetDimensionsCoordinator(
+                 sheetAvailableSpace,
+                 lastTopInset,
+                 lastBottomInset,
+-                currentContentHeight,
++                fitToContentsHeight,
+                 keyboardLift,
+             ) ?: (sheetAvailableSpace - lastTopInset - lastBottomInset - keyboardLift).coerceAtLeast(0)
+ 
+```
 
+**File**: `android/src/main/java/com/swmansion/rnscreens/core/modals/sheet/dialog/SheetContainer.kt` (modified, +9/-0)
+```diff
+@@ -47,6 +47,15 @@ class SheetContainer(
+         grabberView.visibility = if (visible) VISIBLE else GONE
+     }
+ 
++    internal fun measureGrabberHeight(): Int {
++        if (grabberView.visibility == GONE) {
++            return 0
++        }
++        val unspecified = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
++        grabberView.measure(unspecified, unspecified)
++        return grabberView.measuredHeight
++    }
++
+     private fun shouldHoldBackFromSheet(
+         target: View,
+         dy: Int,
+```
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/core/modals/sheet/presentation/SheetPresentation.kt` (modified, +2/-0)
+```diff
+@@ -104,6 +104,7 @@ internal class SheetPresentation(
+             applyInitialDetent = true,
+         )
+         container.setGrabberVisible(config.prefersGrabberVisible)
++        dimensionsCoordinator.onGrabberVisibilityChanged()
+         appearanceCoordinator.updateCornerRadius(config.preferredCornerRadius)
+         appearanceCoordinator.updateBackgroundColor(config.nativeContainerBackgroundColor)
+         nativeDismissCoordinator.shouldPreventDismiss = config.shouldPreventNativeDismiss
+@@ -122,6 +123,7 @@ internal class SheetPresentation(
+ 
+         if (oldConfig.prefersGrabberVisible != newConfig.prefersGrabberVisible) {
+             container.setGrabberVisible(newConfig.prefersGrabberVisible)
++            dimensionsCoordinator.onGrabberVisibilityChanged()
+         }
+ 
+         if (oldConfig.preferredCornerRadius != newConfig.preferredCornerRadius) {
+```
+
+**File**: `apps/src/tests/single-feature-tests/form-sheet/test-form-sheet-fit-to-contents/index.tsx` (modified, +11/-1)
+```diff
+@@ -8,6 +8,7 @@ import { Colors } from '@apps/shared/styling';
+ function TestFormSheetFitToContents() {
+   const [isOpen, setIsOpen] = useState(false);
+   const [isExpanded, setIsExpanded] = useState(false);
++  const [isGrabberVisible, setIsGrabberVisible] = useState(false);
+ 
+   const handleDismiss = () => {
+     setIsOpen(false);
+@@ -24,7 +25,8 @@ function TestFormSheetFitToContents() {
+       <FormSheet
+         isOpen={isOpen}
+         onNativeDismiss={handleDismiss}
+-        detents="fitToContents">
++        detents="fitToContents"
++        prefersGrabberVisible={isGrabberVisible}>
+         <View style={styles.sheetContent}>
+           <Text style={styles.sheetTitle}>FormSheet content</Text>
+ 
+@@ -52,6 +54,14 @@ function TestFormSheetFitToContents() {
+ 
+           <View style={styles.spacing} />
+ 
++          <Button
++            title={isGrabberVisible ? 'Hide Grabber' : 'Show Grabber'}
++            color={Colors.primary}
++            onPress={() => setIsGrabberVisible(!isGrabberVisible)}
++          />
++
++          <View style={styles.spacing} />
++
+           <Button
+             title="Dismiss from JS"
+             color={Colors.primary}
+```
+
+**File**: `apps/src/tests/single-feature-tests/form-sheet/test-form-sheet-fit-to-contents/scenario-description.ts` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@ export const scenarioDescription: ScenarioDescription = {
+   name: 'Fit To Contents',
+   key: 'test-form-sheet-fit-to-contents',
+   details:
+-    'detents="fitToContents": the sheet wraps its content and follows dynamic content height changes.',
++    'detents="fitToContents": the sheet wraps its content and follows dynamic content height and grabber visibility changes.',
+   platforms: ['android', 'ios'],
+   e2eCoverage: 'tbd',
+   smokeTest: false,
+```
+
+**File**: `apps/src/tests/single-feature-tests/form-sheet/test-form-sheet-fit-to-contents/scenario.md` (modified, +20/-2)
+```diff
+@@ -2,7 +2,7 @@
+ 
+ ## Details
+ 
+-**Description:** Verify `detents="fitToContents"` of the `FormSheet` component. This test ensures that the FormSheet calculates its initial height to wrap its content upon opening and follows changes of the content height while presented. On iOS the height change is animated; on Android the sheet snaps to the new height immediately.
++**Description:** Verify `detents="fitToContents"` of the `FormSheet` component. This test ensures that the FormSheet calculates its initial height to wrap its content upon opening and follows changes of the content height and grabber visibility while presented. On iOS the height change is animated; on Android the sheet snaps to the new height immediately.
+ 
+ **OS test creation version:** iOS: 18.6 and 26.5, iPadOS: 26.5, Android: API Level 36.
+ 
+@@ -36,7 +36,7 @@ TBD: Planned, but will be implemented separately.
+ 
+ 1. Tap "Open FormSheet".
+ 
+-    - [ ] The sheet presents with a height matching its content ("FormSheet content" title, description text, "Expand Content" and "Dismiss from JS" buttons). No visual jumps during the presentation animation.
++    - [ ] The sheet presents with a height matching its content ("FormSheet content" title, description text, "Expand Content", "Show Grabber" and "Dismiss from JS" buttons). No visual jumps during the presentation animation.
+     - [ ] iPhone: the empty bottom inset area is added below the content.
+     - [ ] iPad: the sheet height matches the content exactly – there is no bottom inset area below it.
+     - [ ] Android: the sheet surface extends behind the navigation bar while the content sits above it.
+@@ -59,6 +59,24 @@ TBD: Planned, but will be implemented separately.
+ 
+ ---
+ 
++### Grabber
++
++1. Tap "Show Grabber".
++
++    - [ ] The grabber appears at the top of the sheet and the button now reads "Hide Grabber".
++    - [ ] The whole content is visible – "Dismiss from JS" is not clipped at the bottom.
++    - [ ] Android: the sheet grows by the grabber height and "Dismiss from JS" sits fully above the navigation bar.
++
++2. Tap "Expand Content".
++
++    - [ ] The sheet grows to fit the extra text box; the grabber, the whole extra text box and "Dismiss from JS" are visible.
++
++3. Tap "Collapse Content", then tap "Hide Grabber".
++
++    - [ ] The grabber disappears and the sheet returns to the height from step 1 of **Presentation**. The button reads "Show Grabber".
++
++---
++
+ ### Dismissal
+ 
+ 1. Tap "Dismiss from JS" (or swipe the sheet down).
+```
+
+**File**: `apps/src/tests/single-feature-tests/page-sheet/test-page-sheet-fit-to-contents/index.tsx` (modified, +11/-1)
+```diff
+@@ -8,6 +8,7 @@ import { Colors } from '@apps/shared/styling';
+ function TestPageSheetFitToContents() {
+   const [isOpen, setIsOpen] = useState(false);
+   const [isExpanded, setIsExpanded] = useState(false);
++  const [isGrabberVisible, setIsGrabberVisible] = useState(false);
+ 
+   const handleDismiss = () => {
+     setIsOpen(false);
+@@ -24,7 +25,8 @@ function TestPageSheetFitToContents() {
+       <PageSheet
+         isOpen={isOpen}
+         onNativeDismiss={handleDismiss}
+-        detents="fitToContents">
++        detents="fitToContents"
++        prefersGrabberVisible={isGrabberVisible}>
+         <View style={styles.sheetContent}>
+           <Text style={styles.sheetTitle}>PageSheet content</Text>
+ 
+@@ -52,6 +54,14 @@ function TestPageSheetFitToContents() {
+ 
+           <View style={styles.spacing} />
+ 
++          <Button
++            title={isGrabberVisible ? 'Hide Grabber' : 'Show Grabber'}
++            color={Colors.primary}
++            onPress={() => setIsGrabberVisible(!isGrabberVisible)}
++          />
++
++          <View style={styles.spacing} />
++
+           <Button
+             title="Dismiss from JS"
+             color={Colors.primary}
+```
+
+**File**: `apps/src/tests/single-feature-tests/page-sheet/test-page-sheet-fit-to-contents/scenario-description.ts` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@ export const scenarioDescription: ScenarioDescription = {
+   name: 'Fit To Contents',
+   key: 'test-page-sheet-fit-to-contents',
+   details:
+-    'detents="fitToContents": the sheet wraps its content and follows dynamic content height changes.',
++    'detents="fitToContents": the sheet wraps its content and follows dynamic content height and grabber visibility changes.',
+   platforms: ['android', 'ios'],
+   e2eCoverage: 'tbd',
+   smokeTest: false,
 ```
 
 ---
 
-### Incident Patch 2: `f3306074` (2026-11-16)
-**Commit Message**: fix(Android, Tabs): remove TabsScreen natively when it's removed from JS (#5074)
+### Incident Patch 2: `08d5f32e` (2026-11-20)
+**Commit Message**: fix(iOS, Split): a column shown after the Split collapses has the size of the collapsed Split (#5290)
 
 ## Description
 
-This is #4812 by @ArnaudDerosin, rebased onto `main`. The tabs moved to
-`react/containers` in #4946, so that branch no longer applies. I
-cherry-picked its commit, keeping the authorship, and resolved the one
-conflict in `TabsHost.kt`. The change itself is unchanged.
+When the window gets too narrow for its columns, the Split collapses and
+shows one column at a time. On an iPad it was too narrow. A plain column
+and a column navigated by a `Stack.Host` were both affected.
+In a collapsed Split UIKit nests the navigation controller of a column
+in the navigation controller of the primary column and resizes it before
+the column is shown. `UINavigationController` wraps the view of each of
+its view controllers in a view of its own, and gives that wrapper the
+autoresizing mask of the wrapped view. The content view of a plain
+column and the view of a stack screen had no mask, so the wrapper kept
+its size, and so did the view inside. The view was not laid out again,
+so no new frame was reported to the shadow tree either.
 
-On Android, a `TabsScreen` removed from JS is never removed natively.
-Before Fabric removes a child, `SurfaceMountingManager.removeViewAt`
-looks it up through `viewGroupManager.getChildAt(parent, index)`. When
-the tag isn't there, it logs `view already removed from parent!` and
-returns without calling the view manager's `removeViewAt`. The only real
-Android child of `TabsHost` is `TabsContainer`, since the screens live
-in `renderedScreens` and in the container's model, and
-`TabsHostViewManager` didn't override `getChildCount`/`getChildAt`. So
-every tab removal was skipped, the removed tabs stayed in the bar, and
-once the model held more than six the next menu rebuild threw:
+Supersedes #3811.
 
-```
-java.lang.IllegalArgumentException: Maximum number of items supported by CustomBottomNavigationView is 6. Limit can be checked with CustomBottomNa
+Closes
+https://github.com/software-mansion/react-native-screens-labs/issues/1089
 
-**File**: `android/src/main/java/com/swmansion/rnscreens/react/containers/tabs/host/TabsHost.kt` (modified, +5/-0)
+## Changes
+
+- `RNSSplitPlainColumnContentView`, the content view of a plain column,
+has the flexible width and height autoresizing mask. A view has this
+mask when its view controller creates it.
+- `RNSStackScreenComponent
+
+**File**: `apps/src/tests/component-integration-tests/split/index.ts` (modified, +3/-0)
 ```diff
-@@ -102,6 +102,11 @@ class TabsHost(
-             "[RNScreens] Nullish fragment manager - can't run container operations"
-         }
+@@ -2,15 +2,18 @@ import type { ScenarioGroup } from '@apps/tests/shared/helpers';
+ import TestSplitStackV5InTabs from './test-split-stack-v5-nesting-stack-v5-in-tabs-ios';
+ import TestSplitStackV5InFormSheet from './test-split-stack-v5-nesting-stack-v5-in-form-sheet-ios';
+ import TestSplitStackV5InContainedModal from './test-split-stack-v5-nesting-stack-v5-in-contained-modal-ios';
++import TestSplitStackColumnLayoutAfterCollapse from './test-split-stack-column-layout-after-collapse-ios';
  
-+    internal val reactSubviewCount: Int
-+        get() = renderedScreens.size
-+
-+    internal fun getReactSubviewAt(index: Int): TabsScreen? = renderedScreens.getOrNull(index)
-+
-     internal fun mountReactSubviewAt(
-         tabsScreen: TabsScreen,
-         index: Int,
-```
-
-**File**: `android/src/main/java/com/swmansion/rnscreens/react/containers/tabs/host/TabsHostViewManager.kt` (modified, +10/-0)
-```diff
-@@ -54,6 +54,16 @@ class TabsHostViewManager :
-         parent.unmountReactSubviewAt(index)
-     }
- 
-+    // TabsScreens are not real Android children of TabsHost (they live in its
-+    // container). Fabric's removeViewAt verifies the child via getChildAt before
-+    // removing; without these overrides it never finds the tab and skips removal.
-+    override fun getChildCount(parent: TabsHost): Int = parent.reactSubviewCount
-+
-+    override fun getChildAt(
-+        parent: TabsHost,
-+        index: Int,
-+    ): View? = parent.getReactSubviewAt(index)
-+
-     override fun removeAllViews(parent: TabsHost) {
-         parent.unmountAllReactSubviews()
-     }
-```
-
-**File**: `apps/src/tests/single-feature-tests/tabs/index.ts` (modified, +3/-0)
-```diff
-@@ -34,6 +34,7 @@ import TestTabsBottomAccessoryVisibility from './test-tabs-bottom-accessory-visi
- import TestTabsBottomAccessorySize from './test-tabs-bottom-accessory-size-ios';
- import TestTabsScreenOrientation from './test-tabs-screen-orientation';
- import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-experimental-user-interface-style-ios';
-+import TestTabsDynamicTabCount from './test-tabs-dynamic-tab-count';
- // Scenario entry-point components — each scenario's default export re-exported
- // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
- export { default as TestTabsSimpleNav } from './test-tabs-simple-nav';
-@@ -68,6 +69,7 @@ export { default as TestTabsBottomAccessoryVisibility } from './test-tabs-bottom
- export { default as TestTabsBottomAccessorySize } from './test-tabs-bottom-accessory-size-ios';
- export { default as TestTabsScreenOrientation } from './test-tabs-screen-orientation';
- export { default as TestTabsTabBarExperimentalUserInterfaceStyle } from './test-tabs-tab-bar-experimental-user-interface-style-ios';
-+export { default as TestTabsDynamicTabCount } from './test-tabs-dynamic-tab-count';
+ export { default as TestSplitStackV5InTabs } from './test-split-stack-v5-nesting-stack-v5-in-tabs-ios';
+ export { default as TestSplitStackV5InFormSheet } from './test-split-stack-v5-nesting-stack-v5-in-form-sheet-ios';
+ export { default as TestSplitStackV5InContainedModal } from './test-split-stack-v5-nesting-stack-v5-in-contained-modal-ios';
++export { default as TestSplitStackColumnLayoutAfterCollapse } from './test-split-stack-column-layout-after-collapse-ios';
  
  const scenarios = {
-   TestTabsSimpleNav,
-@@ -102,6 +104,7 @@ const scenarios = {
-   TestTabsBottomAccessorySize,
-   TestTabsScreenOrientation,
-   TestTabsTabBarExperimentalUserInterfaceStyle,
-+  TestTabsDynamicTabCount,
+   TestSplitStackV5InTabs,
+   TestSplitStackV5InFormSheet,
+   TestSplitStackV5InContainedModal,
++  TestSplitStackColumnLayoutAfterCollapse,
  };
  
- const TabsScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
+ const SplitScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
 ```
 
-**File**: `apps/src/tests/single-feature-tests/tabs/test-tabs-dynamic-tab-count/index.tsx` (added, +55/-0)
+**File**: `apps/src/tests/component-integration-tests/split/test-split-stack-column-layout-after-collapse-ios/index.tsx` (added, +134/-0)
 ```diff
-@@ -0,0 +1,55 @@
+@@ -0,0 +1,134 @@
 +import React from 'react';
-+import { Button, Text, View } from 'react-native';
-+import { Tabs } from 'react-native-screens';
++import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
++import { Split } from 'react-native-screens';
 +import { scenarioDescription } from './scenario-description';
 +import { createScenario } from '@apps/tests/shared/helpers';
-+import { DEFAULT_TAB_ROUTE_OPTIONS } from '@apps/shared/containers/tabs';
++import { StackContainer } from '@apps/shared/containers/stack';
++import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
++import { Colors } from '@apps/shared/styling';
 +
-+const EXTRA_TAB_KEYS = ['Tab2', 'Tab3', 'Tab4'];
-+
-+function TestTabsDynamicTabCount() {
-+  const [showExtraTabs, setShowExtraTabs] = React.useState(true);
-+  const [toggleCount, setToggleCount] = React.useState(0);
-+
-+  const toggle = () => {
-+    setShowExtraTabs(value => !value);
-+    setToggleCount(count => count + 1);
-+  };
-+
++function TestSplitStackColumnLayoutAfterCollapse() {
 +  return (
-+    <Tabs.Host
-+      navStateRequest={{ selectedScreenKey: 'Tab1', baseProvenance: 0 }}>
-+      <Tabs.Screen {...DEFAULT_TAB_ROUTE_OPTIONS} screenKey="Tab1" title="Tab1">
-+        <View
-+          style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-+          <Text>Extra tabs: {showExtraTabs ? 'rendered' : 'removed'}</Text>
-+          <Text>Toggles: {toggleCount}</Text>
-+          <Button
-+            title={showExtraTabs ? 'Remove extra tabs' : 'Add extra tabs'}
-+            onPress={toggle}
-+            testID="dynamic-tab-count-toggle"
-+          />
-+        </View>
-+      </Tabs.Screen>
-+      {showExtraTabs &&
-+        EXTRA_TAB_KEYS.map(key => (
-+          <Tabs.Screen
-+            {...DEFAULT_TAB_ROUTE_OPTIONS}
-+            key={key}
-+            screenKey={key}
-+            title={key}>
-+            <View
-+              style={{
-+                flex: 1,
-+                alignItems: 'center',
-+                justifyContent: 'center',
-+              }}>
-+              <Text>{key}</Text>
-+            </View>
-+          </Tabs.Screen>
-+        ))}
-+    </Tabs.Host>
++    <Split.Host preferredDisplayMode="twoBesideSecondary">
++      <Split.Column>
++        <SizeProbe name="Primary" color={Colors.NavyLight20} />
++      </Split.Column>
++      <Split.Column>
++        <ColumnStack
++          name="Supplementary"
++          colors={[Colors.RedLight40, Colors.RedLight60]}
++        />
++      </Split.Column>
++      <Split.Column>
++        <ColumnStack
++          name="Secondary"
++          colors={[Colors.YellowLight40, Colors.YellowLight60]}
++        />
++      </Split.Column>
++    </Split.Host>
 +  );
 +}
 +
-+export default createScenario(TestTabsDynamicTabCount, scenarioDescription);
++// A stack that navigates the column, with two screens.
++function ColumnStack({
++  name,
++  colors,
++}: {
++  name: string;
++  colors: [string, string];
++}) {
++  const root = `${name} root`;
++  const pushed = `${name} pushed`;
++
++  return (
++    <StackContainer
++      routeConfigs={[
++        {
++          name: root,
++          element: (
++            <SizeProbe name={root} color={colors[0]}>
++              <StackNavigationButtons
++                routeNames={[pushed]}
++                isPopEnabled={false}
++              />
++            </SizeProbe>
++          ),
++          options: { headerConfig: { title: root } },
++        },
++        {
++          name: pushed,
++          element: (
++            <SizeProbe name={pushed} color={colors[1]}>
++              <StackNavigationButtons routeNames={[]} isPopEnabled={true} />
++            </SizeProbe>
++          ),
++          options: { headerConfig: { title: pushed } },
++        },
++      ]}
++    />
++  );
++}
++
++type Size = { width: number; height: number };
++
++function formatSize({ width, height }: Size) {
++  return `${Math.round(width)} × ${Math.round(height)}`;
++}
++
++// Fills its parent and prints its size next to the size of the window.
++function SizeProbe({
++  name,
++  color,
++  children,
++}: {
++  name: string;
++  color: string;
++  children?: React.ReactNode;
++}) {
++  const windowSize = useWindowDimensions();
++  const [size, setSize] = React.useState<Size | null>(null);
++
++  return (
++    <View
++      style={[styles.probe, { backgroundColor: color }]}
++      onLayout={event => {
++        const { width, height } = event.nativeEvent.layout;
++        setSize({ width, height });
++      }}>
++      <Text style={styles.title}>{name}</Text>
++      <Text style={styles.size}>{size != null ? formatSize(size) : '…'}</Text>
++      <Text style={styles.caption}>window {formatSize(windowSize)}</Text>
++      {children}
++    </View>
++  );
++}
++
++const styles = StyleSheet.create({
++  probe: {
++    flex: 1,
++    alignItems: 'center',
++    justifyContent: 'center',
++    gap: 8,
++  },
++  title: {
++    fontSize: 20,
++    fontWeight: 'bold',
++    color: Colors.NavyDark140,
++  },
++  size: {
++    fontSize: 34,
++    fontWeight: 'bold',
++    fontVariant: ['tabular-nums'],
++    color: Colors.NavyDark140,
++  },
++  caption: {
++    fontSize: 16,
++    fontVariant: ['tabular-nums'],
++    color: Colors.NavyDark100,
++  },
++});
++
++export default createScenario(
++  TestSplitStackColumnLayoutAfterCollapse,
++  scenarioDescription,
++);
 ```
 
-**File**: `apps/src/tests/single-feature-tests/tabs/test-tabs-dynamic-tab-count/scenario-description.ts` (added, +11/-0)
+**File**: `apps/src/tests/component-integration-tests/split/test-split-stack-column-layout-after-collapse-ios/scenario-description.ts` (added, +18/-0)
 ```diff
-@@ -0,0 +1,11 @@
+@@ -0,0 +1,18 @@
 +import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 +
 +export const scenarioDescription: ScenarioDescription = {
-+  name: 'Dynamic Tab Count',
-+  key: 'test-tabs-dynamic-tab-count',
++  name: 'Split stack column layout after collapse',
++  key: 'test-split-stack-column-layout-after-collapse-ios',
 +  details:
-+    'Test removing and re-adding TabsScreens at runtime (conditional rendering).',
-+  platforms: ['ios', 'android'],
++    'A screen of a stack that navigates a column fills the window after the Split collapses.',
++  platforms: ['ios'],
++  devices: ['ipad'],
++  osVersions: {
++    ipad: { createdOn: ['iOS 27.2'], testOn: ['iOS 27.2'] },
++  },
++  deviceSetup: {
++    ipad: 'Portrait, in a multitasking mode that allows resizing the app window. The window has its full size at launch.',
++  },
 +  e2eCoverage: 'tbd',
 +  smokeTest: false,
 +};
 ```
 
-**File**: `apps/src/tests/single-feature-tests/tabs/test-tabs-dynamic-tab-count/scenario.md` (added, +67/-0)
+**File**: `apps/src/tests/component-integration-tests/split/test-split-stack-column-layout-after-collapse-ios/scenario.md` (added, +74/-0)
 ```diff
-@@ -0,0 +1,67 @@
-+# Test Scenario: Dynamic Tab Count
+@@ -0,0 +1,74 @@
++# Test Scenario: Split stack column layout after collapse
 +
-+## Details
++<!-- scenario-metadata:start: generated by `yarn sync-scenario-metadata` -->
 +
-+**Description:** Verify that tabs rendered conditionally can be removed from and
-+added back to `Tabs.Host` at runtime. Pass means the tab bar always shows exactly
-+the rendered tabs and the app does not crash.
++| Field | Value |
++| ----- | ----- |
++| Key | `test-split-stack-column-layout-after-collapse-ios` |
++| Platforms | iOS |
++| E2E coverage | TBD |
++| Smoke test | No |
 +
-+**OS test creation version:** iOS: 27.2, Android: API Level 36.
++| Device | Test on | Setup |
++| ------ | ------- | ----- |
++| iPad | iOS 27.2 | Portrait, in a multitasking mode that allows resizing the app window. The window has its full size at launch. |
 +
-+## E2E test
++<!-- scenario-metadata:end -->
 +
-+TBD: to be automated once adding tabs at runtime is fully supported on Android.
++## Description
 +
-+## Prerequisites
++A `Stack.Host` that is the direct and only child of a `Split.Column` navigates the column. In this scenario the supplementary and the secondary column each host such a stack, and the primary column is a plain column.
 +
-+- iOS device or simulator
-+- Android emulator
++When the window gets too narrow for its columns, the Split collapses and shows one column at a time. A screen of the stack shown in a collapsed Split has to fill the window. Every screen in this scenario prints its own size and, below it, the size of the window, so in a collapsed Split both sizes have to be equal.
++
++It guards against a screen keeping the size its column had before the Split collapsed. Such a screen is too narrow for the window, and its bottom part is outside of the window.
 +
 +## Note
 +
-+- **Known issue:** Android: a tab added back at runtime shows an empty content
-+  area when selected. Adding tabs at runtime is not fully supported yet.
++- The scenario has to be rendered as the root of the app: import `TestSplitStackColumnLayoutAfterCollapse` as `Example` in `apps/App.tsx`. The Split is a top-level navigator, and the tests menu would push the scenario onto a stack.
++- After the window gets its full size back, the primary column is hidden. UIKit restores the columns this way.
 +
 +## Steps
 +
 +### Baseline
 +
-+1. Launch the app and navigate to the **Dynamic Tab Count** screen.
++1. Start the app with **TestSplitStackColumnLayoutAfterCollapse** as its root.
 +
-+   - [ ] The tab bar shows "Tab1", "Tab2", "Tab3" and "Tab4"; "Tab1" is
-+         selected.
-+   - [ ] The screen shows "Extra tabs: rendered" and "Toggles: 0".
-+
-+2. Select the "Tab2" tab.
-+
-+   - [ ] The screen shows the text "Tab2".
++    - [ ] The "Primary" column is shown over the supplementary column, next to the secondary column, which shows "Secondary root".
++    - [ ] The height of the "Primary" column and of "Secondary root" is the height of the window.
 +
 +---
 +
-+### Remove and add back
++### Collapsing the Split
 +
-+1. Select the "Tab1" tab, then tap "Remove extra tabs".
++1. Drag the bottom right corner of the window towards the center of the screen, until the Split shows only one column.
 +
-+   - [ ] The tab bar shows only "Tab1".
-+   - [ ] The screen shows "Extra tabs: removed" and "Toggles: 1".
++    - [ ] "Secondary root" is shown, with a back button in the navigation bar.
++    - [ ] The size of the screen is the size of the window.
 +
-+2. Tap "Add extra tabs".
++2. Tap "Push Secondary pushed".
 +
-+   - [ ] The tab bar shows exactly "Tab1", "Tab2", "Tab3" and "Tab4"; "Tab1"
-+         is selected.
-+   - [ ] The screen shows "Extra tabs: rendered" and "Toggles: 2".
++    - [ ] "Secondary pushed" is pushed, and its size is the size of the window.
 +
-+3. Tap "Remove extra tabs", then "Add extra tabs", 5 times in a row.
++3. Tap "Pop", then tap the back button in the navigation bar.
 +
-+   - [ ] The tab bar shows exactly "Tab1", "Tab2", "Tab3" and "Tab4".
-+   - [ ] The screen shows "Toggles: 12".
++    - [ ] "Supplementary root" is shown, with a back button in the navigation bar.
++    - [ ] The size of the screen is the size of the window.
 +
-+4. Select the "Tab2" tab.
++4. Tap "Push Supplementary pushed".
 +
-+   - [ ] "Tab2" is selected in the tab bar.
-+   - [ ] iOS: the screen shows the text "Tab2".
-+   - [ ] Android: the content area is empty (see Note).
++    - [ ] "Supplementary pushed" is pushed, and its size is the size of the window.
 +
-+5. Select the "Tab1" tab.
++5. Tap "Pop", then tap the back button in the navigation bar.
 +
-+   - [ ] The screen shows "Extra tabs: rendered" and "Toggles: 12".
++    - [ ] The "Primary" column is shown, without a back button.
++    - [ ] The size of the column is the size of the window.
++
++---
++
++### Expanding the Split
++
++1. Drag the bottom right corner of the window back, until the window has its full size.
++
++    - [ ] "Supplementary root" and "Secondary root" are shown side by side.
++    - [ ] Each of them prints the width it has now, and its height is the height of the window.
 ```
 
----
-
-### Incident Patch 3: `65a7c6dc` (2026-11-16)
-**Commit Message**: fix(Android, Stack v4): dispatch the appear event after a pause mid push (#5171)
-
-## Description
-
-On Android, if the app goes to the background while a pushed screen is
-still animating in, the screen never gets `onAppear`, so
-react-navigation never emits `transitionEnd`. The enter animation ends
-after the fragment is paused, `dispatchViewAnimationEvent` takes the
-disappear branch, and the canDispatch gate drops that event because the
-screen never appeared. This PR keeps the appear for the top screen and
-sends it from `onResume`. The pending-flag approach follows the analysis
-Nezz posted in the issue. A pause before the enter animation starts lost
-the will-appear in the same way. The top screen now gets it right away,
-so `transitionStart` still reaches JS.
-
-Closes #4941.
-
-## Test plan
-
-Added `Test4941` (`apps/src/tests/issue-tests/Test4941.tsx`), based on
-the repro from the issue.
-
-1. Run `Test4941` in FabricExample on Android.
-2. Tap "Push details" and press Home while Details slides in. "Push
-details in 1s" gives time to reach the Home button. Details shows "Home
-pressed during the push: yes" when the press landed during the
-animation. A run counts only with "yes".
-3. Reopen the a
-
-**File**: `android/src/main/java/com/swmansion/rnscreens/legacy/ScreenFragment.kt` (modified, +15/-0)
+**File**: `apps/src/tests/single-feature-tests/split/index.ts` (modified, +3/-0)
 ```diff
-@@ -62,6 +62,10 @@ open class ScreenFragment :
-     // in nested fragments. See more explanation in dispatchViewAnimationEvent
-     private var isTransitioning = false
+@@ -8,6 +8,7 @@ import TestSplitStackHeaderNavigation from './test-split-stack-header-navigation
+ import TestSplitStackLifecycleEvents from './test-split-stack-lifecycle-events-ios';
+ import TestSplitStackContentSwap from './test-split-stack-content-swap-ios';
+ import TestSplitStackIntegrationDisabled from './test-split-stack-integration-disabled-ios';
++import TestSplitColumnLayoutAfterCollapse from './test-split-column-layout-after-collapse-ios';
  
-+    // The enter animation can end while the fragment is paused, e.g. when the app goes to the
-+    // background in the middle of a push. In such case we dispatch the appear event on resume.
-+    private var shouldDispatchAppearOnResume = false
-+
-     constructor() {
-         throw IllegalStateException(
-             "Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.",
-@@ -79,6 +83,10 @@ open class ScreenFragment :
-             shouldUpdateOnResume = false
-             ScreenWindowTraits.trySetWindowTraits(screen, tryGetActivity(), tryGetContext())
-         }
-+        if (shouldDispatchAppearOnResume) {
-+            shouldDispatchAppearOnResume = false
-+            dispatchOnAppear()
-+        }
-     }
+ export { default as TestSplitTopColumnForCollapsing } from './test-top-column-for-collapsing';
+ export { default as TestSplitCommandShowColumn } from './test-command-show-column';
+@@ -18,6 +19,7 @@ export { default as TestSplitStackHeaderNavigation } from './test-split-stack-he
+ export { default as TestSplitStackLifecycleEvents } from './test-split-stack-lifecycle-events-ios';
+ export { default as TestSplitStackContentSwap } from './test-split-stack-content-swap-ios';
+ export { default as TestSplitStackIntegrationDisabled } from './test-split-stack-integration-disabled-ios';
++export { default as TestSplitColumnLayoutAfterCollapse } from './test-split-column-layout-after-collapse-ios';
  
-     override fun onCreateView(
-@@ -309,6 +317,12 @@ open class ScreenFragment :
-                 UiThreadUtil.runOnUiThread {
-                     if (animationEnd) dispatchOnAppear() else dispatchOnWillAppear()
-                 }
-+            } else if (screen.container?.topScreen === screen) {
-+                if (animationEnd) {
-+                    shouldDispatchAppearOnResume = true
-+                } else {
-+                    UiThreadUtil.runOnUiThread { dispatchOnWillAppear() }
-+                }
-             } else {
-                 if (animationEnd) dispatchOnDisappear() else dispatchOnWillDisappear()
-             }
-@@ -317,6 +331,7 @@ open class ScreenFragment :
+ const scenarios = {
+   TestSplitTopColumnForCollapsing,
+@@ -29,6 +31,7 @@ const scenarios = {
+   TestSplitStackLifecycleEvents,
+   TestSplitStackContentSwap,
+   TestSplitStackIntegrationDisabled,
++  TestSplitColumnLayoutAfterCollapse,
+ };
  
-     override fun onDestroy() {
-         super.onDestroy()
-+        shouldDispatchAppearOnResume = false
-         val container = screen.container
-         if (container == null || !container.hasScreen(this.screen.fragmentWrapper)) {
-             // we only send dismissed even when the screen has been removed from its container
+ const SplitScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
 ```
 
-**File**: `apps/src/tests/issue-tests/Test4941.tsx` (added, +127/-0)
+**File**: `apps/src/tests/single-feature-tests/split/test-split-column-layout-after-collapse-ios/index.tsx` (added, +77/-0)
 ```diff
-@@ -0,0 +1,127 @@
-+import React, { useEffect, useRef, useState } from 'react';
-+import { AppState, StyleSheet, Text, View } from 'react-native';
-+import { NavigationContainer } from '@react-navigation/native';
-+import {
-+  createNativeStackNavigator,
-+  type NativeStackScreenProps,
-+} from '@react-navigation/native-stack';
-+import { Button } from '@apps/shared';
+@@ -0,0 +1,77 @@
++import React from 'react';
++import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
++import { Split } from 'react-native-screens';
++import { scenarioDescription } from './scenario-description';
++import { createScenario } from '@apps/tests/shared/helpers';
++import { Colors } from '@apps/shared/styling';
 +
-+// Android: tap "Push details" and press Home while Details slides in, then
-+// reopen the app. "Push details in 1s" starts the push 1 s after the tap:
-+// press Home only after Details starts to slide in. JS timers stop in the
-+// background, so an earlier Home press delays the push until the app is
-+// reopened. The run counts only if Details shows "Home pressed during the
-+// push: yes". Details should then show "transitionStart: received (1)" and
-+// "transitionEnd: received (1)".
-+//
-+// A Home press before the first animation frame is too fast by hand. Send the
-+// tap on "Push details" and Home in one command:
-+//   adb shell "input tap <x> <y>; sleep 0.03; input keyevent KEYCODE_HOME"
-+// Without the fix, such a run can show "transitionStart: waiting".
-+
-+type ParamList = {
-+  Home: undefined;
-+  Details: undefined;
-+};
-+
-+const Stack = createNativeStackNavigator<ParamList>();
-+
-+function HomeScreen({ navigation }: NativeStackScreenProps<ParamList, 'Home'>) {
++function TestSplitColumnLayoutAfterCollapse() {
 +  return (
-+    <View style={styles.container}>
-+      <Button
-+        title="Push details"
-+        onPress={() => navigation.navigate('Details')}
-+      />
-+      <Button
-+        title="Push details in 1s"
-+        onPress={() => setTimeout(() => navigation.navigate('Details'), 1000)}
-+      />
-+    </View>
++    <Split.Host preferredDisplayMode="twoBesideSecondary">
++      <Split.Column>
++        <SizeProbe name="Primary" color={Colors.NavyLight20} />
++      </Split.Column>
++      <Split.Column>
++        <SizeProbe name="Supplementary" color={Colors.RedLight40} />
++      </Split.Column>
++      <Split.Column>
++        <SizeProbe name="Secondary" color={Colors.YellowLight40} />
++      </Split.Column>
++    </Split.Host>
 +  );
 +}
 +
-+function DetailsScreen({
-+  navigation,
-+}: NativeStackScreenProps<ParamList, 'Details'>) {
-+  const [transitionStartCount, setTransitionStartCount] = useState(0);
-+  const [transitionEndCount, setTransitionEndCount] = useState(0);
-+  const [backgroundedDuringPush, setBackgroundedDuringPush] = useState(false);
-+  const transitionEndedRef = useRef(false);
++type Size = { width: number; height: number };
 +
-+  useEffect(
-+    () =>
-+      navigation.addListener('transitionStart', event => {
-+        if (!event.data.closing) {
-+          console.log('[Test4941] Details transitionStart (closing: false)');
-+          setTransitionStartCount(count => count + 1);
-+        }
-+      }),
-+    [navigation],
-+  );
-+
-+  useEffect(
-+    () =>
-+      navigation.addListener('transitionEnd', event => {
-+        if (!event.data.closing) {
-+          console.log('[Test4941] Details transitionEnd (closing: false)');
-+          transitionEndedRef.current = true;
-+          setTransitionEndCount(count => count + 1);
-+        }
-+      }),
-+    [navigation],
-+  );
-+
-+  useEffect(() => {
-+    const subscription = AppState.addEventListener('change', state => {
-+      if (state === 'background' && !transitionEndedRef.current) {
-+        setBackgroundedDuringPush(true);
-+      }
-+    });
-+    return () => subscription.remove();
-+  }, []);
-+
-+  return (
-+    <View style={styles.container}>
-+      <Text style={styles.text}>
-+        transitionStart:{' '}
-+        {transitionStartCount > 0
-+          ? `received (${transitionStartCount})`
-+          : 'waiting'}
-+      </Text>
-+      <Text style={styles.text}>
-+        transitionEnd:{' '}
-+        {transitionEndCount > 0
-+          ? `received (${transitionEndCount})`
-+          : 'waiting'}
-+      </Text>
-+      <Text style={styles.text}>
-+        Home pressed during the push: {backgroundedDuringPush ? 'yes' : 'no'}
-+      </Text>
-+    </View>
-+  );
++function formatSize({ width, height }: Size) {
++  return `${Math.round(width)} × ${Math.round(height)}`;
 +}
 +
-+export default function Test4941() {
++// Fills its parent and prints its size next to the size of the window.
++function SizeProbe({ name, color }: { name: string; color: string }) {
++  const windowSize = useWindowDimensions();
++  const [size, setSize] = React.useState<Size | null>(null);
++
 +  return (
-+    <NavigationContainer>
-+      <Stack.Navigator>
-+        <Stack.Screen name="Home" component={HomeScreen} />
-+        <Stack.Screen name="Details" component={DetailsScreen} />
-+      </Stack.Navigator>
-+    </NavigationContainer>
++    <View
++      style={[styles.probe, { backgroundColor: color }]}
++      onLayout={event => {
++        const { width, height } = event.nativeEvent.layout;
++        setSize({ width, height });
++      }}>
++      <Text style={styles.title}>{name}</Text>
++      <Text style={styles.size}>{size != null ? formatSize(size) : '…'}</Text>
++      <Text style={styles.caption}>window {formatSize(windowSize)}</Text>
++    </View>
 +  );
 +}
 +
 +const styles = StyleSheet.create({
-+  container: {
++  probe: {
 +    flex: 1,
 +    alignItems: 'center',
 +    justifyContent: 'center',
-+    gap: 16,
++    gap: 8,
 +  },
-+  text: {
++  title: {
 +    fontSize: 20,
++    fontWeight: 'bold',
++    color: Colors.NavyDark140,
++  },
++  size: {
++    fontSize: 34,
++    fontWeight: 'bold',
++    fontVariant: ['tabular-nums'],
++    color: Colors.NavyDark140,
++  },
++  caption: {
++    fontSize: 16,
++    fontVariant: ['tabular-nums'],
++    color: Colors.NavyDark100,
 +  },
 +});
++
++export default createScenario(
++  TestSplitColumnLayoutAfterCollapse,
++  scenarioDescription,
++);
 ```
 
-**File**: `apps/src/tests/issue-tests/index.ts` (modified, +1/-0)
+**File**: `apps/src/tests/single-feature-tests/split/test-split-column-layout-after-collapse-ios/scenario-description.ts` (added, +17/-0)
 ```diff
-@@ -228,6 +228,7 @@ export { default as Test4811 } from './Test4811';
- export { default as Test4857 } from './Test4857';
- export { default as Test4863 } from './Test4863';
- export { default as Test4872 } from './Test4872';
-+export { default as Test4941 } from './Test4941';
- export { default as Test4989 } from './Test4989'; // [E2E skipped]: needs an iPhone Duo cold-launched unfolded
- export { default as Test5015 } from './Test5015'; // [E2E skipped]: truncated tab bar titles can't be checked
- export { default as Test5092 } from './Test5092';
+@@ -0,0 +1,17 @@
++import type { ScenarioDescription } from '@apps/tests/shared/helpers';
++
++export const scenarioDescription: ScenarioDescription = {
++  name: 'Split column layout after collapse',
++  key: 'test-split-column-layout-after-collapse-ios',
++  details: 'A plain column shown after the Split collapses fills the window.',
++  platforms: ['ios'],
++  devices: ['ipad'],
++  osVersions: {
++    ipad: { createdOn: ['iOS 27.2'], testOn: ['iOS 27.2'] },
++  },
++  deviceSetup: {
++    ipad: 'Portrait, in a multitasking mode that allows resizing the app window. The window has its full size at launch.',
++  },
++  e2eCoverage: 'tbd',
++  smokeTest: false,
++};
+```
+
+**File**: `apps/src/tests/single-feature-tests/split/test-split-column-layout-after-collapse-ios/scenario.md` (added, +64/-0)
+```diff
+@@ -0,0 +1,64 @@
++# Test Scenario: Split column layout after collapse
++
++<!-- scenario-metadata:start: generated by `yarn sync-scenario-metadata` -->
++
++| Field | Value |
++| ----- | ----- |
++| Key | `test-split-column-layout-after-collapse-ios` |
++| Platforms | iOS |
++| E2E coverage | TBD |
++| Smoke test | No |
++
++| Device | Test on | Setup |
++| ------ | ------- | ----- |
++| iPad | iOS 27.2 | Portrait, in a multitasking mode that allows resizing the app window. The window has its full size at launch. |
++
++<!-- scenario-metadata:end -->
++
++## Description
++
++When the window gets too narrow for its columns, the Split collapses and shows one column at a time. A column shown in a collapsed Split has to fill the window. Every column in this scenario prints its own size and, below it, the size of the window, so in a collapsed Split both sizes have to be equal.
++
++It guards against a column keeping the size it had before the Split collapsed. Such a column is too narrow for the window, and its bottom part is outside of the window.
++
++## Note
++
++- The scenario has to be rendered as the root of the app: import `TestSplitColumnLayoutAfterCollapse` as `Example` in `apps/App.tsx`. The Split is a top-level navigator, and the tests menu would push the scenario onto a stack.
++- After the window gets its full size back, the primary column is hidden. UIKit restores the columns this way.
++
++## Steps
++
++### Baseline
++
++1. Start the app with **TestSplitColumnLayoutAfterCollapse** as its root.
++
++    - [ ] The "Primary" column is shown over the "Supplementary" column, next to the "Secondary" column.
++    - [ ] The height of the "Primary" and of the "Secondary" column is the height of the window.
++
++---
++
++### Collapsing the Split
++
++1. Drag the bottom right corner of the window towards the center of the screen, until the Split shows only one column.
++
++    - [ ] The "Secondary" column is shown, with a back button in its navigation bar.
++    - [ ] The size of the column is the size of the window.
++
++2. Tap the back button.
++
++    - [ ] The "Supplementary" column is shown, with a back button in its navigation bar.
++    - [ ] The size of the column is the size of the window.
++
++3. Tap the back button.
++
++    - [ ] The "Primary" column is shown, without a back button.
++    - [ ] The size of the column is the size of the window.
++
++---
++
++### Expanding the Split
++
++1. Drag the bottom right corner of the window back, until the window has its full size.
++
++    - [ ] The "Supplementary" and the "Secondary" column are shown side by side.
++    - [ ] Each of them prints the width it has now, and its height is the height of the window.
+```
+
+---
+
+### Incident Patch 3: `0e738bfc` (2026-11-20)
+**Commit Message**: fix(iOS, Split): notify every Split column about repositioning (#5248)
+
+## Description
+
+Stacked on #5247.
+
+After the Split repositions its columns, e.g. on a display mode change,
+it tells the columns to report their frames again. This PR changes how
+that notification reaches a column and which columns get it.
+
+## Changes
+
+- The Split notifies the controllers of its columns directly, as its
+columns provider lists them. It no longer looks the columns up in the
+view controller hierarchy, through `topViewController` of the navigation
+controller of a column.
+- The column frame is computed in one place, for a layout and for the
+notification. An inspector presented as a modal gets the same frame from
+both now.
+- Every column is notified. A column that is not on screen, or that
+hosts a stack, ignores the notification.
+
+The Split used to keep a list of visible columns, built from
+`willShowColumn` and `willHideColumn`, and notified only those. On iOS
+27.2 UIKit does not call these callbacks when a column is shown or
+hidden with `showColumn:` or `hideColumn:`, so a column shown that way
+was left out and could keep the frame from before it moved in. The list
+is removed.
+
+## Test plan
+
+Split ex
+
+**File**: `ios/core/containers/split/RNSSplitHostController.mm` (modified, +13/-58)
+```diff
+@@ -28,16 +28,6 @@ @implementation RNSSplitHostController {
+    */
+   NSInteger _fixedColumnsCount;
+ 
+-  /**
+-   * Tracks currently visible columns of the UISplitViewController.
+-   *
+-   * This set is kept in sync via `UISplitViewControllerDelegate` methods (`willShow` / `willHide`)
+-   * to reflect which columns are currently rendered in the UI.
+-   * It ensures that only visible columns are considered (e.g. for accessing topViewController),
+-   * avoiding crashes when certain columns are collapsed or hidden.
+-   */
+-  NSMutableSet<NSNumber *> *_visibleColumns;
+-
+   /**
+    * Observe the frames of the views of the navigation controllers installed for the columns.
+    *
+@@ -54,7 +44,6 @@ - (instancetype)initWithNumberOfColumns:(NSInteger)numberOfColumns
+     _splitAppearanceApplicator = [RNSSplitAppearanceApplicator new];
+     _fixedColumnsCount = numberOfColumns;
+     _needsChildViewControllersUpdate = NO;
+-    _visibleColumns = [NSMutableSet set];
+ 
+     self.delegate = self;
+   }
+@@ -318,40 +307,20 @@ - (void)validateInspectors:(NSArray<RNSSplitScreenController *> *)inspectors
+ }
+ 
+ /**
+- * @brief Gets the RNSSplitScreenController instances of the visible columns that do NOT host a stack.
+- *
+- * In a column that hosts a stack the navigation controller holds the screens of the stack, and the
+- * RNSSplitScreenController of the column is not in the view controller hierarchy. Such a column is left out.
++ * @brief Notifies the columns that the Split repositioned its columns.
+  *
+- * @return An array of RNSSplitScreenController corresponding to the visible columns that do not host a stack.
++ * Every column is notified, and a column that is not on screen ignores it. UIKit does not tell the delegate about
++ * every column it shows or hides (e.g. not when `showColumn:` is called), so the Split does not track which columns
++ * are visible.
+  */
+-- (NSArray<RNSSplitScreenController *> *)visibleSplitScreenControllersWithoutStack
+-{
+-  NSMutableArray<RNSSplitScreenController *> *splitScreenControllers =
+-      [NSMutableArray arrayWithCapacity:_visibleColumns.count];
+-
+-  for (NSNumber *columnNumber in _visibleColumns) {
+-    UISplitViewControllerColumn column = (UISplitViewControllerColumn)columnNumber.integerValue;
+-    UIViewController *viewController = [self viewControllerForColumn:column];
+-    RNSAssert(viewController != nil, @"[RNScreens] viewController for column %ld is nil.", (long)column);
+-
+-    RNSStackNavigationController *navigationController =
+-        [viewController isKindOfClass:RNSStackNavigationController.class]
+-        ? (RNSStackNavigationController *)viewController
+-        : nil;
+-    RNSAssert(navigationController != nil,
+-              @"[RNScreens] Expected RNSStackNavigationController but got %@",
+-              NSStringFromClass(viewController.class));
+-
+-    UIViewController *topViewController = navigationController.topViewController;
+-    if (![topViewController isKindOfClass:RNSSplitScreenController.class]) {
+-      continue;
+-    }
+-
+-    [splitScreenControllers addObject:(RNSSplitScreenController *)topViewController];
++- (void)notifyColumnsAboutPositioningChange
++{
++  for (RNSSplitScreenController *controller in [self.columnsProvider columnControllers]) {
++    [controller columnPositioningDidChange];
++  }
++  for (RNSSplitScreenController *controller in [self.columnsProvider inspectorControllers]) {
++    [controller columnPositioningDidChange];
+   }
+-
+-  return splitScreenControllers;
+ }
+ 
+ #pragma mark - RNSViewFrameChangeDelegate
+@@ -365,9 +334,7 @@ - (void)validateInspectors:(NSArray<RNSSplitScreenController *> *)inspectors
+  */
+ - (void)viewFrameDidChange:(nonnull UIView *)view
+ {
+-  for (RNSSplitScreenController *controller in self.visibleSplitScreenControllersWithoutStack) {
+-    [controller columnPositioningDidChangeInSplitViewController:self];
+-  }
++  [self notifyColumnsAboutPositioningChange];
+ }
+ 
+ #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+@@ -426,16 +393,6 @@ - (void)maybeHideInspector
+ 
+ #pragma mark - UISplitViewControllerDelegate
+ 
+-- (void)splitViewController:(UISplitViewController *)svc willShowColumn:(UISplitViewControllerColumn)column
+-{
+-  [_visibleColumns addObject:@(column)];
+-}
+-
+-- (void)splitViewController:(UISplitViewController *)svc willHideColumn:(UISplitViewControllerColumn)column
+-{
+-  [_visibleColumns removeObject:@(column)];
+-}
+-
+ - (void)splitViewControllerDidCollapse:(UISplitViewController *)svc
+ {
+   [self.eventsDelegate splitHostControllerDidCollapse:self];
+@@ -500,9 +457,7 @@ - (void)splitViewController:(UISplitViewController *)svc
+       return;
+     }
+ 
+-    for (RNSSplitScreenController *controller in [strongSelf visibleSplitScreenControllersWithoutStack]) {
+-      [controller columnPositioningDidChangeInSplitViewController:strongSelf];
+-    }
++    [strongSelf notifyColumnsAboutPositioningChange];
+   };
+ 
+   id<UIViewControllerTransitionCoordinator> coordinator = svc.transitionCoordinator;
+```
+
+**File**: `ios/core/containers/split/RNSSplitScreenController.h` (modified, +3/-4)
+```diff
+@@ -76,12 +76,11 @@ NS_ASSUME_NONNULL_BEGIN
+ #pragma mark - Layout
+ 
+ /**
+- * @brief Reports the column frame change after the Split repositioned its columns.
++ * @brief Called by the Split after it repositioned its columns.
+  *
+- * @param splitViewController The UISplitViewController whose layout positioning changed, represented by
+- * RNSSplitHostController.
++ * Reports the column frame. A column that hosts a stack or is not on screen has no frame to report.
+  */
+-- (void)columnPositioningDidChangeInSplitViewController:(UISplitViewController *)splitViewController;
++- (void)columnPositioningDidChange;
+ 
+ @end
+ 
+```
+
+**File**: `ios/core/containers/split/RNSSplitScreenController.mm` (modified, +12/-8)
+```diff
+@@ -84,7 +84,11 @@ - (void)setNeedsLifecycleStateUpdate
+ - (void)viewDidLayoutSubviews
+ {
+   [super viewDidLayoutSubviews];
++  [self reportColumnFrame];
++}
+ 
++- (void)reportColumnFrame
++{
+   // For modals, which are presented outside the SplitHost subtree (and RN hierarchy),
+   // we're attaching our touch handler and we don't need to apply any offset corrections,
+   // because it's positioned relatively to the column view
+@@ -96,18 +100,18 @@ - (void)viewDidLayoutSubviews
+   UIView *ancestorView = [self findSplitHostController].view;
+   RNSAssert(ancestorView != nil, @"[RNScreens] Expected to find RNSSplitHost component for RNSSplitScreen component");
+ 
+-  [self reportColumnFrameInContextOfView:ancestorView];
++  CGRect frame = [self.view convertRect:self.view.frame toView:ancestorView];
++  [_delegate splitScreenController:self didChangeColumnFrame:frame];
+ }
+ 
+-- (void)columnPositioningDidChangeInSplitViewController:(UISplitViewController *)splitViewController
++- (void)columnPositioningDidChange
+ {
+-  [self reportColumnFrameInContextOfView:splitViewController.view];
+-}
++  if (self.view.window == nil) {
++    // The column is not on screen, or it hosts a stack and its view is not in the view hierarchy.
++    return;
++  }
+ 
+-- (void)reportColumnFrameInContextOfView:(UIView *)ancestorView
+-{
+-  CGRect frame = [self.view convertRect:self.view.frame toView:ancestorView];
+-  [_delegate splitScreenController:self didChangeColumnFrame:frame];
++  [self reportColumnFrame];
+ }
+ 
+ #pragma mark - RNSViewControllerViewLifecycleEventsObserver
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5217** (2026-11-15): chore(deps): bump addressable from 2.9.0 to 2.9.1 in /FabricExample (@dependabot[bot])
-- **PR #5216** (2026-11-15): chore(deps): bump addressable from 2.9.0 to 2.9.1 in /TVOSExample (@dependabot[bot])
-- **PR #5213** (2026-11-16): refactor(iOS, Split): a Split column owns its navigation controller (@t0maboro)
-- **PR #5210** (closed): chore: Replace issue labeling workflows with CodeRabbit triage comments (@kmichalikk)
-- **PR #5206** (2026-11-15): chore(deps): bump fast-xml-parser from 5.11.1 to 5.12.0 in /TVOSExample (@dependabot[bot])
-- **PR #5205** (2026-11-15): chore(deps): bump fast-xml-parser from 5.10.1 to 5.12.0 in /FabricExample (@dependabot[bot])
+- **PR #5295** (2026-11-20): docs(v5): unify @defaultValue tags (@Loloekk)
+- **PR #5293** (2026-11-20): test(iOS, Split): move the Split and Stack scenarios to the integration tests (@t0maboro)
+- **PR #5290** (2026-11-20): fix(iOS, Split): a column shown after the Split collapses has the size of the collapsed Split (@t0maboro)
+- **PR #5288** (2026-11-20): refactor(v5): declare union values once (@Loloekk)
+- **PR #5287** (2026-11-20): refactor(v5): use family aliases for common types (@Loloekk)
+- **PR #5286** (2026-11-20): docs(v5): add @platform to the fields of public types (@Loloekk)
 
 ---
 
@@ -1021,72 +1412,42 @@ animation. A run counts only with "yes".
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. iOS): follow the gesture in interactive fade and fade_from_bottom pops
+## X. Android, FormSheet): include grabber height in fitToContents sheet height
 
 **RULE**:
-When implementing operations in `ios/legacy/RNSScreenStackAnimator.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `android/src/main/java/com/swmansion/rnscreens/core/modals/sheet/coordinator/SheetDimensionsCoordinator.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `54c55f6c`: iOS): follow the gesture in interactive fade and fade_from_bottom pops. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5b0b3abb`: Android, FormSheet): include grabber height in fitToContents sheet height. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `ios/legacy/RNSScreenStackAnimator.mm`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/main/java/com/swmansion/rnscreens/core/modals/sheet/coordinator/SheetDimensionsCoordinator.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-
-    void (^animationBlock)(void) = ^{
-      fromViewController.view.alpha = 0.0;
-    };
-    void (^completionBlock)(UIViewAnimatingPosition) = ^(UIViewAnimatingPosition finalPosition) {
-    };
-
-    if (!transitionContext.isInteractive) {
-      auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-                                                                 curve:UIViewAnimationCurveEaseInOut
-                                                            animations:animationBlock];
-      [animator addCompletion:completionBlock];
-      _inFlightAnimator = animator;
-      [animator startAnimation];
-    } else {
-      auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-                                                                 curve:UIViewAnimationCurveLinear
-                                                            animations:animationBlock];
-      [animator addCompletion:completionBlock];
-      _inFlightAnimator = animator;
+    internal fun onGrabberVisibilityChanged() {
+        invalidateGeometry()
     }
-    void (^slideAnimationBlock)(void) = ^{
-      toViewController.view.transform = CGAffineTransformIdentity;
-      fromViewController.v
+
+        // The grabber sits above the React content in the container, so the container has to fit both.
+        // A non-positive content height means "not measured yet" and is passed through as is.
+        val fitToContentsHeight =
+            if (currentContentHeight > 0) currentContentHeight + container.measureGrabberHeight() else currentContentHeight
+
+                contentHeightForFitToContents = fitToContentsHeight,
+                fitToContentsHeight,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-    auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-                                                               curve:UIViewAnimationCurveEaseInOut
-                                                          animations:^{
-                                                            fromViewController.view.alpha = 0.0;
-                                                          }];
-    [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
-    }];
-    _inFlightAnimator = animator;
-    [animator startAnimation];
-    // Android Nougat exit animation
-    // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml
-    auto slideAnimator = [[UIViewPropertyAnimator alloc]
-        initWithDuration:baseTransitionDuration * RNSSlideCloseTransitionDurationProportion
-                   curve:UIViewAnimationCurveEaseIn
-              animations:^{
-                toViewController.view.transform = CGAffineTransformIdentity;
-                fromViewController.view.transform = topBottomTransform;
-              }];
-    [slideAnimator addCompletion:^(UIViewAnimatingPosition fina
+                contentHeightForFitToContents = currentContentHeight,
+                currentContentHeight,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `54c55f6c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5b0b3abb` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
