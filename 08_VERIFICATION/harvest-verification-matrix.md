@@ -11721,3 +11721,8 @@
 | `CYCLE-20261121-WH6E` | `2026-11-21T03:36:42.998Z` | `ShiGuangSchedule/shiguangschedule` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9717` | Yes (`1313f0ec...`) |
 | `CYCLE-20261121-WJ7N` | `2026-11-21T03:36:45.635Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9718` | Yes (`6ad9fbc6...`) |
 | `CYCLE-20261121-WMSX` | `2026-11-21T03:36:50.289Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9719` | Yes (`6329e3e0...`) |
+| `CYCLE-20261121-6KWZ` | `2026-11-21T03:44:34.403Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9720` | Yes (`37b85aa6...`) |
+| `CYCLE-20261121-6OE6` | `2026-11-21T03:44:38.910Z` | `makecindy/cindy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9721` | Yes (`a758540b...`) |
+| `CYCLE-20261121-6RD0` | `2026-11-21T03:44:42.756Z` | `infracost/infracost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9722` | Yes (`c56f0fab...`) |
+| `CYCLE-20261121-6ST7` | `2026-11-21T03:44:44.635Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9723` | Yes (`5c2dfa74...`) |
+| `CYCLE-20261121-6UPQ` | `2026-11-21T03:44:47.102Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9724` | Yes (`847c30c8...`) |

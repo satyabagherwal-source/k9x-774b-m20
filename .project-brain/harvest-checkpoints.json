@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T03:36:50.302Z",
+  "last_updated": "2026-11-21T03:44:47.114Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "b29c02268323c68183f0d7debc460130f786dcd1d1267d8f7e75b2740b82c1db",
-      "verified_at": "2026-11-21T01:08:29.106Z",
+      "content_hash": "5c2dfa7431af085cc9f45c96a3af6c4da578813539599a6c116f5ec0ce4baa33",
+      "verified_at": "2026-11-21T03:44:44.646Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T01:08:29.106Z"
+      "last_updated": "2026-11-21T03:44:44.646Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -6156,14 +6156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trailbaseio-trailbase",
-      "content_hash": "b1c12794513aa0906f620b69b3bb52b0da428d3176bfe2894e528b02169a71eb",
-      "verified_at": "2026-11-18T19:52:12.211Z",
+      "content_hash": "847c30c8b5a80db34ffaee204cd57deb3bf540259533ac405aa152b38752feb7",
+      "verified_at": "2026-11-21T03:44:47.114Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T19:52:12.211Z"
+      "last_updated": "2026-11-21T03:44:47.114Z"
     },
     "tremorlabs/tremor-npm": {
       "repository": "tremorlabs/tremor-npm",
@@ -7416,14 +7416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infracost-infracost",
-      "content_hash": "1e7eaa98d69bbe9724b9b6a62a412a55c8ba13d58ee26b9d9e2bc2b969864c5d",
-      "verified_at": "2026-11-13T14:34:03.436Z",
+      "content_hash": "c56f0faba3229a943bd6b5254e9592e1a4bc74ab7f8ccd2255a3523fce226937",
+      "verified_at": "2026-11-21T03:44:42.768Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T14:34:03.436Z"
+      "last_updated": "2026-11-21T03:44:42.768Z"
     },
     "apache/shardingsphere": {
       "repository": "apache/shardingsphere",
@@ -11436,14 +11436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-arrow",
-      "content_hash": "5970ec9b8416c322b62dd9f0f07e9133a9901293ff5d7d83012675c843616a8f",
-      "verified_at": "2026-11-19T17:23:18.512Z",
+      "content_hash": "37b85aa6be03ec3059f950762087092f9ab7fdf937624a08526f97d18674a3b4",
+      "verified_at": "2026-11-21T03:44:34.415Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T17:23:18.512Z"
+      "last_updated": "2026-11-21T03:44:34.415Z"
     },
     "CrossPaste/crosspaste-desktop": {
       "repository": "CrossPaste/crosspaste-desktop",
@@ -16056,14 +16056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-makecindy-cindy",
-      "content_hash": "37ef03bf4b9ed5ebeac7d8df22a514360c8f91d10b4ef7cf7bd3cd87a5430d89",
-      "verified_at": "2026-11-17T06:09:56.222Z",
+      "content_hash": "a758540b33b2a4f77aff30cf25d32fa3ad7d75720c5b9b4a16ea2edcc6808f94",
+      "verified_at": "2026-11-21T03:44:38.921Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T06:09:56.222Z"
+      "last_updated": "2026-11-21T03:44:38.921Z"
     },
     "Fei2411/DS-Bot": {
       "repository": "Fei2411/DS-Bot",

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T03:36:54.329Z",
+  "updated_at": "2026-11-21T03:44:51.356Z",
   "stats": {
-    "total_discovered": 6993,
-    "approved_pending_harvest": 6604,
+    "total_discovered": 7000,
+    "approved_pending_harvest": 6611,
     "harvested_count": 0,
     "rejected_count": 389,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6582,
+      "COMMUNITY_AND_EXPERT": 6589,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -151146,6 +151146,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shiguangschedule-shiguangschedule-learnings.md",
         "fileName": "shiguangschedule-shiguangschedule-learnings.md"
+      }
+    },
+    "SRC-4E5AA0268500": {
+      "id": "SRC-4E5AA0268500",
+      "url": "https://github.com/ursacomputing/crossbow/actions/runs/44430480310/job/135246278866",
+      "title": "https://github.com/ursacomputing/crossbow/actions/runs/44430480310/job/135246278866",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T03:44:50.418Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-6B69641897BF": {
+      "id": "SRC-6B69641897BF",
+      "url": "https://github.com/ursacomputing/crossbow/actions/runs/44430460911/job/135246208174",
+      "title": "https://github.com/ursacomputing/crossbow/actions/runs/44430460911/job/135246208174",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T03:44:50.466Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-D48FD66A6F14": {
+      "id": "SRC-D48FD66A6F14",
+      "url": "https://apt.llvm.org/llvm-snapshot.gpg.key",
+      "title": "https://apt.llvm.org/llvm-snapshot.gpg.key",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T03:44:50.516Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-9A2F5C7FA222": {
+      "id": "SRC-9A2F5C7FA222",
+      "url": "https://apt.llvm.org/$(lsb_release",
+      "title": "https://apt.llvm.org/$(lsb_release",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T03:44:50.562Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-51052A137B46": {
+      "id": "SRC-51052A137B46",
+      "url": "https://github.com/apache/arrow/pull/55675",
+      "title": "https://github.com/apache/arrow/pull/55675",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T03:44:50.608Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-EF7E29E1E9EB": {
+      "id": "SRC-EF7E29E1E9EB",
+      "url": "https://github.com/actions/runner-images/issues/14790",
+      "title": "https://github.com/actions/runner-images/issues/14790",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T03:44:50.685Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-4160AA203C42": {
+      "id": "SRC-4160AA203C42",
+      "url": "https://cindy.app/",
+      "title": "https://cindy.app/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T03:44:51.356Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
+        "fileName": "makecindy-cindy-learnings.md"
       }
     }
   }

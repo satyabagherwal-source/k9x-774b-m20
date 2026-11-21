@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T03:36:55.372Z",
-  "total_records": 2224,
+  "last_updated": "2026-11-21T03:44:52.446Z",
+  "total_records": 2226,
   "domains": {
     "A": {
       "total": 17,
@@ -1950,7 +1950,7 @@
       ]
     },
     "I": {
-      "total": 119,
+      "total": 121,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2070,7 +2070,9 @@
         "domain_intelligence-content-information-intelligence-software-mansion-react-native-screens-core-inva",
         "domain_intelligence-content-information-intelligence-software-mansion-react-native-screens-learnings",
         "domain_intelligence-content-information-intelligence-shiguangschedule-shiguangschedule-core-invarian",
-        "domain_intelligence-content-information-intelligence-shiguangschedule-shiguangschedule-learnings-cor"
+        "domain_intelligence-content-information-intelligence-shiguangschedule-shiguangschedule-learnings-cor",
+        "domain_intelligence-content-information-intelligence-infracost-infracost-core-invariants",
+        "domain_intelligence-content-information-intelligence-infracost-infracost-learnings-core-invariants"
       ]
     },
     "J": {
@@ -8328,10 +8330,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "c90869edec12ecf0878772eafc70665d456979c8af5514698cfd9b1b04f7fc32",
-      "created_at": "2026-11-21T01:08:29.466Z"
+      "content_hash": "736089607553b6d6e8522b2c0aa544356d45daf8c1cd5842d06d81348acfeecc",
+      "created_at": "2026-11-21T03:44:44.993Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -8792,8 +8794,8 @@
       "title": "Technical Construction Intelligence: makecindy/cindy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-makecindy-cindy-technical-construction-intelligence-makecindy-cindy-core-invaria.md",
       "repository": "makecindy/cindy",
-      "content_hash": "664abd9df684b1ca7efda92964a65b31c9a34b4b3c96f439442e05ad3b7c5af8",
-      "created_at": "2026-11-17T06:09:56.506Z"
+      "content_hash": "874d0a52e245057fdb213b5b954b660a910d34ccf89cd014c353d90f97836fd3",
+      "created_at": "2026-11-21T03:44:39.258Z"
     },
     "domain_intelligence-technical-construction-intelligence-volcengine-openviking-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-volcengine-openviking-core-invariants",
@@ -8861,8 +8863,8 @@
       "title": "Technical Construction Intelligence: makecindy-cindy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-makecindy-cindy-learnings-technical-construction-intelligence-makecindy-cindy-le.md",
       "repository": "makecindy-cindy-learnings",
-      "content_hash": "1129916a17d9b4fcd833a53caf6479372e17256f95c8d7813e6c9b10935f5d2a",
-      "created_at": "2026-11-17T06:11:31.175Z"
+      "content_hash": "cef1ce708796a36180e383f22eb0bb4675b6bbdf122e9a4d3b4023755c4b5cdd",
+      "created_at": "2026-11-21T03:44:51.700Z"
     },
     "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria",
@@ -17202,8 +17204,8 @@
       "title": "Content & Information Intelligence: apache/arrow Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-arrow-content-information-intelligence-apache-arrow-core-invariants.md",
       "repository": "apache/arrow",
-      "content_hash": "7098d91cf838e512bda725f0621f4286ca1a251875a266340438557b1006f796",
-      "created_at": "2026-11-19T17:23:18.949Z"
+      "content_hash": "0ed2fed54cfeb336816b8c25bef8e7a17fd5e7bb4d335c88e1d431b7da0441a6",
+      "created_at": "2026-11-21T03:44:34.749Z"
     },
     "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-core-invariants",
@@ -17220,8 +17222,8 @@
       "title": "Content & Information Intelligence: apache-arrow-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-arrow-learnings-content-information-intelligence-apache-arrow-learnings-c.md",
       "repository": "apache-arrow-learnings",
-      "content_hash": "52b6c62d3d9bf46bc28bdcf000344beaf97f52c34d068962c7a690a5337b62cf",
-      "created_at": "2026-11-19T17:23:35.335Z"
+      "content_hash": "9472fc98c4e4424dea8d87ccf0645bccad68552119ef033591a171f1edba1c40",
+      "created_at": "2026-11-21T03:44:51.031Z"
     },
     "DOM-D-A21D48E1": {
       "record_id": "DOM-D-A21D48E1",
@@ -32082,8 +32084,8 @@
       "title": "Architecture Intelligence: trailbaseio/trailbase Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trailbaseio-trailbase-architecture-intelligence-trailbaseio-trailbase-core-invar.md",
       "repository": "trailbaseio/trailbase",
-      "content_hash": "244a7cb09b205d9cc65038f6ee80a7cff31d2e70ec7ab8b8e9919e29ea242dd3",
-      "created_at": "2026-11-18T19:52:12.526Z"
+      "content_hash": "ccf33d27311f9a83eb1f2750e12239a265f6f2ac5e3cab1292bf0d885642fb3f",
+      "created_at": "2026-11-21T03:44:47.438Z"
     },
     "DOM-H-26FD692A": {
       "record_id": "DOM-H-26FD692A",
@@ -37365,6 +37367,24 @@
       "repository": "shiguangschedule-shiguangschedule-learnings",
       "content_hash": "65c0a6bd77747bcb66b1bc14fbf5f7908b05e3806108ae13aacc55a5fe6ec3fd",
       "created_at": "2026-11-21T03:36:54.690Z"
+    },
+    "domain_intelligence-content-information-intelligence-infracost-infracost-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-infracost-infracost-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: infracost/infracost Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-infracost-infracost-content-information-intelligence-infracost-infracost-core-in.md",
+      "repository": "infracost/infracost",
+      "content_hash": "7538d662a280785c7d5fd39bd10c8be7bc66ae53dbce357c9530f87cfd0c504d",
+      "created_at": "2026-11-21T03:44:43.106Z"
+    },
+    "domain_intelligence-content-information-intelligence-infracost-infracost-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-infracost-infracost-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: infracost-infracost-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-infracost-infracost-learnings-content-information-intelligence-infracost-infraco.md",
+      "repository": "infracost-infracost-learnings",
+      "content_hash": "0b0a364555db6eb0547a95904ac695b7a44a679f0e3ea0ebda574fdfe27ccbd5",
+      "created_at": "2026-11-21T03:44:52.446Z"
     }
   }
 }

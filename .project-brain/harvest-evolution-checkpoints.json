@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T03:36:55.656Z",
+  "last_updated": "2026-11-21T03:44:52.729Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T01:16:32.184Z",
@@ -123,7 +123,7 @@
       "staged_for_review": 1
     },
     "apache-arrow-learnings.md": {
-      "processed_at": "2026-11-19T17:23:34.422Z",
+      "processed_at": "2026-11-21T03:44:50.354Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1023,7 +1023,7 @@
       "staged_for_review": 1
     },
     "infracost-infracost-learnings.md": {
-      "processed_at": "2026-11-13T14:34:30.370Z",
+      "processed_at": "2026-11-21T03:44:52.006Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1988,7 +1988,7 @@
       "staged_for_review": 0
     },
     "makecindy-cindy-learnings.md": {
-      "processed_at": "2026-11-17T06:11:30.795Z",
+      "processed_at": "2026-11-21T03:44:51.316Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3658,7 +3658,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2724,
+  "total_dossiers_evaluated": 2727,
   "total_canonical_promoted": 442,
-  "total_staged_for_review": 2096
+  "total_staged_for_review": 2099
 }

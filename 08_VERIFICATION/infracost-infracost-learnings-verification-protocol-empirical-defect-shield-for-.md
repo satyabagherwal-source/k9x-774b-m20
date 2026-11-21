@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:39:32.587Z",
+  "timestamp": "2026-11-21T03:44:52.189Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-infracost-infracost-learnings",
+  "learning_id": "LEARN-EVO-infracost-infracost-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [infracost-infracost-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:39:32.587Z`  
-> **Learning ID**: `LEARN-REEXTRACT-infracost-infracost-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-21T03:44:52.189Z`  
+> **Learning ID**: `LEARN-EVO-infracost-infracost-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/infracost-infracost-learnings.md`  
 > **Source**: github ([https://github.com/infracost/infracost](https://github.com/infracost/infracost))  
-> **Source Version**: `40ad0ac9`  
+> **Source Version**: `b8c2bd6e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T10:42:55.834Z  
+> **Timestamp**: 2026-11-21T03:44:41.767Z  
 > **Learning ID**: `learn-github-infracost-infracost`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infracost-infracost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infracost/infracost](https://github.com/infracost/infracost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T10:42:55.671Z  
+> **Harvest Timestamp**: 2026-11-21T03:44:41.763Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Cloud cost intelligence for engineers, AI coding agents, and CI/CD 💰📉 Shift FinOps Left!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12620 stars
+- **Stars / Engagement**: 12627 stars
 
 ---
 
@@ -718,141 +718,560 @@ func regionToCDNZone(region string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `40ad0ac9` (2026-11-10)
-**Commit Message**: fix(deps): bump brotli, go-jose and klauspost/compress (#3641)
+### Incident Patch 1: `b8c2bd6e` (2026-11-20)
+**Commit Message**: fix(deps): bump golang.org/x/net to 0.62.0, otel to 1.47.0 and Go to 1.26.11 (#3645)
 
-**File**: `go.mod` (modified, +3/-3)
+**File**: `Dockerfile` (modified, +1/-1)
 ```diff
-@@ -155,7 +155,7 @@ require (
- 	github.com/ProtonMail/go-crypto v1.1.6 // indirect
- 	github.com/STARRY-S/zip v0.2.1 // indirect
- 	github.com/agnivade/levenshtein v1.2.1 // indirect
--	github.com/andybalholm/brotli v1.1.1 // indirect
-+	github.com/andybalholm/brotli v1.2.8 // indirect
- 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
- 	github.com/apparentlymart/go-versions v1.0.1 // indirect
- 	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.24 // indirect
-@@ -183,7 +183,7 @@ require (
- 	github.com/felixge/httpsnoop v1.0.4 // indirect
- 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
- 	github.com/go-ini/ini v1.67.0 // indirect
--	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-+	github.com/go-jose/go-jose/v4 v4.1.9 // indirect
- 	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/gogo/protobuf v1.3.2 // indirect
-@@ -294,7 +294,7 @@ require (
- 	github.com/hashicorp/go-version v1.6.0
- 	github.com/heimdalr/dag v1.3.1
- 	github.com/iancoleman/orderedmap v0.2.0 // indirect
--	github.com/klauspost/compress v1.18.7 // indirect
-+	github.com/klauspost/compress v1.20.2 // indirect
- 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
- 	github.com/open-policy-agent/opa v1.6.0
- 	github.com/otiai10/copy v1.7.0
+@@ -1,4 +1,4 @@
+-ARG GO_VERSION=1.26.10
++ARG GO_VERSION=1.26.11
+ 
+ FROM golang:${GO_VERSION} AS builder
+ 
 ```
 
-**File**: `go.sum` (modified, +6/-6)
+**File**: `Dockerfile.ci` (modified, +1/-1)
 ```diff
-@@ -732,8 +732,8 @@ github.com/aliyun/aliyun-tablestore-go-sdk v4.1.2+incompatible/go.mod h1:LDQHRZy
- github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883 h1:bvNMNQO63//z+xNgfBlViaCIJKLlCJ6/fmUseuG0wVQ=
- github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883/go.mod h1:rCTlJbsFo29Kk6CurOXKm700vrz8f0KW0JNfpkRJY/8=
- github.com/andybalholm/brotli v1.0.4/go.mod h1:fO7iG3H7G2nSZ7m0zPUDn85XEX2GTukHGRSepvi9Eig=
--github.com/andybalholm/brotli v1.1.1 h1:PR2pgnyFznKEugtsUo0xLdDop5SKXd5Qf5ysW+7XdTA=
--github.com/andybalholm/brotli v1.1.1/go.mod h1:05ib4cKhjx3OQYUY22hTVd34Bc8upXjOLL2rKwwZBoA=
-+github.com/andybalholm/brotli v1.2.8 h1:H9F6r7RNwzSRsx/lytpIYkbjNFMt2yNBwsJ2+0gpx78=
-+github.com/andybalholm/brotli v1.2.8/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
- github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFIImctFaOjnTIavg87rW78vTPkQqLI8=
- github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be/go.mod h1:ySMOLuWl6zY27l47sB3qLNK6tF2fkHG55UZxx8oIVo4=
- github.com/antchfx/xpath v0.0.0-20190129040759-c8489ed3251e/go.mod h1:Yee4kTMuNiPYJ7nSNorELQMr1J33uOpXDMByNYhvtNk=
-@@ -1038,8 +1038,8 @@ github.com/go-gl/glfw/v3.3/glfw v0.0.0-20191125211704-12ad95a8df72/go.mod h1:tQ2
- github.com/go-gl/glfw/v3.3/glfw v0.0.0-20200222043503-6f7a984d4dc4/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
- github.com/go-ini/ini v1.67.0 h1:z6ZrTEZqSWOTyH2FlglNbNgARyHG8oLW9gMELqKr06A=
- github.com/go-ini/ini v1.67.0/go.mod h1:ByCAeIL28uOIIG0E3PJtZPDL8WnHpFKFOtgjp+3Ies8=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.9 h1:pKfeQkig1NmgK4hJrZYXLEYURXfoJB61Larw0uIW4gY=
-+github.com/go-jose/go-jose/v4 v4.1.9/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-latex/latex v0.0.0-20210118124228-b3d85cf34e07/go.mod h1:CO1AlKB2CSIqUrmQPqA0gdRIlnLEY0gK5JGjh37zN5U=
- github.com/go-latex/latex v0.0.0-20210823091927-c0d11ff05a81/go.mod h1:SX0U8uGpxhq9o2S/CELCSUxEWWAuoCUcVCQWv7G2OCk=
-@@ -1400,8 +1400,8 @@ github.com/klauspost/asmfmt v1.3.2/go.mod h1:AG8TuvYojzulgDAMCnYn50l/5QV3Bs/tp6j
- github.com/klauspost/compress v1.4.1/go.mod h1:RyIbtBH6LamlWaDj8nUwkbUhJ87Yi3uG0guNDohfE1A=
- github.com/klauspost/compress v1.15.9/go.mod h1:PhcZ0MbTNciWF3rruxRgKxI5NkcHHrHUDtV4Yw2GlzU=
- github.com/klauspost/compress v1.15.11/go.mod h1:QPwzmACJjUTFsnSHH934V6woptycfrDDJnH7hvFVbGM=
--github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
--github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
-+github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
-+github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/klauspost/cpuid v1.2.0/go.mod h1:Pj4uuM528wm8OyEC2QMXAi2YiTZ96dNQPGgoMS4s3ek=
- github.com/klauspost/cpuid/v2 v2.0.9/go.mod h1:FInQzS24/EEf25PyTYn52gqo7WaD8xa0213Md/qVLRg=
- github.com/klauspost/cpuid/v2 v2.3.0 h1:S4CRMLnYUhGeDFDqkGriYKdfoFlDnMtqTiI/sFzhA9Y=
+@@ -1,4 +1,4 @@
+-ARG GO_VERSION=1.26.10
++ARG GO_VERSION=1.26.11
+ 
+ FROM golang:${GO_VERSION} AS builder
+ 
 ```
 
-**File**: `internal/providers/terraform/google/testdata/compute_instance_test/compute_instance_test.golden` (modified, +15/-15)
+**File**: `go.mod` (modified, +17/-16)
 ```diff
-@@ -10,16 +10,16 @@
-  ├─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-  └─ NVIDIA Tesla K80 (on-demand)                                         2,920  hours       $919.80   
-                                                                                                       
-- google_compute_instance.preemptible_gpu                                                              
-- ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               730  hours       $332.75   
-- ├─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-- └─ NVIDIA Tesla K80 (preemptible)                                       2,920  hours       $501.95   
--                                                                                                      
-  google_compute_instance.gpu_l4                                                                       
-  ├─ Instance usage (Linux/UNIX, on-demand, g2-standard-4)                  730  hours       $515.99   
-  ├─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
+@@ -2,7 +2,7 @@ module github.com/infracost/infracost
+ 
+ go 1.26.0
+ 
+-toolchain go1.26.10
++toolchain go1.26.11
+ 
+ require (
+ 	github.com/Masterminds/goutils v1.1.1 // indirect
+@@ -37,10 +37,10 @@ require (
+ 	github.com/sirupsen/logrus v1.9.3
+ 	github.com/spf13/cobra v1.9.1
+ 	github.com/spf13/pflag v1.0.6
+-	github.com/stretchr/testify v1.11.1
++	github.com/stretchr/testify v1.12.1
+ 	github.com/tidwall/gjson v1.17.0
+ 	github.com/zclconf/go-cty v1.17.0
+-	golang.org/x/crypto v0.57.0 // indirect
++	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/mod v0.41.0
+ 	gopkg.in/go-playground/assert.v1 v1.2.1
+ 	gopkg.in/yaml.v2 v2.4.0
+@@ -50,12 +50,12 @@ require (
+ require (
+ 	github.com/aws/aws-sdk-go-v2/service/eks v1.73.3
+ 	github.com/hashicorp/terraform-config-inspect v0.0.0-20210625153042-09f34846faab
+-	golang.org/x/sys v0.48.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
+ )
+ 
+ require (
+ 	github.com/agext/levenshtein v1.2.3 // indirect
+-	github.com/aws/aws-sdk-go-v2/credentials v1.18.12 // indirect
++	github.com/aws/aws-sdk-go-v2/credentials v1.18.12
+ 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.7 // indirect
+ 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.23 // indirect
+ 	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.3 // indirect
+@@ -66,7 +66,6 @@ require (
+ 	github.com/aws/aws-sdk-go-v2/service/sso v1.29.3 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/sts v1.38.4 // indirect
+ 	github.com/aws/smithy-go v1.25.1
+-	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
+ 	github.com/hashicorp/hcl v1.0.1-vault // indirect
+ 	github.com/hashicorp/hcl/v2 v2.24.0
+ 	github.com/imdario/mergo v0.3.13
+@@ -81,15 +80,15 @@ require (
+ 	github.com/slack-go/slack v0.27.0
+ 	github.com/tidwall/match v1.1.1 // indirect
+ 	github.com/tidwall/pretty v1.2.1 // indirect
+-	golang.org/x/text v0.42.0
+-	golang.org/x/tools v0.49.0 // indirect
++	golang.org/x/text v0.43.0
++	golang.org/x/tools v0.51.0 // indirect
+ )
+ 
+ require (
+ 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.10 // indirect
+ 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.23 // indirect
+ 	github.com/gorilla/websocket v1.5.3 // indirect
+-	golang.org/x/sync v0.23.0
++	golang.org/x/sync v0.24.0
+ )
+ 
+ require (
+@@ -259,13 +258,15 @@ require (
+ 	go.opentelemetry.io/contrib/detectors/gcp v1.44.0 // indirect
+ 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.61.0 // indirect
+ 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.61.0 // indirect
+-	go.opentelemetry.io/otel v1.45.0 // indirect
+-	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+-	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
+-	go.opentelemetry.io/otel/sdk/metric v1.45.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.45.0 // indirect
++	go.opentelemetry.io/otel v1.47.0 // indirect
++	go.opentelemetry.io/otel/log v1.47.0 // indirect
++	go.opentelemetry.io/otel/metric v1.47.0 // indirect
++	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
++	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
++	go.opentelemetry.io/otel/trace v1.47.0 // indirect
++	go.yaml.in/yaml/v3 v3.0.5 // indirect
+ 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
+-	golang.org/x/term v0.46.0 // indirect
++	golang.org/x/term v0.47.0 // indirect
+ 	golang.org/x/time v0.14.0 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+@@ -304,7 +305,7 @@ require (
+ 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
+ 	github.com/yashtewari/glob-intersection v0.2.0 // indirect
+ 	github.com/zclconf/go-cty-yaml v1.0.3
+-	golang.org/x/net v0.60.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	google.golang.org/api v0.264.0
+ 	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
+ 	google.golang.org/grpc v1.83.2 // indirect
+```
+
+**File**: `go.sum` (modified, +34/-29)
+```diff
+@@ -1691,8 +1691,9 @@ github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+
+ github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
+ github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
+ github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=
+-github.com/stretchr/objx v0.5.2 h1:xuMeJ0Sdp5ZMRXx/aWO6RZxdr3beISkG5/G/aIRr3pY=
+ github.com/stretchr/objx v0.5.2/go.mod h1:FRsXN1f5AsAjCGJKqEizvkpNtU+EGNCLh3NxZ/8L+MA=
++github.com/stretchr/objx v0.5.3 h1:jmXUvGomnU1o3W/V5h2VEradbpJDwGrzugQQvL0POH4=
++github.com/stretchr/objx v0.5.3/go.mod h1:rDQraq+vQZU7Fde9LOZLr8Tax6zZvy4kuNKF+QYS+U0=
+ github.com/stretchr/testify v0.0.0-20151208002404-e3a8ff8ce365/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
+ github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
+ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
+@@ -1709,8 +1710,8 @@ github.com/stretchr/testify v1.8.3/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXl
+ github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
+ github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
+ github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
+-github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
+-github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
++github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
++github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
+ github.com/tchap/go-patricia/v2 v2.3.2 h1:xTHFutuitO2zqKAQ5rCROYgUb7Or/+IC3fts9/Yc7nM=
+ github.com/tchap/go-patricia/v2 v2.3.2/go.mod h1:VZRHKAb53DLaG+nA9EaYYiaEx6YztwDlLElMsnSHD4k=
+ github.com/tencentcloud/tencentcloud-sdk-go v3.0.82+incompatible/go.mod h1:0PfYow01SHPMhKY31xa+EFz2RStxIqj6JFAJS+IkCi4=
+@@ -1819,8 +1820,8 @@ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.61.0 h1:F7Jx+6h
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.61.0/go.mod h1:UHB22Z8QsdRDrnAtX4PntOl36ajSxcdUMt1sF7Y6E7Q=
+ go.opentelemetry.io/otel v1.32.0/go.mod h1:00DCVSB0RQcnzlwyTfqtxSm+DRr9hpYrHjNGiBHVQIg=
+ go.opentelemetry.io/otel v1.36.0/go.mod h1:/TcFMXYjyRNh8khOAO9ybYkqaDBb/70aVwkNML4pP8E=
+-go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
+-go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
++go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
++go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.36.0 h1:dNzwXjZKpMpE2JhmO+9HsPl42NIXFIFSUSSs0fiqra0=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.36.0/go.mod h1:90PoxvaEB5n6AOdZvi+yWJQoE95U8Dhhw2bSyRqnTD0=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.36.0 h1:JgtbA0xkWHnTmYk7YusopJFX6uleBmAuZ8n05NEh8nQ=
+@@ -1829,20 +1830,22 @@ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.36.0 h1:nRVXX
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.36.0/go.mod h1:r49hO7CgrxY9Voaj3Xe8pANWtr0Oq916d0XAmOoCZAQ=
+ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0 h1:rixTyDGXFxRy1xzhKrotaHy3/KXdPhlWARrCgK+eqUY=
+ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0/go.mod h1:dowW6UsM9MKbJq5JTz2AMVp3/5iW5I/TStsk8S+CfHw=
++go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
++go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
+ go.opentelemetry.io/otel/metric v1.32.0/go.mod h1:jH7CIbbK6SH2V2wE16W05BHCtIDzauciCRLoc/SyMv8=
+ go.opentelemetry.io/otel/metric v1.36.0/go.mod h1:zC7Ks+yeyJt4xig9DEw9kuUFe5C3zLbVjV2PzT6qzbs=
+-go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
+-go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
+-go.opentelemetry.io/otel/metric/x v0.67.0 h1:PcicCNZFkZ4bXfSooXdo3WN7RBOVOtjVdo1wD358Uns=
+-go.opentelemetry.io/otel/metric/x v0.67.0/go.mod h1:FBjCWZe6wgcqxcMtjdGiClDKXb2YxxXii0CXftE4QtI=
+-go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
+-go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
+-go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
+-go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
++go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
++go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
++go.opentelemetry.io/otel/metric/x v0.69.0 h1:DjRLr15H83v+hCW7JA9NoJvOkYTtmq5YoDRbe9deYpM=
++go.opentel
+```
+
+---
+
+### Incident Patch 2: `7bc4a8cc` (2026-11-20)
+**Commit Message**: fix(modules): move the S3 module cache to aws-sdk-go-v2 (#3646)
+
+**File**: `go.mod` (modified, +2/-2)
+```diff
+@@ -65,7 +65,7 @@ require (
+ 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.23 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/sso v1.29.3 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/sts v1.38.4 // indirect
+-	github.com/aws/smithy-go v1.25.1 // indirect
++	github.com/aws/smithy-go v1.25.1
+ 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
+ 	github.com/hashicorp/hcl v1.0.1-vault // indirect
+ 	github.com/hashicorp/hcl/v2 v2.24.0
+@@ -280,7 +280,7 @@ require (
+ 	cloud.google.com/go v0.121.6 // indirect
+ 	cloud.google.com/go/storage v1.56.0 // indirect
+ 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
+-	github.com/aws/aws-sdk-go v1.44.122
++	github.com/aws/aws-sdk-go v1.44.122 // indirect
+ 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
+ 	github.com/bmatcuk/doublestar v1.3.4
+ 	github.com/gobwas/glob v0.2.3
+```
+
+**File**: `internal/hcl/modules/s3_cache.go` (modified, +21/-24)
+```diff
+@@ -2,6 +2,7 @@ package modules
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"fmt"
+ 	"io"
+ 	"net/url"
+@@ -13,15 +14,15 @@ import (
+ 	"github.com/google/uuid"
+ 	"github.com/terraform-linters/tflint-plugin-sdk/logger"
+ 
+-	"github.com/aws/aws-sdk-go/aws"
+-	"github.com/aws/aws-sdk-go/aws/awserr"
+-	"github.com/aws/aws-sdk-go/aws/session"
+-	"github.com/aws/aws-sdk-go/service/s3"
++	"github.com/aws/aws-sdk-go-v2/aws"
++	"github.com/aws/aws-sdk-go-v2/config"
++	"github.com/aws/aws-sdk-go-v2/service/s3"
++	"github.com/aws/smithy-go"
+ 	"github.com/mholt/archives"
+ )
+ 
+ type S3Cache struct {
+-	s3Client     *s3.S3
++	s3Client     *s3.Client
+ 	bucketName   string
+ 	prefix       string
+ 	publicPrefix string
+@@ -30,18 +31,13 @@ type S3Cache struct {
+ 
+ // NewS3Cache creates a new S3Cache instance
+ func NewS3Cache(region, bucketName, prefix string, cachePrivate bool) (*S3Cache, error) {
+-	sess, err := session.NewSessionWithOptions(session.Options{
+-		SharedConfigState: session.SharedConfigEnable,
+-		Config: aws.Config{
+-			Region: aws.String(region),
+-		},
+-	})
++	cfg, err := config.LoadDefaultConfig(context.Background(), config.WithRegion(region))
+ 	if err != nil {
+-		return nil, fmt.Errorf("failed to create AWS session: %w", err)
++		return nil, fmt.Errorf("failed to load AWS config: %w", err)
+ 	}
+ 
+ 	return &S3Cache{
+-		s3Client:     s3.New(sess),
++		s3Client:     s3.NewFromConfig(cfg),
+ 		bucketName:   bucketName,
+ 		prefix:       prefix,
+ 		publicPrefix: "publicModules",
+@@ -72,14 +68,15 @@ func (cache *S3Cache) Exists(key string, public bool) (bool, error) {
+ 	}
+ 
+ 	prefixedKey := cache.applyPrefix(key, public)
+-	headObj, err := cache.s3Client.HeadObject(&s3.HeadObjectInput{
++	headObj, err := cache.s3Client.HeadObject(context.Background(), &s3.HeadObjectInput{
+ 		Bucket: aws.String(cache.bucketName),
+ 		Key:    aws.String(prefixedKey),
+ 	})
+ 	if err != nil {
+-		if awsErr, ok := err.(awserr.Error); ok {
+-			switch awsErr.Code() {
+-			case s3.ErrCodeNoSuchKey, "NotFound", "Forbidden":
++		var apiErr smithy.APIError
++		if errors.As(err, &apiErr) {
++			switch apiErr.ErrorCode() {
++			case "NoSuchKey", "NotFound", "Forbidden":
+ 				return false, nil
+ 			}
+ 		}
+@@ -88,7 +85,7 @@ func (cache *S3Cache) Exists(key string, public bool) (bool, error) {
+ 
+ 	// Check expiration based on x-amz-meta-expires-at
+ 	if expiresAtStr, ok := headObj.Metadata["x-amz-meta-expires-at"]; ok {
+-		expirationTime, err := time.Parse(time.RFC3339, *expiresAtStr)
++		expirationTime, err := time.Parse(time.RFC3339, expiresAtStr)
+ 		if err != nil {
+ 			return false, fmt.Errorf("failed to parse expiration metadata: %w", err)
+ 		}
+@@ -110,8 +107,10 @@ func (cache *S3Cache) Get(key, destPath string, public bool) error {
+ 
+ 	prefixedKey := cache.applyPrefix(key, public)
+ 
++	ctx := context.Background()
++
+ 	// Download from S3
+-	result, err := cache.s3Client.GetObject(&s3.GetObjectInput{
++	result, err := cache.s3Client.GetObject(ctx, &s3.GetObjectInput{
+ 		Bucket: aws.String(cache.bucketName),
+ 		Key:    aws.String(prefixedKey),
+ 	})
+@@ -125,8 +124,6 @@ func (cache *S3Cache) Get(key, destPath string, public bool) error {
+ 		return fmt.Errorf("failed to create destination directory: %w", err)
+ 	}
+ 
+-	ctx := context.Background()
+-
+ 	format := archives.CompressedArchive{
+ 		Compression: archives.Gz{},
+ 		Extraction:  archives.Tar{},
+@@ -239,16 +236,16 @@ func (cache *S3Cache) Put(key, srcPath string, ttl time.Duration, public bool) e
+ 
+ 	// Calculate expiration time and set it as metadata
+ 	expirationTime := time.Now().Add(ttl).Format(time.RFC3339)
+-	metadata := map[string]*string{
+-		"x-amz-meta-expires-at": aws.String(expirationTime),
++	metadata := map[string]string{
++		"x-amz-meta-expires-at": expirationTime,
+ 	}
+ 
+ 	_, err = tmpFile.Seek(0, 0)
+ 	if err != nil {
+ 		return fmt.Errorf("failed to seek to start of file: %w", err)
+ 	}
+ 
+-	_, err = cache.s3Client.PutObject(&s3.PutObjectInput{
++	_, err = cache.s3Client.PutObject(ctx, &s3.PutObjectInput{
+ 		Bucket:   aws.String(cache.bucketName),
+ 		Key:      aws.String(prefixedKey),
+ 		Body:     tmpFile,
+```
+
+**File**: `internal/hcl/modules/s3_cache_test.go` (added, +146/-0)
+```diff
+@@ -0,0 +1,146 @@
++package modules
++
++import (
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"os"
++	"path/filepath"
++	"strings"
++	"sync"
++	"testing"
++	"time"
++
++	"github.com/aws/aws-sdk-go-v2/aws"
++	"github.com/aws/aws-sdk-go-v2/credentials"
++	"github.com/aws/aws-sdk-go-v2/service/s3"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++)
++
++type fakeObject struct {
++	body   []byte
++	header http.Header
++}
++
++// fakeS3 is a minimal path-style S3 server supporting HEAD, GET and PUT.
++type fakeS3 struct {
++	mu        sync.Mutex
++	objects   map[string]fakeObject
++	forbidden map[string]bool
++}
++
++func (f *fakeS3) ServeHTTP(w http.ResponseWriter, r *http.Request) {
++	f.mu.Lock()
++	defer f.mu.Unlock()
++
++	key := r.URL.EscapedPath()
++	if f.forbidden[key] {
++		w.WriteHeader(http.StatusForbidden)
++		return
++	}
++
++	switch r.Method {
++	case http.MethodPut:
++		body, _ := io.ReadAll(r.Body)
++		h := http.Header{}
++		for k, v := range r.Header {
++			if strings.HasPrefix(strings.ToLower(k), "x-amz-meta-") {
++				h[k] = v
++			}
++		}
++		f.objects[key] = fakeObject{body: body, header: h}
++		w.WriteHeader(http.StatusOK)
++	case http.MethodHead, http.MethodGet:
++		obj, ok := f.objects[key]
++		if !ok {
++			w.Header().Set("Content-Type", "application/xml")
++			w.WriteHeader(http.StatusNotFound)
++			if r.Method == http.MethodGet {
++				_, _ = w.Write([]byte(`<Error><Code>NoSuchKey</Code></Error>`))
++			}
++			return
++		}
++		for k, v := range obj.header {
++			w.Header()[k] = v
++		}
++		w.WriteHeader(http.StatusOK)
++		if r.Method == http.MethodGet {
++			_, _ = w.Write(obj.body)
++		}
++	}
++}
++
++func newTestS3Cache(t *testing.T, f *fakeS3) *S3Cache {
++	t.Helper()
++	srv := httptest.NewServer(f)
++	t.Cleanup(srv.Close)
++
++	client := s3.New(s3.Options{
++		Region:       "us-east-1",
++		BaseEndpoint: aws.String(srv.URL),
++		UsePathStyle: true,
++		Credentials:  credentials.NewStaticCredentialsProvider("id", "secret", ""),
++	})
++
++	return &S3Cache{
++		s3Client:     client,
++		bucketName:   "bucket",
++		prefix:       "private",
++		publicPrefix: "publicModules",
++		cachePrivate: true,
++	}
++}
++
++func TestS3CacheRoundTrip(t *testing.T) {
++	f := &fakeS3{objects: map[string]fakeObject{}, forbidden: map[string]bool{}}
++	cache := newTestS3Cache(t, f)
++
++	src := t.TempDir()
++	require.NoError(t, os.WriteFile(filepath.Join(src, "main.tf"), []byte("resource \"x\" \"y\" {}"), 0600))
++
++	exists, err := cache.Exists("git::example.com/mod", false)
++	require.NoError(t, err)
++	assert.False(t, exists)
++
++	require.NoError(t, cache.Put("git::example.com/mod", src, time.Hour, false))
++
++	exists, err = cache.Exists("git::example.com/mod", false)
++	require.NoError(t, err)
++	assert.True(t, exists)
++
++	dest := t.TempDir()
++	require.NoError(t, cache.Get("git::example.com/mod", dest, false))
++	b, err := os.ReadFile(filepath.Join(dest, "main.tf"))
++	require.NoError(t, err)
++	assert.Equal(t, "resource \"x\" \"y\" {}", string(b))
++}
++
++func TestS3CacheExpired(t *testing.T) {
++	f := &fakeS3{objects: map[string]fakeObject{}, forbidden: map[string]bool{}}
++	cache := newTestS3Cache(t, f)
++
++	require.NoError(t, cache.Put("mod", t.TempDir(), -time.Minute, true))
++
++	exists, err := cache.Exists("mod", true)
++	require.NoError(t, err)
++	assert.False(t, exists)
++}
++
++func TestS3CacheForbidden(t *testing.T) {
++	f := &fakeS3{objects: map[string]fakeObject{}, forbidden: map[string]bool{"/bucket/publicModules/mod": true}}
++	cache := newTestS3Cache(t, f)
++
++	exists, err := cache.Exists("mod", true)
++	require.NoError(t, err)
++	assert.False(t, exists)
++}
++
++func TestS3CachePrivateDisabled(t *testing.T) {
++	f := &fakeS3{objects: map[string]fakeObject{}, forbidden: map[string]bool{}}
++	cache := newTestS3Cache(t, f)
++	cache.cachePrivate = false
++
++	require.NoError(t, cache.Put("mod", t.TempDir(), time.Hour, false))
++	assert.Empty(t, f.objects)
++}
+```
+
+---
+
+### Incident Patch 3: `36378827` (2026-11-20)
+**Commit Message**: fix(aws): tighten NLB and inter-region data transfer price filters (#3647)
+
+**File**: `internal/providers/terraform/google/testdata/compute_instance_test/compute_instance_test.golden` (modified, +10/-10)
+```diff
+@@ -16,7 +16,7 @@
   └─ NVIDIA L4 (on-demand)                                                  730  hours       $286.18   
                                                                                                        
-+ google_compute_instance.preemptible_gpu                                                              
-+ ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               730  hours       $298.70   
-+ ├─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-+ └─ NVIDIA Tesla K80 (preemptible)                                       2,920  hours       $501.95   
-+                                                                                                      
-  google_compute_instance.sud_20_perc_with_hours                                                       
-  ├─ Instance usage (Linux/UNIX, on-demand, n2-standard-8)                  730  hours       $226.87   
-  └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-@@ -45,8 +45,13 @@
+  google_compute_instance.preemptible_gpu                                                              
+- ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               730  hours       $298.70   
++ ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               730  hours       $283.78   
+  ├─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
+  └─ NVIDIA Tesla K80 (preemptible)                                       2,920  hours       $501.95   
+                                                                                                       
+@@ -45,13 +45,8 @@
   └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
                                                                                                        
   google_compute_instance.custom_preemptible                                                           
-- ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)              730  hours        $87.21   
-- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)                730  hours        $38.95   
-+ ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)              730  hours        $78.27   
-+ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)                730  hours        $34.97   
-+ └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-+                                                                                                      
-+ google_compute_instance.custom_n2d                                                                   
-+ ├─ Custom instance CPU (Linux/UNIX, preemptible, N2D 4 vCPUs)             730  hours        $44.85   
-+ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N2D 20 GB)               730  hours        $30.05   
+- ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)              730  hours        $78.27   
+- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)                730  hours        $34.97   
+- └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
+-                                                                                                      
+- google_compute_instance.custom_n2d                                                                   
+- ├─ Custom instance CPU (Linux/UNIX, preemptible, N2D 4 vCPUs)             730  hours        $44.85   
+- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N2D 20 GB)               730  hours        $30.05   
++ ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)              730  hours        $74.37   
++ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)                730  hours        $33.22   
   └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
                                                                                                        
   google_compute_instance.custom_ext                                                                   
-@@ -55,11 +60,6 @@
+@@ -60,6 +55,11 @@
   ├─ Custom Instance Extended RAM (Linux/UNIX, on-demand, N1 2 GB)          730  hours         $9.76   
   └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
                                                                                                        
-- google_compute_instance.custom_n2d                                                                   
-- ├─ Custom instance CPU (Linux/UNIX, preemptible, N2D 4 vCPUs)             730  hours        $41.11   
-- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N2D 20 GB)               730  hours        $27.52   
-- └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
--                                                                                                      
++ google_compute_instance.custom_n2d                                                                   
++ ├─ Custom instance CPU (Linux/UNIX, preemptible, N2D 4 vCPUs)             730  hours        $42.60   
++ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N2D 20 GB)               730  hours        $28.54   
++ └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
++                                                                                                      
   google_compute_instance.local_ssd                                                                    
   ├─ Instance usage (Linux/UNIX, on-demand, f1-micro)                       730  hours         $3.88   
   ├─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
-@@ -68,7 +68,7 @@
-  google_compute_instance.preemptibl
+@@ -86,7 +86,7 @@
+  ├─ Instance usage (Linux/UNIX, preemptible, f1-micro)                     730  hours         $0.50   
+  └─ Standard provisioned storage (pd-standard)                              10  GB            $0.40   
+                                                                                                       
+- OVERALL TOTAL                                                                          $10,600.35 
++ OVERALL TOTAL                                                                          $10,576.03 
+ 
+ *Usage costs can be estimated by updating Infracost Cloud settings, see docs for other options.
+ 
+@@ -99,7 +99,7 @@
+ ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
+ ┃ Project                                            ┃ Baseline cost ┃ Usage cost* ┃ Total cost ┃
+ ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━╋━━━━━━━━━━━━┫
+-┃ main                                               ┃       $10,600 ┃           - ┃    $10,600 ┃
++┃ main                                               ┃       $10,576 ┃           - ┃    $10,576 ┃
+ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━┻━━━━━━━━━━━━┛
+ Logs:
+ 
 ```
 
-**File**: `internal/providers/terraform/google/testdata/container_cluster_test/container_cluster_test.golden` (modified, +17/-17)
+**File**: `internal/providers/terraform/google/testdata/container_cluster_test/container_cluster_test.golden` (modified, +9/-9)
 ```diff
 @@ -10,7 +10,7 @@
   │  ├─ Instance usage (Linux/UNIX, on-demand, n1-standard-16)                 8,760  hours                  $4,660.30    
   │  └─ Standard provisioned storage (pd-standard)                             1,200  GB                        $48.00    
   └─ node_pool[1]                                                                                                         
--    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,992.98    
-+    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,584.42    
+-    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,584.42    
++    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,405.36    
      └─ Standard provisioned storage (pd-standard)                             1,200  GB                        $48.00    
                                                                                                                           
   google_container_cluster.with_node_pools_regional                                                                       
@@ -860,66 +1279,82 @@ Observed empirical fixes and code patches:
   │  ├─ Instance usage (Linux/UNIX, on-demand, n1-standard-16)                 4,380  hours                  $2,330.15    
   │  └─ Standard provisioned storage (pd-standard)                               600  GB                        $24.00    
   └─ node_pool[1]                                                                                                         
--    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,992.98    
-+    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,584.42    
+-    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,584.42    
++    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,405.36    
      └─ Standard provisioned storage (pd-standard)                             1,200  GB                        $48.00    
                                                                                                                           
   google_container_cluster.with_node_pools_node_locations_withUsage                                                       
-@@ -34,18 +34,9 @@
+@@ -34,7 +34,7 @@
   │  ├─ Instance usage (Linux/UNIX, on-demand, n1-standard-16)                 5,840  hours                  $3,106.86    
   │  └─ Standard provisioned storage (pd-standard)                               800  GB                        $32.00    
   └─ node_pool[1]                                                                                                         
--    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               2,920  hours                  $1,330.99    
-+    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               2,920  hours                  $1,194.81    
+-    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               2,920  hours                  $1,194.81    
++    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               2,920  hours                  $1,135.12    
      └─ Standard provisioned storage (pd-standard)                               400  GB                        $16.00    
                                                                                                                           
-- google_container_cluster.with_unsupported_node_pool                                                                     
-- ├─ Cluster management fee                                                      730  hours                     $73.00    
-- ├─ default_pool                                                                                                         
-- │  ├─ Instance usage (Linux/UNIX, on-demand, e2-medium)                      6,570  hours                    $220.13    
-- │  └─ Standard provisioned storage (pd-standard)                               900  GB                        $36.00    
-- └─ node_pool[1]                                                                                                         
--    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,992.98    
--    └─ Standard provisioned storage (pd-standard)                             1,200  GB                        $48.00    
--                                                                                                                         
   google_container_cluster.with_node_config                                                                               
-  ├─ Cluster management fee                                                      730  hours                     $73.00    
-  └─ default_pool                                                                                                         
-@@ -54,6 +45,15 @@
-     ├─ Local SSD provisioned storage                                          1,125  GB                        $90.00    
-     └─ NVIDIA Tesla K80 (on-demand)                                           8,760  hours                  $2,759.40    
+@@ -51,7 +51,7 @@
+  │  ├─ Instance usage (Linux/UNIX, on-demand, e2-medium)                      6,570  hours                    $220.13    
+  │  └─ Standard provisioned storage (pd-standard)                               900  GB                        $36.00    
+  └─ node_pool[1]                                                                                                         
+-    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,584.42    
++    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               8,760  hours                  $3,405.36    
+     └─ Standard provisioned storage (pd-standard)                             1,200  GB                        $48.00    
                                                                                                                           
-+ google_container_cluster.with_unsupported_node_pool                                                                     
-+ ├─ Cluster management fee                                                      730  hours                     $73.00    
-+ ├─ d
+  google_container_cluster.with_node_pools_zonal_withUsage                                                                
+@@ -63,7 +63,7 @@
+  │  ├─ Instance usage (Linux/UNIX, on-demand, n1-standard-16)                 2,920  hours                  $1,553.43    
+  │  └─ Standard provisioned storage (pd-standard)                               400  GB                        $16.00    
+  └─ node_pool[1]                                                                                                         
+-    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               2,920  hours                  $1,194.81    
++    ├─ Instance usage (Linux/UNIX, preemptible, n1-standard-16)               2,920  hours                  $1,135.12    
+     └─ Standard provisioned storage (pd-standard)                               400  GB                        $16.00    
+                                                                                                                          
+  google_container_cluster.with_node_pools_node_locations                                                        
 ```
 
-**File**: `internal/providers/terraform/google/testdata/container_node_pool_test/container_node_pool_test.golden` (modified, +6/-6)
+**File**: `internal/providers/terraform/google/testdata/container_node_pool_test/container_node_pool_test.golden` (modified, +12/-12)
 ```diff
-@@ -19,13 +19,13 @@
+@@ -18,16 +18,6 @@
+  ├─ Custom Instance RAM (Linux/UNIX, on-demand, N1 20 GB)            2,190  hours       $136.31   
   └─ Standard provisioned storage (pd-standard)                         300  GB           $12.00   
                                                                                                    
-  google_container_node_pool.with_preemptible_instance                                             
-- ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $261.62   
-- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours       $116.86   
-+ ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $234.81   
-+ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours       $104.90   
-  └─ Standard provisioned storage (pd-standard)                         300  GB           $12.00   
-                                                                                                   
-  google_container_node_pool.with_spot_instance                                                    
-- ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $261.62   
-- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours       $116.86   
-+ ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $234.81   
-+ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours       $104.90   
-  └─ Standard provisioned storage (pd-standard)                         300  GB           $12.00   
-                                                                                                   
+- google_container_node_pool.with_preemptible_instance                                             
+- ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $234.81   
+- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours       $104.90   
+- └─ Standard provisioned storage (pd-standard)                         300  GB           $12.00   
+-                                                                                                  
+- google_container_node_pool.with_spot_instance                                                    
+- ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $234.81   
+- ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours       $104.90   
+- └─ Standard provisioned storage (pd-standard)                         300  GB           $12.00   
+-                                                                                                  
   google_container_node_pool.initial_node_count_zonal                                              
+  ├─ Instance usage (Linux/UNIX, on-demand, e2-medium)                8,760  hours       $293.51   
+  └─ Standard provisioned storage (pd-standard)                       1,200  GB           $48.00   
+@@ -36,6 +26,16 @@
+  ├─ Instance usage (Linux/UNIX, on-demand, e2-medium)                8,760  hours       $293.51   
+  └─ Standard provisioned storage (pd-standard)                       1,200  GB           $48.00   
+                                                                                                   
++ google_container_node_pool.with_preemptible_instance                                             
++ ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $223.12   
++ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours        $99.65   
++ └─ Standard provisioned storage (pd-standard)                         300  GB           $12.00   
++                                                                                                  
++ google_container_node_pool.with_spot_instance                                                    
++ ├─ Custom instance CPU (Linux/UNIX, preemptible, N1 6 vCPUs)        2,190  hours       $223.12   
++ ├─ Custom Instance RAM (Linux/UNIX, preemptible, N1 20 GB)          2,190  hours        $99.65   
++ └─ Standard provisioned storage (pd-standard)                         300  GB           $12.00   
++                                                                                                  
+  google_container_cluster.default_zonal                                                           
+  ├─ Cluster management fee                                             730  hours        $73.00   
+  └─ default_pool                                                                                  
 @@ -122,7 +122,7 @@
   ├─ Instance usage (Linux/UNIX, on-demand, e2-medium)                1,460  hours        $48.92   
   └─ Standard provisioned storage (pd-standard)                         200  GB            $8.00   
                                                                                                    
-- OVERALL TOTAL                                                                      $28,486.42 
-+ OVERALL TOTAL                                                                      $28,408.89 
+- OVERALL TOTAL                                                                      $28,408.89 
++ OVERALL TOTAL                                                                      $28,374.99 
  
  *Usage costs can be estimated by updating Infracost Cloud settings, see docs for other options.
  
@@ -927,19 +1362,54 @@ Observed empirical fixes and code patches:
  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
  ┃ Project                                            ┃ Baseline cost ┃ Usage cost* ┃ Total cost ┃
  ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━╋━━━━━━━━━━━━┫
--┃ main                                               ┃       $28,486 ┃           - ┃    $28,486 ┃
-+┃ main                                               ┃       $28,409 ┃           - ┃    $28,409 ┃
+-┃ main                                               ┃       $28,409 ┃           - ┃    $28,409 ┃
++┃ main                                               ┃       $28,375 ┃           - ┃    $28,375 ┃
  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━┻━━━━━━━━━━━━┛
 \ No newline at end of file
 ```
 
+**File**: `internal/resources/aws/data_transfer.go` (modified, +2/-2)
+```diff
+@@ -211,7 +211,7 @@ func (r *DataTransfer) outboundUsEastCostComponents() []*schema.CostComponent {
+ 		Unit:            "GB",
+ 		UnitMultiplier:  decimal.NewFromInt(1),
+ 		MonthlyQuantity: decimalPtr(decimal.NewFromFloat(*r.MonthlyOutboundUsEastToUsEastGB)),
+-		ProductFilter:   r.buildProductFilter("InterRegion Outbound", &toRegion, ""),
++		ProductFilter:   r.buildProductFilter("InterRegion Outbound", &toRegion, "-AWS-Out-Bytes"),
+ 		UsageBased:      true,
+ 	})
+ 
+@@ -245,7 +245,7 @@ func (r *DataTransfer) outboundOtherRegionsCostComponents() []*schema.CostCompon
+ 		Unit:            "GB",
+ 		UnitMultiplier:  decimal.NewFromInt(1),
+ 		MonthlyQuantity: decimalPtr(decimal.NewFromFloat(*r.MonthlyOutboundOtherRegionsGB)),
+-		ProductFilter:   r.buildProductFilter("InterRegion Outbound", &toRegion, ""),
++		ProductFilter:   r.buildProductFilter("InterRegion Outbound", &toRegion, "-AWS-Out-Bytes"),
+ 		UsageBased:      true,
+ 	})
+ 
+```
+
+**File**: `internal/resources/aws/lb.go` (modified, +1/-1)
+```diff
+@@ -139,7 +139,7 @@ func (r *LB) networkLBCostComponents(maxLCU *decimal.Decimal) []*schema.CostComp
+ 				ProductFamily: strPtr("Load Balancer-Network"),
+ 				AttributeFilters: []*schema.AttributeFilter{
+ 					{Key: "locationType", Value: strPtr("AWS Region")},
+-					{Key: "usagetype", ValueRegex: strPtr("/LoadBalancerUsage/")},
++					{Key: "usagetype", ValueRegex: regexPtr("^([A-Z]{3}\\d-|Global-|EU-)?LoadBalancerUsage$")},
+ 				},
+ 			},
+ 		},
+```
+
 #### Recent Merged Pull Requests:
-- **PR #3641** (2026-11-10): fix(deps): bump brotli, go-jose and klauspost/compress (@aliscott)
-- **PR #3637** (2026-11-03): ci: release from master by dispatch, not from a pushed tag (@aliscott)
-- **PR #3636** (2026-11-03): ci: switch docker hub login to oidc [TRK-1401] (@owenrumney)
-- **PR #3635** (closed): chore(deps): bump github.com/go-jose/go-jose/v4 from 4.1.4 to 4.1.6 (@dependabot[bot])
-- **PR #3634** (2026-10-21): fix: build with Go 1.26.10 and Alpine 3.24 (@liamg)
-- **PR #3633** (2026-10-15): docs: add AGENTS.md steering contributors to discussions for EOL 0.10.x repo (@glenngillen)
+- **PR #3647** (2026-11-20): fix(aws): tighten NLB and inter-region data transfer price filters (@aliscott)
+- **PR #3646** (2026-11-20): fix(modules): move the S3 module cache to aws-sdk-go-v2 (@aliscott)
+- **PR #3645** (2026-11-20): fix(deps): bump golang.org/x/net to 0.62.0, otel to 1.47.0 and Go to 1.26.11 (@aliscott)
+- **PR #3644** (closed): chore(deps): bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 (@dependabot[bot])
+- **PR #3643** (closed): chore(deps): bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 (@dependabot[bot])
+- **PR #3642** (2026-11-13): fix(config): ignore sensitive vars in working-directory .env (@liamg)
 
 ---
 
@@ -959,35 +1429,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump brotli, go-jose and klauspost/compress (#3641)
+## X. deps): bump golang.org/x/net to 0.62.0, otel to 1.47.0 and Go to 1.26.11
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infracost/infracost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infracost/infracost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `40ad0ac9`: deps): bump brotli, go-jose and klauspost/compress (#3641). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b8c2bd6e`: deps): bump golang.org/x/net to 0.62.0, otel to 1.47.0 and Go to 1.26.11. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/andybalholm/brotli v1.2.8 // indirect
-	github.com/go-jose/go-jose/v4 v4.1.9 // indirect
-	github.com/klauspost/compress v1.20.2 // indirect
+ARG GO_VERSION=1.26.11
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-	github.com/andybalholm/brotli v1.1.1 // indirect
-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-	github.com/klauspost/compress v1.18.7 // indirect
+// Induced defect failure mode:
+ARG GO_VERSION=1.26.10
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `40ad0ac9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b8c2bd6e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

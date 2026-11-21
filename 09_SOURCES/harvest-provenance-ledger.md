@@ -11754,3 +11754,8 @@ Every entry in this ledger must capture:
 | `learn-github-shiguangschedule-shiguangschedule` | `https://github.com/ShiGuangSchedule/shiguangschedule` | `790f3072` | Multi-dimensional audit evidence | 2026-11-21T03:36:43.002Z |
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `629d0164` | Multi-dimensional audit evidence | 2026-11-21T03:36:45.639Z |
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `a29a8d49` | Multi-dimensional audit evidence | 2026-11-21T03:36:50.294Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `d58f83f3` | Multi-dimensional audit evidence | 2026-11-21T03:44:34.407Z |
+| `learn-github-makecindy-cindy` | `https://github.com/makecindy/cindy` | `559ad18c` | Multi-dimensional audit evidence | 2026-11-21T03:44:38.914Z |
+| `learn-github-infracost-infracost` | `https://github.com/infracost/infracost` | `b8c2bd6e` | Multi-dimensional audit evidence | 2026-11-21T03:44:42.760Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `9138ff8a` | Multi-dimensional audit evidence | 2026-11-21T03:44:44.639Z |
+| `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `b9e8acb7` | Multi-dimensional audit evidence | 2026-11-21T03:44:47.106Z |

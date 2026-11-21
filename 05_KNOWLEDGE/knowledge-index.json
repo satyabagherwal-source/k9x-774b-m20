@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T03:36:55.524Z",
-  "total_verified_learnings": 9057,
+  "last_updated": "2026-11-21T03:44:52.598Z",
+  "total_verified_learnings": 9058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22912,
+  "total_items": 22930,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "6a6a6a66",
-      "content_hash": "c90869edec12ecf0878772eafc70665d456979c8af5514698cfd9b1b04f7fc32",
+      "source_version": "9138ff8a",
+      "content_hash": "736089607553b6d6e8522b2c0aa544356d45daf8c1cd5842d06d81348acfeecc",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T01:08:29.466Z"
+      "persisted_at": "2026-11-21T03:44:44.993Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "6a6a6a66",
-      "content_hash": "7c2135dc29d148551709894f505cc7095fd9be8d57b88cbe4e383de31b1a4c2a",
+      "source_version": "9138ff8a",
+      "content_hash": "307843b2b9aedd8a922ed0cfd3eddda761f86a84043e314138e07a13a8427e21",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T01:08:29.618Z"
+      "persisted_at": "2026-11-21T03:44:45.143Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -113505,10 +113505,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-makecindy-cindy-technical-construction-intelligence-makecindy-cindy-core-invaria.md",
       "title": "Technical Construction Intelligence: makecindy/cindy Core Invariants",
       "repository": "makecindy/cindy",
-      "source_version": "50dbd865",
-      "content_hash": "664abd9df684b1ca7efda92964a65b31c9a34b4b3c96f439442e05ad3b7c5af8",
+      "source_version": "559ad18c",
+      "content_hash": "874d0a52e245057fdb213b5b954b660a910d34ccf89cd014c353d90f97836fd3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T06:09:56.506Z"
+      "persisted_at": "2026-11-21T03:44:39.258Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy",
@@ -113517,10 +113517,10 @@
       "relative_path": "08_VERIFICATION/makecindy-cindy-verification-protocol-empirical-defect-shield-for-makecindy-cind.md",
       "title": "Verification Protocol: Empirical Defect Shield for makecindy/cindy",
       "repository": "makecindy/cindy",
-      "source_version": "50dbd865",
-      "content_hash": "cdb946ae975706548398a38ca93a3d466c027b0618931eaf38777514e795ff3c",
+      "source_version": "559ad18c",
+      "content_hash": "a7a93b774e5e4df62ddf87e56de4a42207c56b9de0b16c78bd93dd0f2f6cbf6e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:09:56.736Z"
+      "persisted_at": "2026-11-21T03:44:39.398Z"
     },
     "candidate_directive-react-align-the-file-browser-search-dialog-with-the-console-design-7570": {
       "item_id": "candidate_directive-react-align-the-file-browser-search-dialog-with-the-console-design-7570",
@@ -113578,9 +113578,9 @@
       "title": "Technical Construction Intelligence: makecindy-cindy-learnings Core Invariants",
       "repository": "makecindy-cindy-learnings",
       "source_version": "HEAD",
-      "content_hash": "1129916a17d9b4fcd833a53caf6479372e17256f95c8d7813e6c9b10935f5d2a",
+      "content_hash": "cef1ce708796a36180e383f22eb0bb4675b6bbdf122e9a4d3b4023755c4b5cdd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T06:11:31.175Z"
+      "persisted_at": "2026-11-21T03:44:51.700Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy-learnings",
@@ -113590,9 +113590,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for makecindy-cindy-learnings",
       "repository": "makecindy-cindy-learnings",
       "source_version": "HEAD",
-      "content_hash": "4fab5dc849798ee485b44ddbc3a7d80d955f02b65fcacffc62e8023748ac0c8f",
+      "content_hash": "bb548e1e25b532c580249ca2ab8b269ded838a16f77edc6664f51e2ff76908b9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:11:31.439Z"
+      "persisted_at": "2026-11-21T03:44:51.863Z"
     },
     "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria",
@@ -215797,13 +215797,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "6a6a6a66",
-      "content_hash": "b29c02268323c68183f0d7debc460130f786dcd1d1267d8f7e75b2740b82c1db",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "9138ff8a",
+      "content_hash": "5c2dfa7431af085cc9f45c96a3af6c4da578813539599a6c116f5ec0ce4baa33",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215874,6 +215874,11 @@
           "number": 9653,
           "title": "Empirical Invariant Guard in test_partial_upgrade.sh",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 9723,
+          "title": "Empirical Invariant Guard in main.rs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215881,7 +215886,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T01:08:28.896Z",
+      "verified_at": "2026-11-21T03:44:44.449Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234631,8 +234636,8 @@
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "ac7d3fab",
-      "content_hash": "5970ec9b8416c322b62dd9f0f07e9133a9901293ff5d7d83012675c843616a8f",
+      "source_version": "d58f83f3",
+      "content_hash": "37b85aa6be03ec3059f950762087092f9ab7fdf937624a08526f97d18674a3b4",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "promoted_rules": [
@@ -234655,6 +234660,11 @@
           "number": 9417,
           "title": "[C++] Mark the glog backend for deprecation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9720,
+          "title": "[CI] Use ubuntu 24.04 for debian i386 jobs and force double comparison",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234662,7 +234672,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T17:23:18.266Z",
+      "verified_at": "2026-11-21T03:44:34.215Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234704,10 +234714,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-arrow-content-information-intelligence-apache-arrow-core-invariants.md",
       "title": "Content & Information Intelligence: apache/arrow Core Invariants",
       "repository": "apache/arrow",
-      "source_version": "ac7d3fab",
-      "content_hash": "7098d91cf838e512bda725f0621f4286ca1a251875a266340438557b1006f796",
+      "source_version": "d58f83f3",
+      "content_hash": "0ed2fed54cfeb336816b8c25bef8e7a17fd5e7bb4d335c88e1d431b7da0441a6",
       "domain_letter": "I",
-      "persisted_at": "2026-11-19T17:23:18.949Z"
+      "persisted_at": "2026-11-21T03:44:34.749Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow",
@@ -234716,10 +234726,10 @@
       "relative_path": "08_VERIFICATION/apache-arrow-verification-protocol-empirical-defect-shield-for-apache-arrow.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/arrow",
       "repository": "apache/arrow",
-      "source_version": "ac7d3fab",
-      "content_hash": "8ae447e0c9b40d455c56232abe118b23c2a6eb9d58af8c8e779b5fe2acada10c",
+      "source_version": "d58f83f3",
+      "content_hash": "fd4b7cf7f41979f7f6b28a6544892786142cd72a414d95bfde315bb80e63d4d7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T17:23:19.136Z"
+      "persisted_at": "2026-11-21T03:44:34.902Z"
     },
     "learn-github-greptimeteam-greptimedb": {
       "learning_id": "learn-github-greptimeteam-greptimedb",
@@ -234844,9 +234854,9 @@
       "title": "Content & Information Intelligence: apache-arrow-learnings Core Invariants",
       "repository": "apache-arrow-learnings",
       "source_version": "HEAD",
-      "content_hash": "52b6c62d3d9bf46bc28bdcf000344beaf97f52c34d068962c7a690a5337b62cf",
+      "content_hash": "9472fc98c4e4424dea8d87ccf0645bccad68552119ef033591a171f1edba1c40",
       "domain_letter": "I",
-      "persisted_at": "2026-11-19T17:23:35.335Z"
+      "persisted_at": "2026-11-21T03:44:51.031Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow-learnings",
@@ -234856,9 +234866,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-arrow-learnings",
       "repository": "apache-arrow-learnings",
       "source_version": "HEAD",
-      "content_hash": "d3fbc28cf225c23cf8fdfb894a153bc7bc85455176fbe6f453e809530d1e0ffb",
+      "content_hash": "13189120603f41141f0fa52c2e00062e53feda69b3a6d2acd1a850ca169753a5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T17:23:35.517Z"
+      "persisted_at": "2026-11-21T03:44:51.178Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-embeddinggemma-2-gguf-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-embeddinggemma-2-gguf-learnings-core-",
@@ -268110,14 +268120,19 @@
       "slug": "makecindy-cindy",
       "platform": "github",
       "source_url": "https://github.com/makecindy/cindy",
-      "source_version": "50dbd865",
-      "content_hash": "37ef03bf4b9ed5ebeac7d8df22a514360c8f91d10b4ef7cf7bd3cd87a5430d89",
+      "source_version": "559ad18c",
+      "content_hash": "a758540b33b2a4f77aff30cf25d32fa3ad7d75720c5b9b4a16ea2edcc6808f94",
       "dossier_path": "07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
       "promoted_rules": [
         {
           "number": 8881,
           "title": "notify only when reconciled PR associations change",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9721,
+          "title": "resume Passport recovery after transient failure",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -268126,7 +268141,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T06:09:56.046Z",
+      "verified_at": "2026-11-21T03:44:38.718Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -283798,8 +283813,8 @@
       "slug": "trailbaseio-trailbase",
       "platform": "github",
       "source_url": "https://github.com/trailbaseio/trailbase",
-      "source_version": "e0a2df25",
-      "content_hash": "b1c12794513aa0906f620b69b3bb52b0da428d3176bfe2894e528b02169a71eb",
+      "source_version": "b9e8acb7",
+      "content_hash": "847c30c8b5a80db34ffaee204cd57deb3bf540259533ac405aa152b38752feb7",
       "dossier_path": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "promoted_rules": [
@@ -283812,6 +283827,11 @@
           "number": 9277,
           "title": "Update JavaScript dependencies and address security advisories.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9724,
+          "title": "Update Rust dependencies. Addresses wasmtime security advisories.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -283819,7 +283839,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T19:52:12.016Z",
+      "verified_at": "2026-11-21T03:44:46.924Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -283859,10 +283879,10 @@
       "relative_path": "08_VERIFICATION/trailbaseio-trailbase-verification-protocol-empirical-defect-shield-for-trailbas.md",
       "title": "Verification Protocol: Empirical Defect Shield for trailbaseio/trailbase",
       "repository": "trailbaseio/trailbase",
-      "source_version": "e0a2df25",
-      "content_hash": "c06120f9d0ec96a6a01b8c2ea2f0787beb61d22168a2d5280a1f0544b52ed098",
+      "source_version": "b9e8acb7",
+      "content_hash": "883dc16b6e37e4b5c81288ab3c89f681f004fdb163aba94d7874fb691cc19648",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T19:52:12.665Z"
+      "persisted_at": "2026-11-21T03:44:47.580Z"
     },
     "candidate_directive-matchers-report-honest-failure-messages-from-matchinorder-matchinordersubset-o": {
       "item_id": "candidate_directive-matchers-report-honest-failure-messages-from-matchinorder-matchinordersubset-o",
@@ -291447,10 +291467,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trailbaseio-trailbase-architecture-intelligence-trailbaseio-trailbase-core-invar.md",
       "title": "Architecture Intelligence: trailbaseio/trailbase Core Invariants",
       "repository": "trailbaseio/trailbase",
-      "source_version": "e0a2df25",
-      "content_hash": "244a7cb09b205d9cc65038f6ee80a7cff31d2e70ec7ab8b8e9919e29ea242dd3",
+      "source_version": "b9e8acb7",
+      "content_hash": "ccf33d27311f9a83eb1f2750e12239a265f6f2ac5e3cab1292bf0d885642fb3f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T19:52:12.526Z"
+      "persisted_at": "2026-11-21T03:44:47.438Z"
     },
     "candidate_directive-deny-ignore-the-unmaintained-chrono-advisory": {
       "item_id": "candidate_directive-deny-ignore-the-unmaintained-chrono-advisory",
@@ -311068,6 +311088,253 @@
       "content_hash": "65c0a6bd77747bcb66b1bc14fbf5f7908b05e3806108ae13aacc55a5fe6ec3fd",
       "domain_letter": "I",
       "persisted_at": "2026-11-21T03:36:54.690Z"
+    },
+    "rule-9720": {
+      "learning_id": "rule-9720",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9720,
+      "title": "[CI] Use ubuntu 24.04 for debian i386 jobs and force double comparison",
+      "source_url": "https://github.com/apache/arrow",
+      "source_version": "d58f83f3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T03:44:34.215Z"
+    },
+    "candidate_directive-ci-use-ubuntu-24-04-for-debian-i386-jobs-and-force-double-comparison": {
+      "item_id": "candidate_directive-ci-use-ubuntu-24-04-for-debian-i386-jobs-and-force-double-comparison",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6L2I-ci-use-ubuntu-24-04-for-debian-i386-jobs-and-force-double-comparison.md",
+      "title": "[CI] Use ubuntu 24.04 for debian i386 jobs and force double comparison",
+      "repository": "apache/arrow",
+      "source_version": "d58f83f3",
+      "content_hash": "dee01665d1fec9c3ef19a2d8a262ca57290f8171ba7521b4991030a4c866f4f1",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T03:44:34.603Z"
+    },
+    "rule-9721": {
+      "learning_id": "rule-9721",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9721,
+      "title": "resume Passport recovery after transient failure",
+      "source_url": "https://github.com/makecindy/cindy",
+      "source_version": "559ad18c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T03:44:38.718Z"
+    },
+    "candidate_directive-resume-passport-recovery-after-transient-failure": {
+      "item_id": "candidate_directive-resume-passport-recovery-after-transient-failure",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6OJR-resume-passport-recovery-after-transient-failure.md",
+      "title": "resume Passport recovery after transient failure",
+      "repository": "makecindy/cindy",
+      "source_version": "559ad18c",
+      "content_hash": "b8f7cd7ad8e9e7fe3306b1f3dc5449ffbab4d976fea5e12053e44ac0427f7760",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T03:44:39.114Z"
+    },
+    "learn-github-infracost-infracost": {
+      "learning_id": "learn-github-infracost-infracost",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "infracost/infracost",
+      "repository": "infracost/infracost",
+      "slug": "infracost-infracost",
+      "platform": "github",
+      "source_url": "https://github.com/infracost/infracost",
+      "source_version": "b8c2bd6e",
+      "content_hash": "c56f0faba3229a943bd6b5254e9592e1a4bc74ab7f8ccd2255a3523fce226937",
+      "dossier_path": "07_PROJECT_LEARNING/infracost-infracost-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/infracost-infracost-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9722,
+          "title": "bump golang.org/x/net to 0.62.0, otel to 1.47.0 and Go to 1.26.11",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-21T03:44:42.566Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9722": {
+      "learning_id": "rule-9722",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9722,
+      "title": "bump golang.org/x/net to 0.62.0, otel to 1.47.0 and Go to 1.26.11",
+      "source_url": "https://github.com/infracost/infracost",
+      "source_version": "b8c2bd6e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T03:44:42.566Z"
+    },
+    "candidate_directive-bump-golang-org-x-net-to-0-62-0-otel-to-1-47-0-and-go-to-1-26-11": {
+      "item_id": "candidate_directive-bump-golang-org-x-net-to-0-62-0-otel-to-1-47-0-and-go-to-1-26-11",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6RIL-bump-golang-org-x-net-to-0-62-0-otel-to-1-47-0-and-go-to-1-26-11.md",
+      "title": "bump golang.org/x/net to 0.62.0, otel to 1.47.0 and Go to 1.26.11",
+      "repository": "infracost/infracost",
+      "source_version": "b8c2bd6e",
+      "content_hash": "30cc58e70ea8dda1f6ae6fa6d5c151d0dc53986872d8de397034800066a68a15",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T03:44:42.958Z"
+    },
+    "domain_intelligence-content-information-intelligence-infracost-infracost-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-infracost-infracost-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-infracost-infracost-content-information-intelligence-infracost-infracost-core-in.md",
+      "title": "Content & Information Intelligence: infracost/infracost Core Invariants",
+      "repository": "infracost/infracost",
+      "source_version": "b8c2bd6e",
+      "content_hash": "7538d662a280785c7d5fd39bd10c8be7bc66ae53dbce357c9530f87cfd0c504d",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T03:44:43.106Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-infracost-infracost": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-infracost-infracost",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/infracost-infracost-verification-protocol-empirical-defect-shield-for-infracost-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for infracost/infracost",
+      "repository": "infracost/infracost",
+      "source_version": "b8c2bd6e",
+      "content_hash": "d017691039a2581f8f8ba71cbe34fb04d14001c7aa6eca1cce263e656faabb65",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T03:44:43.258Z"
+    },
+    "rule-9723": {
+      "learning_id": "rule-9723",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9723,
+      "title": "Empirical Invariant Guard in main.rs",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "9138ff8a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T03:44:44.449Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-main-rs": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-main-rs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6SYS-empirical-invariant-guard-in-main-rs.md",
+      "title": "Empirical Invariant Guard in main.rs",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "source_version": "9138ff8a",
+      "content_hash": "92260167f2693368a9971e2b0937e462c44706cd3b0fad02ef964588d041d98e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T03:44:44.840Z"
+    },
+    "rule-9724": {
+      "learning_id": "rule-9724",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9724,
+      "title": "Update Rust dependencies. Addresses wasmtime security advisories.",
+      "source_url": "https://github.com/trailbaseio/trailbase",
+      "source_version": "b9e8acb7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T03:44:46.924Z"
+    },
+    "candidate_directive-update-rust-dependencies-addresses-wasmtime-security-advisories": {
+      "item_id": "candidate_directive-update-rust-dependencies-addresses-wasmtime-security-advisories",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6UUZ-update-rust-dependencies-addresses-wasmtime-security-advisories.md",
+      "title": "Update Rust dependencies. Addresses wasmtime security advisories.",
+      "repository": "trailbaseio/trailbase",
+      "source_version": "b9e8acb7",
+      "content_hash": "67dd357f4d1487836b887e398dd587ff437e3ff20483ccfbd9ff549b4fbbfa4a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T03:44:47.292Z"
+    },
+    "candidate_directive-gh-55679-ci-use-ubuntu-24-04-for-debian-i386-jobs-and-force-double-comparison": {
+      "item_id": "candidate_directive-gh-55679-ci-use-ubuntu-24-04-for-debian-i386-jobs-and-force-double-comparison",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6XMP-gh-55679-ci-use-ubuntu-24-04-for-debian-i386-jobs-and-force-double-comparison.md",
+      "title": "GH-55679: [CI] Use ubuntu 24.04 for debian i386 jobs and force double comparison",
+      "repository": "apache-arrow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "98bb28280dad08d7f729da15d2906bb40e5025067b8e53cd02d6828e9eb65e02",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T03:44:50.882Z"
+    },
+    "candidate_directive-auth-resume-passport-recovery-after-transient-failure": {
+      "item_id": "candidate_directive-auth-resume-passport-recovery-after-transient-failure",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6Y59-auth-resume-passport-recovery-after-transient-failure.md",
+      "title": "auth): resume Passport recovery after transient failure",
+      "repository": "makecindy-cindy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "48581d4cd9ad50a4c9ac52d447432689fc9015b7591a4f23b888cd55de3b25dd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T03:44:51.552Z"
+    },
+    "candidate_directive-deps-bump-golang-org-x-net-to-0-62-0-otel-to-1-47-0-and-go-to-1-26-11": {
+      "item_id": "candidate_directive-deps-bump-golang-org-x-net-to-0-62-0-otel-to-1-47-0-and-go-to-1-26-11",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6YPY-deps-bump-golang-org-x-net-to-0-62-0-otel-to-1-47-0-and-go-to-1-26-11.md",
+      "title": "deps): bump golang.org/x/net to 0.62.0, otel to 1.47.0 and Go to 1.26.11",
+      "repository": "infracost-infracost-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3f154aa1561cf7ef83dae595a00d06fa4434a107c03f3748c2d8a8159ea7f3c1",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T03:44:52.295Z"
+    },
+    "domain_intelligence-content-information-intelligence-infracost-infracost-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-infracost-infracost-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-infracost-infracost-learnings-content-information-intelligence-infracost-infraco.md",
+      "title": "Content & Information Intelligence: infracost-infracost-learnings Core Invariants",
+      "repository": "infracost-infracost-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0b0a364555db6eb0547a95904ac695b7a44a679f0e3ea0ebda574fdfe27ccbd5",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T03:44:52.446Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-infracost-infracost-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-infracost-infracost-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/infracost-infracost-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for infracost-infracost-learnings",
+      "repository": "infracost-infracost-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b37edebba17fd099f38882696485ac49e0293ce9b6bb5ab953b985fc4f0ac506",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T03:44:52.598Z"
     }
   },
   "ai-builder-brain": {

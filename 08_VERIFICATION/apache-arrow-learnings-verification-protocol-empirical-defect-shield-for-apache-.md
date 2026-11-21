@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T17:23:35.021Z",
+  "timestamp": "2026-11-21T03:44:50.773Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-apache-arrow-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apache-arrow-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T17:23:35.021Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T03:44:50.773Z`  
 > **Learning ID**: `LEARN-EVO-apache-arrow-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `ac7d3fab`  
+> **Source Version**: `d58f83f3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T17:23:17.278Z  
+> **Timestamp**: 2026-11-21T03:44:33.435Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T17:23:17.271Z  
+> **Harvest Timestamp**: 2026-11-21T03:44:33.234Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17317 stars
+- **Stars / Engagement**: 17323 stars
 
 ---
 
@@ -1402,11 +1402,13 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55663** (2026-11-18): **GH-55625: [CI][R] test-r-m1-san fails in "Install dependencies" since 2026-11-09**
-  *Symptoms*: ### Rationale for this change  pak calculates binary name incorrectly in new release so job fails  ### What changes are included in this PR?  Use dev pak which has fix  ### Are these changes tested?  Will run CI  ### Are there any user-facing changes?  No  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [x] AI  **Reviewed before submission by:**  - [x] Human - [ ] AI - [ ] Not reviewed  * GitHub Issue: #55625
+- **Issue #55687** (2026-11-20): **GH-55669: [C++][IPC] Validate buffer bounds and replace raw pointer arithmetic in MessageDecoder**
+  *Symptoms*: ﻿### Rationale for this change  In `cpp/src/arrow/ipc`, streaming decoding and decompression can be hardened against malformed or untrusted buffers (GH-55669). This pull request incorporates the hardening work originally proposed by @Awesome06 in #55671, while resolving the build failures across the C++ matrix and addressing all active review findings.  ### What changes are included in this PR?  1. **Memory Safety and Bound Checks in MessageDecoder:**    - Replaces raw pointer arithmetic and manual memcpy with `std::span` and checked offsets in `MessageDecoderImpl`.    - Validates input sizes against negative values in `MessageDecoder::Consume`.    - Protects chunk reassembly against out-of-bounds copies.  2. **IPC Read Ceilings in IpcReadOptions:**    - Adds configurable `max_metadata_length`, `max_body_length`, and `max_decompression_ratio` to `IpcReadOptions`.    - Rejects negative lengths in `CheckMetadataLength` and `CheckBodyLength`.    - Enforces configured limits in the shared `ReadRecordBatchInternal` function so that direct public `ReadRecordBatch` entry points cannot bypass bounds checks.  3. **FlatBuffers and Metadata Hardening:**    - Adds null checks for FlatBuffers tensor and custom metadata fields.    - Removes unconditional `metadata->reserve` in `GetKeyValueMetadata` to prevent untrusted metadata counts from triggering premature large vector allocations.  4. **CI Build and Test Fixes:**    - Fixes compiler deduction error on `read_write_test.cc:3579` by sepa
 
-- **Issue #55657** (2026-11-17): **MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates**
-  *Symptoms*: Bumps the apache-infrastructure-actions-stash group with 2 updates: [apache/infrastructure-actions/stash/restore](https://github.com/apache/infrastructure-actions) and [apache/infrastructure-actions/stash/save](https://github.com/apache/infrastructure-actions).  Updates `apache/infrastructure-actions/stash/restore` from 5a4eaabe6c43770c9df95875a513a6b8362be5eb to 762a01f36a09ab9e0e4c8af8f4b0f2ed12683df5 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/apache/infrastructure-actions/commit/762a01f36a09ab9e0e4c8af8f4b0f2ed12683df5"><code>762a01f</code></a> fork-ci: Add optional commit status reporting (<a href="https://redirect.github.com/apache/infrastructure-actions/issues/1534">#1534</a>)</li> <li><a href="https://github.com/apache/infrastructure-actions/commit/48e6b4cd4def0995346e9a48ce9b9e1598b407fc"><code>48e6b4c</code></a> Remove Expired Refs</li> <li><a href="https://github.com/apache/infrastructure-actions/commit/5bbd162d9e5952388608e1ae502ec644b99ee358"><code>5bbd162</code></a> fork-ci: list jobs that did not succeed in the check (<a href="https://redirect.github.com/apache/infrastructure-actions/issues/1533">#1533</a>)</li> <li><a href="https://github.com/apache/infrastructure-actions/commit/39fedec0756fecc6c05a89266fd6c5c4a9a93b94"><code>39fedec</code></a> Bump the codeql-action group across 1 directory with 2 updates (<a href="https://redirect.github.com/apache/infrastructure-actions/issues/1531">#1531</a>)</li> <li><a href="https://github.c
+- **Issue #55679** (2026-11-20): **[CI] The debian-13-{cpp/python-3}-i386 jobs are currently failing to install base packages from Debian**
+  *Symptoms*: ### Describe the bug, including details regarding any error messages, version, and platform.  The following jobs are failing: - [test-debian-13-cpp-i386](https://github.com/ursacomputing/crossbow/actions/runs/44430480310/job/135246278866) - [test-debian-13-python-3-i386](https://github.com/ursacomputing/crossbow/actions/runs/44430460911/job/135246208174)  With: ``` [0](https://github.com/ursacomputing/crossbow/actions/runs/44430460911/job/135246208174#step:7:323)      failed to solve: process "/bin/sh -c apt-get update -y -q &&     apt-get install -y -q --no-install-recommends         apt-transport-https         ca-certificates         gnupg         lsb-release         wget &&     if [ ${llvm} -ge 20 ]; then       wget -O /usr/share/keyrings/llvm-snapshot.asc         https://apt.llvm.org/llvm-snapshot.gpg.key &&       (echo \"Types: deb\";        echo \"URIs: https://apt.llvm.org/$(lsb_release --codename --short)/\";        echo \"Suites: llvm-toolchain-$(lsb_release --codename --short)-${llvm}\";        echo \"Components: main\";        echo \"Signed-By: /usr/share/keyrings/llvm-snapshot.asc\") |         tee /etc/apt/sources.list.d/llvm.sources;     fi &&     apt-get update -y -q &&     apt-get install -y -q --no-install-recommends         autoconf         cargo         ccache         clang-${llvm}         cmake         curl         g++         gcc         gdb         git         libbenchmark-dev         libboost-filesystem-dev         libbrotli-dev         libbz2-dev       
+  **Post-Mortem & Fix Analysis**:
+  > Issue resolved by pull request 55675 https://github.com/apache/arrow/pull/55675
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1423,182 +1425,24 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ac7d3fab` (2026-11-19)
-**Commit Message**: GH-47465: [C++] Mark the glog backend for deprecation (#55632)
-
-### Rationale for this change
-As discussed in GH-47465, glog is no longer maintained, therefore this PR deprecates the glog backend in Apache Arrow.
-
-### What changes are included in this PR?
-- Mark `ARROW_USE_GLOG` CMake option as deprecated and emit a warning for it
-- Mark `GLOG` as deprecated in the C++ build docs
-- Deprecate `ArrowLog::InstallFailureSignalHandler()` and `ArrowLog::UninstallSignalAction()` and suppress the deprecation warnings for their calls in `acero_main.cc` and `test_integration_client.cc`
-
-### Are these changes tested?
-Yes, I tested them locally with CMake/Ninja.
-
-### Are there any user-facing changes?
-
-Yes, `ARROW_USE_GLOG`, `ArrowLog::InstallFailureSignalHandler()` and `UninstallSignalAction()` now emit deprecation warnings.
-
-### Was AI used for this PR?
-
-Yes, Copilot's code review caught a macro for deprecation that I hadn't used. I accepted its suggestion, and the commit that added it has Copilot as a co-author.
-
-**PR code and description written by:**
-
-- [x] Human
-- [x] AI
-
-**Reviewed before submission by:**
-
-- [x] Human
-- [ ] AI
-- [ ] Not reviewed
-
-* GitHub Issue: #47465
-
-Lead-authored-by
-
-**File**: `cpp/cmake_modules/DefineOptions.cmake` (modified, +7/-2)
-```diff
-@@ -519,8 +519,8 @@ takes precedence over ccache if a storage backend is configured" ON)
-   define_option(ARROW_ZSTD_USE_SHARED "Rely on zstd shared libraries where relevant"
-                 ${ARROW_DEPENDENCY_USE_SHARED})
- 
--  define_option(ARROW_USE_GLOG "Build libraries with glog support for pluggable logging"
--                OFF)
-+  define_option(ARROW_USE_GLOG "Build libraries with glog support for pluggable logging;\
-+(This is a deprecated option and will be removed in a future release.)" OFF)
- 
-   define_option(ARROW_WITH_BACKTRACE "Build with backtrace support" ON)
- 
-@@ -703,6 +703,11 @@ macro(config_summary_message)
-   if(ARROW_PYTHON)
-     message(WARNING "ARROW_PYTHON is deprecated. Use CMake presets instead.")
-   endif()
-+
-+  if(ARROW_USE_GLOG)
-+    message(DEPRECATION "ARROW_USE_GLOG is deprecated and will be removed in a future release."
-+    )
-+  endif()
- endmacro()
- 
- macro(config_summary_json)
-```
-
-**File**: `cpp/src/arrow/flight/integration_tests/test_integration_client.cc` (modified, +4/-0)
-```diff
-@@ -217,7 +217,9 @@ arrow::Status RunScenario(arrow::flight::integration_tests::Scenario* scenario)
- }
- 
- int main(int argc, char** argv) {
-+  ARROW_SUPPRESS_DEPRECATION_WARNING
-   arrow::util::ArrowLog::InstallFailureSignalHandler();
-+  ARROW_UNSUPPRESS_DEPRECATION_WARNING
- 
-   gflags::SetUsageMessage("Integration testing client for Flight.");
-   gflags::ParseCommandLineFlags(&argc, &argv, true);
-@@ -240,6 +242,8 @@ int main(int argc, char** argv) {
-   }
-   ABORT_NOT_OK(status);
- 
-+  ARROW_SUPPRESS_DEPRECATION_WARNING
-   arrow::util::ArrowLog::UninstallSignalAction();
-+  ARROW_UNSUPPRESS_DEPRECATION_WARNING
-   return 0;
- }
-```
-
-**File**: `cpp/src/arrow/flight/sql/example/acero_main.cc` (modified, +2/-0)
-```diff
-@@ -56,7 +56,9 @@ int main(int argc, char** argv) {
- 
-   arrow::util::ArrowLog::StartArrowLog("acero-flight-sql-server",
-                                        arrow::util::ArrowLogLevel::ARROW_INFO);
-+  ARROW_SUPPRESS_DEPRECATION_WARNING
-   arrow::util::ArrowLog::InstallFailureSignalHandler();
-+  ARROW_UNSUPPRESS_DEPRECATION_WARNING
- 
-   arrow::Status st = RunMain(FLAGS_location);
- 
-```
-
-**File**: `cpp/src/arrow/util/logging.cc` (modified, +4/-0)
-```diff
-@@ -187,6 +187,8 @@ void ArrowLog::StartArrowLog(const std::string& app_name,
- #endif
- }
- 
-+ARROW_SUPPRESS_DEPRECATION_WARNING
-+
- void ArrowLog::UninstallSignalAction() {
- #ifdef ARROW_USE_GLOG
-   ARROW_LOG(DEBUG) << "Uninstall signal handlers.";
-@@ -223,6 +225,8 @@ void ArrowLog::InstallFailureSignalHandler() {
- #endif
- }
- 
-+ARROW_UNSUPPRESS_DEPRECATION_WARNING
-+
- bool ArrowLog::IsLevelEnabled(ArrowLogLevel log_level) {
-   return log_level >= severity_threshold_;
- }
-```
-
-**File**: `cpp/src/arrow/util/logging.h` (modified, +4/-0)
-```diff
-@@ -189,9 +189,13 @@ class ARROW_EXPORT ArrowLog : public ArrowLogBase {
- 
-   /// Install the failure signal handler to output call stack when crash.
-   /// If glog is not installed, this function won't do anything.
-+  /// \deprecated Deprecated in 27.0.0. GLog support is deprecated.
-+  ARROW_DEPRECATED("Deprecated in 27.0.0. GLog support is deprecated.")
-   static void InstallFailureSignalHandler();
- 
-   /// Uninstall the signal actions installed by InstallFailureSignalHandler.
-+  /// \deprecated Deprecated in 27.0.0. GLog support is deprecated.
-+  ARROW_DEPRECATED("Deprecated in 27.0.0. GLog support is deprecated.")
-   static void UninstallSignalAction();
- 
-   /// Return whether or not the log level is enabled in current setting.
-```
-
-**File**: `docs/source/developers/cpp/building.rst` (modified, +1/-1)
-```diff
-@@ -494,7 +494,7 @@ The build system supports a number of third-party dependencies
-   * ``BZip2``: for data compression
-   * ``c-ares``: a dependency of gRPC
-   * ``gflags``: for command line utilities (formerly Googleflags)
--  * ``GLOG``: for logging
-+  * ``GLOG``: for logging (deprecated)
-   * ``google_cloud_cpp_storage``: for Google Cloud Storage support, requires
-     system cURL and can use the ``BUNDLED`` method described below
-   * ``gRPC``: for remote procedure calls
-```
-
----
-
-### Incident Patch 2: `931b9ccc` (2026-11-18)
-**Commit Message**: GH-55478: [R] Vendored dependencies to enable parquet (smallest change, biggest tarball) (#55491)
+### Incident Patch 1: `d58f83f3` (2026-11-20)
+**Commit Message**: GH-55679: [CI] Use ubuntu 24.04 for debian i386 jobs and force double comparison (#55675)
 
 ### Rationale for this change
 
-Vendor (and trim) C++ dependencies for offline builds that would allow us to build Parquet even when CMake cannot reach the internet. This is an R-package-only change, but in doing so can't trim quite as much (specifically building thrift without boost). The resulting tarball is larger than strictly necessary (~13.1 MB).
-
-Resolves #55478
+The debian-13 i386 jobs are currently failing on main. It started since the ubuntu-latest bumped to 26.04.
 
 ### What changes are included in this PR?
 
-Scripts for vendoring and trimming dependencies, tests
+Use ubuntu-24.04 as base for the i386 images instead of 26.04. Also force `default_min_savings` comparison to be a double, there seems to be some comparison between double and long double otherwise which makes the test fail.
 
 ### Are these changes tested?
 
-Yes
+Yes via CI.
 
 ### Are there any user-facing changes?
 
-More full-feature arrow builds 
+No
 
 ### Was AI used for this PR?
 
@@ -1607,173 +1451,81 @@ In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/de
 **PR code and description written by:**
 
 - [x] Human
-- [ ] AI
+- [x] AI
 
 **Reviewed before submission by:**
 
 - [x] Human
-- [x] AI
+- [ ] AI
 - [ ] Not reviewed
 
-* GitHub Issue: #55478
+* GitHub Issue: #55679
 
-Authored-by: Jonathan Keane <[REDACTED_EMAIL]>
-Signed-off-by: Jonathan Keane <[REDACTED_EMAIL]>
+Authored-by: Raúl Cumplido <[REDACTED_EMAIL]>
+Signed-off-by: Raúl Cumplido <[REDACTED_EMAIL]>
 
-**File**: `ci/scripts/r_test.sh` (modified, +20/-0)
+**File**: `dev/tasks/docker-tests/github.linux.yml` (modified, +1/-1)
 ```diff
-@@ -158,6 +158,26 @@ if [ "${ARROW_R_TEST_OFFLINE:-false}" = "true" ]; then
-   cp /etc/resolv.conf{.bak,}
- fi
+@@ -28,7 +28,7 @@ jobs:
+   test:
+     name: |
+       Docker Test {{ flags|default("") }} {{ image }} {{ command|default("") }}
+-    runs-on: ubuntu-latest
++    runs-on: {{ runs_on|default("ubuntu-latest") }}
+ {{ macros.github_set_env(env) }}
+     timeout-minutes: {{ timeout|default(60) }}
+     steps:
+```
+
+**File**: `dev/tasks/tasks.yml` (modified, +6/-0)
+```diff
+@@ -408,6 +408,9 @@ tasks:
+         DEBIAN: "{{ debian_version }}"
+       flags: "-e ARROW_AZURE=OFF -e ARROW_S3=OFF -e ARROW_GANDIVA=OFF"
+       image: debian-cpp
++      # This can be unpinned to use latest once the following issue is solved:
++      # https://github.com/actions/runner-images/issues/14790
++      runs_on: ubuntu-24.04
+ {% endfor %}
  
-+if [ -n "${ARROW_R_EXPECTED_FEATURES:-}" ]; then
-+  # The tests skip what the build doesn't support, so make sure the features
-+  # we expect (e.g. from the vendored thirdparty sources) were actually built.
-+  # ARROW_R_EXPECTED_FEATURES is a comma-separated list of
-+  # names(arrow::arrow_info()$capabilities) and memory pool backends
-+  # (e.g. mimalloc).
-+  ${R_BIN} -s -e "
-+    library(arrow, lib.loc = 'check/arrow.Rcheck')
-+    info <- arrow_info()
-+    print(info\$capabilities)
-+    print(info\$memory_pool\$available_backends)
-+    available <- c(names(which(info\$capabilities)), info\$memory_pool\$available_backends)
-+    expected <- strsplit(Sys.getenv('ARROW_R_EXPECTED_FEATURES'), ',')[[1]]
-+    missing <- setdiff(expected, available)
-+    if (length(missing) > 0) {
-+      stop('Expected features are not available: ', paste(missing, collapse = ', '))
-+    }
-+  "
-+fi
-+
- AFTER=$(ls -alh ~/)
- if [ "$NOT_CRAN" != "true" ] && [ "$BEFORE" != "$AFTER" ]; then
-   # Ignore ~/.TinyTex/ and ~/R/ because it has many files.
-```
-
-**File**: `cpp/cmake_modules/ThirdpartyToolchain.cmake` (modified, +6/-0)
-```diff
-@@ -470,6 +470,12 @@ foreach(_VERSION_ENTRY ${TOOLCHAIN_VERSIONS_TXT})
-     continue()
-   endif()
+   test-debian-experimental-cpp-gcc-15:
+@@ -526,6 +529,9 @@ tasks:
+         DEBIAN: "{{ debian_version }}"
+       flags: "-e ARROW_S3=OFF -e ARROW_GANDIVA=OFF"
+       image: debian-python
++      # This can be unpinned to use latest once the following issue is solved:
++      # https://github.com/actions/runner-images/issues/14790
++      runs_on: ubuntu-24.04
+ {% endfor %}
  
-+  # Allow overriding checksums by environment variables, e.g. for a source
-+  # archive given by ARROW_$LIBRARY_URL that differs from the upstream one
-+  if(_VARIABLE_NAME MATCHES "_CHECKSUM$" AND DEFINED ENV{${_VARIABLE_NAME}})
-+    set(_VARIABLE_VALUE "$ENV{${_VARIABLE_NAME}}")
-+  endif()
-+
-   # For debugging
-   message(STATUS "${_VARIABLE_NAME}: ${_VARIABLE_VALUE}")
+   test-ubuntu-24.04-python-3:
+```
+
+**File**: `python/pyarrow/_parquet.pyx` (modified, +2/-1)
+```diff
+@@ -2086,11 +2086,12 @@ cdef shared_ptr[WriterProperties] _create_writer_properties(
+         WriterProperties.Builder props
+         CdcOptions cdc_options
+         double savings
++        double default_min_savings = 0.01
  
-```
-
-**File**: `dev/release/rat_exclude_files.txt` (modified, +1/-0)
-```diff
-@@ -97,6 +97,7 @@ r/tests/testthat/_snaps/*.md
- r/inst/include/cpp11.hpp
- r/inst/include/cpp11/*.hpp
- r/tools/nixlibs-allowlist.txt
-+r/inst/COPYRIGHTS
- .gitattributes
- ruby/red-arrow/.yardopts
- ruby/red-arrow-format/lib/arrow-format/org/*
-```
-
-**File**: `dev/tasks/tasks.yml` (modified, +21/-7)
-```diff
-@@ -633,14 +633,28 @@ tasks:
-     template: r/github.linux.offline.build.yml
+     savings = min_compression_savings
+     if not (0.0 <= savings <= 1.0):
+         raise ValueError("min_compression_savings must be in range [0, 1]")
+-    if savings > 0.01 and data_page_version == "1.0":
++    if savings > default_min_savings and data_page_version == "1.0":
+         raise ValueError("min_compression_savings requires V2 data pages")
+     props.min_compression_savings(savings)
  
-   # Simulate a CRAN builder without network access: the build should detect
--  # that it is offline and fall back to a minimal build without downloading
--  # anything.
--  test-r-offline-minimal:
--    ci: github
--    template: docker-tests/github.linux.yml
--    params:
--      flags: '-e ARROW_R_TEST_OFFLINE=true -e NOT_CRAN=false -e SKIP_VIGNETTES=true'
-+  # that it is offline and build libarrow without downloading anything, using
-+  # the thirdparty sources vendored in the package (tools/vendored) to still
-+  # include Parquet, Dataset, JSON, the compression codecs, etc.
-+  # ARROW_SOURCE_HOME='' makes it use the C++ source copied into tools/cpp
-+  # (like the CRAN package does), whose versions.txt has the checksums of the
-+  # trimmed tarballs. bz2 is off by default on Linux, so it is turned on to make
-+  # sure every vendored tarball is built. Brotli and Zstandard aren't vendored.
-+  test-r-offline-vendored:
-+    ci: github
-+    template: docker-tests/github.linux.yml
-+    params:
-+      flags: >-
-+        -e ARROW_R_TEST_OFFLINE=true
-+        -e NOT_CRAN=false
-+        -e SKIP_VIGNETTES=true
-+        -e ARROW_SOURCE_HOME=''
-+        -e ARROW_WITH_BZ2=ON
-+        -e ARROW_R_EXPECTED_FEATURES=dataset,parquet,json,mimalloc,re2,utf8proc,snappy,gzip,lz4,bz2
-       image: r
-+      # A full libarrow build with 2 cores (NOT_CRAN=false) and no sccache
-+      # (it's offline)
-+      timeout: 180
- 
-   # This one has -flto=auto
-   test-r-ubuntu-22.04:
-```
-
-**File**: `docs/source/developers/cpp/building.rst` (modified, +4/-0)
-```diff
-@@ -581,6 +581,10 @@ internet.
- To enable offline builds, you can download the source artifacts yourself and
- use environment variables of the form ``ARROW_$LIBRARY_URL`` to direct the
- build system to read from a local file rather than accessing the internet.
-+Each archive is checked against the SHA256 checksum in
-+``thirdparty/versions.txt``; if you use an archive that differs from the
-+upstream one, you can set the matching ``ARROW_$LIBRARY_BUILD_SHA256_CHECKSUM``
-+environment variable to its checksum.
- 
- To make this easier for you, we have prepared a script
- ``thirdparty/download_dependencies.sh`` which will download the correct version
-```
-
-**File**: `r/.Rbuildignore` (modified, +2/-0)
-```diff
-@@ -32,3 +32,5 @@ STYLE.md
- ^inst/__pycache__$
- ^bootstrap.R$
- air.toml
-+^tools/vendored-downloads$
-+^tools/trim$
-```
-
-**File**: `r/.gitignore` (modified, +2/-0)
-```diff
-@@ -35,3 +35,5 @@ extra-tests/files
- # Source tarballs of required dependencies that we ship for offline builds.
- # They're downloaded by `make sync-cpp` (see tools/vendor_dependencies.sh).
- /tools/vendored/
-+# Cache of the upstream (untrimmed) tarballs used by tools/vendor_dependencies.sh
-+/tools/vendored-downloads/
-```
-
-**File**: `r/DESCRIPTION` (modified, +1/-0)
-```diff
-@@ -24,6 +24,7 @@ Description: 'Apache' 'Arrow' <https://arrow.apache.org/> is a cross-language
-     package provides an interface to the 'Arrow C++' library.
- Depends: R (>= 4.2)
- License: Apache License (>= 2.0)
-+Copyright: See file inst/COPYRIGHTS
- URL: https://github.com/apache/arrow/, https://arrow.apache.org/docs/r/
- BugReports: https://github.com/apache/arrow/issues
- Encoding: UTF-8
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #55687** (closed): GH-55669: [C++][IPC] Validate buffer bounds and replace raw pointer arithmetic in MessageDecoder (@Mr-Nobody-Anonymous)
+- **PR #55675** (2026-11-20): GH-55679: [CI] Use ubuntu 24.04 for debian i386 jobs and force double comparison (@raulcd)
 - **PR #55663** (2026-11-18): GH-55625: [CI][R] test-r-m1-san fails in "Install dependencies" since 2026-11-09 (@thisisnic)
 - **PR #55657** (2026-11-17): MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates (@dependabot[bot])
 - **PR #55654** (2026-11-17): GH-55653: [Python][Docs] Correction for operator list of Array/Scalar (@tadeja)
 - **PR #55651** (2026-11-17): GH-55630: [CI][C++] Relax simdjson error message checking (@pitrou)
-- **PR #55649** (2026-11-17): GH-55648: [C++][CI] Fix protobuf-induced Valgrind failures (@pitrou)
-- **PR #55639** (2026-11-17): GH-55638: [C++][Parquet] Fix CDC to make list page boundaries independent of array chunking (@kszucs)
 
 ---
 
@@ -1793,38 +1545,31 @@ Signed-off-by: Jonathan Keane <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-47465: [C++] Mark the glog backend for deprecation
+## X. GH-55679: [CI] Use ubuntu 24.04 for debian i386 jobs and force double comparison
 
 **RULE**:
-When implementing operations in `cpp/cmake_modules/DefineOptions.cmake`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `dev/tasks/docker-tests/github.linux.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ac7d3fab`: GH-47465: [C++] Mark the glog backend for deprecation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d58f83f3`: GH-55679: [CI] Use ubuntu 24.04 for debian i386 jobs and force double comparison. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/cmake_modules/DefineOptions.cmake`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `dev/tasks/docker-tests/github.linux.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  define_option(ARROW_USE_GLOG "Build libraries with glog support for pluggable logging;\
-(This is a deprecated option and will be removed in a future release.)" OFF)
-
-  if(ARROW_USE_GLOG)
-    message(DEPRECATION "ARROW_USE_GLOG is deprecated and will be removed in a future release."
-    )
-  endif()
+    runs-on: {{ runs_on|default("ubuntu-latest") }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-  define_option(ARROW_USE_GLOG "Build libraries with glog support for pluggable logging"
-                OFF)
+    runs-on: ubuntu-latest
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ac7d3fab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d58f83f3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -4,24 +4,24 @@
 {
   "source_repository": "trailbaseio/trailbase",
   "source_url": "https://github.com/trailbaseio/trailbase",
-  "source_version": "e0a2df25",
+  "source_version": "b9e8acb7",
   "license": "OSL-3.0",
-  "timestamp": "2026-11-18T19:52:12.386Z",
+  "timestamp": "2026-11-21T03:44:47.292Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-trailbaseio-trailbase",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [trailbaseio/trailbase](https://github.com/trailbaseio/trailbase) (Revision: `e0a2df25`).  
-> **License**: OSL-3.0 | **Timestamp**: `2026-11-18T19:52:12.386Z`  
+> **Provenance**: Harvested from [trailbaseio/trailbase](https://github.com/trailbaseio/trailbase) (Revision: `b9e8acb7`).  
+> **License**: OSL-3.0 | **Timestamp**: `2026-11-21T03:44:47.292Z`  
 > **Learning ID**: `learn-github-trailbaseio-trailbase`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), I (Content & Information Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), F (Design Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from trailbaseio/trailbase:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T19:52:11.212Z  
+> **Harvest Timestamp**: 2026-11-21T03:44:46.120Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: An open, sub-millisecond, single-executable Firebase alternative with type-safe APIs, built-in WebAssembly runtime, realtime subscriptions, auth, MCP and admin UI built on Rust, SQLite (PG) & Wasmtime.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5773 stars
+- **Stars / Engagement**: 5774 stars
 
 ---
 
@@ -947,8 +947,11 @@ pub async fn test_email_handler(
   > Hi @chardskarth , thanks for the request and thanks for reaching out. In the next release node positions will be persisted locally in the browser. Would that address your request?
   > v0.36.1 has been released. I'll tentatively consider this closed. Let me know, if you re looking for something else 🙏 
 
-- **Issue #311** (2026-11-08): **Record subscriptions emit `Insert` events for rows of a rolled-back transaction**
-  *Symptoms*: ## Summary  When a `POST /api/transaction/v1/execute` request with `"transaction": true` fails after an earlier operation already inserted a row, the transaction rolls back and the row is never stored. Table subscriptions (`/api/records/v1/{api}/subscribe/*`) still receive an `Insert` event for that row. Clients that apply subscription events to a local cache end up showing a row that does not exist, and no later event removes it.  ## Version  `trail v0.35.8-0-g05238c02 (2026-10-30)`, macOS arm64. From reading the source, `main` behaves the same (see Cause).  ## Reproduction  Needs only `trail` and `curl`:  ```bash #!/usr/bin/env bash set -euo pipefail  port="${PORT:-4011}" base="http://127.0.0.1:${port}" dir="$(mktemp -d)" trap 'kill "${sse_pid:-}" "${trail_pid:-}" 2>/dev/null || true; wait 2>/dev/null || true; rm -rf "$dir"' EXIT  mkdir -p "$dir/depot/migrations/main" cat > "$dir/depot/migrations/main/U1700000000__probe.sql" <<'SQL' CREATE TABLE probe (   id INTEGER PRIMARY KEY,   note TEXT NOT NULL UNIQUE ) STRICT; SQL cat > "$dir/depot/config.textproto" <<'PROTO' server { application_name: "repro" enable_record_transactions: true } record_apis: [{   name: "probe"   table_name: "probe"   acl_world: [CREATE, READ]   enable_subscriptions: true }] PROTO  trail --version | head -1 trail --depot "$dir/depot" run --address "127.0.0.1:${port}" >"$dir/trail.log" 2>&1 & trail_pid=$! until curl -fsS "$base/api/healthcheck" >/dev/null 2>&1; do   kill -0 "$trail_pid" 2>/dev/null || { 
+- **Issue #312** (2026-11-19): **Double reverse proxy (X-Forwarded-For not getting unwrapped)**
+  *Symptoms*: Hello. I recently had to override my webservers default x-forwarded-for handling which, by default, comma-separates multiple forwarded for in trusted proxy situation. Seems Trailbase only uses the last IP (or falls back to the source IP).  Thats not ideal, but is what it is. This request is for the docs to be updated to reflect that.  Or if I have it all wrong let me know :) web server is Caddy.  Thanks!
+  **Post-Mortem & Fix Analysis**:
+  > > Thats not ideal, but is what it is. This request is for the docs to be updated to reflect that.  It doesn't have to be :). The behavior you describe is implemented here: https://github.com/trailbaseio/trailbase/blob/f7a68cdf409597ac3c33a22ba1b41f3a3acd41f7/crates/core/src/extract/ip.rs#L11. We use it for:  * rate limiting * logging  I assume the problem you ran into was related to logging, were picking the left-most forwarded-for makes a lot of sense (whereas rate limiting should probably maintain right-most behavior). WDYT?
+  > Hmm. Other than an ancillary/informational "upstream"/proxy IP column/field wouldn't you want _everything_ to be the right most (actual remote host) to be used for both logging and rate limiting?
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -965,230 +968,78 @@ pub async fn test_email_handler(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `efb40fa7` (2026-11-18)
-**Commit Message**: Update JavaScript dependencies and address security advisories.
+### Incident Patch 1: `bd2af544` (2026-11-20)
+**Commit Message**: Update Rust dependencies. Addresses wasmtime security advisories.
 
-**File**: `client/testfixture/guests/typescript/package.json` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +147/-94)
 ```diff
-@@ -22,7 +22,7 @@
-     "eslint": "^10.15.0",
-     "prettier": "^3.10.1",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.2",
-+    "typescript-eslint": "^8.73.0",
-     "vite": "^8.3.8"
-   }
- }
-```
-
-**File**: `crates/assets/js/admin/package.json` (modified, +4/-4)
-```diff
-@@ -32,7 +32,7 @@
-     "@solid-primitives/memo": "^1.5.1",
-     "@solidjs/router": "^1.0.3",
-     "@tanstack/solid-form": "^1.33.5",
--    "@tanstack/solid-query": "^5.107.1",
-+    "@tanstack/solid-query": "^5.107.2",
-     "@tanstack/solid-table": "^9.3.1",
-     "@tanstack/table-core": "^9.3.1",
-     "@tiledb-inc/wkx": "github:TileDB-Inc/wkx",
-@@ -59,7 +59,7 @@
-     "@tailwindcss/typography": "^0.5.20",
-     "@tailwindcss/vite": "^4.3.5",
-     "@testing-library/jest-dom": "^7.0.1",
--    "@testing-library/user-event": "^14.6.10",
-+    "@testing-library/user-event": "^14.6.12",
-     "@types/geojson": "^7946.0.16",
-     "@types/wicg-file-system-access": "^2023.10.7",
-     "autoprefixer": "^10.6.2",
-@@ -73,10 +73,10 @@
-     "tailwindcss": "^4.3.5",
-     "tailwindcss-animate": "^1.0.7",
-     "trailbase-bindings": "file:../bindings",
--    "ts-proto": "^2.21.1",
-+    "ts-proto": "^2.22.0",
-     "tw-animate-css": "^1.4.0",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.2",
-+    "typescript-eslint": "^8.73.0",
-     "vite": "^8.3.8",
-     "vite-plugin-csp-guard": "^4.0.1",
-     "vite-plugin-solid": "^2.11.16",
-```
-
-**File**: `crates/assets/js/client/package.json` (modified, +1/-1)
-```diff
-@@ -55,7 +55,7 @@
-     "tinybench": "^6.2.3",
-     "trailbase-bindings": "file:../bindings",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.2",
-+    "typescript-eslint": "^8.73.0",
-     "vite": "^8.3.8",
-     "vite-node": "^6.0.0",
-     "vite-plugin-dts": "^5.1.2",
-```
-
-**File**: `crates/auth-ui/ui/package.json` (modified, +1/-1)
-```diff
-@@ -47,6 +47,6 @@
-     "tailwindcss": "^4.3.5",
-     "tw-animate-css": "^1.4.0",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.2"
-+    "typescript-eslint": "^8.73.0"
-   }
- }
-```
-
-**File**: `docs/examples/record_api_ts/package.json` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@
-     "eslint": "^10.15.0",
-     "prettier": "^3.10.1",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.2",
-+    "typescript-eslint": "^8.73.0",
-     "vitest": "^4.1.12"
-   },
-   "dependencies": {
-```
-
-**File**: `docs/examples/wasm-guest-ts/package.json` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@
-     "nano-spawn": "^2.1.0",
-     "prettier": "^3.10.1",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.2",
-+    "typescript-eslint": "^8.73.0",
-     "vite": "^8.3.8"
-   }
- }
-```
-
-**File**: `docs/package.json` (modified, +1/-1)
-```diff
-@@ -46,6 +46,6 @@
-     "prettier-plugin-astro": "^1.1.2",
-     "prettier-plugin-tailwindcss": "^0.8.1",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.2"
-+    "typescript-eslint": "^8.73.0"
-   }
- }
-```
-
-**File**: `examples/blog/web/package.json` (modified, +1/-1)
-```diff
-@@ -40,6 +40,6 @@
-     "quicktype": "^23.3.25",
-     "sharp": "^0.35.5",
-     "tailwindcss": "^4.3.5",
--    "typescript-eslint": "^8.72.2"
-+    "typescript-eslint": "^8.73.0"
-   }
- }
-```
-
----
-
-### Incident Patch 2: `6119f18d` (2026-11-17)
-**Commit Message**: Update Rust dependencies to address security advisories.
-
-**File**: `Cargo.lock` (modified, +111/-108)
-```diff
-@@ -996,9 +996,9 @@ checksum = "8f1fe948ff07f4bd06c30984e69f5b4899c516a3ef74f34df92a2df2ab535495"
+@@ -1075,9 +1075,9 @@ dependencies = [
  
  [[package]]
- name = "bytes"
--version = "1.12.1"
-+version = "1.12.2"
+ name = "cc"
+-version = "1.11.2"
++version = "1.11.3"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
-+checksum = "776dfebd015e2d8732c684a2c71003674ccb49457b539b9e82151ba38e96dd7c"
+-checksum = "33ef9e3e8154a45c7a95cff4c1299702106ad94062d7bb85fdc5d3a5afd91d45"
++checksum = "02f0e023adb368345ce0ca6cdfc0f24a06554468d0e8503e14a0841de79bfa69"
  dependencies = [
-  "serde",
- ]
+  "find-msvc-tools",
+  "jobserver",
 @@ -1193,9 +1193,9 @@ dependencies = [
  
  [[package]]
  name = "clap"
--version = "4.6.7"
-+version = "4.6.8"
+-version = "4.6.8"
++version = "4.6.9"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946"
-+checksum = "ac230478587d0269d8d6998b82ae69ea51509d55df66d9e92edd1f986904cd4a"
+-checksum = "ac230478587d0269d8d6998b82ae69ea51509d55df66d9e92edd1f986904cd4a"
++checksum = "844c5c0b65be192cb68d570cca1b21a6444431d24e39c084dc0336177015337c"
  dependencies = [
   "clap_builder",
   "clap_derive",
-@@ -1215,9 +1215,9 @@ dependencies = [
- 
- [[package]]
- name = "clap_complete"
--version = "4.6.11"
-+version = "4.6.12"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "037e2a1a92236d0aff7e845093f64661d6df4c02c9fcc61a60e9e1d736fa392f"
-+checksum = "6a35200383f20018d41c14d1ab19c1727c697f544492143f7d93aa39f0187848"
- dependencies = [
-  "clap",
-  "clap_lex",
 @@ -1227,9 +1227,9 @@ dependencies = [
  
  [[package]]
  name = "clap_derive"
--version = "4.6.7"
-+version = "4.6.8"
+-version = "4.6.8"
++version = "4.6.9"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f9c751b79415d4e559e3d1fcf128e09e720eb673a06d26cf6f392d37d75b66e0"
-+checksum = "895c9d8d2ac2dd8b8a29f3724a14e72aaaa6debcf8c38c82f97305c6a172767a"
+-checksum = "895c9d8d2ac2dd8b8a29f3724a14e72aaaa6debcf8c38c82f97305c6a172767a"
++checksum = "b4c174f11f949b9ca8c60580925e282b9cbd5454750e506f08648b2038080cd7"
  dependencies = [
   "heck",
   "proc-macro2",
-@@ -1239,9 +1239,9 @@ dependencies = [
- 
- [[package]]
- name = "clap_lex"
--version = "1.1.1"
-+version = "1.1.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1c133bc6a41be0d194c306b5506d15e6feeea7b1d6604bd3f8310dfb2ca96486"
-+checksum = "e0921b3876b3a1df8a1c9f912e7f94342458022c2e84288015893d83c4d62a79"
- 
- [[package]]
- name = "client-ip"
 @@ -1463,37 +1463,37 @@ dependencies = [
  
  [[package]]
  name = "cranelift-assembler-x64"
--version = "0.135.8"
-+version = "0.135.9"
+-version = "0.135.9"
++version = "0.135.10"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "10c7459262c93a3c408bda96acaaa3d92868f166b33d445b20921f8378325038"
-+checksum = "f4c0cfdaf0fa6d94af39357be9b0c6137b99e57832d68b1ba1110524f4c67138"
+-checksum = "f4c0cfdaf0fa6d94af39357be9b0c6137b99e57832d68b1ba1110524f4c67138"
++checksum = "da23f7367f4f5d003249eb1067760b3e6f5df82ad61829d40db22fdf8d41fd22"
  dependencies = [
   "cranelift-assembler-x64-meta",
  ]
  
  [[package]]
  name = "cranelift-assembler-x64-meta"
--version = "0.135.8"
-+version = "0.135.9"
+-version = "0.135.9"
++version = "0.135.10"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "97a25bfba0da265ef1f98728358e9bb3ab7489913e7bd759c743108892288934"
-+checksum = "c829e4494e4ee099395ebbc10a49343e8d582c3fdb894527967bb256bf937612"
+-checksum = "c829e4494e4ee099395ebbc10a49343e8d582c3fdb894527967bb256bf937612"
++checksum = "a8dbd10a21204ce6ae3786f8369860ec4e10a24913e987d5abe4c3cc0c7195d6"
  dependencies = [
   "cranelift-srcgen",
  ]
  
  [[package]]
  name = "cranelift-bforest"
--version = "0.135.8"
-+version = "0.135.9"
+-version = "0.135.9"
++version = "0.135.10"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "32a9ad33269057337a70db66950f426fbdce436a66fe8071f55851a13a2e40cd"
-+checksum = "4955ac604c69b279138b2bd1b46c5f21748910d96e96eca5df23c79ee2a5edcc"
+-checksum = "4955ac604c69b279138b2bd1b46c5f21748910d96e96eca5df23c79ee2a5edcc"
++checksum = "4439be9aa2867bcef9effa83a265f550763a37b2cf4ad560c7bc41cbda947a48"
  dependencies = [
   "cranelift-entity",
   "wasmtime-internal-core",
@@ -1196,11 +1047,11 @@ Observed empirical fixes and code patches:
  
  [[package]]
  name = "cranelift-bitset"
--version = "0.135.8"
-+version = "0.135.9"
+-version = "0.135.9"
++version = "0.135.10"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d322e6584efe3b229b1164b49edf55aec561553426f7fe3e228a45e80a15a190"
-+checksum = "d4be0efebaf985207ba2330083d86c5dd50a03357435e5bdffc97598393b5a19"
+-checksum = "d4be0efebaf985207ba2330083d86c5dd50a03357435e5bdffc97598393b5a19"
++checksum = "9913a7776903ccf6a3172633f59a0d6da2b428ec631c4b999a4b7401efdca1a7"
  dependencies = [
   "serde",
   "serde_derive",
@@ -1208,11 +1059,11 @@ Observed empirical fixes and code patches:
  
  [[package]]
  name = "cranelift-codegen"
--version = "0.135.8"
-+version = "0.135.9"
+-version = "0.135.9"
++version = "0.135.10"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6a7b9f73f97da69d6edc9adbfeec068cdb2649f0221be41abd3909267cb1cd53"
-+checksum = "4f463af533c6fad6aa1d54c454569baebd38a11374deee0c4d104a1e4e4da207"
+-checksum = "4f463af533c6fad6aa1d54c454569baebd38a11374deee0c4d104a1e4e4da207"
++checksum = "ffc88c2b684ca7df2ed79fa42b38a983e4d3632ee9d57bc2a389f69fc7ff9348"
  dependencies = [
   "bumpalo",
   "cranelift-assembler-x64",
@@ -1220,11 +1071,11 @@ Observed empirical fixes and code patches:
  
  [[package]]
  name = "cranelift-codegen-meta"
--version = "0.135.8"
-+version = "0.135.9"
+-version = "0.135.9"
++version = "0.135.10"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e7015ef10993d7129e0bce933874b60dab8187239aca4ceca352987d9907d528"
-+checksum = "b5614f7c37ee06c404c1556b2d54859fb74149774f08594625dbe764963b2f7f"
+-checksum = "b5614f7c37ee06c404c1556b2d54859fb74149774f08594625dbe764963b2f7f"
++checksum = "df667a6e48506af68c087cebee157bfe69e04d78df83e243025ce6473a538fcd"
  dependencies = [
   "cranelift-assembler-x64-meta",
   "cranelift-codegen-shared",
@@ -1232,233 +1083,618 @@ Observed empirical fixes and code patches:
  
  [[package]]
  name = "cranelift-codegen-shared"
--version = "0.135.8"
-+version = "0.135.9"
+-version = "0.135.9"
++version = "0.135.10"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "37916b08a7b17e063bae743cb746da542df7df283ced961aae213620dc11e27a"
-+checksum = "061a4c3049f6b16df98e2a7feca329541da41eabb37b9e42cf8c7671fc17cf56"
+-checksum = "061a4c3049f6b16df98e2a7feca329541da41eabb37b9e42cf8c7671fc17cf56"
++checksum = "ed3fdd2cd7bcd83a9263a978ea1d66477742a1a92095fa08f8752cb9a79ece11"
  
  [[package]]
  name = "cranelift-control"
--version = "0.135.8"
-+version = "0.135.9"
+-version = "0.135.9"
++version = "0.135.10"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8154d189f2cc2a84a95a8129773799ddcf2f4609f667047db30715db4be6aa0a"
-+checksum = "9b267c615bd7d04c5bd7970b35019483824f33a43eb5c26f384246fd53c8b257"
+-checksum = "9b267c615bd7d04c5bd7970b35019483824f33a43eb5c26f384246fd53c8b257"
++checksum = "8e1ecc088bd88f5a271f55b1544a8ec60b9d7373f61efe267d54bd2481adf5a3"
  dependencies = [
   "arbitrary",
  ]
-
+ 
+ [[package]]
+ name = "cranelift-entity"
+-version = "0.135.9"
++version = "0.135.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3613e5a2b21dde0f6591fb54139cf4dbac8b851ea1e79b08bca6631b98ff4299"
++checksum = "2e9e591820d13f0671f879602ff29b241ea8b1dd54a386acbcbf4c3787f41af0"
+ dependencies = [
+  "cranelift-bitset",
+  "serde",
+@@ -1573,9 +1573,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "cranelift-frontend"
+-version = "0.135.9"
++version = "0.135.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7d3a784683a03e1e2099f8761d473527cfd8d510ecb83b871eb8ac4e2ef662a9"
++checksum = "b00cf9b20096b09b3499d19f82cca658c13c6988ecbc54881caf12a2f01b2f8c"
+ dependencies = [
+  "cranelift-codegen",
+  "hashbrown 0.17.1",
+@@ -1586,15 +
 ```
 
-**File**: `Cargo.toml` (modified, +7/-7)
+**File**: `Cargo.toml` (modified, +5/-5)
 ```diff
-@@ -57,12 +57,12 @@ askama = { version = "0.16.1", default-features = false, features = ["derive", "
- axum = { version = "^0.8.9", default-features = false, features = ["multipart", "tokio", "http2"] }
- axum-extra = { version = "^0.12.6", default-features = false, features = ["typed-header"] }
- base64 = { version = "0.23.1", default-features = false, features = ["alloc", "std"] }
--bytes = { version = "1.12.1", features = ["serde"] }
-+bytes = { version = "1.12.2", features = ["serde"] }
+@@ -60,7 +60,7 @@ base64 = { version = "0.23.1", default-features = false, features = ["alloc", "s
+ bytes = { version = "1.12.2", features = ["serde"] }
  chrono = { version = "0.4.45", default-features = false }
  compact_str = { version = "0.10.0", default-features = false, features = ["serde"] }
--clap = { version = "^4.6.7", features=["derive", "env"] }
-+clap = { version = "^4.6.8", features=["derive", "env"] }
+-clap = { version = "^4.6.8", features=["derive", "env"] }
++clap = { version = "^4.6.9", features=["derive", "env"] }
  cron = "0.17.0"
--crossfire = { version = "3.1.22", default-features = false, features = ["tokio"] }
-+crossfire = { version = "3.1.23", default-features = false, features = ["tokio"] }
+ crossfire = { version = "3.1.23", default-features = false, features = ["tokio"] }
  env_logger = { version = "^0.11.11", default-features = false, features = ["auto-color", "humantime"] }
- flume = { version = "0.12.0", default-features = false, features = ["select", "async"] }
- futures-util = { version = "0.3.34", default-features = false, features = ["alloc", "spin"] }
 @@ -117,10 +117,10 @@ ts-rs = { version = "12", features = ["uuid-impl", "serde-json-impl", "indexmap-
  utoipa = { version = "6.0.0", default-features = false, features = ["axum_extras", "debug", "indexmap", "uuid", "macros"] }
  utoipa-axum = { version = "0.3.0" }
  uuid = { version = "1", default-features = false, features = ["std", "v4", "v7", "serde"] }
--wasmtime = { version = "48.0.8", features = ["winch"] }
--wasmtime-wasi = { version = "48.0.8", default-features = false, features = [] }
--wasmtime-wasi-http = { version = "48.0.8", features = ["p2"] }
--wasmtime-wasi-io = { version = "48.0.8", features = [] }
-+wasmtime = { version = "48.0.9", features = ["winch"] }
-+wasmtime-wasi = { version = "48.0.9", default-features = false, features = [] }
-+wasmtime-wasi-http = { version = "48.0.9", features = ["p2"] }
-+wasmtime-wasi-io = { version = "48.0.9", features = [] }
+-wasmtime = { version = "48.0.9", features = ["winch"] }
+-wasmtime-wasi = { version = "48.0.9", default-features = false, features = [] }
+-wasmtime-wasi-http = { version = "48.0.9", features = ["p2"] }
+-wasmtime-wasi-io = { version = "48.0.9", features = [] }
++wasmtime = { version = "48.0.10", features = ["winch"] }
++wasmtime-wasi = { version = "48.0.10", default-features = false, features = [] }
++wasmtime-wasi-http = { version = "48.0.10", features = ["p2"] }
++wasmtime-wasi-io = { version = "48.0.10", features = [] }
  
  # When building TrailBase as a standalone workspace, use local submodule paths.
  # These [patch] sections are ignored when TrailBase is consumed as a dependency
 ```
 
-**File**: `crates/build/Cargo.toml` (modified, +1/-1)
+**File**: `crates/core/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -13,4 +13,4 @@ env_logger = { workspace = true }
- log = { workspace = true }
- prost-build = "^0.14.6"
- prost-reflect-build = "0.16.1"
--regex = "1.13.1"
-+regex = "1.13.2"
-```
-
-**File**: `crates/cli/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -24,14 +24,14 @@ base64 = { workspace = true }
- chrono = { workspace = true }
- compact_str = { workspace = true }
- clap = { workspace = true }
--clap_complete = { version = "4.6.11", features = ["unstable-dynamic"] }
-+clap_complete = { version = "4.6.12", features = ["unstable-dynamic"] }
- env_logger = { workspace = true }
- itertools = { workspace = true }
- jsonwebtoken = { workspace = true }
- log = { workspace = true }
- mimalloc = { workspace = true }
- reqwest = { workspace = true }
--rmcp = { version = "^3.10.0", default-features = false, features = ["server", "transport-io"], optional = true }
-+rmcp = { version = "^3.11.0", default-features = false, features = ["server", "transport-io"], optional = true }
- rmcp-openapi = { workspace = true, optional = true }
- rusqlite = { workspace = true }
- serde = { workspace = true }
-```
-
-**File**: `crates/core/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -72,7 +72,7 @@ itertools = { workspace = true }
- jsonschema = { version = "0.61.2", default-features = false }
- jsonwebtoken = { workspace = true }
- lazy_static = "1.5.1"
--lettre = { version = "^0.11.23", default-features = false, features = ["tokio1-rustls-tls", "sendmail-transport", "smtp-transport", "builder"] }
-+lettre = { version = "^0.11.24", default-features = false, features = ["tokio1-rustls-tls", "sendmail-transport", "smtp-transport", "builder"] }
- litegis = { workspace = true, optional = true }
- log = { workspace = true }
- mime = "0.3.18"
-@@ -87,7 +87,7 @@ prost = { version = "^0.14.6", default-features = false }
+@@ -82,7 +82,7 @@ oauth2 = { version = "5.0.0", default-features = false, features = ["rustls-tls"
+ object_store = { version = "0.14.2", default-features = false, features = ["aws", "fs"] }
+ once_cell = "1.21.4"
+ parking_lot = { workspace = true }
+-pin-project-lite = "0.2.17"
++pin-project-lite = "0.2.18"
+ prost = { version = "^0.14.6", default-features = false }
  prost-reflect = { version = "^0.16.5", default-features = false, features = ["derive", "text-format"] }
  quick_cache = "0.7.0"
- rand = { workspace = true }
--regex = "1.13.1"
-+regex = "1.13.2"
- reqwest = { workspace = true }
- rusqlite = { workspace = true }
- rust-embed = { workspace = true }
 ```
 
-**File**: `crates/extension/Cargo.toml` (modified, +1/-1)
+**File**: `crates/sqlite/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -19,7 +19,7 @@ bcrypt = "0.19.3"
- jsonschema = { version = "0.61.2", default-features = false }
- maxminddb = "0.33.0"
- quick_cache = { version = "0.7.0", default-features = false }
--regex = "1.13.1"
-+regex = "1.13.2"
- # NOTE: rusqlite must not enable "bundled" for the .so built to work.
- rusqlite = { version = "0.43.0", default-features = false, features = ["functions", "cache"] }
- serde = { workspace = true }
-```
-
-**File**: `crates/qs/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ serde = { workspace = true }
- serde-value = "0.7.0"
- serde_qs = { workspace = true }
- uuid = { workspace = true }
--wkt = { version = "0.14.0", default-features = false }
-+wkt = { version = "0.15.0", default-features = false }
- 
- [dev-dependencies]
- rusqlite = { workspace = true }
-```
-
-**File**: `crates/schema/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ lazy_static = "1.5.1"
- log = { workspace = true }
- parking_lot = { workspace = true }
- rand = { workspace = true }
--regex = "1.13.1"
-+regex = "1.13.2"
- schemars = { workspace = true }
+@@ -36,7 +36,7 @@ rusqlite = { workspace = true }
+ self_cell = "1.3.0"
  serde = { workspace = true }
  serde_json = { workspace = true }
+-smallvec = { version = "1.16.5", features = ["const_generics"] }
++smallvec = { version = "1.16.6", features = ["const_generics"] }
+ sqlparser = { version = "0.64.0", optional = true }
+ thiserror = "2.0.21"
+ tokio = { workspace = true }
+```
+
+**File**: `crates/wasm-component-repo/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@ trailbase-build = { workspace = true }
+ trailbase-wasm-common = { workspace = true }
+ url = "2.5.8"
+ wit-component = "0.263.0"
+-zip = { version = "9.7.0", default-features = false, features = ["deflate"] }
++zip = { version = "9.8.1", default-features = false, features = ["deflate"] }
+ 
+ [build-dependencies]
+ trailbase-build = { workspace = true }
 ```
 
 ---
 
-### Incident Patch 3: `afa872ca` (2026-11-17)
-**Commit Message**: Admin UI: persist erd node positions. #313
+### Incident Patch 2: `665e798a` (2026-11-19)
+**Commit Message**: Add proxy settings to admin UI.
 
-**File**: `crates/assets/js/admin/src/components/erd/ErdGraph.tsx` (modified, +37/-7)
+**File**: `crates/assets/js/admin/src/components/settings/AuthSettings.tsx` (modified, +5/-2)
 ```diff
-@@ -1,4 +1,5 @@
- import { createEffect, onCleanup } from "solid-js";
-+import { persistentJSON } from "@nanostores/persistent";
+@@ -49,6 +49,7 @@ import {
+   OAuthProviderId,
+   UserIdentifier,
+   oAuthProviderIdFromJSON,
++  userIdentifierToJSON,
+ } from "@proto/config";
+ import { createConfigQuery, setConfig } from "@/lib/api/config";
+ import { adminFetch } from "@/lib/fetch";
+@@ -840,7 +841,7 @@ function InfoTooltip(props: {
  
- import {
-   Graph,
-@@ -68,13 +69,19 @@ function layoutErdNodes(nodes: NodeMetadata[], aspect: number): NodeMetadata[] {
-     Math.ceil(Math.sqrt((safeAspect * nodes.length * height) / width)),
-   );
- 
--  return nodes.map((node, index) => ({
--    ...node,
--    position: node.position ?? {
--      x: (index % columns) * width,
--      y: Math.floor(index / columns) * height,
--    },
--  }));
-+  return nodes.map((node, index) => {
-+    const id = node.id;
-+    const storedProps = id ? $layout.get().get(id) : undefined;
-+
-+    return {
-+      ...node,
-+      position: node.position ??
-+        storedProps?.position ?? {
-+          x: (index % columns) * width,
-+          y: Math.floor(index / columns) * height,
-+        },
-+    } satisfies NodeMetadata;
-+  });
+ function UserIdentifierSelect(props: {
+   value: UserIdentifier | undefined;
+-  handleChange: (v: UserIdentifier | undefined) => void;
++  handleChange: (v: UserIdentifier) => void;
+   disabled?: boolean;
+ }) {
+   return (
+@@ -888,8 +889,10 @@ function userIdentifierLabel(ui: UserIdentifier | undefined): string {
+       return "Email + username";
+     case UserIdentifier.ONLY_EMAIL:
+     case UserIdentifier.USER_IDENTIFIER_UNDEFINED:
+-    default:
++    case undefined:
+       return "Only email (Default)";
++    default:
++      return userIdentifierToJSON(ui);
+   }
  }
  
- export function edgeProperties(opts?: {
-@@ -233,6 +240,15 @@ export function ErdGraph(props: {
-     g.on("node:click", ({ node }) => onSelect(node.id));
-     g.on("blank:click", () => onSelect(undefined));
+```
+
+**File**: `crates/assets/js/admin/src/components/settings/EmailSettings.tsx` (modified, +22/-9)
+```diff
+@@ -44,7 +44,12 @@ import type { FormApiT } from "@/components/FormFields";
  
-+    g.on("node:moved", ({ node }) => {
-+      const id = node.id;
-+      if (id) {
-+        $layout.get().set(id, {
-+          position: node.getPosition(),
-+        });
-+      }
-+    });
+ import type { TestEmailRequest } from "trailbase-bindings";
+ 
+-import { Config, EmailConfig, SmtpEncryption } from "@proto/config";
++import {
++  Config,
++  EmailConfig,
++  SmtpEncryption,
++  smtpEncryptionToJSON,
++} from "@proto/config";
+ import { createConfigQuery, setConfig } from "@/lib/api/config";
+ import { $user } from "@/lib/client";
+ import { adminFetch } from "@/lib/fetch";
+@@ -508,12 +513,7 @@ function SmtpEncryptionSelect(props: {
+     <Select<SmtpEncryption | undefined>
+       value={props.value}
+       disabled={props.disabled}
+-      options={[
+-        undefined,
+-        // SmtpEncryption.SMTP_ENCRYPTION_STARTTLS,
+-        SmtpEncryption.SMTP_ENCRYPTION_TLS,
+-        SmtpEncryption.SMTP_ENCRYPTION_NONE,
+-      ]}
++      options={smtpEncryptionOptions()}
+       placeholder={smtpEncryptionLabel(undefined)}
+       itemComponent={(props) => (
+         <SelectItem item={props.item}>
+@@ -535,17 +535,30 @@ function SmtpEncryptionSelect(props: {
+   );
+ }
+ 
++function smtpEncryptionOptions(): (SmtpEncryption | undefined)[] {
++  return [
++    // NOTE: STARTTLS, UNDEFINED and undefined are functionally identical.
++    // SmtpEncryption.SMTP_ENCRYPTION_STARTTLS,
++    // SmtpEncryption.SMTP_ENCRYPTION_UNDEFINED,
++    undefined,
++    SmtpEncryption.SMTP_ENCRYPTION_TLS,
++    SmtpEncryption.SMTP_ENCRYPTION_NONE,
++  ];
++}
 +
-     if (g.getCells().length) {
-       g.zoomToFit({ padding: 20 });
-     }
-@@ -267,6 +283,8 @@ export function ErdGraph(props: {
-       zoomOut: () => g.zoomTo(g.zoom() / 2),
-       fit: () => g.zoomToFit({ padding: 20 }),
-       reset: () => {
-+        $layout.set(new Map());
-+
-         layoutErdNodes(props.nodes, graphAspect(ref)).forEach((node, index) => {
-           const position = node.position;
-           if (position) {
-@@ -396,3 +414,15 @@ function graphAspect(el: HTMLElement | undefined) {
-     );
+ function smtpEncryptionLabel(enc: SmtpEncryption | undefined): string {
+   switch (enc) {
+     case SmtpEncryption.SMTP_ENCRYPTION_NONE:
+       return "None (Plain)";
+     case SmtpEncryption.SMTP_ENCRYPTION_TLS:
+       return "TLS/SSL";
+-    // Server falls back to starttls.
++    // These are functionally identical: Server falls back to starttls.
+     case SmtpEncryption.SMTP_ENCRYPTION_STARTTLS:
+     case SmtpEncryption.SMTP_ENCRYPTION_UNDEFINED:
+-    default:
++    case undefined:
+       return "STARTTLS (Default)";
++    default:
++      return smtpEncryptionToJSON(enc);
    }
- })();
+ }
+ 
+```
+
+**File**: `crates/assets/js/admin/src/components/settings/ServerSettings.tsx` (modified, +128/-2)
+```diff
+@@ -8,13 +8,19 @@ import {
+ } from "solid-js";
+ import { createForm } from "@tanstack/solid-form";
+ import { useQueryClient } from "@tanstack/solid-query";
++import type { InfoResponse } from "trailbase-bindings";
+ 
+ import { Button } from "@/components/ui/button";
+ import { Card, CardContent, CardHeader } from "@/components/ui/card";
++import {
++  Select,
++  SelectContent,
++  SelectItem,
++  SelectTrigger,
++  SelectValue,
++} from "@/components/ui/select";
+ import { TextField, TextFieldLabel } from "@/components/ui/text-field";
+ 
+-import type { InfoResponse } from "trailbase-bindings";
+-import { Config, ServerConfig } from "@proto/config";
+ import {
+   notEmptyValidator,
+   unsetOrValidUrl,
+@@ -26,6 +32,12 @@ import {
+ import { Version } from "@/components/Version";
+ import type { CommonProps } from "@/components/settings/SettingsPage";
+ 
++import {
++  Config,
++  ServerConfig,
++  ProxyClientIpHeader,
++  proxyClientIpHeaderToJSON,
++} from "@proto/config";
+ import { createConfigQuery, setConfig } from "@/lib/api/config";
+ import { createSystemInfoQuery } from "@/lib/api/info";
+ 
+@@ -189,6 +201,47 @@ function ServerSettingsForm(
+         </CardContent>
+       </Card>
+ 
++      <Card>
++        <CardHeader>
++          <h2>Proxy</h2>
++        </CardHeader>
 +
-+type StoredNodeMetadata = {
-+  position?: {
-+    x: number;
-+    y: number;
-+  };
-+};
++        <CardContent>
++          <p class="mb-4 text-sm">
++            If your TrailBase instance sits behind (reverse) proxies, the peer
++            address will be the proxy's. In order for traffic attribution
++            (logging & rate limiting) to work correctly, proxies will attach a
++            header forwarding their respective peer's address. Specify your
++            proxy setup to narrowly extract a specific header controlled by your
++            proxy (as opposed to clients).
++          </p>
 +
-+const $layout = persistentJSON<Map<string, StoredNodeMetadata>>(
-+  "erd:layout",
-+  new Map(),
-+);
++          <form.Field name="proxy.clientIpHeader">
++            {(field) => {
++              return (
++                <TextField class="w-full">
++                  <div
++                    class="grid items-center gap-x-2 gap-y-1"
++                    style={{ "grid-template-columns": "auto 1fr" }}
++                  >
++                    <div class="w-40">
++                      <TextFieldLabel>Client-IP Header</TextFieldLabel>
++                    </div>
++
++                    <div class="w-full">
++                      <ProxyHeaderSelect
++                        value={field().state.value}
++                        handleChange={field().handleChange}
++                      />
++                    </div>
++                  </div>
++                </TextField>
++              );
++            }}
++          </form.Field>
++        </CardContent>
++      </Card>
++
+       <div class="flex justify-end gap-4">
+         <form.Subscribe
+           selector={(state) => ({
+@@ -213,6 +266,79 @@ function ServerSettingsForm(
+   );
+ }
+ 
++function ProxyHeaderSelect(props: {
++  value: ProxyClientIpHeader | undefined;
++  handleChange: (v: ProxyClientIpHeader) => void;
++  disabled?: boolean;
++}) {
++  return (
++    <Select<ProxyClientIpHeader | undefined>
++      value={props.value}
++      disabled={props.disabled}
++      options={proxyClientIpHeaderOptions()}
++      placeholder={proxyClientIpHeaderLabel(undefined)}
++      itemComponent={(props) => (
++        <SelectItem item={props.item}>
++          {proxyClientIpHeaderLabel(props.item.rawValue)}
++        </SelectItem>
++      )}
++      onChange={(value) => {
++        props.handleChange(
++          value ?? ProxyClientIpHeader.PROXY_CLIENT_IP_HEADER_UNDEFINED,
++        );
++      }}
++    >
++      <SelectTrigger>
++        <SelectValue<ProxyClientIpHeader>>
++          {(_state) => proxyClientIpHeaderLabel(props.value)}
++        </SelectValue>
++      </SelectTrigger>
++
++      <SelectContent />
++    </Select>
++  );
++}
++
++function proxyClientIpHeaderOptions(): (ProxyClientIpHeader | undefined)[] {
++  return [
++    undefined,
++    // ProxyClientIpHeader.PROXY_CLIENT_IP_HEADER_UNDEFINED,
++    ProxyClientIpHeader.NONE,
++    ProxyClientIpHeader.X_FORWARDED_FOR,
++    ProxyClientIpHeader.X_REAL_IP,
++    ProxyClientIpHeader.CF_CONNECTING_IP,
++    ProxyClientIpHeader.TRUE_CLIENT_IP,
++    ProxyClientIpHeader.FLY_CLIENT_IP,
++    ProxyClientIpHeader.CLOUDFRONT_VIEWER_ADDRESS,
++  ];
++}
++
++function proxyClientIpHeaderLabel(
++  header: ProxyClientIpHeader | undefined,
++): string {
++  switch (header) {
++    case ProxyClientIpHeader.NONE:
++      return "None (no proxy)";
++    case ProxyClientIpHeader.X_FORWARDED_FOR:
++      return "X-Forwarded-For";
++    case ProxyClientIpHeader.X_REAL_IP:
++      return "X-Real-Ip";
++    case ProxyClientIpHeader.TRUE_CLIENT_IP:
++      return "True-Client-Ip (e.g. Cloudflare enterprise)";
++    case ProxyClientIpHeader.CF_CONNECTING_IP:
++      return "Cloudflare (Cf-Connecting-Ip)";
++    case ProxyClientIpHeader.FLY_CLIENT_IP:
++      return "Fly";
++    case ProxyClientIpHeader.CLOUDFRONT_VIEWER_ADDRESS:
++      return "AWS CloudFront";
++    case ProxyClientIpHeader.PROXY_CLIENT_IP_HEADER_UNDEFINED:
++    case undefined:
+```
+
+---
+
+### Incident Patch 3: `7951d40e` (2026-11-19)
+**Commit Message**: Admin UI internal: move `ServerSettings` code out and share `CommonProps`.
+
+**File**: `crates/assets/js/admin/src/components/explorer/CreateAlterColumnForm.tsx` (modified, +0/-2)
+```diff
+@@ -420,8 +420,6 @@ function ColumnOptionForeignKeySelect(props: {
+       </Select>
+ 
+       <Show when={foreignTable()}>
+-        <div></div>
+-
+         <div class="flex flex-col gap-2">
+           <div class="flex w-full items-center gap-2">
+             <div class="min-w-22">ON DELETE</div>
+```
+
+**File**: `crates/assets/js/admin/src/components/explorer/CreateAlterTable.tsx` (modified, +0/-1)
+```diff
+@@ -130,7 +130,6 @@ export function CreateAlterTableForm(props: {
+       invalidateConfig(queryClient);
+ 
+       // Reload schemas and switch to new/altered table.
+-      // eslint-disable-next-line solid/reactivity
+       props.schemaRefetch().then(() => {
+         props.setSelected(value.name);
+       });
+```
+
+**File**: `crates/assets/js/admin/src/components/settings/AuthSettings.tsx` (modified, +9/-12)
+```diff
+@@ -40,6 +40,7 @@ import {
+   TooltipContent,
+   TooltipTrigger,
+ } from "@/components/ui/tooltip";
++import type { CommonProps } from "@/components/settings/SettingsPage";
+ 
+ import {
+   AuthConfig,
+@@ -372,12 +373,12 @@ function createAuthSettingsForm(opts: {
+   });
+ }
+ 
+-function AuthSettingsForm(props: {
+-  config: Config;
+-  providers: OAuthProviderResponse;
+-  markDirty: () => void;
+-  postSubmit: () => void;
+-}) {
++function AuthSettingsForm(
++  props: {
++    config: Config;
++    providers: OAuthProviderResponse;
++  } & CommonProps,
++) {
+   const values = createMemo(() =>
+     configToProxy(
+       props.providers.providers,
+@@ -774,10 +775,7 @@ function OAuthCallbackAddressInfo(props: {
+   );
+ }
+ 
+-export function AuthSettings(props: {
+-  markDirty: () => void;
+-  postSubmit: () => void;
+-}) {
++export function AuthSettings(props: CommonProps) {
+   const providers = useQuery(() => ({
+     queryKey: ["admin", "oauthproviders"],
+     queryFn: adminListOAuthProviders,
+@@ -807,10 +805,9 @@ export function AuthSettings(props: {
+ 
+         <Match when={config.data && providers.data}>
+           <AuthSettingsForm
+-            markDirty={props.markDirty}
+-            postSubmit={props.postSubmit}
+             providers={providers.data!}
+             config={protoConfig()}
++            {...props}
+           />
+         </Match>
+       </Switch>
+```
+
+**File**: `crates/assets/js/admin/src/components/settings/BackupSettings.tsx` (modified, +2/-4)
+```diff
+@@ -26,17 +26,15 @@ import {
+   TableHeader,
+   TableRow,
+ } from "@/components/ui/table";
++import type { CommonProps } from "@/components/settings/SettingsPage";
+ 
+ function Timestamp(props: { timestamp: bigint }) {
+   const time = (): Date => new Date(Number(props.timestamp));
+ 
+   return <div>{time().toLocaleString()}</div>;
+ }
+ 
+-export function BackupSettings(_props: {
+-  markDirty: () => void;
+-  postSubmit: () => void;
+-}) {
++export function BackupSettings(_props: CommonProps) {
+   const backupsList = useQuery(() => ({
+     queryKey: listBackupsKey,
+     queryFn: listBackups,
+```
+
+**File**: `crates/assets/js/admin/src/components/settings/DatabaseSettings.tsx` (modified, +3/-10)
+```diff
+@@ -22,14 +22,12 @@ import {
+   DialogFooter,
+ } from "@/components/ui/dialog";
+ import { TextField, TextFieldInput } from "@/components/ui/text-field";
++import type { CommonProps } from "@/components/settings/SettingsPage";
+ 
+ import { Config, DatabaseConfig } from "@proto/config";
+ import { createSystemInfoQuery } from "@/lib/api/info";
+ 
+-export function DatabaseSettings(props: {
+-  markDirty: () => void;
+-  postSubmit: () => void;
+-}) {
++export function DatabaseSettings(props: CommonProps) {
+   const config = createConfigQuery();
+   const systemInfo = createSystemInfoQuery();
+   const isPostgres = () => systemInfo.data?.postgres ?? false;
+@@ -61,11 +59,7 @@ export function DatabaseSettings(props: {
+   );
+ }
+ 
+-function DatabaseSettingsForm(props: {
+-  config: Config;
+-  markDirty: () => void;
+-  postSubmit: () => void;
+-}) {
++function DatabaseSettingsForm(props: { config: Config } & CommonProps) {
+   const queryClient = useQueryClient();
+   const [selectedRows, setSelectedRows] = createSignal(new Set<string>());
+   const [linkDbDialog, setLinkDbDialog] = createSignal(false);
+@@ -231,7 +225,6 @@ function DatabaseSettingsForm(props: {
+                   onClick={() => {
+                     (async () => {
+                       await unlinkSelectedDbs();
+-
+                       props.postSubmit();
+                     })();
+                   }}
+```
+
+**File**: `crates/assets/js/admin/src/components/settings/EmailSettings.tsx` (modified, +2/-4)
+```diff
+@@ -31,6 +31,7 @@ import {
+   TextFieldLabel,
+   TextFieldInput,
+ } from "@/components/ui/text-field";
++import type { CommonProps } from "@/components/settings/SettingsPage";
+ 
+ import {
+   unsetOrLargerThanZero,
+@@ -133,10 +134,7 @@ function EmailTemplate(props: {
+   );
+ }
+ 
+-export function EmailSettings(props: {
+-  markDirty: () => void;
+-  postSubmit: () => void;
+-}) {
++export function EmailSettings(props: CommonProps) {
+   const queryClient = useQueryClient();
+   const config = createConfigQuery();
+ 
+```
+
+**File**: `crates/assets/js/admin/src/components/settings/FileSettings.tsx` (modified, +2/-4)
+```diff
+@@ -9,14 +9,12 @@ import {
+   unsetOrNotEmptyValidator,
+   buildOptionalTextFormField,
+ } from "@/components/FormFields";
++import type { CommonProps } from "@/components/settings/SettingsPage";
+ 
+ import { Config, ServerConfig } from "@proto/config";
+ import { createConfigQuery, setConfig } from "@/lib/api/config";
+ 
+-export function FileSettings(props: {
+-  markDirty: () => void;
+-  postSubmit: () => void;
+-}) {
++export function FileSettings(props: CommonProps) {
+   const queryClient = useQueryClient();
+   const config = createConfigQuery();
+ 
+```
+
+**File**: `crates/assets/js/admin/src/components/settings/JobSettings.tsx` (modified, +10/-12)
+```diff
+@@ -21,8 +21,9 @@ import {
+   TooltipContent,
+   TooltipTrigger,
+ } from "@/components/ui/tooltip";
+-
++import type { CommonProps } from "@/components/settings/SettingsPage";
+ import { type FieldApiT, FieldInfo } from "@/components/FormFields";
++
+ import { Config, JobsConfig, SystemJob } from "@proto/config";
+ import { createConfigQuery, setConfig } from "@/lib/api/config";
+ import { listJobs, runJob } from "@/lib/api/jobs";
+@@ -123,13 +124,13 @@ function extractConfig(proxy: FormProxy): JobsConfig {
+   };
+ }
+ 
+-function JobSettingsImpl(props: {
+-  markDirty: () => void;
+-  postSubmit: () => void;
+-  config: Config;
+-  jobs: Job[];
+-  refetchJobs: () => void;
+-}) {
++function JobSettingsImpl(
++  props: {
++    config: Config;
++    jobs: Job[];
++    refetchJobs: () => void;
++  } & CommonProps,
++) {
+   const queryClient = useQueryClient();
+   const form = createForm(() => ({
+     defaultValues: buildFormProxy(props.config.jobs, props.jobs),
+@@ -399,10 +400,7 @@ function JobSettingsImpl(props: {
+   );
+ }
+ 
+-export function JobSettings(props: {
+-  markDirty: () => void;
+-  postSubmit: () => void;
+-}) {
++export function JobSettings(props: CommonProps) {
+   const queryClient = useQueryClient();
+   const config = createConfigQuery();
+   const jobList = useQuery(() => ({
 ```
 
 #### Recent Merged Pull Requests:
@@ -1487,31 +1723,80 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update JavaScript dependencies and address security advisories.
+## X. Update Rust dependencies. Addresses wasmtime security advisories.
 
 **RULE**:
-When implementing operations in `client/testfixture/guests/typescript/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `efb40fa7`: Update JavaScript dependencies and address security advisories.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bd2af544`: Update Rust dependencies. Addresses wasmtime security advisories.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/testfixture/guests/typescript/package.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    "typescript-eslint": "^8.73.0",
+version = "1.11.3"
+checksum = "02f0e023adb368345ce0ca6cdfc0f24a06554468d0e8503e14a0841de79bfa69"
+version = "4.6.9"
+checksum = "844c5c0b65be192cb68d570cca1b21a6444431d24e39c084dc0336177015337c"
+version = "4.6.9"
+checksum = "b4c174f11f949b9ca8c60580925e282b9cbd5454750e506f08648b2038080cd7"
+version = "0.135.10"
+checksum = "da23f7367f4f5d003249eb1067760b3e6f5df82ad61829d40db22fdf8d41fd22"
+version = "0.135.10"
+checksum = "a8dbd10a21204ce6ae3786f8369860ec4e10a24913e987d5abe4c3cc0c7195d6"
+version = "0.135.10"
+checksum = "4439be9aa2867bcef9effa83a265f550763a37b2cf4ad560c7bc41cbda947a48"
+version = "0.135.10"
+checksum = "9913a7776903ccf6a3172633f59a0d6da2b428ec631c4b999a4b7401efdca1a7"
+version = "0.135.10"
+checksum = "ffc88c2b684ca7df2ed79fa42b38a983e4d3632ee9d57bc2a389f69fc7ff9348"
+version = "0.135.10"
+checksum = "df667a6e48506af68c087cebee157bfe69e04d78df83e243025ce6473a538fcd"
+version = "0.135.10"
+checksum = "ed3fdd2cd7bcd83a9263a978ea1d66477742a1a92095fa08f8752cb9a79ece11"
+version = "0.135.10"
+checksum = "8e1ecc088bd88f5a271f55b1544a8ec60b9d7373f61efe267d54bd2481adf5a3"
+version = "0.135.10"
+checksum = "2e9e591820d13f0671f879602ff29b241ea8b1dd54a386acbcbf4c3787f41af0"
+version = "0.135.10"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    "typescript-eslint": "^8.72.2",
+version = "1.11.2"
+checksum = "33ef9e3e8154a45c7a95cff4c1299702106ad94062d7bb85fdc5d3a5afd91d45"
+version = "4.6.8"
+checksum = "ac230478587d0269d8d6998b82ae69ea51509d55df66d9e92edd1f986904cd4a"
+version = "4.6.8"
+checksum = "895c9d8d2ac2dd8b8a29f3724a14e72aaaa6debcf8c38c82f97305c6a172767a"
+version = "0.135.9"
+checksum = "f4c0cfdaf0fa6d94af39357be9b0c6137b99e57832d68b1ba1110524f4c67138"
+version = "0.135.9"
+checksum = "c829e4494e4ee099395ebbc10a49343e8d582c3fdb894527967bb256bf937612"
+version = "0.135.9"
+checksum = "4955ac604c69b279138b2bd1b46c5f21748910d96e96eca5df23c79ee2a5edcc"
+version = "0.135.9"
+checksum = "d4be0efebaf985207ba2330083d86c5dd50a03357435e5bdffc97598393b5a19"
+version = "0.135.9"
+checksum = "4f463af533c6fad6aa1d54c454569baebd38a11374deee0c4d104a1e4e4da207"
+version = "0.135.9"
+checksum = "b5614f7c37ee06c404c1556b2d54859fb74149774f08594625dbe764963b2f7f"
+version = "0.135.9"
+checksum = "061a4c3049f6b16df98e2a7feca329541da41eabb37b9e42cf8c7671fc17cf56"
+version = "0.135.9"
+checksum = "9b267c615bd7d04c5bd7970b35019483824f33a43eb5c26f384246fd53c8b257"
+version = "0.135.9"
+checksum = "3613e5a2b21dde0f6591fb54139cf4dbac8b851ea1e79b08bca6631b98ff4299"
+version = "0.135.9"
+checksum 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `efb40fa7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bd2af544` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

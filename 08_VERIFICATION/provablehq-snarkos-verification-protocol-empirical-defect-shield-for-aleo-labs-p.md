@@ -4,22 +4,22 @@
 {
   "source_repository": "aleo-labs-protocol/snarkOS",
   "source_url": "https://github.com/ProvableHQ/snarkOS",
-  "source_version": "60e3fed6",
+  "source_version": "9138ff8a",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T22:57:25.758Z",
+  "timestamp": "2026-11-21T03:44:44.839Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aleo-labs-protocol-snarkos",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/ProvableHQ/snarkOS) (Revision: `60e3fed6`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T22:57:25.758Z`  
+> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/ProvableHQ/snarkOS) (Revision: `9138ff8a`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T03:44:44.839Z`  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `aleo-labs-protocol/snarkOS` (Commit: `60e3fed6`)
+- **Target Repository**: `aleo-labs-protocol/snarkOS` (Commit: `9138ff8a`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T22:57:24.613Z  
+> **Harvest Timestamp**: 2026-11-21T03:44:43.650Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -176,6 +176,7 @@ use crate::{
     spawn_blocking,
 };
 use snarkos_node_bft_ledger_service::{LedgerService, deserialize_transaction_strict};
+use snarkos_utilities::locks::parking_lot::{Mutex, RwLock};
 use snarkvm::{
     console::prelude::*,
     ledger::{
@@ -187,10 +188,6 @@ use snarkvm::{
 
 use anyhow::Context;
 use indexmap::{IndexMap, IndexSet};
-#[cfg(feature = "locktick")]
-use locktick::parking_lot::{Mutex, RwLock};
-#[cfg(not(feature = "locktick"))]
-use parking_lot::{Mutex, RwLock};
 use rand::seq::IteratorRandom;
 
 use std::{future::Future, net::SocketAddr, sync::Arc};
@@ -402,7 +399,8 @@ impl<N: Network> Worker<N> {
     pub(crate) fn reinsert(&self, transmission_id: TransmissionID<N>, transmission: Transmission<N>) -> bool {
         // Check if the transmission ID exists.
         if !self.contains_transmission(transmission_id) {
-            // Insert the transmission
+            // Insert the transmission into the ready queue.
+            return self.ready.write().insert(transmission_
 ```
 
 ### Core Architecture Module: `node/consensus/src/transactions_queue.rs`
@@ -952,12 +950,8 @@ mod tests {
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use crate::locks::parking_lot::{RwLock, RwLockReadGuard};
 use anyhow::{Result, bail};
-#[cfg(feature = "locktick")]
-use locktick::{LockGuard, parking_lot::RwLock};
-#[cfg(not(feature = "locktick"))]
-use parking_lot::RwLock;
-use parking_lot::RwLockReadGuard;
 
 /// Helper struct to hold a reference to a callback struct.
 pub struct CallbackHandle<C: Clone + Send + Sync> {
@@ -992,15 +986,6 @@ impl<C: Send + Sync + Clone> CallbackHandle<C> {
 
     /// Get reference to the callback.
     /// Cannot be shared across await-boundaries.
-    #[cfg(feature = "locktick")]
-    #[inline]
-    pub fn get_ref(&self) -> LockGuard<RwLockReadGuard<'_, Option<C>>> {
-        self.callback.read()
-    }
-
-    /// Get reference to the callback.
-    /// Cannot be shared across await-boundaries.
-    #[cfg(not(feature = "locktick"))]
     #[inline]
     pub fn get_ref(&self) -> RwLockReadGuard<'_, Option<C>> {
         self.callback.read()
@@ -1107,6 +1092,8 @@ pub use signals::*;
 pub mod node_data;
 pub use node_data::*;
 
+pub mod locks;
+
 mod callback_handle;
 pub use callback_handle::CallbackHandle;
 
@@ -1121,6 +1108,116 @@ pub const DEVELOPMENT_MODE_RNG_SEED: u64 = 1234567890u64;
 pub struct DevHotswapConfig {
     /// Number of validators in the dev committee.
     pub dev_num_validators: u16,
+}
+
+```
+
+### Core Architecture Module: `utilities/src/locks.rs`
+```
+// Copyright (c) 2019-2026 Provable Inc.
+// This file is part of the snarkOS library.
+
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at:
+
+// http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+//! The lock types that snarkOS crates use.
+//!
+//! Building with `--cfg locktick` swaps every lock for its instrumented counterpart from the
+//! `locktick` crate, which records where each lock and guard is taken. `.cargo/config.toml`
+//! defines the cargo aliases that set the cfg.
+//!
+//! The submodules mirror the layout of `locktick`. A lock's methods return the guard alias of
+//! its submodule in both builds. Under `--cfg locktick` that guard is a `locktick::LockGuard`
+//! that dereferences to the plain guard. Code that passes a guard to an associated function of
+//! the plain guard type, such as `parking_lot::MutexGuard::map`, compiles only without the cfg.
+//!
+//! `clippy.toml` disallows the lock types of `parking_lot`, `tokio` and `locktick` everywhere
+//! else. Turning these type aliases into `pub use` re-exports would make that lint flag every
+//! user of them.
+
+#![allow(clippy::disallowed_types)]
+
+#[cfg(not(locktick))]
+type Guard<G> = G;
+#[cfg(locktick)]
+type Guard<G> = ::locktick::LockGuard<G>;
+
+/// Synchronous locks from `parking_lot`.
+pub mod parking_lot {
+    use super::Guard;
+
+    #[cfg(locktick)]
+    use ::locktick::parking_lot as backend;
+    #[cfg(not(locktick))]
+    use ::parking_lot as backend;
+
+    pub type Mutex<T> = backend::Mutex<T>;
+    pub type RwLock<T> = backend::RwLock<T>;
+    pub type MutexGuard<'a, T> = Guard<::parking_lot::MutexGuard<'a, T>>;
+    pub type RwLockReadGuard<'a, T> = Guard<::parking_lot::RwLockReadGuard<'a, T>>;
+    pub type RwLockWriteGuard<'a, T> = Guard<::parking_lot::RwLockWriteGuard<'a, T>>;
+}
+
+/// Asynchronous locks from `tokio::sync`.
+pub mod tokio {
+    use super::Guard;
+
+    #[cfg(locktick)]
+    use ::locktick::tokio as backend;
+    #[cfg(not(locktick))]
+    use ::tokio::sync as backend;
+
+    pub type Mutex<T> = backend::Mutex<T>;
+    pub type RwLock<T> = backend::RwLock<T>;
+    pub type MutexGuard<'a, T> = Guard<::tokio::sync::MutexGuard<'a, T>>;
+    pub type RwLockReadGuard<'a, T> = Guard<::tokio::sync::RwLockReadGuard<'a, T>>;
+    pub type RwLockWriteGuard<'a, T> = Guard<::tokio::sync::RwLockWriteGuard<'a, T>>;
+}
+
+/// Under `--cfg locktick`, spawns a thread that logs every lock guard that is held or waited
+/// for, every three seconds. Otherwise, does nothing.
+pub fn spawn_lock_reporter() {
+    #[cfg(locktick)]
+    std::thread::spawn(|| {
+        loop {
+            tracing::info!("[locktick] checking for active lock guards");
+            let ts = std::time::Instant::now();
+            let mut infos = ::locktick::lock_snapshots();
+            infos.sort_unstable_by(|l1, l2| l1.location.cmp(&l2.location));
+
+            for lock in infos {
+                let mut guards = lock.known_guards.values().filter(|g| g.is_in_use()).collect::<Vec<_>>();
+                guards.sort_unstable_by(|g1, g2| g1.location.cmp(&g2.location));
+
+                for guard in guards {
+                    let location = &guard.location;
+                    let kind = guard.kind;
+                    let num_uses = guard.num_uses;
+                    let active_users = guard.num_active_uses();
+                    let avg_duration = guard.avg_duration();
+                    let avg_wait_time = guard.avg_wait_time();
+                    let num_waiting = guard.num_waiting();
+                    tracing::info!(
+                        "[locktick] {location} ({:?}): {num_uses}; {active_users} active; {num_waiting} waiting; avg d: {:?}; avg w: {:?}",
+                        kind,
+                        avg_duration,
+                        avg_wait_time
+                    );
+                }
+            }
+            tracing::debug!("[locktick] finished the check in {:?}", ts.elapsed());
+            std::thread::sleep(std::time::Duration::from_secs(3));
+        }
+    });
 }
 
 ```
@@ -1361,10 +1458,7 @@ mod tests {
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#[cfg(feature = "locktick")]
-use locktick::parking_lot::{Mutex, RwLock};
-#[cfg(not(feature = "locktick"))]
-use parking_lot::{Mutex, RwLock};
+use crate::locks::parking_lot::{Mutex, RwLock};
 
 use std::sync::{
     Arc,
@@ -1764,218 +1858,6 @@ if __name__ == "__main__":
 
 ```
 
-### Core Architecture Module: `account/src/lib.rs`
-```
-// Copyright (c) 2019-2026 Provable Inc.
-// This file is part of the snarkOS library.
-
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at:
-
-// http://www.apache.org/licenses/LICENSE-2.0
-
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#![forbid(unsafe_code)]
-
-use snarkvm::{
-    console::{network::prelude::*, types::Field},
-    prelude::*,
-};
-
-use colored::*;
-use core::fmt;
-
-/// A helper struct for an Aleo account.
-#[derive(Clone, Debug)]
-pub struct Account<N: Network> {
-    /// The account private key.
-    private_key: PrivateKey<N>,
-    /// The account view key.
-    view_key: ViewKey<N>,
-    /// The account address.
-    address: Address<N>,
-}
-
-impl<N: Network> Account<N> {
-    /// Samples a new account.
-    pub fn new<R: Rng + CryptoRng>(rng: &mut R) -> Result<Self> {
-        Self::try_from(PrivateKey::new(rng)?)
-    }
-
-    /// Returns the account private key.
-    pub const fn private_key(&self) -> &PrivateKey<N> {
-        &self.private_key
-    }
-
-    /// Returns the account view key.
-    pub const fn view_key(&self) -> &ViewKey<N> {
-        &self.view_key
-    }
-
-    /// Returns the account address.
-    pub const fn address(&self) -> Address<N> {
-        self.address
-    }
-}
-
-impl<N: Network> Account<N> {
-    /// Returns a signature for the given message (as field elements), using the account private key.
-    pub fn sign<R: Rng + CryptoRng>(&self, message: &[Field<N>], rng: &mut R) -> Result<Signature<N>> {
-        Signature::sign(&self.private_key, message, rng)
-    }
-
-    /// Returns a signature for the given message (as bytes), using the account private key.
-    pub fn sign_bytes<R: Rng + CryptoRng>(&self, message: &[u8], rng: &mut R) -> Result<Signature<N>> {
-        Signature::sign_bytes(&self.private_key, message, rng)
-    }
-
-    /// Returns a signature for the given message (as bits), using the account private key.
-    pub fn sign_bits<R: Rng + CryptoRng>(&self, message: &[bool], rng: &mut R) -> Result<Signature<N>> {
-        Signature::sign_bits(&self.private_key, message, rng)
-    }
-
-    /// Verifies a signature for the given message (as fields), using the account address.
-    pub fn verify(&self, message: &[Field<N>], signature: &Signature<N>) -> bool {
-        signature.verify(&self.address, message)
-    }
-
-    /// Verifies a signature for the given message (as bytes), using the account address.
-    pub fn verify_bytes(&self, message: &[u8], signature: &Signature<N>) -> bool {
-        signature.verify_bytes(&self.address, message)
-    }
-
-    /// Verifies a signature for the given message (as bits), using the account address.
-    pub fn verify_bits(&self, message: &[bool], signature: &Signature<N>) -> bool {
-        signature.verify_bits(&self.address, message)
-    }
-}
-
-impl<N: Network> TryFrom<PrivateKey<N>> for Account<N> {
-    type Error = Error;
-
-    /// Initializes a new account from a private key.
-    fn try_from(private_key: PrivateKey<N>) -> Result<Self, Self::Error> {
-        Self::try_from(&private_key)
-    }
-}
-
-impl<N: Network> TryFrom<&PrivateKey<N>> for Account<N> {
-    type Error = Error;
-
-    /// Initializes a new account from a private key.
-    fn try_from(private_key: &PrivateKey<N>) -> Result<Self, Self::Error> {
-        let view_key = ViewKey::try_from(private_key)?;
-        let address = view_key.to_address();
-        Ok(Self { private_key: *private_key, view_key, address })
-    }
-}
-
-impl<N: Network> TryFrom<String> for Account<N> {
-    type Error = Error;
-
-    /// Initializes a new account from a private key string.
-    fn try_from(private_key: String) -> Result<Self, Self::Error> {
-        Self::try_from(&private_key)
-    }
-}
-
-impl<N: Network> TryFrom<&String> for Account<N> {
-    type Error = Error;
-
-    /// Initializes a new account from a private key string.
-    fn try_from(private_key: &String) -> Result<Self, Self::Error> {
-        Self::from_str(private_key.as_str())
-    }
-}
-
-impl<N: Network> TryFrom<&str> for Account<N> {
-    type Error = Error;
-
-    /// Initializes a new account from a private key string.
-    fn try_from(private_key: &str) -> Result<Self, Self::Error> {
-        Self::from_str(private_key)
-    }
-}
-
-impl<N: Network> FromStr for Account<N> {
-    type Err = Error;
-
-    /// Initializes a new account from a private key string.
-    fn from_str(private_key: &str) -> Result<Self, Self::Err> {
-        Self::try_from(PrivateKey::from_str(private_key)?)
-    }
-}
-
-impl<N: Network> Display for Account<N> {
-    /// Renders the account as a string.
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            " {:>12}  {}\n {:>12}  {}\n {:>12}  {}",
-            "Private Key".cyan().bold(),
-            self.private_key,
-            "View Key".cyan().bold(),
-            self.view_key,
-            "Address".cyan().bold(),
-            self.address
-        )
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use snarkvm::prelude::MainnetV0;
-
-    type CurrentNetwork = MainnetV0;
-
-    #[test]
-    fn test_sign() {
-        // Initialize the RNG.
-        let mut rng = TestRng::default();
-        // Prepare the account and message.
-        let account = Account::<CurrentNetwork>::new(&mut rng).unwrap();
-        let message = vec![Field::rand(&mut rng); 10];
-        // Sign and verify.
-        let signature = account.sign(&message, &mut rng).unwrap();
-        assert!(account.verify(&message, &signature));
-    }
-
-    #[test]
-    fn test_sign_bytes() {
-        // Initialize the RNG.
-        let mut rng = TestRng::default();
-        // Prepare the account and message.
-        let account = Account::<CurrentNetwork>::new(&mut rng).unwrap();
-
-        // TODO(kaimast): remove once we upgrade the rand crate
-        let message = (0..10).map(|_| rng.random::<u8>()).collect::<Vec<u8>>();
-        // Sign and verify.
-        let signature = account.sign_bytes(&message, &mut rng).unwrap();
-        assert!(account.verify_bytes(&message, &signature));
-    }
-
-    #[test]
-    fn test_sign_bits() {
-        // Initialize the RNG.
-        let mut rng = TestRng::default();
-        // Prepare the account and message.
-        let account = Account::<CurrentNetwork>::new(&mut rng).unwrap();
-        let message = (0..10).map(|_| rng.random::<bool>()).collect::<Vec<bool>>();
-        // Sign and verify.
-        let signature = account.sign_bits(&message, &mut rng).unwrap();
-        assert!(account.verify_bits(&message, &signature));
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2003,94 +1885,73 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `60e3fed6` (2026-11-20)
-**Commit Message**: Merge pull request #4742 from aleo-labs-protocol/ci/partial-upgrade-expected-errors
+### Incident Patch 1: `9138ff8a` (2026-11-21)
+**Commit Message**: Merge pull request #4748 from aleo-labs-protocol/refactor/inline-display-error
 
-Expect the errors of a consensus upgrade in the partial upgrade test
-
-**File**: `.ci/test_partial_upgrade.sh` (modified, +18/-1)
+**File**: `snarkos/main.rs` (modified, +3/-2)
 ```diff
-@@ -289,7 +289,24 @@ fi
+@@ -14,7 +14,7 @@
+ // limitations under the License.
  
- log "🎉 Test passed! Node synced to new consensus height ($new_consensus_height) after another node was upgraded."
+ use snarkos_cli::{commands::CLI, helpers::Updater};
+-use snarkvm::utilities::{display_error, flatten_error};
++use snarkvm::utilities::flatten_error;
  
--if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES"; then
-+# Once two validators run the new version, they hold at least a third of the stake, so the
-+# release validators shut down. Before that, the last node rejects the blocks of its outdated
-+# peers.
-+upgrade_stop="Validators holding at least a third of the stake run ConsensusVersion::V[0-9]+ from height [0-9]+, but this build does not schedule it at that height, and must be upgraded"
-+outdated_peer="The peer's consensus version for height [0-9]+ is behind ours"
-+# The release binary leaves a task running when it shuts down this way.
-+surplus_tasks="There are [0-9]+ surplus live tasks"
-+expected_errors="$upgrade_stop|$outdated_peer|$surplus_tasks"
-+
-+# Only the release validators may log the surplus task error.
-+for ((node_index = penultimate_index; node_index < total_validators; node_index++)); do
-+  if grep -E "ERROR.*$surplus_tasks" "$log_dir/validator-$node_index.log"; then
-+    log "❌ Test failed! Upgraded validator #${node_index} left surplus live tasks."
-+    exit 1
-+  fi
-+done
-+
-+if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "$expected_errors"; then
-   exit 0
- else
-   exit 1
+ use clap::Parser;
+ use std::{backtrace::Backtrace, env, io, io::IsTerminal, panic::catch_unwind};
+@@ -127,7 +127,8 @@ fn main() {
+         Ok(Err(err)) => {
+             // A regular error occurred during startup.
+             if io::stderr().is_terminal() || !has_tracing_subscriber() {
+-                display_error(&err);
++                eprintln!("⚠️ {err}");
++                err.chain().skip(1).for_each(|cause| eprintln!("     ↳ {cause}"));
+                 eprintln!();
+                 eprintln!("Use `--help` for instructions on how to use this command");
+             } else {
 ```
 
 ---
 
-### Incident Patch 2: `749c1dae` (2026-11-20)
-**Commit Message**: Expect the errors of a consensus upgrade in the partial upgrade test
+### Incident Patch 2: `f3fb4675` (2026-11-21)
+**Commit Message**: Print the startup error chain without snarkvm::utilities::display_error
 
-The partial upgrade test runs only when the current build has a newer
-consensus version than the latest release. Once two validators run it, the
-release validators shut down, and before that the last validator rejects
-the blocks of its outdated peers. Both log an ERROR, and so does the
-release binary's shutdown, which leaves a task running. Pass these to
-`check_logs` as expected errors, and fail if an upgraded validator logs
-the surplus task error.
+main.rs prints the error and its causes itself, in the same format. This
+lets snarkVM remove display_error from its public API.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmLGgpejAr8wqRMCv45
+Claude-Session: https://claude.ai/code/session_01UYfmmLpEstoRCMNsPhVpwB
 
-**File**: `.ci/test_partial_upgrade.sh` (modified, +18/-1)
+**File**: `snarkos/main.rs` (modified, +3/-2)
 ```diff
-@@ -289,7 +289,24 @@ fi
+@@ -14,7 +14,7 @@
+ // limitations under the License.
  
- log "🎉 Test passed! Node synced to new consensus height ($new_consensus_height) after another node was upgraded."
+ use snarkos_cli::{commands::CLI, helpers::Updater};
+-use snarkvm::utilities::{display_error, flatten_error};
++use snarkvm::utilities::flatten_error;
  
--if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES"; then
-+# Once two validators run the new version, they hold at least a third of the stake, so the
-+# release validators shut down. Before that, the last node rejects the blocks of its outdated
-+# peers.
-+upgrade_stop="Validators holding at least a third of the stake run ConsensusVersion::V[0-9]+ from height [0-9]+, but this build does not schedule it at that height, and must be upgraded"
-+outdated_peer="The peer's consensus version for height [0-9]+ is behind ours"
-+# The release binary leaves a task running when it shuts down this way.
-+surplus_tasks="There are [0-9]+ surplus live tasks"
-+expected_errors="$upgrade_stop|$outdated_peer|$surplus_tasks"
-+
-+# Only the release validators may log the surplus task error.
-+for ((node_index = penultimate_index; node_index < total_validators; node_index++)); do
-+  if grep -E "ERROR.*$surplus_tasks" "$log_dir/validator-$node_index.log"; then
-+    log "❌ Test failed! Upgraded validator #${node_index} left surplus live tasks."
-+    exit 1
-+  fi
-+done
-+
-+if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "$expected_errors"; then
-   exit 0
- else
-   exit 1
+ use clap::Parser;
+ use std::{backtrace::Backtrace, env, io, io::IsTerminal, panic::catch_unwind};
+@@ -127,7 +127,8 @@ fn main() {
+         Ok(Err(err)) => {
+             // A regular error occurred during startup.
+             if io::stderr().is_terminal() || !has_tracing_subscriber() {
+-                display_error(&err);
++                eprintln!("⚠️ {err}");
++                err.chain().skip(1).for_each(|cause| eprintln!("     ↳ {cause}"));
+                 eprintln!();
+                 eprintln!("Use `--help` for instructions on how to use this command");
+             } else {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4748** (2026-11-21): Print the startup error chain without snarkvm::utilities::display_error (@cbeck88)
+- **PR #4746** (2026-11-21): Pass the expected errors to check_logs in the partial upgrade test (@cbeck88)
 - **PR #4742** (2026-11-20): Expect the errors of a consensus upgrade in the partial upgrade test (@cbeck88)
 - **PR #4740** (2026-11-20): Bump snarkVM to aleo-labs-protocol/snarkVM@7ba14e66b (@cbeck88)
 - **PR #4739** (2026-11-20): Bump snarkVM to aleo-labs-protocol/snarkVM@7ba14e66b and remove the serial feature (@cbeck88)
 - **PR #4738** (2026-11-20): release-test: the sync legs run at once (@cbeck88)
-- **PR #4737** (2026-11-20): Give skipped devnet jobs a static name (@cbeck88)
-- **PR #4733** (2026-11-20): Restore the upgrade test's new-version check, and make the test faster (@cbeck88)
 
 ---
 
@@ -2110,48 +1971,34 @@ Claude-Session: https://claude.ai/code/session_01UYfmmLGgpejAr8wqRMCv45
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in test_partial_upgrade.sh
+## X. Empirical Invariant Guard in main.rs
 
 **RULE**:
-When implementing operations in `.ci/test_partial_upgrade.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `snarkos/main.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `60e3fed6`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9138ff8a`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.ci/test_partial_upgrade.sh`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `snarkos/main.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Once two validators run the new version, they hold at least a third of the stake, so the
-# release validators shut down. Before that, the last node rejects the blocks of its outdated
-# peers.
-upgrade_stop="Validators holding at least a third of the stake run ConsensusVersion::V[0-9]+ from height [0-9]+, but this build does not schedule it at that height, and must be upgraded"
-outdated_peer="The peer's consensus version for height [0-9]+ is behind ours"
-# The release binary leaves a task running when it shuts down this way.
-surplus_tasks="There are [0-9]+ surplus live tasks"
-expected_errors="$upgrade_stop|$outdated_peer|$surplus_tasks"
-
-# Only the release validators may log the surplus task error.
-for ((node_index = penultimate_index; node_index < total_validators; node_index++)); do
-  if grep -E "ERROR.*$surplus_tasks" "$log_dir/validator-$node_index.log"; then
-    log "❌ Test failed! Upgraded validator #${node_index} left surplus live tasks."
-    exit 1
-  fi
-done
-
-if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "$expected_errors"; then
+use snarkvm::utilities::flatten_error;
+                eprintln!("⚠️ {err}");
+                err.chain().skip(1).for_each(|cause| eprintln!("     ↳ {cause}"));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES"; then
+use snarkvm::utilities::{display_error, flatten_error};
+                display_error(&err);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `60e3fed6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9138ff8a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

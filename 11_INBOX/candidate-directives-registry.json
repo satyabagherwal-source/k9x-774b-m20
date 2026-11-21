@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T03:36:55.217Z",
+  "last_updated": "2026-11-21T03:44:52.295Z",
   "directives": [
     {
       "id": "CD-001",
@@ -41105,6 +41105,94 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C33063-revert-chore-update-lambda-runtime-integ.md",
       "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-6L2I",
+      "directive_title": "[CI] Use ubuntu 24.04 for debian i386 jobs and force double comparison",
+      "source_repo": "apache/arrow",
+      "source_commit": "d58f83f3",
+      "staged_file": "11_INBOX/candidate-directives/CD-6L2I-ci-use-ubuntu-24-04-for-debian-i386-jobs-and-force-double-comparison.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-6OJR",
+      "directive_title": "resume Passport recovery after transient failure",
+      "source_repo": "makecindy/cindy",
+      "source_commit": "559ad18c",
+      "staged_file": "11_INBOX/candidate-directives/CD-6OJR-resume-passport-recovery-after-transient-failure.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-6RIL",
+      "directive_title": "bump golang.org/x/net to 0.62.0, otel to 1.47.0 and Go to 1.26.11",
+      "source_repo": "infracost/infracost",
+      "source_commit": "b8c2bd6e",
+      "staged_file": "11_INBOX/candidate-directives/CD-6RIL-bump-golang-org-x-net-to-0-62-0-otel-to-1-47-0-and-go-to-1-26-11.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-6SYS",
+      "directive_title": "Empirical Invariant Guard in main.rs",
+      "source_repo": "aleo-labs-protocol/snarkOS",
+      "source_commit": "9138ff8a",
+      "staged_file": "11_INBOX/candidate-directives/CD-6SYS-empirical-invariant-guard-in-main-rs.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-6UUZ",
+      "directive_title": "Update Rust dependencies. Addresses wasmtime security advisories.",
+      "source_repo": "trailbaseio/trailbase",
+      "source_commit": "b9e8acb7",
+      "staged_file": "11_INBOX/candidate-directives/CD-6UUZ-update-rust-dependencies-addresses-wasmtime-security-advisories.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-6XMP",
+      "directive_title": "GH-55679: [CI] Use ubuntu 24.04 for debian i386 jobs and force double comparison",
+      "source_repo": "apache-arrow-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6XMP-gh-55679-ci-use-ubuntu-24-04-for-debian-i386-jobs-and-force-double-comparison.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-6Y59",
+      "directive_title": "auth): resume Passport recovery after transient failure",
+      "source_repo": "makecindy-cindy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6Y59-auth-resume-passport-recovery-after-transient-failure.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-6YPY",
+      "directive_title": "deps): bump golang.org/x/net to 0.62.0, otel to 1.47.0 and Go to 1.26.11",
+      "source_repo": "infracost-infracost-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6YPY-deps-bump-golang-org-x-net-to-0-62-0-otel-to-1-47-0-and-go-to-1-26-11.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "I"
     }
   ]
 }

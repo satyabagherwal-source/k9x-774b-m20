@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-R1Z6",
-    "timestamp": "2026-11-19T00:41:11.874Z",
-    "repository": "apache/zookeeper",
-    "learningId": "learn-github-apache-zookeeper",
-    "contentHash": "1a63ac3c0daaef2223b0d3041fd098ee79ec984ff9016e230c490ff50e0488e3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-R3KT",
-    "timestamp": "2026-11-19T00:41:13.949Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "05841c51130e0e74ca8cd085e6fdac450fc8382e97d5684a58dfa52c183e15c8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-1XRM",
-    "timestamp": "2026-11-19T00:49:39.634Z",
-    "repository": "BAAI/bge-reranker-v2-m3",
-    "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-    "contentHash": "ef3f1848c52a2dfe01b3cbc0b4b7971e3d5772341e58a521b25ee533603757ab",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-1Z1V",
-    "timestamp": "2026-11-19T00:49:41.299Z",
-    "repository": "Xudong-Huang/may",
-    "learningId": "learn-github-xudong-huang-may",
-    "contentHash": "cb9590db2667dbccdf987e8cc652e493e5be9a8891ce815aea1d70a2f5a05de5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-23YE",
-    "timestamp": "2026-11-19T00:49:47.654Z",
-    "repository": "callstack/agent-device",
-    "learningId": "learn-github-callstack-agent-device",
-    "contentHash": "cbd705d794d94682c6cfd82bdd3477bdc21f655e269213a53d2457a8dc7b7edb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-25AQ",
     "timestamp": "2026-11-19T00:49:49.394Z",
     "repository": "octodns/octodns",
@@ -7490,6 +7415,81 @@
     "repository": "HelixDB/helix-db",
     "learningId": "learn-github-helixdb-helix-db",
     "contentHash": "6329e3e0dc0e27046f87347157b5b89c28ef3175927d09d02384fff8fd994007",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-6KWZ",
+    "timestamp": "2026-11-21T03:44:34.403Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "37b85aa6be03ec3059f950762087092f9ab7fdf937624a08526f97d18674a3b4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-6OE6",
+    "timestamp": "2026-11-21T03:44:38.910Z",
+    "repository": "makecindy/cindy",
+    "learningId": "learn-github-makecindy-cindy",
+    "contentHash": "a758540b33b2a4f77aff30cf25d32fa3ad7d75720c5b9b4a16ea2edcc6808f94",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-6RD0",
+    "timestamp": "2026-11-21T03:44:42.756Z",
+    "repository": "infracost/infracost",
+    "learningId": "learn-github-infracost-infracost",
+    "contentHash": "c56f0faba3229a943bd6b5254e9592e1a4bc74ab7f8ccd2255a3523fce226937",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-6ST7",
+    "timestamp": "2026-11-21T03:44:44.635Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "5c2dfa7431af085cc9f45c96a3af6c4da578813539599a6c116f5ec0ce4baa33",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-6UPQ",
+    "timestamp": "2026-11-21T03:44:47.102Z",
+    "repository": "trailbaseio/trailbase",
+    "learningId": "learn-github-trailbaseio-trailbase",
+    "contentHash": "847c30c8b5a80db34ffaee204cd57deb3bf540259533ac405aa152b38752feb7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
