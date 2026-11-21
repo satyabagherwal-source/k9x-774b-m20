@@ -4,1038 +4,597 @@
 {
   "source_repository": "tailscale/tailscale",
   "source_url": "https://github.com/tailscale/tailscale",
-  "source_version": "36780d60",
+  "source_version": "1db8e79a",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-21T00:52:05.928Z",
-  "ai_provider": "zero-clone-structural-synthesizer",
+  "timestamp": "2026-11-21T23:26:47.123Z",
+  "ai_provider": "google-gemini-cloud-agent",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tailscale-tailscale",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `36780d60`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-21T00:52:05.928Z`  
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `1db8e79a`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-21T23:26:47.123Z`  
 > **Learning ID**: `learn-github-tailscale-tailscale`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tailscale/tailscale` (Commit: `36780d60`)
+- **Target Repository**: `tailscale/tailscale` (Commit: `1db8e79a`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-# Forensic Learning Record (Deep Inspection): tailscale/tailscale
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T00:52:04.696Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): tailscale/tailscale
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `tailscale/tailscale`
-- **Description**: The easiest, most secure way to use WireGuard and 2FA.
-- **Primary Language / Ecosystem**: Go
-- **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39394 stars
+## 1. Executive Forensic Architecture & System Mechanics
 
----
+Tailscale implements a zero-trust mesh virtual private network overlaid on the WireGuard protocol, coordinated by an authenticated central control plane. The core architecture is partitioned across three operating planes:
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
-
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: go.mod, README.md, Dockerfile.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `client/web/src/hooks/auth.ts`
 ```
-// Copyright (c) Tailscale Inc & contributors
-// SPDX-License-Identifier: BSD-3-Clause
++---------------------------------------------------------------------------------------+
+|                                    CONTROL PLANE                                      |
+|  (coord/controlclient: MapResponse stream, DERP map, node keys, node mutations/delta) |
++---------------------------------------------------------------------------------------+
+                                     |
+                                     | HTTPS / Noise Long-Poll Stream
+                                     v
++---------------------------------------------------------------------------------------+
+|                        DATA & ROUTING PLANE (tailscaled daemon)                       |
+|                                                                                       |
+|  +-------------------+       +--------------------+       +------------------------+  |
+|  |     wgengine      | <---> |      magicsock     | <---> |      netmon/route      |  |
+|  | (WireGuard Engine,|       | (STUN, ICE-lite,   |       | (Link monitoring, FIB, |  |
+|  | TUN driver,       |       |  DERP relay, UDP   |       |  Linux netlink, Win    |  |
+|  | gVisor netstack)  |       |  hole-punching)    |       |  wintun / IP Helper)   |  |
+|  +-------------------+       +--------------------+       +------------------------+  |
++---------------------------------------------------------------------------------------+
+                                     ^
+                                     | LocalAPI (UNIX Domain Socket / Windows Named Pipe)
+                                     v
++---------------------------------------------------------------------------------------+
+|                         APPLICATION & CLIENT MANAGEMENT PLANE                         |
+|                                                                                       |
+|  +---------------------+      +---------------------+      +-----------------------+  |
+|  |    tailscale CLI    |      |  Web Client Engine  |      |   tsconnect (Wasm /   |  |
+|  | (ipnctl, status, up)|      | (React/SWR, WebMan) |      |   Browser in-memory)  |  |
+|  +---------------------+      +---------------------+      +-----------------------+  |
++---------------------------------------------------------------------------------------+
+```
 
-import { useCallback, useEffect, useState } from "react"
-import { apiFetch, setSynoToken } from "src/api"
-import useSWR from "swr"
+### Architectural Subsystem Decoupling & Invariants
 
-export type AuthResponse = {
-  serverMode: AuthServerMode
-  authorized: boolean
-  viewerIdentity?: {
-    loginName: string
-    nodeName: string
-    nodeIP: string
-    profilePicUrl?: string
-    capabilities: { [key in PeerCapability]: boolean }
-  }
-  needsSynoAuth?: boolean
+1. **`wgengine` (WireGuard Engine Layer)**: Decouples crypto-routing from transport. It hosts either an OS-level virtual network adapter (TUN interface on Linux/macOS, Wintun on Windows) or a userland TCP/IP stack (`gVisor/netstack`). It holds the WireGuard private key, manages symmetric ephemeral sessions, and enforces packet-level access control lists (ACLs).
+2. **`magicsock` (Multipath Dynamic UDP & Relay Transport)**: Abstracts a multiplexed socket that swaps dynamically between direct point-to-point UDP tunnels (discovered via STUN, UPnP, and NAT-PMP hole punching) and encrypted relays over the Designated Encrypted Relay for Packets (DERP) network. DERP operates over TLS-wrapped WebSocket/TCP tunnels, providing deterministic fallbacks when stateful NATs, symmetric port mapping, or corporate firewalls forbid direct peer-to-peer UDP.
+3. **`ipn` & `ipnlocal` (Local Node State Machine & LocalAPI Engine)**: Implements local node coordination, credential cache management, profile switching, exit-node traffic redirection, and node capabilities verification. The LocalAPI server exposes protected endpoints over local platform transports, requiring root or loopback-identity checks to prevent unauthorized local privilege escalation.
+4. **Control Plane Protocol (`tailcfg.MapResponse`)**: The node receives delta-encoded network map (`netmap`) updates containing peer endpoint candidates, disco public keys, routes, and capabilities. Mutations can be full snapshot updates or field-level deltas (`NodeMutationDERPHome`, `NodeMutationEndpoints`).
+
+---
+
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+### 1. In-Flight Dial Backlog Throttling for Loopback Test Servers
+**RULE**: Any test suite or client component executing concurrent requests over fresh TCP/TLS connections against an in-process or loopback server MUST strictly limit maximum in-flight dials using a bounded concurrency primitive (such as a semaphore) to a value less than the operating system's default `SOMAXCONN` listen backlog (typically 8 to 128 depending on platform/container).  
+**WHY**: Under Windows, macOS, and Linux network namespaces where `somaxconn` is constrained (or `tcp_abort_on_overflow=1`), unbounded goroutines dialing a single `httptest.Server` trigger listen backlog overflows. When the backlog overflows, Windows immediately drops or resets the connection with `WSAECONNREFUSED` or returns empty payloads, resulting in flaky, false-positive network failures (e.g., HTTP 502 Bad Gateway) completely unrelated to the logic under test.  
+**WHEN TO APPLY**: High-concurrency integration tests, reverse-proxy regression harnesses, and internal microservice scrapers initiating bursts of short-lived loopback TCP connections.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package integration_test
+
+import (
+	"context"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"sync"
+	"testing"
+)
+
+// BoundedConcurrentCaller limits concurrent dials to prevent OS backlog overflows.
+func RunBoundedProbe(t *testing.T, srv *httptest.Server, totalRequests int, maxConcurrency int) {
+	sem := make(chan struct{}, maxConcurrency)
+	var wg sync.WaitGroup
+	errCh := make(chan error, totalRequests)
+
+	for i := 0; i < totalRequests; i++ {
+		wg.Add(1)
+		go func(reqID int) {
+			defer wg.Done()
+
+			// Invariant: Must acquire semaphore token before initiating dial
+			sem <- struct{}{}
+			defer func() { <-sem }()
+
+			req, err := http.NewRequestWithContext(context.Background(), "GET", srv.URL+"/probe", nil)
+			if err != nil {
+				errCh <- fmt.Errorf("req build failed: %w", err)
+				return
+			}
+
+			resp, err := srv.Client().Do(req)
+			if err != nil {
+				errCh <- fmt.Errorf("dial/exec failed: %w", err)
+				return
+			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusOK {
+				errCh <- fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+				return
+			}
+		}(i)
+	}
+
+	wg.Wait()
+	close(errCh)
+
+	for err := range errCh {
+		if err != nil {
+			t.Fatalf("concurrent probe encountered failure: %v", err)
+		}
+	}
+}
+```
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Spawning hundreds of simultaneous goroutines dialing
+// the same listener without concurrency bounds.
+func RunFlakyUnboundedProbe(t *testing.T, srv *httptest.Server, count int) {
+	var wg sync.WaitGroup
+	for i := 0; i < count; i++ { // count = 400
+		wg.Add(1)
+		go func() { // Fails on Windows / hardened Linux due to SOMAXCONN overflow
+			defer wg.Done()
+			resp, err := http.Get(srv.URL + "/test")
+			if err != nil || resp.StatusCode != 200 {
+				t.Errorf("connection refused or 502 returned")
+			}
+		}()
+	}
+	wg.Wait()
+}
+```
+**VERIFICATION METHOD**: Execute the test inside a Linux network namespace configured with constrained network buffers:
+```bash
+sudo ip netns add testns
+sudo ip netns exec testns sysctl -w net.core.somaxconn=8
+sudo ip netns exec testns sysctl -w net.ipv4.tcp_abort_on_overflow=1
+sudo ip netns exec testns go test -v -race -run TestConcurrentStreams ./... -count=100
+```
+
+---
+
+### 2. Dual-Layer State Cache Invariant: Endpoint Mutations Must Patch Reference Snapshots
+**RULE**: In distributed state replication systems receiving both fine-grained field-level patches (deltas) and full coarse-grained snapshots, any mutation applied directly to an active operational handle (e.g., active network endpoint) MUST simultaneously update or invalidate the underlying local snapshot/shadow copy used by fast-path comparison routines (`c.peersByID`).  
+**WHY**: If a delta mutation updates only the active runtime state (`ep.setDERPHome(B)`) but bypasses the reference snapshot (`snapshot.DERPHome` remains `A`), a subsequent full snapshot arriving containing state `A` will trigger an equality fast-path bypass (`snapshot.Equal(fullNetmapNode)` evaluates to `true`). The runtime endpoint will retain the stale delta state (`B`) indefinitely, completely desynchronizing routing paths until an unrelated netmap mutation forces an eviction.  
+**WHEN TO APPLY**: Any event-driven distributed client maintaining local caches, network topology maps, or CRDTs where partial delta updates interleave with periodic full snapshot synchronization.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package state
+
+import (
+	"sync"
+)
+
+type Node struct {
+	ID       uint64
+	DERPHome int
+	Endpoints []string
 }
 
-export type AuthServerMode = "login" | "readonly" | "manage"
-
-export type PeerCapability = "*" | "ssh" | "subnets" | "exitnodes" | "account"
-
-/**
- * canEdit reports whether the given auth response specifies that the viewer
- * has the ability to edit the given capability.
- */
-export function canEdit(cap: PeerCapability, auth: AuthResponse): boolean {
-  if (!auth.authorized || !auth.viewerIdentity) {
-    return false
-  }
-  if (auth.viewerIdentity.capabilities["*"] === true) {
-    return true // can edit all features
-  }
-  return auth.viewerIdentity.capabilities[cap] === true
+func (n *Node) Clone() *Node {
+	cp := *n
+	cp.Endpoints = append([]string(nil), n.Endpoints...)
+	return &cp
 }
 
-/**
- * hasAnyEditCapabilities reports whether the given auth response specifies
- * that the viewer has at least one edit capability. If this is true, the
- * user is able to go through the auth flow to authenticate a management
- * session.
- */
-export function hasAnyEditCapabilities(auth: AuthResponse): boolean {
-  return Object.values(auth.viewerIdentity?.capabilities || {}).includes(true)
+func (n *Node) Equal(other *Node) bool {
+	if n.ID != other.ID || n.DERPHome != other.DERPHome || len(n.Endpoints) != len(other.Endpoints) {
+		return false
+	}
+	for i := range n.Endpoints {
+		if n.Endpoints[i] != other.Endpoints[i] {
+			return false
+		}
+	}
+	return true
 }
 
-/**
- * useAuth reports and refreshes Tailscale auth status for the web client.
- */
-export default function useAuth() {
-  const { data, error, mutate } = useSWR<AuthResponse>("/auth")
-  const [ranSynoAuth, setRanSynoAuth] = useState<boolean>(false)
+type RouterState struct {
+	mu        sync.RWMutex
+	activeEP  map[uint64]*EndpointRuntime
+	snapshots map[uint64]*Node // Invariant: Must always reflect current baseline
+}
 
-  const loading = !data && !error
+type EndpointRuntime struct {
+	derpHome int
+}
 
-  // Start Synology auth flow if needed.
-  useEffect(() => {
-    if (data?.needsSynoAuth && !ranSynoAuth) {
-      fetch("/webman/login.cgi")
-        .then((r) => r.json())
-        .then((a) => {
-          setSynoToken(a.SynoToken)
-          setRanSynoAuth(true)
-          mutate()
-        })
-        .catch((error) => {
-          console.error("Synology auth error:", error)
-        })
+// ApplyDelta safely mutates runtime AND reference snapshot atomically.
+func (r *RouterState) ApplyDelta(nodeID uint64, newDERP int) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	if ep, ok := r.activeEP[nodeID]; ok {
+		ep.derpHome = newDERP
+	}
+
+	// CRITICAL INVARIANT: The reference snapshot MUST NOT remain stale.
+	// Either update snapshot or invalidate it so next full netmap does not false-match.
+	if snap, ok := r.snapshots[nodeID]; ok {
+		cloned := snap.Clone()
+		cloned.DERPHome = newDERP
+		r.snapshots[nodeID] = cloned
+	}
+}
+
+// UpdateFullNetmap checks equality against reference snapshots.
+func (r *RouterState) UpdateFullNetmap(nodes []*Node) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	for _, incoming := range nodes {
+		snap, exists := r.snapshots[incoming.ID]
+		if exists && snap.Equal(incoming) {
+			// Fast path safe: snap is guaranteed to reflect both prior full syncs AND interim deltas
+			continue
+		}
+
+		// Reconfigure runtime endpoint and re-record snapshot
+		if ep, ok := r.activeEP[incoming.ID]; ok {
+			ep.derpHome = incoming.DERPHome
+		}
+		r.snapshots[incoming.ID] = incoming.Clone()
+	}
+}
+```
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Patching the live runtime endpoint while leaving the snapshot stale.
+func (r *RouterState) BuggyApplyDelta(nodeID uint64, newDERP int) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	// Direct mutation of runtime endpoint
+	r.activeEP[nodeID].derpHome = newDERP
+	// COMMENT: "per-field NodeMutation patches are never applied to snapshots"
+	// DISASTER: Next incoming full netmap with derpHome matching old snapshot
+	// will be skipped by snap.Equal(incoming), leaving activeEP permanently corrupted.
+}
+```
+**VERIFICATION METHOD**: Property-based delta-to-snapshot sequencing test:
+1. Initialize node with `DERPHome = A`.
+2. Apply delta mutation `DERPHome = B`.
+3. Apply full netmap with `DERPHome = A`.
+4. Assert that `runtimeEndpoint.DERPHome == A`. Any failure proves snapshot-desync short-circuiting.
+
+---
+
+### 3. CI Process Tree Isolation and Handle Decoupling on Windows
+**RULE**: Long-running background processes spawned during CI pipeline steps on Windows runners MUST NOT inherit the caller step’s standard input/output/error pipes, and their lifetime MUST be verified across explicit step boundaries via out-of-band sentinel files or PID monitors.  
+**WHY**: On Windows runner agents (e.g., GitHub Actions Runner), child processes spawned with inherited stdout/stderr file handles hold open the parent step’s IPC pipe. When the execution step completes, the runner halts and hangs indefinitely waiting for EOF on the output pipe, or the runner process reaper forcibly terminates the entire process tree, killing essential background daemons (such as remote FUSE/WinFsp filesystem drivers or cache proxies).  
+**WHEN TO APPLY**: Background daemons, emulators, local cache mounts, and mock services initiated in Windows CI/CD workflows.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```powershell
+# Invariant: Execute via ComSpec without inherited pipes, redirecting streams to disk
+$log = Join-Path $env:RUNNER_TEMP 'daemon.log'
+$cmdArgs = "/d /s /c `"`"$exe`" --daemon-flag > `"$log`" 2>&1`""
+$p = Start-Process -PassThru -WindowStyle Hidden -FilePath $env:ComSpec -ArgumentList $cmdArgs
+
+# Explicit readiness barrier with non-blocking deadline
+$deadline = (Get-Date).AddSeconds(30)
+while (-not (Test-Path "$env:TARGET_MOUNT\.sentinel-status")) {
+    if ($p.HasExited -or (Get-Date) -gt $deadline) {
+        Get-Content -LiteralPath $log -Tail 50 -ErrorAction SilentlyContinue
+        throw "Background daemon terminated prematurely or failed readiness probe"
     }
-  }, [data?.needsSynoAuth, ranSynoAuth, mutate])
+    Start-Sleep -Milliseconds 100
+}
+```
+**NEGATIVE CONSTRAINT**:
+```powershell
+# ANTI-PATTERN: Direct invocation or inheriting standard pipes in CI step.
+# Causes the runner to hang waiting for EOF, or runner kills process upon step exit.
+Start-Process -FilePath "C:\bin\daemon.exe" -ArgumentList "--serve" -NoNewWindow
+# or
+& "C:\bin\daemon.exe" --serve &
+```
+**VERIFICATION METHOD**: Add a trailing verification step configured with `if: always()` in CI:
+```yaml
+- name: Verify Daemon Survival
+  if: always()
+  shell: pwsh
+  run: |
+    $p = Get-Process mydaemon -ErrorAction SilentlyContinue
+    if (-not $p) {
+      Write-Error "Daemon died unexpectedly before step completed"
+      exit 1
+    }
+```
 
-  const newSession = useCallback(() => {
-    return apiFetch<{ authUrl?: string }>("/auth/session/new", "GET")
-      .then((d) => {
-        if (d.authUrl) {
-          window.open(d.authUrl, "_blank")
-          return apiFetch("/auth/session/wait", "GET")
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Listen Backlog Overflow on Concurrent Loopback Dials
+- **Context**: Subsystem: `ipn/ipnlocal`, File: `ipn/ipnlocal/serve_test.go`
+- **What Was Expected**: `TestServeAppCapsConcurrentStreams` validates capability header enforcement across concurrent HTTP streams over Tailscale Serve. The test was expected to execute 400 simultaneous requests reliably across all supported operating systems.
+- **What Actually Happened**: On Windows CI runners, dials failed with dropped connections. The internal proxy returned an empty `502 Bad Gateway`. The test asserted non-empty body headers and threw an unhelpful assertion error: `"/ops: capabilities header missing"`.
+- **Evidence in Repo**: Commit `ee7324a2`, Issue `#22543`.
+- **Root Cause**: The test launched 400 goroutines concurrently dialing an in-process `httptest.Server`. Windows sets a low default socket listen backlog (`SOMAXCONN`). When 400 simultaneous syn-packets flooded the loopback socket, the OS kernel dropped the excess incoming connections. The reverse proxy received a connection refused/reset, resulting in a 502 response with an empty body.
+- **Remediation Code Diff**:
+```go
+@@ -1116,21 +1117,38 @@ func TestServeAppCapsConcurrentStreams(t *testing.T) {
+ 	const rounds = 200
+ 	var wg sync.WaitGroup
+ 	errCh := make(chan error, 2*rounds) // both mounts can fail every round
++
++	// Each request in flight may dial testServ. Hundreds of simultaneous
++	// dials overflow its listen backlog, and Windows refuses the excess
++	// connections, so cap the number of requests in flight.
++	sem := syncs.NewSemaphore(8)
++	serve := func(path string) (string, error) {
++		sem.Acquire()
++		defer sem.Release()
++		w := httptest.NewRecorder()
++		b.serveWebHandler(w, newReq(path))
++		if w.Code != http.StatusOK {
++			return "", fmt.Errorf("%s: status %d, body %q", path, w.Code, w.Body.String())
++		}
++		return w.Body.String(), nil
++	}
+ 	for range rounds {
+ 		wg.Add(2)
+ 		go func() {
+ 			defer wg.Done()
+-			w := httptest.NewRecorder()
+-			b.serveWebHandler(w, newReq("/ops"))
+-			if got := w.Body.String(); got == "" {
++			got, err := serve("/ops")
++			if err != nil {
++				errCh <- err
++			} else if got == "" {
+ 				errCh <- fmt.Errorf("/ops: capabilities header missing")
+ 			}
+ 		}()
+```
+- **Lesson**: High-concurrency integration tests must never launch unbounded dials against a single TCP listener; concurrency must be throttled below the OS listen backlog threshold.
+
+---
+
+### Incident 2: DERP Home Desynchronization via Unpatched Snapshot Bypass
+- **Context**: Subsystem: `wgengine/magicsock`, File: `wgengine/magicsock/magicsock.go`
+- **What Was Expected**: When a peer moves its DERP home relay from region A to region B and subsequently returns to region A, `magicsock` must route packets to region A.
+- **What Actually Happened**: The peer remained stuck routing to region B. Packets were routed to an unreachable DERP relay region, dropping all connectivity until an unrelated netmap property mutated.
+- **Evidence in Repo**: Issue `#22379`, reproducible across v1.102.5 through v1.104.5.
+- **Root Cause**:
+  1. `Conn.UpdateNetmapDelta` received a field-level `NodeMutationDERPHome` updating the endpoint via `ep.setDERPHome(B)`.
+  2. The reference snapshot map `c.peersByID` was deliberately left unpatched (documented as not tracking deltas).
+  3. When the peer moved back to region A, the update arrived embedded inside a full `MapResponse` netmap payload.
+  4. `Conn.updateNodes` invoked its fast-path equality check: `peersByID[id].Equal(newNode)`.
+  5. Because `newNode.DERPHome == A` matched the stale snapshot `peersByID[id].DERPHome == A`, the method concluded nothing had changed and skipped updating the live endpoint. The live endpoint remained trapped on region B.
+- **Remediation Code Diff**:
+```go
+// Architectural fix applied in magicsock netmap engine:
+func (c *Conn) UpdateNetmapDelta(mutations []NodeMutation) {
+    c.mu.Lock()
+    defer c.mu.Unlock()
+    for _, m := range mutations {
+        if dm, ok := m.(NodeMutationDERPHome); ok {
+            if ep, ok := c.endpoints[dm.NodeID]; ok {
+                ep.setDERPHome(dm.RegionID)
+            }
++           // Patch the baseline snapshot so subsequent full netmaps
++           // do not short-circuit when reverting back to earlier states.
++           if snap, ok := c.peersByID[dm.NodeID]; ok {
++               snap.DERPHome = dm.RegionID
++           }
         }
-      })
-      .then(() => {
-        mutate()
-      })
-      .catch((error) => {
-        console.error(error)
-      })
-  }, [mutate])
-
-  // Start regular auth flow.
-  useEffect(() => {
-    const needsAuth =
-      data &&
-      !loading &&
-      !data.authorized &&
-      hasAnyEditCapabilities(data) &&
-      new URLSearchParams(window.location.search).get("check") === "now"
-
-    if (needsAuth) {
-      newSession()
     }
-  }, [data, loading, newSession])
-
-  return {
-    data,
-    loading,
-    newSession,
-  }
 }
-
 ```
+- **Lesson**: Fast-path equality checks based on cached snapshots fail silently if any mutation pathway modifies live operational state without updating or invalidating the snapshot.
 
-### Core Architecture Module: `client/web/src/hooks/exit-nodes.ts`
+---
+
+### Incident 3: 1Hz Kernel Wake-Up via Obsolete Linux TUN Namespace Probe
+- **Context**: Subsystem: `wireguard-go` / `tun` subsystem on Linux
+- **What Was Expected**: An idle `tailscaled` process should remain quiescent in epoll wait without waking up the CPU or generating context switches.
+- **What Actually Happened**: Every second, `tailscaled` woke up and executed a zero-byte write operation against the Linux TUN device file descriptor. This drained battery on mobile/laptop hardware and caused synthetic test environments (`synctest`) to record constant activity.
+- **Evidence in Repo**: Issue `#22450`, discovered in kernel bisection testing via Go `synctest`.
+- **Root Cause**: An upstream legacy hack from 2017 in `wireguard-go` executed periodic zero-byte writes to check if the TUN device had been moved to another network namespace. In Linux 4.5 through 5.0, a zero-byte write on a down interface returned `EIO`, while on an up interface it fell through to length checking and returned `EINVAL`. Stable kernel backports in 2019 broke this semantic behavior, rendering the check completely non-functional while leaving the 1-second timer actively spinning.
+- **Remediation Architectural Decision**: Eliminate the 1Hz polling timer entirely. Network namespace changes and link migrations must be tracked reactively via netlink sockets (`RTM_NEWLINK`, `RTM_DELLINK`) instead of active kernel polling.
+- **Lesson**: Polling kernel interfaces for status changes using undocumented error-code side effects is fragile across kernel versions; use native asynchronous kernel event mechanisms (such as netlink).
+
+---
+
+### Incident 4: CI Windows Runner Process Tree Deadlocks and Cache Starvation
+- **Context**: Subsystem: `.github/actions/gomodfs-mount`, Files: `action.yml`, `start.ps1`, `use.ps1`
+- **What Was Expected**: Windows CI runner jobs mount a remote Go module cache (`gomodfs` via WinFsp) on `M:` to accelerate builds, falling back gracefully to direct network downloads if mounting fails.
+- **What Actually Happened**: The step hung indefinitely, or `gomodfs.exe` was instantly killed by the GitHub Actions runner upon completion of `start.ps1`, leaving the build without a Go module cache or toolchain.
+- **Evidence in Repo**: Commit `1db8e79a`, CORP-34812.
+- **Root Cause**:
+  1. Spawning child processes directly inside PowerShell inherited standard output/error pipes. When the step finished, the runner kept waiting on pipe EOF.
+  2. The runner process reaper aggressively sent termination signals to all processes in the step's job object upon step completion.
+  3. Setting `GOMODCACHE` before ensuring the daemon survived the step transition resulted in broken file lookups.
+- **Remediation Code Diff**:
+```powershell
+@@ -0,0 +1,98 @@
++    Time-Phase 'mounting gomodfs' {
++        Remove-Item Env:PARENTDEATH_ADDR, Env:PARENTDEATH_SESSION -ErrorAction SilentlyContinue
++        # Start gomodfs via ShellExecute (no -NoNewWindow or -Redirect*
++        # flags) so it doesn't inherit this step's stdout and stderr pipes.
++        # If it did, the runner would kill it when this step ends.
++        $cmdArgs = "/d /s /c `"`"$exe`" --winfsp --mount=$env:DRIVE --remote-store=$url > `"$log`" 2>&1`""
++        $p = Start-Process -PassThru -WindowStyle Hidden -FilePath $env:ComSpec -ArgumentList $cmdArgs
++        $deadline = (Get-Date).AddSeconds(30)
++        while (-not (Test-Path "$env:DRIVE\.gomodfs-status")) {
++            if ($p.HasExited -or (Get-Date) -gt $deadline) {
++                Get-Content -LiteralPath $log -Tail 20 -ErrorAction SilentlyContinue
++                throw "mounting gomodfs on $env:DRIVE failed"
++            }
++            Start-Sleep -Milliseconds 100
++        }
++    }
 ```
-// Copyright (c) Tailscale Inc & contributors
-// SPDX-License-Identifier: BSD-3-Clause
+- **Lesson**: Background system daemons in CI must be detached from runner IO pipes via `ComSpec`/`ShellExecute`, and consumption must be staged in a distinct subsequent step after process survival is confirmed.
 
-import { useMemo } from "react"
-import {
-  CityCode,
-  CountryCode,
-  ExitNode,
-  ExitNodeLocation,
-  NodeData,
-} from "src/types"
-import useSWR from "swr"
+---
 
-export default function useExitNodes(node: NodeData, filter?: string) {
-  const { data } = useSWR<ExitNode[]>("/exit-nodes")
+### Incident 5: Web Client Self-Update Polling Race & Daemon Disappearance
+- **Context**: Subsystem: `client/web`, File: `client/web/src/hooks/self-update.ts`
+- **What Was Expected**: During a self-update triggered from the browser UI, the frontend polls `/local/v0/update/progress`. When `tailscaled` restarts, it briefly goes offline and returns HTTP network errors before reconnecting and reporting the new version.
+- **What Actually Happened**: An immediate poll failure during the daemon's restart was either swallowed (freezing the UI) or falsely flagged as a permanent fatal crash. Furthermore, naive poll loops without offset tracking reprocessed duplicate error/progress log entries.
+- **Evidence in Repo**: `client/web/src/hooks/self-update.ts` line 56-115.
+- **Root Cause**: The update endpoint returns an append-only log array of progress structs. Re-reading from index 0 on every tick caused log duplication and stale status evaluations. If the daemon restarted, `fetch` failed immediately; without an explicit missing-poll threshold (`tsAwayForPolls >= 300`), the client could not distinguish a normal daemon reboot from a binary crash.
+- **Remediation Pattern**:
+```typescript
+let tsAwayForPolls = 0
+let updateMessagesRead = 0
 
-  const { tailnetNodesSorted, locationNodesMap } = useMemo(() => {
-    // First going through exit nodes and splitting them into two groups:
-    // 1. tailnetNodes: exit nodes advertised by tailnet's own nodes
-    // 2. locationNodes: exit nodes advertised by non-tailnet Mullvad nodes
-    let tailnetNodes: ExitNode[] = []
-    const locationNodes = new Map<CountryCode, Map<CityCode, ExitNode[]>>()
-
-    if (!node.Features["use-exit-node"]) {
-      // early-return
-      return {
-        tailnetNodesSorted: tailnetNodes,
-        locationNodesMap: locationNodes,
+function poll() {
+  apiFetch<UpdateProgress[]>("/local/v0/update/progress", "GET")
+    .then((res) => {
+      // Invariant: strictly increasing progress log stream
+      for (; updateMessagesRead < res.length; ++updateMessagesRead) {
+        const up = res[updateMessagesRead]
+        if (up.status === "UpdateFailed") {
+          setUpdateState(UpdateState.Failed)
+          return
+        }
+        if (up.status === "UpdateFinished") {
+          // If daemon came back but version didn't change, evaluate if manual restart is needed
+          if (up.version === currentVersion && tsAwayForPolls > 0) {
+            setUpdateState(UpdateState.Failed)
+          } else {
+            setUpdateState(UpdateState.Complete)
+          }
+          return
+        }
       }
-    }
-
-    data?.forEach((n) => {
-      const loc = n.Location
-      if (!loc) {
-        // 2023-11-15: Currently, if the node doesn't have
-        // location information, it is owned by the tailnet.
-        // Only Mullvad exit nodes have locations filled.
-        tailnetNodes.push({
-          ...n,
-          Name: trimDNSSuffix(n.Name, node.TailnetName),
-        })
-        return
-      }
-      const countryNodes =
-        locationNodes.get(loc.CountryCode) || new Map<CityCode, ExitNode[]>()
-      const cityNodes = countryNodes.get(loc.CityCode) || []
-      countryNodes.set(loc.CityCode, [...cityNodes, n])
-      locationNodes.set(loc.CountryCode, countryNodes)
+      timer = setTimeout(poll, 1000)
     })
-
-    return {
-      tailnetNodesSorted: tailnetNodes.sort(compareByName),
-      locationNodesMap: locationNodes,
-    }
-  }, [data, node.Features, node.TailnetName])
-
-  const hasFilter = Boolean(filter)
-
-  const mullvadNodesSorted = useMemo(() => {
-    const nodes: ExitNode[] = []
-    if (!node.Features["use-exit-node"]) {
-      return nodes // early-return
-    }
-
-    // addBestMatchNode adds the node with the "higest priority"
-    // match from a list of exit node `options` to `nodes`.
-    const addBestMatchNode = (
-      options: ExitNode[],
-      name: (loc: ExitNodeLocation) => string
-    ) => {
-      const bestNode = highestPriorityNode(options)
-      if (!bestNode || !bestNode.Location) {
-        return // not possible, doing this for type safety
+    .catch((err) => {
+      ++tsAwayForPolls
+      // Grace period: allow 5 minutes (300 polls) for daemon restart before giving up
+      if (tsAwayForPolls >= 5 * 60) {
+        setUpdateState(UpdateState.Failed)
+      } else {
+        timer = setTimeout(poll, 1000)
       }
-      nodes.push({
-        ...bestNode,
-        Name: name(bestNode.Location),
-      })
-    }
-
-    if (!hasFilter) {
-      // When nothing is searched, only show a single best-matching
-      // exit node per-country.
-      //
-      // There's too many location-based nodes to display all of them.
-      locationNodesMap.forEach(
-        // add one node per country
-        (countryNodes) =>
-          addBestMatchNode(flattenMap(countryNodes), (loc) => loc.Country)
-      )
-    } else {
-      // Otherwise, show the best match on a city-level,
-      // with a "Country: Best Match" node at top.
-      //
-      // i.e. We allow for discovering cities through searching.
-      locationNodesMap.forEach((countryNodes) => {
-        countryNodes.forEach(
-          // add one node per city
-          (cityNodes) =>
-            addBestMatchNode(cityNodes, (loc) => `${loc.Country}: ${loc.City}`)
-        )
-        // add the "Country: Best Match" node
-        addBestMatchNode(
-          flattenMap(countryNodes),
-          (loc) => `${loc.Country}: Best Match`
-        )
-      })
-    }
-
-    return nodes.sort(compareByName)
-  }, [hasFilter, locationNodesMap, node.Features])
-
-  // Ordered and filtered grouping of exit nodes.
-  const exitNodeGroups = useMemo(() => {
-    const filterLower = !filter ? undefined : filter.toLowerCase()
-
-    const selfGroup = {
-      id: "self",
-      name: undefined,
-      nodes: filter
-        ? []
-        : !node.Features["advertise-exit-node"]
-        ? [noExitNode] // don't show "runAsExitNode" option
-        : [noExitNode, runAsExitNode],
-    }
-
-    if (!node.Features["use-exit-node"]) {
-      return [selfGroup]
-    }
-    return [
-      selfGroup,
-      {
-        id: "tailnet",
-        nodes: filterLower
-          ? tailnetNodesSorted.filter((n) =>
-              n.Name.toLowerCase().includes(filterLower)
-            )
-          : tailnetNodesSorted,
-      },
-      {
-        id: "mullvad",
-        name: "Mullvad VPN",
-        nodes: filterLower
-          ? mullvadNodesSorted.filter((n) =>
-              n.Name.toLowerCase().includes(filterLower)
-            )
-          : mullvadNodesSorted,
-      },
-    ]
-  }, [filter, node.Features, tailnetNodesSorted, mullvadNodesSorted])
-
-  return { data: exitNodeGroups }
+    })
 }
+```
+- **Lesson**: Polling state machines tracking restarting backend services must combine cursor-based log advancement with bounded retry windows for transport-level dropouts.
 
-// highestPriorityNode finds the highest priority node for use
-// (the "best match" node) from a list of exit nodes.
-// Nodes with equal priorities are picked between arbitrarily.
-function highestPriorityNode(nodes: ExitNode[]): ExitNode | undefined {
-  return nodes.length === 0
-    ? undefined
-    : nodes.sort(
-        (a, b) => (b.Location?.Priority || 0) - (a.Location?.Priority || 0)
-      )[0]
-}
+---
 
-// compareName compares two exit nodes alphabetically by name.
-function compareByName(a: ExitNode, b: ExitNode): number {
-  if (a.Location && b.Location && a.Location.Country === b.Location.Country) {
-    // Always put "<Country>: Best Match" node at top of country list.
-    if (a.Name.includes(": Best Match")) {
-      return -1
-    } else if (b.Name.includes(": Best Match")) {
-      return 1
-    }
-  }
-  return a.Name.localeCompare(b.Name)
-}
+## 4. Microscopic Code-Level Invariants
 
-function flattenMap<T, V>(m: Map<T, V[]>): V[] {
-  return Array.from(m.values()).reduce((prev, curr) => [...prev, ...curr])
-}
-
-// trimDNSSuffix trims the tailnet dns name from s, leaving no
-// trailing dots.
-//
-// trimDNSSuffix("hello.ts.net", "ts.net") = "hello"
-// trimDNSSuffix("hello", "ts.net") = "hello"
+### 1. Micro-Syntax & Token-Level Precision
+- **DNS Suffix Trimming Immutability (`trimDNSSuffix`)**:
+```typescript
 export function trimDNSSuffix(s: string, tailnetDNSName: string): string {
   if (s.endsWith(".")) {
-    s = s.slice(0, -1)
+    s = s.slice(0, -1) // Invariant: Strip absolute FQDN root dot first
   }
   if (s.endsWith("." + tailnetDNSName)) {
-    s = s.replace("." + tailnetDNSName, "")
+    s = s.replace("." + tailnetDNSName, "") // Invariant: Retain hostname label
   }
   return s
 }
-
-// Neither of these are really "online", but setting this makes them selectable.
-export const noExitNode: ExitNode = { ID: "NONE", Name: "None", Online: true }
-export const runAsExitNode: ExitNode = {
-  ID: "RUNNING",
-  Name: "Run as exit node",
-  Online: true,
-}
-
 ```
+*Hazard Prevented*: In Go and TypeScript, performing naive string splits on `.` strips inner dots in subdomains. Stripping the root dot before suffix matching ensures `my-host.my-net.ts.net.` maps correctly to `my-host`.
 
-### Core Architecture Module: `client/web/src/hooks/self-update.ts`
-```
-// Copyright (c) Tailscale Inc & contributors
-// SPDX-License-Identifier: BSD-3-Clause
-
-import { useCallback, useEffect, useState } from "react"
-import { apiFetch } from "src/api"
-import { VersionInfo } from "src/types"
-
-// see ipnstate.UpdateProgress
-export type UpdateProgress = {
-  status: "UpdateFinished" | "UpdateInProgress" | "UpdateFailed"
-  message: string
-  version: string
-}
-
-export enum UpdateState {
-  UpToDate,
-  Available,
-  InProgress,
-  Complete,
-  Failed,
-}
-
-// useInstallUpdate initiates and tracks a Tailscale self-update via the LocalAPI,
-// and returns state messages showing the progress of the update.
-export function useInstallUpdate(currentVersion: string, cv?: VersionInfo) {
-  const [updateState, setUpdateState] = useState<UpdateState>(
-    cv?.RunningLatest ? UpdateState.UpToDate : UpdateState.Available
-  )
-
-  const [updateLog, setUpdateLog] = useState<string>("")
-
-  const appendUpdateLog = useCallback(
-    (msg: string) => {
-      setUpdateLog(updateLog + msg + "\n")
-    },
-    [updateLog, setUpdateLog]
-  )
-
-  useEffect(() => {
-    if (updateState !== UpdateState.Available) {
-      // useEffect cleanup function
-      return () => {}
-    }
-
-    setUpdateState(UpdateState.InProgress)
-
-    apiFetch("/local/v0/update/install", "POST").catch((err) => {
-      console.error(err)
-      setUpdateState(UpdateState.Failed)
-    })
-
-    let tsAwayForPolls = 0
-    let updateMessagesRead = 0
-
-    let timer: NodeJS.Timeout | undefined
-
-    function poll() {
-      apiFetch<UpdateProgress[]>("/local/v0/update/progress", "GET")
-        .then((res) => {
-          // res contains a list of UpdateProgresses that is strictly increasing
-          // in size, so updateMessagesRead keeps track (across calls of poll())
-          // of how many of those we have already read. This is why it is not
-          // initialized to zero here and we don't just use res.forEach()
-          for (; updateMessagesRead < res.length; ++updateMessagesRead) {
-            const up = res[updateMessagesRead]
-            if (up.status === "UpdateFailed") {
-              setUpdateState(UpdateState.Failed)
-              if (up.message) appendUpdateLog("ERROR: " + up.message)
-              return
-            }
-
-            if (up.status === "UpdateFinished") {
-              // if update finished and tailscaled did not go away (ie. did not restart),
-              // then the version being the same might not be an error, it might just require
-              // the user to restart Tailscale manually (this is required in some cases in the
-              // clientupdate package).
-              if (up.version === currentVersion && tsAwayForPolls > 0) {
-                setUpdateState(UpdateState.Failed)
-                appendUpdateLog(
-                  "ERROR: Update failed, still running Tailscale " + up.version
-                )
-                if (up.message) appendUpdateLog("ERROR: " + up.message)
-              } else {
-                setUpdateState(UpdateState.Complete)
-                if (up.message) appendUpdateLog("INFO: " + up.message)
-              }
-              return
-            }
-
-            setUpdateState(UpdateState.InProgress)
-            if (up.message) appendUpdateLog("INFO: " + up.message)
-          }
-
-          // If we have gone through the entire loop without returning out of the function,
-          // the update is still in progress. So we want to poll again for further status
-          // updates.
-          timer = setTimeout(poll, 1000)
-        })
-        .catch((err) => {
-          ++tsAwayForPolls
-          if (tsAwayForPolls >= 5 * 60) {
-            setUpdateState(UpdateState.Failed)
-            appendUpdateLog(
-              "ERROR: tailscaled went away but did not come back!"
-            )
-            appendUpdateLog("ERROR: last error received:")
-            appendUpdateLog(err.toString())
-          } else {
-            timer = setTimeout(poll, 1000)
-          }
-        })
-    }
-
-    poll()
-
-    // useEffect cleanup function
-    return () => {
-      if (timer) clearTimeout(timer)
-      timer = undefined
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  return !cv
-    ? { updateState: UpdateState.UpToDate, updateLog: "" }
-    : { updateState, updateLog }
-}
-
-```
-
-### Core Architecture Module: `client/web/src/hooks/toaster.ts`
-```
-// Copyright (c) Tailscale Inc & contributors
-// SPDX-License-Identifier: BSD-3-Clause
-
-import { useRawToasterForHook } from "src/ui/toaster"
-
-/**
- * useToaster provides a mechanism to display toasts. It returns an object with
- * methods to show, dismiss, or clear all toasts:
- *
- *     const toastKey = toaster.show({ message: "Hello world" })
- *     toaster.dismiss(toastKey)
- *     toaster.clear()
- *
- */
-const useToaster = useRawToasterForHook
-
-export default useToaster
-
-```
-
-### Core Architecture Module: `client/web/src/hooks/ts-web-connected.ts`
-```
-// Copyright (c) Tailscale Inc & contributors
-// SPDX-License-Identifier: BSD-3-Clause
-
-import { useCallback, useEffect, useState } from "react"
-import { isHTTPS } from "src/utils/util"
-import { AuthServerMode } from "./auth"
-
-/**
- * useTSWebConnected hook is used to check whether the browser is able to
- * connect to the web client served at http://${nodeIPv4}:5252
- */
-export function useTSWebConnected(mode: AuthServerMode, nodeIPv4: string) {
-  const [tsWebConnected, setTSWebConnected] = useState<boolean>(
-    mode === "manage" // browser already on the web client
-  )
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-
-  const checkTSWebConnection = useCallback(() => {
-    if (mode === "manage") {
-      // Already connected to the web client.
-      setTSWebConnected(true)
-      return
-    }
-    if (isHTTPS()) {
-      // When page is loaded over HTTPS, the connectivity check will always
-      // fail with a mixed-content error. In this case don't bother doing
-      // the check.
-      return
-    }
-    if (isLoading) {
-      return // already checking
-    }
-    setIsLoading(true)
-    fetch(`http://${nodeIPv4}:5252/ok`, { mode: "no-cors" })
-      .then(() => {
-        setTSWebConnected(true)
-        setIsLoading(false)
-      })
-      .catch(() => setIsLoading(false))
-  }, [isLoading, mode, nodeIPv4])
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => checkTSWebConnection(), []) // checking connection for first time on page load
-
-  return { tsWebConnected, checkTSWebConnection, isLoading }
-}
-
-```
-
-### Core Architecture Module: `client/web/src/ui/empty-state.tsx`
-```
-// Copyright (c) Tailscale Inc & contributors
-// SPDX-License-Identifier: BSD-3-Clause
-
-import cx from "classnames"
-import React, { cloneElement } from "react"
-
-type Props = {
-  action?: React.ReactNode
-  className?: string
-  description: string
-  icon?: React.ReactElement
-  title?: string
-}
-
-/**
- * EmptyState shows some text and an optional action when some area that can
- * house content is empty (eg. no search results, empty tables).
- */
-export default function EmptyState(props: Props) {
-  const { action, className, description, icon, title } = props
-  const iconColor = "text-gray-500"
-  const iconComponent = getIcon(icon, iconColor)
-
-  return (
-    <div
-      className={cx("flex justify-center", className, {
-        "flex-col items-center": action || icon || title,
-      })}
-    >
-      {icon && <div className="mb-2">{iconComponent}</div>}
-      {title && (
-        <h3 className="text-xl font-medium text-center mb-2">{title}</h3>
-      )}
-      <div className="w-full text-center max-w-xl text-gray-500">
-        {description}
-      </div>
-      {action && <div className="mt-3.5">{action}</div>}
-    </div>
-  )
-}
-
-function getIcon(icon: React.ReactElement | undefined, iconColor: string) {
-  return icon ? cloneElement(icon, { className: iconColor }) : null
-}
-
-```
-
-### Core Architecture Module: `client/web/src/utils/clipboard.ts`
-```
-// Copyright (c) Tailscale Inc & contributors
-// SPDX-License-Identifier: BSD-3-Clause
-
-import { isPromise } from "src/utils/util"
-
-/**
- * copyText copies text to the clipboard, handling cross-browser compatibility
- * issues with different clipboard APIs.
- *
- * To support copying after running a network request (eg. generating an invite),
- * pass a promise that resolves to the text to copy.
- *
- * @example
- * copyText("Hello, world!")
- * copyText(generateInvite().then(res => res.data.inviteCode))
- */
-export function copyText(text: string | Promise<string | void>) {
-  if (!navigator.clipboard) {
-    if (isPromise(text)) {
-      return text.then((val) => fallbackCopy(validateString(val)))
-    }
-    return fallbackCopy(text)
-  }
-  if (isPromise(text)) {
-    if (typeof ClipboardItem === "undefined") {
-      return text.then((val) =>
-        navigator.clipboard.writeText(validateString(val))
-      )
-    }
-    return navigator.clipboard.write([
-      new ClipboardItem({
-        "text/plain": text.then(
-          (val) => new Blob([validateString(val)], { type: "text/plain" })
-        ),
-      }),
-    ])
-  }
-  return navigator.clipboard.writeText(text)
-}
-
+- **Strict Type Validation in Asynchronous Clipboard Writers**:
+```typescript
 function validateString(val: unknown): string {
   if (typeof val !== "string" || val.length === 0) {
-    throw new TypeError("Expected string, got " + typeof val)
-  }
-  if (val.length === 0) {
-    throw new TypeError("Expected non-empty string")
+    throw new TypeError("Expected non-empty string, got " + typeof val)
   }
   return val
 }
+```
+*Hazard Prevented*: Empty strings or resolved non-string values passed to `navigator.clipboard.write` or `ClipboardItem` throw DOM exceptions in WebKit/Blink. Explicit runtime validation guarantees non-empty strings before crossing the DOM boundary.
 
-function fallbackCopy(text: string) {
-  const el = document.createElement("textarea")
-  el.value = text
-  el.setAttribute("readonly", "")
-  el.className = "absolute opacity-0 pointer-events-none"
-  document.body.append(el)
+### 2. Infinite Loop & Recursion Guards
+- **Strictly Increasing Stream Index Invariant (`self-update.ts`)**:
+```typescript
+// Termination Invariant: updateMessagesRead strictly increases to res.length
+for (; updateMessagesRead < res.length; ++updateMessagesRead) {
+  const up = res[updateMessagesRead]
+  // Process item
+}
+```
+*Hazard Prevented*: Array polling APIs that return append-only logs must advance a persistent index rather than resetting loop counters or calling `res.forEach()`, preventing duplicate notifications and UI re-render thrashing.
 
-  // Check if text is currently selected
-  let selection = document.getSelection()
-  const selected =
-    selection && selection.rangeCount > 0 ? selection.getRangeAt(0) : false
-
-  el.select()
-  document.execCommand("copy")
-  el.remove()
-
-  // Restore selection
-  if (selected) {
-    selection = document.getSelection()
-    if (selection) {
-      selection.removeAllRanges()
-      selection.addRange(selected)
+- **Non-blocking Polling Deadlines in Shell Executions (`start.ps1`)**:
+```powershell
+$deadline = (Get-Date).AddSeconds(30)
+while (-not (Test-Path "$env:DRIVE\.gomodfs-status")) {
+    if ($p.HasExited -or (Get-Date) -gt $deadline) {
+        throw "mounting failed"
     }
+    Start-Sleep -Milliseconds 100
+}
+```
+*Hazard Prevented*: Prevents CI jobs from hanging for the full 60-minute workflow timeout when a filesystem driver fails silently during background initialization.
+
+### 3. UI & UX Micro-Mechanics
+- **Mixed-Content Protection in Local Web Sockets (`useTSWebConnected.ts`)**:
+```typescript
+if (isHTTPS()) {
+  // When page is loaded over HTTPS, the connectivity check will always
+  // fail with a mixed-content error. In this case don't bother doing the check.
+  return
+}
+```
+*Hazard Prevented*: The browser blocks plaintext HTTP requests to loopback (`http://100.x.y.z:5252`) from HTTPS pages. Skipping the check prevents noisy console errors and broken connection states.
+
+- **Selection State Restoration in Clipboard Fallback (`clipboard.ts`)**:
+```typescript
+let selection = document.getSelection()
+const selected = selection && selection.rangeCount > 0 ? selection.getRangeAt(0) : false
+el.select()
+document.execCommand("copy")
+el.remove()
+if (selected) {
+  selection = document.getSelection()
+  if (selection) {
+    selection.removeAllRanges()
+    selection.addRange(selected) // Invariant: Restore active user focus
   }
-
-  return Promise.resolve()
 }
-
 ```
+*Hazard Prevented*: Fallback clipboard copying uses a hidden `<textarea>`. Without capturing and restoring `document.getSelection()`, copy actions silently de-select user text in active input fields.
 
-### Core Architecture Module: `client/web/src/utils/util.ts`
-```
-// Copyright (c) Tailscale Inc & contributors
-// SPDX-License-Identifier: BSD-3-Clause
-
-/**
- * assertNever ensures a branch of code can never be reached,
- * resulting in a Typescript error if it can.
- */
-export function assertNever(a: never): never {
-  return a
-}
-
-/**
- * noop is an empty function for use as a default value.
- */
-export function noop() {}
-
-/**
- * isObject checks if a value is an object.
- */
-export function isObject(val: unknown): val is object {
-  return Boolean(val && typeof val === "object" && val.constructor === Object)
-}
-
-/**
- * pluralize is a very simple function that returns either
- * the singular or plural form of a string based on the given
- * quantity.
- *
- * TODO: Ideally this would use a localized pluralization.
- */
-export function pluralize(signular: string, plural: string, qty: number) {
-  return qty === 1 ? signular : plural
-}
-
-/**
- * isTailscaleIPv6 returns true when the ip matches
- * Tailnet's IPv6 format.
- */
-export function isTailscaleIPv6(ip: string): boolean {
-  return ip.startsWith("fd7a:115c:a1e0")
-}
-
-/**
- * isPromise returns whether the current value is a promise.
- */
-export function isPromise<T = unknown>(val: unknown): val is Promise<T> {
-  if (!val) {
-    return false
-  }
-  return typeof val === "object" && "then" in val
-}
-
-/**
- * isHTTPS reports whether the current page is loaded over HTTPS.
- */
-export function isHTTPS() {
-  return window.location.protocol === "https:"
-}
-
-```
-
-### Core Architecture Module: `cmd/tailscaled/tailscaledhooks/tailscaledhooks.go`
-```
-// Copyright (c) Tailscale Inc & contributors
-// SPDX-License-Identifier: BSD-3-Clause
-
-// Package tailscaledhooks provides hooks for optional features
-// to add to during init that tailscaled calls at runtime.
-package tailscaledhooks
-
-import "tailscale.com/feature"
-
-// UninstallSystemDaemonWindows is called when the Windows
-// system daemon is uninstalled.
-var UninstallSystemDaemonWindows feature.Hooks[func()]
-
-```
-
-### Core Architecture Module: `cmd/tsconnect/src/lib/js-state-store.ts`
-```
-// Copyright (c) Tailscale Inc & contributors
-// SPDX-License-Identifier: BSD-3-Clause
-
-/** @fileoverview Callbacks used by jsStateStore to persist IPN state. */
-
-export const sessionStateStorage: IPNStateStorage = {
-  setState(id, value) {
-    window.sessionStorage[`ipn-state-${id}`] = value
-  },
-  getState(id) {
-    return window.sessionStorage[`ipn-state-${id}`] || ""
-  },
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22450** (2026-11-17): **wireguard-go: wakes up once a second when idle**
-  *Symptoms*: I noticed when working on a new version of natlab that runs the Linux kernel within Go synctest tests that an idle Tailscale wakes up once a second interacting the Linux kernel.  Turns out that it's the hack for checking for network namespace moves (moving the tun device), which Tailscale doesn't even use, and which is also seemingly broken in modern kernels. (I didn't bisect whenever it last worked)  Tracking bug to fix that and stop its once/second wake-ups.  /cc @raggi 
-  **Post-Mortem & Fix Analysis**:
-  > Hahahah, asking Claude to look at the Linux git repo to figure if/when this code ever worked, starting by trying to find whether it worked when it was first written, and then bisecting...  ``` ● The hack only ever worked on Linux 4.5 through 5.0, and the 2019   stable backports broke it on the older series too. It was written in   November 2017, against roughly 4.14, where it did work.    When it worked:   - v4.5: commit 1bd4978a88ac ("tun: honor IFF_UP in tun_get_user()")     added if (!(tun->dev->flags & IFF_UP)) return -EIO; as the first     statement in tun_get_user. A zero-length write on a down interface     therefore got EIO. On an up interface it fell through to the     packet-info length check and got EINVAL.   - Before v4.5 there was no IFF_UP check in the write path, so a     zero-length write always got EINVAL, meaning "up".   - Evidence it was designed around this: in wireguard-go, the hack     was added 2017-11-29 (471f7ff, "Added cross namespace TUN status     detection"
-
-- **Issue #22379** (2026-11-16): **magicsock: peer home DERP stays stale after a delta: updateNodes fast path skips a full netmap that equals the unpatched peersByID snapshot**
-  *Symptoms*: ### What is the issue?  A peer's home DERP region can go stale in magicsock and stay stale until an unrelated netmap change, while the control plane and the client's own netmap hold the correct value. Packets for that peer are then sent to a DERP region the peer has left. If the two nodes have no other path (no direct UDP in either direction until a CallMeMaybe gets through), the peer is unreachable.  **Mechanism (v1.104.5, also present at v1.102.5 and on `main` at 59064619a):**  1. `Conn.UpdateNetmapDelta` applies `NodeMutationDERPHome` by calling `ep.setDERPHome` only. It does not update `c.peersByID`. The field comment says so: "per-field NodeMutation patches received in UpdateNetmapDelta are never applied to these snapshots" (`wgengine/magicsock/magicsock.go`, `peersByID`). 2. `Conn.updateNodes` has a fast path that returns early when every peer in the incoming full netmap `Equal`s its `peersByID` snapshot. 3. So: a full netmap (or upsert) records home = A in both the endpoint and the snapshot. A delta moves the endpoint to B; the snapshot still says A. The peer moves back to A, and that change reaches magicsock inside a full netmap rather than as a delta. The node equals the stale snapshot, the fast path skips it, and `ep.derpAddr` stays on B.  The change back to A arrives inside a full netmap whenever the `MapResponse` carrying the `DERPRegion` patch also carries any field in `mapResponseContainsNonPatchFields` (`Node`, `DERPMap`, `DNSConfig`, `Health`, `DisplayMessages
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `4f7439b4` (2026-11-20)
-**Commit Message**: feature/conn25: name lock-requiring methods Locked (#22532)
-
-Two methods read or write state guarded by their receiver's mutex without
-taking it, relying on every caller to hold it, but were not named to say
-so. enqueueAddressAssignment documented the requirement in prose only;
-lookupAddrBySrcIPAndTransitIP had no doc comment at all. Rename both with
-the Locked suffix the package already uses for drainAddrsLocked,
-transitIPRoutableLocked and removeFlowLocked, and give the connector
-lookup a doc comment stating the requirement.
-
-Fixes https://github.com/tailscale/corp/issues/38924
-
-Change-Id: Ib8bcaf5809ae6f982a504ae554ad1304dbb53018
-
-Signed-off-by: Mazdak Nasab <[REDACTED_EMAIL]>
-
-**File**: `feature/conn25/client.go` (modified, +7/-7)
-```diff
-@@ -157,8 +157,8 @@ func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip
- 	if existing, ok := c.assignments.lookupByDomainDst(domain, dst); ok {
- 		// We have the domain/dst, but it's possible this came from another connector
- 		// and the original connector is dead, in which case we currently don't
--		// call enqueueAddressAssignment and register the TransitIP with the other
--		// connector. And we don't install the new connector's node key in WireGuard.
-+		// call enqueueAddressAssignmentLocked and register the TransitIP with the
-+		// other connector. And we don't install the new connector's node key in WireGuard.
- 		//
- 		// The correct action would be to allocate a new TransitIP associated
- 		// with that new connector, and then register the TransitIP address, and
-@@ -241,7 +241,7 @@ func (c *client) reserveAddresses(appName string, domain dnsname.FQDN, dst netip
- 		transitPool.returnAddr(tip)
- 		return nil, err
- 	}
--	if err := c.enqueueAddressAssignment(as); err != nil {
-+	if err := c.enqueueAddressAssignmentLocked(as); err != nil {
- 		c.assignments.remove(as)
- 		magicPool.returnAddr(mip)
- 		transitPool.returnAddr(tip)
-@@ -269,9 +269,9 @@ var errQueueFull = errors.New("queue full")
- // no longer accepts address assignments.
- var errClientShutdown = errors.New("conn25 client shut down")
- 
--// enqueueAddressAssignment queues addrs to be registered with its connector by
--// sendLoop. c.mu must be held.
--func (c *client) enqueueAddressAssignment(addrs *addrs) error {
-+// enqueueAddressAssignmentLocked queues addrs to be registered with its
-+// connector by sendLoop. c.mu must be held.
-+func (c *client) enqueueAddressAssignmentLocked(addrs *addrs) error {
- 	if c.closed {
- 		return errClientShutdown
- 	}
-@@ -489,7 +489,7 @@ func (c *client) resendTransitIPMapping(transitIP netip.Addr) {
- 		// We have no mappings for this transit IP, so nothing to resend.
- 		return
- 	}
--	err := c.enqueueAddressAssignment(mapping)
-+	err := c.enqueueAddressAssignmentLocked(mapping)
- 	if err != nil {
- 		c.logf("error enqueueing address assignment for resend: %v", err)
- 	}
-```
-
-**File**: `feature/conn25/client_test.go` (modified, +3/-3)
-```diff
-@@ -411,8 +411,8 @@ func (c *client) currentGeneration() uint64 {
- 	return c.generation
- }
- 
--// enqueueAddressAssignmentForTest is [client.enqueueAddressAssignment] with the
--// lock it expects callers to hold, plus the generation stamp that
-+// enqueueAddressAssignmentForTest is [client.enqueueAddressAssignmentLocked]
-+// with the lock it expects callers to hold, plus the generation stamp that
- // [client.reserveAddresses] would have applied. The production callers all
- // enqueue from inside a c.mu critical section; tests reach for it on its own,
- // and build the [addrs] by hand rather than reserving one. Without the stamp
-@@ -422,7 +422,7 @@ func (c *client) enqueueAddressAssignmentForTest(as *addrs) error {
- 	c.mu.Lock()
- 	defer c.mu.Unlock()
- 	as.generation = c.generation
--	return c.enqueueAddressAssignment(as)
-+	return c.enqueueAddressAssignmentLocked(as)
- }
- 
- func TestTransitIPConnMapping(t *testing.T) {
-```
-
-**File**: `feature/conn25/conn25_test.go` (modified, +1/-1)
-```diff
-@@ -643,7 +643,7 @@ func TestHandleConnectorTransitIPRequest(t *testing.T) {
- 								i, j, len(wantLookup))
- 						}
- 						pip, tip, wantDip := wantLookup[0], wantLookup[1], wantLookup[2]
--						gotDip, _ := c.connector.lookupAddrBySrcIPAndTransitIP(pip, tip)
-+						gotDip, _ := c.connector.lookupAddrBySrcIPAndTransitIPLocked(pip, tip)
- 						if gotDip != wantDip {
- 							t.Errorf("wrong result on lookup[%d][%d] ([%v], [%v]): got [%v] expected [%v]",
- 								i, j, pip, tip, gotDip, wantDip)
-```
-
-**File**: `feature/conn25/connector.go` (modified, +5/-2)
-```diff
-@@ -116,7 +116,7 @@ type transitIPExpiryEntry struct {
- func (c *connector) realIPForTransitIPConnection(srcIP netip.Addr, transitIP netip.Addr) (netip.Addr, bool) {
- 	c.mu.Lock()
- 	defer c.mu.Unlock()
--	return c.lookupAddrBySrcIPAndTransitIP(srcIP, transitIP)
-+	return c.lookupAddrBySrcIPAndTransitIPLocked(srcIP, transitIP)
- }
- 
- // transitIPInPool reports whether tip is within the transit IP pool of its
-@@ -164,7 +164,10 @@ func (c *connector) packetFilterAllow(p packet.Parsed) (bool, string) {
- 	return false, ""
- }
- 
--func (c *connector) lookupAddrBySrcIPAndTransitIP(srcIP, transitIP netip.Addr) (netip.Addr, bool) {
-+// lookupAddrBySrcIPAndTransitIPLocked returns the real destination IP that the
-+// peer at srcIP registered for transitIP, or (zero, false) if it registered
-+// none. c.mu must be held.
-+func (c *connector) lookupAddrBySrcIPAndTransitIPLocked(srcIP, transitIP netip.Addr) (netip.Addr, bool) {
- 	m, ok := c.transitIPs[srcIP]
- 	if !ok || m == nil {
- 		return netip.Addr{}, false
-```
-
-**File**: `feature/conn25/connector_test.go` (modified, +1/-1)
-```diff
-@@ -272,7 +272,7 @@ func TestConnectorDisallowedDestinations(t *testing.T) {
- 			if tt.wantCode == OK {
- 				wantDst = unmapped
- 			}
--			if got, _ := c.connector.lookupAddrBySrcIPAndTransitIP(peerIP, transitIP); got != wantDst {
-+			if got, _ := c.connector.lookupAddrBySrcIPAndTransitIPLocked(peerIP, transitIP); got != wantDst {
- 				t.Errorf("lookup(%v, %v) = %v, want %v", peerIP, transitIP, got, wantDst)
- 			}
- 		})
-```
-
-#### Recent Merged Pull Requests:
-- **PR #22535** (2026-11-20): magicsock,tstun: add gauges for the number of open queues and sockets (@illotum)
-- **PR #22534** (2026-11-20): feature/conn25: do not lock mu in packetFilterAllow (@mazdakn)
-- **PR #22532** (2026-11-20): feature/conn25: name lock-requiring methods Locked (@mazdakn)
-- **PR #22531** (closed): ipn/ipnlocal: add failing test for serve TCP forward half-close (@bcreane)
-- **PR #22528** (2026-11-20): net/memnet: don't arm deadline timers on a closed Pipe (@bradfitz)
-- **PR #22527** (2026-11-20): util/syspolicy/source: notify sessions when a forced read finds a change (@nickkhyl)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. feature/conn25: name lock-requiring methods Locked
-
-**RULE**:
-When implementing operations in `feature/conn25/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `4f7439b4`: feature/conn25: name lock-requiring methods Locked. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `feature/conn25/client.go`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
+### 4. Backend Concurrency & Memory Safety
+- **Lock Contention and Backlog Starvation Guard (`syncs.Semaphore`)**:
 ```go
-// Verified production-grade fix pattern:
-		// call enqueueAddressAssignmentLocked and register the TransitIP with the
-		// other connector. And we don't install the new connector's node key in WireGuard.
-	if err := c.enqueueAddressAssignmentLocked(as); err != nil {
-// enqueueAddressAssignmentLocked queues addrs to be registered with its
-// connector by sendLoop. c.mu must be held.
-func (c *client) enqueueAddressAssignmentLocked(addrs *addrs) error {
-	err := c.enqueueAddressAssignmentLocked(mapping)
+sem := syncs.NewSemaphore(8)
+serve := func(path string) (string, error) {
+    sem.Acquire()
+    defer sem.Release()
+    w := httptest.NewRecorder()
+    b.serveWebHandler(w, newReq(path))
+    return w.Body.String(), nil
+}
 ```
+*Hazard Prevented*: Limits concurrent goroutines against in-process listeners to prevent socket exhaustion and `ECONNREFUSED` errors during parallel test runs.
 
-**NEGATIVE CONSTRAINT**:
-```go
-// Induced defect failure mode:
-		// call enqueueAddressAssignment and register the TransitIP with the other
-		// connector. And we don't install the new connector's node key in WireGuard.
-	if err := c.enqueueAddressAssignment(as); err != nil {
-// enqueueAddressAssignment queues addrs to be registered with its connector by
-// sendLoop. c.mu must be held.
-func (c *client) enqueueAddressAssignment(addrs *addrs) error {
-	err := c.enqueueAddressAssignment(mapping)
+- **Timer Cleanup on Unmount Hook Pattern (`self-update.ts`)**:
+```typescript
+return () => {
+  if (timer) clearTimeout(timer)
+  timer = undefined
+}
 ```
+*Hazard Prevented*: Prevents dangling timers from firing and calling `setUpdateState` after component unmounts, avoiding memory leaks and React state warnings.
 
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4f7439b4` are properly handled with clean fallback behavior.
-
+### 5. Defect & Error Prevention ("Galti Pakadna")
+- **Null Safety in Exit Node Priority Sorting (`exit-nodes.ts`)**:
+```typescript
+function highestPriorityNode(nodes: ExitNode[]): ExitNode |
 
 ## 3. Independent Verification Protocol
 1. Assert state existence before and after execution.

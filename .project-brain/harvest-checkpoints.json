@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T23:06:14.445Z",
+  "last_updated": "2026-11-21T23:27:18.747Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "31728eab23f80bad0cdbab99d7985c16cfb3b709151b09c265c516ffbab13458",
-      "verified_at": "2026-11-21T00:52:05.726Z",
+      "content_hash": "3cb059791176083ee53ac9e7f08771a29b5d3286e7328610c8e02dd137834fb9",
+      "verified_at": "2026-11-21T23:26:46.922Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T00:52:05.726Z"
+      "last_updated": "2026-11-21T23:26:46.922Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -7236,14 +7236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pimalaya-himalaya",
-      "content_hash": "82637fe01b7493f03326b5e828d4108cbfffbed8526a0d728064c6412db6ea89",
-      "verified_at": "2026-11-20T07:35:56.458Z",
+      "content_hash": "93cc46b6c26254e730184e7dd434ff51566cec28cfcf1ce2c9be1ebbcf469f8b",
+      "verified_at": "2026-11-21T23:27:18.747Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T07:35:56.458Z"
+      "last_updated": "2026-11-21T23:27:18.747Z"
     },
     "wcandillon/react-native-skia": {
       "repository": "wcandillon/react-native-skia",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "6a25e4ccfc221674678ea6ffd71ba5bcc62eef7bb297a414f911c022844e69e2",
-      "verified_at": "2026-11-21T18:52:24.403Z",
+      "content_hash": "865e8ceb018de6172440a863c7b20fa0052e1ec429b60c389c41a9c1dda2cc0e",
+      "verified_at": "2026-11-21T23:25:30.720Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T18:52:24.403Z"
+      "last_updated": "2026-11-21T23:25:30.720Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -17585,15 +17585,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
-      "content_hash": "0e208e0e602ed7adc8860dd171b2c5745c6ce120919e36fa0dcf250c3eaaf4d8",
-      "verified_at": "2026-11-21T22:56:43.834Z",
+      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-air",
+      "content_hash": "0fc8d3f4bf16a4e19329741b53c13d31bf753b3d23e4cfc96f39187028582cec",
+      "verified_at": "2026-11-21T23:27:03.292Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T22:56:43.834Z"
+      "last_updated": "2026-11-21T23:27:03.292Z"
     },
     "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated": {
       "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",

@@ -11967,3 +11967,11 @@ Every entry in this ledger must capture:
 | `learn-dom-d-8372cbcd` | `project://hf-edge0-audio8-tts-realistic-0.6b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md` | 2026-11-21T22:57:57.568Z |
 | `learn-huggingface-burner22-numbat` | `https://huggingface.co/burner22/numbat` | `hf-burner2` | Multi-dimensional audit evidence | 2026-11-21T23:06:00.054Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `c0f3122f` | Multi-dimensional audit evidence | 2026-11-21T23:06:14.407Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `37096726` | Multi-dimensional audit evidence | 2026-11-21T23:25:30.712Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `1db8e79a` | Multi-dimensional audit evidence | 2026-11-21T23:26:46.911Z |
+| `learn-huggingface-edge0-audio8-tts-realistic-air` | `https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-21T23:27:03.282Z |
+| `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `bf9f4e2a` | Multi-dimensional audit evidence | 2026-11-21T23:27:18.739Z |
+| `learn-dom-h-a2ea49e2` | `project://pimalaya-himalaya` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md` | 2026-11-21T23:27:50.173Z |
+| `learn-dom-i-dbbc4693` | `project://pimalaya-himalaya` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md` | 2026-11-21T23:28:26.723Z |
+| `learn-dom-h-149b3a5c` | `project://hf-edge0-audio8-tts-realistic-air` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md` | 2026-11-21T23:29:11.135Z |
+| `learn-dom-b-1a9a8a88` | `project://tailscale-tailscale` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md` | 2026-11-21T23:30:18.496Z |

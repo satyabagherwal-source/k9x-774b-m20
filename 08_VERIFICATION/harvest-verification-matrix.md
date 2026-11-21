@@ -11934,3 +11934,11 @@
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T22:57:57.568Z` | `hf-edge0-audio8-tts-realistic-0.6b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-8372CBCD` [Domain D] | Yes (`73ad2c2a...`) |
 | `CYCLE-20261121-O6PD` | `2026-11-21T23:06:00.049Z` | `burner22/numbat` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md` | Yes (`b9d1522a...`) |
 | `CYCLE-20261121-OHS2` | `2026-11-21T23:06:14.402Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md` | Yes (`f65c3302...`) |
+| `CYCLE-20261121-D9ZO` | `2026-11-21T23:25:30.708Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9820` | Yes (`865e8ceb...`) |
+| `CYCLE-20261121-EWSB` | `2026-11-21T23:26:46.907Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9860, Rule 9861, Rule 9862` | Yes (`3cb05979...`) |
+| `CYCLE-20261121-F9F2` | `2026-11-21T23:27:03.278Z` | `Edge0/Audio8-TTS-Realistic-Air` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9863, Rule 9864, Rule 9865` | Yes (`0fc8d3f4...`) |
+| `CYCLE-20261121-FLCF` | `2026-11-21T23:27:18.735Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9866, Rule 9867, Rule 9868` | Yes (`93cc46b6...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T23:27:50.173Z` | `pimalaya-himalaya` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-A2EA49E2` [Domain H] | Yes (`1065078b...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T23:28:26.723Z` | `pimalaya-himalaya` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-DBBC4693` [Domain I] | Yes (`02986d32...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T23:29:11.135Z` | `hf-edge0-audio8-tts-realistic-air` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-149B3A5C` [Domain H] | Yes (`e678eea6...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T23:30:18.496Z` | `tailscale-tailscale` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-B-1A9A8A88` [Domain B] | Yes (`3fa665c7...`) |

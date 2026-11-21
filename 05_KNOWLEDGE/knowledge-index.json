@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T23:06:19.977Z",
+  "last_updated": "2026-11-21T23:30:19.752Z",
   "total_verified_learnings": 9063,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23328,
+  "total_items": 23354,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112425,10 +112425,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "36780d60",
-      "content_hash": "6aa4e1c6bb1496e7d16f31b97f5900008a4427b186e65a6206762628653405a0",
+      "source_version": "1db8e79a",
+      "content_hash": "a40ca13ae5c7e9c31e06fc6608b6cbf205dd9c6d52dc62351787704fb3ba596a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:52:06.272Z"
+      "persisted_at": "2026-11-21T23:26:47.772Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -113010,13 +113010,13 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "repository": "tursodatabase/turso",
-      "source_version": "1db4b548",
-      "content_hash": "eb16b4a8af07be23845a2b5c65c5c1b1b1a2f19f59975cab80d3ec4f09a35889",
+      "source_version": "37096726",
+      "content_hash": "6415f739ea5ebbc42a840eac3990672434bd5cced2c315f20cc8019b97a28332",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T18:52:24.787Z"
+      "persisted_at": "2026-11-21T23:25:31.104Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
@@ -113025,10 +113025,10 @@
       "relative_path": "08_VERIFICATION/tursodatabase-turso-verification-protocol-empirical-defect-shield-for-tursodatab.md",
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "source_version": "93648484",
-      "content_hash": "a8ea52554072985271e9897a3dcc21ad503a1128a367a82086c9a326a623fcf0",
+      "source_version": "37096726",
+      "content_hash": "a38116813fdf904a65dc142820dcefba2600add5e952236919524f2fbf68287f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T19:11:46.727Z"
+      "persisted_at": "2026-11-21T23:25:31.274Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
@@ -113949,10 +113949,10 @@
       "relative_path": "08_VERIFICATION/pimalaya-himalaya-verification-protocol-empirical-defect-shield-for-pimalaya-him.md",
       "title": "Verification Protocol: Empirical Defect Shield for pimalaya/himalaya",
       "repository": "pimalaya/himalaya",
-      "source_version": "a5623dca",
-      "content_hash": "70425eb6e29cbf931ac0d249763bf8f6394931d9652ead5533b77cdec8957ecd",
+      "source_version": "bf9f4e2a",
+      "content_hash": "bbba17849025e49ff3068e708dfc3ac769837cfdd9e45cf686d8ef2c7b4fa399",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T07:35:56.970Z"
+      "persisted_at": "2026-11-21T23:27:19.667Z"
     },
     "candidate_directive-report-zero-progress-for-zero-height-android-keyboards-1731": {
       "item_id": "candidate_directive-report-zero-progress-for-zero-height-android-keyboards-1731",
@@ -114010,9 +114010,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pimalaya-himalaya-learnings",
       "repository": "pimalaya-himalaya-learnings",
       "source_version": "HEAD",
-      "content_hash": "3d169050f2a181838efe6e0aba122748b0155c46531a04dd96852d922a9d48cc",
+      "content_hash": "572e0784fbdce4c184721c9907deeb26325b1b74428fb5a4100a22113be78358",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T07:36:06.980Z"
+      "persisted_at": "2026-11-21T23:28:28.044Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c",
@@ -213586,13 +213586,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "1db4b548",
-      "content_hash": "6a25e4ccfc221674678ea6ffd71ba5bcc62eef7bb297a414f911c022844e69e2",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "37096726",
+      "content_hash": "865e8ceb018de6172440a863c7b20fa0052e1ec429b60c389c41a9c1dda2cc0e",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 8367,
@@ -213647,7 +213647,7 @@
         {
           "number": 9820,
           "title": "run the simulator built with optimizations",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213655,7 +213655,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T18:52:24.174Z",
+      "verified_at": "2026-11-21T23:25:30.482Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223246,8 +223246,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "36780d60",
-      "content_hash": "31728eab23f80bad0cdbab99d7985c16cfb3b709151b09c265c516ffbab13458",
+      "source_version": "1db8e79a",
+      "content_hash": "3cb059791176083ee53ac9e7f08771a29b5d3286e7328610c8e02dd137834fb9",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -223335,6 +223335,21 @@
           "number": 9685,
           "title": "feature/conn25: name lock-requiring methods Locked",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9860,
+          "title": "In-Flight Dial Backlog Throttling for Loopback Test Servers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9861,
+          "title": "Dual-Layer State Cache Invariant: Endpoint Mutations Must Patch Reference Snapshots",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9862,
+          "title": "CI Process Tree Isolation and Handle Decoupling on Windows",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223342,7 +223357,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T00:52:05.513Z",
+      "verified_at": "2026-11-21T23:26:46.670Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223445,9 +223460,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tailscale-tailscale-learnings",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "3ad58e0ec484a4821e1f1e52a5395bcc29418df2f85229cc8d1140dd66f15bba",
+      "content_hash": "f8f62dc540cbc835bfdd91789f134935df34b1678c406283d4d1e377ab2ed620",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:52:14.497Z"
+      "persisted_at": "2026-11-21T23:30:19.752Z"
     },
     "learn-huggingface-stabilityai-stable-diffusion-3-medium": {
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
@@ -224923,25 +224938,25 @@
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-edge0-audio8-tts-realistic-air",
       "artifact_type": "architecture_decision",
       "target_folder": "12_DECISIONS",
-      "relative_path": "12_DECISIONS/ADR-hf-edge0-audio8-tts-realistic-0-6b-adr-subsystem-boundary-modular-decoupling-in-.md",
+      "relative_path": "12_DECISIONS/ADR-hf-edge0-audio8-tts-realistic-air-adr-subsystem-boundary-modular-decoupling-in-e.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in Edge0/Audio8-TTS-Realistic-Air",
       "repository": "Edge0/Audio8-TTS-Realistic-Air",
-      "source_version": "hf-edge0-audio8-tts-realistic-0.6b",
-      "content_hash": "139f8bcc04e0d9fba9e92338a9a7793ccf278ae3175b025a83d402c0d3746474",
-      "domain_letter": "F",
-      "persisted_at": "2026-11-14T05:05:33.904Z"
+      "source_version": "hf-edge0-audio8-tts-realistic-air",
+      "content_hash": "b7f111506757a359fa63e03a99edbbf60216f8c85048b4cdffbc172dbf2c33b3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T23:27:03.907Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-edge0-audio8-tts-realistic-air": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-edge0-audio8-tts-realistic-air",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/hf-edge0-audio8-tts-realistic-0-6b-verification-protocol-empirical-defect-shield.md",
+      "relative_path": "08_VERIFICATION/hf-edge0-audio8-tts-realistic-air-verification-protocol-empirical-defect-shield-.md",
       "title": "Verification Protocol: Empirical Defect Shield for Edge0/Audio8-TTS-Realistic-Air",
       "repository": "Edge0/Audio8-TTS-Realistic-Air",
-      "source_version": "hf-edge0-audio8-tts-realistic-0.6b",
-      "content_hash": "c70e801be4bda4c933cfeed954f0af49ccb39442ddc9609dc2d04fc549ecd724",
+      "source_version": "hf-edge0-audio8-tts-realistic-air",
+      "content_hash": "fab8d8321c5bf9a7b07a97356589970b75406b92a35cca451d19b96567242c06",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T05:05:33.997Z"
+      "persisted_at": "2026-11-21T23:27:04.041Z"
     },
     "learn-github-authzed-spicedb": {
       "learning_id": "learn-github-authzed-spicedb",
@@ -225402,13 +225417,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-edge0-audio8-tts-realistic-",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/hf-edge0-audio8-tts-realistic-0-6b-learnings-verification-protocol-empirical-def.md",
-      "title": "Verification Protocol: Empirical Defect Shield for hf-edge0-audio8-tts-realistic-0.6b-learnings",
-      "repository": "hf-edge0-audio8-tts-realistic-0.6b-learnings",
+      "relative_path": "08_VERIFICATION/hf-edge0-audio8-tts-realistic-air-learnings-verification-protocol-empirical-defe.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-edge0-audio8-tts-realistic-air-learnings",
+      "repository": "hf-edge0-audio8-tts-realistic-air-learnings",
       "source_version": "HEAD",
-      "content_hash": "f501910a89ebb330c4877728348e597b2d201836fde1cd010d1768d71614d8c5",
+      "content_hash": "85887f93cfa04c7af0b82c68aafbb4d8a19d56c804ce7a505d621003638a85aa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T05:08:57.319Z"
+      "persisted_at": "2026-11-21T23:29:12.348Z"
     },
     "learn-huggingface-baidu-unlimited-ocr": {
       "learning_id": "learn-huggingface-baidu-unlimited-ocr",
@@ -244833,16 +244848,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
       "source_version": "hf-edge0-audio8-tts-realistic-air",
-      "content_hash": "3bb2af68d457fd360dbf72782a9b379d30b5621d0611dadfe0ff9d430e59c288",
+      "content_hash": "0fc8d3f4bf16a4e19329741b53c13d31bf753b3d23e4cfc96f39187028582cec",
       "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9863,
+          "title": "Dual-Tier Autoregressive Latent Projection Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9864,
+          "title": "Disjoint Semantic-Acoustic Vocabulary Offsetting Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9865,
+          "title": "Repetition-Aware Windowed Logit Penalization (RAS) Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T07:41:47.059Z",
+      "verified_at": "2026-11-21T23:27:03.036Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -247931,8 +247962,8 @@
       "slug": "pimalaya-himalaya",
       "platform": "github",
       "source_url": "https://github.com/pimalaya/himalaya",
-      "source_version": "a5623dca",
-      "content_hash": "82637fe01b7493f03326b5e828d4108cbfffbed8526a0d728064c6412db6ea89",
+      "source_version": "bf9f4e2a",
+      "content_hash": "93cc46b6c26254e730184e7dd434ff51566cec28cfcf1ce2c9be1ebbcf469f8b",
       "dossier_path": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "promoted_rules": [
@@ -247955,6 +247986,21 @@
           "number": 9540,
           "title": "the family analysis fix-now batch (HIM-1 to HIM-5, HIM-10, HIM-14, HIM-18, HIM-1",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9866,
+          "title": "Pre-Execution Syntax and Argument Verification Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9867,
+          "title": "Lossless Partial-Outcome Reporting Over Silent Dropping",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9868,
+          "title": "Machine API Documentation Leakage Prevention Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -247962,7 +248008,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T07:35:56.254Z",
+      "verified_at": "2026-11-21T23:27:18.523Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -303549,10 +303595,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pimalaya-himalaya-technical-construction-intelligence-pimalaya-himalaya-core-inv.md",
       "title": "Technical Construction Intelligence: pimalaya/himalaya Core Invariants",
       "repository": "pimalaya/himalaya",
-      "source_version": "a5623dca",
-      "content_hash": "5522fac204c7b000637b3d5861342dccffa6a6f543fddba0caaed6a1ff981b79",
+      "source_version": "bf9f4e2a",
+      "content_hash": "8fc996c833874e4ed72897dccc663e9a88d251af1245958ec27f0c04c1cdcc99",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T07:35:56.815Z"
+      "persisted_at": "2026-11-21T23:27:19.388Z"
     },
     "rule-9541": {
       "learning_id": "rule-9541",
@@ -303614,9 +303660,9 @@
       "title": "Technical Construction Intelligence: pimalaya-himalaya-learnings Core Invariants",
       "repository": "pimalaya-himalaya-learnings",
       "source_version": "HEAD",
-      "content_hash": "19027dd5f4b5b33917259bcf6b286b706b0a8df8d2143d448266559b8569d879",
+      "content_hash": "4350d99a10dcc6c6bdddaa3cc201f8f529d28c0972dd8822dc683a2943998468",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T07:36:06.823Z"
+      "persisted_at": "2026-11-21T23:28:27.710Z"
     },
     "candidate_directive-ast-skip-repeated-rule-names-when-resolving-refs": {
       "item_id": "candidate_directive-ast-skip-repeated-rule-names-when-resolving-refs",
@@ -315553,14 +315599,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 9820,
       "title": "run the simulator built with optimizations",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "1db4b548",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "37096726",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-21T18:52:24.174Z"
+      "verified_at": "2026-11-21T23:25:30.482Z"
     },
     "candidate_directive-draft-nuc-128-origins-and-outcomes-of-reasoning-selections": {
       "item_id": "candidate_directive-draft-nuc-128-origins-and-outcomes-of-reasoning-selections",
@@ -317156,6 +317202,336 @@
       "content_hash": "ba8ba491df7b542c20bbf581c5e1e2a8e7e41d9e4a62b2c48cd8aaf1d5502754",
       "domain_letter": "K",
       "persisted_at": "2026-11-21T23:06:18.715Z"
+    },
+    "candidate_directive-run-the-simulator-built-with-optimizations": {
+      "item_id": "candidate_directive-run-the-simulator-built-with-optimizations",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DA65-run-the-simulator-built-with-optimizations.md",
+      "title": "run the simulator built with optimizations",
+      "repository": "tursodatabase/turso",
+      "source_version": "37096726",
+      "content_hash": "d4d2b19dfd103df6199aaf680344a071f02fdee6dacb5eb76251f3bd271fdc6e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T23:25:30.942Z"
+    },
+    "rule-9860": {
+      "learning_id": "rule-9860",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9860,
+      "title": "In-Flight Dial Backlog Throttling for Loopback Test Servers",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "1db8e79a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T23:26:46.670Z"
+    },
+    "rule-9861": {
+      "learning_id": "rule-9861",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9861,
+      "title": "Dual-Layer State Cache Invariant: Endpoint Mutations Must Patch Reference Snapshots",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "1db8e79a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T23:26:46.670Z"
+    },
+    "rule-9862": {
+      "learning_id": "rule-9862",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9862,
+      "title": "CI Process Tree Isolation and Handle Decoupling on Windows",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "1db8e79a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T23:26:46.670Z"
+    },
+    "candidate_directive-in-flight-dial-backlog-throttling-for-loopback-test-servers": {
+      "item_id": "candidate_directive-in-flight-dial-backlog-throttling-for-loopback-test-servers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JGCN-in-flight-dial-backlog-throttling-for-loopback-test-servers.md",
+      "title": "In-Flight Dial Backlog Throttling for Loopback Test Servers",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1719be09f62cdf2756de3e20340ac16503dbff2afec7af624cde8bb0f6a327f5",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-21T23:30:18.914Z"
+    },
+    "candidate_directive-dual-layer-state-cache-invariant-endpoint-mutations-must-patch-reference-snapsho": {
+      "item_id": "candidate_directive-dual-layer-state-cache-invariant-endpoint-mutations-must-patch-reference-snapsho",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JGCN-dual-layer-state-cache-invariant-endpoint-mutations-must-patch-reference-snapsho.md",
+      "title": "Dual-Layer State Cache Invariant: Endpoint Mutations Must Patch Reference Snapshots",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "01dfeaf4e0f62685bd915fee7d3f2fc41b6f5abe35ce3d0fd76e5220e2220452",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T23:30:19.133Z"
+    },
+    "candidate_directive-ci-process-tree-isolation-and-handle-decoupling-on-windows": {
+      "item_id": "candidate_directive-ci-process-tree-isolation-and-handle-decoupling-on-windows",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JGDE-ci-process-tree-isolation-and-handle-decoupling-on-windows.md",
+      "title": "CI Process Tree Isolation and Handle Decoupling on Windows",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a307dfcaa9a750074f6843b9a08c630e660d38b1b0fa14f5ebc3b942da6bf73d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T23:30:19.310Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-tailscale-tailscale-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-tailscale-tailscale-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-tailscale-tailscale-quality-verification-intelligence-tailscale-tailscale-core-i.md",
+      "title": "Quality & Verification Intelligence: tailscale/tailscale Core Invariants",
+      "repository": "tailscale/tailscale",
+      "source_version": "1db8e79a",
+      "content_hash": "84dd4a0d9b5ec3f9cbb524a94ef60a7242c8ea086529cb48b8641033e369d9a6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T23:26:47.616Z"
+    },
+    "rule-9863": {
+      "learning_id": "rule-9863",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9863,
+      "title": "Dual-Tier Autoregressive Latent Projection Invariant",
+      "source_url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
+      "source_version": "hf-edge0-audio8-tts-realistic-air",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T23:27:03.036Z"
+    },
+    "rule-9864": {
+      "learning_id": "rule-9864",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9864,
+      "title": "Disjoint Semantic-Acoustic Vocabulary Offsetting Invariant",
+      "source_url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
+      "source_version": "hf-edge0-audio8-tts-realistic-air",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T23:27:03.036Z"
+    },
+    "rule-9865": {
+      "learning_id": "rule-9865",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9865,
+      "title": "Repetition-Aware Windowed Logit Penalization (RAS) Invariant",
+      "source_url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
+      "source_version": "hf-edge0-audio8-tts-realistic-air",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T23:27:03.036Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-edge0-audio8-tts-realistic-air-core-invarian": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-edge0-audio8-tts-realistic-air-core-invarian",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-edge0-audio8-tts-realistic-air-technical-construction-intelligence-edge0-audi.md",
+      "title": "Technical Construction Intelligence: Edge0/Audio8-TTS-Realistic-Air Core Invariants",
+      "repository": "Edge0/Audio8-TTS-Realistic-Air",
+      "source_version": "hf-edge0-audio8-tts-realistic-air",
+      "content_hash": "835c0e01f85ebd812dbb97767fbd4b13b96bd80fb8bbfbd0a2da50b211f24e6f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T23:27:03.735Z"
+    },
+    "rule-9866": {
+      "learning_id": "rule-9866",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9866,
+      "title": "Pre-Execution Syntax and Argument Verification Invariant",
+      "source_url": "https://github.com/pimalaya/himalaya",
+      "source_version": "bf9f4e2a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T23:27:18.523Z"
+    },
+    "rule-9867": {
+      "learning_id": "rule-9867",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9867,
+      "title": "Lossless Partial-Outcome Reporting Over Silent Dropping",
+      "source_url": "https://github.com/pimalaya/himalaya",
+      "source_version": "bf9f4e2a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T23:27:18.523Z"
+    },
+    "rule-9868": {
+      "learning_id": "rule-9868",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9868,
+      "title": "Machine API Documentation Leakage Prevention Invariant",
+      "source_url": "https://github.com/pimalaya/himalaya",
+      "source_version": "bf9f4e2a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T23:27:18.523Z"
+    },
+    "candidate_directive-pre-execution-syntax-and-argument-verification-invariant": {
+      "item_id": "candidate_directive-pre-execution-syntax-and-argument-verification-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H23H-pre-execution-syntax-and-argument-verification-invariant.md",
+      "title": "Pre-Execution Syntax and Argument Verification Invariant",
+      "repository": "pimalaya-himalaya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dca1298176d481837f653ec733c333527feeb046b0905b6a36d2437f3a15eb33",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T23:28:27.103Z"
+    },
+    "candidate_directive-lossless-partial-outcome-reporting-over-silent-dropping": {
+      "item_id": "candidate_directive-lossless-partial-outcome-reporting-over-silent-dropping",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H23I-lossless-partial-outcome-reporting-over-silent-dropping.md",
+      "title": "Lossless Partial-Outcome Reporting Over Silent Dropping",
+      "repository": "pimalaya-himalaya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "efdd38c5158bb862306f928e825c0650a26977627b010998f0ea351016a6fc9d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T23:28:27.338Z"
+    },
+    "candidate_directive-machine-api-documentation-leakage-prevention-invariant": {
+      "item_id": "candidate_directive-machine-api-documentation-leakage-prevention-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H23I-machine-api-documentation-leakage-prevention-invariant.md",
+      "title": "Machine API Documentation Leakage Prevention Invariant",
+      "repository": "pimalaya-himalaya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "76d97e6d56e1a5251f76461c9cb9e6a45299fe269d69804d40dbe5fbc859a7ac",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T23:28:27.509Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pimalaya-himalaya": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pimalaya-himalaya",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-pimalaya-himalaya-adr-subsystem-boundary-modular-decoupling-in-pimalaya-himalaya.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in pimalaya/himalaya",
+      "repository": "pimalaya/himalaya",
+      "source_version": "bf9f4e2a",
+      "content_hash": "9305d2bbdebbd6e4402b6d7c36753af795d8dd04eb9338d955d5a242d890cc65",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T23:27:19.541Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pimalaya-himalaya-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pimalaya-himalaya-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-pimalaya-himalaya-learnings-adr-subsystem-boundary-modular-decoupling-in-pimalay.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in pimalaya-himalaya-learnings",
+      "repository": "pimalaya-himalaya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "492e7471f050db2eb53c1b61bf67e5002c6879455a0616598d14418521961573",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T23:28:27.895Z"
+    },
+    "candidate_directive-dual-tier-autoregressive-latent-projection-invariant": {
+      "item_id": "candidate_directive-dual-tier-autoregressive-latent-projection-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I0A7-dual-tier-autoregressive-latent-projection-invariant.md",
+      "title": "Dual-Tier Autoregressive Latent Projection Invariant",
+      "repository": "hf-edge0-audio8-tts-realistic-air-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eb0398d3393eaf532d56b81f343400df0f1858242ef0de48bdef4d423db8e473",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T23:29:11.408Z"
+    },
+    "candidate_directive-disjoint-semantic-acoustic-vocabulary-offsetting-invariant": {
+      "item_id": "candidate_directive-disjoint-semantic-acoustic-vocabulary-offsetting-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I0A8-disjoint-semantic-acoustic-vocabulary-offsetting-invariant.md",
+      "title": "Disjoint Semantic-Acoustic Vocabulary Offsetting Invariant",
+      "repository": "hf-edge0-audio8-tts-realistic-air-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1f7e5192e322f7088482c12bc2df5d3be6aeb33e94cc966195682cb08c9a2d66",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T23:29:11.633Z"
+    },
+    "candidate_directive-repetition-aware-windowed-logit-penalization-ras-invariant": {
+      "item_id": "candidate_directive-repetition-aware-windowed-logit-penalization-ras-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I0A8-repetition-aware-windowed-logit-penalization-ras-invariant.md",
+      "title": "Repetition-Aware Windowed Logit Penalization (RAS) Invariant",
+      "repository": "hf-edge0-audio8-tts-realistic-air-learnings",
+      "source_version": "HEAD",
+      "content_hash": "330706b28bd4bbfc2049903729284a70043fa5aed01e2eb5c05f771fa91185f1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T23:29:11.816Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-edge0-audio8-tts-realistic-air-learnings-": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-hf-edge0-audio8-tts-realistic-air-learnings-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-edge0-audio8-tts-realistic-air-learnings-technical-construction-intelligence-.md",
+      "title": "Technical Construction Intelligence: hf-edge0-audio8-tts-realistic-air-learnings Core Invariants",
+      "repository": "hf-edge0-audio8-tts-realistic-air-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d3aa525502d70b72a0c8c4a3eb41870da97aa6c8ab7a3b3b35d27caeee4a490f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T23:29:12.009Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hf-edge0-audio8-tts-realistic-air-l": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hf-edge0-audio8-tts-realistic-air-l",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-hf-edge0-audio8-tts-realistic-air-learnings-adr-subsystem-boundary-modular-decou.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in hf-edge0-audio8-tts-realistic-air-learnings",
+      "repository": "hf-edge0-audio8-tts-realistic-air-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a8d353aba96b91e4122bd34c370679302fc99907cf7c38b1f5e1bba099026f64",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T23:29:12.200Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-tailscale-tailscale-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-tailscale-tailscale-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-tailscale-tailscale-learnings-quality-verification-intelligence-tailscale-tailsc.md",
+      "title": "Quality & Verification Intelligence: tailscale-tailscale-learnings Core Invariants",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "da2e3f330e1f7742731232adec5b6f6f9e618dadd88b3aa5568f0490cec4b5ff",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T23:30:19.517Z"
     }
   },
   "ai-builder-brain": {

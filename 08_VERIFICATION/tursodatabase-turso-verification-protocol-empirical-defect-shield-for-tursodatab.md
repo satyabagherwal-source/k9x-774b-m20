@@ -4,22 +4,22 @@
 {
   "source_repository": "tursodatabase/turso",
   "source_url": "https://github.com/tursodatabase/turso",
-  "source_version": "93648484",
+  "source_version": "37096726",
   "license": "MIT",
-  "timestamp": "2026-11-20T19:11:46.375Z",
+  "timestamp": "2026-11-21T23:25:30.942Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tursodatabase-turso",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/turso) (Revision: `93648484`).  
-> **License**: MIT | **Timestamp**: `2026-11-20T19:11:46.375Z`  
+> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/turso) (Revision: `37096726`).  
+> **License**: MIT | **Timestamp**: `2026-11-21T23:25:30.942Z`  
 > **Learning ID**: `learn-github-tursodatabase-turso`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tursodatabase/turso` (Commit: `93648484`)
+- **Target Repository**: `tursodatabase/turso` (Commit: `37096726`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T19:06:33.647Z  
+> **Harvest Timestamp**: 2026-11-21T23:25:29.825Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25302 stars
+- **Stars / Engagement**: 25315 stars
 
 ---
 
@@ -1443,11 +1443,13 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12168** (2026-11-20): **ci/dotnet: pin .NET 10 SDK in iOS package validation**
-  *Symptoms*: The `validate-ios-package` job fails at `dotnet workload install ios --version 10.0.401`:  ``` Workload pack 'Microsoft.NET.Runtime.Emscripten.Node.net10' in manifest 'microsoft.net.workload.emscripten.net10' [.../sdk-manifests/11.0.100/...] conflicts with manifest 'microsoft.net.workload.emscripten.current' [.../sdk-manifests/10.0.100/...] ```  The macos-26 runner image now ships a .NET 11 SDK. `actions/setup-dotnet` with `dotnet-version: 10.0.x` installs a .NET 10 SDK but does not stop `dotnet` from choosing the newest SDK, and `bindings/dotnet` has no global.json. The workload install therefore appears to run under SDK 11 and mixes 11.0.100 and 10.0.100 workload manifests. This cause comes from the manifest paths in the error, because the failing log does not print the SDK version.  This PR adds a step to the iOS job only. The step writes `bindings/dotnet/global.json`, pinning the version that setup-dotnet reports as installed, with `rollForward: latestFeature`. The workload install, restore and build in this job run from `bindings/dotnet`, so all of them pick up the global.json. The step prints `dotnet --version` and `dotnet --list-sdks`, so the log shows which SDK ran. The 10.0.401 workload pin and its Xcode 26 comment stay as they are. Other jobs are not changed.
+- **Issue #12230** (2026-11-21): **ci: make PR CI faster**
+  *Symptoms*: ## Description  On main, PR CI takes 9.3 min p50 and 15.9 min p90, from push until the last job ends. This PR removes slow or duplicated work from the jobs that end last. Estimate after this PR: **8.2 min p50, 10.4 min p90.**  | Change | Job | Time saved per job | Reason | |---|---|---|---| | Build `limbo_sim` with a new `simulator` Cargo profile: dev with opt-level 1 and `debug = "line-tables-only"` | Simulator | One WriteStress seed runs in 41 s instead of 534 s (on a Mac) | On main, CI runs an unoptimized simulator. The profile inherits dev, so debug assertions and overflow checks stay on. | | Remove 4 steps: install JS dependencies, build common package, build native binding, build TypeScript | JS sqltest | 73 s p50, 147 s p90 (removed steps, CI) | `make run-js` does all 4 again. It builds the binding with `test_helper`, so the binding from the removed step was never used. | | Add `CARGO_PROFILE_BENCH_LTO: "false"` to `codspeed-memory.yml`, plus the other 3 env vars from `codspeed.yml` | CodSpeed memory | Build after a `turso_core` change: 80 s instead of 106 s (on a Mac) | `codspeed.yml` sets this env var, but a called workflow does not get the caller's `env`. So on main the memory build uses thin LTO. | | Remove the "Memory leak check" step | Rust, `extra` suite | 56 s p50 (removed step, CI) | The `leak_tests` binary is already in the nextest run on Linux, macOS and Windows. The removed step built `turso_core` a second time with other features. |  How the estimate was m
+  **Post-Mortem & Fix Analysis**:
+  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  A maintainer asked Autofixer to review this pull request. The review of `bd1210755865` is [here](https://github.com/tursodatabase/turso/pull/12230#pullrequestreview-6003528435).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge. Autofixer reviews every new commit pushed to this pull request, up to 3 reviews each time the `autofixer: review-requested` label is added. It then removes the label; adding the label again asks for more.</sub>  <!-- autofixer:contributor-review:bd12107558652e647bcae7150e9bd5b396f89a03 --> <!-- autofixer:contributor-review-recommends:bd12107558652e647bcae7150e9bd5b396f89a03 --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiYmQxMjEwNzU1ODY1MmU2NDdiY2FlNzE1MGU5YmQ1YjM5NmY4OWEwMyIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMjFUMDY6Mjg6MDAuNzk0WiIsInZlcmRpY3QiOiJhcHByb3ZlIiwicmVjb21tZW5kYXRpb24
 
-- **Issue #12164** (2026-11-20): **testing/sqltest: record known PostgreSQL differences as @compat-gap tests**
-  *Symptoms*: <img width="1400" height="1530" alt="image" src="https://github.com/user-attachments/assets/c7b3d264-8794-41c8-a627-63ab83bcefb9" />  ## Summary  - Adds `@compat-gap` to sqltest. - It marks a test where tursopg differs from PostgreSQL. - 424 existing tursopg overrides are now tagged.  ``` @compat-gap "type:bool" test like-case-sensitive-literal {     SELECT 'ABC' LIKE 'abc', 'abc' LIKE 'a%', 'abc' LIKE 'A%'; } # PostgreSQL 18 (checked on real PG in CI) expect {     f|t|f } # tursopg today: wrong expect @tursopg {     0|1|0 } ```  ## Why  - Write tests before the feature exists:  ``` @compat-gap "function:json_build_object" test json-build-object {     SELECT json_build_object('id', id, 's', s) FROM t WHERE id = 1; } expect {     {"id" : 1, "s" : "abc"} } @sqlstate 42883 expect @tursopg error {} ```  - When the feature lands, CI tells you:  ``` gap fixed: remove @compat-gap and the expect @tursopg override ```  - CI counts gaps per feature:  | label | gaps | refused | error-mismatch | accepts-invalid | wrong | |---|---:|---:|---:|---:|---:| | `function:age` | 20 | 13 | 7 | 0 | 0 | | `function:format_type` | 3 | 0 | 0 | 0 | 3 | | `function:json_build_object` | 25 | 25 | 0 | 0 | 0 |  - If a gap gets worse, CI fails:  ``` known gap type:bool: tursopg returns NULL|NULL|NULL, PostgreSQL returns f|t|f, recorded tursopg answer 0|1|0 ```  - If someone deletes a gap test, CI fails:  ``` gaps/operators-functions.sqltest: gap 
+- **Issue #12229** (2026-11-21): **core/vdbe: use the test dialect in test_serialize_array_from_blob**
+  *Symptoms*: Core no longer has a \`SqliteDialect\`; the frontends define it. The bytea hex change added a call with \`crate::SqliteDialect\` to a core unit test while the parser-free core change was removing it, so the \`turso_core\` tests did not compile on main.  The test now uses \`DialectThatCannotParse\`, like the other core unit tests that need a dialect but no SQL. It keeps the default blob element format that the test expects.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1464,581 +1466,313 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `be08cdd2` (2026-11-18)
-**Commit Message**: tests: fix compilation and lint errors after main rebase
+### Incident Patch 1: `3885b0ea` (2026-11-21)
+**Commit Message**: ci: run the simulator built with optimizations
 
-Use the renamed logical-log sync API while preserving the encrypted restore rejection checks. Assert open failures directly with expect_err so the page-size regressions pass clippy.
+The simulator jobs ran a dev-profile (unoptimized) limbo_sim. Each job runs
+its iterations four at a time, so it takes as long as its slowest seed, and
+WriteStress seeds took 100 to 475 s each in CI. WriteStress (7.2 min p50,
+12.2 min p90) was the last check to finish on 7 of 34 pull request pushes.
 
-Tests: encryption regressions, explicit page-size regressions, seeded encryption fuzzer, and core_tester all-features/all-targets clippy
+The new simulator profile is dev with opt-level 1, so debug assertions and
+overflow checks stay on. Measured locally with CARGO_INCREMENTAL=0, as in CI:
 
-**File**: `tests/integration/database_open.rs` (modified, +4/-8)
+  WriteStress seed 10093952252616453925   dev 534 s   opt-level 1 41 s   opt-level 2 39 s
+  WriteStress seed 963397087373001144     dev 212 s                      opt-level 2 17 s
+  rebuild after a turso_core change       dev  33 s   opt-level 1 69 s   opt-level 2 90 s
+
+opt-level 2 runs no faster than 1 and builds slower, so the profile uses 1.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/rust.yml` (modified, +5/-2)
 ```diff
-@@ -2178,8 +2178,7 @@ mod explicit_page_size {
-                     for api in [OpenApi::Open, OpenApi::OpenWithStorage, OpenApi::OpenAsync] {
-                         let error =
-                             open(io.clone(), path, options.clone().page_size(requested), api)
--                                .err()
--                                .expect("cached open accepted a mismatching page size");
-+                                .expect_err("cached open accepted a mismatching page size");
-                         assert_mismatch(error, requested, actual);
- 
-                         for size in [None, Some(actual)] {
-@@ -2208,8 +2207,7 @@ mod explicit_page_size {
-                                 })
-                                 .page_size(requested);
-                             let error = open(io.clone(), path, wrong_key, api)
--                                .err()
--                                .expect("cached open accepted the wrong key");
-+                                .expect_err("cached open accepted the wrong key");
-                             assert!(
-                                 matches!(
-                                     error,
-@@ -2260,8 +2258,7 @@ mod explicit_page_size {
-                     OpenApi::RawOpenAsync,
-                 ] {
-                     let error = open(io.clone(), path, options.clone().page_size(requested), api)
--                        .err()
--                        .expect("cold open accepted a mismatching page size");
-+                        .expect_err("cold open accepted a mismatching page size");
-                     assert_mismatch(error, requested, actual);
-                     assert_eq!(std::fs::read(path)?, original);
- 
-@@ -2274,8 +2271,7 @@ mod explicit_page_size {
-                             })
-                             .page_size(requested);
-                         let error = open(io.clone(), path, wrong_key, api)
--                            .err()
--                            .expect("cold open accepted the wrong key");
-+                            .expect_err("cold open accepted the wrong key");
-                         assert!(
-                             matches!(
-                                 error,
+@@ -433,8 +433,11 @@ jobs:
+           prefix-key: "v1-rust"
+           cache-on-failure: true
+           save-if: ${{ github.ref == 'refs/heads/main' }}
++      # The simulator profile (Cargo.toml) optimizes the code but keeps
++      # debug assertions; simulations run about ten times faster than with
++      # the dev profile.
+       - name: Build simulator
+-        run: cargo build -p limbo_sim --bin limbo_sim --locked
++        run: cargo build -p limbo_sim --bin limbo_sim --locked --profile simulator
+       - name: Simulator ${{ matrix.profile.name }}
+         env:
+           SIM_ARGS: ${{ matrix.profile.args }}
+@@ -444,7 +447,7 @@ jobs:
+             i="$1"
+             log="sim-run-$i.log"
+             read -r -a args <<< "$SIM_ARGS"
+-            if ./target/debug/limbo_sim "${args[@]}" >"$log" 2>&1; then
++            if ./target/simulator/limbo_sim "${args[@]}" >"$log" 2>&1; then
+               echo "iteration $i ok: $(grep -m1 "^seed: " "$log")"
+             else
+               echo "iteration $i FAILED:"
 ```
 
-**File**: `tests/integration/query_processing/encryption.rs` (modified, +1/-1)
+**File**: `Cargo.toml` (modified, +9/-0)
 ```diff
-@@ -2690,7 +2690,7 @@ fn encrypted_restore_rejects_storage_changes_but_allows_schema_publication() ->
-             owner.publish_schema_after_external_restore()?;
-             if let Some(store) = owner.mv_store().as_ref() {
-                 assert!(store.reset_logical_log_after_external_restore().is_err());
--                if let Some(completion) = store.sync_logical_log_after_external_restore(&owner)? {
-+                if let Some(completion) = store.sync_logical_log(&owner)? {
-                     tmp.io.wait_for_completion(completion)?;
-                 }
-             }
+@@ -196,6 +196,15 @@ shuttle = { version = "0.8.1" }
+ [profile.dev.package.similar]
+ opt-level = 3
+ 
++# CI runs the simulator built with this profile. A simulation runs about ten
++# times faster than with the dev profile, and a rebuild after a change to
++# turso_core takes about twice as long. opt-level 2 runs no faster than 1.
++# Debug assertions and overflow checks stay on, as in dev.
++[profile.simulator]
++inherits = "dev"
++opt-level = 1
++debug = "line-tables-only"
++
+ [profile.release]
+ debug = "line-tables-only"
+ codegen-units = 4
 ```
 
 ---
 
-### Incident Patch 2: `a6ac463f` (2026-11-17)
-**Commit Message**: core/database: require authenticated pagers before exposing connections
+### Incident Patch 2: `76da890c` (2026-11-21)
+**Commit Message**: Merge 'perf: fix make bench-tpc-c and remove the leftover checkpoint-bench file' from Jussi Saurio
 
-Reject missing keys and late encryption, authenticate before publishing
-layout or resolving roles, and check pager/database identity when
-constructing a connection. Assert authentication before page allocation
-and migrate existing failures from query time to initialization time.
+On main, `make bench-tpc-c` fails: it runs `perf/tpc-c/tpcc-
+turso/run_bench.sh`, and that directory does not exist. This PR points
+the target at `perf/tpc-c/run_bench.sh`, where `635b5c063e` put the
+TPC-C harness.
 
-**File**: `core/database.rs` (modified, +43/-7)
-```diff
-@@ -1715,7 +1715,7 @@ impl Database {
-                     state.header_validation_state = hv_state;
-                     let pager = return_if_io!(result);
- 
--                    let mut db = state
-+                    let db = state
-                         .building_db
-                         .take()
-                         .expect("building_db must be set in Init phase");
-@@ -1730,8 +1730,6 @@ impl Database {
-                             "Either WAL or MVStore must be enabled"
-                         );
-                     }
--                    let _ = &mut db;
--
-                     // Wrap db in Arc before connecting
-                     let db = Arc::new(db);
- 
-@@ -2004,6 +2002,18 @@ impl Database {
-             )
-             .into());
-         }
-+        if self.pager_state.encryption_cipher() == CipherMode::None && encryption_key.is_some() {
-+            return Err(LimboError::InvalidArgument(
-+                "database was opened without encryption".into(),
-+            )
-+            .into());
-+        }
-+        if self.pager_state.encryption_cipher() != CipherMode::None && encryption_key.is_none() {
-+            return Err(LimboError::InvalidArgument(
-+                "encrypted database requires an encryption key".into(),
-+            )
-+            .into());
-+        }
-         loop {
-             match st {
-                 InitState::Start => {
-@@ -2049,9 +2059,22 @@ impl Database {
- 
-                     *st = InitState::ReadPage1 {
-                         pager: Box::new(pager),
-+                        encryption_validation: EncryptionValidationState::default(),
-                     };
-                 }
--                InitState::ReadPage1 { pager } => {
-+                InitState::ReadPage1 {
-+                    pager,
-+                    encryption_validation,
-+                } => {
-+                    match pager.validate_encryption(encryption_validation) {
-+                        Ok(IOResult::Done(())) => {}
-+                        Ok(IOResult::IO(io)) => return Ok(IOResult::IO(io)),
-+                        Err(err) => {
-+                            pager.end_read_tx();
-+                            return Err(err);
-+                        }
-+                    }
-+                    pager.set_page_size(pager.get_page_size_unchecked());
-                     // Read page 1 within the read transaction to determine the
-                     // autovacuum mode. The read tx stays open across an IO
-                     // yield here (re-entry resumes the read); we only end it
-@@ -2121,7 +2144,7 @@ impl Database {
-                     pager.end_read_tx();
-                     pager.set_auto_vacuum_mode(mode);
- 
--                    let InitState::ReadPage1 { pager } = std::mem::take(st) else {
-+                    let InitState::ReadPage1 { pager, .. } = std::mem::take(st) else {
-                         unreachable!("state is ReadPage1");
-                     };
-                     return Ok(IOResult::Done(*pager));
-@@ -2743,7 +2766,6 @@ impl Database {
-         pager: Option<Arc<Pager>>,
-         stats: StatsRefresh,
-     ) -> Result<Arc<Connection>> {
--        let role = self.resolve_session_role(&opts.role)?;
-         let ConnectOpts {
-             encryption_key,
-             page_codec,
-@@ -2769,12 +2791,16 @@ impl Database {
-             // before reading page 1. This is required for reopening encrypted databases.
-             Arc::new(self._init(encryption_key.as_ref(), page_codec.clone())?)
-         };
-+        turso_assert!(
-+            pager.is_authenticated(),
-+            "connection initialization must authenticate its pager"
-+        );
-         let default_cache_size = pager
-             .io
-             .block(|| pager.with_header(|header| header.default_page_cache_size))
-             .unwrap_or_default()
-             .get();
--
-+        let role = self.resolve_session_role(&opts.role)?;
-         let conn = self.new_connection(
-             role,
-             is_mvcc_bootstrap_connection,
-@@ -2837,6 +2863,16 @@ impl Database {
-         default_cache_size: i32,
-         context: ConnectionContext,
-     ) -> Result<Arc<Connection>> {
-+        if !pager.shares_database_state(&self.pager_state) {
-+            return Err(LimboError::InvalidArgument(
-+                "connection pager belongs to another database".into(),
-+            ));
-+        }
-+        if !pager.is_authenticated() {
-+            return Err(LimboError::InvalidArgument(
-+                "connection pager has not completed authentication".into(),
-+            ));
-+        }
-         let encryption_cipher = self.encryption_cipher_mode.get();
-         let conn = Arc::new(Connection {
-             db: self.clone(),
+It also deletes `perf/checkpoint-bench/src/main.rs`. That directory has
+no `Cargo.toml` and is not a workspace member, so nothing builds the
+file. `85c091e17c` deleted the crate, and `28af7f1b6e` re-added only
+`main.rs`.
+
+Ran `make bench-tpc-c` with this PR in a Linux container (aarch64, gcc).
+Last lines of the report:
+
+```
+  Turso / SQLite ratio: 0.14x
+  Winner: sqlite (+627.4%)
 ```
 
-**File**: `core/storage/pager.rs` (modified, +12/-0)
+Not fixed here: the harness does not compile on macOS, because it uses
+`timer_t`.
+
+A broken Makefile target and a file that no build includes.
+
+Claude Code found both items, made the change, ran the target, and wrote
+this text.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Closes #12222
+
+**File**: `Makefile` (modified, +1/-1)
 ```diff
-@@ -3412,6 +3412,10 @@ impl Pager {
+@@ -199,7 +199,7 @@ docker-cli-run:
+ 	docker run -it -v ./:/app turso-cli
  
-     #[instrument(skip_all, level = Level::DEBUG)]
-     pub fn maybe_allocate_page1(&self) -> IOResultOr<()> {
-+        turso_assert!(
-+            self.is_authenticated(),
-+            "page allocation requires an authenticated pager"
-+        );
-         if !self.db_initialized() {
-             if let Some(_lock) = self.shared.init_lock.try_lock() {
-                 return Ok(self.allocate_page1()?.map(|_| ()));
-@@ -5801,6 +5805,10 @@ impl Pager {
+ bench-tpc-c:
+-	@cd perf/tpc-c/tpcc-turso && ./run_bench.sh
++	@cd perf/tpc-c && ./run_bench.sh
+ .PHONY: bench-tpc-c
  
-     #[instrument(skip_all, level = Level::DEBUG)]
-     pub fn allocate_page1(&self) -> IOResultOr<PageRef> {
-+        turso_assert!(
-+            self.is_authenticated(),
-+            "page allocation requires an authenticated pager"
-+        );
-         let state = self.allocate_page1_state.read().clone();
-         match state {
-             AllocatePage1State::Start => {
-@@ -6298,6 +6306,10 @@ impl Pager {
-         Ok(IOResult::Done(result))
-     }
- 
-+    pub(crate) fn shares_database_state(&self, shared: &Arc<SharedPagerState>) -> bool {
-+        Arc::ptr_eq(&self.shared, shared)
-+    }
-+
-     pub fn is_encryption_ctx_set(&self) -> bool {
-         self.io_ctx.read().encryption_context().is_some()
-     }
+ merge-pr:
 ```
 
-**File**: `tests/integration/query_processing/encryption.rs` (modified, +25/-30)
+**File**: `perf/checkpoint-bench/src/main.rs` (removed, +0/-684)
 ```diff
-@@ -140,18 +140,15 @@ fn run_corruption_associated_data_bytes_test(
-             test_db_path.to_str().unwrap()
-         );
- 
--        let (_io, conn) = turso_core::Connection::from_uri(
--            &uri,
--            DatabaseOpts::new().with_encryption(ENABLE_ENCRYPTION),
--            Arc::new(SqliteDialect),
--        )
--        .expect("opening the corrupted DB should not fail at the URI level");
+@@ -1,684 +0,0 @@
+-//! Multithreaded MVCC checkpoint benchmark: TRUNCATE (blocking) vs PASSIVE (non-blocking).
+-//!
+-//! Concurrent writer and reader tasks hammer a small table while the auto-checkpoint fires
+-//! aggressively (low `mvcc_checkpoint_threshold`). The blocking Truncate checkpoint takes the
+-//! global lock for the whole checkpoint, so transactions stall whenever one runs — visible as
+-//! tail-latency spikes and throughput dips. The passive checkpoint only contends for a brief
+-//! publish window. We record per-operation latency with timestamps, so the output includes a
+-//! time series (CSV + self-contained SVG plots) that makes contention visible.
+-//!
+-//! File sizes (db / -wal / logical log) are reported per mode as a "did checkpointing keep up"
+-//! signal: if checkpoints fall behind, the logical log and WAL grow without bound during the run.
+-//!
+-//! Example:
+-//!   cargo run --profile bench-profile -p mvcc-checkpoint-bench -- \
+-//!       --writers 8 --readers 8 --duration 15 --rows 2000 --checkpoint-threshold 4096
 -
--        let result = run_query_on_row(tmp_db, &conn, "SELECT * FROM test", |_row: &Row| {});
+-use std::path::{Path, PathBuf};
+-use std::sync::Arc;
+-use std::time::{Duration, Instant};
 -
--        assert_that!(result)
--            .described_as(format!("accessing an encrypted database with corrupted associated data at position {corrupt_pos}"))
--            .is_err();
-+        assert!(
-+            turso_core::Connection::from_uri(
-+                &uri,
-+                DatabaseOpts::new().with_encryption(true),
-+                Arc::new(SqliteDialect)
-+            )
-+            .is_err(),
-+            "corrupted associated data at {corrupt_pos}"
-+        );
-     }
- 
-     Ok(())
-@@ -249,11 +246,12 @@ fn test_per_page_encryption(tmp_db: TempDatabase) -> anyhow::Result<()> {
-             "file:{}?cipher=aegis256&hexkey=b1bbfda4f589dc9daaf004fe21111e00dc00c98237102f5c7002a5669fc76377",
-             db_path.to_str().unwrap()
-         );
--        let (_io, conn) = turso_core::Connection::from_uri(&uri, opts, Arc::new(SqliteDialect))?;
--        let result = run_query_on_row(&tmp_db, &conn, "SELECT * FROM test", |_row: &Row| {});
--        assert_that!(result)
--            .described_as("accessing an encrypted database with the wrong key")
--            .is_err();
-+        assert!(matches!(
-+            turso_core::Connection::from_uri(&uri, opts, Arc::new(SqliteDialect)),
-+            Err(LimboError::CompletionError(
-+                CompletionError::DecryptionError { .. }
-+            ))
-+        ));
-     }
-     {
-         // test connecting to encrypted db using insufficient encryption parameters in URI.
-@@ -277,11 +275,10 @@ fn test_per_page_encryption(tmp_db: TempDatabase) -> anyhow::Result<()> {
-     }
-     {
-         // test connecting to encrypted db without using URI.
--        let conn = tmp_db.connect_limbo();
--        let result = run_query_on_row(&tmp_db, &conn, "SELECT * FROM test", |_row: &Row| {});
--        assert_that!(result)
--            .described_as("accessing an encrypted database without using the URI")
--            .is_err();
-+        assert!(tmp_db
-+            .db
-+            .connect(ConnectOpts::new(turso_core::SessionRole::Superuser))
-+            .is_err());
-     }
- 
-     Ok(())
-@@ -407,14 +404,12 @@ fn test_corruption_turso_magic_bytes(tmp_db: TempDatabase) -> anyhow::Result<()>
-             db_path.to_str().unwrap()
-         );
- 
--        let (_io, conn) = turso_core::Connection::from_uri(&uri, opts, Arc::new(SqliteDialect))?;
--        let result = run_query_on_row(&tmp_db, &conn, "SELECT * FROM test", |_row: &Row| {});
+-use clap::Parser;
+-use tokio::sync::Mutex;
+-use turso::Builder;
 -
--        assert_that!(result)
--            .described_as("accessing an encrypted database with corrupted Turso magic bytes")
--            .err()
--            .display_string()
--            .contains("Decryption failed");
-+        assert!(matches!(
-+            turso_core::Connection::from_uri(&uri, opts, Arc::new(SqliteDialect)),
-+            Err(LimboError::CompletionError(
-+                CompletionError::DecryptionError { .. }
-+            ))
-+        ));
-     }
- 
-     Ok(())
+-#[derive(Parser, Clone)]
+-#[command(about = "Compare TRUNCATE vs PASSIVE MVCC checkpoint latency/throughput")]
+-struct Args {
+-    /// Concurrent writer tasks (each runs BEGIN CONCURRENT / UPDATE / COMMIT in a loop).
+-    #[arg(long, default_value_t = 4)]
+-    writers: usize,
+-    /// Concurrent reader tasks (each runs point SELECTs in a loop).
+-    #[arg(long, default_value_t = 4)]
+-    readers: usize,
+-    /// Measurement duration per mode, in seconds.
+-    #[arg(long, default_value_t = 10)]
+-    duration: u64,
+-    /// Rows seeded into the table (also the key space writers/readers touch).
+-    #[arg(long, default_value_t = 1000)]
+-    rows: i64,
+-    /// `PRAGMA mvcc_checkpoint_threshold` in bytes: 0 = checkpoint on every commit,
+-    /// N > 0 = when the logical log exceeds N bytes, -1 = never.
+-    #[arg(long, default_value_t = 0)]
+-    checkpoint_threshold: i64,
+-    /// `PRAGMA synchronous`: full = fsync per commit (durable, default), normal/off = relax fsync.
+-    #[arg(long, default_value = "full")]
+-    synchronous: String,
+-    /// Which mode(s) to run.
+-    #[arg(long, value_enum, default_value_t = ModeArg::Both)]
+-    mode: ModeArg,
+-    /// Time-series bucket width in milliseconds.
+-    #[arg(long, default_value_t = 200)]
+-    bucket_ms: u32,
+-    /// Output path prefix for the CSV and HTML report.
+-    #[arg(long, default_value = "checkpoint-bench-out")]
+-    out: String,
+-    /// Tokio worker threads (0 = tokio default = number of cores).
+-    #[arg(long, default_value_t = 0)]
+-    worker_threads: usize,
+-}
+-
+-#[derive(clap::ValueEnum, Clone, Copy, PartialEq)]
+-enum ModeArg {
+-    Truncate,
+-    Passive,
+-    Both,
+-}
+-
+-/// One operation: milliseconds since the measurement window started, and its latency (us).
+-type Sample = (u32, u32);
+-
+-struct ModeData {
+-    writes: Vec<Sample>,
+-    reads: Vec<Sample>,
+-    write_conflicts: u64,
+-    elapsed_secs: f64,
+-    files: Vec<(String, u64)>,
+-}
+-
+-struct Stats {
+-    count: u64,
+-    per_sec: f64,
+-    mean: f64,
+-    p50: u64,
+-    p90: u64,
+-    p99: u64,
+-    p999: u64,
+-    max: u64,
+-}
+-
+-impl Stats {
+-    fn compute(samples: &[Sample], elapsed_secs: f64) -> Self {
+-        let mut lat: Vec<u64> = samples.iter().map(|&(_, l)| l as u64).collect();
+-        let count = lat.len() as u64;
+-        if lat.is_empty() {
+-            return Stats {
+-                count: 0,
+-                per_sec: 0.0,
+-                mean: 0.0,
+-                p50: 0,
+-                p90: 0,
+-                p99: 0,
+-                p999: 0,
+-                max: 0,
+-            };
+-        }
+-        lat.sort_unstable();
+-        let sum: u128 = lat.iter().map(|&x| x as u128).sum();
+-        let pct =
+-            |p: f64| lat[((p * (lat.len() as f64 - 1.0)).round() as usize).min(lat.len() - 1)];
+-        Stats {
+-            count,
+-            per_sec: count as f64 / elapsed_secs,
+-            mean: sum as f64 / lat.len() as f64,
+-            p50: pct(0.50),
+-            p90: pct(0.90),
+-            p99: pct(0.99),
+-            p999: pct(0.999),
+-            max: *lat.last().unwrap(),
+-        }
+-    }
+-}
+-
+-/// Per-time-bucket aggregate for the time series.
+-struct Bucket {
+-    t_ms: u32,
+-    throughput: f64,
+-    p50: u64,
+-    p99: u64,
+-    max: u64,
+-}
+-
+-fn bucketize(samples: &[Sample], bucket_ms: u32, duration_ms: u32) -> Vec<Bucket> {
+-    let n = (duration_ms / bucket_ms) as usize + 1;
+-    let mut buckets: Vec<Vec<u64>> = vec![Vec::new(); n];
+-    for &(t, l) in samples {
+-        let b = (t / bucket_ms) as usize;
+-        if b < n {
+-            buckets[b].push(l as u64);
+-        }
+-    }
+-    let secs = bucket_ms as f64 / 1000.0;
+-    buckets
+-        .into_iter()
+-        .enumerate()
+-        .map(|(i, mut v)| {
+-            let t_ms = i as u32
 ```
 
 ---
 
-### Incident Patch 3: `280f0614` (2026-11-17)
-**Commit Message**: tests/integration: configure encrypted fixtures at open
+### Incident Patch 3: `e7fd7e2d` (2026-11-21)
+**Commit Message**: ci: build the CodSpeed memory benchmarks without LTO
 
-Keep existing integration scenarios working with open-time credentials
-and initial page sizes. Pass each fixture key when creating connections
-and remove setup through encryption PRAGMA assignments.
+26fc7e7f27 turned off LTO for CodSpeed builds with CARGO_PROFILE_BENCH_LTO in
+codspeed.yml's env. codspeed-memory.yml is a called workflow, and a called
+workflow does not get the env of the workflow that calls it, so the memory
+benchmark build still used thin LTO. That build (233 s p50) plus the
+benchmark shard after it was the last check to finish on 11 of 34 pull
+request pushes. Locally, a rebuild after a turso_core change takes 80 s
+without LTO and 106 s with thin LTO.
 
-**File**: `tests/integration/common.rs` (modified, +42/-13)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/codspeed-memory.yml` (modified, +10/-0)
 ```diff
-@@ -39,6 +39,7 @@ pub struct TempDatabase {
-     pub init_sql: Option<String>,
-     #[allow(dead_code)]
-     pub enable_mvcc: bool,
-+    pub encryption: Option<turso_core::EncryptionOpts>,
- }
- unsafe impl Send for TempDatabase {}
+@@ -14,6 +14,16 @@ permissions:
+   contents: read
+   id-token: write # required for OIDC authentication with CodSpeed
  
-@@ -53,6 +54,8 @@ pub struct TempDatabaseBuilder {
-     io_uring: bool,
-     enable_views: bool,
-     dialect: Option<Arc<dyn Dialect>>,
-+    encryption: Option<turso_core::EncryptionOpts>,
-+    page_size: Option<turso_core::storage::sqlite3_ondisk::PageSize>,
- }
- 
- struct TestIo {
-@@ -139,6 +142,8 @@ impl TempDatabaseBuilder {
-             io_uring: false,
-             enable_views: false,
-             dialect: None,
-+            encryption: None,
-+            page_size: None,
-         }
-     }
- 
-@@ -200,6 +205,19 @@ impl TempDatabaseBuilder {
-         self
-     }
- 
-+    pub fn with_encryption(mut self, cipher: &str, hexkey: &str) -> Self {
-+        self.encryption = Some(turso_core::EncryptionOpts {
-+            cipher: cipher.into(),
-+            hexkey: hexkey.into(),
-+        });
-+        self
-+    }
++# A called workflow does not get the env block of the workflow that calls
++# it, so codspeed.yml's settings are repeated here.
++env:
++  CARGO_INCREMENTAL: "0"
++  CARGO_NET_RETRY: 10
++  CARGO_TERM_COLOR: always
++  # Thin LTO made up a large part of the bench build. CodSpeed compares each
++  # PR against main built the same way, so the comparison does not need it.
++  CARGO_PROFILE_BENCH_LTO: "false"
 +
-+    pub fn with_page_size(mut self, size: u32) -> Self {
-+        self.page_size = Some(turso_core::storage::sqlite3_ondisk::PageSize::new(size).unwrap());
-+        self
-+    }
-+
-     pub fn build(self) -> TempDatabase {
-         let mut opts = self
-             .opts
-@@ -250,21 +268,25 @@ impl TempDatabaseBuilder {
-             }
-         };
-         let dialect = self.dialect.unwrap_or_else(|| Arc::new(SqliteDialect));
--        let db = Database::open_file_with_flags(
--            io.clone(),
--            db_path.to_str().unwrap(),
--            flags,
--            opts,
--            None,
--            dialect,
--        )
--        .unwrap();
-+        let mut options = turso_core::OpenOptions::new(dialect)
-+            .flags(flags)
-+            .db_opts(opts)
-+            .encryption(self.encryption.clone());
-+        if let Some(size) = self.page_size {
-+            options = options.page_size(size);
-+        }
-+        let db = Database::open(io.clone(), db_path.to_str().unwrap(), options).unwrap();
-+        let connect_opts = || {
-+            ConnectOpts::new(SessionRole::Superuser).with_encryption_key(
-+                self.encryption
-+                    .as_ref()
-+                    .map(|opts| turso_core::EncryptionKey::from_hex_string(&opts.hexkey).unwrap()),
-+            )
-+        };
- 
-         // Enable MVCC via turso connection if requested
-         if self.enable_mvcc {
--            let conn = db
--                .connect(ConnectOpts::new(SessionRole::Superuser))
--                .unwrap();
-+            let conn = db.connect(connect_opts()).unwrap();
-             conn.pragma_update("journal_mode", "'mvcc'")
-                 .expect("enable mvcc");
-         }
-@@ -277,6 +299,7 @@ impl TempDatabaseBuilder {
-             db_flags: flags,
-             init_sql: self.init_sql,
-             enable_mvcc: self.enable_mvcc,
-+            encryption: self.encryption,
-         }
-     }
- }
-@@ -331,7 +354,13 @@ impl TempDatabase {
- 
-         let conn = self
-             .db
--            .connect(ConnectOpts::new(SessionRole::Superuser))
-+            .connect(
-+                ConnectOpts::new(SessionRole::Superuser).with_encryption_key(
-+                    self.encryption.as_ref().map(|opts| {
-+                        turso_core::EncryptionKey::from_hex_string(&opts.hexkey).unwrap()
-+                    }),
-+                ),
-+            )
-             .unwrap();
-         log::debug!("connected to limbo");
-         conn
-```
-
-**File**: `tests/integration/query_processing/encryption.rs` (modified, +31/-39)
-```diff
-@@ -6,30 +6,34 @@ use asserting::prelude::*;
- use rand::{rng, RngCore};
- use std::sync::Arc;
- use turso_core::{
--    CipherMode, ConnectOpts, Database, DatabaseOpts, EncryptionKey, EncryptionOpts, OpenFlags,
--    PlatformIO, Row, SessionRole, IO,
-+    CompletionError, ConnectOpts, Database, DatabaseOpts, EncryptionKey, EncryptionOpts,
-+    LimboError, OpenFlags, OpenOptions, PlatformIO, Row, SessionRole, IO,
- };
- use turso_sqlite::SqliteDialect;
- 
- const ENABLE_ENCRYPTION: bool = true;
- 
-+fn encrypted_fixture(source: &TempDatabase, size: u32) -> TempDatabase {
-+    TempDatabaseBuilder::new()
-+        .with_opts(source.db_opts)
-+        .with_mvcc(source.enable_mvcc)
-+        .with_encryption(CIPHER_A, KEY_A)
-+        .with_page_size(size)
-+        .build()
-+}
-+
- fn run_non_4k_page_size_encryption_test(
-     tmp_db: &TempDatabase,
-     enable_mvcc: bool,
- ) -> anyhow::Result<()> {
-+    // Set page size to 8k (8192 bytes) and test encryption. Default page size is 4k.
-+    let encrypted = encrypted_fixture(tmp_db, 8192);
-+    let tmp_db = &encrypted;
-     let _ = env_logger::try_init();
-     let db_path = tmp_db.path.clone();
- 
-     {
-         let conn = tmp_db.connect_limbo();
--        // Set page size to 8k (8192 bytes) and test encryption. Default page size is 4k.
--        run_query(tmp_db, &conn, "PRAGMA page_size = 8192;")?;
--        run_query(
--            tmp_db,
--            &conn,
--            "PRAGMA hexkey = 'b1bbfda4f589dc9daaf004fe21111e00dc00c98237102f5c7002a5669fc76327';",
--        )?;
--        run_query(tmp_db, &conn, "PRAGMA cipher = 'aegis256';")?;
-         if enable_mvcc {
-             run_query(tmp_db, &conn, "PRAGMA journal_mode = 'mvcc';")?;
-         }
-@@ -78,17 +82,13 @@ fn run_corruption_associated_data_bytes_test(
-     tmp_db: &TempDatabase,
-     enable_mvcc: bool,
- ) -> anyhow::Result<()> {
-+    let encrypted = encrypted_fixture(tmp_db, 4096);
-+    let tmp_db = &encrypted;
-     let _ = env_logger::try_init();
-     let db_path = tmp_db.path.clone();
- 
-     {
-         let conn = tmp_db.connect_limbo();
--        run_query(
--            tmp_db,
--            &conn,
--            "PRAGMA hexkey = 'b1bbfda4f589dc9daaf004fe21111e00dc00c98237102f5c7002a5669fc76327';",
--        )?;
--        run_query(tmp_db, &conn, "PRAGMA cipher = 'aegis256';")?;
-         if enable_mvcc {
-             run_query(tmp_db, &conn, "PRAGMA journal_mode = 'mvcc';")?;
-         }
-@@ -157,18 +157,13 @@ fn run_corruption_associated_data_bytes_test(
- // TODO: mvcc does not error here
- #[turso_macros::test]
- fn test_per_page_encryption(tmp_db: TempDatabase) -> anyhow::Result<()> {
-+    let tmp_db = encrypted_fixture(&tmp_db, 4096);
-     let _ = env_logger::try_init();
-     let db_path = tmp_db.path.clone();
-     let opts = tmp_db.db_opts;
- 
-     {
-         let conn = tmp_db.connect_limbo();
--        run_query(
--            &tmp_db,
--            &conn,
--            "PRAGMA hexkey = 'b1bbfda4f589dc9daaf004fe21111e00dc00c98237102f5c7002a5669fc76327';",
--        )?;
--        run_query(&tmp_db, &conn, "PRAGMA cipher = 'aegis256';")?;
-         run_query(
-             &tmp_db,
-             &conn,
-@@ -359,19 +354,14 @@ fn test_mvcc_rejects_late_encryption_pragmas(tmp_db: TempDatabase) -> anyhow::Re
- // TODO: mvcc for some reason does not error on corruption here
- #[turso_macros::test]
- fn test_corruption_turso_magic_bytes(tmp_db: TempDatabase) -> anyhow::Result<()> {
-+    let tmp_db = encrypted_fixture(&tmp_db, 4096);
-     let _ = env_logger::try_init();
-     let db_path = tmp_db.path.clone();
- 
-     let opts = tmp_db.db_opts;
- 
-     {
-         let conn = tmp_db.connect_limbo();
--        run_query(
--            &tmp_db,
--            &conn,
--            "PRAGMA hexkey = 'b1bbfda4f589dc9daaf004fe21111e00dc00c98237102f5c7002a5669fc76327';",
--        )?;
--        run_query(&tmp_db, &conn, "PRAGMA cipher = 'aegis256';")?;
-         run_query(
-             &tmp_db,
-             &conn,
-@@ -516,13 +506,12 @@ fn test_turso_header_structure(db: TempDatabase) -> anyhow::Result<()> {
-         let tmp_db = TempDatabase::builder()
-             .with_opts(opts)
-             .with_flags(flags)
-+            .with_encryption(cipher_name, hexkey)
-             .build();
-         let db_path = tmp_db.path.clone();
- 
-         {
-             let conn = tmp_db.connect_limbo();
--            run_query(&tmp_db, &conn, &format!("PRAGMA hexkey = '{hexkey}';"))?;
--            run_query(&tmp_db, &conn, &format!("PRAGMA cipher = '{cipher_name}';"))?;
-             run_query(
-                 &tmp_db,
-                 &conn,
-@@ -580,9 +569,10 @@ fn test_encryption_key_validation_with_cached_database(_db: TempDatabase) -> any
-         let correct_encryption_key =
-             turso_core::EncryptionKey::from_hex_string(correct_key).unwrap();
- 
--        let conn = main_db.connect(ConnectOpts::new(SessionRole::Superuser))?;
--        conn.set_encryption_cipher(turso_core::CipherMode::Aegis256)?;
--        conn.set_encryption_key(correct_encryption_key)?;
-+        let conn
+ jobs:
+   build:
+     runs-on: blacksmith-4vcpu-ubuntu-2404
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12168** (2026-11-20): ci/dotnet: pin .NET 10 SDK in iOS package validation (@penberg)
-- **PR #12164** (2026-11-20): testing/sqltest: record known PostgreSQL differences as @compat-gap tests (@jussisaurio)
-- **PR #12157** (2026-11-20): sdk-kit: update README examples to the current C and Rust API (@turso-github-handyman[bot])
-- **PR #12156** (closed): postgres: store timestamp and timestamptz as PostgreSQL does (@jussisaurio)
-- **PR #12155** (2026-11-20): postgres: now() is the start of the transaction, statement_timestamp() the time the client's query arrived (@jussisaurio)
-- **PR #12151** (2026-11-20): sqlite/conformance: regenerate two gencol snapshots for new bytecode (@glommer)
+- **PR #12230** (2026-11-21): ci: make PR CI faster (@jussisaurio)
+- **PR #12229** (2026-11-21): core/vdbe: use the test dialect in test_serialize_array_from_blob (@jussisaurio)
+- **PR #12222** (2026-11-21): perf: fix make bench-tpc-c and remove the leftover checkpoint-bench file (@jussisaurio)
+- **PR #12221** (2026-11-21): ci: remove the GitHub-runner criterion benchmark job (@jussisaurio)
+- **PR #12218** (2026-11-21): sync/engine: pass a session role to ConnectOpts::new in the verify test (@jussisaurio)
+- **PR #12210** (2026-11-21): core/translate: keep upsert clauses with INSERT OR IGNORE and OR REPLACE (@turso-github-handyman[bot])
 
 ---
 
@@ -2058,41 +1792,36 @@ and remove setup through encryption PRAGMA assignments.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tests: fix compilation and lint errors after main rebase
+## X. ci: run the simulator built with optimizations
 
 **RULE**:
-When implementing operations in `tests/integration/database_open.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/rust.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `be08cdd2`: tests: fix compilation and lint errors after main rebase. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3885b0ea`: ci: run the simulator built with optimizations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/integration/database_open.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/rust.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                                .expect_err("cached open accepted a mismatching page size");
-                                .expect_err("cached open accepted the wrong key");
-                        .expect_err("cold open accepted a mismatching page size");
-                            .expect_err("cold open accepted the wrong key");
+      # The simulator profile (Cargo.toml) optimizes the code but keeps
+      # debug assertions; simulations run about ten times faster than with
+      # the dev profile.
+        run: cargo build -p limbo_sim --bin limbo_sim --locked --profile simulator
+            if ./target/simulator/limbo_sim "${args[@]}" >"$log" 2>&1; then
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                                .err()
-                                .expect("cached open accepted a mismatching page size");
-                                .err()
-                                .expect("cached open accepted the wrong key");
-                        .err()
-                        .expect("cold open accepted a mismatching page size");
-                            .err()
-                            .expect("cold open accepted the wrong key");
+        run: cargo build -p limbo_sim --bin limbo_sim --locked
+            if ./target/debug/limbo_sim "${args[@]}" >"$log" 2>&1; then
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `be08cdd2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3885b0ea` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

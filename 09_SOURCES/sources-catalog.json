@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "36780d60",
+    "sourceVersion": "1db8e79a",
     "license": "BSD-3-Clause",
-    "contentHash": "31728eab23f80bad0cdbab99d7985c16cfb3b709151b09c265c516ffbab13458",
-    "lastHarvestedAt": "2026-11-21T00:52:05.717Z",
+    "contentHash": "3cb059791176083ee53ac9e7f08771a29b5d3286e7328610c8e02dd137834fb9",
+    "lastHarvestedAt": "2026-11-21T23:26:46.911Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -4743,10 +4743,10 @@
     "repository": "pimalaya/himalaya",
     "platform": "github",
     "sourceUrl": "https://github.com/pimalaya/himalaya",
-    "sourceVersion": "a5623dca",
+    "sourceVersion": "bf9f4e2a",
     "license": "Apache-2.0",
-    "contentHash": "82637fe01b7493f03326b5e828d4108cbfffbed8526a0d728064c6412db6ea89",
-    "lastHarvestedAt": "2026-11-20T07:35:56.450Z",
+    "contentHash": "93cc46b6c26254e730184e7dd434ff51566cec28cfcf1ce2c9be1ebbcf469f8b",
+    "lastHarvestedAt": "2026-11-21T23:27:18.739Z",
     "learningId": "learn-github-pimalaya-himalaya"
   },
   "shopify-react-native-skia": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "93648484",
+    "sourceVersion": "37096726",
     "license": "MIT",
-    "contentHash": "f496b4d6787f2a96e8c8e4b14cca27fbaa05d96dcd12a01b4680845966bfb161",
-    "lastHarvestedAt": "2026-11-20T19:11:46.163Z",
+    "contentHash": "865e8ceb018de6172440a863c7b20fa0052e1ec429b60c389c41a9c1dda2cc0e",
+    "lastHarvestedAt": "2026-11-21T23:25:30.712Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {
@@ -11685,8 +11685,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
     "sourceVersion": "hf-edge0-audio8-tts-realistic-air",
     "license": "Open-Source",
-    "contentHash": "3bb2af68d457fd360dbf72782a9b379d30b5621d0611dadfe0ff9d430e59c288",
-    "lastHarvestedAt": "2026-11-15T07:41:47.230Z",
+    "contentHash": "0fc8d3f4bf16a4e19329741b53c13d31bf753b3d23e4cfc96f39187028582cec",
+    "lastHarvestedAt": "2026-11-21T23:27:03.282Z",
     "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air"
   },
   "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated": {

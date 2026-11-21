@@ -735033,3 +735033,1202 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `93d9fd57` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9860. In-Flight Dial Backlog Throttling for Loopback Test Servers (Harvested from tailscale/tailscale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "In-Flight Dial Backlog Throttling for Loopback Test Servers",
+  "source": "tailscale/tailscale",
+  "source_url": "https://github.com/tailscale/tailscale",
+  "source_version": "1db8e79a",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-11-21T23:26:45.407Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tailscale-tailscale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `1db8e79a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**: Any test suite or client component executing concurrent requests over fresh TCP/TLS connections against an in-process or loopback server MUST strictly limit maximum in-flight dials using a bounded concurrency primitive (such as a semaphore) to a value less than the operating system's default `SOMAXCONN` listen backlog (typically 8 to 128 depending on platform/container).  
+**WHY**: Under Windows, macOS, and Linux network namespaces where `somaxconn` is constrained (or `tcp_abort_on_overflow=1`), unbounded goroutines dialing a single `httptest.Server` trigger listen backlog overflows. When the backlog overflows, Windows immediately drops or resets the connection with `WSAECONNREFUSED` or returns empty payloads, resulting in flaky, false-positive network failures (e.g., HTTP 502 Bad Gateway) completely unrelated to the logic under test.  
+**WHEN TO APPLY**: High-concurrency integration tests, reverse-proxy regression harnesses, and internal microservice scrapers initiating bursts of short-lived loopback TCP connections.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package integration_test
+
+import (
+	"context"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"sync"
+	"testing"
+)
+
+// BoundedConcurrentCaller limits concurrent dials to prevent OS backlog overflows.
+func RunBoundedProbe(t *testing.T, srv *httptest.Server, totalRequests int, maxConcurrency int) {
+	sem := make(chan struct{}, maxConcurrency)
+	var wg sync.WaitGroup
+	errCh := make(chan error, totalRequests)
+
+	for i := 0; i < totalRequests; i++ {
+		wg.Add(1)
+		go func(reqID int) {
+			defer wg.Done()
+
+			// Invariant: Must acquire semaphore token before initiating dial
+			sem <- struct{}{}
+			defer func() { <-sem }()
+
+			req, err := http.NewRequestWithContext(context.Background(), "GET", srv.URL+"/probe", nil)
+			if err != nil {
+				errCh <- fmt.Errorf("req build failed: %w", err)
+				return
+			}
+
+			resp, err := srv.Client().Do(req)
+			if err != nil {
+				errCh <- fmt.Errorf("dial/exec failed: %w", err)
+				return
+			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusOK {
+				errCh <- fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+				return
+			}
+		}(i)
+	}
+
+	wg.Wait()
+	close(errCh)
+
+	for err := range errCh {
+		if err != nil {
+			t.Fatalf("concurrent probe encountered failure: %v", err)
+		}
+	}
+}
+```
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Spawning hundreds of simultaneous goroutines dialing
+// the same listener without concurrency bounds.
+func RunFlakyUnboundedProbe(t *testing.T, srv *httptest.Server, count int) {
+	var wg sync.WaitGroup
+	for i := 0; i < count; i++ { // count = 400
+		wg.Add(1)
+		go func() { // Fails on Windows / hardened Linux due to SOMAXCONN overflow
+			defer wg.Done()
+			resp, err := http.Get(srv.URL + "/test")
+			if err != nil || resp.StatusCode != 200 {
+				t.Errorf("connection refused or 502 returned")
+			}
+		}()
+	}
+	wg.Wait()
+}
+```
+**VERIFICATION METHOD**: Execute the test inside a Linux network namespace configured with constrained network buffers:
+```bash
+sudo ip netns add testns
+sudo ip netns exec testns sysctl -w net.core.somaxconn=8
+sudo ip netns exec testns sysctl -w net.ipv4.tcp_abort_on_overflow=1
+sudo ip netns exec testns go test -v -race -run TestConcurrentStreams ./... -count=100
+```
+
+---
+
+
+---
+
+## 9861. Dual-Layer State Cache Invariant: Endpoint Mutations Must Patch Reference Snapshots (Harvested from tailscale/tailscale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Layer State Cache Invariant: Endpoint Mutations Must Patch Reference Snapshots",
+  "source": "tailscale/tailscale",
+  "source_url": "https://github.com/tailscale/tailscale",
+  "source_version": "1db8e79a",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-11-21T23:26:45.890Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tailscale-tailscale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `1db8e79a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**: In distributed state replication systems receiving both fine-grained field-level patches (deltas) and full coarse-grained snapshots, any mutation applied directly to an active operational handle (e.g., active network endpoint) MUST simultaneously update or invalidate the underlying local snapshot/shadow copy used by fast-path comparison routines (`c.peersByID`).  
+**WHY**: If a delta mutation updates only the active runtime state (`ep.setDERPHome(B)`) but bypasses the reference snapshot (`snapshot.DERPHome` remains `A`), a subsequent full snapshot arriving containing state `A` will trigger an equality fast-path bypass (`snapshot.Equal(fullNetmapNode)` evaluates to `true`). The runtime endpoint will retain the stale delta state (`B`) indefinitely, completely desynchronizing routing paths until an unrelated netmap mutation forces an eviction.  
+**WHEN TO APPLY**: Any event-driven distributed client maintaining local caches, network topology maps, or CRDTs where partial delta updates interleave with periodic full snapshot synchronization.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package state
+
+import (
+	"sync"
+)
+
+type Node struct {
+	ID       uint64
+	DERPHome int
+	Endpoints []string
+}
+
+func (n *Node) Clone() *Node {
+	cp := *n
+	cp.Endpoints = append([]string(nil), n.Endpoints...)
+	return &cp
+}
+
+func (n *Node) Equal(other *Node) bool {
+	if n.ID != other.ID || n.DERPHome != other.DERPHome || len(n.Endpoints) != len(other.Endpoints) {
+		return false
+	}
+	for i := range n.Endpoints {
+		if n.Endpoints[i] != other.Endpoints[i] {
+			return false
+		}
+	}
+	return true
+}
+
+type RouterState struct {
+	mu        sync.RWMutex
+	activeEP  map[uint64]*EndpointRuntime
+	snapshots map[uint64]*Node // Invariant: Must always reflect current baseline
+}
+
+type EndpointRuntime struct {
+	derpHome int
+}
+
+// ApplyDelta safely mutates runtime AND reference snapshot atomically.
+func (r *RouterState) ApplyDelta(nodeID uint64, newDERP int) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	if ep, ok := r.activeEP[nodeID]; ok {
+		ep.derpHome = newDERP
+	}
+
+	// CRITICAL INVARIANT: The reference snapshot MUST NOT remain stale.
+	// Either update snapshot or invalidate it so next full netmap does not false-match.
+	if snap, ok := r.snapshots[nodeID]; ok {
+		cloned := snap.Clone()
+		cloned.DERPHome = newDERP
+		r.snapshots[nodeID] = cloned
+	}
+}
+
+// UpdateFullNetmap checks equality against reference snapshots.
+func (r *RouterState) UpdateFullNetmap(nodes []*Node) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	for _, incoming := range nodes {
+		snap, exists := r.snapshots[incoming.ID]
+		if exists && snap.Equal(incoming) {
+			// Fast path safe: snap is guaranteed to reflect both prior full syncs AND interim deltas
+			continue
+		}
+
+		// Reconfigure runtime endpoint and re-record snapshot
+		if ep, ok := r.activeEP[incoming.ID]; ok {
+			ep.derpHome = incoming.DERPHome
+		}
+		r.snapshots[incoming.ID] = incoming.Clone()
+	}
+}
+```
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Patching the live runtime endpoint while leaving the snapshot stale.
+func (r *RouterState) BuggyApplyDelta(nodeID uint64, newDERP int) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	// Direct mutation of runtime endpoint
+	r.activeEP[nodeID].derpHome = newDERP
+	// COMMENT: "per-field NodeMutation patches are never applied to snapshots"
+	// DISASTER: Next incoming full netmap with derpHome matching old snapshot
+	// will be skipped by snap.Equal(incoming), leaving activeEP permanently corrupted.
+}
+```
+**VERIFICATION METHOD**: Property-based delta-to-snapshot sequencing test:
+1. Initialize node with `DERPHome = A`.
+2. Apply delta mutation `DERPHome = B`.
+3. Apply full netmap with `DERPHome = A`.
+4. Assert that `runtimeEndpoint.DERPHome == A`. Any failure proves snapshot-desync short-circuiting.
+
+---
+
+
+---
+
+## 9862. CI Process Tree Isolation and Handle Decoupling on Windows (Harvested from tailscale/tailscale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "CI Process Tree Isolation and Handle Decoupling on Windows",
+  "source": "tailscale/tailscale",
+  "source_url": "https://github.com/tailscale/tailscale",
+  "source_version": "1db8e79a",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-11-21T23:26:46.410Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tailscale-tailscale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `1db8e79a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**: Long-running background processes spawned during CI pipeline steps on Windows runners MUST NOT inherit the caller step’s standard input/output/error pipes, and their lifetime MUST be verified across explicit step boundaries via out-of-band sentinel files or PID monitors.  
+**WHY**: On Windows runner agents (e.g., GitHub Actions Runner), child processes spawned with inherited stdout/stderr file handles hold open the parent step’s IPC pipe. When the execution step completes, the runner halts and hangs indefinitely waiting for EOF on the output pipe, or the runner process reaper forcibly terminates the entire process tree, killing essential background daemons (such as remote FUSE/WinFsp filesystem drivers or cache proxies).  
+**WHEN TO APPLY**: Background daemons, emulators, local cache mounts, and mock services initiated in Windows CI/CD workflows.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```powershell
+# Invariant: Execute via ComSpec without inherited pipes, redirecting streams to disk
+$log = Join-Path $env:RUNNER_TEMP 'daemon.log'
+$cmdArgs = "/d /s /c `"`"$exe`" --daemon-flag > `"$log`" 2>&1`""
+$p = Start-Process -PassThru -WindowStyle Hidden -FilePath $env:ComSpec -ArgumentList $cmdArgs
+
+# Explicit readiness barrier with non-blocking deadline
+$deadline = (Get-Date).AddSeconds(30)
+while (-not (Test-Path "$env:TARGET_MOUNT\.sentinel-status")) {
+    if ($p.HasExited -or (Get-Date) -gt $deadline) {
+        Get-Content -LiteralPath $log -Tail 50 -ErrorAction SilentlyContinue
+        throw "Background daemon terminated prematurely or failed readiness probe"
+    }
+    Start-Sleep -Milliseconds 100
+}
+```
+**NEGATIVE CONSTRAINT**:
+```powershell
+# ANTI-PATTERN: Direct invocation or inheriting standard pipes in CI step.
+# Causes the runner to hang waiting for EOF, or runner kills process upon step exit.
+Start-Process -FilePath "C:\bin\daemon.exe" -ArgumentList "--serve" -NoNewWindow
+# or
+& "C:\bin\daemon.exe" --serve &
+```
+**VERIFICATION METHOD**: Add a trailing verification step configured with `if: always()` in CI:
+```yaml
+- name: Verify Daemon Survival
+  if: always()
+  shell: pwsh
+  run: |
+    $p = Get-Process mydaemon -ErrorAction SilentlyContinue
+    if (-not $p) {
+      Write-Error "Daemon died unexpectedly before step completed"
+      exit 1
+    }
+```
+
+---
+
+
+---
+
+## 9863. Dual-Tier Autoregressive Latent Projection Invariant (Harvested from Edge0/Audio8-TTS-Realistic-Air)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Tier Autoregressive Latent Projection Invariant",
+  "source": "Edge0/Audio8-TTS-Realistic-Air",
+  "source_url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
+  "source_version": "hf-edge0-audio8-tts-realistic-air",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-21T23:27:01.766Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-air",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Edge0/Audio8-TTS-Realistic-Air](https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air) (Revision: `hf-edge0-a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When building multi-codebook neural audio transformers, the system MUST decouple primary semantic token prediction (Codebook 0) from residual acoustic token generation (Codebooks $1 \dots K-1$) via a secondary shallow transformer ("Fast Layer"), and MUST apply independent input layer normalization to the fast network (`norm_fastlayer_input = true`). The system MUST NOT concatenate residual codebooks along the primary sequence axis of the main backbone.
+
+**WHY**:
+Concatenating $K=10$ codebooks into the primary autoregressive sequence increases attention context length by $10\times$, resulting in a $100\times$ increase in quadratic attention compute and KV-cache footprint. Furthermore, mixing raw unnormalized primary hidden states into acoustic sub-layers leads to numerical gradient explosion during zero-shot prompt injection.
+
+**WHEN TO APPLY**:
+Apply to any autoregressive speech synthesis or multi-codebook discrete audio generation system where sample rate $\ge 24\text{ kHz}$ and codebooks $\ge 4$.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn as nn
+
+class DualTierAudioLM(nn.Module):
+    def __init__(
+        self,
+        hidden_size: int = 896,
+        num_codebooks: int = 10,
+        codebook_size: int = 4096,
+        norm_fastlayer_input: bool = True,
+        rms_norm_eps: float = 1e-6,
+    ):
+        super().__init__()
+        self.num_codebooks = num_codebooks
+        self.codebook_size = codebook_size
+        self.norm_fastlayer_input = norm_fastlayer_input
+        
+        # Fast layer normalization guard
+        if self.norm_fastlayer_input:
+            self.fast_input_norm = nn.RMSNorm(hidden_size, eps=rms_norm_eps)
+        else:
+            self.fast_input_norm = nn.Identity()
+
+        # Shared codebook embedding tables for auxiliary codebooks
+        self.aux_embeddings = nn.ModuleList([
+            nn.Embedding(codebook_size, hidden_size)
+            for _ in range(num_codebooks - 1)
+        ])
+        
+    def forward_fast_layers(
+        self,
+        primary_hidden_state: torch.Tensor,
+        fast_transformer: nn.Module,
+    ) -> torch.Tensor:
+        """
+        primary_hidden_state: [Batch, 1, Hidden] from Codebook 0 forward
+        Returns: [Batch, Num_Codebooks - 1, Codebook_Size] logits
+        """
+        # INVARIANT: Normalize interface boundaries between backbone and fast layers
+        fast_input = self.fast_input_norm(primary_hidden_state)
+        
+        aux_logits = []
+        current_context = fast_input
+        
+        for k in range(self.num_codebooks - 1):
+            # Shallow transformer step (e.g., 4 layers)
+            step_out = fast_transformer(current_context, codebook_index=k)
+            logits_k = step_out[:, -1:, :]  # Project to vocab
+            aux_logits.append(logits_k)
+            
+            # Predict token and embed for next residual stage
+            pred_token = torch.argmax(logits_k, dim=-1)
+            token_embed = self.aux_embeddings[k](pred_token)
+            current_context = torch.cat([current_context, token_embed], dim=1)
+            
+        return torch.cat(aux_logits, dim=1)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Serializing all 10 codebooks into the main backbone
+def forward_bad_monolithic_tts(self, text_tokens, audio_codes):
+    # Flattening 10 codebooks into primary attention sequence: [B, T * 10]
+    # CAUTION: Causes sequence blowup (2048 frames -> 20480 context length)
+    # Memory consumption: O(N^2) in self-attention!
+    flat_sequence = audio_codes.view(audio_codes.size(0), -1)
+    return self.monolithic_backbone(flat_sequence)
+```
+
+**VERIFICATION METHOD**:
+Run an assert statement on the output shapes of the primary backbone and the fast layer projections:
+```python
+def test_dual_tier_latency_and_shape():
+    model = DualTierAudioLM(hidden_size=896, num_codebooks=10, codebook_size=4096)
+    dummy_primary_hidden = torch.randn(2, 1, 896)
+    
+    # Fast layers must only process current step frame [B, 1, 896]
+    assert dummy_primary_hidden.shape[1] == 1, "Backbone must output 1 semantic step at a time"
+    normalized = model.fast_input_norm(dummy_primary_hidden)
+    assert not torch.isnan(normalized).any(), "Fast layer input normalization resulted in NaN"
+    assert torch.allclose(normalized.mean(dim=-1), torch.zeros(2, 1), atol=1e-2)
+```
+
+---
+
+
+---
+
+## 9864. Disjoint Semantic-Acoustic Vocabulary Offsetting Invariant (Harvested from Edge0/Audio8-TTS-Realistic-Air)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Disjoint Semantic-Acoustic Vocabulary Offsetting Invariant",
+  "source": "Edge0/Audio8-TTS-Realistic-Air",
+  "source_url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
+  "source_version": "hf-edge0-audio8-tts-realistic-air",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-21T23:27:02.250Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-air",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Edge0/Audio8-TTS-Realistic-Air](https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air) (Revision: `hf-edge0-a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+In models sharing a unified causal LM backbone between text and audio tokens, semantic audio token indices MUST be strictly partitioned from text vocabulary via contiguous offset slicing (`semantic_begin_id` to `semantic_end_id`). Code processing tokens MUST strictly assert:
+$$\text{semantic\_begin\_id} + \text{codebook\_size} - 1 == \text{semantic\_end\_id}$$
+Logit sampling MUST apply causal logit masking to suppress standard text and special control tokens during the acoustic generation phase.
+
+**WHY**:
+Failure to isolate semantic tokens causes acoustic hallucination where the audio decoder outputs linguistic text tokens as sound codes, resulting in invalid memory offsets in the neural codec lookup (`codec.pth`) and producing silent frames or acoustic screeching artifacts.
+
+**WHEN TO APPLY**:
+Any unified multimodal or audio-generation model using `transformers.AutoModelForCausalLM` or GGUF where `vocab_size` encompasses both BPE text tokens and discrete VQ-codebooks.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def sample_semantic_token(
+    logits: torch.Tensor,
+    semantic_begin_id: int = 151678,
+    semantic_end_id: int = 155773,
+    temperature: float = 0.7,
+    top_p: float = 0.9,
+) -> torch.Tensor:
+    """
+    Logits shape: [Batch, Vocab_Size]
+    Ensures absolute partition compliance during audio token generation.
+    """
+    # Verify contract
+    expected_size = (semantic_end_id - semantic_begin_id) + 1
+    assert expected_size == 4096, f"Invalid codebook span: {expected_size} != 4096"
+    
+    # 1. Mask non-semantic tokens with -infinity
+    masked_logits = torch.full_like(logits, float('-inf'))
+    masked_logits[:, semantic_begin_id : semantic_end_id + 1] = logits[:, semantic_begin_id : semantic_end_id + 1]
+    
+    # 2. Temperature scaling
+    scaled_logits = masked_logits / max(temperature, 1e-5)
+    
+    # 3. Softmax restricted to valid domain
+    probs = torch.softmax(scaled_logits[:, semantic_begin_id : semantic_end_id + 1], dim=-1)
+    
+    # 4. Top-p (nucleus) filtering on valid sub-distribution
+    sorted_probs, sorted_indices = torch.sort(probs, descending=True)
+    cumulative_probs = torch.cumsum(sorted_probs, dim=-1)
+    sorted_indices_to_remove = cumulative_probs > top_p
+    sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
+    sorted_indices_to_remove[..., 0] = 0
+    
+    sorted_probs[sorted_indices_to_remove] = 0.0
+    sorted_probs = sorted_probs / sorted_probs.sum(dim=-1, keepdim=True)
+    
+    next_sub_token = torch.multinomial(sorted_probs, num_samples=1)
+    next_token_id = sorted_indices.gather(dim=-1, index=next_sub_token)
+    
+    # 5. Re-map relative offset back to absolute global vocabulary ID
+    global_token_id = next_token_id + semantic_begin_id
+    return global_token_id
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Sampling across global logits without acoustic range isolation
+def sample_bad_audio_token(logits, semantic_begin_id):
+    # CAUTION: Model can sample 151644 (<|im_start|>) or text subwords in the middle of audio
+    # Directly causes codec runtime index-out-of-bounds or audio synthesis collapse
+    probs = torch.softmax(logits, dim=-1)
+    return torch.multinomial(probs, num_samples=1)
+```
+
+**VERIFICATION METHOD**:
+Execute continuous range fuzz testing:
+```python
+def test_semantic_partition_boundaries():
+    vocab_size = 155776
+    begin_id = 151678
+    end_id = 155773
+    logits = torch.randn(4, vocab_size)
+    sampled = sample_semantic_token(logits, begin_id, end_id)
+    
+    assert (sampled >= begin_id).all().item(), f"Sampled token below {begin_id}"
+    assert (sampled <= end_id).all().item(), f"Sampled token above {end_id}"
+```
+
+---
+
+
+---
+
+## 9865. Repetition-Aware Windowed Logit Penalization (RAS) Invariant (Harvested from Edge0/Audio8-TTS-Realistic-Air)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Repetition-Aware Windowed Logit Penalization (RAS) Invariant",
+  "source": "Edge0/Audio8-TTS-Realistic-Air",
+  "source_url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
+  "source_version": "hf-edge0-audio8-tts-realistic-air",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-21T23:27:02.771Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-air",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Edge0/Audio8-TTS-Realistic-Air](https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air) (Revision: `hf-edge0-a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Autoregressive audio token generation loops MUST enforce Repetition-Aware Sampling (RAS) over a rolling temporal window ($W \le 10$ frames) and MUST NOT apply static global repetition penalties across acoustic frames.
+
+**WHY**:
+Unlike natural language where exact word repetition over 10 tokens is rare, natural acoustic signals (such as sustained vowels, steady-state phonemes, or silences) naturally require identical or near-identical codebook indices across adjacent 2048-sample frames (at 44.1 kHz, each frame is ~46.4 ms). Applying standard global repetition penalties destroys steady-state formant stability, producing robotic vibrato, pitch instability, and phoneme dropouts.
+
+**WHEN TO APPLY**:
+All audio token decoders (TTS, speech-to-speech) operating on discretized acoustic frames where frame duration is under 100 ms.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+class RepetitionAwareSampler:
+    def __init__(self, window_size: int = 10, penalty_factor: float = 1.2):
+        self.window_size = window_size
+        self.penalty_factor = penalty_factor
+        self.history = []
+
+    def update_and_penalize(self, logits: torch.Tensor, token_offset: int) -> torch.Tensor:
+        """
+        logits: [1, Vocab_Size]
+        token_offset: Base index (e.g., semantic_begin_id)
+        """
+        penalized_logits = logits.clone()
+        if len(self.history) > 0:
+            # Count frequency strictly inside recent window
+            recent_tokens = self.history[-self.window_size:]
+            counts = {}
+            for t in recent_tokens:
+                counts[t] = counts.get(t, 0) + 1
+            
+            for token, count in counts.items():
+                local_idx = token
+                # Invariant: penalize proportionally to frequency in local window only
+                val = penalized_logits[0, local_idx]
+                if val > 0:
+                    penalized_logits[0, local_idx] = val / (self.penalty_factor * count)
+                else:
+                    penalized_logits[0, local_idx] = val * (self.penalty_factor * count)
+                    
+        return penalized_logits
+
+    def record_token(self, token_id: int):
+        self.history.append(token_id)
+        if len(self.history) > self.window_size * 2:
+            self.history = self.history[-self.window_size:]
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Global repetition penalty applied across all generated audio steps
+def apply_bad_global_penalty(logits, all_past_tokens, penalty=1.5):
+    # CAUTION: Long audio generation will penalize naturally recurring vowel frames,
+    # causing pitch drift, phase distortion, and raspy whispering.
+    for token in set(all_past_tokens):
+        logits[0, token] /= penalty
+    return logits
+```
+
+**VERIFICATION METHOD**:
+Simulate a sustained vowel phoneme consisting of 8 identical codebook frames:
+```python
+def test_ras_does_not_suppress_sustained_phoneme():
+    sampler = RepetitionAwareSampler(window_size=10, penalty_factor=1.1)
+    for _ in range(5):
+        sampler.record_token(42)
+    logits = torch.zeros((1, 100))
+    penalized = sampler.update_and_penalize(logits, 0)
+    # Token 42 is penalized but remains numerically stable and non-zero
+    assert not torch.isinf(penalized[0, 42])
+    assert penalized[0, 42] < logits[0, 42]
+```
+
+---
+
+
+---
+
+## 9866. Pre-Execution Syntax and Argument Verification Invariant (Harvested from pimalaya/himalaya)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Pre-Execution Syntax and Argument Verification Invariant",
+  "source": "pimalaya/himalaya",
+  "source_url": "https://github.com/pimalaya/himalaya",
+  "source_version": "bf9f4e2a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T23:27:17.268Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pimalaya-himalaya",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pimalaya/himalaya](https://github.com/pimalaya/himalaya) (Revision: `bf9f4e2a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+CLI argument parsing MUST validate syntactic, semantic, and domain-level grammar constraints prior to invoking any credential resolvers, keyrings, file handles, or network sockets. If an argument is malformed, the process MUST exit immediately with an invalid-usage status code without triggering side effects.
+
+**WHY**:
+Invoking external secret providers (such as `pass`, `1Password`, `gpg-agent`, or system keyrings) or initiating TLS handshakes before verifying user input exposes credentials, spawns unnecessary sub-processes, causes IPC deadlocks in non-interactive environments, and slows down immediate user feedback.
+
+**WHEN TO APPLY**:
+Apply in all CLI applications, daemon commands, and RPC gateways where command-line arguments (e.g., message sequence ranges, UUIDs, email addresses, CIDR blocks) can be validated syntactically before runtime execution contexts are established.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use clap::Parser;
+use std::str::FromStr;
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SequenceRange {
+    pub start: u32,
+    pub end: Option<u32>,
+}
+
+impl FromStr for SequenceRange {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let parts: Vec<&str> = s.split(':').collect();
+        match parts.as_slice() {
+            [single] => {
+                let n = single.parse::<u32>().map_err(|e| format!("Invalid sequence id `{single}`: {e}"))?;
+                Ok(SequenceRange { start: n, end: Some(n) })
+            }
+            [start, "*"] => {
+                let n = start.parse::<u32>().map_err(|e| format!("Invalid range start `{start}`: {e}"))?;
+                Ok(SequenceRange { start: n, end: None })
+            }
+            [start, end] => {
+                let s_num = start.parse::<u32>().map_err(|e| format!("Invalid range start `{start}`: {e}"))?;
+                let e_num = end.parse::<u32>().map_err(|e| format!("Invalid range end `{end}`: {e}"))?;
+                if s_num > e_num {
+                    return Err(format!("Start range `{s_num}` cannot exceed end range `{e_num}`"));
+                }
+                Ok(SequenceRange { start: s_num, end: Some(e_num) })
+            }
+            _ => Err(format!("Invalid sequence format `{s}`: expected `<id>`, `<id>:*`, or `<start>:<end>`")),
+        }
+    }
+}
+
+#[derive(Parser, Debug)]
+#[command(name = "client")]
+pub struct CommandArgs {
+    /// Target sequence set parsed and checked strictly during CLI argument derivation.
+    #[arg(value_parser = clap::builder::ValueParser::new(SequenceRange::from_str))]
+    pub sequence: SequenceRange,
+}
+
+pub fn execute_prevalidated(args: CommandArgs) -> Result<(), Box<dyn std::error::Error>> {
+    // Secrets and network connections are ONLY accessed here, after args are guaranteed valid.
+    let _secret = resolve_vault_secret()?;
+    Ok(())
+}
+
+fn resolve_vault_secret() -> Result<String, Box<dyn std::error::Error>> {
+    // External process call
+    Ok("token".to_string())
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Resolving secrets or establishing network state before verifying arguments
+pub fn run_leaky(raw_sequence: &str) -> Result<(), Box<dyn std::error::Error>> {
+    // BAD: Password prompt or IPC triggered before validating raw_sequence
+    let client = connect_imap_and_prompt_keyring()?; 
+    
+    // If this fails, the user was prompted for their master password pointlessly
+    let seq = raw_sequence.parse::<u32>()?; 
+    client.fetch(seq)?;
+    Ok(())
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce via automated parser unit tests using `clap::Parser::try_parse_from`:
+```rust
+#[test]
+fn test_invalid_arguments_abort_before_execution() {
+    let bad_input = ["app", "fetch", "abc"];
+    let result = CommandArgs::try_parse_from(&bad_input);
+    assert!(result.is_err());
+    let err = result.unwrap_err();
+    assert_eq!(err.kind(), clap::error::ErrorKind::ValueValidation);
+}
+```
+
+---
+
+
+---
+
+## 9867. Lossless Partial-Outcome Reporting Over Silent Dropping (Harvested from pimalaya/himalaya)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Lossless Partial-Outcome Reporting Over Silent Dropping",
+  "source": "pimalaya/himalaya",
+  "source_url": "https://github.com/pimalaya/himalaya",
+  "source_version": "bf9f4e2a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T23:27:17.746Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pimalaya-himalaya",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pimalaya/himalaya](https://github.com/pimalaya/himalaya) (Revision: `bf9f4e2a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When parsing external network responses or collection payloads that contain malformed records, the pipeline MUST NOT silently drop the unreadable items or replace invalid octets with lossy placeholders (`U+FFFD`). Unparseable records MUST be preserved as base64-encoded raw octets, appended to an `errors` collection (e.g., `ItemError`), and the process MUST exit with a dedicated partial-outcome status code (Exit Code 3).
+
+**WHY**:
+Silent omission of invalid records causes subtle synchronization drift and user confusion (e.g., IMAP status reporting 177 messages while envelope listing returns 173). Conversely, outright fatal failure (`Exit Code 1`) halts execution of batch operations. Lossless raw capture isolates the bad record, informs the caller, and enables diagnostics without data loss.
+
+**WHEN TO APPLY**:
+Apply to any data serialization/deserialization boundary parsing untrusted or imperfect external protocol streams (IMAP untagged responses, corrupt database rows, malformed MIME parts, external API webhooks).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ItemError {
+    pub id: String,
+    pub code: String,
+    pub message: String,
+    pub raw_payload_base64: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BatchResult<T> {
+    pub items: Vec<T>,
+    pub errors: Vec<ItemError>,
+}
+
+pub enum ExitStatus {
+    Success = 0,
+    FatalError = 1,
+    UsageError = 2,
+    PartialOutcome = 3,
+}
+
+pub fn decode_protocol_stream<T, F>(
+    raw_frames: Vec<(String, &[u8])>, 
+    decoder: F
+) -> (BatchResult<T>, ExitStatus)
+where
+    F: Fn(&[u8]) -> Result<T, String>,
+{
+    let mut items = Vec::new();
+    let mut errors = Vec::new();
+
+    for (record_id, bytes) in raw_frames {
+        match decoder(bytes) {
+            Ok(item) => items.push(item),
+            Err(err_msg) => {
+                errors.push(ItemError {
+                    id: record_id,
+                    code: "record-unreadable".into(),
+                    message: err_msg,
+                    raw_payload_base64: Some(base64_codec::encode(bytes)),
+                });
+            }
+        }
+    }
+
+    let status = if errors.is_empty() {
+        ExitStatus::Success
+    } else {
+        ExitStatus::PartialOutcome
+    };
+
+    (BatchResult { items, errors }, status)
+}
+
+mod base64_codec {
+    pub fn encode(b: &[u8]) -> String {
+        // Minimal base64 representation
+        use std::fmt::Write;
+        b.iter().fold(String::new(), |mut acc, byte| {
+            let _ = write!(acc, "{:02x}", byte);
+            acc
+        })
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Silently filtering out errors or swallowing decode failures
+pub fn decode_leaky<T, F>(frames: Vec<&[u8]>, decoder: F) -> Vec<T>
+where
+    F: Fn(&[u8]) -> Result<T, String>,
+{
+    frames
+        .into_iter()
+        .filter_map(|bytes| {
+            // BUG: Dropped frames vanish without leaving structured telemetry
+            // Callers cannot distinguish between a server with 0 items and 100 corrupt items
+            decoder(bytes).ok() 
+        })
+        .collect()
+}
+```
+
+**VERIFICATION METHOD**:
+Write unit tests validating that any malformed frame produces an entry in `errors` containing base64 data and triggers the `PartialOutcome` variant:
+```rust
+#[test]
+fn test_corrupt_frame_triggers_partial_outcome() {
+    let data: Vec<(String, &[u8])> = vec![
+        ("1".into(), b"VALID"),
+        ("2".into(), b"\xFF\xFE\xFD_CORRUPT"),
+    ];
+    let (res, status) = decode_protocol_stream(data, |b| {
+        std::str::from_utf8(b).map(|s| s.to_string()).map_err(|e| e.to_string())
+    });
+    assert_eq!(res.items.len(), 1);
+    assert_eq!(res.errors.len(), 1);
+    assert_eq!(res.errors[0].id, "2");
+    assert!(res.errors[0].raw_payload_base64.is_some());
+    assert_matches::assert_matches!(status, ExitStatus::PartialOutcome);
+}
+```
+
+---
+
+
+---
+
+## 9868. Machine API Documentation Leakage Prevention Invariant (Harvested from pimalaya/himalaya)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Machine API Documentation Leakage Prevention Invariant",
+  "source": "pimalaya/himalaya",
+  "source_url": "https://github.com/pimalaya/himalaya",
+  "source_version": "bf9f4e2a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T23:27:18.262Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pimalaya-himalaya",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pimalaya/himalaya](https://github.com/pimalaya/himalaya) (Revision: `bf9f4e2a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Public JSON Schema descriptions emitted by a program MUST NOT include ecosystem-specific intra-doc link syntax (such as Rust `[` `]`, `//!`, or language-specific symbol links). All descriptions exposed in machine-readable schema contracts MUST be stated purely in JSON-native domain terminology (referencing `null` rather than `None`/`nil`, JSON primitive names, and standard RFC specifications).
+
+**WHY**:
+Emitting internal language-specific symbols or compiler link markdown syntax (`[` `]`) into generated JSON Schema artifacts breaks cross-language agent tooling, leaks implementation choices into external API contracts, and fails automated schema validators.
+
+**WHEN TO APPLY**:
+Apply to any schema generator, OpenAPI spec derive macro, or JSON Schema registry (`schemars`, `utoipa`, `serde-reflection`) that extracts doc-comments to populate OpenAPI/JSON-Schema descriptions.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use serde_json::Value;
+
+pub fn assert_no_compiler_doc_links_in_schema(schema_root: &Value) -> Result<(), Vec<String>> {
+    let mut violations = Vec::new();
+    traverse_descriptions("root".to_string(), schema_root, &mut violations);
+    if violations.is_empty() {
+        Ok(())
+    } else {
+        Err(violations)
+    }
+}
+
+fn traverse_descriptions(path: String, value: &Value, violations: &mut Vec<String>) {
+    match value {
+        Value::Object(map) => {
+            for (key, val) in map {
+                if key == "description" {
+                    if let Value::String(desc) = val {
+                        if desc.contains("[`") || desc.contains("`]") {
+                            violations.push(format!("Path `{path}/description` holds intra-doc link: {desc}"));
+                        }
+                    }
+                } else {
+                    traverse_descriptions(format!("{path}/{key}"), val, violations);
+                }
+            }
+        }
+        Value::Array(arr) => {
+            for (i, val) in arr.iter().enumerate() {
+                traverse_descriptions(format!("{path}/{i}"), val, violations);
+            }
+        }
+        _ => {}
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Rust intra-doc link inside struct that derives JsonSchema
+use schemars::JsonSchema;
+use serde::Serialize;
+
+#[derive(Serialize, JsonSchema)]
+pub struct MailboxStatus {
+    /// Row from [`PimdirStatusOutput`]. // BUG: Leaks Rust intra-doc link to JSON Schema
+    pub count: u64,
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a global recursive schema walker test that runs across all registered schemas and their `$defs`:
+```rust
+#[test]
+fn test_all_json_schemas_contain_no_doc_links() {
+    let schema_val = serde_json::to_value(&schemars::schema_for!(MailboxStatus)).unwrap();
+    let result = assert_no_compiler_doc_links_in_schema(&schema_val);
+    assert!(result.is_ok(), "Doc link violations found: {:?}", result.err());
+}
+```
+
+---

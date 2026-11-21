@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T23:06:18.329Z",
+  "updated_at": "2026-11-21T23:30:18.582Z",
   "stats": {
-    "total_discovered": 7379,
-    "approved_pending_harvest": 6981,
+    "total_discovered": 7381,
+    "approved_pending_harvest": 6982,
     "harvested_count": 0,
-    "rejected_count": 398,
+    "rejected_count": 399,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6961,
+      "COMMUNITY_AND_EXPERT": 6962,
       "OFFICIAL_DOCUMENTATION": 240,
-      "STANDARDS_AND_SPECIFICATIONS": 122,
+      "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
       "SECURITY_ADVISORIES": 42,
       "LEGAL_AND_REGULATORY": 2,
@@ -159575,6 +159575,43 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
         "fileName": "clockworklabs-spacetimedb-learnings.md"
+      }
+    },
+    "SRC-EF12FE772291": {
+      "id": "SRC-EF12FE772291",
+      "url": "https://www.rfc-editor.org/rfc/rfc5322",
+      "title": "IETF RFC 5322",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T23:28:26.806Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-DDA57788E92E": {
+      "id": "SRC-DDA57788E92E",
+      "url": "http://100.x.y.z:5252`",
+      "title": "http://100.x.y.z:5252`",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-21T23:30:18.582Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
+        "fileName": "tailscale-tailscale-learnings.md"
       }
     }
   }

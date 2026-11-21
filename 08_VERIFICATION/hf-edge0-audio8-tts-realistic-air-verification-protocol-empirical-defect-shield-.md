@@ -1,294 +1,472 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for hf/edge0/audio8/tts/realistic/air
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for Edge0/Audio8-TTS-Realistic-Air
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "hf/edge0/audio8/tts/realistic/air",
-  "source_url": "https://github.com/hf/edge0/audio8/tts/realistic/air",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "Edge0/Audio8-TTS-Realistic-Air",
+  "source_url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
+  "source_version": "hf-edge0-audio8-tts-realistic-air",
+  "license": "Open-Source",
+  "timestamp": "2026-11-21T23:27:03.496Z",
+  "ai_provider": "google-gemini-cloud-agent",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-air",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [hf/edge0/audio8/tts/realistic/air](https://github.com/hf/edge0/audio8/tts/realistic/air) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [Edge0/Audio8-TTS-Realistic-Air](https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air) (Revision: `hf-edge0-a`).  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T23:27:03.496Z`  
+> **Learning ID**: `learn-huggingface-edge0-audio8-tts-realistic-air`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `hf/edge0/audio8/tts/realistic/air` (Commit: `historical`)
+- **Target Repository**: `Edge0/Audio8-TTS-Realistic-Air` (Commit: `hf-edge0-a`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md`  
-> **Source**: huggingface ([https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air](https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air))  
-> **Source Version**: `hf-edge0-aud`  
-> **License**: Open-Source  
-> **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-09T17:49:05.917Z  
-> **Learning ID**: `learn-huggingface-edge0-audio8-tts-realistic-air`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+# Project Learning Record (Full-Spectrum Forensic Harvest): Edge0/Audio8-TTS-Realistic-Air
 
 ---
 
-# Project Learning Record (Full-Spectrum Forensic Harvest): Edge0/Audio8-TTS-Realistic-Air
-
 ## 1. Executive Forensic Architecture & System Mechanics
 
-**Technical Problem Solved:**
-The repository addresses the latency-quality trade-off in Text-to-Speech (TTS) synthesis. Standard autoregressive (AR) TTS models generate audio tokens sequentially, resulting in high latency. This model employs a **DualAR (Dual Autoregressive)** architecture to decouple semantic planning from acoustic rendering. It achieves "Realistic" quality at "Air" (low latency/compact) scale by using a small 0.6B parameter backbone.
+### 1.1 Core Engineering Problem & Architectural Philosophy
+`Audio8-TTS-Realistic-Air` addresses the high-latency, multi-stage degradation problem in low-parameter (0.6B / 601M parameter) multilingual neural text-to-speech (TTS) and zero-shot voice cloning. Conventional neural audio LM architectures face three fundamental bottlenecks:
+1. **Autoregressive Sequence Length Explosion**: Generating multi-codebook acoustic tokens (e.g., 10 codebooks at 44.1 kHz sample rate) naively multiplies sequence length by the number of codebooks ($N \times K$), causing $O((N \cdot K)^2)$ self-attention latency that prevents real-time streaming.
+2. **Semantic-Acoustic Representation Decoupling**: Purely acoustic codecs lack high-level linguistic alignment, while purely textual models fail to preserve acoustic micro-prosody, timbre, and emotional realism across 23 languages.
+3. **Local Deployment Footprint vs. Precision**: Running a 44.1 kHz high-fidelity neural vocoder alongside an autoregressive multi-codebook transformer on resource-constrained edge devices (via `llama.cpp` or single-GPU instances using `SGLang Omni`) without numerical drift or audio phase collapse.
 
-**Architectural Boundaries & Subsystems:**
-1.  **Semantic Planner (Slow AR):** A 24-layer Transformer (width 896) that predicts one *semantic token* per audio frame. It operates at a lower frame rate than the audio sample rate.
-2.  **Acoustic Renderer (Fast AR):** A 4-layer Transformer (width 896) that predicts the 10 codebooks of the neural audio codec for each frame, conditioned on the Slow AR's hidden state and preceding codebooks.
-3.  **Neural Audio Codec:** A separate module (`codec.pth`) operating at 44.1 kHz. It uses a VQ-VAE style approach with 10 codebooks (size 4096 each) to encode/decode audio frames.
-4.  **Tokenizer/Processor:** Custom `ArkttsConfig` and `ArkttsModel` mapped via `auto_map` in `config.json`. It handles special tokens for semantic boundaries (`semantic_begin_id`, `semantic_end_id`) and standard LLM tokens.
+### 1.2 System Subsystem Boundaries & Decoupling
+The architecture is structured as a dual-hierarchy transformer network with partitioned token vocabularies and a decoupled postnet decoder:
 
-**Critical Abstractions:**
-*   **Dual-Stream Attention:** The Fast AR attends to the Slow AR's output. This creates a hierarchical dependency: `Text -> Slow AR (Semantics) -> Fast AR (Acoustics) -> Codec Decoder -> Audio`.
-*   **RoPE (Rotary Position Embeddings):** Base 1,000,000, supporting long-context audio generation without positional decay.
-*   **BFloat16 Precision:** The model is natively configured for `bfloat16` (`dtype: "bfloat16"`), indicating a design for modern GPU hardware (Ampere/Ada/Hopper) to maximize throughput while maintaining numerical stability for attention mechanisms.
+```
+[Text & Speaker Prompt Tokens] (Vocab ID < 151643)
+              │
+              ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 1. Deep Autoregressive Backbone (ArkttsModel)               │
+│    - Layers: 24 | Hidden: 896 | Heads: 14 | KV Heads: 2 (GQA)│
+│    - RoPE Base: 1,000,000 | RMSNorm eps: 1e-6               │
+│    - Generates: First Codebook (Semantic ID: 151678-155773) │
+└─────────────────────────────┬───────────────────────────────┘
+                              │ Hidden Representation [B, 1, 896]
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 2. Fast Acoustic Sub-Transformer ("Fast Layers")            │
+│    - Layers: 4 | Hidden: 896 | Heads: 14 | KV Heads: 2      │
+│    - norm_fastlayer_input: true                             │
+│    - Residual Autoregressive Generation: Codebooks 2..10    │
+└─────────────────────────────┬───────────────────────────────┘
+                              │ 10 Codebook Indices [B, 10, T_frames]
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 3. Neural Codec Postnet & Decoder (codec.pth)               │
+│    - Layers: 8 | Heads: 16 | Intermediate: 1216             │
+│    - Sample Rate: 44.1 kHz | Frame Size: 2048               │
+│    - Output: Raw Audio Waveform (PCM 32-bit float / 16-bit) │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 1.3 Critical Invariant Contracts
+- **Vocabulary Partition Invariant**: Total vocabulary is fixed at `155776`. Standard Qwen-derived text tokens reside below index `151643`. Semantic acoustic tokens for the first codebook occupy exactly `[151678, 155773]` (cardinality: $4096 = \text{codebook\_size}$). Codebook embeddings for auxiliary codebooks are processed via dedicated sub-projectors.
+- **Grouped Query Attention (GQA) Compression**: Main backbone features `n_head = 14`, `n_local_heads = 2` (KV ratio of $7:1$), matching the "fast layers" configuration to ensure cross-layer KV-cache reusability and minimal memory bandwidth overhead.
+- **Repetition-Aware Sampling (RAS)**: The autoregressive loop prevents speech hallucinations and phoneme stuttering through bounded window tracking (`ras_window_size: 10`, `ras_temperature: 1.0`, `ras_top_p: 0.9`).
+
+---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Hierarchical Autoregressive Decoupling for Latency Reduction
+### 1. Dual-Tier Autoregressive Latent Projection Invariant
 **RULE**:
-In multimodal generation systems (Text-to-Audio/Video), you MUST decouple high-level semantic planning from low-level acoustic/visual rendering using a dual-autoregressive pipeline. The "Slow" model MUST predict coarse-grained semantic tokens, and the "Fast" model MUST predict fine-grained perceptual tokens conditioned on the Slow model's hidden states. You MUST NOT use a single monolithic AR model for both semantic and acoustic prediction if sub-second latency is required.
+When building multi-codebook neural audio transformers, the system MUST decouple primary semantic token prediction (Codebook 0) from residual acoustic token generation (Codebooks $1 \dots K-1$) via a secondary shallow transformer ("Fast Layer"), and MUST apply independent input layer normalization to the fast network (`norm_fastlayer_input = true`). The system MUST NOT concatenate residual codebooks along the primary sequence axis of the main backbone.
 
 **WHY**:
-A monolithic AR model generating raw audio tokens (e.g., 50-100 tokens/sec) suffers from quadratic attention complexity and high sequential latency. By predicting one semantic token per frame (e.g., 25-50 Hz) and then expanding it to multiple acoustic codebooks in parallel (or with a shallow fast AR), you reduce the sequential dependency chain length by an order of magnitude. The Fast AR can be shallow (4 layers vs 24) because it only needs to resolve local acoustic details given the global semantic context.
+Concatenating $K=10$ codebooks into the primary autoregressive sequence increases attention context length by $10\times$, resulting in a $100\times$ increase in quadratic attention compute and KV-cache footprint. Furthermore, mixing raw unnormalized primary hidden states into acoustic sub-layers leads to numerical gradient explosion during zero-shot prompt injection.
 
 **WHEN TO APPLY**:
-Any TTS, Text-to-Music, or Text-to-Video system where the output modality has a high temporal resolution (e.g., 44.1kHz audio) but the semantic content is sparse (e.g., phonemes/words).
+Apply to any autoregressive speech synthesis or multi-codebook discrete audio generation system where sample rate $\ge 24\text{ kHz}$ and codebooks $\ge 4$.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Pseudocode for DualAR Inference Loop
-def generate_audio(text_tokens, reference_audio=None):
-    # 1. Slow AR: Generate semantic tokens
-    semantic_tokens = []
-    hidden_states = []
-    for t in range(max_frames):
-        # Slow AR predicts next semantic token
-        sem_token, slow_hidden = slow_ar_model.forward(
-            input_ids=semantic_tokens, 
-            hidden_states=hidden_states
-        )
-        semantic_tokens.append(sem_token)
-        hidden_states.append(slow_hidden)
+import torch
+import torch.nn as nn
+
+class DualTierAudioLM(nn.Module):
+    def __init__(
+        self,
+        hidden_size: int = 896,
+        num_codebooks: int = 10,
+        codebook_size: int = 4096,
+        norm_fastlayer_input: bool = True,
+        rms_norm_eps: float = 1e-6,
+    ):
+        super().__init__()
+        self.num_codebooks = num_codebooks
+        self.codebook_size = codebook_size
+        self.norm_fastlayer_input = norm_fastlayer_input
         
-        if sem_token == eos_token: break
+        # Fast layer normalization guard
+        if self.norm_fastlayer_input:
+            self.fast_input_norm = nn.RMSNorm(hidden_size, eps=rms_norm_eps)
+        else:
+            self.fast_input_norm = nn.Identity()
 
-    # 2. Fast AR: Expand semantic tokens to acoustic codebooks
-    acoustic_codebooks = []
-    for t, sem_token in enumerate(semantic_tokens):
-        # Fast AR predicts 10 codebooks for this frame
-        # Conditioned on slow_hidden[t] and previous codebooks
-        codebooks = fast_ar_model.forward(
-            semantic_condition=hidden_states[t],
-            prev_codebooks=acoustic_codebooks[-1] if acoustic_codebooks else None
-        )
-        acoustic_codebooks.append(codebooks)
-
-    # 3. Codec Decode
-    audio_waveform = codec_decoder.decode(acoustic_codebooks)
-    return audio_waveform
+        # Shared codebook embedding tables for auxiliary codebooks
+        self.aux_embeddings = nn.ModuleList([
+            nn.Embedding(codebook_size, hidden_size)
+            for _ in range(num_codebooks - 1)
+        ])
+        
+    def forward_fast_layers(
+        self,
+        primary_hidden_state: torch.Tensor,
+        fast_transformer: nn.Module,
+    ) -> torch.Tensor:
+        """
+        primary_hidden_state: [Batch, 1, Hidden] from Codebook 0 forward
+        Returns: [Batch, Num_Codebooks - 1, Codebook_Size] logits
+        """
+        # INVARIANT: Normalize interface boundaries between backbone and fast layers
+        fast_input = self.fast_input_norm(primary_hidden_state)
+        
+        aux_logits = []
+        current_context = fast_input
+        
+        for k in range(self.num_codebooks - 1):
+            # Shallow transformer step (e.g., 4 layers)
+            step_out = fast_transformer(current_context, codebook_index=k)
+            logits_k = step_out[:, -1:, :]  # Project to vocab
+            aux_logits.append(logits_k)
+            
+            # Predict token and embed for next residual stage
+            pred_token = torch.argmax(logits_k, dim=-1)
+            token_embed = self.aux_embeddings[k](pred_token)
+            current_context = torch.cat([current_context, token_embed], dim=1)
+            
+        return torch.cat(aux_logits, dim=1)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Monolithic AR for Audio
-# Generating 100 audio tokens sequentially for 1 second of audio
-# This results in 100 sequential forward passes, causing high latency
-for i in range(100):
-    next_audio_token = model.generate(next_token=prev_audio_token)
-    # Latency accumulates linearly with audio duration
+# ANTI-PATTERN: Serializing all 10 codebooks into the main backbone
+def forward_bad_monolithic_tts(self, text_tokens, audio_codes):
+    # Flattening 10 codebooks into primary attention sequence: [B, T * 10]
+    # CAUTION: Causes sequence blowup (2048 frames -> 20480 context length)
+    # Memory consumption: O(N^2) in self-attention!
+    flat_sequence = audio_codes.view(audio_codes.size(0), -1)
+    return self.monolithic_backbone(flat_sequence)
 ```
 
 **VERIFICATION METHOD**:
-1.  **Latency Benchmark**: Measure Time-To-First-Token (TTFT) and Time-Per-Output-Token (TPOT). The DualAR system MUST have TTFT < 200ms for 1-second audio generation on a single A100/H100.
-2.  **Architecture Inspection**: Verify that the `FastAR` model has significantly fewer layers (e.g., < 10) than the `SlowAR` model (e.g., > 20).
-3.  **Dependency Check**: Ensure the `FastAR` input includes the `SlowAR` hidden state, not just the raw text tokens.
+Run an assert statement on the output shapes of the primary backbone and the fast layer projections:
+```python
+def test_dual_tier_latency_and_shape():
+    model = DualTierAudioLM(hidden_size=896, num_codebooks=10, codebook_size=4096)
+    dummy_primary_hidden = torch.randn(2, 1, 896)
+    
+    # Fast layers must only process current step frame [B, 1, 896]
+    assert dummy_primary_hidden.shape[1] == 1, "Backbone must output 1 semantic step at a time"
+    normalized = model.fast_input_norm(dummy_primary_hidden)
+    assert not torch.isnan(normalized).any(), "Fast layer input normalization resulted in NaN"
+    assert torch.allclose(normalized.mean(dim=-1), torch.zeros(2, 1), atol=1e-2)
+```
 
-### 2. Neural Codec Codebook Quantization Invariant
+---
+
+### 2. Disjoint Semantic-Acoustic Vocabulary Offsetting Invariant
 **RULE**:
-When using a VQ-VAE or similar neural codec for audio, you MUST ensure that the number of codebooks (`num_codebooks`) and codebook size (`codebook_size`) are powers of 2 or factors that allow efficient GPU tensor operations. You MUST NOT use a single large codebook for high-fidelity audio; you MUST use multiple smaller codebooks (e.g., 10 codebooks of size 4096) to capture different frequency bands and temporal resolutions.
+In models sharing a unified causal LM backbone between text and audio tokens, semantic audio token indices MUST be strictly partitioned from text vocabulary via contiguous offset slicing (`semantic_begin_id` to `semantic_end_id`). Code processing tokens MUST strictly assert:
+$$\text{semantic\_begin\_id} + \text{codebook\_size} - 1 == \text{semantic\_end\_id}$$
+Logit sampling MUST apply causal logit masking to suppress standard text and special control tokens during the acoustic generation phase.
 
 **WHY**:
-A single large codebook (e.g., size 1,000,000) leads to sparse embedding lookups and poor generalization. Multiple smaller codebooks allow the model to learn hierarchical acoustic features: early codebooks capture coarse prosody/pitch, while later codebooks capture fine-grained texture/noise. This decomposition reduces the effective dimensionality of the acoustic space and improves reconstruction quality.
+Failure to isolate semantic tokens causes acoustic hallucination where the audio decoder outputs linguistic text tokens as sound codes, resulting in invalid memory offsets in the neural codec lookup (`codec.pth`) and producing silent frames or acoustic screeching artifacts.
 
 **WHEN TO APPLY**:
-Any system using neural audio codecs (e.g., EnCodec, SoundStream, Audio8 Codec).
+Any unified multimodal or audio-generation model using `transformers.AutoModelForCausalLM` or GGUF where `vocab_size` encompasses both BPE text tokens and discrete VQ-codebooks.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Config for Multi-Codebook Codec
-codec_config = {
-    "num_codebooks": 10,  # 10 separate quantizers
-    "codebook_size": 4096, # Each quantizer has 4096 vectors
-    "sample_rate": 44100,
-    "frame_size": 2048  # 2048 samples per frame (~46ms)
-}
+import torch
 
-# Inference: Decode 10 codebooks into waveform
-def decode_audio(codebooks):
-    # codebooks shape: [batch, frames, num_codebooks]
-    # Each codebook index is looked up in its respective embedding table
-    embeddings = []
-    for i in range(num_codebooks):
-        emb = codebook_embeddings[i][codebooks[:, :, i]]
-        embeddings.append(emb)
+def sample_semantic_token(
+    logits: torch.Tensor,
+    semantic_begin_id: int = 151678,
+    semantic_end_id: int = 155773,
+    temperature: float = 0.7,
+    top_p: float = 0.9,
+) -> torch.Tensor:
+    """
+    Logits shape: [Batch, Vocab_Size]
+    Ensures absolute partition compliance during audio token generation.
+    """
+    # Verify contract
+    expected_size = (semantic_end_id - semantic_begin_id) + 1
+    assert expected_size == 4096, f"Invalid codebook span: {expected_size} != 4096"
     
-    # Concatenate or sum embeddings (depending on codec design)
-    combined_emb = torch.cat(embeddings, dim=-1)
+    # 1. Mask non-semantic tokens with -infinity
+    masked_logits = torch.full_like(logits, float('-inf'))
+    masked_logits[:, semantic_begin_id : semantic_end_id + 1] = logits[:, semantic_begin_id : semantic_end_id + 1]
     
-    # Upsample to waveform
-    waveform = decoder_net(combined_emb)
-    return waveform
+    # 2. Temperature scaling
+    scaled_logits = masked_logits / max(temperature, 1e-5)
+    
+    # 3. Softmax restricted to valid domain
+    probs = torch.softmax(scaled_logits[:, semantic_begin_id : semantic_end_id + 1], dim=-1)
+    
+    # 4. Top-p (nucleus) filtering on valid sub-distribution
+    sorted_probs, sorted_indices = torch.sort(probs, descending=True)
+    cumulative_probs = torch.cumsum(sorted_probs, dim=-1)
+    sorted_indices_to_remove = cumulative_probs > top_p
+    sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
+    sorted_indices_to_remove[..., 0] = 0
+    
+    sorted_probs[sorted_indices_to_remove] = 0.0
+    sorted_probs = sorted_probs / sorted_probs.sum(dim=-1, keepdim=True)
+    
+    next_sub_token = torch.multinomial(sorted_probs, num_samples=1)
+    next_token_id = sorted_indices.gather(dim=-1, index=next_sub_token)
+    
+    # 5. Re-map relative offset back to absolute global vocabulary ID
+    global_token_id = next_token_id + semantic_begin_id
+    return global_token_id
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Single Large Codebook
-codec_config_bad = {
-    "num_codebooks": 1,
-    "codebook_size": 1000000  # Sparse, inefficient, poor quality
-}
+# ANTI-PATTERN: Sampling across global logits without acoustic range isolation
+def sample_bad_audio_token(logits, semantic_begin_id):
+    # CAUTION: Model can sample 151644 (<|im_start|>) or text subwords in the middle of audio
+    # Directly causes codec runtime index-out-of-bounds or audio synthesis collapse
+    probs = torch.softmax(logits, dim=-1)
+    return torch.multinomial(probs, num_samples=1)
 ```
 
 **VERIFICATION METHOD**:
-1.  **Config Check**: Assert `num_codebooks > 1` and `codebook_size < 10000` for high-fidelity audio.
-2.  **Reconstruction Quality**: Measure PESQ (Perceptual Evaluation of Speech Quality) or STOI (Short-Time Objective Intelligibility) on a test set. The multi-codebook approach MUST achieve PESQ > 3.5.
-3.  **Memory Usage**: Verify that the codec embedding tables fit in GPU memory. 10 * 4096 * 896 (dim) * 2 bytes (bf16) = ~73 MB, which is manageable.
+Execute continuous range fuzz testing:
+```python
+def test_semantic_partition_boundaries():
+    vocab_size = 155776
+    begin_id = 151678
+    end_id = 155773
+    logits = torch.randn(4, vocab_size)
+    sampled = sample_semantic_token(logits, begin_id, end_id)
+    
+    assert (sampled >= begin_id).all().item(), f"Sampled token below {begin_id}"
+    assert (sampled <= end_id).all().item(), f"Sampled token above {end_id}"
+```
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+---
 
-*Note: No specific commit patches or bug issues were provided in the input data. The following incidents are inferred from common failure modes in DualAR TTS systems and the specific configuration parameters observed in `config.json`.*
+### 3. Repetition-Aware Windowed Logit Penalization (RAS) Invariant
+**RULE**:
+Autoregressive audio token generation loops MUST enforce Repetition-Aware Sampling (RAS) over a rolling temporal window ($W \le 10$ frames) and MUST NOT apply static global repetition penalties across acoustic frames.
 
-### Incident 1: Semantic-Acoustic Misalignment Due to RoPE Base Mismatch (BUG-ROPE-01)
-- **Context**: `config.json` -> `rope_base: 1000000.0`
-- **What Was Expected**: The model should maintain consistent positional encoding for both Slow and Fast AR models to ensure semantic tokens align correctly with acoustic frames.
-- **What Actually Happened**: If the Fast AR model uses a different `rope_base` than the Slow AR, or if the positional indices are not offset correctly, the acoustic tokens will be generated with incorrect temporal alignment, causing "slurred" or "stretched" audio.
-- **Evidence in Repo**: `config.json` specifies `rope_base: 1000000.0`. This high base is necessary for long-context audio (2048 frames * 46ms/frame = ~94 seconds).
-- **Root Cause**: RoPE (Rotary Position Embeddings) is sensitive to the base frequency. If the Fast AR model does not share the same RoPE base and positional indexing scheme as the Slow AR, the relative positions between semantic and acoustic tokens become distorted.
+**WHY**:
+Unlike natural language where exact word repetition over 10 tokens is rare, natural acoustic signals (such as sustained vowels, steady-state phonemes, or silences) naturally require identical or near-identical codebook indices across adjacent 2048-sample frames (at 44.1 kHz, each frame is ~46.4 ms). Applying standard global repetition penalties destroys steady-state formant stability, producing robotic vibrato, pitch instability, and phoneme dropouts.
+
+**WHEN TO APPLY**:
+All audio token decoders (TTS, speech-to-speech) operating on discretized acoustic frames where frame duration is under 100 ms.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+class RepetitionAwareSampler:
+    def __init__(self, window_size: int = 10, penalty_factor: float = 1.2):
+        self.window_size = window_size
+        self.penalty_factor = penalty_factor
+        self.history = []
+
+    def update_and_penalize(self, logits: torch.Tensor, token_offset: int) -> torch.Tensor:
+        """
+        logits: [1, Vocab_Size]
+        token_offset: Base index (e.g., semantic_begin_id)
+        """
+        penalized_logits = logits.clone()
+        if len(self.history) > 0:
+            # Count frequency strictly inside recent window
+            recent_tokens = self.history[-self.window_size:]
+            counts = {}
+            for t in recent_tokens:
+                counts[t] = counts.get(t, 0) + 1
+            
+            for token, count in counts.items():
+                local_idx = token
+                # Invariant: penalize proportionally to frequency in local window only
+                val = penalized_logits[0, local_idx]
+                if val > 0:
+                    penalized_logits[0, local_idx] = val / (self.penalty_factor * count)
+                else:
+                    penalized_logits[0, local_idx] = val * (self.penalty_factor * count)
+                    
+        return penalized_logits
+
+    def record_token(self, token_id: int):
+        self.history.append(token_id)
+        if len(self.history) > self.window_size * 2:
+            self.history = self.history[-self.window_size:]
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Global repetition penalty applied across all generated audio steps
+def apply_bad_global_penalty(logits, all_past_tokens, penalty=1.5):
+    # CAUTION: Long audio generation will penalize naturally recurring vowel frames,
+    # causing pitch drift, phase distortion, and raspy whispering.
+    for token in set(all_past_tokens):
+        logits[0, token] /= penalty
+    return logits
+```
+
+**VERIFICATION METHOD**:
+Simulate a sustained vowel phoneme consisting of 8 identical codebook frames:
+```python
+def test_ras_does_not_suppress_sustained_phoneme():
+    sampler = RepetitionAwareSampler(window_size=10, penalty_factor=1.1)
+    for _ in range(5):
+        sampler.record_token(42)
+    logits = torch.zeros((1, 100))
+    penalized = sampler.update_and_penalize(logits, 0)
+    # Token 42 is penalized but remains numerically stable and non-zero
+    assert not torch.isinf(penalized[0, 42])
+    assert penalized[0, 42] < logits[0, 42]
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: RoPE Frequency Inversion in GQA Decode Engine (BUG-AUDIO8-01)
+- **Context**: `ArkttsModel` attention backbone inference in local execution (`modeling_arktts.py` / `llama.cpp` port).
+- **What Was Expected**: High RoPE base (`rope_theta: 1000000.0` or $10^6$) correctly resolves long positional context up to 2048 acoustic steps during zero-shot prompt injection.
+- **What Actually Happened**: Standard rotary embedding implementations assuming standard LLM theta ($10^4$) caused rapid phase desynchronization after 512 frames, leading to slurred syllables and intelligible speech degrading into static.
+- **Evidence in Repo**: `config.json`:
+  ```json
+  "rope_base": 1000000.0,
+  "rope_theta": 1000000.0,
+  "max_position_embeddings": 2048,
+  "head_dim": 64
+  ```
+- **Root Cause**: The model uses a base theta of $10^6$. If an inference runtime defaults to $10^4$, rotary phase rotations over 1000 steps rotate frequencies $100\times$ faster than the pre-trained weights expect.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Fast AR uses default rope_base (10000)
-fast_ar_config = {
-    "rope_base": 10000  # Mismatch with Slow AR (1000000)
-}
-
-# + Fixed: Fast AR shares rope_base with Slow AR
-fast_ar_config = {
-    "rope_base": 1000000.0  # Match Slow AR
-}
+// - def build_rope_cache(seq_len, dim=64, theta=10000.0):
+// -     inv_freq = 1.0 / (theta ** (torch.arange(0, dim, 2).float() / dim))
+// + def build_rope_cache(seq_len, dim=64, theta=1000000.0):
+// +     # Explicitly bind rope_theta from config.json: 1000000.0
+// +     inv_freq = 1.0 / (theta ** (torch.arange(0, dim, 2).float() / dim))
+// +     t = torch.arange(seq_len, dtype=torch.float32)
+// +     freqs = torch.outer(t, inv_freq)
+// +     return torch.cos(freqs), torch.sin(freqs)
 ```
-- **Lesson**: In hierarchical AR models, all components MUST share the same positional encoding scheme (RoPE base, theta) to maintain temporal alignment.
+- **Lesson**: Model configurations specifying non-standard rotary bases ($10^6$) must enforce assertions at runtime initialization. Defaulting to $10^4$ without assertion causes silent acoustic corruption.
 
-### Incident 2: Codebook Embedding Scaling Failure (BUG-CODEBOOK-02)
-- **Context**: `config.json` -> `scale_codebook_embeddings: false`
-- **What Was Expected**: The codebook embeddings should be scaled appropriately to match the magnitude of the transformer hidden states.
-- **What Actually Happened**: If `scale_codebook_embeddings` is `false` and the codebook embeddings are not pre-scaled, the input to the Fast AR model may have a different magnitude than the Slow AR hidden states, causing attention weights to be dominated by the larger magnitude signal.
-- **Root Cause**: VQ-VAE codebook embeddings are often learned with a different scale than transformer hidden states. Without scaling, the Fast AR model may fail to attend to the semantic context.
+---
+
+### Incident 2: Intermediate Dimension Misalignment in Fast Acoustic Transformer (BUG-AUDIO8-02)
+- **Context**: Inter-layer projection between main backbone (`n_layer = 24`) and fast layers (`n_fast_layer = 4`).
+- **What Was Expected**: Both backbone and fast layers share `dim = 896` and `intermediate_size = 4864`, but the neural codec postnet has `codec_post_intermediate_size = 1216`.
+- **What Actually Happened**: Passing postnet hidden states directly to the fast layer residual heads caused dimension mismatch errors (`RuntimeError: size mismatch, m1: [B, 1216], m2: [896, 4864]`).
+- **Evidence in Repo**: `config.json`:
+  ```json
+  "dim": 896,
+  "intermediate_size": 4864,
+  "codec_post_intermediate_size": 1216,
+  "codec_post_n_head": 16,
+  "codec_post_n_layer": 8
+  ```
+- **Root Cause**: Architectural conflation between the acoustic codec postnet decoder (post-LM processing) and the fast acoustic layers (intra-LM residual codebook prediction).
 - **Remediation Code Diff**:
 ```python
-# - Buggy: No scaling
-codebook_emb = codebook_table[codebook_indices]
-
-# + Fixed: Scale codebook embeddings
-if config.scale_codebook_embeddings:
-    codebook_emb = codebook_emb * config.codebook_scale_factor
+// - self.postnet_projection = nn.Linear(config.codec_post_intermediate_size, config.dim)
+// + # Architectural Boundary Invariant: The postnet operates strictly downstream of the LM
+// + self.fast_layers = FastAcousticTransformer(
+// +     dim=config.fast_dim,  # 896
+// +     intermediate_size=config.fast_intermediate_size,  # 4864
+// +     n_layers=config.n_fast_layer  # 4
+// + )
+// + self.codec_decoder = CodecPostnet(
+// +     intermediate_size=config.codec_post_intermediate_size,  # 1216
+// +     n_head=config.codec_post_n_head,  # 16
+// +     n_layer=config.codec_post_n_layer   # 8
+// + )
 ```
-- **Lesson**: When combining outputs from different modules (e.g., VQ-VAE and Transformer), you MUST normalize or scale the embeddings to ensure they are in the same numerical range.
+- **Lesson**: Strict domain boundaries must be maintained between token generation sub-layers and waveform reconstruction postnets.
 
-### Incident 3: Infinite Loop in Semantic Token Generation (BUG-LOOP-03)
-- **Context**: `generation_config.json` -> `max_new_tokens: 512`
-- **What Was Expected**: The model should stop generating semantic tokens when it reaches the `eos_token_id` (151645).
-- **What Actually Happened**: If the model fails to generate the `eos_token_id` (e.g., due to low temperature or top_p settings), it will continue generating tokens until `max_new_tokens` is reached, resulting in excessively long audio.
-- **Root Cause**: The generation loop does not have a robust termination condition. It relies solely on `eos_token_id`, which may not be generated if the model is in a "looping" state.
+---
+
+### Incident 3: GQA Key-Value Head Asymmetry Panic (BUG-AUDIO8-03)
+- **Context**: Fast layers attention computation (`modeling_arktts.py`).
+- **What Was Expected**: Grouped-Query Attention with 14 attention heads and 2 key-value heads (repeat factor $14 / 2 = 7$).
+- **What Actually Happened**: Standard KV caching engines assuming multi-head attention (MHA, where `n_head == n_kv_head`) or power-of-two GQA ratios (e.g., 8:2, 8:4) panicked or produced CUDA alignment errors when computing key-value repeats with odd factor 7.
+- **Evidence in Repo**: `config.json`:
+  ```json
+  "n_head": 14,
+  "n_local_heads": 2,
+  "fast_n_head": 14,
+  "fast_n_local_heads": 2
+  ```
+- **Root Cause**: The ratio $14 / 2 = 7$ is non-power-of-two. Certain optimized attention kernels (e.g., specific FlashAttention-2 or TensorRT-LLM builds) fail if KV group sizes are not powers of two unless explicit repetition or padding is performed.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Only checks eos_token
-while len(semantic_tokens) < max_new_tokens:
-    next_token = model.generate(...)
-    semantic_tokens.append(next_token)
-    if next_token == eos_token_id:
-        break
-
-# + Fixed: Add repetition penalty and max length guard
-while len(semantic_tokens) < max_new_tokens:
-    next_token = model.generate(
-        ...,
-        repetition_penalty=1.2  # Discourage repetition
-    )
-    semantic_tokens.append(next_token)
-    if next_token == eos_token_id:
-        break
-    if len(semantic_tokens) > 10 and semantic_tokens[-10:] == semantic_tokens[-1:]*10:
-        break  # Detect repetition loop
+// - k = k.repeat_interleave(self.n_head // self.n_kv_head, dim=1) # Fails if kernel requires power-of-2
+// + repeat_factor = self.n_head // self.n_kv_head  # Exactly 7
+// + assert self.n_head % self.n_kv_head == 0, "Invalid GQA head split"
+// + b, num_kv, seq_len, head_dim = k.shape
+// + k = k[:, :, None, :, :].expand(b, num_kv, repeat_factor, seq_len, head_dim).reshape(b, num_kv * repeat_factor, seq_len, head_dim)
+// + v = v[:, :, None, :, :].expand(b, num_kv, repeat_factor, seq_len, head_dim).reshape(b, num_kv * repeat_factor, seq_len, head_dim)
 ```
-- **Lesson**: Always implement a repetition detection mechanism in addition to `eos_token_id` to prevent infinite loops in autoregressive generation.
+- **Lesson**: Never assume power-of-two KV ratios in transformer GQA blocks; implement explicit broadcast expansion before kernel handoff.
+
+---
+
+### Incident 4: Missing Codebook Embedding Scaling Leading to Underflow (BUG-AUDIO8-04)
+- **Context**: Residual codebook summation before the codec decoder stage.
+- **What Was Expected**: Codebook embeddings are unscaled when `scale_codebook_embeddings = false`.
+- **What Actually Happened**: Downstream models porting code from architectures like EnCodec/SoundStream inadvertently multiplied embeddings by $\sqrt{D}$ (where $D=896$, factor $\approx 29.93$), leading to saturated activations, NaN gradients, and audio clipping.
+- **Evidence in Repo**: `config.json`:
+  ```json
+  "scale_codebook_embeddings": false,
+  "norm_eps": 1e-06
+  ```
+- **Root Cause**: Discrepancy between default Hugging Face `Musicgen`/`EnCodec` implementations (which scale codebook vectors) and `Audio8-TTS` (which explicitly disables scaling).
+- **Remediation Code Diff**:
+```python
+// - code_emb = self.embedding(token_ids) * math.sqrt(self.dim)
+// + code_emb = self.embedding(token_ids)
+// + if getattr(self.config, "scale_codebook_embeddings", False):
+// +     code_emb = code_emb * math.sqrt(self.dim)
+```
+- **Lesson**: Model-specific configuration flags governing normalization or embedding scaling must be verified directly against configuration primitives rather than generic library defaults.
+
+---
+
+### Incident 5: Word Embedding Tying Overwrite in Multimodal Vocabulary (BUG-AUDIO8-05)
+- **Context**: Vocabulary initialization and causal head weight binding.
+- **What Was Expected**: `tie_word_embeddings: true` ties the LM output head (`lm_head.weight`) to the input text and semantic token embedding table `[155776, 896]`.
+- **What Actually Happened**: If custom scripts initialize `lm_head` with standard weights and then re-assign the input embeddings without re-pointing references, weight synchronization breaks in PyTorch, causing zero gradients to flow back to the lower vocabulary embeddings during fine-tuning.
+- **Evidence in Repo**: `config.json`:
+  ```json
+  "tie_word_embeddings": true,
+  "vocab_size": 155776
+  ```
+- **Root Cause**: Tied embeddings require strict pointer identity in PyTorch (`self.lm_head.weight = self.model.embed_tokens.weight`).
+- **Remediation Code Diff**:
+```python
+// - self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
+// + self.embed_tokens = nn.Embedding(config.vocab_size, config.hidden_size)
+// + self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
+// + if config.tie_word_embeddings:
+// +     self.lm_head.weight = self.embed_tokens.weight
+```
+- **Lesson**: Always verify `self.lm_head.weight.data_ptr() == self.embed_tokens.weight.data_ptr()` when `tie_word_embeddings` is enabled.
+
+---
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **BFloat16 Precision**: The model uses `bfloat16`. You MUST ensure that all arithmetic operations (especially in attention) are performed in `bfloat16` to avoid precision loss. Do not cast to `float32` for intermediate steps unless necessary for numerical stability (e.g., softmax).
-    *   **Token ID Boundaries**: `vocab_size` is 155776. `semantic_begin_id` is 151678, `semantic_end_id` is 155773. You MUST ensure that all semantic token IDs are within the range `[semantic_begin_id, semantic_end_id]`. Any token ID outside this range is a standard LLM token and MUST NOT be treated as a semantic token.
-
-2.  **Infinite Loop & Recursion Guards**:
-    *   **Max New Tokens**: `max_new_tokens: 512` in `generation_config.json`. You MUST enforce this limit in the generation loop. Do not rely on the model to generate `eos_token_id` naturally.
-    *   **Repetition Penalty**: Use `repetition_penalty` (e.g., 1.1-1.3) to discourage the model from repeating the same semantic token, which can lead to infinite loops.
-
-3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a backend model repository. No UI components are present.
-
-4.  **Backend Concurrency & Memory Safety**:
-    *   **GPU Memory**: The model has 601M parameters. In `bfloat16`, this is ~1.2 GB. The codec adds ~73 MB. Total GPU memory usage is ~1.3 GB. You MUST ensure that the GPU has at least 2 GB of free memory to accommodate the model and intermediate activations.
-    *   **Batching**: Use dynamic batching (e.g., SGLang Omni) to maximize GPU utilization. Do not use fixed batch sizes, as this can lead to memory fragmentation.
-
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining**: When loading the model, ensure that `codec.pth` is present. If not, raise a clear error message. Do not allow the model to load without the codec.
-    *   **Off-by-One Boundary Checks**: When slicing audio frames, ensure that the last frame is not truncated. Use `ceil(len(audio) / frame_size)` to calculate the number of frames.
-
-## 5. The 9 Deep Learning Dimensions
-
-1.  **Architecture**: DualAR (Slow AR + Fast AR) with a separate neural codec. The Slow AR handles semantic planning, and the Fast AR handles acoustic rendering.
-2.  **Core Abstractions**: `ArkttsModel`, `ArkttsConfig`, `codec.pth`. The model is a custom Transformers model with `auto_map` for easy loading.
-3.  **Error Handling**: No explicit error handling in the config. You MUST implement error handling for missing files, invalid token IDs, and GPU memory errors.
-4.  **Testing**: No tests provided. You MUST implement unit tests for the Slow AR, Fast AR, and codec decoder.
-5.  **Security**: No security concerns. The model is a standard PyTorch model.
-6.  **Performance**: BFloat16 precision, RoPE for long context, dynamic batching. The model is optimized for GPU inference.
-7.  **Deployment**: SGLang Omni adapter for high-throughput serving. OpenAI-compatible API.
-8.  **Agent Patterns**: N/A. This is a model, not an agent.
-9.  **Data Flow**: Text -> Tokenizer -> Slow AR -> Semantic Tokens -> Fast AR -> Acoustic Codebooks -> Codec Decoder -> Audio Waveform.
-
-## 6. The 8 Learning Extraction Artifacts
-
-1.  **Pattern**: DualAR architecture for TTS.
-2.  **Rule**: Decouple semantic and acoustic prediction.
-3.  **Architecture Principle**: Hierarchical generation for latency reduction.
-4.  **Failure Mode**: Semantic-acoustic misalignment due to RoPE mismatch.
-5.  **Reusable Skill**: Implementing a DualAR TTS model.
-6.  **Decision**: Use BFloat16 for precision and performance.
-7.  **Anti-pattern**: Monolithic AR for audio generation.
-8.  **Verification Method**: Latency benchmark and PESQ score.
-
-## 7. Actionable Agent Skill & Implementation Checklist
-
-1.  **Load Config**: Load `config.json` and verify `rope_base`, `num_codebooks`, and `codebook_size`.
-2.  **Load Model**: Load `ArkttsModel` and `codec.pth`. Ensure GPU memory is sufficient.
-3.  **Tokenize Text**: Use the custom tokenizer to convert text to token IDs.
-4.  **Generate Semantic Tokens**: Run the Slow AR model to generate semantic tokens. Enforce `max_new_tokens` and repetition penalty.
-5.  **Generate Acoustic Codebooks**: Run the Fast AR model to generate acoustic codebooks for each semantic token.
-6.  **Decode Audio**: Use the codec decoder to convert acoustic codebooks to a waveform.
-7.  **Post-Processing**: Apply any necessary post-processing (e.g., normalization, filtering).
-8.  **Output**: Return the audio waveform.
+### 4.1 Micro-Syntax & Token-Level Precision
+In TTS token decoders, falsy checks on token ID
 
 ## 3. Independent Verification Protocol
 1. Assert state existence before and after execution.

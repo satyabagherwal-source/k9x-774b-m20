@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T23:06:19.671Z",
-  "total_records": 2293,
+  "last_updated": "2026-11-21T23:30:19.517Z",
+  "total_records": 2301,
   "domains": {
     "A": {
       "total": 17,
@@ -27,7 +27,7 @@
       ]
     },
     "B": {
-      "total": 19,
+      "total": 20,
       "record_ids": [
         "DOM-B-44DC921B",
         "DOM-B-1CC83E41",
@@ -47,7 +47,8 @@
         "domain_intelligence-product-intelligence-transact-rs-sqlx-core-invariants",
         "domain_intelligence-product-intelligence-transact-rs-sqlx-learnings-core-invariants",
         "domain_intelligence-product-intelligence-kcl-lang-kcl-learnings-core-invariants",
-        "DOM-B-2C8CFAB3"
+        "DOM-B-2C8CFAB3",
+        "DOM-B-1A9A8A88"
       ]
     },
     "C": {
@@ -1459,7 +1460,7 @@
       ]
     },
     "H": {
-      "total": 543,
+      "total": 547,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2003,11 +2004,15 @@
         "DOM-H-6F3CCE20",
         "domain_intelligence-technical-construction-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
         "DOM-H-713ADB2E",
-        "DOM-H-2D29E63D"
+        "DOM-H-2D29E63D",
+        "domain_intelligence-technical-construction-intelligence-edge0-audio8-tts-realistic-air-core-invarian",
+        "DOM-H-A2EA49E2",
+        "DOM-H-149B3A5C",
+        "domain_intelligence-technical-construction-intelligence-hf-edge0-audio8-tts-realistic-air-learnings-"
       ]
     },
     "I": {
-      "total": 126,
+      "total": 127,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2134,7 +2139,8 @@
         "domain_intelligence-content-information-intelligence-fabio-rovai-open-ontologies-learnings-core-inva",
         "domain_intelligence-content-information-intelligence-kube-rs-kube-core-invariants",
         "domain_intelligence-content-information-intelligence-open-source-legal-opencontracts-core-invariants",
-        "domain_intelligence-content-information-intelligence-open-source-legal-opencontracts-learnings-core-"
+        "domain_intelligence-content-information-intelligence-open-source-legal-opencontracts-learnings-core-",
+        "DOM-I-DBBC4693"
       ]
     },
     "J": {
@@ -2187,7 +2193,7 @@
       ]
     },
     "K": {
-      "total": 136,
+      "total": 138,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2324,7 +2330,9 @@
         "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-learnings-core-invaria",
         "DOM-K-7F9FC9D4",
         "domain_intelligence-quality-verification-intelligence-clockworklabs-spacetimedb-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-clockworklabs-spacetimedb-learnings-core-invar"
+        "domain_intelligence-quality-verification-intelligence-clockworklabs-spacetimedb-learnings-core-invar",
+        "domain_intelligence-quality-verification-intelligence-tailscale-tailscale-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-tailscale-tailscale-learnings-core-invariants"
       ]
     },
     "L": {
@@ -8504,8 +8512,8 @@
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "7849a5821740cfa8d084fa081b8588917570b5283c8b58b8a6e42adeb214f750",
-      "created_at": "2026-11-20T19:11:46.563Z"
+      "content_hash": "6415f739ea5ebbc42a840eac3990672434bd5cced2c315f20cc8019b97a28332",
+      "created_at": "2026-11-21T23:25:31.104Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -35672,8 +35680,8 @@
       "title": "Technical Construction Intelligence: pimalaya/himalaya Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pimalaya-himalaya-technical-construction-intelligence-pimalaya-himalaya-core-inv.md",
       "repository": "pimalaya/himalaya",
-      "content_hash": "5522fac204c7b000637b3d5861342dccffa6a6f543fddba0caaed6a1ff981b79",
-      "created_at": "2026-11-20T07:35:56.815Z"
+      "content_hash": "8fc996c833874e4ed72897dccc663e9a88d251af1245958ec27f0c04c1cdcc99",
+      "created_at": "2026-11-21T23:27:19.388Z"
     },
     "domain_intelligence-technical-construction-intelligence-pimalaya-himalaya-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-pimalaya-himalaya-learnings-core-invariants",
@@ -35681,8 +35689,8 @@
       "title": "Technical Construction Intelligence: pimalaya-himalaya-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pimalaya-himalaya-learnings-technical-construction-intelligence-pimalaya-himalay.md",
       "repository": "pimalaya-himalaya-learnings",
-      "content_hash": "19027dd5f4b5b33917259bcf6b286b706b0a8df8d2143d448266559b8569d879",
-      "created_at": "2026-11-20T07:36:06.823Z"
+      "content_hash": "4350d99a10dcc6c6bdddaa3cc201f8f529d28c0972dd8822dc683a2943998468",
+      "created_at": "2026-11-21T23:28:27.710Z"
     },
     "domain_intelligence-research-knowledge-intelligence-cloudflare-clairic-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-cloudflare-clairic-core-invariants",
@@ -38580,6 +38588,194 @@
       "repository": "clockworklabs-spacetimedb-learnings",
       "content_hash": "ba8ba491df7b542c20bbf581c5e1e2a8e7e41d9e4a62b2c48cd8aaf1d5502754",
       "created_at": "2026-11-21T23:06:18.715Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-tailscale-tailscale-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-tailscale-tailscale-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: tailscale/tailscale Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-tailscale-tailscale-quality-verification-intelligence-tailscale-tailscale-core-i.md",
+      "repository": "tailscale/tailscale",
+      "content_hash": "84dd4a0d9b5ec3f9cbb524a94ef60a7242c8ea086529cb48b8641033e369d9a6",
+      "created_at": "2026-11-21T23:26:47.616Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-edge0-audio8-tts-realistic-air-core-invarian": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-edge0-audio8-tts-realistic-air-core-invarian",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: Edge0/Audio8-TTS-Realistic-Air Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-edge0-audio8-tts-realistic-air-technical-construction-intelligence-edge0-audi.md",
+      "repository": "Edge0/Audio8-TTS-Realistic-Air",
+      "content_hash": "835c0e01f85ebd812dbb97767fbd4b13b96bd80fb8bbfbd0a2da50b211f24e6f",
+      "created_at": "2026-11-21T23:27:03.735Z"
+    },
+    "DOM-H-A2EA49E2": {
+      "record_id": "DOM-H-A2EA49E2",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Silent Message Dropping on Non-RFC Escaped Characters in Fetch Responses (BUG-IMAP-01)",
+      "content": "Network stream decoders must never silently drop unreadable packets. Unparseable lines must be treated as item-level errors, bubbled to the structured output envelope, and result in a partial-outcome exit code.",
+      "content_hash": "1065078bfbc5cd000c3f2095735c2ac74481bed7d5108066c940e7e9a4747b33",
+      "summary": "`output_data` inside `src/imap/utils.rs` merely logged a `log::warn!` when `output.skipped` was non-empty and returned the filtered data sli -> Network stream decoders must never silently drop unreadable packets. Unparseable lines must be treated as item-level errors, bubbled to the ",
+      "provenance": {
+        "source_uri": "project://pimalaya-himalaya/pimalaya-himalaya-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T23:27:22.504Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (pimalaya-himalaya)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Issue #817, Commit `e575f8de689e3633dca0599c35eefe261f6304f3`, Commit `af054a5c`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T23:27:50.147Z"
+    },
+    "DOM-I-DBBC4693": {
+      "record_id": "DOM-I-DBBC4693",
+      "domain_letter": "I",
+      "domain_id": "content_information",
+      "domain_name": "Content & Information Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "Rust Compiler Intra-Doc Markdown Leaking Into Exported JSON Schemas (BUG-SCHEMA-02)",
+      "content": "Treat derived metadata (like JSON Schema descriptions derived from doc comments) as public API surface. Write explicit validation assertions to walk ASTs or emitted serialized trees.",
+      "content_hash": "02986d32d0aa335b4d0076c8ea4944d5e92b059606cf6c8aa1c2850b25776dd5",
+      "summary": "Lack of automated linting/testing against the registered JSON Schema tree for compiler-specific doc tokens. -> Treat derived metadata (like JSON Schema descriptions derived from doc comments) as public API surface. Write explicit validation assertions",
+      "provenance": {
+        "source_uri": "project://pimalaya-himalaya/pimalaya-himalaya-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T23:27:22.504Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (pimalaya-himalaya)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `ae9d5f2c`, log `cairn/log/2026-11-20-schema-defs-carry-no-doc-link.md`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.9,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T23:28:26.681Z"
+    },
+    "DOM-H-149B3A5C": {
+      "record_id": "DOM-H-149B3A5C",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "RoPE Frequency Inversion in GQA Decode Engine (BUG-AUDIO8-01)",
+      "content": "Model configurations specifying non-standard rotary bases ($10^6$) must enforce assertions at runtime initialization. Defaulting to $10^4$ without assertion causes silent acoustic corruption.",
+      "content_hash": "e678eea63d30aa6cf534f85c537719cc2e314d9a134d96da2615c23d40bb8882",
+      "summary": "The model uses a base theta of $10^6$. If an inference runtime defaults to $10^4$, rotary phase rotations over 1000 steps rotate frequencies -> Model configurations specifying non-standard rotary bases ($10^6$) must enforce assertions at runtime initialization. Defaulting to $10^4$ w",
+      "provenance": {
+        "source_uri": "project://hf-edge0-audio8-tts-realistic-air/hf-edge0-audio8-tts-realistic-air-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T23:28:28.196Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-edge0-audio8-tts-realistic-air)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`config.json`:"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T23:29:11.113Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-edge0-audio8-tts-realistic-air-learnings-": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-hf-edge0-audio8-tts-realistic-air-learnings-",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: hf-edge0-audio8-tts-realistic-air-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-edge0-audio8-tts-realistic-air-learnings-technical-construction-intelligence-.md",
+      "repository": "hf-edge0-audio8-tts-realistic-air-learnings",
+      "content_hash": "d3aa525502d70b72a0c8c4a3eb41870da97aa6c8ab7a3b3b35d27caeee4a490f",
+      "created_at": "2026-11-21T23:29:12.009Z"
+    },
+    "DOM-B-1A9A8A88": {
+      "record_id": "DOM-B-1A9A8A88",
+      "domain_letter": "B",
+      "domain_id": "product",
+      "domain_name": "Product Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "Listen Backlog Overflow on Concurrent Loopback Dials",
+      "content": "High-concurrency integration tests must never launch unbounded dials against a single TCP listener; concurrency must be throttled below the OS listen backlog threshold.",
+      "content_hash": "3fa665c7f237db811c899bfcf017b08a1d92fa9d93d091f33af93e99d7d07775",
+      "summary": "The test launched 400 goroutines concurrently dialing an in-process `httptest.Server`. Windows sets a low default socket listen backlog (`SO -> High-concurrency integration tests must never launch unbounded dials against a single TCP listener; concurrency must be throttled below the ",
+      "provenance": {
+        "source_uri": "project://tailscale-tailscale/tailscale-tailscale-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T23:29:12.496Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (tailscale-tailscale)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `ee7324a2`, Issue `#22543`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.86,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T23:30:18.451Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-tailscale-tailscale-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-tailscale-tailscale-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: tailscale-tailscale-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-tailscale-tailscale-learnings-quality-verification-intelligence-tailscale-tailsc.md",
+      "repository": "tailscale-tailscale-learnings",
+      "content_hash": "da2e3f330e1f7742731232adec5b6f6f9e618dadd88b3aa5568f0490cec4b5ff",
+      "created_at": "2026-11-21T23:30:19.517Z"
     }
   }
 }

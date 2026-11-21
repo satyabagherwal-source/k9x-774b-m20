@@ -2,25 +2,25 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-21T22:57:57.566Z",
+  "updated_at": "2026-11-21T23:30:18.494Z",
   "statistics": {
-    "total_nodes": 457,
-    "total_edges": 197,
+    "total_nodes": 461,
+    "total_edges": 199,
     "domain_distribution": {
       "D": 283,
       "M": 1,
-      "H": 76,
+      "H": 78,
       "J": 22,
       "K": 28,
       "L": 8,
       "G": 1,
       "F": 25,
-      "B": 3,
+      "B": 4,
       "E": 2,
-      "I": 8
+      "I": 9
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 194,
+      "CONSTRAINED_BY_ARCHITECTURE": 196,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 1
     }
@@ -10213,6 +10213,96 @@
       ],
       "created_at": "2026-11-21T22:57:57.566Z",
       "updated_at": "2026-11-21T22:57:57.566Z"
+    },
+    "DOM-H-A2EA49E2": {
+      "id": "DOM-H-A2EA49E2",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Silent Message Dropping on Non-RFC Escaped Characters in Fetch Responses (BUG-IMAP-01)",
+      "summary": "`output_data` inside `src/imap/utils.rs` merely logged a `log::warn!` when `output.skipped` was non-empty and returned the filtered data sli -> Network stream decoders must never silently drop unreadable packets. Unparseable lines must be treated as item-level errors, bubbled to the ",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://pimalaya-himalaya/pimalaya-himalaya-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T23:27:22.504Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (pimalaya-himalaya)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-21T23:27:50.170Z",
+      "updated_at": "2026-11-21T23:27:50.170Z"
+    },
+    "DOM-I-DBBC4693": {
+      "id": "DOM-I-DBBC4693",
+      "domain": "I",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Rust Compiler Intra-Doc Markdown Leaking Into Exported JSON Schemas (BUG-SCHEMA-02)",
+      "summary": "Lack of automated linting/testing against the registered JSON Schema tree for compiler-specific doc tokens. -> Treat derived metadata (like JSON Schema descriptions derived from doc comments) as public API surface. Write explicit validation assertions",
+      "confidence": 0.9,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://pimalaya-himalaya/pimalaya-himalaya-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T23:27:22.504Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (pimalaya-himalaya)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "I",
+        "Content & Information Intelligence",
+        "H"
+      ],
+      "created_at": "2026-11-21T23:28:26.720Z",
+      "updated_at": "2026-11-21T23:28:26.720Z"
+    },
+    "DOM-H-149B3A5C": {
+      "id": "DOM-H-149B3A5C",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "RoPE Frequency Inversion in GQA Decode Engine (BUG-AUDIO8-01)",
+      "summary": "The model uses a base theta of $10^6$. If an inference runtime defaults to $10^4$, rotary phase rotations over 1000 steps rotate frequencies -> Model configurations specifying non-standard rotary bases ($10^6$) must enforce assertions at runtime initialization. Defaulting to $10^4$ w",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-edge0-audio8-tts-realistic-air/hf-edge0-audio8-tts-realistic-air-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T23:28:28.196Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-edge0-audio8-tts-realistic-air)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-21T23:29:11.132Z",
+      "updated_at": "2026-11-21T23:29:11.132Z"
+    },
+    "DOM-B-1A9A8A88": {
+      "id": "DOM-B-1A9A8A88",
+      "domain": "B",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Listen Backlog Overflow on Concurrent Loopback Dials",
+      "summary": "The test launched 400 goroutines concurrently dialing an in-process `httptest.Server`. Windows sets a low default socket listen backlog (`SO -> High-concurrency integration tests must never launch unbounded dials against a single TCP listener; concurrency must be throttled below the ",
+      "confidence": 0.86,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://tailscale-tailscale/tailscale-tailscale-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T23:29:12.496Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (tailscale-tailscale)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "B",
+        "Product Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-21T23:30:18.493Z",
+      "updated_at": "2026-11-21T23:30:18.493Z"
     }
   },
   "edges": [
@@ -12185,6 +12275,26 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-3CF395C7 [D] with Domain M",
       "created_at": "2026-11-21T22:57:27.044Z"
+    },
+    {
+      "id": "EDGE-315B47D8A8DA",
+      "sourceId": "DOM-I-DBBC4693",
+      "targetId": "NODE-H-domain-bridge-h",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-I-DBBC4693 [I] with Domain H",
+      "created_at": "2026-11-21T23:28:26.720Z"
+    },
+    {
+      "id": "EDGE-E5A2363EC259",
+      "sourceId": "DOM-B-1A9A8A88",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-B-1A9A8A88 [B] with Domain G",
+      "created_at": "2026-11-21T23:30:18.494Z"
     }
   ]
 }
