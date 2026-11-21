@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T04:20:39.078Z",
+  "updated_at": "2026-11-21T04:39:22.138Z",
   "stats": {
-    "total_discovered": 7004,
-    "approved_pending_harvest": 6614,
+    "total_discovered": 7024,
+    "approved_pending_harvest": 6634,
     "harvested_count": 0,
     "rejected_count": 390,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6593,
+      "COMMUNITY_AND_EXPERT": 6613,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -151381,6 +151381,446 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
         "fileName": "google-tcmalloc-learnings.md"
+      }
+    },
+    "SRC-1E688CE2CD1D": {
+      "id": "SRC-1E688CE2CD1D",
+      "url": "https://github.com/kirillzyusko/react-native-keyboard-controller/pull/1785",
+      "title": "https://github.com/kirillzyusko/react-native-keyboard-controller/pull/1785",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:18.979Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-338B06DB26DB": {
+      "id": "SRC-338B06DB26DB",
+      "url": "https://registry.yarnpkg.com/@react-navigation/bottom-tabs/-/bottom-tabs-7.18.18.tgz",
+      "title": "https://registry.yarnpkg.com/@react-navigation/bottom-tabs/-/bottom-tabs-7.18.18.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:19.029Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-B862191F2BF4": {
+      "id": "SRC-B862191F2BF4",
+      "url": "https://registry.yarnpkg.com/@react-navigation/bottom-tabs/-/bottom-tabs-7.9.0.tgz",
+      "title": "https://registry.yarnpkg.com/@react-navigation/bottom-tabs/-/bottom-tabs-7.9.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:19.078Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-45A183FCDBB8": {
+      "id": "SRC-45A183FCDBB8",
+      "url": "https://registry.yarnpkg.com/@react-navigation/core/-/core-7.21.13.tgz",
+      "title": "https://registry.yarnpkg.com/@react-navigation/core/-/core-7.21.13.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:19.126Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-E3BB1EBDC490": {
+      "id": "SRC-E3BB1EBDC490",
+      "url": "https://registry.yarnpkg.com/@react-navigation/core/-/core-7.13.7.tgz",
+      "title": "https://registry.yarnpkg.com/@react-navigation/core/-/core-7.13.7.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:19.176Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-C0A0C5CE5EE6": {
+      "id": "SRC-C0A0C5CE5EE6",
+      "url": "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.9.40.tgz",
+      "title": "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.9.40.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:19.223Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-F83F10610A28": {
+      "id": "SRC-F83F10610A28",
+      "url": "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.6.4.tgz",
+      "title": "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.6.4.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:19.270Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-6FE629AA51A9": {
+      "id": "SRC-6FE629AA51A9",
+      "url": "https://registry.yarnpkg.com/@react-navigation/native-stack/-/native-stack-7.18.10.tgz",
+      "title": "https://registry.yarnpkg.com/@react-navigation/native-stack/-/native-stack-7.18.10.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:19.318Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-03E9CF99E53E": {
+      "id": "SRC-03E9CF99E53E",
+      "url": "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.9.3.tgz",
+      "title": "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.9.3.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:19.365Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-6BFC1724E020": {
+      "id": "SRC-6BFC1724E020",
+      "url": "https://registry.yarnpkg.com/@react-navigation/native-stack/-/native-stack-7.3.26.tgz",
+      "title": "https://registry.yarnpkg.com/@react-navigation/native-stack/-/native-stack-7.3.26.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:19.413Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-CC3F5D2358C0": {
+      "id": "SRC-CC3F5D2358C0",
+      "url": "https://registry.yarnpkg.com/@react-navigation/native/-/native-7.3.18.tgz",
+      "title": "https://registry.yarnpkg.com/@react-navigation/native/-/native-7.3.18.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:19.462Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-417A475C29C2": {
+      "id": "SRC-417A475C29C2",
+      "url": "https://registry.yarnpkg.com/@react-navigation/native/-/native-7.1.17.tgz",
+      "title": "https://registry.yarnpkg.com/@react-navigation/native/-/native-7.1.17.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:19.510Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-603530FB1AF9": {
+      "id": "SRC-603530FB1AF9",
+      "url": "https://registry.yarnpkg.com/@react-navigation/routers/-/routers-7.6.4.tgz",
+      "title": "https://registry.yarnpkg.com/@react-navigation/routers/-/routers-7.6.4.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:19.559Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-9FCBB4F82BD2": {
+      "id": "SRC-9FCBB4F82BD2",
+      "url": "https://registry.yarnpkg.com/@react-navigation/r",
+      "title": "https://registry.yarnpkg.com/@react-navigation/r",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:19.607Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-9259D938BB32": {
+      "id": "SRC-9259D938BB32",
+      "url": "https://app.coderabbit.ai/change-stack/meshery/meshery/pull/24064?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "title": "https://app.coderabbit.ai/change-stack/meshery/meshery/pull/24064?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:20.645Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-6A51115998D9": {
+      "id": "SRC-6A51115998D9",
+      "url": "https://www.linkedin.com/in/jayita-lakhmani",
+      "title": "https://www.linkedin.com/in/jayita-lakhmani",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:20.742Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-179D641F91B7": {
+      "id": "SRC-179D641F91B7",
+      "url": "https://github.com/JayitaL",
+      "title": "https://github.com/JayitaL",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:20.791Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-1F0367BF962F": {
+      "id": "SRC-1F0367BF962F",
+      "url": "https://www.linkedin.com/in/thulaganyo-phala-sehuhula-68a61a373",
+      "title": "https://www.linkedin.com/in/thulaganyo-phala-sehuhula-68a61a373",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:20.869Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-270D0F1DFEB5": {
+      "id": "SRC-270D0F1DFEB5",
+      "url": "https://sx-helm-repository-prod.s3.eu-west-3.amazonaws.com/stable/chaos-21.3.390.tgz",
+      "title": "https://sx-helm-repository-prod.s3.eu-west-3.amazonaws.com/stable/chaos-21.3.390.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:20.921Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-6D6259FFE232": {
+      "id": "SRC-6D6259FFE232",
+      "url": "https://github.com/dathere/qsv/pull/5084",
+      "title": "https://github.com/dathere/qsv/pull/5084",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T04:39:22.138Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
       }
     }
   }

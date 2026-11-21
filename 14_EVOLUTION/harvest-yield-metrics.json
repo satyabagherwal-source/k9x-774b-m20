@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T04:20:35.698Z",
-  "total_cycles_completed": 11165,
-  "total_learnings_persisted": 11165,
-  "total_rules_promoted": 10522,
+  "last_updated": "2026-11-21T04:39:15.436Z",
+  "total_cycles_completed": 11168,
+  "total_learnings_persisted": 11168,
+  "total_rules_promoted": 10525,
   "history": [
-    {
-      "timestamp": "2026-11-20T09:10:36.360Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T09:34:48.775Z",
-      "repository": "temporalio/temporal",
-      "learningId": "learn-github-temporalio-temporal",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T09:34:50.581Z",
-      "repository": "StarTrail-org/LEANN",
-      "learningId": "learn-github-startrail-org-leann",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T09:59:06.505Z",
       "repository": "rocketride-org/rocketride-server",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-21T04:20:35.698Z",
       "repository": "google/tcmalloc",
       "learningId": "learn-github-google-tcmalloc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T04:39:06.628Z",
+      "repository": "kirillzyusko/react-native-keyboard-controller",
+      "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T04:39:08.805Z",
+      "repository": "meshery/meshery",
+      "learningId": "learn-github-meshery-meshery",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T04:39:15.436Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

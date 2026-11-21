@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `82819859`  
+> **Source Version**: `ea8e9cca`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T16:42:27.446Z  
+> **Timestamp**: 2026-11-21T04:39:14.339Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T16:42:27.441Z  
+> **Harvest Timestamp**: 2026-11-21T04:39:14.333Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3835 stars
+- **Stars / Engagement**: 3834 stars
 
 ---
 
@@ -2201,29 +2201,31 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `82819859` (2026-11-20)
-**Commit Message**: deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes (#5081)
+### Incident Patch 1: `ea8e9cca` (2026-11-21)
+**Commit Message**: feat(synthesize): --target <col> for conditional generation; read non-UTF8 input (#5084)
 
-* deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes
+* feat(synthesize): --target <col> for conditional generation
 
-Polars main is 91 commits past 2d9938d (crates stay 0.55.1).
+Each synthetic row draws a class of <col> by its share of the input's
+rows, then fills every other column from that class's own profile.
 
-- #30887 changed DataFrame/Series::slice to take one impl Into<Slice>.
-  Pass (offset, len) tuples in pivotp and readstat, and patch
-  polars-readstat-rs 0.27.0 to a dathere fork with the same 6-line fix
-  (upstream builds on crates.io polars 0.55.1 and can't take it yet).
-- New SQL: PIVOT/UNPIVOT, COPY ... TO, CREATE MACRO, SELECT alias reuse,
-  CAST AS CATEGORICAL, E'' strings, MAKE_DATE/CHR/DATE_DIFF/TYPEOF/
-  TO_CHAR/PRINTF/FORMAT and more. Enable polars' rolling_window_by for
-  RANGE frames with an offset (#30849).
-- Result changes: DELETE affects later statements (#30869), NULL length
-  makes LEFT/SUBSTRING NULL (#30934), SPLIT_PART(NULL) is NULL (#30936),
-  DESCRIBE reports SQL type names, repeated expressions get a :1 suffix
-  (#30949).
-- COPY (query) TO '<file>' (#30834) writes files by default. New
-  QSV_SQL_DISABLE_FILE_WRITES turns it off in sqlp, joinp --sql-filter,
-  profile and scoresql (util::new_sql_context). The MCP server sets it in
-  plugin mode (Cowork, C
+- Fit: the whole-input pass runs as before (types, fakers, dictionary,
+  report keys); one read of the input then writes each row to its
+  class's temporary CSV, and stats/frequency run once per class, with
+  the fit RNG keyed by (seed, class index) and classes in a fixed order.
+- Classes: at most 50 distinct trimmed values split by value (an empty
+  value is a class); a numeric target with more is split by its own
+  quantile buckets and its value drawn from the class's bucket; any
+  other target is refused. Classes under --min-count rows are dropped
+  and listed in --report.
+- Fake-value columns, and columns a class can't profile, use the
+  whole-input generator; relationships drop the target from their
+  members.
+- Model format 4 stores the per-class schedules; Model::check verifies
+  each fills every non-target column once. --target is refused with
+  --model.
+
+Without --target, output is byte-
 
 **File**: `.claude/skills/CHANGELOG.md` (modified, +1/-0)
 ```diff
@@ -2231,210 +2233,341 @@ Polars main is 91 commits past 2d9938d (crates stay 0.55.1).
  ## [Unreleased]
  
  ### Added
-+- **SQL file writes are off in plugin mode (Cowork, Claude Code plugin).** Polars SQL now has `COPY (<query>) TO '<file>'`, where the query rather than `output_file` picks the target. In plugin mode the server sets `QSV_SQL_DISABLE_FILE_WRITES=1` for qsv, and `qsv_sqlp` never sends SQL that may contain `COPY ... TO` or `EXPORT DATABASE` to DuckDB: it runs on Polars `sqlp`, which refuses a real `COPY ... TO`. A `.env` file can't lift the switch, for qsv or the qsv subprocesses it spawns. Other MCP clients and the Desktop extension keep them. New `QSV_MCP_SQL_FILE_WRITES` overrides the default either way. `qsv-sqlp` skill regenerated from the USAGE text. ([#5081](https://github.com/dathere/qsv/pull/5081))
++- **`qsv-synthesize --target <col>`**: conditional generation. Each row draws a class of `<col>` (at most 50 distinct values, or a numeric column's quantile buckets) in proportion to its source rows, after dropping classes seen in fewer than `--min-count` rows, then fills the other columns from that class's own profile; `stats` and `frequency` run once more per class. Skill regenerated from the USAGE text. ([#5084](https://github.com/dathere/qsv/pull/5084))
+ - **SQL file writes are off in plugin mode (Cowork, Claude Code plugin).** Polars SQL now has `COPY (<query>) TO '<file>'`, where the query rather than `output_file` picks the target. In plugin mode the server sets `QSV_SQL_DISABLE_FILE_WRITES=1` for qsv, and `qsv_sqlp` never sends SQL that may contain `COPY ... TO` or `EXPORT DATABASE` to DuckDB: it runs on Polars `sqlp`, which refuses a real `COPY ... TO`. A `.env` file can't lift the switch, for qsv or the qsv subprocesses it spawns. Other MCP clients and the Desktop extension keep them. New `QSV_MCP_SQL_FILE_WRITES` overrides the default either way. `qsv-sqlp` skill regenerated from the USAGE text. ([#5081](https://github.com/dathere/qsv/pull/5081))
  - **`qsv-synthesize --quantiles <n>`**: 2, 4, 5, 10, 20, 25, 50 or 100 equal-share buckets for numeric/date columns and `ordered` gaps (default 4, the quartiles, unchanged output); more buckets keep long tails. Skill regenerated from the USAGE text. ([#5078](https://github.com/dathere/qsv/pull/5078))
  - **`qsv-synthesize`: `--rows-per-file` is CLI-only for now.** The new `synthesize --rows-per-file` option and its USAGE example are left out of the skill: the MCP server checks only the literal `{}` output template against its allowed directories and would report the template as the written file. The generator's per-command skip list now also drops examples that use a skipped option. ([#5077](https://github.com/dathere/qsv/pull/5077))
- - **`qsv-synthesize --format csv|jsonl|parquet`**: typed JSONL and Parquet output (integers, floats, Parquet dates, nulls; booleans when `--stats-options=--infer-boolean` types the column Boolean and its values are `true`/`false`); zero-padded codes stay text. Parquet needs `--output`. Skill regenerated from the USAGE text. ([#5075](https://github.com/dathere/qsv/pull/5075))
 ```
 
-**File**: `.claude/skills/README-MCP.md` (modified, +1/-0)
+**File**: `.claude/skills/qsv/qsv-synthesize.json` (modified, +5/-0)
 ```diff
-@@ -176,6 +176,7 @@ This script will:
- | `QSV_MCP_MAX_OUTPUT_SIZE` | `52428800` | Maximum output size in bytes (50MB) |
- | `QSV_MCP_MAX_EXAMPLES` | `5` | Maximum examples in tool descriptions (0-20) |
- | `QSV_MCP_PLUGIN_MODE` | unset | Force plugin mode (for Gemini CLI etc.) |
-+| `QSV_MCP_SQL_FILE_WRITES` | `false` in plugin mode, else `true` | Allow SQL that writes files itself (`COPY ... TO '<file>'`, DuckDB `EXPORT DATABASE`). When `false`, qsv gets `QSV_SQL_DISABLE_FILE_WRITES=1` and SQL that may contain them runs on Polars `sqlp` (which refuses them) instead of DuckDB; use `output_file` instead. |
- | `QSV_MCP_ENABLE_APPS` | `true` | Enable MCP Apps UI tools. When `true` and the client supports MCP Apps, exposes the app-only `qsv_browse_directory` interactive directory browser. Set to `false` to disable. |
- | `QSV_MCP_EXPOSE_ALL_TOOLS` | unset | Controls tool exposure mode. `true`: expose all 57 tools immediately (no deferred loading). `false`: use only 10 core utility tools (+1 app-only tool when Apps enabled; no deferred additions). Unset (default): deferred loading — 23 tools at startup (10 core + 13 commonly-used commands), +1 app-only when Apps enabled, plus tools discovered via search |
- | `QSV_MCP_SANITIZE_ERRORS` | `true` | Strip absolute paths from qsv error messages (and the command line echoed alongside them) before they reach the MCP client. Protects usernames and directory layout in hosted/shared deployments. Set to `false` to keep full paths for local debugging. |
+@@ -125,6 +125,11 @@
+         "flag": "--strict-relationships",
+         "type": "flag",
+         "description": "Abort instead of warning-and-degrading when a declared relationship fails validation."
++      },
++      {
++        "flag": "--target",
++        "type": "string",
++        "description": "Generate the other columns conditionally on the class of column <col> (a column name; with no headers, its 0-based index), e.g. a label to train a classifier on. Each row first draws a class by its share of the rows of <input>, then fills every other column from that class's own profile, so each column keeps its distribution within each class. A column with at most 50 distinct (trimmed) values is split by value, an empty value being a class of its own; a numeric column with more is split by its quantile buckets (see --quantiles), each class drawn at the share of rows its bucket holds (with tied bucket edges, not the shares of an ordinary fit), and any other column is refused. A class seen in fewer than <k> rows (<k> is set by the --min-count option) is dropped and its share redistributed. Fake-value columns, and columns a class has too few values to profile, use the generator fitted on the whole input, blank rate included (a column blank throughout a class stays blank). A numeric or date column needs at least 2k-1 values in a class, so with the default <k> of 5 a class of fewer than 9 rows takes all of them from the whole input; lower the --min-count to profile small classes, if that is acceptable for privacy. Relationships that name <col> drop it from their members, as do fake-value columns in the classes, and each class fits (and with --strict-relationships, enforces) them on its own rows. Dropping <col> can make a group eligible that an ordinary fit skips (it overlapped an earlier one only on <col>); it still yields to earlier groups, and a `joint` one writes real value-tuples, so a column an ordinary fit fakes can then write real values. `stats` and `frequency` run once more per class, on a temporary copy of <input> split by class."
+       }
+     ]
+   },
 ```
 
-**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +4/-0)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -280,6 +280,10 @@
-       "description": "generate_series(start, stop[, step]) and range(start, stop[, step]) generate a column of integers. generate_series includes stop; range does not.",
-       "command": "qsv sqlp SKIP_INPUT \"SELECT * FROM generate_series(1, 10, 2)\""
-     },
-+    {
-+      "description": "COPY writes a query's result to a file itself, in the format its extension or a FORMAT option names. Set QSV_SQL_DISABLE_FILE_WRITES to turn this off; the qsv MCP server does so in plugin mode (Cowork and the Claude Code plugin).",
-+      "command": "qsv sqlp data.csv \"COPY (SELECT * FROM data WHERE col1 > 10) TO 'result.parquet'\""
+@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ## [Unreleased]
+ 
+ ### Added
++- `synthesize`: new `--target <col>` generates the other columns conditionally on the class of `<col>`, e.g. a label to train a classifier on. Each synthetic row first draws a class by its share of the input's rows, then fills every other column from that class's own profile, so each column keeps its distribution within each class (on a 10%-positive label whose positive rows have a 10x larger `amount`, the synthetic positives' mean `amount` was 499 against the source's 499, and 116 without `--target`). A column with at most 50 distinct (trimmed) values is split by value, an empty value being a class of its own (not counted toward the 50); a numeric column with more is split by its own quantile buckets (`--quantiles`), each class drawn at the share of rows its bucket holds, and each value from the written values that land back in that bucket; any other column is refused. With tied bucket edges that follows the source more closely than an ordinary fit: on 900 zeros and the integers 1–100, 89.8% of synthetic targets were zeros, against 90% in the source and 75.1% without `--target`. `stats` and `frequency` run once more per class, on a temporary copy of the input split by class. A class seen in fewer than `--min-count` rows is dropped and its share redistributed (listed in `--report`, which also records the target and tags per-class suppressions with their class). Fake-value columns use their whole-input generator (blank rate included, though a column blank throughout a class stays blank), so `--consistent-fakes` keeps one fake per source value across classes, and so does any column a class can't profile as well as the whole input (filler text, or a generator that would write the column in another form, such as raw dates in a column the dictionary formats, or zero-padded codes as numbers) or has too few values to profile (a numeric or date column needs 2k−1 values in the class, so at the default `--min-count` of 5 a class of fewer than 9 rows takes them all from the whole input). Relationships that name the target drop it from their members, in the whole-input fit too, and in a class so do fake-value columns, so a class group never writes a column's real values where the whole input fakes it. Dropping the target can make a group eligible that an ordinary fit skips (it overlapped an earlier one only on the target); it still yields to earlier groups, and a `joint` one writes real value-tuples, so a column an ordinary fit fakes can then write real values. Each class fits relationships on its own rows, and `--strict-relationships` applies there, so a relationship that only holds within classes (e.g. y rising with x in one class and falling in another) is kept. Class files quote every field, so a `QSV_COMMENT_CHAR` value can't hide a row. Output is the same bytes at any `--jobs`, from `--model`, and across `--shard` and `--rows-per-file`; without `--target` it is unchanged. Saved models hold per-class profiles, so the model format is version 4 and models saved before this change must be fitted again. `--target` can't be combined with `--model`. ([#5084](https://github.com/dathere/qsv/pull/5084))
+ - `synthesize`: new `--quantiles <n>` sets how many equal-share buckets reproduce each numeric and date column's shape, and the gaps of `ordered` relationships: 2, 4, 5, 10, 20, 25, 50 or 100 (divisors of 100, so every bucket edge is a whole percentile and every bucket holds the same share of rows). More buckets keep skewed and long-tailed columns closer to the source: on a column whose values double every 5% of rows, the 90th percentile came out 2.4× too high with the quartiles and 2% high with `--quantiles 20`. The default of 4 still cuts at the source quartiles, so output is unchanged; other values cut at `stats --percentiles`, which are real source values, so a column gets fewer buckets when it has too few non-null values for each bucket to hold more than `--min-count` of them (at worst, the quartiles). Percentile edges are read unrounded (`stats --round 9999`, unless `--stats-options` sets `--round`), so small-magnitude floats keep distinct edges. The model format is unchanged. `--quantiles` can't be combined with `--model`, and with a value other than 4 `--stats-options` may not include `--percentiles` or `--percentile-list`. ([#5078](https://github.com/dathere/qsv/pull/5078))
+ - `synthesize`: new `--rows-per-file <n>` splits the output into files of `<n>` rows. The `--output` name must contain `{}`, which is replaced by the zero-based row number of each file's first row, as in `qsv split`, zero-padded so the names sort in order (`-o synthetic_{}.csv` writes `synthetic_000.csv`, `synthetic_250.csv`, …). The files hold the same rows as a single-file run, in order, at any `--jobs` and from a `--model` run, and join the same way as `--shard` slices; each CSV file has a header row and each Parqu
+```
+
+**File**: `docs/help/synthesize.md` (modified, +3/-1)
+```diff
+@@ -101,7 +101,8 @@ can reappear at or near its real value.
+ Review the output before sharing it, or training on it, as de-identified data.
+ A model saved with --save-model holds real values from <input>, such as
+ enumerated values, bucket boundaries and range ends, including some the
+-output never shows. Review and share it at least as carefully as the output.
++output never shows; with --target, it holds them for each class, and the
++class values. Review and share it at least as carefully as the output.
+ 
+ With --seed, output is fully reproducible, whatever the --jobs setting.
+ Rows are generated in parallel, in fixed blocks of 8192 rows. With --seed
+@@ -226,6 +227,7 @@ qsv synthesize --help
+ | &nbsp;`‑‑locale`&nbsp; | string | Locale for faker-backed columns. Case-insensitive. Supported: en, fr_fr, de_de, it_it, pt_br, pt_pt, ja_jp, zh_cn, zh_tw, ar_sa, cy_gb, fa_ir, nl_nl, tr_tr. Sparse locales (those without per-category data in fake-rs) silently fall back to en data for the missing categories — e.g. lorem text under a non-en locale is still English, since only zh_cn has localized lorem data. | `en` |
+ | &nbsp;`‑‑freq‑limit`&nbsp; | integer | Frequency pool depth passed to the internal `frequency` run as --limit. A column is reproduced via exact frequency-weighted sampling only when its cardinality is fully captured within this limit; higher values reproduce more columns verbatim. 0 means unlimited. | `100` |
+ | &nbsp;`‑‑quantiles`&nbsp; | integer | Number of equal-share buckets that reproduce the shape of numeric and date columns: 2, 4, 5, 10, 20, 25, 50 or 100. More buckets keep skewed and long-tailed columns closer to the source. 4 (the default) cuts at the source quartiles; other values cut at `stats --percentiles` (real source values). A column with too few non-null values for every bucket to hold more than <k> of them (<k> is set by the --min-count option) gets fewer buckets, or the quartiles. Also applies to the gaps of `ordered` relationships. |  |
++| &nbsp;`‑‑target`&nbsp; | string | Generate the other columns conditionally on the class of column <col> (a column name; with no headers, its 0-based index), e.g. a label to train a classifier on. Each row first draws a class by its share of the rows of <input>, then fills every other column from that class's own profile, so each column keeps its distribution within each class. A column with at most 50 distinct (trimmed) values is split by value, an empty value being a class of its own; a numeric column with more is split by its quantile buckets (see --quantiles), each class drawn at the share of rows its bucket holds (with tied bucket edges, not the shares of an ordinary fit), and any other column is refused. A class seen in fewer than <k> rows (<k> is set by the --min-count option) is dropped and its share redistributed. Fake-value columns, and columns a class has too few values to profile, use the generator fitted on the whole input, blank rate included (a column blank throughout a class stays blank). A numeric or date column needs at least 2k-1 values in a class, so with the default <k> of 5 a class of fewer than 9 rows takes all of them from the whole input; lower the --min-count to profile small classes, if that is acceptable for privacy. Relationships that name <col> drop it from their members, as do fake-value columns in the classes, and each class fits (and with --strict-relationships, enforces) them on its own rows. Dropping <col> can make a group eligible that an ordinary fit skips (it overlapped an earlier one only on <col>); it still yields to earlier groups, and a `joint` one writes real value-tuples, so a column an ordinary fit fakes can then write real values. `stats` and `frequency` run once more per class, on a temporary copy of <input> split by class. |  |
+ | &nbsp;`‑‑min‑count`&nbsp; | integer | Privacy threshold. A real value of an enumerated column, or a real `joint` value-tuple, that occurs fewer than <k> times in <input> is dropped from the values it samples; its share is redistributed over the kept values. An enumerated column whose values are all below <k> falls back to its faker or type-based generator (numeric and date columns to their trimmed range), and a joint group to independent columns, or aborts under the --strict-relationships option. A warning is printed when either happens. 1 disables suppression. Counts are of rows, not people: where one person has many rows (transactions, visits, logs), one person's value can pass <k> alone. Raise <k>, or dedupe to one row per person first. Numeric and date ranges, and the gaps of `ordered` relationships, are also trimmed to their k-th smallest and k-th largest values (one extra pass over <input>). A numeric or date column with fewer than 2k-1 non-null values is left empty unless its real values are sampled. | `5` |
+ | &nbsp;`‑‑report`&nbsp; | string | Write a JSON report of what the run reproduced from <input>: source and synthetic row counts, how many synthetic rows exactly 
+```
+
+**File**: `src/cmd/synthesize/generator.rs` (modified, +1/-1)
+```diff
+@@ -115,7 +115,7 @@ fn is_unstructured(content_type: &str) -> bool {
+     UNSTRUCTURED_CONTENT_TYPES.contains(&content_type)
+ }
+ 
+-#[derive(Serialize, Deserialize)]
++#[derive(Clone, Serialize, Deserialize)]
+ pub(crate) enum ColumnGenerator {
+     /// Sample real values with real frequency weights.
+     FrequencyWeighted {
+```
+
+**File**: `src/cmd/synthesize/mod.rs` (modified, +534/-23)
+```diff
+@@ -89,7 +89,8 @@ not stop it:
+ Review the output before sharing it, or training on it, as de-identified data.
+ A model saved with --save-model holds real values from <input>, such as
+ enumerated values, bucket boundaries and range ends, including some the
+-output never shows. Review and share it at least as carefully as the output.
++output never shows; with --target, it holds them for each class, and the
++class values. Review and share it at least as carefully as the output.
+ 
+ With --seed, output is fully reproducible, whatever the --jobs setting.
+ Rows are generated in parallel, in fixed blocks of 8192 rows. With --seed
+@@ -254,6 +255,44 @@ synthesize options:
+                            by the --min-count option) gets fewer buckets, or
+                            the quartiles.
+                            Also applies to the gaps of `ordered` relationships.
++    --target <col>         Generate the other columns conditionally on the
++                           class of column <col> (a column name; with no
++                           headers, its 0-based index), e.g. a label to train
++                           a classifier on. Each row first draws a class by
++                           its share of the rows of <input>, then fills every
++                           other column from that class's own profile, so
++                           each column keeps its distribution within each
++                           class. A column with at most 50 distinct (trimmed)
++                           values is split by value, an empty value being a
++                           class of its own; a numeric column with more is
++                           split by its quantile buckets (see --quantiles),
++                           each class drawn at the share of rows its bucket
++                           holds (with tied bucket edges, not the shares of
++                           an ordinary fit), and any other column is
++                           refused. A class seen in
++                           fewer than <k> rows (<k> is set by the --min-count
++                           option) is dropped and its share redistributed.
++                           Fake-value columns, and columns a class has too
++                           few values to profile, use the generator fitted
++                           on the whole input, blank rate included (a
++                           column blank throughout a class stays blank). A numeric or date column
++                           needs at least 2k-1 values in a class, so with
++                           the default <k> of 5 a class of fewer than 9 rows
++                           takes all of them from the whole input; lower
++                           the --min-count to profile small classes, if that
++                           is acceptable for privacy. Relationships that
++                           name <col> drop it from their members, as do
++                           fake-value columns in the classes, and each class
++                           fits (and with --strict-relationships, enforces)
++                           them on its own rows. Dropping <col> can make a
++                           group eligible that an ordinary fit skips (it
++                           overlapped an earlier one only on <col>); it
++                           still yields to earlier groups, and a `joint`
++                           one writes real value-tuples, so a column an
++                           ordinary fit fakes can then write real values.
++                           `stats` and `frequency` run once more per
++                           class, on a
++                           temporary copy of <input> split by class.
+     --min-count <k>        Privacy threshold. A real value of an enumerated
+                            column, or a real `joint` value-tuple, that occurs
+                            fewer than <k> times in <input> is dropped from the
+@@ -345,7 +384,9 @@ use serde::Deserialize;
+ 
+ use crate::{
+     CliError, CliResult,
+-    cmd::describegpt::dictionary::{StatsRecord, parse_frequency_csv, parse_stats_csv},
++    cmd::describegpt::dictionary::{
++        FrequencyRecord, StatsRecord, parse_frequency_csv, parse_stats_csv,
 +    },
-     {
-       "description": "use stdin as input",
-       "command": "cat data.csv | qsv sqlp - 'select * from stdin'"
+     config::{Config, Delimiter},
+     util,
+ };
+@@ -359,9 +400,13 @@ mod output;
+ mod range_trim;
+ mod relationships;
+ mod report;
++mod target;
+ 
++use dictionary::SynthRelationship;
+ use faker_map::Locale;
++use generator::ColumnGenerator;
+ use relationships::{EmitUnit, ScheduleParams, build_emit_schedule};
++use report::Suppression;
+ 
+ #[derive(Deserialize)]
+ struct Args {
+@@ -378,6 +423,7 @@ struct Args {
+     flag_locale:                String,
+     flag_freq_limit:            usize,
+     flag_quantiles:             Option<usize>,
++    flag_target:                Option<String>,
+     flag_stats_options:         Option<String>,
+     flag_consistent_fakes:      bool,
+     flag_no_relationships:      bool,
+@@ -479,6 +525,7 @@ pub fn run(argv: &[&str]) -> 
 ```
 
-**File**: `.claude/skills/src/config.ts` (modified, +25/-0)
+**File**: `src/cmd/synthesize/model.rs` (modified, +62/-23)
 ```diff
-@@ -666,6 +666,22 @@ export function isPluginMode(): boolean {
-   return hasPluginRoot && !inExtensionMode;
+@@ -9,11 +9,11 @@ use serde::{Deserialize, Serialize};
+ 
+ use super::{
+     generator::ColumnGenerator, group_generator::GroupGenerator, output::OutType,
+-    relationships::EmitUnit,
++    relationships::EmitUnit, target::Target,
+ };
+ use crate::{CliError, CliResult, cmd::describegpt::dictionary::is_valid_strftime};
+ 
+-const FORMAT_VERSION: u32 = 3;
++const FORMAT_VERSION: u32 = 4;
+ 
+ #[derive(Serialize, Deserialize)]
+ pub(crate) struct Model {
+@@ -26,6 +26,9 @@ pub(crate) struct Model {
+     /// The source's day-first preference, for reading sampled real dates.
+     pub(crate) prefer_dmy: bool,
+     pub(crate) schedule:   Vec<EmitUnit>,
++    /// With `--target`: one schedule per class, which rows use instead of
++    /// `schedule` (still the whole-input fit, for types and `--report`).
++    pub(crate) target:     Option<Target>,
  }
  
-+/**
-+ * Pass the SQL file-write policy on to qsv child processes, which inherit process.env.
-+ * qsv's Polars SQL contexts (sqlp, joinp --sql-filter, profile, scoresql) honor
-+ * QSV_SQL_DISABLE_FILE_WRITES. When writes are allowed, the environment is left as is.
-+ */
-+export function applySqlFileWritePolicy(
-+  allowWrites: boolean,
-+  env: NodeJS.ProcessEnv = process.env,
-+): void {
-+  // Authoritative when off: an inherited QSV_SQL_DISABLE_FILE_WRITES=0 must not keep
-+  // writes on while the server reports them disabled (QSV_MCP_SQL_FILE_WRITES is the knob).
-+  if (!allowWrites) {
-+    env.QSV_SQL_DISABLE_FILE_WRITES = "1";
-+  }
+ /// How the model was fitted. Informational only: generation never reads it.
+@@ -43,6 +46,7 @@ impl Model {
+         types: Vec<OutType>,
+         prefer_dmy: bool,
+         schedule: Vec<EmitUnit>,
++        target: Option<Target>,
+         fit: FitInfo,
+     ) -> Self {
+         Self {
+@@ -53,6 +57,7 @@ impl Model {
+             types,
+             prefer_dmy,
+             schedule,
++            target,
+         }
+     }
+ 
+@@ -109,31 +114,65 @@ impl Model {
+         for ty in &self.types {
+             check_date_format(ty.date_format())?;
+         }
+-        let mut filled = vec![false; ncols];
+-        for unit in &self.schedule {
+-            let cols: &[usize] = match unit {
+-                EmitUnit::Independent { col_idx, generator } => {
+-                    check_column(generator)?;
+-                    std::slice::from_ref(col_idx)
+-                },
+-                EmitUnit::Group(group) => {
+-                    check_group(group)?;
+-                    group.col_indices()
+-                },
+-            };
+-            for &col in cols {
+-                match filled.get_mut(col) {
+-                    Some(seen) if !*seen => *seen = true,
+-                    Some(_) => return Err(format!("column {col} is generated twice.")),
+-                    None => return Err(format!("column {col} is out of range.")),
+-                }
++        check_schedule(&self.schedule, ncols, None)?;
++        let Some(target) = &self.target else {
++            return Ok(());
++        };
++        if target.col_idx >= ncols {
++            return Err(format!(
++                "its target column {} is out of range.",
++                target.col_idx
++            ));
++        }
++        if target.classes.is_empty() || target.classes.iter().all(|c| c.rows == 0) {
++            return bad("a target with no classes");
++        }
++        for class in &target.classes {
++            if class
++                .bucket
++                .is_some_and(|(lo, hi)| lo.partial_cmp(&hi).is_none_or(std::cmp::Ordering::is_gt))
++            {
++                return bad("a target class whose low end is above its high end");
++            }
++            if class.grid.is_some_and(|(a, b)| a > b) {
++                return bad("a target class with an empty value range");
+             }
++            check_schedule(&class.schedule, ncols, Some(target.col_idx))?;
+         }
+-        match filled.iter().position(|seen| !seen) {
+-            Some(col) => Err(format!("column {col} is never generated.")),
+-            None => Ok(()),
++        Ok(())
++    }
 +}
 +
- /**
-  * Initialize qsv binary path with auto-detection
-  */
-@@ -879,6 +895,15 @@ export const config = {
-    */
-   isPluginMode: isPluginMode(),
- 
-+  /**
-+   * Whether SQL may write files itself (`COPY ... TO '<file>'`, DuckDB `EXPORT DATABASE`).
-+   * The query, not output_file, picks the target, so this is off in plugin mode
-+   * (Cowork / Claude Code plugin) and on elsewhere. Override with QSV_MCP_SQL_FILE_WRITES.
-+   * When off, qsv children get QSV_SQL_DISABLE_FILE_WRITES=1 (see applySqlFileWritePolicy)
-+   * and the DuckDB route hands SQL that may contain them to sqlp instead.
-+   */
-+  sqlFileWrites: getOptionalBooleanEnv("QSV_MCP_SQL_FILE_WRITES") ?? !isPluginMode(),
-+
-   /**
-    * Expose all tools mode
-    *
-```
-
-**File**: `.claude/skills/src/duckdb.ts` (modified, +15/-0)
-```diff
-@@ -387,6 +387,21 @@ export function translateSql(
-   return translated;
++/// Checks that `schedule` fills every column (except `skip`, the target)
++/// exactly once, and that nothing it holds can panic when sampled.
++fn check_schedule(schedule: &[EmitUnit], ncols: usize, skip: Option<usize>) -> Result<(), String> {
++    let mut filled = vec![false; ncols];
++    if let Some(skip) = skip {
++        filled[skip] = true;
++    }
++    for unit in schedule {
++        let cols: &[usize] = match unit {
++            EmitUnit::Independent { col_idx, generator } => {
++                check_column(generator)?;
++                std::slice::from_ref(col_idx)
++            },
++            EmitUnit::Group(group) => {
++                check_group(group)?;
++                group.col_indices()
++            },
++        };
++        for &col in cols {
++            match filled.get_mut(col) {
++                Some(seen) if !*seen => *seen = true,
++                Some(_) => return Err(format!("column {col} is generated twice.")),
++                None => return Err(format!("column {col} is out of range.")),
++            }
+         }
+     }
++    match filled.iter().position(|seen| !seen) {
++        Some(col) => Err(format!("column {col} is never generated.")),
++        None => Ok(()),
++    }
  }
  
-+/**
-+ * Find a statement that makes DuckDB write files itself: `COPY ... TO` or
-+ * `EXPORT DATABASE`. Returns its kind, or null. `COPY <table> FROM` (a read) is allowed.
-+ */
-+export function findFileWritingStatement(sql: string): string | null {
-+  // Deliberately scans the raw text, strings and comments included. Blanking them first
-+  // needs DuckDB's own lexer (nested block comments, $tag$ strings, E'' escapes), and any
-+  // mismatch would hide a real statement. These keywords can't be spelled any other way,
-+  // so a raw match can only err toward refusing; a refused query can drop the word from
-+  // its literals or comments, or the server can be run with QSV_MCP_SQL_FILE_WRITES=true.
-+  if (/\bEXPORT\b/i.test(sql)) return "EXPORT DATABASE";
-+  if (/\bCOPY\b/i.test(sql) && /\bTO\b/i.test(sql)) return "COPY ... TO";
-+  return null;
+ fn bad(what: &str) -> Result<(), String> {
+```
+
+**File**: `src/cmd/synthesize/output.rs` (modified, +17/-2)
+```diff
+@@ -131,7 +131,22 @@ pub(crate) fn resolve_types(
+     types
+ }
+ 
+-const fn number_type(is_int: bool) -> OutType {
++/// Whether values a generator types `values` keep their written form in a
++/// column typed `column`: the same type, or Integer values in a Float column.
++pub(crate) fn holds_exactly(column: &OutType, values: &OutType) -> bool {
++    column == values || (*column == OutType::Float && *values == OutType::Integer)
 +}
 +
- /**
-  * Execute a SQL query using DuckDB.
-  *
-```
-
-**File**: `.claude/skills/src/mcp-server.ts` (modified, +7/-1)
-```diff
-@@ -26,7 +26,7 @@ import { homedir } from "node:os";
- import { SkillLoader } from "./loader.js";
- import { SkillExecutor, runQsvSimple } from "./executor.js";
- import { FilesystemResourceProvider } from "./mcp-filesystem.js";
--import { config, revalidateQsvBinary } from "./config.js";
-+import { applySqlFileWritePolicy, config, revalidateQsvBinary } from "./config.js";
- import {
-   COMMON_COMMANDS,
-   createToolDefinition,
-@@ -1238,6 +1238,12 @@ class QsvMcpServer {
- 
-     console.error("Starting QSV MCP Server...");
- 
-+    // Before any qsv child is spawned: they inherit process.env.
-+    applySqlFileWritePolicy(config.sqlFileWrites);
-+    if (!config.sqlFileWrites) {
-+      console.error("  SQL file writes (COPY ... TO): disabled");
-+    }
++/// Whether a column typed `column` can hold values a generator types
++/// `values`: the same type, Integer values in a Float column, or anything in a
++/// String column.
++pub(crate) fn holds(column: &OutType, values: &OutType) -> bool {
++    column == values
++        || *column == OutType::String
++        || (*column == OutType::Float && *values == OutType::Integer)
++}
 +
-     await this.server.connect(transport);
-     console.error("QSV MCP Server running on stdio");
- 
-```
-
-**File**: `.claude/skills/src/parquet-bridge.ts` (modified, +15/-0)
-```diff
-@@ -10,6 +10,7 @@ import {
-   detectDuckDb,
-   markDuckDbUnavailable,
-   translateSql,
-+  findFileWritingStatement,
-   executeDuckDbQuery,
-   CSV_LIKE_EXTENSIONS,
- } from "./duckdb.js";
-@@ -816,6 +817,20 @@ export async function tryDuckDbExecution(
-     return null; // Fall through to sqlp
-   }
- 
-+  // With SQL file writes off (plugin mode), SQL that may write files never reaches DuckDB.
-+  // The check over-matches (a column named "export" trips it), so fall back to sqlp rather
-+  // than fail: Polars runs under QSV_SQL_DISABLE_FILE_WRITES=1 and refuses a real COPY TO.
-+  if (!config.sqlFileWrites) {
-+    const kind = findFileWritingStatement(sql);
-+    if (kind) {
-+      console.error(
-+        `[MCP Tools] DuckDB: SQL file writes are disabled and the query may contain ${kind}; ` +
-+        `running it with sqlp instead`,
-+      );
-+      return null;
-+    }
-+  }
-+
-   const format = String(params.format ?? "csv").toLowerCase();
- 
-   // Unsupported formats fall back to sqlp
-```
-
-**File**: `.claude/skills/tests/config.test.ts` (modified, +21/-0)
-```diff
-@@ -13,6 +13,7 @@ import {
-   parseQsvCommandList,
-   expandTemplateVars,
-   isPluginMode,
-+  applySqlFileWritePolicy,
- } from '../src/config.js';
- import { QSV_AVAILABLE } from './test-helpers.js';
- 
-@@ -589,3 +590,23 @@ test('QSV_MCP_PLUGIN_MODE with invalid value falls back to auto-detection', () =
-     else delete process.env['QSV_MCP_PLUGIN_MODE'];
-   }
- });
-+
-+test('applySqlFileWritePolicy sets QSV_SQL_DISABLE_FILE_WRITES only when writes are off', () => {
-+  const off: NodeJS.ProcessEnv = {};
-+  applySqlFileWritePolicy(false, off);
-+  assert.strictEqual(off.QSV_SQL_DISABLE_FILE_WRITES, '1');
-+
-+  const on: NodeJS.ProcessEnv = {};
-+  applySqlFileWritePolicy(true, on);
-+  assert.strictEqual(on.QSV_SQL_DISABLE_FILE_WRITES, undefined);
-+
-+  // when off, the server's value wins over an inherited one
-+  const inherited: NodeJS.ProcessEnv = { QSV_SQL_DISABLE_FILE_WRITES: '0' };
-+  applySqlFileWritePolicy(false, inherited);
-+  assert.strictEqual(inherited.QSV_SQL_DISABLE_FILE_WRITES, '1');
-+
-+  // when on, a user's own setting is left alone
-+  const userSet: NodeJS.ProcessEnv = { QSV_SQL_DISABLE_FILE_WRITES: '1' };
-+  applySqlFileWritePolicy(true, userSet);
-+  assert.strictEqual(userSet.QSV_SQL_DISABLE_FILE_WRITES, '1');
-+});
++pub(crate) const fn number_type(is_int: bool) -> OutType {
+     if is_int {
+         OutType::Integer
+     } else {
+@@ -172,7 +187,7 @@ fn date_type(is_datetime: bool, date_format: Option<&String>) -> OutType {
+ /// so a zero-padded code stays text; a float must keep its decimal value
+ /// through f64; a date must be a whole day and a datetime must fit in
+ /// microseconds, as Parquet stores them.
+-fn pooled_type<'a>(
++pub(crate) fn pooled_type<'a>(
+     stats_type: &str,
+     mut values: impl Iterator<Item = &'a str>,
+     prefer_dmy: bool,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5084** (2026-11-21): feat(synthesize): --target <col> for conditional generation; read non-UTF8 input (@jqnatividad)
 - **PR #5081** (2026-11-20): deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes (@jqnatividad)
 - **PR #5080** (2026-11-20): feat(synthesize): Float columns keep their source decimal places (@jqnatividad)
 - **PR #5078** (2026-11-20): feat(synthesize): --quantiles <n> for finer numeric/date marginals (@jqnatividad)
 - **PR #5077** (2026-11-20): feat(synthesize): --rows-per-file <n> splits the output into files (@jqnatividad)
 - **PR #5075** (2026-11-19): feat(synthesize): --format csv|jsonl|parquet with typed columns (@jqnatividad)
-- **PR #5074** (2026-11-19): feat(synthesize): --save-model / --model to fit once and generate from the model (@jqnatividad)
 
 ---
 
@@ -2454,13 +2587,13 @@ Polars main is 91 commits past 2d9938d (crates stay 0.55.1).
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes
+## X. synthesize): --target <col> for conditional generation; read non-UTF8 input
 
 **RULE**:
 When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `82819859`: deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ea8e9cca`: synthesize): --target <col> for conditional generation; read non-UTF8 input. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
@@ -2468,7 +2601,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **SQL file writes are off in plugin mode (Cowork, Claude Code plugin).** Polars SQL now has `COPY (<query>) TO '<file>'`, where the query rather than `output_file` picks the target. In plugin mode the server sets `QSV_SQL_DISABLE_FILE_WRITES=1` for qsv, and `qsv_sqlp` never sends SQL that may contain `COPY ... TO` or `EXPORT DATABASE` to DuckDB: it runs on Polars `sqlp`, which refuses a real `COPY ... TO`. A `.env` file can't lift the switch, for qsv or the qsv subprocesses it spawns. Other MCP clients and the Desktop extension keep them. New `QSV_MCP_SQL_FILE_WRITES` overrides the default either way. `qsv-sqlp` skill regenerated from the USAGE text. ([#5081](https://github.com/dathere/qsv/pull/5081))
+- **`qsv-synthesize --target <col>`**: conditional generation. Each row draws a class of `<col>` (at most 50 distinct values, or a numeric column's quantile buckets) in proportion to its source rows, after dropping classes seen in fewer than `--min-count` rows, then fills the other columns from that class's own profile; `stats` and `frequency` run once more per class. Skill regenerated from the USAGE text. ([#5084](https://github.com/dathere/qsv/pull/5084))
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2478,4 +2611,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `82819859` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ea8e9cca` are properly handled with clean fallback behavior.

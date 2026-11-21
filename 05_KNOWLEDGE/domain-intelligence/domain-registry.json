@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T04:20:41.158Z",
+  "last_updated": "2026-11-21T04:39:22.597Z",
   "total_records": 2226,
   "domains": {
     "A": {
@@ -9082,8 +9082,8 @@
       "title": "Technical Construction Intelligence: kirillzyusko-react-native-keyboard-controller-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kirillzyusko-react-native-keyboard-controller-learnings-technical-construction-i.md",
       "repository": "kirillzyusko-react-native-keyboard-controller-learnings",
-      "content_hash": "640948c65f05268d52b29812775b9107b4e9994118b0cbfc4b9e83c5c8de4b4a",
-      "created_at": "2026-11-17T06:36:11.768Z"
+      "content_hash": "95b55ead05d967e11228c4d7f8c58b7b1a566aae0517f9a364c32c7fc0905fe1",
+      "created_at": "2026-11-21T04:39:20.020Z"
     },
     "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants",
@@ -12283,8 +12283,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "2c98304a052914de311c397e67d3616428d798bf43b83a06281f6e34fb3a072f",
-      "created_at": "2026-11-20T14:04:12.339Z"
+      "content_hash": "108e880bc43cac0774a9425da887cd1618f2ccbee70bea18dbd6380006ada4e8",
+      "created_at": "2026-11-21T04:39:15.868Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -12352,8 +12352,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "b4005f5c9e77357066a0a9418808488f0b099be5c3ec0ddb7b9195fb9abaacef",
-      "created_at": "2026-11-20T14:07:35.987Z"
+      "content_hash": "6907aef041c574c863cefb18f9efd32d9d3041cd3aab1f819924b608af5a44c1",
+      "created_at": "2026-11-21T04:39:22.597Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -27168,8 +27168,8 @@
       "title": "Architecture Intelligence: meshery/meshery Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-meshery-meshery-architecture-intelligence-meshery-meshery-core-invariants.md",
       "repository": "meshery/meshery",
-      "content_hash": "522fc83bc5e3a0bc474df27c75268d5bb2f21aa22add34ee3d6a552c8eb7e86d",
-      "created_at": "2026-11-17T10:41:08.844Z"
+      "content_hash": "ab9fbf9b13ab6365552cc60f14fb9f91692343613019393e706e45d137bda3f3",
+      "created_at": "2026-11-21T04:39:09.193Z"
     },
     "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-core-invariants",
@@ -27195,8 +27195,8 @@
       "title": "Architecture Intelligence: meshery-meshery-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-meshery-meshery-learnings-architecture-intelligence-meshery-meshery-learnings-co.md",
       "repository": "meshery-meshery-learnings",
-      "content_hash": "45e8d7a53000f0985de6fe5e2129b46e8940bafbfffa225996c4cde25c4eb04f",
-      "created_at": "2026-11-17T10:41:18.649Z"
+      "content_hash": "82b287d0135696c68ec93907073c16a1d1008fa67d176d296e38149af7432b23",
+      "created_at": "2026-11-21T04:39:21.325Z"
     },
     "domain_intelligence-human-need-intelligence-zulip-zulip-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-zulip-zulip-core-invariants",

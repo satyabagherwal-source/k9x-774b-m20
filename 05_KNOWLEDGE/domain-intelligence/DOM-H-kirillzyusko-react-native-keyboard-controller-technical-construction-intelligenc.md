@@ -4,24 +4,24 @@
 {
   "source_repository": "kirillzyusko/react-native-keyboard-controller",
   "source_url": "https://github.com/kirillzyusko/react-native-keyboard-controller",
-  "source_version": "0012bfd1",
+  "source_version": "67112625",
   "license": "MIT",
-  "timestamp": "2026-11-17T06:36:05.919Z",
+  "timestamp": "2026-11-21T04:39:06.876Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-kirillzyusko-react-native-keyboard-controller",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [kirillzyusko/react-native-keyboard-controller](https://github.com/kirillzyusko/react-native-keyboard-controller) (Revision: `0012bfd1`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T06:36:05.919Z`  
+> **Provenance**: Harvested from [kirillzyusko/react-native-keyboard-controller](https://github.com/kirillzyusko/react-native-keyboard-controller) (Revision: `67112625`).  
+> **License**: MIT | **Timestamp**: `2026-11-21T04:39:06.876Z`  
 > **Learning ID**: `learn-github-kirillzyusko-react-native-keyboard-controller`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence)
-- **Confidence Rating**: 67%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from kirillzyusko/react-native-keyboard-controller:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kirillzyusko/react-native-keyboard-controller](https://github.com/kirillzyusko/react-native-keyboard-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T06:36:04.833Z  
+> **Harvest Timestamp**: 2026-11-21T04:39:05.351Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ⌨️ Keyboard manager which works in identical way on both iOS and Android
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3765 stars
+- **Stars / Engagement**: 3763 stars
 
 ---
 
@@ -346,16 +346,15 @@ class KeyboardBackgroundViewComponentDescriptor final
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1770** (2026-11-16): **chore: release 1.23.1**
-  *Symptoms*: # Release  Version 1.23.1 
+- **Issue #1790** (2026-11-20): **chore: regenerate e2e baselines for #1777 (do not merge)**
+  *Symptoms*: Temporary: #1777 with all e2e baselines deleted, the full iOS matrix and `fail-fast: false`, so CI generates every baseline for the native stack on `react-native-screens` 4.24 with #1788. Will be closed after the run.
   **Post-Mortem & Fix Analysis**:
-  > ### 📊 Package size report | Current size | Target Size | Difference | | ------------- | ------------- | ------------------------ | | 355367 bytes | 355366 bytes | 1 bytes 📈 | <!-- Sticky Pull Request Comment -->
+  > ### 📊 Package size report | Current size | Target Size | Difference | | ------------- | ------------- | ------------------------ | | 360595 bytes | 360595 bytes | 0 bytes 📉 | <!-- Sticky Pull Request Comment -->
 
-- **Issue #1767** (2026-11-16): **refactor: create Android view managers on demand**
-  *Symptoms*: ## 📜 Description  `KeyboardControllerPackage` now implements `ViewManagerOnDemandReactPackage`, so on Android React Native builds the config of a keyboard-controller view manager when JS first uses that view, instead of building all six at startup.  ## 💡 Motivation and Context  In bridgeless mode, React Native builds the view config (props and events) of every view manager of an eager package when JS first reads `UIManager`, on the JS thread, before the first screen renders. On-demand packages are left out of that step: React Native only lists their names. `MainReactPackage`, `react-native-gesture-handler` and `react-native-svg` already work this way.  The gain needs React Native 0.89+, which includes react/react-native#58097. On older versions, `UIManager.js` spreads `BridgelessUIManager` and builds every lazy config anyway. The change is safe there. To measure it in `FabricExample` (React Native 0.87.1), I applied #58097 to its `node_modules/react-native` locally.  In `FabricExample`, the JS-thread CPU under `UIManager.getConstants` during a cold start dropped from 29.9 ms to 27.0 ms (median of 10 release-build runs each). None of the keyboard-controller views render on the example's first screen, so nothing moves to first use. The example registers many other eager packages, so the share is small there. In an app where all packages are on-demand, the same change cut JS start → first mount by about 40% (numbers in react/react-native#59173).  Alternative considered: react/
+- **Issue #1789** (2026-11-19): **test: #1788 on react-native-screens 4.24 (do not merge)**
+  *Symptoms*: Validation for #1788: the fix on top of #1780 (`react-native-screens` 4.24.0) with the `BottomTabBarPortrait` baselines from before #1780. The Android e2e has to pass; without the fix these baselines fail (#1783). Will be closed after the run.
   **Post-Mortem & Fix Analysis**:
-  > ### 📊 Package size report | Current size | Target Size | Difference | | ------------- | ------------- | ------------------------ | | 355685 bytes | 355366 bytes | 319 bytes 📈 | <!-- Sticky Pull Request Comment -->
-  > Thank you for your contribution!
+  > ### 📊 Package size report | Current size | Target Size | Difference | | ------------- | ------------- | ------------------------ | | 360595 bytes | 360485 bytes | 110 bytes 📈 | <!-- Sticky Pull Request Comment -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -372,176 +371,531 @@ class KeyboardBackgroundViewComponentDescriptor final
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fe89635c` (2026-11-14)
-**Commit Message**: fix: keep KeyboardExtender opaque during predictive back (#1766)
+### Incident Patch 1: `c0dceafe` (2026-11-19)
+**Commit Message**: fix: check `KeyboardProvider` state on UI thread in `StatusBar.setTranslucent` (#1788)
 
 ## 📜 Description
 
-Keep `KeyboardExtender` opaque during Android's predictive-back preview
-while preserving its fade during keyboard opening and closing.
+`StatusBar.setTranslucent` checks whether `KeyboardProvider` is active
+on the UI thread, so a call that arrives before the provider is mounted
+no longer removes the top inset for the whole app on Android.
 
 ## 💡 Motivation and Context
 
-In [FabricExample's existing Keyboard Extender
-example](https://github.com/kirillzyusko/react-native-keyboard-controller/blob/5b1cec70fbc5c6e02946dadef6fcb01109c0a180/FabricExample/src/screens/Examples/KeyboardExtender/index.tsx),
-focus **Donation amount**, drag inward from the screen edge and hold. On
-Android 16 with gesture navigation and edge-to-edge enabled, the
-extender fades and reveals the background while the keyboard stays
-opaque. Return to the edge to cancel, or release inward to close it.
+Fixes #1783
+https://github.com/kirillzyusko/react-native-keyboard-controller/pull/1785.
 
-[Android
-16](https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-16.0.0_r1/core/java/android/view/ImeBackAnimationController.java#159)
-limits the preview to 10% of the IME height and passes alpha `1`. The
-measured keyboard progress ranged from `0.8996088` to `1`; integer pixel
-rounding accounts for the small dip below `0.9`. Finish the fade at
-`0.8`, rounding the lower boundary down to one decimal place to leave
-r
+Steps: open "Bottom tab bar" in `example` on Android with
+`react-native-screens` 4.19+ (old architecture; `main` at 1b319bd2c4,
+#1780, has 4.24.0). The header of the native stack nested in the tabs is
+drawn under the status bar; after a rotation to landscape and back it
+gets the inset. Expected: the header is below the status bar from the
+start. On CI it happened every time on Android 9 and 12, and #1780 had
+to update the `BottomTabBarPortrait` baselines to this state.
 
-**File**: `src/views/KeyboardExtender/index.tsx` (modified, +8/-1)
+Cause. `KeyboardProvider` sets an insets listener on the decor view and
+keeps the insets as they are. Our `StatusBarManager` module replaces the
+React Native one, and `setTranslucent` called the original
+implementation when `KeyboardProvider` wasn't active. That check ran on
+the native module
+
+**File**: `android/src/main/java/com/reactnativekeyboardcontroller/modules/statusbar/StatusBarManagerCompatModuleImpl.kt` (modified, +12/-8)
 ```diff
-@@ -29,13 +29,20 @@ const AnimatedKeyboardBackgroundView = Animated.createAnimatedComponent(
- const KeyboardExtender = (props: PropsWithChildren<KeyboardExtenderProps>) => {
-   const { children, enabled = true, transparent = false } = props;
-   const { progress } = useKeyboardAnimation();
-+  // Android's predictive-back preview stays near 0.9 progress. Finish fading
-+  // earlier to keep the extender opaque, allowing for pixel rounding.
-+  const opacity = progress.interpolate({
-+    inputRange: [0, 0.8],
-+    outputRange: [0, 1],
-+    extrapolate: "clamp",
-+  });
-   const Container = transparent
-     ? Animated.View
-     : AnimatedKeyboardBackgroundView;
+@@ -85,16 +85,20 @@ class StatusBarManagerCompatModuleImpl(
+   }
  
-   return (
-     <KeyboardStickyView enabled={enabled}>
--      <Container style={{ opacity: progress }}>{children}</Container>
-+      <Container style={{ opacity }}>{children}</Container>
-     </KeyboardStickyView>
-   );
- };
+   fun setTranslucent(translucent: Boolean) {
+-    if (!isEnabled()) {
+-      return original.setTranslucent(translucent)
+-    }
++    // `<StatusBar />` can call this method before `KeyboardProvider` is mounted, so its state is checked
++    // on the UI thread. Otherwise the original implementation replaces the insets listener of
++    // `KeyboardProvider` with the one that removes the top inset for the whole view hierarchy.
++    UiThreadUtil.runOnUiThread {
++      if (!isEnabled()) {
++        original.setTranslucent(translucent)
++        return@runOnUiThread
++      }
+ 
+-    if (BuildConfig.IS_EDGE_TO_EDGE_ENABLED) {
+-      Logger.w(TAG, "StatusBarModule: Ignored status bar change, current activity is edge-to-edge.")
+-      return
+-    }
++      if (BuildConfig.IS_EDGE_TO_EDGE_ENABLED) {
++        Logger.w(TAG, "StatusBarModule: Ignored status bar change, current activity is edge-to-edge.")
++        return@runOnUiThread
++      }
+ 
+-    UiThreadUtil.runOnUiThread {
+       view()?.forceStatusBarTranslucent(translucent)
+     }
+   }
 ```
 
 ---
 
-### Incident Patch 2: `5b1cec70` (2026-11-14)
-**Commit Message**: fix: skip ghost padding correction for hidden keyboards and disabled views (#1762)
+### Incident Patch 2: `7f71d1dd` (2026-11-19)
+**Commit Message**: chore: revert bump of react-native-screens and react-navigation in example app (#1787)
 
 ## 📜 Description
 
-`KeyboardAwareScrollView` skips ghost-padding scroll correction when its
-recorded keyboard height is zero or `enabled` is false. This prevents
-scroll jumps from unpaired hide events and real keyboard dismissal in a
-disabled view.
+Revert #1780: the `example` app goes back to `react-native-screens`
+4.16.0 and the `@react-navigation/*` versions it used before the bump.
 
 ## 💡 Motivation and Context
 
-Fixes #1665.
+#1780 was needed only for #1777 (example apps on a native stack), which
+is closed now.
 
-On iOS 27, open [the Issue #1665
-reproduction](https://github.com/Elehiggle/react-native-keyboard-controller/commit/13801c690e2877c2aff467a4da5f1871b0240867),
-drag the list once, go Home, and reopen the app. No input needs to be
-focused. On the verified iPhone 18 Pro Max simulator, Case A jumps from
-`-62` to `0`; Case B jumps from `878` to `844` after scrolling to the
-end.
+With `react-native-screens` 4.24 the Android header of a native stack
+sometimes gets no status bar inset on the first layout: the title is
+drawn under the status bar until a rotation (#1783). On `main` it shows
+up only in "Bottom tab bar", but with all examples on a native stack
+(#1777) the e2e run on CI caught it on about a dozen screens, and a
+different set of screens on each emulator. The e2e screenshots then
+depend on timing, so the bump goes back until the cause is clear.
 
-`removeGhostPadding` treats this zero-to-zero transition as a real hide
-and interpolates over `[0, 0]`, subtracting the viewport/content gap.
-Requiring a previously recorded positive keyboard height prevents this
-correction. Real keyboard dismissal still removes ghost padding.
+The tree after this PR is identical to `main` at 76cc29b608, before
+#1780.
 
-`enabled={false}` already disables padding and `maybeScroll`, but a real
-hide still reached this correction. Disabling before keyboard show or
-while the keyboard is v
+## 📢 Changelog
 
-**File**: `src/components/KeyboardAwareScrollView/__fixtures__/mocks.tsx` (modified, +2/-2)
+### Example
+
+- `example/package.json`, `example/yarn.lock`: `react-native-screens`
+4.24.0 → 4.16.0, `@react-navigation/native` 7.3.18 → 7.1.17,
+`native-stack` 7.18.10 → 7.3.26, `stack` 7.10.24 → 7.3.6, `elements`
+2.9.40 → 2.6.4, `bottom-tabs` 7.18.18 → ^7.9.0
+
+**File**: `example/ios/Podfile.lock` (modified, +2/-2)
 ```diff
-@@ -21,8 +21,8 @@ const mockInterpolateFn = (
- ): number => {
-   "worklet";
+@@ -2665,7 +2665,7 @@ PODS:
+     - ReactCommon/turbomodule/core
+     - SocketRocket
+     - Yoga
+-  - RNScreens (4.24.0):
++  - RNScreens (4.16.0):
+     - boost
+     - DoubleConversion
+     - fast_float
+@@ -3047,7 +3047,7 @@ SPEC CHECKSUMS:
+   RNGestureHandler: 4e01eefc427d3af22b877fdb4f7bc826132daab6
+   RNReactNativeHapticFeedback: c56813c4217519c6bff2f640a7d48f07c30902c2
+   RNReanimated: f1d171f6d4a8bf0ec2b8b18bdc09be608fab2f9b
+-  RNScreens: 67a126c21af12b5b309df90994d31b881775ca44
++  RNScreens: 9ae2656a55e9466dc04da3ba196d7932a6bd8146
+   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
+   Yoga: a3ed390a19db0459bd6839823a6ac6d9c6db198d
  
--  if (input[1] === 0) {
--    return 0;
-+  if (input[1] === input[0]) {
-+    return output[0];
-   }
- 
-   const progress = (value - input[0]) / (input[1] - input[0]);
 ```
 
-**File**: `src/components/KeyboardAwareScrollView/__tests__/foreground.spec.tsx` (added, +33/-0)
+**File**: `example/package.json` (modified, +6/-6)
 ```diff
-@@ -0,0 +1,33 @@
-+import "../__fixtures__/mocks";
-+
-+import {
-+  mockKeyboardHandlers,
-+  mockLayout,
-+  mockOffset,
-+  mockScrollTo,
-+  mockSize,
-+  renderKeyboardAwareScrollView,
-+  reset,
-+} from "../__fixtures__/testUtils";
-+
-+beforeEach(() => {
-+  reset();
-+});
-+
-+it("foreground", async () => {
-+  await renderKeyboardAwareScrollView();
-+
-+  // Case A in the video: a drag populates scroll state, then the short list
-+  // settles at the automatic top inset. No TextInput has been focused.
-+  mockOffset.value = -62;
-+  mockLayout.value = { width: 440, height: 956 };
-+  mockSize.value = { width: 440, height: 300 };
-+
-+  // On return from Home, UIKit sends a hide even though the keyboard is hidden.
-+  const hide = { height: 0, duration: 383, progress: 0, target: -1 };
-+
-+  mockKeyboardHandlers.current.onStart(hide); // keyboardWillHide
-+  mockKeyboardHandlers.current.onEnd(hide); // keyboardDidHide; no movement frames
-+
-+  expect(mockScrollTo).not.toHaveBeenCalled();
-+});
+@@ -17,11 +17,11 @@
+     "@legendapp/list": "3.3.3",
+     "@react-native-community/blur": "^4.4.1",
+     "@react-native-masked-view/masked-view": "^0.3.2",
+-    "@react-navigation/bottom-tabs": "7.18.18",
+-    "@react-navigation/elements": "2.9.40",
+-    "@react-navigation/native": "7.3.18",
+-    "@react-navigation/native-stack": "7.18.10",
+-    "@react-navigation/stack": "7.10.24",
++    "@react-navigation/bottom-tabs": "^7.9.0",
++    "@react-navigation/elements": "2.6.4",
++    "@react-navigation/native": "7.1.17",
++    "@react-navigation/native-stack": "7.3.26",
++    "@react-navigation/stack": "7.3.6",
+     "@shopify/flash-list": "1.8.3",
+     "@shopify/react-native-skia": "^2.6.9",
+     "lottie-react-native": "^7.3.4",
+@@ -32,7 +32,7 @@
+     "react-native-keyboard-controller": "link:../",
+     "react-native-reanimated": "3.19.2",
+     "react-native-safe-area-context": "5.6.1",
+-    "react-native-screens": "4.24.0",
++    "react-native-screens": "4.16.0",
+     "react-native-text-input-mask": "3.1.5",
+     "react-native-toast-message": "^2.3.0",
+     "react-native-webview": "^13.16.0",
 ```
 
-**File**: `src/components/KeyboardAwareScrollView/index.tsx` (modified, +7/-2)
+**File**: `example/yarn.lock` (modified, +46/-45)
 ```diff
-@@ -230,7 +230,12 @@ const KeyboardAwareScrollView = forwardRef<
-         // insets mode: `ScrollViewWithBottomPadding` extends scrollable area without
-         // changing layout, so when the keyboard hides and we're at the end of the
-         // ScrollView we must manually scroll back.
--        if (keyboardWillHide.value && ghostViewSpace.value > 0) {
-+        if (
-+          enabled &&
-+          keyboardWillHide.value &&
-+          keyboardHeight.value > 0 &&
-+          ghostViewSpace.value > 0
-+        ) {
-           scrollTo(
-             scrollViewAnimatedRef,
-             0,
-@@ -248,7 +253,7 @@ const KeyboardAwareScrollView = forwardRef<
+@@ -1659,21 +1659,21 @@
+     invariant "^2.2.4"
+     nullthrows "^1.1.1"
  
-         return false;
-       },
--      [mode],
-+      [enabled, mode],
-     );
-     const performScrollWithPositionRestoration = useCallback(
-       (newPosition: number) => {
+-"@react-navigation/bottom-tabs@7.18.18":
+-  version "7.18.18"
+-  resolved "https://registry.yarnpkg.com/@react-navigation/bottom-tabs/-/bottom-tabs-7.18.18.tgz#f382bbe2b4ea8790deb8d4fbcbb6e06635c7358f"
+-  integrity sha512-8XEvMG7SeBEY1zPSM3Bt3T12db1Q+j9qAMakdoSVkbFBXo5+rbrsdz4kOVtCs7vXOEeJfOEIZlubgDb4zRFHAw==
++"@react-navigation/bottom-tabs@^7.9.0":
++  version "7.9.0"
++  resolved "https://registry.yarnpkg.com/@react-navigation/bottom-tabs/-/bottom-tabs-7.9.0.tgz#b546adb0cedd72a1f0179e00b74039b3c8abb6bd"
++  integrity sha512-024FWdHp3ZsE5rP8tmGI4vh+1z3wg8u8E9Frep8eeGoYo1h9rQhvgofQDGxknmrKsb7t8o8Dim+IZSvl57cPFQ==
+   dependencies:
+-    "@react-navigation/elements" "^2.9.40"
++    "@react-navigation/elements" "^2.9.3"
+     color "^4.2.3"
+     sf-symbols-typescript "^2.1.0"
+ 
+-"@react-navigation/core@^7.21.13":
+-  version "7.21.13"
+-  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-7.21.13.tgz#30948e4f3ba00a8bf9e9f10ec6dee972d42530f8"
+-  integrity sha512-d1syMXra7RlJjGsjsIxEA14F6U+awFtQJeOfDc+V7x3y1mPqYQVTYnqnt3PR+fBBouUKaKsgKZsSR3MP5919Xg==
++"@react-navigation/core@^7.12.4":
++  version "7.13.7"
++  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-7.13.7.tgz#1263903a703b5f183a08c22dfc5c3735ac4ef91c"
++  integrity sha512-k2ABo3250vq1ovOh/iVwXS6Hwr5PVRGXoPh/ewVFOOuEKTvOx9i//OBzt8EF+HokBxS2HBRlR2b+aCOmscRqBw==
+   dependencies:
+-    "@react-navigation/routers" "^7.6.4"
++    "@react-navigation/routers" "^7.5.3"
+     escape-string-regexp "^4.0.0"
+     fast-deep-equal "^3.1.3"
+     nanoid "^3.3.11"
+@@ -1682,52 +1682,57 @@
+     use-latest-callback "^0.2.4"
+     use-sync-external-store "^1.5.0"
+ 
+-"@react-navigation/elements@2.9.40", "@react-navigation/elements@^2.9.40":
+-  version "2.9.40"
+-  resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.9.40.tgz#9c04bf0da29c9ff66ad96600365986ed256ac746"
+-  integrity sha512-x2fCMVKU23YeQvHSCFq2mVRYAbHqYNqb8kfWSEfIQ+XUX7dBXWd93/pr0w5jLjALDHDxQUaJKh4mIqr8q3zAwQ==
++"@react-navigation/elements@2.6.4":
++  version "2.6.4"
++  resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.6.4.tgz#f1dc8548b1289588fabcd2f0342c1391c689a49f"
++  integrity sha512-O3X9vWXOEhAO56zkQS7KaDzL8BvjlwZ0LGSteKpt1/k6w6HONG+2Wkblrb057iKmehTkEkQMzMLkXiuLmN5x9Q==
+   dependencies:
+     color "^4.2.3"
+     use-latest-callback "^0.2.4"
+     use-sync-external-store "^1.5.0"
+ 
+-"@react-navigation/native-stack@7.18.10":
+-  version "7.18.10"
+-  resolved "https://registry.yarnpkg.com/@react-navigation/native-stack/-/native-stack-7.18.10.tgz#ce65eab69aff271af771f19c57b94520022f303d"
+-  integrity sha512-dWH6bLHxdPslMmNCPi8doythC9gtavvh9LK8F0HIQLuYE5A2GOk1u6mrvnYrqyJBfsXa6gA8O0Zr6XGywynDnA==
++"@react-navigation/elements@^2.4.6", "@react-navigation/elements@^2.6.4", "@react-navigation/elements@^2.9.3":
++  version "2.9.3"
++  resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.9.3.tgz#505ae38af347a0bc5326155318a3d9a54e2071e3"
++  integrity sha512-3+eyvWiVPIEf6tN9UdduhOEHcTuNe3R5WovgiVkfH9+jApHMTZDc2loePTpY/i2HDJhObhhChpJzO6BVjrpdYQ==
+   dependencies:
+-    "@react-navigation/elements" "^2.9.40"
+     color "^4.2.3"
+-    sf-symbols-typescript "^2.1.0"
++    use-latest-callback "^0.2.4"
++    use-sync-external-store "^1.5.0"
++
++"@react-navigation/native-stack@7.3.26":
++  version "7.3.26"
++  resolved "https://registry.yarnpkg.com/@react-navigation/native-stack/-/native-stack-7.3.26.tgz#a08ee0626e49428a808da9d810f24db5b08deae9"
++  integrity sha512-EjaBWzLZ76HJGOOcWCFf+h/M+Zg7M1RalYioDOb6ZdXHz7AwYNidruT3OUAQgSzg3gVLqvu5OYO0jFsNDPCZxQ==
++  dependencies:
++    "@react-navigation/elements" "^2.6.4"
+     warn-once "^0.1.1"
+ 
+-"@react-navigation/native@7.3.18":
+-  version "7.3.18"
+-  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-7.3.18.tgz#ae9bbad2f95140c0387f9700bbd0f335f8797446"
+-  integrity sha512-5lLYl0Kt85jcpEYxXzj2ecIKta+yo4EcAIOZoJe6jU9lbR0lu6sAQsotU3rlVAYL1VBY/xLemxs4WQ2LJs4Oew==
++"@react-navigation/native@7.1.17":
++  version "7.1.17"
++  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-7.1.17.tgz#88d557c0f5000aa2741e4368c59719526f1394c4"
++  integrity sha512-uEcYWi1NV+2Qe1oELfp9b5hTYekqWATv2cuwcOAg5EvsIsUPtzFrKIasgUXLBRGb9P7yR5ifoJ+ug4u6jdqSTQ==
+   dependencies:
+-    "@react-navigation/core" "^7.21.13"
++    "@react-navigation/core" "^7.12.4"
+     escape-string-regexp "^4.0.0"
+     fast-deep-equal "^3.1.3"
+     nanoid "^3.3.11"
+-    standard-navigation "^0.0.8"
+     use-latest-callback "^0.2.4"
+ 
+-"@react-navigation/routers@^7.6.4":
+-  version "7.6.4"
+-  resolved "https://registry.yarnpkg.com/@react-navigation/routers/-/routers-7.6.4.tgz#7b0dfa19f9fef0ab1588c9dbfc7f7616fced3ff8"
+-  integrity sha512-GI7eJm8/KsZUQaYcXvEExikKurRZRgEsSzyZ7faENfi65yqJBCXjDMwyN1pF6pNW1MoLH1ErDwDivFxY6BzD3w==
++"@react-navigation/routers@^7.5.3":
++  version "7.5.3"
++  resolved "https://registry.yarnpkg.com/@react-navigation/r
+```
+
+---
+
+### Incident Patch 3: `76cc29b6` (2026-11-17)
+**Commit Message**: ci: remove redundant Paper build workflows (#1772)
+
+## 📜 Description
+
+Remove the standalone Android and iOS Paper build workflows and use the
+existing E2E build jobs to validate the Paper example app. This reduces
+cache storage pressure and CI minutes spent on repeated builds.
+
+## 💡 Motivation and Context
+
+Native changes currently build `example/` twice: once in a standalone
+build workflow and again before E2E tests. Both use Paper, and E2E tests
+depend on their build job succeeding.
+
+The current 10 GB Actions cache limit is too small to retain caches for
+all CI jobs. Their caches keep evicting one another, forcing subsequent
+builds to repeat expensive work and making builds much slower. Removing
+these additional builds reduces cache usage and eviction pressure, and
+saves CI minutes.
+
+The E2E path filters already cover the native sources, podspec, and
+example configuration. Add the root `yarn.lock` to both E2E workflows
+for pushes to `main` and pull requests so dependency-only changes keep
+triggering builds after removing the standalone workflows.
+
+There is a coverage tradeoff: the removed jobs build Debug, while E2E
+builds Release. Android E2E also builds only `x86_64`, whereas 
+
+**File**: `.github/workflows/android-e2e-test.yml` (modified, +2/-0)
+```diff
+@@ -4,6 +4,7 @@ on:
+     paths:
+       - ".github/workflows/android-e2e-test.yml"
+       - "package.json"
++      - "yarn.lock"
+       - "android/**"
+       - "example/**"
+       - "e2e/**"
+@@ -14,6 +15,7 @@ on:
+     paths:
+       - ".github/workflows/android-e2e-test.yml"
+       - "package.json"
++      - "yarn.lock"
+       - "android/**"
+       - "example/**"
+       - "e2e/**"
+```
+
+**File**: `.github/workflows/build-android.yml` (removed, +0/-64)
+```diff
+@@ -1,64 +0,0 @@
+-name: 🤖 Build Android
+-
+-on:
+-  push:
+-    branches:
+-      - main
+-    paths:
+-      - ".github/workflows/build-android.yml"
+-      - "android/**"
+-      - "example/android/**"
+-      - "yarn.lock"
+-      - "example/yarn.lock"
+-      - "example/patches/**"
+-  pull_request:
+-    paths:
+-      - ".github/workflows/build-android.yml"
+-      - "android/**"
+-      - "example/android/**"
+-      - "yarn.lock"
+-      - "example/yarn.lock"
+-      - "example/patches/**"
+-
+-concurrency:
+-  group: build-android-${{ github.event.pull_request.number || github.run_id }}
+-  cancel-in-progress: true
+-
+-jobs:
+-  build:
+-    name: Build Android Example App
+-    runs-on: ubuntu-latest
+-    steps:
+-      - uses: actions/checkout@v4
+-
+-      - name: Setup JDK 17
+-        uses: actions/setup-java@v4
+-        with:
+-          distribution: "microsoft"
+-          java-version: "17"
+-
+-      - name: Get yarn cache directory path
+-        id: yarn-cache-dir-path
+-        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+-      - name: Restore node_modules from cache
+-        uses: actions/cache@v4
+-        id: yarn-cache
+-        with:
+-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+-          restore-keys: |
+-            ${{ runner.os }}-yarn-
+-      - name: Install node_modules for example/
+-        run: yarn install --frozen-lockfile --cwd example
+-
+-      - name: Restore Gradle cache
+-        uses: actions/cache@v4
+-        with:
+-          path: |
+-            ~/.gradle/caches
+-            ~/.gradle/wrapper
+-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+-          restore-keys: |
+-            ${{ runner.os }}-gradle-
+-      - name: Run Gradle Build for example/android/
+-        run: cd example/android && ./gradlew assembleDebug --build-cache && cd ../..
+```
+
+**File**: `.github/workflows/build-ios.yml` (removed, +0/-125)
+```diff
+@@ -1,125 +0,0 @@
+-name: 🍏 Build iOS
+-
+-on:
+-  push:
+-    branches:
+-      - main
+-    paths:
+-      - ".github/workflows/build-ios.yml"
+-      - "react-native-keyboard-controller.podspec"
+-      - "ios/**"
+-      - "example/ios/**"
+-      - "example/Gemfile*"
+-      - "example/.ruby-version"
+-      - "yarn.lock"
+-      - "example/yarn.lock"
+-      - "example/patches/**"
+-  pull_request:
+-    branches:
+-      - main
+-    paths:
+-      - ".github/workflows/build-ios.yml"
+-      - "react-native-keyboard-controller.podspec"
+-      - "ios/**"
+-      - "example/ios/**"
+-      - "example/Gemfile*"
+-      - "example/.ruby-version"
+-      - "yarn.lock"
+-      - "example/yarn.lock"
+-      - "example/patches/**"
+-
+-concurrency:
+-  group: build-ios-${{ github.event.pull_request.number || github.run_id }}
+-  cancel-in-progress: true
+-
+-jobs:
+-  build:
+-    name: Build iOS Example App
+-    runs-on: macOS-15
+-    defaults:
+-      run:
+-        working-directory: example/ios
+-    env:
+-      XCODE_VERSION: "16.4"
+-    steps:
+-      - uses: actions/checkout@v4
+-
+-      - uses: maxim-lobanov/setup-xcode@v1
+-        with:
+-          xcode-version: ${{ env.XCODE_VERSION }}
+-      - name: List all available simulators
+-        run: xcrun simctl list
+-
+-      - name: Get yarn cache directory path
+-        id: yarn-cache-dir-path
+-        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+-      - name: Restore node_modules from cache
+-        uses: actions/cache@v4
+-        id: yarn-cache
+-        with:
+-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+-          restore-keys: |
+-            ${{ runner.os }}-yarn-
+-      - name: Install node_modules for example/
+-        run: yarn install --frozen-lockfile --cwd ..
+-      - name: Install root dependencies
+-        run: yarn install --frozen-lockfile --cwd ../..
+-
+-      - name: Install Ccache
+-        uses: hendrikmuhs/ccache-action@v1.2
+-        with:
+-          max-size: 1.5G
+-          key: ${{ runner.os }}-ccache-example-ios
+-          create-symlink: true
+-      - name: Setup ccache behavior
+-        run: |
+-          echo "CCACHE_SLOPPINESS=clang_index_store,file_stat_matches,include_file_ctime,include_file_mtime,ivfsoverlay,pch_defines,modules,system_headers,time_macros" >> $GITHUB_ENV
+-          echo "CCACHE_FILECLONE=true" >> $GITHUB_ENV
+-          echo "CCACHE_DEPEND=true" >> $GITHUB_ENV
+-          echo "CCACHE_INODECACHE=true" >> $GITHUB_ENV
+-
+-      - name: Set up Ruby
+-        uses: ruby/setup-ruby@v1
+-        with:
+-          bundler-cache: true
+-          working-directory: example
+-
+-      - name: Restore Pods cache
+-        uses: actions/cache@v4
+-        with:
+-          path: |
+-            example/ios/Pods
+-            ~/Library/Caches/CocoaPods
+-            ~/.cocoapods
+-          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+-          restore-keys: |
+-            ${{ runner.os }}-pods-
+-      - name: Restore DerivedData cache
+-        # Restore before pod install so cached codegen files are regenerated.
+-        uses: actions/cache@v5
+-        with:
+-          path: example/ios/build
+-          key: ${{ runner.os }}-derived-data-xcode-${{ env.XCODE_VERSION }}-${{ hashFiles('**/Podfile.lock', '**/Gemfile.lock', '**/package.json', '**/yarn.lock') }}
+-          restore-keys: |
+-            ${{ runner.os }}-derived-data-xcode-${{ env.XCODE_VERSION }}-
+-      - name: Install Pods
+-        run: |
+-          if ! bundle exec pod install; then
+-            bundle exec pod update --repo-update
+-          fi
+-        env:
+-          USE_CCACHE: "1"
+-      - name: Install xcpretty
+-        run: gem install xcpretty
+-      - name: Build App
+-        run: "set -o pipefail && xcodebuild \
+-          CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ \
+-          -derivedDataPath build -UseModernBuildSystem=YES \
+-          -workspace KeyboardControllerExample.xcworkspace \
+-          -scheme KeyboardControllerExample \
+-          -sdk iphonesimulator \
+-          -configuration Debug \
+-          -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+-          build \
+-          CODE_SIGNING_ALLOWED=NO | xcpretty"
+```
+
+**File**: `.github/workflows/ios-e2e-test.yml` (modified, +2/-0)
+```diff
+@@ -5,6 +5,7 @@ on:
+       - ".github/workflows/ios-e2e-test.yml"
+       - "react-native-keyboard-controller.podspec"
+       - "package.json"
++      - "yarn.lock"
+       - "ios/**"
+       - "example/**"
+       - "e2e/**"
+@@ -16,6 +17,7 @@ on:
+       - ".github/workflows/ios-e2e-test.yml"
+       - "react-native-keyboard-controller.podspec"
+       - "package.json"
++      - "yarn.lock"
+       - "ios/**"
+       - "example/**"
+       - "e2e/**"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1770** (2026-11-16): chore: release 1.23.1 (@kirillzyusko)
-- **PR #1767** (2026-11-16): refactor: create Android view managers on demand (@imranbarbhuiya)
-- **PR #1766** (2026-11-14): fix: keep KeyboardExtender opaque during predictive back (@kirillzyusko)
-- **PR #1762** (2026-11-14): fix: skip ghost padding correction for hidden keyboards and disabled views (@kirillzyusko)
-- **PR #1759** (2026-11-11): fix: preserve Android chat presses with content insets (@kirillzyusko)
-- **PR #1755** (2026-11-09): fix: synchronize focused input layout inside Android modals (@kirillzyusko)
+- **PR #1790** (closed): chore: regenerate e2e baselines for #1777 (do not merge) (@kirillzyusko)
+- **PR #1789** (closed): test: #1788 on react-native-screens 4.24 (do not merge) (@kirillzyusko)
+- **PR #1788** (2026-11-19): fix: check `KeyboardProvider` state on UI thread in `StatusBar.setTranslucent` (@kirillzyusko)
+- **PR #1787** (2026-11-19): chore: revert bump of react-native-screens and react-navigation in example app (@kirillzyusko)
+- **PR #1786** (closed): chore: regenerate e2e baselines for #1777 on react-native-screens 4.24 (do not merge) (@kirillzyusko)
+- **PR #1785** (closed): test: verify Android bottom tab status bar insets (@kirillzyusko)
 
 ---
 
@@ -561,38 +915,49 @@ while the keyboard is v
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep KeyboardExtender opaque during predictive back
+## X. check `KeyboardProvider` state on UI thread in `StatusBar.setTranslucent`
 
 **RULE**:
-When implementing operations in `src/views/KeyboardExtender/index.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kirillzyusko/react-native-keyboard-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `android/src/main/java/com/reactnativekeyboardcontroller/modules/statusbar/StatusBarManagerCompatModuleImpl.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kirillzyusko/react-native-keyboard-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fe89635c`: keep KeyboardExtender opaque during predictive back. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c0dceafe`: check `KeyboardProvider` state on UI thread in `StatusBar.setTranslucent`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/views/KeyboardExtender/index.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/main/java/com/reactnativekeyboardcontroller/modules/statusbar/StatusBarManagerCompatModuleImpl.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  // Android's predictive-back preview stays near 0.9 progress. Finish fading
-  // earlier to keep the extender opaque, allowing for pixel rounding.
-  const opacity = progress.interpolate({
-    inputRange: [0, 0.8],
-    outputRange: [0, 1],
-    extrapolate: "clamp",
-  });
-      <Container style={{ opacity }}>{children}</Container>
+    // `<StatusBar />` can call this method before `KeyboardProvider` is mounted, so its state is checked
+    // on the UI thread. Otherwise the original implementation replaces the insets listener of
+    // `KeyboardProvider` with the one that removes the top inset for the whole view hierarchy.
+    UiThreadUtil.runOnUiThread {
+      if (!isEnabled()) {
+        original.setTranslucent(translucent)
+        return@runOnUiThread
+      }
+      if (BuildConfig.IS_EDGE_TO_EDGE_ENABLED) {
+        Logger.w(TAG, "StatusBarModule: Ignored status bar change, current activity is edge-to-edge.")
+        return@runOnUiThread
+      }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-      <Container style={{ opacity: progress }}>{children}</Container>
+    if (!isEnabled()) {
+      return original.setTranslucent(translucent)
+    }
+    if (BuildConfig.IS_EDGE_TO_EDGE_ENABLED) {
+      Logger.w(TAG, "StatusBarModule: Ignored status bar change, current activity is edge-to-edge.")
+      return
+    }
+    UiThreadUtil.runOnUiThread {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fe89635c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c0dceafe` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

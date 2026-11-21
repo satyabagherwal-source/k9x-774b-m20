@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T04:20:41.579Z",
+  "last_updated": "2026-11-21T04:39:22.916Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T03:52:39.820Z",
@@ -748,7 +748,7 @@
       "staged_for_review": 1
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-20T16:42:32.388Z",
+      "processed_at": "2026-11-21T04:39:21.783Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1058,9 +1058,9 @@
       "staged_for_review": 0
     },
     "meshery-meshery-learnings.md": {
-      "processed_at": "2026-11-20T03:49:20.560Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-21T04:39:20.519Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "google-closure-compiler-learnings.md": {
       "processed_at": "2026-11-20T23:05:39.060Z",
@@ -2018,7 +2018,7 @@
       "staged_for_review": 0
     },
     "kirillzyusko-react-native-keyboard-controller-learnings.md": {
-      "processed_at": "2026-11-17T06:36:11.379Z",
+      "processed_at": "2026-11-21T04:39:18.860Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3658,7 +3658,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2733,
+  "total_dossiers_evaluated": 2736,
   "total_canonical_promoted": 442,
-  "total_staged_for_review": 2105
+  "total_staged_for_review": 2108
 }

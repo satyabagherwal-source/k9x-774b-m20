@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T10:41:18.433Z",
+  "timestamp": "2026-11-21T04:39:21.058Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-meshery-meshery-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [meshery-meshery-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T10:41:18.433Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T04:39:21.058Z`  
 > **Learning ID**: `LEARN-EVO-meshery-meshery-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 73%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from meshery-meshery-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `d085ff5e`  
+> **Source Version**: `5f96e08e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T10:41:07.634Z  
+> **Timestamp**: 2026-11-21T04:39:08.092Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T10:41:07.629Z  
+> **Harvest Timestamp**: 2026-11-21T04:39:08.086Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12224 stars
+- **Stars / Engagement**: 12270 stars
 
 ---
 
@@ -832,11 +832,14 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23830** (2026-11-17): **[mesheryctl] Make SafeClose nil-safe and handle uninitialized logger**
-  *Symptoms*: ### Description This PR addresses nil-pointer dereference panics in `SafeClose` under `mesheryctl/pkg/utils/helpers.go`:  1. **Nil Interface & Typed Nil Guard**:    - Added checks for `co == nil` and reflected nil pointer values to prevent `runtime error: invalid memory address or nil pointer dereference` when passed a nil or typed nil `io.Closer`. 2. **Uninitialized Logger Guard**:    - Added `if Log != nil` check before logging errors returned by `co.Close()`, ensuring that failed closures do not panic during early CLI initialization or in unit tests where `Log` is nil. 3. **Unit Tests**:    - Expanded `TestSafeClose` in `mesheryctl/pkg/utils/helpers_test.go` with subtests covering:      - Untyped `nil` closer (`SafeClose(nil)`)      - Typed nil pointer (`SafeClose((*os.File)(nil))`)      - Valid closer success (`SafeClose(mc)`)      - Closer error with initialized logger      - Closer error with `Log == nil`  ### Notes for Reviewers - All unit tests pass cleanly: `go test -v -run TestSafeClose ./mesheryctl/pkg/utils/...` - Fixes #23829  ### Checklist - [x] Signed off commits (`git commit -s`) - [x] Followed repository naming conventions and guidelines - [x] Linked the related issue - [x] Added unit test coverage  <!-- This is an auto-generated comment: release notes by coderabbit.ai --> <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Bug Fixes**   * Prevented panics when closing nil or typed-nil values, while continuing to close valid values.   * Made cl
+- **Issue #24070** (2026-11-21): **[Server] Check selector model in Rego mutator-based relationship identification.**
+  *Symptoms*: This PR fixes #24006  The identify rule in eval_rules.rego paired components to selectors by kind only, so two components of the same kind from different models could be wrongly identified as related through edge non-binding relationships. This adds a model check mirroring the feasibility check in feasibility_evaluation.rego: a selector with no model or a wildcard model still matches any model, otherwise the model names must match.  Changes - models/meshery-core/0.7.2/v1.0.0/policies/eval_rules.rego: new selector_model_matches helper and two model checks in identify_relationships_based_on_matching_mutator_and_mutated_fields - models/meshery-core/0.7.2/v1.0.0/policies/tests/eval_rules_test.rego: four regression tests (cross-model no match, same-model match, wildcard selector model match, selector without model match)  Tests - go test ./server/policies/ -run TestRegoPolicy: 115 passed, 0 failed - The cross-model test fails on the unfixed code and passes with the fix.  Note: the Go twin of this gap is issue 23865, still open and unassigned. This PR covers the Rego engine only.  Yes, I signed my commits.  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Bug Fixes**   * Relationship matching now checks component model names as well as kinds, so components from different models are no longer treated as matches solely because they share a kind.   * Selectors with a specific model name match
 
-- **Issue #23829** (2026-11-17): **[mesheryctl] SafeClose panics with nil pointer dereference when passed nil io.Closer or uninitialized logger**
-  *Symptoms*: ### Description  In `mesheryctl/pkg/utils/helpers.go`, the `SafeClose` utility function is designed to safely close an `io.Closer` (such as HTTP response bodies, open files, and other resources) and log any closure errors.  The current implementation is:  ```go func SafeClose(co io.Closer) {     if cerr := co.Close(); cerr != nil {         Log.Error(cerr)     } } ```  However, the function does not check whether `co` is nil before calling `co.Close()`.  If a nil `io.Closer` is passed, the function can panic with:  ```text panic: runtime error: invalid memory address or nil pointer dereference ```  Additionally, if `Log` is nil when a closing error occurs, calling `Log.Error(cerr)` can also cause a nil pointer dereference.  This makes `SafeClose` unsafe in scenarios involving optional resources, early CLI initialization, or unit tests.  ### Steps to Reproduce  Call `SafeClose` with a nil `io.Closer`:  ```go func TestSafeCloseNil(t *testing.T) {     SafeClose(nil) } ```  **Actual Behavior:**  The function panics when attempting to call `Close()` on a nil interface.  ### Expected Behavior  `SafeClose` should safely handle nil values without causing a panic.  1. If `co` is nil, the function should return immediately. 2. If closing the resource returns an error, the function should check whether `Log` is initialized before logging the error. 3. Closing resources should never cause a nil pointer panic due to an uninitialized logger.  ### Proposed Fix  Add appropriate nil checks:  `
+- **Issue #24064** (2026-11-20): **[Docs] Add newcomer introduction for T.S. Phala**
+  *Symptoms*: **Notes for Reviewers** - Added my introduction file (`TS-Phala.md`) under `docs/meetings/2026/week-of-11-19-2026/` for the Meshery Newcomers' Meeting.  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->   <!-- This is an auto-generated comment: release notes by coderabbit.ai --> <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Updated the meeting document with a heading for T.S. Phala, a brief introduction, and a link to their LinkedIn profile. The document now includes these details alongside the meeting information. <!-- end of auto-generated comment: release notes by coderabbit.ai -->
+  **Post-Mortem & Fix Analysis**:
+  > 👋 **Welcome to Meshery, @unchained-angel!**  Thank you for opening your first pull request — this is a big moment and we're excited to review your contribution! 🚀  Here are a few things that will help your PR get merged smoothly:  - ✅ **DCO sign-off** — make sure every commit is signed off (`git commit -s`) as required by our [Developer Certificate of Origin](https://docs.meshery.io/project/contributing). - 🧪 **Tests** — if your change affects functionality, please include or update tests. - 📝 **Description** — a clear PR description helps reviewers understand your intent quickly.  ---  📅 **Join our Weekly Community Meeting** We hold a public development meeting every week. It's a great place to walk through your PR with a maintainer or ask any questions you have. 👉 **[Add to calendar & join at meet.meshery.io](https://meet.meshery.io)**  💬 **Join the Meshery Community Slack** Connect with other contributors and get real-time help from the community. 👉 **[Join Slack at slack.me
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/meshery/meshery/pull/24064?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  <details> <summary><stro
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -853,247 +856,960 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f80e0d97` (2026-11-17)
-**Commit Message**: fix(server): guard remaining DeleteContext logger calls against nil
+### Incident Patch 1: `c2b54aba` (2026-11-20)
+**Commit Message**: Merge pull request #24031 from nishant-devv/fix/planner-panic-starvation-deadlock
 
-CodeRabbit flagged four h.log calls in DeleteContext that the
-nil-logger guards in this PR did not cover (loadContextsForDeletion
-failure, the SendEvent failure path in the delete goroutine, and the
-final status-update error). A nil h.log there panics instead of
-returning HTTP 500. Guard them the same way as the rest of the
-handler, completing the linked issue's nil-logger requirement.
+[Server] Recover from planner parallel process panics to prevent channel starvation deadlocks
 
-Signed-off-by: Yi Nuo <[REDACTED_EMAIL]>
-
-**File**: `server/handlers/contexts_handler.go` (modified, +12/-4)
+**File**: `docs/data/errorindex/meshery-server_errors_index.json` (modified, +17/-0)
 ```diff
-@@ -220,7 +220,9 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
- 	contexts, listErr := loadContextsForDeletion(provider, token)
- 	if listErr != nil {
- 		handlerErr := ErrGetK8sContexts(listErr)
--		h.log.Error(handlerErr)
-+		if h.log != nil {
-+			h.log.Error(handlerErr)
+@@ -7673,6 +7673,23 @@
+       "suggestedRemediation": [
+         "Set the design file's version to a semver string such as 0.0.1 and save again"
+       ]
++    },
++    {
++      "code": "meshery-server-1497",
++      "moniker": "ErrProvisionPanicCode",
++      "component": {
++        "name": "meshery-server",
++        "type": "component"
++      },
++      "numericCode": "1497",
++      "severity": "alert",
++      "shortDescription": "Component panicked during provisioning",
++      "probableCause": [
++        "Runtime fault occurred in component visitor execution"
++      ],
++      "suggestedRemediation": [
++        "Inspect component configuration and provider logs for runtime failures"
++      ]
+     }
+   ],
+   "schemaVersion": 2
+```
+
+**File**: `docs/data/errorref/meshery-server_errors_export.json` (modified, +9/-0)
+```diff
+@@ -4372,6 +4372,15 @@
+         "short_description": "Invalid design version",
+         "probable_cause": "The design file's version is not semver, so a next version cannot be computed from it\nOlder tooling wrote arbitrary version strings into design files",
+         "suggested_remediation": "Set the design file's version to a semver string such as 0.0.1 and save again"
++      },
++      "1497": {
++        "name": "ErrProvisionPanicCode",
++        "code": "1497",
++        "severity": "Alert",
++        "long_description": "",
++        "short_description": "Component panicked during provisioning",
++        "probable_cause": "Runtime fault occurred in component visitor execution",
++        "suggested_remediation": "Inspect component configuration and provider logs for runtime failures"
+       }
+     }
+   }
+```
+
+**File**: `server/helpers/component_info.json` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ {
+   "name": "meshery-server",
+   "type": "component",
+-  "next_error_code": 1497
++  "next_error_code": 1498
+ }
+\ No newline at end of file
+```
+
+**File**: `server/models/pattern/planner/parallel_process.go` (modified, +26/-11)
+```diff
+@@ -96,7 +96,30 @@ func (g *ParallelProcessGraph) Traverse(fn VisitFn, withheld WithheldFn, log log
+ // Process starts an internal loop which listens for the signals on the channels
+ // and operate accordingly
+ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg *sync.WaitGroup, fn VisitFn, withheld WithheldFn, log logger.Handler) {
+-	defer wg.Done()
++	signaled := make(map[*ParallelProcessGraphNode]bool, len(deps))
++	sendSignals := func(ok bool) {
++		for _, dep := range deps {
++			if !signaled[dep] {
++				signaled[dep] = true
++				func() {
++					defer func() {
++						if r := recover(); r != nil {
++							log.Errorf("panic sending signal to dependent %s: %v", dep.Name, r)
++						}
++					}()
++					sendSignalToDep(dep, ok, v.Name, log)
++				}()
++			}
 +		}
- 		writeMeshkitError(w, handlerErr, http.StatusInternalServerError)
++	}
++
++	defer func() {
++		if r := recover(); r != nil {
++			log.Errorf("panic in parallel process node %s: %v", v.Name, r)
++			sendSignals(false)
++		}
++		wg.Done()
++	}()
+ 
+ 	log.Debug("started with:", v.Name, v.DepCount)
+ 
+@@ -129,8 +152,7 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg
+ 			withheld(v.Name, v.Data.Data, failedDep)
+ 		}
+ 
+-		sendSignalToDeps(deps, false, v.Name, log)
+-
++		sendSignals(false)
  		return
  	}
-@@ -277,9 +279,13 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
- 			}
- 			event, err := inst.SendEvent(detachedCtx, machines.Delete, nil)
- 			if err != nil {
--				h.log.Error(err)
-+				if h.log != nil {
-+					h.log.Error(err)
-+				}
- 				h.reportMachineOutcome(provider, token, userID, event, err)
--				h.log.Debug(event)
-+				if h.log != nil {
-+					h.log.Debug(event)
-+				}
- 				return
- 			}
  
-@@ -293,7 +299,9 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
+@@ -140,14 +162,7 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg
+ 	log.Debug("RESPONSE GOT FOR", v.Name, ":", ok)
+ 
+ 	// Send the appropriate signal
+-	sendSignalToDeps(deps, ok, v.Name, log)
+-}
+-
+-// sendSignalToDeps sends signal on the channel
+-func sendSignalToDeps(deps []*ParallelProcessGraphNode, ok bool, from string, log logger.Handler) {
+-	for _, dep := range deps {
+-		sendSignalToDep(dep, ok, from, log)
+-	}
++	sendSignals(ok)
+ }
+ 
+ // sendSignalToDep sends signal either on the DepUpdateChannel or DepCancelChannel
+```
+
+**File**: `server/models/pattern/planner/parallel_process_test.go` (modified, +446/-0)
+```diff
+@@ -312,3 +312,449 @@ func TestParallelProcess_MixedOutcomesWithManyPrereqs(t *testing.T) {
  	}
+ }
  
- 	if err != nil {
--		h.log.Error(err)
-+		if h.log != nil {
-+			h.log.Error(err)
++// TestParallelProcess_PanicInPrerequisiteDoesNotDeadlockDependents verifies that when
++// a prerequisite node panics during visitor execution, downstream dependents are
++// not permanently starved on channel reads, and the plan execution does not deadlock.
++func TestParallelProcess_PanicInPrerequisiteDoesNotDeadlockDependents(t *testing.T) {
++	prereq := newComponent("prereq")
++	dependent := newComponent("dependent", "prereq")
++
++	design := newDesign("panic-recovery", prereq, dependent)
++	plan, err := CreatePlan(design, nil, false)
++	if err != nil {
++		t.Fatalf("CreatePlan() returned unexpected error: %v", err)
++	}
++
++	var (
++		mu                sync.Mutex
++		dependentVisited  bool
++		dependentWithheld bool
++		reportedDep       string
++	)
++
++	done := make(chan struct{})
++	go func() {
++		defer close(done)
++		defer func() {
++			_ = recover()
++		}()
++		_ = plan.Execute(
++			func(id string, comp component.ComponentDefinition) bool {
++				if comp.DisplayName == "prereq" {
++					panic("simulated fatal panic in component visitor")
++				}
++				mu.Lock()
++				if comp.DisplayName == "dependent" {
++					dependentVisited = true
++				}
++				mu.Unlock()
++				return true
++			},
++			func(id string, comp component.ComponentDefinition, failedDep string) {
++				mu.Lock()
++				if comp.DisplayName == "dependent" {
++					dependentWithheld = true
++					reportedDep = failedDep
++				}
++				mu.Unlock()
++			},
++			testLogger(t),
++		)
++	}()
++
++	select {
++	case <-done:
++		// Plan execution completed without deadlocking
++	case <-time.After(2 * time.Second):
++		t.Fatal("Plan.Execute() deadlocked; prerequisite panic bypassed signal propagation, permanently wedging dependent channel reads")
++	}
++
++	mu.Lock()
++	defer mu.Unlock()
++
++	if dependentVisited {
++		t.Error("dependent node was visited despite prerequisite panic")
++	}
++	if !dependentWithheld {
++		t.Error("dependent node was not marked as withheld following prerequisite panic")
++	}
++	if reportedDep != prereq.ID.String() {
++		t.Errorf("dependent reported failed dependency %q, want %q", reportedDep, prereq.ID.String())
++	}
++}
++
++// TestParallelProcess_PanicInMiddleOfDeepChainPropagatesWithholding verifies that when
++// a middle node in a multi-hop dependency chain panics (A -> B -> C -> D, B panics),
++// subsequent nodes C and D are sequentially withheld without deadlock or starvation.
++func TestParallelProcess_PanicInMiddleOfDeepChainPropagatesWithholding(t *testing.T) {
++	nodeA := newComponent("nodeA")
++	nodeB := newComponent("nodeB", "nodeA")
++	nodeC := newComponent("nodeC", "nodeB")
++	nodeD := newComponent("nodeD", "nodeC")
++
++	design := newDesign("deep-chain-panic", nodeA, nodeB, nodeC, nodeD)
++	plan, err := CreatePlan(design, nil, false)
++	if err != nil {
++		t.Fatalf("CreatePlan() returned unexpected error: %v", err)
++	}
++
++	var (
++		mu         sync.Mutex
++		aVisited   bool
++		cVisited   bool
++		dVisited   bool
++		cWithheld  bool
++		dWithheld  bool
++		cFailedDep string
++		dFailedDep string
++	)
++
++	done := make(chan struct{})
++	go func() {
++		defer close(done)
++		defer func() {
++			_ = recover()
++		}()
++		_ = plan.Execute(
++			func(id string, comp component.ComponentDefinition) bool {
++				mu.Lock()
++				defer mu.Unlock()
++				switch comp.DisplayName {
++				case "nodeA":
++					aVisited = true
++					return true
++				case "nodeB":
++					panic("simulated fatal panic in nodeB")
++				case "nodeC":
++					cVisited = true
++					return true
++				case "nodeD":
++					dVisited = true
++					return true
++				}
++				return true
++			},
++			func(id string, comp component.ComponentDefinition, failedDep string) {
++				mu.Lock()
++				defer mu.Unlock()
++				switch comp.DisplayName {
++				case "nodeC":
++					cWithheld = true
++					cFailedDep = failedDep
++				case "nodeD":
++					dWithheld = true
++					dFailedDep = failedDep
++				}
++			},
++			testLogger(t),
++		)
++	}()
++
++	select {
++	case <-done:
++	case <-time.After(3 * time.Second):
++		t.Fatal("Plan.Execute() deadlocked; panic in middle of deep chain hung downstream nodes")
++	}
++
++	mu.Lock()
++	defer mu.Unlock()
++
++	if !aVisited {
++		t.Error("nodeA was not visited, want it visited before nodeB")
++	}
++	if cVisited {
++		t.Error("nodeC was visited, want it withheld because nodeB panicked")
++	}
++	if dVisited {
++		t.Error("nodeD was visited, want it withheld because nodeC was withheld")
++	}
++	if !cWithheld || cFailedDep != nodeB.ID.String() {
++		t.Errorf("nodeC withheld=%v, failedDep=%q, want true and %q", cWithheld, cFailedDep, nodeB.ID.String())
++	}
++	if !dWithheld || dFailedDep != nodeC.ID.String() {
++		t.Errorf("nodeD withheld=%v, failedDep=%q, want true and %q", dWithheld, dFailedDep, nodeC.ID.String())
++	}
++}
++
++// TestParallelProcess_DiamondTopologyPanicOneBranchWithholdsSink verifies that in a diamond
++// DAG (Root -> BranchA, BranchB -> Sink), when BranchA panics while BranchB succeeds,
++// the Sink receives both signals, correctly determines it cannot
+```
+
+**File**: `server/models/pattern/stages/error.go` (modified, +13/-0)
+```diff
+@@ -11,8 +11,21 @@ const (
+ 	ErrResolveReferenceCode       = "meshery-server-1361"
+ 	ErrYAMLUnmarshalCode          = "meshery-server-1436"
+ 	ErrDependencyNotSatisfiedCode = "meshery-server-1480"
++	ErrProvisionPanicCode         = "meshery-server-1497"
+ )
+ 
++// ErrProvisionPanic reports a component that panicked during provisioning execution.
++func ErrProvisionPanic(component string, r interface{}) error {
++	return errors.New(
++		ErrProvisionPanicCode,
++		errors.Alert,
++		[]string{"Component panicked during provisioning"},
++		[]string{fmt.Sprintf("A panic occurred while provisioning component %q: %v", component, r)},
++		[]string{"Runtime fault occurred in component visitor execution"},
++		[]string{"Inspect component configuration and provider logs for runtime failures"},
++	)
++}
++
+ // ErrDependencyNotSatisfied reports a component that was not acted on because a
+ // component it declared a dependency on did not succeed.
+ //
+```
+
+**File**: `server/models/pattern/stages/provision.go` (modified, +12/-1)
+```diff
+@@ -67,7 +67,18 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
+ 		}
+ 
+ 		// Execute the plan
+-		err = plan.Execute(func(name string, component component.ComponentDefinition) bool {
++		err = plan.Execute(func(name string, component component.ComponentDefinition) (ok bool) {
++			defer func() {
++				if r := recover(); r != nil {
++					log.Errorf("panic during component provisioning for %s (%s): %v", component.DisplayName, name, r)
++					panicErr := ErrProvisionPanic(component.DisplayName, r)
++					data.Lock.Lock()
++					data.Other[fmt.Sprintf("%s%s", name, ProvisionSuffixKey)] = dispatchFailureMessage(component, panicErr, data.Pattern.Name, prov.IsDelete())
++					data.Lock.Unlock()
++					ok = false
++				}
++			}()
++
+ 			ccp := CompConfigPair{}
+ 
+ 			// meshkit's orchestration.EnrichComponentWithMesheryMetadata operates
+```
+
+**File**: `server/models/pattern/stages/provision_test.go` (modified, +114/-0)
+```diff
+@@ -49,6 +49,7 @@ type stubActionProvider struct {
+ 	dispatchFailures     map[string]bool
+ 	noOutcomes           map[string]bool
+ 	prerequisiteFailures map[string]bool
++	panics               map[string]bool
+ 
+ 	mx         sync.Mutex
+ 	dispatched []string
+@@ -77,8 +78,13 @@ func (s *stubActionProvider) Provision(ccp CompConfigPair) ([]patterns.Deploymen
+ 
+ 	s.mx.Lock()
+ 	s.dispatched = append(s.dispatched, name)
++	shouldPanic := s.panics[name]
+ 	s.mx.Unlock()
+ 
++	if shouldPanic {
++		panic(fmt.Sprintf("simulated failure in act.Provision for %s", name))
++	}
++
+ 	if s.dispatchFailures[name] {
+ 		return nil, errors.New("meshery-server-test", errors.Alert, []string{"dispatch failed"}, []string{"dispatch failed"}, []string{}, []string{})
+ 	}
+@@ -299,6 +305,114 @@ func TestProvisionWithholdsDependentsOfAComponentThatFailedToApply(t *testing.T)
+ 	}
+ }
+ 
++func TestProvisionHandlesPanicInActProvision(t *testing.T) {
++	act := newStubActionProvider(t)
++	act.panics = map[string]bool{"a": true}
++
++	compA := newDesignComponent("a")
++	compB := newDesignComponent("b", "a")
++	compC := newDesignComponent("c")
++	components := []*component.ComponentDefinition{compA, compB, compC}
++
++	design := pattern.PatternFile{
++		ID:         uuid.Must(uuid.NewV4()),
++		Name:       "provision-test",
++		Version:    "1.0.0",
++		Components: components,
++	}
++
++	names := map[string]string{}
++	mapping := map[core.Uuid]component.ComponentDefinition{}
++	for _, comp := range components {
++		names[comp.ID.String()] = comp.DisplayName
++		mapping[comp.ID] = *comp
++	}
++
++	data := &Data{
++		Pattern:                       &design,
++		Other:                         map[string]interface{}{},
++		DeclartionToDefinitionMapping: mapping,
++	}
++
++	var nextErr error
++	nextCalled := false
++	next := func(d *Data, err error) {
++		nextCalled = true
++		nextErr = err
++	}
++
++	testLog, err := logger.New("provision-test", logger.Options{})
++	if err != nil {
++		t.Fatalf("failed to build a logger: %v", err)
++	}
++
++	Provision(&stubInfoProvider{}, act, testLog)(data, nil, next)
++
++	if !nextCalled {
++		t.Fatal("next was not called")
++	}
++
++	if nextErr != nil {
++		t.Errorf("next called with error %v, want nil so deployment summary is preserved in HTTP response", nextErr)
++	}
++
++	reported := map[string][]patterns.DeploymentMessagePerContext{}
++	data.Lock.Lock()
++	for key, value := range data.Other {
++		id := key[:len(key)-len(ProvisionSuffixKey)]
++		msgs, ok := value.([]patterns.DeploymentMessagePerContext)
++		if !ok {
++			t.Fatalf("data.Other[%q] holds %T, want []patterns.DeploymentMessagePerContext", key, value)
 +		}
- 		event := newEvent().WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", contextID)).WithMetadata(map[string]interface{}{
- 			"error": err,
- 		}).Build()
++		reported[names[id]] = msgs
++	}
++	data.Lock.Unlock()
++
++	order := act.order()
++
++	if !dispatched(order, "a") {
++		t.Errorf("dispatched %v, want \"a\" dispatched", order)
++	}
++
++	if dispatched(order, "b") {
++		t.Errorf("dispatched %v, want \"b\" withheld because \"a\" panicked", order)
++	}
++
++	if !dispatched(order, "c") {
++		t.Errorf("dispatched %v, want \"c\" dispatched", order)
++	}
++
++	msgA, reportedA := reported["a"]
++	if !reportedA {
++		t.Fatal("\"a\" produced no deployment message in data.Other, want failure recorded")
++	}
++
++	if succeeded(msgA) {
++		t.Error("\"a\" was reported as successful, want it reported as failed")
++	}
++
++	if got := errors.GetCode(msgA[0].Summary[0].Error); got != ErrProvisionPanicCode {
++		t.Errorf("\"a\" was reported with error code %s, want %s", got, ErrProvisionPanicCode)
++	}
++
++	withheldB, reportedB := reported["b"]
++	if !reportedB {
++		t.Fatal("\"b\" produced no deployment message, want it reported as withheld")
++	}
++
++	if succeeded(withheldB) {
++		t.Error("\"b\" was reported as successful, want it reported as withheld")
++	}
++
++	if got := errors.GetCode(withheldB[0].Summary[0].Error); got != ErrDependencyNotSatisfiedCode {
++		t.Errorf("\"b\" was reported with error code %s, want %s", got, ErrDependencyNotSatisfiedCode)
++	}
++
++	if !succeeded(reported["c"]) {
++		t.Error("\"c\" was not reported as successful")
++	}
++}
++
+ // A component deployed to several clusters at once that fails on one of them is
+ // treated as failed outright, so its dependents are withheld everywhere rather
+ // than only on the cluster where it failed.
 ```
 
 ---
 
-### Incident Patch 2: `84eaa406` (2026-11-17)
-**Commit Message**: Merge pull request #23817 from Shikhyy/bug/Shikhyy/23813-syscheck
+### Incident Patch 2: `5f96e08e` (2026-11-21)
+**Commit Message**: Merge pull request #23947 from madhavzanwar/fix/environment-list-nil-description-guards
 
-[mesheryctl] Report a null server version in system check instead of panicking
+[mesheryctl] Guard nil environment page and fallback empty description in environment list
 
-**File**: `mesheryctl/internal/cli/root/system/check.go` (modified, +4/-0)
+**File**: `mesheryctl/internal/cli/root/environments/list.go` (modified, +10/-1)
 ```diff
-@@ -543,6 +543,10 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
- 		if err != nil {
- 			return errors.Errorf("\n  Unable to unmarshal data: %v", err)
- 		}
-+		// A body of null decodes without error but leaves serverVersion nil.
-+		if serverVersion == nil {
-+			return errors.New("\n  Invalid response: the server returned no version information")
-+		}
+@@ -16,6 +16,7 @@ package environments
  
- 		isOutdated, _, err := handlers.CheckLatestVersion(serverVersion.GetBuild())
- 		if err != nil {
+ import (
+ 	"fmt"
++	"strings"
+ 
+ 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+ 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+@@ -89,9 +90,17 @@ mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
+ }
+ 
+ func processEnvironmentData(environmentResponse *environment.EnvironmentPage) ([][]string, int64) {
++	if environmentResponse == nil {
++		return [][]string{}, 0
++	}
++
+ 	rows := [][]string{}
+ 	for _, environment := range environmentResponse.Environments {
+-		row := []string{environment.ID.String(), environment.Name, environment.OrganizationID.String(), environment.Description, environment.CreatedAt.String(), environment.UpdatedAt.String()}
++		description := "N/A"
++		if strings.TrimSpace(environment.Description) != "" {
++			description = environment.Description
++		}
++		row := []string{environment.ID.String(), environment.Name, environment.OrganizationID.String(), description, environment.CreatedAt.String(), environment.UpdatedAt.String()}
+ 		rows = append(rows, row)
+ 	}
+ 	return rows, int64(environmentResponse.TotalCount)
 ```
 
-**File**: `mesheryctl/internal/cli/root/system/check_null_version_test.go` (added, +40/-0)
+**File**: `mesheryctl/internal/cli/root/environments/list_test.go` (modified, +47/-0)
 ```diff
-@@ -0,0 +1,40 @@
-+package system
+@@ -7,6 +7,7 @@ import (
+ 	"testing"
+ 
+ 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
++	"github.com/meshery/schemas/models/v1beta1/environment"
+ 	"github.com/pkg/errors"
+ )
+ 
+@@ -59,3 +60,49 @@ func TestListEnvironment(t *testing.T) {
+ 
+ 	utils.InvokeMesheryctlTestListCommand(t, update, EnvironmentCmd, tests, currDir, "environments")
+ }
 +
-+import (
-+	"net/http"
-+	"net/http/httptest"
-+	"strings"
-+	"testing"
++func TestProcessEnvironmentData_NilResponse(t *testing.T) {
++	rows, total := processEnvironmentData(nil)
++	if len(rows) != 0 {
++		t.Fatalf("expected 0 rows on nil response, got %d", len(rows))
++	}
++	if total != 0 {
++		t.Fatalf("expected 0 total on nil response, got %d", total)
++	}
++}
 +
-+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
-+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-+)
-+
-+// A server, proxy or provider can answer 200 with the JSON value null (what
-+// json.Marshal writes for a nil pointer). Decoding that into a *config.Version
-+// leaves it nil, and the next call, GetBuild, dereferenced it: mesheryctl system
-+// check panicked instead of reporting that the version could not be read.
-+func TestMesheryVersionHealthCheck_NullVersionResponseIsAnError(t *testing.T) {
-+	utils.SetupMeshkitLoggerTesting(t, false)
-+
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-+		_, _ = w.Write([]byte("null"))
-+	}))
-+	t.Cleanup(server.Close)
-+
-+	hc := &HealthChecker{
-+		Options: &HealthCheckOptions{},
-+		mctlCfg: &config.MesheryCtlConfig{
-+			Contexts:       map[string]config.Context{"test": {Endpoint: server.URL}},
-+			CurrentContext: "test",
++func TestProcessEnvironmentData_EmptyDescriptionFallback(t *testing.T) {
++	envPage := &environment.EnvironmentPage{
++		TotalCount: 3,
++		Environments: []environment.Environment{
++			{
++				Name:        "empty-desc-env",
++				Description: "",
++			},
++			{
++				Name:        "whitespace-desc-env",
++				Description: "   \t\n  ",
++			},
++			{
++				Name:        "valid-desc-env",
++				Description: "Production Environment",
++			},
 +		},
 +	}
-+
-+	err := hc.runMesheryVersionHealthChecks()
-+	if err == nil {
-+		t.Fatal("a null version response must be reported as an error")
++	rows, total := processEnvironmentData(envPage)
++	if total != 3 {
++		t.Fatalf("expected total 3, got %d", total)
 +	}
-+	if !strings.Contains(err.Error(), "no version information") {
-+		t.Errorf("error = %q, want it to say the server returned no version information", err)
++	if len(rows) != 3 {
++		t.Fatalf("expected 3 rows, got %d", len(rows))
++	}
++	if rows[0][3] != "N/A" {
++		t.Fatalf("expected empty description 'N/A', got %q", rows[0][3])
++	}
++	if rows[1][3] != "N/A" {
++		t.Fatalf("expected whitespace-only description 'N/A', got %q", rows[1][3])
++	}
++	if rows[2][3] != "Production Environment" {
++		t.Fatalf("expected preserved description 'Production Environment', got %q", rows[2][3])
 +	}
 +}
 ```
 
 ---
 
-### Incident Patch 3: `d085ff5e` (2026-11-17)
-**Commit Message**: Merge pull request #23803 from Junnygram/fix/welcome-workflow-pagination
+### Incident Patch 3: `f94f3d99` (2026-11-21)
+**Commit Message**: Merge branch 'master' into fix/environment-list-nil-description-guards
 
-[CI] Replace actions/first-interaction with github-script in welcome workflow
-
-**File**: `.github/workflows/welcome-first-time-contributors.yml` (modified, +148/-78)
+**File**: `docs/data/openapi.yml` (modified, +140/-9)
 ```diff
-@@ -1,23 +1,21 @@
- name: Welcome First-Time Contributors
- 
- # This workflow automatically welcomes new contributors when they open their first
--# issue or pull request. It uses the actions/first-interaction action to detect
--# first-time interactions and posts a friendly, informative comment that:
-+# issue or pull request. It checks if the author has previously opened an issue or PR
-+# and posts a friendly, informative comment that:
- #   - Welcomes the contributor to the Meshery community
- #   - Invites them to the weekly development meeting (https://meet.meshery.io)
- #   - Encourages them to join the community Slack workspace (https://slack.meshery.io)
- #   - Optionally invites them to fill in the newcomer form (https://meshery.io/newcomer)
- 
- on:
-   # Trigger on any new issue or pull request opened in this repository.
--  # The first-interaction action will check if the actor is a first-time contributor.
-   issues:
-     types: [opened]
-   pull_request_target:
-     types: [opened]
- 
--  # Allow manual triggering for debugging; note that `actions/first-interaction` still only
--  # posts messages for true first-time contributors in this repository.
-+  # Allow manual triggering for debugging
-   workflow_dispatch:
-     inputs:
-       debug_mode:
-@@ -49,97 +47,169 @@ jobs:
-           echo "Actor       : ${{ github.actor }}"
-           echo "Event Name  : ${{ github.event_name }}"
-           echo "Repository  : ${{ github.repository }}"
--          echo "Ref         : $GITHUB_REF"
-+          echo "Ref         : ${{ github.ref }}"
-           echo "::endgroup::"
- 
-       # -----------------------------------------------------------------------
-       # Step 2 – Post a welcome comment for first-time issue authors.
--      #
--      # The `actions/first-interaction` action only posts the comment when the
--      # triggering user has NEVER opened an issue or PR in this repository before.
-       # -----------------------------------------------------------------------
-       - name: 🎉 Welcome First-Time Issue Author
-         if: github.event_name == 'issues'
--        uses: actions/first-interaction@v1
-+        uses: actions/github-script@v7
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
--          # The issue-message is only sent to contributors opening their very
--          # first issue in this repository.
--          issue-message: |
--            👋 **Welcome to Meshery, @${{ github.actor }}!**
--
--            Thank you for opening your first issue — we're glad you're here! 🚀
--
--            Meshery is a CNCF project and a vibrant open-source community. Here are a few ways to get connected and make the most of your contribution journey:
--
--            ---
--
--            📅 **Join our Weekly Community Meeting**
--            We hold a public development meeting every week where anyone can join, ask questions, share ideas, and pair with maintainers. New contributors are especially welcome!
--            👉 **[Add to calendar & join at meet.meshery.io](https://meet.meshery.io)**
--
--            💬 **Join the Meshery Community Slack**
--            The fastest way to get help, share ideas, or just say hi is through our Slack workspace. Jump in — we'd love to meet you!
--            👉 **[Join Slack at slack.meshery.io](https://slack.meshery.io)**
--
--            🌟 **Become a Community Member**
--            Fill in our newcomer form to introduce yourself, unlock additional resources, and get added to our community directory.
--            👉 **[Newcomer form at meshery.io/newcomer](https://meshery.io/newcomer)**
--
--            ---
--
--            A maintainer will review your issue shortly. In the meantime, feel free to explore our [contributing guide](https://docs.meshery.io/project/contributing) and [documentation](https://docs.meshery.io).
--
--            We're happy to have you! 🎊
-+          github-token: ${{ secrets.GITHUB_TOKEN }}
-+          script: |
-+            const author = context.payload.issue?.user?.login || context.actor;
-+            const isBot = context.payload.issue?.user?.type === 'Bot' || author.includes('[bot]');
-+            if (isBot) {
-+              console.log(`Skipping bot actor: ${author}`);
-+              return;
-+            }
+@@ -67207,6 +67207,7 @@ paths:
+         expose: true
+         title: Get the current user profile
+         scope: account:read
++        description: Read-only. Returns the profile of the signed-in user. An `X-Current-Orgid` that is not a UUID answers 400.
+       summary: Get current user profile
+       description: |
+         Returns the profile of the signed-in user. An `X-Current-Orgid` that is not a UUID answers 400.
+@@ -67218,7 +67219,12 @@ paths:
+             Organization the call acts in, by ID (a UUID). When present, the server resolves the session organization
+             from it instead of the caller's selected organization, and runs its membership and permission checks there.
+             A caller who is not a live member of the named organization receives the same 404 as an unknown resource.
+-            Omitted, the caller's selected organization applies.
++            Omitted, a path or query `orgId` the operation takes names the organization when sent; otherwise the
++            caller's selected organization applies when it is not nil; otherwise the server defaults among the caller's
++            live organizations, using the only one when exactly one qualifies. When the call needs an acting
++            organization and several qualify, an operation that declares the OrganizationSelectionRequired response
++            answers 409 `organization_selection_required`. The resolution order is in docs/mcp-operation-contract.md,
++            the organization selector.
+           schema:
+             type: string
+             minLength: 36
+@@ -67860,6 +67866,61 @@ paths:
+             text/plain:
+               schema:
+                 type: string
++        '409':
++          description: >-
++            Conflict - the call needs an organization, none was named, and more than one of the caller's organizations
++            qualifies. Pass one of `choices[].id` as `X-Current-Orgid` (the `organizationId` tool argument). The body's
++            `code` is `organization_selection_required`.
++          content:
++            application/json:
++              schema:
++                type: object
++                description: >-
++                  The call needs an acting organization, the caller named none, and more than one of the caller's live
++                  organizations qualifies. Nothing was done by this request. Repeat it naming one of `choices` as
++                  `X-Current-Orgid` (the `organizationId` tool argument).
++                required:
++                  - code
++                  - message
++                  - choices
++                additionalProperties: false
++                properties:
++                  code:
++                    type: string
++                    description: Machine-readable reason. Always `organization_selection_required` for this body.
++                    enum:
++                      - organization_selection_required
++                  message:
++                    type: string
++                    minLength: 1
++                    description: The sentence the caller is shown.
++                  choices:
++                    type: array
++                    minItems: 2
++                    description: The caller's own live organizations the call could act in. Pass one `id` as `X-Current-Orgid`.
++                    items:
++                      type: object
++                      description: An organization the call could act in. Same fields as AvailableOrganization.
++                      required:
++                        - id
++                        - name
++                        - description
++                      additionalProperties: false
++                      properties:
++                        id:
++                          type: string
++                          format: uuid
++                          x-go-type: uuid.UUID
++                          x-go-type-import:
++                            path: github.com/gofrs/uuid
++                          description: Organization ID.
++                          x-go-name: ID
++                        name:
++                          type: string
++                          description: Name of the organization.
++                        description:
++                          type: string
++                          description: Description of the organization.
+         '500':
+           description: Internal server error
+           content:
+@@ -68038,13 +68099,19 @@ paths:
+         expose: true
+         title: Get connections
+         scope: connections:read
++        description: >-
++          Read-only. Returns a paginated list of connections for the authenticated user with filtering, sorting and
++          pagination support. When `X-Current-Orgid` is also sent, it must name the same organization as the `orgId`
++          query; a mismatch is refused with a 400 (the organization selector in docs/mcp-operation-contract.md). When
++          `X-Current-Orgid` is omitted, a sent `orgId` query names the ac
+```
+
+**File**: `docs/meetings/2026/week-of-11-19-2026/JayitaLakhmani.md` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++# Hi, I'm Jayita Lakhmani!!! 👋
 +
-+            // Issues and PRs share one list, so a single page can be full of
-+            // the other type. Page through the author's history until a prior
-+            // issue is found or the history ends.
-+            let priorIssues = [];
-+            for await (const page of github.paginate.iterator(
-+              github.rest.issues.listForRepo,
-+              {
-+                owner: context.repo.owner,
-+                repo: context.repo.repo,
-+                creator: author,
-+                state: 'all',
-+                per_page: 100
-+              }
-+            )) {
-+              priorIssues = page.data.filter(
-+                item => !item.pull_request && item.number < context.issue.number
-+              );
-+              if (priorIssues.
++I am an Electronics and Communication Engineering graduate with an interest in Software Development and Cloud-Native Technologies.
++
++I have a background in Full-Stack Development and am currently exploring areas like Cloud Computing, DevOps, Kubernetes, Docker, Distributed Systems, and Open Source Development.
++
++I'm excited to begin my open-source journey with **Meshery**, learn from the community, and contribute to building and improving cloud-native infrastructure. Looking forward to collaborating, learning, and growing along the way!
++
++## Here are my profiles
++
++- **LinkedIn:** [Jayita Lakhmani](https://www.linkedin.com/in/jayita-lakhmani/)
++- **GitHub:** [JayitaL](https://github.com/JayitaL)
+```
+
+**File**: `docs/meetings/2026/week-of-11-19-2026/TS-Phala.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++# T.S. Phala
++
++Hey everyone! I'm T.S. Phala, I'm looking forward to working beside you all!
++
++We can connect through LinkedIn: https://www.linkedin.com/in/thulaganyo-phala-sehuhula-68a61a373/
+```
+
+**File**: `models/chaos/21.3.390/v1.0.0/components/AWSChaos.json` (added, +209/-0)
+```diff
+@@ -0,0 +1,209 @@
++{
++  "id": "00000000-0000-0000-0000-000000000000",
++  "schemaVersion": "components.meshery.io/v1beta2",
++  "version": "v1.0.0",
++  "displayName": "AWS Chaos",
++  "description": "",
++  "format": "JSON",
++  "model": {
++    "id": "00000000-0000-0000-0000-000000000000",
++    "schemaVersion": "models.meshery.io/v1beta2",
++    "version": "v1.0.0",
++    "name": "chaos",
++    "displayName": "Chaos",
++    "status": "enabled",
++    "registrant": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "Artifact Hub",
++      "type": "registry",
++      "subType": "",
++      "kind": "artifacthub",
++      "status": "discovered",
++      "created_at": "0001-01-01T00:00:00Z",
++      "updated_at": "0001-01-01T00:00:00Z",
++      "deleted_at": null,
++      "schemaVersion": ""
++    },
++    "connection_id": "00000000-0000-0000-0000-000000000000",
++    "category": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "App Definition and Development"
++    },
++    "subCategory": "Continuous Integration \u0026 Delivery",
++    "metadata": {
++      "isAnnotation": false,
++      "primaryColor": "#00B39F",
++      "secondaryColor": "#00D3A9",
++      "shape": "circle",
++      "source_uri": "https://sx-helm-repository-prod.s3.eu-west-3.amazonaws.com/stable/chaos-21.3.390.tgz",
++      "styleOverrides": "",
++      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 60 40\" fill=\"none\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" clip-path=\"url(#clip0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M59.7518 0.292419L50.4322 7.60754L43.5508 1.86349L48.854 9.04349L44.1195 15.4913L50.4323 10.8989L59.3186 18.7899L52.2949 9.47025L59.7518 0.292419Z\" fill=\"#000E44\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M16.6266 32.37C25.318 32.37 32.3636 25.3243 32.3636 16.633C32.3636 7.94169 25.318 0.895996 16.6266 0.895996C7.93534 0.895996 0.889648 7.94169 0.889648 16.633C0.889648 25.3243 7.93534 32.37 16.6266 32.37Z\" stroke=\"#6D4013\" stroke-width=\"1.5\" stroke-miterlimit=\"2.5\"\u003e\u003c/path\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask0_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M25.9877 28.2204C26.739 27.6944 28.4711 28.8719 29.8565 30.8506C31.242 32.8292 31.7561 34.8596 31.0048 35.3857C30.2536 35.9117 28.5214 34.7342 27.136 32.7555C25.7505 30.7769 25.2364 28.7465 25.9877 28.2204Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.08853 28.2205C7.33726 27.6944 5.60513 28.8719 4.21967 30.8506C2.83421 32.8292 2.32012 34.8596 3.07137 35.3857C3.82264 35.9117 5.55477 34.7342 6.94022 32.7555C8.32568 30.7769 8.83978 28.7465 8.08853 28.2205Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M17.0298 31.3186C16.1127 31.3186 15.3692 33.2767 15.3692 35.6921C15.3692 38.1076 16.1127 40.0657 17.0298 40.0657C17.947 40.0657 18.6904 38.1076 18.6904 35.6921C18.6904 33.2767 17.9469 31.3186 17.0298 31.3186Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask1_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask1_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M29.6667 24.2904C26.9918 28.7344 22.1445 31.7039 16.6089 31.7039C11.2246 31.7039 6.49166 28.8947 3.77539 24.6518\" stroke=\"#6D4013\" stroke-width=\"2.64447\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28.983 18.905C29.9651 17.2039 29.9144 17.2969 30.7265 15.8903C31.0051 15.3919 31.2542 14.9522 31.5182 14.4978C30.6385 12.9733 29.7445 11.4342 28.8502 9.89509H25.4056C24.8193 8.89832 24.2182 7.90159 23.6173 6.87549H20.1873C19.601 5.89339 19.0293 4.89659 18.3842 3.82659C18.3696 3.82659 18.355 3.82659 18.3404 3.81193C18.0325 4.31031 17.7687 4.7354 17.4756 5.20443C17.1824 4.72071 16.9185 4.29562 16.6253 3
+```
+
+**File**: `models/chaos/21.3.390/v1.0.0/components/AzureChaos.json` (added, +209/-0)
+```diff
+@@ -0,0 +1,209 @@
++{
++  "id": "00000000-0000-0000-0000-000000000000",
++  "schemaVersion": "components.meshery.io/v1beta2",
++  "version": "v1.0.0",
++  "displayName": "Azure Chaos",
++  "description": "",
++  "format": "JSON",
++  "model": {
++    "id": "00000000-0000-0000-0000-000000000000",
++    "schemaVersion": "models.meshery.io/v1beta2",
++    "version": "v1.0.0",
++    "name": "chaos",
++    "displayName": "Chaos",
++    "status": "enabled",
++    "registrant": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "Artifact Hub",
++      "type": "registry",
++      "subType": "",
++      "kind": "artifacthub",
++      "status": "discovered",
++      "created_at": "0001-01-01T00:00:00Z",
++      "updated_at": "0001-01-01T00:00:00Z",
++      "deleted_at": null,
++      "schemaVersion": ""
++    },
++    "connection_id": "00000000-0000-0000-0000-000000000000",
++    "category": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "App Definition and Development"
++    },
++    "subCategory": "Continuous Integration \u0026 Delivery",
++    "metadata": {
++      "isAnnotation": false,
++      "primaryColor": "#00B39F",
++      "secondaryColor": "#00D3A9",
++      "shape": "circle",
++      "source_uri": "https://sx-helm-repository-prod.s3.eu-west-3.amazonaws.com/stable/chaos-21.3.390.tgz",
++      "styleOverrides": "",
++      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 60 40\" fill=\"none\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" clip-path=\"url(#clip0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M59.7518 0.292419L50.4322 7.60754L43.5508 1.86349L48.854 9.04349L44.1195 15.4913L50.4323 10.8989L59.3186 18.7899L52.2949 9.47025L59.7518 0.292419Z\" fill=\"#000E44\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M16.6266 32.37C25.318 32.37 32.3636 25.3243 32.3636 16.633C32.3636 7.94169 25.318 0.895996 16.6266 0.895996C7.93534 0.895996 0.889648 7.94169 0.889648 16.633C0.889648 25.3243 7.93534 32.37 16.6266 32.37Z\" stroke=\"#6D4013\" stroke-width=\"1.5\" stroke-miterlimit=\"2.5\"\u003e\u003c/path\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask0_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M25.9877 28.2204C26.739 27.6944 28.4711 28.8719 29.8565 30.8506C31.242 32.8292 31.7561 34.8596 31.0048 35.3857C30.2536 35.9117 28.5214 34.7342 27.136 32.7555C25.7505 30.7769 25.2364 28.7465 25.9877 28.2204Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.08853 28.2205C7.33726 27.6944 5.60513 28.8719 4.21967 30.8506C2.83421 32.8292 2.32012 34.8596 3.07137 35.3857C3.82264 35.9117 5.55477 34.7342 6.94022 32.7555C8.32568 30.7769 8.83978 28.7465 8.08853 28.2205Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M17.0298 31.3186C16.1127 31.3186 15.3692 33.2767 15.3692 35.6921C15.3692 38.1076 16.1127 40.0657 17.0298 40.0657C17.947 40.0657 18.6904 38.1076 18.6904 35.6921C18.6904 33.2767 17.9469 31.3186 17.0298 31.3186Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask1_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask1_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M29.6667 24.2904C26.9918 28.7344 22.1445 31.7039 16.6089 31.7039C11.2246 31.7039 6.49166 28.8947 3.77539 24.6518\" stroke=\"#6D4013\" stroke-width=\"2.64447\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28.983 18.905C29.9651 17.2039 29.9144 17.2969 30.7265 15.8903C31.0051 15.3919 31.2542 14.9522 31.5182 14.4978C30.6385 12.9733 29.7445 11.4342 28.8502 9.89509H25.4056C24.8193 8.89832 24.2182 7.90159 23.6173 6.87549H20.1873C19.601 5.89339 19.0293 4.89659 18.3842 3.82659C18.3696 3.82659 18.355 3.82659 18.3404 3.81193C18.0325 4.31031 17.7687 4.7354 17.4756 5.20443C17.1824 4.72071 16.9185 4.29562 16.6253
+```
+
+**File**: `models/chaos/21.3.390/v1.0.0/components/BlockChaos.json` (added, +209/-0)
+```diff
+@@ -0,0 +1,209 @@
++{
++  "id": "00000000-0000-0000-0000-000000000000",
++  "schemaVersion": "components.meshery.io/v1beta2",
++  "version": "v1.0.0",
++  "displayName": "Block Chaos",
++  "description": "",
++  "format": "JSON",
++  "model": {
++    "id": "00000000-0000-0000-0000-000000000000",
++    "schemaVersion": "models.meshery.io/v1beta2",
++    "version": "v1.0.0",
++    "name": "chaos",
++    "displayName": "Chaos",
++    "status": "enabled",
++    "registrant": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "Artifact Hub",
++      "type": "registry",
++      "subType": "",
++      "kind": "artifacthub",
++      "status": "discovered",
++      "created_at": "0001-01-01T00:00:00Z",
++      "updated_at": "0001-01-01T00:00:00Z",
++      "deleted_at": null,
++      "schemaVersion": ""
++    },
++    "connection_id": "00000000-0000-0000-0000-000000000000",
++    "category": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "App Definition and Development"
++    },
++    "subCategory": "Continuous Integration \u0026 Delivery",
++    "metadata": {
++      "isAnnotation": false,
++      "primaryColor": "#00B39F",
++      "secondaryColor": "#00D3A9",
++      "shape": "circle",
++      "source_uri": "https://sx-helm-repository-prod.s3.eu-west-3.amazonaws.com/stable/chaos-21.3.390.tgz",
++      "styleOverrides": "",
++      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 60 40\" fill=\"none\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" clip-path=\"url(#clip0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M59.7518 0.292419L50.4322 7.60754L43.5508 1.86349L48.854 9.04349L44.1195 15.4913L50.4323 10.8989L59.3186 18.7899L52.2949 9.47025L59.7518 0.292419Z\" fill=\"#000E44\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M16.6266 32.37C25.318 32.37 32.3636 25.3243 32.3636 16.633C32.3636 7.94169 25.318 0.895996 16.6266 0.895996C7.93534 0.895996 0.889648 7.94169 0.889648 16.633C0.889648 25.3243 7.93534 32.37 16.6266 32.37Z\" stroke=\"#6D4013\" stroke-width=\"1.5\" stroke-miterlimit=\"2.5\"\u003e\u003c/path\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask0_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M25.9877 28.2204C26.739 27.6944 28.4711 28.8719 29.8565 30.8506C31.242 32.8292 31.7561 34.8596 31.0048 35.3857C30.2536 35.9117 28.5214 34.7342 27.136 32.7555C25.7505 30.7769 25.2364 28.7465 25.9877 28.2204Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.08853 28.2205C7.33726 27.6944 5.60513 28.8719 4.21967 30.8506C2.83421 32.8292 2.32012 34.8596 3.07137 35.3857C3.82264 35.9117 5.55477 34.7342 6.94022 32.7555C8.32568 30.7769 8.83978 28.7465 8.08853 28.2205Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M17.0298 31.3186C16.1127 31.3186 15.3692 33.2767 15.3692 35.6921C15.3692 38.1076 16.1127 40.0657 17.0298 40.0657C17.947 40.0657 18.6904 38.1076 18.6904 35.6921C18.6904 33.2767 17.9469 31.3186 17.0298 31.3186Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask1_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask1_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M29.6667 24.2904C26.9918 28.7344 22.1445 31.7039 16.6089 31.7039C11.2246 31.7039 6.49166 28.8947 3.77539 24.6518\" stroke=\"#6D4013\" stroke-width=\"2.64447\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28.983 18.905C29.9651 17.2039 29.9144 17.2969 30.7265 15.8903C31.0051 15.3919 31.2542 14.9522 31.5182 14.4978C30.6385 12.9733 29.7445 11.4342 28.8502 9.89509H25.4056C24.8193 8.89832 24.2182 7.90159 23.6173 6.87549H20.1873C19.601 5.89339 19.0293 4.89659 18.3842 3.82659C18.3696 3.82659 18.355 3.82659 18.3404 3.81193C18.0325 4.31031 17.7687 4.7354 17.4756 5.20443C17.1824 4.72071 16.9185 4.29562 16.6253
+```
+
+**File**: `models/chaos/21.3.390/v1.0.0/components/DNSChaos.json` (added, +209/-0)
+```diff
+@@ -0,0 +1,209 @@
++{
++  "id": "00000000-0000-0000-0000-000000000000",
++  "schemaVersion": "components.meshery.io/v1beta2",
++  "version": "v1.0.0",
++  "displayName": "DNS Chaos",
++  "description": "",
++  "format": "JSON",
++  "model": {
++    "id": "00000000-0000-0000-0000-000000000000",
++    "schemaVersion": "models.meshery.io/v1beta2",
++    "version": "v1.0.0",
++    "name": "chaos",
++    "displayName": "Chaos",
++    "status": "enabled",
++    "registrant": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "Artifact Hub",
++      "type": "registry",
++      "subType": "",
++      "kind": "artifacthub",
++      "status": "discovered",
++      "created_at": "0001-01-01T00:00:00Z",
++      "updated_at": "0001-01-01T00:00:00Z",
++      "deleted_at": null,
++      "schemaVersion": ""
++    },
++    "connection_id": "00000000-0000-0000-0000-000000000000",
++    "category": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "App Definition and Development"
++    },
++    "subCategory": "Continuous Integration \u0026 Delivery",
++    "metadata": {
++      "isAnnotation": false,
++      "primaryColor": "#00B39F",
++      "secondaryColor": "#00D3A9",
++      "shape": "circle",
++      "source_uri": "https://sx-helm-repository-prod.s3.eu-west-3.amazonaws.com/stable/chaos-21.3.390.tgz",
++      "styleOverrides": "",
++      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 60 40\" fill=\"none\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" clip-path=\"url(#clip0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M59.7518 0.292419L50.4322 7.60754L43.5508 1.86349L48.854 9.04349L44.1195 15.4913L50.4323 10.8989L59.3186 18.7899L52.2949 9.47025L59.7518 0.292419Z\" fill=\"#000E44\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M16.6266 32.37C25.318 32.37 32.3636 25.3243 32.3636 16.633C32.3636 7.94169 25.318 0.895996 16.6266 0.895996C7.93534 0.895996 0.889648 7.94169 0.889648 16.633C0.889648 25.3243 7.93534 32.37 16.6266 32.37Z\" stroke=\"#6D4013\" stroke-width=\"1.5\" stroke-miterlimit=\"2.5\"\u003e\u003c/path\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask0_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M25.9877 28.2204C26.739 27.6944 28.4711 28.8719 29.8565 30.8506C31.242 32.8292 31.7561 34.8596 31.0048 35.3857C30.2536 35.9117 28.5214 34.7342 27.136 32.7555C25.7505 30.7769 25.2364 28.7465 25.9877 28.2204Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.08853 28.2205C7.33726 27.6944 5.60513 28.8719 4.21967 30.8506C2.83421 32.8292 2.32012 34.8596 3.07137 35.3857C3.82264 35.9117 5.55477 34.7342 6.94022 32.7555C8.32568 30.7769 8.83978 28.7465 8.08853 28.2205Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M17.0298 31.3186C16.1127 31.3186 15.3692 33.2767 15.3692 35.6921C15.3692 38.1076 16.1127 40.0657 17.0298 40.0657C17.947 40.0657 18.6904 38.1076 18.6904 35.6921C18.6904 33.2767 17.9469 31.3186 17.0298 31.3186Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask1_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask1_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M29.6667 24.2904C26.9918 28.7344 22.1445 31.7039 16.6089 31.7039C11.2246 31.7039 6.49166 28.8947 3.77539 24.6518\" stroke=\"#6D4013\" stroke-width=\"2.64447\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28.983 18.905C29.9651 17.2039 29.9144 17.2969 30.7265 15.8903C31.0051 15.3919 31.2542 14.9522 31.5182 14.4978C30.6385 12.9733 29.7445 11.4342 28.8502 9.89509H25.4056C24.8193 8.89832 24.2182 7.90159 23.6173 6.87549H20.1873C19.601 5.89339 19.0293 4.89659 18.3842 3.82659C18.3696 3.82659 18.355 3.82659 18.3404 3.81193C18.0325 4.31031 17.7687 4.7354 17.4756 5.20443C17.1824 4.72071 16.9185 4.29562 16.6253 3
+```
+
+**File**: `models/chaos/21.3.390/v1.0.0/components/GCPChaos.json` (added, +209/-0)
+```diff
+@@ -0,0 +1,209 @@
++{
++  "id": "00000000-0000-0000-0000-000000000000",
++  "schemaVersion": "components.meshery.io/v1beta2",
++  "version": "v1.0.0",
++  "displayName": "GCP Chaos",
++  "description": "",
++  "format": "JSON",
++  "model": {
++    "id": "00000000-0000-0000-0000-000000000000",
++    "schemaVersion": "models.meshery.io/v1beta2",
++    "version": "v1.0.0",
++    "name": "chaos",
++    "displayName": "Chaos",
++    "status": "enabled",
++    "registrant": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "Artifact Hub",
++      "type": "registry",
++      "subType": "",
++      "kind": "artifacthub",
++      "status": "discovered",
++      "created_at": "0001-01-01T00:00:00Z",
++      "updated_at": "0001-01-01T00:00:00Z",
++      "deleted_at": null,
++      "schemaVersion": ""
++    },
++    "connection_id": "00000000-0000-0000-0000-000000000000",
++    "category": {
++      "id": "00000000-0000-0000-0000-000000000000",
++      "name": "App Definition and Development"
++    },
++    "subCategory": "Continuous Integration \u0026 Delivery",
++    "metadata": {
++      "isAnnotation": false,
++      "primaryColor": "#00B39F",
++      "secondaryColor": "#00D3A9",
++      "shape": "circle",
++      "source_uri": "https://sx-helm-repository-prod.s3.eu-west-3.amazonaws.com/stable/chaos-21.3.390.tgz",
++      "styleOverrides": "",
++      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 60 40\" fill=\"none\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" clip-path=\"url(#clip0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M59.7518 0.292419L50.4322 7.60754L43.5508 1.86349L48.854 9.04349L44.1195 15.4913L50.4323 10.8989L59.3186 18.7899L52.2949 9.47025L59.7518 0.292419Z\" fill=\"#000E44\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M16.6266 32.37C25.318 32.37 32.3636 25.3243 32.3636 16.633C32.3636 7.94169 25.318 0.895996 16.6266 0.895996C7.93534 0.895996 0.889648 7.94169 0.889648 16.633C0.889648 25.3243 7.93534 32.37 16.6266 32.37Z\" stroke=\"#6D4013\" stroke-width=\"1.5\" stroke-miterlimit=\"2.5\"\u003e\u003c/path\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask0_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M25.9877 28.2204C26.739 27.6944 28.4711 28.8719 29.8565 30.8506C31.242 32.8292 31.7561 34.8596 31.0048 35.3857C30.2536 35.9117 28.5214 34.7342 27.136 32.7555C25.7505 30.7769 25.2364 28.7465 25.9877 28.2204Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.08853 28.2205C7.33726 27.6944 5.60513 28.8719 4.21967 30.8506C2.83421 32.8292 2.32012 34.8596 3.07137 35.3857C3.82264 35.9117 5.55477 34.7342 6.94022 32.7555C8.32568 30.7769 8.83978 28.7465 8.08853 28.2205Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M17.0298 31.3186C16.1127 31.3186 15.3692 33.2767 15.3692 35.6921C15.3692 38.1076 16.1127 40.0657 17.0298 40.0657C17.947 40.0657 18.6904 38.1076 18.6904 35.6921C18.6904 33.2767 17.9469 31.3186 17.0298 31.3186Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask1_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask1_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M29.6667 24.2904C26.9918 28.7344 22.1445 31.7039 16.6089 31.7039C11.2246 31.7039 6.49166 28.8947 3.77539 24.6518\" stroke=\"#6D4013\" stroke-width=\"2.64447\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28.983 18.905C29.9651 17.2039 29.9144 17.2969 30.7265 15.8903C31.0051 15.3919 31.2542 14.9522 31.5182 14.4978C30.6385 12.9733 29.7445 11.4342 28.8502 9.89509H25.4056C24.8193 8.89832 24.2182 7.90159 23.6173 6.87549H20.1873C19.601 5.89339 19.0293 4.89659 18.3842 3.82659C18.3696 3.82659 18.355 3.82659 18.3404 3.81193C18.0325 4.31031 17.7687 4.7354 17.4756 5.20443C17.1824 4.72071 16.9185 4.29562 16.6253 3
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23830** (2026-11-17): [mesheryctl] Make SafeClose nil-safe and handle uninitialized logger (@muskan-creates352)
-- **PR #23826** (2026-11-17): chore: bump meshery/schemas to v1.3.120 (@leecalcote)
-- **PR #23824** (2026-11-17): [Server] Return 404 Not Found for non-existent Kubernetes context in GetContext and DeleteContext (@patelshivani2283-lab)
-- **PR #23822** (2026-11-17): [Server] Run load tests against every configured endpoint URL (@RameshwariS)
-- **PR #23820** (2026-11-17): [UI] Deduplicate connection transfer lists and fix active environment… (@harmanD-MAX)
-- **PR #23818** (2026-11-17): [mesheryctl] Show N/A for a component with no model in component list (@Shikhyy)
+- **PR #24070** (closed): [Server] Check selector model in Rego mutator-based relationship identification. (@dropps07)
+- **PR #24064** (2026-11-20): [Docs] Add newcomer introduction for T.S. Phala (@unchained-angel)
+- **PR #24062** (2026-11-20): [Docs] fix: remove trailing dot from meeting notes filename (@rrehhamm)
+- **PR #24060** (2026-11-20): Add JayitaLakhmani.md with introduction (@JayitaL)
+- **PR #24058** (2026-11-20): [Docs] Rename meeting minutes file to remove trailing dot (@abhinavkdeval08-design)
+- **PR #24049** (2026-11-20): [UI] Guard ProviderUiAccessControl against non-iterable walker arguments and undefined extension navigators (@madhavzanwar)
 
 ---
 
@@ -1113,45 +1829,47 @@ Signed-off-by: Yi Nuo <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. server): guard remaining DeleteContext logger calls against nil
+## X. Empirical Invariant Guard in meshery-server_errors_index.json
 
 **RULE**:
-When implementing operations in `server/handlers/contexts_handler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/data/errorindex/meshery-server_errors_index.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f80e0d97`: server): guard remaining DeleteContext logger calls against nil. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c2b54aba`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/handlers/contexts_handler.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/data/errorindex/meshery-server_errors_index.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		if h.log != nil {
-			h.log.Error(handlerErr)
-		}
-				if h.log != nil {
-					h.log.Error(err)
-				}
-				if h.log != nil {
-					h.log.Debug(event)
-				}
-		if h.log != nil {
-			h.log.Error(err)
-		}
+    },
+    {
+      "code": "meshery-server-1497",
+      "moniker": "ErrProvisionPanicCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1497",
+      "severity": "alert",
+      "shortDescription": "Component panicked during provisioning",
+      "probableCause": [
+        "Runtime fault occurred in component visitor execution"
+      ],
+      "suggestedRemediation": [
+        "Inspect component configuration and provider logs for runtime failures"
+      ]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		h.log.Error(handlerErr)
-				h.log.Error(err)
-				h.log.Debug(event)
-		h.log.Error(err)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f80e0d97` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c2b54aba` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

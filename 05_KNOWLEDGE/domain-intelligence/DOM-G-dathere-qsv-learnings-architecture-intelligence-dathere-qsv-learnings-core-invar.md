@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T14:07:35.667Z",
+  "timestamp": "2026-11-21T04:39:22.322Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dathere-qsv-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dathere-qsv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T14:07:35.667Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T04:39:22.322Z`  
 > **Learning ID**: `LEARN-EVO-dathere-qsv-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere-qsv-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `18803975`  
+> **Source Version**: `ea8e9cca`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T14:04:10.674Z  
+> **Timestamp**: 2026-11-21T04:39:14.339Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T14:04:03.738Z  
+> **Harvest Timestamp**: 2026-11-21T04:39:14.333Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1557,7 +1557,7 @@ use std::{
 };
 
 use foldhash::{HashMap, HashMapExt};
-use polars::{prelude::*, sql::SQLContext};
+use polars::prelude::*;
 use serde::{Deserialize, Serialize};
 
 use crate::{CliResult, cmd::joinp::path_delim, config::Delimiter, util};
@@ -1725,7 +1725,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
     }
     args.arg_input = inputs;
 
-    if args.ar
+    if args.arg_input.is_empty() 
 ```
 
 ### Core Architecture Module: `src/llmutil.rs`
@@ -2229,631 +2229,373 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `18803975` (2026-11-20)
-**Commit Message**: feat(synthesize): Float columns keep their source decimal places (#5080)
+### Incident Patch 1: `ea8e9cca` (2026-11-21)
+**Commit Message**: feat(synthesize): --target <col> for conditional generation; read non-UTF8 input (#5084)
 
-* feat(synthesize): Float columns keep their source decimal places
+* feat(synthesize): --target <col> for conditional generation
 
-Synthetic Float values are rounded to the most decimal places the column
-shows in the input (stats max_precision) and printed in shortest form,
-instead of full f64 digits. Applies to independent columns and to
-ordered and correlated relationship members. In an ordered chain each
-member is rounded to its own grid, moved up a step rather than print
-below its predecessor, and its cap is floored to that grid, so order
-and trimmed ranges hold. max_precision above 15 (binary-float noise) is
-left unrounded.
+Each synthetic row draws a class of <col> by its share of the input's
+rows, then fills every other column from that class's own profile.
 
-Random draws are unchanged: against master with the same seed, only
-Float cells differ, each equal to the old value rounded. The model now
-records per-column decimals, so FORMAT_VERSION is 3.
+- Fit: the whole-input pass runs as before (types, fakers, dictionary,
+  report keys); one read of the input then writes each row to its
+  class's temporary CSV, and stats/frequency run once per class, with
+  the fit RNG keyed by (seed, class index) and classes in a fixed order.
+- Classes: at most 50 distinct trimmed values split by value (an empty
+  value is a class); a numeric target with more is split by its own
+  quantile buckets and its value drawn from the class's bucket; any
+  other target is refused. Classes under --min-count rows are dropped
+  and listed in --report.
+- Fake-value columns, and columns a class can't profile, use the
+  whole-input generator; relationships drop the target from their
+  members.
+- Model format 4 stores the per-class schedules; Model::check verifies
+  each fills every non-target column once. --target is refused with
+  --model.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Without --target, output is byte-
 
-* docs(synthesize): cite #5080 in CHANGELOG [skip ci]
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(synthesize): only round decimals exactly representable on the grid
-
-At 13-15 places a value near 2^53 steps could scale onto a half and
-round a step away (4.000000000000005 at 15 places became
-
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.claude/skills/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - `synthesize`: a column with any null was never treated as fully enumerated, because frequency's `(NULL)` row parses to rank 0, the same as an "Other" bucket. Such columns fell back to fakers, filler or the min/max range instead of sampling their real values by frequency, which also let them bypass `--min-count`. Nulls are still reproduced through the null ratio. **Behavior change:** columns with blank cells now emit their real values (those seen at least `--min-count` times), like every other enumerated column. With a Data Dictionary but without `--consistent-fakes`, a name, email or address column that has blanks goes from generated fakes to real values; pass `--consistent-fakes` to keep fakes. ([#5066](https://github.com/dathere/qsv/pull/5066))
+@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ## [Unreleased]
  
- ### Changed
-+- `synthesize`: Float columns now keep their source's decimal places. A synthetic value is rounded to the most places any value of the column shows in the input (`stats` `max_precision`), so a 2-place price column prints `106.86` instead of `106.85678552041723`. Values print in their shortest form, so trailing zeros are dropped (`12.50` prints as `12.5`). This applies to independent columns and to `ordered` and `correlated` relationship members; in an `ordered` chain each member is rounded to its own places and still never prints below its predecessor or outside its range. A column whose `max_precision` is above 15 (binary-float noise such as `0.30000000000000004`) is left unrounded, as is a value too large to round exactly at its column's places (at 15 places, values from about 1.1 up; at 2 places, above about 10^13). Rounded floats can land exactly on real values, which `--report` counts as exact matches. The random draws are the same, so outside `ordered` relationships a seeded run gives the same rows as before with only Float cells rounded; in an `ordered` chain each member builds on the rounded value before it, so later members, Integer ones included, can differ by a step. Saved models now record each column's decimal places, so the model format is version 3 and models saved before this change must be fitted again. ([#5080](https://github.com/dathere/qsv/pull/5080))
- - `synthesize`: rows are now generated in parallel, in fixed blocks of 8,192 rows. Each block draws from its own random stream, worked out from `--seed` and the block's position, so a seeded run gives the same output at any `--jobs` setting. `--jobs` now also sets the threads used to generate rows, not only those of the internal `stats` and `frequency` runs. On a 16-core machine, 1M rows from a 10k-row source took 142 ms instead of 475 ms, and `--jobs 1` is as fast as before. Blocks are written in order, and the output held in memory at once is capped at about 256 MiB, so memory does not grow with `-n` or with core count (1M rows of a 100-column file peaked at 302 MiB on 16 cores, against 104 MiB before). Seeded output is the same at any `--jobs` while `stats` computes exact statistics; approximate ones can differ, whether requested through `--stats-options` (e.g. `--quantile-method approx`) or switched on by `stats` itself, with a warning, when the input won't fit in memory. **Behavior change:** a given `--seed` now produces different rows than in 29.0.0. The values follow the same distributions, but they come out in a different sequence, so seeded outputs saved from 29.0.0 or earlier will not be reproduced. ([#5069](https://github.com/dathere/qsv/pull/5069))
- - `synthesize`: the help now warns that synthetic output is not anonymized. It can copy real values and value combinations from the source: fully enumerated columns, enumerated structured-faker columns without `--consistent-fakes`, `joint` relationship tuples, and outliers at the edge of numeric/date ranges. ([#5064](https://github.com/dathere/qsv/pull/5064))
- - `sqlp`: the `--try-parsedates` help now warns that Polars reads slash, dash and dot dates as day-first, so `01/05/2024` becomes `2024-05-01`, and that `CAST(col AS DATE)` does the same. For month-first (US) dates, leave `--try-parsedates` off and use `STRPTIME(col, '%m/%d/%Y')` ([#5062](https://github.com/dathere/qsv/pull/5062)).
+ ### Added
++- **`qsv-synthesize --target <col>`**: conditional generation. Each row draws a class of `<col>` (at most 50 distinct values, or a numeric column's quantile buckets) in proportion to its source rows, after dropping classes seen in fewer than `--min-count` rows, then fills the other columns from that class's own profile; `stats` and `frequency` run once more per class. Skill regenerated from the USAGE text. ([#5084](https://github.com/dathere/qsv/pull/5084))
+ - **SQL file writes are off in plugin mode (Cowork, Claude Code plugin).** Polars SQL now has `COPY (<query>) TO '<file>'`, where the query rather than `output_file` picks the target. In plugin mode the server sets `QSV_SQL_DISABLE_FILE_WRITES=1` for qsv, and `qsv_sqlp` never sends SQL that may contain `COPY ... TO` or `EXPORT DATABASE` to DuckDB: it runs on Polars `sqlp`, which refuses a real `COPY ... TO`. A `.env` file can't lift the switch, for qsv or the qsv subprocesses it spawns. Other MCP clients and the Desktop extension keep them. New `QSV_MCP_SQL_FILE_WRITES` overrides the default either way. `qsv-sqlp` skill regenerated from the USAGE text. ([#5081](https://github.com/dathere/qsv/pull/5081))
+ - **`qsv-synthesize --quantiles <n>`**: 2, 4, 5, 10, 20, 25, 50 or 100 equal-share buckets for numeric/date columns and `ordered` gaps (default 4, the quartiles, unchanged output); more buckets keep long tails. Skill regenerated from the USAGE text. ([#5078](https://github.com/dathere/qsv/pull/5078))
+ - **`qsv-synthesize`: `--rows-per-file` is CLI-only for now.** The new `synthesize --rows-per-file` option and its USAGE example are left out of the skill: the MCP server checks only the literal `{}` output template against its allowed directories and would report the template as the written file. The generator's per-command skip list now also drops examples that use a skipped option. ([#5077](https://github.com/dathere/qsv/pull/5077))
 ```
 
-**File**: `docs/help/synthesize.md` (modified, +5/-2)
+**File**: `.claude/skills/qsv/qsv-synthesize.json` (modified, +5/-0)
 ```diff
-@@ -22,7 +22,9 @@ structure are preserved, minus values rarer than the --min-count.
- * Numeric and date/datetime columns are reproduced with quantile buckets
- (quartiles by default, see --quantiles), so the shape of the distribution
- (not just its [min,max] range) is preserved.
--The range ends are trimmed by the --min-count (see below).
-+The range ends are trimmed by the --min-count (see below). Float values
-+are rounded to the most decimal places the column shows in <input>
-+(unrounded when that is float noise, more than 15 places).
- * Null ratios are reproduced per column.
- 
- When a Data Dictionary is supplied (via --dictionary, or generated on the fly
-@@ -91,7 +93,8 @@ city/zip/age combination) seen at least --min-count times.
- lie at or beyond each end (the k-th smallest and k-th largest values),
- so a lone outlier no longer sets the range. The ends are themselves real
- values, and values inside the range are drawn uniformly per bucket, so
--integers and dates can still land exactly on real values. With
-+integers, dates and floats (rounded to their source decimals) can still
-+land exactly on real values. With
- the --min-count at 1 the range is the real min and max, and an outlier
- can reappear at or near its real value.
- 
+@@ -125,6 +125,11 @@
+         "flag": "--strict-relationships",
+         "type": "flag",
+         "description": "Abort instead of warning-and-degrading when a declared relationship fails validation."
++      },
++      {
++        "flag": "--target",
++        "type": "string",
++        "description": "Generate the other columns conditionally on the class of column <col> (a column name; with no headers, its 0-based index), e.g. a label to train a classifier on. Each row first draws a class by its share of the rows of <input>, then fills every other column from that class's own profile, so each column keeps its distribution within each class. A column with at most 50 distinct (trimmed) values is split by value, an empty value being a class of its own; a numeric column with more is split by its quantile buckets (see --quantiles), each class drawn at the share of rows its bucket holds (with tied bucket edges, not the shares of an ordinary fit), and any other column is refused. A class seen in fewer than <k> rows (<k> is set by the --min-count option) is dropped and its share redistributed. Fake-value columns, and columns a class has too few values to profile, use the generator fitted on the whole input, blank rate included (a column blank throughout a class stays blank). A numeric or date column needs at least 2k-1 values in a class, so with the default <k> of 5 a class of fewer than 9 rows takes all of them from the whole input; lower the --min-count to profile small classes, if that is acceptable for privacy. Relationships that name <col> drop it from their members, as do fake-value columns in the classes, and each class fits (and with --strict-relationships, enforces) them on its own rows. Dropping <col> can make a group eligible that an ordinary fit skips (it overlapped an earlier one only on <col>); it still yields to earlier groups, and a `joint` one writes real value-tuples, so a column an ordinary fit fakes can then write real values. `stats` and `frequency` run once more per class, on a temporary copy of <input> split by class."
+       }
+     ]
+   },
 ```
 
-**File**: `src/cmd/synthesize/generator.rs` (modified, +151/-8)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -162,6 +162,9 @@ pub(crate) enum ColumnGenerator {
-     NumericQuantile {
-         buckets:    Vec<(f64, f64)>,
-         is_int:     bool,
-+        /// Float columns only: decimal places to round to (the source's
-+        /// `max_precision`); `None` leaves values unrounded.
-+        decimals:   Option<u32>,
-         null_ratio: f64,
-     },
-     /// Date / `DateTime` column reproduced via quantile buckets over epoch seconds.
-@@ -389,6 +392,7 @@ impl ColumnGenerator {
-             ColumnGenerator::NumericQuantile {
-                 buckets,
-                 is_int,
-+                decimals,
-                 null_ratio,
-             } => {
-                 if draw_null(*null_ratio, rng) {
-@@ -400,14 +404,7 @@ impl ColumnGenerator {
-                 } else {
-                     lo
-                 };
--                if *is_int {
--                    #[allow(clippy::cast_possible_truncation)]
--                    {
--                        (value.round() as i64).to_string()
--                    }
--                } else {
--                    value.to_string()
--                }
-+                format_number(value, *is_int, *decimals)
-             },
+@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ## [Unreleased]
  
-             ColumnGenerator::DateQuantile {
-@@ -744,12 +741,111 @@ fn build_numeric(stats: &StatsRecord, is_int: bool, null_ratio: f64) -> ColumnGe
-         Some(buckets) => ColumnGenerator::NumericQuantile {
-             buckets,
-             is_int,
-+            decimals: if is_int { None } else { float_decimals(stats) },
-             null_ratio,
-         },
-         None => ColumnGenerator::Empty,
-     }
+ ### Added
++- `synthesize`: new `--target <col>` generates the other columns conditionally on the class of `<col>`, e.g. a label to train a classifier on. Each synthetic row first draws a class by its share of the input's rows, then fills every other column from that class's own profile, so each column keeps its distribution within each class (on a 10%-positive label whose positive rows have a 10x larger `amount`, the synthetic positives' mean `amount` was 499 against the source's 499, and 116 without `--target`). A column with at most 50 distinct (trimmed) values is split by value, an empty value being a class of its own (not counted toward the 50); a numeric column with more is split by its own quantile buckets (`--quantiles`), each class drawn at the share of rows its bucket holds, and each value from the written values that land back in that bucket; any other column is refused. With tied bucket edges that follows the source more closely than an ordinary fit: on 900 zeros and the integers 1–100, 89.8% of synthetic targets were zeros, against 90% in the source and 75.1% without `--target`. `stats` and `frequency` run once more per class, on a temporary copy of the input split by class. A class seen in fewer than `--min-count` rows is dropped and its share redistributed (listed in `--report`, which also records the target and tags per-class suppressions with their class). Fake-value columns use their whole-input generator (blank rate included, though a column blank throughout a class stays blank), so `--consistent-fakes` keeps one fake per source value across classes, and so does any column a class can't profile as well as the whole input (filler text, or a generator that would write the column in another form, such as raw dates in a column the dictionary formats, or zero-padded codes as numbers) or has too few values to profile (a numeric or date column needs 2k−1 values in the class, so at the default `--min-count` of 5 a class of fewer than 9 rows takes them all from the whole input). Relationships that name the target drop it from their members, in the whole-input fit too, and in a class so do fake-value columns, so a class group never writes a column's real values where the whole input fakes it. Dropping the target can make a group eligible that an ordinary fit skips (it overlapped an earlier one only on the target); it still yields to earlier groups, and a `joint` one writes real value-tuples, so a column an ordinary fit fakes can then write real values. Each class fits relationships on its own rows, and `--strict-relationships` applies there, so a relationship that only holds within classes (e.g. y rising with x in one class and falling in another) is kept. Class files quote every field, so a `QSV_COMMENT_CHAR` value can't hide a row. Output is the same bytes at any `--jobs`, from `--model`, and across `--shard` and `--rows-per-file`; without `--target` it is unchanged. Saved models hold per-class profiles, so the model format is version 4 and models saved before this change must be fitted again. `--target` can't be combined with `--model`. ([#5084](https://github.com/dathere/qsv/pull/5084))
+ - `synthesize`: new `--quantiles <n>` sets how many equal-share buckets reproduce each numeric and date column's shape, and the gaps of `ordered` relationships: 2, 4, 5, 10, 20, 25, 50 or 100 (divisors of 100, so every bucket edge is a whole percentile and every bucket holds the same share of rows). More buckets keep skewed and long-tailed columns closer to the source: on a column whose values double every 5% of rows, the 90th percentile came out 2.4× too high with the quartiles and 2% high with `--quantiles 20`. The default of 4 still cuts at the source quartiles, so output is unchanged; other values cut at `stats --percentiles`, which are real source values, so a column gets fewer buckets when it has too few non-null values for each bucket to hold more than `--min-count` of them (at worst, the quartiles). Percentile edges are read unrounded (`stats --round 9999`, unless `--stats-options` sets `--round`), so small-magnitude floats keep distinct edges. The model format is unchanged. `--quantiles` can't be combined with `--model`, and with a value other than 4 `--stats-options` may not include `--percentiles` or `--percentile-list`. ([#5078](https://github.com/dathere/qsv/pull/5078))
+ - `synthesize`: new `--rows-per-file <n>` splits the output into files of `<n>` rows. The `--output` name must contain `{}`, which is replaced by the zero-based row number of each file's first row, as in `qsv split`, zero-padded so the names sort in order (`-o synthetic_{}.csv` writes `synthetic_000.csv`, `synthetic_250.csv`, …). The files hold the same rows as a single-file run, in order, at any `--jobs` and from a `--model` run, and join the same way as `--shard` slices; each CSV file has a header row and each Parqu
+```
+
+**File**: `docs/help/synthesize.md` (modified, +3/-1)
+```diff
+@@ -101,7 +101,8 @@ can reappear at or near its real value.
+ Review the output before sharing it, or training on it, as de-identified data.
+ A model saved with --save-model holds real values from <input>, such as
+ enumerated values, bucket boundaries and range ends, including some the
+-output never shows. Review and share it at least as carefully as the output.
++output never shows; with --target, it holds them for each class, and the
++class values. Review and share it at least as carefully as the output.
+ 
+ With --seed, output is fully reproducible, whatever the --jobs setting.
+ Rows are generated in parallel, in fixed blocks of 8192 rows. With --seed
+@@ -226,6 +227,7 @@ qsv synthesize --help
+ | &nbsp;`‑‑locale`&nbsp; | string | Locale for faker-backed columns. Case-insensitive. Supported: en, fr_fr, de_de, it_it, pt_br, pt_pt, ja_jp, zh_cn, zh_tw, ar_sa, cy_gb, fa_ir, nl_nl, tr_tr. Sparse locales (those without per-category data in fake-rs) silently fall back to en data for the missing categories — e.g. lorem text under a non-en locale is still English, since only zh_cn has localized lorem data. | `en` |
+ | &nbsp;`‑‑freq‑limit`&nbsp; | integer | Frequency pool depth passed to the internal `frequency` run as --limit. A column is reproduced via exact frequency-weighted sampling only when its cardinality is fully captured within this limit; higher values reproduce more columns verbatim. 0 means unlimited. | `100` |
+ | &nbsp;`‑‑quantiles`&nbsp; | integer | Number of equal-share buckets that reproduce the shape of numeric and date columns: 2, 4, 5, 10, 20, 25, 50 or 100. More buckets keep skewed and long-tailed columns closer to the source. 4 (the default) cuts at the source quartiles; other values cut at `stats --percentiles` (real source values). A column with too few non-null values for every bucket to hold more than <k> of them (<k> is set by the --min-count option) gets fewer buckets, or the quartiles. Also applies to the gaps of `ordered` relationships. |  |
++| &nbsp;`‑‑target`&nbsp; | string | Generate the other columns conditionally on the class of column <col> (a column name; with no headers, its 0-based index), e.g. a label to train a classifier on. Each row first draws a class by its share of the rows of <input>, then fills every other column from that class's own profile, so each column keeps its distribution within each class. A column with at most 50 distinct (trimmed) values is split by value, an empty value being a class of its own; a numeric column with more is split by its quantile buckets (see --quantiles), each class drawn at the share of rows its bucket holds (with tied bucket edges, not the shares of an ordinary fit), and any other column is refused. A class seen in fewer than <k> rows (<k> is set by the --min-count option) is dropped and its share redistributed. Fake-value columns, and columns a class has too few values to profile, use the generator fitted on the whole input, blank rate included (a column blank throughout a class stays blank). A numeric or date column needs at least 2k-1 values in a class, so with the default <k> of 5 a class of fewer than 9 rows takes all of them from the whole input; lower the --min-count to profile small classes, if that is acceptable for privacy. Relationships that name <col> drop it from their members, as do fake-value columns in the classes, and each class fits (and with --strict-relationships, enforces) them on its own rows. Dropping <col> can make a group eligible that an ordinary fit skips (it overlapped an earlier one only on <col>); it still yields to earlier groups, and a `joint` one writes real value-tuples, so a column an ordinary fit fakes can then write real values. `stats` and `frequency` run once more per class, on a temporary copy of <input> split by class. |  |
+ | &nbsp;`‑‑min‑count`&nbsp; | integer | Privacy threshold. A real value of an enumerated column, or a real `joint` value-tuple, that occurs fewer than <k> times in <input> is dropped from the values it samples; its share is redistributed over the kept values. An enumerated column whose values are all below <k> falls back to its faker or type-based generator (numeric and date columns to their trimmed range), and a joint group to independent columns, or aborts under the --strict-relationships option. A warning is printed when either happens. 1 disables suppression. Counts are of rows, not people: where one person has many rows (transactions, visits, logs), one person's value can pass <k> alone. Raise <k>, or dedupe to one row per person first. Numeric and date ranges, and the gaps of `ordered` relationships, are also trimmed to their k-th smallest and k-th largest values (one extra pass over <input>). A numeric or date column with fewer than 2k-1 non-null values is left empty unless its real values are sampled. | `5` |
+ | &nbsp;`‑‑report`&nbsp; | string | Write a JSON report of what the run reproduced from <input>: source and synthetic row counts, how many synthetic rows exactly 
+```
+
+**File**: `src/cmd/synthesize/generator.rs` (modified, +1/-1)
+```diff
+@@ -115,7 +115,7 @@ fn is_unstructured(content_type: &str) -> bool {
+     UNSTRUCTURED_CONTENT_TYPES.contains(&content_type)
  }
  
-+/// Above this many decimal places a column's `max_precision` reflects binary
-+/// float noise (`0.30000000000000004` counts 17), not how the source was
-+/// written, so its values are left unrounded.
-+const MAX_ROUNDED_DECIMALS: u32 = 15;
-+
-+/// The decimal places a Float column's synthetic values are rounded to: the
-+/// most any source value shows (`stats` `max_precision`), or `None` when that
-+/// is unknown or float noise.
-+pub(crate) fn float_decimals(stats: &StatsRecord) -> Option<u32> {
-+    stats
-+        .addl_cols
-+        .get("max_precision")?
-+        .parse::<u32>()
-+        .ok()
-+        .filter(|&d| d <= MAX_ROUNDED_DECIMALS)
-+}
-+
-+/// `value` on the grid of `decimals` places, as `(steps, scale)` with
-+/// `value ≈ steps / scale`; `None` when it can't be rounded exactly (no
-+/// decimals, or too large for the grid to be finer than an f64's spacing).
-+/// Working in whole steps keeps clear of noise like `1.1 * 100 =
-+/// 110.00000000000001`: `steps / scale` is the f64 nearest the decimal, so it
-+/// prints as that decimal.
-+pub(crate) fn decimal_steps(value: f64, decimals: Option<u32>) -> Option<(f64, f64)> {
-+    // Below 2^50 the error in `value * scale` is under a quarter step, so a
-+    // value already on the grid rounds to itself; nearer 2^53 it can land on
-+    // a half and round a step away (4.000000000000005 at 15 places). Whole
-+    // numbers aren't scaled, so they round exactly up to 2^53, beyond which
-+    // every f64 is already whole.
-+    const EXACT_STEPS: f64 = 1_125_899_906_842_624.0;
-+    const EXACT_WHOLE: f64 = 9_007_199_254_740_992.0;
-+    let decimals = decimals?;
-+    let scale = 10_f64.powi(i32::try_from(decimals).ok()?);
-+    let scaled = value * scale;
-+    let limit = if decimals == 0 {
-+        EXACT_WHOLE
-+    } else {
-+        EXACT_STEPS
-+    };
-+    (scaled.abs() < limit).then(|| (scaled.round(), scale))
-+}
-+
-+/// Round `value` to `decimals` places (no-op for `None`), never returning
-+/// negative zero.
-+pub(crate) fn round_to(value: f64, decimals: Option<u32>) -> f64 {
-+    match decimal_steps(value, decimals) {
-+        Some((steps, scale)) => steps / scale + 0.0,
-+        None => value,
-+    }
-+}
-+
-+/// The largest value on the `decimals` grid that is <= `value` (no-op for
-+/// `None`).
-+pub(crate) fn floor_to(value: f64, decimals: Option<u32>) -> f64 {
-+    match decimal_steps(value, decimals) {
-+        Some((steps, scale)) => {
-+            let rounded = steps / scale;
-+            (if rounded > value {
-+                (steps - 1.0) / scale
-+            } else {
-+                rounded
-+            }) + 0.0
-+        },
-+        None => value,
-+    }
-+}
-+
-+/// `value` rounded to the `decimals` grid, moved up one step if rounding took
-+/// it below `floor` (no-op for `None`). With `value >= floor`, the result is
-+/// the smallest grid value >= `floor` in that case, so it stays in order
-+/// after a predecessor and no higher than any grid value >= `floor`.
-+pub(crate) fn round_at_least(value: f64, floor: f64, decimals: Option<u32>) -> f64 {
-+    match decimal_steps(value, decimals) {
-+        Some((steps, scale)) => {
-+            let rounded = steps / scale;
-+            (if rounded < floor {
-+                (steps + 1.0) / scale
-+            } else {
-+                rounded
-+            }) + 0.0
-+        },
-+        None => value,
-+    }
-+}
-+
-+/// Render a numeric value as an Integer c
+-#[derive(Serialize, Deserialize)]
++#[derive(Clone, Serialize, Deserialize)]
+ pub(crate) enum ColumnGenerator {
+     /// Sample real values with real frequency weights.
+     FrequencyWeighted {
 ```
 
-**File**: `src/cmd/synthesize/group_generator.rs` (modified, +46/-30)
+**File**: `src/cmd/synthesize/mod.rs` (modified, +534/-23)
 ```diff
-@@ -9,7 +9,7 @@
- use rand::{RngExt, rngs::StdRng};
- use serde::{Deserialize, Serialize};
+@@ -89,7 +89,8 @@ not stop it:
+ Review the output before sharing it, or training on it, as de-identified data.
+ A model saved with --save-model holds real values from <input>, such as
+ enumerated values, bucket boundaries and range ends, including some the
+-output never shows. Review and share it at least as carefully as the output.
++output never shows; with --target, it holds them for each class, and the
++class values. Review and share it at least as carefully as the output.
  
--use super::generator::draw_null;
-+use super::generator::{draw_null, format_number, round_at_least};
+ With --seed, output is fully reproducible, whatever the --jobs setting.
+ Rows are generated in parallel, in fixed blocks of 8192 rows. With --seed
+@@ -254,6 +255,44 @@ synthesize options:
+                            by the --min-count option) gets fewer buckets, or
+                            the quartiles.
+                            Also applies to the gaps of `ordered` relationships.
++    --target <col>         Generate the other columns conditionally on the
++                           class of column <col> (a column name; with no
++                           headers, its 0-based index), e.g. a label to train
++                           a classifier on. Each row first draws a class by
++                           its share of the rows of <input>, then fills every
++                           other column from that class's own profile, so
++                           each column keeps its distribution within each
++                           class. A column with at most 50 distinct (trimmed)
++                           values is split by value, an empty value being a
++                           class of its own; a numeric column with more is
++                           split by its quantile buckets (see --quantiles),
++                           each class drawn at the share of rows its bucket
++                           holds (with tied bucket edges, not the shares of
++                           an ordinary fit), and any other column is
++                           refused. A class seen in
++                           fewer than <k> rows (<k> is set by the --min-count
++                           option) is dropped and its share redistributed.
++                           Fake-value columns, and columns a class has too
++                           few values to profile, use the generator fitted
++                           on the whole input, blank rate included (a
++                           column blank throughout a class stays blank). A numeric or date column
++                           needs at least 2k-1 values in a class, so with
++                           the default <k> of 5 a class of fewer than 9 rows
++                           takes all of them from the whole input; lower
++                           the --min-count to profile small classes, if that
++                           is acceptable for privacy. Relationships that
++                           name <col> drop it from their members, as do
++                           fake-value columns in the classes, and each class
++                           fits (and with --strict-relationships, enforces)
++                           them on its own rows. Dropping <col> can make a
++                           group eligible that an ordinary fit skips (it
++                           overlapped an earlier one only on <col>); it
++                           still yields to earlier groups, and a `joint`
++                           one writes real value-tuples, so a column an
++                           ordinary fit fakes can then write real values.
++                           `stats` and `frequency` run once more per
++                           class, on a
++                           temporary copy of <input> split by class.
+     --min-count <k>        Privacy threshold. A real value of an enumerated
+                            column, or a real `joint` value-tuple, that occurs
+                            fewer than <k> times in <input> is dropped from the
+@@ -345,7 +384,9 @@ use serde::Deserialize;
  
- /// The value domain an `ordered` relationship group is generated in. Date
- /// values are carried as whole days since the UNIX epoch, datetimes as seconds
-@@ -55,6 +55,9 @@ pub(crate) enum GroupGenerator {
-         /// integer when true, a float when false. Lets a mixed Integer/Float
-         /// group keep each column's declared type. Ignored for Date/DateTime.
-         is_int:         Vec<bool>,
-+        /// Per-member decimal places a Float member is rounded to (its source
-+        /// `max_precision`); `None` for Integer, unrounded and date members.
-+        decimals:       Vec<Option<u32>>,
-         /// describegpt-inferred chrono strftime format for date members.
-         date_format:    Option<String>,
-         /// Anchor quantile buckets, in the numeric domain.
-@@ -87,6 +90,9 @@ pub(crate) enum GroupGenerator {
-         marginals:   Vec<Vec<(f64, f64)>>,
-         /// Per-member flag: round the emitted value to an integer.
-         is_int:      Vec<bool>,
-+        /// Per-member decimal places a Float member is rounded to; `None`
-+        /// for Integer and unrounded members.
-+        decimals:    Vec<Option<u32>>,
-         /// Per-member null ratio. Each member draws null independently, so its
-         /// marginal null ratio is preserved and nulls do not all co-occur.
-         null_ratios: Vec<f64>,
-@@ -129,6 +135,7 @@ impl GroupGenerator {
-                 member_cols,
-                 kind,
-                 is_int,
-+                decimals,
-                 date_format,
-                 anchor_buckets,
-                 gap_buckets,
-@@ -144,25 +151,22 @@ impl GroupGenerator {
-                 // The anchor's upper bound is capped by every follower's (see
-                 // `resolve_ordered`), so the chain can always stay in range.
-                 let mut value = sample_bucket(anchor_buckets, rng).min(member_ranges[0].1);
--                // Chain from the value actually emitted: an Integer member is
--                // printed rounded, so the next member must build on the
--                // rounded value or a Float follower can print below it. An
--                // Integer follower rounds no lower than ceil(floor), or it can
--                // print below a Float predecessor. ceil(floor) stays within
--                // range: the predecessor's cap is at most this member's
--                // integer-floored cap.
-+                // Chain from the value actually emitted: a member is printed
-+                // rounded to its grid (whole numbers for Integer, its source
-+                // decimals for Float), so the next member must build on the
-+                // rounded value or it can print below it. A follower rounds no
-+                // lower than its predecessor, or a coarser grid can print it
-+                // below a finer one (1.24 at one decimal is 1.2). That stays
-+                // within range: the predecessor's cap is at most this
-+                // member's grid-floored cap.
-                 let quantize = |v: f64, i: usize, floor: f64| {
--                    if *kind == OrderedKind::Numeric && is_int[i] {
--                        v.round().max(floor.ceil())
--                    } else {
--                        v
--                    }
-+                    round_at_least(v, floor, member_grid(*kind, is_int[i], decimals[i]))
-                 };
-                 value = quantize(value, 0, f64::NEG_INFINITY);
-                 let mut out = Vec::with_capacity(member_cols.len());
-                 out.push((
-                     member_cols[0],
--                    format_ordered(value, *kind, is_int[0], date_format.as_ref()),
-+                    format_ordered(value, *kind, is_int[0], decimals[0], date_format.as_ref()),
-                 ));
-                 for (i, gaps) in gap_buckets.iter().enumerate() {
-                     // Gap buckets are clamped to >= 0, and the clamp into the
-@@ -177,7 +181,13 @@ impl GroupGenerator {
-                     );
-                     out.push((
-                         member_cols[i + 1],
--                        format_ordered(value, *kind, is_int[i + 1], date_format.as_ref()),
-+                        format_ordered(
-+                            value,
-+                            *kind,
-+                            is_int[i + 1],
-+                            decimals[i + 1],
-+                            date_format.as_ref(),
-+                        ),
-                     ));
-                 }
-                 out
-@@ -188,6 +198,7 @@ impl GroupGenerator {
-                 cholesky_l,
-                 marginals,
-                 is_int,
-+                decimals,
-                 null_ratios,
-             } => {
-                 let k = col_indices.len();
-@@ -209,13 +220,8 @@ impl GroupGenerator {
-                     // all co-occur.
-    
+ use crate::{
+     CliError, CliResult,
+-    cmd::describegpt::dictionary::{StatsRecord, parse_frequency_csv, parse_stats_csv},
++    cmd::describegpt::dictionary::{
++        FrequencyRecord, StatsRecord, parse_frequency_csv, parse_stats_csv,
++    },
+     config::{Config, Delimiter},
+     util,
+ };
+@@ -359,9 +400,13 @@ mod output;
+ mod range_trim;
+ mod relationships;
+ mod report;
++mod target;
+ 
++use dictionary::SynthRelationship;
+ use faker_map::Locale;
++use generator::ColumnGenerator;
+ use relationships::{EmitUnit, ScheduleParams, build_emit_schedule};
++use report::Suppression;
+ 
+ #[derive(Deserialize)]
+ struct Args {
+@@ -378,6 +423,7 @@ struct Args {
+     flag_locale:                String,
+     flag_freq_limit:            usize,
+     flag_quantiles:             Option<usize>,
++    flag_target:                Option<String>,
+     flag_stats_options:         Option<String>,
+     flag_consistent_fakes:      bool,
+     flag_no_relationships:      bool,
+@@ -479,6 +525,7 @@ pub fn run(argv: &[&str]) -> 
 ```
 
-**File**: `src/cmd/synthesize/mod.rs` (modified, +5/-2)
+**File**: `src/cmd/synthesize/model.rs` (modified, +62/-23)
 ```diff
-@@ -10,7 +10,9 @@ fake data that reproduce the source's per-column attributes:
-   * Numeric and date/datetime columns are reproduced with quantile buckets
-     (quartiles by default, see --quantiles), so the shape of the distribution
-     (not just its [min,max] range) is preserved.
--    The range ends are trimmed by the --min-count (see below).
-+    The range ends are trimmed by the --min-count (see below). Float values
-+    are rounded to the most decimal places the column shows in <input>
-+    (unrounded when that is float noise, more than 15 places).
-   * Null ratios are reproduced per column.
+@@ -9,11 +9,11 @@ use serde::{Deserialize, Serialize};
  
- When a Data Dictionary is supplied (via --dictionary, or generated on the fly
-@@ -79,7 +81,8 @@ not stop it:
-     lie at or beyond each end (the k-th smallest and k-th largest values),
-     so a lone outlier no longer sets the range. The ends are themselves real
-     values, and values inside the range are drawn uniformly per bucket, so
--    integers and dates can still land exactly on real values. With
-+    integers, dates and floats (rounded to their source decimals) can still
-+    land exactly on real values. With
-     the --min-count at 1 the range is the real min and max, and an outlier
-     can reappear at or near its real value.
- 
-```
-
-**File**: `src/cmd/synthesize/model.rs` (modified, +5/-1)
-```diff
-@@ -13,7 +13,7 @@ use super::{
+ use super::{
+     generator::ColumnGenerator, group_generator::GroupGenerator, output::OutType,
+-    relationships::EmitUnit,
++    relationships::EmitUnit, target::Target,
  };
  use crate::{CliError, CliResult, cmd::describegpt::dictionary::is_valid_strftime};
  
--const FORMAT_VERSION: u32 = 2;
-+const FORMAT_VERSION: u32 = 3;
+-const FORMAT_VERSION: u32 = 3;
++const FORMAT_VERSION: u32 = 4;
  
  #[derive(Serialize, Deserialize)]
  pub(crate) struct Model {
-@@ -198,6 +198,7 @@ fn check_group(group: &GroupGenerator) -> Result<(), String> {
-         GroupGenerator::Ordered {
-             member_cols,
-             is_int,
-+            decimals,
-             date_format,
-             anchor_buckets,
-             gap_buckets,
-@@ -207,6 +208,7 @@ fn check_group(group: &GroupGenerator) -> Result<(), String> {
-             let n = member_cols.len();
-             if n == 0
-                 || is_int.len() != n
-+                || decimals.len() != n
-                 || member_ranges.len() != n
-                 || gap_buckets.len() != n - 1
-                 || anchor_buckets.is_empty()
-@@ -224,6 +226,7 @@ fn check_group(group: &GroupGenerator) -> Result<(), String> {
-             cholesky_l,
-             marginals,
-             is_int,
-+            decimals,
-             null_ratios,
-         } => {
-             let k = col_indices.len();
-@@ -232,6 +235,7 @@ fn check_group(group: &GroupGenerator) -> Result<(), String> {
-                 || marginals.len() != k
-                 || marginals.iter().any(Vec::is_empty)
-                 || is_int.len() != k
-+                || decimals.len() != k
-                 || null_ratios.len() != k
-             {
-                 return bad("a correlated group with inconsistent members");
-```
-
-**File**: `src/cmd/synthesize/relationships.rs` (modified, +27/-14)
-```diff
-@@ -26,10 +26,10 @@ use super::{
-     dictionary::SynthRelationship,
-     faker_map::{self, Locale},
-     generator::{
--        ColumnGenerator, compute_null_ratio, date_buckets, effective_quantiles, numeric_buckets,
--        parse_epoch, parse_f64,
-+        ColumnGenerator, compute_null_ratio, date_buckets, effective_quantiles, float_decimals,
-+        floor_to, numeric_buckets, parse_epoch, parse_f64,
-     },
--    group_generator::{GroupGenerator, OrderedKind},
-+    group_generator::{GroupGenerator, OrderedKind, member_grid},
-     report::Suppression,
- };
- use crate::{
-@@ -481,6 +481,10 @@ fn resolve_ordered(
-     // Per-member integer formatting — keeps an Integer column emitting integers
-     // even in a mixed Integer/Float ordered group.
-     let is_int: Vec<bool> = types.iter().map(|t| *t == "Integer").collect();
-+    let decimals: Vec<Option<u32>> = member_cols
-+        .iter()
-+        .map(|&c| member_decimals(&stats[c]))
-+        .collect();
- 
-     // Every member, not just the anchor, needs a usable range. A member whose
-     // range `--min-count` emptied must stay empty, which only independent
-@@ -509,20 +513,15 @@ fn resolve_ordered(
-     // Members are non-decreasing, so no member may exceed any later member's
-     // upper bound. Cap each upper bound by the ones after it; otherwise the
-     // order floor (`max(prev)`) would push a follower past its trimmed range.
--    // Integer members are emitted rounded, so their caps are floored (in the
--    // Numeric domain) to keep the rounded value within range and in order.
--    let floor_int = |i: usize, v: f64| {
--        if kind == OrderedKind::Numeric && is_int[i] {
--            v.floor()
--        } else {
--            v
--        }
--    };
-+    // Members are emitted rounded to their grid (whole numbers for Integer,
-+    // source decimals for Float), so their caps are floored to that grid to
-+    // keep the rounded value within range and in order.
-+    let floor_grid = |i: usize, v: f64| floor_to(v, member_grid(kind, is_int[i], decimals[i]));
-     if let Some(last) = member_ranges.len().checked_sub(1) {
--        member_ranges[last].1 = floor_int(last, member_ranges[last].1);
-+        member_ranges[last].1 = floor_grid(last, member_ranges[last].1);
-     }
-     for i in (0..member_ranges.len().saturating_sub(1)).rev() {
--        member_ranges[i].1 = floor_int(i, member_ranges[i].1.min(member_ranges[i + 1].1));
-+        member_ranges[i].1 = floor_grid(i, member_ranges[i].1.min(member_ranges[i + 1].1));
-     }
-     if let Some(i) = member_ranges.iter().position(|&(lo, hi)| hi < lo) {
-         let msg = format!(
-@@ -645,6 +644,7 @@ fn resolve_ordered(
-         member_cols,
-         kind,
-         is_int,
-+        decimals,
-         date_format,
-         anchor_buckets,
-         gap_buckets,
-@@ -653,6 +653,16 @@ fn resolve_ordered(
-     }))
+@@ -26,6 +26,9 @@ pub(crate) struct Model {
+     /// The source's day-first preference, for reading sampled real dates.
+     pub(crate) prefer_dmy: bool,
+     pub(crate) schedule:   Vec<EmitUnit>,
++    /// With `--target`: one schedule per class, which rows use instead of
++    /// `schedule` (still the whole-input fit, for types and `--report`).
++    pub(crate) target:     Option<Target>,
  }
  
-+/// The decimals a numeric group member's values are rounded to: its source
-+/// `max_precision` for a Float column, `None` otherwise.
-+fn member_decimals(stats: &StatsRecord) -> Option<u32> {
-+    if stats.r#type == "Float" {
-+        float_decimals(stats)
-+    } else {
-+        None
-+    }
-+}
-+
- /// Classify the shared domain of an ordered group's member columns. Numeric
- /// members (Integer and/or Float) share the `Numeric` domain — per-member
- /// integer formatting is tracked separately. Returns `None` for a mixed or
-@@ -868,6 +878,7 @@ fn resolve_correlated(
-     // non-null values without forcing nulls to co-occur.
-     let mut marginals = Vec::with_capacity(kept_cols.len());
-     let mut is_int = Vec::with_capacity(kept_cols.len());
-+    let mut decimals = Vec::with_capacity(kept_cols.len());
-     let mut null_ratios = Vec::with_capacity(kept_cols.len());
-     for &col in &kept_cols {
-         let sr = &stats[col];
-@@ -881,6 +892,7 @@ fn resolve_correlated(
-         };
-         marginals.push(buckets);
-         is_int.push(sr.r#type == "Integer");
-+        decimals.push(member_decimals(sr));
-         null_ratios.push(compute_null_ratio(sr.nullcount, params.total_rows));
+ /// How the model was fitted. Informational only: generation never reads it.
+@@ -43,6 +46,7 @@ impl Model {
+         types: Vec<OutType>,
+         prefer_dmy: bool,
+         schedule: Vec<EmitUnit>,
++        target: Option<Target>,
+         fit: FitInfo,
+     ) -> Self {
+         Self {
+@@ -53,6 +57,7 @@ impl Model {
+             types,
+             prefer_dmy,
+             schedule,
++            target,
+         }
      }
  
-@@ -893,6 +905,7 @@ fn resolve_correlated(
-         cholesky_l,
-         marginals,
-         is_int,
-+        decimals,
-         null_ratios,
-     }))
- }
-```
-
-**File**: `tests/test_synthesize.rs` (modified, +206/-0)
-```diff
-@@ -3482,6 +3482,12 @@ fn synthesize_model_rejects_other_versions_and_broken_models() {
-     v1["qsv_synthesize_model"] = 1.into();
-     expect_error("v1.json", &v1, "model format version 1");
- 
-+    // A version 2 model has no decimal places, so Float columns would print
-+    // unrounded.
-+    let mut v2 = model.clone();
-+    v2["qsv_synthesize_model"] = 2.into();
-+    expect_error("v2.json", &v2, "model format version 2");
-+
-     let mut untyped = model.clone();
-     untyped["types"].as_array_mut().unwrap().pop();
-     expect_error(
-@@ -4308,3 +4314,203 @@ fn synthesize_quantiles_keep_small_float_precision() {
-         "median {median} should be near 5e-6"
-     );
- }
-+
-+/// Decimal places of a numeric cell as written (`12.5` has 1, `3` has 0).
-+fn written_decimals(cell: &str) -> usize {
-+    cell.split_once('.').map_or(0, |(_, frac)| frac.len())
-+}
-+
-+/// `price` has 2 places, `ratio` 3, `noise` binary-float noise (stats counts
-+/// 17 places, so it stays unrounded) and `whole` 1 (`stats` counts `12.0` as
-+/// 1 place, so whole-number draws print as `12`).
-+fn float_decimals_fixture(wrk: &Workdir) {
-+    let mut csv = String::from("price,ratio,noise,whole\n");
-+    for i in 1..=60 {
-+        let f = f64::from(i);
-+        csv.push_str(&format!(
-+            "{:.2},{:.3},{},{f:.1}\n",
-+            f * 1.37,
-+            f / 7.0,
-+            f * 0.1 + 0.2
-+        ));
-+    }
-+    wrk.create_from_string("data.csv", &csv);
-+}
-+
-+#[test]
-+fn synthesize_floats_keep_source_decimals() {
-+    let wrk = Workdir::new("synthesize_float_decimals");
-+    float_decimals_fixture(&wrk);
-+
-+    let mut cmd = wrk.command("synthesize");
-+    cmd.args(["-n", "2000", "--seed", "3", "--freq-limit", "1", "data.csv"]);
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    let max_places = |col: usize| {
-+        got[1..]
-+            .iter()
-+            .filter(|r| !r[col].is_empty())
-+            .map(|r| written_decimals(&r[col]))
-+            .max()
-+            .unwrap()
-+    };
-+    assert_eq!(max_places(0), 2, "price");
-+    assert_eq!(max_places(1), 3, "ratio");
-+    assert!(max_places(2) > 10, "noise should stay unrounded");
-+    assert_eq!(max_places(3), 1, "whole");
-+    assert!(
-+        got[1..].iter().any(|r| !r[3].contains('.')),
-+        "some whole-number draws should print without a point"
-+    );
-+    for r in &got[1..] {
-+        assert!(!r[0].starts_with("-0"), "negative zero: {r:?}");
-+    }
-+
-+    // A Float value printed without a point is still typed as a float.
-+    let mut cmd = wrk.command("synthesize");
-+    cmd.args(["-n", "50", "--seed", "3", "--freq-limit", "1"])
-+        .args(["--format", "jsonl", "data.csv"]);
-+    for row in jsonl_rows(&wrk.stdout::<String>(&mut cmd)) {
-+        assert!(row["whole"].is_f64(), "whole should be a float: {row:?}");
-+    }
-+}
-+
-+#[test]
-+fn synthesize_ordered_mixed_decimals_keep_order_and_range() {
-+    let wrk = Workdir::new("synthesize_ordered_mixed_decimals");
-+    // A 2-place Float, a 1-place Float and an Integer, in order, with gaps
-+    // smaller than the coarser grids: rounding `b` to 1 place can take it
-+    // below `a` (10.42 -> 10.4) unless it is moved up a step.
-+    let mut rows = vec![svec!["a", "b", "c"]];
-+    for i in 10..50 {
-+        rows.push(vec![
-+            format!("{i}.37"),
-+            format!("{i}.4"),
-+            format!("{}", i + 1),
-+        ]);
-+    }
-+    wrk.create("data.csv", rows.clone());
-+    wrk.create_from_string(
-+        "dict.json",
-+        r#"{
-+            "fields": [
-+                {"name": "a", "type": "Float"},
-+                {"name": "b", "type": "Float"},
-+                {"name": "c", "type": "Integer"}
-+            ],
-+            "relationships": [{"kind": "ordered", "members": ["a", "b", "c"]}]
-+        }"#,
-+    );
-+
-+    let mut cmd = wrk.command("synthesize");
-+    cmd.args(["-n", "3000", "--seed", "8", "--dictionary"])
-+        .arg(wrk.path("dict.json"))
-+        .arg("data.csv");
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    // `--min-count 5` trims each range to its 5th smallest and largest values.
-+    let trimmed: Vec<(f64, f64)> = (0..3)
-+        .map(|c| {
-+            let mut v: Vec<f64> = rows[1..].iter().map(|r| r[c].parse().unwrap()).collect();
-+            v.sort_by(f64::total_cmp);
-+            (v[4], v[v.len() - 5])
-+        })
-+        .collect();
-+    for r in &got[1..] {
-+        let v: Vec<f64> = r.iter().map(|s| s.parse().unwrap()).collect();
-+        assert!(v[0] <= v[1] && v[1] <= v[2], "order broken: {r:?}");
-+        for (c, &(lo, hi)) in trimmed.iter().enumerate() {
-+            assert!(
-+                lo <= v[c] && v[c] <= hi,
-+                "column {c} out of {lo}..={hi}: {r:?}"
-+            );
+@@ -109,31 +114,65 @@ impl Model {
+         for ty in &self.types {
+             check_date_format(ty.date_format())?;
+         }
+-        let mut filled = vec![false; ncols];
+-        for unit in &self.schedule {
+-            let cols: &[usize] = match unit {
+-                EmitUnit::Independent { col_idx, generator } => {
+-                    check_column(generator)?;
+-                    std::slice::from_ref(col_idx)
+-                },
+-                EmitUnit::Group(group) => {
+-                    check_group(group)?;
+-                    group.col_indices()
+-                },
+-            };
+-            for &col in cols {
+-                match filled.get_mut(col) {
+-                    Some(seen) if !*seen => *seen = true,
+-                    Some(_) => return Err(format!("column {col} is generated twice.")),
+-                    None => return Err(format!("column {col} is out of range.")),
+-                }
++        check_schedule(&self.schedule, ncols, None)?;
++        let Some(target) = &self.target else {
++            return Ok(());
++        };
++        if target.col_idx >= ncols {
++            return Err(format!(
++                "its target column {} is out of range.",
++                target.col_idx
++            ));
 +        }
-+        assert!(written_decimals(&r[0]) <= 2, "{r:?}");
-+        assert!(written_decimals(&r[1]) <= 1, "{r:?}");
-+        assert_eq!(written_decimals(&r[2]), 0, "{r:?}");
++        if target.classes.is_empty() || target.classes.iter().all(|c| c.rows == 0) {
++            return bad("a target with no classes");
++        }
++        for class in &target.classes {
++            if class
++                .bucket
++                .is_some_and(|(lo, hi)| lo.partial_cmp(&hi).is_none_or(std::cmp::Ordering::is_gt))
++            {
++                return bad("a target class whose low end is above its high end");
++            }
++            if class.grid.is_some_and(|(a, b)| a > b) {
++                return bad("a target class with an empty value range");
+             }
++            check_schedule(&class.schedule, ncols, Some(target.col_idx))?;
+         }
+-        match filled.iter().position(|seen| !seen) {
+-            Some(col) => Err(format!("column {col} is never generated.")),
+-            None => Ok(()),
++        Ok(())
 +    }
 +}
 +
-+#[test]
-+fn synthesize_correlat
++/// Checks that `schedule` fills every column (except `skip`, the target)
++/// exactly once, and that nothing it holds can panic when sampled.
++fn check_schedule(schedule: &[EmitUnit], ncols: usize, skip: Option<usize>) -> Result<(), String> {
++    let mut filled = vec![false; ncols];
++    if let Some(skip) = skip {
++        filled[skip] = true;
++    }
++    for unit in schedule {
++        let cols: &[usize] = match unit {
++            EmitUnit::Independent { col_idx, generator } => {
++                check_column(generator)?;
++                std::slice::from_ref(col_idx)
++            },
++            EmitUnit::Group(group) => {
++                check_group(group)?;
++                group.col_indices()
++            },
++        };
++        for &col in cols {
++            match filled.get_mut(col) {
++                Some(seen) if !*seen => *seen = true,
++                Some(_) => return Err(format!("column {col} is generated twice.")),
++                None => return Err(format!("column {col} is out of range.")),
++            }
+         }
+     }
++    match filled.iter().position(|seen| !seen) {
++        Some(col) => Err(format!("column {col} is never generated.")),
++        None => Ok(()),
++    }
+ }
+ 
+ fn bad(what: &str) -> Result<(), String> {
+```
+
+**File**: `src/cmd/synthesize/output.rs` (modified, +17/-2)
+```diff
+@@ -131,7 +131,22 @@ pub(crate) fn resolve_types(
+     types
+ }
+ 
+-const fn number_type(is_int: bool) -> OutType {
++/// Whether values a generator types `values` keep their written form in a
++/// column typed `column`: the same type, or Integer values in a Float column.
++pub(crate) fn holds_exactly(column: &OutType, values: &OutType) -> bool {
++    column == values || (*column == OutType::Float && *values == OutType::Integer)
++}
++
++/// Whether a column typed `column` can hold values a generator types
++/// `values`: the same type, Integer values in a Float column, or anything in a
++/// String column.
++pub(crate) fn holds(column: &OutType, values: &OutType) -> bool {
++    column == values
++        || *column == OutType::String
++        || (*column == OutType::Float && *values == OutType::Integer)
++}
++
++pub(crate) const fn number_type(is_int: bool) -> OutType {
+     if is_int {
+         OutType::Integer
+     } else {
+@@ -172,7 +187,7 @@ fn date_type(is_datetime: bool, date_format: Option<&String>) -> OutType {
+ /// so a zero-padded code stays text; a float must keep its decimal value
+ /// through f64; a date must be a whole day and a datetime must fit in
+ /// microseconds, as Parquet stores them.
+-fn pooled_type<'a>(
++pub(crate) fn pooled_type<'a>(
+     stats_type: &str,
+     mut values: impl Iterator<Item = &'a str>,
+     prefer_dmy: bool,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5084** (2026-11-21): feat(synthesize): --target <col> for conditional generation; read non-UTF8 input (@jqnatividad)
+- **PR #5081** (2026-11-20): deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes (@jqnatividad)
 - **PR #5080** (2026-11-20): feat(synthesize): Float columns keep their source decimal places (@jqnatividad)
 - **PR #5078** (2026-11-20): feat(synthesize): --quantiles <n> for finer numeric/date marginals (@jqnatividad)
 - **PR #5077** (2026-11-20): feat(synthesize): --rows-per-file <n> splits the output into files (@jqnatividad)
 - **PR #5075** (2026-11-19): feat(synthesize): --format csv|jsonl|parquet with typed columns (@jqnatividad)
-- **PR #5074** (2026-11-19): feat(synthesize): --save-model / --model to fit once and generate from the model (@jqnatividad)
-- **PR #5073** (2026-11-18): feat(synthesize): add --shard k/N to generate one slice of a seeded dataset (@jqnatividad)
 
 ---
 
@@ -2873,21 +2615,21 @@ round a step away (4.000000000000005 at 15 places became
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. synthesize): Float columns keep their source decimal places
+## X. synthesize): --target <col> for conditional generation; read non-UTF8 input
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `18803975`: synthesize): Float columns keep their source decimal places. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ea8e9cca`: synthesize): --target <col> for conditional generation; read non-UTF8 input. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- `synthesize`: Float columns now keep their source's decimal places. A synthetic value is rounded to the most places any value of the column shows in the input (`stats` `max_precision`), so a 2-place price column prints `106.86` instead of `106.85678552041723`. Values print in their shortest form, so trailing zeros are dropped (`12.50` prints as `12.5`). This applies to independent columns and to `ordered` and `correlated` relationship members; in an `ordered` chain each member is rounded to its own places and still never prints below its predecessor or outside its range. A column whose `max_precision` is above 15 (binary-float noise such as `0.30000000000000004`) is left unrounded, as is a value too large to round exactly at its column's places (at 15 places, values from about 1.1 up; at 2 places, above about 10^13). Rounded floats can land exactly on real values, which `--report` counts as exact matches. The random draws are the same, so outside `ordered` relationships a seeded run gives the same rows as before with only Float cells rounded; in an `ordered` chain each member builds on the rounded value before it, so later members, Integer ones included, can differ by a step. Sav
+- **`qsv-synthesize --target <col>`**: conditional generation. Each row draws a class of `<col>` (at most 50 distinct values, or a numeric column's quantile buckets) in proportion to its source rows, after dropping classes seen in fewer than `--min-count` rows, then fills the other columns from that class's own profile; `stats` and `frequency` run once more per class. Skill regenerated from the USAGE text. ([#5084](https://github.com/dathere/qsv/pull/5084))
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2897,7 +2639,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `18803975` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ea8e9cca` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

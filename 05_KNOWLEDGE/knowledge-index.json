@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T04:20:41.444Z",
+  "last_updated": "2026-11-21T04:39:22.775Z",
   "total_verified_learnings": 9058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22937,
+  "total_items": 22943,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "82819859",
-      "content_hash": "f78b3e961b7ef712d19d2242b2338a8701f3ba5d5b25464c8f9ac154709c8265",
+      "source_version": "ea8e9cca",
+      "content_hash": "4c5c339a1d3e71305f939be42af05282277ed5e37a21d3d193ce752da70132e7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T16:42:28.898Z"
+      "persisted_at": "2026-11-21T04:39:16.027Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112174,9 +112174,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "92d4419f788bf2dac26d4c3bad6e9594ce4fe8253d3475322d0f87172d755ba3",
+      "content_hash": "a9540d821b57f7d3722debe36617f8f589966667382a98703df67bbc04af8d4f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T16:42:33.224Z"
+      "persisted_at": "2026-11-21T04:39:22.775Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -112894,9 +112894,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for meshery-meshery-learnings",
       "repository": "meshery-meshery-learnings",
       "source_version": "HEAD",
-      "content_hash": "e3ceaabe6e603c446a0f8e74f7809c7dc3d62ae002a98e97d9a251e6dde0e6a3",
+      "content_hash": "2c022f2d42ec89342f6cd0cf61918114a7559bfee6bf9690fc8dee26cabd39b1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T03:49:21.374Z"
+      "persisted_at": "2026-11-21T04:39:21.623Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants",
@@ -113974,9 +113974,9 @@
       "title": "Technical Construction Intelligence: kirillzyusko-react-native-keyboard-controller-learnings Core Invariants",
       "repository": "kirillzyusko-react-native-keyboard-controller-learnings",
       "source_version": "HEAD",
-      "content_hash": "640948c65f05268d52b29812775b9107b4e9994118b0cbfc4b9e83c5c8de4b4a",
+      "content_hash": "95b55ead05d967e11228c4d7f8c58b7b1a566aae0517f9a364c32c7fc0905fe1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T06:36:11.768Z"
+      "persisted_at": "2026-11-21T04:39:20.020Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kirillzyusko-react-native-keyb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kirillzyusko-react-native-keyb",
@@ -113986,9 +113986,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kirillzyusko-react-native-keyboard-controller-learnings",
       "repository": "kirillzyusko-react-native-keyboard-controller-learnings",
       "source_version": "HEAD",
-      "content_hash": "7e0aca13aa8a5923bd7f77facfd44a52e7f524872c12630892e2510fc5c350d9",
+      "content_hash": "144e2391f50ec997782e70b4778c9c962c1317e4f63f21a34139f3f27052ff33",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:36:11.884Z"
+      "persisted_at": "2026-11-21T04:39:20.353Z"
     },
     "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants": {
       "item_id": "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants",
@@ -219747,8 +219747,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "82819859",
-      "content_hash": "eca5b78ccc20fea74de7bbbe8f5b7424843e7aadafba546e6a9d7027b5a855b1",
+      "source_version": "ea8e9cca",
+      "content_hash": "a0a6618ba359cc594498a45f4e7156bd20e590e4c7f05c6bcb1288588b82c51d",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -219881,6 +219881,11 @@
           "number": 9600,
           "title": "bump Polars to upstream 93d31f0; gate SQL COPY TO file writes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9729,
+          "title": "--target <col> for conditional generation; read non-UTF8 input",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219888,7 +219893,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T16:42:28.239Z",
+      "verified_at": "2026-11-21T04:39:15.181Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220854,10 +220859,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "18803975",
-      "content_hash": "2c98304a052914de311c397e67d3616428d798bf43b83a06281f6e34fb3a072f",
+      "source_version": "ea8e9cca",
+      "content_hash": "108e880bc43cac0774a9425da887cd1618f2ccbee70bea18dbd6380006ada4e8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T14:04:12.339Z"
+      "persisted_at": "2026-11-21T04:39:15.868Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -220927,9 +220932,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "b4005f5c9e77357066a0a9418808488f0b099be5c3ec0ddb7b9195fb9abaacef",
+      "content_hash": "6907aef041c574c863cefb18f9efd32d9d3041cd3aab1f819924b608af5a44c1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T14:07:35.987Z"
+      "persisted_at": "2026-11-21T04:39:22.597Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -237420,8 +237425,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "c5d506a5",
-      "content_hash": "7f90d73fb1008c30c084ff7d0f72ac184bf1c5ad4ffd40e5968f9aae8975f23d",
+      "source_version": "5f96e08e",
+      "content_hash": "4f7926ad58a2c6941460678dfb74d869aeb5c7e074b39e04820e6a7bf66f2203",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -237443,7 +237448,7 @@
         {
           "number": 9157,
           "title": "Empirical Invariant Guard in meshery-server_errors_index.json",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 9295,
@@ -237466,7 +237471,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T03:48:47.497Z",
+      "verified_at": "2026-11-21T04:39:08.592Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237520,10 +237525,10 @@
       "relative_path": "08_VERIFICATION/meshery-meshery-verification-protocol-empirical-defect-shield-for-meshery-mesher.md",
       "title": "Verification Protocol: Empirical Defect Shield for meshery/meshery",
       "repository": "meshery/meshery",
-      "source_version": "c5d506a5",
-      "content_hash": "bbeefdbeca91939e4cf73515eae16bfee132b11a041fbaee7a7c1f6d1e253204",
+      "source_version": "5f96e08e",
+      "content_hash": "1bf31a91681f55831e4dba9f3e734d548f1a43edb8927650d7b922b3e6152780",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T03:48:48.425Z"
+      "persisted_at": "2026-11-21T04:39:09.509Z"
     },
     "candidate_directive-compose-supervise-vm-workers-from-their-log-stream-instead-of-polling-worker": {
       "item_id": "candidate_directive-compose-supervise-vm-workers-from-their-log-stream-instead-of-polling-worker",
@@ -269045,14 +269050,19 @@
       "slug": "kirillzyusko-react-native-keyboard-controller",
       "platform": "github",
       "source_url": "https://github.com/kirillzyusko/react-native-keyboard-controller",
-      "source_version": "0012bfd1",
-      "content_hash": "55208439477c7494916c1d9925034170a31eeacbe9bebb020d2d1c5c24516d0b",
+      "source_version": "67112625",
+      "content_hash": "d9d9f8b41821ded9c4df6d854b50f8e8288c978b9d4dec3067700e729333d340",
       "dossier_path": "07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
       "promoted_rules": [
         {
           "number": 8894,
           "title": "keep KeyboardExtender opaque during predictive back",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9728,
+          "title": "check `KeyboardProvider` state on UI thread in `StatusBar.setTranslucent`",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -269061,7 +269071,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T06:36:05.577Z",
+      "verified_at": "2026-11-21T04:39:06.400Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -272365,10 +272375,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-meshery-meshery-architecture-intelligence-meshery-meshery-core-invariants.md",
       "title": "Architecture Intelligence: meshery/meshery Core Invariants",
       "repository": "meshery/meshery",
-      "source_version": "d085ff5e",
-      "content_hash": "522fc83bc5e3a0bc474df27c75268d5bb2f21aa22add34ee3d6a552c8eb7e86d",
+      "source_version": "5f96e08e",
+      "content_hash": "ab9fbf9b13ab6365552cc60f14fb9f91692343613019393e706e45d137bda3f3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T10:41:08.844Z"
+      "persisted_at": "2026-11-21T04:39:09.193Z"
     },
     "rule-8954": {
       "learning_id": "rule-8954",
@@ -272440,9 +272450,9 @@
       "title": "Architecture Intelligence: meshery-meshery-learnings Core Invariants",
       "repository": "meshery-meshery-learnings",
       "source_version": "HEAD",
-      "content_hash": "45e8d7a53000f0985de6fe5e2129b46e8940bafbfffa225996c4cde25c4eb04f",
+      "content_hash": "82b287d0135696c68ec93907073c16a1d1008fa67d176d296e38149af7432b23",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T10:41:18.649Z"
+      "persisted_at": "2026-11-21T04:39:21.325Z"
     },
     "rule-8955": {
       "learning_id": "rule-8955",
@@ -285948,25 +285958,25 @@
       "rule_number": 9157,
       "title": "Empirical Invariant Guard in meshery-server_errors_index.json",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "3a3c535f",
+      "source_version": "5f96e08e",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-18T07:39:03.546Z"
+      "verified_at": "2026-11-21T04:39:08.592Z"
     },
     "candidate_directive-empirical-invariant-guard-in-meshery-server_errors_index-json": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-meshery-server_errors_index-json",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-9JHM-empirical-invariant-guard-in-meshery-server_errors_index-json.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-50ZS-empirical-invariant-guard-in-meshery-server_errors_index-json.md",
       "title": "Empirical Invariant Guard in meshery-server_errors_index.json",
       "repository": "meshery-meshery-learnings",
       "source_version": "HEAD",
-      "content_hash": "33a4c59734b35cdfc8fce792b990faefce63557f7372862869fed781961ca307",
+      "content_hash": "806e4b55dcc205943f0e677cd830ff8205751fb68c4fa170694ca5bd8c0d0fa6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T07:39:48.587Z"
+      "persisted_at": "2026-11-21T04:39:21.165Z"
     },
     "candidate_directive-empirical-invariant-guard-in-changelog": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-changelog",
@@ -301196,10 +301206,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/meshery-meshery-agent-contract-meshery-meshery-autonomous-specialist-persona.md",
       "title": "Agent Contract: meshery/meshery Autonomous Specialist Persona",
       "repository": "meshery/meshery",
-      "source_version": "c5d506a5",
-      "content_hash": "6d41da2c4c94696d7bda3b3eead7f34ecc775b2953169c5da440f813004fe6bb",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-20T03:48:48.310Z"
+      "source_version": "5f96e08e",
+      "content_hash": "7088177eb7c694a93ef27f038327daf70a1d6b87bc9635a9029e058c74454ed3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T04:39:09.364Z"
     },
     "agent_contract-agent-contract-meshery-meshery-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-meshery-meshery-learnings-autonomous-specialist-persona",
@@ -301209,9 +301219,9 @@
       "title": "Agent Contract: meshery-meshery-learnings Autonomous Specialist Persona",
       "repository": "meshery-meshery-learnings",
       "source_version": "HEAD",
-      "content_hash": "495ca604102e19c84c1174667294031cd14a2f0ad9e98fd6cac59257ed74d27b",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-20T03:49:21.245Z"
+      "content_hash": "1528ecb78d51cdb7e300f4e8b5e448ade051775237a88fe9abf30cfe52ef950d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T04:39:21.483Z"
     },
     "learn-github-bridgecrewio-checkov": {
       "learning_id": "learn-github-bridgecrewio-checkov",
@@ -311440,6 +311450,82 @@
       "content_hash": "83f23569079ec0d1e6650c39cf892df4bac5514b79b3a49758148ca4a10a4f01",
       "domain_letter": "H",
       "persisted_at": "2026-11-21T04:20:40.096Z"
+    },
+    "rule-9728": {
+      "learning_id": "rule-9728",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9728,
+      "title": "check `KeyboardProvider` state on UI thread in `StatusBar.setTranslucent`",
+      "source_url": "https://github.com/kirillzyusko/react-native-keyboard-controller",
+      "source_version": "67112625",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T04:39:06.400Z"
+    },
+    "candidate_directive-check-keyboardprovider-state-on-ui-thread-in-statusbar-settranslucent": {
+      "item_id": "candidate_directive-check-keyboardprovider-state-on-ui-thread-in-statusbar-settranslucent",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4ZZC-check-keyboardprovider-state-on-ui-thread-in-statusbar-settranslucent.md",
+      "title": "check `KeyboardProvider` state on UI thread in `StatusBar.setTranslucent`",
+      "repository": "kirillzyusko-react-native-keyboard-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6a6f6558a6d0ed2f76758dd36ed4cc95eada668af1d4b45f1d7ce0cdd28cf9b0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T04:39:19.849Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kirillzyusko-react-native-keyboard-": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kirillzyusko-react-native-keyboard-",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-kirillzyusko-react-native-keyboard-controller-learnings-adr-subsystem-boundary-m.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in kirillzyusko-react-native-keyboard-controller-learnings",
+      "repository": "kirillzyusko-react-native-keyboard-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f0cb33f56c920db680c158fd665df1324d28efa87859d74649cc4221efbc4d41",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T04:39:20.212Z"
+    },
+    "rule-9729": {
+      "learning_id": "rule-9729",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9729,
+      "title": "--target <col> for conditional generation; read non-UTF8 input",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "ea8e9cca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T04:39:15.181Z"
+    },
+    "candidate_directive-target-col-for-conditional-generation-read-non-utf8-input": {
+      "item_id": "candidate_directive-target-col-for-conditional-generation-read-non-utf8-input",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4WR0-target-col-for-conditional-generation-read-non-utf8-input.md",
+      "title": "--target <col> for conditional generation; read non-UTF8 input",
+      "repository": "dathere/qsv",
+      "source_version": "ea8e9cca",
+      "content_hash": "e97f3d56c7777e8327809b8fc3be78e41a3026965c979972ccb58d93102848c4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T04:39:15.666Z"
+    },
+    "candidate_directive-synthesize-target-col-for-conditional-generation-read-non-utf8-input": {
+      "item_id": "candidate_directive-synthesize-target-col-for-conditional-generation-read-non-utf8-input",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-51YY-synthesize-target-col-for-conditional-generation-read-non-utf8-input.md",
+      "title": "synthesize): --target <col> for conditional generation; read non-UTF8 input",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6a62ad90fcd311e1fa257b7dc140dae0512c836dee9c6a2182ded10ae66bdcce",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T04:39:22.431Z"
     }
   },
   "ai-builder-brain": {

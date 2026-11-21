@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "82819859",
+    "sourceVersion": "ea8e9cca",
     "license": "NOASSERTION",
-    "contentHash": "eca5b78ccc20fea74de7bbbe8f5b7424843e7aadafba546e6a9d7027b5a855b1",
-    "lastHarvestedAt": "2026-11-20T16:42:28.420Z",
+    "contentHash": "a0a6618ba359cc594498a45f4e7156bd20e590e4c7f05c6bcb1288588b82c51d",
+    "lastHarvestedAt": "2026-11-21T04:39:15.430Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "c5d506a5",
+    "sourceVersion": "5f96e08e",
     "license": "Apache-2.0",
-    "contentHash": "7f90d73fb1008c30c084ff7d0f72ac184bf1c5ad4ffd40e5968f9aae8975f23d",
-    "lastHarvestedAt": "2026-11-20T03:48:47.711Z",
+    "contentHash": "4f7926ad58a2c6941460678dfb74d869aeb5c7e074b39e04820e6a7bf66f2203",
+    "lastHarvestedAt": "2026-11-21T04:39:08.799Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
@@ -11343,10 +11343,10 @@
     "repository": "kirillzyusko/react-native-keyboard-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/kirillzyusko/react-native-keyboard-controller",
-    "sourceVersion": "0012bfd1",
+    "sourceVersion": "67112625",
     "license": "MIT",
-    "contentHash": "55208439477c7494916c1d9925034170a31eeacbe9bebb020d2d1c5c24516d0b",
-    "lastHarvestedAt": "2026-11-17T06:36:05.745Z",
+    "contentHash": "d9d9f8b41821ded9c4df6d854b50f8e8288c978b9d4dec3067700e729333d340",
+    "lastHarvestedAt": "2026-11-21T04:39:06.622Z",
     "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller"
   },
   "margelo-react-native-blur": {

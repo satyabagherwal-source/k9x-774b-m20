@@ -11729,3 +11729,6 @@
 | `CYCLE-20261121-GSGE` | `2026-11-21T03:52:30.734Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9725` | Yes (`3e8e1e78...`) |
 | `CYCLE-20261121-AM0U` | `2026-11-21T04:15:42.078Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9726` | Yes (`1e688fac...`) |
 | `CYCLE-20261121-GWKP` | `2026-11-21T04:20:35.689Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9727` | Yes (`7f0b0174...`) |
+| `CYCLE-20261121-4PRU` | `2026-11-21T04:39:06.618Z` | `kirillzyusko/react-native-keyboard-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9728` | Yes (`d9d9f8b4...`) |
+| `CYCLE-20261121-4RGB` | `2026-11-21T04:39:08.795Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9157` | Yes (`4f7926ad...`) |
+| `CYCLE-20261121-4WKI` | `2026-11-21T04:39:15.426Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9729` | Yes (`a0a6618b...`) |
