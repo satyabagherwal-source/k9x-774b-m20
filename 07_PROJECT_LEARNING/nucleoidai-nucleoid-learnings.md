@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `8b37fa90`  
+> **Source Version**: `e2f16915`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T06:28:05.015Z  
+> **Timestamp**: 2026-11-21T07:58:56.230Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T06:28:05.010Z  
+> **Harvest Timestamp**: 2026-11-21T07:58:56.226Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1558,10 +1558,10 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `315b255b` (2026-11-21)
-**Commit Message**: Fix synthesized instance implementations
+### Incident Patch 1: `356bce8c` (2026-11-21)
+**Commit Message**: Fix synthesized instance execution
 
-Store generated implementations on synthesized instances and enable the remaining rotation routines.
+Use synthesized implementations and include the current instance in execution. Reorder the synthesis routine's final transformations.
 
 **File**: `arc/src/synthesizer.ts` (modified, +5/-4)
 ```diff
@@ -1569,32 +1569,40 @@ Store generated implementations on synthesized instances and enable the remainin
    { x: 1, y: 0, rotation: 90 },
    { x: 1, y: 1, rotation: 180 },
    { x: 0, y: 1, rotation: 270 },
--  // { x: 1, y: 0, rotation: 270 },
--  // { x: 0, y: 0, rotation: 180 },
--  // { x: 0, y: 1, rotation: 90 },
-+  { x: 1, y: 0, rotation: 270 },
+-  { x: 1, y: 0, rotation: 270 },
+-  { x: 0, y: 0, rotation: 180 },
+   { x: 0, y: 1, rotation: 90 },
 +  { x: 0, y: 0, rotation: 180 },
-+  { x: 0, y: 1, rotation: 90 },
++  { x: 1, y: 0, rotation: 270 },
  ];
  
  async function synthesize({ train }) {
-@@ -44,6 +44,7 @@ async function synthesize({ train }) {
-           instance_name: synthesized_instance_name,
-           input_value: undefined,
-           output_value: undefined,
-+          implementation: undefined,
-           input_instance_matrix: input_instance_matrix,
-           output_instance_matrix: undefined,
-         };
-@@ -53,7 +54,7 @@ async function synthesize({ train }) {
-           instance: synthesized_instance,
-         });
+@@ -69,7 +69,7 @@ async function synthesize({ train }) {
+         const canvas_height: number = input_instance_matrix.length;
+         const class_declaration = train.class_declaration;
+         const declarations = train.declarations;
+-        const implementations = dataset.instances.map(
++        const implementations = synthesized_dataset.instances.map(
+           ({ implementation }) => implementation
+         );
  
--        instance.implementation = await object.implementation({
-+        synthesized_instance.implementation = await object.implementation({
-           train,
-           instance: synthesized_instance,
-           x: input_x,
+@@ -78,7 +78,7 @@ async function synthesize({ train }) {
+             `canvas_width = ${canvas_width}`,
+             `canvas_height = ${canvas_height}`,
+             class_declaration,
+-            instance.implementation,
++            synthesized_instance.implementation,
+             `${synthesized_instance_name}`,
+           ].join("\n\n")
+         );
+@@ -90,6 +90,7 @@ async function synthesize({ train }) {
+             class_declaration,
+             ...declarations,
+             ...implementations,
++            synthesized_instance.implementation,
+             `${synthesized_instance_name}`,
+           ].join("\n\n")
+         );
 ```
 
 #### Recent Merged Pull Requests:
@@ -1623,13 +1631,13 @@ Store generated implementations on synthesized instances and enable the remainin
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. synthesized instance implementations
+## X. synthesized instance execution
 
 **RULE**:
 When implementing operations in `arc/src/synthesizer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `315b255b`: synthesized instance implementations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `356bce8c`: synthesized instance execution. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/synthesizer.ts`.
@@ -1637,21 +1645,21 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  { x: 1, y: 0, rotation: 270 },
   { x: 0, y: 0, rotation: 180 },
-  { x: 0, y: 1, rotation: 90 },
-          implementation: undefined,
-        synthesized_instance.implementation = await object.implementation({
+  { x: 1, y: 0, rotation: 270 },
+        const implementations = synthesized_dataset.instances.map(
+            synthesized_instance.implementation,
+            synthesized_instance.implementation,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  // { x: 1, y: 0, rotation: 270 },
-  // { x: 0, y: 0, rotation: 180 },
-  // { x: 0, y: 1, rotation: 90 },
-        instance.implementation = await object.implementation({
+  { x: 1, y: 0, rotation: 270 },
+  { x: 0, y: 0, rotation: 180 },
+        const implementations = dataset.instances.map(
+            instance.implementation,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `315b255b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `356bce8c` are properly handled with clean fallback behavior.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T07:42:07.937Z",
-  "total_records": 2232,
+  "last_updated": "2026-11-21T07:59:01.610Z",
+  "total_records": 2233,
   "domains": {
     "A": {
       "total": 17,
@@ -59,7 +59,7 @@
       ]
     },
     "D": {
-      "total": 887,
+      "total": 888,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -947,7 +947,8 @@
         "domain_intelligence-research-knowledge-intelligence-skyhook-io-radar-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-biomejs-biome-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-biomejs-biome-learnings-core-invariants",
-        "DOM-D-9397456A"
+        "DOM-D-9397456A",
+        "domain_intelligence-research-knowledge-intelligence-sfu-db-connector-x-core-invariants"
       ]
     },
     "E": {
@@ -15311,8 +15312,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "84edcfe9a44c2325cdd5502d935a6387dfffd5519d40d93c06737b0f9dd49045",
-      "created_at": "2026-11-21T06:28:06.295Z"
+      "content_hash": "795de077ee769128f10461bd409d6c579c3519a02514ae30f0ef1724ec6da113",
+      "created_at": "2026-11-21T07:58:57.390Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -22977,8 +22978,8 @@
       "title": "Architecture Intelligence: MetrolistGroup/Metrolist Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-metrolistgroup-metrolist-architecture-intelligence-metrolistgroup-metrolist-core.md",
       "repository": "MetrolistGroup/Metrolist",
-      "content_hash": "dd38a643be3c8276b7565322a0ee9b5b5482899e89dfe543aca2efb2e84c35ab",
-      "created_at": "2026-11-16T00:17:31.280Z"
+      "content_hash": "1348f0331f5428894faf5d73ef4bee45bc1e868b101ac3127356482a9ca66210",
+      "created_at": "2026-11-21T07:58:48.096Z"
     },
     "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-core-invariants",
@@ -23004,8 +23005,8 @@
       "title": "Architecture Intelligence: metrolistgroup-metrolist-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-metrolistgroup-metrolist-learnings-architecture-intelligence-metrolistgroup-metr.md",
       "repository": "metrolistgroup-metrolist-learnings",
-      "content_hash": "791aa3471b7a49fabf95e1da887b4d7b67d396a1664360e58bbd25a443a47c7e",
-      "created_at": "2026-11-16T00:17:47.296Z"
+      "content_hash": "7d69a3a87240c55af7889e77a6eb2b9567f8dbb2de03973a41e40aa6b4bc2ae6",
+      "created_at": "2026-11-21T07:59:01.610Z"
     },
     "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-learnings-core-invariants",
@@ -27792,8 +27793,8 @@
       "title": "Research & Knowledge Intelligence: autogluon/chronos-2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autogluon-chronos-2-research-knowledge-intelligence-autogluon-chronos-2-core-.md",
       "repository": "autogluon/chronos-2",
-      "content_hash": "382bbf6895c8966799586d5d787021dc5e9d1f625900113334307cc1e6cacfb1",
-      "created_at": "2026-11-17T14:33:40.041Z"
+      "content_hash": "ee70590b8458514377d9f56d39c44662b93057e8cfaeab61b821893db1588cd6",
+      "created_at": "2026-11-21T07:58:42.081Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autogluon-chronos-2-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-autogluon-chronos-2-learnings-core-invariants",
@@ -27801,8 +27802,8 @@
       "title": "Research & Knowledge Intelligence: hf-autogluon-chronos-2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autogluon-chronos-2-learnings-research-knowledge-intelligence-hf-autogluon-ch.md",
       "repository": "hf-autogluon-chronos-2-learnings",
-      "content_hash": "6d711ee43fb91c7caf127d421091d79f61413028814826d1113d6944f0d88bb4",
-      "created_at": "2026-11-17T14:33:44.000Z"
+      "content_hash": "1474e9a600f0771486dfb79f43dee8b65ef7f1fc8ada627a26968249deada59c",
+      "created_at": "2026-11-21T07:59:01.057Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-moss-image-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-moss-image-core-invariants",
@@ -34188,8 +34189,8 @@
       "title": "Design Intelligence: herdrdev/herdr Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-herdrdev-herdr-design-intelligence-herdrdev-herdr-core-invariants.md",
       "repository": "herdrdev/herdr",
-      "content_hash": "93f90e5d989db1619e2ab9b293cdf60219b963e6b0031ad3bc522a3f81943db0",
-      "created_at": "2026-11-19T21:08:10.376Z"
+      "content_hash": "60c2baf4ac9406c7263974e2e4cc7009c7c4613b91f969b0d0904f1bb9618ce8",
+      "created_at": "2026-11-21T07:58:43.209Z"
     },
     "domain_intelligence-design-intelligence-herdrdev-herdr-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-herdrdev-herdr-learnings-core-invariants",
@@ -34197,8 +34198,8 @@
       "title": "Design Intelligence: herdrdev-herdr-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-herdrdev-herdr-learnings-design-intelligence-herdrdev-herdr-learnings-core-invar.md",
       "repository": "herdrdev-herdr-learnings",
-      "content_hash": "65ab406c0ceb5b1eb022fe962019ac2741acd4ba52706630fabcbcf2f718ee05",
-      "created_at": "2026-11-19T21:08:22.072Z"
+      "content_hash": "15df09429c395b896b83ddcf41173a9872406303b4331e40300fb4057cd6d6b3",
+      "created_at": "2026-11-21T07:59:00.624Z"
     },
     "domain_intelligence-technical-construction-intelligence-lapce-lapce-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lapce-lapce-core-invariants",
@@ -37495,6 +37496,15 @@
       "confidence": 0.9,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-21T06:46:53.123Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-sfu-db-connector-x-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-sfu-db-connector-x-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: sfu-db/connector-x Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-sfu-db-connector-x-research-knowledge-intelligence-sfu-db-connector-x-core-invar.md",
+      "repository": "sfu-db/connector-x",
+      "content_hash": "081211e1b2e6be511f9143b20b6dd692614a8baceec9421f64f279c353d9e64b",
+      "created_at": "2026-11-21T07:58:55.438Z"
     }
   }
 }

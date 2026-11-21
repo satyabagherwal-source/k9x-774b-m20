@@ -11784,3 +11784,8 @@ Every entry in this ledger must capture:
 | `learn-github-jithin-sabu-purge-app` | `https://github.com/jithin-sabu/purge-app` | `384b5b6c` | Multi-dimensional audit evidence | 2026-11-21T07:05:13.148Z |
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `ef0b734b` | Multi-dimensional audit evidence | 2026-11-21T07:10:31.560Z |
 | `learn-github-meta-docusaurus` | `https://github.com/facebook/docusaurus` | `809ffffd` | Multi-dimensional audit evidence | 2026-11-21T07:42:00.875Z |
+| `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-11-21T07:58:41.906Z |
+| `learn-github-herdrdev-herdr` | `https://github.com/herdrdev/herdr` | `e8d7d970` | Multi-dimensional audit evidence | 2026-11-21T07:58:42.892Z |
+| `learn-github-metrolistgroup-metrolist` | `https://github.com/MetrolistGroup/Metrolist` | `5189f16f` | Multi-dimensional audit evidence | 2026-11-21T07:58:47.780Z |
+| `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `4cfcea91` | Multi-dimensional audit evidence | 2026-11-21T07:58:55.126Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e2f16915` | Multi-dimensional audit evidence | 2026-11-21T07:58:57.076Z |

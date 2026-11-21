@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T07:42:07.584Z",
+  "last_updated": "2026-11-21T07:59:01.484Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1687,14 +1687,14 @@
       "learning_id": "learn-github-svenstaro-miniserve"
     },
     {
-      "id": "CD-0GFS",
+      "id": "CD-9OAZ",
       "directive_title": "Empirical Invariant Guard in Cargo.lock",
-      "source_repo": "provablehq-snarkos-learnings",
-      "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-0GFS-empirical-invariant-guard-in-cargo-lock.md",
-      "status": "QUARANTINED_REJECT",
-      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-20",
+      "source_repo": "sfu-db/connector-x",
+      "source_commit": "4cfcea91",
+      "staged_file": "11_INBOX/candidate-directives/CD-9OAZ-empirical-invariant-guard-in-cargo-lock.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
       "domain_letter": "D"
     },
     {
@@ -41766,6 +41766,59 @@
       "domain_letter": "A",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-749ACB-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-9SAY",
+      "directive_title": "retry interrupted handoff reads; reap pane shells in 500+ pane sessions",
+      "source_repo": "herdrdev-herdr-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9SAY-retry-interrupted-handoff-reads-reap-pane-shells-in-500-pane-sessions.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-9IN0",
+      "directive_title": "integrate Weblate translations with corrections",
+      "source_repo": "MetrolistGroup/Metrolist",
+      "source_commit": "5189f16f",
+      "staged_file": "11_INBOX/candidate-directives/CD-9IN0-integrate-weblate-translations-with-corrections.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-9PT0",
+      "directive_title": "synthesized instance execution",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "e2f16915",
+      "staged_file": "11_INBOX/candidate-directives/CD-9PT0-synthesized-instance-execution.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-DD8CF5",
+      "directive_title": "retry interrupted handoff reads; reap pane shells in 500+ pane sessions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "herdrdev-herdr",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DD8CF5-retry-interrupted-handoff-reads-reap-pan.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-9T2F",
+      "directive_title": "i18n): integrate Weblate translations with corrections",
+      "source_repo": "metrolistgroup-metrolist-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9T2F-i18n-integrate-weblate-translations-with-corrections.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
     }
   ]
 }

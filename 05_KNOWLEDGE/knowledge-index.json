@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T07:42:07.937Z",
+  "last_updated": "2026-11-21T07:59:01.730Z",
   "total_verified_learnings": 9058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22986,
+  "total_items": 22994,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -215900,26 +215900,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8012,
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "40d8778b",
+      "source_url": "https://github.com/sfu-db/connector-x",
+      "source_version": "4cfcea91",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-20T08:04:00.476Z"
+      "verified_at": "2026-11-21T07:58:54.962Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-lock": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-lock",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0GFS-empirical-invariant-guard-in-cargo-lock.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-9OAZ-empirical-invariant-guard-in-cargo-lock.md",
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "repository": "provablehq-snarkos-learnings",
-      "source_version": "HEAD",
-      "content_hash": "74390b7c6db29405372eba136cf4e53f5e1ce62c12edcce1ea7f190f892ffb60",
+      "repository": "sfu-db/connector-x",
+      "source_version": "4cfcea91",
+      "content_hash": "56475b3d2621f6960701f55cdec35ec451c0e048e3c4ad18b9e5e45716dbc03e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-20T08:04:04.798Z"
+      "persisted_at": "2026-11-21T07:58:55.308Z"
     },
     "learn-github-langchain4j-langchain4j": {
       "learning_id": "learn-github-langchain4j-langchain4j",
@@ -229306,8 +229306,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "8b37fa90",
-      "content_hash": "914a0399f0583d0514d1e46f48912783461165620fca94cb17769653728da543",
+      "source_version": "e2f16915",
+      "content_hash": "ef228f9fec24006807303a600ba05fc673e2ede4b735b2313dd16e35cf437cbf",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -229485,6 +229485,11 @@
           "number": 9738,
           "title": "synthesized instance implementations",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9748,
+          "title": "synthesized instance execution",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229492,7 +229497,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T06:28:05.778Z",
+      "verified_at": "2026-11-21T07:58:56.916Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229534,10 +229539,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "8b37fa90",
-      "content_hash": "84edcfe9a44c2325cdd5502d935a6387dfffd5519d40d93c06737b0f9dd49045",
+      "source_version": "e2f16915",
+      "content_hash": "795de077ee769128f10461bd409d6c579c3519a02514ae30f0ef1724ec6da113",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T06:28:06.295Z"
+      "persisted_at": "2026-11-21T07:58:57.390Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -229546,10 +229551,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "8b37fa90",
-      "content_hash": "1daa27cca9697d7d975b0cd367436ca707cf30843125bbee02c6e7bb9c002c1a",
+      "source_version": "e2f16915",
+      "content_hash": "c8ee4e4209843a1d891d8155b36ea3df14a4b6c41dcd01d471cacc8164abce48",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T06:28:06.439Z"
+      "persisted_at": "2026-11-21T07:58:57.520Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -251698,11 +251703,16 @@
       "slug": "sfu-db-connector-x",
       "platform": "github",
       "source_url": "https://github.com/sfu-db/connector-x",
-      "source_version": "c52b20c0",
-      "content_hash": "86df9b1d91db507253997b941944b53fc5df3fa957fd9784b5ca58c5c0249ef0",
+      "source_version": "4cfcea91",
+      "content_hash": "e547cb38d62999a5c812b98f71ee2dd6ac32803d239b3b3f70df6459907d4fe6",
       "dossier_path": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "promoted_rules": [
+        {
+          "number": 8012,
+          "title": "Empirical Invariant Guard in Cargo.lock",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8667,
           "title": "URL Preservation Invariant Under Parameter Stripping",
@@ -251719,7 +251729,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T07:06:27.073Z",
+      "verified_at": "2026-11-21T07:58:54.962Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -251823,10 +251833,10 @@
       "relative_path": "08_VERIFICATION/sfu-db-connector-x-verification-protocol-empirical-defect-shield-for-sfu-db-conn.md",
       "title": "Verification Protocol: Empirical Defect Shield for sfu-db/connector-x",
       "repository": "sfu-db/connector-x",
-      "source_version": "ac243a1b",
-      "content_hash": "314dcabe614c03fd2929c56265bf453ca150dff824516cfee3022225d6d32670",
+      "source_version": "4cfcea91",
+      "content_hash": "73a7674e91dc7dc158856f8103a7236393b0d723983bf70cfbbcbcaaf3581abc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T23:39:59.463Z"
+      "persisted_at": "2026-11-21T07:58:55.590Z"
     },
     "domain_intelligence-technical-construction-intelligence-sfu-db-connector-x-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-sfu-db-connector-x-learnings-core-invariants",
@@ -252076,14 +252086,19 @@
       "slug": "metrolistgroup-metrolist",
       "platform": "github",
       "source_url": "https://github.com/MetrolistGroup/Metrolist",
-      "source_version": "7172398f",
-      "content_hash": "871933eea4398d0a45b5dff5058d12d3e157afa8159929d9d029701b50d88e7e",
+      "source_version": "5189f16f",
+      "content_hash": "90d0aeffeef1fde17680d2a1af6831b4e0a6930d1c8ff4947e8868983e101b88",
       "dossier_path": "07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md",
       "promoted_rules": [
         {
           "number": 8670,
           "title": "register java.rmi.MarshalledObject for native clipboard reflection",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9747,
+          "title": "integrate Weblate translations with corrections",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -252092,7 +252107,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T00:17:30.879Z",
+      "verified_at": "2026-11-21T07:58:47.613Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252134,10 +252149,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-metrolistgroup-metrolist-architecture-intelligence-metrolistgroup-metrolist-core.md",
       "title": "Architecture Intelligence: MetrolistGroup/Metrolist Core Invariants",
       "repository": "MetrolistGroup/Metrolist",
-      "source_version": "7172398f",
-      "content_hash": "dd38a643be3c8276b7565322a0ee9b5b5482899e89dfe543aca2efb2e84c35ab",
+      "source_version": "5189f16f",
+      "content_hash": "1348f0331f5428894faf5d73ef4bee45bc1e868b101ac3127356482a9ca66210",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T00:17:31.280Z"
+      "persisted_at": "2026-11-21T07:58:48.096Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metrolistgroup-metrolist": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metrolistgroup-metrolist",
@@ -252146,10 +252161,10 @@
       "relative_path": "08_VERIFICATION/metrolistgroup-metrolist-verification-protocol-empirical-defect-shield-for-metro.md",
       "title": "Verification Protocol: Empirical Defect Shield for MetrolistGroup/Metrolist",
       "repository": "MetrolistGroup/Metrolist",
-      "source_version": "7172398f",
-      "content_hash": "395b9dfa954de7706a463b6d62a1ff32b3f960450a6ad52e92e9e271dab174a0",
+      "source_version": "5189f16f",
+      "content_hash": "aecde9955e8b9d44eb1f49a2e7702e23d01d09e9003d6f24637caae4a3613016",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T00:17:31.378Z"
+      "persisted_at": "2026-11-21T07:58:48.224Z"
     },
     "learn-github-ehpanda-team-ehpanda": {
       "learning_id": "learn-github-ehpanda-team-ehpanda",
@@ -252357,9 +252372,9 @@
       "title": "Architecture Intelligence: metrolistgroup-metrolist-learnings Core Invariants",
       "repository": "metrolistgroup-metrolist-learnings",
       "source_version": "HEAD",
-      "content_hash": "791aa3471b7a49fabf95e1da887b4d7b67d396a1664360e58bbd25a443a47c7e",
+      "content_hash": "7d69a3a87240c55af7889e77a6eb2b9567f8dbb2de03973a41e40aa6b4bc2ae6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T00:17:47.296Z"
+      "persisted_at": "2026-11-21T07:59:01.610Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metrolistgroup-metrolist-learn": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metrolistgroup-metrolist-learn",
@@ -252369,9 +252384,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for metrolistgroup-metrolist-learnings",
       "repository": "metrolistgroup-metrolist-learnings",
       "source_version": "HEAD",
-      "content_hash": "e16a8e400747d5232e43de037e67ccd89dbf3123a34637c6c33002db4209ef47",
+      "content_hash": "0db11c89c7b693288a9a0d6792089825dcdd62f27d2d355faa76adf9b0249e8d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T00:17:47.391Z"
+      "persisted_at": "2026-11-21T07:59:01.730Z"
     },
     "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ehpanda-team-ehpanda-learnings-core-invariants",
@@ -274219,7 +274234,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autogluon/chronos-2",
       "source_version": "hf-autogluon-chronos-2",
-      "content_hash": "619ab415cc212065470ef7cf2ad90d0664e2053df330b8f9441b80f836eb538b",
+      "content_hash": "d545d3c0f767f6403e2873034933da751bbfe58ebff79037faa19861f84a65cb",
       "dossier_path": "07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
       "promoted_rules": [],
@@ -274228,7 +274243,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T14:33:39.612Z",
+      "verified_at": "2026-11-21T07:58:41.745Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -274245,9 +274260,9 @@
       "title": "Research & Knowledge Intelligence: autogluon/chronos-2 Core Invariants",
       "repository": "autogluon/chronos-2",
       "source_version": "hf-autogluon-chronos-2",
-      "content_hash": "382bbf6895c8966799586d5d787021dc5e9d1f625900113334307cc1e6cacfb1",
+      "content_hash": "ee70590b8458514377d9f56d39c44662b93057e8cfaeab61b821893db1588cd6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T14:33:40.041Z"
+      "persisted_at": "2026-11-21T07:58:42.081Z"
     },
     "candidate_directive-security-re-pin-credential_redaction-rs-scanner-digest": {
       "item_id": "candidate_directive-security-re-pin-credential_redaction-rs-scanner-digest",
@@ -274269,9 +274284,9 @@
       "title": "Research & Knowledge Intelligence: hf-autogluon-chronos-2-learnings Core Invariants",
       "repository": "hf-autogluon-chronos-2-learnings",
       "source_version": "HEAD",
-      "content_hash": "6d711ee43fb91c7caf127d421091d79f61413028814826d1113d6944f0d88bb4",
+      "content_hash": "1474e9a600f0771486dfb79f43dee8b65ef7f1fc8ada627a26968249deada59c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T14:33:44.000Z"
+      "persisted_at": "2026-11-21T07:59:01.057Z"
     },
     "learn-huggingface-comfy-org-moss-image": {
       "learning_id": "learn-huggingface-comfy-org-moss-image",
@@ -298638,14 +298653,19 @@
       "slug": "herdrdev-herdr",
       "platform": "github",
       "source_url": "https://github.com/herdrdev/herdr",
-      "source_version": "8734523b",
-      "content_hash": "e1984438b74ad738167ef692c08f1aa11c235378bad58e5c2bed9e96b83e5d4f",
+      "source_version": "e8d7d970",
+      "content_hash": "5919375293dbaf225004b42c2ad398c590bbd4889b8327b8b1b731ae3bbff504",
       "dossier_path": "07_PROJECT_LEARNING/herdrdev-herdr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/herdrdev-herdr-learnings.md",
       "promoted_rules": [
         {
           "number": 9443,
           "title": "keep the terminal theme readable on light terminals",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9746,
+          "title": "retry interrupted handoff reads; reap pane shells in 500+ pane sessions",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -298654,7 +298674,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T21:08:09.808Z",
+      "verified_at": "2026-11-21T07:58:42.692Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -298696,10 +298716,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-herdrdev-herdr-design-intelligence-herdrdev-herdr-core-invariants.md",
       "title": "Design Intelligence: herdrdev/herdr Core Invariants",
       "repository": "herdrdev/herdr",
-      "source_version": "8734523b",
-      "content_hash": "93f90e5d989db1619e2ab9b293cdf60219b963e6b0031ad3bc522a3f81943db0",
+      "source_version": "e8d7d970",
+      "content_hash": "60c2baf4ac9406c7263974e2e4cc7009c7c4613b91f969b0d0904f1bb9618ce8",
       "domain_letter": "F",
-      "persisted_at": "2026-11-19T21:08:10.376Z"
+      "persisted_at": "2026-11-21T07:58:43.209Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-herdrdev-herdr": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-herdrdev-herdr",
@@ -298708,10 +298728,10 @@
       "relative_path": "08_VERIFICATION/herdrdev-herdr-verification-protocol-empirical-defect-shield-for-herdrdev-herdr.md",
       "title": "Verification Protocol: Empirical Defect Shield for herdrdev/herdr",
       "repository": "herdrdev/herdr",
-      "source_version": "8734523b",
-      "content_hash": "86dd77bff7359f6548eb2203f7a084c2ee3324c3c7a0ee6a566b5b2abe87fdff",
+      "source_version": "e8d7d970",
+      "content_hash": "643f694963064fd5ef615bf49217fbd8d08ea8b7ea711c470047b6868e18059c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T21:08:10.523Z"
+      "persisted_at": "2026-11-21T07:58:43.332Z"
     },
     "rule-9444": {
       "learning_id": "rule-9444",
@@ -298773,9 +298793,9 @@
       "title": "Design Intelligence: herdrdev-herdr-learnings Core Invariants",
       "repository": "herdrdev-herdr-learnings",
       "source_version": "HEAD",
-      "content_hash": "65ab406c0ceb5b1eb022fe962019ac2741acd4ba52706630fabcbcf2f718ee05",
+      "content_hash": "15df09429c395b896b83ddcf41173a9872406303b4331e40300fb4057cd6d6b3",
       "domain_letter": "F",
-      "persisted_at": "2026-11-19T21:08:22.072Z"
+      "persisted_at": "2026-11-21T07:59:00.624Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-herdrdev-herdr-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-herdrdev-herdr-learnings",
@@ -298785,9 +298805,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for herdrdev-herdr-learnings",
       "repository": "herdrdev-herdr-learnings",
       "source_version": "HEAD",
-      "content_hash": "768e39c3bff804e600cdea99e96e27412e1886f99ef72b15cdb1698af584d5f7",
+      "content_hash": "e3683d4970aa2dcef5f899a18e860b3a57992d415f740e82b5e9b568134e24be",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T21:08:22.234Z"
+      "persisted_at": "2026-11-21T07:59:00.764Z"
     },
     "candidate_directive-revert-read-the-git-repository-with-go-git-only": {
       "item_id": "candidate_directive-revert-read-the-git-repository-with-go-git-only",
@@ -312154,6 +312174,108 @@
       "content_hash": "cc3bd7ce271df6bb6ce7e2184d0cb4fd376e2d6fc126167e1bc9ef4ee8db667a",
       "domain_letter": "H",
       "persisted_at": "2026-11-21T07:42:06.022Z"
+    },
+    "rule-9746": {
+      "learning_id": "rule-9746",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9746,
+      "title": "retry interrupted handoff reads; reap pane shells in 500+ pane sessions",
+      "source_url": "https://github.com/herdrdev/herdr",
+      "source_version": "e8d7d970",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T07:58:42.692Z"
+    },
+    "candidate_directive-retry-interrupted-handoff-reads-reap-pane-shells-in-500-pane-sessions": {
+      "item_id": "candidate_directive-retry-interrupted-handoff-reads-reap-pane-shells-in-500-pane-sessions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9SAY-retry-interrupted-handoff-reads-reap-pane-shells-in-500-pane-sessions.md",
+      "title": "retry interrupted handoff reads; reap pane shells in 500+ pane sessions",
+      "repository": "herdrdev-herdr-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ed20987d4a7d74dfe533bf5e0805d65100e4297712e433c092b3cce97c9308f2",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-21T07:59:00.496Z"
+    },
+    "rule-9747": {
+      "learning_id": "rule-9747",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9747,
+      "title": "integrate Weblate translations with corrections",
+      "source_url": "https://github.com/MetrolistGroup/Metrolist",
+      "source_version": "5189f16f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T07:58:47.613Z"
+    },
+    "candidate_directive-integrate-weblate-translations-with-corrections": {
+      "item_id": "candidate_directive-integrate-weblate-translations-with-corrections",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9IN0-integrate-weblate-translations-with-corrections.md",
+      "title": "integrate Weblate translations with corrections",
+      "repository": "MetrolistGroup/Metrolist",
+      "source_version": "5189f16f",
+      "content_hash": "018c6d1af54dac4eeb698fe914e51d0629cbaed2e07b49f5e334d5b80156351d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T07:58:47.969Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-sfu-db-connector-x-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-sfu-db-connector-x-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-sfu-db-connector-x-research-knowledge-intelligence-sfu-db-connector-x-core-invar.md",
+      "title": "Research & Knowledge Intelligence: sfu-db/connector-x Core Invariants",
+      "repository": "sfu-db/connector-x",
+      "source_version": "4cfcea91",
+      "content_hash": "081211e1b2e6be511f9143b20b6dd692614a8baceec9421f64f279c353d9e64b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T07:58:55.438Z"
+    },
+    "rule-9748": {
+      "learning_id": "rule-9748",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9748,
+      "title": "synthesized instance execution",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "e2f16915",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T07:58:56.916Z"
+    },
+    "candidate_directive-synthesized-instance-execution": {
+      "item_id": "candidate_directive-synthesized-instance-execution",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9PT0-synthesized-instance-execution.md",
+      "title": "synthesized instance execution",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "e2f16915",
+      "content_hash": "a3252884fc98cd5aef43b6f26efb1e6acd52a4f9bf7c859cd89bd8bcd298a87a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T07:58:57.254Z"
+    },
+    "candidate_directive-i18n-integrate-weblate-translations-with-corrections": {
+      "item_id": "candidate_directive-i18n-integrate-weblate-translations-with-corrections",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9T2F-i18n-integrate-weblate-translations-with-corrections.md",
+      "title": "i18n): integrate Weblate translations with corrections",
+      "repository": "metrolistgroup-metrolist-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1c84ada84965f5e3592758109e533f6418744b8c5a22d782f8f19ef363c2426f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T07:59:01.484Z"
     }
   },
   "ai-builder-brain": {

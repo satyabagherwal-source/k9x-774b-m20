@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T07:42:05.720Z",
+  "updated_at": "2026-11-21T07:59:01.302Z",
   "stats": {
-    "total_discovered": 7075,
-    "approved_pending_harvest": 6684,
+    "total_discovered": 7077,
+    "approved_pending_harvest": 6685,
     "harvested_count": 0,
-    "rejected_count": 391,
+    "rejected_count": 392,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6664,
+      "COMMUNITY_AND_EXPERT": 6666,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -152936,6 +152936,43 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
         "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-25EB0ACE1AC0": {
+      "id": "SRC-25EB0ACE1AC0",
+      "url": "https://github.com/user-attachments/assets/123b5178-2dcf-4428-8dbd-4393e0f63ccc",
+      "title": "https://github.com/user-attachments/assets/123b5178-2dcf-4428-8dbd-4393e0f63ccc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T07:59:01.267Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md",
+        "fileName": "metrolistgroup-metrolist-learnings.md"
+      }
+    },
+    "SRC-07BB663F4968": {
+      "id": "SRC-07BB663F4968",
+      "url": "http://apache.org/xml/features/disallow-doctype-decl",
+      "title": "http://apache.org/xml/features/disallow-doctype-decl",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-21T07:59:01.302Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md",
+        "fileName": "metrolistgroup-metrolist-learnings.md"
       }
     }
   }

@@ -11751,3 +11751,8 @@
 | `CYCLE-20261121-CM2G` | `2026-11-21T07:05:13.144Z` | `jithin-sabu/purge-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9743` | Yes (`1bf8fa2b...`) |
 | `CYCLE-20261121-JFR8` | `2026-11-21T07:10:31.556Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9744` | Yes (`0afe1831...`) |
 | `CYCLE-20261121-NXK6` | `2026-11-21T07:42:00.870Z` | `meta/docusaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9745` | Yes (`328a4001...`) |
+| `CYCLE-20261121-9DYN` | `2026-11-21T07:58:41.903Z` | `autogluon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md` | Yes (`d545d3c0...`) |
+| `CYCLE-20261121-9EQ1` | `2026-11-21T07:58:42.889Z` | `herdrdev/herdr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9746` | Yes (`59193752...`) |
+| `CYCLE-20261121-9IHT` | `2026-11-21T07:58:47.777Z` | `MetrolistGroup/Metrolist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9747` | Yes (`90d0aeff...`) |
+| `CYCLE-20261121-9O5V` | `2026-11-21T07:58:55.123Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`e547cb38...`) |
+| `CYCLE-20261121-9PO0` | `2026-11-21T07:58:57.072Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9748` | Yes (`ef228f9f...`) |

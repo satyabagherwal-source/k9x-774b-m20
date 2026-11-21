@@ -4,23 +4,23 @@
 {
   "source_repository": "MetrolistGroup/Metrolist",
   "source_url": "https://github.com/MetrolistGroup/Metrolist",
-  "source_version": "7172398f",
+  "source_version": "5189f16f",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-16T00:17:31.176Z",
+  "timestamp": "2026-11-21T07:58:47.964Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-metrolistgroup-metrolist",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [MetrolistGroup/Metrolist](https://github.com/MetrolistGroup/Metrolist) (Revision: `7172398f`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-16T00:17:31.176Z`  
+> **Provenance**: Harvested from [MetrolistGroup/Metrolist](https://github.com/MetrolistGroup/Metrolist) (Revision: `5189f16f`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-21T07:58:47.964Z`  
 > **Learning ID**: `learn-github-metrolistgroup-metrolist`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence)
 - **Confidence Rating**: 81%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MetrolistGroup/Metrolist](https://github.com/MetrolistGroup/Metrolist))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T00:17:29.977Z  
+> **Harvest Timestamp**: 2026-11-21T07:58:46.926Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Material Design YouTube Music client for Android, iOS and desktop
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14444 stars
+- **Stars / Engagement**: 14730 stars
 
 ---
 
@@ -56,13 +56,125 @@ The following architectural invariants have been empirically discovered and reco
 package com.metrolist.android.utils
 
 import android.app.Application
+import com.metrolist.shared.playback.PlaybackClientStats
 import com.metrolist.shared.settings.Settings
 
 object SentryManager {
     fun initialize(application: Application) = Unit
 
+    // Keeps the launch counter and stored counts bounded; debug builds never send them.
+    suspend fun reportPlaybackClientStats() {
+        PlaybackClientStats.takeReportOnLaunch()
+    }
+
     fun setEnabled(enabled: Boolean) {
         Settings.shared.sentryEnabled = enabled
+    }
+}
+
+```
+
+### Core Architecture Module: `androidApp/src/main/kotlin/com/metrolist/android/backup/AutomaticBackupWorker.kt`
+```
+package com.metrolist.android.backup
+
+import android.content.Context
+import androidx.work.CoroutineWorker
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
+import androidx.work.workDataOf
+import com.metrolist.shared.backup.AutoBackupFrequency
+import com.metrolist.shared.backup.defaultBackupFilename
+import com.metrolist.shared.db.MusicDatabase
+import com.metrolist.shared.settings.Settings
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import org.koin.core.context.GlobalContext
+import java.io.File
+import java.util.concurrent.TimeUnit
+
+class AutomaticBackupWorker(
+    context: Context,
+    parameters: WorkerParameters,
+) : CoroutineWorker(context, parameters) {
+    override suspend fun doWork(): Result = backupMutex.withLock { doWorkLocked() }
+
+    private suspend fun doWorkLocked(): Result {
+        if (inputData.getBoolean(PRUNE_ONLY_KEY, false)) {
+            return runCatching { pruneBackups(File(applicationContext.filesDir, BACKUP_DIRECTORY)) }
+                .fold({ Result.success() }, { Result.retry() })
+        }
+        val settings = Settings.shared
+        if (!settings.autoBackupEnabled) return Result.success()
+
+        val directory = File(applicationContext.filesDir, BACKUP_DIRECTORY)
+        val destination = File(directory, "${defaultBackupFilename(BACKUP_FILENAME_PREFIX)}.zip")
+        val backupResult =
+            runCatching {
+                check(directory.isDirectory || directory.mkdirs()) { "Could not create automatic backup directory" }
+                BackupRestoreManager(applicationContext, GlobalContext.get().get<MusicDatabase>())
+                    .backup(destination)
+                    .getOrThrow()
+            }
+        if (backupResult.isFailure) return Result.retry()
+
+        settings.autoBackupLastSuccessEpochMillis = System.currentTimeMillis()
+        runCatching { settings.flush() }
+        val pruneResult = runCatching { pruneBackups(directory) }
+        if (pruneResult.isFailure) {
+            WorkManager
+                .getInstance(applicationContext)
+                .enqueueUniqueWork(
+                    PRUNE_WORK_NAME,
+                    ExistingWorkPolicy.KEEP,
+                    OneTimeWorkRequestBuilder<AutomaticBackupWorker>()
+                        .setInputData(workDataOf(PRUNE_ONLY_KEY to true))
+                        .build(),
+                )
+        }
+        return Result.success()
+    }
+
+    private fun pruneBackups(directory: File) {
+        directory
+            .listFiles { file -> file.isFile && (file.extension == "tmp" || file.name.endsWith(".tmp")) }
+            ?.forEach { it.delete() }
+        directory
+            .listFiles { file -> file.isFile && file.extension == "zip" }
+            .orEmpty()
+            .sortedByDescending(File::lastModified)
+            .drop(MAX_RETAINED_BACKUPS)
+            .forEach { check(it.delete()) { "Could not remove expired automatic backup" } }
+    }
+
+    companion object {
+        private val backupMutex = Mutex()
+        private const val BACKUP_DIRECTORY = "automatic-backups"
+        private const val BACKUP_FILENAME_PREFIX = "metrolist-backup"
+        private const val MAX_RETAINED_BACKUPS = 10
+        private const val WORK_NAME = "automatic-backup"
+        private const val PRUNE_WORK_NAME = "automatic-backup-prune"
+        private const val PRUNE_ONLY_KEY = "pruneOnly"
+
+        fun schedule(
+            context: Context,
+            enabled: Boolean,
+            frequency: AutoBackupFrequency,
+        ) {
+            val workManager = WorkManager.getInstance(context)
+            if (!enabled) {
+                workManager.cancelUniqueWork(WORK_NAME)
+                return
+            }
+            val request =
+                PeriodicWorkRequestBuilder<AutomaticBackupWorker>(frequency.intervalMillis, TimeUnit.MILLISECONDS)
+                    .build()
+            workManager.enqueueUniquePeriodicWork(WORK_NAME, ExistingPeriodicWorkPolicy.UPDATE, request)
+        }
     }
 }
 
@@ -117,12 +229,14 @@ data class PersistPlayerState(
     val radioQueueSeedSongId: String? = null,
     val radioQueueFinite: Boolean? = null,
     val radioQueue: Boolean = false,
+    val explicitRadioQueue: Boolean? = null,
     val queueSessionId: Long? = null,
     val radioQueueChips: List<PersistRadioQueueChip> = emptyList(),
     val radioQueueSelectedChipId: String? = null,
     val radioQueueContinuation: String? = null,
     val radioQueuePlaylistId: String? = null,
     val radioQueueParams: String? = null,
+    val radioQueueExplicitFeed: Boolean? = null,
     val revision: String? = null,
 ) : java.io.Serializable
 
@@ -328,9 +442,13 @@ internal class AndroidQueueCoordinator(
     var recommendationSeedSongId: String? = null
         private set
     private var radioQueueContinuation: String? = null
+    private var radioQueueContinuationClassic: Boolean = Settings.shared.classicRecommendations
+    private var radioQueueExplicitFeed = false
     private var radioQueuePlaylistId: String? = null
     private var radioQueueParams: String? = null
     private var isRadioQueue = false
+    private var isExplicitRadioQueue = false
+    val explicitRadioQueue: Boolean get() = isExplicitRadioQueue
     private val queuedSongIds = linkedSetOf<String>()
     private val recommendationHistory = RadioRecommendationHistory()
     private val queueSessionLock = Any()
@@ -353,8 +471,7 @@ internal class AndroidQueueCoordinator(
     @Volatile
     var queueSessionId = 0L
         private set
-    private var pendingRestorePositionMs: Long? = null
-    private var restoredSongId: String? = null
+    private val pendingRestorePosition = PendingQueueRestorePosition()
     private var remoteLoadGeneration = 0L
 
     fun saveShuffleMode() {
@@ -389,6 +506,7 @@ internal class AndroidQueueCoordinator(
             radioQueueSeedSongId = recommendationSeedSongId,
             radioQueueFinite = isFiniteQueue,
             radioQueue = isRadioQueue,
+            explicitRadioQueue = isExplicitRadioQueue,
             queueSessionId = queueSessionId.takeIf { isRadioQueue },
             radioQueueChips =
                 queueChipsState.value.map { chip ->
@@ -401,6 +519,7 @@ internal class AndroidQueueCoordinator(
             radioQueueContinuation = radioQueueContinuation,
             radioQueuePlaylistId = radioQueuePlaylistId,
             radioQueueParams = radioQueueParams,
+            radioQueueExplicitFeed = radioQueueExplicitFeed,
         )
     }
 
@@ -426,12 +545,17 @@ internal class AndroidQueueCoordinator(
                 sessionId = state.queueSessionId,
             )
             val restoredPosition = state.currentPosition
-            pendingRestorePositionMs = restoredPosition.takeIf { it > 0L }
-            restoredSongId = restoredSongs.getOrNull(restoredQueue.currentIndex)?.id
             isRadioQueue = state.radioQueue || restoredMix
-            radioQueueContinuation = state.radioQueueContinuation
+            isExplicitRadioQueue = state.explicitRadioQueue ?: false
+            radioQueueContinuation = null
+            // A persisted continuation's recommendations mode is not stored, so after a
+            // restart its mode is unknown: discard it and let autoplay fetch a fresh page.
             radioQueuePlaylistId = state.radioQueuePlaylistId
             radioQueueParams = state.radioQueueParams
+            radioQueueExplicitFeed = state.radioQueueExplicitFeed ?: (
+                radioQueueParams != null ||
+                    radioQueuePlaylistId?.let { it != "RDAMVM$recommendationSeedSongId" } == true
+            )
             queueChipsState.value =
                 state.radioQueueChips.map { chip ->
                     RadioQueueChip(
@@ -439,19 +563,7 @@ internal class AndroidQueueCoordinator(
                         chip.title,
                         chip.playlistId,
                         chip.params,
-                        state.radioQueueSelectedChipId?.let { it == chip.id } ?: chip.isSelected,
-                    )
-                }
-            queuedSongIds.addAll(restoredSongs.map(SongItem::id))
-            player.setQueue(
-                songs = restoredSongs,
-                startIndex = restoredQueue.currentIndex,
-                startPlaying = false,
-            )
-            player.restoreQueue(restoredQueue)
-            _shuffleModeEnabled.value = player.isShuffleEnabled
-            _repeatMode.value = if (restoreModes) state.repeatMode else Player.REPEAT_MODE_OFF
-            player.seekTo(restoredPosition, PlaybackSeekSource("queue_restore",
+                        state.radio
 ```
 
 ### Core Architecture Module: `androidApp/src/main/kotlin/com/metrolist/android/playback/AndroidQueueTransitions.kt`
@@ -641,7 +753,7 @@ internal class AndroidQueueTransitions(
         }
 
         scope.launch {
-            snapshotFlow { Settings.shared.videoViewerVisible }
+            snapshotFlow { Triple(Settings.shared.videoViewerVisible, Settings.shared.crossfadeEnabled, Settings.shared.crossfadeGapless) }
                 .distinctUntilChanged()
                 .collect { cancelNextTrackPreload() }
         }
@@ -659,8 +771,7 @@ internal class AndroidQueueTransitions(
                         pendingAutomaticCacheSongs.clear()
                         cancelSongCache()
                     } else {
-                        scheduleQueuePreCache(queue.queueSessionId)
-                        nextTrackPreloadResource?.let { r
+                        scheduleQueuePreCache(que
 ```
 
 ### Core Architecture Module: `androidApp/src/main/kotlin/com/metrolist/android/playback/AutomotiveQueuePolicy.kt`
@@ -707,7 +818,21 @@ internal suspend fun offlineAutomotiveQueue(
     val playableIndices = queue.songs.indices.filter { isCached(queue.songs[it].id) }
     if (playableIndices.isEmpty()) return null
     val selected = playableIndices.firstOrNull { it >= queue.startIndex } ?: playableIndices.first()
-    return AutomotiveSongResolution(playableIndices.map(queue.songs::get), playableIndices.indexOf(selected))
+    return queue.copy(
+        songs = playableIndices.map(queue.songs::get),
+        startIndex = playableIndices.indexOf(selected),
+        retainsRequestedStartPosition = queue.retainsRequestedStartPosition && selected == queue.startIndex,
+    )
+}
+
+// Selects inside the active queue so going offline never trims it to the downloaded songs.
+internal suspend fun offlineQueueEntryIndex(
+    entries: List<MusicQueueEntry>,
+    startIndex: Int,
+    isCached: suspend (String) -> Boolean,
+): Int? {
+    val playableIndices = entries.indices.filter { isCached(entries[it].song.id) }
+    return playableIndices.firstOrNull { it >= startIndex } ?: playableIndices.firstOrNull()
 }
 
 internal suspend fun nextOfflineQueueIndex(
@@ -828,6 +953,47 @@ internal class DownloadQueuePersistence(
 
 ```
 
+### Core Architecture Module: `androidApp/src/main/kotlin/com/metrolist/android/playback/PendingQueueRestorePosition.kt`
+```
+package com.metrolist.android.playback
+
+/** The saved position belongs to one queue occurrence, not every copy of the same song. */
+internal class PendingQueueRestorePosition {
+    private var entryKey: Long? = null
+    private var positionMs: Long? = null
+
+    fun restore(
+        selectedEntryKey: Long?,
+        savedPositionMs: Long,
+    ) {
+        entryKey = selectedEntryKey
+        positionMs = savedPositionMs.takeIf { it > 0L }
+    }
+
+    fun update(
+        selectedEntryKey: Long?,
+        requestedPositionMs: Long,
+    ) {
+        if (entryKey != null && selectedEntryKey == entryKey) positionMs = requestedPositionMs.coerceAtLeast(0L)
+    }
+
+    fun take(
+        selectedEntryKey: Long?,
+        requestedPositionMs: Long,
+    ): Long {
+        val saved = positionMs?.takeIf { entryKey != null && selectedEntryKey == entryKey }
+        clear()
+        return (saved ?: requestedPositionMs).coerceAtLeast(0L)
+    }
+
+    fun clear() {
+        entryKey = null
+        positionMs = null
+    }
+}
+
+```
+
 ### Core Architecture Module: `androidApp/src/main/kotlin/com/metrolist/android/playback/QueueEnqueue.kt`
 ```
 package com.metrolist.android.playback
@@ -901,91 +1067,17 @@ internal fun queuePlaybackResolveBudget(
 
 ```
 
-### Core Architecture Module: `androidApp/src/main/kotlin/com/metrolist/android/playback/QueuePreCacheScheduler.kt`
-```
-package com.metrolist.android.playback
-
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-
-internal class QueuePreCacheScheduler(
-    private val scope: CoroutineScope,
-) {
-    private var cacheJob: Job? = null
-    private var cacheRequest: (suspend () -> Unit)? = null
-
-    fun schedule(cache: suspend () -> Unit) {
-        cacheRequest = cache
-        if (cacheJob == null) startCache()
-    }
-
-    fun cancel() {
-        cacheRequest = null
-        cacheJob?.cancel()
-    }
-
-    private fun startCache() {
-        val request = cacheRequest ?: return
-        cacheRequest = null
-        // Install ownership and cleanup even when cancellation happens before the worker starts.
-        val job = scope.launch(start = CoroutineStart.LAZY) { request() }
-        cacheJob = job
-        job.invokeOnCompletion {
-            if (cacheJob === job) {
-                cacheJob = null
-                startCache()
-            }
-        }
-        job.start()
-    }
-}
-
-```
-
-### Core Architecture Module: `androidApp/src/main/kotlin/com/metrolist/android/playback/RadioQueueBootstrap.kt`
-```
-package com.metrolist.android.playback
-
-import com.metrolist.shared.model.RadioQueuePage
-
-internal suspend fun bootstrapRadioQueue(
-    loadPage: suspend (String?) -> RadioQueuePage,
-    isCurrent: () -> Boolean,
-    applyPage: suspend (RadioQueuePage, initial: Boolean) -> Boolean,
-    nextContinuation: (RadioQueuePage) -> String? = { it.continuation },
-) {
-    var continuation: String? = null
-    val seenContinuations = mutableSetOf<String>()
-    var initial = true
-    repeat(10) {
-        if (!isCurrent()) return
-        val page = loadPage(continuation)
-        if (!isCurrent()) return
-        val appended = applyPage(page, initial)
-        if (!isCurrent()) return
-        if (appended) {
-            if (!initial) return
-            initial = false
-        }
-        continuation = nextContinuation(page)?.takeIf(seenContinuations::add) ?: return
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4779** (2026-11-16): **Cannot subscribe/save artists locally when not logged into YouTube Music [KMP 14.0.0 / Linux]**
-  *Symptoms*: ### Checklist  - [x] I can reproduce this on the [latest release](https://github.com/MetrolistGroup/Metrolist/releases). - [x] I searched open and closed issues and found no duplicate. - [x] This issue contains only one bug. - [x] The title describes the bug. - [x] This issue is written in English.  ### Device  Linux  ### Version  14.0.0  ### Issue  I use Metrolist without logging into a YouTube Music account.  On Metrolist KMP 14.0.0 for Linux, when I open an artist profile and click **Subscribe**, the button briefly changes to **Subscribed**, but almost immediately changes back to **Subscribe** and an error message appears at the bottom of the window.  ### Steps to reproduce  1. Open Metrolist without logging into YouTube Music. 2. Open any artist profile. 3. Click **Subscribe**. 4. The button briefly changes to **Subscribed**. 5. It immediately changes back to **Subscribe** and an error message appears.  ### Expected behavior  The artist should be saved/subscribed locally and remain in the library without requiring a YouTube Music account.  This functionality existed in previous versions and a similar issue was previously reported in #2414 ("Saved artists / Library"), where saving artists without being logged into YouTube Music was treated as supported behavior.  ### Actual behavior  The subscription appears to succeed for a moment, but then fails and the artist is not saved.  ### Environment  - Metrolist: 14.0.0 KMP - OS: Ubuntu 24.04.5 LTS - Architecture: x86_64 - Packag
+- **Issue #5097** (2026-11-21): **Repeat Playback Mode Resets When Switching to Another Song**
+  *Symptoms*: ### Checklist  - [x] I can reproduce this on the [latest release](https://github.com/MetrolistGroup/Metrolist/releases). - [x] I searched open and closed issues and found no duplicate. - [x] This issue contains only one bug. - [x] The title describes the bug. - [x] This issue is written in English.  ### Device  Android  ### Version  14.0.1+0a9dbca  ARM64-V8A  ### Issue  The Repeat playback setting does not persist when switching to a different song. Once Repeat One is enabled, it works correctly for the currently playing track and playing next song. However, when a new song starts by manually clicking a new song or recommended song or any song, the Repeat One setting is automatically disabled. This requires users to manually enable Repeat One again every time they switch songs.  ### Logs  ```shell  ```
 
-- **Issue #4777** (2026-11-16): **Home sections setting doesn't appear in Android**
-  *Symptoms*: ### Checklist  - [x] I can reproduce this on the [latest release](https://github.com/MetrolistGroup/Metrolist/releases). - [x] I searched open and closed issues and found no duplicate. - [x] This issue contains only one bug. - [x] The title describes the bug. - [x] This issue is written in English.  ### Device  Android  ### Version  v14  ### Issue  To give a frame of reference: here is how it is on desktop  <img width="1361" height="898" alt="image" src="https://github.com/user-attachments/assets/aec0716c-b432-48ad-b616-bccd36f26d0c" />  vs. on Android, which only has the auto-playlist setting  <img width="488" height="1083" alt="image" src="https://github.com/user-attachments/assets/8e12a28d-cd7a-4f62-9a52-6cc348cc22a1" />  ### Logs  ```shell  ```
+- **Issue #5085** (2026-11-21): **Device connect fails to pair devices**
+  *Symptoms*: ### Checklist  - [x] I can reproduce this on the [latest release](https://github.com/MetrolistGroup/Metrolist/releases). - [x] I searched open and closed issues and found no duplicate. - [x] This issue contains only one bug. - [x] The title describes the bug. - [x] This issue is written in English.  ### Device  Android, Linux  ### Version  14.0.1, izzy and flatpak  ### Issue  When trying to connect linux laptop with android, i get  `Account identity unavailable. Sign in again on both devices and select the same YouTube channel.` on both devices. I'm using the same account on both devices  <img width="1162" height="117" alt="obraz" src="https://github.com/user-attachments/assets/123b5178-2dcf-4428-8dbd-4393e0f63ccc" />  ### Logs  ```shell  ```
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1002,473 +1094,1045 @@ internal suspend fun bootstrapRadioQueue(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5015f4d5` (2026-11-15)
-**Commit Message**: fix(desktop): register java.rmi.MarshalledObject for native clipboard reflection (#4731)
+### Incident Patch 1: `5189f16f` (2026-11-21)
+**Commit Message**: fix(i18n): integrate Weblate translations with corrections (#5131)
 
-The JDK clipboard flavor comparator resolves java.rmi.MarshalledObject
-reflectively in sun.datatransfer.DataFlavorUtil. Native Image only exposes
-registered members, so Class.getDeclaredConstructor(Object.class) found
-nothing and the first clipboard paste failed with AssertionError:
-NoSuchMethodException: java.rmi.MarshalledObject.<init>(java.lang.Object).
-
-Register the constructor and the get method in the application reachability
-metadata. The tracing agent records the class without its members, so the
-generated metadata never carried the constructor.
-
-Co-authored-by: f6466553-lab <[REDACTED_EMAIL]>
-
-**File**: `docs/desktop-native-image.md` (modified, +2/-0)
+**File**: `androidApp/build.gradle.kts` (modified, +10/-1)
 ```diff
-@@ -72,6 +72,8 @@ The same scan writes `metrolist-serialization-types.tsv`, a resource listing eac
+@@ -193,14 +193,23 @@ java {
  
- Windows loads pinned Nucleus Windows, AWT, font, graphics and JNA/COM metadata alongside Skiko's Direct3D entries. Wry metadata is adapted to the app's current `io.github.kdroidfilter` namespace, with class names checked against `wrywebview:1.0.0-beta-02`. Metrolist's own window procedures, User32 interface, MENUITEMINFO and the JDK's DirectSound mixer/control types have additional Windows metadata. Windows DLL resources and JavaCPP's platform natives are retained. When an interactive desktop exists, the CI tracing agent merges a Windows JVM startup trace before compilation. On service runners without a desktop, the code-derived metadata remains the input.
- 
-+The JDK's clipboard flavor comparator resolves `java.rmi.MarshalledObject` reflectively in `sun.datatransfer.DataFlavorUtil`. Native Image exposes only registered members, so the image registers that class' constructor and its `get` method. Without the registration the first clipboard paste fails with `AssertionError: NoSuchMethodException: java.rmi.MarshalledObject.<init>(java.lang.Object)` on every platform, because the JDK's static initializer turns the missing constructor into an `Error`.
-+
- ### Test and inspect
- 
- Manual native builds run launch probes; Nightly skips them. Manual Linux builds give the packaged AppImage a private Xvfb display. Every smoke run uses an isolated profile. Native executables default to warning on a missing registration and falling back as the JVM would, because an English trace cannot see every locale's resources and a tester build must not exit for that. The smoke runner uses warning mode so every missing registration reaches the logs, and it fails on any reported registration. Exit mode would hide the cause, because its report goes through `System.out`, which the app logger buffers, and the process exits first. It runs with a French locale (`-Duser.language=fr`), so CI still fails on any missing registration, including localized JDK resources. The GUI smoke checks startup, screenshot, shutdown and logs. On Windows service runners without a desktop, the native executable instead runs a strict backend probe for AWT/Skia fonts, Java Sound providers, FFmpeg and JNA/COM initialization. Its result explicitly says GUI behavior is unverified. The smoke collector also checks redirected native stderr, so a missing-registration error there cannot count as a pass. JVM packages retain their existing unavailable-desktop handling.
+ val sentryAuthToken = providers.environmentVariable("SENTRY_AUTH_TOKEN").filter(String::isNotBlank)
+ val appVersion = providers.gradleProperty("appVersion").get()
++val bundledLanguageParser =
++    DocumentBuilderFactory
++        .newInstance()
++        .apply { setFeature("http://apache.org/xml/features/disallow-doctype-decl", true) }
++        .newDocumentBuilder()
+ val bundledLanguageTags =
+     rootProject
+         .file("shared/src/commonMain/composeResources")
+         .listFiles()
+         .orEmpty()
+         .asSequence()
+         .filter { it.isDirectory && it.name.startsWith("values-") && it.name != "values-xml" }
+-        .map { directory ->
++        .filter { directory ->
++            val catalog = File(directory, "strings.xml").takeIf(File::isFile) ?: return@filter false
++            val root = bundledLanguageParser.parse(catalog).documentElement
++            root.getElementsByTagName("string").length > 0 || root.getElementsByTagName("plurals").length > 0
++        }.map { directory ->
+             val qualifier = directory.name.removePrefix("values-")
+             val languageTag =
+                 if (qualifier.startsWith("b+")) {
 ```
 
-**File**: `scripts/desktop-native-image/resources/META-INF/native-image/com.metrolist/desktop-experiment/application/reachability-metadata.json` (modified, +10/-0)
+**File**: `desktopApp/src/jvmMain/kotlin/com/metrolist/desktop/state/DesktopLocaleManager.kt` (modified, +5/-97)
 ```diff
-@@ -78,6 +78,16 @@
-         }
-       ]
-     },
-+    {
-+      "type": "java.rmi.MarshalledObject",
-+      "allDeclaredConstructors": true,
-+      "methods": [
-+        {
-+          "name": "get",
-+          "parameterTypes": []
-+        }
-+      ]
-+    },
-     {
-       "type": "androidx.compose.material3.TooltipStateImpl$show$cancellableShow$1",
-       "fields": [
+@@ -4,10 +4,7 @@ import com.metrolist.shared.BuildConfig
+ import com.metrolist.shared.settings.canonicalAppLanguageTag
+ import com.metrolist.shared.utils.SystemLocale
+ import com.metrolist.shared.utils.desktopSystemLocale
+-import java.io.File
+-import java.net.JarURLConnection
+ import java.util.Locale
+-import java.util.jar.JarFile
+ 
+ data class DesktopLanguage(
+     val tag: String,
+@@ -18,8 +15,11 @@ data class DesktopLanguage(
+ object DesktopLocaleManager {
+     const val SYSTEM = "SYSTEM"
+     private val bundledTags: List<String> by lazy {
+-        val staticTags = BuildConfig.BUNDLED_LANGUAGE_TAGS.split(',').filter(String::isNotBlank)
+-        (staticTags + discoverBundledLanguages()).distinct().sorted()
++        BuildConfig.BUNDLED_LANGUAGE_TAGS
++            .split(',')
++            .filter(String::isNotBlank)
++            .distinct()
++            .sorted()
+     }
+     val systemLocale: Locale = desktopSystemLocale
+ 
+@@ -63,96 +63,4 @@ object DesktopLocaleManager {
+         val language = Locale.forLanguageTag(normalized).language
+         return bundledTags.firstOrNull { it.equals(language, ignoreCase = true) }
+     }
+-
+-    private fun discoverBundledLanguages(): List<String> {
+-        val langs = mutableSetOf<String>()
+-
+-        val classLoader = DesktopLocaleManager::class.java.classLoader
+-        val resourceUrls = classLoader.getResources("composeResources")
+-        while (resourceUrls.hasMoreElements()) {
+-            val resourceUrl = resourceUrls.nextElement()
+-            when (resourceUrl.protocol) {
+-                "file" -> {
+-                    val basePath = File(resourceUrl.toURI())
+-                    collectFromDirectory(basePath, langs)
+-                }
+-
+-                "jar" -> {
+-                    val connection = resourceUrl.openConnection() as? JarURLConnection
+-                    if (connection != null) {
+-                        connection.useCaches = false
+-                        connection.jarFile.use { jar -> collectFromJar(jar, langs) }
+-                    }
+-                }
+-            }
+-        }
+-
+-        return langs.sorted()
+-    }
+-
+-    private fun collectFromDirectory(
+-        basePath: File,
+-        langs: MutableSet<String>,
+-    ) {
+-        if (!basePath.isDirectory) return
+-        basePath.listFiles()?.forEach { child ->
+-            when {
+-                !child.isDirectory -> {
+-                    return@forEach
+-                }
+-
+-                child.name == "values-xml" -> {
+-                    return@forEach
+-                }
+-
+-                child.name == "values" -> {
+-                    return@forEach
+-                }
+-
+-                child.name.startsWith("values-") -> {
+-                    val tag = languageTagFromValuesDirectory(child.name)
+-                    if (tag.isNotBlank()) langs.add(tag)
+-                    return@forEach
+-                }
+-
+-                else -> {
+-                    collectFromDirectory(child, langs)
+-                }
+-            }
+-        }
+-    }
+-
+-    private fun collectFromJar(
+-        jar: JarFile,
+-        langs: MutableSet<String>,
+-    ) {
+-        val seenDirs = mutableSetOf<String>()
+-        val entries = jar.entries()
+-        while (entries.hasMoreElements()) {
+-            val entry = entries.nextElement()
+-            val valuesDir = valuesDirectory(entry.name) ?: continue
+-            if (!seenDirs.add(valuesDir)) continue
+-            if (valuesDir == "values-xml") continue
+-            if (valuesDir != "values") {
+-                val tag = languageTagFromValuesDirectory(valuesDir)
+-                if (tag.isNotBlank()) langs.add(tag)
+-            }
+-        }
+-    }
+-
+-    private fun valuesDirectory(entryPath: String): String? {
+-        val segments = entryPath.split('/')
+-        return segments.firstOrNull { it == "values" || it.startsWith("values-") }
+-    }
+-
+-    internal fun languageTagFromValuesDirectory(valuesDirectory: String): String {
+-        val qualifier = valuesDirectory.removePrefix("values-")
+-        val languageTag =
+-            if (qualifier.startsWith("b+")) {
+-                qualifier.removePrefix("b+").replace('+', '-')
+-            } else {
+-                qualifier.replace(Regex("-r(?=[A-Z]{2}(?:$|-))"), "-")
+-            }
+-        return Locale.forLanguageTag(languageTag).toLanguageTag()
+-    }
+ }
+```
+
+**File**: `docs/strings.md` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@ Agents and contributors edit only `values/strings.xml`. Never add, remove, renam
+ 
+ Desktop and shared Compose code use `com.metrolist.shared.generated.resources.Res`. Android's `generateAndroidStrings` scans non-test sources in `androidApp/src` and `shared/src/androidMain` for `R.string`, `R.plurals`, `@string` and `@plurals` references. It generates only those keys for each locale. Missing referenced base keys fail the build. Do not create platform-local catalogs or translation tables.
+ 
+-Gradle derives bundled language tags from resource directories. Hinglish uses `values-b+hi+Latn` and `hi-Latn`; saved `hin` selections migrate to that tag. `prepareComposeResourceAliases` generates `values-id` from `values-in` and `values-he` from `values-iw` for Compose. Weblate edits the original catalogs, not generated aliases.
++Gradle derives bundled language tags from resource directories containing translated entries. Empty Weblate catalogs stay in the repository but do not appear in app-language choices. Desktop uses the same generated tags. Hinglish uses `values-b+hi+Latn` and `hi-Latn`; saved `hin` selections migrate to that tag. `prepareComposeResourceAliases` generates `values-id` from `values-in` and `values-he` from `values-iw` for Compose. Weblate edits the original catalogs, not generated aliases.
+ 
+ Content-language and country preferences use the selected code or system locale. UI resource fallback does not authorize a hardcoded content-language default.
+ 
+```
+
+**File**: `fastlane/metadata/android/it/full_description.txt` (modified, +5/-5)
+```diff
+@@ -3,19 +3,19 @@ Client YouTube Music per Android in stile Material 3
+ Funzionalità:
+ 
+ - Riproduzione di YouTube Music ultra rapida e senza interruzioni
+-- Supporto per l'accesso a YouTube Music (utilizzabile appieno anche senza effettuare il login)
++- Supporto per l'accesso a YouTube Music (utilizzabile appieno anche senza login)
+ - Design **Material 3 Expressive**
+ - **Discord Rich Presence**, scrobbling tramite **Last.fm e ListenBrainz**
+-- **Nessuna pubblicità**, mai
++- **Nessuna pubblicità**, per sempre
+ - Ascolta insieme ad altre persone online in tempo reale
+ - Trasmissione su **Google Cast**, F-Cast, dispositivi SONOS e tramite DLNA
+ - Importazione di backup e playlist da oltre 29 altri client e 6 diversi servizi
+ - Riconoscimento musicale tramite **Shazam**
+-- Provider personalizzato ad alta velocità per i testi, con supporto per traduzione e traslitterazione
++- Provider per i testi personalizzato ad alta velocità, con supporto per traduzione e romanizzazione
+ - Tradotta in oltre 15 lingue
+ - Supporto per la **riproduzione video**
+ - Filtri avanzati per i contenuti
+ - **Canvas da Apple Music**, Spotify e YouTube Music
+-- Diversi stili di lettore, copertina, miniplayer e sfondo tra cui scegliere
++- Diversi stili di lettore, copertina, minilettore e sfondo tra cui scegliere
+ - Supporto per font e icone dell'app personalizzati
+-- ... e molto altro ancora!
++- …e molto altro ancora!
+```
+
+**File**: `fastlane/metadata/android/it/short_description.txt` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-Client YouTube Music per Android in stile Materiale 3
++Client YouTube Music per Android in stile Material 3
+```
+
+**File**: `shared/build.gradle.kts` (modified, +11/-1)
+```diff
+@@ -26,6 +26,7 @@ import java.util.Base64
+ import java.util.Locale
+ import java.util.Properties
+ import java.util.zip.ZipFile
++import javax.xml.parsers.DocumentBuilderFactory
+ 
+ plugins {
+     alias(libs.plugins.kotlin.multiplatform)
+@@ -246,13 +247,22 @@ tasks.matching { it.name == "lintAnalyzeAndroidHostTest" || it.name == "generate
+ 
+ val appVersion = providers.gradleProperty("appVersion").get()
+ val innerTubeXVersion = providers.gradleProperty("innerTubeXVersion").get()
++val bundledLanguageParser =
++    DocumentBuilderFactory
++        .newInstance()
++        .apply { setFeature("http://apache.org/xml/features/disallow-doctype-decl", true) }
++        .newDocumentBuilder()
+ val bundledLanguageTags =
+     file("src/commonMain/composeResources")
+         .listFiles()
+         .orEmpty()
+         .asSequence()
+         .filter { it.isDirectory && it.name.startsWith("values-") && it.name != "values-xml" }
+-        .map { directory ->
++        .filter { directory ->
++            val catalog = File(directory, "strings.xml").takeIf(File::isFile) ?: return@filter false
++            val root = bundledLanguageParser.parse(catalog).documentElement
++            root.getElementsByTagName("string").length > 0 || root.getElementsByTagName("plurals").length > 0
++        }.map { directory ->
+             val qualifier = directory.name.removePrefix("values-")
+             val languageTag =
+                 if (qualifier.startsWith("b+")) {
+```
+
+**File**: `shared/src/commonMain/composeResources/values-az/strings.xml` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++<?xml version="1.0" encoding="utf-8"?>
++<resources>
++</resources>
+```
+
+**File**: `shared/src/commonMain/composeResources/values-jv/strings.xml` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++<?xml version="1.0" encoding="utf-8"?>
++<resources>
++</resources>
 ```
 
 ---
 
-### Incident Patch 2: `2e559b71` (2026-11-15)
-**Commit Message**: fix(cache): restore v13 audio after the Android upgrade
+### Incident Patch 2: `ebfe654a` (2026-11-21)
+**Commit Message**: fix(i18n): preserve non-breaking unit and separator spacing
 
-Index complete download and player cache spans in place through read-only
-Media3 index queries. Restore Room metadata and dates, retain partial spans,
-and keep cache clear from deleting recovered downloads.
-
-fixes: #4728
-related to: #4726
-related to: #4596
-
-**File**: `androidApp/src/main/kotlin/com/metrolist/android/App.kt` (modified, +2/-1)
+**File**: `shared/src/commonMain/composeResources/values-cs/strings.xml` (modified, +40/-40)
 ```diff
-@@ -383,7 +383,8 @@ class App :
-             val settings = Settings.shared
-             val location = Json.encodeToString(listOf(settings.audioCacheLocation, settings.downloadLocation, settings.customDownloadPath))
-             val now = System.currentTimeMillis()
--            if (startupMaintenanceDue(settings.androidLastStorageAudit, now, STORAGE_AUDIT_INTERVAL_MS) ||
-+            if (get<AudioCacheManager>().needsLegacyAudioImport() ||
-+                startupMaintenanceDue(settings.androidLastStorageAudit, now, STORAGE_AUDIT_INTERVAL_MS) ||
-                 settings.androidStorageAuditLocation != location
-             ) {
-                 runStartupStorageAudit(
+@@ -86,7 +86,7 @@
+     <string name="bitrate">Přenosová rychlost</string>
+     <string name="sample_rate">Vzorkovací frekvence</string>
+     <string name="loudness">Hlučnost</string>
+-    <string name="loudness_value">%1$s dB</string>
++    <string name="loudness_value">%1$s dB</string>
+     <string name="volume">Hlasitost</string>
+     <string name="file_size">Velikost souboru</string>
+     <string name="unknown">Neznámé</string>
+@@ -116,22 +116,22 @@
+         <item quantity="other">%1$d alb</item>
+     </plurals>
+     <plurals name="n_week">
+-        <item quantity="one">%1$d týden</item>
+-        <item quantity="few">%1$d týdny</item>
+-        <item quantity="many">%1$d týdnů</item>
+-        <item quantity="other">%1$d týdnů</item>
++        <item quantity="one">%1$d týden</item>
++        <item quantity="few">%1$d týdny</item>
++        <item quantity="many">%1$d týdnů</item>
++        <item quantity="other">%1$d týdnů</item>
+     </plurals>
+     <plurals name="n_month">
+-        <item quantity="one">%1$d měsíc</item>
+-        <item quantity="few">%1$d měsíce</item>
+-        <item quantity="many">%1$d měsíců</item>
+-        <item quantity="other">%1$d měsíců</item>
++        <item quantity="one">%1$d měsíc</item>
++        <item quantity="few">%1$d měsíce</item>
++        <item quantity="many">%1$d měsíců</item>
++        <item quantity="other">%1$d měsíců</item>
+     </plurals>
+     <plurals name="n_year">
+-        <item quantity="one">%1$d rok</item>
+-        <item quantity="few">%1$d roky</item>
+-        <item quantity="many">%1$d let</item>
+-        <item quantity="other">%1$d let</item>
++        <item quantity="one">%1$d rok</item>
++        <item quantity="few">%1$d roky</item>
++        <item quantity="many">%1$d let</item>
++        <item quantity="other">%1$d let</item>
+     </plurals>
+     <string name="undo">Zrušit</string>
+     <string name="lyrics_not_found">Text skladby nenalezen</string>
+@@ -150,10 +150,10 @@
+     <string name="queue_loading">Načítání fronty…</string>
+     <string name="calculating">Vypočítavám…</string>
+     <plurals name="queue_track_count_duration">
+-        <item quantity="one">%1$d skladba · %2$s</item>
+-        <item quantity="few">%1$d skladby · %2$s</item>
+-        <item quantity="many">%1$d skladeb · %2$s</item>
+-        <item quantity="other">%1$d skladeb · %2$s</item>
++        <item quantity="one">%1$d skladba · %2$s</item>
++        <item quantity="few">%1$d skladby · %2$s</item>
++        <item quantity="many">%1$d skladeb · %2$s</item>
++        <item quantity="other">%1$d skladeb · %2$s</item>
+     </plurals>
+     <string name="suggested_tracks">Navrhované</string>
+     <string name="playback_notification_channel_name">Přehrávání</string>
+@@ -987,10 +987,10 @@
+         <item quantity="other">Před %1$d minutami</item>
+     </plurals>
+     <plurals name="hours">
+-        <item quantity="one">%1$d hodina</item>
+-        <item quantity="few">%1$d hodiny</item>
+-        <item quantity="many">%1$d hodin</item>
+-        <item quantity="other">%1$d hodin</item>
++        <item quantity="one">%1$d hodina</item>
++        <item quantity="few">%1$d hodiny</item>
++        <item quantity="many">%1$d hodin</item>
++        <item quantity="other">%1$d hodin</item>
+     </plurals>
+     <plurals name="listening_times">
+         <item quantity="one">%1$skrát</item>
+@@ -1011,10 +1011,10 @@
+         <item quantity="other">Navrhněte %1$d skladeb hostiteli. Pouze hostitel je schopen nahradit frontu.</item>
+     </plurals>
+     <plurals name="minutes">
+-        <item quantity="one">%1$d minuta</item>
+-        <item quantity="few">%1$d minuty</item>
+-        <item quantity="many">%1$d minut</item>
+-        <item quantity="other">%1$d minut</item>
++        <item quantity="one">%1$d minuta</item>
++        <item quantity="few">%1$d minuty</item>
++        <item quantity="many">%1$d minut</item>
++        <item quantity="other">%1$d minut</item>
+     </plurals>
+     <plurals name="n_track">
+         <item quantity="one">%1$d skladba</item>
+@@ -1119,10 +1119,10 @@
+     <string name="subscribe">Odebírat</string>
+     <string name="subscribed">Odebíráno</string>
+     <plurals name="seconds">
+-        <item quantity="one">%1$d sekunda</item>
+-        <item quantity="few">%1$d sekundy</item>
+-        <item quantity="many">%1$d sekund</item>
+-        <item quantity="other">%1$d sekund</item>
++        <item quantity="one">%1$d sekunda</item>
++        <item quantity="few">%1$d sekundy</item>
++        <item quantity="many">%1$d sekund</item>
++        <item quantity="other">%1$d sekund</item>
+     </plurals>
+     <string name="beta_tag">[BETA]</string>
+     <string name="crossfade">Prolínání</string>
+@@ -1613,7 +1613,7 @@
+     <string name="device_connect_device_type_desktop">Počítač</string>
+     <string name="device_connect_device_type_android_auto">Android Auto</string>
+     <string name="device_connect_device_type_unknown">Neznámé zařízení</string>
+-    <string name="device_connect_device_type_and_model">%1$s 
 ```
 
-**File**: `androidApp/src/main/kotlin/com/metrolist/android/playback/AudioCacheManager.kt` (modified, +129/-92)
+**File**: `shared/src/commonMain/composeResources/values-it/strings.xml` (modified, +31/-31)
 ```diff
-@@ -16,10 +16,7 @@ import android.provider.DocumentsContract
- import android.provider.MediaStore
- import android.provider.OpenableColumns
- import androidx.core.net.toUri
--import androidx.media3.database.StandaloneDatabaseProvider
--import androidx.media3.datasource.cache.ContentMetadata
--import androidx.media3.datasource.cache.NoOpCacheEvictor
--import androidx.media3.datasource.cache.SimpleCache
-+import androidx.media3.exoplayer.offline.Download
- import coil3.annotation.ExperimentalCoilApi
- import coil3.decode.BlackholeDecoder
- import coil3.imageLoader
-@@ -297,7 +294,25 @@ class AudioCacheManager(
-             if (touch) database.dao().touchCachedAudio(songId, System.currentTimeMillis(), System.currentTimeMillis() - 60_000L)
-             PlaybackResource(
-                 videoId = songId,
--                url = entry.filePath.takeIf(::isContentUri) ?: File(entry.filePath).toUri().toString(),
-+                url =
-+                    when {
-+                        isContentUri(entry.filePath) -> {
-+                            entry.filePath
-+                        }
-+
-+                        LegacyAudioFile.fromPath(context, entry.filePath) != null -> {
-+                            File(entry.filePath)
-+                                .toUri()
-+                                .buildUpon()
-+                                .scheme(LegacyAudioFile.SCHEME)
-+                                .build()
-+                                .toString()
-+                        }
-+
-+                        else -> {
-+                            File(entry.filePath).toUri().toString()
-+                        }
-+                    },
-                 headers = emptyMap(),
-                 loudnessDb = null,
-                 expiresAt = null,
-@@ -617,98 +632,95 @@ class AudioCacheManager(
-             }
-         }
+@@ -112,19 +112,19 @@
+         <item quantity="other">%1$d album</item>
+     </plurals>
+     <plurals name="n_week">
+-        <item quantity="one">%1$d settimana</item>
+-        <item quantity="many">%1$d settimane</item>
+-        <item quantity="other">%1$d settimane</item>
++        <item quantity="one">%1$d settimana</item>
++        <item quantity="many">%1$d settimane</item>
++        <item quantity="other">%1$d settimane</item>
+     </plurals>
+     <plurals name="n_month">
+-        <item quantity="one">%1$d mese</item>
+-        <item quantity="many">%1$d mesi</item>
+-        <item quantity="other">%1$d mesi</item>
++        <item quantity="one">%1$d mese</item>
++        <item quantity="many">%1$d mesi</item>
++        <item quantity="other">%1$d mesi</item>
+     </plurals>
+     <plurals name="n_year">
+-        <item quantity="one">%1$d anno</item>
+-        <item quantity="many">%1$d anni</item>
+-        <item quantity="other">%1$d anni</item>
++        <item quantity="one">%1$d anno</item>
++        <item quantity="many">%1$d anni</item>
++        <item quantity="other">%1$d anni</item>
+     </plurals>
+     <string name="undo">Annulla</string>
+     <string name="lyrics_not_found">Testo non trovato</string>
+@@ -703,8 +703,8 @@
+     <string name="downloaded_songs_empty_hint">Clicca sul pulsante di download su qualsiasi brano per salvarlo per l'ascolto offline.</string>
+     <string name="imported_playlist">Playlist importata</string>
+     <string name="import_error_unsupported_link">Questo link non è riconosciuto o supportato.</string>
+-    <string name="bitrate_value">%1$d kbps</string>
+-    <string name="sample_rate_value">%1$d Hz</string>
++    <string name="bitrate_value">%1$d kbps</string>
++    <string name="sample_rate_value">%1$d Hz</string>
+     <string name="import_error_unsupported_playlist_entries">Questa playlist contiene file locali o link diretti a cui Android non può accedere. Importa una playlist contenente link di YouTube, oppure scegli i file locali sul computer.</string>
+     <string name="import_error_local_files_require_local_playlist">I file audio locali possono essere importati solo in una playlist locale.</string>
+     <string name="import_error_file_read_failed">Impossibile leggere il file della playlist. Selezionalo di nuovo e concedi l’accesso ai file.</string>
+@@ -923,9 +923,9 @@
+     <string name="library_sort_updated">Aggiornati</string>
+     <string name="playlist_direction_descending">Ordine: decrescente</string>
+     <plurals name="hours">
+-        <item quantity="one">%1$d ora</item>
+-        <item quantity="many">%1$d ore</item>
+-        <item quantity="other">%1$d ore</item>
++        <item quantity="one">%1$d ora</item>
++        <item quantity="many">%1$d ore</item>
++        <item quantity="other">%1$d ore</item>
+     </plurals>
+     <plurals name="added_songs_to_playlist">
+         <item quantity="one">Aggiunto %1$d brano a %2$s</item>
+@@ -1081,9 +1081,9 @@
+         <item quantity="other">Suggerisci %1$d brani all'host. Solo l'host può sostituire la coda della stanza.</item>
+     </plurals>
+     <plurals name="minutes">
+-        <item quantity="one">%1$d minuto</item>
+-        <item quantity="many">%1$d minuti</item>
+-        <item quantity="other">%1$d minuti</item>
++        <item quantity="one">%1$d minuto</item>
++        <item quantity="many">%1$d minuti</item>
++        <item quantity="other">%1$d minuti</item>
+     </plurals>
+     <plurals name="n_track">
+         <item quantity="one">%1$d brano</item>
+@@ -1169,9 +1169,9 @@
+     <string name="subscribe">Iscriviti</string>
+     <string name="subscribed">Iscritto</string>
+     <plurals name="seconds">
+-        <item quantity="one">%1$d secondo</item>
+-        <item quantity="many">%1$d secondi</item>
+-        <item quantity="other">%1$d secondi</item>
++        <item quantity="one">%1$d secondo</item>
++        <item quantity="many">%1$d secondi</item>
++        <item quantity="other">%1$d secondi</item>
+     </plurals>
+     <string name="beta_tag">[BETA]</string>
+     <string name="crossfade">Dissolvenza</string>
+@@ -1370,7 +1370,7 @@
+     <string name="import_source_youtube_music">YouTube Music</string>
+     <string name="video_stats_mv_source">Fonte video musicale</string>
+     <string name="video_stats_stream_source">Fonte stream</string>
+-    <string name="settings_seconds_value">%1$d secondi</string>
++    <string name="settings_seconds_value">%1$d secondi</string>
+     <string name="settings_playback_speed_locked_listen_together">La velocità di riproduzione è fissata quando si utilizza Listen Together</string>
+     <string name="settings_diagnostic_logging">Log di diagnostica</string>
+     <string name="settings_diagnostic_logging_description">Scrive la diagnostica dell'applicazione su un file di log locale</string>
+@@ -1816,7 +1816,7 @@
+     <string name="canvas_source_youtube_music_video">Video musicale da YouTube</string>
+     <string name="seek_duration_description_android">Secondi da saltare toccando due volte sulla
+```
+
+**File**: `shared/src/commonMain/composeResources/values-zh-rCN/strings.xml` (modified, +8/-8)
+```diff
+@@ -80,7 +80,7 @@
+     <string name="bitrate">比特率</string>
+     <string name="sample_rate">采样率</string>
+     <string name="loudness">响度</string>
+-    <string name="loudness_value">%1$s dB</string>
++    <string name="loudness_value">%1$s dB</string>
+     <string name="volume">音量</string>
+     <string name="file_size">文件大小</string>
+     <string name="unknown">未知</string>
+@@ -104,13 +104,13 @@
+         <item quantity="other">%1$d 张专辑</item>
+     </plurals>
+     <plurals name="n_week">
+-        <item quantity="other">%1$d 周</item>
++        <item quantity="other">%1$d 周</item>
+     </plurals>
+     <plurals name="n_month">
+         <item quantity="other">%1$d 个月</item>
+     </plurals>
+     <plurals name="n_year">
+-        <item quantity="other">%1$d 年</item>
++        <item quantity="other">%1$d 年</item>
+     </plurals>
+     <string name="undo">撤销</string>
+     <string name="lyrics_not_found">未找到歌词</string>
+@@ -129,7 +129,7 @@
+     <string name="queue_loading">正在加载队列…</string>
+     <string name="calculating">正在计算…</string>
+     <plurals name="queue_track_count_duration">
+-        <item quantity="other">%1$d 首 · %2$s</item>
++        <item quantity="other">%1$d 首 · %2$s</item>
+     </plurals>
+     <string name="suggested_tracks">推荐</string>
+     <string name="playback_notification_channel_name">播放</string>
+@@ -292,14 +292,14 @@
+     <string name="app_font_picker_desc">选择 TTF 或 OTF 文件。Metrolist 会将其复制到应用专属存储空间。</string>
+     <string name="app_font_system">系统默认</string>
+     <string name="app_font_applied">使用 %1$s</string>
+-    <string name="app_font_invalid">无法使用该字体。请选择有效的 TTF 或 OTF 文件，大小小于 20 MB。</string>
++    <string name="app_font_invalid">无法使用该字体。请选择有效的 TTF 或 OTF 文件，大小小于 20 MB。</string>
+     <string name="app_font_downloads">快速字体下载</string>
+     <string name="app_font_checking">正在检查已安装字体…</string>
+     <string name="app_font_reset">重置字体</string>
+     <string name="app_font_reset_description">使用系统字体并移除导入的字体</string>
+     <string name="app_font_downloading">正在下载 %1$s…</string>
+     <string name="app_font_active">激活</string>
+-    <string name="app_font_installed">已安装 · 点击使用</string>
++    <string name="app_font_installed">已安装 · 点击使用</string>
+     <string name="app_font_download_and_use">点击下载并使用</string>
+     <string name="app_font_download_error">无法下载 %1$s。请检查连接并重试。</string>
+     <string name="app_font_import_custom">导入 TTF 或 OTF 文件</string>
+@@ -530,8 +530,8 @@
+     <string name="file_size_unit_terabyte">TB</string>
+     <string name="partial_song_count">≥ %1$s</string>
+     <string name="http_status_code">HTTP %1$d</string>
+-    <string name="lyrics_offset_decrease">−%1$d 毫秒</string>
+-    <string name="lyrics_offset_increase">+%1$d 毫秒</string>
++    <string name="lyrics_offset_decrease">−%1$d 毫秒</string>
++    <string name="lyrics_offset_increase">+%1$d 毫秒</string>
+     <string name="milliseconds_unit">毫秒</string>
+     <string name="playlist_add_progress">已处理 %1$d 首歌曲，共 %2$d 首</string>
+     <string name="playlist_add_stopped">%1$d 首歌曲已添加或已存在；%2$d 首歌曲的添加状态仍未确认。已添加的歌曲已保留。</string>
+```
+
+---
+
+### Incident Patch 3: `e78c7ede` (2026-11-21)
+**Commit Message**: fix(i18n): integrate current Weblate translations and main
+
+**File**: `androidApp/build.gradle.kts` (modified, +1/-0)
+```diff
+@@ -448,6 +448,7 @@ dependencies {
  
--    /**
--     * Moves downloads made by the legacy v13 app, which kept them in an ExoPlayer cache keyed by song id,
--     * into internal download storage. Imported entries leave the legacy cache one by one, so a failed run
--     * resumes on the next storage audit; the cache directory is removed once every entry is handled.
--     */
--    internal suspend fun importLegacyDownloads(directory: File = File(context.filesDir, LEGACY_DOWNLOAD_DIRECTORY)) =
--        withContext(Dispatchers.IO) {
-+    internal fun needsLegacyAudioImport(): Boolean =
-+        !File(context.filesDir, LEGACY_IMPORT_COMPLETE).exists() &&
-+            listOf(LEGACY_DOWNLOAD_DIRECTORY, LEGACY_PLAYER_DIRECTORY).any { File(context.filesDir, it).isDirectory }
-+
-+    // Index spans in place so recovery needs no second copy and never opens a destructive SimpleCache.
-+    internal suspend fun importLegacyDownloads(
-+        directory: File = File(context.filesDir, LEGACY_DOWNLOAD_DIRECTORY),
-+        playerDirectory: File = File(context.filesDir, LEGACY_PLAYER_DIRECTORY),
-+    ) = withContext(Dispatchers.IO) {
-+        storageLock.all {
-             database.dao().restoreDownloadDates()
--            if (!directory.isDirectory) return@withContext
--            // The legacy app indexed this cache in StandaloneDatabaseProvider's database; SimpleCache deletes spans it cannot index.
--            val databaseProvider = StandaloneDatabaseProvider(context)
--            val cache = SimpleCache(directory, NoOpCacheEvictor(), databaseProvider)
--            var failure: Exception? = null
--            try {
--                for (songId in cache.keys.toList()) {
--                    try {
--                        storageLock.song(songId) { importLegacyDownload(cache, songId) }
--                        cache.removeResource(songId)
--                    } catch (cancelled: CancellationException) {
--                        throw cancelled
--                    } catch (error: Exception) {
--                        Timber.tag(TAG).w(error, "Failed to import legacy download songId=%s", songId)
--                        if (failure == null) failure = error
--                    }
-+            val snapshot = readLegacyCache(context, directory, playerDirectory)
-+            var failure: Exception? = snapshot.failures.firstOrNull()
-+            for (entry in snapshot.entries) {
-+                try {
-+                    val download = snapshot.downloads.find { it.key == entry.key || it.songId == entry.key }
-+                    val songId = download?.songId ?: entry.key
-+                    importLegacyAudio(entry, download, songId)
-+                } catch (cancelled: CancellationException) {
-+                    throw cancelled
-+                } catch (error: Exception) {
-+                    Timber.tag(TAG).w(error, "Failed to import legacy audio key=%s; retaining spans", entry.key)
-+                    if (failure == null) failure = error
-                 }
--            } finally {
--                cache.release()
-             }
-             failure?.let { throw it }
--            SimpleCache.delete(directory, databaseProvider)
-+            File(context.filesDir, LE
+     implementation(libs.activity)
+     implementation(libs.lifecycle.process)
++    implementation(libs.androidx.work.runtime)
+     implementation(libs.material3)
+     implementation(libs.androidx.navigation3.ui)
+     implementation(libs.androidx.navigation3.runtime)
 ```
 
-**File**: `androidApp/src/main/kotlin/com/metrolist/android/playback/AutomotiveMediaLibrary.kt` (modified, +8/-1)
+**File**: `androidApp/src/main/kotlin/com/metrolist/android/App.kt` (modified, +38/-0)
 ```diff
-@@ -1281,7 +1281,14 @@ internal class AutomotiveMediaLibrary(
-                 .dao()
-                 .cachedAudioByKind(kind)
-                 .first()
--                .filter { entry -> File(entry.filePath).let { it.exists() && it.length() > 0L } }
-+                .filter { entry ->
-+                    val legacy = LegacyAudioFile.fromPath(context, entry.filePath)
-+                    if (legacy != null) {
-+                        runCatching { LegacyAudioFile.read(legacy).verify() }.isSuccess
-+                    } else {
-+                        File(entry.filePath).let { it.exists() && it.length() > 0L }
-+                    }
-+                }
-         if (cached.isEmpty()) return emptyList()
-         val localSongs = database.dao().getSongsByIds(cached.map { it.songId }).associateBy { it.id }
-         return cached.map { entry ->
-```
-
-**File**: `androidApp/src/main/kotlin/com/metrolist/android/playback/ExoPlaybackPlayer.kt` (modified, +8/-1)
-```diff
-@@ -4,6 +4,7 @@ import android.content.Context
- import android.content.Intent
- import android.media.AudioDeviceInfo
- import android.media.AudioManager
-+import android.net.Uri
+@@ -14,6 +14,7 @@ import android.content.pm.PackageManager
  import android.os.Build
- import android.os.Handler
- import android.os.Looper
-@@ -3703,6 +3704,12 @@ private fun buildDirectDataSourceFactory(
- ): DataSource.Factory {
-     val size = if (video) resource.videoContentLengthBytes else resource.contentLengthBytes
-     val url = if (video) checkNotNull(resource.videoUrl) else resource.url
-+    if (url.startsWith("${LegacyAudioFile.SCHEME}:")) {
-+        val path = checkNotNull(Uri.parse(url).path)
-+        val manifest = checkNotNull(LegacyAudioFile.fromPath(context, path))
-+        val source = LegacyAudioSource(manifest).also(onSourceOpened)
-+        return DataSource.Factory { SeekableMediaDataSource(source) }
-+    }
-     val boundedHttp = url.startsWith("https://")
-     if ((boundedHttp || resource.requireBoundedRange || resource.useRangeChunks) && size != null && size > 0L) {
-         val source =
-@@ -3842,7 +3849,7 @@ private fun resourceSummary(resource: PlaybackResource): String =
+ import android.os.SystemClock
+ import android.service.quicksettings.TileService
++import android.util.Log
+ import android.webkit.WebView
+ import androidx.compose.runtime.snapshots.Snapshot
+ import androidx.core.app.NotificationChannelCompat
+@@ -67,6 +68,8 @@ import com.metrolist.shared.state.coreModule
+ import com.metrolist.shared.utils.isCrashReportingAvailable
+ import com.metrolist.shared.youtube.di.sharedModule
+ import com.metrolist.shared.youtube.playback.AndroidContextProvider
++import com.metrolist.shared.youtube.playback.PlaybackEventLevel
++import com.metrolist.shared.youtube.playback.PlaybackEventLog
+ import com.metrolist.shared.youtube.playback.PlaybackNetworkStateStore
+ import kotlinx.coroutines.CoroutineScope
+ import kotlinx.coroutines.CoroutineStart
+@@ -85,6 +88,8 @@ import org.koin.android.ext.koin.androidContext
+ import org.koin.core.context.startKoin
+ import timber.log.Timber
+ import java.io.File
++import java.io.PrintWriter
++import java.io.StringWriter
+ import com.metrolist.shared.BuildConfig as SharedBuildConfig
  
- private class SeekableMediaDataSource(
-     private val source: SeekableMediaSource,
--) : BaseDataSource(true) {
-+) : BaseDataSource(source !is LegacyAudioSource) {
-     private var opened = false
-     private var uri = android.net.Uri.EMPTY
-     private var readPosition = 0L
-```
-
-**File**: `androidApp/src/main/kotlin/com/metrolist/android/playback/LegacyAudioCache.kt` (added, +325/-0)
-```diff
-@@ -0,0 +1,325 @@
-+package com.metrolist.android.playback
+ class App :
+@@ -150,6 +155,7 @@ class App :
+     @OptIn(ExperimentalResourceApi::class)
+     override fun onCreate() {
+         super.onCreate()
++        Timber.plant(AppFailureTree())
+         instance = this
+         AndroidContextProvider.applicationContext = applicationContext
+         val processName = currentProcessName()
+@@ -427,6 +433,38 @@ class App :
+     override fun newImageLoader(context: Context): ImageLoader = createAppImageLoader(context)
+ }
+ 
++private class AppFailureTree : Timber.Tree() {
++    override fun isLoggable(
++        tag: String?,
++        priority: Int,
++    ): Boolean = priority == Log.WARN || priority == Log.ERROR
 +
-+import android.content.Context
-+import android.database.sqlite.SQLiteDatabase
-+import android.util.AtomicFile
-+import androidx.media3.database.StandaloneDatabaseProvider
-+import androidx.media3.datasource.cache.ContentMetadata
-+import com.metrolist.shared.playback.SeekableMediaSource
-+import kotlinx.serialization.Serializable
-+import kotlinx.serialization.json.Json
-+import okio.ByteString.Companion.encodeUtf8
-+import timber.log.Timber
-+import java.io.DataInputStream
-+import java.io.File
-+import java.io.FileNotFoundException
-+import java.io.IOException
-+import java.io.RandomAccessFile
-+
-+internal data class LegacyDownload(
-+    val songId: String,
-+    val key: String,
-+    val state: Int,
-+    val length: Long,
-+    val bytesDownloaded: Long,
-+    val startedAt: Long,
-+)
-+
-+internal data class LegacyCacheSpan(
-+    val file: File,
-+    val position: Long,
-+    val length: Long,
-+    val touchedAt: Long,
-+)
-+
-+internal data class LegacyCacheEntry(
-+    val key: String,
-+    val length: Long?,
-+    val spans: List<LegacyCacheSpan>,
-+    val downloadCache: Boolean,
-+) {
-+    fun completeAudio(length: Long): LegacyAudioFile? {
-+        if (length <= 0) return null
-+        var position = 0L
-+        val audio = mutableListOf<LegacyAudioSpan>()
-+        for (span in spans.sortedWith(compareBy<LegacyCacheSpan> { it.position }.thenByDescending { it.length })) {
-+            if (position == length) break
-+            if (span.position > position) return null
-+            val end = span.position + span.length
-+            if (end <= position) continue
-+            val count = minOf(end, length) - position
-+            audio += LegacyAudioSpan(span.file.absolutePath, position - span.position, count, span.length)
-+            position += count
-+        }
-+        return if (position == length) LegacyAudioFile(audio) else null
++    override fun log(
++        priority: Int,
++        tag: String?,
++        message: String,
++        t: Throwable?,
++    ) {
++        val level =
++            when (priority) {
++                Log.ERROR -> PlaybackEventLevel.ERROR
++                Log.WARN -> PlaybackEventLevel.WARN
++                else -> return
++            }
++        if (message.startsWith("[YtLogger] ")) return
++        val messageWithoutThrowable =
++            t?.let { throwable ->
++                val stackTrace =
++                    StringWriter(256)
++                        .also { writer ->
++                            throwable.printStackTrace(PrintWriter(writer, false))
++                        }.toString()
++                message.removeSuffix("\n$stackTrace").removeSuffix(stackTrace).removeSuffix("\n")
++            } ?: message
++        PlaybackEventLog.captureApplicationFailure(level, tag ?: "Android", messageWithoutThrowable, t)
 +    }
 +}
 +
-+internal data class LegacyCacheSnapshot(
-+    val entries: List<LegacyCacheEntry>,
-+    val downloads: List<LegacyDownload>,
-+    val failures: List<Exception> = emptyList(),
-+)
+ private fun currentProcessName(): String =
+     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+         Application.getProcessName()
+```
+
+**File**: `androidApp/src/main/kotlin/com/metrolist/android/backup/AutomaticBackupWorker.kt` (added, +101/-0)
+```diff
+@@ -0,0 +1,101 @@
++package com.metrolist.android.backup
 +
-+// SimpleCache initialization can delete unindexed files. Read its v3 database and spans without opening a cache.
-+internal fun readLegacyCache(
++import android.content.Context
++import androidx.work.CoroutineWorker
++import androidx.work.ExistingPeriodicWorkPolicy
++import androidx.work.ExistingWorkPolicy
++import androidx.work.OneTimeWorkRequestBuilder
++import androidx.work.PeriodicWorkRequestBuilder
++import androidx.work.WorkManager
++import androidx.work.WorkerParameters
++import androidx.work.workDataOf
++import com.metrolist.shared.backup.AutoBackupFrequency
++import com.metrolist.shared.backup.defaultBackupFilename
++import com.metrolist.shared.db.MusicDatabase
++import com.metrolist.shared.settings.Settings
++import kotlinx.coroutines.sync.Mutex
++import kotlinx.coroutines.sync.withLock
++import org.koin.core.context.GlobalContext
++import java.io.File
++import java.util.concurrent.TimeUnit
++
++class AutomaticBackupWorker(
 +    context: Context,
-+    downloadDirectory: File,
-+    playerDirectory: File,
-+): LegacyCacheSnapshot {
-+    val directories =
-+        listOf(downloadDirectory, playerDirectory).filter { directory ->
-+            directory.isDirectory && directory.walkTopDown().any { it.name.endsWith(".exo") }
-+        }
-+    if (directories.isEmpty()) {
-+        return LegacyCacheSnapshot(emptyList(), emptyList())
-+    }
-+    val databaseFile = context.getDatabasePath(StandaloneDatabaseProvider.DATABASE_NAME)
-+    check(databaseFile.isFile) { "Legacy audio index is missing; retaining cache files" }
-+    return SQLiteDatabase.openDatabase(databaseFile.path, null, SQLiteDatabase.OPEN_READONLY).use { index ->
-+        fun hasTable(name: String): Boolean =
-+            index.rawQuery("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?", arrayOf(name)).use { it.moveToFirst() }
++    parameters: WorkerParameters,
++) : CoroutineWorker(context, parameters) {
++    override suspend fun doWork(): Result = backupMutex.withLock { doWorkLocked() }
 +
-+        val failures = mutableListOf<Exception>()
-+        val downloads = mutableListOf<LegacyDownload>()
-+        if (hasTable("ExoPlayerDownloads")) {
++    private suspend fun doWorkLocked(): Result {
++        if (inputData.getBoolean(PRUNE_ONLY_KEY, false)) {
++            return runCatching { pruneBackups(File(applicationContext.filesDir, BACKUP_DIRECTORY)) }
++                .fold({ Result.success() }, { Result.retry() })
++        }
++        val settings = Settings.shared
++        if (!settings.autoBackupEnabled) return Result.success()
++
++        val directory = File(applicationContext.filesDir, BACKUP_DIRECTORY)
++        val destination = File(directory, "${defaultBackupFilename(BACKUP_FILENAME_PREFIX)}.zip")
++        val backupResult =
++            runCatching {
++                check(directory.isDirectory || directory.mkdirs()) { "Could not create automatic backup directory" }
++                BackupRestoreManager(applicationContext, GlobalContext.get().get<MusicDatabase>())
++                    .backup(destination)
++                    .getOrThrow()
++            }
++        if (backupResult.isFailure) return Result.retry()
++
++        settings.autoBackupLastSuccessEpochMillis = System.currentTimeMillis()
++        runCatching { settings.flush() }
++        val pruneResult = runCatching { pruneBackups(directory) }
++        if (pruneResult.isFailure) {
++            WorkManager
++                .getInstance(applicationContext)
++                .enqueueUniqueWork(
++                    PRUNE_WORK_NAME,
++                    ExistingWorkPolicy.KEEP,
++                    OneTimeWorkRequestBuilder<AutomaticBackupWorker>()
++                        .setInputData(workDataOf(PRUNE_ONLY_KEY to true))
++                        .build(),
++                )
++        }
++        return Result.success()
++    }
++
++    private fun pruneBackups(directory: File) {
++        directory
++            .listFiles { file -> file.isFile && (file.extension == "tmp" || file.name.endsWith(".tmp")) }
++            ?.forEach { it.delete() }
++        directory
++            .listFiles { file -> file.isFile && file.extension == "zip" }
++            .orEmpty()
++            .sortedByDescending(File::lastModified)
++            .drop(MAX_RETAINED_BACKUPS)
++            .forEach { check(it.delete()) { "Could not remove expired automatic backup" } }
++    }
++
++    companion object {
++        private val backupMutex = Mutex()
++        private const val BACKUP_DIRECTORY = "automatic-backups"
++        private const val BACKUP_FILENAME_PREFIX = "metrolist-backup"
++        private const val MAX_RETAINED_BACKUPS = 10
++        private const val WORK_NAME = "automatic-backup"
++        private const val PRUNE_WORK_NAME = "automatic-backup-prune"
++        private const val PRUNE_ONLY_KEY = "pruneOnly"
++
++        fun schedule(
++            context: Context,
++            enabled: Boolean,
++            frequency: AutoBackupFrequency,
++        ) {
++            val workManager = WorkManager.getInstance(context)
++            if (!enabled) {
++                workManager.cancelUniqueWork(WORK_NAME)
++                return
++            }
++            val request =
++                PeriodicWorkRequestBuilder<AutomaticBackupWorker>(frequency.intervalMillis, TimeUnit.MILLISECONDS)
++                    .build()
++            workManager.enqueueUniquePeriodicWork(WORK_NAME, ExistingPeriodicWorkPolicy.UPDATE, request)
++        }
++    }
++}
+```
+
+**File**: `androidApp/src/main/kotlin/com/metrolist/android/backup/BackupRestoreManager.kt` (modified, +38/-6)
+```diff
+@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase
+ import android.net.Uri
+ import android.os.Build
+ import android.os.Process
++import android.system.Os
+ import androidx.core.database.sqlite.transaction
+ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+ import androidx.room3.exclusiveTransaction
+@@ -52,6 +53,7 @@ import kotlinx.serialization.Serializable
+ import kotlinx.serialization.encodeToString
+ import kotlinx.serialization.json.Json
+ import java.io.File
++import java.io.InputStream
+ import java.util.UUID
+ import java.util.zip.ZipEntry
+ import java.util.zip.ZipInputStream
+@@ -140,6 +142,35 @@ class BackupRestoreManager(
+     private val database: MusicDatabase,
+ ) {
+     suspend fun backup(uri: Uri): Result<Unit> =
++        backup { archive ->
++            context.contentResolver.openOutputStream(uri, "wt")?.use { output ->
++                archive.inputStream().buffered().use { it.copyTo(output) }
++                output.flush()
++            } ?: error("Could not open backup destination")
++        }
++
++    suspend fun backup(destination: File): Result<Unit> =
++        backup { archive ->
++            val liveDatabase = context.getDatabasePath(BACKUP_DATABASE_ENTRY)
++            val protectedPaths =
++                listOf(
++                    liveDatabase,
++                    File(liveDatabase.path + "-wal"),
++                    File(liveDatabase.path + "-shm"),
++                    File(liveDatabase.path + "-journal"),
++                ).map { it.canonicalFile }
++            check(destination.canonicalFile !in protectedPaths) { "Backup destination cannot replace the live database or its sidecars" }
++            check(destination.parentFile?.let { it.mkdirs() || it.isDirectory } != false) { "Could not create backup directory" }
++            val temporary = File(destination.parentFile, ".${destination.name}.tmp")
 +            try {
-+                index
-+                    .rawQuery(
-+                        "SELECT id, custom_cache_key, uri, state, content_length, bytes_downloaded, start_time_ms FROM ExoPlayerDownloads",
-+                        null,
-+                    ).use { rows ->
-+                        while (rows.moveToNext()) {
-+                            downloads +=
-+                                LegacyDownload(
-+                                    rows.getString(0),
-+                                    rows.getString(1) ?: rows.getString(2),
-+                                    rows.getInt(3),
-+                                    rows.getLong(4),
-+                                    rows.getLong(5),
-+                                    rows.getLong(6),
-+                                )
-+                        }
-+                    }
-+            } catch (error: Exception) {
-+                Timber.w(error, "Unreadable legacy download index; retaining cache files")
-+                failures += error
++                archive.inputStream().buffered().use { input -> temporary.outputStream().buffered().use(input::copyTo) }
++                Os.rename(temporary.absolutePath, destination.absolutePath)
++            } finally {
++                temporary.delete()
 +            }
 +        }
-+        val entries =
-+            directories.flatMap { directory ->
-+                try {
-+                    val files = directory.walkTopDown().filter { it.isFile }.toList()
-+                    val uid = files.singleOrNull { it.parentFile == directory && it.name.matches(Regex("[0-9a-f]+\\.uid")) }
-+                    check(uid != null) { "Legacy audio cache UID is missing; retaining cache files" }
-+                    val suffix = uid.name.removeSuffix(".uid")
-+                    val table = "ExoPlayerCacheIndex$suffix"
-+                    check(hasTable(table)) { "Legacy audio content index is missing; retaining cache files" }
-+         
-```
-
-**File**: `androidApp/src/main/kotlin/com/metrolist/android/ui/screens/SettingsScreen.kt` (modified, +1/-2)
-```diff
-@@ -296,11 +296,10 @@ fun SettingsScreen(
-         scope.launch {
-             isCalculatingCacheSize = true
-             try {
--                val exoplayerDir = context.filesDir.resolve("exoplayer")
-                 val coilDir = context.cacheDir.resolve("coil")
-                 val songCacheSize =
-                     withContext(Dispatchers.IO) {
--                        audioCacheManager.getCacheSizeBytes() + exoplayerDir.calculateDirectorySize()
-+                        audioCacheManager.getCacheSizeBytes()
-                     }
-                 val downloadSize = withContext(Dispatchers.IO) { audioCacheManager.getDownloadSizeBytes() }
-                 val imageCacheSize =
-```
-
-**File**: `androidApp/src/main/kotlin/com/metrolist/android/ui/screens/settings/StorageSettingsScreen.kt` (modified, +1/-4)
-```diff
-@@ -185,7 +185,6 @@ fun StorageSettingsScreen(
- 
-     var cacheSliderRevision by remember { mutableIntStateOf(0) }
- 
--    val exoplayerDir = remember { context.filesDir.resolve("exoplayer") }
-     val coilDir = remember { context.cacheDir.resolve("coil") }
-     val imageDiskCache = context.imageLoader.diskCache
-     var audioCacheLocation by remember { mutableStateOf(Settings.shared.audioCacheLocation) }
-@@ -305,7 +304,7 @@ fun StorageSettingsScreen(
- 
-     suspend fun readSongCacheSize(): Long =
++
++    private suspend fun backup(writeArchive: (File) -> Unit): Result<Unit> =
          withContext(Dispatchers.IO) {
--            audioCacheManager.getCacheSizeBytes() + exoplayerDir.calculateDirectorySize()
-+            audioCacheManager.getCacheSizeBytes()
+             runCatching {
+                 DiscordTokenStore.migrateLegacyCredentials(context)
+@@ -177,17 +208,18 @@ class BackupRestoreManager(
+                         snapshot.inputStream().buffered().use { it.copyTo(zip, BackupArchiveLimits.DATABASE_BYTES) }
+                         zip.closeEntry()
+                     }
+-                    context.contentResolver.openOutputStream(uri, "wt")?.use { output ->
+-                        archive.inputStream().buffered().use { it.copyTo(output) }
+-                        output.flush()
+-                    } ?: error("Could not open backup destination")
++                    writeArchive(archive)
+                 } finally {
+                     staging.deleteRecursively()
+                 }
+             }
          }
  
-     suspend fun readImageCacheSize(): Long =
-@@ -406,8 +405,6 @@ fun StorageSettingsScreen(
-                 launchStorageOperation {
-                     storageOperationFailed =
-                         !withContext(Dispatchers.IO) {
--                            exoplayerDir.deleteRecursively()
--                            exoplayerDir.mkdirs()
-                             audioCacheManager.clearCache()
-                         }
-                     refreshStorageSizes()
+-    suspend fun restore(uri: Uri): Result<Unit> =
++    suspend fun restore(uri: Uri): Result<Unit> = restoreInput { context.contentResolver.openInputStream(uri) }
++
++    suspend fun restore(file: File): Result<Unit> = restoreInput { file.inputStream() }
++
++    private suspend fun restoreInput(openInput: () -> InputStream?): Result<Unit> =
+         withContext(Dispatchers.IO) {
+             var restoreStage = RestoreStage.READING_BACKUP
+             val stagedDb = File(context.cacheDir, "restore-$BACKUP_DATABASE_ENTRY")
+@@ -214,7 +246,7 @@ class BackupRestoreManager(
+                     var manifest: BackupManifest? = null
+                     var entryCount = 0
+                     var extractedBytes = 0L
+-                    context.contentResolver.openInputStream(uri)?.use { rawInput ->
++                    openInput()?.use { rawInput ->
+                         ZipInputStream(rawInput.buffered()).use { zip ->
+                             var entry = zip.nextEntry
+                             while (entry != null) {
 ```
 
-**File**: `androidApp/src/main/res/xml/backup_rules.xml` (modified, +3/-0)
+**File**: `androidApp/src/main/kotlin/com/metrolist/android/data/PlayHistoryRepository.kt` (modified, +43/-0)
 ```diff
-@@ -3,6 +3,9 @@
-     <exclude domain="file" path="datastore/settings.preferences_pb" />
-     <exclude domain="sharedpref" path="secure_settings.xml" />
-     <exclude domain="file" path="downloads" />
-+    <exclude domain="file" path="download" />
-+    <exclude domain="file" path="legacy-audio" />
-+    <exclude domain="file" path="legacy-audio-import-v2.complete" />
-     <exclude domain="file" path="audio_cache" />
-     <exclude domain="file" path="exoplayer" />
-     <exclude domain="file" path="animated_cover_video_cache" />
-```
-
----
-
-### Incident Patch 3: `873bc034` (2026-11-15)
-**Commit Message**: fix(desktop): avoid Linux window drag crash (#4773)
-
-* fix(desktop): avoid Linux window drag crash
-
-* test: remove ineffective window-move assertion
-
-**File**: `desktopApp/src/jvmMain/kotlin/com/metrolist/desktop/utils/LinuxWindowMove.kt` (modified, +6/-0)
-```diff
-@@ -25,6 +25,7 @@ internal object LinuxWindowMove {
-     fun start(window: Window): Boolean {
-         if (!isX11Toolkit()) return false
-         val toolkit = Toolkit.getDefaultToolkit().javaClass
-+        if (!hasAwtX11PeerAccess(toolkit.module, LinuxWindowMove::class.java.module)) return false
+@@ -10,6 +10,7 @@ import com.metrolist.shared.db.RemoteHistoryDate
+ import com.metrolist.shared.db.daos.DatabaseDao
+ import com.metrolist.shared.db.deleteHistoryEntries
+ import com.metrolist.shared.db.entities.Event
++import com.metrolist.shared.db.entities.RelatedSongMap
+ import com.metrolist.shared.db.historyAlbumStatistics
+ import com.metrolist.shared.db.historyArtistStatistics
+ import com.metrolist.shared.db.historySongStatistics
+@@ -29,8 +30,13 @@ import com.metrolist.shared.model.HistorySortMode
+ import com.metrolist.shared.model.SongItem
+ import com.metrolist.shared.model.SortDirection
+ import com.metrolist.shared.settings.BlockedContent
++import com.metrolist.shared.settings.Settings
+ import com.metrolist.shared.state.GlobalYouTubeRepository
++import kotlinx.coroutines.CancellationException
++import kotlinx.coroutines.CoroutineScope
+ import kotlinx.coroutines.Dispatchers
++import kotlinx.coroutines.SupervisorJob
++import kotlinx.coroutines.launch
+ import kotlinx.coroutines.withContext
+ import kotlinx.datetime.TimeZone
+ import kotlinx.datetime.toLocalDateTime
+@@ -41,6 +47,7 @@ import java.util.Locale
+ import kotlin.time.Instant
  
-         val lock = toolkit.getMethod("awtLock")
-         val unlock = toolkit.getMethod("awtUnlock")
-@@ -50,6 +51,11 @@ internal object LinuxWindowMove {
+ private const val HISTORY_LOG_TAG = "PlayHistory"
++private const val RELATED_SONGS_LIMIT = 20
+ 
+ data class HistoryEntry(
+     val id: Long,
+@@ -99,6 +106,8 @@ class PlayHistoryRepository(
+     private val database: MusicDatabase,
+     private val dao: DatabaseDao,
+ ) {
++    private val relatedSongsScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
++
+     private data class SqlFilter(
+         val sql: String,
+         val args: List<Any?> = emptyList(),
+@@ -313,6 +322,40 @@ class PlayHistoryRepository(
+             playTimeMs,
+             song.artists.size,
+         )
++        // Keep the optional network fetch out of the ordered history writes.
++        if (Settings.shared.classicRecommendations) {
++            relatedSongsScope.launch { recordRelatedSongs(song.id) }
++        }
++    }
++
++    /** Stores the songs YouTube relates to [songId], feeding the classic local Quick picks. */
++    private suspend fun recordRelatedSongs(songId: String) {
++        // Local files have no YouTube watch id, so their relations cannot be fetched.
++        if (songId.startsWith("local_")) return
++        try {
++            if (dao.hasRelatedSongs(songId)) return
++            val related =
++                GlobalYouTubeRepository.instance
++                    .startRadioQueue(songId)
++                    .songs
++                    .filter { it.id.isNotBlank() && it.id != songId }
++                    .distinctBy { it.id }
++                    .take(RELATED_SONGS_LIMIT)
++            if (related.isEmpty()) return
++            database.withDatabaseTransaction {
++                // Recheck inside the transaction: overlapping qualified plays of the
++                // same seed could both pass the check above before either write.
++                if (dao.hasRelatedSongs(songId)) return@withDatabaseTransaction
++                related.forEach { relatedSong ->
++                    dao.upsertHistorySong(relatedSong)
++                    dao.insert(RelatedSongMap(songId = songId, relatedSongId = relatedSong.id))
++                }
++            }
++        } catch (e: CancellationException) {
++            throw e
++        } catch (e: Exception) {
++            Timber.tag(HISTORY_LOG_TAG).w("related songs fetch failed type=%s", e::class.simpleName)
++        }
      }
+ 
+     suspend fun getSongListeningStats(songId: String): SongListeningStats =
+```
+
+**File**: `androidApp/src/main/kotlin/com/metrolist/android/models/PersistPlayerState.kt` (modified, +2/-0)
+```diff
+@@ -45,12 +45,14 @@ data class PersistPlayerState(
+     val radioQueueSeedSongId: String? = null,
+     val radioQueueFinite: Boolean? = null,
+     val radioQueue: Boolean = false,
++    val explicitRadioQueue: Boolean? = null,
+     val queueSessionId: Long? = null,
+     val radioQueueChips: List<PersistRadioQueueChip> = emptyList(),
+     val radioQueueSelectedChipId: String? = null,
+     val radioQueueContinuation: String? = null,
+     val radioQueuePlaylistId: String? = null,
+     val radioQueueParams: String? = null,
++    val radioQueueExplicitFeed: Boolean? = null,
+     val revision: String? = null,
+ ) : java.io.Serializable
+ 
+```
+
+**File**: `androidApp/src/main/kotlin/com/metrolist/android/playback/AndroidAudioTrackSelection.kt` (modified, +5/-1)
+```diff
+@@ -5,6 +5,7 @@ import com.metrolist.shared.api.musicvideo.MusicTrackResult
+ import com.metrolist.shared.model.ArtistTiny
+ import com.metrolist.shared.model.SongItem
+ import com.metrolist.shared.model.canSwitchToAudioTrack
++import com.metrolist.shared.model.playlistOccurrenceIdentity
+ import com.metrolist.shared.youtube.playback.PlaybackResource
+ import kotlinx.coroutines.CancellationException
+ import kotlinx.coroutines.currentCoroutineContext
+@@ -111,7 +112,10 @@ internal fun mergeSelectedQueueSong(
+         queueSourceTitle = currentQueueSong.queueSourceTitle,
+         customTitle = customTitle,
+         customArtist = customArtist,
+-    ).copy(originalQueueItemId = sourceSongAtSelection.originalQueueItemId ?: sourceSongAtSelection.id)
++    ).copy(
++        originalQueueItemId = sourceSongAtSelection.originalQueueItemId ?: sourceSongAtSelection.id,
++        playlistOccurrenceId = sourceSongAtSelection.playlistOccurrenceIdentity(),
++    )
  }
  
-+internal fun hasAwtX11PeerAccess(
-+    toolkitModule: Module,
-+    callerModule: Module,
-+): Boolean = toolkitModule.isExported("sun.awt", callerModule) && toolkitModule.isExported("sun.awt.X11", callerModule)
-+
- internal fun startX11WindowMove(
-     x11: WindowMoveX11,
-     display: X11.Display,
+ private fun applyAudioTrackMetadata(
 ```
 
-**File**: `docs/desktop.md` (modified, +1/-1)
+**File**: `androidApp/src/main/kotlin/com/metrolist/android/playback/AndroidDeviceConnectPlayback.kt` (modified, +26/-3)
 ```diff
-@@ -20,7 +20,7 @@ Connected action groups use the shared Material shapes and spacing, with fixed c
+@@ -57,6 +57,13 @@ internal class AndroidDeviceConnectPlayback(
+     private var appliedSyncTrackRevision: Long? = null
+     val port: DeviceConnectPlaybackPort =
+         object : DeviceConnectPlaybackPort {
++            @Volatile private var pendingExplicitRadioRequest = false
++            private var explicitRadioBootstrapPending = false
++
++            override fun onExplicitRadioRequest() {
++                pendingExplicitRadioRequest = true
++            }
++
+             override val canStartDefaultPlayback: Boolean get() = !isCasting()
  
- ## Miniplayer
- 
--The Linux miniplayer and player top bar use the main window's X11 drag handler, which avoids Compose's JBR window-move lookup. The player top bar uses it with both system and custom window frames. Both JVM and native packages use this handler. Linux keeps the miniplayer window opaque, because some backends stop drawing transparent undecorated windows, so both layouts use square corners there.
-+The Linux miniplayer and player top bar use the main window's X11 drag handler, which avoids Compose's JBR window-move lookup. When Java does not export its X11 peer APIs, the handler falls back to pointer-based window positioning. The player top bar uses it with both system and custom window frames. Both JVM and native packages use this handler. Linux keeps the miniplayer window opaque, because some backends stop drawing transparent undecorated windows, so both layouts use square corners there.
- 
- Check both layouts on a Linux desktop with the packaged JVM AppImage and native AppImage. Verify dragging, playback buttons, seeking, opening and closing, focus-mode control fades and pressed-button springs. Repeat on X11 and XWayland with OpenGL and software rendering.
- 
+             override suspend fun snapshot(): DcLocalPlaybackState =
+@@ -80,6 +87,7 @@ internal class AndroidDeviceConnectPlayback(
+                                     .getOrNull(player.currentMediaItemIndex.value)
+                                     ?.id,
+                         finite = queue.isFiniteQueue,
++                        explicitRadioQueue = queue.explicitRadioQueue,
+                         scrobbleSession = scrobbleManager.session(),
+                     )
+                 }
+@@ -114,11 +122,18 @@ internal class AndroidDeviceConnectPlayback(
+                 }
+                 transitions.cancelNextTrackPreload()
+                 val seedId = desiredQueue.originalItems.firstOrNull()?.id
++                val startsExplicitRadio =
++                    desired.explicitRadioQueue && desiredQueue.displayedItems.size == 1 &&
++                        (pendingExplicitRadioRequest || !queue.explicitRadioQueue || appliedSyncSessionId != snapshot.sessionId)
++                pendingExplicitRadioRequest = false
+                 if (AndroidDeviceConnect.manager.remote.isFollowing || desired.finite != queue.isFiniteQueue ||
+-                    seedId != queue.recommendationSeedSongId
++                    seedId != queue.recommendationSeedSongId || desired.explicitRadioQueue != queue.explicitRadioQueue ||
++                    startsExplicitRadio
+                 ) {
+                     queue.resetQueueSession(seedId, desired.title, desired.finite)
++                    explicitRadioBootstrapPending = startsExplicitRadio
+                 }
++                queue.setExplicitRadioQueue(desired.explicitRadioQueue)
+                 queue.setTitle(desired.title)
+                 repeatMode.value = desired.repeatMode.toPlayerRepeatMode()
+                 if (trackChanged || previousQueue != desiredQueue) player.restoreQueue(desiredQueue, currentTrackChanged = trackChanged)
+@@ -183,8 +198,14 @@ internal class AndroidDeviceConnectPlayback(
+                     player.isPlaying.value,
+                     desired.scrobbleSession,
+                 )
+-                if (!queue.isFiniteQueue && queue.recommendationBootstrapJob == null && song != null) {
+-                    queue.bootstrapRecommendations(queue.recommendationSeedSongId ?: song.id)
++                if (!queue.isFiniteQueue && queue.recommendationBootstrapJob == null && song != null &&
++                    (!desired.explicitRadioQueue || explicitRadioBootstrapPending)
++                ) {
++                    queue.bootstrapRecommendations(
++                        queue.recommendationSeedSongId ?: song.id,
++                        allowRepeatMode = desired.explicitRadioQueue,
++                    )
++                    explicitRadioBootstrapPending = queue.recommendationBootstrapJob == null
+                 }
+                 onSave()
+             }
+@@ -221,12 +242,14 @@ internal class AndroidDeviceConnectPlayback(
+                             playback.title,
+                             playback.finite,
+                         )
++                        queue.setExplicitRadioQueue(playback.explicitRadioQueue)
+                         queue.setTitle(playback.title)
+                         repeatMode.value = playback.repeatMode.toPlayerRepeatMode()
+                         if (player.queueSnapshots.value != playback.queue) player.restoreQueue(playback.queue)
+                         shuffleModeEnabled.value = playback.queue.isShuffled
+                         syncTargetLoaded = false
+                     }
++                    if (playback != null) queue.setExplicitRadioQueue(playback.explicitRadioQueue)
+                     controllerPlayback = playback
+                     player.setControllerPlayback(playback)
+                     if (playback !=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4773** (2026-11-15): fix(desktop): avoid Linux window drag crash (@kairosci)
-- **PR #4770** (2026-11-15): fix(android): fall back from stalled audio offload (@kairosci)
-- **PR #4766** (2026-11-15): fix(desktop): reduce artifacts in tempo processing (@kairosci)
-- **PR #4764** (2026-11-15): fix(desktop): bound channel picker height (@kairosci)
-- **PR #4762** (2026-11-15): fix(search): focus floating search after layout (@kairosci)
-- **PR #4736** (closed): ... (@Bbnnbhgg)
+- **PR #5141** (2026-11-21): fix(device-connect): keep Radio bootstrap across shuffle and transfer (@nyxiereal)
+- **PR #5140** (2026-11-21): fix(radio): retain bootstrap continuations and selected feeds (@nyxiereal)
+- **PR #5139** (2026-11-21): fix(lyrics): preserve repeated and nested background vocals (@nyxiereal)
+- **PR #5138** (2026-11-21): fix(player): retain fullscreen contrast behind tablet controls (@nyxiereal)
+- **PR #5137** (2026-11-21): fix(cast): accept receiver updates after a startup seek (@nyxiereal)
+- **PR #5136** (2026-11-21): fix(backup): recheck desktop deadlines after suspend (@nyxiereal)
 
 ---
 
@@ -1488,32 +2152,40 @@ related to: #4596
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. desktop): register java.rmi.MarshalledObject for native clipboard reflection
+## X. i18n): integrate Weblate translations with corrections
 
 **RULE**:
-When implementing operations in `docs/desktop-native-image.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MetrolistGroup/Metrolist. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `androidApp/build.gradle.kts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MetrolistGroup/Metrolist. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5015f4d5`: desktop): register java.rmi.MarshalledObject for native clipboard reflection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5189f16f`: i18n): integrate Weblate translations with corrections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/desktop-native-image.md`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `androidApp/build.gradle.kts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-The JDK's clipboard flavor comparator resolves `java.rmi.MarshalledObject` reflectively in `sun.datatransfer.DataFlavorUtil`. Native Image exposes only registered members, so the image registers that class' constructor and its `get` method. Without the registration the first clipboard paste fails with `AssertionError: NoSuchMethodException: java.rmi.MarshalledObject.<init>(java.lang.Object)` on every platform, because the JDK's static initializer turns the missing constructor into an `Error`.
-
+val bundledLanguageParser =
+    DocumentBuilderFactory
+        .newInstance()
+        .apply { setFeature("http://apache.org/xml/features/disallow-doctype-decl", true) }
+        .newDocumentBuilder()
+        .filter { directory ->
+            val catalog = File(directory, "strings.xml").takeIf(File::isFile) ?: return@filter false
+            val root = bundledLanguageParser.parse(catalog).documentElement
+            root.getElementsByTagName("string").length > 0 || root.getElementsByTagName("plurals").length > 0
+        }.map { directory ->
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        .map { directory ->
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5015f4d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5189f16f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

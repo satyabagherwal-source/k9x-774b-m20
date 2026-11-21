@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T07:42:00.885Z",
+  "last_updated": "2026-11-21T07:58:57.083Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3231,14 +3231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autogluon-chronos-2",
-      "content_hash": "619ab415cc212065470ef7cf2ad90d0664e2053df330b8f9441b80f836eb538b",
-      "verified_at": "2026-11-17T14:33:39.829Z",
+      "content_hash": "d545d3c0f767f6403e2873034933da751bbfe58ebff79037faa19861f84a65cb",
+      "verified_at": "2026-11-21T07:58:41.913Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T14:33:39.829Z"
+      "last_updated": "2026-11-21T07:58:41.913Z"
     },
     "deeplethe/solid-glass": {
       "repository": "deeplethe/solid-glass",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "914a0399f0583d0514d1e46f48912783461165620fca94cb17769653728da543",
-      "verified_at": "2026-11-21T06:28:05.968Z",
+      "content_hash": "ef228f9fec24006807303a600ba05fc673e2ede4b735b2313dd16e35cf437cbf",
+      "verified_at": "2026-11-21T07:58:57.083Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T06:28:05.968Z"
+      "last_updated": "2026-11-21T07:58:57.083Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7131,14 +7131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sfu-db-connector-x",
-      "content_hash": "86df9b1d91db507253997b941944b53fc5df3fa957fd9784b5ca58c5c0249ef0",
-      "verified_at": "2026-11-17T07:06:27.258Z",
+      "content_hash": "e547cb38d62999a5c812b98f71ee2dd6ac32803d239b3b3f70df6459907d4fe6",
+      "verified_at": "2026-11-21T07:58:55.133Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T07:06:27.258Z"
+      "last_updated": "2026-11-21T07:58:55.133Z"
     },
     "stenciljs/core": {
       "repository": "stenciljs/core",
@@ -11856,14 +11856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-herdrdev-herdr",
-      "content_hash": "e1984438b74ad738167ef692c08f1aa11c235378bad58e5c2bed9e96b83e5d4f",
-      "verified_at": "2026-11-19T21:08:10.025Z",
+      "content_hash": "5919375293dbaf225004b42c2ad398c590bbd4889b8327b8b1b731ae3bbff504",
+      "verified_at": "2026-11-21T07:58:42.901Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T21:08:10.025Z"
+      "last_updated": "2026-11-21T07:58:42.901Z"
     },
     "darrylmorley/whatcable": {
       "repository": "darrylmorley/whatcable",
@@ -19086,14 +19086,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-metrolistgroup-metrolist",
-      "content_hash": "871933eea4398d0a45b5dff5058d12d3e157afa8159929d9d029701b50d88e7e",
-      "verified_at": "2026-11-16T00:17:31.029Z",
+      "content_hash": "90d0aeffeef1fde17680d2a1af6831b4e0a6930d1c8ff4947e8868983e101b88",
+      "verified_at": "2026-11-21T07:58:47.788Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T00:17:31.029Z"
+      "last_updated": "2026-11-21T07:58:47.788Z"
     },
     "GanymedeNil/document.ai": {
       "repository": "GanymedeNil/document.ai",

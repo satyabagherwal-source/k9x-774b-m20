@@ -2065,8 +2065,8 @@
     "sourceUrl": "https://huggingface.co/autogluon/chronos-2",
     "sourceVersion": "hf-autogluon-chronos-2",
     "license": "Open-Source",
-    "contentHash": "619ab415cc212065470ef7cf2ad90d0664e2053df330b8f9441b80f836eb538b",
-    "lastHarvestedAt": "2026-11-17T14:33:39.819Z",
+    "contentHash": "d545d3c0f767f6403e2873034933da751bbfe58ebff79037faa19861f84a65cb",
+    "lastHarvestedAt": "2026-11-21T07:58:41.906Z",
     "learningId": "learn-huggingface-autogluon-chronos-2"
   },
   "deeplethe-solid-glass": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "8b37fa90",
+    "sourceVersion": "e2f16915",
     "license": "Apache-2.0",
-    "contentHash": "914a0399f0583d0514d1e46f48912783461165620fca94cb17769653728da543",
-    "lastHarvestedAt": "2026-11-21T06:28:05.961Z",
+    "contentHash": "ef228f9fec24006807303a600ba05fc673e2ede4b735b2313dd16e35cf437cbf",
+    "lastHarvestedAt": "2026-11-21T07:58:57.076Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -4673,10 +4673,10 @@
     "repository": "sfu-db/connector-x",
     "platform": "github",
     "sourceUrl": "https://github.com/sfu-db/connector-x",
-    "sourceVersion": "c52b20c0",
+    "sourceVersion": "4cfcea91",
     "license": "MIT",
-    "contentHash": "86df9b1d91db507253997b941944b53fc5df3fa957fd9784b5ca58c5c0249ef0",
-    "lastHarvestedAt": "2026-11-17T07:06:27.250Z",
+    "contentHash": "e547cb38d62999a5c812b98f71ee2dd6ac32803d239b3b3f70df6459907d4fe6",
+    "lastHarvestedAt": "2026-11-21T07:58:55.126Z",
     "learningId": "learn-github-sfu-db-connector-x"
   },
   "stenciljs-core": {
@@ -7883,10 +7883,10 @@
     "repository": "herdrdev/herdr",
     "platform": "github",
     "sourceUrl": "https://github.com/herdrdev/herdr",
-    "sourceVersion": "8734523b",
+    "sourceVersion": "e8d7d970",
     "license": "Apache-2.0",
-    "contentHash": "e1984438b74ad738167ef692c08f1aa11c235378bad58e5c2bed9e96b83e5d4f",
-    "lastHarvestedAt": "2026-11-19T21:08:10.017Z",
+    "contentHash": "5919375293dbaf225004b42c2ad398c590bbd4889b8327b8b1b731ae3bbff504",
+    "lastHarvestedAt": "2026-11-21T07:58:42.892Z",
     "learningId": "learn-github-herdrdev-herdr"
   },
   "darrylmorley-whatcable": {
@@ -12663,10 +12663,10 @@
     "repository": "MetrolistGroup/Metrolist",
     "platform": "github",
     "sourceUrl": "https://github.com/MetrolistGroup/Metrolist",
-    "sourceVersion": "7172398f",
+    "sourceVersion": "5189f16f",
     "license": "GPL-3.0",
-    "contentHash": "871933eea4398d0a45b5dff5058d12d3e157afa8159929d9d029701b50d88e7e",
-    "lastHarvestedAt": "2026-11-16T00:17:31.021Z",
+    "contentHash": "90d0aeffeef1fde17680d2a1af6831b4e0a6930d1c8ff4947e8868983e101b88",
+    "lastHarvestedAt": "2026-11-21T07:58:47.780Z",
     "learningId": "learn-github-metrolistgroup-metrolist"
   },
   "ganymedenil-document.ai": {

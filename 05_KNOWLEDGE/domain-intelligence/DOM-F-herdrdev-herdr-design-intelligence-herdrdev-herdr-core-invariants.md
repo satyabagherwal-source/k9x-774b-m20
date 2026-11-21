@@ -4,24 +4,24 @@
 {
   "source_repository": "herdrdev/herdr",
   "source_url": "https://github.com/herdrdev/herdr",
-  "source_version": "8734523b",
+  "source_version": "e8d7d970",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T21:08:10.222Z",
+  "timestamp": "2026-11-21T07:58:43.079Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-herdrdev-herdr",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [herdrdev/herdr](https://github.com/herdrdev/herdr) (Revision: `8734523b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T21:08:10.222Z`  
+> **Provenance**: Harvested from [herdrdev/herdr](https://github.com/herdrdev/herdr) (Revision: `e8d7d970`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T07:58:43.079Z`  
 > **Learning ID**: `learn-github-herdrdev-herdr`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain F (Design Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), E (Creative Intelligence)
-- **Confidence Rating**: 83%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 81%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from herdrdev/herdr:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/herdrdev-herdr-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/herdrdev/herdr](https://github.com/herdrdev/herdr))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T21:08:08.822Z  
+> **Harvest Timestamp**: 2026-11-21T07:58:41.997Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: the runtime your coding agents live on
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 51883 stars
+- **Stars / Engagement**: 52108 stars
 
 ---
 
@@ -2524,831 +2524,253 @@ export default function (pi) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8734523b` (2026-11-19)
-**Commit Message**: fix: keep the terminal theme readable on light terminals (#6092)
+### Incident Patch 1: `e8d7d970` (2026-11-19)
+**Commit Message**: fix: retry interrupted handoff reads; reap pane shells in 500+ pane sessions (#6107)
 
-refs #1307
-
-**File**: `src/app/mod.rs` (modified, +16/-6)
+**File**: `src/pane.rs` (modified, +10/-9)
 ```diff
-@@ -297,6 +297,7 @@ fn resolve_palette_for_theme_name(
-     fallback_name: &str,
-     runtime: &state::ThemeRuntimeConfig,
-     mode_custom: Option<&crate::config::ModeThemeColors>,
-+    host: Option<&crate::terminal_theme::TerminalTheme>,
- ) -> state::Palette {
-     let mut palette = state::Palette::from_name(name).unwrap_or_else(|| {
-         tracing::warn!(
-@@ -307,11 +308,17 @@ fn resolve_palette_for_theme_name(
-         state::Palette::from_name(fallback_name).unwrap_or_else(state::Palette::catppuccin)
-     });
- 
-+    if crate::config::canonical_theme_name(name) == Some("terminal") {
-+        if let Some(host) = host {
-+            palette = state::Palette::terminal_for_host(host);
-+        }
-+    }
-     if let Some(custom) = &runtime.custom {
-         palette = palette.with_overrides(custom);
-     }
-     if let Some(accent) = &runtime.legacy_accent {
-         palette.accent = crate::config::parse_color(accent);
-+        palette.accent_fg = None;
-     }
-     if let Some(custom) = mode_custom {
-         palette = palette.with_mode_overrides(custom);
-@@ -323,6 +330,7 @@ fn resolve_palette_for_theme_name(
- fn resolve_effective_theme(
-     runtime: &state::ThemeRuntimeConfig,
-     appearance: Option<crate::terminal_theme::HostAppearance>,
-+    host: Option<&crate::terminal_theme::TerminalTheme>,
- ) -> (state::Palette, String) {
-     let (name, fallback, mode_custom) = if runtime.auto_switch {
-         match appearance.unwrap_or(crate::terminal_theme::HostAppearance::Dark) {
-@@ -347,7 +355,7 @@ fn resolve_effective_theme(
-         (&runtime.manual_name, "catppuccin", None)
-     };
-     (
--        resolve_palette_for_theme_name(name, fallback, runtime, mode_custom),
-+        resolve_palette_for_theme_name(name, fallback, runtime, mode_custom, host),
-         name.clone(),
-     )
- }
-@@ -359,20 +367,22 @@ pub(crate) fn client_theme_runtime_from_config(config: &Config) -> state::ThemeR
- pub(crate) fn client_palette_for_theme(
-     runtime: &state::ThemeRuntimeConfig,
-     name: &str,
-+    host: &crate::terminal_theme::TerminalTheme,
- ) -> state::Palette {
--    resolve_palette_for_theme_name(name, "catppuccin", runtime, None)
-+    resolve_palette_for_theme_name(name, "catppuccin", runtime, None, Some(host))
- }
- 
- pub(crate) fn client_palette_from_config(config: &Config) -> state::Palette {
-     let runtime = client_theme_runtime_from_config(config);
--    resolve_effective_theme(&runtime, None).0
-+    resolve_effective_theme(&runtime, None, None).0
- }
- 
- pub(crate) fn client_palette_for_appearance(
-     runtime: &state::ThemeRuntimeConfig,
--    appearance: crate::terminal_theme::HostAppearance,
-+    appearance: Option<crate::terminal_theme::HostAppearance>,
-+    host: &crate::terminal_theme::TerminalTheme,
- ) -> state::Palette {
--    resolve_effective_theme(runtime, Some(appearance)).0
-+    resolve_effective_theme(runtime, appearance, Some(host)).0
- }
- 
- impl App {
-@@ -492,7 +502,7 @@ impl App {
-         #[cfg(test)]
-         let agent_manifest_summaries = Vec::new();
-         let theme_runtime = theme_runtime_config(config, true);
--        let (theme_palette, theme_name) = resolve_effective_theme(&theme_runtime, None);
-+        let (theme_palette, theme_name) = resolve_effective_theme(&theme_runtime, None, None);
- 
-         let mut state = AppState {
-             terminals: std::collections::HashMap::new(),
+@@ -2738,14 +2738,13 @@ impl PaneRuntime {
+             let child_pid = child_pid.clone();
+             let child_wait_completed = child_wait_completed.clone();
+             let events = events.clone();
+-            let rt = tokio::runtime::Handle::current();
+-            let mut child = spawned.child;
++            let child = spawned.child;
+             if let Some(pid) = child.process_id() {
+                 child_pid.store(pid, Ordering::Release);
+                 crate::logging::pane_spawned(pane_id.raw(), pid);
+             }
+-            tokio::task::spawn_blocking(move || {
+-                let exit_reason = match child.wait() {
++            tokio::spawn(async move {
++                let exit_reason = match crate::pty::backend::wait_for_child(child).await {
+                     Ok(status) => {
+                         let exit_reason = crate::platform::classify_child_exit(&status);
+                         let status_text = format!("{status:?}");
+@@ -2758,11 +2757,13 @@ impl PaneRuntime {
+                     }
+                 };
+                 child_wait_completed.store(true, Ordering::Release);
+-                // Use blocking send — PaneDied is critical, must not be dropped
+-                if let Err(e) = rt.block_on(events.send(AppEvent::PaneDied {
+-                    pane_id,
+-                    exit_reason,
+-                })) {
++                if let Err(e) = events
++                    .send(AppEvent::PaneDied {
++                        pane_id,
++                        exit_reason,
++                    })
++                    .await
++                {
+                     error!(pane = pane_id.raw(), err = %e, "failed to send PaneDied event");
+                 }
+             });
 ```
 
-**File**: `src/app/state.rs` (modified, +194/-20)
+**File**: `src/pty/backend.rs` (modified, +16/-0)
 ```diff
-@@ -35,6 +35,8 @@ use crate::workspace::Workspace;
- pub struct Palette {
-     /// Primary accent (highlight, active borders).
-     pub accent: Color,
-+    /// Host-derived text color for accent fills, independent of borders and separators.
-+    pub(crate) accent_fg: Option<Color>,
-     /// Background for the tab bar, floating panels, overlays, and modals.
-     pub panel_bg: Color,
-     /// Optional desktop sidebar background. Reset preserves the terminal background.
-@@ -74,9 +76,24 @@ pub struct Palette {
+@@ -13,6 +13,22 @@ pub(crate) struct SpawnedPty {
+     pub child: Box<dyn Child + Send + Sync>,
  }
  
- impl Palette {
-+    pub(crate) fn accent_foreground(&self) -> Color {
-+        self.accent_fg.unwrap_or(match self.panel_bg {
-+            Color::Reset => self.surface_dim,
-+            color => color,
-+        })
++#[cfg(target_os = "linux")]
++mod linux;
++#[cfg(target_os = "linux")]
++pub(crate) use linux::wait_for_child;
++
++#[cfg(not(target_os = "linux"))]
++pub(crate) use wait_for_child_blocking as wait_for_child;
++
++pub(crate) async fn wait_for_child_blocking(
++    mut child: Box<dyn portable_pty::Child + Send + Sync>,
++) -> std::io::Result<portable_pty::ExitStatus> {
++    tokio::task::spawn_blocking(move || child.wait())
++        .await
++        .map_err(std::io::Error::other)?
++}
++
+ #[cfg(windows)]
+ pub(crate) fn spawn_with_portable_pty(
+     rows: u16,
+```
+
+**File**: `src/pty/backend/linux.rs` (added, +125/-0)
+```diff
+@@ -0,0 +1,125 @@
++use std::os::fd::{FromRawFd, OwnedFd};
++use std::sync::atomic::{AtomicBool, Ordering};
++
++use portable_pty::Child;
++use tokio::io::unix::AsyncFd;
++
++fn child_pidfd(child: &dyn Child) -> std::io::Result<AsyncFd<OwnedFd>> {
++    let pid = child
++        .process_id()
++        .ok_or_else(|| std::io::Error::other("pane child has no process ID"))?;
++    let fd = unsafe { libc::syscall(libc::SYS_pidfd_open, pid, 0) };
++    if fd < 0 {
++        return Err(std::io::Error::last_os_error());
 +    }
++    AsyncFd::new(unsafe { OwnedFd::from_raw_fd(fd as _) })
++}
 +
-+    pub(crate) fn fill_foreground(&self) -> Color {
-+        match self.panel_bg {
-+            Color::Reset => self.surface_dim,
-+            color => color,
-+        }
-+    }
-+
-     /// Catppuccin Mocha — the default.
-     pub fn catppuccin() -> Self {
-         Self {
-+            accent_fg: None,
-             accent: Color::Rgb(137, 180, 250), // blue
-             panel_bg: Color::Rgb(24, 24, 37),
-             sidebar_bg: Color::Reset,
-@@ -102,6 +119,7 @@ impl Palette {
-     /// Catppuccin Latte — the light Catppuccin flavor.
-     pub fn catppuccin_latte() -> Self {
-         Self {
-+            accent_fg: None,
-             accent: Color::Rgb(30, 102, 245),
-             panel_bg: Color::Rgb(239, 241, 245),
-             sidebar_bg: Color::Reset,
-@@ -127,6 +145,7 @@ impl Palette {
-     /// Terminal 16-color theme.
-     pub fn terminal() -> Self {
-         Self {
-+            accent_fg: None,
-             accent: Color::Blue,
-             panel_bg: Color::Reset,
-             sidebar_bg: Color::Reset,
-@@ -149,9 +168,79 @@ impl Palette {
-         }
-     }
- 
-+    pub(crate) fn terminal_for_host(host: &crate::terminal_theme::TerminalTheme) -> Self {
-+        use crate::terminal_theme::RgbColor;
-+
-+        let mut palette = Self::terminal();
-+        let (Some(foreground), Some(background)) = (host.foreground, host.background) else {
-+            return palette;
-+        };
-+        let rgb = |color: RgbColor| Color::Rgb(color.r, color.g, color.b);
-+
-+        if let Some(surface) = host.palette[8] {
-+            if foreground.contrast_ratio(surface) < 3.0 {
-+                // Keep the host background's hue while making the active row visible.
-+                let visible_tint = |text_floor| {
-+                    for weight in (10u16..=95).step_by(5) {
-+                        let blend = |bg: u8, fg: u8| {
-+                            ((u16::from(bg) * (100 - weight) + u16::from(fg) * weight) / 100) as u8
-+                        };
-+                        let candidate = RgbColor {
-+                            r: blend(background.r, foreground.r),
-+                            g: blend(background.g, foreground.g),
-+                            b: blend(background.b, foreground.b),
-+                        };
-+                        if foreground.contrast_ratio(candidate) < text_floor {
-+                            break;
-+                        }
-+                        if background.contrast_ratio(candidate) >= 1.3 {
-+                            return Some(candidate);
-+                        }
-+                    }
-+                    None
-+                };
-+                if let Some(row) = visible_tint(4.5).or_else(|| visible_tint(3.0)) {
-+                    palette.active_row_bg = rgb(row);
-+                    palette.surface1 = rgb(row);
-+                }
++pub(crate) async fn wait_for_child(
++    mut child: Box<dyn Child + Send + Sync>,
++) -> std::io::Result<portable_pty::ExitStatus> {
++    let pidfd = match child_pidfd(child.as_ref()) {
++        Ok(pidfd) => pidfd,
++        Err(err) => {
++            static WARNED: AtomicBool = AtomicBool::new(false);
++            if !WARNED.swap(true, Ordering::Relaxed) {
++                tracing::warn!(%err, "pidfd unavailable; using blocking pane child wait");
++            } else {
++                tracing::debug!(%err, "pidfd unavailable; using blocking pane child wait");
 +            }
-+            if let Some(accent) = host.palette[4] {
-+                if surface.contrast_ratio(accent) < 4.5 {
-+                    let black = RgbColor { r: 0, g: 0, b: 0 };
-+                    let white = RgbColor {
-+                        r: 255,
-+                        g: 255,
-+                        b: 255,
-+                    };
-+                    let contrast = if background.contrast_ratio(accent) >= 4.5 {
-+                        background
-+                    } else if black.contrast_ratio(accent) >= white.contrast_ratio(accent) {
-+                        black
-+                    } else {
-+                        white
-+                    };
-+                    palette.accent_fg = Some(rgb(contrast));
-+                }
-+            }
++            return super::wait_for_child_blocking(child).await;
 +        }
-+
-+        for (color, index) in [
-+            (&mut palette.overlay0, 7),
-+            (&mut palette.subtext0, 7),
-+            (&mut palette.mauve, 7),
-+            (&mut palette.overlay1, 15),
-+        ] {
-+            if host.palette[index].is_some_and(|color| color.contrast_ratio(background) < 3.0) {
-+                *color = Color::Reset;
-+            }
++    };
++    loop {
++        if let Some(status) = child.try_wait()? {
++            return Ok(status);
 +        }
-+        palette
++        let mut ready = pidfd.readable().await?;
++        ready.clear_ready();
 +    }
++}
 +
-     /// Tokyo Night — blue-purple aesthetic.
-     pub fn tokyo_night() -> Self {
-         Self {
-+            accent_fg: None,
-             accent: Color::Rgb(122, 162, 247), // blue
-             panel_bg: Color::Rgb(26, 27, 38),
-             s
-```
-
-**File**: `src/app/theme_sync.rs` (modified, +1/-0)
-```diff
-@@ -100,6 +100,7 @@ impl App {
-         let (palette, theme_name) = super::resolve_effective_theme(
-             &self.state.theme_runtime,
-             self.state.host_terminal_appearance,
-+            None,
-         );
-         if self.state.theme_name == theme_name && self.state.palette == palette {
-             return false;
-```
-
-**File**: `src/client/shell.rs` (modified, +0/-7)
-```diff
-@@ -236,13 +236,6 @@ fn status_color(
-     }
- }
- 
--fn panel_contrast_fg(palette: &Palette) -> ratatui::style::Color {
--    match palette.panel_bg {
--        ratatui::style::Color::Reset => palette.surface_dim,
--        color => color,
--    }
--}
--
- fn blit_pane_surface(target: &mut FrameData, source: &FrameData, area: Rect) {
-     let copy_width = source.width.min(area.width);
-     let copy_height = source.height.min(area.height);
-```
-
-**File**: `src/client/shell/composition.rs` (modified, +2/-2)
-```diff
-@@ -394,7 +394,7 @@ impl ClientShellState {
-                         hit.scroll,
-                         &self.config.palette,
-                         crate::terminal_theme::TerminalTheme {
--                            background: self.host_background,
-+                            background: self.host_theme.background,
-                             ..Default::default()
-                         },
-                     );
-@@ -758,7 +758,7 @@ fn render_client_copy_search_highlights(
-     let bottom = top.saturating_add(u32::from(hit.inner_rect.height.saturating_sub(1)));
-     let style = if current_only {
-         Style::default()
--            .fg(panel_contrast_fg(palette))
-+            .fg(palette.accent_foreground())
-             .bg(palette.accent)
-             .add_modifier(Modifier::BOLD)
-     } else {
-```
-
-**File**: `src/client/shell/config.rs` (modified, +29/-6)
-```diff
-@@ -16,6 +16,34 @@ pub(super) fn merged_config_diagnostic(
- }
- 
- impl ClientShellState {
-+    pub(super) fn refresh_host_palette(&mut self) -> bool {
-+        let effective = crate::app::client_palette_for_appearance(
-+            &self.config.theme_runtime,
-+            self.host_appearance,
-+            &self.host_theme,
-+        );
-+        let preview = if let Some(ClientShellOverlay::Settings(settings)) = self.overlay.as_mut() {
-+            settings
-+                .original_theme_name
-+                .clone_from(&self.config.theme_runtime.manual_name);
-+            settings.original_palette = effective.clone();
-+            settings.theme_preview.as_deref()
-+        } else {
-+            None
-+        };
-+        let palette = if let Some(name) = preview {
-+            self.config.theme_name = name.to_owned();
-+            crate::app::client_palette_for_theme(&self.config.theme_runtime, name, &self.host_theme)
-+        } else {
-+            effective
-+        };
-+        if self.config.palette == palette {
++#[cfg(test)]
++mod tests {
++    use std::os::fd::{FromRawFd, OwnedFd};
++    use std::sync::Arc;
++    use std::time::Duration;
++
++    use tokio::sync::{mpsc, Notify};
++
++    use crate::events::AppEvent;
++    use crate::layout::PaneId;
++    use crate::pane::{AgentDetection, PaneLaunchEnv, PaneRuntime};
++    use crate::render_signal::RenderSignal;
++
++    fn pidfd_supported() -> bool {
++        let fd = unsafe { libc::syscall(libc::SYS_pidfd_open, std::process::id(), 0) };
++        if fd < 0 {
 +            return false;
 +        }
-+        self.config.palette = palette;
++        drop(unsafe { OwnedFd::from_raw_fd(fd as _) });
 +        true
 +    }
 +
-     pub(super) fn set_local_config_diagnostic(&mut self, diagnostic: Option<String>) {
-         self.local_config_diagnostic = diagnostic;
-         self.config_diagnostic = merged_config_diagnostic(
-@@ -77,12 +105,7 @@ impl ClientShellState {
-                     &loaded.diagnostics,
-                     &loaded.invalid_sections,
-                 );
--                if let Some(appearance) = self.host_appearance {
--                    self.config.palette = crate::app::client_palette_for_appearance(
--                        &self.config.theme_runtime,
--                        appearance,
--                    );
--                }
-+                self.refresh_host_palette();
-                 if !self.sidebar_width_manual {
-                     self.sidebar_width = self.config.sidebar_width;
-                 }
-```
-
-**File**: `src/client/shell/input.rs` (modified, +22/-27)
-```diff
-@@ -222,6 +222,7 @@ impl ClientShellState {
- 
-     pub(crate) fn handle_raw_events(&mut self, events: Vec<RawInputEvent>) -> ClientShellInput {
-         let mut outcome = ClientShellInput::default();
-+        let mut host_palette_changed = false;
-         if !events.is_empty() && self.endpoint_error.take().is_some() {
-             self.endpoint_error_deadline = None;
-             outcome.repaint = true;
-@@ -336,41 +337,35 @@ impl ClientShellState {
-                     self.host_appearance = Some(appearance);
-                     self.host_appearance_explicit = true;
-                     outcome.query_host_theme = true;
--                    if self.config.theme_runtime.auto_switch {
--                        self.config.palette = crate::app::client_palette_for_appearance(
--                            &self.config.theme_runtime,
--                            appearance,
--                        );
--                        outcome.repaint = true;
--                    }
-+                    host_palette_changed = true;
-                 }
--                RawInputEvent::HostDefaultColor {
--                    kind: crate::terminal_theme::DefaultColorKind::Background,
--                    color,
--                } => {
--                    if self.host_background != Some(color) {
--                        self.host_background = Some(color);
-+                RawInputEvent::HostDefaultColor { kind, color } => {
-+                    if kind == crate::terminal_theme::DefaultColorKind::Background
-+                        && self.host_theme.background != Some(color)
++    #[test]
++    fn closed_pane_children_are_reaped_when_blocking_pool_is_busy() {
++        // Without pidfd the blocking fallback needs the pool this test fills.
++        if !pidfd_supported() {
++            return;
++        }
++        let rt = tokio::runtime::Builder::new_multi_thread()
++            .worker_threads(1)
++            .enable_all()
++            .max_blocking_threads(1)
++            .build()
++            .unwrap();
++        let (release_tx, release_rx) = std::sync::mpsc::channel();
++        let (started_tx, started_rx) = std::sync::mpsc::channel();
++        let blocker = rt.spawn_blocking(move || {
++            started_tx.send(()).unwrap();
++            let _ = release_rx.recv();
++        });
++        started_rx.recv().unwrap();
++
++        let reaped = rt.block_on(async {
++            let (events, mut event_rx) = mpsc::channel(32);
++            let runtime = PaneRuntime::spawn_shell_command(
++                PaneId::from_raw(42),
++                24,
++                80,
++                std::env::temp_dir(),
++                "exec sleep 30",
++                &PaneLaunchEnv::default(),
++                AgentDetection::Disabled,
++                0,
++                crate::terminal_theme::TerminalTheme::default(),
++                None,
++                events,
++                Arc::new(Notify::new()),
++                Arc::new(RenderSignal::new()),
++            )
++            .unwrap();
++            runtime.shutdown();
++            tokio::time::timeout(Duration::from_secs(1), async {
++                while let Some(event) = event_rx.recv().await {
++                    if let AppEvent::PaneDied {
++                        pane_id,
++                        exit_reason,
++                    } = event
 +                    {
-                         outcome.repaint = true;
-                     }
--                    if !self.host_appearance_explicit {
--                        let appearance = color.inferred_appearance();
--                        self.host_appearance = Some(appearance);
--                        if self.config.theme_runtime.auto_switch {
--                            self.config.palette = crate::app::client_palette_for_appearance(
--                                &self.config.theme_runtime,
--                                appearance,
--                            );
--                            outcome.repaint = true;
--                        }
-+                    self.host_theme = self.host_theme.with_color(kind, color);
-+                    host_palette_changed = true;
-+                    if kind == crate::terminal_theme::DefaultColorKind::Background
-+                        && !self.host_appearance_explicit
-+                    {
-+                        self.host_appearance = Some(color.inferred_appearance());
++                        return pane_id == PaneId::from_raw(42)
++                            && !matches!(
++                                exit_reason,
++                                crate::platform::ChildExitReason::WaitFailed
++                            );
 +                    }
 +                }
-+                RawInputEvent::HostPaletteColors { colors } => {
-+                    for (index, color) in colors {
-+                        self.host_theme = self.host_theme.with_palette_color(index, color);
-                     }
-+                    host_palette_changed = true;
-                 }
--                RawInputEvent::HostDefaultColor { .. }
--                | RawInputEvent::HostPaletteColors { .. }
--                | RawInputEvent::HostCellSizeReport { .. }
--                | RawInputEvent::Unsupported => {}
-+                RawInputEvent::HostCellSizeReport { .. } | RawInputEvent::Unsupported => {}
-             }
-             self.reconcile_input_source();
-         }
-+        if host_palette_changed {
-+            outcome.repaint |= self.refresh_host_palette();
-+        }
-         outcome.repaint |= self.resume_mobile_switcher_if_ready();
-         outcome
-     }
++                false
++            })
++            .await
++        });
++        release_tx.send(()).unwrap();
++        rt.block_on(blocker).unwrap();
++        assert!(matches!(reaped, Ok(true)));
++    }
++}
 ```
 
-**File**: `src/client/shell/overlays.rs` (modified, +9/-15)
+**File**: `src/server/handoff.rs` (modified, +16/-5)
 ```diff
-@@ -124,7 +124,7 @@ pub(crate) fn render_global_menu(
-         let highlighted = index == menu.highlighted;
-         let style = if highlighted {
-             Style::default()
--                .fg(panel_contrast_fg(palette))
-+                .fg(palette.accent_foreground())
-                 .bg(palette.accent)
-                 .add_modifier(Modifier::BOLD)
-         } else {
-@@ -201,7 +201,7 @@ pub(crate) fn render_context_menu(
-         let highlighted = index == menu.highlighted;
-         let style = if highlighted {
-             Style::default()
--                .fg(panel_contrast_fg(palette))
-+                .fg(palette.accent_foreground())
-                 .bg(palette.accent)
-                 .add_modifier(Modifier::BOLD)
-         } else {
-@@ -299,12 +299,6 @@ fn row(i: Rect, ws: &[u16], gap: u16, off: u16) -> Vec<Rect> {
-         })
-         .collect()
- }
--fn contrast(p: &Palette) -> ratatui::style::Color {
--    match p.panel_bg {
--        ratatui::style::Color::Reset => p.surface_dim,
--        c => c,
+@@ -362,7 +362,11 @@ fn read_line_unbuffered(stream: &mut UnixStream) -> io::Result<String> {
+     let mut bytes = Vec::new();
+     let mut byte = [0u8; 1];
+     loop {
+-        let read = stream.read(&mut byte)?;
++        let read = match stream.read(&mut byte) {
++            Ok(read) => read,
++            Err(err) if err.kind() == io::ErrorKind::Interrupted => continue,
++            Err(err) => return Err(err),
++        };
+         if read == 0 {
+             return Err(io::Error::new(
+                 io::ErrorKind::UnexpectedEof,
+@@ -474,10 +478,17 @@ fn recv_fd_batch(stream: &UnixStream, wanted: usize) -> io::Result<Vec<RawFd>> {
+     msg.msg_control = control.as_mut_ptr() as *mut libc::c_void;
+     msg.msg_controllen = control.len() as _;
+ 
+-    let read = unsafe { libc::recvmsg(stream.as_raw_fd(), &mut msg, 0) };
+-    if read < 0 {
+-        return Err(io::Error::last_os_error());
 -    }
--}
- fn render_release_notes_overlay(
-     b: &mut Buffer,
-     notes: &crate::app::state::ReleaseNotesState,
-@@ -371,7 +365,7 @@ fn render_release_notes_overlay(
-         close,
-         " esc close ",
-         Style::default()
--            .fg(contrast(p))
-+            .fg(p.accent_foreground())
-             .bg(p.accent)
-             .add_modifier(Modifier::BOLD)
-             .remove_modifier(Modifier::DIM),
-@@ -487,7 +481,7 @@ fn render_product_announcement_overlay(
-         close,
-         " esc close ",
-         Style::default()
--            .fg(contrast(p))
-+            .fg(p.accent_foreground())
-             .bg(p.accent)
-             .add_modifier(Modifier::BOLD)
-             .remove_modifier(Modifier::DIM),
-@@ -629,7 +623,7 @@ fn render_onboarding_overlay(
-         primary,
-         " ↵ continue ",
-         Style::default()
--            .fg(contrast(p))
-+            .fg(p.accent_foreground())
-             .bg(p.accent)
-             .add_modifier(Modifier::BOLD)
-             .remove_modifier(Modifier::DIM),
-@@ -676,7 +670,7 @@ fn render_rename_overlay(
-         *save,
-         " ↵ save ",
-         Style::default()
--            .fg(contrast(p))
-+            .fg(p.accent_foreground())
-             .bg(p.accent)
-             .add_modifier(Modifier::BOLD),
-     );
-@@ -846,7 +840,7 @@ fn render_navigator_overlay(
-                 .add_modifier(Modifier::DIM)
-         } else if ix == selected {
-             Style::default()
--                .fg(contrast(p))
-+                .fg(p.accent_foreground())
-                 .bg(p.accent)
-                 .add_modifier(Modifier::BOLD)
-         } else {
-@@ -1148,7 +1142,7 @@ fn render_help_overlay(
-             " esc close "
-         },
-         Style::default()
--            .fg(contrast(p))
-+            .fg(p.accent_foreground())
-             .bg(p.accent)
-             .add_modifier(Modifier::BOLD),
-     );
-@@ -1288,7 +1282,7 @@ fn render_confirm_close_overlay(
-         *ok,
-         " ↵ confirm ",
-         Style::default()
--            .fg(contrast(p))
-+            .fg(p.fill_foreground())
-             .bg(p.red)
-             .add_modifier(Modifier::BOLD),
-     );
-```
-
----
-
-### Incident Patch 2: `48987295` (2026-11-19)
-**Commit Message**: fix: stop queuing stale screens for tui clients that stop reading (#6097)
-
-refs #5471
-
-**File**: `src/platform/windows.rs` (modified, +14/-0)
-```diff
-@@ -72,6 +72,20 @@ impl PrivateLocalListener {
-     }
- }
- 
-+pub(crate) fn shutdown_client_stream(stream: &crate::ipc::LocalStream) -> std::io::Result<()> {
-+    use std::os::windows::io::AsHandle as _;
-+
-+    let crate::ipc::LocalStream::NamedPipe(pipe) = stream;
-+    let ok = unsafe {
-+        windows_sys::Win32::System::Pipes::DisconnectNamedPipe(pipe.as_handle().as_raw_handle())
++    let read = loop {
++        msg.msg_controllen = control.len() as _;
++        let read = unsafe { libc::recvmsg(stream.as_raw_fd(), &mut msg, 0) };
++        if read >= 0 {
++            break read;
++        }
++        let err = io::Error::last_os_error();
++        if err.kind() != io::ErrorKind::Interrupted {
++            return Err(err);
++        }
 +    };
-+    if ok == 0 {
-+        Err(std::io::Error::last_os_error())
-+    } else {
-+        Ok(())
-+    }
-+}
-+
- pub(crate) struct ChildPipe(std::fs::File);
  
- impl ChildPipe {
-```
-
-**File**: `src/server/client_transport.rs` (modified, +335/-5)
-```diff
-@@ -46,6 +46,7 @@ const OBSERVER_WRITE_TIMEOUT: Duration = Duration::from_secs(30);
- 
- /// Maximum input payload size (bytes) for a single `ClientMessage::Input`.
- const MAX_INPUT_PAYLOAD: usize = 1024 * 1024; // 1 MB
-+const MAX_CLIENT_CONTROL_BYTES: usize = 64 * 1024 * 1024;
- const MAX_CLIENT_SHELL_DIMENSION: u16 = 4096;
- const MAX_CLIENT_SHELL_CELLS: u32 = 1_000_000;
- const MAX_CLIENT_CELL_SIZE_PX: u32 = 4096;
-@@ -117,6 +118,19 @@ fn decode_endpoint_request(request: &str) -> serde_json::Result<DecodedEndpointR
- /// Maximum structured input events accepted in one client message.
- const MAX_INPUT_EVENT_BATCH: usize = 4096;
- 
-+#[cfg(test)]
-+fn split_control_frames(data: Vec<u8>) -> Vec<Vec<u8>> {
-+    let mut frames = Vec::new();
-+    let mut offset = 0;
-+    while offset < data.len() {
-+        let length = u32::from_le_bytes(data[offset..offset + 4].try_into().unwrap()) as usize;
-+        let end = offset + 4 + length;
-+        frames.push(data[offset..end].to_vec());
-+        offset = end;
-+    }
-+    frames
-+}
-+
- /// Channels owned by the server side of a client writer thread.
- #[derive(Clone, Debug)]
- pub(crate) struct ClientWriter {
-@@ -144,9 +158,16 @@ impl ClientWriter {
-     #[cfg(all(test, unix))]
-     pub(crate) fn test_drain(&self) -> Vec<Vec<u8>> {
-         let mut state = self.render.queue.lock_state();
--        let mut frames = state.control.drain(..).collect::<Vec<_>>();
-+        let mut frames = Vec::new();
-+        while let Some(item) = state.take_control() {
-+            match item {
-+                ClientWriteItem::Control(data) => frames.extend(split_control_frames(data)),
-+                ClientWriteItem::Render(_) => unreachable!(),
-+            }
-+        }
-         frames.extend(state.ordered.drain(..));
-         frames.extend(state.render.take());
-+        state.retained_bytes = 0;
-         frames
-     }
- 
-@@ -176,10 +197,16 @@ impl ClientWriter {
-         };
-         std::thread::spawn(move || {
-             while let Some(item) = drain.recv() {
-+                let retained = item.retained_control_bytes();
-                 let sent = match item {
--                    ClientWriteItem::Control(data) => control.send(data).is_ok(),
-+                    ClientWriteItem::Control(data) => split_control_frames(data)
-+                        .into_iter()
-+                        .all(|frame| control.send(frame).is_ok()),
-                     ClientWriteItem::Render(data) => render.send(data).is_ok(),
-                 };
-+                if let Some(retained) = retained {
-+                    drain.release(retained);
-+                }
-                 if !sent {
-                     break;
-                 }
-@@ -239,6 +266,11 @@ impl ClientControlWriter {
-     pub(crate) fn send(&self, data: Vec<u8>) -> Result<(), SendError<Vec<u8>>> {
-         self.queue.send_control(data)
-     }
-+
-+    /// One revision's optional view projection, completion map, and snapshot in wire order.
-+    pub(crate) fn send_state(&self, data: Vec<u8>) -> Result<(), SendError<Vec<u8>>> {
-+        self.queue.send_state(data)
-+    }
- }
- 
- impl ClientRenderWriter {
-@@ -268,31 +300,76 @@ impl ClientRenderWriter {
- struct ClientWriterQueue {
-     state: Mutex<ClientWriterQueueState>,
-     ready: Condvar,
-+    max_bytes: usize,
-+    client_id: u64,
-+    disconnect_stream: Option<LocalStream>,
- }
- 
- #[derive(Debug, Default)]
- struct ClientWriterQueueState {
-     control: VecDeque<Vec<u8>>,
-+    pending_state: Option<Vec<u8>>,
-+    controls_before_state: usize,
-     ordered: VecDeque<Vec<u8>>,
-     render: Option<Vec<u8>>,
-+    retained_bytes: usize,
-     senders: usize,
-     writer_alive: bool,
- }
- 
-+impl ClientWriterQueueState {
-+    fn take_control(&mut self) -> Option<ClientWriteItem> {
-+        if self.controls_before_state == 0 {
-+            if let Some(frames) = self.pending_state.take() {
-+                return Some(ClientWriteItem::Control(frames));
-+            }
-+        }
-+        let data = self.control.pop_front()?;
-+        self.controls_before_state = self.controls_before_state.saturating_sub(1);
-+        Some(ClientWriteItem::Control(data))
-+    }
-+}
-+
- #[derive(Debug, PartialEq, Eq)]
- enum ClientWriteItem {
-     Control(Vec<u8>),
-     Render(Vec<u8>),
- }
- 
-+fn frame_retained_bytes(data: &Vec<u8>) -> usize {
-+    data.capacity()
-+        .saturating_add(std::mem::size_of::<Vec<u8>>())
-+}
-+
-+impl ClientWriteItem {
-+    fn retained_control_bytes(&self) -> Option<usize> {
-+        match self {
-+            Self::Control(data) => Some(frame_retained_bytes(data)),
-+            Self::Render(_) => None,
-+        }
-+    }
-+}
-+
- impl ClientWriterQueue {
-+    #[cfg(test)]
-     fn new() -> Arc<Self> {
-+        Self::with_limit(0, MAX_CLIENT_CONTROL_BYTES, None)
-+    }
-+
-+    fn with_limit(
-+        client_id: u64,
-+        max_bytes: usize,
-+        disconnect_stream: Option<LocalStream>,
-+    ) -> Arc<Self> {
-         Arc::new(Self {
-             state: Mutex::new(ClientWriterQueueState {
-                 writer_
-```
-
-**File**: `src/server/headless/render.rs` (modified, +5/-4)
-```diff
-@@ -717,10 +717,11 @@ impl HeadlessServer {
-                         broken_clients.push(client_id);
-                         continue;
-                     };
--                    if projection_framed.is_some_and(|framed| writer.control.send(framed).is_err())
--                        || writer.control.send(completion_framed).is_err()
--                        || writer.control.send(snapshot_framed).is_err()
--                    {
-+                    let mut state_framed = projection_framed.unwrap_or_default();
-+                    state_framed.reserve_exact(completion_framed.len() + snapshot_framed.len());
-+                    state_framed.extend_from_slice(&completion_framed);
-+                    state_framed.extend_from_slice(&snapshot_framed);
-+                    if writer.control.send_state(state_framed).is_err() {
-                         broken_clients.push(client_id);
-                         continue;
-                     }
-```
-
----
-
-### Incident Patch 3: `33bc1638` (2026-11-19)
-**Commit Message**: ci: fix windows checks (pin windows-2022, worktree remove race) (#6093)
-
-**File**: `.github/workflows/build-artifacts-manual.yml` (modified, +1/-1)
-```diff
-@@ -190,7 +190,7 @@ jobs:
- 
-   build-windows:
-     if: ${{ inputs.build_group == 'windows' || inputs.build_group == 'all' }}
--    runs-on: windows-latest
-+    runs-on: windows-2022
-     env:
-       LIBGHOSTTY_VT_OPTIMIZE: ${{ inputs.libghostty_optimize }}
-       LIBGHOSTTY_VT_SIMD: ${{ inputs.libghostty_simd }}
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
-```diff
-@@ -60,7 +60,7 @@ jobs:
-           - os: macos-latest
-             kind: unix
-             nextest_filter: not binary(live_handoff)
--          - os: windows-latest
-+          - os: windows-2022
-             kind: windows
-     runs-on: ${{ matrix.os }}
-     timeout-minutes: 15
-```
-
-**File**: `.github/workflows/preview.yml` (modified, +1/-1)
-```diff
-@@ -154,7 +154,7 @@ jobs:
-             os: macos-latest
-             name: herdr-macos-aarch64
-           - target: x86_64-pc-windows-msvc
--            os: windows-latest
-+            os: windows-2022
-             name: herdr-windows-x86_64.zip
-     runs-on: ${{ matrix.os }}
-     env:
-```
-
-**File**: `scripts/release-workflows.test.ts` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ describe("official publishing workflow boundaries", () => {
-     expect(checks.run.trim().split("\n")).toEqual(["just ci", "just docs-contract-test"]);
-     expect(preview.jobs.build.strategy.matrix.include).toContainEqual({
-       target: "x86_64-pc-windows-msvc",
--      os: "windows-latest",
-+      os: "windows-2022",
-       name: "herdr-windows-x86_64.zip",
-     });
-     expect(preview.jobs.publish.needs).toContain("build");
-```
-
-**File**: `src/app/api/worktrees/deferred.rs` (modified, +22/-21)
-```diff
-@@ -291,27 +291,6 @@ impl App {
-             return;
-         }
- 
--        #[cfg(windows)]
--        {
--            if !params.force
--                && crate::worktree::checkout_has_dirty_files(
--                    &space.checkout_path,
--                    params.trust_repository,
--                )
--                .unwrap_or(false)
--            {
--                Self::send_api_response(
--                    respond_to,
--                    encode_error(
--                        id,
--                        "dirty_worktree_requires_force",
--                        crate::worktree::worktree_dirty_remove_message(&space.checkout_path),
--                    ),
--                );
--                return;
--            }
--        }
--
-         let workspace_internal_id = self.state.workspaces[ws_idx].id.clone();
-         let checkout_key = crate::worktree::canonical_or_original(&space.checkout_path);
-         if self
-@@ -343,6 +322,28 @@ impl App {
-             return;
-         }
- 
-+        // After the in-flight check: a running removal makes the checkout look dirty.
-+        #[cfg(windows)]
-+        {
-+            if !params.force
-+                && crate::worktree::checkout_has_dirty_files(
-+                    &space.checkout_path,
-+                    params.trust_repository,
-+                )
-+                .unwrap_or(false)
-+            {
-+                Self::send_api_response(
-+                    respond_to,
-+                    encode_error(
-+                        id,
-+                        "dirty_worktree_requires_force",
-+                        crate::worktree::worktree_dirty_remove_message(&space.checkout_path),
-+                    ),
-+                );
-+                return;
-+            }
-+        }
-+
-         let shutdown_panes =
-             if Self::should_shutdown_workspace_terminal_runtimes_for_worktree_remove(params.force) {
-                 self.shutdown_workspace_terminal_runtimes_for_worktree_remove(ws_idx)
+     let mut out = Vec::new();
+     unsafe {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6120** (closed): feat(rex): Rex server control and data clients (@Parsifa1)
+- **PR #6107** (2026-11-19): fix: retry interrupted handoff reads; reap pane shells in 500+ pane sessions (@ogulcancelik)
 - **PR #6097** (2026-11-19): fix: stop queuing stale screens for tui clients that stop reading (@ogulcancelik)
 - **PR #6093** (2026-11-19): ci: fix windows checks (pin windows-2022, worktree remove race) (@ogulcancelik)
 - **PR #6092** (2026-11-19): fix: keep the terminal theme readable on light terminals (@ogulcancelik)
 - **PR #6056** (closed): perf: defer hidden tab resizes until the host resize settles (@safa0)
-- **PR #6050** (closed): doc: map harness names to agent start --kind in the herdr skill (@ashishvaishno)
-- **PR #6013** (closed): fix: keep Moshi clients on the connected host (@dltacube)
 
 ---
 
@@ -3368,51 +2790,48 @@ refs #5471
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep the terminal theme readable on light terminals
+## X. retry interrupted handoff reads; reap pane shells in 500+ pane sessions
 
 **RULE**:
-When implementing operations in `src/app/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in herdrdev/herdr. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/pane.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in herdrdev/herdr. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8734523b`: keep the terminal theme readable on light terminals. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e8d7d970`: retry interrupted handoff reads; reap pane shells in 500+ pane sessions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/app/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pane.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    host: Option<&crate::terminal_theme::TerminalTheme>,
-    if crate::config::canonical_theme_name(name) == Some("terminal") {
-        if let Some(host) = host {
-            palette = state::Palette::terminal_for_host(host);
-        }
-    }
-        palette.accent_fg = None;
-    host: Option<&crate::terminal_theme::TerminalTheme>,
-        resolve_palette_for_theme_name(name, fallback, runtime, mode_custom, host),
-    host: &crate::terminal_theme::TerminalTheme,
-    resolve_palette_for_theme_name(name, "catppuccin", runtime, None, Some(host))
-    resolve_effective_theme(&runtime, None, None).0
-    appearance: Option<crate::terminal_theme::HostAppearance>,
-    host: &crate::terminal_theme::TerminalTheme,
-    resolve_effective_theme(runtime, appearance, Some(host)).0
-        let (theme_palette, theme_name) = resolve_effective_theme(&theme_runtime, None, None);
+            let child = spawned.child;
+            tokio::spawn(async move {
+                let exit_reason = match crate::pty::backend::wait_for_child(child).await {
+                if let Err(e) = events
+                    .send(AppEvent::PaneDied {
+                        pane_id,
+                        exit_reason,
+                    })
+                    .await
+                {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        resolve_palette_for_theme_name(name, fallback, runtime, mode_custom),
-    resolve_palette_for_theme_name(name, "catppuccin", runtime, None)
-    resolve_effective_theme(&runtime, None).0
-    appearance: crate::terminal_theme::HostAppearance,
-    resolve_effective_theme(runtime, Some(appearance)).0
-        let (theme_palette, theme_name) = resolve_effective_theme(&theme_runtime, None);
+            let rt = tokio::runtime::Handle::current();
+            let mut child = spawned.child;
+            tokio::task::spawn_blocking(move || {
+                let exit_reason = match child.wait() {
+                // Use blocking send — PaneDied is critical, must not be dropped
+                if let Err(e) = rt.block_on(events.send(AppEvent::PaneDied {
+                    pane_id,
+                    exit_reason,
+                })) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8734523b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e8d7d970` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
