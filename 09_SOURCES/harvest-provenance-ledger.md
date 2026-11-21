@@ -11747,3 +11747,6 @@ Every entry in this ledger must capture:
 | `learn-github-faker-js-faker` | `https://github.com/faker-js/faker` | `84d1bf84` | Multi-dimensional audit evidence | 2026-11-21T03:15:35.056Z |
 | `learn-github-saffsanity-sill` | `https://github.com/Saffsanity/sill` | `c33d1057` | Multi-dimensional audit evidence | 2026-11-21T03:15:36.453Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `8c164554` | Multi-dimensional audit evidence | 2026-11-21T03:15:39.202Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `ac154af9` | Multi-dimensional audit evidence | 2026-11-21T03:28:36.255Z |
+| `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `eaa9be2c` | Multi-dimensional audit evidence | 2026-11-21T03:28:41.619Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `5c494ac8` | Multi-dimensional audit evidence | 2026-11-21T03:28:50.572Z |

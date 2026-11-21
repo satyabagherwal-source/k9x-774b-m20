@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "116bffc3",
+    "sourceVersion": "5c494ac8",
     "license": "NOASSERTION",
-    "contentHash": "7c3ca3769baecac319375c69b100fa80fcacc9342690841985652f21095e1101",
-    "lastHarvestedAt": "2026-11-20T01:20:34.301Z",
+    "contentHash": "23c0699b5341198f75ae032cf94ae27096fa60ef61a9b9b775c053c19b5cf0a9",
+    "lastHarvestedAt": "2026-11-21T03:28:50.572Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "9b34eb69",
+    "sourceVersion": "ac154af9",
     "license": "Apache-2.0",
-    "contentHash": "feca5bca0199c1e4d18ae36e23f79a5128b440917fc8280eb102c4de35af6a47",
-    "lastHarvestedAt": "2026-11-19T16:40:56.377Z",
+    "contentHash": "bf5bbb36d6cddd67decbae0326403fb5c528949a0524eb793c6d5e5b9996cab0",
+    "lastHarvestedAt": "2026-11-21T03:28:36.255Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {
@@ -10563,10 +10563,10 @@
     "repository": "gauthierpiarrette/highball",
     "platform": "github",
     "sourceUrl": "https://github.com/gauthierpiarrette/highball",
-    "sourceVersion": "4ebe4fe0",
+    "sourceVersion": "eaa9be2c",
     "license": "GPL-3.0",
-    "contentHash": "7a3d26411b018bb3a94381a329fbdfd6c7f1c053513a94b5c1fff40b8e14637d",
-    "lastHarvestedAt": "2026-11-17T05:37:13.379Z",
+    "contentHash": "30797122f5e9ecf36563b50587dd0256251206c8944d826c66bddd82f6a75d92",
+    "lastHarvestedAt": "2026-11-21T03:28:41.619Z",
     "learningId": "learn-github-gauthierpiarrette-highball"
   },
   "hf-minimaxai-minimax-m3.1-flash": {

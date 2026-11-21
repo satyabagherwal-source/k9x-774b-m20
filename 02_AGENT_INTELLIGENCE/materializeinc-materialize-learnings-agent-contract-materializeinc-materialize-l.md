@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T01:23:30.811Z",
+  "timestamp": "2026-11-21T03:28:57.455Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-materializeinc-materialize-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [materializeinc-materialize-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T01:23:30.811Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T03:28:57.455Z`  
 > **Learning ID**: `LEARN-EVO-materializeinc-materialize-learnings`
 
 
@@ -26,10 +26,10 @@ PROVENANCE_END -->
 ## 2. Operational Capabilities
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `116bffc3`  
+> **Source Version**: `5c494ac8`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T01:20:33.375Z  
+> **Timestamp**: 2026-11-21T03:28:49.532Z  
 > **Learning ID**: `learn-github-materializeinc-materialize`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,7 +43,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T01:20:33.181Z  
+> **Harvest Timestamp**: 2026-11-21T03:28:49.526Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1107,11 +1107,11 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40933** (2026-11-19): **ci: Nightly fixes (2026-11-19)**
-  *Symptoms*: Based on https://buildkite.com/materialize/nightly/builds/18794  Exposed by https://github.com/MaterializeInc/materialize/pull/40890  Test run: https://buildkite.com/materialize/nightly/builds/18800 (edit: green)
+- **Issue #40969** (2026-11-20): **[librdkafka agent test] kafka: upgrade librdkafka to v2.16.0**
+  *Symptoms*: **Test run of mz-agents' librdkafka-release-agent; do not merge.** It replays the `v2.16.0` upgrade against MaterializeInc/materialize@`60cc748fd80eef17f9d6b444d4a39217f12db92b` (`2026-10-27T12:09:07-07:00`), seeing only what existed then. The base branch is `main` at `60cc748fd80eef17f9d6b444d4a39217f12db92b`. Review comments are welcome; the agent answers them for eight hours after each daily run.  Linear: [SS-608](https://linear.app/materializeinc/issue/SS-608/librdkafka-bump-fake-test-issue-upgrade-librdkafka-to-v2160) (fake test issue) Depends on: MaterializeInc/rust-rdkafka#39 (pinned to its head `13adee1`)  ### Motivation  Upgrades the vendored librdkafka from upstream v2.12.1 (plus one build fix) to [v2.16.0](https://github.com/confluentinc/librdkafka/releases/tag/v2.16.0), the latest stable release. It brings four releases of fixes, several of which are in code paths we use (re-bootstrap, `ALL_BROKERS_DOWN`, watermark/offset queries on client destroy, lost-assignment commits), plus bundled OpenSSL/libcurl CVE fixes.  ### Changes  * `Cargo.toml` `[patch.crates-io]`: `rdkafka` and `rdkafka-sys` now pin `rev = "13adee1ddd5d2008c205bec6c9c34a917c8e97a8"` (head of MaterializeInc/rust-rdkafka#39) instead of following the fork's default branch. * `Cargo.lock`: only the two rust-rdkafka entries change (`642daa6` → `13adee1`, `rdkafka-sys` `4.3.0+2.5.0` → `4.3.0+2.16.0`). No other crate moved. * `test/cargo-fuzz/Cargo.toml`: the same `rev` pins, because `bin/lint-cargo` requi
 
-- **Issue #40932** (2026-11-19): **workload-anonymize: rename query policy names in cluster options**
-  *Symptoms*: SHOW CREATE CLUSTER renders a managed cluster's attached query policy as a string literal (QUERY POLICY = '<name>'). CREATE/ALTER CLUSTER literals are preserved as configuration, so the policy name survived bin/mz-workload-anonymize verbatim, and the verification pass did not notice because it blanks string literals before scanning for identifiers.  Treat the option value as an object reference: the helper collects and renames it consistently with query policy names in captured statements, and the verification pass checks it like an identifier.  Follow-up to #38762  Closes: [QAR-294](https://linear.app/materializeinc/issue/QAR-294)
+- **Issue #40965** (2026-11-20): **ci: run the claude workflow with the read-only job token**
+  *Symptoms*: The Claude workflow now passes the job's `GITHUB_TOKEN` to `claude-code-action` instead of letting the action mint a Claude GitHub App token. The job token is scoped to `contents: read`, `pull-requests: write` and `actions: read`, so Claude can still read PRs and CI results and post replies, but cannot push branches or merge. The `gh` allowlist is narrowed to `gh pr view`, `gh pr diff` and `gh pr checks`, and `@claude` on plain issues no longer starts the job.  ### Risks  - Replies are posted as `github-actions[bot]` instead of the Claude app. - `@claude` on a plain issue is ignored. - `@claude` in PR reviews on fork PRs gets a read-only token from GitHub. The OAuth secret is already unavailable on those runs. - Rollback is reverting this one file.  ### Tests  actionlint passes. Not exercised end to end: needs an `@claude` comment on a PR after merge.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1128,416 +1128,468 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6b3569ab` (2026-11-19)
-**Commit Message**: workload-replay: Confirm performance regressions (#40841)
+### Incident Patch 1: `71f8f02e` (2026-11-20)
+**Commit Message**: chore(deps): update dependency @faker-js/faker to v10 [security] (#40860)
 
-Require the same metric to regress in two fresh reference/current pairs.
-Alternative to https://github.com/MaterializeInc/materialize/pull/38712
+This PR contains the following updates:
 
-Closes: [QAR-153](https://linear.app/materializeinc/issue/QAR-153)
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+| [@faker-js/faker](https://fakerjs.dev)
+([source](https://redirect.github.com/faker-js/faker)) | `8.4.0` →
+`10.5.0` |
+![age](https://developer.mend.io/api/mc/badges/age/npm/@faker-js%2ffaker/10.5.0?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@faker-js%2ffaker/8.4.0/10.5.0?slim=true)
+|
 
-Test run: https://buildkite.com/materialize/nightly/builds/18765
+---
 
-**File**: `misc/python/materialize/workload_replay/executor.py` (modified, +59/-72)
+> [!WARNING]
+> Some dependencies could not be looked up. Check the Dependency
+Dashboard for more information.
+
+---
+
+### Faker: helpers.fake exploitable into arbritary code execution
+[CVE-2026-73231](https://nvd.nist.gov/vuln/detail/CVE-2026-73231) /
+[GHSA-qxc2-j82w-r537](https://redirect.github.com/advisories/GHSA-qxc2-j82w-r537)
+
+<details>
+<summary>More information</summary>
+
+#### Details
+##### Summary
+
+`faker.helpers.fake` can be tricked into arbritary code execution.
+
+##### Details
+
+fakeEval.resolveProperty resolves properties on functions itself instead
+of resolving the nested functio
+
+**File**: `ci/test/docs-widgets/package-lock.json` (modified, +17/-0)
 ```diff
-@@ -314,9 +314,9 @@ def benchmark(
-     When `compare_against` is set, an older reference version is run first and
-     its stats are compared against the current version. Otherwise only the
-     current version is run, which still exercises that the workload replays
--    without crashing.
-+    without crashing. A performance failure must repeat for the same metric in
-+    a fresh reference/current pair. Query errors are not retried.
-     """
--    import random
- 
-     services = [
-         "materialized",
-@@ -348,22 +348,19 @@ def benchmark(
- 
-     print_workload_stats(file, workload)
- 
--    stats_old = None
--    old_version = None
--    if compare_against:
--        tag = resolve_tag(compare_against)
--        print(f"-- Running against materialized:{tag} (reference)")
-+    def run(image: str | None) -> tuple[dict[str, Any], str]:
-+        print(f"-- Running against {image or 'current materialized'}")
-         random.seed(seed)
-         with c.override(
-             Materialized(
--                image=f"{image_registry()}/materialized:{tag}",
-+                image=image,
-                 cluster_replica_size=cluster_replica_sizes,
-                 ports=[6875, 6874, 6876, 6877, 6878, 6880, 6881, 26257],
-                 environment_extra=["MZ_NO_BUILTIN_CONSOLE=0"],
-                 additional_system_parameter_defaults=additional_system_parameter_defaults,
-             )
-         ):
--            stats_old = test(
-+            stats = test(
-                 c,
-                 workload,
-                 file,
-@@ -379,82 +376,72 @@ def benchmark(
-                 True,
-                 max_concurrent_queries,
-             )
--            old_version = c.query_mz_version()
-+            version = c.query_mz_version()
-         try:
-             c.kill(*services)
-         except:
-             pass
-         c.rm(*services, destroy_volumes=True)
-         c.rm_volumes("mzdata")
--    print("-- Running against current materialized")
--    random.seed(seed)
--    with c.override(
--        Materialized(
--            image=None,
--            cluster_replica_size=cluster_replica_sizes,
--            ports=[6875, 6874, 6876, 6877, 6878, 6880, 6881, 26257],
--            environment_extra=["MZ_NO_BUILTIN_CONSOLE=0"],
--            additional_system_parameter_defaults=additional_system_parameter_defaults,
--        )
--    ):
--        stats_new = test(
--            c,
--            workload,
--            file,
--            factor_initial_data,
--            factor_ingestions,
--            factor_queries,
--            runtime,
--            verbose,
--            True,
--            True,
--            early_initial_data,
--            True,
--            True,
--            max_concurrent_queries,
--        )
--        new_version = c.query_mz_version()
--    try:
--        c.kill(*services)
--    except:
--        pass
--    c.rm(*services, destroy_volumes=True)
--    c.rm_volumes("mzdata")
--    filename = posixpath.relpath(file, LOCATION)
-+        return stats, version
- 
--    if stats_old is None or old_version is None:
-+    if not compare_against:
-+        _, new_version = run(None)
-         print(f"-- Ran {new_version} without a reference version to compare against")
-         return
- 
--    print(f"-- Comparing {old_version} against {new_version}")
--    plot_docker_stats_compare(
--        stats_old=stats_old,
--        stats_new=stats_new,
--        file=filename,
--        old_version=old_version,
--        new_version=new_version,
--    )
--    failures: list[TestFailureDetails] = []
--    failures.extend(compare_table(filename, stats_old, stats_new))
--
--    if "errors" in stats_old["queries"]:
--        new_errors = []
--        for error, occurrences in stats_new["queries"]["errors"].items():
--            if error in stats_old["queries"]["errors"]:
--                continue
-+    tag = resolve_tag(compare_against)
-+    if tag is None:
-+        raise ValueError(f"Could not resolve reference {compare_against}")
-+    filename = posixpath.relpath(file, LOCATION)
-+    pending: set[str] = set()
-+    tables = []
-+    # A fast baseline can also produce a false regression, so rerun both versions.
-+    for attempt in range(1, 3):
-+        stats_old, old_version = run(f"{image_registry()}/materialized:{tag}")
-+        stats_new, new_version = run(None)
-+        print(f"-- Comparing {old_version} against {new_version}, attempt {attempt}")
-+        plot_docker_stats_compare(
-+            stats_old=stats_old,
-+            stats_new=stats_new,
-+            file=f"{filename}_attempt_{attempt}",
-+            old_version=old_version,
-+            new_version=new_version,
-+        )
-+        table, regressions = compare_table(stats_old, stats_new)
-+        tables.append(f"Attempt {attempt}\n{table}")
-+        details = "\n\n".join(tables)
-+
-+        new_errors = [
-+            f"{error} in queries: {occurrences}"
-+            for error, occurrences in stats_new["queries"].get("errors", {}).items()
-+            if error not in stats_old["queries"].get("errors", {})
-      
+@@ -6,6 +6,7 @@
+     "": {
+       "name": "docs-widgets-tests",
+       "dependencies": {
++        "@faker-js/faker": "10.5.0",
+         "jsdom": "^31.0.0",
+         "vitest": "^5.0.0"
+       }
+@@ -61,6 +62,22 @@
+         }
+       }
+     },
++    "node_modules/@faker-js/faker": {
++      "version": "10.5.0",
++      "resolved": "https://registry.npmjs.org/@faker-js/faker/-/faker-10.5.0.tgz",
++      "integrity": "sha512-bsxD8WLS5lIj7aaoCx1YJkktqYj5vlBUE6HWzu2Q51ksrGJ0H737ECCKlFU7Yf8Br45z9t99frBp/J7kzbMPAg==",
++      "funding": [
++        {
++          "type": "opencollective",
++          "url": "https://opencollective.com/fakerjs"
++        }
++      ],
++      "license": "MIT",
++      "engines": {
++        "node": "^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0",
++        "npm": ">=10"
++      }
++    },
+     "node_modules/@jridgewell/resolve-uri": {
+       "version": "3.1.3",
+       "resolved": "https://registry.npmjs.org/@jridgewell/resolve-uri/-/resolve-uri-3.1.3.tgz",
 ```
 
-**File**: `misc/python/materialize/workload_replay/stats.py` (modified, +6/-19)
+**File**: `ci/test/docs-widgets/package.json` (modified, +1/-0)
 ```diff
-@@ -26,7 +26,6 @@
- import numpy
+@@ -5,6 +5,7 @@
+     "test": "vitest"
+   },
+   "dependencies": {
++    "@faker-js/faker": "10.5.0",
+     "jsdom": "^31.0.0",
+     "vitest": "^5.0.0"
+   }
+```
+
+**File**: `ci/test/docs-widgets/webhooks-datagen.test.js` (modified, +156/-137)
+```diff
+@@ -7,163 +7,182 @@
+ // the Business Source License, use of this software will be governed
+ // by the Apache License, Version 2.0.
  
- from materialize import MZ_ROOT, buildkite
--from materialize.mzcompose.test_result import TestFailureDetails
+-import { beforeEach, describe, it, expect, vi } from "vitest";
++import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
++import { faker } from "@faker-js/faker";
+ import { JSDOM } from "jsdom";
+ import fs from "fs";
+ import path from "path";
  
- # Byte parsing utilities
+-describe("Webhooks Data Generator", async () => {
++describe("Webhooks Data Generator", () => {
+   let window, document;
+-  let isGenerating = false;
++  const uuid = /^[0-9a-f-]{36}$/;
++  const fakerVersion = JSON.parse(
++    fs.readFileSync(path.join(__dirname, "package.json"), "utf-8"),
++  ).dependencies["@faker-js/faker"];
  
-@@ -391,9 +390,9 @@ def fmt_pct(delta: float) -> str:
- 
- 
- def compare_table(
--    filename: str, stats_old: dict[str, Any], stats_new: dict[str, Any]
--) -> list[TestFailureDetails]:
--    """Generate a comparison table and check for regressions."""
-+    stats_old: dict[str, Any], stats_new: dict[str, Any]
-+) -> tuple[str, set[str]]:
-+    """Return a comparison table and the metrics exceeding their thresholds."""
-     rows = []
-     if "object_creation" in stats_old:
-         rows.append(
-@@ -480,21 +479,19 @@ def compare_table(
-             ]
-         )
- 
--    failures: list[TestFailureDetails] = []
+-  beforeEach(async () => {
++  beforeEach(() => {
++    vi.useFakeTimers();
+     const htmlPath = path.join(
+       __dirname,
+-      "../../../doc/user/layouts/shortcodes/plugins/webhooks-datagen.html"
++      "../../../doc/user/layouts/shortcodes/plugins/webhooks-datagen.html",
+     );
+-    const htmlContent = fs.readFileSync(htmlPath, "utf-8");
+-    const dom = new JSDOM(htmlContent, {
+-      runScripts: "dangerously",
+-      resources: "usable",
++    const dom = new JSDOM(fs.readFileSync(htmlPath, "utf-8"), {
++      runScripts: "outside-only",
+       url: "http://localhost",
+     });
 -
-     output_lines = [
-         f"{'METRIC':<24} | {'OLD':^12} | {'NEW':^12} | {'CHANGE':^9} | {'THRESHOLD':^9} | {'REGRESSION?':^12}",
-         "-" * 92,
+     window = dom.window;
+     document = window.document;
+-
+-    // Wait for all the scripts and content to load
+-    await vi.waitFor(() => {
+-      if (document.readyState === "complete") {
+-        return true;
+-      } else {
+-        throw new Error("Document not ready yet");
+-      }
+-    });
+-  });
+-
+-  it("should initialize the DOM elements correctly", async () => {
+-    const webhookURLInput = window.document.getElementById("webhookURL");
+-    const authPasswordInput = window.document.getElementById("authPassword");
+-    const jsonSchemaTextarea = window.document.getElementById("jsonSchema");
+-    const startButton = window.document.getElementById("startButton");
+-    const stopButton = window.document.getElementById("stopButton");
+-
+-    await vi.waitFor(() => webhookURLInput && authPasswordInput && jsonSchemaTextarea && startButton && stopButton);
+-
+-    expect(webhookURLInput).not.toBeNull();
+-    expect(authPasswordInput).not.toBeNull();
+-    expect(jsonSchemaTextarea).not.toBeNull();
+-    expect(startButton).not.toBeNull();
+-    expect(stopButton).not.toBeNull();
+-  });
+-
+-  it("should not start generation without valid URL and password", async () => {
+-    const startButton = window.document.getElementById("startButton");
+-    const webhookURLInput = window.document.getElementById("webhookURL");
+-    const authPasswordInput = window.document.getElementById("authPassword");
+-
+-    // Leave the URL and password empty
+-    webhookURLInput.value = "";
+-    authPasswordInput.value = "";
+-
+-    startButton.click();
+-
+-    expect(startButton.style.display).not.toBe("none");
+-  });
+-
+-  it("should enable the stop button when generation starts", async () => {
+-    const startButton = window.document.getElementById("startButton");
+-    const stopButton = window.document.getElementById("stopButton");
+-    const webhookURLInput = window.document.getElementById("webhookURL");
+-    const authPasswordInput = window.document.getElementById("authPassword");
+-
+-    webhookURLInput.value = "http://localhost";
+-    authPasswordInput.value = "password";
+-
+-    startButton.click();
+-
+-    await vi.waitFor(() => !stopButton.disabled);
+-
+-    expect(stopButton.disabled).toBe(false);
+-  });
+-
+-  it("should populate JSON schema based on selected use case", async () => {
+-    const jsonSchemaTextarea = window.document.getElementById("jsonSchema");
+-    const useCaseSelect = window.document.getElementById("useCaseSelect");
+-
+-    // Select a use case
+-    useCaseSelect.value = "sensorData";
+-    useCaseSelect.dispatchEvent(new window.Event("change"));
+-
+-    expect(jsonSchemaTextarea.value.trim()).not.toBe("");
+-  });
+-
+-  it("should clear logs when the stop button is clicked", async () => {
+-    const stopButton = window.document.getElementById("stopButton");
+-    const logOutputDiv = window.document.getElementById("logOutput");
+-
+-    logOutputDiv.innerHTML = "<p>Log message</p>";
+-
+-    stopButton.click();
+-
+-    expect(logOutputDiv.innerHTML).toBe(logOutputDiv.innerHTML);
++    window.faker = faker;
++    window.fetch = vi.fn().mockResolvedValue({ ok: true });
++    window.alert = vi.fn();
++    window.console.error = vi.fn();
++
++    // JSDOM does not execute module scripts, so supply the real Faker instance
++    // and evaluate the widget without its browser-only CDN import.
++    const script = document.querySelector('script[type="module"]').textContent;
++    const importStatement = script.match(
++      /^\s*import \{ faker \} from 'https:\/\/esm\.sh\/@faker-js\/faker@([^']+)';/m,
++    );
++    expect(importStatement?.[1]).toBe(fakerVersion);
++    window.eval(script.replace(importStatement[0], ""));
++    document.getElement
+```
+
+**File**: `doc/user/layouts/shortcodes/plugins/webhooks-datagen.html` (modified, +15/-15)
+```diff
+@@ -29,13 +29,13 @@
+     <div class="json">
+       <textarea placeholder="JSON schema" id="jsonSchema" rows="5" cols="30" class="json-textarea">
+ {
+-  "sensor_id": "faker.datatype.number({ max: 100, min: 1})",
+-  "timestamp": "faker.date.between('2020-01-01T00:00:00.000Z', '2030-01-01T00:00:00.000Z')",
++  "sensor_id": "faker.number.int({ max: 100, min: 1})",
++  "timestamp": "faker.date.between({ from: '2020-01-01T00:00:00.000Z', to: '2030-01-01T00:00:00.000Z' })",
+   "location": {
+-      "latitude": "faker.datatype.number({ max: 90, min: -90})",
+-      "longitude": "faker.datatype.number({ max: 180, min: -180})"
++      "latitude": "faker.number.int({ max: 90, min: -90})",
++      "longitude": "faker.number.int({ max: 180, min: -180})"
+   },
+-  "temperature": "faker.datatype.float({ min: 20, max: 95 })"
++  "temperature": "faker.number.float({ min: 20, max: 95 })"
+ }
+       </textarea>
+       <div id="jsonError" class="error" style="display: none"></div>
+@@ -45,7 +45,7 @@
+ </div>
+ 
+ <script type="module">
+-  import { faker } from 'https://esm.sh/@faker-js/faker@8.4.0';
++  import { faker } from 'https://esm.sh/@faker-js/faker@10.5.0';
+ 
+   const webhookURLInput = document.getElementById("webhookURL");
+   const authPasswordInput = document.getElementById("authPassword");
+@@ -191,16 +191,16 @@
+ 
+   const schemas = {
+     sensorData: `{
+-      "sensor_id": "faker.datatype.number({ max: 100, min: 1})",
+-      "timestamp": "faker.date.between('2020-01-01T00:00:00.000Z', '2030-01-01T00:00:00.000Z')",
++      "sensor_id": "faker.number.int({ max: 100, min: 1})",
++      "timestamp": "faker.date.between({ from: '2020-01-01T00:00:00.000Z', to: '2030-01-01T00:00:00.000Z' })",
+       "location": {
+-          "latitude": "faker.datatype.number({ max: 90, min: -90})",
+-          "longitude": "faker.datatype.number({ max: 180, min: -180})"
++          "latitude": "faker.number.int({ max: 90, min: -90})",
++          "longitude": "faker.number.int({ max: 180, min: -180})"
+       },
+-      "temperature": "faker.datatype.float({ min: 20, max: 95 })"
++      "temperature": "faker.number.float({ min: 20, max: 95 })"
+     }`,
+     userActivity: `{
+-      "user_id": "faker.datatype.uuid()",
++      "user_id": "faker.string.uuid()",
+       "event": "faker.helpers.arrayElement(['page_view', 'click', 'scroll', 'navigation'])",
+       "timestamp": "faker.date.recent()",
+       "page": {
+@@ -209,15 +209,15 @@
+       },
+       "interaction": {
+         "element": "faker.lorem.word()",
+-        "time_spent": "faker.datatype.number({ min: 1, max: 120 })"
++        "time_spent": "faker.number.int({ min: 1, max: 120 })"
+       }
+     }`,
+     ecommerceTransaction: `{
+-      "user_id": "faker.datatype.uuid()",
++      "user_id": "faker.string.uuid()",
+       "event": "faker.helpers.arrayElement(['add_to_cart', 'remove_from_cart', 'purchase', 'view_product'])",
+       "timestamp": "faker.date.recent()",
+       "product": {
+-        "id": "faker.datatype.uuid()",
++        "id": "faker.string.uuid()",
+         "name": "faker.commerce.productName()",
+         "category": "faker.commerce.department()",
+         "price": "faker.commerce.price()"
+```
+
+---
+
+### Incident Patch 2: `24463bee` (2026-11-20)
+**Commit Message**: fix(deps): update dependency string-width to v9 (#40753)
+
+This PR contains the following updates:
+
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+| [string-width](https://redirect.github.com/sindresorhus/string-width)
+| [`^7.2.0` →
+`^9.0.0`](https://renovatebot.com/diffs/npm/string-width/7.2.0/9.0.0) |
+![age](https://developer.mend.io/api/mc/badges/age/npm/string-width/9.0.0?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/string-width/7.2.0/9.0.0?slim=true)
+|
+
+---
+
+### Release Notes
+
+<details>
+<summary>sindresorhus/string-width (string-width)</summary>
+
+###
+[`v9.0.0`](https://redirect.github.com/sindresorhus/string-width/releases/tag/v9.0.0)
+
+[Compare
+Source](https://redirect.github.com/sindresorhus/string-width/compare/v8.3.0...v9.0.0)
+
+##### Breaking
+
+- Require Node.js 22
+[`ede59cf`](https://redirect.github.com/sindresorhus/string-width/commit/ede59cf)
+
+##### Improvements
+
+- Improve performance
+[`2a7fa3e`](https://redirect.github.com/sindresorhus/string-width/commit/2a7fa3e)
+[`429619c`](https://redirect.github.com/sindresorhus/string-wid
+
+**File**: `console/package.json` (modified, +1/-1)
+```diff
+@@ -111,7 +111,7 @@
+     "scroll-into-view-if-needed": "^3.1.0",
+     "semver": "^7.8.6",
+     "stream": "^0.0.3",
+-    "string-width": "^7.2.0",
++    "string-width": "^9.0.0",
+     "stripe": "^23.1.0",
+     "style-mod": "^4.1.4",
+     "ts-node": "^10.9.2",
+```
+
+**File**: `console/yarn.lock` (modified, +13/-3)
+```diff
+@@ -7590,7 +7590,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"get-east-asian-width@npm:^1.0.0, get-east-asian-width@npm:^1.5.0":
++"get-east-asian-width@npm:^1.0.0, get-east-asian-width@npm:^1.5.0, get-east-asian-width@npm:^1.7.0":
+   version: 1.7.0
+   resolution: "get-east-asian-width@npm:1.7.0"
+   checksum: 10c0/680a5f611a186e4a065291f31821f7e4ad7742625be814e05b8ab5535c6fa53562bc0333a83138fca5f2e1030ed960a561b2fd4629e0cff0dc68b19cf46d7c53
+@@ -9255,7 +9255,7 @@ __metadata:
+     semver: "npm:^7.8.6"
+     storybook: "npm:^10"
+     stream: "npm:^0.0.3"
+-    string-width: "npm:^7.2.0"
++    string-width: "npm:^9.0.0"
+     stripe: "npm:^23.1.0"
+     style-mod: "npm:^4.1.4"
+     terser: "npm:^5.51.2"
+@@ -11809,6 +11809,16 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
++"string-width@npm:^9.0.0":
++  version: 9.0.0
++  resolution: "string-width@npm:9.0.0"
++  dependencies:
++    get-east-asian-width: "npm:^1.7.0"
++    strip-ansi: "npm:^7.2.0"
++  checksum: 10c0/fe420883178c224a121e771d81aafc520606bae31be5fdc0f368ff5c3facdb427b659ee3ad85710b67fe6e2a7d4535d0332b61e096326ea0eb92c7b5cafa0b06
++  languageName: node
++  linkType: hard
++
+ "string.prototype.matchall@npm:^4.0.12":
+   version: 4.1.0
+   resolution: "string.prototype.matchall@npm:4.1.0"
+@@ -11888,7 +11898,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"strip-ansi@npm:^7.1.0, strip-ansi@npm:^7.1.2":
++"strip-ansi@npm:^7.1.0, strip-ansi@npm:^7.1.2, strip-ansi@npm:^7.2.0":
+   version: 7.2.0
+   resolution: "strip-ansi@npm:7.2.0"
+   dependencies:
+```
+
+---
+
+### Incident Patch 3: `c517d7ce` (2026-11-20)
+**Commit Message**: fix(deps): update vscode dependencies (major) (#40756)
+
+This PR contains the following updates:
+
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+|
+[@types/node](https://redirect.github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/node)
+([source](https://redirect.github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/node))
+| [`^22.7.0` →
+`^26.0.0`](https://renovatebot.com/diffs/npm/@types%2fnode/22.20.5/26.6.6)
+|
+![age](https://developer.mend.io/api/mc/badges/age/npm/@types%2fnode/26.6.6?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@types%2fnode/22.20.5/26.6.6?slim=true)
+|
+| [@vscode/vsce](https://code.visualstudio.com)
+([source](https://redirect.github.com/Microsoft/vsce)) | [`^3.9.2` →
+`^4.0.0`](https://renovatebot.com/diffs/npm/@vscode%2fvsce/3.9.2/4.1.1)
+|
+![age](https://developer.mend.io/api/mc/badges/age/npm/@vscode%2fvsce/4.1.1?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@vscode%2fvsce/3.9.2/4.1.1?slim=true)
+|
+| [typescript](https://www.typescriptlang.org/)
+([source](https://redir
+
+**File**: `misc/vscode-ext/package.json` (modified, +4/-4)
+```diff
+@@ -66,13 +66,13 @@
      ]
- 
--    regressed = False
-+    regressions = set()
-     for name, old, new, threshold in rows:
-         delta = pct_change(old, new)
- 
-         if threshold is None:
-             flag = ""
-         elif new > old * threshold:
--            regressed = True
-+            regressions.add(name)
-             flag = "!!YES!!"
-         else:
-             flag = "no"
-@@ -509,14 +506,4 @@ def compare_table(
-             f"{threshold_field:>9} | "
-             f"{flag:^12}"
-         )
--    if regressed:
--        failures.append(
--            TestFailureDetails(
--                message=f"Workload {filename} regressed",
--                details="\n".join(output_lines),
--                test_class_name_override=filename,
--            )
--        )
--
--    print("\n".join(output_lines))
--    return failures
-+    return "\n".join(output_lines), regressions
-```
-
----
-
-### Incident Patch 2: `b097a5f4` (2026-11-19)
-**Commit Message**: ci: Nightly fixes (2026-11-19) (#40933)
-
-Based on https://buildkite.com/materialize/nightly/builds/18794
-
-Exposed by https://github.com/MaterializeInc/materialize/pull/40890
-
-Test run: https://buildkite.com/materialize/nightly/builds/18800 (edit:
-green)
-
-**File**: `test/terraform/mzcompose.py` (modified, +11/-19)
-```diff
-@@ -23,7 +23,7 @@
- import tempfile
- import threading
- import time
--from collections.abc import Sequence
-+from collections.abc import MutableMapping, Sequence
- from pathlib import Path
- from textwrap import dedent
- from typing import IO
-@@ -205,6 +205,13 @@ def testdrive(no_reset: bool, use_https: bool = True) -> Testdrive:
-     )
- 
- 
-+def pass_license_key(env: MutableMapping[str, str]) -> None:
-+    """Hands the CI license key to the Terraform invocations run with `env`."""
-+    license_key = os.getenv("MZ_CI_LICENSE_KEY", "")
-+    if license_key:
-+        env["TF_VAR_license_key"] = license_key
-+
-+
- def get_tag(tag: str | None) -> str:
-     return tag or ci_util.dev_docker_tag()
- 
-@@ -810,12 +817,7 @@ def setup(
-                 f"orchestratord_version={get_tag(orchestratord_tag or tag)}",
-             ]
- 
--        license_key = os.getenv("MZ_CI_LICENSE_KEY", "")
--        if license_key:
--            self.base_vars += [
--                "-var",
--                f"license_key={license_key}",
--            ]
-+        pass_license_key(os.environ)
- 
-         if prefix == PREFIX_AWS_PERSISTENT:
-             delete_after = "2099-12-31T00:00:00Z"
-@@ -1453,12 +1455,7 @@ def workflow_gcp_temporary(c: Composition, parser: WorkflowArgumentParser) -> No
-                 f"orchestratord_version={get_tag(tag)}",
-             ]
- 
--        license_key = os.getenv("MZ_CI_LICENSE_KEY", "")
--        if license_key:
--            vars += [
--                "-var",
--                f"license_key={license_key}",
--            ]
-+        pass_license_key(os.environ)
- 
-         vars += [
-             "-var",
-@@ -1679,12 +1676,7 @@ def workflow_azure_temporary(c: Composition, parser: WorkflowArgumentParser) ->
-                 f"orchestratord_version={get_tag(tag)}",
-             ]
- 
--        license_key = os.getenv("MZ_CI_LICENSE_KEY", "")
--        if license_key:
--            vars += [
--                "-var",
--                f"license_key={license_key}",
--            ]
-+        pass_license_key(venv_env)
- 
-         vars += [
-             "-var",
-```
-
----
-
-### Incident Patch 3: `71e76bb8` (2026-11-19)
-**Commit Message**: ci: Nightly fixes (2026-11-18) (#40893)
-
-Based on https://buildkite.com/materialize/nightly/builds/18771
-
-SLT: Follow-up to #38762
-
-mz-deploy: Merge skew between #38762 & #38834
-
-Test run: https://buildkite.com/materialize/nightly/builds/18785 (edit:
-green)
-
-**File**: `deny.toml` (modified, +6/-0)
-```diff
-@@ -309,6 +309,12 @@ ignore = [
-     "RUSTSEC-2024-0436",
-     # Bincode is unmaintained, the team considers version 1.3.3 a complete version of bincode that is not in need of any updates.
-     "RUSTSEC-2025-0141",
-+    # chrono is unmaintained with no patched release. Arrow and postgres-types
-+    # still depend on it.
-+    "RUSTSEC-2026-0543",
-+    # humantime is unmaintained with no patched release. console-subscriber
-+    # still depends on it.
-+    "RUSTSEC-2026-0542",
-     # Allows private key leakage through timing information
-     # rsa is required through iceberg-storage-opendal
-     "RUSTSEC-2023-0071",
-```
-
-**File**: `misc/python/materialize/cli/ci_annotate_errors.py` (modified, +20/-1)
-```diff
-@@ -133,6 +133,8 @@
-     | Assertion\ `.*'\ failed\.
-     | Invalid\ data\ in\ source\ errors,\ saw\ retractions
-     | \+\+\+\ Expected\ builds\ to\ be\ available,\ the\ build\ probably\ failed
-+    # cargo-deny advisories
-+    | ^error\[(?:vulnerability|unmaintained|unsound|notice|yanked)\]:[^\n]*(?:\n(?!error\[|warning\[)[^\n]+)*
-     )
-     .* $
-     """,
-@@ -491,7 +493,24 @@ def main() -> int:
- 
-     if args.buildkite_log_until:
-         # Unlike output the caller captures, Buildkite's log has secrets redacted.
--        args.log_files.insert(0, write_buildkite_log(args.buildkite_log_until))
-+        try:
-+            args.log_files.insert(0, write_buildkite_log(args.buildkite_log_until))
-+        except Exception as e:
-+            if not args.test_result:
-+                raise
-+            print(f"Could not retrieve the Buildkite job log: {e}", file=sys.stderr)
-+            add_annotation_raw(
-+                style="error",
-+                markdown=(
-+                    f'<a href="#{html.escape(os.environ["BUILDKITE_JOB_ID"])}">'
-+                    f"{html.escape(get_suite_name())}</a> failed "
-+                    f"(exit status {args.test_result}).\n\n"
-+                    "Could not retrieve the job log for error analysis:\n"
-+                    f"<pre>{html.escape(str(e))}</pre>\n"
-+                    "See the linked job for the command output."
-+                ),
-+            )
-+            return args.test_result
- 
-     test_analytics_config = create_test_analytics_config_with_hostname(
-         args.cloud_hostname
-```
-
-**File**: `test/mz-deploy/mzcompose.py` (modified, +0/-2)
-```diff
-@@ -1336,8 +1336,6 @@ def workflow_avro_record_type(c: Composition, parser: WorkflowArgumentParser) ->
-         # What a version 1 lock file holds for this column: the pseudo-type
-         # token, with no way to rebuild the record. It has to load, and
-         # reconstruction has to say what to do about it.
--        # The container-created file can be owned by root, so replace it.
--        types_lock.unlink()
-         types_lock.write_text(
-             'version = 1\n\n[[table]]\nname = "app.ingest.ledger_entry"\ncolumns = [\n'
-             '    { name = "record", type = "record", nullable = true },\n]\n'
-```
-
-**File**: `test/sqllogictest/query_policy.slt` (modified, +6/-0)
-```diff
-@@ -223,12 +223,18 @@ DETAIL: Query policy "no_dataflows" rule "fast_only" applies to this query on cl
- HINT: Run EXPLAIN to inspect the query plan. Create an index that serves the query on this cluster, or use a cluster whose query policy permits this plan.
- 
- # Diagnostics remain available even when their introspection queries need dataflows.
-+statement ok
-+SET cluster_replica = r1;
-+
- statement ok
- EXPLAIN ANALYZE CLUSTER MEMORY;
- 
- statement ok
- EXPLAIN ANALYZE MEMORY FOR MATERIALIZED VIEW unindexed;
- 
-+statement ok
-+RESET cluster_replica;
-+
- # A persist fast-path read does not build a temporary dataflow.
- query II rowsort
- SELECT * FROM unindexed LIMIT 10;
+   },
+   "dependencies": {
+-    "vscode-languageclient": "^10.1.0"
++    "vscode-languageclient": "^11.0.0"
+   },
+   "devDependencies": {
+-    "@types/node": "^22.7.0",
++    "@types/node": "^26.0.0",
+     "@types/vscode": "^1.88.0",
+-    "@vscode/vsce": "^3.9.2",
++    "@vscode/vsce": "^4.0.0",
+     "esbuild": "^0.28.1",
+-    "typescript": "^5.9.3"
++    "typescript": "^7.0.0"
+   }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40933** (2026-11-19): ci: Nightly fixes (2026-11-19) (@def-)
-- **PR #40932** (2026-11-19): workload-anonymize: rename query policy names in cluster options (@def-)
-- **PR #40930** (2026-11-19): storage: Decode bzip2 with libbz2-rs-sys instead of C libbz2 (@jasonhernandez)
-- **PR #40929** (2026-11-19): docs: release notes for v26.50.2, v26.49.2, v26.44.2 and v26.41.3 (@bosconi)
-- **PR #40924** (2026-11-19): release: mark v26.51, v26.50 as released (@materialize-bot)
-- **PR #40922** (2026-11-19): compute: give MV sink correction chunks their own compression floor (@DAlperin)
+- **PR #40969** (closed): [librdkafka agent test] kafka: upgrade librdkafka to v2.16.0 (@bosconi)
+- **PR #40965** (2026-11-20): ci: run the claude workflow with the read-only job token (@jasonhernandez)
+- **PR #40956** (closed): http: Install the connection protocol layer at startup (@def-)
+- **PR #40952** (2026-11-20): storage: Fix dead early return in statistics snapshot (@def-)
+- **PR #40944** (2026-11-20): chore(deps): update dependency sqlalchemy to v2.1.9 (@renovate[bot])
+- **PR #40943** (2026-11-20): release: bump to version v26.53.0-dev.0 and create its doc file (@materialize-bot)
 
 ---
 
@@ -1557,94 +1609,47 @@ green)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. workload-replay: Confirm performance regressions
+## X. deps): update dependency @faker-js/faker to v10 [security]
 
 **RULE**:
-When implementing operations in `misc/python/materialize/workload_replay/executor.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ci/test/docs-widgets/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6b3569ab`: workload-replay: Confirm performance regressions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `71f8f02e`: deps): update dependency @faker-js/faker to v10 [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `misc/python/materialize/workload_replay/executor.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/test/docs-widgets/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    without crashing. A performance failure must repeat for the same metric in
-    a fresh reference/current pair. Query errors are not retried.
-    def run(image: str | None) -> tuple[dict[str, Any], str]:
-        print(f"-- Running against {image or 'current materialized'}")
-                image=image,
-            stats = test(
-            version = c.query_mz_version()
-        return stats, version
-    if not compare_against:
-        _, new_version = run(None)
-    tag = resolve_tag(compare_against)
-    if tag is None:
-        raise ValueError(f"Could not resolve reference {compare_against}")
-    filename = posixpath.relpath(file, LOCATION)
-    pending: set[str] = set()
-    tables = []
-    # A fast baseline can also produce a false regression, so rerun both versions.
-    for attempt in range(1, 3):
-        stats_old, old_version = run(f"{image_registry()}/materialized:{tag}")
-        stats_new, new_version = run(None)
-        print(f"-- Comparing {old_version} against {new_version}, attempt {attempt}")
-        plot_docker_stats_compare(
-            stats_old=stats_old,
-            stats_new=stats_new,
-            file=f"{filename}_attempt_{attempt}",
-            old_version=old_
+        "@faker-js/faker": "10.5.0",
+    "node_modules/@faker-js/faker": {
+      "version": "10.5.0",
+      "resolved": "https://registry.npmjs.org/@faker-js/faker/-/faker-10.5.0.tgz",
+      "integrity": "sha512-bsxD8WLS5lIj7aaoCx1YJkktqYj5vlBUE6HWzu2Q51ksrGJ0H737ECCKlFU7Yf8Br45z9t99frBp/J7kzbMPAg==",
+      "funding": [
+        {
+          "type": "opencollective",
+          "url": "https://opencollective.com/fakerjs"
+        }
+      ],
+      "license": "MIT",
+      "engines": {
+        "node": "^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0",
+        "npm": ">=10"
+      }
+    },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    without crashing.
-    import random
-    stats_old = None
-    old_version = None
-    if compare_against:
-        tag = resolve_tag(compare_against)
-        print(f"-- Running against materialized:{tag} (reference)")
-                image=f"{image_registry()}/materialized:{tag}",
-            stats_old = test(
-            old_version = c.query_mz_version()
-    print("-- Running against current materialized")
-    random.seed(seed)
-    with c.override(
-        Materialized(
-            image=None,
-            cluster_replica_size=cluster_replica_sizes,
-            ports=[6875, 6874, 6876, 6877, 6878, 6880, 6881, 26257],
-            environment_extra=["MZ_NO_BUILTIN_CONSOLE=0"],
-            additional_system_parameter_defaults=additional_system_parameter_defaults,
-        )
-    ):
-        stats_new = test(
-            c,
-            workload,
-            file,
-            factor_initial_data,
-            factor_ingestions,
-            factor_queries,
-            runtime,
-            verbose,
-            True,
-            True,
-            early_initial_data,
-            True,
-            True,
-            max_concurrent_queries,
-        )
-        new_version = c.query_mz_version()
-  
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6b3569ab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `71f8f02e` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

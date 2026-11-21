@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T03:15:39.207Z",
-  "total_cycles_completed": 11150,
-  "total_learnings_persisted": 11150,
-  "total_rules_promoted": 10507,
+  "last_updated": "2026-11-21T03:28:50.577Z",
+  "total_cycles_completed": 11153,
+  "total_learnings_persisted": 11153,
+  "total_rules_promoted": 10510,
   "history": [
-    {
-      "timestamp": "2026-11-20T06:45:17.504Z",
-      "repository": "argoproj/argo-workflows",
-      "learningId": "learn-github-argoproj-argo-workflows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T06:45:26.755Z",
-      "repository": "yugabyte/yugabyte-db",
-      "learningId": "learn-github-yugabyte-yugabyte-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T06:58:44.869Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T07:03:00.697Z",
       "repository": "yshrsmz/BuildKonfig",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-21T03:15:39.207Z",
       "repository": "pulumi/pulumi",
       "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T03:28:36.260Z",
+      "repository": "astral-sh/uv",
+      "learningId": "learn-github-astral-sh-uv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T03:28:41.625Z",
+      "repository": "gauthierpiarrette/highball",
+      "learningId": "learn-github-gauthierpiarrette-highball",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T03:28:50.577Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md`  
 > **Source**: github ([https://github.com/gauthierpiarrette/highball](https://github.com/gauthierpiarrette/highball))  
-> **Source Version**: `4ebe4fe0`  
+> **Source Version**: `eaa9be2c`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T05:37:12.551Z  
+> **Timestamp**: 2026-11-21T03:28:40.600Z  
 > **Learning ID**: `learn-github-gauthierpiarrette-highball`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gauthierpiarrette/highball](https://github.com/gauthierpiarrette/highball))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T05:37:12.545Z  
+> **Harvest Timestamp**: 2026-11-21T03:28:40.594Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run Windows games on Apple Silicon — free, open source, with an open compatibility database that tells you what actually works.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2271 stars
+- **Stars / Engagement**: 2304 stars
 
 ---
 
@@ -1033,14 +1033,14 @@ for path in sys.argv[1:]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #717** (2026-11-14): ****Additional RDR2 memory-pressure test — M4 Pro, 24GB, macOS 27.2****
-  *Symptoms*: ### What happened  Environment: Highball `x64-crossover26.3-r31`, clean RDR2 environment, Vulkan/MoltenVK, 1920×1080, High textures.  Tested `HB_MVK_DEVICE_MEMORY_PERCENT=40` and `30`. Both values correctly change RDR2's reported available video memory (9,830 MB and 7,372 MB respectively), but neither prevents severe swapping and stuttering.  With the 30% limit:  - Before cutscenes: green memory pressure, 1.50 GB swap - Initial loading: yellow, 1.53 GB - Early cinematics: yellow, 2.20 GB - Loading transition before Chapter 1: Colter: yellow, 8.60 GB - Subsequent Colter cutscenes: yellow with brief red periods, over 9 GB swap  The sharpest memory increase occurs during the loading transition immediately before Chapter 1: Colter.  The launch log also contains repeated `AGX: Texture read/write assertion failed` messages.  Is there a way to determine whether this is an unresolved MoltenVK allocation/resource-lifetime issue? The smaller reported video-memory budget does not prevent the substantial swap growth.  ### Chip and macOS  Apple M4 Pro, macOS 27.2.1  ### Highball version  0.10.26  
+- **Issue #748** (2026-11-18): **Pirated games not working**
+  *Symptoms*: ### What happened  So I pirate quite a few games and consistently what I've been seeing is when the game is an online pirated version, it often just does not work. Showing an error on steam saying, "license not found" I am unsure if this is due to it being ran on mac as the site does not report any issues regarding the games functionality.   As far as I am aware the way the pirated online features work is by convincing steam its running a game called spacewar, which is what is shown on your steam status or running page. However, something through highball is causing this not to work.  Game launch logs attached.   ### Chip and macOS  macOS 14.6, M1 pro  ### Highball version  0.3.1  ### Log  # gin x64-sikarugir10.0_6-r28 bottle=Games renderer=dxmt # wine /Users/veeb/Desktop/games/CRACK/CRACK/CRACK.exe # sync=none (bottle asks msync) winver=win10 dpi=96 dxvkAsync=false frameGen=off # audio out=48000 Hz # WINEDLLPATH_PREPEND=/Users/veeb/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r28/renderers/dxmt/wine:/Users/veeb/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r28/frameworks/renderer/d9vk/wine # WINEDLLOVERRIDES=winemenubuilder.exe=d;winhttp=n,b # CX_FWD_COMPAT_GL_CTX=1 # DXVK_CONFIG_FILE=C:\highball\dxvk.conf # DXVK_LOG_PATH=C:\highball\logs # DXMT_LOG_PATH=C:\highball\logs # MVK_CONFIG_LOG_LEVEL=2 #   dxvk.enableAsync = False # note: the environment's Windows services keep the stack they started with (it runs with sync none and the game w
 
-- **Issue #706** (2026-11-12): **Problems with Tomodachi Life Editor**
-  *Symptoms*: ### What happened  Note; this may be an issue with the editor itself and not the Highball emulator. I opened the exe file with highball and used Tomodachi Life Editor accordingly, selecting correct regions and using the 3ds editor via checkpoint correctly using a verified tutorial. After reloading my SD card into my 3ds, it read "Save data is corrupted and will be deleted." I am currently trying to restore my old save file through checkpoint by using the backup feature on Tomodachi Life Editor. I am unsure what went wrong in my beginning editing process that impacted my SD card, but I am doing everything I can to restore my unedited version of Tomodachi Life before using the editor.  ### Chip and macOS  Apple A18 Pro, macOS 26.6.2  ### Highball version  0.10.26  ### Log  ~/Library/Application Support/Highball/logs/2026-11-12T045822Z-Games-Tomodachi Life Save Editor.exe.log: # gin x64-sikarugir10.0_6-r28 bottle=Games renderer=dxmt # wine ~/Downloads/Tomodachi.Life.Save.Editor.5.1.0/Tomodachi Life Save Editor.exe # sync=msync winver=win10 dpi=96 dxvkAsync=false frameGen=off # audio out=48000 Hz # WINEDLLPATH_PREPEND=~/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r28/renderers/dxmt/wine:~/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r28/frameworks/renderer/d9vk/wine # WINEDLLOVERRIDES=winemenubuilder.exe=d # CX_FWD_COMPAT_GL_CTX=1 # DXVK_CONFIG_FILE=C:\highball\dxvk.conf # DXVK_LOG_PATH=C:\highball\logs # DXMT_LOG_PATH=C:\highball\logs # M
+- **Issue #740** (2026-11-17): **both main & demo game show up in Highball library**
+  *Symptoms*: ### What happened  per implementation in #432 of not returning demo if main game is in library in `highball library`  I'm tracking this separately as the implementation is not strictly CLI but also shows up in the GUI:  <img width="932" height="724" alt="Screenshot 2026-11-17 at 12 16 20 AM" src="https://github.com/user-attachments/assets/1f1ee000-e7ea-43af-8e1a-abba7459cb4b" />  The intent is to match the Steam client behavior which is to hide the demo if the main game has been purchased:  <img width="1010" height="777" alt="Screenshot 2026-11-17 at 12 30 23 AM" src="https://github.com/user-attachments/assets/bd010255-c3f0-4346-ba31-e79da824d828" />  I wonder if it has to do with the fact that the demo was Windows only and the main game has a macOS build?  Just a hypothesis.  ### Chip and macOS  M1, macOS 27.2.1  ### Highball version  0.10.28  ### Log  _No response_
   **Post-Mortem & Fix Analysis**:
-  > Thanks for the report, and sorry about the save. The log shows the editor running for 80 seconds and closing normally with no errors, so it doesn't tell what went wrong with the file, and Highball has no way to check a 3DS save, so I can't test this one. If you backed the save up with Checkpoint before editing, that backup is still in Checkpoint's saves folder on the SD card and you can restore it from Checkpoint.
-  > How do I do that? I'm not completely sure if I edited the save or if I have two saves. Using checkpoint, I created a save, then imported the save into the editor, and hit "restore" on Checkpoint when finished. What exactly can I do to restore it from Checkpoint? I used https://www.instagram.com/reel/DV8pgMqCFUy/  for the tutorial.
+  > closing this issue - Highball eventually updated:  <img width="932" height="724" alt="Screenshot 2026-11-17 at 1 20 29 AM" src="https://github.com/user-attachments/assets/c3e6037e-97af-40f2-a24a-5991f63613ea" />  when is this update triggered?  I could have sworn I quit Highball and relaunched it but maybe I didn't.  false alarm!
+  > Glad it sorted itself out. Installed games are watched all the time, but the full list of what you own, where a demo gets matched to its game, is read when Highball starts and again after things like an install finishing. So a relaunch does it. If you see it again right after a real relaunch, tell me.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1057,260 +1057,324 @@ for path in sys.argv[1:]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ac350e46` (2026-11-14)
-**Commit Message**: Wine 10 engines r30 (default) and r31 (D3DMetal 4 line): r28 and r29 with the audio library the Wine 11 engines carry since r30 (audiobuf-20261103, sha256 617b8feb, 8 KB, the same archive). The default engine still had the October library, so on it a microphone lost 32 frames nearly every 10 ms period (highball#350, #601), Wine's audio clock slept at normal priority on a busy Mac (#444), and games kept the output they started with (#460, nikiomori's change). Every other archive is r28's or r29's, so environments move without the Windows setup and download 8 KB; r28 moves to spike/engines for rollback. Installed r30 from its manifest with the CLI in a throwaway home on an M1 Pro, macOS 27.0: every file is r28's except libhbaudiobuf.dylib, byte-identical to Wine 11 r31's. A WASAPI capture with hbtap's sample time ramp in place of the microphone's data, 6 s at 48 kHz: 520 and 501 breaks on r28, 0 on r30, under 10 busy loops 510 against 0; the library logs the capture buffer capped at 240 frames and audio_client_timer made real time (status 0). r31 was not installed on its own, BundledEngineTests checks it is r29 plus that archive. 872 tests pass.
+### Incident Patch 1: `39e06d01` (2026-11-17)
+**Commit Message**: Wine 11 engines r34 and r35 for Diablo II: Resurrected (#371): r32 and r33 with one rebuilt Wine, highball-engine release engine-wine-11.0-20261114T185735Z-fiber-mirror-switch (run 43624249972, PR #38, sha256 ee1609f0, public download checked). Its patch 0031 lets a game's recipe turn the fiber mirror off with HB_FIBER_MIRROR=0: D3DMetal calls macOS code straight from the game's fiber threads, and D2R exited with SIGILL before any window while the mirror put a fiber pointer in the QoS slot. Without the variable nothing changes, so Guardians of the Galaxy and Metaphor keep it. A recipe's variable can now name a file of the environment's engine with ${frameworks} and ${renderers}, as a manifest's baseEnv does, since D2R also needs CX_APPLEGPTK_LIBD3DSHARED_PATH set to its engine's libd3dshared.dylib (AlexPako played 35 minutes with both, sync off and MSync, M5 Pro, macOS 27.2.1). Every other archive is the base's, so only the Wine downloads. 875 tests pass.
 
-**File**: `Tests/HighballKitTests/BundledEngineTests.swift` (modified, +37/-13)
+**File**: `Sources/HighballKit/Bottle.swift` (modified, +10/-2)
 ```diff
-@@ -303,6 +303,8 @@ final class BundledEngineTests: XCTestCase {
-     /// On 2026-10-08 the audio library gains a limiter, so a game whose float mix goes over full scale
-     /// is turned down instead of clipped (highball-db#349): r26 and r27.
-     /// On 2026-10-18 DXMT gains Steep's sample count fallback (highball-db#465): r28 and r29.
-+    /// On 2026-11-14 the audio library the Wine 11 engines carry since r30 (microphones, a real time
-+    /// audio clock, following the Mac's output; highball#350, #444, #460): r30 and r31.
-     /// Everything else is byte-identical, so it is not downloaded again, and every new archive
-     /// comes from Highball's own release pages (a component URL has to be ours to stay immutable,
-     /// #27/#28).
-@@ -320,14 +322,15 @@ final class BundledEngineTests: XCTestCase {
-                                   ("x64-sikarugir10.0_6-r20", "x64-sikarugir10.0_6-r6"), ("x64-sikarugir10.0_6-r23", "x64-sikarugir10.0_6-r6"),
-                                   ("x64-sikarugir10.0_6-r25", "x64-sikarugir10.0_6-r6"), ("x64-sikarugir10.0_6-r26", "x64-sikarugir10.0_6-r5"),
-                                   ("x64-sikarugir10.0_6-r27", "x64-sikarugir10.0_6-r6"), ("x64-sikarugir10.0_6-r28", "x64-sikarugir10.0_6-r5"),
--                                  ("x64-sikarugir10.0_6-r29", "x64-sikarugir10.0_6-r6")] {
-+                                  ("x64-sikarugir10.0_6-r29", "x64-sikarugir10.0_6-r6"), ("x64-sikarugir10.0_6-r30", "x64-sikarugir10.0_6-r5"),
-+                                  ("x64-sikarugir10.0_6-r31", "x64-sikarugir10.0_6-r6")] {
-             let r = try one(current), base = try one(baseID)
-             XCTAssertEqual(r.minMacOS, base.minMacOS, "\(current) must keep \(baseID)'s floor")
-             XCTAssertEqual(r.baseEnv?["D3DM_MTL4"], base.baseEnv?["D3DM_MTL4"], "\(current) must keep \(baseID)'s Metal 4 setting")
-             XCTAssertEqual(Set(r.components.keys), Set(base.components.keys).union(["winemac", "wineserver", "ntdll-unix", "audiobuf"]),
-                            "\(current) has exactly \(baseID)'s components plus the driver, the msync fix and the audio library")
-             let readback: Set = ["x64-sikarugir10.0_6-r24", "x64-sikarugir10.0_6-r25", "x64-sikarugir10.0_6-r26", "x64-sikarugir10.0_6-r27",
--                                 "x64-sikarugir10.0_6-r28", "x64-sikarugir10.0_6-r29"]
-+                                 "x64-sikarugir10.0_6-r28", "x64-sikarugir10.0_6-r29", "x64-sikarugir10.0_6-r30", "x64-sikarugir10.0_6-r31"]
-             for (name, component) in base.components where name != "dxmt" && !(name == "moltenvk" && readback.contains(current)) {
-                 XCTAssertEqual(r.components[name]?.sha256, component.sha256, "\(name) drifted from \(baseID), so its download is not reused")
-             }
-@@ -351,7 +354,7 @@ final class BundledEngineTests: XCTestCase {
-             // (Scripts/build-wine10-msync.sh), one archive behind two single-file components. r21's
-             // archive (Scripts/build-wine10-dep.sh) carries those edits plus the DEP one.
-             let archive = ["x64-sikarugir10.0_6-r21", "x64-sikarugir10.0_6-r22", "x64-sikarugir10.0_6-r24", "x64-sikarugir10.0_6-r26",
--                           "x64-sikarugir10.0_6-r28"].contains(current) ? "wine10-dep-" : "wine10-msync-"
-+                           "x64-sikarugir10.0_6-r28", "x64-sikarugir10.0_6-r30"].contains(current) ? "wine10-dep-" : "wine10-msync-"
-             for (name, into) in [("wineserver", "engine/bin/wineserver"), ("ntdll-unix", "engine/lib/wine/x86_64-unix/ntdll.so")] {
-                 let c = try XCTUnwrap(r.components[name])
-                 XCTAssertEqual(c.extract?.into, into, "\(current)/\(name) replaces one file, the Wine archive's own")
-@@ -369,7 +372,7 @@ final class BundledEngineTests: XCTestCase {
-             XCTAssertTrue(audio.url.absoluteString.hasPrefix("https://github.com/gauthierpiarrette/highball-engine/releases/download/audiobuf-"),
-                           "\(current)'s audio library must come from Highball's own release page: \(audio.url)")
+@@ -932,8 +932,16 @@ public struct Bottle: Sendable {
+             env["ROSETTA_X87_PATH"] = sidecar.path
          }
--        XCTAssertEqual(all.last?.id, "x64-sikarugir10.0_6-r28", "r28 is the default engine")
-+        XCTAssertEqual(all.last?.id, "x64-sikarugir10.0_6-r30", "r30 is the default engine")
-         // r22 and r23 are r21 and r20 with only the driver changed: the retina fix rides one new
-         // archive, and every other download is reused.
-         for (fixed, before) in [("x64-sikarugir10.0_6-r22", "x64-sikarugir10.0_6-r21"), ("x64-sikarugir10.0_6-r23", "x64-sikarugir10.0_6-r20")] {
-@@ -438,27 +441,48 @@ final class BundledEngineTests: XCTestCase {
-         }
-         XCTAssertEqual(try one("x64-sikarugir10.0_6-r28").components["dxmt"]?.sha256, try one("x64-sikarugir10.0_6-r29").components["dxmt"]?.sha256,
-                        "one DXMT archive behind both lines, downloaded once")
-+        // r30 and r31 are r28 and r29 with only the audio library changed, to the 8 KB archive the Wine 11
-+     
+         // A recipe's value can depend on this Mac (a video memory budget from its memory), and an engine's or a recipe's
+-        // on this environment (a driver's shader cache kept inside it, and gone with it).
+-        return env.mapValues { MacVariables.expand($0).replacingOccurrences(of: "${environment}", with: url.path) }
++        // on this environment (a driver's shader cache kept inside it, and gone with it). A recipe can also name a file
++        // of the environment's engine with ${frameworks} and ${renderers}, as a manifest's baseEnv does: Diablo II:
++        // Resurrected needs Wine to load D3DMetal's libd3dshared.dylib (highball#371), which sits in each engine's own
++        // folder.
++        let frameworks = engine.frameworksDir.path, renderers = engine.renderersDir.path
++        return env.mapValues {
++            MacVariables.expand($0).replacingOccurrences(of: "${environment}", with: url.path)
++                .replacingOccurrences(of: "${frameworks}", with: frameworks)
++                .replacingOccurrences(of: "${renderers}", with: renderers)
++        }
+     }
+ 
+     /// The renderer-specific bridge files that make the DLSS switch actionable in this engine.
 ```
 
-**File**: `spike/engine-manifest.json` (modified, +11/-10)
+**File**: `Tests/HighballKitTests/BundledEngineTests.swift` (modified, +30/-5)
 ```diff
-@@ -1,13 +1,14 @@
- {
-   "$schema": "https://highball.app/schemas/engine-manifest/v0",
--  "id": "x64-sikarugir10.0_6-r28",
--  "displayName": "Wine 10.0 (Sikarugir) r28",
-+  "id": "x64-sikarugir10.0_6-r30",
-+  "displayName": "Wine 10.0 (Sikarugir) r30",
-   "arch": "x86_64",
-   "minMacOS": "14.0",
-   "requires": [
-     "rosetta2"
-   ],
-   "notes": [
-+    "r30 (2026-11-14): r28 with only the audio library changed, to the 2026-11-03 build the Wine 11 engines r30 to r33 carry (audiobuf component). Microphones keep every frame (highball#350), Wine's audio clock runs in real time so a busy Mac wakes a game's audio on time (highball#444), and games follow the Mac's output when it changes (highball#460, nikiomori). Every other archive is r28's, so environments on r28 move without the Windows setup and download 8 KB. Measured on an M1 Pro, macOS 27.0, installed from this manifest with the CLI: every file is r28's except libhbaudiobuf.dylib, which is byte-identical to the Wine 11 r31 one. A WASAPI capture (event driven, 20 ms buffer) with the HAL's sample time written in place of the microphone's data, 6 s at 48 kHz: r28 broke the ramp 520 and 501 times (about 15,000 frames lost), r30 never; under 10 busy loops 510 against 0. The library logged the capture buffer capped at 240 frames and Wine's audio_client_timer made real time (status 0). No game was run on this revision.",
-     "r28 (2026-10-18): r26 with only DXMT changed, built from Highball's DXMT branch with Steep's fix (highball-db#465, by Sean Shmulevich): Steep asks for 8x MSAA without checking, Apple GPUs stop at 4, and the game died with no window. A built-in profile gives steep.exe the highest count the Mac has instead; no other game changes. Same toolchain as the previous DXMT build (mingw-w64 14.0.0_3, meson 1.10.0, Xcode 16.1, LLVM 15.0.7). Environments on r26 move without the Windows setup and download about 19 MB. Measured on an M4, macOS 27.0 (2026-10-18): against the previous DXMT archive, winemetal.so is byte-identical, winemetal.dll, d3d10core, nvapi64 and nvngx differ only in their build timestamps, and d3d11.dll and dxgi.dll (which also carries DXMT's profile table) differ by the fix and the profile. A D3D11 test asking for an 8x MSAA render target, 64- and 32-bit: refused under its own name on r26 and on this revision alike, and named steep.exe it gets a 4x texture here that clears and resolves to the exact colour, where r26 refused it.",
-     "r26 (2026-10-08): r24 with the audio library rebuilt to also limit float output like Windows' audio engine (audiobuf component, highball-db#349). Windows ends its shared-mode mix with a limiter, so a game may hand it samples above full scale and never clip. Wine passed them to Core Audio, which clipped them at the device, and loud passages crackled. Only that 6 KB archive changes, so environments move without the Windows setup. Measured on an M4, macOS 27.0 (2026-10-08), with this archive's library inserted into Wine 10 r21 and Wine 11 r17 environments: a WASAPI test tone recorded through ScreenCaptureKit passes sound under full scale unchanged (0.5 stays 0.5000, rms 0.3536) and holds a tone at 1.4 times full scale to 0.9923 with no sample over full scale, where HB_AUDIOLIMIT=0 lets 47,376 samples over through. No dropouts or clicks. The same code built as a prototype: Paperback's title music has nothing over full scale (2,586 samples in 30 s without) and is 0.4 dB quieter, Five Nights at Freddy's has nothing over (70 without).",
-     "r24 (2026-10-07): r22 with MoltenVK's shadow-import fixed so GPU results reach the game (moltenvk component, highball#283, highball-db#160, #174). Under MVK_SHADOW_IMPORT=1, which only The Sims Legacy Collection's recipe sets, the private Metal buffer behind imported host memory was copied to the GPU on every submit and never back, so everything a 32-bit Vulkan game read back from the GPU was stale: The Sims' lot thumbnails and family portraits came out as noise. The shadow-readback patch records the ranges a submission's copy, fill, update and query-results commands write into that memory, keeps the next submits' upload off them, and copies them back to the game's pages when the submission completes, before its fence and semaphores are signalled. Measured on an M4 with macOS 27.0 with a 32-bit test program (private/tools/vkrb): with the variable, every readback was stale on r22 and is right on this build, at 32 MB into a 64 MB allocation, next to bytes the program wrote during the submission (kept), and with a second submit in flight (20 rounds). The Sims starts and draws its neighbourhood with no lost device, Portal 2 under DXVK loads two maps with HDR, Direct3D 11 and Direct3D 9 test programs under DXVK give the same results, and without the variable nothing runs differently. Every other component is byte-identical to r22, so only the 1.7 MB MoltenVK archive is new.",
-@@ -173,17 +174,17 @@
-     },
-     "audiobuf": {
-       "kind": "runtime",
--      "url": "https://github
+@@ -101,20 +101,20 @@ final class BundledEngineTests: XCTestCase {
+         }
+         XCTAssertEqual(try one("x64-crossover26.3-r20").components["wine"]?.sha256, try one("x64-crossover26.3-r21").components["wine"]?.sha256,
+                        "one Wine build behind both, downloaded once")
+-        // Every older plain Wine 11 pin is offered the newest plain revision on macOS 27 (r33 since
+-        // the D3DMetal 4 line moved to r32, below), never a D3DMetal 4 one.
++        // Every older plain Wine 11 pin is offered the newest plain revision on macOS 27 (r35 since
++        // the D3DMetal 4 line moved to r34, below), never a D3DMetal 4 one.
+         for pin in ["x64-crossover26.3-r5", "x64-crossover26.3-r7", "x64-crossover26.3-r8", "x64-crossover26.3-r9", "x64-crossover26.3-r15", "x64-crossover26.3-r19",
+                     "x64-crossover26.3-r21", "x64-crossover26.3-r23", "x64-crossover26.3-r25", "x64-crossover26.3-r27",
+-                    "x64-crossover26.3-r29", "x64-crossover26.3-r31"] {
++                    "x64-crossover26.3-r29", "x64-crossover26.3-r31", "x64-crossover26.3-r33"] {
+             let wanted = try one(pin)
+             let offered = all.filter { EngineManifest.satisfies(current: $0, wanted: wanted) && $0.runs(onMacOS: "27.0") }
+                 .max { (EngineManifest.revision(of: $0.id) ?? 0) < (EngineManifest.revision(of: $1.id) ?? 0) }
+-            XCTAssertEqual(offered?.id, "x64-crossover26.3-r33", "a pin on \(pin) must get the newest D3DMetal 3 revision")
++            XCTAssertEqual(offered?.id, "x64-crossover26.3-r35", "a pin on \(pin) must get the newest D3DMetal 3 revision")
+         }
+         let forzaPin = try one("x64-crossover26.3-r18")
+         let forOffer = all.filter { EngineManifest.satisfies(current: $0, wanted: forzaPin) && $0.runs(onMacOS: "27.0") }
+             .max { (EngineManifest.revision(of: $0.id) ?? 0) < (EngineManifest.revision(of: $1.id) ?? 0) }
+-        XCTAssertEqual(forOffer?.id, "x64-crossover26.3-r32", "Forza Horizon 6's pin gets the newest D3DMetal 4 revision")
++        XCTAssertEqual(forOffer?.id, "x64-crossover26.3-r34", "Forza Horizon 6's pin gets the newest D3DMetal 4 revision")
+         XCTAssertFalse(EngineManifest.satisfies(current: try one("x64-crossover26.3-r21"), wanted: forzaPin), "r21 lacks D3DMetal 4")
+     }
+ 
+@@ -284,6 +284,31 @@ final class BundledEngineTests: XCTestCase {
+         XCTAssertFalse(EngineManifest.satisfies(current: r33, wanted: try one("x64-crossover26.3-r18")), "r33 lacks D3DMetal 4")
+     }
+ 
++    /// r34 and r35 are r32 and r33 with one rebuilt Wine: patch 0031, which lets a game's recipe keep the macOS QoS
++    /// value in %gs:0x20 with HB_FIBER_MIRROR=0 instead of the fiber mirror (Diablo II: Resurrected, highball#371).
++    /// Every other archive is the base's, so only Wine downloads.
++    func testR34AndR35AreR32AndR33WithTheFiberSwitchWine() throws {
++        let all = try manifests()
++        func one(_ id: String) throws -> EngineManifest { try XCTUnwrap(all.first { $0.id == id }, "\(id) missing") }
++        for (old, new) in [("x64-crossover26.3-r32", "x64-crossover26.3-r34"), ("x64-crossover26.3-r33", "x64-crossover26.3-r35")] {
++            let o = try one(old), n = try one(new)
++            XCTAssertEqual(Set(n.components.keys), Set(o.components.keys), "\(new) has \(old)'s components")
++            for (name, c) in o.components where name != "wine" {
++                XCTAssertEqual(n.components[name]?.sha256, c.sha256, "\(new)/\(name) must be \(old)'s, only Wine is rebuilt")
++            }
++            XCTAssertNotEqual(n.components["wine"]?.sha256, o.components["wine"]?.sha256, "\(new) carries the rebuilt Wine")
++            XCTAssertEqual(n.components["wine"]?.url.absoluteString,
++                           "https://github.com/gauthierpiarrette/highball-engine/releases/download/engine-wine-11.0-20261114T185735Z-fiber-mirror-switch/engine-wine-11.0-20261114T185735Z-fiber-mirror-switch.tar.gz")
++            XCTAssertEqual(n.minMacOS, o.minMacOS)
++            XCTAssertEqual(n.baseEnv, o.baseEnv)
++            XCTAssertEqual(n.displayName, o.displayName.replacingOccurrences(of: String(old.suffix(3)), with: String(new.suffix(3))))
++        }
++        let r34 = try one("x64-crossover26.3-r34"), r35 = try one("x64-crossover26.3-r35")
++        XCTAssertEqual(r34.components["wine"]?.sha256, r35.components["wine"]?.sha256, "one Wine build behind both, downloaded once")
++        XCTAssertTrue(EngineManifest.satisfies(current: r34, wanted: try one("x64-crossover26.3-r18")), "r34 carries D3DMetal 4")
++        XCTAssertFalse(EngineManifest.satisfies(current: r35, wanted: try one("x64-crossover26.3-r18")), "r35 lacks D3DMetal 4")
++    }
++
+     /// Frame generation left Highball on 2026-09-27 at its author's request (itsOwen's lsfg-metal,
+     /// highball#171): no engine may ship the component any more. The revisions since are their
+     /// bases (r5 on the main line, r6 on the GPTK 4 line) with DXMT swapped 
 ```
 
-**File**: `spike/engines/x64-sikarugir10.0_6-r28.json` (added, +223/-0)
+**File**: `Tests/HighballKitTests/RendererAvailabilityTests.swift` (modified, +13/-0)
 ```diff
-@@ -0,0 +1,223 @@
+@@ -177,6 +177,19 @@ final class RendererAvailabilityTests: XCTestCase {
+         XCTAssertNil(try stale.environment(engine: e)["ROSETTA_X87_PATH"], "only the switch sets it")
+     }
+ 
++    /// A recipe names a file of the environment's own engine with ${frameworks} or ${renderers}, as an engine
++    /// manifest's baseEnv does (Diablo II: Resurrected's CX_APPLEGPTK_LIBD3DSHARED_PATH, highball#371).
++    func testARecipeVariableCanNameAFileOfTheEnvironmentsEngine() throws {
++        let e = try engine(accepted: false)
++        var b = bottle(renderer: .dxmt)
++        b.settings.environment = ["CX_APPLEGPTK_LIBD3DSHARED_PATH": "${frameworks}/renderer/d3dmetal/external/libd3dshared.dylib",
++                                  "HB_SOME_RENDERER_FILE": "${renderers}/dxmt/wine"]
++        let env = try b.environment(engine: e)
++        XCTAssertEqual(env["CX_APPLEGPTK_LIBD3DSHARED_PATH"], e.frameworksDir.path + "/renderer/d3dmetal/external/libd3dshared.dylib")
++        XCTAssertEqual(env["HB_SOME_RENDERER_FILE"], e.renderersDir.path + "/dxmt/wine")
++        XCTAssertFalse(env.values.contains { $0.contains("${frameworks}") || $0.contains("${renderers}") })
++    }
++
+     func testEnvironmentFollowsTheDegradedRendererInsteadOfThrowing() throws {
+         let e = try engine(accepted: false)
+         let env = try bottle(renderer: .d3dmetal).environment(engine: e)
+```
+
+**File**: `spike/engines/x64-crossover26.3-r34.json` (added, +201/-0)
+```diff
+@@ -0,0 +1,201 @@
 +{
 +  "$schema": "https://highball.app/schemas/engine-manifest/v0",
-+  "id": "x64-sikarugir10.0_6-r28",
-+  "displayName": "Wine 10.0 (Sikarugir) r28",
 +  "arch": "x86_64",
-+  "minMacOS": "14.0",
-+  "requires": [
-+    "rosetta2"
-+  ],
-+  "notes": [
-+    "r28 (2026-10-18): r26 with only DXMT changed, built from Highball's DXMT branch with Steep's fix (highball-db#465, by Sean Shmulevich): Steep asks for 8x MSAA without checking, Apple GPUs stop at 4, and the game died with no window. A built-in profile gives steep.exe the highest count the Mac has instead; no other game changes. Same toolchain as the previous DXMT build (mingw-w64 14.0.0_3, meson 1.10.0, Xcode 16.1, LLVM 15.0.7). Environments on r26 move without the Windows setup and download about 19 MB. Measured on an M4, macOS 27.0 (2026-10-18): against the previous DXMT archive, winemetal.so is byte-identical, winemetal.dll, d3d10core, nvapi64 and nvngx differ only in their build timestamps, and d3d11.dll and dxgi.dll (which also carries DXMT's profile table) differ by the fix and the profile. A D3D11 test asking for an 8x MSAA render target, 64- and 32-bit: refused under its own name on r26 and on this revision alike, and named steep.exe it gets a 4x texture here that clears and resolves to the exact colour, where r26 refused it.",
-+    "r26 (2026-10-08): r24 with the audio library rebuilt to also limit float output like Windows' audio engine (audiobuf component, highball-db#349). Windows ends its shared-mode mix with a limiter, so a game may hand it samples above full scale and never clip. Wine passed them to Core Audio, which clipped them at the device, and loud passages crackled. Only that 6 KB archive changes, so environments move without the Windows setup. Measured on an M4, macOS 27.0 (2026-10-08), with this archive's library inserted into Wine 10 r21 and Wine 11 r17 environments: a WASAPI test tone recorded through ScreenCaptureKit passes sound under full scale unchanged (0.5 stays 0.5000, rms 0.3536) and holds a tone at 1.4 times full scale to 0.9923 with no sample over full scale, where HB_AUDIOLIMIT=0 lets 47,376 samples over through. No dropouts or clicks. The same code built as a prototype: Paperback's title music has nothing over full scale (2,586 samples in 30 s without) and is 0.4 dB quieter, Five Nights at Freddy's has nothing over (70 without).",
-+    "r24 (2026-10-07): r22 with MoltenVK's shadow-import fixed so GPU results reach the game (moltenvk component, highball#283, highball-db#160, #174). Under MVK_SHADOW_IMPORT=1, which only The Sims Legacy Collection's recipe sets, the private Metal buffer behind imported host memory was copied to the GPU on every submit and never back, so everything a 32-bit Vulkan game read back from the GPU was stale: The Sims' lot thumbnails and family portraits came out as noise. The shadow-readback patch records the ranges a submission's copy, fill, update and query-results commands write into that memory, keeps the next submits' upload off them, and copies them back to the game's pages when the submission completes, before its fence and semaphores are signalled. Measured on an M4 with macOS 27.0 with a 32-bit test program (private/tools/vkrb): with the variable, every readback was stale on r22 and is right on this build, at 32 MB into a 64 MB allocation, next to bytes the program wrote during the submission (kept), and with a second submit in flight (20 rounds). The Sims starts and draws its neighbourhood with no lost device, Portal 2 under DXVK loads two maps with HDR, Direct3D 11 and Direct3D 9 test programs under DXVK give the same results, and without the variable nothing runs differently. Every other component is byte-identical to r22, so only the 1.7 MB MoltenVK archive is new.",
-+    "r22 (2026-10-06): r21 with the Mac driver's retina screen size fixed (winemac component). Retina resolution on, the Mac driver reported HORZRES and VERTRES twice the screen size that GetSystemMetrics, EnumDisplaySettings and DESKTOPHORZRES report (6912x4468 against 3456x2234 on an M1 Pro, 7680x4320 against 3840x2160 on an M4's 1920x1080 display), so a game sizing its window or its fullscreen picture from them got it twice too large: Team Fortress 2 placed its window off screen (athei), and Red Dead Redemption 2's 1080p fullscreen came out cropped for a player with Retina on (highball#261). With retina off the doubling shift was by zero, so nothing changes there. Every other component is byte-identical, so only the 160 KB winemac archive is new.",
-+    "r21 (2026-10-03): r19 plus the data execution prevention edit to ntdll.so (see the ntdll-unix component), the Wine 10 counterpart of the Wine 11 engine's r17. Every other file is byte-identical to r19.",
-+    "r19 (2026-10-01): r17 plus the audio buffer library (audiobuf component, highball#127). At 48 kHz the Mac asked Wine's audio driver for 10.7 ms at a time, more than a game that keeps one 10 ms period queued has, and the driver played the shortfa
++  "baseEnv": {
++    "DYLD_FALLBACK_FRAMEWORK_PATH": "${frameworks}",
++    "DYLD_FALLBACK_LIBRARY_PATH": "${frameworks}:${frameworks}/GStreamer.framework/Versions/1.0/lib",
++    "GST_PLUGIN_PATH": "${frameworks}/GStreamer.framework/Versions/1.0/lib/gstreamer-1.0",
++    "WINEDEBUG": "fixme-all",
++    "DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN": "1",
++    "D3DM_MTL4": "0"
++  },
++  "components": {
++    "d3dmetal-tsshim": {
++      "extract": {
++        "into": "renderers/d3dmetal-tsshim/wine",
++        "subpath": "renderers/d3dmetal-tsshim/wine"
++      },
++      "kind": "renderer",
++      "layout": [
++        "x86_64-windows/d3d12.dll"
++      ],
++      "license": "MIT",
++      "note": "A d3d12.dll in front of D3DMetal's that serves DirectX 12 timestamp queries (D3DMetal 3.0 resolves them to zero at a reported 60 Hz). Exports carry the ordinals D3DMetal 4.0 beta 3 uses (D3D12CreateDevice at 101, D3D12GetInterface at 109, the two Serialize calls at 110 and 111), so games that bind d3d12 imports by ordinal load through it. Kill switch HB_D3D12_TSSHIM=0 idles the patches; the DLL stays in front. HB_TSSHIM_ATOMIC64=1 in a game's variables answers yes to OPTIONS11's 64-bit atomics on descriptor heap resources, which D3DMetal 3 answers no to and Capcom's RE Engine requires (opt-in, for a game's fix to set). Input layouts that place elements with D3D12_APPEND_ALIGNED_ELEMENT reach D3DMetal with those offsets written out, which D3DMetal 4.0 beta 2 and beta 3 get wrong (HB_TSSHIM_APPEND_OFFSETS=0 passes them through). D3D12GetInterface is passed through, and a device factory it returns gets its CreateDevice wrapped so those devices are patched too. Built for beta 3 only: older D3DMetal numbers the Serialize calls 109 and 110. Source: spike/tsshim, Scripts/build-tsshim.sh.",
++      "order": 1,
++      "sha256": "30fccd4ea8f88ad55d44e46b2ac943ad633b2c90fd6a56774294573062ae1259",
++      "size": 52852,
++      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/d3dmetal-tsshim-20261020/d3dmetal-tsshim-20261020.tar.xz",
++      "version": "20261020"
++    },
++    "dxmt": {
++      "extract": {
++        "into": "renderers/dxmt/wine",
++        "subpath": "highball"
++      },
++      "kind": "renderer",
++      "license": "MIT (Highball branch of DXMT: SwapDeviceContextState, cross-process opt-in)",
++      "sha256": "96feaf5d98d3c6cdc3edea9503e2891d435df8d5bfdf7d3f6998a56ec62bbd58",
++      "size": 18923969,
++      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/dxmt-highball-20260930T161516Z-a444716/dxmt-highball-20260930T161516Z-a444716.tar.gz",
++      "note": "DXMT from Highball's fork (gauthierpiarrette/dxmt, branch highball-20260928 at 5c50790): upstream main of 2026-09-16 (v0.80 plus five months of upstream work, among it keyed-mutex and shared-resource support and DXGI functions Steam's overlay can hook) plus four Highball changes: cross-process swapchains behind DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN (off by default), SwapDeviceContextState implemented instead of aborting, 2D textures answering IDXGISurface, and the one that matters on this Wine: a shared texture with no D3DKMT device behind it is created as a private one, with one error line, instead of failing the game. On this Wine the driver assigns GPU LUIDs of its own, so DXMT's lookup of its adapter fails (the build also tries the primary display's name, which fails here too) and there is never a D3DKMT device; before this build every shared texture then died at creation. This revision's DXMT is that branch plus a444716 (branch highball-20260930): the encoding context's Metal device is declared before the command helpers whose constructors build pipelines through it. Declared after them it was still uninitialised memory there, and a game could die at start in newComputePipelineStateWithDescriptor sent to a garbage object: Among Us's 64-bit build did in 8 of 12 launches on r13, and in none of 12 with this build. The bug is in upstream DXMT too."
++    },
++    "moltenvk": {
++      "extract": {
++        "into": "frameworks/libMoltenVK.dylib",
++        "subpath": "libMoltenVK.dylib"
++      },
++      "kind": "runtime",
++      "license": "Apache-2.0",
++      "note": "MoltenVK 1.4.2 rebuilt with three Highball patches (spike/patches/moltenvk-shadow-import.patch, moltenvk-linear-fallback.patch and moltenvk-shadow-readback.patch, Scripts/build-moltenvk.sh). Shadow import is off unless a launch sets MVK_SHADOW_IMPORT=1 (32-bit native-Vulkan games such as The Sims Legacy Collection). Linear fallback is always on: a linear-tiled image that Metal cannot back with linear memory (3D, mipmapped or array images) is created with optimal tiling instead of failing vkCreateImage, which is what takes Red Dead Redemption 2 from an exit at 98 per cent to the main menu and the story. Shadow readback (highball#283) copies what the GPU writes into 
 ```
 
-**File**: `spike/engines/x64-sikarugir10.0_6-r31.json` (added, +218/-0)
+**File**: `spike/engines/x64-crossover26.3-r35.json` (added, +179/-0)
 ```diff
-@@ -0,0 +1,218 @@
+@@ -0,0 +1,179 @@
 +{
 +  "$schema": "https://highball.app/schemas/engine-manifest/v0",
-+  "id": "x64-sikarugir10.0_6-r31",
-+  "displayName": "Wine 10.0 (Sikarugir) r31, D3DMetal 4.0 beta 2",
 +  "arch": "x86_64",
-+  "minMacOS": "27.0",
-+  "requires": [
-+    "rosetta2"
-+  ],
-+  "notes": [
-+    "r31 (2026-11-14): r29 with only the audio library changed, to the 2026-11-03 build the Wine 11 engines r30 to r33 carry (audiobuf component). Microphones keep every frame (highball#350), Wine's audio clock runs in real time so a busy Mac wakes a game's audio on time (highball#444), and games follow the Mac's output when it changes (highball#460, nikiomori). Every other archive is r29's, so environments on r29 move without the Windows setup and download 8 KB. Not installed on its own: every archive is r29's except the audio library, the one measured on r30 (BundledEngineTests checks this). No game was run on this revision.",
-+    "r29 (2026-10-18): r27 with only DXMT changed, built from Highball's DXMT branch with Steep's fix (highball-db#465, by Sean Shmulevich): Steep asks for 8x MSAA without checking, Apple GPUs stop at 4, and the game died with no window. A built-in profile gives steep.exe the highest count the Mac has instead; no other game changes. Same toolchain as the previous DXMT build (mingw-w64 14.0.0_3, meson 1.10.0, Xcode 16.1, LLVM 15.0.7). The same DXMT archive as r28, downloaded once. Measured on an M4, macOS 27.0 (2026-10-18): against the previous DXMT archive, winemetal.so is byte-identical, winemetal.dll, d3d10core, nvapi64 and nvngx differ only in their build timestamps, and d3d11.dll and dxgi.dll (which also carries DXMT's profile table) differ by the fix and the profile. A D3D11 test asking for an 8x MSAA render target, 64- and 32-bit: refused under its own name on r26 and on this revision alike, and named steep.exe it gets a 4x texture here that clears and resolves to the exact colour, where r26 refused it.",
-+    "r27 (2026-10-08): r25 with the audio library rebuilt to limit float output like Windows' audio engine (audiobuf component, highball-db#349), the same archive as r26. Measured on an M4, macOS 27.0 (2026-10-08), with this archive's library inserted into Wine 10 r21 and Wine 11 r17 environments: a WASAPI test tone recorded through ScreenCaptureKit passes sound under full scale unchanged (0.5 stays 0.5000, rms 0.3536) and holds a tone at 1.4 times full scale to 0.9923 with no sample over full scale, where HB_AUDIOLIMIT=0 lets 47,376 samples over through. No dropouts or clicks. The same code built as a prototype: Paperback's title music has nothing over full scale (2,586 samples in 30 s without) and is 0.4 dB quieter, Five Nights at Freddy's has nothing over (70 without).",
-+    "r25 (2026-10-07): r23 with MoltenVK's shadow-import fixed so GPU results reach the game (moltenvk component, highball#283, highball-db#160, #174). Under MVK_SHADOW_IMPORT=1, which only The Sims Legacy Collection's recipe sets, the private Metal buffer behind imported host memory was copied to the GPU on every submit and never back, so everything a 32-bit Vulkan game read back from the GPU was stale: The Sims' lot thumbnails and family portraits came out as noise. The shadow-readback patch records the ranges a submission's copy, fill, update and query-results commands write into that memory, keeps the next submits' upload off them, and copies them back to the game's pages when the submission completes, before its fence and semaphores are signalled. Measured on an M4 with macOS 27.0 with a 32-bit test program (private/tools/vkrb): with the variable, every readback was stale on r23 and is right on this build, at 32 MB into a 64 MB allocation, next to bytes the program wrote during the submission (kept), and with a second submit in flight (20 rounds). The Sims starts and draws its neighbourhood with no lost device, Portal 2 under DXVK loads two maps with HDR, Direct3D 11 and Direct3D 9 test programs under DXVK give the same results, and without the variable nothing runs differently. Every other component is byte-identical to r23, so only the 1.7 MB MoltenVK archive is new.",
-+    "r23 (2026-10-06): r20, the D3DMetal 4 line for macOS 27, with the Mac driver's retina screen size fixed (winemac component), the same change as the default engine's r22. Retina resolution on, the Mac driver reported HORZRES and VERTRES twice the screen size that GetSystemMetrics, EnumDisplaySettings and DESKTOPHORZRES report (6912x4468 against 3456x2234 on an M1 Pro, 7680x4320 against 3840x2160 on an M4's 1920x1080 display), so a game sizing its window or its fullscreen picture from them got it twice too large: Team Fortress 2 placed its window off screen (athei), and Red Dead Redemption 2's 1080p fullscreen came out cropped for a player with Retina on (highball#261). With retina off the doubling shift was by zero, so nothing changes there. Every other component is byte-identical, so only the 160 KB winemac archive is new.",
-+    "r20 (2026-10
++  "baseEnv": {
++    "DYLD_FALLBACK_FRAMEWORK_PATH": "${frameworks}",
++    "DYLD_FALLBACK_LIBRARY_PATH": "${frameworks}:${frameworks}/GStreamer.framework/Versions/1.0/lib",
++    "GST_PLUGIN_PATH": "${frameworks}/GStreamer.framework/Versions/1.0/lib/gstreamer-1.0",
++    "WINEDEBUG": "fixme-all",
++    "DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN": "1"
++  },
++  "components": {
++    "d3dmetal-tsshim": {
++      "extract": {
++        "into": "renderers/d3dmetal-tsshim/wine",
++        "subpath": "renderers/d3dmetal-tsshim/wine"
++      },
++      "kind": "renderer",
++      "layout": [
++        "x86_64-windows/d3d12.dll"
++      ],
++      "license": "MIT",
++      "note": "A d3d12.dll in front of D3DMetal's that serves DirectX 12 timestamp queries (D3DMetal 3.0 resolves them to zero at a reported 60 Hz). Exports carry Microsoft's d3d12 ordinals (D3D12CreateDevice at 101), which D3DMetal mirrors, so games that bind d3d12 imports by ordinal load through it. Kill switch HB_D3D12_TSSHIM=0 idles the patches; the DLL stays in front. HB_TSSHIM_ATOMIC64=1 in a game's variables answers yes to OPTIONS11's 64-bit atomics on descriptor heap resources, which D3DMetal 3 answers no to and Capcom's RE Engine requires (opt-in, for a game's fix to set). Source: spike/tsshim, Scripts/build-tsshim.sh.",
++      "order": 1,
++      "sha256": "5906fd46813e0cbe5e59909f77fd86344768ea8c07babe60cf4d8bbad1d0d00a",
++      "size": 50532,
++      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/d3dmetal-tsshim-20261014/d3dmetal-tsshim-20261014.tar.xz",
++      "version": "20261014"
++    },
++    "dxmt": {
++      "extract": {
++        "into": "renderers/dxmt/wine",
++        "subpath": "highball"
++      },
++      "kind": "renderer",
++      "license": "MIT (Highball branch of DXMT: SwapDeviceContextState, cross-process opt-in)",
++      "sha256": "96feaf5d98d3c6cdc3edea9503e2891d435df8d5bfdf7d3f6998a56ec62bbd58",
++      "size": 18923969,
++      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/dxmt-highball-20260930T161516Z-a444716/dxmt-highball-20260930T161516Z-a444716.tar.gz",
++      "note": "DXMT from Highball's fork (gauthierpiarrette/dxmt, branch highball-20260928 at 5c50790): upstream main of 2026-09-16 (v0.80 plus five months of upstream work, among it keyed-mutex and shared-resource support and DXGI functions Steam's overlay can hook) plus four Highball changes: cross-process swapchains behind DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN (off by default), SwapDeviceContextState implemented instead of aborting, 2D textures answering IDXGISurface, and the one that matters on this Wine: a shared texture with no D3DKMT device behind it is created as a private one, with one error line, instead of failing the game. On this Wine the driver assigns GPU LUIDs of its own, so DXMT's lookup of its adapter fails (the build also tries the primary display's name, which fails here too) and there is never a D3DKMT device; before this build every shared texture then died at creation. This revision's DXMT is that branch plus a444716 (branch highball-20260930): the encoding context's Metal device is declared before the command helpers whose constructors build pipelines through it. Declared after them it was still uninitialised memory there, and a game could die at start in newComputePipelineStateWithDescriptor sent to a garbage object: Among Us's 64-bit build did in 8 of 12 launches on r13, and in none of 12 with this build. The bug is in upstream DXMT too."
++    },
++    "moltenvk": {
++      "extract": {
++        "into": "frameworks/libMoltenVK.dylib",
++        "subpath": "libMoltenVK.dylib"
++      },
++      "kind": "runtime",
++      "license": "Apache-2.0",
++      "note": "MoltenVK 1.4.2 rebuilt with three Highball patches (spike/patches/moltenvk-shadow-import.patch, moltenvk-linear-fallback.patch and moltenvk-shadow-readback.patch, Scripts/build-moltenvk.sh). Shadow import is off unless a launch sets MVK_SHADOW_IMPORT=1 (32-bit native-Vulkan games such as The Sims Legacy Collection). Linear fallback is always on: a linear-tiled image that Metal cannot back with linear memory (3D, mipmapped or array images) is created with optimal tiling instead of failing vkCreateImage, which is what takes Red Dead Redemption 2 from an exit at 98 per cent to the main menu and the story. Shadow readback (highball#283) copies what the GPU writes into shadowed memory back to the game's pages when a submission completes, so a 32-bit game's readbacks under MVK_SHADOW_IMPORT=1 stop being stale (The Sims' thumbnails); without the variable it does nothing. Since r30 and r31 also: device-memory-cap (HB_MVK_DEVICE_MEMORY_PERCENT caps the heap and its budget, highball#398) and two changes from DiAvisoo's MoltenVK-Detroit (cache-drawid-present, lenient-interfaces, highball#125), CI build run 41367170976.",
++      "order": 1,
++      "sha256": "662d7c06
 ```
 
 ---
 
-### Incident Patch 2: `d272065c` (2026-11-14)
-**Commit Message**: Two follow-ups to #714 from udance4ever's tests (#432). A demo of a game the account owns is left out of the owned Steam list: appinfo's common.parent names its game, and Fireside Feelings was listed beside its demo. And 'highball play --wait' on a game that isn't installed returns at once with an error, after the app has shown its question: such a game never starts, and the wait ran to --start-timeout (600 s). Test: testADemoOfAnOwnedGameIsLeftOut.
+### Incident Patch 2: `055c1909` (2026-11-18)
+**Commit Message**: A bottles folder that is a symlink to another disk is listed again (#750). contentsOfDirectory(at:) refuses a symlinked folder on macOS 27 ("The file “bottles” couldn’t be opened", reproduced with the CLI in a throwaway home), so the app showed no environments at all. Listing goes through the path call, which follows the link, and each entry's URL stays under bottles/, so get(), delete()'s containment check and everything that compares bottle URLs see the same paths as before. A test lists two bottles through a linked folder and deletes one, which removes its folder on the other disk and keeps the link. 130 tests in the bottle, home and regression suites pass.
 
-**File**: `Sources/HighballKit/SteamOwnedLibrary.swift` (modified, +8/-1)
+**File**: `Sources/HighballKit/BottleStore.swift` (modified, +10/-2)
 ```diff
-@@ -62,8 +62,12 @@ public enum SteamOwnedLibrary {
-         let owned = Set(((try? FileManager.default.contentsOfDirectory(atPath: cache.path)) ?? []).compactMap(Int.init))
-         guard !owned.isEmpty,
-               let apps = try? SteamAppInfo.read(steamRoot.appending(path: "appcache/appinfo.vdf"), only: owned) else { return [] }
-+        // A demo of a game the account owns is left out: the game stands for it (highball#432,
-+        // Fireside Feelings and its demo both listed).
-+        let ownedGames = Set(owned.filter { apps[$0]?.type?.lowercased() == "game" })
-         return owned.compactMap { appid in
-             guard let app = apps[appid], ["game", "demo"].contains(app.type?.lowercased() ?? ""), let name = app.name else { return nil }
-+            if app.type?.lowercased() == "demo", let parent = app.parent, ownedGames.contains(parent) { return nil }
-             let folder = cache.appending(path: String(appid))
-             let art = artwork(in: folder)
-             return OwnedSteamGame(appid: appid, name: name, localCapsule: art["library_600x900.jpg"],
-@@ -116,6 +120,8 @@ public enum SteamAppInfo {
-         public var depots: [Depot] = []
-         /// `ufs.quota`: the room the game has in Steam Cloud, 0 for a game Steam Cloud does not keep.
-         public var steamCloudQuota: Int64 = 0
-+        /// `common.parent`: the full game a demo (or other child app) belongs to.
-+        public var parent: Int? = nil
+@@ -6,7 +6,7 @@ public struct BottleStore: Sendable {
  
-         public struct Depot: Sendable, Equatable {
-             public let id: Int
-@@ -184,7 +190,8 @@ public enum SteamAppInfo {
-             }.sorted { $0.id < $1.id }
-             apps[appid] = App(name: common?["name"]?.string, type: common?["type"]?.string, oslist: common?["oslist"]?.string,
-                               osextended: common?["osextended"]?.string, macLaunchArchs: macArchs, depots: depots,
--                              steamCloudQuota: Int64(info["ufs"]?.object?["quota"]?.string ?? "") ?? 0)
-+                              steamCloudQuota: Int64(info["ufs"]?.object?["quota"]?.string ?? "") ?? 0,
-+                              parent: Int(common?["parent"]?.string ?? ""))
-         }
-         return apps
-     }
-```
-
-**File**: `Sources/highball/main.swift` (modified, +6/-1)
-```diff
-@@ -1010,6 +1010,7 @@ struct Play: AsyncParsableCommand {
-         }
-         let paths = HighballPaths()
-         // A typo fails here and now, not as an alert in the app and a wait that never ends.
-+        var notInstalled = false
-         switch target {
-         case .launcher:
-             break
-@@ -1019,9 +1020,10 @@ struct Play: AsyncParsableCommand {
-                 fail("\(id) is not an installed Epic game in this Highball. `highball library --installed` lists what can be played.")
-             }
-         case .steam, .gog, .pin, .battlenet:
--            guard currentLibrary(paths: paths, epic: false).contains(where: { $0.id == target.libraryID }) else {
-+            guard let item = currentLibrary(paths: paths, epic: false).first(where: { $0.id == target.libraryID }) else {
-                 fail("\(id) is not in this Highball's library. `highball library` lists the ids.")
-             }
-+            notInstalled = !item.installed && !item.installedOnMac
-         }
-         // The link the game's Mac app opens, with this install's token, so the app starts it
-         // without asking; -g keeps Highball behind the game (MacAppStub.launchScript).
-@@ -1034,6 +1036,9 @@ struct Play: AsyncParsableCommand {
-         guard open.terminationStatus == 0 else { fail("macOS could not open the Highball app (open exited with \(open.terminationStatus))") }
-         guard wait else { return }
-         if case .launcher = target { return }   // a launcher is not a game the app follows
-+        // A game that isn't installed never starts: the app asks about it in its window, and the
-+        // wait used to run to --start-timeout (highball#432). The question is up, so stop here.
-+        if notInstalled { fail("\(id) is not installed, so it won't start. Highball shows what it can do with it in its window.") }
- 
-         let started = Date()
-         var phase = PlayWait.Phase.starting
-```
-
-**File**: `Tests/HighballKitTests/SteamOwnedLibraryTests.swift` (modified, +13/-1)
-```diff
-@@ -10,6 +10,7 @@ final class SteamOwnedLibraryTests: XCTestCase {
-     private struct App {
-         var appid: UInt32; var name: String; var type: String; var oslist: String = "windows"
-         var osextended: String? = nil
-+        var parent: UInt32? = nil
-         /// Launch entries under config.launch, each with its oslist and optional osarch.
-         var launch: [(oslist: String, osarch: String?)] = []
-     }
-@@ -18,7 +19,7 @@ final class SteamOwnedLibraryTests: XCTestCase {
- 
-     /// Builds a v29 file (keys as indexes into a trailing string table) or a v28 one (inline keys).
-     private func appinfo(_ apps: [App], v29: Bool = true) -> Data {
--        let keys = ["appinfo", "Common", "name", "type", "oslist", "appid", "osextended", "config", "launch", "osarch", "0", "1", "2"]
-+        let keys = ["appinfo", "Common", "name", "type", "oslist", "appid", "osextended", "config", "launch", "osarch", "0", "1", "2", "parent"]
-         func key(_ k: String) -> [UInt8] { v29 ? le(UInt32(keys.firstIndex(of: k)!)) : Array(k.utf8) + [0] }
-         func str(_ k: String, _ v: String) -> [UInt8] { [0x01] + key(k) + Array(v.utf8) + [0] }
-         func int(_ k: String, _ v: UInt32) -> [UInt8] { [0x02] + key(k) + le(v) }
-@@ -29,6 +30,7 @@ final class SteamOwnedLibraryTests: XCTestCase {
-             // Key case varies in Valve's data; the reader must not care.
-             var common = str("name", app.name) + str("type", app.type) + str("oslist", app.oslist)
-             if let ext = app.osextended { common += str("osextended", ext) }
-+            if let parent = app.parent { common += int("parent", parent) }
-             var info = int("appid", app.appid) + obj("Common", common)
-             if !app.launch.isEmpty {
-                 let entries = app.launch.enumerated().flatMap { i, l in
-@@ -145,6 +147,16 @@ final class SteamOwnedLibraryTests: XCTestCase {
-         XCTAssertEqual(SteamOwnedLibrary.games(steamRoot: root).map(\.appid), [570940, 3460730], "games and demos, by name")
+     public func list() throws -> [Bottle] {
+         guard FileManager.default.fileExists(atPath: paths.bottles.path) else { return [] }
+-        return try FileManager.default.contentsOfDirectory(at: paths.bottles, includingPropertiesForKeys: nil)
++        return try Self.entries(of: paths.bottles)
+             .compactMap { url -> Bottle? in
+                 guard var b = try? Bottle.load(url) else { return nil }
+                 // The folder is the bottle's identity (get/delete resolve by folder). A copied
+@@ -26,6 +26,14 @@ public struct BottleStore: Sendable {
+             .sorted { $0.name < $1.name }
      }
  
-+    func testADemoOfAnOwnedGameIsLeftOut() throws {
-+        // Fireside Feelings and its demo were both owned and both listed (highball#432); a demo
-+        // whose game the account lacks stays.
-+        let root = try steamRoot(owned: [2990600, 3163380, 3460730], appinfo: appinfo([
-+            App(appid: 2990600, name: "Fireside Feelings", type: "Game"),
-+            App(appid: 3163380, name: "Fireside Feelings Demo", type: "Demo", parent: 2990600),
-+            App(appid: 3460730, name: "SlashZero Demo", type: "Demo", parent: 3460720)]))
-+        XCTAssertEqual(SteamOwnedLibrary.games(steamRoot: root).map(\.appid), [2990600, 3460730])
++    /// The entries of `bottles/`, each as a URL under `bottles/` itself. A player can make the folder a
++    /// symlink to another disk (highball#750), and contentsOfDirectory(at:) refuses a symlinked folder
++    /// ("couldn't be opened", measured on macOS 27) where the path call follows it. The URLs stay under
++    /// the link, so they match what bottleURL builds and its containment check.
++    static func entries(of dir: URL) throws -> [URL] {
++        try FileManager.default.contentsOfDirectory(atPath: dir.path).map { dir.appending(path: $0) }
 +    }
 +
-     func testPrefersTheClientsCachedArtwork() throws {
-         let root = try steamRoot(owned: [2062430, 570940], appinfo: appinfo([
-             App(appid: 2062430, name: "BALL x PIT", type: "game"), App(appid: 570940, name: "DSR", type: "game")]))
+     public func get(_ name: String) throws -> Bottle {
+         // Every subcommand resolves through here, so the name guard belongs here too rather than
+         // only on the destructive calls.
+@@ -399,7 +407,7 @@ public struct BottleStore: Sendable {
+     /// can never be invisible again — being invisible is what stranded the reporter of #38.
+     public func damaged() throws -> [DamagedBottle] {
+         guard FileManager.default.fileExists(atPath: paths.bottles.path) else { return [] }
+-        return try FileManager.default.contentsOfDirectory(at: paths.bottles, includingPropertiesForKeys: nil)
++        return try Self.entries(of: paths.bottles)
+             .compactMap { url -> DamagedBottle? in
+                 let name = url.lastPathComponent
+                 if name.hasPrefix(".") { return nil }
+```
+
+**File**: `Sources/HighballKit/Paths.swift` (modified, +1/-1)
+```diff
+@@ -317,7 +317,7 @@ public enum BugReport {
+     /// started by a launcher client that Highball did not spawn.
+     static func logDirectories(_ paths: HighballPaths) -> [URL] {
+         var dirs = [paths.logs]
+-        let bottles = (try? FileManager.default.contentsOfDirectory(at: paths.bottles, includingPropertiesForKeys: nil)) ?? []
++        let bottles = (try? BottleStore.entries(of: paths.bottles)) ?? []
+         dirs += bottles.map { $0.appending(path: "drive_c/highball/logs") }
+         return dirs.filter { FileManager.default.fileExists(atPath: $0.path) }
+     }
+```
+
+**File**: `Tests/HighballKitTests/BottleDeleteTests.swift` (modified, +24/-0)
+```diff
+@@ -347,6 +347,30 @@ final class BottleDeleteTests: XCTestCase {
+         XCTAssertTrue(try store.damaged().isEmpty)
+     }
+ 
++    /// A player can move bottles/ to another disk and leave a symlink (highball#750). Listing used to fail
++    /// outright ("couldn't be opened"), so the app showed no environments. Entries stay under bottles/,
++    /// and deleting one removes the folder on the other disk and keeps the link.
++    func testABottlesFolderThatIsASymlinkIsListedAndDeletable() throws {
++        let elsewhere = home.appending(path: "elsewhere")
++        try FileManager.default.createDirectory(at: elsewhere, withIntermediateDirectories: true)
++        try FileManager.default.removeItem(at: paths.bottles)
++        try FileManager.default.createSymbolicLink(atPath: paths.bottles.path, withDestinationPath: elsewhere.path)
++        try makeBottle("play")
++        try makeBottle("Games")
++
++        let listed = try store.list()
++        XCTAssertEqual(listed.map(\.name), ["Games", "play"])
++        XCTAssertTrue(listed.allSatisfy { $0.url.path.hasPrefix(paths.bottles.path) }, "entries stay under bottles/")
++        XCTAssertTrue(try store.damaged().isEmpty)
++
++        XCTAssertNoThrow(try store.delete("play"))
++        XCTAssertEqual(try store.list().map(\.name), ["Games"])
++        XCTAssertFalse(FileManager.default.fileExists(atPath: elsewhere.appending(path: "play").path))
++        var st = stat()
++        XCTAssertEqual(lstat(paths.bottles.path, &st), 0)
++        XCTAssertEqual(st.st_mode & S_IFMT, S_IFLNK, "the link itself stays")
++    }
++
+     /// A dangling symlink used to slip past create()'s fileExists guard, which follows links, so
+     /// creation failed later with a raw Foundation error on a name nothing would show.
+     func testCreateRefusesANameHeldByADanglingSymlink() throws {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #751** (2026-11-20): List environments when the bottles folder is a symlink (@gauthierpiarrette)
+- **PR #742** (2026-11-20): highball play fails for a game that isn't installed, also without --wait (@gauthierpiarrette)
+- **PR #741** (2026-11-20): Wine 11 r34 and r35, and engine paths in recipe variables, for Diablo II: Resurrected (@gauthierpiarrette)
+- **PR #731** (2026-11-17): Display setting: say where a fullscreen game opens (@gauthierpiarrette)
 - **PR #727** (2026-11-14): Wine 10 r30 and r31 carry the new audio library (microphones, real time audio clock, output follow) (@gauthierpiarrette)
 - **PR #726** (2026-11-14): Demos of owned games stay out, play --wait returns for games that aren't installed (#432) (@gauthierpiarrette)
-- **PR #715** (2026-11-12): A Steam game's session follows its program after it relaunches itself (@gauthierpiarrette)
-- **PR #714** (2026-11-12): Steam demos stay in the library like games (#432) (@gauthierpiarrette)
-- **PR #713** (2026-11-12): Epic can be disconnected (#708) (@gauthierpiarrette)
-- **PR #710** (2026-11-12): Wine 11 engines r32 and r33: no Homebrew paths (#698), D3DKMTSetProcessSchedulingPriorityClass (#699) (@gauthierpiarrette)
 
 ---
 
@@ -1330,39 +1394,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Wine 10 engines r30 (default) and r31 (D3DMetal 4 line): r28 and r29 with the au
+## X. Wine 11 engines r34 and r35 for Diablo II: Resurrected: r32 and r33 with one reb
 
 **RULE**:
-When implementing operations in `Tests/HighballKitTests/BundledEngineTests.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gauthierpiarrette/highball. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/HighballKit/Bottle.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gauthierpiarrette/highball. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ac350e46`: Wine 10 engines r30 (default) and r31 (D3DMetal 4 line): r28 and r29 with the audio library the Wine 11 engines carry since r30 (audiobuf-20261103, sha256 617b8feb, 8 KB, the same archive). The default engine still had the October library, so on it a microphone lost 32 frames nearly every 10 ms period (highball#350, #601), Wine's audio clock slept at normal priority on a busy Mac, and games kept the output they started with (#460, nikiomori's change). Every other archive is r28's or r29's, so environments move without the Windows setup and download 8 KB; r28 moves to spike/engines for rollback. Installed r30 from its manifest with the CLI in a throwaway home on an M1 Pro, macOS 27.0: every file is r28's except libhbaudiobuf.dylib, byte-identical to Wine 11 r31's. A WASAPI capture with hbtap's sample time ramp in place of the microphone's data, 6 s at 48 kHz: 520 and 501 breaks on r28, 0 on r30, under 10 busy loops 510 against 0; the library logs the capture buffer capped at 240 frames and audio_client_timer made real time (status 0). r31 was not installed on its own, BundledEngineTests checks it is r29 plus that archive. 872 tests pass.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `39e06d01`: Wine 11 engines r34 and r35 for Diablo II: Resurrected: r32 and r33 with one rebuilt Wine, highball-engine release engine-wine-11.0-20261114T185735Z-fiber-mirror-switch (run 43624249972,, sha256 ee1609f0, public download checked). Its patch 0031 lets a game's recipe turn the fiber mirror off with HB_FIBER_MIRROR=0: D3DMetal calls macOS code straight from the game's fiber threads, and D2R exited with SIGILL before any window while the mirror put a fiber pointer in the QoS slot. Without the variable nothing changes, so Guardians of the Galaxy and Metaphor keep it. A recipe's variable can now name a file of the environment's engine with ${frameworks} and ${renderers}, as a manifest's baseEnv does, since D2R also needs CX_APPLEGPTK_LIBD3DSHARED_PATH set to its engine's libd3dshared.dylib (AlexPako played 35 minutes with both, sync off and MSync, M5 Pro, macOS 27.2.1). Every other archive is the base's, so only the Wine downloads. 875 tests pass.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Tests/HighballKitTests/BundledEngineTests.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/HighballKit/Bottle.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    /// On 2026-11-14 the audio library the Wine 11 engines carry since r30 (microphones, a real time
-    /// audio clock, following the Mac's output; highball#350, #444, #460): r30 and r31.
-                                  ("x64-sikarugir10.0_6-r29", "x64-sikarugir10.0_6-r6"), ("x64-sikarugir10.0_6-r30", "x64-sikarugir10.0_6-r5"),
-                                  ("x64-sikarugir10.0_6-r31", "x64-sikarugir10.0_6-r6")] {
-                                 "x64-sikarugir10.0_6-r28", "x64-sikarugir10.0_6-r29", "x64-sikarugir10.0_6-r30", "x64-sikarugir10.0_6-r31"]
-                           "x64-sikarugir10.0_6-r28", "x64-sikarugir10.0_6-r30"].contains(current) ? "wine10-dep-" : "wine10-msync-"
-        XCTAssertEqual(all.last?.id, "x64-sikarugir10.0_6-r30", "r30 is the default engine")
-        // r30 and r31 are r28 and r29 with only the audio library changed, to the 8 KB archive the Wine 11
-     
+        // on this environment (a driver's shader cache kept inside it, and gone with it). A recipe can also name a file
+        // of the environment's engine with ${frameworks} and ${renderers}, as a manifest's baseEnv does: Diablo II:
+        // Resurrected needs Wine to load D3DMetal's libd3dshared.dylib (highball#371), which sits in each engine's own
+        // folder.
+        let frameworks = engine.frameworksDir.path, renderers = engine.renderersDir.path
+        return env.mapValues {
+            MacVariables.expand($0).replacingOccurrences(of: "${environment}", with: url.path)
+                .replacingOccurrences(of: "${frameworks}", with: frameworks)
+                .replacingOccurrences(of: "${renderers}", with: renderers)
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-                                  ("x64-sikarugir10.0_6-r29", "x64-sikarugir10.0_6-r6")] {
-                                 "x64-sikarugir10.0_6-r28", "x64-sikarugir10.0_6-r29"]
-                           "x64-sikarugir10.0_6-r28"].contains(current) ? "wine10-dep-" : "wine10-msync-"
-        XCTAssertEqual(all.last?.id, "x64-sikarugir10.0_6-r28", "r28 is the default engine")
+        // on this environment (a driver's shader cache kept inside it, and gone with it).
+        return env.mapValues { MacVariables.expand($0).replacingOccurrences(of: "${environment}", with: url.path) }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ac350e46` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `39e06d01` are properly handled with clean fallback behavior.

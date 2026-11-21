@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T03:15:44.837Z",
-  "total_records": 2220,
+  "last_updated": "2026-11-21T03:28:57.723Z",
+  "total_records": 2222,
   "domains": {
     "A": {
       "total": 17,
@@ -1419,7 +1419,7 @@
       ]
     },
     "H": {
-      "total": 524,
+      "total": 526,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1944,7 +1944,9 @@
         "DOM-H-09C0B40C",
         "domain_intelligence-technical-construction-intelligence-zed-industries-zed-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-iliyami-macsai-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-iliyami-macsai-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-iliyami-macsai-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-materializeinc-materialize-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-materializeinc-materialize-learnings-core-in"
       ]
     },
     "I": {
@@ -8605,8 +8607,8 @@
       "title": "Architecture Intelligence: gauthierpiarrette/highball Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gauthierpiarrette-highball-architecture-intelligence-gauthierpiarrette-highball-.md",
       "repository": "gauthierpiarrette/highball",
-      "content_hash": "f0b33f0af41ac2286b71e5a897f2b44949a525a2f682a3e53bdcc1ad56a546cd",
-      "created_at": "2026-11-17T05:37:13.657Z"
+      "content_hash": "75a206bd6d02f9c90ba748b77bd0a77c1181897354128149e86b200de09669f4",
+      "created_at": "2026-11-21T03:28:41.987Z"
     },
     "domain_intelligence-technical-construction-intelligence-gocd-gocd-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-gocd-gocd-core-invariants",
@@ -8683,8 +8685,8 @@
       "title": "Architecture Intelligence: gauthierpiarrette-highball-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gauthierpiarrette-highball-learnings-architecture-intelligence-gauthierpiarrette.md",
       "repository": "gauthierpiarrette-highball-learnings",
-      "content_hash": "c9e4ddc140872373c4f6daf44d57af6407948ccfb9ec8b2811a276117a50cec5",
-      "created_at": "2026-11-17T05:37:20.777Z"
+      "content_hash": "053e4be6fab60fb6707197788e981b0bc04daef6b6f9417f33d5560b6a1042df",
+      "created_at": "2026-11-21T03:28:55.447Z"
     },
     "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants",
@@ -16997,8 +16999,8 @@
       "title": "Architecture Intelligence: astral-sh/uv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-architecture-intelligence-astral-sh-uv-core-invariants.md",
       "repository": "astral-sh/uv",
-      "content_hash": "b2171e3f06ce6c1cc80a49e472150fd88efca3b082d1cec7d32511c382dc481f",
-      "created_at": "2026-11-19T16:40:56.670Z"
+      "content_hash": "8828075087a38a5a9254035ac745a0139c3db050dcb752e4f799c099ba46ab8c",
+      "created_at": "2026-11-21T03:28:36.615Z"
     },
     "domain_intelligence-technical-construction-intelligence-callstack-agent-device-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-callstack-agent-device-core-invariants",
@@ -17024,8 +17026,8 @@
       "title": "Architecture Intelligence: astral-sh-uv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-learnings-architecture-intelligence-astral-sh-uv-learnings-core-inv.md",
       "repository": "astral-sh-uv-learnings",
-      "content_hash": "9e52c97623f976149ce2e4e818e56f9482a28dea965a8c4b7ff036f08a552628",
-      "created_at": "2026-11-19T16:41:10.590Z"
+      "content_hash": "701e49eda144d586e34af7fdcf7396167015446b210f32dfa44b5cceee4fe6f5",
+      "created_at": "2026-11-21T03:28:54.455Z"
     },
     "DOM-D-CCF89F8A": {
       "record_id": "DOM-D-CCF89F8A",
@@ -37325,6 +37327,24 @@
       "repository": "iliyami-macsai-learnings",
       "content_hash": "03d2106dbef7a8d834283257702ca64023516277af69af552e34cd231b837f91",
       "created_at": "2026-11-21T02:57:55.716Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-materializeinc-materialize-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-materializeinc-materialize-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: MaterializeInc/materialize Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-materializeinc-materialize-technical-construction-intelligence-materializeinc-ma.md",
+      "repository": "MaterializeInc/materialize",
+      "content_hash": "64fe41915efeb89ba247a637dff56d9f56a1958c2a10cdfa643056f9e9dc0576",
+      "created_at": "2026-11-21T03:28:50.934Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-materializeinc-materialize-learnings-core-in": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-materializeinc-materialize-learnings-core-in",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: materializeinc-materialize-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-materializeinc-materialize-learnings-technical-construction-intelligence-materia.md",
+      "repository": "materializeinc-materialize-learnings",
+      "content_hash": "2c0e3d043563e3a44d185476aa123f7750d2779c0017975a15495933368678af",
+      "created_at": "2026-11-21T03:28:57.723Z"
     }
   }
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
-> **Source Version**: `9b34eb69`  
+> **Source Version**: `ac154af9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T16:40:55.582Z  
+> **Timestamp**: 2026-11-21T03:28:35.212Z  
 > **Learning ID**: `learn-github-astral-sh-uv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T16:40:55.578Z  
+> **Harvest Timestamp**: 2026-11-21T03:28:35.018Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python package and project manager, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 92410 stars
+- **Stars / Engagement**: 92471 stars
 
 ---
 
@@ -1496,13 +1496,11 @@ mod types;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #23312** (2026-11-20): **Filter unreachable wheels before selecting hashes for uv.lock**
+  *Symptoms*: ## Summary  A project requiring Python 3.13 or later can fail to lock because a CPython 3.12 wheel on its index lacks a SHA-256 hash. When the index sets `hash-algorithm = "sha256"`, we check every wheel for the required hash before we filter by Python version and platform. The error can point to a file that would never appear in `uv.lock`.  We now filter the wheels before converting them to lockfile entries. We require the configured hash for every wheel we record.  Extracted from #23310. 
+
 - **Issue #23261** (2026-11-16): **Reject wheels with mismatched names**
   *Symptoms*: When fetching a wheel from an index, reject it when its name does not match the the originally requested package name.  This doesn't eagerly fail, and allows another index to supply the necessary wheel (depending on normal index policy). This seemed like it had precedent.
-
-- **Issue #23248** (2026-11-19): **`uv upgrade` is not aware of other dependency groups**
-  *Symptoms*: ### Summary  I have `ipython` in my project, listed under the dev dependency group:  ```toml dependencies = [ ... ]  [dependency-groups] dev = ["ipython", ... ] ```  I want to update it in my lock file so I ran: `uv upgrade ipython`, but it doesn't work. Then I tried `uv upgrade --dev ipython`, assuming it understood that argument, since many other subcommands do. But it doesn't.  ```sh uv upgrade ipython error: Dependency `ipython` was not found in `project.dependencies` uv upgrade --dev ipython error: unexpected argument '--dev' found ```  How is one supposed to upgrade a non-main dep group dependency without manually updating the version range/pin in the pyproject.toml file?  ### Platform  Ubuntu 24.04  ### Version  uv 0.13.7 (x86_64-unknown-linux-gnu)  ### Python version  3.14.7
-  **Post-Mortem & Fix Analysis**:
-  > Hi, thanks for opening an issue. This is a known gap in `uv upgrade` at the moment, and is tracked under https://github.com/astral-sh/uv/issues/20783
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1519,79 +1517,51 @@ mod types;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9b34eb69` (2026-11-19)
-**Commit Message**: Update blake2 dependency from 0.11.0-rc.6 to 0.11.0 (#23294)
+### Incident Patch 1: `08cda500` (2026-11-20)
+**Commit Message**: Use GPT-6.2 Astra for pull request security reviews (#23327)
 
-<!--
-Thank you for contributing to uv! To help us out with reviewing, please
-consider the following:
+Switch PR security reviews from `gpt-6-astra` to `gpt-6.2-astra` at
+`xhigh` by adopting astral-sh/github-actions#70. Pin the same workflow
+commit in CI and the token service policy so the reviewer can publish
+inline findings. This revision also includes
+astral-sh/github-actions#68, which keeps security reviews from creating
+deployment entries on PRs.
 
-- Does this pull request include a summary of the change? (See below.)
-- Does this pull request include a descriptive title?
-- Does this pull request include references to any relevant issues?
--->
+Co-authored-by: zaniebot <[REDACTED_EMAIL]>
 
-## Summary
-
-<!-- What's the purpose of the change? What does it do, and why? -->
-Update the minimum version of `blake2` from `0.11.0-rc.6` to `0.11.0` in
-`Cargo.toml`. The 0.11.0 final release has been available for a while,
-and it’s already in `Cargo.lock`, so there’s no need to allow a release
-candidate anymore.
-
-## Test Plan
-
-<!-- How was it tested? -->
-`cargo update blake2` succeeds and does not modify `Cargo.lock`
-
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `.github/secure-token-service.json` (modified, +1/-1)
 ```diff
-@@ -143,7 +143,7 @@ backon = { version = "1.3.0", default-features = false, features = [
- ] }
- base64 = { version = "0.23.0", default-features = false, features = ["std"] }
- bitflags = { version = "2.6.0", default-features = false }
--blake2 = { version = "0.11.0-rc.6", default-features = false }
-+blake2 = { version = "0.11.0", default-features = false }
- blake3 = { version = "1.8.5", default-features = false, features = ["std"] }
- boxcar = { version = "0.2.5", default-features = false }
- bytecheck = { version = "0.8.0", default-features = false }
+@@ -157,7 +157,7 @@
+       "environment": "automations",
+       "caller_ref": "refs/pull/*/merge",
+       "caller_workflow": "ci.yml",
+-      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@67dc9ee1ddc113eccd8116e7b949fb6cdcd89889",
++      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@6c1398e34f646a0470c5bf2a7c3476d19e435bd7",
+       "on": ["pull_request"],
+       "permissions": { "pull_requests": "write" },
+       "target": "uv"
 ```
 
----
-
-### Incident Patch 2: `99a766b1` (2026-11-19)
-**Commit Message**: Bump webpki-root-certs (#23302)
-
-Closes #23269. FWICT there's no risk with these, but there's also no
-harm in removing them.
-
-Signed-off-by: William Woodruff <[REDACTED_EMAIL]>
-
-Signed-off-by: William Woodruff <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -8473,9 +8473,9 @@ dependencies = [
- 
- [[package]]
- name = "webpki-root-certs"
--version = "1.0.10"
-+version = "1.0.12"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
-+checksum = "293198dcebfb821155b5092ab94b5a82ff180eddd7241df3bd6e66a4ffd1a585"
- dependencies = [
-  "rustls-pki-types",
- ]
+@@ -48,7 +48,7 @@ jobs:
+     if: ${{ github.event_name == 'pull_request' && github.repository == 'astral-sh/uv' && github.event.pull_request.head.repo.full_name == github.repository && needs.plan.outputs.review-security == 'true' }}
+     # N.B. despite setting this, Depot jobs allow cache writes directly through the API
+     cache-mode: read
+-    uses: astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@67dc9ee1ddc113eccd8116e7b949fb6cdcd89889 # 2026.11.16.0
++    uses: astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@6c1398e34f646a0470c5bf2a7c3476d19e435bd7
+     with:
+       runner: depot-ubuntu-24.04-16
+       helper-runner: github-ubuntu-24.04-x86_64-4
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23303** (2026-11-19): Cite Minato's original description of the ISOP algorithm (@charliermarsh)
-- **PR #23302** (2026-11-19): Bump webpki-root-certs (@woodruffw)
-- **PR #23296** (2026-11-19): Move typos to its own dependency group (@zsol)
-- **PR #23294** (2026-11-19): Update blake2 dependency from 0.11.0-rc.6 to 0.11.0 (@musicinmybrain)
-- **PR #23292** (closed): Report HTTP proxy connection and tunnel errors (@arifrhm)
-- **PR #23289** (2026-11-19): Use `uv check` for repository type checking in CI (@zsol)
+- **PR #23332** (2026-11-20): Validate ZIP data descriptor compressed sizes against the central directory (@astral-automations-bot[bot])
+- **PR #23331** (2026-11-20): Document unsafe string and Win32 pointer invariants (@astral-automations-bot[bot])
+- **PR #23328** (2026-11-20): Allow promotion jobs to load actions from private repositories (@astral-automations-bot[bot])
+- **PR #23327** (2026-11-20): Use GPT-6.2 Astra for pull request security reviews (@zanieb)
+- **PR #23314** (closed): Keep wheels with partially recognized tags in universal lockfiles (@charliermarsh)
+- **PR #23313** (2026-11-20): Share registry wheel and sdist conversion between pylock writers (@charliermarsh)
 
 ---
 
@@ -1611,28 +1581,28 @@ Signed-off-by: William Woodruff <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update blake2 dependency from 0.11.0-rc.6 to 0.11.0
+## X. Use GPT-6.2 Astra for pull request security reviews
 
 **RULE**:
-When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/secure-token-service.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9b34eb69`: Update blake2 dependency from 0.11.0-rc.6 to 0.11.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `08cda500`: Use GPT-6.2 Astra for pull request security reviews. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/secure-token-service.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-blake2 = { version = "0.11.0", default-features = false }
+      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@6c1398e34f646a0470c5bf2a7c3476d19e435bd7",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-blake2 = { version = "0.11.0-rc.6", default-features = false }
+      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@67dc9ee1ddc113eccd8116e7b949fb6cdcd89889",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9b34eb69` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `08cda500` are properly handled with clean fallback behavior.

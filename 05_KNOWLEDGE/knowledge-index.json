@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T03:15:44.976Z",
+  "last_updated": "2026-11-21T03:28:58.008Z",
   "total_verified_learnings": 9056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22892,
+  "total_items": 22901,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113253,10 +113253,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gauthierpiarrette-highball-architecture-intelligence-gauthierpiarrette-highball-.md",
       "title": "Architecture Intelligence: gauthierpiarrette/highball Core Invariants",
       "repository": "gauthierpiarrette/highball",
-      "source_version": "4ebe4fe0",
-      "content_hash": "f0b33f0af41ac2286b71e5a897f2b44949a525a2f682a3e53bdcc1ad56a546cd",
+      "source_version": "eaa9be2c",
+      "content_hash": "75a206bd6d02f9c90ba748b77bd0a77c1181897354128149e86b200de09669f4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T05:37:13.657Z"
+      "persisted_at": "2026-11-21T03:28:41.987Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball",
@@ -113265,10 +113265,10 @@
       "relative_path": "08_VERIFICATION/gauthierpiarrette-highball-verification-protocol-empirical-defect-shield-for-gau.md",
       "title": "Verification Protocol: Empirical Defect Shield for gauthierpiarrette/highball",
       "repository": "gauthierpiarrette/highball",
-      "source_version": "4ebe4fe0",
-      "content_hash": "d74710d6721e27e6299b4e893114c3637aed8314e58b0fb962e333233b1b8996",
+      "source_version": "eaa9be2c",
+      "content_hash": "a1425b1ddccac0f9ad479bcb975f584abf8825333a46cd80d8a662dd3a06f91a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T05:37:13.769Z"
+      "persisted_at": "2026-11-21T03:28:42.138Z"
     },
     "candidate_directive-build-deps-dev-bump-aquasec-trivy-from-0-76-1-to-0-76-2-in-docker-14733": {
       "item_id": "candidate_directive-build-deps-dev-bump-aquasec-trivy-from-0-76-1-to-0-76-2-in-docker-14733",
@@ -113338,9 +113338,9 @@
       "title": "Architecture Intelligence: gauthierpiarrette-highball-learnings Core Invariants",
       "repository": "gauthierpiarrette-highball-learnings",
       "source_version": "HEAD",
-      "content_hash": "c9e4ddc140872373c4f6daf44d57af6407948ccfb9ec8b2811a276117a50cec5",
+      "content_hash": "053e4be6fab60fb6707197788e981b0bc04daef6b6f9417f33d5560b6a1042df",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T05:37:20.777Z"
+      "persisted_at": "2026-11-21T03:28:55.447Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball-lea",
@@ -113350,9 +113350,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gauthierpiarrette-highball-learnings",
       "repository": "gauthierpiarrette-highball-learnings",
       "source_version": "HEAD",
-      "content_hash": "c0381d7f24c75628e5737476cae2826eb069678c716c5bd226f527cd3d99b729",
+      "content_hash": "a881ef906c8ca9477067c3a61d4483af289bc51392166e157e96a1d2bba16de3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T05:37:20.891Z"
+      "persisted_at": "2026-11-21T03:28:55.600Z"
     },
     "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants",
@@ -226675,8 +226675,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "116bffc3",
-      "content_hash": "7c3ca3769baecac319375c69b100fa80fcacc9342690841985652f21095e1101",
+      "source_version": "5c494ac8",
+      "content_hash": "23c0699b5341198f75ae032cf94ae27096fa60ef61a9b9b775c053c19b5cf0a9",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -226709,6 +226709,11 @@
           "number": 9486,
           "title": "Confirm performance regressions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9715,
+          "title": "update dependency @faker-js/faker to v10 [security]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -226716,7 +226721,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T01:20:34.119Z",
+      "verified_at": "2026-11-21T03:28:50.364Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226770,10 +226775,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/materializeinc-materialize-agent-contract-materializeinc-materialize-autonomous-.md",
       "title": "Agent Contract: MaterializeInc/materialize Autonomous Specialist Persona",
       "repository": "MaterializeInc/materialize",
-      "source_version": "116bffc3",
-      "content_hash": "480d734d0339192608083eb76c64c03fb51106deb0d2fafcdb163edee45cb248",
-      "domain_letter": "D",
-      "persisted_at": "2026-11-20T01:20:34.755Z"
+      "source_version": "5c494ac8",
+      "content_hash": "0f7767943d6d434d6e6519e31b986d5553f9b206280691df208b2a640fe4656c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T03:28:51.092Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize",
@@ -226782,10 +226787,10 @@
       "relative_path": "08_VERIFICATION/materializeinc-materialize-verification-protocol-empirical-defect-shield-for-mat.md",
       "title": "Verification Protocol: Empirical Defect Shield for MaterializeInc/materialize",
       "repository": "MaterializeInc/materialize",
-      "source_version": "116bffc3",
-      "content_hash": "56bdeb1e7436d4eb801ca5fe854f92bf47c4ae49372b288ce3df46af8e20d116",
+      "source_version": "5c494ac8",
+      "content_hash": "f4369af05f175be112379c40792bcafabc20ed0aa493f8197a9af3027777a694",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T01:20:34.867Z"
+      "persisted_at": "2026-11-21T03:28:51.225Z"
     },
     "candidate_directive-windows-fix-the-unit-test-binary-crashing-at-startup-on-rust-1-100": {
       "item_id": "candidate_directive-windows-fix-the-unit-test-binary-crashing-at-startup-on-rust-1-100",
@@ -233858,8 +233863,8 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "9b34eb69",
-      "content_hash": "feca5bca0199c1e4d18ae36e23f79a5128b440917fc8280eb102c4de35af6a47",
+      "source_version": "ac154af9",
+      "content_hash": "bf5bbb36d6cddd67decbae0326403fb5c528949a0524eb793c6d5e5b9996cab0",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
@@ -233882,6 +233887,11 @@
           "number": 9413,
           "title": "Update blake2 dependency from 0.11.0-rc.6 to 0.11.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9713,
+          "title": "Use GPT-6.2 Astra for pull request security reviews",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233889,7 +233899,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T16:40:56.226Z",
+      "verified_at": "2026-11-21T03:28:36.027Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233931,10 +233941,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-architecture-intelligence-astral-sh-uv-core-invariants.md",
       "title": "Architecture Intelligence: astral-sh/uv Core Invariants",
       "repository": "astral-sh/uv",
-      "source_version": "9b34eb69",
-      "content_hash": "b2171e3f06ce6c1cc80a49e472150fd88efca3b082d1cec7d32511c382dc481f",
+      "source_version": "ac154af9",
+      "content_hash": "8828075087a38a5a9254035ac745a0139c3db050dcb752e4f799c099ba46ab8c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T16:40:56.670Z"
+      "persisted_at": "2026-11-21T03:28:36.615Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv",
@@ -233943,10 +233953,10 @@
       "relative_path": "08_VERIFICATION/astral-sh-uv-verification-protocol-empirical-defect-shield-for-astral-sh-uv.md",
       "title": "Verification Protocol: Empirical Defect Shield for astral-sh/uv",
       "repository": "astral-sh/uv",
-      "source_version": "9b34eb69",
-      "content_hash": "f628e2bf8cd1ba4d222fd898adb0c8f59425ce15c886c31b2713b35556ed0ca0",
+      "source_version": "ac154af9",
+      "content_hash": "7e389de6a6b8d76f65274d16b85cc58aac03bd72201fa1747264af386f98bbcc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T16:40:56.793Z"
+      "persisted_at": "2026-11-21T03:28:36.773Z"
     },
     "learn-github-callstack-agent-device": {
       "learning_id": "learn-github-callstack-agent-device",
@@ -234164,9 +234174,9 @@
       "title": "Architecture Intelligence: astral-sh-uv-learnings Core Invariants",
       "repository": "astral-sh-uv-learnings",
       "source_version": "HEAD",
-      "content_hash": "9e52c97623f976149ce2e4e818e56f9482a28dea965a8c4b7ff036f08a552628",
+      "content_hash": "701e49eda144d586e34af7fdcf7396167015446b210f32dfa44b5cceee4fe6f5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T16:41:10.590Z"
+      "persisted_at": "2026-11-21T03:28:54.455Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv-learnings",
@@ -234176,9 +234186,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for astral-sh-uv-learnings",
       "repository": "astral-sh-uv-learnings",
       "source_version": "HEAD",
-      "content_hash": "99329a214e8eda441d34a04013776ec6e4cadcf11768e451f681a66348e102ac",
+      "content_hash": "208656a38146e240a82a458914a5733607d2e6c25fe8772e9de9e82ae6241e71",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T16:41:10.726Z"
+      "persisted_at": "2026-11-21T03:28:54.624Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-embeddinggemma-2-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-embeddinggemma-2-learnings-core-invari",
@@ -250062,9 +250072,9 @@
       "title": "Agent Contract: materializeinc-materialize-learnings Autonomous Specialist Persona",
       "repository": "materializeinc-materialize-learnings",
       "source_version": "HEAD",
-      "content_hash": "a727baa5192991272c3fbb5882538e60e8ab89b3cdd19e58172f65bd036296a6",
-      "domain_letter": "D",
-      "persisted_at": "2026-11-20T01:23:31.235Z"
+      "content_hash": "cfa76a4714f24d3513a082ba404dbdf639bc7e61ec1a7da976105f8b6c34490f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T03:28:57.876Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize-lea",
@@ -250074,9 +250084,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for materializeinc-materialize-learnings",
       "repository": "materializeinc-materialize-learnings",
       "source_version": "HEAD",
-      "content_hash": "53256dff78f6e7b83f490044c0600dbb07770911a7a55f2270e81ad5045bf5d3",
+      "content_hash": "14056e116c27f34290ac29ba167234ff713ed3dda5b73d6c4e4f61e6f676be99",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T01:23:31.372Z"
+      "persisted_at": "2026-11-21T03:28:58.008Z"
     },
     "learn-github-mlua-rs-mlua": {
       "learning_id": "learn-github-mlua-rs-mlua",
@@ -267721,14 +267731,19 @@
       "slug": "gauthierpiarrette-highball",
       "platform": "github",
       "source_url": "https://github.com/gauthierpiarrette/highball",
-      "source_version": "4ebe4fe0",
-      "content_hash": "7a3d26411b018bb3a94381a329fbdfd6c7f1c053513a94b5c1fff40b8e14637d",
+      "source_version": "eaa9be2c",
+      "content_hash": "30797122f5e9ecf36563b50587dd0256251206c8944d826c66bddd82f6a75d92",
       "dossier_path": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
       "promoted_rules": [
         {
           "number": 8876,
           "title": "Wine 10 engines r30 (default) and r31 (D3DMetal 4 line): r28 and r29 with the au",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9714,
+          "title": "Wine 11 engines r34 and r35 for Diablo II: Resurrected: r32 and r33 with one reb",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -267737,7 +267752,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T05:37:13.231Z",
+      "verified_at": "2026-11-21T03:28:41.424Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -310763,6 +310778,120 @@
       "content_hash": "abeb685d6a1e76c26a0d633371538552e2047137439b1afd9dcef2710e75b012",
       "domain_letter": "K",
       "persisted_at": "2026-11-21T03:15:44.691Z"
+    },
+    "rule-9713": {
+      "learning_id": "rule-9713",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9713,
+      "title": "Use GPT-6.2 Astra for pull request security reviews",
+      "source_url": "https://github.com/astral-sh/uv",
+      "source_version": "ac154af9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T03:28:36.027Z"
+    },
+    "candidate_directive-use-gpt-6-2-astra-for-pull-request-security-reviews": {
+      "item_id": "candidate_directive-use-gpt-6-2-astra-for-pull-request-security-reviews",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MFIU-use-gpt-6-2-astra-for-pull-request-security-reviews.md",
+      "title": "Use GPT-6.2 Astra for pull request security reviews",
+      "repository": "astral-sh-uv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "38d2da05cd9edcd337d5304102f69d28ea36b2193e197c26a2c47a1aea3ef2eb",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T03:28:54.295Z"
+    },
+    "rule-9714": {
+      "learning_id": "rule-9714",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9714,
+      "title": "Wine 11 engines r34 and r35 for Diablo II: Resurrected: r32 and r33 with one reb",
+      "source_url": "https://github.com/gauthierpiarrette/highball",
+      "source_version": "eaa9be2c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T03:28:41.424Z"
+    },
+    "candidate_directive-wine-11-engines-r34-and-r35-for-diablo-ii-resurrected-r32-and-r33-with-one-reb": {
+      "item_id": "candidate_directive-wine-11-engines-r34-and-r35-for-diablo-ii-resurrected-r32-and-r33-with-one-reb",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MGAE-wine-11-engines-r34-and-r35-for-diablo-ii-resurrected-r32-and-r33-with-one-reb.md",
+      "title": "Wine 11 engines r34 and r35 for Diablo II: Resurrected: r32 and r33 with one reb",
+      "repository": "gauthierpiarrette-highball-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b3d3199b000a179a9c659a51cb390e25b6c3a5503ccdc1024770e88e1bb14992",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T03:28:55.290Z"
+    },
+    "rule-9715": {
+      "learning_id": "rule-9715",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9715,
+      "title": "update dependency @faker-js/faker to v10 [security]",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "5c494ac8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T03:28:50.364Z"
+    },
+    "candidate_directive-update-dependency-faker-js-faker-to-v10-security": {
+      "item_id": "candidate_directive-update-dependency-faker-js-faker-to-v10-security",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MCT5-update-dependency-faker-js-faker-to-v10-security.md",
+      "title": "update dependency @faker-js/faker to v10 [security]",
+      "repository": "MaterializeInc/materialize",
+      "source_version": "5c494ac8",
+      "content_hash": "2f87962a09ed5bc56bd1821f24c76748cc57cc6185943223de67b9f0907a9127",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T03:28:50.778Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-materializeinc-materialize-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-materializeinc-materialize-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-materializeinc-materialize-technical-construction-intelligence-materializeinc-ma.md",
+      "title": "Technical Construction Intelligence: MaterializeInc/materialize Core Invariants",
+      "repository": "MaterializeInc/materialize",
+      "source_version": "5c494ac8",
+      "content_hash": "64fe41915efeb89ba247a637dff56d9f56a1958c2a10cdfa643056f9e9dc0576",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T03:28:50.934Z"
+    },
+    "candidate_directive-deps-update-dependency-faker-js-faker-to-v10-security": {
+      "item_id": "candidate_directive-deps-update-dependency-faker-js-faker-to-v10-security",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MI1R-deps-update-dependency-faker-js-faker-to-v10-security.md",
+      "title": "deps): update dependency @faker-js/faker to v10 [security]",
+      "repository": "materializeinc-materialize-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a3a00bfb0e8dc315dbc59cd2df7acfe0cd89f68db0744d946ea9185c2cfcb20b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T03:28:57.568Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-materializeinc-materialize-learnings-core-in": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-materializeinc-materialize-learnings-core-in",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-materializeinc-materialize-learnings-technical-construction-intelligence-materia.md",
+      "title": "Technical Construction Intelligence: materializeinc-materialize-learnings Core Invariants",
+      "repository": "materializeinc-materialize-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2c0e3d043563e3a44d185476aa123f7750d2779c0017975a15495933368678af",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T03:28:57.723Z"
     }
   },
   "ai-builder-brain": {

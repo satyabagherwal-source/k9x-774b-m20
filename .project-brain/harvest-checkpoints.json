@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T03:15:39.210Z",
+  "last_updated": "2026-11-21T03:28:50.580Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "7c3ca3769baecac319375c69b100fa80fcacc9342690841985652f21095e1101",
-      "verified_at": "2026-11-20T01:20:34.308Z",
+      "content_hash": "23c0699b5341198f75ae032cf94ae27096fa60ef61a9b9b775c053c19b5cf0a9",
+      "verified_at": "2026-11-21T03:28:50.579Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T01:20:34.309Z"
+      "last_updated": "2026-11-21T03:28:50.579Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",
@@ -11766,14 +11766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-uv",
-      "content_hash": "feca5bca0199c1e4d18ae36e23f79a5128b440917fc8280eb102c4de35af6a47",
-      "verified_at": "2026-11-19T16:40:56.388Z",
+      "content_hash": "bf5bbb36d6cddd67decbae0326403fb5c528949a0524eb793c6d5e5b9996cab0",
+      "verified_at": "2026-11-21T03:28:36.263Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T16:40:56.388Z"
+      "last_updated": "2026-11-21T03:28:36.263Z"
     },
     "thaw-app/Thaw": {
       "repository": "thaw-app/Thaw",
@@ -15876,14 +15876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gauthierpiarrette-highball",
-      "content_hash": "7a3d26411b018bb3a94381a329fbdfd6c7f1c053513a94b5c1fff40b8e14637d",
-      "verified_at": "2026-11-17T05:37:13.387Z",
+      "content_hash": "30797122f5e9ecf36563b50587dd0256251206c8944d826c66bddd82f6a75d92",
+      "verified_at": "2026-11-21T03:28:41.627Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T05:37:13.387Z"
+      "last_updated": "2026-11-21T03:28:41.627Z"
     },
     "MiniMaxAI/MiniMax-M3.1-Flash": {
       "repository": "MiniMaxAI/MiniMax-M3.1-Flash",

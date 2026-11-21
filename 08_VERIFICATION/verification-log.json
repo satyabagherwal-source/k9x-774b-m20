@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-3AOT",
-    "timestamp": "2026-11-19T00:22:43.421Z",
-    "repository": "mlua-rs/mlua",
-    "learningId": "learn-github-mlua-rs-mlua",
-    "contentHash": "f471bca865e2eb135b58f6387ae098e1f8556fc5537ca294b4ecc7796ef24179",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-3KJP",
-    "timestamp": "2026-11-19T00:22:56.197Z",
-    "repository": "arangodb/arangodb",
-    "learningId": "learn-github-arangodb-arangodb",
-    "contentHash": "85843f61dd13ba459c7907b073c98284dd101f9c6a825ffc752a6e3e7b5b66b4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-EEPS",
-    "timestamp": "2026-11-19T00:31:21.856Z",
-    "repository": "openai/clip-vit-base-patch32",
-    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-    "contentHash": "bb4f2572ed21e1c4409b49d1a4e9cbd6fc40f79903c5ad7aa1a12bcd03697205",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-ENW4",
     "timestamp": "2026-11-19T00:31:33.748Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7490,6 +7445,51 @@
     "repository": "pulumi/pulumi",
     "learningId": "learn-github-pulumi-pulumi",
     "contentHash": "3843f9903b278b88fa44be264f546aa10c9ba624743c455aa200e6fb4488f40f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-M1LN",
+    "timestamp": "2026-11-21T03:28:36.251Z",
+    "repository": "astral-sh/uv",
+    "learningId": "learn-github-astral-sh-uv",
+    "contentHash": "bf5bbb36d6cddd67decbae0326403fb5c528949a0524eb793c6d5e5b9996cab0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-M5QN",
+    "timestamp": "2026-11-21T03:28:41.615Z",
+    "repository": "gauthierpiarrette/highball",
+    "learningId": "learn-github-gauthierpiarrette-highball",
+    "contentHash": "30797122f5e9ecf36563b50587dd0256251206c8944d826c66bddd82f6a75d92",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-MCNB",
+    "timestamp": "2026-11-21T03:28:50.567Z",
+    "repository": "MaterializeInc/materialize",
+    "learningId": "learn-github-materializeinc-materialize",
+    "contentHash": "23c0699b5341198f75ae032cf94ae27096fa60ef61a9b9b775c053c19b5cf0a9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
