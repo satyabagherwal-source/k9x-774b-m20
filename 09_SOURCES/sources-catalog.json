@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "6a6a6a66",
+    "sourceVersion": "ffa93916",
     "license": "Apache-2.0",
-    "contentHash": "b29c02268323c68183f0d7debc460130f786dcd1d1267d8f7e75b2740b82c1db",
-    "lastHarvestedAt": "2026-11-21T01:08:29.099Z",
+    "contentHash": "602d4deb6590f62a69c845b4cc96c9d316ff72c46e6c1ecdd770387db3a81596",
+    "lastHarvestedAt": "2026-11-21T08:24:30.006Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -2085,8 +2085,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MOSS-Image",
     "sourceVersion": "hf-comfy-org-moss-image",
     "license": "Open-Source",
-    "contentHash": "a8cc960ba50743f202de5a9b34122c4020c7b1daddd2aa66c21e1a43082f8d72",
-    "lastHarvestedAt": "2026-11-17T14:41:22.367Z",
+    "contentHash": "bb3d98ff917dbe16425f7f2a05e77bd8406e01e6ac88c87182f99928950c910d",
+    "lastHarvestedAt": "2026-11-21T08:25:04.594Z",
     "learningId": "learn-huggingface-comfy-org-moss-image"
   },
   "bvaughn-react-virtualized": {
@@ -12723,10 +12723,10 @@
     "repository": "yazinsai/OpenOats",
     "platform": "github",
     "sourceUrl": "https://github.com/yazinsai/OpenOats",
-    "sourceVersion": "123ec38d",
+    "sourceVersion": "2d6e6ce5",
     "license": "MIT",
-    "contentHash": "881024c9266959d0ab398fca49d0ec152cd8d704c1e5833003944c05f2d31fa2",
-    "lastHarvestedAt": "2026-11-16T18:01:43.724Z",
+    "contentHash": "15cc519a3d8814afba7b1b4b78a55fb5d1c2e25f303cd9a16664aedb9450ed10",
+    "lastHarvestedAt": "2026-11-21T08:24:47.295Z",
     "learningId": "learn-github-yazinsai-openoats"
   },
   "mdiri-ai-soduwork": {
@@ -13128,5 +13128,15 @@
     "contentHash": "606f180bf7b9fbae8b0c9b29251e8275dcb4da1e67e2597a83f2a1c94c6abd72",
     "lastHarvestedAt": "2026-11-21T01:08:19.091Z",
     "learningId": "learn-github-dosco-deeporg"
+  },
+  "hf-openai-clip-vit-large-patch14": {
+    "repository": "openai/clip-vit-large-patch14",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/openai/clip-vit-large-patch14",
+    "sourceVersion": "hf-openai-clip-vit-large-patch14",
+    "license": "Open-Source",
+    "contentHash": "e0b2004c5167f5656e3508cbd18535e183eff7bb1dffda1efa41955885209764",
+    "lastHarvestedAt": "2026-11-21T08:24:26.530Z",
+    "learningId": "learn-huggingface-openai-clip-vit-large-patch14"
   }
 }

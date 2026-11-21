@@ -21853,5 +21853,17 @@
     "qualityScore": 1966,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-21T01:06:40.830Z"
+  },
+  {
+    "name": "openai/clip-vit-large-patch14",
+    "fullName": "openai/clip-vit-large-patch14",
+    "url": "https://huggingface.co/openai/clip-vit-large-patch14",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: openai/clip-vit-large-patch14 (2147 likes, 8556453 downloads)",
+    "likes": 2147,
+    "downloads": 8556453,
+    "qualityScore": 23470,
+    "discoveredAt": "2026-11-21T08:18:13.423Z"
   }
 ]

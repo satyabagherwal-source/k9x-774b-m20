@@ -5282,3 +5282,7 @@ https://huggingface.co/unsloth/Inkling-2-Mini-GGUF
 # --- Automatically Discovered by AI Scout Engine [2026-11-21T01:08:08.482Z] ---
 # [DEVOPS-CLOUD-INFRASTRUCTURE] dosco/deeporg (1966 score) - DeepORG (formerly GraphJin) — one AI agent for your whole organization: database
 https://github.com/dosco/deeporg
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-21T08:20:21.589Z] ---
+# [HUGGINGFACE-AI-MODELS] openai/clip-vit-large-patch14 (23470 score) - Verified Hugging Face Model: openai/clip-vit-large-patch14 (2147 likes, 8556453 
+https://huggingface.co/openai/clip-vit-large-patch14

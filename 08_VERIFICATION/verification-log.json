@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-3T71",
-    "timestamp": "2026-11-19T03:39:04.717Z",
-    "repository": "inworld/voice-isolator",
-    "learningId": "learn-huggingface-inworld-voice-isolator",
-    "contentHash": "63fe08c80341da6fbb710bc4a0076474e30b6d196109c228f9989ae89f2370ba",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-3V4O",
-    "timestamp": "2026-11-19T03:39:07.224Z",
-    "repository": "google/gemma-4-31B-it",
-    "learningId": "learn-huggingface-google-gemma-4-31b-it",
-    "contentHash": "e3ca4cf708b0c24a53b715014764d8353a87b2707ff5f38bb09aa62acb93d023",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-40SQ",
-    "timestamp": "2026-11-19T03:39:14.570Z",
-    "repository": "sqldelight/sqldelight",
-    "learningId": "learn-github-sqldelight-sqldelight",
-    "contentHash": "a51a42f9744370526533ce80abcddcbeba14d5c0c3b8d519a459a91741e1ef22",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-44WU",
-    "timestamp": "2026-11-19T03:39:19.902Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "23ab74fcce81b4bd8659f1576afaba50310ce5e2ef82a5704eadca50f05e849f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-5DGL",
     "timestamp": "2026-11-19T04:08:17.253Z",
     "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -7492,6 +7432,66 @@
     "contentHash": "ef228f9fec24006807303a600ba05fc673e2ede4b735b2313dd16e35cf437cbf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-6HSU",
+    "timestamp": "2026-11-21T08:24:26.526Z",
+    "repository": "openai/clip-vit-large-patch14",
+    "learningId": "learn-huggingface-openai-clip-vit-large-patch14",
+    "contentHash": "e0b2004c5167f5656e3508cbd18535e183eff7bb1dffda1efa41955885209764",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-6KHE",
+    "timestamp": "2026-11-21T08:24:30.002Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "602d4deb6590f62a69c845b4cc96c9d316ff72c46e6c1ecdd770387db3a81596",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-6XTN",
+    "timestamp": "2026-11-21T08:24:47.291Z",
+    "repository": "yazinsai/OpenOats",
+    "learningId": "learn-github-yazinsai-openoats",
+    "contentHash": "15cc519a3d8814afba7b1b4b78a55fb5d1c2e25f303cd9a16664aedb9450ed10",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-7B66",
+    "timestamp": "2026-11-21T08:25:04.590Z",
+    "repository": "Comfy-Org/MOSS-Image",
+    "learningId": "learn-huggingface-comfy-org-moss-image",
+    "contentHash": "bb3d98ff917dbe16425f7f2a05e77bd8406e01e6ac88c87182f99928950c910d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

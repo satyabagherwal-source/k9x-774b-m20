@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T07:58:57.083Z",
+  "last_updated": "2026-11-21T08:25:04.603Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "5c2dfa7431af085cc9f45c96a3af6c4da578813539599a6c116f5ec0ce4baa33",
-      "verified_at": "2026-11-21T03:44:44.646Z",
+      "content_hash": "602d4deb6590f62a69c845b4cc96c9d316ff72c46e6c1ecdd770387db3a81596",
+      "verified_at": "2026-11-21T08:24:30.014Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T03:44:44.646Z"
+      "last_updated": "2026-11-21T08:24:30.014Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -3261,14 +3261,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-moss-image",
-      "content_hash": "a8cc960ba50743f202de5a9b34122c4020c7b1daddd2aa66c21e1a43082f8d72",
-      "verified_at": "2026-11-17T14:41:22.376Z",
+      "content_hash": "bb3d98ff917dbe16425f7f2a05e77bd8406e01e6ac88c87182f99928950c910d",
+      "verified_at": "2026-11-21T08:25:04.602Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T14:41:22.376Z"
+      "last_updated": "2026-11-21T08:25:04.602Z"
     },
     "bvaughn/react-virtualized": {
       "repository": "bvaughn/react-virtualized",
@@ -19176,14 +19176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yazinsai-openoats",
-      "content_hash": "881024c9266959d0ab398fca49d0ec152cd8d704c1e5833003944c05f2d31fa2",
-      "verified_at": "2026-11-16T18:01:43.731Z",
+      "content_hash": "15cc519a3d8814afba7b1b4b78a55fb5d1c2e25f303cd9a16664aedb9450ed10",
+      "verified_at": "2026-11-21T08:24:47.303Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T18:01:43.731Z"
+      "last_updated": "2026-11-21T08:24:47.303Z"
     },
     "mdiri-ai/SoduWork": {
       "repository": "mdiri-ai/SoduWork",
@@ -19784,6 +19784,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-21T01:08:19.101Z"
+    },
+    "openai/clip-vit-large-patch14": {
+      "repository": "openai/clip-vit-large-patch14",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-openai-clip-vit-large-patch14",
+      "content_hash": "e0b2004c5167f5656e3508cbd18535e183eff7bb1dffda1efa41955885209764",
+      "verified_at": "2026-11-21T08:24:26.539Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-21T08:24:26.539Z"
     }
   },
   "repos": {

@@ -11756,3 +11756,8 @@
 | `CYCLE-20261121-9IHT` | `2026-11-21T07:58:47.777Z` | `MetrolistGroup/Metrolist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9747` | Yes (`90d0aeff...`) |
 | `CYCLE-20261121-9O5V` | `2026-11-21T07:58:55.123Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`e547cb38...`) |
 | `CYCLE-20261121-9PO0` | `2026-11-21T07:58:57.072Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9748` | Yes (`ef228f9f...`) |
+| `CYCLE-20261121-6HSU` | `2026-11-21T08:24:26.526Z` | `openai/clip-vit-large-patch14` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9749, Rule 9750, Rule 9751` | Yes (`e0b2004c...`) |
+| `CYCLE-20261121-6KHE` | `2026-11-21T08:24:30.002Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9752, Rule 9753, Rule 9754` | Yes (`602d4deb...`) |
+| `CYCLE-20261121-6XTN` | `2026-11-21T08:24:47.291Z` | `yazinsai/OpenOats` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9755, Rule 9756, Rule 9757` | Yes (`15cc519a...`) |
+| `CYCLE-20261121-7B66` | `2026-11-21T08:25:04.590Z` | `Comfy-Org/MOSS-Image` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9758, Rule 9759, Rule 9760` | Yes (`bb3d98ff...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T08:25:39.928Z` | `hf-comfy-org-moss-image` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-351DFF5E` [Domain H] | Yes (`6a0af5a5...`) |

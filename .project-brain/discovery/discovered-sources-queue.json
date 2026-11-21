@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T07:59:01.302Z",
+  "updated_at": "2026-11-21T08:25:41.413Z",
   "stats": {
-    "total_discovered": 7077,
-    "approved_pending_harvest": 6685,
+    "total_discovered": 7082,
+    "approved_pending_harvest": 6687,
     "harvested_count": 0,
-    "rejected_count": 392,
+    "rejected_count": 395,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6666,
+      "COMMUNITY_AND_EXPERT": 6671,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -152973,6 +152973,95 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md",
         "fileName": "metrolistgroup-metrolist-learnings.md"
+      }
+    },
+    "SRC-8158622CAD11": {
+      "id": "SRC-8158622CAD11",
+      "url": "https://huggingface.co/openai/clip-vit-large-patch14",
+      "title": "https://huggingface.co/openai/clip-vit-large-patch14",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T08:25:08.500Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-clip-vit-large-patch14-learnings.md",
+        "fileName": "hf-openai-clip-vit-large-patch14-learnings.md"
+      }
+    },
+    "SRC-EDF880913837": {
+      "id": "SRC-EDF880913837",
+      "url": "https://evil-server.com/test.m4a%60",
+      "title": "https://evil-server.com/test.m4a%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T08:25:41.244Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yazinsai-openoats-learnings.md",
+        "fileName": "yazinsai-openoats-learnings.md"
+      }
+    },
+    "SRC-FFCD359430F6": {
+      "id": "SRC-FFCD359430F6",
+      "url": "http://api.assemblyai.com/test.m4a%60",
+      "title": "http://api.assemblyai.com/test.m4a%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-21T08:25:41.303Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yazinsai-openoats-learnings.md",
+        "fileName": "yazinsai-openoats-learnings.md"
+      }
+    },
+    "SRC-249B765CC20F": {
+      "id": "SRC-249B765CC20F",
+      "url": "http://host:8080/v1%60",
+      "title": "http://host:8080/v1%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-21T08:25:41.351Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yazinsai-openoats-learnings.md",
+        "fileName": "yazinsai-openoats-learnings.md"
+      }
+    },
+    "SRC-8074A76BD33F": {
+      "id": "SRC-8074A76BD33F",
+      "url": "http://host:8080/v1/v1/messages%60",
+      "title": "http://host:8080/v1/v1/messages%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-21T08:25:41.413Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yazinsai-openoats-learnings.md",
+        "fileName": "yazinsai-openoats-learnings.md"
       }
     }
   }

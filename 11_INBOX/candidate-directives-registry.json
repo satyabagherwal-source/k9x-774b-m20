@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T07:59:01.484Z",
+  "last_updated": "2026-11-21T08:25:41.995Z",
   "directives": [
     {
       "id": "CD-001",
@@ -41815,6 +41815,114 @@
       "source_repo": "metrolistgroup-metrolist-learnings",
       "source_commit": "HEAD",
       "staged_file": "11_INBOX/candidate-directives/CD-9T2F-i18n-integrate-weblate-translations-with-corrections.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-6KN6",
+      "directive_title": "Disjoint Non-Signaling Enum Invariants for P2P Sync Traversal",
+      "source_repo": "aleo-labs-protocol/snarkOS",
+      "source_commit": "ffa93916",
+      "staged_file": "11_INBOX/candidate-directives/CD-6KN6-disjoint-non-signaling-enum-invariants-for-p2p-sync-traversal.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-6KN7",
+      "directive_title": "Diagnostic Compile-Time Cfg Isolation Over Cargo Dependency Leaks",
+      "source_repo": "aleo-labs-protocol/snarkOS",
+      "source_commit": "ffa93916",
+      "staged_file": "11_INBOX/candidate-directives/CD-6KN7-diagnostic-compile-time-cfg-isolation-over-cargo-dependency-leaks.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-83RD",
+      "directive_title": "Presigned Host Boundary Validation for Third-Party Ingestion",
+      "source_repo": "yazinsai-openoats-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-83RD-presigned-host-boundary-validation-for-third-party-ingestion.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-6XZB",
+      "directive_title": "Presigned Host Boundary Validation for Third-Party Ingestion",
+      "source_repo": "yazinsai/OpenOats",
+      "source_commit": "2d6e6ce5",
+      "staged_file": "11_INBOX/candidate-directives/CD-6XZB-presigned-host-boundary-validation-for-third-party-ingestion.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-7ECY",
+      "directive_title": "Dual-Stream Metric Normalization and Scale Invariant",
+      "source_repo": "hf-openai-clip-vit-large-patch14-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7ECY-dual-stream-metric-normalization-and-scale-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-7ECZ",
+      "directive_title": "Spatial Patch Coordinate Projection Invariant",
+      "source_repo": "hf-openai-clip-vit-large-patch14-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7ECZ-spatial-patch-coordinate-projection-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-82MF",
+      "directive_title": "Rotational Transformation Invariant for Low-Bit Diffusion Projections",
+      "source_repo": "hf-comfy-org-moss-image-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-82MF-rotational-transformation-invariant-for-low-bit-diffusion-projections.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-82MG",
+      "directive_title": "VAE Latent Channel-Stride Dimension Invariant",
+      "source_repo": "hf-comfy-org-moss-image-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-82MG-vae-latent-channel-stride-dimension-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-7D6F5E",
+      "directive_title": "Unbounded Audio Capture on Mac Sleep / Lid Close (BUG-OATS-01)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "yazinsai-openoats",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7D6F5E-unbounded-audio-capture-on-mac-sleep-lid.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-83RC",
+      "directive_title": "Acoustic Boundary Cut Invariant for Audio Chunking",
+      "source_repo": "yazinsai-openoats-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-83RC-acoustic-boundary-cut-invariant-for-audio-chunking.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-21",

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T07:59:01.610Z",
-  "total_records": 2233,
+  "last_updated": "2026-11-21T08:25:42.177Z",
+  "total_records": 2240,
   "domains": {
     "A": {
       "total": 17,
@@ -960,7 +960,7 @@
       ]
     },
     "F": {
-      "total": 77,
+      "total": 79,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1038,7 +1038,9 @@
         "DOM-F-6DD8B1FE",
         "domain_intelligence-design-intelligence-a2ui-project-a2ui-core-invariants",
         "domain_intelligence-design-intelligence-a2ui-project-a2ui-learnings-core-invariants",
-        "DOM-F-9744E937"
+        "DOM-F-9744E937",
+        "domain_intelligence-design-intelligence-openai-clip-vit-large-patch14-core-invariants",
+        "domain_intelligence-design-intelligence-hf-openai-clip-vit-large-patch14-learnings-core-invariants"
       ]
     },
     "G": {
@@ -1425,7 +1427,7 @@
       ]
     },
     "H": {
-      "total": 527,
+      "total": 532,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1953,7 +1955,12 @@
         "domain_intelligence-technical-construction-intelligence-iliyami-macsai-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-materializeinc-materialize-core-invariants",
         "domain_intelligence-technical-construction-intelligence-materializeinc-materialize-learnings-core-in",
-        "DOM-H-2B0EB374"
+        "DOM-H-2B0EB374",
+        "domain_intelligence-technical-construction-intelligence-yazinsai-openoats-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-comfy-org-moss-image-core-invariants",
+        "DOM-H-351DFF5E",
+        "domain_intelligence-technical-construction-intelligence-hf-comfy-org-moss-image-learnings-core-invar",
+        "domain_intelligence-technical-construction-intelligence-yazinsai-openoats-learnings-core-invariants"
       ]
     },
     "I": {
@@ -8337,10 +8344,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "736089607553b6d6e8522b2c0aa544356d45daf8c1cd5842d06d81348acfeecc",
-      "created_at": "2026-11-21T03:44:44.993Z"
+      "content_hash": "9da41be3d6cd899e9fb5a5827b849b6d36a497724918cfcfb7fa3ed9b93c9368",
+      "created_at": "2026-11-21T08:24:30.688Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -37505,6 +37512,94 @@
       "repository": "sfu-db/connector-x",
       "content_hash": "081211e1b2e6be511f9143b20b6dd692614a8baceec9421f64f279c353d9e64b",
       "created_at": "2026-11-21T07:58:55.438Z"
+    },
+    "domain_intelligence-design-intelligence-openai-clip-vit-large-patch14-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-openai-clip-vit-large-patch14-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: openai/clip-vit-large-patch14 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-openai-clip-vit-large-patch14-design-intelligence-openai-clip-vit-large-patch.md",
+      "repository": "openai/clip-vit-large-patch14",
+      "content_hash": "1c056dfe9d0f29d97207f20ebe19c5faa3f1a1973ccc76208a47c4228534ae62",
+      "created_at": "2026-11-21T08:24:26.988Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-yazinsai-openoats-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-yazinsai-openoats-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: yazinsai/OpenOats Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yazinsai-openoats-technical-construction-intelligence-yazinsai-openoats-core-inv.md",
+      "repository": "yazinsai/OpenOats",
+      "content_hash": "2294786587fbca432bafa27959e522b0fa8b0c442e20863ad284539f6074b555",
+      "created_at": "2026-11-21T08:24:47.957Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-comfy-org-moss-image-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-comfy-org-moss-image-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: Comfy-Org/MOSS-Image Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-comfy-org-moss-image-technical-construction-intelligence-comfy-org-moss-image.md",
+      "repository": "Comfy-Org/MOSS-Image",
+      "content_hash": "5c012ea3b08cfb84b6b7bb634af14cc5cf1f8d3b8eeb09fba371021cdb1df636",
+      "created_at": "2026-11-21T08:25:05.068Z"
+    },
+    "domain_intelligence-design-intelligence-hf-openai-clip-vit-large-patch14-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-hf-openai-clip-vit-large-patch14-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: hf-openai-clip-vit-large-patch14-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-openai-clip-vit-large-patch14-learnings-design-intelligence-hf-openai-clip-vi.md",
+      "repository": "hf-openai-clip-vit-large-patch14-learnings",
+      "content_hash": "015e7398951e5d030c80c9f29e6ad1d5d53bc0471b57533af75ddd1a943179d9",
+      "created_at": "2026-11-21T08:25:09.203Z"
+    },
+    "DOM-H-351DFF5E": {
+      "record_id": "DOM-H-351DFF5E",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Qwen3.5-9B Context Projection OOM via Unpinned CUDA Staging (BUG-MOSS-02)",
+      "content": "Inter-subsystem handoffs in low-resource environments MUST synchronize CUDA streams and force allocator eviction prior to the next model staging.",
+      "content_hash": "6a0af5a5ecb3ee8927902dd3087e5a8c25eb6362df6463b48ee2a69606509f47",
+      "summary": "Asynchronous CUDA stream execution allowed memory allocation requests for the diffusion model to preempt the deferred deallocation of text e -> Inter-subsystem handoffs in low-resource environments MUST synchronize CUDA streams and force allocator eviction prior to the next model sta",
+      "provenance": {
+        "source_uri": "project://hf-comfy-org-moss-image/hf-comfy-org-moss-image-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T08:25:09.485Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-comfy-org-moss-image)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Distinct directory isolation (`models/text_encoders/` vs `models/diffusion_models/`) enabling separated execution lifecycles."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T08:25:39.892Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-comfy-org-moss-image-learnings-core-invar": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-hf-comfy-org-moss-image-learnings-core-invar",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: hf-comfy-org-moss-image-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-comfy-org-moss-image-learnings-technical-construction-intelligence-hf-comfy-o.md",
+      "repository": "hf-comfy-org-moss-image-learnings",
+      "content_hash": "767c4a7f016244ef863342b1fd8c7aa87990a939ddbc74f04d2e36fe08369b24",
+      "created_at": "2026-11-21T08:25:40.680Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-yazinsai-openoats-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-yazinsai-openoats-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: yazinsai-openoats-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yazinsai-openoats-learnings-technical-construction-intelligence-yazinsai-openoat.md",
+      "repository": "yazinsai-openoats-learnings",
+      "content_hash": "4b7e65716034153eba176894931dcb53c54f4b6fd2d3fd3dc53faab9a8538da4",
+      "created_at": "2026-11-21T08:25:42.177Z"
     }
   }
 }

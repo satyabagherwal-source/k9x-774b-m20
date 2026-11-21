@@ -11789,3 +11789,8 @@ Every entry in this ledger must capture:
 | `learn-github-metrolistgroup-metrolist` | `https://github.com/MetrolistGroup/Metrolist` | `5189f16f` | Multi-dimensional audit evidence | 2026-11-21T07:58:47.780Z |
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `4cfcea91` | Multi-dimensional audit evidence | 2026-11-21T07:58:55.126Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e2f16915` | Multi-dimensional audit evidence | 2026-11-21T07:58:57.076Z |
+| `learn-huggingface-openai-clip-vit-large-patch14` | `https://huggingface.co/openai/clip-vit-large-patch14` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-21T08:24:26.530Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `ffa93916` | Multi-dimensional audit evidence | 2026-11-21T08:24:30.006Z |
+| `learn-github-yazinsai-openoats` | `https://github.com/yazinsai/OpenOats` | `2d6e6ce5` | Multi-dimensional audit evidence | 2026-11-21T08:24:47.295Z |
+| `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-21T08:25:04.594Z |
+| `learn-dom-h-351dff5e` | `project://hf-comfy-org-moss-image` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md` | 2026-11-21T08:25:39.928Z |

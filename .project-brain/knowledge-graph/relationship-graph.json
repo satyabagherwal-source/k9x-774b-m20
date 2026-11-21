@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-21T06:46:53.152Z",
+  "updated_at": "2026-11-21T08:25:39.925Z",
   "statistics": {
-    "total_nodes": 442,
+    "total_nodes": 443,
     "total_edges": 192,
     "domain_distribution": {
       "D": 279,
       "M": 1,
-      "H": 68,
+      "H": 69,
       "J": 22,
       "K": 27,
       "L": 8,
@@ -9878,6 +9878,28 @@
       ],
       "created_at": "2026-11-21T06:46:53.152Z",
       "updated_at": "2026-11-21T06:46:53.152Z"
+    },
+    "DOM-H-351DFF5E": {
+      "id": "DOM-H-351DFF5E",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Qwen3.5-9B Context Projection OOM via Unpinned CUDA Staging (BUG-MOSS-02)",
+      "summary": "Asynchronous CUDA stream execution allowed memory allocation requests for the diffusion model to preempt the deferred deallocation of text e -> Inter-subsystem handoffs in low-resource environments MUST synchronize CUDA streams and force allocator eviction prior to the next model sta",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-comfy-org-moss-image/hf-comfy-org-moss-image-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T08:25:09.485Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-comfy-org-moss-image)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-21T08:25:39.925Z",
+      "updated_at": "2026-11-21T08:25:39.925Z"
     }
   },
   "edges": [
