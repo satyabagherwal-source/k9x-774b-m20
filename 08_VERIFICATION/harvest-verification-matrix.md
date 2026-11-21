@@ -11947,3 +11947,6 @@
 | `CYCLE-20261121-5LZK` | `2026-11-21T23:47:32.624Z` | `LiquidAI/d1-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md` | Yes (`1ba061fe...`) |
 | `CYCLE-20261121-5US4` | `2026-11-21T23:47:44.020Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9843` | Yes (`00ebb22f...`) |
 | `CYCLE-20261121-5XHO` | `2026-11-21T23:47:47.532Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9870` | Yes (`f693a15a...`) |
+| `CYCLE-20261121-FVQ1` | `2026-11-21T23:55:31.801Z` | `SulphurAI/Sulphur-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md` | Yes (`3bbf7a4a...`) |
+| `CYCLE-20261121-G7Q4` | `2026-11-21T23:55:47.356Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`b0c6615f...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T23:56:17.643Z` | `hf-fusioncow-sulphur-3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-6EECDBA7` [Domain D] | Yes (`29e79ad7...`) |

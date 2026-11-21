@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "bf3afb03",
+    "sourceVersion": "9d6d6ac4",
     "license": "Apache-2.0",
-    "contentHash": "f1e39ecf42559a0c537f3509cf238e3d79ad6bd03a93f842458330efa9a39a1f",
-    "lastHarvestedAt": "2026-11-21T22:30:08.055Z",
+    "contentHash": "b0c6615f858f3b5aaa9b069eb32b9aaa014182d266f7bf0a8e010bb64bb529a0",
+    "lastHarvestedAt": "2026-11-21T23:55:47.361Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -11710,13 +11710,13 @@
     "learningId": "learn-huggingface-burner22-numbat"
   },
   "hf-fusioncow-sulphur-3": {
-    "repository": "FusionCow/Sulphur-3",
+    "repository": "SulphurAI/Sulphur-3",
     "platform": "huggingface",
     "sourceUrl": "https://huggingface.co/FusionCow/Sulphur-3",
     "sourceVersion": "hf-fusioncow-sulphur-3",
     "license": "Open-Source",
-    "contentHash": "99952ab2f72cdc7e7524db333db8a7c98703ea38e88d943a741ab1ba2525fe1a",
-    "lastHarvestedAt": "2026-11-15T10:53:00.243Z",
+    "contentHash": "3bbf7a4a075c1c933d3d23831ecc9844aebf8d8ba5a61639093fa8a3d8590551",
+    "lastHarvestedAt": "2026-11-21T23:55:31.806Z",
     "learningId": "learn-huggingface-fusioncow-sulphur-3"
   },
   "hf-xiaomi-research-xiaomi-ocr-0": {

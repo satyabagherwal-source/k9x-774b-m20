@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T23:47:52.874Z",
-  "total_records": 2303,
+  "last_updated": "2026-11-21T23:56:19.868Z",
+  "total_records": 2304,
   "domains": {
     "A": {
       "total": 17,
@@ -60,7 +60,7 @@
       ]
     },
     "D": {
-      "total": 906,
+      "total": 907,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -967,7 +967,8 @@
         "DOM-D-8372CBCD",
         "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-tts-realistic-0-6b-learnings-cor",
         "domain_intelligence-research-knowledge-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterated",
-        "domain_intelligence-research-knowledge-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblitera"
+        "domain_intelligence-research-knowledge-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblitera",
+        "DOM-D-6EECDBA7"
       ]
     },
     "E": {
@@ -9036,8 +9037,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "1793bb0b1b64b2c91f0a859e8a5fdbbe5ae1273cd9c3559125d0e1fdb59fcfc8",
-      "created_at": "2026-11-21T21:49:14.079Z"
+      "content_hash": "05201284c4fc7265afb13e981e21cc0d05e66afa51fae86875a52ae6057d5147",
+      "created_at": "2026-11-21T23:56:19.868Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -15382,8 +15383,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "61b2c3888a29dc55d69b7a09faca268e352f1e1ac494f1d2dceb62280facf646",
-      "created_at": "2026-11-21T22:30:08.333Z"
+      "content_hash": "761ca2234ee0e447f63d91f9715d17cfd1baf4902655d16d4145e5d5b274494c",
+      "created_at": "2026-11-21T23:55:47.766Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15832,8 +15833,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "2cf1afedf882c0529db7a422ac6e9e809b78c09f4d3522e563d9d4516f727ea7",
-      "created_at": "2026-11-21T22:30:46.750Z"
+      "content_hash": "af5269f0963f06d33e0231572e81370885d457b3d3b3d49c55dd59c62e94f693",
+      "created_at": "2026-11-21T23:56:18.758Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -21074,8 +21075,8 @@
       "title": "Research & Knowledge Intelligence: hf-fusioncow-sulphur-3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fusioncow-sulphur-3-learnings-research-knowledge-intelligence-hf-fusioncow-su.md",
       "repository": "hf-fusioncow-sulphur-3-learnings",
-      "content_hash": "50fefcd4d76253075da7923f1eb710df35b088e0c754429f0f5a4203d72c9e40",
-      "created_at": "2026-11-15T10:53:36.359Z"
+      "content_hash": "5df5dcf4fad11a8fc3bffe1a4c411b85d041996dd34c7585e6afcc59bc4c1617",
+      "created_at": "2026-11-21T23:56:17.867Z"
     },
     "domain_intelligence-technical-construction-intelligence-databendlabs-databend-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-databendlabs-databend-learnings-core-invaria",
@@ -38466,10 +38467,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-sulphurai-sulphur-3-core-invariants",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: SulphurAI/Sulphur-3 Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sulphurai-sulphur-3-research-knowledge-intelligence-sulphurai-sulphur-3-core-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fusioncow-sulphur-3-research-knowledge-intelligence-sulphurai-sulphur-3-core-.md",
       "repository": "SulphurAI/Sulphur-3",
-      "content_hash": "1c50505f2e4e1ce5074eb9cbced0fd736262b4d52a5ee286ce369df7d9581c93",
-      "created_at": "2026-11-21T22:56:41.269Z"
+      "content_hash": "1a53e56a1662b442c1bcc5c1ee63ec9f9274fc721772345c041bfff21dba6414",
+      "created_at": "2026-11-21T23:55:32.013Z"
     },
     "DOM-D-3CF395C7": {
       "record_id": "DOM-D-3CF395C7",
@@ -38796,6 +38797,48 @@
       "repository": "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings",
       "content_hash": "058a391ac3a61b63c76df222f321e98a237df5b4def4336b34f15c2ae0e24af6",
       "created_at": "2026-11-21T23:39:49.556Z"
+    },
+    "DOM-D-6EECDBA7": {
+      "record_id": "DOM-D-6EECDBA7",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): SulphurAI/Sulphur-3",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/FusionCow/Sulphur-3](https://huggingface.co/FusionCow/Sulphur-3))  \n> **Source Version**: `hf-fusioncow`  \n> **License**: Open-Source  \n> **Synthesized By",
+      "content_hash": "29e79ad7b2665c5bfbddd19c18638cbe7adc66fb5614cb63c680b7c307cccf14",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md`  \n> **Source**: huggingface ([https://huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md`  \n> **Source**: huggingface ([https://huggingfa",
+      "provenance": {
+        "source_uri": "project://hf-fusioncow-sulphur-3/hf-fusioncow-sulphur-3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T23:55:50.718Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-fusioncow-sulphur-3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-fusioncow-sulphur-3"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T23:56:17.616Z"
     }
   }
 }

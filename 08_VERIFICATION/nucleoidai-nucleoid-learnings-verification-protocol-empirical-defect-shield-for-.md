@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T21:04:49.807Z",
+  "timestamp": "2026-11-21T23:56:18.454Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T21:04:49.807Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T23:56:18.454Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `d0e53bdc`  
+> **Source Version**: `9d6d6ac4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T21:04:45.175Z  
+> **Timestamp**: 2026-11-21T23:55:46.882Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T21:04:45.169Z  
+> **Harvest Timestamp**: 2026-11-21T23:55:46.877Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1596,255 +1596,235 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba7507c1` (2026-11-21)
-**Commit Message**: NUC 126 Exit-Controlled Repeat-Until Loops
+### Incident Patch 1: `9d6d6ac4` (2026-11-21)
+**Commit Message**: NUC 128 Origins and Outcomes of Reasoning Selections
 
 Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Runtime features, existing_comparable, token
-comparison required): the frozen candidate meets every hard criterion
-and passes every policy check, the token non-regression gate included.
-The cycle found no stale Draft, drew Runtime features uniformly from the
-five eligible categories, allocated NUC 126 in a461d16f, and completed
-it with fresh baselines, candidate, proposer, Rust improvement pass and
-evaluator.
+/nuc-proposal cycle (Reasoning enhancement, token comparison required):
+the frozen candidate meets every hard criterion and passes every policy
+check, the token non-regression gate included. The cycle found no stale
+Draft, drew Reasoning enhancement uniformly from the five eligible
+categories (index 3, p = 1/5, no redraw), allocated NUC 128 in 23b93c48,
+and completed it with fresh baselines, candidate, proposer, Rust
+improvement pass and evaluator.
 
-An exit-controlled loop: repeat: and a suite, an indented block or
-statements on the same line separated by ;, then until CONDITION on its
-own line after the body. The body runs first and the condition is tested
-after every iteration with the truthiness of if, through the iteration
-step and the 100,000-iteration bound of while, so a loop that never ends
-raises TypeError("Loop did not terminate") and rolls back. return leaves
-the enclosing function, block or loop at once. Only blank and comment
-lines may stand between the body and until, an until line at a width
-between the body and repeat closes the loop by the lexer's accepted rule,
-and an until line
+Two filter stages for reasoning selections: SELECTION |> origins keeps
+the steps that rest on no step of the selection, and SELECTION |>
+outcomes keeps the steps that no step of it rests on. A step rests on
+another when it depends on it through one or more dependency edges,
+through unselected nodes and through no reasoning observer, so a step
+on a cycle of NUC 85's fixed anchors rests on itself and is neither.
+S |> origins is exactly the accepted S |> except(S |> affects); the
+outcomes, over a filtered selection, had no accepted stage spelling.
+Kept steps keep their order, fields, distances and walk direction, so
+further s
 
-**File**: `README.md` (modified, +32/-0)
+**File**: `README.md` (modified, +33/-0)
 ```diff
-@@ -2758,6 +2758,38 @@ assert([ana.duties, cy.duties], [["dishes", "floors", "cooking"], ["trash", "mai
-   the new chore joins the share whose turn it falls on. See the
-   [root contract](nucleoid.spec.md#stepped-slices).
+@@ -2790,6 +2790,39 @@ assert([lift.floor, stopped], [4, true])
+   `until` stay ordinary names everywhere else. See the
+   [root contract](nucleoid.spec.md#exit-controlled-repeat-until-loops).
  
-+## Repeat-until loops
++## Origins and outcomes of reasoning selections
 +
-+**Repeat-until loops move a lift to the next call**
++**Origins and outcomes show where a change of pressure enters and which alarms it ends at**
 +
 +```nuc
-+class Lift(floor):
-+    this.floor = floor
-+lift = Lift(1)
-+calls = [1, 4, 6]
-+stopped = calls.includes(lift.floor)
-+repeat: lift.floor += 1
-+until stopped
-+assert(lift.floor, 4)
-+calls.push(2)
-+assert([lift.floor, stopped], [4, true])
++pressure = 5
++flow = 3
++temperature = 70
++strain = pressure * flow
++leak = flow > 2 && pressure > 4
++overheat = temperature + strain > 80
++shutdown = pressure > 9 || overheat
++enters = pressure |> affects |> origins
++alarms = pressure |> affects |> outcomes
++assert(enters.map(step -> step.node), ["strain", "leak"])
++assert(alarms.map(step -> step.node), ["leak", "shutdown"])
++leak = flow > 2 && strain > 12
++panel = [leak, shutdown]
++assert([enters.map(step -> step.node), alarms.map(step -> step.node)], [["strain"], ["panel"]])
 +```
 +
-+- [NUC 126](docs/nuc-0126.md) adds `repeat:` with an indented or same-line
-+  body, followed by `until CONDITION` on its own line after the body: the
-+  exit-controlled sibling of `while`. The body runs first, and the condition
-+  is tested after every iteration with the truthiness of `if`, so the body
-+  always runs at least once.
-+- The lift waits at a call on floor 1, so `stopped` already holds, yet the
-+  loop moves it on: one floor at a time, until `stopped`, a standing rule
-+  that follows every move, holds again at floor 4. A `while not stopped:`
-+  loop would not move it at all. The loop runs once, imperatively: it leaves
-+  no standing rule and does not run again when a new call arrives. A loop
-+  still unfinished after 100,000 iterations raises
-+  `TypeError("Loop did not terminate")` and rolls back, and `repeat` and
-+  `until` stay ordinary names everywhere else. See the
-+  [root contract](nucleoid.spec.md#exit-controlled-repeat-until-loops).
++- [NUC 128](docs/nuc-0128.md) adds the reasoning stages `|> origins` and
++  `|> outcomes`, which keep the two ends of a selection.
++  `pressure |> affects |> origins` keeps where a change of the pressure
++  enters the model: the strain and the leak check, which read it and rest
++  on nothing else it moves. The shutdown reads the pressure too, but it
++  also rests on the overheat, which the pressure moves through the strain.
++- `pressure |> affects |> outcomes` keeps where the change ends: the leak
++  check and the shutdown, which nothing reads. Both stay live: once the
++  leak check reads the strain, the change enters at the strain alone, and
++  once a panel shows both alarms, it ends at the panel. See the
++  [root contract](nucleoid.spec.md#origins-and-outcomes-of-reasoning-selections).
 +
  ## Reactive list flattening
  
  **Flat turns nested lists into one live list**
 ```
 
-**File**: `build_statements.rs` (modified, +3/-2)
-```diff
-@@ -110,9 +110,10 @@ pub(crate) fn statements(source: &str) -> Vec<String> {
-         let top_level = line.len() == line.trim_start().len();
-         let comment_or_blank = trimmed.is_empty() || trimmed.starts_with('#');
-         // Raw::Word in the lexer is [A-Za-z_][A-Za-z0-9_]*. Keep either
--        // complete Else alias or Catch with its chain, not an identifier prefix.
-+        // complete Else alias, Catch with its chain or Until with its loop,
-+        // not an identifier prefix.
-         // Header validity remains the parser's job, not a second grammar here.
--        let continuation = ["else", "elif", "catch"]
-+        let continuation = ["else", "elif", "catch", "until"]
-             .iter()
-             .any(|keyword| starts_keyword(trimmed, keyword))
-             || trimmed.starts_with("finally:")
-```
-
 **File**: `dataset/nucleoid.spec.jsonl` (modified, +20/-16)
 ```diff
-@@ -814,19 +814,23 @@
- {"id":"spec-0814","description":"Nucleoid reverses strings by character with stepped slices","code":"word = \"añejo\"\nmirror = word[::-1]\npalindrome = mirror == word\nassert([mirror, palindrome], [\"ojeña\", false])\nword = \"reconocer\"\nassert([mirror, palindrome], [\"reconocer\", true])\nword = \"Øresund\"\nassert([mirror, palindrome], [\"dnuserØ\", false])\nword = \"über\"\nassert([mirror, palindrome], [\"rebü\", false])","return":null}
- {"id":"spec-0815","description":"Nucleoid strides class instance populations with stepped slices","code":"class Lap(seconds):\n    this.seconds = seconds\nLap(62)\nLap(58)\nLap(57)\nLap(61)\nstride = 2\nsampled = Lap[::stride].map(lap -> lap.seconds)\nassert(sampled, [62, 57])\nLap(60)\nassert(sampled, [62, 57, 60])\nstride = 3\nassert(sampled, [62, 61])","return":null}
- {"id":"spec-0816","description":"Nucleoid rolls back failed updates through stepped slices","code":"def checked(amount):\n    if amount < 0:\n        throw \"NEGATIVE\"\n    return amount\nprices = [4, 9, 7, 12]\npicked = prices[::2].map(checked)\nfailure = \"\"\ntry:\n    prices.push(-3)\ncatch error:\n    failure = error\nassert([failure, prices, picked], [\"NEGATIVE\", [4, 9, 7, 12], [4, 7]])\ntry:\n    prices.push(5)\n    assert(picked, [4, 7, 5])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([prices, picked], [[4, 9, 7, 12], [4, 7]])\nclass Crate(weight): this.weight = weight\nCrate(6)\nCrate(2)\nCrate(9)\nlatest = Crate[::-2].map(crate -> checked(crate.weight))\nfailure = \"\"\ntry:\n    Crate(-1)\ncatch error:\n    failure = error\nassert([failure, Crate.length, latest], [\"NEGATIVE\", 3, [9, 6]])\nCrate(5)\nlatest","return":"[5,2]"}
--{"id":"spec-0817","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0818","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0819","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0820","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0821","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
--{"id":"spec-0822","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
--{"id":"spec-0823","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nassert([1, 2] in [[1, 2], [3]], true)\nassert({ x: 1 } in [{ x: 1 }, null], true)\nassert(null in [1, null], true)\nassert(Number.NaN in [Number.NaN],
+@@ -818,19 +818,23 @@
+ {"id":"spec-0818","description":"Nucleoid returns from inside repeat-until loops in methods","code":"class Drone(battery):\n    this.battery = battery\n    this.distance = 0\n    def fly(target):\n        repeat:\n            this.battery -= 10\n            this.distance += 3\n            if this.empty: return \"stranded\"\n        until this.distance >= target\n$Drone.empty = $Drone.battery < 10\nscout = Drone(40)\nassert([scout.fly(6), scout.distance, scout.empty], [null, 6, false])\nassert([scout.fly(0), scout.distance, scout.battery], [null, 9, 10])\nassert([scout.fly(20), scout.distance, scout.empty], [\"stranded\", 12, true])\nspare = Drone(25)\nassert([spare.fly(6), spare.distance], [\"stranded\", 6])\nscout.battery = 50\nassert([scout.empty, spare.empty], [false, true])","return":null}
+ {"id":"spec-0819","description":"Nucleoid nests repeat-until loops inside other loops","code":"class Truck(minimum):\n    this.minimum = minimum\n    this.load = 0\n    this.crates = 0\n$Truck.full = $Truck.load >= $Truck.minimum\nTruck(6)\nTruck(0)\nTruck(7)\nassert(Truck.map(truck -> truck.full), [false, true, false])\ndock = [4, 3, 5, 2, 6, 1]\nshipped = []\nfor truck of Truck:\n    repeat: truck.load += dock.shift(); truck.crates += 1\n    until truck.full\n    shipped.push(truck.load)\nassert([shipped, dock], [[7, 5, 8], [1]])\nTruck(3)\nassert(Truck.map(truck -> truck.crates), [2, 1, 2, 0])\nTruck.map(truck -> truck.full)","return":"[true,true,true,false]"}
+ {"id":"spec-0820","description":"Nucleoid rolls back a repeat-until loop that fails during an iteration","code":"class Oven(temp):\n    this.temp = temp\n    this.steps = 0\n    def heat():\n        repeat: this.temp += 10; this.steps += 1\n        until this.ready\nmarks = [150, 180, 220]\n$Oven.ready = marks.includes($Oven.temp)\nif $Oven.temp > 200:\n    throw \"OVERHEAT\"\noven = Oven(150)\noven.heat()\nassert([oven.temp, oven.steps, oven.ready], [180, 3, true])\ntry:\n    oven.heat()\ncatch error:\n    failure = error\nassert([failure, oven.temp, oven.steps], [\"OVERHEAT\", 180, 3])\nmarks.push(190)\noven.heat()\n[oven.temp, oven.steps]","return":"[190,4]"}
+-{"id":"spec-0821","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0822","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0823","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0824","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0825","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
+-{"id":"spec-0826","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.
 ```
 
-**File**: `dataset/nucleoid.synth.90.jsonl` (added, +12/-0)
+**File**: `dataset/nucleoid.synth.91.jsonl` (added, +12/-0)
 ```diff
 @@ -0,0 +1,12 @@
-+{"id":"synth-90-0001","description":"A thermostat heats a room in steps until it reaches the target","code":"room = 18\ntarget = 21\nsteps = 0\nrepeat:\n    room = room + 1.5\n    steps = steps + 1\nuntil room >= target\n[room, steps]","return":"[21,2]"}
-+{"id":"synth-90-0002","description":"The body runs once although the condition already holds","code":"stock = 10\norders = 0\nrepeat: orders = orders + 1; stock = stock - 3\nuntil stock < 20\n[orders, stock]","return":"[1,7]"}
-+{"id":"synth-90-0003","description":"Rolls are drawn from a sequence until one lands on six","code":"rolls = [2, 5, 1, 6, 3]\ntries = []\nrepeat: tries.push(rolls.shift())\nuntil tries.at(-1) == 6\n[tries, rolls]","return":"[[2,5,1,6],[3]]"}
-+{"id":"synth-90-0004","description":"A function returns from inside the loop before the condition is tested","code":"def first_square_over(limit):\n    n = 1\n    repeat:\n        if n * n > limit: return n\n        n = n + 1\n    until n > 100\n    return null\n[first_square_over(50), first_square_over(10000)]","return":"[8,null]"}
-+{"id":"synth-90-0005","description":"A method charges a battery until a class-level rule reports it full","code":"class Battery(level):\n    this.level = level\n    def charge():\n        repeat: this.level = this.level + 30\n        until this.full\n        return this.level\n$Battery.full = $Battery.level >= 100\nphone = Battery(20)\n[phone.charge(), phone.full, phone.charge()]","return":"[110,true,140]"}
-+{"id":"synth-90-0006","description":"A queue is drained into batches by a repeat-until loop inside a while loop","code":"queue = [3, 1, 4, 1, 5, 9, 2]\nbatches = []\nwhile queue.length > 0:\n    batch = []\n    repeat: batch.push(queue.shift())\n    until batch.length == 3 || queue.length == 0\n    batches.push(batch)\nbatches","return":"[[3,1,4],[1,5,9],[2]]"}
-+{"id":"synth-90-0007","description":"A quantified condition waits until every sensor has warmed up","code":"sensors = [12, 15, 9]\nticks = 0\nrepeat:\n    sensors = sensors.map(t -> t + 4)\n    ticks = ticks + 1\nuntil all t in sensors: t >= 20\n[sensors, ticks]","return":"[[24,27,21],3]"}
-+{"id":"synth-90-0008","description":"A conditional expression in the condition picks the stopping distance","code":"fast = false\ndistance = 0\nrepeat: distance = distance + 7\nuntil fast ? distance >= 10 : distance >= 30\ndistance","return":"35"}
-+{"id":"synth-90-0009","description":"A failed iteration rolls back every step the loop already took","code":"class Tank(volume):\n    this.volume = volume\nif $Tank.volume > 100:\n    throw \"OVERFLOW\"\ntank = Tank(70)\ntry:\n    repeat: tank.volume = tank.volume + 20\n    until tank.volume >= 150\ncatch error:\n    failure = error\n[failure, tank.volume]","return":"[\"OVERFLOW\",70]"}
-+{"id":"synth-90-0010","description":"A loop adds buses until a derived count covers the riders and never runs again","code":"class Bus(route):\n    this.route = route\nriders = 95\nbuses = Bus.filter(bus -> bus.route == \"A\").length\nrepeat: Bus(\"A\")\nuntil buses * 40 >= riders\nriders = 200\n[buses, Bus.length]","return":"[3,3]"}
-+{"id":"synth-90-0011","description":"Reading .value in the condition tests the current value at every step","code":"level = 1\ndoubled = level * 2\nrepeat: level = level + 1\nuntil doubled.value > 7\n[level, doubled]","return":"[4,8]"}
-+{"id":"synth-90-0012","description":"A blank line and a comment line may stand between the body and until","code":"word = \"ab\"\nrepeat:\n    word = word + word\n\n# keep doubling until the word is long enough\nuntil word.length >= 16\nword.length","return":"16"}
++{"id":"synth-91-0001","description":"Origins after affects keeps where a change of one fact enters, the steps it reaches that rest on no step it reaches","code":"price = 10\nqty = 3\nsubtotal = price * qty\ntax = subtotal * 0.2\ntotal = subtotal + tax\nprice |> affects |> origins |> nodes","return":"[\"subtotal\"]"}
++{"id":"synth-91-0002","description":"Outcomes after affects keeps where a change of one fact ends, the steps it reaches that no step it reaches rests on","code":"price = 10\nqty = 3\nsubtotal = price * qty\ntax = subtotal * 0.2\ntotal = subtotal + tax\nprice |> affects |> outcomes |> nodes","return":"[\"total\"]"}
++{"id":"synth-91-0003","description":"Origins and outcomes of the model are its sources and its sinks","code":"rate = 0.2\nprice = 10\nqty = 3\nsubtotal = price * qty\ntax = subtotal * rate\nshipping = qty * 2\n[model |> origins |> nodes, model |> outcomes |> nodes]","return":"[[\"rate\",\"price\",\"qty\"],[\"tax\",\"shipping\"]]"}
++{"id":"synth-91-0004","description":"Outcomes of an explanation without a cycle is the explained value alone, and its origins are the facts it starts from","code":"a = 1\nb = a + 2\nc = b * 2\nd = c + a\n[d |> why |> outcomes |> nodes, d |> why |> origins |> nodes]","return":"[[\"d\"],[\"a\"]]"}
++{"id":"synth-91-0005","description":"Origins keeps the inputs that a class governs, which stated leaves out","code":"fee = 2\nclass Order(price, qty):\n    this.price = price\n    this.qty = qty\n$Order.total = $Order.price * $Order.qty + fee\nfirst = Order(10, 2)\n[first.total |> why |> origins |> nodes, first.total |> why |> stated |> nodes]","return":"[[\"first.price\",\"first.qty\",\"fee\"],[\"fee\"]]"}
++{"id":"synth-91-0006","description":"Outcomes follows the chains through the steps that a filter dropped","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\ntotal = subtotal + tax\ntotal |> why |> except(subtotal) |> outcomes |> nodes","return":"[\"total\"]"}
++{"id":"synth-91-0007","description":"Origins after depth keeps the first conclusions within the limit","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\ntotal = subtotal + tax\ntotal |> why |> depth(1) |> origins |> nodes","return":"[\"subtotal\"]"}
++{"id":"synth-91-0008","description":"A derived value whose only input was deleted rests on no step and is an origin","code":"a = 1\nb = a * 2\nc = b + 1\ndelete a\nmodel |> origins |> nodes","return":"[\"b\"]"}
++{"id":"synth-91-0009","description":"A standing outcomes declaration follows a new dependent of its outcome","code":"price = 10\nqty = 3\nsubtotal = price * qty\nends = price |> affects |> outcomes\ntotal = subtotal + 5\ngrand = total * 2\nends.map(step -> step.node)","return":"[\"grand\"]"}
++{"id":"synth-91-0010","description":"Outcomes of a union keeps the ends of both explanations","code":"price = 10\nquantity = 3\nrate = 0.5\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntax |> why |> union(shipping |> why) |> outcomes |> nodes","return":"[\"tax\",\"shipping\"]"}
++{"id":"synth-91-0011","description":"A class-level rule keeps where a change of each instance's cost ends","code":"class Part(cost):\n    this.cost = cost\n$Part.price = $Part.cost * 2\n$Part.label = \"$\" + $Part.price\n$Part.ends = $Part.cost |> affects |> outcomes\nbolt = Part(3)\nnut = Part(4)\n[bolt.ends.map(step -> step.node), nut.ends.map(step -> step.holds)]","return":"[[\"bolt.label\"],[\"$8\"]]"}
++{"id":"synth-91-0012","description":"A binding named origins shadows the stage, and a try catches the error","code":"a = 1\nb = a + 1\norigins = 5\ntry:\n    found = b |> why |> origins\ncatch error:\n    found = error\n[found, b |> why |> outcomes |> nodes]","return":"[\"TypeError: origins is not an operation\",[\"b\"]]"}
 ```
 
-**File**: `docs/README.md` (modified, +53/-1)
+**File**: `docs/README.md` (modified, +79/-3)
 ```diff
-@@ -1795,7 +1795,8 @@ assert(signal.output, 8)
- - `all` and `any` quantifiers test each member's condition the same way; see
-   [Quantifiers](#quantifiers).
- - A `while` loop tests its condition the same way before every iteration; see
--  [while](#while).
-+  [while](#while). A repeat-until loop tests its condition the same way after
-+  every iteration; see [repeat until](#repeat-until).
+@@ -4514,6 +4514,10 @@ route.shift()
+ - A selection is an ordered list of steps with `node`, `holds`, `rule`, `state`, and `from` fields.
+ - `state` is `"stated"` for an independent fact or `"derived"` for a relationship or class-level rule.
+ - List functions such as `map`, `find`, and `some` can inspect the steps.
++- `selection |> origins` keeps the steps that rest on no step of the
++  selection, and `selection |> outcomes` the steps that no step of it rests
++  on, so `price |> affects |> outcomes` is where a change of the price
++  ends ([NUC 128](nuc-0128.md)).
+ - `selection |> nodes` lists the steps' `node` names, as
+   `(selection).map(step => step.node)` does for the selection the pipeline
+   denotes ([NUC 112](nuc-0112.md)).
+@@ -4788,6 +4792,69 @@ facts.map(step => step.node)
+   [union reasoning selections](../nucleoid.spec.md#union-reasoning-selections)
+   section.
+ 
++### Origins and outcomes of reasoning selections
++
++```
++price = 10
++qty = 3
++shipping = 5
++subtotal = price * qty
++total = subtotal + shipping
++unit = total / qty
++starts = qty |> affects |> origins
++ends = model |> outcomes
++assert(starts.map(step => step.node), ["subtotal"])
++assert(ends.map(step => step.node), ["unit"])
++fee = qty * 2
++[starts.map(step => step.node), ends.map(step => step.node)]
++```
++
++- This is the complete `Nucleoid keeps the ends of selections with origins and outcomes`
++  program in `tests/reference.md`, without its title and expected-return
++  metadata; it returns `[["subtotal","fee"],["unit","fee"]]`.
++- [NUC 128](nuc-0128.md) adds the stages `selection |> origins` and
++  `selection |> outcomes`. `origins` keeps the steps of the selection that
++  rest on no step of it, and `outcomes` the steps that no step of it rests
++  on, in their order and with their fields unchanged, so
++  `qty |> affects |> origins` is where a change of the quantity enters the
++  model and `model |> outcomes` is the model's results. A step rests on
++  another when it depends on it through one or more dependency edges,
++  directly or through nodes that the selection does not hold, along the
++  edges that the walks follow, through no reasoning observer. A step on a
++  cycle of those edges, such as the width and the height of an
++  instance after `$Box.width = $Box.height@first` and
++  `$Box.height = $Box.width@first`, rests on itself, so neither stage keeps
++  it from any selection that holds it.
++- `selection |> origins` is exactly
++  `selection |> except(selection |> affects)`, which names the selection
++  twice. Over a selection that `affects`, `why` or `model` produced,
++  `selection |> outcomes` keeps the steps whose node no step's `from`
++  names; over a thinned selection both stages also follow the chains
++  through the steps a filter dropped, which `from` does not name.
++- Here the unit reads the quantity, but it rests on the total, which rests
++  on the subtotal, so the change enters at the subtotal alone. Once the fee
++  reads the quantity and nothing reads the fee, the fee is both where the
++  change enters and one of the model's results.
++- The result is a selection: the kept steps keep their distances and the
++  direction of the selection's most recent walk, so every stage applies to
++  it, and both stages may stand in an `intersect`, `except` or `union`
++  argument. A `path` target is a reference, so a `path` argument that ends
++  with either stage raises `TypeError("Cannot explain <target>")`. A
++  selection that a `depth(null)` makes undefined stays undefined.
++- Only `|>` followed by `origins` or `outcomes` is a stage; both names stay
++  ordinary everywhere else, and there is no prefix form. A local or
++  parameter, variable, function or class named `origins` or `outcomes`
++  shadows its stage, as bindings shadow the other stages: the pipeline then
++  raises `TypeError("origins is not an operation")` or
++  `TypeError("outcomes is not an operation")` before selecting its source.
++- The selection stays live through every observation its source made and
++  through the structure of every node the stage walks, and a declaration
++  that holds it is a reasoning observer. It renders as
++  `selection|>origins` and `selection|>outcomes`.
++- The authoritative contract is the
++  [origins and outcomes of reasoning selections](../nucleoid.spec.md#origins-and-outcomes-of-reasoning-selections)
++  section.
++
+ ### Node names of reasoning selections
  
  ```
- if $Device.profile:
-@@ -1981,6 +1982,50 @@ savings.balance
- 
- Normative detail: [count-controlled repeat loops](../nucleoid.spec.md#count-controlled-repeat-loops).
- 
-+### repeat until
-+
-+```
-+days = [1, 2, 4, 5]
-+today = 2
-+open = days.includes(today)
-+repeat: today += 1
-+until open
-+assert([today, open], [4, true])
-+days.push(3)
-+today
-+```
-+
-+- This is the complete
-+  `Nucleoid repeats statements until a condition holds` program in
-+  `tests/reference.md`, without its title and expected-return metadata; it
-+  returns `4`. Day 2 is already an opening day, yet the loop moves on to the
-+  next one, day 4, and opening on day 3 later does not run the loop again.
-+- `repeat:` followed by a body and then `until <condition>` on its own line
-+  after the body, at the indentation of `repeat`, runs the body until the
-+  condition holds, under [NUC 126](nuc-0126.md). The body is an indented
-+  block, or statements on the same line separated by `;`. Only blank and
-+  comment lines may stand between the body and `until`.
-+- The condition is tested after every iteration with the truthiness of `if`,
-+  so the body always runs at least once, also when the condition already
-+  holds, where a `while` loop would run no iteration.
-+- The body runs as a `while` body does: once per iteration, imperatively, in
-+  the enclosing scope, with no scope frame and no loop variable. `return`
-+  leaves the enclosing function, as from a `while` body, without testing the
-+  condition.
-+- The loop runs once, like `while`: nothing is filed in the graph, and the
-+  loop does not run again when its inputs change later.
-+- Each run of a loop runs its body at most 100,000 times: a condition that is
-+  still falsy then raises `TypeError("Loop did not terminate")` and the
-+  transaction rolls back.
-+- `repeat` and `until` are not reserved. `repeat: NAME` before a line end or
-+  `;` stays the typed declaration, so a same-line body cannot start with one
-+  bare name, and `repeat COUNT:` loops, the string method `"ab".repeat(2)`,
-+  and names, calls and properties named `repeat` or `until` keep working, as
-+  does `until X` outside a loop. A `repeat:` body that no `until` line follows
-+  raises `SyntaxError("Expected 'until' after 'repeat'")`.
-+
-+Normative detail: [exit-controlled repeat-until loops](../nucleoid.spec.md#exit-controlled-repeat-until-loops).
-+
- ---
- 
- ## 9. Functions
-@@ -5121,6 +5166,7 @@ Messages are exact and are part of the observable behaviour of the language.
- | Repeated string output is too large to represent or allocate | `Repeated string is too large` |
- | Padded string output of `padStart` or `padEnd` is too large to represent or allocate | `Padded string is too large` |
- | A `while` loop whose condition still holds after 100,000 iterations of one run | `Loop did not terminate` |
-+| A repeat-until loop whose condition is still falsy after 100,000 iterations of one run | `Loop did not terminate` |
- | A `repeat` loop whose count converts to more than 100,000, `Infinity` included, raised before the first iteration | `Repeat count is too large` |
- | An undeclared constructor label | `Unknown constructor argument '<name>' for <class>` |
- | A repeated constructor binding, including positional plus named | `Duplicate constructor argument '<name>' for <class>` |
-@@ -5154,6 +5200,7 @@ Messages are exact and are part of the observable behaviour of the language.
- | An `extends` clause whose parent is missing or not a name | `Expected a parent class name but found <what>` |
- | A second parent after `class Name extends Parent:` | `Class '<Name>' already extends '<Parent>'` |
- | A list comprehension whose name is not followed by `in` or `of` | `Expected 'in' or 'of' but found <what>` |
-+| A `repeat:` body that no `until` line follows at the indentation of `repeat` | `Expected 'until' after 'repeat'` |
- 
- ### Where an error happened
- 
-@@ -5296,6 +5343,11 @@ while condition: statement             same loop with a same-line body
- repeat count:                          run the body count times; count is read once (NUC 115)
-     statement
- repeat count: statement                same loop with a same-line body
-+repeat:                                run the body, then again until the condition holds (NUC 126)
-+    statement
-+until condition
-+repeat: statement                      same loop with a same-line body
-+until condition
- 
- value => expression                    anonymous arrow; also (a, b) => expression
- value => { statement }                 anonymous arrow with a statement body
+@@ -4938,10 +5005,13 @@ c = b * 2
+   [NUC 112](nuc-0112.md) candidate adds a final `nodes` stage, which names
+   the nodes of a selection and, unlike NUC 11's operations, returns a list
+   rather than a selection, the [NUC 120](nuc-0120.md) candidate adds a
+-  `union(other)` stage, which NUC 11 does not plan either, and the
++  `union(other)` stage, which NUC 11 does not plan either, the
+   [NUC 121](nuc-0121.md) candidate adds a final `holds` stage, which gives
+-  the values of a selection's steps and, like `nodes`, returns a list. Other
+-  NUC 11 operations remain proposals, not dependen
 ```
 
-**File**: `docs/examples.md` (modified, +36/-0)
+**File**: `docs/examples.md` (modified, +32/-0)
 ```diff
-@@ -4256,6 +4256,42 @@ heart.rows.push("#....")
-   `....#` and breaks the heart's symmetry. See [NUC 125](nuc-0125.md) and the
-   [root contract](../nucleoid.spec.md#stepped-slices).
+@@ -4292,6 +4292,38 @@ big.passengers = 60
+   the method is called. See [NUC 126](nuc-0126.md) and the
+   [root contract](../nucleoid.spec.md#exit-controlled-repeat-until-loops).
  
-+## Repeat-until loops
++## Origins and outcomes of reasoning selections
 +
-+**Repeat-until loops give every ferry enough lifeboats**
++**Origins and outcomes show where more nights enter a trip budget and the figures they end at**
 +
 +```nuc
-+class Lifeboat(ferry):
-+    this.ferry = ferry
-+    this.seats = 20
-+class Ferry(passengers):
-+    this.passengers = passengers
-+    this.crew = 0
-+    def equip():
-+        repeat: Lifeboat(this); this.crew += 2
-+        until this.safe
-+$Ferry.seats = Lifeboat.filter(boat -> boat.ferry == $Ferry).sum(boat -> boat.seats)
-+$Ferry.safe = $Ferry.seats >= $Ferry.passengers + $Ferry.crew
-+big = Ferry(50)
-+dinghy = Ferry(0)
-+big.equip()
-+dinghy.equip()
-+assert([big.crew, dinghy.crew, Lifeboat.length], [6, 2, 4])
-+big.passengers = 60
-+[big.seats, big.safe, dinghy.safe]
-+# return: [60,false,true]
++nights = 4
++flight = 300
++hotel = nights * 120
++meals = nights * 40
++trip = flight + hotel + meals
++daily = trip / nights
++enters = nights |> affects |> origins
++ends = nights |> affects |> outcomes
++assert([enters.map(step -> step.node), ends.map(step -> step.node)], [["hotel", "meals"], ["daily"]])
++taxis = nights * 15
++assert(ends.map(step -> step.node), ["daily", "taxis"])
++trip = flight + hotel + meals + taxis
++nights = 6
++[enters.map(step -> step.node), ends.map(step -> step.holds)]
++# return: [["hotel","meals","taxis"],[225]]
 +```
 +
-+- Each ferry's `equip` method launches lifeboats until the class-level rule
-+  `safe` holds: the seats must cover the passengers and the crew, and every
-+  lifeboat brings two more crew. The body runs before the test, so even the
-+  dinghy, which carries no passengers, gets one lifeboat and its crew, where a
-+  `while` loop would launch none.
-+- The rules stay live after the loop: when more passengers board the big
-+  ferry, `safe` turns false, and the loop in `equip` does not run again until
-+  the method is called. See [NUC 126](nuc-0126.md) and the
-+  [root contract](../nucleoid.spec.md#exit-controlled-repeat-until-loops).
++- `nights |> affects |> origins` keeps where another night enters the
++  budget: the hotel and the meals, which the nights price directly. The
++  daily cost reads the nights too, but it rests on the trip, so the change
++  does not enter there.
++- `nights |> affects |> outcomes` keeps the figures the change ends at: the
++  daily cost, and the taxis until the trip adds them. The taxis join where
++  the change enters, and six nights cost 225 a day. See
++  [NUC 128](nuc-0128.md) and the
++  [root contract](../nucleoid.spec.md#origins-and-outcomes-of-reasoning-selections).
 +
  ## Reactive list flattening
  
@@ -1853,82 +1833,160 @@ and an until line
 
 **File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -99,7 +99,7 @@ Created: 31-Jul-2026
- | [90](nuc-0090.md) | Enum Declarations | Accepted |
- | [115](nuc-0115.md) | Count-Controlled Repeat Loops | Accepted |
- | [119](nuc-0119.md) | Finally Clauses for Try Statements | Accepted |
--| [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Draft |
-+| [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Accepted |
+@@ -155,7 +155,7 @@ Created: 31-Jul-2026
+ | [112](nuc-0112.md) | Node Names of Reasoning Selections | Accepted |
+ | [120](nuc-0120.md) | Union Reasoning Selections | Accepted |
+ | [121](nuc-0121.md) | Held Values of Reasoning Selections | Accepted |
+-| [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Draft |
++| [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Accepted |
  
- ### Utility enhancement
+ ### Language compatibility
  
-@@ -308,7 +308,7 @@ Created: 31-Jul-2026
- | [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Accepted |
- | [124](nuc-0124.md) | List and Population Quantiles | Standards Track | Utility enhancement | Accepted |
+@@ -311,7 +311,7 @@ Created: 31-Jul-2026
  | [125](nuc-0125.md) | Stepped Slices | Standards Track | Syntax enhancement | Accepted |
--| [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Standards Track | Runtime features | Draft |
-+| [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Standards Track | Runtime features | Accepted |
+ | [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Standards Track | Runtime features | Accepted |
  | [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Standards Track | Syntax enhancement | Draft |
- | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+-| [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
++| [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [129](nuc-0129.md) | List and Population Zipping | Standards Track | Utility enhancement | Draft |
  
+ ## Copyright
 ```
 
-**File**: `docs/nucleoid.g4` (modified, +22/-1)
+**File**: `docs/nuc-0128.md` (modified, +1221/-15)
 ```diff
-@@ -103,10 +103,12 @@ block
- // Statements need no separator where the preceding production ends.
- // At statement start, '{' is a block or pattern, never an object literal.
- // Destructuring, whileStmt and repeatStmt are tentative; other recognized
--// statement headers commit even if a later token fails to match.
-+// statement headers commit even if a later token fails to match, as
-+// repeatUntilStmt commits at 'REPEAT COLON' outside a typeDeclaration.
- statement
-     : destructuring
-     | whileStmt
-+    | repeatUntilStmt
-     | repeatStmt
-     | enumStmt
-     | ifStmt
-@@ -309,6 +311,23 @@ repeatStmt
-     : REPEAT clauseExpression suite     // Stmt::Repeat
-     ;
+@@ -4,7 +4,7 @@
+ NUC: 128
+ Title: Origins and Outcomes of Reasoning Selections
+ Author: Can Mingir <canmingir@gmail.com>
+-Status: Draft
++Status: Accepted
+ Type: Standards Track
+ Category: Reasoning enhancement
+ Created: 21-Nov-2026
+@@ -15,29 +15,38 @@ Requires: 48, 82, 83, 88, 106, 112, 120, 121
  
-+// REPEAT COLON starts a repeatUntilStmt, except where a typeDeclaration
-+// 'REPEAT COLON name' stands before NEWLINE, ';', DEDENT or EOF, which keeps
-+// its reading. UNTIL starts the logical line after the body, at the
-+// repeatUntilStmt's layout level: only NEWLINEs follow the body, and the
-+// token before UNTIL is the NEWLINE that ends an inline suite or the DEDENT
-+// that closes an indented block, so the UNTIL line after an inline suite
-+// nested in another inline suite closes the innermost one. UNTIL on the
-+// body's line, after ';', or inside '(' and '[', which suppress layout,
-+// keeps its name reading, and the statement fails with
-+// SyntaxError("Expected 'until' after 'repeat'") where UNTIL should stand.
-+// The condition must be followed by NEWLINE, ';', DEDENT, EOF or the '}' that
-+// closes an enclosing block, which the loop leaves to that block, as
-+// returnStmt does.
-+repeatUntilStmt
-+    : REPEAT suite NEWLINE* UNTIL clauseExpression  // Stmt::RepeatUntil
-+    ;
-+
- // Without finallyClause a tryStmt is Stmt::Try, with it Stmt::TryFinally.
- tryStmt
-     : TRY body lineSeparator* (catchClause | exceptClause) finallyClause?
-@@ -924,6 +943,7 @@ enumName
-     : NAME
-     | WHILE
-     | REPEAT
-+    | UNTIL
-     | FINALLY
-     | ENUM
-     | EXTENDS
-@@ -1013,6 +1033,7 @@ TYPEOF           : 'typeof';
+ - Adds two pipeline stages that keep the steps at the two ends of a
+   reasoning selection. `SELECTION |> origins` keeps the steps of
+-  `SELECTION` that rest on no other step of it, and
+-  `SELECTION |> outcomes` keeps the steps that no other step of it rests
++  `SELECTION` that rest on no step of it, and
++  `SELECTION |> outcomes` keeps the steps that no step of it rests
+   on. Both keep the steps they keep in their order and with their `node`,
+   `holds`, `rule`, `state` and `from` fields unchanged, and drop the
+   others.
+ - So `price |> affects |> outcomes` selects where a change of the price
+-  ends, the steps it reaches that no other step it reaches is computed
++  ends, the steps it reaches that no step it reaches is computed
+   from, and `price |> affects |> origins` where the change enters.
+   `total |> why |> origins` selects what a total starts from, and
+   `model |> origins` and `model |> outcomes` select the model's starting
+   points and its final results.
+ - A step rests on another when it depends on it, directly or through nodes
+   that need not be selected, along the edges that `why` and `path` follow,
+-  through no reasoning observer. So `S |> origins` is the accepted
++  through no reasoning observer, and a step on a cycle of fixed anchors
++  rests on itself. So `S |> origins` is the accepted
+   `S |> except(S |> affects)`, and over a selection that `affects`, `why` or
+   `model` produced, `S |> outcomes` keeps the steps whose node no step's
+   `from` names.
+ - Both are filters, as `stated` and `derived` are: the result is a
+   selection, so further stages apply, and the kept steps keep the direction
+   of the most recent walk and their distances.
+-- At the accepted revision each pipeline with either stage raises the
+-  parse-time `TypeError("origins is not an operation")` or
+-  `TypeError("outcomes is not an operation")`. Only those programs change.
++- At the accepted revision each program that holds either stage was a
++  whole-program parse error, or an accepted program in which the parser
++  skips the stage, such as a template interpolation whose trailing tokens
++  are ignored. Most of the errors were the parse-time
++  `TypeError("origins is not an operation")` or
++  `TypeError("outcomes is not an operation")`; where the statement parser
++  backtracks from an unpacking or object-destructuring pattern,
++  `SyntaxError("Unexpected ','")` or `SyntaxError("Unexpected '='")` came
++  first. Only programs that were parse errors change: the accepted programs
++  keep their results, and so does the parse error of a position that admits
++  no pipeline, such as a parameter default.
+   Both names stay ordinary everywhere else, as variables, functions,
+   properties or object keys, and a binding of either name shadows its
+   stage, as bindings shadow the other stages. No keyword, token or error
+@@ -54,9 +63,10 @@ Requires: 48, 82, 83, 88, 106, 112, 120, 121
+ - The starts are spelled with the selection twice:
+   `starts = price |> affects |> except(price |> affects |> affects)` is 14
+   lexer tokens where `starts = price |> affects |> origins` is 7.
+-- The ends have no spelling in stages. `affects` never selects its input
+-  steps, so subtracting `S |> affects` finds the starts, but `why` keeps
+-  them, so the same subtraction over `why` drops every step. Over an
++- The ends have no spelling in stages. `affects` selects a step of `S`
++  exactly when the step rests on a step of `S`, so subtracting
++  `S |> affects` finds the starts, but `why` keeps every step of `S`, so
++  the same subtraction over `why` drops every step. Over an
+   `affects` selection the ends are spelled with a filter and a quantifier
+   over each step's `from`:
+   `ends = (affects price).filter(s -> not any t in (affects price): s.node in t.from)`
+@@ -73,19 +83,1215 @@ Requires: 48, 82, 83, 88, 106, 112, 120, 121
  
- WHILE            : 'while';
- REPEAT           : 'repeat';
-+UNTIL            : 'until';
- FINALLY          : 'finally';
- ENUM             : 'enum';
- EXTENDS          : 'extends';
+ ## Rationale
+ 
+-- Pending: the proposer completes this section.
++- **Category and selection.** The cycle that allocated this Draft, in the
++  pushed commit `23b93c48` on 21-Nov-2026, made one tool-backed uniform draw
++  (`Get-Random -Minimum 0 -Maximum 5`) over the five categories that NUC 1's
++  registry marks eligible for automatic selection, and drew index 3,
++  Reasoning enhancement, with probability 1/5 and no redraw. Within it, the
++  caller chose this bounded enhancement because the pipeline has stages
++  that walk a selection (`why`, `affects`), filter it (`stated`, `derived`,
++  `depth`, `path`, `diff`), combine it (`intersect`, `except`, `union`) and
++  project it (`nodes`, `holds`), but none that picks out the steps at its
++  two ends, and no NUC proposes one. NUC 11's unimplemented `why not`,
++  `rules`, `conflicts
+```
+
+**File**: `docs/nucleoid.g4` (modified, +14/-1)
+```diff
+@@ -547,7 +547,9 @@ stage
+     | DERIVED
+     | DIFF
+     | NODES
+-    | HOLDS                                               // Expr::Reason
++    | HOLDS
++    | ORIGINS
++    | OUTCOMES                                            // Expr::Reason
+     | DEPTH LPAREN expression RPAREN                       // Expr::Depth
+     | PATH LPAREN expression RPAREN                        // Expr::Path
+     | (INTERSECT | EXCEPT) LPAREN expression RPAREN        // Expr::Combine
+@@ -969,6 +971,8 @@ enumName
+     | UNION
+     | NODES
+     | HOLDS
++    | ORIGINS
++    | OUTCOMES
+     | MODEL
+     | FIRST
+     | LAST
+@@ -1062,6 +1066,8 @@ AS               : 'as';
+ UNION            : 'union';
+ NODES            : 'nodes';
+ HOLDS            : 'holds';
++ORIGINS          : 'origins';
++OUTCOMES         : 'outcomes';
+ MODEL            : 'model';
+ FIRST            : 'first';
+ LAST             : 'last';
+@@ -1271,6 +1277,13 @@ fragment REGEX_CHAR
+  *                             s's steps hold. It ends the pipeline as nodes
+  *                             does, and a binding named holds shadows it at
+  *                             run time.
++ * s |> origins             -> Expr::Reason with Stage::Origins, the steps of s
++ *                             that rest on no step of s, and
++ *                             s |> outcomes -> Stage::Outcomes, the steps that
++ *                             no step of s rests on; a step on a dependency
++ *                             cycle rests on itself. Both keep a
++ *                             selection, and a binding of either name
++ *                             shadows its stage at run time.
+  * An object containing spread uses Expr::SpreadObject, with later entries
+  * winning; otherwise it uses Expr::ObjectLiteral. Numeric keys become text.
+  *
 ```
 
 #### Recent Merged Pull Requests:
@@ -1957,13 +2015,13 @@ and an until line
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 126 Exit-Controlled Repeat-Until Loops
+## X. NUC 128 Origins and Outcomes of Reasoning Selections
 
 **RULE**:
 When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba7507c1`: NUC 126 Exit-Controlled Repeat-Until Loops. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9d6d6ac4`: NUC 128 Origins and Outcomes of Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
@@ -1971,37 +2029,35 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Repeat-until loops
+## Origins and outcomes of reasoning selections
 
-**Repeat-until loops move a lift to the next call**
+**Origins and outcomes show where a change of pressure enters and which alarms it ends at**
 
 ```nuc
-class Lift(floor):
-    this.floor = floor
-lift = Lift(1)
-calls = [1, 4, 6]
-stopped = calls.includes(lift.floor)
-repeat: lift.floor += 1
-until stopped
-assert(lift.floor, 4)
-calls.push(2)
-assert([lift.floor, stopped], [4, true])
+pressure = 5
+flow = 3
+temperature = 70
+strain = pressure * flow
+leak = flow > 2 && pressure > 4
+overheat = temperature + strain > 80
+shutdown = pressure > 9 || overheat
+enters = pressure |> affects |> origins
+alarms = pressure |> affects |> outcomes
+assert(enters.map(step -> step.node), ["strain", "leak"])
+assert(alarms.map(step -> step.node), ["leak", "shutdown"])
+leak = flow > 2 && strain > 12
+panel = [leak, shutdown]
+assert([enters.map(step -> step.node), alarms.map(step -> step.node)], [["strain"], ["panel"]])
 ```
 
-- [NUC 126](docs/nuc-0126.md) adds `repeat:` with an indented or same-line
-  body, followed by `until CONDITION` on its own line after the body: the
-  exit-controlled sibling of `while`. The body runs first, and the condition
-  is tested after every iteration with the truthiness of `if`, so the body
-  always runs at least once.
-- The lift waits at a call on floor 1, so `stopped` already holds, yet the
-  loop moves it on: one floor at a time, until `stopped`, a standing rule
-  that follows every move, holds again at floor 4. A `while not stopped:`
-  loop would not move it at all. The loop runs once, imperatively: it leaves
-  no standing rule and does not run again when a new call arrives. A loop
-  still unfinished after 100,000 iterations raises
-  `TypeError("Loop did not terminate")` and rolls back, and `repeat` and
-  `until` stay ordinary names everywhere else. See the
-  
+- [NUC 128](docs/nuc-0128.md) adds the reasoning stages `|> origins` and
+  `|> outcomes`, which keep the two ends of a selection.
+  `pressure |> affects |> origins` keeps where a change of the pressure
+  enters the model: the strain and the leak check, which read it and rest
+  on nothing else it moves. The shutdown reads the pressure too, but it
+  also rests on the overheat, which the pressure moves through the strain.
+- `pressure |> affects |> outcomes` keeps where the change ends: the leak
+  check and the shutdown, whi
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2011,7 +2067,7 @@ assert([lift.floor, stopped], [4, true])
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba7507c1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9d6d6ac4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

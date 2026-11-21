@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-21T23:30:18.494Z",
+  "updated_at": "2026-11-21T23:56:17.641Z",
   "statistics": {
-    "total_nodes": 461,
-    "total_edges": 199,
+    "total_nodes": 462,
+    "total_edges": 200,
     "domain_distribution": {
-      "D": 283,
+      "D": 284,
       "M": 1,
       "H": 78,
       "J": 22,
@@ -20,7 +20,7 @@
       "I": 9
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 196,
+      "CONSTRAINED_BY_ARCHITECTURE": 197,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 1
     }
@@ -10303,6 +10303,29 @@
       ],
       "created_at": "2026-11-21T23:30:18.493Z",
       "updated_at": "2026-11-21T23:30:18.493Z"
+    },
+    "DOM-D-6EECDBA7": {
+      "id": "DOM-D-6EECDBA7",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): SulphurAI/Sulphur-3",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md`  \n> **Source**: huggingface ([https://huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md`  \n> **Source**: huggingface ([https://huggingfa",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-fusioncow-sulphur-3/hf-fusioncow-sulphur-3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T23:55:50.718Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-fusioncow-sulphur-3)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-21T23:56:17.640Z",
+      "updated_at": "2026-11-21T23:56:17.640Z"
     }
   },
   "edges": [
@@ -12295,6 +12318,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-B-1A9A8A88 [B] with Domain G",
       "created_at": "2026-11-21T23:30:18.494Z"
+    },
+    {
+      "id": "EDGE-DADB5224291B",
+      "sourceId": "DOM-D-6EECDBA7",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-6EECDBA7 [D] with Domain M",
+      "created_at": "2026-11-21T23:56:17.640Z"
     }
   ]
 }

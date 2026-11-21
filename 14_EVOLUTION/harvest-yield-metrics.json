@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T23:47:47.542Z",
-  "total_cycles_completed": 11362,
-  "total_learnings_persisted": 11362,
+  "last_updated": "2026-11-21T23:55:47.396Z",
+  "total_cycles_completed": 11364,
+  "total_learnings_persisted": 11364,
   "total_rules_promoted": 10680,
   "history": [
-    {
-      "timestamp": "2026-11-21T03:52:30.742Z",
-      "repository": "meta/folly",
-      "learningId": "learn-github-meta-folly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T04:15:42.087Z",
-      "repository": "crossplane/crossplane",
-      "learningId": "learn-github-crossplane-crossplane",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T04:20:35.698Z",
       "repository": "google/tcmalloc",
@@ -1403,6 +1389,20 @@
       "repository": "t8y2/dbx",
       "learningId": "learn-github-t8y2-dbx",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T23:55:31.811Z",
+      "repository": "SulphurAI/Sulphur-3",
+      "learningId": "learn-huggingface-fusioncow-sulphur-3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T23:55:47.396Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

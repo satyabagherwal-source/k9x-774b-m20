@@ -11980,3 +11980,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-d1-2b` | `https://huggingface.co/LiquidAI/d1-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-21T23:47:32.629Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `ff15a1de` | Multi-dimensional audit evidence | 2026-11-21T23:47:44.024Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `5f5ec9c1` | Multi-dimensional audit evidence | 2026-11-21T23:47:47.536Z |
+| `learn-huggingface-fusioncow-sulphur-3` | `https://huggingface.co/FusionCow/Sulphur-3` | `hf-fusionc` | Multi-dimensional audit evidence | 2026-11-21T23:55:31.806Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `9d6d6ac4` | Multi-dimensional audit evidence | 2026-11-21T23:55:47.361Z |
+| `learn-dom-d-6eecdba7` | `project://hf-fusioncow-sulphur-3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md` | 2026-11-21T23:56:17.643Z |

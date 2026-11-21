@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T23:47:53.212Z",
+  "last_updated": "2026-11-21T23:56:20.204Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T21:58:03.324Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-21T21:49:13.329Z",
+      "processed_at": "2026-11-21T23:56:19.144Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -773,9 +773,9 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-21T22:30:46.081Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-21T23:56:18.079Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "tableproapp-tablepro-learnings.md": {
       "processed_at": "2026-11-19T20:34:30.303Z",
@@ -2948,7 +2948,7 @@
       "staged_for_review": 0
     },
     "hf-fusioncow-sulphur-3-learnings.md": {
-      "processed_at": "2026-11-15T10:53:36.124Z",
+      "processed_at": "2026-11-21T23:56:17.644Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
     },
@@ -3688,7 +3688,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2931,
-  "total_canonical_promoted": 463,
-  "total_staged_for_review": 2244
+  "total_dossiers_evaluated": 2934,
+  "total_canonical_promoted": 464,
+  "total_staged_for_review": 2246
 }

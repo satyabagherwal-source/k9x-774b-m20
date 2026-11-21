@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T10:53:36.255Z",
+  "timestamp": "2026-11-21T23:56:17.762Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-fusioncow-sulphur-3-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-fusioncow-sulphur-3-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T10:53:36.255Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T23:56:17.762Z`  
 > **Learning ID**: `LEARN-EVO-hf-fusioncow-sulphur-3-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-fusioncow`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T10:52:59.790Z  
+> **Timestamp**: 2026-11-21T23:55:31.306Z  
 > **Learning ID**: `learn-huggingface-fusioncow-sulphur-3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -40,22 +40,22 @@ The following architectural invariants have been empirically discovered and reco
 
 ---
 
-# Forensic Learning Record (Deep Inspection): FusionCow/Sulphur-3
+# Forensic Learning Record (Deep Inspection): SulphurAI/Sulphur-3
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/FusionCow/Sulphur-3](https://huggingface.co/FusionCow/Sulphur-3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T10:42:58.218Z  
+> **Harvest Timestamp**: 2026-11-21T23:55:31.169Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
-- **Repository / Resource**: `FusionCow/Sulphur-3`
+- **Repository / Resource**: `SulphurAI/Sulphur-3`
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1154 downloads | 632 likes
+- **Stars / Engagement**: 1186 downloads | 664 likes
 
 ---
 

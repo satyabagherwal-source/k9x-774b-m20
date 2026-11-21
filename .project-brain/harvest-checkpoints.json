@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T23:47:47.545Z",
+  "last_updated": "2026-11-21T23:55:47.399Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "f1e39ecf42559a0c537f3509cf238e3d79ad6bd03a93f842458330efa9a39a1f",
-      "verified_at": "2026-11-21T22:30:08.065Z",
+      "content_hash": "b0c6615f858f3b5aaa9b069eb32b9aaa014182d266f7bf0a8e010bb64bb529a0",
+      "verified_at": "2026-11-21T23:55:47.398Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T22:30:08.065Z"
+      "last_updated": "2026-11-21T23:55:47.398Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -19820,15 +19820,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-sulphurai-sulphur-3",
-      "content_hash": "2ea5f4010de33f37c3a13f7e7ba6f3d2018e817854a34f49634bb6a7f517aedb",
-      "verified_at": "2026-11-21T22:56:41.043Z",
+      "learning_id": "learn-huggingface-fusioncow-sulphur-3",
+      "content_hash": "3bbf7a4a075c1c933d3d23831ecc9844aebf8d8ba5a61639093fa8a3d8590551",
+      "verified_at": "2026-11-21T23:55:31.814Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T22:56:41.043Z"
+      "last_updated": "2026-11-21T23:55:31.814Z"
     }
   },
   "repos": {
