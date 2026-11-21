@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T21:57:51.033Z",
-  "total_cycles_completed": 11335,
-  "total_learnings_persisted": 11335,
-  "total_rules_promoted": 10659,
+  "last_updated": "2026-11-21T22:06:30.801Z",
+  "total_cycles_completed": 11337,
+  "total_learnings_persisted": 11337,
+  "total_rules_promoted": 10660,
   "history": [
-    {
-      "timestamp": "2026-11-21T02:00:36.967Z",
-      "repository": "tauri-apps/tauri",
-      "learningId": "learn-github-tauri-apps-tauri",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T02:08:36.587Z",
-      "repository": "electron/electron",
-      "learningId": "learn-github-electron-electron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T02:08:44.147Z",
       "repository": "pixeltable/pixeltable",
@@ -1403,6 +1389,20 @@
       "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
       "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T22:06:21.041Z",
+      "repository": "LiquidAI/LFM3-1.7B-GGUF",
+      "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T22:06:30.801Z",
+      "repository": "chaos-mesh/chaos-mesh",
+      "learningId": "learn-github-chaos-mesh-chaos-mesh",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

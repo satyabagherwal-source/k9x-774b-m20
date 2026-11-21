@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T21:58:04.904Z",
+  "last_updated": "2026-11-21T22:06:35.304Z",
   "directives": [
     {
       "id": "CD-001",
@@ -36242,11 +36242,11 @@
       "staged_date": "2026-11-20"
     },
     {
-      "id": "CD-B0ON",
+      "id": "CD-JS4O",
       "directive_title": "dead license badge link in README",
       "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-B0ON-dead-license-badge-link-in-readme.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-JS4O-dead-license-badge-link-in-readme.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-21",
@@ -43889,6 +43889,35 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C80742-benchmarks-report-gold-coverage-across-r.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-JRK6",
+      "directive_title": "ci(e2e): skip builds for existing caches",
+      "source_repo": "chaos-mesh-chaos-mesh-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JRK6-ci-e2e-skip-builds-for-existing-caches.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-EF37F3",
+      "directive_title": "ci(e2e): skip builds for existing caches",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "chaos-mesh-chaos-mesh",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EF37F3-ci-e2e-skip-builds-for-existing-caches.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-AFE464",
+      "directive_title": "dead license badge link in README",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AFE464-dead-license-badge-link-in-readme.md",
       "staged_date": "2026-11-21"
     }
   ]

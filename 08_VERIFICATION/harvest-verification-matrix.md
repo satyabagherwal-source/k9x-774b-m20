@@ -11913,3 +11913,5 @@
 | `CYCLE-20261121-X1NR` | `2026-11-21T21:48:54.567Z` | `LiquidAI/LFM3-Audio-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md` | Yes (`699671e8...`) |
 | `CYCLE-20261121-XC6Q` | `2026-11-21T21:49:08.210Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9851` | Yes (`fa3baea4...`) |
 | `CYCLE-20261121-8JLB` | `2026-11-21T21:57:51.023Z` | `OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md` | Yes (`935c4843...`) |
+| `CYCLE-20261121-JH49` | `2026-11-21T22:06:21.033Z` | `LiquidAI/LFM3-1.7B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md` | Yes (`b183acba...`) |
+| `CYCLE-20261121-JONE` | `2026-11-21T22:06:30.794Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9852` | Yes (`4b6c7543...`) |

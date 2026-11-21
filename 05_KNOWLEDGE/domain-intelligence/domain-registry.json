@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T21:58:05.068Z",
+  "last_updated": "2026-11-21T22:06:35.426Z",
   "total_records": 2283,
   "domains": {
     "A": {
@@ -15074,8 +15074,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "bc76eb3c794f6e1bd89bd538201d86d6272332657bf70980de9613f150e32a9b",
-      "created_at": "2026-11-21T09:23:57.057Z"
+      "content_hash": "a5875194c376b3c5ec1436d227b03fec3917d0d26da9d57a240fe00beb42c870",
+      "created_at": "2026-11-21T22:06:35.426Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -26103,8 +26103,8 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-1.7B-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-1-7b-gguf-research-knowledge-intelligence-liquidai-lfm3-1-7b-gg.md",
       "repository": "LiquidAI/LFM3-1.7B-GGUF",
-      "content_hash": "999f1228d0ab7e12f384debe9831d558bd4e8c9a0f3bbb974814e17689d56523",
-      "created_at": "2026-11-17T04:43:44.635Z"
+      "content_hash": "55df1ee36a392df18f8082abc05aae245ccc929a70cd1cfe0482085ee2d4ab9a",
+      "created_at": "2026-11-21T22:06:21.219Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-1-7b-gguf-learnings-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-1-7b-gguf-learnings-core-invari",
@@ -26112,8 +26112,8 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-1.7b-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-1-7b-gguf-learnings-research-knowledge-intelligence-hf-liquidai.md",
       "repository": "hf-liquidai-lfm3-1.7b-gguf-learnings",
-      "content_hash": "f3a5da40ac2d8d315b8fa6ee05837ea04be5564829affeb10f1717ea669169f0",
-      "created_at": "2026-11-17T04:43:58.670Z"
+      "content_hash": "91c17e0c08909dcb0519b25aeaa485c06fa150b91ee33be74836247ca282655d",
+      "created_at": "2026-11-21T22:06:34.173Z"
     },
     "domain_intelligence-technical-construction-intelligence-tanstack-query-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tanstack-query-core-invariants",
@@ -33695,8 +33695,8 @@
       "title": "Quality & Verification Intelligence: chaos-mesh/chaos-mesh Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-chaos-mesh-chaos-mesh-quality-verification-intelligence-chaos-mesh-chaos-mesh-co.md",
       "repository": "chaos-mesh/chaos-mesh",
-      "content_hash": "5fb7db863c813dd4c726ab5db2af85ad5307f3b75deddbc5f301307bd4f1c1a0",
-      "created_at": "2026-11-20T18:41:41.303Z"
+      "content_hash": "1e3a2d92ea137cfd45752a85e3e6b1c40234abfcb54bc84092c9463e03085d74",
+      "created_at": "2026-11-21T22:06:31.092Z"
     },
     "DOM-D-66709892": {
       "record_id": "DOM-D-66709892",
@@ -36532,8 +36532,8 @@
       "title": "Quality & Verification Intelligence: chaos-mesh-chaos-mesh-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-chaos-mesh-chaos-mesh-learnings-quality-verification-intelligence-chaos-mesh-cha.md",
       "repository": "chaos-mesh-chaos-mesh-learnings",
-      "content_hash": "ebc88350786816b329ffd7559771395918e9eb556786b3f1f98093a380d95f06",
-      "created_at": "2026-11-20T18:41:53.565Z"
+      "content_hash": "3ba9de1b2c8eae67d0ac5f568e28766f446a6ff68371375f9f2bbc1e52bb1022",
+      "created_at": "2026-11-21T22:06:34.690Z"
     },
     "domain_intelligence-content-information-intelligence-golutra-golutra-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-golutra-golutra-core-invariants",

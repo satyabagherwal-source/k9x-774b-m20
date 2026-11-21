@@ -2343,10 +2343,10 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "81e7bcad",
+    "sourceVersion": "da9a3583",
     "license": "Apache-2.0",
-    "contentHash": "75523bc2b84d33a288893d7371710f27d08d0c6f1dc4e3d4eaeea67ebe2a2ae2",
-    "lastHarvestedAt": "2026-11-20T18:41:40.816Z",
+    "contentHash": "4b6c754346c6664710654047641abe49b21db9bcf181469b87a0d1507af9a42d",
+    "lastHarvestedAt": "2026-11-21T22:06:30.797Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {
@@ -11595,8 +11595,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
     "sourceVersion": "hf-liquidai-lfm3-1.7b-gguf",
     "license": "Open-Source",
-    "contentHash": "69dd95b2a6f1da0523c9107ed16b82d68fb4c6ec5f82db6c977db7a3785cfd97",
-    "lastHarvestedAt": "2026-11-17T04:43:44.458Z",
+    "contentHash": "b183acbae4b711b4c83642cf2950c9ae76fb50e930184d76892897c3d80e1df2",
+    "lastHarvestedAt": "2026-11-21T22:06:21.036Z",
     "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf"
   },
   "hf-speridlabs-idol": {

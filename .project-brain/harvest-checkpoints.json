@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T21:57:51.037Z",
+  "last_updated": "2026-11-21T22:06:30.804Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3651,14 +3651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
-      "content_hash": "75523bc2b84d33a288893d7371710f27d08d0c6f1dc4e3d4eaeea67ebe2a2ae2",
-      "verified_at": "2026-11-20T18:41:40.830Z",
+      "content_hash": "4b6c754346c6664710654047641abe49b21db9bcf181469b87a0d1507af9a42d",
+      "verified_at": "2026-11-21T22:06:30.803Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T18:41:40.830Z"
+      "last_updated": "2026-11-21T22:06:30.803Z"
     },
     "nolabs-ai/nono": {
       "repository": "nolabs-ai/nono",
@@ -17436,14 +17436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
-      "content_hash": "69dd95b2a6f1da0523c9107ed16b82d68fb4c6ec5f82db6c977db7a3785cfd97",
-      "verified_at": "2026-11-17T04:43:44.467Z",
+      "content_hash": "b183acbae4b711b4c83642cf2950c9ae76fb50e930184d76892897c3d80e1df2",
+      "verified_at": "2026-11-21T22:06:21.049Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T04:43:44.467Z"
+      "last_updated": "2026-11-21T22:06:21.049Z"
     },
     "speridlabs/idol": {
       "repository": "speridlabs/idol",

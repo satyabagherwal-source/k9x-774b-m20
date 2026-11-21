@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-KGDG",
-    "timestamp": "2026-11-19T18:19:49.348Z",
-    "repository": "OpenMOSS-Team/MOSS-Image-Base",
-    "learningId": "learn-huggingface-openmoss-team-moss-image-base",
-    "contentHash": "181733b38ce03a0f19f30b3172dc4ab3ff9ff3d40fa3a4de2d6196b2633574ce",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-KHW6",
-    "timestamp": "2026-11-19T18:19:51.318Z",
-    "repository": "nguyenphutrong/quotio",
-    "learningId": "learn-github-nguyenphutrong-quotio",
-    "contentHash": "9069090e5ad6d21bb4aec7f0b8eccea5c8e06cd2727f60efa030939322dfdff7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-KOZN",
     "timestamp": "2026-11-19T18:20:00.515Z",
     "repository": "kgateway-dev/kgateway",
@@ -7492,6 +7462,36 @@
     "contentHash": "935c4843fee372dcd927245766f19a56f3bc9090b7c2dbe48626ca1e982c89e1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-JH49",
+    "timestamp": "2026-11-21T22:06:21.033Z",
+    "repository": "LiquidAI/LFM3-1.7B-GGUF",
+    "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
+    "contentHash": "b183acbae4b711b4c83642cf2950c9ae76fb50e930184d76892897c3d80e1df2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-JONE",
+    "timestamp": "2026-11-21T22:06:30.794Z",
+    "repository": "chaos-mesh/chaos-mesh",
+    "learningId": "learn-github-chaos-mesh-chaos-mesh",
+    "contentHash": "4b6c754346c6664710654047641abe49b21db9bcf181469b87a0d1507af9a42d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

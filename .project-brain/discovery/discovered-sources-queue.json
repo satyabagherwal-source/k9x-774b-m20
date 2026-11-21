@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T21:58:02.897Z",
+  "updated_at": "2026-11-21T22:06:34.390Z",
   "stats": {
-    "total_discovered": 7364,
-    "approved_pending_harvest": 6966,
+    "total_discovered": 7365,
+    "approved_pending_harvest": 6967,
     "harvested_count": 0,
     "rejected_count": 398,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6946,
+      "COMMUNITY_AND_EXPERT": 6947,
       "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -159245,6 +159245,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md",
         "fileName": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md"
+      }
+    },
+    "SRC-531FBBF2421F": {
+      "id": "SRC-531FBBF2421F",
+      "url": "https://github.com/actions/cache/pull/498",
+      "title": "https://github.com/actions/cache/pull/498",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T22:06:34.390Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
       }
     }
   }
