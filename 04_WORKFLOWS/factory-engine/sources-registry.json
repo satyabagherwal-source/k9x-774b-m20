@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T22:56:59.737Z",
-    "lastVerified": "2026-11-21T22:56:59.737Z",
+    "lastChecked": "2026-11-21T23:06:17.642Z",
+    "lastVerified": "2026-11-21T23:06:17.642Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -353,12 +353,12 @@
     "lastVerified": "2026-11-21T21:31:41.682Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T22:30:07.434Z",
-    "lastVerified": "2026-11-21T22:30:07.434Z",
+    "lastChecked": "2026-11-21T23:06:11.518Z",
+    "lastVerified": "2026-11-21T23:06:11.518Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -367,7 +367,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "bf3afb03"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1146,14 +1147,14 @@
     "officialUrl": "https://github.com/clockworklabs/SpacetimeDB",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T18:41:43.034Z",
-    "lastVerified": "2026-11-20T18:41:43.034Z",
+    "lastChecked": "2026-11-21T23:06:13.901Z",
+    "lastVerified": "2026-11-21T23:06:13.901Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "363075429255bbcc149c9650485bfb333ae8c0d626cc029414863da7ac7e0621",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "f65c33024745ca8348063a7489b2ced05825a8c2190a32b8b92fc419fbb842dd",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2073,8 +2074,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T17:05:52.615Z",
-    "lastVerified": "2026-11-21T17:05:52.615Z",
+    "lastChecked": "2026-11-21T23:06:06.652Z",
+    "lastVerified": "2026-11-21T23:06:06.652Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -2659,9 +2660,9 @@
   "permify-permify": {
     "name": "permify",
     "officialUrl": "https://github.com/Permify/permify",
-    "lastChecked": "2026-11-20T20:28:13.925Z",
+    "lastChecked": "2026-11-21T23:06:04.108Z",
     "revisionIdentifier": "18fcfdda",
-    "lastVerified": "2026-11-20T20:28:13.925Z"
+    "lastVerified": "2026-11-21T23:06:04.108Z"
   },
   "ontos-ai-knowhere": {
     "name": "knowhere",
@@ -3888,9 +3889,9 @@
   "founded-labs-react-native-reusables": {
     "name": "react-native-reusables",
     "officialUrl": "https://github.com/founded-labs/react-native-reusables",
-    "lastChecked": "2026-11-18T17:51:07.766Z",
+    "lastChecked": "2026-11-21T23:06:01.679Z",
     "revisionIdentifier": "7df9e76c",
-    "lastVerified": "2026-11-18T17:51:07.766Z"
+    "lastVerified": "2026-11-21T23:06:01.679Z"
   },
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
@@ -4262,9 +4263,9 @@
   "chmln-sd": {
     "name": "sd",
     "officialUrl": "https://github.com/chmln/sd",
-    "lastChecked": "2026-11-20T07:23:26.582Z",
+    "lastChecked": "2026-11-21T23:05:56.595Z",
     "revisionIdentifier": "44febdf8",
-    "lastVerified": "2026-11-20T07:23:26.582Z"
+    "lastVerified": "2026-11-21T23:05:56.595Z"
   },
   "hf-black-forest-labs-flux.1-schnell": {
     "name": "black-forest-labs/FLUX.1-schnell",
@@ -13081,6 +13082,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
     "contentHash": "0e208e0e602ed7adc8860dd171b2c5745c6ce120919e36fa0dcf250c3eaaf4d8",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-burner22-numbat": {
+    "name": "burner22/numbat",
+    "officialUrl": "https://huggingface.co/burner22/numbat",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T23:05:59.403Z",
+    "lastVerified": "2026-11-21T23:05:59.403Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-burner22-numbat",
+    "contentHash": "b9d1522ad3cb53075528dfbb51b69210de556a785c4a889ee02014d16dee4965",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

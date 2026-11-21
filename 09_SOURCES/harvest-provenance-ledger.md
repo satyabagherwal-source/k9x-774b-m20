@@ -11965,3 +11965,5 @@ Every entry in this ledger must capture:
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `e169d3bb` | Multi-dimensional audit evidence | 2026-11-21T22:56:56.521Z |
 | `learn-dom-d-3cf395c7` | `project://hf-sulphurai-sulphur-3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sulphurai-sulphur-3-learnings.md` | 2026-11-21T22:57:27.047Z |
 | `learn-dom-d-8372cbcd` | `project://hf-edge0-audio8-tts-realistic-0.6b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md` | 2026-11-21T22:57:57.568Z |
+| `learn-huggingface-burner22-numbat` | `https://huggingface.co/burner22/numbat` | `hf-burner2` | Multi-dimensional audit evidence | 2026-11-21T23:06:00.054Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `c0f3122f` | Multi-dimensional audit evidence | 2026-11-21T23:06:14.407Z |

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-U2Q0",
-    "timestamp": "2026-11-19T19:23:17.448Z",
-    "repository": "matthart1983/netwatch",
-    "learningId": "learn-github-matthart1983-netwatch",
-    "contentHash": "f7f0375c516225aececaf9f7a26feb0612b17b3d9d7eace1c111b82083123375",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-U6W0",
-    "timestamp": "2026-11-19T19:23:22.848Z",
-    "repository": "momenbasel/PureMac",
-    "learningId": "learn-github-momenbasel-puremac",
-    "contentHash": "cbeddf249c84a6e3a3b61a9255369d1311cf196d393280673eef529bdfaffa02",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-EBLJ",
     "timestamp": "2026-11-19T19:39:02.071Z",
     "repository": "tuist/tuist",
@@ -7492,6 +7462,36 @@
     "contentHash": "e77e8120f752543e92e7751ab50589ac13b2fbb48d6609933c04ff45a406af54",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-O6PD",
+    "timestamp": "2026-11-21T23:06:00.049Z",
+    "repository": "burner22/numbat",
+    "learningId": "learn-huggingface-burner22-numbat",
+    "contentHash": "b9d1522ad3cb53075528dfbb51b69210de556a785c4a889ee02014d16dee4965",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-OHS2",
+    "timestamp": "2026-11-21T23:06:14.402Z",
+    "repository": "clockworklabs/SpacetimeDB",
+    "learningId": "learn-github-clockworklabs-spacetimedb",
+    "contentHash": "f65c33024745ca8348063a7489b2ced05825a8c2190a32b8b92fc419fbb842dd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T22:56:56.526Z",
-  "total_cycles_completed": 11351,
-  "total_learnings_persisted": 11351,
+  "last_updated": "2026-11-21T23:06:14.442Z",
+  "total_cycles_completed": 11353,
+  "total_learnings_persisted": 11353,
   "total_rules_promoted": 10667,
   "history": [
-    {
-      "timestamp": "2026-11-21T03:28:41.625Z",
-      "repository": "gauthierpiarrette/highball",
-      "learningId": "learn-github-gauthierpiarrette-highball",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T03:28:50.577Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T03:36:38.121Z",
       "repository": "pola-rs/polars",
@@ -1403,6 +1389,20 @@
       "repository": "projectdiscovery/nuclei",
       "learningId": "learn-github-projectdiscovery-nuclei",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T23:06:00.060Z",
+      "repository": "burner22/numbat",
+      "learningId": "learn-huggingface-burner22-numbat",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T23:06:14.442Z",
+      "repository": "clockworklabs/SpacetimeDB",
+      "learningId": "learn-github-clockworklabs-spacetimedb",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T07:32:59.092Z",
+  "timestamp": "2026-11-21T23:06:17.886Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-burner22-numbat-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-burner22-numbat-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T07:32:59.092Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T23:06:17.886Z`  
 > **Learning ID**: `LEARN-EVO-hf-burner22-numbat-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-burner22-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T07:32:17.945Z  
+> **Timestamp**: 2026-11-21T23:05:59.566Z  
 > **Learning ID**: `learn-huggingface-burner22-numbat`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/burner22/numbat](https://huggingface.co/burner22/numbat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T07:32:17.837Z  
+> **Harvest Timestamp**: 2026-11-21T23:05:59.403Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 10944 downloads | 407 likes
+- **Stars / Engagement**: 6991 downloads | 408 likes
 
 ---
 

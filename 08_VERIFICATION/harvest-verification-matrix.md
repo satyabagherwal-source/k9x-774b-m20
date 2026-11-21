@@ -11932,3 +11932,5 @@
 | `CYCLE-20261121-CJB9` | `2026-11-21T22:56:56.517Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9859` | Yes (`e77e8120...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T22:57:27.047Z` | `hf-sulphurai-sulphur-3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3CF395C7` [Domain D] | Yes (`f0e29b1b...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T22:57:57.568Z` | `hf-edge0-audio8-tts-realistic-0.6b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-8372CBCD` [Domain D] | Yes (`73ad2c2a...`) |
+| `CYCLE-20261121-O6PD` | `2026-11-21T23:06:00.049Z` | `burner22/numbat` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md` | Yes (`b9d1522a...`) |
+| `CYCLE-20261121-OHS2` | `2026-11-21T23:06:14.402Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md` | Yes (`f65c3302...`) |

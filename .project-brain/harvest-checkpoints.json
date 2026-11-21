@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T22:56:56.530Z",
+  "last_updated": "2026-11-21T23:06:14.445Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "363075429255bbcc149c9650485bfb333ae8c0d626cc029414863da7ac7e0621",
-      "verified_at": "2026-11-20T18:41:44.379Z",
+      "content_hash": "f65c33024745ca8348063a7489b2ced05825a8c2190a32b8b92fc419fbb842dd",
+      "verified_at": "2026-11-21T23:06:14.445Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T18:41:44.379Z"
+      "last_updated": "2026-11-21T23:06:14.445Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",
@@ -17616,14 +17616,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-burner22-numbat",
-      "content_hash": "38afcc6883c2384dbc22c750a33c07a673ea8d562f2f8ae56dad8bf32f25e63e",
-      "verified_at": "2026-11-15T07:32:18.298Z",
+      "content_hash": "b9d1522ad3cb53075528dfbb51b69210de556a785c4a889ee02014d16dee4965",
+      "verified_at": "2026-11-21T23:06:00.062Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T07:32:18.298Z"
+      "last_updated": "2026-11-21T23:06:00.062Z"
     },
     "FusionCow/Sulphur-3": {
       "repository": "FusionCow/Sulphur-3",

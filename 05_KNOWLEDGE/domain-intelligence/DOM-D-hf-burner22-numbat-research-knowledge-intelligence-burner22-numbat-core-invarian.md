@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/burner22/numbat",
   "source_version": "hf-burner22-numbat",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T07:32:18.450Z",
+  "timestamp": "2026-11-21T23:06:00.257Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-burner22-numbat",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [burner22/numbat](https://huggingface.co/burner22/numbat) (Revision: `hf-burner2`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T07:32:18.450Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T23:06:00.257Z`  
 > **Learning ID**: `learn-huggingface-burner22-numbat`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/burner22/numbat](https://huggingface.co/burner22/numbat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T07:32:17.837Z  
+> **Harvest Timestamp**: 2026-11-21T23:05:59.403Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 10944 downloads | 407 likes
+- **Stars / Engagement**: 6991 downloads | 408 likes
 
 ---
 

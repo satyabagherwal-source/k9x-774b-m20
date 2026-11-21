@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T18:41:55.079Z",
+  "timestamp": "2026-11-21T23:06:18.426Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-clockworklabs-spacetimedb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [clockworklabs-spacetimedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T18:41:55.079Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T23:06:18.426Z`  
 > **Learning ID**: `LEARN-EVO-clockworklabs-spacetimedb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `c3e36c4a`  
+> **Source Version**: `c0f3122f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T18:41:43.041Z  
+> **Timestamp**: 2026-11-21T23:06:13.907Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T18:41:43.034Z  
+> **Harvest Timestamp**: 2026-11-21T23:06:13.901Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25569 stars
+- **Stars / Engagement**: 25570 stars
 
 ---
 
@@ -855,545 +855,340 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c3e36c4a` (2026-11-20)
-**Commit Message**: Bump version to 2.16.2 (#6654)
+### Incident Patch 1: `c0f3122f` (2026-11-21)
+**Commit Message**: Tweak PR-writing guidance for agents (#6657)
 
 # Description of Changes
 
-<!-- Please describe your change, mention any related tickets, and so on
-here. -->
-
-- Bumps version to 2.16.2
+Tweaked the guidance for agent-written PRs, and moved it into its own
+skill. Also added golden examples to hopefully minimize regressions as
+we iterate on the skill more.
 
 # API and ABI breaking changes
 
-None
-
-<!-- If this is an API or ABI breaking change, please apply the
-corresponding GitHub label. -->
+None.
 
 # Rollback safety impact
-
-<!--
-If this PR is safe to roll back after deployment and has no impact on
-the rollback safety of any prior PRs, write `n/a` below.
-
-Otherwise, list every prerequisite PR that must be included in a release
-before this PR can merge. This PR must not be deployed until each
-prerequisite has been deployed and sufficiently observed or tested in
-the live deployment that we are confident it will not be rolled back.
-Supported forms include #123, SpacetimeDB#123,
-clockworklabs/SpacetimeDB#123, and GitHub PR URLs.
-
-Consider whether this PR:
-- newly writes to a previously introduced but unused ControlDB table or
-reducer, system table, or on-disk data format; or
-- clears, deletes, incompatibly changes, or renders unsupported a
-previously available ControlDB table or reducer, system table, or
-on-disk data format.
--->
 
 n/a
 
 # Expected complexity level and risk
 
-- 1 - this
+1
 
-**File**: `Cargo.lock` (modified, +59/-59)
+# Testing
+
+Tested the skill on regression-test PRs, failed tests, untested changes,
+and edits to existing descriptions. Blind trials withheld the golden
+examples. Drafts still sometimes included individual assertions.
+
+**Original draft and reviewer-edited target for #6629**
+
 ```diff
-@@ -828,7 +828,7 @@ dependencies = [
+--- Before
++++ Editorial target
+@@ -1,8 +1,10 @@
+ # Testing
  
- [[package]]
- name = "case-conversion-client"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "env_logger 0.10.2",
-@@ -1471,7 +1471,7 @@ dependencies = [
- 
- [[package]]
- name = "connect_disconnect_client"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "console_error_panic_hook",
-@@ -2542,7 +2542,7 @@ dependencies = [
- 
- [[package]]
- name = "event-table-client"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "console_error_panic_hook",
-@@ -6114,7 +6114,7 @@ dependencies = [
- 
- [[package]]
- name = "procedural-view-pk-client"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "console_error_panic_hook",
-@@ -6128,7 +6128,7 @@ dependencies = [
- 
- [[package]]
- name = "procedure-client"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "console_error_panic_hook",
-@@ -6145,7 +6145,7 @@ dependencies = [
- 
- [[package]]
- name = "procedure-concurrency-client"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "console_error_panic_hook",
-@@ -7482,7 +7482,7 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
- 
- [[package]]
- name = "sdk-csharp-test-harness"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "serial_test",
-  "spacetimedb-testing",
-@@ -7549,7 +7549,7 @@ dependencies = [
- 
- [[package]]
- name = "sdk-unreal-test-harness"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "serial_test",
-  "spacetimedb-testing",
-@@ -8056,7 +8056,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "bytemuck",
-@@ -8079,7 +8079,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-auth"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "jsonwebtoken",
-@@ -8092,7 +8092,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-bench"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "ahash 0.8.12",
-  "anyhow",
-@@ -8135,7 +8135,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-bindings-macro"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "heck 0.4.1",
-  "humantime",
-@@ -8146,14 +8146,14 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-bindings-sys"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "spacetimedb-primitives",
- ]
- 
- [[package]]
- name = "spacetimedb-cli"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "base64 0.21.7",
-@@ -8224,7 +8224,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-client-api"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "async-stream",
-@@ -8274,7 +8274,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-client-api-messages"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "bytes",
-  "bytestring",
-@@ -8297,7 +8297,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-codegen"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "convert_case 0.6.0",
-@@ -8316,7 +8316,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-commitlog"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "async-stream",
-  "bitflags 2.10.0",
-@@ -8350,7 +8350,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-core"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -8450,7 +8450,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-data-structures"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "ahash 0.8.12",
-  "crossbeam-queue",
-@@ -8466,7 +8466,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-datastore"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "bytes",
-@@ -8504,7 +8504,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-dst-lib"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "spacetimedb-commitlog",
-@@ -8522,7 +8522,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-durability"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "async-channel",
-@@ -8542,7 +8542,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-engine"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -8584,7 +8584,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-execution"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "itertools 0.12.1",
-@@ -8598,7 +8598,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-expr"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "bigdecimal",
-@@ -8616,7 +8616,7 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-fs-utils"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "anyhow",
-  "chrono",
-@@ -8632,15 +8632,15 @@ dependencies = [
- 
- [[package]]
- name = "spacetimedb-guard"
--version = "2.16.0"
-+version = "2.16.2"
- dependencies = [
-  "reqwest",
-  "tempfile",
- ]
- 
- [[pa
+-All 85 client API library tests passed with default features disabled. The new tests exercise the HTTP route with a mock backend. Live Cloud hierarchy behavior remains untested.
+-
+-- Create and update requests forward the expected parent to publication when `parent` is omitted, supplied by name, or supplied as a hex identity. Creation authorization receives the same parent, including when `clear=true` targets a missing database.
+-- An unknown parent name returns 404 before backend publication 
+
+**File**: `.agents/skills/write-pull-requests/SKILL.md` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++---
++name: write-pull-requests
++description: Prepare verified commits and write or update GitHub pull request descriptions for SpacetimeDB.
++---
++
++# Writing pull requests
++
++When preparing commits, use the signing requirements below. When drafting or editing a description, use the template and the writing guidance.
++
++## Verified commits
++
++Verified commits are required: a PR cannot be merged without them. Enable commit signing before creating commits for a PR, and ensure GitHub recognizes the commits as **Verified**. A local signature alone does not establish that GitHub can verify it.
++
++If you cannot create verified commits, alert the user promptly, explicitly tell them that the PR cannot be merged without verified commits, and help them set up commit signing and GitHub verification. Do not silently proceed with unverified commits or present the PR as ready to merge. After setup, confirm that GitHub marks the PR's commits as **Verified**.
++
++## Write for the reviewer
++
++Use the [PR template](../../../.github/pull_request_template.md). Keep and complete every section, including the prescribed wording for inapplicable sections. Replace placeholders with facts from the change. Lead the description with what changes and why it matters. For a test-only PR, identify the behavior being protected. Reserve the evidence for Testing.
++
++On an existing PR, work from the current body. Edit only the requested lines and preserve every section, the author's wording elsewhere, and the state of their checkboxes.
++
++## Testing
++
++Running the changed workflow on a representative input and inspecting its output is behavioral testing, including for changes to authoring instructions. Use the recorded output as evidence.
++
++If no behavioral testing was performed, the entire Testing section is the single sentence “Not tested.” Reviewing the patch, checking whitespace, or verifying signatures alone counts as untested.
++
++Summarize coverage at test-title granularity. For newly added tests, count the test functions, introduce them by number and kind alone with a colon, and give each one a plain bullet. Put the motivating regression first. Keep closely related tests adjacent. For existing coverage, identify what was exercised or updated.
++
++Write each main bullet as a test title the caller would recognize. Name the option or operation when it defines the scenario. Use product verbs such as “uses the selected credit”; skip descriptions of how components pass values to one another. If one test also guards other independently breakable behaviors, put those on separate indented lines under its main case. A short parenthesis can group input forms. Preserve reviewer wording when regrouping.
++
++For example, two billing tests might exercise eight assertions. The author also temporarily disabled duplicate detection, saw the first test fail, restored the change, and reran 96 tests. The complete Testing prose could be:
++
++> Added two billing tests covering the following behaviors:
++>
++> - A duplicate invoice is rejected (CSV or JSON import). Disabling duplicate detection made the test fail.
++> - Prepaid invoices use the selected credit. The same test covers:
++>   - Credits apply before tax.
++>   - Fully covered invoices skip payment.
++
++Stop once the scope is clear. “Requires approval” is the entire permission test title; a second description of normal success or denial adds no new scope. Keep distinct extra coverage, such as *which* approval applies, under its own test. Give a specific error code when that is what the test distinguishes. For a failed mutation experiment, naming the removed protection and saying the test failed is enough. Keep fixture details, build settings, sample sizes and numeric thresholds in the test code unless they define the feature being tested. Omit response text, call ordering, suite status and restoration steps. A manual fault-injection result belongs on the regression bullet. Mention a failure or gap separately when it affects the conclusion.
++
++For generated output, lead with what the trial covered. Show the complete comparison inline after the summary. Use a unified diff or two intact outputs for the unit under review. “Before” is the observed output from before the PR. Preserve that baseline. Label a later run on the base revision as a reproduction. Mention trial conditions that affect interpretation. If only one output was captured, show it and limit the claim to that observation.
++
++For examples to use when refining this skill, see the [golden cases](examples/README.md).
 ```
 
-**File**: `Cargo.toml` (modified, +40/-40)
+**File**: `.agents/skills/write-pull-requests/examples/README.md` (added, +66/-0)
 ```diff
-@@ -156,51 +156,51 @@ inherits = "release"
- debug = true
- 
- [workspace.package]
--version = "2.16.0"
-+version = "2.16.2"
- edition = "2024"
- # update rust-toolchain.toml too!
- rust-version = "1.97"
- 
- [workspace.dependencies]
--spacetimedb = { path = "crates/bindings", version = "=2.16.0" }
--spacetimedb-auth = { path = "crates/auth", version = "=2.16.0" }
--spacetimedb-bindings-macro = { path = "crates/bindings-macro", version = "=2.16.0" }
--spacetimedb-bindings-sys = { path = "crates/bindings-sys", version = "=2.16.0" }
--spacetimedb-cli = { path = "crates/cli", version = "=2.16.0" }
--spacetimedb-client-api = { path = "crates/client-api", version = "=2.16.0" }
--spacetimedb-client-api-messages = { path = "crates/client-api-messages", version = "=2.16.0" }
--spacetimedb-codegen = { path = "crates/codegen", version = "=2.16.0" }
--spacetimedb-commitlog = { path = "crates/commitlog", version = "=2.16.0" }
--spacetimedb-core = { path = "crates/core", version = "=2.16.0" }
--spacetimedb-data-structures = { path = "crates/data-structures", version = "=2.16.0" }
--spacetimedb-datastore = { path = "crates/datastore", version = "=2.16.0" }
--spacetimedb-durability = { path = "crates/durability", version = "=2.16.0" }
--spacetimedb-engine = { path = "crates/engine", version = "=2.16.0" }
--spacetimedb-execution = { path = "crates/execution", version = "=2.16.0" }
--spacetimedb-expr = { path = "crates/expr", version = "=2.16.0" }
--spacetimedb-fs-utils = { path = "crates/fs-utils", version = "=2.16.0" }
--spacetimedb-guard = { path = "crates/guard", version = "=2.16.0" }
--spacetimedb-lib = { path = "crates/lib", default-features = false, version = "=2.16.0" }
--spacetimedb-memory-usage = { path = "crates/memory-usage", version = "=2.16.0", default-features = false }
--spacetimedb-metrics = { path = "crates/metrics", version = "=2.16.0" }
--spacetimedb-paths = { path = "crates/paths", version = "=2.16.0" }
--spacetimedb-pg = { path = "crates/pg", version = "=2.16.0" }
--spacetimedb-physical-plan = { path = "crates/physical-plan", version = "=2.16.0" }
--spacetimedb-portable-datastore = { path = "crates/portable-datastore", version = "=2.16.0" }
--spacetimedb-primitives = { path = "crates/primitives", version = "=2.16.0" }
--spacetimedb-query = { path = "crates/query", version = "=2.16.0" }
--spacetimedb-query-builder = { path = "crates/query-builder", version = "=2.16.0" }
--spacetimedb-runtime = { path = "crates/runtime", version = "=2.16.0" }
--spacetimedb-runtime-core = { path = "crates/runtime-core", version = "=2.16.0" }
--spacetimedb-sats = { path = "crates/sats", version = "=2.16.0" }
--spacetimedb-schema = { path = "crates/schema", version = "=2.16.0" }
--spacetimedb-snapshot = { path = "crates/snapshot", version = "=2.16.0" }
--spacetimedb-standalone = { path = "crates/standalone", version = "=2.16.0" }
--spacetimedb-subscription = { path = "crates/subscription", version = "=2.16.0" }
--spacetimedb-sql-parser = { path = "crates/sql-parser", version = "=2.16.0" }
--spacetimedb-table = { path = "crates/table", version = "=2.16.0" }
--spacetimedb-test-datastore = { path = "crates/test-datastore", version = "=2.16.0" }
--spacetimedb-tiered-storage = { path = "crates/tiered-storage", version = "=2.16.0" }
-+spacetimedb = { path = "crates/bindings", version = "=2.16.2" }
-+spacetimedb-auth = { path = "crates/auth", version = "=2.16.2" }
-+spacetimedb-bindings-macro = { path = "crates/bindings-macro", version = "=2.16.2" }
-+spacetimedb-bindings-sys = { path = "crates/bindings-sys", version = "=2.16.2" }
-+spacetimedb-cli = { path = "crates/cli", version = "=2.16.2" }
-+spacetimedb-client-api = { path = "crates/client-api", version = "=2.16.2" }
-+spacetimedb-client-api-messages = { path = "crates/client-api-messages", version = "=2.16.2" }
-+spacetimedb-codegen = { path = "crates/codegen", version = "=2.16.2" }
-+spacetimedb-commitlog = { path = "crates/commitlog", version = "=2.16.2" }
-+spacetimedb-core = { path = "crates/core", version = "=2.16.2" }
-+spacetimedb-data-structures = { path = "crates/data-structures", version = "=2.16.2" }
-+spacetimedb-datastore = { path = "crates/datastore", version = "=2.16.2" }
-+spacetimedb-durability = { path = "crates/durability", version = "=2.16.2" }
-+spacetimedb-engine = { path = "crates/engine", version = "=2.16.2" }
-+spacetimedb-execution = { path = "crates/execution", version = "=2.16.2" }
-+spacetimedb-expr = { path = "crates/expr", version = "=2.16.2" }
-+spacetimedb-fs-utils = { path = "crates/fs-utils", version = "=2.16.2" }
-+spacetimedb-guard = { path = "crates/guard", version = "=2.16.2" }
-+spacetimedb-lib = { path = "crates/lib", default-features = false, version = "=2.16.2" }
-+spacetimedb-memory-usage = { path = "crates/memory-usage", version = "=2.16.2", default-features = false }
-+spacetimedb-metrics = { path = "crates/metrics", version = "=2.16.2" }
-+spacetimedb-paths = { path = "crates/paths", version = "=2.16.2" }
-+spacetimedb-pg = { path = "crates/pg", version = "=2.16.2" }
-+spacetimedb-physical-plan = { p
+@@ -0,0 +1,66 @@
++# Golden Testing sections
++
++Use these cases to judge fresh drafts. Give the writer the case diff, raw evidence, and the instructions being tested. Keep this README and expected answers outside its workspace, including in the diff. For a change to the skill itself, supply a patch with example files excluded. Give the complete observed outputs so the writer has to choose the evidence.
++
++Compare instructions on identical inputs and model settings. Reserve a separate case the author of the instructions did not tune against. Judge accuracy, evidence selection, and brevity; wording can vary. Add a diff, input notes, and a short example when a new case teaches a distinct decision.
++
++## A change to PR-writing instructions
++
++**Diff under review.** The authoring guide put behavior ahead of routine run details. The template changed its Testing prompt from “Describe any testing you've done” to “If untested, write only ‘Not tested.’ Otherwise, describe the behavior verified and any gap that affects confidence in this change.” See `git show 5c5f7bc0df` for the full historical patch.
++
++**Trial input.** Two fresh agents drafted Testing sections for the same [database route test diff](https://github.com/clockworklabs/SpacetimeDB/compare/34dcbf8084cf07b978e9a1b9b14127a2fb24279d...5ef5f833a7a4e4230f0662f5e6d93990ba3e1d29). Both received the notes below. The original run did not record a model setting here. The revised run used Sol at low reasoning. The diff below covers both complete Testing sections.
++
++**Example Testing section**
++
++Fresh agents tried the skill on a regression-test PR. Other cases covered failed tests, untested changes, and edits to existing PR descriptions.
++
++**Full comparison from the original drafting trial**
++
++
++```diff
++--- Before
+++++ After
++@@ -1,8 +1,10 @@
++ # Testing
++ 
++-All 85 client API library tests passed with default features disabled. The new tests exercise the HTTP route with a mock backend. Live Cloud hierarchy behavior remains untested.
+++New HTTP route tests cover these cases:
++ 
++-- Create and update requests forward the expected parent to publication when `parent` is omitted, supplied by name, or supplied as a hex identity. Creation authorization receives the same parent, including when `clear=true` targets a missing database.
++-- An unknown parent name returns 404 before backend publication for both creates and updates.
++-- Resetting an existing database with either form of `parent` returns 400 and skips the backend reset, even with reset permission. Temporarily removing the parent guard made this test fail with 200.
++-- Without `parent`, a denied reset returns 403 and skips the backend reset. An authorized reset calls the backend once and reports the existing database as updated.
+++- Publishing to an existing database with `clear=true` and a parent returns HTTP 400 before calling the reset backend, whether the parent is supplied by name or identity. Manually removing the guard changed the response to HTTP 200 and failed the new test.
+++- Clearing an existing database with no parent returns HTTP 403 without reset permission. With permission, the route calls reset once and reports the database as updated.
+++- Creation and update forward the parent identity to publication when the request supplies a name or identity, and forward no parent when it is omitted. Creation also forwards the same value to authorization. A missing target follows the create path even with `clear=true`.
+++- An unknown parent name returns HTTP 404 for both creation and update before calling the publication backend.
+++
+++The tests use a mock backend, so live Cloud hierarchy behavior remains unverified.
++```
++
++
++## Database route regression
++
++**Input.** Same route diff as above. The tests used a mock backend. All 85 library tests passed. Manually removing the parent check changed the response from 400 to 200 and failed the new test. The guard was restored and the suite rerun.
++
++**Editorial target for Testing**
++
++Added four HTTP route tests covering the following behaviors:
++
++- Publishing to an existing database with `clear=true` and a parent (supplied by name or identity). Removing the guard correctly failed the test.
++- Clearing an existing database with no parent requires reset permission
++- Create and update requests use the requested parent. The same test covers:
++  - Creation checks permission for the requested parent.
++  - Publishing with `clear=true` creates the database if it does not exist.
++- An unknown parent name returns 404 for both creation and update
++
++## Other regression cases
++
++The notes below are offline test scenarios paired with real diffs. Example answers here are editorial targets.
++
++| Diff and input notes | Example Testing text |
++| --- | --- |
++| [Rust receiver bindings](https://github.com/clockworklabs/SpacetimeDB/commit/98689d9e2f4a79a75d93b0bf5dadbefe4e5cea47). Codegen and CLI smoke tests passed. Bindings UI suite was not run. | The updated CLI smoke test r
 ```
 
-**File**: `LICENSE.txt` (modified, +2/-2)
+**File**: `.agents/writing-prs.md` (removed, +0/-77)
 ```diff
-@@ -5,7 +5,7 @@ Business Source License 1.1
- Parameters
- 
- Licensor:             Clockwork Laboratories, Inc.
--Licensed Work:        SpacetimeDB 2.16.0
-+Licensed Work:        SpacetimeDB 2.16.2
-                       The Licensed Work is
-                       (c) 2023 Clockwork Laboratories, Inc.
-                       
-@@ -21,7 +21,7 @@ Additional Use Grant: You may make use of the Licensed Work provided your
-                       Licensed Work by creating tables whose schemas are
-                       controlled by such third parties.
- 
--Change Date:          2031-11-10
-+Change Date:          2031-11-20
- 
- Change License:       GNU Affero General Public License v3.0 with a linking
-                       exception
+@@ -1,77 +0,0 @@
+-# Writing pull requests
+-
+-Read this guide when creating or updating a PR. Use the repository's [PR template](../.github/pull_request_template.md) and preserve every section when updating an existing PR.
+-
+-## Verified commits
+-
+-Verified commits are required: a PR cannot be merged without them. Enable commit signing before creating commits for a PR, and ensure GitHub recognizes the commits as **Verified**. A local signature alone does not establish that GitHub can verify it.
+-
+-If you cannot create verified commits, alert the user promptly, explicitly tell them that the PR cannot be merged without verified commits, and help them set up commit signing and GitHub verification. Do not silently proceed with unverified commits or present the PR as ready to merge. After setup, confirm that GitHub marks the PR's commits as **Verified**.
+-
+-## Preserve and complete the template
+-
+-No section of the PR template may be removed. PRs that remove any template section will be rejected. Populate every section faithfully, following its instructions and describing the actual change; do not leave placeholders or invent information. Where a section does not apply, say so explicitly and follow any prescribed wording.
+-
+-## Writing the testing section
+-
+-Describe the automated or manual testing performed and what behavior it covers, including relevant existing test coverage. Include important gaps in that coverage.
+-
+-If no testing was performed, write “Not tested.” Do not justify the absence of testing or pad the section with routine checks. Reviewing the diff or instructions, checking whitespace or links, and verifying commit signatures are not substitutes for testing the change.
+-
+-### Choose the evidence
+-
+-- Start from the change's intended outcome and the important ways it could fail. Identify what verification addresses those concerns, including existing coverage.
+-- Usually, the strongest evidence is how automated tests were extended or adapted, or why existing tests cover the change. Manual tests, successful use, and other verification can also provide evidence.
+-- State what the evidence establishes. A same-client compilation test supports source compatibility; a client/server test supports actual interaction. Neither proves the other.
+-- Include important remaining uncertainty and explain any barriers to testing it. Distinguish "not tested yet" from "cannot be tested"; don't invent a reason or imply impossibility.
+-
+-The connection between the evidence and the intended outcome should be clear from the wording. It doesn't need a separate justification after every bullet.
+-
+-### Content
+-
+-- Distinguish updated tests, added tests, and relevant existing coverage. Use short bullets; omit categories that don't apply.
+-- Describe what each test or other check verifies. Name the inputs or API when needed to make the claim clear: incorrect reducer arguments, generated bindings, or the built package.
+-- Explain what coverage the change adds. A new test may exercise previously tested behavior through a new path; don't imply the behavior was previously untested.
+-- Make compatibility claims precise. The same client against old and new bindings is different from old bindings against a new SDK.
+-- Include existing integration coverage when it helps explain why the change is covered. Inspect it before claiming coverage is missing or proposing more tests.
+-- Write assuming CI passes. Don't include a running log of local test execution or say CI tests still need to be run for the PR. This does not justify claiming a known failure passes.
+-- Label manual verification as manual and state what was checked and the result.
+-- Keep caveats focused on gaps that affect confidence in the change, not a routine list of what tests don't do.
+-
+-### Wording and detail
+-
+-Brevity comes from removing unnecessary detail, not replacing concrete information with vague labels.
+-
+-- Use plain language and concrete actions. Each bullet should describe a distinct piece of coverage.
+-- Describe observable behavior instead of labels such as "runtime checks," "metadata coverage," or "strengthened tests."
+-- Be precise about what runs. Local assertions on imported bindings are not the same as a client connecting to a server. State what is checked rather than calling both "running a client."
+-- Describe each piece of coverage once. Compiling a client and checking its types often describe the same test.
+-- Omit routine mechanics, commands, counts, and assertion details unless they materially help the reviewer.
+-- Scale the section to the change. Don't turn it into an inventory of every assertion or an explicit question-and-answer checklist.
+-
+-### Wording examples
+-
+-| Vague or misleading | Concrete |
+-| --- | --- |
+-| Strengthened codegen tests. | Updated codegen tests to check names and aliases using generated bindings instead of searching generated text. |
+-| Added compile-time checks. | Tests that incorrect reducer arguments fail compilat
 ```
 
-**File**: `crates/bindings-cpp/CMakeLists.txt` (modified, +1/-1)
+**File**: `.github/pull_request_template.md` (modified, +4/-6)
 ```diff
-@@ -2,7 +2,7 @@
+@@ -1,6 +1,6 @@
+ # Description of Changes
  
- cmake_minimum_required(VERSION 3.15)
- project(SpacetimeDBCppModuleLibrary 
--    VERSION 2.16.0
-+    VERSION 2.16.2
-     LANGUAGES CXX)
+-<!-- Please describe your change, mention any related tickets, and so on here. -->
++<!-- What changes for users or maintainers, and why? Link related public issues where useful. -->
  
- # Generate version header from template
+ # API and ABI breaking changes
+ 
+@@ -33,8 +33,6 @@ and what other components it interacts with in potentially concerning ways.  -->
+ 
+ # Testing
+ 
+-<!-- Describe any testing you've done, and any testing you'd like your reviewers to do,
+-so that you're confident that all the changes work as expected! -->
+-
+-- [ ] <!-- maybe a test you want to do -->
+-- [ ] <!-- maybe a test you want a reviewer to do, so they can check it off when they're satisfied. -->
++<!-- If untested, write only “Not tested.”
++Otherwise, summarize coverage in short test-case titles. Group additional behaviors beneath the test that covers them. Mention any important failure or gap.
++Include a reviewer task only when a specific action is needed. -->
 ```
 
-**File**: `crates/bindings-csharp/BSATN.Codegen/BSATN.Codegen.csproj` (modified, +1/-1)
+**File**: `AGENTS.md` (modified, +1/-1)
 ```diff
-@@ -2,7 +2,7 @@
+@@ -16,4 +16,4 @@ These markers are provisional, and CI does not check any of this yet.
  
-   <PropertyGroup>
-     <AssemblyName>SpacetimeDB.BSATN.Codegen</AssemblyName>
--    <Version>2.16.0</Version>
-+    <Version>2.16.2</Version>
-     <Title>SpacetimeDB BSATN Codegen</Title>
-     <Description>The SpacetimeDB BSATN Codegen implements the Roslyn incremental generators for BSATN serialization/deserialization in C#.</Description>
-   </PropertyGroup>
-```
-
-**File**: `crates/bindings-csharp/BSATN.Runtime/BSATN.Runtime.csproj` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-     <AssemblyName>SpacetimeDB.BSATN.Runtime</AssemblyName>
--    <Version>2.16.0</Version>
-+    <Version>2.16.2</Version>
-     <Title>SpacetimeDB BSATN Runtime</Title>
-     <Description>The SpacetimeDB BSATN Runtime implements APIs for BSATN serialization/deserialization in C#.</Description>
-     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-```
-
-**File**: `crates/bindings-csharp/Codegen/Codegen.csproj` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-     <AssemblyName>SpacetimeDB.Codegen</AssemblyName>
--    <Version>2.16.0</Version>
-+    <Version>2.16.2</Version>
-     <Title>SpacetimeDB Module Codegen</Title>
-     <Description>The SpacetimeDB Codegen implements the Roslyn incremental generators for writing SpacetimeDB modules in C#.</Description>
-   </PropertyGroup>
-```
-
-**File**: `crates/bindings-csharp/Runtime/Runtime.csproj` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
+ # Writing PRs
  
-   <PropertyGroup>
-     <AssemblyName>SpacetimeDB.Runtime</AssemblyName>
--    <Version>2.16.0</Version>
-+    <Version>2.16.2</Version>
-     <Title>SpacetimeDB Module Runtime</Title>
-     <Description>The SpacetimeDB Runtime implements the database runtime bindings for writing SpacetimeDB modules in C#.</Description>
-   </PropertyGroup>
+-When creating or updating a PR, read [Writing pull requests](.agents/writing-prs.md). Follow its requirements for verified commits, preserving and faithfully completing every template section, and explaining verification and remaining uncertainty.
++Use the [write-pull-requests skill](.agents/skills/write-pull-requests/SKILL.md) when preparing commits for a PR and when drafting or editing its GitHub description.
 ```
 
 ---
 
-### Incident Patch 2: `ddd04ee4` (2026-11-19)
-**Commit Message**: Use parking_lot's Mutex in BlobSet, so TxState is the same size on macOS (#6641)
+### Incident Patch 2: `71a28a35` (2026-11-20)
+**Commit Message**: Update doc comment about http request timeout (#6650)
 
 # Description of Changes
 
-`spacetimedb-datastore` fails to compile on macOS:
-`static_assert_size!(TxState, 144)` fails because `TxState` is 152 bytes
-there.
+Update inline doc comment to have the correct timeout for http requests 
 
-The extra 8 bytes come from `BlobSet`, which #6305 added to `TxState`.
-Its `evictable` field was a `std::sync::Mutex<Vec<_>>`. On Linux, std's
-`Mutex` is a futex word plus a poison flag (8 bytes). On Apple targets
-it is a lazily boxed pthread mutex, a pointer plus a poison flag (16
-bytes). Measured on aarch64 macOS, `BlobSet` was 96 bytes there against
-88 on Linux, which put `TxState` at 152 against 144.
+# API and ABI breaking changes
 
-CI didn't catch this because every PR job that compiles the datastore
-runs on Linux or Windows. The only macOS builds are in `package.yml`,
-which runs on tag pushes and manual dispatch, so the next release
-packaging run would probably have hit it.
+No
 
-This PR switches `evictable` to `parking_lot::Mutex`, as suggested in
-review. `BlobSet` already uses `parking_lot` for its `RwLock`, and
-`parking_lot`'s `Mutex` has the same layout on every platform, so the
-existing `static_assert_size!(TxState, 144)` now holds everywhere and is
-unchanged. `parking_lo
+# Rollback safety impact
 
-**File**: `crates/table/src/tiered/blob_set.rs` (modified, +4/-8)
+n/a
+
+# Expected complexity level and risk
+
+1
+
+# Testing
+
+No testing. Just a comment change
+
+Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
+
+**File**: `crates/bindings-cpp/include/spacetimedb/http.h` (modified, +4/-3)
 ```diff
-@@ -1,11 +1,7 @@
- use super::metrics::{CacheTier, EvictionDirection, ObjectType};
--use std::{
--    num::NonZeroUsize,
--    ops::Deref,
--    sync::{Arc, Mutex},
--};
-+use std::{num::NonZeroUsize, ops::Deref, sync::Arc};
- 
--use parking_lot::RwLock;
-+use parking_lot::{Mutex, RwLock};
- use spacetimedb_data_structures::{
-     map::{hash_map, IntMap},
-     small_map::SmallHashMap,
-@@ -120,7 +116,7 @@ impl BlobSet {
-             return Ok(bytes_freed);
-         }
- 
--        let mut candidates = self.evictable.lock().unwrap();
-+        let mut candidates = self.evictable.lock();
-         self.resident.evictable_blobs(&mut candidates);
-         for candidate in candidates.drain(..) {
-             let maybe_resident = self.entries.read().get(&candidate.key).and_then(|entry| match entry {
-@@ -546,7 +542,7 @@ impl BlobSet {
- impl MemoryUsage for BlobSet {
-     fn heap_usage(&self) -> usize {
-         // Cache and backing store are counted by `TieredDatabaseStorage`.
--        let scratch = self.evictable.lock().unwrap().capacity() * size_of::<BlobEvictionCandidate>();
-+        let scratch = self.evictable.lock().capacity() * size_of::<BlobEvictionCandidate>();
- 
-         self.entries.read().heap_usage() + scratch
-     }
+@@ -21,7 +21,7 @@
+  * IMPORTANT LIMITATIONS:
+  * - HTTP requests CANNOT be performed inside with_tx() or try_with_tx()
+  * - The host will reject HTTP requests with WOULD_BLOCK_TRANSACTION
+- * - All timeouts are clamped to a maximum of 500ms by the host
++ * - Timeouts default to 30s and are clamped to a maximum of 180s by the host
+  * - No external HTTP library dependencies (host does actual HTTP)
+  *
+  * Example usage:
+@@ -165,7 +165,8 @@ struct HttpBody {
+  * };
+  * @endcode
+  *
+- * The host clamps all timeouts to a maximum of 500ms.
++ * Requests without a timeout use a default of 30 seconds.
++ * The host clamps all timeouts to a maximum of 180 seconds.
+  */
+ struct HttpRequest {
+     std::string uri;
+@@ -208,7 +209,7 @@ class HttpClient {
+      * @brief Send a simple GET request
+      *
+      * @param uri The request URI
+-     * @param timeout Optional timeout (clamped to 500ms by host)
++     * @param timeout Optional timeout (default 30s, clamped to 180s by host)
+      * @return Outcome<HttpResponse> - Ok if response received, Err if transport failed
+      *
+      * @code
+```
+
+**File**: `crates/bindings/src/http.rs` (modified, +2/-1)
+```diff
+@@ -492,7 +492,8 @@ impl HttpClient {
+     ///
+     /// Include a [`Timeout`] in the [`Request::extensions`] via [`http::request::Builder::extension`]
+     /// to impose a timeout on the request.
+-    /// All HTTP requests in SpacetimeDB are subject to a maximum timeout of 500 milliseconds.
++    /// Requests without a [`Timeout`] use a default timeout of 30 seconds,
++    /// and the host clamps any requested timeout to a maximum of 180 seconds.
+     /// All other extensions in `request` are ignored.
+     ///
+     /// The returned [`Response`] may have a status code other than 200 OK.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6657** (2026-11-21): Tweak PR-writing guidance for agents (@bfops)
 - **PR #6654** (2026-11-20): Bump version to 2.16.2 (@rekhoff)
+- **PR #6653** (closed): Ignore memory limit for replay if eviction fails (@aasoni)
+- **PR #6650** (2026-11-20): Update doc comment about http request timeout (@aasoni)
 - **PR #6641** (2026-11-19): Use parking_lot's Mutex in BlobSet, so TxState is the same size on macOS (@krisajenkins)
 - **PR #6636** (2026-11-19): Tiered storage docs (@joshua-spacetime)
-- **PR #6635** (2026-11-19): docs: add OIDC token verification diagram to the authentication overview (@cloutiertyler)
-- **PR #6617** (2026-11-17): Correct docs on restricting scheduled reducers (@JulienLavocat)
-- **PR #6614** (2026-11-18): TS SDK cache: build indexes on first lookup, and use a flat map for unique single-column indexes (@Ludv1gL)
 
 ---
 
@@ -1413,85 +1208,48 @@ unchanged. `parking_lo
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump version to 2.16.2
+## X. Tweak PR-writing guidance for agents
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.agents/skills/write-pull-requests/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c3e36c4a`: Bump version to 2.16.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c0f3122f`: Tweak PR-writing guidance for agents. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/skills/write-pull-requests/SKILL.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
-version = "2.16.2"
+---
+name: write-pull-requests
+description: Prepare verified commits and write or update GitHub pull request descriptions for SpacetimeDB.
+---
+
+# Writing pull requests
+
+When preparing commits, use the signing requirements below. When drafting or editing a description, use the template and the writing guidance.
+
+## Verified commits
+
+Verified commits are required: a PR cannot be merged without them. Enable commit signing before creating commits for a PR, and ensure GitHub recognizes the commits as **Verified**. A local signature alone does not establish that GitHub can verify it.
+
+If you cannot create verified commits, alert the user promptly, explicitly tell them that the PR cannot be merged without verified commits, and help them set up commit signing and GitHub verification. Do not silently proceed with unverified commits or present the PR as ready to merge. After setup, confirm that GitHub marks the PR's commits as **Verified**.
+
+## Write for the reviewer
+
+Use the [PR template](../../../.github/pull_request_template.md). Keep and complete every section, including the prescribed wording for inapplicable sections. Replace placeholders with facts from the change. Lead the description
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
-version = "2.16.0"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c3e36c4a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c0f3122f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

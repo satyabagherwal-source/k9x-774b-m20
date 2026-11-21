@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T22:57:58.257Z",
+  "updated_at": "2026-11-21T23:06:18.329Z",
   "stats": {
-    "total_discovered": 7377,
-    "approved_pending_harvest": 6979,
+    "total_discovered": 7379,
+    "approved_pending_harvest": 6981,
     "harvested_count": 0,
     "rejected_count": 398,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6959,
+      "COMMUNITY_AND_EXPERT": 6961,
       "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -159531,6 +159531,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/builderio-builder-learnings.md",
         "fileName": "builderio-builder-learnings.md"
+      }
+    },
+    "SRC-E6AB2F79F38D": {
+      "id": "SRC-E6AB2F79F38D",
+      "url": "https://github.com/clockworklabs/SpacetimeDB/compare/34dcbf8084cf07b978e9a1b9b14127a2fb24279d...5ef5f833a7a4e4230f0662f5e6d93990ba3e1d29",
+      "title": "https://github.com/clockworklabs/SpacetimeDB/compare/34dcbf8084cf07b978e9a1b9b14127a2fb24279d...5ef5f833a7a4e4230f0662f5e6d93990ba3e1d29",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T23:06:18.277Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
+        "fileName": "clockworklabs-spacetimedb-learnings.md"
+      }
+    },
+    "SRC-0F96025B8D40": {
+      "id": "SRC-0F96025B8D40",
+      "url": "https://github.com/clockworklabs/SpacetimeDB/commit/98689d9e2f4a79a75d93b0bf5dadbefe4e5cea47",
+      "title": "https://github.com/clockworklabs/SpacetimeDB/commit/98689d9e2f4a79a75d93b0bf5dadbefe4e5cea47",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T23:06:18.329Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
+        "fileName": "clockworklabs-spacetimedb-learnings.md"
       }
     }
   }
