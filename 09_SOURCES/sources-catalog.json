@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "2875dee3",
+    "sourceVersion": "ff15a1de",
     "license": "Apache-2.0",
-    "contentHash": "c1ef264025a4a50ce160fd774557f35969be02e131fb8e3c5c34e52e15767de4",
-    "lastHarvestedAt": "2026-11-21T17:41:58.128Z",
+    "contentHash": "00ebb22f4daf338965668416f4c47e5f30af57c9df01ee559e4a1c086587041f",
+    "lastHarvestedAt": "2026-11-21T23:47:44.024Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "c6df43e3",
+    "sourceVersion": "5f5ec9c1",
     "license": "Apache-2.0",
-    "contentHash": "5942268cfa183239f3366376e2275834536a0cead8f9529fa018c0ee012dfe11",
-    "lastHarvestedAt": "2026-11-20T19:44:45.713Z",
+    "contentHash": "f693a15a128657ead222c5ab0d43ac6a056dccb6a1e9e283f325d7bfa8b3c96c",
+    "lastHarvestedAt": "2026-11-21T23:47:47.536Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {
@@ -11735,8 +11735,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/d1-2B",
     "sourceVersion": "hf-liquidai-d1-2b",
     "license": "Open-Source",
-    "contentHash": "50adaf2ae139c9170e96ee6dc00d56e3a62578edb8a82c30974a1a65654f95cb",
-    "lastHarvestedAt": "2026-11-15T09:55:04.092Z",
+    "contentHash": "1ba061fed393d04be33b7f482aec62f1d4e4ad7a9c62210aba581d1e13d2523b",
+    "lastHarvestedAt": "2026-11-21T23:47:32.629Z",
     "learningId": "learn-huggingface-liquidai-d1-2b"
   },
   "hf-sensenova-sensenova-loop-9b-preview": {

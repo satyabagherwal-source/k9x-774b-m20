@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T09:55:28.054Z",
+  "timestamp": "2026-11-21T23:47:51.029Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-liquidai-d1-2b-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-liquidai-d1-2b-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T09:55:28.054Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T23:47:51.029Z`  
 > **Learning ID**: `LEARN-EVO-hf-liquidai-d1-2b-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-liquidai-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T09:55:03.758Z  
+> **Timestamp**: 2026-11-21T23:47:32.116Z  
 > **Learning ID**: `learn-huggingface-liquidai-d1-2b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/LiquidAI/d1-2B](https://huggingface.co/LiquidAI/d1-2B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T09:49:47.882Z  
+> **Harvest Timestamp**: 2026-11-21T23:47:31.971Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 13154 downloads | 286 likes
+- **Stars / Engagement**: 17143 downloads | 351 likes
 
 ---
 

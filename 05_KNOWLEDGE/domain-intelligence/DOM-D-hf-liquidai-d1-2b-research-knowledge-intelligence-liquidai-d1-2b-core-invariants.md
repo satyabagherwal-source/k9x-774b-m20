@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/LiquidAI/d1-2B",
   "source_version": "hf-liquidai-d1-2b",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T09:55:04.221Z",
+  "timestamp": "2026-11-21T23:47:32.839Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-liquidai-d1-2b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [LiquidAI/d1-2B](https://huggingface.co/LiquidAI/d1-2B) (Revision: `hf-liquida`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T09:55:04.221Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T23:47:32.839Z`  
 > **Learning ID**: `learn-huggingface-liquidai-d1-2b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/LiquidAI/d1-2B](https://huggingface.co/LiquidAI/d1-2B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T09:49:47.882Z  
+> **Harvest Timestamp**: 2026-11-21T23:47:31.971Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 13154 downloads | 286 likes
+- **Stars / Engagement**: 17143 downloads | 351 likes
 
 ---
 

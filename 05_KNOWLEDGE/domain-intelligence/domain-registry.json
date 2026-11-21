@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T23:39:51.410Z",
+  "last_updated": "2026-11-21T23:47:52.874Z",
   "total_records": 2303,
   "domains": {
     "A": {
@@ -8407,10 +8407,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "c7bcfd9c44558594ad9476dfb2352d0720616394f05b11cc84b9eb6ed35cc774",
-      "created_at": "2026-11-21T21:19:46.431Z"
+      "content_hash": "496a753259fbe485abcd2ba72bc40befd16fb63515fa99e31f8cc126fc5cae82",
+      "created_at": "2026-11-21T23:47:44.403Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -10344,8 +10344,8 @@
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "repository": "t8y2/dbx",
-      "content_hash": "1050e0df6618d03c174399a8d193ad88f2991740fbea2cf8caf0117e50daa19d",
-      "created_at": "2026-11-20T19:44:46.071Z"
+      "content_hash": "0c63ab8a54450f3e6878d010dac0c508906c6a037952d91910949d9e4d8dbdd1",
+      "created_at": "2026-11-21T23:47:47.923Z"
     },
     "DOM-D-218A5260": {
       "record_id": "DOM-D-218A5260",
@@ -20390,8 +20390,8 @@
       "title": "Technical Construction Intelligence: t8y2-dbx-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-learnings-technical-construction-intelligence-t8y2-dbx-learnings-core-i.md",
       "repository": "t8y2-dbx-learnings",
-      "content_hash": "541f3ed4e589e61a764dc98a50743889e426a1e2155953ef0f5b81bf2739da4d",
-      "created_at": "2026-11-18T12:16:17.507Z"
+      "content_hash": "d1c8195cb0ae772f93db39ef569acba9b1388bfd95d74ea01cd57f9c88bea202",
+      "created_at": "2026-11-21T23:47:52.874Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tencent-hy-memory-30b-a3b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-hy-memory-30b-a3b-core-invariants",
@@ -20885,8 +20885,8 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/d1-2B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-d1-2b-research-knowledge-intelligence-liquidai-d1-2b-core-invariants.md",
       "repository": "LiquidAI/d1-2B",
-      "content_hash": "10eccaeaaf77208ee4c8ce0e4cc13f92f0a8f87c3899ebaff244a05693e82ba8",
-      "created_at": "2026-11-15T09:55:04.221Z"
+      "content_hash": "6ed41a62147692b8a9f5a04b72b6f42466f11c23fe1389c8f6adeead7514bdf3",
+      "created_at": "2026-11-21T23:47:32.839Z"
     },
     "DOM-D-4EE8ADE1": {
       "record_id": "DOM-D-4EE8ADE1",
@@ -20936,8 +20936,8 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-d1-2b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-d1-2b-learnings-research-knowledge-intelligence-hf-liquidai-d1-2b-le.md",
       "repository": "hf-liquidai-d1-2b-learnings",
-      "content_hash": "e211fda9014d7669414449fae9f17e03f5416aa00eb0f8cc484bc16a618faaea",
-      "created_at": "2026-11-15T09:55:28.124Z"
+      "content_hash": "595f1d946cab50b6e7795eda58473193decb068a2e73387926e5209458ddfe49",
+      "created_at": "2026-11-21T23:47:51.135Z"
     },
     "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-learnings-core-invariants",
@@ -23825,8 +23825,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "7c4a6459c1a573e811e83af3de716b6e5b72f4d4c860910822dd3339111fc3a9",
-      "created_at": "2026-11-21T17:42:06.599Z"
+      "content_hash": "2b9e0bc101f9e14f5630db440c851d989dceffceaf13bdc20cec96740e5fe3cd",
+      "created_at": "2026-11-21T23:47:51.795Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",

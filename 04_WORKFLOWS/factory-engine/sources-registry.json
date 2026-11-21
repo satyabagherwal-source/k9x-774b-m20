@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T23:39:49.199Z",
-    "lastVerified": "2026-11-21T23:39:49.199Z",
+    "lastChecked": "2026-11-21T23:47:50.781Z",
+    "lastVerified": "2026-11-21T23:47:50.781Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,9 +255,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-21T22:56:55.321Z",
+    "lastChecked": "2026-11-21T23:47:44.128Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-21T22:56:55.321Z"
+    "lastVerified": "2026-11-21T23:47:44.128Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1417,14 +1417,14 @@
     "officialUrl": "https://github.com/t8y2/dbx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T19:44:44.728Z",
-    "lastVerified": "2026-11-20T19:44:44.728Z",
+    "lastChecked": "2026-11-21T23:47:46.476Z",
+    "lastVerified": "2026-11-21T23:47:46.476Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "5942268cfa183239f3366376e2275834536a0cead8f9529fa018c0ee012dfe11",
+    "contentHash": "f693a15a128657ead222c5ab0d43ac6a056dccb6a1e9e283f325d7bfa8b3c96c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 18,
+    "recentFixesCount": 11,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2334,14 +2334,14 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T17:41:57.372Z",
-    "lastVerified": "2026-11-21T17:41:57.372Z",
+    "lastChecked": "2026-11-21T23:47:43.271Z",
+    "lastVerified": "2026-11-21T23:47:43.271Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "c1ef264025a4a50ce160fd774557f35969be02e131fb8e3c5c34e52e15767de4",
+    "contentHash": "00ebb22f4daf338965668416f4c47e5f30af57c9df01ee559e4a1c086587041f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2845,12 +2845,12 @@
     "lastVerified": "2026-11-21T19:44:48.248Z"
   },
   "kgateway-dev-kgateway": {
-    "name": "kgateway-dev/kgateway",
+    "name": "kgateway",
     "officialUrl": "https://github.com/kgateway-dev/kgateway",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T20:57:52.465Z",
-    "lastVerified": "2026-11-20T20:57:52.465Z",
+    "lastChecked": "2026-11-21T23:47:36.664Z",
+    "lastVerified": "2026-11-21T23:47:36.664Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kgateway-dev-kgateway",
@@ -2859,7 +2859,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8a71677f"
   },
   "pinecone-io-examples": {
     "name": "examples",
@@ -4048,9 +4049,9 @@
   "margelo-react-native-mmkv": {
     "name": "react-native-mmkv",
     "officialUrl": "https://github.com/margelo/react-native-mmkv",
-    "lastChecked": "2026-11-18T18:38:07.677Z",
+    "lastChecked": "2026-11-21T23:47:34.248Z",
     "revisionIdentifier": "0ec4c963",
-    "lastVerified": "2026-11-18T18:38:07.677Z"
+    "lastVerified": "2026-11-21T23:47:34.248Z"
   },
   "erkamyaman-rust-anything": {
     "name": "erkamyaman/rust-anything",
@@ -4452,8 +4453,8 @@
     "officialUrl": "https://github.com/aome510/spotify-player",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T08:28:20.999Z",
-    "lastVerified": "2026-11-20T08:28:20.999Z",
+    "lastChecked": "2026-11-21T23:47:29.124Z",
+    "lastVerified": "2026-11-21T23:47:29.124Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aome510-spotify-player",
@@ -13133,6 +13134,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
     "contentHash": "0b89a22d536d0b7f5c342d998d504e9f83819c1ec0c786f93123034a5c17e18a",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-liquidai-d1-2b": {
+    "name": "LiquidAI/d1-2B",
+    "officialUrl": "https://huggingface.co/LiquidAI/d1-2B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T23:47:31.971Z",
+    "lastVerified": "2026-11-21T23:47:31.971Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-liquidai-d1-2b",
+    "contentHash": "1ba061fed393d04be33b7f482aec62f1d4e4ad7a9c62210aba581d1e13d2523b",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

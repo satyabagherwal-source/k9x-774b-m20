@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T23:39:51.735Z",
+  "last_updated": "2026-11-21T23:47:53.046Z",
   "total_verified_learnings": 9063,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23358,
+  "total_items": 23361,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "3862fd16",
-      "content_hash": "c7bcfd9c44558594ad9476dfb2352d0720616394f05b11cc84b9eb6ed35cc774",
+      "source_version": "ff15a1de",
+      "content_hash": "496a753259fbe485abcd2ba72bc40befd16fb63515fa99e31f8cc126fc5cae82",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T21:19:46.431Z"
+      "persisted_at": "2026-11-21T23:47:44.403Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
+      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "3862fd16",
-      "content_hash": "f78e2ede8e70251dab4c0e6626b9d90ddc2299f0b8cf0c1f8c525bf3086489b1",
+      "source_version": "ff15a1de",
+      "content_hash": "604212174ad0227349adff322c15ab3b99aea4951fcd73ae47a24f5fa31ea71f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T21:19:46.595Z"
+      "persisted_at": "2026-11-21T23:47:44.717Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -214360,8 +214360,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "c6df43e3",
-      "content_hash": "5942268cfa183239f3366376e2275834536a0cead8f9529fa018c0ee012dfe11",
+      "source_version": "5f5ec9c1",
+      "content_hash": "f693a15a128657ead222c5ab0d43ac6a056dccb6a1e9e283f325d7bfa8b3c96c",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -214399,6 +214399,11 @@
           "number": 9631,
           "title": "explain launch-enforced read-only errors",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9870,
+          "title": "allow SQL file execution in passwordless deployments",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214406,7 +214411,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T19:44:45.520Z",
+      "verified_at": "2026-11-21T23:47:47.323Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214448,10 +214453,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "repository": "t8y2/dbx",
-      "source_version": "c6df43e3",
-      "content_hash": "1050e0df6618d03c174399a8d193ad88f2991740fbea2cf8caf0117e50daa19d",
+      "source_version": "5f5ec9c1",
+      "content_hash": "0c63ab8a54450f3e6878d010dac0c508906c6a037952d91910949d9e4d8dbdd1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T19:44:46.071Z"
+      "persisted_at": "2026-11-21T23:47:47.923Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx",
@@ -214460,10 +214465,10 @@
       "relative_path": "08_VERIFICATION/t8y2-dbx-verification-protocol-empirical-defect-shield-for-t8y2-dbx.md",
       "title": "Verification Protocol: Empirical Defect Shield for t8y2/dbx",
       "repository": "t8y2/dbx",
-      "source_version": "c6df43e3",
-      "content_hash": "ab97fd945fa3e9cd1958762824f18f95805a3ae34aaa365db57e58dbb712603a",
+      "source_version": "5f5ec9c1",
+      "content_hash": "89d8aa2f2686dfb6a200c6df70e8921bf5cb445852c65e6d6f99284428305883",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T19:44:46.215Z"
+      "persisted_at": "2026-11-21T23:47:48.102Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar",
@@ -215847,13 +215852,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "3862fd16",
-      "content_hash": "3919bff8a6ca847a991704fc8a036f429364c06081633873aec27c63011af5f2",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "ff15a1de",
+      "content_hash": "00ebb22f4daf338965668416f4c47e5f30af57c9df01ee559e4a1c086587041f",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215948,7 +215953,7 @@
         {
           "number": 9843,
           "title": "Empirical Invariant Guard in block_sync.rs",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215956,7 +215961,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T21:19:45.828Z",
+      "verified_at": "2026-11-21T23:47:43.815Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244566,9 +244571,9 @@
       "title": "Technical Construction Intelligence: t8y2-dbx-learnings Core Invariants",
       "repository": "t8y2-dbx-learnings",
       "source_version": "HEAD",
-      "content_hash": "541f3ed4e589e61a764dc98a50743889e426a1e2155953ef0f5b81bf2739da4d",
+      "content_hash": "d1c8195cb0ae772f93db39ef569acba9b1388bfd95d74ea01cd57f9c88bea202",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T12:16:17.507Z"
+      "persisted_at": "2026-11-21T23:47:52.874Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx-learnings",
@@ -244578,9 +244583,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for t8y2-dbx-learnings",
       "repository": "t8y2-dbx-learnings",
       "source_version": "HEAD",
-      "content_hash": "eca41304094465fd3f7a4bb730f576266f2ecc8e2485cc3f2f0d8078a8a56baf",
+      "content_hash": "16a4f6c6df73aad1ea98ecec1c2149f637adc0ec88dd8b025a06f80f58fb6abf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T12:16:17.662Z"
+      "persisted_at": "2026-11-21T23:47:53.046Z"
     },
     "learn-huggingface-tencent-hy-memory-30b-a3b": {
       "learning_id": "learn-huggingface-tencent-hy-memory-30b-a3b",
@@ -246485,7 +246490,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/d1-2B",
       "source_version": "hf-liquidai-d1-2b",
-      "content_hash": "50adaf2ae139c9170e96ee6dc00d56e3a62578edb8a82c30974a1a65654f95cb",
+      "content_hash": "1ba061fed393d04be33b7f482aec62f1d4e4ad7a9c62210aba581d1e13d2523b",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md",
       "promoted_rules": [],
@@ -246494,7 +246499,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T09:55:03.948Z",
+      "verified_at": "2026-11-21T23:47:32.388Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246511,9 +246516,9 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/d1-2B Core Invariants",
       "repository": "LiquidAI/d1-2B",
       "source_version": "hf-liquidai-d1-2b",
-      "content_hash": "10eccaeaaf77208ee4c8ce0e4cc13f92f0a8f87c3899ebaff244a05693e82ba8",
+      "content_hash": "6ed41a62147692b8a9f5a04b72b6f42466f11c23fe1389c8f6adeead7514bdf3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T09:55:04.221Z"
+      "persisted_at": "2026-11-21T23:47:32.839Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-2b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-2b-learnings-core-invariants",
@@ -246523,9 +246528,9 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-d1-2b-learnings Core Invariants",
       "repository": "hf-liquidai-d1-2b-learnings",
       "source_version": "HEAD",
-      "content_hash": "e211fda9014d7669414449fae9f17e03f5416aa00eb0f8cc484bc16a618faaea",
+      "content_hash": "595f1d946cab50b6e7795eda58473193decb068a2e73387926e5209458ddfe49",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T09:55:28.124Z"
+      "persisted_at": "2026-11-21T23:47:51.135Z"
     },
     "candidate_directive-ci-cap-the-build-test-packages-only-when-they-change-key-the-compile-cache-on": {
       "item_id": "candidate_directive-ci-cap-the-build-test-packages-only-when-they-change-key-the-compile-cache-on",
@@ -256120,9 +256125,9 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "7c4a6459c1a573e811e83af3de716b6e5b72f4d4c860910822dd3339111fc3a9",
+      "content_hash": "2b9e0bc101f9e14f5630db440c851d989dceffceaf13bdc20cec96740e5fe3cd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T17:42:06.599Z"
+      "persisted_at": "2026-11-21T23:47:51.795Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea",
@@ -256132,9 +256137,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol-snarkos-learnings",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "829fb4a3d00e0eadf41f23d68ed86e003a9b0ec810e73f44e4648ff9c2faa1ec",
+      "content_hash": "d049703af690fc46e597f6bc592c3bc3a06c19dc12b1510bc82f9f7ba9b7dd23",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T17:42:06.888Z"
+      "persisted_at": "2026-11-21T23:47:52.117Z"
     },
     "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and": {
       "item_id": "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and",
@@ -264590,10 +264595,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/aleo-labs-protocol-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-.md",
       "title": "Agent Contract: aleo-labs-protocol/snarkOS Autonomous Specialist Persona",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "2875dee3",
-      "content_hash": "cc8260058c399ec0f3319745bd1f427839c6933db31589b2d93652fd03370f2f",
+      "source_version": "ff15a1de",
+      "content_hash": "352af4702deb1b1e75c7680a1425e56d97aade0edac57284dd2d0c15a4482de1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T17:41:58.673Z"
+      "persisted_at": "2026-11-21T23:47:44.574Z"
     },
     "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
@@ -269302,9 +269307,9 @@
       "title": "Agent Contract: aleo-labs-protocol-snarkos-learnings Autonomous Specialist Persona",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "c969ef5586d0c8d618af8644767622d195c4358c2f9e6dd44992c1d7d680bb0b",
+      "content_hash": "bedcaac97b382cfeafc0a28e37a76153dd270932f523cf71d64f2f19544cee79",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T17:42:06.754Z"
+      "persisted_at": "2026-11-21T23:47:51.975Z"
     },
     "learn-github-cypress-io-cypress": {
       "learning_id": "learn-github-cypress-io-cypress",
@@ -316516,26 +316521,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 9843,
       "title": "Empirical Invariant Guard in block_sync.rs",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "3862fd16",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "ff15a1de",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-21T21:19:45.828Z"
+      "verified_at": "2026-11-21T23:47:43.815Z"
     },
     "candidate_directive-empirical-invariant-guard-in-block_sync-rs": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-block_sync-rs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZSB3-empirical-invariant-guard-in-block_sync-rs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-60NG-empirical-invariant-guard-in-block_sync-rs.md",
       "title": "Empirical Invariant Guard in block_sync.rs",
-      "repository": "provablehq-snarkos-learnings",
+      "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "6c9f07b4f708b0b72db351b33f45157a9a1a81a2b1df583c63bf78cb15d25fc6",
+      "content_hash": "36da47b90cbee92581ea90eb57e64159497182643647a6de0ca10c3ebf2b1ee7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T21:23:02.802Z"
+      "persisted_at": "2026-11-21T23:47:51.631Z"
     },
     "rule-9844": {
       "learning_id": "rule-9844",
@@ -317587,6 +317592,44 @@
       "content_hash": "058a391ac3a61b63c76df222f321e98a237df5b4def4336b34f15c2ae0e24af6",
       "domain_letter": "D",
       "persisted_at": "2026-11-21T23:39:49.556Z"
+    },
+    "rule-9870": {
+      "learning_id": "rule-9870",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9870,
+      "title": "allow SQL file execution in passwordless deployments",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "5f5ec9c1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T23:47:47.323Z"
+    },
+    "candidate_directive-allow-sql-file-execution-in-passwordless-deployments": {
+      "item_id": "candidate_directive-allow-sql-file-execution-in-passwordless-deployments",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5XNS-allow-sql-file-execution-in-passwordless-deployments.md",
+      "title": "allow SQL file execution in passwordless deployments",
+      "repository": "t8y2/dbx",
+      "source_version": "5f5ec9c1",
+      "content_hash": "ab1ea3e99fab66cf52d2ad96c958b8246c426cf57f928ff670b79adb4785341f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T23:47:47.756Z"
+    },
+    "candidate_directive-web-allow-sql-file-execution-in-passwordless-deployments": {
+      "item_id": "candidate_directive-web-allow-sql-file-execution-in-passwordless-deployments",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-61HI-web-allow-sql-file-execution-in-passwordless-deployments.md",
+      "title": "web): allow SQL file execution in passwordless deployments",
+      "repository": "t8y2-dbx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "757094b55db8fec21cf059b973c011761730be95d5585011df3a8f33ddea4f22",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T23:47:52.713Z"
     }
   },
   "ai-builder-brain": {

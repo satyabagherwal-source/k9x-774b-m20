@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T23:39:44.392Z",
+  "last_updated": "2026-11-21T23:47:47.545Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "3919bff8a6ca847a991704fc8a036f429364c06081633873aec27c63011af5f2",
-      "verified_at": "2026-11-21T21:19:46.047Z",
+      "content_hash": "00ebb22f4daf338965668416f4c47e5f30af57c9df01ee559e4a1c086587041f",
+      "verified_at": "2026-11-21T23:47:44.032Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T21:19:46.048Z"
+      "last_updated": "2026-11-21T23:47:44.032Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "5942268cfa183239f3366376e2275834536a0cead8f9529fa018c0ee012dfe11",
-      "verified_at": "2026-11-20T19:44:45.721Z",
+      "content_hash": "f693a15a128657ead222c5ab0d43ac6a056dccb6a1e9e283f325d7bfa8b3c96c",
+      "verified_at": "2026-11-21T23:47:47.544Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T19:44:45.721Z"
+      "last_updated": "2026-11-21T23:47:47.544Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",
@@ -17661,14 +17661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-d1-2b",
-      "content_hash": "50adaf2ae139c9170e96ee6dc00d56e3a62578edb8a82c30974a1a65654f95cb",
-      "verified_at": "2026-11-15T09:55:04.099Z",
+      "content_hash": "1ba061fed393d04be33b7f482aec62f1d4e4ad7a9c62210aba581d1e13d2523b",
+      "verified_at": "2026-11-21T23:47:32.637Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T09:55:04.099Z"
+      "last_updated": "2026-11-21T23:47:32.637Z"
     },
     "sensenova/SenseNova-Loop-9B-Preview": {
       "repository": "sensenova/SenseNova-Loop-9B-Preview",

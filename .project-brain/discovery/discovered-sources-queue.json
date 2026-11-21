@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T23:30:18.582Z",
+  "updated_at": "2026-11-21T23:47:52.499Z",
   "stats": {
-    "total_discovered": 7381,
-    "approved_pending_harvest": 6982,
+    "total_discovered": 7385,
+    "approved_pending_harvest": 6986,
     "harvested_count": 0,
     "rejected_count": 399,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6962,
+      "COMMUNITY_AND_EXPERT": 6966,
       "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -159612,6 +159612,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
         "fileName": "tailscale-tailscale-learnings.md"
+      }
+    },
+    "SRC-BD2E1E5604F1": {
+      "id": "SRC-BD2E1E5604F1",
+      "url": "https://dl.dbxio.com/issue-feedback/2026/11/e69e0df4-3729-40c3-a1e3-4dc000dcc425/1-2f838c3f-867e-455d-a43b-8ec4a5962361.png",
+      "title": "https://dl.dbxio.com/issue-feedback/2026/11/e69e0df4-3729-40c3-a1e3-4dc000dcc425/1-2f838c3f-867e-455d-a43b-8ec4a5962361.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T23:47:52.347Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
+        "fileName": "t8y2-dbx-learnings.md"
+      }
+    },
+    "SRC-E1E734F4AF70": {
+      "id": "SRC-E1E734F4AF70",
+      "url": "https://dl.dbxio.com/issue-feedback/2026/11/e69e0df4-3729-40c3-a1e3-4dc000dcc425/2-30665664-40a6-4cd4-b74e-d2439d539ebb.png",
+      "title": "https://dl.dbxio.com/issue-feedback/2026/11/e69e0df4-3729-40c3-a1e3-4dc000dcc425/2-30665664-40a6-4cd4-b74e-d2439d539ebb.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T23:47:52.399Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
+        "fileName": "t8y2-dbx-learnings.md"
+      }
+    },
+    "SRC-7AF9342BA228": {
+      "id": "SRC-7AF9342BA228",
+      "url": "https://dl.dbxio.com/issue-feedback/2026/11/e69e0df4-3729-40c3-a1e3-4dc000dcc425/3-2bfec45f-b317-4af8-99a8-a56194907fad.png",
+      "title": "https://dl.dbxio.com/issue-feedback/2026/11/e69e0df4-3729-40c3-a1e3-4dc000dcc425/3-2bfec45f-b317-4af8-99a8-a56194907fad.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T23:47:52.450Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
+        "fileName": "t8y2-dbx-learnings.md"
+      }
+    },
+    "SRC-9D3344217122": {
+      "id": "SRC-9D3344217122",
+      "url": "https://github.com/user-attachments/assets/f91468f6-402a-4651-b1c3-3d8fa3c0837f",
+      "title": "https://github.com/user-attachments/assets/f91468f6-402a-4651-b1c3-3d8fa3c0837f",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T23:47:52.499Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
+        "fileName": "t8y2-dbx-learnings.md"
       }
     }
   }

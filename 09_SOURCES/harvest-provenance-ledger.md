@@ -11977,3 +11977,6 @@ Every entry in this ledger must capture:
 | `learn-dom-b-1a9a8a88` | `project://tailscale-tailscale` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md` | 2026-11-21T23:30:18.496Z |
 | `learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated` | `https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | `hf-obliter` | Multi-dimensional audit evidence | 2026-11-21T23:39:37.314Z |
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `badcc586` | Multi-dimensional audit evidence | 2026-11-21T23:39:44.383Z |
+| `learn-huggingface-liquidai-d1-2b` | `https://huggingface.co/LiquidAI/d1-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-21T23:47:32.629Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `ff15a1de` | Multi-dimensional audit evidence | 2026-11-21T23:47:44.024Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `5f5ec9c1` | Multi-dimensional audit evidence | 2026-11-21T23:47:47.536Z |

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T12:16:17.300Z",
+  "timestamp": "2026-11-21T23:47:52.599Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-t8y2-dbx-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [t8y2-dbx-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T12:16:17.300Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T23:47:52.599Z`  
 > **Learning ID**: `LEARN-EVO-t8y2-dbx-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `5d542c80`  
+> **Source Version**: `5f5ec9c1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T12:16:12.090Z  
+> **Timestamp**: 2026-11-21T23:47:46.482Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T12:16:12.085Z  
+> **Harvest Timestamp**: 2026-11-21T23:47:46.476Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 30740 stars
+- **Stars / Engagement**: 31100 stars
 
 ---
 
@@ -467,6 +467,7 @@ use std::sync::{Arc, LazyLock, Mutex as StdMutex};
 use std::time::{Duration, Instant};
 
 use anyhow::{anyhow, bail, Context, Result};
+use chrono::FixedOffset;
 use chrono_tz::Tz;
 use futures::future::poll_fn;
 use serde_json::Value;
@@ -482,7 +483,7 @@ use crate::model::{
     ObjectInfo, ObjectSource, QueryOptions, QueryPageResult, QueryResult, TableInfo, DEFAULT_MAX_ROWS,
     TDENGINE_DATA_TYPES,
 };
-use crate::value::borrowed_value_to_json;
+use crate::value::{borrowed_value_to_json, TimestampZone};
 
 /// 表列表快照的兜底有效期。
 ///
@@ -511,7 +512,7 @@ pub struct TdengineDriver {
     connection: Option<Taos>,
     params: ConnectParams,
     server_version: Option<String>,
-    session_timezone: Option<Tz>,
+    session_timezone: Option<TimestampZone>,
     current_database: String,
     query_sessions: HashMap<String, QueryCursor>,
 }
@@ -526,8 +527,8 @@ struct TableSnapshot {
 
 struct QueryCursor {
     result_set: ResultSet,
-    timezone: Option<Tz>,
-    session_timezone: Option<Tz>,
+    timezone: Option<TimestampZone>,
+    session_timezone: Option<TimestampZone>,
     columns: Vec<String>,
     column_types: Vec<String>,
     affected_rows: i64,
@@ -570,7 +571,7 @@ impl TdengineDriver {
         let session_timezone = query_scalar_string(&connection, "SELECT timezone()", &token, 5)
             .await
             .ok()
-            .and_then(|value| parse_server_timezone(&value));
+            .and_then(|value| parse_server_time_zone(&value));
         self.current_database = dsn.database;
         self.server_version = server_version;
         self.session_timezone = session_timezone;
@@ -722,8 +723,7 @@ impl TdengineDriver {
     ) -> Result<CompletionAssistantResponse> {
         let allowed = request.object_kinds.iter().map(|kind| kind.to_ascii_lowercase()).collect::<HashSet<_>>();
         let include_databases = allowed.contains("database") || allowed.contains("schema");
-        let include_tables = allowed.is_empty() || allowed.contains("table") || allowed.contains("view");
-        let 
+        let include_tables = allowed.is_em
 ```
 
 ### Core Architecture Module: `agents/drivers/tdengine/src/lib.rs`
@@ -1299,13 +1299,32 @@ impl RuntimeServer {
 ```
 use base64::engine::general_purpose::STANDARD;
 use base64::Engine;
-use chrono::{NaiveDateTime, Timelike};
+use chrono::{FixedOffset, NaiveDateTime, TimeZone, Timelike};
 use chrono_tz::Tz;
 use serde_json::{json, Number, Value};
 use taos::taos_query::common::Timestamp;
 use taos::BorrowedValue;
 
-pub fn borrowed_value_to_json(value: BorrowedValue<'_>, timezone: Option<Tz>) -> Value {
+/// 时间戳渲染时使用的时区。
+///
+/// TDengine 的 `SELECT timezone()` 不一定返回 IANA 名称（例如 `CST (+0800)`），
+/// 这时只能拿到一个 UTC 偏移量，用固定偏移渲染出的墙钟时间同样正确。
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TimestampZone {
+    Iana(Tz),
+    Fixed(FixedOffset),
+}
+
+impl TimestampZone {
+    fn to_naive_local(self, timestamp: Timestamp) -> NaiveDateTime {
+        match self {
+            TimestampZone::Iana(timezone) => timestamp.to_datetime_with_custom_tz(&timezone).naive_local(),
+            TimestampZone::Fixed(offset) => offset.from_utc_datetime(&timestamp.to_naive_datetime()).naive_local(),
+        }
+    }
+}
+
+pub fn borrowed_value_to_json(value: BorrowedValue<'_>, timezone: Option<TimestampZone>) -> Value {
     match value {
         BorrowedValue::Null(_) => Value::Null,
         BorrowedValue::Bool(value) => Value::Bool(value),
@@ -1369,9 +1388,9 @@ fn looks_like_wkt(value: &str) -> bool {
         .any(|prefix| upper.starts_with(prefix))
 }
 
-fn format_timestamp(timestamp: Timestamp, timezone: Option<Tz>) -> String {
+fn format_timestamp(timestamp: Timestamp, timezone: Option<TimestampZone>) -> String {
     let datetime = match timezone {
-        Some(timezone) => timestamp.to_datetime_with_custom_tz(&timezone).naive_local(),
+        Some(timezone) => timezone.to_naive_local(timestamp),
         None => timestamp.to_naive_datetime(),
     };
     format_naive_datetime(datetime, timestamp)
@@ -1435,21 +1454,21 @@ mod tests {
         assert_eq!(
             borrowed_value_to_json(
                 BorrowedValue::Timestamp(Timestamp::Milliseconds(1_704_067_200_123)),
-                Some(chrono_tz::UTC)
+                Some(TimestampZone::Iana(chrono_tz::UTC))
             ),
             Value::String("2024-01-01 00:00:00.123".into())
         );
         assert_eq!(
             borrowed_value_to_json(
                 BorrowedValue::Timestamp(Timestamp::Microseconds(1_704_067_200_123_400)),
-                Some(chrono_tz::UTC)
+                Some(TimestampZone::Iana(chrono_tz::UTC))
             ),
             Value::String("2024-01-01 00:00:00.1234".into())
         );
         assert_eq!(
             borrowed_value_to_json(
                 BorrowedValue::Timestamp(Timestamp::Nanoseconds(1_704_067_200_123_456_789)),
-                Some(chrono_tz::UTC)
+                Some(TimestampZone::Iana(chrono_tz::UTC))
             ),
             Value::String("2024-01-01 00:00:00.123456789".into())
         );
@@ -1459,8 +1478,26 @@ mod tests {
     fn formats_timestamps_in_the_selected_timezone() {
         let timestamp = BorrowedValue::Timestamp(Timestamp::Milliseconds(1_704_067_200_123));
         assert_eq!(
-            borrowed_value_to_json(timestamp.clone(), Some(chrono_tz::Asia::Shanghai)),
+            borrowed_value_to_json(timestamp.clone(), Some(TimestampZone::Iana(chrono_tz::Asia::Shanghai))),
             Value::String("2024-01-01 08:00:00.123".into())
+        );
+        assert_eq!(
+            borrowed_value_to_json(
+                timestamp.clone(),
+                Some(TimestampZone::Fixed(FixedOffset::east_opt(8 * 3600).unwrap()))
+            ),
+            Value::String("2024-01-01 08:00:00.123".into())
+        );
+        assert_eq!(
+            borrowed_value_to_json(
+                timestamp.clone(),
+                Some(TimestampZone::Fixed(FixedOffset::east_opt(-(5 * 3600 + 30 * 60)).unwrap()))
+            ),
+            Value::String("2023-12-31 18:30:00.123".into())
+        );
+        assert_eq!(
+            borrowed_value_to_json(timestamp.clone(), Some(TimestampZone::Fixed(FixedOffset::east_opt(0).unwrap()))),
+            Value::String("2024-01-01 00:00:00.123".into())
         );
         assert_eq!(borrowed_value_to_json(timestamp, None), Value::String("2024-01-01 00:00:00.123".into()));
     }
@@ -2016,14 +2053,17 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15158** (2026-11-18): **[Bug] docker部署后功能“粘贴为新行”提示：复制失败：Clipboard API is not available**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  ALL  ### 问题描述 / Problem description  1.链接任意数据库打开数据表，从任意地方复制一条数据，在程序里使用“粘贴为新行”，直接报错未找到剪切板API。 2.希望可以正常使用“粘贴为新行”功能，并且和navicat一样直接将数据粘贴到数据表，两种方式共存。 3.目前该功能只提示：Clipboard API is not available，未测试其他相关剪切板功能。  <img width="456" height="217" alt="image" src="https://github.com/user-attachments/assets/23f859a9-c487-4fd1-b49e-ca6d865e8894" />  <img width="401" height="105" alt="image" src="https://github.com/user-attachments/assets/a34e1bf8-6316-43f5-bca9-b22ef8920f26" />  ### 支持信息 / Support information  DBX 版本：v0.6.71-beta.20261115.1 运行环境：Web 端 操作系统：Win32 docker镜像版本：latest Digest: sha256:c3fd96054501690748f7a4742bce4288f01419ed4db593cdb44cf9e8f691e66e  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
-
-- **Issue #15152** (2026-11-17): **[Bug] PostgreSQL 原生驱动把 real 查询结果舍入到小数点后六位**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  PostgreSQL 17.11，DBX 原生 PostgreSQL 驱动  ### 问题描述 / Problem description  通过原生驱动执行以下查询，无需建表。  ```sql SELECT 0.0000001::real AS tiny, 1.2345678::real AS fractional; ```  | 结果 | tiny | fractional | | --- | ---: | ---: | | PostgreSQL（psql） | 1e-07 | 1.2345678 | | DBX `execute_query` | 0.0 | 1.234568 |  第一个非零数在查询结果中变成了零。希望驱动返回的 JSON 数字保留 PostgreSQL 存储的单精度值，能够往返回同一个 `f32`。  ### 支持信息 / Support information  DBX 上游 main，复现提交 df7a91c694051fa5aa80a980ff4428ec175ac695。macOS 26.6.2 / arm64，通过 dbx-driver-postgres 的 connect 和 execute_query 连接本地 PostgreSQL 17.11。  ### 优先级（是否紧急） / Priority (urgency)  🟡 P2 普通 · 按排期处理 / Normal · Schedule as appropriate  ### 补充信息 / Additional information  `pg_fallback_value_to_json` 将标量 `f32` 乘以 1,000,000 再取整。#3951 已修复 pgvector 元素的同类精度问题，本例是普通 `real` 列。
+- **Issue #15376** (2026-11-21): **[Bug] 查询结果区纵向滚动条浮动且难以发现，建议改为固定宽度并可悬停加粗**
+  *Symptoms*: ### 问题描述 - 查询结果区的纵向滚动条设计不合理：查看结果后需要纵向拉动时，滚动条不易找到，或需要仔细观察才能发现。 - 截图1中，查询结果区的纵向滚动条呈现为浮动/叠加在数据上的样式，影响可发现性和可读性。 - 用户认为查询结果区宽度足够，不应为节省宽度而让滚动条浮动在数据上面或更不要隐藏起来。  ### 截图对照 - 截图1：查询结果区。纵向滚动条浮动在数据上，难以发现，必须先滚动一下。 - 截图2：编辑区。纵向滚动条占用固定宽度，鼠标悬停时加粗，目前宽度刚好；用户认为该方案可以。 - 截图3：转置视图。纵向滚动条为较标准的设计，用户认为也可以。 - 截图中未出现密码、Token 或连接串。  ### 期望行为 - 查询结果区的纵向滚动条应占用固定宽度，像编辑区那么宽。 - 鼠标悬停时滚动条应加粗。 - 不应像截图1那样浮动在数据上，也不应隐形而难以找到。 - 用户偏好方案排序：编辑区方案 优于 转置视图区方案 优于 查询结果区方案。  ### 环境信息 - DBX 版本：v0.6.73-beta.20261120.1 - 运行环境：桌面端 - 操作系统：Windows 11 (10.0.22000.2538) - 系统架构：x86_64 - 数据库类型：Oracle - 数据库版本：未提供  ### 补充信息 - 复现步骤：未提供。 - 日志/错误信息：未提供。 - 其他数据库连接信息：未提供。  ## 附件  ![DBX issue image 1](https://dl.dbxio.com/issue-feedback/2026/11/e69e0df4-3729-40c3-a1e3-4dc000dcc425/1-2f838c3f-867e-455d-a43b-8ec4a5962361.png)  ![DBX issue image 2](https://dl.dbxio.com/issue-feedback/2026/11/e69e0df4-3729-40c3-a1e3-4dc000dcc425/2-30665664-40a6-4cd4-b74e-d2439d539ebb.png)  ![DBX issue image 3](https://dl.dbxio.com/issue-feedback/2026/11/e69e0df4-3729-40c3-a1e3-4dc000dcc425/3-2bfec45f-b317-4af8-99a8-a56194907fad.png)  ---  _此 Issue 通过 DBX 官网匿名反馈入口提交，发布前已由提交者确认。_
   **Post-Mortem & Fix Analysis**:
   > /claim
-  > ✅ @lyinglyingl 已认领 #15152，开始处理吧！
+  > ✅ @ThugKd 已认领 #15376，开始处理吧！
+
+- **Issue #15369** (2026-11-21): **[Bug] 空闲状态持续写入磁盘 200kb/s**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  Any  ### 问题描述 / Problem description  1. 打开DBX即可复现 2. 每秒持续向database-backups/state.db 的 metadata 表里更新 heartbeat 3. 导致每秒约 200kb的写入 （后台挂一个小时就是2GB的磁盘写入）  DBX 每次访问都重新打开并关闭 SQLite 连接。  最后一个连接关闭时，SQLite 会把 WAL 的更改写回主库，再清理 -wal 和 -shm 文件。 从而导致大量写入   ### 支持信息 / Support information  DBX 版本 / Version: v0.6.72 运行环境 / Runtime: Desktop / Flatpak 操作系统 / OS: Linux 系统架构 / Architecture: x64  ### 优先级（是否紧急） / Priority (urgency)  🟠 P1 重要 · 尽快处理 / Important · Fix soon  ### 补充信息 / Additional information  只更新了一个字段，导致这么大的写入，有可能是因为我使用的是btrfs cow导致的。  当然即使如此也不能这么频繁的写入吧
+  **Post-Mortem & Fix Analysis**:
+  > <img width="1074" height="244" alt="屏幕录像_20261121_114644" src="https://github.com/user-attachments/assets/f91468f6-402a-4651-b1c3-3d8fa3c0837f" />
+  > /claim
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2040,29 +2080,259 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a86f46de` (2026-11-18)
-**Commit Message**: fix(sidebar): avoid unsupported array at lookup
+### Incident Patch 1: `0685e9f4` (2026-11-21)
+**Commit Message**: fix(web): allow SQL file execution in passwordless deployments (#14627)
 
-**File**: `apps/desktop/src/lib/sidebar/sidebarTableVGroupDrag.ts` (modified, +1/-1)
+With DBX_DISABLE_PASSWORD the auth middleware lets every API request
+through without any login, so the browser never carries a dbx_session
+cookie. The SQL file execute route and the failure-log info/text/download
+routes are the only handlers that also require that cookie for the
+failure-log owner (dbx#11619), which made them always fail with
+"Not authenticated" in passwordless deployments while every other
+feature worked.
+
+Fall back to a shared "web-shared" owner when no session token is
+present, mirroring the desktop runtime's "desktop" owner: with no
+sessions there is nothing to isolate, and authenticated deployments keep
+their per-session isolation unchanged.
+
+Fixes #14626
+
+**File**: `crates/dbx-web/src/routes/sql_file.rs` (modified, +94/-8)
 ```diff
-@@ -49,7 +49,7 @@ export function databaseVGroupDropTarget(treeNodes: TreeNode[], source: TreeNode
-     return undefined;
-   };
-   // A folder's edges mean its parent level; only its middle means entering it.
--  const groupId = isGroup ? (position === "inside" ? target.vgroupId : parentGroupOf(layout.order)) : isDatabaseVGroupMember(target) ? (tableVGroupPathForTable(layout, target.database!, target.type).at(-1) ?? null) : null;
-+  const groupId = isGroup ? (position === "inside" ? target.vgroupId : parentGroupOf(layout.order)) : isDatabaseVGroupMember(target) ? (tableVGroupPathForTable(layout, target.database!, target.type).slice(-1)[0] ?? null) : null;
-   return { node: target, groupId: groupId ?? null, scope, position: isDatabaseVGroupContainer(target) ? "after" : position };
+@@ -160,6 +160,20 @@ pub fn sql_file_upload_max_bytes_from_value(value: Option<&str>) -> usize {
+     mb.clamp(SQL_FILE_UPLOAD_MIN_BYTES, SQL_FILE_UPLOAD_MAX_BYTES_LIMIT)
  }
  
++/// Failure-log owner for the Web runtime (dbx#11619): the authenticated
++/// session token when one exists. Deployments that disable password protection
++/// (`DBX_DISABLE_PASSWORD`) never log in, so the browser carries no
++/// `dbx_session` cookie even though the auth middleware lets every API call
++/// through; without this fallback those deployments could not execute SQL
++/// files at all ("Not authenticated"), while every other feature worked.
++/// Anonymous deployments share one owner, exactly how the desktop runtime
++/// shares "desktop": with no sessions there is nothing to isolate.
++const ANONYMOUS_FAILURE_LOG_OWNER: &str = "web-shared";
++
++fn web_failure_log_owner(headers: &HeaderMap) -> String {
++    crate::auth::session_token_from_headers(headers).unwrap_or_else(|| ANONYMOUS_FAILURE_LOG_OWNER.to_string())
++}
++
+ pub fn sql_file_upload_hard_cap_bytes() -> usize {
+     SQL_FILE_UPLOAD_MAX_BYTES_LIMIT.saturating_add(1024 * 1024)
+ }
+@@ -331,8 +345,7 @@ pub async fn execute_sql_file(
+     }
+     // The failure log of this run belongs to the session that started it: the
+     // export/copy routes look it up by this owner, never by path (dbx#11619).
+-    let log_owner = crate::auth::session_token_from_headers(&headers)
+-        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
++    let log_owner = web_failure_log_owner(&headers);
+ 
+     let requested_paths = if body.file_paths.is_empty() { vec![req.file_path.clone()] } else { body.file_paths };
+     let file_paths = requested_paths
+@@ -560,8 +573,7 @@ pub async fn sql_file_failure_log_info(
+     AxumPath(execution_id): AxumPath<String>,
+     headers: HeaderMap,
+ ) -> Result<Json<Option<serde_json::Value>>, AppError> {
+-    let owner = crate::auth::session_token_from_headers(&headers)
+-        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
++    let owner = web_failure_log_owner(&headers);
+     let info = state.sql_file_failure_logs.info(&owner, &execution_id);
+     Ok(Json(info.map(|info| {
+         serde_json::json!({
+@@ -586,8 +598,7 @@ pub async fn sql_file_failure_log_download(
+     Query(query): Query<SqlFileFailureLogDownloadQuery>,
+     headers: HeaderMap,
+ ) -> Result<Response, AppError> {
+-    let owner = crate::auth::session_token_from_headers(&headers)
+-        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
++    let owner = web_failure_log_owner(&headers);
+     let format = match query.format.as_deref() {
+         Some(value) => SqlFileFailureLogFormat::parse(value)
+             .ok_or_else(|| AppError::from(format!("Unsupported log format: {value}")))?,
+@@ -644,8 +655,7 @@ pub async fn sql_file_failure_log_text(
+     headers: HeaderMap,
+     Json(body): Json<SqlFileFailureLogTextRequest>,
+ ) -> Result<Json<SqlFileFailureLogTextResponse>, AppError> {
+-    let owner = crate::auth::session_token_from_headers(&headers)
+-        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
++    let owner = web_failure_log_owner(&headers);
+     let format = match body.format.as_deref() {
+         Some(value) => SqlFileFailureLogFormat::parse(value)
+             .ok_or_else(|| AppError::from(format!("Unsupported log format: {value}")))?,
+@@ -975,6 +985,82 @@ mod tests {
+         assert!(state.sql_file_executions.read().await.contains_key("existing-job"));
+     }
+ 
++    #[test]
++    fn failure_log_owner_falls_back_to_a_shared_owner_without_a_session_cookie() {
++        // Deployments with password protection disabled never log in, so the
++        // browser sends no `dbx_session`; everything must still work.
++        assert_eq!(web_failure_log_owner(&HeaderMap::new()), ANONYMOUS_FAILURE_LOG_OWNER);
++
++        let mut headers = HeaderMap::new();
++        headers.insert(header::COOKIE, "dbx_session=session-token-1".parse().unwrap());
++        assert_eq!(web_failure_log_owner(&headers), "session-token-1");
++    }
++
++    #[tokio::test]
++    async fn anonymous_deployment_executes_sql_files_without_a_session_cookie() {
++        let directory = tempfile::tempdir().unwrap();
++        let state = Arc::new(restore_state(directory.path()).await);
++        let upload_dir = directory.path().join("tmp").join("sql_file");
++        std::fs::create_dir_all(&upload_dir).unwrap();
++        let file = upload_dir.join("upload-anon.sql");
++        std::fs::write(&file, "SELECT 1;").unwrap();
++        let request = serde_json::from_value(serde_json::json!({
++            "executionId": "anon-run", "connectionId": "missing", "database": "app",
++            "filePath": file, "continueOnError": false
++        }))
++        .unwrap();
++        let response = execute_sql_file(
++            State(state.clone()),
++            HeaderMap::new(),
++            Json(SqlFileExecuteWrapper { request, file_paths: vec![] }),
++        )
++        .await
++       
+```
+
+---
+
+### Incident Patch 2: `0cb073ef` (2026-11-21)
+**Commit Message**: fix(web): report SQL execution errors as 422 instead of 500 (#14309)
+
+Web-mode SQL failures (syntax/execution errors reported by the engine,
+carrying category=sql diagnostics) were surfaced as HTTP 500. That is a
+server-fault status for what is a client-side request problem: gateways
+and monitoring count every such response as a 5xx outage, and the issue
+reporter was left staring at a bare 500.
+
+Map BackendError envelopes whose diagnostics category is sql to 422
+Unprocessable Entity in AppError::from_backend_error; the structured
+envelope (code/messageKey/detail) is unchanged, and every non-SQL
+backend error keeps the generic 500. The frontend classifies errors by
+response body only (backendResponseError on !ok), so no client changes
+are needed.
+
+Fixes #14172
+
+Co-authored-by: yongqing.cai <[REDACTED_EMAIL]>
+Co-authored-by: zipg <[REDACTED_EMAIL]>
+
+**File**: `crates/dbx-driver-agent/src/backend_error.rs` (modified, +17/-0)
+```diff
+@@ -105,6 +105,12 @@ pub struct BackendErrorDiagnostics {
+     adapter_code: Option<String>,
+ }
+ 
++impl BackendErrorDiagnostics {
++    pub fn category(&self) -> Option<&str> {
++        self.category.as_deref()
++    }
++}
++
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+ #[serde(rename_all = "snake_case")]
+ pub enum TransactionOutcome {
+@@ -437,6 +443,17 @@ impl BackendError {
+         self.diagnostics.as_ref()
+     }
+ 
++    /// Whether the envelope carries a SQL-category failure (syntax/execution
++    /// error reported by the engine or driver). HTTP boundaries map this to a
++    /// 4xx status instead of 500 so user-side SQL mistakes are not counted as
++    /// server faults by gateways and monitoring.
++    pub fn is_sql_error(&self) -> bool {
++        self.diagnostics
++            .as_ref()
++            .and_then(|diagnostics| diagnostics.category())
++            .is_some_and(|category| category == "sql")
++    }
++
+     pub fn error_position(&self) -> Option<crate::sql_error_position::SqlErrorPosition> {
+         self.error_position
+     }
+```
+
+**File**: `crates/dbx-web/src/error.rs` (modified, +24/-1)
+```diff
+@@ -44,7 +44,13 @@ impl AppError {
+     }
+ 
+     pub fn from_backend_error(error: BackendError) -> Self {
+-        Self { message: error.code().to_string(), status: StatusCode::INTERNAL_SERVER_ERROR, error: Box::new(error) }
++        // SQL failures (syntax/execution errors reported by the engine) are the
++        // client's request problem, not a server fault: surface them as 422 so
++        // gateways and monitoring do not count user-side mistakes as 5xx
++        // outages. Every other backend error keeps the generic 500.
++        let status =
++            if error.is_sql_error() { StatusCode::UNPROCESSABLE_ENTITY } else { StatusCode::INTERNAL_SERVER_ERROR };
++        Self { message: error.code().to_string(), status, error: Box::new(error) }
+     }
+ }
+ 
+@@ -146,6 +152,7 @@ mod tests {
+         });
+ 
+         let response = AppError::from(error).into_response();
++        assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
+         let body = axum::body::to_bytes(response.into_body(), usize::MAX).await.unwrap();
+         let payload: serde_json::Value = serde_json::from_slice(&body).unwrap();
+ 
+@@ -155,6 +162,22 @@ mod tests {
+         assert!(payload["diagnostics"].get("agentSessionId").is_none());
+     }
+ 
++    #[tokio::test]
++    async fn sql_failures_map_to_422_while_other_backend_errors_stay_500() {
++        use dbx_core::db::agent_driver::{AgentErrorStage, AgentOperationOutcome};
++
++        // Native-driver SQL failure: detail is preserved and the status is 422.
++        let response =
++            AppError::from(BackendError::from_sql_detail("ERROR: relation missing does not exist")).into_response();
++        assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
++
++        // Non-SQL backend failures keep the generic 500.
++        let response =
++            AppError::from(BackendError::from_canceled(AgentErrorStage::Execute, AgentOperationOutcome::Unknown))
++                .into_response();
++        assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
++    }
++
+     #[tokio::test]
+     async fn http_response_preserves_duckdb_native_detail_and_worker_code() {
+         let error = BackendError::from_duckdb_worker_error(
+```
+
+---
+
+### Incident Patch 3: `74cb5989` (2026-11-21)
+**Commit Message**: fix(deps): update dependency com.fasterxml.jackson.core:jackson-databind to v2.23.0 (#15424)
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `plugins/jdbc/build.gradle` (modified, +1/-1)
+```diff
+@@ -20,7 +20,7 @@ def mavenResolverVersion = '2.0.25'
+ def mavenCoreVersion = '4.0.0-rc-7'
+ 
+ dependencies {
+-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.22.4'
++    implementation 'com.fasterxml.jackson.core:jackson-databind:2.23.0'
+     implementation('org.slf4j:slf4j-api') {
+         version {
+             strictly '1.7.36'
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15154** (2026-11-17): fix(sidebar): 全局搜索过滤中保留局部表搜索框 (@dienaso)
-- **PR #15153** (2026-11-17): fix(postgres): preserve precision of scalar real query results (@lyinglyingl)
-- **PR #15151** (2026-11-18): feat(sidebar): add database virtual groups and drag ordering (@eryajf)
-- **PR #15146** (2026-11-17): feat(sidebar): Schema/库选择器支持 % 通配符搜索并一键选中匹配项 (@dienaso)
-- **PR #15145** (2026-11-17): fix(editor): preserve quoted values when pasting IN conditions (@Celestial-0)
-- **PR #15143** (2026-11-17): fix(mongodb): apply global format to mixed and nested BSON dates (@ThugKd)
+- **PR #15424** (2026-11-21): fix(deps): update dependency com.fasterxml.jackson.core:jackson-databind to v2.23.0 (@renovate[bot])
+- **PR #15423** (2026-11-21): chore(deps): update gradle to v9.9.2 (@renovate[bot])
+- **PR #15421** (closed): fix(deps): update mavenresolverversion to v2.0.25 - autoclosed (@renovate[bot])
+- **PR #15420** (2026-11-21): feat(sql-file): create the target database from the Execute SQL File dialog (@x-labb)
+- **PR #15418** (2026-11-21): chore(deps): update taiki-e/install-action action to v2.90.8 (@renovate[bot])
+- **PR #15416** (2026-11-21): fix(deps): update mavenresolverversion to v2.0.25 (@renovate[bot])
 
 ---
 
@@ -2082,31 +2352,59 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sidebar): avoid unsupported array at lookup
+## X. web): allow SQL file execution in passwordless deployments
 
 **RULE**:
-When implementing operations in `apps/desktop/src/lib/sidebar/sidebarTableVGroupDrag.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/dbx-web/src/routes/sql_file.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a86f46de`: sidebar): avoid unsupported array at lookup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0685e9f4`: web): allow SQL file execution in passwordless deployments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/lib/sidebar/sidebarTableVGroupDrag.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/dbx-web/src/routes/sql_file.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  const groupId = isGroup ? (position === "inside" ? target.vgroupId : parentGroupOf(layout.order)) : isDatabaseVGroupMember(target) ? (tableVGroupPathForTable(layout, target.database!, target.type).slice(-1)[0] ?? null) : null;
+/// Failure-log owner for the Web runtime (dbx#11619): the authenticated
+/// session token when one exists. Deployments that disable password protection
+/// (`DBX_DISABLE_PASSWORD`) never log in, so the browser carries no
+/// `dbx_session` cookie even though the auth middleware lets every API call
+/// through; without this fallback those deployments could not execute SQL
+/// files at all ("Not authenticated"), while every other feature worked.
+/// Anonymous deployments share one owner, exactly how the desktop runtime
+/// shares "desktop": with no sessions there is nothing to isolate.
+const ANONYMOUS_FAILURE_LOG_OWNER: &str = "web-shared";
+
+fn web_failure_log_owner(headers: &HeaderMap) -> String {
+    crate::auth::session_token_from_headers(headers).unwrap_or_else(|| ANONYMOUS_FAILURE_LOG_OWNER.to_string())
+}
+
+    let log_owner = web_failure_log_owner(&headers);
+    let owner = web_failure_log_owner(&headers);
+    let owner = web_failure_log_owner(&headers);
+    let owner = web_failure_log_owner(&headers);
+    #[test]
+    fn failure_log_owner_falls_back_to_a_shared_owner_without_a_session_cookie() {
+        // Deployments with password protection disabled never log in, so the
+      
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  const groupId = isGroup ? (position === "inside" ? target.vgroupId : parentGroupOf(layout.order)) : isDatabaseVGroupMember(target) ? (tableVGroupPathForTable(layout, target.database!, target.type).at(-1) ?? null) : null;
+    let log_owner = crate::auth::session_token_from_headers(&headers)
+        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
+    let owner = crate::auth::session_token_from_headers(&headers)
+        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
+    let owner = crate::auth::session_token_from_headers(&headers)
+        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
+    let owner = crate::auth::session_token_from_headers(&headers)
+        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a86f46de` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0685e9f4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

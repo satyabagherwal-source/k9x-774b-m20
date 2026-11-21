@@ -11944,3 +11944,6 @@
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T23:30:18.496Z` | `tailscale-tailscale` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-B-1A9A8A88` [Domain B] | Yes (`3fa665c7...`) |
 | `CYCLE-20261121-VF8E` | `2026-11-21T23:39:37.310Z` | `OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md` | Yes (`0b89a22d...`) |
 | `CYCLE-20261121-VKOQ` | `2026-11-21T23:39:44.378Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9869` | Yes (`827ea4e4...`) |
+| `CYCLE-20261121-5LZK` | `2026-11-21T23:47:32.624Z` | `LiquidAI/d1-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md` | Yes (`1ba061fe...`) |
+| `CYCLE-20261121-5US4` | `2026-11-21T23:47:44.020Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9843` | Yes (`00ebb22f...`) |
+| `CYCLE-20261121-5XHO` | `2026-11-21T23:47:47.532Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9870` | Yes (`f693a15a...`) |

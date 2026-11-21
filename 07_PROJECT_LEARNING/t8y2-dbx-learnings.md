@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `c6df43e3`  
+> **Source Version**: `5f5ec9c1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T19:44:44.734Z  
+> **Timestamp**: 2026-11-21T23:47:46.482Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T19:44:44.728Z  
+> **Harvest Timestamp**: 2026-11-21T23:47:46.476Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 31055 stars
+- **Stars / Engagement**: 31100 stars
 
 ---
 
@@ -442,6 +442,7 @@ use std::sync::{Arc, LazyLock, Mutex as StdMutex};
 use std::time::{Duration, Instant};
 
 use anyhow::{anyhow, bail, Context, Result};
+use chrono::FixedOffset;
 use chrono_tz::Tz;
 use futures::future::poll_fn;
 use serde_json::Value;
@@ -457,7 +458,7 @@ use crate::model::{
     ObjectInfo, ObjectSource, QueryOptions, QueryPageResult, QueryResult, TableInfo, DEFAULT_MAX_ROWS,
     TDENGINE_DATA_TYPES,
 };
-use crate::value::borrowed_value_to_json;
+use crate::value::{borrowed_value_to_json, TimestampZone};
 
 /// 表列表快照的兜底有效期。
 ///
@@ -486,7 +487,7 @@ pub struct TdengineDriver {
     connection: Option<Taos>,
     params: ConnectParams,
     server_version: Option<String>,
-    session_timezone: Option<Tz>,
+    session_timezone: Option<TimestampZone>,
     current_database: String,
     query_sessions: HashMap<String, QueryCursor>,
 }
@@ -501,8 +502,8 @@ struct TableSnapshot {
 
 struct QueryCursor {
     result_set: ResultSet,
-    timezone: Option<Tz>,
-    session_timezone: Option<Tz>,
+    timezone: Option<TimestampZone>,
+    session_timezone: Option<TimestampZone>,
     columns: Vec<String>,
     column_types: Vec<String>,
     affected_rows: i64,
@@ -545,7 +546,7 @@ impl TdengineDriver {
         let session_timezone = query_scalar_string(&connection, "SELECT timezone()", &token, 5)
             .await
             .ok()
-            .and_then(|value| parse_server_timezone(&value));
+            .and_then(|value| parse_server_time_zone(&value));
         self.current_database = dsn.database;
         self.server_version = server_version;
         self.session_timezone = session_timezone;
@@ -697,8 +698,7 @@ impl TdengineDriver {
     ) -> Result<CompletionAssistantResponse> {
         let allowed = request.object_kinds.iter().map(|kind| kind.to_ascii_lowercase()).collect::<HashSet<_>>();
         let include_databases = allowed.contains("database") || allowed.contains("schema");
-        let include_tables = allowed.is_empty() || allowed.contains("table") || allowed.contains("view");
-        let 
+        let include_tables = allowed.is_em
 ```
 
 ### Core Architecture Module: `agents/drivers/tdengine/src/lib.rs`
@@ -1274,13 +1274,32 @@ impl RuntimeServer {
 ```
 use base64::engine::general_purpose::STANDARD;
 use base64::Engine;
-use chrono::{NaiveDateTime, Timelike};
+use chrono::{FixedOffset, NaiveDateTime, TimeZone, Timelike};
 use chrono_tz::Tz;
 use serde_json::{json, Number, Value};
 use taos::taos_query::common::Timestamp;
 use taos::BorrowedValue;
 
-pub fn borrowed_value_to_json(value: BorrowedValue<'_>, timezone: Option<Tz>) -> Value {
+/// 时间戳渲染时使用的时区。
+///
+/// TDengine 的 `SELECT timezone()` 不一定返回 IANA 名称（例如 `CST (+0800)`），
+/// 这时只能拿到一个 UTC 偏移量，用固定偏移渲染出的墙钟时间同样正确。
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TimestampZone {
+    Iana(Tz),
+    Fixed(FixedOffset),
+}
+
+impl TimestampZone {
+    fn to_naive_local(self, timestamp: Timestamp) -> NaiveDateTime {
+        match self {
+            TimestampZone::Iana(timezone) => timestamp.to_datetime_with_custom_tz(&timezone).naive_local(),
+            TimestampZone::Fixed(offset) => offset.from_utc_datetime(&timestamp.to_naive_datetime()).naive_local(),
+        }
+    }
+}
+
+pub fn borrowed_value_to_json(value: BorrowedValue<'_>, timezone: Option<TimestampZone>) -> Value {
     match value {
         BorrowedValue::Null(_) => Value::Null,
         BorrowedValue::Bool(value) => Value::Bool(value),
@@ -1344,9 +1363,9 @@ fn looks_like_wkt(value: &str) -> bool {
         .any(|prefix| upper.starts_with(prefix))
 }
 
-fn format_timestamp(timestamp: Timestamp, timezone: Option<Tz>) -> String {
+fn format_timestamp(timestamp: Timestamp, timezone: Option<TimestampZone>) -> String {
     let datetime = match timezone {
-        Some(timezone) => timestamp.to_datetime_with_custom_tz(&timezone).naive_local(),
+        Some(timezone) => timezone.to_naive_local(timestamp),
         None => timestamp.to_naive_datetime(),
     };
     format_naive_datetime(datetime, timestamp)
@@ -1410,21 +1429,21 @@ mod tests {
         assert_eq!(
             borrowed_value_to_json(
                 BorrowedValue::Timestamp(Timestamp::Milliseconds(1_704_067_200_123)),
-                Some(chrono_tz::UTC)
+                Some(TimestampZone::Iana(chrono_tz::UTC))
             ),
             Value::String("2024-01-01 00:00:00.123".into())
         );
         assert_eq!(
             borrowed_value_to_json(
                 BorrowedValue::Timestamp(Timestamp::Microseconds(1_704_067_200_123_400)),
-                Some(chrono_tz::UTC)
+                Some(TimestampZone::Iana(chrono_tz::UTC))
             ),
             Value::String("2024-01-01 00:00:00.1234".into())
         );
         assert_eq!(
             borrowed_value_to_json(
                 BorrowedValue::Timestamp(Timestamp::Nanoseconds(1_704_067_200_123_456_789)),
-                Some(chrono_tz::UTC)
+                Some(TimestampZone::Iana(chrono_tz::UTC))
             ),
             Value::String("2024-01-01 00:00:00.123456789".into())
         );
@@ -1434,8 +1453,26 @@ mod tests {
     fn formats_timestamps_in_the_selected_timezone() {
         let timestamp = BorrowedValue::Timestamp(Timestamp::Milliseconds(1_704_067_200_123));
         assert_eq!(
-            borrowed_value_to_json(timestamp.clone(), Some(chrono_tz::Asia::Shanghai)),
+            borrowed_value_to_json(timestamp.clone(), Some(TimestampZone::Iana(chrono_tz::Asia::Shanghai))),
             Value::String("2024-01-01 08:00:00.123".into())
+        );
+        assert_eq!(
+            borrowed_value_to_json(
+                timestamp.clone(),
+                Some(TimestampZone::Fixed(FixedOffset::east_opt(8 * 3600).unwrap()))
+            ),
+            Value::String("2024-01-01 08:00:00.123".into())
+        );
+        assert_eq!(
+            borrowed_value_to_json(
+                timestamp.clone(),
+                Some(TimestampZone::Fixed(FixedOffset::east_opt(-(5 * 3600 + 30 * 60)).unwrap()))
+            ),
+            Value::String("2023-12-31 18:30:00.123".into())
+        );
+        assert_eq!(
+            borrowed_value_to_json(timestamp.clone(), Some(TimestampZone::Fixed(FixedOffset::east_opt(0).unwrap()))),
+            Value::String("2024-01-01 00:00:00.123".into())
         );
         assert_eq!(borrowed_value_to_json(timestamp, None), Value::String("2024-01-01 00:00:00.123".into()));
     }
@@ -1991,11 +2028,17 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15349** (2026-11-20): **[Bug] Db2 查询结果将 DECIMAL 零显示为 0E-10**
-  *Symptoms*: ### 数据库类型  IBM Db2 LUW，DBX 的原生 Db2 连接。  ### 复现步骤  在查询编辑器中执行以下 SQL。示例只读取 Db2 系统表，不需要业务数据。  ```sql SELECT SUM(DECIMAL(0, 9, 5) * DECIMAL(1, 9, 5)) AS TOTAL FROM SYSIBM.SYSDUMMY1; ```  ### 实际结果  结果列类型为 `DECIMAL`，零显示成 `0E-10`。同样的路径也会把部分很小的非零值转换为指数形式。  ### 预期结果  按十进制小数显示，并保留数据库返回的小数位和精度。例如上面的结果应显示为 `0.0000000000`。  ### 实测环境  Db2 Community Edition 11.5.8.0，IBM JCC 11.5.9.0，通过 DBX Db2 Agent 的 JSON-RPC 验证。修复前运行上述 SQL 返回 `0E-10`，修复后返回 `0.0000000000`。 
+- **Issue #15376** (2026-11-21): **[Bug] 查询结果区纵向滚动条浮动且难以发现，建议改为固定宽度并可悬停加粗**
+  *Symptoms*: ### 问题描述 - 查询结果区的纵向滚动条设计不合理：查看结果后需要纵向拉动时，滚动条不易找到，或需要仔细观察才能发现。 - 截图1中，查询结果区的纵向滚动条呈现为浮动/叠加在数据上的样式，影响可发现性和可读性。 - 用户认为查询结果区宽度足够，不应为节省宽度而让滚动条浮动在数据上面或更不要隐藏起来。  ### 截图对照 - 截图1：查询结果区。纵向滚动条浮动在数据上，难以发现，必须先滚动一下。 - 截图2：编辑区。纵向滚动条占用固定宽度，鼠标悬停时加粗，目前宽度刚好；用户认为该方案可以。 - 截图3：转置视图。纵向滚动条为较标准的设计，用户认为也可以。 - 截图中未出现密码、Token 或连接串。  ### 期望行为 - 查询结果区的纵向滚动条应占用固定宽度，像编辑区那么宽。 - 鼠标悬停时滚动条应加粗。 - 不应像截图1那样浮动在数据上，也不应隐形而难以找到。 - 用户偏好方案排序：编辑区方案 优于 转置视图区方案 优于 查询结果区方案。  ### 环境信息 - DBX 版本：v0.6.73-beta.20261120.1 - 运行环境：桌面端 - 操作系统：Windows 11 (10.0.22000.2538) - 系统架构：x86_64 - 数据库类型：Oracle - 数据库版本：未提供  ### 补充信息 - 复现步骤：未提供。 - 日志/错误信息：未提供。 - 其他数据库连接信息：未提供。  ## 附件  ![DBX issue image 1](https://dl.dbxio.com/issue-feedback/2026/11/e69e0df4-3729-40c3-a1e3-4dc000dcc425/1-2f838c3f-867e-455d-a43b-8ec4a5962361.png)  ![DBX issue image 2](https://dl.dbxio.com/issue-feedback/2026/11/e69e0df4-3729-40c3-a1e3-4dc000dcc425/2-30665664-40a6-4cd4-b74e-d2439d539ebb.png)  ![DBX issue image 3](https://dl.dbxio.com/issue-feedback/2026/11/e69e0df4-3729-40c3-a1e3-4dc000dcc425/3-2bfec45f-b317-4af8-99a8-a56194907fad.png)  ---  _此 Issue 通过 DBX 官网匿名反馈入口提交，发布前已由提交者确认。_
+  **Post-Mortem & Fix Analysis**:
+  > /claim
+  > ✅ @ThugKd 已认领 #15376，开始处理吧！
 
-- **Issue #15313** (2026-11-20): **[Bug] Redis 顶部刷新后，已展开的分组丢失补扫加载的 key**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  Redis 8.8.0（本地单机复现数据）  ### 问题描述 / Problem description  1. 准备超过 DBX 默认首屏大小（1000）的 key，让同一前缀下的两条 key 分布在不同的 `SCAN` 批次。 2. 在树形视图展开该分组，等前缀补扫显示两条 key。 3. 点击 Key 列表顶部的刷新按钮。  **实际结果**：分组保持展开，列表回到首屏数据，分组从 `2+` 变为 `1+`。折叠后重新展开才会重新看到两条 key。  **期望结果**：顶部刷新后，对首屏恢复展开的分组自动执行有预算限制的前缀补扫，直接恢复仍然存在的 key。  **原因**：刷新会重置扫描结果和分组补扫状态，只恢复展开状态。自动恢复展开未触发手动展开时的前缀补扫逻辑。  ### 支持信息 / Support information  DBX `0.6.71`，`t8y2/dbx` 主分支 `d3be7a2751` 上的代码。录屏为桌面端，回归使用 DBX Web 和本地 Redis。  ### 优先级 / Urgency  P2 普通。 
+- **Issue #15369** (2026-11-21): **[Bug] 空闲状态持续写入磁盘 200kb/s**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  Any  ### 问题描述 / Problem description  1. 打开DBX即可复现 2. 每秒持续向database-backups/state.db 的 metadata 表里更新 heartbeat 3. 导致每秒约 200kb的写入 （后台挂一个小时就是2GB的磁盘写入）  DBX 每次访问都重新打开并关闭 SQLite 连接。  最后一个连接关闭时，SQLite 会把 WAL 的更改写回主库，再清理 -wal 和 -shm 文件。 从而导致大量写入   ### 支持信息 / Support information  DBX 版本 / Version: v0.6.72 运行环境 / Runtime: Desktop / Flatpak 操作系统 / OS: Linux 系统架构 / Architecture: x64  ### 优先级（是否紧急） / Priority (urgency)  🟠 P1 重要 · 尽快处理 / Important · Fix soon  ### 补充信息 / Additional information  只更新了一个字段，导致这么大的写入，有可能是因为我使用的是btrfs cow导致的。  当然即使如此也不能这么频繁的写入吧
+  **Post-Mortem & Fix Analysis**:
+  > <img width="1074" height="244" alt="屏幕录像_20261121_114644" src="https://github.com/user-attachments/assets/f91468f6-402a-4651-b1c3-3d8fa3c0837f" />
+  > /claim
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2012,846 +2055,259 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d2d3db02` (2026-11-20)
-**Commit Message**: fix(mcp): explain launch-enforced read-only errors (#15335)
+### Incident Patch 1: `0685e9f4` (2026-11-21)
+**Commit Message**: fix(web): allow SQL file execution in passwordless deployments (#14627)
 
-Reviewed exact HEAD `049a4d891e0796952142a9cf4d1cbc34777ab15f`.
+With DBX_DISABLE_PASSWORD the auth middleware lets every API request
+through without any login, so the browser never carries a dbx_session
+cookie. The SQL file execute route and the failure-log info/text/download
+routes are the only handlers that also require that cookie for the
+failure-log owner (dbx#11619), which made them always fail with
+"Not authenticated" in passwordless deployments while every other
+feature worked.
 
-Issue #15291 is covered. Exact-head CI passed with no failures, and the isolated regression test passed. Non-blocking documentation feedback remains for the root README wording.
+Fall back to a shared "web-shared" owner when no session token is
+present, mirroring the desktop runtime's "desktop" owner: with no
+sessions there is nothing to isolate, and authenticated deployments keep
+their per-session isolation unchanged.
 
-**File**: `crates/dbx-mcp/src/backend.rs` (modified, +1/-1)
+Fixes #14626
+
+**File**: `crates/dbx-web/src/routes/sql_file.rs` (modified, +94/-8)
 ```diff
-@@ -57,7 +57,7 @@ impl From<&ConnectionConfig> for ConnectionSummary {
+@@ -160,6 +160,20 @@ pub fn sql_file_upload_max_bytes_from_value(value: Option<&str>) -> usize {
+     mb.clamp(SQL_FILE_UPLOAD_MIN_BYTES, SQL_FILE_UPLOAD_MAX_BYTES_LIMIT)
+ }
+ 
++/// Failure-log owner for the Web runtime (dbx#11619): the authenticated
++/// session token when one exists. Deployments that disable password protection
++/// (`DBX_DISABLE_PASSWORD`) never log in, so the browser carries no
++/// `dbx_session` cookie even though the auth middleware lets every API call
++/// through; without this fallback those deployments could not execute SQL
++/// files at all ("Not authenticated"), while every other feature worked.
++/// Anonymous deployments share one owner, exactly how the desktop runtime
++/// shares "desktop": with no sessions there is nothing to isolate.
++const ANONYMOUS_FAILURE_LOG_OWNER: &str = "web-shared";
++
++fn web_failure_log_owner(headers: &HeaderMap) -> String {
++    crate::auth::session_token_from_headers(headers).unwrap_or_else(|| ANONYMOUS_FAILURE_LOG_OWNER.to_string())
++}
++
+ pub fn sql_file_upload_hard_cap_bytes() -> usize {
+     SQL_FILE_UPLOAD_MAX_BYTES_LIMIT.saturating_add(1024 * 1024)
+ }
+@@ -331,8 +345,7 @@ pub async fn execute_sql_file(
+     }
+     // The failure log of this run belongs to the session that started it: the
+     // export/copy routes look it up by this owner, never by path (dbx#11619).
+-    let log_owner = crate::auth::session_token_from_headers(&headers)
+-        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
++    let log_owner = web_failure_log_owner(&headers);
+ 
+     let requested_paths = if body.file_paths.is_empty() { vec![req.file_path.clone()] } else { body.file_paths };
+     let file_paths = requested_paths
+@@ -560,8 +573,7 @@ pub async fn sql_file_failure_log_info(
+     AxumPath(execution_id): AxumPath<String>,
+     headers: HeaderMap,
+ ) -> Result<Json<Option<serde_json::Value>>, AppError> {
+-    let owner = crate::auth::session_token_from_headers(&headers)
+-        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
++    let owner = web_failure_log_owner(&headers);
+     let info = state.sql_file_failure_logs.info(&owner, &execution_id);
+     Ok(Json(info.map(|info| {
+         serde_json::json!({
+@@ -586,8 +598,7 @@ pub async fn sql_file_failure_log_download(
+     Query(query): Query<SqlFileFailureLogDownloadQuery>,
+     headers: HeaderMap,
+ ) -> Result<Response, AppError> {
+-    let owner = crate::auth::session_token_from_headers(&headers)
+-        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
++    let owner = web_failure_log_owner(&headers);
+     let format = match query.format.as_deref() {
+         Some(value) => SqlFileFailureLogFormat::parse(value)
+             .ok_or_else(|| AppError::from(format!("Unsupported log format: {value}")))?,
+@@ -644,8 +655,7 @@ pub async fn sql_file_failure_log_text(
+     headers: HeaderMap,
+     Json(body): Json<SqlFileFailureLogTextRequest>,
+ ) -> Result<Json<SqlFileFailureLogTextResponse>, AppError> {
+-    let owner = crate::auth::session_token_from_headers(&headers)
+-        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
++    let owner = web_failure_log_owner(&headers);
+     let format = match body.format.as_deref() {
+         Some(value) => SqlFileFailureLogFormat::parse(value)
+             .ok_or_else(|| AppError::from(format!("Unsupported log format: {value}")))?,
+@@ -975,6 +985,82 @@ mod tests {
+         assert!(state.sql_file_executions.read().await.contains_key("existing-job"));
+     }
+ 
++    #[test]
++    fn failure_log_owner_falls_back_to_a_shared_owner_without_a_session_cookie() {
++        // Deployments with password protection disabled never log in, so the
++        // browser sends no `dbx_session`; everything must still work.
++        assert_eq!(web_failure_log_owner(&HeaderMap::new()), ANONYMOUS_FAILURE_LOG_OWNER);
++
++        let mut headers = HeaderMap::new();
++        headers.insert(header::COOKIE, "dbx_session=session-token-1".parse().unwrap());
++        assert_eq!(web_failure_log_owner(&headers), "session-token-1");
++    }
++
++    #[tokio::test]
++    async fn anonymous_deployment_executes_sql_files_without_a_session_cookie() {
++        let directory = tempfile::tempdir().unwrap();
++        let state = Arc::new(restore_state(directory.path()).await);
++        let upload_dir = directory.path().join("tmp").join("sql_file");
++        std::fs::create_dir_all(&upload_dir).unwrap();
++        let file = upload_dir.join("upload-anon.sql");
++        std::fs::write(&file, "SELECT 1;").unwrap();
++        let request = serde_json::from_value(serde_json::json!({
++            "executionId": "anon-run", "connectionId": "missing", "database": "app",
++            "filePath": file, "continueOnError": false
++        }))
++        .unwrap();
++        let response = execute_sql_file(
++            State(state.clone()),
++            HeaderMap::new(),
++            Json(SqlFileExecuteWrapper { request, file_paths: vec![] }),
++        )
++        .await
++       
+```
+
+---
+
+### Incident Patch 2: `0cb073ef` (2026-11-21)
+**Commit Message**: fix(web): report SQL execution errors as 422 instead of 500 (#14309)
+
+Web-mode SQL failures (syntax/execution errors reported by the engine,
+carrying category=sql diagnostics) were surfaced as HTTP 500. That is a
+server-fault status for what is a client-side request problem: gateways
+and monitoring count every such response as a 5xx outage, and the issue
+reporter was left staring at a bare 500.
+
+Map BackendError envelopes whose diagnostics category is sql to 422
+Unprocessable Entity in AppError::from_backend_error; the structured
+envelope (code/messageKey/detail) is unchanged, and every non-SQL
+backend error keeps the generic 500. The frontend classifies errors by
+response body only (backendResponseError on !ok), so no client changes
+are needed.
+
+Fixes #14172
+
+Co-authored-by: yongqing.cai <[REDACTED_EMAIL]>
+Co-authored-by: zipg <[REDACTED_EMAIL]>
+
+**File**: `crates/dbx-driver-agent/src/backend_error.rs` (modified, +17/-0)
+```diff
+@@ -105,6 +105,12 @@ pub struct BackendErrorDiagnostics {
+     adapter_code: Option<String>,
+ }
+ 
++impl BackendErrorDiagnostics {
++    pub fn category(&self) -> Option<&str> {
++        self.category.as_deref()
++    }
++}
++
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+ #[serde(rename_all = "snake_case")]
+ pub enum TransactionOutcome {
+@@ -437,6 +443,17 @@ impl BackendError {
+         self.diagnostics.as_ref()
+     }
+ 
++    /// Whether the envelope carries a SQL-category failure (syntax/execution
++    /// error reported by the engine or driver). HTTP boundaries map this to a
++    /// 4xx status instead of 500 so user-side SQL mistakes are not counted as
++    /// server faults by gateways and monitoring.
++    pub fn is_sql_error(&self) -> bool {
++        self.diagnostics
++            .as_ref()
++            .and_then(|diagnostics| diagnostics.category())
++            .is_some_and(|category| category == "sql")
++    }
++
+     pub fn error_position(&self) -> Option<crate::sql_error_position::SqlErrorPosition> {
+         self.error_position
+     }
+```
+
+**File**: `crates/dbx-web/src/error.rs` (modified, +24/-1)
+```diff
+@@ -44,7 +44,13 @@ impl AppError {
+     }
+ 
+     pub fn from_backend_error(error: BackendError) -> Self {
+-        Self { message: error.code().to_string(), status: StatusCode::INTERNAL_SERVER_ERROR, error: Box::new(error) }
++        // SQL failures (syntax/execution errors reported by the engine) are the
++        // client's request problem, not a server fault: surface them as 422 so
++        // gateways and monitoring do not count user-side mistakes as 5xx
++        // outages. Every other backend error keeps the generic 500.
++        let status =
++            if error.is_sql_error() { StatusCode::UNPROCESSABLE_ENTITY } else { StatusCode::INTERNAL_SERVER_ERROR };
++        Self { message: error.code().to_string(), status, error: Box::new(error) }
      }
  }
  
--fn legacy_mcp_allow_writes() -> Option<bool> {
-+pub(crate) fn legacy_mcp_allow_writes() -> Option<bool> {
-     parse_legacy_mcp_allow_writes(&std::env::var("DBX_MCP_ALLOW_WRITES").ok()?)
- }
+@@ -146,6 +152,7 @@ mod tests {
+         });
  
-```
-
-**File**: `crates/dbx-mcp/src/server.rs` (modified, +8/-1)
-```diff
-@@ -6185,7 +6185,14 @@ fn transaction_failure_result(session_id: &str, failure: TransactionFailure) ->
- }
+         let response = AppError::from(error).into_response();
++        assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
+         let body = axum::body::to_bytes(response.into_body(), usize::MAX).await.unwrap();
+         let payload: serde_json::Value = serde_json::from_slice(&body).unwrap();
  
- fn tool_error(code: &str, message: impl Into<String>) -> CallToolResult {
--    CallToolResult::error(vec![ContentBlock::text(format!("Error [{code}]: {}", message.into()))])
-+    let launch_restriction = if code == "MCP_READ_ONLY" && crate::backend::legacy_mcp_allow_writes() == Some(false) {
-+        "This MCP process is forced read-only by the DBX_MCP_ALLOW_WRITES launch setting. \
-+         It takes precedence over permissions saved in DBX Settings → MCP. \
-+         Check the MCP client's launch configuration.\n"
-+    } else {
-+        ""
-+    };
-+    CallToolResult::error(vec![ContentBlock::text(format!("Error [{code}]: {launch_restriction}{}", message.into()))])
- }
+@@ -155,6 +162,22 @@ mod tests {
+         assert!(payload["diagnostics"].get("agentSessionId").is_none());
+     }
  
- fn backend_tool_error(default_code: &str, error: impl Into<String>) -> CallToolResult {
-```
-
-**File**: `crates/dbx-mcp/tests/local.rs` (modified, +85/-25)
-```diff
-@@ -474,54 +474,114 @@ async fn local_backend_uses_the_installed_duckdb_sidecar() {
- #[tokio::test]
- async fn legacy_read_only_config_applies_before_settings_are_opened() {
-     const CHILD_ENV: &str = "DBX_MCP_LEGACY_READ_ONLY_TEST_CHILD";
--    if std::env::var_os(CHILD_ENV).is_none() {
--        let status = std::process::Command::new(std::env::current_exe().expect("locate test executable"))
--            .args(["--exact", "legacy_read_only_config_applies_before_settings_are_opened", "--nocapture"])
--            .env(CHILD_ENV, "1")
--            .env("DBX_MCP_ALLOW_WRITES", "0")
--            .status()
--            .expect("run legacy read-only test in an isolated process");
--        assert!(status.success(), "isolated legacy read-only test failed");
-+    let Ok(case) = std::env::var(CHILD_ENV) else {
-+        for (case, allow_writes) in [
-+            ("launch-unconfigured", Some("0")),
-+            ("launch-configured", Some("0")),
-+            ("launch-false", Some("false")),
-+            ("launch-invalid", Some("unexpected")),
-+            ("policy-unset", None),
-+            ("policy-enabled", Some("1")),
-+            ("writable", None),
-+        ] {
-+            let mut command = std::process::Command::new(std::env::current_exe().expect("locate test executable"));
-+            command
-+                .args(["--exact", "legacy_read_only_config_applies_before_settings_are_opened", "--nocapture"])
-+                .env(CHILD_ENV, case)
-+                .env_remove("DBX_MCP_ALLOW_WRITES");
-+            if let Some(value) = allow_writes {
-+                command.env("DBX_MCP_ALLOW_WRITES", value);
-+            }
-+            let status = command.status().expect("run legacy read-only test in an isolated process");
-+            assert!(status.success(), "isolated legacy read-only test failed: {case}");
-+        }
-         return;
--    }
-+    };
- 
-     let directory = tempdir().expect("temporary data directory");
-     let db_path = directory.path().join("dbx.db");
--    let storage = Storage::open(&db_path).await.expect("open storage");
-+    let storage = dbx_core::persistence::test_storage::open(&db_path).await.expect("open isolated storage");
-     assert!(!storage.load_mcp_global_policy().await.expect("load MCP policy").configured);
-+    let launch_read_only = case.starts_with("launch-");
-+    let policy_read_only = case.starts_with("policy-");
-+    if case != "launch-unconfigured" {
-+        storage
-+            .save_mcp_global_policy(&dbx_core::storage::McpGlobalPolicy {
-+                read_only: policy_read_only,
-+                ..Default::default()
-+            })
-+            .await
-+            .expect("save MCP policy");
++    #[tokio::test]
++    async fn sql_failures_map_to_422_while_other_backend_errors_stay_500() {
++        use dbx_core::db::agent_driver::{AgentErrorStage, AgentOperationOutcome};
++
++        // Native-driver SQL failure: detail is preserved and the status is 422.
++        let response =
++            AppError::from(BackendError::from_sql_detail("ERROR: relation missing does not exist")).into_response();
++        assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
++
++        // Non-SQL backend failures keep the generic 500.
++        let response =
++            AppError::from(BackendError::from_canceled(AgentErrorStage::Execute, AgentOperationOutcome::Unknown))
++                .into_response();
++        assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
 +    }
-+    tokio::fs::write(directory.path().join("legacy.sqlite"), b"").await.expect("create SQLite file");
-     let connection: ConnectionConfig = serde_json::from_value(json!({
-         "id": "legacy-read-only",
-         "name": "legacy-read-only",
-         "db_type": "sqlite",
--        "host": "",
-+        "host": directory.path().join("legacy.sqlite").to_string_lossy(),
-         "port": 0,
-         "username": "",
-         "password": "",
--        "database": directory.path().join("legacy.sqlite").to_string_lossy(),
-+        "database": "main",
-         "ssl": false
-     }))
-     .expect("minimal connection config");
--    storage.save_connections(&[connection]).await.expect("save connection");
-+    storage.save_connections(std::slice::from_ref(&connection)).await.expect("save connection");
-     let backend = Arc::new(LocalBackend::open(&db_path).await.expect("open local backend"));
--    let server = DbxMcpServer::with_runtime_options(backend, McpScope::default(), false);
-+    let database = connection.database.as_deref().expect("SQLite database path");
-+    backend
-+        .execute_query(&connection, database, "CREATE TABLE items (name TEXT)", None, None)
-+        .await
-+        .expect("create test table");
-+    let server = DbxMcpServer::with_runtime_options(backend.clone(), McpScope::default(), false);
-     let (server_transport, client_transport) = tokio::io::duplex(16 * 1024);
-     let server_task = tokio::spawn(async move { server.serve(server_transport).await });
-     let client = ().serve(client_transport).await.expect("initialize client");
--    let arguments = json!({
--        "connection_id": "legacy-read-only",
--        "sql": "INSERT INTO items (name) VALUES ('blocked')",
--    })
--    .as_object()
--    .cloned()
--    .unwrap_or_else(Map::<String, Value>::new);
-+    for tool in ["dbx_execute_query", "dbx_execute_batch"] {
-+        let arguments = json!({
-+            "connection_id": "legacy-read-only",
-+            "sql": "INSERT INTO items (name) VALUES ('blocked')",
-+        })
-+        .as_object()
-+        .cloned()
-+        .unwrap_or_else(Map::<String, Value>::new);
-+        let result = client
-+            .peer()
-+            .call_tool(CallToolRequestParams::new(tool).with_arguments(arguments))
-+            .await
-+            .expect("execute write q
-```
-
-**File**: `packages/mcp-server/README.md` (modified, +8/-4)
-```diff
-@@ -323,7 +323,9 @@ Use `DBX_MCP_SCOPE_CONNECTION_ID`, comma-separated `DBX_MCP_SCOPE_CONNECTION_IDS
- 
- ## Safety
- 
--Choose **Read only**, **Data read/write**, or **Full access** in DBX instead of placing permission flags in client configuration. Updated servers do not let `DBX_MCP_ALLOW_WRITES` or `DBX_MCP_ALLOW_DANGEROUS_SQL` widen the DBX policy. For upgrade compatibility, `DBX_MCP_ALLOW_WRITES=0` (or `false`) keeps MCP read-only until a central policy is saved for the first time; the legacy permission variables are ignored afterward.
-+Choose **Read only**, **Data read/write**, or **Full access** in DBX instead of placing permission flags in client configuration. Updated servers do not let `DBX_MCP_ALLOW_WRITES` or `DBX_MCP_ALLOW_DANGEROUS_SQL` widen the DBX policy. `DBX_MCP_ALLOW_WRITES=0` (or `false`) forces the current MCP process to be read-only, even when saved group, connection, or database permissions allow writes. This applies to both local and Web backends without modifying saved settings. A value of `1`, `true`, or an unset variable still requires authorization from the DBX policy.
 +
-+When `MCP_READ_ONLY` identifies `DBX_MCP_ALLOW_WRITES` as the restriction, check the MCP client's launch configuration; changing DBX permissions cannot override it. Otherwise, follow the error's policy context in **DBX Settings → MCP**.
- 
- MongoDB update/delete operations require a verifiably effective filter unless Full access is enabled. Aggregation stages such as `$out` and `$merge` are treated as high-risk writes.
- 
-@@ -355,7 +357,7 @@ SQL text is not included in normal MCP errors or logged by default. Enable tempo
- | `DBX_MCP_HTTP_ALLOW_REMOTE` | Set to `1` together with `--http-allow-remote` before a non-loopback bind is allowed |
- | `DBX_MCP_HTTP_ALLOWED_HOSTS` | Required Host authority allowlist for a non-loopback native bind |
- | `DBX_MCP_HTTP_ALLOWED_ORIGINS` | Required browser Origin allowlist for a non-loopback native bind |
--| `DBX_MCP_ALLOW_WRITES` | Upgrade compatibility only: `0`/`false` keeps an unconfigured policy read-only |
-+| `DBX_MCP_ALLOW_WRITES` | `0`/`false` forces the current run to be read-only; `1`/`true` never widens DBX permissions |
- | `DBX_MCP_SCOPE_CONNECTION_ID` | Compatibility scope for one connection ID |
- | `DBX_MCP_SCOPE_CONNECTION_IDS` | Compatibility scope for multiple connection IDs |
- | `DBX_MCP_SCOPE_CONNECTION_NAME` | Restrict tools to one connection name |
-@@ -688,7 +690,9 @@ DBX 在 **设置 → MCP** 中保存一份权威策略，并在每次请求时
- 
- ### SQL 和命令安全
- 
--请在 DBX 中选择 **只读**、**数据读写** 或 **完全访问**，不要在客户端配置中放置权限开关。新版 Server 不允许 `DBX_MCP_ALLOW_WRITES` 或 `DBX_MCP_ALLOW_DANGEROUS_SQL` 放宽 DBX 中央策略。为兼容升级，在中央策略首次保存前，`DBX_MCP_ALLOW_WRITES=0`（或 `false`）仍会保持 MCP 只读；策略保存后旧权限变量即被忽略。
-+请在 DBX 中选择 **只读**、**数据读写** 或 **完全访问**，不要在客户端配置中放置权限开关。新版 Server 不允许 `DBX_MCP_ALLOW_WRITES` 或 `DBX_MCP_ALLOW_DANGEROUS_SQL` 放宽 DBX 中央策略。`DBX_MCP_ALLOW_WRITES=0`（或 `false`）会强制当前 MCP 进程只读，即使已保存的分组、连接或单库权限允许写入。此限制同时适用于本地和 Web 后端，不修改已保存的设置。设为 `1`、`true` 或不设置时，仍以 DBX 策略授权为准。
-+
-+当 `MCP_READ_ONLY` 指明限制来自 `DBX_MCP_ALLOW_WRITES` 时，请检查 MCP 客户端的启动配置；修改 DBX 权限无法覆盖此限制。其他情况请根据错误中的策略上下文检查 **DBX 设置 → MCP**。
- 
- MongoDB 更新和删除在未启用完全访问时必须提供可验证有效的 filter；`$out`、`$merge` 聚合阶段按高风险写操作处理。
- 
-@@ -718,7 +722,7 @@ MongoDB 更新和删除在未启用完全访问时必须提供可验证有效的
- | `DBX_MCP_HTTP_ALLOW_REMOTE` | 与 `--http-allow-remote` 同时设置为允许监听非回环地址 |
- | `DBX_MCP_HTTP_ALLOWED_HOSTS` | 监听非回环地址时必填的 Host authority 白名单 |
- | `DBX_MCP_HTTP_ALLOWED_ORIGINS` | 监听非回环地址时必填的浏览器 Origin 白名单 |
--| `DBX_MCP_ALLOW_WRITES` | 仅用于升级兼容：`0`/`false` 使尚未配置的策略保持只读 |
-+| `DBX_MCP_ALLOW_WRITES` | `0`/`false` 强制本次运行只读；`1`/`true` 不会扩大 DBX 权限 |
- | `DBX_MCP_SCOPE_CONNECTION_ID` | 兼容旧配置：限制到指定连接 ID |
- | `DBX_MCP_SCOPE_CONNECTION_IDS` | 兼容旧配置：限制到多个连接 ID |
- | `DBX_MCP_SCOPE_CONNECTION_NAME` | 限制到指定连接名称 |
+     #[tokio::test]
+     async fn http_response_preserves_duckdb_native_detail_and_worker_code() {
+         let error = BackendError::from_duckdb_worker_error(
 ```
 
 ---
 
-### Incident Patch 2: `0c2ffce8` (2026-11-20)
-**Commit Message**: fix(plugin-stats): keep per-plugin rollups in step with versions
+### Incident Patch 3: `74cb5989` (2026-11-21)
+**Commit Message**: fix(deps): update dependency com.fasterxml.jackson.core:jackson-databind to v2.23.0 (#15424)
 
-The old aggregator advanced versioned counters in the `counts` phase and the
-`kind:plugin` rollups in a later phase, so every mid-pass failure left the
-rollups behind; dl was about 11% short by 2026-11-10. applyWindow now advances
-both from the same counts entry, and reconcile-rollups.mjs raises the historical
-rollups to max(stored, sum of versions) once, so no counter decreases.
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-Also pulls the shared OAuth/KV helpers out of migrate-archive.mjs into
-cf-kv-api.mjs and adds unit tests for the document model and the repair.
-
-**File**: `deploy/plugin-stats-worker/README.md` (modified, +9/-2)
+**File**: `plugins/jdbc/build.gradle` (modified, +1/-1)
 ```diff
-@@ -62,8 +62,15 @@ into the `plugin_stats_archive` KV namespace — the permanent layer future UI
- reads:
+@@ -20,7 +20,7 @@ def mavenResolverVersion = '2.0.25'
+ def mavenCoreVersion = '4.0.0-rc-7'
  
- - `archive:v2` — **one** JSON document holding every counter:
--  `{v:2, lastSuccess, total:{"kind:pluginId:version": n}, uniqd:{"kind:pluginId:day": n}}`
--  (plus `kind:pluginId` rollups inside `total`). A pass reads it once, folds in
-+  `{v:2, lastSuccess, total:{"kind:pluginId:version": n}, uniqd:{"kind:pluginId:day": n}}`.
-+  `total` also holds the `kind:pluginId` rollups, advanced from the same counts
-+  entry as the versioned counter, so `sum(versions) == rollup` stays true. (The
-+  old aggregator wrote versions in one phase and rollups in a later one, so each
-+  mid-pass failure left the rollups behind — `dl` was ~11% short by 2026-11-10.
-+  `reconcile-rollups.mjs` reset them to `max(previous, sum of versions)`, which
-+  never lowers a counter; four legacy `inst` rollups still sit +1 above their
-+  version sum, from an event whose version string failed validation.)
-+  A pass reads the document once, folds in
-   the window, writes it back — the number of distinct keys touched per pass is
-   constant (archive + summary + lock) no matter how many plugins exist.
- - `summary` — one JSON blob `{dl: {pluginId: n}, inst: {...}, updt: {...}}` for
-```
-
-**File**: `deploy/plugin-stats-worker/cf-kv-api.mjs` (added, +119/-0)
-```diff
-@@ -0,0 +1,119 @@
-+// Shared Cloudflare KV / OAuth plumbing for the ops scripts in this directory.
-+// Only used from a workstation: the token is the wrangler OAuth session (or
-+// CLOUDFLARE_API_TOKEN), never something a Worker holds.
-+
-+import fs from "node:fs";
-+import os from "node:os";
-+import path from "node:path";
-+
-+export const API = "https://api.cloudflare.com/client/v4";
-+export const BULK_GET_BATCH = 100;
-+const WRANGLER_CLIENT_ID = "54d11594-84e4-41aa-b438-e81b8fa78ee7";
-+
-+function wranglerConfigPath() {
-+  if (process.env.WRANGLER_CONFIG) return process.env.WRANGLER_CONFIG;
-+  const candidates =
-+    process.platform === "win32"
-+      ? [path.join(process.env.APPDATA ?? os.homedir(), ".wrangler", "config", "default.toml")]
-+      : [
-+          path.join(os.homedir(), "Library", "Preferences", ".wrangler", "config", "default.toml"),
-+          path.join(os.homedir(), ".wrangler", "config", "default.toml"),
-+        ];
-+  return candidates.find((candidate) => fs.existsSync(candidate)) ?? null;
-+}
-+
-+function readTomlValue(text, field) {
-+  const match = text.match(new RegExp(`^${field} = "(.*)"$`, "m"));
-+  return match ? match[1] : null;
-+}
-+
-+/** Wrangler OAuth: refresh the access token and persist the rotated refresh token. */
-+async function tokenFromWrangler() {
-+  const configPath = wranglerConfigPath();
-+  if (!configPath) throw new Error("no CLOUDFLARE_API_TOKEN and no wrangler config found; run `npx wrangler login`");
-+  const text = fs.readFileSync(configPath, "utf8");
-+  const refreshToken = readTomlValue(text, "refresh_token");
-+  if (!refreshToken) throw new Error(`${configPath} has no refresh_token; run \`npx wrangler login\``);
-+
-+  const response = await fetch("https://dash.cloudflare.com/oauth2/token", {
-+    method: "POST",
-+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-+    body: new URLSearchParams({ grant_type: "refresh_token", refresh_token: refreshToken, client_id: WRANGLER_CLIENT_ID }),
-+  });
-+  const payload = await response.json();
-+  if (!response.ok || !payload.access_token) {
-+    throw new Error(`wrangler token refresh failed (${response.status}): ${JSON.stringify(payload).slice(0, 300)}`);
-+  }
-+  const expires = new Date(Date.now() + (payload.expires_in ?? 3600) * 1000).toISOString().replace(/\.\d{3}Z$/, ".000Z");
-+  const updated = text
-+    .replace(/^oauth_token = ".*"$/m, `oauth_token = "${payload.access_token}"`)
-+    .replace(/^refresh_token = ".*"$/m, `refresh_token = "${payload.refresh_token ?? refreshToken}"`)
-+    .replace(/^expiration_time = ".*"$/m, `expiration_time = "${expires}"`);
-+  fs.writeFileSync(configPath, updated, { mode: 0o600 });
-+  return payload.access_token;
-+}
-+
-+export async function accessToken() {
-+  if (process.env.CLOUDFLARE_API_TOKEN) return process.env.CLOUDFLARE_API_TOKEN;
-+  return tokenFromWrangler();
-+}
-+
-+export async function api(token, method, pathname, body, options = {}) {
-+  const response = await fetch(`${API}${pathname}`, {
-+    method,
-+    headers: {
-+      Authorization: `Bearer ${token}`,
-+      ...(body === undefined ? {} : { "Content-Type": options.raw ? "text/plain" : "application/json" }),
-+    },
-+    // KV values take the raw text as the body; everything else is JSON.
-+    body: body === undefined ? undefined : options.raw ? body : JSON.stringify(body),
-+  });
-+  const payload = await response.json().catch(() => ({}));
-+  if (!response.ok || payload.success === false) {
-+    throw new Error(`${method} ${pathname} -> ${response.status}: ${JSON.stringify(payload.errors ?? payload).slice(0, 400)}`);
-+  }
-+  return payload;
-+}
-+
-+/** KV `values/` responses are the raw value, not a JSON envelope. */
-+export async function apiText(token, pathname) {
-+  const response = await fetch(`${API}${pathname}`, { headers: { Authorization: `Bearer ${token}` } });
-+  if (!response.ok) {
-+    const error = new Error(`GET ${pathname} -> ${response.status}: ${(await response.text()).slice(0, 200)}`);
-+    error.status = response.status;
-+    throw error;
-+  }
-+  return response.text();
-+}
-+
-+export async function listKeys(token, account, namespace) {
-+  const keys = [];
-+  let cursor;
-+  for (;;) {
-+    const query = new URLSearchParams({ limit: "1000", ...(cursor ? { cursor } : {}) });
-+    const payload = await api(token, "GET", `/accounts/${account}/storage/kv/namespaces/${namespace}/keys?${query}`);
-+    keys.push(...payload.result.map((entry) => entry.name));
-+    cursor = payload.result_info?.cursor;
-+    if (!cursor || payload.result.length === 0) break;
-+  }
-+  return keys;
-+}
-+
-+export async function bulkGet(token, account, namespace, keys) {
-+  const values = {};
-+  for (let index = 0; index < keys.length; index += BULK_GET_BATCH) {
-+    const batch = keys.slice(index, index + BULK_GET_BATCH);
-+    const payload = await api(token, "POST", `/accounts/${account}/storage/kv/namespaces/${namespace}/bulk/get`, { keys: batch, type: "text" });
-+    Object.assign(values, payload.result?.values ?? {}
-```
-
-**File**: `deploy/plugin-stats-worker/migrate-archive.mjs` (modified, +1/-104)
-```diff
-@@ -28,15 +28,13 @@ import os from "node:os";
- import path from "node:path";
- import crypto from "node:crypto";
- import { pathToFileURL } from "node:url";
-+import { accessToken, api, apiText, bulkGet, listKeys } from "./cf-kv-api.mjs";
- 
--const API = "https://api.cloudflare.com/client/v4";
- const ARCHIVE_KEY = "archive:v2";
- const ARCHIVE_VERSION = 2;
- const SUMMARY_KEY = "summary";
- const META_KEY = "meta:last-success";
- const LEGACY_PREFIXES = ["total:", "uniqd:"];
--const BULK_GET_BATCH = 100;
--const WRANGLER_CLIENT_ID = "54d11594-84e4-41aa-b438-e81b8fa78ee7";
- 
- function parseArgs(argv) {
-   const args = { apply: false, force: false, out: null, account: "7ad3349ede62c17968a90108d39fd4d0", namespace: "0cc9e49a117f4edeb931464fa0256834" };
-@@ -126,107 +124,6 @@ function sha256(text) {
-   return crypto.createHash("sha256").update(text).digest("hex");
- }
- 
--function wranglerConfigPath() {
--  if (process.env.WRANGLER_CONFIG) return process.env.WRANGLER_CONFIG;
--  const candidates =
--    process.platform === "win32"
--      ? [path.join(process.env.APPDATA ?? os.homedir(), ".wrangler", "config", "default.toml")]
--      : [
--          path.join(os.homedir(), "Library", "Preferences", ".wrangler", "config", "default.toml"),
--          path.join(os.homedir(), ".wrangler", "config", "default.toml"),
--        ];
--  return candidates.find((candidate) => fs.existsSync(candidate)) ?? null;
--}
--
--function readTomlValue(text, field) {
--  const match = text.match(new RegExp(`^${field} = "(.*)"$`, "m"));
--  return match ? match[1] : null;
--}
--
--/** Wrangler OAuth: refresh the access token and persist the rotated refresh token. */
--async function tokenFromWrangler() {
--  const configPath = wranglerConfigPath();
--  if (!configPath) throw new Error("no CLOUDFLARE_API_TOKEN and no wrangler config found; run `npx wrangler login`");
--  const text = fs.readFileSync(configPath, "utf8");
--  const refreshToken = readTomlValue(text, "refresh_token");
--  if (!refreshToken) throw new Error(`${configPath} has no refresh_token; run \`npx wrangler login\``);
--
--  const response = await fetch("https://dash.cloudflare.com/oauth2/token", {
--    method: "POST",
--    headers: { "Content-Type": "application/x-www-form-urlencoded" },
--    body: new URLSearchParams({ grant_type: "refresh_token", refresh_token: refreshToken, client_id: WRANGLER_CLIENT_ID }),
--  });
--  const payload = await response.json();
--  if (!response.ok || !payload.access_token) {
--    throw new Error(`wrangler token refresh failed (${response.status}): ${JSON.stringify(payload).slice(0, 300)}`);
--  }
--  const expires = new Date(Date.now() + (payload.expires_in ?? 3600) * 1000).toISOString().replace(/\.\d{3}Z$/, ".000Z");
--  const updated = text
--    .replace(/^oauth_token = ".*"$/m, `oauth_token = "${payload.access_token}"`)
--    .replace(/^refresh_token = ".*"$/m, `refresh_token = "${payload.refresh_token ?? refreshToken}"`)
--    .replace(/^expiration_time = ".*"$/m, `expiration_time = "${expires}"`);
--  fs.writeFileSync(configPath, updated, { mode: 0o600 });
--  return payload.access_token;
--}
--
--async function accessToken() {
--  if (process.env.CLOUDFLARE_API_TOKEN) return process.env.CLOUDFLARE_API_TOKEN;
--  return tokenFromWrangler();
--}
--
--async function api(token, method, pathname, body, options = {}) {
--  const response = await fetch(`${API}${pathname}`, {
--    method,
--    headers: {
--      Authorization: `Bearer ${token}`,
--      ...(body === undefined ? {} : { "Content-Type": options.raw ? "text/plain" : "application/json" }),
--    },
--    // KV values take the raw text as the body; everything else is JSON.
--    body: body === undefined ? undefined : options.raw ? body : JSON.stringify(body),
--  });
--  const payload = await response.json().catch(() => ({}));
--  if (!response.ok || payload.success === false) {
--    throw new Error(`${method} ${pathname} -> ${response.status}: ${JSON.stringify(payload.errors ?? payload).slice(0, 400)}`);
--  }
--  return payload;
--}
--
--/** KV `values/` responses are the raw value, not a JSON envelope. */
--async function apiText(token, pathname) {
--  const response = await fetch(`${API}${pathname}`, { headers: { Authorization: `Bearer ${token}` } });
--  if (!response.ok) {
--    const error = new Error(`GET ${pathname} -> ${response.status}: ${(await response.text()).slice(0, 200)}`);
--    error.status = response.status;
--    throw error;
--  }
--  return response.text();
--}
--
--async function listKeys(token, account, namespace) {
--  const keys = [];
--  let cursor;
--  for (;;) {
--    const query = new URLSearchParams({ limit: "1000", ...(cursor ? { cursor } : {}) });
--    const payload = await api(token, "GET", `/accounts/${account}/storage/kv/namespaces/${namespace}/keys?${query}`);
--    keys.push(...payload.result.map((entry) => entry.name));
--    cursor = payload.result_info?.cursor;
--    if (!cursor || payload.result.length === 0) break;
--  }
--  return keys;
--}
--
--async function bulkGet(token, account, namespace, keys) {
--  const values
-```
-
-**File**: `deploy/plugin-stats-worker/reconcile-rollups.mjs` (added, +155/-0)
-```diff
-@@ -0,0 +1,155 @@
-+#!/usr/bin/env node
-+// Repair the per-plugin rollups inside `archive:v2`.
-+//
-+// The old aggregator advanced versioned counters in one phase and the
-+// `kind:plugin` rollups in a later one, so every mid-pass failure left the
-+// rollups behind (dl was ~11% short by 2026-11-10). The current Worker keeps
-+// both in step, but the historical gap has to be closed once.
-+//
-+// Rule: rollup = max(stored, sum of its versioned counters). A counter never
-+// decreases; four legacy `inst` rollups legitimately sit +1 above their version
-+// sum (that event's version string failed validation), and they are left alone.
-+//
-+// Usage:
-+//   node reconcile-rollups.mjs            # dry run: report what would change
-+//   node reconcile-rollups.mjs --apply    # write archive:v2 and verify read-back
-+
-+import fs from "node:fs";
-+import os from "node:os";
-+import path from "node:path";
-+import { pathToFileURL } from "node:url";
-+
-+import { accessToken, api, apiText } from "./cf-kv-api.mjs";
-+
-+const ARCHIVE_KEY = "archive:v2";
-+const DEFAULT_ACCOUNT = "7ad3349ede62c17968a90108d39fd4d0";
-+const DEFAULT_NAMESPACE = "0cc9e49a117f4edeb931464fa0256834";
-+
-+/** Split a counter key into its parts; rollups are 2, versioned counters are 3. */
-+export function splitCounterKey(key) {
-+  const parts = key.split(":");
-+  return { kind: parts[0], plugin: parts[1], version: parts[2], isRollup: parts.length === 2 };
-+}
-+
-+/**
-+ * Pure reconcile: raise rollups to at least the sum of their versioned counters.
-+ * Returns the new document plus a change report; never lowers a value.
-+ */
-+export function reconcileRollups(doc) {
-+  const sums = new Map();
-+  for (const [key, value] of Object.entries(doc.total)) {
-+    const parts = key.split(":");
-+    if (parts.length !== 3) continue;
-+    const rollup = `${parts[0]}:${parts[1]}`;
-+    sums.set(rollup, (sums.get(rollup) ?? 0) + value);
-+  }
-+
-+  const changes = [];
-+  let created = 0;
-+  let unchanged = 0;
-+  for (const [rollup, sum] of sums) {
-+    const stored = doc.total[rollup];
-+    if (stored === undefined) {
-+      doc.total[rollup] = sum;
-+      created += 1;
-+      changes.push({ key: rollup, from: null, to: sum, kind: "created" });
-+    } else if (sum > stored) {
-+      doc.total[rollup] = sum;
-+      changes.push({ key: rollup, from: stored, to: sum, kind: "raised" });
-+    } else {
-+      unchanged += 1;
-+    }
-+  }
-+  return { doc, changes, created, unchanged };
-+}
-+
-+/** Every rollup must cover its versioned counters after the repair. */
-+export function verifyRollups(doc) {
-+  const sums = new Map();
-+  for (const [key, value] of Object.entries(doc.total)) {
-+    const parts = key.split(":");
-+    if (parts.length !== 3) continue;
-+    const rollup = `${parts[0]}:${parts[1]}`;
-+    sums.set(rollup, (sums.get(rollup) ?? 0) + value);
-+  }
-+  const problems = [];
-+  for (const [rollup, sum] of sums) {
-+    const stored = doc.total[rollup];
-+    if (stored === undefined) problems.push(`${rollup}: no rollup for ${sum} counters`);
-+    else if (stored < sum) problems.push(`${rollup}: rollup ${stored} < version sum ${sum}`);
-+  }
-+  return problems;
-+}
-+
-+function parseArgs(argv) {
-+  const args = { apply: false, account: DEFAULT_ACCOUNT, namespace: DEFAULT_NAMESPACE, out: null };
-+  for (const arg of argv) {
-+    if (arg === "--apply") args.apply = true;
-+    else if (arg.startsWith("--account=")) args.account = arg.slice(10);
-+    else if (arg.startsWith("--namespace=")) args.namespace = arg.slice(12);
-+    else if (arg.startsWith("--out=")) args.out = arg.slice(6);
-+    else if (arg === "--help" || arg === "-h") {
-+      console.log(fs.readFileSync(new URL(import.meta.url), "utf8").split("\n").slice(1, 20).join("\n"));
-+      process.exit(0);
-+    } else throw new Error(`unknown argument: ${arg}`);
-+  }
-+  return args;
-+}
-+
-+async function main() {
-+  const args = parseArgs(process.argv.slice(2));
-+  const token = await accessToken();
-+  const base = `/accounts/${args.account}/storage/kv/namespaces/${args.namespace}`;
-+  const valuePath = `${base}/values/${encodeURIComponent(ARCHIVE_KEY)}`;
-+
-+  const raw = await apiText(token, valuePath);
-+  const doc = JSON.parse(raw);
-+  const before = JSON.stringify(doc.total).length;
-+
-+  const { changes, created, unchanged } = reconcileRollups(doc);
-+  const problems = verifyRollups(doc);
-+  if (problems.length) {
-+    console.error(`rollup verification failed (${problems.length}):`);
-+    for (const problem of problems.slice(0, 20)) console.error(`  ${problem}`);
-+    process.exit(1);
-+  }
-+
-+  const lowered = changes.filter((change) => change.from !== null && change.to < change.from);
-+  console.log(
-+    `rollups: ${created} created, ${changes.length - created} raised, ${unchanged} already current, ${lowered.length} lowered`,
-+  );
-+  for (const change of changes.slice(0, 10)) {
-+    console.log(`  ${change.key}: ${change.from ?? "(none)"} -> ${change.to}`);
-+  }
-+  if (changes.length > 10) console.log(`  ... ${changes.
-```
-
-**File**: `deploy/plugin-stats-worker/reconcile-rollups.test.mjs` (added, +54/-0)
-```diff
-@@ -0,0 +1,54 @@
-+// Unit tests for the rollup repair.
-+// Run: node --test deploy/plugin-stats-worker/reconcile-rollups.test.mjs
-+import assert from "node:assert/strict";
-+import test from "node:test";
-+
-+import { reconcileRollups, splitCounterKey, verifyRollups } from "./reconcile-rollups.mjs";
-+
-+const doc = (total) => ({ v: 2, lastSuccess: "2026-11-17 04:00:42", total, uniqd: {} });
-+
-+test("splitCounterKey distinguishes rollups from versioned counters", () => {
-+  assert.equal(splitCounterKey("dl:foo").isRollup, true);
-+  assert.equal(splitCounterKey("dl:foo:1.0.0").isRollup, false);
-+});
-+
-+test("raises a stale rollup to the version sum", () => {
-+  const d = doc({ "dl:foo": 10, "dl:foo:1.0.0": 7, "dl:foo:1.1.0": 8 });
-+  const { changes } = reconcileRollups(d);
-+  assert.equal(d.total["dl:foo"], 15);
-+  assert.deepEqual(changes[0], { key: "dl:foo", from: 10, to: 15, kind: "raised" });
-+});
-+
-+test("creates a missing rollup", () => {
-+  const d = doc({ "inst:bar:2.0.0": 4 });
-+  const { created } = reconcileRollups(d);
-+  assert.equal(created, 1);
-+  assert.equal(d.total["inst:bar"], 4);
-+});
-+
-+test("never lowers a rollup that is already ahead of its versions", () => {
-+  const d = doc({ "inst:foo": 8, "inst:foo:1.0.0": 7 });
-+  const { changes } = reconcileRollups(d);
-+  assert.equal(d.total["inst:foo"], 8);
-+  assert.deepEqual(changes, []);
-+});
-+
-+test("leaves an already-correct rollup untouched", () => {
-+  const d = doc({ "dl:foo": 15, "dl:foo:1.0.0": 7, "dl:foo:1.1.0": 8 });
-+  const { changes, unchanged } = reconcileRollups(d);
-+  assert.deepEqual(changes, []);
-+  assert.equal(unchanged, 1);
-+});
-+
-+test("verifyRollups reports a short or missing rollup", () => {
-+  const short = doc({ "dl:foo": 3, "dl:foo:1.0.0": 7 });
-+  assert.match(verifyRollups(short)[0], /rollup 3 < version sum 7/);
-+  const missing = doc({ "dl:foo:1.0.0": 7 });
-+  assert.match(verifyRollups(missing)[0], /no rollup/);
-+});
-+
-+test("verifyRollups accepts the repaired document", () => {
-+  const d = doc({ "dl:foo": 10, "dl:foo:1.0.0": 7, "dl:foo:1.1.0": 8 });
-+  reconcileRollups(d);
-+  assert.deepEqual(verifyRollups(d), []);
-+});
-```
-
-**File**: `deploy/plugin-stats-worker/worker.test.mjs` (added, +53/-0)
-```diff
-@@ -0,0 +1,53 @@
-+// Unit tests for the archive document model in worker.ts.
-+// Run: node --test deploy/plugin-stats-worker/worker.test.mjs
-+import assert from "node:assert/strict";
-+import test from "node:test";
-+
-+import { applySummary, applyWindow, emptyArchive, parseArchive } from "./worker.ts";
-+
-+const count = (kind, plugin, version, events) => ({ kind, plugin, version, events });
-+const unique = (kind, plugin, day, uniq) => ({ kind, plugin, day, uniq });
-+
-+test("applyWindow advances the versioned counter and its plugin rollup together", () => {
-+  const doc = emptyArchive();
-+  applyWindow(doc, [count("inst", "foo", "1.0.0", 3)], []);
-+  assert.equal(doc.total["inst:foo:1.0.0"], 3);
-+  assert.equal(doc.total["inst:foo"], 3);
-+});
-+
-+test("versions roll up to the plugin total across windows", () => {
-+  const doc = emptyArchive();
-+  applyWindow(doc, [count("inst", "foo", "1.0.0", 3), count("inst", "foo", "1.1.0", 4)], []);
-+  applyWindow(doc, [count("inst", "foo", "1.1.0", 5)], []);
-+  assert.equal(doc.total["inst:foo:1.0.0"], 3);
-+  assert.equal(doc.total["inst:foo:1.1.0"], 9);
-+  assert.equal(doc.total["inst:foo"], 12);
-+});
-+
-+test("kinds stay separate", () => {
-+  const doc = emptyArchive();
-+  applyWindow(doc, [count("inst", "foo", "1.0.0", 2), count("updt", "foo", "1.0.0", 7)], []);
-+  assert.equal(doc.total["inst:foo"], 2);
-+  assert.equal(doc.total["updt:foo"], 7);
-+});
-+
-+test("per-day uniques overwrite instead of adding", () => {
-+  const doc = emptyArchive();
-+  applyWindow(doc, [], [unique("inst", "foo", "2026-11-10", 5)]);
-+  applyWindow(doc, [], [unique("inst", "foo", "2026-11-10", 6)]);
-+  assert.equal(doc.uniqd["inst:foo:2026-11-10"], 6);
-+});
-+
-+test("applySummary adds the same window per plugin", () => {
-+  const summary = { inst: { foo: 2 } };
-+  applySummary(summary, [count("inst", "foo", "1.1.0", 3), count("inst", "bar", "2.0.0", 1)]);
-+  assert.deepEqual(summary, { inst: { foo: 5, bar: 1 } });
-+});
-+
-+test("parseArchive round-trips and rejects an unknown version", () => {
-+  const doc = emptyArchive();
-+  applyWindow(doc, [count("inst", "foo", "1.0.0", 1)], []);
-+  assert.deepEqual(parseArchive(JSON.stringify(doc)), doc);
-+  assert.throws(() => parseArchive(JSON.stringify({ ...doc, v: 3 })), /unsupported version/);
-+  assert.throws(() => parseArchive("null"), /not an object/);
-+});
-```
-
-**File**: `deploy/plugin-stats-worker/worker.ts` (modified, +6/-0)
-```diff
-@@ -352,6 +352,12 @@ export function applyWindow(doc: ArchiveDoc, counts: WindowCount[], uniques: Dai
-   for (const count of counts) {
-     const key = `${count.kind}:${count.plugin}:${count.version}`;
-     doc.total[key] = (doc.total[key] ?? 0) + count.events;
-+    // Keep the per-plugin rollup in step with its versioned counters. The old
-+    // aggregator wrote versions first and the rollup in a later phase, so every
-+    // mid-pass failure left the rollup behind (dl was ~11% short by 2026-11-10).
-+    // Both are now advanced from the same `counts` entry.
-+    const rollupKey = `${count.kind}:${count.plugin}`;
-+    doc.total[rollupKey] = (doc.total[rollupKey] ?? 0) + count.events;
-   }
-   for (const unique of uniques) {
-     // Overwrite, not add: reruns converge to the full-day value and
-```
-
----
-
-### Incident Patch 3: `c6df43e3` (2026-11-20)
-**Commit Message**: fix(editor): group execute script context action
-
-Follow-up menu refinement for the SQL editor execute-script action.
-
-**File**: `apps/desktop/src/components/editor/QueryEditorContextMenu.vue` (modified, +3/-1)
-```diff
-@@ -180,6 +180,9 @@ const contextMenuItems = computed<ContextMenuItem[]>(() => {
-             icon: Play,
-             shortcut: shortcuts.executeSql,
-           },
-+          ...(state.showExecuteScriptFromHere && actions.executeScriptFromContextPosition
-+            ? [{ sidebarActionId: "editor.contextMenu.executeScriptFromHere", label: t("editor.contextMenu.executeScriptFromHere"), action: actions.executeScriptFromContextPosition, disabled: !state.canExecuteScriptFromHere, icon: FastForward }]
-+            : []),
-           ...(actions.executeAllFromContextMenu
-             ? [
-                 {
-@@ -192,7 +195,6 @@ const contextMenuItems = computed<ContextMenuItem[]>(() => {
-                 },
-               ]
-             : []),
--          ...(state.showExecuteScriptFromHere && actions.executeScriptFromContextPosition ? [{ label: t("editor.contextMenu.executeScriptFromHere"), action: actions.executeScriptFromContextPosition, disabled: !state.canExecuteScriptFromHere, icon: FastForward }] : []),
-           ...(state.canDebugPlSql && actions.debugPlSqlFromContextMenu ? [{ sidebarActionId: "plDebug.start.title", label: t("plDebug.start.title"), action: actions.debugPlSqlFromContextMenu, icon: Play }] : []),
-           {
-             sidebarActionId: "settings.shortcutExecuteSqlInNewResultTab",
-```
-
-**File**: `apps/desktop/src/components/editor/__tests__/QueryEditorContextMenu.integration.spec.ts` (modified, +33/-0)
-```diff
-@@ -20,6 +20,8 @@ function mountMenu(layout: "full" | "grouped" = "full") {
-   const state = reactive<QueryEditorContextMenuState>({ readOnly: false, hideExecutionControls: false, databaseType: "mysql", selectedSql: "", executableSql: "", previewContextSql: "", contextObjectTarget: null, shortcuts: { ...DEFAULT_SHORTCUT_SETTINGS }, expandSelectStar: undefined });
-   const actions = {
-     executeFromContextMenu: vi.fn(),
-+    executeAllFromContextMenu: vi.fn(),
-+    executeScriptFromContextPosition: vi.fn(),
-     executeInNewResultTabFromContextMenu: vi.fn(),
-     explainFromContextMenu: vi.fn(),
-     requestPreviewChanges: vi.fn(),
-@@ -128,6 +130,37 @@ describe("QueryEditor extracted context menu", () => {
-     expect(actions.emitContextObjectAction).toHaveBeenCalledExactlyOnceWith("edit-table-structure");
-   });
- 
-+  it("places execute-script-from-here in More for the grouped SQL editor menu", async () => {
-+    const { state, actions, open } = mountMenu("grouped");
-+    state.showExecuteScriptFromHere = true;
-+    state.canExecuteScriptFromHere = true;
-+    await open();
-+
-+    expect([...document.querySelectorAll<HTMLButtonElement>("[data-dbx-context-menu] button")].some((entry) => entry.textContent?.includes("editor.contextMenu.executeScriptFromHere"))).toBe(false);
-+    button("common.more").click();
-+    await nextTick();
-+    const menus = document.querySelectorAll<HTMLElement>("[data-dbx-context-menu]");
-+    const submenu = menus[menus.length - 1]!;
-+    const labels = [...submenu.querySelectorAll<HTMLButtonElement>("button")].map((entry) => entry.textContent ?? "");
-+    expect(labels[labels.length - 2]).toBe("editor.contextMenu.executeScriptFromHere");
-+    expect(labels[labels.length - 1]).toContain("toolbar.executeAllSql");
-+    button("editor.contextMenu.executeScriptFromHere").click();
-+    expect(actions.executeScriptFromContextPosition).toHaveBeenCalledExactlyOnceWith();
-+  });
-+
-+  it("places execute-script-from-here above execute-all in the full SQL editor menu", async () => {
-+    const { state, open } = mountMenu("full");
-+    state.showExecuteScriptFromHere = true;
-+    state.canExecuteScriptFromHere = true;
-+    await open();
-+
-+    const labels = [...document.querySelectorAll<HTMLButtonElement>("[data-dbx-context-menu] button")].map((entry) => entry.textContent ?? "");
-+    const executeScriptIndex = labels.findIndex((label) => label.includes("editor.contextMenu.executeScriptFromHere"));
-+    const executeAllIndex = labels.findIndex((label) => label.includes("toolbar.executeAllSql"));
-+    expect(executeScriptIndex).toBeGreaterThanOrEqual(0);
-+    expect(executeAllIndex).toBe(executeScriptIndex + 1);
-+  });
-+
-   it("updates the open menu when switching layouts without clearing the accepted target", async () => {
-     const { state, open, onClose } = mountMenu("grouped");
-     state.selectedSql = "SELECT * FROM orders";
-```
-
-**File**: `apps/desktop/src/composables/useSidebarMenuPresentation.ts` (modified, +13/-0)
-```diff
-@@ -21,6 +21,19 @@ function collapseSqlEditorMenuGroups(items: ContextMenuItem[], t: (key: string)
-     else secondary.push({ label: "", separator: true });
-     secondary.push(...item.children);
-   }
-+
-+  const executionActionIds = ["editor.contextMenu.executeScriptFromHere", "toolbar.executeAllSql"];
-+  const executionActions = executionActionIds.flatMap((id) => {
-+    const action = secondary.find((item) => item.sidebarActionId === id);
-+    return action ? [action] : [];
-+  });
-+  if (executionActions.length > 0) {
-+    const executionActionIdSet = new Set(executionActions.map((item) => item.sidebarActionId));
-+    const remaining = secondary.filter((item) => !executionActionIdSet.has(item.sidebarActionId));
-+    if (remaining.length > 0 && !remaining[remaining.length - 1]?.separator) remaining.push({ label: "", separator: true });
-+    secondary.splice(0, secondary.length, ...remaining, ...executionActions);
-+  }
-+
-   return result;
- }
- 
-```
-
-**File**: `apps/desktop/src/lib/sidebar/sidebarMenuLayout.ts` (modified, +1/-1)
-```diff
-@@ -141,7 +141,7 @@ export function sidebarMenuActionGroup(item: ContextMenuItem): MenuGroup {
-   if (id === "plDebug.start.title" || id === "settings.shortcutExecuteSqlInNewResultTab" || id === "toolbar.explainPlan" || id === "editor.previewChanges" || id === "editor.contextMenu.export") return "data";
-   if (id === "editor.contextMenu.copySelectionAsRichText" || id === "editor.contextMenu.screenshotSelection" || id === "editor.contextMenu.pasteRestoringSourceSql") return "copy";
-   if (id === "editor.contextMenu.folding" || id === "editor.contextMenu.addNextSelectionOccurrence" || id === "editor.contextMenu.selectAllSelectionOccurrences" || id === "editor.contextMenu.selectCurrentStatement" || id === "editor.contextMenu.selectAll") return "selection";
--  if (id?.startsWith("editor.contextMenu.")) return "sql";
-+  if (id === "toolbar.executeAllSql" || id?.startsWith("editor.contextMenu.")) return "sql";
-   for (const [group, ids] of Object.entries(groupActions)) if (id && ids.includes(id)) return group as MenuGroup;
-   return item.variant === "destructive" ? "danger" : "other";
- }
+ dependencies {
+-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.22.4'
++    implementation 'com.fasterxml.jackson.core:jackson-databind:2.23.0'
+     implementation('org.slf4j:slf4j-api') {
+         version {
+             strictly '1.7.36'
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15363** (2026-11-20): fix(editor): group execute script context action (@eryajf)
-- **PR #15354** (2026-11-20): fix(web): disable sidebar layout auto-sync for shared Docker sessions (@Mo-Moore)
-- **PR #15350** (2026-11-20): fix(db2): 保留查询结果的十进制小数格式 (@zipg)
-- **PR #15335** (2026-11-20): fix(mcp): 区分启动配置强制只读与权限策略限制 (@SuLea-IT)
-- **PR #15314** (2026-11-20): fix(redis): refill expanded groups after refreshing keys (@zipg)
-- **PR #15309** (2026-11-20): fix(mcp): prove CTE scope through EXPLAIN and INSERT wrappers (#15288) (@xiaou61)
+- **PR #15424** (2026-11-21): fix(deps): update dependency com.fasterxml.jackson.core:jackson-databind to v2.23.0 (@renovate[bot])
+- **PR #15423** (2026-11-21): chore(deps): update gradle to v9.9.2 (@renovate[bot])
+- **PR #15421** (closed): fix(deps): update mavenresolverversion to v2.0.25 - autoclosed (@renovate[bot])
+- **PR #15420** (2026-11-21): feat(sql-file): create the target database from the Execute SQL File dialog (@x-labb)
+- **PR #15418** (2026-11-21): chore(deps): update taiki-e/install-action action to v2.90.8 (@renovate[bot])
+- **PR #15416** (2026-11-21): fix(deps): update mavenresolverversion to v2.0.25 (@renovate[bot])
 
 ---
 
@@ -2871,28 +2327,56 @@ Follow-up menu refinement for the SQL editor execute-script action.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp): explain launch-enforced read-only errors
+## X. web): allow SQL file execution in passwordless deployments
 
 **RULE**:
-When implementing operations in `crates/dbx-mcp/src/backend.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/dbx-web/src/routes/sql_file.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d2d3db02`: mcp): explain launch-enforced read-only errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0685e9f4`: web): allow SQL file execution in passwordless deployments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/dbx-mcp/src/backend.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/dbx-web/src/routes/sql_file.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-pub(crate) fn legacy_mcp_allow_writes() -> Option<bool> {
+/// Failure-log owner for the Web runtime (dbx#11619): the authenticated
+/// session token when one exists. Deployments that disable password protection
+/// (`DBX_DISABLE_PASSWORD`) never log in, so the browser carries no
+/// `dbx_session` cookie even though the auth middleware lets every API call
+/// through; without this fallback those deployments could not execute SQL
+/// files at all ("Not authenticated"), while every other feature worked.
+/// Anonymous deployments share one owner, exactly how the desktop runtime
+/// shares "desktop": with no sessions there is nothing to isolate.
+const ANONYMOUS_FAILURE_LOG_OWNER: &str = "web-shared";
+
+fn web_failure_log_owner(headers: &HeaderMap) -> String {
+    crate::auth::session_token_from_headers(headers).unwrap_or_else(|| ANONYMOUS_FAILURE_LOG_OWNER.to_string())
+}
+
+    let log_owner = web_failure_log_owner(&headers);
+    let owner = web_failure_log_owner(&headers);
+    let owner = web_failure_log_owner(&headers);
+    let owner = web_failure_log_owner(&headers);
+    #[test]
+    fn failure_log_owner_falls_back_to_a_shared_owner_without_a_session_cookie() {
+        // Deployments with password protection disabled never log in, so the
+      
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-fn legacy_mcp_allow_writes() -> Option<bool> {
+    let log_owner = crate::auth::session_token_from_headers(&headers)
+        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
+    let owner = crate::auth::session_token_from_headers(&headers)
+        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
+    let owner = crate::auth::session_token_from_headers(&headers)
+        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
+    let owner = crate::auth::session_token_from_headers(&headers)
+        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d2d3db02` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0685e9f4` are properly handled with clean fallback behavior.

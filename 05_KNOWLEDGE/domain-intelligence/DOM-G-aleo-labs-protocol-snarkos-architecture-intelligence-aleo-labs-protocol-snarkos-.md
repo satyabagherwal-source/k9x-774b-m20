@@ -4,24 +4,24 @@
 {
   "source_repository": "aleo-labs-protocol/snarkOS",
   "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-  "source_version": "2875dee3",
+  "source_version": "ff15a1de",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T17:41:58.343Z",
+  "timestamp": "2026-11-21T23:47:44.242Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aleo-labs-protocol-snarkos",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `2875dee3`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T17:41:58.343Z`  
+> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `ff15a1de`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T23:47:44.242Z`  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), B (Product Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from aleo-labs-protocol/snarkOS:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T17:41:57.372Z  
+> **Harvest Timestamp**: 2026-11-21T23:47:43.271Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1138,6 +1138,11 @@ pub struct DevHotswapConfig {
 //! `locktick` crate, which records where each lock and guard is taken. `.cargo/config.toml`
 //! defines the cargo aliases that set the cfg.
 //!
+//! `locktick` comes from snarkVM's re-export, `snarkvm::utilities::locktick`, so these locks and
+//! snarkVM's register with one copy of the crate, and [`spawn_lock_reporter`] logs both. Hazard: a
+//! direct dependency on `locktick` can build a second copy, whose `lock_snapshots` misses
+//! snarkVM's locks.
+//!
 //! The submodules mirror the layout of `locktick`. A lock's methods return the guard alias of
 //! its submodule in both builds. Under `--cfg locktick` that guard is a `locktick::LockGuard`
 //! that dereferences to the plain guard. Code that passes a guard to an associated function of
@@ -1152,16 +1157,16 @@ pub struct DevHotswapConfig {
 #[cfg(not(locktick))]
 type Guard<G> = G;
 #[cfg(locktick)]
-type Guard<G> = ::locktick::LockGuard<G>;
+type Guard<G> = ::snarkvm::utilities::locktick::LockGuard<G>;
 
 /// Synchronous locks from `parking_lot`.
 pub mod parking_lot {
     use super::Guard;
 
-    #[cfg(locktick)]
-    use ::locktick::parking_lot as backend;
     #[cfg(not(locktick))]
     use ::parking_lot as backend;
+    #[cfg(locktick)]
+    use ::snarkvm::utilities::locktick::parking_lot as backend;
 
     pub type Mutex<T> = backend::Mutex<T>;
     pub type RwLock<T> = backend::RwLock<T>;
@@ -1175,7 +1180,7 @@ pub mod tokio {
     use super::Guard;
 
     #[cfg(locktick)]
-    use ::locktick::tokio as backend;
+    use ::snarkvm::utilities::locktick::tokio as backend;
     #[cfg(not(locktick))]
     use ::tokio::sync as backend;
 
@@ -1194,7 +1199,7 @@ pub fn spawn_lock_reporter() {
         loop {
             tracing::info!("[locktick] checking for active lock guards");
             let ts = std::time::Instant::now();
-            let mut infos = ::locktick::lock_snapshots();
+            let mut infos = ::snarkvm::utilities::locktick::lock_snapshots();
             infos.sort_unstable_by(|l1, l2| l1.location.cmp(&l2.location));
 
             for lock in infos {
@@ -1888,470 +1893,271 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2875dee3` (2026-11-21)
-**Commit Message**: Merge pull request #4751 from aleo-labs-protocol/ci/remove-start-runner
+### Incident Patch 1: `d41f2d25` (2026-11-21)
+**Commit Message**: Merge pull request #4750 from aleo-labs-protocol/agent/sync-quiet-at-tip
 
-CI: remove the start-runner job and fork-pr-runners.yml
+Keep block sync quiet while the tip block is in flight
 
-**File**: `.github/workflows/ci.yml` (modified, +7/-44)
+**File**: `node/sync/src/block_sync.rs` (modified, +38/-6)
 ```diff
-@@ -24,35 +24,10 @@ env:
-   CARGO_TERM_COLOR: always
+@@ -752,15 +752,15 @@ impl<N: Network> BlockSync<N> {
+         if batches.is_empty() {
+             let total_requests = self.num_total_block_requests();
+             let num_outstanding = self.num_outstanding_block_requests();
+-            if total_requests != 0 {
+-                trace!(
+-                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
+-                );
+-            } else {
++            if total_requests == 0 {
+                 debug!(
+                     "Not block synced yet, and there are no outstanding block requests or \
+                  new block requests to send"
+                 );
++            } else if !self.requested_all_served() {
++                trace!(
++                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
++                );
+             }
+         } else {
+             let chunk_size = DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as usize;
+@@ -1375,6 +1375,10 @@ impl<N: Network> BlockSync<N> {
  
- # GitHub holds an outside contributor's pull request run until a maintainer
--# approves it. A fork's run gets no secrets, so start-cpu-runners is skipped and
--# fork-pr-runners.yml starts the boxes. The fleet jobs therefore accept a
--# skipped start-cpu-runners, and run only in this repository, which alone may
--# use the fleet.
--#
--# The fleet jobs also wait for check-shared-refs, a hosted job. GitHub reports
--# a run as `in_progress`, and fires the `workflow_run` event that starts the
--# boxes, only once none of its ready jobs is waiting for a runner. With no
--# hosted job ahead of them, a fork's fleet jobs would wait for boxes that only
--# that event starts.
-+# approves it. The org's fleet starter boots the boxes when GitHub queues a
-+# fleet job, from any run, a fork's included, so no job here starts them. The
-+# fleet jobs run only in this repository, which alone may use the fleet.
- jobs:
--  start-cpu-runners:
--    # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
--    uses: aleo-labs-protocol/gh-actions/.github/workflows/start-runner.yml@v2
--    permissions: { id-token: write, contents: read, actions: read }
--    secrets:
--      runner_app_key: ${{ secrets.RUNNER_APP_KEY }}
--    with:
--      role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
--      label: cpu
--      # Below the default of 3: snarkOS's jobs run ten minutes or more, so a
--      # box absorbs fewer of them within the critical path. fork-pr-runners.yml
--      # repeats this.
--      jobs-per-box: 2
--      runner-app-id: ${{ vars.RUNNER_APP_ID }}
--    if: >-
--      github.event.pull_request == null ||
--      github.event.pull_request.head.repo.full_name == github.repository
--
-   check-shared-refs:
-     runs-on: ubuntu-latest
-     steps:
-@@ -121,12 +96,9 @@ jobs:
-       - run: .github/merge-fixup.test.sh
+             print_requests();
+             vec![]
++        } else if self.requested_all_served() {
++            // Nothing to request until a peer serves more blocks, e.g. at the tip while the tip
++            // block is in flight.
++            vec![]
+         } else if let Some((sync_peers, min_common_ancestor)) =
+             self.find_sync_peers_inner(current_height, Some(start_height))
+         {
+@@ -1407,7 +1411,7 @@ impl<N: Network> BlockSync<N> {
  
-   lint:
--    needs: [check-shared-refs, start-cpu-runners]
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: 90
-     if: &fleet-if >-
--      !cancelled() && needs.check-shared-refs.result == 'success' &&
--      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
-       github.repository == 'aleo-labs-protocol/snarkOS'
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -145,7 +117,6 @@ jobs:
-       - run: cargo check -p snarkos-node-bft-events --features test-helpers
+             vec![]
+         } else {
+-            // This happens if we already requested all advertised blocks.
++            // No sync peers serve the next height to request.
+             trace!("No new blocks can be requested, but there are still outstanding requests.");
  
-   lint-locktick:
--    needs: [check-shared-refs, start-cpu-runners]
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: 90
-     if: *fleet-if
-@@ -253,7 +224,6 @@ jobs:
-         with: *aleo-resources
+             print_requests();
+@@ -1939,6 +1943,15 @@ impl<N: Network> BlockSync<N> {
+         height
+     }
  
-   test:
--    needs: [check-shared-refs, start-cpu-runners]
-     permissions: { contents: read, actions: write }
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: 90
-@@ -295,7 +265,6 @@ jobs:
++    /// Returns `true` if a peer is ahead of this node, and every block any peer serves is in the
++    /// ledger or requested.
++    fn requested_all_served(&self) -> bool {
++        let current_height = self.retention_height();
++        let start_height = self.first_unrequested_height(current_height.saturating_add(1));
++        let max_tip = self.locators.read().values().map(|peer| peer.serving_tip()).max();
++        max_tip.is_some_and(|tip| current_height < tip && tip < start_height)
++    }
++
+     /// Given the sync peers and their minimum common ancestor, return a list of block requests
+     /// starting at `start_height` (see `first_unrequested_height`).
+     ///
+@@ -2931,6 +2944,25 @@ mod tests {
+         assert!(sync_peers.contains_key(&sample_peer_ip(2)));
+     }
  
-   # The node binary the devnet jobs run, built once per workflow run.
-   build-snarkos:
--    needs: [check-shared-refs, start-cpu-runners]
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: 60
-     if: *fleet-if
-@@ -324,12 +293,11 @@ jobs:
-   # loopback qdiscs outlive a job that is cancelled or whose box dies, so each
-   # entry clears them before it starts as well as after.
-   devnet:
--    needs: [start-cpu-runners, build-snarkos]
-+    needs: build-snarkos
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: ${{ matrix.timeout }}
-     if: >-
-       !cancelled() && needs.build-snarkos.result == 'success' &&
--      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
-       github.repository == 'aleo-labs-protocol/snarkOS'
-     strategy:
-       fail-fast: false
-@@ -385,12 +353,11 @@ jobs:
-   # Slower devnets. On every push, on pull requests into a release branch, and
-   # on demand.
-   devnet-merge:
--    needs: [start-cpu-runners, build-snarkos]
-+    needs: build-snarkos
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: ${{ matrix.timeout }}
-     if: >-
-       !cancelled() && needs.build-snarkos.result == 'success' &&
--      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
-       github.repository == 'aleo-labs-protocol/snarkOS' &&
-       (github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/'))
-     strategy:
-@@ -425,12 +392,11 @@ jobs:
-   # Devnets for releases only. On every push to a release branch, on pull
-   # requests into one, and on demand.
-   devnet-release:
--    needs: [start-cpu-runners, build-snarkos]
-+    needs: build-snarkos
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: ${{ matrix.timeout }}
-     if: >-
-       !cancelled() && needs.build-snarkos.result == 'success' &&
--      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
-       github.repository == 'aleo-labs-protocol/snarkOS' &&
-       (github.event_name == 'workflow_dispatch' ||
-       startsWith(github.ref, 'refs/heads/release/') ||
-@@ -500,13 +46
-```
-
-**File**: `.github/workflows/fork-pr-runners.yml` (removed, +0/-40)
-```diff
-@@ -1,40 +0,0 @@
--name: fork-pr-runners
--
--# Starts the self-hosted boxes for a pull request from a fork when its run
--# starts. GitHub holds an outside contributor's run until a maintainer approves
--# it.
--#
--# A fork's `pull_request` run gets no secrets, so its own start-runner job is
--# skipped. GitHub runs this workflow from the default branch, with this
--# repository's secrets. A fork's run fires `requested` before approval and
--# `in_progress` after it.
--#
--# SECURITY: this workflow holds the runner role, which can change a box's user
--# data. It must never check out or run the pull request's code. It must never
--# put a `workflow_run` field into a `run:` script either: the fork controls its
--# branch name, its commit messages and its workflow names.
--on:
--  workflow_run:
--    workflows: [CI]
--    types: [in_progress]
--
--permissions: {}
--
--jobs:
--  start-runners:
--    # A mirror receives this file by push; see ci.yml.
--    if: >-
--      github.repository == 'aleo-labs-protocol/snarkOS' &&
--      github.event.workflow_run.event == 'pull_request' &&
--      github.event.workflow_run.head_repository.full_name != github.repository
--    # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
--    uses: aleo-labs-protocol/gh-actions/.github/workflows/start-runner.yml@v2
--    permissions: { id-token: write, contents: read, actions: read }
--    secrets:
--      runner_app_key: ${{ secrets.RUNNER_APP_KEY }}
--    with:
--      role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
--      label: cpu
--      # The same box share as ci.yml's start-cpu-runners.
--      jobs-per-box: 2
--      runner-app-id: ${{ vars.RUNNER_APP_ID }}
-```
-
-**File**: `CI.md` (modified, +7/-9)
-```diff
-@@ -12,9 +12,10 @@ Jobs run in one of two places:
-   cold. Their caches would take about half of the repository's 10 GB cache
-   limit and evict the test jobs' entries.
- - **The self-hosted `cpu` fleet** for heavy jobs: clippy, the heavier
--  crates' tests, the `snarkos` build and the devnets. `start-cpu-runners`
--  starts the boxes the run needs; they stop themselves when idle. Each box
--  keeps a persistent `target/` and sccache, so builds there are incremental.
-+  crates' tests, the `snarkos` build and the devnets. The org's fleet starter
-+  starts the boxes when GitHub queues their jobs; they stop themselves when
-+  idle. Each box keeps a persistent `target/` and sccache, so builds there are
-+  incremental.
- 
- ## Triggers
- 
-@@ -31,7 +32,6 @@ a job marked "release" only on the third. The other jobs run on every event.
- 
- | Job | Runner | Trigger | Timeout (min) | What it runs |
- |---|---|---|---|---|
--| `start-cpu-runners` | hosted | all | | starts fleet boxes |
- | `check-shared-refs` | hosted | all | | checks that each `aleo-labs-protocol/gh-actions` ref is a release tag, and that each matrix `name` axis lists the same names as its `include` |
- | `fmt` | hosted | all | | `cargo fmt --check` on `FMT_TOOLCHAIN` |
- | `deny` | hosted | all | | `cargo deny --workspace check bans licenses sources`, plus `advisories` everywhere but `staging`, whose advisories [`bump-advisories.yml`](.github/workflows/bump-advisories.yml) bumps nightly |
-@@ -63,8 +63,7 @@ A job with no timeout gets the GitHub default of six hours. Only hosted jobs
- have none, and a hosted job holds no fleet box.
- 
- Protected branches require `ci-ok` alone. GitHub counts a skipped job as
--passed for a required check, and a fleet job is skipped when
--`start-cpu-runners` fails; `ci-ok` fails then.
-+passed for a required check, so `ci-ok` checks each job's result itself.
- 
- A pull request that changes only Markdown files starts no run, so it gets no
- `ci-ok` check. Where a branch rule requires `ci-ok`,
-@@ -120,9 +119,8 @@ To run the `.ci` scripts on macOS you may want to `brew install bash coreutils
- ## Forks
- 
- A fork's pull request runs on the fleet once a team member approves its run.
--The run gets no secrets, so `start-cpu-runners` is skipped;
--`fork-pr-runners.yml` starts the boxes instead, and the fleet jobs accept the
--skipped start.
-+GitHub then queues its fleet jobs, and the fleet starter boots boxes for them
-+as for any other run.
- 
- The fleet's `target/` and sccache persist between jobs, so an approved run can
- affect later builds there. A pull request runs its own copy of `ci.yml`, so no
++    /// Tests when block sync has requested every block its peers serve.
++    #[test]
++    fn test_quiet_while_tip_block_in_flight() {
++        let sync = sample_sync_at_height(1_000);
++        add_peers(&sync, 1, 1, 1_001, 0);
++        insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
++        assert!(sync.requested_all_served());
++
++        // A peer ahead whose floor is above the next height to request.
++        add_peers(&sync, 2, 1, 1_100, 1_050);
++        assert!(!sync.requested_all_served());
++
++        // No peer ahead, but requests are outstanding.
++        let sync = sample_sync_at_height(1_000);
++        add_peers(&sync, 1, 1, 1_000, 0);
++        insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
++        assert!(!sync.requested_all_served());
++    }
++
+     /// Tests that a `Pruned` reply raises the floor, releases the whole chunk at once, and that the
+     /// chunk is re-issued at once to a peer that serves it.
+     #[test]
 ```
 
 ---
 
-### Incident Patch 2: `2820b172` (2026-11-21)
-**Commit Message**: Remove the start-runner job and fork-pr-runners.yml
+### Incident Patch 2: `5da5dc92` (2026-11-21)
+**Commit Message**: Rename the schedule gate to schedule-due and require a verdict to skip
 
-The org's fleet starter now starts the self-hosted boxes when GitHub
-queues a fleet job, for any run, a fork's included
-(aleo-labs-protocol/aws-dev-infra#465). So ci.yml's start-cpu-runners
-goes, with the fork-pr-runners.yml companion that started boxes for
-approved fork runs.
-
-The fleet jobs no longer need check-shared-refs either. It was ahead of
-them only so a fork's run would reach in_progress and fire the
-companion's workflow_run event. The job still runs, and ci-ok still
-requires it. The fleet jobs keep their repository guard, so approved
-forks still run on the fleet, as before.
+schedule-due outputs due. A head is not due only if an earlier scheduled run
+on it passed or failed with its fmt job run, so cancelled, no-op and
+gate-failed runs no longer count. This matches snarkVM's gate.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Claude-Session: https://claude.ai/code/session_01UYfmmMdw2sVR367ZdZ9CMB
 
-**File**: `.github/workflows/ci.yml` (modified, +7/-44)
+**File**: `.github/workflows/ci.yml` (modified, +69/-58)
 ```diff
-@@ -24,35 +24,10 @@ env:
-   CARGO_TERM_COLOR: always
- 
- # GitHub holds an outside contributor's pull request run until a maintainer
--# approves it. A fork's run gets no secrets, so start-cpu-runners is skipped and
--# fork-pr-runners.yml starts the boxes. The fleet jobs therefore accept a
--# skipped start-cpu-runners, and run only in this repository, which alone may
--# use the fleet.
--#
--# The fleet jobs also wait for check-shared-refs, a hosted job. GitHub reports
--# a run as `in_progress`, and fires the `workflow_run` event that starts the
--# boxes, only once none of its ready jobs is waiting for a runner. With no
--# hosted job ahead of them, a fork's fleet jobs would wait for boxes that only
--# that event starts.
-+# approves it. The org's fleet starter boots the boxes when GitHub queues a
-+# fleet job, from any run, a fork's included, so no job here starts them. The
-+# fleet jobs run only in this repository, which alone may use the fleet.
+@@ -9,8 +9,8 @@ on:
+   push:
+     branches: ['release/**']
+   # Staging's head, every six hours. The schedule fires only in the default
+-  # branch's copy of this file, and `schedule-gate` skips a head that a
+-  # scheduled run already checked.
++  # branch's copy of this file, and `schedule-due` skips a head that a
++  # scheduled run already gave a verdict.
+   schedule:
+     - cron: '47 */6 * * *'
+   workflow_dispatch:
+@@ -21,8 +21,10 @@ permissions:
+ # A superseded PR run holds a one-slot box the new head is queued behind, so a
+ # new push cancels it. Other runs are grouped by event, branch and commit
+ # instead: a group keeps one pending run and drops the rest, and every push to
+-# a release branch needs its own verdict. Two scheduled runs of one commit run
+-# one after the other, so the second's `schedule-gate` sees the first's result.
++# a release branch needs its own verdict. Scheduled runs have groups of their
++# own, so a push or pull request run never cancels one. Two scheduled runs of
++# one commit run one after the other, so the second's `schedule-due` sees the
++# first's verdict.
+ concurrency:
+   group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || format('{0}-{1}-{2}', github.event_name, github.ref, github.sha) }}
+   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+@@ -35,58 +37,65 @@ env:
+ # fleet job, from any run, a fork's included, so no job here starts them. The
+ # fleet jobs run only in this repository, which alone may use the fleet.
+ #
+-# Every job needs `schedule-gate`. It runs only on a schedule, so each job's
++# Every job needs `schedule-due`. It runs only on a schedule, so each job's
+ # `if:` holds a status function: a job whose need was skipped is otherwise
+ # skipped too.
  jobs:
--  start-cpu-runners:
--    # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
--    uses: aleo-labs-protocol/gh-actions/.github/workflows/start-runner.yml@v2
--    permissions: { id-token: write, contents: read, actions: read }
--    secrets:
--      runner_app_key: ${{ secrets.RUNNER_APP_KEY }}
--    with:
--      role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
--      label: cpu
--      # Below the default of 3: snarkOS's jobs run ten minutes or more, so a
--      # box absorbs fewer of them within the critical path. fork-pr-runners.yml
--      # repeats this.
--      jobs-per-box: 2
--      runner-app-id: ${{ vars.RUNNER_APP_ID }}
--    if: >-
--      github.event.pull_request == null ||
--      github.event.pull_request.head.repo.full_name == github.repository
--
-   check-shared-refs:
+-  # On a schedule, decides whether this run checks staging's head. A head
+-  # that an earlier scheduled run passed, failed or is still running is
+-  # skipped: a human reruns a failed run. A re-run of a scheduled run always
+-  # checks. snarkOS-internal mirrors staging with this file, and there the
+-  # gate and so the whole run are skipped.
+-  schedule-gate:
++  # On a schedule, decides whether staging's head is due a check. It is not
++  # due if an earlier scheduled run of this workflow on the same commit gave
++  # a verdict: it passed or failed, and its `fmt` job ran. A cancelled run,
++  # a run this job skipped and a run where this job failed give none, and a
++  # failed head is not checked again until a human re-runs it. A re-run is
++  # always due. snarkOS-internal mirrors staging with this file, and there
++  # this job and so the whole run are skipped.
++  schedule-due:
+     if: github.event_name == 'schedule' && github.repository == 'aleo-labs-protocol/snarkOS'
      runs-on: ubuntu-latest
+     timeout-minutes: 10
+     permissions: { actions: read }
+     outputs:
+-      run: ${{ steps.check.outputs.run }}
++      due: ${{ steps.check.outputs.due }}
      steps:
-@@ -121,12 +96,9 @@ jobs:
-       - run: .github/merge-fixup.test.sh
- 
-   lint:
--    needs: [check-shared-refs, start-cpu-runners]
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: 90
-     if: &fleet-if >-
--      !cancelled() && needs.check-shared-refs.result == 'success' &&
--      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
-       github.repository == 'aleo-labs-protocol/snarkOS'
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -145,7 +117,6 @@ jobs:
-       - run: cargo check -p snarkos-node-bft-events --features test-helpers
- 
-   lint-locktick:
--    needs: [check-shared-refs, start-cpu-runners]
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: 90
-     if: *fleet-if
-@@ -253,7 +224,6 @@ jobs:
-         with: *aleo-resources
- 
-   test:
--    needs: [check-shared-refs, start-cpu-runners]
-     permissions: { contents: read, actions: write }
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: 90
-@@ -295,7 +265,6 @@ jobs:
- 
-   # The node binary the devnet jobs run, built once per workflow run.
-   build-snarkos:
--    needs: [check-shared-refs, start-cpu-runners]
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: 60
-     if: *fleet-if
-@@ -324,12 +293,11 @@ jobs:
-   # loopback qdiscs outlive a job that is cancelled or whose box dies, so each
-   # entry clears them before it starts as well as after.
-   devnet:
--    needs: [start-cpu-runners, build-snarkos]
-+    needs: build-snarkos
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: ${{ matrix.timeout }}
-     if: >-
-       !cancelled() && needs.build-snarkos.result == 'success' &&
--      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
-       github.repository == 'aleo-labs-protocol/snarkOS'
-     strategy:
-       fail-fast: false
-@@ -385,12 +353,11 @@ jobs:
-   # Slower devnets. On every push, on pull requests into a release branch, and
-   # on demand.
-   devnet-merge:
--    needs: [start-cpu-runners, build-snarkos]
-+    needs: build-snarkos
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: ${{ matrix.timeout }}
-     if: >-
-       !cancelled() && needs.build-snarkos.result == 'success' &&
--      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
-       github.repository == 'aleo-labs-protocol/snarkOS' &&
-       (github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/'))
-     strategy:
-@@ -425,12 +392,11 @@ jobs:
-   # Devnets for releases only. On every push to a release branch, on pull
-   # requests into one, and on demand.
-   devnet-release:
--    needs: [start-cpu-runners, build-snarkos]
-+    needs: build-snarkos
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: ${{ matrix.timeout }}
-     if: >-
-       !cancelled() && needs.build-snarkos.result == 'success' &&
--      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
-       github.repository == 'aleo-labs-protocol/snarkOS' &&
-       (github.event_name == 'workflow_dispatch' ||
-       startsWith(github.ref, 'refs/heads/release/') ||
-@@ -500,13 +46
+       - id: check
+         env:
+           GH_TOKEN: ${{ github.token }}
++          MARKER: fmt
+         run: |
+           workflow=${GITHUB_WORKFLOW_REF%%@*}
+           workflow=${workflow##*/}
+-          if [ "$GITHUB_RUN_ATTEMPT" -gt 1 ]; then
+-            echo "A re-run: checking $GITHUB_SHA." | tee -a "$GITHUB_STEP_SUMMARY"
+-            echo run=true >> "$GITHUB_OUTPUT"
++          due() {
++            echo "$2" | tee -a "$GITHUB_STEP_SUMMARY"
++            echo "due=$1" >> "$GITHUB_OUTPUT"
+             exit 0
+-          fi
+-          # An error here checks the head rather than leave it unchecked.
++          }
++          [ "$GITHUB_RUN_ATTEMPT" -eq 1 ] || due true "A re-run: checking $GITHUB_SHA."
++          # An API error checks the head rather than leave it unchecked.
+           if ! runs=$(gh run list -R "$GITHUB_REPOSITORY" --workflow "$workflow" \
+               --event schedule --branch "$GITHUB_REF_NAME" --commit "$GITHUB_SHA" \
+               --limit 100 --json databaseId,status,conclusion,url); then
+             echo "::warning::could not list earlier scheduled runs; checking $GITHUB_SHA"
+-            echo run=true >> "$GITHUB_OUTPUT"
+-            exit 0
+-          fi
+-          earlier=$(jq --argjson id "$GITHUB_RUN_ID" '[.[] | select(.databaseId != $id)
+-            | select(.status != "completed" or (.conclusion | IN("success", "failure", "timed_out")))]' <<< "$runs")
+-          if [ "$(jq length <<< "$earlier")" -eq 0 ]; then
+-            echo "Checking $GITHUB_SHA." | tee -a "$GITHUB_STEP_SUMMARY"
+-            echo run=true >> "$GITHUB_OUTPUT"
+-          else
+-            jq -r --arg sha "$GITHUB_SHA" '"Skipped: \($sha) was checked by \(.[0].url) (\(.[0] | if .status == "completed" then .conclusion else .status end))."' \
+-              <<< "$earlier" | tee -a "$GITHUB_STEP_SUMMARY"
+-            echo run=false >> "$GITHUB_OUTPUT"
++            due true "Checking $GITHUB_SHA."
+           fi
++          # Newest first.
++          while read -r id conclusion url; do
++            if ! ma
 ```
 
-**File**: `.github/workflows/fork-pr-runners.yml` (removed, +0/-40)
+**File**: `CI.md` (modified, +17/-11)
 ```diff
-@@ -1,40 +0,0 @@
--name: fork-pr-runners
--
--# Starts the self-hosted boxes for a pull request from a fork when its run
--# starts. GitHub holds an outside contributor's run until a maintainer approves
--# it.
--#
--# A fork's `pull_request` run gets no secrets, so its own start-runner job is
--# skipped. GitHub runs this workflow from the default branch, with this
--# repository's secrets. A fork's run fires `requested` before approval and
--# `in_progress` after it.
--#
--# SECURITY: this workflow holds the runner role, which can change a box's user
--# data. It must never check out or run the pull request's code. It must never
--# put a `workflow_run` field into a `run:` script either: the fork controls its
--# branch name, its commit messages and its workflow names.
--on:
--  workflow_run:
--    workflows: [CI]
--    types: [in_progress]
--
--permissions: {}
--
--jobs:
--  start-runners:
--    # A mirror receives this file by push; see ci.yml.
--    if: >-
--      github.repository == 'aleo-labs-protocol/snarkOS' &&
--      github.event.workflow_run.event == 'pull_request' &&
--      github.event.workflow_run.head_repository.full_name != github.repository
--    # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
--    uses: aleo-labs-protocol/gh-actions/.github/workflows/start-runner.yml@v2
--    permissions: { id-token: write, contents: read, actions: read }
--    secrets:
--      runner_app_key: ${{ secrets.RUNNER_APP_KEY }}
--    with:
--      role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
--      label: cpu
--      # The same box share as ci.yml's start-cpu-runners.
--      jobs-per-box: 2
--      runner-app-id: ${{ vars.RUNNER_APP_ID }}
-```
-
-**File**: `CI.md` (modified, +7/-9)
-```diff
-@@ -12,9 +12,10 @@ Jobs run in one of two places:
-   cold. Their caches would take about half of the repository's 10 GB cache
-   limit and evict the test jobs' entries.
- - **The self-hosted `cpu` fleet** for heavy jobs: clippy, the heavier
--  crates' tests, the `snarkos` build and the devnets. `start-cpu-runners`
--  starts the boxes the run needs; they stop themselves when idle. Each box
--  keeps a persistent `target/` and sccache, so builds there are incremental.
-+  crates' tests, the `snarkos` build and the devnets. The org's fleet starter
-+  starts the boxes when GitHub queues their jobs; they stop themselves when
-+  idle. Each box keeps a persistent `target/` and sccache, so builds there are
-+  incremental.
+@@ -31,25 +31,31 @@ instead, so `staging` is checked after each merge and not before it.
  
- ## Triggers
+ ## The schedule
  
-@@ -31,7 +32,6 @@ a job marked "release" only on the third. The other jobs run on every event.
+-The `schedule-gate` job runs first in a scheduled run. It decides whether the
+-run checks the head of `staging`:
++The `schedule-due` job runs first in a scheduled run. It decides whether the
++head of `staging` is due a check:
+ 
+-- A head that an earlier scheduled run passed, failed or is still running is
+-  skipped. Every other job in the run is then skipped, and so is `ci-ok`.
+-- A head whose earlier scheduled runs were all cancelled is checked again.
+-- A re-run of a scheduled run always checks its head. To retry a failed
+-  head, re-run the scheduled run's jobs.
++- The head is not due if an earlier scheduled run on it gave a verdict: the
++  run passed or failed, and its `fmt` job ran. Every other job in the run is
++  then skipped, and so is `ci-ok`. The job's summary names that run.
++- A cancelled run, a run that was not due, and a run where `schedule-due`
++  failed give no verdict. A head with only such runs is due.
++- A failed head is not checked again on the next tick. To retry it, re-run
++  the scheduled run's jobs. A re-run is always due.
++- If the GitHub API fails, the head is due.
++
++Scheduled runs have concurrency groups of their own. Two on one commit run
++one after the other, and no push or pull request run cancels one.
+ 
+ A day with no merge into `staging` costs only the hosted minutes of
+-`schedule-gate` and `notify`.
++`schedule-due` and `notify`.
+ 
+ The `notify` job posts to Slack when the scheduled run turns red, and once when
+-it is green again. A run the gate skipped changes nothing. The channel is the
++it is green again. A run that was not due changes nothing. The channel is the
+ repository variable `CI_SLACK_CHANNEL`, `#ci` by default.
+ 
+ A schedule fires only in the default branch's copy of `ci.yml`.
+ `snarkOS-internal` mirrors `staging` with this file, so its schedule fires too.
+-There the gate is skipped, and so is every job after it.
++There `schedule-due` is skipped, and so is every job after it.
+ 
+ ## Jobs
+ 
+@@ -60,7 +66,7 @@ jobs run on every event.
  
  | Job | Runner | Trigger | Timeout (min) | What it runs |
  |---|---|---|---|---|
--| `start-cpu-runners` | hosted | all | | starts fleet boxes |
+-| `schedule-gate` | hosted | schedule | 10 | decides whether a scheduled run checks `staging`'s head |
++| `schedule-due` | hosted | schedule | 10 | decides whether `staging`'s head is due a check |
  | `check-shared-refs` | hosted | all | | checks that each `aleo-labs-protocol/gh-actions` ref is a release tag, and that each matrix `name` axis lists the same names as its `include` |
  | `fmt` | hosted | all | | `cargo fmt --check` on `FMT_TOOLCHAIN` |
  | `deny` | hosted | all | | `cargo deny --workspace check bans licenses sources`, plus `advisories` everywhere but `staging`, whose advisories [`bump-advisories.yml`](.github/workflows/bump-advisories.yml) bumps nightly |
-@@ -63,8 +63,7 @@ A job with no timeout gets the GitHub default of six hours. Only hosted jobs
- have none, and a hosted job holds no fleet box.
- 
- Protected branches require `ci-ok` alone. GitHub counts a skipped job as
--passed for a required check, and a fleet job is skipped when
--`start-cpu-runners` fails; `ci-ok` fails then.
-+passed for a required check, so `ci-ok` checks each job's result itself.
- 
- A pull request that changes only Markdown files starts no run, so it gets no
- `ci-ok` check. Where a branch rule requires `ci-ok`,
-@@ -120,9 +119,8 @@ To run the `.ci` scripts on macOS you may want to `brew install bash coreutils
- ## Forks
- 
- A fork's pull request runs on the fleet once a team member approves its run.
--The run gets no secrets, so `start-cpu-runners` is skipped;
--`fork-pr-runners.yml` starts the boxes instead, and the fleet jobs accept the
--skipped start.
-+GitHub then queues its fleet jobs, and the fleet starter boots boxes for them
-+as for any other run.
- 
- The fleet's `target/` and sccache persist between jobs, so an approved run can
- affect later builds there. A pull request runs its own copy of `ci.yml`, so no
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4754** (2026-11-21): Check staging on a 6-hourly schedule instead of on every push (@cbeck88)
+- **PR #4753** (2026-11-21): Bump snarkVM to aleo-labs-protocol/snarkVM@1757a9b84 (@cbeck88)
+- **PR #4752** (2026-11-21): Take locktick from snarkVM's re-export (@cbeck88)
 - **PR #4751** (2026-11-21): CI: remove the start-runner job and fork-pr-runners.yml (@cbeck88)
+- **PR #4750** (2026-11-21): Keep block sync quiet while the tip block is in flight (@eranrund)
 - **PR #4749** (closed): Deserialize snarkVM Data on the blocking pool in snarkOS (@cbeck88)
-- **PR #4748** (2026-11-21): Print the startup error chain without snarkvm::utilities::display_error (@cbeck88)
-- **PR #4746** (2026-11-21): Pass the expected errors to check_logs in the partial upgrade test (@cbeck88)
-- **PR #4742** (2026-11-20): Expect the errors of a consensus upgrade in the partial upgrade test (@cbeck88)
-- **PR #4740** (2026-11-20): Bump snarkVM to aleo-labs-protocol/snarkVM@7ba14e66b (@cbeck88)
 
 ---
 
@@ -2371,59 +2177,58 @@ Claude-Session: https://claude.ai/code/session_01UYfmmMdw2sVR367ZdZ9CMB
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in ci.yml
+## X. Empirical Invariant Guard in block_sync.rs
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `node/sync/src/block_sync.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2875dee3`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d41f2d25`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/sync/src/block_sync.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# approves it. The org's fleet starter boots the boxes when GitHub queues a
-# fleet job, from any run, a fork's included, so no job here starts them. The
-# fleet jobs run only in this repository, which alone may use the fleet.
-    needs: build-snarkos
-    needs: build-snarkos
-    needs: build-snarkos
+            if total_requests == 0 {
+            } else if !self.requested_all_served() {
+                trace!(
+                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
+                );
+        } else if self.requested_all_served() {
+            // Nothing to request until a peer serves more blocks, e.g. at the tip while the tip
+            // block is in flight.
+            vec![]
+            // No sync peers serve the next height to request.
+    /// Returns `true` if a peer is ahead of this node, and every block any peer serves is in the
+    /// ledger or requested.
+    fn requested_all_served(&self) -> bool {
+        let current_height = self.retention_height();
+        let start_height = self.first_unrequested_height(current_height.saturating_add(1));
+        let max_tip = self.locators.read().values().map(|peer| peer.serving_tip()).max();
+        max_tip.is_some_and(|tip| current_height < tip && tip < start_height)
+    }
+
+    /// Tests when block sync has requested every block its peers serve.
+    #[test]
+    fn test_quiet_while_tip_block_in_flight() {
+        let sync = sample_sync
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-# approves it. A fork's run gets no secrets, so start-cpu-runners is skipped and
-# fork-pr-runners.yml starts the boxes. The fleet jobs therefore accept a
-# skipped start-cpu-runners, and run only in this repository, which alone may
-# use the fleet.
-#
-# The fleet jobs also wait for check-shared-refs, a hosted job. GitHub reports
-# a run as `in_progress`, and fires the `workflow_run` event that starts the
-# boxes, only once none of its ready jobs is waiting for a runner. With no
-# hosted job ahead of them, a fork's fleet jobs would wait for boxes that only
-# that event starts.
-  start-cpu-runners:
-    # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
-    uses: aleo-labs-protocol/gh-actions/.github/workflows/start-runner.yml@v2
-    permissions: { id-token: write, contents: read, actions: read }
-    secrets:
-      runner_app_key: ${{ secrets.RUNNER_APP_KEY }}
-    with:
-      role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
-      label: cpu
-      # Below the default of 3: snarkOS's jobs run ten minutes or more, so a
-      # box absorbs fewer of them within the critical path. fork-pr-runners.yml
-      # repeats this.
-      jobs-per-box: 2
-      runner-app-id: ${{ va
+            if total_requests != 0 {
+                trace!(
+                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
+                );
+            } else {
+            // This happens if we already requested all advertised blocks.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2875dee3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d41f2d25` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

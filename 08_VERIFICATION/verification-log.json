@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-CXRF",
-    "timestamp": "2026-11-19T20:33:56.716Z",
-    "repository": "rtk-ai/rtk",
-    "learningId": "learn-github-rtk-ai-rtk",
-    "contentHash": "7866f4e6dfa710362738b149ae75f8b0777b2269d3ac6d65629b51190c2c7d4c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-52UW",
-    "timestamp": "2026-11-19T20:55:49.688Z",
-    "repository": "skyhook-io/radar",
-    "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "952c6adf3991acc07b464136a80c3d71e83ae82b488f01d798878534c6766208",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-54YP",
-    "timestamp": "2026-11-19T20:55:52.417Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "27bbfe828429281bfe4b8fb2fd7b7477e3956e931a5f89b8727c6f6786355c1c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-560K",
     "timestamp": "2026-11-19T20:55:53.780Z",
     "repository": "xerj-org/xerj",
@@ -7490,6 +7445,51 @@
     "repository": "wcandillon/react-native-skia",
     "learningId": "learn-github-wcandillon-react-native-skia",
     "contentHash": "827ea4e42dca02da78833df24905cc109f2c7e5b6a8d123a2127145917774d18",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-5LZK",
+    "timestamp": "2026-11-21T23:47:32.624Z",
+    "repository": "LiquidAI/d1-2B",
+    "learningId": "learn-huggingface-liquidai-d1-2b",
+    "contentHash": "1ba061fed393d04be33b7f482aec62f1d4e4ad7a9c62210aba581d1e13d2523b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-5US4",
+    "timestamp": "2026-11-21T23:47:44.020Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "00ebb22f4daf338965668416f4c47e5f30af57c9df01ee559e4a1c086587041f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-5XHO",
+    "timestamp": "2026-11-21T23:47:47.532Z",
+    "repository": "t8y2/dbx",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "f693a15a128657ead222c5ab0d43ac6a056dccb6a1e9e283f325d7bfa8b3c96c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
