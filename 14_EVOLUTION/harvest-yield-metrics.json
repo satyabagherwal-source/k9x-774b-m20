@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T15:49:15.305Z",
-  "total_cycles_completed": 11262,
-  "total_learnings_persisted": 11262,
+  "last_updated": "2026-11-21T15:59:50.042Z",
+  "total_cycles_completed": 11264,
+  "total_learnings_persisted": 11264,
   "total_rules_promoted": 10604,
   "history": [
-    {
-      "timestamp": "2026-11-20T19:44:35.225Z",
-      "repository": "nodejs/undici",
-      "learningId": "learn-github-nodejs-undici",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T19:44:40.329Z",
-      "repository": "authzed/spicedb",
-      "learningId": "learn-github-authzed-spicedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T19:44:42.533Z",
       "repository": "projectdiscovery/nuclei",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-21T15:49:15.305Z",
       "repository": "Comfy-Org/Fibo-2.0",
       "learningId": "learn-huggingface-comfy-org-fibo-2-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T15:59:37.078Z",
+      "repository": "KRAFTON/Raon-1-mini-preview",
+      "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T15:59:50.042Z",
+      "repository": "StarTrail-org/LEANN",
+      "learningId": "learn-github-startrail-org-leann",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

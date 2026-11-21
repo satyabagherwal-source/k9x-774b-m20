@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T15:49:51.292Z",
+  "last_updated": "2026-11-21T15:59:56.464Z",
   "total_records": 2258,
   "domains": {
     "A": {
@@ -8073,8 +8073,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "106b74f2ed278926ffc49e5bd8eda04fec89891fc4bc64351f6ca9808675fc65",
-      "created_at": "2026-11-21T14:49:44.126Z"
+      "content_hash": "4641f4fcc77fe54ebb6d3b2157b37d6ea05a8d4b8ffeebaa29faa25ec29075eb",
+      "created_at": "2026-11-21T15:59:56.464Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -27677,8 +27677,8 @@
       "title": "Technical Construction Intelligence: StarTrail-org/LEANN Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-startrail-org-leann-technical-construction-intelligence-startrail-org-leann-core.md",
       "repository": "StarTrail-org/LEANN",
-      "content_hash": "7416375023b1486b8fd20520cadc6e58bc7eb56e95441c1dd3dac5411693834a",
-      "created_at": "2026-11-20T09:34:50.859Z"
+      "content_hash": "8137821d2474aa381f8c1447f01d3156d42dc3d1c58f2faf0e1e78735d11e19b",
+      "created_at": "2026-11-21T15:59:50.578Z"
     },
     "domain_intelligence-technical-construction-intelligence-startrail-org-leann-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-startrail-org-leann-learnings-core-invariant",
@@ -27686,8 +27686,8 @@
       "title": "Technical Construction Intelligence: startrail-org-leann-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-startrail-org-leann-learnings-technical-construction-intelligence-startrail-org-.md",
       "repository": "startrail-org-leann-learnings",
-      "content_hash": "78c9fe697445c0ab7cd29a2e20691cd6d6a5974e47c9ba07d71e363ea48e8df8",
-      "created_at": "2026-11-20T09:34:54.733Z"
+      "content_hash": "cf0a0c929142aa09878a8cf18aef18f0f15ba1ef8f56d3528653b5e9ae941f40",
+      "created_at": "2026-11-21T15:59:54.920Z"
     },
     "domain_intelligence-technical-construction-intelligence-nitrojs-nitro-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nitrojs-nitro-core-invariants",
@@ -28505,8 +28505,8 @@
       "title": "Research & Knowledge Intelligence: KRAFTON/Raon-1-mini-preview Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-krafton-raon-1-mini-preview-research-knowledge-intelligence-krafton-raon-1-mi.md",
       "repository": "KRAFTON/Raon-1-mini-preview",
-      "content_hash": "3ef020463259ee8b2b1b6b8cf4ad6297e5a32bfe4778c7dcd95d1abdf96356a9",
-      "created_at": "2026-11-17T17:49:55.455Z"
+      "content_hash": "e82990a4b80772c7dd5997aae55bd1e6e86d40bd2ba2e401f7eff647166c0c3e",
+      "created_at": "2026-11-21T15:59:37.329Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-preview-learnings-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-preview-learnings-core-in",
@@ -28514,8 +28514,8 @@
       "title": "Research & Knowledge Intelligence: hf-krafton-raon-1-mini-preview-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-krafton-raon-1-mini-preview-learnings-research-knowledge-intelligence-hf-kraf.md",
       "repository": "hf-krafton-raon-1-mini-preview-learnings",
-      "content_hash": "21005fae71594c75bf5fa17a26c14eccb40ddbf4291144372bb05a0c8826130f",
-      "created_at": "2026-11-17T17:50:07.879Z"
+      "content_hash": "7db91756f93e9e9db86949ded9cfead1e05f7f56d148a261531c7a821f1bb574",
+      "created_at": "2026-11-21T15:59:54.010Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-cod": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-cod",

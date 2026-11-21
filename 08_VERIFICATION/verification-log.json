@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-FFSE",
-    "timestamp": "2026-11-19T13:07:59.534Z",
-    "repository": "xevrion/hatchzip",
-    "learningId": "learn-github-xevrion-hatchzip",
-    "contentHash": "2ca6466aed64c6c082736ed0dfa292615a55a0903e885c01c2b45cd993a7bc89",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-FJP4",
-    "timestamp": "2026-11-19T13:08:04.600Z",
-    "repository": "CrossPaste/crosspaste-desktop",
-    "learningId": "learn-github-crosspaste-crosspaste-desktop",
-    "contentHash": "422b6c3c168813edbd86a06ad868d189c35fe6886c9393e4b4cb32b65b7e4f3a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-X66B",
     "timestamp": "2026-11-19T13:21:46.883Z",
     "repository": "zenbu-labs/terminal-browser",
@@ -7490,6 +7460,36 @@
     "repository": "Comfy-Org/Fibo-2.0",
     "learningId": "learn-huggingface-comfy-org-fibo-2-0",
     "contentHash": "d0948d74f1e086e77f501d7827a02564f8b8a6b1f9fdebede3702da8cf8080a3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-FUQX",
+    "timestamp": "2026-11-21T15:59:37.065Z",
+    "repository": "KRAFTON/Raon-1-mini-preview",
+    "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
+    "contentHash": "fd0f35ec045b18f8e993b854d03e955161602832d4547a4bc70c666bf6d3caf6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-G4Q0",
+    "timestamp": "2026-11-21T15:59:49.992Z",
+    "repository": "StarTrail-org/LEANN",
+    "learningId": "learn-github-startrail-org-leann",
+    "contentHash": "4b27fa86c05904b01b59337592dafa20a8adc449322bdbc52e4942313f903cfd",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T15:49:15.310Z",
+  "last_updated": "2026-11-21T15:59:50.047Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8631,14 +8631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-startrail-org-leann",
-      "content_hash": "84d5cccb2531fa0aabed7cf8a82bce71d7046ee8c682d257dd2aefd3476075d5",
-      "verified_at": "2026-11-20T09:34:50.584Z",
+      "content_hash": "4b27fa86c05904b01b59337592dafa20a8adc449322bdbc52e4942313f903cfd",
+      "verified_at": "2026-11-21T15:59:50.046Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T09:34:50.584Z"
+      "last_updated": "2026-11-21T15:59:50.046Z"
     },
     "adonisjs/core": {
       "repository": "adonisjs/core",
@@ -15921,14 +15921,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-krafton-raon-1-mini-preview",
-      "content_hash": "f7de76d77d48c5d9ec8b6f2cfc2982c72a56addd4975eac0e4289e42e6310129",
-      "verified_at": "2026-11-17T17:49:55.243Z",
+      "content_hash": "fd0f35ec045b18f8e993b854d03e955161602832d4547a4bc70c666bf6d3caf6",
+      "verified_at": "2026-11-21T15:59:37.082Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T17:49:55.243Z"
+      "last_updated": "2026-11-21T15:59:37.082Z"
     },
     "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF": {
       "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",

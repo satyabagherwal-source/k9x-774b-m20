@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T15:49:51.656Z",
+  "last_updated": "2026-11-21T15:59:56.464Z",
   "total_verified_learnings": 9060,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23145,
+  "total_items": 23147,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "106b74f2ed278926ffc49e5bd8eda04fec89891fc4bc64351f6ca9808675fc65",
+      "content_hash": "4641f4fcc77fe54ebb6d3b2157b37d6ea05a8d4b8ffeebaa29faa25ec29075eb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T14:49:44.126Z"
+      "persisted_at": "2026-11-21T15:59:56.464Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -273826,8 +273826,8 @@
       "slug": "startrail-org-leann",
       "platform": "github",
       "source_url": "https://github.com/StarTrail-org/LEANN",
-      "source_version": "5235a29d",
-      "content_hash": "84d5cccb2531fa0aabed7cf8a82bce71d7046ee8c682d257dd2aefd3476075d5",
+      "source_version": "dd64641c",
+      "content_hash": "4b27fa86c05904b01b59337592dafa20a8adc449322bdbc52e4942313f903cfd",
       "dossier_path": "07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
       "promoted_rules": [
@@ -273842,7 +273842,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T09:34:50.429Z",
+      "verified_at": "2026-11-21T15:59:49.716Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -273870,10 +273870,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-startrail-org-leann-technical-construction-intelligence-startrail-org-leann-core.md",
       "title": "Technical Construction Intelligence: StarTrail-org/LEANN Core Invariants",
       "repository": "StarTrail-org/LEANN",
-      "source_version": "5235a29d",
-      "content_hash": "7416375023b1486b8fd20520cadc6e58bc7eb56e95441c1dd3dac5411693834a",
+      "source_version": "dd64641c",
+      "content_hash": "8137821d2474aa381f8c1447f01d3156d42dc3d1c58f2faf0e1e78735d11e19b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T09:34:50.859Z"
+      "persisted_at": "2026-11-21T15:59:50.578Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-startrail-org-leann": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-startrail-org-leann",
@@ -273882,10 +273882,10 @@
       "relative_path": "08_VERIFICATION/startrail-org-leann-verification-protocol-empirical-defect-shield-for-startrail-.md",
       "title": "Verification Protocol: Empirical Defect Shield for StarTrail-org/LEANN",
       "repository": "StarTrail-org/LEANN",
-      "source_version": "5235a29d",
-      "content_hash": "ef65c0a61dad26565a2024ea5a10ed5f79a0b2d7e451daca1d6cdcaf54e79128",
+      "source_version": "dd64641c",
+      "content_hash": "276f2df08cb6c3fe3f1fdc73b0074b920141cec50a6149e0edd08ecca06a505b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T09:34:50.980Z"
+      "persisted_at": "2026-11-21T15:59:50.814Z"
     },
     "candidate_directive-mobile-fix-locked-note-history-does-not-save-note-title": {
       "item_id": "candidate_directive-mobile-fix-locked-note-history-does-not-save-note-title",
@@ -273907,9 +273907,9 @@
       "title": "Technical Construction Intelligence: startrail-org-leann-learnings Core Invariants",
       "repository": "startrail-org-leann-learnings",
       "source_version": "HEAD",
-      "content_hash": "78c9fe697445c0ab7cd29a2e20691cd6d6a5974e47c9ba07d71e363ea48e8df8",
+      "content_hash": "cf0a0c929142aa09878a8cf18aef18f0f15ba1ef8f56d3528653b5e9ae941f40",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T09:34:54.733Z"
+      "persisted_at": "2026-11-21T15:59:54.920Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-startrail-org-leann-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-startrail-org-leann-learnings",
@@ -273919,9 +273919,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for startrail-org-leann-learnings",
       "repository": "startrail-org-leann-learnings",
       "source_version": "HEAD",
-      "content_hash": "843bb4d36df86a6cb25e2e8f1e7665ea9a6292b772b6d956b99ef720fbb2cd9b",
+      "content_hash": "413c03e2b0a89397be50a74eff6f2b5b654b4698d5b42fe3b43bd36c7ac2e298",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T09:34:54.847Z"
+      "persisted_at": "2026-11-21T15:59:55.176Z"
     },
     "learn-github-nitrojs-nitro": {
       "learning_id": "learn-github-nitrojs-nitro",
@@ -277779,7 +277779,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
       "source_version": "hf-krafton-raon-1-mini-preview",
-      "content_hash": "f7de76d77d48c5d9ec8b6f2cfc2982c72a56addd4975eac0e4289e42e6310129",
+      "content_hash": "fd0f35ec045b18f8e993b854d03e955161602832d4547a4bc70c666bf6d3caf6",
       "dossier_path": "07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md",
       "promoted_rules": [],
@@ -277788,7 +277788,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T17:49:54.994Z",
+      "verified_at": "2026-11-21T15:59:36.728Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -277805,9 +277805,9 @@
       "title": "Research & Knowledge Intelligence: KRAFTON/Raon-1-mini-preview Core Invariants",
       "repository": "KRAFTON/Raon-1-mini-preview",
       "source_version": "hf-krafton-raon-1-mini-preview",
-      "content_hash": "3ef020463259ee8b2b1b6b8cf4ad6297e5a32bfe4778c7dcd95d1abdf96356a9",
+      "content_hash": "e82990a4b80772c7dd5997aae55bd1e6e86d40bd2ba2e401f7eff647166c0c3e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T17:49:55.455Z"
+      "persisted_at": "2026-11-21T15:59:37.329Z"
     },
     "rule-9023": {
       "learning_id": "rule-9023",
@@ -277843,9 +277843,9 @@
       "title": "Research & Knowledge Intelligence: hf-krafton-raon-1-mini-preview-learnings Core Invariants",
       "repository": "hf-krafton-raon-1-mini-preview-learnings",
       "source_version": "HEAD",
-      "content_hash": "21005fae71594c75bf5fa17a26c14eccb40ddbf4291144372bb05a0c8826130f",
+      "content_hash": "7db91756f93e9e9db86949ded9cfead1e05f7f56d148a261531c7a821f1bb574",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T17:50:07.879Z"
+      "persisted_at": "2026-11-21T15:59:54.010Z"
     },
     "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
@@ -314488,6 +314488,30 @@
       "content_hash": "0fab6ba68704bf0182c58f0380b0ff4d7fe27b746bbacdc6aeb48210aa448a90",
       "domain_letter": "G",
       "persisted_at": "2026-11-21T15:49:51.292Z"
+    },
+    "candidate_directive-rebuild-the-index-when-files-are-only-deleted": {
+      "item_id": "candidate_directive-rebuild-the-index-when-files-are-only-deleted",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G4YS-rebuild-the-index-when-files-are-only-deleted.md",
+      "title": "rebuild the index when files are only deleted",
+      "repository": "StarTrail-org/LEANN",
+      "source_version": "dd64641c",
+      "content_hash": "5190429faee28cf756bd0f0192a3b007c7e8c0de164b5f173ba10d9baac4be1f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T15:59:50.313Z"
+    },
+    "candidate_directive-cli-rebuild-the-index-when-files-are-only-deleted": {
+      "item_id": "candidate_directive-cli-rebuild-the-index-when-files-are-only-deleted",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G8CA-cli-rebuild-the-index-when-files-are-only-deleted.md",
+      "title": "cli): rebuild the index when files are only deleted",
+      "repository": "startrail-org-leann-learnings",
+      "source_version": "HEAD",
+      "content_hash": "abd2aace40d3c88c41297c5ee85424ecdbde67b38a47a5a1ad4f24760bbbe406",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T15:59:54.685Z"
     }
   },
   "ai-builder-brain": {

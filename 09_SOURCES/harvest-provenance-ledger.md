@@ -11866,3 +11866,5 @@ Every entry in this ledger must capture:
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `ad1c3d5b` | Multi-dimensional audit evidence | 2026-11-21T15:49:15.189Z |
 | `learn-huggingface-comfy-org-fibo-2-0` | `https://huggingface.co/Comfy-Org/Fibo-2.0` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-21T15:49:15.300Z |
 | `learn-dom-k-7f9fc9d4` | `project://fallow-rs-fallow` | `ad1c3d5b` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md` | 2026-11-21T15:49:47.999Z |
+| `learn-huggingface-krafton-raon-1-mini-preview` | `https://huggingface.co/KRAFTON/Raon-1-mini-preview` | `hf-krafton` | Multi-dimensional audit evidence | 2026-11-21T15:59:37.071Z |
+| `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `dd64641c` | Multi-dimensional audit evidence | 2026-11-21T15:59:49.998Z |

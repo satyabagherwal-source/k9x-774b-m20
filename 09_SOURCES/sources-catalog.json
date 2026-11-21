@@ -5673,10 +5673,10 @@
     "repository": "StarTrail-org/LEANN",
     "platform": "github",
     "sourceUrl": "https://github.com/StarTrail-org/LEANN",
-    "sourceVersion": "5235a29d",
+    "sourceVersion": "dd64641c",
     "license": "MIT",
-    "contentHash": "84d5cccb2531fa0aabed7cf8a82bce71d7046ee8c682d257dd2aefd3476075d5",
-    "lastHarvestedAt": "2026-11-20T09:34:50.577Z",
+    "contentHash": "4b27fa86c05904b01b59337592dafa20a8adc449322bdbc52e4942313f903cfd",
+    "lastHarvestedAt": "2026-11-21T15:59:49.998Z",
     "learningId": "learn-github-startrail-org-leann"
   },
   "adonisjs-core": {
@@ -10595,8 +10595,8 @@
     "sourceUrl": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
     "sourceVersion": "hf-krafton-raon-1-mini-preview",
     "license": "Open-Source",
-    "contentHash": "f7de76d77d48c5d9ec8b6f2cfc2982c72a56addd4975eac0e4289e42e6310129",
-    "lastHarvestedAt": "2026-11-17T17:49:55.233Z",
+    "contentHash": "fd0f35ec045b18f8e993b854d03e955161602832d4547a4bc70c666bf6d3caf6",
+    "lastHarvestedAt": "2026-11-21T15:59:37.071Z",
     "learningId": "learn-huggingface-krafton-raon-1-mini-preview"
   },
   "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf": {

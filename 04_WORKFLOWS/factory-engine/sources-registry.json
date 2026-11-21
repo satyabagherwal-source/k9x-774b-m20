@@ -1,11 +1,11 @@
 {
   "dnscontrol-dnscontrol": {
-    "name": "DNSControl/dnscontrol",
+    "name": "dnscontrol",
     "officialUrl": "https://github.com/DNSControl/dnscontrol",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T12:07:19.389Z",
-    "lastVerified": "2026-11-20T12:07:19.389Z",
+    "lastChecked": "2026-11-21T15:59:41.192Z",
+    "lastVerified": "2026-11-21T15:59:41.192Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dnscontrol-dnscontrol",
@@ -14,7 +14,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "62103794"
   },
   "gravitl-netmaker": {
     "name": "netmaker",
@@ -45,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T14:49:41.914Z",
-    "lastVerified": "2026-11-21T14:49:41.914Z",
+    "lastChecked": "2026-11-21T15:59:48.657Z",
+    "lastVerified": "2026-11-21T15:59:48.657Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T15:49:18.466Z",
-    "lastVerified": "2026-11-21T15:49:18.466Z",
+    "lastChecked": "2026-11-21T15:59:53.537Z",
+    "lastVerified": "2026-11-21T15:59:53.537Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1693,8 +1694,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T06:01:28.338Z",
-    "lastVerified": "2026-11-21T06:01:28.338Z",
+    "lastChecked": "2026-11-21T15:59:43.689Z",
+    "lastVerified": "2026-11-21T15:59:43.689Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -1760,9 +1761,9 @@
   "infinitered-reactotron": {
     "name": "reactotron",
     "officialUrl": "https://github.com/infinitered/reactotron",
-    "lastChecked": "2026-11-18T12:58:22.243Z",
+    "lastChecked": "2026-11-21T15:59:38.793Z",
     "revisionIdentifier": "acdd7c73",
-    "lastVerified": "2026-11-18T12:58:22.243Z"
+    "lastVerified": "2026-11-21T15:59:38.793Z"
   },
   "loft-sh-vcluster": {
     "name": "vcluster",
@@ -2349,9 +2350,9 @@
   "sayanarijit-xplr": {
     "name": "xplr",
     "officialUrl": "https://github.com/sayanarijit/xplr",
-    "lastChecked": "2026-11-20T01:31:14.474Z",
+    "lastChecked": "2026-11-21T15:59:33.658Z",
     "revisionIdentifier": "e91f74b1",
-    "lastVerified": "2026-11-20T01:31:14.474Z"
+    "lastVerified": "2026-11-21T15:59:33.658Z"
   },
   "hf-taichuai-zdtaichu5.0-9b": {
     "name": "TaichuAI/ZDTaichu5.0-9B",
@@ -6421,14 +6422,14 @@
     "officialUrl": "https://github.com/StarTrail-org/LEANN",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-20T09:34:49.666Z",
-    "lastVerified": "2026-11-20T09:34:49.666Z",
+    "lastChecked": "2026-11-21T15:59:49.325Z",
+    "lastVerified": "2026-11-21T15:59:49.325Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-startrail-org-leann",
-    "contentHash": "84d5cccb2531fa0aabed7cf8a82bce71d7046ee8c682d257dd2aefd3476075d5",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "4b27fa86c05904b01b59337592dafa20a8adc449322bdbc52e4942313f903cfd",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12463,6 +12464,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-comfy-org-fibo-2-0",
     "contentHash": "d0948d74f1e086e77f501d7827a02564f8b8a6b1f9fdebede3702da8cf8080a3",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-krafton-raon-1-mini-preview": {
+    "name": "KRAFTON/Raon-1-mini-preview",
+    "officialUrl": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T15:59:36.237Z",
+    "lastVerified": "2026-11-21T15:59:36.237Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
+    "contentHash": "fd0f35ec045b18f8e993b854d03e955161602832d4547a4bc70c666bf6d3caf6",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

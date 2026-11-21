@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/startrail-org-leann-learnings.md`  
 > **Source**: github ([https://github.com/StarTrail-org/LEANN](https://github.com/StarTrail-org/LEANN))  
-> **Source Version**: `5235a29d`  
+> **Source Version**: `dd64641c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T09:34:49.813Z  
+> **Timestamp**: 2026-11-21T15:59:49.333Z  
 > **Learning ID**: `learn-github-startrail-org-leann`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/startrail-org-leann-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarTrail-org/LEANN](https://github.com/StarTrail-org/LEANN))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T09:34:49.666Z  
+> **Harvest Timestamp**: 2026-11-21T15:59:49.325Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: [MLsys2026 Best Paper]: https://arxiv.org/abs/2506.08276. RAG on Everything with LEANN. Enjoy 97% storage savings while running a fast, accurate, and 100% private RAG application on your personal device.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 13806 stars
+- **Stars / Engagement**: 13808 stars
 
 ---
 
@@ -2218,207 +2218,136 @@ class EmbeddingServerManager:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5235a29d` (2026-11-20)
-**Commit Message**: ci: cancel superseded CI runs instead of queueing behind them (#470)
+### Incident Patch 1: `dd64641c` (2026-11-20)
+**Commit Message**: fix(cli): rebuild the index when files are only deleted (#471)
 
-No workflow in the repo declares a concurrency group, so an obsolete run
-keeps its place in the queue and keeps its runner reservation. Because
-this workflow fans out to a build matrix of ~30 jobs with about half on
-macOS, a few pushes in a row reserve several full matrices.
+HNSW cannot remove vectors in place, so `leann build` falls back to a
+full rebuild when files are modified or removed. When the only changes
+were deletions, the incremental path loaded the changed paths, got no
+text back and returned with "No documents found" before reaching that
+fallback. The sync snapshot was not committed either, so every later
+run printed the same message and the deleted files stayed in the index
+until another file was added or modified, or --force was used.
 
-On 2026-11-19 that produced six queued CI runs -- two superseded main
-runs, a run on a branch whose PR had already merged, and a PR's own
-earlier run testing an approach that had been force-pushed away. A PR
-opened at 22:09 still had not started its build jobs an hour later,
-while the obsolete matrices worked through macOS runners.
+Only return early when nothing was modified or removed. IVF indexes
+still remove the old chunks in place.
 
-Grouping on workflow+ref with cancel-in-progress fixes that: a new push
-to a ref cancels the run it replaces.
+Signed-off-by: Tianlang (Jackie) Chen <[REDACTED_EMAIL]>
+Co-authored-by: Tianlang (Jackie) Chen <[REDACTED_EMAIL]>
 
-Safe to cancel, which is why cancel-in-progress is unconditional rather
-than gated to pull_request: this workflow only builds. It calls
-build-reusable.yml, whose jobs are lint, type-check, build and
-arch-smoke; that workflow uploads artifacts but has no publish step.
-Releases run through release-manual.yml, a separate workflow with its own
-run, so this group does not touch them.
-
-Co-authored-by: Claude O
-
-**File**: `.github/workflows/build-and-publish.yml` (modified, +13/-0)
+**File**: `docs/CHANGELOG.md` (modified, +10/-0)
 ```diff
-@@ -7,6 +7,19 @@ on:
-     branches: [ main ]
-   workflow_dispatch:
- 
-+# Supersede in-flight runs for the same ref instead of queueing behind them. This
-+# workflow fans out to a build matrix of ~30 jobs, about half of them macOS, so
-+# without this a few pushes in a row each reserve a full matrix and later runs sit
-+# queued behind work nobody wants any more -- on 2026-11-19 six runs piled up and
-+# nothing cancelled the obsolete ones; a PR waited over an hour to start.
-+# Safe to cancel: this workflow only builds (it calls build-reusable.yml, whose
-+# jobs are lint, type-check, build and arch-smoke, and which uploads artifacts but
-+# never publishes). Releases go through release-manual.yml, a separate workflow
-+# with its own run, so they are not affected by this group.
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.ref }}
-+  cancel-in-progress: true
+@@ -266,3 +266,13 @@ dropped and the wheel floor moved with it.
+   dependencies from source on every macOS job.
+ - Coverage is otherwise unchanged: `macos-15` and `macos-26` for Apple Silicon,
+   `macos-15-intel` for x86_64. The build matrix goes from 32 jobs to 27.
 +
- jobs:
-   build:
-     uses: ./.github/workflows/build-reusable.yml
++## 2026-11-20: Deleting files no longer leaves them searchable in HNSW indexes
++
++- HNSW cannot delete vectors in place, so `leann build` falls back to a full rebuild when
++  files are modified or removed. When the only changes were deletions, the incremental path
++  loaded the changed files, got no text back, and returned with "No documents found" before
++  reaching that fallback. The sync snapshot was not committed either, so every later run
++  printed the same message, and the deleted files' chunks stayed in the index until
++  another file was added or modified, or `--force` was used. The early return now applies
++  only when nothing was modified or removed; IVF still removes the chunks in place.
 ```
 
----
-
-### Incident Patch 2: `fcc12b75` (2026-11-19)
-**Commit Message**: ci: drop the retired macos-14 runner, and move the wheel floor with it (#468)
-
-GitHub retired the macos-14 runner image, so those five build jobs stopped
-being scheduled. They were cancelled rather than failed, which
-`gh pr checks` reports as a failure -- every pull request showed five red
-jobs whose code was fine. macos-14 last passed 2026-11-03.
-
-The 14.0 deployment target cannot simply move to another runner. On a
-macos-15 runner the Homebrew bottles carry a 15.0 minimum themselves, and
-delocate refuses to mislabel the wheel:
-
-  DelocationError: Library dependencies do not satisfy target MacOS
-  version 14.0:
-    libomp.dylib has a minimum target of 15.0
-    libzmq.5.dylib has a minimum target of 15.0
-    libsodium.26.dylib has a minimum target of 15.0
-
-That is the same constraint the matrix already recorded for
-macos-15-intel ("system libraries require it"). Preserving the 14.0 floor
-would mean building those three dependencies from source on every macOS
-job, so the floor moves instead.
-
-This is a breaking change for macOS 14 on Apple Silicon: releases after
-0.3.9 ship no macosx_14_0_arm64 wheel. Announced in the README next to
-the existing Linux note, and in docs/CHANGELOG.md,
-
-**File**: `.github/workflows/build-reusable.yml` (modified, +6/-19)
+**File**: `packages/leann-core/src/leann/cli.py` (modified, +3/-2)
 ```diff
-@@ -96,16 +96,12 @@ jobs:
-             python: '3.13'
-           - os: ubuntu-22.04-arm
-             python: '3.14'
--          - os: macos-14
--            python: '3.10'
--          - os: macos-14
--            python: '3.11'
--          - os: macos-14
--            python: '3.12'
--          - os: macos-14
--            python: '3.13'
--          - os: macos-14
--            python: '3.14'
-+          # macos-14 removed: GitHub retired the runner image. Its jobs were cancelled
-+          # rather than scheduled, which `gh pr checks` reports as a failure on every PR.
-+          # A 14.0 deployment target is not reachable from a macos-15 runner either --
-+          # the Homebrew bottles there (libomp, libzmq, libsodium) have a 15.0 minimum, so
-+          # delocate refuses to tag the wheel 14.0. The prebuilt arm64 floor is therefore
-+          # macOS 15; macOS 14 users build from source or pin leann==0.3.9.
-           - os: macos-15
-             python: '3.10'
-           - os: macos-15
-@@ -391,8 +387,6 @@ jobs:
-             # macos-15-intel runs macOS 15, so target 15.0 (system libraries require it)
-             if [[ "${{ matrix.os }}" == "macos-15-intel" ]]; then
-               export MACOSX_DEPLOYMENT_TARGET=15.0
--            elif [[ "${{ matrix.os }}" == macos-14* ]]; then
--              export MACOSX_DEPLOYMENT_TARGET=14.0
-             elif [[ "${{ matrix.os }}" == macos-15* ]]; then
-               export MACOSX_DEPLOYMENT_TARGET=15.0
-             elif [[ "${{ matrix.os }}" == macos-26* ]]; then
-@@ -414,8 +408,6 @@ jobs:
-             # macos-15-intel runs macOS 15, so target 15.0 (system libraries require it)
-             if [[ "${{ matrix.os }}" == "macos-15-intel" ]]; then
-               export MACOSX_DEPLOYMENT_TARGET=15.0
--            elif [[ "${{ matrix.os }}" == macos-14* ]]; then
--              export MACOSX_DEPLOYMENT_TARGET=14.0
-             elif [[ "${{ matrix.os }}" == macos-15* ]]; then
-               export MACOSX_DEPLOYMENT_TARGET=15.0
-             elif [[ "${{ matrix.os }}" == macos-26* ]]; then
-@@ -476,9 +468,6 @@ jobs:
-           if [[ "${{ matrix.os }}" == "macos-15-intel" ]]; then
-             HNSW_TARGET="15.0"
-             DISKANN_TARGET="15.0"
--          elif [[ "${{ matrix.os }}" == macos-14* ]]; then
--            HNSW_TARGET="14.0"
--            DISKANN_TARGET="14.0"
-           elif [[ "${{ matrix.os }}" == macos-15* ]]; then
-             HNSW_TARGET="15.0"
-             DISKANN_TARGET="15.0"
-@@ -605,8 +594,6 @@ jobs:
-             # macos-15-intel runs macOS 15, so target 15.0 (system libraries require it)
-             if [[ "${{ matrix.os }}" == "macos-15-intel" ]]; then
-               export MACOSX_DEPLOYMENT_TARGET=15.0
--            elif [[ "${{ matrix.os }}" == macos-14* ]]; then
--              export MACOSX_DEPLOYMENT_TARGET=14.0
-             elif [[ "${{ matrix.os }}" == macos-15* ]]; then
-               export MACOSX_DEPLOYMENT_TARGET=15.0
-             elif [[ "${{ matrix.os }}" == macos-26* ]]; then
+@@ -2754,8 +2754,9 @@ def _normalize_model_name(name: str) -> str:
+                     include_hidden=args.include_hidden,
+                     args=args,
+                 )
+-                # Proceed even when all_texts is empty (e.g. file emptied): we still need to remove old chunks
+-                if not all_texts and not (can_ivf_update and (modified_paths or removed_paths)):
++                # Proceed even when all_texts is empty (e.g. files were only deleted): old chunks
++                # still have to go, through the IVF update or the full rebuild below.
++                if not all_texts and not (modified_paths or removed_paths):
+                     print("No documents found")
+                     return
+ 
 ```
 
-**File**: `README.md` (modified, +2/-0)
+**File**: `tests/test_hnsw_rebuild_fallback.py` (modified, +64/-0)
 ```diff
-@@ -118,6 +118,8 @@ uv pip install leann
- # CPU-only (Linux): use the `cpu` extra (e.g. `leann[cpu]`)
- ```
- 
-+> **macOS note:** prebuilt wheels require **macOS 15 or later** on Apple Silicon (`macosx_15_0_arm64`), and macOS 15 or later on Intel. Releases after `0.3.9` no longer ship a `macosx_14_0_arm64` wheel, because GitHub retired the macOS 14 runner and the replacement runner's system libraries (`libomp`, `libzmq`, `libsodium`) carry a 15.0 minimum, so a 14.0-tagged wheel cannot honestly be produced. On macOS 14, either pin the last release that ships one, `uv pip install 'leann==0.3.9'`, or build from source (below). `0.3.9` has `macosx_14_0_arm64` wheels for Python 3.10 through 3.14.
+@@ -109,3 +109,67 @@ def build_index(self, index_path):
+         "full-rebuild fallback dropped an untouched file from the corpus (issue #386)"
+     )
+     assert "modified content" in added_texts
 +
- > **Linux note:** if a later `leann build` fails with `Security Violation [pathsec.open]: refusing multiply-linked file`, reinstall with `UV_LINK_MODE=copy uv pip install --reinstall ...` (or `UV_LINK_MODE=copy uv tool install --reinstall ...`) - uv's default hardlink installs trip nltk's hardened file loader bundled with llama-index. If it instead fails with `Resource 'stopwords' not found` after `NLTK will not read data from ...` warnings, the environment is group-writable: `export NLTK_DATA=` a private directory (`mkdir -m 700`). Details in the [FAQ](docs/faq.md).
- 
- <!--
-```
-
-**File**: `docs/CHANGELOG.md` (modified, +28/-2)
-```diff
-@@ -238,5 +238,31 @@ Triage pass over the open PR queue. Entries for merges that did not carry their
- `Build macos-14 Python 3.10`-`3.14` is cancelled on every pull request, because GitHub has
- retired the `macos-14` runner image. The jobs are cancelled rather than failed — three of
- them one second after starting — so `gh pr checks` reports them as failures on PRs whose
--code is fine. macos-14 last passed on 3 November (#460). `build-reusable.yml:99-107` still
--requests it; the matrix needs to drop macos-14 or move to a supported image.
-+code is fine. macos-14 last passed on 3 November (#460). Resolved below on 2026-11-19;
-+moving the target to another runner turned out not to be possible, so the runner was
-+dropped and the wheel floor moved with it.
 +
-+## 2026-11-19: Prebuilt macOS wheels now require macOS 15 (breaking)
++def test_hnsw_remove_only_triggers_full_rebuild(tmp_path, monkeypatch):
++    """A deleted file leaves nothing to load from the changed paths.
 +
-+- **Releases after `0.3.9` do not ship a `macosx_14_0_arm64` wheel.** The prebuilt Apple
-+  Silicon floor is macOS 15. On macOS 14, pin `leann==0.3.9` — which does ship that wheel for
-+  Python 3.10 through 3.14 — or build from source.
-+- Why: GitHub retired the `macos-14` runner image, so those five build jobs stopped being
-+  scheduled. They were *cancelled* rather than failed, which `gh pr checks` reports as a
-+  failure, so every pull request showed five red jobs whose code was fine.
-+- Why the target could not simply move to another runner: a 14.0 deployment target is not
-+  reachable from a `macos-15` runner, because the Homebrew bottles installed there carry a
-+  15.0 minimum themselves. `delocate` refuses the wheel rather than mislabel it:
++    That must not stop the full rebuild, or the deleted file stays searchable.
++    """
++    monkeypatch.chdir(tmp_path)
++    docs_root = tmp_path / "docs"
++    docs_root.mkdir()
++    keep_file = docs_root / "keep.md"
++    keep_file.write_text("keep me around", encoding="utf-8")
++    gone_path = str((docs_root / "gone.md").resolve())  # indexed earlier, now deleted
 +
-+  ```
-+  DelocationError: Library dependencies do not satisfy target MacOS version 14.0:
-+    libomp.dylib has a minimum target of 15.0
-+    libzmq.5.dylib has a minimum target of 15.0
-+    libsodium.26.dylib has a minimum target of 15.0
-+  ```
++    cli = LeannCLI()
++    index_dir = tmp_path / ".leann" / "indexes" / "sample"
++    index_dir.mkdir(parents=True)
++    (index_dir / "documents.leann.meta.json").write_text(
++        json.dumps(
++            {
++                "backend_name": "hnsw",
++                "embedding_model": "facebook/contriever",
++                "embedding_mode": "sentence-transformers",
++                "backend_kwargs": {"is_compact": False, "is_recompute": True},
++            }
++        ),
++        encoding="utf-8",
++    )
 +
-+  This is the same constraint the matrix already recorded for `macos-15-intel` ("system
-+  libraries require it"). Preserving the 14.0 floor would mean building those three
-+  dependencies from source on every macOS job.
-+- Coverage is otherwise unchanged: `macos-15` and `macos-26` for Apple Silicon,
-+  `macos-15-intel` for x86_64. The build matrix goes from 32 jobs to 27.
++    class FakeSynchronizer:
++        def detect_changes(self):
++            return set(), {gone_path}, set()
++
++        def create_snapshot(self):
++            pass
++
++    def fake_load_documents(paths, _file_types, include_hidden=False, args=None):
++        if list(paths) == [str(docs_root)]:
++            return [{"text": "keep me around", "metadata": {"file_path": str(keep_file)}}]
++        return []  # nothing left to load from the deleted path
++
++    added_texts: list[str] = []
++
++    class RecordingBuilder:
++        def __init__(self, **_kwargs):
++            pass
++
++        def add_text(self, text, metadata=None):
++            added_texts.append(text)
++
++        def build_index(self, index_path):
++            Path(index_path).parent.mkdir(parents=True, exist_ok=True)
++
++    monkeypatch.setattr(cli, "_build_synchronizers", lambda *_a, **_k: [FakeSynchronizer()])
++    monkeypatch.setattr(cli, "load_documents", fake_load_documents)
++    monkeypatch.setattr(cli, "register_project_dir", lambda: None)
++    monkeypatch.setattr("leann.cli.LeannBuilder", RecordingBuilder)
++
++    args = cli.create_parser().parse_args(
++        ["build", "sample", "--docs", str(docs_root), "--backend-name", "hnsw"]
++    )
++    asyncio.run(cli.build_index(args))
++
++    assert added_texts == ["keep me around"]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #471** (2026-11-20): fix(cli): rebuild the index when files are only deleted (@jackiectl2)
 - **PR #470** (2026-11-20): ci: cancel superseded CI runs instead of queueing behind them (@ASuresh0524)
 - **PR #469** (2026-11-19): feat(benchmarks): score OCR on olmOCR-Bench with its own tests (rebase of #457) (@ASuresh0524)
 - **PR #468** (2026-11-19): ci: drop the retired macos-14 runner, and move the wheel floor with it (@ASuresh0524)
 - **PR #466** (2026-11-19): docs(changelog): record the 2026-11-17 PR triage pass (@ASuresh0524)
 - **PR #465** (2026-11-17): fix(readers): stop WeChatHistoryReader stripping message text at the first colon (@rtmalikian)
-- **PR #463** (2026-11-17): fix(apps): stop forced OCR from silently indexing nothing (@ASuresh0524)
 
 ---
 
@@ -2438,33 +2367,30 @@ the existing Linux note, and in docs/CHANGELOG.md,
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: cancel superseded CI runs instead of queueing behind them
+## X. cli): rebuild the index when files are only deleted
 
 **RULE**:
-When implementing operations in `.github/workflows/build-and-publish.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarTrail-org/LEANN. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarTrail-org/LEANN. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5235a29d`: ci: cancel superseded CI runs instead of queueing behind them. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd64641c`: cli): rebuild the index when files are only deleted. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-and-publish.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-# Supersede in-flight runs for the same ref instead of queueing behind them. This
-# workflow fans out to a build matrix of ~30 jobs, about half of them macOS, so
-# without this a few pushes in a row each reserve a full matrix and later runs sit
-# queued behind work nobody wants any more -- on 2026-11-19 six runs piled up and
-# nothing cancelled the obsolete ones; a PR waited over an hour to start.
-# Safe to cancel: this workflow only builds (it calls build-reusable.yml, whose
-# jobs are lint, type-check, build and arch-smoke, and which uploads artifacts but
-# never publishes). Releases go through release-manual.yml, a separate workflow
-# with its own run, so they are not affected by this group.
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 
+## 2026-11-20: Deleting files no longer leaves them searchable in HNSW indexes
+
+- HNSW cannot delete vectors in place, so `leann build` falls back to a full rebuild when
+  files are modified or removed. When the only changes were deletions, the incremental path
+  loaded the changed files, got no text back, and returned with "No documents found" before
+  reaching that fallback. The sync snapshot was not committed either, so every later run
+  printed the same message, and the deleted files' chunks stayed in the index until
+  another file was added or modified, or `--force` was used. The early return now applies
+  only when nothing was modified or removed; IVF still removes the chunks in place.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2474,4 +2400,4 @@ concurrency:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5235a29d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd64641c` are properly handled with clean fallback behavior.
