@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T15:59:27.929Z",
+  "timestamp": "2026-11-21T02:00:42.476Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-oxc-project-oxc-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [oxc-project-oxc-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T15:59:27.929Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T02:00:42.476Z`  
 > **Learning ID**: `LEARN-EVO-oxc-project-oxc-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source**: github ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
-> **Source Version**: `c5890024`  
+> **Source Version**: `209f078b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T15:58:46.994Z  
+> **Timestamp**: 2026-11-21T02:00:31.497Z  
 > **Learning ID**: `learn-github-oxc-project-oxc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T15:58:46.989Z  
+> **Harvest Timestamp**: 2026-11-21T02:00:31.337Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23506 stars
+- **Stars / Engagement**: 23525 stars
 
 ---
 
@@ -1073,14 +1073,17 @@ impl ConfigScopes {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29895** (2026-11-19): **test(parser): cover comment attachment after a right shift**
-  *Symptoms*: The existing trivia-builder test now checks that JavaScript and TypeScript both attach the block comment after `>>` to the unary `+` at byte 23. Before #29847, the test fails because TypeScript reports the comment as trailing. It passes with the fix.  OpenAI Codex (GPT-6) assisted with the test. The exact model version and reasoning effort were unavailable.  closes #29837 
+- **Issue #29958** (2026-11-21): **perf(mangler): promote hot late bindings into front slots of large scopes**
+  *Symptoms*: Bindings take free slots in declaration order. In a scope with many bindings, a heavily used binding declared late gets a fresh slot that no other scope shares, and often ends up with a two-character name. Meanwhile the scope's first slots are reused by inner scopes for their parameters and locals, so they get one-character names no matter how rarely the outer bindings in them are used.  This PR swaps a few such bindings into the front of the scope: - only in scopes with at least 100 mangle candidates; - at most 20 swaps per scope, each with the coldest of the first 54 bindings; - only when the late binding has more than 4× the uses of the one it displaces; - parameters never move, so `function(e,t,n)` patterns survive.  The promoted binding's uses join a slot that already gets a one-character name, and its old slot cools down, freeing a one-character name for another slot. Everything else keeps declaration order, which is what keeps neighbouring names similar for gzip.  ### Example  Input (the full file is in the details below):  ```js export function outer() {   var c0, c1, /* … */ c99;                  // 100 cold bindings, declared first   function set(v) { c0 = v; /* … */ c99 = v; }   function g(p0, /* … */ p53) {              // 54 hot params, reusing the front slots     return [p0, /* … */ p53, /* ×12 */];   }   var hot = g();                             // hot binding declared late   return [hot, /* ×13 */, set, c0, /* … */ c99]; } ```  No playground link: the input n
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"72b985107141c878d122e1037df9d0042e440268","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-19T13:22:11.702337Z">2026-11-19T13:22:11.702337Z</relative-time> | `72b9851` | New commits |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Co
-  > ### Merge activity  * **Nov 19, 1:21 PM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Nov 19, 1:23 PM UTC**: `camc314` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Nov 19, 1:27 PM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
+  > ## [Monitor Oxc](https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577)  Commit: [`3d272902f83f`](https://github.com/oxc-project/oxc/commit/3d272902f83f755bbcd6e4781be419f9a892578d)  | suite | result | |-------|--------| | [Test262](https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577/job/136672060186) | :white_check_mark: | | [Build](https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577/job/136672060358) | :white_check_mark: | | [Isolated Declarations](https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577/job/136672902538) | :white_check_mark: | | [Runtime Bundles](https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577/job/136672902577) | :white_check_mark: | | [Uglify Corpus](https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577/job/136672902599) | :white_check_mark: | | [Minify Size](https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577/job/136672902606) | :white_check_mark: | | [(white
+  > ## Minify Size  **[`claude/gracious-euler-g6xiwf`](https://github.com/oxc-project/oxc/commit/3d272902f83f755bbcd6e4781be419f9a892578d)** vs **[`main`](https://github.com/oxc-project/oxc/commit/209f078ba8572400fbf75e59cbd48fa8c291e71a)**  **542 of 109,516 files changed.**  | | files | changed | raw | gzip -9 | brotli q5 | |---|---:|---:|---:|---:|---:| | normal | 108,351 | 474<br><sub>455 smaller, 19 larger</sub> | -80,744 B (-0.016%)<br><sub>503.27 MB → 503.19 MB</sub> | +4,666 B (+0.003%)<br><sub>148.55 MB → 148.56 MB</sub> | +13,697 B (+0.010%)<br><sub>136.55 MB → 136.56 MB</sub> | | already minified (`*.min.js`) | 1,165 | 68<br><sub>64 smaller, 4 larger</sub> | -6,313 B (-0.012%)<br><sub>54.30 MB → 54.29 MB</sub> | +905 B (+0.006%)<br><sub>14.16 MB → 14.16 MB</sub> | +1,225 B (+0.009%)<br><sub>13.23 MB → 13.23 MB</sub> |  **[Full report](https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577)** (Test Minify Size summary): top files and packages each way, and before/afte
 
-- **Issue #29882** (2026-11-19): **fix(linter/unicorn/prefer-logical-operator-over-ternary): parenthesize operands that bind looser than `||` in fixer**
-  *Symptoms*: The `unicorn/prefer-logical-operator-over-ternary` fixer wrote `test || <alternate>` using raw source text, only parenthesizing `??` operands. An alternate (or left operand) binding looser than `||` was emitted bare, so applying the suggestion could change meaning or produce code that no longer parses. For example, `x ? x : y ? 1 : 2` became `x || y ? 1 : 2` (now `(x || y) ? 1 : 2`, different result), and `onSelect ? onSelect : () => {}` became the syntax error `onSelect || () => {}`.  The fixer now parenthesizes any `||` operand that is a conditional, arrow function, assignment, `yield`, sequence, or coalescing `??` expression, on both sides of both rewrite paths, so fixed output stays valid and meaning-preserving, matching the upstream eslint-plugin-unicorn suggestions (e.g. `x || (y ? 1 : 2)`).  Closes #29877  Automated triagebot fix (AI-assisted).
+- **Issue #29950** (2026-11-20): **docs(formatter_css): record multi-line value comment expanding its group as a divergence**
+  *Symptoms*: For consistency. All other languages break parent, but CSS does not. 
+  **Post-Mortem & Fix Analysis**:
+  > * **#29950** <a href="https://app.graphite.com/github/pr/oxc-project/oxc/29950?utm_source=stack-comment-icon" target="_blank"><img src="https://static.graphite.dev/graphite-32x32-black.png" alt="Graphite" width="10px" height="10px"/></a> 👈 <a href="https://app.graphite.com/github/pr/oxc-project/oxc/29950?utm_source=stack-comment-view-in-graphite" target="_blank">(View in Graphite)</a> * `main` <hr />  ## How to use the Graphite Merge Queue  Add either label to this PR to merge it via the merge queue: - <kbd>0-merge</kbd> - adds this PR to the back of the merge queue - <kbd>hotfix</kbd> - for urgent changes, fast-track this PR to the front of the merge queue  You must have a Graphite account in order to use the merge queue. Sign up using [this link](https://app.graphite.com/invite/github/oxc-project?ref=merge-queue-instructions-in-stack-comment&prId=29950).  <h2></h2> <sub>  An organization admin has enabled the [Graphite Merge Queue](https://graphite.dev/docs/graphite-merge-queue) in 
+  > ### Merge activity  * **Nov 20, 2:16 PM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Nov 20, 2:17 PM UTC**: `leaysgur` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Nov 20, 2:24 PM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1097,804 +1100,720 @@ impl ConfigScopes {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `35694db4` (2026-11-18)
-**Commit Message**: fix(linter/typescript/explicit-function-return-type): check block-bodied arrows in returned objects (#29843)
+### Incident Patch 1: `6db561f3` (2026-11-20)
+**Commit Message**: fix(transformer): keep correct keys on leftover fields with setPublicClassFields (#29911)
 
-Oxlint misses block-bodied arrow functions without an explicit return type when they are properties of an object returned by a typed function.
+With `setPublicClassFields: true`, the TypeScript transform moves field initializers into the constructor. With the default `allowDeclareFields`, the field declaration stays in the class body. For string, numeric, BigInt and computed keys, the key was moved out with `take_in`, leaving `null;` / `[null];` behind, so instances got a bogus `null` own property.
 
-Part of #29822 (item 3).
+Supersedes #29906. That PR kept literal keys, but left computed keys as `[_y]` while assigning `_y` in a `static {}` block. JavaScript evaluates every computed class key during class definition, before any static block runs, so `[_y]` read `undefined`. That PR also panicked with `allowDeclareFields: false`.
+
+Closes #29904
 
 ### Example
 
-Input ([playground for this example](https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22lint%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%7D&code=type+R+%3D+%7B+run%3A+%28%29+%3D%3E+Promise%3Cnumber%3E+%7D%3B%0Aexport+function+f%28%29%3A+R+%7B%0A++return+%7B%0A++++run%3A+async+%28%29+%3D%3E+%7B%0A++++++return+1%3B%0A++++%7D%2C%0A++%7D%3B%0A%7D%0A&lintRules=typescript%2Fexplicit-function-return-type); it runs the released version, not this PR):
+Input (options: `{ "assumptions": { "setPublicClassFields": true }, "plugins": ["transform-typescript"] }`):
 
 ```ts
-type R = { run: () => Promise<number> };
-export function f(): R {
-  return {
-    run: async () => {
-      return 1;
-    },
-  };
+const getY = () => "yKey";
+class C {
+  "x" = 1;
+  [getY()] = 2;
 }
+console.log(Object.keys(new C()));
 ```
 
-Before output:
+No playground link: the playground's `useDefineForClassFields: false` turns on both `setPublicClassFields` and `removeClassFieldsWithoutInitializer`, so it can't select the kept-declaratio
 
-```text
-(no diagnostics)
-```
-
-After output:
-
-```text
-example.ts:4:5: Missing return type on function. [Error/typescript(explicit-function-return-type)]
-
-1 problem
-```
-
-The rule now reports the block-bodied arrow, matching typescript-eslint. Expression-bodied arrows in
-
-**File**: `crates/oxc_linter/src/rules/typescript/explicit_function_return_type.rs` (modified, +43/-18)
+**File**: `crates/oxc_transformer/src/typescript/class.rs` (modified, +66/-15)
 ```diff
-@@ -489,15 +489,15 @@ fn is_setter(node: &AstNode) -> bool {
+@@ -9,7 +9,10 @@ use oxc_syntax::operator::AssignmentOperator;
+ use oxc_traverse::BoundIdentifier;
  
- fn check_typed_function_expression<'a>(node: &AstNode<'a>, ctx: &LintContext<'a>) -> bool {
-     let Some(parent) = outermost_paren_parent(node, ctx) else { return false };
--    is_typed_parent(parent, Some(node), ctx)
-+    is_typed_parent(parent, Some(node))
-         || is_property_of_object_with_type(parent, ctx)
-         || is_constructor_argument(parent)
- }
- 
--fn is_typed_parent(parent: &AstNode, callee: Option<&AstNode>, ctx: &LintContext) -> bool {
-+fn is_typed_parent(parent: &AstNode, callee: Option<&AstNode>) -> bool {
-     is_type_assertion(parent)
-         || is_variable_declarator_with_type_annotation(parent)
--        || is_default_function_parameter_with_type_annotation(parent, ctx)
-+        || is_default_function_parameter_with_type_annotation(parent)
-         || is_property_definition_with_type_annotation(parent)
-         || is_function_argument(parent, callee)
-         || is_typed_jsx(parent)
-@@ -535,13 +535,8 @@ fn is_function_argument(parent: &AstNode, callee: Option<&AstNode>) -> bool {
- fn is_type_assertion(node: &AstNode) -> bool {
-     matches!(node.kind(), AstKind::TSAsExpression(_) | AstKind::TSTypeAssertion(_))
- }
--fn is_default_function_parameter_with_type_annotation(node: &AstNode, ctx: &LintContext) -> bool {
--    let AstKind::AssignmentPattern(_assign) = node.kind() else { return false };
--    match ctx.nodes().parent_kind(node.id()) {
--        AstKind::FormalParameter(f) => f.type_annotation.is_some(),
--        AstKind::FormalParameterRest(f) => f.type_annotation.is_some(),
--        _ => false,
--    }
-+fn is_default_function_parameter_with_type_annotation(node: &AstNode) -> bool {
-+    matches!(node.kind(), AstKind::FormalParameter(param) if param.type_annotation.is_some())
- }
- 
- /**
-@@ -570,12 +565,17 @@ fn is_typed_jsx(node: &AstNode) -> bool {
- fn ancestor_has_return_type<'a>(node: &AstNode<'a>, ctx: &LintContext<'a>) -> bool {
-     let Some(parent) = outermost_paren_parent(node, ctx) else { return false };
- 
--    if let AstKind::ObjectProperty(prop) = parent.kind()
--        && let Expression::ArrowFunctionExpression(func) = &prop.value
--        && func.get_function_body().is_some_and(|body| !body.statements.is_empty())
--        && func.return_type.is_some()
--    {
--        return true;
-+    let can_inherit_return_type = match parent.kind() {
-+        AstKind::ReturnStatement(_) => true,
-+        AstKind::ArrowFunctionExpression(func) => func.get_expression().is_some(),
-+        AstKind::ObjectProperty(prop) => matches!(
-+            prop.value.without_parentheses(),
-+            Expression::ArrowFunctionExpression(func) if func.get_expression().is_some()
-+        ),
-+        _ => false,
-+    };
-+    if !can_inherit_return_type {
-+        return false;
-     }
- 
-     for ancestor in ctx.nodes().ancestors(node.id()) {
-@@ -666,8 +666,7 @@ fn is_property_of_object_with_type(node: &AstNode, ctx: &LintContext) -> bool {
-     let Some(obj_expr_parent) = outermost_paren_parent(parent, ctx) else {
-         return false;
-     };
--    is_typed_parent(obj_expr_parent, None, ctx)
--        || is_property_of_object_with_type(obj_expr_parent, ctx)
-+    is_typed_parent(obj_expr_parent, None) || is_property_of_object_with_type(obj_expr_parent, ctx)
- }
- 
- #[test]
-@@ -1494,6 +1493,17 @@ fn test() {
-             None,
-             None,
-         ),
-+        (
-+            "
-+            type R = { run: () => Promise<number> };
-+            export function f(): R {
-+              return { run: async () => 1 };
-+            }
-+            ",
-+            None,
-+            None,
-+            None,
-+        ),
-     ];
- 
-     let fail = vec![
-@@ -2110,6 +2120,21 @@ fn test() {
-             None,
-             None,
-         ),
-+        (
-+            "
-+            type R = { run: () => Promise<number> };
-+            export function f(): R {
-+              return {
-+                run: async () => {
-+                  return 1;
-+                },
-+              };
-+            }
-+            ",
-+            None,
-+            None,
-+            None,
-+        ),
-     ];
- 
-     Tester::new(ExplicitFunctionReturnType::NAME, ExplicitFunctionReturnType::PLUGIN, pass, fail)
+ use crate::{
+-    common::computed_key::{create_computed_key_temp_var, key_needs_temp_var},
++    common::{
++        computed_key::{create_computed_key_temp_var, key_needs_temp_var},
++        duplicate::duplicate_expression,
++    },
+     context::TraverseCtx,
+     utils::ast_builder::{
+         create_class_constructor, create_this_property_access, create_this_property_assignment,
+@@ -120,9 +123,17 @@ impl<'a> TypeScript<'a> {
+                         || (!prop.r#static && will_hoist_initializers_to_constructor) =>
+                 {
+                     if let Some(value) = prop.value.take() {
++                        // A static property is replaced by a static block below, and an instance
++                        // property is removed later when `remove_class_fields_without_initializer`
++                        // is `true`. Otherwise, the instance property declaration stays in the
++                        // class body (without its initializer), so its key is still evaluated
++                        // during class definition.
++                        let keep_declaration =
++                            !prop.r#static && !self.remove_class_fields_without_initializer;
+                         let assignment = self.convert_property_definition(
+                             &mut prop.key,
+                             value,
++                            keep_declaration,
+                             &mut computed_key_assignments,
+                             ctx,
+                         );
+@@ -148,6 +159,15 @@ impl<'a> TypeScript<'a> {
+                             // keeps and is evaluated in the same order as the original class field in static block.
+                             computed_key_assignments.push(key.take_in(ctx));
+                         }
++                    } else if !prop.declare && prop.computed {
++                        // The property declaration without initializer is kept in the class body, so its
++                        // computed key is evaluated during class definition. Any pending computed key
++                        // assignments from previous elements must be evaluated before it.
++                        Self::convert_computed_key(
++                            &mut prop.key,
++                            &mut computed_key_assignments,
++                            ctx,
++                        );
+                     }
+                 }
+                 ClassElement::MethodDefinition(method) => {
+@@ -435,12 +455,18 @@ impl<'a> TypeScript<'a> {
+     /// * Static key:
+     ///   `class C { x = 1; }` -> `class C { constructor() { this.x = 1; } }`
+     ///
++    /// When `keep_declaration` is `true`, the property declaration stays in the class body, so
++    /// its key is still evaluated during class definition. In that case the temp var is assigned
++    /// inside the key itself, so the key expression is evaluated exactly once and in source order:
++    ///   `class C { [x()] = 1; }` -> `let _x; class C { constructor() { this[_x] = 1; } [_x = x()]; }`
++    ///
+     /// Returns an assignment statement which would be inserted in the constructor body.
+     #[expect(clippy::unused_self)]
+     fn convert_property_definition(
+         &self,
+         key: &mut PropertyKey<'a>,
+         value: Expression<'a>,
++        keep_declaration: bool,
+         computed_key_assignments: &mut Vec<Expression<'a>>,
+         ctx: &mut TraverseCtx<'a>,
+     ) -> Statement<'a> {
+@@ -467,8 +493,25 @@ impl<'a> TypeScript<'a> {
+                 let new_key = if key_needs_temp_var(key, ctx) {
+                     let taken_key = key.take_in(ctx);
+                     let (assignment, ident) = create_computed_key_temp_var(taken_key, ctx);
+-                    computed_key_assignments.push(assignment);
++                    if keep_declaration {
++                        // All computed keys are evaluated during class definition, before any
++                        // static block runs, so assigning the temp var in a static block would
++                        // leave it `undefined` when the kept declaration's key is evaluated.
++                        // Assign it in the key instead: `[x()] = 1` -> `[_x = x()];`.
++                        *key = assignment;
++                        Self::prepend_computed_key_assignments(key, computed_key_assignments, ctx);
++                    } else {
++                        computed_key_assignments.push(assignment);
++                    }
+                     ident
++                } else if keep_declaration {
++                    // Keep the original key in the kept declaration, rather than leaving
++                    // the `NullLiteral` dummy from `take_in`, which would create a `null` property.
++                    // The key is side-effect free here, so it can be duplicated without a temp var.
++                    let (original_key, new_key) =
++                       
 ```
 
-**File**: `crates/oxc_linter/src/snapshots/typescript_explicit_function_return_type.snap` (modified, +9/-0)
+**File**: `tasks/transform_conformance/snapshots/oxc.snap.md` (modified, +2/-2)
 ```diff
-@@ -690,3 +690,12 @@ source: crates/oxc_linter/src/tester.rs
-    ·        ────────────────────
-    ╰────
-   help: Require explicit return types on functions and class methods.
+@@ -1,6 +1,6 @@
+ commit: 16a2d671
+ 
+-Passed: 342/467
++Passed: 344/469
+ 
+ # All Passed:
+ * babel-plugin-transform-class-static-block
+@@ -49,7 +49,7 @@ x Output mismatch
+ x Output mismatch
+ 
+ 
+-# babel-plugin-transform-typescript (51/67)
++# babel-plugin-transform-typescript (53/69)
+ * computed-constant-value/input.ts
+ x Output mismatch
+ 
+```
+
+**File**: `tasks/transform_conformance/snapshots/oxc_exec.snap.md` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@ commit: 16a2d671
+ 
+ node: v26.12.1
+ 
+-Passed: 71 of 367 (19.35%)
++Passed: 73 of 369 (19.78%)
+ 
+ Failures:
+ 
+```
+
+**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/set-public-class-fields-computed-key-order-remove-uninitialized/exec.ts` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++const log: string[] = [];
++const k = (name: string) => (log.push(name), name);
 +
-+  ⚠ typescript(explicit-function-return-type): Missing return type on function.
-+   ╭─[explicit_function_return_type.tsx:5:17]
-+ 4 │               return {
-+ 5 │                 run: async () => {
-+   ·                 ───────────
-+ 6 │                   return 1;
-+   ╰────
-+  help: Require explicit return types on functions and class methods.
++class D {
++  [k("a")] = 1;
++  "lit" = 2;
++  [k("b")]: number;
++  static [k("c")] = 3;
++  [k("d")]: number;
++  [k("e")]() {}
++  [k("f")] = 4;
++  static [k("g")] = 5;
++  plain = 6;
++}
++
++expect(log).toEqual(["a", "b", "c", "d", "e", "f", "g"]);
++const d = new D();
++expect(log).toEqual(["a", "b", "c", "d", "e", "f", "g"]);
++expect(Object.keys(d)).toEqual(["a", "lit", "f", "plain"]);
++expect(d).toEqual({ a: 1, lit: 2, f: 4, plain: 6 });
++expect(Object.keys(D)).toEqual(["c", "g"]);
++expect(D.c).toBe(3);
++expect(D.g).toBe(5);
++expect(typeof D.prototype.e).toBe("function");
+```
+
+**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/set-public-class-fields-computed-key-order-remove-uninitialized/input.ts` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++class D {
++  [k("a")] = 1;
++  [k("b")]: number;
++  static [k("c")] = 2;
++  [k("d")]: number;
++  [k("e")]() {}
++  static [k("f")] = 3;
++  [k("g")] = 4;
++  static [k("h")] = 5;
++}
+```
+
+**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/set-public-class-fields-computed-key-order-remove-uninitialized/options.json` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++{
++  "assumptions": {
++    "setPublicClassFields": true
++  },
++  "plugins": [["transform-typescript", { "allowDeclareFields": false }]]
++}
+```
+
+**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/set-public-class-fields-computed-key-order-remove-uninitialized/output.js` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++let _k, _k2, _k3, _k4, _k5;
++class D {
++  constructor() {
++    this[_k] = 1;
++    this[_k4] = 4;
++  }
++  static {
++    _k3 = k("f"), _k4 = k("g"), _k5 = k("h");
++  }
++  static {
++    this[_k2] = 2;
++  }
++  [(_k = k("a"), k("b"), _k2 = k("c"), k("d"), k("e"))]() {}
++  static {
++    this[_k3] = 3;
++  }
++  static {
++    this[_k5] = 5;
++  }
++}
+```
+
+**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/set-public-class-fields-non-identifier-keys/exec.ts` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++const log: string[] = [];
++const k = (name: string) => (log.push(name), name);
++const getY = () => "yKey";
++const bound = "b";
++
++class C {
++  "x" = 1;
++  1 = 2;
++  [getY()] = 4;
++  [bound] = 5;
++  z = 6;
++}
++
++const c = new C();
++expect(Object.keys(c)).toEqual(["1", "x", "yKey", "b", "z"]);
++expect(c).toEqual({ 1: 2, x: 1, yKey: 4, b: 5, z: 6 });
++
++class D {
++  [k("a")] = 1;
++  "lit" = 2;
++  [k("b")]: number;
++  static [k("c")] = 3;
++  [k("d")]: number;
++  [k("e")]() {}
++  [k("f")] = 4;
++  static [k("g")] = 5;
++  plain = 6;
++}
++
++expect(log).toEqual(["a", "b", "c", "d", "e", "f", "g"]);
++const d = new D();
++expect(log).toEqual(["a", "b", "c", "d", "e", "f", "g"]);
++expect(d.a).toBe(1);
++expect(d.lit).toBe(2);
++expect(d.f).toBe(4);
++expect(d.plain).toBe(6);
++expect(D.c).toBe(3);
++expect(D.g).toBe(5);
++expect(typeof D.prototype.e).toBe("function");
++expect(Object.keys(d)).not.toContain("undefined");
++expect(Object.keys(d)).not.toContain("null");
++expect(Object.keys(D)).toEqual(["c", "g"]);
 ```
 
 ---
 
-### Incident Patch 2: `c5890024` (2026-11-19)
-**Commit Message**: fix(minifier): drop redeclarations of removed declarations (#29415)
+### Incident Patch 2: `831fbcab` (2026-11-20)
+**Commit Message**: fix(transformer): don't fold computed key assignments into non-computed method keys (#29912)
 
-When the minifier removed a declaration of a redeclared symbol, its entry in `Scoping::symbol_redeclarations` stayed. In `catch (a) { var a }` the stale entry kept the catch parameter looking redeclared (and, with #28739, linked to the enclosing var binding), so the catch binding was only removed when the output was minified a second time.
+Follow-up to #29911 (merged).
 
-Closes #27548
+With `setPublicClassFields: true`, key assignments that are still waiting to be emitted (for example from a static field turned into a static block) are prepended to the next method or accessor key, even when that key isn't computed. A non-computed key can't hold a sequence expression, so the output is invalid JavaScript. This bug is already on `main`; #29911 didn't introduce it.
 
 ### Example
 
-Input ([playground for this example](`` https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22compress%22%3Atrue%2C%22whitespace%22%3Atrue%7D%7D&code=export+function+f%28%29%7Btry%7Bx%28%29%3B%7Dcatch%28a%29%7Bvar+a%3B%7D%7D); `` playground.oxc.rs runs the released Oxc version, so it shows the behavior before this PR):
+Input, with target `esnext` and `useDefineForClassFields: false`:
 
-```js
-export function f(){try{x();}catch(a){var a;}}
+```ts
+const k = (name: string) => name;
+class C {
+  static [k("a")] = 1;
+  "m"() {
+    return "m";
+  }
+}
+console.log(C.a, new C().m());
 ```
 
-`cargo run -p oxc_minifier --example minifier -- input.js --nospace --twice` prints the first run, then a second run on that output.
+[Playground for this example](https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22target%22%3A%22esnext%22%2C%22useDefineForClassFields%22%3Afalse%7D%7D&code=const+k+%3D+%28name%3A+string%29+%3D%3E+name%3B%0Aclass+C+%7B%0A++static+%5Bk%28%22a%22%29%5D+%3D+1%3B%0A++%22m%22%28%29+%7B%0A++++return+%22m%22%3B%0A++%7D%0A%7D%0Aconsole.log%28C.a%2C+new+C%28%29
 
-Before output (parent commit d4c3cbe):
-
-```text
-export function f(){try{x()}catch(a){}}
-export function f(){try{x()}catch{}}
-same = false
-```
-
-After output:
-
-```text
-export function f(){try{x()}catch{}}
-export function f(){try{x()}cat
-
-**File**: `crates/oxc_minifier/src/compression_pass.rs` (modified, +106/-11)
+**File**: `crates/oxc_transformer/src/typescript/class.rs` (modified, +5/-2)
 ```diff
-@@ -1,24 +1,28 @@
- //! Completion of Normalize and peephole compression passes.
- //!
--//! AST mutations accumulate removed semantic references and dropped direct
--//! `eval` calls on [`crate::state::PassChanges`]. Both Normalize and each
--//! peephole pass cross the same completion boundary: prune those references,
-+//! AST mutations accumulate removed semantic references, dropped direct
-+//! `eval` calls and dropped declarations of redeclared symbols on
-+//! [`crate::state::PassChanges`]. Both Normalize and each peephole pass cross
-+//! the same completion boundary: prune those references and declarations,
- //! refresh direct-eval scope flags, then derive function reachability from the
- //! settled semantic state.
- 
--#[cfg(debug_assertions)]
--use oxc_ast_visit::Visit;
--use oxc_ast_visit::{VisitJs, walk_js::walk_call_expression};
-+use oxc_ast_visit::{Visit, VisitJs, walk_js::walk_call_expression};
- use rustc_hash::FxHashSet;
- 
- use oxc_allocator::{BitSet, GetAllocator};
- use oxc_ast::ast::*;
--use oxc_semantic::Scoping;
-+use oxc_semantic::{Scoping, SymbolId};
-+use oxc_span::Span;
- use oxc_syntax::scope::{ScopeFlags, ScopeId};
- 
- use crate::{
--    ReusableTraverseCtx, TraverseCtx, minifier_traverse::traverse_mut_with_ctx,
--    peephole::PeepholeOptimizations, symbol_liveness, traverse_context::as_direct_eval_call,
-+    ReusableTraverseCtx, TraverseCtx,
-+    minifier_traverse::traverse_mut_with_ctx,
-+    peephole::PeepholeOptimizations,
-+    state::PassChanges,
-+    symbol_liveness,
-+    traverse_context::{RedeclaredBindings, as_direct_eval_call},
- };
- 
- /// The fixed-point decision produced by one completed peephole pass.
-@@ -140,6 +144,35 @@ pub fn debug_assert_no_under_prune(
-     }
- }
- 
-+/// Debug-only guard for the walk gate in [`prune_removed_declarations`]: a
-+/// declaration dropped this pass must not still be in the program unless
-+/// `KeepVar` re-emitted it. A violation means a site moved or cloned a binding
-+/// out of a subtree it then dropped; release builds, which skip the walk when
-+/// nothing was re-emitted, would then remove a live declaration from
-+/// `Scoping::symbol_redeclarations` (the unsafe direction).
-+///
-+/// This is a separate walk rather than part of the pruning walk, so debug builds
-+/// take the same pruning path as release builds.
-+///
-+/// Allocation-free like the other debug guards: it asserts inline during the walk.
-+#[cfg(debug_assertions)]
-+fn debug_assert_no_revived_declarations(
-+    program: &Program<'_>,
-+    scoping: &Scoping,
-+    removed: &FxHashSet<(SymbolId, Span)>,
-+    reemitted: &FxHashSet<(SymbolId, Span)>,
-+) {
-+    RedeclaredBindings::new(scoping, |symbol_id, span| {
-+        let declaration = (symbol_id, span);
-+        assert!(
-+            !removed.contains(&declaration) || reemitted.contains(&declaration),
-+            "revived declaration: {declaration:?} was dropped and is still in the program, \
-+             but `KeepVar` did not re-emit it — see `PassChanges::reemitted_declarations`",
-+        );
-+    })
-+    .visit_program(program);
-+}
-+
- /// Debug-only guard for the gated direct-eval refresh: every live direct
- /// `eval(...)` call must already have `ScopeFlags::DirectEval` on its
- /// reference's recorded scope and every ancestor (the exact postcondition of
-@@ -199,9 +232,65 @@ fn debug_assert_no_stale_direct_eval(program: &Program<'_>, scoping: &Scoping) {
-     DirectEvalFlagCheck { scoping }.visit_program(program);
- }
- 
-+/// Whether `span` identifies exactly one recorded declaration of `symbol_id`.
-+///
-+/// Bindings with synthesized spans (e.g. `SPAN` from a transform) can share one,
-+/// and then a span cannot tell which of them a dropped binding was. Such
-+/// declarations are never pruned: a stale redeclaration only keeps optimizations
-+/// conservative, while pruning the wrong one would drop a live declaration.
-+fn has_unique_span(scoping: &Scoping, symbol_id: SymbolId, span: Span) -> bool {
-+    let mut matching = scoping
-+        .symbol_redeclarations(symbol_id)
-+        .iter()
-+        .filter(|redeclaration| redeclaration.span == span);
-+    matching.next().is_some() && matching.next().is_none()
-+}
-+
-+/// Remove [`PassChanges::removed_declarations`] from
-+/// `Scoping::symbol_redeclarations`, so e.g. `catch (a) { var a }` can drop `a`
-+/// once the `var` is gone (#27548). A declaration is identified by its symbol
-+/// and binding span; keys whose span is shared are skipped (see
-+/// [`has_unique_span`]).
-+///
-+/// Unlike a `ReferenceId`, a dropped binding can reappear: `KeepVar` re-emits
-+/// dropped `var`s with their symbol and span, and records them in
-+/// [`PassChanges::reemitted_declarations`]. Only when a removed declaration was
-+/// re-emitted is the program walked to keep those still present. Skipping the
-+/// walk otherwise relies on `KeepVar` being the only site that re-emits a
-+/// dropped binding, which debug builds check with a separate walk
-+/// (`debug_assert_no_revived_declarations`); the pruning itself takes the sam
+@@ -173,15 +173,18 @@ impl<'a> TypeScript<'a> {
+                 ClassElement::MethodDefinition(method) => {
+                     if method.kind == MethodDefinitionKind::Constructor {
+                         constructor = Some(&mut method.value);
+-                    } else {
++                    } else if method.computed {
++                        // A non-computed key (e.g. `"m"() {}`) has no side effects, and can't hold
++                        // a sequence expression. Pending assignments go to the next computed key
++                        // or the static block instead.
+                         Self::convert_computed_key(
+                             &mut method.key,
+                             &mut computed_key_assignments,
+                             ctx,
+                         );
+                     }
+                 }
+-                ClassElement::AccessorProperty(accessor) => {
++                ClassElement::AccessorProperty(accessor) if accessor.computed => {
+                     Self::convert_computed_key(
+                         &mut accessor.key,
+                         &mut computed_key_assignments,
 ```
 
-**File**: `crates/oxc_minifier/src/keep_var.rs` (modified, +16/-1)
+**File**: `tasks/transform_conformance/snapshots/oxc.snap.md` (modified, +2/-2)
 ```diff
-@@ -10,6 +10,8 @@ use oxc_syntax::{
-     symbol::{SymbolFlags, SymbolId},
- };
+@@ -1,6 +1,6 @@
+ commit: 16a2d671
  
-+use crate::traverse_context::redeclared_symbols;
-+
- pub struct KeepVar<'a> {
-     vars: Vec<(Ident<'a>, Span, Option<SymbolId>)>,
- }
-@@ -80,7 +82,20 @@ impl<'a> KeepVar<'a> {
+-Passed: 344/469
++Passed: 345/470
  
-         for (name, span, symbol_id) in &mut self.vars {
-             if let Some(symbol_id) = symbol_id {
--                *symbol_id = Self::declared_symbol(*name, *span, *symbol_id, scope_id, ctx);
-+                let declared_symbol =
-+                    Self::declared_symbol(*name, *span, *symbol_id, scope_id, ctx);
-+                if declared_symbol != *symbol_id {
-+                    // Identity drops skip the drop walk. Retire the old declaration if
-+                    // rebinding replaces it; callers can also discard a canonical regeneration.
-+                    let declaration = (*symbol_id, *span);
-+                    ctx.state.pass_changes.removed_declarations.insert(declaration);
-+                    ctx.state.pass_changes.reemitted_declarations.insert(declaration);
-+                    *symbol_id = declared_symbol;
-+                }
-+                // Tell the pass flush these declarations may still be live.
-+                for symbol_id in redeclared_symbols(*symbol_id, ctx.scoping.scoping(), false) {
-+                    ctx.state.pass_changes.reemitted_declarations.insert((symbol_id, *span));
-+                }
-             }
-         }
+ # All Passed:
+ * babel-plugin-transform-class-static-block
+@@ -49,7 +49,7 @@ x Output mismatch
+ x Output mismatch
+ 
+ 
+-# babel-plugin-transform-typescript (53/69)
++# babel-plugin-transform-typescript (54/70)
+ * computed-constant-value/input.ts
+ x Output mismatch
  
 ```
 
-**File**: `crates/oxc_minifier/src/peephole/remove_unused_declaration.rs` (modified, +20/-5)
+**File**: `tasks/transform_conformance/snapshots/oxc_exec.snap.md` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,10 @@
- use super::{PeepholeOptimizations, remove_unused_expression::ClassRemovability};
--use crate::{CompressOptionsUnused, TraverseCtx};
-+use crate::{CompressOptionsUnused, TraverseCtx, traverse_context::redeclared_symbols};
- use oxc_ast::ast::*;
--use oxc_ecmascript::constant_evaluation::{DetermineValueType, ValueType};
-+use oxc_ecmascript::{
-+    BoundNames,
-+    constant_evaluation::{DetermineValueType, ValueType},
-+};
- use oxc_syntax::symbol::SymbolId;
+@@ -2,7 +2,7 @@ commit: 16a2d671
  
- impl<'a> PeepholeOptimizations {
-@@ -162,10 +165,11 @@ impl<'a> PeepholeOptimizations {
-     /// in the live AST changed this pass, and a spurious mutation spins the
-     /// fixed-point loop past its iteration guard (bluebird.js, monitor-oxc).
-     /// Installing — or declining to install — the filtered statement is the
--    /// caller's mutation event.
-+    /// caller's mutation event. Removed declarations still need journaling:
-+    /// identity drops may have skipped the original subtree's drop walk.
-     pub fn remove_unused_variable_declaration(
-         mut stmt: Statement<'a>,
--        ctx: &TraverseCtx<'a>,
-+        ctx: &mut TraverseCtx<'a>,
-     ) -> Option<Statement<'a>> {
-         let Statement::VariableDeclaration(var_decl) = &mut stmt else { return Some(stmt) };
-         if !Self::can_remove_unused_declarators(ctx) {
-@@ -178,7 +182,18 @@ impl<'a> PeepholeOptimizations {
-                 "callers must pass KeepVar output (init-less declarators); a declarator \
-                  with an init would need a `drop_*` walk for its references"
-             );
--            !Self::should_remove_unused_declarator(decl, kind, ctx)
-+            if !Self::should_remove_unused_declarator(decl, kind, ctx) {
-+                return true;
-+            }
-+            let scoping = ctx.scoping.scoping();
-+            let removed = &mut ctx.state.pass_changes.removed_declarations;
-+            decl.id.bound_names(&mut |ident| {
-+                let Some(symbol_id) = ident.symbol_id.get() else { return };
-+                for symbol_id in redeclared_symbols(symbol_id, scoping, false) {
-+                    removed.insert((symbol_id, ident.span));
-+                }
-+            });
-+            false
-         });
-         if var_decl.declarations.is_empty() {
-             return None;
-```
-
-**File**: `crates/oxc_minifier/src/state.rs` (modified, +15/-2)
-```diff
-@@ -1,9 +1,10 @@
- use oxc_allocator::{Allocator, BitSet};
- use oxc_data_structures::stack::NonEmptyStack;
- use oxc_semantic::Scoping;
--use oxc_span::SourceType;
-+use oxc_span::{SourceType, Span};
- use oxc_str::{Ident, IdentHashSet};
--use oxc_syntax::scope::ScopeId;
-+use oxc_syntax::{scope::ScopeId, symbol::SymbolId};
-+use rustc_hash::FxHashSet;
+ node: v26.12.1
  
- use crate::{CompressOptions, symbol_state::SymbolState};
+-Passed: 73 of 369 (19.78%)
++Passed: 74 of 370 (20.00%)
  
-@@ -59,6 +60,14 @@ pub struct PassChanges<'a> {
-     /// At least one direct `eval(...)` call was dropped this pass. Gates
-     /// the small `LiveDirectEvalCollector` walk at flush time.
-     pub(crate) direct_eval_dropped: bool,
-+
-+    /// Declarations `(symbol, binding span)` of redeclared symbols found in dropped
-+    /// subtrees, to remove from `Scoping::symbol_redeclarations` at flush time.
-+    pub(crate) removed_declarations: FxHashSet<(SymbolId, Span)>,
-+
-+    /// Declarations `(symbol, binding span)` of redeclared symbols that `KeepVar`
-+    /// re-emitted. These may be in `removed_declarations` and still be live.
-+    pub(crate) reemitted_declarations: FxHashSet<(SymbolId, Span)>,
- }
- 
- impl<'a> PassChanges<'a> {
-@@ -67,6 +76,8 @@ impl<'a> PassChanges<'a> {
-             revisit_requested: false,
-             removed_references: BitSet::new_in(references_len, allocator),
-             direct_eval_dropped: false,
-+            removed_declarations: FxHashSet::default(),
-+            reemitted_declarations: FxHashSet::default(),
-         }
-     }
- }
-@@ -183,6 +194,8 @@ impl<'a> MinifierState<'a> {
-         !self.pass_changes.revisit_requested
-             && self.pass_changes.removed_references.is_empty()
-             && !self.pass_changes.direct_eval_dropped
-+            && self.pass_changes.removed_declarations.is_empty()
-+            && self.pass_changes.reemitted_declarations.is_empty()
-     }
- }
+ Failures:
  
 ```
 
-**File**: `crates/oxc_minifier/src/traverse_context/dropped_subtree_collector.rs` (modified, +90/-6)
+**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/set-public-class-fields-non-computed-method-key/exec.ts` (added, +30/-0)
 ```diff
-@@ -1,5 +1,11 @@
- use oxc_ast::ast::*;
--use oxc_ast_visit::{Visit, walk::walk_call_expression};
-+use oxc_ast_visit::{
-+    Visit,
-+    walk::{walk_call_expression, walk_catch_parameter},
-+};
-+use oxc_semantic::Scoping;
-+use oxc_span::Span;
-+use oxc_syntax::symbol::SymbolId;
- 
- use crate::state::PassChanges;
- 
-@@ -17,14 +23,73 @@ pub fn as_direct_eval_call<'a, 'b>(
-     (ident.name == "eval").then_some(ident)
- }
- 
-+/// The redeclared symbols a binding identifier of `symbol_id` declares: the
-+/// symbol itself and, for a `var` redeclaring a catch parameter, the enclosing
-+/// var binding (see `Scoping::catch_var_binding`). Only these need to be kept in
-+/// sync with `Scoping::symbol_redeclarations`. The catch parameter itself only
-+/// declares its own symbol, so pass `is_catch_parameter` for that binding.
-+pub fn redeclared_symbols(
-+    symbol_id: SymbolId,
-+    scoping: &Scoping,
-+    is_catch_parameter: bool,
-+) -> impl Iterator<Item = SymbolId> + '_ {
-+    std::iter::once(symbol_id)
-+        .chain((!is_catch_parameter).then(|| scoping.catch_var_binding(symbol_id)).flatten())
-+        .filter(|&symbol_id| !scoping.symbol_redeclarations(symbol_id).is_empty())
+@@ -0,0 +1,30 @@
++const log: string[] = [];
++const k = (name: string) => (log.push(name), name);
++
++class C {
++  static [k("a")] = 1;
++  "m"() {
++    return "m";
++  }
++  1() {
++    return 1;
++  }
++  get "g"() {
++    return 2;
++  }
++  static "s"() {
++    return "s";
++  }
++  [k("b")] = 3;
 +}
 +
-+/// The symbol of a simple catch parameter: the one binding [`redeclared_symbols`]
-+/// must be told about, since it does not also declare the enclosing var binding.
-+fn catch_parameter_symbol(it: &CatchParameter<'_>) -> Option<SymbolId> {
-+    match &it.pattern {
-+        BindingPattern::BindingIdentifier(ident) => ident.symbol_id.get(),
-+        _ => None,
-+    }
-+}
-+
-+/// Calls `on_declaration` with `(symbol, binding span)` for every declaration of
-+/// a redeclared symbol in the visited subtree, i.e. for every binding the
-+/// [`DroppedSubtreeCollector`] would record in `PassChanges::removed_declarations`.
-+/// Used by the pass flush and its debug checks to find the live declarations.
-+pub struct RedeclaredBindings<'s, F> {
-+    scoping: &'s Scoping,
-+    catch_parameter: Option<SymbolId>,
-+    on_declaration: F,
-+}
-+
-+impl<'s, F: FnMut(SymbolId, Span)> RedeclaredBindings<'s, F> {
-+    pub fn new(scoping: &'s Scoping, on_declaration: F) -> Self {
-+        Self { scoping, catch_parameter: None, on_declaration }
-+    }
-+}
-+
-+impl<'a, F: FnMut(SymbolId, Span)> Visit<'a> for RedeclaredBindings<'_, F> {
-+    fn visit_binding_identifier(&mut self, it: &BindingIdentifier<'a>) {
-+        let Some(symbol_id) = it.symbol_id.get() else { return };
-+        for symbol_id in
-+            redeclared_symbols(symbol_id, self.scoping, self.catch_parameter == Some(symbol_id))
-+        {
-+            (self.on_declaration)(symbol_id, it.span);
-+        }
-+    }
-+
-+    fn visit_catch_parameter(&mut self, it: &CatchParameter<'a>) {
-+        let previous = std::mem::replace(&mut self.catch_parameter, catch_parameter_symbol(it));
-+        walk_catch_parameter(self, it);
-+        self.catch_parameter = previous;
-+    }
-+}
-+
- /// Walks AST subtrees being dropped or replaced, collecting
--/// `IdentifierReference`s and direct `eval(...)` calls into the per-pass
-+/// `IdentifierReference`s, direct `eval(...)` calls and declarations of
-+/// redeclared symbols into the per-pass
- /// [`PassChanges`] accumulator. Use via the `Visit` entry point matching the
- /// dropped node (`visit_expression`, `visit_variable_declarator`, ...).
- ///
- /// Mark-only semantics: every reference found in a dropped subtree is added
- /// to `pass_changes.removed_references`; every direct eval call sets
--/// `pass_changes.direct_eval_dropped = true`. Marks for unresolved references
-+/// `pass_changes.direct_eval_dropped = true`; every binding of a redeclared
-+/// symbol is added to `pass_changes.removed_declarations`. Marks for unresolved references
- /// are inert: the flush only filters per-symbol resolved-reference lists,
- /// which never contain unresolved ids (and `root_unresolved_references` is
- /// deliberately not pruned — no in-loop optimization consumes it and callers
-@@ -35,14 +100,18 @@ pub fn as_direct_eval_call<'a, 'b>(
- /// moved out of the old slot into the new value leave id-less `TakeIn` dummies
- /// behind, so the removed-subtree walk never sees their ids; and replacements
- /// are built with fresh references, never cloned ids (see
--/// `substitute_is_object_and_not_null`).
-+/// `substitute_is_object_and_not_null`). Bindings are the exception: `KeepVar`
-+/// re-emits dropped `var`s with their symbol and span (see
-+/// `PassChanges::reemitted_declarations`).
- pub struct DroppedSubtreeCollector<'a, 's> {
-     pass_changes: &'s mut PassChanges<'a>,
-+    scoping: &'s Scoping,
-+    catch_parameter: Option<SymbolId>,
- }
- 
- impl<'a, 's> DroppedSubtreeCollector<'a, 's> {
--    pub(crate) fn new(pass_changes: &'s mut PassChanges<'a>) -> Self {
--        Self { pass_changes }
-+    pub(crate) fn new(pass_changes: &'s mut PassChanges<'a>, scoping: &'s Scoping) -> Self {
-+        Self { pass_changes, scoping, catch_parameter: None }
-     }
- }
- 
-@@ -63,6 +132,21 @@ impl<'a> Visit<'a> for Drop
++expect(log).toEqual(["a", "b"]);
++expect(C.a).toBe(1);
++expect(C.s()).toBe("s");
++const c = new C();
++expect(c.m()).toBe("m");
++expect(c[1]()).toBe(1);
++expect(c.g).toBe(2);
++expect(c.b).toBe(3);
++expect(Object.keys(c)).toEqual(["b"]);
++expect(log).toEqual(["a", "b"]);
 ```
 
-**File**: `crates/oxc_minifier/src/traverse_context/ecma_context.rs` (modified, +1/-1)
+**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/set-public-class-fields-non-computed-method-key/input.ts` (added, +10/-0)
 ```diff
-@@ -433,7 +433,7 @@ impl<'a> TraverseCtx<'a, MinifierState<'a>> {
-     /// Used by the `replace_*` / `drop_*` helpers.
-     #[inline]
-     fn dropped_subtree_collector(&mut self) -> DroppedSubtreeCollector<'a, '_> {
--        DroppedSubtreeCollector::new(&mut self.state.pass_changes)
-+        DroppedSubtreeCollector::new(&mut self.state.pass_changes, self.scoping.scoping())
-     }
- 
-     /// Replace an expression slot. Marks the pass as having mutated the AST.
+@@ -0,0 +1,10 @@
++class C {
++  static [k("a")] = 1;
++  "m"() {}
++  1() {}
++  get "g"() {
++    return 2;
++  }
++  static "s"() {}
++  [k("b")] = 3;
++}
 ```
 
-**File**: `crates/oxc_minifier/src/traverse_context/mod.rs` (modified, +1/-1)
+**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/set-public-class-fields-non-computed-method-key/options.json` (added, +6/-0)
 ```diff
-@@ -30,7 +30,7 @@ mod uid;
- use ancestry::PopToken;
- pub use ancestry::TraverseAncestry;
- pub use bound_identifier::BoundIdentifier;
--pub use dropped_subtree_collector::as_direct_eval_call;
-+pub use dropped_subtree_collector::{RedeclaredBindings, as_direct_eval_call, redeclared_symbols};
- pub use maybe_bound_identifier::MaybeBoundIdentifier;
- pub use reusable::ReusableTraverseCtx;
- pub use scoping::TraverseScoping;
+@@ -0,0 +1,6 @@
++{
++  "assumptions": {
++    "setPublicClassFields": true
++  },
++  "plugins": ["transform-typescript"]
++}
 ```
 
-**File**: `crates/oxc_minifier/tests/mod.rs` (modified, +31/-1)
+**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/set-public-class-fields-non-computed-method-key/output.js` (added, +16/-0)
 ```diff
-@@ -5,11 +5,13 @@ mod mangler;
- mod peephole;
- 
- use oxc_allocator::Allocator;
-+use oxc_ast::ast::BindingIdentifier;
-+use oxc_ast_visit::VisitMut;
- use oxc_codegen::{Codegen, CodegenOptions};
- use oxc_compat::EngineTargets;
- use oxc_parser::{ParseOptions, Parser};
- use oxc_semantic::SemanticBuilder;
--use oxc_span::SourceType;
-+use oxc_span::{SPAN, SourceType};
- 
- pub(crate) use oxc_minifier::{
-     CompressOptions, CompressOptionsKeepNames, CompressOptionsUnused, Compressor, TreeShakeOptions,
-@@ -149,6 +151,25 @@ fn run_with_iterations(
-     source_text: &str,
-     source_type: SourceType,
-     options: Option<CompressOptions>,
-+) -> (String, u8) {
-+    run_with_binding_spans(source_text, source_type, options, false)
+@@ -0,0 +1,16 @@
++let _k, _k2;
++class C {
++  constructor() {
++    this[_k2] = 3;
++  }
++  static {
++    this[_k] = 1;
++  }
++  "m"() {}
++  1() {}
++  get "g"() {
++    return 2;
++  }
++  static "s"() {}
++  [(_k = k("a"), _k2 = k("b"))];
 +}
-+
-+/// Like [`test_smallest`], with every binding given the synthesized `SPAN`, so
-+/// redeclarations cannot be told apart by span. No idempotency check: such
-+/// redeclarations are never pruned, so the output may shrink on a second run.
-+#[track_caller]
-+pub(crate) fn test_unspanned_bindings(source_text: &str, expected: &str) {
-+    let options = CompressOptions::smallest();
-+    let output = run_with_binding_spans(source_text, SourceType::mjs(), Some(options), true).0;
-+    assert_eq!(output, run(expected, SourceType::mjs(), None), "for source\n{source_text}");
-+}
-+
-+fn run_with_binding_spans(
-+    source_text: &str,
-+    source_type: SourceType,
-+    options: Option<CompressOptions>,
-+    unspanned: bool,
- ) -> (String, u8) {
-     let allocator = Allocator::default();
-     let ret = Parser::new(&allocator, source_text, source_type)
-@@ -157,6 +178,15 @@ fn run_with_iterations(
-     assert!(!ret.fatal_error, "{source_text}");
-     assert!(ret.diagnostics.is_empty(), "{source_text}");
-     let mut program = ret.program;
-+    if unspanned {
-+        struct UnspanBindings;
-+        impl<'a> VisitMut<'a> for UnspanBindings {
-+            fn visit_binding_identifier(&mut self, ident: &mut BindingIdentifier<'a>) {
-+                ident.span = SPAN;
-+            }
-+        }
-+        UnspanBindings.visit_program(&mut program);
-+    }
-     let iterations = options.map_or(0, |options| {
-         let scoping = SemanticBuilder::new().build(&program).semantic.into_scoping();
-         Compressor::new(&allocator).build_with_scoping(&mut program, scoping, options)
 ```
 
 ---
 
-### Incident Patch 3: `f1816d8f` (2026-11-19)
-**Commit Message**: fix(formatter_htmlish): count a blank line after unclosed element (#29881)
+### Incident Patch 3: `e4e2ac4e` (2026-11-20)
+**Commit Message**: fix(parser,semantic): reject invalid types in type arguments (#29945)
 
-Fix idempotency issue for cases like:
+TypeScript parses an element of a type-argument list only from a token that can start a type. `null` is a literal type and cannot begin a qualified name, and JSDoc `?`/`!` types are grammar errors wherever they appear. Before this change, Oxc did three things differently:
 
-```html
-<p>
-  ...
-<div>block</div>
-```
+- It parsed reserved words such as `class` and `return` as type references inside type arguments.
+- It parsed `null.x` as a qualified name.
+- It reported JSDoc `?`/`!` only when the type was the top-level type of a type annotation.
 
-We allow `omitted-end-tag`, so need to count differently than Prettier.
+As a result, every example in the issue was accepted silently.
 
-**File**: `apps/oxfmt/conformance/snapshots/prettier.snap.md` (modified, +2/-1)
+### Example
+
+Input from #29314, plus `type T = null.x;` ([playground for `type T = null.x`](https://playground.oxc.rs/?t=ast&options=%7B%22parser%22%3A%7B%22extension%22%3A%22ts%22%2C%22semanticErrors%22%3Atrue%7D%7D&code=type+T+%3D+null.x%3B); it runs the released Oxc, so it shows the before behavior). Each line was run as its own `.ts` file with `cargo run -p oxc_semantic --example semantic`:
+
+```ts
+f<class>(h);
+f<return>(h);
+f<A<class>>(h);
+f<A<return>>(h);
+f<A<null.x>>(h);
+f<A<B?>>(h);
+f<A<?>>(h);
+f<A<?B>>(h);
+f<A<B!>>(h);
+f<A<!B>>(h);
+type T = nul
+
+**File**: `crates/oxc_parser/src/ts/types.rs` (modified, +59/-15)
 ```diff
-@@ -574,8 +574,9 @@
-   - crates/oxc_formatter_htmlish/DIVERGENCES.md#unclosed-at-end
- - externals/prettier/html/basics/with-colon.html (💥, 98.37%)
-   - crates/oxc_formatter_htmlish/DIVERGENCES.md#prefixed-script-style
--- externals/prettier/html/prettier_ignore/unclosed2.html (💥, 80.00%)
-+- externals/prettier/html/prettier_ignore/unclosed2.html (💥, 66.67%)
-   - crates/oxc_formatter_htmlish/DIVERGENCES.md#unclosed-at-end
-+  - crates/oxc_formatter_htmlish/DIVERGENCES.md#omitted-end-tag
- - externals/prettier/html/tags/tags.html (💥✨✨✨, 99.82%)
-   - crates/oxc_formatter_htmlish/DIVERGENCES.md#script-display-none
- - externals/prettier/html/tags/tags2.html (💥💥✨✨, 97.17%)
-```
-
-**File**: `crates/oxc_formatter_htmlish/DIVERGENCES.md` (modified, +6/-0)
-```diff
-@@ -562,6 +562,8 @@ Prettier closes it where the fragment ends, which changes the page it is joined
- 
- - Why: uniform-rule (a normalization is applied only where it is known safe for every reader: `oxc_formatter_css`'s AGENTS.md "Case")
- - Pin: `tests/fixtures/html/omitted-end-tag.html`
-+- Conformance:
-+  - `externals/prettier/html/prettier_ignore/unclosed2.html`
- 
- ```html
- <!-- input -->
-@@ -591,6 +593,10 @@ To a browser reading the page the end tag changes nothing, but in a template the
- <!-- an end tag added before the second <p> lands in the else branch: a stray </p>, which makes an empty p -->
- ```
- 
-+A blank line before the next sibling is the source's, counted from where the element's content ends.
-+Prettier counts from its start tag, so `<p>⏎  a⏎<div>` gets one (with the `</p>` it adds);
-+without the end tag, that would not be a fixpoint: a `<p>` whose content breaks onto lines of its own would get one on the next pass.
-+
- ## pre-content-without-end-tag
- 
- - Why: semantics (whitespace in `pre`-like elements is content; prettier/prettier#16205)
-```
-
-**File**: `crates/oxc_formatter_htmlish/src/print/children.rs` (modified, +4/-1)
-```diff
-@@ -237,8 +237,11 @@ enum Leading {
-     IfPrevFlat(GroupId),
- }
- 
-+/// A blank line before the next sibling, from where the node's content ends (`<p>⏎  a⏎<div>` has none).
- fn force_next_empty_line(t: &Tree<'_>, id: NodeId) -> bool {
--    t[id].next.is_some_and(|next| t.line_breaks(t.source_end(id), t[next].span.start) >= 2)
-+    t[id]
-+        .next
-+        .is_some_and(|next| t.line_breaks(super::end_with_content(t, id), t[next].span.start) >= 2)
- }
- 
- fn prefer_hard_line_as_leading(t: &Tree<'_>, id: NodeId) -> bool {
-```
-
-**File**: `crates/oxc_formatter_htmlish/src/print/mod.rs` (modified, +4/-4)
-```diff
-@@ -84,7 +84,7 @@ fn write_child<'a>(t: &'a Tree<'a>, id: NodeId, f: &mut HtmlishFormatter<'_, 'a>
-     if opening_start_borrowed(t, id) {
-         start += opening_start_marker(t, id).len();
-     }
--    let mut end = ignored_end(t, id) as usize;
-+    let mut end = end_with_content(t, id) as usize;
-     // Whoever borrows the closing `>` prints it,
-     // the parent included (DIVERGENCES.md#ignored-closing-end-once)
-     if closing_end_borrowed(t, id) {
-@@ -94,12 +94,12 @@ fn write_child<'a>(t: &'a Tree<'a>, id: NodeId, f: &mut HtmlishFormatter<'_, 'a>
-     write!(f, [opening_tag_prefix(t, id), text(raw), closing_tag_suffix(t, id)]);
- }
- 
--/// Where an ignored node's source ends: an unclosed element extends to its last child.
--fn ignored_end(t: &Tree<'_>, id: NodeId) -> u32 {
-+/// Where a node's source ends, its content included: an unclosed element extends to its last child.
-+fn end_with_content(t: &Tree<'_>, id: NodeId) -> u32 {
-     let end = t.source_end(id);
-     match t.kind(id) {
-         NodeKind::Element(el) if el.end_tag.is_none() => {
--            t[id].last_child.map_or(end, |last| end.max(ignored_end(t, last)))
-+            t[id].last_child.map_or(end, |last| end.max(end_with_content(t, last)))
+@@ -466,9 +466,14 @@ impl<'a, C: Config> ParserImpl<'a, C> {
+             | Kind::Boolean
+             | Kind::Undefined
+             | Kind::Never
+-            | Kind::Object
++            | Kind::Object => self.parse_keyword_type(),
+             // Parse `null` as `TSNullKeyword` instead of null literal to align with typescript eslint.
+-            | Kind::Null => self.parse_keyword_type(),
++            // Unlike the keywords above, it cannot begin a qualified name: `null.x`.
++            Kind::Null => {
++                let span = self.cur_token().span();
++                self.bump_any();
++                TSType::new_ts_null_keyword(span, self)
++            }
+             // TODO: js doc types: `JSDocAllType`, `JSDocFunctionType`
+             // Kind::StarEq => {
+             // scanner.reScanAsteriskEqualsToken();
+@@ -491,7 +496,11 @@ impl<'a, C: Config> ParserImpl<'a, C> {
+                 let start = self.cur_start();
+                 let literal = self.parse_template_literal(false);
+                 let span = self.end_span(start);
+-                TSType::new_ts_literal_type(span, TSLiteral::TemplateLiteral(self.alloc(literal)), self)
++                TSType::new_ts_literal_type(
++                    span,
++                    TSLiteral::TemplateLiteral(self.alloc(literal)),
++                    self,
++                )
+             }
+             Kind::Minus => {
+                 if self.lexer.peek_token().kind().is_number() {
+@@ -517,9 +526,7 @@ impl<'a, C: Config> ParserImpl<'a, C> {
+                     TSType::TSThisType(this_type)
+                 }
+             }
+-            Kind::Typeof => {
+-                self.parse_type_query()
+-            }
++            Kind::Typeof => self.parse_type_query(),
+             Kind::LCurly => {
+                 let opening_span = self.cur_token().span();
+                 self.bump_any();
+@@ -576,7 +583,6 @@ impl<'a, C: Config> ParserImpl<'a, C> {
+             Kind::Symbol => TSType::new_ts_symbol_keyword(span, self),
+             Kind::Undefined => TSType::new_ts_undefined_keyword(span, self),
+             Kind::Unknown => TSType::new_ts_unknown_keyword(span, self),
+-            Kind::Null => TSType::new_ts_null_keyword(span, self),
+             _ => unreachable!(),
          }
-         _ => end,
      }
+@@ -935,7 +941,7 @@ impl<'a, C: Config> ParserImpl<'a, C> {
+                 Kind::RAngle,
+                 Kind::Comma,
+                 opening_span,
+-                Self::parse_ts_type,
++                Self::parse_type_argument,
+             );
+             self.expect(Kind::RAngle);
+             let span = self.end_span(start);
+@@ -1013,7 +1019,7 @@ impl<'a, C: Config> ParserImpl<'a, C> {
+                 Kind::RAngle,
+                 Kind::Comma,
+                 opening_span,
+-                Self::parse_ts_type,
++                Self::parse_type_argument,
+             );
+             self.expect(Kind::RAngle);
+             let span = self.end_span(start);
+@@ -1025,6 +1031,18 @@ impl<'a, C: Config> ParserImpl<'a, C> {
+         None
+     }
+ 
++    /// Parse one type in a `TypeArguments` list.
++    ///
++    /// TypeScript parses a type argument only from a token which can start a type. A type
++    /// reference otherwise accepts any identifier name, as in `let a: class`, but `A<class>`
++    /// is not a type-argument list.
++    fn parse_type_argument(&mut self) -> TSType<'a> {
++        if is_reserved_non_type_start(self.cur_kind()) {
++            return self.unexpected();
++        }
++        self.parse_ts_type()
++    }
++
+     /// Speculatively parse a `<T, U>` type-argument list in an expression
+     /// position (e.g. `foo<T>(arg)` vs `foo < T`). Returns `None` if a cached failure
+     /// rules it out, or rewinds to the checkpoint when a fresh attempt fails.
+@@ -1089,8 +1107,12 @@ impl<'a, C: Config> ParserImpl<'a, C> {
+         let opening_span = self.cur_token().span();
+         debug_assert!(self.at(Kind::LAngle));
+         self.advance(Kind::LAngle);
+-        let (params, _) =
+-            self.parse_delimited_list(Kind::RAngle, Kind::Comma, opening_span, Self::parse_ts_type);
++        let (params, _) = self.parse_delimited_list(
++            Kind::RAngle,
++            Kind::Comma,
++            opening_span,
++            Self::parse_type_argument,
++        );
+         // A contiguous `>=` remains a relational operator: `a < b >= c`. A separated
+         // `> =` can end an instantiation before `=`; assignment validity is checked later.
+         // Re-lex before consuming `>` so whitespace between these spellings matters.
+@@ -1151,9 +1173,11 @@ impl<'a, C: Config> ParserImpl<'a, C> {
+     ///
+     /// plus the JSDoc postfix `!` and `?`, which the type parser accepts in order to report them.
+     /// Any other token ends the list early: `a < b;`, `a < b.c)`, `a < 0 &&`, `a < this.b`.
++    /// A reserved word which cannot start a type rules out the list at once: `a < class {}`.
+     ///
+     /// The lexer is positioned after `first`. The checks mirror `parse_non_array
 ```
 
-**File**: `crates/oxc_formatter_htmlish/tests/fixtures/html/omitted-end-tag.html` (modified, +3/-0)
+**File**: `crates/oxc_semantic/src/checker/mod.rs` (modified, +3/-1)
 ```diff
-@@ -4,3 +4,6 @@
- </ul>
- <p>para
- <div>block</div>
-+<p>
-+  multi-line para
-+<div>block</div>
+@@ -99,7 +99,9 @@ pub fn check<'a>(kind: AstKind<'a>, ctx: &SemanticBuilder<'a>) {
+         AstKind::VariableDeclarator(decl) if !ctx.source_type.is_typescript() => {
+             js::check_variable_declarator_redeclaration(decl, ctx);
+         }
+-        AstKind::TSTypeAnnotation(annot) => ts::check_ts_type_annotation(annot, ctx),
++        AstKind::JSDocNullableType(ty) => ts::check_jsdoc_nullable_type(ty, ctx),
++        AstKind::JSDocNonNullableType(ty) => ts::check_jsdoc_non_nullable_type(ty, ctx),
++        AstKind::JSDocUnknownType(ty) => ts::check_jsdoc_unknown_type(ty, ctx),
+         AstKind::TSTypePredicate(predicate) => ts::check_ts_type_predicate(predicate, ctx),
+         AstKind::TSExternalModuleDeclaration(decl) => {
+             ts::check_ts_external_module_declaration(decl, ctx);
 ```
 
-**File**: `crates/oxc_formatter_htmlish/tests/fixtures/html/omitted-end-tag.html.snap` (modified, +7/-0)
+**File**: `crates/oxc_semantic/src/checker/typescript.rs` (modified, +18/-9)
 ```diff
-@@ -8,6 +8,9 @@ source: crates/oxc_formatter_htmlish/tests/fixtures/mod.rs
- </ul>
- <p>para
- <div>block</div>
-+<p>
-+  multi-line para
-+<div>block</div>
+@@ -10,15 +10,20 @@ use oxc_str::{JSStr, Str};
  
- ==================== Output ====================
- ------------------
-@@ -19,6 +22,8 @@ source: crates/oxc_formatter_htmlish/tests/fixtures/mod.rs
- </ul>
- <p>para
- <div>block</div>
-+<p>multi-line para
-+<div>block</div>
+ use crate::{builder::SemanticBuilder, diagnostics};
  
- -------------------
- { printWidth: 100 }
-@@ -29,5 +34,7 @@ source: crates/oxc_formatter_htmlish/tests/fixtures/mod.rs
- </ul>
- <p>para
- <div>block</div>
-+<p>multi-line para
-+<div>block</div>
+-pub fn check_ts_type_annotation(annotation: &TSTypeAnnotation<'_>, ctx: &SemanticBuilder<'_>) {
+-    let (modifier, is_start, span_with_illegal_modifier) = match &annotation.type_annotation {
+-        TSType::JSDocNonNullableType(ty) => ('!', !ty.postfix, ty.span()),
+-        TSType::JSDocNullableType(ty) => ('?', !ty.postfix, ty.span()),
+-        _ => {
+-            return;
+-        }
+-    };
++pub fn check_jsdoc_nullable_type(ty: &JSDocNullableType<'_>, ctx: &SemanticBuilder<'_>) {
++    check_jsdoc_type_modifier('?', !ty.postfix, ty.span, ctx);
++}
++
++pub fn check_jsdoc_non_nullable_type(ty: &JSDocNonNullableType<'_>, ctx: &SemanticBuilder<'_>) {
++    check_jsdoc_type_modifier('!', !ty.postfix, ty.span, ctx);
++}
  
- ===================== End =====================
++fn check_jsdoc_type_modifier(
++    modifier: char,
++    is_start: bool,
++    span_with_illegal_modifier: Span,
++    ctx: &SemanticBuilder<'_>,
++) {
+     let valid_type_span = if is_start {
+         span_with_illegal_modifier.shrink_left(1)
+     } else {
+@@ -32,14 +37,18 @@ pub fn check_ts_type_annotation(annotation: &TSTypeAnnotation<'_>, ctx: &Semanti
+         Cow::Borrowed(suggestion)
+     };
+ 
+-    ctx.error(diagnostics::jsdoc_type_in_annotation(
++    ctx.error(diagnostics::jsdoc_type_modifier(
+         modifier,
+         is_start,
+         span_with_illegal_modifier,
+         &suggestion,
+     ));
+ }
+ 
++pub fn check_jsdoc_unknown_type(ty: &JSDocUnknownType, ctx: &SemanticBuilder<'_>) {
++    ctx.error(diagnostics::jsdoc_type(ty.span));
++}
++
+ pub fn check_ts_type_predicate(predicate: &TSTypePredicate<'_>, ctx: &SemanticBuilder<'_>) {
+     if !is_allowed_type_predicate_position(ctx) {
+         ctx.error(diagnostics::type_predicate_only_in_return_type(predicate.span));
+```
+
+**File**: `crates/oxc_semantic/src/diagnostics.rs` (modified, +7/-1)
+```diff
+@@ -319,7 +319,7 @@ pub fn await_or_yield_in_parameter(x0: &str, span1: Span) -> OxcDiagnostic {
+ 
+ /// '?' at the end of a type is not valid TypeScript syntax. Did you mean to write 'number | null | undefined'?(17019)
+ #[cold]
+-pub fn jsdoc_type_in_annotation(
++pub fn jsdoc_type_modifier(
+     modifier: char,
+     is_start: bool,
+     span: Span,
+@@ -335,6 +335,12 @@ pub fn jsdoc_type_in_annotation(
+     .with_help(format!("Did you mean to write '{suggested_type}'?"))
+ }
+ 
++/// JSDoc types can only be used inside documentation comments.(8020)
++#[cold]
++pub fn jsdoc_type(span: Span) -> OxcDiagnostic {
++    ts_error("8020", "JSDoc types can only be used inside documentation comments.").with_label(span)
++}
++
+ #[cold]
+ pub fn not_allowed_namespace_declaration(span: Span) -> OxcDiagnostic {
+     ts_error(
+```
+
+**File**: `tasks/coverage/misc/fail/oxc-29314-1.ts` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++f<class>(h);
+```
+
+**File**: `tasks/coverage/misc/fail/oxc-29314-2.ts` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++f<A<return>>(h);
+```
+
+**File**: `tasks/coverage/misc/fail/oxc-29314-3.ts` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++type T = null.x;
+```
+
+**File**: `tasks/coverage/snapshots/lexer_misc.snap` (modified, +2/-2)
+```diff
+@@ -1,3 +1,3 @@
+ lexer_misc Summary:
+-AST Parsed     : 431/431 (100.00%)
+-Positive Passed: 431/431 (100.00%)
++AST Parsed     : 434/434 (100.00%)
++Positive Passed: 434/434 (100.00%)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29895** (2026-11-19): test(parser): cover comment attachment after a right shift (@camc314)
-- **PR #29882** (2026-11-19): fix(linter/unicorn/prefer-logical-operator-over-ternary): parenthesize operands that bind looser than `||` in fixer (@oxc-captain[bot])
-- **PR #29881** (2026-11-19): fix(formatter_htmlish): count a blank line after unclosed element (@leaysgur)
-- **PR #29880** (2026-11-19): fix(linter/eslint/no-unneeded-ternary): don't drop side-effecting tests in equal-literal fix (@oxc-captain[bot])
-- **PR #29874** (2026-11-19): fix(formatter_htmlish/angular): do not break a parent for ICU (@leaysgur)
-- **PR #29873** (2026-11-19): fix(formatter_htmlish/angular): break as-written block parameters (@leaysgur)
+- **PR #29958** (closed): perf(mangler): promote hot late bindings into front slots of large scopes (@Dunqing)
+- **PR #29950** (2026-11-20): docs(formatter_css): record multi-line value comment expanding its group as a divergence (@leaysgur)
+- **PR #29947** (2026-11-20): fix(semantic): align JSDoc nullable type suggestions with TypeScript (@camc314)
+- **PR #29946** (2026-11-20): chore(submodules): update submodule SHAs to latest commits (@camc314)
+- **PR #29945** (2026-11-20): fix(parser,semantic): reject invalid types in type arguments (@camc314)
+- **PR #29942** (2026-11-20): refactor(formatter_css): share block comment helper (@leaysgur)
 
 ---
 
@@ -1914,78 +1833,49 @@ We allow `omitted-end-tag`, so need to count differently than Prettier.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. linter/typescript/explicit-function-return-type): check block-bodied arrows in r
+## X. transformer): keep correct keys on leftover fields with setPublicClassFields
 
 **RULE**:
-When implementing operations in `crates/oxc_linter/src/rules/typescript/explicit_function_return_type.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_transformer/src/typescript/class.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `35694db4`: linter/typescript/explicit-function-return-type): check block-bodied arrows in returned objects. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6db561f3`: transformer): keep correct keys on leftover fields with setPublicClassFields. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/typescript/explicit_function_return_type.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_transformer/src/typescript/class.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    is_typed_parent(parent, Some(node))
-fn is_typed_parent(parent: &AstNode, callee: Option<&AstNode>) -> bool {
-        || is_default_function_parameter_with_type_annotation(parent)
-fn is_default_function_parameter_with_type_annotation(node: &AstNode) -> bool {
-    matches!(node.kind(), AstKind::FormalParameter(param) if param.type_annotation.is_some())
-    let can_inherit_return_type = match parent.kind() {
-        AstKind::ReturnStatement(_) => true,
-        AstKind::ArrowFunctionExpression(func) => func.get_expression().is_some(),
-        AstKind::ObjectProperty(prop) => matches!(
-            prop.value.without_parentheses(),
-            Expression::ArrowFunctionExpression(func) if func.get_expression().is_some()
-        ),
-        _ => false,
-    };
-    if !can_inherit_return_type {
-        return false;
-    is_typed_parent(obj_expr_parent, None) || is_property_of_object_with_type(obj_expr_parent, ctx)
-        (
-            "
-            type R = { run: () => Promise<number> };
-            export function f(): R {
-              return { run: async () => 1 };
-            }
-            ",
-            None,
-            None,
-            None,
-        ),
-        (
-            "
-  
+    common::{
+        computed_key::{create_computed_key_temp_var, key_needs_temp_var},
+        duplicate::duplicate_expression,
+    },
+                        // A static property is replaced by a static block below, and an instance
+                        // property is removed later when `remove_class_fields_without_initializer`
+                        // is `true`. Otherwise, the instance property declaration stays in the
+                        // class body (without its initializer), so its key is still evaluated
+                        // during class definition.
+                        let keep_declaration =
+                            !prop.r#static && !self.remove_class_fields_without_initializer;
+                            keep_declaration,
+                    } else if !prop.declare && prop.computed {
+                        // The property declaration without initializer is kept in the class body, so its
+                        // computed key is evaluated during class definition. Any pending computed key
+                        // assignments from previous elements must be evaluated before it.
+                        Self::convert_computed_key(
+                      
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    is_typed_parent(parent, Some(node), ctx)
-fn is_typed_parent(parent: &AstNode, callee: Option<&AstNode>, ctx: &LintContext) -> bool {
-        || is_default_function_parameter_with_type_annotation(parent, ctx)
-fn is_default_function_parameter_with_type_annotation(node: &AstNode, ctx: &LintContext) -> bool {
-    let AstKind::AssignmentPattern(_assign) = node.kind() else { return false };
-    match ctx.nodes().parent_kind(node.id()) {
-        AstKind::FormalParameter(f) => f.type_annotation.is_some(),
-        AstKind::FormalParameterRest(f) => f.type_annotation.is_some(),
-        _ => false,
-    }
-    if let AstKind::ObjectProperty(prop) = parent.kind()
-        && let Expression::ArrowFunctionExpression(func) = &prop.value
-        && func.get_function_body().is_some_and(|body| !body.statements.is_empty())
-        && func.return_type.is_some()
-    {
-        return true;
-    is_typed_parent(obj_expr_parent, None, ctx)
-        || is_property_of_object_with_type(obj_expr_parent, ctx)
+    common::computed_key::{create_computed_key_temp_var, key_needs_temp_var},
+                    computed_key_assignments.push(assignment);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `35694db4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6db561f3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

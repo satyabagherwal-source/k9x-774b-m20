@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T01:51:36.132Z",
-  "total_cycles_completed": 11134,
-  "total_learnings_persisted": 11134,
-  "total_rules_promoted": 10490,
+  "last_updated": "2026-11-21T02:00:36.967Z",
+  "total_cycles_completed": 11136,
+  "total_learnings_persisted": 11136,
+  "total_rules_promoted": 10492,
   "history": [
-    {
-      "timestamp": "2026-11-20T05:21:11.532Z",
-      "repository": "rqlite/rqlite",
-      "learningId": "learn-github-rqlite-rqlite",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T05:28:55.942Z",
-      "repository": "zoontek/react-native-bootsplash",
-      "learningId": "learn-github-zoontek-react-native-bootsplash",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T05:29:03.340Z",
       "repository": "apple/foundationdb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-21T01:51:36.132Z",
       "repository": "software-mansion/react-native-screens",
       "learningId": "learn-github-software-mansion-react-native-screens",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T02:00:32.843Z",
+      "repository": "oxc-project/oxc",
+      "learningId": "learn-github-oxc-project-oxc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T02:00:36.967Z",
+      "repository": "tauri-apps/tauri",
+      "learningId": "learn-github-tauri-apps-tauri",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T01:51:42.365Z",
+  "last_updated": "2026-11-21T02:00:47.343Z",
   "total_verified_learnings": 9055,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22840,
+  "total_items": 22846,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-VE6I-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-H3Q5-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a1d4346b12c0f29ff33f5c7abae61602bf27ce13ecb7509d880123baa5a6231a",
+      "content_hash": "86ba72f9950a36dd27382fa68dcae6db10a68049ba65a80577a59d28455ad411",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T01:43:53.997Z"
+      "persisted_at": "2026-11-21T02:00:46.881Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "34430cc40bb27f34fb6a3989e580cbac547a6fa4c9bb73aac041aa12a54f5bd4",
+      "content_hash": "227cc9c1721ea412d06b77475d7b615bde7a7aedb695a227340ce06e2a9e8d85",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T01:43:54.151Z"
+      "persisted_at": "2026-11-21T02:00:47.097Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c427f7c0a3314e72ad52c26f59c3d6f9d8cd1ed7abcc906a2eeb7ada10956aaa",
+      "content_hash": "9a4cc481b8c88d62712f03737f80e8f0936d93323aa6ecb2467ce7e83e4fc80e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T01:43:54.323Z"
+      "persisted_at": "2026-11-21T02:00:47.343Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -232426,8 +232426,8 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "c5890024",
-      "content_hash": "702a4d08b9e4042edb3db349411ba002b91b0f6d137a2d3419ef215919fcbf51",
+      "source_version": "209f078b",
+      "content_hash": "146a2101958332d2e3b2372c02d29689b6bd69fe60dcb5396ba6e3b965eeacf6",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
@@ -232450,6 +232450,11 @@
           "number": 9398,
           "title": "linter/typescript/explicit-function-return-type): check block-bodied arrows in r",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9696,
+          "title": "keep correct keys on leftover fields with setPublicClassFields",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232457,7 +232462,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T15:58:47.735Z",
+      "verified_at": "2026-11-21T02:00:32.537Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232511,10 +232516,10 @@
       "relative_path": "08_VERIFICATION/oxc-project-oxc-verification-protocol-empirical-defect-shield-for-oxc-project-ox.md",
       "title": "Verification Protocol: Empirical Defect Shield for oxc-project/oxc",
       "repository": "oxc-project/oxc",
-      "source_version": "c5890024",
-      "content_hash": "75e517e3a0f535b865a71e4d6212fb9d9e33edfb85b14ddfdca64b2e96cbc43c",
+      "source_version": "209f078b",
+      "content_hash": "049603d323f6bf62956f77a895d0310add3108be38053a9874c440ac10d66680",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T15:58:48.379Z"
+      "persisted_at": "2026-11-21T02:00:33.609Z"
     },
     "learn-github-agent-field-agentfield": {
       "learning_id": "learn-github-agent-field-agentfield",
@@ -232779,9 +232784,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for oxc-project-oxc-learnings",
       "repository": "oxc-project-oxc-learnings",
       "source_version": "HEAD",
-      "content_hash": "69480effa211326a41754d4e7dc74fd0cdbcf8d0c039e4c40c401db5bdcea42c",
+      "content_hash": "0163423624d8b8403a57929b72f7a00648e4c047507aa3ee4315053f7b7449d7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T15:59:28.329Z"
+      "persisted_at": "2026-11-21T02:00:43.092Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants",
@@ -256339,10 +256344,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oxc-project-oxc-technical-construction-intelligence-oxc-project-oxc-core-invaria.md",
       "title": "Technical Construction Intelligence: oxc-project/oxc Core Invariants",
       "repository": "oxc-project/oxc",
-      "source_version": "c5890024",
-      "content_hash": "61c3a8ad4be6805ad789bdc9f3b86be0b718affcd22ed35bb1291d406125cee4",
+      "source_version": "209f078b",
+      "content_hash": "01c6fc0f1d74b7c3a7d308abbc1b8b9fa9a3f2c5f87239236f4d40bfbbfe109a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T15:58:48.244Z"
+      "persisted_at": "2026-11-21T02:00:33.357Z"
     },
     "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -256352,9 +256357,9 @@
       "title": "Technical Construction Intelligence: oxc-project-oxc-learnings Core Invariants",
       "repository": "oxc-project-oxc-learnings",
       "source_version": "HEAD",
-      "content_hash": "e291f6d7892d5ccfa9b3d0e1a35badbaba4a0182fcdd921df0b0d74a162ce5b3",
+      "content_hash": "1988e4209dd092699a0f8a2d7c24d8b4c12ec78840dda137de6ad7d7210c3401",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T15:59:28.189Z"
+      "persisted_at": "2026-11-21T02:00:42.852Z"
     },
     "rule-8727": {
       "learning_id": "rule-8727",
@@ -266747,14 +266752,19 @@
       "slug": "tauri-apps-tauri",
       "platform": "github",
       "source_url": "https://github.com/tauri-apps/tauri",
-      "source_version": "c42354b6",
-      "content_hash": "13817b8a86cef06f858947f28599e749d52018dfe7eac2378a64f49aa33940bc",
+      "source_version": "bf10f005",
+      "content_hash": "81d0159082313a8d1fbc04f6f5f1f1ebbbdcb19fa897e20096b5ab32bbe00122",
       "dossier_path": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "promoted_rules": [
         {
           "number": 8865,
           "title": "accept an inherited package version in the Cargo manifest",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9697,
+          "title": "link the Windows resource into all targets",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -266763,7 +266773,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T04:05:43.284Z",
+      "verified_at": "2026-11-21T02:00:36.666Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -266805,10 +266815,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tauri-apps-tauri-technical-construction-intelligence-tauri-apps-tauri-core-invar.md",
       "title": "Technical Construction Intelligence: tauri-apps/tauri Core Invariants",
       "repository": "tauri-apps/tauri",
-      "source_version": "c42354b6",
-      "content_hash": "4964c329e267654335cf6efd86b5ba1bef2cc63f6163db6a16e52154674d7631",
+      "source_version": "bf10f005",
+      "content_hash": "284f42a97e0f270fb8dcdc3b8381d2a4130d02187cfd2bbf3c2ba3f572f296e6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T04:05:43.753Z"
+      "persisted_at": "2026-11-21T02:00:37.491Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tauri-apps-tauri": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tauri-apps-tauri",
@@ -266817,10 +266827,10 @@
       "relative_path": "08_VERIFICATION/tauri-apps-tauri-verification-protocol-empirical-defect-shield-for-tauri-apps-ta.md",
       "title": "Verification Protocol: Empirical Defect Shield for tauri-apps/tauri",
       "repository": "tauri-apps/tauri",
-      "source_version": "c42354b6",
-      "content_hash": "9b44541ea7e9572a550570e168df630c5c4b1b822e109092e19b573332fa85ba",
+      "source_version": "bf10f005",
+      "content_hash": "8f3f00d49b2208fa7bab31ce6b8e05c85f1f60cc24c0511750f60aa46929e3f5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T04:05:43.867Z"
+      "persisted_at": "2026-11-21T02:00:37.717Z"
     },
     "rule-8866": {
       "learning_id": "rule-8866",
@@ -266916,9 +266926,9 @@
       "title": "Technical Construction Intelligence: tauri-apps-tauri-learnings Core Invariants",
       "repository": "tauri-apps-tauri-learnings",
       "source_version": "HEAD",
-      "content_hash": "2f84ab3dd5a21b10c04393b89833358b7b0fe960e0fc7ab74ef29f818804e650",
+      "content_hash": "c741b8791912b98d53794aad2bb2c82198360937b4474a46f27dc8f336cf734a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T04:05:49.280Z"
+      "persisted_at": "2026-11-21T02:00:45.819Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tauri-apps-tauri-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tauri-apps-tauri-learnings",
@@ -266928,9 +266938,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tauri-apps-tauri-learnings",
       "repository": "tauri-apps-tauri-learnings",
       "source_version": "HEAD",
-      "content_hash": "05c1beba3531755c90c1fe82f439f3fe40dba3ab95c571ef954df1ad6a65053f",
+      "content_hash": "0bf74452b46cf2fdbf67cf453864c7ac04c2b04993e9640f1b4ad032dc277b89",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T04:05:49.397Z"
+      "persisted_at": "2026-11-21T02:00:46.039Z"
     },
     "candidate_directive-shacl-hide-provenance-from-scoped-prebound-union-queries": {
       "item_id": "candidate_directive-shacl-hide-provenance-from-scoped-prebound-union-queries",
@@ -310003,6 +310013,82 @@
       "content_hash": "498080c61ac3654cc7b52811d09f10f47e5be074ef3fd21d0d016ee059fdd5ec",
       "domain_letter": "I",
       "persisted_at": "2026-11-21T01:51:41.229Z"
+    },
+    "rule-9696": {
+      "learning_id": "rule-9696",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9696,
+      "title": "keep correct keys on leftover fields with setPublicClassFields",
+      "source_url": "https://github.com/oxc-project/oxc",
+      "source_version": "209f078b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T02:00:32.537Z"
+    },
+    "candidate_directive-keep-correct-keys-on-leftover-fields-with-setpublicclassfields": {
+      "item_id": "candidate_directive-keep-correct-keys-on-leftover-fields-with-setpublicclassfields",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GT3M-keep-correct-keys-on-leftover-fields-with-setpublicclassfields.md",
+      "title": "keep correct keys on leftover fields with setPublicClassFields",
+      "repository": "oxc-project/oxc",
+      "source_version": "209f078b",
+      "content_hash": "9d4544c04e3675ae12450fca19f28ad6f9b3682832d432ef6034f0dc00fa08bf",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T02:00:33.110Z"
+    },
+    "rule-9697": {
+      "learning_id": "rule-9697",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9697,
+      "title": "link the Windows resource into all targets",
+      "source_url": "https://github.com/tauri-apps/tauri",
+      "source_version": "bf10f005",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T02:00:36.666Z"
+    },
+    "candidate_directive-link-the-windows-resource-into-all-targets": {
+      "item_id": "candidate_directive-link-the-windows-resource-into-all-targets",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GWAC-link-the-windows-resource-into-all-targets.md",
+      "title": "link the Windows resource into all targets",
+      "repository": "tauri-apps/tauri",
+      "source_version": "bf10f005",
+      "content_hash": "6a7d30e9476ebcc8cae83a445f967bd468cef4a0016c7e50930de53174a29ac5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T02:00:37.241Z"
+    },
+    "candidate_directive-transformer-keep-correct-keys-on-leftover-fields-with-setpublicclassfields": {
+      "item_id": "candidate_directive-transformer-keep-correct-keys-on-leftover-fields-with-setpublicclassfields",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H0FV-transformer-keep-correct-keys-on-leftover-fields-with-setpublicclassfields.md",
+      "title": "transformer): keep correct keys on leftover fields with setPublicClassFields",
+      "repository": "oxc-project-oxc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0c0d181471990dc2c91ac75af64ad328286779c16fe36672946c51c621ba6817",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T02:00:42.624Z"
+    },
+    "candidate_directive-tauri-build-link-the-windows-resource-into-all-targets": {
+      "item_id": "candidate_directive-tauri-build-link-the-windows-resource-into-all-targets",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H2PU-tauri-build-link-the-windows-resource-into-all-targets.md",
+      "title": "tauri-build): link the Windows resource into all targets",
+      "repository": "tauri-apps-tauri-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e846441d200318e4388a3649e3a80debbba36caf39036f0ccfd0ed2ff02515f2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T02:00:45.573Z"
     }
   },
   "ai-builder-brain": {

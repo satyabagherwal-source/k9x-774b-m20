@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T01:51:40.869Z",
+  "updated_at": "2026-11-21T02:00:45.309Z",
   "stats": {
-    "total_discovered": 6880,
-    "approved_pending_harvest": 6492,
+    "total_discovered": 6914,
+    "approved_pending_harvest": 6525,
     "harvested_count": 0,
-    "rejected_count": 388,
+    "rejected_count": 389,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6471,
+      "COMMUNITY_AND_EXPERT": 6505,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -148667,6 +148667,747 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
         "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-DD8EF2F15399": {
+      "id": "SRC-DD8EF2F15399",
+      "url": "https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577",
+      "title": "https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:41.371Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-289381CF7EA5": {
+      "id": "SRC-289381CF7EA5",
+      "url": "https://github.com/oxc-project/oxc/commit/3d272902f83f755bbcd6e4781be419f9a892578d",
+      "title": "https://github.com/oxc-project/oxc/commit/3d272902f83f755bbcd6e4781be419f9a892578d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:41.441Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-B298C9A1E4F9": {
+      "id": "SRC-B298C9A1E4F9",
+      "url": "https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577/job/136672060186",
+      "title": "https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577/job/136672060186",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:41.510Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-44B312894322": {
+      "id": "SRC-44B312894322",
+      "url": "https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577/job/136672060358",
+      "title": "https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577/job/136672060358",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:41.578Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-0450AFE803AE": {
+      "id": "SRC-0450AFE803AE",
+      "url": "https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577/job/136672902538",
+      "title": "https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577/job/136672902538",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:41.649Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-2C94AC3F18C3": {
+      "id": "SRC-2C94AC3F18C3",
+      "url": "https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577/job/136672902577",
+      "title": "https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577/job/136672902577",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:41.725Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-F1970DAC736C": {
+      "id": "SRC-F1970DAC736C",
+      "url": "https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577/job/136672902599",
+      "title": "https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577/job/136672902599",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:41.804Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-AA2706D58E60": {
+      "id": "SRC-AA2706D58E60",
+      "url": "https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577/job/136672902606",
+      "title": "https://github.com/oxc-project/monitor-oxc/actions/runs/44847911577/job/136672902606",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:41.872Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-C7182872597E": {
+      "id": "SRC-C7182872597E",
+      "url": "https://github.com/oxc-project/oxc/commit/209f078ba8572400fbf75e59cbd48fa8c291e71a",
+      "title": "https://github.com/oxc-project/oxc/commit/209f078ba8572400fbf75e59cbd48fa8c291e71a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:41.936Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-E11E0372467C": {
+      "id": "SRC-E11E0372467C",
+      "url": "https://app.graphite.com/github/pr/oxc-project/oxc/29950",
+      "title": "https://app.graphite.com/github/pr/oxc-project/oxc/29950",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:42.002Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-0B5077F66CF3": {
+      "id": "SRC-0B5077F66CF3",
+      "url": "https://static.graphite.dev/graphite-32x32-black.png",
+      "title": "https://static.graphite.dev/graphite-32x32-black.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:42.067Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-7F420312BF91": {
+      "id": "SRC-7F420312BF91",
+      "url": "https://app.graphite.com/invite/github/oxc-project?prId=29950",
+      "title": "https://app.graphite.com/invite/github/oxc-project?prId=29950",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:42.137Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-3E5A1571EECF": {
+      "id": "SRC-3E5A1571EECF",
+      "url": "https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22target%22%3A%22esnext%22%2C%22useDefineForClassFields%22%3Afalse%7D%7D&code=const+k+%3D+%28name%3A+string%29+%3D%3E+name%3B%0Aclass+C+%7B%0A++static+%5Bk%28%22a%22%29%5D+%3D+1%3B%0A++%22m%22%28%29+%7B%0A++++return+%22m%22%3B%0A++%7D%0A%7D%0Aconsole.log%28C.a%2C+new+C%28%29",
+      "title": "https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22target%22%3A%22esnext%22%2C%22useDefineForClassFields%22%3Afalse%7D%7D&code=const+k+%3D+%28name%3A+string%29+%3D%3E+name%3B%0Aclass+C+%7B%0A++static+%5Bk%28%22a%22%29%5D+%3D+1%3B%0A++%22m%22%28%29+%7B%0A++++return+%22m%22%3B%0A++%7D%0A%7D%0Aconsole.log%28C.a%2C+new+C%28%29",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:42.264Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-41D1DB0944FE": {
+      "id": "SRC-41D1DB0944FE",
+      "url": "https://playground.oxc.rs/?t=ast&options=%7B%22parser%22%3A%7B%22extension%22%3A%22ts%22%2C%22semanticErrors%22%3Atrue%7D%7D&code=type+T+%3D+null.x%3B",
+      "title": "https://playground.oxc.rs/?t=ast&options=%7B%22parser%22%3A%7B%22extension%22%3A%22ts%22%2C%22semanticErrors%22%3Atrue%7D%7D&code=type+T+%3D+null.x%3B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:42.330Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-F7984020210F": {
+      "id": "SRC-F7984020210F",
+      "url": "https://redirect.github.com/tauri-apps/rust-icns",
+      "title": "https://redirect.github.com/tauri-apps/rust-icns",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:44.011Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-89885AC2CBD4": {
+      "id": "SRC-89885AC2CBD4",
+      "url": "https://redirect.github.com/tauri-apps/rust-icns/blob/HEAD/CHANGELOG.md",
+      "title": "https://redirect.github.com/tauri-apps/rust-icns/blob/HEAD/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:44.077Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-E8074D478EF3": {
+      "id": "SRC-E8074D478EF3",
+      "url": "https://redirect.github.com/tauri-apps/rust-icns/compare/icns-v0.1.0...icns-v0.2.0",
+      "title": "https://redirect.github.com/tauri-apps/rust-icns/compare/icns-v0.1.0...icns-v0.2.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:44.136Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-EB77A6842BB6": {
+      "id": "SRC-EB77A6842BB6",
+      "url": "https://redirect.github.com/tauri-apps/rust-icns/commit/ca321e476d310e39d50d768aae4214e65d4506ea",
+      "title": "https://redirect.github.com/tauri-apps/rust-icns/commit/ca321e476d310e39d50d768aae4214e65d4506ea",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:44.199Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-314C78C64CBD": {
+      "id": "SRC-314C78C64CBD",
+      "url": "https://redirect.github.com/tauri-apps/rust-icns/pull/6",
+      "title": "https://redirect.github.com/tauri-apps/rust-icns/pull/6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:44.259Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-A659E286C7DE": {
+      "id": "SRC-A659E286C7DE",
+      "url": "https://developer.mend.io/github/tauri-apps/tauri",
+      "title": "https://developer.mend.io/github/tauri-apps/tauri",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:44.364Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-1E27B08CF47A": {
+      "id": "SRC-1E27B08CF47A",
+      "url": "https://socket.dev/",
+      "title": "https://socket.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:44.424Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-E5BA85002D65": {
+      "id": "SRC-E5BA85002D65",
+      "url": "https://socket.dev/dashboard/org/tauri-apps/diff-scan/8ca2389d-03ef-4eb1-b4fa-ed90f75ad663?tab=dependencies&dependency_item_key=101976929423",
+      "title": "https://socket.dev/dashboard/org/tauri-apps/diff-scan/8ca2389d-03ef-4eb1-b4fa-ed90f75ad663?tab=dependencies&dependency_item_key=101976929423",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:44.491Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-1D9404E430A7": {
+      "id": "SRC-1D9404E430A7",
+      "url": "https://github-app-statics.socket.dev/diff-updated.svg",
+      "title": "https://github-app-statics.socket.dev/diff-updated.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:44.547Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-4C12FD345B80": {
+      "id": "SRC-4C12FD345B80",
+      "url": "https://s/",
+      "title": "https://s/",
+      "status": "REJECTED_ANONYMOUS_OR_MISSING_PUBLISHER",
+      "rejection_reasons": [
+        "ANONYMOUS_OR_MISSING_PUBLISHER"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-21T02:00:44.613Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-45418196D675": {
+      "id": "SRC-45418196D675",
+      "url": "https://redirect.github.com/rust-phf/rust-phf",
+      "title": "https://redirect.github.com/rust-phf/rust-phf",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:44.671Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-2A1692D94A5C": {
+      "id": "SRC-2A1692D94A5C",
+      "url": "https://redirect.github.com/rust-phf/rust-phf/releases/tag/v0.14.0",
+      "title": "https://redirect.github.com/rust-phf/rust-phf/releases/tag/v0.14.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:44.735Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-08B90A332B10": {
+      "id": "SRC-08B90A332B10",
+      "url": "https://redirect.github.com/rust-phf/rust-phf/compare/v0.13.1...v0.14.0",
+      "title": "https://redirect.github.com/rust-phf/rust-phf/compare/v0.13.1...v0.14.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:44.795Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-F8A36AC874C3": {
+      "id": "SRC-F8A36AC874C3",
+      "url": "https://redirect.github.com/JohnTitor",
+      "title": "https://redirect.github.com/JohnTitor",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:44.861Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-49F28ABC0C95": {
+      "id": "SRC-49F28ABC0C95",
+      "url": "https://redirect.github.com/rust-phf/rust-phf/pull/355",
+      "title": "https://redirect.github.com/rust-phf/rust-phf/pull/355",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:44.918Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-9789AC980229": {
+      "id": "SRC-9789AC980229",
+      "url": "https://redirect.github.com/rust-phf/rust-phf/pull/363",
+      "title": "https://redirect.github.com/rust-phf/rust-phf/pull/363",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:45.012Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-2878A373E5AD": {
+      "id": "SRC-2878A373E5AD",
+      "url": "https://redirect.github.com/rust-phf/rust-phf/pull/360",
+      "title": "https://redirect.github.com/rust-phf/rust-phf/pull/360",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:45.075Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-F69D1E81BD2C": {
+      "id": "SRC-F69D1E81BD2C",
+      "url": "https://redirect.github.com/rust-phf/rust-phf/pull/361",
+      "title": "https://redirect.github.com/rust-phf/rust-phf/pull/361",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:45.136Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-864B1A635E23": {
+      "id": "SRC-864B1A635E23",
+      "url": "https://redirect.github.com/rust-phf/rust-phf/pull/366",
+      "title": "https://redirect.github.com/rust-phf/rust-phf/pull/366",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:45.212Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
+      }
+    },
+    "SRC-AFBFCC14ABFF": {
+      "id": "SRC-AFBFCC14ABFF",
+      "url": "https://github.com/tauri-apps/tauri/pull/4383",
+      "title": "https://github.com/tauri-apps/tauri/pull/4383",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T02:00:45.309Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
       }
     }
   }

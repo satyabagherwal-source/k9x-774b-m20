@@ -11695,3 +11695,5 @@
 | `CYCLE-20261121-V4MM` | `2026-11-21T01:43:41.615Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9693` | Yes (`e5474569...`) |
 | `CYCLE-20261121-57VM` | `2026-11-21T01:51:32.386Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9694` | Yes (`6690b2d6...`) |
 | `CYCLE-20261121-5ARF` | `2026-11-21T01:51:36.123Z` | `software-mansion/react-native-screens` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9695` | Yes (`2742b56a...`) |
+| `CYCLE-20261121-GSW0` | `2026-11-21T02:00:32.832Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9696` | Yes (`146a2101...`) |
+| `CYCLE-20261121-GW2J` | `2026-11-21T02:00:36.955Z` | `tauri-apps/tauri` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9697` | Yes (`81d01590...`) |

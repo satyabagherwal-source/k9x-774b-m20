@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T04:05:49.061Z",
+  "timestamp": "2026-11-21T02:00:45.425Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tauri-apps-tauri-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tauri-apps-tauri-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T04:05:49.061Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T02:00:45.425Z`  
 > **Learning ID**: `LEARN-EVO-tauri-apps-tauri-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
 > **Source**: github ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
-> **Source Version**: `c42354b6`  
+> **Source Version**: `bf10f005`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T04:05:42.561Z  
+> **Timestamp**: 2026-11-21T02:00:35.589Z  
 > **Learning ID**: `learn-github-tauri-apps-tauri`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T04:05:42.555Z  
+> **Harvest Timestamp**: 2026-11-21T02:00:35.582Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Build smaller, faster, and more secure desktop and mobile applications with a web frontend.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 112934 stars
+- **Stars / Engagement**: 113029 stars
 
 ---
 
@@ -980,7 +980,6 @@ pub fn download(url: &str) -> crate::Result<Vec<u8>> {
 #[allow(dead_code)]
 #[derive(Clone, Copy)]
 pub enum HashAlgorithm {
-  #[cfg(target_os = "windows")]
   Sha256,
   Sha1,
 }
@@ -1001,7 +1000,6 @@ pub fn download_and_verify(
 #[allow(dead_code)]
 pub fn verify_hash(data: &[u8], hash: &str, hash_algorithm: HashAlgorithm) -> crate::Result<()> {
   match hash_algorithm {
-    #[cfg(target_os = "windows")]
     HashAlgorithm::Sha256 => {
       let hasher = sha2::Sha256::new();
       verify_data_with_hasher(data, hash, hasher)
@@ -1077,11 +1075,30 @@ mod tests {
   const GITHUB_ASSET_URL: &str =
     "https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip";
   const NON_GITHUB_ASSET_URL: &str = "https://someotherwebsite.com/somefile.zip";
+  const MIRROR_TEMPLATE_VAR: &str = "TAURI_BUNDLER_TOOLS_GITHUB_MIRROR_TEMPLATE";
+
+  /// Sets [`MIRROR_TEMPLATE_VAR`] for as long as it is alive. Environment
+  /// variables belong to the whole process, so a test that leaves this one set
+  /// sends every download after it to `mirror.example.com`.
+  struct MirrorTemplate;
+
+  impl MirrorTemplate {
+    fn set(template: &str) -> Self {
+      unsafe { env::set_var(MIRROR_TEMPLATE_VAR, template) };
+      Self
+    }
+  }
+
+  impl Drop for MirrorTemplate {
+    fn drop(&mut self) {
+      unsafe { env::remove_var(MIRROR_TEMPLATE_VAR) };
+    }
+  }
 
   #[test]
   #[serial_test::serial]
   fn test_generate_mirror_url_no_env_var() {
-    unsafe { env::remove_var("TAURI_BUNDLER_TOOLS_GITHUB_MIRROR_TEMPLATE") };
+    unsafe { env::remove_var(MIRROR_TEMPLATE_VAR) };
 
     assert!(generate_github_mirror_url_from_template(GITHUB_ASSET_URL).is_none());
   }
@@ -1089,12 +1106,9 @@ mod tests {
   #[test]
   #[serial_test::serial]
   fn test_generate_mirror_url_non_github_url() {
-    unsafe {
-      env::set_var(
-        "TAURI_BUNDLER_TOOLS_GITHUB_MIRROR_TEMPLATE",
-        "https://mirror.example.com/<owner>/<repo>/releases/download/<version>/<asset>",
-      )
-    };
+    let _template = MirrorTemplate::set(
+      "https://mirror.example.com/<owner>/<repo>/releases/download/<version>/<asset>",
+    );
 
     assert!(generate_github_mirror_url_from_template(NON_GITHUB_ASSET_URL).is_none());
   }
@@ -1119,7 +1133,7 @@ mod tests {
     ];
 
     for case in test_cases {
-      unsafe { env::set_var("TAURI_BUNDLER_TOOLS_GITHUB_MIRROR_TEMPLATE", case.template) };
+      let _template = MirrorTemplate::set(case.template);
       assert_eq!(
         generate_github_mirror_url_from_template(GITHUB_ASSET_URL),
         Some(case.expected_url.to_string())
@@ -2287,11 +2301,13 @@ mod build {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16543** (2026-11-17): **docs(bundler): update the tauri.conf.json example to the v2 config**
-  *Symptoms*: <!-- Before submitting a PR, please read https://github.com/tauri-apps/tauri/blob/dev/.github/CONTRIBUTING.md#pull-request-guidelines  1. Give the PR a descriptive title.    Examples of good title:     - fix(windows): fix race condition in event loop     - docs: update example for `App::show`     - feat: add `Window::set_fullscreen`    Examples of bad title:     - fix #7123     - update docs     - fix bugs  2. If there is a related issue, reference it in the PR text, e.g. closes #123. 3. If this change requires a new version, then add a change file in `.changes` directory with the appropriate bump, see https://github.com/tauri-apps/tauri/blob/dev/.changes/README.md 4. Ensure that all your commits are signed https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits 5. Ensure `cargo test` and `cargo clippy` passes. 6. Propose your changes as a draft PR if your work is still in progress. -->  The `tauri.conf.json` example in `crates/tauri-bundler/README.md` still used two v1 locations: `bundle.deb` (now `bundle.linux.deb`) and `bundle.macOS.license` (now the general `bundle.licenseFile`). Validated against `crates/tauri-schema-generator/schemas/config.schema.json`, the old example is rejected and the updated one passes.  The macOS settings list also described a `license` field, but `MacOsSettings` has none. The DMG bundle reads `license_file` from the general settings, as NSIS and MSI do, so the bullet moved to the general list.  Found by v
+- **Issue #16604** (2026-11-20): **chore(deps): update rust crate icns to 0.2**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [icns](https://redirect.github.com/tauri-apps/rust-icns) | dependencies | minor | `0.1` → `0.2` |  ---  ### Release Notes  <details> <summary>tauri-apps/rust-icns (icns)</summary>  ### [`v0.2.0`](https://redirect.github.com/tauri-apps/rust-icns/blob/HEAD/CHANGELOG.md#020)  [Compare Source](https://redirect.github.com/tauri-apps/rust-icns/compare/icns-v0.1.0...icns-v0.2.0)  - [`ca321e4`](https://redirect.github.com/tauri-apps/rust-icns/commit/ca321e476d310e39d50d768aae4214e65d4506ea) ([#&#8203;6](https://redirect.github.com/tauri-apps/rust-icns/pull/6)) Updated dependency png to 0.18. `Image::decode_from_png` now takes `BufRead + Seek` instead of `Read`  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR is behind base branch, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR was generated by [Mend Renovate](https://mend.io/renovate/). View the [repository job log](https://developer.mend.io/github/tauri-apps/tauri). <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yNDkuMSIsInVwZGF0ZWRJbl
+  **Post-Mortem & Fix Analysis**:
+  > **Review the following changes in direct dependencies.** Learn more about [Socket for GitHub](https://socket.dev?utm_medium=gh).  <table> <thead> <tr> <th>Diff</th> <th width="200px">Package</th> <th align="left" width="100px">Supply Chain<br/>Security</th> <th align="left" width="100px">Vulnerability</th> <th align="left" width="100px">Quality</th> <th align="left" width="100px">Maintenance</th> <th align="left" width="100px">License</th> </tr> </thead> <tbody> <tr><td align="center"><a href="https://socket.dev/dashboard/org/tauri-apps/diff-scan/8ca2389d-03ef-4eb1-b4fa-ed90f75ad663?tab=dependencies&dependency_item_key=101976929423"><img src="https://github-app-statics.socket.dev/diff-updated.svg" title="Updated" alt="Updated" width="20" height="20"></a></td><td><a href="https://socket.dev/dashboard/org/tauri-apps/diff-scan/8ca2389d-03ef-4eb1-b4fa-ed90f75ad663?tab=dependencies&dependency_item_key=101976929423">cargo/​tauri-icns@​0.1.0 ⏵ 0.2.0</a></td><td align="left"><a href="https://s
 
-- **Issue #16538** (2026-11-16): **[bug] macOS bundle fails on Xcode 27 with an Icon Composer `.icon`: actool "Bad file descriptor" (run with stdin closed)**
-  *Symptoms*: ### Describe the bug  With Xcode 27.0, `tauri build` fails at the bundling step for any macOS app whose `bundle.icon` lists an Icon Composer `.icon` file:  ``` failed to bundle project: Failed to create app Assets.car: `failed to run actool: /* com.apple.actool.errors */ /var/folders/…/T/.tmpcs7AON/Icon.icon: error: The operation couldn’t be completed. Bad file descriptor     Failure Reason: Bad file descriptor /var/folders/…/T/.tmpcs7AON/Icon.icon: error: Failed to create a catalog from the Icon Studio document: /var/folders/…/T/.tmpcs7AON/Icon.icon ```  The Rust build succeeds; only `create_assets_car_file` (`crates/tauri-bundler/src/bundle/macos/icon.rs`) fails.  The cause is that the CLI runs `actool` with file descriptor 0 closed. Xcode 27's `actool` starts its `ibtoold` daemon in that state, and the daemon then cannot compile a `.icon`. The same project and CLI version build fine with Xcode 26.6 (GitHub's `macos-26` runner).  What I verified:  - A stand-in `actool` placed first on `PATH` that logs its stdin reports it closed for both calls the bundler makes (`actool --version` and the compile). This is the case from an interactive terminal and with `tauri build < /dev/null` alike. - If the stand-in does nothing but `exec /usr/bin/actool "$@" < /dev/null`, the same `tauri build` succeeds and the bundle contains `Assets.car`. - The bundler's exact `actool` arguments work when run from a shell. - It reproduces without Tauri (below). - The `ibtoold` left behind by a failed 
+- **Issue #16603** (2026-11-20): **chore(deps): update rust crate phf to 0.14**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [phf](https://redirect.github.com/rust-phf/rust-phf) | dependencies | minor | `0.13` → `0.14` |  ---  ### Release Notes  <details> <summary>rust-phf/rust-phf (phf)</summary>  ### [`v0.14.0`](https://redirect.github.com/rust-phf/rust-phf/releases/tag/v0.14.0)  [Compare Source](https://redirect.github.com/rust-phf/rust-phf/compare/v0.13.1...v0.14.0)  #### What's Changed  - chore: setup cargo-deny by [@&#8203;JohnTitor](https://redirect.github.com/JohnTitor) in [#&#8203;355](https://redirect.github.com/rust-phf/rust-phf/pull/355) - chore(deps): update embarkstudios/cargo-deny-action action to v2.0.15 by [@&#8203;renovate](https://redirect.github.com/renovate)\[bot] in [#&#8203;363](https://redirect.github.com/rust-phf/rust-phf/pull/363) - chore(deps): update actions/checkout action to v5.0.1 by [@&#8203;renovate](https://redirect.github.com/renovate)\[bot] in [#&#8203;360](https://redirect.github.com/rust-phf/rust-phf/pull/360) - chore(deps): update benchmark-action/github-action-benchmark action to v1.20.7 by [@&#8203;renovate](https://redirect.github.com/renovate)\[bot] in [#&#8203;361](https://redirect.github.com/rust-phf/rust-phf/pull/361) - chore(deps): update rust crate siphasher to v1.0.2 by [@&#8203;renovate](https://redirect.github.com/renovate)\[bot] in [#&#8203;366](https://redirect.github.com/rust-phf/rust-phf/pull/366) - chore(\*): bump MSRV to 1.68 by [@&#8203;JohnTito
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2308,481 +2324,734 @@ mod build {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7b568e9c` (2026-11-16)
-**Commit Message**: fix(cli): accept an inherited package version in the Cargo manifest (#16521)
+### Incident Patch 1: `22356474` (2026-11-18)
+**Commit Message**: feat(tauri-build): link the Windows resource into all targets (#16320)
 
-`CargoManifestPackage::version` was a plain string, so a manifest with
-`version.workspace = true` failed to parse and `tauri migrate` stopped
-with "invalid type: map, expected a string". Read the version as
-optional and treat anything other than a string as unknown; it is only
-used to show the version of path dependencies.
+* feat(tauri-build): option to link the Windows resource into all targets
 
-Fixes #16519
+The resource file (and with it the application manifest) is only linked
+into binaries, so on Windows any test binary that links Tauri fails to
+start with STATUS_ENTRYPOINT_NOT_FOUND, because Tauri imports
+`TaskDialogIndirect`, which needs Common Controls v6 from the manifest.
+
+Add `WindowsAttributes::link_resource_into_all_targets`, which uses
+`tauri_winres::WindowsResource::compile_for_everything` so the resource is
+also linked into the library's unit tests, integration tests, examples,
+benchmarks and cdylibs. It is opt-in, so the default output is unchanged.
+
+Closes #13419
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* chore: update lockfile
+
+* use link_resource_into_all_targets on examples/api
+
+* default to true
+
+* actually remove option - force true
+
+---------
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Lucas Nogueira <[REDACTED_EMAIL]>
 
-**File**: `.changes/cli-migrate-workspace-version.md` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+---
-+"tauri-cli": patch:bug
-+"@tauri-apps/cli": patch:bug
-+---
-+
-+Fix `tauri migrate` failing to parse the app's `Cargo.toml` when its package version is inherited from the workspace (`version.workspace = true`).
-```
-
-**File**: `crates/tauri-cli/src/helpers/cargo_manifest.rs` (modified, +34/-2)
-```diff
-@@ -42,7 +42,18 @@ pub enum CargoManifestDependency {
- 
- #[derive(Deserialize)]
- pub struct CargoManifestPackage {
--  pub version: String,
-+  /// `None` when the version is inherited from the workspace (`version.workspace = true`).
-+  #[serde(default, deserialize_with = "deserialize_package_version")]
-+  pub version: Option<String>,
-+}
-+
-+fn deserialize_package_version<'de, D: serde::Deserializer<'de>>(
-+  deserializer: D,
-+) -> Result<Option<String>, D::Error> {
-+  match toml::Value::deserialize(deserializer)? {
-+    toml::Value::String(version) => Ok(Some(version)),
-+    _ => Ok(None),
-+  }
- }
- 
- #[derive(Deserialize)]
-@@ -191,7 +202,7 @@ pub fn crate_version(
-             let v = fs::read_to_string(manifest_path)
-               .ok()
-               .and_then(|m| toml::from_str::<CargoManifest>(&m).ok())
--              .map(|m| m.package.version);
-+              .and_then(|m| m.package.version);
-             version.version = v;
-             version.path = Some(p);
-           } else if let Some(g) = p.git {
-@@ -232,6 +243,27 @@ mod tests {
-     }
-   }
- 
-+  #[test]
-+  fn parses_manifest_with_inherited_package_version() {
-+    let manifest: CargoManifest = toml::from_str(
-+      r#"
-+        [package]
-+        name = "app"
-+        version.workspace = true
-+
-+        [dependencies]
-+        tauri = { workspace = true }
-+      "#,
-+    )
-+    .unwrap();
-+
-+    let lock = CargoLock {
-+      package: vec![lock_package("1.8.0")],
-+    };
-+    let version = crate_version(Path::new("."), Some(&manifest), Some(&lock), "tauri");
-+    assert_eq!(version.version.as_deref(), Some("1.8.0"));
-+  }
-+
-   #[test]
-   fn crate_version_lists_all_locked_versions() {
-     let lock = CargoLock {
-```
-
----
-
-### Incident Patch 2: `a99dc0e8` (2026-11-16)
-**Commit Message**: fix(api): make mocked once and unlisten work with shouldMockEvents (#16522)
-
-**File**: `.changes/api-mock-events-once-unlisten.md` (added, +5/-0)
+**File**: `.changes/tauri-build-link-resource-all-targets.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+"@tauri-apps/api": patch:bug
++"tauri-build": "minor:feat"
 +---
 +
-+Fix `mockIPC` with `shouldMockEvents` so `once` listeners only run once and `unlisten` removes the mocked listener. The mocked event now carries the listener `id`, and `plugin:event|unlisten` reads `eventId`.
++Link the Windows resource file, including the application manifest, into all targets of the package instead of only into binaries, so tests that link Tauri no longer fail with `STATUS_ENTRYPOINT_NOT_FOUND` on Windows.
 ```
 
-**File**: `crates/tauri/scripts/bundle.global.js` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -1 +1 @@
--var __TAURI_IIFE__=function(e){"use strict";function n(e,n,t,i){if("a"===t&&!i)throw new TypeError("Private accessor was defined without a getter");if("function"==typeof n?e!==n||!i:!n.has(e))throw new TypeError("Cannot read private member from an object whose class did not declare it");return"m"===t?i:"a"===t?i.call(e):i?i.value:n.get(e)}function t(e,n,t,i,r){if("m"===i)throw new TypeError("Private method is not writable");if("a"===i&&!r)throw new TypeError("Private accessor was defined without a setter");if("function"==typeof n?e!==n||!r:!n.has(e))throw new TypeError("Cannot write private member to an object whose class did not declare it");return"a"===i?r.call(e,t):r?r.value=t:n.set(e,t),t}var i,r,s,a,l,o,u;"function"==typeof SuppressedError&&SuppressedError;const c="__TAURI_TO_IPC_KEY__";function d(e,n=!1){return window.__TAURI_INTERNALS__.transformCallback(e,n)}class p{constructor(e){i.add(this),r.set(this,void 0),s.set(this,0),a.set(this,[]),l.set(this,void 0),t(this,r,e||(()=>{}),"f"),this.id=d(e=>{const r=e.index;if("end"in e)return void(r==n(this,s,"f")?this.cleanupCallback():t(this,l,r,"f"));const u=e.message;if(r==n(this,s,"f")){for(n(this,i,"m",o).call(this,u),t(this,s,n(this,s,"f")+1,"f");n(this,s,"f")in n(this,a,"f");){const e=n(this,a,"f")[n(this,s,"f")];n(this,i,"m",o).call(this,e),delete n(this,a,"f")[n(this,s,"f")],t(this,s,n(this,s,"f")+1,"f")}n(this,s,"f")===n(this,l,"f")&&this.cleanupCallback()}else n(this,a,"f")[r]=u})}cleanupCallback(){window.__TAURI_INTERNALS__.unregisterCallback(this.id)}set onmessage(e){t(this,r,e,"f")}get onmessage(){return n(this,r,"f")}[(r=new WeakMap,s=new WeakMap,a=new WeakMap,l=new WeakMap,i=new WeakSet,o=function(e){try{n(this,r,"f").call(this,e)}catch(e){queueMicrotask(()=>{throw e})}},c)](){return`__CHANNEL__:${this.id}`}toJSON(){return this[c]()}}class h{constructor(e,n,t){this.plugin=e,this.event=n,this.channelId=t}async unregister(){return _(`plugin:${this.plugin}|remove_listener`,{event:this.event,channelId:this.channelId})}}async function w(e,n,t){const i=new p(t);try{return await _(`plugin:${e}|register_listener`,{event:n,handler:i}),new h(e,n,i.id)}catch{return await _(`plugin:${e}|registerListener`,{event:n,handler:i}),new h(e,n,i.id)}}async function _(e,n={},t){return window.__TAURI_INTERNALS__.invoke(e,n,t)}class y{get rid(){return n(this,u,"f")}constructor(e){u.set(this,void 0),t(this,u,e,"f")}async close(){return _("plugin:resources|close",{rid:this.rid})}async[(u=new WeakMap,Symbol.asyncDispose)](){await this.close()}}var g=Object.freeze({__proto__:null,Channel:p,PluginListener:h,Resource:y,SERIALIZE_TO_IPC_FN:c,addPluginListener:w,checkPermissions:async function(e){return _(`plugin:${e}|check_permissions`)},convertFileSrc:function(e,n="asset"){return window.__TAURI_INTERNALS__.convertFileSrc(e,n)},invoke:_,isTauri:function(){return!!(globalThis||window).isTauri},requestPermissions:async function(e){return _(`plugin:${e}|request_permissions`)},transformCallback:d});class b extends y{constructor(e){super(e)}static async new(e,n,t){return _("plugin:image|new",{rgba:e,width:n,height:t}).then(e=>new b(e))}static async fromBytes(e){return _("plugin:image|from_bytes",{bytes:e}).then(e=>new b(e))}static async fromPath(e){return _("plugin:image|from_path",{path:e}).then(e=>new b(e))}async rgba(){return _("plugin:image|rgba",{rid:this.rid}).then(e=>new Uint8Array(e))}async size(){return _("plugin:image|size",{rid:this.rid})}}function m(e){return null==e?null:"string"==typeof e?e:e instanceof b?e.rid:e}var v,f=Object.freeze({__proto__:null,Image:b,transformImage:m});!function(e){e.Nsis="nsis",e.Msi="msi",e.Deb="deb",e.Rpm="rpm",e.AppImage="appimage",e.App="app"}(v||(v={}));var k=Object.freeze({__proto__:null,get BundleType(){return v},defaultWindowIcon:async function(){return _("plugin:app|default_window_icon").then(e=>e?new b(e):null)},exit:async function(e=0){return _("plugin:app|exit",{code:e})},fetchDataStoreIdentifiers:async function(){return _("plugin:app|fetch_data_store_identifiers")},getBundleType:async function(){return _("plugin:app|bundle_type")},getIdentifier:async function(){return _("plugin:app|identifier")},getName:async function(){return _("plugin:app|name")},getTauriVersion:async function(){return _("plugin:app|tauri_version")},getVersion:async function(){return _("plugin:app|version")},hide:async function(){return _("plugin:app|app_hide")},onBackButtonPress:async function(e){return w("app","back-button",e)},removeDataStore:async function(e){return _("plugin:app|remove_data_store",{uuid:e})},setDockVisibility:async function(e){return _("plugin:app|set_dock_visibility",{visible:e})},setTheme:async function(e){return _("plugin:app|set_app_theme",{theme:e})},show:async function(){return _("plugin:app|app_show")},supportsMultipleWindows:async function(){return _("plugin:app|supports_multiple_windows")}});class A{constructor(...e){this.type="Logical",1===e.length?"Logical"in e[0]?(this.width=e[0].Logical.width,this.height=e[0].
+@@ -8770,9 +8770,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "tauri-winres"
+-version = "0.3.6"
++version = "0.3.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cc65d45c68858bfe420dd29e834b5d15dbecf8a07a8a16cf4d532c7b1f69d4b6"
++checksum = "c52bb6904475a6ca662f15ef787f18ade61d5740a1ee12c45d3b748efdb6f796"
+ dependencies = [
+  "dunce",
+  "embed-resource",
 ```
 
-**File**: `packages/api/src/mocks.ts` (modified, +8/-5)
+**File**: `crates/tauri-build/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -132,6 +132,7 @@ export interface MockIPCOptions {
-  *  emit('test-event', { foo: 'bar' });
-  *  expect(eventHandler).toHaveBeenCalledWith({
-  *    event: 'test-event',
-+ *    id: expect.any(Number),
-  *    payload: { foo: 'bar' }
-  *  });
-  * })
-@@ -157,7 +158,9 @@ export function mockIPC(
-       case 'plugin:event|emit':
-         return handleEmit(args as { event: EventName; payload?: unknown })
-       case 'plugin:event|unlisten':
--        return handleRemoveListener(args as { event: EventName; id: number })
-+        return handleRemoveListener(
-+          args as { event: EventName; eventId: number }
-+        )
+@@ -33,7 +33,7 @@ serde_json = "1"
+ heck = "0.5"
+ json-patch = "4"
+ walkdir = "2"
+-tauri-winres = "0.3"
++tauri-winres = "0.3.7"
+ semver = "1"
+ dirs = "7"
+ glob = "0.3"
+```
+
+**File**: `crates/tauri-build/src/lib.rs` (modified, +3/-1)
+```diff
+@@ -881,7 +881,9 @@ pub fn try_build(attributes: Attributes) -> Result<()> {
+       )));
      }
-   }
  
-@@ -172,15 +175,15 @@ export function mockIPC(
+-    res.compile().with_context(|| {
++    // link the resource into all targets (not only binaries) so test binaries that link Tauri
++    // also get the app manifest, otherwise they fail with `STATUS_ENTRYPOINT_NOT_FOUND`
++    res.compile_for_everything().with_context(|| {
+       format!(
+         "failed to compile `{}` into a Windows Resource file during tauri-build",
+         window_icon_path.display()
+```
+
+**File**: `examples/api/src-tauri/build.rs` (modified, +0/-35)
+```diff
+@@ -2,13 +2,10 @@
+ // SPDX-License-Identifier: Apache-2.0
+ // SPDX-License-Identifier: MIT
  
-   function handleEmit(args: { event: EventName; payload?: unknown }) {
-     const eventListeners = listeners.get(args.event) || []
--    for (const handler of eventListeners) {
--      runCallback(handler, args)
-+    for (const handler of [...eventListeners]) {
-+      runCallback(handler, { ...args, id: handler })
-     }
-     return null
-   }
--  function handleRemoveListener(args: { event: EventName; id: number }) {
-+  function handleRemoveListener(args: { event: EventName; eventId: number }) {
-     const eventListeners = listeners.get(args.event)
-     if (eventListeners) {
--      const index = eventListeners.indexOf(args.id)
-+      const index = eventListeners.indexOf(args.eventId)
-       if (index !== -1) {
-         eventListeners.splice(index, 1)
-       }
+-use tauri_build::WindowsAttributes;
+-
+ fn main() {
+   tauri_build::try_build(
+     tauri_build::Attributes::new()
+       .codegen(tauri_build::CodegenContext::new())
+-      .windows_attributes(WindowsAttributes::new_without_app_manifest())
+       .plugin(
+         "app-menu",
+         tauri_build::InlinedPlugin::new().commands(&["toggle", "popup"]),
+@@ -21,36 +18,4 @@ fn main() {
+       ])),
+   )
+   .expect("failed to run tauri-build");
+-
+-  #[cfg(windows)]
+-  {
+-    // workaround needed to prevent `STATUS_ENTRYPOINT_NOT_FOUND` error in tests
+-    // see https://github.com/tauri-apps/tauri/pull/4383#issuecomment-1212221864
+-    let target_os = std::env::var("CARGO_CFG_TARGET_OS").unwrap();
+-    let target_env = std::env::var("CARGO_CFG_TARGET_ENV");
+-    let is_tauri_workspace = std::env::var("__TAURI_WORKSPACE__").is_ok_and(|v| v == "true");
+-    if is_tauri_workspace && target_os == "windows" && Ok("msvc") == target_env.as_deref() {
+-      embed_manifest_for_tests();
+-    }
+-  }
+-}
+-
+-#[cfg(windows)]
+-fn embed_manifest_for_tests() {
+-  static WINDOWS_MANIFEST_FILE: &str = "windows-app-manifest.xml";
+-
+-  let manifest = std::env::current_dir()
+-    .unwrap()
+-    .join("../../../crates/tauri-build/src")
+-    .join(WINDOWS_MANIFEST_FILE);
+-
+-  println!("cargo:rerun-if-changed={}", manifest.display());
+-  // Embed the Windows application manifest file.
+-  println!("cargo:rustc-link-arg=/MANIFEST:EMBED");
+-  println!(
+-    "cargo:rustc-link-arg=/MANIFESTINPUT:{}",
+-    manifest.to_str().unwrap()
+-  );
+-  // Turn linker warnings into errors.
+-  println!("cargo:rustc-link-arg=/WX");
+ }
 ```
 
 ---
 
-### Incident Patch 3: `3aac98b4` (2026-11-13)
-**Commit Message**: fix: clippy warnings from Rust 1.100 (#16524)
+### Incident Patch 2: `f4194be6` (2026-11-19)
+**Commit Message**: fix(bundler): pass deep link URLs through the Linux desktop entry Exec line (#15929)
 
-* fix: clippy warnings from Rust 1.100
+* fix(bundler): pass URLs and files through the Linux desktop entry Exec line
 
-also gets rid of udeps since cargo now checks unused dependencies
+The generated desktop entry declares MimeType associations (deep-link
+schemes as x-scheme-handler, file associations) but rendered Exec with no
+field code. Per the Desktop Entry specification an Exec line without a
+field code is launched without the URL or files it was asked to open, so
+resolving a deep link through the packaged entry silently dropped the
+URL - OAuth/OIDC callbacks never reached the app.
 
-* fmt
+Emit %u when deep-link schemes are configured (deep links arrive as one
+URL, matching the handler entry the deep-link plugin registers at
+runtime) and %F when only file associations are configured.
 
-* which and tar on bundler is macos only
+fixes #15928
 
-* tar on linux too
+Co-Authored-By: Claude Fable 5 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/udeps.yml` (removed, +0/-140)
+* refactor(bundler): only emit %u for deep links, keep file association launches unchanged
+
+Launchers already fall back to %f when Exec has no field code, so file
+associations work today; only URLs without a local path are dropped.
+
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+* docs, tests
+
+* fix(bundler): use %U/%F desktop Exec field codes, document 
+
+**File**: `.changes/linux-desktop-exec-field-code.md` (added, +5/-0)
 ```diff
-@@ -1,140 +0,0 @@
--# Copyright 2019-2024 Tauri Programme within The Commons Conservancy
--# SPDX-License-Identifier: Apache-2.0
--# SPDX-License-Identifier: MIT
--
--name: Udeps
--
--on:
--  push:
--    branches:
--      - dev
--
--env:
--  RUST_BACKTRACE: 1
--  CARGO_PROFILE_DEV_DEBUG: 0 # This would add unnecessary bloat to the target folder, decreasing cache efficiency.
--
--concurrency:
--  group: ${{ github.workflow }}-${{ github.ref }}
--  cancel-in-progress: true
--
--permissions:
--  contents: read
--
--jobs:
--  changes:
--    runs-on: ubuntu-latest
--    outputs:
--      tauri: ${{ steps.filter.outputs.tauri }}
--      build: ${{ steps.filter.outputs.build }}
--      codegen: ${{ steps.filter.outputs.codegen }}
--      macros: ${{ steps.filter.outputs.macros }}
--      runtime: ${{ steps.filter.outputs.runtime }}
--      wry: ${{ steps.filter.outputs.wry }}
--      utils: ${{ steps.filter.outputs.utils }}
--      bundler: ${{ steps.filter.outputs.bundler }}
--      cli: ${{ steps.filter.outputs.cli }}
--    steps:
--      - uses: actions/checkout@v7
--      - uses: dorny/paths-filter@v3
--        id: filter
--        with:
--          filters: |
--            tauri:
--              - 'crates/tauri/**'
--              - '!crates/tauri/scripts/**'
--            build:
--              - 'crates/tauri-build/**'
--            codegen:
--              - 'crates/tauri-codegen/**'
--            macros:
--              - 'crates/tauri-macros/**'
--            runtime:
--              - 'crates/tauri-runtime/**'
--            wry:
--              - 'crates/tauri-runtime-wry/**'
--            utils:
--              - 'crates/tauri-utils/**'
--            bundler:
--              - 'crates/tauri-bundler/**'
--            cli:
--              - 'crates/tauri-cli/**'
--            macossign:
--              - 'crates/tauri-macos-sign/**'
--
--  setup:
--    runs-on: ubuntu-latest
--    needs: changes
--    if: |
--      needs.changes.outputs.tauri == 'true' ||
--      needs.changes.outputs.build == 'true' ||
--      needs.changes.outputs.codegen == 'true' ||
--      needs.changes.outputs.macros == 'true' ||
--      needs.changes.outputs.runtime == 'true' ||
--      needs.changes.outputs.wry == 'true' ||
--      needs.changes.outputs.utils == 'true' ||
--      needs.changes.outputs.bundler == 'true' ||
--      needs.changes.outputs.cli == 'true' ||
--      needs.changes.outputs.macossign == 'true'
--
--    steps:
--      - name: Create udeps matrix
--        id: create-matrix
--        env:
--          TAURI: ${{ needs.changes.outputs.tauri == 'true' }}
--          BUILD: ${{ needs.changes.outputs.build == 'true' }}
--          CODEGEN: ${{ needs.changes.outputs.codegen == 'true' }}
--          MACROS: ${{ needs.changes.outputs.macros == 'true' }}
--          RUNTIME: ${{ needs.changes.outputs.runtime == 'true' }}
--          WRY: ${{ needs.changes.outputs.wry == 'true' }}
--          UTILS: ${{ needs.changes.outputs.utils == 'true' }}
--          BUNDLER: ${{ needs.changes.outputs.bundler == 'true' }}
--          CLI: ${{ needs.changes.outputs.cli == 'true' }}
--          MACOSSIGN: ${{ needs.changes.outputs.macossign == 'true' }}
--        run: |
--          crates=()
--          if [ "${TAURI}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri\""; fi
--          if [ "${BUILD}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri-build\""; fi
--          if [ "${CODEGEN}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri-codegen\""; fi
--          if [ "${MACROS}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri-macros\""; fi
--          if [ "${RUNTIME}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri-runtime\""; fi
--          if [ "${WRY}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri-runtime-wry\""; fi
--          if [ "${UTILS}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri-utils\""; fi
--          if [ "${BUNDLER}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri-bundler\""; fi
--          if [ "${CLI}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri-cli\""; fi
--          if [ "${MACOSSIGN}" == "true" ]; then crates[${#crates[@]}]="\"./crates/tauri-macos-sign\""; fi
--          echo "matrix=[$crates]" >> "$GITHUB_OUTPUT"
--    outputs:
--      matrix: ${{ steps.create-matrix.outputs.matrix }}
--
--  udeps:
--    runs-on: ubuntu-latest
--    needs: setup
--    strategy:
--      matrix:
--        path: ${{ fromJson(needs.setup.outputs.matrix) }}
--    steps:
--      - uses: actions/checkout@v7
--
--      - name: Install Rust nightly
--        uses: dtolnay/rust-toolchain@nightly
--
--      - name: install dependencies
--        run: |
--          sudo apt-get update
--          sudo apt-get install -y libgtk-3-dev
--
--      # No rust-cache on purpose: this job only runs on `dev`, its target dir does not fit the
--      # repository's 10 GB cache limit next to the entries pull requests restore, and an entry
--      # evicted before the next push only costs upload time.
--      - name: Install udeps
--        uses: taiki-e/install-action@v2
--        
-```
-
-**File**: `Cargo.lock` (modified, +2/-18)
-```diff
-@@ -2543,9 +2543,9 @@ checksum = "f90f7dce0722e95104fcb095585910c0977252f286e354b5e3bd38902cd99988"
- 
- [[package]]
- name = "futures-timer"
--version = "3.0.3"
-+version = "3.0.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f288b0a4f20f9a56b5d1da57e2227c661b7b16168e2f72365f57b63326e29b24"
-+checksum = "af43fadb8a98512d547e37b4e92e0ced13e205c061b87b4623eff01d918d6968"
- 
- [[package]]
- name = "futures-util"
-@@ -3840,20 +3840,6 @@ dependencies = [
-  "thiserror 2.0.21",
- ]
- 
--[[package]]
--name = "jsonrpsee-ws-client"
--version = "0.26.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "06cd5b8daf2d7c0730731a97f96c0d1d0dd38def07001ff80df1cf6063442235"
--dependencies = [
-- "http",
-- "jsonrpsee-client-transport",
-- "jsonrpsee-core",
-- "jsonrpsee-types",
-- "tower",
-- "url",
--]
--
- [[package]]
- name = "jsonschema"
- version = "0.60.1"
-@@ -8450,7 +8436,6 @@ dependencies = [
-  "jsonrpsee",
-  "jsonrpsee-client-transport",
-  "jsonrpsee-core",
-- "jsonrpsee-ws-client",
-  "jsonschema",
-  "libc",
-  "local-ip-address",
-@@ -8542,7 +8527,6 @@ name = "tauri-driver"
- version = "2.1.0"
- dependencies = [
-  "anyhow",
-- "futures",
-  "futures-util",
-  "http-body-util",
-  "hyper",
-```
-
-**File**: `Cargo.toml` (modified, +3/-0)
-```diff
-@@ -91,3 +91,6 @@ collapsible_if = "allow"
- redundant_clone = "warn"
- assigning_clones = "warn"
- or_fun_call = "warn"
+@@ -0,0 +1,5 @@
++---
++"tauri-bundler": "patch:bug"
++---
 +
-+[workspace.lints.cargo]
-+unused_dependencies = "deny"
++Fixed deep links being dropped on Linux when the app is launched through the bundled desktop entry, and files being opened one process at a time. The desktop entry's `Exec` now ends with `%U` when deep-link schemes are configured and with `%F` when only file associations are. Custom `desktopTemplate`s must append `{{exec_arg}}` to their `Exec` line, as in `Exec={{exec}}{{exec_arg}}`, to get the fix.
 ```
 
-**File**: `crates/tauri-bundler/Cargo.toml` (modified, +2/-3)
+**File**: `crates/tauri-bundler/src/bundle/linux/freedesktop/main.desktop` (modified, +1/-1)
 ```diff
-@@ -23,7 +23,6 @@ anyhow = "1"
- serde_json = "1"
- serde = { version = "1", features = ["derive"] }
- strsim = "0.11"
--tar = "0.4"
- walkdir = "2"
- bytesize = "2"
- handlebars = "6"
-@@ -46,7 +45,6 @@ plist = "1"
- glob = "0.3"
- 
- [target."cfg(target_os = \"windows\")".dependencies]
--bitness = "0.4"
- windows-registry = "0.6"
- 
- [target."cfg(target_os = \"windows\")".dependencies.windows-sys]
-@@ -57,6 +55,7 @@ features = ["Win32_System_SystemInformation", "Win32_System_Diagnostics_Debug"]
- icns = { package = "tauri-icns", version = "0.1" }
- time = { version = "0.3", features = ["formatting"] }
- tauri-macos-sign = { workspace = true }
-+which = "8"
- 
- [target."cfg(target_os = \"linux\")".dependencies]
- heck = "0.5"
-@@ -65,7 +64,7 @@ md5 = "0.8"
- rpm = { version = "0.30", features = ["bzip2-compression"] }
- 
- [target."cfg(unix)".dependencies]
--which = "8"
-+tar = "0.4"
- 
- [lib]
- name = "tauri_bundler"
+@@ -3,7 +3,7 @@ Categories={{categories}}
+ {{#if comment}}
+ Comment={{comment}}
+ {{/if}}
+-Exec={{exec}}
++Exec={{exec}}{{exec_arg}}
+ StartupWMClass={{exec}}
+ Icon={{icon}}
+ Name={{name}}
 ```
 
-**File**: `crates/tauri-bundler/src/bundle/windows/nsis/mod.rs` (modified, +1/-2)
+**File**: `crates/tauri-bundler/src/bundle/linux/freedesktop/mod.rs` (modified, +121/-8)
 ```diff
-@@ -124,8 +124,7 @@ pub fn bundle_project(settings: &Settings, updater: bool) -> crate::Result<Vec<P
-         let out_path = nsis_toolset_path.join(path);
-         std::fs::create_dir_all(out_path.parent().context("output path has no parent")?)
-           .fs_context("failed to create file output directory", out_path.clone())?;
--        fs::write(&out_path, data)
--          .fs_context("failed to save NSIS downloaded file", out_path.clone())?;
-+        fs::write(&out_path, data).fs_context("failed to save NSIS downloaded file", out_path)?;
+@@ -131,6 +131,7 @@ pub fn generate_desktop_file(
+     icon: &'a str,
+     name: &'a str,
+     mime_type: Option<String>,
++    exec_arg: &'a str,
+     long_description: String,
+   }
+ 
+@@ -144,14 +145,31 @@ pub fn generate_desktop_file(
+     );
+   }
+ 
+-  if let Some(protocols) = settings.deep_link_protocols() {
+-    mime_type.extend(
+-      protocols
+-        .iter()
+-        .flat_map(|protocol| &protocol.schemes)
+-        .map(|s| format!("x-scheme-handler/{s}")),
+-    );
+-  }
++  let schemes: Vec<String> = settings
++    .deep_link_protocols()
++    .into_iter()
++    .flatten()
++    .flat_map(|protocol| &protocol.schemes)
++    .map(|s| format!("x-scheme-handler/{s}"))
++    .collect();
++
++  // Launchers fall back to `%f` when Exec has no field code, which drops URLs
++  // without a local path (deep links) and starts one process per file.
++  // `%U` passes local files as paths and URLs as-is, all in one process;
++  // `%F` also maps remote files to local paths for file-only apps.
++  // The leading space lets templates append it as `Exec={{exec}}{{exec_arg}}`.
++  let has_file_associations = settings
++    .file_associations()
++    .is_some_and(|associations| !associations.is_empty());
++  let exec_arg = if !schemes.is_empty() {
++    " %U"
++  } else if has_file_associations {
++    " %F"
++  } else {
++    ""
++  };
++
++  mime_type.extend(schemes);
+ 
+   let mime_type = (!mime_type.is_empty()).then_some(mime_type.join(";"));
+ 
+@@ -177,10 +195,105 @@ pub fn generate_desktop_file(
+       icon: bin_name,
+       name: settings.product_name(),
+       mime_type,
++      exec_arg,
+       long_description: settings.long_description().unwrap_or_default().to_string(),
+     },
+     file,
+   )?;
+ 
+   Ok((file_path, dest_path))
+ }
++
++#[cfg(test)]
++mod tests {
++  use super::*;
++  use crate::bundle::{BundleBinary, BundleSettings, PackageSettings, SettingsBuilder};
++  use tauri_utils::config::{AssociationExt, DeepLinkProtocol, FileAssociation};
++
++  fn render(
++    deep_link_protocols: Option<Vec<DeepLinkProtocol>>,
++    file_associations: Option<Vec<FileAssociation>>,
++  ) -> String {
++    let tmp_dir = tempfile::tempdir().expect("failed to create temp dir");
++    let settings = SettingsBuilder::new()
++      .project_out_directory(tmp_dir.path())
++      .package_settings(PackageSettings {
++        product_name: "TestApp".into(),
++        version: "0.1.0".into(),
++        description: "test".into(),
++        homepage: None,
++        authors: None,
++        default_run: None,
++      })
++      .bundle_settings(BundleSettings {
++        deep_link_protocols,
++        file_associations,
++        ..Default::default()
++      })
++      .binaries(vec![BundleBinary::new("test-app".into(), true)])
++      .target("x86_64-unknown-linux-gnu".into())
++      .build()
++      .expect("failed to build settings");
++
++    let (path, _) =
++      generate_desktop_file(&settings, &None, tmp_dir.path()).expect("failed to generate");
++    std::fs::read_to_string(path).expect("failed to read desktop file")
++  }
++
++  fn deep_link() -> Vec<DeepLinkProtocol> {
++    vec![DeepLinkProtocol {
++      schemes: vec!["my-app".into(), "other".into()],
++      domains: Vec::new(),
++      name: None,
++      role: Default::default(),
++    }]
++  }
++
++  fn file_association() -> Vec<FileAssociation> {
++    vec![FileAssociation {
++      ext: vec![AssociationExt("png".into())],
++      content_types: None,
++      name: None,
++      description: None,
++      role: Default::default(),
++      mime_type: Some("image/png".into()),
++      rank: Default::default(),
++      exported_type: None,
++      android_intent_action_filters: None,
++    }]
++  }
++
++  #[test]
++  fn exec_without_associations_has_no_field_code() {
++    let desktop = render(None, None);
++    assert!(desktop.contains("\nExec=test-app\n"), "{desktop}");
++    assert!(!desktop.contains("MimeType="), "{desktop}");
++  }
++
++  #[test]
++  fn exec_with_file_associations_takes_files() {
++    let desktop = render(None, Some(file_association()));
++    assert!(desktop.contains("\nExec=test-app %F\n"), "{desktop}");
++    assert!(desktop.contains("\nMimeType=image/png\n"), "{desktop}");
++  }
++
++  #[test]
++  fn exec_with_deep_links_takes_urls() {
++    let desktop = render(Some(deep_link()), None);
++    assert!(desktop.contains("\nExec=test-app %U\n"), "{desktop}");
++    assert!(
++      desktop.contains("\nMimeType=x-scheme-handler/my-app;x-scheme-handler/other\n"),
++      "{desktop}"
++    );
++  }
++
++  #[test]
++  fn exec_with_deep_links_and_file_associations_takes_urls() {
++    let desktop = render(Some(deep_link()), Some(file_association()));
++    assert!(desktop.contains("\nExec=test-app %U\n"), "{desktop}");
++    assert!(
++      desktop.contains("\nMimeType=image/png;x-scheme-handler/my-app;x-scheme-handler/other\n"),
++      "{desktop}"
++    );
++  }
++}
+```
+
+**File**: `crates/tauri-cli/config.schema.json` (modified, +2/-2)
+```diff
+@@ -3578,7 +3578,7 @@
+           ]
+         },
+         "desktopTemplate": {
+-          "description": "Path to a custom desktop file Handlebars template.\n\n Available variables: `categories`, `comment` (optional), `exec`, `icon` and `name`.",
++          "description": "Path to a custom desktop file Handlebars template.\n\n Available variables: `categories`, `comment` (optional), `exec`, `exec_arg`, `icon`,\n `name`, `mime_type` (optional) and `long_description`.\n\n `exec_arg` is the `Exec` field code with a leading space: ` %U` when deep link schemes are\n configured, ` %F` when only file associations are, and empty otherwise, so launchers pass the\n opened URLs or files to the app. Use it as `Exec={{exec}}{{exec_arg}}`.",
+           "type": [
+             "string",
+             "null"
+@@ -3813,7 +3813,7 @@
+           }
+         },
+         "desktopTemplate": {
+-          "description": "Path to a custom desktop file Handlebars template.\n\n Available variables: `categories`, `comment` (optional), `exec`, `icon` and `name`.",
++          "description": "Path to a custom desktop file Handlebars template.\n\n Available variables: `categories`, `comment` (optional), `exec`, `exec_arg`, `icon`,\n `name`, `mime_type` (optional) and `long_description`.\n\n `exec_arg` is the `Exec` field code with a leading space: ` %U` when deep link schemes are\n configured, ` %F` when only file associations are, and empty otherwise, so launchers pass the\n opened URLs or files to the app. Use it as `Exec={{exec}}{{exec_arg}}`.",
+           "type": [
+             "string",
+             "null"
+```
+
+**File**: `crates/tauri-schema-generator/schemas/config.schema.json` (modified, +2/-2)
+```diff
+@@ -3578,7 +3578,7 @@
+           ]
+         },
+         "desktopTemplate": {
+-          "description": "Path to a custom desktop file Handlebars template.\n\n Available variables: `categories`, `comment` (optional), `exec`, `icon` and `name`.",
++          "description": "Path to a custom desktop file Handlebars template.\n\n Available variables: `categories`, `comment` (optional), `exec`, `exec_arg`, `icon`,\n `name`, `mime_type` (optional) and `long_description`.\n\n `exec_arg` is the `Exec` field code with a leading space: ` %U` when deep link schemes are\n configured, ` %F` when only file associations are, and empty otherwise, so launchers pass the\n opened URLs or files to the app. Use it as `Exec={{exec}}{{exec_arg}}`.",
+           "type": [
+             "string",
+             "null"
+@@ -3813,7 +3813,7 @@
+           }
+         },
+         "desktopTemplate": {
+-          "description": "Path to a custom desktop file Handlebars template.\n\n Available variables: `categories`, `comment` (optional), `exec`, `icon` and `name`.",
++          "description": "Path to a custom desktop file Handlebars template.\n\n Available variables: `categories`, `comment` (optional), `exec`, `exec_arg`, `icon`,\n `name`, `mime_type` (optional) and `long_description`.\n\n `exec_arg` is the `Exec` field code with a leading space: ` %U` when deep link schemes are\n configured, ` %F` when only file associations are, and empty otherwise, so launchers pass the\n opened URLs or files to the app. Use it as `Exec={{exec}}{{exec_arg}}`.",
+           "type": [
+             "string",
+             "null"
+```
+
+**File**: `crates/tauri-utils/src/config.rs` (modified, +12/-2)
+```diff
+@@ -455,7 +455,12 @@ pub struct DebConfig {
+   pub changelog: Option<PathBuf>,
+   /// Path to a custom desktop file Handlebars template.
+   ///
+-  /// Available variables: `categories`, `comment` (optional), `exec`, `icon` and `name`.
++  /// Available variables: `categories`, `comment` (optional), `exec`, `exec_arg`, `icon`,
++  /// `name`, `mime_type` (optional) and `long_description`.
++  ///
++  /// `exec_arg` is the `Exec` field code with a leading space: ` %U` when deep link schemes are
++  /// configured, ` %F` when only file associations are, and empty otherwise, so launchers pass the
++  /// opened URLs or files to the app. Use it as `Exec={{exec}}{{exec_arg}}`.
+   #[serde(alias = "desktop-template")]
+   pub desktop_template: Option<PathBuf>,
+   /// Path to script that will be executed before the package is unpacked. See
+@@ -700,7 +705,12 @@ pub struct RpmConfig {
+   pub files: HashMap<PathBuf, PathBuf>,
+   /// Path to a custom desktop file Handlebars template.
+   ///
+-  /// Available variables: `categories`, `comment` (optional), `exec`, `icon` and `name`.
++  /// Available variables: `categories`, `comment` (optional), `exec`, `exec_arg`, `icon`,
++  /// `name`, `mime_type` (optional) and `long_description`.
++  ///
++  /// `exec_arg` is the `Exec` field code with a leading space: ` %U` when deep link schemes are
++  /// configured, ` %F` when only file associations are, and empty otherwise, so launchers pass the
++  /// opened URLs or files to the app. Use it as `Exec={{exec}}{{exec_arg}}`.
+   #[serde(alias = "desktop-template")]
+   pub desktop_template: Option<PathBuf>,
+   /// Path to script that will be executed before the package is unpacked. See
+```
+
+---
+
+### Incident Patch 3: `1c8ab037` (2026-11-19)
+**Commit Message**: feat(menu): support native icons on Windows and Linux (#16181)
+
+* feat(menu): support native icons on Windows and Linux
+
+* update api example
+
+---------
+
+Co-authored-by: Lucas Nogueira <[REDACTED_EMAIL]>
+
+**File**: `.changes/menu-native-icon-all-platforms.md` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++---
++"tauri": "patch:enhance"
++"@tauri-apps/api": "patch:enhance"
++---
++
++`IconMenuItem::set_native_icon` and `Submenu::set_native_icon` are no longer macOS-only. Known `NativeIcon` variants now map to freedesktop icon names on Linux and stock shell icons on Windows, the same as `TrayIcon::set_native_icon`.
+```
+
+**File**: `crates/tauri/src/menu/builders/icon.rs` (modified, +2/-0)
+```diff
+@@ -81,6 +81,8 @@ impl<'a> IconMenuItemBuilder<'a> {
+   ///
+   /// **Note:** This method conflicts with [`Self::icon`]
+   /// so calling one of them, will reset the other.
++  ///
++  /// See [`IconMenuItem::set_native_icon`] for the platform-specific behavior.
+   pub fn native_icon(mut self, icon: NativeIcon) -> Self {
+     self.native_icon.replace(icon);
+     self.icon = None;
+```
+
+**File**: `crates/tauri/src/menu/builders/menu.rs` (modified, +3/-3)
+```diff
+@@ -164,6 +164,8 @@ impl<'m, R: Runtime, M: Manager<R>> SubmenuBuilder<'m, R, M> {
+ 
+   /// Set a native icon for the submenu.
+   /// Calling this method resets the icon.
++  ///
++  /// See [`Submenu::set_native_icon`] for the platform-specific behavior.
+   pub fn submenu_native_icon(mut self, icon: NativeIcon) -> Self {
+     self.native_icon = Some(icon);
+     self.icon = None;
+@@ -265,9 +267,7 @@ macro_rules! shared_menu_builder {
+ 
+       /// Add an [IconMenuItem] with a native icon to the menu.
+       ///
+-      /// ## Platform-specific:
+-      ///
+-      /// - **Windows / Linux**: Unsupported.
++      /// See [`IconMenuItem::set_native_icon`] for the platform-specific behavior.
+       pub fn native_icon<I: Into<MenuId>, S: AsRef<str>>(
+         mut self,
+         id: I,
+```
+
+**File**: `crates/tauri/src/menu/icon.rs` (modified, +16/-18)
+```diff
+@@ -84,11 +84,8 @@ impl<R: Runtime> IconMenuItem<R> {
+ 
+   /// Create a new icon menu item but with a native icon.
+   ///
+-  /// See [`IconMenuItem::new`] for more info.
+-  ///
+-  /// ## Platform-specific:
+-  ///
+-  /// - **Windows / Linux**: Unsupported.
++  /// See [`IconMenuItem::new`] for more info and [`IconMenuItem::set_native_icon`] for the
++  /// platform-specific behavior.
+   pub fn with_native_icon<M, T, A>(
+     manager: &M,
+     text: T,
+@@ -118,11 +115,8 @@ impl<R: Runtime> IconMenuItem<R> {
+ 
+   /// Create a new icon menu item with the specified id but with a native icon.
+   ///
+-  /// See [`IconMenuItem::new`] for more info.
+-  ///
+-  /// ## Platform-specific:
+-  ///
+-  /// - **Windows / Linux**: Unsupported.
++  /// See [`IconMenuItem::new`] for more info and [`IconMenuItem::set_native_icon`] for the
++  /// platform-specific behavior.
+   pub fn with_id_and_native_icon<M, I, T, A>(
+     manager: &M,
+     id: I,
+@@ -244,15 +238,19 @@ impl<R: Runtime> IconMenuItem<R> {
+ 
+   /// Change this menu item icon to a native image or remove it.
+   ///
++  /// Note that this overrides any icon set with [`IconMenuItem::set_icon`].
++  ///
+   /// ## Platform-specific:
+   ///
+-  /// - **Windows / Linux**: Unsupported.
+-  pub fn set_native_icon(&self, _icon: Option<NativeIcon>) -> crate::Result<()> {
+-    #[cfg(target_os = "macos")]
+-    return run_item_main_thread!(self, |self_: Self| {
+-      (*self_.0).as_ref().set_native_icon(_icon.map(Into::into))
+-    });
+-    #[allow(unreachable_code)]
+-    Ok(())
++  /// - **Linux:** Known variants map to freedesktop icon names, so the icon is resolved by the
++  ///   desktop icon theme and follows its light and dark variants.
++  /// - **macOS:** Known variants map to AppKit image names.
++  /// - **Windows:** Known variants map to stock shell icons where an equivalent exists, and the
++  ///   item is drawn without an icon otherwise.
++  pub fn set_native_icon(&self, icon: Option<NativeIcon>) -> crate::Result<()> {
++    let icon = icon.map(Into::into);
++    run_item_main_thread!(self, |self_: Self| (*self_.0)
++      .as_ref()
++      .set_native_icon(icon))
+   }
+ }
+```
+
+**File**: `crates/tauri/src/menu/mod.rs` (modified, +2/-2)
+```diff
+@@ -371,8 +371,8 @@ impl TryFrom<AboutMetadata<'_>> for muda::AboutMetadata {
+ /// - **macOS**: an AppKit image name.
+ /// - **Windows**: a stock shell icon, for the variants that have one.
+ ///
+-/// Note that not every API taking a native icon supports every platform, see
+-/// [`IconMenuItem::set_native_icon`] and [`Submenu::set_native_icon`].
++/// Not every variant has an equivalent on every platform, see
++/// [`IconMenuItem::set_native_icon`] and [`Submenu::set_native_icon`] for what happens then.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+ pub enum NativeIcon {
+   /// An add item template image.
+```
+
+**File**: `crates/tauri/src/menu/submenu.rs` (modified, +16/-8)
+```diff
+@@ -127,6 +127,8 @@ impl<R: Runtime> Submenu<R> {
+   }
+ 
+   /// Create a new submenu with a native icon.
++  ///
++  /// See [`Submenu::set_native_icon`] for the platform-specific behavior.
+   pub fn new_with_native_icon<M: Manager<R>, S: AsRef<str>>(
+     manager: &M,
+     text: S,
+@@ -194,6 +196,8 @@ impl<R: Runtime> Submenu<R> {
+   }
+ 
+   /// Create a new submenu with an id and a native icon.
++  ///
++  /// See [`Submenu::set_native_icon`] for the platform-specific behavior.
+   pub fn with_id_and_native_icon<M: Manager<R>, I: Into<MenuId>, S: AsRef<str>>(
+     manager: &M,
+     id: I,
+@@ -456,15 +460,19 @@ impl<R: Runtime> Submenu<R> {
+ 
+   /// Change this submenu icon to a native image or remove it.
+   ///
++  /// Note that this overrides any icon set with [`Submenu::set_icon`].
++  ///
+   /// ## Platform-specific:
+   ///
+-  /// - **Windows / Linux**: Unsupported.
+-  pub fn set_native_icon(&self, _icon: Option<NativeIcon>) -> crate::Result<()> {
+-    #[cfg(target_os = "macos")]
+-    return run_item_main_thread!(self, |self_: Self| {
+-      (*self_.0).as_ref().set_native_icon(_icon.map(Into::into))
+-    });
+-    #[allow(unreachable_code)]
+-    Ok(())
++  /// - **Linux:** Known variants map to freedesktop icon names, so the icon is resolved by the
++  ///   desktop icon theme and follows its light and dark variants.
++  /// - **macOS:** Known variants map to AppKit image names.
++  /// - **Windows:** Known variants map to stock shell icons where an equivalent exists, and the
++  ///   submenu is drawn without an icon otherwise.
++  pub fn set_native_icon(&self, icon: Option<NativeIcon>) -> crate::Result<()> {
++    let icon = icon.map(Into::into);
++    run_item_main_thread!(self, |self_: Self| (*self_.0)
++      .as_ref()
++      .set_native_icon(icon))
+   }
+ }
+```
+
+**File**: `examples/api/src-tauri/src/lib.rs` (modified, +1/-0)
+```diff
+@@ -68,6 +68,7 @@ pub fn run_app<R: Runtime, F: FnOnce(&App<R>) + Send + 'static>(
+         tauri::menu::MenuBuilder::new(app)
+           .check("check", "Tauri is awesome!")
+           .text("text", "Do something")
++          .native_icon("info", "About Tauri", tauri::menu::NativeIcon::Info)
+           .copy()
+           .build()?,
+       ));
+```
+
+**File**: `examples/api/src-tauri/src/tray.rs` (modified, +52/-6)
+```diff
+@@ -5,28 +5,64 @@
+ use std::sync::atomic::{AtomicBool, Ordering};
+ use tauri::{
+   Manager, Runtime, WebviewUrl, include_image,
+-  menu::{Menu, MenuItem},
++  menu::{IconMenuItem, Menu, MenuItem, NativeIcon, Submenu},
+   tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+ };
+ 
+ pub fn create_tray<R: Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result<()> {
+   let toggle_i = MenuItem::with_id(app, "toggle", "Toggle", true, None::<&str>)?;
+-  let new_window_i = MenuItem::with_id(app, "new-window", "New window", true, None::<&str>)?;
++  let new_window_i = IconMenuItem::with_id_and_native_icon(
++    app,
++    "new-window",
++    "New window",
++    true,
++    Some(NativeIcon::Computer),
++    None::<&str>,
++  )?;
+   let icon_i_1 = MenuItem::with_id(app, "icon-1", "Icon 1", true, None::<&str>)?;
+   let icon_i_2 = MenuItem::with_id(app, "icon-2", "Icon 2", true, None::<&str>)?;
++  let native_icon_i_1 = IconMenuItem::with_id_and_native_icon(
++    app,
++    "native-icon-1",
++    "Native icon: Info",
++    true,
++    Some(NativeIcon::Info),
++    None::<&str>,
++  )?;
++  let native_icon_i_2 = IconMenuItem::with_id_and_native_icon(
++    app,
++    "native-icon-2",
++    "Native icon: Network",
++    true,
++    Some(NativeIcon::Network),
++    None::<&str>,
++  )?;
++  let icons_submenu = Submenu::with_id_and_native_icon(
++    app,
++    "tray-icon",
++    "Tray icon",
++    true,
++    Some(NativeIcon::PreferencesGeneral),
++  )?;
++  icons_submenu.append_items(&[&icon_i_1, &icon_i_2, &native_icon_i_1, &native_icon_i_2])?;
+   #[cfg(target_os = "macos")]
+   let set_title_i = MenuItem::with_id(app, "set-title", "Set Title", true, None::<&str>)?;
+   let switch_i = MenuItem::with_id(app, "switch-menu", "Switch Menu", true, None::<&str>)?;
+   let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
+-  let remove_tray_i =
+-    MenuItem::with_id(app, "remove-tray", "Remove Tray icon", true, None::<&str>)?;
++  let remove_tray_i = IconMenuItem::with_id_and_native_icon(
++    app,
++    "remove-tray",
++    "Remove Tray icon",
++    true,
++    Some(NativeIcon::Remove),
++    None::<&str>,
++  )?;
+   let menu1 = Menu::with_items(
+     app,
+     &[
+       &toggle_i,
+       &new_window_i,
+-      &icon_i_1,
+-      &icon_i_2,
++      &icons_submenu,
+       #[cfg(target_os = "macos")]
+       &set_title_i,
+       &switch_i,
+@@ -89,6 +125,16 @@ pub fn create_tray<R: Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result<()> {
+           let _ = tray.set_icon(Some(icon));
+         }
        }
-     }
-   }
-```
-
-**File**: `crates/tauri-cli/Cargo.toml` (modified, +1/-2)
-```diff
-@@ -40,9 +40,8 @@ cargo-mobile2 = { version = "0.22.5", default-features = false }
- 
- [dependencies]
- jsonrpsee = { version = "0.26", features = ["server"] }
--jsonrpsee-core = "0.26"
-+jsonrpsee-core = { version = "0.26", features = ["async-client"] }
- jsonrpsee-client-transport = { version = "0.26", features = ["ws"] }
--jsonrpsee-ws-client = { version = "0.26", default-features = false }
- tower = { version = "0.5", default-features = false }
- sublime_fuzzy = "0.7"
- clap_complete = "4"
-```
-
-**File**: `crates/tauri-cli/src/mobile/ios/xcode_script.rs` (modified, +1/-1)
-```diff
-@@ -305,7 +305,7 @@ pub fn command(options: Options) -> Result<()> {
- 
-     std::fs::copy(&lib_path, externals_lib_dir.join(lib_output_file_name)).fs_context(
-       "failed to copy mobile lib file to Externals directory",
--      lib_path.to_path_buf(),
-+      lib_path,
-     )?;
-   }
-   Ok(())
-```
-
-**File**: `crates/tauri-driver/Cargo.toml` (modified, +3/-3)
-```diff
-@@ -10,9 +10,9 @@ description = "Webdriver server for Tauri applications"
- edition = "2024"
- rust-version = "1.90"
- 
--[dependencies]
-+# tauri-driver only does something on Linux and Windows, everywhere else it is a stub
-+[target.'cfg(any(target_os = "linux", windows))'.dependencies]
- anyhow = "1"
--futures = "0.3"
- futures-util = "0.3"
- http-body-util = "0.1"
- hyper = { version = "1", features = ["client", "http1", "server"] }
-@@ -29,7 +29,7 @@ serde_json = "1"
- tokio = { version = "1", features = ["macros"] }
- which = "8"
- 
--[target."cfg(unix)".dependencies]
-+[target.'cfg(target_os = "linux")'.dependencies]
- signal-hook = "0.4"
- signal-hook-tokio = { version = "0.4", features = ["futures-v0_3"] }
- 
++      i @ "native-icon-1" | i @ "native-icon-2" => {
++        if let Some(tray) = app.tray_by_id("tray-1") {
++          let icon = if i == "native-icon-1" {
++            NativeIcon::Info
++          } else {
++            NativeIcon::Network
++          };
++          let _ = tray.set_native_icon(Some(icon));
++        }
++      }
+       "switch-menu" => {
+         let flag = is_menu1.load(Ordering::Relaxed);
+         let (menu, tooltip) = if flag {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16543** (2026-11-17): docs(bundler): update the tauri.conf.json example to the v2 config (@rawsun007)
-- **PR #16524** (2026-11-13): fix: clippy warnings from Rust 1.100 (@lucasfernog)
-- **PR #16522** (2026-11-16): fix(api): make mocked once and unlisten work with shouldMockEvents (@lazerg)
-- **PR #16521** (2026-11-16): fix(cli): accept an inherited package version in tauri migrate (fix #16519) (@1AbdullahButt)
-- **PR #16512** (closed): fix(macos): prevent scroll jump during RTL text input in WKWebView (@sharmis-tp)
-- **PR #16510** (2026-11-12): refactor: release `WryWebviewDispatcher::window_id` early (@Legend-Master)
+- **PR #16604** (2026-11-20): chore(deps): update rust crate icns to 0.2 (@renovate[bot])
+- **PR #16603** (2026-11-20): chore(deps): update rust crate phf to 0.14 (@renovate[bot])
+- **PR #16601** (2026-11-20): chore(deps): update rust crate dom_query to 0.30 (@renovate[bot])
+- **PR #16597** (closed): fix(tauri-runtime-wry): keep proxy_url with additional_browser_args on Windows (@b84330808)
+- **PR #16596** (2026-11-20): Update Italian language for NSIS (@bovirus)
+- **PR #16592** (closed): chore(deps): update rust crate schemars to v1 (@renovate[bot])
 
 ---
 
@@ -2802,26 +3071,25 @@ also gets rid of udeps since cargo now checks unused dependencies
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): accept an inherited package version in the Cargo manifest
+## X. tauri-build): link the Windows resource into all targets
 
 **RULE**:
-When implementing operations in `.changes/cli-migrate-workspace-version.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changes/tauri-build-link-resource-all-targets.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7b568e9c`: cli): accept an inherited package version in the Cargo manifest. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `22356474`: tauri-build): link the Windows resource into all targets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/cli-migrate-workspace-version.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/tauri-build-link-resource-all-targets.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
 ---
-"tauri-cli": patch:bug
-"@tauri-apps/cli": patch:bug
+"tauri-build": "minor:feat"
 ---
 
-Fix `tauri migrate` failing to parse the app's `Cargo.toml` when its package version is inherited from the workspace (`version.workspace = true`).
+Link the Windows resource file, including the application manifest, into all targets of the package instead of only into binaries, so tests that link Tauri no longer fail with `STATUS_ENTRYPOINT_NOT_FOUND` on Windows.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2831,7 +3099,7 @@ Fix `tauri migrate` failing to parse the app's `Cargo.toml` when its package ver
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7b568e9c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `22356474` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

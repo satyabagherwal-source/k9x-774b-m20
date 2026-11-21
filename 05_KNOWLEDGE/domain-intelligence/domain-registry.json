@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T01:51:42.092Z",
+  "last_updated": "2026-11-21T02:00:47.097Z",
   "total_records": 2213,
   "domains": {
     "A": {
@@ -8946,8 +8946,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "34430cc40bb27f34fb6a3989e580cbac547a6fa4c9bb73aac041aa12a54f5bd4",
-      "created_at": "2026-11-21T01:43:54.151Z"
+      "content_hash": "227cc9c1721ea412d06b77475d7b615bde7a7aedb695a227340ce06e2a9e8d85",
+      "created_at": "2026-11-21T02:00:47.097Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -23894,8 +23894,8 @@
       "title": "Technical Construction Intelligence: oxc-project/oxc Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oxc-project-oxc-technical-construction-intelligence-oxc-project-oxc-core-invaria.md",
       "repository": "oxc-project/oxc",
-      "content_hash": "61c3a8ad4be6805ad789bdc9f3b86be0b718affcd22ed35bb1291d406125cee4",
-      "created_at": "2026-11-19T15:58:48.244Z"
+      "content_hash": "01c6fc0f1d74b7c3a7d308abbc1b8b9fa9a3f2c5f87239236f4d40bfbbfe109a",
+      "created_at": "2026-11-21T02:00:33.357Z"
     },
     "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -23903,8 +23903,8 @@
       "title": "Technical Construction Intelligence: oxc-project-oxc-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oxc-project-oxc-learnings-technical-construction-intelligence-oxc-project-oxc-le.md",
       "repository": "oxc-project-oxc-learnings",
-      "content_hash": "e291f6d7892d5ccfa9b3d0e1a35badbaba4a0182fcdd921df0b0d74a162ce5b3",
-      "created_at": "2026-11-19T15:59:28.189Z"
+      "content_hash": "1988e4209dd092699a0f8a2d7c24d8b4c12ec78840dda137de6ad7d7210c3401",
+      "created_at": "2026-11-21T02:00:42.852Z"
     },
     "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-core-invariants",
@@ -25892,8 +25892,8 @@
       "title": "Technical Construction Intelligence: tauri-apps/tauri Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tauri-apps-tauri-technical-construction-intelligence-tauri-apps-tauri-core-invar.md",
       "repository": "tauri-apps/tauri",
-      "content_hash": "4964c329e267654335cf6efd86b5ba1bef2cc63f6163db6a16e52154674d7631",
-      "created_at": "2026-11-17T04:05:43.753Z"
+      "content_hash": "284f42a97e0f270fb8dcdc3b8381d2a4130d02187cfd2bbf3c2ba3f572f296e6",
+      "created_at": "2026-11-21T02:00:37.491Z"
     },
     "domain_intelligence-research-knowledge-intelligence-fabio-rovai-open-ontologies-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-fabio-rovai-open-ontologies-core-invariants",
@@ -25919,8 +25919,8 @@
       "title": "Technical Construction Intelligence: tauri-apps-tauri-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tauri-apps-tauri-learnings-technical-construction-intelligence-tauri-apps-tauri-.md",
       "repository": "tauri-apps-tauri-learnings",
-      "content_hash": "2f84ab3dd5a21b10c04393b89833358b7b0fe960e0fc7ab74ef29f818804e650",
-      "created_at": "2026-11-17T04:05:49.280Z"
+      "content_hash": "c741b8791912b98d53794aad2bb2c82198360937b4474a46f27dc8f336cf734a",
+      "created_at": "2026-11-21T02:00:45.819Z"
     },
     "domain_intelligence-research-knowledge-intelligence-fabio-rovai-open-ontologies-learnings-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-fabio-rovai-open-ontologies-learnings-core-invar",

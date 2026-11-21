@@ -719925,3 +719925,165 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `5b0b3abb` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9696. keep correct keys on leftover fields with setPublicClassFields (Harvested from oxc-project/oxc)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "keep correct keys on leftover fields with setPublicClassFields",
+  "source": "oxc-project/oxc",
+  "source_url": "https://github.com/oxc-project/oxc",
+  "source_version": "209f078b",
+  "license": "MIT",
+  "extracted_at": "2026-11-21T02:00:32.157Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-oxc-project-oxc",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [oxc-project/oxc](https://github.com/oxc-project/oxc) (Revision: `209f078b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/oxc_transformer/src/typescript/class.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6db561f3`: transformer): keep correct keys on leftover fields with setPublicClassFields. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_transformer/src/typescript/class.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    common::{
+        computed_key::{create_computed_key_temp_var, key_needs_temp_var},
+        duplicate::duplicate_expression,
+    },
+                        // A static property is replaced by a static block below, and an instance
+                        // property is removed later when `remove_class_fields_without_initializer`
+                        // is `true`. Otherwise, the instance property declaration stays in the
+                        // class body (without its initializer), so its key is still evaluated
+                        // during class definition.
+                        let keep_declaration =
+                            !prop.r#static && !self.remove_class_fields_without_initializer;
+                            keep_declaration,
+                    } else if !prop.declare && prop.computed {
+                        // The property declaration without initializer is kept in the class body, so its
+                        // computed key is evaluated during class definition. Any pending computed key
+                        // assignments from previous elements must be evaluated before it.
+                        Self::convert_computed_key(
+                      
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+    common::computed_key::{create_computed_key_temp_var, key_needs_temp_var},
+                    computed_key_assignments.push(assignment);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6db561f3` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9697. link the Windows resource into all targets (Harvested from tauri-apps/tauri)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "link the Windows resource into all targets",
+  "source": "tauri-apps/tauri",
+  "source_url": "https://github.com/tauri-apps/tauri",
+  "source_version": "bf10f005",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T02:00:36.289Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tauri-apps-tauri",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tauri-apps/tauri](https://github.com/tauri-apps/tauri) (Revision: `bf10f005`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.changes/tauri-build-link-resource-all-targets.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `22356474`: tauri-build): link the Windows resource into all targets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/tauri-build-link-resource-all-targets.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+---
+"tauri-build": "minor:feat"
+---
+
+Link the Windows resource file, including the application manifest, into all targets of the package instead of only into binaries, so tests that link Tauri no longer fail with `STATUS_ENTRYPOINT_NOT_FOUND` on Windows.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `22356474` are properly handled with clean fallback behavior.

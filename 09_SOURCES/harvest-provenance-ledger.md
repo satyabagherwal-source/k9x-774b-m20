@@ -11728,3 +11728,5 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `7af7535b` | Multi-dimensional audit evidence | 2026-11-21T01:43:41.619Z |
 | `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `426c33de` | Multi-dimensional audit evidence | 2026-11-21T01:51:32.390Z |
 | `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `83408f21` | Multi-dimensional audit evidence | 2026-11-21T01:51:36.127Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `209f078b` | Multi-dimensional audit evidence | 2026-11-21T02:00:32.837Z |
+| `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `bf10f005` | Multi-dimensional audit evidence | 2026-11-21T02:00:36.960Z |

@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "c5890024",
+    "sourceVersion": "209f078b",
     "license": "MIT",
-    "contentHash": "702a4d08b9e4042edb3db349411ba002b91b0f6d137a2d3419ef215919fcbf51",
-    "lastHarvestedAt": "2026-11-19T15:58:47.914Z",
+    "contentHash": "146a2101958332d2e3b2372c02d29689b6bd69fe60dcb5396ba6e3b965eeacf6",
+    "lastHarvestedAt": "2026-11-21T02:00:32.837Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {
@@ -8483,10 +8483,10 @@
     "repository": "tauri-apps/tauri",
     "platform": "github",
     "sourceUrl": "https://github.com/tauri-apps/tauri",
-    "sourceVersion": "c42354b6",
+    "sourceVersion": "bf10f005",
     "license": "Apache-2.0",
-    "contentHash": "13817b8a86cef06f858947f28599e749d52018dfe7eac2378a64f49aa33940bc",
-    "lastHarvestedAt": "2026-11-17T04:05:43.455Z",
+    "contentHash": "81d0159082313a8d1fbc04f6f5f1f1ebbbdcb19fa897e20096b5ab32bbe00122",
+    "lastHarvestedAt": "2026-11-21T02:00:36.960Z",
     "learningId": "learn-github-tauri-apps-tauri"
   },
   "oliviertassinari-react-swipeable-views": {
