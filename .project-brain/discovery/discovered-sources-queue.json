@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T18:52:28.256Z",
+  "updated_at": "2026-11-21T19:11:50.364Z",
   "stats": {
-    "total_discovered": 7305,
-    "approved_pending_harvest": 6907,
+    "total_discovered": 7343,
+    "approved_pending_harvest": 6945,
     "harvested_count": 0,
     "rejected_count": 398,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6887,
+      "COMMUNITY_AND_EXPERT": 6925,
       "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -157947,6 +157947,842 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
         "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-AED91702E8B4": {
+      "id": "SRC-AED91702E8B4",
+      "url": "https://github.com/AdityaGarg8/remove-unwanted-software/releases",
+      "title": "https://github.com/AdityaGarg8/remove-unwanted-software/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:47.358Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-AA03E22C6C0E": {
+      "id": "SRC-AA03E22C6C0E",
+      "url": "https://download.pytorch.org/whl/cu124",
+      "title": "https://download.pytorch.org/whl/cu124",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:48.323Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-F9BF5C394FB7": {
+      "id": "SRC-F9BF5C394FB7",
+      "url": "https://download.pytorch.org/whl/rocm6.2.4",
+      "title": "https://download.pytorch.org/whl/rocm6.2.4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:48.372Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-79319DBCB6FA": {
+      "id": "SRC-79319DBCB6FA",
+      "url": "https://download.pytorch.org/whl/cu126",
+      "title": "https://download.pytorch.org/whl/cu126",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:48.432Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-B3157211AEC1": {
+      "id": "SRC-B3157211AEC1",
+      "url": "https://download.pytorch.org/whl/rocm7.1",
+      "title": "https://download.pytorch.org/whl/rocm7.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:48.482Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-43DDE84A7C2A": {
+      "id": "SRC-43DDE84A7C2A",
+      "url": "https://download.pytorch.org/whl/xpu",
+      "title": "https://download.pytorch.org/whl/xpu",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:48.541Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-E7C18EFB8C55": {
+      "id": "SRC-E7C18EFB8C55",
+      "url": "https://download.pytorch.org/whl/cpu",
+      "title": "https://download.pytorch.org/whl/cpu",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:48.589Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-F97986B5FAAF": {
+      "id": "SRC-F97986B5FAAF",
+      "url": "https://github.com/microsoft/playwright/releases",
+      "title": "https://github.com/microsoft/playwright/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:48.668Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-D968FCB1BD56": {
+      "id": "SRC-D968FCB1BD56",
+      "url": "https://github.com/microsoft/playwright/compare/v1.56.1...v1.65.0",
+      "title": "https://github.com/microsoft/playwright/compare/v1.56.1...v1.65.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:48.728Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-BAD53181E402": {
+      "id": "SRC-BAD53181E402",
+      "url": "https://registry.yarnpkg.com/@babel/helper-plugin-utils/-/helper-plugin-utils-7.27.1.tgz",
+      "title": "https://registry.yarnpkg.com/@babel/helper-plugin-utils/-/helper-plugin-utils-7.27.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:48.834Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-1021B8AA0F61": {
+      "id": "SRC-1021B8AA0F61",
+      "url": "https://registry.yarnpkg.com/@babel/helper-string-parser/-/helper-string-parser-7.27.1.tgz",
+      "title": "https://registry.yarnpkg.com/@babel/helper-string-parser/-/helper-string-parser-7.27.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:48.896Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-A1B660BF5CC9": {
+      "id": "SRC-A1B660BF5CC9",
+      "url": "https://registry.yarnpkg.com/@babel/parser/-/parser-7.28.5.tgz",
+      "title": "https://registry.yarnpkg.com/@babel/parser/-/parser-7.28.5.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:48.946Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-790216B1CB62": {
+      "id": "SRC-790216B1CB62",
+      "url": "https://registry.yarnpkg.com/@babel/parser/-/parser-7.29.2.tgz",
+      "title": "https://registry.yarnpkg.com/@babel/parser/-/parser-7.29.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:49.007Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-96479CFC3CD4": {
+      "id": "SRC-96479CFC3CD4",
+      "url": "https://registry.yarnpkg.com/@babel/parser/-/parser-7.29.7.tgz",
+      "title": "https://registry.yarnpkg.com/@babel/parser/-/parser-7.29.7.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:49.056Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-F0334AB16C55": {
+      "id": "SRC-F0334AB16C55",
+      "url": "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-self/-/plugin-transform-react-jsx-self-7.27.1.tgz",
+      "title": "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-self/-/plugin-transform-react-jsx-self-7.27.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:49.115Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-1CA15500D0D3": {
+      "id": "SRC-1CA15500D0D3",
+      "url": "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-source/-/plugin-transform-react-jsx-source-7.27.1.tgz",
+      "title": "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-source/-/plugin-transform-react-jsx-source-7.27.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:49.164Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-C5E2FBEB6470": {
+      "id": "SRC-C5E2FBEB6470",
+      "url": "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.28.4.tgz",
+      "title": "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.28.4.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:49.223Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-F67915971FB4": {
+      "id": "SRC-F67915971FB4",
+      "url": "https://registry.yarnpkg.com/@babel/types/-/types-7.28.5.tgz",
+      "title": "https://registry.yarnpkg.com/@babel/types/-/types-7.28.5.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:49.273Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-6B53CD184949": {
+      "id": "SRC-6B53CD184949",
+      "url": "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz",
+      "title": "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:49.332Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-2F5F312F1513": {
+      "id": "SRC-2F5F312F1513",
+      "url": "https://registry.yarnpkg.com/@playwright/experimental-ct-core/-/experimental-ct-core-1.56.1.tgz",
+      "title": "https://registry.yarnpkg.com/@playwright/experimental-ct-core/-/experimental-ct-core-1.56.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:49.381Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-11C52B8F2154": {
+      "id": "SRC-11C52B8F2154",
+      "url": "https://github.com/PostHog/posthog-js",
+      "title": "https://github.com/PostHog/posthog-js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:49.441Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-7C0583CF61DC": {
+      "id": "SRC-7C0583CF61DC",
+      "url": "https://github.com/PostHog/posthog-js/releases",
+      "title": "https://github.com/PostHog/posthog-js/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:49.490Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-22F998441D7F": {
+      "id": "SRC-22F998441D7F",
+      "url": "https://github.com/PostHog/posthog-js/blob/main/CHANGELOG.md",
+      "title": "https://github.com/PostHog/posthog-js/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:49.549Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-8F2C43A27F9D": {
+      "id": "SRC-8F2C43A27F9D",
+      "url": "https://github.com/PostHog/posthog-js/compare/[REDACTED_EMAIL",
+      "title": "https://github.com/PostHog/posthog-js/compare/[REDACTED_EMAIL",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:49.598Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-2200D129FCD4": {
+      "id": "SRC-2200D129FCD4",
+      "url": "https://registry.yarnpkg.com/@posthog/core/-/core-1.9.0.tgz",
+      "title": "https://registry.yarnpkg.com/@posthog/core/-/core-1.9.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:49.657Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-14D69BB6D76A": {
+      "id": "SRC-14D69BB6D76A",
+      "url": "https://registry.yarnpkg.com/@posthog/browser-common/-/browser-common-0.12.1.tgz",
+      "title": "https://registry.yarnpkg.com/@posthog/browser-common/-/browser-common-0.12.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:49.706Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-F6C0A2E50E39": {
+      "id": "SRC-F6C0A2E50E39",
+      "url": "https://registry.yarnpkg.com/@posthog/core/-/core-1.69.2.tgz",
+      "title": "https://registry.yarnpkg.com/@posthog/core/-/core-1.69.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:49.766Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-3F0BBBD953A2": {
+      "id": "SRC-3F0BBBD953A2",
+      "url": "https://registry.yarnpkg.com/@posthog/types/-/types-1.427.0.tgz",
+      "title": "https://registry.yarnpkg.com/@posthog/types/-/types-1.427.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:49.816Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-B984AE44E0FB": {
+      "id": "SRC-B984AE44E0FB",
+      "url": "https://registry.yarnpkg.com/cookie/-/cookie-1.1.1.tgz",
+      "title": "https://registry.yarnpkg.com/cookie/-/cookie-1.1.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:49.877Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-91F94654E7E8": {
+      "id": "SRC-91F94654E7E8",
+      "url": "https://registry.yarnpkg.com/core-js/-/core-js-3.47.0.tgz",
+      "title": "https://registry.yarnpkg.com/core-js/-/core-js-3.47.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:49.926Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-E00A605EC211": {
+      "id": "SRC-E00A605EC211",
+      "url": "https://registry.yarnpkg.com/core-js/-/core-js-3.51.0.tgz",
+      "title": "https://registry.yarnpkg.com/core-js/-/core-js-3.51.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:49.985Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-E68673465F09": {
+      "id": "SRC-E68673465F09",
+      "url": "https://registry.yarnpkg.com/dompurify/-/dompurify-3.4.18.tgz",
+      "title": "https://registry.yarnpkg.com/dompurify/-/dompurify-3.4.18.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:50.036Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-FF723D757318": {
+      "id": "SRC-FF723D757318",
+      "url": "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.312.0.tgz",
+      "title": "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.312.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:50.096Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-97FB15C7D0D0": {
+      "id": "SRC-97FB15C7D0D0",
+      "url": "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.450.0.tgz",
+      "title": "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.450.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:50.146Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-31FC2351F9D0": {
+      "id": "SRC-31FC2351F9D0",
+      "url": "https://registry.yarnpkg.com/preact/-/preact-10.28.2.tgz",
+      "title": "https://registry.yarnpkg.com/preact/-/preact-10.28.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:50.206Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-5391793A0557": {
+      "id": "SRC-5391793A0557",
+      "url": "https://registry.yarnpkg.com/preact/-/preact-10.29.8.tgz",
+      "title": "https://registry.yarnpkg.com/preact/-/preact-10.29.8.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:50.256Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-19175A3F5456": {
+      "id": "SRC-19175A3F5456",
+      "url": "https://registry.yarnpkg.com/pure-color/-/pure-color-1.3.0.tgz",
+      "title": "https://registry.yarnpkg.com/pure-color/-/pure-color-1.3.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:50.316Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
+      }
+    },
+    "SRC-D511E193AF6C": {
+      "id": "SRC-D511E193AF6C",
+      "url": "https://registry.yarnpkg.com/query-selector-shadow-dom/-/query-selector-shadow-dom-1.0.1.tgz",
+      "title": "https://registry.yarnpkg.com/query-selector-shadow-dom/-/query-selector-shadow-dom-1.0.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T19:11:50.364Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
+        "fileName": "open-source-legal-opencontracts-learnings.md"
       }
     }
   }

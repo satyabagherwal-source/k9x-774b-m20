@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T18:52:24.404Z",
+  "last_updated": "2026-11-21T19:11:13.195Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -200,14 +200,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-source-legal-opencontracts",
-      "content_hash": "2f67dd81d46d48d5488c3a492ad4aee658186d9d857da7faecf60267b6527665",
-      "verified_at": "2026-11-20T13:48:26.881Z",
+      "content_hash": "30780389e40caa7e354d01d917202d36408ad2445634bf62d1de989e1a1dcdf4",
+      "verified_at": "2026-11-21T19:07:45.012Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T13:48:26.881Z"
+      "last_updated": "2026-11-21T19:07:45.012Z"
     },
     "Qwen/Qwen3.8-27B": {
       "repository": "Qwen/Qwen3.8-27B",
@@ -5466,14 +5466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-invertase-react-native-firebase",
-      "content_hash": "04cbc77dba470fef4e2d6018cb475b8461f9e25a8c1da607559a27ead1a2eef2",
-      "verified_at": "2026-11-18T14:48:38.350Z",
+      "content_hash": "4bbf333a820f0764d5e68dae17d6ebddd4472700636a6ae7186637150d263c93",
+      "verified_at": "2026-11-21T19:07:36.776Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T14:48:38.350Z"
+      "last_updated": "2026-11-21T19:07:36.776Z"
     },
     "PeerDB-io/peerdb": {
       "repository": "PeerDB-io/peerdb",
@@ -17121,14 +17121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
-      "content_hash": "9b60bf2f04609db727dd3ea2c674cfbba3b187616b263f76f70dc44b9ba5202f",
-      "verified_at": "2026-11-17T21:56:39.856Z",
+      "content_hash": "ee54df7924a115c55c1831eee7c09fd3aab1f1eeaba92af4f798126d7c97de55",
+      "verified_at": "2026-11-21T19:11:13.194Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T21:56:39.856Z"
+      "last_updated": "2026-11-21T19:11:13.194Z"
     },
     "prithivMLmods/Gender-Classifier-Mini": {
       "repository": "prithivMLmods/Gender-Classifier-Mini",

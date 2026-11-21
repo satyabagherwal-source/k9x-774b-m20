@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T18:52:24.400Z",
-  "total_cycles_completed": 11300,
-  "total_learnings_persisted": 11300,
-  "total_rules_promoted": 10627,
+  "last_updated": "2026-11-21T19:11:13.191Z",
+  "total_cycles_completed": 11303,
+  "total_learnings_persisted": 11303,
+  "total_rules_promoted": 10631,
   "history": [
-    {
-      "timestamp": "2026-11-20T23:21:22.201Z",
-      "repository": "solidjs/solid",
-      "learningId": "learn-github-solidjs-solid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T23:21:26.668Z",
-      "repository": "dosco/graphjin",
-      "learningId": "learn-github-dosco-graphjin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T23:29:53.797Z",
-      "repository": "vitejs/vite",
-      "learningId": "learn-github-vitejs-vite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T23:39:47.910Z",
       "repository": "webpack/webpack",
@@ -1403,6 +1382,27 @@
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T19:07:36.773Z",
+      "repository": "invertase/react-native-firebase",
+      "learningId": "learn-github-invertase-react-native-firebase",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T19:07:45.009Z",
+      "repository": "Open-Source-Legal/OpenContracts",
+      "learningId": "learn-github-open-source-legal-opencontracts",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T19:11:13.191Z",
+      "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
+      "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

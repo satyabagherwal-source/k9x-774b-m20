@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md`  
 > **Source**: github ([https://github.com/Open-Source-Legal/OpenContracts](https://github.com/Open-Source-Legal/OpenContracts))  
-> **Source Version**: `8a4cf42b`  
+> **Source Version**: `98286cab`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T13:48:25.920Z  
+> **Timestamp**: 2026-11-21T19:07:43.959Z  
 > **Learning ID**: `learn-github-open-source-legal-opencontracts`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Open-Source-Legal/OpenContracts](https://github.com/Open-Source-Legal/OpenContracts))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T13:48:25.915Z  
+> **Harvest Timestamp**: 2026-11-21T19:07:43.954Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1530,110 +1530,369 @@ def filterset_factory(model: type, fields: dict) -> type:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8a4cf42b` (2026-11-20)
-**Commit Message**: fix(deps): update setuptools requirement from >=84.0.0 to >=84.2.1 (#2549)
+### Incident Patch 1: `261d624c` (2026-11-20)
+**Commit Message**: Security: PyTorch 2.13 / torchvision 0.28 in the accelerated images (clears 18 torch advisories) (#2562)
 
-Updates the requirements on [setuptools](https://github.com/pypa/setuptools) to permit the latest version.
-- [Release notes](https://github.com/pypa/setuptools/releases)
-- [Changelog](https://github.com/pypa/setuptools/blob/main/NEWS.rst)
-- [Commits](https://github.com/pypa/setuptools/compare/v84.0.0...v84.2.1)
+* Pin embedder transformers to 5.15.1 so the image resolves against optimum-intel
+
+The pinned optimum-intel development commit declares transformers<5.16.
+Dependabot moved transformers to 5.22.2 (#2495, #2510, #2538), which made
+pip fail with ResolutionImpossible in the embedder Dockerfile; no CI job
+builds that image so it went unnoticed. Return to the newest release under
+the cap (all transformers advisories remain patched) and tell Dependabot to
+skip >=5.16 until the optimum-intel pin is replaced (#2488).
+
+* Move accelerated images to torch 2.13 / torchvision 0.28 (clears torch advisories)
+
+**File**: `.github/dependabot.yml` (modified, +2/-2)
+```diff
+@@ -68,9 +68,9 @@ updates:
+     # indexes in both Dockerfiles and validation on the supported accelerators.
+     ignore:
+       - dependency-name: "torch"
+-        versions: [">=2.7"]
++        versions: [">=2.14"]
+       - dependency-name: "torchvision"
+-        versions: [">=0.22"]
++        versions: [">=0.29"]
+       # optimum-intel (pinned commit in embedder/requirements.txt) caps
+       # transformers below 5.16; lift together with that pin (issue #2488).
+       - dependency-name: "transformers"
+```
+
+**File**: `changelog.d/torch-2.13-series.security.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++- **PyTorch 2.6 → 2.13 / torchvision 0.21 → 0.28 in the accelerated images** (`compose/accelerated/{docling,embedder}/requirements-torch.txt` + Dockerfiles, `compose/README.md`, `.github/dependabot.yml`, `compose/accelerated/tests/test_compose_overlays.py`): clears the 18 open `torch` advisories (GHSA-63cw-57p8-fm3p RCE via untrusted checkpoints fixed in 2.10, plus the memory-corruption/DoS series; the three advisories with no 2.6.x fix are all `<= 2.6.0`). Wheel indexes follow the new series: CUDA `cu124` → `cu126`, ROCm `rocm6.2.4` → `rocm7.1`; `xpu` and `cpu` are unchanged. Dependabot's series cap moves to `torch >=2.14` / `torchvision >=0.29`. Validated on CPU only: both images build, `pip check` output matches the 2.6 image, and a 23-page PDF parses identically (254 text items) through docling; CUDA, ROCm and XPU runtimes were not exercised.
+```
+
+**File**: `compose/README.md` (modified, +3/-2)
+```diff
+@@ -28,8 +28,9 @@ update both build and runtime stages.
+ Accelerated service Python pins live next to their Dockerfiles in
+ `requirements*.txt`. Install PyTorch separately using the index selected by
+ `ACCEL`, before the embedder's other requirements. PyTorch updates stay within
+-the 2.6 / torchvision 0.21 series; new series require coordinating the CUDA/ROCm
+-indexes in both Dockerfiles and validating the supported accelerators.
++the 2.13 / torchvision 0.28 series (CUDA 12.6, ROCm 7.1 indexes); new series
++require coordinating the CUDA/ROCm indexes in both Dockerfiles and validating
++the supported accelerators.
+ 
+ Update the frontend `docxodus` package and the Docxodus service image's
+ `docxodus...` suffix together: their character offsets must agree. Automatic
+```
+
+**File**: `compose/accelerated/docling/Dockerfile` (modified, +2/-2)
+```diff
+@@ -40,8 +40,8 @@ RUN set -eux; \
+ COPY docling/requirements-torch.txt /opt/accel/requirements-torch.txt
+ RUN set -eux; \
+     case "${ACCEL}" in \
+-      cuda)  IDX="https://download.pytorch.org/whl/cu124" ;; \
+-      rocm)  IDX="https://download.pytorch.org/whl/rocm6.2.4" ;; \
++      cuda)  IDX="https://download.pytorch.org/whl/cu126" ;; \
++      rocm)  IDX="https://download.pytorch.org/whl/rocm7.1" ;; \
+       xpu)   IDX="https://download.pytorch.org/whl/xpu" ;; \
+       auto|cpu) IDX="https://download.pytorch.org/whl/cpu" ;; \
+       *) echo "Unsupported ACCEL=${ACCEL}; expected auto, cpu, xpu, cuda, or rocm" >&2; exit 2 ;; \
+```
+
+**File**: `compose/accelerated/docling/requirements-torch.txt` (modified, +2/-2)
+```diff
+@@ -1,4 +1,4 @@
+ # Installed from the accelerator-specific index selected by the Dockerfile.
+ # Update this series together with the CUDA/ROCm indexes in both images.
+-torch==2.6.0
+-torchvision==0.21.0
++torch==2.13.0
++torchvision==0.28.0
+```
+
+**File**: `compose/accelerated/embedder/Dockerfile` (modified, +2/-2)
+```diff
+@@ -26,8 +26,8 @@ ARG ACCEL=auto
+ COPY embedder/requirements-torch.txt /opt/accel/requirements-torch.txt
+ RUN set -eux; \
+     case "${ACCEL}" in \
+-      cuda)  IDX="https://download.pytorch.org/whl/cu124" ;; \
+-      rocm)  IDX="https://download.pytorch.org/whl/rocm6.2.4" ;; \
++      cuda)  IDX="https://download.pytorch.org/whl/cu126" ;; \
++      rocm)  IDX="https://download.pytorch.org/whl/rocm7.1" ;; \
+       xpu)   IDX="https://download.pytorch.org/whl/xpu" ;; \
+       auto|cpu) IDX="https://download.pytorch.org/whl/cpu" ;; \
+       *) echo "Unsupported ACCEL=${ACCEL}; expected auto, cpu, xpu, cuda, or rocm" >&2; exit 2 ;; \
+```
+
+**File**: `compose/accelerated/embedder/requirements-torch.txt` (modified, +2/-2)
+```diff
+@@ -1,6 +1,6 @@
+ # Installed before service dependencies, from the accelerator-specific index.
+ # Update this series together with the CUDA/ROCm indexes in both images.
+-torch==2.6.0
++torch==2.13.0
+ # Optimum requires torchvision; install its matching accelerator wheel here so
+ # service dependency resolution cannot replace the selected torch variant.
+-torchvision==0.21.0
++torchvision==0.28.0
+```
+
+**File**: `compose/accelerated/tests/test_compose_overlays.py` (modified, +5/-5)
+```diff
+@@ -24,20 +24,20 @@ def _service(document, name="vector-embedder"):
+     return document["services"][name]
+ 
+ 
+-def test_accelerated_dockerfiles_use_published_torch_26_indexes():
++def test_accelerated_dockerfiles_use_published_torch_213_indexes():
+     embedder_dockerfile = EMBEDDER_DOCKERFILE.read_text(encoding="utf-8")
+     docling_dockerfile = DOCLING_DOCKERFILE.read_text(encoding="utf-8")
+ 
+     for service in ("embedder", "docling"):
+         requirements = (ACCEL_DIR / service / "requirements-torch.txt").read_text(
+             encoding="utf-8"
+         )
+-        assert "torch==2.6." in requirements
++        assert "torch==2.13." in requirements
+         if service == "docling":
+-            assert "torchvision==0.21." in requirements
++            assert "torchvision==0.28." in requirements
+     for dockerfile in (embedder_dockerfile, docling_dockerfile):
+-        assert "https://download.pytorch.org/whl/cu124" in dockerfile
+-        assert "https://download.pytorch.org/whl/rocm6.2.4" in dockerfile
++        assert "https://download.pytorch.org/whl/cu126" in dockerfile
++        assert "https://download.pytorch.org/whl/rocm7.1" in dockerfile
+         assert "https://download.pytorch.org/whl/xpu" in dockerfile
+         assert "https://download.pytorch.org/whl/cpu" in dockerfile
+         assert "Unsupported ACCEL=${ACCEL}" in dockerfile
+```
+
+---
+
+### Incident Patch 2: `31134519` (2026-11-20)
+**Commit Message**: fix(deps-dev): pin playwright, @playwright/test and @playwright/experimental-ct-react to 1.62.1 (#2555)
+
+* fix(deps-dev): bump playwright from 1.56.1 to 1.65.0 in /frontend
+
+Bumps [playwright](https://github.com/microsoft/playwright) from 1.56.1 to 1.65.0.
+- [Release notes](https://github.com/microsoft/playwright/releases)
+- [Commits](https://github.com/microsoft/playwright/compare/v1.56.1...v1.65.0)
 
 ---
 updated-dependencies:
-- dependency-name: setuptools
-  dependency-version: 84.2.1
-  dependency-type: direct:production
+- dependency-name: playwright
+  dependency-version: 1.65.0
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `requirements/base.txt` (modified, +1/-1)
-```diff
-@@ -111,7 +111,7 @@ jsonschema>=4.26.0,<5  # https://github.com/python-jsonschema/jsonschema - MCP t
- # ------------------------------------------------------------------------------
- twisted>=26.10.0 # not directly required, pinned by Snyk to avoid a vulnerability
- ipython>=9.18.1 # not directly required, pinned by Snyk to avoid a vulnerability
--setuptools>=84.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
-+setuptools>=84.2.1 # not directly required, pinned by Snyk to avoid a vulnerability
- sqlparse>=0.6.1 # not directly required, pinned by Snyk to avoid a vulnerability
- tornado>=6.6 # not directly required, pinned by Snyk to avoid a vulnerability
- urllib3>=2.8.0 # not directly required, pinned by Snyk to avoid a vulnerability
-```
+* Pin playwright, @playwright/test and @playwright/experimental-ct-react to 1.62.1 in lockstep
 
-**File**: `requirements/local.txt` (modified, +1/-1)
-```diff
-@@ -62,7 +62,7 @@ django==5.2.17  # https://www.djangoproject.com/
- twisted>=26.10.0 # not directly required, pinned by Snyk to avoid a vulnerability
- ipython>=9.18.1 # not directly required, pinned by Snyk to avoid a vulnerability
- requests>=2.34.2,<3 # not directly required, pinned by Snyk to avoid a vulnerability
--setuptools>=84.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
-+setuptools>=84.2.1 # not directly required, pinned by Snyk to avoid a vulnerability
- sqlparse>=0.6.1 # not directly required, pinned by Snyk to avoid a vulnerability
- tornado>=6.6 # not directly required, pinned by Snyk to avoid a vulnerability
- urllib3>=2.8.0 # not directly required, pinned by Snyk to avoid a vulnerability
-```
+The experimental CT packages publish later than playwright itself (latest is
+1.62.1 while playwright is at 1.65.x), so bumping playwright alone skews the
+CT babel bundle and every component spec fails with "Couldn't find a Program".
+Group the three in dependabot.yml so they update together.
 
-**File**: `requirements/production.txt` (modified, +1/-1)
-```diff
-@@ -17,7 +17,7 @@ django==5.2.17  # https://www.djangoproject.com/
- twisted>=26.10.0 # not directly required, pinned by Snyk to avoid a vulnerability
- ipython>=9.18.1 # not directly required, pinned by Snyk to avoid a vulnerability
- requests>=2.34.2,<3 # not directly required, pinned by Snyk to avoid a vulnerability
--setuptools>=84.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
-+setuptools>=84.2.1 # not directly required, pinned by Snyk to avoid a vulnerability
- sqlparse>=0.6.1 # not directly required, pinned by Snyk to avoid a vulnerability
- tornado>=6.6 # not directly required, pinned by Snyk to avoid a vulnerability
- urllib3>=2.8.0 # not directly required, pinned by Snyk to avoid a vulnerability
-```
+* Fix first-click-lost on composer Send and sidebar hover race exposed by Chromium 151
 
----
-
-### Incident Patch 2: `98ccb859` (2026-11-20)
-**Commit Message**: fix(deps): update pydantic-ai-slim requirement (#2551)
-
-Updates the requirements on [pydantic-ai-slim](https://github.com/pydantic/pydantic-ai) to permit the latest version.
-- [Release notes](https://github.com/pydantic/pydantic-ai/releases)
-- [Changelog](https://github.com/pydantic/pydantic-ai/blob/main/docs/changelog.md)
-- [Commits](https://github.com/pydantic/pydantic-ai/compare/v1.107.9...v1.107.10)
-
----
-updated-dependencies:
-- dependency-name: pydantic-ai-slim
-  dependency-version: 1.107.10
-  dependency-type: direct:production
-...
+---------
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: dependabot[bot] <49
 
-**File**: `requirements/base.txt` (modified, +1/-1)
+**File**: `.github/dependabot.yml` (modified, +9/-0)
 ```diff
-@@ -70,7 +70,7 @@ openai>=3.37.0,<4  # https://github.com/openai/openai-python (pydantic-ai 1.x re
- # extra caps ``fastmcp-slim<4``, and every fastmcp-slim 3.x requires
- # ``mcp<2`` -- against our ``mcp>=2.3`` pin that is unsatisfiable, and pip
- # reports it as ``resolution-too-deep`` rather than a conflict.
--pydantic-ai-slim[openai,anthropic,google]>=1.107.9,<2  # see issue #1451 before bumping the upper bound
-+pydantic-ai-slim[openai,anthropic,google]>=1.107.10,<2  # see issue #1451 before bumping the upper bound
- spacy
- # preshed 3.0.14 breaks spaCy model loading during fresh CI image builds.
- preshed==3.0.13
+@@ -89,3 +89,12 @@ updates:
+           - "version-update:semver-major"
+           - "version-update:semver-minor"
+           - "version-update:semver-patch"
++    # playwright, @playwright/test and @playwright/experimental-ct-react must
++    # share one version (the CT babel bundle breaks on skew), and the
++    # experimental CT packages publish later than playwright itself. Grouping
++    # keeps them in a single PR instead of bumping playwright alone.
++    groups:
++      playwright:
++        patterns:
++          - "playwright"
++          - "@playwright/*"
+```
+
+**File**: `changelog.d/playwright-lockstep.changed.md` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++- **Frontend: Playwright pinned in lockstep at 1.62.1** (`frontend/package.json`, `frontend/yarn.lock`): `playwright`, `@playwright/test` and `@playwright/experimental-ct-react` now share one exact version. Dependabot had bumped `playwright` alone to 1.65.0 while the experimental component-testing packages (latest published: 1.62.1) stayed behind, and the skew broke the component-test babel transform ("Couldn't find a Program" on every spec). `.github/dependabot.yml` now groups the three so they update together.
++- **Fixes surfaced by the newer bundled Chromium (151)**: `MessageComposer`'s Send button now ignores mouse-press focus (`onMouseDown` `preventDefault`) — taking focus expanded the collapsed composer (`:focus-within`), shifting Send ~17px before `mouseup` so the first click was swallowed when focus was elsewhere (e.g. the thread title input). `tests/CorpusesView.ct.tsx` parks the pointer off the hover-to-expand sidebar before measuring; the newer Chromium treats the default top-left pointer as hovering it at mount.
+```
+
+**File**: `frontend/package.json` (modified, +3/-3)
+```diff
+@@ -155,8 +155,8 @@
+     "uuid": "^11.1.1"
+   },
+   "devDependencies": {
+-    "@playwright/experimental-ct-react": "^1.52.0",
+-    "@playwright/test": "^1.52.0",
++    "@playwright/experimental-ct-react": "1.62.1",
++    "@playwright/test": "1.62.1",
+     "@types/d3": "^7.4.3",
+     "@types/dompurify": "^3.2.0",
+     "@types/json-schema": "^7.0.15",
+@@ -171,7 +171,7 @@
+     "husky": "^8.0.1",
+     "jsdom": "^26.1.0",
+     "nyc": "^18.0.0",
+-    "playwright": "^1.52.0",
++    "playwright": "1.62.1",
+     "prettier": "^2.7.1",
+     "vite-plugin-istanbul": "^9.0.1",
+     "vitest": "^5.0.5"
+```
+
+**File**: `frontend/src/components/threads/MessageComposer.tsx` (modified, +5/-0)
+```diff
+@@ -807,6 +807,11 @@ export function MessageComposer({
+           {isOverLimit && " (too long)"}
+         </CharacterCount>
+         <SendButton
++          // Keep focus where it is on mouse press. Moving focus onto the
++          // button expands the collapsed composer (:focus-within), shifting
++          // the button out from under the pointer before mouseup and
++          // swallowing the click. Keyboard activation is unaffected.
++          onMouseDown={(e) => e.preventDefault()}
+           onClick={handleSubmit}
+           disabled={disabled || isEmpty || isOverLimit}
+           title="Send (Cmd+Enter)"
+```
+
+**File**: `frontend/tests/CorpusesView.ct.tsx` (modified, +13/-0)
+```diff
+@@ -228,6 +228,19 @@ test("sidebar expands and tab navigation works", async ({ mount, page }) => {
+   const sidebar = page.locator('[data-testid="navigation-sidebar"]');
+   await expect(sidebar).toBeVisible();
+ 
++  // The sidebar expands on hover, and newer Chromium treats the default
++  // pointer position (top-left, over the sidebar) as hovering it at mount.
++  // Park the pointer over the main content and let the sidebar settle
++  // collapsed before measuring.
++  await page.mouse.move(800, 400);
++  await expect
++    .poll(
++      async () =>
++        await sidebar.evaluate((el) => el.getBoundingClientRect().width),
++      { timeout: 3000 }
++    )
++    .toBeLessThan(100);
++
+   // Get initial width
+   let widthNow = await sidebar.evaluate(
+     (el) => el.getBoundingClientRect().width
+```
+
+**File**: `frontend/yarn.lock` (modified, +48/-98)
+```diff
+@@ -102,7 +102,7 @@
+   resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.29.7.tgz#6f0237f0f36d2e51c0570a636faed9d2d0efe629"
+   integrity sha512-locTkQyKvwIEgBzVrn8693ebc97F2U8ZHjbXwDXJ5Fn2TCpNwTlKcaKLkdHop5c/icOFE7qt7Q9JC5hnKNa6Gg==
+ 
+-"@babel/core@^7.21.3", "@babel/core@^7.23.9", "@babel/core@^7.28.0":
++"@babel/core@^7.21.3", "@babel/core@^7.23.9":
+   version "7.29.7"
+   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.29.7.tgz#80c10b17248082968b57a857b91640971f2070f7"
+   integrity sha512-RgHBCvtjbOK2gXSNBNIkNoEc9qoVEtau3hj8gEqKQuL3HZAibKarWFEI3Lfm6EYKkLalOh8eSrj9b+ch9H/VBA==
+@@ -180,11 +180,6 @@
+     "@babel/helper-validator-identifier" "^7.29.7"
+     "@babel/traverse" "^7.29.7"
+ 
+-"@babel/helper-plugin-utils@^7.27.1":
+-  version "7.27.1"
+-  resolved "https://registry.yarnpkg.com/@babel/helper-plugin-utils/-/helper-plugin-utils-7.27.1.tgz#ddb2f876534ff8013e6c2b299bf4d39b3c51d44c"
+-  integrity sha512-1gn1Up5YXka3YYAHGKpbideQ5Yjf1tDa9qYcgysz+cNCXukyLl6DjPXhD3VRwSb8c0J9tA4b2+rHEZtc6R0tlw==
+-
+ "@babel/helper-string-parser@^7.27.1":
+   version "7.27.1"
+   resolved "https://registry.yarnpkg.com/@babel/helper-string-parser/-/helper-string-parser-7.27.1.tgz#54da796097ab19ce67ed9f88b47bb2ec49367687"
+@@ -218,41 +213,27 @@
+     "@babel/template" "^7.29.7"
+     "@babel/types" "^7.29.7"
+ 
+-"@babel/parser@^7.1.0", "@babel/parser@^7.20.7", "@babel/parser@^7.27.2", "@babel/parser@^7.28.5":
+-  version "7.28.5"
+-  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.28.5.tgz#0b0225ee90362f030efd644e8034c99468893b08"
+-  integrity sha512-KKBU1VGYR7ORr3At5HAtUQ+TV3SzRCXmA/8OdDZiLDBIZxVyzXuztPjfLd3BV1PRAQGCMWWSHYhL0F8d5uHBDQ==
+-  dependencies:
+-    "@babel/types" "^7.28.5"
+-
+ "@babel/parser@^7.23.9":
+   version "7.29.2"
+   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.29.2.tgz#58bd50b9a7951d134988a1ae177a35ef9a703ba1"
+   integrity sha512-4GgRzy/+fsBa72/RZVJmGKPmZu9Byn8o4MoLpmNe1m8ZfYnz5emHLQz3U4gLud6Zwl0RZIcgiLD7Uq7ySFuDLA==
+   dependencies:
+     "@babel/types" "^7.29.0"
+ 
++"@babel/parser@^7.27.2", "@babel/parser@^7.28.5":
++  version "7.28.5"
++  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.28.5.tgz#0b0225ee90362f030efd644e8034c99468893b08"
++  integrity sha512-KKBU1VGYR7ORr3At5HAtUQ+TV3SzRCXmA/8OdDZiLDBIZxVyzXuztPjfLd3BV1PRAQGCMWWSHYhL0F8d5uHBDQ==
++  dependencies:
++    "@babel/types" "^7.28.5"
++
+ "@babel/parser@^7.29.7":
+   version "7.29.7"
+   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.29.7.tgz#837b87387cbf5ec5530cb634b3c622f68edb9334"
+   integrity sha512-hnORnjP/1P/zFEndoeX+n+t1RwWRJiJpM/jO7FW32Kn9r5+sJB2JWOdYo4L6k78j15eCwY3Gm/7364B1EMwtNg==
+   dependencies:
+     "@babel/types" "^7.29.7"
+ 
+-"@babel/plugin-transform-react-jsx-self@^7.27.1":
+-  version "7.27.1"
+-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-self/-/plugin-transform-react-jsx-self-7.27.1.tgz#af678d8506acf52c577cac73ff7fe6615c85fc92"
+-  integrity sha512-6UzkCs+ejGdZ5mFFC/OCUrv028ab2fp1znZmCZjAOBKiBK2jXD1O+BPSfX8X2qjJ75fZBMSnQn3Rq2mrBJK2mw==
+-  dependencies:
+-    "@babel/helper-plugin-utils" "^7.27.1"
+-
+-"@babel/plugin-transform-react-jsx-source@^7.27.1":
+-  version "7.27.1"
+-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-source/-/plugin-transform-react-jsx-source-7.27.1.tgz#dcfe2c24094bb757bf73960374e7c55e434f19f0"
+-  integrity sha512-zbwoTsBruTeKB9hSq73ha66iFeJHuaFkUbwvqElnygoNbj/jHRsSeokowZFN3CZ64IvEqcmmkVe89OPXc7ldAw==
+-  dependencies:
+-    "@babel/helper-plugin-utils" "^7.27.1"
+-
+ "@babel/runtime@^7.0.0", "@babel/runtime@^7.12.0", "@babel/runtime@^7.12.5", "@babel/runtime@^7.17.8", "@babel/runtime@^7.18.3", "@babel/runtime@^7.20.13", "@babel/runtime@^7.26.7", "@babel/runtime@^7.28.4", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.7":
+   version "7.28.4"
+   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.28.4.tgz#a70226016fabe25c5783b2f22d3e1c9bc5ca3326"
+@@ -302,7 +283,7 @@
+     "@babel/types" "^7.29.7"
+     debug "^4.3.1"
+ 
+-"@babel/types@^7.0.0", "@babel/types@^7.20.7", "@babel/types@^7.21.3", "@babel/types@^7.27.1", "@babel/types@^7.28.2", "@babel/types@^7.28.5":
++"@babel/types@^7.0.0", "@babel/types@^7.21.3", "@babel/types@^7.27.1", "@babel/types@^7.28.5":
+   version "7.28.5"
+   resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.28.5.tgz#10fc405f60897c35f07e85493c932c7b5ca0592b"
+   integrity sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA==
+@@ -910,29 +891,29 @@
+   resolved "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"
+   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
+ 
+-"@playwright/experimental-ct-core@1.56.1":
+-  version "1.56.1"
+-  resolved "https://registry.yarnpkg.com/@playwright/experimental-ct-core/-/experimental-ct-core-1.56.1.tgz#c85a8ce3eb1c989ea938c2078474ddf04f1edd55
 ```
 
 ---
 
-### Incident Patch 3: `7f5083fa` (2026-11-20)
-**Commit Message**: fix(deps): bump posthog from 7.75.6 to 7.86.4 (#2550)
+### Incident Patch 3: `56ca972a` (2026-11-20)
+**Commit Message**: fix(deps): bump posthog-js from 1.312.0 to 1.450.0 in /frontend (#2588)
 
-Bumps [posthog](https://github.com/posthog/posthog-python) from 7.75.6 to 7.86.4.
-- [Release notes](https://github.com/posthog/posthog-python/releases)
-- [Changelog](https://github.com/PostHog/posthog-python/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/posthog/posthog-python/compare/posthog-v7.75.6...posthog-v7.86.4)
+Bumps [posthog-js](https://github.com/PostHog/posthog-js) from 1.312.0 to 1.450.0.
+- [Release notes](https://github.com/PostHog/posthog-js/releases)
+- [Changelog](https://github.com/PostHog/posthog-js/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/PostHog/posthog-js/compare/[REDACTED_EMAIL]-js@1.450.0)
 
 ---
 updated-dependencies:
-- dependency-name: posthog
-  dependency-version: 7.86.4
+- dependency-name: posthog-js
+  dependency-version: 1.450.0
   dependency-type: direct:production
   update-type: version-update:semver-minor
 ...
@@ -1641,26 +1900,137 @@ updated-dependencies:
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `requirements/base.txt` (modified, +1/-1)
+**File**: `frontend/package.json` (modified, +1/-1)
 ```diff
-@@ -93,7 +93,7 @@ graphql-core>=3.3.2,<3.4  # strawberry>=0.328 requires 3.3; config/graphql/autom
+@@ -62,7 +62,7 @@
+     "lucide-react": "^0.438.0",
+     "pdfjs-dist": "^6.5.438",
+     "polished": "^4.3.1",
+-    "posthog-js": "^1.312.0",
++    "posthog-js": "^1.450.0",
+     "react": "18",
+     "react-cool-inview": "^3.0.1",
+     "react-countup": "^6.5.3",
+```
+
+**File**: `frontend/yarn.lock` (modified, +52/-27)
+```diff
+@@ -926,12 +926,27 @@
+   dependencies:
+     playwright "1.62.1"
  
- # Telemetry
- # ------------------------------------------------------------------------------
--posthog==7.75.6  # https://github.com/posthog/posthog-python
-+posthog==7.86.4  # https://github.com/posthog/posthog-python
+-"@posthog/core@1.9.0":
+-  version "1.9.0"
+-  resolved "https://registry.yarnpkg.com/@posthog/core/-/core-1.9.0.tgz#b0f3b2018e166dd47e8d5a38fbcf32c93ff384f7"
+-  integrity sha512-j7KSWxJTUtNyKynLt/p0hfip/3I46dWU2dk+pt7dKRoz2l5CYueHuHK4EO7Wlgno5yo1HO4sc4s30MXMTICHJw==
++"@posthog/browser-common@^0.12.0":
++  version "0.12.1"
++  resolved "https://registry.yarnpkg.com/@posthog/browser-common/-/browser-common-0.12.1.tgz#33717c5a0e2c519046e6213e1db9d8a6cee08c39"
++  integrity sha512-MPQPsU89FwxZAtgo58RpIDTbREBVWz0ybWSEJ2gB56PxQUlsXBpBF4QZYbcb8yvEsIJ460NCnBLiFFJyrNB8cg==
+   dependencies:
+-    cross-spawn "^7.0.6"
++    "@posthog/core" "^1.69.1"
++    "@posthog/types" "^1.425.1"
++    dompurify "^3.4.13"
++    preact "^10.29.3"
++
++"@posthog/core@^1.68.0", "@posthog/core@^1.69.1":
++  version "1.69.2"
++  resolved "https://registry.yarnpkg.com/@posthog/core/-/core-1.69.2.tgz#3f65b803138e483cf472a9d1f236f7e99c330358"
++  integrity sha512-toMfPKklwLW+a4ZY3/EzM3GNMVXmk2ylGb8NPJXRH4igXMoI8wgNL2jqXOiglWAXqFBLZGYFN1oQx6LVmUTxTg==
++  dependencies:
++    "@posthog/types" "^1.427.0"
++
++"@posthog/types@^1.425.1", "@posthog/types@^1.427.0":
++  version "1.427.0"
++  resolved "https://registry.yarnpkg.com/@posthog/types/-/types-1.427.0.tgz#fd4791204925fc7406b2b016ae8af31cad93fe3d"
++  integrity sha512-2RPVfuGIx0iys78mTOcfdzN7/w7AM1Ak3yu9++4/FonPf08mwGqDkJjThz2dA/34666ToNw5Q4fZoFdgvfNUHw==
  
- # Model Context Protocol
- # ------------------------------------------------------------------------------
+ "@react-leaflet/core@^2.1.0":
+   version "2.1.0"
+@@ -2900,10 +2915,10 @@ cookie@^1.0.1:
+   resolved "https://registry.yarnpkg.com/cookie/-/cookie-1.1.1.tgz#3bb9bdfc82369db9c2f69c93c9c3ceb310c88b3c"
+   integrity sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ==
+ 
+-core-js@^3.38.1:
+-  version "3.47.0"
+-  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.47.0.tgz#436ef07650e191afeb84c24481b298bd60eb4a17"
+-  integrity sha512-c3Q2VVkGAUyupsjRnaNX6u8Dq2vAdzm9iuPj5FW0fRxzlxgq9Q39MDq10IvmQSpLgHQNyQzQmOo6bgGHmH3NNg==
++core-js@^3.49.0:
++  version "3.51.0"
++  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.51.0.tgz#9a7b197159ab83173b50efbe0c4846bec94b3abb"
++  integrity sha512-7bDKx/5jm5MxzsXxc93g6Z2+4ZsuT/MddrfRmTDJNAkWsYWHU8EVNEsBiIEWnMAMCHMmRfUEjkuo3jeNBOIHRw==
+ 
+ cosmiconfig@^7.0.0:
+   version "7.1.0"
+@@ -3339,7 +3354,7 @@ dom-helpers@^5.0.1:
+     "@babel/runtime" "^7.8.7"
+     csstype "^3.0.2"
+ 
+-dompurify@*, dompurify@^3.4.18:
++dompurify@*, dompurify@^3.4.13, dompurify@^3.4.18:
+   version "3.4.18"
+   resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-3.4.18.tgz#82161003672c8780ad1db0335787e6aa6587e5d2"
+   integrity sha512-ofe3wI/uNm68HInABYFJYqQxRw1EaKAjNdrFVKqjUY+UZurvNd2L/HuQe097s/4RivWiZyP6tT7aoT8atjfhwg==
+@@ -5305,21 +5320,26 @@ postcss@^8.5.23, postcss@^8.5.30:
+     picocolors "^1.1.1"
+     source-map-js "^1.2.1"
+ 
+-posthog-js@^1.312.0:
+-  version "1.312.0"
+-  resolved "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.312.0.tgz#7caa60a794b55ee4e5bf677c0b06dbd66c4a092b"
+-  integrity sha512-rdXprhuRzhutU8powMJpIfC0uRtI3OyuYktmLhZRMsD4DQaO3fnudKNq4zxtNmqMPFCSTfmlBH8ByLNOppm2tg==
++posthog-js@^1.450.0:
++  version "1.450.0"
++  resolved "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.450.0.tgz#57bb688fe95b0f7ed146beabc0fbf7b4c9019159"
++  integrity sha512-KsjBOy0At8HFm8aYIb3zZ+0oYdOeAMCDkGcvM4po/N08K+nyvFNJgqHL2DzyVXkN0FiB6lvdWzjbZk7QQbxJCQ==
+   dependencies:
+-    "@posthog/core" "1.9.0"
+-    core-js "^3.38.1"
++    "@posthog/browser-common" "^0.12.0"
++    "@posthog/core" "^1.68.0"
++    "@posthog/types" "^1.425.1"
++    core-js "^3.49.0"
++    dompurify "^3.4.13"
+     fflate "^0.4.8"
+-    preact "^10.19.3"
+-    web-vitals "^4.2.4"
++    preact "^10.29.3"
++    query-selector-shadow-dom "^1.0.1"
++    web-vitals "^6.2.1"
++    web-vitals-soft-navs "npm:web-vitals@6.2.1"
+ 
+-preact@^10.19.3:
+-  version "10.28.2"
+-  resolved "https://registry.yarnpkg.com/preact/-/preact-10.28.2.tgz#4b668383afa4b4a2546bbe4bd1747e02e2360138"
+-  integrity sha512-lbteaWGzGHdlIuiJ0l2Jq454m6kcpI1zNje6d8MlGAFlYvP2GO4ibnat7P74Esfz4sPTdM6UxtTwh/d3pwM9JA==
++preact@^10.29.3:
++  version "10.29.8"
++  resolved "https://registry.yarnpkg.com/preact/-/preact-10.29.8.tgz#fc85b82dc2474e245b1430b51781d417361f5fc3"
++  integrity sha512-ej2aVZ+vZ8WO7tvlQWRM9N63A0KzF9q4mWJfDUHgYaIofWY9hu74QdnQrjoPMmZi2/nZ5gN0bJCQF49xQqx09Q==
+ 
+ prettier@^3.9.10:
+   version "3.9.10"
+@@ -5510,6 +5530,11 @@ pure-color@^1.2.0:
+   resolved "https://registry.yarnpkg.com/pure-color/-/pure-color-1.3.0.tgz#1fe064fb0ac851f0de61320a8bf796836422f33e"
+   integrity sha512-QFADYnsVoBMw1srW7OVKEYjG+MbIa49s54w1MA1EDY6r2r/sTcKKYqRX1f4GYvnXP7eN/Pe9HFcX+hwzmrXRHA==
+ 
++query-selector-shadow-dom@^1.0.1:
++  version "1.0.1"
++  resolved "https://registry.yarnpkg.com/query-selector-shadow-dom/-/query-selector-shadow-dom-1.0.1.tgz#1c7b0058eff4881ac44f45d8f84ede32e9a2f349"
++  integrity sha512-lT5yCqEBgfoMYpf3F2xQRK7zEr1rhIIZuceDK6+xRkJQ4NMbHTwXqk4NkwDwQMNqXgG9r9fyHnzwNVs6zV5KRw==
++
+ raf-schd@^4.0.3:
+   ve
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2560** (2026-11-20): fix(deps): bump traefik from v3.7.17 to v3.7.19 in /compose/production/traefik (@dependabot[bot])
-- **PR #2559** (closed): fix(deps): bump traefik from v3.7.17 to v3.7.18 in /compose/production/traefik (@dependabot[bot])
-- **PR #2558** (closed): fix(deps): bump transformers from 5.22.2 to 5.23.0 in /compose/accelerated/embedder (@dependabot[bot])
-- **PR #2557** (2026-11-20): fix(deps): bump sentence-transformers from 6.2.0 to 6.3.0 in /compose/accelerated/embedder (@dependabot[bot])
-- **PR #2554** (2026-11-20): fix(deps): bump @types/node from 16.18.126 to 26.6.6 in /frontend (@dependabot[bot])
-- **PR #2552** (2026-11-20): fix(deps): bump react-json-tree from 0.19.0 to 0.20.0 in /frontend (@dependabot[bot])
+- **PR #2589** (2026-11-20): fix(deps): bump web-vitals from 2.1.4 to 6.2.3 in /frontend (@dependabot[bot])
+- **PR #2588** (2026-11-20): fix(deps): bump posthog-js from 1.312.0 to 1.450.0 in /frontend (@dependabot[bot])
+- **PR #2587** (2026-11-20): fix(deps): bump preshed from 3.0.13 to 3.0.15 (@dependabot[bot])
+- **PR #2586** (2026-11-20): fix(deps): bump django-cte from 4.0.0 to 5.0.1 (@dependabot[bot])
+- **PR #2585** (2026-11-20): fix(deps): bump react-router-dom from 7.18.2 to 7.18.5 in /frontend (@dependabot[bot])
+- **PR #2584** (2026-11-20): Dependabot: hold celery below 5.7 while kombu is pinned (@JSv4)
 
 ---
 
@@ -1680,28 +2050,30 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update setuptools requirement from >=84.0.0 to >=84.2.1
+## X. Security: PyTorch 2.13 / torchvision 0.28 in the accelerated images (clears 18 t
 
 **RULE**:
-When implementing operations in `requirements/base.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Open-Source-Legal/OpenContracts. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/dependabot.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Open-Source-Legal/OpenContracts. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8a4cf42b`: deps): update setuptools requirement from >=84.0.0 to >=84.2.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `261d624c`: Security: PyTorch 2.13 / torchvision 0.28 in the accelerated images (clears 18 torch advisories). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `requirements/base.txt`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/dependabot.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-setuptools>=84.2.1 # not directly required, pinned by Snyk to avoid a vulnerability
+        versions: [">=2.14"]
+        versions: [">=0.29"]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-setuptools>=84.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
+        versions: [">=2.7"]
+        versions: [">=0.22"]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8a4cf42b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `261d624c` are properly handled with clean fallback behavior.

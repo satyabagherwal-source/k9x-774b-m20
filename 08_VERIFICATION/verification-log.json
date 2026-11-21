@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-TVND",
-    "timestamp": "2026-11-19T16:07:10.969Z",
-    "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
-    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-    "contentHash": "a7cf24d3b03422846b5fd9f7eea2a8dd7b066ee15cb6c7364dfcc03c6d1b8531",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-TXKO",
-    "timestamp": "2026-11-19T16:07:13.464Z",
-    "repository": "zed-industries/zed",
-    "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "808a4b95966b7850ecb85df71a2adcd53a5ed57c9995ddcc4f5ecef88381c583",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-U2AU",
-    "timestamp": "2026-11-19T16:07:19.590Z",
-    "repository": "thaw-app/Thaw",
-    "learningId": "learn-github-thaw-app-thaw",
-    "contentHash": "ee0645a674c6575caf6bdc1bb40cb6fcc802da98b7f23c2b1c5cfd4d1fe69efa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-U4TE",
     "timestamp": "2026-11-19T16:07:22.850Z",
     "repository": "chaos-mesh/chaos-mesh",
@@ -7492,6 +7447,51 @@
     "contentHash": "6a25e4ccfc221674678ea6ffd71ba5bcc62eef7bb297a414f911c022844e69e2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-5M7V",
+    "timestamp": "2026-11-21T19:07:36.763Z",
+    "repository": "invertase/react-native-firebase",
+    "learningId": "learn-github-invertase-react-native-firebase",
+    "contentHash": "4bbf333a820f0764d5e68dae17d6ebddd4472700636a6ae7186637150d263c93",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-5SKO",
+    "timestamp": "2026-11-21T19:07:45.000Z",
+    "repository": "Open-Source-Legal/OpenContracts",
+    "learningId": "learn-github-open-source-legal-opencontracts",
+    "contentHash": "30780389e40caa7e354d01d917202d36408ad2445634bf62d1de989e1a1dcdf4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-A97I",
+    "timestamp": "2026-11-21T19:11:13.182Z",
+    "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
+    "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
+    "contentHash": "ee54df7924a115c55c1831eee7c09fd3aab1f1eeaba92af4f798126d7c97de55",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

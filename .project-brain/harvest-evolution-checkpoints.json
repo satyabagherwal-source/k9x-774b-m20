@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T18:52:29.873Z",
+  "last_updated": "2026-11-21T19:11:51.119Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T15:59:55.405Z",
@@ -1763,9 +1763,9 @@
       "staged_for_review": 1
     },
     "hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md": {
-      "processed_at": "2026-11-17T21:57:34.146Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 0
+      "processed_at": "2026-11-21T19:11:46.216Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 1
     },
     "hf-audio-cpp-audio.cpp-gguf-learnings.md": {
       "processed_at": "2026-11-17T22:11:15.551Z",
@@ -1963,7 +1963,7 @@
       "staged_for_review": 1
     },
     "open-source-legal-opencontracts-learnings.md": {
-      "processed_at": "2026-11-20T13:48:30.938Z",
+      "processed_at": "2026-11-21T19:11:48.186Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2278,7 +2278,7 @@
       "staged_for_review": 0
     },
     "invertase-react-native-firebase-learnings.md": {
-      "processed_at": "2026-11-18T14:48:46.596Z",
+      "processed_at": "2026-11-21T19:11:47.188Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3673,7 +3673,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2862,
-  "total_canonical_promoted": 451,
-  "total_staged_for_review": 2196
+  "total_dossiers_evaluated": 2865,
+  "total_canonical_promoted": 452,
+  "total_staged_for_review": 2199
 }

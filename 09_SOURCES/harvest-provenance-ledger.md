@@ -11906,3 +11906,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-lfm3-1-7b` | `https://huggingface.co/LiquidAI/LFM3-1.7B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-21T18:52:07.028Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `23b93c48` | Multi-dimensional audit evidence | 2026-11-21T18:52:24.393Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `1db4b548` | Multi-dimensional audit evidence | 2026-11-21T18:52:24.395Z |
+| `learn-github-invertase-react-native-firebase` | `https://github.com/invertase/react-native-firebase` | `74471603` | Multi-dimensional audit evidence | 2026-11-21T19:07:36.768Z |
+| `learn-github-open-source-legal-opencontracts` | `https://github.com/Open-Source-Legal/OpenContracts` | `98286cab` | Multi-dimensional audit evidence | 2026-11-21T19:07:45.004Z |
+| `learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8` | `https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-21T19:11:13.186Z |
+| `learn-dom-f-0277a6e9` | `project://hf-tencent-hy-simulmt-30b-a3b-fp8` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md` | 2026-11-21T19:11:46.193Z |

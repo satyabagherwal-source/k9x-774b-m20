@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T18:52:29.573Z",
-  "total_records": 2267,
+  "last_updated": "2026-11-21T19:11:50.789Z",
+  "total_records": 2272,
   "domains": {
     "A": {
       "total": 17,
@@ -967,7 +967,7 @@
       ]
     },
     "F": {
-      "total": 81,
+      "total": 82,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1049,11 +1049,12 @@
         "domain_intelligence-design-intelligence-openai-clip-vit-large-patch14-core-invariants",
         "domain_intelligence-design-intelligence-hf-openai-clip-vit-large-patch14-learnings-core-invariants",
         "domain_intelligence-design-intelligence-mattermost-mattermost-core-invariants",
-        "domain_intelligence-design-intelligence-mattermost-mattermost-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-mattermost-mattermost-learnings-core-invariants",
+        "DOM-F-0277A6E9"
       ]
     },
     "G": {
-      "total": 384,
+      "total": 386,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1438,7 +1439,9 @@
         "domain_intelligence-architecture-intelligence-watchexec-watchexec-core-invariants",
         "domain_intelligence-architecture-intelligence-watchexec-watchexec-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-pubkey-rxdb-core-invariants",
-        "domain_intelligence-architecture-intelligence-pubkey-rxdb-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-pubkey-rxdb-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-tencent-hy-simulmt-30b-a3b-fp8-core-invariants",
+        "domain_intelligence-architecture-intelligence-hf-tencent-hy-simulmt-30b-a3b-fp8-learnings-core-invar"
       ]
     },
     "H": {
@@ -1985,7 +1988,7 @@
       ]
     },
     "I": {
-      "total": 124,
+      "total": 126,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2110,7 +2113,9 @@
         "domain_intelligence-content-information-intelligence-infracost-infracost-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-fabio-rovai-open-ontologies-core-invariants",
         "domain_intelligence-content-information-intelligence-fabio-rovai-open-ontologies-learnings-core-inva",
-        "domain_intelligence-content-information-intelligence-kube-rs-kube-core-invariants"
+        "domain_intelligence-content-information-intelligence-kube-rs-kube-core-invariants",
+        "domain_intelligence-content-information-intelligence-open-source-legal-opencontracts-core-invariants",
+        "domain_intelligence-content-information-intelligence-open-source-legal-opencontracts-learnings-core-"
       ]
     },
     "J": {
@@ -12056,8 +12061,8 @@
       "title": "Technical Construction Intelligence: invertase/react-native-firebase Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-invertase-react-native-firebase-technical-construction-intelligence-invertase-re.md",
       "repository": "invertase/react-native-firebase",
-      "content_hash": "2a037e014cbd367314d7c3a27b40677e98bbe5b402522deab9158a4e50e0d56b",
-      "created_at": "2026-11-18T14:48:38.662Z"
+      "content_hash": "552fc126917564e42fb4409ac7caa1acf75b37c5cbee32b947d309851c890914",
+      "created_at": "2026-11-21T19:07:37.157Z"
     },
     "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-learnings-core-invariants",
@@ -12159,8 +12164,8 @@
       "title": "Technical Construction Intelligence: invertase-react-native-firebase-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-invertase-react-native-firebase-learnings-technical-construction-intelligence-in.md",
       "repository": "invertase-react-native-firebase-learnings",
-      "content_hash": "8d21b12018abda0a8fa532a67ca07b552f6c7bd228036bab558d3f7aefa1e9ca",
-      "created_at": "2026-11-18T14:48:47.534Z"
+      "content_hash": "397c9cf830e14f163170b1a1b8e7c6f8380f54530a13e531e019150e07744796",
+      "created_at": "2026-11-21T19:11:47.818Z"
     },
     "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-schnell-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-schnell-core-invariants",
@@ -38074,6 +38079,76 @@
       "repository": "kube-rs/kube",
       "content_hash": "e56ba0f0485dcad9fd6c942629b30f7fb84b1716fcdb68fe3384ed4977af15de",
       "created_at": "2026-11-21T17:49:58.758Z"
+    },
+    "domain_intelligence-content-information-intelligence-open-source-legal-opencontracts-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-open-source-legal-opencontracts-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: Open-Source-Legal/OpenContracts Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-open-source-legal-opencontracts-content-information-intelligence-open-source-leg.md",
+      "repository": "Open-Source-Legal/OpenContracts",
+      "content_hash": "e412afd14bafe9f615d1aee0e59bfeb8576126d2af476f43c521b3548810dc08",
+      "created_at": "2026-11-21T19:07:45.372Z"
+    },
+    "domain_intelligence-architecture-intelligence-tencent-hy-simulmt-30b-a3b-fp8-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-tencent-hy-simulmt-30b-a3b-fp8-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: tencent/Hy-SimulMT-30B-A3B-FP8 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hf-tencent-hy-simulmt-30b-a3b-fp8-architecture-intelligence-tencent-hy-simulmt-3.md",
+      "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
+      "content_hash": "8c0e349dbc1c3ab1cb666e240063bfec54ccbfae099677de3fd806852a2ec04d",
+      "created_at": "2026-11-21T19:11:13.568Z"
+    },
+    "DOM-F-0277A6E9": {
+      "record_id": "DOM-F-0277A6E9",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "FP8 MoE Router Quantization Underflow Leading to Expert Starvation (BUG-HY-FP8-01)",
+      "content": "High-fanout MoE gating projections must be exempt from low-bit sub-8-bit quantization. Keep routing networks in FP32 or unquantized BF16.",
+      "content_hash": "f719e006a11d2efb34e0dee595f9ed952a9f733d25e95b9a9fdfe059ae2bf098",
+      "summary": "Gating layers in high-count sparse MoE (128 experts) have sensitive output distributions where tiny logit deltas (~0.05) shift tokens betwee -> High-fanout MoE gating projections must be exempt from low-bit sub-8-bit quantization. Keep routing networks in FP32 or unquantized BF16.",
+      "provenance": {
+        "source_uri": "project://hf-tencent-hy-simulmt-30b-a3b-fp8/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T19:11:16.712Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-tencent-hy-simulmt-30b-a3b-fp8)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`config.json` explicit exclusion whitelist:"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T19:11:46.166Z"
+    },
+    "domain_intelligence-architecture-intelligence-hf-tencent-hy-simulmt-30b-a3b-fp8-learnings-core-invar": {
+      "record_id": "domain_intelligence-architecture-intelligence-hf-tencent-hy-simulmt-30b-a3b-fp8-learnings-core-invar",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: hf-tencent-hy-simulmt-30b-a3b-fp8-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hf-tencent-hy-simulmt-30b-a3b-fp8-learnings-architecture-intelligence-hf-tencent.md",
+      "repository": "hf-tencent-hy-simulmt-30b-a3b-fp8-learnings",
+      "content_hash": "fac6abfdfadcc7a683358da79f4319060ac8e2ff354e3df3fd5adf29da0e25e2",
+      "created_at": "2026-11-21T19:11:46.819Z"
+    },
+    "domain_intelligence-content-information-intelligence-open-source-legal-opencontracts-learnings-core-": {
+      "record_id": "domain_intelligence-content-information-intelligence-open-source-legal-opencontracts-learnings-core-",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: open-source-legal-opencontracts-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-open-source-legal-opencontracts-learnings-content-information-intelligence-open-.md",
+      "repository": "open-source-legal-opencontracts-learnings",
+      "content_hash": "3e561f394c7628b7f899525c53da5d9e0ec1a46f07b80fd2884ce2a59a88bfa0",
+      "created_at": "2026-11-21T19:11:50.789Z"
     }
   }
 }

@@ -3563,10 +3563,10 @@
     "repository": "invertase/react-native-firebase",
     "platform": "github",
     "sourceUrl": "https://github.com/invertase/react-native-firebase",
-    "sourceVersion": "b278991e",
+    "sourceVersion": "74471603",
     "license": "NOASSERTION",
-    "contentHash": "04cbc77dba470fef4e2d6018cb475b8461f9e25a8c1da607559a27ead1a2eef2",
-    "lastHarvestedAt": "2026-11-18T14:48:38.323Z",
+    "contentHash": "4bbf333a820f0764d5e68dae17d6ebddd4472700636a6ae7186637150d263c93",
+    "lastHarvestedAt": "2026-11-21T19:07:36.768Z",
     "learningId": "learn-github-invertase-react-native-firebase"
   },
   "peerdb-io-peerdb": {
@@ -6323,10 +6323,10 @@
     "repository": "Open-Source-Legal/OpenContracts",
     "platform": "github",
     "sourceUrl": "https://github.com/Open-Source-Legal/OpenContracts",
-    "sourceVersion": "8a4cf42b",
+    "sourceVersion": "98286cab",
     "license": "MIT",
-    "contentHash": "2f67dd81d46d48d5488c3a492ad4aee658186d9d857da7faecf60267b6527665",
-    "lastHarvestedAt": "2026-11-20T13:48:26.873Z",
+    "contentHash": "30780389e40caa7e354d01d917202d36408ad2445634bf62d1de989e1a1dcdf4",
+    "lastHarvestedAt": "2026-11-21T19:07:45.004Z",
     "learningId": "learn-github-open-source-legal-opencontracts"
   },
   "fastapi-fastapi": {
@@ -11395,8 +11395,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
     "sourceVersion": "hf-tencent-hy-simulmt-30b-a3b-fp8",
     "license": "Open-Source",
-    "contentHash": "9b60bf2f04609db727dd3ea2c674cfbba3b187616b263f76f70dc44b9ba5202f",
-    "lastHarvestedAt": "2026-11-17T21:56:39.846Z",
+    "contentHash": "ee54df7924a115c55c1831eee7c09fd3aab1f1eeaba92af4f798126d7c97de55",
+    "lastHarvestedAt": "2026-11-21T19:11:13.186Z",
     "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8"
   },
   "hf-prithivmlmods-gender-classifier-mini": {

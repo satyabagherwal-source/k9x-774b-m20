@@ -11873,3 +11873,7 @@
 | `CYCLE-20261121-LOTR` | `2026-11-21T18:52:07.023Z` | `LiquidAI/LFM3-1.7B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md` | Yes (`91d14176...`) |
 | `CYCLE-20261121-M285` | `2026-11-21T18:52:24.389Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9820` | Yes (`d70a9f37...`) |
 | `CYCLE-20261121-M287` | `2026-11-21T18:52:24.391Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9820` | Yes (`6a25e4cc...`) |
+| `CYCLE-20261121-5M7V` | `2026-11-21T19:07:36.763Z` | `invertase/react-native-firebase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9821` | Yes (`4bbf333a...`) |
+| `CYCLE-20261121-5SKO` | `2026-11-21T19:07:45.000Z` | `Open-Source-Legal/OpenContracts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9822` | Yes (`30780389...`) |
+| `CYCLE-20261121-A97I` | `2026-11-21T19:11:13.182Z` | `tencent/Hy-SimulMT-30B-A3B-FP8` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9823, Rule 9824` | Yes (`ee54df79...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T19:11:46.193Z` | `hf-tencent-hy-simulmt-30b-a3b-fp8` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-0277A6E9` [Domain F] | Yes (`f719e006...`) |
