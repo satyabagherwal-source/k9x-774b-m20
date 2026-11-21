@@ -4,24 +4,24 @@
 {
   "source_repository": "temporalio/temporal",
   "source_url": "https://github.com/temporalio/temporal",
-  "source_version": "73f1acad",
+  "source_version": "32ef011f",
   "license": "MIT",
-  "timestamp": "2026-11-13T20:47:11.150Z",
+  "timestamp": "2026-11-21T13:53:39.788Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-temporalio-temporal",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [temporalio/temporal](https://github.com/temporalio/temporal) (Revision: `73f1acad`).  
-> **License**: MIT | **Timestamp**: `2026-11-13T20:47:11.150Z`  
+> **Provenance**: Harvested from [temporalio/temporal](https://github.com/temporalio/temporal) (Revision: `32ef011f`).  
+> **License**: MIT | **Timestamp**: `2026-11-21T13:53:39.788Z`  
 > **Learning ID**: `learn-github-temporalio-temporal`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from temporalio/temporal:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T20:47:09.868Z  
+> **Harvest Timestamp**: 2026-11-21T13:53:38.565Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24383 stars
+- **Stars / Engagement**: 24527 stars
 
 ---
 
@@ -2135,272 +2135,191 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cbeb97f4` (2026-11-13)
-**Commit Message**: Require matching request IDs for Nexus completions (#13077)
+### Incident Patch 1: `59c4ca9a` (2026-11-21)
+**Commit Message**: Fix flakes: raise deadlock detection timeout in `TestChildWorkflowInheritance` inherit tests (#13066)
 
 ## What changed?
-Require asynchronous Nexus completions to carry a request ID matching
-the pending operation in both HSM and CHASM. Frontend rejects a
-completion token with an empty request ID as an invalid callback token
-(BadRequest). History also rejects empty or mismatched IDs with NotFound
-before applying a completion transition, covering direct internal
-requests.
+In `testChildWorkflowInheritanceExpectInherit`, set
+`DeadlockDetectionTimeout: 30s` on the v1 worker and raise the parent's
+`WorkflowTaskTimeout` from 10s to 30s, matching the other versioning
+helpers that block the same way.
 
 ## Why?
-An empty request ID previously skipped the operation identity check,
-allowing a completion token to be retargeted to another pending
-operation. The Frontend check treats a missing required token field as
-an invalid request; the History checks prevent an invalid completion
-from changing operation state.
+The parent workflow blocks on a Go channel while the test waits for task
+queue user data to propagate. When that took over 1s, the SDK deadlock
+detector failed the workflow task, and the workflow didn't complete
+before the test timed out. Adding a 1.5s delay before unblocking the
+workflow reproduces this every time without the fix.
+
+## How did you test it?
+- [ ] built
+- [ ] run locally and tested manually
+- [ ] covered by existing tests
+- [ ] added new unit test(s)
+- [ ] added new functional test(s)
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `tests/versioning_3_test.go` (modified, +3/-1)
+```diff
+@@ -1668,6 +1668,8 @@ func (s *Versioning3Suite) testChildWorkflowInheritanceExpectInherit(crossTq boo
+ 			DefaultVersioningBehavior: workflow.VersioningBehaviorAutoUpgrade,
+ 		},
+ 		MaxConcurrentWorkflowTaskPollers: numPollers,
++		// Because the wf task can get stuck behind a channel, we make sure sdk does not panic too early
++		DeadlockDetectionTimeout: 30 * time.Second,
+ 	})
+ 	w1.RegisterWorkflowWithOptions(wf1, workflow.RegisterOptions{Name: "wf", VersioningBehavior: sdkParentBehavior})
+ 	if !crossTq {
+@@ -1683,7 +1685,7 @@ func (s *Versioning3Suite) testChildWorkflowInheritanceExpectInherit(crossTq boo
+ 		ID:                  tv1.WorkflowID(),
+ 		TaskQueue:           tv1.TaskQueue().GetName(),
+ 		VersioningOverride:  nil,
+-		WorkflowTaskTimeout: 10 * time.Second,
++		WorkflowTaskTimeout: 30 * time.Second,
+ 	}
+ 	if withOverride {
+ 		startOpts.VersioningOverride = &sdkclient.PinnedVersioningOverride{
+```
+
+---
+
+### Incident Patch 2: `ea8df3ed` (2026-11-20)
+**Commit Message**: Fix flaky TestMultipleTasks_ValidateStats test (#13185)
+
+## What changed?
+One-line test fix: `validateDescribeWorkerDeploymentVersion` now picks
+the task queue by name **and** type, instead of name **or** type.
+
+## Why?
+Fixes flaky
+`TestTaskQueueStats_Pri_Suite/TestVersioningSuite/*/TestMultipleTasks_ValidateStats`.
+The worst variant fails 5.8% of the time in CI.
+
+The response has two entries with the same task queue name: one
+WORKFLOW, one ACTIVITY. The server builds this list by iterating over a
+Go map, which is unordered, so either entry can come first. Because the
+old check used `||`, the name alone was enough to match, so it matched
+whichever entry came first. When that was the wrong entry, the test
+checked its stats against the other type's expectations, e.g.:
+
+```
+DescribeWorkerDeploymentVersion[Activity]: ApproximateBacklogCount should be at most 0, got 24
+```
+
+The check retries for 5s, so it only failed when every retry got the
+wrong order. That's more likely on slow CI runners, which get fewer
+retries.
 
 ## How did you test it?
 - [x] built
-- [ ] run locally and tested manually
+- [x] run locally and tested manually
 - [x] covered by existing tests
-- [x] added new unit test(s)
-- [x] added new functional test(s)
+
+To force the failure, I shortened the retry window to 1s. Withou
+
+**File**: `tests/task_queue_stats_test.go` (modified, +1/-1)
+```diff
+@@ -1551,7 +1551,7 @@ func (s *taskQueueStatsContext) validateDescribeWorkerDeploymentVersion(
+ 		require.Len(t, resp.VersionTaskQueues, 2, "should be 1 task queue for Workflows and 1 for Activities")
+ 
+ 		for _, info := range resp.VersionTaskQueues {
+-			if info.Name == tqName || info.Type == tqType {
++			if info.Name == tqName && info.Type == tqType {
+ 				label := "DescribeWorkerDeploymentVersion[" + tqType.String() + "]"
+ 				validateTaskQueueStats(require.New(t), label, info.Stats, expectation)
+ 				if expectation.BacklogCount > 0 {
+```
+
+---
+
+### Incident Patch 3: `c44a13c6` (2026-11-20)
+**Commit Message**: Fix testx bump workflow races (#13209)
+
+## What changed?
+1. Run the pin check after the bump job succeeds.
+2. If a push fails, fetch `main` again and recompute the pin. Allow up
+to three push attempts.
+
+## Why?
+The nightly check reported a stale pin while the same run was updating
+it.
+
+The prior run had left the pin stale because `main` advanced before its
+push. [Nightly
+run](https://github.com/temporalio/temporal/actions/runs/44700468715) ·
+[Prior push
+rejection](https://github.com/temporalio/temporal/actions/runs/44603063841)
 
 ## Potential risks
-Completion tokens issued without a request ID will now be rejected if
-their operations remain pending, which may affect long-running
-operations in older self-hosted deployments. HTTP callbacks with an
-empty request ID now receive BadRequest.
+A persistent push failure uses all three attempts before the existing
+Slack notification fires.
 
-**File**: `chasm/lib/nexusoperation/operation.go` (modified, +1/-1)
+**File**: `.github/workflows/testx-bump.yml` (modified, +25/-12)
 ```diff
-@@ -307,7 +307,7 @@ func (o *Operation) HandleNexusCompletion(
- 	completion *persistencespb.ChasmNexusCompletion,
- ) error {
- 	// Request ID lets us reject a stale or misrouted completion.
--	if completion.GetRequestId() != "" && o.GetRequestId() != completion.GetRequestId() {
-+	if completion.GetRequestId() == "" || o.GetRequestId() != completion.GetRequestId() {
- 		return serviceerror.NewNotFound("operation not found")
- 	}
+@@ -55,26 +55,39 @@ jobs:
  
-```
-
-**File**: `chasm/lib/nexusoperation/operation_test.go` (modified, +19/-0)
-```diff
-@@ -10,6 +10,7 @@ import (
- 	commonpb "go.temporal.io/api/common/v1"
- 	enumspb "go.temporal.io/api/enums/v1"
- 	failurepb "go.temporal.io/api/failure/v1"
-+	"go.temporal.io/api/serviceerror"
- 	"go.temporal.io/api/workflowservice/v1"
- 	persistencespb "go.temporal.io/server/api/persistence/v1"
- 	"go.temporal.io/server/chasm"
-@@ -249,6 +250,24 @@ func TestHandleNexusCompletion(t *testing.T) {
- 		}
- 	}
- 
-+	t.Run("InvalidRequestID", func(t *testing.T) {
-+		for _, tc := range []struct{ name, requestID string }{
-+			{"empty", ""},
-+			{"mismatched", "other-request-id"},
-+		} {
-+			t.Run(tc.name, func(t *testing.T) {
-+				ctx := newCtx()
-+				op := newScheduledTestOperation(t, ctx)
-+				err := op.HandleNexusCompletion(ctx, &persistencespb.ChasmNexusCompletion{
-+					RequestId: tc.requestID,
-+					Outcome:   &persistencespb.ChasmNexusCompletion_Success{Success: mustToPayload(t, "result")},
-+				})
-+				require.ErrorAs(t, err, new(*serviceerror.NotFound))
-+				require.Equal(t, nexusoperationpb.OPERATION_STATUS_SCHEDULED, op.GetStatus())
-+			})
-+		}
-+	})
-+
- 	t.Run("Success", func(t *testing.T) {
- 		t.Run("AfterStarted", func(t *testing.T) {
- 			ctx := newCtx()
-```
-
-**File**: `service/frontend/nexus_completion_http_handler.go` (modified, +3/-0)
-```diff
-@@ -135,6 +135,9 @@ func (h *nexusCompletionHandler) CompleteOperation(ctx context.Context, r *nexus
- 		h.Logger.Error("failed to decode completion from token", tag.Error(err))
- 		return nexus.NewHandlerErrorf(nexus.HandlerErrorTypeBadRequest, "invalid callback token")
- 	}
-+	if completion.GetRequestId() == "" {
-+		return nexus.NewHandlerErrorf(nexus.HandlerErrorTypeBadRequest, "invalid callback token")
-+	}
- 
- 	// Determine the target namespace, workflow, and run ID from the completion token. The CHASM
- 	// ComponentRef is canonical when present; otherwise the top-level HSM fields are used. Shared
-```
-
-**File**: `service/history/hsm/nexusoperations/completion.go` (modified, +8/-8)
-```diff
-@@ -179,9 +179,10 @@ func (h *CompletionHandler) Handle(
- 	result *commonpb.Payload,
- 	opFailedError *nexus.OperationError,
- ) error {
--	// The initial version of the completion token did not include a request ID.
--	// Only retry Access without a run ID if the request ID is not empty.
--	isRetryableNotFoundErr := requestID != ""
-+	if requestID == "" {
-+		return serviceerror.NewNotFound("operation not found")
-+	}
-+	isRetryableNotFoundErr := true
- 	// emitMetrics is populated inside the Access closure and invoked only after the write
- 	// transaction commits successfully, so a failed commit (which retries the completion) does not
- 	// double-count the metric. See operationMetricsHandler's doc comment.
-@@ -194,18 +195,17 @@ func (h *CompletionHandler) Handle(
- 		if err != nil {
- 			return err
- 		}
-+		if operation.RequestId != requestID {
-+			isRetryableNotFoundErr = false
-+			return serviceerror.NewNotFound("operation not found")
-+		}
- 		// If the operation has not started yet, this completion arrived before the start response and
- 		// fabricateStartedEventIfMissing will transition it to started below; the executor never emitted
- 		// schedule-to-start in that case, so we emit it here.
- 		fabricatedStart := TransitionStarted.Possible(operation)
- 		if err := fabricateStartedEventIfMissing(node, requestID, operationToken, startTime, links); err != nil {
- 			return err
- 		}
--		if requestID != "" && operation.RequestId != requestID {
--			isRetryableNotFoundErr = false
--			return serviceerror.NewNotFound("operation not found")
--		}
+       - name: Update testx on main
+         run: |
+-          sha=$(git rev-list -1 HEAD -- common/testx/)
+-          go get "go.temporal.io/testx@${sha}"
+-          go mod tidy
 -
- 		if opFailedError != nil {
- 			err = handleOperationError(node, operation, opFailedError)
- 		} else {
-```
-
-**File**: `service/history/hsm/nexusoperations/completion_test.go` (modified, +33/-8)
-```diff
-@@ -9,6 +9,8 @@ import (
- 	"github.com/stretchr/testify/require"
- 	commonpb "go.temporal.io/api/common/v1"
- 	historypb "go.temporal.io/api/history/v1"
-+	"go.temporal.io/api/serviceerror"
-+	enumsspb "go.temporal.io/server/api/enums/v1"
- 	chasmnexus "go.temporal.io/server/chasm/lib/nexusoperation"
- 	"go.temporal.io/server/common/dynamicconfig"
- 	"go.temporal.io/server/common/metrics/metricstest"
-@@ -18,6 +20,27 @@ import (
- 	"google.golang.org/protobuf/types/known/durationpb"
- )
+-          if git diff --quiet -- go.mod go.sum; then
+-            echo "testx version is already current"
+-            exit 0
+-          fi
+-
+           git config --local user.name 'Temporal Data'
+           git config --local user.email 'commander-data@temporal.io'
  
-+func TestCompletionHandlerRejectsInvalidRequestID(t *testing.T) {
-+	t.Parallel()
-+	for _, tc := range []struct{ name, requestID string }{
-+		{"empty", ""},
-+		{"mismatched", "other-request-id"},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+			node := newOperationNode(t, &hsmtest.NodeBackend{}, mustNewScheduledEvent(time.Now(), &historypb.NexusOperationScheduledEventAttributes{
-+				RequestId: "request-id", ScheduleToCloseTimeout: durationpb.New(time.Hour),
-+			}))
-+			handler := nexusoperations.NewCompletionHandler(metricstest.NewCaptureHandler(), &nexusoperations.Config{})
-+			err := handler.Handle(context.Background(), fakeEnv{node: node}, hsm.Ref{}, tc.requestID, "token", nil, nil, &commonpb.Payload{}, nil)
-+			require.ErrorAs(t, err, new(*serviceerror.NotFound))
-+			op, err := hsm.MachineData[nexusoperations.Operation](node)
-+			require.NoError(t, err)
-+			require.Equal(t, enumsspb.NEXUS_OPERATION_STATE_SCHEDULED, op.NexusOperationInfo.State)
-+		})
-+	}
-+}
+-          git add go.mod go.sum
+-          git commit -m "Bump go.temporal.io/testx to ${sha::9}"
+-          git push origin HEAD:main
++          max_attempts=3
++          for ((attempt = 1; attempt <= max_attempts; attempt++)); do
++            echo "testx bump attempt $attempt of $max_attempts"
++            git fetch origin main
++            git switch --detach FETCH_HEAD
 +
- func TestCompletionHandler_EmitsCallerMetrics(t *testing.T) {
- 	// All cases drive a completion that arrives before the start response, so the handler
- 	// fabricates the started transition (emitting schedule-to-start) and then resolves the
-@@ -66,6 +89,7 @@ func TestCompletionHandler_EmitsCallerMetrics(t *testing.T) {
- 			backend := &hsmtest.NodeBackend{}
- 			node := newOperationNode(t, backend, mustNewScheduledEvent(time.Now(), &historypb.NexusOperationScheduledEventAttributes{
- 				ScheduleToCloseTimeout: durationpb.New(time.Hour),
-+				RequestId:              "request-id",
- 			}))
++            sha=$(git rev-list -1 HEAD -- common/testx/)
++            go get "go.temporal.io/testx@${sha}"
++            go mod tidy
++
++            if git diff --quiet -- go.mod go.sum; then
++              echo "testx version is already current"
++              exit 0
++            fi
++
++            git add go.mod go.sum
++            git commit -m "Bump go.temporal.io/testx to ${sha::9}"
++            if git push origin HEAD:main; then
++              exit 0
++            fi
++          done
++
++          echo "::error::Could not push the testx bump after $max_attempts attempts."
++          exit 1
  
- 			captureHandler := metricstest.NewCaptureHandler()
-@@ -79,10 +103,10 @@ func TestCompletionHandler_EmitsCallerMetrics(t *testing.T) {
- 				context.Background(),
- 				fakeEnv{node: node},
- 				hsm.Ref{},
--				"",      // requestID (empty skips the request-id match check)
--				"token", // operationToken
--				nil,     // startTime
--				nil,     // links
-+				"request-id", // requestID
-+				"token",      // operationToken
-+				nil,          // startTime
-+				nil,          // links
- 				tc.result,
- 				tc.opErr,
- 			))
-@@ -130,6 +154,7 @@ func TestCompletionHandler_AlreadyStartedMetricsUseWorkflowTime(t *testing.T) {
- 	backend := &hsmtest.NodeBackend{WorkflowTimeFn: func() time.Time { return workflowNow }}
- 	node := newOperationNode(t, backend, mustNewScheduledEvent(scheduledTime, &historypb.NexusOperationScheduledEventAttributes{
- 		ScheduleToCloseTimeout: durationpb.New(time.Hour),
-+		RequestId:              "request-id",
- 	}))
- 	require.NoError(t, hsm.MachineTransition(node, func(operation nexusoperations.Operation) (hsm.TransitionOutput, error) {
- 		return nexusoperations.TransitionStarted.Apply(operation, nexusoperations.EventStarted{
-@@ -150,10 +175,10 @@ func TestCompletionHandler_AlreadyStartedMetricsUseWorkflowTime(t *testing.T) {
- 		context.Background(),
- 		fakeEnv{node: node, nowFn: func() time.Time { return wallNow }},
- 		hsm.Ref{},
--		"",      // requestID (empty skips the request-id match check)
--		"token", // operationToken
--		nil,     // startTime
--		nil,     // links
-+		"request-id", // requestID
-+		"token",      // operationToken
-+		nil,          // startTime
-+		nil,          // links
- 		&commonpb.Payload{},
- 		nil,
- 	))
-```
-
-**File**: `tests/nexus_workflow_test.go` (modified, +25/-0)
-```diff
-@@ -2019,6 +2019,31 @@ func (s *NexusWorkflowTestSuite) TestNexusOperationAsyncCompletionErrors(chasmEn
- 		s.Contains(handlerErr.Error(), "invalid callback token", "Response should indicate invalid callback token")
- 	})
+   # Fails if the testx version required on main doesn't match common/testx/, e.g. because the bump failed
+   # to push. Builds in this repo don't notice, since they use the replace.
+   # Runs nightly (US time), when the bump for the day's testx changes should have landed.
+   check-pin:
++    needs: bump
+     if: github.event_name != 'push'
+     runs-on: ubuntu-latest
  
-+	s.Run("CallbackTokenWithoutRequestID", func(s *NexusWorkflowTestSuite) {
-+		env := s.newTestEnv(chasmEnabled)
-+		gen := &commonnexus.CallbackTokenGenerator{}
-+		validToken, err := s.generateValidCallbackToken(env.NamespaceID().String(), testcore.RandomizeStr("workflow"), uuid.NewString())
-+		s.NoError(err)
-+		decodedToken, err := commonnexus.DecodeCallbackToken(validToken)
-+		s.NoError(err)
-+		completionToken, err := gen.DecodeCompletion(decodedToken)
-+		s.NoError(err)
-+		completionToken.RequestId = ""
-+		invalidToken, err := gen.Tokenize(completionToken)
-+		s.NoError(err)
-+
-+		completion := nexusrpc.CompleteOperationOptions{
-+			Result: testcore.MustToPayload(s.T(), "result"),
-+			Header: nexus.Header{commonnexus.CallbackTokenHeader: invalidToken},
-+		}
-+		publicCallbackURL := "http://" + env.HttpAPIAddress() + "/" + commonnexus.RouteCompletionCallback.Path(env.Namespace().String())
-+		err = s.sendNexusCompletionRequest(s.Context(), publicCallbackURL, completion)
-+		var handlerErr *nexus.HandlerError
-+		s.ErrorAs(err, &handlerErr)
-+		s.Equal(nexus.HandlerErrorTypeBadRequest, handlerErr.Type)
-+		s.Contains(handlerErr.Error(), "invalid callback token")
-+	})
-+
- 	s.Run("InvalidCallbackTokenNoIdentifier", func(s *NexusWorkflowTestSuite) {
- 		env := s.newTestEnv(chasmEnabled)
- 		completion := nexusrpc.CompleteOperationOptions{
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13077** (2026-11-13): Require matching request IDs for Nexus completions (@tekkaya)
-- **PR #13075** (2026-11-13): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #13069** (2026-11-13): Keep CHASM schedule buffers progressing after discarded or failed starts (@chaptersix)
-- **PR #13068** (2026-11-12): Fix flakes: `TestWorkerRegistry_CountWorkers` (@carlydf)
-- **PR #13058** (closed): Add Zap integration for the shared testlogger (@stephanos)
-- **PR #13052** (2026-11-12): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13226** (2026-11-21): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13219** (2026-11-21): Optionally enforce JWT audience on Nexus HTTP handlers (@chrsmith)
+- **PR #13217** (closed): Stop each matching partition exactly once (@gurdasnijor)
+- **PR #13210** (2026-11-20): Preserve activity attempt timestamps across handoff retries (@fretz12)
+- **PR #13209** (2026-11-20): Fix testx bump workflow races (@stephanos)
+- **PR #13205** (2026-11-20): Use namespace.Name in TestEnv.SendSignal (@stephanos)
 
 ---
 
@@ -2420,31 +2339,33 @@ empty request ID now receive BadRequest.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Require matching request IDs for Nexus completions
+## X. flakes: raise deadlock detection timeout in `TestChildWorkflowInheritance` inher
 
 **RULE**:
-When implementing operations in `chasm/lib/nexusoperation/operation.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/versioning_3_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cbeb97f4`: Require matching request IDs for Nexus completions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `59c4ca9a`: flakes: raise deadlock detection timeout in `TestChildWorkflowInheritance` inherit tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `chasm/lib/nexusoperation/operation.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/versioning_3_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if completion.GetRequestId() == "" || o.GetRequestId() != completion.GetRequestId() {
+		// Because the wf task can get stuck behind a channel, we make sure sdk does not panic too early
+		DeadlockDetectionTimeout: 30 * time.Second,
+		WorkflowTaskTimeout: 30 * time.Second,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	if completion.GetRequestId() != "" && o.GetRequestId() != completion.GetRequestId() {
+		WorkflowTaskTimeout: 10 * time.Second,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cbeb97f4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `59c4ca9a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

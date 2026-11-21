@@ -2493,10 +2493,10 @@
     "repository": "karakeep-app/karakeep",
     "platform": "github",
     "sourceUrl": "https://github.com/karakeep-app/karakeep",
-    "sourceVersion": "bcc4b90a",
+    "sourceVersion": "337161a5",
     "license": "AGPL-3.0",
-    "contentHash": "2b9de76c881575bc0d4ab248309170576ffb5054b39465c3ee3a1e65f444b84f",
-    "lastHarvestedAt": "2026-11-17T10:11:01.963Z",
+    "contentHash": "f49b5f4d83a9336061c760bb372d7353d9cc6e43ff4ccef6fd677e2a7f2092fb",
+    "lastHarvestedAt": "2026-11-21T13:53:36.588Z",
     "learningId": "learn-github-karakeep-app-karakeep"
   },
   "authzed-spicedb": {
@@ -2823,10 +2823,10 @@
     "repository": "watchexec/watchexec",
     "platform": "github",
     "sourceUrl": "https://github.com/watchexec/watchexec",
-    "sourceVersion": "f71af3b1",
+    "sourceVersion": "3e5e4d4a",
     "license": "Apache-2.0",
-    "contentHash": "2960559587f5ba48ba15b35c9cd6dcd6d76770d50d5507846bd46f9f83552ce9",
-    "lastHarvestedAt": "2026-11-03T22:59:03.212Z",
+    "contentHash": "ab79c0af4b8083275d9a9b35d971f85cc9fe3429af433995706485a8f3b32eb7",
+    "lastHarvestedAt": "2026-11-21T13:53:31.500Z",
     "learningId": "learn-github-watchexec-watchexec"
   },
   "streetwriters-notesnook": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "7b95bfd8",
+    "sourceVersion": "88defe33",
     "license": "Apache-2.0",
-    "contentHash": "f89a56be80377a11670eee46a482b9fc0a3af1936d72e46582ed8ab4c394d5f3",
-    "lastHarvestedAt": "2026-11-20T07:15:00.731Z",
+    "contentHash": "ae476937641039d2295bbcf52484dbd0345eb0a7133e631a30aea0103212a146",
+    "lastHarvestedAt": "2026-11-21T13:53:45.472Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "2c8ae4e8",
+    "sourceVersion": "32ef011f",
     "license": "MIT",
-    "contentHash": "cc019eca902a59378d40b518e50c664f7fe6be82ed5c4b679783d81b23e6d46a",
-    "lastHarvestedAt": "2026-11-20T09:34:48.772Z",
+    "contentHash": "b9faaf523c862198f4cc48e63ad34a5292f6485d150570145fe94d77dcb7ec6d",
+    "lastHarvestedAt": "2026-11-21T13:53:39.584Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {
@@ -10525,8 +10525,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-14B",
     "sourceVersion": "hf-qwen-qwen3-14b",
     "license": "Open-Source",
-    "contentHash": "927eaa62ae03f17fe5a2f67373e1c36b5e19c4e7c6cef06a63303cb462ebedb2",
-    "lastHarvestedAt": "2026-11-17T16:54:41.815Z",
+    "contentHash": "3ca3ef8dcebaafe22449a1f5c2a6ca3a7025dd889fbcbcdd818eefeabf6dfe28",
+    "lastHarvestedAt": "2026-11-21T13:53:30.282Z",
     "learningId": "learn-huggingface-qwen-qwen3-14b"
   },
   "solaceproducts-solace-agent-mesh": {

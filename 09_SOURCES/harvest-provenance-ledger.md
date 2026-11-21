@@ -11842,3 +11842,8 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `ffa93916` | Multi-dimensional audit evidence | 2026-11-21T13:30:39.683Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `87875513` | Multi-dimensional audit evidence | 2026-11-21T13:30:42.977Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `3996998d` | Multi-dimensional audit evidence | 2026-11-21T13:30:43.015Z |
+| `learn-huggingface-qwen-qwen3-14b` | `https://huggingface.co/Qwen/Qwen3-14B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-21T13:53:30.282Z |
+| `learn-github-watchexec-watchexec` | `https://github.com/watchexec/watchexec` | `3e5e4d4a` | Multi-dimensional audit evidence | 2026-11-21T13:53:31.500Z |
+| `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `337161a5` | Multi-dimensional audit evidence | 2026-11-21T13:53:36.588Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `32ef011f` | Multi-dimensional audit evidence | 2026-11-21T13:53:39.584Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `88defe33` | Multi-dimensional audit evidence | 2026-11-21T13:53:45.472Z |

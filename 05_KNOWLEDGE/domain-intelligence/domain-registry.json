@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T13:30:48.194Z",
-  "total_records": 2250,
+  "last_updated": "2026-11-21T13:53:50.417Z",
+  "total_records": 2252,
   "domains": {
     "A": {
       "total": 17,
@@ -1046,7 +1046,7 @@
       ]
     },
     "G": {
-      "total": 380,
+      "total": 382,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1427,7 +1427,9 @@
         "domain_intelligence-architecture-intelligence-sceneview-sceneview-core-invariants",
         "domain_intelligence-architecture-intelligence-sceneview-sceneview-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-etcd-io-etcd-core-invariants",
-        "domain_intelligence-architecture-intelligence-etcd-io-etcd-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-etcd-io-etcd-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-watchexec-watchexec-core-invariants",
+        "domain_intelligence-architecture-intelligence-watchexec-watchexec-learnings-core-invariants"
       ]
     },
     "H": {
@@ -10369,8 +10371,8 @@
       "title": "Technical Construction Intelligence: karakeep-app/karakeep Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-karakeep-app-karakeep-technical-construction-intelligence-karakeep-app-karakeep-.md",
       "repository": "karakeep-app/karakeep",
-      "content_hash": "22d6f9c5aa424d4f9272cbfec1de0241b8c1ace9549becba50274c8b44eec39f",
-      "created_at": "2026-11-17T10:11:02.288Z"
+      "content_hash": "1c5e18dc111cdbc20e6cbab02ecd9b8bab2852064caa86b82531adc3a04dc8d2",
+      "created_at": "2026-11-21T13:53:36.945Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-7": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-7",
@@ -10387,8 +10389,8 @@
       "title": "Technical Construction Intelligence: karakeep-app-karakeep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-karakeep-app-karakeep-learnings-technical-construction-intelligence-karakeep-app.md",
       "repository": "karakeep-app-karakeep-learnings",
-      "content_hash": "e197dbe9b94fbb5e719a7861ce04ade73a1189091692f9bff8bd092fb0de3b6c",
-      "created_at": "2026-11-17T10:11:14.104Z"
+      "content_hash": "b6e5aadeb01aad184d012890cff01651e8b75ee790bb3fda5b42667344441082",
+      "created_at": "2026-11-21T13:53:50.417Z"
     },
     "domain_intelligence-research-knowledge-intelligence-cloudflare-clef-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-cloudflare-clef-core-invariants",
@@ -10639,8 +10641,8 @@
       "title": "Content & Information Intelligence: temporalio/temporal Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-temporalio-temporal-content-information-intelligence-temporalio-temporal-core-in.md",
       "repository": "temporalio/temporal",
-      "content_hash": "ea449237751c2ce45c6f90dac91f86e5a71bfc17243bdf04af7076c6c3d24e32",
-      "created_at": "2026-11-13T20:47:11.283Z"
+      "content_hash": "b595e820c9a1b11553804b7f628013ceec2deebd0c0adba1a3466bb538ad28a0",
+      "created_at": "2026-11-21T13:53:39.948Z"
     },
     "domain_intelligence-content-information-intelligence-alibaba-zvec-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-alibaba-zvec-core-invariants",
@@ -17342,8 +17344,8 @@
       "title": "Technical Construction Intelligence: ydb-platform/ydb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-technical-construction-intelligence-ydb-platform-ydb-core-invar.md",
       "repository": "ydb-platform/ydb",
-      "content_hash": "70c33a10616f0e584a39aafd527f5089fdf444a78d11ef554579155a45499088",
-      "created_at": "2026-11-20T07:15:01.088Z"
+      "content_hash": "3a096e04a4b8e43054a5b546d653fa0b5be53dd8f8a12cc77cb69c20ff930ae5",
+      "created_at": "2026-11-21T13:53:45.835Z"
     },
     "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
@@ -28362,8 +28364,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-14B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-14b-research-knowledge-intelligence-qwen-qwen3-14b-core-invariants.md",
       "repository": "Qwen/Qwen3-14B",
-      "content_hash": "3a8e51e9a5ed4223529d7ff09cdf0825174923ca9030baec5b7b8b58951ad371",
-      "created_at": "2026-11-17T16:54:41.970Z"
+      "content_hash": "d97da5fccebed5971385ddf9d3d9baa34ebaef65738cfb8f4e4c733710db037a",
+      "created_at": "2026-11-21T13:53:30.481Z"
     },
     "domain_intelligence-technical-construction-intelligence-margelo-react-native-vision-camera-core-inva": {
       "record_id": "domain_intelligence-technical-construction-intelligence-margelo-react-native-vision-camera-core-inva",
@@ -28380,8 +28382,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-14b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-14b-learnings-research-knowledge-intelligence-hf-qwen-qwen3-14b-le.md",
       "repository": "hf-qwen-qwen3-14b-learnings",
-      "content_hash": "6f55c87e4c8239e8ac00ed771b31803995935dc177387d774af8b65e163dc4a9",
-      "created_at": "2026-11-17T16:54:59.122Z"
+      "content_hash": "d2e5d6fade6db7292f34f5ec719e840007da9181cb1127e814744aed5dc1daf4",
+      "created_at": "2026-11-21T13:53:49.814Z"
     },
     "domain_intelligence-technical-construction-intelligence-margelo-react-native-vision-camera-learnings": {
       "record_id": "domain_intelligence-technical-construction-intelligence-margelo-react-native-vision-camera-learnings",
@@ -37766,6 +37768,24 @@
       "repository": "linkerd-linkerd2-learnings",
       "content_hash": "c479b336cd645804396f34568fd14cee3f3a2254116d3700f69316c3261ebf3f",
       "created_at": "2026-11-21T13:05:38.526Z"
+    },
+    "domain_intelligence-architecture-intelligence-watchexec-watchexec-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-watchexec-watchexec-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: watchexec/watchexec Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-watchexec-watchexec-architecture-intelligence-watchexec-watchexec-core-invariant.md",
+      "repository": "watchexec/watchexec",
+      "content_hash": "2d4228b4e6b4c8f87863a6b9714512e3c18a9770c9e9eeaee95489729351246d",
+      "created_at": "2026-11-21T13:53:31.868Z"
+    },
+    "domain_intelligence-architecture-intelligence-watchexec-watchexec-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-watchexec-watchexec-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: watchexec-watchexec-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-watchexec-watchexec-learnings-architecture-intelligence-watchexec-watchexec-lear.md",
+      "repository": "watchexec-watchexec-learnings",
+      "content_hash": "a9987cef35ff8a884945680d798fe95d625112608ffb46b381f044bc3f106d98",
+      "created_at": "2026-11-21T13:53:49.318Z"
     }
   }
 }

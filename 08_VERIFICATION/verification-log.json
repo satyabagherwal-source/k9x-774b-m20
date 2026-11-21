@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-4PIH",
-    "timestamp": "2026-11-19T09:43:41.609Z",
-    "repository": "vcaesar/riot",
-    "learningId": "learn-github-vcaesar-riot",
-    "contentHash": "5b6318c99d555a4da9abbd33822ffa339293bd09f5c26e02e3f76bdd6e993d49",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-4TZN",
-    "timestamp": "2026-11-19T09:43:47.411Z",
-    "repository": "arkivanov/Decompose",
-    "learningId": "learn-github-arkivanov-decompose",
-    "contentHash": "ca5c1fee2164b84c239e248740eac4df1b12e3cd890e4cad6bc676007ca41a29",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-4VAA",
-    "timestamp": "2026-11-19T09:43:49.090Z",
-    "repository": "open-policy-agent/gatekeeper",
-    "learningId": "learn-github-open-policy-agent-gatekeeper",
-    "contentHash": "c893eff2055be08b39e25f8d0582de7c3cfa0ca2b7c1882d4f91a6a0337b44b6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-4YT5",
-    "timestamp": "2026-11-19T09:43:53.657Z",
-    "repository": "meilisearch/meilisearch",
-    "learningId": "learn-github-meilisearch-meilisearch",
-    "contentHash": "6c9e0fd78d37e5911842ce58955eeb0447b0d9f36b4fd968c385ea1cbe54dbf2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-518E",
-    "timestamp": "2026-11-19T09:43:56.798Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "f98bdc43b5f70eb5514845b13b85b26cc7a3e42b119f06d6d2119497ecdd3cb1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-9RJT",
     "timestamp": "2026-11-19T10:15:37.145Z",
     "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -7492,6 +7417,81 @@
     "contentHash": "39b266b2f16abcb3d890b12113fb12ea4601637d8580adece257176551229597",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-XO6E",
+    "timestamp": "2026-11-21T13:53:30.278Z",
+    "repository": "Qwen/Qwen3-14B",
+    "learningId": "learn-huggingface-qwen-qwen3-14b",
+    "contentHash": "3ca3ef8dcebaafe22449a1f5c2a6ca3a7025dd889fbcbcdd818eefeabf6dfe28",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-XP48",
+    "timestamp": "2026-11-21T13:53:31.496Z",
+    "repository": "watchexec/watchexec",
+    "learningId": "learn-github-watchexec-watchexec",
+    "contentHash": "ab79c0af4b8083275d9a9b35d971f85cc9fe3429af433995706485a8f3b32eb7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-XT1K",
+    "timestamp": "2026-11-21T13:53:36.584Z",
+    "repository": "karakeep-app/karakeep",
+    "learningId": "learn-github-karakeep-app-karakeep",
+    "contentHash": "f49b5f4d83a9336061c760bb372d7353d9cc6e43ff4ccef6fd677e2a7f2092fb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-XVCS",
+    "timestamp": "2026-11-21T13:53:39.580Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "b9faaf523c862198f4cc48e63ad34a5292f6485d150570145fe94d77dcb7ec6d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-XZWC",
+    "timestamp": "2026-11-21T13:53:45.468Z",
+    "repository": "ydb-platform/ydb",
+    "learningId": "learn-github-ydb-platform-ydb",
+    "contentHash": "ae476937641039d2295bbcf52484dbd0345eb0a7133e631a30aea0103212a146",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -11809,3 +11809,8 @@
 | `CYCLE-20261121-4AM7` | `2026-11-21T13:30:39.679Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`a1cdc9c0...`) |
 | `CYCLE-20261121-4D5P` | `2026-11-21T13:30:42.973Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9787` | Yes (`020a5955...`) |
 | `CYCLE-20261121-4D6R` | `2026-11-21T13:30:43.011Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`39b266b2...`) |
+| `CYCLE-20261121-XO6E` | `2026-11-21T13:53:30.278Z` | `Qwen/Qwen3-14B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md` | Yes (`3ca3ef8d...`) |
+| `CYCLE-20261121-XP48` | `2026-11-21T13:53:31.496Z` | `watchexec/watchexec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9788` | Yes (`ab79c0af...`) |
+| `CYCLE-20261121-XT1K` | `2026-11-21T13:53:36.584Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9789` | Yes (`f49b5f4d...`) |
+| `CYCLE-20261121-XVCS` | `2026-11-21T13:53:39.580Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9790` | Yes (`b9faaf52...`) |
+| `CYCLE-20261121-XZWC` | `2026-11-21T13:53:45.468Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9791` | Yes (`ae476937...`) |

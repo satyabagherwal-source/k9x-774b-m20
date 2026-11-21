@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:46:33.698Z",
+  "timestamp": "2026-11-21T13:53:49.036Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-watchexec-watchexec-learnings",
+  "learning_id": "LEARN-EVO-watchexec-watchexec-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [watchexec-watchexec-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:46:33.698Z`  
-> **Learning ID**: `LEARN-REEXTRACT-watchexec-watchexec-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-21T13:53:49.036Z`  
+> **Learning ID**: `LEARN-EVO-watchexec-watchexec-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/watchexec-watchexec-learnings.md`  
 > **Source**: github ([https://github.com/watchexec/watchexec](https://github.com/watchexec/watchexec))  
-> **Source Version**: `f71af3b1`  
+> **Source Version**: `3e5e4d4a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T22:59:02.560Z  
+> **Timestamp**: 2026-11-21T13:53:30.442Z  
 > **Learning ID**: `learn-github-watchexec-watchexec`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/watchexec-watchexec-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/watchexec/watchexec](https://github.com/watchexec/watchexec))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T22:59:01.470Z  
+> **Harvest Timestamp**: 2026-11-21T13:53:30.435Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Executes commands in response to file modifications
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7268 stars
+- **Stars / Engagement**: 7309 stars
 
 ---
 
@@ -1109,363 +1109,429 @@ impl GitInfo {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f71af3b1` (2026-11-03)
-**Commit Message**: docs: fix dead source file and CI badge links (#1167)
+### Incident Patch 1: `4e2c9ce7` (2026-11-13)
+**Commit Message**: fix(cli): trim the extensions given to --exts
 
-**File**: `CONTRIBUTING.md` (modified, +6/-10)
-```diff
-@@ -80,7 +80,7 @@ These are generic guides for implementing specific bits of functionality.
- ### Adding an event source
- 
- - add a worker for "sourcing" events. Looking at the [signal source
--  worker](https://github.com/watchexec/watchexec/blob/main/crates/lib/src/signal/source.rs) is
-+  worker](https://github.com/watchexec/watchexec/blob/main/crates/lib/src/sources/signal.rs) is
-   probably easiest to get started here.
- 
- - because we may not always want to enable this event source, and just to be flexible, add [runtime
-@@ -91,27 +91,23 @@ These are generic guides for implementing specific bits of functionality.
-   configures the most common usecase.
- 
- - because watchexec is reconfigurable, in the worker you'll need to react to config changes. Look at
--  how the [fs worker does it](https://github.com/watchexec/watchexec/blob/main/crates/lib/src/fs.rs)
--  for reference.
-+  how the [fs worker does
-+  it](https://github.com/watchexec/watchexec/blob/main/crates/lib/src/sources/fs.rs) for reference.
- 
- - you may need to [add to the event tag
--  enum](https://github.com/watchexec/watchexec/blob/main/crates/lib/src/event.rs).
--
--- if you do, you should [add support to the "tagged
--  filterer"](https://github.com/watchexec/watchexec/blob/main/crates/filterer/tagged/src/parse.rs),
--  but this can be done in follow-up work.
-+  enum](https://github.com/watchexec/watchexec/blob/main/crates/events/src/event.rs).
- 
- ### Process a new event in the CLI
- 
- - add an option to the
-   [args](https://github.com/watchexec/watchexec/blob/main/crates/cli/src/args.rs) if necessary
- 
- - add to the [runtime
--  config](https://github.com/watchexec/watchexec/blob/main/crates/cli/src/config/runtime.rs) when
-+  config](https://github.com/watchexec/watchexec/blob/main/crates/cli/src/config.rs) when
-   the option is present
- 
- - process relevant events [in the action
--  handler](https://github.com/watchexec/watchexec/blob/main/crates/cli/src/config/runtime.rs)
-+  handler](https://github.com/watchexec/watchexec/blob/main/crates/cli/src/config.rs)
- 
- ---
- vim: tw=100
-```
+`--exts` is split on commas only, so `-e "rs, txt"` filtered on "rs"
+and " txt", and changes to .txt files were silently ignored. A trailing
+comma also added an empty extension that no file has.
 
-**File**: `crates/filterer/globset/README.md` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- [![Crates.io page](https://badgen.net/crates/v/watchexec-filterer-globset)](https://crates.io/crates/watchexec-filterer-globset)
- [![API Docs](https://docs.rs/watchexec-filterer-globset/badge.svg)][docs]
- [![Crate license: Apache 2.0](https://badgen.net/badge/license/Apache%202.0)][license]
--[![CI status](https://github.com/watchexec/watchexec/actions/workflows/check.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/check.yml)
-+[![CI status](https://github.com/watchexec/watchexec/actions/workflows/tests.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/tests.yml)
- 
- # Watchexec filterer: globset
- 
-```
+Trim each extension and drop the empty ones before stripping the
+leading dot.
 
-**File**: `crates/filterer/ignore/README.md` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- [![Crates.io page](https://badgen.net/crates/v/watchexec-filterer-ignore)](https://crates.io/crates/watchexec-filterer-ignore)
- [![API Docs](https://docs.rs/watchexec-filterer-ignore/badge.svg)][docs]
- [![Crate license: Apache 2.0](https://badgen.net/badge/license/Apache%202.0)][license]
--[![CI status](https://github.com/watchexec/watchexec/actions/workflows/check.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/check.yml)
-+[![CI status](https://github.com/watchexec/watchexec/actions/workflows/tests.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/tests.yml)
- 
- # Watchexec filterer: ignore
- 
-```
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `crates/ignore-files/README.md` (modified, +1/-1)
+**File**: `crates/cli/src/filterer.rs` (modified, +59/-5)
 ```diff
-@@ -1,7 +1,7 @@
- [![Crates.io page](https://badgen.net/crates/v/ignore-files)](https://crates.io/crates/ignore-files)
- [![API Docs](https://docs.rs/ignore-files/badge.svg)][docs]
- [![Crate license: Apache 2.0](https://badgen.net/badge/license/Apache%202.0)][license]
--[![CI status](https://github.com/watchexec/watchexec/actions/workflows/check.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/check.yml)
-+[![CI status](https://github.com/watchexec/watchexec/actions/workflows/tests.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/tests.yml)
+@@ -129,11 +129,7 @@ impl WatchexecFilterer {
+ 				.map(|f| (f.to_owned(), Some(workdir.clone()))),
+ 		);
  
- # Ignore files
+-		let exts = args
+-			.filtering
+-			.filter_extensions
+-			.iter()
+-			.map(|e| OsString::from(e.strip_prefix('.').unwrap_or(e)));
++		let exts = extensions_to_filter(&args.filtering.filter_extensions);
  
-```
-
-**File**: `crates/lib/README.md` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- [![Crates.io page](https://badgen.net/crates/v/watchexec)](https://crates.io/crates/watchexec)
- [![API Docs](https://docs.rs/watchexec/badge.svg)][docs]
- [![Crate license: Apache 2.0](https://badgen.net/badge/license/Apache%202.0)][license]
--[![CI status](https://github.com/watchexec/watchexec/actions/workflows/check.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/check.yml)
-+[![CI status](https://github.com/watchexec/watchexec/actions/workflows/tests.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/tests.yml)
+ 		info!("initialising Globset filterer");
+ 		Ok(Arc::new(Self {
+@@ -157,6 +153,19 @@ impl WatchexecFilterer {
+ 	}
+ }
  
- # Watchexec library
++/// The extensions given to `--exts`, without their leading dot. The option is split on commas
++/// only, so `-e "rs, txt"` gives " txt": trim it, and drop the empty entries that a trailing comma
++/// leaves, as no file has an empty extension.
++fn extensions_to_filter(extensions: &[String]) -> Vec<OsString> {
++	extensions
++		.iter()
++		.map(|e| e.trim())
++		.map(|e| e.strip_prefix('.').unwrap_or(e))
++		.filter(|e| !e.is_empty())
++		.map(OsString::from)
++		.collect()
++}
++
+ async fn read_filter_file(path: &Path) -> Result<Vec<(String, Option<PathBuf>)>> {
+ 	let _span = trace_span!("loading filter file", ?path).entered();
  
-```
-
-**File**: `crates/project-origins/README.md` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- [![Crates.io page](https://badgen.net/crates/v/project-origins)](https://crates.io/crates/project-origins)
- [![API Docs](https://docs.rs/project-origins/badge.svg)][docs]
- [![Crate license: Apache 2.0](https://badgen.net/badge/license/Apache%202.0)][license]
--[![CI status](https://github.com/watchexec/watchexec/actions/workflows/check.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/check.yml)
-+[![CI status](https://github.com/watchexec/watchexec/actions/workflows/tests.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/tests.yml)
+@@ -194,6 +203,51 @@ mod tests {
+ 	use super::*;
+ 	use watchexec_events::FileType;
  
- # Project origins
- 
-```
-
-**File**: `crates/supervisor/README.md` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- [![Crates.io page](https://badgen.net/crates/v/watchexec-supervisor)](https://crates.io/crates/watchexec-supervisor)
- [![API Docs](https://docs.rs/watchexec-supervisor/badge.svg)][docs]
- [![Crate license: Apache 2.0](https://badgen.net/badge/license/Apache%202.0)][license]
--[![CI status](https://github.com/watchexec/watchexec/actions/workflows/check.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/check.yml)
-+[![CI status](https://github.com/watchexec/watchexec/actions/workflows/tests.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/tests.yml)
- 
- # Supervisor
- 
++	#[test]
++	fn extensions_are_trimmed_and_empty_ones_dropped() {
++		let extensions = ["rs", " txt", ".md ", "", " ", "tar.gz"]
++			.map(String::from)
++			.to_vec();
++		assert_eq!(
++			extensions_to_filter(&extensions),
++			["rs", "txt", "md", "tar.gz"].map(OsString::from)
++		);
++	}
++
++	#[tokio::test]
++	async fn an_extension_after_a_comma_and_a_space_still_matches() {
++		let origin = dunce::canonicalize(".").unwrap();
++		// `-e "rs, txt"` is split on the comma only
++		let extensions = ["rs", " txt"].map(String::from).to_vec();
++		let filterer = GlobsetFilterer::new(
++			&origin,
++			Vec::<(String, Option<PathBuf>)>::new(),
++			Vec::<(String, Option<PathBuf>)>::new(),
++			Vec::<PathBuf>::new(),
++			Vec::<ignore_files::IgnoreFile>::new(),
++			extensions_to_filter(&extensions),
++		)
++		.await
++		.unwrap();
++		let event = |name: &str| Event {
++			tags: vec![Tag::Path {
++				path: origin.join(name),
++				file_type: Some(FileType::File),
++			}],
++			metadata: Default::default(),
++		};
++
++		assert!(filterer
++			.check_event(&event("notes.txt"), Priority::Normal)
++			.unwrap());
++		assert!(filterer
++			.check_event(&event("main.rs"), Priority::Normal)
++			.unwrap());
++		assert!(!filterer
++			.check_event(&event("image.png"), Priority::Normal)
++			.unwrap());
++	}
++
+ 	#[tokio::test]
+ 	async fn normalised_watch_root_whitelist_overrides_event_ignore() {
+ 		let origin = dunce::canonicalize(".").unwrap();
 ```
 
 ---
 
-### Incident Patch 2: `ac4f11fd` (2026-11-03)
-**Commit Message**: fix: allowlist .gitignore pruning at the project root (#1165)
+### Incident Patch 2: `c3fbfe64` (2026-11-21)
+**Commit Message**: fix: make events on watched directory roots still match filters (#1182)
 
-**File**: `crates/filterer/globset/tests/filtering.rs` (modified, +40/-0)
+Regression introduced in 2.7.0
+
+**File**: `crates/filterer/globset/src/lib.rs` (modified, +78/-60)
 ```diff
-@@ -87,6 +87,46 @@ async fn source_checks_ignore_files() {
- 	assert_source_dir(&filterer, "ignored/nested", false);
+@@ -64,6 +64,8 @@ impl GlobsetFilterer {
+ 	/// empty, only the ignore list will be used. If both lists are empty, the filter always passes.
+ 	/// Whitelist is used to automatically accept files even if they would be filtered out
+ 	/// otherwise. It is passed as an absolute path to the file that should not be filtered.
++	/// Events for a whitelisted directory bypass ignores, but must still match the filters and
++	/// extensions.
+ 	///
+ 	/// Ignores and filters are passed as a tuple of the glob pattern as a string and an optional
+ 	/// path of the folder the pattern should apply in (e.g. the folder a gitignore file is in).
+@@ -177,6 +179,66 @@ impl GlobsetFilterer {
+ 
+ 		self.ignores.matched(path, is_dir).is_ignore()
+ 	}
++
++	/// Return whether a path matches the positive filters and extensions.
++	///
++	/// Passes when neither are configured.
++	fn matches_filters(&self, path: &Path, is_dir: bool) -> bool {
++		let mut filtered = false;
++		if self.filters.num_ignores() > 0 {
++			trace!("running through glob filters");
++			filtered = true;
++
++			if self.filters.matched(path, is_dir).is_ignore() {
++				trace!("allowed by globset filters");
++				return true;
++			}
++
++			// Watchexec 1.x bug, TODO remove at 2.0
++			#[cfg(unix)]
++			if let Ok(based) = path.strip_prefix(&self.origin) {
++				let rebased = {
++					use std::path::MAIN_SEPARATOR;
++					let mut b = self.origin.clone().into_os_string();
++					b.push(PathBuf::from(String::from(MAIN_SEPARATOR)));
++					b.push(PathBuf::from(String::from(MAIN_SEPARATOR)));
++					b.push(based.as_os_str());
++					b
++				};
++
++				trace!(?rebased, "testing on rebased path, 1.x bug compat (#258)");
++				if self.filters.matched(rebased, is_dir).is_ignore() {
++					trace!("allowed by globset filters, 1.x bug compat (#258)");
++					return true;
++				}
++			}
++		}
++
++		if !self.extensions.is_empty() {
++			trace!("running through extension filters");
++			filtered = true;
++
++			if is_dir {
++				trace!("failed on extension check due to being a dir");
++				return false;
++			}
++
++			if let Some(ext) = path.extension() {
++				if self.extensions.iter().any(|e| e == ext) {
++					trace!("allowed by extension filter");
++					return true;
++				}
++			} else {
++				trace!(
++					?path,
++					"failed on extension check due to having no extension"
++				);
++				return false;
++			}
++		}
++
++		!filtered
++	}
+ }
+ 
+ impl Filterer for GlobsetFilterer {
+@@ -221,13 +283,22 @@ impl Filterer for GlobsetFilterer {
+ 
+ 		{
+ 			trace!("checking internal whitelist");
+-			// Ideally check path equality backwards for better perf
+-			// There could be long matching prefixes so we will exit late
+-			if !self.whitelist.is_empty()
+-				&& event.paths().any(|(path, _)| self.whitelist.contains(path))
++			for (path, file_type) in event
++				.paths()
++				.filter(|(path, _)| self.whitelist.contains(*path))
+ 			{
+-				trace!("internal whitelist filterer matched (success)");
+-				return Ok(true);
++				if !matches!(file_type, Some(FileType::Dir)) {
++					trace!("internal whitelist filterer matched (success)");
++					return Ok(true);
++				}
++
++				// A whitelisted directory (an exact watch root) bypasses ignores only. It must
++				// still match the positive filters and extensions, or every event reported on
++				// the root itself (such as an FSEvents rescan) would pass a filter like `dir/**`.
++				if self.matches_filters(path, true) {
++					trace!("internal whitelist matched directory allowed by filters (success)");
++					return Ok(true);
++				}
+ 			}
+ 		}
+ 
+@@ -257,60 +328,7 @@ impl Filterer for GlobsetFilterer {
+ 					return false;
+ 				}
+ 
+-				let mut filtered = false;
+-				if self.filters.num_ignores() > 0 {
+-					trace!("running through glob filters");
+-					filtered = true;
+-
+-					if self.filters.matched(path, is_dir).is_ignore() {
+-						trace!("allowed by globset filters");
+-						return true;
+-					}
+-
+-					// Watchexec 1.x bug, TODO remove at 2.0
+-					#[cfg(unix)]
+-					if let Ok(based) = path.strip_prefix(&self.origin) {
+-						let rebased = {
+-							use std::path::MAIN_SEPARATOR;
+-							let mut b = self.origin.clone().into_os_string();
+-							b.push(PathBuf::from(String::from(MAIN_SEPARATOR)));
+-							b.push(PathBuf::from(String::from(MAIN_SEPARATOR)));
+-							b.push(based.as_os_str());
+-							b
+-						};
+-
+-						trace!(?rebased, "testing on rebased path, 1.x bug compat (#258)");
+-						if self.filters.matched(rebased, is_dir).is_ignore() {
+-							trace!("allowed by globset filters, 1.x bug compat (#258)");
+-							return true;
+-						}
+-					}
+-				}
+-
+-				if !self.extensions.is_empty() {
+-					trace!("running through extension filters");
+-					filtered = true;
+-
+-					if is_dir {
+-						trace!("failed on extension check due to being a dir");
+-						return false;
+-					}
+-
+-					if let Some(ext) = path.extension() {
+-						if self.extensions.iter().any(|e| e == ext) {
+-							trace!("allowed by extension filter");
+-							return true;
+-						}
+-					} else {
+-						trace!(
+-							?path,
+-							"failed 
+```
+
+**File**: `crates/filterer/globset/tests/filtering.rs` (modified, +42/-0)
+```diff
+@@ -922,6 +922,48 @@ async fn whitelist_overrides_ignore() {
+ 	filterer.dir_doesnt_pass("raw/prunes");
  }
  
 +#[tokio::test]
-+async fn source_checks_allowlist_gitignore() {
-+	let project = tempfile::tempdir().unwrap();
-+	let canonical_origin = dunce::canonicalize(project.path()).unwrap();
-+	let origin = canonical_origin.as_path();
-+	std::fs::create_dir(origin.join("src")).unwrap();
-+	let ignore_path = origin.join(".gitignore");
-+	std::fs::write(&ignore_path, "*\n!src/\n!src/*.rs\n").unwrap();
-+	let filterer = GlobsetFilterer::new(
-+		origin,
-+		std::iter::empty::<(String, Option<PathBuf>)>(),
-+		std::iter::empty::<(String, Option<PathBuf>)>(),
-+		std::iter::empty::<PathBuf>(),
-+		[IgnoreFile {
-+			path: ignore_path,
-+			applies_in: Some(origin.to_owned()),
-+			applies_to: None,
-+		}],
-+		std::iter::empty::<OsString>(),
-+	)
-+	.await
-+	.unwrap();
++async fn whitelisted_dir_still_obeys_filters() {
++	let origin = std::fs::canonicalize(".").unwrap();
++	let root = origin.join("crates").display().to_string();
++	let filterer = filt(&["crates/**"], &[], &[&root], &[], &[]).await;
 +
-+	assert!(filterer.check_dir(origin).unwrap());
-+	assert!(filterer.check_dir(&origin.join("src")).unwrap());
-+	assert!(!filterer.check_dir(&origin.join("other")).unwrap());
-+	assert!(filterer
-+		.check_path(
-+			origin.join("src/main.rs"),
-+			Some(watchexec_events::FileType::File)
-+		)
-+		.unwrap());
-+	assert!(!filterer
-+		.check_path(
-+			origin.join("src/main.txt"),
-+			Some(watchexec_events::FileType::File)
-+		)
-+		.unwrap());
++	// Events on the watched root itself, e.g. an FSEvents rescan or an mtime change, don't
++	// match `crates/**`.
++	filterer.dir_doesnt_pass("crates");
++	filterer.file_does_pass("crates/a/lib.rs");
++}
++
++#[tokio::test]
++async fn whitelisted_dir_still_obeys_extensions() {
++	let origin = std::fs::canonicalize(".").unwrap();
++	let root = origin.join("crates").display().to_string();
++	let filterer = filt(&[], &[], &[&root], &["rs"], &[]).await;
++
++	filterer.dir_doesnt_pass("crates");
++	filterer.file_does_pass("crates/a/lib.rs");
++}
++
++#[tokio::test]
++async fn whitelisted_dir_matching_filters_overrides_ignore() {
++	let origin = std::fs::canonicalize(".").unwrap();
++	let root = origin.join("prunes").display().to_string();
++	let filterer = filt(&["prunes"], &["**/prunes"], &[&root], &[], &[]).await;
++
++	filterer.dir_does_pass("prunes");
++	filterer.dir_doesnt_pass("apples/prunes");
++}
++
++#[tokio::test]
++async fn whitelisted_file_bypasses_filters() {
++	let origin = std::fs::canonicalize(".").unwrap();
++	let file = origin.join("Cargo.toml").display().to_string();
++	let filterer = filt(&["crates/**"], &[], &[&file], &["rs"], &[]).await;
++
++	filterer.file_does_pass("Cargo.toml");
++	filterer.file_doesnt_pass("Cargo.lock");
 +}
 +
  #[tokio::test]
- async fn source_checks_git_boundary_and_descendants() {
- 	let filterer = filt(&[], &["**/.git", "**/.git/**"], &[], &[], &[]).await;
-```
-
-**File**: `crates/ignore-files/src/filter.rs` (modified, +7/-1)
-```diff
-@@ -434,7 +434,9 @@ impl IgnoreFilter {
- 			.map(|_| {
- 				path.ancestors()
- 					.skip(1)
--					.take_while(|ancestor| ancestor.starts_with(&self.origin))
-+					.take_while(|ancestor| {
-+						*ancestor != self.origin && ancestor.starts_with(&self.origin)
-+					})
- 					.collect::<Vec<_>>()
- 			})
- 			.unwrap_or_default();
-@@ -457,6 +459,10 @@ impl IgnoreFilter {
- 	/// the latter handles events with multiple associated paths.
- 	pub fn check_dir(&self, path: &Path) -> bool {
- 		let _span = trace_span!("check_dir", ?path).entered();
-+		// Ignore patterns in the project root apply to its contents, not the root itself.
-+		if simplify_path(path) == self.origin {
-+			return true;
-+		}
- 
- 		trace!("checking against compiled ignore files");
- 		match self.match_path_or_ancestors(path, true) {
+ async fn whitelist_overrides_ignore_files() {
+ 	let mut ignore_file = tempfile::NamedTempFile::new().unwrap();
 ```
 
 ---
 
-### Incident Patch 3: `f6727c3b` (2026-10-30)
-**Commit Message**: docs: fix dead source file and CI badge links
+### Incident Patch 3: `3e5e4d4a` (2026-11-21)
+**Commit Message**: fix(cli): trim the extensions given to --exts (#1180)
 
-CONTRIBUTING.md pointed at source files that were moved or removed
-(signal/source.rs, lib/src/fs.rs, lib/src/event.rs, the tagged
-filterer, cli/src/config/runtime.rs). Point them at the current files.
-
-The crate READMEs linked a check.yml workflow that no longer exists, so
-the CI badge 404'd. Use tests.yml, like the root README does.
-
-Assisted-by: AI coding assistant
-
-**File**: `CONTRIBUTING.md` (modified, +9/-9)
+**File**: `crates/cli/src/filterer.rs` (modified, +59/-5)
 ```diff
-@@ -80,7 +80,7 @@ These are generic guides for implementing specific bits of functionality.
- ### Adding an event source
+@@ -129,11 +129,7 @@ impl WatchexecFilterer {
+ 				.map(|f| (f.to_owned(), Some(workdir.clone()))),
+ 		);
  
- - add a worker for "sourcing" events. Looking at the [signal source
--  worker](https://github.com/watchexec/watchexec/blob/main/crates/lib/src/signal/source.rs) is
-+  worker](https://github.com/watchexec/watchexec/blob/main/crates/lib/src/sources/signal.rs) is
-   probably easiest to get started here.
+-		let exts = args
+-			.filtering
+-			.filter_extensions
+-			.iter()
+-			.map(|e| OsString::from(e.strip_prefix('.').unwrap_or(e)));
++		let exts = extensions_to_filter(&args.filtering.filter_extensions);
  
- - because we may not always want to enable this event source, and just to be flexible, add [runtime
-@@ -91,27 +91,27 @@ These are generic guides for implementing specific bits of functionality.
-   configures the most common usecase.
+ 		info!("initialising Globset filterer");
+ 		Ok(Arc::new(Self {
+@@ -157,6 +153,19 @@ impl WatchexecFilterer {
+ 	}
+ }
  
- - because watchexec is reconfigurable, in the worker you'll need to react to config changes. Look at
--  how the [fs worker does it](https://github.com/watchexec/watchexec/blob/main/crates/lib/src/fs.rs)
--  for reference.
-+  how the [fs worker does
-+  it](https://github.com/watchexec/watchexec/blob/main/crates/lib/src/sources/fs.rs) for reference.
++/// The extensions given to `--exts`, without their leading dot. The option is split on commas
++/// only, so `-e "rs, txt"` gives " txt": trim it. Empty entries, such as the one a trailing comma
++/// leaves, are dropped: matching files whose name ends with a dot (`file.`) is not supported.
++fn extensions_to_filter(extensions: &[String]) -> Vec<OsString> {
++	extensions
++		.iter()
++		.map(|e| e.trim())
++		.map(|e| e.strip_prefix('.').unwrap_or(e))
++		.filter(|e| !e.is_empty())
++		.map(OsString::from)
++		.collect()
++}
++
+ async fn read_filter_file(path: &Path) -> Result<Vec<(String, Option<PathBuf>)>> {
+ 	let _span = trace_span!("loading filter file", ?path).entered();
  
- - you may need to [add to the event tag
--  enum](https://github.com/watchexec/watchexec/blob/main/crates/lib/src/event.rs).
-+  enum](https://github.com/watchexec/watchexec/blob/main/crates/events/src/event.rs).
+@@ -194,6 +203,51 @@ mod tests {
+ 	use super::*;
+ 	use watchexec_events::FileType;
  
--- if you do, you should [add support to the "tagged
--  filterer"](https://github.com/watchexec/watchexec/blob/main/crates/filterer/tagged/src/parse.rs),
--  but this can be done in follow-up work.
-+- if you do, you should [add support to the CLI's
-+  filterer](https://github.com/watchexec/watchexec/blob/main/crates/cli/src/filterer.rs), but this
-+  can be done in follow-up work.
- 
- ### Process a new event in the CLI
- 
- - add an option to the
-   [args](https://github.com/watchexec/watchexec/blob/main/crates/cli/src/args.rs) if necessary
- 
- - add to the [runtime
--  config](https://github.com/watchexec/watchexec/blob/main/crates/cli/src/config/runtime.rs) when
-+  config](https://github.com/watchexec/watchexec/blob/main/crates/cli/src/config.rs) when
-   the option is present
- 
- - process relevant events [in the action
--  handler](https://github.com/watchexec/watchexec/blob/main/crates/cli/src/config/runtime.rs)
-+  handler](https://github.com/watchexec/watchexec/blob/main/crates/cli/src/config.rs)
- 
- ---
- vim: tw=100
-```
-
-**File**: `crates/filterer/globset/README.md` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- [![Crates.io page](https://badgen.net/crates/v/watchexec-filterer-globset)](https://crates.io/crates/watchexec-filterer-globset)
- [![API Docs](https://docs.rs/watchexec-filterer-globset/badge.svg)][docs]
- [![Crate license: Apache 2.0](https://badgen.net/badge/license/Apache%202.0)][license]
--[![CI status](https://github.com/watchexec/watchexec/actions/workflows/check.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/check.yml)
-+[![CI status](https://github.com/watchexec/watchexec/actions/workflows/tests.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/tests.yml)
- 
- # Watchexec filterer: globset
- 
-```
-
-**File**: `crates/filterer/ignore/README.md` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- [![Crates.io page](https://badgen.net/crates/v/watchexec-filterer-ignore)](https://crates.io/crates/watchexec-filterer-ignore)
- [![API Docs](https://docs.rs/watchexec-filterer-ignore/badge.svg)][docs]
- [![Crate license: Apache 2.0](https://badgen.net/badge/license/Apache%202.0)][license]
--[![CI status](https://github.com/watchexec/watchexec/actions/workflows/check.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/check.yml)
-+[![CI status](https://github.com/watchexec/watchexec/actions/workflows/tests.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/tests.yml)
- 
- # Watchexec filterer: ignore
- 
-```
-
-**File**: `crates/ignore-files/README.md` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- [![Crates.io page](https://badgen.net/crates/v/ignore-files)](https://crates.io/crates/ignore-files)
- [![API Docs](https://docs.rs/ignore-files/badge.svg)][docs]
- [![Crate license: Apache 2.0](https://badgen.net/badge/license/Apache%202.0)][license]
--[![CI status](https://github.com/watchexec/watchexec/actions/workflows/check.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/check.yml)
-+[![CI status](https://github.com/watchexec/watchexec/actions/workflows/tests.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/tests.yml)
- 
- # Ignore files
- 
-```
-
-**File**: `crates/lib/README.md` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- [![Crates.io page](https://badgen.net/crates/v/watchexec)](https://crates.io/crates/watchexec)
- [![API Docs](https://docs.rs/watchexec/badge.svg)][docs]
- [![Crate license: Apache 2.0](https://badgen.net/badge/license/Apache%202.0)][license]
--[![CI status](https://github.com/watchexec/watchexec/actions/workflows/check.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/check.yml)
-+[![CI status](https://github.com/watchexec/watchexec/actions/workflows/tests.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/tests.yml)
- 
- # Watchexec library
- 
-```
-
-**File**: `crates/project-origins/README.md` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- [![Crates.io page](https://badgen.net/crates/v/project-origins)](https://crates.io/crates/project-origins)
- [![API Docs](https://docs.rs/project-origins/badge.svg)][docs]
- [![Crate license: Apache 2.0](https://badgen.net/badge/license/Apache%202.0)][license]
--[![CI status](https://github.com/watchexec/watchexec/actions/workflows/check.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/check.yml)
-+[![CI status](https://github.com/watchexec/watchexec/actions/workflows/tests.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/tests.yml)
- 
- # Project origins
- 
-```
-
-**File**: `crates/supervisor/README.md` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- [![Crates.io page](https://badgen.net/crates/v/watchexec-supervisor)](https://crates.io/crates/watchexec-supervisor)
- [![API Docs](https://docs.rs/watchexec-supervisor/badge.svg)][docs]
- [![Crate license: Apache 2.0](https://badgen.net/badge/license/Apache%202.0)][license]
--[![CI status](https://github.com/watchexec/watchexec/actions/workflows/check.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/check.yml)
-+[![CI status](https://github.com/watchexec/watchexec/actions/workflows/tests.yml/badge.svg)](https://github.com/watchexec/watchexec/actions/workflows/tests.yml)
- 
- # Supervisor
- 
++	#[test]
++	fn extensions_are_trimmed_and_empty_ones_dropped() {
++		let extensions = ["rs", " txt", ".md ", "", " ", "tar.gz"]
++			.map(String::from)
++			.to_vec();
++		assert_eq!(
++			extensions_to_filter(&extensions),
++			["rs", "txt", "md", "tar.gz"].map(OsString::from)
++		);
++	}
++
++	#[tokio::test]
++	async fn an_extension_after_a_comma_and_a_space_still_matches() {
++		let origin = dunce::canonicalize(".").unwrap();
++		// `-e "rs, txt"` is split on the comma only
++		let extensions = ["rs", " txt"].map(String::from).to_vec();
++		let filterer = GlobsetFilterer::new(
++			&origin,
++			Vec::<(String, Option<PathBuf>)>::new(),
++			Vec::<(String, Option<PathBuf>)>::new(),
++			Vec::<PathBuf>::new(),
++			Vec::<ignore_files::IgnoreFile>::new(),
++			extensions_to_filter(&extensions),
++		)
++		.await
++		.unwrap();
++		let event = |name: &str| Event {
++			tags: vec![Tag::Path {
++				path: origin.join(name),
++				file_type: Some(FileType::File),
++			}],
++			metadata: Default::default(),
++		};
++
++		assert!(filterer
++			.check_event(&event("notes.txt"), Priority::Normal)
++			.unwrap());
++		assert!(filterer
++			.check_event(&event("main.rs"), Priority::Normal)
++			.unwrap());
++		assert!(!filterer
++			.check_event(&event("image.png"), Priority::Normal)
++			.unwrap());
++	}
++
+ 	#[tokio::test]
+ 	async fn normalised_watch_root_whitelist_overrides_event_ignore() {
+ 		let origin = dunce::canonicalize(".").unwrap();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1167** (2026-11-03): docs: fix dead source file and CI badge links (@sarankumar1325)
-- **PR #1166** (2026-11-03): chore(deps): run Dependabot from the Cargo workspace root (@mishalshanavas)
-- **PR #1165** (2026-11-03): Fix allowlist .gitignore pruning at the project root (@iBreaker)
-- **PR #1163** (closed): chore(deps): bump release-plz/action from 0.5.139 to 0.5.145 (@dependabot[bot])
-- **PR #1162** (closed): chore(deps): update gix-config requirement from 0.61.0 to 0.62.1 in /crates/ignore-files (@dependabot[bot])
-- **PR #1161** (closed): chore(deps): bump taiki-e/install-action from 2.87.22 to 2.87.31 (@dependabot[bot])
+- **PR #1183** (2026-11-21): Fix allowlist gitignores at any level (@noc7c9)
+- **PR #1182** (2026-11-21): fix: make events on watched directory roots still match filters (@akesson)
+- **PR #1180** (2026-11-21): fix(cli): trim the extensions given to --exts (@HarpeLm)
+- **PR #1178** (closed): chore(deps): bump taiki-e/install-action from 2.87.22 to 2.90.3 (@dependabot[bot])
+- **PR #1177** (closed): chore(deps): bump taiki-e/install-action from 2.87.22 to 2.90.0 (@dependabot[bot])
+- **PR #1169** (closed): chore(deps): bump taiki-e/install-action from 2.87.22 to 2.88.1 (@dependabot[bot])
 
 ---
 
@@ -1485,45 +1551,69 @@ Assisted-by: AI coding assistant
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: fix dead source file and CI badge links (#1167)
+## X. cli): trim the extensions given to --exts
 
 **RULE**:
-When implementing operations in `CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in watchexec/watchexec. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/cli/src/filterer.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in watchexec/watchexec. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f71af3b1`: docs: fix dead source file and CI badge links (#1167). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4e2c9ce7`: cli): trim the extensions given to --exts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CONTRIBUTING.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/cli/src/filterer.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  worker](https://github.com/watchexec/watchexec/blob/main/crates/lib/src/sources/signal.rs) is
-  how the [fs worker does
-  it](https://github.com/watchexec/watchexec/blob/main/crates/lib/src/sources/fs.rs) for reference.
-  enum](https://github.com/watchexec/watchexec/blob/main/crates/events/src/event.rs).
-  config](https://github.com/watchexec/watchexec/blob/main/crates/cli/src/config.rs) when
-  handler](https://github.com/watchexec/watchexec/blob/main/crates/cli/src/config.rs)
+		let exts = extensions_to_filter(&args.filtering.filter_extensions);
+/// The extensions given to `--exts`, without their leading dot. The option is split on commas
+/// only, so `-e "rs, txt"` gives " txt": trim it, and drop the empty entries that a trailing comma
+/// leaves, as no file has an empty extension.
+fn extensions_to_filter(extensions: &[String]) -> Vec<OsString> {
+	extensions
+		.iter()
+		.map(|e| e.trim())
+		.map(|e| e.strip_prefix('.').unwrap_or(e))
+		.filter(|e| !e.is_empty())
+		.map(OsString::from)
+		.collect()
+}
+
+	#[test]
+	fn extensions_are_trimmed_and_empty_ones_dropped() {
+		let extensions = ["rs", " txt", ".md ", "", " ", "tar.gz"]
+			.map(String::from)
+			.to_vec();
+		assert_eq!(
+			extensions_to_filter(&extensions),
+			["rs", "txt", "md", "tar.gz"].map(OsString::from)
+		);
+	}
+
+	#[tokio::test]
+	async fn an_extension_after_a_comma_and_a_space_still_matches() {
+		let origin = dunce::canonicalize(".").unwrap();
+		// `-e "rs, txt"` is split on the comma only
+		let extensions = ["rs", " txt"].map(String::from).to_vec();
+		let filterer = GlobsetFilterer::new(
+			&origin,
+			Vec::<(String, Option<PathBuf>)>::new(),
+			Vec::<(String, Option<PathBuf>)>::new(),
+			Vec::<Pa
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-  worker](https://github.com/watchexec/watchexec/blob/main/crates/lib/src/signal/source.rs) is
-  how the [fs worker does it](https://github.com/watchexec/watchexec/blob/main/crates/lib/src/fs.rs)
-  for reference.
-  enum](https://github.com/watchexec/watchexec/blob/main/crates/lib/src/event.rs).
-
-- if you do, you should [add support to the "tagged
-  filterer"](https://github.com/watchexec/watchexec/blob/main/crates/filterer/tagged/src/parse.rs),
-  but this can be done in follow-up work.
-  config](https://github.com/watchexec/watchexec/blob/main/crates/cli/src/config/runtime.rs) when
-  handler](https://github.com/watchexec/watchexec/blob/main/crates/cli/src/config/runtime.rs)
+// Induced defect failure mode:
+		let exts = args
+			.filtering
+			.filter_extensions
+			.iter()
+			.map(|e| OsString::from(e.strip_prefix('.').unwrap_or(e)));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f71af3b1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4e2c9ce7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

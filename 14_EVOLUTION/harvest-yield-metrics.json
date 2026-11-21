@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T13:30:43.058Z",
-  "total_cycles_completed": 11240,
-  "total_learnings_persisted": 11240,
-  "total_rules_promoted": 10589,
+  "last_updated": "2026-11-21T13:53:45.477Z",
+  "total_cycles_completed": 11245,
+  "total_learnings_persisted": 11245,
+  "total_rules_promoted": 10593,
   "history": [
-    {
-      "timestamp": "2026-11-20T17:29:06.418Z",
-      "repository": "ntex-rs/ntex",
-      "learningId": "learn-github-ntex-rs-ntex",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T17:29:08.799Z",
-      "repository": "fb55/css-select",
-      "learningId": "learn-github-fb55-css-select",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T17:29:16.660Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T17:37:13.730Z",
-      "repository": "cheeriojs/dom-serializer",
-      "learningId": "learn-github-cheeriojs-dom-serializer",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T17:37:23.518Z",
-      "repository": "topoteretes/cognee",
-      "learningId": "learn-github-topoteretes-cognee",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T17:45:24.741Z",
       "repository": "siderolabs/talos",
@@ -1403,6 +1368,41 @@
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T13:53:30.288Z",
+      "repository": "Qwen/Qwen3-14B",
+      "learningId": "learn-huggingface-qwen-qwen3-14b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T13:53:31.505Z",
+      "repository": "watchexec/watchexec",
+      "learningId": "learn-github-watchexec-watchexec",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T13:53:36.593Z",
+      "repository": "karakeep-app/karakeep",
+      "learningId": "learn-github-karakeep-app-karakeep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T13:53:39.590Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T13:53:45.477Z",
+      "repository": "ydb-platform/ydb",
+      "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

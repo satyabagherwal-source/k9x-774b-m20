@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T13:30:46.710Z",
+  "updated_at": "2026-11-21T13:53:48.929Z",
   "stats": {
-    "total_discovered": 7183,
-    "approved_pending_harvest": 6786,
+    "total_discovered": 7186,
+    "approved_pending_harvest": 6789,
     "harvested_count": 0,
     "rejected_count": 397,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6767,
+      "COMMUNITY_AND_EXPERT": 6770,
       "OFFICIAL_DOCUMENTATION": 239,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -155270,6 +155270,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
         "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-6E7B9E3B7EB9": {
+      "id": "SRC-6E7B9E3B7EB9",
+      "url": "https://github.com/watchexec/watchexec",
+      "title": "https://github.com/watchexec/watchexec",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T13:53:48.826Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/watchexec-watchexec-learnings.md",
+        "fileName": "watchexec-watchexec-learnings.md"
+      }
+    },
+    "SRC-AE5B1A853706": {
+      "id": "SRC-AE5B1A853706",
+      "url": "https://reproducible-builds.org/",
+      "title": "https://reproducible-builds.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T13:53:48.880Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/watchexec-watchexec-learnings.md",
+        "fileName": "watchexec-watchexec-learnings.md"
+      }
+    },
+    "SRC-37ECEC230813": {
+      "id": "SRC-37ECEC230813",
+      "url": "https://github.com/watchexec/watchexec.git",
+      "title": "https://github.com/watchexec/watchexec.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T13:53:48.929Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/watchexec-watchexec-learnings.md",
+        "fileName": "watchexec-watchexec-learnings.md"
       }
     }
   }

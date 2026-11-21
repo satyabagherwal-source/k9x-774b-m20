@@ -4,22 +4,22 @@
 {
   "source_repository": "temporalio/temporal",
   "source_url": "https://github.com/temporalio/temporal",
-  "source_version": "2c8ae4e8",
+  "source_version": "32ef011f",
   "license": "MIT",
-  "timestamp": "2026-11-20T09:34:48.946Z",
+  "timestamp": "2026-11-21T13:53:39.790Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-temporalio-temporal",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [temporalio/temporal](https://github.com/temporalio/temporal) (Revision: `2c8ae4e8`).  
-> **License**: MIT | **Timestamp**: `2026-11-20T09:34:48.946Z`  
+> **Provenance**: Harvested from [temporalio/temporal](https://github.com/temporalio/temporal) (Revision: `32ef011f`).  
+> **License**: MIT | **Timestamp**: `2026-11-21T13:53:39.790Z`  
 > **Learning ID**: `learn-github-temporalio-temporal`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `temporalio/temporal` (Commit: `2c8ae4e8`)
+- **Target Repository**: `temporalio/temporal` (Commit: `32ef011f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T09:34:46.349Z  
+> **Harvest Timestamp**: 2026-11-21T13:53:38.565Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24516 stars
+- **Stars / Engagement**: 24527 stars
 
 ---
 
@@ -2132,1117 +2132,191 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cead54f6` (2026-11-19)
-**Commit Message**: Fix CHASM scheduler creation rollout in feature tests (#12448)
+### Incident Patch 1: `59c4ca9a` (2026-11-21)
+**Commit Message**: Fix flakes: raise deadlock detection timeout in `TestChildWorkflowInheritance` inherit tests (#13066)
 
 ## What changed?
-
-Set `history.chasmSchedulerCreationRolloutPercent` to 100 in the Go
-CHASM scheduler feature job. Remove explicit
-`history.enableTransitionHistory` and `history.enableChasm` values,
-which already default to true.
+In `testChildWorkflowInheritanceExpectInherit`, set
+`DeadlockDetectionTimeout: 30s` on the v1 worker and raise the parent's
+`WorkflowTaskTimeout` from 10s to 30s, matching the other versioning
+helpers that block the same way.
 
 ## Why?
+The parent workflow blocks on a Go channel while the test waits for task
+queue user data to propagate. When that took over 1s, the SDK deadlock
+detector failed the workflow task, and the workflow didn't complete
+before the test timed out. Adding a 1.5s delay before unblocking the
+workflow reproduces this every time without the fix.
 
-Enabling `history.enableCHASMSchedulerCreation` alone leaves the
-percentage gate at its default of 0, so ordinary schedule creation
-continues to use V1. The CHASM job should create schedules with the V2
-implementation.
+## How did you test it?
+- [ ] built
+- [ ] run locally and tested manually
+- [ ] covered by existing tests
+- [ ] added new unit test(s)
+- [ ] added new functional test(s)
 
-## How did you test this?
+---------
 
-No test cases were added or changed. This updates the server
-configuration used by the existing Go SDK feature suite so its schedule
-cases exercise CHASM creation. Live validation of that path is pending
-CI.
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/features-integration.yml` (modified, +2/-4)
+**File**: `tests/versioning_3_test.go` (modified, +3/-1)
 ```diff
-@@ -93,12 +93,10 @@ jobs:
-       version-is-repo-ref: false
-       docker-image-artifact-name: temporal-server-docker
-       dynamic-config-values: |
--        history.enableTransitionHistory:
--          - value: true
--        history.enableChasm:
--          - value: true
-         history.enableCHASMSchedulerCreation:
-           - value: true
-+        history.chasmSchedulerCreationRolloutPercent:
-+          - value: 100
- 
-   feature-tests-python:
-     needs: build-docker-image
+@@ -1668,6 +1668,8 @@ func (s *Versioning3Suite) testChildWorkflowInheritanceExpectInherit(crossTq boo
+ 			DefaultVersioningBehavior: workflow.VersioningBehaviorAutoUpgrade,
+ 		},
+ 		MaxConcurrentWorkflowTaskPollers: numPollers,
++		// Because the wf task can get stuck behind a channel, we make sure sdk does not panic too early
++		DeadlockDetectionTimeout: 30 * time.Second,
+ 	})
+ 	w1.RegisterWorkflowWithOptions(wf1, workflow.RegisterOptions{Name: "wf", VersioningBehavior: sdkParentBehavior})
+ 	if !crossTq {
+@@ -1683,7 +1685,7 @@ func (s *Versioning3Suite) testChildWorkflowInheritanceExpectInherit(crossTq boo
+ 		ID:                  tv1.WorkflowID(),
+ 		TaskQueue:           tv1.TaskQueue().GetName(),
+ 		VersioningOverride:  nil,
+-		WorkflowTaskTimeout: 10 * time.Second,
++		WorkflowTaskTimeout: 30 * time.Second,
+ 	}
+ 	if withOverride {
+ 		startOpts.VersioningOverride = &sdkclient.PinnedVersioningOverride{
 ```
 
 ---
 
-### Incident Patch 2: `4d3f3f0b` (2026-11-19)
-**Commit Message**: Migrate remaining functional test entrypoints to parallel suites (#13115)
+### Incident Patch 2: `ea8df3ed` (2026-11-20)
+**Commit Message**: Fix flaky TestMultipleTasks_ValidateStats test (#13185)
 
 ## What changed?
-Convert ordinary test entrypoints to suites, inline suite test handles,
-and keep the scheduler-state exemption beside the test.
+One-line test fix: `validateDescribeWorkerDeploymentVersion` now picks
+the task queue by name **and** type, instead of name **or** type.
 
-**File**: `common/testx/parallelsuite/suite.go` (modified, +12/-1)
-```diff
-@@ -8,6 +8,7 @@ import (
- 	"regexp"
- 	"strings"
- 	"testing"
-+	"testing/synctest"
- 	"time"
- 
- 	"github.com/stretchr/testify/require"
-@@ -26,7 +27,7 @@ type TestingSuite interface {
- }
- 
- // AssertionsInitializer may be implemented by an embedded suite to bind
--// additional assertions after each test, subtest, or await attempt is initialized.
-+// additional assertions after each test, subtest, synctest bubble, or await attempt is initialized.
- type AssertionsInitializer interface {
- 	InitAssertions()
- }
-@@ -149,6 +150,16 @@ func (s *Suite[T]) run(name string, parallel bool, fn func(T)) bool {
- 	})
- }
- 
-+// Synctest runs fn with a fresh suite inside a [synctest.Test] bubble.
-+// Create subtests outside the bubble.
-+func (s *Suite[T]) Synctest(fn func(T)) {
-+	t := s.T()
-+	t.Helper()
-+	synctest.Test(t, func(t *testing.T) {
-+		fn(s.copySuite(t, false, nil, nil).(T))
-+	})
-+}
-+
- // Await calls fn repeatedly until all assertions pass or timeout is reached.
- func (s *Suite[T]) Await(fn func(T), timeout, interval time.Duration) {
- 	s.Awaitf(fn, timeout, interval, "")
+## Why?
+Fixes flaky
+`TestTaskQueueStats_Pri_Suite/TestVersioningSuite/*/TestMultipleTasks_ValidateStats`.
+The worst variant fails 5.8% of the time in CI.
+
+The response has two entries with the same task queue name: one
+WORKFLOW, one ACTIVITY. The server builds this list by iterating over a
+Go map, which is unordered, so either entry can come first. Because the
+old check used `||`, the name alone was enough to match, so it matched
+whichever entry came first. When that was the wrong entry, the test
+checked its stats against the other type's expectations, e.g.:
+
+```
+DescribeWorkerDeploymentVersion[Activity]: ApproximateBacklogCount should be at most 0, got 24
 ```
 
-**File**: `common/testx/parallelsuite/suite_test.go` (modified, +37/-0)
-```diff
-@@ -6,6 +6,7 @@ import (
- 	"reflect"
- 	"sync/atomic"
- 	"testing"
-+	"testing/synctest"
- 	"time"
- 
- 	"github.com/stretchr/testify/require"
-@@ -22,6 +23,42 @@ func (s *validSuite) TestA() {
- 	s.Equal(42, s.Rcv(ch))
- }
- 
-+type synctestSuite struct{ Suite[*synctestSuite] }
-+
-+func (s *synctestSuite) TestBubbleScope() {
-+	parent := s
-+	s.Synctest(func(s *synctestSuite) {
-+		synctest.Wait()
-+		s.NotSame(parent, s)
-+		s.NotSame(parent.T(), s.T())
-+	})
-+}
-+
-+func TestSynctest(t *testing.T) {
-+	Run(t, &synctestSuite{})
-+}
-+
-+type isolatedSuite struct{ Suite[*isolatedSuite] }
-+
-+func (s *isolatedSuite) TestFirst(instances chan<- *isolatedSuite) {
-+	instances <- s
-+}
-+
-+func (s *isolatedSuite) TestSecond(instances chan<- *isolatedSuite) {
-+	instances <- s
-+}
-+
-+func TestRunIsolatesMethods(t *testing.T) {
-+	instances := make(chan *isolatedSuite, 2)
-+	t.Cleanup(func() {
-+		require.Len(t, instances, 2)
-+		first, second := <-instances, <-instances
-+		require.NotSame(t, first, second)
-+		require.NotSame(t, first.T(), second.T())
-+	})
-+	Run(t, &isolatedSuite{}, instances)
-+}
-+
- type validWithArgsSuite struct{ Suite[*validWithArgsSuite] }
- 
- func (s *validWithArgsSuite) TestA(name string, count int) {
-```
+The check retries for 5s, so it only failed when every retry got the
+wrong order. That's more likely on slow CI runners, which get fewer
+retries.
 
-**File**: `tests/activity_api_pause_test.go` (modified, +288/-285)
-```diff
-@@ -21,7 +21,7 @@ import (
- 	contextpropagationspb "go.temporal.io/server/api/contextpropagation/v1"
- 	"go.temporal.io/server/common/contextutil"
- 	"go.temporal.io/server/common/dynamicconfig"
--	"go.temporal.io/server/common/testing/await"
-+	"go.temporal.io/server/common/testing/parallelsuite"
- 	"go.temporal.io/server/common/util"
- 	"go.temporal.io/server/tests/testcore"
- 	"google.golang.org/grpc"
-@@ -104,34 +104,39 @@ func pauseAPIs() []activityPauseAPI {
- 	}
- }
- 
--func TestActivityApiPauseClientTestSuite(t *testing.T) {
--	t.Parallel()
-+type ActivityAPIPauseSuite struct {
-+	parallelsuite.Suite[*ActivityAPIPauseSuite]
-+}
-+
-+func TestActivityAPIPauseSuite(t *testing.T) {
-+	parallelsuite.Run(t, &ActivityAPIPauseSuite{})
-+}
- 
-+func (s *ActivityAPIPauseSuite) TestClient() {
- 	for _, api := range pauseAPIs() {
--		t.Run(api.name, func(t *testing.T) {
--			t.Parallel()
-+		s.Run(api.name, func(s *ActivityAPIPauseSuite) {
- 
--			t.Run("TestActivityPauseApi_AfterWorkflowCompleted", func(t *testing.T) {
--				s := testcore.NewEnv(t)
-+			s.Run("AfterWorkflowCompleted", func(s *ActivityAPIPauseSuite) {
-+				env := testcore.NewEnv(s.T())
- 				ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
- 				defer cancel()
- 
- 				workflowFn := func(workflow.Context) error { return nil }
--				s.SdkWorker().RegisterWorkflow(workflowFn)
-+				env.SdkWorker().RegisterWorkflow(workflowFn)
- 
--				workflowRun, err := s.SdkClient().ExecuteWorkflow(ctx, sdkclient.StartWorkflowOptions{
--					ID:        testcore.RandomizeStr("wf_id-" + t.Name()),
--					TaskQueue: s.WorkerTaskQueue(),
-+				workflowRun, err := env.SdkClient().ExecuteWorkflow(ctx, sdkclient.StartWorkflowOptions{
-+					ID:        testcore.RandomizeStr("wf_id-" + s.T().Name()),
-+					TaskQueue: env.WorkerTaskQueue(),
- 				}, workflowFn)
--				require.NoError(t, err)
--				require.NoError(t, workflowRun.Get(ctx, nil))
-+				s.NoError(err)
-+				s.NoError(workflowRun.Get(ctx, nil))
- 
--				err = api.pause(ctx, s, workflowRun.GetID(), "activity-id", "test-identity", "test-reason", "test-request-id")
--				require.ErrorContains(t, err, "workflow execution already completed")
-+				err = api.pause(ctx, env, workflowRun.GetID(), "activity-id", "test-identity", "test-reason", "test-request-id")
-+				s.ErrorContains(err, "workflow execution already completed")
- 			})
- 
--			t.Run("TestActivityPauseApi_WhileRunning", func(t *testing.T) {
--				s := testcore.NewEnv(t)
-+			s.Run("WhileRunning", func(s *ActivityAPIPauseSuite) {
-+				env := testcore.NewEnv(s.T())
- 
- 				initialRetryInterval := 1 * time.Second
- 				scheduleToCloseTimeout := 30 * time.Minute
-@@ -164,72 +169,72 @@ func TestActivityApiPauseClientTestSuite(t *testing.T) {
- 				activityFunction := func() (string, error) {
- 					startedActivityCount.Add(1)
- 					if startedActivityCount.Load() == 1 {
--						await.Rcv(t, activityPausedCn)
-+						s.Rcv(activityPausedCn)
- 						return "", activityErr
- 					}
- 					return "done!", nil
- 				}
- 
- 				workflowFn := makeWorkflowFunc(activityFunction)
- 
--				s.SdkWorker().RegisterWorkflow(workflowFn)
--				s.SdkWorker().RegisterActivity(activityFunction)
-+				env.SdkWorker().RegisterWorkflow(workflowFn)
-+				env.SdkWorker().RegisterActivity(activityFunction)
- 
- 				workflowOptions := sdkclient.StartWorkflowOptions{
--					ID:        testcore.RandomizeStr("wf_id-" + t.Name()),
--					TaskQueue: s.WorkerTaskQueue(),
-+					ID:        testcore.RandomizeStr("wf_id-" + s.T().Name()),
-+					TaskQueue: env.WorkerTaskQueue(),
- 				}
- 
--				workflowRun, err := s.SdkClient().ExecuteWorkflow(ctx, workflowOptions, workflowFn)
--				require.NoError(t, err)
-+				workflowRun, err := env.SdkClient().ExecuteWorkflow(ctx, workflowOptions, workflowFn)
-+				s.NoError(err)
- 
- 				// wait for activity to start
--				await.Require(t.Context(), t, func(t *await.T) {
--					description, err := s.SdkClient().DescribeWorkflowExecution(ctx, workflowRun.GetID(), workflowRun.GetRunID())
--					require.NoError(t, err)
--					require.Len(t, description.PendingActivities, 1)
--					require.Equal(t, int32(1), startedActivityCount.Load())
-+				s.Await(func(s *ActivityAPIPauseSuite) {
-+					description, err := env.SdkClient().DescribeWorkflowExecution(ctx, workflowRun.GetID(), workflowRun.GetRunID())
-+					s.NoError(err)
-+					s.Len(description.PendingActivities, 1)
-+					s.Equal(int32(1), startedActivityCount.Load())
- 				}, 5*time.Second, 500*time.Millisecond)
- 
- 				// pause activity
- 				testIdentity := "test-identity"
- 				testReason := "test-reason"
- 				requestID := "test-request-id"
--				require.NoError(t, api.pause(ctx, s, workflowRun.GetID(), "activity-id", testIdentity, testReason, requestID))
-+				s.NoError(api.pause(ctx, env, workflowRun.GetID(), "activity-id", testIdentity, testReason, requestID))
- 
- 				// make sure activity is paused on server while running on worker
--				await.Require(t.Context(), t, func(t *await.T) {
--					description, err := s.SdkClient().DescribeWorkflowExecution(ctx, workflowRun.GetID(), wor
-```
+## How did you test it?
+- [x] built
+- [x] run locally and tested manually
+- [x] covered by existing tests
 
-**File**: `tests/activity_api_update_test.go` (modified, +208/-206)
-```diff
-@@ -7,15 +7,14 @@ import (
- 	"testing"
- 	"time"
- 
--	"github.com/stretchr/testify/require"
- 	activitypb "go.temporal.io/api/activity/v1"
- 	commonpb "go.temporal.io/api/common/v1"
- 	enumspb "go.temporal.io/api/enums/v1"
- 	"go.temporal.io/api/workflowservice/v1"
- 	sdkclient "go.temporal.io/sdk/client"
- 	"go.temporal.io/sdk/temporal"
- 	"go.temporal.io/sdk/workflow"
--	"go.temporal.io/server/common/testing/await"
-+	"go.temporal.io/server/common/testing/parallelsuite"
- 	"go.temporal.io/server/tests/testcore"
- 	"google.golang.org/protobuf/types/known/durationpb"
- 	"google.golang.org/protobuf/types/known/fieldmaskpb"
-@@ -102,15 +101,20 @@ func updateAPIs() []activityUpdateAPI {
- 	}
- }
- 
--func TestActivityApiUpdateClientTestSuite(t *testing.T) {
--	t.Parallel()
-+type ActivityAPIUpdateSuite struct {
-+	parallelsuite.Suite[*ActivityAPIUpdateSuite]
-+}
-+
-+func TestActivityAPIUpdateSuite(t *testing.T) {
-+	parallelsuite.Run(t, &ActivityAPIUpdateSuite{})
-+}
- 
-+func (s *ActivityAPIUpdateSuite) TestClient() {
- 	for _, api := range updateAPIs() {
--		t.Run(api.name, func(t *testing.T) {
--			t.Parallel()
-+		s.Run(api.name, func(s *ActivityAPIUpdateSuite) {
- 
--			t.Run("TestActivityUpdateApi_ChangeRetryInterval", func(t *testing.T) {
--				s := testcore.NewEnv(t)
-+			s.Run("ChangeRetryInterval", func(s *ActivityAPIUpdateSuite) {
-+				env := testcore.NewEnv(s.T())
- 
- 				ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
- 				defer cancel()
-@@ -126,33 +130,33 @@ func TestActivityApiUpdateClientTestSuite(t *testing.T) {
- 						return "", activityErr
- 					}
- 
--					await.Rcv(t, activityUpdated)
-+					s.Rcv(activityUpdated)
- 					return "done!", nil
- 				}
- 
- 				scheduleToCloseTimeout := 30 * time.Minute
- 				retryTimeout := 10 * time.Minute
- 				workflowFn := makeActivityUpdateWorkflowFunc(activityFunction, scheduleToCloseTimeout, retryTimeout)
- 
--				s.SdkWorker().RegisterWorkflow(workflowFn)
--				s.SdkWorker().RegisterActivity(activityFunction)
-+				env.SdkWorker().RegisterWorkflow(workflowFn)
-+				env.SdkWorker().RegisterActivity(activityFunction)
- 
- 				workflowOptions := sdkclient.StartWorkflowOptions{
- 					ID:        activityUpdateWorkflowID,
--					TaskQueue: s.WorkerTaskQueue(),
-+					TaskQueue: env.WorkerTaskQueue(),
- 				}
- 
--				workflowRun, err := s.SdkClient().ExecuteWorkflow(ctx, workflowOptions, workflowFn)
--				require.NoError(t, err)
-+				workflowRun, err := env.SdkClient().ExecuteWorkflow(ctx, workflowOptions, workflowFn)
-+				s.NoError(err)
- 
--				await.Require(t.Context(), t, func(t *await.T) {
--					description, err := s.SdkClient().DescribeWorkflowExecution(ctx, workflowRun.GetID(), workflowRun.GetRunID())
--					require.NoError(t, err)
--					require.Len(t, description.GetPendingActivities(), 1)
--					require.Equal(t, int32(1), startedActivityCount.Load())
-+				s.Await(func(s *ActivityAPIUpdateSuite) {
-+					description, err := env.SdkClient().DescribeWorkflowExecution(ctx, workflowRun.GetID(), workflowRun.GetRunID())
-+					s.NoError(err)
-+					s.Len(description.GetPendingActivities(), 1)
-+					s.Equal(int32(1), startedActivityCount.Load())
- 				}, 10*time.Second, 500*time.Millisecond)
- 
--				_, err = api.update(ctx, s, workflowRun.GetID(), "activity-id",
-+				_, err = api.update(ctx, env, workflowRun.GetID(), "activity-id",
- 					&activitypb.ActivityOptions{
- 						RetryPolicy: &commonpb.RetryPolicy{
- 							InitialInterval: durationpb.New(1 * time.Second),
-@@ -161,33 +165,33 @@ func TestActivityApiUpdateClientTestSuite(t *testing.T) {
- 					[]string{"retry_policy.initial_interval"},
- 					false,
- 				)
--				require.NoError(t, err)
-+				s.NoError(err)
- 
--				description, err := s.SdkClient().DescribeWorkflowExecution(ctx, workflowRun.GetID(), workflowRun.GetRunID())
--				require.NoError(t, err)
-+				description, err := env.SdkClient().DescribeWorkflowExecution(ctx, workflowRun.GetID(), workflowRun.GetRunID())
-+				s.NoError(err)
- 				s.Len(description.PendingActivities, 1)
- 
- 				select {
- 				case activityUpdated <- struct{}{}:
- 				case <-ctx.Done():
--					t.Fatal("timed out waiting for activity to receive update signal")
-+					s.FailNow("timed out waiting for activity to receive update signal")
- 				}
- 
--				await.Require(t.Context(), t, func(t *await.T) {
--					description, err = s.SdkClient().DescribeWorkflowExecution(ctx, workflowRun.GetID(), workflowRun.GetRunID())
--					require.NoError(t, err)
--					require.Empty(t, description.GetPendingActivities())
--					require.Equal(t, int32(2), startedActivityCount.Load())
-+				s.Await(func(s *ActivityAPIUpdateSuite) {
-+					description, err = env.SdkClient().DescribeWorkflowExecution(ctx, workflowRun.GetID(), workflowRun.GetRunID())
-+					s.NoError(err)
-+					s.Empty(description.GetPendingActivities())
-+					s.Equal(int32(2), startedActivityCount.Load())
- 				}, 3*time.Second, 100*time.Millisecond)
- 
- 				var out string
- 				err = workflowRun.Get(ctx, &out)
- 
--				require.NoError(t, err)
-+				s.NoError(err)
- 			})
- 
--			t.Run("TestActivityUpd
-```
+To force the failure, I shortened the retry window to 1s. Withou
 
-**File**: `tests/activity_driver_test.go` (modified, +30/-30)
+**File**: `tests/task_queue_stats_test.go` (modified, +1/-1)
 ```diff
-@@ -6,13 +6,12 @@ import (
- 	"context"
- 	"fmt"
- 	"testing"
--	"testing/synctest"
- 	"time"
+@@ -1551,7 +1551,7 @@ func (s *taskQueueStatsContext) validateDescribeWorkerDeploymentVersion(
+ 		require.Len(t, resp.VersionTaskQueues, 2, "should be 1 task queue for Workflows and 1 for Activities")
  
- 	"github.com/stretchr/testify/require"
- 	enumspb "go.temporal.io/api/enums/v1"
- 	"go.temporal.io/server/chasm/lib/activity/model"
--	"go.temporal.io/server/common/testing/await"
-+	"go.temporal.io/server/common/testing/parallelsuite"
- 	"go.temporal.io/server/common/testing/testcontext"
- )
- 
-@@ -28,37 +27,43 @@ func (s *activityParityTestSuite) TestDriversRecognizeTimeoutObservedBeforeWait(
- 		StartToClose:  activityShortTimeout,
- 	}
- 
--	waitUntilTimeoutVisible := func(t *testing.T, timeoutInfo func(require.TestingT) activityTimeoutInfo) {
-+	waitUntilTimeoutVisible := func(s *activityParityTestSuite, timeoutInfo func(require.TestingT) activityTimeoutInfo) {
- 		var got activityTimeoutInfo
--		await.Require(t.Context(), t, func(t *await.T) {
--			got = timeoutInfo(t)
--			t.Require().Equal(enumspb.TIMEOUT_TYPE_START_TO_CLOSE, got.timeout)
--			t.Require().Equal(int32(2), got.attempt)
-+		s.Await(func(s *activityParityTestSuite) {
-+			got = timeoutInfo(s.AssertionT())
-+			s.Equal(enumspb.TIMEOUT_TYPE_START_TO_CLOSE, got.timeout)
-+			s.Equal(int32(2), got.attempt)
- 		}, cfg.StartToClose+activityDriverTimerMargin, activityDriverPollInterval)
- 	}
- 
- 	s.Run("WorkflowActivity", func(s *activityParityTestSuite) {
- 		t := s.T()
- 		a := newWFADriver(t, newActivityParityEnv(t), cfg).start(t, cfg)
- 		a.driveEvent(t, model.Poll)
--		waitUntilTimeoutVisible(t, a.timeoutInfo)
-+		waitUntilTimeoutVisible(s, a.timeoutInfo)
- 		a.awaitTimeout(t, model.StartToCloseElapses, time.Now().Add(waitForDriver))
- 	})
- 
- 	s.Run("StandaloneActivity", func(s *activityParityTestSuite) {
- 		t := s.T()
- 		a := newSAADriver(t, newActivityParityEnv(t), cfg).start(t, cfg)
- 		a.driveEvent(t, model.Poll)
--		waitUntilTimeoutVisible(t, a.timeoutInfo)
-+		waitUntilTimeoutVisible(s, a.timeoutInfo)
- 		a.awaitTimeout(t, model.StartToCloseElapses, time.Now().Add(waitForDriver))
- 	})
- }
- 
-+type ActivityDriverSuite struct {
-+	parallelsuite.Suite[*ActivityDriverSuite]
-+}
-+
-+func TestActivityDriverSuite(t *testing.T) {
-+	parallelsuite.Run(t, &ActivityDriverSuite{})
-+}
-+
- // The model refuses two sorts of trace event: one whose clock is not running, and a Poll that
- // finds no task. Driving either waits for something that never happens.
--func TestModelRefusesUnrealizableEvents(t *testing.T) {
--	t.Parallel()
--
-+func (s *ActivityDriverSuite) TestModelRefusesUnrealizableEvents() {
- 	cfg := activityConfig{MaxAttempts: 3, RetryInterval: activityLongDuration}
- 	for name, tc := range map[string]struct {
- 		accepted []model.Event
-@@ -86,14 +91,13 @@ func TestModelRefusesUnrealizableEvents(t *testing.T) {
- 			failure:  "event that cannot occur",
- 		},
- 	} {
--		t.Run(name, func(t *testing.T) {
--			t.Parallel()
-+		s.Run(name, func(s *ActivityDriverSuite) {
- 
- 			m := newActivityModel(cfg)
- 			for _, e := range tc.accepted {
--				require.Emptyf(t, tryAdvance(m, e), "the model must accept %s", e)
-+				s.Emptyf(tryAdvance(m, e), "the model must accept %s", e)
- 			}
--			require.Contains(t, tryAdvance(m, tc.refused), tc.failure)
-+			s.Contains(tryAdvance(m, tc.refused), tc.failure)
- 		})
- 	}
- }
-@@ -126,29 +130,25 @@ type contextualDriver interface{ testContext() context.Context }
- // Runs inside a synctest bubble so it doesn't need to wait out real minutes of test-context timeout,
- // and so `go test -timeout` (a real-clock deadline, meaningless in a fake-clock bubble) can't cap the
- // context and mask the very extension this test is checking for.
--func TestDriverContextReflectsExtension(t *testing.T) {
--	t.Parallel()
--
-+func (s *ActivityDriverSuite) TestDriverContextReflectsExtension() {
- 	for name, newDriver := range map[string]func(*testing.T) contextualDriver{
- 		"SAA": func(t *testing.T) contextualDriver { return newSAADriver(t, nil, activityConfig{}) },
- 		"WFA": func(t *testing.T) contextualDriver { return newWFADriver(t, nil, activityConfig{}) },
- 	} {
--		t.Run(name, func(t *testing.T) {
--			t.Parallel()
--
--			synctest.Test(t, func(t *testing.T) {
--				d := newDriver(t)
-+		s.Run(name, func(s *ActivityDriverSuite) {
-+			s.Synctest(func(s *ActivityDriverSuite) {
-+				d := newDriver(s.T())
- 				before, ok := d.testContext().Deadline()
--				require.True(t, ok)
-+				s.True(ok)
- 
--				extended := testcontext.EnsureRemaining(testcontext.For(t), t, testcontext.DefaultTimeout()+time.Minute)
-+				extended := testcontext.EnsureRemaining(s.Context(), s.T(), testcontext.DefaultTimeout()+time.Minute)
- 				extendedDeadline, ok := extended.Deadline()
--				require.True(t, ok)
--				require.True(t, extendedDeadline.After(before), "test setup: EnsureRemaining should have extended the deadline")
-+				s.True(ok)
-+				s.True(extendedDeadline.After(before), "test setup: EnsureRemaining should have extended the deadline")
- 
- 				after, ok := d.testContext().Deadline()
--				require.True(t, ok)
--				require.Equal(t, extendedDeadline, after,
-+				s.True(ok)
-+				s.Equal(extendedDeadline, after,
- 					"driver must
-```
-
-**File**: `tests/eager_activity_dispatch_test.go` (modified, +47/-41)
-```diff
-@@ -11,16 +11,24 @@ import (
- 	"go.temporal.io/api/workflowservice/v1"
- 	"go.temporal.io/server/common/dynamicconfig"
- 	"go.temporal.io/server/common/metrics"
--	"go.temporal.io/server/common/testing/await"
-+	"go.temporal.io/server/common/testing/parallelsuite"
- 	"go.temporal.io/server/common/testing/taskpoller"
- 	"go.temporal.io/server/common/testing/testhooks"
- 	"go.temporal.io/server/common/testing/testvars"
- 	"go.temporal.io/server/tests/testcore"
- 	"google.golang.org/protobuf/types/known/durationpb"
- )
- 
--func TestEagerActivityWithMatchingGrant_Unversioned(t *testing.T) {
--	env := testcore.NewEnv(t,
-+type EagerActivityDispatchSuite struct {
-+	parallelsuite.Suite[*EagerActivityDispatchSuite]
-+}
-+
-+func TestEagerActivityDispatchSuite(t *testing.T) {
-+	parallelsuite.Run(t, &EagerActivityDispatchSuite{})
-+}
-+
-+func (s *EagerActivityDispatchSuite) TestEagerActivityWithMatchingGrant_Unversioned() {
-+	env := testcore.NewEnv(s.T(),
- 		testcore.WithDynamicConfig(dynamicconfig.EnableActivityEagerExecution, true),
- 		testcore.WithDynamicConfig(dynamicconfig.EnableActivityEagerDispatchCheck, true),
- 		testcore.WithDynamicConfig(dynamicconfig.MatchingNumTaskqueueReadPartitions, 4),
-@@ -30,33 +38,31 @@ func TestEagerActivityWithMatchingGrant_Unversioned(t *testing.T) {
- 	env.InjectHook(testhooks.NewHook(testhooks.MatchingLBForceReadPartition, 1))
- 
- 	tv := env.Tv()
--	startEagerActivityTestWorkflow(t, env, tv)
-+	startEagerActivityTestWorkflow(s.T(), env, tv)
- 
- 	poller := env.TaskPoller()
- 	response, err := poller.PollAndHandleWorkflowTask(
- 		tv,
--		scheduleActivityForEagerDispatchTest(t, tv, true),
-+		scheduleActivityForEagerDispatchTest(s.T(), tv, true),
- 	)
--	require.NoError(t, err)
--	require.Len(t, response.GetActivityTasks(), 1)
-+	s.NoError(err)
-+	s.Len(response.GetActivityTasks(), 1)
- 
- 	eagerActivity := response.GetActivityTasks()[0]
--	require.Equal(t, tv.ActivityID(), eagerActivity.GetActivityId())
-+	s.Equal(tv.ActivityID(), eagerActivity.GetActivityId())
- 	_, err = poller.HandleActivityTask(tv, eagerActivity, taskpoller.CompleteActivityTask(tv))
--	require.NoError(t, err)
-+	s.NoError(err)
- 
- 	_, err = poller.PollAndHandleWorkflowTask(
- 		tv,
- 		taskpoller.CompleteWorkflowHandler,
- 		taskpoller.WithTimeout(20*time.Second),
- 	)
--	require.NoError(t, err)
-+	s.NoError(err)
- }
- 
--func TestEagerActivityBatchWithRateLimit(t *testing.T) {
--	t.Parallel()
--
--	env := testcore.NewEnv(t,
-+func (s *EagerActivityDispatchSuite) TestEagerActivityBatchWithRateLimit() {
-+	env := testcore.NewEnv(s.T(),
- 		testcore.WithDynamicConfig(dynamicconfig.EnableActivityEagerExecution, true),
- 		testcore.WithDynamicConfig(dynamicconfig.EnableActivityEagerDispatchCheck, true),
- 		testcore.WithDynamicConfig(dynamicconfig.AdminMatchingNamespaceTaskqueueToPartitionDispatchRate, 1),
-@@ -67,7 +73,7 @@ func TestEagerActivityBatchWithRateLimit(t *testing.T) {
- 	lowPriority := tv.WithActivityIDNumber(1)
- 	mediumPriority := tv.WithActivityIDNumber(2)
- 	highPriority := tv.WithActivityIDNumber(3)
--	startEagerActivityTestWorkflow(t, env, tv)
-+	startEagerActivityTestWorkflow(s.T(), env, tv)
- 	capture := env.StartNamespaceMetricCapture()
- 	poller := env.TaskPoller()
- 	response, err := poller.PollAndHandleWorkflowTask(tv,
-@@ -81,34 +87,34 @@ func TestEagerActivityBatchWithRateLimit(t *testing.T) {
- 			}, nil
- 		},
- 	)
--	require.NoError(t, err)
-+	s.NoError(err)
- 	// A one-second burst at one task per second admits two initial grants.
--	require.Len(t, response.GetActivityTasks(), 2)
--	require.Equal(t, mediumPriority.ActivityID(), response.GetActivityTasks()[0].GetActivityId())
--	require.Equal(t, highPriority.ActivityID(), response.GetActivityTasks()[1].GetActivityId())
-+	s.Len(response.GetActivityTasks(), 2)
-+	s.Equal(mediumPriority.ActivityID(), response.GetActivityTasks()[0].GetActivityId())
-+	s.Equal(highPriority.ActivityID(), response.GetActivityTasks()[1].GetActivityId())
- 	for _, metric := range []string{metrics.EagerDispatchRequestsSent.Name(), metrics.EagerDispatchRequests.Name()} {
- 		recordings := capture.Metric(metric)
--		require.Len(t, recordings, 1, "all three activities should share one grant RPC")
--		require.Equal(t, int64(3), recordings[0].Value)
-+		s.Len(recordings, 1, "all three activities should share one grant RPC")
-+		s.Equal(int64(3), recordings[0].Value)
- 	}
- 	for _, eagerActivity := range response.GetActivityTasks() {
- 		_, err := poller.HandleActivityTask(tv, eagerActivity, taskpoller.CompleteActivityTask(tv))
--		require.NoError(t, err)
-+		s.NoError(err)
- 	}
- 	_, err = poller.PollAndHandleActivityTask(lowPriority,
- 		func(task *workflowservice.PollActivityTaskQueueResponse) (*workflowservice.RespondActivityTaskCompletedRequest, error) {
--			require.Equal(t, lowPriority.ActivityID(), task.GetActivityId())
-+			s.Equal(lowPriority.ActivityID(), task.GetActivityId())
- 			return &workflowservice.RespondActivityTaskCompletedRequest{}, nil
- 		},
- 		taskpoller.WithTimeout(20*time.Second),
- 	)
--	require.NoError(t, err)
-+	s.NoError(err)
- 	_, e
-```
-
-**File**: `tests/partition_scaling_test.go` (modified, +122/-109)
-```diff
-@@ -8,15 +8,14 @@ import (
- 	"time"
- 
- 	"github.com/google/uuid"
--	"github.com/stretchr/testify/require"
- 	enumspb "go.temporal.io/api/enums/v1"
- 	taskqueuepb "go.temporal.io/api/taskqueue/v1"
- 	"go.temporal.io/api/workflowservice/v1"
- 	"go.temporal.io/server/api/adminservice/v1"
- 	taskqueuespb "go.temporal.io/server/api/taskqueue/v1"
- 	"go.temporal.io/server/common/dynamicconfig"
- 	"go.temporal.io/server/common/metrics"
--	"go.temporal.io/server/common/testing/await"
-+	"go.temporal.io/server/common/testing/parallelsuite"
- 	"go.temporal.io/server/common/testing/taskpoller"
- 	"go.temporal.io/server/common/testing/testvars"
- 	"go.temporal.io/server/tests/testcore"
-@@ -54,90 +53,99 @@ func scalerEnvOptions(dcPartitions int, shrink scalerShrink) []testcore.TestOpti
- 	}
- }
- 
--func TestPartitionScaling_Up(t *testing.T) {
-+type PartitionScalingSuite struct {
-+	parallelsuite.Suite[*PartitionScalingSuite]
-+}
-+
-+func TestPartitionScalingSuite(t *testing.T) {
-+	parallelsuite.Run(t, &PartitionScalingSuite{})
-+}
-+
-+func (s *PartitionScalingSuite) TestPartitionScaling_Up() {
-+	t := s.T()
- 	// default dynamic config to 1 to ensure we turn on managed scaling immediately
--	s := testcore.NewEnv(t, scalerEnvOptions(1, scalerShrinkFast)...)
-+	env := testcore.NewEnv(t, scalerEnvOptions(1, scalerShrinkFast)...)
- 
- 	t.Log("set to 2 partitions using scaler")
--	s.OverrideDynamicConfig(dynamicconfig.MatchingPartitionScaler, dynamicconfig.SimplePartitionScalerSettings{
-+	env.OverrideDynamicConfig(dynamicconfig.MatchingPartitionScaler, dynamicconfig.SimplePartitionScalerSettings{
- 		Enabled: true,
- 		Fixed:   2,
- 	})
- 
- 	t.Log("start sending 10 tasks/s")
--	stopTasks := scalerBackgroundTasks(s, s.Tv(), 10)
-+	stopTasks := scalerBackgroundTasks(env, 10)
- 	defer stopTasks()
- 
- 	t.Log("wait until partitions 0,1 have 5 tasks backlog")
--	await.RequireTrue(t, scalerBacklogAtLeast(s, s.Tv(), 5, 0, 1), 15*time.Second, time.Second)
-+	s.AwaitTrue(scalerBacklogAtLeast(env, 5, 0, 1), 15*time.Second, time.Second)
- 
- 	t.Log("check that 2,3 have no tasks (leave 4,5 unloaded)")
--	s.True(scalerBacklogEmpty(s, s.Tv(), 2, 3)())
-+	s.True(scalerBacklogEmpty(env, 2, 3)())
- 
- 	t.Log("set to 6 partitions using scaler")
--	s.OverrideDynamicConfig(dynamicconfig.MatchingPartitionScaler, dynamicconfig.SimplePartitionScalerSettings{
-+	env.OverrideDynamicConfig(dynamicconfig.MatchingPartitionScaler, dynamicconfig.SimplePartitionScalerSettings{
- 		Enabled: true,
- 		Fixed:   6,
- 	})
- 
- 	t.Log("wait until partitions 2,3,4,5 have 5 tasks backlog")
--	await.RequireTrue(t, scalerBacklogAtLeast(s, s.Tv(), 5, 2, 3, 4, 5), 15*time.Second, time.Second)
-+	s.AwaitTrue(scalerBacklogAtLeast(env, 5, 2, 3, 4, 5), 15*time.Second, time.Second)
- 
- 	t.Log("stop sending tasks")
- 	stopTasks()
- 
- 	t.Log("start background polls")
--	stopPolls := scalerBackgroundPolls(s, s.Tv(), s.TaskPoller(), 3)
-+	stopPolls := scalerBackgroundPolls(env, 3)
- 	defer stopPolls()
- 
- 	t.Log("wait until all are drained")
--	await.RequireTrue(t, scalerBacklogEmpty(s, s.Tv(), 0, 1, 2, 3, 4, 5), 15*time.Second, time.Second)
-+	s.AwaitTrue(scalerBacklogEmpty(env, 0, 1, 2, 3, 4, 5), 15*time.Second, time.Second)
- }
- 
--func TestPartitionScaling_Down(t *testing.T) {
-+func (s *PartitionScalingSuite) TestPartitionScaling_Down() {
-+	t := s.T()
- 	// default dynamic config to 1 to ensure we turn on managed scaling immediately
--	s := testcore.NewEnv(t, scalerEnvOptions(1, scalerShrinkFast)...)
-+	env := testcore.NewEnv(t, scalerEnvOptions(1, scalerShrinkFast)...)
- 
- 	t.Log("set to 6 partitions using scaler")
--	s.OverrideDynamicConfig(dynamicconfig.MatchingPartitionScaler, dynamicconfig.SimplePartitionScalerSettings{
-+	env.OverrideDynamicConfig(dynamicconfig.MatchingPartitionScaler, dynamicconfig.SimplePartitionScalerSettings{
- 		Enabled: true,
- 		Fixed:   6,
- 	})
- 
- 	t.Log("start sending 10 tasks/s")
--	stopTasks := scalerBackgroundTasks(s, s.Tv(), 10)
-+	stopTasks := scalerBackgroundTasks(env, 10)
- 	defer stopTasks()
- 
- 	t.Log("wait until partitions 0-5 have 5 tasks backlog")
--	await.RequireTrue(t, scalerBacklogAtLeast(s, s.Tv(), 5, 0, 1, 2, 3, 4, 5), 15*time.Second, time.Second)
-+	s.AwaitTrue(scalerBacklogAtLeast(env, 5, 0, 1, 2, 3, 4, 5), 15*time.Second, time.Second)
- 
- 	t.Log("set to 4 partitions using scaler")
--	s.OverrideDynamicConfig(dynamicconfig.MatchingPartitionScaler, dynamicconfig.SimplePartitionScalerSettings{
-+	env.OverrideDynamicConfig(dynamicconfig.MatchingPartitionScaler, dynamicconfig.SimplePartitionScalerSettings{
- 		Enabled: true,
- 		Fixed:   4,
- 	})
- 
- 	t.Log("wait until 4,5 see no new tasks over a 2s window")
--	// nolint:staticcheck // until we rewrite the test
--	await.Require(s.Context(), t, scalerBacklogUnchanged(s, s.Tv(), 2*time.Second, 4, 5), 15*time.Second, time.Millisecond)
-+	s.Await(scalerBacklogUnchanged(env, 2*time.Second, 4, 5), 15*time.Second, time.Millisecond)
- 
- 	t.Log("stop sending tasks")
- 	stopTasks()
- 
- 	t.Log("capture poll metrics")
--	capture := s.StartNamespaceMetricCapture()
-+	capture := env
-```
-
-**File**: `tests/schedule_audit_test.go` (modified, +24/-18)
-```diff
-@@ -5,21 +5,27 @@ import (
- 	"testing"
- 	"time"
- 
--	"github.com/stretchr/testify/require"
- 	enumspb "go.temporal.io/api/enums/v1"
- 	schedulepb "go.temporal.io/api/schedule/v1"
- 	"go.temporal.io/sdk/workflow"
--	"go.temporal.io/server/common/testing/await"
-+	"go.temporal.io/server/common/testing/parallelsuite"
- 	"go.temporal.io/server/tests/testcore"
- 	"go.temporal.io/server/tools/tdbg/scheduleaudit"
- )
- 
--func TestScheduleV1AuditVisibility(t *testing.T) { testScheduleAuditVisibility(t, v1ContextFactory) }
-+type ScheduleAuditSuite struct {
-+	parallelsuite.Suite[*ScheduleAuditSuite]
-+}
-+
-+func TestScheduleV1AuditVisibility(t *testing.T) {
-+	parallelsuite.Run(t, &ScheduleAuditSuite{}, v1ContextFactory)
-+}
- func TestScheduleCHASMAuditVisibility(t *testing.T) {
--	testScheduleAuditVisibility(t, chasmContextFactory)
-+	parallelsuite.Run(t, &ScheduleAuditSuite{}, chasmContextFactory)
- }
- 
--func testScheduleAuditVisibility(t *testing.T, newContext contextFactory) {
-+func (s *ScheduleAuditSuite) TestVisibility(newContext contextFactory) {
-+	t := s.T()
- 	env := newScheduleEnv(t, scheduleCommonOpts(t)...)
- 	ctx := newContext(testcore.NewContext())
- 	sid := testcore.RandomizeStr("audit-schedule")
-@@ -38,21 +44,21 @@ func testScheduleAuditVisibility(t *testing.T, newContext contextFactory) {
- 	})
- 	loader := scheduleaudit.NewGRPCExecutionLoader(env.FrontendClient(), io.Discard, nil)
- 	var blocker scheduleaudit.Execution
--	await.Require(ctx, t, func(t *await.T) {
--		rows, err := loader.ListExecutions(t.Context(), env.Namespace().String(), []string{sid}, first.Add(-time.Second), first.Add(time.Second))
--		require.NoError(t, err)
--		require.Len(t, rows[sid], 1)
-+	s.Await(func(s *ScheduleAuditSuite) {
-+		rows, err := loader.ListExecutions(newContext(s.Context()), env.Namespace().String(), []string{sid}, first.Add(-time.Second), first.Add(time.Second))
-+		s.NoError(err)
-+		s.Len(rows[sid], 1)
- 		blocker = rows[sid][0]
--		require.Equal(t, first, blocker.NominalTime)
-+		s.Equal(first, blocker.NominalTime)
- 	}, 30*time.Second, pollInterval)
--	await.RequireTrue(t, func() bool { return time.Now().After(second.Add(time.Second)) }, 30*time.Second, pollInterval)
-+	s.AwaitTrue(func() bool { return time.Now().After(second.Add(time.Second)) }, 30*time.Second, pollInterval)
- 	rows, err := loader.ListExecutions(ctx, env.Namespace().String(), []string{sid}, second.Add(-time.Second), second.Add(time.Second))
--	require.NoError(t, err)
--	require.Len(t, rows[sid], 1)
--	require.Equal(t, blocker.RunID, rows[sid][0].RunID, "pre-window running action remains visible")
--	require.NoError(t, env.SdkClient().SignalWorkflow(ctx, blocker.WorkflowID, blocker.RunID, "finish", nil))
-+	s.NoError(err)
-+	s.Len(rows[sid], 1)
-+	s.Equal(blocker.RunID, rows[sid][0].RunID, "pre-window running action remains visible")
-+	s.NoError(env.SdkClient().SignalWorkflow(ctx, blocker.WorkflowID, blocker.RunID, "finish", nil))
- 	var delayed scheduleaudit.Execution
--	await.RequireTrue(t, func() bool {
-+	s.AwaitTrue(func() bool {
- 		rows, err := loader.ListExecutions(ctx, env.Namespace().String(), []string{sid}, second.Add(-time.Second), second.Add(time.Second))
- 		if err != nil || len(rows[sid]) != 2 {
- 			return false
-@@ -65,6 +71,6 @@ func testScheduleAuditVisibility(t *testing.T, newContext contextFactory) {
- 		}
- 		return false
- 	}, 30*time.Second, pollInterval)
--	require.True(t, delayed.StartTime.After(second.Add(time.Second)), "in-window nominal matches even when the buffered workflow starts after window end")
--	require.NotEqual(t, blocker.RunID, delayed.RunID)
-+	s.True(delayed.StartTime.After(second.Add(time.Second)), "in-window nominal matches even when the buffered workflow starts after window end")
-+	s.NotEqual(blocker.RunID, delayed.RunID)
- }
+ 		for _, info := range resp.VersionTaskQueues {
+-			if info.Name == tqName || info.Type == tqType {
++			if info.Name == tqName && info.Type == tqType {
+ 				label := "DescribeWorkerDeploymentVersion[" + tqType.String() + "]"
+ 				validateTaskQueueStats(require.New(t), label, info.Stats, expectation)
+ 				if expectation.BacklogCount > 0 {
 ```
 
 ---
 
-### Incident Patch 3: `4d2eaffb` (2026-11-19)
-**Commit Message**: Add Await for parallelsuite Scope helpers (#13151)
+### Incident Patch 3: `c44a13c6` (2026-11-20)
+**Commit Message**: Fix testx bump workflow races (#13209)
 
 ## What changed?
-Add `parallelsuite.Await` for helpers that take a `Scope` and migrate
-the 12 polling call sites.
+1. Run the pin check after the bump job succeeds.
+2. If a push fails, fetch `main` again and recompute the pin. Allow up
+to three push attempts.
 
-**File**: `common/testing/parallelsuite/wrapper.go` (modified, +7/-0)
+## Why?
+The nightly check reported a stale pin while the same run was updating
+it.
+
+The prior run had left the pin stale because `main` advanced before its
+push. [Nightly
+run](https://github.com/temporalio/temporal/actions/runs/44700468715) ·
+[Prior push
+rejection](https://github.com/temporalio/temporal/actions/runs/44603063841)
+
+## Potential risks
+A persistent push failure uses all three attempts before the existing
+Slack notification fires.
+
+**File**: `.github/workflows/testx-bump.yml` (modified, +25/-12)
 ```diff
-@@ -3,6 +3,7 @@ package parallelsuite
- import (
- 	"context"
- 	"testing"
-+	"time"
+@@ -55,26 +55,39 @@ jobs:
  
- 	"go.temporal.io/server/common/testing/historyrequire"
- 	"go.temporal.io/server/common/testing/protorequire"
-@@ -28,6 +29,12 @@ func WithContext(ctx context.Context, scope Scope) Scope {
- 	return parallelsuite.WithContext(ctx, scope)
- }
+       - name: Update testx on main
+         run: |
+-          sha=$(git rev-list -1 HEAD -- common/testx/)
+-          go get "go.temporal.io/testx@${sha}"
+-          go mod tidy
+-
+-          if git diff --quiet -- go.mod go.sum; then
+-            echo "testx version is already current"
+-            exit 0
+-          fi
+-
+           git config --local user.name 'Temporal Data'
+           git config --local user.email 'commander-data@temporal.io'
  
-+// Await retries fn on assertion failure with a scope for each attempt.
-+func Await(s Scope, fn func(Scope), timeout, interval time.Duration) {
-+	s.TB().Helper()
-+	parallelsuite.Await(s, fn, timeout, interval)
-+}
+-          git add go.mod go.sum
+-          git commit -m "Bump go.temporal.io/testx to ${sha::9}"
+-          git push origin HEAD:main
++          max_attempts=3
++          for ((attempt = 1; attempt <= max_attempts; attempt++)); do
++            echo "testx bump attempt $attempt of $max_attempts"
++            git fetch origin main
++            git switch --detach FETCH_HEAD
 +
- func Run[T parallelsuite.TestingSuite](t *testing.T, s T, args ...any) {
- 	t.Helper()
- 	parallelsuite.Run(t, s, args...)
-```
-
-**File**: `common/testx/parallelsuite/scope.go` (modified, +12/-0)
-```diff
-@@ -3,8 +3,10 @@ package parallelsuite
- import (
- 	"context"
- 	"testing"
-+	"time"
- 
- 	"github.com/stretchr/testify/require"
-+	"go.temporal.io/testx/await"
- )
- 
- // Scope provides the context and test handles for a test or await attempt.
-@@ -38,3 +40,13 @@ func WithContext(ctx context.Context, scope Scope) Scope {
- func (s contextScope) Context() context.Context {
- 	return s.ctx
- }
++            sha=$(git rev-list -1 HEAD -- common/testx/)
++            go get "go.temporal.io/testx@${sha}"
++            go mod tidy
 +
-+// Await retries fn on assertion failure until the timeout or scope cancellation.
-+// The scope passed to fn carries the context and assertions for that attempt.
-+func Await(s Scope, fn func(Scope), timeout, interval time.Duration) {
-+	tb := s.TB()
-+	tb.Helper()
-+	await.Require(s.Context(), tb, func(t *await.T) {
-+		fn(t)
-+	}, timeout, interval)
-+}
-```
-
-**File**: `common/testx/parallelsuite/scope_test.go` (modified, +14/-6)
-```diff
-@@ -1,11 +1,11 @@
- package parallelsuite_test
++            if git diff --quiet -- go.mod go.sum; then
++              echo "testx version is already current"
++              exit 0
++            fi
++
++            git add go.mod go.sum
++            git commit -m "Bump go.temporal.io/testx to ${sha::9}"
++            if git push origin HEAD:main; then
++              exit 0
++            fi
++          done
++
++          echo "::error::Could not push the testx bump after $max_attempts attempts."
++          exit 1
  
- import (
-+	"context"
- 	"errors"
- 	"testing"
- 	"time"
+   # Fails if the testx version required on main doesn't match common/testx/, e.g. because the bump failed
+   # to push. Builds in this repo don't notice, since they use the replace.
+   # Runs nightly (US time), when the bump for the day's testx changes should have landed.
+   check-pin:
++    needs: bump
+     if: github.event_name != 'push'
+     runs-on: ubuntu-latest
  
--	"go.temporal.io/testx/await"
- 	"go.temporal.io/testx/parallelsuite"
- )
- 
-@@ -31,6 +31,7 @@ func (s *scopeAssertionsSuite) TestSuiteHelpers() {
- }
- 
- func (s *scopeAssertionsSuite) TestAwaitHelpersRetryFailedAssertions() {
-+	const timeout = time.Second
- 	checks := map[string]func(parallelsuite.Scope){
- 		"NoError":  func(s parallelsuite.Scope) { s.NoError(errors.New("not ready")) },
- 		"Equal":    func(s parallelsuite.Scope) { s.Equal("ready", "pending") },
-@@ -41,17 +42,24 @@ func (s *scopeAssertionsSuite) TestAwaitHelpersRetryFailedAssertions() {
- 	}
- 	for name, check := range checks {
- 		s.Run(name, func(s *scopeAssertionsSuite) {
-+			type contextKey struct{}
-+			ctx := context.WithValue(s.Context(), contextKey{}, name)
-+			scope := parallelsuite.WithContext(ctx, s)
- 			attempts := 0
- 			completed := 0
--			await.Require(s.Context(), s.T(), func(t *await.T) {
-+			parallelsuite.Await(scope, func(s parallelsuite.Scope) {
- 				attempts++
--				scope := parallelsuite.WithContext(t.Context(), t)
- 				if attempts == 1 {
--					check(scope)
-+					check(s)
- 				}
--				checkScopeAssertions(scope)
-+				checkScopeAssertions(s)
-+				s.Equal(name, s.Context().Value(contextKey{}))
-+				deadline, ok := s.Context().Deadline()
-+				s.True(ok, "await context must have a deadline")
-+				remaining := time.Until(deadline)
-+				s.True(remaining <= timeout, "await deadline is %v away; want at most %v", remaining, timeout)
- 				completed++
--			}, time.Second, time.Millisecond)
-+			}, timeout, time.Millisecond)
- 			s.Equal(2, attempts)
- 			s.Equal(1, completed)
- 		})
-```
-
-**File**: `tests/versioning_test_env.go` (modified, +65/-65)
-```diff
-@@ -82,18 +82,18 @@ func (env *VersioningTestEnv) waitForTaskQueueVersioningInfo(
- 	expectedRampingVersion string,
- 	rampingPercentage float32,
- ) {
--	await.Require(s.Context(), s.TB(), func(t *await.T) {
--		resp, err := env.FrontendClient().DescribeTaskQueue(t.Context(), &workflowservice.DescribeTaskQueueRequest{
-+	parallelsuite.Await(s, func(s parallelsuite.Scope) {
-+		resp, err := env.FrontendClient().DescribeTaskQueue(s.Context(), &workflowservice.DescribeTaskQueueRequest{
- 			Namespace: env.Namespace().String(),
- 			TaskQueue: tq,
- 		})
--		t.NoError(err)
--		t.NotNil(resp)
--		protorequire.ProtoEqual(t.AssertionT(), worker_versioning.ExternalWorkerDeploymentVersionFromStringV31(expectedCurrentVersion), resp.GetVersioningInfo().GetCurrentDeploymentVersion())
--		protorequire.ProtoEqual(t.AssertionT(), worker_versioning.ExternalWorkerDeploymentVersionFromStringV31(expectedRampingVersion), resp.GetVersioningInfo().GetRampingDeploymentVersion())
--		t.Equal(expectedCurrentVersion, resp.GetVersioningInfo().GetCurrentVersion()) //nolint:staticcheck // SA1019: old worker versioning
--		t.Equal(expectedRampingVersion, resp.GetVersioningInfo().GetRampingVersion()) //nolint:staticcheck // SA1019: old worker versioning
--		t.Require().InDelta(rampingPercentage, resp.GetVersioningInfo().GetRampingVersionPercentage(), 0.001)
-+		s.NoError(err)
-+		s.NotNil(resp)
-+		protorequire.ProtoEqual(s.AssertionT(), worker_versioning.ExternalWorkerDeploymentVersionFromStringV31(expectedCurrentVersion), resp.GetVersioningInfo().GetCurrentDeploymentVersion())
-+		protorequire.ProtoEqual(s.AssertionT(), worker_versioning.ExternalWorkerDeploymentVersionFromStringV31(expectedRampingVersion), resp.GetVersioningInfo().GetRampingDeploymentVersion())
-+		s.Equal(expectedCurrentVersion, resp.GetVersioningInfo().GetCurrentVersion()) //nolint:staticcheck // SA1019: old worker versioning
-+		s.Equal(expectedRampingVersion, resp.GetVersioningInfo().GetRampingVersion()) //nolint:staticcheck // SA1019: old worker versioning
-+		s.Require().InDelta(rampingPercentage, resp.GetVersioningInfo().GetRampingVersionPercentage(), 0.001)
- 	}, 10*time.Second, 200*time.Millisecond)
- }
- 
-@@ -359,18 +359,18 @@ func (env *VersioningTestEnv) verifySpeculativeTask(s parallelsuite.Scope, execu
- 
- func (env *VersioningTestEnv) setCurrentDeployment(s parallelsuite.Scope, tv *testvars.TestVars) {
- 	failedPrecondition := serviceerror.NewFailedPreconditionf(workerdeployment.ErrCurrentVersionDoesNotHaveAllTaskQueues, tv.DeploymentVersionStringV32()).Error()
--	await.Require(s.Context(), s.TB(), func(t *await.T) {
-+	parallelsuite.Await(s, func(s parallelsuite.Scope) {
- 		req := &workflowservice.SetWorkerDeploymentCurrentVersionRequest{
- 			Namespace:      env.Namespace().String(),
- 			DeploymentName: tv.DeploymentSeries(),
- 		}
- 		req.BuildId = tv.BuildID()
--		_, err := env.FrontendClient().SetWorkerDeploymentCurrentVersion(t.Context(), req)
--		if env.shouldRetryWorkerDeploymentRPC(t.Context(), err, failedPrecondition) {
--			t.NoError(err)
-+		_, err := env.FrontendClient().SetWorkerDeploymentCurrentVersion(s.Context(), req)
-+		if env.shouldRetryWorkerDeploymentRPC(s.Context(), err, failedPrecondition) {
-+			s.NoError(err)
- 			return
- 		}
--		t.NoError(err)
-+		s.NoError(err)
- 	}, 60*time.Second, 500*time.Millisecond)
- 
- 	// Wait for propagation to complete since we have tests using async entity workflows to set the current version
-@@ -403,16 +403,16 @@ func (env *VersioningTestEnv) pollUntilRegistered(s parallelsuite.Scope, tv *tes
- 	}
- 
- 	// Wait until the version is visible and all requested task queue types are registered.
--	await.Require(s.Context(), s.TB(), func(t *await.T) {
--		resp, err := env.FrontendClient().DescribeWorkerDeploymentVersion(t.Context(), &workflowservice.DescribeWorkerDeploymentVersionRequest{
-+	parallelsuite.Await(s, func(s parallelsuite.Scope) {
-+		resp, err := env.FrontendClient().DescribeWorkerDeploymentVersion(s.Context(), &workflowservice.DescribeWorkerDeploymentVersionRequest{
- 			Namespace: env.Namespace().String(),
- 			Version:   tv.DeploymentVersionString(),
- 		})
- 		if _, ok := errors.AsType[*serviceerror.NotFound](err); ok {
--			t.NoError(err)
-+			s.NoError(err)
- 			return
- 		}
--		t.NoError(err)
-+		s.NoError(err)
- 		tqName := tv.TaskQueue().GetName()
- 		for _, tqType := range tqTypes {
- 			found := false
-@@ -422,24 +422,24 @@ func (env *VersioningTestEnv) pollUntilRegistered(s parallelsuite.Scope, tv *tes
- 					break
- 				}
- 			}
--			t.True(found)
-+			s.True(found)
- 		}
- 	}, 30*time.Second, 500*time.Millisecond)
- 	cancel()
- }
- 
- func (env *VersioningTestEnv) unsetCurrentDeployment(s parallelsuite.Scope, tv *testvars.TestVars) {
--	await.Require(s.Context(), s.TB(), func(t *await.T) {
-+	parallelsuite.Await(s, func(s parallelsuite.Scope) {
- 		req := &workflowservice.SetWorkerDeploymentCurrentVersionRequest{
- 			Namespace:      env.Namespace().String(),
- 			DeploymentName: tv.DeploymentSeries(),
- 		}
--		_, err := env.FrontendClient().SetWorkerDeploym
-```
-
-**File**: `tests/worker_deployment_version_test.go` (modified, +3/-4)
-```diff
-@@ -35,7 +35,6 @@ import (
- 	"go.temporal.io/server/common/dynamicconfig"
- 	"go.temporal.io/server/common/metrics"
- 	"go.temporal.io/server/common/metrics/metricstest"
--	"go.temporal.io/server/common/testing/await"
- 	"go.temporal.io/server/common/testing/parallelsuite"
- 	"go.temporal.io/server/common/testing/testhooks"
- 	"go.temporal.io/server/common/testing/testvars"
-@@ -848,12 +847,12 @@ func requireWorkerDeploymentMetricTags(
- 	metricNames ...string,
- ) {
- 	for _, metricName := range metricNames {
--		await.Require(s.Context(), s.TB(), func(t *await.T) {
-+		parallelsuite.Await(s, func(s parallelsuite.Scope) {
- 			recordings := capture.CollectMetric(metricName, func(recording *metricstest.CapturedRecording) bool {
- 				taskQueue, hasTaskQueue := recording.Tags["taskqueue"]
- 				return !hasTaskQueue || taskQueue == tv.TaskQueue().GetName()
- 			})
--			t.NotEmpty(recordings, "expected %s in namespace %s", metricName, tv.NamespaceName())
-+			s.NotEmpty(recordings, "expected %s in namespace %s", metricName, tv.NamespaceName())
- 			hasExpectedTags := false
- 			for _, recording := range recordings {
- 				if recording.Tags["worker_deployment_name"] == tv.DeploymentSeries() &&
-@@ -862,7 +861,7 @@ func requireWorkerDeploymentMetricTags(
- 					break
- 				}
- 			}
--			t.True(hasExpectedTags, "expected %s with deployment %q and build ID %q", metricName, tv.DeploymentSeries(), tv.BuildID())
-+			s.True(hasExpectedTags, "expected %s with deployment %q and build ID %q", metricName, tv.DeploymentSeries(), tv.BuildID())
- 		}, 5*time.Second, 50*time.Millisecond)
- 	}
- }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13173** (closed): Support package-exclusive methods in parallel suites (@stephanos)
-- **PR #13167** (closed): Migrate PriMatcherSuite to parallelsuite (@stephanos)
-- **PR #13166** (2026-11-19): Add typed synctest callbacks to parallel test suites (@stephanos)
-- **PR #13165** (2026-11-19): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #13159** (closed): CHASM DLQ data model (@chanric)
-- **PR #13158** (2026-11-18): Add Nexus serialization context usage metrics (@JoshuaFrenchwood)
+- **PR #13226** (2026-11-21): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13219** (2026-11-21): Optionally enforce JWT audience on Nexus HTTP handlers (@chrsmith)
+- **PR #13217** (closed): Stop each matching partition exactly once (@gurdasnijor)
+- **PR #13210** (2026-11-20): Preserve activity attempt timestamps across handoff retries (@fretz12)
+- **PR #13209** (2026-11-20): Fix testx bump workflow races (@stephanos)
+- **PR #13205** (2026-11-20): Use namespace.Name in TestEnv.SendSignal (@stephanos)
 
 ---
 
@@ -3262,35 +2336,33 @@ the 12 polling call sites.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. CHASM scheduler creation rollout in feature tests
+## X. flakes: raise deadlock detection timeout in `TestChildWorkflowInheritance` inher
 
 **RULE**:
-When implementing operations in `.github/workflows/features-integration.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/versioning_3_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cead54f6`: CHASM scheduler creation rollout in feature tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `59c4ca9a`: flakes: raise deadlock detection timeout in `TestChildWorkflowInheritance` inherit tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/features-integration.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/versioning_3_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        history.chasmSchedulerCreationRolloutPercent:
-          - value: 100
+		// Because the wf task can get stuck behind a channel, we make sure sdk does not panic too early
+		DeadlockDetectionTimeout: 30 * time.Second,
+		WorkflowTaskTimeout: 30 * time.Second,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        history.enableTransitionHistory:
-          - value: true
-        history.enableChasm:
-          - value: true
+		WorkflowTaskTimeout: 10 * time.Second,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cead54f6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `59c4ca9a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
