@@ -11759,3 +11759,4 @@ Every entry in this ledger must capture:
 | `learn-github-infracost-infracost` | `https://github.com/infracost/infracost` | `b8c2bd6e` | Multi-dimensional audit evidence | 2026-11-21T03:44:42.760Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `9138ff8a` | Multi-dimensional audit evidence | 2026-11-21T03:44:44.639Z |
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `b9e8acb7` | Multi-dimensional audit evidence | 2026-11-21T03:44:47.106Z |
+| `learn-github-meta-folly` | `https://github.com/facebook/folly` | `27995cd3` | Multi-dimensional audit evidence | 2026-11-21T03:52:30.737Z |

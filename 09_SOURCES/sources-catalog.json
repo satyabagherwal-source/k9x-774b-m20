@@ -7663,10 +7663,10 @@
     "repository": "meta/folly",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/folly",
-    "sourceVersion": "24e09e96",
+    "sourceVersion": "27995cd3",
     "license": "Apache-2.0",
-    "contentHash": "041697beb775b508d0b820041df4d6edb3b8973d7076a578807bc2f59dbfbf77",
-    "lastHarvestedAt": "2026-11-19T17:37:55.368Z",
+    "contentHash": "3e8e1e780d406711de37a1ff2d84a001f6bf6ac9278f65768624ef3443d02517",
+    "lastHarvestedAt": "2026-11-21T03:52:30.737Z",
     "learningId": "learn-github-meta-folly"
   },
   "kotlin-kmp-production-sample": {

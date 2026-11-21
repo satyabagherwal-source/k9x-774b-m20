@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T03:44:47.114Z",
+  "last_updated": "2026-11-21T03:52:30.746Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17181,14 +17181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meta-folly",
-      "content_hash": "041697beb775b508d0b820041df4d6edb3b8973d7076a578807bc2f59dbfbf77",
-      "verified_at": "2026-11-19T17:37:55.380Z",
+      "content_hash": "3e8e1e780d406711de37a1ff2d84a001f6bf6ac9278f65768624ef3443d02517",
+      "verified_at": "2026-11-21T03:52:30.745Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T17:37:55.380Z"
+      "last_updated": "2026-11-21T03:52:30.745Z"
     },
     "LiquidAI/LFM3-Omni-2B": {
       "repository": "LiquidAI/LFM3-Omni-2B",

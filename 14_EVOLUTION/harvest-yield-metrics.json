@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T03:44:47.111Z",
-  "total_cycles_completed": 11162,
-  "total_learnings_persisted": 11162,
-  "total_rules_promoted": 10519,
+  "last_updated": "2026-11-21T03:52:30.742Z",
+  "total_cycles_completed": 11163,
+  "total_learnings_persisted": 11163,
+  "total_rules_promoted": 10520,
   "history": [
-    {
-      "timestamp": "2026-11-20T08:34:43.111Z",
-      "repository": "linkerd/linkerd2",
-      "learningId": "learn-github-linkerd-linkerd2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T08:38:43.465Z",
       "repository": "ytsaurus/ytsaurus",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-21T03:44:47.111Z",
       "repository": "trailbaseio/trailbase",
       "learningId": "learn-github-trailbaseio-trailbase",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T03:52:30.742Z",
+      "repository": "meta/folly",
+      "learningId": "learn-github-meta-folly",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

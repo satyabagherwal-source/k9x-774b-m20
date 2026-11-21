@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-25AQ",
-    "timestamp": "2026-11-19T00:49:49.394Z",
-    "repository": "octodns/octodns",
-    "learningId": "learn-github-octodns-octodns",
-    "contentHash": "606b7e87f9b2ffbb4e44158997088b41460d8b288a3048c8322b07ab4027253a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-29KK",
     "timestamp": "2026-11-19T00:49:54.932Z",
     "repository": "citusdata/citus",
@@ -7490,6 +7475,21 @@
     "repository": "trailbaseio/trailbase",
     "learningId": "learn-github-trailbaseio-trailbase",
     "contentHash": "847c30c8b5a80db34ffaee204cd57deb3bf540259533ac405aa152b38752feb7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-GSGE",
+    "timestamp": "2026-11-21T03:52:30.734Z",
+    "repository": "meta/folly",
+    "learningId": "learn-github-meta-folly",
+    "contentHash": "3e8e1e780d406711de37a1ff2d84a001f6bf6ac9278f65768624ef3443d02517",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

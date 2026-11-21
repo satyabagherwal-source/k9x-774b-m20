@@ -4,22 +4,22 @@
 {
   "source_repository": "meta/folly",
   "source_url": "https://github.com/facebook/folly",
-  "source_version": "24e09e96",
+  "source_version": "27995cd3",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T17:37:55.594Z",
+  "timestamp": "2026-11-21T03:52:30.927Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-meta-folly",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [meta/folly](https://github.com/facebook/folly) (Revision: `24e09e96`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T17:37:55.594Z`  
+> **Provenance**: Harvested from [meta/folly](https://github.com/facebook/folly) (Revision: `27995cd3`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T03:52:30.927Z`  
 > **Learning ID**: `learn-github-meta-folly`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `meta/folly` (Commit: `24e09e96`)
+- **Target Repository**: `meta/folly` (Commit: `27995cd3`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T17:37:54.068Z  
+> **Harvest Timestamp**: 2026-11-21T03:52:29.598Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2399,767 +2399,430 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `da724490` (2026-11-19)
-**Commit Message**: add fixed-work F14 cache-locality profiles
+### Incident Patch 1: `e7490bbd` (2026-11-19)
+**Commit Message**: Handle signed overflow in checked_div and checked_mod (#2742)
 
 Summary:
-[🤖 Metamate] Extend `HashMapsBench` with an opt-in `--map_locality` matrix for Value/Node/Vector maps, uint64 keys, and 1/17-byte values. Hot and eviction cases share fixtures and shuffled traces. Large cases traverse the complete trace over a table sized so its allocated header-line arena exceeds LLC, rather than repeatedly warming a small query subset.
+`checked_div` and `checked_mod` in `folly/lang/CheckedMath.h` only reject `divisor == 0`. For a signed built-in type at least as wide as `int` (no promotion), `min / -1` and `min % -1` are undefined behaviour (the quotient does not fit), so `checked_div(&r, INT64_MIN, int64_t{-1})` runs the division instead of returning `false`. UBSan reports `division of -9223372036854775808 by -1 cannot be represented in type 'long long'` at both call sites.
 
-Cover hits, misses, exact 50/50 mixes, forced no-tag/false-tag misses, and multi-chunk overflow misses/last hits. A shared noinline lookup kernel keeps ordinary hashing in the timed region; compiler-ordering barriers and consumed checksums keep repeated work observable. Check membership, values, candidate counts and overflow shapes outside timing without adding instrumentation or private seams to F14.
+Both functions now return `false` with `*result = {}` for that pair, the same way they handle a zero divisor. The check is under `if constexpr` for built-in signed integers only, using `folly::is_integral_v` and `folly::is_signed_v` so `__int128` is covered on standard libraries whose `std::` traits leave it out (libstdc++ in strict `-std=c++XX` mode). The minimum is computed from the sign bit via `folly::make_unsigned_t` rather than `std::numeric_limits`, so the guard also works where strict-mode libstdc++ (GCC 10.1 and 10.2) leaves `numeric_limits<__int128>` unspecialised, which would make `min()` return `0` and reject `0 / -1`. Class types keep their old behaviour. `c
 
-Use fixed-work Folly profiling and the actual returned operation count, with checked rounding. Report seeds, traces and allocation footprints; reserve the retained eviction buffer in all memory estimates. Separate wrapper controls are diagnostic, not additionally subtracted. Eviction remains best-effort cache pressure, and a single profile does not establish confidence intervals 
-
-**File**: `folly/container/test/BUCK` (modified, +3/-0)
+**File**: `folly/lang/BUCK` (modified, +1/-0)
 ```diff
-@@ -683,6 +683,7 @@ fb_dirsync_cpp_unittest(
- fb_dirsync_cpp_binary(
-     name = "hash_maps_bench",
-     srcs = ["HashMapsBench.cpp"],
-+    labels = _F14_FALLBACK_CI_LABELS,
-     deps = [
-         "fbsource//third-party/fmt:fmt",
-         "fbsource//third-party/glog:glog",
-@@ -694,6 +695,8 @@ fb_dirsync_cpp_binary(
-         "//folly/container:f14_hash",
-         "//folly/hash:hash",
-         "//folly/init:init",
-+        "//folly/lang:align",
-+        "//folly/lang:exception",
-         "//folly/portability:gflags",
-     ],
- )
-```
-
-**File**: `folly/container/test/HashMapsBench.cpp` (modified, +487/-0)
-```diff
-@@ -15,12 +15,19 @@
-  */
- 
- #include <array>
-+#include <atomic>
- #include <cstddef>
- #include <functional>
-+#include <limits>
- #include <map>
- #include <random>
-+#include <stdexcept>
- #include <string>
-+#include <string_view>
-+#include <type_traits>
- #include <unordered_map>
-+#include <utility>
-+#include <vector>
- 
- #include <fmt/format.h>
- #include <glog/logging.h>
-@@ -31,6 +38,8 @@
- #include <folly/Random.h>
- #include <folly/hash/Hash.h>
- #include <folly/init/Init.h>
-+#include <folly/lang/Align.h>
-+#include <folly/lang/Exception.h>
- #include <folly/portability/GFlags.h>
- 
- #include <folly/container/F14Map.h>
-@@ -52,6 +61,28 @@ DEFINE_int32(
- DEFINE_int32(
-     map_size_step, 32, "multiplier for each benchmark between iterations");
- 
-+DEFINE_bool(
-+    map_locality, false, "Run the fixed-work F14 locality matrix instead.");
-+DEFINE_uint32(
-+    map_locality_small_entries,
-+    128,
-+    "Entries for non-collision hot/eviction fixtures; collisions use fixed 6/64.");
-+DEFINE_uint32(
-+    map_locality_evict_iters,
-+    128,
-+    "Eviction lookups, a positive multiple of 128.");
-+DEFINE_uint32(map_locality_seed, 42, "Fixed locality query-shuffle seed.");
-+DEFINE_uint32(
-+    map_locality_large_llc_factor,
-+    2,
-+    "Minimum large header-line footprint / LLC.");
-+DEFINE_uint64(
-+    map_locality_hot_max_bytes, 16384, "Hot map+query allocation budget.");
-+DEFINE_uint64(
-+    map_locality_max_bytes,
-+    uint64_t{8} << 30,
-+    "Per-process active map+query+reserved eviction-buffer budget, not RSS.");
-+
- //////// Key related preparation ////////
- 
- namespace {
-@@ -453,6 +484,452 @@ void runAllHashMapTests() {
-   }
- }
- 
-+namespace {
-+
-+#if FOLLY_F14_VECTOR_INTRINSICS_AVAILABLE
-+
-+using std::literals::operator""sv;
-+
-+enum class LookupLocality { hot, eviction, large };
-+enum class LookupPattern {
-+  hit,
-+  miss,
-+  mixed,
-+  no_tag,
-+  false_tag,
-+  overflow_no_tag,
-+  overflow_false_tag,
-+  overflow_last_hit,
-+};
-+
-+struct LookupConfig {
-+  std::string name;
-+  LookupLocality locality;
-+  LookupPattern pattern;
-+};
-+
-+constexpr std::array kLookupLocalities{
-+    std::pair{LookupLocality::hot, "Hot"sv},
-+    std::pair{LookupLocality::eviction, "Eviction"sv},
-+    std::pair{LookupLocality::large, "Large"sv},
-+};
-+constexpr std::array kLookupPatterns{
-+    std::pair{LookupPattern::hit, "hit"sv},
-+    std::pair{LookupPattern::miss, "miss"sv},
-+    std::pair{LookupPattern::mixed, "mixed"sv},
-+    std::pair{LookupPattern::no_tag, "no_tag"sv},
-+    std::pair{LookupPattern::false_tag, "false_tag"sv},
-+    std::pair{LookupPattern::overflow_no_tag, "overflow_no_tag"sv},
-+    std::pair{LookupPattern::overflow_false_tag, "overflow_false_tag"sv},
-+    std::pair{LookupPattern::overflow_last_hit, "overflow_last_hit"sv},
-+};
-+
-+bool noTagPattern(LookupPattern pattern) {
-+  return pattern == LookupPattern::no_tag ||
-+      pattern == LookupPattern::overflow_no_tag;
-+}
-+
-+bool overflowPattern(LookupPattern pattern) {
-+  return pattern == LookupPattern::overflow_no_tag ||
-+      pattern == LookupPattern::overflow_false_tag ||
-+      pattern == LookupPattern::overflow_last_hit;
-+}
-+
-+bool collisionPattern(LookupPattern pattern) {
-+  return noTagPattern(pattern) || pattern == LookupPattern::false_tag ||
-+      overflowPattern(pattern);
-+}
-+
-+size_t maxProbe(std::vector<size_t> const& histo) {
-+  for (size_t i = histo.size(); i != 0; --i) {
-+    if (histo[i - 1] != 0) {
-+      return i - 1;
-+    }
-+  }
-+  return 0;
-+}
-+
-+struct LookupCollisionHash {
-+  // Intentionally non-avalanching; opt out of remixing to preserve fixture
-+  // tags.
-+  using folly_is_avalanching = std::true_type;
-+  size_t operator()(uint64_t key) const {
-+    return static_cast<size_t>(key & 255) << (sizeof(size_t) * 8 - 8);
-+  }
-+};
-+
-+struct LookupCountEqual {
-+  size_t* calls;
-+  bool operator()(uint64_t a, uint64_t b) const {
-+    ++*calls;
-+    return a == b;
-+  }
-+};
-+
-+size_t localityEntries(LookupConfig const& config, size_t llc) {
-+  if (collisionPattern(config.pattern)) {
-+    return overflowPattern(config.pattern) ? 64 : 6;
-+  }
-+  if (config.locality != LookupLocality::large) {
-+    return FLAGS_map_locality_small_entries;
-+  }
-+  auto const factor = FLAGS_map_locality_large_llc_factor;
-+  if (llc == 0 || llc > std::numeric_limits<size_t>::max() / factor) {
-+    throw_exception<std::length_error>("Invalid large locality footprint");
-+  }
-+  auto const bytes = llc * factor;
-+  auto const lines = bytes / hardware_constructive_interference_size +
-+      (bytes % hardware_constructive_interference_size != 0);
-+  if (lines > std::numeric_limits<uint32_t>::max() / 32) {
-+    throw_exception<std::length_error>("Too many locality entries");
-+  }
-+  // At most 16 slots per chunk; size the allocated header-line arena beyond
-+  // LLC.
-+  return lines * 16;
-+}
-+
-+uint64_t localityKey(size_t id, bool collision, uint8_t tag = 17) {
-+  return collision
-+      ? (uint64_t{id} << 8) | tag
-+      : keyGen<uint64_t>(static_cast<uint32_t>(id));
-+}
-+
-+template <typena
-```
-
----
-
-### Incident Patch 2: `e5ca9de6` (2026-11-19)
-**Commit Message**: Fix Over-Aligned Element Types in `ProducerConsumerQueue` (#2733)
-
-Summary:
-`ProducerConsumerQueue` allocates its ring with `std::malloc`, which only guarantees `alignof(std::max_align_t)`. A `T` with a stricter `alignas` is then constructed on misaligned storage. This is undefined behavior, may crash: an `alignas(32)` `__m256d` struct built with `-mavx2` segfaults on an aligned `vmovapd` store.
-
-The ring is now always allocated with `folly::operator_new` and released with `folly::operator_delete`, passing `std::align_val_t{alignof(T)}` in both cases. There is no change to the public API or object layout.
-
-Pull Request resolved: https://github.com/meta/folly/pull/2733
-
-Reviewed By: r-barnes
-
-Differential Revision: D132984650
-
-Pulled By: yfeldblum
-
-fbshipit-source-id: 96adc5dcb0b156c2f7e7164c6c6a016eb305e90d
-
-**File**: `folly/BUCK` (modified, +1/-0)
-```diff
-@@ -2167,6 +2167,7 @@ fb_dirsync_cpp_library(
+@@ -137,6 +137,7 @@ fb_dirsync_cpp_library(
      exported_deps = [
-         "//folly/concurrency:cache_locality",
-         "//folly/lang:bits",
-+        "//folly/lang:new",
+         "//folly:c_portability",
+         "//folly:likely",
++        "//folly:traits",
      ],
  )
  
 ```
 
-**File**: `folly/CMakeLists.txt` (modified, +1/-0)
+**File**: `folly/lang/CMakeLists.txt` (modified, +1/-0)
 ```diff
-@@ -1009,6 +1009,7 @@ folly_add_library(
+@@ -108,6 +108,7 @@ folly_add_library(
    EXPORTED_DEPS
-     folly_concurrency_cache_locality
-     folly_lang_bits
-+    folly_lang_new
+     folly_c_portability
+     folly_likely
++    folly_traits
  )
  
  folly_add_library(
 ```
 
-**File**: `folly/ProducerConsumerQueue.h` (modified, +19/-9)
+**File**: `folly/lang/CheckedMath.h` (modified, +26/-0)
 ```diff
-@@ -18,7 +18,6 @@
+@@ -28,6 +28,7 @@
  
- #include <atomic>
- #include <cassert>
--#include <cstdlib>
- #include <limits>
- #include <memory>
- #include <stdexcept>
-@@ -27,6 +26,7 @@
- 
- #include <folly/concurrency/CacheLocality.h>
- #include <folly/lang/Bits.h>
-+#include <folly/lang/New.h>
+ #include <folly/CPortability.h>
+ #include <folly/Likely.h>
++#include <folly/Traits.h>
  
  namespace folly {
- 
-@@ -75,7 +75,7 @@ struct alignas(hardware_destructive_interference_size) ProducerConsumerQueue {
-       }
-     }
- 
--    std::free(producer_.records);
-+    deallocate(producer_.records);
+ namespace detail {
+@@ -182,6 +183,17 @@ constexpr bool checked_div(T* result, T dividend, T divisor) {
+     *result = {};
+     return false;
    }
- 
-   //  Checks a private, unsynchronized cache of the other side's cursor
-@@ -211,7 +211,7 @@ struct alignas(hardware_destructive_interference_size) ProducerConsumerQueue {
- 
-   //  Bundles the three values makeState() computes, so the delegating
-   //  constructor below can initialize both producer_ and consumer_ from a
--  //  single malloc() call rather than validating/allocating twice.
-+  //  single allocation rather than validating/allocating twice.
-   struct State {
-     T* records{};
-     uint32_t mask{};
-@@ -240,7 +240,7 @@ struct alignas(hardware_destructive_interference_size) ProducerConsumerQueue {
- 
-   //  Computed in 64 bits and checked against size_t's actual range before
-   //  narrowing: sizeof(T) * (mask + 1) can legally exceed the 32-bit size_t
--  //  that std::malloc() takes on a 32-bit platform, even though mask itself
-+  //  that the allocator takes on a 32-bit platform, even though mask itself
-   //  always fits in uint32_t. Silently truncating that byte count would
-   //  allocate a smaller buffer than record indices (computed mod mask+1 in
-   //  the wider sense) are entitled to touch.
-@@ -253,14 +253,24 @@ struct alignas(hardware_destructive_interference_size) ProducerConsumerQueue {
-     return static_cast<size_t>(bytes);
-   }
- 
-+  //  std::malloc() only guarantees alignof(std::max_align_t), so storage is
-+  //  always drawn from the aligned allocator to support a T with a stricter
-+  //  alignas; constructing using storage allocated with malloc() would be
-+  //  misaligned, and can fault on the aligned SIMD instructions the compiler
-+  //  is then entitled to use.
-+  static T* allocate(uint32_t mask) {
-+    size_t const bytes = allocationSize(mask);
-+    return static_cast<T*>(operator_new(bytes, std::align_val_t{alignof(T)}));
++  if constexpr (folly::is_integral_v<T> && folly::is_signed_v<T>) {
++    constexpr auto kBits =
++        sizeof(T) * std::numeric_limits<unsigned char>::digits;
++    constexpr T kMin =
++        static_cast<T>(folly::make_unsigned_t<T>{1} << (kBits - 1));
++    constexpr T kMinusOne = static_cast<T>(-1);
++    if (dividend == kMin && divisor == kMinusOne) [[unlikely]] {
++      *result = {};
++      return false;
++    }
 +  }
-+
-+  static void deallocate(T* records) noexcept {
-+    operator_delete(records, std::align_val_t{alignof(T)});
-+  }
-+
-   static State makeState(uint32_t size) {
-     uint32_t const validSize = validateSize(size); // in [1, 1 << 31]
-     uint32_t const mask = nextPowTwo(validSize) - 1; // in [1, 1 << 31)
--    auto* const records = static_cast<T*>(std::malloc(allocationSize(mask)));
--    if (!records) {
--      throw std::bad_alloc();
--    }
--    return State{records, mask, validSize};
-+    return State{allocate(mask), mask, validSize};
+   *result = dividend / divisor;
+   return true;
+ }
+@@ -192,6 +204,20 @@ constexpr bool checked_mod(T* result, T dividend, T divisor) {
+     *result = {};
+     return false;
    }
- 
-   explicit ProducerConsumerQueue(State st) noexcept
++  using R = decltype(dividend % divisor);
++  if constexpr (
++      folly::is_integral_v<T> && folly::is_integral_v<R> &&
++      folly::is_signed_v<R>) {
++    constexpr auto kBits =
++        sizeof(R) * std::numeric_limits<unsigned char>::digits;
++    constexpr R kMin =
++        static_cast<R>(folly::make_unsigned_t<R>{1} << (kBits - 1));
++    constexpr T kMinusOne = static_cast<T>(-1);
++    if (dividend == kMin && divisor == kMinusOne) [[unlikely]] {
++      *result = {};
++      return false;
++    }
++  }
+   *result = dividend % divisor;
+   return true;
+ }
 ```
 
-**File**: `folly/test/BUCK` (modified, +1/-0)
+**File**: `folly/lang/test/BUCK` (modified, +1/-0)
 ```diff
-@@ -1238,6 +1238,7 @@ fb_dirsync_cpp_unittest(
+@@ -69,6 +69,7 @@ fb_dirsync_cpp_unittest(
+     name = "checked_math_test",
+     srcs = ["CheckedMathTest.cpp"],
      deps = [
-         "fbsource//third-party/glog:glog",
-         "//folly:producer_consumer_queue",
-+        "//folly/lang:align",
++        "//folly:traits",
+         "//folly/lang:checked_math",
+         "//folly/lang:keep",
          "//folly/portability:gtest",
-     ],
- )
 ```
 
-**File**: `folly/test/ProducerConsumerQueueTest.cpp` (modified, +28/-0)
+**File**: `folly/lang/test/CheckedMathTest.cpp` (modified, +97/-1)
 ```diff
-@@ -24,6 +24,7 @@
+@@ -20,6 +20,7 @@
+ #include <limits>
+ #include <random>
  
- #include <glog/logging.h>
- 
-+#include <folly/lang/Align.h>
++#include <folly/Traits.h>
+ #include <folly/lang/Keep.h>
  #include <folly/portability/GTest.h>
  
- //////////////////////////////////////////////////////////////////////
-@@ -213,6 +214,26 @@ struct DtorChecker {
+@@ -229,10 +230,105 @@ TEST(CheckedMath, checkedModSafeDivisor) {
+ TEST(CheckedMath, checkedModZeroDivisor) {
+   unsigned int a;
  
- unsigned int DtorChecker::numInstances = 0;
- 
-+template <size_t Align>
-+struct alignas(Align) OverAligned {};
-+
-+template <class T>
-+void checkOverAlignedStorage() {
-+  // Keep every queue alive such that each ring is a separate allocation. If
-+  // they were freed, malloc() could return the same block on each iteration,
-+  // and one block whose address is a multiple of alignof(T) would pass every
-+  // check.
-+  std::vector<std::unique_ptr<folly::ProducerConsumerQueue<T>>> queues;
-+
-+  for (int i = 0; i < 32; ++i) {
-+    queues.push_back(std::make_unique<folly::ProducerConsumerQueue<T>>(2));
-+    EXPECT_TRUE(queues.back()->write());
-+
-+    auto* const front = queues.back()->frontPtr();
-+    EXPECT_EQ(front, folly::align_floor(front, alignof(T)));
-+  }
-+}
-+
- } // namespace
- 
- //////////////////////////////////////////////////////////////////////
-@@ -317,3 +338,10 @@ TEST(PCQ, MinimumSize) {
-   EXPECT_TRUE(queue.read(value));
-   EXPECT_EQ(value, 3);
+-  EXPECT_FALSE(folly::checked_div(&a, 5u, 0u));
++  EXPECT_FALSE(folly::checked_mod(&a, 5u, 0u));
+   EXPECT_EQ(a, {});
  }
+ 
++TEST(CheckedMath, checkedDivSignedOverflow) {
++  int64_t result64 = 1;
++  EXPECT_FALSE(
++      folly::checked_div(
++          &result64, std::numeric_limits<int64_t>::min(), int64_t{-1}));
++  EXPECT_EQ(result64, 0);
 +
-+TEST(PCQ, OverAlignedStorage) {
-+  // 32 bytes is the first alignment malloc() does not guarantee, and 256
-+  // exceeds the cache-line-sized alignment an implementation may hardcode.
-+  checkOverAlignedStorage<OverAligned<32>>();
-+  checkOverAlignedStorage<OverAligned<256>>();
++  int32_t result32 = 1;
++  EXPECT_FALSE(
++      folly::checked_div(
++          &result32, std::numeric_limits<int32_t>::min(), int32_t{-1}));
++  EXPECT_EQ(result32, 0);
 +}
++
++TEST(CheckedMath, checkedModSignedOverflow) {
++  int64_t result64 = 1;
++  EXPECT_FALSE(
++      folly::checked_mod(
++          &result64, std::numeric_limits<int64_t>::min(), int64_t{-1}));
++  EXPECT_EQ(result64, 0);
++
++  int32_t result32 = 1;
++  EXPECT_FALSE(
++      folly::checked_mod(
++          &result32, std::numeric_limits<int32_t>::min(), int32_t{-1}));
++  EXPECT_EQ(result32, 0);
++}
++
++TEST(CheckedMath, checkedDivNarrowSignedOverflow) {
++  int8_t result8 = 1;
++  EXPECT_FALSE(
++      folly::checked_div(
++          &result8, std::numeric_limits<int8_t>::min(), int8_t{-1}));
++  EXPECT_EQ(result8, 0);
++
++  int16_t result16 = 1;
++  EXPECT_FALSE(
++      folly::checked_div(
++          &result16, std::numeric_limits<int16_t>::min(), int16_t{-1}));
++  EXPECT_EQ(result16, 0);
++}
++
++#if FOLLY_HAVE_INT128_T
++TEST(CheckedMath, checkedDivModInt128SignedOverflow) {
++  constexpr auto min = folly::int128_t(folly::uint128_t{1} << 127);
++  folly::int128_t result = 1;
++  EXPECT_FALSE(folly::checked_div(&result, min, folly::int128_t{-1}));
++  EXPECT_EQ(result, 0);
++
++  result = 1;
++  EXPECT_FALSE(folly::checked_mod(&result, min, folly::int128_t{-1}));
++  EXPECT_EQ(result, 0);
++}
++
++TEST(CheckedMath, checkedDivModInt128ZeroDividend) {
++  folly::int128_t result = 1;
++  EXPECT_TRUE(
++      folly::checked_div(&result, folly::int128_t{0}, folly::int128_t{-1}));
++  EXPECT_EQ(result, 0);
++
++  result = 1;
++  EXPECT_TRUE(
++      folly::checked_mod(&result, folly::int128_t{0}, folly::int128_t{-1}));
++  EXPECT_EQ(result, 0);
++}
++#endif
++
++TEST(CheckedMath, checkedDivSignedSafeDivisors) {
++  int64_t result = 1;
++  auto min = std::numeric_limits<int64_t>::min();
++  EXPECT_TRUE(folly::checked_div(&result, min, int64_t{1}));
++  EXPECT_EQ(result, min);
++  EXPECT_TRUE(folly::checked_div(&result, min, int64_t{-2}));
++  EXPECT_EQ(result, -(min / 2));
++  EXPECT_TRUE(folly::checked_div(&result, int64_t{8}, int64_t{-1}));
++  EXPECT_EQ(result, -8);
++}
++
++TEST(CheckedMath, checkedModSignedSafeDivisors) {
++  int8_t smallResult = 1;
++  EXPECT_TRUE(
++      folly::checked_mod(
++          &smallResult, std::numeric_limits<int8_t>::min(), int8_t{-1}));
++  EXPECT_EQ(smallResult, 0);
++
++  int64_t result = 1;
++  auto min = std::numeric_limits<int64_t>::min();
++  EXPECT_TRUE(folly::checked_mod(&result, min, int64_t{1}));
++  EXPECT_EQ(result, 0);
++  EXPECT_TRUE(folly::checked_mod(&result, min, int64_t{-2}));
++  EXPECT_EQ(result, 0);
++  EXPECT_TRUE(folly::checked_mod(&result, int64_t{8}, int64_t{-1}));
++  EXPECT_EQ(result, 0);
++}
++
+ TEST(CheckedMath, checkedMulNoOverflow) {
+   unsigned int a;
+ 
 ```
 
 ---
 
-### Incident Patch 3: `96786bdf` (2026-11-18)
-**Commit Message**: Recover truncated .debug_info.dwo offsets in .dwp index
+### Incident Patch 2: `ca7a6399` (2026-11-20)
+**Commit Message**: ez|fastio| allocate the ZCRX overflow queue before mapping
 
 Summary:
-`llvm-dwp --continue-on-cu-index-overflow`, which fbcode's `dwp` build wrapper passes by default, keeps packaging after `.debug_info.dwo` passes 4 GiB and writes each unit's offset into `.debug_cu_index` modulo 2^32. LLVM tools rebuild the index in that case. The symbolizer parsed whatever unit sat at the truncated offset without checking its DWO ID, and could not address `.debug_info.dwo` beyond 4 GiB at all, so stack traces symbolized against such packages (Unicorn: D63291887, D81615968) lose their inlined frames, or can take them from the wrong unit.
+if
+```
+pendingBuffers_ = DynamicRingQueue<Buffer*>(
+      static_cast<uint32_t>(params.numBuffers * (bufferSize_ / kMTU)));
+```
+fails for any reason, then we don't `mmap()` (and needing to `munmap()` said memory which right now we don't do and would lead to a leak) and dtor cleans everything up.
 
-The recovery is similar to gimli, the Rust DWARF library used by the blazesym symbolizer: `DwarfPackage::find_unit` also steps from the truncated offset in 4 GiB increments and accepts the unit whose ID matches (gimli-rs/gimli#903, pinned in fbsource by D122577485). Unlike gimli, this also recovers DWARF 4 split units, whose DWO ID is in the root DIE, and checks the DWO ID in packages under 4 GiB.
+previously if `DynamicRingQueue` fails to allocate because of memory pressure we had already mmap() the memory.
 
 Reviewed By: yfeldblum
 
-Differential Revision: D132680644
+Differential Revision: D133232919
 
-fbshipit-source-id: 9a9508b5a5ea845db3777348e067eaa61e004ac4
+fbshipit-source-id: 8a4d563837cd17e667979443759708ff0e8ae50a
 
-**File**: `folly/debugging/symbolizer/DwarfCursor.h` (modified, +1/-1)
+**File**: `folly/io/async/IoUringZeroCopyBufferPool.cpp` (modified, +2/-2)
 ```diff
-@@ -38,7 +38,7 @@ enum class DwarfParseErrorCode : uint8_t {
- 
- struct DwarfParseError {
-   DwarfParseErrorCode code;
--  size_t offset;
-+  uint64_t offset;
- 
-   friend bool operator==(const DwarfParseError&, const DwarfParseError&) =
-       default;
-```
-
-**File**: `folly/debugging/symbolizer/DwarfImpl.cpp` (modified, +4/-6)
-```diff
-@@ -35,12 +35,10 @@ namespace symbolizer {
- namespace {
- 
- template <typename Size = size_t>
--DwarfParseResult<Size> incrementDieOffset(uint32_t offset) {
--  if constexpr (sizeof(Size) <= sizeof(uint32_t)) {
--    if (offset >= std::numeric_limits<Size>::max()) {
--      return makeUnexpected(
--          DwarfParseError{DwarfParseErrorCode::integer_overflow, offset});
--    }
-+DwarfParseResult<Size> incrementDieOffset(uint64_t offset) {
-+  if (offset >= std::numeric_limits<Size>::max()) {
-+    return makeUnexpected(
-+        DwarfParseError{DwarfParseErrorCode::integer_overflow, offset});
-   }
-   return static_cast<Size>(offset) + 1;
- }
-```
-
-**File**: `folly/debugging/symbolizer/DwarfUtil.cpp` (modified, +23/-23)
-```diff
-@@ -261,7 +261,7 @@ DwarfParseResult<DIEAbbreviation> getAbbreviation(
- }
- 
- template <typename T>
--DwarfParseResult<T> parseError(DwarfParseErrorCode code, size_t offset) {
-+DwarfParseResult<T> parseError(DwarfParseErrorCode code, uint64_t offset) {
-   return makeUnexpected(DwarfParseError{code, offset});
- }
- 
-@@ -287,10 +287,6 @@ DwarfParseResult<CompilationUnitHeader> parseCompilationUnitHeader(
-     return parseError<CompilationUnitHeader>(
-         DwarfParseErrorCode::invalid_offset, offset);
-   }
--  if (offset > std::numeric_limits<uint32_t>::max()) {
--    return parseError<CompilationUnitHeader>(
--        DwarfParseErrorCode::integer_overflow, offset);
--  }
- 
-   DwarfCursor lengthCursor(debugInfo.subspan(offset), offset);
-   auto initialLength = lengthCursor.read<uint32_t>();
-@@ -318,8 +314,7 @@ DwarfParseResult<CompilationUnitHeader> parseCompilationUnitHeader(
-         DwarfParseErrorCode::truncated, lengthCursor.offset());
-   }
-   const auto unitSize = lengthFieldSize + static_cast<size_t>(unitLength);
--  if (unitSize > std::numeric_limits<uint32_t>::max() ||
--      offset > std::numeric_limits<uint32_t>::max() - unitSize) {
-+  if (unitSize > std::numeric_limits<uint32_t>::max()) {
-     return parseError<CompilationUnitHeader>(
-         DwarfParseErrorCode::integer_overflow, offset);
-   }
-@@ -353,7 +348,7 @@ DwarfParseResult<CompilationUnitHeader> parseCompilationUnitHeader(
-     }
-     header.unitType = *unitType;
-     if (!isSupportedCompilationUnitType(header.unitType)) {
--      header.firstDie = static_cast<uint32_t>(cursor.offset());
-+      header.firstDie = cursor.offset();
-       return header;
-     }
- 
-@@ -401,7 +396,7 @@ DwarfParseResult<CompilationUnitHeader> parseCompilationUnitHeader(
-     header.addrSize = *addrSize;
+@@ -336,11 +336,11 @@ IoUringZeroCopyBufferPoolImpl::IoUringZeroCopyBufferPoolImpl(
    }
  
--  header.firstDie = static_cast<uint32_t>(cursor.offset());
-+  header.firstDie = cursor.offset();
-   return header;
- }
+   bufAreaSize_ = params.numBuffers * bufferSize_;
+-  mapMemory();
+-
+   pendingBuffers_ = DynamicRingQueue<Buffer*>(
+       static_cast<uint32_t>(params.numBuffers * (bufferSize_ / kMTU)));
  
-@@ -591,7 +586,7 @@ DwarfParseResult<bool> parseCompilationUnitMetadata(
-     return makeUnexpected(header.error());
-   }
- 
--  cu.offset = static_cast<uint32_t>(offset);
-+  cu.offset = offset;
-   cu.is64Bit = header->is64Bit;
-   cu.strOffsetsIs64Bit = header->is64Bit;
-   cu.size = header->size;
-@@ -699,6 +694,21 @@ DwarfParseResult<bool> parseCompilationUnitMetadata(
- 
- } // namespace
- 
-+bool parseDwpCompilationUnit(CompilationUnit& cu, uint64_t dwoId) {
-+  const uint64_t infoSize = cu.debugSections.debugInfo.size();
-+  for (uint64_t offset = cu.offset; offset < infoSize;
-+       offset += uint64_t{1} << 32) {
-+    CompilationUnit candidate = cu;
-+    auto result =
-+        parseCompilationUnitMetadata(candidate, folly::to_narrow(offset), true);
-+    if (result.hasValue() && *result && candidate.dwoId == dwoId) {
-+      cu = candidate;
-+      return true;
-+    }
-+  }
-+  return false;
-+}
++  mapMemory();
 +
- CompilationUnits getCompilationUnits(
-     ElfCacheBase* elfCache,
-     const DebugSections& debugSections,
-@@ -811,12 +821,8 @@ CompilationUnits getCompilationUnits(
-         splitCU.debugSections.debugCuIndex,
-         *cu.mainCompilationUnit.dwoId,
-         splitCU);
--    if (indexResult.hasError() || !*indexResult) {
--      return cu;
--    }
--    auto splitResult =
--        parseCompilationUnitMetadata(splitCU, splitCU.offset, true);
--    if (splitResult.hasError() || !*splitResult) {
-+    if (indexResult.hasError() || !*indexResult ||
-+        !parseDwpCompilationUnit(splitCU, *cu.mainCompilationUnit.dwoId)) {
-       return cu;
-     }
-     // 3.1.3 Split Full Compilation Unit Entries
-@@ -1263,19 +1269,13 @@ DwarfParseResult<Die> getDieAtOffset(
-         DwarfParseError{
-             DwarfParseErrorCode::invalid_offset, toErrorOffset(offset)});
-   }
--  if (offset > std::numeric_limits<uint32_t>::max()) {
--    return makeUnexpected(
--        DwarfParseError{
--            DwarfParseErrorCode::integer_overflow,
--            static_cast<size_t>(offset)});
--  }
- 
-   Die die;
-   DwarfCursor cursor(
-       debugInfo.subspan(
-           static_cast<size_t>(offset), static_cast<size_t>(unitEnd - offset)),
-       static_cast<size_t>(offset));
--  die.offset = static_cast<uint32_t>(offset);
-+  die.offset = offset;
-   die.is64Bit = cu.is64Bit;
-   auto code = cursor.readULEB();
-   if (code.hasError()) {
+   if (!test) {
+     initialRegister(params, pageSize);
+   } else {
 ```
 
-**File**: `folly/debugging/symbolizer/DwarfUtil.h` (modified, +8/-4)
+**File**: `folly/io/async/test/BUCK` (modified, +1/-0)
 ```diff
-@@ -79,10 +79,10 @@ struct CompilationUnit {
-   uint8_t unitType = DW_UT_compile;
-   uint8_t addrSize = 0;
-   // Offset in .debug_info of this compilation unit.
--  uint32_t offset = 0;
-+  uint64_t offset = 0;
-   uint32_t size = 0;
-   // Offset in .debug_info for the first DIE in this compilation unit.
--  uint32_t firstDie = 0;
-+  uint64_t firstDie = 0;
-   folly::Optional<uint64_t> abbrevOffset;
- 
-   // Compilation directory.
-@@ -119,7 +119,7 @@ struct CompilationUnitHeader {
-   uint8_t version = 0;
-   uint8_t unitType = DW_UT_compile;
-   uint8_t addrSize = 0;
--  uint32_t firstDie = 0;
-+  uint64_t firstDie = 0;
-   uint64_t abbrevOffset = 0;
-   folly::Optional<uint64_t> dwoId;
- };
-@@ -147,7 +147,7 @@ struct Die {
-   // Offset from start to first attribute
-   uint8_t attrOffset = 0;
-   // Offset within debug info.
--  uint32_t offset = 0;
-+  uint64_t offset = 0;
-   uint64_t code = 0;
-   DIEAbbreviation abbr;
- };
-@@ -227,6 +227,10 @@ DwarfParseResult<CompilationUnitHeader> parseCompilationUnitHeader(
- DwarfParseResult<bool> findDwpCompilationUnit(
-     std::span<const uint8_t> debugCuIndex, uint64_t dwoId, CompilationUnit& cu);
- 
-+// Parse the split unit for dwoId at the offset from findDwpCompilationUnit,
-+// which llvm-dwp --continue-on-cu-index-overflow may have truncated to 32 bits.
-+bool parseDwpCompilationUnit(CompilationUnit& cu, uint64_t dwoId);
-+
- // Advance cu.strOffsetsBase from the start of its .dwp contribution to the
- // first entry, taking the offset size from the contribution's own header.
- void setDwpStrOffsetsBase(CompilationUnit& cu);
-```
-
-**File**: `folly/debugging/symbolizer/test/BUCK` (modified, +1/-0)
-```diff
-@@ -265,6 +265,7 @@ fb_dirsync_cpp_unittest(
-         "//folly:varint",
-         "//folly/debugging/symbolizer:dwarf",
-         "//folly/portability:gtest",
+@@ -1378,6 +1378,7 @@ fb_dirsync_cpp_unittest(
+     target_compatible_with = ["ovr_config//runtime:fbcode"],
+     deps = [
+         "//folly/io/async:io_uring_zero_copy_buffer_pool",
 +        "//folly/portability:sys_mman",
+         "//folly/portability:unistd",
      ],
  )
- 
 ```
 
-**File**: `folly/debugging/symbolizer/test/DwarfUtilTest.cpp` (modified, +111/-0)
+**File**: `folly/io/async/test/IoUringZeroCopyBufferPoolTest.cpp` (modified, +28/-0)
 ```diff
-@@ -26,6 +26,7 @@
- #include <folly/Utility.h>
- #include <folly/Varint.h>
- #include <folly/portability/GTest.h>
+@@ -14,13 +14,15 @@
+  * limitations under the License.
+  */
+ 
++#include <cerrno>
+ #include <thread>
+ #include <utility>
+ #include <vector>
+ 
+ #include <gtest/gtest.h>
+ 
+ #include <folly/io/async/IoUringZeroCopyBufferPool.h>
 +#include <folly/portability/SysMman.h>
+ #include <folly/portability/Unistd.h>
  
- #if FOLLY_HAVE_DWARF && FOLLY_HAVE_ELF
+ using namespace ::testing;
+@@ -58,6 +60,32 @@ class IoUringZeroCopyBufferPoolTestHelper {
  
-@@ -119,6 +120,74 @@ std::vector<uint8_t> abbreviation() {
-   };
+ using namespace ::folly;
+ 
++TEST(IoUringZeroCopyBufferPoolTest, BufferKeepsMappingAliveAfterPoolDestroy) {
++  IoUringZeroCopyBufferPool::Params params = {
++      .ring = nullptr,
++      .numBuffers = 32,
++      .bufferSizeHint = 4096,
++      .rqEntries = 8,
++      .ifindex = 0,
++      .queueId = 0,
++  };
++  auto pool = IoUringZeroCopyBufferPoolTestHelper::create(params);
++  io_uring_cqe cqe{};
++  cqe.res = 2048;
++  io_uring_zcrx_cqe zcqe{};
++  auto buffer = pool->getIoBuf(&cqe, &zcqe).buffer;
++  ASSERT_NE(buffer, nullptr);
++  auto* address = const_cast<uint8_t*>(buffer->data());
++  const size_t pageSize = static_cast<size_t>(sysconf(_SC_PAGESIZE));
++  unsigned char resident{};
++
++  pool.reset();
++  EXPECT_EQ(::mincore(address, pageSize, &resident), 0);
++  buffer.reset();
++  EXPECT_EQ(::mincore(address, pageSize, &resident), -1);
++  EXPECT_EQ(errno, ENOMEM);
++}
++
+ // TODO: T264228475: remove this once liburing/uapi headers are updated.
+ struct TestZcrxNotifStats {
+   uint64_t copy_count;
+```
+
+---
+
+### Incident Patch 3: `c7716510` (2026-11-20)
+**Commit Message**: Fix Subprocess.cpp build with clang and glibc >= 2.40 fortify (#2757)
+
+Summary:
+With glibc 2.40 or newer, clang and `_FORTIFY_SOURCE`, `bits/fcntl2.h` declares `open` and `openat` as `__attribute__((overloadable))` overload sets. The libc X-macros in `Subprocess.cpp` spell the field types as `decltype(&::open)` and deduce the loader's return type from `&::open`. Neither can pick an overload, so the build fails with "reference to overloaded function could not be resolved". GCC doesn't take that glibc path, so only clang builds break.
+
+Now each X-macro entry carries its function type:
+- The other entries use `decltype(::func)`, so their types are unchanged.
+- `open` and `openat` use `subprocess_libc_open_t` and `subprocess_libc_openat_t`, their libc signatures. This also covers Bionic's `__open_real` and `__openat_real`.
+- The initializer does `static_cast<type*>(&::func)`, which picks the libc function out of the overload set.
+
+Fixes https://github.com/meta/folly/issues/2751.
+
+Pull Request resolved: https://github.com/meta/folly/pull/2757
+
+Test Plan:
+On Debian trixie (glibc 2.41, clang 19), with `-O2 -D_FORTIFY_SOURCE=2`:
+- Before: `Subprocess.cpp` fails with the errors in https://g
+
+**File**: `folly/Subprocess.cpp` (modified, +30/-22)
+```diff
+@@ -127,30 +127,37 @@ static Ret subprocess_libc_load(
+   return !kIsSanitize ? ptr : reinterpret_cast<Ret>(::dlsym(handle, name));
  }
  
-+// DWARF 4 split units carry their DWO ID in DW_AT_GNU_dwo_id, DWARF 5 in the
-+// unit header.
-+std::vector<uint8_t> splitUnitAbbreviation(uint16_t version) {
-+  if (version == 5) {
-+    return abbreviation();
-+  }
-+  std::vector<uint8_t> bytes{1, DW_TAG_compile_unit, DW_CHILDREN_yes};
-+  appendULEB(bytes, DW_AT_GNU_dwo_id);
-+  appendULEB(bytes, DW_FORM_data8);
-+  bytes.insert(bytes.end(), {0, 0, 0});
-+  return bytes;
-+}
+-#define FOLLY_DETAIL_SUBPROCESS_LIBC_X_BASE(X) \
+-  X(_exit, _exit)                              \
+-  X(close, close)                              \
+-  X(dup2, dup2)                                \
+-  X(fcntl, fcntl)                              \
+-  X(pthread_sigmask, pthread_sigmask)          \
+-  X(signal, signal)                            \
+-  X(sprintf, sprintf)                          \
+-  X(strtol, strtol)                            \
+-  X(vfork, vfork)                              \
+-  X(write, write)
++#define FOLLY_DETAIL_SUBPROCESS_LIBC_X_BASE(X)                     \
++  X(_exit, _exit, decltype(::_exit))                               \
++  X(close, close, decltype(::close))                               \
++  X(dup2, dup2, decltype(::dup2))                                  \
++  X(fcntl, fcntl, decltype(::fcntl))                               \
++  X(pthread_sigmask, pthread_sigmask, decltype(::pthread_sigmask)) \
++  X(signal, signal, decltype(::signal))                            \
++  X(sprintf, sprintf, decltype(::sprintf))                         \
++  X(strtol, strtol, decltype(::strtol))                            \
++  X(vfork, vfork, decltype(::vfork))                               \
++  X(write, write, decltype(::write))
 +
-+std::vector<uint8_t> splitUnit(uint16_t version, uint64_t dwoId) {
-+  std::vector<uint8_t> bytes;
-+  append<uint32_t>(bytes, 0);
-+  append<uint16_t>(bytes, version);
-+  if (version == 5) {
-+    append<uint8_t>(bytes, DW_UT_split_compile);
-+    append<uint8_t>(bytes, sizeof(uintptr_t));
-+    append<uint32_t>(bytes, 0);
-+    append<uint64_t>(bytes, dwoId);
-+    appendULEB(bytes, 1);
-+    bytes.insert(bytes.end(), {'x', 0});
-+  } else {
-+    append<uint32_t>(bytes, 0);
-+    append<uint8_t>(bytes, sizeof(uintptr_t));
-+    appendULEB(bytes, 1);
-+    append<uint64_t>(bytes, dwoId);
-+  }
-+  bytes.push_back(0);
-+  overwrite<uint32_t>(bytes, 0, folly::to_narrow(bytes.size() - 4));
-+  return bytes;
-+}
-+
-+class SparseSection {
-+ public:
-+  explicit SparseSection(size_t size)
-+      : size_(size),
-+        data_(mmap(
-+            nullptr,
-+            size,
-+            PROT_READ | PROT_WRITE,
-+            MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE,
-+            -1,
-+            0)) {}
-+  SparseSection(const SparseSection&) = delete;
-+  SparseSection& operator=(const SparseSection&) = delete;
-+  ~SparseSection() {
-+    if (valid()) {
-+      munmap(data_, size_);
-+    }
-+  }
-+
-+  bool valid() const { return data_ != MAP_FAILED; }
-+  void write(size_t offset, std::span<const uint8_t> bytes) {
-+    std::memcpy(
-+        static_cast<uint8_t*>(data_) + offset, bytes.data(), bytes.size());
-+  }
-+  std::span<const uint8_t> bytes() const {
-+    return {static_cast<const uint8_t*>(data_), size_};
-+  }
-+
-+ private:
-+  size_t size_;
-+  void* data_;
-+};
-+
- TEST(DwarfUtil, ParsesDwarf4CompilationUnitHeader) {
-   const auto bytes = dwarf4Header();
++//  open and openat are spelled with explicit types since some libcs declare
++//  them as overload sets under fortify, e.g. glibc >= 2.40 with clang, where
++//  decltype(::open) is ill-formed.
++using subprocess_libc_open_t = int(char const*, int, ...);
++using subprocess_libc_openat_t = int(int, char const*, int, ...);
  
-@@ -309,6 +378,48 @@ TEST(DwarfUtil, RejectsOverflowingDwpDimensions) {
-   EXPECT_EQ(DwarfParseErrorCode::integer_overflow, result.error().code);
- }
+ #if defined(__BIONIC_INCLUDE_FORTIFY_HEADERS)
+ #define FOLLY_DETAIL_SUBPROCESS_LIBC_X_OPEN(X) \
+-  X(open, __open_real)                         \
+-  X(openat, __openat_real)
++  X(open, __open_real, subprocess_libc_open_t) \
++  X(openat, __openat_real, subprocess_libc_openat_t)
+ #else
+ #define FOLLY_DETAIL_SUBPROCESS_LIBC_X_OPEN(X) \
+-  X(open, open)                                \
+-  X(openat, openat)
++  X(open, open, subprocess_libc_open_t)        \
++  X(openat, openat, subprocess_libc_openat_t)
+ #endif
  
-+TEST(DwarfUtil, FindsDwpUnitPastTruncatedInfoOffset) {
-+  if (sizeof(size_t) < sizeof(uint64_t)) {
-+    GTEST_SKIP() << "requires a 64-bit address space";
-+  }
-+  constexpr uint64_t kTruncatedOffset = 0x10;
-+  constexpr uint64_t kOffset = (uint64_t{1} << 32) + kTruncatedOffset;
-+  constexpr uint64_t kDwoId = 0x123456789abcdef0;
-+  SparseSection info(folly::to_narrow(kOffset + 0x1000));
-+  if (!info.valid()) {
-+    GTEST_SKIP() << "cannot map a section larger than 4 GiB";
-+  }
-+  for (uint16_t version : {4, 5}) {
-+    SCOPED_TRACE(version);
-+    const auto abbrev = splitUnitAbbreviation(version);
-+    info.write(kTruncatedOffset, splitUnit(version, kDwoId + 1));
-+    info.write(folly::to_narrow(kOffset), splitUnit(version, kDwoId));
-+    CompilationUnit cu{};
-+    cu.debugSections.debugInfo = info.bytes();
-+    cu.debugSections.debugAbbrev = abbrev;
-+    cu.offset = kTruncatedOffset;
-+
-+    EXPECT_TRUE(parseDwpCompilationUnit(cu, kDwoId));
-+
-+    EXPECT_EQ(kOffset, cu.offset);
-+    ASSERT_TRUE(cu.dwoId.hasValue());
-+    EXPECT_EQ(kDwoId, *cu.dwoId);
-+  }
-+}
-+
-+TEST(DwarfUtil, RejectsDwpUnitWithMismatchedDwoIdWithoutModifyingOutput) {
-+  const auto info = splitUnit(5, 0x1234);
-+  const auto abbrev = splitUnitAbbreviation(5);
-+  CompilationUnit cu{};
-+  cu.debugSections.debugInfo = info;
-+  cu.debugSections.debugAbbrev = abbrev;
-+
-+  EXPECT_FALSE(parseDwpCompilationUnit(cu, 0x4321));
-+
-+  EXPECT_EQ(uint32_t{0}, cu.size);
-+  EXPECT_FALSE(cu.dwoId.hasValue());
-+}
-+
- TEST(DwarfUtil, ResolvesStrxThroughDwarf64DwpContributionOfDwarf32Unit) {
-   const std::vector<uint8_t> strings{'a', 0, 'b', 0};
-   std::vector<uint8_t> stringOffsets(4);
+ #if defined(__linux__)
+-#define FOLLY_DETAIL_SUBPROCESS_LIBC_X_PRCTL(X) X(prctl, prctl)
++#define FOLLY_DETAIL_SUBPROCESS_LIBC_X_PRCTL(X) \
++  X(prctl, prctl, decltype(::prctl))
+ #else
+ #define FOLLY_DETAIL_SUBPROCESS_LIBC_X_PRCTL(X)
+ #endif
+@@ -160,12 +167,13 @@ static Ret subprocess_libc_load(
+   FOLLY_DETAIL_SUBPROCESS_LIBC_X_OPEN(X)  \
+   FOLLY_DETAIL_SUBPROCESS_LIBC_X_PRCTL(X)
+ 
+-#define FOLLY_DETAIL_SUBPROCESS_LIBC_FIELD_DECL(name, func) \
+-  static decltype(&::func) name;
+-#define FOLLY_DETAIL_SUBPROCESS_LIBC_FIELD_DEFN(name, func) \
+-  decltype(&::func) subprocess_libc::name;
+-#define FOLLY_DETAIL_SUBPROCESS_LIBC_INIT(name, func) \
+-  subprocess_libc::name = subprocess_libc_load(handle, &::func, #name);
++#define FOLLY_DETAIL_SUBPROCESS_LIBC_FIELD_DECL(name, func, type) \
++  static type* name;
++#define FOLLY_DETAIL_SUBPROCESS_LIBC_FIELD_DEFN(name, func, type) \
++  type* subprocess_libc::name;
++#define FOLLY_DETAIL_SUBPROCESS_LIBC_INIT(name, func, type) \
++  subprocess_libc::name =                                   \
++      subprocess_libc_load(handle, static_cast<type*>(&::func), #name);
+ 
+ struct subprocess_libc {
+   FOLLY_DETAIL_SUBPROCESS_LIBC_X(FOLLY_DETAIL_SUBPROCESS_LIBC_FIELD_DECL)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2757** (closed): Fix Subprocess.cpp build with clang and glibc >= 2.40 fortify (@adiroy28852)
 - **PR #2756** (2026-11-18): Re-sync with internal repository (@meta-codesync[bot])
 - **PR #2755** (closed): Fix dead fmt format-syntax link in logging docs (@farisbasha)
 - **PR #2747** (closed): Reject multi-character labels in `IPAddressV6::fromInverseArpaName` (@0z5a)
 - **PR #2746** (closed): Reject `\x` without hex digits in `cUnescape` (@0z5a)
-- **PR #2741** (closed): Split the chunk header into F14ChunkHeader; the empty chunk is a real header object (#2741) (@DenisYaroshevskiy)
-- **PR #2740** (2026-11-09): Re-sync with internal repository (@meta-codesync[bot])
+- **PR #2742** (closed): Handle signed overflow in checked_div and checked_mod (@ZainnQureshii)
 
 ---
 
@@ -3179,23 +2842,21 @@ fbshipit-source-id: 9a9508b5a5ea845db3777348e067eaa61e004ac4
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add fixed-work F14 cache-locality profiles
+## X. Handle signed overflow in checked_div and checked_mod
 
 **RULE**:
-When implementing operations in `folly/container/test/BUCK`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `folly/lang/BUCK`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `da724490`: add fixed-work F14 cache-locality profiles. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e7490bbd`: Handle signed overflow in checked_div and checked_mod. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/container/test/BUCK`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/lang/BUCK`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    labels = _F14_FALLBACK_CI_LABELS,
-        "//folly/lang:align",
-        "//folly/lang:exception",
+        "//folly:traits",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3205,7 +2866,7 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `da724490` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e7490bbd` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

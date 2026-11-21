@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T03:44:50.224Z",
-    "lastVerified": "2026-11-21T03:44:50.224Z",
+    "lastChecked": "2026-11-21T03:52:37.934Z",
+    "lastVerified": "2026-11-21T03:52:37.934Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -355,8 +355,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T03:15:40.345Z",
-    "lastVerified": "2026-11-21T03:15:40.345Z",
+    "lastChecked": "2026-11-21T03:52:37.926Z",
+    "lastVerified": "2026-11-21T03:52:37.926Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1202,12 +1202,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "freenet-freenet-core": {
-    "name": "freenet/freenet-core",
+    "name": "freenet-core",
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T23:05:34.652Z",
-    "lastVerified": "2026-11-20T23:05:34.652Z",
+    "lastChecked": "2026-11-21T03:52:33.130Z",
+    "lastVerified": "2026-11-21T03:52:33.130Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
@@ -1216,7 +1216,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "32cd9498"
   },
   "tursodatabase-turso": {
     "name": "tursodatabase/turso",
@@ -4313,8 +4314,8 @@
     "officialUrl": "https://github.com/malisper/pgrust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T01:54:02.444Z",
-    "lastVerified": "2026-11-20T01:54:02.444Z",
+    "lastChecked": "2026-11-21T03:52:35.416Z",
+    "lastVerified": "2026-11-21T03:52:35.416Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-malisper-pgrust",
@@ -5029,9 +5030,9 @@
   "encoredev-encore": {
     "name": "encore",
     "officialUrl": "https://github.com/encoredev/encore",
-    "lastChecked": "2026-11-20T03:21:46.955Z",
+    "lastChecked": "2026-11-21T03:52:30.505Z",
     "revisionIdentifier": "8a7465a4",
-    "lastVerified": "2026-11-20T03:21:46.955Z"
+    "lastVerified": "2026-11-21T03:52:30.505Z"
   },
   "sfu-db-connector-x": {
     "name": "connector-x",
@@ -8442,12 +8443,12 @@
     "officialUrl": "https://github.com/facebook/folly",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-19T17:37:54.068Z",
-    "lastVerified": "2026-11-19T17:37:54.068Z",
+    "lastChecked": "2026-11-21T03:52:29.598Z",
+    "lastVerified": "2026-11-21T03:52:29.598Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meta-folly",
-    "contentHash": "041697beb775b508d0b820041df4d6edb3b8973d7076a578807bc2f59dbfbf77",
+    "contentHash": "3e8e1e780d406711de37a1ff2d84a001f6bf6ac9278f65768624ef3443d02517",
     "promotedRulesCount": 1,
     "recentFixesCount": 8,
     "closedIssuesCount": 1,
@@ -11707,5 +11708,19 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "syntax-tree-unist": {
+    "name": "unist",
+    "officialUrl": "https://github.com/syntax-tree/unist",
+    "lastChecked": "2026-11-21T03:52:25.626Z",
+    "revisionIdentifier": "8b10b611",
+    "lastVerified": "2026-11-21T03:52:25.626Z"
+  },
+  "margelo-react-native-blur": {
+    "name": "react-native-blur",
+    "officialUrl": "https://github.com/margelo/react-native-blur",
+    "lastChecked": "2026-11-21T03:52:27.958Z",
+    "revisionIdentifier": "7edfaa0f",
+    "lastVerified": "2026-11-21T03:52:27.958Z"
   }
 }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T03:44:51.356Z",
+  "updated_at": "2026-11-21T03:52:38.297Z",
   "stats": {
-    "total_discovered": 7000,
-    "approved_pending_harvest": 6611,
+    "total_discovered": 7003,
+    "approved_pending_harvest": 6613,
     "harvested_count": 0,
-    "rejected_count": 389,
+    "rejected_count": 390,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6589,
+      "COMMUNITY_AND_EXPERT": 6592,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -151300,6 +151300,65 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
         "fileName": "makecindy-cindy-learnings.md"
+      }
+    },
+    "SRC-C7AFA6587E1B": {
+      "id": "SRC-C7AFA6587E1B",
+      "url": "https://github.com/meta/folly/issues/2751",
+      "title": "https://github.com/meta/folly/issues/2751",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T03:52:38.205Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-78DAD42D3377": {
+      "id": "SRC-78DAD42D3377",
+      "url": "https://github.com/meta/folly/pull/2757",
+      "title": "https://github.com/meta/folly/pull/2757",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T03:52:38.251Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-6999A07C2581": {
+      "id": "SRC-6999A07C2581",
+      "url": "https://g/",
+      "title": "https://g/",
+      "status": "REJECTED_ANONYMOUS_OR_MISSING_PUBLISHER",
+      "rejection_reasons": [
+        "ANONYMOUS_OR_MISSING_PUBLISHER"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-21T03:52:38.297Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
       }
     }
   }

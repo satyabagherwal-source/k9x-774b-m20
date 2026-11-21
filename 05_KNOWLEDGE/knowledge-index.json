@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T03:44:52.598Z",
+  "last_updated": "2026-11-21T03:52:40.108Z",
   "total_verified_learnings": 9058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22930,
+  "total_items": 22932,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-H3Q5-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-GZ4Q-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "86ba72f9950a36dd27382fa68dcae6db10a68049ba65a80577a59d28455ad411",
+      "content_hash": "12e1f038019de071ffdec85ce54850a9c4e05909aac94c65195db81521ff4230",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T02:00:46.881Z"
+      "persisted_at": "2026-11-21T03:52:39.389Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "227cc9c1721ea412d06b77475d7b615bde7a7aedb695a227340ce06e2a9e8d85",
+      "content_hash": "daa549124fc564faf39f30ef022396dac95133551bd3c7efba01c177e6b57254",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T02:00:47.097Z"
+      "persisted_at": "2026-11-21T03:52:39.538Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "9a4cc481b8c88d62712f03737f80e8f0936d93323aa6ecb2467ce7e83e4fc80e",
+      "content_hash": "7041a47cefc10657ba9acff9c9026cc55e959a8ff609faefbf1a989147f3ccb1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:00:47.343Z"
+      "persisted_at": "2026-11-21T03:52:39.682Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -234953,8 +234953,8 @@
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "24e09e96",
-      "content_hash": "041697beb775b508d0b820041df4d6edb3b8973d7076a578807bc2f59dbfbf77",
+      "source_version": "27995cd3",
+      "content_hash": "3e8e1e780d406711de37a1ff2d84a001f6bf6ac9278f65768624ef3443d02517",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "promoted_rules": [
@@ -234972,6 +234972,11 @@
           "number": 9419,
           "title": "add fixed-work F14 cache-locality profiles",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9725,
+          "title": "Handle signed overflow in checked_div and checked_mod",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234979,7 +234984,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T17:37:55.169Z",
+      "verified_at": "2026-11-21T03:52:30.552Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235033,10 +235038,10 @@
       "relative_path": "08_VERIFICATION/facebook-folly-verification-protocol-empirical-defect-shield-for-meta-folly.md",
       "title": "Verification Protocol: Empirical Defect Shield for meta/folly",
       "repository": "meta/folly",
-      "source_version": "24e09e96",
-      "content_hash": "9c384bf62cdf2552f2a00d6d8510f4d9d0b34957dce487491116d0d22be81bea",
+      "source_version": "27995cd3",
+      "content_hash": "122f61e926a455d1adee735ff3d74a4444d6e17b4c62928c74fb6c3326dcdac3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T17:37:56.008Z"
+      "persisted_at": "2026-11-21T03:52:31.210Z"
     },
     "learn-github-gkd-kit-gkd": {
       "learning_id": "learn-github-gkd-kit-gkd",
@@ -235239,9 +235244,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for facebook-folly-learnings",
       "repository": "facebook-folly-learnings",
       "source_version": "HEAD",
-      "content_hash": "9a16ac58a3e6d84701fbe2738ffe45f2aab91a1cd0e1fc8b072dc5c8f02c0a27",
+      "content_hash": "7a715fc22b0d7119aac1a672056b637dc9a48beb4626ebfccf593be5c93f7fd2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T17:42:53.023Z"
+      "persisted_at": "2026-11-21T03:52:38.830Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnin": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnin",
@@ -288688,9 +288693,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "14d629fd1fcc24eae3199e67fb783e1d1056fa155de15037e04328ab6308c913",
+      "content_hash": "20a802a0ec35b31a351bdc71648d3627722b1c041993ee1295e6a68531a335be",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T01:16:32.473Z"
+      "persisted_at": "2026-11-21T03:52:40.108Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -297514,10 +297519,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-facebook-folly-technical-construction-intelligence-meta-folly-core-invariants.md",
       "title": "Technical Construction Intelligence: meta/folly Core Invariants",
       "repository": "meta/folly",
-      "source_version": "24e09e96",
-      "content_hash": "563eadc596b6e3c1d1727d7308656f80c5af0d5f458cee21bbdc076453275a76",
+      "source_version": "27995cd3",
+      "content_hash": "fef47386ba9f115504fbaae0999f2b67dd29f4a4044fee75edea6359b9175dbe",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T17:37:55.797Z"
+      "persisted_at": "2026-11-21T03:52:31.070Z"
     },
     "rule-9420": {
       "learning_id": "rule-9420",
@@ -297591,9 +297596,9 @@
       "title": "Technical Construction Intelligence: facebook-folly-learnings Core Invariants",
       "repository": "facebook-folly-learnings",
       "source_version": "HEAD",
-      "content_hash": "f0a2a9c9a9ebc586258260e242f877b0b3d526d1e29b1561cb25f17d8267ff9b",
+      "content_hash": "8a406685988a6433a5d7b2346245d848726bab32a696121ca01a55d2878fb68d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T17:42:52.831Z"
+      "persisted_at": "2026-11-21T03:52:38.668Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-",
@@ -311335,6 +311340,32 @@
       "content_hash": "b37edebba17fd099f38882696485ac49e0293ce9b6bb5ab953b985fc4f0ac506",
       "domain_letter": "K",
       "persisted_at": "2026-11-21T03:44:52.598Z"
+    },
+    "rule-9725": {
+      "learning_id": "rule-9725",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9725,
+      "title": "Handle signed overflow in checked_div and checked_mod",
+      "source_url": "https://github.com/facebook/folly",
+      "source_version": "27995cd3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T03:52:30.552Z"
+    },
+    "candidate_directive-handle-signed-overflow-in-checked_div-and-checked_mod": {
+      "item_id": "candidate_directive-handle-signed-overflow-in-checked_div-and-checked_mod",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GYGG-handle-signed-overflow-in-checked_div-and-checked_mod.md",
+      "title": "Handle signed overflow in checked_div and checked_mod",
+      "repository": "facebook-folly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f4a39c6ddc4a7530478439d70d3db7154fcdac8252b40bf5ae14a03535d58b87",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T03:52:38.515Z"
     }
   },
   "ai-builder-brain": {

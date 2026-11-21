@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T03:44:52.446Z",
+  "last_updated": "2026-11-21T03:52:40.108Z",
   "total_records": 2226,
   "domains": {
     "A": {
@@ -8959,8 +8959,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "227cc9c1721ea412d06b77475d7b615bde7a7aedb695a227340ce06e2a9e8d85",
-      "created_at": "2026-11-21T02:00:47.097Z"
+      "content_hash": "daa549124fc564faf39f30ef022396dac95133551bd3c7efba01c177e6b57254",
+      "created_at": "2026-11-21T03:52:39.538Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -31322,8 +31322,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "14d629fd1fcc24eae3199e67fb783e1d1056fa155de15037e04328ab6308c913",
-      "created_at": "2026-11-21T01:16:32.473Z"
+      "content_hash": "20a802a0ec35b31a351bdc71648d3627722b1c041993ee1295e6a68531a335be",
+      "created_at": "2026-11-21T03:52:40.108Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
@@ -33860,8 +33860,8 @@
       "title": "Technical Construction Intelligence: meta/folly Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-facebook-folly-technical-construction-intelligence-meta-folly-core-invariants.md",
       "repository": "meta/folly",
-      "content_hash": "563eadc596b6e3c1d1727d7308656f80c5af0d5f458cee21bbdc076453275a76",
-      "created_at": "2026-11-19T17:37:55.797Z"
+      "content_hash": "fef47386ba9f115504fbaae0999f2b67dd29f4a4044fee75edea6359b9175dbe",
+      "created_at": "2026-11-21T03:52:31.070Z"
     },
     "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-invarian": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-invarian",
@@ -33878,8 +33878,8 @@
       "title": "Technical Construction Intelligence: facebook-folly-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-facebook-folly-learnings-technical-construction-intelligence-facebook-folly-lear.md",
       "repository": "facebook-folly-learnings",
-      "content_hash": "f0a2a9c9a9ebc586258260e242f877b0b3d526d1e29b1561cb25f17d8267ff9b",
-      "created_at": "2026-11-19T17:42:52.831Z"
+      "content_hash": "8a406685988a6433a5d7b2346245d848726bab32a696121ca01a55d2878fb68d",
+      "created_at": "2026-11-21T03:52:38.668Z"
     },
     "DOM-D-6FA503EE": {
       "record_id": "DOM-D-6FA503EE",

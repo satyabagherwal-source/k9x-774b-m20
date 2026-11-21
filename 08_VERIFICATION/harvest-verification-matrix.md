@@ -11726,3 +11726,4 @@
 | `CYCLE-20261121-6RD0` | `2026-11-21T03:44:42.756Z` | `infracost/infracost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9722` | Yes (`c56f0fab...`) |
 | `CYCLE-20261121-6ST7` | `2026-11-21T03:44:44.635Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9723` | Yes (`5c2dfa74...`) |
 | `CYCLE-20261121-6UPQ` | `2026-11-21T03:44:47.102Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9724` | Yes (`847c30c8...`) |
+| `CYCLE-20261121-GSGE` | `2026-11-21T03:52:30.734Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9725` | Yes (`3e8e1e78...`) |
