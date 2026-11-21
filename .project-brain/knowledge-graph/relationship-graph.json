@@ -2,19 +2,19 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-21T02:13:39.561Z",
+  "updated_at": "2026-11-21T06:46:53.152Z",
   "statistics": {
-    "total_nodes": 440,
+    "total_nodes": 442,
     "total_edges": 192,
     "domain_distribution": {
       "D": 279,
       "M": 1,
-      "H": 67,
+      "H": 68,
       "J": 22,
       "K": 27,
       "L": 8,
       "G": 1,
-      "F": 22,
+      "F": 23,
       "B": 3,
       "E": 2,
       "I": 8
@@ -9834,6 +9834,50 @@
       ],
       "created_at": "2026-11-21T02:13:39.561Z",
       "updated_at": "2026-11-21T02:13:39.561Z"
+    },
+    "DOM-H-2B0EB374": {
+      "id": "DOM-H-2B0EB374",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "System Memory Calculation Discrepancy vs Activity Monitor (BUG-MEM-01)",
+      "summary": "`MemoryReader` calculated `appBytes` using Mach VM `active_count` minus `purgeable_count`. `active_count` includes external file-backed cach -> Kernel abstractions define specific semantic categorizations. \"Active\" refers to paging eviction state (active vs. inactive list), NOT anony",
+      "confidence": 0.86,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://lingyired-status-trio/lingyired-status-trio-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T06:45:26.017Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (lingyired-status-trio)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-21T06:46:05.579Z",
+      "updated_at": "2026-11-21T06:46:05.579Z"
+    },
+    "DOM-F-9744E937": {
+      "id": "DOM-F-9744E937",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Dual-Ring Battery Charging Symbol Silent Render Failure (BUG-UI-02)",
+      "summary": "Pattern matching exhaustiveness failure. In `StatusIconRenderer.swift`, the accessory rendering pipeline for dual rings contained:\n  ```swif -> Do not use non-exhaustive `guard case let` across polymorphic domain enums in UI rendering routines. Enum matching must be exhaustive (`swit",
+      "confidence": 0.9,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://lingyired-status-trio/lingyired-status-trio-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T06:45:26.017Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (lingyired-status-trio)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence"
+      ],
+      "created_at": "2026-11-21T06:46:53.152Z",
+      "updated_at": "2026-11-21T06:46:53.152Z"
     }
   },
   "edges": [

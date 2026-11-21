@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T06:28:11.205Z",
+  "last_updated": "2026-11-21T06:46:55.480Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-XISC",
+      "id": "CD-P33A",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-XISC-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-P33A-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-21",
@@ -41614,6 +41614,68 @@
       "source_repo": "nucleoidai-nucleoid",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-CD6471-synthesized-instance-implementations.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-N5M4",
+      "directive_title": "数据：更新每日公开快照（快照 public-05cd7a6660654dc12d36c5db405ba11bd0f08cc64e7b27600f1685a3da",
+      "source_repo": "folkbench-folkbench-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-N5M4-public-05cd7a6660654dc12d36c5db405ba11bd0f08cc64e7b27600f1685a3da.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-P1K8",
+      "directive_title": "Darwin Mach VM Kernel Page Accounting Invariant",
+      "source_repo": "lingyired-status-trio-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-P1K8-darwin-mach-vm-kernel-page-accounting-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-P1K9",
+      "directive_title": "Apple Event Descriptor Memory Alignment & Type Proofing",
+      "source_repo": "lingyired-status-trio-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-P1K9-apple-event-descriptor-memory-alignment-type-proofing.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-N1VD",
+      "directive_title": "Apple Event Descriptor Memory Alignment & Type Proofing",
+      "source_repo": "lingyired/status-trio",
+      "source_commit": "f57d4590",
+      "staged_file": "11_INBOX/candidate-directives/CD-N1VD-apple-event-descriptor-memory-alignment-type-proofing.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-57E4BA",
+      "directive_title": "数据：更新每日公开快照（快照 public-05cd7a6660654dc12d36c5db405ba11bd0f08cc64e7b27600f1685a3da",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "folkbench-folkbench",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-57E4BA--public-05cd7a6660654dc12d36c5db405ba11b.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-30842B",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-30842B-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-21"
     }
   ]

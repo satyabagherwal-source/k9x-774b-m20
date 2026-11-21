@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T06:28:11.345Z",
-  "total_records": 2230,
+  "last_updated": "2026-11-21T06:46:55.708Z",
+  "total_records": 2232,
   "domains": {
     "A": {
       "total": 17,
@@ -959,7 +959,7 @@
       ]
     },
     "F": {
-      "total": 76,
+      "total": 77,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1036,7 +1036,8 @@
         "domain_intelligence-design-intelligence-kianuni-erosion-cn-learnings-core-invariants",
         "DOM-F-6DD8B1FE",
         "domain_intelligence-design-intelligence-a2ui-project-a2ui-core-invariants",
-        "domain_intelligence-design-intelligence-a2ui-project-a2ui-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-a2ui-project-a2ui-learnings-core-invariants",
+        "DOM-F-9744E937"
       ]
     },
     "G": {
@@ -1423,7 +1424,7 @@
       ]
     },
     "H": {
-      "total": 526,
+      "total": 527,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1950,7 +1951,8 @@
         "domain_intelligence-technical-construction-intelligence-iliyami-macsai-core-invariants",
         "domain_intelligence-technical-construction-intelligence-iliyami-macsai-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-materializeinc-materialize-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-materializeinc-materialize-learnings-core-in"
+        "domain_intelligence-technical-construction-intelligence-materializeinc-materialize-learnings-core-in",
+        "DOM-H-2B0EB374"
       ]
     },
     "I": {
@@ -8963,8 +8965,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "33a64763798eeea50486d3987701cd1848210a42a6289835b0b61e0fccd71526",
-      "created_at": "2026-11-21T05:01:30.737Z"
+      "content_hash": "c200411ab9345c722867b03b322ff0d334d8f311620bc99c35f3f4245fd8c6aa",
+      "created_at": "2026-11-21T06:46:55.708Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -14535,8 +14537,8 @@
       "title": "Technical Construction Intelligence: lingyired/status-trio Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lingyired-status-trio-technical-construction-intelligence-lingyired-status-trio-.md",
       "repository": "lingyired/status-trio",
-      "content_hash": "ca1689e8d68507a177cc2b0da0ce035ecec63efe071863ef888a949ea78ade14",
-      "created_at": "2026-11-17T18:42:42.130Z"
+      "content_hash": "f4e20ccc4b3a4e83a79609f5875027dea78a37b54050334c6babde53080d23d7",
+      "created_at": "2026-11-21T06:45:21.192Z"
     },
     "domain_intelligence-design-intelligence-naiveai-naive-n0-5-flash-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-naiveai-naive-n0-5-flash-core-invariants",
@@ -14553,8 +14555,8 @@
       "title": "Technical Construction Intelligence: lingyired-status-trio-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lingyired-status-trio-learnings-technical-construction-intelligence-lingyired-st.md",
       "repository": "lingyired-status-trio-learnings",
-      "content_hash": "395a71270172caf34b080839291d92f894eb11c0ed0f5f87073d4b03bc9a56f6",
-      "created_at": "2026-11-17T18:44:45.370Z"
+      "content_hash": "6cf46fa11dc3d0b448d4b63c8d25cbd4ccc2bad714148c675455dfa642a443df",
+      "created_at": "2026-11-21T06:46:54.213Z"
     },
     "DOM-H-87566B56": {
       "record_id": "DOM-H-87566B56",
@@ -23698,8 +23700,8 @@
       "title": "Technical Construction Intelligence: Folkbench/folkbench Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-technical-construction-intelligence-folkbench-folkbench-core.md",
       "repository": "Folkbench/folkbench",
-      "content_hash": "eaa9fc5e38aca803eb2ea9e74e8a5ae0714713860d70cba64d1040e6f1f40a5c",
-      "created_at": "2026-11-19T20:00:19.291Z"
+      "content_hash": "0340477277d52ee91b46280b53d674aa83f26367965e80949059ec22fa535544",
+      "created_at": "2026-11-21T06:42:15.419Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants",
@@ -23716,8 +23718,8 @@
       "title": "Technical Construction Intelligence: folkbench-folkbench-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-learnings-technical-construction-intelligence-folkbench-folk.md",
       "repository": "folkbench-folkbench-learnings",
-      "content_hash": "7331abb0aabb9f3776c701107f1ec7924a6678e8cf22f156c7253947429bf73a",
-      "created_at": "2026-11-19T20:00:30.091Z"
+      "content_hash": "2512fd4189a18c22ccc09dc1deca4a2f911e8d21b08ef2a2318859d655ad8d6e",
+      "created_at": "2026-11-21T06:45:25.632Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants",
@@ -37425,6 +37427,74 @@
       "repository": "sceneview-sceneview-learnings",
       "content_hash": "bc3823efe3e27e6ffcc33d6890abbd7658738f2e65c4f36a3b0fd15e175b15ba",
       "created_at": "2026-11-21T06:28:10.559Z"
+    },
+    "DOM-H-2B0EB374": {
+      "record_id": "DOM-H-2B0EB374",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "System Memory Calculation Discrepancy vs Activity Monitor (BUG-MEM-01)",
+      "content": "Kernel abstractions define specific semantic categorizations. \"Active\" refers to paging eviction state (active vs. inactive list), NOT anonymous vs. file-backed ownership. System metrics must match kernel page ownership semantics (`internal` vs `external`).",
+      "content_hash": "0f05a5c448d1a2d3869a3fdafacb2c3c0c5ec5deae352c836b4db1598ffbc8ec",
+      "summary": "`MemoryReader` calculated `appBytes` using Mach VM `active_count` minus `purgeable_count`. `active_count` includes external file-backed cach -> Kernel abstractions define specific semantic categorizations. \"Active\" refers to paging eviction state (active vs. inactive list), NOT anony",
+      "provenance": {
+        "source_uri": "project://lingyired-status-trio/lingyired-status-trio-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T06:45:26.017Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (lingyired-status-trio)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Issue #363, resolved in commit `de0584c1` and merged into release candidate `175ee0c4`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.86,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T06:46:05.546Z"
+    },
+    "DOM-F-9744E937": {
+      "record_id": "DOM-F-9744E937",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "Dual-Ring Battery Charging Symbol Silent Render Failure (BUG-UI-02)",
+      "content": "Do not use non-exhaustive `guard case let` across polymorphic domain enums in UI rendering routines. Enum matching must be exhaustive (`switch`) to ensure new or alternative cases produce compile-time enforcement rather than silent visual drops.",
+      "content_hash": "92e27fca9f0a4de0d2f45c814d5ce85af1bb1ea99f856e4ed08d57942217e4ae",
+      "summary": "Pattern matching exhaustiveness failure. In `StatusIconRenderer.swift`, the accessory rendering pipeline for dual rings contained:\n  ```swif -> Do not use non-exhaustive `guard case let` across polymorphic domain enums in UI rendering routines. Enum matching must be exhaustive (`swit",
+      "provenance": {
+        "source_uri": "project://lingyired-status-trio/lingyired-status-trio-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T06:45:26.017Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (lingyired-status-trio)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Issue #361, resolved in commits `aa390bb6` and `e87e1caf`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.9,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T06:46:53.123Z"
     }
   }
 }

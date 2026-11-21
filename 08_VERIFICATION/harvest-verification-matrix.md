@@ -11744,3 +11744,7 @@
 | `CYCLE-20261121-0MIL` | `2026-11-21T06:27:54.237Z` | `tuist/tuist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9736` | Yes (`ed4b03f1...`) |
 | `CYCLE-20261121-0P2C` | `2026-11-21T06:27:57.540Z` | `sceneview/sceneview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9737` | Yes (`182b94ce...`) |
 | `CYCLE-20261121-0VK6` | `2026-11-21T06:28:05.958Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9738` | Yes (`914a0399...`) |
+| `CYCLE-20261121-J2MU` | `2026-11-21T06:42:14.934Z` | `Folkbench/folkbench` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9739` | Yes (`a84b8da6...`) |
+| `CYCLE-20261121-N1NV` | `2026-11-21T06:45:20.299Z` | `lingyired/status-trio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9740, Rule 9741, Rule 9742` | Yes (`bcd61914...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T06:46:05.583Z` | `lingyired-status-trio` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-2B0EB374` [Domain H] | Yes (`0f05a5c4...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T06:46:53.155Z` | `lingyired-status-trio` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-9744E937` [Domain F] | Yes (`92e27fca...`) |

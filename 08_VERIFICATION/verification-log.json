@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-DYUQ",
-    "timestamp": "2026-11-19T01:55:00.146Z",
-    "repository": "google/gemma-4-26B-A4B-it",
-    "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-    "contentHash": "210ef14df814cbd863ce5451a9908c01b2a54ad916ca177c89d6a543c9054281",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-OYUS",
-    "timestamp": "2026-11-19T02:03:33.364Z",
-    "repository": "intfloat/multilingual-e5-small",
-    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-    "contentHash": "dfc96ea9d7ceab467359fc046733fbb2212b7012b1da088df39a29df3b538913",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-Z09R",
     "timestamp": "2026-11-19T02:11:21.760Z",
     "repository": "argmaxinc/whisperkit-coreml",
@@ -7492,6 +7462,36 @@
     "contentHash": "914a0399f0583d0514d1e46f48912783461165620fca94cb17769653728da543",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-J2MU",
+    "timestamp": "2026-11-21T06:42:14.934Z",
+    "repository": "Folkbench/folkbench",
+    "learningId": "learn-github-folkbench-folkbench",
+    "contentHash": "a84b8da6455c1030e7ae0bd980a8a3c0ae0d992e614592250409d8e0b8c585f7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-N1NV",
+    "timestamp": "2026-11-21T06:45:20.299Z",
+    "repository": "lingyired/status-trio",
+    "learningId": "learn-github-lingyired-status-trio",
+    "contentHash": "bcd619146cdff82a000c162090944ff6496e67cd5d03ca9563f09160d67980c3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

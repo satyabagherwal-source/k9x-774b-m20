@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T06:28:05.969Z",
+  "last_updated": "2026-11-21T06:45:20.316Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18831,14 +18831,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lingyired-status-trio",
-      "content_hash": "c95d222c29e465dc07e9fe090e4e9bea8c61b186be448527deb2f07f27a576be",
-      "verified_at": "2026-11-17T18:42:41.863Z",
+      "content_hash": "bcd619146cdff82a000c162090944ff6496e67cd5d03ca9563f09160d67980c3",
+      "verified_at": "2026-11-21T06:45:20.315Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T18:42:41.863Z"
+      "last_updated": "2026-11-21T06:45:20.315Z"
     },
     "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF": {
       "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
@@ -19116,14 +19116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-folkbench-folkbench",
-      "content_hash": "6b3d96acb44c7d55d05a6e2c63769502348ebc85d5b26b2c4974a26682e97301",
-      "verified_at": "2026-11-19T20:00:18.834Z",
+      "content_hash": "a84b8da6455c1030e7ae0bd980a8a3c0ae0d992e614592250409d8e0b8c585f7",
+      "verified_at": "2026-11-21T06:42:14.951Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T20:00:18.834Z"
+      "last_updated": "2026-11-21T06:42:14.951Z"
     },
     "IFM/PAN2": {
       "repository": "IFM/PAN2",

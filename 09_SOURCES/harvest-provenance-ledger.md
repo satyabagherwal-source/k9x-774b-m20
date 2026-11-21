@@ -11777,3 +11777,7 @@ Every entry in this ledger must capture:
 | `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `45d39123` | Multi-dimensional audit evidence | 2026-11-21T06:27:54.240Z |
 | `learn-github-sceneview-sceneview` | `https://github.com/sceneview/sceneview` | `8a3f4274` | Multi-dimensional audit evidence | 2026-11-21T06:27:57.544Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8b37fa90` | Multi-dimensional audit evidence | 2026-11-21T06:28:05.961Z |
+| `learn-github-folkbench-folkbench` | `https://github.com/Folkbench/folkbench` | `97260416` | Multi-dimensional audit evidence | 2026-11-21T06:42:14.939Z |
+| `learn-github-lingyired-status-trio` | `https://github.com/lingyired/status-trio` | `f57d4590` | Multi-dimensional audit evidence | 2026-11-21T06:45:20.304Z |
+| `learn-dom-h-2b0eb374` | `project://lingyired-status-trio` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lingyired-status-trio-learnings.md` | 2026-11-21T06:46:05.583Z |
+| `learn-dom-f-9744e937` | `project://lingyired-status-trio` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lingyired-status-trio-learnings.md` | 2026-11-21T06:46:53.155Z |

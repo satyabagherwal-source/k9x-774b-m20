@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T06:28:11.484Z",
+  "last_updated": "2026-11-21T06:46:55.931Z",
   "total_verified_learnings": 9058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22971,
+  "total_items": 22979,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-XISC-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-P33A-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "d85746b659ed8d292ecb3017e679599601a4a555e438f9ac327c38bb08ed3b2a",
+      "content_hash": "171b4bb4b6c6c93f31befc2ce3a369be0f9bc45509e41da9bd9836aff7956ff3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T05:01:30.590Z"
+      "persisted_at": "2026-11-21T06:46:55.480Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "33a64763798eeea50486d3987701cd1848210a42a6289835b0b61e0fccd71526",
+      "content_hash": "c200411ab9345c722867b03b322ff0d334d8f311620bc99c35f3f4245fd8c6aa",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T05:01:30.737Z"
+      "persisted_at": "2026-11-21T06:46:55.708Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1530efce90f1ed9c5c3a3278c169092c57b4f751a53c37fabb5842bd7e30f4ea",
+      "content_hash": "e6ce231c126b86de63bd5a2c3433c40a8037f42c298b72e821b216a114bab99e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T05:01:30.880Z"
+      "persisted_at": "2026-11-21T06:46:55.931Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -227089,8 +227089,8 @@
       "slug": "lingyired-status-trio",
       "platform": "github",
       "source_url": "https://github.com/lingyired/status-trio",
-      "source_version": "ca166e73",
-      "content_hash": "c95d222c29e465dc07e9fe090e4e9bea8c61b186be448527deb2f07f27a576be",
+      "source_version": "f57d4590",
+      "content_hash": "bcd619146cdff82a000c162090944ff6496e67cd5d03ca9563f09160d67980c3",
       "dossier_path": "07_PROJECT_LEARNING/lingyired-status-trio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lingyired-status-trio-learnings.md",
       "promoted_rules": [
@@ -227103,6 +227103,21 @@
           "number": 9029,
           "title": "re-read lid state instead of caching external ownership",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9740,
+          "title": "Darwin Mach VM Kernel Page Accounting Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9741,
+          "title": "Idempotent Redundant AppKit State-Transition Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9742,
+          "title": "Apple Event Descriptor Memory Alignment & Type Proofing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -227110,7 +227125,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T18:42:41.683Z",
+      "verified_at": "2026-11-21T06:45:20.045Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227152,10 +227167,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lingyired-status-trio-technical-construction-intelligence-lingyired-status-trio-.md",
       "title": "Technical Construction Intelligence: lingyired/status-trio Core Invariants",
       "repository": "lingyired/status-trio",
-      "source_version": "ca166e73",
-      "content_hash": "ca1689e8d68507a177cc2b0da0ce035ecec63efe071863ef888a949ea78ade14",
+      "source_version": "f57d4590",
+      "content_hash": "f4e20ccc4b3a4e83a79609f5875027dea78a37b54050334c6babde53080d23d7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T18:42:42.130Z"
+      "persisted_at": "2026-11-21T06:45:21.192Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-lingyired-status-trio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lingyired-status-trio",
@@ -227164,10 +227179,10 @@
       "relative_path": "08_VERIFICATION/lingyired-status-trio-verification-protocol-empirical-defect-shield-for-lingyire.md",
       "title": "Verification Protocol: Empirical Defect Shield for lingyired/status-trio",
       "repository": "lingyired/status-trio",
-      "source_version": "ca166e73",
-      "content_hash": "e0e7d0c63749f2d14e12b03af94f99601175b9a42384bf386e96b74b6e1cc0fe",
+      "source_version": "f57d4590",
+      "content_hash": "19395d7543b8943f450293652fc6f9ebf8d5d77c0c246615a0b413e6f311a16f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T18:42:42.253Z"
+      "persisted_at": "2026-11-21T06:45:21.401Z"
     },
     "learn-huggingface-naiveai-naive-n0-5-flash": {
       "learning_id": "learn-huggingface-naiveai-naive-n0-5-flash",
@@ -227298,9 +227313,9 @@
       "title": "Technical Construction Intelligence: lingyired-status-trio-learnings Core Invariants",
       "repository": "lingyired-status-trio-learnings",
       "source_version": "HEAD",
-      "content_hash": "395a71270172caf34b080839291d92f894eb11c0ed0f5f87073d4b03bc9a56f6",
+      "content_hash": "6cf46fa11dc3d0b448d4b63c8d25cbd4ccc2bad714148c675455dfa642a443df",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T18:44:45.370Z"
+      "persisted_at": "2026-11-21T06:46:54.213Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-lingyired-status-trio-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lingyired-status-trio-learning",
@@ -227310,9 +227325,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lingyired-status-trio-learnings",
       "repository": "lingyired-status-trio-learnings",
       "source_version": "HEAD",
-      "content_hash": "18e22caca66097e1da8789fc2d0cd77da3d64b5f4439e75acdc47e8dcbaeab80",
+      "content_hash": "6859815c5f018609b314b93916aedef4219190226b1c125de7b16983ba330f46",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T18:44:45.518Z"
+      "persisted_at": "2026-11-21T06:46:54.440Z"
     },
     "candidate_directive-dual-frequency-context-decoupling-for-hybrid-local-sparse-transformer-layers": {
       "item_id": "candidate_directive-dual-frequency-context-decoupling-for-hybrid-local-sparse-transformer-layers",
@@ -255227,8 +255242,8 @@
       "slug": "folkbench-folkbench",
       "platform": "github",
       "source_url": "https://github.com/Folkbench/folkbench",
-      "source_version": "c39cf173",
-      "content_hash": "6b3d96acb44c7d55d05a6e2c63769502348ebc85d5b26b2c4974a26682e97301",
+      "source_version": "97260416",
+      "content_hash": "a84b8da6455c1030e7ae0bd980a8a3c0ae0d992e614592250409d8e0b8c585f7",
       "dossier_path": "07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
       "promoted_rules": [
@@ -255246,6 +255261,11 @@
           "number": 9435,
           "title": "README 新增 Sidrune AI 赞助位，Switch 预设线路加入 Sidrune AI 并升至 0.1.0-beta.10",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9739,
+          "title": "数据：更新每日公开快照（快照 public-05cd7a6660654dc12d36c5db405ba11bd0f08cc64e7b27600f1685a3da",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -255253,7 +255273,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T20:00:18.576Z",
+      "verified_at": "2026-11-21T06:42:14.679Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -255295,10 +255315,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-technical-construction-intelligence-folkbench-folkbench-core.md",
       "title": "Technical Construction Intelligence: Folkbench/folkbench Core Invariants",
       "repository": "Folkbench/folkbench",
-      "source_version": "c39cf173",
-      "content_hash": "eaa9fc5e38aca803eb2ea9e74e8a5ae0714713860d70cba64d1040e6f1f40a5c",
+      "source_version": "97260416",
+      "content_hash": "0340477277d52ee91b46280b53d674aa83f26367965e80949059ec22fa535544",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T20:00:19.291Z"
+      "persisted_at": "2026-11-21T06:42:15.419Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench",
@@ -255307,10 +255327,10 @@
       "relative_path": "08_VERIFICATION/folkbench-folkbench-verification-protocol-empirical-defect-shield-for-folkbench-.md",
       "title": "Verification Protocol: Empirical Defect Shield for Folkbench/folkbench",
       "repository": "Folkbench/folkbench",
-      "source_version": "c39cf173",
-      "content_hash": "8f30873f182c4029166c9964244b172fd76eaeb21414c59a106d598e7b5c9952",
+      "source_version": "97260416",
+      "content_hash": "42db96dbc5c084d26e9ccceffbb4fd5d07129265ab028ba1e677b79a607b3fba",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T20:00:19.482Z"
+      "persisted_at": "2026-11-21T06:42:15.627Z"
     },
     "rule-8712": {
       "learning_id": "rule-8712",
@@ -255429,9 +255449,9 @@
       "title": "Technical Construction Intelligence: folkbench-folkbench-learnings Core Invariants",
       "repository": "folkbench-folkbench-learnings",
       "source_version": "HEAD",
-      "content_hash": "7331abb0aabb9f3776c701107f1ec7924a6678e8cf22f156c7253947429bf73a",
+      "content_hash": "2512fd4189a18c22ccc09dc1deca4a2f911e8d21b08ef2a2318859d655ad8d6e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T20:00:30.091Z"
+      "persisted_at": "2026-11-21T06:45:25.632Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench-learnings",
@@ -255441,9 +255461,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for folkbench-folkbench-learnings",
       "repository": "folkbench-folkbench-learnings",
       "source_version": "HEAD",
-      "content_hash": "d7b1a11552b9d09e0389db89a1a0dd86c7b4eb56cc430193305e0d5c70018efd",
+      "content_hash": "3edb717ecae56a704391f6836845ac01fd9e28aba4fb4d0061eb2dbd30493fab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T20:00:30.284Z"
+      "persisted_at": "2026-11-21T06:45:25.837Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants",
@@ -311925,6 +311945,110 @@
       "content_hash": "bc3823efe3e27e6ffcc33d6890abbd7658738f2e65c4f36a3b0fd15e175b15ba",
       "domain_letter": "G",
       "persisted_at": "2026-11-21T06:28:10.559Z"
+    },
+    "rule-9739": {
+      "learning_id": "rule-9739",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9739,
+      "title": "数据：更新每日公开快照（快照 public-05cd7a6660654dc12d36c5db405ba11bd0f08cc64e7b27600f1685a3da",
+      "source_url": "https://github.com/Folkbench/folkbench",
+      "source_version": "97260416",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T06:42:14.679Z"
+    },
+    "candidate_directive-public-05cd7a6660654dc12d36c5db405ba11bd0f08cc64e7b27600f1685a3da": {
+      "item_id": "candidate_directive-public-05cd7a6660654dc12d36c5db405ba11bd0f08cc64e7b27600f1685a3da",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-N5M4-public-05cd7a6660654dc12d36c5db405ba11bd0f08cc64e7b27600f1685a3da.md",
+      "title": "数据：更新每日公开快照（快照 public-05cd7a6660654dc12d36c5db405ba11bd0f08cc64e7b27600f1685a3da",
+      "repository": "folkbench-folkbench-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9fc1ca3877c8c9d5fef7e67bac38f9150e4a802619f0e4cc1245e4d093fabecc",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T06:45:25.422Z"
+    },
+    "rule-9740": {
+      "learning_id": "rule-9740",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9740,
+      "title": "Darwin Mach VM Kernel Page Accounting Invariant",
+      "source_url": "https://github.com/lingyired/status-trio",
+      "source_version": "f57d4590",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T06:45:20.045Z"
+    },
+    "rule-9741": {
+      "learning_id": "rule-9741",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9741,
+      "title": "Idempotent Redundant AppKit State-Transition Verification",
+      "source_url": "https://github.com/lingyired/status-trio",
+      "source_version": "f57d4590",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T06:45:20.045Z"
+    },
+    "rule-9742": {
+      "learning_id": "rule-9742",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9742,
+      "title": "Apple Event Descriptor Memory Alignment & Type Proofing",
+      "source_url": "https://github.com/lingyired/status-trio",
+      "source_version": "f57d4590",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T06:45:20.045Z"
+    },
+    "candidate_directive-darwin-mach-vm-kernel-page-accounting-invariant": {
+      "item_id": "candidate_directive-darwin-mach-vm-kernel-page-accounting-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P1K8-darwin-mach-vm-kernel-page-accounting-invariant.md",
+      "title": "Darwin Mach VM Kernel Page Accounting Invariant",
+      "repository": "lingyired-status-trio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ebe050ae904024bad371b33567fd8884de785b72dceecdf7e034e5ef19c6dcbd",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T06:46:53.482Z"
+    },
+    "candidate_directive-idempotent-redundant-appkit-state-transition-verification": {
+      "item_id": "candidate_directive-idempotent-redundant-appkit-state-transition-verification",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P1K9-idempotent-redundant-appkit-state-transition-verification.md",
+      "title": "Idempotent Redundant AppKit State-Transition Verification",
+      "repository": "lingyired-status-trio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d72e7d61087fc34a965d9efbabf29fa75e96385dea650b10f5b451bb604bb3b1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T06:46:53.736Z"
+    },
+    "candidate_directive-apple-event-descriptor-memory-alignment-type-proofing": {
+      "item_id": "candidate_directive-apple-event-descriptor-memory-alignment-type-proofing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P1K9-apple-event-descriptor-memory-alignment-type-proofing.md",
+      "title": "Apple Event Descriptor Memory Alignment & Type Proofing",
+      "repository": "lingyired-status-trio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "946b7745485ce95a0b1f4b28137784a96426ebaf7d380e5f246ee28d223ce1f2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T06:46:53.967Z"
     }
   },
   "ai-builder-brain": {

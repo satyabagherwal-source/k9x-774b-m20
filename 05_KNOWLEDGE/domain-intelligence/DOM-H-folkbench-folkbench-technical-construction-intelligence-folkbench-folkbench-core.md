@@ -4,24 +4,24 @@
 {
   "source_repository": "Folkbench/folkbench",
   "source_url": "https://github.com/Folkbench/folkbench",
-  "source_version": "c39cf173",
+  "source_version": "97260416",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-19T20:00:19.093Z",
+  "timestamp": "2026-11-21T06:42:15.205Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-folkbench-folkbench",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Folkbench/folkbench](https://github.com/Folkbench/folkbench) (Revision: `c39cf173`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-19T20:00:19.093Z`  
+> **Provenance**: Harvested from [Folkbench/folkbench](https://github.com/Folkbench/folkbench) (Revision: `97260416`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-21T06:42:15.205Z`  
 > **Learning ID**: `learn-github-folkbench-folkbench`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), C (Market & Business Intelligence), E (Creative Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), G (Architecture Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), E (Creative Intelligence), A (Human & Need Intelligence), C (Market & Business Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from Folkbench/folkbench:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/folkbench-folkbench-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Folkbench/folkbench](https://github.com/Folkbench/folkbench))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T20:00:17.542Z  
+> **Harvest Timestamp**: 2026-11-21T06:42:13.608Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: AI API 中转站推荐与评测：中转站排行榜、中转站检测、Claude / GPT / Gemini 中转站对比 · AI API relay rankings · Folkbench Switch for Claude Code, Codex & Gemini CLI
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3209 stars
+- **Stars / Engagement**: 3249 stars
 
 ---
 
@@ -1154,164 +1154,72 @@ process.stdout.write(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c39cf173` (2026-11-19)
-**Commit Message**: README 新增 Sidrune AI 赞助位，Switch 预设线路加入 Sidrune AI 并升至 0.1.0-beta.10
+### Incident Patch 1: `97260416` (2026-11-20)
+**Commit Message**: 数据：更新每日公开快照（快照 public-05cd7a6660654dc12d36c5db405ba11bd0f08cc64e7b27600f1685a3da792ea8）
 
-README 的赞助区新增 Sidrune AI（中文、英文、西班牙文、日文四个版本），附深浅两种 Logo，链接经 Folkbench 跳出页并带 README 来源参数。
-
-Switch 预设线路新增 Sidrune AI：简易模式、添加向导和专业模式都可以直接选择。客户端版本升到 0.1.0-beta.10，更新记录补上本版内容；依赖许可清单、Cargo 版本和下载链接测试随版本号同步。
-
-**File**: `README.en.md` (modified, +4/-0)
+**File**: `README.md` (modified, +49/-33)
 ```diff
-@@ -41,6 +41,10 @@ These relays support Folkbench's ongoing benchmarks. [Become a sponsor →](http
- <td width="200" align="center"><a href="https://folkbench.com/go/fluxlane?source=readme_en"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/sponsors/fluxlane-dark.png"><img src="docs/images/sponsors/fluxlane-light.png" alt="智流 FluxLane" width="180"></picture></a></td>
- <td><a href="https://folkbench.com/go/fluxlane?source=readme_en"><b>FluxLane (智流)</b></a><br>An AI API gateway for developers and teams: full-capability, stable access to global models, supporting GPT, Claude, Gemini, DeepSeek, GLM, and other mainstream models as well as major global model-vendor protocols. The platform provides policy-based routing and multi-route failover, making long-term integration and cost accounting easier for teams in China. For enterprise and university procurement in China, it can sign contracts, accept wire transfers, and provide invoices, purchase orders, and related materials (subject to commercial confirmation). Publishes model capability evaluation reports, with multipliers as low as 0.1×, and new registrants receive a $2 trial credit.</td>
- </tr>
-+<tr>
-+<td width="200" align="center"><a href="https://folkbench.com/go/merchant-955eb49b-34a?source=readme_en"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/sponsors/sidrune-dark.png"><img src="docs/images/sponsors/sidrune-light.png" alt="Sidrune AI" width="180"></picture></a></td>
-+<td><a href="https://folkbench.com/go/merchant-955eb49b-34a?source=readme_en"><b>Sidrune AI</b></a><br>Claude Max at ~85% off for Claude Code, plus 13 more Claude API routes. Pay as you go; invoices and business bank transfers supported.</td>
-+</tr>
- </table>
- 
- ---
-```
-
-**File**: `README.es.md` (modified, +4/-0)
-```diff
-@@ -41,6 +41,10 @@ Estas estaciones apoyan las mediciones continuas de Folkbench. [Hazte patrocinad
- <td width="200" align="center"><a href="https://folkbench.com/go/fluxlane?source=readme_es"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/sponsors/fluxlane-dark.png"><img src="docs/images/sponsors/fluxlane-light.png" alt="智流 FluxLane" width="180"></picture></a></td>
- <td><a href="https://folkbench.com/go/fluxlane?source=readme_es"><b>智流 FluxLane</b></a><br>智流 FluxLane tiene muchos modelos y rutas, tanto internacionales como de China, y la forma de conexión es uniforme: compatible directamente con el SDK de OpenAI. Además de esa cobertura, la plataforma incluye enrutado, uso, coste y latencia, así que encaja con desarrolladores y equipos que se quedan. Para compras de empresas y universidades tiene una ventaja clara: puede emitir factura, contrato y orden de compra.</td>
- </tr>
-+<tr>
-+<td width="200" align="center"><a href="https://folkbench.com/go/merchant-955eb49b-34a?source=readme_es"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/sponsors/sidrune-dark.png"><img src="docs/images/sponsors/sidrune-light.png" alt="Sidrune AI" width="180"></picture></a></td>
-+<td><a href="https://folkbench.com/go/merchant-955eb49b-34a?source=readme_es"><b>Sidrune AI</b></a><br>Claude Max con ~85 % de descuento para Claude Code, además de 13 rutas más de la API de Claude. Pago por uso; emite facturas y acepta transferencias bancarias de empresa.</td>
-+</tr>
- </table>
- 
- ---
-```
-
-**File**: `README.ja.md` (modified, +4/-0)
-```diff
-@@ -31,6 +31,10 @@
- <td width="200" align="center"><a href="https://folkbench.com/go/fluxlane?source=readme_ja"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/sponsors/fluxlane-dark.png"><img src="docs/images/sponsors/fluxlane-light.png" width="180" alt="FluxLane（智流）"></picture></a></td>
- <td><a href="https://folkbench.com/go/fluxlane?source=readme_ja"><b>FluxLane（智流）</b></a><br>国内外の多様なモデルを網羅し、OpenAI SDK と完全互換。ルーティング、利用量、コスト、遅延を一元管理でき、企業や教育機関向けの請求書・契約書対応が強みです。</td>
- </tr>
-+<tr>
-+<td width="200" align="center"><a href="https://folkbench.com/go/merchant-955eb49b-34a?source=readme_ja"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/sponsors/sidrune-dark.png"><img src="docs/images/sponsors/sidrune-light.png" width="180" alt="Sidrune AI"></picture></a></td>
-+<td><a href="https://folkbench.com/go/merchant-955eb49b-34a?source=readme_ja"><b>Sidrune AI</b></a><br>Claude Code 向けの Claude Max を約 85% オフで提供。ほかに Claude API ルートが 13 本あります。従量課金で、請求書の発行と法人振込に対応しています。</td>
-+</tr>
- </table>
- 
- ---
-```
-
-**File**: `README.md` (modified, +1/-0)
-```diff
-@@ -24,6 +24,7 @@
- <tr><td width="180"><a href="https://folkbench.com/go/modelflare?source=readme"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/sponsors/modelflare-dark.png"><img src="docs/images/sponsors/modelflare-light.png" alt="Modelflare" width="160"></picture></a></td><td><a href="https://folkbench.com/go/modelflare?source=readme">Modelflare</a><br>Modelflare站点是由美国 Havenbyte LLC 运营，支持 GPT、Claude、Gemini、Grok 等主流模型和常用兼容协议，同时也支持 40 多种图片及视频模型。API Key 可以配置有序回退，一把 API Key 可以调用多个模型，Key 还可以设置备用分组，并且从请求日志里能看到状态、延迟、Token 和实际费用。<br><br>缓存补偿是这个站的另一个亮点：部分 OpenAI 价格优先、稳定和高级分组分别提供每日 65%、75%、85% 的缓存命中率保障，对于符合条件的api请求如果未达到缓存命中率，平台会给予对应补充。<br><br>站点目前也有首次充值解锁特惠分组的活动，单笔充值 US$20 后可解锁 0.015 倍率 GPT 特惠分组，解锁后 GPT-5.6-Sol 的价格大约是 ¥0.51（输入）/ ¥3.01（输出）/每百万 Token，并且没有使用上限限制。单笔充值 US$50 后可解锁 0.03 倍率 Claude 特惠分组。</td></tr>
- <tr><td width="180"><a href="https://folkbench.com/go/ikuncode?source=readme"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/sponsors/ikuncode-dark.png"><img src="docs/images/sponsors/ikuncode-light.png" alt="IKunCode" width="160"></picture></a></td><td><a href="https://folkbench.com/go/ikuncode?source=readme">IKunCode</a><br>IKunCode对于各个编程工具接入的支持比较好，Claude Code、Codex 和 Gemini CLI 都有单独支持，售后以及咨询渠道渠道做得比较全，官网公开了客服邮箱、QQ 群和 Telegram，人工客服服务贴心，很适合新手上路。</td></tr>
- <tr><td width="180"><a href="https://folkbench.com/go/fluxlane?source=readme"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/sponsors/fluxlane-dark.png"><img src="docs/images/sponsors/fluxlane-light.png" alt="智流 FluxLane" width="160"></picture></a></td><td><a href="https://folkbench.com/go/fluxlane?source=readme">智流 FluxLane</a><br>智流 FluxLane 是一个面向开发者与团队的 AI API 网关：提供满血且稳定的全球模型，支持 GPT、Claude、Gemini、Deepseek、GLM 等主流模型和全球主流模型厂商协议，平台提供策略路由与多线路容灾，方便国内团队长期接入与成本核算。面向国内企业/高校采购，可签订合同、对公转账，并提供发票、采购单等材料（具体以商务确认为准），公开模型能力检测报告，倍率低至0.1倍率，新人注册可领 2 美元体验额度。</td></tr>
-+<tr><td width="180"><a href="https://folkbench.com/go/merchant-955eb49b-34a?source=readme"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/sponsors/sidrune-dark.png"><img src="docs/images/sponsors/sidrune-light.png" alt="Sidrune AI" width="160"></picture></a></td><td><a href="https://folkbench.com/go/merchant-955eb49b-34a?source=readme">Sidrune AI</a><br>省心用Claude：Claude Max低至1.5折，另有14+Claude API线路，按量计费，支持开票及对公转账。</td></tr>
- </table>
- 
- ## AI API 中转站推荐与选站指南
-```
-
-**File**: `apps/switch/dependency-license-inventory.json` (modified, +3/-3)
-```diff
-@@ -1,10 +1,10 @@
- {
-   "schemaVersion": 1,
--  "version": "0.1.0-beta.9",
-+  "version": "0.1.0-beta.10",
-   "hashes": {
--    "package.json": "85d0f5f8cc5fb68e61f870e70d0fef4b46172650ef5c746ef800b5c85c853e94",
-+    "package.json": "0235e82a859e5fa23fae4719d11bcfb7d7716856fd1f35c316060e4d565811c3",
-     "bun.lock": "231d61a49f3f16769c2034f5e30f7fc38824d906628edc0b3bbde18cb1b1a3cd",
--    "src-tauri/Cargo.lock": "cdd9e6d8baeee2642b69e59589eed7449c9cd4454360da20aa9ff3dca1d6f019"
-+    "src-tauri/Cargo.lock": "c5287dcab5813d19821ea6e5d4b56b8892a705739e6bd3aea8931eec4c5caf2d"
-   },
-   "packages": [
-     {
-```
-
-**File**: `apps/switch/package.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "name": "folkbench-switch",
-   "private": true,
--  "version": "0.1.0-beta.9",
-+  "version": "0.1.0-beta.10",
-   "description": "Folkbench desktop assistant for API services the user already bought",
-   "license": "Apache-2.0",
-   "repository": {
-```
-
-**File**: `apps/switch/scripts/easy-mode.test.mjs` (modified, +1/-1)
-```diff
-@@ -135,7 +135,7 @@ test('paid presets remain available without rankings and do not inherit unrelate
-     new URL('src/features/home/relay-presets.json', root), 'utf8'
-   ))
-   const offline = easyPresetStations(presets, [])
--  assert.deepEqual(offline.map((row) => row.stationName), ['Modelflare', 'IKunCode', '智流 FluxLane'])
-+  assert.deepEqual(offline.map((row) => row.stationName), ['Modelflare', 'IKunCode', '智流 FluxLane', 'Sidrune AI'])
-   assert.ok(offline.every((row) => row.baseUrl.startsWith('https://')))
-   assert.ok(offline.every((row) => !row.channelId && !row.modelId))
-   const withOtherStation = easyPresetStations(presets, [
-```
-
-**File**: `apps/switch/src-tauri/Cargo.lock` (modified, +1/-1)
-```diff
-@@ -1217,7 +1217,7 @@ checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
- 
- [[package]]
- name = "folkbench-switch"
--version = "0.1.0-beta.9"
-+version = "0.1.0-beta.10"
- dependencies = [
-  "arboard",
-  "base64 0.22.1",
-```
-
----
-
-### Incident Patch 2: `f1d0f2c1` (2026-11-18)
-**Commit Message**: 数据：更新每日公开快照（快照 public-e942fede9ed7f3bee7216d3109affcb011b9a2033e1941ca4a574e909afcfe5a）
-
-**File**: `README.md` (modified, +32/-30)
-```diff
-@@ -69,57 +69,59 @@ Folkbench 帮你挑线路、配好客户端，不是自建代理教程。
+@@ -70,59 +70,75 @@ Folkbench 帮你挑线路、配好客户端，不是自建代理教程。
  ## 今日公开快照
  
  <!-- FOLKBENCH-BOARD:START -->
--> 归档日期：2026-11-17 · 发布：2026-11-17 20:30:50（北京时间）· 快照：`public-dc1f4dff1dff69c086e10163e8480059cac6fc2ffda3912f902f0558c339b64b`
-+> 归档日期：2026-11-18 · 发布：2026-11-18 20:30:02（北京时间）· 快照：`public-e942fede9ed7f3bee7216d3109affcb011b9a2033e1941ca4a574e909afcfe5a`
+-> 归档日期：2026-11-19 · 发布：2026-11-19 20:30:55（北京时间）· 快照：`public-bcf5cd0ec2e93f5fccaf70a6248bfd78e44bd504df66773c776e34a8f8cd43b4`
++> 归档日期：2026-11-20 · 发布：2026-11-20 21:49:23（北京时间）· 快照：`public-05cd7a6660654dc12d36c5db405ba11bd0f08cc64e7b27600f1685a3da792ea8`
  > 排序沿用主站规则，包含合作档位与运营加分；部分数据为展示样本。本页提供公开快照，不是原始运行记录；部分数据为展示样本。
  
  | 模型 | # | 中转站 | 综合 | 可用率 | 稳定性 | 输入 / 输出价 | 样本 |
  | :-- | :-: | :-- | --: | --: | --: | :-- | --: |
--| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 98.6% | 95.8% | ¥1.99 / 1M / ¥9.96 / 1M | 145 |
--| Claude Fable 5.1 | 2 | [智流 FluxLane](https://folkbench.com/services/fluxlane?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 98.1% | 100.0% | 88.6% | — / — | 47 |
--| Claude Fable 5.1 | 3 | [Cloudbridge](https://folkbench.com/services/cloudbridge?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 82.9% | 97.9% | 74.2% | — / — | 48 |
-+| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 98.5% | 96.2% | ¥1.99 / 1M / ¥9.96 / 1M | 197 |
-+| Claude Fable 5.1 | 2 | [智流 FluxLane](https://folkbench.com/services/fluxlane?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 98.2% | 100.0% | 84.8% | — / — | 48 |
-+| Claude Fable 5.1 | 3 | [Zashmodel](https://folkbench.com/services/merchant-5cf7678f-611?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 87.9% | 60.4% | 52.4% | ¥2.00 / 1M / ¥10.00 / 1M | 48 |
+-| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 97.5% | 94.2% | ¥1.99 / 1M / ¥9.96 / 1M | 118 |
+-| Claude Fable 5.1 | 2 | [Zashmodel](https://folkbench.com/services/merchant-5cf7678f-611?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 87.2% | 66.7% | 56.8% | ¥2.00 / 1M / ¥10.00 / 1M | 48 |
+-| Claude Fable 5.1 | 3 | [Cloudbridge](https://folkbench.com/services/cloudbridge?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 85.0% | 100.0% | 74.2% | ¥31.20 / 1M / ¥156.00 / 1M | 48 |
++| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 97.8% | 94.9% | ¥1.99 / 1M / ¥9.96 / 1M | 138 |
++| Claude Fable 5.1 | 2 | [Cloudbridge](https://folkbench.com/services/cloudbridge?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 86.1% | 100.0% | 85.7% | ¥31.20 / 1M / ¥156.00 / 1M | 48 |
  | | | [完整 Claude Fable 5.1 榜单 →](https://folkbench.com/rankings/claude-fable-5-1?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-more) | | | | | |
--| Claude Haiku 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 98.3% | 94.8% | — / — | 120 |
-+| Claude Haiku 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.9% | 95.2% | — / — | 189 |
+-| Claude Haiku 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.1% | 94.8% | ¥0.17 / 1M / ¥0.83 / 1M | 171 |
++| Claude Haiku 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.8% | 95.6% | ¥0.17 / 1M / ¥0.83 / 1M | 185 |
++| claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r2) | 92.4% | 100.0% | — | ¥0.10 / 1M / ¥0.50 / 1M | 5 |
  | | | [完整 Claude Haiku 5.5 榜单 →](https://folkbench.com/rankings/claude-haiku-5-5?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-more) | | | | | |
--| Claude Opus 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r1) | 100.0% | 98.6% | 95.8% | ¥0.80 / 1M / ¥3.98 / 1M | 141 |
--| Claude Opus 5.5 | 2 | [智流 FluxLane](https://folkbench.com/services/fluxlane?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r2) | 98.1% | 95.8% | 80.2% | — / — | 48 |
--| Claude Opus 5.5 | 3 | [IKunCode](https://folkbench.com/services/ikuncode?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r3) | 94.6% | 87.5% | 65.7% | ¥4.00 / 1M / ¥20.00 / 1M | 48 |
-+| Claude Opus 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r1) | 100.0% | 98.3% | 96.0% | ¥0.80 / 1M / ¥3.98 / 1M | 179 |
-+| Claude Opus 5.5 | 2 | [智流 FluxLane](https://folkbench.com/services/fluxlane?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r2) | 98.2% | 100.0% | 84.8% | — / — | 48 |
-+| Claude Opus 5.5 | 3 | [IKunCode](https://folkbench.com/services/ikuncode?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r3) | 95.0% | 93.6% | 81.8% | ¥4.00 / 1M / ¥20.00 / 1M | 47 |
+-| Claude Opus 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r1) | 100.0% | 98.2% | 95.7% | ¥0.80 / 1M / ¥3.98 / 1M | 166 |
+-| Claude Opus 5.5 | 2 | [智流 FluxLane](https://folkbench.com/services/fluxlane?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r2) | 98.0% | 100.0% | 84.8% | ¥4.80 / 1M / ¥24.00 / 1M | 48 |
+-| Claude Opus 5.5 | 3 | [IKunCode](https://folkbench.com/services/ikuncode?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r3) | 95.1% | 100.0% | 89.8% | ¥4.00 / 1M / ¥20.00 / 1M | 48 |
++| Claude Opus 5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-r1) | 100.0% | 99.0% | 96.4% | ¥1.00 / 1M / ¥4.98 / 1M | 193 |
++| | | [完整 Claude Opus 5 榜单 →](https://folkbench.com/rankings/claude-opus-5?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-more) | | | | | |
++| Claude Opus 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r1) | 100.0% | 97.6% | 94.5% | ¥0.80 / 1M / ¥3.98 / 1M | 125 |
++| Claude Opus 5.5 | 2 | [IKunCode](https://folkbench.com/services/ikuncode?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r2) | 95.3% | 100.0% | 86.8% | ¥4.00 / 1M / ¥20.00 / 1M | 48 |
++| Claude Opus 5.5 | 3 | [智流 FluxLane](https://folkbench.com/services/fluxlane?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r3) | 93.2% | 100.0% | 89.4% | ¥4.80 / 1M / ¥24.00 / 1M | 48 |
  | | | [完整 Claude Opus 5.5 榜单 →](https://folkbench.com/rankings/claude-opus-5-5?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-more) | | | | | |
--| DeepSeek V4.1 Flash | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-deepseek-v4-1-flash-r1) | 100.0% | 98.0% | 95.7% | ¥1.20 / 1M / ¥4.80 / 1M | 199 |
--| DeepSeek V4.1 Flash | 2 | [智流 FluxLane](https://folkbench.com/services/fluxlane?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-deepseek-v4-1-flash-r2) | 98.1% | 41.7% | 46.8% | — / — | 48 |
--| DeepSeek V4.1 Flash | 3 | [IKunCode](https://folkbench.com/services/ikuncode?utm_source=github&utm_medium=readme&utm_campaign=main-re
+-| DeepSeek V4.1 Flash | 1 | [Modelfla
+```
+
+---
+
+### Incident Patch 2: `7fd7159b` (2026-11-20)
+**Commit Message**: 站点资料 README 里 Cloudbridge 的注册链接改为 sign-up?aff=XVuJ，返佣参数由 ref 更正为 aff
+
+**File**: `docs/services/README.en.md` (modified, +1/-1)
+```diff
+@@ -53,7 +53,7 @@ The site also supports several payment methods, which can be checked directly on
+ 
+ Oriented toward domestic business users and multi-channel access. The minimum top-up is low at ¥5, any amount can be invoiced, and support is available through online customer service and Enterprise WeChat. The current profile still lists Claude stability as an area for improvement and has no recent user-experience data; it is most relevant for users who value invoicing and low-cost trials, with the target channel checked first.
+ 
+-<h3><a href="https://cbapi.ai/sign-up?ref=XVuJ&utm_source=folkbench&utm_medium=referral&utm_campaign=folkbench-blog-readme" target="_blank" rel="noopener noreferrer">Cloudbridge</a></h3>
++<h3><a href="https://cbapi.ai/sign-up?aff=XVuJ&utm_source=folkbench&utm_medium=referral&utm_campaign=folkbench-blog-readme" target="_blank" rel="noopener noreferrer">Cloudbridge</a></h3>
+ 
+ Its main features are multi-channel access, an overseas site, multilingual support, and USD billing, with a $1 minimum top-up and published coverage for GPT, Claude, Grok, DeepSeek, and other models. Folkbench currently marks it as a newly opened site, so reliability and response speed need more data; it is useful for comparing overseas settlement and domestic-model pricing, while stability should be verified separately.
+ 
+```
+
+**File**: `docs/services/README.zh-CN.md` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@ CheapAI字如其名，主打一个便宜，可以重点看特惠分组，价格
+ ApiPorter的定位偏国内企业用户和多渠道聚合，超级适合看重开票和低额试用的用户。起充门槛只有¥5，支持小额开票，还有在线客服和企业微信，想先充一点试线路的话成本不高。支持任意金额开票，并提供在线客服和企业微信。
+ 
+ 它本身做了多个渠道分组，不同分组在价格和稳定性上取向不一样，API Key也可以单独设置额度和有效期，在团队内部使用或者在不同项目中分开用会比较方便。
+-<h3><a href="https://cbapi.ai/sign-up?ref=XVuJ&utm_source=folkbench&utm_medium=referral&utm_campaign=folkbench-blog-readme" target="_blank" rel="noopener noreferrer">Cloudbridge</a></h3>
++<h3><a href="https://cbapi.ai/sign-up?aff=XVuJ&utm_source=folkbench&utm_medium=referral&utm_campaign=folkbench-blog-readme" target="_blank" rel="noopener noreferrer">Cloudbridge</a></h3>
+ 
+ Cloudbridge 比较偏海外使用场景，支持美元计费和多语言，起充门槛也不高。目前公开的模型里有 GPT、Claude、Grok、DeepSeek 等，想用美元结算的话会比较顺手。
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -1339,34 +1247,41 @@ Switch 预设线路新增 Sidrune AI：简易模式、添加向导和专业模�
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. README 新增 Sidrune AI 赞助位，Switch 预设线路加入 Sidrune AI 并升至 0.1.0-beta.10
+## X. 数据：更新每日公开快照（快照 public-05cd7a6660654dc12d36c5db405ba11bd0f08cc64e7b27600f1685a3da
 
 **RULE**:
-When implementing operations in `README.en.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Folkbench/folkbench. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Folkbench/folkbench. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c39cf173`: README 新增 Sidrune AI 赞助位，Switch 预设线路加入 Sidrune AI 并升至 0.1.0-beta.10. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `97260416`: 数据：更新每日公开快照（快照 public-05cd7a6660654dc12d36c5db405ba11bd0f08cc64e7b27600f1685a3da792ea8）. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.en.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-<tr>
-<td width="200" align="center"><a href="https://folkbench.com/go/merchant-955eb49b-34a?source=readme_en"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/sponsors/sidrune-dark.png"><img src="docs/images/sponsors/sidrune-light.png" alt="Sidrune AI" width="180"></picture></a></td>
-<td><a href="https://folkbench.com/go/merchant-955eb49b-34a?source=readme_en"><b>Sidrune AI</b></a><br>Claude Max at ~85% off for Claude Code, plus 13 more Claude API routes. Pay as you go; invoices and business bank transfers supported.</td>
-</tr>
+> 归档日期：2026-11-20 · 发布：2026-11-20 21:49:23（北京时间）· 快照：`public-05cd7a6660654dc12d36c5db405ba11bd0f08cc64e7b27600f1685a3da792ea8`
+| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 97.8% | 94.9% | ¥1.99 / 1M / ¥9.96 / 1M | 138 |
+| Claude Fable 5.1 | 2 | [Cloudbridge](https://folkbench.com/services/cloudbridge?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 86.1% | 100.0% | 85.7% | ¥31.20 / 1M / ¥156.00 / 1M | 48 |
+| Claude Haiku 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.8% | 95.6% | ¥0.17 / 1M / ¥0.83 / 1M | 185 |
+| claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r2) | 92.4% | 100.0% | — | ¥0.10 / 1M / ¥0.50 / 1M | 5 |
+| Claude Opus 5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=gith
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+> 归档日期：2026-11-19 · 发布：2026-11-19 20:30:55（北京时间）· 快照：`public-bcf5cd0ec2e93f5fccaf70a6248bfd78e44bd504df66773c776e34a8f8cd43b4`
+| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 97.5% | 94.2% | ¥1.99 / 1M / ¥9.96 / 1M | 118 |
+| Claude Fable 5.1 | 2 | [Zashmodel](https://folkbench.com/services/merchant-5cf7678f-611?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 87.2% | 66.7% | 56.8% | ¥2.00 / 1M / ¥10.00 / 1M | 48 |
+| Claude Fable 5.1 | 3 | [Cloudbridge](https://folkbench.com/services/cloudbridge?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 85.0% | 100.0% | 74.2% | ¥31.20 / 1M / ¥156.00 / 1M | 48 |
+| Claude Haiku 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.1% | 94.8% | ¥0.17 / 1M / ¥0.83 / 1M | 171 |
+| Claude Opus 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_sourc
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c39cf173` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `97260416` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

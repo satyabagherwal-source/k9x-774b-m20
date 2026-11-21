@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T05:27:58.725Z",
-    "lastVerified": "2026-11-21T05:27:58.725Z",
+    "lastChecked": "2026-11-21T06:42:24.229Z",
+    "lastVerified": "2026-11-21T06:42:24.229Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T06:28:09.081Z",
-    "lastVerified": "2026-11-21T06:28:09.081Z",
+    "lastChecked": "2026-11-21T06:45:24.160Z",
+    "lastVerified": "2026-11-21T06:45:24.160Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1909,12 +1909,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
-    "name": "projectdiscovery/nuclei",
+    "name": "nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T00:32:44.877Z",
-    "lastVerified": "2026-11-21T00:32:44.877Z",
+    "lastChecked": "2026-11-21T06:42:19.270Z",
+    "lastVerified": "2026-11-21T06:42:19.270Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -1923,7 +1923,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9bd87c68"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -4861,12 +4862,12 @@
     "revisionIdentifier": "22149587"
   },
   "gluesql-gluesql": {
-    "name": "gluesql/gluesql",
+    "name": "gluesql",
     "officialUrl": "https://github.com/gluesql/gluesql",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T04:02:37.418Z",
-    "lastVerified": "2026-11-20T04:02:37.418Z",
+    "lastChecked": "2026-11-21T06:42:21.769Z",
+    "lastVerified": "2026-11-21T06:42:21.769Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gluesql-gluesql",
@@ -4875,7 +4876,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "bb30d6be"
   },
   "telemt-telemt": {
     "name": "telemt",
@@ -5578,9 +5580,9 @@
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
     "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
-    "lastChecked": "2026-11-20T05:07:43.451Z",
+    "lastChecked": "2026-11-21T06:42:16.874Z",
     "revisionIdentifier": "04e12f37",
-    "lastVerified": "2026-11-20T05:07:43.451Z"
+    "lastVerified": "2026-11-21T06:42:16.874Z"
   },
   "apache-zookeeper": {
     "name": "zookeeper",
@@ -8806,12 +8808,12 @@
     "officialUrl": "https://github.com/Folkbench/folkbench",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-19T20:00:17.542Z",
-    "lastVerified": "2026-11-19T20:00:17.542Z",
+    "lastChecked": "2026-11-21T06:42:13.608Z",
+    "lastVerified": "2026-11-21T06:42:13.608Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-folkbench-folkbench",
-    "contentHash": "6b3d96acb44c7d55d05a6e2c63769502348ebc85d5b26b2c4974a26682e97301",
+    "contentHash": "a84b8da6455c1030e7ae0bd980a8a3c0ae0d992e614592250409d8e0b8c585f7",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -11915,6 +11917,30 @@
     "contentHash": "182b94ce1530bf6844eb01a08bc9839e4148de79561a59b8515f5b7cc656b94a",
     "promotedRulesCount": 1,
     "recentFixesCount": 20,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "unjs-ofetch": {
+    "name": "ofetch",
+    "officialUrl": "https://github.com/unjs/ofetch",
+    "lastChecked": "2026-11-21T06:42:11.722Z",
+    "revisionIdentifier": "1dbc37fd",
+    "lastVerified": "2026-11-21T06:42:11.722Z"
+  },
+  "lingyired-status-trio": {
+    "name": "lingyired/status-trio",
+    "officialUrl": "https://github.com/lingyired/status-trio",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-11-21T06:42:21.058Z",
+    "lastVerified": "2026-11-21T06:42:21.058Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-lingyired-status-trio",
+    "contentHash": "bcd619146cdff82a000c162090944ff6496e67cd5d03ca9563f09160d67980c3",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 14,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

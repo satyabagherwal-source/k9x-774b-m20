@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T06:28:05.966Z",
-  "total_cycles_completed": 11180,
-  "total_learnings_persisted": 11180,
-  "total_rules_promoted": 10536,
+  "last_updated": "2026-11-21T06:45:20.311Z",
+  "total_cycles_completed": 11182,
+  "total_learnings_persisted": 11182,
+  "total_rules_promoted": 10540,
   "history": [
-    {
-      "timestamp": "2026-11-20T11:30:45.614Z",
-      "repository": "touchlab/Kermit",
-      "learningId": "learn-github-touchlab-kermit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T11:30:49.170Z",
-      "repository": "fabio-rovai/open-ontologies",
-      "learningId": "learn-github-fabio-rovai-open-ontologies",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T11:30:51.306Z",
       "repository": "zama-ai/tfhe-rs",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T06:42:14.947Z",
+      "repository": "Folkbench/folkbench",
+      "learningId": "learn-github-folkbench-folkbench",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T06:45:20.311Z",
+      "repository": "lingyired/status-trio",
+      "learningId": "learn-github-lingyired-status-trio",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

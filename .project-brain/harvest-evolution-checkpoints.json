@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T06:28:11.600Z",
+  "last_updated": "2026-11-21T06:46:56.139Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T06:01:34.139Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-21T05:01:30.144Z",
+      "processed_at": "2026-11-21T06:46:54.682Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2478,9 +2478,9 @@
       "staged_for_review": 1
     },
     "lingyired-status-trio-learnings.md": {
-      "processed_at": "2026-11-17T18:44:45.061Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-21T06:46:53.155Z",
+      "promoted_canonical": 2,
+      "staged_for_review": 0
     },
     "hf-naiveai-naive-n0.5-flash-learnings.md": {
       "processed_at": "2026-11-19T00:23:35.539Z",
@@ -3153,7 +3153,7 @@
       "staged_for_review": 0
     },
     "folkbench-folkbench-learnings.md": {
-      "processed_at": "2026-11-19T20:00:28.459Z",
+      "processed_at": "2026-11-21T06:45:24.351Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3658,7 +3658,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2754,
-  "total_canonical_promoted": 442,
-  "total_staged_for_review": 2126
+  "total_dossiers_evaluated": 2757,
+  "total_canonical_promoted": 444,
+  "total_staged_for_review": 2128
 }

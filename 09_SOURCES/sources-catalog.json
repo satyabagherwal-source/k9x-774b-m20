@@ -12513,10 +12513,10 @@
     "repository": "lingyired/status-trio",
     "platform": "github",
     "sourceUrl": "https://github.com/lingyired/status-trio",
-    "sourceVersion": "ca166e73",
+    "sourceVersion": "f57d4590",
     "license": "Apache-2.0",
-    "contentHash": "c95d222c29e465dc07e9fe090e4e9bea8c61b186be448527deb2f07f27a576be",
-    "lastHarvestedAt": "2026-11-17T18:42:41.855Z",
+    "contentHash": "bcd619146cdff82a000c162090944ff6496e67cd5d03ca9563f09160d67980c3",
+    "lastHarvestedAt": "2026-11-21T06:45:20.304Z",
     "learningId": "learn-github-lingyired-status-trio"
   },
   "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf": {
@@ -12683,10 +12683,10 @@
     "repository": "Folkbench/folkbench",
     "platform": "github",
     "sourceUrl": "https://github.com/Folkbench/folkbench",
-    "sourceVersion": "c39cf173",
+    "sourceVersion": "97260416",
     "license": "NOASSERTION",
-    "contentHash": "6b3d96acb44c7d55d05a6e2c63769502348ebc85d5b26b2c4974a26682e97301",
-    "lastHarvestedAt": "2026-11-19T20:00:18.822Z",
+    "contentHash": "a84b8da6455c1030e7ae0bd980a8a3c0ae0d992e614592250409d8e0b8c585f7",
+    "lastHarvestedAt": "2026-11-21T06:42:14.939Z",
     "learningId": "learn-github-folkbench-folkbench"
   },
   "hf-ifm-pan2": {
