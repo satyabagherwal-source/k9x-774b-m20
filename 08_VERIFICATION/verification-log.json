@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-5G3H",
-    "timestamp": "2026-11-19T04:36:20.285Z",
-    "repository": "Bingsu/adetailer",
-    "learningId": "learn-huggingface-bingsu-adetailer",
-    "contentHash": "45d41e96ef29b646fe39f9f16e249b7c4ef962bb114ded78b5088f7d8eb008e3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-5GHC",
     "timestamp": "2026-11-19T04:36:20.784Z",
     "repository": "graphprotocol/graph-node",
@@ -7490,6 +7475,21 @@
     "repository": "Comfy-Org/Z-Image-Turbo",
     "learningId": "learn-huggingface-comfy-org-z_image_turbo",
     "contentHash": "d7187627183cdf41de8eda6ad72f68bf427be934a8dd2473fadecc2c7da0aa56",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-AQZL",
+    "timestamp": "2026-11-21T09:23:44.289Z",
+    "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
+    "contentHash": "d9da591b9401b251de58827312c6aafac32c88ee205dc8b94ee63175bda469b4",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

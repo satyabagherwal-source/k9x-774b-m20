@@ -8275,8 +8275,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "a1b5e63d1151086beb003f4fe97e61290645a548f6010f09f5fad59948e831ad",
-    "lastHarvestedAt": "2026-11-17T14:57:50.435Z",
+    "contentHash": "d9da591b9401b251de58827312c6aafac32c88ee205dc8b94ee63175bda469b4",
+    "lastHarvestedAt": "2026-11-21T09:23:44.294Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4"
   },
   "sventiigi-whatsnewkit": {

@@ -11797,3 +11797,4 @@ Every entry in this ledger must capture:
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `f872eb46` | Multi-dimensional audit evidence | 2026-11-21T08:52:48.404Z |
 | `learn-github-react-react-native` | `https://github.com/react/react-native` | `32a5aa6a` | Multi-dimensional audit evidence | 2026-11-21T08:52:53.135Z |
 | `learn-huggingface-comfy-org-z_image_turbo` | `https://huggingface.co/Comfy-Org/z_image_turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-21T08:54:38.939Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-21T09:23:44.294Z |

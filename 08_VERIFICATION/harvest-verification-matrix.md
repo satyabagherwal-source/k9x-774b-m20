@@ -11764,3 +11764,4 @@
 | `CYCLE-20261121-6YZ3` | `2026-11-21T08:52:48.399Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9761` | Yes (`09bbcc92...`) |
 | `CYCLE-20261121-72MJ` | `2026-11-21T08:52:53.131Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9762` | Yes (`892d3af5...`) |
 | `CYCLE-20261121-9C9I` | `2026-11-21T08:54:38.934Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md` | Yes (`d7187627...`) |
+| `CYCLE-20261121-AQZL` | `2026-11-21T09:23:44.289Z` | `nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md` | Yes (`d9da591b...`) |

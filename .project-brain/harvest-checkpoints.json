@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T08:54:38.949Z",
+  "last_updated": "2026-11-21T09:23:44.304Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -12441,14 +12441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
-      "content_hash": "a1b5e63d1151086beb003f4fe97e61290645a548f6010f09f5fad59948e831ad",
-      "verified_at": "2026-11-17T14:57:50.443Z",
+      "content_hash": "d9da591b9401b251de58827312c6aafac32c88ee205dc8b94ee63175bda469b4",
+      "verified_at": "2026-11-21T09:23:44.304Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T14:57:50.443Z"
+      "last_updated": "2026-11-21T09:23:44.304Z"
     },
     "SvenTiigi/WhatsNewKit": {
       "repository": "SvenTiigi/WhatsNewKit",

@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T08:54:41.935Z",
-    "lastVerified": "2026-11-21T08:54:41.935Z",
+    "lastChecked": "2026-11-21T09:23:54.205Z",
+    "lastVerified": "2026-11-21T09:23:54.205Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -148,9 +148,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-21T01:24:59.727Z",
+    "lastChecked": "2026-11-21T09:23:49.173Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-21T01:24:59.727Z"
+    "lastVerified": "2026-11-21T09:23:49.173Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -214,9 +214,9 @@
   "justjavac-free-programming-books-zh_cn": {
     "name": "free-programming-books-zh_CN",
     "officialUrl": "https://github.com/justjavac/free-programming-books-zh_CN",
-    "lastChecked": "2026-11-18T09:43:15.933Z",
+    "lastChecked": "2026-11-21T09:23:44.194Z",
     "revisionIdentifier": "cc1108ac",
-    "lastVerified": "2026-11-18T09:43:15.933Z"
+    "lastVerified": "2026-11-21T09:23:44.194Z"
   },
   "bitnami-sealed-secrets": {
     "name": "sealed-secrets",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-21T07:42:04.761Z",
+    "lastChecked": "2026-11-21T09:23:54.193Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-21T07:42:04.761Z"
+    "lastVerified": "2026-11-21T09:23:54.193Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -464,9 +464,9 @@
   "tabbyml-tabby": {
     "name": "tabby",
     "officialUrl": "https://github.com/TabbyML/tabby",
-    "lastChecked": "2026-11-19T21:43:34.385Z",
+    "lastChecked": "2026-11-21T09:23:39.235Z",
     "revisionIdentifier": "21b29048",
-    "lastVerified": "2026-11-19T21:43:34.385Z"
+    "lastVerified": "2026-11-21T09:23:39.235Z"
   },
   "hf-cross-encoder-ms-marco-minilm-l6-v2": {
     "name": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -5239,9 +5239,9 @@
   "cockroachdb-cockroach": {
     "name": "cockroach",
     "officialUrl": "https://github.com/cockroachdb/cockroach",
-    "lastChecked": "2026-11-20T05:07:48.851Z",
+    "lastChecked": "2026-11-21T09:23:51.946Z",
     "revisionIdentifier": "d30c905f",
-    "lastVerified": "2026-11-20T05:07:48.851Z"
+    "lastVerified": "2026-11-21T09:23:51.946Z"
   },
   "async-rs-async-std": {
     "name": "async-std",
@@ -5997,12 +5997,12 @@
     "lastVerified": "2026-11-19T01:47:05.647Z"
   },
   "kcl-lang-kcl": {
-    "name": "kcl-lang/kcl",
+    "name": "kcl",
     "officialUrl": "https://github.com/kcl-lang/kcl",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T06:02:31.437Z",
-    "lastVerified": "2026-11-20T06:02:31.437Z",
+    "lastChecked": "2026-11-21T09:23:46.800Z",
+    "lastVerified": "2026-11-21T09:23:46.800Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kcl-lang-kcl",
@@ -6011,7 +6011,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4e4df138"
   },
   "ydb-platform-ydb": {
     "name": "ydb-platform/ydb",
@@ -12103,6 +12104,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-comfy-org-z_image_turbo",
     "contentHash": "d7187627183cdf41de8eda6ad72f68bf427be934a8dd2473fadecc2c7da0aa56",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4": {
+    "name": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+    "officialUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T09:23:42.175Z",
+    "lastVerified": "2026-11-21T09:23:42.175Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
+    "contentHash": "d9da591b9401b251de58827312c6aafac32c88ee205dc8b94ee63175bda469b4",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-nvidia-nv`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T14:57:50.090Z  
+> **Timestamp**: 2026-11-21T09:23:43.725Z  
 > **Learning ID**: `learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T14:57:49.843Z  
+> **Harvest Timestamp**: 2026-11-21T09:23:42.175Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 113500 downloads | 284 likes
+- **Stars / Engagement**: 129773 downloads | 288 likes
 
 ---
 
