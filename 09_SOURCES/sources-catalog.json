@@ -3893,10 +3893,10 @@
     "repository": "ClementTsang/bottom",
     "platform": "github",
     "sourceUrl": "https://github.com/ClementTsang/bottom",
-    "sourceVersion": "829779a0",
+    "sourceVersion": "d9a0f1d1",
     "license": "MIT",
-    "contentHash": "b710dcb6d1e47113bdd20e80378a960d8c90472ab3c4fcf9d83fe46c4e7c40ed",
-    "lastHarvestedAt": "2026-11-20T04:14:15.296Z",
+    "contentHash": "1132ac05425a52d96fd0b97ded9e1d1e6bd850cc3a0a0877d1a2fe6018a32efb",
+    "lastHarvestedAt": "2026-11-21T19:27:20.204Z",
     "learningId": "learn-github-clementtsang-bottom"
   },
   "jhen0409-react-native-debugger": {
@@ -7083,10 +7083,10 @@
     "repository": "emberstack/kubernetes-reflector",
     "platform": "github",
     "sourceUrl": "https://github.com/emberstack/kubernetes-reflector",
-    "sourceVersion": "b26ca679",
+    "sourceVersion": "dbbd9cc6",
     "license": "MIT",
-    "contentHash": "73d0278ec6859a7a6f569beed61b667f19ddc96d5951d0da3b11aa87232e6391",
-    "lastHarvestedAt": "2026-11-20T16:13:00.930Z",
+    "contentHash": "975622c4a9942c6a5410de28483109a4b90113275b47819f786227b012fe960e",
+    "lastHarvestedAt": "2026-11-21T19:27:26.954Z",
     "learningId": "learn-github-emberstack-kubernetes-reflector"
   },
   "arxanas-git-branchless": {
@@ -11405,8 +11405,8 @@
     "sourceUrl": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
     "sourceVersion": "hf-prithivmlmods-gender-classifier-mini",
     "license": "Open-Source",
-    "contentHash": "fae5a22d3022fd3b8de1017e7bcecab1cd88127cdf1671cf57c70804bf0c8168",
-    "lastHarvestedAt": "2026-11-18T06:00:02.381Z",
+    "contentHash": "7efe1ab07a7b21a84a5c0174d4c620f602b2507ee839a4a54c9c7e3a242f9c01",
+    "lastHarvestedAt": "2026-11-21T19:32:19.291Z",
     "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini"
   },
   "hf-openbmb-minicpm-ocr-1.0": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T19:11:50.612Z",
+  "last_updated": "2026-11-21T19:32:24.976Z",
   "directives": [
     {
       "id": "CD-001",
@@ -43324,6 +43324,48 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-21",
       "domain_letter": "I"
+    },
+    {
+      "id": "CD-UZKF",
+      "directive_title": "add basic GPU usage graph",
+      "source_repo": "ClementTsang/bottom",
+      "source_commit": "d9a0f1d1",
+      "staged_file": "11_INBOX/candidate-directives/CD-UZKF-add-basic-gpu-usage-graph.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-1IJ4",
+      "directive_title": "build(deps): bump gittools/actions",
+      "source_repo": "emberstack-kubernetes-reflector-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-1IJ4-build-deps-bump-gittools-actions.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-1H8Z",
+      "directive_title": "feature: add basic GPU usage graph",
+      "source_repo": "clementtsang-bottom-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-1H8Z-feature-add-basic-gpu-usage-graph.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-REV-47C6DE",
+      "directive_title": "build(deps): bump gittools/actions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "emberstack-kubernetes-reflector",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-47C6DE-build-deps-bump-gittools-actions.md",
+      "staged_date": "2026-11-21"
     }
   ]
 }

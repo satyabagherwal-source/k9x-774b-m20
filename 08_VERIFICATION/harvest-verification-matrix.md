@@ -11877,3 +11877,6 @@
 | `CYCLE-20261121-5SKO` | `2026-11-21T19:07:45.000Z` | `Open-Source-Legal/OpenContracts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9822` | Yes (`30780389...`) |
 | `CYCLE-20261121-A97I` | `2026-11-21T19:11:13.182Z` | `tencent/Hy-SimulMT-30B-A3B-FP8` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9823, Rule 9824` | Yes (`ee54df79...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T19:11:46.193Z` | `hf-tencent-hy-simulmt-30b-a3b-fp8` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-0277A6E9` [Domain F] | Yes (`f719e006...`) |
+| `CYCLE-20261121-UZD3` | `2026-11-21T19:27:20.199Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9825` | Yes (`1132ac05...`) |
+| `CYCLE-20261121-V4KM` | `2026-11-21T19:27:26.950Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9826` | Yes (`975622c4...`) |
+| `CYCLE-20261121-1E51` | `2026-11-21T19:32:19.285Z` | `prithivMLmods/Gender-Classifier-Mini` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md` | Yes (`7efe1ab0...`) |

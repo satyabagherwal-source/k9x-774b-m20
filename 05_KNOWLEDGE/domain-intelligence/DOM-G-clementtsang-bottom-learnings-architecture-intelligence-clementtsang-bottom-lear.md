@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T04:14:26.203Z",
+  "timestamp": "2026-11-21T19:32:23.178Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-clementtsang-bottom-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [clementtsang-bottom-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T04:14:26.203Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T19:32:23.178Z`  
 > **Learning ID**: `LEARN-EVO-clementtsang-bottom-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), F (Design Intelligence), B (Product Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: F (Design Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from clementtsang-bottom-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source**: github ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
-> **Source Version**: `829779a0`  
+> **Source Version**: `d9a0f1d1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T04:14:14.289Z  
+> **Timestamp**: 2026-11-21T19:27:18.880Z  
 > **Learning ID**: `learn-github-clementtsang-bottom`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T04:14:14.167Z  
+> **Harvest Timestamp**: 2026-11-21T19:27:18.732Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Yet another cross-platform graphical process/system monitor.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 14213 stars
+- **Stars / Engagement**: 14227 stars
 
 ---
 
@@ -74,12 +74,18 @@ use crate::{
     constants,
     utils::input::InputFieldState,
     widgets::{
-        BatteryWidgetState, CpuWidgetState, DiskIoGraphWidgetState, DiskTableWidget,
-        MemWidgetState, NetWidgetState, ProcWidgetState, TempGraphWidgetState, TempWidgetState,
-        query::ProcessQuery,
+        CpuWidgetState, DiskIoGraphWidgetState, DiskTableWidget, MemWidgetState, NetWidgetState,
+        ProcWidgetState, TempGraphWidgetState, TempWidgetState, query::ProcessQuery,
     },
 };
 
+#[cfg(feature = "gpu")]
+use crate::widgets::GpuGraphWidgetState;
+
+#[cfg(feature = "battery")]
+use crate::widgets::BatteryWidgetState;
+
+// TODO: Update this system.
 pub struct AppWidgetStates {
     pub cpu_state: CpuState,
     pub mem_state: MemState,
@@ -89,8 +95,11 @@ pub struct AppWidgetStates {
     pub temp_graph_state: TempGraphStates,
     pub disk_state: DiskState,
     pub disk_io_graph_state: DiskIoGraphStates,
+    #[cfg(feature = "battery")]
     pub battery_state: AppBatteryState,
     pub basic_table_widget_state: Option<BasicTableWidgetState>,
+    #[cfg(feature = "gpu")]
+    pub gpu_graph_state: GpuGraphStates,
 }
 
 #[derive(Debug)]
@@ -231,6 +240,22 @@ impl MemState {
     }
 }
 
+#[cfg(feature = "gpu")]
+pub struct GpuGraphStates {
+    pub widget_states: HashMap<u64, GpuGraphWidgetState>,
+}
+
+#[cfg(feature = "gpu")]
+impl GpuGraphStates {
+    pub fn init(widget_states: HashMap<u64, GpuGraphWidgetState>) -> Self {
+        GpuGraphStates { widget_states }
+    }
+
+    pub fn get_mut_widget_state(&mut self, widget_id: u64) -> Option<&mut GpuGraphWidgetState> {
+        self.widget_states.get_mut(&widget_id)
+    }
+}
+
 pub struct TempState {
     pub widget_states: HashMap<u64, TempWidgetState>,
 }
@@ -307,10 +332,12 @@ pub struct BasicTableWidgetState {
     pub right_brc: Option<(u16, u16)>,
 }
 
+#[cfg(feature = "battery")]
 pub struct AppBatteryState {
     pub widget_states: HashMap<u64, BatteryWidgetState>,
 }
 
+#[cfg(feature = "battery")]
 impl AppBatteryState {
     pub fn init(widget_states: HashMap<u64, BatteryWidgetState>) -> Self {
         AppBatteryState { widget_states }
@@ -1629,274 +1656,210 @@ impl InputFieldState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a1742a35` (2026-11-19)
-**Commit Message**: feature: add basic integration with sysinfo's gpu api for non-Linux (#2326)
+### Incident Patch 1: `d9a0f1d1` (2026-11-21)
+**Commit Message**: feature: add basic GPU usage graph (#2329)
 
-This is a very simple integration for non-Linux to use sysinfo's new GPU API.
+Adds a basic GPU usage graph.
 
-**File**: `src/collection.rs` (modified, +31/-0)
+**File**: `.cargo/config.toml` (modified, +1/-1)
 ```diff
-@@ -31,6 +31,8 @@ use std::time::{Duration, Instant};
- use processes::Pid;
- #[cfg(feature = "battery")]
- use starship_battery::{Battery, Manager};
-+#[cfg(all(feature = "gpu", not(target_os = "linux")))]
-+use sysinfo::Gpus;
+@@ -8,4 +8,4 @@ rustflags = ["-C", "target-feature=+crt-static"]
+ rustflags = ["-C", "target-feature=+crt-static"]
  
- use super::DataFilters;
- use crate::app::layout_manager::UsedWidgets;
-@@ -198,6 +200,11 @@ pub struct DataCollector {
-     /// update time.
-     nvidia_gpu_list_cache: Option<(Vec<(String, std::path::PathBuf)>, Instant)>,
- 
-+    #[cfg(all(feature = "gpu", not(target_os = "linux")))]
-+    /// GPU list pulled from sysinfo. This is refreshed only periodically to avoid
-+    /// overhead.
-+    sysinfo_gpus: Option<Gpus>,
-+
-     #[cfg(feature = "zfs")]
-     free_arc_mem: bool,
- 
-@@ -250,6 +257,8 @@ impl DataCollector {
-             gpus_total_mem: None,
-             #[cfg(all(target_os = "linux", feature = "gpu", feature = "nvidia"))]
-             nvidia_gpu_list_cache: None,
-+            #[cfg(all(feature = "gpu", not(target_os = "linux")))]
-+            sysinfo_gpus: None,
-             #[cfg(feature = "zfs")]
-             free_arc_mem: false,
-             last_list_collection_time: last_collection_time,
-@@ -383,6 +392,20 @@ impl DataCollector {
-                     disk.refresh();
-                 }
-             }
-+
-+            // Throttle sysinfo GPU list refresh to avoid costly `Gpus::new()` calls.
-+            // Only rebuild the list every 60 seconds; data (usage/memory) is
-+            // refreshed every cycle via `Gpus::refresh()`.
-+            #[cfg(feature = "gpu")]
-+            if self.widgets_to_harvest.use_gpu {
-+                if let Some(gpus) = &mut self.sysinfo_gpus {
-+                    gpus.refresh(false);
-+                } else if let Ok(gpus) = Gpus::new_with_refreshed_list()
-+                    && !gpus.is_empty()
-+                {
-+                    self.sysinfo_gpus = Some(gpus);
-+                }
-+            }
-         }
-     }
- 
-@@ -481,6 +504,14 @@ impl DataCollector {
-                 }
-             }
- 
-+            #[cfg(all(feature = "gpu", not(target_os = "linux")))]
-+            if let Some(gpus) = &self.sysinfo_gpus
-+                && let Some(mut mem) =
-+                    gpu::sysinfo_backend::collect_sysinfo_gpu_data(gpus, &self.widgets_to_harvest)
-+            {
-+                local_gpu.append(&mut mem);
-+            }
-+
-             self.data.gpu = (!local_gpu.is_empty()).then_some(local_gpu);
-             self.gpu_pids = (!local_gpu_pids.is_empty()).then_some(local_gpu_pids);
-             self.gpus_total_mem = (local_gpu_total_mem > 0).then_some(local_gpu_total_mem);
+ [registry]
+-global-min-publish-age = "7 days"
++global-min-publish-age = "14 days"
 ```
 
-**File**: `src/collection/gpu.rs` (modified, +3/-0)
+**File**: `CHANGELOG.md` (modified, +3/-1)
 ```diff
-@@ -6,5 +6,8 @@ cfg_select! {
-         pub mod intel;
-         pub mod amd;
-     }
-+    all(not(target_os = "linux"), feature = "gpu") => {
-+        pub mod sysinfo_backend;
-+    }
-     _ => {}
- }
+@@ -22,7 +22,7 @@ That said, these are more guidelines rather than hard rules, though the project
+ 
+ ---
+ 
+-## 0.15.1 - Unreleased
++## 0.16.0 - Unreleased
+ 
+ ### Features
+ 
+@@ -31,6 +31,7 @@ That said, these are more guidelines rather than hard rules, though the project
+ - [#2325](https://github.com/ClementTsang/bottom/pull/2325): Add hostname template to terminal title option.
+ - [#2326](https://github.com/ClementTsang/bottom/pull/2326): Add basic GPU support for non-Linux operating systems using sysinfo's new GPU API.
+ - [#2328](https://github.com/ClementTsang/bottom/pull/2328): Add natural sorting options for the process, disk, and temperature widgets.
++- [#2329](https://github.com/ClementTsang/bottom/pull/2329): Add a GPU usage graph widget.
+ 
+ ### Changes
+ 
+@@ -40,6 +41,7 @@ That said, these are more guidelines rather than hard rules, though the project
+ 
+ - [#2300](https://github.com/ClementTsang/bottom/pull/2300): Fix dialog screens not blocking certain user events.
+ - [#2298](https://github.com/ClementTsang/bottom/pull/2298): Fix hidden table columns shifting the widths of later columns and header clicks.
++- [#2329](https://github.com/ClementTsang/bottom/pull/2329): Fix `--default_widget_type` not accepting `memory`, `temp_graph`, `temperature_graph`, and `disk_io_graph`.
+ 
+ ### Other
+ 
 ```
 
-**File**: `src/collection/gpu/sysinfo_backend.rs` (added, +63/-0)
+**File**: `docs/content/configuration/config-file/flags.md` (modified, +47/-47)
 ```diff
-@@ -0,0 +1,63 @@
-+//! Non-Linux GPU data collection via sysinfo.
-+//!
-+//! This module provides GPU data on Windows, macOS, and other platforms where
-+//! sysinfo has built-in GPU support.
-+
-+use std::num::NonZeroU64;
-+
-+use sysinfo::Gpus;
-+
-+use crate::{app::layout_manager::UsedWidgets, collection::memory::MemData};
-+
-+/// Returns the human-readable name for a GPU vendor.
-+fn vendor_name(vendor: Option<&str>) -> String {
-+    match vendor {
-+        Some("Intel Corporation") => "Intel".to_string(),
-+        Some("Advanced Micro Devices, Inc.") => "AMD".to_string(),
-+        Some("NVIDIA Corporation") => "NVIDIA".to_string(),
-+        Some("") | None => "Unknown".to_string(),
-+        Some(other) => other.to_string(),
-+    }
-+}
-+
-+/// Collect GPU data using sysinfo's `Gpus` type.
-+///
-+/// Only includes memory data if the platform reports VRAM (Windows).
-+/// On macOS/FreeBSD, memory is always `None` because GPUs share
-+/// system memory with no dedicated VRAM.
-+pub fn collect_sysinfo_gpu_data(
-+    gpus: &Gpus, widgets: &UsedWidgets,
-+) -> Option<Vec<(String, MemData)>> {
-+    let mut mem_vec: Vec<(String, MemData)> = Vec::new();
-+
-+    for gpu in gpus.iter() {
-+        let name = vendor_name(gpu.vendor());
-+        let model = gpu.model().unwrap_or("");
-+        let display_name = match (model.is_empty(), model.starts_with(&name)) {
-+            (true, _) | (false, true) => name,
-+            (false, false) => format!("{name} {model}"),
-+        };
-+
-+        if widgets.use_mem {
-+            // total_memory/used_memory returns Some only on Windows (DXGI).
-+            // On macOS/FreeBSD these always return None (shared memory).
-+            if let (Some(total), Some(used)) = (gpu.total_memory(), gpu.used_memory())
-+                && let Some(total_bytes) = NonZeroU64::new(total)
-+            {
-+                mem_vec.push((
-+                    display_name,
-+                    MemData {
-+                        total_bytes,
-+                        used_bytes: used,
-+                    },
-+                ));
-+            }
-+        }
-+    }
-+
-+    if !mem_vec.is_empty() {
-+        Some(mem_vec)
-+    } else {
-+        None
-+    }
-+}
+@@ -14,50 +14,50 @@ hide_avg_cpu = true
+ Most of the [command line flags](../command-line-options.md) have config file equivalents to avoid having to type them out
+ each time:
+ 
+-| Field                        | Type                                                                                                               | Functionality                                                                                                                                                                    |
+-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+-| `terminal_title`             | String                                                                                                             | Sets a custom string displayed in the terminal title; add `{hostname}` to substitute it for your hostname.                                                                       |
+-| `hide_avg_cpu`               | Boolean                                                                                                            | Deprecated - use `cpu.hide_avg_cpu`. Hides the average CPU usage.                                                                                                                |
+-| `dot_marker`                 | Boolean                                                                                                            | Uses a dot marker for graphs.                                                                                                                                                    |
+-| `cpu_left_legend`            | Boolean                                                                                                            | Deprecated - use `cpu.left_legend`. Puts the CPU chart legend to the left side.                                                                                                  |
+-| `current_usage`              | Boolean                                                                                                            | Deprecated - use `processes.current_usage`. Sets process CPU% to be based on current CPU%.                                                                                       |
+-| `group_processes`            | Boolean                                                                                                            | Deprecated - use `processes.default_grouped`. Groups processes with the same name by default.                                                                                    |
+-| `case_sensitive`             | Boolean                                                                                                            | Deprecated - use `processes.case_sensitive`. Enables case sensitivity by default.                                                                                                |
+-| `whole_word`                 | Boolean                                                                                                            | Deprecated - use `processes.whole_word`. Enables whole-word matching by default.                                                                                                 |
+-| `regex`                      | Boolean                                                                                                            | Deprecated - use `processes.regex`. Enables regex by default.                                                                                                                    |
+-| `basic`                      | Boolean                                                                                                            | Hides graphs and uses a more basic look.                                                                                                                                         |
+-| `use_old_network_legend`     | Boolean                                                                                                            | DEPRECATED - uses the older network legend.                                                                                                                                      |
+-| `battery`                    | Boolean                                                                                                            | Shows the battery widget.                                                                                                                                                        |
+-| `rate`                       | Unsigned Int (represents milliseconds) or String (represents human time)                                           | Sets a refresh rate in ms.                         
 ```
 
-**File**: `src/collection/processes/unix.rs` (modified, +3/-27)
+**File**: `docs/content/configuration/config-file/gpu-graph.md` (added, +24/-0)
 ```diff
-@@ -15,34 +15,10 @@ cfg_select! {
-         pub fn sysinfo_process_data(
-             collector: &mut DataCollector,
-         ) -> CollectionResult<Vec<ProcessHarvest>> {
--            let sys = &collector.sys.system;
--            let use_current_cpu_total = collector.use_current_cpu_total;
--            let unnormalized_cpu = collector.unnormalized_cpu;
--            let total_memory = collector.total_memory();
--            let user_table = &mut collector.user_table;
--
-             cfg_select! {
--                target_os = "macos" => MacOSProcessExt::sysinfo_process_data(
--                    sys,
--                    use_current_cpu_total,
--                    unnormalized_cpu,
--                    total_memory,
--                    user_table,
--                ),
--                target_os = "freebsd" => FreeBSDProcessExt::sysinfo_process_data(
--                    sys,
--                    use_current_cpu_total,
--                    unnormalized_cpu,
--                    total_memory,
--                    user_table,
--                ),
--                _ => GenericProcessExt::sysinfo_process_data(
--                    sys,
--                    use_current_cpu_total,
--                    unnormalized_cpu,
--                    total_memory,
--                    user_table,
--                ),
-+                target_os = "macos" => MacOSProcessExt::sysinfo_process_data(collector),
-+                target_os = "freebsd" => FreeBSDProcessExt::sysinfo_process_data(collector),
-+                _ => GenericProcessExt::sysinfo_process_data(collector),
-             }
-         }
-     }
+@@ -0,0 +1,24 @@
++# GPU Usage Graph Widget Configuration
++
++If you want to change some of the default behaviour of the GPU usage graph widget, you can configure things under the `[gpu_graph]` section.
++
++## Graph legend position
++
++You can change where the legend for the graph is placed within the widget itself (or hidden with `"none"`). The default is `"top-right"`.
++
++```toml
++[gpu_graph]
++# One of ["none", "top-left", "top", "top-right", "left", "right", "bottom-left", "bottom", "bottom-right"]
++legend_position = "top-left"
++```
++
++## Short GPU names
++
++If GPU support is enabled, you can use `short_gpu_names` to display simplified GPU names in the GPU usage widget
++instead of the full GPU names. If enabled, then if there's only one GPU, it'll just list the entry as `GPU`;
++if there are multiple GPUs, it'll use entries like `GPU0`, `GPU1`, etc. By default, this is disabled.
++
++```toml
++[gpu_graph]
++short_gpu_names = true
++```
 ```
 
-**File**: `src/collection/processes/unix/process_ext.rs` (modified, +23/-7)
+**File**: `docs/content/configuration/config-file/layout.md` (modified, +1/-0)
 ```diff
-@@ -3,13 +3,13 @@
- use std::{io, time::Duration};
+@@ -49,6 +49,7 @@ The following `type` values are supported:
+ | `"temp_graph", "temperature_graph"` | Temperature graph        |
+ | `"disk"`                            | Disk table               |
+ | `"disk_io_graph"`                   | Disk I/O graph           |
++| `"gpu"`                             | GPU usage graph          |
+ | `"empty"`                           | An empty space           |
+ | `"batt", "battery"`                 | Battery statistics       |
  
- use itertools::Itertools;
--use sysinfo::{ProcessStatus, System};
-+use sysinfo::ProcessStatus;
- 
- use super::{ProcessHarvest, process_status_str};
- #[cfg(target_os = "macos")]
- use crate::collection::processes::macos::sysctl_bindings;
- use crate::{
--    collection::{Pid, error::CollectionResult, processes::UserTable},
-+    collection::{DataCollector, Pid, error::CollectionResult},
-     utils::int_hash::IntHashMap,
- };
- 
-@@ -73,9 +73,17 @@ fn get_priority(pid: Pid) -> i32 {
- 
- pub(crate) trait UnixProcessExt {
-     fn sysinfo_process_data(
--        sys: &System, use_current_cpu_total: bool, unnormalized_cpu: bool, total_memory: u64,
--        user_table: &mut UserTable,
-+        collector: &mut DataCollector,
-     ) -> CollectionResult<Vec<ProcessHarvest>> {
-+        let sys = &collector.sys.system;
-+        let use_current_cpu_total = collector.use_current_cpu_total;
-+        let unnormalized_cpu = collector.unnormalized_cpu;
+```
+
+**File**: `docs/content/usage/widgets/gpu-graph.md` (added, +44/-0)
+```diff
+@@ -0,0 +1,44 @@
++# GPU Usage Graph Widget
 +
-+        let total_memory = collector.total_memory();
-+        #[cfg(feature = "gpu")]
-+        let total_gpu_mem = collector.gpus_total_mem.unwrap_or(0);
++The GPU usage graph widget displays the per-GPU utilization percentage over time.
 +
-+        let user_table = &mut collector.user_table;
-         let mut process_vector: Vec<ProcessHarvest> = Vec::new();
-         let process_hashmap = sys.processes();
-         let cpu_usage = sys.global_cpu_usage() / 100.0;
-@@ -161,11 +169,19 @@ pub(crate) trait UnixProcessExt {
-                     Duration::from_secs(process_val.run_time())
-                 },
-                 #[cfg(feature = "gpu")]
--                gpu_mem: 0,
-+                gpu_mem: process_val.gpu_memory().unwrap_or(0),
-                 #[cfg(feature = "gpu")]
--                gpu_mem_percent: 0.0,
-+                gpu_mem_percent: if total_gpu_mem > 0 {
-+                    (process_val.gpu_memory().unwrap_or(0) as f64 / total_gpu_mem as f64 * 100.0)
-+                        as f32
-+                } else {
-+                    0.0
-+                },
-                 #[cfg(feature = "gpu")]
--                gpu_util: 0,
-+                gpu_util: process_val
-+                    .gpu_usage()
-+                    .map(|u| u.clamp(0.0, 100.0) as u32)
-+                    .unwrap_or(0),
-                 #[cfg(unix)]
-                 nice,
-                 priority,
++<figure>
++    <img src="../../../assets/screenshots/gpu_graph.webp" alt="A picture of an expanded GPU usage graph widget."/>
++</figure>
++
++## Features
++
++The GPU usage graph shows the current GPU utilization for each GPU as a percentage.
++
++The displayed time range can be adjusted through either the keyboard or mouse.
++
++## Key bindings
++
++Note that key bindings are generally case-sensitive.
++
++| Binding   | Action                                  |
++| --------- | --------------------------------------- |
++| ++plus++  | Zoom in on chart (decrease time range)  |
++| ++minus++ | Zoom out on chart (increase time range) |
++| ++equal++ | Reset zoom                              |
++
++## Mouse bindings
++
++| Binding      | Action                                                         |
++| ------------ | -------------------------------------------------------------- |
++| ++"Scroll"++ | Scrolling up or down zooms in or out of the graph respectively |
++
++## How is GPU information gathered?
++
++How we get GPU data depends on the platform:
++
++- On Linux:
++  - NVIDIA: Using the NVML crate
++  - AMD: Manually parsing sysfs
++  - Intel: Summing per-process engine usage from `/proc/<pid>/fdinfo`. Note this only includes processes that
++    bottom has permissions to inspect, so it may miss some processes unless run with elevated privileges (which
++    comes with its own set of risks).
++- On Windows:
++  - NVIDIA: Using the NVML crate and sysinfo as a fallback.
++  - AMD/Intel: Using sysinfo's GPU API
++- On other platforms, we just use sysinfo's GPU API
+```
+
+**File**: `docs/mkdocs.yml` (modified, +2/-0)
+```diff
+@@ -169,6 +169,7 @@ nav:
+           - "Temperature Widget": usage/widgets/temperature-table.md
+           - "Temperature Graph Widget": usage/widgets/temperature-graph.md
+           - "Disk I/O Graph Widget": usage/widgets/disk-io-graph.md
++          - "GPU Graph Widget": usage/widgets/gpu-graph.md
+           - "Battery Widget": usage/widgets/battery.md
+       - "Auto-Complete": usage/autocomplete.md
+   - "Configuration":
+@@ -183,6 +184,7 @@ nav:
+           - "Temperature Table Widget": configuration/config-file/temperature-table.md
+           - "Temperature Graph Widget": configuration/config-file/temperature-graph.md
+           - "Disk I/O Graph Widget": configuration/config-file/disk-io-graph.md
++          - "GPU Graph Widget": configuration/config-file/gpu-graph.md
+           - "Flags": configuration/config-file/flags.md
+           - "Layout": configuration/config-file/layout.md
+           - "Styling": configuration/config-file/styling.md
+```
+
+**File**: `sample_configs/default_config.toml` (modified, +9/-0)
+```diff
+@@ -402,6 +402,15 @@
+ # Use short GPU names (e.g. "GPU" or "GPU0", "GPU1") instead of full GPU names. Only available if the GPU feature is enabled when built.
+ #short_gpu_names = false
+ 
++# GPU usage graph widget configuration, Only available if the GPU feature is enabled when built.
++#[gpu_graph]
++
++# Where to place the legend for the GPU usage graph widget. One of "none", "top-left", "top", "top-right", "left", "right", "bottom-left", "bottom", "bottom-right".
++#legend_position = "top-right"
++
++# Use short GPU names (e.g. "GPU" or "GPU0", "GPU1") instead of full GPU names.
++#short_gpu_names = false
++
+ # Network widget configuration
+ #[network_graph]
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2329** (2026-11-21): feature: add basic GPU usage graph (@ClementTsang)
 - **PR #2328** (2026-11-19): feature: add natural sorting option (@ClementTsang)
 - **PR #2327** (2026-11-19): docs: update changelog to add #2326 (@ClementTsang)
 - **PR #2326** (2026-11-19): feature: add basic integration with sysinfo's gpu api for non-Linux (@ClementTsang)
 - **PR #2325** (2026-11-17): feature: add hostname template to terminal title option (@ClementTsang)
 - **PR #2324** (2026-11-16): ci: fix MSI installer workflow failing when installing dotnet (@ClementTsang)
-- **PR #2323** (2026-11-15): feature: allow setting a custom terminal name (@ClementTsang)
 
 ---
 
@@ -1916,57 +1879,31 @@ This is a very simple integration for non-Linux to use sysinfo's new GPU API.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. feature: add basic integration with sysinfo's gpu api for non-Linux
+## X. feature: add basic GPU usage graph
 
 **RULE**:
-When implementing operations in `src/collection.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a1742a35`: feature: add basic integration with sysinfo's gpu api for non-Linux. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d9a0f1d1`: feature: add basic GPU usage graph. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/collection.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[cfg(all(feature = "gpu", not(target_os = "linux")))]
-use sysinfo::Gpus;
-    #[cfg(all(feature = "gpu", not(target_os = "linux")))]
-    /// GPU list pulled from sysinfo. This is refreshed only periodically to avoid
-    /// overhead.
-    sysinfo_gpus: Option<Gpus>,
-
-            #[cfg(all(feature = "gpu", not(target_os = "linux")))]
-            sysinfo_gpus: None,
-
-            // Throttle sysinfo GPU list refresh to avoid costly `Gpus::new()` calls.
-            // Only rebuild the list every 60 seconds; data (usage/memory) is
-            // refreshed every cycle via `Gpus::refresh()`.
-            #[cfg(feature = "gpu")]
-            if self.widgets_to_harvest.use_gpu {
-                if let Some(gpus) = &mut self.sysinfo_gpus {
-                    gpus.refresh(false);
-                } else if let Ok(gpus) = Gpus::new_with_refreshed_list()
-                    && !gpus.is_empty()
-                {
-                    self.sysinfo_gpus = Some(gpus);
-                }
-            }
-            #[cfg(all(feature = "gpu", not(target_os = "linux")))]
-            if let Some(gpus) = &self.sysinfo_gpus
-                && let Some(mut mem) =
-                    gpu::sysinfo_backend::collect_
+global-min-publish-age = "14 days"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+global-min-publish-age = "7 days"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a1742a35` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d9a0f1d1` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

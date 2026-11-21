@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T19:11:13.191Z",
-  "total_cycles_completed": 11303,
-  "total_learnings_persisted": 11303,
-  "total_rules_promoted": 10631,
+  "last_updated": "2026-11-21T19:32:19.297Z",
+  "total_cycles_completed": 11306,
+  "total_learnings_persisted": 11306,
+  "total_rules_promoted": 10633,
   "history": [
-    {
-      "timestamp": "2026-11-20T23:39:47.910Z",
-      "repository": "webpack/webpack",
-      "learningId": "learn-github-webpack-webpack",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T23:39:56.333Z",
-      "repository": "xerj-org/xerj",
-      "learningId": "learn-github-xerj-org-xerj",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T23:47:46.776Z",
-      "repository": "rollup/rollup",
-      "learningId": "learn-github-rollup-rollup",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T23:56:26.420Z",
       "repository": "lioensky/VCPToolBox",
@@ -1403,6 +1382,27 @@
       "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
       "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T19:27:20.210Z",
+      "repository": "ClementTsang/bottom",
+      "learningId": "learn-github-clementtsang-bottom",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T19:27:26.960Z",
+      "repository": "emberstack/kubernetes-reflector",
+      "learningId": "learn-github-emberstack-kubernetes-reflector",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T19:32:19.297Z",
+      "repository": "prithivMLmods/Gender-Classifier-Mini",
+      "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

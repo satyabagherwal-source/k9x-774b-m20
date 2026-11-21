@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T19:11:50.973Z",
+  "last_updated": "2026-11-21T19:32:25.452Z",
   "total_verified_learnings": 9062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23220,
+  "total_items": 23225,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114718,9 +114718,9 @@
       "title": "Research & Knowledge Intelligence: hf-prithivmlmods-gender-classifier-mini-learnings Core Invariants",
       "repository": "hf-prithivmlmods-gender-classifier-mini-learnings",
       "source_version": "HEAD",
-      "content_hash": "41d7566a8e6c614e2a21a9fc03ce1e19ea02265f029ed789de0bb20747a70379",
+      "content_hash": "e37e0d7f7d4747645f11943e3a2089d5cdd8704dec545b30e6a9cb07af4f7cfc",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T06:00:19.460Z"
+      "persisted_at": "2026-11-21T19:32:24.280Z"
     },
     "domain_intelligence-technical-construction-intelligence-laurent22-joplin-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-laurent22-joplin-learnings-core-invariants",
@@ -244542,8 +244542,8 @@
       "slug": "clementtsang-bottom",
       "platform": "github",
       "source_url": "https://github.com/ClementTsang/bottom",
-      "source_version": "829779a0",
-      "content_hash": "b710dcb6d1e47113bdd20e80378a960d8c90472ab3c4fcf9d83fe46c4e7c40ed",
+      "source_version": "d9a0f1d1",
+      "content_hash": "1132ac05425a52d96fd0b97ded9e1d1e6bd850cc3a0a0877d1a2fe6018a32efb",
       "dossier_path": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "promoted_rules": [
@@ -244561,6 +244561,11 @@
           "number": 9511,
           "title": "add basic integration with sysinfo's gpu api for non-Linux",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9825,
+          "title": "add basic GPU usage graph",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -244568,7 +244573,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T04:14:15.092Z",
+      "verified_at": "2026-11-21T19:27:19.870Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244610,10 +244615,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-architecture-intelligence-clementtsang-bottom-core-invariant.md",
       "title": "Architecture Intelligence: ClementTsang/bottom Core Invariants",
       "repository": "ClementTsang/bottom",
-      "source_version": "829779a0",
-      "content_hash": "9c0fcc317c2f704be9d3d2621db4baa14253876868d8e444fb8bdbf25c5eddd4",
+      "source_version": "d9a0f1d1",
+      "content_hash": "8f40c7147bf41edcb800bfc468eb84236d5a78242655fd5a5bad7e19ee8ce453",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T04:14:15.653Z"
+      "persisted_at": "2026-11-21T19:27:20.689Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom",
@@ -244622,10 +244627,10 @@
       "relative_path": "08_VERIFICATION/clementtsang-bottom-verification-protocol-empirical-defect-shield-for-clementtsa.md",
       "title": "Verification Protocol: Empirical Defect Shield for ClementTsang/bottom",
       "repository": "ClementTsang/bottom",
-      "source_version": "829779a0",
-      "content_hash": "7d852a6b8c4eb42bb617e0319fdf01040ad123b5d4d44560ea597052eeea0d62",
+      "source_version": "d9a0f1d1",
+      "content_hash": "4a77d7565bb1cf1bdbea1d339cade86fcb8c4fade536d3e40323bf9b9d7e84da",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T04:14:15.812Z"
+      "persisted_at": "2026-11-21T19:27:20.959Z"
     },
     "candidate_directive-other-set-unused_dependencies-lint-to-deny": {
       "item_id": "candidate_directive-other-set-unused_dependencies-lint-to-deny",
@@ -244647,9 +244652,9 @@
       "title": "Architecture Intelligence: clementtsang-bottom-learnings Core Invariants",
       "repository": "clementtsang-bottom-learnings",
       "source_version": "HEAD",
-      "content_hash": "c8d2c78468e3d364305010a36ac5aa6a23c0f113df2daf58cbcf92abe9e80697",
+      "content_hash": "896d6fbd55a55b4eac736b9536c2fb12d4fc5fb06649c18196e7e04edf95f7f0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T04:14:26.468Z"
+      "persisted_at": "2026-11-21T19:32:23.540Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom-learnings",
@@ -244659,9 +244664,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for clementtsang-bottom-learnings",
       "repository": "clementtsang-bottom-learnings",
       "source_version": "HEAD",
-      "content_hash": "99819a770816cb1e4fac821689c6b8afbb31d6f12a216cefba3f13e0c04bc730",
+      "content_hash": "b0f54475638e1b7c24d9e9bf843ee19942ec8e3db0ed90757dbe90b0a8e05fe5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T04:14:26.632Z"
+      "persisted_at": "2026-11-21T19:32:23.811Z"
     },
     "learn-huggingface-burner22-numbat": {
       "learning_id": "learn-huggingface-burner22-numbat",
@@ -278513,8 +278518,8 @@
       "slug": "emberstack-kubernetes-reflector",
       "platform": "github",
       "source_url": "https://github.com/emberstack/kubernetes-reflector",
-      "source_version": "b26ca679",
-      "content_hash": "73d0278ec6859a7a6f569beed61b667f19ddc96d5951d0da3b11aa87232e6391",
+      "source_version": "dbbd9cc6",
+      "content_hash": "975622c4a9942c6a5410de28483109a4b90113275b47819f786227b012fe960e",
       "dossier_path": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "promoted_rules": [
@@ -278527,6 +278532,11 @@
           "number": 9030,
           "title": "Bump the all-dependencies group with 7 updates",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9826,
+          "title": "build(deps): bump gittools/actions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -278534,7 +278544,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T16:13:00.731Z",
+      "verified_at": "2026-11-21T19:27:26.704Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -278576,10 +278586,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-emberstack-kubernetes-reflector-architecture-intelligence-emberstack-kubernetes-.md",
       "title": "Architecture Intelligence: emberstack/kubernetes-reflector Core Invariants",
       "repository": "emberstack/kubernetes-reflector",
-      "source_version": "b26ca679",
-      "content_hash": "85bad94e2fb216b00b9a3c01c5bc365d925705b758a3ef80954b2465045f3d88",
+      "source_version": "dbbd9cc6",
+      "content_hash": "4d4dc3a2c5e3a9e3598e8ab005490c9f19fb421b54174c210dabfe3b46c3b13e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T16:13:01.304Z"
+      "persisted_at": "2026-11-21T19:27:27.435Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-emberstack-kubernetes-reflecto": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-emberstack-kubernetes-reflecto",
@@ -278589,9 +278599,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for emberstack-kubernetes-reflector-learnings",
       "repository": "emberstack-kubernetes-reflector-learnings",
       "source_version": "HEAD",
-      "content_hash": "9dde4ac4c74aebf14d9d5e1785f782c8f35b416d8bbb861918c214bc7d521fe4",
+      "content_hash": "c997ba536bfcfe05784244f88c54cd98507a0acf20be4df13e552d51e1d24169",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T16:14:35.326Z"
+      "persisted_at": "2026-11-21T19:32:25.452Z"
     },
     "rule-9031": {
       "learning_id": "rule-9031",
@@ -278794,9 +278804,9 @@
       "title": "Architecture Intelligence: emberstack-kubernetes-reflector-learnings Core Invariants",
       "repository": "emberstack-kubernetes-reflector-learnings",
       "source_version": "HEAD",
-      "content_hash": "f0b30b072c302519b0c685a1c9bace53058a918bd2bfe871e011d52cc69c72fe",
+      "content_hash": "437c105c113f6119bd1597342bd21778c2eeb427c571bb7674a8e644b350e5ac",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T16:14:35.152Z"
+      "persisted_at": "2026-11-21T19:32:25.196Z"
     },
     "learn-huggingface-briaai-fibo-2-0-dev": {
       "learning_id": "learn-huggingface-briaai-fibo-2-0-dev",
@@ -285141,7 +285151,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
       "source_version": "hf-prithivmlmods-gender-classifier-mini",
-      "content_hash": "fae5a22d3022fd3b8de1017e7bcecab1cd88127cdf1671cf57c70804bf0c8168",
+      "content_hash": "7efe1ab07a7b21a84a5c0174d4c620f602b2507ee839a4a54c9c7e3a242f9c01",
       "dossier_path": "07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md",
       "promoted_rules": [],
@@ -285150,7 +285160,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T06:00:02.180Z",
+      "verified_at": "2026-11-21T19:32:18.969Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -285167,9 +285177,9 @@
       "title": "Research & Knowledge Intelligence: prithivMLmods/Gender-Classifier-Mini Core Invariants",
       "repository": "prithivMLmods/Gender-Classifier-Mini",
       "source_version": "hf-prithivmlmods-gender-classifier-mini",
-      "content_hash": "51a5895788c50eab02985867e69dd775df0491a34095fc1f85c097e666ab6699",
+      "content_hash": "d6e8db11b34fd5e7386be17f4e3ceeac0295cb776a886d0a153c729ecd5caeae",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T06:00:02.579Z"
+      "persisted_at": "2026-11-21T19:32:19.520Z"
     },
     "rule-9135": {
       "learning_id": "rule-9135",
@@ -315591,6 +315601,70 @@
       "content_hash": "3e561f394c7628b7f899525c53da5d9e0ec1a46f07b80fd2884ce2a59a88bfa0",
       "domain_letter": "I",
       "persisted_at": "2026-11-21T19:11:50.789Z"
+    },
+    "rule-9825": {
+      "learning_id": "rule-9825",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9825,
+      "title": "add basic GPU usage graph",
+      "source_url": "https://github.com/ClementTsang/bottom",
+      "source_version": "d9a0f1d1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T19:27:19.870Z"
+    },
+    "candidate_directive-add-basic-gpu-usage-graph": {
+      "item_id": "candidate_directive-add-basic-gpu-usage-graph",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UZKF-add-basic-gpu-usage-graph.md",
+      "title": "add basic GPU usage graph",
+      "repository": "ClementTsang/bottom",
+      "source_version": "d9a0f1d1",
+      "content_hash": "811c4c432001958ccbeb72613cd397bf1a94ab039392268aa937450bad808a7a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T19:27:20.467Z"
+    },
+    "rule-9826": {
+      "learning_id": "rule-9826",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9826,
+      "title": "build(deps): bump gittools/actions",
+      "source_url": "https://github.com/emberstack/kubernetes-reflector",
+      "source_version": "dbbd9cc6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T19:27:26.704Z"
+    },
+    "candidate_directive-build-deps-bump-gittools-actions": {
+      "item_id": "candidate_directive-build-deps-bump-gittools-actions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1IJ4-build-deps-bump-gittools-actions.md",
+      "title": "build(deps): bump gittools/actions",
+      "repository": "emberstack-kubernetes-reflector-learnings",
+      "source_version": "HEAD",
+      "content_hash": "381585b47f8602751f4ddc279f8966069de13afbe0ea05c5fe24914815de143e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T19:32:24.976Z"
+    },
+    "candidate_directive-feature-add-basic-gpu-usage-graph": {
+      "item_id": "candidate_directive-feature-add-basic-gpu-usage-graph",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1H8Z-feature-add-basic-gpu-usage-graph.md",
+      "title": "feature: add basic GPU usage graph",
+      "repository": "clementtsang-bottom-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e1c9ac08b16d09c4c6502c36ea357682af5522b15c6652024d53434e8edec89c",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-21T19:32:23.318Z"
     }
   },
   "ai-builder-brain": {

@@ -11910,3 +11910,6 @@ Every entry in this ledger must capture:
 | `learn-github-open-source-legal-opencontracts` | `https://github.com/Open-Source-Legal/OpenContracts` | `98286cab` | Multi-dimensional audit evidence | 2026-11-21T19:07:45.004Z |
 | `learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8` | `https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-21T19:11:13.186Z |
 | `learn-dom-f-0277a6e9` | `project://hf-tencent-hy-simulmt-30b-a3b-fp8` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md` | 2026-11-21T19:11:46.193Z |
+| `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `d9a0f1d1` | Multi-dimensional audit evidence | 2026-11-21T19:27:20.204Z |
+| `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `dbbd9cc6` | Multi-dimensional audit evidence | 2026-11-21T19:27:26.954Z |
+| `learn-huggingface-prithivmlmods-gender-classifier-mini` | `https://huggingface.co/prithivMLmods/Gender-Classifier-Mini` | `hf-prithiv` | Multi-dimensional audit evidence | 2026-11-21T19:32:19.291Z |

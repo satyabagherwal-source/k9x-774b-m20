@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T19:11:13.195Z",
+  "last_updated": "2026-11-21T19:32:19.301Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5961,14 +5961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clementtsang-bottom",
-      "content_hash": "b710dcb6d1e47113bdd20e80378a960d8c90472ab3c4fcf9d83fe46c4e7c40ed",
-      "verified_at": "2026-11-20T04:14:15.304Z",
+      "content_hash": "1132ac05425a52d96fd0b97ded9e1d1e6bd850cc3a0a0877d1a2fe6018a32efb",
+      "verified_at": "2026-11-21T19:27:20.213Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T04:14:15.304Z"
+      "last_updated": "2026-11-21T19:27:20.213Z"
     },
     "jhen0409/react-native-debugger": {
       "repository": "jhen0409/react-native-debugger",
@@ -10671,14 +10671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-emberstack-kubernetes-reflector",
-      "content_hash": "73d0278ec6859a7a6f569beed61b667f19ddc96d5951d0da3b11aa87232e6391",
-      "verified_at": "2026-11-20T16:13:00.939Z",
+      "content_hash": "975622c4a9942c6a5410de28483109a4b90113275b47819f786227b012fe960e",
+      "verified_at": "2026-11-21T19:27:26.964Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T16:13:00.939Z"
+      "last_updated": "2026-11-21T19:27:26.964Z"
     },
     "arxanas/git-branchless": {
       "repository": "arxanas/git-branchless",
@@ -17136,14 +17136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-prithivmlmods-gender-classifier-mini",
-      "content_hash": "fae5a22d3022fd3b8de1017e7bcecab1cd88127cdf1671cf57c70804bf0c8168",
-      "verified_at": "2026-11-18T06:00:02.389Z",
+      "content_hash": "7efe1ab07a7b21a84a5c0174d4c620f602b2507ee839a4a54c9c7e3a242f9c01",
+      "verified_at": "2026-11-21T19:32:19.300Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T06:00:02.389Z"
+      "last_updated": "2026-11-21T19:32:19.300Z"
     },
     "openbmb/MiniCPM-OCR-1.0": {
       "repository": "openbmb/MiniCPM-OCR-1.0",
