@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T01:34:58.804Z",
-    "lastVerified": "2026-11-21T01:34:58.804Z",
+    "lastChecked": "2026-11-21T01:43:51.917Z",
+    "lastVerified": "2026-11-21T01:43:51.917Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -174,8 +174,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T01:08:29.222Z",
-    "lastVerified": "2026-11-21T01:08:29.222Z",
+    "lastChecked": "2026-11-21T01:43:51.909Z",
+    "lastVerified": "2026-11-21T01:43:51.909Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -330,8 +330,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T21:25:42.179Z",
-    "lastVerified": "2026-11-20T21:25:42.179Z",
+    "lastChecked": "2026-11-21T01:43:46.859Z",
+    "lastVerified": "2026-11-21T01:43:46.859Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -3724,12 +3724,12 @@
     "lastVerified": "2026-11-20T23:39:45.106Z"
   },
   "llphant-llphant": {
-    "name": "LLPhant/LLPhant",
+    "name": "LLPhant",
     "officialUrl": "https://github.com/LLPhant/LLPhant",
     "sourceType": "github",
     "technology": "PHP",
-    "lastChecked": "2026-11-20T00:06:42.504Z",
-    "lastVerified": "2026-11-20T00:06:42.504Z",
+    "lastChecked": "2026-11-21T01:43:49.364Z",
+    "lastVerified": "2026-11-21T01:43:49.364Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-llphant-llphant",
@@ -3738,7 +3738,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9f03e7de"
   },
   "vi-websocat": {
     "name": "websocat",
@@ -4481,9 +4482,9 @@
   "nitrictech-nitric": {
     "name": "nitric",
     "officialUrl": "https://github.com/nitrictech/nitric",
-    "lastChecked": "2026-11-20T01:20:22.490Z",
+    "lastChecked": "2026-11-21T01:43:44.443Z",
     "revisionIdentifier": "8b1be250",
-    "lastVerified": "2026-11-20T01:20:22.490Z"
+    "lastVerified": "2026-11-21T01:43:44.443Z"
   },
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
@@ -7980,14 +7981,14 @@
     "officialUrl": "https://github.com/codewhale-hq/Codewhale",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T15:42:23.772Z",
-    "lastVerified": "2026-11-19T15:42:23.772Z",
+    "lastChecked": "2026-11-21T01:43:40.481Z",
+    "lastVerified": "2026-11-21T01:43:40.481Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "9e58a3e45cddc2c8c8902d0d1f2b482f3e7960f1586a24d36aa235bf06684215",
+    "contentHash": "e5474569b167416bb11d5e5269d4d6b9c6a7e62f289b38eeef9fa6863a5f5e8b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 14,
+    "recentFixesCount": 11,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11455,5 +11456,19 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "testing-library-react-testing-library": {
+    "name": "react-testing-library",
+    "officialUrl": "https://github.com/testing-library/react-testing-library",
+    "lastChecked": "2026-11-21T01:43:39.345Z",
+    "revisionIdentifier": "20ce75f2",
+    "lastVerified": "2026-11-21T01:43:39.345Z"
+  },
+  "callstack-react-native-builder-bob": {
+    "name": "react-native-builder-bob",
+    "officialUrl": "https://github.com/callstack/react-native-builder-bob",
+    "lastChecked": "2026-11-21T01:43:41.975Z",
+    "revisionIdentifier": "a73fd95b",
+    "lastVerified": "2026-11-21T01:43:41.975Z"
   }
 }

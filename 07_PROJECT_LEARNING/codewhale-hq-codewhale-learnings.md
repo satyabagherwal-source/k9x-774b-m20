@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
-> **Source Version**: `b274f161`  
+> **Source Version**: `7af7535b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T15:42:23.979Z  
+> **Timestamp**: 2026-11-21T01:43:40.599Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T15:42:23.772Z  
+> **Harvest Timestamp**: 2026-11-21T01:43:40.481Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source coding agent for your terminal, written in Rust. It works with any model, can split one task across several agents, and every line of it is yours to read.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41180 stars
+- **Stars / Engagement**: 41191 stars
 
 ---
 
@@ -1299,7 +1299,7 @@ pub enum FragmentId {
     Route,
     AgentTopology,
     SkillsTools,
-    TokenBudget,
+    SessionRelay,
     ProjectInstructions,
     Constitution,
 }
@@ -1313,7 +1313,7 @@ impl FragmentId {
             Self::Route => "route",
             Self::AgentTopology => "agent_topology",
             Self::SkillsTools => "skills_tools",
-            Self::TokenBudget => "token_budget",
+            Self::SessionRelay => "session_relay",
             Self::ProjectInstructions => "project_instructions",
             Self::Constitution => "constitution",
         }
@@ -1326,7 +1326,7 @@ impl FragmentId {
             Self::Route => "<!-- cw:ctx:route -->",
             Self::AgentTopology => "<!-- cw:ctx:agent_topology -->",
             Self::SkillsTools => "<!-- cw:ctx:skills_tools -->",
-            Self::TokenBudget => "<!-- cw:ctx:token_budget -->",
+            Self::SessionRelay => "<!-- cw:ctx:session_relay -->",
             Self::ProjectInstructions => "<!-- cw:ctx:project_instructions -->",
             Self::Constitution => "<!-- cw:ctx:constitution -->",
         }
@@ -1339,7 +1339,7 @@ impl FragmentId {
             Self::Route => FragmentRole::Route,
             Self::AgentTopology => FragmentRole::AgentTopology,
             Self::SkillsTools => FragmentRole::SkillsTools,
-            Self::TokenBudget => FragmentRole::TokenBudget,
+            Self::SessionRelay => FragmentRole::SessionRelay,
             Self::ProjectInstructions => FragmentRole::ProjectInstructions,
             Self::Constitution => FragmentRole::Constitution,
         }
@@ -1352,7 +1352,7 @@ impl FragmentId {
             Self::Route,
             Self::AgentTopology,
             Self::SkillsTools,
-            Self::TokenBudget,
+            Self::SessionRelay,
             Self::ProjectInstructions,
             Self::Constitution,
         ]
@@ -1366,7 +1366,7 @@ pub enum FragmentRole {
     Route,
     AgentTopology,
     SkillsTools,
-    TokenBudget,
+    SessionRelay,
     ProjectInstructions,
     Constitution,
 }
@@ -1380,7 +1380,7 @@ impl FragmentRole {
             Self::Route => "route",
             Self::AgentTopology => "agent_topology",
             Self::SkillsTools => "skills_tools",
-            Self::TokenBudget => "token_budget",
+            Self::SessionRelay => "session_relay",
             Self::ProjectInstructions => "project_instructions",
             Self::Constitution => "constitution",
         }
@@ -1584,7 +1584,7 @@ pub fn read_project_instruction_file(file: std::fs::File) -> Option<String> {
             .max(observed_len)
             .saturating_sub(INSTRUCTIONS_FILE_MAX_BYTES as u64);
         text.push_str(&format!("\n[…truncated: {omitted} bytes omitted]"));
-        return S
+     
 ```
 
 ### Core Architecture Module: `crates/core/src/lib.rs`
@@ -1966,11 +1966,11 @@ pub use codewhale_protocol::request::*;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7379** (2026-11-19): **[CI only, do not merge] fix(sanitize,config,engine): fast-path secret redaction and retire OpenCode Zen free rows (CW-8225, CW-8257)**
-  *Symptoms*: ## Summary 0.10.3 slice `ci/redact-and-opencode-zen-0103-v1` (CURRENT_DECISIONS §235, ops gap map codewhale-hq/codewhale-ops#20). **Stacked on `ci/release-prep-0103-v2` (`25e73276b5`)**: only the commits after `25e73276b5` belong to this slice; the 16 commits below it are the reviewed release-prep stack, which lands first. Opened to get hosted `ci.yml` on this exact head (`workflow_dispatch` is not available to this session); lands through the designated lander after 2x exact-SHA `VERDICT: LAND`, not by merging this PR.  Slice commit message:  ``` fix(sanitize,config,engine): add fast-path secret redaction and retire dead-end OpenCode Zen free rows (CW-8225, CW-8257)  - CW-8225 (#7347): Add byte-identical fast-path pre-scans in crates/sanitize/src/redact.rs   so ordinary text without secret indicators skips regex/tokenization passes on every   model request, covered by fast_path_is_byte_identical_to_unoptimized_reference_across_corpus. - CW-8257 (#7365): Remove the 11 OpenCode Zen `*-free` rows from the curated catalog   (catalog_corrections.json, bundled Models.dev seed, model_resolution.golden.tsv,   reviewed.rs transport count) because OpenCode restricts them to its own client with   HTTP 429 FreeUsageLimitError and Codewhale does not spoof OpenCode's client. Document   the boundary in docs/PROVIDERS.md and docs/zh_hans/PROVIDERS.md and surface a clear   client-restriction hint in opencode_go_hint. ```   <!-- devin-bot-banner-begin --> ---  <p><picture><source srcset="http
+- **Issue #7431** (2026-11-21): **fix(engine): classify local read-only deferred tools as Safe in get_tool_category**
+  *Symptoms*: ## What and why  `crates/engine/src/core/authority.rs` `get_tool_category()` still left a number of registered `ToolCapability::ReadOnly` local tools, canonical read-action targets, and legacy `tool_search` spellings unclassified, so they fell through to `ToolCategory::Unknown` and Auto-Review routed every call to `AskUser` (`auto_review.rs:1582`).  Each candidate tool from #7407 was audited individually against its implementation and capabilities before classifying:  ### Classified as `ToolCategory::Safe`  | Tool / Target | Rationale | | --- | --- | | `is_tool_search_tool(name)` (`tool_search`, `tool_search_tool_regex`, `tool_search_tool_bm25`) | Replaces the literal `"tool_search"` arm with the shared `codewhale_tools::names::is_tool_search_tool` helper so legacy dispatchable spellings (`turn_loop.rs:1136-1146`, `:2238`) also classify as `Safe`. | | `context_archive_get`, `context_archive_search` | `ReadOnly` / `Auto`. Bounded, secret-scrubbed in-process reads of the current session's compaction archive. | | `session_get`, `session_search` | `ReadOnly` / `Auto`. Bounded, workspace-scoped in-process reads of prior session metadata/tails. | | `memory_get`, `memory_search` | `ReadOnly` / `Auto`. Bounded, workspace-scoped in-process reads of `NativeMemoryStore`. | | `project_map` | `ReadOnly`, `Sandboxable` / `Auto`. In-process directory walk (`"project"` was already in `Safe`, while the registered tool name is `"project_map"`). | | `validate_data` | `ReadOnly`, `Sandboxable` /
 
-- **Issue #7378** (2026-11-19): **[CI only, do not merge] fix(tui,engine): typed error codes on error cards and turn outcomes in exports (CW-8136)**
-  *Symptoms*: ## Summary 0.10.3 slice `ci/export-error-diagnostics-0103-v1` (CURRENT_DECISIONS §235, ops gap map codewhale-hq/codewhale-ops#20). **Stacked on `ci/release-prep-0103-v2` (`25e73276b5`)**: only the commits after `25e73276b5` belong to this slice; the 16 commits below it are the reviewed release-prep stack, which lands first. Opened to get hosted `ci.yml` on this exact head (`workflow_dispatch` is not available to this session); lands through the designated lander after 2x exact-SHA `VERDICT: LAND`, not by merging this PR.  Slice commit message:  ``` fix(tui,engine): show typed error code on error cards and export persisted turn outcomes (CW-8136)  - Preserve normalized ErrorEnvelope::code on HistoryCell::Error and SavedTurnOutcome,   rendering a muted [code] badge on TUI error cards without duplicating codes already   present in the message text. - Project persisted session turn_outcomes (with secret redaction and chronological   message-position interleaving, including under --no-tools) into Markdown, HTML,   JSON, and /copy clipboard exports. - Update the export redaction unit test assertion to match sanitize_text's full   Authorization header redaction (`Authorization: [redacted]`). ```   <!-- devin-bot-banner-begin --> ---  <p><picture><source srcset="https://app.devin.ai/api/presigned_proxy?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjpudWxsLCJidWNrZXRfbmFtZSI6ImRldmluYXR0YWNobWVudHMiLCJidWNrZXRfa2V5IjoiYXR0YWNobWVudHNfcHJpdmF0ZS9vcmctMTg2NDJhNWVmM2Y1NDE1MzkxN
+- **Issue #7430** (2026-11-21): **fix(execpolicy): scan static awk and sed program payloads**
+  *Symptoms*: ## What and why  `awk 'BEGIN{system("rm x")}'` and `sed 's/a/rm x/e'` execute deny-listed commands from inside static program text that `crates/execpolicy/src/shell_expand.rs` previously treated as opaque. Under `AskForApproval::Never` with a `rm` deny rule, those commands were allowed through.  This change adds static program scanners for both families in `shell_expand.rs`: - **`awk` / `gawk` / `mawk` / `nawk` / `goawk`**: extracts program text from positional operands, `-e`, `--source`, and `-W source=`, tokenizes awk code (handling strings with octal/hex escapes, `#` comments, and regex vs. division `/` disambiguation), and emits command payloads from `system(...)`, `expr | getline` / `|& getline`, and `print`/`printf ... | expr` / `|& expr` through `code_payload`. Non-literal command expressions (e.g. `system(cmd)`, `print "a" | c`), dynamic script operands (`awk $PROG`), and stdin/fd script files (`-f -`, `-f /dev/stdin`) fail closed by marking `Expansion::dynamic`. - **`sed` / `gsed` / `ssed`**: extracts scripts from positional operands (including BSD `sed -i ''` / `-i .bak` forms), `-e`, and `--expression`, parses addresses and commands (respecting alternate delimiters, regex character classes, `a`/`i`/`c` text blocks, `y///`, labels, and `s///w` filenames), and emits payloads from `s/.../.../e` and standalone `e <cmd>` through `code_payload`. Bare `e`, `s///e` forms that can execute runtime pattern space, dynamic script operands, and stdin/fd script files mark `Expans
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1987,641 +1987,503 @@ pub use codewhale_protocol::request::*;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bacf9dea` (2026-11-19)
-**Commit Message**: 0.10.3 lane 8: execpolicy launcher panic and payload-hiding fixes (#7385)
+### Incident Patch 1: `88357eb4` (2026-11-20)
+**Commit Message**: fix(execpolicy): preserve command stdin under group redirection (CW-8303)
 
-* fix(execpolicy): guard launcher verb index on flag-only commands
+Treat group stdin as inherited input and preserve the stdin metadata of a command-owned heredoc. Keep deny target collection and command-side redirections unchanged.
 
-Expander::record_launcher_commands indexed tokens[verb_idx] unchecked in the nix, npm, launchctl, and VERB_LAUNCHERS arms when resolve_wrapper_targets appended tokens.len() after scanning global flags with no subcommand (e.g. docker --version, npm --version). Guard all four arms with tokens.get(verb_idx) and add launcher_flag_only_commands_do_not_panic.
-
-Restacked onto ci/release-prep-0103-v2 25e73276b5 from 03aee41843 (PR #7375, 2x LAND); source patch identical, changelog entry placed under [0.10.3] ### Fixed and crates/tui/CHANGELOG.md resynced. rustfmt applied to the is_container_run line.
-
-Checks on Linux x86_64: cargo test --locked -p codewhale-execpolicy (268 passed on this tip: 246 unit, 1 authorization_order, 11 redirection_policy, 9 shell_parse_policy, 1 doctest; 0 failed); without the shell_expand.rs guards the new test fails (0 passed; 1 failed: index out of bounds: the len is 2 but the index is 2); cargo clippy --locked -p codewhale-execpolicy --all-targets -- -D warnings; cargo fmt -p codewhale-execpolicy -- --check; scripts/syn
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -591,6 +591,8 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
- 
- ### Fixed
- 
-+- **Flag-only launcher commands no longer crash the turn:** running `npm --version`, `nix --version`, `launchctl --help`, `docker --version`, `podman --version`, or another launcher command with global flags and no subcommand no longer panics with an out-of-bounds index during command policy expansion.
-+- **Command policy sees payloads behind empty words and `--entrypoint`:** command policy now also checks the nested command in launcher lines with empty-string words before the subcommand (`npm '' exec -c 'rm -rf /'`, `docker '' -D run alpine rm -rf /`) and checks `docker run --entrypoint rm alpine -rf /` as the entrypoint plus the arguments after the image, checking every `--entrypoint` value before the image, so deny rules and approval review match them. A launcher line with so many options that the option walk hits its state limit is now treated like other commands whose words are only known at run time: while deny rules are in force it asks for approval, or is refused where approval is unavailable, instead of dropping the nested command.
- - **File search in very large folders returns results instead of timing out:** `file_search` (shown as `find`) no longer fails with "operation timed out after 30s" in a huge folder that is not a git repository. It now walks the tree in parallel, searches the top four levels first so shallow files are found even when the rest of the tree is too large, also skips `.venv`, `__pycache__`, `.next`, `.turbo` and `.gradle` by default alongside `target`, `node_modules`, `.git` and build output, and, if the tree is still too large to finish in 20 seconds, returns the best matches found so far marked `partial` with a note to narrow `path` or the query. Results in an ordinary repository are unchanged apart from those newly skipped folders. (CW-8265)
- - **Auto-Review on the desktop app sees what you asked for:** the Auto-Review reviewer refused every command started from the desktop composer with "No person request provided (person_messages is empty)", because the desktop reaches its Engine with the local runtime token, which counted as an automation caller. A runtime-token caller that names the owner surface (`"client": "desktop"`) on `POST /v1/threads/{id}/turns` or `.../steer` now records the typed prompt as your message, the same way the signed-in web composer and the terminal already do; a paired device or phone that claims `desktop` is refused with 403, and a runtime-token caller that names no owner surface, a tokenless local server, scheduled work, automations and agent-created threads still record nothing. The reviewer still blocks actions your messages do not cover. (CW-8270)
- - **Scheduled catalog refresh pushes with a branch-tip lease:** the Catalog refresh workflow now resolves the remote `catalog-refresh` branch tip before pushing, aborts if `catalog-refresh` has commits outside `origin/main` not committed by `codewhale-agent[bot]`, and passes that resolved tip (empty when absent) to `--force-with-lease` so pushes no longer fail with `stale info`. (CW-8266)
-```
-
-**File**: `crates/execpolicy/src/shell_expand.rs` (modified, +211/-30)
-```diff
-@@ -2048,10 +2048,15 @@ impl Expander {
-         depth: usize,
-     ) {
-         let tokens = &line.words;
-+        let mut truncated = false;
-         match name {
-             "nix" => {
--                for verb_idx in resolve_wrapper_targets(tokens, head + 1, &NIX_GLOBAL_SPEC) {
--                    let verb = tokens[verb_idx].as_str();
-+                for verb_idx in
-+                    launcher_verb_targets(tokens, head + 1, &NIX_GLOBAL_SPEC, &mut truncated)
-+                {
-+                    let Some(verb) = tokens.get(verb_idx).map(String::as_str) else {
-+                        continue;
-+                    };
-                     if matches!(verb, "develop" | "shell")
-                         && let Some(at) = (verb_idx + 1..tokens.len())
-                             .take_while(|&i| tokens[i] != "--")
-@@ -2086,8 +2091,13 @@ impl Expander {
-                         self.code_payload(&payload, payload_dynamic, depth);
-                     }
-                 } else {
--                    for verb_idx in resolve_wrapper_targets(tokens, head + 1, &EMPTY_WRAPPER_SPEC) {
--                        if matches!(tokens[verb_idx].as_str(), "exec" | "x") {
-+                    for verb_idx in
-+                        launcher_verb_targets(tokens, head + 1, &EMPTY_WRAPPER_SPEC, &mut truncated)
-+                    {
-+                        if tokens
-+                            .get(verb_idx)
-+                            .is_some_and(|verb| matches!(verb.as_str(), "exec" | "x"))
-+                        {
-                             for (payload, payload_dynamic) in option_payloads(
-                                 tokens,
-                                 verb_idx,
-@@ -2106,7 +2116,8 @@ impl Expander {
-                 if ssh_skips_remote_command(&tokens[head + 1..]) {
-                     return;
-                 }
--                for landing in resolve_wrapper_targets(tokens, head + 1, &SSH_SPEC) {
-+                for landing in resolve_wrapper_targets(tokens, head + 1, &SSH_SPEC, &mut truncated)
-+                {
-                     if landing < tokens.len() {
-                         let rest = &tokens[landing..];
-                         let rest_dynamic = dynamic[landing..].iter().any(|d| *d);
-@@ -2121,7 +2132,9 @@ impl Expander {
-                 if screen_attaches_only(&tokens[head + 1..]) {
-                     return;
-                 }
--                for landing in resolve_wrapper_targets(tokens, head + 1, &SCREEN_SPEC) {
-+                for landing in
-+                    resolve_wrapper_targets(tokens, head + 1, &SCREEN_SPEC, &mut truncated)
-+                {
-                     if landing < tokens.len() {
-                         self.record(&slice_line(line, landing), depth + 1);
-                     }
-@@ -2132,8 +2145,10 @@ impl Expander {
-             }
-             _ => {
-                 if name == "launchctl" {
--                    for verb_idx in resolve_wrapper_targets(tokens, head + 1, &EMPTY_WRAPPER_SPEC) {
--                        if tokens[verb_idx] == "submit" {
-+                    for verb_idx in
-+                        launcher_verb_targets(tokens, head + 1, &EMPTY_WRAPPER_SPEC, &mut truncated)
-+                    {
-+                        if tokens.get(verb_idx).map(String::as_str) == Some("submit") {
-                             self.record_exec_flag_command(line, verb_idx, &['p'], &[], depth);
-                         }
-                     }
-@@ -2142,24 +2157,55 @@ impl Expander {
-                     if launcher.program != name {
-                         continue;
-                     }
--                    for verb_idx in resolve_wrapper_targets(tokens, head + 1, launcher.global) {
--                        if !launcher.verbs.contains(&tokens[verb_idx].as_str()) {
-+                    for verb_idx in
-+                        launcher_verb_targets(tokens, head + 1, launcher.global, &mut truncated)
-+                    {
-+                        let Some(verb) = tokens.get(verb_idx).map(String::as_str) else {
-+                            continue;
-+                        };
-+                        if !launcher.verbs.contains(&verb) {
-                             continue;
-                         }
--                        let is_container_run =
--                            matches!(name, "docker" | "podman") && tokens[verb_idx] == "run";
--                        let entrypoint = if is_container_run {
--                            find_entrypoint(&tokens[verb_idx + 1..], verb_idx + 1)
--                        } else {
--                            None
-+                        let is_container_run = matches!(name, "docker" | "podman") && verb == "run";
-+                        let entrypoints_before = |end: usize| {
-+                            if !is_container_run {
-+                                return Vec::new();
-+                            }
-+                            let end = end.min(tokens.len()).max(verb_idx + 1);
-+                            l
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -591,6 +591,8 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
- 
- ### Fixed
- 
-+- **Flag-only launcher commands no longer crash the turn:** running `npm --version`, `nix --version`, `launchctl --help`, `docker --version`, `podman --version`, or another launcher command with global flags and no subcommand no longer panics with an out-of-bounds index during command policy expansion.
-+- **Command policy sees payloads behind empty words and `--entrypoint`:** command policy now also checks the nested command in launcher lines with empty-string words before the subcommand (`npm '' exec -c 'rm -rf /'`, `docker '' -D run alpine rm -rf /`) and checks `docker run --entrypoint rm alpine -rf /` as the entrypoint plus the arguments after the image, checking every `--entrypoint` value before the image, so deny rules and approval review match them. A launcher line with so many options that the option walk hits its state limit is now treated like other commands whose words are only known at run time: while deny rules are in force it asks for approval, or is refused where approval is unavailable, instead of dropping the nested command.
- - **File search in very large folders returns results instead of timing out:** `file_search` (shown as `find`) no longer fails with "operation timed out after 30s" in a huge folder that is not a git repository. It now walks the tree in parallel, searches the top four levels first so shallow files are found even when the rest of the tree is too large, also skips `.venv`, `__pycache__`, `.next`, `.turbo` and `.gradle` by default alongside `target`, `node_modules`, `.git` and build output, and, if the tree is still too large to finish in 20 seconds, returns the best matches found so far marked `partial` with a note to narrow `path` or the query. Results in an ordinary repository are unchanged apart from those newly skipped folders. (CW-8265)
- - **Auto-Review on the desktop app sees what you asked for:** the Auto-Review reviewer refused every command started from the desktop composer with "No person request provided (person_messages is empty)", because the desktop reaches its Engine with the local runtime token, which counted as an automation caller. A runtime-token caller that names the owner surface (`"client": "desktop"`) on `POST /v1/threads/{id}/turns` or `.../steer` now records the typed prompt as your message, the same way the signed-in web composer and the terminal already do; a paired device or phone that claims `desktop` is refused with 403, and a runtime-token caller that names no owner surface, a tokenless local server, scheduled work, automations and agent-created threads still record nothing. The reviewer still blocks actions your messages do not cover. (CW-8270)
- - **Scheduled catalog refresh pushes with a branch-tip lease:** the Catalog refresh workflow now resolves the remote `catalog-refresh` branch tip before pushing, aborts if `catalog-refresh` has commits outside `origin/main` not committed by `codewhale-agent[bot]`, and passes that resolved tip (empty when absent) to `--force-with-lease` so pushes no longer fail with `stale info`. (CW-8266)
-```
-
-**File**: `docs/MODES.md` (modified, +3/-1)
-```diff
-@@ -27,7 +27,9 @@ the saved `role`/`profile` assignment. An Exact Fleet fixes each member's route.
- One dial says how much Codewhale may do without asking. Press `Shift+Tab` to
- step it: **Ask → Accept Edits → Plan → Auto-Review → Full Access → Ask**. Plan
- is the Plan mode; every other stop is Work with that permission posture. The
--footer shows the current stop and `Shift+Tab to change`. New installs start on
-+footer shows the current stop and `Shift+Tab to change`; after you have pressed
-+it twice the hint stands down, except on Auto-Review and Full Access, where it
-+stays while the footer has room. New installs start on
- Accept Edits when no permission posture is saved. An explicit saved choice,
- including Ask from an earlier version, stays in control.
- `Tab` only completes composer menus, commands, file mentions and suggestions;
-```
-
----
-
-### Incident Patch 2: `7041117f` (2026-11-18)
-**Commit Message**: fix(engine): refuse private addresses for registry-admitted providers at connect time (CW-8246)
-
-Model traffic to a provider admitted from the signed registry went through
-platform_client_builder, which only installs the loopback proxy fallback.
-Admission checks base_url statically (https, public multi-label domain, no
-IP literal), so a public host name that resolves, or later rebinds, to
-10.x, 169.254.169.254 or ::1 was connected to.
-
-codewhale_net::guard gains PublicAddressResolver, a reqwest DNS resolver
-that resolves on every connection and refuses an answer containing any
-is_restricted_ip address, and public_address_reqwest_client_builder, the
-guarded transport (ambient proxies off, as guarded_reqwest_client_builder)
-with that resolver. codewhale_config::descriptors gains
-is_registry_admitted_base_url, true when a URL's host equals the host of a
-provider in the active verified registry. http_client_builder_with_auth_mode
-builds a `custom` route on the guarded transport when its base_url passes
-that check, so the chat, HTTP/1.1 fallback and /models clients of a pulled
-provider are all guarded. Built-in providers (including Ollama, vLLM and
-SGLang) and custom endpoints on any ot
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **One configured-model selection chain:** a model id that a provider does not accept now gives the same clear error in every command (`codewhale model resolve`, the terminal UI, and the app-server) instead of being sent anyway by some of them, and configured default models resolve through one shared chain across every surface. (CW-8250)
- - **Model limits, capabilities and prices follow the resolved route:** context windows, output limits, thinking support, request wire selection, Google thought-signature and reasoning controls, and turn prices now come from the same catalog entry the request uses, so they match the model actually sent. (CW-8251)
- - **Standing-instruction receipt over the Runtime API:** `GET /v1/threads/{id}/context/standing` (capability `thread_standing_context`) returns the receipt the Engine already computes for a live thread: per-item estimated tokens kept and dropped, the action taken (kept, trimmed, skipped, refused) and the limit that caused it, scope budgets and totals, relative paths only, the 65,536-byte delivery cap with whether the delivered message was truncated, and a `not_measured` list (skills, agents, MCP tool schemas, memory) so a client does not show zero. Read-only; prompts and the cached prefix are unchanged.
--- **Signed model and provider registry wired into resolution and discovery (off by default):** when `[cloud_facts]` is enabled (`CODEWHALE_CLOUD_FACTS=1` or `enabled = true`), Codewhale fetches the signed models-and-providers list (`registry.json`, `codewhale.registry.v1`) from `https://codewhale.net/api/facts/v1/registry` by default (or `CODEWHALE_REGISTRY_URL` / `CODEWHALE_REGISTRY_PATH`, or `CODEWHALE_CLOUD_FACTS_URL` when it contains `{channel}`), verifies it against the pinned keys, caches the last good copy at `$CODEWHALE_HOME/facts/registry-cache.json`, and applies verified models, offerings, aliases and admitted providers across `resolve_model`, `RouteResolver`, catalog lookups and `/provider` discovery. Scheduled `automation` signatures with a non-expired `not_after` within seven days of `generated_at` may update models, offerings and bundled-provider naming aliases, while adding a new OpenAI-compatible HTTPS provider requires a `founder` signature and can never change a built-in provider's address, key or protocol or reuse another product or provider `*_API_KEY` variable. Disabling cloud facts, expiry past `not_after`, `CODEWHALE_DISABLE_CLOUD_FACTS=1`, or a failed/rejected pull leaves or restores the copy already in use (or the bundled seed) without delaying startup; CI suppresses network pulls. Source only: cloud facts remain off by default and publication is separate. See `docs/CLOUD_FACTS.md`. (CW-8246)
-+- **Signed model and provider registry wired into resolution and discovery (off by default):** when `[cloud_facts]` is enabled (`CODEWHALE_CLOUD_FACTS=1` or `enabled = true`), Codewhale fetches the signed models-and-providers list (`registry.json`, `codewhale.registry.v1`) from `https://codewhale.net/api/facts/v1/registry` by default (or `CODEWHALE_REGISTRY_URL` / `CODEWHALE_REGISTRY_PATH`, or `CODEWHALE_CLOUD_FACTS_URL` when it contains `{channel}`), verifies it against the pinned keys, caches the last good copy at `$CODEWHALE_HOME/facts/registry-cache.json`, and applies verified models, offerings, aliases and admitted providers across `resolve_model`, `RouteResolver`, catalog lookups and `/provider` discovery. Model requests to a custom provider whose host a verified registry admitted resolve that host on every connection, without an ambient proxy, and are refused when it answers with a private, loopback, link-local or cloud-metadata address; built-in providers (including local Ollama, vLLM and SGLang) and custom endpoints on any other host are unchanged. Scheduled `automation` signatures with a non-expired `not_after` within seven days of `generated_at` may update models, offerings and bundled-provider naming aliases, while adding a new OpenAI-compatible HTTPS provider requires a `founder` signature and can never change a built-in provider's address, key or protocol or reuse another product or provider `*_API_KEY` variable. Disabling cloud facts, expiry past `not_after`, `CODEWHALE_DISABLE_CLOUD_FACTS=1`, or a failed/rejected pull leaves or restores the copy already in use (or the bundled seed) without delaying startup; CI suppresses network pulls. Source only: cloud facts remain off by default and publication is separate. See `docs/CLOUD_FACTS.md`. (CW-8246)
- - **Gemini 4 Hydrogen:** Google's `gemini-4-hydrogen` is in the catalog and the Google model list, with a 1,048,576-token context window and 65,536 output tokens. The shut-down `gemini-3-pro-preview` leaves the Google list.
- - **Model shorthands work the same everywhere:** short names that previously worked only in `/provider <name> <model>` or `codewhale model resolve` — such as `flash`, `pr
-```
-
-**File**: `crates/config/src/cloud_facts/registry/tests.rs` (modified, +12/-0)
-```diff
-@@ -820,8 +820,20 @@ fn founder_signed_registry_admits_new_provider_discovers_it_and_clears_on_disabl
-             .any(|row| row.provider == "tavily" || row.wire_model_id == "tavily-leaked-offering")
-     );
-     assert!(intrinsic_model("acme-sonnet").is_some());
-+    assert!(crate::descriptors::is_registry_admitted_base_url(
-+        "https://API.acme-cloud.example./v1/chat/completions"
-+    ));
-+    assert!(!crate::descriptors::is_registry_admitted_base_url(
-+        "https://api.other.example/v1"
-+    ));
-+    assert!(!crate::descriptors::is_registry_admitted_base_url(
-+        "http://localhost:11434/v1"
-+    ));
- 
-     overlay::clear();
-+    assert!(!crate::descriptors::is_registry_admitted_base_url(
-+        "https://api.acme-cloud.example/v1"
-+    ));
-     assert!(provider_descriptor("acme-cloud").is_none());
-     assert!(provider_descriptor("acme-ai").is_none());
-     assert_eq!(
-```
-
-**File**: `crates/config/src/descriptors.rs` (modified, +19/-0)
-```diff
-@@ -247,6 +247,25 @@ pub fn active_provider_descriptors() -> Vec<ProviderDescriptor> {
-     out
- }
- 
-+#[must_use]
-+pub fn is_registry_admitted_base_url(base_url: &str) -> bool {
-+    fn host(raw: &str) -> Option<String> {
-+        url::Url::parse(raw.trim()).ok().and_then(|url| {
-+            url.host_str()
-+                .map(|host| host.trim_end_matches('.').to_ascii_lowercase())
-+        })
-+    }
-+    let Some(target) = host(base_url) else {
-+        return false;
-+    };
-+    crate::cloud_facts::overlay::pulled_registry().is_some_and(|admitted| {
-+        admitted
-+            .providers
-+            .iter()
-+            .any(|provider| host(&provider.base_url).as_deref() == Some(target.as_str()))
-+    })
-+}
-+
- #[must_use]
- pub fn provider_descriptor(id: &str) -> Option<ProviderDescriptor> {
-     active_provider_descriptors()
-```
-
-**File**: `crates/engine/src/client.rs` (modified, +8/-1)
-```diff
-@@ -2593,7 +2593,14 @@ impl CodewhaleClient {
-             auth_disabled,
-             surface,
-         )?;
--        let mut builder = crate::platform_client_builder()
-+        let transport = if api_provider == ProviderKind::Custom
-+            && codewhale_config::descriptors::is_registry_admitted_base_url(base_url)
-+        {
-+            codewhale_net::guard::public_address_reqwest_client_builder()
-+        } else {
-+            crate::platform_client_builder()
-+        };
-+        let mut builder = transport
-             .default_headers(headers)
-             .user_agent(client_user_agent(api_provider))
-             .connect_timeout(config.connect_timeout())
-```
-
-**File**: `crates/engine/src/client/test_cases_04.rs` (modified, +90/-0)
-```diff
-@@ -1623,3 +1623,93 @@
-             );
-         }
-     }
-+
-+    #[tokio::test]
-+    async fn registry_admitted_custom_hosts_refuse_private_addresses_at_connect_time() {
-+        use codewhale_config::cloud_facts::{
-+            BuiltinNames, KeyRole, REGISTRY_SCHEMA, Registry, VerifiedRegistry, admit_registry,
-+            overlay,
-+        };
-+        use tokio::io::{AsyncReadExt as _, AsyncWriteExt as _};
-+
-+        let listener = tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 0))
-+            .await
-+            .expect("bind");
-+        let port = listener.local_addr().expect("addr").port();
-+        tokio::spawn(async move {
-+            while let Ok((mut socket, _)) = listener.accept().await {
-+                tokio::spawn(async move {
-+                    let mut buf = [0u8; 2048];
-+                    let _ = socket.read(&mut buf).await;
-+                    let _ = socket
-+                        .write_all(b"HTTP/1.1 200 OK\r\ncontent-length: 2\r\nconnection: close\r\n\r\nok")
-+                        .await;
-+                });
-+            }
-+        });
-+        let base_url = format!("http://localhost:{port}/v1");
-+        let probe = |provider: ProviderKind| {
-+            let client =
-+                CodewhaleClient::build_http_client("sk-test", &HashMap::new(), provider, &base_url)
-+                    .expect("client");
-+            let url = format!("{base_url}/models");
-+            async move { client.get(url).send().await }
-+        };
-+
-+        overlay::clear();
-+        assert!(probe(ProviderKind::Custom).await.is_ok());
-+
-+        let registry: Registry = serde_json::from_value(json!({
-+            "schema": REGISTRY_SCHEMA,
-+            "revision": overlay::highest_seen(REGISTRY_SCHEMA).unwrap_or(0) + 1,
-+            "generated_at": "2026-11-17T00:00:00Z",
-+            "providers": [{
-+                "id": "acme-rebind",
-+                "label": "Acme Rebind",
-+                "wire_policy": "openai-compatible",
-+                "base_url": "https://api.acme-rebind.example/v1",
-+                "admission": {"founder_signature": "required"}
-+            }],
-+            "models": [],
-+            "offerings": [],
-+            "dialects": {}
-+        }))
-+        .expect("registry");
-+        let mut admitted = admit_registry(
-+            VerifiedRegistry {
-+                registry,
-+                key_id: "engine-guard-test".to_string(),
-+                key_role: KeyRole::Founder,
-+                sha256: String::new(),
-+                generated_at_unix: 0,
-+                not_after: None,
-+            },
-+            &BuiltinNames::bundled(),
-+        );
-+        assert_eq!(admitted.providers.len(), 1, "{:?}", admitted.refused);
-+        admitted.providers[0].base_url.clone_from(&base_url);
-+        let ticket = overlay::configure(true, "engine-pulled-guard-test").expect("ticket");
-+        assert!(overlay::publish_registry(
-+            &ticket,
-+            Some(std::sync::Arc::new(admitted)),
-+            |_| {}
-+        ));
-+
-+        let refused = probe(ProviderKind::Custom).await.expect_err("guarded");
-+        let chain = format!("{:?}", anyhow::Error::from(refused));
-+        assert!(chain.contains("restricted address"), "{chain}");
-+        assert!(probe(ProviderKind::Ollama).await.is_ok());
-+        assert!(probe(ProviderKind::Vllm).await.is_ok());
-+        assert!(
-+            CodewhaleClient::build_http_client(
-+                "sk-test",
-+                &HashMap::new(),
-+                ProviderKind::Custom,
-+                "http://127.0.0.1:1/v1",
-+            )
-+            .is_ok()
-+        );
-+
-+        overlay::clear();
-+        assert!(probe(ProviderKind::Custom).await.is_ok());
-+    }
-```
-
-**File**: `crates/engine/src/lib.rs` (modified, +2/-1)
-```diff
-@@ -91,7 +91,8 @@ pub mod work_graph;
- /// environment at build time, so one builder decides the route for the whole
- /// process lifetime. Installing the loopback fallback here, rather than at
- /// selected call sites, keeps those clients on the same proxy rules. Reviewed
--/// plugin remotes and guarded fetches do not come through here: they use
-+/// plugin remotes, guarded fetches and model clients for registry-admitted
-+/// custom providers do not come through here: they use
- /// `codewhale_net::guard::guarded_reqwest_client_builder`, which disables
- /// ambient proxies on purpose.
- pub(crate) fn platform_client_builder() -> reqwest::ClientBuilder {
-```
-
-**File**: `crates/net/src/guard.rs` (modified, +52/-0)
-```diff
-@@ -29,6 +29,41 @@ pub fn guarded_reqwest_client_builder() -> reqwest::ClientBuilder {
-     codewhale_release::tls::reqwest_client_builder().no_proxy()
- }
- 
-+#[derive(Clone, Copy, Debug, Default)]
-+pub struct PublicAddressResolver;
-+
-+impl reqwest::dns::Resolve for PublicAddressResolver {
-+    fn resolve(&self, name: reqwest::dns::Name) -> reqwest::dns::Resolving {
-+        let host = name.as_str().to_string();
-+        Box::pin(async move {
-+            let addrs: Vec<SocketAddr> = tokio::time::timeout(
-+                DNS_PREFLIGHT_TIMEOUT,
-+                tokio::net::lookup_host((host.as_str(), 0u16)),
-+            )
-+            .await
-+            .map_err(|_| format!("timed out resolving {host}"))?
-+            .map_err(|error| format!("could not resolve {host}: {error}"))?
-+            .collect();
-+            if let Some(addr) = addrs.iter().find(|addr| is_restricted_ip(&addr.ip())) {
-+                return Err(format!(
-+                    "{host} resolved to restricted address {} (private/loopback/link-local/metadata); registry-admitted providers must resolve to public addresses",
-+                    addr.ip()
-+                )
-+                .into());
-+            }
-+            if addrs.is_empty() {
-+                return Err(format!("{host} resolved to no addresses").into());
-+            }
-+            let addrs: reqwest::dns::Addrs = Box::new(addrs.into_iter());
-+            Ok(addrs)
-+        })
-+    }
-+}
-+
-+pub fn public_address_reqwest_client_builder() -> reqwest::ClientBuilder {
-+    guarded_reqwest_client_builder().dns_resolver(PublicAddressResolver)
-+}
-+
- const CLOUD_METADATA_V4: [Ipv4Addr; 4] = [
-     Ipv4Addr::new(169, 254, 169, 254),
-     Ipv4Addr::new(100, 100, 100, 200),
-@@ -522,6 +557,23 @@ impl<'a> GuardedGet<'a> {
- #[cfg(test)]
- mod tests {
-     use super::*;
-+
-+    #[tokio::test]
-+    async fn public_address_resolver_refuses_names_that_resolve_to_loopback() {
-+        use reqwest::dns::Resolve as _;
-+        use std::str::FromStr as _;
-+        let error = match PublicAddressResolver
-+            .resolve(reqwest::dns::Name::from_str("localhost").expect("name"))
-+            .await
-+        {
-+            Ok(addrs) => panic!(
-+                "localhost admitted: {:?}",
-+                addrs.collect::<Vec<SocketAddr>>()
-+            ),
-+            Err(error) => error.to_string(),
-+        };
-+        assert!(error.contains("restricted address"), "{error}");
-+    }
-     #[cfg(not(windows))]
-     use std::io::{Read, Write};
-     #[cfg(not(windows))]
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **One configured-model selection chain:** a model id that a provider does not accept now gives the same clear error in every command (`codewhale model resolve`, the terminal UI, and the app-server) instead of being sent anyway by some of them, and configured default models resolve through one shared chain across every surface. (CW-8250)
- - **Model limits, capabilities and prices follow the resolved route:** context windows, output limits, thinking support, request wire selection, Google thought-signature and reasoning controls, and turn prices now come from the same catalog entry the request uses, so they match the model actually sent. (CW-8251)
- - **Standing-instruction receipt over the Runtime API:** `GET /v1/threads/{id}/context/standing` (capability `thread_standing_context`) returns the receipt the Engine already computes for a live thread: per-item estimated tokens kept and dropped, the action taken (kept, trimmed, skipped, refused) and the limit that caused it, scope budgets and totals, relative paths only, the 65,536-byte delivery cap with whether the delivered message was truncated, and a `not_measured` list (skills, agents, MCP tool schemas, memory) so a client does not show zero. Read-only; prompts and the cached prefix are unchanged.
--- **Signed model and provider registry wired into resolution and discovery (off by default):** when `[cloud_facts]` is enabled (`CODEWHALE_CLOUD_FACTS=1` or `enabled = true`), Codewhale fetches the signed models-and-providers list (`registry.json`, `codewhale.registry.v1`) from `https://codewhale.net/api/facts/v1/registry` by default (or `CODEWHALE_REGISTRY_URL` / `CODEWHALE_REGISTRY_PATH`, or `CODEWHALE_CLOUD_FACTS_URL` when it contains `{channel}`), verifies it against the pinned keys, caches the last good copy at `$CODEWHALE_HOME/facts/registry-cache.json`, and applies verified models, offerings, aliases and admitted providers across `resolve_model`, `RouteResolver`, catalog lookups and `/provider` discovery. Scheduled `automation` signatures with a non-expired `not_after` within seven days of `generated_at` may update models, offerings and bundled-provider naming aliases, while adding a new OpenAI-compatible HTTPS provider requires a `founder` signature and can never change a built-in provider's address, key or protocol or reuse another product or provider `*_API_KEY` variable. Disabling cloud facts, expiry past `not_after`, `CODEWHALE_DISABLE_CLOUD_FACTS=1`, or a failed/rejected pull leaves or restores the copy already in use (or the bundled seed) without delaying startup; CI suppresses network pulls. Source only: cloud facts remain off by default and publication is separate. See `docs/CLOUD_FACTS.md`. (CW-8246)
-+- **Signed model and provider registry wired into resolution and discovery (off by default):** when `[cloud_facts]` is enabled (`CODEWHALE_CLOUD_FACTS=1` or `enabled = true`), Codewhale fetches the signed models-and-providers list (`registry.json`, `codewhale.registry.v1`) from `https://codewhale.net/api/facts/v1/registry` by default (or `CODEWHALE_REGISTRY_URL` / `CODEWHALE_REGISTRY_PATH`, or `CODEWHALE_CLOUD_FACTS_URL` when it contains `{channel}`), verifies it against the pinned keys, caches the last good copy at `$CODEWHALE_HOME/facts/registry-cache.json`, and applies verified models, offerings, aliases and admitted providers across `resolve_model`, `RouteResolver`, catalog lookups and `/provider` discovery. Model requests to a custom provider whose host a verified registry admitted resolve that host on every connection, without an ambient proxy, and are refused when it answers with a private, loopback, link-local or cloud-metadata address; built-in providers (including local Ollama, vLLM and SGLang) and custom endpoints on any other host are unchanged. Scheduled `automation` signatures with a non-expired `not_after` within seven days of `generated_at` may update models, offerings and bundled-provider naming aliases, while adding a new OpenAI-compatible HTTPS provider requires a `founder` signature and can never change a built-in provider's address, key or protocol or reuse another product or provider `*_API_KEY` variable. Disabling cloud facts, expiry past `not_after`, `CODEWHALE_DISABLE_CLOUD_FACTS=1`, or a failed/rejected pull leaves or restores the copy already in use (or the bundled seed) without delaying startup; CI suppresses network pulls. Source only: cloud facts remain off by default and publication is separate. See `docs/CLOUD_FACTS.md`. (CW-8246)
- - **Gemini 4 Hydrogen:** Google's `gemini-4-hydrogen` is in the catalog and the Google model list, with a 1,048,576-token context window and 65,536 output tokens. The shut-down `gemini-3-pro-preview` leaves the Google list.
- - **Model shorthands work the same everywhere:** short names that previously worked only in `/provider <name> <model>` or `codewhale model resolve` — such as `flash`, `pr
-```
-
----
-
-### Incident Patch 3: `8cc2b95b` (2026-11-18)
-**Commit Message**: fix(config): every config load refuses a user-layer tool_launcher (CW-8021)
-
-The Boat qualification step "user-layer tool_launcher was not rejected"
-failed because `codewhale model resolve` exited 0 with tool_launcher in
-the user's config.toml. The refusal lived only in the runtime's
-Config::load_with. The CLI dispatcher, and the app-server config and
-secrets RPCs, load the same file through codewhale_config::ConfigStore,
-which parsed the key into extras and carried on.
-
-No tool ever ran through that path: every command that executes tools
-loads the runtime Config, which already refused the file, and the managed
-launcher is read separately from the sealed managed file. So this was an
-inconsistent answer at the trust boundary, not a bypass. The decision is
-refuse, not confine: a launcher is a privilege-changing prefix and is
-read only from the managed layer, so any user-layer copy is an error on
-every surface.
-
-The check now lives in codewhale_config (reject_unmanaged_tool_launcher,
-tool_launcher_in_profiles) and both ConfigStore::load and the runtime
-loader call it, so the CLI, desktop RPCs and Engine give the same error.
-The runtime's managed_tool_launcher reuses the shared profil
+Checks: 1 focused shell parser test passed, 0 failed using rustc with pinned shlex source; rustfmt, git diff --check, and release-version checks passed.
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -254,6 +254,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Withdrawn desktop account plugins connector removed on upgrade:** the old desktop app's `codewhale-desktop-account-plugins` bundle, whose one connector (shown as `plugin-…-codewhale-desktop-account-plugins-codewhale-plugins`) failed on every session start, is now removed at startup together with its plugin record, and a `plugin.retired` line is written to `audit.log`. Only an installed copy whose single connector still points at the retired account endpoint is removed; other plugins, and a bundle of that name you changed or placed by hand, are left alone.
- - **Linked AGENTS.md inside the workspace:** a project `AGENTS.md`, `CLAUDE.md`, `.codewhale/instructions.md` or rules file that is a symlink to another file in the same directory tree now loads instead of being refused with `Refusing symlinked file` and leaving the session without project instructions. Every link in the chain is resolved first and the file is still refused, with a visible skip notice, when it resolves outside the workspace through `..`, an absolute target, a chain of links or a Windows junction. (CW-8266)
- - **A connector tool switched Off leaves conversations that already used it:** turning off a tool such as `close_issue` in Settings or with `PATCH /v1/apps/mcp/servers/{name}` now takes it out of the next turn of a conversation that had already found it through tool search, not only out of new conversations. The Engine rereads the connector configuration when it gathers a turn's tools and reconnects the changed server under the new settings.
-+- **`tool_launcher` in a user config is refused by every command:** `codewhale model resolve`, `codewhale config`, the other CLI subcommands and the desktop's config and secrets calls now stop with the same error the Engine gives when `config.toml` sets `tool_launcher` at the top level or in a profile, instead of loading the file and exiting 0. The key is still read only from the managed configuration. (CW-8021)
- - **CJK text in terminal columns:** the command palette, the hotbar setup rows, the `/config` detail labels, the workflow history lanes, the approval card intent and parameter lines and the elevation prompt now pad and cut text by the columns it takes on screen, so Chinese, Japanese and Korean labels no longer push later columns right or get cut to a third of their space. Thanks [@luochen211](https://github.com/luochen211) (#7273).
- - **Slash-command arguments after any whitespace:** `/config` splits its key from its value, and finds a trailing `--save`, after a tab or a full-width space (U+3000) from a CJK input method, not only after an ASCII space, and a user command's `$ARGUMENTS` and `$N` are filled in one pass, so `$1` or `$10` written inside your own argument is not expanded again. Thanks [@luochen211](https://github.com/luochen211) (#7269).
- - **Negative retry delays:** a `[retry]` setting with a negative or non-finite `initial_delay`, `max_delay` or `exponential_base` is now refused when the configuration loads, where `jitter = false` with `max_delay = -1` made the first transport retry panic. Thanks [@luochen211](https://github.com/luochen211) (#7275).
+@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ## [Unreleased]
+ 
++- **Shell groups preserve command-owned input:** policy evaluation keeps each command's explicit stdin source when a redirection supplies default input to its enclosing group. (CW-8303)
+ ## [0.10.3] - 2026-11-18
+ 
+ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features] plugin_creator`) and unmodified DeepSeek Harness (`@deepseek-ai/dsh-*`) plugin compatibility, an upgraded Auto-Review guardian with workspace boundaries, soft rules, sub-agent return review, and one-use retry approvals, and a single `Shift+Tab` permission dial defaulting to Accept Edits (`Ask → Accept Edits → Plan → Auto-Review → Full Access`). It moves the ACP server and external-agent sessions (including Qwen Code and GitHub Copilot CLI) onto the official Agent Client Protocol SDK, publishes native signed HarmonyOS ARM64 release assets, adds a verified signed model-and-provider registry channel alongside unified model-ID resolution and managed `/v1/models` pricing, updates design tokens to `5.4.0` with a docked single-line approval strip, folded turn activity, live working-row light sweeps and 13 hex-lattice dot-whale forms, adds `claude-org` billing auth, `show_data` transcript charts, `codewhale sessions migrate`, DeepSeek Chatbot web search and speech tools, receipted self-updates and `codewhale uninstall`, and lands reliability, CJK/Unicode, Windows, and sandbox security fixes.
 ```
 
-**File**: `crates/config/src/config_store.rs` (modified, +22/-0)
+**File**: `crates/execpolicy/src/shell_expand.rs` (modified, +29/-3)
 ```diff
-@@ -127,6 +127,27 @@ pub fn parse_config_toml(contents: &str) -> Result<ConfigToml, toml::de::Error>
-     parse_config_toml_str(contents)
+@@ -1462,6 +1462,12 @@ struct Line {
+     stdin_piped: bool,
  }
  
-+pub fn tool_launcher_in_profiles(document: &toml::Value) -> bool {
-+    document
-+        .get("profiles")
-+        .and_then(toml::Value::as_table)
-+        .is_some_and(|profiles| {
-+            profiles
-+                .values()
-+                .any(|profile| profile.get("tool_launcher").is_some())
-+        })
++fn inherit_group_stdin(commands: &mut [Line]) {
++    for command in commands.iter_mut().filter(|command| !command.heredoc) {
++        command.stdin_piped = true;
++    }
 +}
 +
-+pub fn reject_unmanaged_tool_launcher(document: &toml::Value, path: &Path) -> Result<()> {
-+    if document.get("tool_launcher").is_some() || tool_launcher_in_profiles(document) {
-+        bail!(
-+            "`tool_launcher` in {} is not accepted: it is read only from the managed configuration (CODEWHALE_MANAGED_CONFIG_PATH, or the default managed path), in a file the Engine cannot write",
-+            quote_os_path(path)
+ /// How a shell invocation receives its script.
+ enum ShellInput {
+     /// `-c` / `--command`: the word at each offset may be the command line.
+@@ -1761,9 +1767,7 @@ impl Expander {
+                         line.stdin_piped = true;
+                         line.heredoc = false;
+                         if let Some(start) = last_closed_group {
+-                            for cmd in &mut commands[start..] {
+-                                cmd.stdin_piped = true;
+-                            }
++                            inherit_group_stdin(&mut commands[start..]);
+                         }
+                     }
+                     i += redirection_len(&chars[i..]);
+@@ -4471,6 +4475,28 @@ fn shell_input(shell: &str, tokens: &[String], dynamic: &[bool]) -> ShellInput {
+ mod tests {
+     use super::*;
+ 
++    #[test]
++    fn group_input_preserves_command_owned_stdin() {
++        let mut commands = [
++            Line::default(),
++            Line {
++                stdin_piped: true,
++                ..Line::default()
++            },
++            Line {
++                heredoc: true,
++                ..Line::default()
++            },
++        ];
++
++        inherit_group_stdin(&mut commands);
++
++        assert_eq!(
++            commands.map(|command| (command.stdin_piped, command.heredoc)),
++            [(true, false), (true, false), (false, true)]
 +        );
 +    }
-+    Ok(())
-+}
 +
- impl ConfigStore {
-     /// The validated file snapshot captured by the last load or successful
-     /// save. This read-only view preserves literal provider identities that a
-@@ -154,6 +175,7 @@ impl ConfigStore {
-                     toml_error_location(Some(&raw), &err)
-                 )
-             })?;
-+            reject_unmanaged_tool_launcher(&raw_document, &path)?;
-             if let Some(provider_id) = raw_document.get("provider").and_then(toml::Value::as_str) {
-                 parsed
-                     .bind_persisted_provider_id(provider_id)
-```
-
-**File**: `crates/config/src/tests.rs` (modified, +17/-0)
-```diff
-@@ -11145,3 +11145,20 @@ id = "account-model"
-     assert!(resolved.model_error.is_none());
-     assert!(resolved.route.is_ok());
- }
-+
-+#[test]
-+fn config_store_refuses_a_user_layer_tool_launcher() {
-+    let dir = tempfile::tempdir().expect("tempdir");
-+    let config_path = dir.path().join("config.toml");
-+    for body in [
-+        "tool_launcher = [\"/usr/bin/sudo\", \"-n\", \"-u\", \"agent\", \"--\"]\n",
-+        "[profiles.work]\ntool_launcher = [\"/usr/bin/sudo\"]\n",
-+    ] {
-+        fs::write(&config_path, body).expect("write config");
-+        let error = ConfigStore::load(Some(config_path.clone()))
-+            .expect_err("a user-layer tool_launcher is a load error");
-+        assert!(error.to_string().contains("`tool_launcher`"), "{error}");
-+    }
-+    fs::write(&config_path, "model = \"deepseek-v4-flash\"\n").expect("write config");
-+    ConfigStore::load(Some(config_path)).expect("a config without a launcher loads");
-+}
-```
-
-**File**: `crates/runtime/src/config.rs` (modified, +4/-30)
-```diff
-@@ -3684,7 +3684,9 @@ impl Config {
-                 if let Some(msg) = warn_on_misplaced_top_level_keys(&contents) {
-                     tracing::warn!("{msg}");
-                 }
--                reject_unmanaged_tool_launcher(&contents, path)?;
-+                if let Ok(document) = toml::from_str::<toml::Value>(&contents) {
-+                    codewhale_config::reject_unmanaged_tool_launcher(&document, path)?;
-+                }
-                 parsed
-             } else {
-                 apply_profile(ConfigFile::default(), profile)?;
-@@ -10375,41 +10377,13 @@ fn apply_managed_overrides(config: &mut Config) -> Result<()> {
-     Ok(())
- }
- 
--fn tool_launcher_layer_error(path: &Path) -> anyhow::Error {
--    anyhow::anyhow!(
--        "`tool_launcher` in {} is not accepted: it is read only from the managed configuration (CODEWHALE_MANAGED_CONFIG_PATH, or the default managed path), in a file the Engine cannot write",
--        codewhale_config::quote_os_path(path)
--    )
--}
--
--fn tool_launcher_in_profiles(document: &toml::Value) -> bool {
--    document
--        .get("profiles")
--        .and_then(toml::Value::as_table)
--        .is_some_and(|profiles| {
--            profiles
--                .values()
--                .any(|profile| profile.get("tool_launcher").is_some())
--        })
--}
--
--fn reject_unmanaged_tool_launcher(raw: &str, path: &Path) -> Result<()> {
--    let Ok(document) = toml::from_str::<toml::Value>(raw) else {
--        return Ok(());
--    };
--    if document.get("tool_launcher").is_some() || tool_launcher_in_profiles(&document) {
--        return Err(tool_launcher_layer_error(path));
--    }
--    Ok(())
--}
--
- fn managed_tool_launcher(path: &Path) -> Result<Option<Vec<String>>> {
-     let raw = fs::read_to_string(path)
-         .with_context(|| format!("Failed to read config file: {}", path.display()))?;
-     let Ok(document) = toml::from_str::<toml::Value>(&raw) else {
-         return Ok(None);
-     };
--    if tool_launcher_in_profiles(&document) {
-+    if codewhale_config::tool_launcher_in_profiles(&document) {
-         anyhow::bail!(
-             "`tool_launcher` in {} belongs at the top level of the managed configuration, not in a profile",
-             codewhale_config::quote_os_path(path)
+     fn expand(command: &str) -> Vec<String> {
+         // Exercise the POSIX grammar consistently on every test host.
+         expanded_commands_for_platform(command, false)
 ```
 
 **File**: `crates/tui/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -254,6 +254,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Withdrawn desktop account plugins connector removed on upgrade:** the old desktop app's `codewhale-desktop-account-plugins` bundle, whose one connector (shown as `plugin-…-codewhale-desktop-account-plugins-codewhale-plugins`) failed on every session start, is now removed at startup together with its plugin record, and a `plugin.retired` line is written to `audit.log`. Only an installed copy whose single connector still points at the retired account endpoint is removed; other plugins, and a bundle of that name you changed or placed by hand, are left alone.
- - **Linked AGENTS.md inside the workspace:** a project `AGENTS.md`, `CLAUDE.md`, `.codewhale/instructions.md` or rules file that is a symlink to another file in the same directory tree now loads instead of being refused with `Refusing symlinked file` and leaving the session without project instructions. Every link in the chain is resolved first and the file is still refused, with a visible skip notice, when it resolves outside the workspace through `..`, an absolute target, a chain of links or a Windows junction. (CW-8266)
- - **A connector tool switched Off leaves conversations that already used it:** turning off a tool such as `close_issue` in Settings or with `PATCH /v1/apps/mcp/servers/{name}` now takes it out of the next turn of a conversation that had already found it through tool search, not only out of new conversations. The Engine rereads the connector configuration when it gathers a turn's tools and reconnects the changed server under the new settings.
-+- **`tool_launcher` in a user config is refused by every command:** `codewhale model resolve`, `codewhale config`, the other CLI subcommands and the desktop's config and secrets calls now stop with the same error the Engine gives when `config.toml` sets `tool_launcher` at the top level or in a profile, instead of loading the file and exiting 0. The key is still read only from the managed configuration. (CW-8021)
- - **CJK text in terminal columns:** the command palette, the hotbar setup rows, the `/config` detail labels, the workflow history lanes, the approval card intent and parameter lines and the elevation prompt now pad and cut text by the columns it takes on screen, so Chinese, Japanese and Korean labels no longer push later columns right or get cut to a third of their space. Thanks [@luochen211](https://github.com/luochen211) (#7273).
- - **Slash-command arguments after any whitespace:** `/config` splits its key from its value, and finds a trailing `--save`, after a tab or a full-width space (U+3000) from a CJK input method, not only after an ASCII space, and a user command's `$ARGUMENTS` and `$N` are filled in one pass, so `$1` or `$10` written inside your own argument is not expanded again. Thanks [@luochen211](https://github.com/luochen211) (#7269).
- - **Negative retry delays:** a `[retry]` setting with a negative or non-finite `initial_delay`, `max_delay` or `exponential_base` is now refused when the configuration loads, where `jitter = false` with `max_delay = -1` made the first transport retry panic. Thanks [@luochen211](https://github.com/luochen211) (#7275).
+@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ## [Unreleased]
+ 
++- **Shell groups preserve command-owned input:** policy evaluation keeps each command's explicit stdin source when a redirection supplies default input to its enclosing group. (CW-8303)
+ ## [0.10.3] - 2026-11-18
+ 
+ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features] plugin_creator`) and unmodified DeepSeek Harness (`@deepseek-ai/dsh-*`) plugin compatibility, an upgraded Auto-Review guardian with workspace boundaries, soft rules, sub-agent return review, and one-use retry approvals, and a single `Shift+Tab` permission dial defaulting to Accept Edits (`Ask → Accept Edits → Plan → Auto-Review → Full Access`). It moves the ACP server and external-agent sessions (including Qwen Code and GitHub Copilot CLI) onto the official Agent Client Protocol SDK, publishes native signed HarmonyOS ARM64 release assets, adds a verified signed model-and-provider registry channel alongside unified model-ID resolution and managed `/v1/models` pricing, updates design tokens to `5.4.0` with a docked single-line approval strip, folded turn activity, live working-row light sweeps and 13 hex-lattice dot-whale forms, adds `claude-org` billing auth, `show_data` transcript charts, `codewhale sessions migrate`, DeepSeek Chatbot web search and speech tools, receipted self-updates and `codewhale uninstall`, and lands reliability, CJK/Unicode, Windows, and sandbox security fixes.
+```
+
+---
+
+### Incident Patch 2: `7b543aec` (2026-11-20)
+**Commit Message**: fix(engine): classify local read-only deferred tools as Safe in get_tool_category
+
+Follow-up to #7372 / e8b51b39 (#7407).
+
+get_tool_category left local read-only tools, read-action canonical
+targets, and legacy tool_search spellings unclassified, so they fell
+through to ToolCategory::Unknown and Auto-Review routed every call to
+AskUser.
+
+Classified as ToolCategory::Safe:
+- is_tool_search_tool(name): covers tool_search and legacy dispatchable
+  spellings tool_search_tool_regex / tool_search_tool_bm25.
+- Local read-only stores and inspection/presentation tools (all declared
+  ToolCapability::ReadOnly with ApprovalRequirement::Auto):
+  context_archive_get, context_archive_search, session_get,
+  session_search, memory_get, memory_search, project_map, validate_data,
+  tui_help, notify, show_data, present, lsp, git_merge_tree,
+  agents/list, agents/wait.
+- Canonical read-action targets for tasks and automation:
+  task_list, task_read, pr_attempt_list, pr_attempt_read,
+  automation_list, automation_read.
+
+Intentionally left as ToolCategory::Unknown (held for explicit review):
+- External-process / network-capable or non-ReadOnly tools: image_ocr
+  (external OCR binaries + DeepSeek OCR netw
+
+**File**: `crates/engine/src/core/authority.rs` (modified, +155/-2)
+```diff
+@@ -20,6 +20,7 @@ use codewhale_config::AppMode;
+ use codewhale_execpolicy::ApprovalMode;
+ use codewhale_execpolicy::canonical_action::canonical_action_alias;
+ use codewhale_sandbox::SandboxPolicy;
++use codewhale_tools::names::is_tool_search_tool;
+ use serde_json::Value;
+ 
+ use super::ops::UserInputProvenance;
+@@ -1226,14 +1227,36 @@ pub fn get_tool_category(name: &str) -> ToolCategory {
+             | "git_show"
+             | "git_blame"
+             | "git_commit_plan"
++            | "git_merge_tree"
+             | "git_review_scope"
+             | "project"
++            | "project_map"
+             | "diagnostics"
++            | "lsp"
+             | "load_skill"
+-            | "tool_search"
+             | "handle_read"
+             | "retrieve_tool_result"
+-    ) || name.starts_with("read_")
++            | "context_archive_get"
++            | "context_archive_search"
++            | "session_get"
++            | "session_search"
++            | "memory_get"
++            | "memory_search"
++            | "validate_data"
++            | "tui_help"
++            | "notify"
++            | "show_data"
++            | "present"
++            | "agents/list"
++            | "agents/wait"
++            | "task_list"
++            | "task_read"
++            | "pr_attempt_list"
++            | "pr_attempt_read"
++            | "automation_list"
++            | "automation_read"
++    ) || is_tool_search_tool(name)
++        || name.starts_with("read_")
+         || name.starts_with("list_")
+         || name.starts_with("get_")
+     {
+@@ -2066,13 +2089,143 @@ mod tests {
+ 
+     #[test]
+     fn tool_category_keeps_deferred_read_only_tools_safe() {
++        let policy = auto_review::AutoReviewPolicy::default();
++        let empty = serde_json::json!({});
++
+         for name in [
+             "load_skill",
+             "tool_search",
++            "tool_search_tool_regex",
++            "tool_search_tool_bm25",
+             "handle_read",
+             "retrieve_tool_result",
++            "lsp",
++            "context_archive_get",
++            "context_archive_search",
++            "session_get",
++            "session_search",
++            "memory_get",
++            "memory_search",
++            "project_map",
++            "validate_data",
++            "tui_help",
++            "notify",
++            "show_data",
++            "present",
++            "agents/list",
++            "agents/wait",
++            "git_merge_tree",
++            "task_list",
++            "task_read",
++            "pr_attempt_list",
++            "pr_attempt_read",
++            "automation_list",
++            "automation_read",
+         ] {
+             assert_eq!(get_tool_category(name), ToolCategory::Safe, "{name}");
++            let ctx = auto_review::AutoReviewContext::from_tool_call(
++                name,
++                &empty,
++                RunOrigin::Background,
++                ApprovalMode::Auto,
++                true,
++                None,
++            );
++            assert_eq!(
++                policy.evaluate(&ctx).action,
++                auto_review::AutoReviewAction::Allow,
++                "{name}"
++            );
++        }
++
++        for (family, action) in [
++            ("Git", "merge_tree"),
++            ("tasks", "list"),
++            ("tasks", "read"),
++            ("tasks", "pr_attempt_list"),
++            ("tasks", "pr_attempt_read"),
++            ("automation", "list"),
++            ("automation", "read"),
++        ] {
++            let params = serde_json::json!({ "action": action });
++            assert_eq!(
++                get_tool_category_for_call(family, &params),
++                ToolCategory::Safe,
++                "{family}.{action}"
++            );
++            let ctx = auto_review::AutoReviewContext::from_tool_call(
++                family,
++                &params,
++                RunOrigin::Background,
++                ApprovalMode::Auto,
++                true,
++                None,
++            );
++            assert_eq!(
++                policy.evaluate(&ctx).action,
++                auto_review::AutoReviewAction::Allow,
++                "{family}.{action}"
++            );
++        }
++
++        for name in [
++            "image_ocr",
++            "image_analyze",
++            "pandoc_convert",
++            "finance",
++            "verify",
++            "review",
++            "github_issue_context",
++            "github_pr_context",
++            "github_report_read",
++            "pr_attempt_preflight",
++        ] {
++            assert_eq!(get_tool_category(name), ToolCategory::Unknown, "{name}");
++            let ctx = auto_review::AutoReviewContext::from_tool_call(
++                name,
++                &empty,
++                RunOrigin::Background,
++                ApprovalMode::Auto,
++                true,
++                None,
++            );
++            assert_eq!(
++                policy.evaluate(&ctx).action,
++                auto_review::AutoReviewAction::AskUser,
++                "{name}"
++            )
+```
+
+---
+
+### Incident Patch 3: `e1871d57` (2026-11-20)
+**Commit Message**: fix(execpolicy): scan static awk and sed program payloads
+
+Scan static awk/gawk/mawk/nawk/goawk program text (positional operand,
+-e, --source, and -W source=) for system(...) calls and | / |& pipe and
+coprocess commands (both expr | getline and print/printf ... | expr).
+Literal command strings (including concatenated string literals and
+octal/hex escapes) are emitted through code_payload; non-literal command
+expressions, dynamic script operands, and stdin/fd script files fail
+closed by marking Expansion::dynamic.
+
+Scan static sed/gsed/ssed scripts (positional operand, BSD -i suffix
+forms, -e, and --expression) for the e flag on s/// (any delimiter,
+respecting regex character classes and w-flag filenames) and standalone
+e commands. Command payloads flow through code_payload; bare e and
+s///e forms that can execute runtime pattern space mark dynamic.
+
+Verified with cargo test -p codewhale-execpolicy (271 passed, 0 failed),
+cargo clippy -p codewhale-execpolicy --all-targets -- -D warnings, and
+cargo fmt --all -- --check.
+
+Closes #7413
+
+Change-Id: Ic97127173f5d2bed56e349176a2b7c4c59d5951d
+
+**File**: `crates/execpolicy/src/shell_expand.rs` (modified, +1265/-109)
+```diff
+@@ -1982,6 +1982,12 @@ impl Expander {
+                     }
+                 }
+                 "powershell" | "pwsh" => self.record_powershell(tokens, head, &dynamic, depth),
++                "awk" | "gawk" | "mawk" | "nawk" | "goawk" => {
++                    self.record_awk_program(tokens, head, &dynamic, depth);
++                }
++                "sed" | "gsed" | "ssed" => {
++                    self.record_sed_program(tokens, head, &dynamic, depth);
++                }
+                 _ if SHELL_NAMES.contains(&name.as_str()) => {
+                     match shell_input(&name, &tokens[head..], &dynamic[head..]) {
+                         ShellInput::Command(offsets) => {
+@@ -2280,124 +2286,1138 @@ impl Expander {
+                         found = Some((tokens[i + 1].clone(), i + 1));
+                         i += 1;
+                     }
+-                }
+-            } else if let Some(flags) = token.strip_prefix('-') {
+-                for (at, ch) in flags.char_indices() {
+-                    if short_flags.contains(&ch) {
+-                        let rest = &flags[at + ch.len_utf8()..];
+-                        if !rest.is_empty() {
+-                            found = Some((rest.to_string(), i));
+-                        } else if i + 1 < opt_end {
+-                            found = Some((tokens[i + 1].clone(), i + 1));
+-                            i += 1;
++                }
++            } else if let Some(flags) = token.strip_prefix('-') {
++                for (at, ch) in flags.char_indices() {
++                    if short_flags.contains(&ch) {
++                        let rest = &flags[at + ch.len_utf8()..];
++                        if !rest.is_empty() {
++                            found = Some((rest.to_string(), i));
++                        } else if i + 1 < opt_end {
++                            found = Some((tokens[i + 1].clone(), i + 1));
++                            i += 1;
++                        }
++                        break;
++                    }
++                }
++            }
++            i += 1;
++        }
++        if let Some((prog, prog_idx)) = found
++            && !prog.is_empty()
++        {
++            let combined = build_prefixed_line(&prog, prog_idx, line, args_start);
++            self.record(&combined, depth + 1);
++        }
++    }
++
++    /// Code handed to another command as a string: parse it as a command line.
++    fn code_payload(&mut self, payload: &str, dynamic: bool, depth: usize) {
++        self.dynamic |= dynamic;
++        self.expand(payload, depth + 1);
++    }
++
++    /// `powershell` / `pwsh`: `-Command` (or any prefix of it) takes the rest
++    /// of the line as code, `-EncodedCommand` cannot be read statically, and
++    /// a bare operand may start code too (Windows PowerShell's default).
++    /// PowerShell syntax is only approximated by the POSIX parser, which is
++    /// enough to find the command words a deny rule names.
++    fn record_powershell(
++        &mut self,
++        tokens: &[String],
++        head: usize,
++        dynamic: &[bool],
++        depth: usize,
++    ) {
++        let rest = |at: usize| {
++            (
++                tokens[at..].join(" "),
++                dynamic[at..].iter().any(|dynamic| *dynamic),
++            )
++        };
++        let mut positional_seen = false;
++        for at in head + 1..tokens.len() {
++            let Some(option) = tokens[at].strip_prefix(['-', '/']) else {
++                if !positional_seen {
++                    positional_seen = true;
++                    let (payload, payload_dynamic) = rest(at);
++                    self.code_payload(&payload, payload_dynamic, depth);
++                }
++                continue;
++            };
++            let option = option.to_ascii_lowercase();
++            if option.is_empty() {
++                continue;
++            }
++            if "command".starts_with(option.as_str()) {
++                if at + 1 >= tokens.len() || tokens[at + 1] == "-" {
++                    // The code arrives on stdin.
++                    self.dynamic = true;
++                } else {
++                    let (payload, payload_dynamic) = rest(at + 1);
++                    self.code_payload(&payload, payload_dynamic, depth);
++                }
++                return;
++            }
++            if option == "ec" || "encodedcommand".starts_with(option.as_str()) {
++                self.dynamic = true;
++                return;
++            }
++            if "file".starts_with(option.as_str()) {
++                // A script file is opaque, as it is for every other shell.
++                return;
++            }
++        }
++    }
++
++    /// `find … -exec CMD … ;` runs `CMD` for every match.
++    fn record_find_exec(&mut self, line: &Line, head: usize, depth: usize) {
++        let tokens = &line.words;
++        let mut index = head + 1;
++        while index < tokens.len() {
++            if matches!(
++                tokens[index].as_str(),
++                "-exec" | "-execd
+```
+
+**File**: `crates/execpolicy/tests/shell_parse_policy.rs` (modified, +45/-0)
+```diff
+@@ -256,6 +256,35 @@ const HIDDEN_RM: &[&str] = &[
+     "at -f script.sh now",
+     "at -f script.sh -l",
+     "at -l -f script.sh",
++    "awk 'BEGIN{system(\"rm x\")}'",
++    "awk 'BEGIN{\"rm x\" | getline}'",
++    "awk 'BEGIN{\"rm x\" |& getline}'",
++    "awk 'BEGIN{print \"x\" | \"rm y\"}'",
++    "awk 'BEGIN{print \"x\" |& \"rm y\"}'",
++    "awk 'BEGIN{c=\"rm x\"; system(c)}'",
++    "awk 'BEGIN{system(\"r\" \"m\" \" x\")}'",
++    r#"awk 'BEGIN{system("\162\155 x")}'"#,
++    "awk '{x = a / b; system(\"rm x\"); y = c / d}'",
++    "gawk -e 'BEGIN{system(\"rm x\")}'",
++    "gawk --source='BEGIN{system(\"rm x\")}'",
++    "awk $PROG file",
++    "sed 's/a/rm x/e'",
++    "sed 's#a#rm x#ge'",
++    "sed 's|a|rm x|2ep'",
++    "sed 's/.*/rm x/e'",
++    "sed 's/a/rm x/ew /tmp/out'",
++    "sed 's/^//e'",
++    "sed 'e rm x'",
++    "sed '1e rm x'",
++    "sed '/foo/e rm x'",
++    "sed 'e'",
++    "sed '1{e}'",
++    "sed 's/foo/bar/g; e rm x'",
++    "sed -e 's/a/b/' -e 's/c/rm x/e'",
++    "sed --expression='e rm x'",
++    "sed -i '' 's/a/rm x/e' file.txt",
++    "sed -i .bak 's/a/rm x/e' file.txt",
++    "sed $PROG file",
+ ];
+ 
+ /// Literal spellings that were already denied and must stay denied.
+@@ -403,6 +432,22 @@ fn ordinary_commands_stay_allowed_next_to_a_deny_rule() {
+             "at -d 3",
+             "at -c 3",
+             "batch -l",
++            "awk '{print}'",
++            "awk '{print $1}'",
++            "awk -F: '{print $1}' /etc/passwd",
++            "awk '/foo|bar/ {print}' file.txt",
++            "awk '$1 == \"a\" || $2 == \"b\" {print}' file.txt",
++            "awk '{print $1 / 2}' file.txt",
++            "awk '{print \"system(\\\"rm x\\\")\"}'",
++            "sed -n '/x/p'",
++            "sed 's/foo/bar/g'",
++            "sed -e 's/echo/echoed/g'",
++            "sed 's/e/x/g'",
++            "sed 's/a/b/w readme.txt'",
++            "sed 'y/abcde/ABCDE/'",
++            "sed ':end; s/a/b/; t end'",
++            "sed -i 's/foo/bar/' file.txt",
++            "sed -i '' 's/foo/bar/g' file.txt",
+         ] {
+             let decision = engine
+                 .check(context(command, AskForApproval::Never))
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7395** (2026-11-19): ci: defer unreachable heapless RUSTSEC batch to unblock advisories gate (@Hmbown)
-- **PR #7390** (2026-11-19): 0.10.3 ergonomics and truth batch: pricing, codemode-js, export error codes, redaction/Zen (@Hmbown)
-- **PR #7386** (2026-11-19): release(0.10.3): land ci/release-prep-0103-v2 on main (@Hmbown)
-- **PR #7385** (2026-11-19): 0.10.3 lane 8: execpolicy launcher panic and payload-hiding fixes (@Hmbown)
-- **PR #7382** (closed): [CI only, do not merge] 0.10.3 ergonomics and truth batch: pricing, codemode-js, export errors, redaction/Zen (@Hmbown)
-- **PR #7381** (closed): test(app-server): scale the SSE session TTL in the TTL-expiry test for CI (release-prep port) (@Hmbown)
+- **PR #7431** (2026-11-21): fix(engine): classify local read-only deferred tools as Safe in get_tool_category (@NieZhuZhu)
+- **PR #7430** (2026-11-21): fix(execpolicy): scan static awk and sed program payloads (@NieZhuZhu)
+- **PR #7429** (2026-11-21): fix(execpolicy): tighten stdin_piped propagation and numactl --strict (@NieZhuZhu)
+- **PR #7426** (closed): fix(execpolicy): bound repeated '--' deny-target expansion (@NieZhuZhu)
+- **PR #7423** (2026-11-20): fix(engine): distinguish missing tool-call fallback ids from literal call ids (@donglovejava)
+- **PR #7422** (2026-11-20): test(tui): prove raw and bracketed pastes stay lossless past 64 KiB (@donglovejava)
 
 ---
 
@@ -2641,13 +2503,13 @@ The runtime's managed_tool_launcher reuses the shared profil
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 0.10.3 lane 8: execpolicy launcher panic and payload-hiding fixes
+## X. execpolicy): preserve command stdin under group redirection (CW-8303)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bacf9dea`: 0.10.3 lane 8: execpolicy launcher panic and payload-hiding fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `88357eb4`: execpolicy): preserve command stdin under group redirection (CW-8303). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2655,8 +2517,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Flag-only launcher commands no longer crash the turn:** running `npm --version`, `nix --version`, `launchctl --help`, `docker --version`, `podman --version`, or another launcher command with global flags and no subcommand no longer panics with an out-of-bounds index during command policy expansion.
-- **Command policy sees payloads behind empty words and `--entrypoint`:** command policy now also checks the nested command in launcher lines with empty-string words before the subcommand (`npm '' exec -c 'rm -rf /'`, `docker '' -D run alpine rm -rf /`) and checks `docker run --entrypoint rm alpine -rf /` as the entrypoint plus the arguments after the image, checking every `--entrypoint` value before the image, so deny rules and approval review match them. A launcher line with so many options that the option walk hits its state limit is now treated like other commands whose words are only known at run time: while deny rules are in force it asks for approval, or is refused where approval is unavailable, instead of dropping the nested command.
+- **Shell groups preserve command-owned input:** policy evaluation keeps each command's explicit stdin source when a redirection supplies default input to its enclosing group. (CW-8303)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2666,4 +2527,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bacf9dea` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `88357eb4` are properly handled with clean fallback behavior.

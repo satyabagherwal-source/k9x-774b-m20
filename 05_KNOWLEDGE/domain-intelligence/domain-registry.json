@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T01:35:35.532Z",
+  "last_updated": "2026-11-21T01:43:54.151Z",
   "total_records": 2209,
   "domains": {
     "A": {
@@ -8942,8 +8942,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "4d733cb1d9a32f046509235ac6c3878abd9b1fd21cbfc4ae9976b1d084b02464",
-      "created_at": "2026-11-21T01:16:31.894Z"
+      "content_hash": "34430cc40bb27f34fb6a3989e580cbac547a6fa4c9bb73aac041aa12a54f5bd4",
+      "created_at": "2026-11-21T01:43:54.151Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -11600,8 +11600,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "e9ffc308222ac8283146abbec34b9c82cb58e64e74eeec63752fc7405f4e6d8e",
-      "created_at": "2026-11-21T01:35:35.532Z"
+      "content_hash": "c5f5d05cb9cbef69295db0cbd0e1573083f8566646234d90d32f6cdedb4ce6a2",
+      "created_at": "2026-11-21T01:43:53.271Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -16048,10 +16048,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
       "repository": "codewhale-hq/Codewhale",
-      "content_hash": "8d2f87eb9e1f0d98bd38ab3aec7e4090bef0f67cf4d44730a0b57e7ca3359e0c",
-      "created_at": "2026-11-19T23:43:21.636Z"
+      "content_hash": "ea95f6565da23aa5c83cad064ac298b34507bb74250f2431ca983f407574657a",
+      "created_at": "2026-11-21T01:43:41.994Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants",
@@ -16059,8 +16059,8 @@
       "title": "Architecture Intelligence: codewhale-hq-codewhale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-learnings-architecture-intelligence-codewhale-hq-codewhal.md",
       "repository": "codewhale-hq-codewhale-learnings",
-      "content_hash": "03aa891b3148940878a8a91d990f3447c7e78cc7b0963680c8134ee0a66e572f",
-      "created_at": "2026-11-19T15:42:43.784Z"
+      "content_hash": "fce713fb3f9bc815c1f4a5e8e772d064cae59f22c5db6680f4b493040f39a954",
+      "created_at": "2026-11-21T01:43:52.426Z"
     },
     "domain_intelligence-research-knowledge-intelligence-bingsu-adetailer-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-bingsu-adetailer-core-invariants",

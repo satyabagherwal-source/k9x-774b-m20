@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-8IV9",
-    "timestamp": "2026-11-18T23:02:48.453Z",
-    "repository": "baidu/Unlimited-OCR",
-    "learningId": "learn-huggingface-baidu-unlimited-ocr",
-    "contentHash": "033a860aa6f7e15ad16e4f8cf91359eed1be8496a6bd9fe93b8360b15f917e55",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-I5TS",
     "timestamp": "2026-11-18T23:10:18.112Z",
     "repository": "Aleph-Alpha/Kolibri-1",
@@ -7492,6 +7477,21 @@
     "contentHash": "a3e1abc79d03cf5382cd961f832c7422083cdaceb687df0ea85eee8a04ded881",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-V4MM",
+    "timestamp": "2026-11-21T01:43:41.615Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "e5474569b167416bb11d5e5269d4d6b9c6a7e62f289b38eeef9fa6863a5f5e8b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
